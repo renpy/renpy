@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import os
@@ -29,13 +29,13 @@ import pygame_sdl2
 from pygame_sdl2 import CONTROLLERDEVICEADDED, CONTROLLERDEVICEREMOVED
 from pygame_sdl2 import CONTROLLERAXISMOTION, CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP
 from pygame_sdl2.controller import Controller, get_string_for_axis, get_string_for_button
+
 pygame = pygame_sdl2
 
 import renpy
 
 
 def load_mappings():
-
     try:
         with renpy.loader.load("renpycontrollerdb.txt", tl=False) as f:
             pygame_sdl2.controller.add_mappings(f)
@@ -78,7 +78,7 @@ def init():
 
 
 # A map from controller index to controller object.
-controllers = { }
+controllers = {}
 
 # A map from (controller, axis) to "pos", "neg", None position.
 axis_positions = {}
@@ -108,16 +108,14 @@ def post_event(control, state, repeat):
     if repeat:
         name = "repeat_" + name
 
-    names = [ name ]
+    names = [name]
 
     if renpy.config.map_pad_event:
         names.extend(renpy.config.map_pad_event(name))
     else:
         names.extend(renpy.config.pad_bindings.get(name, ()))
 
-    ev = pygame_sdl2.event.Event(
-        renpy.display.core.EVENTNAME,
-        { "eventnames" : names, "controller" : name, "up" : False })
+    ev = pygame_sdl2.event.Event(renpy.display.core.EVENTNAME, {"eventnames": names, "controller": name, "up": False})
 
     pygame.event.post(ev)
 
@@ -133,7 +131,7 @@ def exists():
         return False
 
 
-def quit(index): # @ReservedAssignment
+def quit(index):  # @ReservedAssignment
     """
     Quits the controller at index.
     """
@@ -179,7 +177,6 @@ class PadEvent(object):
     """
 
     def __init__(self, control):
-
         # The control this corresponds to.
         self.control = control
 
@@ -190,7 +187,6 @@ class PadEvent(object):
         self.repeat_time = 0
 
     def event(self, state):
-
         self.state = state
         self.repeat_time = renpy.display.core.get_time() + renpy.config.controller_first_repeat
 
@@ -200,7 +196,6 @@ class PadEvent(object):
             renpy.display.interface.hide_mouse()
 
     def repeat(self):
-
         if self.state not in renpy.config.controller_repeat_states:
             return
 
@@ -218,11 +213,10 @@ class PadEvent(object):
 
 
 # A map from the pad event name to the pad event object.
-pad_events = { }
+pad_events = {}
 
 
 def controller_event(control, state):
-
     pe = pad_events.get(control, None)
     if pe is None:
         pe = pad_events[control] = PadEvent(control)
@@ -259,12 +253,10 @@ def event(ev):
         return rv
 
     elif ev.type == CONTROLLERAXISMOTION:
-
         pygame_sdl2.event.pump()
-        events = [ ev ] + pygame.event.get(CONTROLLERAXISMOTION)
+        events = [ev] + pygame.event.get(CONTROLLERAXISMOTION)
 
         for ev in events:
-
             old_pos = axis_positions.get((ev.which, ev.axis), None)
 
             if ev.value > THRESHOLD:
@@ -286,7 +278,6 @@ def event(ev):
         return rv
 
     elif ev.type in (CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP):
-
         if ev.type == CONTROLLERBUTTONDOWN:
             pr = "press"
         else:
@@ -296,15 +287,14 @@ def event(ev):
         return rv
 
     elif ev.type in (
-            pygame.JOYAXISMOTION,
-            pygame.JOYHATMOTION,
-            pygame.JOYBALLMOTION,
-            pygame.JOYBUTTONDOWN,
-            pygame.JOYBUTTONUP,
-            pygame.JOYDEVICEADDED,
-            pygame.JOYDEVICEREMOVED,
-            ):
-
+        pygame.JOYAXISMOTION,
+        pygame.JOYHATMOTION,
+        pygame.JOYBALLMOTION,
+        pygame.JOYBUTTONDOWN,
+        pygame.JOYBUTTONUP,
+        pygame.JOYDEVICEADDED,
+        pygame.JOYDEVICEREMOVED,
+    ):
         if not renpy.config.pass_joystick_events:
             return None
 

@@ -3,9 +3,10 @@ import os
 import re
 import json
 
+import renpy
 import doc
 
-SPHINX = os.path.abspath(os.path.dirname(__file__) + "/..")
+SPHINX = renpy.config.renpy_base + "/sphinx"
 
 DEPRECATED = [
     "ui."

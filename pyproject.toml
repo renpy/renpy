@@ -46,3 +46,11 @@ reportOptionalIterable = false
 reportOptionalContextManager = false
 reportOptionalOperand = false
 reportMissingModuleSource = false
+
+
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+preview = true

@@ -7,6 +7,7 @@ import re
 import codecs
 
 import datetime
+
 year = datetime.date.today().year
 
 ENDINGS = [
@@ -17,9 +18,9 @@ ENDINGS = [
     ".pxd",
     ".pyi",
     ".pxf",
-    ]
+]
 
-full_copyright="""\
+full_copyright = """\
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -42,7 +43,6 @@ full_copyright="""\
 
 
 def process_file(fn):
-
     for i in ENDINGS:
         if fn.endswith(i):
             break
@@ -51,17 +51,14 @@ def process_file(fn):
 
     print("Processing", fn)
 
-    lines = [ ]
+    lines = []
 
     has_copyright = False
     first = True
 
     with open(fn, "r") as f:
         for l in f:
-            l = re.sub(
-                r"Copyright (\d{4})-\d{4} Tom Rothamel",
-                r"Copyright \1-{} Tom Rothamel".format(year),
-                l)
+            l = re.sub(r"Copyright (\d{4})-\d{4} Tom Rothamel", r"Copyright \1-{} Tom Rothamel".format(year), l)
 
             if re.search(r"Copyright .* Tom Rothamel", l):
                 if has_copyright:
@@ -85,8 +82,7 @@ def process_file(fn):
 
 
 def process(root):
-
-    for dirname, _dirs, files in os.walk(root): #type: ignore
+    for dirname, _dirs, files in os.walk(root):  # type: ignore
         for fn in files:
             fn = os.path.join(dirname, fn)
             process_file(fn)

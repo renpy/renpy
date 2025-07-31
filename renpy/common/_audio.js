@@ -464,6 +464,8 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
 
         video_start(c);
         return;
+    } else if (c.video) {
+        throw new Error('Videos must not be stored in game.zip.');
     }
 
     const q = {
@@ -596,8 +598,8 @@ renpyAudio.queue_depth = (channel) => {
     let rv = 0;
     let c = get_channel(channel);
 
-    // Try to resume the audio context if it's not running.
-    if (context.state != "running") {
+    // Try to resume the audio context if it's been interrupted (iOS Safari feature)
+    if (context.state === "interrupted") {
         context.resume();
     }
 

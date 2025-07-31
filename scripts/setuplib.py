@@ -62,16 +62,17 @@ if static:
 cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
 # The include and library dirs that we compile against.
-include_dirs = [ "src" ]
-library_dirs = [ ]
+include_dirs = ["src"]
+library_dirs = []
 
 # Extra arguments that will be given to the compiler.
-extra_compile_args = [ ]
-extra_link_args = [ ]
+extra_compile_args = []
+extra_link_args = []
 
 
 # The libraries that we link against.
-libraries = [ ]
+libraries = []
+
 
 def library(name):
     """
@@ -82,10 +83,10 @@ def library(name):
 
 
 # A list of extension objects that we use.
-extensions = [ ]
+extensions = []
 
 # A list of macros that are defined for all modules.
-global_macros = [ ]
+global_macros = []
 
 
 def cmodule(name, source, define_macros=[], language="c", compile_args=[]):
@@ -110,24 +111,27 @@ def cmodule(name, source, define_macros=[], language="c", compile_args=[]):
     if language == "c":
         eca.insert(0, "-std=gnu99")
 
-    extensions.append(setuptools.Extension(
-        name,
-        source,
-        include_dirs=include_dirs,
-        library_dirs=library_dirs,
-        extra_compile_args=eca,
-        extra_link_args=extra_link_args,
-        libraries=libraries,
-        define_macros=define_macros + global_macros,
-        language=language,
-        ))
+    extensions.append(
+        setuptools.Extension(
+            name,
+            source,
+            include_dirs=include_dirs,
+            library_dirs=library_dirs,
+            extra_compile_args=eca,
+            extra_link_args=extra_link_args,
+            libraries=libraries,
+            define_macros=define_macros + global_macros,
+            language=language,
+        )
+    )
 
 
 # A list of cython files that were necessary to generate.
-necessary_gen = [ ]
+necessary_gen = []
 
 # A list of cython generation commands that will be run in parallel.
-generate_cython_queue = [ ]
+generate_cython_queue = []
+
 
 def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_args=[]):
     """
@@ -145,7 +149,7 @@ def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_ar
     else:
         fn = "/".join(split_name) + ".pyx"
 
-    for d in [ ".", "src" ]:
+    for d in [".", "src"]:
         prepended = os.path.join(d, fn)
         if os.path.exists(prepended):
             fn = prepended
@@ -153,20 +157,19 @@ def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_ar
     else:
         raise SystemExit("Could not find {0}.".format(fn))
 
-
     module_dir = os.path.dirname(fn)
 
     # Figure out what it depends on.
-    deps = [ fn ]
+    deps = [fn]
 
     with open(fn) as f:
         for l in f:
-            m = re.search(r'from\s*([\w.]+)\s*cimport', l)
+            m = re.search(r"from\s*([\w.]+)\s*cimport", l)
             if m:
                 deps.append(m.group(1).replace(".", "/") + ".pxd")
                 continue
 
-            m = re.search(r'cimport\s*([\w.]+)', l)
+            m = re.search(r"cimport\s*([\w.]+)", l)
             if m:
                 deps.append(m.group(1).replace(".", "/") + ".pxd")
                 continue
@@ -177,7 +180,7 @@ def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_ar
                 continue
 
     # Filter out cython stdlib dependencies.
-    deps = [ i for i in deps if (not i.startswith("cpython/")) and (not i.startswith("libc/")) ]
+    deps = [i for i in deps if (not i.startswith("cpython/")) and (not i.startswith("libc/"))]
 
     # Determine if any of the dependencies are newer than the c file.
 
@@ -198,8 +201,7 @@ def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_ar
     # print c_fn, "depends on", deps
 
     for dep_fn in deps:
-
-        for d in [ module_dir, ".", "src", gen ]:
+        for d in [module_dir, ".", "src", gen]:
             prepended = os.path.join(d, dep_fn)
             if os.path.exists(prepended):
                 dep_fn = prepended
@@ -224,45 +226,50 @@ def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_ar
     # Build the module normally once we have the c file.
 
     if mod_coverage:
-        define_macros = define_macros + [ ("CYTHON_TRACE", "1") ]
+        define_macros = define_macros + [("CYTHON_TRACE", "1")]
 
-    cmodule(name, [ c_fn ] + source,define_macros=define_macros, language=language, compile_args=compile_args)
+    cmodule(name, [c_fn] + source, define_macros=define_macros, language=language, compile_args=compile_args)
 
 
 lock = threading.Condition()
 cython_failure = False
 
+
 def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
     import subprocess
+
     global cython_failure
 
     if language == "c++":
-        lang_args = [ "--cplus" ]
+        lang_args = ["--cplus"]
     else:
-        lang_args = [ ]
+        lang_args = []
 
     if "RENPY_ANNOTATE_CYTHON" in os.environ:
-        annotate = [ "-a" ]
+        annotate = ["-a"]
     else:
-        annotate = [ ]
+        annotate = []
 
     if mod_coverage:
-        coverage_args = [ "-X", "linetrace=true" ]
+        coverage_args = ["-X", "linetrace=true"]
     else:
-        coverage_args = [ ]
+        coverage_args = []
 
-    p = subprocess.Popen([
+    p = subprocess.Popen(
+        [
             cython_command,
             "-Isrc",
             "-I" + gen,
             "-I.",
             "-3",
-            ] + annotate + lang_args + coverage_args + [
-            "-X", "profile=False",
-            "-X", "embedsignature=True",
-            fn,
-            "-o",
-            c_fn], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        ]
+        + annotate
+        + lang_args
+        + coverage_args
+        + ["-X", "profile=False", "-X", "embedsignature=True", fn, "-o", c_fn],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
 
     stdout, stderr = p.communicate()
 
@@ -278,23 +285,47 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
 
     # Fix-up source for static loading
     if static:
-        parent_module = '.'.join(split_name[:-1])
-        parent_module_identifier = parent_module.replace('.', '_')
+        parent_module = ".".join(split_name[:-1])
+        parent_module_identifier = parent_module.replace(".", "_")
 
-        with open(c_fn, 'r') as f:
+        with open(c_fn, "r") as f:
             ccode = f.read()
 
-        with open(c_fn + ".dynamic", 'w') as f:
+        with open(c_fn + ".dynamic", "w") as f:
             f.write(ccode)
 
         if len(split_name) > 1:
-            ccode = re.sub(r'Py_InitModule4\("([^"]+)"', 'Py_InitModule4("' + parent_module + '.\\1"', ccode) # Py2
-            ccode = re.sub(r'(__pyx_moduledef.*?"){}"'.format(re.escape(split_name[-1])), '\\1' + '.'.join(split_name) + '"', ccode, count=1, flags=re.DOTALL) # Py3
-            ccode = re.sub(r'^__Pyx_PyMODINIT_FUNC init', '__Pyx_PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, count=0, flags=re.MULTILINE) # Py2 Cython 0.28+
-            ccode = re.sub(r'^__Pyx_PyMODINIT_FUNC PyInit_', '__Pyx_PyMODINIT_FUNC PyInit_' + parent_module_identifier + '_', ccode, count=0, flags=re.MULTILINE) # Py3 Cython 0.28+
-            ccode = re.sub(r'^PyMODINIT_FUNC init', 'PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, count=0, flags=re.MULTILINE) # Py2 Cython 0.25.2
+            ccode = re.sub(r'Py_InitModule4\("([^"]+)"', 'Py_InitModule4("' + parent_module + '.\\1"', ccode)  # Py2
+            ccode = re.sub(
+                r'(__pyx_moduledef.*?"){}"'.format(re.escape(split_name[-1])),
+                "\\1" + ".".join(split_name) + '"',
+                ccode,
+                count=1,
+                flags=re.DOTALL,
+            )  # Py3
+            ccode = re.sub(
+                r"^__Pyx_PyMODINIT_FUNC init",
+                "__Pyx_PyMODINIT_FUNC init" + parent_module_identifier + "_",
+                ccode,
+                count=0,
+                flags=re.MULTILINE,
+            )  # Py2 Cython 0.28+
+            ccode = re.sub(
+                r"^__Pyx_PyMODINIT_FUNC PyInit_",
+                "__Pyx_PyMODINIT_FUNC PyInit_" + parent_module_identifier + "_",
+                ccode,
+                count=0,
+                flags=re.MULTILINE,
+            )  # Py3 Cython 0.28+
+            ccode = re.sub(
+                r"^PyMODINIT_FUNC init",
+                "PyMODINIT_FUNC init" + parent_module_identifier + "_",
+                ccode,
+                count=0,
+                flags=re.MULTILINE,
+            )  # Py2 Cython 0.25.2
 
-        with open(c_fn, 'w') as f:
+        with open(c_fn, "w") as f:
             f.write(ccode)
 
 
@@ -318,7 +349,6 @@ def generate_all_cython():
 
 
 def find_unnecessary_gen():
-
     for i in os.listdir(gen):
         if not i.endswith(".c"):
             continue
@@ -329,7 +359,7 @@ def find_unnecessary_gen():
         print("Unnecessary file", os.path.join(gen, i))
 
 
-py_modules = [ ]
+py_modules = []
 
 
 def pymodule(name):
@@ -367,6 +397,7 @@ def copyfile(source, dest, replace=None, replace_with=None):
         df.write(data)
 
     import shutil
+
     shutil.copystat(sfn, dfn)
 
 
@@ -438,4 +469,4 @@ def setup(name, version):
         ext_modules=extensions,
         py_modules=py_modules,
         zip_safe=False,
-        )
+    )

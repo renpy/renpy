@@ -21,262 +21,23 @@
 
 # This file contains functions that load and save the game state.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
 import io
 import zipfile
 import re
 import threading
-import types
 import shutil
 import os
-import sys
 import time
 
 import renpy
 from json import dumps as json_dumps
 
-from renpy.compat.pickle import PROTOCOL, dump, loads
+from renpy.compat.pickle import dump, loads, dump_paths, find_bad_reduction
 
 
 # This is used as a quick and dirty way of versioning savegame
 # files.
 savegame_suffix = renpy.savegame_suffix
-
-
-def save_dump(roots, log):
-    """
-    Dumps information about the save to save_dump.txt. We dump the size
-    of the object (including unique children), the path to the object,
-    and the type or repr of the object.
-    """
-
-    o_repr_cache = { }
-
-    def visit(o, path):
-        ido = id(o)
-
-        if ido in o_repr_cache:
-            f.write("{0: 7d} {1} = alias {2}\n".format(0, path, o_repr_cache[ido]))
-            return 0
-
-        if isinstance(o, (int, float, type(None), types.ModuleType, type)):
-            o_repr = repr(o)
-
-        elif isinstance(o, str):
-            if len(o) <= 80:
-                o_repr = repr(o)
-            else:
-                o_repr = repr(o[:40] + "..." + o[-40:])
-
-        elif isinstance(o, bytes):
-            if len(o) <= 80:
-                o_repr = repr(o)
-            else:
-                o_repr = repr(o[:40] + b"..." + o[-40:])
-
-        elif isinstance(o, (tuple, list)):
-            o_repr = "<" + o.__class__.__name__ + ">"
-
-        elif isinstance(o, dict):
-            o_repr = "<" + o.__class__.__name__ + ">"
-
-        elif isinstance(o, types.MethodType):
-
-            o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
-
-        elif isinstance(o, types.FunctionType):
-            name = o.__qualname__ or o.__name__
-
-            o_repr = o.__module__ + '.' + name
-
-        elif isinstance(o, object):
-            o_repr = "<{0}>".format(type(o).__name__)
-
-        else:
-            o_repr = "BAD TYPE <{0}>".format(type(o).__name__)
-
-        o_repr_cache[ido] = o_repr
-
-        if isinstance(o, (int, float, type(None), types.ModuleType, type)):
-            size = 1
-
-        elif isinstance(o, bytes):
-            size = len(o) // 40 + 1
-
-        elif isinstance(o, (tuple, list)):
-            size = 1
-            for i, oo in enumerate(o):
-                size += 1
-                size += visit(oo, "{0}[{1!r}]".format(path, i))
-
-        elif isinstance(o, dict):
-            size = 2
-            for k, v in o.items():
-                size += 2
-                size += visit(v, "{0}[{1!r}]".format(path, k))
-
-        elif isinstance(o, types.MethodType):
-            size = 1 + visit(o.__self__, path + ".im_self")
-
-        elif isinstance(o, types.FunctionType):
-            size = 1
-
-        else:
-
-            try:
-                reduction = o.__reduce_ex__(PROTOCOL)
-            except Exception:
-                reduction = [ ]
-                o_repr_cache[ido] = "BAD REDUCTION " + o_repr
-
-            if isinstance(reduction, str):
-                o_repr_cache[ido] = o.__module__ + '.' + reduction
-                size = 1
-
-            else:
-                # Gets an element from the reduction, or o if we don't have
-                # such an element.
-                def get(idx, default):
-                    if idx < len(reduction) and reduction[idx] is not None:
-                        return reduction[idx]
-                    else:
-                        return default
-
-                # An estimate of the size of the object, in arbitrary units.
-                # (These units are about 20-25 bytes on my computer.)
-                size = 1
-
-                state = get(2, { })
-                if isinstance(state, dict):
-                    for k, v in state.items():
-                        size += 2
-                        size += visit(v, path + "." + k)
-                else:
-                    size += visit(state, path + ".__getstate__()")
-
-                for i, oo in enumerate(get(3, [])): # type: ignore
-                    size += 1
-                    size += visit(oo, "{0}[{1}]".format(path, i))
-
-                for i in get(4, []): # type: ignore
-
-                    if len(i) != 2:
-                        continue
-
-                    k, v = i
-
-                    size += 2
-                    size += visit(v, "{0}[{1!r}]".format(path, k))
-
-        f.write("{0: 7d} {1} = {2}\n".format(size, path, o_repr_cache[ido]))
-
-        return size
-
-    f, _ = renpy.error.open_error_file("save_dump.txt", "w")
-
-    with f:
-        visit(roots, "roots")
-        visit(log, "log")
-
-
-def find_bad_reduction(roots, log):
-    """
-    Finds objects that can't be reduced properly.
-    """
-
-    seen = set()
-
-    def visit(o, path):
-        ido = id(o)
-
-        if ido in seen:
-            return
-
-        seen.add(ido)
-
-        if isinstance(o, (int, float, type(None), type)):
-            return
-
-        if isinstance(o, (tuple, list)):
-            for i, oo in enumerate(o):
-                rv = visit(oo, "{0}[{1!r}]".format(path, i))
-                if rv is not None:
-                    return rv
-
-        elif isinstance(o, dict):
-            for k, v in o.items():
-                rv = visit(v, "{0}[{1!r}]".format(path, k))
-                if rv is not None:
-                    return rv
-
-        elif isinstance(o, types.MethodType):
-            return visit(o.__self__, path + ".im_self")
-
-        elif isinstance(o, types.ModuleType):
-
-            return "{} = {}".format(path, repr(o)[:160])
-
-        else:
-
-            try:
-                reduction = o.__reduce_ex__(2)
-            except Exception:
-
-                import copy
-
-                try:
-                    copy.copy(o)
-                    return None
-                except Exception:
-                    pass
-
-                return "{} = {}".format(path, repr(o)[:160])
-
-            # Gets an element from the reduction, or o if we don't have
-            # such an element.
-            def get(idx, default):
-                if idx < len(reduction) and reduction[idx] is not None:
-                    return reduction[idx]
-                else:
-                    return default
-
-            state = get(2, { })
-            if isinstance(state, dict):
-                for k, v in state.items():
-                    rv = visit(v, path + "." + k)
-                    if rv is not None:
-                        return rv
-            else:
-                rv = visit(state, path + ".__getstate__()")
-                if rv is not None:
-                    return rv
-
-            for i, oo in enumerate(get(3, [])):
-                rv = visit(oo, "{0}[{1}]".format(path, i))
-                if rv is not None:
-                    return rv
-
-            for i in get(4, []):
-
-                if len(i) != 2:
-                    continue
-
-                k, v = i
-
-                rv = visit(v, "{0}[{1!r}]".format(path, k))
-                if rv is not None:
-                    return rv
-
-        return None
-
-    for k, v in roots.items():
-        rv = visit(v, k)
-        if rv is not None:
-            return rv
-
-    return visit(log, "renpy.game.log")
 
 ################################################################################
 # Saving
@@ -301,13 +62,11 @@ def safe_rename(old, new):
     try:
         os.rename(old, new)
     except Exception:
-
         # If the rename failed, try again.
         try:
             os.unlink(new)
             os.rename(old, new)
         except Exception:
-
             # If it fails a second time, give up.
             try:
                 os.unlink(old)
@@ -373,7 +132,7 @@ class SaveRecord(object):
         self.first_filename = filename
 
 
-def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True, extra_json=None):
+def save(slotname, extra_info="", mutate_flag=False, include_screenshot=True, extra_json=None):
     """
     :doc: loadsave
     :args: (filename, extra_info='', *, extra_json=None)
@@ -418,18 +177,18 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True, ex
     roots = renpy.game.log.freeze(None)
 
     if renpy.config.save_dump:
-        save_dump(roots, renpy.game.log)
+        dump_paths("save_dump.txt", **{"renpy.game.log": renpy.game.log}, **roots)
 
     logf = io.BytesIO()
     try:
         dump((roots, renpy.game.log), logf)
     except Exception as e:
-        if mutate_flag or not e.args:
+        if mutate_flag:
             raise
 
         try:
-            if bad := find_bad_reduction(roots, renpy.game.log):
-                e.args = (e.args[0] + f' (perhaps {bad})', *e.args[1:])
+            if bad := find_bad_reduction(**{"renpy.game.log": renpy.game.log}, **roots):
+                e.add_note(f"Perhaps bad reduction in {bad}")
         except Exception:
             pass
 
@@ -444,12 +203,12 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True, ex
         screenshot = None
 
     json = {
-        "_save_name" : extra_info,
-        "_renpy_version" : list(renpy.version_tuple),
-        "_version" : renpy.config.version,
-        "_game_runtime" : renpy.exports.get_game_runtime(),
-        "_ctime" : time.time(),
-        }
+        "_save_name": extra_info,
+        "_renpy_version": list(renpy.version_tuple),
+        "_version": renpy.config.version,
+        "_game_runtime": renpy.exports.get_game_runtime(),
+        "_ctime": time.time(),
+    }
 
     for i in renpy.config.save_json_callbacks:
         i(json)
@@ -479,8 +238,8 @@ autosave_counter = 0
 # True if a background autosave has finished.
 did_autosave = False
 
-def autosave_thread_function(take_screenshot):
 
+def autosave_thread_function(take_screenshot):
     global autosave_counter
     global did_autosave
 
@@ -490,9 +249,7 @@ def autosave_thread_function(take_screenshot):
         prefix = "auto-"
 
     try:
-
         with renpy.savelocation.SyncfsLock():
-
             if renpy.config.auto_save_extra_info:
                 extra_info = renpy.config.auto_save_extra_info()
             else:
@@ -592,7 +349,6 @@ def force_autosave(take_screenshot=False, block=False):
         return
 
     if block:
-
         if renpy.config.auto_save_extra_info:
             extra_info = renpy.config.auto_save_extra_info()
         else:
@@ -621,13 +377,13 @@ def force_autosave(take_screenshot=False, block=False):
     else:
         autosave_thread_function(take_screenshot)
 
+
 ################################################################################
 # Loading and Slot Manipulation
 ################################################################################
 
 
 def scan_saved_game(slotname):
-
     c = get_cache(slotname)
 
     mtime = c.get_mtime()
@@ -639,7 +395,7 @@ def scan_saved_game(slotname):
     if json is None:
         return None
 
-    extra_info = json.get("_save_name", "") # type: ignore
+    extra_info = json.get("_save_name", "")  # type: ignore
 
     screenshot = c.get_screenshot()
 
@@ -649,47 +405,47 @@ def scan_saved_game(slotname):
     return extra_info, screenshot, mtime
 
 
-def list_saved_games(regexp=r'.', fast=False):
+def list_saved_games(regexp=r".", fast=False):
     """
-    :doc: loadsave
+     :doc: loadsave
 
-    Lists the save games. For each save game, returns a tuple containing:
+     Lists the save games. For each save game, returns a tuple containing:
 
-    * The filename of the save.
-    * The extra_info that was passed in.
-    * A displayable that, when displayed, shows the screenshot that was
-      used when saving the game.
-    * The time the game was stayed at, in seconds since the UNIX epoch.
+     * The filename of the save.
+     * The extra_info that was passed in.
+     * A displayable that, when displayed, shows the screenshot that was
+       used when saving the game.
+     * The time the game was stayed at, in seconds since the UNIX epoch.
 
-    `regexp`
-        A regular expression to filter save slot names. If ``None``, all slots are included.
+     `regexp`
+         A regular expression to filter save slot names. If ``None``, all slots are included.
 
-    `fast`
-        If fast is true, only a list with matching filenames is returned instead of the list of tuples, making it equivalent to :func:`list_slots`
+     `fast`
+         If fast is true, only a list with matching filenames is returned instead of the list of tuples, making it equivalent to :func:`list_slots`
 
-    Unless ``fast=True``, returns a list of tuples, each containing:
-    - The slot name (e.g., ``"1-1"``).
-    - ``extra_info``, the ``_save_name`` field from the save file’s metadata, set by the ``extra_info`` argument of :func:`renpy.save`.
-    - ``time``, the modification time of the save file, in seconds since the epoch (equivalent to ``_ctime`` in :func:`renpy.slot_json` or :func:`FileJson`).
-    - ``screenshot``, a displayable (or ``None``) for the save’s screenshot, accessible via :func:`FileScreenshot`.
+     Unless ``fast=True``, returns a list of tuples, each containing:
+     - The slot name (e.g., ``"1-1"``).
+     - ``extra_info``, the ``_save_name`` field from the save file’s metadata, set by the ``extra_info`` argument of :func:`renpy.save`.
+     - ``time``, the modification time of the save file, in seconds since the epoch (equivalent to ``_ctime`` in :func:`renpy.slot_json` or :func:`FileJson`).
+     - ``screenshot``, a displayable (or ``None``) for the save’s screenshot, accessible via :func:`FileScreenshot`.
 
-    To access other metadata fields (e.g., ``_renpy_version``, ``_version``, ``_game_runtime``, custom fields), use :func:`renpy.slot_json` or, for built-in fields only, :func:`FileJson`.
+     To access other metadata fields (e.g., ``_renpy_version``, ``_version``, ``_game_runtime``, custom fields), use :func:`renpy.slot_json` or, for built-in fields only, :func:`FileJson`.
 
-   Example::
+     Example::
 
-       screen save_list():
-           vbox:
-               for name, extra_info, time, screenshot in renpy.list_saved_games(fast=False):
-                   textbutton "[name]: [extra_info]" action FileLoad(name)
+        screen save_list():
+            vbox:
+                for name, extra_info, time, screenshot in renpy.list_saved_games(fast=False):
+                    textbutton "[name]: [extra_info]" action FileLoad(name)
 
-    Ren'Py save slots follow naming conventions: manual saves use the format ``page-slot`` (e.g., ``1-1``, ``2-3``), autosaves use ``auto-slot`` (e.g., ``auto-1``), and quicksaves use ``quick-slot`` (e.g., ``quick-1``). The ``regexp`` parameter can filter these slots using Python regular expressions.
+     Ren'Py save slots follow naming conventions: manual saves use the format ``page-slot`` (e.g., ``1-1``, ``2-3``), autosaves use ``auto-slot`` (e.g., ``auto-1``), and quicksaves use ``quick-slot`` (e.g., ``quick-1``). The ``regexp`` parameter can filter these slots using Python regular expressions.
 
-   Useful Regular Expressions:
+    Useful Regular Expressions:
 
-   - ``r"^(\\d+|auto|quick)-\\d+$"``: Matches all manual (e.g., ``1-1``), auto (e.g., ``auto-1``), and quick (e.g., ``quick-1``) saves. Intentionally listing the types you need avoids encountering built-in save types like ``_reload-1``
-   - ``r"^\\d+-\\d+$"``: Matches manual saves (e.g., ``1-1``, ``2-3``).
-   - ``r"^auto-\\d+$"``: Matches autosaves (e.g., ``auto-1``, ``auto-2``).
-   - ``r"^quick-\\d+$"``: Matches quicksaves (e.g., ``quick-1``, ``quick-2``).
+    - ``r"^(\\d+|auto|quick)-\\d+$"``: Matches all manual (e.g., ``1-1``), auto (e.g., ``auto-1``), and quick (e.g., ``quick-1``) saves. Intentionally listing the types you need avoids encountering built-in save types like ``_reload-1``
+    - ``r"^\\d+-\\d+$"``: Matches manual saves (e.g., ``1-1``, ``2-3``).
+    - ``r"^auto-\\d+$"``: Matches autosaves (e.g., ``auto-1``, ``auto-2``).
+    - ``r"^quick-\\d+$"``: Matches quicksaves (e.g., ``quick-1``, ``quick-2``).
 
     """
 
@@ -697,23 +453,22 @@ def list_saved_games(regexp=r'.', fast=False):
     slots = location.list()
 
     if regexp is not None:
-        slots = [ i for i in slots if re.match(regexp, i) ]
+        slots = [i for i in slots if re.match(regexp, i)]
 
     slots.sort()
 
     if fast:
         return slots
 
-    rv = [ ]
+    rv = []
 
     for s in slots:
-
         c = get_cache(s)
 
         if c is not None:
             json = c.get_json()
             if json is not None:
-                extra_info = json.get("_save_name", "") # type: ignore
+                extra_info = json.get("_save_name", "")  # type: ignore
             else:
                 extra_info = ""
 
@@ -740,7 +495,7 @@ def list_slots(regexp=None):
     slots = location.list()
 
     if regexp is not None:
-        slots = [ i for i in slots if re.match(regexp, i) ]
+        slots = [i for i in slots if re.match(regexp, i)]
 
     slots.sort()
 
@@ -752,7 +507,7 @@ def list_slots(regexp=None):
 accessed_slots = set()
 
 # A cache for newest slot info.
-newest_slot_cache = { }
+newest_slot_cache = {}
 
 
 def newest_slot(regexp=None):
@@ -769,14 +524,12 @@ def newest_slot(regexp=None):
 
     rv = newest_slot_cache.get(regexp, unknown)
     if rv is unknown:
-
         max_mtime = 0
         rv = None
 
         slots = location.list()
 
         for i in slots:
-
             if (regexp is not None) and (not re.match(regexp, i)):
                 continue
 
@@ -784,7 +537,7 @@ def newest_slot(regexp=None):
             if mtime is None:
                 continue
 
-            if mtime >= max_mtime: # type: ignore
+            if mtime >= max_mtime:  # type: ignore
                 rv = i
                 max_mtime = mtime
 
@@ -810,7 +563,7 @@ def slot_json(slotname):
 
     Returns a dictionary containing the metadata of the save file in `slotname`, including ``_save_name``, ``_renpy_version``, ``_version``, ``_game_runtime``, ``_ctime``, and any custom fields added via :var:`config.save_json_callbacks` at the time of saving. If the slot is empty, `None` is returned. For save/load screen actions, :func:`FileJson` provides a subset of these fields (excluding custom fields).
 
-        Example::
+    Example::
 
         def show_game_runtime(slot):
             metadata = renpy.slot_json(slot)
@@ -871,9 +624,17 @@ def load(filename):
     if not renpy.savetoken.check_load(log_data, signature):
         return
 
+    try:
+        json = slot_json(filename)
+    except Exception as e:
+        json = {}
+
+    renpy.session["traceback_load"] = "_traceback" in json
+
     roots, log = loads(log_data)
 
     log.unfreeze(roots, label="_after_load")
+
 
 def get_save_data(filename):
     """
@@ -890,7 +651,8 @@ def get_save_data(filename):
 
     roots, log = loads(log_data)
 
-    return { k[6:]: v for k, v in roots.items() if k.startswith("store.") }
+    return {k[6:]: v for k, v in roots.items() if k.startswith("store.")}
+
 
 def unlink_save(filename):
     """
@@ -943,6 +705,7 @@ def cycle_saves(name, count):
     for i in range(count - 1, 0, -1):
         rename_save(name + str(i), name + str(i + 1))
 
+
 ################################################################################
 # Cache
 ################################################################################
@@ -954,9 +717,9 @@ unknown = renpy.object.Sentinel("unknown")
 
 def wrap_json(d):
     if isinstance(d, list):
-        return [ wrap_json(i) for i in d ]
+        return [wrap_json(i) for i in d]
     if isinstance(d, dict):
-        return renpy.revertable.RevertableDict({ k : wrap_json(v) for k, v in d.items() })
+        return renpy.revertable.RevertableDict({k: wrap_json(v) for k, v in d.items()})
     else:
         return d
 
@@ -981,7 +744,6 @@ class Cache(object):
         self.screenshot = unknown
 
     def get_mtime(self):
-
         rv = self.mtime
 
         if rv is unknown:
@@ -990,7 +752,6 @@ class Cache(object):
         return rv
 
     def get_json(self):
-
         rv = self.json
 
         if rv is unknown:
@@ -999,7 +760,6 @@ class Cache(object):
         return wrap_json(rv)
 
     def get_screenshot(self):
-
         rv = self.screenshot
 
         if rv is unknown:
@@ -1019,11 +779,10 @@ class Cache(object):
 
 # A map from slotname to cache object. This is used to cache savegame scan
 # data until the slot changes.
-cache = { }
+cache = {}
 
 
 def get_cache(slotname):
-
     rv = cache.get(slotname, None)
 
     if rv is None:

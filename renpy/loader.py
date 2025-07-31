@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Iterable, NamedTuple
+from typing import Iterable, Literal, NamedTuple
 
 import renpy
 import os
@@ -32,9 +32,6 @@ import io
 import unicodedata
 import time
 import pathlib
-import importlib.machinery
-import importlib.abc
-import importlib.util
 
 from pygame_sdl2.rwobject import RWopsIO
 
@@ -43,9 +40,10 @@ from renpy.webloader import DownloadNeeded
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
-u"".encode(u"utf-8")
+"".encode("utf-8")
 
 # Physical Paths
+
 
 def get_path(fn):
     """
@@ -66,49 +64,54 @@ def get_path(fn):
 
     return fn
 
+
 # Asset Loading
 
-apks = [ ]
-game_apks = [ ]
-split_apks = [ ]
+apks = []
+game_apks = []
+split_apks = []
 
 if renpy.android:
-    import android.apk # type: ignore
+    import android.apk  # type: ignore
 
-    packs = [os.environ[i] for i in ["ANDROID_PACK_FF" + str(j+1) for j in range(4)] if i in os.environ and os.environ[i].endswith(".apk")]
+    packs = [
+        os.environ[i]
+        for i in ["ANDROID_PACK_FF" + str(j + 1) for j in range(4)]
+        if i in os.environ and os.environ[i].endswith(".apk")
+    ]
 
     if renpy.config.renpy_base == renpy.config.basedir:
         # Read the game data from the APKs.
 
-        apks.append(android.apk.APK(prefix='assets/x-game/'))
+        apks.append(android.apk.APK(prefix="assets/x-game/"))
         game_apks.append(apks[-1])
         for i in packs:
-            apks.append(android.apk.APK(apk=i, prefix='assets/game/'))
+            apks.append(android.apk.APK(apk=i, prefix="assets/game/"))
             game_apks.append(apks[-1])
             split_apks.append(apks[-1])
 
-    apks.append(android.apk.APK(prefix='assets/x-renpy/x-common/'))
+    apks.append(android.apk.APK(prefix="assets/x-renpy/x-common/"))
     for i in packs:
-        apks.append(android.apk.APK(apk=i, prefix='assets/renpy/common/'))
+        apks.append(android.apk.APK(apk=i, prefix="assets/renpy/common/"))
         split_apks.append(apks[-1])
 
 
 # Files on disk should be checked before archives. Otherwise, among
 # other things, using a new version of bytecode.rpyb will break.
-archives = [ ]
+archives = []
 
 # A map from lower-case filename to regular-case filename.
-lower_map = { }
+lower_map: dict[str, str] = {}
 
 
 class ArchiveHandlers:
     def __init__(self):
-        self.exts = { }
-        self.peek = { }
+        self.exts = {}
+        self.peek = {}
 
     def append(self, handler):
-        candidates = [ ]
-        header_sizes = [ ]
+        candidates = []
+        header_sizes = []
 
         for header in handler.get_supported_headers():
             candidates.append((header, handler))
@@ -117,7 +120,7 @@ class ArchiveHandlers:
         peek = max(header_sizes)
 
         for ext in handler.get_supported_extensions():
-            self.exts.setdefault(ext, [ ]).extend(candidates)
+            self.exts.setdefault(ext, []).extend(candidates)
             self.peek[ext] = max(self.peek.get(ext, 0), peek)
 
     def spec(self, ext):
@@ -137,11 +140,11 @@ class RPAv3ArchiveHandler(object):
 
     @staticmethod
     def get_supported_extensions():
-        return [ ".rpa" ]
+        return [".rpa"]
 
     @staticmethod
     def get_supported_headers():
-        return [ b"RPA-3.0 " ]
+        return [b"RPA-3.0 "]
 
     @staticmethod
     def read_index(infile):
@@ -153,7 +156,7 @@ class RPAv3ArchiveHandler(object):
 
         def start_to_bytes(s):
             if not s:
-                return b''
+                return b""
 
             if not isinstance(s, bytes):
                 s = s.encode("latin-1")
@@ -163,11 +166,10 @@ class RPAv3ArchiveHandler(object):
         # Deobfuscate the index.
 
         for k in index.keys():
-
             if len(index[k][0]) == 2:
-                index[k] = [ (offset ^ key, dlen ^ key) for offset, dlen in index[k] ]
+                index[k] = [(offset ^ key, dlen ^ key) for offset, dlen in index[k]]
             else:
-                index[k] = [ (offset ^ key, dlen ^ key, start_to_bytes(start)) for offset, dlen, start in index[k] ]
+                index[k] = [(offset ^ key, dlen ^ key, start_to_bytes(start)) for offset, dlen, start in index[k]]
 
         return index
 
@@ -184,11 +186,11 @@ class RPAv2ArchiveHandler(object):
 
     @staticmethod
     def get_supported_extensions():
-        return [ ".rpa" ]
+        return [".rpa"]
 
     @staticmethod
     def get_supported_headers():
-        return [ b"RPA-2.0 " ]
+        return [b"RPA-2.0 "]
 
     @staticmethod
     def read_index(infile):
@@ -212,11 +214,11 @@ class RPAv1ArchiveHandler(object):
 
     @staticmethod
     def get_supported_extensions():
-        return [ ".rpi" ]
+        return [".rpi"]
 
     @staticmethod
     def get_supported_headers():
-        return [ b"\x78\x9c" ]
+        return [b"\x78\x9c"]
 
     @staticmethod
     def read_index(infile):
@@ -237,10 +239,10 @@ def index_files():
     lower_map.clear()
 
     for _dir, fn in listdirfiles():
-        lower_map[unicodedata.normalize('NFC', fn.lower())] = fn
+        lower_map[unicodedata.normalize("NFC", fn.lower())] = fn
 
     for fn in remote_files:
-        lower_map[unicodedata.normalize('NFC', fn.lower())] = fn
+        lower_map[unicodedata.normalize("NFC", fn.lower())] = fn
 
 
 def index_archives():
@@ -270,9 +272,8 @@ def index_archives():
         renpy.config.archives.append(stem)
 
 
-def walkdir(path, elide=None): # @ReservedAssignment
+def walkdir(path, elide=None):  # @ReservedAssignment
     if elide is None:
-
         # Only existence check the top level for speed.
         if not os.path.exists(path) and not renpy.config.developer:
             return
@@ -281,7 +282,6 @@ def walkdir(path, elide=None): # @ReservedAssignment
         elide = len(path) + 1
 
     for de in os.scandir(path):
-
         if de.is_dir():
             yield from walkdir(de.path, elide)
         else:
@@ -289,23 +289,29 @@ def walkdir(path, elide=None): # @ReservedAssignment
 
 
 # A list of files that are recognised as archives.
-arc_files = [ ]
+arc_files = []
 
 # A list of files that are in the common directory.
-common_files: list[tuple[str, str]] = [ ]
+common_files: list[tuple[str, str]] = []
 
 # A list of files that make up the game.
-game_files: list[tuple[str, str]] = [ ]
+game_files: list[tuple[str, str]] = []
 
 # A map from filename to if the file is loadable.
-loadable_cache = { }
+loadable_cache = {}
 
 # A map from filename to if the file is downloadable.
-remote_files = { }
+remote_files = {}
 
 
 # A list of callbacks to fill out the lists above.
-scandirfiles_callbacks = [ ]
+scandirfiles_callbacks = []
+
+
+type TreeEntry = dict[str, "TreeEntry"] | Literal[True]
+tree: TreeEntry = {}
+"""This is a tree of files and directories, used to allow resource traversal. directories are represented as
+   dicts, and files as True."""
 
 
 def scandirfiles():
@@ -317,7 +323,6 @@ def scandirfiles():
     seen = set()
 
     def add(dn, fn, files, seen):
-
         fn = str(fn)
 
         if fn in seen:
@@ -331,7 +336,25 @@ def scandirfiles():
 
         files.append((dn, fn))
         seen.add(fn)
-        loadable_cache[unicodedata.normalize('NFC', fn.lower())] = True
+        loadable_cache[unicodedata.normalize("NFC", fn.lower())] = True
+
+        # Build the tree used to traverse files.
+
+        parts = fn.split("/")
+        rest = parts[-1]
+        first = parts[:-1]
+
+        t = tree
+        for i in first:
+            assert t is not True
+
+            if (i not in t) or (t[i] is True):
+                t[i] = {}
+
+            t = t[i]
+
+        assert t is not True
+        t[rest] = True
 
     for i in scandirfiles_callbacks:
         i(add, seen)
@@ -343,14 +366,12 @@ def scandirfiles_from_apk(add, seen):
     """
 
     for apk in apks:
-
         if apk not in game_apks:
-            files = common_files # @UnusedVariable
+            files = common_files  # @UnusedVariable
         else:
-            files = game_files # @UnusedVariable
+            files = game_files  # @UnusedVariable
 
         for f in apk.list():
-
             # Strip off the "x-" in front of each filename, which is there
             # to ensure that aapt actually includes every file.
             if apk not in split_apks:
@@ -369,27 +390,27 @@ def scandirfiles_from_remote_file(add, seen):
     """
 
     # HTML5 remote files
-    index_filename = os.path.join(renpy.config.gamedir, 'renpyweb_remote_files.txt')
+    index_filename = os.path.join(renpy.config.gamedir, "renpyweb_remote_files.txt")
     if os.path.exists(index_filename):
         files = game_files
-        with open(index_filename, 'r') as remote_index:
+        with open(index_filename, "r") as remote_index:
             while True:
                 f = remote_index.readline()
                 metadata = remote_index.readline()
-                if f == '' or metadata == '': # end of file
+                if f == "" or metadata == "":  # end of file
                     break
 
                 f = f.rstrip("\r\n")
                 metadata = metadata.rstrip("\r\n")
-                (entry_type, entry_size) = metadata.split(' ')
-                if entry_type == 'image':
-                    entry_size = [int(i) for i in entry_size.split(',')]
+                (entry_type, entry_size) = metadata.split(" ")
+                if entry_type == "image":
+                    entry_size = [int(i) for i in entry_size.split(",")]
 
-                add('/game', f, files, seen)
-                remote_files[f] = {'type':entry_type, 'size':entry_size}
+                add("/game", f, files, seen)
+                remote_files[f] = {"type": entry_type, "size": entry_size}
 
 
-if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+if renpy.emscripten or os.environ.get("RENPY_SIMULATE_DOWNLOAD", False):
     scandirfiles_callbacks.append(scandirfiles_from_remote_file)
 
 
@@ -401,22 +422,20 @@ def scandirfiles_from_filesystem(add, seen):
     exts = archive_handlers.exts
 
     for i in renpy.config.searchpath:
-
         if i == renpy.config.commondir:
-            files = common_files # @UnusedVariable
+            files = common_files  # @UnusedVariable
         else:
-            files = game_files # @UnusedVariable
+            files = game_files  # @UnusedVariable
 
         i = os.path.join(renpy.config.basedir, i)
 
         for j in walkdir(i):
-
             # Use rpartition as much faster than pathlib and splitext.
-            stem, _, ext = j.rpartition('.')
-            ext = '.' + ext
+            stem, _, ext = j.rpartition(".")
+            ext = "." + ext
 
             if ext in exts:
-                arc_files.append((stem, ext, f'{i}/{j}'))
+                arc_files.append((stem, ext, f"{i}/{j}"))
             else:
                 add(i, j, files, seen)
 
@@ -451,7 +470,7 @@ def listdirfiles(common=True, game=True):
     if (not game_files) and (not common_files):
         scandirfiles()
 
-    rv = [ ]
+    rv = []
 
     if common:
         rv.extend(common_files)
@@ -461,7 +480,7 @@ def listdirfiles(common=True, game=True):
     return rv
 
 
-open_file = RWopsIO # type: ignore
+open_file = RWopsIO  # type: ignore
 
 if "RENPY_TEST_RWOPS" in os.environ:
 
@@ -472,7 +491,6 @@ if "RENPY_TEST_RWOPS" in os.environ:
             length = f.tell()
 
         try:
-
             a = RWopsIO.from_buffer(data, name=name)
 
             if length <= 1024:
@@ -484,11 +502,12 @@ if "RENPY_TEST_RWOPS" in os.environ:
 
         except Exception:
             import traceback
+
             traceback.print_exc()
 
 
 # A list of callbacks to open an open python file object of the given type.
-file_open_callbacks = [ ]
+file_open_callbacks = []
 
 
 def load_core(name):
@@ -496,7 +515,7 @@ def load_core(name):
     Returns an open python file object of the given type.
     """
 
-    name = lower_map.get(unicodedata.normalize('NFC', name.lower()), name)
+    name = lower_map.get(unicodedata.normalize("NFC", name.lower()), name)
 
     for i in file_open_callbacks:
         rv = i(name)
@@ -546,15 +565,14 @@ def load_from_archive(name):
         if not name in index:
             continue
 
-        data = [ ]
+        data = []
 
         # Direct path.
         if len(index[name]) == 1:
-
             t = index[name][0]
             if len(t) == 2:
                 offset, dlen = t
-                start = b''
+                start = b""
             else:
                 offset, dlen, start = t
 
@@ -574,7 +592,7 @@ def load_from_archive(name):
                     f.seek(offset)
                     data.append(f.read(dlen))
 
-                return io.BufferedReader(RWopsIO.from_buffer(b''.join(data), name=name))
+                return io.BufferedReader(RWopsIO.from_buffer(b"".join(data), name=name))
 
     return None
 
@@ -610,12 +628,12 @@ def load_from_remote_file(name):
     """
 
     if name in remote_files:
-        raise DownloadNeeded(relpath=name, rtype=remote_files[name]['type'], size=remote_files[name]['size'])
+        raise DownloadNeeded(relpath=name, rtype=remote_files[name]["type"], size=remote_files[name]["size"])
 
     return None
 
 
-if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+if renpy.emscripten or os.environ.get("RENPY_SIMULATE_DOWNLOAD", False):
     file_open_callbacks.append(load_from_remote_file)
 
 
@@ -628,7 +646,6 @@ def check_name(name):
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
     if renpy.config.reject_relative:
-
         split = name.split("/")
 
         if ("." in split) or (".." in split):
@@ -640,22 +657,20 @@ def get_prefixes(tl=True, directory=None):
     Returns a list of prefixes to search for files.
     """
 
-    rv = [ ]
+    rv = []
 
     if tl:
-        language = renpy.game.preferences.language # type: ignore
+        language = renpy.game.preferences.language  # type: ignore
     else:
         language = None
 
     for prefix in renpy.config.search_prefixes:
-
         if language is not None:
             rv.append(renpy.config.tl_directory + "/" + language + "/" + prefix)
 
         rv.append(prefix)
 
     if directory is not None:
-
         if language is not None:
             rv.append(renpy.config.tl_directory + "/" + language + "/" + directory + "/")
 
@@ -665,23 +680,22 @@ def get_prefixes(tl=True, directory=None):
 
 
 def load(name, directory=None, tl=True):
-
-    if renpy.display.predict.predicting: # @UndefinedVariable
+    if renpy.display.predict.predicting:  # @UndefinedVariable
         if threading.current_thread().name == "MainThread":
-            if not (renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False)):
+            if not (renpy.emscripten or os.environ.get("RENPY_SIMULATE_DOWNLOAD", False)):
                 raise Exception("Refusing to open {} while predicting.".format(name))
 
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
-    name = re.sub(r'/+', '/', name).lstrip('/')
+    name = re.sub(r"/+", "/", name).lstrip("/")
 
     for p in get_prefixes(directory=directory, tl=tl):
         rv = load_core(p + name)
         if rv is not None:
             return rv
 
-    raise IOError("Couldn't find file '%s'." % name)
+    raise FileNotFoundError("Couldn't find file '%s'." % name)
 
 
 def loadable_core(name):
@@ -689,7 +703,7 @@ def loadable_core(name):
     Returns True if the name is loadable with load, False if it is not.
     """
 
-    name = lower_map.get(unicodedata.normalize('NFC', name.lower()), name)
+    name = lower_map.get(unicodedata.normalize("NFC", name.lower()), name)
 
     if name in loadable_cache:
         return loadable_cache[name]
@@ -723,8 +737,7 @@ def loadable_core(name):
 
 
 def loadable(name, tl=True, directory=None):
-
-    name = name.lstrip('/')
+    name = name.lstrip("/")
 
     if (renpy.config.loadable_callback is not None) and renpy.config.loadable_callback(name):
         return True
@@ -736,28 +749,39 @@ def loadable(name, tl=True, directory=None):
     return False
 
 
-def transfn(name):
+def transpath(path: str) -> str|None:
+    """
+    Translates `path` to a name that exists in one of the searched directories,
+    or to None if it does not exist.
+    """
+
+    path = path.lstrip("/")
+    path = lower_map.get(unicodedata.normalize("NFC", path.lower()), path)
+
+    for d in renpy.config.searchpath:
+        fn = os.path.join(renpy.config.basedir, d, path)
+
+        if os.path.exists(fn):
+            return fn
+
+
+def transfn(name: bytes|str) -> str:
     """
     Tries to translate the name to a file that exists in one of the
     searched directories.
     """
 
-    name = name.lstrip('/')
+    if isinstance(name, bytes):
+        name = name.decode("utf-8")
 
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
-    name = lower_map.get(unicodedata.normalize('NFC', name.lower()), name)
+    path = transpath(name)
 
-    if isinstance(name, bytes):
-        name = name.decode("utf-8")
-
-    for d in renpy.config.searchpath:
-        fn = os.path.join(renpy.config.basedir, d, name)
-
-        if os.path.isfile(fn):
-            add_auto(fn)
-            return fn
+    if path is not None:
+        add_auto(path)
+        return path
 
     raise Exception("Couldn't find file '%s'." % name)
 
@@ -765,7 +789,7 @@ def transfn(name):
 hash_cache = {}
 
 
-def get_hash(name): # type: (str) -> int
+def get_hash(name):  # type: (str) -> int
     """
     Returns the time the file m was last modified, or 0 if it
     doesn't exist or is archived.
@@ -796,220 +820,6 @@ def get_hash(name): # type: (str) -> int
     return rv
 
 
-# Module Loading
-class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
-    """
-    A meta-path importer, that tries to load pure Python modules from the places
-    where Ren'Py searches for data files.
-    """
-
-    def __init__(self):
-        self.prefixes: list[str] = []
-        "List of prefixes where modules can be found."
-
-        self._finder_cache: dict[str, RenpyImporter._ModuleInfo] | None = None
-        """
-        A dict from module name to module info of that module for all paths that
-        can be loaded with this importer.
-        """
-
-    def add_prefix(self, prefix: str):
-        if prefix and not prefix.endswith("/"):
-            prefix = prefix + "/"
-
-        if prefix in self.prefixes:
-            return
-
-        self.prefixes.append(prefix)
-        self.invalidate_caches()
-
-    class _ModuleInfo(NamedTuple):
-        filename: str
-        absolute_path: str | None
-        is_package: bool
-        is_namespace: bool
-
-    def _visit_dir(self, *path: str, files: Iterable[str]):
-        dir_to_fn: dict[str, list[str]] = {}
-
-        seen_init = False
-        prefix = ""
-        if path:
-            prefix += "/".join(path) + "/"
-
-        for fn in files:
-            if "/" in fn:
-                top_directory, _, fn = fn.partition("/")
-                if top_directory not in dir_to_fn:
-                    dir_to_fn[top_directory] = []
-
-                dir_to_fn[top_directory].append(fn)
-                continue
-
-            mod_name = ".".join(path)
-            if path and fn == "__init__.py":
-                seen_init = True
-                is_package = True
-            else:
-                if mod_name:
-                    mod_name += "." + fn[:-3]
-                else:
-                    mod_name = fn[:-3]
-
-                is_package = False
-
-            filename = prefix + fn
-            absolute_path = None
-            for d in renpy.config.searchpath:
-                absolute = os.path.join(renpy.config.basedir, d, filename)
-                if os.path.isfile(absolute):
-                    absolute_path = absolute
-                    break
-
-            mod_info = RenpyImporter._ModuleInfo(
-                filename,
-                absolute_path,
-                is_package,
-                False)
-
-            yield mod_name, mod_info
-
-        if path and not seen_init:
-            absolute_path = None
-            for d in renpy.config.searchpath:
-                absolute = os.path.join(renpy.config.basedir, d, prefix)
-                if os.path.isdir(absolute):
-                    absolute_path = absolute
-                    break
-
-            yield ".".join(path), RenpyImporter._ModuleInfo(
-                prefix,
-                absolute_path,
-                True,
-                True)
-
-        for add_dir, files in dir_to_fn.items():
-            yield from self._visit_dir(*path, add_dir, files=files)
-
-    def _cache_entries(self) -> dict[str, _ModuleInfo]:
-        if self._finder_cache is not None:
-            return self._finder_cache
-
-        if not game_files:
-            scandirfiles()
-
-        self._finder_cache = dict(self._visit_dir(files=(
-            fn for _, fn in game_files
-            if fn.endswith(".py")
-            if not fn.endswith(("_ren.py", "_rpym.py")))))
-        return self._finder_cache
-
-    def _get_module_info(self, fullname: str) -> _ModuleInfo | None:
-        cache_entries = self._cache_entries()
-
-        for prefix in self.prefixes:
-            prefix = prefix.replace("/", ".")
-            if rv := cache_entries.get(prefix + fullname):
-                return rv
-
-        return None
-
-    # MetaPathFinder interface
-    def invalidate_caches(self):
-        self._finder_cache = None
-
-    def find_spec(self, fullname, path, target=None):
-        if module_info := self._get_module_info(fullname):
-            filename = module_info.absolute_path or module_info.filename
-
-            spec = importlib.machinery.ModuleSpec(
-                name=fullname,
-                loader=self,
-                is_package=module_info.is_package,
-            )
-
-            if module_info.absolute_path is not None:
-                spec.has_location = True
-
-            if module_info.is_namespace:
-                spec.submodule_search_locations = [filename]
-
-            elif module_info.is_package:
-                spec.submodule_search_locations = [filename.rpartition("/")[0]]
-
-            if not module_info.is_namespace:
-                spec.origin = filename
-                spec.cached = filename + "c"
-
-            return spec
-
-    # InspectLoader interface
-    def is_package(self, fullname: str) -> bool:
-        if module_info := self._get_module_info(fullname):
-            return module_info.is_package
-        else:
-            raise ImportError
-
-    def get_source(self, fullname: str) -> str | None:
-        module_info = self._get_module_info(fullname)
-        if module_info is None:
-            raise ImportError
-
-        if module_info.is_namespace:
-            return None
-
-        with load(module_info.filename, tl=False) as f:
-            bindata = f.read()
-
-        return importlib.util.decode_source(bindata)
-
-    def get_code(self, fullname: str):
-        module_info = self._get_module_info(fullname)
-        if module_info is None:
-            raise ImportError
-
-        filename = module_info.absolute_path or module_info.filename
-
-        if module_info.is_namespace:
-            return compile('', filename, 'exec', dont_inherit=True)
-
-        # TODO: add bytecode handling?
-
-        with load(module_info.filename, tl=False) as f:
-            source = f.read()
-
-        return self.source_to_code(source, filename)
-
-
-
-meta_backup = [ ]
-
-
-def add_python_directory(path: str):
-    """
-    :doc: other
-
-    Adds `path` to the list of paths searched for Python modules and packages.
-    The path should be a string relative to the game directory. This must be
-    called before an import statement.
-    """
-
-    for importer in sys.meta_path:
-        if isinstance(importer, RenpyImporter):
-            importer.add_prefix(path)
-
-
-def init_importer():
-    meta_backup[:] = sys.meta_path
-
-    sys.meta_path.insert(0, RenpyImporter())
-
-    add_python_directory("python-packages/")
-    add_python_directory("")
-
-
-def quit_importer():
-    sys.meta_path[:] = meta_backup
 
 # Auto-Reload
 
@@ -1018,7 +828,7 @@ def quit_importer():
 needs_autoreload = set()
 
 # A map from filename to mtime, or None if the file doesn't exist.
-auto_mtimes = { }
+auto_mtimes = {}
 
 # The thread used for autoreload.
 auto_thread = None
@@ -1075,6 +885,7 @@ def add_auto(fn, force=False):
 
 max_mtime = 0
 
+
 def auto_thread_function():
     """
     This thread sets need_autoreload when necessary.
@@ -1083,9 +894,7 @@ def auto_thread_function():
     global max_mtime
 
     while True:
-
         with auto_lock:
-
             auto_lock.wait(1.5)
 
             if auto_quit_flag:
@@ -1094,7 +903,6 @@ def auto_thread_function():
             items = list(auto_mtimes.items())
 
         for fn, mtime in items:
-
             if mtime is auto_blacklisted:
                 continue
 
@@ -1104,10 +912,10 @@ def auto_thread_function():
                 max_mtime = max(max_mtime, new_mtime)
 
             if new_mtime != mtime:
-
                 with auto_lock:
                     if auto_mtime(fn) != auto_mtimes[fn]:
                         needs_autoreload.add(fn)
+
 
 def check_git_index_lock():
     """
@@ -1134,6 +942,7 @@ def check_git_index_lock():
 # Are we actively reloading?
 reloading = False
 
+
 def check_autoreload():
     """
     Checks to see if autoreload is required.
@@ -1148,7 +957,7 @@ def check_autoreload():
     if needs_autoreload and check_git_index_lock():
         return
 
-    if time.time() - max_mtime < .050:
+    if time.time() - max_mtime < 0.050:
         return
 
     while needs_autoreload:

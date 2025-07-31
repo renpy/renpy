@@ -22,8 +22,7 @@
 # The public API for sound playback from games.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy.audio
@@ -33,28 +32,31 @@ import renpy.audio
 
 
 def play(filename, channel="sound", fadeout=0, fadein=0, tight=False, loop=False, relative_volume=1.0):
-    renpy.audio.music.play(filename,
-                           channel=channel,
-                           fadeout=fadeout,
-                           fadein=fadein,
-                           tight=tight,
-                           loop=loop,
-                           relative_volume=relative_volume)
+    renpy.audio.music.play(
+        filename,
+        channel=channel,
+        fadeout=fadeout,
+        fadein=fadein,
+        tight=tight,
+        loop=loop,
+        relative_volume=relative_volume,
+    )
 
 
 def queue(filename, channel="sound", clear_queue=True, fadein=0, tight=False, loop=False, relative_volume=1.0):
-    renpy.audio.music.queue(filename,
-                            channel=channel,
-                            clear_queue=clear_queue,
-                            fadein=fadein,
-                            tight=tight,
-                            loop=loop,
-                            relative_volume=relative_volume)
+    renpy.audio.music.queue(
+        filename,
+        channel=channel,
+        clear_queue=clear_queue,
+        fadein=fadein,
+        tight=tight,
+        loop=loop,
+        relative_volume=relative_volume,
+    )
 
 
 def stop(channel="sound", fadeout=0):
-    renpy.audio.music.stop(channel=channel,
-                           fadeout=fadeout)
+    renpy.audio.music.stop(channel=channel, fadeout=fadeout)
 
 
 set_mixer = renpy.audio.music.set_mixer

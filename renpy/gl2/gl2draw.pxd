@@ -146,6 +146,11 @@ cdef class GL2DrawingContext:
     # Has depth been enabled?
     cdef bint has_depth
 
+    # Enables or disables face culling. None if disabled. If enabled, "cw" or "ccw", giving the
+    # winding order in the Ren'Py virtual coordinate system.
+    cdef object cull_face
+
+
     cdef GL2DrawingContext child_context(self)
 
     cdef dict merge_properties(self, dict old, dict child)

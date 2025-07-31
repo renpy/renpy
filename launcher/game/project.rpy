@@ -337,7 +337,10 @@ init python in project:
             if wait:
                 if p.wait():
 
-                    print("Launch failed. command={!r}, returncode={!r}".format(cmd, p.returncode))
+                    print(f"Launch failed (returned {p.returncode}).")
+
+                    command = " ".join(repr(i) for i in cmd)
+                    print(f"Command: {command}")
 
                     if args and not self.is_writeable():
                         interface.error(_("Launching the project failed."), _("This may be because the project is not writeable."))
@@ -536,7 +539,7 @@ init python in project:
             self.scanned = set()
 
             # The tutorial game, and the language it's for.
-            self.tutoral = None
+            self.tutorial = None
             self.tutorial_language = "the meowing of a cat"
 
             self.scan()
@@ -657,6 +660,10 @@ init python in project:
                     pf.add(p)
 
                     self.all_projects.append(p)
+
+                    project_type = p.data.get("type", "normal")
+                    if project_type == "template":
+                        self.templates.append(p)
 
                 if not pf.hidden and not pf.projects:
                     pf.hidden = True

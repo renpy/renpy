@@ -22,6 +22,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import print_function
+from typing import Literal
 
 DEF ANGLE = False
 
@@ -473,13 +474,20 @@ cdef class GL2Draw:
             return False
 
         # Log the GL version.
-        renderer = <char *> glGetString(GL_RENDERER)
-        version = <char *> glGetString(GL_VERSION)
+        vendor_string = <char *> glGetString(GL_VENDOR)
+        vendor = self.info["gpu_vendor"] = vendor_string.decode("utf-8")
+        renpy.display.log.write(f"Vendor: {vendor!r}")
 
-        renpy.display.log.write("Vendor: %r", str(<char *> glGetString(GL_VENDOR)))
-        renpy.display.log.write("Renderer: %r", renderer)
-        renpy.display.log.write("Version: %r", version)
-        renpy.display.log.write("Display Info: %s", self.display_info)
+        renderer_string = <char *> glGetString(GL_RENDERER)
+        renderer = self.info["gpu_name"] = renderer_string.decode("utf-8")
+        renpy.display.log.write(f"Renderer: {renderer!r}")
+
+        version_string = <char *> glGetString(GL_VERSION)
+        version = self.info["gpu_driver_version"] = version_string.decode("utf-8")
+        renpy.display.log.write(f"Version: {version!r}")
+
+        self.display_info = renpy.display.get_info()
+        renpy.display.log.write(f"Display Info: {self.display_info}")
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(extensions_string.decode("utf-8").split(" "))
@@ -524,7 +532,8 @@ cdef class GL2Draw:
                 self.shader_cache.clear()
 
         if full_reset:
-            pygame.display.get_window().recreate_gl_context(always=renpy.emscripten)
+            if pygame.display.get_window().recreate_gl_context(always=renpy.emscripten):
+                renpy.display.interface.kill_textures()
 
         # Are we in fullscreen mode?
         if renpy.emscripten:
@@ -1064,11 +1073,12 @@ cdef class GL2Draw:
         r.loaded = True
 
         # Load the child textures.
+        # This needs to be outside of r.mesh, as it handles all uniform texture loading,
+        # even if uniforms isn't used.
+
         for c in r.children:
             self.load_all_textures(c[0])
 
-        # This needs to be outside of r.mesh, as it handles all uniform texture loading,
-        # even if uniforms isn't used.
         # If we have a mesh (or mesh=True), create the GL2Model.
         if r.mesh:
 
@@ -1102,7 +1112,14 @@ cdef class GL2Draw:
                 model.set_texture(i, self.render_to_texture(c[0], properties=r.properties))
 
             if r.mesh is True:
-                model.mesh = model.get_texture(0).mesh
+                tex = model.get_texture(0)
+                if tex.width == model.width and tex.height == model.height:
+                    model.mesh = tex.mesh
+                else:
+                    # Otherwise, we need to use a mesh.
+                    model.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_rectangle(
+                        0, 0, r.width, r.height,
+                        0, 0, 1, 1)
             else:
                 model.mesh = r.mesh
 
@@ -1122,15 +1139,22 @@ cdef class GL2Draw:
 
         if properties is None:
             properties = {}
+            need_mipmap = False
+        else:
+            need_mipmap = properties.get("mipmap", False)
 
         if isinstance(what, Surface):
             what = self.load_texture(what)
             self.load_all_textures(what)
 
         if isinstance(what, Texture):
+            if need_mipmap:
+                what.add_mipmap()
             return what
 
         if what.cached_texture is not None:
+            if need_mipmap:
+                what.cached_texture.add_mipmap()
             return what.cached_texture
 
         rv = self.texture_loader.render_to_texture(what, properties)
@@ -1321,6 +1345,51 @@ cdef class GL2Draw:
 
         return (x, y)
 
+BIG_PIXELS = 65536 # Chosen to be bigger than any reasonable screen size, to limit
+
+current_cull_face: Literal["ccw",  "cw", None] = None
+"The current setting of the cull face."
+
+current_invert_front_face: bool = False
+"""
+Should the front face be inverted? This is used to make the front face work properly when rendering to
+texture, with a flipped y axis.
+"""
+
+def set_cull_face(cull_face):
+    """
+    Sets the cull face.
+    """
+
+    global current_cull_face
+
+    current_cull_face = cull_face
+
+    # Cull face is in Ren'Py's coordinate system, which is inverted from OpenGL's,
+    # and so when CW is selectes here we choose ccw, and vice-versa.
+
+    if cull_face == "cw":
+        glEnable(GL_CULL_FACE)
+        glCullFace(GL_BACK)
+
+        if not current_invert_front_face:
+            glFrontFace(GL_CCW)
+        else:
+            glFrontFace(GL_CW)
+
+    elif cull_face == "ccw":
+        glEnable(GL_CULL_FACE)
+        glCullFace(GL_BACK)
+
+        if not current_invert_front_face:
+            glFrontFace(GL_CW)
+        else:
+            glFrontFace(GL_CCW)
+
+    else:
+        glDisable(GL_CULL_FACE)
+        glCullFace(GL_BACK)
+
 
 cdef class GL2DrawingContext:
     """
@@ -1368,6 +1437,7 @@ cdef class GL2DrawingContext:
 
         rv.pixel_perfect = self.pixel_perfect
         rv.has_depth = self.has_depth
+        rv.cull_face = self.cull_face
 
         return rv
 
@@ -1387,6 +1457,23 @@ cdef class GL2DrawingContext:
         rv.pop("depth", None)
         rv.pop("pixel_perfect", None)
         return rv
+
+    def merge_uniforms(self, dict uniforms):
+        """
+        Merges the child uniforms into the current uniforms.
+        """
+
+        if not self.uniforms:
+            self.uniforms = uniforms
+            return
+
+        self.uniforms = dict(self.uniforms)
+
+        for k, v in uniforms.items():
+            if (k in self.uniforms) and (k in renpy.config.merge_uniforms):
+                self.uniforms[k] = renpy.config.merge_uniforms[k](self.uniforms[k], v)
+            else:
+                self.uniforms[k] = v
 
     cdef void correct_pixel_perfect(self):
         """
@@ -1429,6 +1516,10 @@ cdef class GL2DrawingContext:
         cdef GL2Draw gl2draw = renpy.display.draw
         cdef Mesh mesh = model.mesh
 
+        # Handle cull_face.
+        if self.cull_face is not current_cull_face:
+            set_cull_face(self.cull_face)
+
         # If a clip polygon is in place, clip the mesh with it.
         if self.clip_polygon is not None:
 
@@ -1450,13 +1541,11 @@ cdef class GL2DrawingContext:
             self.shaders = self.shaders + model.shaders
 
         if model.uniforms:
-            uniforms = dict(model.uniforms)
-            uniforms.update(self.uniforms)
-            self.uniforms = uniforms
+            self.merge_uniforms(model.uniforms)
 
         if self.debug:
             import renpy.gl2.gl2debug as gl2debug
-            gl2debug.geometry(mesh, self.model_matrix, self.width, self.height)
+            gl2debug.geometry(mesh, self.view_matrix * self.model_matrix, 1, 1)
 
         program = gl2draw.shader_cache.get(self.shaders)
 
@@ -1521,7 +1610,8 @@ cdef class GL2DrawingContext:
 
         cdef GL2DrawingContext ctx
         cdef Polygon new_clip_polygon
-        cdef bint has_reverse
+        cdef bint has_reverse = False
+        cdef bint has_depth = False
 
         if what.__class__ is not Render:
 
@@ -1541,11 +1631,15 @@ cdef class GL2DrawingContext:
 
         # Handle clipping.
         if (r.xclipping or r.yclipping):
-            new_clip_polygon = Polygon.rectangle(0, 0, r.width, r.height)
+            new_clip_polygon = Polygon.rectangle(
+                0 if r.xclipping else -BIG_PIXELS,
+                0 if r.yclipping else -BIG_PIXELS,
+                r.width if r.xclipping else BIG_PIXELS,
+                r.height if r.yclipping else BIG_PIXELS)
 
             if self.clip_polygon is not None:
-                clip_polygon = new_clip_polygon.intersect(self.clip_polygon)
-                if clip_polygon is None:
+                self.clip_polygon = new_clip_polygon.intersect(self.clip_polygon)
+                if self.clip_polygon is None:
                     return
             else:
                 self.clip_polygon = new_clip_polygon
@@ -1570,6 +1664,10 @@ cdef class GL2DrawingContext:
 
                 self.has_depth = True
 
+            cull_face = r.properties.get("cull_face", False)
+            if cull_face is not False:
+                self.cull_face = cull_face
+
         if has_reverse:
             self.pixel_perfect = False
 
@@ -1581,14 +1679,8 @@ cdef class GL2DrawingContext:
         if r.cached_model is not None:
             children = [ (r.cached_model, 0, 0, False, False) ]
         else:
-            if r.uniforms is not None:
-                self.uniforms = dict(self.uniforms)
-
-                for k, v in r.uniforms.items():
-                    if (k in self.uniforms) and (k in renpy.config.merge_uniforms):
-                        self.uniforms[k] = renpy.config.merge_uniforms[k](self.uniforms[k], v)
-                    else:
-                        self.uniforms[k] = v
+            if r.uniforms:
+                self.merge_uniforms(r.uniforms)
 
         for child, cx, cy, focus, main in children:
 
@@ -1637,7 +1729,7 @@ cdef class GL2DrawingContext:
 root_context = GL2DrawingContext()
 
 
-def draw_render(what, int drawable_width, int drawable_height, Matrix projection):
+def draw_render(what, int drawable_width, int drawable_height, Matrix projection, invert_front_face: bool = False):
     """
     Renders `what` to the current OpenGL context.
 
@@ -1654,7 +1746,16 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
     `projection`
         The projection matrix to use to transform from view space
         to the viewport.
+
+    `invert_front_face`
+        If True, the front face is inverted, so that if "cw" is requested, "ccw" is used,
+        and vice versa. Used when rendering to a texture.
     """
+
+    global current_invert_front_face
+
+    current_invert_front_face = invert_front_face
+    set_cull_face(None)
 
     cdef GL2DrawingContext ctx = root_context
 
@@ -1680,8 +1781,8 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
     ctx.draw_one(what)
 
     while ctx is not None:
-        ctx.uniforms.clear()
-        ctx.properties.clear()
+        ctx.uniforms = None
+        ctx.properties = None
 
         ctx = ctx._child_context
 

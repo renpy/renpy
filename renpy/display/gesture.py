@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import math
@@ -28,7 +28,7 @@ import math
 import pygame_sdl2 as pygame
 import renpy
 
-DIRECTIONS = [ "n", "ne", "e", "se", "s", "sw", "w", "nw" ]
+DIRECTIONS = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
 
 
 def dispatch_gesture(gesture):
@@ -43,7 +43,6 @@ def dispatch_gesture(gesture):
 
 
 class GestureRecognizer(object):
-
     def __init__(self):
         super(GestureRecognizer, self).__init__()
 
@@ -51,7 +50,6 @@ class GestureRecognizer(object):
         self.y = None
 
     def start(self, x, y):
-
         # The last coordinates we saw motion at.
         self.x = x
         self.y = y
@@ -67,7 +65,7 @@ class GestureRecognizer(object):
         self.stroke_length = 0
 
         # A list of strokes we've recognized.
-        self.strokes = [ ]
+        self.strokes = []
 
     def take_point(self, x, y):
         if self.x is None:

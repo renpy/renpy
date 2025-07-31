@@ -41,7 +41,6 @@ def cosine_easing(done):
 
 
 class Linear(object):
-
     def __init__(self, x0, y0, x1, y1):
         self.duration = x1 - x0
 
@@ -57,7 +56,6 @@ class Linear(object):
 
 
 class Step(object):
-
     def __init__(self, x0, y0, x1, y1):
         self.duration = x1 - x0
 
@@ -72,7 +70,6 @@ class Step(object):
 
 
 class InvStep(object):
-
     def __init__(self, x0, y0, x1, y1):
         self.duration = x1 - x0
 
@@ -87,7 +84,6 @@ class InvStep(object):
 
 
 class Bezier(object):
-
     def __init__(self, x0, y0, x1, y1, x2, y2, x3, y3):
         self.duration = x3 - x0
 
@@ -121,17 +117,15 @@ class Bezier(object):
 
 
 class Motion(object):
-
     def __init__(self, filename, fadein, fadeout):
-
         self.filename = filename
 
         with renpy.loader.load(filename, directory="images") as f:
             j = json.load(f)
 
         self.duration = j["Meta"]["Duration"]
-        self.curves = { }
-        self.fades = { }
+        self.curves = {}
+        self.fades = {}
 
         y = 0
 
@@ -143,12 +137,11 @@ class Motion(object):
             x0 = s.pop(0)
             y0 = s.pop(0)
 
-            segments = [ ]
+            segments = []
 
             curve_duration = 0.0
 
             while s:
-
                 kind = s.pop(0)
 
                 if kind == 0:
@@ -194,7 +187,7 @@ class Motion(object):
             self.fades[target, name] = (
                 curve.get("FadeInTime", fadein),
                 curve.get("FadeOutTime", fadeout),
-                )
+            )
 
     def get(self, st, fade_st, do_fade_in, do_fade_out):
         """
@@ -207,10 +200,9 @@ class Motion(object):
         else:
             st = st % self.duration
 
-        rv = { }
+        rv = {}
 
         for k, segments in self.curves.items():
-
             fadein, fadeout = self.fades[k]
 
             if not do_fade_in:
@@ -264,7 +256,6 @@ class Motion(object):
         rv = 86400.0
 
         for k, segments in self.curves.items():
-
             fadeout = self.fades[k][1]
 
             if not do_fade_out:
@@ -309,7 +300,7 @@ class NullMotion(object):
     duration = 1.0
 
     def get(self, st, fade_st, do_fade_in, do_fade_out):
-        return { }
+        return {}
 
     def wait(self, st, fade_st, do_fade_in, do_fade_out):
         return max(1.0 - st, 0)

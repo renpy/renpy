@@ -24,7 +24,7 @@
 # going on.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import os
@@ -48,7 +48,6 @@ start_time = time.time()
 
 
 class ProgressBar(object):
-
     def __init__(self, foreground, background):
         super(ProgressBar, self).__init__()
         self.foreground = pygame_sdl2.image.load(foreground)
@@ -73,7 +72,7 @@ class ProgressBar(object):
 
 
 def find_file(base_name, root):
-    allowed_exts = [ ".png", ".jpg" ]
+    allowed_exts = [".png", ".jpg"]
     for ext in allowed_exts:
         fn = os.path.join(root, base_name + ext)
         if os.path.exists(fn):
@@ -99,17 +98,16 @@ def start(basedir, gamedir):
             return
 
     if renpy.windows:
-
         import ctypes
 
-        ctypes.windll.user32.SetProcessDPIAware() # type: ignore
+        ctypes.windll.user32.SetProcessDPIAware()  # type: ignore
 
     pygame_sdl2.display.init()
 
     global progress_bar
 
     if foreground_fn and background_fn:
-        presplash = ProgressBar(foreground_fn, background_fn) # type: ignore
+        presplash = ProgressBar(foreground_fn, background_fn)  # type: ignore
         progress_bar = presplash
     else:
         presplash = pygame_sdl2.image.load(presplash_fn)
@@ -131,11 +129,8 @@ def start(basedir, gamedir):
         shape = shape.background
 
     window = pygame_sdl2.display.Window(
-        sys.argv[0],
-        (sw, sh),
-        flags=pygame_sdl2.WINDOW_BORDERLESS,
-        pos=(x, y),
-        shape=shape)
+        sys.argv[0], (sw, sh), flags=pygame_sdl2.WINDOW_BORDERLESS, pos=(x, y), shape=shape
+    )
 
     if foreground_fn and background_fn:
         presplash.convert_alpha(window.get_surface())
@@ -155,8 +150,8 @@ pump_count = 0
 pump_clock = 21
 pump_total = 0
 
-def pump_window():
 
+def pump_window():
     global last_pump_time
     global pump_count, pump_total
 
@@ -168,7 +163,7 @@ def pump_window():
     if window is None:
         return
 
-    if last_pump_time + 1/24 > time.time():
+    if last_pump_time + 1 / 24 > time.time():
         return
 
     last_pump_time = time.time()
@@ -184,8 +179,7 @@ def pump_window():
         if not renpy.game.script:
             return
 
-        pump_total = (len(renpy.game.script.common_script_files) +
-                      len(renpy.game.script.script_files)) + pump_clock
+        pump_total = (len(renpy.game.script.common_script_files) + len(renpy.game.script.script_files)) + pump_clock
 
     progress_bar.draw(window.get_surface(), pump_count / pump_total)
     window.update()
@@ -236,6 +230,7 @@ def sleep():
 
 
 progress_kind = None
+
 
 def progress(kind, done, total):
     """

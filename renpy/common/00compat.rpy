@@ -323,6 +323,7 @@ init -1100 python:
 
         if _compat_versions(version, (7, 7, 1), (8, 2, 1)):
             config.fill_shrinks_frame = True
+            config.tts_queue = False
 
         if ((7, 4, 0) <= version) and _compat_versions(version, (7, 7, 99), (8, 2, 99)):
             config.window_functions_set_auto = True
@@ -337,8 +338,9 @@ init -1100 python:
 
         if version <= (8, 3, 99):
             config.old_show_expression = True
-            config.mipmap = True
             config.cds_label_callbacks = False
+            config.mesh_pad_compat = True
+            config.zoom_zaxis = True
 
 
     # The version of Ren'Py this script is intended for, or

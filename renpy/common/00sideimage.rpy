@@ -92,7 +92,8 @@ init -1650 python:
         :args: ()
 
         Returns the side image associated with the currently speaking character,
-        or a Null displayable if no such side image exists.
+        or a Null displayable if no such side image exists. This may be a transform
+        between two side images if one is set.
         """
 
         # Compatibility with older games.
@@ -101,6 +102,24 @@ init -1650 python:
             _side_per_interact()
 
         return _side_image
+
+    def HasSideImage():
+        """
+        :doc: side_image_function
+
+        Returns True if a side image will be displayed for the current interaction, and
+        false otherwise. This becomes available earlier than SideImage does (which is only valid
+        as the start of an interaction), and so can be used in the say screen to make layut conditional
+        on the presence of a side image.
+        """
+
+        side_image_tag = _side_image_tag if _side_image_tag is not None else config.side_image_tag
+        side_image_prefix_tag = _side_image_prefix_tag if _side_image_prefix_tag is not None else config.side_image_prefix_tag
+
+        new = renpy.get_side_image(side_image_prefix_tag, image_tag=side_image_tag, not_showing=config.side_image_only_not_showing)
+
+        return bool(new)
+
 
 init 1650 python:
 

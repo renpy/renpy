@@ -117,7 +117,8 @@ steam_appid.txt
 
 # Live2D
 cubism
-CubismSdkForNative-4-*.zip
+CubismSdkForNative-*.zip
+CubismSdkForWeb-*.zip
 
 # Created files.
 /screenshot*
@@ -152,7 +153,6 @@ renpy/gl2/gl2polygon.pyi
 renpy/gl2/gl2shader.pyi
 renpy/gl2/gl2texture.pyi
 renpy/gl2/live2dmodel.pyi
-renpy/lexersupport.pyi
 renpy/pydict.pyi
 renpy/style.pyi
 renpy/style.pyi

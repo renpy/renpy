@@ -421,6 +421,44 @@ fix_dlc("renios", "renios")
 
             self.sort()
 
+        def web_transform_renpy(self):
+            """
+            Creates a new file list that has the web transform applied to it.
+            See the web_transform_renpy parameter to Distributor for an explanation
+            of what this does.
+            """
+
+            pyc_suffix = f".{sys.implementation.cache_tag}.pyc"
+
+            rv = FileList()
+
+            for f in self:
+
+                if f.name.startswith("renpy/"):
+
+                    # If it's a .py file, we remove it.
+                    if f.name.endswith(".py"):
+                        continue
+
+                    # If it's a __pycache__ directory, we remove it.
+                    if f.name.endswith("__pycache__"):
+                        continue
+
+                    # If it's a .pyc file, we move it up one directory.
+                    if f.name.endswith(pyc_suffix):
+                        new_name = f.name[:-len(pyc_suffix)] + ".pyc"
+                        new_name = new_name.replace("__pycache__/", "")
+
+                        new = f.copy()
+                        new.name = new_name
+                        rv.append(new)
+                        continue
+
+                # Otherwise, we keep the file.
+                rv.append(f)
+
+            return rv
+
 
         def hash(self, distributor):
             """
@@ -469,7 +507,7 @@ fix_dlc("renios", "renios")
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None, force_format=None, files_filter=None):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None, force_format=None, files_filter=None, web_transform_renpy=False):
             """
             Distributes `project`.
 
@@ -512,7 +550,15 @@ fix_dlc("renios", "renios")
                 If given, use this object to decide which files must be included.
                 The object must contains the `filter(file, variant, format)`
                 method which must return True is the file must be included.
+
+            `web_transform_renpy`
+                If True, the web transform will be applied to the renpy/ directory.
+                This removes .py files, places .pyc files in the directory above the cache, removing
+                the version tag, and deletes the __pycache__ directory.
             """
+
+            # Should the web transform be applied to the renpy/ directory?
+            self.web_transform_renpy = web_transform_renpy
 
             # A map from a package to a unique update version hash.
             self.update_versions = { }
@@ -1420,6 +1466,9 @@ fix_dlc("renios", "renios")
 
             if macapp:
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
+
+            if self.web_transform_renpy:
+                fl = fl.web_transform_renpy()
 
             if not self.build["renpy"]:
 

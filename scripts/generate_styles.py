@@ -22,7 +22,7 @@
 import collections
 import os
 
-from io import StringIO # @UnusedImport
+from io import StringIO  # @UnusedImport
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -39,6 +39,7 @@ def sorted_dict(**kwargs):
     items = list(kwargs.items())
     return collections.OrderedDict(items)
 
+
 ################################################################################
 # Prefixes
 ################################################################################
@@ -49,9 +50,7 @@ prefixes = collections.OrderedDict()
 
 
 class Prefix(object):
-
     def __init__(self, index, name, priority, alts):
-
         # The index of where this prefix is stored in memory, or -1 if this
         # prefix isn't stored in memory.
         self.index = index
@@ -88,28 +87,28 @@ PRIORITY_LEVELS = 8
 # The number of prefixes we have.
 PREFIX_COUNT = 6
 
-Prefix(5, 'selected_hover_', 3, [ ])
-Prefix(4, 'selected_idle_', 3, [ ])
-Prefix(3, 'selected_insensitive_', 3, [ ])
-Prefix(-3, 'selected_', 2, [ "selected_hover_", "selected_idle_", "selected_insensitive_" ])
-Prefix(2, 'hover_', 1, [ "selected_hover_" ])
-Prefix(1, 'idle_', 1, [ "selected_idle_" ])
-Prefix(0, 'insensitive_', 1, [ "selected_insensitive_" ])
-Prefix(-4, '', 0, [ "selected_hover_", "selected_idle_", "selected_insensitive_", "idle_", "hover_", "insensitive_" ])
+Prefix(5, "selected_hover_", 3, [])
+Prefix(4, "selected_idle_", 3, [])
+Prefix(3, "selected_insensitive_", 3, [])
+Prefix(-3, "selected_", 2, ["selected_hover_", "selected_idle_", "selected_insensitive_"])
+Prefix(2, "hover_", 1, ["selected_hover_"])
+Prefix(1, "idle_", 1, ["selected_idle_"])
+Prefix(0, "insensitive_", 1, ["selected_insensitive_"])
+Prefix(-4, "", 0, ["selected_hover_", "selected_idle_", "selected_insensitive_", "idle_", "hover_", "insensitive_"])
 
-Prefix(-2, 'activate_', 0, [ ])
-Prefix(-1, 'selected_activate_', 0, [ ])
+Prefix(-2, "activate_", 0, [])
+Prefix(-1, "selected_activate_", 0, [])
 
 # The images that are searched by a prefix.
 PREFIX_SEARCH = {
-    "idle_" : [ "idle_", "" ],
-    "hover_" : [ "hover_", "" ],
-    "insensitive_" : [ "insensitive_", "", "idle_" ],
-    "selected_idle_" : [ "selected_idle_", "selected_", "", "idle_" ],
-    "selected_hover_" : [ "selected_hover_", "hover_", "selected_", "" ],
-    "selected_insensitive_" : [ "selected_insensitive_", "insensitive_", "selected_", "", "selected_idle_", "idle_" ],
-    "" : [ "" ],
-    }
+    "idle_": ["idle_", ""],
+    "hover_": ["hover_", ""],
+    "insensitive_": ["insensitive_", "", "idle_"],
+    "selected_idle_": ["selected_idle_", "selected_", "", "idle_"],
+    "selected_hover_": ["selected_hover_", "hover_", "selected_", ""],
+    "selected_insensitive_": ["selected_insensitive_", "insensitive_", "selected_", "", "selected_idle_", "idle_"],
+    "": [""],
+}
 
 ################################################################################
 # Style Properties
@@ -121,17 +120,17 @@ PREFIX_SEARCH = {
 style_properties = sorted_dict(
     activate_sound=None,
     adjust_spacing=None,
-    aft_bar='none_is_null',
+    aft_bar="none_is_null",
     aft_gutter=None,
     alt=None,
     altruby_style=None,
     antialias=None,
     axis=None,
-    background='renpy.easy.displayable_or_none',
+    background="renpy.easy.displayable_or_none",
     bar_invert=None,
     bar_resizing=None,
     bar_vertical=None,
-    black_color='renpy.easy.color',
+    black_color="renpy.easy.color",
     bold=None,
     bottom_margin=None,
     bottom_padding=None,
@@ -141,25 +140,25 @@ style_properties = sorted_dict(
     box_reverse=None,
     box_wrap=None,
     box_wrap_spacing=None,
-    caret='renpy.easy.displayable_or_none',
-    child='renpy.easy.displayable_or_none',
+    caret="renpy.easy.displayable_or_none",
+    child="renpy.easy.displayable_or_none",
     clipping=None,
-    color='renpy.easy.color',
+    color="renpy.easy.color",
     debug=None,
     drop_shadow=None,
-    drop_shadow_color='renpy.easy.color',
+    drop_shadow_color="renpy.easy.color",
     emoji_font=None,
     extra_alt=None,
     first_indent=None,
     first_spacing=None,
     fit_first=None,
-    focus_mask='expand_focus_mask',
+    focus_mask="expand_focus_mask",
     focus_rect=None,
     font=None,
     font_features=None,
-    fore_bar='none_is_null',
+    fore_bar="none_is_null",
     fore_gutter=None,
-    foreground='renpy.easy.displayable_or_none',
+    foreground="renpy.easy.displayable_or_none",
     group_alt=None,
     hinting=None,
     hover_sound=None,
@@ -185,7 +184,7 @@ style_properties = sorted_dict(
     newline_indent=None,
     order_reverse=None,
     outline_scaling=None,
-    outlines='expand_outlines',
+    outlines="expand_outlines",
     prefer_emoji=None,
     reading_order=None,
     rest_indent=None,
@@ -206,32 +205,32 @@ style_properties = sorted_dict(
     text_align=None,
     text_y_fudge=None,
     textshader=None,
-    thumb='none_is_null',
+    thumb="none_is_null",
     thumb_offset=None,
-    thumb_shadow='none_is_null',
+    thumb_shadow="none_is_null",
     time_policy=None,
     top_margin=None,
     top_padding=None,
     underline=None,
     unscrollable=None,
     vertical=None,
-    xanchor='expand_anchor',
+    xanchor="expand_anchor",
     xfill=None,
     xfit=None,
     xmaximum=None,
-    xminimum='none_is_0',
+    xminimum="none_is_0",
     xoffset=None,
     xpos=None,
     xspacing=None,
-    yanchor='expand_anchor',
+    yanchor="expand_anchor",
     yfill=None,
     yfit=None,
     ymaximum=None,
-    yminimum='none_is_0',
+    yminimum="none_is_0",
     yoffset=None,
     ypos=None,
     yspacing=None,
-    )
+)
 
 # Properties that take displayables that should be given the right set
 # of prefixes.
@@ -243,7 +242,7 @@ displayable_properties = {
     "aft_bar",
     "thumb",
     "thumb_shadow",
-    }
+}
 
 # A map from a style property to its index in the order of style_properties.
 style_property_index = collections.OrderedDict()
@@ -288,158 +287,129 @@ property_priority = sorted_dict(
 # * A string giving the name of a function to call to get the value to assign, a constant
 #   numeric value, or None to not change the argument.
 synthetic_properties = sorted_dict(
-
     margin=[
-        ('left_margin', 'index_0'),
-        ('top_margin', 'index_1'),
-        ('right_margin', 'index_2_or_0'),
-        ('bottom_margin', 'index_3_or_1'),
-        ],
-
-    xmargin=[
-        ('left_margin', None),
-        ('right_margin', None)
-        ],
-
+        ("left_margin", "index_0"),
+        ("top_margin", "index_1"),
+        ("right_margin", "index_2_or_0"),
+        ("bottom_margin", "index_3_or_1"),
+    ],
+    xmargin=[("left_margin", None), ("right_margin", None)],
     ymargin=[
-        ('top_margin', None),
-        ('bottom_margin', None),
-        ],
-
+        ("top_margin", None),
+        ("bottom_margin", None),
+    ],
     xalign=[
-        ('xpos', None),
-        ('xanchor', None),
-        ],
-
+        ("xpos", None),
+        ("xanchor", None),
+    ],
     yalign=[
-        ('ypos', None),
-        ('yanchor', None),
-        ],
-
+        ("ypos", None),
+        ("yanchor", None),
+    ],
     padding=[
-        ('left_padding', 'index_0'),
-        ('top_padding', 'index_1'),
-        ('right_padding', 'index_2_or_0'),
-        ('bottom_padding', 'index_3_or_1'),
-        ],
-
+        ("left_padding", "index_0"),
+        ("top_padding", "index_1"),
+        ("right_padding", "index_2_or_0"),
+        ("bottom_padding", "index_3_or_1"),
+    ],
     xpadding=[
-        ('left_padding', None),
-        ('right_padding', None),
-        ],
-
+        ("left_padding", None),
+        ("right_padding", None),
+    ],
     ypadding=[
-        ('top_padding', None),
-        ('bottom_padding', None),
-        ],
-
-    minwidth=[ ('min_width', None) ],
-    textalign=[ ('text_align', None) ],
-    slow_speed=[ ('slow_cps', None) ],
-    enable_hover=[ ],
-
-    left_gutter=[ ('fore_gutter', None) ],
-    right_gutter=[ ('aft_gutter', None) ],
-    top_gutter=[ ('fore_gutter', None) ],
-    bottom_gutter=[ ('aft_gutter', None) ],
-
-    left_bar=[ ('fore_bar', None) ],
-    right_bar=[ ('aft_bar', None) ],
-    top_bar=[ ('fore_bar', None) ],
-    bottom_bar=[ ('aft_bar', None) ],
-
+        ("top_padding", None),
+        ("bottom_padding", None),
+    ],
+    minwidth=[("min_width", None)],
+    textalign=[("text_align", None)],
+    slow_speed=[("slow_cps", None)],
+    enable_hover=[],
+    left_gutter=[("fore_gutter", None)],
+    right_gutter=[("aft_gutter", None)],
+    top_gutter=[("fore_gutter", None)],
+    bottom_gutter=[("aft_gutter", None)],
+    left_bar=[("fore_bar", None)],
+    right_bar=[("aft_bar", None)],
+    top_bar=[("fore_bar", None)],
+    bottom_bar=[("aft_bar", None)],
     base_bar=[
-        ('fore_bar', None),
-        ('aft_bar', None),
-        ],
-
-    box_spacing=[ ('spacing', None) ],
-    box_first_spacing=[ ('first_spacing', None) ],
-
+        ("fore_bar", None),
+        ("aft_bar", None),
+    ],
+    box_spacing=[("spacing", None)],
+    box_first_spacing=[("first_spacing", None)],
     pos=[
-        ('xpos', 'index_0'),
-        ('ypos', 'index_1'),
-        ],
-
+        ("xpos", "index_0"),
+        ("ypos", "index_1"),
+    ],
     anchor=[
-        ('xanchor', 'index_0'),
-        ('yanchor', 'index_1'),
-        ],
-
+        ("xanchor", "index_0"),
+        ("yanchor", "index_1"),
+    ],
     offset=[
-        ('xoffset', 'index_0'),
-        ('yoffset', 'index_1'),
-        ],
-
+        ("xoffset", "index_0"),
+        ("yoffset", "index_1"),
+    ],
     align=[
-        ('xpos', 'index_0'),
-        ('ypos', 'index_1'),
-        ('xanchor', 'index_0'),
-        ('yanchor', 'index_1'),
-        ],
-
+        ("xpos", "index_0"),
+        ("ypos", "index_1"),
+        ("xanchor", "index_0"),
+        ("yanchor", "index_1"),
+    ],
     maximum=[
-        ('xmaximum', 'index_0'),
-        ('ymaximum', 'index_1'),
-        ],
-
+        ("xmaximum", "index_0"),
+        ("ymaximum", "index_1"),
+    ],
     minimum=[
-        ('xminimum', 'index_0'),
-        ('yminimum', 'index_1'),
-        ],
-
+        ("xminimum", "index_0"),
+        ("yminimum", "index_1"),
+    ],
     xsize=[
-        ('xminimum', None),
-        ('xmaximum', None),
-        ],
-
+        ("xminimum", None),
+        ("xmaximum", None),
+    ],
     ysize=[
-        ('yminimum', None),
-        ('ymaximum', None),
-        ],
-
+        ("yminimum", None),
+        ("ymaximum", None),
+    ],
     xysize=[
-        ('xminimum', 'index_0'),
-        ('xmaximum', 'index_0'),
-        ('yminimum', 'index_1'),
-        ('ymaximum', 'index_1'),
-        ],
-
+        ("xminimum", "index_0"),
+        ("xmaximum", "index_0"),
+        ("yminimum", "index_1"),
+        ("ymaximum", "index_1"),
+    ],
     area=[
-        ('xpos', 'index_0'),
-        ('ypos', 'index_1'),
-        ('xanchor', 0),
-        ('yanchor', 0),
-        ('xfill', True),
-        ('yfill', True),
-        ('xmaximum', 'index_2'),
-        ('ymaximum', 'index_3'),
-        ('xminimum', 'index_2'),
-        ('yminimum', 'index_3'),
-        ],
-
+        ("xpos", "index_0"),
+        ("ypos", "index_1"),
+        ("xanchor", 0),
+        ("yanchor", 0),
+        ("xfill", True),
+        ("yfill", True),
+        ("xmaximum", "index_2"),
+        ("ymaximum", "index_3"),
+        ("xminimum", "index_2"),
+        ("yminimum", "index_3"),
+    ],
     xcenter=[
-        ('xpos', None),
-        ('xanchor', 0.5),
-        ],
-
+        ("xpos", None),
+        ("xanchor", 0.5),
+    ],
     ycenter=[
-        ('ypos', None),
-        ('yanchor', 0.5),
-        ],
-
+        ("ypos", None),
+        ("yanchor", 0.5),
+    ],
     xycenter=[
-        ('xpos', 'index_0'),
-        ('ypos', 'index_1'),
-        ('xanchor', 0.5),
-        ('yanchor', 0.5),
-        ],
-    )
+        ("xpos", "index_0"),
+        ("ypos", "index_1"),
+        ("xanchor", 0.5),
+        ("yanchor", 0.5),
+    ],
+)
 
 all_properties = collections.OrderedDict()
 
 for k in style_properties:
-    all_properties[k] = [ (k, None) ]
+    all_properties[k] = [(k, None)]
 
 all_properties.update(synthetic_properties)
 
@@ -465,7 +435,6 @@ class CodeGen(object):
         self.spew = spew
 
     def close(self):
-
         text = self.f.getvalue()
 
         if os.path.exists(self.filename):
@@ -520,10 +489,12 @@ def generate_constants():
 
 
 def generate_property_function(g, prefix, propname, properties):
-
     name = prefix.name + propname
 
-    g.write("cdef int {name}_property(PyObject **cache, int *cache_priorities, int priority, object value) except -1:", name=name)
+    g.write(
+        "cdef int {name}_property(PyObject **cache, int *cache_priorities, int priority, object value) except -1:",
+        name=name,
+    )
     g.indent()
 
     g.write("priority += {}", prefix.priority + property_priority.get(propname, 0))
@@ -547,15 +518,23 @@ def generate_property_function(g, prefix, propname, properties):
             value = "v"
 
         for alt, alt_name in zip(prefix.alts, prefix.alt_names):
-
             if stylepropname in displayable_properties:
-                g.write("assign_prefixed({}, cache, cache_priorities, priority, {}, '{}') # {}{}",
-                        alt * len(style_properties) + style_property_index[stylepropname],
-                        value, alt_name, alt_name, stylepropname)
+                g.write(
+                    "assign_prefixed({}, cache, cache_priorities, priority, {}, '{}') # {}{}",
+                    alt * len(style_properties) + style_property_index[stylepropname],
+                    value,
+                    alt_name,
+                    alt_name,
+                    stylepropname,
+                )
             else:
-                g.write("assign({}, cache, cache_priorities, priority, <PyObject *> {}) # {}{}",
-                        alt * len(style_properties) + style_property_index[stylepropname],
-                        value, alt_name, stylepropname)
+                g.write(
+                    "assign({}, cache, cache_priorities, priority, <PyObject *> {}) # {}{}",
+                    alt * len(style_properties) + style_property_index[stylepropname],
+                    value,
+                    alt_name,
+                    stylepropname,
+                )
 
     g.write("return 0")
     g.dedent()
@@ -572,11 +551,11 @@ def generate_property_functions():
     This generates code that defines the property functions.
     """
 
-    for prefix in sorted(prefixes.values(), key=lambda p : p.index):
+    for prefix in sorted(prefixes.values(), key=lambda p: p.index):
         g = CodeGen(setuplib.gen + "/style_{}functions.pyx".format(prefix.name))
 
         g.write('include "style_common.pxi"')
-        g.write('')
+        g.write("")
 
         for propname, proplist in all_properties.items():
             generate_property_function(g, prefix, propname, proplist)
@@ -615,7 +594,6 @@ def generate_property(g, propname):
 
 
 def generate_properties():
-
     g = CodeGen(setuplib.gen + "/styleclass.pxi")
 
     g.write("cdef class Style(StyleCore):")

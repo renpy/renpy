@@ -408,6 +408,7 @@ init python:
 
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
+    build.classify_renpy("lib/**/*live2d*", None)
 
     build.classify_renpy("lib/py3-linux-armv7l", None)
     build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")

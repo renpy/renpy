@@ -64,5 +64,5 @@ python "$ROOT/distribute.py" --link-directories
 if  [ "$1" = "--build" ] ; then
     echo "Ren'Py build complete."
 else
-    exec $RENPY_GDB python -O $ROOT/renpy.py "$@"
+    exec $RENPY_GDB python $ROOT/renpy.py "$@"
 fi

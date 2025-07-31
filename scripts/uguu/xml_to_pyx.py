@@ -29,6 +29,7 @@ BAD_COMMANDS = {
     "glDetachObjectARB",
 }
 
+
 def snarf(fn):
     with open(os.path.join(os.path.dirname(__file__), fn)) as f:
         return f.read() + "\n"
@@ -60,18 +61,18 @@ GL_FEATURES = [
     "GL_VERSION_2_0",
     "GL_VERSION_2_1",
     "GL_VERSION_3_0",
-    ]
+]
 
 GLES_FEATURES = [
     "GL_ES_VERSION_2_0",
     "GL_ES_VERSION_3_0",
-    ]
+]
 
 
 def type_and_name(node):
     name = node.findtext("name")
     text = "".join(node.itertext()).strip()
-    type_ = text[:-len(name)]
+    type_ = text[: -len(name)]
 
     return type_, name
 
@@ -88,12 +89,11 @@ def python_type(t):
 
 
 class Command:
-
     def __init__(self, node):
         self.return_type = type_and_name(node.find("proto"))[0].strip()
 
-        self.parameters = [ ]
-        self.parameter_types = [ ]
+        self.parameters = []
+        self.parameter_types = []
 
         for i in node.findall("param"):
             t, n = type_and_name(i)
@@ -103,7 +103,7 @@ class Command:
         self.aliases = set()
 
     def format_param_list(self):
-        l = [ ]
+        l = []
 
         for name, type_ in zip(self.parameters, self.parameter_types):
             l.append(f"{type_} {name}")
@@ -118,13 +118,11 @@ class Command:
 
 
 class Feature:
-
     def __init__(self):
         self.commands = set()
         self.enums = set()
 
     def from_node(self, node):
-
         for i in node.findall("require/enum"):
             self.enums.add(i.attrib["name"])
 
@@ -145,17 +143,16 @@ class Feature:
 
 
 class XMLToPYX:
-
     def __init__(self):
         self.root = parse("gl.xml").getroot()
 
-        self.types = [ ]
-        self.type_names = [ ]
+        self.types = []
+        self.type_names = []
 
         self.convert_types()
 
         # A map from command name to command.
-        self.commands = { }
+        self.commands = {}
 
         self.find_commands()
 
@@ -165,10 +162,10 @@ class XMLToPYX:
         self.find_enums()
 
         # A map from feature name to value.
-        self.features = { } 
+        self.features = {}
 
         # The features, merged together.
-        self.merged = None # type:Feature|None
+        self.merged = None  # type:Feature|None
 
         self.find_features()
         self.select_features()
@@ -183,7 +180,7 @@ class XMLToPYX:
             self.generate_uguu_pyx(f)
 
     def convert_types(self):
-        types = self.root.find('types')
+        types = self.root.find("types")
 
         for t in types:
             if t.get("api", ""):
@@ -199,7 +196,7 @@ class XMLToPYX:
 
             self.type_names.append(name)
 
-            text  = "".join(t.itertext())
+            text = "".join(t.itertext())
 
             text = text.replace(";", "")
             text = text.replace("typedef", "ctypedef")
@@ -212,7 +209,7 @@ class XMLToPYX:
         if name in BAD_COMMANDS:
             return
 
-        names = [ name ]
+        names = [name]
 
         for i in node.findall("alias"):
             names.append(i.attrib["name"])
@@ -235,7 +232,6 @@ class XMLToPYX:
             self.add_command(c)
 
     def find_enums(self):
-
         for enums in self.root.findall("enums"):
             for i in enums.findall("enum"):
                 value = i.attrib["value"]
@@ -249,12 +245,7 @@ class XMLToPYX:
                     self.enums[alias] = value
 
     def find_features(self):
-
-        for i in itertools.chain(
-                self.root.findall("feature"),
-                self.root.findall("extensions/extension")
-                ):
-
+        for i in itertools.chain(self.root.findall("feature"), self.root.findall("extensions/extension")):
             name = i.attrib["name"]
 
             f = Feature()
@@ -264,7 +255,6 @@ class XMLToPYX:
             # print(name)
 
     def select_features(self):
-
         gl = Feature()
 
         for i in GL_FEATURES:
@@ -280,22 +270,21 @@ class XMLToPYX:
         self.merged = f
 
     def generate_uguugl_pxd(self, f):
-
         f.write(UGUUGL_PXD_HEADER)
 
         def w(s):
             f.write(s + "\n")
 
         w('cdef extern from "renpygl.h":')
-        w('')
+        w("")
 
         for l in self.types:
             w(f"    {l}")
 
         enums = list(self.merged.enums)
-        enums.sort(key=lambda n : (int(self.enums[n], 0), n))
+        enums.sort(key=lambda n: (int(self.enums[n], 0), n))
 
-        w(f'')
+        w(f"")
 
         for i in enums:
             w(f"    GLenum {i}")
@@ -309,7 +298,6 @@ class XMLToPYX:
             w(f"cdef {typename} {i}")
 
     def generate_uguugl_pyx(self, f):
-
         f.write(UGUUGL_PYX_HEADER)
 
         def w(s):
@@ -327,7 +315,6 @@ class XMLToPYX:
         w("def load():")
 
         for i in sorted(self.merged.commands):
-
             names = list(self.commands[i].aliases)
             names.remove(i)
             names.sort()
@@ -337,21 +324,20 @@ class XMLToPYX:
                 names.append(i + "EXT")
                 print(names)
 
-            names = [ i.encode("utf-8") for i in names ]
+            names = [i.encode("utf-8") for i in names]
 
             w(f"")
             w(f"    global {i}")
             w(f"    {i} = <{i}_type> find_gl_command({names!r})")
 
     def generate_uguu_pyx(self, f):
-
         def w(s):
             f.write(s + "\n")
 
         for l in self.type_names:
             w(f"from renpy.uguu.gl cimport {l}")
 
-        w(f'')
+        w(f"")
         f.write(UGUU_PYX_HEADER)
 
         for l in self.type_names:
@@ -366,14 +352,14 @@ class XMLToPYX:
             params = list(zip(c.parameters, c.parameter_types))
             param_list = ", ".join(c.parameters)
 
-            w(f'')
+            w(f"")
             w(f"def {i}({param_list}):")
 
             for param, type_ in params:
                 if "*" in type_:
                     w(f"    cdef ptr {param}_ptr = get_ptr({param})")
 
-            proxy = [ ]
+            proxy = []
 
             for param, type_ in params:
                 if "*" in type_:
@@ -386,21 +372,21 @@ class XMLToPYX:
             rt = c.return_type.strip()
 
             if rt == "void":
-                w(f'    renpy.uguu.gl.{i}({proxy})')
+                w(f"    renpy.uguu.gl.{i}({proxy})")
             elif rt == "const GLubyte *":
-                w(f'    return proxy_return_string(renpy.uguu.gl.{i}({proxy}))')
+                w(f"    return proxy_return_string(renpy.uguu.gl.{i}({proxy}))")
             else:
-                w(f'    return renpy.uguu.gl.{i}({proxy})')
+                w(f"    return renpy.uguu.gl.{i}({proxy})")
 
         # Expose the enums to python.
 
         enums = list(self.merged.enums)
-        enums.sort(key=lambda n : (int(self.enums[n], 0), n))
+        enums.sort(key=lambda n: (int(self.enums[n], 0), n))
 
-        w(f'')
+        w(f"")
 
         for i in enums:
-            w(f'{i} = renpy.uguu.gl.{i}')
+            w(f"{i} = renpy.uguu.gl.{i}")
 
 
 if __name__ == "__main__":

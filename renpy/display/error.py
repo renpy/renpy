@@ -117,7 +117,6 @@ def report_exception(traceback_exception: renpy.error.TracebackException) -> boo
 
     try:
         if not renpy.game.context().init_phase:
-
             if renpy.config.rollback_enabled:
                 rollback_action = renpy.display.error.rollback_action
 
@@ -153,6 +152,7 @@ def report_exception(traceback_exception: renpy.error.TracebackException) -> boo
 
     return False
 
+
 def report_parse_errors(errors: list[str], error_fn: str) -> bool:
     """
     Reports an exception to the user. Returns True if the exception should
@@ -183,7 +183,6 @@ def report_parse_errors(errors: list[str], error_fn: str) -> bool:
     reload_action = renpy.exports.utter_restart
 
     try:
-
         renpy.game.invoke_in_new_context(
             call_exception_screen,
             "_parse_errors",

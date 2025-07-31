@@ -66,8 +66,8 @@ cdef class Polygon:
     cpdef void ensure_winding(Polygon self):
         """
         Checks to ensure that the winding of this polygon is what
-        Ren'Py expects (CCW). If not, rearranges the points to
-        ensure the winding is correct.
+        Ren'Py expects (CCW virtual/physical/drawable coordinates). If not,
+        rearranges the points to ensure the winding is correct.
         """
 
         cdef float ax, ay, bx, by

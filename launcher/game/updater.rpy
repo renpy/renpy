@@ -85,6 +85,9 @@ init python:
 
 default allow_repair_update = False
 
+# The url used for the update, if confirmed.
+default update_url = None
+
 screen update_channel(channels):
 
     frame:
@@ -115,7 +118,10 @@ screen update_channel(channels):
                     for c in channels:
 
                         if c["split_version"] != list(renpy.version_tuple) or allow_repair_update:
-                            $ action = [ SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False, force=allow_repair_update, prefer_rpu=persistent.prefer_rpu) ]
+                            $ action = [ SetField(persistent, "has_update", None),
+                                         SetField(persistent, "last_update_check", None),
+                                         SetVariable("update_url", c["url"]),
+                                         Jump("confirm_update") ]
 
                             if c["channel"].startswith("Release"):
                                 $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")
@@ -204,12 +210,22 @@ screen updater:
     if u.can_proceed:
         textbutton _("Proceed") action u.proceed style "l_right_button"
 
+
+
 label update:
 
     $ update_channels = fetch_update_channels(quiet=False)
     call screen update_channel(update_channels) nopredict
 
     jump front_page
+
+label confirm_update:
+
+    $ interface.info(_("Updating while Ren'Py games are running on this computer can cause problems. Please close all Ren'Py games before proceeding."), cancel=Jump("front_page"))
+    $ renpy.run(updater.Update(update_url, simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False, force=allow_repair_update, prefer_rpu=persistent.prefer_rpu))
+
+    jump front_page
+
 
 init python:
 

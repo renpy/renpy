@@ -1,3 +1,6 @@
+cdef extern from "assimp/defs.h":
+    ctypedef float ai_real
+
 cdef extern from "assimp/types.h":
     cdef enum aiReturn:
         aiReturn_SUCCESS
@@ -119,9 +122,49 @@ cdef extern from "assimp/material.h":
         aiTextureType_CLEARCOAT
         aiTextureType_TRANSMISSION
 
+
+    cdef enum aiPropertyTypeInfo:
+        aiPTI_Float
+        aiPTI_Double
+        aiPTI_String
+        aiPTI_Integer
+        aiPTI_Buffer
+
+    cdef struct aiMaterialProperty:
+        aiString mKey
+        unsigned int mSemantic
+        unsigned int mIndex
+        unsigned int mDataLength
+        aiPropertyTypeInfo mType
+
     cdef struct aiMaterial:
+        aiMaterialProperty **mProperties
+        unsigned int mNumProperties
+
         unsigned int GetTextureCount(aiTextureType type)
         aiReturn GetTexture(aiTextureType type, unsigned int index, aiString *path)
+
+    aiReturn aiGetMaterialFloat(const aiMaterial *pMat,
+        const char *pKey,
+        unsigned int type,
+        unsigned int index,
+        ai_real *pOut)
+
+    aiReturn aiGetMaterialFloatArray(
+        const aiMaterial *pMat,
+        const char *pKey,
+        unsigned int type,
+        unsigned int index,
+        ai_real *pOut,
+        unsigned int *pMax)
+
+    aiReturn aiGetMaterialIntegerArray(
+        const aiMaterial *pMat,
+        const char *pKey,
+        unsigned int type,
+        unsigned int index,
+        int *pOut,
+        unsigned int *pMax)
 
 cdef extern from "assimp/texture.h":
     cdef struct aiTexture:

@@ -473,7 +473,7 @@ translate italian strings:
     old "Language [text]"
     new "Lingua [text]"
 
-    # 
+    #
     old "Language"
     new "Lingua"
 

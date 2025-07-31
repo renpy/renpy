@@ -19,11 +19,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
+
 
 def warp_to_line(warp_spec):
     """
@@ -82,9 +83,9 @@ def log(msg):
         pass
 
     try:
-
         if not logfile:
             import os
+
             if renpy.config.clear_log:
                 file_mode = "w"
             else:
@@ -96,14 +97,14 @@ def log(msg):
 
         import textwrap
 
-        wrapped = [ ]
+        wrapped = []
 
-        for line in msg.split('\n'):
+        for line in msg.split("\n"):
             line = textwrap.fill(line, renpy.config.log_width)
             line = str(line)
             wrapped.append(line)
 
-        wrapped = '\n'.join(wrapped)
+        wrapped = "\n".join(wrapped)
 
         logfile.write(wrapped + "\n")
         logfile.flush()
@@ -116,7 +117,9 @@ def log(msg):
 def _error(msg):
     raise Exception(msg)
 
-_error_handlers = [ _error ]
+
+_error_handlers = [_error]
+
 
 def push_error_handler(eh):
     _error_handlers.append(eh)

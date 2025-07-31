@@ -20,8 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import collections
@@ -82,17 +81,16 @@ def process_file(fn):
     edits = missing[fn]
     edits.sort()
 
-    with open(fn, "rb") as f:
-        data = f.read().decode("utf-8")
+    with open(fn, "r", encoding="utf-8") as f:
+        data = f.read()
 
     # How much of the input has been consumed.
     consumed = 0
 
     # The output.
-    output = u""
+    output = ""
 
     for loc, target in edits:
-
         if loc not in renpy.scriptedit.lines:
             continue
 
@@ -105,8 +103,8 @@ def process_file(fn):
 
     output += data[consumed:]
 
-    with open(fn + ".new", "wb") as f:
-        f.write(output.encode("utf-8"))
+    with open(fn + ".new", "w", encoding="utf-8") as f:
+        f.write(output)
 
     try:
         os.unlink(fn + ".bak")
@@ -115,6 +113,7 @@ def process_file(fn):
 
     os.rename(fn, fn + ".bak")
     os.rename(fn + ".new", fn)
+
 
 def clear():
     """
@@ -125,7 +124,6 @@ def clear():
 
 
 def add_from():
-
     renpy.arguments.takes_no_arguments("Adds from clauses to call statements that are missing them.")
 
     for fn in missing:

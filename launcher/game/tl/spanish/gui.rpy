@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # gui.rpy:2
     old "## Initialization"

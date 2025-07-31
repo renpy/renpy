@@ -172,6 +172,15 @@ Ren'Py supports only the following variable types:
 * vec2 (a tuple of 2 floats)
 * vec3 (a tuple of 3 floats)
 * vec4 (a tuple of 4 floats)
+* int (a Python integer)
+* ivec2 (a tuple of 2 integers)
+* ivec3 (a tuple of 3 integers)
+* ivec4 (a tuple of 4 integers)
+* bool (a Python boolean)
+* bvec2 (a tuple of 2 booleans)
+* bvec3 (a tuple of 3 booleans)
+* bvec4 (a tuple of 4 booleans)
+* type[n] (an array of [n] elements of [type] (any of the types above) (for instance, int[5] would be an array of 5 integers))
 * mat2 (a :class:`Matrix`)
 * mat3 (a :class:`Matrix`)
 * mat4 (a :class:`Matrix`)
@@ -217,6 +226,15 @@ will be accessible by any and all other shaders applied from the same list. This
 can be useful when having optional parts in a given shader system, but it can also
 lead to name collisions when using two independent shaders.
 
+**GLSL Version.**
+The version of GLSL supported depends on platform, but the most restrictive
+are mobile and web platforms, which use GLSL ES 1.00. Ren'Py declares variables
+to have highp precision, which supports floating point numbers in the range
+2\ :sup:`-62` to 2\ :sup:`62`. Non-zero floating point numbers should have a
+magnitude betwee 2\ :sup:`-62` and 2\ :sup:`62`, and integers should be in the range
+range -2\ :sup:`16` to 2\ :sup:`16`.  Actual hardware often supports a larger range,
+but this isn't guaranteed.
+
 There is a variable that can help in debugging custom shaders:
 
 .. var:: config.log_gl_shaders = False
@@ -259,6 +277,9 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
       child.
     * The child of this transform will be rendered to a texture.
     * The renpy.texture shader will be added.
+
+    By default, the texture used by the mesh will not be mipmapped. If
+    mipmaps are desired, :tpref:`gl_mipmap` should be set to True.
 
 .. transform-property:: mesh_pad
 
@@ -393,9 +414,13 @@ The following uniforms are made available to all models.
     image file. After a render to texture, it's the number of drawable pixels
     the rendered texture covered.
 
-In addition, if a sampler uniform is available, then suffixing it with ``__res`` will give a vec2
+If a sampler uniform is available, then suffixing it with ``__res`` will give a vec2
 containing the underlying texture size. For example, ``u_markup__res`` will give the size of the
 ``u_markup`` texture.
+
+If a vec4 uniform is available, then suffixing it with ``__premul`` will give a vec4
+containing the premultiplied color. For example, ``u_color__premul`` will give a vec4
+where the red, green, and blue channels are multiplied by the alpha channel.
 
 Matrix Uniforms
 ----------------
@@ -437,9 +462,9 @@ appended to the matrix
     When appended to a matrix, this returns the transpose of the matrix. For example, ``u_view__transpose``
     is the transpose of the view matrix.
 
-``__inversetranspose``
+``__inverse_transpose``
     When appended to a matrix, this returns the inverse of the transpose of the matrix. For example,
-    ``u_model__inversetranspose`` is the inverse of the transpose of the model matrix. This is useful for
+    ``u_model__inverse_transpose`` is the inverse of the transpose of the model matrix. This is useful for
     transforming normals.
 
 Attributes
@@ -507,6 +532,13 @@ function.
     True, the draw operation will write to that pixel. Otherwise, it will
     not.
 
+``gl_cull_face``
+    If not None, this enables face culling, which is the process of removing
+    triangles that are facing away from the camera. To do this, we need to
+    know which face is the front face, and which is the back face. The front face
+    is determined using the winding order of the vertices, which is one of "cw" (clockwise) or "ccw" (counter-clockwise).
+    The values are done in the Ren'Py coordinate system (with +Y down), which is the opposite of the OpenGL coordinate system.
+
 ``gl_depth``
     If True, this will clear the depth buffer, and then enable depth
     rendering for this displayable and the children of this displayable.
@@ -567,6 +599,69 @@ The GLTFModel displayble allow you to load 3D models in the GLTF file format. Th
 if you have a 3D model you created in another program and want to display in Ren'Py.
 
 .. include:: inc/assimp
+
+Some things we noticed:
+
+* Some models are very small, and need to be zoomed by 100x or 1000x to be useful.
+* The uniforms generating by each model can vary.
+
+We recommend creating GLTF models with report=True, and then looking at log.txt to see
+the size and  what's available. It's then possible to scale the model and to
+create a suitable shader.
+
+Limitations
+^^^^^^^^^^^
+
+GLTFModel currently does not include a default shader, so you must define and include a shader.
+Here is one possible shader that can be used with GLTFModel::
+
+    init python:
+
+        renpy.register_shader("example.lighting", variables="""
+            uniform mat4 u_model__inverse_transpose;
+            uniform vec4 u_color_diffuse;
+            uniform vec4 u_color_specular;
+            uniform sampler2D u_tex_diffuse;
+
+            varying vec3 v_normal;
+            varying vec2 v_tex_coord;
+
+            attribute vec3 a_normal;
+            attribute vec2 a_tex_coord;
+    """, vertex_201="""
+            v_normal = (u_model__inverse_transpose * vec4(a_normal, 1.0)).xyz;
+            v_tex_coord = a_tex_coord;
+    """, fragment_201="""
+
+            // The direction of the light.
+            vec3 lightDir = normalize(vec3(0.0, -1000.0, 1000.0));
+
+            vec3 normal = normalize(v_normal);
+
+            float lambertian = max(dot(normal, lightDir), 0.0);
+            vec4 diffuse_color = texture2D(u_tex_diffuse, v_tex_coord.xy);
+            diffuse_color *= vec4(lambertian * u_color_diffuse.rgb * u_color_diffuse.a, u_color_diffuse.a);
+
+            vec3 viewDir = normalize(vec3(0.0, 0.0, -1.0));
+            vec3 halfDir = normalize(lightDir + viewDir);
+            float specular = pow(max(dot(normal, halfDir), 0.0), 4.0);
+
+            vec4 specular_color = vec4(u_color_specular.rgb * u_color_specular.a * specular, u_color_specular.a * specular);
+
+            gl_FragColor = diffuse_color + specular_color;
+
+            if (gl_FragColor.a < 0.9) {
+                discard;
+            }
+    """)
+
+This is a very simple shader that applies diffuse and specular lighting to the model based
+on a single light source, meant for experimentation until better shaders are created.
+
+GLTFModel does not support transparent surfaces well. While the discard command above emulates
+transparency, the ordering is a bit wrong and can lead to artifacts.
+
+
 
 Model Displayable
 -----------------

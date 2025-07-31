@@ -24,6 +24,7 @@ from __future__ import print_function
 
 import renpy
 
+
 def import_style_functions():
     import renpy.styledata.stylesets  # @UnresolvedImport
 
@@ -40,6 +41,7 @@ def import_style_functions():
     import renpy.styledata.style_selected_insensitive_functions  # @UnresolvedImport
 
     import renpy.styledata.styleclass  # @UnresolvedImport
+
     renpy.style.Style = renpy.styledata.styleclass.Style  # type: ignore
 
 

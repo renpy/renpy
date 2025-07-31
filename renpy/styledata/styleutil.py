@@ -54,7 +54,7 @@ def expand_focus_mask(v):
 
 
 def expand_outlines(l):
-    rv = [ ]
+    rv = []
 
     for i in l:
         if len(i) == 2:
@@ -72,7 +72,7 @@ ANCHORS = dict(
     center=0.5,
     top=0.0,
     bottom=1.0,
-    )
+)
 
 
 def expand_anchor(v):

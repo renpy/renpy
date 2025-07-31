@@ -19,8 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
@@ -50,7 +50,7 @@ def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     given delay elapsed uninterrupted.
     """
 
-    renpy.exports.mode('movie')
+    renpy.exports.mode("movie")
 
     if stop_music:
         renpy.audio.audio.set_force_stop("music", True)
@@ -69,8 +69,7 @@ def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     else:
         roll_forward = None
 
-    rv = renpy.ui.interact(suppress_overlay=True,
-                           roll_forward=roll_forward)
+    rv = renpy.ui.interact(suppress_overlay=True, roll_forward=roll_forward)
 
     # We don't want to put a checkpoint here, as we can't roll back while
     # playing a cutscene.

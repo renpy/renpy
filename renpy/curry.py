@@ -21,7 +21,7 @@
 
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import functools
@@ -40,7 +40,6 @@ class Curry(object):
         self.__name__ = getattr(self.callable, "__name__", None)
 
     def __call__(self, *args, **kwargs):
-
         merged_kwargs = dict(self.kwargs)
         merged_kwargs.update(kwargs)
 
@@ -50,18 +49,17 @@ class Curry(object):
         return "<curry %s %r %r>" % (self.callable, self.args, self.kwargs)
 
     def __eq__(self, other):
-
         return (
-            isinstance(other, Curry) and
-            self.callable == other.callable and
-            self.args == other.args and
-            self.kwargs == other.kwargs)
+            isinstance(other, Curry)
+            and self.callable == other.callable
+            and self.args == other.args
+            and self.kwargs == other.kwargs
+        )
 
     def __ne__(self, other):
         return not (self == other)
 
     def __hash__(self):
-
         if self.hash is None:
             self.hash = hash(self.callable) ^ hash(self.args)
 
@@ -80,23 +78,22 @@ class Partial(functools.partial):
 
     __slots__ = ("hash",)
 
-
     def __repr__(self):
         return "<partial %s %r %r>" % (self.func, self.args, self.keywords)
 
     def __eq__(self, other):
-
         return (
-            isinstance(other, Partial) and
-            self.func == other.func and
-            self.args == other.args and
-            self.keywords == other.keywords)
+            isinstance(other, Partial)
+            and self.func == other.func
+            and self.args == other.args
+            and self.keywords == other.keywords
+        )
 
     def __ne__(self, other):
         return not (self == other)
 
     def __hash__(self):
-        _hash = getattr(self, 'hash', None)
+        _hash = getattr(self, "hash", None)
 
         if _hash is None:
             _hash = hash(self.func) ^ hash(self.args)
@@ -104,7 +101,7 @@ class Partial(functools.partial):
             for i in self.keywords.items():
                 _hash ^= hash(i)
 
-            setattr(self, 'hash', _hash)
+            setattr(self, "hash", _hash)
 
         return _hash
 
@@ -119,7 +116,7 @@ def curry(fn):
 
     rv = Partial(Partial, fn)
     rv.__doc__ = getattr(fn, "__doc__", None)
-    rv.__name__ = getattr(fn, "__name__", None) # type: ignore
+    rv.__name__ = getattr(fn, "__name__", None)  # type: ignore
     return rv
 
 

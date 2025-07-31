@@ -108,10 +108,11 @@ that feature.
     Similar to the default statement, these callbacks are a good place
     to add data to the game that does not exist, but needs to.
 
-.. var:: config.context_callback = None
+.. var:: config.context_callbacks = [ ]
 
-    This is a callback that is called with no arguments when Ren'Py enters a
-    new context, such as a menu context.
+    These are callbacks that are called wioh no arguments when Ren'Py enters
+    a new context, such as a at the start of the game, when entering the game
+    or main menus, or when beginning a replay.
 
 .. var:: config.interact_callbacks = [ ... ]
 
@@ -392,6 +393,12 @@ Display
     amount of time has been reached, it will sleep to ensure the image is
     shown for at least this amount of time. The image may be shown longer
     if Ren'Py takes longer to start up.
+
+.. var:: config.mipmap = True
+
+    This controls if Ren'Py generates mipmaps for images. If True, mipmaps are always generated. If "auto", mipmaps
+    are generated only if the window is smaller than 75% of the virtual screen size. If False, mipmaps are never
+    generated.
 
 .. var:: config.nearest_neighbor = False
 
@@ -760,27 +767,9 @@ Media (Music, Sound, and Video)
     A list of channels that are stopped when entering or returning to the
     main menu.
 
-.. var:: config.mipmap = "auto"
-
-    This controls if Ren'Py generates mipmaps for image. If True, mipmaps are always generated. If "auto", mipmaps
-    are generated only if the window is smaller than 75% of the virtual screen size. If False, mipmaps are never
-    generated.
-
-.. var:: config.mipmap_dissolves = False
-
-    If True, mipmaps are generated for dissolve transitions.
-
-    This takes the same values as :var:`config.mipmap`.
-
 .. var:: config.mipmap_movies = False
 
     The default value of the mipmap argument to :func:`Movie`.
-
-    This takes the same values as :var:`config.mipmap`.
-
-.. var:: config.mipmap_text = False
-
-    If True, mipmaps are generated for text.
 
     This takes the same values as :var:`config.mipmap`.
 
@@ -1196,6 +1185,21 @@ Saving and Loading
     This must be set with either the define statement, or inside a ``python
     early`` block. It should only reference other things typically available
     to ``python early`` blocks.
+
+    The callback can make use of :var:`persistent._version` to determine when
+    the data was originated and, if managed properly, when it was last
+    migrated. A value of None implies that the data predates this feature being
+    added in Ren'Py 8.4.
+
+    A extremely basic callback may look something like::
+
+        def migrate_persistent(data):
+            if data._version is None:
+                # Update values in data to be suitable for current version.
+                ...
+
+                # Update originating version.
+                data._version = config.version
 
 .. var:: config.quicksave_slots = 10
 

@@ -86,8 +86,8 @@ translate piglatin screens_demo_62c184f8:
 # game/tutorial_screens.rpy:265
 translate piglatin screens_showing_1b51e9a4:
 
-    # e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen, and its name is simple_screen."
-    e "Erehay'say anay exampleay ofay aay eryvay implesay creensay. Hetay creensay atementstay isay useday otay elltay Enray'Ypay histay isay aay creensay, anday itsay amenay isay imple_screensay."
+    # e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen, and its name is simple_screen." id screens_showing_1b51e9a4
+    e "Erehay'say anay exampleay ofay aay eryvay implesay creensay. Hetay creensay atementstay isay useday otay elltay Enray'Ypay histay isay aay creensay, anday itsay amenay isay imple_screensay." id screens_showing_1b51e9a4
 
 # game/tutorial_screens.rpy:267
 translate piglatin screens_showing_5a6bbad0:
@@ -471,35 +471,35 @@ translate piglatin strings:
     old "Chutzpah"
     new "Hutzpahcay"
 
-    # game/tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:175
     old "What screens can do."
     new "Hatway creenssay ancay oday."
 
-    # game/tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:178
     old "How to show screens."
     new "Owhay otay owshay creenssay."
 
-    # game/tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:181
     old "Passing parameters to screens."
     new "Assingpay arameterspay otay creenssay."
 
-    # game/tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:184
     old "Screen properties."
     new "Creensay ropertiespay."
 
-    # game/tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:187
     old "Special screen statements."
     new "Pecialsay creensay atementsstay."
 
-    # game/tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:190
     old "Using other screens."
     new "Singuay otheray creenssay."
 
-    # game/tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:193
     old "That's it."
     new "Hattay'say itay."
 
-    # game/tutorial_screens.rpy:205
+    # game/tutorial_screens.rpy:212
     old "I do."
     new "Iay oday."
 

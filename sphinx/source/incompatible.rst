@@ -13,27 +13,38 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-8.4.2:
+
+8.4.2
+-----
+
+**Zoom and the Z-Axis** In Ren'Py 8.4, the :tpref:`zoom` transform property applies to the z-axis as well as the x and y
+axes. This can cause a behavior change in older games that did not expect the z-axis to be zoomed. To revert this
+change, add to your game::
+
+    define config.zoom_zaxis = False
+
+
+.. _incompatible-8.4.1:
+
+8.4.1
+-----
+
+**Constant-power Audio Panning** It's now possible to revert the change to
+constant-power audio panning that was introduced in 8.1.0. To do this, add to
+your game::
+
+    define config.adjust_audio_amplitude = 1.0 / 0.7071067811865476
+
+
 .. _incompatible-8.4.0:
 
 8.4.0
 -----
 
 
-**Mipmaps**
-Mipmaps are smaller versions of an image that are used when Ren'Py scales an image down. Using mipmaps
-prevents the image from becoming jagged when scaled down, but generating mipmaps takes time and can cause the game
-to use more memory.
-
-Ren'Py now leaves the decision of if to create mipmaps to the developer, who knows if the game will scale down an
-image. To always enable mipmaps, set :var:`config.mipmap` to True. If this isn't set to true, Ren'Py will only
-create mipmaps if the display is scaled down to less than 75% of the virtual window size.
-
-Mipmaps will automatically be created for images loaded for the purpose of Live2D or AssimpModel, as these are
-likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
-of :func:`Image`.
-
 **Automatic Oversamping** When Ren'Py is scaled up enough, it can search the image files for
-higher resolution images, and load those instead. See :ref:`automatic-oversampling` for more informaiton.
+higher resolution images, and load those instead. See :ref:`the documentation <automatic-oversampling>` for more informaiton.
 This can be disabled with:
 
     define config.automatic_oversampling = None
@@ -54,48 +65,44 @@ a unique tag is created for the show expression statement. This change can be re
 
     define config.old_show_expression = True
 
+**LayeredImage** The "variant" and "prefix" properties, if passed unquoted names, now read them as an unquoted string instead of a variable to be evaluated at init time. It is unlikely to cause any issue, but if it does, you can use::
+
+    variant f"{old_expression}"
+
+Also, naming a group "multiple" is no longer supported.
 
 **Creator-defined Statements and config.label_callbacks** Creator-defined statements now call :var:`config.label_callbacks`,
 when a label is defined. To revert to the old behavior of not calling config.label_callbacks, add to your game::
 
     define config.cds_label_callbacks = False
 
+**Mesh Padding** The behavior of :tpref:`mesh_pad` has been changed when left or top padding is present. Previously, this would
+offset the child by the padding amount. Now, the child remains in the same place, with the padding added to the
+left and top of the child.
+
+**Small GUI Viewport Size**
+While not strictly incompatible, we recommend adding the following to games that use the default GUI::
+
+    style game_menu_viewport:
+        variant "small"
+        xsize 1305
+
+This ensures menus will have a scrollbar on phones and televisions. The number 1305 is suitable for a 1920 pixel wide
+game. For a 1280 pixel wide game, use 870. For a 3840 pixel wide game, use 2010. (Other resolutions should use
+0.68 times the width of the game, rounded down to an integer.)
+
+**Shader Order**
+In previous versions of Ren'Py, the order in which shader parts that shared the same
+priority were applied was undefined. Now, the parts are ordered by the name of the shader, producing
+a reliable order, but this reliable order may be diferent than what was seen on particular systems.
+
+**Python Module Paths**
+When a Python module is loaded from the game/ directory, the ``__file__`` variable is set to the relative path of the
+module, which can be passed to :func:`renpy.open_file`. Previously, ``__file__`` could be set to the absolute path of
+the module in some cases, and the relative path in others.
 
 .. _incompatible-8.3.4:
 .. _incompatible-7.8.4:
-
-8.3.4 / 7.8.4
--------------
-
-**Dissolving Different-Sized Displayables, part two.** When ImageDissolving or AlphaDissolving between
-displayables of different sizes, Ren'Py will give the result the size of the largest displayable, in
-each access. To revert to the pre-8.1.2 behavior (the smallest size on each axis), add to your game::
-
-    define config.dissolve_shrinks = True
-
-
-
-.. _incompatible-8.3.4:
-.. _incompatible-7.8.4:
-
-
-8.3.4 / 7.8.4
--------------
-
-**Dissolving Different-Sized Displayables, part two.** When ImageDissolving or AlphaDissolving between
-displayables of different sizes, Ren'Py will give the result the size of the largest displayable, in
-each access. To revert to the pre-8.1.2 behavior (the smallest size on each axis), add to your game::
-
-    define config.dissolve_shrinks = True
-
-**Removal of the ATL 'update' event.** Previous versions of Ren'Py could deliver and "update" event to ATL
-inside screens when the screen was changed in major ways, such as when changing translations. This event
-was not delivered reliably, and is unlikely to have been used, so it has been removed.
-
-
-.. _incompatible-8.3.4:
-.. _incompatible-7.8.4:
-
 
 8.3.4 / 7.8.4
 -------------

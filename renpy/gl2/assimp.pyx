@@ -20,18 +20,34 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+import functools
 import threading
 
-from typing import Iterable
+from typing import Iterable, Literal
 
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
 
 from assimpapi cimport (
-    Importer, aiProcessPreset_TargetRealtime_Quality, aiProcess_ConvertToLeftHanded, aiProcess_FlipUVs, aiScene,
-    aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiFace, aiNode, aiTexture,
-    aiTextureType, IOSystem,
+    Importer,
 
+    aiProcessPreset_TargetRealtime_Quality,
+    aiProcess_FlipUVs,
+    aiProcess_FlipWindingOrder,
+
+    aiScene,
+    aiMesh,
+    aiMatrix4x4,
+    aiFace,
+    aiNode,
+    IOSystem,
+
+    aiPrimitiveType_TRIANGLE,
+    aiPrimitiveType_LINE,
+    aiPrimitiveType_POINT,
+
+    aiTexture,
+    aiTextureType,
     aiTextureType_NONE,
     aiTextureType_DIFFUSE,
     aiTextureType_SPECULAR,
@@ -55,7 +71,16 @@ from assimpapi cimport (
     aiTextureType_CLEARCOAT,
     aiTextureType_TRANSMISSION,
 
-    aiString, aiMaterial
+    aiPTI_Float,
+    aiPTI_Double,
+    aiPTI_Integer,
+    aiPTI_Buffer,
+
+    aiString,
+    aiMaterial,
+    aiGetMaterialFloatArray,
+    aiGetMaterialIntegerArray,
+
 )
 
 cdef extern from "assimpio.h":
@@ -75,69 +100,32 @@ from renpy.display.im import Data, unoptimized_texture, render_for_texture
 from renpy.gl2.gl2mesh3 cimport Mesh3, Point3
 from renpy.gl2.gl2model import GL2Model
 
+
 # A map from texture types to the corresponding assimp constants.
 TEXTURE_TYPES = {
-    "none": aiTextureType_NONE,
-    "diffuse": aiTextureType_DIFFUSE,
-    "specular": aiTextureType_SPECULAR,
-    "ambient": aiTextureType_AMBIENT,
-    "emissive": aiTextureType_EMISSIVE,
-    "height": aiTextureType_HEIGHT,
-    "normals": aiTextureType_NORMALS,
-    "shininess": aiTextureType_SHININESS,
-    "opacity": aiTextureType_OPACITY,
-    "displacement": aiTextureType_DISPLACEMENT,
-    "lightmap": aiTextureType_LIGHTMAP,
-    "reflection": aiTextureType_REFLECTION,
-    "base_color": aiTextureType_BASE_COLOR,
-    "normal_camera": aiTextureType_NORMAL_CAMERA,
-    "emission_color": aiTextureType_EMISSION_COLOR,
-    "metalness": aiTextureType_METALNESS,
-    "diffuse_roughness": aiTextureType_DIFFUSE_ROUGHNESS,
-    "ambient_occlusion": aiTextureType_AMBIENT_OCCLUSION,
-    "unknown": aiTextureType_UNKNOWN,
-    "sheen": aiTextureType_SHEEN,
-    "clearcoat": aiTextureType_CLEARCOAT,
-    "transmission": aiTextureType_TRANSMISSION,
+    "u_tex_none": aiTextureType_NONE,
+    "u_tex_diffuse": aiTextureType_DIFFUSE,
+    "u_tex_specular": aiTextureType_SPECULAR,
+    "u_tex_ambient": aiTextureType_AMBIENT,
+    "u_tex_emissive": aiTextureType_EMISSIVE,
+    "u_tex_height": aiTextureType_HEIGHT,
+    "u_tex_normals": aiTextureType_NORMALS,
+    "u_tex_shininess": aiTextureType_SHININESS,
+    "u_tex_opacity": aiTextureType_OPACITY,
+    "u_tex_displacement": aiTextureType_DISPLACEMENT,
+    "u_tex_lightmap": aiTextureType_LIGHTMAP,
+    "u_tex_reflection": aiTextureType_REFLECTION,
+    "u_tex_base_color": aiTextureType_BASE_COLOR,
+    "u_tex_normal_camera": aiTextureType_NORMAL_CAMERA,
+    "u_tex_emission_color": aiTextureType_EMISSION_COLOR,
+    "u_tex_metalness": aiTextureType_METALNESS,
+    "u_tex_diffuse_roughness": aiTextureType_DIFFUSE_ROUGHNESS,
+    "u_tex_ambient_occlusion": aiTextureType_AMBIENT_OCCLUSION,
+    "u_tex_unknown": aiTextureType_UNKNOWN,
+    "u_tex_sheen": aiTextureType_SHEEN,
+    "u_tex_clearcoat": aiTextureType_CLEARCOAT,
+    "u_tex_transmission": aiTextureType_TRANSMISSION,
 }
-
-
-class ModelData:
-    """
-    Represents the information about a model after it's been loaded.
-    """
-
-    embedded_textures: dict[str, Data]
-    "The embedded textures in the model."
-
-    mesh_info: dict[str, MeshInfo]
-    "Information required to blit each mesh in the model."
-
-    def __init__(self):
-        self.embedded_textures = { }
-        self.mesh_info = [ ]
-
-
-    def duplicate(self):
-        """
-        Duplicates the model data.
-        """
-
-        rv = ModelData()
-        rv.embedded_textures = self.embedded_textures.copy()
-        rv.mesh_info = [ mi.duplicate() for mi in self.mesh_info ]
-
-        return rv
-
-
-cache: dict[AssimpModel, ModelData] = { }
-"Caches the models that have been loaded."
-
-predicted: set[AssimpModel]|None = None
-"The set of models that are predicted to be loaded."
-
-new_predicted: set[AssimpModel] = set()
-"The same, but before finish_predict() is called."
 
 
 def free_memory():
@@ -152,70 +140,213 @@ class MeshInfo:
     mesh: Mesh3
     "The mesh that's being loaded."
 
-    reverse_matrix: Matrix
-    forward_matrix: Matrix
-
-    textures: list
-    """
-    A list of displaybles to render and blit as textures.
-    """
-
     shaders: Iterable[str]
     """
     The shaders to use.
     """
 
-    def __init__(self, Loader loader, Mesh3 mesh, reverse_matrix: Matrix, forward_matrix: Matrix,  int material_index, textures: Iterable[str], shaders: Iterable[str]):
+    uniforms: dict[str, object]
+    """
+    A dictionary of uniforms that are set by the material.
+    """
+
+    texture_uniforms = dict[str, renpy.display.displayable.Displayable]
+    """
+    A dictionary of texture uniforms that are set by the material.
+    """
+
+    twosided: bool
+    """
+    True of the mesh is two-sided, and should be rendered with backface culling disabled.
+    """
+
+    def __init__(self, Loader loader, Mesh3 mesh, int material_index, textures: Iterable[str], shaders: Iterable[str]):
 
         self.mesh = mesh
-        self.reverse_matrix = reverse_matrix
-        self.forward_matrix = forward_matrix
-
-        self.textures = [ ]
-
-        for t in textures:
-
-            if isinstance(t, str) and t in TEXTURE_TYPES:
-
-                path = loader.get_texture(material_index, TEXTURE_TYPES[t])
-
-                if path is None:
-                    d = renpy.display.im.Null()
-
-                elif path.startswith("*"):
-                    d = loader.model_data.embedded_textures[path]
-
-                else:
-                    d = renpy.easy.displayable(loader.dirname + "/" + path)
-
-            else:
-
-                d = t
-
-            self.textures.append(unoptimized_texture(d))
-
         self.shaders = shaders
 
-    def duplicate(self):
+        self.uniforms = loader.get_material_uniforms(material_index)
+        self.texture_uniforms = loader.get_texture_uniforms(material_index)
+        self.twosided = loader.get_twosided(material_index)
+
+
+class BlitInfo:
+    """
+    This stores the information used to blit a texture.
+    """
+
+    def __init__(self, reverse: Matrix, forward: Matrix, mesh_info: MeshInfo):
         """
-        Duplicates the mesh info.
+        Initializes the BlitInfo.
         """
 
-        rv = MeshInfo.__new__(MeshInfo)
-        rv.mesh = self.mesh
-        rv.reverse_matrix = self.reverse_matrix
-        rv.forward_matrix = self.forward_matrix
-        rv.shaders = self.shaders
+        self.reverse: Matrix = reverse
+        self.forward: Matrix = forward
+        self.mesh_info: MeshInfo = mesh_info
 
-        rv.textures = [ ]
+        if self.mesh_info is None:
+            raise ValueError("MeshInfo cannot be None.")
 
-        for d in self.textures:
-            if d._duplicatable:
-                rv.textures.append(d._duplicate())
+class ModelData:
+    """
+    Represents the information about a model after it's been loaded.
+    """
+
+    filename: str
+    "The filename of the model."
+
+    embedded_textures: dict[str, Data]
+    "The embedded textures in the model."
+
+    blit_info: list[BlitInfo]
+    "Information required to blit each mesh in the model."
+
+    mesh_info: list[MeshInfo]
+    "A list of MeshInfo objects used by the blit_info objects."
+
+    def __init__(self):
+        self.embedded_textures = { }
+        self.blit_info = [ ]
+
+
+    def report(self):
+        """
+        Prints a report of the model data.
+        """
+
+        def log(msg: str):
+            """
+            Prints a message to the log.
+            """
+
+            renpy.display.log.write("%s", msg)
+
+        log("")
+        log(f"GLTFModel {self.filename!r}")
+
+        minx = miny = minz = float("inf")
+        maxx = maxy = maxz = float("-inf")
+
+        for bi in self.blit_info:
+            for x, y, z, w in bi.mesh_info.mesh.get_points():
+
+                x, y, z = bi.reverse.transform(x, y, z, components=3)
+
+                minx = min(minx, x)
+                miny = min(miny, y)
+                minz = min(minz, z)
+
+                maxx = max(maxx, x)
+                maxy = max(maxy, y)
+                maxz = max(maxz, z)
+
+        log(f"  Bounding box (after zoom):")
+
+        log(f"    X: {minx:.3f} to {maxx:.3f}")
+        log(f"    Y: {miny:.3f} to {maxy:.3f}")
+        log(f"    Z: {minz:.3f} to {maxz:.3f}")
+
+        uniform_sets = [ ]
+
+        min_values = { }
+        max_values = { }
+
+        types: dict[str, str] = {}
+
+        def recursive_min(a, b):
+            """
+            Returns the minimum of a and b. If a and b are tuples, it returns a tuple of the minimums.
+            """
+
+            if isinstance(a, tuple) and isinstance(b, tuple):
+                return tuple(recursive_min(x, y) for x, y in zip(a, b))
             else:
-                rv.textures.append(d)
+                return min(a, b)
 
-        return rv
+        def recursive_max(a, b):
+            """
+            Returns the maximum of a and b. If a and b are tuples, it returns a tuple of the maximums.
+            """
+            if isinstance(a, tuple) and isinstance(b, tuple):
+                return tuple(recursive_max(x, y) for x, y in zip(a, b))
+            else:
+                return max(a, b)
+
+
+        def recursive_format(v):
+            """
+            Formats a value for display. If it's a tuple, it formats each element.
+            """
+
+            if v is None:
+                return "N/A"
+
+            if isinstance(v, tuple):
+                return "(" + ", ".join(f"{x:.5g}" for x in v) + ")"
+            else:
+                return f"{v:.5g}"
+
+        for i in self.mesh_info:
+            uniform_sets.append(set(i.uniforms) | set(i.texture_uniforms))
+
+            for k, v in i.uniforms.items():
+                if k not in min_values:
+                    min_values[k] = v
+                    max_values[k] = v
+                else:
+                    min_values[k] = recursive_min(min_values[k], v)
+                    max_values[k] = recursive_max(max_values[k], v)
+
+                if isinstance(v, float):
+                    types[k] = "float"
+                elif isinstance(v, int):
+                    types[k] = "int"
+                elif isinstance(v, tuple):
+                    types[k] = f"vec{len(v)}"
+                else:
+                    types[k] = "unknown"
+
+            for k, v in i.texture_uniforms.items():
+                types[k] = "sampler2D"
+
+
+        any_uniforms = set.union(*uniform_sets)
+        all_uniforms = set.intersection(*uniform_sets)
+        all_uniforms.add("u_tex_diffuse")
+
+        log("  Uniforms:")
+
+        for u in sorted(any_uniforms):
+
+            min_value = min_values.get(u, None)
+            max_value = max_values.get(u, None)
+
+            comments = [ ]
+
+            if min_value is not None:
+                comments.append(f"range {recursive_format(min_value)} to {recursive_format(max_value)}")
+
+            if u not in all_uniforms:
+                comments.append("not in all meshes")
+
+            uniform_type = types.get(u, "unknown")
+
+            comment = "; ".join(comments)
+            if comment:
+                comment = " // " + comment
+
+
+            log(f"    uniform {uniform_type} {u};{comment}")
+
+
+cache: dict[GLTFModel, ModelData] = { }
+"Caches the models that have been loaded."
+
+predicted: set[GLTFModel]|None = None
+"The set of models that are predicted to be loaded."
+
+new_predicted: set[GLTFModel] = set()
+"The same, but before finish_predict() is called."
 
 cdef class Loader:
 
@@ -231,14 +362,24 @@ cdef class Loader:
     cdef public object model_data
     "The ModelData object that is being filled in."
 
+    cdef public dict mesh_info
+    "A dictionary mapping mesh indices to MeshInfo objects."
+
     cdef public bint tangents
     "True if tangents should be included in the mesh."
 
-    cdef public object textures
-    "A list of names of shaders to use."
-
     cdef public object shaders
     "A shader or list of shaders to use."
+
+    cdef public set uniforms
+    "A list of the uniforms being set by materials."
+
+    cdef public dict textures
+    "A map from material and texture type to the texture displayable."
+
+    cdef public object filename
+    "The name of the file being loaded."
+
 
     def __cinit__(self):
         self.importer.SetIOHandler(new RenpyIOSystem())
@@ -247,18 +388,18 @@ cdef class Loader:
         self,
         model_data: ModelData,
         filename: str,
-        textures: Iterable[str],
         shaders: Iterable[str|renpy.display.displayable.Displayable],
         tangents: bool,
         zoom: float,
-        flip_x: bool,
-        flip_y: bool,
-        flip_z: bool,
-        flip_uv: bool,) -> None:
+        report: bool) -> None:
+
+        self.filename = filename
 
         self.shaders = shaders
-        self.textures = textures
         self.tangents = tangents
+        self.uniforms = set()
+
+        self.textures = { }
 
         self.dirname = filename.rpartition("/")[0]
 
@@ -266,7 +407,7 @@ cdef class Loader:
         filename_bytes = filename.encode()
         self.scene = self.importer.ReadFile(
             filename_bytes,
-            aiProcessPreset_TargetRealtime_Quality | (aiProcess_FlipUVs if flip_uv else 0))
+            aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs | aiProcess_FlipWindingOrder)
 
         if not self.scene:
             raise Exception("Error loading %s: %s" % (filename, self.importer.GetErrorString()))
@@ -274,24 +415,29 @@ cdef class Loader:
         try:
 
             self.model_data = model_data
+            self.mesh_info = { }
 
             self.load_textures()
 
-            xdx = -1.0 if flip_x else 1.0
-            ydy = -1.0 if flip_y else 1.0
-            zdz = -1.0 if flip_z else 1.0
-
-            # Load the nodes.
-            m = Matrix.scale(xdx, ydy, zdz) * Matrix.scale(zoom, zoom, zoom)
+            # The base matrix uses scale and rotate to move the model into the Ren'Py coordinate system,
+            # and then scales it.
+            m = Matrix.scale(-1, -1, -1) * Matrix.rotate(0, 180, 0) *  Matrix.scale(zoom, zoom, zoom)
 
             self.load_node(self.scene.mRootNode, m)
+
+            self.model_data.filename = filename
+            self.model_data.mesh_info = list(self.mesh_info.values())
+
+            if report:
+                self.model_data.report()
 
             return self.model_data
 
         finally:
+            self.mesh_info = { }
             self.shaders = [ ]
-            self.textures = [ ]
             self.model_data = None
+            self.uniforms = set()
 
             self.importer.FreeScene()
 
@@ -321,54 +467,174 @@ cdef class Loader:
             else:
                 raise Exception(f"{format} textures are not (yet) supported.")
 
-    def get_texture(self, material_index : int, texture_type : int) -> str|None:
+    def get_texture(self, material_index : int, texture_type : int) -> Displayable|None:
         """
         Given a material index and a texture type, returns the path to the texture. This
         may also be *0 (etc) for embedded textures.
         """
 
-        cdef aiString path
+        key = (material_index, texture_type)
+
+        if key in self.textures:
+            return self.textures[key]
+
+        cdef aiString path_string
         cdef aiMaterial *material = self.scene.mMaterials[material_index]
 
         if material.GetTextureCount(texture_type) == 0:
-            return None
+            rv = None
+        else:
+            material.GetTexture(texture_type, 0, &path_string)
+            path = path_string.data[:path_string.length].decode()
 
-        material.GetTexture(texture_type, 0, &path)
+            if path.startswith("*"):
+                d = loader.model_data.embedded_textures[path]
 
-        return path.data[:path.length].decode()
+            else:
+                d = renpy.easy.displayable(loader.dirname + "/" + path)
+
+            rv = unoptimized_texture(d)
+
+        self.textures[key] = rv
+
+        return rv
+
+    def get_texture_uniforms(self, material_index: int) -> dict[str, str]:
+        """
+        Given a material index, returns a dictionary of texture uniforms that
+        should be set for the material.
+        """
+
+        uniforms = { }
+
+        for uniform, texture_type in TEXTURE_TYPES.items():
+
+            d = self.get_texture(material_index, texture_type)
+            if d is not None:
+                uniforms[uniform] = unoptimized_texture(d)
+
+        return uniforms
+
+    def get_material_uniforms(self, material_index: int):
+
+        cdef float[4] values
+        cdef int ivalue
+        cdef unsigned int pmax
+
+        cdef aiMaterial *material = self.scene.mMaterials[material_index]
+
+        uniforms = { }
+
+        for i in range(material.mNumProperties):
+            pmax = 4
+
+            prop = material.mProperties[i]
+
+            key = prop.mKey.data[:prop.mKey.length].decode()
+
+            prefix, _, suffix = key.partition(".")
+            suffix = suffix.lower().replace(".", "_")
+
+            if prop.mType != aiPTI_Float and prop.mType != aiPTI_Double and prop.mType != aiPTI_Integer and prop.mType != aiPTI_Buffer:
+                continue
+
+            if prefix == "$mat":
+                name = f"u_material_{suffix}"
+            elif prefix == "$clr":
+                name = f"u_color_{suffix}"
+            else:
+                continue
+
+            pmax = 4
+            if aiGetMaterialFloatArray(material, prop.mKey.data, 0, 0, &values[0], &pmax):
+                continue
+
+            if pmax == 1:
+                value = values[0]
+            elif pmax == 2:
+                value = (values[0], values[1])
+            elif pmax == 3:
+                value = (values[0], values[1], values[2])
+            elif pmax == 4:
+                value = (values[0], values[1], values[2], values[3])
+            else:
+                continue
+
+            uniforms[name] = value
+
+        return uniforms
+
+    def get_twosided(self, material_index: int) -> bool:
+        """
+        Returns True if the material with the given index is two-sided.
+        """
+
+        cdef aiMaterial *material = self.scene.mMaterials[material_index]
+        cdef int ivalue
+
+        if aiGetMaterialIntegerArray(material, "$mat.twosided", 0, 0, &ivalue, NULL):
+            return False
+
+        return ivalue != 0
 
 
     cdef load_node(self, aiNode *node, matrix : Matrix):
         cdef unsigned int i
 
         node_matrix = Matrix((
-            node.mTransformation.a1, node.mTransformation.b1, node.mTransformation.c1, node.mTransformation.d1,
-            node.mTransformation.a2, node.mTransformation.b2, node.mTransformation.c2, node.mTransformation.d2,
-            node.mTransformation.a3, node.mTransformation.b3, node.mTransformation.c3, node.mTransformation.d3,
-            node.mTransformation.a4, node.mTransformation.b4, node.mTransformation.c4, node.mTransformation.d4)
-            )
+            node.mTransformation.a1, node.mTransformation.a2, node.mTransformation.a3, node.mTransformation.a4,
+            node.mTransformation.b1, node.mTransformation.b2, node.mTransformation.b3, node.mTransformation.b4,
+            node.mTransformation.c1, node.mTransformation.c2, node.mTransformation.c3, node.mTransformation.c4,
+            node.mTransformation.d1, node.mTransformation.d2, node.mTransformation.d3, node.mTransformation.d4,
+            ))
 
-        matrix = node_matrix * matrix
+        matrix = matrix * node_matrix
 
         for i in range(node.mNumMeshes):
-            self.load_mesh(node.mMeshes[i], matrix)
+
+            mesh_info = self.load_mesh(node.mMeshes[i])
+
+            if mesh_info is None:
+                continue
+
+            self.model_data.blit_info.append(BlitInfo(
+                matrix,
+                matrix.inverse(),
+                mesh_info))
 
         for i in range(node.mNumChildren):
             self.load_node(node.mChildren[i], matrix)
 
 
-    def load_mesh(self, mesh_index: int, matrix: Matrix) -> Render:
+    def load_mesh(self, mesh_index: int) -> MeshInfo:
         """
         Loads the mesh with index `mesh_index` from the scene.
         """
+
+        cached = self.mesh_info.get(mesh_index, None)
+        if cached is not None:
+            return cached
 
         if mesh_index < 0 or mesh_index >= self.scene.mNumMeshes:
             raise Exception("Invalid mesh index %d." % mesh_index)
 
         cdef aiMesh *mesh = self.scene.mMeshes[mesh_index]
 
+        def log(msg: str):
+            if renpy.config.developer:
+                renpy.display.log.write("%s", msg)
+
+        if mesh.mPrimitiveTypes == aiPrimitiveType_LINE:
+            log(f"Warning: {self.filename!r}, mesh {mesh_index} is a line mesh, which is not supported. Skipping.")
+            return
+
+        if mesh.mPrimitiveTypes == aiPrimitiveType_POINT:
+            log(f"Warning: {self.filename!r}, mesh {mesh_index} is a point mesh, which is not supported. Skipping.")
+            return
+
         if mesh.mPrimitiveTypes != aiPrimitiveType_TRIANGLE:
-            raise Exception("Mesh %d is not a triangle mesh." % mesh_index)
+            log(f"Warning: {self.filename!r}, mesh {mesh_index} is not a triangle mesh (type={mesh.mPrimitiveTypes}). Skipping.")
+            return
 
         if self.tangents:
             layout = renpy.gl2.gl2mesh.MODEL_NT_LAYOUT
@@ -428,13 +694,12 @@ cdef class Loader:
         info = MeshInfo(
             self,
             m,
-            matrix,
-            matrix.inverse(),
             mesh.mMaterialIndex,
             self.textures,
             self.shaders)
 
-        self.model_data.mesh_info.append(info)
+        self.mesh_info[mesh_index] = info
+        return info
 
 loader = Loader()
 "The loader used to load in imported models."
@@ -459,42 +724,6 @@ class GLTFModel(renpy.display.displayable.Displayable):
     `filename`
         The filename of the model to display.
 
-    `textures`
-        A list of textures to load. These textures will be loaded into texture slots - the first will be tex0, the
-        second tex1, and so on.
-
-        The list may contain one of the following strings, giving the type of texture to load:
-
-        * "none"
-        * "diffuse"
-        * "specular"
-        * "ambient"
-        * "emissive"
-        * "height"
-        * "normals"
-        * "shininess"
-        * "opacity"
-        * "displacement"
-        * "lightmap"
-        * "reflection"
-        * "base_color"
-        * "normal_camera"
-        * "emission_color"
-        * "metalness"
-        * "diffuse_roughness"
-        * "ambient_occlusion"
-        * "unknown"
-        * "sheen"
-        * "clearcoat"
-        * "transmission"
-
-        These correspond to the various textures defined by assimp. In many cases, you'll have multiple types packed
-        into a single texture - like having a textuure that has metallic on the blue channel, roughness on the green,
-        and ambient occlusion on the red. In that case, you'll want to pick one texture type to load, and use the
-        texture shader to extract the channels you want.
-
-        The textures list may also contain displayables, which will be used as textures directly.
-
     `shader`
         Either a string or tuple of strings, giving the name of the shader to use.
 
@@ -505,26 +734,13 @@ class GLTFModel(renpy.display.displayable.Displayable):
         A zoom factor that will be applied to the model. Many models naturally use the range -1 to 1, and so this
         may need to be quite large to make the model visible.
 
-    `flip_x`
-        If True, the model will be flipped along the x axis.
-
-    `flip_y`
-        If True, the model will be flipped along the y axis. This defaults to True, to map models to Ren'Py's
-        coordinate system.
-
-    `flip_z`
-        If True, the model will be flipped along the z axis.
-
-    `flip_uv`
-        If True, the UV coordinates will be flipped vertically. This defaults to True, to map texture coordinates
-        to how Ren'Py expects them.
+    `report`
+        If true, a report of the model will be printed to the log. This includes the uniforms that are used by
+        the model.
     """
 
     filename: str
     "The filename of the model to display."
-
-    textures: Iterable[str]
-    "The textures to load."
 
     shaders: Iterable[str]
     "The shaders to use."
@@ -535,27 +751,29 @@ class GLTFModel(renpy.display.displayable.Displayable):
     zoom: float
     "The zoom level of the model."
 
-    flip_y: bool
-    "True if the model should be flipped along the y axis."
+    uniforms: dict[str, object]
+    """
+    A dictionary of uniforms that are set by the model.
+    """
 
-    flip_z: bool
-    "True if the model should be flipped along the z axis."
+    texture_uniforms: dict[str, renpy.display.displayable.Displayable]
+    """
+    A dictionary of texture uniforms.
+    """
 
-    flip_uv: bool
-    "True if the UV coordinates should be flipped vertically."
-
+    report: bool
+    """
+    Should a report of the model be printed to the log? This includes the uniforms that are used by the model.
+    """
 
     def __init__(
         self,
         filename: str,
-        textures: Iterable = ("diffuse",),
-        shader: str|tuple[str] = "renpy.texture",
+        shader: str|tuple[str] = tuple(),
         tangents: bool = False,
         zoom: float = 1.0,
-        flip_x: bool = False,
-        flip_y: bool = True,
-        flip_z: bool = False,
-        flip_uv: bool = True):
+        report: bool = False,
+        **kwargs):
 
         super().__init__()
 
@@ -564,25 +782,33 @@ class GLTFModel(renpy.display.displayable.Displayable):
         else:
             shaders = shader
 
+        if not shaders:
+            raise ValueError("At least one shader must be specified for GLTFModel. Consider 'renpy.texture' to start with.")
+
         self.filename = filename
         self.shaders = shaders
         self.tangents = tangents
         self.zoom = zoom
+        self.report = report
 
-        self.flip_x = flip_x
-        self.flip_y = flip_y
-        self.flip_z = flip_z
-        self.flip_uv = flip_uv
+        self.uniforms = { }
+        self.texture_uniforms = { }
 
-        self.textures = [ ]
+        kwargs.setdefault("u_tex_diffuse", renpy.display.im.Null("#fff"))
 
-        for i in textures:
-            if i not in TEXTURE_TYPES:
-                i = renpy.easy.displayable(i)
+        for k, v in kwargs.items():
 
-            self.textures.append(i)
+            if k.startswith("u_tex_"):
+                self.texture_uniforms[k] = renpy.display.im.unoptimized_texture(renpy.easy.displayable(v))
+            elif k.startswith("u_"):
+                self.uniforms[k] = v
+            else:
+                raise ValueError(f"Unknown keyword argument {k!r} for GLTFModel. Uniforms must start with 'u_'.")
 
-        self._duplicatable = any(getattr(i, "_duplicatable", False) for i in self.textures)
+        if report:
+            self.load()
+            self.report = False
+
 
     def load(self):
         """
@@ -601,21 +827,18 @@ class GLTFModel(renpy.display.displayable.Displayable):
                     loader.load(
                         model_data,
                         self.filename,
-                        self.textures,
                         self.shaders,
                         self.tangents,
                         self.zoom,
-                        self.flip_x,
-                        self.flip_y,
-                        self.flip_z,
-                        self.flip_uv)
+                        self.report)
 
                 except Exception as e:
                     del cache[self]
                     raise
 
-            for d in (j for i in cache[self].mesh_info for j in i.textures if j):
-                renpy.display.im.cache.preload_image(d)
+            for i in cache[self].mesh_info:
+                for d in i.texture_uniforms.values():
+                    renpy.display.im.cache.preload_image(d)
 
         return model_data
 
@@ -627,28 +850,55 @@ class GLTFModel(renpy.display.displayable.Displayable):
 
         rv = Render(0, 0)
 
-        for mi in model_data.mesh_info:
+        for k, v in self.uniforms.items():
+            rv.add_uniform(k, v)
+
+        for k, v in self.texture_uniforms.items():
+            tr = renpy.display.im.render_for_texture(v, width, height, st, at)
+            rv.add_uniform(k, tr)
+
+        for bi in model_data.blit_info:
+            mi = bi.mesh_info
+
             cr = Render(0, 0)
             cr.mesh = mi.mesh
-            cr.reverse = mi.reverse_matrix
-            cr.forward = mi.forward_matrix
+            cr.reverse = bi.reverse
+            cr.forward = bi.forward
 
             for i in mi.shaders:
                 cr.add_shader(i)
 
-            for i in mi.textures:
-                cr.blit(renpy.display.im.render_for_texture(i, width, height, st, at), (0, 0))
+            for k, v in mi.uniforms.items():
+                cr.add_uniform(k, v)
+
+            if mi.twosided:
+                cr.add_uniform("u_cull_face", None)
+
+            has_diffuse = False
+
+            for k, i in mi.texture_uniforms.items():
+                tr = renpy.display.im.render_for_texture(i, width, height, st, at)
+                cr.add_uniform(k, tr)
+
+                if k == "u_tex_diffuse":
+                    cr.blit(tr, (0, 0))
+                    has_diffuse = True
+
+            if not has_diffuse:
+                tr = renpy.display.im.render_for_texture(self.texture_uniforms.get("u_tex_diffuse", renpy.display.im.Null("#fff")), width, height, st, at)
+                cr.blit(tr, (0, 0))
 
             rv.blit(cr, (0, 0))
 
         rv.add_property("depth", True)
         rv.add_property("texture_wrap", (renpy.uguu.GL_REPEAT, renpy.uguu.GL_REPEAT))
+        rv.add_property("cull_face", "ccw")
 
         return rv
 
     def visit(self):
         if self in cache:
-            return [ j for i in cache[self].mesh_info for j in i.textures ]
+            return [ j for i in cache[self].mesh_info for j in i.texture_uniforms.values() ]
         else:
             return [ ]
 

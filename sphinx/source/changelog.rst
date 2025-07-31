@@ -5,17 +5,89 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.5.0:
+
+8.5.0
+=====
+
+Other Changes
+-------------
+
+The game.zip file produced by the web platform no longer contains .py files.
+
+
+.. _renpy-8.4.1:
+
+8.4.2
+=====
+
+
+
+Other Changes
+-------------
+
+Ren'Py will now promopt you to close other Ren'Py games before an upgrade. This addresses problems on Windows
+that could be caused by launcher files in use by games that are running during the upgrade.
+
+
+.. _renpy-8.4.1:
+
+8.4.1
+=====
+
+Fixes
+-----
+
+Ren'Py will no longer report "Leaking texture: 0" warnings, which could be spurious in some cases.
+
+On the web platform, textures are reloaded when the browser window is resized, preventing the textures from appearing
+transparent or black.
+
+Playing a movie on the web platform no longer causes Ren'Py to produce a stream of warnings.
+
+The :func:`gui.SetPreference` action once again rebuilds the styles after the preference is set.
+
+The config.dissolve_shrinks option, which provides backwards compatibility for :class:`AlphaDissolve` transitions and
+:func:`AlphaBlend` displayables with mismatched child sizes, now works as intended.
+
+Copying translations between games now works correctly. This is especially important for transferring translations from
+the launcher to newly-created games, ensuring new non-English games are set up properly.
+
+Diagnostic print statements that could appear when playing movies on the web platform have been eliminated.
+
+The pixellate transition now functions as expected.
+
+Features
+--------
+
+Ren'Py now scans for templates in subdirectories of the projects directory.
+
+Ren'Py now supports Python's `importlib.resources <https://docs.python.org/3.12/library/importlib.resources.html>`_
+module. This provides a way to load the resources in a Python package, even if that Python package is stored in an RPA
+archive or an Android APK or asset pack.
+
+Other Changes
+-------------
+
+The lint check for when translation functions are called with the wrong number of arguments was too slow,
+to be included in lint, and so this check has been removed for the time being.
+
+Support for right-to-left languages is now enabled by default.
+
+When loading a Python module or package from disk, Ren'Py will now set the ``__file__`` attribute to the absolute
+path of the module or package. This reverts a change made in Ren'Py 8.4.0, which set the ``__file__`` attribute
+to the path relative to the game directory. When loading a module from an RPA archive or Android APK, this changes
+to a relative path starting with ``$game``. This change is meant to help more pure Python packages work with Ren'Py,
+but we recommend that you do not rely on the ``__file__`` attribute in your code, and use importlib.resources instead.
+
+It's now possible to :ref:`revert the audio volume drop <incompatible-8.4.1>` caused by the constant power
+panning change in Ren'Py 8.1. (This can also be worked around by adjusting mixer volumes.)
+
+
 .. _renpy-8.4.0:
 
 8.4.0
 =====
-
-Performance Improvements
-------------------------
-
-*Live2D* When rendering Live2D models, Ren'Py will avoid doing unproductive work to create Renders for layers
-that are not visible, and masks that are not used. This can improve performance when using Live2D models with
-many layers.
 
 Requirement and Dependency Changes
 ----------------------------------
@@ -30,6 +102,100 @@ such as the Raspberry Pi.
 
 The Android version of Ren'Py is now being built with 16KB pages, for future Android devices that will
 require 16 KB page support.
+
+Python 3.12
+-----------
+
+Ren'Py now uses Python 3.12 on all platforms. This makes avilable several years of Python improvements. To
+finds all of them, please see:
+
+* `What's New in Python 3.10 <https://docs.python.org/3/whatsnew/3.10.html>`_
+* `What's New in Python 3.11 <https://docs.python.org/3/whatsnew/3.11.html>`_
+* `What's New in Python 3.12 <https://docs.python.org/3/whatsnew/3.12.html>`_
+
+One of the most visible changes caused by this is that Ren'Py will now report the location of Python errors
+at sub-line granularity, rather than at line granularity. In tracebacks, the portions of a line that contribute
+to an error will be colored or underlined.
+
+Performance Improvements
+------------------------
+
+**Script Loading** The internal respresentation of the game script has been changed to reduce the amount of
+memory used and to improve loading time, by only representing data that varies from the default. For a large
+game where initial startup is dominated by script loading, this improved the time it takes to load the script by
+50%.
+
+**Persistent Data** The persistent data format has been changed to use numeric hashes of visited script locations,
+rather than the full script location. These hashes can be saved and loaded much more quickly, which improves game
+performance when the persistent data is large.
+
+**OpenGL Drawing** Ren'Py's OpenGL drawing code has been changed to remove allocations of matrix objects, and to
+reduce the amount of math that needs to be done in many cases. This can improve performance when drawing scenes
+with large numbers of drawing operations, as those scenes can be CPU-bound.
+
+Similarly, the OpenGL drawing code has been changed to avoid the repeated allocation of dictionaries
+that contain shader variables.
+
+**Live2D** When rendering Live2D models, Ren'Py will avoid doing unproductive work to create Renders for layers
+that are not visible, and masks that are not used. This can improve performance when using Live2D models with
+many layers.
+
+Shaders
+-------
+
+Ren'Py's GLSL shader support now allows uniforms of types int, bool, ivec2, ivec3, ivec4, and bvec2, bvec3, bvec4,
+in addition to the support for float, vec2, vec3, vec4, mat2, mat3, mat4 and sampler2D that Ren'Py has
+always had.
+
+Ren'Py's GLSL shader support now allows one-dimensions arrays of uniforms of scalar and vector types, but not
+arrays of  matrices or samplers.
+
+Ren'Py now can supply separate model to world (u_model), world to camera view (u_view), and camera view to viewport
+(u_projection) matrices to shaders. These matrices are supplied as uniforms. There are also a u_projectionview matrix
+that combines u_projection and u_view, and the existing u_transform matrix is all three. Breaking these out allows
+OpenGL shaders to support lighting.
+
+Ren'Py's GLSL shader support now supports performing operations on the underlying data before passing it to
+a uniform. For example, if ``u_color`` is an RGBA uniform, ``u_color__premul`` is that color, premultiplied
+by its alpha channel. Other suffixes get the resolution of a texture, and can perform inverse, transpose,
+and inverse transpose operations on matrices.
+
+Inside Transforms, Ren'Py now supports uniforms of type sampler2D. These are textures that are set up
+to sample textures. These transforms can be supplied a displayable or a string that becomes a displayable.
+
+GLTF Model Loading
+------------------
+
+Ren'Py now has a minimal ability to load 3D models defined in the GLTF format, using the Open Asset Importer library.
+Models can be loaded using the :class:`GLTFModel` displayable.
+
+Right now, the GLTFModel loading only supports loading the mesh and textures of a model. There's no support for
+animation or other features of GLTF. What's more, the default Ren'Py shaders only show the base colors, and a custom
+shader is required to handle the other portions of physical-based rendering (PBR) that GLTF supports.
+
+The current GLTFModel support is is likely useful for people who want to use 3D backgrounds in their games, but
+may require a skilled developer to position the model in 3D space. It's also intended for developers that want to
+experiment and contribute insights and development back to Ren'Py. A future release will include more tools for
+working with objects in three dimensions.
+
+Optional Mipmaps
+----------------
+
+Mipmaps are smaller versions of an image that are used when Ren'Py scales an image down. Using mipmaps
+prevents the image from becoming jagged when scaled down, but generating mipmaps takes time and can cause the game
+to use more memory.
+
+Ren'Py now leaves the decision of if to create mipmaps to the developer, who knows if the game will scale down an
+image. By default, Ren'Py will create mipmaps for all images it loas. A new mode will only only create mipmaps
+when the display is scaled down to less than 75% of the virtual window size. This is suitable for games
+that do not scale down images, but for which the window size may be smaller than the virtual window size.
+
+To enable this new mode, set :var:`config.mipmap` to "auto".
+
+Mipmaps will automatically be created for images loaded for the purpose of Live2D or GLTFModel, as these are
+likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
+of :func:`Image`.
+
 
 Libs and Mods
 -------------
@@ -54,20 +220,38 @@ merged with the player's script, a library can be placed under game/libs, and wi
 
 `.rpe` and `.rpe.py` files are also searched in the libs directory.
 
-Optional Mipmaps
-----------------
+Layered Images
+--------------
 
-Mipmaps are smaller versions of an image that are used when Ren'Py scales an image down. Using mipmaps
-prevents the image from becoming jagged when scaled down, but generating mipmaps takes time and can cause the game
-to use more memory.
+The ``variant`` and ``prefix`` properties, which accepted any value but evaluated it (as a string) only at init time,
+now accept an unquoted `image name component` (digits, letters and underscores, no space or dash, may start with a
+digit).
 
-Ren'Py now leaves the decision of if to create mipmaps to the developer, who knows if the game will scale down an
-image. To always enable mipmaps, set :var:`config.mipmap` to True. If this isn't set to true, Ren'Py will only
-create mipmaps if the display is scaled down to less than 75% of the virtual window size.
+In places where the syntax allowed the ``at`` keyword, it now allows an ``at transform:`` block.
 
-Mipmaps will automatically be created for images loaded for the purpose of Live2D or GLTFModel, as these are
-likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
-of :func:`Image`.
+In places where a displayable is expected, it is now possible to use an ``image:`` block, and to define an ATL image,
+like an anonymous :ref:`atl-image-statement`.
+
+The new ``when`` property introduces a more straightforward boolean condition syntax, replacing the ``if_any``,
+``if_all`` and ``if_not`` properties which remain supported for backwards compatibility. The new syntax removes
+the need for lists and quoting.
+To convert to the new syntax, you can replace::
+
+  if_any ["a", "b"]
+  if_all ["c", "d"]
+  if_not ["e", "f"]
+
+with the more concise::
+
+  when (a or b) and c and d and not (e or f).
+
+The ``multiple`` groups may now be anonymous, and should from now on be defined with the ``multiple`` keyword placed in
+lieu of the group name. This makes their behavior more consistent and easier to understand. The behavior of named
+multiple groups is unchanged, but they should not be used going forward.
+
+The ``attribute`` statement now takes the ``variant`` property, unless it is inside a group with a ``variant``, or it is
+directly assigned a displayable. This allows native support for cases which previously required a multiple group with a
+variant, or an attribute_function manipulation.
 
 Automatic Oversampling
 ----------------------
@@ -81,12 +265,6 @@ When scaled to more than 200%, it will look for "eileen happy@4.png", "eileen ha
 
 Ren'Py also supports oversampling and automatic oversampling for movies played using :class:`Movie` and
 :func:`renpy.movie_cutscene`. This works similarly to images, with respect to filenames.
-
-Texture Uniforms
-----------------
-
-Inside Transforms, Ren'Py now supports uniforms of type sampler2D. These are textures that are set up
-to sample textures. These transforms can be supplied a displayable or a string that becomes a displayable.
 
 Accessibility
 -------------
@@ -116,6 +294,8 @@ the downloader game. This is the public key that will be used to verify the down
 
 When creating a new game, Ren'Py will now include a .gitignore file that contains a default set of files to ignore.
 
+It's possible to :ref:`customize the Ren'Py launcher <launcher-customization>` to select the files and directories
+that are available to click on.
 
 Text
 -----
@@ -150,9 +330,14 @@ The new :func:`renpy.get_save_data` function allows you to retrieve the data for
 without loading the save. This can be used with a traceback save to retrieve the game data without loading
 into an error state.
 
+Features
+--------
 
-Other Features
---------------
+The :tpref:`nearest` transform property now works as documented, allowing nearest neighbor texture interpolation
+to be disabled when set to False.
+
+The new :func:`HasSideImage` function returns the presence or absence of a side image before the side image
+itself is determined, making it useable in the say screen for layout.
 
 The new :var:`config.web_unload_music` variable controls whether music is unloaded when downloaded as part
 of :ref:`progressive downloading <progressive-downloading>`.
@@ -179,6 +364,9 @@ The new :func:`renpy.lex_string` function makes it possible to create a Lexer fo
 The :class:`SpriteManager` and :func:`SnowBlossom` displayables now support the `animation` parameter,
 which can be used to prevent resetting when the displayable is reshown.
 
+The :func:`SnowBlossom` displayable now supports the `distribution` parameter, which controls the distribution of how
+the particles are created, allowing the particles to be created in the center or sides of the screen.
+
 The :class:`Gallery` class now supports separate transitions when entering a sequence of images, going
 between images, and exiting the sequence of images.
 
@@ -204,7 +392,7 @@ The new :func:`renpy.seen_translation`, :func:`renpy.mark_translation_seen`, and
 functions make it possible to determine if a translation has been seen.
 
 Audio filesname can now include a volume clase, like "<volume 0.5>sunflower-slow-drag.ogg". This sets the relative
-amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue` statements.
+amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue`` statements.
 
 The new :var:`config.keep_screenshot_entering_menu` variable determines if a screenshot taken with :class:`FileTakeScreenshot`
 is kept when entering a menu context.
@@ -224,10 +412,32 @@ that the function is called from. The triple underscore function also marks the 
 inside for translation.
 
 The :var:`config.persistent_callback` callback makes it possible to update persistent data when it is loaded.
+Starting from this release :var:`persistent._version` will also be set to the current version of the game in
+any newly created persistent data. This can be used with the callback to migrate persistent save data.
 
+Changes
+-------
 
-Other Changes
--------------
+The :func:`renpy.get_renderer_info` function now returns a dictionary containing information about user's
+GPU and graphics driver, when available.
+
+Lint now reports when the translation functions (:func:`_`, :func:`__`, :func:`___`, and :func:`_p`) are called
+with the wrong number of arguments.
+
+When Ren'Py loads a Python module from the game/ directory, ``__file__`` is set to the relative path of the module.
+
+Ren'Py now support showing the same :class:`Live2D` displayable on multiple layers, with multiple tags,
+or both.
+
+:class:`Transform` now has an attribute, original_child, that gives the child of the transform before the
+function was called.
+
+The behavior of :tpref:`mesh_pad` has been changed when left or top padding is present. Previously, this would
+offset the child by the padding amount. Now, the child remains in the same place, with the padding added to the
+left and top of the child.
+
+From the Python typing module, the names Callable, Any, Self, Literal, cast, overload, final, and override are imported
+into namespaces. These become reserved names in Ren'Py, and should not be used as names in newly-developed projects.
 
 A regression that kept "Add From to Calls" from working has been fixed.
 
@@ -278,6 +488,7 @@ to determine otherwise.
 
 Ren'Py now also searches for `.rpe` and `.rpe.py` files in the new libs directory.
 
+:func:`renpy.get_renderer_info` now also include GPU vendor and device name as well as driver version.
 
 .. _renpy-8.3.7:
 .. _renpy-7.8.7:

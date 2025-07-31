@@ -23,8 +23,7 @@
 # operation.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -42,7 +41,6 @@ report = True
 
 
 def replacement_open(*args, **kwargs):
-
     global report
 
     rv = real_open(*args, **kwargs)

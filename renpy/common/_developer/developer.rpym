@@ -572,11 +572,11 @@ screen _image_load_log():
                     $ color="#ffcccc"
                     $ prefix=__("✘ ")
 
-                text "[prefix][filename!q]" color color size 14
+                text "[prefix][filename!q]" color color size 14 emoji_font None
 
             if show_help:
                 text _("\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"):
-                    size 14
+                    size 14 emoji_font None
 
     timer 10.0 action SetScreenVariable("show_help", False)
 

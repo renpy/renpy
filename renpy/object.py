@@ -20,14 +20,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 # Allow pickling NoneType.
 import builtins
-builtins.NoneType = type(None) # type: ignore
+
+builtins.NoneType = type(None)  # type: ignore
 
 
 class Object(object):
@@ -37,7 +36,7 @@ class Object(object):
 
     __version__ = 0
 
-    nosave = [ ]
+    nosave = []
 
     def __getstate__(self):
         rv = vars(self).copy()
@@ -54,7 +53,6 @@ class Object(object):
     after_setstate = None
 
     def __setstate__(self, new_dict):
-
         version = new_dict.pop("__version__", 0)
 
         self.__dict__.update(new_dict)
@@ -65,11 +63,12 @@ class Object(object):
         if self.after_setstate:
             self.after_setstate()  # E1102
 
+
 # We don't handle slots with this mechanism, since the call to vars should
 # throw an error.
 
 
-sentinels = { }
+sentinels = {}
 
 
 class Sentinel(object):
@@ -91,4 +90,4 @@ class Sentinel(object):
         self.name = name
 
     def __reduce__(self):
-        return (Sentinel, (self.name, ))
+        return (Sentinel, (self.name,))

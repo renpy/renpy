@@ -20,9 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy.display
@@ -131,12 +129,11 @@ class Color(tuple):
     _rgba = None
 
     def __new__(cls, color=None, hls=None, hsv=None, rgb=None, alpha=1.0):
-
         if color is not None:
             c = color
 
             if isinstance(c, str):
-                if c[0] == '#':
+                if c[0] == "#":
                     c = c[1:]
 
                 lenc = len(c)
@@ -217,7 +214,7 @@ class Color(tuple):
         return "<Color {}>".format(self.hexcode)
 
     def __getnewargs__(self):
-        return (tuple(self), )
+        return (tuple(self),)
 
     @property
     def rgb(self):
@@ -226,7 +223,7 @@ class Color(tuple):
                 self[0] / 255.0,
                 self[1] / 255.0,
                 self[2] / 255.0,
-                )
+            )
 
         return self._rgb
 
@@ -238,7 +235,7 @@ class Color(tuple):
                 self[1] / 255.0,
                 self[2] / 255.0,
                 self[3] / 255.0,
-                )
+            )
 
         return self._rgba
 
@@ -287,44 +284,30 @@ class Color(tuple):
     def __add__(self, other):
         other = Color(other)
 
-        return Color((
-            self[0] + other[0],
-            self[1] + other[1],
-            self[2] + other[2],
-            self[3] + other[3]))
+        return Color((self[0] + other[0], self[1] + other[1], self[2] + other[2], self[3] + other[3]))
 
     __radd__ = __add__
 
     def __sub__(self, other):
         other = Color(other)
 
-        return Color((
-            self[0] - other[0],
-            self[1] - other[1],
-            self[2] - other[2],
-            self[3] - other[3]))
+        return Color((self[0] - other[0], self[1] - other[1], self[2] - other[2], self[3] - other[3]))
 
     def __rsub__(self, other):
         other = Color(other)
         return other - self
 
     def __mul__(self, other):
-
         if isinstance(other, renpy.display.im.matrix):
             return Color(tuple(int(i) for i in other.vector_mul(self)[:4]))
 
         other = Color(other)
 
-        return Color((
-            self[0] * other[0],
-            self[1] * other[1],
-            self[2] * other[2],
-            self[3] * other[3]))
+        return Color((self[0] * other[0], self[1] * other[1], self[2] * other[2], self[3] * other[3]))
 
-    __rmul__ = __mul__ # type: ignore
+    __rmul__ = __mul__  # type: ignore
 
     def interpolate_core(self, a, b, fraction):
-
         if isinstance(a, tuple):
             rv = tuple(self.interpolate_core(ac, bc, fraction) for ac, bc in zip(a, b))
         else:
@@ -364,7 +347,7 @@ class Color(tuple):
         hsv = self.interpolate_core(self.hsv, other.hsv, fraction)
         alpha = self.interpolate_core(self.alpha, other.alpha, fraction)
 
-        return Color(hsv=hsv, alpha=alpha) # type: ignore
+        return Color(hsv=hsv, alpha=alpha)  # type: ignore
 
     def interpolate_hls(self, other, fraction):
         """
@@ -385,7 +368,7 @@ class Color(tuple):
         hls = self.interpolate_core(self.hls, other.hls, fraction)
         alpha = self.interpolate_core(self.alpha, other.alpha, fraction)
 
-        return Color(hls=hls, alpha=alpha) # type: ignore
+        return Color(hls=hls, alpha=alpha)  # type: ignore
 
     def tint(self, fraction):
         """
@@ -421,11 +404,7 @@ class Color(tuple):
         the new color.
         """
 
-        return Color((
-            self[0],
-            self[1],
-            self[2],
-            int(self[3] * opacity)))
+        return Color((self[0], self[1], self[2], int(self[3] * opacity)))
 
     def rotate_hue(self, rotation):
         """

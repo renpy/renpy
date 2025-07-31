@@ -20,14 +20,14 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import pygame_sdl2
 import renpy
 
 # A map from the name of a testcase to the testcase.
-testcases = { }
+testcases = {}
 
 # The root node.
 node = None
@@ -95,7 +95,6 @@ def execute_node(now, node, state, start):
     """
 
     while True:
-
         try:
             if state is None:
                 state = node.start()
@@ -183,7 +182,7 @@ def test_command():
     """
 
     ap = renpy.arguments.ArgumentParser(description="Runs a testcase.")
-    ap.add_argument("testcase", help="The name of a testcase to run.", nargs='?', default="default")
+    ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?", default="default")
 
     args = ap.parse_args()
 

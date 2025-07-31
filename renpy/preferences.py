@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import copy
 import math
@@ -28,61 +28,70 @@ import math
 import renpy
 
 pad_bindings = {
-    "pad_leftshoulder_press" : [ "rollback", ],
-    "pad_lefttrigger_pos" : [ "rollback", ],
-    "pad_back_press" : [ "rollback", ],
-
-    "repeat_pad_leftshoulder_press" : [ "rollback", ],
-    "repeat_pad_lefttrigger_pos" : [ "rollback", ],
-    "repeat_pad_back_press" : [ "rollback", ],
-
-    "pad_guide_press" : [ "game_menu", ],
-    "pad_start_press" : [ "game_menu", ],
-
-    "pad_y_press" : [ "hide_windows", ],
-    "pad_x_press" : [ "button_alternate" ],
-
-    "pad_rightshoulder_press" : [ "rollforward", ],
-    "repeat_pad_rightshoulder_press" : [ "rollforward", ],
-
-    "pad_righttrigger_pos" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate" ],
-    "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
-    "pad_b_press" : [ "game_menu" ],
-
-    "pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
-    "pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
-    "pad_rightx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
-
-    "pad_dpright_press" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
-    "pad_leftx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
-    "pad_rightx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
-
-    "pad_dpup_press" : [ "focus_up", "bar_up", "viewport_uparrow" ],
-    "pad_lefty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
-    "pad_righty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
-
-    "pad_dpdown_press" : [ "focus_down", "bar_down", "viewport_downarrow" ],
-    "pad_lefty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
-    "pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
-
-    "repeat_pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
-    "repeat_pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
-    "repeat_pad_rightx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
-
-    "repeat_pad_dpright_press" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
-    "repeat_pad_leftx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
-    "repeat_pad_rightx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
-
-    "repeat_pad_dpup_press" : [ "focus_up", "bar_up", "viewport_uparrow" ],
-    "repeat_pad_lefty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
-    "repeat_pad_righty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
-
-    "repeat_pad_dpdown_press" : [ "focus_down", "bar_down", "viewport_downarrow" ],
-    "repeat_pad_lefty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
-    "repeat_pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+    "pad_leftshoulder_press": [
+        "rollback",
+    ],
+    "pad_lefttrigger_pos": [
+        "rollback",
+    ],
+    "pad_back_press": [
+        "rollback",
+    ],
+    "repeat_pad_leftshoulder_press": [
+        "rollback",
+    ],
+    "repeat_pad_lefttrigger_pos": [
+        "rollback",
+    ],
+    "repeat_pad_back_press": [
+        "rollback",
+    ],
+    "pad_guide_press": [
+        "game_menu",
+    ],
+    "pad_start_press": [
+        "game_menu",
+    ],
+    "pad_y_press": [
+        "hide_windows",
+    ],
+    "pad_x_press": ["button_alternate"],
+    "pad_rightshoulder_press": [
+        "rollforward",
+    ],
+    "repeat_pad_rightshoulder_press": [
+        "rollforward",
+    ],
+    "pad_righttrigger_pos": ["dismiss", "button_select", "bar_activate", "bar_deactivate"],
+    "pad_a_press": ["dismiss", "button_select", "bar_activate", "bar_deactivate"],
+    "pad_b_press": ["game_menu"],
+    "pad_dpleft_press": ["focus_left", "bar_left", "viewport_leftarrow"],
+    "pad_leftx_neg": ["focus_left", "bar_left", "viewport_leftarrow"],
+    "pad_rightx_neg": ["focus_left", "bar_left", "viewport_leftarrow"],
+    "pad_dpright_press": ["focus_right", "bar_right", "viewport_rightarrow"],
+    "pad_leftx_pos": ["focus_right", "bar_right", "viewport_rightarrow"],
+    "pad_rightx_pos": ["focus_right", "bar_right", "viewport_rightarrow"],
+    "pad_dpup_press": ["focus_up", "bar_up", "viewport_uparrow"],
+    "pad_lefty_neg": ["focus_up", "bar_up", "viewport_uparrow"],
+    "pad_righty_neg": ["focus_up", "bar_up", "viewport_uparrow"],
+    "pad_dpdown_press": ["focus_down", "bar_down", "viewport_downarrow"],
+    "pad_lefty_pos": ["focus_down", "bar_down", "viewport_downarrow"],
+    "pad_righty_pos": ["focus_down", "bar_down", "viewport_downarrow"],
+    "repeat_pad_dpleft_press": ["focus_left", "bar_left", "viewport_leftarrow"],
+    "repeat_pad_leftx_neg": ["focus_left", "bar_left", "viewport_leftarrow"],
+    "repeat_pad_rightx_neg": ["focus_left", "bar_left", "viewport_leftarrow"],
+    "repeat_pad_dpright_press": ["focus_right", "bar_right", "viewport_rightarrow"],
+    "repeat_pad_leftx_pos": ["focus_right", "bar_right", "viewport_rightarrow"],
+    "repeat_pad_rightx_pos": ["focus_right", "bar_right", "viewport_rightarrow"],
+    "repeat_pad_dpup_press": ["focus_up", "bar_up", "viewport_uparrow"],
+    "repeat_pad_lefty_neg": ["focus_up", "bar_up", "viewport_uparrow"],
+    "repeat_pad_righty_neg": ["focus_up", "bar_up", "viewport_uparrow"],
+    "repeat_pad_dpdown_press": ["focus_down", "bar_down", "viewport_downarrow"],
+    "repeat_pad_lefty_pos": ["focus_down", "bar_down", "viewport_downarrow"],
+    "repeat_pad_righty_pos": ["focus_down", "bar_down", "viewport_downarrow"],
 }
 
-all_preferences = [ ]
+all_preferences = []
 
 
 class Preference(object):
@@ -125,13 +134,13 @@ Preference("video_image_fallback", False)
 Preference("skip_after_choices", False)
 
 # A map from channel name to the current volume (between 0 and 1).
-Preference("volumes", { })
+Preference("volumes", {})
 
 # Not used anymore.
-Preference("mute", { })
+Preference("mute", {})
 
 # Joystick mappings.
-Preference("joymap", { })
+Preference("joymap", {})
 
 # The size of the window, or None if we don't know it yet.
 Preference("physical_size", None, (tuple, type(None)))
@@ -227,11 +236,11 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
+
     __version__ = len(all_preferences) + 3
 
     # Default values, for typing purposes.
     if 1 == 0:
-
         fullscreen = False
         skip_unseen = False
         text_cps = 0
@@ -251,15 +260,15 @@ class Preferences(renpy.object.Object):
         joymap = {}
         physical_size = None
         virtual_size = None
-        renderer = u'auto'
+        renderer = "auto"
         performance_test = True
         language = None
         self_voicing = False
         self_voicing_volume_drop = 0.5
         emphasize_audio = False
         pad_enabled = True
-        mobile_rollback_side = u'disable'
-        desktop_rollback_side = u'disable'
+        mobile_rollback_side = "disable"
+        desktop_rollback_side = "disable"
         gl_npot = True
         gl_powersave = True
         gl_framerate = None
@@ -275,11 +284,10 @@ class Preferences(renpy.object.Object):
         voice_after_game_menu = False
         maximized = False
         window_position = (0, 0)
-        window_position_layout = ( (0, 0, 1920, 1080), )
+        window_position_layout = ((0, 0, 1920, 1080),)
         restore_window_position = True
         mono_audio = False
         font_kerning = 0.0
-
 
     def init(self):
         """
@@ -309,7 +317,6 @@ class Preferences(renpy.object.Object):
         error = None
 
         for p in all_preferences:
-
             v = getattr(self, p.name, None)
 
             if isinstance(v, bytes):
@@ -388,5 +395,5 @@ class Preferences(renpy.object.Object):
         return not (self == other)
 
 
-renpy.game.Preferences = Preferences # type: ignore
+renpy.game.Preferences = Preferences  # type: ignore
 renpy.game.preferences = Preferences()

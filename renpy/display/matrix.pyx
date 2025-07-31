@@ -26,7 +26,7 @@ from libc.math cimport sin, cos
 
 DEF pi = 3.14159265358979323846
 
-cdef float *aligned_1 = [ 1, 0, 0, 0, 0, 1, 0, 0,  0, 0, 1, 0, 0, 0, 0, 1 ]
+cdef float *aligned_1 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]
 cdef float *aligned_2 = [ 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]
 
 fields = [
@@ -627,20 +627,20 @@ cdef class Matrix:
         wdw = self.wdw
 
         self.xdx = xdx
-        self.xdy = ydx
-        self.xdz = zdx
-        self.xdw = wdx
-        self.ydx = xdy
+        self.xdy = xdy
+        self.xdz = xdz
+        self.xdw = xdw
+        self.ydx = ydx
         self.ydy = ydy
-        self.ydz = zdy
-        self.ydw = wdy
-        self.zdx = xdz
-        self.zdy = ydz
+        self.ydz = ydz
+        self.ydw = ydw
+        self.zdx = zdx
+        self.zdy = zdy
         self.zdz = zdz
-        self.zdw = wdz
-        self.wdx = xdw
-        self.wdy = ydw
-        self.wdz = zdw
+        self.zdw = zdw
+        self.wdx = wdx
+        self.wdy = wdy
+        self.wdz = wdz
         self.wdw = wdw
 
         return self
