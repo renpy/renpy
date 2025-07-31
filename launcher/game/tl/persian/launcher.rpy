@@ -1316,7 +1316,7 @@ translate persian strings:
 
     # game/new_project.rpy:41
     old "{#language name and font}"
-    new "{#language name and font}"
+    new "{font=Vazirmatn-RD-UI-Light.ttf}فارسی{/font}"
 
     # game/new_project.rpy:45
     old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
