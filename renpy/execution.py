@@ -1015,6 +1015,9 @@ def run_context(top):
     if renpy.config.context_callback is not None:
         renpy.config.context_callback()
 
+    for cb in renpy.config.context_callbacks:
+        cb()
+
     while True:
         context = renpy.game.context()
 

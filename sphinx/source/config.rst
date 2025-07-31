@@ -108,10 +108,11 @@ that feature.
     Similar to the default statement, these callbacks are a good place
     to add data to the game that does not exist, but needs to.
 
-.. var:: config.context_callback = None
+.. var:: config.context_callbacks = [ ]
 
-    This is a callback that is called with no arguments when Ren'Py enters a
-    new context, such as a menu context.
+    These are callbacks that are called wioh no arguments when Ren'Py enters
+    a new context, such as a at the start of the game, when entering the game
+    or main menus, or when beginning a replay.
 
 .. var:: config.interact_callbacks = [ ... ]
 

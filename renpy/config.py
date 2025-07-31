@@ -1592,6 +1592,12 @@ zoom_zaxis: bool = True
 If True, zooms will apply to the z-axis as well as the x and y axes.
 """
 
+context_callbacks: list[Callable[[], None]] = []
+"""
+A list of callbacks that are called when entering a new context.
+"""
+
+
 del os
 del collections
 
