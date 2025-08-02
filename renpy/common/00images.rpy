@@ -20,7 +20,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1900 python:
-    config.images_directory = 'images'
+
+    config.image_directories = [ "images" ]
+
+    # Compat for < 8.5
+    config.images_directory = None
+
     config.late_images_scan = False
 
     config.image_extensions =  [ ".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg" ]
@@ -29,45 +34,48 @@ init -1900 python:
 
         import os
 
-        if not config.images_directory:
-            return
+        directories = config.image_directories
 
-        prefix = config.images_directory.rstrip('/') + '/'
+        if config.images_directory and config.images_directory not in directories:
+            directories = directories + [ config.images_directory ]
 
-        non_oversampled_images = [ ]
+        for prefix in directories:
 
-        oversampled_images = [ ]
+            prefix = prefix.rstrip('/') + '/'
 
-        for fn in renpy.list_files():
-            if not fn.startswith(prefix):
-                continue
+            non_oversampled_images = [ ]
 
-            basename = os.path.basename(fn)
-            base, ext = os.path.splitext(basename)
+            oversampled_images = [ ]
 
-            if not ext.lower() in config.image_extensions:
-                continue
+            for fn in renpy.list_files():
+                if not fn.startswith(prefix):
+                    continue
 
-            base = base.lower()
-            base, _, oversampled = base.partition("@")
+                basename = os.path.basename(fn)
+                base, ext = os.path.splitext(basename)
 
-            if oversampled:
-                oversampled_images.append((base, fn))
-            else:
-                non_oversampled_images.append((base, fn))
+                if not ext.lower() in config.image_extensions:
+                    continue
 
-        for base, fn in non_oversampled_images:
-            if renpy.has_image(base, exact=True):
-                continue
+                base = base.lower()
+                base, _, oversampled = base.partition("@")
 
-            renpy.image(base, fn)
+                if oversampled:
+                    oversampled_images.append((base, fn))
+                else:
+                    non_oversampled_images.append((base, fn))
 
-        for base, fn in oversampled_images:
+            for base, fn in non_oversampled_images:
+                if renpy.has_image(base, exact=True):
+                    continue
 
-            if renpy.has_image(base, exact=True):
-                continue
+                renpy.image(base, fn)
 
-            renpy.image(base, fn)
+            for base, fn in oversampled_images:
+                if renpy.has_image(base, exact=True):
+                    continue
+
+                renpy.image(base, fn)
 
 init python:
 

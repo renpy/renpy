@@ -13,6 +13,9 @@ Changelog (Ren'Py 7.x-)
 Other Changes
 -------------
 
+The config.images_directory variable has been superseded by :var:`config.image_directories`, which is a list of
+directories that Ren'Py searches for images.
+
 The game.zip file produced by the web platform no longer contains .py files.
 
 

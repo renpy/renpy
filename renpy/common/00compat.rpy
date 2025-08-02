@@ -43,6 +43,10 @@ init -1100 python:
         if "RENPY_EXPERIMENTAL" in os.environ:
             return
 
+        if version <= (8, 5, 0):
+            config.images_directory = "images"
+            config.images_directories = [ ]
+
         if version <= (8, 3, 99):
             config.old_show_expression = True
             config.cds_label_callbacks = False
