@@ -484,6 +484,19 @@ History
     set to 250 by the default gui.
 
 
+Images
+------
+
+.. var:: config.image_directories = [ "images" ]
+
+    A list of one or more directories that Ren'Py searches for images, as described in the :ref:`images-directory` section.
+    The directories are searched in order, and the first directory that contains the image is used.
+
+.. var:: config.image_extensions =  [ ".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg" ]
+
+    A list of of file extensions that Ren'Py will use when searching for images, as described in the :ref:`images-directory` section.
+
+
 Input, Focus, and Events
 ------------------------
 

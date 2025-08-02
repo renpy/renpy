@@ -126,6 +126,9 @@ example, all of these files will define the image ``eileen happy``::
 When an image filename is given, and the image is not found, the images directory
 is searched.
 
+The images directory can be customized with :var:`config.image_directories` and
+:var:`config.image_extensions`.
+
 .. _oversampling:
 
 Oversampling
