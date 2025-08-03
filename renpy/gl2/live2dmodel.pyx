@@ -37,6 +37,9 @@ import renpy
 cdef extern from "live2dcsm.h" nogil:
     void* load_live2d_object(const char* sofile)
     void* load_live2d_function(void* handle, const char* name)
+    void deallocate_live2d_moc(void *moc)
+    void deallocate_live2d_model(void *model)
+
 
 cdef extern from "Live2DCubismCore.h":
 
@@ -199,6 +202,18 @@ cdef class Live2DModel:
         parameter_groups : dict
         opacity_groups : dict
         """
+
+
+    def __dealloc__(self):
+        """
+        Deallocates the model, and the MOC.
+        """
+
+        if self.model is not NULL:
+            deallocate_live2d_model(self.model)
+
+        if self.moc is not NULL:
+            deallocate_live2d_moc(self.moc)
 
     def __init__(self, fn):
         """
