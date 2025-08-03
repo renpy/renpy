@@ -34,7 +34,7 @@ from renpy.uguu.gl cimport GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD,
 
 import renpy
 
-cdef extern from "load_live2d.h" nogil:
+cdef extern from "live2dcsm.h" nogil:
     void* load_live2d_object(const char* sofile)
     void* load_live2d_function(void* handle, const char* name)
 
