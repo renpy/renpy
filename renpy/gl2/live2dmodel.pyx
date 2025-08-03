@@ -34,9 +34,9 @@ from renpy.uguu.gl cimport GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD,
 
 import renpy
 
-cdef extern from "SDL2/SDL.h" nogil:
-    void* SDL_LoadObject(const char* sofile)
-    void* SDL_LoadFunction(void* handle, const char* name)
+cdef extern from "load_live2d.h" nogil:
+    void* load_live2d_object(const char* sofile)
+    void* load_live2d_function(void* handle, const char* name)
 
 cdef extern from "Live2DCubismCore.h":
 
