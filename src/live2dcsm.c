@@ -28,6 +28,8 @@ void deallocate_live2d_model(void *model) {
 
 #else
 
+#include <emscripten.h>
+
 typedef struct csmMoc csmMoc;
 typedef struct csmModel csmModel;
 typedef unsigned int csmVersion;
@@ -50,178 +52,353 @@ typedef struct csmVector4 {
 
 typedef void (*csmLogFunction)(const char* message);
 
-// Emscripten implementations with empty function bodies
+// Wrappers to call the CSM functions in JavaScript using EM_JS.
 
-csmVersion csmGetVersion() {
+static EM_JS(csmVersion, wasmGetVersion, (), {
+    return window.live2d_csm.ccall('csmGetVersion', 'number', [], []);
+});
+
+static EM_JS(csmMocVersion, wasmGetLatestMocVersion, (), {
+    return window.live2d_csm.ccall('csmGetLatestMocVersion', 'number', [], []);
+});
+
+static EM_JS(csmMocVersion, wasmGetMocVersion, (const void* address, const unsigned int size), {
+    return 0;
+});
+
+static EM_JS(int, wasmHasMocConsistency, (void* address, const unsigned int size), {
+    return 0;
+});
+
+static EM_JS(csmLogFunction, wasmGetLogFunction, (), {
+    return 0;
+});
+
+static EM_JS(void, wasmSetLogFunction, (csmLogFunction handler), {
+});
+
+static EM_JS(csmMoc*, wasmReviveMocInPlace, (void* address, const unsigned int size), {
+    return 0;
+});
+
+static EM_JS(unsigned int, wasmGetSizeofModel, (const csmMoc* moc), {
+    return 0;
+});
+
+static EM_JS(csmModel*, wasmInitializeModelInPlace, (const csmMoc* moc, void* address, const unsigned int size), {
+    return 0;
+});
+
+static EM_JS(void, wasmUpdateModel, (csmModel* model), {
+});
+
+static EM_JS(void, wasmReadCanvasInfo, (const csmModel* model, csmVector2* outSizeInPixels, csmVector2* outOriginInPixels, float* outPixelsPerUnit), {
+});
+
+static EM_JS(int, wasmGetParameterCount, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const char**, wasmGetParameterIds, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const csmParameterType*, wasmGetParameterTypes, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const float*, wasmGetParameterMinimumValues, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const float*, wasmGetParameterMaximumValues, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const float*, wasmGetParameterDefaultValues, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(float*, wasmGetParameterValues, (csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const int*, wasmGetParameterRepeats, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const int*, wasmGetParameterKeyCounts, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const float**, wasmGetParameterKeyValues, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(int, wasmGetPartCount, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const char**, wasmGetPartIds, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(float*, wasmGetPartOpacities, (csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const int*, wasmGetPartParentPartIndices, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(int, wasmGetDrawableCount, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const char**, wasmGetDrawableIds, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const csmFlags*, wasmGetDrawableConstantFlags, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const csmFlags*, wasmGetDrawableDynamicFlags, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const int*, wasmGetDrawableTextureIndices, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const int*, wasmGetDrawableDrawOrders, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const int*, wasmGetDrawableRenderOrders, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const float*, wasmGetDrawableOpacities, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const int*, wasmGetDrawableMaskCounts, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const int**, wasmGetDrawableMasks, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const int*, wasmGetDrawableVertexCounts, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const csmVector2**, wasmGetDrawableVertexPositions, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const csmVector2**, wasmGetDrawableVertexUvs, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const int*, wasmGetDrawableIndexCounts, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const unsigned short**, wasmGetDrawableIndices, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const csmVector4*, wasmGetDrawableMultiplyColors, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const csmVector4*, wasmGetDrawableScreenColors, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(const int*, wasmGetDrawableParentPartIndices, (const csmModel* model), {
+    return 0;
+});
+
+static EM_JS(void, wasmResetDrawableDynamicFlags, (csmModel* model), {
+});
+
+
+// Our CSM function implementations.
+
+static csmVersion csmGetVersion() {
+    return wasmGetVersion();
+}
+
+static csmMocVersion csmGetLatestMocVersion() {
+    return wasmGetLatestMocVersion();
+}
+
+static csmMocVersion csmGetMocVersion(const void* address, const unsigned int size) {
     return 0;
 }
 
-csmMocVersion csmGetLatestMocVersion() {
+static int csmHasMocConsistency(void* address, const unsigned int size) {
     return 0;
 }
 
-csmMocVersion csmGetMocVersion(const void* address, const unsigned int size) {
+static csmLogFunction csmGetLogFunction() {
+    return NULL;
+}
+
+static void csmSetLogFunction(csmLogFunction handler) {
+}
+
+static csmMoc* csmReviveMocInPlace(void* address, const unsigned int size) {
+    return NULL;
+}
+
+static unsigned int csmGetSizeofModel(const csmMoc* moc) {
     return 0;
 }
 
-int csmHasMocConsistency(void* address, const unsigned int size) {
+static csmModel* csmInitializeModelInPlace(const csmMoc* moc, void* address, const unsigned int size) {
+    return NULL;
+}
+
+static void csmUpdateModel(csmModel* model) {
+}
+
+static void csmReadCanvasInfo(const csmModel* model, csmVector2* outSizeInPixels, csmVector2* outOriginInPixels, float* outPixelsPerUnit) {
+}
+
+static int csmGetParameterCount(const csmModel* model) {
     return 0;
 }
 
-csmLogFunction csmGetLogFunction() {
+static const char** csmGetParameterIds(const csmModel* model) {
     return NULL;
 }
 
-void csmSetLogFunction(csmLogFunction handler) {
-}
-
-csmMoc* csmReviveMocInPlace(void* address, const unsigned int size) {
+static const csmParameterType* csmGetParameterTypes(const csmModel* model) {
     return NULL;
 }
 
-unsigned int csmGetSizeofModel(const csmMoc* moc) {
+static const float* csmGetParameterMinimumValues(const csmModel* model) {
+    return NULL;
+}
+
+static const float* csmGetParameterMaximumValues(const csmModel* model) {
+    return NULL;
+}
+
+static const float* csmGetParameterDefaultValues(const csmModel* model) {
+    return NULL;
+}
+
+static float* csmGetParameterValues(csmModel* model) {
+    return NULL;
+}
+
+static const int* csmGetParameterRepeats(const csmModel* model) {
+    return NULL;
+}
+
+static const int* csmGetParameterKeyCounts(const csmModel* model) {
+    return NULL;
+}
+
+static const float** csmGetParameterKeyValues(const csmModel* model) {
+    return NULL;
+}
+
+static int csmGetPartCount(const csmModel* model) {
     return 0;
 }
 
-csmModel* csmInitializeModelInPlace(const csmMoc* moc, void* address, const unsigned int size) {
+static const char** csmGetPartIds(const csmModel* model) {
     return NULL;
 }
 
-void csmUpdateModel(csmModel* model) {
+static float* csmGetPartOpacities(csmModel* model) {
+    return NULL;
 }
 
-void csmReadCanvasInfo(const csmModel* model, csmVector2* outSizeInPixels, csmVector2* outOriginInPixels, float* outPixelsPerUnit) {
+static const int* csmGetPartParentPartIndices(const csmModel* model) {
+    return NULL;
 }
 
-int csmGetParameterCount(const csmModel* model) {
+static int csmGetDrawableCount(const csmModel* model) {
     return 0;
 }
 
-const char** csmGetParameterIds(const csmModel* model) {
+static const char** csmGetDrawableIds(const csmModel* model) {
     return NULL;
 }
 
-const csmParameterType* csmGetParameterTypes(const csmModel* model) {
+static const csmFlags* csmGetDrawableConstantFlags(const csmModel* model) {
     return NULL;
 }
 
-const float* csmGetParameterMinimumValues(const csmModel* model) {
+static const csmFlags* csmGetDrawableDynamicFlags(const csmModel* model) {
     return NULL;
 }
 
-const float* csmGetParameterMaximumValues(const csmModel* model) {
+static const int* csmGetDrawableTextureIndices(const csmModel* model) {
     return NULL;
 }
 
-const float* csmGetParameterDefaultValues(const csmModel* model) {
+static const int* csmGetDrawableDrawOrders(const csmModel* model) {
     return NULL;
 }
 
-float* csmGetParameterValues(csmModel* model) {
+static const int* csmGetDrawableRenderOrders(const csmModel* model) {
     return NULL;
 }
 
-const int* csmGetParameterRepeats(const csmModel* model) {
+static const float* csmGetDrawableOpacities(const csmModel* model) {
     return NULL;
 }
 
-const int* csmGetParameterKeyCounts(const csmModel* model) {
+static const int* csmGetDrawableMaskCounts(const csmModel* model) {
     return NULL;
 }
 
-const float** csmGetParameterKeyValues(const csmModel* model) {
+static const int** csmGetDrawableMasks(const csmModel* model) {
     return NULL;
 }
 
-int csmGetPartCount(const csmModel* model) {
-    return 0;
-}
-
-const char** csmGetPartIds(const csmModel* model) {
+static const int* csmGetDrawableVertexCounts(const csmModel* model) {
     return NULL;
 }
 
-float* csmGetPartOpacities(csmModel* model) {
+static const csmVector2** csmGetDrawableVertexPositions(const csmModel* model) {
     return NULL;
 }
 
-const int* csmGetPartParentPartIndices(const csmModel* model) {
+static const csmVector2** csmGetDrawableVertexUvs(const csmModel* model) {
     return NULL;
 }
 
-int csmGetDrawableCount(const csmModel* model) {
-    return 0;
-}
-
-const char** csmGetDrawableIds(const csmModel* model) {
+static const int* csmGetDrawableIndexCounts(const csmModel* model) {
     return NULL;
 }
 
-const csmFlags* csmGetDrawableConstantFlags(const csmModel* model) {
+static const unsigned short** csmGetDrawableIndices(const csmModel* model) {
     return NULL;
 }
 
-const csmFlags* csmGetDrawableDynamicFlags(const csmModel* model) {
+static const csmVector4* csmGetDrawableMultiplyColors(const csmModel* model) {
     return NULL;
 }
 
-const int* csmGetDrawableTextureIndices(const csmModel* model) {
+static const csmVector4* csmGetDrawableScreenColors(const csmModel* model) {
     return NULL;
 }
 
-const int* csmGetDrawableDrawOrders(const csmModel* model) {
+static const int* csmGetDrawableParentPartIndices(const csmModel* model) {
     return NULL;
 }
 
-const int* csmGetDrawableRenderOrders(const csmModel* model) {
-    return NULL;
-}
-
-const float* csmGetDrawableOpacities(const csmModel* model) {
-    return NULL;
-}
-
-const int* csmGetDrawableMaskCounts(const csmModel* model) {
-    return NULL;
-}
-
-const int** csmGetDrawableMasks(const csmModel* model) {
-    return NULL;
-}
-
-const int* csmGetDrawableVertexCounts(const csmModel* model) {
-    return NULL;
-}
-
-const csmVector2** csmGetDrawableVertexPositions(const csmModel* model) {
-    return NULL;
-}
-
-const csmVector2** csmGetDrawableVertexUvs(const csmModel* model) {
-    return NULL;
-}
-
-const int* csmGetDrawableIndexCounts(const csmModel* model) {
-    return NULL;
-}
-
-const unsigned short** csmGetDrawableIndices(const csmModel* model) {
-    return NULL;
-}
-
-const csmVector4* csmGetDrawableMultiplyColors(const csmModel* model) {
-    return NULL;
-}
-
-const csmVector4* csmGetDrawableScreenColors(const csmModel* model) {
-    return NULL;
-}
-
-const int* csmGetDrawableParentPartIndices(const csmModel* model) {
-    return NULL;
-}
-
-void csmResetDrawableDynamicFlags(csmModel* model) {
+static void csmResetDrawableDynamicFlags(csmModel* model) {
 }
 
 struct NameToPointer {
