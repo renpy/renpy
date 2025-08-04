@@ -43,6 +43,10 @@ import re
 
 did_onetime_init = False
 
+did_web_init = False
+
+web_is_incompatible = False
+
 
 def onetime_init():
     global did_onetime_init
@@ -51,12 +55,14 @@ def onetime_init():
         return
 
     if renpy.emscripten:
-        web_init()
-        did_onetime_init = True
-        return
+        if web_is_incompatible:
+            raise Exception("This version of Live2D Cubism for Web is not compatible with this version of Ren'Py.")
 
+        if not did_web_init:
+            raise Exception("Live2D Cubism for Web was not found. Install it in the Ren'Py launcher and rebuild the game.")
 
-    if renpy.windows:
+        dll = "builtin"
+    elif renpy.windows:
         dll = "Live2DCubismCore.dll"
     elif renpy.macintosh:
         dll = "libLive2DCubismCore.dylib"
@@ -65,9 +71,10 @@ def onetime_init():
     else:
         dll = "libLive2DCubismCore.so"
 
-    fn = os.path.join(os.path.dirname(sys.executable), dll)
-    if os.path.exists(fn):
-        dll = fn
+    if dll != "builtin":
+        fn = os.path.join(os.path.dirname(sys.executable), dll)
+        if os.path.exists(fn):
+            dll = fn
 
     dll = dll.encode("utf-8")
 
@@ -76,23 +83,42 @@ def onetime_init():
 
     did_onetime_init = True
 
+
 def web_init():
     """
     Initializes live2d for the web platform.
     """
 
+    global did_web_init
+    global web_is_incompatible
+
     try:
         # We assume we're in /, which is where the web build lives.
         source = open("lib/web/live2dcubismcore.js").read()
     except FileNotFoundError:
-        raise Exception("Live2D Cubism for Web was not found. Install it in the Ren'Py launcher and rebuild the game.")
+        return
 
     m = re.search(r"var _em_module=(.*)var _em = _em_module\(\);", source, re.DOTALL)
     if not m:
-        raise Exception("This version of Live2D Cubism for Web is not compatible with this version of Ren'Py.")
+        web_is_incompatible = True
+        return
 
     import emscripten
     emscripten.run_script(m.group(0) + "window.live2d_csm = _em;")
+
+    # Wait for the wasm to be ready.
+    for i in range(100):
+        emscripten.sleep(25)
+        if emscripten.run_script_int("window.live2d_csm.asm ? 1 : 0") == 1:
+            break
+    else:
+        raise Exception("Live2D Cubism for Web did not initialize in time.")
+
+    emscripten.run_script(f"""
+window.live2d_csm.ccall("csmInitializeAmountOfMemory", null, ["number"], [{renpy.config.live2d_max_memory}]);
+""")
+
+    did_web_init = True
 
 
 did_init = False
@@ -110,9 +136,6 @@ def init():
 
     if live2dmodel is None:
         raise Exception("Live2D has not been built.")
-
-    if renpy.emscripten:
-        raise Exception("Live2D is not supported the web platform.")
 
     onetime_init()
 
