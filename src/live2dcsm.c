@@ -243,6 +243,20 @@ static EM_JS(void, wasmFree, (void* moc), {
 });
 
 
+// Our utility functions.
+
+// Copy data from the main heap to the Live2D WebAssembly heap.
+static EM_JS(void, copyToLive2d, (void *source, void *wasm_destination, unsigned int size), {
+    const source = HEAPU8.subarray(source, source + size);
+    window.live2d_csm.HEAPU8.set(source, wasm_destination);
+);
+
+static EM_JS(void, copyFromLive2d, (void *wasm_source, void *destination, unsigned int size), {
+    const source = window.live2d_csm.HEAPU8.subarray(wasm_source, wasm_source + size);
+    HEAPU8.set(source, destination);
+});
+
+
 // Our CSM function implementations.
 
 static csmVersion csmGetVersion() {
