@@ -246,15 +246,54 @@ static EM_JS(void, live2dFree, (void* moc), {
 // Our utility functions.
 
 // Copy data from the main heap to the Live2D WebAssembly heap.
-static EM_JS(void, copyToLive2d, (void *source, void *wasm_destination, unsigned int size), {
-    const source = HEAPU8.subarray(source, source + size);
-    window.live2d_csm.HEAPU8.set(source, wasm_destination);
-);
-
-static EM_JS(void, copyFromLive2d, (void *wasm_source, void *destination, unsigned int size), {
-    const source = window.live2d_csm.HEAPU8.subarray(wasm_source, wasm_source + size);
-    HEAPU8.set(source, destination);
+static EM_JS(void, copyToLive2d, (void *source, void *live2d_destination, unsigned int size), {
+    const data = HEAPU8.subarray(source, source + size);
+    window.live2d_csm.HEAPU8.set(data, live2d_destination);
 });
+
+static EM_JS(void, copyFromLive2d, (void *live2d_source, void *destination, unsigned int size), {
+    const data = window.live2d_csm.HEAPU8.subarray(live2d_source, live2d_source + size);
+    HEAPU8.set(data, destination);
+});
+
+
+typedef struct MocProxy {
+    // This is 0x42424242 if the Moc has been proxied.
+    unsigned int flag;
+
+    // The address of the Moc in live2d.
+    void *live2d_moc_data;
+
+    // The address of the Moc in live2d, if it's been revived.
+    void *live2d_moc;
+
+    // The size of the Moc in bytes.
+    unsigned int size;
+} MocProxy;
+
+
+/**
+ * Given a pointer to a Moc in memory, copyies the data over to the live2d heap if it
+ * hasn't been already, copies some information into the allocated data, and returns
+ * the pointer cast to the MocProxy structure.
+ */
+static MocProxy* toMocProxy(void *address, unsigned int size) {
+
+    MocProxy *proxy = (MocProxy *) address;
+    if (proxy->flag == 0x42424242) {
+        return proxy;
+    }
+
+    void *wasm_moc = live2dMallocMoc(size);
+    copyToLive2d(address, wasm_moc, size);
+
+    proxy->flag = 0x42424242;
+    proxy->live2d_moc_data = wasm_moc;
+    proxy->live2d_moc = NULL;
+    proxy->size = size;
+
+    return proxy;
+}
 
 
 // Our CSM function implementations.
@@ -268,7 +307,9 @@ static csmMocVersion csmGetLatestMocVersion() {
 }
 
 static csmMocVersion csmGetMocVersion(const void* address, const unsigned int size) {
-    return 0;
+    MocProxy *proxy = toMocProxy((void *) address, size);
+
+    return live2dGetMocVersion(proxy->live2d_moc, proxy->size);
 }
 
 static int csmHasMocConsistency(void* address, const unsigned int size) {
@@ -283,7 +324,17 @@ static void csmSetLogFunction(csmLogFunction handler) {
 }
 
 static csmMoc* csmReviveMocInPlace(void* address, const unsigned int size) {
-    return NULL;
+    MocProxy *proxy = toMocProxy(address, size);
+
+    if (proxy->live2d_moc) {
+        return (csmMoc *) proxy;
+    }
+
+    proxy->live2d_moc = live2dReviveMocInPlace(proxy->live2d_moc_data, proxy->size);
+    if (proxy->live2d_moc == NULL) {
+        return NULL;
+    }
+    return (csmMoc *) proxy;
 }
 
 static unsigned int csmGetSizeofModel(const csmMoc* moc) {
