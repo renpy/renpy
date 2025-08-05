@@ -54,191 +54,191 @@ typedef void (*csmLogFunction)(const char* message);
 
 // Wrappers to call the CSM functions in JavaScript using EM_JS.
 
-static EM_JS(csmVersion, wasmGetVersion, (), {
+static EM_JS(csmVersion, live2dGetVersion, (), {
     return window.live2d_csm.ccall('csmGetVersion', 'number', [], []);
 });
 
-static EM_JS(csmMocVersion, wasmGetLatestMocVersion, (), {
+static EM_JS(csmMocVersion, live2dGetLatestMocVersion, (), {
     return window.live2d_csm.ccall('csmGetLatestMocVersion', 'number', [], []);
 });
 
-static EM_JS(csmMocVersion, wasmGetMocVersion, (const void* address, const unsigned int size), {
+static EM_JS(csmMocVersion, live2dGetMocVersion, (const void* address, const unsigned int size), {
     return window.live2d_csm.ccall('csmGetMocVersion', 'number', ['number', 'number'], [address, size]);
 });
 
-static EM_JS(int, wasmHasMocConsistency, (void* address, const unsigned int size), {
+static EM_JS(int, live2dHasMocConsistency, (void* address, const unsigned int size), {
     return reflect(window.live2d_csm.ccall('csmHasMocConsistency', 'number', ['number', 'number'], [address, size]));
 });
 
-static EM_JS(csmLogFunction, wasmGetLogFunction, (), {
+static EM_JS(csmLogFunction, live2dGetLogFunction, (), {
     return NULL;
 });
 
-static EM_JS(void, wasmSetLogFunction, (csmLogFunction handler), {
+static EM_JS(void, live2dSetLogFunction, (csmLogFunction handler), {
     // pass
 });
 
-static EM_JS(void*, wasmReviveMocInPlace, (void* address, const unsigned int size), {
+static EM_JS(void*, live2dReviveMocInPlace, (void* address, const unsigned int size), {
     return window.live2d_csm.ccall('csmReviveMocInPlace', 'number', ['number', 'number'], [address, size]);
 });
 
-static EM_JS(unsigned int, wasmGetSizeofModel, (void* moc), {
+static EM_JS(unsigned int, live2dGetSizeofModel, (void* moc), {
     return window.live2d_csm.ccall('csmGetSizeofModel', 'number', ['number'], [moc]);
 });
 
-static EM_JS(void*, wasmInitializeModelInPlace, (void* moc, void* address, const unsigned int size), {
+static EM_JS(void*, live2dInitializeModelInPlace, (void* moc, void* address, const unsigned int size), {
     return window.live2d_csm.ccall('csmInitializeModelInPlace', 'number', ['number', 'number', 'number'], [moc, address, size]);
 });
 
-static EM_JS(void, wasmUpdateModel, (void* model), {
+static EM_JS(void, live2dUpdateModel, (void* model), {
     window.live2d_csm.ccall('csmUpdateModel', 'void', ['number'], [model]);
 });
 
-static EM_JS(void, wasmReadCanvasInfo, (void* model, void *outSizeInPixels, void* outOriginInPixels, void* outPixelsPerUnit), {
+static EM_JS(void, live2dReadCanvasInfo, (void* model, void *outSizeInPixels, void* outOriginInPixels, void* outPixelsPerUnit), {
     window.live2d_csm.ccall('csmReadCanvasInfo', 'void', ['number', 'number', 'number', 'number'], [model, outSizeInPixels, outOriginInPixels, outPixelsPerUnit]);
 });
 
-static EM_JS(int, wasmGetParameterCount, (void* model), {
+static EM_JS(int, live2dGetParameterCount, (void* model), {
     return window.live2d_csm.ccall('csmGetParameterCount', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetParameterIds, (void* model), {
+static EM_JS(void*, live2dGetParameterIds, (void* model), {
     return window.live2d_csm.ccall('csmGetParameterIds', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetParameterTypes, (void* model), {
+static EM_JS(void*, live2dGetParameterTypes, (void* model), {
     return window.live2d_csm.ccall('csmGetParameterTypes', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetParameterMinimumValues, (void * model), {
+static EM_JS(void*, live2dGetParameterMinimumValues, (void * model), {
     return window.live2d_csm.ccall('csmGetParameterMinimumValues', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetParameterMaximumValues, (void* model), {
+static EM_JS(void*, live2dGetParameterMaximumValues, (void* model), {
     return window.live2d_csm.ccall('csmGetParameterMaximumValues', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetParameterDefaultValues, (void* model), {
+static EM_JS(void*, live2dGetParameterDefaultValues, (void* model), {
     return window.live2d_csm.ccall('csmGetParameterDefaultValues', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetParameterValues, (csmModel* model), {
+static EM_JS(void*, live2dGetParameterValues, (csmModel* model), {
     return window.live2d_csm.ccall('csmGetParameterValues', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetParameterRepeats, (void* model), {
+static EM_JS(void*, live2dGetParameterRepeats, (void* model), {
     return window.live2d_csm.ccall('csmGetParameterRepeats', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetParameterKeyCounts, (void* model), {
+static EM_JS(void*, live2dGetParameterKeyCounts, (void* model), {
     return window.live2d_csm.ccall('csmGetParameterKeyCounts', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetParameterKeyValues, (void* model), {
+static EM_JS(void*, live2dGetParameterKeyValues, (void* model), {
     return window.live2d_csm.ccall('csmGetParameterKeyValues', 'number', ['number'], [model]);
 });
 
-static EM_JS(int, wasmGetPartCount, (void* model), {
+static EM_JS(int, live2dGetPartCount, (void* model), {
     return window.live2d_csm.ccall('csmGetPartCount', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetPartIds, (void* model), {
+static EM_JS(void*, live2dGetPartIds, (void* model), {
     return window.live2d_csm.ccall('csmGetPartIds', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetPartOpacities, (csmModel* model), {
+static EM_JS(void*, live2dGetPartOpacities, (csmModel* model), {
     return window.live2d_csm.ccall('csmGetPartOpacities', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetPartParentPartIndices, (void* model), {
+static EM_JS(void*, live2dGetPartParentPartIndices, (void* model), {
     return window.live2d_csm.ccall('csmGetPartParentPartIndices', 'number', ['number'], [model]);
 });
 
-static EM_JS(int, wasmGetDrawableCount, (void* model), {
+static EM_JS(int, live2dGetDrawableCount, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableCount', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableIds, (void* model), {
+static EM_JS(void*, live2dGetDrawableIds, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableIds', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableConstantFlags, (void* model), {
+static EM_JS(void*, live2dGetDrawableConstantFlags, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableConstantFlags', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableDynamicFlags, (void* model), {
+static EM_JS(void*, live2dGetDrawableDynamicFlags, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableDynamicFlags', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableTextureIndices, (void* model), {
+static EM_JS(void*, live2dGetDrawableTextureIndices, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableTextureIndices', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableDrawOrders, (void* model), {
+static EM_JS(void*, live2dGetDrawableDrawOrders, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableDrawOrders', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableRenderOrders, (void* model), {
+static EM_JS(void*, live2dGetDrawableRenderOrders, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableRenderOrders', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableOpacities, (void* model), {
+static EM_JS(void*, live2dGetDrawableOpacities, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableOpacities', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableMaskCounts, (void* model), {
+static EM_JS(void*, live2dGetDrawableMaskCounts, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableMaskCounts', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableMasks, (void* model), {
+static EM_JS(void*, live2dGetDrawableMasks, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableMasks', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableVertexCounts, (void* model), {
+static EM_JS(void*, live2dGetDrawableVertexCounts, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableVertexCounts', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableVertexPositions, (void* model), {
+static EM_JS(void*, live2dGetDrawableVertexPositions, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableVertexPositions', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableVertexUvs, (void* model), {
+static EM_JS(void*, live2dGetDrawableVertexUvs, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableVertexUvs', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableIndexCounts, (void* model), {
+static EM_JS(void*, live2dGetDrawableIndexCounts, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableIndexCounts', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableIndices, (void* model), {
+static EM_JS(void*, live2dGetDrawableIndices, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableIndices', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableMultiplyColors, (void* model), {
+static EM_JS(void*, live2dGetDrawableMultiplyColors, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableMultiplyColors', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableScreenColors, (void* model), {
+static EM_JS(void*, live2dGetDrawableScreenColors, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableScreenColors', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, wasmGetDrawableParentPartIndices, (void* model), {
+static EM_JS(void*, live2dGetDrawableParentPartIndices, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableParentPartIndices', 'number', ['number'], [model]);
 });
 
-static EM_JS(void, wasmResetDrawableDynamicFlags, (void* model), {
+static EM_JS(void, live2dResetDrawableDynamicFlags, (void* model), {
     window.live2d_csm.ccall('csmResetDrawableDynamicFlags', null, ['number'], [model]);
 });
 
-static EM_JS(void*, wasmMallocMoc, (unsigned int size), {
+static EM_JS(void*, live2dMallocMoc, (unsigned int size), {
     return window.live2d_csm.ccall('csmMallocMoc', 'number', ['number'], [size]);
 });
 
-static EM_JS(void *, wasmMallocModel, (void *model), {
+static EM_JS(void *, live2dMallocModel, (void *model), {
     return window.live2d_csm.ccall('csmMallocModelAndInitialize', 'number', ['number'], [model]);
 });
 
-static EM_JS(void, wasmFree, (void* moc), {
+static EM_JS(void, live2dFree, (void* moc), {
     window.live2d_csm.ccall('csmFree', null, ['number'], [moc]);
 });
 
@@ -260,11 +260,11 @@ static EM_JS(void, copyFromLive2d, (void *wasm_source, void *destination, unsign
 // Our CSM function implementations.
 
 static csmVersion csmGetVersion() {
-    return wasmGetVersion();
+    return live2dGetVersion();
 }
 
 static csmMocVersion csmGetLatestMocVersion() {
-    return wasmGetLatestMocVersion();
+    return live2dGetLatestMocVersion();
 }
 
 static csmMocVersion csmGetMocVersion(const void* address, const unsigned int size) {
