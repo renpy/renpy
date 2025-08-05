@@ -45,7 +45,7 @@ init -1100 python:
 
         if version <= (8, 5, 0):
             config.images_directory = "images"
-            config.images_directories = [ ]
+            config.image_directories = [ ]
 
         if version <= (8, 3, 99):
             config.old_show_expression = True

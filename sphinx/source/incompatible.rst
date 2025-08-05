@@ -1165,7 +1165,7 @@ underneath the game directory) for images, and define them based on their
 filename. To disable this behavior, use the code::
 
     init python:
-        config.image_directory = None
+        config.images_directory = None
 
 
 .. _incompatible-6.18:
