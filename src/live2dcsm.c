@@ -234,8 +234,8 @@ static EM_JS(void*, live2dMallocMoc, (unsigned int size), {
     return window.live2d_csm.ccall('csmMallocMoc', 'number', ['number'], [size]);
 });
 
-static EM_JS(void *, live2dMallocModel, (void *model), {
-    return window.live2d_csm.ccall('csmMallocModelAndInitialize', 'number', ['number'], [model]);
+static EM_JS(void *, live2dMallocModelAndInitialize, (void *moc), {
+    return window.live2d_csm.ccall('csmMallocModelAndInitialize', 'number', ['number'], [moc]);
 });
 
 static EM_JS(void, live2dFree, (void* moc), {
@@ -267,9 +267,34 @@ typedef struct MocProxy {
     // The address of the Moc in live2d, if it's been revived.
     void *live2d_moc;
 
+    // The address of the Moc in Ren'Py.
+    void *renpy_moc_data;
+
     // The size of the Moc in bytes.
     unsigned int size;
+
 } MocProxy;
+
+
+
+typedef struct ModelProxy {
+
+    // The MocProxy associated with this model.
+    MocProxy *moc_proxy;
+
+    // The address of the model, in live2d.
+    void *live2d_model;
+
+    // The address of the copy of the model stored by Ren'Py.
+    void *renpy_model;
+
+    // The size of the model.
+    unsigned int size;
+
+    // The number of parameters
+    int parameter_count;
+
+} ModelProxy;
 
 
 /**
@@ -290,11 +315,16 @@ static MocProxy* toMocProxy(void *address, unsigned int size) {
     proxy->flag = 0x42424242;
     proxy->live2d_moc_data = wasm_moc;
     proxy->live2d_moc = NULL;
+    proxy->renpy_moc_data = address;
     proxy->size = size;
 
     return proxy;
 }
 
+static ModelProxy *toModelProxy(csmModel *address) {
+    ModelProxy *proxy = (ModelProxy *) address;
+    return NULL;
+}
 
 // Our CSM function implementations.
 
@@ -334,44 +364,64 @@ static csmMoc* csmReviveMocInPlace(void* address, const unsigned int size) {
     if (proxy->live2d_moc == NULL) {
         return NULL;
     }
+
+    proxy->renpy_moc_data = malloc(proxy->size);
+    copyFromLive2d(proxy->live2d_moc_data, proxy->renpy_moc_data, proxy->size);
+
     return (csmMoc *) proxy;
 }
 
 static unsigned int csmGetSizeofModel(const csmMoc* moc) {
-    return 0;
+    return sizeof(ModelProxy);
 }
 
 static csmModel* csmInitializeModelInPlace(const csmMoc* moc, void* address, const unsigned int size) {
-    return NULL;
+    MocProxy *moc_proxy = toMocProxy(moc, 0);
+    ModelProxy *proxy = (ModelProxy *) address;
+
+    memset(proxy, 0, sizeof(ModelProxy));
+
+    proxy->moc_proxy = moc_proxy;
+    proxy->size = live2dGetSizeofModel(moc_proxy->live2d_moc);
+    proxy->live2d_model = live2dMallocModelAndInitialize(moc_proxy->live2d_moc);
+    proxy->renpy_model = malloc(proxy->size);
+    copyFromLive2d(proxy->live2d_model, proxy->renpy_model, proxy->size);
+
+    proxy->parameter_count = live2dGetParameterCount(proxy->live2d_model);
+
+    printf("Parameter count: %d\n", proxy->parameter_count);
+
+    return (csmModel *) proxy;
 }
 
 static void csmUpdateModel(csmModel* model) {
 }
 
-static void csmReadCanvasInfo(void* model, csmVector2* outSizeInPixels, csmVector2* outOriginInPixels, float* outPixelsPerUnit) {
+static void csmReadCanvasInfo(csmModel* model, csmVector2* outSizeInPixels, csmVector2* outOriginInPixels, float* outPixelsPerUnit) {
 }
 
-static int csmGetParameterCount(void* model) {
-    return 0;
+static int csmGetParameterCount(csmModel* model) {\
+    ModelProxy *proxy = toModelProxy(model);
+    return proxy->parameter_count;
 }
 
-static const char** csmGetParameterIds(void* model) {
+static const char** csmGetParameterIds(csmModel* model) {
     return NULL;
 }
 
-static const csmParameterType* csmGetParameterTypes(void* model) {
+static const csmParameterType* csmGetParameterTypes(csmModel* model) {
     return NULL;
 }
 
-static const float* csmGetParameterMinimumValues(void* model) {
+static const float* csmGetParameterMinimumValues(csmModel* model) {
     return NULL;
 }
 
-static const float* csmGetParameterMaximumValues(void* model) {
+static const float* csmGetParameterMaximumValues(csmModel* model) {
     return NULL;
 }
 
-static const float* csmGetParameterDefaultValues(void* model) {
+static const float* csmGetParameterDefaultValues(csmModel* model) {
     return NULL;
 }
 
@@ -379,23 +429,23 @@ static float* csmGetParameterValues(csmModel* model) {
     return NULL;
 }
 
-static const int* csmGetParameterRepeats(void* model) {
+static const int* csmGetParameterRepeats(csmModel* model) {
     return NULL;
 }
 
-static const int* csmGetParameterKeyCounts(void* model) {
+static const int* csmGetParameterKeyCounts(csmModel* model) {
     return NULL;
 }
 
-static const float** csmGetParameterKeyValues(void* model) {
+static const float** csmGetParameterKeyValues(csmModel* model) {
     return NULL;
 }
 
-static int csmGetPartCount(void* model) {
+static int csmGetPartCount(csmModel* model) {
     return 0;
 }
 
-static const char** csmGetPartIds(void* model) {
+static const char** csmGetPartIds(csmModel* model) {
     return NULL;
 }
 
@@ -403,79 +453,79 @@ static float* csmGetPartOpacities(csmModel* model) {
     return NULL;
 }
 
-static const int* csmGetPartParentPartIndices(void* model) {
+static const int* csmGetPartParentPartIndices(csmModel* model) {
     return NULL;
 }
 
-static int csmGetDrawableCount(void* model) {
+static int csmGetDrawableCount(csmModel* model) {
     return 0;
 }
 
-static const char** csmGetDrawableIds(void* model) {
+static const char** csmGetDrawableIds(csmModel* model) {
     return NULL;
 }
 
-static const csmFlags* csmGetDrawableConstantFlags(void* model) {
+static const csmFlags* csmGetDrawableConstantFlags(csmModel* model) {
     return NULL;
 }
 
-static const csmFlags* csmGetDrawableDynamicFlags(void* model) {
+static const csmFlags* csmGetDrawableDynamicFlags(csmModel* model) {
     return NULL;
 }
 
-static const int* csmGetDrawableTextureIndices(void* model) {
+static const int* csmGetDrawableTextureIndices(csmModel* model) {
     return NULL;
 }
 
-static const int* csmGetDrawableDrawOrders(void* model) {
+static const int* csmGetDrawableDrawOrders(csmModel* model) {
     return NULL;
 }
 
-static const int* csmGetDrawableRenderOrders(void* model) {
+static const int* csmGetDrawableRenderOrders(csmModel* model) {
     return NULL;
 }
 
-static const float* csmGetDrawableOpacities(void* model) {
+static const float* csmGetDrawableOpacities(csmModel* model) {
     return NULL;
 }
 
-static const int* csmGetDrawableMaskCounts(void* model) {
+static const int* csmGetDrawableMaskCounts(csmModel* model) {
     return NULL;
 }
 
-static const int** csmGetDrawableMasks(void* model) {
+static const int** csmGetDrawableMasks(csmModel* model) {
     return NULL;
 }
 
-static const int* csmGetDrawableVertexCounts(void* model) {
+static const int* csmGetDrawableVertexCounts(csmModel* model) {
     return NULL;
 }
 
-static const csmVector2** csmGetDrawableVertexPositions(void* model) {
+static const csmVector2** csmGetDrawableVertexPositions(csmModel* model) {
     return NULL;
 }
 
-static const csmVector2** csmGetDrawableVertexUvs(void* model) {
+static const csmVector2** csmGetDrawableVertexUvs(csmModel* model) {
     return NULL;
 }
 
-static const int* csmGetDrawableIndexCounts(void* model) {
+static const int* csmGetDrawableIndexCounts(csmModel* model) {
     return NULL;
 }
 
-static const unsigned short** csmGetDrawableIndices(void* model) {
+static const unsigned short** csmGetDrawableIndices(csmModel* model) {
     return NULL;
 }
 
-static const csmVector4* csmGetDrawableMultiplyColors(void* model) {
+static const csmVector4* csmGetDrawableMultiplyColors(csmModel* model) {
     return NULL;
 }
 
-static const csmVector4* csmGetDrawableScreenColors(void* model) {
+static const csmVector4* csmGetDrawableScreenColors(csmModel* model) {
     return NULL;
 }
 
-static const int* csmGetDrawableParentPartIndices(void* model) {
+static const int* csmGetDrawableParentPartIndices(csmModel* model) {
     return NULL;
 }
 
