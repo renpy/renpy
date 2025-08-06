@@ -246,12 +246,12 @@ static EM_JS(void, live2dFree, (void* moc), {
 // Our utility functions.
 
 // Copy data from the main heap to the Live2D WebAssembly heap.
-static EM_JS(void, copyToLive2d, (void *source, void *live2d_destination, unsigned int size), {
+static EM_JS(void, copyToLive2d, (const void *source, void *live2d_destination, unsigned int size), {
     const data = HEAPU8.subarray(source, source + size);
     window.live2d_csm.HEAPU8.set(data, live2d_destination);
 });
 
-static EM_JS(void, copyFromLive2d, (void *live2d_source, void *destination, unsigned int size), {
+static EM_JS(void, copyFromLive2d, (const void *live2d_source, void *destination, unsigned int size), {
     const data = window.live2d_csm.HEAPU8.subarray(live2d_source, live2d_source + size);
     HEAPU8.set(data, destination);
 });
@@ -294,6 +294,9 @@ typedef struct ModelProxy {
     // The number of parameters
     int parameter_count;
 
+    // Fields that point to things in the model.
+    const char **renpy_parameter_ids;
+
 } ModelProxy;
 
 
@@ -325,6 +328,41 @@ static ModelProxy *toModelProxy(csmModel *address) {
     ModelProxy *proxy = (ModelProxy *) address;
     return NULL;
 }
+
+static void *pointerFromLive2d(ModelProxy *model, const void *address) {
+    if (!address) {
+        return NULL;
+    }
+
+    if (model->live2d_model <= address && address < model->live2d_model + model->size) {
+        return address - model->live2d_model + model->renpy_model;
+    }
+
+    MocProxy *moc = model->moc_proxy;
+
+    if (moc->live2d_moc_data <= address && address < moc->live2d_moc_data + moc->size) {
+        return address - moc->live2d_moc_data + moc->renpy_moc_data;
+    }
+
+    fprintf(stderr, "Error: Address %p is not in the model or moc memory.\n", address);
+
+    return NULL;
+}
+
+static void **pointerListFromLive2d(ModelProxy *model, const void *address, unsigned int size) {
+    if (!address || size == 0) {
+        return NULL;
+    }
+
+    void **source = (void **) pointerFromLive2d(model, address);
+    void **result = (void **) malloc(size * sizeof(void *));
+
+    for (unsigned int i = 0; i < size; i++) {
+        result[i] = pointerFromLive2d(model, source[i]);
+    }
+
+    return result;
+};
 
 // Our CSM function implementations.
 
@@ -388,8 +426,7 @@ static csmModel* csmInitializeModelInPlace(const csmMoc* moc, void* address, con
     copyFromLive2d(proxy->live2d_model, proxy->renpy_model, proxy->size);
 
     proxy->parameter_count = live2dGetParameterCount(proxy->live2d_model);
-
-    printf("Parameter count: %d\n", proxy->parameter_count);
+    proxy->renpy_parameter_ids = (const char **) pointerListFromLive2d(proxy, live2dGetParameterIds(proxy->live2d_model), proxy->parameter_count);
 
     return (csmModel *) proxy;
 }
@@ -406,7 +443,7 @@ static int csmGetParameterCount(csmModel* model) {\
 }
 
 static const char** csmGetParameterIds(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_parameter_ids;
 }
 
 static const csmParameterType* csmGetParameterTypes(csmModel* model) {

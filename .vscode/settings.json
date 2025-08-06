@@ -291,5 +291,8 @@
                 }
             }
         ]
-    }
+    },
+    "C_Cpp.default.defines": [
+        "__EMSCRIPTEN__"
+    ]
 }
