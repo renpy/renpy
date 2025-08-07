@@ -91,11 +91,11 @@ static EM_JS(void*, live2dInitializeModelInPlace, (void* moc, void* address, con
 });
 
 static EM_JS(void, live2dUpdateModel, (void* model), {
-    window.live2d_csm.ccall('csmUpdateModel', 'void', ['number'], [model]);
+    window.live2d_csm.ccall('csmUpdateModel', null, ['number'], [model]);
 });
 
 static EM_JS(void, live2dReadCanvasInfo, (void* model, void *outSizeInPixels, void* outOriginInPixels, void* outPixelsPerUnit), {
-    window.live2d_csm.ccall('csmReadCanvasInfo', 'void', ['number', 'number', 'number', 'number'], [model, outSizeInPixels, outOriginInPixels, outPixelsPerUnit]);
+    window.live2d_csm.ccall("csmReadCanvasInfo", null, ["number", "number", "number", "number"], [model, outSizeInPixels, outOriginInPixels, outPixelsPerUnit]);
 });
 
 static EM_JS(int, live2dGetParameterCount, (void* model), {
@@ -238,6 +238,10 @@ static EM_JS(void *, live2dMallocModelAndInitialize, (void *moc), {
     return window.live2d_csm.ccall('csmMallocModelAndInitialize', 'number', ['number'], [moc]);
 });
 
+static EM_JS(void *, live2dMalloc, (unsigned int size), {
+    return window.live2d_csm.ccall('csmMalloc', 'number', ['number'], [size]);
+});
+
 static EM_JS(void, live2dFree, (void* moc), {
     window.live2d_csm.ccall('csmFree', null, ['number'], [moc]);
 });
@@ -312,7 +316,7 @@ typedef struct ModelProxy {
     const char **renpy_drawable_ids;
     const csmFlags *renpy_drawable_constant_flags;
     void *live2d_drawable_dynamic_flags;
-    const csmFlags *renpy_drawable_dynamic_flags;
+    csmFlags *renpy_drawable_dynamic_flags;
     const int *renpy_drawable_texture_indices;
     const int *renpy_drawable_draw_orders;
     const int *renpy_drawable_render_orders;
@@ -327,11 +331,6 @@ typedef struct ModelProxy {
     const csmVector4 *renpy_drawable_multiply_colors;
     const csmVector4 *renpy_drawable_screen_colors;
     const int *renpy_drawable_parent_part_indices;
-
-
-
-
-
 } ModelProxy;
 
 
@@ -361,7 +360,7 @@ static MocProxy* toMocProxy(void *address, unsigned int size) {
 
 static ModelProxy *toModelProxy(csmModel *address) {
     ModelProxy *proxy = (ModelProxy *) address;
-    return NULL;
+    return proxy;
 }
 
 static void *pointerFromLive2d(ModelProxy *model, const void *address) {
@@ -380,7 +379,6 @@ static void *pointerFromLive2d(ModelProxy *model, const void *address) {
     }
 
     fprintf(stderr, "Error: Address %p is not in the model or moc memory.\n", address);
-
     return NULL;
 }
 
@@ -501,9 +499,33 @@ static csmModel* csmInitializeModelInPlace(const csmMoc* moc, void* address, con
 }
 
 static void csmUpdateModel(csmModel* model) {
+    ModelProxy *proxy = toModelProxy(model);
+
+    copyToLive2d(proxy->renpy_parameter_values, proxy->live2d_parameter_values, sizeof(float) * proxy->parameter_count);
+    copyToLive2d(proxy->renpy_part_opacities, proxy->live2d_part_opacities, sizeof(float) * proxy->part_count);
+    live2dUpdateModel(proxy->live2d_model);
+    copyFromLive2d(proxy->live2d_model, proxy->renpy_model, proxy->size);
 }
 
 static void csmReadCanvasInfo(csmModel* model, csmVector2* outSizeInPixels, csmVector2* outOriginInPixels, float* outPixelsPerUnit) {
+    float results[5];
+    void *live2dResults = live2dMalloc(sizeof(float) * 5);
+
+    live2dReadCanvasInfo(
+        toModelProxy(model)->live2d_model,
+        live2dResults,
+        live2dResults + sizeof(float) * 2,
+        live2dResults + sizeof(float) * 4
+    );
+
+    copyFromLive2d(live2dResults, results, sizeof(float) * 5);
+    live2dFree(live2dResults);
+
+    outSizeInPixels->x = results[0];
+    outSizeInPixels->y = results[1];
+    outOriginInPixels->x = results[2];
+    outOriginInPixels->y = results[3];
+    *outPixelsPerUnit = results[4];
 }
 
 static int csmGetParameterCount(csmModel* model) {\
@@ -637,7 +659,7 @@ static const int* csmGetDrawableParentPartIndices(csmModel* model) {
 
 static void csmResetDrawableDynamicFlags(csmModel* model) {
     ModelProxy *proxy = toModelProxy(model);
-    live2dResetDrawableDynamicFlags(proxy->live2d_model);
+    live2dResetDrawableDynamicFlags((void *) proxy->live2d_model);
     copyFromLive2d(proxy->live2d_drawable_dynamic_flags, proxy->renpy_drawable_dynamic_flags, proxy->drawable_count * sizeof(csmFlags));
 }
 
