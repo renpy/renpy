@@ -280,7 +280,7 @@ typedef struct MocProxy {
 typedef struct ModelProxy {
 
     // The MocProxy associated with this model.
-    MocProxy *moc_proxy;
+    const MocProxy *moc_proxy;
 
     // The address of the model, in live2d.
     void *live2d_model;
@@ -293,9 +293,44 @@ typedef struct ModelProxy {
 
     // The number of parameters
     int parameter_count;
-
-    // Fields that point to things in the model.
     const char **renpy_parameter_ids;
+    const csmParameterType *renpy_parameter_types;
+    const float *renpy_parameter_minimum_values;
+    const float *renpy_parameter_maximum_values;
+    const float *renpy_parameter_default_values;
+    void *live2d_parameter_values;
+    float *renpy_parameter_values;
+    const int *renpy_parameter_repeats;
+    const int *renpy_parameter_key_counts;
+    const float **renpy_parameter_key_values;
+    int part_count;
+    const char **renpy_part_ids;
+    void *live2d_part_opacities;
+    float *renpy_part_opacities;
+    const int *renpy_part_parent_part_indices;
+    int drawable_count;
+    const char **renpy_drawable_ids;
+    const csmFlags *renpy_drawable_constant_flags;
+    void *live2d_drawable_dynamic_flags;
+    const csmFlags *renpy_drawable_dynamic_flags;
+    const int *renpy_drawable_texture_indices;
+    const int *renpy_drawable_draw_orders;
+    const int *renpy_drawable_render_orders;
+    const float *renpy_drawable_opacities;
+    const int *renpy_drawable_mask_counts;
+    const int **renpy_drawable_masks;
+    const int *renpy_drawable_vertex_counts;
+    const csmVector2 **renpy_drawable_vertex_positions;
+    const csmVector2 **renpy_drawable_vertex_uvs;
+    const int *renpy_drawable_index_counts;
+    const unsigned short **renpy_drawable_indices;
+    const csmVector4 *renpy_drawable_multiply_colors;
+    const csmVector4 *renpy_drawable_screen_colors;
+    const int *renpy_drawable_parent_part_indices;
+
+
+
+
 
 } ModelProxy;
 
@@ -338,7 +373,7 @@ static void *pointerFromLive2d(ModelProxy *model, const void *address) {
         return address - model->live2d_model + model->renpy_model;
     }
 
-    MocProxy *moc = model->moc_proxy;
+    const MocProxy *moc = model->moc_proxy;
 
     if (moc->live2d_moc_data <= address && address < moc->live2d_moc_data + moc->size) {
         return address - moc->live2d_moc_data + moc->renpy_moc_data;
@@ -381,7 +416,8 @@ static csmMocVersion csmGetMocVersion(const void* address, const unsigned int si
 }
 
 static int csmHasMocConsistency(void* address, const unsigned int size) {
-    return 0;
+    MocProxy *proxy = toMocProxy(address, size);
+    return live2dHasMocConsistency(proxy->live2d_moc_data, proxy->size);
 }
 
 static csmLogFunction csmGetLogFunction() {
@@ -414,7 +450,7 @@ static unsigned int csmGetSizeofModel(const csmMoc* moc) {
 }
 
 static csmModel* csmInitializeModelInPlace(const csmMoc* moc, void* address, const unsigned int size) {
-    MocProxy *moc_proxy = toMocProxy(moc, 0);
+    const MocProxy *moc_proxy = (const MocProxy *) moc;
     ModelProxy *proxy = (ModelProxy *) address;
 
     memset(proxy, 0, sizeof(ModelProxy));
@@ -427,6 +463,39 @@ static csmModel* csmInitializeModelInPlace(const csmMoc* moc, void* address, con
 
     proxy->parameter_count = live2dGetParameterCount(proxy->live2d_model);
     proxy->renpy_parameter_ids = (const char **) pointerListFromLive2d(proxy, live2dGetParameterIds(proxy->live2d_model), proxy->parameter_count);
+    proxy->renpy_parameter_types = (const csmParameterType *) pointerFromLive2d(proxy, live2dGetParameterTypes(proxy->live2d_model));
+    proxy->renpy_parameter_minimum_values = (const float *) pointerFromLive2d(proxy, live2dGetParameterMinimumValues(proxy->live2d_model));
+    proxy->renpy_parameter_maximum_values = (const float *) pointerFromLive2d(proxy, live2dGetParameterMaximumValues(proxy->live2d_model));
+    proxy->renpy_parameter_default_values = (const float *) pointerFromLive2d(proxy, live2dGetParameterDefaultValues(proxy->live2d_model));
+    proxy->live2d_parameter_values = live2dGetParameterValues(proxy->live2d_model);
+    proxy->renpy_parameter_values = (float *) pointerFromLive2d(proxy, proxy->live2d_parameter_values);
+    proxy->renpy_parameter_repeats = (const int *) pointerFromLive2d(proxy, live2dGetParameterRepeats(proxy->live2d_model));
+    proxy->renpy_parameter_key_counts = (const int *) pointerFromLive2d(proxy, live2dGetParameterKeyCounts(proxy->live2d_model));
+    proxy->renpy_parameter_key_values = (const float **) pointerListFromLive2d(proxy, live2dGetParameterKeyValues(proxy->live2d_model), proxy->parameter_count);
+    proxy->part_count = live2dGetPartCount(proxy->live2d_model);
+    proxy->renpy_part_ids = (const char **) pointerListFromLive2d(proxy, live2dGetPartIds(proxy->live2d_model), proxy->part_count);
+    proxy->live2d_part_opacities = live2dGetPartOpacities(proxy->live2d_model);
+    proxy->renpy_part_opacities = (float *) pointerFromLive2d(proxy, proxy->live2d_part_opacities);
+    proxy->renpy_part_parent_part_indices = (const int *) pointerFromLive2d(proxy, live2dGetPartParentPartIndices(proxy->live2d_model));
+    proxy->drawable_count = live2dGetDrawableCount(proxy->live2d_model);
+    proxy->renpy_drawable_ids = (const char **) pointerListFromLive2d(proxy, live2dGetDrawableIds(proxy->live2d_model), proxy->drawable_count);
+    proxy->renpy_drawable_constant_flags = (const csmFlags *) pointerFromLive2d(proxy, live2dGetDrawableConstantFlags(proxy->live2d_model));
+    proxy->live2d_drawable_dynamic_flags = live2dGetDrawableDynamicFlags(proxy->live2d_model);
+    proxy->renpy_drawable_dynamic_flags = (const csmFlags *) pointerFromLive2d(proxy, proxy->live2d_drawable_dynamic_flags);
+    proxy->renpy_drawable_texture_indices = (const int *) pointerFromLive2d(proxy, live2dGetDrawableTextureIndices(proxy->live2d_model));
+    proxy->renpy_drawable_draw_orders = (const int *) pointerFromLive2d(proxy, live2dGetDrawableDrawOrders(proxy->live2d_model));
+    proxy->renpy_drawable_render_orders = (const int *) pointerFromLive2d(proxy, live2dGetDrawableRenderOrders(proxy->live2d_model));
+    proxy->renpy_drawable_opacities = (const float *) pointerFromLive2d(proxy, live2dGetDrawableOpacities(proxy->live2d_model));
+    proxy->renpy_drawable_mask_counts = (const int *) pointerFromLive2d(proxy, live2dGetDrawableMaskCounts(proxy->live2d_model));
+    proxy->renpy_drawable_masks = (const int **) pointerListFromLive2d(proxy, live2dGetDrawableMasks(proxy->live2d_model), proxy->drawable_count);
+    proxy->renpy_drawable_vertex_counts = (const int *) pointerFromLive2d(proxy, live2dGetDrawableVertexCounts(proxy->live2d_model));
+    proxy->renpy_drawable_vertex_positions = (const csmVector2 **) pointerListFromLive2d(proxy, live2dGetDrawableVertexPositions(proxy->live2d_model), proxy->drawable_count);
+    proxy->renpy_drawable_vertex_uvs = (const csmVector2 **) pointerListFromLive2d(proxy, live2dGetDrawableVertexUvs(proxy->live2d_model), proxy->drawable_count);
+    proxy->renpy_drawable_index_counts = (const int *) pointerFromLive2d(proxy, live2dGetDrawableIndexCounts(proxy->live2d_model));
+    proxy->renpy_drawable_indices = (const unsigned short **) pointerListFromLive2d(proxy, live2dGetDrawableIndices(proxy->live2d_model), proxy->drawable_count);
+    proxy->renpy_drawable_multiply_colors = (const csmVector4 *) pointerFromLive2d(proxy, live2dGetDrawableMultiplyColors(proxy->live2d_model));
+    proxy->renpy_drawable_screen_colors = (const csmVector4 *) pointerFromLive2d(proxy, live2dGetDrawableScreenColors(proxy->live2d_model));
+    proxy->renpy_drawable_parent_part_indices = (const int *) pointerFromLive2d(proxy, live2dGetDrawableParentPartIndices(proxy->live2d_model));
 
     return (csmModel *) proxy;
 }
@@ -447,126 +516,129 @@ static const char** csmGetParameterIds(csmModel* model) {
 }
 
 static const csmParameterType* csmGetParameterTypes(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_parameter_types;
 }
 
 static const float* csmGetParameterMinimumValues(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_parameter_minimum_values;
 }
 
 static const float* csmGetParameterMaximumValues(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_parameter_maximum_values;
 }
 
 static const float* csmGetParameterDefaultValues(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_parameter_default_values;
 }
 
 static float* csmGetParameterValues(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_parameter_values;
 }
 
 static const int* csmGetParameterRepeats(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_parameter_repeats;
 }
 
 static const int* csmGetParameterKeyCounts(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_parameter_key_counts;
 }
 
 static const float** csmGetParameterKeyValues(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_parameter_key_values;
 }
 
 static int csmGetPartCount(csmModel* model) {
-    return 0;
+    return toModelProxy(model)->part_count;
 }
 
 static const char** csmGetPartIds(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_part_ids;
 }
 
 static float* csmGetPartOpacities(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_part_opacities;
 }
 
 static const int* csmGetPartParentPartIndices(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_part_parent_part_indices;
 }
 
 static int csmGetDrawableCount(csmModel* model) {
-    return 0;
+    return toModelProxy(model)->drawable_count;
 }
 
 static const char** csmGetDrawableIds(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_ids;
 }
 
 static const csmFlags* csmGetDrawableConstantFlags(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_constant_flags;
 }
 
 static const csmFlags* csmGetDrawableDynamicFlags(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_dynamic_flags;
 }
 
 static const int* csmGetDrawableTextureIndices(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_texture_indices;
 }
 
 static const int* csmGetDrawableDrawOrders(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_draw_orders;
 }
 
 static const int* csmGetDrawableRenderOrders(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_render_orders;
 }
 
 static const float* csmGetDrawableOpacities(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_opacities;
 }
 
 static const int* csmGetDrawableMaskCounts(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_mask_counts;
 }
 
 static const int** csmGetDrawableMasks(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_masks;
 }
 
 static const int* csmGetDrawableVertexCounts(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_vertex_counts;
 }
 
 static const csmVector2** csmGetDrawableVertexPositions(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_vertex_positions;
 }
 
 static const csmVector2** csmGetDrawableVertexUvs(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_vertex_uvs;
 }
 
 static const int* csmGetDrawableIndexCounts(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_index_counts;
 }
 
 static const unsigned short** csmGetDrawableIndices(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_indices;
 }
 
 static const csmVector4* csmGetDrawableMultiplyColors(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_multiply_colors;
 }
 
 static const csmVector4* csmGetDrawableScreenColors(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_screen_colors;
 }
 
 static const int* csmGetDrawableParentPartIndices(csmModel* model) {
-    return NULL;
+    return toModelProxy(model)->renpy_drawable_parent_part_indices;
 }
 
 static void csmResetDrawableDynamicFlags(csmModel* model) {
+    ModelProxy *proxy = toModelProxy(model);
+    live2dResetDrawableDynamicFlags(proxy->live2d_model);
+    copyFromLive2d(proxy->live2d_drawable_dynamic_flags, proxy->renpy_drawable_dynamic_flags, proxy->drawable_count * sizeof(csmFlags));
 }
 
 struct NameToPointer {
