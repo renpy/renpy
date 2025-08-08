@@ -1597,6 +1597,11 @@ context_callbacks: list[Callable[[], None]] = []
 A list of callbacks that are called when entering a new context.
 """
 
+live2d_max_memory: int = 32 * 1024 * 1024
+"""
+The maximum amount of memory, in bytes, that can be used by live2d and models on the web platform.
+"""
+
 
 del os
 del collections

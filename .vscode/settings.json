@@ -28,7 +28,6 @@
         "doc": true,
         "doc-web": true,
         "jedit": true,
-        "lib*": true,
         "live2d": true,
         "rapt*": true,
         "renios*": true,
@@ -292,5 +291,8 @@
                 }
             }
         ]
-    }
+    },
+    "C_Cpp.default.defines": [
+        "__EMSCRIPTEN__"
+    ]
 }

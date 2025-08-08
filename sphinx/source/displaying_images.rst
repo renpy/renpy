@@ -111,7 +111,7 @@ Images Directory
 ----------------
 
 The image directory is named "images", and is placed under the game directory.
-When a file with a .jpg, .jpeg, .png, or .webp extension is placed underneath this directory,
+When a file with a .jpg, .jpeg, .png, .webp, .avif, or .svg extension is placed underneath this directory,
 the extension is stripped, the rest of the filename is forced to lowercase,
 and the resulting filename is used as the image name if an image with that
 name has not been previously defined.
@@ -125,6 +125,9 @@ example, all of these files will define the image ``eileen happy``::
 
 When an image filename is given, and the image is not found, the images directory
 is searched.
+
+The images directory can be customized with :var:`config.image_directories` and
+:var:`config.image_extensions`.
 
 .. _oversampling:
 

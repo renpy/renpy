@@ -339,6 +339,10 @@ def bootstrap(renpy_base):
 
     renpy.importer.init_importer()
 
+    if renpy.emscripten:
+        import renpy.gl2.live2d
+        renpy.gl2.live2d.web_init()
+
     exit_status = None
     original_basedir = basedir
     original_sys_path = list(sys.path)

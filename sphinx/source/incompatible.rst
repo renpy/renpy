@@ -13,6 +13,22 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-8.5.0:
+
+8.5.0
+-----
+
+**Image Directories** The config.images_directory variable has been superseded by
+:var:`config.image_directories`, which is a list of directories that Ren'Py searches for images. Scripts that change
+the config.images_directory variable shoul be migrated. For example, change::
+
+    define config.images_directory = "myimages"
+
+to::
+
+    define config.image_directories = [ "myimages" ]
+
+
 .. _incompatible-8.4.2:
 
 8.4.2
@@ -1149,7 +1165,7 @@ underneath the game directory) for images, and define them based on their
 filename. To disable this behavior, use the code::
 
     init python:
-        config.image_directory = None
+        config.images_directory = None
 
 
 .. _incompatible-6.18:
