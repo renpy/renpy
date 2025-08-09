@@ -382,8 +382,6 @@ init python:
         with io.open(os.path.join(destination, "manifest.json"), encoding='utf-8') as f:
             manifest = json.load(f)
 
-
-
         # Replace the project name with the ones in the game
         manifest["name"] = p.dump['build']['display_name']
 
@@ -397,7 +395,6 @@ init python:
             f.write(json.dumps(manifest))
 
         generate_files_catalog(destination)
-
 
     def build_web(p, gui=True, destination=None, launch=True):
 
@@ -441,7 +438,7 @@ init python:
         presplash = None
 
         for fn in [ "web-presplash.png", "web-presplash.jpg", "web-presplash.webp" ]:
-            fullfn = os.path.join(project.current.path, fn)
+            fullfn = os.path.join(p.path, fn)
 
             if os.path.exists(fullfn):
                 presplash = fn
@@ -449,7 +446,7 @@ init python:
 
         if presplash:
             os.unlink(os.path.join(destination, "web-presplash.jpg"))
-            shutil.copy(os.path.join(project.current.path, presplash), os.path.join(destination, presplash))
+            shutil.copy(os.path.join(p.path, presplash), os.path.join(destination, presplash))
 
         # Copy over index.html.
         with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
@@ -479,7 +476,9 @@ init python:
         with zipfile.ZipFile(destination + ".zip", 'w') as zf:
             for i, target in enumerate(zip_targets):
                 zf.write(target, os.path.relpath(target, destination))
-                reporter.progress(_("Creating package..."), i + 1, len(zip_targets))
+                reporter.progress(_("Creating package..."), i, len(zip_targets))
+
+        reporter.progress_done()
 
         # Start the web server.
 
