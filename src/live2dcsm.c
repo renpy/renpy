@@ -736,11 +736,27 @@ void *load_live2d_function(void *obj, const char *name) {
 }
 
 void deallocate_live2d_moc(void *moc) {
+    MocProxy *proxy = toMocProxy((void *) moc, 0);
 
+    live2dFree(proxy->live2d_moc_data);
+    free(proxy->renpy_moc_data);
 }
 
 void deallocate_live2d_model(void *model) {
 
+    ModelProxy *proxy = toModelProxy((csmModel *) model);
+
+    live2dFree(proxy->live2d_model);
+    free(proxy->renpy_model);
+
+    free(proxy->renpy_parameter_ids);
+    free(proxy->renpy_parameter_key_values);
+    free(proxy->renpy_part_ids);
+    free(proxy->renpy_drawable_ids);
+    free(proxy->renpy_drawable_masks);
+    free(proxy->renpy_drawable_vertex_positions);
+    free(proxy->renpy_drawable_vertex_uvs);
+    free(proxy->renpy_drawable_indices);
 }
 
 #endif
