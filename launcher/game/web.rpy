@@ -441,7 +441,7 @@ init python:
         presplash = None
 
         for fn in [ "web-presplash.png", "web-presplash.jpg", "web-presplash.webp" ]:
-            fullfn = os.path.join(project.current.path, fn)
+            fullfn = os.path.join(p.path, fn)
 
             if os.path.exists(fullfn):
                 presplash = fn
@@ -449,7 +449,7 @@ init python:
 
         if presplash:
             os.unlink(os.path.join(destination, "web-presplash.jpg"))
-            shutil.copy(os.path.join(project.current.path, presplash), os.path.join(destination, presplash))
+            shutil.copy(os.path.join(p.path, presplash), os.path.join(destination, presplash))
 
         # Copy over index.html.
         with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
