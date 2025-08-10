@@ -1,8 +1,8 @@
-==========================
-Lifecycle of a Ren'Py game
-==========================
+==================================
+Lifecycle of a Running Ren'Py Game
+==================================
 
-When launching a Ren'Py game, be it from the executable or from the launcher, it follows a series
+When running a Ren'Py game, be it from the executable or from the launcher, it follows a series
 of steps up until the point where it is closed. This page exposes the various phases of this
 lifecycle, and various related statements.
 
