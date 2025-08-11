@@ -755,17 +755,20 @@ Media (Music, Sound, and Video)
 
 .. var:: config.has_music = True
 
-    If true, the "music" mixer is enabled. The default GUI will hide the music mixer if this is false. When this,
-    config.has_sound, and config.has_voice are all false, the default GUI will hide the main mixer as well.
+    If true, the "music" mixer is enabled. Audio channels will not be assigned the "music" mixer when this is false. The
+    default GUI will hide the music mixer if this is false. When this, config.has_sound, and config.has_voice are all
+    false, the default GUI will hide the main mixer as well.
 
 .. var:: config.has_sound = True
 
-    If true, the "sfx" mixer is enabled. The default GUI will hide the sound mixer if this is false.
+    If true, the "sfx" mixer is enabled. Audio channels will not be assigned the "sfx" mixer when this is false.
+    The default GUI will hide the sound mixer if this is false.
 
 .. var:: config.has_voice = True
 
-    If true, the "voice" mixer is enabled. The default GUI will hide the voice mixer if this is false. Ren'Py will
-    disable the voice system if this is false.
+    If true, the "voice" mixer is enabled. Ren'Py's voice statement and other voice-related functionality will be
+    disabled when this is false. Audio channels will not be assigned the "voice" mixer when this is  false. The default
+    GUI will hide the voice mixer if this is false.
 
 .. var:: config.main_menu_music = None
 
