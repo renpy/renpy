@@ -961,15 +961,12 @@ Paths
 
 .. var:: config.search_prefixes = [ "", ... ]
 
-    A list of prefixes that are prepended to filenames that are searched
-    for.
+    A list of prefixes that are prepended to filenames that are loaded. This
+    is only used when a file is loaded or checked for being loadable. It does
+    not affect scans of files used to automatically define images or namespace
+    variables.
 
-.. var:: config.searchpath = [ 'common', 'game', ... ]
-
-    A list of directories that are searched for images, music,
-    archives, and other media, but not scripts. This is initialized to
-    a list containing "common" and the name of the game directory.
-
+.. config.searchpath was formerly documented.
 
 Quit
 ----
