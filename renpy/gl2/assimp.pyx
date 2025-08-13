@@ -872,7 +872,7 @@ class GLTFModel(renpy.display.displayable.Displayable):
                 cr.add_uniform(k, v)
 
             if mi.twosided:
-                cr.add_uniform("u_cull_face", None)
+                cr.add_property("cull_face", None)
 
             has_diffuse = False
 

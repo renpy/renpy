@@ -755,17 +755,20 @@ Media (Music, Sound, and Video)
 
 .. var:: config.has_music = True
 
-    If true, the "music" mixer is enabled. The default GUI will hide the music mixer if this is false. When this,
-    config.has_sound, and config.has_voice are all false, the default GUI will hide the main mixer as well.
+    If true, the "music" mixer is enabled. Audio channels will not be assigned the "music" mixer when this is false. The
+    default GUI will hide the music mixer if this is false. When this, config.has_sound, and config.has_voice are all
+    false, the default GUI will hide the main mixer as well.
 
 .. var:: config.has_sound = True
 
-    If true, the "sfx" mixer is enabled. The default GUI will hide the sound mixer if this is false.
+    If true, the "sfx" mixer is enabled. Audio channels will not be assigned the "sfx" mixer when this is false.
+    The default GUI will hide the sound mixer if this is false.
 
 .. var:: config.has_voice = True
 
-    If true, the "voice" mixer is enabled. The default GUI will hide the voice mixer if this is false. Ren'Py will
-    disable the voice system if this is false.
+    If true, the "voice" mixer is enabled. Ren'Py's voice statement and other voice-related functionality will be
+    disabled when this is false. Audio channels will not be assigned the "voice" mixer when this is  false. The default
+    GUI will hide the voice mixer if this is false.
 
 .. var:: config.main_menu_music = None
 
@@ -958,15 +961,12 @@ Paths
 
 .. var:: config.search_prefixes = [ "", ... ]
 
-    A list of prefixes that are prepended to filenames that are searched
-    for.
+    A list of prefixes that are prepended to filenames that are loaded. This
+    is only used when a file is loaded or checked for being loadable. It does
+    not affect scans of files used to automatically define images or namespace
+    variables.
 
-.. var:: config.searchpath = [ 'common', 'game', ... ]
-
-    A list of directories that are searched for images, music,
-    archives, and other media, but not scripts. This is initialized to
-    a list containing "common" and the name of the game directory.
-
+.. config.searchpath was formerly documented.
 
 Quit
 ----
