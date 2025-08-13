@@ -1,5 +1,5 @@
 ==============================
-The Ren'Py Visual Novel Engine
+The RenPy Visual Novel Engine
 ==============================
 
 https://www.renpy.org
