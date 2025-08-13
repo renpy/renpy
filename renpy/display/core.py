@@ -2528,6 +2528,7 @@ class Interface(object):
             xr, yr = ev.rel
             relx += xr
             rely += yr
+            self.mouse_event_time = get_time()
 
         # Add a single TIMEEVENT to the queue.
         self.post_time_event()
