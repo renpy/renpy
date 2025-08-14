@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2025-08-14 20:06
-
+﻿
 translate ukrainian strings:
 
     # renpy/common/_layout/classic_joystick_preferences.rpym:94
