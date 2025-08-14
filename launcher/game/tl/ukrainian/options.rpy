@@ -91,11 +91,11 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:104
     old "## This controls when the dialogue window is displayed. If \"show\", it is always displayed. If \"hide\", it is only displayed when dialogue is present. If \"auto\", the window is hidden before scene statements and shown again once dialogue is displayed."
-    new "## Цей параметр визначає час показу діалогового вікна. Якщо задано «show», воно завжди показуватиметься. Якщо задано «hide», воно показуватиметься лише за наявності діалогу. Якщо задано «auto», вікно буде приховано перед операторами сцени та показано знову, коли відобразиться діалог."
+    new "## Цей параметр визначає час показу діалогового вікна. Якщо задано «show», воно показуватиметься завжди. Якщо задано «hide», воно показуватиметься лише за наявності діалогу. Якщо задано «auto», вікно буде приховано перед операторами сцени та показано знову, коли покажеться діалог."
 
     # gui/game/options.rpy:109
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
-    new "## Після початку гри це можна змінити через оператори «window show», «window hide» та «window auto»."
+    new "## Після початку гри це можна змінити на оператори «window show», «window hide» та «window auto»."
 
     # gui/game/options.rpy:115
     old "## Transitions used to show and hide the dialogue window"
@@ -111,7 +111,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:129
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
-    new "## Стандартна затримка автоматичного перемотування. Більші значення призводять до довшого очікування, допустимий діапазон від 0 до 30."
+    new "## Стандартна затримка автоматичного переходу. Більші значення призводять до довшого очікування, допустимий діапазон від 0 до 30."
 
     # gui/game/options.rpy:135
     old "## Save directory"
@@ -139,11 +139,11 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:152
     old "## Icon"
-    new "## Значок"
+    new "## Іконка"
 
     # gui/game/options.rpy:154
     old "## The icon displayed on the taskbar or dock."
-    new "## Значок, що показується на панелі завдань або док-станції."
+    new "## Іконка, яка показується на панелі завдань або док-станції."
 
     # gui/game/options.rpy:159
     old "## Build configuration"
@@ -151,7 +151,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:161
     old "## This section controls how Ren'Py turns your project into distribution files."
-    new "## Цей розділ керує тим, як Ren'Py перетворює ваш проєкт на файли для розповсюдження."
+    new "## Цей розділ керує тим, як Ren'Py перетворює ваш проєкт на файли розповсюдження."
 
     # gui/game/options.rpy:166
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
@@ -190,15 +190,10 @@ translate ukrainian strings:
     new "## Файли, що відповідають шаблонам документації, дублюються у збірці застосунку для Mac, тому вони зʼявляються як застосунок, так і zip-файл."
 
     # gui/game/options.rpy:203
-    old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
-    new "## Для завантаження файлів розширення та здійснення покупок у застосунку потрібен ліцензійний ключ Google Play. Його можна знайти на сторінці «Сервіси та API» в консолі розробника Google Play."
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new "## Для здійснення внутрішньоігрового придбання потрібен ліцензійний ключ Google Play. Його можна знайти в консолі розробника Google Play у розділі «Монетизація» > «Налаштування монетизації» > «Ліцензування»."
 
     # gui/game/options.rpy:210
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Ім’я користувача та назва проєкту, пов’язані з проєктом itch.io, розділені скісною рискою."
 
-translate ukrainian strings:
-
-    # gui/game/options.rpy:203
-    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
-    new "## Для здійснення внутрішньоігрового придбання потрібен ліцензійний ключ Google Play. Його можна знайти в консолі розробника Google Play у розділі «Монетизація» > «Налаштування монетизації» > «Ліцензування»."
