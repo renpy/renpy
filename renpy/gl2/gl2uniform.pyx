@@ -631,7 +631,7 @@ UNIFORM_GETTER_CLASSES = {
     "u_lod_bias": (LODBiasGetter, "float"),
     "u_time": (TimeGetter, "float"),
     "u_random": (RandomGetter, "vec4"),
-    "u_viewport": (ViewportGetter, "vec2"),
+    "u_viewport": (ViewportGetter, "vec4"),
     "u_drawable_size": (DrawableSizeGetter, "vec2"),
     "u_virtual_size": (VirtualSizeGetter, "vec2"),
     "tex0" : (Tex0Getter, "sampler2D"),
