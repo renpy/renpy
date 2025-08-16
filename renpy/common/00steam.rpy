@@ -539,7 +539,7 @@ init -1499 python in _renpysteam:
             The time since the last state change.
         """
 
-        steamapi.SteamTimeline().SetTimelineStateDescription(description.encode("utf-8"), time_delta)
+        steamapi.SteamTimeline().SetTimelineTooltip(description.encode("utf-8"), time_delta)
 
     def clear_timeline_state_description(time_delta):
         """
@@ -548,7 +548,7 @@ init -1499 python in _renpysteam:
         Clears the description of the current state in the timeline.
         """
 
-        steamapi.SteamTimeline().ClearTimelineStateDescription(time_delta)
+        steamapi.SteamTimeline().ClearTimelineTooltip(time_delta)
 
     def add_timeline_event(icon, title, description, priority=0, start_offset=0.0, duration=0.0, possible_clip=None):
         """
