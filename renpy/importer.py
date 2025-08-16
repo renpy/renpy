@@ -217,7 +217,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
             renpy.loader.scandirfiles()
 
         self._finder_cache = dict(
-            self._visit_dir(files=(fn for _, fn in renpy.loader.game_files if fn.endswith(".py") if not fn.endswith("_ren.py")))
+            self._visit_dir(files=(fn for _, fn in renpy.loader.game_files if fn.endswith(".py") if not fn.endswith(("_ren.py", "_rpym.py"))))
         )
         return self._finder_cache
 
