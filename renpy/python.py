@@ -355,8 +355,21 @@ def reset_store_changes(name):
     sd.begin()
 
 
-# Code that replaces literals will calls to magic constructors.
+def mark_changed(name: str, variable: str):
+    """
+    :undocumented:
 
+    Marks `variable` in the store with `name` as changed, casusing it to be saved/loaded.
+    """
+
+    if not name.startswith("store."):
+        name = "store." + name
+
+    sd = store_dicts[name]
+    sd.ever_been_changed.add(variable)
+
+
+# Code that replaces literals will calls to magic constructors.
 
 class LoadedVariables(ast.NodeVisitor):
     """

@@ -226,6 +226,7 @@ from renpy.pyanalysis import (
 )
 
 from renpy.python import (
+    mark_changed,
     py_eval as eval,
 )
 
