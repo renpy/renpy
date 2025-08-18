@@ -24,6 +24,20 @@ The game.zip file produced by the web platform no longer contains .py files.
 8.4.2
 =====
 
+Gui Default Changes
+-------------------
+
+There have been multiple changes to how the gui namespace interacts with the ``default`` statement, designed to
+make how Ren'Py behaves match how `it was documented to behave <gui-default>`_. As of this release, gui variables
+set with ``default``...
+
+* ... are set when the game starts or restarts.
+* ... can be changed in python blocks.
+* ... retain the last set value when the language changes.
+* ... are saved and loaded like other variables.
+
+These changes only apply to variables that are initially set with ``default``. All variables in the gui namespace
+should be set with one of ``default`` or ``define``.
 
 
 Other Changes

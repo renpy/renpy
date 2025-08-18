@@ -781,8 +781,14 @@ def change_language(language, force: bool = False, rebuild: bool = False):
         This is common code that runs translate blocks and deferred styles.
         """
 
+        gui_defaults = renpy.store.gui._defaults
+        defaulted_variables = { name: getattr(renpy.store.gui, name) for name in gui_defaults }
+
         for i in renpy.config.translate_clean_stores:
             renpy.python.clean_store(i)
+
+        for name, value in defaulted_variables.items():
+            setattr(renpy.store.gui, name, value)
 
         renpy.store.gui._apply_rebuild()
 
