@@ -359,7 +359,7 @@ def mark_changed(name: str, variable: str):
     """
     :undocumented:
 
-    Marks `variable` in the store with `name` as changed, casusing it to be saved/loaded.
+    Marks `variable` in the store with `name` as changed, causing it to be saved/loaded.
     """
 
     if not name.startswith("store."):
