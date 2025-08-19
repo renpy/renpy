@@ -2172,7 +2172,9 @@ class Adjustment(renpy.object.Object):
 
         self.change(value, end_animation=False)
 
-        if value < 0 or value > self._range:
+        if self.animation_start is None or self.animation_delay is None:
+            return 0
+        elif value < 0 or value > self._range:
             self.end_animation(instantly=True)
             return 0
         elif st > self.animation_start + self.animation_delay:  # type: ignore
