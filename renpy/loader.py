@@ -761,7 +761,7 @@ def transpath(path: str) -> str|None:
     for d in renpy.config.searchpath:
         fn = os.path.join(renpy.config.basedir, d, path)
 
-        if os.path.exists(fn):
+        if os.path.isfile(fn):
             return fn
 
 
