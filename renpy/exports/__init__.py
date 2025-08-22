@@ -349,6 +349,7 @@ from renpy.exports.contextexports import (
 
 from renpy.exports.debugexports import (
     error,
+    filename_line_override,
     get_filename_line,
     log,
     pop_error_handler,
