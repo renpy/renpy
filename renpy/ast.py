@@ -2195,7 +2195,8 @@ class UserStatement(Node):
         return renpy.statements.call(method, parsed, *args, **kwargs)
 
     def execute_init(self):
-        self.call("execute_init")
+        with renpy.exports.filename_line_override(self.filename, self.linenumber):
+            self.call("execute_init")
 
         if renpy.statements.get("execute_default", self.parsed):
             default_statements.append(self)
@@ -2231,7 +2232,8 @@ class UserStatement(Node):
             self.call("execute")
 
     def execute_default(self, start):
-        self.call("execute_default")
+        with renpy.exports.filename_line_override(self.filename, self.linenumber):
+            self.call("execute_default")
 
     def predict(self):
         predictions = self.call("predict")

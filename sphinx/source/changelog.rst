@@ -13,6 +13,12 @@ Changelog (Ren'Py 7.x-)
 Other Changes
 -------------
 
+When running the execute_init or execute_default functions in a creator-defined statement,
+:func:`renpy.get_filename_line` will return the statements's filename and line number.
+
+The :func:`renpy.filename_line_override` context manager makes it possible to override the
+filename and line number returned by :func:`renpy.get_filename_line`.
+
 The config.images_directory variable has been superseded by :var:`config.image_directories`, which is a list of
 directories that Ren'Py searches for images.
 
