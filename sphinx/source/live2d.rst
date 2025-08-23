@@ -21,7 +21,7 @@ processes the motions and expressions to determine the values of
 the parameters. This is passed to the Cubism SDK for Native, which gives
 Ren'Py back a list of meshes to show. Ren'Py then renders these meshes, and the result is a Live2D character on the screen.
 
-Ren'Py supports Live2D animations in the Cubism 3 and Cubism 4 formats.
+Ren'Py supports Live2D animations in the Cubism 3, 4 and 5 formats.
 It supports the playback of expressions and motions.
 
 .. warning::
