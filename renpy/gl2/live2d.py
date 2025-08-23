@@ -40,6 +40,7 @@ import os
 import json
 import collections
 import re
+import time
 
 did_onetime_init = False
 
@@ -707,6 +708,21 @@ class Live2D(renpy.display.displayable.Displayable):
         if update_function is not None:
             common.update_function = update_function
 
+    # Used to assign unique names to Live2D objects.
+    unique_time = str(int(time.time()))
+    unique_serial = 0
+
+    def ensure_name(self):
+        """
+        Ensures a unique name is assigned to this live2d object, if None is given.
+        """
+
+        if self.name is not None:
+            return
+
+        self.name = ("_unique", self.unique_time, "", self.unique_serial)
+        Live2D.unique_serial += 1
+
     def per_interact(self):
         global live2d_showing
         live2d_showing = True
@@ -954,6 +970,8 @@ class Live2D(renpy.display.displayable.Displayable):
             return motion.wait(st, st_fade, do_fade_in, do_fade_out)
 
     def update_expressions(self, st):
+        self.ensure_name()
+
         common = self.common
         model = common.model
         state = states[self.name]
@@ -1026,6 +1044,8 @@ class Live2D(renpy.display.displayable.Displayable):
         self.common.model.blend_opacity(name, blend, value, weight)
 
     def render(self, width, height, st, at):
+        self.ensure_name()
+
         common = self.common
         model = common.model
 
