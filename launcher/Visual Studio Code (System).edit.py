@@ -55,8 +55,8 @@ class Editor(renpy.editor.Editor):
             filename = "{}:{}".format(filename, line)
         self.args.append(filename)
 
-    def open_project(self, project):
-        self.args.append(project)
+    def open_project(self, directory):
+        self.args.append(directory)
 
     def begin(self, new_window=False, **kwargs):
         self.args = [ ]
@@ -84,7 +84,7 @@ class Editor(renpy.editor.Editor):
                 flatpak_args = [ renpy.exports.fsencode(i) for i in flatpak_args ]
                 try:
                     subprocess.Popen(flatpak_args)
-                except
+                except:
                     raise missingvscode
         else:
             subprocess.Popen(args)
