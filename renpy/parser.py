@@ -683,7 +683,7 @@ def pass_statement(l, loc):
 @statement("menu")
 def menu_statement(l, loc):
     l.expect_block("menu statement")
-    label = l.label_name_declare()
+    label = l.label_name()
     l.set_global_label(label)
 
     arguments = parse_arguments(l)
@@ -761,7 +761,7 @@ def call_statement(l, loc):
     rv = [ast.Call(loc, target, expression, arguments, (expression and l.global_label or ""))]  # type: list[ast.Call|ast.Label|ast.Pass]
 
     if l.keyword("from"):
-        name = l.require(l.label_name_declare)
+        name = l.require(l.label_name)
         rv.append(ast.Label(loc, name, [], None))
     else:
         if expression:
@@ -1100,7 +1100,7 @@ def python_statement(l, loc):
 
 @statement("label")
 def label_statement(l, loc, init=False):
-    name = l.require(l.label_name_declare)
+    name = l.require(l.label_name)
     l.set_global_label(name)
     parameters = parse_parameters(l)
 

@@ -1197,13 +1197,10 @@ class Lexer(object):
         if label and label[0] != ".":
             self.global_label = label.split(".")[0]
 
-    def label_name(self, declare=False):
+    def label_name(self):
         """
         Try to parse label name. Returns name in form of "global.local" if local
         is present, "global" otherwise; or None if it doesn't parse.
-
-        If declare is True, allow only such names that are valid for declaration
-        (e.g. forbid global name mismatch)
         """
 
         old_pos = self.pos
@@ -1222,10 +1219,6 @@ class Lexer(object):
                 return None
         else:
             if self.match(r"\."):
-                # full global.local name
-                if declare and global_name != self.global_label:
-                    self.pos = old_pos
-                    return None
 
                 local_name = self.name()
                 if not local_name:
@@ -1236,12 +1229,6 @@ class Lexer(object):
             return global_name
 
         return global_name + "." + local_name
-
-    def label_name_declare(self):
-        """
-        Same as label_name, but set declare to True.
-        """
-        return self.label_name(declare=True)
 
     def image_name_component(self):
         """

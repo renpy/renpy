@@ -10,6 +10,21 @@ Changelog (Ren'Py 7.x-)
 8.5.0
 =====
 
+Local Labels
+------------
+
+Local labels have been relaxed so that they can be declared with any global label. It's now possible
+to have in :file:`chapter_1_part_1.rpy`::
+
+    label chapter_1:
+    label chapter_1.part_1:
+        # ...
+
+And then in :file:`chapter_1_part_2.rpy`::
+
+    label chapter_1.part_2:
+        # ...
+
 Other Changes
 -------------
 

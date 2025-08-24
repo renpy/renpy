@@ -44,7 +44,15 @@ For example::
         "..resides a local one."
         jump .another_local
     label .another_local:
-        "And another !"
+        "And another!"
+        jump .local_label
+
+A local label can also be declared by its full name, consisting of the global
+label name followed by the local label name, separated by a dot. This will not
+declare the local label. ::
+
+    label global_label.yet_another_local:
+        "Yet another!"
         jump .local_label
 
 Local labels can be referenced directly inside the same global label they are
