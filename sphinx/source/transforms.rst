@@ -1014,7 +1014,7 @@ following warpers are defined by default.
 In addition, most of Robert Penner's easing functions are supported. To
 make the names match those above, the functions have been renamed
 somewhat. Graphs of these standard functions can be found at
-http://www.easings.net/.
+https://easings.net/.
 
 .. include:: inc/easings
 
