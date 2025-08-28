@@ -511,6 +511,14 @@ def mark_sweep():
 
     worklist.extend(renpy.display.im.cache.get_renders())
 
+    for t in renpy.display.video.texture.values():
+        if isinstance(t, Render) and t not in worklist:
+            worklist.append(t)
+
+    for t in renpy.display.video.group_texture.values():
+        if isinstance(t, Render) and t not in worklist:
+            worklist.append(t)
+
     for r in worklist:
         r.mark = True
 
@@ -525,12 +533,6 @@ def mark_sweep():
                 worklist.append(j)
 
         i += 1
-
-    if renpy.emscripten:
-        # Do not kill Renders that cache the last video frame
-        for o in renpy.display.video.texture.values():
-            if isinstance(o, Render):
-                o.mark = True
 
     for r in live_renders:
         if not r.mark:
