@@ -35,7 +35,7 @@ init -1499 python in _renpysteam:
     import collections
     import time
 
-    from renpy.store import store, config
+    from renpy.store import store, config, NoRollback
 
     ticket = None
 
@@ -650,16 +650,14 @@ init -1499 python in _renpysteam:
 
     callback_handlers = collections.defaultdict(list)
 
-    old_menu = None
-    old_save_name = None
+    callback_state = NoRollback()
+    callback_state.menu = None
+    callback_state.save_name = None
 
     def periodic():
         """
         Called periodically to run Steam callbacks.
         """
-
-        global old_menu
-        global old_save_name
 
         for cb in steamapi.generate_callbacks():
             # print(type(cb).__name__, {k : getattr(cb, k) for k in dir(cb) if not k.startswith("_")})
@@ -676,17 +674,17 @@ init -1499 python in _renpysteam:
             else:
                 new_menu = TIMELINE_GAME_MODE_PLAYING
 
-            if old_menu != new_menu:
+            if callback_state.menu != new_menu:
                 set_timeline_game_mode(new_menu)
-                old_menu = new_menu
+                callback_state.menu = new_menu
 
-        if store.save_name != old_save_name:
+        if store.save_name != callback_state.save_name:
             if not store.save_name:
                 clear_timeline_state_description(0.0)
             else:
                 set_timeline_state_description(store.save_name, 0.0)
 
-            old_save_name = store.save_name
+            callback_state.save_name = store.save_name
 
 
 
