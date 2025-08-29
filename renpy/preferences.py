@@ -133,6 +133,8 @@ Preference("video_image_fallback", False)
 
 Preference("skip_after_choices", False)
 
+Preference("skip_after_scene_changes", False)
+
 # A map from channel name to the current volume (between 0 and 1).
 Preference("volumes", {})
 
@@ -255,6 +257,7 @@ class Preferences(renpy.object.Object):
         transitions = 2
         video_image_fallback = False
         skip_after_choices = False
+        skip_after_scene_changes = False
         volumes = {}
         mute = {}
         joymap = {}
