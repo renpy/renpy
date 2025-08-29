@@ -36,6 +36,7 @@ init -1499 python in _renpysteam:
     import time
 
     from renpy.store import store, config, NoRollback
+    from renpy.store import store, config, NoRollback
 
     ticket = None
 
@@ -669,6 +670,9 @@ init -1499 python in _renpysteam:
     callback_state = NoRollback()
     callback_state.menu = None
     callback_state.save_name = None
+    callback_state = NoRollback()
+    callback_state.menu = None
+    callback_state.save_name = None
 
     def periodic():
         """
@@ -691,7 +695,9 @@ init -1499 python in _renpysteam:
                 new_menu = TIMELINE_GAME_MODE_PLAYING
 
             if callback_state.menu != new_menu:
+            if callback_state.menu != new_menu:
                 set_timeline_game_mode(new_menu)
+                callback_state.menu = new_menu
                 callback_state.menu = new_menu
 
             if store.save_name != callback_state.save_name:
@@ -702,6 +708,14 @@ init -1499 python in _renpysteam:
                     start_game_phase(store.save_name)
 
                 callback_state.save_name = store.save_name
+        if store.save_name != callback_state.save_name:
+            if not store.save_name:
+                clear_timeline_state_description(0.0)
+            else:
+                set_timeline_state_description(store.save_name, 0.0)
+
+            callback_state.save_name = store.save_name
+
 
 
     ################################################################## Keyboard
