@@ -25,6 +25,16 @@ And then in :file:`chapter_1_part_2.rpy`::
     label chapter_1.part_2:
         # ...
 
+Steam Support
+-------------
+
+Ren'Py now uses and requires Steamworks SDK 1.62.
+
+When :var:`config.automatic_steam_timeline` is set, Ren'Py will now use :var:`save_name` to set
+the game phase. (It's best to consider :var:`save_name` to be a chapter name). Previously, it would
+annotate timeline states instead of game phases.
+
+
 Other Changes
 -------------
 
@@ -64,7 +74,7 @@ should be set with one of ``default`` or ``define``.
 Other Changes
 -------------
 
-Ren'Py will now promopt you to close other Ren'Py games before an upgrade. This addresses problems on Windows
+Ren'Py will now prompt you to close other Ren'Py games before an upgrade. This addresses problems on Windows
 that could be caused by launcher files in use by games that are running during the upgrade.
 
 

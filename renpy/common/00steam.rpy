@@ -608,6 +608,22 @@ init -1499 python in _renpysteam:
 
         steamapi.SteamTimeline().SetTimelineGameMode(mode)
 
+    def start_game_phase(identifier: str):
+        """
+        Starts a Steam Timeline game phase, and sets its identifier to `identifier`.
+        """
+
+        steamapi.SteamTimeline().StartGamePhase()
+        steamapi.SteamTimeline().SetGamePhaseID(identifier)
+
+    def end_game_phase():
+        """
+        Ends a Steam Timeline game phase.
+        """
+
+        steamapi.SteamTimeline().EndGamePhase()
+
+
 
     ############################################ Import API after steam is found.
     def import_api():
@@ -678,14 +694,14 @@ init -1499 python in _renpysteam:
                 set_timeline_game_mode(new_menu)
                 callback_state.menu = new_menu
 
-        if store.save_name != callback_state.save_name:
-            if not store.save_name:
-                clear_timeline_state_description(0.0)
-            else:
-                set_timeline_state_description(store.save_name, 0.0)
+            if store.save_name != callback_state.save_name:
+                if callback_state.save_name:
+                    end_game_phase()
 
-            callback_state.save_name = store.save_name
+                if store.save_name:
+                    start_game_phase(store.save_name)
 
+                callback_state.save_name = store.save_name
 
 
     ################################################################## Keyboard
