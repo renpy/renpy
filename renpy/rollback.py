@@ -76,6 +76,7 @@ class SlottedNoRollback(object):
 class NoRollback(SlottedNoRollback):
     """
     :doc: norollback class
+    :name: NoRollback
 
     Instances of this class, and classes inheriting from this class,
     do not participate in rollback. Objects reachable through an instance
