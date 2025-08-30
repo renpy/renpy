@@ -150,7 +150,9 @@ and rolled-back when rollback occurs.
 
 .. var:: save_name = ""
 
-    A save name that is included with saves.
+    A save name that is included with saves. This is also used by the steam timeline if
+    :var:`config.automatic_steam_timeline` is true, and is best considered to be a chapter
+    name.
 
 .. var:: _scene_show_hide_transition = None
 
