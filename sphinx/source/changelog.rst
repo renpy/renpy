@@ -34,6 +34,13 @@ When :var:`config.automatic_steam_timeline` is set, Ren'Py will now use :var:`sa
 the game phase. (It's best to consider :var:`save_name` to be a chapter name). Previously, it would
 annotate timeline states instead of game phases.
 
+Unicode Support
+---------------
+
+Ren'Py's unicode support has been updated to include support for Unicode 16 characters.
+
+The Emoji font used by Ren'Py has been updated to include 435 more glyphs, with other glyphs
+having been updated.
 
 Other Changes
 -------------
