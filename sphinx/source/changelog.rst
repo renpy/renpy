@@ -38,6 +38,9 @@ annotate timeline states instead of game phases.
 Other Changes
 -------------
 
+Ren'Py will no longer attempt to load .rpy files beginning with a dot (e.g. .hidden.rpy), as these
+are hidden files on unix-like platforms.
+
 When running the execute_init or execute_default functions in a creator-defined statement,
 :func:`renpy.get_filename_line` will return the statements's filename and line number.
 

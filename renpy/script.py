@@ -265,6 +265,10 @@ class Script(object):
         """
 
         for dir, fn in dirlist:
+
+            if fn.rpartition("/")[2].startswith("."):
+                continue
+
             if fn.endswith("_ren.py"):
                 if dir is None:
                     continue
