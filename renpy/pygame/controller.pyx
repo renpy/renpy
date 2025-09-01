@@ -17,12 +17,12 @@
 # 3. This notice may not be removed or altered from any source distribution.
 
 from sdl2 cimport *
-from renpy.pygame.error import error
 import renpy.pygame
-
+from renpy.pygame.error import error
 from renpy.pygame.rwobject cimport to_rwops
+from renpy.pygame import register_init, register_quit
 
-@renpy.pygame.register_init
+@register_init
 def init():
     """
     Initializes game controller support.
@@ -33,7 +33,7 @@ def init():
     if SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER):
         raise error()
 
-@renpy.pygame.register_quit
+@register_quit
 def quit(): # @ReservedAssignment
     """
     Shuts down game controller support.

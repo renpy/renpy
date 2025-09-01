@@ -22,6 +22,7 @@ from renpy.pygame.surface cimport *
 from renpy.pygame.rect cimport to_sdl_rect
 
 from libc.stdlib cimport calloc, free
+from renpy.pygame import register_init, register_quit
 from renpy.pygame.locals import SRCALPHA, GL_SWAP_CONTROL
 from renpy.pygame.error import error
 import renpy.pygame
@@ -81,7 +82,7 @@ def sdl_main_init():
 # True if init has been called without quit being called.
 init_done = False
 
-@renpy.pygame.register_init
+@register_init
 def init():
 
     if init_done:
@@ -99,7 +100,7 @@ def init():
 
 
 
-@renpy.pygame.register_quit
+@register_quit
 def quit(): # @ReservedAssignment
 
     global init_done

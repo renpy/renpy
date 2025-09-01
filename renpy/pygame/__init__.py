@@ -23,28 +23,6 @@ import sys
 import importlib
 
 
-class MissingModule(object):
-
-    def __init__(self, name, reason):
-        self.__name__ = name
-        self.reason = reason
-
-    def __getattr__(self, attr):
-        raise NotImplementedError(self.reason)
-
-
-def try_import(name):
-    full_name = "pygame_sdl2." + name
-
-    try:
-        module = importlib.import_module(full_name)
-    except (IOError, ImportError) as e:
-        module = MissingModule(full_name, "Could not import {}: {}".format(full_name, str(e)))
-
-    globals()[name] = module
-    sys.modules[full_name] = module
-
-
 # Lists of functions that are called on init and quit.
 init_functions = [ ]
 quit_functions = [ ]
@@ -83,86 +61,60 @@ def quit():  # @ReservedAssignment
 
 
 # Import core modules.
-from pygame_sdl2.error import *
+from renpy.pygame.error import *
 
-from pygame_sdl2.surface import Surface
-from pygame_sdl2.rect import Rect
+from renpy.pygame.surface import Surface
+from renpy.pygame.rect import Rect
 
-import pygame_sdl2.color
-import pygame_sdl2.display
-import pygame_sdl2.event
-import pygame_sdl2.key
-import pygame_sdl2.locals  # @ReservedAssignment
-import pygame_sdl2.time
-import pygame_sdl2.version
-import pygame_sdl2.locals as constants
-
-# Import optional modules.
-try_import("controller")
-try_import("draw")
-try_import("font")
-try_import("image")
-try_import("joystick")
-try_import("mixer")
-try_import("mouse")
-try_import("power")
-try_import("transform")
-try_import("scrap")
-try_import("sprite")
-try_import("sysfont")
-
-# Optional imports should be included in this function, so they show up
-# in packaging tools (like py2exe).
-
-
-def _optional_imports():
-    import pygame_sdl2.compat
-    import pygame_sdl2.controller
-    import pygame_sdl2.rwobject
-    import pygame_sdl2.gfxdraw
-    import pygame_sdl2.draw
-    import pygame_sdl2.font
-    import pygame_sdl2.image
-    import pygame_sdl2.joystick
-    import pygame_sdl2.mixer
-    import pygame_sdl2.mouse
-    import pygame_sdl2.power
-    import pygame_sdl2.transform
-    import pygame_sdl2.scrap
-    import pygame_sdl2.sprite
-    import pygame_sdl2.sysfont
+import renpy.pygame.color
+import renpy.pygame.display
+import renpy.pygame.event
+import renpy.pygame.key
+import renpy.pygame.locals  # @ReservedAssignment
+import renpy.pygame.time
+import renpy.pygame.version
+import renpy.pygame.locals as constants
+import renpy.pygame.controller
+import renpy.pygame.draw
+import renpy.pygame.image
+import renpy.pygame.joystick
+import renpy.pygame.mouse
+import renpy.pygame.power
+import renpy.pygame.transform
+import renpy.pygame.scrap
+import renpy.pygame.sysfont
 
 
 # Fill this module with locals.
-from pygame_sdl2.locals import *
+from renpy.pygame.locals import *
 
 
 def import_as_pygame():
     """
     Imports pygame_sdl2 as pygame, so that running the 'import pygame.whatever'
-    statement will import pygame_sdl2.whatever instead.
+    statement will import renpy.pygame.whatever instead.
     """
 
     import os
     import warnings
 
-    if "PYGAME_SDL2_USE_PYGAME" in os.environ:
-        return
-
     if "pygame" in sys.modules:
         warnings.warn("Pygame has already been imported, import_as_pygame may not work.", stacklevel=2)
 
+    if "pygame_sdl2" in sys.modules:
+        warnings.warn("Pygame SDL2 has already been imported, import_as_pygame may not work.", stacklevel=2)
+
     for name, mod in list(sys.modules.items()):
-        name = name.split('.')
-        if name[0] != 'pygame_sdl2':
+        if name.startswith('renpy.pygame'):
+            suffix = name[len('renpy.pygame'):]
+        else:
             continue
 
-        name[0] = 'pygame'
-        name = ".".join(name)
-
-        sys.modules[name] = mod
+        sys.modules["pygame" + suffix] = mod
+        sys.modules["pygame_sdl2" + suffix] = mod
 
     sys.modules['pygame.constants'] = constants
+    sys.modules['pygame_sdl2.constants'] = constants
 
 
 def get_sdl_byteorder():
@@ -173,7 +125,8 @@ def get_sdl_version():
     return SDL_VERSION_TUPLE
 
 
-get_platform = pygame_sdl2.display.get_platform
+def get_platform():
+    return renpy.pygame.display.get_platform()
 
 # We have new-style buffers, but not the pygame.newbuffer module.
 HAVE_NEWBUF = False

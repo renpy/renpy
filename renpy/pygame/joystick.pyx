@@ -17,17 +17,19 @@
 # 3. This notice may not be removed or altered from any source distribution.
 
 from sdl2 cimport *
-from renpy.pygame.error import error
-import renpy.pygame
 
-@renpy.pygame.register_init
+import renpy.pygame
+from renpy.pygame.error import error
+from renpy.pygame import register_init, register_quit
+
+@register_init
 def init():
     renpy.pygame.display.sdl_main_init()
 
     if SDL_InitSubSystem(SDL_INIT_JOYSTICK):
         raise error()
 
-@renpy.pygame.register_quit
+@register_quit
 def quit(): # @ReservedAssignment
     SDL_QuitSubSystem(SDL_INIT_JOYSTICK)
 
