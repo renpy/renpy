@@ -304,6 +304,9 @@ class Backup:
         if not name.startswith("renpy"):
             return
 
+        if name.startswith("renpy.pygame"):
+            return
+
         if name in backup_blacklist:
             return
 

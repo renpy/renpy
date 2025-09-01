@@ -12,7 +12,6 @@
 /* Initializes the stuff found in this file.
  */
 void core_init() {
-    import_pygame_sdl2();
 }
 
 void save_png_core(PyObject *pysurf, SDL_RWops *rw, int compress) {

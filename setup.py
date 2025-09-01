@@ -175,10 +175,7 @@ def main():
     env("CFLAGS", f"pkg-config --cflags {pkgconfig_packages}")
     env("LDFLAGS", f"pkg-config --libs {pkgconfig_packages}")
 
-    import renpy
-    version = renpy.version[7:].partition(".")[0] + ".99.99"
-
-    setuplib.setup("renpy", version)
+    setuplib.setup("renpy", "8.99.99")
 
 
 if __name__ == "__main__":

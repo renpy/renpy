@@ -25,6 +25,7 @@ import subprocess
 import io
 import textwrap
 
+
 # Encoding and sys.stderr/stdout handling ######################################
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
