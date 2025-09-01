@@ -19,11 +19,11 @@
 from sdl2 cimport *
 from sdl2_gfx cimport *
 from libc.stdlib cimport malloc, free
-from pygame_sdl2.surface cimport Surface
-from pygame_sdl2.color cimport Color
+from renpy.pygame.surface cimport Surface
+from renpy.pygame.color cimport Color
 
-from pygame_sdl2.error import error
-from pygame_sdl2.rect import Rect
+from renpy.pygame.error import error
+from renpy.pygame.rect import Rect
 
 
 def pixel(Surface surface, x, y, color):

@@ -24,7 +24,7 @@ from libc.stdio cimport FILE, fopen, fclose, fseek, ftell, fread, SEEK_SET, SEEK
 from libc.stdlib cimport calloc, free
 from libc.stdint cimport uintptr_t
 
-from pygame_sdl2.compat import file_type, bytes_, unicode_
+from renpy.pygame.compat import file_type, bytes_, unicode_
 
 import sys
 import io
@@ -54,7 +54,7 @@ cdef extern from "SDL.h" nogil:
     SDL_RWops* SDL_RWFromFile(const char *file,
                               const char *mode)
 
-cdef extern from "python_threads.h":
+cdef extern from "pygame/python_threads.h":
     void init_python_threads()
 
 cdef set_error(e):

@@ -20,17 +20,17 @@
 from libc.string cimport memmove
 from sdl2 cimport *
 
-from pygame_sdl2.color cimport map_color, get_color
-from pygame_sdl2.rect cimport to_sdl_rect
-from pygame_sdl2.rect import Rect
+from renpy.pygame.color cimport map_color, get_color
+from renpy.pygame.rect cimport to_sdl_rect
+from renpy.pygame.rect import Rect
 
-from pygame_sdl2.error import error
-from pygame_sdl2.locals import SRCALPHA
-import pygame_sdl2
+from renpy.pygame.error import error
+from renpy.pygame.locals import SRCALPHA
+import renpy.pygame
 
 import warnings
 
-cdef extern from "src/surface.h" nogil:
+cdef extern from "pygame/surface.h" nogil:
     int pygame_Blit (SDL_Surface * src, SDL_Rect * srcrect,
                  SDL_Surface * dst, SDL_Rect * dstrect, int the_args);
 
@@ -73,7 +73,7 @@ cdef class Surface:
             SDL_FreeSurface(self.surface)
             return
 
-        warnings.warn("Memory leak via Surface in pygame_sdl2.")
+        warnings.warn("Memory leak via Surface in renpy.pygame.")
 
     def __sizeof__(self):
         if self.surface and self.owns_surface:
@@ -124,7 +124,7 @@ cdef class Surface:
 
         else:
 
-            pysample = pygame_sdl2.display.get_surface()
+            pysample = renpy.pygame.display.get_surface()
 
             if pysample and pysample.surface.format.BitsPerPixel == 32:
                 sample = pysample.surface
@@ -244,7 +244,7 @@ cdef class Surface:
 
     def convert(self, surface=None):
         if not isinstance(surface, Surface):
-            surface = pygame_sdl2.display.get_surface()
+            surface = renpy.pygame.display.get_surface()
 
         cdef SDL_PixelFormat *sample_format
 
@@ -293,7 +293,7 @@ cdef class Surface:
 
     def convert_alpha(self, Surface surface=None):
         if surface is None:
-            surface = pygame_sdl2.display.get_surface()
+            surface = renpy.pygame.display.get_surface()
 
         cdef SDL_PixelFormat *sample_format
 

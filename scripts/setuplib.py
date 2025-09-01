@@ -201,7 +201,7 @@ def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_ar
     # print c_fn, "depends on", deps
 
     for dep_fn in deps:
-        for d in [module_dir, ".", "src", gen]:
+        for d in [module_dir, ".", "src", "src/pygame/include", gen]:
             prepended = os.path.join(d, dep_fn)
             if os.path.exists(prepended):
                 dep_fn = prepended
@@ -255,10 +255,10 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
     else:
         coverage_args = []
 
-    p = subprocess.Popen(
-        [
+    cmd = ([
             cython_command,
             "-Isrc",
+            "-Isrc/pygame/include",
             "-I" + gen,
             "-I.",
             "-3",
@@ -266,7 +266,12 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
         + annotate
         + lang_args
         + coverage_args
-        + ["-X", "profile=False", "-X", "embedsignature=True", fn, "-o", c_fn],
+        + ["-X", "profile=False", "-X", "embedsignature=True", fn, "-o", c_fn])
+
+    print(" ".join(cmd))
+
+    p = subprocess.Popen(
+        cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )

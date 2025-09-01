@@ -18,13 +18,13 @@
 # 3. This notice may not be removed or altered from any source distribution.
 
 from sdl2 cimport *
-from pygame_sdl2.surface cimport *
-from pygame_sdl2.rect cimport to_sdl_rect
+from renpy.pygame.surface cimport *
+from renpy.pygame.rect cimport to_sdl_rect
 
 from libc.stdlib cimport calloc, free
-from pygame_sdl2.locals import SRCALPHA, GL_SWAP_CONTROL
-from pygame_sdl2.error import error
-import pygame_sdl2
+from renpy.pygame.locals import SRCALPHA, GL_SWAP_CONTROL
+from renpy.pygame.error import error
+import renpy.pygame
 
 import warnings
 import os
@@ -34,12 +34,12 @@ ios = ("PYGAME_IOS" in os.environ)
 
 # This inits SDL proper, and should be called by the other init methods.
 
-# A map from a PYGAME_SDL2 hint to what it was set to.
+# A map from a renpy.pygame hint to what it was set to.
 _pygame_hints = { }
 
 def hint(hint, value, priority=1):
 
-    if str(hint).startswith("PYGAME_SDL2"):
+    if str(hint).startswith("renpy.pygame"):
         _pygame_hints[str(hint)] = str(value)
         return
 
@@ -81,7 +81,7 @@ def sdl_main_init():
 # True if init has been called without quit being called.
 init_done = False
 
-@pygame_sdl2.register_init
+@renpy.pygame.register_init
 def init():
 
     if init_done:
@@ -92,14 +92,14 @@ def init():
     if SDL_InitSubSystem(SDL_INIT_VIDEO):
         raise error()
 
-    pygame_sdl2.event.init()
+    renpy.pygame.event.init()
 
     global init_done
     init_done = True
 
 
 
-@pygame_sdl2.register_quit
+@renpy.pygame.register_quit
 def quit(): # @ReservedAssignment
 
     global init_done
@@ -138,7 +138,7 @@ cdef class Window:
 
         # If we do not get the AVOID_GL hint, we always create a GL-compatible
         # window. This lets us change the OPENGL flag later on.
-        if int(_get_hint("PYGAME_SDL2_AVOID_GL", "0")):
+        if int(_get_hint("renpy.pygame_AVOID_GL", "0")):
             gl_flag = 0
         else:
             gl_flag = SDL_WINDOW_OPENGL

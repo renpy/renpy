@@ -16,7 +16,7 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from pygame_sdl2.locals import POWERSTATE_UNKNOWN, POWERSTATE_ON_BATTERY, POWERSTATE_NO_BATTERY, POWERSTATE_CHARGING, POWERSTATE_CHARGED
+from renpy.pygame.locals import POWERSTATE_UNKNOWN, POWERSTATE_ON_BATTERY, POWERSTATE_NO_BATTERY, POWERSTATE_CHARGING, POWERSTATE_CHARGED
 
 from sdl2 cimport *
 
@@ -49,5 +49,3 @@ def get_power_info():
     rv.percent = percent
 
     return rv
-
-

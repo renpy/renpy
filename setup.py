@@ -67,8 +67,10 @@ def main():
     library("harfbuzz")
     library("freetype")
     library("fribidi")
+    library("SDL2_image")
     library("SDL2")
     library("png")
+    library("jpeg")
     library("z")
 
     if windows:
@@ -140,6 +142,27 @@ def main():
     cython("renpy.text.texwrap")
     cython("renpy.text.ftfont", [ "src/ftsupport.c", "src/ttgsubtable.c" ])
     cython("renpy.text.hbfont", [ "src/ftsupport.c" ])
+
+    # renpy.pygame
+    cython("renpy.pygame.error")
+    cython("renpy.pygame.color")
+    cython("renpy.pygame.controller")
+    cython("renpy.pygame.rect")
+    cython("renpy.pygame.rwobject")
+    cython("renpy.pygame.surface", source=[ "src/pygame/alphablit.c" ])
+    cython("renpy.pygame.display")
+    cython("renpy.pygame.event")
+    cython("renpy.pygame.locals")
+    cython("renpy.pygame.key")
+    cython("renpy.pygame.mouse")
+    cython("renpy.pygame.joystick")
+    cython("renpy.pygame.power")
+    cython("renpy.pygame.pygame_time")
+    cython("renpy.pygame.image", source=[ "src/pygame/write_jpeg.c", "src/pygame/write_png.c" ])
+    cython("renpy.pygame.transform", source=[ "src/pygame/SDL2_rotozoom.c" ])
+    cython("renpy.pygame.gfxdraw", source=[ "src/pygame/SDL_gfxPrimitives.c" ])
+    cython("renpy.pygame.draw")
+    cython("renpy.pygame.scrap")
 
     generate_all_cython()
     find_unnecessary_gen()

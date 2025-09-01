@@ -17,8 +17,8 @@
 # 3. This notice may not be removed or altered from any source distribution.
 
 from sdl2 cimport *
-from pygame_sdl2.display cimport main_window
-from pygame_sdl2.surface cimport Surface
+from renpy.pygame.display cimport main_window
+from renpy.pygame.surface cimport Surface
 
 def init():
     global active_cursor
@@ -87,4 +87,3 @@ cdef class ColorCursor(object):
         if active_cursor is not self:
             active_cursor = self
             SDL_SetCursor(self.cursor)
-

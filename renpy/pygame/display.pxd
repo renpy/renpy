@@ -18,7 +18,7 @@
 # 3. This notice may not be removed or altered from any source distribution.
 
 from sdl2 cimport *
-from pygame_sdl2.surface cimport Surface
+from renpy.pygame.surface cimport Surface
 
 cdef class Window:
     # Allow weak references.

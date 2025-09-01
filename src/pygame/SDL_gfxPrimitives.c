@@ -11,9 +11,9 @@ LGPL (c) A. Schiffler
 #include <math.h>
 #include <string.h>
 
-#include "SDL_gfxPrimitives.h"
+#include "pygame/SDL_gfxPrimitives.h"
 //#include "SDL_rotozoom.h"
-#include "SDL_gfxPrimitives_font.h"
+#include "pygame/SDL_gfxPrimitives_font.h"
 
 /* -===================- */
 
@@ -6780,4 +6780,3 @@ int thickLineRGBA(SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,
 	return (thickLineColor(dst, x1, y1, x2, y2, width,
 		((Uint32) r << 24) | ((Uint32) g << 16) | ((Uint32) b << 8) | (Uint32) a));
 }
-

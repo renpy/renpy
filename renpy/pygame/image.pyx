@@ -18,15 +18,15 @@
 
 from sdl2 cimport *
 from sdl2_image cimport *
-from pygame_sdl2.surface cimport *
-from pygame_sdl2.rwobject cimport to_rwops
+from renpy.pygame.surface cimport *
+from renpy.pygame.rwobject cimport to_rwops
 
-from pygame_sdl2.error import error
-from pygame_sdl2.compat import bytes_, unicode_, filesystem_encode
+from renpy.pygame.error import error
+from renpy.pygame.compat import bytes_, unicode_, filesystem_encode
 
 import sys
 import os
-import pygame_sdl2
+import renpy.pygame
 
 
 cdef int image_formats = 0
@@ -146,10 +146,10 @@ def load(fi, namehint="", size=None):
     except error:
         return surf
 
-cdef extern from "write_jpeg.h":
+cdef extern from "pygame/write_jpeg.h":
     int Pygame_SDL2_SaveJPEG(SDL_Surface *, char *, int) nogil
 
-cdef extern from "write_png.h":
+cdef extern from "pygame/write_png.h":
     int Pygame_SDL2_SavePNG(const char *, SDL_Surface *, int) nogil
 
 def save(Surface surface not None, filename, compression=-1):

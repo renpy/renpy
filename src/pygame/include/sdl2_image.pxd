@@ -1,6 +1,6 @@
 from sdl2 cimport *
 
-cdef extern from "sdl_image_compat.h" nogil:
+cdef extern from "pygame/sdl_image_compat.h" nogil:
     ctypedef enum IMG_InitFlags:
         IMG_INIT_JPG
         IMG_INIT_PNG
