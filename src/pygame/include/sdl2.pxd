@@ -2,7 +2,7 @@ from libc.stdint cimport *
 from libc.stdio cimport *
 from libc.stddef cimport *
 
-cdef extern from "SDL.h" nogil:
+cdef extern from "SDL2/SDL.h" nogil:
 
     cdef struct _SDL_iconv_t
 
@@ -3210,5 +3210,3 @@ cdef extern from "SDL.h" nogil:
         SDL_WINDOWPOS_UNDEFINED_MASK
 
     int SDL_MUSTLOCK(SDL_Surface *)
-
-    

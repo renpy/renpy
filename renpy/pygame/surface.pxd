@@ -55,3 +55,5 @@ cdef class Surface:
     cdef void take_surface(self, SDL_Surface *)
 
     cdef bint has_alpha
+
+cdef SDL_Surface *PySurface_AsSurface(object surface)

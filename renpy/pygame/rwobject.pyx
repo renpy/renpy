@@ -606,7 +606,7 @@ cdef class RWopsIOImpl:
         return rv
 
 
-cdef api SDL_RWops *RWopsFromPython(filelike) except NULL:
+cdef SDL_RWops *RWopsFromPython(filelike) except NULL:
     return to_rwops(filelike, "rb", None, None)
 
 
