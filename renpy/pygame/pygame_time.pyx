@@ -19,19 +19,19 @@
 import cython
 import math
 from sdl2 cimport *
-from pygame_sdl2.error import error
-import pygame_sdl2
+from renpy.pygame.error import error
+import renpy.pygame
 
 cdef int timer_id = 0
 
-@pygame_sdl2.register_init
+@renpy.pygame.register_init
 def init():
-    pygame_sdl2.display.sdl_main_init()
+    renpy.pygame.display.sdl_main_init()
 
     if SDL_InitSubSystem(SDL_INIT_TIMER):
         raise error()
 
-@pygame_sdl2.register_quit
+@renpy.pygame.register_quit
 def quit(): # @ReservedAssignment
     SDL_QuitSubSystem(SDL_INIT_TIMER)
 

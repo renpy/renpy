@@ -19,10 +19,10 @@
 from sdl2 cimport *
 from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy
-from pygame_sdl2.display cimport Window, main_window
-from pygame_sdl2.rect cimport to_sdl_rect
+from renpy.pygame.display cimport Window, main_window
+from renpy.pygame.rect cimport to_sdl_rect
 
-from pygame_sdl2.error import error
+from renpy.pygame.error import error
 
 
 cdef class KeyboardState:

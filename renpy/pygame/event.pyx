@@ -20,9 +20,9 @@
 from cpython.ref cimport Py_INCREF, Py_DECREF
 
 from sdl2 cimport *
-from pygame_sdl2.display cimport Window, main_window
+from renpy.pygame.display cimport Window, main_window
 import threading
-import pygame_sdl2
+import renpy.pygame
 import sys
 
 if sys.version_info[0] >= 3:
@@ -123,7 +123,7 @@ cdef make_keyboard_event(SDL_KeyboardEvent *e):
               'repeat' : e.repeat,
                }
 
-    if not pygame_sdl2.key.text_input:
+    if not renpy.pygame.key.text_input:
 
         if e.type == SDL_KEYDOWN:
             # Be careful to only check for a TEXTINPUT event when you know that
@@ -444,7 +444,7 @@ def clear(t=None):
 
 def get_standard_events():
     """
-    Returns a list of standard events that pygame_sdl2 knows about.
+    Returns a list of standard events that renpy.pygame knows about.
     """
 
     return [ i for i in event_names.keys() if (i < SDL_USEREVENT) or (i > USEREVENT_MAX) ]
@@ -514,7 +514,7 @@ def post(e):
     cdef SDL_Event event;
 
     if not isinstance(e, EventType):
-        raise pygame_sdl2.error("event.post must be called with an Event.")
+        raise renpy.pygame.error("event.post must be called with an Event.")
 
     if get_blocked(e.type):
         return
@@ -552,10 +552,10 @@ def copy_event_queue():
 def init():
     if not SDL_WasInit(SDL_INIT_EVENTS):
 
-        pygame_sdl2.display.sdl_main_init()
+        renpy.pygame.display.sdl_main_init()
 
         if SDL_InitSubSystem(SDL_INIT_EVENTS):
-            raise pygame_sdl2.error.error()
+            raise renpy.pygame.error.error()
 
 _types = """
 Event = EventType

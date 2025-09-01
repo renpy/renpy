@@ -18,10 +18,10 @@
 
 from sdl2 cimport *
 
-from pygame_sdl2.error import error
-from pygame_sdl2.locals import SCRAP_TEXT
+from renpy.pygame.error import error
+from renpy.pygame.locals import SCRAP_TEXT
 
-from pygame_sdl2.compat import bytes_
+from renpy.pygame.compat import bytes_
 
 try:
     import emscripten
@@ -76,5 +76,5 @@ def set_mode(mode):
     pass
 
 _types = """
-SCRAP_TEXT : int 
+SCRAP_TEXT : int
 """

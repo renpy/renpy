@@ -17,23 +17,23 @@
 # 3. This notice may not be removed or altered from any source distribution.
 
 from sdl2 cimport *
-from pygame_sdl2.error import error
-import pygame_sdl2
+from renpy.pygame.error import error
+import renpy.pygame
 
-from pygame_sdl2.rwobject cimport to_rwops
+from renpy.pygame.rwobject cimport to_rwops
 
-@pygame_sdl2.register_init
+@renpy.pygame.register_init
 def init():
     """
     Initializes game controller support.
     """
 
-    pygame_sdl2.display.sdl_main_init()
+    renpy.pygame.display.sdl_main_init()
 
     if SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER):
         raise error()
 
-@pygame_sdl2.register_quit
+@renpy.pygame.register_quit
 def quit(): # @ReservedAssignment
     """
     Shuts down game controller support.
@@ -56,7 +56,7 @@ def get_count():
     is a game controller. To check that index `i` corresponds to a game
     controller, use code such as::
 
-        if pygame_sdl2.controller.Controller(i).is_controller():
+        if renpy.pygame.controller.Controller(i).is_controller():
             ...
     """
 

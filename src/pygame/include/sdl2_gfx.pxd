@@ -1,6 +1,6 @@
 from sdl2 cimport *
 
-cdef extern from "SDL2_rotozoom.h" nogil:
+cdef extern from "pygame/SDL2_rotozoom.h" nogil:
     cdef enum:
         SMOOTHING_OFF
         SMOOTHING_ON
@@ -17,7 +17,7 @@ cdef extern from "SDL2_rotozoom.h" nogil:
     SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns)
 
 
-cdef extern from "SDL_gfxPrimitives.h" nogil:
+cdef extern from "pygame/SDL_gfxPrimitives.h" nogil:
     int pixelColor(SDL_Surface * dst, Sint16 x, Sint16 y, Uint32 color)
     int pixelRGBA(SDL_Surface * dst, Sint16 x, Sint16 y, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 

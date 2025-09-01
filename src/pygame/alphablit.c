@@ -22,7 +22,7 @@
   pete@shinners.org
 */
 
-#include "surface.h"
+#include "pygame/surface.h"
 
 /* The structure passed to the low level blit functions */
 typedef struct
