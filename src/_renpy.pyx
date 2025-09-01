@@ -26,7 +26,9 @@ def version():
     return (6, 12, 0)
 
 from sdl2 cimport *
-from pygame_sdl2 cimport *
+
+from renpy.pygame.rwobject cimport RWopsFromPython
+
 from pygame_sdl2 import Surface
 
 cdef extern from "renpy.h":
@@ -460,5 +462,4 @@ def subpixel(pysrc, pydst, xoffset, yoffset, shift):
 
 # Be sure to update scale.py when adding something new here!
 
-import_pygame_sdl2()
 core_init()

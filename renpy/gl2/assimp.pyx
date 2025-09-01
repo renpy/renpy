@@ -25,8 +25,8 @@ import threading
 
 from typing import Iterable, Literal
 
-from pygame_sdl2 cimport *
-import_pygame_sdl2()
+from renpy.pygame.rwobject cimport RWopsFromPython
+from sdl2 cimport SDL_RWops
 
 from assimpapi cimport (
     Importer,

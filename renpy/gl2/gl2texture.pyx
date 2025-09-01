@@ -27,8 +27,8 @@ DEF ANGLE = False
 
 
 from sdl2 cimport *
-from pygame_sdl2 cimport *
-import_pygame_sdl2()
+
+from renpy.pygame.surface cimport PySurface_AsSurface
 
 from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy

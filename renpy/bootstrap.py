@@ -285,22 +285,21 @@ def bootstrap(renpy_base):
     # Set up Ren'Py specific exception handling.
     sys.excepthook = excepthook
 
+
     # Check that we have installed pygame properly. This also deals with
     # weird cases on Windows and Linux where we can't import modules. (On
     # windows ";" is a directory separator in PATH, so if it's in a parent
     # directory, we won't get the libraries in the PATH, and hence pygame
     # won't import.)
     try:
-        import pygame_sdl2
-
-        if not ("pygame" in sys.modules):
-            pygame_sdl2.import_as_pygame()
+        import renpy.pygame
+        renpy.pygame.import_as_pygame()
     except Exception as e:
         e.add_note(
             textwrap.dedent(f"""
-        Could not import pygame_sdl2. Please ensure that this program has been built
-        and unpacked properly. Also, make sure that the directories containing
-        this program do not contain : or ; in their names.
+        Could not import renpy.pygame. Please ensure that this program has been built
+        and unpacked properly. Also, make sure that the directories containing this
+        program do not contain : or ; in their names.
 
         You may be using a system install of python. Please run {name}.sh,
         {name}.exe, or {name}.app instead.

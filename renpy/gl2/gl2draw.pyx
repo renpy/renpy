@@ -32,8 +32,7 @@ from sdl2 cimport *
 from renpy.uguu.gl cimport *
 import renpy.gl2.gl2functions
 
-from pygame_sdl2 cimport *
-import_pygame_sdl2()
+from renpy.pygame.surface cimport PySurface_AsSurface
 
 import renpy
 import pygame_sdl2 as pygame

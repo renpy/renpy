@@ -31,9 +31,8 @@ from renpy.display.displayable import Displayable
 from renpy.display.core import absolute
 
 from sdl2 cimport *
-from pygame_sdl2 cimport *
 
-import_pygame_sdl2()
+from renpy.pygame.surface cimport PySurface_AsSurface
 
 ################################################################################
 # Surface copying
