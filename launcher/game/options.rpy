@@ -345,7 +345,10 @@ init python:
             build.classify_renpy(pattern + "/**.pyc", None)
             build.classify_renpy(pattern + "/**.pyo", None)
 
-        build.classify_renpy(pattern + "/**.pyi", None)
+        build.classify_renpy(pattern + "/**.so", None)
+        build.classify_renpy(pattern + "/**.pyd", None)
+
+        build.classify_renpy(pattern + "/**.pyi", "source_only")
         build.classify_renpy(pattern + "/**.pyx", "source_only")
         build.classify_renpy(pattern + "/**.pxd", "source_only")
 

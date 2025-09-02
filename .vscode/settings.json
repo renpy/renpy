@@ -19,6 +19,8 @@
         "**/*.pyo": true,
         "**/*.rpmc": true,
         "**/*.rpyc": true,
+        "**/*.so": true,
+        "**/*.pyd": true,
         "**/__pycache__": true,
         "**/screenshot-*": true,
         "7z.sfx": true,
