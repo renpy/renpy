@@ -27,7 +27,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <SDL2/SDL_thread.h>
 #include <stdio.h>
 #include <string.h>
-#include <pygame_sdl2/pygame_sdl2.h>
+#include <renpy.pygame.surface_api.h>
 
 apply_audio_filter_type RPS_apply_audio_filter = NULL;
 
@@ -1339,7 +1339,7 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int
 #endif
 #endif
 
-    import_pygame_sdl2();
+
 
     if (SDL_Init(SDL_INIT_AUDIO)) {
         error(SDL_ERROR);
@@ -1459,8 +1459,7 @@ void RPS_advance_time(void) {
 
 
 void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba) {
-    import_pygame_sdl2();
-
+    import_renpy__pygame__surface();
     media_sample_surfaces(
 			PySurface_AsSurface(rgb),
 			PySurface_AsSurface(rgba)

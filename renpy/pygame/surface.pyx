@@ -857,7 +857,7 @@ cdef class Surface:
             d += self.surface.w * self.surface.format.BytesPerPixel
             pixels += self.surface.pitch
 
-cdef SDL_Surface *PySurface_AsSurface(surface):
+cdef api SDL_Surface *PySurface_AsSurface(surface):
     return (<Surface> surface).surface
 
 cdef api object PySurface_New(SDL_Surface *surf):

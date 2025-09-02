@@ -62,7 +62,7 @@ if static:
 cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
 # The include and library dirs that we compile against.
-include_dirs = ["src"]
+include_dirs = ["src", gen]
 library_dirs = []
 
 # Extra arguments that will be given to the compiler.
