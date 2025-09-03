@@ -35,7 +35,7 @@ import fnmatch
 import os
 
 import renpy
-import pygame_sdl2
+import renpy.pygame as pygame_sdl2  # As a public export.
 
 try:
     import emscripten

@@ -28,8 +28,8 @@ import os
 import re
 import subprocess
 
-import pygame_sdl2 as pygame
 import renpy
+import renpy.pygame as pygame
 
 
 class TTSDone(str):

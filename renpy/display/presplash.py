@@ -31,8 +31,8 @@ import os
 import sys
 import time
 
-import pygame_sdl2
 import renpy
+import renpy.pygame as pygame
 
 if renpy.emscripten:
     import emscripten
@@ -50,8 +50,8 @@ start_time = time.time()
 class ProgressBar(object):
     def __init__(self, foreground, background):
         super(ProgressBar, self).__init__()
-        self.foreground = pygame_sdl2.image.load(foreground)
-        self.background = pygame_sdl2.image.load(background)
+        self.foreground = pygame.image.load(foreground)
+        self.background = pygame.image.load(background)
         self.width, self.height = self.background.get_size()
 
     def convert_alpha(self, surface=None):
@@ -102,7 +102,7 @@ def start(basedir, gamedir):
 
         ctypes.windll.user32.SetProcessDPIAware()  # type: ignore
 
-    pygame_sdl2.display.init()
+    pygame.display.init()
 
     global progress_bar
 
@@ -110,11 +110,11 @@ def start(basedir, gamedir):
         presplash = ProgressBar(foreground_fn, background_fn)  # type: ignore
         progress_bar = presplash
     else:
-        presplash = pygame_sdl2.image.load(presplash_fn)
+        presplash = pygame.image.load(presplash_fn)
 
     global window
 
-    bounds = pygame_sdl2.display.get_display_bounds(0)
+    bounds = pygame.display.get_display_bounds(0)
 
     sw, sh = presplash.get_size()
     x = bounds[0] + bounds[2] // 2 - sw // 2
@@ -128,8 +128,8 @@ def start(basedir, gamedir):
     if isinstance(shape, ProgressBar):
         shape = shape.background
 
-    window = pygame_sdl2.display.Window(
-        sys.argv[0], (sw, sh), flags=pygame_sdl2.WINDOW_BORDERLESS, pos=(x, y), shape=shape
+    window = pygame.display.Window(
+        sys.argv[0], (sw, sh), flags=pygame.WINDOW_BORDERLESS, pos=(x, y), shape=shape
     )
 
     if foreground_fn and background_fn:
@@ -168,8 +168,8 @@ def pump_window():
 
     last_pump_time = time.time()
 
-    for ev in pygame_sdl2.event.get():
-        if ev.type == pygame_sdl2.QUIT:
+    for ev in pygame.event.get():
+        if ev.type == pygame.QUIT:
             raise renpy.game.QuitException(relaunch=False, status=0)
 
     if not progress_bar:
@@ -212,7 +212,7 @@ def end():
     global progress_bar
     progress_bar = None
 
-    pygame_sdl2.display.quit()
+    pygame.display.quit()
 
 
 def sleep():

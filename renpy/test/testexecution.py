@@ -23,8 +23,8 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
-import pygame_sdl2
 import renpy
+import renpy.pygame as pygame
 
 # A map from the name of a testcase to the testcase.
 testcases = {}
@@ -144,7 +144,7 @@ def execute():
         renpy.exports.maximum_framerate(None)
 
     # Make sure there are no test events in the event queue.
-    for e in pygame_sdl2.event.copy_event_queue():  # @UndefinedVariable
+    for e in pygame.event.copy_event_queue():  # @UndefinedVariable
         if getattr(e, "test", False):
             return
 

@@ -24,7 +24,7 @@ import time
 import os
 
 import renpy
-import pygame_sdl2
+import renpy.pygame as pygame
 
 from renpy.exports.commonexports import renpy_pure
 
@@ -1453,7 +1453,7 @@ def render_to_surface(d, width=None, height=None, st=0.0, at=None, resize=False)
     """
     :doc: screenshot
 
-    This takes a displayable or Render, and returns a pygame_sdl2 surface. The render is performed by
+    This takes a displayable or Render, and returns a pygame Surface. The render is performed by
     Ren'Py's display system, such that if the window is upscaled the render will be upscaled as well.
 
     `d`
@@ -1539,4 +1539,4 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
 
     filename = os.path.join(renpy.config.basedir, filename)
     surface = render_to_surface(d, width, height, st, at, resize)
-    pygame_sdl2.image.save(surface, filename)
+    pygame.image.save(surface, filename)

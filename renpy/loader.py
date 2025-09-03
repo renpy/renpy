@@ -33,7 +33,7 @@ import unicodedata
 import time
 import pathlib
 
-from pygame_sdl2.rwobject import RWopsIO
+from renpy.pygame.rwobject import RWopsIO
 
 from renpy.compat.pickle import loads
 from renpy.webloader import DownloadNeeded

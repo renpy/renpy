@@ -35,8 +35,8 @@ import io
 import os.path
 import sys
 
-import pygame_sdl2
 import renpy
+import renpy.pygame as pygame
 
 
 # This is an entry in the image cache.
@@ -634,7 +634,7 @@ class ImageBase(renpy.display.displayable.Displayable):
 
         return self.identity == other.identity
 
-    def load(self):  # type:() -> pygame_sdl2.Surface
+    def load(self):  # type:() -> pygame.Surface
         """
         This function is called by the image cache code to cause this
         image to be loaded. It's expected that children of this class
@@ -2071,7 +2071,7 @@ class UnoptimizedTexture(ImageBase):
         self.image = im
 
         self.const_size = im.const_size
-        
+
     def _repr_info(self):
         return repr(self.image)
 

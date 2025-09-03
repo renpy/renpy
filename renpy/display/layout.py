@@ -25,9 +25,9 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
-import pygame_sdl2 as pygame
 
 import renpy
+import renpy.pygame as pygame
 from renpy.display.render import render, Render
 
 

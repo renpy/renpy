@@ -26,8 +26,8 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
-import pygame_sdl2
 import renpy
+import renpy.pygame as pygame
 
 
 # Do we have a joystick enabled?
@@ -45,7 +45,7 @@ joysticks = {}
 
 
 def count():
-    return pygame_sdl2.joystick.get_count()
+    return pygame.joystick.get_count()
 
 
 def get(n):
@@ -53,7 +53,7 @@ def get(n):
         return joysticks[n]
 
     try:
-        joysticks[n] = pygame_sdl2.joystick.Joystick(n)
+        joysticks[n] = pygame.joystick.Joystick(n)
         return joysticks[n]
     except Exception:
         return None

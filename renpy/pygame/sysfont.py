@@ -536,9 +536,9 @@ def initsysfonts():
 
 # pygame.font specific declarations
 def font_constructor(fontpath, size, bold, italic):
-    import pygame_sdl2.font
+    import renpy.pygame.font
 
-    font = pygame_sdl2.font.Font(fontpath, size)
+    font = renpy.pygame.font.Font(fontpath, size)
     if bold:
         font.set_bold(1)
     if italic:
@@ -664,5 +664,3 @@ def match_font(name, bold=0, italic=0):
                     fontname = list(styles.values())[0]
         if fontname: break
     return fontname
-
-

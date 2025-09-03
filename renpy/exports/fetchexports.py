@@ -72,9 +72,8 @@ def fetch_pause():
         return
 
     if renpy.game.context().interacting:
-        import pygame_sdl2
 
-        pygame_sdl2.event.pump()
+        renpy.pygame.event.pump()
         renpy.audio.audio.periodic()
 
         if renpy.emscripten:
