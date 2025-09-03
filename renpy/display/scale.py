@@ -26,8 +26,8 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
-import pygame_sdl2 as pygame
 import renpy
+import renpy.pygame as pygame
 import renpy.display.pgrender as pgrender
 
 import _renpy
@@ -74,7 +74,7 @@ def image_load_unscaled(f, hint, convert=True):
 
 
 def image_save_unscaled(surf, filename):
-    pygame.image.save(surf, filename)  # pygame_sdl2 does the filename encoding.
+    pygame.image.save(surf, filename)  # pygame does the filename encoding.
 
 
 # Scales down a surface.

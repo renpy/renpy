@@ -29,7 +29,7 @@ import json
 import math
 import re
 
-import pygame_sdl2 as pygame
+import renpy.pygame as pygame
 import renpy
 from renpy.display.render import render, Render
 

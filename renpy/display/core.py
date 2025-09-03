@@ -31,8 +31,8 @@ import gc
 import atexit
 import platform
 
-import pygame_sdl2 as pygame
 import renpy
+import renpy.pygame as pygame
 
 from renpy.atl import position
 from renpy.display.displayable import Displayable, DisplayableArguments, place
@@ -380,7 +380,7 @@ class Renderer(object):
     and renpy.game.preferences.physical_size preferences, when these are
     changed from outside the game.
 
-    A renderer has an info dict, that contains the keys from pygame_sdl2.display.Info(),
+    A renderer has an info dict, that contains the keys from pygame.display.Info(),
     and then:
     - "renderer", the name of the Renderer.
     - "resizable", true if the window can be resized.

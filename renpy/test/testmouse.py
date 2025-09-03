@@ -24,7 +24,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 from typing import Optional
 
-import pygame_sdl2 as pygame
+import renpy.pygame as pygame
 
 # The overridden positioning of the mouse.
 mouse_pos = None  # type: Optional[tuple[int, int]]

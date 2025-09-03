@@ -26,8 +26,8 @@ from typing import Any, Optional, Callable
 
 import math
 
-import pygame_sdl2
 import renpy
+import renpy.pygame as pygame
 
 from renpy.text.textsupport import TAG, TEXT, PARAGRAPH, DISPLAYABLE
 
@@ -232,7 +232,7 @@ class DrawInfo(object):
 
     # No implementation, this is set up in the layout object.
 
-    surface = None  # type: Optional[pygame_sdl2.surface.Surface]
+    surface = None  # type: Optional[pygame.Surface]
     override_color = None  # type: Optional[tuple[int, int, int, int]]
     outline = 0  # type: float
     displayable_blits = None  # type: Optional[list[tuple[renpy.display.displayable.Displayable, int, int]]]

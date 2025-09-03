@@ -28,8 +28,8 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import math
 
-import pygame_sdl2 as pygame
 import renpy
+import renpy.pygame as pygame
 
 
 def edgescroll_proportional(n):

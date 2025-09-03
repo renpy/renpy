@@ -27,8 +27,8 @@ import math
 import time
 import os
 
-import pygame_sdl2 as pygame
 import renpy
+import renpy.pygame as pygame
 from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE, PIXELLATE, FLATTEN
 
 

@@ -168,7 +168,7 @@ def choose_variants():
 
         import android  # type: ignore
         import math
-        import pygame_sdl2 as pygame
+        import renpy.pygame as pygame
 
         from jnius import autoclass  # type: ignore
 
