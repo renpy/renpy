@@ -264,19 +264,6 @@ def main():
             os.path.join(destination, "updates.json"),
             ])
 
-    # Package pygame_sdl2.
-    if not args.fast:
-        subprocess.check_call([
-            "pygame_sdl2/setup.py",
-            "-q",
-            "egg_info",
-            "--tag-build",
-            "+renpy" + args.version.replace("+", "-"),
-            "sdist",
-            "-d",
-            os.path.abspath(destination)
-            ])
-
     # Write 7z.exe.
     sdk = "renpy-{}-sdk".format(args.version)
 
