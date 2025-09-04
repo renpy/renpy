@@ -35,8 +35,8 @@ import renpy.gl2.gl2functions
 from renpy.pygame.surface cimport PySurface_AsSurface
 
 import renpy
-import pygame_sdl2 as pygame
-from pygame_sdl2 import Surface
+import renpy.pygame as pygame
+from renpy.pygame import Surface
 
 import os
 import os.path
