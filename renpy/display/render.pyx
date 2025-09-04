@@ -31,9 +31,9 @@ globals()["Matrix"] = Matrix
 globals()["Matrix2D"] = Matrix2D
 
 import collections
-import pygame_sdl2 as pygame
 import threading
 import renpy
+import renpy.pygame as pygame
 import gc
 import math
 

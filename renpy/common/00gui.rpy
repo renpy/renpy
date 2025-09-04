@@ -471,7 +471,7 @@ init -1150 python in gui:
         import store.gui as gui
         from store import config, Color
 
-        import pygame_sdl2
+        import renpy.pygame as pygame
         import os
 
         if not config.developer:
@@ -482,7 +482,7 @@ init -1150 python in gui:
         class Image(object):
 
             def __init__(self, dn, fn, width, height):
-                self.s = pygame_sdl2.Surface((width, height), pygame_sdl2.SRCALPHA)
+                self.s = pygame.Surface((width, height), pygame.SRCALPHA)
 
 
                 if phone:
@@ -519,7 +519,7 @@ init -1150 python in gui:
                     if not gui._skip_backup:
                         os.rename(fn, bfn)
 
-                pygame_sdl2.image.save(s, fn, 3)
+                pygame.image.save(s, fn, 3)
 
             def fill(self, color=None):
                 if color is None:
