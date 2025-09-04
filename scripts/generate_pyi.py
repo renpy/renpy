@@ -21,11 +21,6 @@ import renpy
 
 renpy.import_all()
 
-import pygame_sdl2
-
-pygame_sdl2.import_as_pygame()
-
-
 # Patch renpy.script so the Lexer can be used.
 class FakeScript:
     all_pyexpr = None
@@ -38,7 +33,7 @@ generated_files = []
 
 def python_signature(o):
     """
-    Given a callabale object, try to return a python-style type signature.
+    Given a callable object, try to return a python-style type signature.
     Returns the signature as a string if it can be determined, or None if
     no signature can be determined.
 
@@ -160,7 +155,7 @@ def generate_namespace(out: TextIO, prefix: str, namespace: types.ModuleType | t
 
         if isinstance(v, type):
             if v.__module__ != namespace.__name__:
-                if v.__module__.startswith("renpy") or v.__module__.startswith("pygame_sdl2"):
+                if v.__module__.startswith("renpy"):
                     out.write(prefix + f"{k} = {v.__module__}.{v.__name__}\n")
                 else:
                     out.write(prefix + f"from {v.__module__} import {v.__name__}\n")
@@ -265,7 +260,6 @@ def generate_module(module: types.ModuleType, package: bool):
         f.write(f"from typing import {', '.join(TYPING_IMPORTS)}\n\n")
         f.write("import builtins\n")
         f.write("import renpy\n")
-        f.write("import pygame_sdl2\n\n")
 
         generate_namespace(f, "", module)
 
@@ -303,9 +297,6 @@ def should_generate(name, m: Any):
 
     if prefix == "renpy":
         return is_extension(m)
-
-    if prefix in ["pygame", "pygame_sdl2"]:
-        return True
 
     return False
 
