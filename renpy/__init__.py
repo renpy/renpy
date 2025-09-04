@@ -388,6 +388,7 @@ def import_all():
 
     import renpy
 
+    import renpy.error
     import renpy.config
     import renpy.log
 
