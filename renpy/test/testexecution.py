@@ -399,7 +399,10 @@ def get_frame_stack() -> list[FrameSummary]:
             ]
 
     for n, label in zip(nodes, labels):
-        frame_stack.append(FrameSummary(label, n.filename, n.linenumber)) # type: ignore
+        if n is None:
+            frame_stack.append(FrameSummary(label, "<during last test>", 0)) # type: ignore
+        else:
+            frame_stack.append(FrameSummary(label, n.filename, n.linenumber)) # type: ignore
 
     return frame_stack
 
