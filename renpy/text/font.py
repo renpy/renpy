@@ -99,7 +99,7 @@ class ImageFont(object):
     # chars - A map from a character to the surface containing that character.
     chars = {}  # type: dict[str, pygame.surface.Surface]
 
-    def glyphs(self, s):
+    def glyphs(self, s, level):
         rv = []
 
         if not s:
