@@ -18,6 +18,16 @@ such changes only take effect when the GUI is regenerated.
 8.5.0
 -----
 
+**pygame_sdl2** The pygame_sdl2 module is no longer included with Ren'Py. It's been replace by
+the renpy.pygame package, which is compatible and included with Ren'Py. This packaged has been aliased
+to `pygame` and `pygame_sdl2` for compatibility, so existing imports will work.
+
+Before this version, ``pygame_sdl2`` was imported into the store namespace. This import has been removed. If
+required, it can be added back with::
+
+    init python:
+        import renpy.pygame as pygame_sdl2
+
 **Image Directories** The config.images_directory variable has been superseded by
 :var:`config.image_directories`, which is a list of directories that Ren'Py searches for images. Scripts that change
 the config.images_directory variable shoul be migrated. For example, change::
