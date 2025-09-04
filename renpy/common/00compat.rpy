@@ -46,6 +46,7 @@ init -1100 python:
         if version <= (8, 5, 0):
             config.images_directory = "images"
             config.image_directories = [ ]
+            store.pygame_sdl2 = renpy.pygame
 
         if version <= (8, 3, 99):
             config.old_show_expression = True

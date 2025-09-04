@@ -21,9 +21,6 @@
 
 init -1500 python:
 
-    # May be required for backward compatibility.
-    import renpy.pygame as pygame_sdl2
-
     @renpy.pure
     class _TouchKeyboardTextInput(Action, DictEquality):
         """
@@ -34,7 +31,6 @@ init -1500 python:
             self.char = char
 
         def __call__(self):
-            import pygame_sdl2
             renpy.pygame.event.post(renpy.pygame.event.Event(
                 renpy.pygame.TEXTINPUT,
                 text=self.char))
@@ -66,7 +62,6 @@ init -1500 python:
          """
 
         def __call__(self):
-            import pygame_sdl2
 
             # avoid loop when K_RETURN activates our button
             renpy.exports.hide_screen('_touch_keyboard', layer='screens')
