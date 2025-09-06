@@ -695,7 +695,6 @@ init -1499 python in _renpysteam:
                 new_menu = TIMELINE_GAME_MODE_PLAYING
 
             if callback_state.menu != new_menu:
-            if callback_state.menu != new_menu:
                 set_timeline_game_mode(new_menu)
                 callback_state.menu = new_menu
 
