@@ -70,7 +70,7 @@ Building the modules requires you have the many dependencies installed on
 your system. On Ubuntu and Debian, these dependencies can be installed with
 the command::
 
-    sudo apt install virtualenvwrapper python3-dev libassimp-dev libavcodec-dev libavformat-dev \
+    sudo apt install python3-dev libassimp-dev libavcodec-dev libavformat-dev \
         libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
         libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config
 
@@ -82,30 +82,22 @@ that version, you'll need to download it from:
 We strongly suggest installing the Ren'Py modules into a Python
 virtualenv. To create a new virtualenv, open a new terminal and run::
 
-    . /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-    mkvirtualenv renpy
+    python -m venv .venv --prompt renpy
 
-To return to this virtualenv later, run::
+Avtivate the virtualenv using::
 
-    . /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-    workon renpy
+    source .venv/bin/activate
 
+You'll need to activate the virtualenv each time you begin working on Ren'Py.
 After activating the virtualenv, install additional dependencies::
 
     pip install -U setuptools cython future six typing pefile requests ecdsa
 
-Then, install pygame_sdl2 by running the following commands::
-
-    git clone https://www.github.com/renpy/pygame_sdl2
-    pushd pygame_sdl2
-    python setup.py install
-    popd
-
 Finally, use setup.py to compile extension modules that support Ren'Py::
 
-    python setup.py install
+    python setup.py build_ext --inplace
 
-Ren'Py will be installed into the activated virtualenv. It can then be run
+Ren'Py will be installed into the activated virtualenv. Ren'Py can then be run
 using the command::
 
     python renpy.py
@@ -123,7 +115,8 @@ will set CFLAGS to RENPY_CFLAGS. The same is true for RENPY_LDFLAGS,
 RENPY_CC, RENPY_CXX, and RENPY_LD.
 
 Setup.py does not support cross-compiling. See https://github.com/renpy/renpy-build
-for software that cross-compiles Ren'Py for many platforms.
+for software that cross-compiles Ren'Py for many platforms. The renpy-build system
+also include some runtime components for Android, iOS, and web.
 
 
 Documentation
@@ -174,6 +167,12 @@ For example::
         :args: (factor)
 
         Exceeds the speed of light.
+
+        `factor`
+            The warp factor. See Sternbach (1991) for details.
+
+        `transwarp`
+            If True, use transwarp. This does not work on all platforms.
         """
 
         renpy.engine.warp_drive.engage(factor)

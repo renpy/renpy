@@ -33,8 +33,8 @@ Removes BOMs and TODO comments from translations.
 generate_pyi.py
 ---------------
 
-This must be run using a Python with the Ren'Py and pygame_sdl2 modules
-built for it. This generates .pyi files in typings/ and renpy, allowing
+This must be run using a Python with the Ren'Py, after modules have been
+built. This generates .pyi files in typings/ and renpy, allowing
 tools to analyze Ren'Py.
 
 generate_update_keys.py

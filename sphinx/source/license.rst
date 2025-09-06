@@ -69,7 +69,7 @@ Ren'Py binaries can include source code from the following projects:
 * pysocks (Three Clause BSD License)
 * Python (Python License)
 * requests (Apache License 2.0)
-* rsa (Apache Lixense 2.0)
+* rsa (Apache License 2.0)
 * SDL2_image (Zlib License)
 * SDL2_ttf (Zlib License)
 * SDL2 (Zlib License)
@@ -86,12 +86,16 @@ For the purposes of LGPL compliance, all source code that Ren'Py depends
 on is located in one of the following repositories:
 
 * https://github.com/renpy/renpy (Ren'Py)
-* https://github.com/renpy/pygame_sdl2 (Pygame_SDL2)
 * https://github.com/renpy/renpy-build (Dependencies)
-* https://github.com/renpy/renpyweb (Web)
 
 Ren'Py Build will download source code from other git repositories
 as needed.
+
+For some releases before Ren'Py 8.5, pygame_sdl2 and web support were
+separate from Ren'Py.
+
+* https://github.com/renpy/pygame_sdl2 (Pygame_SDL2)
+* https://github.com/renpy/renpyweb (Web)
 
 And for releases before Ren'Py 7.4:
 

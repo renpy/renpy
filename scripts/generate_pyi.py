@@ -289,7 +289,6 @@ def should_generate(name, m: Any):
     `name`.
     """
 
-    # E.g. pygame_sdl2.try_import adds MissingModule to sys.modules
     if not isinstance(m, types.ModuleType):
         return False
 
