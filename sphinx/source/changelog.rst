@@ -34,8 +34,12 @@ When :var:`config.automatic_steam_timeline` is set, Ren'Py will now use :var:`sa
 the game phase. (It's best to consider :var:`save_name` to be a chapter name). Previously, it would
 annotate timeline states instead of game phases.
 
-Unicode Support
----------------
+Font and Unicode Support
+------------------------
+
+Ren'Py now supports the WOFF2 font format, a modern and highly-compressed font format. Support for
+the older WOFF format has been made official. The :var:`config.font_name_map` and :var:`config.font_replacement_map`
+variables may be useful to creators that wish to replace TrueType fonts with WOFF2 fonts.
 
 Ren'Py's unicode support has been updated to include support for Unicode 16 characters.
 
