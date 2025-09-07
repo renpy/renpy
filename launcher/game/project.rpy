@@ -610,10 +610,12 @@ init python in project:
                 if not os.path.isdir(dpath) and not "Tutorials":
                     persistent.collapsed_folders.pop(name)
 
-        # NOTE
-        # This function is similar to `find_basedir` but instead it looks inside
-        # The folder the user linked renpy to look for projects
+
         def find_folder_projects(self, d):
+            """
+            Finds projects that exist in folders, rather than in
+            the base directory.
+            """
 
             nd = os.path.normpath(d)
             prefix = os.path.normpath(self.projects_directory)
@@ -632,29 +634,24 @@ init python in project:
                 except KeyError:
                     pf.hidden = (fname != "master")
 
-                # NOTE
-                # Effectively almost the same as `scan_directory_direct`
-                # but we ignore files that don't contain any `game/` folder.
-
                 for pdir in util.listdir(full_path):
                     ppath = os.path.join(full_path, pdir)
 
                     if not os.path.isdir(ppath):
                         continue
 
-                    if not self.has_game(ppath):
+                    p_path = self.find_basedir(ppath)
+
+                    if p_path in self.scanned:
                         continue
 
-                    if ppath in self.scanned:
-                        continue
-
-                    self.scanned.add(ppath)
+                    self.scanned.add(p_path)
 
                     # Get the name of the project
                     name = os.path.split(ppath)[1]
 
                     # We have a project directory, so create a Project.
-                    p = Project(ppath, name)
+                    p = Project(p_path, name)
 
                     # Adds the project to the ProjectFolder
                     pf.add(p)
@@ -677,7 +674,6 @@ init python in project:
 
             return None
 
-
         def find_basedir(self, d):
             """
             Try to find a project basedir in d.
@@ -691,14 +687,15 @@ init python in project:
             if self.has_game(dn):
                 return dn
 
-            for dn in os.listdir(d):
-                if not dn.endswith(".app"):
-                    continue
+            apps = [ i for i in os.listdir(d) if i.endswith(".app") ]
+            if len(apps) != 1:
+                return None
 
-                dn = os.path.join(d, dn, "Contents", "Resources", "autorun")
+            dn = apps[0]
+            dn = os.path.join(d, dn, "Contents", "Resources", "autorun")
 
-                if self.has_game(dn):
-                    return dn
+            if self.has_game(dn):
+                return dn
 
             return None
 
@@ -746,14 +743,8 @@ init python in project:
             if not os.path.isdir(ppath):
                 return
 
-            # NOTE
-            # This is where heavy changes were made, Instead of returning right away
-            # now the code checks if the folder inside the `self.projects_directory`
-            # is a game folder, if not it looks if the folder has subfolders that
-            # could be a project
             try:
-                if self.has_game(ppath):
-                    p_path = self.find_basedir(ppath)
+                if p_path := self.find_basedir(ppath):
 
                     if p_path in self.scanned:
                         return
