@@ -152,6 +152,10 @@ A custom statement's parse function takes an instance of a Lexer object.
 
 .. class:: Lexer
 
+    .. property:: init
+
+        This is true if the lexer is inside an init statement, else false.
+
     .. method:: error(msg)
 
         :param str msg: Message to add to the list of detected parsing errors.
