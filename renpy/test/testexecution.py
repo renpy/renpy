@@ -21,6 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from typing import Callable
 
 
 import renpy
@@ -47,7 +48,7 @@ current_statement: renpy.ast.Node | None = None
 testcases: dict[str, TestCase] = {}
 "A dictionary mapping the name of a testcase to the testcase node."
 
-action: Node | None = None
+action: Callable | None = None
 "An action to run before continuing the test execution."
 
 labels: set[str] = set()
@@ -62,6 +63,7 @@ all_results: testreporter.TestSuiteResults
 
 ################################################################################
 ## Public Methods
+
 
 def is_in_test() -> bool:
     return len(context_stack) > 0
@@ -95,7 +97,8 @@ def add_testcase(node: TestCase, parent: TestSuite | None = None) -> None:
             raise KeyError(
                 f"The testcase {node.name!r} is defined twice, "
                 f"at File {testcases[node.name].filename}:{testcases[node.name].linenumber} "
-                f"and File {node.filename}:{node.linenumber}.")
+                f"and File {node.filename}:{node.linenumber}."
+            )
         return
 
     testcases[node.name] = node
@@ -112,6 +115,16 @@ def set_next_node(next: Node | None) -> None:
     """
 
     get_current_context().executor.set_next_node(next)
+
+
+def set_action(a: Callable) -> None:
+    """
+    Sets an action to run before continuing the test execution.
+    This action will be run once, and then cleared.
+    """
+
+    global action
+    action = a
 
 
 def initialize(name: str) -> None:
@@ -213,6 +226,7 @@ def quit_handler() -> int:
 ################################################################################
 ## Setup methods
 
+
 def link_top_level_testcase_to_parent(node: TestCase) -> None:
     """
     Links a top-level testcase (with a name that contains a dot) to its parent TestSuite.
@@ -223,7 +237,7 @@ def link_top_level_testcase_to_parent(node: TestCase) -> None:
     parent_name = node.name.rsplit(".", 1)[0]
     parent_node = get_testcase_by_name(parent_name)
     if not isinstance(parent_node, TestSuite):
-        raise TypeError(f"Parent node \"{parent_name}\" is not a TestSuite.")
+        raise TypeError(f'Parent node "{parent_name}" is not a TestSuite.')
     parent_node.add(node)
 
 
@@ -245,11 +259,7 @@ def create_or_get_top_level_suite(name) -> TestSuite:
         return root
 
     ## If the root is not a TestSuite, we create a new one and run the testcase in isolation.
-    return TestSuite(
-        name=isolated_testsuite_name,
-        loc=(root.filename, root.linenumber),
-        testcases=[root]
-        )
+    return TestSuite(name=isolated_testsuite_name, loc=(root.filename, root.linenumber), testcases=[root])
 
 
 def setup_global_test_suite() -> None:
@@ -294,6 +304,7 @@ def update_suite_skip_flag(node: TestSuite) -> None:
 
 ################################################################################
 ## Context management
+
 
 def get_current_context() -> "TestSuiteContext":
     """
@@ -360,6 +371,7 @@ def pop_context_stack() -> "TestSuiteContext":
 ################################################################################
 ## Reporting methods
 
+
 def report_testcase_skipped(node: TestCase) -> None:
     """
     Marks all children (if any) of the given testcase as skipped.
@@ -387,22 +399,16 @@ def get_frame_stack() -> list[FrameSummary]:
 
     if isinstance(block, TestCase):
         nodes += [block, context_stack[-1].executor.node]
-        labels += [
-            f"testsuite {context_stack[-1].testsuite.name}",
-            f"testcase {block.name}"
-            ]
+        labels += [f"testsuite {context_stack[-1].testsuite.name}", f"testcase {block.name}"]
     elif isinstance(block, renpy.test.testast.Block):
         nodes += [block, context_stack[-1].executor.node]
-        labels += [
-            f"testsuite {context_stack[-1].testsuite.name}",
-            f"hook {block.name}"
-            ]
+        labels += [f"testsuite {context_stack[-1].testsuite.name}", f"hook {block.name}"]
 
     for n, label in zip(nodes, labels):
         if n is None:
-            frame_stack.append(FrameSummary(label, "<during last test>", 0)) # type: ignore
+            frame_stack.append(FrameSummary(label, "<during last test>", 0))  # type: ignore
         else:
-            frame_stack.append(FrameSummary(label, n.filename, n.linenumber)) # type: ignore
+            frame_stack.append(FrameSummary(label, n.filename, n.linenumber))  # type: ignore
 
     return frame_stack
 
@@ -422,7 +428,6 @@ class TestSuiteContext:
     executor: "NodeExecutor"
     "The executor for the current node."
 
-
     def __init__(self, node: TestSuite):
         self.testsuite = node
         results = all_results.get_result_by_name(node.name)
@@ -430,7 +435,6 @@ class TestSuiteContext:
             raise ValueError(f"TestSuiteResults not found for {node.name}")
         self.results = results
         self.executor = NodeExecutor(results, None)
-
 
     def execute(self) -> None:
         try:
@@ -452,8 +456,6 @@ class TestSuiteContext:
             if isinstance(self.executor.node, renpy.test.testast.Until):
                 ## Clean up the Until node if it was running.
                 self.executor.node.left.after_until()
-
-
 
     def prepare_next_execution(self):
         """
@@ -629,14 +631,28 @@ def test_command() -> bool:
         return True
 
     ap = renpy.arguments.ArgumentParser(description="Runs a testcase.")
-    ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?",
-                    default=global_testsuite_name)
-    ap.add_argument("--no-skip", action="store_true", dest="ignore_skip_flag", default=False,
-                    help="Do not skip testcases marked as skip.")
-    ap.add_argument("--print-details", action="store_true", dest="print_details", default=False,
-                    help="Print detailed information for entire run.")
-    ap.add_argument("--print-skipped", action="store_true", dest="print_skipped", default=False,
-                    help="Print information about skipped testcases. Requires --print-detailed.")
+    ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?", default=global_testsuite_name)
+    ap.add_argument(
+        "--no-skip",
+        action="store_true",
+        dest="ignore_skip_flag",
+        default=False,
+        help="Do not skip testcases marked as skip.",
+    )
+    ap.add_argument(
+        "--print-details",
+        action="store_true",
+        dest="print_details",
+        default=False,
+        help="Print detailed information for entire run.",
+    )
+    ap.add_argument(
+        "--print-skipped",
+        action="store_true",
+        dest="print_skipped",
+        default=False,
+        help="Print information about skipped testcases. Requires --print-detailed.",
+    )
 
     args = ap.parse_args()
     _test.ignore_skip_flag = args.ignore_skip_flag
