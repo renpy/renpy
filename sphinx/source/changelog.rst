@@ -41,10 +41,10 @@ Ren'Py now supports the WOFF2 font format, a modern and highly-compressed font f
 the older WOFF format has been made official. The :var:`config.font_name_map` and :var:`config.font_replacement_map`
 variables may be useful to creators that wish to replace TrueType fonts with WOFF2 fonts.
 
-Ren'Py's unicode support has been updated to include support for Unicode 16 characters.
+Ren'Py's unicode support has been updated to include support for Unicode 17 characters.
 
-The Emoji font used by Ren'Py has been updated to include 435 more glyphs, with other glyphs
-having been updated.
+The emoji font used by Ren'Py has been updated to include 435 more glyphs, with other glyphs
+having been updated. (This includes most Unicode 16 emoji, but not unicode 17 emoji.)
 
 Other Changes
 -------------
