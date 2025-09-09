@@ -21,6 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from typing import Callable
 
 
 import renpy
@@ -47,7 +48,7 @@ current_statement: renpy.ast.Node | None = None
 testcases: dict[str, TestCase] = {}
 "A dictionary mapping the name of a testcase to the testcase node."
 
-action: Node | None = None
+action: Callable | None = None
 "An action to run before continuing the test execution."
 
 labels: set[str] = set()
@@ -112,6 +113,16 @@ def set_next_node(next: Node | None) -> None:
     """
 
     get_current_context().executor.set_next_node(next)
+
+
+def set_action(a: Callable) -> None:
+    """
+    Sets an action to run before continuing the test execution.
+    This action will be run once, and then cleared.
+    """
+
+    global action
+    action = a
 
 
 def initialize(name: str) -> None:
@@ -452,7 +463,6 @@ class TestSuiteContext:
             if isinstance(self.executor.node, renpy.test.testast.Until):
                 ## Clean up the Until node if it was running.
                 self.executor.node.left.after_until()
-
 
 
     def prepare_next_execution(self):

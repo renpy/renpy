@@ -1097,7 +1097,7 @@ class Python(Node):
         renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
 
     def start(self):
-        renpy.test.testexecution.action = self
+        renpy.test.testexecution.set_action(self)
         return True
 
     def execute(self, state, t):
