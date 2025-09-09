@@ -755,6 +755,9 @@ class Lexer(object):
         # Are we underneath an init block?
         self.init = init
 
+        # The priority of the init block we're in, if any.
+        self.init_priority = 0
+
         # The priority of auto-defined init statements.
         self.init_offset = init_offset
 

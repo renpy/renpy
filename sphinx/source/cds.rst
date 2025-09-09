@@ -156,6 +156,10 @@ A custom statement's parse function takes an instance of a Lexer object.
 
         This is true if the lexer is inside an init statement, else false.
 
+    .. property:: init_priority
+
+        If init is true, this is the priority of the init block.
+
     .. method:: error(msg)
 
         :param str msg: Message to add to the list of detected parsing errors.

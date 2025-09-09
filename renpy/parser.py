@@ -1157,9 +1157,13 @@ def init_statement(l, loc):
 
     else:
         old_init = l.init
+        old_init_priority = priority
 
         try:
             l.init = True
+            l.init_priority = priority + l.init_offset
+
+            l.expect_noblock("init statement")
 
             checkpoint = l.checkpoint()
 
@@ -1173,6 +1177,7 @@ def init_statement(l, loc):
 
         finally:
             l.init = old_init
+            l.init_priority = old_init_priority
 
     return ast.Init(loc, block, priority + l.init_offset)
 
