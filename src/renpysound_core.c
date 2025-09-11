@@ -1266,10 +1266,11 @@ PyObject *RPS_read_video(int channel) {
     }
 
     c = &channels[channel];
+    MediaState *playing = c->playing;
 
-    if (c->playing) {
+    if (playing) {
         Py_BEGIN_ALLOW_THREADS
-        surf = media_read_video(c->playing);
+        surf = media_read_video(playing);
         Py_END_ALLOW_THREADS
     }
 
