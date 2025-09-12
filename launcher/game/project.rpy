@@ -642,7 +642,7 @@ init python in project:
 
                     p_path = self.find_basedir(ppath)
 
-                    if p_path in self.scanned:
+                    if not p_path or p_path in self.scanned:
                         continue
 
                     self.scanned.add(p_path)
