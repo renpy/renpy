@@ -2212,6 +2212,15 @@ class UserStatement(Node):
 
         init_priority = renpy.statements.get("init_priority", self.parsed)
 
+        if callable(init_priority):
+            parsed = self.parsed
+
+            if parsed is None:
+                parsed = renpy.statements.parse(self, self.line, self.block)
+                self.parsed = parsed
+
+            init_priority = init_priority(parsed)
+
         # Statement init priority and init offset from the file.
         return init_priority + self.init_offset
 

@@ -155,7 +155,9 @@ def register(
 
     `init_priority`
         An integer that determines the priority of initialization of the
-        init block created by `init` and `execute_init` function.
+        init block created by `init` and `execute_init` function. This can
+        also be a function that is called with the parsed block, and should
+        return an integer.
 
     `translation_strings`
         A function that is called with the parsed block. It's expected to

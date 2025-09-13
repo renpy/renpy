@@ -49,6 +49,9 @@ having been updated. (This includes most Unicode 16 emoji, but not unicode 17 em
 Other Changes
 -------------
 
+The `init_priority` argument to the :func:`renpy.register_statement` function can now be a function that
+returns the init priority, rather than an integer.
+
 Ren'Py will no longer attempt to load .rpy files beginning with a dot (e.g. .hidden.rpy), as these
 are hidden files on unix-like platforms.
 
