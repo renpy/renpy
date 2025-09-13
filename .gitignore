@@ -11,6 +11,7 @@ ehthumbs_vista.db
 [Dd]esktop.ini
 
 # Python related files.
+/.venv
 *.pyc
 *.pyo
 *.egg-info
