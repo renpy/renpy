@@ -28,17 +28,13 @@ class StringifyAnnotations(ast.NodeVisitor):
         return ast.Constant(as_str)
 
     def visit_FunctionDef(self, node):
-        if node.returns is None:
-            node.returns = ast.Constant(None)
-        else:
+        if node.returns is not None:
             node.returns = self._maybe_string(node.returns)
 
         self.generic_visit(node)
 
     def visit_AsyncFunctionDef(self, node):
-        if node.returns is None:
-            node.returns = ast.Constant(None)
-        else:
+        if node.returns is not None:
             node.returns = self._maybe_string(node.returns)
 
         self.generic_visit(node)
@@ -95,7 +91,7 @@ def python_signature(o: object) -> str | None:
         # Fix 'void' return type to 'None'.
         sig_line = sig_line.replace("'void'", "None")
 
-        return re.match(rf"def {o.__name__}(\(.*\)(?: -> .*)?)", sig_line).group(1)
+        return re.match(rf"def {o.__name__}(\(.*\)(?: -> .*)?):", sig_line).group(1)
 
     # If for some reason there is no embedded signature, at least get param names.
     try:
@@ -177,6 +173,7 @@ def generate_namespace(out: TextIO, prefix: str, namespace: types.ModuleType | t
 
             # Methods and other contents.
             generate_namespace(out, prefix + "    ", v)
+            out.write("\n")
 
             generated = True
             missing_types.discard(k)
@@ -204,10 +201,12 @@ def generate_namespace(out: TextIO, prefix: str, namespace: types.ModuleType | t
     # _types declaration.
     _types = getattr(namespace, "_types", "")
     _types = textwrap.dedent(_types.strip("\n"))
+    missing_types.discard("_types")
 
     if _types:
         _types = stringify_annotations(_types)
         out.write(textwrap.indent(_types, prefix))
+        out.write("\n")
         generated = True
 
         mod = ast.parse(_types, mode="exec")
@@ -231,8 +230,9 @@ def generate_namespace(out: TextIO, prefix: str, namespace: types.ModuleType | t
     # Integer variables.
     for k, v in namespace_items:
         if k in missing_types and isinstance(v, int):
-            out.write(prefix + f"{k} : int\n")
+            out.write(prefix + f"{k}: int\n")
             generated = True
+            missing_types.discard(k)
 
     if not generated:
         out.write(prefix + "pass\n\n")
