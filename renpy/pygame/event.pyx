@@ -556,7 +556,3 @@ def init():
 
         if SDL_InitSubSystem(SDL_INIT_EVENTS):
             raise renpy.pygame.error.error()
-
-_types = """
-Event = EventType
-"""
