@@ -331,9 +331,9 @@ def annotate_anywhere(list glyphs):
 
 # This is used to tailor the unicode break algorithm. If a character in this
 # array is mapped to not
-cdef char break_tailor[65536]
+cdef char[BREAK_CHARACTER_COUNT] break_tailor
 
-for i in range(0, 65536):
+for i in range(0, BREAK_CHARACTER_COUNT):
     break_tailor[i] = BC_XX
 
 def language_tailor(chars, cls):
@@ -357,6 +357,8 @@ def language_tailor(chars, cls):
     ncls = CLASSES.get(cls, BC_XX)
 
     for c in chars:
+        if ord(c) >= BREAK_CHARACTER_COUNT:
+            raise Exception("Character U+{0:04x} is out of range for language_tailor.".format(ord(c)))
         break_tailor[ord(c)] = ncls
 
 # cjk
@@ -402,15 +404,26 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
         g = glyphs[pos]
         c = g.character
 
-        if 0x20000 <= c <= 0x2ffff: # Supplemental Ideographic Plane
-            new_type = BC_ID
-            tailor_type = BC_XX
-        elif c > 65535: # Other non-basic planes.
-            new_type = BC_AL
-            tailor_type = BC_XX
-        else: # Basic plane - use lookup table.
+
+# E0001          ; CM # Cf         LANGUAGE TAG
+# E0020..E007F   ; CM # Cf    [96] TAG SPACE..CANCEL TAG
+# E0100..E01EF   ; CM # Mn   [240] VARIATION SELECTOR-17..VARIATION SELECTOR-256
+# F0000..FFFFD   ; XX # Co [65534] <private-use-F0000>..<private-use-FFFFD>
+# 100000..10FFFD ; XX # Co [65534] <private-use-100000>..<private-use-10FFFD>
+
+
+        if c < BREAK_CHARACTER_COUNT:
             new_type = break_classes[c]
             tailor_type = break_tailor[c]
+        elif c < 0xE0000:
+            new_type = BC_ID
+            tailor_type = BC_XX
+        elif new_type < 0xF0000:
+            new_type = BC_CM
+            tailor_type = BC_XX
+        else:
+            new_type = BC_XX
+            tailor_type = BC_XX
 
         # If given no-ideographs, then turn ideographs and hangul syllables
         # into alphabetic characters.
@@ -462,6 +475,7 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
             g.split = SPLIT_IGNORE
             continue
 
+
         # Figure out the type of break opportunity we have here.
         # ^ Prohibited break.
         # % Indirect break.
@@ -489,8 +503,14 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
         else:
             g.split = SPLIT_NONE
 
+        if old_type == BC_HH and space_pos != pos - 2 and g.split == SPLIT_NONE:
+            g.split = SPLIT_BEFORE
+            continue
+
         old_type = new_type
         space_pos = 0
+
+
 
     # Deal with ruby, by marking it as non-spacing.
     old_g = glyphs[0]
