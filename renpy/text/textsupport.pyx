@@ -380,8 +380,10 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
     cdef char bc
     cdef Glyph g, g1, old_g
     cdef char *break_classes
+    cdef bint new_hyphen, old_hyphen
 
-    old_type = BC_WJ
+    new_type = BC_WJ
+    new_hyphen = False
     pos = 1
     space_pos = 0
 
@@ -401,16 +403,11 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
     for pos in range(1, len_glyphs):
 
+        old_type = new_type
+        old_hyphen = new_hyphen
+
         g = glyphs[pos]
         c = g.character
-
-
-# E0001          ; CM # Cf         LANGUAGE TAG
-# E0020..E007F   ; CM # Cf    [96] TAG SPACE..CANCEL TAG
-# E0100..E01EF   ; CM # Mn   [240] VARIATION SELECTOR-17..VARIATION SELECTOR-256
-# F0000..FFFFD   ; XX # Co [65534] <private-use-F0000>..<private-use-FFFFD>
-# 100000..10FFFD ; XX # Co [65534] <private-use-100000>..<private-use-10FFFD>
-
 
         if c < BREAK_CHARACTER_COUNT:
             new_type = break_classes[c]
@@ -437,12 +434,15 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
             new_type = BC_AL
 
+        if tailor_type != BC_XX:
+            new_type = tailor_type
+
+        # Is this a hyphen (and not immediately after a space)?
+        new_hyphen = (new_type == BC_HY or new_type == BC_HH) and not old_type == BC_SP
+
         # Normalize the class by turning various groups into AL.
         if (new_type >= BC_PITCH and new_type != BC_SP and new_type != BC_CB):
             new_type = BC_AL
-
-        if tailor_type != BC_XX:
-            new_type = tailor_type
 
         # If we have a space, record it and continue.
         if new_type == BC_SP:
@@ -503,14 +503,12 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
         else:
             g.split = SPLIT_NONE
 
-        if old_type == BC_HH and space_pos != pos - 2 and g.split == SPLIT_NONE:
-            g.split = SPLIT_BEFORE
-            continue
+        # If it's a hyphen, split after. But suppress the split if there's a number after an HY-hyphen.
+        if old_hyphen and g.split == SPLIT_NONE:
+            if old_type != BC_HY or new_type != BC_NU:
+                g.split = SPLIT_BEFORE
 
-        old_type = new_type
         space_pos = 0
-
-
 
     # Deal with ruby, by marking it as non-spacing.
     old_g = glyphs[0]
@@ -528,7 +526,6 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
             g.split = SPLIT_NONE
 
         old_g = g
-
 
 
 def linebreak_greedy(list glyphs, int first_width, int rest_width):
