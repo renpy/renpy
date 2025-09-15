@@ -448,11 +448,15 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
         if new_type == BC_SP:
             g.split = SPLIT_NONE
             space_pos = pos
+
+            new_type = old_type
             continue
 
         # If we have a combining mark, continue.
         if new_type == BC_CM:
             g.split = SPLIT_NONE
+
+            new_type = old_type
             continue
 
         if new_type == BC_CB:
@@ -461,6 +465,8 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
             else:
                 g.split = SPLIT_BEFORE
 
+
+            new_type = old_type
             continue
 
         if old_type == BC_CB:
@@ -473,8 +479,9 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
         if new_type == BC_CL or new_type == BC_CP:
             g.split = SPLIT_IGNORE
-            continue
 
+            new_type = old_type
+            continue
 
         # Figure out the type of break opportunity we have here.
         # ^ Prohibited break.

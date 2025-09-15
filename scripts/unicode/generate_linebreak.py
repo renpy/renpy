@@ -125,8 +125,10 @@ def main():
 
 
         def common_class(cl):
-            if cl in { "AK", "AP", "AS", "VI", "VF", "EB", "EM" }:
+            if cl in { "AK", "AP", "AS", "VI", "VF", "EB",}:
                 return "AL"
+            elif cl in { "EM", }:
+                return "CM"
             else:
                 return cl
 
