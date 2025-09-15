@@ -150,7 +150,7 @@ class MeshInfo:
     A dictionary of uniforms that are set by the material.
     """
 
-    texture_uniforms = dict[str, renpy.display.displayable.Displayable]
+    texture_uniforms: dict[str, Displayable]
     """
     A dictionary of texture uniforms that are set by the material.
     """
@@ -388,7 +388,7 @@ cdef class Loader:
         self,
         model_data: ModelData,
         filename: str,
-        shaders: Iterable[str|renpy.display.displayable.Displayable],
+        shaders: Iterable[str | Displayable],
         tangents: bool,
         zoom: float,
         report: bool) -> None:
@@ -467,7 +467,7 @@ cdef class Loader:
             else:
                 raise Exception(f"{format} textures are not (yet) supported.")
 
-    def get_texture(self, material_index : int, texture_type : int) -> Displayable|None:
+    def get_texture(self, material_index: int, texture_type: int) -> Displayable | None:
         """
         Given a material index and a texture type, returns the path to the texture. This
         may also be *0 (etc) for embedded textures.
@@ -499,7 +499,7 @@ cdef class Loader:
 
         return rv
 
-    def get_texture_uniforms(self, material_index: int) -> dict[str, str]:
+    def get_texture_uniforms(self, material_index: int) -> dict[str, Displayable]:
         """
         Given a material index, returns a dictionary of texture uniforms that
         should be set for the material.
@@ -578,7 +578,7 @@ cdef class Loader:
         return ivalue != 0
 
 
-    cdef load_node(self, aiNode *node, matrix : Matrix):
+    cdef load_node(self, aiNode *node, matrix: Matrix):
         cdef unsigned int i
 
         node_matrix = Matrix((
@@ -707,7 +707,7 @@ loader = Loader()
 loader_lock = threading.Lock()
 "The lock used to protect the loader."
 
-class GLTFModel(renpy.display.displayable.Displayable):
+class GLTFModel(Displayable):
     """
     :doc: assimp
 
@@ -756,7 +756,7 @@ class GLTFModel(renpy.display.displayable.Displayable):
     A dictionary of uniforms that are set by the model.
     """
 
-    texture_uniforms: dict[str, renpy.display.displayable.Displayable]
+    texture_uniforms: dict[str, Displayable]
     """
     A dictionary of texture uniforms.
     """
