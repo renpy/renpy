@@ -102,12 +102,8 @@
         "renpy/uguu/uguu.pyi": true
     },
     "python.languageServer": "Pylance",
-    "python.analysis.typeCheckingMode": "basic",
     "python.analysis.diagnosticMode": "workspace",
     "python.linting.pylintEnabled": false,
-    "python.analysis.diagnosticSeverityOverrides": {
-        "reportMissingModuleSource": "none"
-    },
     "esbonio.server.enabled": true,
     "esbonio.sphinx.confDir": "",
     "renpy.excludeCompiledFilesFromWorkspace": true,

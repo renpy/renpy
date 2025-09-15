@@ -14,6 +14,8 @@ ignore = [
     "renpycoverage.py"
 ]
 
+typeCheckingMode = "basic"
+
 reportOptionalSubscript = false
 reportOptionalMemberAccess = false
 reportOptionalCall = false
@@ -21,7 +23,8 @@ reportOptionalIterable = false
 reportOptionalContextManager = false
 reportOptionalOperand = false
 reportMissingModuleSource = false
-
+reportUnnecessaryTypeIgnoreComment = "information"
+reportTypeCommentUsage = "information"
 
 [tool.cyright]
 include = [
