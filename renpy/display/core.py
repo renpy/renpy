@@ -1062,7 +1062,7 @@ class Interface:
             cursors = {}
 
             for key, cursor_list in renpy.config.mouse.items():  # type: ignore
-                cursor_list = []
+                color_cursor_list = []
 
                 for i in cursor_list:
                     if i not in cursors:
@@ -1070,9 +1070,9 @@ class Interface:
                         surf = renpy.display.im.load_surface(fn)
                         cursors[i] = pygame.mouse.ColorCursor(surf, x, y)
 
-                    cursor_list.append(cursors[i])
+                    color_cursor_list.append(cursors[i])
 
-                self.cursor_cache[key] = cursor_list
+                self.cursor_cache[key] = color_cursor_list
 
             if ("default" not in self.cursor_cache) and (None in self.cursor_cache):
                 self.cursor_cache["default"] = self.cursor_cache[None]
