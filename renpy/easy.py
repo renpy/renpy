@@ -53,7 +53,7 @@ def lookup_displayable_prefix(d: str) -> _Displayable | None:
     return displayable(fn(arg))
 
 
-def displayable_or_none(d, scope=None, dynamic=True) -> _Displayable | None:
+def displayable_or_none(d: Any, scope: dict[str, Any] | None = None, dynamic: bool = True) -> _Displayable | None:
     if isinstance(d, renpy.display.displayable.Displayable):
         return d
 
