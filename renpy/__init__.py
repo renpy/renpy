@@ -741,6 +741,7 @@ if typing.TYPE_CHECKING:
     from . import preferences as preferences
     from . import pyanalysis as pyanalysis
     from . import pydict as pydict
+    from . import pygame as pygame
     from . import python as python
     from . import revertable as revertable
     from . import rollback as rollback
@@ -761,7 +762,6 @@ if typing.TYPE_CHECKING:
     from . import ui as ui
     from . import update as update
     from . import util as util
-    from . import vc_version as vc_version
     from . import versions as versions
     from . import warp as warp
     from . import webloader as webloader
