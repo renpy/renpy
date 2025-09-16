@@ -2041,7 +2041,9 @@ class Null(ImageBase):
         super(Null, self).__init__(**properties)
 
         self.const_size = True
-        self.color: tuple[int, int, int, int] = renpy.color.Color(color)
+
+        r, g, b, a = renpy.color.Color(color)
+        self.color: tuple[int, int, int, int] = (r, g, b, a)
 
     def get_hash(self):
         return 42
