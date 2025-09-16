@@ -901,6 +901,264 @@ class ZipFileImage(ImageBase):
         return []
 
 
+class Null(ImageBase):
+    """
+    :undocumented:
+
+    An image manipulator that returns a 1x1 surface. This can be used as a missing texture,
+    if needed.
+
+    `color`
+        The color of the surface.
+    """
+
+    obsolete = False
+    color = (0, 0, 0, 0)
+
+    def __init__(self, color=(0, 0, 0, 0), **properties):
+        super().__init__(**properties)
+
+        self.const_size = True
+
+        r, g, b, a = renpy.color.Color(color)
+        self.color: tuple[int, int, int, int] = (r, g, b, a)
+
+    def get_hash(self):
+        return 42
+
+    def load(self):
+        rv = renpy.display.pgrender.surface((1, 1), True)
+        rv.fill(self.color)
+        return rv
+
+    def predict_files(self):
+        return []
+
+
+class UnoptimizedTexture(ImageBase):
+    """
+    :undocumented:
+
+    This is used by unoptimized_texture to force a texture to load without
+    optimizing the bounds.
+    """
+
+    obsolete = False
+
+    def __init__(self, im, **properties):
+        im = image(im)
+        super().__init__(im.identity, optimize_bounds=False, **properties)
+        self.image = im
+
+        self.const_size = im.const_size
+
+    def _repr_info(self):
+        return repr(self.image)
+
+    def get_hash(self):
+        return self.image.get_hash()
+
+    def load(self):
+        return self.image.load()
+
+    def predict_files(self):
+        return self.image.predict_files()
+
+
+def image(arg, loose=False, **properties):
+    """
+    :doc: im_image
+    :name: Image
+    :args: (filename, *, optimize_bounds=True, oversample=1, dpi=96, mipmap=None, **properties)
+
+    Loads an image from a file. `filename` is a
+    string giving the name of the file.
+
+    `filename`
+        This should be an image filename, including the extension.
+
+    `optimize_bounds`
+        If true, only the portion of the image that
+        inside the bounding box of non-transparent pixels is loaded into
+        GPU memory. (The only reason to set this to False is when using an
+        image as input to a shader.)
+
+    `oversample`
+        If this is greater than 1, the image is considered to be oversampled,
+        with more pixels than its logical size would imply. For example, if
+        an image file is 2048x2048 and oversample is 2, then the image will
+        be treated as a 1024x1024 image for the purpose of layout.
+
+    `dpi`
+        The DPI of an SVG image. This defaults to 96, but that can be
+        increased to render the SVG larger, and decreased to render
+        it smaller.
+
+    `mipmap`
+        If this is "auto", then mipmaps are generated for the image only if the game is scaled down to less than
+        75% of its default size. If this is True, mipmaps are always generated. If this is False, mipmaps are never
+        generated. If this is None, then the default is taken from config.mipmap.
+    """
+
+    """
+    (Actually, the user documentation is a bit misleading, as
+     this tries for compatibility with several older forms of
+     image specification.)
+
+    If the loose argument is False, then this will report an error if an
+    arbitrary argument is given. If it's True, then the argument is passed
+    through unchanged.
+    """
+
+    if isinstance(arg, ImageBase):
+        return arg
+
+    elif isinstance(arg, str):
+        return Image(arg, **properties)
+
+    elif isinstance(arg, renpy.display.image.ImageReference):
+        arg.find_target()
+        return image(arg.target, loose=loose, **properties)
+
+    elif isinstance(arg, tuple):
+        params = []
+
+        for i in arg:
+            params.append((0, 0))
+            params.append(i)
+
+        return Composite(None, *params)
+
+    elif loose:
+        return arg
+
+    if isinstance(arg, renpy.display.displayable.Displayable):
+        raise Exception("Expected an image, but got a general displayable.")
+    else:
+        raise Exception("Could not construct image from argument.")
+
+
+def expand_bounds(
+    bounds: tuple[int, int, int, int],
+    size: tuple[int, int],
+    amount: int,
+) -> tuple[int, int, int, int]:
+    """
+    This expands the rectangle bounds by amount, while ensure it fits inside size.
+    """
+
+    x, y, w, h = bounds
+    sx, sy = size
+
+    x0 = max(0, x - amount)
+    y0 = max(0, y - amount)
+    x1 = min(sx, x + w + amount)
+    y1 = min(sy, y + h + amount)
+
+    return (x0, y0, x1 - x0, y1 - y0)
+
+
+def ensure_bounds_divide_evenly(bounds: tuple[int, int, int, int], n: int) -> tuple[int, int, int, int]:
+    """
+    This ensures that the bounds is divisible by n, by expanding the bounds
+    if necessary.
+    """
+
+    x, y, w, h = bounds
+
+    xmodulo = x % n
+    ymodulo = y % n
+
+    if xmodulo:
+        x -= xmodulo
+        w += xmodulo
+
+    if ymodulo:
+        y -= ymodulo
+        h += ymodulo
+
+    return (x, y, w, h)
+
+
+def load_image(im) -> "renpy.display.render.Render":
+    """
+    :name: renpy.load_image
+    :doc: udd_utility
+
+    Loads the image manipulator `im` using the image cache, and returns a render.
+    """
+
+    return cache.get(image(im), render=True)
+
+
+def load_surface(im) -> Surface:
+    """
+    :name: renpy.load_surface
+    :doc: udd_utility
+
+    Loads the image manipulator `im` using the image cache, and returns a pygame Surface.
+    """
+
+    return cache.get(image(im))
+
+
+def load_rgba(data: bytes, size: tuple[int, int]) -> Any:
+    """
+    :name: renpy.load_rgba
+    :doc: udd_utility
+
+    Loads the image data `bytes` into a texture of size `size`, and return it.
+
+    `data`
+        Should be a bytes object containing the image data in RGBA8888 order.
+    """
+
+    surf = renpy.display.pgrender.surface(size, True)
+    surf.from_data(data)
+    return renpy.display.draw.load_texture(surf)
+
+
+def unoptimized_texture(d):
+    """
+    :undocumented:
+
+    If `d` is an image manipulator, return an image manipulator that loads
+    the image without optimizing the bounds. Otherwise, return `d`.
+    """
+
+    if isinstance(d, ImageBase):
+        return UnoptimizedTexture(d, mipmap=True)
+    else:
+        return d
+
+
+def render_for_texture(d, width, height, st, at):
+    """
+    :undocumented:
+
+    Attempts to render `d` for the purpose of getting the underlying texture,
+    rather than a Render. A render may be returned if `d` is not an UnoptimizedTexture
+    returned by unoptimized_texture.
+    """
+
+    if isinstance(d, UnoptimizedTexture):
+        return renpy.display.im.cache.get(d, texture=True)
+    else:
+        return renpy.display.render.render(d, width, height, st, at)
+
+
+def reset_module():
+    """
+    :undocumented:
+    """
+
+    print("Resetting cache.")
+
+    global cache
+    cache = Cache()
+
+
+### Obsolete image manipulators and functions.
 class Composite(ImageBase):
     """
     :undocumented:
@@ -2017,260 +2275,3 @@ class AlphaMask(ImageBase):
 
     def predict_files(self):
         return self.base.predict_files() + self.mask.predict_files()
-
-
-class Null(ImageBase):
-    """
-    :undocumented:
-
-    An image manipulator that returns a 1x1 surface. This can be used as a missing texture,
-    if needed.
-
-    `color`
-        The color of the surface.
-    """
-
-    obsolete = False
-    color = (0, 0, 0, 0)
-
-    def __init__(self, color=(0, 0, 0, 0), **properties):
-        super().__init__(**properties)
-
-        self.const_size = True
-
-        r, g, b, a = renpy.color.Color(color)
-        self.color: tuple[int, int, int, int] = (r, g, b, a)
-
-    def get_hash(self):
-        return 42
-
-    def load(self):
-        rv = renpy.display.pgrender.surface((1, 1), True)
-        rv.fill(self.color)
-        return rv
-
-    def predict_files(self):
-        return []
-
-
-class UnoptimizedTexture(ImageBase):
-    """
-    :undocumented:
-
-    This is used by unoptimized_texture to force a texture to load without
-    optimizing the bounds.
-    """
-
-    obsolete = False
-
-    def __init__(self, im, **properties):
-        im = image(im)
-        super().__init__(im.identity, optimize_bounds=False, **properties)
-        self.image = im
-
-        self.const_size = im.const_size
-
-    def _repr_info(self):
-        return repr(self.image)
-
-    def get_hash(self):
-        return self.image.get_hash()
-
-    def load(self):
-        return self.image.load()
-
-    def predict_files(self):
-        return self.image.predict_files()
-
-
-def image(arg, loose=False, **properties):
-    """
-    :doc: im_image
-    :name: Image
-    :args: (filename, *, optimize_bounds=True, oversample=1, dpi=96, mipmap=None, **properties)
-
-    Loads an image from a file. `filename` is a
-    string giving the name of the file.
-
-    `filename`
-        This should be an image filename, including the extension.
-
-    `optimize_bounds`
-        If true, only the portion of the image that
-        inside the bounding box of non-transparent pixels is loaded into
-        GPU memory. (The only reason to set this to False is when using an
-        image as input to a shader.)
-
-    `oversample`
-        If this is greater than 1, the image is considered to be oversampled,
-        with more pixels than its logical size would imply. For example, if
-        an image file is 2048x2048 and oversample is 2, then the image will
-        be treated as a 1024x1024 image for the purpose of layout.
-
-    `dpi`
-        The DPI of an SVG image. This defaults to 96, but that can be
-        increased to render the SVG larger, and decreased to render
-        it smaller.
-
-    `mipmap`
-        If this is "auto", then mipmaps are generated for the image only if the game is scaled down to less than
-        75% of its default size. If this is True, mipmaps are always generated. If this is False, mipmaps are never
-        generated. If this is None, then the default is taken from config.mipmap.
-    """
-
-    """
-    (Actually, the user documentation is a bit misleading, as
-     this tries for compatibility with several older forms of
-     image specification.)
-
-    If the loose argument is False, then this will report an error if an
-    arbitrary argument is given. If it's True, then the argument is passed
-    through unchanged.
-    """
-
-    if isinstance(arg, ImageBase):
-        return arg
-
-    elif isinstance(arg, str):
-        return Image(arg, **properties)
-
-    elif isinstance(arg, renpy.display.image.ImageReference):
-        arg.find_target()
-        return image(arg.target, loose=loose, **properties)
-
-    elif isinstance(arg, tuple):
-        params = []
-
-        for i in arg:
-            params.append((0, 0))
-            params.append(i)
-
-        return Composite(None, *params)
-
-    elif loose:
-        return arg
-
-    if isinstance(arg, renpy.display.displayable.Displayable):
-        raise Exception("Expected an image, but got a general displayable.")
-    else:
-        raise Exception("Could not construct image from argument.")
-
-
-def expand_bounds(
-    bounds: tuple[int, int, int, int],
-    size: tuple[int, int],
-    amount: int,
-) -> tuple[int, int, int, int]:
-    """
-    This expands the rectangle bounds by amount, while ensure it fits inside size.
-    """
-
-    x, y, w, h = bounds
-    sx, sy = size
-
-    x0 = max(0, x - amount)
-    y0 = max(0, y - amount)
-    x1 = min(sx, x + w + amount)
-    y1 = min(sy, y + h + amount)
-
-    return (x0, y0, x1 - x0, y1 - y0)
-
-
-def ensure_bounds_divide_evenly(bounds: tuple[int, int, int, int], n: int) -> tuple[int, int, int, int]:
-    """
-    This ensures that the bounds is divisible by n, by expanding the bounds
-    if necessary.
-    """
-
-    x, y, w, h = bounds
-
-    xmodulo = x % n
-    ymodulo = y % n
-
-    if xmodulo:
-        x -= xmodulo
-        w += xmodulo
-
-    if ymodulo:
-        y -= ymodulo
-        h += ymodulo
-
-    return (x, y, w, h)
-
-
-def load_image(im) -> "renpy.display.render.Render":
-    """
-    :name: renpy.load_image
-    :doc: udd_utility
-
-    Loads the image manipulator `im` using the image cache, and returns a render.
-    """
-
-    return cache.get(image(im), render=True)
-
-
-def load_surface(im) -> Surface:
-    """
-    :name: renpy.load_surface
-    :doc: udd_utility
-
-    Loads the image manipulator `im` using the image cache, and returns a pygame Surface.
-    """
-
-    return cache.get(image(im))
-
-
-def load_rgba(data: bytes, size: tuple[int, int]) -> Any:
-    """
-    :name: renpy.load_rgba
-    :doc: udd_utility
-
-    Loads the image data `bytes` into a texture of size `size`, and return it.
-
-    `data`
-        Should be a bytes object containing the image data in RGBA8888 order.
-    """
-
-    surf = renpy.display.pgrender.surface(size, True)
-    surf.from_data(data)
-    return renpy.display.draw.load_texture(surf)
-
-
-def unoptimized_texture(d):
-    """
-    :undocumented:
-
-    If `d` is an image manipulator, return an image manipulator that loads
-    the image without optimizing the bounds. Otherwise, return `d`.
-    """
-
-    if isinstance(d, ImageBase):
-        return UnoptimizedTexture(d, mipmap=True)
-    else:
-        return d
-
-
-def render_for_texture(d, width, height, st, at):
-    """
-    :undocumented:
-
-    Attempts to render `d` for the purpose of getting the underlying texture,
-    rather than a Render. A render may be returned if `d` is not an UnoptimizedTexture
-    returned by unoptimized_texture.
-    """
-
-    if isinstance(d, UnoptimizedTexture):
-        return renpy.display.im.cache.get(d, texture=True)
-    else:
-        return renpy.display.render.render(d, width, height, st, at)
-
-
-def reset_module():
-    """
-    :undocumented:
-    """
-
-    print("Resetting cache.")
-
-    global cache
-    cache = Cache()
