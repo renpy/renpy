@@ -1790,9 +1790,6 @@ class matrix(tuple):
             a = matrix(a)
 
         if not isinstance(b, matrix):
-            if isinstance(b, renpy.color.Color):
-                return NotImplemented
-
             b = matrix(b)
 
         result = [0] * 25
@@ -1833,12 +1830,20 @@ class matrix(tuple):
         return self * -1 + other
 
     def __mul__(self, other):
+        if isinstance(other, renpy.color.Color):
+            r, g, b, a, _ = self.vector_mul(other)
+            return renpy.color.Color((int(r), int(g), int(b), int(a)))
+
         if isinstance(other, (int, float)):
             return self.scalar_mul(other)
 
         return self.mul(self, other)
 
     def __rmul__(self, other):
+        if isinstance(other, renpy.color.Color):
+            r, g, b, a, _ = self.vector_mul(other)
+            return renpy.color.Color((int(r), int(g), int(b), int(a)))
+
         if isinstance(other, (int, float)):
             return self.scalar_mul(other)
 

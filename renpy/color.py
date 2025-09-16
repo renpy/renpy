@@ -24,7 +24,6 @@ from typing import final, overload
 import re
 import colorsys
 
-import renpy
 
 _SHORT_COLOR_STRING_RE = re.compile(
     r"#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})?",
@@ -399,10 +398,6 @@ class Color(tuple[int, int, int, int]):
         return Color((r2 - r1, g2 - g1, b2 - b1, a2 - a1))
 
     def __mul__(self, other: ColorLike):
-        if isinstance(other, renpy.display.im.matrix):
-            r, g, b, a, _ = other.vector_mul(self)
-            return Color((int(r), int(g), int(b), int(a)))
-
         r1, g1, b1, a1 = self
 
         try:
