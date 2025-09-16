@@ -89,13 +89,10 @@ Avtivate the virtualenv using::
     source .venv/bin/activate
 
 You'll need to activate the virtualenv each time you begin working on Ren'Py.
-After activating the virtualenv, install additional dependencies::
+After activating the virtualenv, install additional dependencies and compile
+extension modules that support Ren'Py::
 
-    pip install -U setuptools cython future six typing pefile requests ecdsa
-
-Finally, use setup.py to compile extension modules that support Ren'Py::
-
-    python setup.py build_ext --inplace
+    pip install -e .[dev]
 
 Ren'Py will be installed into the activated virtualenv. Ren'Py can then be run
 using the command::

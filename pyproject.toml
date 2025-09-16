@@ -1,5 +1,19 @@
-[tool.pyright]
+[project]
+name = "renpy"
+readme = "README.rst"
+license = "MIT"
+version= "8.99.99"
+requires-python = "==3.12.*"
+dependencies = ["future", "six", "pefile", "requests", "ecdsa"]
 
+[project.optional-dependencies]
+dev = ["setuptools", "cython", "ruff"]
+
+[build-system]
+requires = ["setuptools", "cython"]
+build-backend = "setuptools.build_meta:__legacy__"
+
+[tool.pyright]
 include = [
     "*.py",
     "renpy/",
