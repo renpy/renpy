@@ -263,7 +263,7 @@ class Color(tuple[int, int, int, int]):
             return f"#{r:02x}{g:02x}{b:02x}{a:02x}"
 
     def __repr__(self):
-        return "<Color {}>".format(self.hexcode)
+        return f"renpy.color.Color({self.hexcode!r})"
 
     def __getnewargs__(self):
         return (tuple(self),)
