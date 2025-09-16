@@ -42,5 +42,5 @@ Apart from Displayable itself, this could be one of:
 - Name of a defined image.
 - Ren'Py interpolation string referencing one of above.
 - List of any of the above.
-- renpy.Color object.
+- renpy.color.Color object.
 """
