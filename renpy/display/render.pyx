@@ -1536,7 +1536,7 @@ cdef class Render:
         Fills this Render with the given color.
         """
 
-        color = renpy.easy.color(color)
+        color = renpy.color.Color(color)
         solid = renpy.display.imagelike.Solid(color)
         surf = render(solid, self.width, self.height, 0, 0)
         self.blit(surf, (0, 0), focus=False, main=False)
@@ -1697,7 +1697,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.rect(self.surf,
-                             renpy.easy.color(color),
+                             renpy.color.Color(color),
                              rect,
                              width)
         finally:
@@ -1707,7 +1707,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.polygon(self.surf,
-                                renpy.easy.color(color),
+                                renpy.color.Color(color),
                                 pointlist,
                                 width)
         finally:
@@ -1718,7 +1718,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.circle(self.surf,
-                               renpy.easy.color(color),
+                               renpy.color.Color(color),
                                pos,
                                radius,
                                width)
@@ -1730,7 +1730,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.ellipse(self.surf,
-                                renpy.easy.color(color),
+                                renpy.color.Color(color),
                                 rect,
                                 width)
         finally:
@@ -1741,7 +1741,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.arc(self.surf,
-                            renpy.easy.color(color),
+                            renpy.color.Color(color),
                             rect,
                             start_angle,
                             stop_angle,
@@ -1754,7 +1754,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.line(self.surf,
-                             renpy.easy.color(color),
+                             renpy.color.Color(color),
                              start_pos,
                              end_pos,
                              width)
@@ -1765,7 +1765,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.lines(self.surf,
-                              renpy.easy.color(color),
+                              renpy.color.Color(color),
                               closed,
                               pointlist,
                               width)
@@ -1776,7 +1776,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.aaline(self.surf,
-                               renpy.easy.color(color),
+                               renpy.color.Color(color),
                                startpos,
                                endpos,
                                blend)
@@ -1787,7 +1787,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.aalines(self.surf,
-                                renpy.easy.color(color),
+                                renpy.color.Color(color),
                                 closed,
                                 pointlist,
                                 blend)

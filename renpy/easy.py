@@ -31,6 +31,7 @@ import renpy
 
 from renpy.types import Displayable, DisplayableLike
 
+# Kept for backwards compatibility.
 from renpy.color import Color as Color, Color as color  # noqa: F401
 
 

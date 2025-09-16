@@ -1316,8 +1316,8 @@ class Twocolor(ImageBase):
     """
 
     def __init__(self, im, white, black, force_alpha=False, **properties):
-        white = renpy.easy.color(white)
-        black = renpy.easy.color(black)
+        white = renpy.color.Color(white)
+        black = renpy.color.Color(black)
 
         im = image(im)
 
@@ -1536,7 +1536,7 @@ class matrix(tuple):
             a = matrix(a)
 
         if not isinstance(b, matrix):
-            if isinstance(b, renpy.easy.Color):
+            if isinstance(b, renpy.color.Color):
                 return NotImplemented
 
             b = matrix(b)
@@ -1646,7 +1646,7 @@ im.matrix(%f, %f, %f, %f, %f.
 
         r, g, b = desat
 
-        def I(a, b):
+        def I(a, b):  # noqa: E743
             return a + (b - a) * level
 
         return matrix(
@@ -1849,8 +1849,8 @@ im.matrix(%f, %f, %f, %f, %f.
             with the :tpref:`matrixcolor` transform property.
         """
 
-        (r0, g0, b0, _a0) = renpy.easy.color(black_color)  # type: ignore
-        (r1, g1, b1, _a1) = renpy.easy.color(white_color)  # type: ignore
+        (r0, g0, b0, _) = renpy.color.Color(black_color)
+        (r1, g1, b1, _) = renpy.color.Color(white_color)
 
         r0 /= 255.0
         g0 /= 255.0
@@ -1900,7 +1900,7 @@ def Color(im, color):
     black and white is the supplied color.
     """
 
-    r, g, b, a = renpy.easy.color(color)  # type: ignore
+    r, g, b, a = renpy.color.Color(color)
 
     return Recolor(im, r, g, b, a)
 
@@ -2041,7 +2041,7 @@ class Null(ImageBase):
         super(Null, self).__init__(**properties)
 
         self.const_size = True
-        self.color: tuple[int, int, int, int] = tuple(renpy.easy.color(color))
+        self.color: tuple[int, int, int, int] = renpy.color.Color(color)
 
     def get_hash(self):
         return 42
