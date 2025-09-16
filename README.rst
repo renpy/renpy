@@ -92,12 +92,17 @@ You'll need to activate the virtualenv each time you begin working on Ren'Py.
 After activating the virtualenv, install additional dependencies and compile
 extension modules that support Ren'Py::
 
-    pip install -e .[dev]
+    pip install -e .
 
 Ren'Py will be installed into the activated virtualenv. Ren'Py can then be run
 using the command::
 
     python renpy.py
+
+You could also install optional development dependencies if you want to leverage
+IDE extensions for Ruff and Cython::
+
+    pip install -e .[dev]
 
 
 Other Platforms
