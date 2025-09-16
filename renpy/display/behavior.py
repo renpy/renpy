@@ -1127,13 +1127,14 @@ class Button(renpy.display.layout.Window):
             # Used to prevent keymaps (the key statement) from reacting to
             # this event. This is consumed by Keymap.
             try:
+                old_suppressed = getattr(ev, "_suppressed", False)
                 ev._suppressed = True
 
                 rv = super(Button, self).event(ev, x, y, st)
                 if rv is not None:
                     return rv
             finally:
-                ev._suppressed = False
+                ev._suppressed = old_suppressed
 
         if (self.keysym is not None) and (self.clicked is not None):
             if map_event(ev, self.keysym):
