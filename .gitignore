@@ -23,6 +23,7 @@ ehthumbs_vista.db
 *~
 *.bak
 .gdb_history
+uv.lock
 
 # Compiled Ren'Py files.
 *.rpyc
