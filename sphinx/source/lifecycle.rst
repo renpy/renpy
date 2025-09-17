@@ -66,6 +66,10 @@ statement adds or substracts from this 500, rather than replacing it.
 
 Automatic image definition from the :ref:`image-directory` occurs at init priority 0.
 
+`Define statements <define-statement>` are executed at init time, and the variables set in
+define statements should not be changed, as Ren'Py considers those variables to be constants for
+the purpose of performance optimization.
+
 Note that while the :ref:`default <default-statement>` statements are not executed at init time,
 the priority of the statements influences the order in which they will be executed, relative to
 one another.
@@ -96,15 +100,27 @@ The first define statement is run at priority 2, which means it runs
 after the second define statement, and hence ``foo`` winds up with
 a value of 2.
 
+
 Script Execution
 ================
 
-This is what happens once the game window becomes visible. This is when normal Ren'Py statements
-execute, and when the rules described in :doc:`label` apply. This is also the time when the
-variables from :ref:`default statements <default-statement>` are set for the first time - as
-opposed to :ref:`define statements <define-statement>` which are set at init time.
+This is when normal Ren'Py statements execute, and when the rules described in :doc:`label` apply.
 
-Config variables should not be changed once normal game execution starts.
+Variables that are changed during this phase are saved when the game is saved, and restored
+when the game is loaded. The game window is shown during the first interaction that occurs during
+this phase.
+
+Config variables should not be changed once script execution begins, as Ren'Py can cache the values
+of config variables.
+
+Before Splashscreen
+-------------------
+
+The items in this  section at the start of Ren'Py, or after a return to the main menu. Notably, these
+still run even if the splashscreen is skipped.
+
+Before the splashscreen is shown, :ref:`default statements <default-statement>` are executed. Then,
+:var:`config.start_callbacks` are run.
 
 Splashscreen
 ------------
@@ -113,6 +129,9 @@ If it exists, the :ref:`splashscreen <adding-a-splashscreen>` label is executed 
 
 A splashscreen is only displayed once per time Ren'Py is run, and is skipped when
 script execution restarts.
+
+At the end of the splashscreen, even if it is skipped, Ren'Py executes ``scene black`` to clear out
+the splashscreen and provide a default black background.
 
 Main Menu
 ---------
