@@ -4,15 +4,30 @@ readme = "README.rst"
 license = "MIT"
 version= "8.99.99"
 requires-python = "==3.12.*"
-dependencies = ["future", "six", "pefile", "requests", "ecdsa", "setuptools", "cython", "ruff"]
+dependencies = [
+    "future",
+    "six",
+    "pefile",
+    "requests",
+    "ecdsa",
+    "setuptools",
+    "cython",
+    "ruff",
+    "sphinx",
+    "sphinx_rtd_theme",
+    "sphinx_rtd_dark_mode",
+]
+
 
 # For now those are listed in project requirements until build system is updated.
 # [project.optional-dependencies]
 # dev = ["setuptools", "cython", "ruff"]
 
-[build-system]
-requires = ["setuptools", "cython"]
-build-backend = "setuptools.build_meta:__legacy__"
+# For now, Ren'Py isn't using a build system, as build isolation makes building too slow.
+
+# [build-system]
+# requires = ["setuptools", "cython"]
+# build-backend = "setuptools.build_meta:__legacy__"
 
 [tool.pyright]
 include = [

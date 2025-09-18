@@ -79,12 +79,12 @@ that version, you'll need to download it from:
 
     https://github.com/libsdl-org/SDL_image/tree/SDL2
 
-We strongly suggest using package manager to create virtual environment and
-manage dependencies. We have tested with [uv](https://docs.astral.sh/uv/) but
+We strongly suggest using a package manager to create virtual environment and
+manage dependencies. We have tested with `uv <https://docs.astral.sh/uv/>`_ but
 other package managers should work as well. To create a virtual environment and
 install dependencies, open a new terminal and run::
 
-    uv sync --no-install-project
+    uv sync
 
 After that, compile extension modules and run Ren'Py using the command::
 
