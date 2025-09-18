@@ -1,36 +1,58 @@
+# ==============================================================================
+# RESUMEN DE FUNCIONALIDAD:
+# Este archivo, `pyproject.toml`, es el estándar moderno para configurar
+# proyectos de Python. Define todo, desde las dependencias del proyecto
+# hasta las reglas para las herramientas de calidad de código.
+#
+# Para nosotros, este archivo asegura que cualquier persona que trabaje en el
+# motor tenga exactamente el mismo entorno y siga las mismas reglas de estilo,
+# lo que previene errores y mantiene el código limpio.
+# ==============================================================================
+
 [project]
+# --- SECCIÓN DE METADATOS DEL PROYECTO ---
+# EXPLICACIÓN: Aquí se define la identidad de nuestro motor.
 name = "renpy"
 readme = "README.rst"
 license = "MIT"
 version= "8.99.99"
 requires-python = "==3.12.*"
+
+# --- DEPENDENCIAS PRINCIPALES ---
+# EXPLICACIÓN: Esta es la lista de librerías de Python que Ren'Py necesita
+# para funcionar. Cuando configuremos nuestro entorno virtual, estas son las
+# librerías que se instalarán automáticamente.
 dependencies = [
     "future",
     "six",
-    "pefile",
-    "requests",
-    "ecdsa",
-    "rsa",
-    "setuptools",
-    "cython",
-    "ruff",
-    "sphinx",
+    "pefile",         # Para analizar archivos ejecutables de Windows.
+    "requests",       # Para realizar peticiones web (ej. el lanzador).
+    "ecdsa",          # Librerías de criptografía.
+    "rsa",            # Librerías de criptografía.
+    "setuptools",     # Herramienta base para construir paquetes de Python.
+    "cython",         # El compilador que convierte código Cython a C.
+    "ruff",           # Una herramienta moderna para formatear y revisar el código.
+    "sphinx",         # La herramienta para construir la documentación.
     "sphinx_rtd_theme",
     "sphinx_rtd_dark_mode",
 ]
 
 
-# For now those are listed in project requirements until build system is updated.
 # [project.optional-dependencies]
 # dev = ["setuptools", "cython", "ruff"]
-
-# For now, Ren'Py isn't using a build system, as build isolation makes building too slow.
 
 # [build-system]
 # requires = ["setuptools", "cython"]
 # build-backend = "setuptools.build_meta:__legacy__"
 
+# --- CONFIGURACIÓN DE HERRAMIENTAS DE CALIDAD ---
+# EXPLICACIÓN: Las siguientes secciones configuran herramientas que nos ayudan
+# a escribir mejor código, detectando errores y manteniendo un estilo consistente.
+
 [tool.pyright]
+# Pyright es un "verificador de tipos estático". Lee el código y nos avisa
+# si estamos intentando usar variables de forma incorrecta (ej. tratar un
+# número como si fuera texto), lo que previene muchos bugs.
 include = [
     "*.py",
     "renpy/",
@@ -47,6 +69,8 @@ ignore = [
 
 typeCheckingMode = "basic"
 
+# Estas son reglas específicas que desactivan ciertos avisos para que no
+# sean demasiado molestos en la base de código existente de Ren'Py.
 reportOptionalSubscript = false
 reportOptionalMemberAccess = false
 reportOptionalCall = false
@@ -58,6 +82,8 @@ reportUnnecessaryTypeIgnoreComment = "information"
 reportTypeCommentUsage = "information"
 
 [tool.cyright]
+# Esta es una configuración similar a Pyright, pero especializada para
+# archivos Cython.
 include = [
     "*.py",
     "renpy/",
@@ -84,6 +110,9 @@ reportMissingModuleSource = false
 
 
 [tool.ruff]
+# Ruff es un "linter" y "formateador". Se asegura de que todo nuestro
+# código siga las mismas reglas de estilo (espacios, saltos de línea, etc.).
+# Esto hace que el código sea más fácil de leer para todo el equipo.
 line-length = 120
 
 [tool.ruff.format]
