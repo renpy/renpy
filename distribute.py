@@ -1,6 +1,19 @@
 #!/home/tom/ab/renpy/lib/py3-linux-x86_64/python
+# ==============================================================================
+# RESUMEN DE FUNCIONALIDAD:
+# Este es el script que construye una distribución completa de Ren'Py,
+# es decir, los paquetes descargables (SDK) para los desarrolladores.
+# Es la "fábrica de ensamblaje y empaquetado final".
+#
+# RELEVANCIA PARA L-CODE: Este archivo es el modelo a seguir para nuestro
+# futuro `compiler.py`. Aunque nosotros empaquetaremos nuestro propio motor
+# y el formato .lspmt, la lógica para compilar el código Python, manejar
+# versiones, firmar paquetes y crear instaladores para diferentes plataformas
+# está toda detallada aquí. Es nuestro plano de construcción para la
+# distribución.
+# ==============================================================================
 
-# Builds a distribution of Ren'Py.
+# Construye una distribución de Ren'Py.
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 
 import future.standard_library
@@ -28,7 +41,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 
 def zip_rapt_symbols(destination):
     """
-    Zips up the rapt symbols.
+    # EXPLICACIÓN: Empaqueta los "símbolos de depuración" nativos de Android en un
+    # archivo zip. Estos símbolos son necesarios para poder analizar fallos (crashes)
+    # en el código C/C++ en la plataforma Android.
     """
 
     import zipfile
@@ -48,11 +63,12 @@ def zip_rapt_symbols(destination):
 
 def copy_tutorial_file(src, dest):
     """
-    Copies a file from src to dst. Lines between  "# tutorial-only" and
-    "# end-tutorial-only" comments are omitted from the copy.
+    # EXPLICACIÓN: Una función de utilidad que copia un archivo, pero omite
+    # las líneas de código que están marcadas específicamente para no ser
+    # incluidas en el juego de tutorial.
     """
 
-    # True if we want to copy the line.
+    # True si queremos copiar la línea.
     copy = True
 
     with open(src, "r") as sf, open(dest, "w") as df:
@@ -66,6 +82,11 @@ def copy_tutorial_file(src, dest):
                     df.write(l)
 
 def link_directory(dirname):
+    """
+    # EXPLICACIÓN: Crea enlaces simbólicos para directorios. Esto permite que
+    # el proceso de construcción encuentre herramientas como RAPT (para Android)
+    # y Renios (para iOS) sin tener que duplicar los archivos.
+    """
     dn = os.path.join(ROOT, dirname)
 
     if os.path.exists(dn):
@@ -81,12 +102,10 @@ def link_directory(dirname):
 
 def force_even_timestamps():
     """
-    Forces the timestamps of all .py files in the renpy directory to be even.
-
-    This ensures that the timestamps can be represented in a zip file, which
-    can only represent timestamps that are even multiples of 2 seconds.
-
-    See https://github.com/renpy/renpy-build/pull/166
+    # EXPLICACIÓN: Una solución técnica a un problema específico del formato ZIP.
+    # El formato ZIP solo puede registrar marcas de tiempo de archivos que sean
+    # pares. Esta función recorre los archivos .py y se asegura de que sus
+    # marcas de tiempo sean pares para evitar problemas de compatibilidad.
     """
 
     for fn in pathlib.Path("renpy").rglob("*.py"):
@@ -99,6 +118,10 @@ def main():
 
     start = time.time()
 
+    # --- ANÁLISIS DE ARGUMENTOS DE LÍNEA DE COMANDOS ---
+    # EXPLICACIÓN: Define todas las opciones que se pueden pasar a este script
+    # para controlar cómo se construye la distribución. Por ejemplo, la versión,
+    # si se debe firmar el código, si es una compilación rápida, etc.
     ap = argparse.ArgumentParser()
     ap.add_argument("version", nargs="?")
     ap.add_argument("--fast", action="store_true")
@@ -120,6 +143,8 @@ def main():
     link_directory("renios")
     link_directory("web")
 
+    # --- GESTIÓN DE LA VERSIÓN ---
+    # EXPLICACIÓN: Genera y carga la información de la versión del motor.
     import renpy.versions
     renpy.versions.generate_vc_version(nightly=args.nightly)
 
@@ -138,8 +163,6 @@ def main():
     try:
         vc_version_base = os.path.splitext(renpy.vc_version.__file__)[0]
 
-        # Delete the .pyc and .pyo files, as reload can choose one of them instead
-        # of the new .py file.
         for fn in [ vc_version_base + ".pyc", vc_version_base + ".pyo" ]:
             if os.path.exists(fn):
                 os.unlink(fn)
@@ -148,7 +171,6 @@ def main():
     except Exception:
         import renpy.vc_version
 
-    # A normal reload is fine, as renpy/__init__.py won't change.
     reload(renpy)
 
     if args.print_version:
@@ -164,7 +186,6 @@ def main():
     if args.append_version:
         args.version += "-"  + renpy.version_only
 
-    # Check that the versions match.
     full_version = renpy.version_only # @UndefinedVariable
 
     if "-" not in args.version \
@@ -173,7 +194,7 @@ def main():
 
     os.environ['RENPY_BUILD_VERSION'] = args.version
 
-    # The destination directory.
+    # El directorio de destino donde se guardarán los paquetes finales.
     destination = os.path.join("dl", args.version)
 
     if args.variant:
@@ -191,16 +212,21 @@ def main():
 
     force_even_timestamps()
 
-    # Compile all the python files.
+    # --- COMPILACIÓN DEL CÓDIGO PYTHON ---
+    # EXPLICACIÓN: Este paso crucial convierte todos los archivos .py del motor
+    # en archivos .pyc (o .pyo) optimizados. Esto hace que el motor se inicie
+    # más rápido y ofusca el código fuente.
     compileall.compile_dir("renpy/", ddir="renpy/", force=True, quiet=1)
 
-    # Compile the various games.
+    # Compila los juegos de ejemplo incluidos con Ren'Py.
     if not args.fast:
         for i in [ 'tutorial', 'launcher', 'the_question' ]:
             print("Compiling", i)
             subprocess.check_call([renpy_sh, i, "compile" ])
 
-    # Kick off the rapt build.
+    # --- CONSTRUCCIÓN DE HERRAMIENTAS MÓVILES (RAPT) ---
+    # EXPLICACIÓN: Prepara las herramientas necesarias para empaquetar juegos
+    # para Android (RAPT) y iOS (renios).
     if not args.fast:
 
         print("Cleaning RAPT.")
@@ -223,8 +249,11 @@ def main():
 
     zip_rapt_symbols(destination)
 
+    # --- LLAMADA AL PROCESO DE DISTRIBUCIÓN INTERNO ---
+    # EXPLICACIÓN: Este es el corazón del script. Llama al propio Ren'Py
+    # con el comando "distribute" para que use su lógica interna y construya
+    # los paquetes del SDK (el lanzador).
     if args.fast:
-
         cmd = [
             renpy_sh,
             "launcher",
@@ -236,7 +265,6 @@ def main():
             destination,
             "--no-update",
             ]
-
     else:
         cmd = [
             renpy_sh,
@@ -256,7 +284,10 @@ def main():
     print()
     subprocess.check_call(cmd)
 
-    # Sign the update.
+    # --- FIRMA Y EMPAQUETADO FINAL ---
+    # EXPLICACIÓN: Esta sección final se encarga de los toques profesionales:
+    # firmar digitalmente los archivos de actualización y crear los
+    # instaladores finales (como el .7z.exe autoextraíble para Windows).
     if not args.fast:
         subprocess.check_call([
             "scripts/sign_update.py",
@@ -264,12 +295,9 @@ def main():
             os.path.join(destination, "updates.json"),
             ])
 
-    # Write 7z.exe.
     sdk = "renpy-{}-sdk".format(args.version)
 
     if not args.fast:
-
-        # shutil.copy("renpy-ppc.zip", os.path.join(destination, "renpy-ppc.zip"))
 
         with open("7z.sfx", "rb") as f:
             sfx = f.read()
