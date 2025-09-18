@@ -20,8 +20,12 @@ if [ -n "$RENPY_VIRTUAL_ENV" ] ; then
 fi
 
 if [ -z "$VIRTUAL_ENV" ] ; then
-    echo Please install into a virtualenv.
-    exit 1
+    if [ -d "$ROOT/.venv" ] ; then
+        . "$ROOT/.venv/bin/activate"
+    else
+        echo "Please create a virtual environment first (see the README)."
+        exit 1
+    fi
 fi
 
 BUILD_J="-j $(nproc)"

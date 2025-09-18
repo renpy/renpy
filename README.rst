@@ -79,28 +79,16 @@ that version, you'll need to download it from:
 
     https://github.com/libsdl-org/SDL_image/tree/SDL2
 
-We strongly suggest installing the Ren'Py modules into a Python
-virtualenv. To create a new virtualenv, open a new terminal and run::
+We strongly suggest using package manager to create virtual environment and
+manage dependencies. We have tested with [uv](https://docs.astral.sh/uv/) but
+other package managers should work as well. To create a virtual environment and
+install dependencies, open a new terminal and run::
 
-    python -m venv .venv --prompt renpy
+    uv sync --no-install-project
 
-Avtivate the virtualenv using::
+After that, compile extension modules and run Ren'Py using the command::
 
-    source .venv/bin/activate
-
-You'll need to activate the virtualenv each time you begin working on Ren'Py.
-After activating the virtualenv, install additional dependencies::
-
-    pip install -U setuptools cython future six typing pefile requests ecdsa
-
-Finally, use setup.py to compile extension modules that support Ren'Py::
-
-    python setup.py build_ext --inplace
-
-Ren'Py will be installed into the activated virtualenv. Ren'Py can then be run
-using the command::
-
-    python renpy.py
+    ./run.sh
 
 
 Other Platforms
