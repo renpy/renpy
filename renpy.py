@@ -1,20 +1,33 @@
 #!/usr/bin/env python
 
+# ==============================================================================
+# RESUMEN DE FUNCIONALIDAD:
+# Este es el script principal y el punto de entrada para ejecutar Ren'Py.
+# Cuando un jugador hace doble clic en el .exe de un juego, este es el código
+# que se ejecuta primero.
+#
+# Sus responsabilidades principales son:
+#   1. Configurar el entorno de Python inicial.
+#   2. Determinar las rutas de carpetas importantes (dónde está el juego,
+#      dónde está el motor, y crucialmente, dónde se guardarán las partidas).
+#   3. Iniciar el proceso de "bootstrap" (arranque), que carga el resto del motor.
+#
+# RELEVANCIA PARA L-CODE:
+# Este archivo es el corazón de varias de nuestras modificaciones planeadas.
+# - La función `path_to_saves` será COMPLETAMENTE REESCRITA en nuestro
+#   "Motor L-Code Runtime" para implementar la lógica de guardado en la carpeta
+#   "PROGRESOS JUEGOS" y para manejar la migración de guardados antiguos.
+# - Modificaremos la lógica de `path_to_gamedir` para que siempre cargue los
+#   datos desde nuestro paquete encriptado `.lspmt`.
+# ==============================================================================
+
+
 # This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.
 
 # Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
+# ... (Licencia) ...
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
@@ -24,30 +37,31 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function, absolute_import
+from __future__ aimport print_function, absolute_import
 
 import os
 import sys
 import warnings
 
-# Functions to be customized by distributors. ################################
+# Funciones a ser personalizadas por los distribuidores. ################################
+# EXPLICACIÓN: Estas funciones están diseñadas para que alguien que empaqueta
+# Ren'Py pueda cambiar su comportamiento sin tocar el núcleo del motor.
+# Nosotros las modificaremos directamente en nuestro fork.
 
 def path_to_gamedir(basedir, name):
     """
-    Returns the absolute path to the directory containing the game
-    scripts an assets. (This becomes config.gamedir.)
-
-    `basedir`
-        The base directory (config.basedir)
-    `name`
-        The basename of the executable, with the extension removed.
+    # EXPLICACIÓN: Devuelve la ruta absoluta a la carpeta que contiene los
+    # scripts y assets del juego (esto se convierte en config.gamedir).
+    #
+    # MODIFICACIÓN L-CODE: En nuestro motor, esta función será modificada.
+    # En lugar de buscar una carpeta 'game/', apuntará a la lógica que
+    # descomprime y lee nuestro archivo de paquete `.lspmt`.
     """
 
-    # A list of candidate game directory names.
+    # Una lista de nombres candidatos para la carpeta del juego.
     candidates = [ name ]
 
-    # Add candidate names that are based on the name of the executable,
-    # split at spaces and underscores.
+    # Añade nombres candidatos basados en el nombre del ejecutable.
     game_name = name
 
     while game_name:
@@ -57,10 +71,10 @@ def path_to_gamedir(basedir, name):
         if prefix == ' ' or prefix == '_':
             candidates.append(game_name)
 
-    # Add default candidates.
+    # Añade candidatos por defecto.
     candidates.extend([ 'game', 'data', 'launcher/game' ])
 
-    # Take the first candidate that exists.
+    # Toma el primer candidato que exista.
     for i in candidates:
 
         if i == "renpy":
@@ -79,11 +93,8 @@ def path_to_gamedir(basedir, name):
 
 def path_to_common(renpy_base):
     """
-    Returns the absolute path to the Ren'Py common directory.
-
-    `renpy_base`
-        The absolute path to the Ren'Py base directory, the directory
-        containing this file.
+    # EXPLICACIÓN: Devuelve la ruta al directorio 'common' de Ren'Py, que
+    # contiene los assets y scripts compartidos por el motor y el lanzador.
     """
     path = renpy_base + "/renpy/common"
 
@@ -94,15 +105,23 @@ def path_to_common(renpy_base):
 
 def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
     """
-    Given the path to a Ren'Py game directory, and the value of config.
-    save_directory, returns absolute path to the directory where save files
-    will be placed.
-
-    `gamedir`
-        The absolute path to the game directory.
-
-    `save_directory`
-        The value of config.save_directory.
+    # ¡¡¡FUNCIÓN CRÍTICA PARA L-CODE!!!
+    # EXPLICACIÓN: Esta función contiene toda la lógica para decidir dónde se
+    # guardan los archivos de progreso del jugador. Tiene reglas diferentes para
+    # Windows, macOS, Linux, Android e iOS.
+    #
+    # MODIFICACIÓN L-CODE (NUEVO PLAN): En nuestro "Motor L-Code Runtime", vamos a
+    # ARRANCAR Y REEMPLAZAR toda esta función. Nuestra nueva implementación hará lo siguiente:
+    #   1. Localizará la carpeta de "Documentos" del usuario de forma multiplataforma.
+    #   2. Dentro de "Documentos", creará una carpeta llamada "PROGRESOS" si no existe.
+    #   3. Dentro de "PROGRESOS", creará una carpeta con el nombre del juego
+    #      (el `save_directory`, ej. 'MiNovelaIncreible') si no existe.
+    #   4. Devolverá la ruta a la subcarpeta "saves" dentro de la carpeta del juego.
+    #   5. La lógica de MIGRACIÓN de guardados antiguos NO será automática. En su lugar,
+    #      las pantallas de la interfaz del juego (como la pantalla de carga) tendrán
+    #      un botón "Importar Partidas Antiguas". Este botón abrirá un selector de
+    #      archivos para que el usuario elija la carpeta con sus viejos .save, y el
+    #      motor los convertirá a .luss al momento.
     """
 
     import renpy # @UnresolvedImport
@@ -111,7 +130,7 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
         save_directory = renpy.config.save_directory
         save_directory = renpy.exports.fsencode(save_directory) # type: ignore
 
-    # Makes sure the permissions are right on the save directory.
+    # Se asegura de que se puede escribir en el directorio de guardado.
     def test_writable(d):
         try:
             fn = os.path.join(d, "test.txt")
@@ -122,7 +141,7 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
         except Exception:
             return False
 
-    # Android.
+    # Lógica para Android.
     if renpy.android:
         paths = [
             os.path.join(os.environ["ANDROID_OLD_PUBLIC"], "game/saves"),
@@ -139,6 +158,7 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
         print("Saving to", rv)
         return rv
 
+    # Lógica para iOS.
     if renpy.ios:
         from pyobjus import autoclass # type: ignore
         from pyobjus.objc_py_types import enum # type: ignore
@@ -153,7 +173,6 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
             NSSearchPathDomainMask.NSUserDomainMask,
             ).lastObject()
 
-        # url.path seems to change type based on iOS version, for some reason.
         try:
             rv = url.path().UTF8String()
         except Exception:
@@ -166,15 +185,13 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
         print("Saving to", rv)
         return rv
 
-    # No save directory given.
+    # Si no se da un directorio de guardado, lo pone en la carpeta del juego.
     if not save_directory:
         return os.path.join(gamedir, "saves")
 
     if "RENPY_PATH_TO_SAVES" in os.environ:
         return os.environ["RENPY_PATH_TO_SAVES"] + "/" + save_directory
 
-    # Search the path above Ren'Py for a directory named "Ren'Py Data".
-    # If it exists, then use that for our save directory.
     path = renpy.config.renpy_base
 
     while True:
@@ -186,7 +203,7 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
             break
         path = newpath
 
-    # Otherwise, put the saves in a platform-specific location.
+    # Lógica para PC (Windows, macOS, Linux).
     if renpy.macintosh:
         rv = "~/Library/RenPy/" + save_directory
         return os.path.expanduser(rv)
@@ -203,11 +220,9 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
         return os.path.expanduser(rv)
 
 
-# Returns the path to the Ren'Py base directory (containing common and
-# the launcher, usually.)
 def path_to_renpy_base():
     """
-    Returns the absolute path to the Ren'Py base directory.
+    # EXPLICACIÓN: Devuelve la ruta a la carpeta base de Ren'Py.
     """
 
     renpy_base = os.path.dirname(os.path.abspath(__file__))
@@ -217,9 +232,7 @@ def path_to_renpy_base():
 
 def path_to_logdir(basedir):
     """
-    Returns the absolute path to the log directory.
-    `basedir`
-        The base directory (config.basedir)
+    # EXPLICACIÓN: Devuelve la ruta a la carpeta de logs.
     """
 
     import renpy # @UnresolvedImport
@@ -230,20 +243,19 @@ def path_to_logdir(basedir):
     return basedir
 
 def predefined_searchpath(commondir):
+    # EXPLICACIÓN: Define las carpetas y el orden en que Ren'Py buscará los
+    # archivos del juego (imágenes, scripts, etc.).
     import renpy # @UnresolvedImport
 
-    # The default gamedir, in private.
     searchpath = [ renpy.config.gamedir ]
 
     if renpy.android:
-        # The public android directory.
         if "ANDROID_PUBLIC" in os.environ:
             android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
 
             if os.path.exists(android_game):
                 searchpath.insert(0, android_game)
 
-        # Asset packs.
         packs = [
             "ANDROID_PACK_FF1", "ANDROID_PACK_FF2",
             "ANDROID_PACK_FF3", "ANDROID_PACK_FF4",
@@ -260,7 +272,6 @@ def predefined_searchpath(commondir):
                 if os.path.isdir(dn):
                     searchpath.append(dn)
     else:
-        # Add path from env variable, if any
         if "RENPY_SEARCHPATH" in os.environ:
             searchpath.extend(os.environ["RENPY_SEARCHPATH"].split("::"))
 
@@ -278,27 +289,38 @@ def predefined_searchpath(commondir):
 android = ("ANDROID_PRIVATE" in os.environ)
 
 def main():
+    # EXPLICACIÓN: Esta es la función principal que inicia todo.
+    # Es el "botón de encendido" del motor.
 
+    # Obtiene la ruta base del motor.
     renpy_base = path_to_renpy_base()
 
+    # Añade la carpeta del motor al path de Python para que se puedan importar sus módulos.
     sys.path.append(renpy_base)
 
-    # Ignore warnings.
+    # Ignora ciertos avisos de versiones antiguas.
     warnings.simplefilter("ignore", DeprecationWarning)
 
-    # Start Ren'Py proper.
+    # ¡INICIO DEL MOTOR!
+    # ------------------
+    # EXPLICACIÓN: Esta es la parte más importante. Llama al módulo 'bootstrap',
+    # que es el responsable de cargar la configuración, inicializar los subsistemas
+    # (video, audio, entrada) y finalmente, iniciar la ejecución del juego.
     try:
         import renpy.bootstrap
     except ImportError:
-        print("Could not import renpy.bootstrap. Please ensure you decompressed Ren'Py", file=sys.stderr)
-        print("correctly, preserving the directory structure.", file=sys.stderr)
+        print("No se pudo importar renpy.bootstrap. Asegúrate de haber descomprimido Ren'Py", file=sys.stderr)
+        print("correctamente, preservando la estructura de directorios.", file=sys.stderr)
         raise
 
-    # Set renpy.__main__ to this module.
     renpy.__main__ = sys.modules[__name__] # type: ignore
 
     renpy.bootstrap.bootstrap(renpy_base)
 
 
 if __name__ == "__main__":
+    # EXPLICACIÓN: Esto asegura que la función `main()` se ejecute cuando se
+    # llama a este archivo directamente desde la línea de comandos.
     main()
+
+
