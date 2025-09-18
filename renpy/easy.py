@@ -29,13 +29,13 @@ import time
 
 import renpy
 
-Color = renpy.color.Color
-color = renpy.color.Color
+from renpy.types import Displayable, DisplayableLike
 
-type _Displayable = renpy.display.displayable.Displayable
+# Kept for backwards compatibility.
+from renpy.color import Color as Color, Color as color  # noqa: F401
 
 
-def lookup_displayable_prefix(d: str) -> _Displayable | None:
+def lookup_displayable_prefix(d: str) -> Displayable | None:
     """
     Given `d`, a string given a displayable, returns the displayable it
     corresponds to or None if it does not correspond to one.
@@ -53,7 +53,11 @@ def lookup_displayable_prefix(d: str) -> _Displayable | None:
     return displayable(fn(arg))
 
 
-def displayable_or_none(d: Any, scope: dict[str, Any] | None = None, dynamic: bool = True) -> _Displayable | None:
+def displayable_or_none(
+    d: DisplayableLike | None,
+    scope: dict[str, Any] | None = None,
+    dynamic: bool = True,
+) -> Displayable | None:
     if isinstance(d, renpy.display.displayable.Displayable):
         return d
 
@@ -93,7 +97,7 @@ def displayable_or_none(d: Any, scope: dict[str, Any] | None = None, dynamic: bo
     raise Exception(f"Not a displayable: {d!r}")
 
 
-def displayable(d: Any, scope: dict[str, Any] | None = None) -> _Displayable:
+def displayable(d: DisplayableLike, scope: dict[str, Any] | None = None) -> Displayable:
     """
     :doc: udd_utility
     :name: renpy.displayable
@@ -144,7 +148,7 @@ def dynamic_image(
     scope: dict[str, Any] | None = None,
     prefix: str | None = None,
     search: list[str] | None = None,
-) -> _Displayable | None:
+) -> Displayable | None:
     """
     Substitutes a scope into `d`, then returns a displayable.
 

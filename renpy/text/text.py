@@ -1477,13 +1477,13 @@ class Layout(object):
                     if len(value) < 1:
                         raise Exception("empty value supplied for tag %r" % tag)
 
-                    push().color = renpy.easy.color(value)
+                    push().color = renpy.color.Color(value)
 
                 elif tag == "outlinecolor":
                     if len(value) < 1:
                         raise Exception("empty value supplied for tag %r" % tag)
 
-                    push().outline_color = renpy.easy.color(value)
+                    push().outline_color = renpy.color.Color(value)
 
                 elif tag == "alpha":
                     if len(value) < 1:

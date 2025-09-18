@@ -115,7 +115,7 @@ class ExceptionInfo(object):
         The arguments that are percent-formatted with `s`.
     """
 
-    def __init__(self, s, args):
+    def __init__(self, s, args=()):
         self.s = s
         self.args = args
 

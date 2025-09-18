@@ -388,6 +388,8 @@ def import_all():
 
     import renpy
 
+    import renpy.types
+
     import renpy.error
     import renpy.config
     import renpy.log
@@ -758,6 +760,7 @@ if typing.TYPE_CHECKING:
     from . import test as test
     from . import text as text
     from . import translation as translation
+    from . import types as types
     from . import uguu as uguu
     from . import ui as ui
     from . import update as update

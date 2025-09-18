@@ -47,7 +47,7 @@ class Solid(renpy.display.displayable.Displayable):
         super(Solid, self).__init__(**properties)
 
         if color is not None:
-            self.color = renpy.easy.color(color)
+            self.color = renpy.color.Color(color)
         else:
             self.color = None
 
