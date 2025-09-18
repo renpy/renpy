@@ -245,7 +245,7 @@ class Cache:
     def _make_render(ce: "CacheEntry") -> "renpy.display.render.Render":
         bounds = ce.bounds[:2]
 
-        oversample = image.get_oversample() or 0.001
+        oversample = ce.what.get_oversample() or 0.001
 
         if oversample != 1:
             inv_oversample = 1.0 / oversample
