@@ -242,7 +242,7 @@ class Cache:
         self.preloads.clear()
 
     @staticmethod
-    def _make_render(ce: "CacheEntry") -> "renpy.display.render.Render":
+    def _make_render(image: "ImageBase", ce: "CacheEntry") -> "renpy.display.render.Render":
         bounds = ce.bounds[:2]
 
         oversample = ce.what.get_oversample() or 0.001
@@ -295,7 +295,7 @@ class Cache:
                     return None
 
                 if render:
-                    return self._make_render(ce)
+                    return self._make_render(image, ce)
                 else:
                     return ce.texture
 
@@ -382,7 +382,7 @@ class Cache:
             ce.surf = None
 
         if texture and render and not predict:
-            return self._make_render(ce)
+            return self._make_render(image, ce)
 
         if (ce.surf is None) and (ce.texture is None):
             self.kill(ce)
