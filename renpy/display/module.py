@@ -25,6 +25,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
+from renpy.pygame import Surface
 
 import renpy
 import _renpy
@@ -287,3 +288,13 @@ def colormatrix(src, dst, matrix):
 def subpixel(src, dst, x, y):
     shift = src.get_shifts()[3]
     _renpy.subpixel(src, dst, x, y, shift)
+
+
+def premultiply_alpha(src: Surface) -> Surface:
+    """
+    Performs alpha premultiplication on `src` and stores the result in `dst`.
+    """
+
+    dst = renpy.display.pgrender.surface(src.get_size(), True)
+    _renpy.premultiply_alpha(src, dst)
+    return dst
