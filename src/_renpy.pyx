@@ -94,6 +94,8 @@ cdef extern from "renpy.h":
     void staticgray_core(object, object,
                          int, int, int, int, int, char *)
 
+    void premultiply_alpha_core(object, object)
+
     void PyErr_Clear()
 
 
@@ -456,6 +458,17 @@ def staticgray(pysrc, pydst, rmul, gmul, bmul, amul, shift, vmap):
 
 def subpixel(pysrc, pydst, xoffset, yoffset, shift):
     pydst.blit(pysrc, (int(xoffset), int(yoffset)))
+
+
+def premultiply_alpha(pysrc, pydst):
+    """
+    Performs alpha premultiplication on `pysrc` and stores the result in `pydst`.
+    """
+
+    check(pysrc)
+    check(pydst)
+
+    premultiply_alpha_core(pysrc, pydst)
 
 
 # Be sure to update scale.py when adding something new here!
