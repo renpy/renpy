@@ -91,6 +91,7 @@ text_property_names = [
     "language",
     "layout",
     "line_leading",
+    "line_overlap_split",
     "line_spacing",
     "minwidth",
     "min_width",
