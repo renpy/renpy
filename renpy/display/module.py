@@ -25,8 +25,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
-from renpy.pygame import Surface
-
 import pygame_sdl2
 import renpy
 import _renpy
@@ -291,7 +289,7 @@ def subpixel(src, dst, x, y):
     _renpy.subpixel(src, dst, x, y, shift)
 
 
-def premultiply_alpha(src: Surface) -> Surface:
+def premultiply_alpha(src):
     """
     Performs alpha premultiplication on `src` and stores the result in `dst`.
     """
