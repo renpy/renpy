@@ -200,12 +200,13 @@ example::
     default points = 0
 
 When the variable ``points`` is not defined at game start, this statement is
-equivalent to::
+roughly equivalent to::
 
     label start:
         $ points = 0
 
-When the variable ``points`` is not defined at game load, it's equivalent to::
+The actual point in which the variable is set is before the splashscreen and main menu
+are run.  When the variable ``points`` is not defined at game load, it's equivalent to::
 
     label after_load:
         $ points = 0
@@ -395,5 +396,3 @@ block::
     Not all Python packages are compatible with Ren'Py. It's up to you
     to audit the packages you install and make sure the packages will
     work.
-
-
