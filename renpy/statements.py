@@ -337,7 +337,7 @@ def register(
             if not isinstance(rv, list):
                 rv = [rv]
 
-            rv = renpy.ast.Init(loc, rv, init_priority + l.init_offset)
+            rv = renpy.ast.Init(loc, rv, rv[0].get_init())
 
         return rv
 
