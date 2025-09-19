@@ -2219,7 +2219,7 @@ class UserStatement(Node):
                 parsed = renpy.statements.parse(self, self.line, self.block)
                 self.parsed = parsed
 
-            init_priority = init_priority(parsed)
+            init_priority = init_priority(parsed[1])
 
         # Statement init priority and init offset from the file.
         return init_priority + self.init_offset
