@@ -1474,6 +1474,9 @@ class Scene(Node):
         next_node(self.next)
         statement_name("scene")
 
+        if renpy.config.skipping == "slow" and not renpy.game.preferences.skip_after_scene_changes:
+            renpy.config.skipping = None
+
         renpy.config.scene(self.layer)
 
         if self.imspec:

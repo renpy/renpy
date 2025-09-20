@@ -132,6 +132,10 @@ init -1500 python:
 
         * Preference("begin skipping") - Starts skipping.
 
+        * Preference("Scene Changes", "skip") - Skip after scene change.
+        * Preference("Scene Changes", "stop") - Stop skipping after scene change.
+        * Preference("Scene Changes", "toggle") - Toggle skipping after scene change.
+
         * Preference("after choices", "skip") - Skip after choices.
         * Preference("after choices", "stop") - Stop skipping after choices.
         * Preference("after choices", "toggle") - Toggle skipping after choices.
@@ -369,6 +373,15 @@ init -1500 python:
             elif name == _("begin skipping"):
 
                 return Skip()
+
+            elif name == _("after scene changes"):
+
+                if value == "keep skipping" or value == "keep" or value == "skip":
+                    return SetField(_preferences, "skip_after_scene_changes", True)
+                elif value == "stop skipping" or value == "stop":
+                    return SetField(_preferences, "skip_after_scene_changes", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "skip_after_scene_changes"), _("skip after scene changes")
 
             elif name == _("after choices"):
 
