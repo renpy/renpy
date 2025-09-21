@@ -22,9 +22,9 @@
 init python:
 
     try:
-        import _renpytfd
-    except Exception:
-        _renpytfd = None
+        import renpy.tfd as tfd
+    except ImportError:
+        tfd = None
 
     def directory_is_writable(path):
         test = os.path.join(path, "renpy test do not use")
@@ -54,8 +54,8 @@ init python:
         rather than user choice.
         """
 
-        if _renpytfd:
-            path = _renpytfd.selectFolderDialog(__("Select Projects Directory"), default_path)
+        if tfd:
+            path = tfd.selectFolderDialog(__("Select Projects Directory"), default_path)
         else:
             path = None
 

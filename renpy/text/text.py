@@ -39,7 +39,7 @@ from renpy.text.emoji_trie import emoji, UNQUALIFIED
 
 from renpy.gl2.gl2polygon import Polygon
 
-from _renpybidi import LTR, ON, RTL, WLTR, WRTL, get_embedding_levels, log2vis  # @UnresolvedImport
+from renpy.text.bidi import LTR, ON, RTL, WLTR, WRTL, get_embedding_levels, log2vis
 
 
 BASELINE = -65536

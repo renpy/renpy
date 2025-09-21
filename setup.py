@@ -87,8 +87,6 @@ def main():
 
     # src/ directory.
     cython("_renpy", [ "src/IMG_savepng.c", "src/core.c" ])
-    cython("_renpybidi", [ "src/renpybidicore.c" ])
-    cython("_renpytfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
 
     # renpy
     cython("renpy.astsupport")
@@ -97,6 +95,7 @@ def main():
     cython("renpy.pydict")
     cython("renpy.style")
     cython("renpy.encryption")
+    cython("renpy.tfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
 
     # renpy.audio
     cython("renpy.audio.renpysound", [ "src/renpysound_core.c", "src/ffmedia.c" ],
@@ -142,6 +141,7 @@ def main():
     cython("renpy.text.texwrap")
     cython("renpy.text.ftfont", [ "src/ftsupport.c", "src/ttgsubtable.c" ])
     cython("renpy.text.hbfont", [ "src/ftsupport.c" ])
+    cython("renpy.text.bidi", [ "src/renpybidicore.c" ])
 
     # renpy.pygame
     cython("renpy.pygame.error")

@@ -217,12 +217,15 @@ backup_blacklist = {
     "renpy.display.test",
     "renpy.six",
     "renpy.text.ftfont",
+    "renpy.text.hbfont",
+    "renpy.text.bidi",
     "renpy.test",
     "renpy.test.testast",
     "renpy.test.testexecution",
     "renpy.test.testkey",
     "renpy.test.testmouse",
     "renpy.test.testparser",
+    "renpy.tfd",
     "renpy.gl2",
     "renpycoverage",
 }
@@ -573,6 +576,13 @@ def import_all():
 
     import renpy.update
     import renpy.update.deferred
+
+
+    try:
+        import renpy.tfd
+        sys.modules["_renpytfd"] = renpy.tfd
+    except ImportError:
+        pass
 
     import renpy.main
 

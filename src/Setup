@@ -1,5 +1,4 @@
 _renpy ../tmp/gen/_renpy.c IMG_savepng.c core.c
-_renpybidi ../tmp/gen/_renpybidi.c renpybidicore.c
 renpy.audio.renpysound ../tmp/gen/renpy.audio.renpysound.c renpysound_core.c ffmedia.c
 renpy.audio.filter ../tmp/gen/renpy.audio.filter.c
 renpy.astsupport ../tmp/gen/renpy.astsupport.c
@@ -60,3 +59,4 @@ renpy.text.textsupport ../tmp/gen/renpy.text.textsupport.c
 renpy.text.texwrap ../tmp/gen/renpy.text.texwrap.c
 renpy.text.ftfont ../tmp/gen/renpy.text.ftfont.c ftsupport.c ttgsubtable.c
 renpy.text.hbfont ../tmp/gen/renpy.text.hbfont.c
+renpy.text.bidi ../tmp/gen/renpy.text.bidi.c renpybidicore.c
