@@ -328,7 +328,7 @@ def should_generate(name: str, m: object):
     if prefix == "renpy":
         return is_extension(m)
 
-    return name in ["_renpy", "_renpybidi"]
+    return name in ["_renpy" ]
 
 
 def manage_gitignore(generated_files: list[str]):
@@ -369,7 +369,6 @@ def manage_vscode(generated_files: list[str]):
 
 def main():
     import _renpy as _renpy
-    import _renpybidi as _renpybidi
     import renpy
 
     renpy.import_all()
