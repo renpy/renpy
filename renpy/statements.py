@@ -320,7 +320,7 @@ def register(
             rv.atl = atl
             rv.subparses = l.subparses
 
-            if execute_init or execute_default:
+            if execute_init or execute_default or init:
                 rv.init_offset = l.init_offset
             else:
                 rv.init_offset = None
