@@ -17,6 +17,7 @@ dependencies = [
     "sphinx",
     "sphinx_rtd_theme",
     "sphinx_rtd_dark_mode",
+    "jinja2",
 ]
 
 
