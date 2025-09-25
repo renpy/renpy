@@ -48,6 +48,7 @@ phase_controller: "TestPhaseController"
 ################################################################################
 ## Public Methods
 
+
 def exception_handler(exc: Exception) -> bool:
     """
     Handles exceptions that occur during the execution of testcases.
@@ -58,6 +59,7 @@ def exception_handler(exc: Exception) -> bool:
 
     phase_controller.handle_exception(exc)
     return True
+
 
 def execute() -> None:
     """
@@ -93,6 +95,7 @@ def execute() -> None:
 
     reached_labels.clear()
 
+
 def initialize(root_name: str) -> None:
     """
     Initializes the test execution system. This is called when the game starts, and
@@ -117,8 +120,10 @@ def initialize(root_name: str) -> None:
     phase_controller = TestPhaseController(suite)
     initialized = True
 
+
 def is_in_test() -> bool:
     return initialized and phase_controller is not None and phase_controller.is_running
+
 
 def pop_suite_stack() -> None:
     suite = suite_stack.pop()
@@ -129,9 +134,11 @@ def pop_suite_stack() -> None:
         testreporter.reporter.test_run_end()
         renpy.test.testmouse.reset()
 
+
 def push_suite_stack(suite: TestSuite) -> None:
     testreporter.reporter.test_suite_start(suite, depth=len(suite_stack))
     suite_stack.append(suite)
+
 
 def quit_handler() -> int:
     """
@@ -148,6 +155,7 @@ def quit_handler() -> int:
         return 1
     return 0
 
+
 def report_testcase_skipped(node: TestCase) -> None:
     """
     Marks all children (if any) of the given testcase as skipped.
@@ -158,6 +166,7 @@ def report_testcase_skipped(node: TestCase) -> None:
 
     testreporter.reporter.test_case_skipped(node)
 
+
 def set_action(a: Callable) -> None:
     """
     Sets an action to run before continuing the test execution.
@@ -166,6 +175,7 @@ def set_action(a: Callable) -> None:
 
     global action
     action = a
+
 
 def set_next_execution_node(next_node: Node | None) -> None:
     """
@@ -179,6 +189,7 @@ def set_next_execution_node(next_node: Node | None) -> None:
 ################################################################################
 ## Setup methods
 
+
 def link_top_level_testcase_to_parent(node: TestCase) -> None:
     """
     Links a top-level testcase (with a name that contains a dot) to its parent TestSuite.
@@ -189,7 +200,7 @@ def link_top_level_testcase_to_parent(node: TestCase) -> None:
     parent_name = node.name.rsplit(".", 1)[0]
     parent_node = get_testcase_by_name(parent_name)
     if not isinstance(parent_node, TestSuite):
-        raise TypeError(f"Parent node \"{parent_name}\" is not a TestSuite.")
+        raise TypeError(f'Parent node "{parent_name}" is not a TestSuite.')
     parent_node.add(node)
 
 
@@ -210,11 +221,8 @@ def create_or_get_root_suite(root_name: str) -> TestSuite:
     if isinstance(root, TestSuite):
         return root
 
-    return TestSuite(
-        name=isolated_testsuite_name,
-        loc=(root.filename, root.linenumber),
-        subtests=[root]
-        )
+    return TestSuite(name=isolated_testsuite_name, loc=(root.filename, root.linenumber), subtests=[root])
+
 
 def register_testcase(node: TestCase, parent: TestSuite | None = None) -> None:
     """
@@ -229,7 +237,8 @@ def register_testcase(node: TestCase, parent: TestSuite | None = None) -> None:
             raise KeyError(
                 f"The testcase {node.name!r} is defined twice, "
                 f"at File {testcases[node.name].filename}:{testcases[node.name].linenumber} "
-                f"and File {node.filename}:{node.linenumber}.")
+                f"and File {node.filename}:{node.linenumber}."
+            )
         return
 
     testcases[node.name] = node
@@ -237,6 +246,7 @@ def register_testcase(node: TestCase, parent: TestSuite | None = None) -> None:
     add_child_testcases(node)
     if parent is None:
         link_top_level_testcase_to_parent(node)
+
 
 def setup_global_test_suite() -> None:
     """
@@ -303,6 +313,7 @@ def update_suite_skip_flag(node: TestSuite) -> None:
 ################################################################################
 ## NODE EXECUTOR
 
+
 class NodeExecutor:
     """
     This class is responsible for executing a single node in the test execution.
@@ -355,7 +366,7 @@ class NodeExecutor:
     def set_next_node(self, next: Node | None) -> None:
         self.next_node = next
 
-    def set_end_callback(self, callback: Callable, args: tuple|None = None, kwargs: dict|None = None) -> None:
+    def set_end_callback(self, callback: Callable, args: tuple | None = None, kwargs: dict | None = None) -> None:
         self.end_callback = callback
         self.end_callback_args = args if args is not None else ()
         self.end_callback_kwargs = kwargs if kwargs is not None else {}
@@ -429,6 +440,7 @@ class TestPhaseController:
     It transitions between different phases, such as
     running hooks, running testcases, and handling exceptions.
     """
+
     def __init__(self, root_suite: TestSuite):
         self.active_phase: BaseExecutionPhase = StartPhase(root_suite)
         self.active_phase.enter()
@@ -478,7 +490,7 @@ class TestPhaseController:
         """
         frame_stack: list[FrameSummary] = []
 
-        nodes: list[Node|None] = [s for s in suite_stack]
+        nodes: list[Node | None] = [s for s in suite_stack]
         labels: list[str] = [f"testsuite {suite.name}" for suite in suite_stack]
 
         block = self.active_phase.block
@@ -531,6 +543,7 @@ class BaseExecutionPhase:
         """
         pass
 
+
 class HookPhase(BaseExecutionPhase):
     def error(self):
         if not isinstance(self.block, TestHook):
@@ -539,8 +552,10 @@ class HookPhase(BaseExecutionPhase):
         testreporter.reporter.test_hook_end(self.block, testreporter.OutcomeStatus.FAILED, depth=len(suite_stack))
         return RemoveSubSuitePhase()
 
+
 class HookLoopPhase(HookPhase):
     """A phase that loops through the suite stack, running hooks at each level."""
+
     suite_depth: int
     hook_type: HookType
     next_phase: type[BaseExecutionPhase]
@@ -568,7 +583,9 @@ class HookLoopPhase(HookPhase):
 
             testreporter.reporter.test_hook_start(self.block, depth=len(suite_stack))
             node_executor.set_next_node(self.block)
-            node_executor.set_end_callback(testreporter.reporter.test_hook_end, (self.block,), {"depth": len(suite_stack)})
+            node_executor.set_end_callback(
+                testreporter.reporter.test_hook_end, (self.block,), {"depth": len(suite_stack)}
+            )
             self.suite_depth += step
             return None
 
@@ -596,10 +613,12 @@ class StartPhase(BaseExecutionPhase):
     def update(self) -> BaseExecutionPhase | None:
         return BeforeSuitePhase()
 
+
 class EndPhase(BaseExecutionPhase):
     def enter(self) -> None:
         pop_suite_stack()
         testreporter.reporter.test_run_end()
+
 
 class NextTestTransitionPhase(BaseExecutionPhase):
     """
@@ -629,11 +648,13 @@ class NextTestTransitionPhase(BaseExecutionPhase):
             return BeforeEachCasePhase()
         return None
 
+
 class BeforeEachSuitePhase(HookLoopPhase):
     def __init__(self):
         self.hook_type = HookType.BEFORE_EACH_SUITE
         self.next_phase = AddSubSuitePhase
         self.reverse = False
+
 
 class AddSubSuitePhase(BaseExecutionPhase):
     def enter(self) -> None:
@@ -647,22 +668,27 @@ class AddSubSuitePhase(BaseExecutionPhase):
     def update(self) -> BaseExecutionPhase | None:
         return BeforeSuitePhase()
 
+
 class BeforeSuitePhase(BaseExecutionPhase):
     def enter(self) -> None:
         self.block = suite_stack[-1].before
         if self.block is not None:
             testreporter.reporter.test_hook_start(self.block, depth=len(suite_stack))
             node_executor.set_next_node(self.block)
-            node_executor.set_end_callback(testreporter.reporter.test_hook_end, (self.block,), {"depth": len(suite_stack)})
+            node_executor.set_end_callback(
+                testreporter.reporter.test_hook_end, (self.block,), {"depth": len(suite_stack)}
+            )
 
     def update(self) -> BaseExecutionPhase | None:
         return NextTestTransitionPhase()
+
 
 class BeforeEachCasePhase(HookLoopPhase):
     def __init__(self):
         self.hook_type = HookType.BEFORE_EACH_CASE
         self.next_phase = TestCasePhase
         self.reverse = False
+
 
 class TestCasePhase(BaseExecutionPhase):
     def enter(self) -> None:
@@ -684,11 +710,13 @@ class TestCasePhase(BaseExecutionPhase):
     def update(self) -> BaseExecutionPhase | None:
         return AfterEachCasePhase()
 
+
 class AfterEachCasePhase(HookLoopPhase):
     def __init__(self):
         self.hook_type = HookType.AFTER_EACH_CASE
         self.next_phase = NextTestTransitionPhase
         self.reverse = True
+
 
 class AfterSuitePhase(BaseExecutionPhase):
     def enter(self) -> None:
@@ -696,7 +724,9 @@ class AfterSuitePhase(BaseExecutionPhase):
         if self.block is not None:
             testreporter.reporter.test_hook_start(self.block, depth=len(suite_stack))
             node_executor.set_next_node(self.block)
-            node_executor.set_end_callback(testreporter.reporter.test_hook_end, (self.block,), {"depth": len(suite_stack)})
+            node_executor.set_end_callback(
+                testreporter.reporter.test_hook_end, (self.block,), {"depth": len(suite_stack)}
+            )
 
     def update(self) -> BaseExecutionPhase | None:
         if len(suite_stack) > 1:
@@ -704,12 +734,14 @@ class AfterSuitePhase(BaseExecutionPhase):
         else:
             return EndPhase()
 
+
 class RemoveSubSuitePhase(BaseExecutionPhase):
     def enter(self) -> None:
         pop_suite_stack()
 
     def update(self) -> BaseExecutionPhase | None:
         return AfterEachSuitePhase()
+
 
 class AfterEachSuitePhase(HookLoopPhase):
     def __init__(self):
@@ -729,14 +761,28 @@ def test_command() -> bool:
         return True
 
     ap = renpy.arguments.ArgumentParser(description="Runs a testcase.")
-    ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?",
-                    default=global_testsuite_name)
-    ap.add_argument("--no-skip", action="store_true", dest="ignore_skip_flag", default=False,
-                    help="Do not skip testcases marked as skip.")
-    ap.add_argument("--print-details", action="store_true", dest="print_details", default=False,
-                    help="Print detailed information for entire run.")
-    ap.add_argument("--print-skipped", action="store_true", dest="print_skipped", default=False,
-                    help="Print information about skipped testcases. Requires --print-detailed.")
+    ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?", default=global_testsuite_name)
+    ap.add_argument(
+        "--no-skip",
+        action="store_true",
+        dest="ignore_skip_flag",
+        default=False,
+        help="Do not skip testcases marked as skip.",
+    )
+    ap.add_argument(
+        "--print-details",
+        action="store_true",
+        dest="print_details",
+        default=False,
+        help="Print detailed information for entire run.",
+    )
+    ap.add_argument(
+        "--print-skipped",
+        action="store_true",
+        dest="print_skipped",
+        default=False,
+        help="Print information about skipped testcases. Requires --print-detailed.",
+    )
 
     args = ap.parse_args()
     _test.ignore_skip_flag = args.ignore_skip_flag

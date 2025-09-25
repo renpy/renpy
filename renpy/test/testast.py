@@ -32,13 +32,17 @@ from renpy.test.testsettings import _test
 from renpy.test.types import NodeState, NodeLocation, Position, RenpyTestException, RenpyTestTimeoutError, HookType
 
 
-class SelectorException(RenpyTestException): pass
+class SelectorException(RenpyTestException):
+    pass
+
 
 class Node(object):
     """
     An AST node for a test script.
     """
+
     __slots__ = ("filename", "linenumber", "next", "done")
+
     def __init__(self, loc: NodeLocation):
         self.filename, self.linenumber = loc
         self.next: Node | None = None
@@ -185,8 +189,9 @@ class TestCase(Block):
     def get_repr_params(self) -> str:
         return f"name={self.name!r}"
 
+
 class TestHook(Block):
-    __slots__ = ("depth")
+    __slots__ = "depth"
 
     def __init__(
         self,
@@ -198,14 +203,22 @@ class TestHook(Block):
         super().__init__(loc, block, name)
         self.depth = depth
 
+
 class TestSuite(TestCase):
     """
     Most of the logic is handled in renpy.test.testexecution.
     """
+
     __slots__ = (
-        "subtests", "subtest_index", "hooks",
-        "after" , "after_each_case", "after_each_suite",
-        "before", "before_each_case", "before_each_suite"
+        "subtests",
+        "subtest_index",
+        "hooks",
+        "after",
+        "after_each_case",
+        "after_each_suite",
+        "before",
+        "before_each_case",
+        "before_each_suite",
     )
 
     def __init__(
@@ -233,10 +246,7 @@ class TestSuite(TestCase):
             subtest.parent = self
 
         self.hooks: list[TestHook] = []
-        for hook in [
-            after, after_each_case, after_each_suite,
-            before, before_each_case, before_each_suite
-        ]:
+        for hook in [after, after_each_case, after_each_suite, before, before_each_case, before_each_suite]:
             if hook is not None:
                 self.hooks.append(hook)
 
@@ -306,8 +316,10 @@ class Condition(Node):
     Conditions should NOT execute any actions or change the state of the game.
     They should only check if a certain condition is met.
     """
+
     def execute(self, state: NodeState, t: float) -> NodeState:
         raise RenpyTestException("Conditions should not be executed directly. Use `ready()` instead.")
+
 
 ################################################################################
 # Selectors
@@ -316,6 +328,7 @@ class Selector(Condition):
     Base class for selectors. Selectors find a focusable or displayable
     item on the screen.
     """
+
     __slots__ = ("element", "wait_for_focus")
 
     def __init__(self, loc, wait_for_focus):
@@ -602,6 +615,7 @@ class Move(SelectorDrivenNode):
 
 class Scroll(Node):
     __slots__ = "pattern"
+
     def __init__(self, loc: NodeLocation, pattern: str | None = None):
         super(Scroll, self).__init__(loc)
         self.pattern = pattern
@@ -637,6 +651,7 @@ class Scroll(Node):
 
 class Drag(Node):
     __slots__ = ("points", "pattern", "button", "steps")
+
     def __init__(self, loc: NodeLocation, points: list[tuple[int, int]]):
         super(Drag, self).__init__(loc)
         self.points = points
@@ -755,7 +770,9 @@ class Action(Node):
     """
     This is for the `run` keyword
     """
+
     __slots__ = "expr"
+
     def __init__(self, loc: NodeLocation, expr):
         super(Action, self).__init__(loc)
         self.expr = expr
@@ -778,6 +795,7 @@ class Action(Node):
 
 class Pause(Node):
     __slots__ = "expr"
+
     def __init__(self, loc: NodeLocation, expr: str):
         super(Pause, self).__init__(loc)
         self.expr = expr
@@ -800,6 +818,7 @@ class Pause(Node):
 
 class Label(Condition):
     __slots__ = "name"
+
     def __init__(self, loc: NodeLocation, name: str):
         super(Label, self).__init__(loc)
         self.name = name
@@ -812,7 +831,8 @@ class Label(Condition):
 
 
 class Eval(Condition):
-    __slots__ = ("expr")
+    __slots__ = "expr"
+
     def __init__(self, loc: NodeLocation, expr):
         super(Eval, self).__init__(loc)
         self.expr = expr
@@ -846,6 +866,7 @@ class Advance(Node):
     """
     Advances the said dialogue by one line.
     """
+
     last_event: str = ""
     last_kwargs: dict = {}
     began_newline: bool = False
@@ -880,6 +901,7 @@ class Skip(Node):
     """
     Trigger the skip key
     """
+
     __slots__ = ("fast",)
 
     def __init__(self, loc: NodeLocation, fast: bool = False):
@@ -900,8 +922,10 @@ class Skip(Node):
 ################################################################################
 # Boolean proxy clauses
 
+
 class Not(Condition):
     __slots__ = "condition"
+
     def __init__(self, loc: NodeLocation, condition: Condition):
         super(Not, self).__init__(loc)
         self.condition = condition
@@ -909,10 +933,9 @@ class Not(Condition):
     def ready(self):
         return not self.condition.ready()
 
+
 class Binary(Condition):
-    __slots__ = ("left", "right",
-                 "left_ready", "right_ready",
-                 "left_state", "right_state")
+    __slots__ = ("left", "right", "left_ready", "right_ready", "left_state", "right_state")
 
     def __init__(self, loc: NodeLocation, left: Condition, right: Condition):
         super(Binary, self).__init__(loc)
@@ -930,6 +953,7 @@ class Binary(Condition):
         self.left_state = self.left.start()
         self.right_state = self.right.start()
         return self.state()
+
 
 class And(Binary):
     __slots__ = ()
@@ -963,6 +987,7 @@ class And(Binary):
 
         next_node(self)
         return self.state()
+
 
 class Or(Binary):
     __slots__ = ()
@@ -1016,14 +1041,10 @@ class Until(Node):
         If None, the node will never time out.
         If float("NaN"), uses the global test timeout setting.
     """
+
     __slots__ = ("left", "right", "timeout")
-    def __init__(
-        self,
-        loc: NodeLocation,
-        left: Node,
-        right: Condition,
-        timeout: float | None = float("NaN")
-    ):
+
+    def __init__(self, loc: NodeLocation, left: Node, right: Condition, timeout: float | None = float("NaN")):
         Node.__init__(self, loc)
         self.left = left
         self.right = right
@@ -1076,10 +1097,12 @@ class Until(Node):
     def cleanup_after_error(self) -> None:
         return self.left.after_until()
 
+
 class Repeat(Until):
     """
     Executes `left` for `count` times.
     """
+
     def __init__(self, loc: NodeLocation, left: Node, count: int, timeout: float | None = float("NaN")):
         ## Multiplied by 2 to account for Until.execute() calling ready twice per iteration.
         right = RepeatCounter(loc, count * 2)
@@ -1094,11 +1117,13 @@ class If(Node):
     If `condition` is ready, runs the block. Otherwise, goes to the next
     statement.
     """
+
     __slots__ = ("entries",)
+
     def __init__(self, loc: NodeLocation, entries: list[tuple[Condition, "Block"]]):
         Node.__init__(self, loc)
 
-        self.entries = entries # List of (condition, block) tuples.
+        self.entries = entries  # List of (condition, block) tuples.
 
     def chain(self, next):
         self.next = next
@@ -1149,6 +1174,7 @@ class Assert(Node):
     `timeout`
         The maximum delay to wait for the condition to be ready.
     """
+
     __slots__ = ("condition", "timeout", "failed")
 
     def __init__(self, loc: NodeLocation, condition: Condition, timeout: float = 0.0):
@@ -1176,6 +1202,7 @@ class Assert(Node):
 ################################################################################
 # Control structures.
 
+
 class Exit(Node):
     def execute(self, state, t):
         raise renpy.game.QuitException
@@ -1184,6 +1211,7 @@ class Exit(Node):
 ################################################################################
 # Utility functions
 ################################################################################
+
 
 def chain_block(block: list[Node], next: Node | None) -> None:
     """

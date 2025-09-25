@@ -53,6 +53,7 @@ def test_statement(keywords):
 ##############################################################################
 # Statement functions: Control Flow
 
+
 @test_statement("exit")
 def exit_statement(l: Lexer, loc: NodeLocation) -> testast.Exit:
     l.expect_noblock("exit statement")
@@ -64,8 +65,7 @@ def exit_statement(l: Lexer, loc: NodeLocation) -> testast.Exit:
 
 @test_statement("if")
 def if_statement(l: Lexer, loc: NodeLocation) -> testast.If:
-
-    entries = [ ]
+    entries = []
 
     condition = parse_condition(l, loc)
     l.require(":")
@@ -115,6 +115,7 @@ def pass_statement(l: Lexer, loc: NodeLocation) -> testast.Pass:
 ##############################################################################
 # Statement functions: Actions
 
+
 @test_statement("advance")
 def advance_statement(l: Lexer, loc: NodeLocation) -> testast.Advance | testast.Until:
     l.expect_noblock("advance statement")
@@ -128,6 +129,7 @@ def advance_statement(l: Lexer, loc: NodeLocation) -> testast.Advance | testast.
     l.advance()
 
     return rv
+
 
 @test_statement("click")
 def click_statement(l: Lexer, loc: NodeLocation) -> testast.Click | testast.Until:
@@ -194,7 +196,6 @@ def keysym_statement(l: Lexer, loc: NodeLocation) -> testast.Keysym | testast.Un
     rv = testast.Keysym(loc, text)
 
     while True:
-
         if l.keyword("pos"):
             rv.position = l.require(l.simple_expression)
 
@@ -321,7 +322,6 @@ def type_statement(l: Lexer, loc: NodeLocation) -> testast.Type | testast.Until:
     rv = testast.Type(loc, text)
 
     while True:
-
         if l.keyword("pos"):
             rv.position = l.require(l.simple_expression)
 
@@ -343,6 +343,7 @@ def type_statement(l: Lexer, loc: NodeLocation) -> testast.Type | testast.Until:
 ##############################################################################
 # Statement functions: Other (Python, test functions)
 
+
 @test_statement("testsuite")
 def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     global current_testsuite_name
@@ -353,7 +354,7 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     before: testast.TestHook | None = None
     before_each_case: testast.TestHook | None = None
     before_each_suite: testast.TestHook | None = None
-    children: list[testast.TestCase] = [ ]
+    children: list[testast.TestCase] = []
 
     name = l.require(l.dotted_name)
     signature = renpy.parser.parse_parameters(l)
@@ -424,14 +425,14 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     rv = testast.TestSuite(
         loc,
         current_testsuite_name,
-        after = after,
-        after_each_case = after_each_case,
-        after_each_suite = after_each_suite,
-        before = before,
-        before_each_case = before_each_case,
-        before_each_suite = before_each_suite,
-        subtests = children,
-        **extra_kwargs
+        after=after,
+        after_each_case=after_each_case,
+        after_each_suite=after_each_suite,
+        before=before,
+        before_each_case=before_each_case,
+        before_each_suite=before_each_suite,
+        subtests=children,
+        **extra_kwargs,
     )
 
     current_testsuite_name = old_current_testsuite_name
@@ -441,7 +442,6 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
 
 @test_statement("testcase")
 def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
-
     global current_testsuite_name
 
     name = l.require(l.dotted_name)
@@ -467,7 +467,7 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
         loc,
         current_testsuite_name + "." + name if current_testsuite_name else name,
         block=test_block.block,
-        **extra_kwargs
+        **extra_kwargs,
     )
 
     return rv
@@ -508,7 +508,7 @@ def python_statement(l: Lexer, loc: NodeLocation) -> testast.Python:
     l.advance()
 
     code = renpy.ast.PyCode(source, loc, "hide" if hide else "exec")
-    return testast.Python(loc, code, hide=="hide")
+    return testast.Python(loc, code, hide == "hide")
 
 
 @test_statement("$")
@@ -536,17 +536,20 @@ def parse_block(l: Lexer, loc: NodeLocation) -> testast.Block:
     """
 
     l.advance()
-    block = [ ]
+    block = []
 
     while not l.eob:
         stmt = parse_statement(l, l.get_location())
         if isinstance(stmt, (testast.TestSuite, testast.TestCase)):
             l.unadvance()
-            l.error("A testsuite or testcase may not be nested inside a block. "
-                    "It must be at the top level, or within a testsuite.")
+            l.error(
+                "A testsuite or testcase may not be nested inside a block. "
+                "It must be at the top level, or within a testsuite."
+            )
         block.append(stmt)
 
     return testast.Block(loc, block)
+
 
 def parse_hook(l: Lexer, loc: NodeLocation, name: str) -> testast.TestHook:
     signature: renpy.parameter.Signature | None = renpy.parser.parse_parameters(l)
@@ -645,13 +648,13 @@ def parse_condition(l: Lexer, loc: NodeLocation, left: testast.Condition | None 
 
     elif l.keyword("and"):
         if left is None:
-            l.error("Expected a left-hand side for \"and\" condition.")
+            l.error('Expected a left-hand side for "and" condition.')
         right = parse_condition(l, loc)
         return testast.And(loc, left, right)
 
     elif l.keyword("or"):
         if left is None:
-            l.error("Expected a left-hand side for \"or\" condition.")
+            l.error('Expected a left-hand side for "or" condition.')
         right = parse_condition(l, loc)
         return testast.Or(loc, left, right)
 
