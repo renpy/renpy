@@ -186,6 +186,9 @@ class TestCase(Block):
         if self.skip and self.only:
             raise ValueError(f"Test case '{self.name}' cannot have both 'skip' and 'only' set to True.")
 
+    def __hash__(self):
+        return hash(self.name)
+
     def get_repr_params(self) -> str:
         return f"name={self.name!r}"
 

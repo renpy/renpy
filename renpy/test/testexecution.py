@@ -278,22 +278,43 @@ def process_only_flag() -> None:
     """
     If any testcase has the `only` flag set, all other testcases that do not have
     the `only` flag will be marked as skipped.
+
+    Parent tests will ignore the skip flag if they have a child with the `only` flag set.
+    Child tests are unaffected.
     """
     has_only = [tc for tc in testcases.values() if tc.only]
 
     if not has_only:
         return
 
-    for tc in testcases.values():
-        if not tc.only:
-            tc.skip = True
+    processed = set()
 
-    for tc in has_only:
+    def unskip_relatives(tc: TestCase):
+        if tc in processed:
+            return
+
+        processed.add(tc)
+
+        # Unskip parents
         parent = tc.parent
-
         while parent is not None:
+            if parent in processed:
+                break
+            processed.add(parent)
             parent.skip = False
             parent = parent.parent
+
+        # Mark children so they are not skipped later
+        if isinstance(tc, TestSuite):
+            for child in tc.subtests:
+                unskip_relatives(child)
+
+    for tc in has_only:
+        unskip_relatives(tc)
+
+    for tc in testcases.values():
+        if tc not in processed:
+            tc.skip = True
 
 
 def update_suite_skip_flag(node: TestSuite) -> None:
