@@ -431,7 +431,7 @@ class DisplayableSelector(Selector):
 
         renpy.exports.get_displayable(screen, id, layer) is supposed to do this, but it sucks
         """
-        ## TODO: Move to renpy.exports.get_displayable()?
+        ## NOTE: Move to renpy.exports.get_displayable() eventually?
 
         ctx: renpy.execution.Context = renpy.game.context()
         for layer, sles in ctx.scene_lists.layers.items():
@@ -1065,37 +1065,34 @@ class Until(Node):
         if self.timeout and math.isnan(self.timeout):
             self.timeout = _test.timeout
 
-        return (None, None, 0, False)
+        return (None, 0, False)
 
     def execute(self, state, t):
         if self.timeout is not None and t > self.timeout:
             msg = f"Until Statement timed out after {self.timeout} seconds."
             raise RenpyTestTimeoutError(msg)
 
-        child, child_state, start_time, has_started = state
-
         if self.right.ready():
             self.left.after_until()
             next_node(self.next)
             return None
 
-        else:
-            ## The right hand side is not ready, so we execute the left hand side.
-            if child == self.left or self.left.ready():
-                if not has_started:
-                    child = self.left
-                    child_state = self.left.start()
-                    start_time = t
-                    has_started = True
+        ## The right hand side is not ready, so we execute the left hand side.
+        child_state, start_time, has_started = state
 
+        if not has_started and self.left.ready():
+            child_state = self.left.start()
+            start_time = t
+            has_started = True
+
+        if has_started:
             child_state = self.left.execute(child_state, t - start_time)
 
-            if child_state is None:
-                next_node(self)
-                return (None, None, 0, False)
-
         next_node(self)
-        return child, child_state, start_time, has_started
+        if child_state is None:
+            return (None, 0, False)
+
+        return child_state, start_time, has_started
 
     def cleanup_after_error(self) -> None:
         return self.left.after_until()
