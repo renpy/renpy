@@ -117,6 +117,8 @@ class Node(object):
         """
         pass
 
+    def cleanup_after_error(self) -> None:
+        """
         Called if an exception is raised during the execution of this node.
         This can be used to clean up any state that was set by this node.
         """
