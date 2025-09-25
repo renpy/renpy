@@ -436,8 +436,12 @@ class NodeExecutor:
     def check_for_timeout(self, now) -> None:
         self.update_last_state_change(now)
 
-        if (now - self.last_state_change) > _test.timeout:
-            raise RenpyTestTimeoutError(f"Testcase timed out after {_test.timeout} seconds.")
+        timeout = _test.timeout
+        if hasattr(self.node, "timeout") and self.node.timeout > 0:  # type: ignore
+            timeout = self.node.timeout  # type: ignore
+
+        if (now - self.last_state_change) > timeout:
+            raise RenpyTestTimeoutError(f"Testcase timed out after {timeout} seconds.")
 
     def update_last_state_change(self, now):
         loc = renpy.exports.get_filename_line()
