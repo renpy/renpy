@@ -11,6 +11,7 @@ from renpy.test.testsettings import _test
 from renpy.test.types import RenpyTestAssertionError
 from renpy.test.testast import TestCase, TestHook, TestSuite, Assert, Block
 
+
 def format_seconds(seconds: float) -> str:
     if seconds >= 60:
         minutes = int(seconds // 60)
@@ -18,6 +19,7 @@ def format_seconds(seconds: float) -> str:
         return f"{seconds:0.3f} s [{minutes:02d}:{secs:02d}]"
 
     return f"{seconds:0.3f} s"
+
 
 class OutcomeStatus(Enum):
     NOT_RUN = "not_run"
@@ -53,7 +55,7 @@ class BaseOutcome:
         otherwise it is set to FAILED.
         """
         if self.end_time > 0.0:
-            return # Already ended
+            return  # Already ended
 
         now = renpy.display.core.get_time()
         if self.start_time == 0.0:
@@ -124,18 +126,17 @@ class TestSuiteOutcome(TestCaseOutcome):
 
     @property
     def num_testsuites_not_run(self) -> int:
-        return (self.num_testsuites - self.num_testsuites_passed
-            - self.num_testsuites_failed - self.num_testsuites_skipped)
+        return (
+            self.num_testsuites - self.num_testsuites_passed - self.num_testsuites_failed - self.num_testsuites_skipped
+        )
 
     @property
     def num_testcases_not_run(self) -> int:
-        return (self.num_testcases - self.num_testcases_passed
-            - self.num_testcases_failed - self.num_testcases_skipped)
+        return self.num_testcases - self.num_testcases_passed - self.num_testcases_failed - self.num_testcases_skipped
 
     @property
     def num_hooks_not_run(self) -> int:
-        return (self.num_hooks - self.num_hooks_passed
-            - self.num_hooks_failed - self.num_hooks_skipped)
+        return self.num_hooks - self.num_hooks_passed - self.num_hooks_failed - self.num_hooks_skipped
 
     def populate_children(self, node: TestSuite) -> None:
         for hook in node.hooks:
@@ -150,7 +151,7 @@ class TestSuiteOutcome(TestCaseOutcome):
             elif isinstance(child, TestCase):
                 self.children.append(TestCaseOutcome(child.name))
 
-    def end(self, status = None) -> None:
+    def end(self, status=None) -> None:
         """
         Finalize the test suite outcomes.
 
@@ -159,7 +160,7 @@ class TestSuiteOutcome(TestCaseOutcome):
         """
 
         if self.end_time > 0.0:
-            return # Already ended
+            return  # Already ended
 
         now = renpy.display.core.get_time()
         if self.start_time == 0.0:
@@ -209,7 +210,6 @@ class TestSuiteOutcome(TestCaseOutcome):
                 elif child.status == OutcomeStatus.SKIPPED:
                     self.num_hooks_skipped += 1
 
-
         if status is not None:
             self.status = status
 
@@ -240,16 +240,12 @@ class TestSuiteOutcome(TestCaseOutcome):
         if rv := outcomes.get(name, None):
             return rv
 
-        raise ValueError(f"outcomes for '{name}' not found in {self.name}. "
-                         f"Available names: {list(outcomes.keys())}")
+        raise ValueError(f"outcomes for '{name}' not found in {self.name}. Available names: {list(outcomes.keys())}")
 
 
 def get_exception_string(
-        epc: renpy.error.ExceptionPrintContext,
-        exception: Exception,
-        run_stack: list[renpy.error.FrameSummary]
-    ) -> str:
-
+    epc: renpy.error.ExceptionPrintContext, exception: Exception, run_stack: list[renpy.error.FrameSummary]
+) -> str:
     force_color = not os.environ.get("FORCE_COLOR") and isinstance(epc, renpy.error.ANSIColoredPrintContext)
     if force_color:
         os.environ["FORCE_COLOR"] = "1"
@@ -285,12 +281,7 @@ def get_exception_string(
     return string_stream.getvalue()
 
 
-def get_assertion_error_string(
-        epc: renpy.error.ExceptionPrintContext,
-        assert_node: Assert,
-        block_name: str
-    ) -> str:
-
+def get_assertion_error_string(epc: renpy.error.ExceptionPrintContext, assert_node: Assert, block_name: str) -> str:
     if not assert_node.failed:
         return ""
 
@@ -382,6 +373,7 @@ class ConsoleReporter(Reporter):
     """
     Reporter that prints test outcomes to the console.
     """
+
     _is_last_line_written_by_reporter: bool = False
 
     def __init__(self):
@@ -398,8 +390,7 @@ class ConsoleReporter(Reporter):
     def _erase_line(self) -> bool:
         """Erases the current line in the console if supported, and returns True if successful."""
         if can_erase := (
-            isinstance(self.epc, renpy.error.ANSIColoredPrintContext)
-            and self._is_last_line_written_by_reporter
+            isinstance(self.epc, renpy.error.ANSIColoredPrintContext) and self._is_last_line_written_by_reporter
         ):
             ## Move cursor up one line and erase it
             self._print(f"\x1b[1A\x1b[2K", end="\r")
@@ -416,8 +407,7 @@ class ConsoleReporter(Reporter):
         print(text, end=end)
         self._is_last_line_written_by_reporter = True
 
-
-    def _format_with_status_color(self, msg: str, status: OutcomeStatus|None) -> str:
+    def _format_with_status_color(self, msg: str, status: OutcomeStatus | None) -> str:
         """
         Formats the status of a test case with appropriate color.
         """
@@ -447,7 +437,7 @@ class ConsoleReporter(Reporter):
         if depth == 0:
             self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Test outcomes (Detailed)")
 
-        if (outcome.status == OutcomeStatus.SKIPPED and not _test.print_skipped):
+        if outcome.status == OutcomeStatus.SKIPPED and not _test.print_skipped:
             return
 
         test_name = outcome.name.split(".")[-1]
@@ -455,21 +445,21 @@ class ConsoleReporter(Reporter):
 
         if isinstance(outcome, TestSuiteOutcome):
             self._print(
-                f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} " +
-                "  " * (depth) +
-                f"{status_text} {test_name:20s}" +
-                (f" - ({format_seconds(outcome.duration)})" if outcome.duration > 0 else "")
+                f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
+                + "  " * (depth)
+                + f"{status_text} {test_name:20s}"
+                + (f" - ({format_seconds(outcome.duration)})" if outcome.duration > 0 else "")
             )
 
             for child in outcome.children:
-                self._print_detailed_outcomes(child, depth+1)
+                self._print_detailed_outcomes(child, depth + 1)
 
         elif isinstance(outcome, TestCaseOutcome):
             self._print(
-                f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} " +
-                "  " * (depth) +
-                f"{status_text} {test_name:20s}" +
-                (f" - ({format_seconds(outcome.duration)})" if outcome.duration > 0 else "")
+                f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
+                + "  " * (depth)
+                + f"{status_text} {test_name:20s}"
+                + (f" - ({format_seconds(outcome.duration)})" if outcome.duration > 0 else "")
             )
 
         if depth == 0:
@@ -483,24 +473,17 @@ class ConsoleReporter(Reporter):
         else:
             top_name = outcome.name
 
-        self._print(
-            f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
-            f"Test outcomes (Summary): {top_name}"
-        )
+        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Test outcomes (Summary): {top_name}")
 
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
             f"Test suites: {outcome.num_testsuites:5d} | "
-
             f"{ANSIColors.GREEN if outcome.num_testsuites_passed else ANSIColors.RESET}"
             f"{outcome.num_testsuites_passed:5d} passed{ANSIColors.RESET} | "
-
             f"{ANSIColors.RED if outcome.num_testsuites_failed else ANSIColors.RESET}"
             f"{outcome.num_testsuites_failed:5d} failed{ANSIColors.RESET} | "
-
             f"{ANSIColors.YELLOW if outcome.num_testsuites_skipped else ANSIColors.RESET}"
             f"{outcome.num_testsuites_skipped:5d} skipped{ANSIColors.RESET} | "
-
             f"{ANSIColors.YELLOW if outcome.num_testsuites_not_run else ANSIColors.RESET}"
             f"{outcome.num_testsuites_not_run:5d} not run{ANSIColors.RESET}"
         )
@@ -508,16 +491,12 @@ class ConsoleReporter(Reporter):
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
             f"Test cases : {outcome.num_testcases:5d} | "
-
             f"{ANSIColors.GREEN if outcome.num_testcases_passed else ANSIColors.RESET}"
             f"{outcome.num_testcases_passed:5d} passed{ANSIColors.RESET} | "
-
             f"{ANSIColors.RED if outcome.num_testcases_failed else ANSIColors.RESET}"
             f"{outcome.num_testcases_failed:5d} failed{ANSIColors.RESET} | "
-
             f"{ANSIColors.YELLOW if outcome.num_testcases_skipped else ANSIColors.RESET}"
             f"{outcome.num_testcases_skipped:5d} skipped{ANSIColors.RESET} | "
-
             f"{ANSIColors.YELLOW if outcome.num_testcases_not_run else ANSIColors.RESET}"
             f"{outcome.num_testcases_not_run:5d} not run{ANSIColors.RESET}"
         )
@@ -525,16 +504,12 @@ class ConsoleReporter(Reporter):
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
             f"Test hooks : {outcome.num_hooks:5d} | "
-
             f"{ANSIColors.GREEN if outcome.num_hooks_passed else ANSIColors.RESET}"
             f"{outcome.num_hooks_passed:5d} passed{ANSIColors.RESET} | "
-
             f"{ANSIColors.RED if outcome.num_hooks_failed else ANSIColors.RESET}"
             f"{outcome.num_hooks_failed:5d} failed{ANSIColors.RESET} | "
-
             f"{ANSIColors.YELLOW if outcome.num_hooks_skipped else ANSIColors.RESET}"
             f"{outcome.num_hooks_skipped:5d} skipped{ANSIColors.RESET} | "
-
             f"{ANSIColors.YELLOW if outcome.num_hooks_not_run else ANSIColors.RESET}"
             f"{outcome.num_hooks_not_run:5d} not run{ANSIColors.RESET}"
         )
@@ -542,10 +517,8 @@ class ConsoleReporter(Reporter):
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
             f"Assertions : {outcome.num_asserts:5d} | "
-
             f"{ANSIColors.GREEN if outcome.num_asserts_passed else ANSIColors.RESET}"
             f"{outcome.num_asserts_passed:5d} passed{ANSIColors.RESET} | "
-
             f"{ANSIColors.RED if outcome.num_asserts_failed else ANSIColors.RESET}"
             f"{outcome.num_asserts_failed:5d} failed{ANSIColors.RESET} | "
         )
@@ -553,8 +526,7 @@ class ConsoleReporter(Reporter):
         self._print("")
         self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Time: {format_seconds(outcome.duration)}")
         self._print(
-            f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
-            f"Status: {self._get_status_text(outcome.final_status)}"
+            f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Status: {self._get_status_text(outcome.final_status)}"
         )
 
     ##################################
@@ -576,36 +548,36 @@ class ConsoleReporter(Reporter):
         self._print("")
 
     def test_suite_start(self, node, depth=0) -> None:
-        self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  '*depth}+ {node.name}")
+        self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}+ {node.name}")
 
     def test_suite_end(self, node, outcome, depth=0) -> None:
         pass
         # self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {node.name} done")
 
     def test_case_start(self, node, depth=0) -> None:
-        self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  '*depth}- {node.name}")
+        self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}- {node.name}")
 
     def test_case_end(self, node, outcome, depth=0) -> None:
         self._erase_line()
         self._print(
-            f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  '*depth}- "
+            f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}- "
             f"{self._format_with_status_color(node.name, outcome.status)} ({format_seconds(outcome.duration)})"
         )
 
     def test_hook_start(self, node, depth=0) -> None:
-        self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  '*depth}  {node.name}")
+        self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}  {node.name}")
 
     def test_hook_end(self, node, outcome, depth=0) -> None:
         self._erase_line()
         self._print(
-            f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  '*depth}  "
+            f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}  "
             f"{self._format_with_status_color(node.name, outcome.status)} ({format_seconds(outcome.duration)})"
         )
 
     def test_case_skipped(self, node, depth=0) -> None:
         pass
 
-    def log_assert(self, assert_node, block_name = "") -> None:
+    def log_assert(self, assert_node, block_name="") -> None:
         if msg := get_assertion_error_string(self.epc, assert_node, block_name):
             self._print(msg)
 
@@ -623,6 +595,7 @@ class ReporterManager:
     """
     A manager that forwards calls to all registered reporters.
     """
+
     reporters: list["Reporter"] = []
 
     all_outcomes: TestSuiteOutcome | None = None
@@ -638,8 +611,7 @@ class ReporterManager:
 
     @property
     def has_failed(self) -> bool:
-        return (self.all_outcomes is not None and
-                self.all_outcomes.final_status == OutcomeStatus.FAILED)
+        return self.all_outcomes is not None and self.all_outcomes.final_status == OutcomeStatus.FAILED
 
     def add_reporter(self, reporter: Reporter) -> None:
         self.reporters.append(reporter)
@@ -666,7 +638,7 @@ class ReporterManager:
         for reporter in self.reporters:
             reporter.test_suite_start(node, depth=depth)
 
-    def test_suite_end(self, node: TestSuite, status: OutcomeStatus|None = None, depth: int = 0) -> None:
+    def test_suite_end(self, node: TestSuite, status: OutcomeStatus | None = None, depth: int = 0) -> None:
         removed = self.suites.pop()
         if removed != node:
             raise RuntimeError("Mismatched test suite start/end calls.")
@@ -690,7 +662,7 @@ class ReporterManager:
         for reporter in self.reporters:
             reporter.test_case_start(node, depth)
 
-    def test_case_end(self, node: TestCase, status: OutcomeStatus|None = None, depth: int = 0) -> None:
+    def test_case_end(self, node: TestCase, status: OutcomeStatus | None = None, depth: int = 0) -> None:
         self.testcase = None
         self.hook = None
 
@@ -711,7 +683,7 @@ class ReporterManager:
         for reporter in self.reporters:
             reporter.test_hook_start(node, depth=depth)
 
-    def test_hook_end(self, node: TestHook, status = None, depth: int = 0) -> None:
+    def test_hook_end(self, node: TestHook, status=None, depth: int = 0) -> None:
         self.testcase = None
         self.hook = None
 

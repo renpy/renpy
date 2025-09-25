@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class TestSettings:
     maximum_framerate: bool = True
@@ -25,5 +26,6 @@ class TestSettings:
 
     print_skipped: bool = False
     """Should we print skipped test cases?"""
+
 
 _test = TestSettings()
