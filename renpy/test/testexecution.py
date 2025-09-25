@@ -366,12 +366,6 @@ class NodeExecutor:
     end_callback: Callable | None = None
     "A callback to run when no more nodes are left to execute."
 
-    end_callback_args: tuple = ()
-    "Parameters to pass to the end callback."
-
-    end_callback_kwargs: dict = {}
-    "Keyword parameters to pass to the end callback."
-
     def __init__(self, node: Node | None = None):
         self.reinitialize(node)
 
@@ -387,10 +381,8 @@ class NodeExecutor:
     def set_next_node(self, next: Node | None) -> None:
         self.next_node = next
 
-    def set_end_callback(self, callback: Callable, args: tuple | None = None, kwargs: dict | None = None) -> None:
+    def set_end_callback(self, callback: Callable) -> None:
         self.end_callback = callback
-        self.end_callback_args = args if args is not None else ()
-        self.end_callback_kwargs = kwargs if kwargs is not None else {}
 
     def execute(self) -> None:
         """
@@ -428,10 +420,8 @@ class NodeExecutor:
         self.node_has_started = False
 
         if self.node is None and self.end_callback is not None:
-            self.end_callback(*self.end_callback_args, **self.end_callback_kwargs)
+            self.end_callback()
             self.end_callback = None
-            self.end_callback_args = ()
-            self.end_callback_kwargs = {}
 
     def check_for_timeout(self, now) -> None:
         self.update_last_state_change(now)
@@ -481,7 +471,7 @@ class TestPhaseController:
 
             if node_executor.done:
                 next_phase = self.active_phase.update()
-                self.transition_to_new_state(next_phase)
+                self.transition_to_new_phase(next_phase)
 
         except renpy.game.QuitException:
             raise
@@ -489,7 +479,7 @@ class TestPhaseController:
         except Exception as exc:
             self.handle_exception(exc)
 
-    def transition_to_new_state(self, new_state: "BaseExecutionPhase | None") -> None:
+    def transition_to_new_phase(self, new_state: "BaseExecutionPhase | None") -> None:
         if new_state is None:
             return
 
@@ -506,7 +496,7 @@ class TestPhaseController:
         node_executor.reinitialize(None)
 
         new_state = self.active_phase.error()
-        self.transition_to_new_state(new_state)
+        self.transition_to_new_phase(new_state)
 
     def get_frame_stack(self) -> list[FrameSummary]:
         """
@@ -609,7 +599,7 @@ class HookLoopPhase(HookPhase):
             testreporter.reporter.test_hook_start(self.block, depth=len(suite_stack))
             node_executor.set_next_node(self.block)
             node_executor.set_end_callback(
-                testreporter.reporter.test_hook_end, (self.block,), {"depth": len(suite_stack)}
+                renpy.curry.partial(testreporter.reporter.test_hook_end, self.block, depth=len(suite_stack))
             )
             self.suite_depth += step
             return None
@@ -701,7 +691,7 @@ class BeforeSuitePhase(BaseExecutionPhase):
             testreporter.reporter.test_hook_start(self.block, depth=len(suite_stack))
             node_executor.set_next_node(self.block)
             node_executor.set_end_callback(
-                testreporter.reporter.test_hook_end, (self.block,), {"depth": len(suite_stack)}
+                renpy.curry.partial(testreporter.reporter.test_hook_end, self.block, depth=len(suite_stack))
             )
 
     def update(self) -> BaseExecutionPhase | None:
@@ -723,7 +713,9 @@ class TestCasePhase(BaseExecutionPhase):
         self.block = suite_stack[-1].current_test
         testreporter.reporter.test_case_start(self.block, depth=len(suite_stack))
         node_executor.set_next_node(self.block)
-        node_executor.set_end_callback(testreporter.reporter.test_case_end, (self.block,), {"depth": len(suite_stack)})
+        node_executor.set_end_callback(
+            renpy.curry.partial(testreporter.reporter.test_case_end, self.block, depth=len(suite_stack))
+        )
 
     def error(self) -> BaseExecutionPhase | None:
         if not isinstance(self.block, TestCase):
@@ -750,7 +742,7 @@ class AfterSuitePhase(BaseExecutionPhase):
             testreporter.reporter.test_hook_start(self.block, depth=len(suite_stack))
             node_executor.set_next_node(self.block)
             node_executor.set_end_callback(
-                testreporter.reporter.test_hook_end, (self.block,), {"depth": len(suite_stack)}
+                renpy.curry.partial(testreporter.reporter.test_hook_end, self.block, depth=len(suite_stack))
             )
 
     def update(self) -> BaseExecutionPhase | None:
