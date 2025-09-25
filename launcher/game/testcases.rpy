@@ -1,4 +1,4 @@
-﻿testsuite all:
+﻿testsuite global:
     after:
         exit
 
@@ -38,7 +38,7 @@ testsuite default:
 
             persistent.projects_directory = persistent.temp_projects_directory
 
-    before_each:
+    before_each_case:
         $ _test.timeout = 5.0
 
     after:
@@ -91,7 +91,7 @@ testsuite default:
 
 
     testsuite extract_dialogue:
-        before_each:
+        before_each_case:
             click "Extract Dialogue"
             click "Strip text tags"
             click "Escape quotes"

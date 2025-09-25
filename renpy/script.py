@@ -707,7 +707,7 @@ class Script(object):
 
             if isinstance(node, renpy.ast.Testcase):
                 # Handle testcases specially, as they are not part of the script.
-                renpy.test.testexecution.add_testcase(node.test) # type: ignore
+                renpy.test.testexecution.register_testcase(node.test)
 
             else:
                 check_name(node)
