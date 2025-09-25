@@ -115,11 +115,15 @@ def initialize(root_name: str) -> None:
     suite.chain(None)
 
     testreporter.reporter.initialize_test_outcomes(suite)
-    renpy.config.label_callbacks.append(add_reached_label)
 
     node_executor = NodeExecutor(None)
     phase_controller = TestPhaseController(suite)
     initialized = True
+
+
+def on_restart() -> None:
+    if add_reached_label not in renpy.config.label_callbacks:
+        renpy.config.label_callbacks.append(add_reached_label)
 
 
 def is_in_test() -> bool:
@@ -783,6 +787,8 @@ def test_command() -> bool:
     """
 
     ## NOTE: This command gets called after the game finishes and returns to the main menu
+    on_restart()
+
     if initialized:
         return True
 
