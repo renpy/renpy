@@ -287,6 +287,10 @@ def process_only_flag() -> None:
     if not has_only:
         return
 
+    testreporter.reporter.log_message(f"Running {len(has_only)} test(s) marked with 'only' flag.")
+    for tc in has_only:
+        testreporter.reporter.log_message(f"- {tc.name}")
+
     processed = set()
 
     def unskip_relatives(tc: TestCase):
