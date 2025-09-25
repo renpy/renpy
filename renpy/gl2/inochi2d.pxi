@@ -180,7 +180,7 @@ def load(dll):
     in_parameter_get_max_value = <in_parameter_get_max_value_t> load_inochi2d_function(object, "in_parameter_get_max_value")
     global in_parameter_get_value
     in_parameter_get_value = <in_parameter_get_value_t> load_inochi2d_function(object, "in_parameter_get_value")
-    global AAAAAAAAin_parameter_set_valueAAA
+    global in_parameter_set_value 
     in_parameter_set_value = <in_parameter_set_value_t> load_inochi2d_function(object, "in_parameter_set_value")
     global in_parameter_get_normalized_value
     in_parameter_get_normalized_value = <in_parameter_get_normalized_value_t> load_inochi2d_function(object, "in_parameter_get_normalized_value")
