@@ -115,6 +115,7 @@ def initialize(root_name: str) -> None:
     suite.chain(None)
 
     testreporter.reporter.initialize_test_outcomes(suite)
+    renpy.config.label_callbacks.append(add_reached_label)
 
     node_executor = NodeExecutor(None)
     phase_controller = TestPhaseController(suite)
@@ -184,6 +185,10 @@ def set_next_execution_node(next_node: Node | None) -> None:
     """
 
     node_executor.set_next_node(next_node)
+
+
+def add_reached_label(label: str, abnormal: bool) -> None:
+    reached_labels.add(label)
 
 
 ################################################################################
