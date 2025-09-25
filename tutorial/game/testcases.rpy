@@ -7,11 +7,11 @@ testsuite default(description="Default project testsuite"):
         click "Start"
         advance until screen tutorials
 
-    before_each:
+    before_each_case:
         ## Run before each test cases
         $ _test.transition_timeout = 0.05
 
-    after_each:
+    after_each_case:
         ## Run after each testcases
         ## This rescues us from a crash
         if not screen tutorials:
@@ -360,8 +360,8 @@ testsuite default(description="Default project testsuite"):
         click "Yes."
         advance until screen tutorials
 
-testsuite all:
-    before_each:
+testsuite global:
+    before_each_case:
         if not screen main_menu:
             run MainMenu(confirm=False)
 

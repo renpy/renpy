@@ -29,7 +29,7 @@ from renpy.display.focus import Focus
 from renpy.display.displayable import Displayable
 from renpy.test.testmouse import click_mouse, move_mouse
 from renpy.test.testsettings import _test
-from renpy.test.types import State, NodeLocation, Position, RenpyTestException, RenpyTestTimeoutError
+from renpy.test.types import NodeState, NodeLocation, Position, RenpyTestException, RenpyTestTimeoutError, HookType
 
 
 class SelectorException(RenpyTestException): pass
@@ -85,7 +85,7 @@ class Node(object):
         """
         return True
 
-    def start(self) -> State:
+    def start(self) -> NodeState:
         """
         Called once when the node starts execution.
 
@@ -94,7 +94,7 @@ class Node(object):
         """
         return 0
 
-    def execute(self, state: State, t: float) -> State:
+    def execute(self, state: NodeState, t: float) -> NodeState:
         """
         Called once each time the screen is drawn.
 
@@ -114,6 +114,11 @@ class Node(object):
         """
         Called after an Until node has finished executing.
         This is used to end any function that was started by this node.
+        """
+        pass
+
+        Called if an exception is raised during the execution of this node.
+        This can be used to clean up any state that was set by this node.
         """
         pass
 
@@ -152,7 +157,7 @@ class Block(Node):
 
 
 class TestCase(Block):
-    __slots__ = ("description", "skip")
+    __slots__ = ("description", "skip", "only", "parent")
 
     def __init__(
         self,
@@ -161,24 +166,44 @@ class TestCase(Block):
         block: list[Node],
         description: str = "",
         skip: bool = False,
+        only: bool = False,
+        parent: "TestCase | None" = None,
     ):
         super().__init__(loc, block, name)
         self.name = name
         self.block = block
         self.description = description
         self.skip = skip
+        self.only = only
+        self.parent = parent
+
+        if self.skip and self.only:
+            raise ValueError(f"Test case '{self.name}' cannot have both 'skip' and 'only' set to True.")
 
     def get_repr_params(self) -> str:
         return f"name={self.name!r}"
 
+class TestHook(Block):
+    __slots__ = ("depth")
+
+    def __init__(
+        self,
+        loc: NodeLocation,
+        name: str,
+        block: list[Node],
+        depth: int = 0,
+    ):
+        super().__init__(loc, block, name)
+        self.depth = depth
 
 class TestSuite(TestCase):
     """
     Most of the logic is handled in renpy.test.testexecution.
     """
     __slots__ = (
-        "testcases", "testcase_index", "is_in_testcase", "ran_testcase",
-        "before", "before_each", "after_each", "after", "current_block"
+        "subtests", "subtest_index", "hooks",
+        "after" , "after_each_case", "after_each_suite",
+        "before", "before_each_case", "before_each_suite"
     )
 
     def __init__(
@@ -187,88 +212,89 @@ class TestSuite(TestCase):
         name: str,
         description: str = "",
         skip: bool = False,
-        testcases: list[TestCase] | None = None,
-        before: Block | None = None,
-        before_each: Block | None = None,
-        after_each: Block | None = None,
-        after: Block | None = None
+        only: bool = False,
+        parent: "TestCase | None" = None,
+        subtests: list[TestCase] | None = None,
+        after: TestHook | None = None,
+        after_each_case: TestHook | None = None,
+        after_each_suite: TestHook | None = None,
+        before: TestHook | None = None,
+        before_each_case: TestHook | None = None,
+        before_each_suite: TestHook | None = None,
     ):
-        super().__init__(loc, name, [], description, skip)
-        self.testcases = testcases if testcases is not None else []
-        self.testcase_index = 0
-        self.ran_testcase = False
-        self.before = before if before is not None else Block(loc, [])
-        self.before_each = before_each if before_each is not None else Block(loc, [])
-        self.after_each = after_each if after_each is not None else Block(loc, [])
-        self.after = after if after is not None else Block(loc, [])
-        self.is_in_testcase = False
-        self.current_block: Block | None = None
+        super().__init__(loc, name, [], description, skip, only, parent)
+
+        self.subtest_index = -1
+
+        self.subtests = subtests if subtests is not None else []
+        for subtest in self.subtests:
+            subtest.parent = self
+
+        self.hooks: list[TestHook] = []
+        for hook in [
+            after, after_each_case, after_each_suite,
+            before, before_each_case, before_each_suite
+        ]:
+            if hook is not None:
+                self.hooks.append(hook)
+
+        self.after = after
+        self.after_each_case = after_each_case
+        self.after_each_suite = after_each_suite
+        self.before = before
+        self.before_each_case = before_each_case
+        self.before_each_suite = before_each_suite
 
     def chain(self, next: Node | None) -> None:
-        for block in [self.before, self.before_each, self.after_each, self.after]:
+        for block in self.hooks:
             block.chain(None)
 
-        for testcase in self.testcases:
-            testcase.chain(None)
+        for subtest in self.subtests:
+            subtest.chain(None)
 
     def add(self, child: TestCase) -> None:
-        self.testcases.append(child)
+        self.subtests.append(child)
 
-    def get_next_block(self) -> Block | None:
-        """
-        Advances the test suite to the next block.
-        """
-        self.current_block = self._get_next_block()
-        return self.current_block
-
-    def _get_next_block(self) -> Block | None:
-        """
-        Returns the next block to execute in the test suite.
-        """
-        if not self.before.done:
-            return self.before
-
-        if self.testcase_index < len(self.testcases):
-            ## Check if the current testcase is skipped
-            ## If it is, do NOT execute the before_each and after_each block
-            testcase = self.testcases[self.testcase_index]
-            if testcase.skip:
-                self.prepare_for_next_testcase()
-                return testcase
-
-        if not self.before_each.done:
-            return self.before_each
-
-        if not self.ran_testcase and self.testcase_index < len(self.testcases):
-            testcase = self.testcases[self.testcase_index]
-            self.is_in_testcase = True
-            self.ran_testcase = True
-            return testcase
-
-        self.is_in_testcase = False
-
-        if not self.after_each.done:
-            return self.after_each
-
-        if self.testcase_index < len(self.testcases) - 1:
-            self.prepare_for_next_testcase()
-            return self._get_next_block()
-
-        if not self.after.done:
-            return self.after
-
+    @property
+    def current_test(self) -> TestCase | None:
+        if 0 <= self.subtest_index < len(self.subtests):
+            return self.subtests[self.subtest_index]
         return None
 
-    def prepare_for_next_testcase(self) -> None:
+    @property
+    def num_tests(self) -> int:
+        return len(self.subtests)
+
+    @property
+    def is_all_tests_completed(self) -> bool:
+        return self.subtest_index >= len(self.subtests)
+
+    def advance(self) -> Block | None:
         """
-        Prepares the test suite for the next test case.
-        This is called after each test case is executed.
+        Advances the test suite to the next block.
+
+        NOTE: Must be run at the start of a test suite run to correctly set
+        the testcase_index to 0.
         """
-        self.testcase_index += 1
-        self.before_each.restart()
-        self.is_in_testcase = False
-        self.ran_testcase = False
-        self.after_each.restart()
+        self.subtest_index += 1
+
+    def get_hook(self, hook_type: HookType) -> TestHook | None:
+        """Returns the hook of the given type, or None if no such hook exists."""
+        match hook_type:
+            case HookType.AFTER:
+                return self.after
+            case HookType.AFTER_EACH_CASE:
+                return self.after_each_case
+            case HookType.AFTER_EACH_SUITE:
+                return self.after_each_suite
+            case HookType.BEFORE:
+                return self.before
+            case HookType.BEFORE_EACH_SUITE:
+                return self.before_each_suite
+            case HookType.BEFORE_EACH_CASE:
+                return self.before_each_case
+            case _:
+                raise ValueError(f"Invalid hook tag: {self.hook_type}")
 
 
 class Condition(Node):
@@ -278,7 +304,7 @@ class Condition(Node):
     Conditions should NOT execute any actions or change the state of the game.
     They should only check if a certain condition is met.
     """
-    def execute(self, state: State, t: float) -> State:
+    def execute(self, state: NodeState, t: float) -> NodeState:
         raise RenpyTestException("Conditions should not be executed directly. Use `ready()` instead.")
 
 ################################################################################
@@ -491,7 +517,7 @@ class SelectorDrivenNode(Node):
 
         return True
 
-    def execute(self, state: State, t: float) -> State:
+    def execute(self, state: NodeState, t: float) -> NodeState:
         if renpy.display.interface.trans_pause or renpy.display.interface.ongoing_transition:
             if t >= _test.transition_timeout:
                 ## End the transition and wait for the next frame.
@@ -540,7 +566,7 @@ class SelectorDrivenNode(Node):
 
         return x, y
 
-    def perform(self, x: int, y: int, state: State, t: float) -> State | None:
+    def perform(self, x: int, y: int, state: NodeState, t: float) -> NodeState | None:
         """
         Perform the action at the given coordinates.
 
@@ -647,6 +673,7 @@ class Drag(Node):
             if len(points) < 2:
                 raise ValueError("A drag requires at least two points.")
 
+            # NOTE: Might be worth replacing with collections.deque if the number of points is large
             interpoints = []
 
             xa, ya = points[0]
@@ -776,7 +803,7 @@ class Label(Condition):
         self.name = name
 
     def ready(self):
-        return self.name in renpy.test.testexecution.labels
+        return self.name in renpy.test.testexecution.reached_labels
 
     def get_repr_params(self):
         return f"{self.name}"
@@ -1044,6 +1071,8 @@ class Until(Node):
         next_node(self)
         return child, child_state, start_time, has_started
 
+    def cleanup_after_error(self) -> None:
+        return self.left.after_until()
 
 class Repeat(Until):
     """
@@ -1137,6 +1166,7 @@ class Assert(Node):
 
             self.failed = True
 
+        renpy.test.testreporter.reporter.log_assert(self)
         next_node(self.next)
         return None
 
@@ -1174,4 +1204,4 @@ def next_node(node: Node | None):
     Indicates the next node that should be executed.
     """
 
-    renpy.test.testexecution.set_next_node(node)
+    renpy.test.testexecution.set_next_execution_node(node)

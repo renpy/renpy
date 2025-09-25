@@ -648,8 +648,6 @@ class Context(renpy.object.Object):
 
             self.seen = False
 
-            renpy.test.testexecution.set_current_statement(node)
-
             try:
                 try:
                     check_infinite_loop()

@@ -75,7 +75,7 @@ The ``testsuite`` statement can contain the following hooks:
     To close the game after a testsuite, you can use the ``exit`` test
     statement in the ``after`` hook of the testsuite. For example::
 
-        testsuite all:
+        testsuite global:
             after:
                 exit
 
@@ -94,23 +94,24 @@ understand the lifecycle of a test. The following example illustrates this.
 
    "::
 
-        testsuite all:
+        testsuite global:
             before:
                 pause until main_menu
 
-            before_each:
+            before_each_suite:
                 if not screen main_menu:
                     run MainMenu(confirm=False)
                 click ""Start""
 
-            testcase first_testcase:
-                advance
+            testsuite basic:
+                testcase first_testcase:
+                    advance
 
             testsuite test_choices:
                 before:
                     run Jump(""chapter1"")
 
-                before_each:
+                before_each_case:
                     advance until menu choice
 
                 testcase choice1:
@@ -122,13 +123,13 @@ understand the lifecycle of a test. The following example illustrates this.
                 testcase choice3:
                     click ""Third Choice""
 
-                after_each:
+                after_each_case:
                     $ print(""Finished a choice test."")
 
                 after:
                     $ print(""Finished all choice tests."")
 
-            after_each:
+            after_each_suite:
                 if not screen main_menu:
                     run MainMenu(confirm=False)
 
@@ -139,27 +140,29 @@ understand the lifecycle of a test. The following example illustrates this.
 
             .. container :: execution-entry
 
-                **all** :: before
+                **global** :: before
 
             .. container :: execution-block2
 
                 .. container :: execution-entry
 
-                    **all** :: before_each
+                    **global** :: before_each_suite
 
-                .. container :: execution-entry3
+                .. container :: execution-block2
 
-                    first_testcase
+                    .. container :: execution-entry3
+
+                        **simple** :: first_testcase
 
                 .. container :: execution-entry
 
-                    **all** :: after_each
+                    **global** :: after_each_suite
 
             .. container :: execution-block2
 
                 .. container :: execution-entry
 
-                    **all** :: before_each
+                    **global** :: before_each_suite
 
                 .. container :: execution-entry2
 
@@ -169,7 +172,7 @@ understand the lifecycle of a test. The following example illustrates this.
 
                     .. container :: execution-entry2
 
-                        **test_choices** :: before_each
+                        **test_choices** :: before_each_case
 
                     .. container :: execution-entry3
 
@@ -177,13 +180,13 @@ understand the lifecycle of a test. The following example illustrates this.
 
                     .. container :: execution-entry2
 
-                        **test_choices** :: after_each
+                        **test_choices** :: after_each_case
 
                 .. container :: execution-block2
 
                     .. container :: execution-entry2
 
-                        **test_choices** :: before_each
+                        **test_choices** :: before_each_case
 
                     .. container :: execution-entry3
 
@@ -191,7 +194,7 @@ understand the lifecycle of a test. The following example illustrates this.
 
                     .. container :: execution-entry2
 
-                        **test_choices** :: after_each
+                        **test_choices** :: after_each_case
 
                 .. container :: execution-entry2
 
@@ -199,11 +202,11 @@ understand the lifecycle of a test. The following example illustrates this.
 
                 .. container :: execution-entry
 
-                    **all** :: after_each
+                    **global** :: after_each_suite
 
             .. container :: execution-entry
 
-                **all** :: after
+                **global** :: after
     "
 
 .. _skipping-testcases:
@@ -211,7 +214,7 @@ understand the lifecycle of a test. The following example illustrates this.
 Skipping Testcases
 ------------------
 If a testcase is skipped, it will not be executed. In addition, the
-``before_each`` and ``after_each`` hooks of the testsuite will not be executed
+``before_each_case`` and ``after_each_case`` hooks of the testsuite will not be executed
 for that testcase.
 
 If *all* tests are skipped in the testsuite, then the ``before`` and
@@ -224,12 +227,12 @@ Exceptions And Failures
 If an error occurs during a test case:
 
 1. The test case will stop executing immediately
-2. The ``after_each`` hook of the testsuite containing the test case will run
+2. The ``after_each_case`` hook of the testsuite containing the test case will run
 3. If there are more test cases, they will be executed next (including the
-   ``before_each`` hook)
+   ``before_each_case`` hook)
 4. If no more test cases exist, the ``after`` hook of the testsuite will run
 
-If an error occurs during a hook (eg. ``before_each``):
+If an error occurs during a hook (eg. ``before_each_case``):
 
 1. The test suite will stop executing immediately
 2. If the suite was called by another suite, the parent suite will continue
