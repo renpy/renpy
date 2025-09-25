@@ -469,7 +469,7 @@ class TestPhaseController:
         try:
             node_executor.execute()
 
-            if node_executor.done:
+            while node_executor.done and node_executor.next_node is None:
                 next_phase = self.active_phase.update()
                 self.transition_to_new_phase(next_phase)
 
