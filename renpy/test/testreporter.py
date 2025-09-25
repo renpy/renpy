@@ -588,7 +588,7 @@ class ConsoleReporter(Reporter):
         self._print("=" * 20)
 
     def log_message(self, message) -> None:
-        self._print(f"Message: {message}")
+        self._print(f"{ANSIColors.CYAN}[rpytest] [log]{ANSIColors.RESET} {message}")
 
 
 class ReporterManager:

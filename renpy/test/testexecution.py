@@ -78,7 +78,7 @@ def execute() -> None:
     renpy.exports.maximum_framerate(10.0 if _test.maximum_framerate else None)
 
     # Make sure there are no test events in the event queue.
-    for e in pygame.event.copy_event_queue():  # @UndefinedVariable
+    for e in pygame.event.copy_event_queue():  # type: ignore
         if getattr(e, "test", False):
             return
 
@@ -286,6 +286,10 @@ def process_only_flag() -> None:
 
     if not has_only:
         return
+
+    testreporter.reporter.log_message(f"Running {len(has_only)} test(s) marked with 'only' flag.")
+    for tc in has_only:
+        testreporter.reporter.log_message(f"- {tc.name}")
 
     processed = set()
 
