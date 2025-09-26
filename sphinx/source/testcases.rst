@@ -585,11 +585,6 @@ place where a click would not occur on a focusable element.
 
 This clause is always ready.
 
-The :func:`has_default_focus` function is a helpful accessor to know whether a
-game can be advanced by a bare ``click`` clause or not::
-
-    click until eval (not renpy.has_default_focus())
-
 Drag
 --------------
 

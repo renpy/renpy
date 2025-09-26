@@ -14,19 +14,19 @@ testsuite global:
 
 testcase bad_end:
     click "start"
-    click until screen choice
+    advance until screen choice
     click "ask her later"
     advance until screen main_menu
 
 testcase good_end:
     click "start"
-    click until "ask her right away"
+    advance until "ask her right away"
     click "ask her right away"
-    click until ("an interactive book" or "video game")
+    advance until ("an interactive book" or "video game")
     assert not "video game" ## Last condition fails since it's "videogame" in script
     assert "videogame"
     click "an interactive book"
-    click until eval (not renpy.has_default_focus())
+    advance until screen main_menu
 
 testcase history_screen_from_quick_menu:
     click "Start"
