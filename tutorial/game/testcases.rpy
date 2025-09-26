@@ -1,29 +1,34 @@
 ﻿init python:
     import time
 
+testsuite global:
+    before_each_suite:
+        if not screen main_menu:
+            run MainMenu(confirm=False)
+
+    after:
+        exit
+
+
 testsuite default(description="Default project testsuite"):
     before:
         $ _test.timeout = 4.0
-        click "Start"
-        advance until screen tutorials
-
-    before_each_case:
-        ## Run before each test cases
         $ _test.transition_timeout = 0.05
 
-    after_each_case:
-        ## Run after each testcases
-        ## This rescues us from a crash
+    before_each_case:
+        ## Go to the test screen, even if we've crashed in a prior test
         if not screen tutorials:
-            run MainMenu(confirm=False)
-            click "Start"
-            advance until screen tutorials
+            if not screen main_menu:
+                run MainMenu(confirm=False)
+
+            if screen main_menu:
+                run Start()
+                advance until screen tutorials
 
     after:
         click "That's enough for now."
         advance until screen main_menu
         # click "Quit"
-        exit
 
 
     testsuite blank:
@@ -359,11 +364,3 @@ testsuite default(description="Default project testsuite"):
         advance until screen choice
         click "Yes."
         advance until screen tutorials
-
-testsuite global:
-    before_each_case:
-        if not screen main_menu:
-            run MainMenu(confirm=False)
-
-    after:
-        exit
