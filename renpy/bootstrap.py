@@ -313,7 +313,7 @@ def bootstrap(renpy_base):
 
     # If we're not given a command, show the presplash.
     if args.command == "run" and not renpy.mobile:
-        import renpy.display.presplash  # @Reimport
+        import renpy.display.presplash
 
         renpy.display.presplash.start(basedir, gamedir)
 

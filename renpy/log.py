@@ -34,7 +34,7 @@ import sys
 import io
 import re
 
-import encodings.latin_1  # @UnusedImport
+import encodings.latin_1
 
 import renpy
 
@@ -79,7 +79,7 @@ class LogFile(object):
         if renpy.ios:
             self.file = real_stdout
 
-    def open(self):  # @ReservedAssignment
+    def open(self):
         if renpy.config.log_to_stdout:
             self.file = real_stdout
             return True
@@ -199,7 +199,7 @@ class LogFile(object):
 log_cache = {}
 
 
-def open(name, append=False, developer=False, flush=False):  # @ReservedAssignment
+def open(name, append=False, developer=False, flush=False):
     rv = log_cache.get(name, None)
 
     if rv is None:

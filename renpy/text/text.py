@@ -836,7 +836,7 @@ class Layout(object):
             self.paragraph_glyphs.append(list(par_glyphs))
 
             if splits_from:
-                textsupport.copy_splits(splits_from.paragraph_glyphs[p_num], par_glyphs)  # @UndefinedVariable
+                textsupport.copy_splits(splits_from.paragraph_glyphs[p_num], par_glyphs)
 
             else:
                 # Tag the glyphs that are eligible for line breaking, and if
@@ -953,7 +953,7 @@ class Layout(object):
 
             textsupport.adjust_glyph_spacing(
                 all_glyphs, lines, target_x_delta, target_y_delta, maxx, y
-            )  # @UndefinedVariable
+            )
 
             maxx = target_x
             y = target_y
@@ -1295,7 +1295,7 @@ class Layout(object):
 
         done = False
 
-        for type, text in tokens:  # @ReservedAssignment
+        for type, text in tokens:
             try:
                 if type == PARAGRAPH:
                     # Note that this code is duplicated for the p tag, and for

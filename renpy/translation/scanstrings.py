@@ -120,7 +120,7 @@ def scan_strings(filename):
 
     rv = []
 
-    for line, s in renpy.game.script.translator.additional_strings[filename]:  # @UndefinedVariable
+    for line, s in renpy.game.script.translator.additional_strings[filename]:
         rv.append(String(filename, line, s, False))
 
     for _filename, lineno, text in renpy.lexer.list_logical_lines(filename):

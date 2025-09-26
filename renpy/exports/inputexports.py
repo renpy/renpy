@@ -78,7 +78,7 @@ def input(
     copypaste=True,
     multiline=False,
     **kwargs,
-):  # @ReservedAssignment
+):
     """
     :doc: input
     :args: (default='', allow=None, exclude='{}', length=None, pixel_width=None, screen="input", mask=None, copypaste=True, multiline=False, **kwargs)

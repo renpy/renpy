@@ -171,7 +171,7 @@ def what_filter(s):
 class DialogueFile(object):
     def __init__(
         self, filename, output, tdf=True, strings=False, notags=True, escape=True, language=None
-    ):  # @ReservedAssignment
+    ):
         """
         `filename`
             The file we're extracting dialogue from.
@@ -286,7 +286,7 @@ class DialogueFile(object):
             line = ss.line
             s = ss.text
 
-            stl = renpy.game.script.translator.strings[None]  # @UndefinedVariable
+            stl = renpy.game.script.translator.strings[None]
 
             # don't include s in common.rpym
             if s in stl.translations:

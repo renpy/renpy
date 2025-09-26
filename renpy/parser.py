@@ -214,7 +214,7 @@ def parse_menu(stmtl, loc, arguments):
     has_caption = False
 
     with_ = None
-    set = None  # @ReservedAssignment
+    set = None
 
     # Tuples of (label, condition, block)
     items = []
@@ -229,7 +229,7 @@ def parse_menu(stmtl, loc, arguments):
             continue
 
         if l.keyword("set"):
-            set = l.require(l.simple_expression)  # @ReservedAssignment
+            set = l.require(l.simple_expression)
             l.expect_eol()
             l.expect_noblock("set menuitem")
 
@@ -1393,7 +1393,7 @@ def style_statement(l, loc):
         if l.keyword("del"):
             propname = l.require(l.name)
 
-            if propname not in renpy.style.prefixed_all_properties:  # @UndefinedVariable
+            if propname not in renpy.style.prefixed_all_properties:
                 l.error("style property %s is not known." % propname)
 
             rv.delattr.append(propname)  # type: ignore
@@ -1412,7 +1412,7 @@ def style_statement(l, loc):
         if propname is not None:
             if (propname != "properties") and (
                 propname not in renpy.style.prefixed_all_properties
-            ):  # @UndefinedVariable
+            ):
                 l.error("style property %s is not known." % propname)
 
             if propname in rv.properties:  # type: ignore

@@ -22,7 +22,7 @@
 import collections
 import os
 
-from io import StringIO  # @UnusedImport
+from io import StringIO
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))

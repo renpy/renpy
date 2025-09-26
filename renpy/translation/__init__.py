@@ -309,7 +309,7 @@ class Restructurer(object):
         if identifier in self.identifiers:
             return True
 
-        if identifier in renpy.game.script.translator.default_translates:  # @UndefinedVariable
+        if identifier in renpy.game.script.translator.default_translates:
             return True
 
         return False
@@ -605,12 +605,12 @@ def translate_string(s, language=Default):  # type (str, str|renpy.object.Sentin
     if language is Default:
         language = renpy.game.preferences.language
 
-    stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+    stl = renpy.game.script.translator.strings[language]
     return stl.translate(s)
 
 
 def write_updated_strings():
-    stl = renpy.game.script.translator.strings[renpy.game.preferences.language]  # @UndefinedVariable
+    stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
     stl.write_updated_strings(renpy.game.preferences.language)
 
 
@@ -689,7 +689,7 @@ def init_translation():
     """
 
     global style_backup
-    style_backup = renpy.style.backup()  # @UndefinedVariable
+    style_backup = renpy.style.backup()
 
     load_all_rpts()
 
@@ -872,7 +872,7 @@ def check_language():
         tid = ctx.translate_identifier or ctx.deferred_translate_identifier
 
         if tid is not None:
-            node, _ = renpy.game.script.translator.lookup_translate(tid)  # @UndefinedVariable
+            node, _ = renpy.game.script.translator.lookup_translate(tid)
 
             if node is not None:
                 # This is necessary for the menu-with-say case. ADVCharacter needs
@@ -948,7 +948,7 @@ def known_languages():
     language, None.
     """
 
-    return {i for i in renpy.game.script.translator.languages if i is not None}  # @UndefinedVariable
+    return {i for i in renpy.game.script.translator.languages if i is not None}
 
 
 ################################################################################

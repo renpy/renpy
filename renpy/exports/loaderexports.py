@@ -69,7 +69,7 @@ def exists(filename):
         return False
 
 
-def open_file(fn, encoding=None, directory=None):  # @ReservedAssignment
+def open_file(fn, encoding=None, directory=None):
     """
     :doc: file
 
@@ -120,7 +120,7 @@ def file(fn, encoding=None):
     return open_file(fn, encoding=encoding)
 
 
-def notl_file(fn):  # @ReservedAssignment
+def notl_file(fn):
     """
     :undocumented:
 

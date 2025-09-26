@@ -106,7 +106,7 @@ def reload_script():
         utter_restart()
 
 
-def quit(relaunch=False, status=0, save=False):  # @ReservedAssignment
+def quit(relaunch=False, status=0, save=False):
     """
     :doc: other
 

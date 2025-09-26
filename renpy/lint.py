@@ -787,7 +787,7 @@ def check_screen(node):
 
 
 def check_styles():
-    for full_name, s in renpy.style.styles.items():  # @UndefinedVariable
+    for full_name, s in renpy.style.styles.items():
         name = "style." + full_name[0]
         for i in full_name[1:]:
             name += "[{!r}]".format(i)

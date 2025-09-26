@@ -595,7 +595,7 @@ else:
 
 
 @renpy_pure
-def version(tuple=False):  # @ReservedAssignment
+def version(tuple=False):
     """
     :doc: renpy_version
 

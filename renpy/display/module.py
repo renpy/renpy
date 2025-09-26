@@ -145,7 +145,7 @@ def linmap(src, dst, rmap, gmap, bmap, amap):
 save_png = _renpy.save_png
 
 
-def map(src, dst, rmap, gmap, bmap, amap):  # @ReservedAssignment
+def map(src, dst, rmap, gmap, bmap, amap):
     """
     This maps the colors between two surfaces. The various map
     parameters must be 256 character long strings, with the value
@@ -156,7 +156,7 @@ def map(src, dst, rmap, gmap, bmap, amap):  # @ReservedAssignment
     convert_and_call(_renpy.map, src, dst, *endian_order(dst, rmap, gmap, bmap, amap))
 
 
-def blur(src, wrk, dst, xrad, yrad=None):  # @ReservedAssignment
+def blur(src, wrk, dst, xrad, yrad=None):
     """
     This blurs the source surface. It approximates a Gaussian blur
     using several box blurs with box sizes based on the desired

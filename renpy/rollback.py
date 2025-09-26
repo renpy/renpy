@@ -1111,7 +1111,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         # Fix up old screens.
-        renpy.display.screen.before_restart()  # @UndefinedVariable
+        renpy.display.screen.before_restart()
 
         # Set us up as the game log.
         renpy.game.log = self

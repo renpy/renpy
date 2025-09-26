@@ -125,7 +125,7 @@ def copy_surface(surf, alpha=True):  # (Surface, bool|Surface) -> Surface
     """
 
     rv = surface_unscaled(surf.get_size(), alpha)
-    renpy.display.accelerator.nogil_copy(surf, rv)  # @UndefinedVariable
+    renpy.display.accelerator.nogil_copy(surf, rv)
     return rv
 
 

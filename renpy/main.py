@@ -162,7 +162,7 @@ def choose_variants():
 
     renpy.config.variants = [None]
 
-    if renpy.android:  # @UndefinedVariable
+    if renpy.android:
         renpy.config.variants.insert(0, "mobile")  # type: ignore
         renpy.config.variants.insert(0, "android")  # type: ignore
 
@@ -382,7 +382,7 @@ def main():
     renpy.store.store = sys.modules["store"]  # type: ignore
 
     # Set up styles.
-    game.style = renpy.style.StyleManager()  # @UndefinedVariable
+    game.style = renpy.style.StyleManager()
     renpy.store.style = game.style
 
     # Run init code in its own context. (Don't log.)
@@ -405,7 +405,7 @@ def main():
         renpy.exports.load_module("tl/None/common")
 
     renpy.config.init_system_styles()
-    renpy.style.build_styles()  # @UndefinedVariable
+    renpy.style.build_styles()
 
     log_clock("Loading error handling")
 
@@ -515,7 +515,7 @@ def main():
         renpy.game.exception_info = "After initialization, but before game start."
 
         # Check if we should simulate android.
-        renpy.android = renpy.android or renpy.config.simulate_android  # @UndefinedVariable
+        renpy.android = renpy.android or renpy.config.simulate_android
 
         # Re-set up the logging.
         renpy.log.post_init()

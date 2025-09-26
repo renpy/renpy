@@ -1205,7 +1205,7 @@ def cancel_gesture():
     This should be called by displayables that have gesture-like behavior.
     """
 
-    renpy.display.gesture.recognizer.cancel()  # @UndefinedVariable
+    renpy.display.gesture.recognizer.cancel()
 
 
 def add_layer(layer, above=None, below=None, menu_clear=True, sticky=None):
@@ -1409,7 +1409,7 @@ def get_mouse_name(interaction=False):
     return renpy.display.interface.get_mouse_name(interaction=interaction)
 
 
-def set_focus(screen, id, layer="screens"):  # @ReservedAssignment
+def set_focus(screen, id, layer="screens"):
     """
     :doc: screens
 

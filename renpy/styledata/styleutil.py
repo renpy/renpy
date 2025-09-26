@@ -28,7 +28,7 @@ import renpy
 
 def none_is_null(o):
     if o is None:
-        return renpy.display.layout.Null()  # @UndefinedVariable
+        return renpy.display.layout.Null()
     else:
         return renpy.easy.displayable(o)
 

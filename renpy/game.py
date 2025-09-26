@@ -254,7 +254,7 @@ def context(index=-1) -> "renpy.execution.Context":
     return contexts[index]
 
 
-def invoke_in_new_context(callable, *args, **kwargs):  # @ReservedAssignment
+def invoke_in_new_context(callable, *args, **kwargs):
     """
     :doc: context
 

@@ -354,7 +354,7 @@ def find_oversampled(new, filename):
     return filename
 
 
-def default_play_callback(old, new):  # @UnusedVariable
+def default_play_callback(old, new):
     if new.mask:
         renpy.audio.music.play(find_oversampled(new, new.mask), channel=new.mask_channel, loop=new.loop)
 

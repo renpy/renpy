@@ -412,7 +412,7 @@ class Blink(renpy.display.displayable.Displayable):
         on=0.5,
         off=0.5,
         rise=0.5,
-        set=0.5,  # @ReservedAssignment
+        set=0.5,
         high=1.0,
         low=0.0,
         offset=0.0,

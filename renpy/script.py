@@ -199,7 +199,7 @@ class Script(object):
             if renpy.loader.loadable(i):
                 return None
 
-        backups = renpy.__main__.path_to_saves(renpy.config.gamedir, "backups")  # @UndefinedVariable
+        backups = renpy.__main__.path_to_saves(renpy.config.gamedir, "backups")
 
         if backups is None:
             return
@@ -405,7 +405,7 @@ class Script(object):
         count = 0
         skipped = 0
 
-        for fn, dir in script_files:  # @ReservedAssignment
+        for fn, dir in script_files:
             count += 1
             renpy.display.presplash.progress("Loading script...", count, len(script_files))
 
@@ -438,7 +438,7 @@ class Script(object):
         return initcode
 
     def load_module(self, name):
-        files = [(fn, dir) for fn, dir in self.module_files if fn == name]  # @ReservedAssignment
+        files = [(fn, dir) for fn, dir in self.module_files if fn == name]
 
         if not files:
             raise Exception("Module %s could not be loaded." % name)
@@ -446,7 +446,7 @@ class Script(object):
         if len(files) > 2:
             raise Exception("Module %s ambiguous, multiple variants exist." % name)
 
-        fn, dir = files[0]  # @ReservedAssignment
+        fn, dir = files[0]
         initcode = []
 
         self.load_appropriate_file(".rpymc", [".rpym"], dir, fn, initcode)
@@ -779,7 +779,7 @@ class Script(object):
         # Generate translate nodes.
         renpy.translation.restructure(stmts)
 
-    def load_file(self, dir, fn):  # @ReservedAssignment
+    def load_file(self, dir, fn):
         # Used to only find the deferred parse errors from this file.
         old_deferred_parse_errors = renpy.parser.deferred_parse_errors
         renpy.parser.deferred_parse_errors = collections.defaultdict(list)
@@ -924,7 +924,7 @@ class Script(object):
 
             renpy.parser.deferred_parse_errors = old_deferred_parse_errors
 
-    def load_appropriate_file(self, compiled, source_extensions, dir, fn, initcode):  # @ReservedAssignment
+    def load_appropriate_file(self, compiled, source_extensions, dir, fn, initcode):
         data = None
 
         source = source_extensions[-1]

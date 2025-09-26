@@ -1212,7 +1212,7 @@ class Button(renpy.display.layout.Window):
 def TextButton(text, style="button", text_style="button_text", clicked=None, **properties):
     text_properties, button_properties = renpy.easy.split_properties(properties, "text_", "")
 
-    text = renpy.text.text.Text(text, style=text_style, **text_properties)  # @UndefinedVariable
+    text = renpy.text.text.Text(text, style=text_style, **text_properties)
     return Button(text, style=style, clicked=clicked, **button_properties)
 
 
@@ -1391,7 +1391,7 @@ class CaretBlink(renpy.display.displayable.Displayable):
         return rv
 
 
-class Input(renpy.text.text.Text):  # @UndefinedVariable
+class Input(renpy.text.text.Text):
     """
     This is a Displayable that takes text as input.
     """
@@ -2038,7 +2038,7 @@ class Adjustment(renpy.object.Object):
         if self.restart_interaction_at_range:
             renpy.exports.restart_interaction()
 
-    range = property(get_range, set_range)  # @ReservedAssignment
+    range = property(get_range, set_range)
 
     def get_page(self):
         if self._page is not None:
@@ -2212,7 +2212,7 @@ class Bar(renpy.display.displayable.Displayable):
 
     def __init__(
         self,
-        range=None,  # @ReservedAssignment
+        range=None,
         value=None,
         width=None,
         height=None,
@@ -2321,7 +2321,7 @@ class Bar(renpy.display.displayable.Displayable):
         # Store the width and height for the event function to use.
         self.width = width
         self.height = height
-        range = self.adjustment.range  # @ReservedAssignment
+        range = self.adjustment.range
         value = self.adjustment.value
         page = self.adjustment.page
 
@@ -2480,7 +2480,7 @@ class Bar(renpy.display.displayable.Displayable):
         if self.hidden:
             return None
 
-        range = self.adjustment.range  # @ReservedAssignment
+        range = self.adjustment.range
         old_value = self.adjustment.value
         value = old_value
 

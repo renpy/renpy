@@ -144,7 +144,7 @@ def execute():
         renpy.exports.maximum_framerate(None)
 
     # Make sure there are no test events in the event queue.
-    for e in pygame.event.copy_event_queue():  # @UndefinedVariable
+    for e in pygame.event.copy_event_queue():
         if getattr(e, "test", False):
             return
 

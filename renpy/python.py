@@ -1260,15 +1260,15 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
         raise e
 
 
-def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"):  # @ReservedAssignment
+def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"):
     if hide:
-        locals = {}  # @ReservedAssignment
+        locals = {}
 
     if globals is None:
-        globals = store_dicts[store]  # @ReservedAssignment
+        globals = store_dicts[store]
 
     if locals is None:
-        locals = globals  # @ReservedAssignment
+        locals = globals
 
     exec(bytecode, globals, locals)
 
@@ -1278,27 +1278,27 @@ def py_exec(source, hide=False, store=None):
         store = store_dicts["store"]
 
     if hide:
-        locals = {}  # @ReservedAssignment
+        locals = {}
     else:
-        locals = store  # @ReservedAssignment
+        locals = store
 
     exec(py_compile(source, "exec"), store, locals)
 
 
-def py_eval_bytecode(bytecode, globals=None, locals=None):  # @ReservedAssignment
+def py_eval_bytecode(bytecode, globals=None, locals=None):
     if bytecode.__class__ is tuple:
         return bytecode[1]
 
     if globals is None:
-        globals = store_dicts["store"]  # @ReservedAssignment
+        globals = store_dicts["store"]
 
     if locals is None:
-        locals = globals  # @ReservedAssignment
+        locals = globals
 
     return eval(bytecode, globals, locals)
 
 
-def py_eval(code, globals=None, locals=None):  # @ReservedAssignment
+def py_eval(code, globals=None, locals=None):
     if isinstance(code, str):
         code = py_compile(code, "eval")
 
@@ -1333,13 +1333,13 @@ def raise_at_location(e, loc):
 # with cases where it might have leaked into a pickle.
 class StoreProxy(object):
     def __getattr__(self, k):
-        return getattr(renpy.store, k)  # @UndefinedVariable
+        return getattr(renpy.store, k)
 
     def __setattr__(self, k, v):
-        setattr(renpy.store, k, v)  # @UndefinedVariable
+        setattr(renpy.store, k, v)
 
     def __delattr__(self, k):
-        delattr(renpy.store, k)  # @UndefinedVariable
+        delattr(renpy.store, k)
 
 
 # This needs to exist even after PY2 support is dropped, to load older saves.

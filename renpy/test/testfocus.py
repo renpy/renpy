@@ -46,7 +46,7 @@ def find_focus(pattern):
                 return None
 
         if f.x is None:
-            t = renpy.display.tts.root._tts_all()  # @UndefinedVariable
+            t = renpy.display.tts.root._tts_all()
         else:
             t = f.widget._tts_all()
 

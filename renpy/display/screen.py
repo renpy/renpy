@@ -257,7 +257,7 @@ class Screen(renpy.object.Object):
 
         # If this is a SL2 screen, the SLScreen node at the root of this
         # screen.
-        if isinstance(function, renpy.sl2.slast.SLScreen):  # @UndefinedVariable
+        if isinstance(function, renpy.sl2.slast.SLScreen):
             self.ast = function
         else:
             self.ast = None
@@ -1537,7 +1537,7 @@ def current_screen():  # type: () -> ScreenDisplayable|None
     return _current_screen
 
 
-def get_displayable(screen, id, layer=None, base=False):  # @ReservedAssignment
+def get_displayable(screen, id, layer=None, base=False):
     """
     :doc: screens
     :name: renpy.get_displayable
@@ -1575,7 +1575,7 @@ def get_displayable(screen, id, layer=None, base=False):  # @ReservedAssignment
 get_widget = get_displayable
 
 
-def get_displayable_properties(id, screen=None, layer=None):  # @ReservedAssignment
+def get_displayable_properties(id, screen=None, layer=None):
     """
     :doc: screens
     :name: renpy.get_displayable_properties

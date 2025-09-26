@@ -553,7 +553,7 @@ def display_say(
     cb_args,
     with_none,
     callback,
-    type,  # @ReservedAssignment
+    type,
     checkpoint=True,
     ctc_timedpause=None,
     ctc_force=False,
@@ -830,7 +830,7 @@ def display_say(
                     ctc = None
 
             if interact or what_string or (what_ctc is not None) or (behavior and afm):
-                if not isinstance(what_text, renpy.text.text.Text):  # @UndefinedVariable
+                if not isinstance(what_text, renpy.text.text.Text):
                     raise Exception("The say screen (or show_function) must return a Text object.")
 
                 if what_ctc:
