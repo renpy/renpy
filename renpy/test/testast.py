@@ -461,6 +461,18 @@ class DisplayableSelector(Selector):
 
         raise SelectorException("No displayable was specified.")
 
+    def __str__(self) -> str:
+        parts = []
+        if self.screen:
+            parts.append(f"screen={self.screen!r}")
+        if self.id:
+            parts.append(f"id={self.id!r}")
+        if self.layer:
+            parts.append(f"layer={self.layer!r}")
+        if self.wait_for_focus:
+            parts.append("wait_for_focus=True")
+        return f"<{type(self).__name__} {' '.join(parts)}>"
+
 
 class TextSelector(Selector):
     """
