@@ -582,13 +582,11 @@ class SelectorDrivenNode(Node):
         else:
             position = (None, None)
 
-        if self.selector is None or self.selector.element is None:
+        if self.selector is None:
             f = None
         else:
             f = self.selector.element
-
-        if f is None:
-            if not self.always and self.selector is not None:
+            if f is None and not self.always:
                 self.selector.element_not_found_during_perform()
 
         x, y = renpy.test.testfocus.find_position(f, position)
@@ -705,7 +703,7 @@ class Drag(Node):
                 raise ValueError("A drag requires at least two points.")
 
             # NOTE: Might be worth replacing with collections.deque if the number of points is large
-            interpoints = []
+            interpoints: list[tuple[int, int]] = []
 
             xa, ya = points[0]
 
