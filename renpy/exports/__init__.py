@@ -396,7 +396,6 @@ from renpy.exports.displayexports import (
     get_texture_size,
     get_transition,
     get_zorder_list,
-    has_default_focus,
     hide,
     iconify,
     IgnoreEvent,
