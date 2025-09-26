@@ -590,9 +590,8 @@ class SelectorDrivenNode(Node):
         if f is None:
             if not self.always and self.selector is not None:
                 self.selector.element_not_found_during_perform()
-            x, y = renpy.exports.get_mouse_pos()
-        else:
-            x, y = renpy.test.testfocus.find_position(f, position)
+
+        x, y = renpy.test.testfocus.find_position(f, position)
 
         return x, y
 

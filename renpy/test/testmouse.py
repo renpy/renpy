@@ -22,8 +22,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
-from typing import Optional
-
 import renpy.pygame as pygame
 
 # The overridden positioning of the mouse.
