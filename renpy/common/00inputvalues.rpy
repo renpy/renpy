@@ -86,6 +86,7 @@ init -1510 python:
         default = True
         editable = True
         returnable = False
+        disable_on_enter = False
 
         def get_text(self):
             raise NotImplementedError
@@ -96,8 +97,9 @@ init -1510 python:
         def enter(self):
             if self.returnable:
                 return self.get_text()
-            else:
-                return None
+            elif self.disable_on_enter:
+                renpy.run(self.Disable())
+                raise renpy.IgnoreEvent
 
         def Enable(self):
             if self.editable:
@@ -123,11 +125,12 @@ init -1510 python:
         common features of the documented input value classes.
         """
 
-        equality_fields = ("default", "returnable")
+        equality_fields = ("default", "returnable", "disable_on_enter")
 
-        def __init__(self, default=True, returnable=False):
+        def __init__(self, default=True, returnable=False, disable_on_enter=False):
             self.default = default
             self.returnable = returnable
+            self.disable_on_enter = disable_on_enter
 
     class ScreenVariableInputValue(__GenericInputValue):
         r"""
@@ -288,6 +291,9 @@ init -1510 python hide:
         `returnable`
             If true, the value of this input will be returned when the
             user presses enter.
+        `disable_on_enter`
+            If true, and if `returnable` is not true, pressing enter
+            will disable this input.
         """)
 
         for ivalue in (ScreenVariableInputValue, FieldInputValue, VariableInputValue, DictInputValue, LocalVariableInputValue):
