@@ -36,6 +36,7 @@ renpy.gl2.gl2texture ../tmp/gen/renpy.gl2.gl2texture.c
 renpy.gl2.gl2uniform ../tmp/gen/renpy.gl2.gl2uniform.c
 renpy.gl2.gl2shader ../tmp/gen/renpy.gl2.gl2shader.c
 renpy.gl2.live2dmodel ../tmp/gen/renpy.gl2.live2dmodel.c live2dcsm.c
+renpy.gl2.inochi2dmodel ../tmp/gen/renpy.gl2.inochi2dmodel.c inochi2d_ldr.c
 renpy.pygame.error ../tmp/gen/renpy.pygame.error.c
 renpy.pygame.color ../tmp/gen/renpy.pygame.color.c
 renpy.pygame.controller ../tmp/gen/renpy.pygame.controller.c
