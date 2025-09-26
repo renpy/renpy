@@ -912,11 +912,33 @@ class Skip(Node):
         self.fast = fast
 
     def start(self):
-        if self.fast:
-            renpy.config.skipping = "fast"
-        else:
-            renpy.config.skipping = "slow"
+        if not renpy.config.allow_skipping:
+            return None
+
+        if renpy.store.main_menu:
+            return None
+
         return True
+
+    def execute(self, state, t):
+        was_skipping = renpy.config.skipping is not None
+
+        if renpy.exports.context()._menu:  # type: ignore
+            if self.fast:
+                renpy.exports.jump("_return_fast_skipping")
+            else:
+                renpy.exports.jump("_return_skipping")
+        else:
+            if self.fast:
+                renpy.config.skipping = "fast"
+            else:
+                renpy.config.skipping = "slow"
+
+            if not was_skipping:
+                renpy.exports.restart_interaction()
+
+        next_node(self.next)
+        return None
 
     def after_until(self) -> None:
         renpy.config.skipping = None
