@@ -103,7 +103,7 @@
     pause .5
 
     click "Done."
-    click "Quit"
+    exit
 
 
 define nvle = Character("Eileen", kind=nvl)
