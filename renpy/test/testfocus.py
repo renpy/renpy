@@ -78,14 +78,11 @@ def match(f: Focus, pattern: str | None) -> str | None:
         return None
 
 
-def relative_position(x: int, posx: int | float | None, width: int) -> float:
-    if posx is not None:
-        if type(posx) is float:
-            return posx * (width - 1)
-        else:
-            return posx
-
-    return x
+def relative_to_absolute(posx: int | float, width: int) -> int:
+    if isinstance(posx, float):
+        return int(posx * (width - 1))
+    else:
+        return posx
 
 
 def find_position(f: Focus | Displayable | None, position: Position | tuple[None, None]) -> tuple[int, int]:
@@ -103,18 +100,23 @@ def find_position(f: Focus | Displayable | None, position: Position | tuple[None
 
     posx, posy = position
 
-    # Avoid moving the mouse when unnecessary.
-    if renpy.test.testmouse.mouse_pos is not None:
-        x, y = renpy.test.testmouse.mouse_pos
-    else:
-        x = random.randrange(renpy.config.screen_width)
-        y = random.randrange(renpy.config.screen_height)
-
     if f is None:
-        return (
-            int(relative_position(x, posx, renpy.config.screen_width)),
-            int(relative_position(y, posy, renpy.config.screen_height)),
-        )
+        # No target, avoid moving the mouse when unnecessary.
+        if posx is not None:
+            x = relative_to_absolute(posx, renpy.config.screen_width)
+        elif renpy.test.testmouse.mouse_pos is not None:
+            x = renpy.test.testmouse.mouse_pos[0]
+        else:
+            x = random.randrange(renpy.config.screen_width)
+
+        if posy is not None:
+            y = relative_to_absolute(posy, renpy.config.screen_height)
+        elif renpy.test.testmouse.mouse_pos is not None:
+            y = renpy.test.testmouse.mouse_pos[1]
+        else:
+            y = random.randrange(renpy.config.screen_height)
+
+        return x, y
 
     orig_f = f
 
@@ -125,13 +127,24 @@ def find_position(f: Focus | Displayable | None, position: Position | tuple[None
         f.y = 0
         f.w = renpy.config.screen_width
         f.h = renpy.config.screen_height
-
-    x = relative_position(x - f.x, posx, f.w) + f.x
-    y = relative_position(y - f.y, posy, f.h) + f.y
+    else:
+        f = f.copy()
+        f.x = int(f.x)
+        f.y = int(f.y)
+        f.w = int(f.w)
+        f.h = int(f.h)
 
     for _i in range(renpy.test.testsettings._test.focus_trials):
-        x = int(x)
-        y = int(y)
+        # Randomize position if not specified
+        if posx is not None:
+            x = relative_to_absolute(posx, f.w) + f.x
+        else:
+            x = random.randrange(f.x, f.x + f.w)
+
+        if posy is not None:
+            y = relative_to_absolute(posy, f.h) + f.y
+        else:
+            y = random.randrange(f.y, f.y + f.h)
 
         nf = renpy.display.render.focus_at_point(x, y)  # type: ignore
 
@@ -141,9 +154,6 @@ def find_position(f: Focus | Displayable | None, position: Position | tuple[None
         else:
             if (nf.widget == f.widget) and (nf.arg == f.arg):
                 return x, y
-
-        x = random.randrange(int(f.x), int(f.x + f.w))
-        y = random.randrange(int(f.y), int(f.y + f.h))
 
     if isinstance(f_original, Displayable):
         ## It's not guaranteed that the displayable is in the focus list, so we
