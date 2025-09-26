@@ -168,6 +168,17 @@ class Script(object):
 
         self.scan_script_files()
 
+        # If recompiling everything, remove orphan .rpyc files.
+        # Otherwise, will fail in case orphan .rpyc have same
+        # labels as in other scripts (usually happens on script rename).
+        if (renpy.game.args.command == "compile") and not (renpy.game.args.keep_orphan_rpyc):
+
+            self.clean_script_files()
+
+            # Reindex files so that .rpyc's are cleared out.
+            renpy.loader.index_files()
+            self.scan_script_files()
+
         self.translator.chain_translates()
 
         self.compress()
@@ -327,6 +338,26 @@ class Script(object):
         self.classify_script_files(
             renpy.loader.listdirfiles(common=False, game=True), self.script_files, self.module_files
         )
+
+
+    def clean_script_files(self):
+        """
+        Delete .rpyc files that have no corresponding .rpy or _ren.py file.
+        """
+
+        for fn, dn in self.script_files:
+            if dn is None:
+                continue
+
+            if not os.path.isfile(os.path.join(dn, fn + ".rpy")) and not os.path.isfile(
+                os.path.join(dn, fn + "_ren.py")
+            ):
+                try:
+                    name = os.path.join(dn, fn + ".rpyc")
+                    os.rename(name, name + ".bak")
+                except OSError:
+                    # This perhaps shouldn't happen since either .rpy or .rpyc should exist
+                    pass
 
     def script_filter(self, fn, dir):
         """

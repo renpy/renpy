@@ -409,27 +409,6 @@ def main():
 
     log_clock("Loading error handling")
 
-    # If recompiling everything, remove orphan .rpyc files.
-    # Otherwise, will fail in case orphan .rpyc have same
-    # labels as in other scripts (usually happens on script rename).
-    if (renpy.game.args.command == "compile") and not (renpy.game.args.keep_orphan_rpyc):  # type: ignore
-        for fn, dn in renpy.game.script.script_files:
-            if dn is None:
-                continue
-
-            if not os.path.isfile(os.path.join(dn, fn + ".rpy")) and not os.path.isfile(
-                os.path.join(dn, fn + "_ren.py")
-            ):
-                try:
-                    name = os.path.join(dn, fn + ".rpyc")
-                    os.rename(name, name + ".bak")
-                except OSError:
-                    # This perhaps shouldn't happen since either .rpy or .rpyc should exist
-                    pass
-
-        # Reindex files so that .rpyc's are cleared out.
-        renpy.loader.index_files()
-        renpy.game.script.scan_script_files()
 
     # Load all .rpy files.
     renpy.game.script.load_script()  # sets renpy.game.script.
