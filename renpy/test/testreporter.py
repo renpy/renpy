@@ -389,6 +389,10 @@ class Reporter(abc.ABC):
         """Called when a message should be logged."""
         pass
 
+    def on_reload(self) -> None:
+        """Called when the game is reloaded."""
+        pass
+
 
 class ConsoleReporter(Reporter):
     """
@@ -611,6 +615,9 @@ class ConsoleReporter(Reporter):
     def log_message(self, message) -> None:
         self._print(f"{ANSIColors.CYAN}[rpytest] [log]{ANSIColors.RESET} {message}")
 
+    def on_reload(self):
+        self._is_last_line_written_by_reporter = False
+
 
 class ReporterManager:
     """
@@ -749,6 +756,10 @@ class ReporterManager:
     def log_message(self, message: str) -> None:
         for reporter in self.reporters:
             reporter.log_message(message)
+
+    def on_reload(self) -> None:
+        for reporter in self.reporters:
+            reporter.on_reload()
 
     def _current_block_name(self) -> str:
         if self.hook is not None:

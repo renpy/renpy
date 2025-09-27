@@ -118,9 +118,11 @@ def initialize(root_name: str) -> None:
     initialized = True
 
 
-def on_restart() -> None:
+def on_reload() -> None:
     if add_reached_label not in renpy.config.label_callbacks:
         renpy.config.label_callbacks.append(add_reached_label)
+
+    testreporter.reporter.on_reload()
 
 
 def is_in_test() -> bool:
@@ -784,8 +786,6 @@ def test_command() -> bool:
     """
 
     ## NOTE: This command gets called after the game finishes and returns to the main menu
-    on_restart()
-
     if initialized:
         return True
 

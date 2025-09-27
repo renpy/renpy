@@ -702,6 +702,8 @@ def reload_all():
     # Re-initialize the importer.
     renpy.importer.init_importer()
 
+    renpy.test.testexecution.on_reload()
+
     # Reset main log clock.
     renpy.main.reset_clock()
 
