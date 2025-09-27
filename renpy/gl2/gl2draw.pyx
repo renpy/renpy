@@ -271,6 +271,9 @@ cdef class GL2Draw:
         Selects the GL attributes and hints to use.
         """
 
+        global vsync
+
+
         pygame.display.gl_reset_attributes()
 
         pygame.display.gl_set_attribute(pygame.GL_RED_SIZE, 8)
@@ -280,6 +283,9 @@ cdef class GL2Draw:
 
         if renpy.config.depth_size:
             pygame.display.gl_set_attribute(pygame.GL_DEPTH_SIZE, renpy.config.depth_size)
+
+        if not renpy.config.gl_vsync:
+            vsync = 0
 
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
 

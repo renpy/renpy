@@ -1602,6 +1602,12 @@ live2d_max_memory: int = 32 * 1024 * 1024
 The maximum amount of memory, in bytes, that can be used by live2d and models on the web platform.
 """
 
+gl_vsync: bool = True
+"""
+If True, Ren'Py will attempt to enable vsync when creating the OpenGL context. If False, vsync will be disabled.
+This is mostly intended to be set by renpy.test to disable vsync during tests.
+"""
+
 
 del os
 del collections
