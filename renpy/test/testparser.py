@@ -563,13 +563,13 @@ def parse_hook(l: Lexer, loc: NodeLocation, name: str) -> testast.TestHook:
     l.advance()
 
     extra_kwargs = {}
-    if name in ("before_each_case", "after_each_case"):
-        extra_kwargs["depth"] = -1
-    elif name in ("before_each_suite", "after_each_suite"):
-        extra_kwargs["depth"] = 0
-
     if signature:
         signature.apply_defaults(extra_kwargs)
+
+    if name in ("before_each_case", "after_each_case"):
+        extra_kwargs.setdefault("depth", -1)
+    elif name in ("before_each_suite", "after_each_suite"):
+        extra_kwargs.setdefault("depth", 0)
 
     return testast.TestHook(loc, f"{current_testsuite_name}.{name}", block.block, **extra_kwargs)
 
