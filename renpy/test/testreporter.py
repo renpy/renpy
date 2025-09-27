@@ -493,12 +493,7 @@ class ConsoleReporter(Reporter):
             self._print("")
 
     def _print_summarized_outcomes(self, outcome: TestSuiteOutcome) -> None:
-        if outcome.name == renpy.test.testexecution.isolated_testsuite_name:
-            top_name = outcome.children[0].name
-        else:
-            top_name = outcome.name
-
-        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Test outcomes (Summary): {top_name}")
+        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Test outcomes (Summary)")
 
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
