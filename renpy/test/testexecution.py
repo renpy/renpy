@@ -32,7 +32,6 @@ from renpy.test.testsettings import _test
 
 initialized: bool = False
 global_testsuite_name = "global"
-isolated_testsuite_name = "<Top>"
 
 action: Callable | None = None
 reached_labels: set[str] = set()
@@ -93,7 +92,7 @@ def execute() -> None:
     reached_labels.clear()
 
 
-def initialize(root_name: str) -> None:
+def initialize(specified_test: str) -> None:
     """
     Initializes the test execution system. This is called when the game starts, and
     sets up the testcases and the context stack.
@@ -106,15 +105,17 @@ def initialize(root_name: str) -> None:
     if initialized:
         return
 
-    suite = create_or_get_root_suite(root_name)
-    process_only_flag()
-    update_suite_skip_flag(suite)
-    suite.chain(None)
+    root = setup_global_test_suite()
 
-    testreporter.reporter.initialize_test_outcomes(suite)
+    select_testcase(specified_test)
+    process_only_flag()
+    update_suite_skip_flag(root)
+    root.chain(None)
+
+    testreporter.reporter.initialize_test_outcomes(root)
 
     node_executor = NodeExecutor(None)
-    phase_controller = TestPhaseController(suite)
+    phase_controller = TestPhaseController(root)
     initialized = True
 
 
@@ -220,18 +221,6 @@ def add_child_testcases(parent: TestCase) -> None:
         register_testcase(child, parent)
 
 
-def create_or_get_root_suite(root_name: str) -> TestSuite:
-    if root_name == global_testsuite_name:
-        setup_global_test_suite()
-
-    root = get_testcase_by_name(root_name)
-
-    if isinstance(root, TestSuite):
-        return root
-
-    return TestSuite(name=isolated_testsuite_name, loc=(root.filename, root.linenumber), subtests=[root])
-
-
 def register_testcase(node: TestCase, parent: TestSuite | None = None) -> None:
     """
     Adds a testcase to the `testcases` dictionary. The name is a tuple of strings,
@@ -256,7 +245,7 @@ def register_testcase(node: TestCase, parent: TestSuite | None = None) -> None:
         link_top_level_testcase_to_parent(node)
 
 
-def setup_global_test_suite() -> None:
+def setup_global_test_suite() -> TestSuite:
     """
     Set up the global test suite, which contains all top-level testcases,
     and contains hooks for before and after each test.
@@ -273,6 +262,8 @@ def setup_global_test_suite() -> None:
         if (node_name == global_testsuite_name) or ("." in node_name):
             continue
         root.subtests.append(node)
+
+    return root
 
 
 def get_testcase_by_name(name: str) -> TestCase:
@@ -327,6 +318,15 @@ def process_only_flag() -> None:
     for tc in testcases.values():
         if tc not in processed:
             tc.skip = True
+
+
+def select_testcase(execution_node: str) -> None:
+    if execution_node != global_testsuite_name:
+        for tc in testcases.values():
+            if tc.name == execution_node:
+                tc.only = True
+            else:
+                tc.only = False
 
 
 def update_suite_skip_flag(node: TestSuite) -> None:
