@@ -160,7 +160,7 @@ class Block(Node):
 
 
 class TestCase(Block):
-    __slots__ = ("description", "skip", "only", "parent")
+    __slots__ = ("description", "enabled", "only", "parent")
 
     def __init__(
         self,
@@ -168,7 +168,7 @@ class TestCase(Block):
         name: str,
         block: list[Node],
         description: str = "",
-        skip: bool = False,
+        enabled: bool = True,
         only: bool = False,
         parent: "TestCase | None" = None,
     ):
@@ -176,12 +176,12 @@ class TestCase(Block):
         self.name = name
         self.block = block
         self.description = description
-        self.skip = skip
+        self.enabled = enabled
         self.only = only
         self.parent = parent
 
-        if self.skip and self.only:
-            raise ValueError(f"Test case '{self.name}' cannot have both 'skip' and 'only' set to True.")
+        if not self.enabled and self.only:
+            raise ValueError(f"Test case '{self.name}' must be enabled before setting 'only' to True.")
 
     def __hash__(self):
         return hash(self.name)
@@ -225,7 +225,7 @@ class TestSuite(TestCase):
         loc: NodeLocation,
         name: str,
         description: str = "",
-        skip: bool = False,
+        enabled: bool = True,
         only: bool = False,
         parent: "TestCase | None" = None,
         subtests: list[TestCase] | None = None,
@@ -236,7 +236,7 @@ class TestSuite(TestCase):
         after_testcase: TestHook | None = None,
         teardown: TestHook | None = None,
     ):
-        super().__init__(loc, name, [], description, skip, only, parent)
+        super().__init__(loc, name, [], description, enabled, only, parent)
 
         self.subtest_index = -1
 

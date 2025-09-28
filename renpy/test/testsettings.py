@@ -39,8 +39,8 @@ class TestSettings:
     focus_trials: int = 100
     """How many times should we try to find a good spot to place the mouse?"""
 
-    ignore_skip_flag: bool = False
-    """Should we ignore the skip flag when executing test scripts?"""
+    ignore_enabled_flag: bool = False
+    """Should we ignore the enabled flag when executing test scripts?"""
 
     print_details: bool = False
     """Should we print details about the test cases?"""

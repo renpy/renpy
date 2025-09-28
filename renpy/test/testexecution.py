@@ -292,32 +292,32 @@ def process_only_flag() -> None:
 
     processed = set()
 
-    def unskip_relatives(tc: TestCase):
+    def enable_relatives(tc: TestCase):
         if tc in processed:
             return
 
         processed.add(tc)
 
-        # Unskip parents
+        # Enable parents
         parent = tc.parent
         while parent is not None:
             if parent in processed:
                 break
             processed.add(parent)
-            parent.skip = False
+            parent.enabled = True
             parent = parent.parent
 
         # Mark children so they are not skipped later
         if isinstance(tc, TestSuite):
             for child in tc.subtests:
-                unskip_relatives(child)
+                enable_relatives(child)
 
     for tc in has_only:
-        unskip_relatives(tc)
+        enable_relatives(tc)
 
     for tc in testcases.values():
         if tc not in processed:
-            tc.skip = True
+            tc.enabled = False
 
 
 def select_testcase(execution_node: str) -> None:
@@ -331,16 +331,17 @@ def select_testcase(execution_node: str) -> None:
 
 def update_suite_skip_flag(node: TestSuite) -> None:
     """
-    Updates the skip flag for a TestSuite and its children based on the ignore_skip_flag setting.
+    Updates the skip flag for a TestSuite and its children based on the ignore_enabled_flag setting.
     """
     for child in node.subtests:
         if isinstance(child, TestSuite):
             update_suite_skip_flag(child)
         else:
-            child.skip = not _test.ignore_skip_flag and child.skip
+            child.enabled = _test.ignore_enabled_flag or child.enabled
 
-    all_children_skipped = all(child.skip for child in node.subtests)
-    node.skip = not _test.ignore_skip_flag and (node.skip or all_children_skipped)
+    is_child_enabled = any(child.enabled for child in node.subtests)
+    node.enabled = _test.ignore_enabled_flag or (node.enabled and is_child_enabled)
+    node.enabled = True
 
 
 ################################################################################
@@ -665,7 +666,7 @@ class NextTestTransitionPhase(BaseExecutionPhase):
         if current_test is None:
             raise RuntimeError("No current test to run.")
 
-        if current_test.skip:
+        if not current_test.enabled:
             report_testcase_skipped(current_test)
             return NextTestTransitionPhase()
 
@@ -794,9 +795,9 @@ def test_command() -> bool:
     ap.add_argument(
         "--no-skip",
         action="store_true",
-        dest="ignore_skip_flag",
+        dest="ignore_enabled_flag",
         default=False,
-        help="Do not skip testcases marked as skip.",
+        help="Enable all testcases and testsuites.",
     )
     ap.add_argument(
         "--print-details",
@@ -814,7 +815,7 @@ def test_command() -> bool:
     )
 
     args = ap.parse_args()
-    _test.ignore_skip_flag = args.ignore_skip_flag
+    _test.ignore_enabled_flag = args.ignore_enabled_flag
     _test.print_skipped = args.print_skipped
     _test.print_details = args.print_details
 

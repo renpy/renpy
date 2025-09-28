@@ -117,7 +117,7 @@ understand the lifecycle of a test. The following example illustrates this.
                 testcase choice1:
                     click ""First Choice""
 
-                testcase choice2(skip=True):
+                testcase choice2(enabled=False):
                     click ""Second Choice""
 
                 testcase choice3:

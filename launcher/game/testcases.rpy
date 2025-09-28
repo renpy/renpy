@@ -132,7 +132,7 @@ testsuite default:
         click "Continue"
 
 
-testcase android(skip=True):
+testcase android(enabled=False):
 
     $ _test.timeout = 60.0
     $ _test.maximum_framerate = False
