@@ -1780,7 +1780,7 @@ class SLFor(SLBlock):
             except SLContinueException:
                 continue
 
-            if context.unlikely:
+            if context.unlikely and self.constant == NOT_CONST:
                 break
 
         context.new_cache[self.serial] = newcaches
