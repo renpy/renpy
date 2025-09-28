@@ -496,7 +496,7 @@ def list_logical_lines(
 
                 continue
 
-            # Opertator.
+            # Operator.
             if match := operator_regex.match(data, pos):
                 line.append(match[0])
                 pos = match.end()
