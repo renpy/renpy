@@ -212,13 +212,12 @@ class TestSuite(TestCase):
     __slots__ = (
         "subtests",
         "subtest_index",
-        "hooks",
-        "after",
-        "after_each_case",
-        "after_each_suite",
-        "before",
-        "before_each_case",
-        "before_each_suite",
+        "setup",
+        "before_testsuite",
+        "before_testcase",
+        "after_testcase",
+        "after_testsuite",
+        "teardown",
     )
 
     def __init__(
@@ -230,12 +229,12 @@ class TestSuite(TestCase):
         only: bool = False,
         parent: "TestCase | None" = None,
         subtests: list[TestCase] | None = None,
-        after: TestHook | None = None,
-        after_each_case: TestHook | None = None,
-        after_each_suite: TestHook | None = None,
-        before: TestHook | None = None,
-        before_each_case: TestHook | None = None,
-        before_each_suite: TestHook | None = None,
+        setup: TestHook | None = None,
+        before_testsuite: TestHook | None = None,
+        before_testcase: TestHook | None = None,
+        after_testsuite: TestHook | None = None,
+        after_testcase: TestHook | None = None,
+        teardown: TestHook | None = None,
     ):
         super().__init__(loc, name, [], description, skip, only, parent)
 
@@ -245,17 +244,12 @@ class TestSuite(TestCase):
         for subtest in self.subtests:
             subtest.parent = self
 
-        self.hooks: list[TestHook] = []
-        for hook in [after, after_each_case, after_each_suite, before, before_each_case, before_each_suite]:
-            if hook is not None:
-                self.hooks.append(hook)
-
-        self.after = after
-        self.after_each_case = after_each_case
-        self.after_each_suite = after_each_suite
-        self.before = before
-        self.before_each_case = before_each_case
-        self.before_each_suite = before_each_suite
+        self.setup = setup
+        self.before_testsuite = before_testsuite
+        self.before_testcase = before_testcase
+        self.after_testcase = after_testcase
+        self.after_testsuite = after_testsuite
+        self.teardown = teardown
 
     def chain(self, next: Node | None) -> None:
         for block in self.hooks:
@@ -266,6 +260,46 @@ class TestSuite(TestCase):
 
     def add(self, child: TestCase) -> None:
         self.subtests.append(child)
+
+    def advance(self) -> Block | None:
+        """
+        Advances the test suite to the next block.
+
+        NOTE: Must be run at the start of a test suite run to correctly set
+        the testcase_index to 0.
+        """
+        self.subtest_index += 1
+
+    def get_hook(self, hook_type: HookType) -> TestHook | None:
+        """Returns the hook of the given type, or None if no such hook exists."""
+        match hook_type:
+            case HookType.SETUP:
+                return self.setup
+            case HookType.BEFORE_TESTSUITE:
+                return self.before_testsuite
+            case HookType.BEFORE_TESTCASE:
+                return self.before_testcase
+            case HookType.AFTER_TESTCASE:
+                return self.after_testcase
+            case HookType.AFTER_TESTSUITE:
+                return self.after_testsuite
+            case HookType.TEARDOWN:
+                return self.teardown
+
+    @property
+    def hooks(self) -> list[TestHook]:
+        rv: list[TestHook] = []
+        for hook in [
+            self.setup,
+            self.before_testsuite,
+            self.before_testcase,
+            self.after_testcase,
+            self.after_testsuite,
+            self.teardown,
+        ]:
+            if hook is not None:
+                rv.append(hook)
+        return rv
 
     @property
     def current_test(self) -> TestCase | None:
@@ -280,33 +314,6 @@ class TestSuite(TestCase):
     @property
     def is_all_tests_completed(self) -> bool:
         return self.subtest_index >= len(self.subtests)
-
-    def advance(self) -> Block | None:
-        """
-        Advances the test suite to the next block.
-
-        NOTE: Must be run at the start of a test suite run to correctly set
-        the testcase_index to 0.
-        """
-        self.subtest_index += 1
-
-    def get_hook(self, hook_type: HookType) -> TestHook | None:
-        """Returns the hook of the given type, or None if no such hook exists."""
-        match hook_type:
-            case HookType.AFTER:
-                return self.after
-            case HookType.AFTER_EACH_CASE:
-                return self.after_each_case
-            case HookType.AFTER_EACH_SUITE:
-                return self.after_each_suite
-            case HookType.BEFORE:
-                return self.before
-            case HookType.BEFORE_EACH_SUITE:
-                return self.before_each_suite
-            case HookType.BEFORE_EACH_CASE:
-                return self.before_each_case
-            case _:
-                raise ValueError(f"Invalid hook tag: {self.hook_type}")
 
 
 class Condition(Node):

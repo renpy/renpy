@@ -22,7 +22,7 @@
 import renpy.test.testast as testast
 import renpy
 from renpy.lexer import Lexer
-from renpy.test.types import NodeLocation
+from renpy.test.types import NodeLocation, HookType
 
 # The current test case name
 current_testsuite_name = ""
@@ -344,12 +344,12 @@ def type_statement(l: Lexer, loc: NodeLocation) -> testast.Type | testast.Until:
 def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     global current_testsuite_name
 
-    after: testast.TestHook | None = None
-    after_each_case: testast.TestHook | None = None
-    after_each_suite: testast.TestHook | None = None
-    before: testast.TestHook | None = None
-    before_each_case: testast.TestHook | None = None
-    before_each_suite: testast.TestHook | None = None
+    setup: testast.TestHook | None = None
+    before_testsuite: testast.TestHook | None = None
+    before_testcase: testast.TestHook | None = None
+    after_testcase: testast.TestHook | None = None
+    after_testsuite: testast.TestHook | None = None
+    teardown: testast.TestHook | None = None
     children: list[testast.TestCase] = []
 
     name = l.require(l.dotted_name)
@@ -373,35 +373,43 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     ll.advance()
 
     while not ll.eob:
-        if ll.keyword("after"):
-            if after is not None:
-                ll.error("Only one 'after' block is allowed in a testsuite.")
-            after = parse_hook(ll, ll.get_location(), "after")
-
-        elif ll.keyword("after_each_case"):
-            if after_each_case is not None:
-                ll.error("Only one 'after_each_case' block is allowed in a testsuite.")
-            after_each_case = parse_hook(ll, ll.get_location(), "after_each_case")
-
-        elif ll.keyword("after_each_suite"):
-            if after_each_suite is not None:
-                ll.error("Only one 'after_each_suite' block is allowed in a testsuite.")
-            after_each_suite = parse_hook(ll, ll.get_location(), "after_each_suite")
+        if ll.keyword("setup"):
+            if setup is not None:
+                ll.error("Only one 'setup' block is allowed in a testsuite.")
+            setup = parse_hook(ll, ll.get_location(), HookType.SETUP)
 
         elif ll.keyword("before"):
-            if before is not None:
-                ll.error("Only one 'before' block is allowed in a testsuite.")
-            before = parse_hook(ll, ll.get_location(), "before")
+            if ll.keyword("testsuite"):
+                if before_testsuite is not None:
+                    ll.error("Only one 'before testsuite' block is allowed in a testsuite.")
+                before_testsuite = parse_hook(ll, ll.get_location(), HookType.BEFORE_TESTSUITE)
 
-        elif ll.keyword("before_each_case"):
-            if before_each_case is not None:
-                ll.error("Only one 'before_each_case' block is allowed in a testsuite.")
-            before_each_case = parse_hook(ll, ll.get_location(), "before_each_case")
+            elif ll.keyword("testcase"):
+                if before_testcase is not None:
+                    ll.error("Only one 'before testcase' block is allowed in a testsuite.")
+                before_testcase = parse_hook(ll, ll.get_location(), HookType.BEFORE_TESTCASE)
 
-        elif ll.keyword("before_each_suite"):
-            if before_each_suite is not None:
-                ll.error("Only one 'before_each_suite' block is allowed in a testsuite.")
-            before_each_suite = parse_hook(ll, ll.get_location(), "before_each_suite")
+            else:
+                ll.error("Expected 'before testsuite' or 'before testcase'.")
+
+        elif ll.keyword("after"):
+            if ll.keyword("testcase"):
+                if after_testcase is not None:
+                    ll.error("Only one 'after testcase' block is allowed in a testsuite.")
+                after_testcase = parse_hook(ll, ll.get_location(), HookType.AFTER_TESTCASE)
+
+            elif ll.keyword("testsuite"):
+                if after_testsuite is not None:
+                    ll.error("Only one 'after testsuite' block is allowed in a testsuite.")
+                after_testsuite = parse_hook(ll, ll.get_location(), HookType.AFTER_TESTSUITE)
+
+            else:
+                ll.error("Expected 'after testsuite' or 'after testcase'.")
+
+        elif ll.keyword("teardown"):
+            if teardown is not None:
+                ll.error("Only one 'teardown' block is allowed in a testsuite.")
+            teardown = parse_hook(ll, ll.get_location(), HookType.TEARDOWN)
 
         elif ll.keyword("testcase"):
             children.append(testcase_statement(ll, ll.get_location()))
@@ -421,12 +429,12 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     rv = testast.TestSuite(
         loc,
         current_testsuite_name,
-        after=after,
-        after_each_case=after_each_case,
-        after_each_suite=after_each_suite,
-        before=before,
-        before_each_case=before_each_case,
-        before_each_suite=before_each_suite,
+        setup=setup,
+        before_testsuite=before_testsuite,
+        before_testcase=before_testcase,
+        after_testcase=after_testcase,
+        after_testsuite=after_testsuite,
+        teardown=teardown,
         subtests=children,
         **extra_kwargs,
     )
@@ -547,16 +555,16 @@ def parse_block(l: Lexer, loc: NodeLocation) -> testast.Block:
     return testast.Block(loc, block)
 
 
-def parse_hook(l: Lexer, loc: NodeLocation, name: str) -> testast.TestHook:
+def parse_hook(l: Lexer, loc: NodeLocation, hook_type: HookType) -> testast.TestHook:
     signature: renpy.parameter.Signature | None = renpy.parser.parse_parameters(l)
 
     global_testsuite_name = renpy.test.testexecution.global_testsuite_name
-    if name == global_testsuite_name:
+    if hook_type == global_testsuite_name:
         l.error(f"The name {global_testsuite_name!r} is reserved for a testsuite that runs all tests.")
 
     l.require(":")
     l.expect_eol()
-    l.expect_block(f"hook block: {name}")
+    l.expect_block(f"hook block: {hook_type}")
 
     block = parse_block(l.subblock_lexer(False), loc)
 
@@ -566,12 +574,12 @@ def parse_hook(l: Lexer, loc: NodeLocation, name: str) -> testast.TestHook:
     if signature:
         signature.apply_defaults(extra_kwargs)
 
-    if name in ("before_each_case", "after_each_case"):
+    if hook_type in (HookType.BEFORE_TESTCASE, HookType.AFTER_TESTCASE):
         extra_kwargs.setdefault("depth", -1)
-    elif name in ("before_each_suite", "after_each_suite"):
+    elif hook_type in (HookType.BEFORE_TESTSUITE, HookType.AFTER_TESTSUITE):
         extra_kwargs.setdefault("depth", 0)
 
-    return testast.TestHook(loc, f"{current_testsuite_name}.{name}", block.block, **extra_kwargs)
+    return testast.TestHook(loc, f"{current_testsuite_name}.{hook_type.value}", block.block, **extra_kwargs)
 
 
 def parse_statement(l: Lexer, loc: NodeLocation) -> testast.Node:

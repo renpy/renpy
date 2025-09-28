@@ -25,10 +25,10 @@ testcase skip(skip=True):
     assert False
 
 testsuite test_subcase:
-    before_each_case:
+    before testcase:
         $ test_subcase_setup = False
 
-    after_each_case:
+    after testcase:
         assert eval test_subcase_setup
 
     testcase subcase1:
@@ -36,7 +36,7 @@ testsuite test_subcase:
         $ test_subcase_setup = True
 
     testsuite subcase2:
-        before_each_case:
+        before testcase:
             assert eval (not test_subcase_setup)
 
         testcase subcase2_2:
@@ -71,7 +71,7 @@ testsuite test_if:
     #     assert False
 
 testsuite message_if:
-    before:
+    setup:
         run Jump("three_messages")
         pause until screen say
 

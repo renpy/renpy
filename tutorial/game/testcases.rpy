@@ -2,20 +2,20 @@
     import time
 
 testsuite global:
-    before_each_suite:
+    before testsuite:
         if not screen main_menu:
             run MainMenu(confirm=False)
 
-    after:
+    teardown:
         exit
 
 
 testsuite default(description="Default project testsuite"):
-    before:
+    setup:
         $ _test.timeout = 4.0
         $ _test.transition_timeout = 0.05
 
-    before_each_case:
+    before testcase:
         ## Go to the test screen, even if we've crashed in a prior test
         if not screen tutorials:
             if not screen main_menu:
@@ -25,7 +25,7 @@ testsuite default(description="Default project testsuite"):
                 run Start()
                 advance until screen tutorials
 
-    after:
+    teardown:
         click "That's enough for now."
         advance until screen main_menu
         # click "Quit"

@@ -40,9 +40,9 @@ class RenpyTestTimeoutError(TimeoutError):
 
 
 class HookType(enum.Enum):
-    AFTER = "after"
-    AFTER_EACH_CASE = "after_each_case"
-    AFTER_EACH_SUITE = "after_each_suite"
-    BEFORE = "before"
-    BEFORE_EACH_CASE = "before_each_case"
-    BEFORE_EACH_SUITE = "before_each_suite"
+    SETUP = "setup"
+    BEFORE_TESTSUITE = "before_testsuite"
+    BEFORE_TESTCASE = "before_testcase"
+    AFTER_TESTCASE = "after_testcase"
+    AFTER_TESTSUITE = "after_testsuite"
+    TEARDOWN = "teardown"

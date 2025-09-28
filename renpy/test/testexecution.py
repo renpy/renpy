@@ -638,7 +638,7 @@ class StartPhase(BaseExecutionPhase):
         push_suite_stack(self.root_suite)
 
     def update(self) -> BaseExecutionPhase | None:
-        return BeforeSuitePhase()
+        return SuiteSetupPhase()
 
 
 class EndPhase(BaseExecutionPhase):
@@ -659,7 +659,7 @@ class NextTestTransitionPhase(BaseExecutionPhase):
 
     def update(self) -> BaseExecutionPhase | None:
         if suite_stack[-1].is_all_tests_completed:
-            return AfterSuitePhase()
+            return SuiteTeardownPhase()
 
         current_test = suite_stack[-1].current_test
         if current_test is None:
@@ -670,15 +670,15 @@ class NextTestTransitionPhase(BaseExecutionPhase):
             return NextTestTransitionPhase()
 
         if isinstance(current_test, TestSuite):
-            return BeforeEachSuitePhase()
+            return BeforeTestsuitePhase()
         elif isinstance(current_test, TestCase):
-            return BeforeEachCasePhase()
+            return BeforeTestcasePhase()
         return None
 
 
-class BeforeEachSuitePhase(HookLoopPhase):
+class BeforeTestsuitePhase(HookLoopPhase):
     def __init__(self):
-        self.hook_type = HookType.BEFORE_EACH_SUITE
+        self.hook_type = HookType.BEFORE_TESTSUITE
         self.next_phase = AddSubSuitePhase
         self.reverse = False
 
@@ -693,12 +693,12 @@ class AddSubSuitePhase(BaseExecutionPhase):
         push_suite_stack(suite_stack[-1].current_test)
 
     def update(self) -> BaseExecutionPhase | None:
-        return BeforeSuitePhase()
+        return SuiteSetupPhase()
 
 
-class BeforeSuitePhase(BaseExecutionPhase):
+class SuiteSetupPhase(BaseExecutionPhase):
     def enter(self) -> None:
-        self.block = suite_stack[-1].before
+        self.block = suite_stack[-1].get_hook(HookType.SETUP)
         if self.block is not None:
             testreporter.reporter.test_hook_start(self.block, depth=len(suite_stack))
             node_executor.set_next_node(self.block)
@@ -710,14 +710,14 @@ class BeforeSuitePhase(BaseExecutionPhase):
         return NextTestTransitionPhase()
 
 
-class BeforeEachCasePhase(HookLoopPhase):
+class BeforeTestcasePhase(HookLoopPhase):
     def __init__(self):
-        self.hook_type = HookType.BEFORE_EACH_CASE
-        self.next_phase = TestCasePhase
+        self.hook_type = HookType.BEFORE_TESTCASE
+        self.next_phase = TestcasePhase
         self.reverse = False
 
 
-class TestCasePhase(BaseExecutionPhase):
+class TestcasePhase(BaseExecutionPhase):
     def enter(self) -> None:
         if suite_stack[-1].current_test is None:
             raise RuntimeError("No current test to run.")
@@ -737,19 +737,19 @@ class TestCasePhase(BaseExecutionPhase):
         return None
 
     def update(self) -> BaseExecutionPhase | None:
-        return AfterEachCasePhase()
+        return AfterTestcasePhase()
 
 
-class AfterEachCasePhase(HookLoopPhase):
+class AfterTestcasePhase(HookLoopPhase):
     def __init__(self):
-        self.hook_type = HookType.AFTER_EACH_CASE
+        self.hook_type = HookType.AFTER_TESTCASE
         self.next_phase = NextTestTransitionPhase
         self.reverse = True
 
 
-class AfterSuitePhase(BaseExecutionPhase):
+class SuiteTeardownPhase(BaseExecutionPhase):
     def enter(self) -> None:
-        self.block = suite_stack[-1].after
+        self.block = suite_stack[-1].get_hook(HookType.TEARDOWN)
         if self.block is not None:
             testreporter.reporter.test_hook_start(self.block, depth=len(suite_stack))
             node_executor.set_next_node(self.block)
@@ -769,12 +769,12 @@ class RemoveSubSuitePhase(BaseExecutionPhase):
         pop_suite_stack()
 
     def update(self) -> BaseExecutionPhase | None:
-        return AfterEachSuitePhase()
+        return AfterTestsuitePhase()
 
 
-class AfterEachSuitePhase(HookLoopPhase):
+class AfterTestsuitePhase(HookLoopPhase):
     def __init__(self):
-        self.hook_type = HookType.AFTER_EACH_SUITE
+        self.hook_type = HookType.AFTER_TESTSUITE
         self.next_phase = NextTestTransitionPhase
         self.reverse = True
 

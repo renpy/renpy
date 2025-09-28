@@ -1,5 +1,5 @@
 testsuite global:
-    before_each_case:
+    before testcase:
         $ _test.transition_timeout = 0.05
         $ _test.timeout = 2.0
 
@@ -7,10 +7,8 @@ testsuite global:
             run MainMenu(confirm=False)
 
 
-    after:
-        if not screen main_menu:
-            run MainMenu(confirm=False)
-        click "Quit"
+    teardown:
+        exit
 
 testcase bad_end:
     click "start"

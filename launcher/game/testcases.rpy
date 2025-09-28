@@ -1,5 +1,5 @@
 ﻿testsuite global:
-    after:
+    teardown:
         exit
 
 testcase dark_theme:
@@ -24,7 +24,7 @@ init python:
 
 
 testsuite default:
-    before:
+    setup:
         python:
             persistent.old_projects_directory = persistent.projects_directory
 
@@ -38,10 +38,10 @@ testsuite default:
 
             persistent.projects_directory = persistent.temp_projects_directory
 
-    before_each_case:
+    before testcase:
         $ _test.timeout = 5.0
 
-    after:
+    teardown:
         python:
             persistent.projects_directory = persistent.old_projects_directory
             if os.path.exists(persistent.temp_projects_directory):
@@ -91,7 +91,7 @@ testsuite default:
 
 
     testsuite extract_dialogue:
-        before_each_case:
+        before testcase:
             click "Extract Dialogue"
             click "Strip text tags"
             click "Escape quotes"
