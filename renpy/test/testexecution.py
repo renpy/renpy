@@ -341,7 +341,6 @@ def update_suite_skip_flag(node: TestSuite) -> None:
 
     is_child_enabled = any(child.enabled for child in node.subtests)
     node.enabled = _test.ignore_enabled_flag or (node.enabled and is_child_enabled)
-    node.enabled = True
 
 
 ################################################################################

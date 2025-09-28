@@ -10,7 +10,9 @@ testsuite global:
         exit
 
 
-testsuite default(description="Default project testsuite"):
+testsuite default:
+    description "Default project testsuite"
+
     setup:
         $ _test.timeout = 4.0
         $ _test.transition_timeout = 0.05

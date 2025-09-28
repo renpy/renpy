@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from typing import Any, Collection
+
 import renpy.test.testast as testast
 import renpy
 from renpy.lexer import Lexer
@@ -68,7 +70,7 @@ def if_statement(l: Lexer, loc: NodeLocation) -> testast.If:
     l.expect_eol()
     l.expect_block("if statmeent")
 
-    block = parse_block(l.subblock_lexer(False), loc)
+    block, _ = parse_block(l.subblock_lexer(False), loc)
     entries.append((condition, block))
 
     l.advance()
@@ -80,7 +82,7 @@ def if_statement(l: Lexer, loc: NodeLocation) -> testast.If:
         l.expect_eol()
         l.expect_block("elif clause")
 
-        block = parse_block(l.subblock_lexer(False), new_loc)
+        block, _ = parse_block(l.subblock_lexer(False), new_loc)
         entries.append((condition, block))
 
         l.advance()
@@ -91,7 +93,7 @@ def if_statement(l: Lexer, loc: NodeLocation) -> testast.If:
         l.expect_eol()
         l.expect_block("else clause")
 
-        block = parse_block(l.subblock_lexer(False), new_loc)
+        block, _ = parse_block(l.subblock_lexer(False), new_loc)
         entries.append((testast.Eval(new_loc, "True"), block))
 
         l.advance()
@@ -353,7 +355,6 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     children: list[testast.TestCase] = []
 
     name = l.require(l.dotted_name)
-    signature = renpy.parser.parse_parameters(l)
     global_testsuite_name = renpy.test.testexecution.global_testsuite_name
 
     if name == global_testsuite_name and current_testsuite_name:
@@ -372,59 +373,74 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     ll = l.subblock_lexer(False)
     ll.advance()
 
+    properties: dict[str, Any] = {}
+    statements_started = False
+
     while not ll.eob:
-        if ll.keyword("setup"):
-            if setup is not None:
-                ll.error("Only one 'setup' block is allowed in a testsuite.")
-            setup = parse_hook(ll, ll.get_location(), HookType.SETUP)
+        oldpos = ll.pos
+        keyword = ll.word()
 
-        elif ll.keyword("before"):
-            if ll.keyword("testsuite"):
-                if before_testsuite is not None:
-                    ll.error("Only one 'before testsuite' block is allowed in a testsuite.")
-                before_testsuite = parse_hook(ll, ll.get_location(), HookType.BEFORE_TESTSUITE)
+        if keyword in ("enabled", "only", "description"):
+            if statements_started:
+                ll.error(f"Property {keyword} must be defined before any test statements.")
 
-            elif ll.keyword("testcase"):
-                if before_testcase is not None:
-                    ll.error("Only one 'before testcase' block is allowed in a testsuite.")
-                before_testcase = parse_hook(ll, ll.get_location(), HookType.BEFORE_TESTCASE)
-
-            else:
-                ll.error("Expected 'before testsuite' or 'before testcase'.")
-
-        elif ll.keyword("after"):
-            if ll.keyword("testcase"):
-                if after_testcase is not None:
-                    ll.error("Only one 'after testcase' block is allowed in a testsuite.")
-                after_testcase = parse_hook(ll, ll.get_location(), HookType.AFTER_TESTCASE)
-
-            elif ll.keyword("testsuite"):
-                if after_testsuite is not None:
-                    ll.error("Only one 'after testsuite' block is allowed in a testsuite.")
-                after_testsuite = parse_hook(ll, ll.get_location(), HookType.AFTER_TESTSUITE)
-
-            else:
-                ll.error("Expected 'after testsuite' or 'after testcase'.")
-
-        elif ll.keyword("teardown"):
-            if teardown is not None:
-                ll.error("Only one 'teardown' block is allowed in a testsuite.")
-            teardown = parse_hook(ll, ll.get_location(), HookType.TEARDOWN)
-
-        elif ll.keyword("testcase"):
-            children.append(testcase_statement(ll, ll.get_location()))
-
-        elif ll.keyword("testsuite"):
-            children.append(testsuite_statement(ll, ll.get_location()))
+            expr = ll.require(ll.simple_expression)
+            properties[keyword] = renpy.python.py_eval(expr)
+            ll.expect_eol()
+            ll.advance()
 
         else:
-            ll.error(f"Unexpected statement in testsuite.")
+            statements_started = True
+            ll.pos = oldpos
+
+            if ll.keyword("setup"):
+                if setup is not None:
+                    ll.error("Only one 'setup' block is allowed in a testsuite.")
+                setup = parse_hook(ll, ll.get_location(), HookType.SETUP)
+
+            elif ll.keyword("before"):
+                if ll.keyword("testsuite"):
+                    if before_testsuite is not None:
+                        ll.error("Only one 'before testsuite' block is allowed in a testsuite.")
+                    before_testsuite = parse_hook(ll, ll.get_location(), HookType.BEFORE_TESTSUITE)
+
+                elif ll.keyword("testcase"):
+                    if before_testcase is not None:
+                        ll.error("Only one 'before testcase' block is allowed in a testsuite.")
+                    before_testcase = parse_hook(ll, ll.get_location(), HookType.BEFORE_TESTCASE)
+
+                else:
+                    ll.error("Expected 'before testsuite' or 'before testcase'.")
+
+            elif ll.keyword("after"):
+                if ll.keyword("testcase"):
+                    if after_testcase is not None:
+                        ll.error("Only one 'after testcase' block is allowed in a testsuite.")
+                    after_testcase = parse_hook(ll, ll.get_location(), HookType.AFTER_TESTCASE)
+
+                elif ll.keyword("testsuite"):
+                    if after_testsuite is not None:
+                        ll.error("Only one 'after testsuite' block is allowed in a testsuite.")
+                    after_testsuite = parse_hook(ll, ll.get_location(), HookType.AFTER_TESTSUITE)
+
+                else:
+                    ll.error("Expected 'after testsuite' or 'after testcase'.")
+
+            elif ll.keyword("teardown"):
+                if teardown is not None:
+                    ll.error("Only one 'teardown' block is allowed in a testsuite.")
+                teardown = parse_hook(ll, ll.get_location(), HookType.TEARDOWN)
+
+            elif ll.keyword("testcase"):
+                children.append(testcase_statement(ll, ll.get_location()))
+
+            elif ll.keyword("testsuite"):
+                children.append(testsuite_statement(ll, ll.get_location()))
+
+            else:
+                ll.error("Unexpected statement in testsuite.")
 
     l.advance()
-
-    extra_kwargs = {}
-    if signature:
-        signature.apply_defaults(extra_kwargs)
 
     rv = testast.TestSuite(
         loc,
@@ -436,7 +452,7 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
         after_testsuite=after_testsuite,
         teardown=teardown,
         subtests=children,
-        **extra_kwargs,
+        **properties,
     )
 
     current_testsuite_name = old_current_testsuite_name
@@ -449,7 +465,10 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
     global current_testsuite_name
 
     name = l.require(l.dotted_name)
-    signature: renpy.parameter.Signature | None = renpy.parser.parse_parameters(l)
+    # signature: renpy.parameter.Signature | None = renpy.parser.parse_parameters(l)
+    # extra_kwargs = {}
+    # if signature:
+    #     signature.apply_defaults(extra_kwargs)
 
     global_testsuite_name = renpy.test.testexecution.global_testsuite_name
     if name == global_testsuite_name:
@@ -459,19 +478,15 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
     l.expect_eol()
     l.expect_block("testcase statement")
 
-    test_block = parse_block(l.subblock_lexer(False), loc)
+    test_block, properties = parse_block(l.subblock_lexer(False), loc, keywords=("enabled", "only", "description"))
 
     l.advance()
-
-    extra_kwargs = {}
-    if signature:
-        signature.apply_defaults(extra_kwargs)
 
     rv = testast.TestCase(
         loc,
         current_testsuite_name + "." + name if current_testsuite_name else name,
         block=test_block.block,
-        **extra_kwargs,
+        **properties,
     )
 
     return rv
@@ -531,7 +546,9 @@ def one_line_python_statement(l: Lexer, loc: NodeLocation) -> testast.Python:
 # Functions called to parse things.
 
 
-def parse_block(l: Lexer, loc: NodeLocation) -> testast.Block:
+def parse_block(
+    l: Lexer, loc: NodeLocation, keywords: Collection[str] | None = None
+) -> tuple[testast.Block, dict[str, Any]]:
     """
     Parses a named block of testcase statements.
 
@@ -540,24 +557,39 @@ def parse_block(l: Lexer, loc: NodeLocation) -> testast.Block:
     """
 
     l.advance()
-    block = []
+
+    block: list[testast.Node] = []
+    properties: dict[str, Any] = {}
+    statements_started = False
 
     while not l.eob:
-        stmt = parse_statement(l, l.get_location())
-        if isinstance(stmt, (testast.TestSuite, testast.TestCase)):
-            l.unadvance()
-            l.error(
-                "A testsuite or testcase may not be nested inside a block. "
-                "It must be at the top level, or within a testsuite."
-            )
-        block.append(stmt)
+        oldpos = l.pos
+        keyword = l.word()
 
-    return testast.Block(loc, block)
+        if keywords and isinstance(keyword, str) and keyword in keywords:
+            if statements_started:
+                l.error(f"Property {keyword} must be defined before any test statements.")
+
+            expr = l.require(l.simple_expression)
+            properties[keyword] = renpy.python.py_eval(expr)
+            l.expect_eol()
+            l.advance()
+        else:
+            l.pos = oldpos
+            statements_started = True
+            stmt = parse_statement(l, l.get_location())
+            if isinstance(stmt, (testast.TestSuite, testast.TestCase)):
+                l.unadvance()
+                l.error(
+                    "A testsuite or testcase may not be nested inside a block. "
+                    "It must be at the top level, or within a testsuite."
+                )
+            block.append(stmt)
+
+    return testast.Block(loc, block), properties
 
 
 def parse_hook(l: Lexer, loc: NodeLocation, hook_type: HookType) -> testast.TestHook:
-    signature: renpy.parameter.Signature | None = renpy.parser.parse_parameters(l)
-
     global_testsuite_name = renpy.test.testexecution.global_testsuite_name
     if hook_type == global_testsuite_name:
         l.error(f"The name {global_testsuite_name!r} is reserved for a testsuite that runs all tests.")
@@ -566,20 +598,16 @@ def parse_hook(l: Lexer, loc: NodeLocation, hook_type: HookType) -> testast.Test
     l.expect_eol()
     l.expect_block(f"hook block: {hook_type}")
 
-    block = parse_block(l.subblock_lexer(False), loc)
+    block, properties = parse_block(l.subblock_lexer(False), loc, keywords=("depth",))
 
     l.advance()
 
-    extra_kwargs = {}
-    if signature:
-        signature.apply_defaults(extra_kwargs)
-
     if hook_type in (HookType.BEFORE_TESTCASE, HookType.AFTER_TESTCASE):
-        extra_kwargs.setdefault("depth", -1)
+        properties.setdefault("depth", -1)
     elif hook_type in (HookType.BEFORE_TESTSUITE, HookType.AFTER_TESTSUITE):
-        extra_kwargs.setdefault("depth", 0)
+        properties.setdefault("depth", 0)
 
-    return testast.TestHook(loc, f"{current_testsuite_name}.{hook_type.value}", block.block, **extra_kwargs)
+    return testast.TestHook(loc, f"{current_testsuite_name}.{hook_type.value}", block.block, **properties)
 
 
 def parse_statement(l: Lexer, loc: NodeLocation) -> testast.Node:

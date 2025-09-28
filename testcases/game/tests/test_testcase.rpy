@@ -21,7 +21,9 @@ screen teleporting_button(x=0, y=0, remaining=20):
         else:
             action Hide("teleporting_button")
 
-testcase skip(enabled=False):
+testcase skip:
+    enabled False
+
     assert False
 
 testsuite test_subcase:
