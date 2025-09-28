@@ -320,7 +320,6 @@ def list_logical_lines(
     filename: str,
     filedata: str | None = None,
     linenumber: int = 1,
-    add_lines: bool = False,
 ) -> list[tuple[str, int, str]]:
     """
     Reads `filename`, and divides it into logical lines.
@@ -580,23 +579,6 @@ def list_logical_lines(
             else:
                 line.append(c)
                 pos += 1
-
-    # Add scriptedit lines if requested.
-    if add_lines:
-        lines = renpy.scriptedit.lines
-        for _, number, start, end in rv:
-            l = renpy.scriptedit.Line(original_filename, number, start)
-
-            l.end_delim = end + 1
-
-            while data[end - 1] == " ":
-                end -= 1
-
-            l.end = end
-            l.text = data[l.start : l.end]
-            l.full_text = data[l.start : l.end_delim]
-
-            lines[filename, number] = l
 
     return [(filename, number, line) for line, number, _, _ in rv]
 
