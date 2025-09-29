@@ -65,10 +65,10 @@ def match(f: Focus, pattern: str | None) -> str | None:
         else:
             return None
 
-        if f.x is None:
-            t = renpy.display.tts.root._tts_all()
-        else:
-            t = f.widget._tts_all()
+    if f.x is None:
+        t = renpy.display.tts.root._tts_all()
+    else:
+        t = f.widget._tts_all()
 
     if pattern in t.casefold():
         return t
