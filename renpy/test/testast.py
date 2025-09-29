@@ -634,6 +634,24 @@ class Scroll(SelectorDrivenNode):
     amount: int = 1
 
     def perform(self, x, y, state, t):
+        if self.selector is not None:
+            element = self.selector.element
+
+            if isinstance(element, renpy.display.focus.Focus):
+                element = element.widget
+
+            if isinstance(element, renpy.display.behavior.Bar):
+                adj = element.adjustment
+
+                if adj.value == adj.range:
+                    new = 0
+                else:
+                    new = adj.value + (adj.page * self.amount)
+
+                new = max(0, min(new, adj.range))
+                adj.change(new)
+                return
+
         scroll_mouse(-self.amount, x, y)
 
 

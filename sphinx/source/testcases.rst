@@ -657,17 +657,17 @@ Simulates a scroll event. It takes the following optional properties:
 
 ::
 
+    scroll "bar"
     scroll id "inventory_scroll"
     scroll amount 10 id "inventory_scroll" pos (0.5, 0.5)
     scroll # scrolls down at the current mouse position
 
 .. note::
 
-    This only simulates the mousewheel event. It does not directly adjust
-    scrollable elements. To manipulate scrollable elements directly,
-    use the Scroll action from :doc:`screen_actions`. ::
+    This only simulates the mousewheel event. You may consider using
+    the Scroll action from :doc:`screen_actions`. ::
 
-        run Scroll(id="inventory_scroll", amount="step", delay=1.0)
+        run Scroll("inventory_scroll", "increase", amount="step", delay=1.0)
 
 Keyboard Commands
 ----------------
