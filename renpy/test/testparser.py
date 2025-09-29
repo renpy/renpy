@@ -161,28 +161,51 @@ def click_statement(l: Lexer, loc: NodeLocation) -> testast.Click | testast.Unti
 
 
 @test_statement("drag")
-def drag_statement(l: Lexer, loc: NodeLocation) -> testast.Drag | testast.Until:
-    # TODO: Transition off of "pattern"
+def drag_statement(l: Lexer, loc: NodeLocation) -> testast.Drag:
     l.expect_noblock("drag statement")
 
-    points = l.require(l.simple_expression)
-    rv = testast.Drag(loc, points)
+    start_point = testast.SelectorDrivenNode(loc)
+    end_point = testast.SelectorDrivenNode(loc)
+    rv = testast.Drag(loc, start_point, end_point)
 
     while True:
         if l.keyword("button"):
             rv.button = int(l.require(l.integer))
 
-        elif l.keyword("pattern"):
-            rv.pattern = l.require(l.string)
+        elif l.keyword("steps"):
+            rv.steps = int(l.require(l.integer))
+
+        elif l.keyword("pos"):
+            start_point.position = l.require(l.simple_expression)
+
+        elif selector := parse_selector(l, loc):
+            start_point.selector = selector
+
+        elif l.keyword("to"):
+            break
+
+        else:
+            raise l.error("Expected 'to' or drag start specification.")
+
+    while True:
+        if l.keyword("button"):
+            rv.button = int(l.require(l.integer))
 
         elif l.keyword("steps"):
             rv.steps = int(l.require(l.integer))
+
+        elif l.keyword("pos"):
+            end_point.position = l.require(l.simple_expression)
+
+        elif selector := parse_selector(l, loc):
+            end_point.selector = selector
 
         else:
             break
 
     l.expect_eol()
     l.advance()
+
     return rv
 
 
@@ -219,18 +242,15 @@ def move_statement(l: Lexer, loc: NodeLocation) -> testast.Move | testast.Until:
     rv = testast.Move(loc)
 
     while True:
-        if selector := parse_selector(l, loc):
+        if l.keyword("pos"):
+            rv.position = l.require(l.simple_expression)
+
+        elif selector := parse_selector(l, loc):
             rv.selector = selector
 
         elif until := parse_until(l, loc, rv):
             rv = until
             break
-
-        elif temp := l.simple_expression():
-            if isinstance(temp, tuple):
-                rv.position = temp
-            else:
-                l.error("Expected a position tuple for move statement.")
 
         else:
             break
@@ -279,15 +299,26 @@ def run_statement(l: Lexer, loc: NodeLocation) -> testast.Action | testast.Until
 
 @test_statement("scroll")
 def scroll_statement(l: Lexer, loc: NodeLocation) -> testast.Scroll | testast.Until:
-    # TODO: Transition off of "pattern"
     l.expect_noblock("scroll statement")
 
-    ## TODO: Update to selector
-    pattern = l.require(l.string)
-    rv = testast.Scroll(loc, pattern)
+    rv = testast.Scroll(loc)
 
-    if until := parse_until(l, loc, rv):
-        rv = until
+    while True:
+        if l.keyword("amount"):
+            rv.amount = int(l.require(l.integer))
+
+        elif l.keyword("pos"):
+            rv.position = l.require(l.simple_expression)
+
+        elif selector := parse_selector(l, loc):
+            rv.selector = selector
+
+        elif until := parse_until(l, loc, rv):
+            rv = until
+            break
+
+        else:
+            break
 
     l.expect_eol()
     l.advance()

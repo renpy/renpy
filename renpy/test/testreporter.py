@@ -30,7 +30,7 @@ import renpy
 from renpy.error import ANSIColors
 from renpy.test.testsettings import _test
 from renpy.test.types import RenpyTestAssertionError
-from renpy.test.testast import TestCase, TestHook, TestSuite, Assert, Block
+from renpy.test.testast import TestCase, TestHook, TestSuite, Assert
 
 
 def format_seconds(seconds: float) -> str:
@@ -418,7 +418,7 @@ class ConsoleReporter(Reporter):
             isinstance(self.epc, renpy.error.ANSIColoredPrintContext) and self._is_last_line_written_by_reporter
         ):
             ## Move cursor up one line and erase it
-            self._print(f"\x1b[1A\x1b[2K", end="\r")
+            self._print("\x1b[1A\x1b[2K", end="\r")
 
         return can_erase
 

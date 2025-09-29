@@ -94,6 +94,20 @@ def click_mouse(button: int, x: int, y: int) -> None:
     release_mouse(button)
 
 
+def scroll_mouse(amount: int, x: int, y: int) -> None:
+    """
+    Scrolls the mouse wheel at x, y
+    """
+
+    move_mouse(x, y)
+    # post(pygame.MOUSEWHEEL, pos=mouse_pos, x=0, y=amount)  # type: ignore
+
+    btn = 4 if amount > 0 else 5
+    for i in range(abs(amount)):
+        post(pygame.MOUSEBUTTONDOWN, pos=mouse_pos, button=btn)  # type: ignore
+        post(pygame.MOUSEBUTTONUP, pos=mouse_pos, button=btn)  # type: ignore
+
+
 def reset() -> None:
     """
     Resets mouse handling once the test has ended.

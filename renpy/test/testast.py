@@ -24,7 +24,7 @@ from math import isnan
 import renpy
 from renpy.display.focus import Focus
 from renpy.display.displayable import Displayable
-from renpy.test.testmouse import click_mouse, move_mouse
+from renpy.test.testmouse import click_mouse, move_mouse, scroll_mouse
 from renpy.test.testsettings import _test
 from renpy.test.types import NodeState, NodeLocation, Position, RenpyTestException, RenpyTestTimeoutError, HookType
 
@@ -534,7 +534,7 @@ class SelectorDrivenNode(Node):
         self,
         loc: NodeLocation,
         selector: Selector | None = None,
-        position: Position | None = None,
+        position: str | None = None,
         always: bool = False,
     ):
         super(SelectorDrivenNode, self).__init__(loc)
@@ -581,10 +581,11 @@ class SelectorDrivenNode(Node):
         """
         Returns the x and y coordinates for the action to be performed.
         """
+        position: Position | tuple[None, None] = (None, None)
         if self.position is not None:
             position = renpy.python.py_eval(self.position)
-        else:
-            position = (None, None)
+            if not (isinstance(position, tuple) and len(position) == 2):
+                raise ValueError("Position expression must evaluate to a tuple of (x, y).")
 
         if self.selector is None:
             f = None
@@ -629,120 +630,58 @@ class Move(SelectorDrivenNode):
         move_mouse(x, y)
 
 
-class Scroll(Node):
-    __slots__ = "pattern"
+class Scroll(SelectorDrivenNode):
+    amount: int = 1
 
-    def __init__(self, loc: NodeLocation, pattern: str | None = None):
-        super(Scroll, self).__init__(loc)
-        self.pattern = pattern
-
-    def ready(self):
-        f = renpy.test.testfocus.find_focus(self.pattern)
-        return f is not None
-
-    def execute(self, state, t):
-        f = renpy.test.testfocus.find_focus(self.pattern)
-
-        if f is None:
-            return True
-
-        if not isinstance(f.widget, renpy.display.behavior.Bar):
-            return True
-
-        adj = f.widget.adjustment
-
-        if adj.value == adj.range:
-            new = 0
-        else:
-            new = adj.value + adj.page
-
-            if new > adj.range:
-                new = adj.range
-
-        adj.change(new)
-
-        next_node(self.next)
-        return None
+    def perform(self, x, y, state, t):
+        scroll_mouse(-self.amount, x, y)
 
 
 class Drag(Node):
-    __slots__ = ("points", "pattern", "button", "steps")
+    __slots__ = ("start_point", "end_point", "button", "steps")
 
-    def __init__(self, loc: NodeLocation, points: list[tuple[int, int]]):
+    def __init__(
+        self,
+        loc: NodeLocation,
+        start_point: SelectorDrivenNode,
+        end_point: SelectorDrivenNode,
+        button: int = 1,
+        steps: int = 10,
+    ):
         super(Drag, self).__init__(loc)
-        self.points = points
-
-        self.pattern: str | None = None
-        self.button: int = 1
-        self.steps: int = 10
+        self.start_point = start_point
+        self.end_point = end_point
+        self.button = button
+        self.steps = steps
 
     def ready(self):
-        if self.pattern is None:
-            return True
+        return self.start_point.ready() and self.end_point.ready()
 
-        f = renpy.test.testfocus.find_focus(self.pattern)
+    def start(self):
+        start_pos = self.start_point.get_position()
+        end_pos = self.end_point.get_position()
 
-        if f is not None:
-            return True
-        else:
-            return False
+        return (start_pos, end_pos, 0)  # (x, y, step)
 
     def execute(self, state, t):
         if renpy.display.interface.trans_pause:
             return state
 
-        if self.pattern:
-            f = renpy.test.testfocus.find_focus(self.pattern)
-            if f is None:
-                return state
+        (start_pos, end_pos, step) = state
+        x = int(start_pos[0] + (end_pos[0] - start_pos[0]) * step / self.steps)
+        y = int(start_pos[1] + (end_pos[1] - start_pos[1]) * step / self.steps)
 
-        else:
-            f = None
+        renpy.test.testmouse.move_mouse(x, y)
 
-        if state is True:
-            points = renpy.python.py_eval(self.points)
-            points = [renpy.test.testfocus.find_position(f, i) for i in points]
-
-            if len(points) < 2:
-                raise ValueError("A drag requires at least two points.")
-
-            # NOTE: Might be worth replacing with collections.deque if the number of points is large
-            interpoints: list[tuple[int, int]] = []
-
-            xa, ya = points[0]
-
-            interpoints.append((xa, ya))
-
-            for xb, yb in points[1:]:
-                for i in range(1, self.steps + 1):
-                    done = 1.0 * i / self.steps
-
-                    interpoints.append((
-                        int(xa + done * (xb - xa)),
-                        int(ya + done * (yb - ya)),
-                    ))
-
-                xa = xb
-                ya = yb
-
-            x, y = interpoints.pop(0)
-
-            renpy.test.testmouse.move_mouse(x, y)
+        if step == 0:
             renpy.test.testmouse.press_mouse(self.button)
 
-        else:
-            interpoints = state
-
-            x, y = interpoints.pop(0)
-            renpy.test.testmouse.move_mouse(x, y)
-
-        if not interpoints:
+        elif step >= self.steps:
             renpy.test.testmouse.release_mouse(self.button)
             next_node(self.next)
             return None
 
-        else:
-            return interpoints
+        return (start_pos, end_pos, step + 1)
 
 
 class Type(SelectorDrivenNode):

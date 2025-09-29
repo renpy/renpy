@@ -21,6 +21,30 @@ screen teleporting_button(x=0, y=0, remaining=20):
         else:
             action Hide("teleporting_button")
 
+testcase drag_and_drop_test:
+    run Show("drag_and_drop")
+    pause until screen drag_and_drop
+    drag id "peg" pos (0, 0) to id "hole" pos (0, 0)
+    assert id "success"
+    drag id "peg" pos (0.5, 0.5) to id "hole" pos (0, 0)
+    assert id "success"
+    drag id "peg" pos (0.9, 0.9) to id "hole" pos (0, 0)
+    assert id "success"
+    drag id "peg" pos (0, 0) to id "hole" pos (0.5, 0.5)
+    assert id "success"
+    drag id "peg" pos (0.5, 0.5) to pos (0.2, 0.5)
+    assert not id "success"
+    run Hide("drag_and_drop")
+
+testcase scroll_test:
+    run Show("scroll_screen")
+    pause until screen scroll_screen
+    scroll id "scroll_vp" amount 50
+    pause 1
+    click id "close_screen_button"
+    pause 1
+    assert not screen scroll_screen
+
 testcase skip:
     enabled False
 
