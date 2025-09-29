@@ -40,9 +40,7 @@ testcase scroll_test:
     run Show("scroll_screen")
     pause until screen scroll_screen
     scroll id "scroll_vp" amount 50
-    pause 1
     click id "close_screen_button"
-    pause 1
     assert not screen scroll_screen
 
 testcase skip:
