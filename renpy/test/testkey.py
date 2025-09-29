@@ -374,6 +374,16 @@ def queue_keysym(node: Node, name: str) -> None:
         renpy.exports.queue_event(name)
         return
 
+    elif "pad_" in name:
+        parts = name.split("_")
+
+        control = parts[-2]
+        state = parts[-1]
+        repeat = parts[0] == "repeat"
+
+        renpy.display.controller.post_event(control, state, repeat)
+        return
+
     down(node, name)
     up(node, name)
 
