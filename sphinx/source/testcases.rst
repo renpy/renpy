@@ -1,9 +1,10 @@
 ==================
-Integrated Testing
+Automated Testing
 ==================
 
-Ren'py allows creators to put tests in their games to make sure that an
-alteration to the code didn't break the game.
+Ren'Py allows creators to put automated tests in their games to make sure that
+alterations to the game don't break existing functionality. This is especially
+useful for large games, or for games that are frequently updated.
 
 The two main components of the testing system are the ``testcase`` and
 ``testsuite`` statements.
@@ -11,60 +12,300 @@ The two main components of the testing system are the ``testcase`` and
 The :func:`renpy.is_in_test` function is helpful to know whether a test is currently
 executing or not.
 
+.. _testcase-statement:
 
 Testcase Statement
 ==================
 
-The ``testcase`` statement creates a named test case. Each testcase contains a
-block of test statements (see below). Testcases are similar to Ren'py
+The ``testcase`` statement creates a named test case. Each case contains a
+block of test statements (see below). Test cases are similar to Ren'Py
 :ref:`labels <label-statement>`, with a few differences:
 
-- The Ren'py label statement takes Ren'py code, while the testcase statement
+- The Ren'Py label statement takes Ren'Py code, while the testcase statement
   takes test statements (listed on this page). They are mutually exclusive.
 - There is no testcase equivalent of the return statement.
-- There can be no test statement outside of a testcase block, while there can be
-  Ren'py code outside labels (in init blocks for example).
+- There can be no test statement outside of a test block, while there can be
+  Ren'Py code outside labels (in init blocks for example).
 
-.. var:: skip = False
+It takes the following properties:
 
-    Whether or not to skip the testcase. See :ref:`skipping-testcases`
-    for more information.
+.. var:: enabled
+
+    If this expression evaluates to ``False``, this test is skipped.
+    Defaults to ``True``.
+
+    This can conditionally disable tests, for example on platforms
+    where they are not supported. ::
+
+        testcase windows:
+            enabled renpy.windows
+            ...
+
+        testcase not_on_mobile:
+            enabled not renpy.mobile
+            ...
+
+    See :ref:`skipping-testcases` for more information.
+
+.. var:: only
+
+    If this expression evaluates to ``True``, only this test case
+    (and other tests with ``only True``) will be run. Defaults to ``False``.
+
+    See :ref:`skipping-testcases` for more information.
+
+.. var:: description
+
+    A string describing the test case. This is used in the test report.
 
 Testsuite Statement
 ===================
 
-The ``testsuite`` statement is a special variant of ``testcase`` that can be
-used to group test cases together. Test suites may be nested inside each other,
-and they can contain testcases, other testsuites, or both.
+The ``testsuite`` statement is used to group test cases together. Test suites
+can contain test cases, other test suites, and hooks (see below).
 
-The default testsuite is named ``all``, and it is automatically created
-by Ren'py. It contains all other top-level testcases in the game.
+The default test suite is named ``global``, and it is automatically created
+by Ren'Py if not specified by the user. It contains all other top-level test suites
+and test cases in the game.
+
+It takes the same properties as the :ref:`testcase statement <testcase-statement>`.
 
 Hooks
 -----
 The ``testsuite`` statement can contain the following hooks:
 
-.. describe:: before
+A block of test statements that is executed once, before running any tests
 
-    A block of test statements that is executed once, before the first
-    testcase in the suite.
+    .. describe:: setup
+    contained within the current suite.
 
-.. describe:: before_each
+A block of test statements that is executed repeatedly, running before each test suite
 
-    A block of test statements that is executed repeatedly, before each testcase
-    in the suite is run.
+    .. describe:: before testsuite
+    within the current suite.
 
-.. describe:: after_each
 
-    A block of test statements that is executed repeatedly, after each testcase
-    in the suite is run. The is run even if the testcase fails or raises an
+A block of test statements that is executed repeatedly, running before each test case
+
+    .. describe:: before testcase
+    within the current suite.
+
+A block of test statements that is executed repeatedly, running after each test case
+
+    .. describe:: after testcase
+    in the current suite. The is run even if the testcase fails or raises an
     exception.
 
-.. describe:: after
+A block of test statements that is executed repeatedly, running after each test suite
 
-    A block of test statements that is executed once, after all the testcases
-    in the suite are run. This is run even if the testcases fail or raise an
+    .. describe:: after testsuite
+    in the current suite. The is run even if the testsuite fails or raises an
     exception.
+
+A block of test statements that is executed once, after running all tests
+
+    .. describe:: teardown
+    contained within the current suite. This is run even if a test
+    fails or raises an exception.
+
+The ``before *`` and ``after *`` hooks take the following properties:
+
+.. var:: depth
+
+    An integer specifying how deep the hook should apply.
+
+    For testcases, defaults to ``-1``, meaning it applies to all nested test suites and test cases.
+
+    For testsuites, defaults to ``0``, meaning it applies only to test suites directly
+    contained within the current suite.
+
+    For more information, see :ref:`lifecycle-of-a-test-run`.
+
+.. _lifecycle-of-a-test-run:
+
+Lifecycle of a Test Run
+=======================
+
+This section describes the order in which testcases and testsuites are
+executed, and how the hooks are called. The following example illustrates this:
+
+.. csv-table::
+   :header: "Code", "Execution Order"
+   :widths: 50, 50
+
+   "::
+
+        testsuite global:
+            # Hooks
+            setup:
+                skip until main_menu
+
+            before testsuite:
+                if not screen main_menu:
+                    run MainMenu(confirm=False)
+                click ""Start""
+
+            before testcase:
+                $ print(""Starting a testcase."")
+
+            after testcase:
+                $ print(""Finished a testcase."")
+
+            after testsuite:
+                $ print(""Finished a testsuite."")
+
+            teardown
+                exit
+
+            # Subtests
+            testsuite basic:
+                testcase first_testcase:
+                    advance
+
+            testsuite test_choices:
+                # Hooks
+                setup:
+                    run Jump(""chapter1"")
+
+                before testcase:
+                    advance until menu choice
+
+                after testcase:
+                    $ print(""Finished a choice test."")
+
+                teardown
+                    $ print(""Finished all choice tests."")
+
+                # Subtests
+                testcase choice1:
+                    click ""First Choice""
+
+                testcase choice2(enabled=False):
+                    click ""Second Choice""
+
+                testcase choice3:
+                    click ""Third Choice""
+
+
+    ",".. container :: execution-block
+
+            .. container :: execution-entry
+
+                **global** :: setup
+
+            .. container :: execution-block2
+
+                .. container :: execution-entry
+
+                    **global** :: before testsuite
+
+                .. container :: execution-block2
+
+                    .. container :: execution-entry2
+
+                        **global** :: before testcase
+
+                    .. container :: execution-entry3
+
+                        **simple** :: first_testcase
+
+                    .. container :: execution-entry2
+
+                        **global** :: after testcase
+
+                .. container :: execution-entry
+
+                    **global** :: after testsuite
+
+            .. container :: execution-block2
+
+                .. container :: execution-entry
+
+                    **global** :: before testsuite
+
+                .. container :: execution-entry2
+
+                    **test_choices** :: setup
+
+                .. container :: execution-block2
+
+                    .. container :: execution-entry2
+
+                        **global** :: before testcase
+
+                    .. container :: execution-entry2
+
+                        **test_choices** :: before testcase
+
+                    .. container :: execution-entry3
+
+                        **test_choices** :: choice1
+
+                    .. container :: execution-entry2
+
+                        **test_choices** :: after testcase
+
+                    .. container :: execution-entry2
+
+                        **global** :: after testcase
+
+                .. container :: execution-block2
+
+                    .. container :: execution-entry2
+
+                        **global** :: before testcase
+
+                    .. container :: execution-entry2
+
+                        **test_choices** :: before testcase
+
+                    .. container :: execution-entry3
+
+                        **test_choices** :: choice3
+
+                    .. container :: execution-entry2
+
+                        **test_choices** :: after testcase
+
+                    .. container :: execution-entry2
+
+                        **global** :: after testcase
+
+                .. container :: execution-entry2
+
+                    **test_choices** :: teardown
+
+                .. container :: execution-entry
+
+                    **global** :: after testsuite
+
+            .. container :: execution-entry
+
+                **global** :: teardown
+    "
+
+Note that ``global :: before testcase`` and ``global :: after testcase`` are
+executed before and after each test case, even if the test case is inside a
+nested test suite.
+
+In order to limit the scope of a hook, set its ``depth`` property.
+Setting it to ``0`` will make the hook execute only for tests
+directly inside the test suite containing the hook.
+
+For example::
+
+    testsuite global:
+        before testcase:
+            depth 0
+            $ print("Starting a testcase.")
+
+On the other hand, the ``before testsuite`` and ``after testsuite`` hooks
+have a default ``depth`` of ``0``, meaning they will only execute for testsuites
+directly inside the testsuite containing the hook.
+
+To increase the scope of a hook to include nested testsuites and testcases,
+set its ``depth`` property to ``-1`` (for infinite depth) or to a positive
+integer (for a specific depth).
 
 .. note::
 
@@ -79,136 +320,6 @@ The ``testsuite`` statement can contain the following hooks:
             teardown
                 exit
 
-        testcase default:
-            click "Start"
-
-Lifecycle Of A Test Run
-=======================
-
-To understand how testcases and testsuites are executed, it is helpful to
-understand the lifecycle of a test. The following example illustrates this.
-
-.. csv-table::
-   :header: "Code", "Execution Order"
-   :widths: 50, 50
-
-   "::
-
-        testsuite global:
-            setup:
-                pause until main_menu
-
-            before testsuite:
-                if not screen main_menu:
-                    run MainMenu(confirm=False)
-                click ""Start""
-
-            testsuite basic:
-                testcase first_testcase:
-                    advance
-
-            testsuite test_choices:
-                setup:
-                    run Jump(""chapter1"")
-
-                before testcase:
-                    advance until menu choice
-
-                testcase choice1:
-                    click ""First Choice""
-
-                testcase choice2(enabled=False):
-                    click ""Second Choice""
-
-                testcase choice3:
-                    click ""Third Choice""
-
-                after testcase:
-                    $ print(""Finished a choice test."")
-
-                teardown
-                    $ print(""Finished all choice tests."")
-
-            after testsuite:
-                if not screen main_menu:
-                    run MainMenu(confirm=False)
-
-            teardown
-                exit
-
-    ",".. container :: execution-block
-
-            .. container :: execution-entry
-
-                **global** :: before
-
-            .. container :: execution-block2
-
-                .. container :: execution-entry
-
-                    **global** :: before testsuite
-
-                .. container :: execution-block2
-
-                    .. container :: execution-entry3
-
-                        **simple** :: first_testcase
-
-                .. container :: execution-entry
-
-                    **global** :: after testsuite
-
-            .. container :: execution-block2
-
-                .. container :: execution-entry
-
-                    **global** :: before testsuite
-
-                .. container :: execution-entry2
-
-                    **test_choices** :: before
-
-                .. container :: execution-block2
-
-                    .. container :: execution-entry2
-
-                        **test_choices** :: before testcase
-
-                    .. container :: execution-entry3
-
-                        **test_choices** :: choice1
-
-                    .. container :: execution-entry2
-
-                        **test_choices** :: after testcase
-
-                .. container :: execution-block2
-
-                    .. container :: execution-entry2
-
-                        **test_choices** :: before testcase
-
-                    .. container :: execution-entry3
-
-                        **test_choices** :: choice3
-
-                    .. container :: execution-entry2
-
-                        **test_choices** :: after testcase
-
-                .. container :: execution-entry2
-
-                    **test_choices** :: after
-
-                .. container :: execution-entry
-
-                    **global** :: after testsuite
-
-            .. container :: execution-entry
-
-                **global** :: after
-    "
-
 .. _skipping-testcases:
 
 Skipping Testcases
@@ -217,10 +328,10 @@ If a testcase is skipped, it will not be executed. In addition, the
 ``before testcase`` and ``after testcase`` hooks of the testsuite will not be executed
 for that testcase.
 
-If *all* tests are skipped in the testsuite, then the ``before`` and
-``after`` hooks of the testsuite will not be executed either. However, if
-at least one test is not skipped, the ``before`` and ``after`` hooks will
-run as usual.
+If *all* tests are skipped in a testsuite, then the ``setup`` and
+``teardown`` hooks will not be executed either. In addition, the
+``before testsuite`` and ``after testsuite`` hooks will not be executed from
+the parent testsuite(s).
 
 Exceptions And Failures
 -----------------------
@@ -228,7 +339,7 @@ If an error occurs during a test case:
 
 1. The test case will stop executing immediately
 2. The ``after testcase`` hook of the testsuite containing the test case will run
-3. If there are more test cases, they will be executed next (including the
+3. If there are more test cases, they will continue to be executed (including the
    ``before testcase`` hook)
 4. If no more test cases exist, the ``after`` hook of the testsuite will run
 
@@ -239,93 +350,160 @@ If an error occurs during a hook (eg. ``before testcase``):
    executing.
 3. If no parent suite exists, the game will end the test run.
 
+Test Launch Options
+===================
 
-.. _test-clauses:
+The test system accepts the following :doc:`command-line options <cli>`:
 
-Basic Actions
-=============
+.. option:: --ignore_enabled_flag
 
-Clauses are defined by two things: what it does when they are executed, and
-under what circumstances they are ready. They can be part of ``if``, ``assert``
-or ``until`` test statements, or they can simply be given on their own (see
-above).
+    If provided, all test cases and test suites will be executed, regardless
+    of their ``enabled`` property.
 
-.. for each one, say what makes it ready
+.. option:: --print_details
+
+    If provided, the test report will include details about each test case,
+    including its description and the time it took to execute.
+
+.. option:: --print_skipped
+
+    If provided, the test report will include information about skipped
+    test cases and test suites. Requires ``--print_details`` to be enabled as well.
+
+Test Reporting
+===================
+
+After a test run, a report is printed to the console, listing all test cases
+that were executed, skipped, failed, or raised an error.
+
+Below is an example of a test report after successfully testing "The Question":
+
+.. image :: testcases_the_question.png
+    :alt: Test report example
+    :class: screenshot
+
+
+Test Settings
+=================
+
+The following variables can be set to change the behavior of tests:
+
+.. var:: _test.maximum_framerate
+
+    A boolean specifying whether to use maximum framerate mode during tests.
+    This will unlock the framerate beyond your screens refresh rate if possible.
+    Defaults to ``True``.
+
+.. var :: _test.timeout
+
+    A float specifying the maximum number of seconds a test statement
+    should wait for a condition to be met. Defaults to ``10.0``.
+
+    This can be overridden on a per-statement basis by providing a ``timeout``
+    property to statements that support it (like ``assert`` and ``until``).
+
+.. var:: _test.force
+
+    A boolean specifying whether to force the test to proceed even if
+    ``renpy.config.suppress_underlay`` is ``True``. Defaults to ``False``.
+
+.. var:: _test.transition_timeout
+
+    A float specifying the maximum number of seconds to wait for a transition
+    to complete before skipping it and proceeding with the test.
+    Defaults to ``5.0``.
+
+.. var:: _test.focus_trials
+
+    An integer specifying how many times the test system should try to find
+    a valid spot to :ref:`move the mouse <test-move-statement>` when using a
+    selector without a position. Defaults to ``100``.
+
+.. var:: _test.ignore_enabled_flag
+
+    A boolean specifying whether to ignore the ``enabled`` flag of testcases
+    when executing tests. Defaults to ``False``.
+
+
+.. _test-statements:
+
+Test Statements
+===============
+
+Test statements are the building blocks of test cases. They can be broadly
+divided into three categories: command statements, condition/selector statements, and
+control statements.
+
+Basic Commands
+-------------
+
+.. _test-advance-statement:
 
 Advance
---------------
+^^^^^^^^^^
 
-Advances the game by one dialogue line. It is ready when the game can be
-advanced by a click, and fails otherwise. ::
+    Type: :dfn:`Command`
+
+    .. describe:: advance
+
+Advances the game by one dialogue line. ::
 
     advance
     advance until screen choice
 
-Exit
---------------
 
-.. TODO: Check if this is true
+Exit
+^^^^^^^^^^
+
+    Type: :dfn:`Command`
+
+    .. describe:: exit
 
 Quits the game without calling the confirmation screen.
-Does not save the game when quitting::
+Does not save the game when quitting. ::
 
     if eval need_to_confirm:
-        run Quit(confirm=True) # asks for confirmation, and autosaves
+        # Asks for confirmation, and autosaves if config.autosave_on_quit is True
+        run Quit(confirm=True)
 
     if eval persistent.quit_test_using_action:
-        run Quit(confirm=False) # does not ask, but still autosaves
+        # Does not ask, but still autosaves if config.autosave_on_quit is True
+        run Quit(confirm=False)
 
     exit # neither asks nor autosaves
 
-
 Pass
---------------
+^^^^^^^^^^
 
-Does not do anything. It's a no-op, allowing for empty testcases.
+    Type: :dfn:`Command`
 
-This clause is always ready. ::
+    .. describe:: pass
+
+Does not do anything. It's a no-op, allowing for empty testcases. ::
 
     testcase not_yet_implemented:
         pass
 
-
 Pause
----------------
+^^^^^^^^^^
+
+    Type: :dfn:`Command`
+
+    .. describe:: pause [time (float)]
 
 Pauses test execution for a given number of seconds. Similar to the
 :ref:`pause-statement`, but requires a value, or it can be specified without
-a time if it is followed by an `until` clause.
-
-This clause is always ready. ::
+a time if it is followed by an `until` clause. ::
 
     pause 5.0
     pause until screen inventory
 
-
-Python Blocks And Dollar-Lines
-------------------------------
-
-A :ref:`python block <python-statement>` or a :ref:`dollar-line` can be added
-within a testcase. Unlike in normal Ren'py code, the python blocks don't take
-the ``in substore`` parameter, but it does take the ``hide`` keyword. They
-(both) allow execution of arbitrary python code.
-
-Init code gets executed before the test occurs, so functions and classes defined
-in ``init python`` blocks can be called in test python blocks and in test
-dollar-lines. For example::
-
-    init python in test:
-        def afunction():
-            if renpy.is_in_test():
-                return "test"
-            return "not test"
-
-    testcase default:
-        $ print(test.afunction()) # ends up in the console
-
-
 Run
--------------
+^^^^^^^^^^
+
+    Type: :dfn:`Command`
+
+    .. describe:: run <action>
 
 Runs the provided :doc:`screen-language action <screen_actions>` (or list of
 actions).
@@ -336,106 +514,254 @@ sensitive. ::
     testcase chapter_3:
         run Jump("chapter_3")
 
+.. _test-skip-statement:
 
 Skip
----------------
+^^^^^^^^^^
 
-.. Update once the until condition is implemented
+    Type: :dfn:`Command`
 
-Enables skip mode, which allows the player to skip through the game
-until the next dialogue line. This clause is always ready. ::
+    .. describe:: skip [fast]
+
+Causes the game to begin skipping. If the game is in a menu context,
+then this returns to the game. Otherwise, it just enables skipping.
+
+If ``fast`` is provided, the game will skip directly to the next menu choice.
+
+::
 
     skip
+    skip fast
     skip until screen choice
 
 
+Mouse Commands
+----------------
+
+Click
+^^^^^^^^^^
+
+    Type: :dfn:`Command`
+
+    .. describe:: click [button (int)] [selector] [pos (x, y)]
+
+Executes a simulated click on the screen. It takes the following optional
+properties:
+
+- ``button`` specifies which button of the simulated mouse is to be clicked
+    with. It takes an integer and defaults to 1. 1 is a left-click, 2 is a
+    right-click, 3 is a middle-click, 4 and 5 are additional buttons found on
+    some mouses. Normally only 1 and 2 trigger any response from Ren'Py.
+
+If ``selector`` and/or ``pos`` are given, the virtual test mouse is moved according to
+the rules of the :ref:`move statement <test-move-statement>` before the click is sent.
+
+.. ``always`` is not documented because useless in the case of the click clause by itself
+
+Click behaves like a :ref:`pattern <test-text-selector>`\ -taking clause which would
+not be given a pattern: if no ``pos`` is provided, it will look for a neutral
+place where a click would not occur on a focusable element.
+
+.. give example for both
+
+.. note::
+
+    Use the :ref:`advance <test-advance-statement>` or :ref:`skip <test-skip-statement>`
+    statements if you want to advance the game's dialogue.
+    Clicking may result in unpredictable results, depending on where the mouse
+    is positioned and what is currently on the screen.
+
+Drag
+^^^^^^^^^^
+
+    Type: :dfn:`Command`
+
+    .. describe:: drag <[selector] [pos (x, y)]> to <[selector] [pos (x, y)]> [button (int)] [steps (int)]
+
+Simulates a drag action on the screen. It takes the following properties:
+
+- The first part (before the ``to``) specifies the starting point of the drag.
+  It takes an optional ``selector`` and/or ``pos`` property, which are
+  interpreted according to the rules of the :ref:`move statement <test-move-statement>`.
+- The second part (after the ``to``) specifies the ending point of the drag.
+  It also takes an optional ``selector`` and/or ``pos`` property, which are
+  interpreted according to the rules of the :ref:`move statement <test-move-statement>`.
+- ``button`` specifies which button of the simulated mouse is to be used
+  for the drag. It takes an integer and defaults to 1. 1 is a left-click, 2 is a
+  right-click, 3 is a middle-click, 4 and 5 are additional buttons found on
+  some mouses. Normally only 1 and 2 trigger any response from Ren'Py.
+- ``steps`` specifies how many intermediate steps the drag should take.
+  It takes an integer and defaults to `10`. More steps result in a smoother
+  drag, but also take more time.
+
+::
+
+    drag id "item_icon" to id "inventory_slot_3" button 1 steps 20
+    drag pos (100, 200) to pos (400, 500) button 1
+    drag id "item_icon" pos (0.5, 0.5) to pos (300, 400) steps 5
+    drag pos (50, 50) to id "inventory_slot_1"
+    drag pos (50, 50) to pos (150, 150)
+
+.. _test-move-statement:
+
+Move
+^^^^^^^^^^
+
+    Type: :dfn:`Command`
+
+    .. describe:: move [selector] [pos (x, y)]
+
+Moves the virtual test mouse to a given position on the screen.
+
+If a ``selector`` is given, and:
+
+- If ``pos`` is specified, the mouse is moved to that position relative to the selector.
+- If no ``pos`` is specified, the mouse attempts to find a pixel that would focus the
+  selector if clicked. This takes into account things like :propref:`focus_mask`.
+
+If no ``selector`` is given, and:
+
+- If ``pos`` is specified, the mouse is moved to that position relative to the screen.
+- If no ``pos`` is specified, an error is thrown.
+
+::
+
+    # Move to a random clickable point within `back_btn`
+    move id "back_btn"
+
+    # Move to the center of `back_btn`
+    move id "back_btn" pos (0.5, 0.5)
+
+    # Move to a point 20 pixels right and 10 pixels down from the top-left corner of `back_btn`
+    move id "back_btn" pos (20, 10)
+
+    # Move to the top right corner of the screen
+    move pos (1.0, 0.0)
+
+    # Move to a point 20 pixels right and 10 pixels down from the top-left corner of the screen
+    move pos (20, 10)
+
+Scroll
+^^^^^^^^^^
+
+    Type: :dfn:`Command`
+
+    .. describe:: scroll [amount (int)] [selector] [pos (x, y)]
+
+Simulates a scroll event. It takes the following optional properties:
+
+- ``amount`` specifies how many "notches" to scroll. It takes an integer
+  and defaults to ``1``. Positive values scroll down, negative values scroll up.
+- If ``selector`` and/or ``pos`` are given, the virtual test mouse is moved according to
+  the rules of the :ref:`move statement <test-move-statement>` before the scroll is sent.
+
+::
+
+    scroll id "inventory_scroll"
+    scroll amount 10 id "inventory_scroll" pos (0.5, 0.5)
+    scroll # scrolls down at the current mouse position
+
+.. note::
+
+    This only simulates the mousewheel event. It does not directly adjust
+    scrollable elements. To manipulate scrollable elements directly,
+    use the Scroll action from :doc:`screen_actions`. ::
+
+        run Scroll(id="inventory_scroll", amount="step", delay=1.0)
+
+Keyboard Commands
+----------------
+
+Keysym
+^^^^^^^^^^
+
+.. _test-keysym-statement:
+
+    Type: :dfn:`Command`
+
+    .. describe:: keysym <keysym> [selector] [pos (x, y)]
+
+Simulate a keysym event. This includes the keys of :doc:`config.keymap <keymap>`.
+
+If ``selector`` and/or ``pos`` are given, the virtual test mouse is moved according to
+the rules of the :ref:`move statement <test-move-statement>` before the keysym is sent.
+
+::
+
+    keysym "skip"
+    keysym "help"
+    keysym "ctrl_K_a"
+    keysym "K_BACKSPACE" repeat 30
+    keysym "pad_a_press"
+
+.. _test-type-statement:
+
+Type
+^^^^^^^^^^
+
+    Type: :dfn:`Command`
+
+    .. describe:: type <string> [selector] [pos (x, y)]
+
+Types the provided string as if it was typed on the keyboard.
+
+If ``selector`` and/or ``pos`` are given, the virtual test mouse is moved according to
+the rules of the :ref:`move statement <test-move-statement>` before the text is sent.
+
+::
+
+    type "Hello, World!"
+
 .. _test-conditions:
 
-Conditions
-===================
+Condition Statements
+--------------------
 
 Conditions are used to check whether a certain condition is true or not.
-They are not executed, but they are used in condition-taking test statements
+They are used in condition-taking test statements
 like ``if``, ``assert`` or ``until``.
 
 
 Boolean Values
-------------------
+^^^^^^^^^^^^^^^^
 
-Test can use the literal boolean values ``True`` and ``False``.
-These are always ready. :: ::
+Tests can use the literal boolean values ``True`` and ``False``.
+These are always ready. ::
 
     if True:
         click "Start"
 
     if False:
-        click "Start" # does not execute, since the condition is always false
-
+        click "Settings" # does not execute, since the condition is always false
 
 
 Boolean Operations
-------------------
+^^^^^^^^^^^^^^^^
 
-.. csv-table::
-   :header: "Command", "Used as condition", "Can be executed", "Takes selector"
-   :widths: 40, 20, 20, 20
+    Conditions support the ``not``, ``and`` and ``or`` operators.
+    That expression may or may not be enclosed in parentheses. ::
 
-    "advance", "no", "yes", "no"
-    "exit", "no", "yes", "no"
-    "pass", "no", "yes", "no"
-    "run", "no", "yes", "no"
-    "skip", "no", "yes", "no"
+        assert eval (renpy.is_in_test() and screen main_menu)
+        advance until "ask her right" or label "chapter_five"
+        click "Next" until not screen choice
 
-    "not", "yes", "no", "yes"
-    "and", "yes", "no", "yes"
-    "or", "yes", "no", "yes"
-    "eval", "yes", "no", "yes"
-    "True", "yes", "no", "no"
-    "False", "yes", "no", "no"
-    "label", "yes", "no", "no"
-    "screen", "yes", "no", "no"
-    "id", "yes", "no", "no"
-    "pattern", "yes", "no", "no"
-
-    "if", "no", "no", "yes"
-    "elif", "no", "no", "yes"
-    "assert", "no", "no", "yes"
-    "until", "no", "no", "yes"
-    "repeat", "no", "no", "yes"
-
-    "click", "no", "yes", "yes"
-    "move", "no", "yes", "yes"
-    "scroll", "no", "yes", "yes"
-    "drag", "no", "yes", "yes"
-    "keysym", "no", "yes", "yes"
-    "type", "no", "yes", "yes"
-
-Test clauses support the ``not``, ``and`` and ``or`` operators.
-That expression may or may not be enclosed in parentheses.
-
-The readiness of a boolean clause expression is the computation of the readiness
-of the clauses it contains:
-
-- ``(not a)`` is ready if and when ``a`` is not ready
-- ``(a and b)`` is ready when both ``a`` and ``b`` are ready
-- ``(a or b)`` is ready when either ``a`` or ``b`` is ready.
-
-.. _test-eval-clause:
+.. _test-eval-statement:
 
 Eval
------------
+^^^^^^^^^
 
-This clause is ready if and when the provided expression evaluates to a true
-value, in a boolean context.
+    Type: :dfn:`Condition`
 
-This clause exists only to be used inside condition-taking test
+    .. describe:: eval <expression>
+
+Evaluates the provided python expression. This exists only to be used inside condition-taking test
 statements like ``assert``, ``if`` or ``until``. ::
 
-    assert eval (renpy.is_in_test() and ("Ren'py" in renpy.version_string))
+    assert eval (renpy.is_in_test() and ("Ren'Py" in renpy.version_string))
 
 .. note::
 
-    Differences between a dollar-line and the eval clause :
+    Differences between a dollar-line and the eval clause:
 
     - Eval cannot be used on a line by itself, it must be used inside a
       statement like ``if`` or ``until``, while dollar-lines must be on
@@ -444,14 +770,15 @@ statements like ``assert``, ``if`` or ``until``. ::
       have a value - for example ``$ import math`` - while the eval clause
       requires a return value.
 
-
-..
-
 Label
----------------
+^^^^^^^^^
 
-The label clause is ready if and when the provided label has been passed between
-the current test statement and the one just before.
+    Type: :dfn:`Condition`
+
+    .. describe:: label <labelname>
+
+Checks if the provided Ren'Py label has been reached since the last time
+a test statement was executed.
 
 Considering the following example::
 
@@ -470,19 +797,14 @@ That also means the following example will not work::
     advance repeat 3
     assert label chapter_1 # fails
 
-It fails because no renpy label will have been reached between the
-``advance`` statement and the ``assert`` statement.
-
 .. warning::
 
-    This clause should not be confused with the Ren'py native
+    This test statement should not be confused with the Ren'Py native
     :ref:`label <label-statement>` statement it refers to, or with the unrelated
     :ref:`label element <sl-label>` used in screens.
 
-
-
 Selector Statements
-===================
+-------------------
 
 Selector statements are used to check if a certain element is on the screen,
 and to use that element for further actions.
@@ -490,175 +812,98 @@ and to use that element for further actions.
 Selectors are a special kind of condition.
 
 Displayable Selector
---------------------
+^^^^^^^^^^^^^^^^^^^^
+
+    Type: :dfn:`Condition, Selector`
 
 Check if a screen or element with given id is currently displayed.
 
 It takes one parameter, the name of the screen. It takes the following properties:
 
-.. TODO: Which ones need quotes, which ones don't?
+    .. TODO: Which ones need quotes, which ones don't?
 
-.. describe:: screen
+    .. describe:: screen <name>
 
-    The name of the screen to check.
+        The name of the screen to check.
 
-.. describe:: id
+    .. describe:: id "<name>"
 
-    The id of the element to check.
+        The id of the element to check.
 
-.. describe:: layer
+    .. describe:: layer "<name>"
 
-    The layer on which the screen is displayed. If not given, the layer is
-    automatically determined by the screen name.
+        The layer on which the screen is displayed. If not given, the layer is
+        automatically determined by the screen name.
 
 ::
 
     if screen main_menu:
         click "Start"
 
-    advance until screen choice
+    advance until id "inventory_viewport" layer "overlay"
 
     click "Close" until not id "close_button"
-
 
 
 .. _test-text-selector:
 
 Text Selector
--------------
+^^^^^^^^^^^^^^^^^^^^
 
-The ``text`` selector takes a string (except in the case of the string
-expression clause, where it is the string itself) which resolves to a target
-found on the screen, based on the shortest match among the alt text of focusable
-screen elements (typically, buttons). The search is case-insensitive.
+    Type: :dfn:`Condition, Selector`
 
-If no text is given, the virtual test mouse is positioned to the last
-previous location where a click happened, or to the specified position, if any.
-If that position lies on a focusable element, a random position in the screen
-which does not overlap a focusable element is chosen instead.
+    .. describe:: "<text>"
 
-If text is given, the mouse is positioned to the last previous location
-where a click happened, or to the specified position, if any. If that position
-does not lie inside the targeted element, a random position within it is chosen
-instead. To that end, things like :propref:`focus_mask` are taken into account.
+The ``text`` selector takes a string which resolves to a target
+found on the screen. The search is performed by going through all focusable
+elements on the screen (which are typically buttons and the main textbox),
+and looking through their :propref:`alt` text.
 
-If text is given and if it does not resolve to a target at the time when
-the clause using it executes, an exception is raised (terminating the test). To
-test whether a given text resolves to a target at a given time, the readiness
-condition of a string expression clause can be evaluated inside an if statement::
 
-    if "ask her right": # if there is a focusable element containing that text on screen
-        # add a clause using that text
+This search is case-insensitive and looks for the shortest match.
+For example, if the string ``"log"`` is given, and the screen contains
+the texts ``"CATALOG"`` and ``"illogical"``, the target
+will be the ``"CATALOG"`` text.
 
 
 
+::
 
-Selector-Driven Actions
-=======================
+    # This may be in a button
+    skip until "Start Game"
 
-Action statements are used to perform actions in the game, such as clicking
-buttons, pressing buttons, or scrolling menus.
+    # This may be in the main textbox
+    advance until "Hey, that's not fair!"
 
-Click
----------------
-
-Executes a simulated click on the screen. It takes the following optional
-properties:
-
-- ``button`` specifies which button of the simulated mouse is to be clicked
-  with. It takes an integer and defaults to 1. 1 is a left-click, 2 is a
-  right-click, 3 is a middle-click, 4 and 5 are additional buttons found on
-  some mouses. Normally only 1 and 2 trigger any response from Ren'py.
-- ``pos`` specifies where to click, as a pair of x/y coordinates. Coordinates
-  are taken relative to the screen. Floats between 0.0 and 1.0 are supported as
-  a fraction of the screen size in either dimension. ``absolute`` and other
-  means of expressing positions are not supported, since you can't move the
-  mouse to a subpixel-precise position.
-
-.. ``always`` is not documented because useless in the case of the click clause by itself
-
-Click behaves like a :ref:`pattern <test-text-selector>`\ -taking clause which would
-not be given a pattern: if no ``pos`` is provided, it will look for a neutral
-place where a click would not occur on a focusable element.
-
-.. give example for both
-
-This clause is always ready.
-
-Drag
---------------
-
-..
-    simulate the mouse dragging something from one place to another
-    by maintaining click blabla
-    takes an iterable of points to follow as an itinerary
-    each point must be given as a pair of x/y coordinates, or None
-    each occurrence of None will be replaced with a coordinate within the focused area of the screen
-    (the position of the virtual test mouse if already inside it, or a random position within if not)
-    needs to be given at least two points
-    ready if the thing it has been told to type in is found, or if no target has been given
-    show example of ((None, 10), (None, 100)) being an only-vertical movement downwards
-
-
-Keysym
---------------
-
-A keysym is a string that represents a key on the keyboard. It can be used
-to simulate a key press in the game. The keysym can be a single key, such
-TODO
-
-Move
---------------
-
-..
-    `move (position) [pattern (string)]`
-    moves the virtual test mouse to the provided position, within the area targeted by the pattern
-    or, if none is given, within the whole screen
-
-..
-    It is ready if a pattern is not provided,
-    or if one is provided and a suitable target is found on the screen.
-    For the clauses taking the ``always`` property, that property overrides the readiness of the clause.
-
-
-Scroll
-----------------
-
-..
-    takes a string giving it a pattern
-    ready when the target (pattern) is found
-    If the target is a bar, scrolls it down a page. If already at the bottom, returns it to the top.
-
-Type
---------------
-
-.. simulate a key-pressing or the typing of text
-
-..
-    It is ready if a pattern is not provided,
-    or if one is provided and a suitable target is found on the screen.
-    For the clauses taking the ``always`` property, that property overrides the readiness of the clause.
-
-..
-    warning disambiguation this has nothing to do with the python builtin
-
-
+    # Case-insensitive search
+    assert "AsK HeR RighT AwaY"
 
 
 Control Statements
-==================
+------------------
 
 These statements control the flow of the test execution.
 
 Assert
-----------------
+^^^^^^^^^^
 
-This statement takes a :ref:`clause <test-clauses>` and raises a
-RenpyTestAssertionError if the clause is not ready at the time when
-the assert statement executes. ::
+    Type: :dfn:`Control`
+
+    .. describe:: assert <condition> [timeout (float)]
+
+This statement takes a condition and raise a
+RenpyTestAssertionError if the condition is not met at the time when
+the assert statement executes.
+
+If a ``timeout`` is given, the statement will wait up to that many seconds
+for the condition to be met. If the condition is not met within that time,
+the assertion fails.
+
+::
 
     assert screen main_menu
     assert eval some_function(args)
+    assert id "start_button" timeout 5.0
 
 .. seealso::
 
@@ -668,21 +913,19 @@ the assert statement executes. ::
 
 
 If
-------------
+^^^^^^^^^
 
-This statement, like a python ``if`` statement, takes a block.
+    Type: :dfn:`Control`
 
-Unlike the Ren'py or python versions however, it only takes a
-:ref:`test clause <test-clauses>`, instead of a general python expression.
-The provided clause being ready is the actual condition for the block to execute
-or not.
+    .. describe:: if <condition>
+
+This statement executes a block of test statements if and when the provided
+condition is met.
 
 Example::
 
     if label "chapter_five":
         exit
-
-A normal python/renpy ``if`` can be replicated using the :ref:`test-eval-clause`. ::
 
     if eval (persistent.should_advance and i_should_advance["now"]):
         advance
@@ -699,31 +942,70 @@ additional conditions to the ``if`` statement. ::
 
 
 Repeat
-----------------
+^^^^^^^^^
 
-Repeats a statement for a given number of times. It consists a
-:ref:`clause <test-clauses>` and a number of repetitions,
-separated by the word ``repeat``. ::
+    Type: :dfn:`Control`
+
+    .. describe:: <command> repeat <number>
+
+Repeats a statement for a given number of times. It consists of an
+Command statement on the left-hand side and a number of repetitions
+on the right-hand side, separated by the word ``repeat``. ::
 
     click "+" repeat 3
     keysym "K_BACKSPACE" repeat 10
     advance repeat 3
 
-
-
 Until
----------------
+^^^^^^^^^
 
-Repeats a statement until a condition is met. It consists of a
-:ref:`clause <test-clauses>` and a condition,
-separated by the word ``until``.
+    Type: :dfn:`Control`
 
-If and when the clause on the right is ready, control is
-passed to the next statement. Otherwise, the left clause is executed until the
-right clause is ready.
+    .. describe:: <command> until <condition> [timeout (float or None)]
 
-This is basically an inline while loop. ::
+Repeats a statement until a condition is met. It consists of an
+Command statement on the left-hand side and a condition on the right-hand
+side, separated by the word ``until``.
+
+If and when the condition on the right is met, control is
+passed to the next statement. Otherwise, the left-hand statement
+is executed repeatedly until the condition is ready.
+
+If a ``timeout`` is given, the statement will wait up to that many seconds
+for the condition to be met. If the condition is not met within that time,
+a RenpyTestTimeoutError is raised.
+
+If the timeout is ``None``, the statement will wait indefinitely
+for the condition to be met.
+
+This timeout temporarily overrides the global ``_test.timeout`` setting.
+
+::
 
     advance until screen choice
-    "ask her right away"
-    advance until "It's an interactive book."
+    click "Next"
+    advance until label "chapter_5"
+
+    skip until screen inventory timeout 20.0
+
+
+Python Blocks And Dollar-Lines
+------------------------------
+
+A :ref:`python block <python-statement>` or a :ref:`dollar-line` can be added
+within a testcase. Unlike in normal Ren'Py code, the python blocks don't take
+the ``in substore`` parameter, but it does take the ``hide`` keyword. They
+(both) allow execution of arbitrary python code.
+
+Init code gets executed before the test occurs, so functions and classes defined
+in ``init python`` blocks can be called in test python blocks and in test
+dollar-lines. For example::
+
+    init python in test:
+        def afunction():
+            if renpy.is_in_test():
+                return "test"
+            return "not test"
+
+    testcase default:
+        $ print(test.afunction()) # ends up in the console
