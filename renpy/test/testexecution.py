@@ -71,7 +71,12 @@ def execute() -> None:
     if renpy.display.interface.suppress_underlay and (not _test.force):
         return
 
-    renpy.exports.maximum_framerate(10.0 if _test.maximum_framerate else None)
+    if _test.maximum_framerate:
+        renpy.exports.maximum_framerate(10.0)
+        renpy.config.gl_vsync = False
+    else:
+        renpy.exports.maximum_framerate(None)
+        renpy.config.gl_vsync = True
 
     # Make sure there are no test events in the event queue.
     for e in pygame.event.copy_event_queue():  # type: ignore
