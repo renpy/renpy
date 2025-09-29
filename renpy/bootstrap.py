@@ -205,6 +205,19 @@ def excepthook(type, value, traceback):
     te.format(renpy.error.MaybeColoredExceptionPrintContext(sys.stderr))
 
 
+def relaunch():
+    """
+    Call this to launch a new copy of the same game.
+    """
+
+    if hasattr(sys, "renpy_executable"):
+        subprocess.Popen([sys.renpy_executable] + sys.argv[1:])  # type: ignore
+    else:
+        subprocess.Popen([sys.executable] + sys.argv)
+
+
+
+
 def bootstrap(renpy_base):
     global renpy
 
@@ -217,6 +230,15 @@ def bootstrap(renpy_base):
 
     if not isinstance(renpy_base, str):
         renpy_base = str(renpy_base, FSENCODING)
+
+    renpy.config.renpy_base = renpy_base
+
+    # Handle any file deletions or renamed that were deferred from a previous update.
+
+    import renpy.update.deferred
+    if renpy.update.deferred.init() and renpy.windows:
+        relaunch()
+        sys.exit(0)
 
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
@@ -367,7 +389,6 @@ def bootstrap(renpy_base):
                     sys.path.insert(0, basedir)
 
                 renpy.game.args = args
-                renpy.config.renpy_base = renpy_base
                 renpy.config.basedir = basedir
                 renpy.config.gamedir = gamedir
                 renpy.config.args = []  # type: ignore
@@ -391,10 +412,7 @@ def bootstrap(renpy_base):
                 exit_status = e.status
 
                 if e.relaunch:
-                    if hasattr(sys, "renpy_executable"):
-                        subprocess.Popen([sys.renpy_executable] + sys.argv[1:])  # type: ignore
-                    else:
-                        subprocess.Popen([sys.executable] + sys.argv)
+                    relaunch()
 
             except renpy.game.ParseErrorException:
                 pass
