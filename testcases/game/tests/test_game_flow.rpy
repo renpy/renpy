@@ -34,24 +34,24 @@ testcase menus_and_branching:
     $ _test.transition_timeout = 0.00
 
     run Start("branching")
-    advance until screen choice
+    advance until screen "choice"
     click "Terminate"
-    advance until screen main_menu
+    advance until screen "main_menu"
 
     run Start("branching")
-    advance until screen choice
+    advance until screen "choice"
     click "Continue"
     click "Option 1"
     click "Option 1.1"
-    advance until screen main_menu
+    advance until screen "main_menu"
 
     run Start("branching")
-    advance until screen choice
+    advance until screen "choice"
     click "Continue"
     click "Option 1"
     click "Option 1.2"
     click "Option 1.2.1"
-    advance until screen main_menu
+    advance until screen "main_menu"
 
 
 ################################
@@ -80,7 +80,7 @@ label .variable_test2:
 testcase menus_and_branching_variables:
     run Start("branching.variable_test")
 
-    pause until screen choice
+    pause until screen "choice"
     assert not "Decrement"
     assert not "Reset"
     assert not "Done"

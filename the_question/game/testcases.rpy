@@ -3,7 +3,7 @@ testsuite global:
         $ _test.transition_timeout = 0.05
         $ _test.timeout = 2.0
 
-        if not screen main_menu:
+        if not screen "main_menu":
             run MainMenu(confirm=False)
 
 
@@ -12,9 +12,9 @@ testsuite global:
 
 testcase bad_end:
     click "start"
-    advance until screen choice
+    advance until screen "choice"
     click "ask her later"
-    advance until screen main_menu
+    advance until screen "main_menu"
 
 testcase good_end:
     click "start"
@@ -24,7 +24,7 @@ testcase good_end:
     assert not "video game" ## Last condition fails since it's "videogame" in script
     assert "videogame"
     click "an interactive book"
-    advance until screen main_menu
+    advance until screen "main_menu"
 
 testcase history_screen_from_quick_menu:
     click "Start"
@@ -39,4 +39,4 @@ testcase history_screen_from_quick_menu:
     pause 0.5
     keysym "game_menu"
 
-    assert not screen history
+    assert not screen "history"

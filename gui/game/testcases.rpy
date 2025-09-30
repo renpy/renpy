@@ -48,7 +48,7 @@
     click "In testcase code."
 
     # menu_1
-    advance until screen choice
+    advance until screen "choice"
     click "Choice A"
 
 
