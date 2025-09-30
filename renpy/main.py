@@ -468,7 +468,7 @@ def main():
         # Initialize persistent variables.
         renpy.store.persistent = game.persistent  # type: ignore
         renpy.store._preferences = game.preferences  # type: ignore
-        renpy.store._test = renpy.test.testast._test  # type: ignore
+        renpy.store._test = renpy.test.testsettings._test  # type: ignore
 
         if renpy.parser.report_parse_errors():
             raise renpy.game.ParseErrorException()

@@ -335,6 +335,7 @@ from renpy.exports.contextexports import (
     get_skipping,
     get_statement_name,
     invoke_in_new_context,
+    is_in_test,
     is_init_phase,
     is_skipping,
     jump_out_of_context,

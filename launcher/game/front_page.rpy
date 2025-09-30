@@ -208,6 +208,7 @@ screen front_page_project:
 
                 textbutton _("Navigate Script") action Jump("navigation")
                 textbutton _("Check Script (Lint)") action Call("lint")
+                textbutton _("Launch tests") action Jump("launch_tests")
 
                 if project.current.exists("game/gui.rpy"):
                     textbutton _("Change/Update GUI") action Jump("change_gui")
@@ -301,5 +302,13 @@ label force_recompile:
     python hide:
         interface.processing(_("Recompiling all rpy files into rpyc files..."))
         project.current.launch([ 'compile' ], wait=True)
+
+    jump front_page
+
+label launch_tests:
+
+    python hide:
+        interface.processing(_("Launching tests..."))
+        project.current.launch([ 'test' ], wait=True)
 
     jump front_page

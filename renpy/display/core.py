@@ -2929,6 +2929,7 @@ class Interface:
                             in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION]
                         ):
                             x, y = renpy.display.draw.get_mouse_pos()
+                            x, y = renpy.test.testmouse.get_mouse_pos(x, y)
                             ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
 
                             if self.ignore_touch:

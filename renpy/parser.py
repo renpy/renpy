@@ -1220,22 +1220,18 @@ def screen_statement(l, loc):
 
 @statement("testcase")
 def testcase_statement(l, loc):
-    name = l.require(l.name)
-    l.require(":")
-    l.expect_eol()
-    l.expect_block("testcase statement")
+    test = renpy.test.testparser.testcase_statement(l, loc)
 
-    ll = l.subblock_lexer()
-    ll.set_global_label(name)
+    rv = renpy.ast.Testcase(loc, test)
 
-    test = renpy.test.testparser.parse_block(ll, loc)
+    return rv
 
-    l.advance()
 
-    rv = ast.Testcase(loc, name, test)
+@statement("testsuite")
+def testsuite_statement(l, loc):
+    test = renpy.test.testparser.testsuite_statement(l, loc)
 
-    if not l.init:
-        rv = ast.Init(loc, [rv], 500 + l.init_offset)
+    rv = renpy.ast.Testcase(loc, test)
 
     return rv
 
