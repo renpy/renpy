@@ -73,10 +73,8 @@ def execute() -> None:
 
     if _test.maximum_framerate:
         renpy.exports.maximum_framerate(10.0)
-        renpy.config.gl_vsync = False
     else:
         renpy.exports.maximum_framerate(None)
-        renpy.config.gl_vsync = True
 
     # Make sure there are no test events in the event queue.
     for e in pygame.event.copy_event_queue():  # type: ignore
@@ -825,6 +823,9 @@ def test_command() -> bool:
 
     testreporter.reporter.add_reporter(testreporter.ConsoleReporter())
     initialize(args.testcase)
+
+    # Disable vsync, to speed up testing.
+    renpy.config.gl_vsync = False
 
     return True
 
