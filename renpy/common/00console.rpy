@@ -756,7 +756,10 @@ init -1500 python in _console:
                     return
 
                 if error is not None:
-                    he.result = error
+                    error_lines = error.split("\n")
+                    error_lines = [ l for l in error_lines if not l or l.strip(" ~^") ] # remove ^/~ only lines.
+
+                    he.result = "\n".join(error_lines).replace("{", "{{")
                     he.update_lines()
                     he.is_error = True
 
