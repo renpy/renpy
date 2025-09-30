@@ -25,7 +25,7 @@ import renpy
 import renpy.pygame as pygame
 
 from renpy.error import FrameSummary
-from renpy.test.testast import Node, Block, TestSuite, TestCase, TestHook
+from renpy.test.testast import Node, TestSuite, TestCase, TestHook, Block, Exit
 from renpy.test.types import NodeState, NodeLocation, RenpyTestTimeoutError, HookType
 import renpy.test.testreporter as testreporter
 from renpy.test.testsettings import _test
@@ -419,7 +419,16 @@ class NodeExecutor:
             self.node_has_started = True
 
         elapsed = now - self.start
-        self.node_state = self.node.execute(self.node_state, elapsed)
+        try:
+            self.node_state = self.node.execute(self.node_state, elapsed)
+        except renpy.game.QuitException:
+            if isinstance(node_executor.node, Exit):
+                # Handle Exit nodes gracefully, and run any callbacks.
+                self.node_state = None
+                self.next_node = None
+                self.move_to_next_node_if_possible()
+                raise
+
         self.move_to_next_node_if_possible()
 
         self.check_for_timeout(now)
