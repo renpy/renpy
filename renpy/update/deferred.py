@@ -47,12 +47,17 @@ DEFERRED_UPDATE_FILE: str
 # A directory containing files to be deleted on next startup.
 DELETED_DIRECTORY: str
 
+# True if this is the first delete operation to need to be deferred.
+first_deferred_delete = False
+
 
 def delete(fn: str):
     """
     Deletes the file `fn`. If deletion fails, renames the file into the
     deleted directory, to be deleted on next startup.
     """
+
+    global first_deferred_delete
 
     if not os.path.exists(fn):
         return
@@ -61,13 +66,27 @@ def delete(fn: str):
         os.unlink(fn)
     except Exception:
 
-        try:
-            if not os.path.exists(DELETED_DIRECTORY):
-                os.makedirs(DELETED_DIRECTORY, exist_ok=True)
-            os.rename(fn, os.path.join(DELETED_DIRECTORY, os.path.basename(fn)))
+        if first_deferred_delete:
+            attempts = 5
+            delay = 1
+            first_deferred_delete = False
+        else:
+            attempts = 1
+            delay = 0
 
-        except Exception:
-            pass
+        for i in range(attempts):
+
+            try:
+                if not os.path.exists(DELETED_DIRECTORY):
+                    os.makedirs(DELETED_DIRECTORY, exist_ok=True)
+                os.rename(fn, os.path.join(DELETED_DIRECTORY, os.path.basename(fn)))
+
+                return
+
+            except Exception:
+                pass
+
+            time.sleep(delay)
 
 
 def process_deferred_line(l):
@@ -109,6 +128,9 @@ def process_deferred():
     Returns True if a change was made, False otherwise.
     """
 
+    global first_deferred_delete
+    first_deferred_delete = True
+
 
     DEFERRED_UPDATE_LOG = os.path.join(renpy.config.renpy_base, "update", "log.txt")
 
@@ -133,7 +155,9 @@ def process_deferred():
             log.write(l)
 
             try:
-                rv = rv or process_deferred_line(l)
+                if process_deferred_line(l):
+                    rv = True
+
             except Exception:
                 traceback.print_exc(file=log)
 
