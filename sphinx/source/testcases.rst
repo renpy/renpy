@@ -74,37 +74,36 @@ Hooks
 -----
 The ``testsuite`` statement can contain the following hooks:
 
-A block of test statements that is executed once, before running any tests
+.. describe:: setup
 
-    .. describe:: setup
+    A block of test statements that is executed once, before running any tests
     contained within the current suite.
 
-A block of test statements that is executed repeatedly, running before each test suite
+.. describe:: before testsuite
 
-    .. describe:: before testsuite
+    A block of test statements that is executed repeatedly, running before each test suite
     within the current suite.
 
+.. describe:: before testcase
 
-A block of test statements that is executed repeatedly, running before each test case
-
-    .. describe:: before testcase
+    A block of test statements that is executed repeatedly, running before each test case
     within the current suite.
 
-A block of test statements that is executed repeatedly, running after each test case
+.. describe:: after testcase
 
-    .. describe:: after testcase
+    A block of test statements that is executed repeatedly, running after each test case
     in the current suite. The is run even if the testcase fails or raises an
     exception.
 
-A block of test statements that is executed repeatedly, running after each test suite
+.. describe:: after testsuite
 
-    .. describe:: after testsuite
+    A block of test statements that is executed repeatedly, running after each test suite
     in the current suite. The is run even if the testsuite fails or raises an
     exception.
 
-A block of test statements that is executed once, after running all tests
+.. describe:: teardown
 
-    .. describe:: teardown
+    A block of test statements that is executed once, after running all tests
     contained within the current suite. This is run even if a test
     fails or raises an exception.
 
@@ -419,10 +418,7 @@ The following variables can be set to change the behavior of tests:
     a valid spot to :ref:`move the mouse <test-move-statement>` when using a
     selector without a position. Defaults to ``100``.
 
-.. var:: _test.ignore_enabled_flag
 
-    A boolean specifying whether to ignore the ``enabled`` flag of testcases
-    when executing tests. Defaults to ``False``.
 
 
 .. _test-statements:

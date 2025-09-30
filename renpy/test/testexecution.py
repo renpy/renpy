@@ -804,7 +804,7 @@ def test_command() -> bool:
     ap = renpy.arguments.ArgumentParser(description="Runs a testcase.")
     ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?", default=global_testsuite_name)
     ap.add_argument(
-        "--no-skip",
+        "--ignore_enabled_flag",
         action="store_true",
         dest="ignore_enabled_flag",
         default=False,
