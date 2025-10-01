@@ -21,6 +21,15 @@ screen teleporting_button(x=0, y=0, remaining=20):
         else:
             action Hide("teleporting_button")
 
+testcase screenshot:
+    only True
+    screenshot "main_menu.png"
+    run Start()
+    advance
+    # click "Text"
+    # pause 0.1
+    screenshot "main_menu.png" #crop (0, 0, 400, 300)
+
 testcase drag_and_drop_test:
     run Show("drag_and_drop")
     pause until screen "drag_and_drop"

@@ -544,6 +544,27 @@ def assert_statement(l: Lexer, loc: NodeLocation) -> testast.Assert:
     return testast.Assert(loc, condition, timeout)
 
 
+@test_statement("screenshot")
+def screenshot_statement(l: Lexer, loc: NodeLocation) -> testast.Screenshot:
+    l.expect_noblock("screenshot statement")
+
+    name = l.require(l.string)
+    rv = testast.Screenshot(loc, name)
+
+    while True:
+        if l.keyword("max_pixel_difference"):
+            rv.max_pixel_difference = renpy.python.py_eval(l.require(l.float))
+        elif l.keyword("crop"):
+            rv.crop = renpy.python.py_eval(l.require(l.simple_expression))
+        else:
+            break
+
+    l.expect_eol()
+    l.advance()
+
+    return rv
+
+
 @test_statement("python")
 def python_statement(l: Lexer, loc: NodeLocation) -> testast.Python:
     hide = l.keyword("hide")

@@ -359,6 +359,11 @@ The test system accepts the following :doc:`command-line options <cli>`:
     If provided, all test cases and test suites will be executed, regardless
     of their ``enabled`` property.
 
+.. option:: --overwrite_screenshots
+
+    If provided, existing screenshots will be overwritten when a
+    :ref:`screenshot statement <test-screenshot-statement>` is executed.
+
 .. option:: --print_details
 
     If provided, the test report will include details about each test case,
@@ -418,7 +423,10 @@ The following variables can be set to change the behavior of tests:
     a valid spot to :ref:`move the mouse <test-move-statement>` when using a
     selector without a position. Defaults to ``100``.
 
+.. var:: _test.screenshot_directory
 
+    A string specifying the directory to store screenshots in.
+    Defaults to ``tests/screenshots``.
 
 
 .. _test-statements:
@@ -951,6 +959,44 @@ on the right-hand side, separated by the word ``repeat``. ::
     click "+" repeat 3
     keysym "K_BACKSPACE" repeat 10
     advance repeat 3
+
+.. _test-screenshot-statement:
+
+Screenshot
+^^^^^^^^^^
+
+    Type: :dfn:`Command`
+
+    .. describe:: screenshot <path> [max_pixel_difference (int or float)] [crop (x1, y1, x2, y2)]
+
+Takes a screenshot of the current screen and saves it to the provided path.
+
+- ``path`` specifies the path (relative to ``_test.screenshot_directory``)
+  where the screenshot will be saved. It may include a file extension.
+  Only ``.png`` is supported.
+- ``max_pixel_difference`` specifies how many pixels may differ between
+  the taken screenshot and an existing screenshot for the test to pass.
+  Integer values specify the number of pixels, while float values
+  specify a percentage of the total number of pixels. Defaults to ``0``.
+- ``crop`` specifies a rectangle to crop the screenshot to, given as
+  ``(x1, y1, x2, y2)``. Coordinates must be given as integers.
+
+If the project is in a git repository, the hash of the current commit is
+automatically appended to the filename as ``@{hash}.png``. This allows
+the developer to track changes to screenshots over time.
+
+If the file already exists, the current screenshot is compared to the existing
+file. If the files differ by more than ``max_pixel_difference`` pixels, a
+RenpyTestScreenshotError is raised.
+
+To overwrite an existing screenshot, either delete the file or run the test with
+the ``--overwrite_screenshots`` command-line option.
+
+::
+
+    screenshot "screens/main_menu.png"
+    screenshot "screens/inventory" max_pixel_difference 0.01
+    screenshot "button.png" crop (10, 10, 100, 50)
 
 Until
 ^^^^^^^^^

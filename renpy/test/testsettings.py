@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from dataclasses import dataclass
+import subprocess
 
 
 @dataclass
@@ -39,14 +40,32 @@ class TestSettings:
     focus_trials: int = 100
     """How many times should we try to find a good spot to place the mouse?"""
 
+    screenshot_directory: str = "tests/screenshots"
+    """The directory to store screenshots in."""
+
     ignore_enabled_flag: bool = False
     """Should we ignore the enabled flag when executing test scripts?"""
+
+    overwrite_screenshots: bool = False
+    """Should we overwrite existing screenshots when a screenshot statement is executed?"""
 
     print_details: bool = False
     """Should we print details about the test cases?"""
 
     print_skipped: bool = False
     """Should we print skipped test cases?"""
+
+    git_revision: str = ""
+    """The git revision of the current source tree, if available."""
+
+    def __post_init__(self) -> None:
+        if not self.git_revision:
+            try:
+                self.git_revision = subprocess.check_output(
+                    ["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL, text=True
+                ).strip()
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                pass
 
 
 _test = TestSettings()

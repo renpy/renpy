@@ -20,13 +20,23 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from math import isnan
+import os
+import glob
 
 import renpy
 from renpy.display.focus import Focus
 from renpy.display.displayable import Displayable
 from renpy.test.testmouse import click_mouse, move_mouse, scroll_mouse
 from renpy.test.testsettings import _test
-from renpy.test.types import NodeState, NodeLocation, Position, RenpyTestException, RenpyTestTimeoutError, HookType
+from renpy.test.types import (
+    HookType,
+    NodeLocation,
+    NodeState,
+    Position,
+    RenpyTestException,
+    RenpyTestScreenshotError,
+    RenpyTestTimeoutError,
+)
 
 
 class SelectorException(RenpyTestException):
@@ -1189,6 +1199,137 @@ class Assert(Node):
         renpy.test.testreporter.reporter.log_assert(self)
         next_node(self.next)
         return None
+
+
+class Screenshot(Node):
+    __slots__ = ("filename", "max_pixel_difference", "crop")
+
+    def __init__(
+        self,
+        loc: NodeLocation,
+        filename: str,
+        max_pixel_difference: int | float = 0,
+        crop: tuple[int, int, int, int] | None = None,
+        scale: tuple[int, int] | None = None,
+    ):
+        Node.__init__(self, loc)
+        self.max_pixel_difference = max_pixel_difference
+        self.crop = crop
+
+        filename = filename.replace("\\", "/")
+        filename = filename.lstrip("/")
+        filename = os.path.join(_test.screenshot_directory, filename)
+        self.filename = os.path.normpath(filename)
+
+        base_filename, ext = os.path.splitext(self.filename)
+        if ext.lower() != ".png":
+            ext = ".png"
+            self.filename = base_filename + ext
+
+    def execute(self, state, t):
+        img: renpy.pygame.Surface | None = None
+        old_img: renpy.pygame.Surface | None = None
+        diff: renpy.pygame.Surface | None = None
+
+        try:
+            img = renpy.display.draw.screenshot(renpy.game.interface.surftree)
+
+            if self.crop:
+                # img = renpy.display.scale.smoothscale(img, (renpy.config.screen_width, renpy.config.screen_height))
+                img = img.subsurface(self.crop)
+
+            base_filename, ext = os.path.splitext(self.filename)
+            ref_img_path = self.get_reference_image_path()
+
+            if _test.overwrite_screenshots and ref_img_path is not None:
+                os.remove(ref_img_path)
+                ref_img_path = None
+
+            if ref_img_path is None:
+                if _test.git_revision:
+                    fname = f"{base_filename}@{_test.git_revision}{ext}"
+                else:
+                    fname = self.filename
+                self.save_image(img, fname)
+                next_node(self.next)
+                return None
+
+            old_img = renpy.pygame.image.load(ref_img_path)  # type: ignore
+
+            if img.get_size() != old_img.get_size():
+                raise RenpyTestScreenshotError(
+                    f"{self.filename} (size mismatch: {img.get_size()} != {old_img.get_size()})"
+                )
+
+            if img.get_bitsize() != old_img.get_bitsize():
+                raise RenpyTestScreenshotError(
+                    f"{self.filename} (bit size mismatch: {img.get_bitsize()} != {old_img.get_bitsize()})"
+                )
+
+            diff = renpy.pygame.Surface(img.get_size(), 0, img)
+            # diff_count = renpy.pygame.transform.threshold(  # type: ignore
+            #     diff, img, (0, 0, 0), (0, 0, 0), (255, 255, 255), 1, old_img, True
+            # )
+
+            diff_count = 0
+            color_white = (255, 255, 255, 255)
+            color_black = (0, 0, 0, 255)
+
+            for x in range(img.get_width()):
+                for y in range(img.get_height()):
+                    pos = (x, y)
+                    if img.get_at(pos) != old_img.get_at(pos):
+                        diff_count += 1
+                        diff.set_at(pos, color_white)
+                    else:
+                        diff.set_at(pos, color_black)
+
+            if isinstance(self.max_pixel_difference, float) and 0 < self.max_pixel_difference < 1:
+                self.max_pixel_difference = int(self.max_pixel_difference * img.get_width() * img.get_height())
+
+            if diff_count > self.max_pixel_difference:
+                new_fname = f"{base_filename}.new{ext}"
+                diff_fname = f"{base_filename}.diff{ext}"
+
+                self.save_image(img, new_fname)
+                self.save_image(diff, diff_fname)
+                raise RenpyTestScreenshotError(
+                    f"{self.filename} (pixel difference: {diff_count} > {self.max_pixel_difference})\n"
+                    f"Current image saved to {new_fname}\n"
+                    f"Difference image saved to {diff_fname}"
+                )
+
+            next_node(self.next)
+            return None
+
+        finally:
+            # Clear up surfaces to avoid memory leaks.
+            if diff is not None:
+                del diff
+            if old_img is not None:
+                del old_img
+            if img is not None:
+                del img
+
+    def get_reference_image_path(self) -> str | None:
+        if os.path.exists(self.filename):
+            return self.filename
+
+        base_filename, ext = os.path.splitext(self.filename)
+        fnames = glob.glob(os.path.join(base_filename + "@*" + ext))
+        if len(fnames) > 1:
+            raise RuntimeError(f"Multiple reference images found for {self.filename}: {', '.join(fnames)}")
+        elif len(fnames) == 1:
+            return fnames[0]
+
+        return None
+
+    def save_image(self, img: renpy.pygame.Surface, filename: str) -> None:
+        path = os.path.dirname(filename)
+        if path:
+            os.makedirs(path, exist_ok=True)
+
+        renpy.display.scale.image_save_unscaled(img, filename)
 
 
 ################################################################################

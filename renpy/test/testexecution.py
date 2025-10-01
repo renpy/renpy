@@ -811,6 +811,13 @@ def test_command() -> bool:
         help="Enable all testcases and testsuites.",
     )
     ap.add_argument(
+        "--overwrite_screenshots",
+        action="store_true",
+        dest="overwrite_screenshots",
+        default=False,
+        help="Overwrite existing screenshots when a screenshot statement is executed.",
+    )
+    ap.add_argument(
         "--print-details",
         action="store_true",
         dest="print_details",
