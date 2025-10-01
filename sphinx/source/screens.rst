@@ -2222,9 +2222,18 @@ occurs. It takes one parameter, a string giving the name of an
 event. This should be one of:
 
 * ``"show"``
+    This event occurs when the screen is shown (note that if a screen with 
+    the same tag is already showing, the event is ``"replace"`` instead).
+
 * ``"hide"``
+    This event occurs when the screen is hidden (note that if it's replaced
+    by a screen with the same tag, the event is ``"replaced"`` instead).
+
 * ``"replace"``
+    This event occurs the screen is shown, replacing a screen with the same tag.
+
 * ``"replaced"``
+    This event occurs when the screen is replaced by a screen with the same tag.
 
 It then takes an action property, giving an action to run if the event
 occurs.
