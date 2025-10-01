@@ -508,7 +508,7 @@ class TextSelector(Selector):
 
 
 ################################################################################
-# Selector-driven nodes
+# Command statements
 class SelectorDrivenNode(Node):
     """
     Base class for nodes that perform actions that may take
@@ -915,7 +915,7 @@ class Skip(Node):
 
 
 ################################################################################
-# Boolean proxy clauses
+# Boolean operators
 
 
 class Not(Condition):
@@ -940,7 +940,7 @@ class Binary(Condition):
 
     def state(self) -> bool | None:
         """
-        Returns the state of this binary clause.
+        Returns the state of this binary operator.
         """
         raise NotImplementedError("state() must be implemented in subclasses of Binary.")
 
@@ -1159,7 +1159,7 @@ class Python(Node):
 class Assert(Node):
     """
     An assertion that checks if a condition is met.
-    If the condition is not met, an AssertError is raised.
+    If the condition is not met, a RenpyTestAssertionError is raised.
 
     `condition`
         A `Condition` instance that should be ready for the assertion to pass.

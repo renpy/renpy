@@ -23,7 +23,7 @@ screen teleporting_button(x=0, y=0, remaining=20):
 
 testcase drag_and_drop_test:
     run Show("drag_and_drop")
-    pause until screen drag_and_drop
+    pause until screen "drag_and_drop"
     drag id "peg" pos (0, 0) to id "hole" pos (0, 0)
     assert id "success"
     drag id "peg" pos (0.5, 0.5) to id "hole" pos (0, 0)
@@ -38,10 +38,10 @@ testcase drag_and_drop_test:
 
 testcase scroll_test:
     run Show("scroll_screen")
-    pause until screen scroll_screen
+    pause until screen "scroll_screen"
     scroll id "scroll_vp" amount 50
     click id "close_screen_button"
-    assert not screen scroll_screen
+    assert not screen "scroll_screen"
 
 testcase skip:
     enabled False
@@ -97,7 +97,7 @@ testsuite test_if:
 testsuite message_if:
     setup:
         run Jump("three_messages")
-        pause until screen say
+        pause until screen "say"
 
     testcase test_if:
         if "Message 1":
@@ -128,7 +128,7 @@ testsuite timeout:
     testcase hard_pause_timeout:
         # Make sure _test.timeout can be changed
         run Jump("hard_pause")
-        pause until screen say
+        pause until screen "say"
 
         $ _test.timeout = 7
         advance until "End"
@@ -136,5 +136,5 @@ testsuite timeout:
 
 testcase teleporting_button_test:
     run Show("teleporting_button")
-    pause until screen teleporting_button
-    click id "teleporting_button" until not screen teleporting_button
+    pause until screen "teleporting_button"
+    click id "teleporting_button" until not screen "teleporting_button"

@@ -74,37 +74,36 @@ Hooks
 -----
 The ``testsuite`` statement can contain the following hooks:
 
-A block of test statements that is executed once, before running any tests
+.. describe:: setup
 
-    .. describe:: setup
+    A block of test statements that is executed once, before running any tests
     contained within the current suite.
 
-A block of test statements that is executed repeatedly, running before each test suite
+.. describe:: before testsuite
 
-    .. describe:: before testsuite
+    A block of test statements that is executed repeatedly, running before each test suite
     within the current suite.
 
+.. describe:: before testcase
 
-A block of test statements that is executed repeatedly, running before each test case
-
-    .. describe:: before testcase
+    A block of test statements that is executed repeatedly, running before each test case
     within the current suite.
 
-A block of test statements that is executed repeatedly, running after each test case
+.. describe:: after testcase
 
-    .. describe:: after testcase
+    A block of test statements that is executed repeatedly, running after each test case
     in the current suite. The is run even if the testcase fails or raises an
     exception.
 
-A block of test statements that is executed repeatedly, running after each test suite
+.. describe:: after testsuite
 
-    .. describe:: after testsuite
+    A block of test statements that is executed repeatedly, running after each test suite
     in the current suite. The is run even if the testsuite fails or raises an
     exception.
 
-A block of test statements that is executed once, after running all tests
+.. describe:: teardown
 
-    .. describe:: teardown
+    A block of test statements that is executed once, after running all tests
     contained within the current suite. This is run even if a test
     fails or raises an exception.
 
@@ -141,7 +140,7 @@ executed, and how the hooks are called. The following example illustrates this:
                 skip until main_menu
 
             before testsuite:
-                if not screen main_menu:
+                if not screen "main_menu":
                     run MainMenu(confirm=False)
                 click ""Start""
 
@@ -419,10 +418,7 @@ The following variables can be set to change the behavior of tests:
     a valid spot to :ref:`move the mouse <test-move-statement>` when using a
     selector without a position. Defaults to ``100``.
 
-.. var:: _test.ignore_enabled_flag
 
-    A boolean specifying whether to ignore the ``enabled`` flag of testcases
-    when executing tests. Defaults to ``False``.
 
 
 .. _test-statements:
@@ -449,7 +445,7 @@ Advance
 Advances the game by one dialogue line. ::
 
     advance
-    advance until screen choice
+    advance until screen "choice"
 
 
 Exit
@@ -496,7 +492,7 @@ Pauses test execution for a given number of seconds. Similar to the
 a time if it is followed by an `until` clause. ::
 
     pause 5.0
-    pause until screen inventory
+    pause until screen "inventory"
 
 Run
 ^^^^^^^^^^
@@ -532,7 +528,7 @@ If ``fast`` is provided, the game will skip directly to the next menu choice.
 
     skip
     skip fast
-    skip until screen choice
+    skip until screen "choice"
 
 
 Mouse Commands
@@ -741,9 +737,9 @@ Boolean Operations
     Conditions support the ``not``, ``and`` and ``or`` operators.
     That expression may or may not be enclosed in parentheses. ::
 
-        assert eval (renpy.is_in_test() and screen main_menu)
+        assert eval (renpy.is_in_test() and screen "main_menu")
         advance until "ask her right" or label "chapter_five"
-        click "Next" until not screen choice
+        click "Next" until not screen "choice"
 
 .. _test-eval-statement:
 
@@ -826,18 +822,18 @@ It takes one parameter, the name of the screen. It takes the following propertie
 
         The name of the screen to check.
 
-    .. describe:: id "<name>"
+    .. describe:: id <name>
 
         The id of the element to check.
 
-    .. describe:: layer "<name>"
+    .. describe:: layer <name>
 
         The layer on which the screen is displayed. If not given, the layer is
         automatically determined by the screen name.
 
 ::
 
-    if screen main_menu:
+    if screen "main_menu":
         click "Start"
 
     advance until id "inventory_viewport" layer "overlay"
@@ -901,7 +897,7 @@ the assertion fails.
 
 ::
 
-    assert screen main_menu
+    assert screen "main_menu"
     assert eval some_function(args)
     assert id "start_button" timeout 5.0
 
@@ -982,11 +978,11 @@ This timeout temporarily overrides the global ``_test.timeout`` setting.
 
 ::
 
-    advance until screen choice
+    advance until screen "choice"
     click "Next"
     advance until label "chapter_5"
 
-    skip until screen inventory timeout 20.0
+    skip until screen "inventory" timeout 20.0
 
 
 Python Blocks And Dollar-Lines

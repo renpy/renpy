@@ -668,7 +668,7 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
 
     while True:
         if l.keyword("screen"):
-            screen = l.require(l.word)
+            screen = l.require(l.string)
 
         elif l.keyword("id"):
             id = l.require(l.string)
