@@ -172,6 +172,9 @@ cdef class Window:
                     pos[0], pos[1],
                     resolution[0], resolution[1], flags | gl_flag)
 
+                if not self.window:
+                    raise error()
+
                 SDL_SetWindowShape(self.window, shape.surface, &shape_mode)
 
             else:
@@ -180,6 +183,9 @@ cdef class Window:
                     title,
                     pos[0], pos[1],
                     resolution[0], resolution[1], flags | gl_flag)
+
+                if not self.window:
+                    raise error()
 
             if pos != (SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED):
                 SDL_SetWindowPosition(self.window, pos[0], pos[1])
