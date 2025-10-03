@@ -1285,7 +1285,7 @@ class Interface:
         if renpy.display.draw is None:
             return
 
-        if keep_const_size:
+        if keep_const_size and not (renpy.android or renpy.ios):
             renpy.display.im.cache.clear_variable_size()
         else:
             renpy.display.im.cache.clear()
