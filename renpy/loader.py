@@ -71,7 +71,15 @@ apks = []
 game_apks = []
 split_apks = []
 
-if renpy.android:
+def find_apks() -> None:
+    """
+    Finds APKs to load data from, and adds them to apks, game_apks, and
+    split_apks.
+    """
+
+    if apks:
+        return
+
     import android.apk  # type: ignore
 
     packs = [
@@ -243,6 +251,9 @@ def index_files():
 
     for fn in remote_files:
         lower_map[unicodedata.normalize("NFC", fn.lower())] = fn
+
+    if renpy.android:
+        find_apks()
 
 
 def index_archives():
