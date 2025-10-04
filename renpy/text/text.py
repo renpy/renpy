@@ -1919,6 +1919,7 @@ class Layout(object):
                     line.height - line.baseline,
                     self.add_left,
                     self.add_top,
+                    True,
                 )
 
             # Generate the actual glyphs.
@@ -1974,6 +1975,7 @@ class Layout(object):
                         g.descent,
                         self.add_left,
                         self.add_top,
+                        False,
                     )
 
                 last_time = g.time
@@ -2003,6 +2005,7 @@ class Layout(object):
                     line.height - line.baseline,
                     self.add_left,
                     self.add_top,
+                    True,
                 )
 
             top = bottom

@@ -234,6 +234,9 @@ locations, but these are passed to the shader as different vertices.
     The rectangle containing the glyph, in drawable pixels. This is a vec4 with the x, y, width, and height of the rectangle,
     in drawable pixels. This can be converted to texture coordinates by dividing it by ``res0``.
 
+``float a_text_pseudo_glyph``
+    1.0 if this vertex is part of a pseudo-glyph, 0.0 otherwise. See below for more information.
+
 Pseudo-Glyphs
 -------------
 
