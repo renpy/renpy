@@ -3184,7 +3184,9 @@ class Interface:
 
                 # Handle videoresize.
                 if ev.type == pygame.VIDEORESIZE:
-                    pygame.event.get(pygame.VIDEORESIZE)
+                    evs = pygame.event.get(pygame.VIDEORESIZE)
+                    ev = evs[-1] if evs else ev
+                    renpy.display.log.write("Resize event: %r", ev)
 
                     if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
                         renpy.display.draw.full_redraw = True
