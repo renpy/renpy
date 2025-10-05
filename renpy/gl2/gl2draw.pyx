@@ -678,6 +678,8 @@ cdef class GL2Draw:
         renpy.display.log.write("Requested resize to %dx%d, fullscreen=%d, maximized=%d", width, height, fullscreen, maximized)
         pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen, maximized=maximized)
 
+        renpy.display.interface.fullscreen = fullscreen
+
     def update(self, force=False):
         """
         Documented in renderer.
