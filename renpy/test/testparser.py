@@ -404,19 +404,19 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     ll = l.subblock_lexer(False)
     ll.advance()
 
-    properties: dict[str, Any] = {}
+    kwargs: dict[str, Any] = {}
     statements_started = False
 
     while not ll.eob:
         oldpos = ll.pos
         keyword = ll.word()
 
-        if keyword in ("enabled", "only", "description"):
+        if keyword in ("xfail", "enabled", "only", "description", "parameter"):
             if statements_started:
                 ll.error(f"Property {keyword} must be defined before any test statements.")
 
             expr = ll.require(ll.simple_expression)
-            properties[keyword] = renpy.python.py_eval(expr)
+            kwargs[keyword] = renpy.python.py_eval(expr)
             ll.expect_eol()
             ll.advance()
 
@@ -476,6 +476,7 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     rv = testast.TestSuite(
         loc,
         current_testsuite_name,
+        parent=None,
         setup=setup,
         before_testsuite=before_testsuite,
         before_testcase=before_testcase,
@@ -483,7 +484,7 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
         after_testsuite=after_testsuite,
         teardown=teardown,
         subtests=children,
-        **properties,
+        **kwargs,
     )
 
     current_testsuite_name = old_current_testsuite_name
@@ -509,15 +510,18 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
     l.expect_eol()
     l.expect_block("testcase statement")
 
-    test_block, properties = parse_block(l.subblock_lexer(False), loc, keywords=("enabled", "only", "description"))
+    test_block, kwargs = parse_block(
+        l.subblock_lexer(False), loc, keywords=("xfail", "enabled", "only", "description", "parameter")
+    )
 
     l.advance()
 
     rv = testast.TestCase(
         loc,
-        current_testsuite_name + "." + name if current_testsuite_name else name,
         block=test_block.block,
-        **properties,
+        name=current_testsuite_name + "." + name if current_testsuite_name else name,
+        parent=None,
+        **kwargs,
     )
 
     return rv
@@ -526,22 +530,21 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
 @test_statement("assert")
 def assert_statement(l: Lexer, loc: NodeLocation) -> testast.Assert:
     condition = parse_condition(l, loc)
+    kwargs: dict[str, Any] = {}
 
-    if l.keyword("timeout"):
-        timeout = l.require(l.simple_expression)
-        timeout = renpy.python.py_eval(timeout)
-
-        if not isinstance(timeout, (int, float)):
-            l.error("Expected a number or None for timeout.")
-
-    else:
-        timeout = 0.0
+    while True:
+        if l.keyword("timeout"):
+            kwargs["timeout"] = l.require(l.simple_expression)
+        elif l.keyword("xfail"):
+            kwargs["xfail"] = renpy.python.py_eval(l.require(l.simple_expression))
+        else:
+            break
 
     l.expect_noblock("assert statement")
     l.expect_eol()
     l.advance()
 
-    return testast.Assert(loc, condition, timeout)
+    return testast.Assert(loc, condition, **kwargs)
 
 
 @test_statement("screenshot")
@@ -611,7 +614,7 @@ def parse_block(
     l.advance()
 
     block: list[testast.Node] = []
-    properties: dict[str, Any] = {}
+    kwargs: dict[str, Any] = {}
     statements_started = False
 
     while not l.eob:
@@ -623,7 +626,7 @@ def parse_block(
                 l.error(f"Property {keyword} must be defined before any test statements.")
 
             expr = l.require(l.simple_expression)
-            properties[keyword] = renpy.python.py_eval(expr)
+            kwargs[keyword] = renpy.python.py_eval(expr)
             l.expect_eol()
             l.advance()
         else:
@@ -638,7 +641,7 @@ def parse_block(
                 )
             block.append(stmt)
 
-    return testast.Block(loc, block), properties
+    return testast.Block(loc, block), kwargs
 
 
 def parse_hook(l: Lexer, loc: NodeLocation, hook_type: HookType) -> testast.TestHook:
@@ -650,16 +653,18 @@ def parse_hook(l: Lexer, loc: NodeLocation, hook_type: HookType) -> testast.Test
     l.expect_eol()
     l.expect_block(f"hook block: {hook_type}")
 
-    block, properties = parse_block(l.subblock_lexer(False), loc, keywords=("depth",))
+    block, kwargs = parse_block(l.subblock_lexer(False), loc, keywords=("xfail", "depth"))
 
     l.advance()
 
     if hook_type in (HookType.BEFORE_TESTCASE, HookType.AFTER_TESTCASE):
-        properties.setdefault("depth", -1)
+        kwargs.setdefault("depth", -1)
     elif hook_type in (HookType.BEFORE_TESTSUITE, HookType.AFTER_TESTSUITE):
-        properties.setdefault("depth", 0)
+        kwargs.setdefault("depth", 0)
 
-    return testast.TestHook(loc, f"{current_testsuite_name}.{hook_type.value}", block.block, **properties)
+    return testast.TestHook(
+        loc, block=block.block, name=f"{current_testsuite_name}.{hook_type.value}", parent=None, **kwargs
+    )
 
 
 def parse_statement(l: Lexer, loc: NodeLocation) -> testast.Node:

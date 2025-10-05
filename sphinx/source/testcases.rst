@@ -54,6 +54,12 @@ It takes the following properties:
 
     See :ref:`skipping-testcases` for more information.
 
+.. var:: xfail
+
+    If this expression evaluates to ``True``, the test is expected to fail.
+    If the test does fail, it will be marked as xfailed instead of failed.
+    Defaults to ``False``.
+
 .. var:: description
 
     A string describing the test case. This is used in the test report.
@@ -108,6 +114,8 @@ The ``testsuite`` statement can contain the following hooks:
     fails or raises an exception.
 
 The ``before *`` and ``after *`` hooks take the following properties:
+
+.. var:: xfail
 
 .. var:: depth
 
@@ -893,7 +901,7 @@ Assert
 
     Type: :dfn:`Control`
 
-    .. describe:: assert <condition> [timeout (float)]
+    .. describe:: assert <condition> [timeout (float)] [xfail (bool)]
 
 This statement takes a condition and raise a
 RenpyTestAssertionError if the condition is not met at the time when
@@ -902,6 +910,10 @@ the assert statement executes.
 If a ``timeout`` is given, the statement will wait up to that many seconds
 for the condition to be met. If the condition is not met within that time,
 the assertion fails.
+
+If ``xfail`` is set to ``True``, the assert statement is expected to fail.
+This inverts the meaning of the statement: if the condition is met, the
+assertion fails. If the condition is not met, the assertion passes.
 
 ::
 

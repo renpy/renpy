@@ -25,7 +25,7 @@ import renpy
 import renpy.pygame as pygame
 
 from renpy.error import FrameSummary
-from renpy.test.testast import Node, TestSuite, TestCase, TestHook, Block, Exit
+from renpy.test.testast import Node, BaseTestBlock, TestSuite, TestCase, TestHook, Exit
 from renpy.test.types import NodeState, NodeLocation, RenpyTestTimeoutError, HookType
 import renpy.test.testreporter as testreporter
 from renpy.test.testsettings import _test
@@ -512,14 +512,21 @@ class TestPhaseController:
         new_state.enter()
 
     def handle_exception(self, exc: Exception) -> None:
+        if self.active_phase.block is None or not self.active_phase.block.xfail:
+            xfailed = False
+            status = testreporter.OutcomeStatus.FAILED
+        else:
+            xfailed = True
+            status = testreporter.OutcomeStatus.XFAILED
+
         frame_stack = self.get_frame_stack()
-        testreporter.reporter.log_exception(exc, frame_stack)
+        testreporter.reporter.log_exception(exc, frame_stack, xfailed)
 
         if node_executor.node is not None:
             node_executor.node.cleanup_after_error()
         node_executor.reinitialize(None)
 
-        new_state = self.active_phase.error()
+        new_state = self.active_phase.error(status)
         self.transition_to_new_phase(new_state)
 
     def get_frame_stack(self) -> list[FrameSummary]:
@@ -557,17 +564,17 @@ class TestPhaseController:
 
 
 ################################################################################
-## STATES / PHASES
+## STATE / PHASE BASES
 class BaseExecutionPhase:
     """A base class for all execution phases."""
 
-    block: Block | None = None
+    block: BaseTestBlock | None = None
 
     def enter(self) -> None:
         """Called when entering this phase."""
         pass
 
-    def error(self) -> "BaseExecutionPhase | None":
+    def error(self, status: testreporter.OutcomeStatus) -> "BaseExecutionPhase | None":
         """
         Returns the phase to transition to when an error occurs.
         By default, transitions to the EndPhase.
@@ -584,11 +591,12 @@ class BaseExecutionPhase:
 
 
 class HookPhase(BaseExecutionPhase):
-    def error(self):
+    def error(self, status):
         if not isinstance(self.block, TestHook):
             raise RuntimeError("Block is not a TestHook.")
 
-        testreporter.reporter.test_hook_end(self.block, testreporter.OutcomeStatus.FAILED, depth=len(suite_stack))
+        testreporter.reporter.test_hook_end(self.block, status, depth=len(suite_stack))
+        self.block.increment_call_count()
         return RemoveSubSuitePhase()
 
 
@@ -622,9 +630,10 @@ class HookLoopPhase(HookPhase):
 
             testreporter.reporter.test_hook_start(self.block, depth=len(suite_stack))
             node_executor.set_next_node(self.block)
-            node_executor.set_end_callback(
-                renpy.curry.partial(testreporter.reporter.test_hook_end, self.block, depth=len(suite_stack))
-            )
+            node_executor.set_end_callback([
+                renpy.curry.partial(testreporter.reporter.test_hook_end, self.block, depth=len(suite_stack)),
+                self.block.increment_call_count,
+            ])
             self.suite_depth += step
             return None
 
@@ -641,6 +650,8 @@ class HookLoopPhase(HookPhase):
         return hook.depth + self.suite_depth >= len(suite_stack) - 1
 
 
+################################################################################
+## STATES / PHASES
 class StartPhase(BaseExecutionPhase):
     def __init__(self, root_suite: TestSuite):
         self.root_suite = root_suite
@@ -741,12 +752,12 @@ class TestcasePhase(BaseExecutionPhase):
             renpy.curry.partial(testreporter.reporter.test_case_end, self.block, depth=len(suite_stack))
         )
 
-    def error(self) -> BaseExecutionPhase | None:
+    def error(self, status) -> BaseExecutionPhase | None:
         if not isinstance(self.block, TestCase):
             raise RuntimeError("Block is not a TestCase.")
 
-        testreporter.reporter.test_case_end(self.block, testreporter.OutcomeStatus.FAILED, depth=len(suite_stack))
-        return None
+        testreporter.reporter.test_case_end(self.block, status, depth=len(suite_stack))
+        return self.update()
 
     def update(self) -> BaseExecutionPhase | None:
         return AfterTestcasePhase()

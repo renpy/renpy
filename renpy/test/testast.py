@@ -169,29 +169,24 @@ class Block(Node):
         return None
 
 
-class TestCase(Block):
-    __slots__ = ("description", "enabled", "only", "parent")
+class BaseTestBlock(Block):
+    """
+    A base class for TestCase, TestSuite, and TestHook.
+    """
+
+    __slots__ = ("parent", "xfail")
 
     def __init__(
         self,
         loc: NodeLocation,
-        name: str,
         block: list[Node],
-        description: str = "",
-        enabled: bool = True,
-        only: bool = False,
-        parent: "TestCase | None" = None,
+        name: str,
+        parent: "TestSuite | None" = None,
+        xfail: bool = False,
     ):
         super().__init__(loc, block, name)
-        self.name = name
-        self.block = block
-        self.description = description
-        self.enabled = enabled
-        self.only = only
         self.parent = parent
-
-        if not self.enabled and self.only:
-            raise ValueError(f"Test case '{self.name}' must be enabled before setting 'only' to True.")
+        self.xfail = xfail
 
     def __hash__(self):
         return hash(self.name)
@@ -200,18 +195,43 @@ class TestCase(Block):
         return f"name={self.name!r}"
 
 
-class TestHook(Block):
+class TestHook(BaseTestBlock):
     __slots__ = "depth"
 
     def __init__(
         self,
         loc: NodeLocation,
-        name: str,
         block: list[Node],
+        name: str,
+        parent: "TestSuite | None" = None,
+        xfail: bool = False,
         depth: int = 0,
     ):
-        super().__init__(loc, block, name)
+        super().__init__(loc, block, name, parent, xfail)
         self.depth = depth
+
+
+class TestCase(BaseTestBlock):
+    __slots__ = ("description", "enabled", "only")
+
+    def __init__(
+        self,
+        loc: NodeLocation,
+        block: list[Node],
+        name: str,
+        parent: "TestSuite | None" = None,
+        xfail: bool = False,
+        description: str = "",
+        enabled: bool = True,
+        only: bool = False,
+    ):
+        super().__init__(loc, block, name, parent, xfail)
+        self.description = description
+        self.enabled = enabled
+        self.only = only
+
+        if not self.enabled and self.only:
+            raise ValueError(f"Test case '{self.name}' must be enabled before setting 'only' to True.")
 
 
 class TestSuite(TestCase):
@@ -234,10 +254,11 @@ class TestSuite(TestCase):
         self,
         loc: NodeLocation,
         name: str,
+        parent: "TestSuite | None" = None,
+        xfail: bool = False,
         description: str = "",
         enabled: bool = True,
         only: bool = False,
-        parent: "TestCase | None" = None,
         subtests: list[TestCase] | None = None,
         setup: TestHook | None = None,
         before_testsuite: TestHook | None = None,
@@ -246,7 +267,7 @@ class TestSuite(TestCase):
         after_testcase: TestHook | None = None,
         teardown: TestHook | None = None,
     ):
-        super().__init__(loc, name, [], description, enabled, only, parent)
+        super().__init__(loc, [], name, parent, xfail, description, enabled, only)
 
         self.subtest_index = -1
 
@@ -269,6 +290,7 @@ class TestSuite(TestCase):
             subtest.chain(None)
 
     def add(self, child: TestCase) -> None:
+        child.parent = self
         self.subtests.append(child)
 
     def advance(self) -> Block | None:
@@ -1175,14 +1197,18 @@ class Assert(Node):
         A `Condition` instance that should be ready for the assertion to pass.
     `timeout`
         The maximum delay to wait for the condition to be ready.
+    `xfail`
+        If True, the test is expected to fail. If the condition is not met,
+        the test will be marked as xfailed instead of failed.
     """
 
-    __slots__ = ("condition", "timeout", "failed")
+    __slots__ = ("condition", "timeout", "xfail", "failed")
 
-    def __init__(self, loc: NodeLocation, condition: Condition, timeout: float = 0.0):
+    def __init__(self, loc: NodeLocation, condition: Condition, timeout: float = 0.0, xfail: bool = False):
         Node.__init__(self, loc)
         self.condition = condition
         self.timeout = timeout
+        self.xfail = xfail
         self.failed = False
 
     def execute(self, state, t):
@@ -1190,8 +1216,8 @@ class Assert(Node):
         Executes the assertion. If the condition is not ready, it waits up to
         `self.timeout` seconds.
         """
-        if not self.condition.ready():
-            if t < self.timeout:
+        if t < self.timeout:
+            if not self.condition.ready() ^ self.xfail:
                 return state
 
             self.failed = True
