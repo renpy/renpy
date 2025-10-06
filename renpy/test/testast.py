@@ -598,14 +598,17 @@ class DisplayableSelector(Selector):
 
     def ready(self) -> bool:
         ## Needs to be checked here and not in __init__ since screens are not be defined yet.
-        if self.screen is not None and not renpy.exports.has_screen(self.screen):
-            raise ValueError(f"The screen {self.screen!r} does not exist.")
+        if self.screen is not None:
+            if not renpy.exports.has_screen(scoped_eval(self.screen)):
+                raise ValueError(f"The screen {self.screen!r} does not exist.")
 
         return super().ready()
 
     def get_element(self) -> Displayable | None:
         if self.screen and self.id is None:
-            rv = renpy.exports.get_screen(self.screen, self.layer)
+            layer = None if self.layer is None else scoped_eval(self.layer)
+            screen = None if self.screen is None else scoped_eval(self.screen)
+            rv = renpy.exports.get_screen(screen, layer)
         else:
             # rv = renpy.exports.get_displayable(self.screen, self.id, self.layer)
             rv = self.get_displayable()
@@ -621,22 +624,26 @@ class DisplayableSelector(Selector):
         """
         ## NOTE: Move to renpy.exports.get_displayable() eventually?
 
+        layer = None if self.layer is None else scoped_eval(self.layer)
+        screen = None if self.screen is None else scoped_eval(self.screen)
+        id = None if self.id is None else scoped_eval(self.id)
+
         ctx: renpy.execution.Context = renpy.game.context()
-        for layer, sles in ctx.scene_lists.layers.items():
-            layer: str
+        for context_layer, sles in ctx.scene_lists.layers.items():
+            context_layer: str
             sles: list[renpy.display.scenelists.SceneListEntry]
 
-            if self.layer and self.layer != layer:
+            if layer and layer != context_layer:
                 continue
 
             for sle in sles:
                 if not isinstance(sle.displayable, renpy.display.screen.ScreenDisplayable):
                     continue
 
-                if self.screen and sle.name != self.screen:
+                if screen and sle.name != screen:
                     continue
 
-                rv = sle.displayable.widgets.get(self.id, None)
+                rv = sle.displayable.widgets.get(id, None)
 
                 if rv is not None:
                     return rv
