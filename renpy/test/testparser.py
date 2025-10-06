@@ -26,9 +26,6 @@ import renpy
 from renpy.lexer import Lexer
 from renpy.test.types import NodeLocation, HookType
 
-# The current test case name
-current_testsuite_name = ""
-
 # The root of the parse trie.
 test_statements = renpy.parser.ParseTrie()
 
@@ -375,8 +372,6 @@ def type_statement(l: Lexer, loc: NodeLocation) -> testast.Type | testast.Until:
 
 @test_statement("testsuite")
 def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
-    global current_testsuite_name
-
     setup: testast.TestHook | None = None
     before_testsuite: testast.TestHook | None = None
     before_testcase: testast.TestHook | None = None
@@ -386,20 +381,14 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     children: list[testast.TestCase] = []
 
     name = l.require(l.dotted_name)
-    global_testsuite_name = renpy.test.testexecution.global_testsuite_name
+    # global_testsuite_name = renpy.test.testexecution.global_testsuite_name
 
-    if name == global_testsuite_name and current_testsuite_name:
-        l.error(f"The name {global_testsuite_name!r} is reserved for a testsuite that runs all tests.")
+    # if name == global_testsuite_name:
+    #     l.error(f"The name {global_testsuite_name!r} is reserved for a testsuite that runs all tests.")
 
     l.require(":")
     l.expect_eol()
     l.expect_block("testsuite statement")
-
-    old_current_testsuite_name = current_testsuite_name
-    if current_testsuite_name:
-        current_testsuite_name += "." + name
-    else:
-        current_testsuite_name = name
 
     ll = l.subblock_lexer(False)
     ll.advance()
@@ -415,10 +404,19 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
             if statements_started:
                 ll.error(f"Property {keyword} must be defined before any test statements.")
 
-            expr = ll.require(ll.simple_expression)
-            kwargs[keyword] = renpy.python.py_eval(expr)
-            ll.expect_eol()
-            ll.advance()
+            if keyword == "parameter":
+                kwargs.setdefault("parameters", [])
+                kwargs["parameters"].append(parse_testcase_parameters(ll, loc))
+            elif keyword == "xfail":
+                expr = ll.require(ll.simple_expression)
+                kwargs["xfail_expr"] = expr
+                ll.expect_eol()
+                ll.advance()
+            else:
+                expr = ll.require(ll.simple_expression)
+                kwargs[keyword] = renpy.python.py_eval(expr)
+                ll.expect_eol()
+                ll.advance()
 
         else:
             statements_started = True
@@ -475,7 +473,7 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
 
     rv = testast.TestSuite(
         loc,
-        current_testsuite_name,
+        name,
         parent=None,
         setup=setup,
         before_testsuite=before_testsuite,
@@ -487,24 +485,20 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
         **kwargs,
     )
 
-    current_testsuite_name = old_current_testsuite_name
-
     return rv
 
 
 @test_statement("testcase")
 def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
-    global current_testsuite_name
-
     name = l.require(l.dotted_name)
     # signature: renpy.parameter.Signature | None = renpy.parser.parse_parameters(l)
     # extra_kwargs = {}
     # if signature:
     #     signature.apply_defaults(extra_kwargs)
 
-    global_testsuite_name = renpy.test.testexecution.global_testsuite_name
-    if name == global_testsuite_name:
-        l.error(f"The name {global_testsuite_name!r} is reserved for a testsuite that runs all tests.")
+    # global_testsuite_name = renpy.test.testexecution.global_testsuite_name
+    # if name == global_testsuite_name:
+    #     l.error(f"The name {global_testsuite_name!r} is reserved for a testsuite that runs all tests.")
 
     l.require(":")
     l.expect_eol()
@@ -519,7 +513,7 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
     rv = testast.TestCase(
         loc,
         block=test_block.block,
-        name=current_testsuite_name + "." + name if current_testsuite_name else name,
+        name=name,
         parent=None,
         **kwargs,
     )
@@ -536,7 +530,7 @@ def assert_statement(l: Lexer, loc: NodeLocation) -> testast.Assert:
         if l.keyword("timeout"):
             kwargs["timeout"] = l.require(l.simple_expression)
         elif l.keyword("xfail"):
-            kwargs["xfail"] = renpy.python.py_eval(l.require(l.simple_expression))
+            kwargs["xfail_expr"] = l.require(l.simple_expression)
         else:
             break
 
@@ -551,7 +545,7 @@ def assert_statement(l: Lexer, loc: NodeLocation) -> testast.Assert:
 def screenshot_statement(l: Lexer, loc: NodeLocation) -> testast.Screenshot:
     l.expect_noblock("screenshot statement")
 
-    name = l.require(l.string)
+    name = l.require(l.simple_expression)
     rv = testast.Screenshot(loc, name)
 
     while True:
@@ -581,20 +575,18 @@ def python_statement(l: Lexer, loc: NodeLocation) -> testast.Python:
 
     l.advance()
 
-    code = renpy.ast.PyCode(source, loc, "hide" if hide else "exec")
-    return testast.Python(loc, code, hide == "hide")
+    return testast.Python(loc, source, hide == "hide")
 
 
 @test_statement("$")
 def one_line_python_statement(l: Lexer, loc: NodeLocation) -> testast.Python:
     source = l.require(l.rest)
-    code = renpy.ast.PyCode(source, loc)
 
     l.expect_noblock("one-line python statement")
     l.expect_eol()
     l.advance()
 
-    return testast.Python(loc, code)
+    return testast.Python(loc, source)
 
 
 ##############################################################################
@@ -625,10 +617,19 @@ def parse_block(
             if statements_started:
                 l.error(f"Property {keyword} must be defined before any test statements.")
 
-            expr = l.require(l.simple_expression)
-            kwargs[keyword] = renpy.python.py_eval(expr)
-            l.expect_eol()
-            l.advance()
+            if keyword == "parameter":
+                kwargs.setdefault("parameters", [])
+                kwargs["parameters"].append(parse_testcase_parameters(l, loc))
+            elif keyword == "xfail":
+                expr = l.require(l.simple_expression)
+                kwargs["xfail_expr"] = expr
+                l.expect_eol()
+                l.advance()
+            else:
+                expr = l.require(l.simple_expression)
+                kwargs[keyword] = renpy.python.py_eval(expr)
+                l.expect_eol()
+                l.advance()
         else:
             l.pos = oldpos
             statements_started = True
@@ -645,10 +646,6 @@ def parse_block(
 
 
 def parse_hook(l: Lexer, loc: NodeLocation, hook_type: HookType) -> testast.TestHook:
-    global_testsuite_name = renpy.test.testexecution.global_testsuite_name
-    if hook_type == global_testsuite_name:
-        l.error(f"The name {global_testsuite_name!r} is reserved for a testsuite that runs all tests.")
-
     l.require(":")
     l.expect_eol()
     l.expect_block(f"hook block: {hook_type}")
@@ -662,9 +659,61 @@ def parse_hook(l: Lexer, loc: NodeLocation, hook_type: HookType) -> testast.Test
     elif hook_type in (HookType.BEFORE_TESTSUITE, HookType.AFTER_TESTSUITE):
         kwargs.setdefault("depth", 0)
 
-    return testast.TestHook(
-        loc, block=block.block, name=f"{current_testsuite_name}.{hook_type.value}", parent=None, **kwargs
-    )
+    return testast.TestHook(loc, block=block.block, name=hook_type.value, parent=None, **kwargs)
+
+
+def parse_testcase_parameters(l: Lexer, loc: NodeLocation) -> list[dict[str, Any]]:
+    l.expect_noblock("parameter statement")
+
+    #  Input: parameter x = [1, 2]
+    # Output: [{"x": 1}, {"x": 2}]
+
+    #  Input: parameter (x, y) = [(1,1), (2,2)]
+    # Output: [{"x": 1, "y": 1}, {"x": 2, "y": 2}]
+
+    rv: list[dict[str, Any]] = []
+    names: list[str] = []
+
+    if l.match(r"\("):
+        while True:
+            if l.match(r"\)"):
+                break
+            if l.match(r","):
+                continue
+            names.append(l.require(l.name))
+    else:
+        names = [l.require(l.name)]
+
+    if len(names) == 0:
+        l.error("Expected at least one name in parameter statement.")
+    elif len(names) != len(set(names)):
+        l.error("Parameter names in a parameter statement must be unique.")
+
+    l.require("=")
+
+    values_expr = l.require(l.simple_expression)
+    values = renpy.python.py_eval(values_expr)
+
+    if not isinstance(values, list) or isinstance(values, str):
+        l.error("Expected a list of values in parameter statement.")
+
+    if len(names) == 1:
+        rv = []
+        for v in values:
+            rv.append({names[0]: v})
+    else:
+        rv = []
+        for v in values:
+            if not isinstance(v, tuple) or isinstance(v, str):
+                l.error("Values must be tuples in parameter statement with multiple parameters.")
+            if len(v) != len(names):
+                l.error("Length of value tuples must match number of parameters in parameter statement.")
+            rv.append(dict(zip(names, v)))
+
+    l.expect_eol()
+    l.advance()
+
+    return rv
 
 
 def parse_statement(l: Lexer, loc: NodeLocation) -> testast.Node:
@@ -794,11 +843,6 @@ def parse_until(l: Lexer, loc: NodeLocation, left: testast.Node) -> testast.Unti
 
         if l.keyword("timeout"):
             timeout = l.require(l.simple_expression)
-            timeout = renpy.python.py_eval(timeout)
-
-            if not isinstance(timeout, (int, float, type(None))):
-                l.error("Expected a number or None for timeout.")
-
             return testast.Until(loc, left, right, timeout)
         else:
             return testast.Until(loc, left, right)
@@ -811,11 +855,6 @@ def parse_until(l: Lexer, loc: NodeLocation, left: testast.Node) -> testast.Unti
 
         if l.keyword("timeout"):
             timeout = l.require(l.simple_expression)
-            timeout = renpy.python.py_eval(timeout)
-
-            if not isinstance(timeout, (int, float, type(None))):
-                l.error("Expected a number or None for timeout.")
-
             return testast.Repeat(loc, left, right, timeout)
         else:
             return testast.Repeat(loc, left, right)

@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Callable
+from textwrap import dedent
+from typing import Callable, Any
 
 import renpy
 import renpy.pygame as pygame
@@ -36,6 +37,7 @@ global_testsuite_name = "global"
 action: Callable | None = None
 reached_labels: set[str] = set()
 suite_stack: list[TestSuite] = []
+scope_stack: list[dict[str, Any]] = [{}]
 
 testcases: dict[str, TestCase] = {}
 node_executor: "NodeExecutor"
@@ -110,9 +112,10 @@ def initialize(specified_test: str) -> None:
 
     root = setup_global_test_suite()
 
-    select_testcase(specified_test)
+    test_node = get_testcase_by_id(specified_test)
+    select_testcase(test_node)
     process_only_flag()
-    update_suite_skip_flag(root)
+    update_suite_enabled_flag(root)
     root.chain(None)
 
     testreporter.reporter.initialize_test_outcomes(root)
@@ -135,17 +138,21 @@ def is_in_test() -> bool:
 
 def pop_suite_stack() -> None:
     suite = suite_stack.pop()
+    scope_stack.pop()
 
     testreporter.reporter.test_suite_end(suite)
-
-    if len(suite_stack) == 0:
-        testreporter.reporter.test_run_end()
-        renpy.test.testmouse.reset()
 
 
 def push_suite_stack(suite: TestSuite) -> None:
     testreporter.reporter.test_suite_start(suite, depth=len(suite_stack))
     suite_stack.append(suite)
+    push_scope_stack(suite.current_parameters)
+
+
+def push_scope_stack(new_scope: dict[str, Any]) -> None:
+    updated_scope = scope_stack[-1].copy()
+    updated_scope.update(new_scope)
+    scope_stack.append(updated_scope)
 
 
 def quit_handler() -> int:
@@ -198,6 +205,46 @@ def add_reached_label(label: str, abnormal: bool) -> None:
     reached_labels.add(label)
 
 
+def get_current_scope() -> dict:
+    """
+    Returns the current scope for py_eval.
+    """
+    return scope_stack[-1]
+
+
+def scoped_eval(expr: str, store: str = "store") -> Any:
+    """
+    Evaluates a Python expression in the current test scope.
+    """
+
+    scope = renpy.test.testexecution.get_current_scope()
+    globals = renpy.python.store_dicts[store]
+    return renpy.python.py_eval(expr, globals=globals, locals=scope)
+
+
+def scoped_exec(source: str, hide: bool = False, store: str = "store") -> None:
+    """
+    Executes Python bytecode in the current test scope.
+
+    If `hide` is True, the executed code will not be visible in the store.
+    """
+
+    scope = renpy.test.testexecution.get_current_scope()
+    old_keys = set(scope.keys())
+    globals = renpy.python.store_dicts[store]
+
+    # code = renpy.ast.PyCode(source, mode="hide" if hide else "exec")
+    renpy.python.py_exec_bytecode(dedent(source), hide, globals=globals, locals=scope)
+
+    if hide:
+        return
+
+    new_keys = set(scope.keys()) - old_keys
+    for key in new_keys:
+        globals[key] = scope[key]
+        del scope[key]
+
+
 ################################################################################
 ## Setup methods
 
@@ -206,11 +253,11 @@ def link_top_level_testcase_to_parent(node: TestCase) -> None:
     """
     Links a top-level testcase (with a name that contains a dot) to its parent TestSuite.
     """
-    if "." not in node.name:
+    if "." not in node.full_path:
         return
 
-    parent_name = node.name.rsplit(".", 1)[0]
-    parent_node = get_testcase_by_name(parent_name)
+    parent_name = node.full_path.rsplit(".", 1)[0]
+    parent_node = get_testcase_by_id(parent_name)
     if not isinstance(parent_node, TestSuite):
         raise TypeError(f'Parent node "{parent_name}" is not a TestSuite.')
     parent_node.add(node)
@@ -232,16 +279,16 @@ def register_testcase(node: TestCase, parent: TestSuite | None = None) -> None:
 
     ## NOTE: This is run every time the script is reloaded.
 
-    if node.name in testcases:
-        if testcases[node.name] != node:
+    if node.full_path in testcases:
+        if testcases[node.full_path] != node:
             raise KeyError(
-                f"The testcase {node.name!r} is defined twice, "
-                f"at File {testcases[node.name].filename}:{testcases[node.name].linenumber} "
+                f"The testcase {node.full_path!r} is defined twice, "
+                f"at File {testcases[node.full_path].filename}:{testcases[node.full_path].linenumber} "
                 f"and File {node.filename}:{node.linenumber}."
             )
         return
 
-    testcases[node.name] = node
+    testcases[node.full_path] = node
 
     add_child_testcases(node)
     if parent is None:
@@ -253,27 +300,32 @@ def setup_global_test_suite() -> TestSuite:
     Set up the global test suite, which contains all top-level testcases,
     and contains hooks for before and after each test.
     """
-    if global_testsuite_name not in testcases:
-        register_testcase(TestSuite(name=global_testsuite_name, loc=("", 0), subtests=[]))
 
-    root = get_testcase_by_name(global_testsuite_name)
-
-    if not isinstance(root, TestSuite):
-        raise ValueError(f"Root node for {global_testsuite_name!r} must be a TestSuite, got {type(root)}")
-
+    root_children = []
     for node_name, node in testcases.items():
-        if (node_name == global_testsuite_name) or ("." in node_name):
+        if (node_name == global_testsuite_name) or (node.parent is not None):
             continue
-        root.subtests.append(node)
+        root_children.append(node)
+
+    try:
+        root = get_testcase_by_id(global_testsuite_name)
+        if not isinstance(root, TestSuite):
+            raise ValueError(f"Root node for {global_testsuite_name!r} must be a TestSuite, got {type(root)}")
+
+        for child in root_children:
+            root.add(child)
+    except KeyError:
+        root = TestSuite(name=global_testsuite_name, loc=("", 0), subtests=root_children)
+        register_testcase(root)
 
     return root
 
 
-def get_testcase_by_name(name: str) -> TestCase:
-    if name not in testcases:
-        raise KeyError(f"Testcase {name} not found.")
+def get_testcase_by_id(id: str) -> TestCase:
+    if id not in testcases:
+        raise KeyError(f"TestCase {id} not found. Available tests are: {', '.join(testcases.keys())}")
 
-    return testcases[name]
+    return testcases[id]
 
 
 def process_only_flag() -> None:
@@ -291,7 +343,7 @@ def process_only_flag() -> None:
 
     testreporter.reporter.log_message(f"Running {len(has_only)} test(s) marked with 'only' flag.")
     for tc in has_only:
-        testreporter.reporter.log_message(f"- {tc.name}")
+        testreporter.reporter.log_message(f"- {tc.full_path}")
 
     processed = set()
 
@@ -323,22 +375,26 @@ def process_only_flag() -> None:
             tc.enabled = False
 
 
-def select_testcase(execution_node: str) -> None:
-    if execution_node != global_testsuite_name:
-        for tc in testcases.values():
-            if tc.name == execution_node:
-                tc.only = True
-            else:
-                tc.only = False
+def select_testcase(node: TestCase) -> None:
+    id = node.full_path
+
+    if id == global_testsuite_name:
+        return
+
+    for tc in testcases.values():
+        if tc.full_path == id:
+            tc.only = True
+        else:
+            tc.only = False
 
 
-def update_suite_skip_flag(node: TestSuite) -> None:
+def update_suite_enabled_flag(node: TestSuite) -> None:
     """
-    Updates the skip flag for a TestSuite and its children based on the ignore_enabled_flag setting.
+    Updates the enabled flag for a TestSuite and its children based on the ignore_enabled_flag setting.
     """
     for child in node.subtests:
         if isinstance(child, TestSuite):
-            update_suite_skip_flag(child)
+            update_suite_enabled_flag(child)
         else:
             child.enabled = _test.ignore_enabled_flag or child.enabled
 
@@ -378,7 +434,7 @@ class NodeExecutor:
     last_state_change: float = 0.0
     "The last time the state changed."
 
-    end_callback: Callable | None = None
+    end_callbacks: list[Callable] | None = None
     "A callback to run when no more nodes are left to execute."
 
     def __init__(self, node: Node | None = None):
@@ -396,8 +452,10 @@ class NodeExecutor:
     def set_next_node(self, next: Node | None) -> None:
         self.next_node = next
 
-    def set_end_callback(self, callback: Callable) -> None:
-        self.end_callback = callback
+    def set_end_callback(self, callback: Callable | list[Callable]) -> None:
+        if not isinstance(callback, list):
+            callback = [callback]
+        self.end_callbacks = callback
 
     def execute(self) -> None:
         """
@@ -443,19 +501,20 @@ class NodeExecutor:
         self.node = self.next_node
         self.node_has_started = False
 
-        if self.node is None and self.end_callback is not None:
-            self.end_callback()
-            self.end_callback = None
+        if self.node is None and self.end_callbacks is not None:
+            for callback in self.end_callbacks:
+                callback()
+            self.end_callbacks = None
 
     def check_for_timeout(self, now) -> None:
         self.update_last_state_change(now)
 
-        timeout = _test.timeout
-        if hasattr(self.node, "timeout") and self.node.timeout > 0:  # type: ignore
-            timeout = self.node.timeout  # type: ignore
+        if (now - self.last_state_change) > _test.timeout:
+            raise RenpyTestTimeoutError(f"TestCase timed out after {_test.timeout} seconds.")
 
-        if (now - self.last_state_change) > timeout:
-            raise RenpyTestTimeoutError(f"Testcase timed out after {timeout} seconds.")
+    def cleanup_after_error(self) -> None:
+        if self.node is not None:
+            self.node.cleanup_after_error(self.node_state)
 
     def update_last_state_change(self, now):
         loc = renpy.exports.get_filename_line()
@@ -482,6 +541,7 @@ class TestPhaseController:
 
     def __init__(self, root_suite: TestSuite):
         self.active_phase: BaseExecutionPhase = StartPhase(root_suite)
+        testreporter.reporter.test_run_start()
         self.active_phase.enter()
         self.next_phase: BaseExecutionPhase | None = None
 
@@ -523,7 +583,7 @@ class TestPhaseController:
         testreporter.reporter.log_exception(exc, frame_stack, xfailed)
 
         if node_executor.node is not None:
-            node_executor.node.cleanup_after_error()
+            node_executor.cleanup_after_error()
         node_executor.reinitialize(None)
 
         new_state = self.active_phase.error(status)
@@ -537,15 +597,15 @@ class TestPhaseController:
         frame_stack: list[FrameSummary] = []
 
         nodes: list[Node | None] = [s for s in suite_stack]
-        labels: list[str] = [f"testsuite {suite.name}" for suite in suite_stack]
+        labels: list[str] = [f"testsuite {suite.current_parameterized_name}" for suite in suite_stack]
 
         block = self.active_phase.block
         if isinstance(block, TestHook):
             nodes.append(block)
-            labels.append(f"hook {block.name}")
+            labels.append(f"hook {block.current_parameterized_name}")
         elif isinstance(block, TestCase):
             nodes.append(block)
-            labels.append(f"testcase {block.name}")
+            labels.append(f"testcase {block.current_parameterized_name}")
 
         nodes.append(node_executor.node)
         labels.insert(0, "None")
@@ -559,8 +619,15 @@ class TestPhaseController:
         return frame_stack
 
     def quit(self) -> None:
-        while suite_stack:
-            pop_suite_stack()
+        """
+        Quits the test execution, transitioning to the EndPhase.
+        """
+        if isinstance(self.active_phase, EndPhase):
+            return
+
+        node_executor.reinitialize(None)
+        new_state = EndPhase()
+        self.transition_to_new_phase(new_state)
 
 
 ################################################################################
@@ -657,7 +724,6 @@ class StartPhase(BaseExecutionPhase):
         self.root_suite = root_suite
 
     def enter(self) -> None:
-        testreporter.reporter.test_run_start()
         push_suite_stack(self.root_suite)
 
     def update(self) -> BaseExecutionPhase | None:
@@ -666,8 +732,10 @@ class StartPhase(BaseExecutionPhase):
 
 class EndPhase(BaseExecutionPhase):
     def enter(self) -> None:
-        pop_suite_stack()
+        while suite_stack:
+            pop_suite_stack()
         testreporter.reporter.test_run_end()
+        renpy.test.testmouse.reset()
 
 
 class NextTestTransitionPhase(BaseExecutionPhase):
@@ -677,11 +745,8 @@ class NextTestTransitionPhase(BaseExecutionPhase):
     If not, transitions to the EndState or RunAfterState as appropriate.
     """
 
-    def enter(self) -> None:
-        suite_stack[-1].advance()
-
     def update(self) -> BaseExecutionPhase | None:
-        if suite_stack[-1].is_all_tests_completed:
+        if suite_stack[-1].has_completed_all_subtests:
             return SuiteTeardownPhase()
 
         current_test = suite_stack[-1].current_test
@@ -690,16 +755,21 @@ class NextTestTransitionPhase(BaseExecutionPhase):
 
         if not current_test.enabled:
             report_testcase_skipped(current_test)
-            return NextTestTransitionPhase()
+            current_test.advance_to_next_parameter_set()
+            if current_test.has_all_parameters_been_processed:
+                suite_stack[-1].advance_to_next_subtest()
+                current_test.restart()
+            return None  # NextTestTransitionPhase()
 
         if isinstance(current_test, TestSuite):
-            return BeforeTestsuitePhase()
+            return BeforeTestSuitePhase()
         elif isinstance(current_test, TestCase):
-            return BeforeTestcasePhase()
-        return None
+            return BeforeTestCasePhase()
+
+        raise TypeError("Current test is neither a TestSuite nor a TestCase.")
 
 
-class BeforeTestsuitePhase(HookLoopPhase):
+class BeforeTestSuitePhase(HookLoopPhase):
     def __init__(self):
         self.hook_type = HookType.BEFORE_TESTSUITE
         self.next_phase = AddSubSuitePhase
@@ -725,27 +795,30 @@ class SuiteSetupPhase(BaseExecutionPhase):
         if self.block is not None:
             testreporter.reporter.test_hook_start(self.block, depth=len(suite_stack))
             node_executor.set_next_node(self.block)
-            node_executor.set_end_callback(
-                renpy.curry.partial(testreporter.reporter.test_hook_end, self.block, depth=len(suite_stack))
-            )
+            node_executor.set_end_callback([
+                renpy.curry.partial(testreporter.reporter.test_hook_end, self.block, depth=len(suite_stack)),
+                self.block.increment_call_count,
+            ])
 
     def update(self) -> BaseExecutionPhase | None:
         return NextTestTransitionPhase()
 
 
-class BeforeTestcasePhase(HookLoopPhase):
+class BeforeTestCasePhase(HookLoopPhase):
     def __init__(self):
         self.hook_type = HookType.BEFORE_TESTCASE
-        self.next_phase = TestcasePhase
+        self.next_phase = TestCasePhase
         self.reverse = False
 
 
-class TestcasePhase(BaseExecutionPhase):
+class TestCasePhase(BaseExecutionPhase):
     def enter(self) -> None:
         if suite_stack[-1].current_test is None:
             raise RuntimeError("No current test to run.")
 
         self.block = suite_stack[-1].current_test
+        push_scope_stack(self.block.current_parameters)
+
         testreporter.reporter.test_case_start(self.block, depth=len(suite_stack))
         node_executor.set_next_node(self.block)
         node_executor.set_end_callback(
@@ -760,14 +833,30 @@ class TestcasePhase(BaseExecutionPhase):
         return self.update()
 
     def update(self) -> BaseExecutionPhase | None:
-        return AfterTestcasePhase()
+        scope_stack.pop()
+        return AfterTestCasePhase()
 
 
-class AfterTestcasePhase(HookLoopPhase):
+class AfterTestCasePhase(HookLoopPhase):
     def __init__(self):
         self.hook_type = HookType.AFTER_TESTCASE
-        self.next_phase = NextTestTransitionPhase
+        self.next_phase = TestCaseParameterCyclePhase
         self.reverse = True
+
+
+class TestCaseParameterCyclePhase(BaseExecutionPhase):
+    def update(self) -> BaseExecutionPhase | None:
+        current_test = suite_stack[-1].current_test
+        if not isinstance(current_test, TestCase):
+            raise RuntimeError(f"Expecting TestCase, got {type(current_test)}.")
+
+        current_test.advance_to_next_parameter_set()
+
+        if current_test.has_all_parameters_been_processed:
+            suite_stack[-1].advance_to_next_subtest()
+            current_test.restart()
+            return NextTestTransitionPhase()
+        return BeforeTestCasePhase()
 
 
 class SuiteTeardownPhase(BaseExecutionPhase):
@@ -776,15 +865,16 @@ class SuiteTeardownPhase(BaseExecutionPhase):
         if self.block is not None:
             testreporter.reporter.test_hook_start(self.block, depth=len(suite_stack))
             node_executor.set_next_node(self.block)
-            node_executor.set_end_callback(
-                renpy.curry.partial(testreporter.reporter.test_hook_end, self.block, depth=len(suite_stack))
-            )
+            node_executor.set_end_callback([
+                renpy.curry.partial(testreporter.reporter.test_hook_end, self.block, depth=len(suite_stack)),
+                self.block.increment_call_count,
+            ])
 
     def update(self) -> BaseExecutionPhase | None:
         if len(suite_stack) > 1:
             return RemoveSubSuitePhase()
         else:
-            return EndPhase()
+            return GlobalParameterCyclePhase()
 
 
 class RemoveSubSuitePhase(BaseExecutionPhase):
@@ -792,14 +882,41 @@ class RemoveSubSuitePhase(BaseExecutionPhase):
         pop_suite_stack()
 
     def update(self) -> BaseExecutionPhase | None:
-        return AfterTestsuitePhase()
+        return AfterTestSuitePhase()
 
 
-class AfterTestsuitePhase(HookLoopPhase):
+class AfterTestSuitePhase(HookLoopPhase):
     def __init__(self):
         self.hook_type = HookType.AFTER_TESTSUITE
-        self.next_phase = NextTestTransitionPhase
+        self.next_phase = TestSuiteParameterCyclePhase
         self.reverse = True
+
+
+class TestSuiteParameterCyclePhase(BaseExecutionPhase):
+    def update(self) -> BaseExecutionPhase | None:
+        current_test = suite_stack[-1].current_test
+        if not isinstance(current_test, TestSuite):
+            raise RuntimeError(f"Expecting TestSuite, got {type(current_test)}.")
+
+        current_test.advance_to_next_parameter_set()
+
+        if current_test.has_all_parameters_been_processed:
+            suite_stack[-1].advance_to_next_subtest()
+            current_test.restart()
+            return NextTestTransitionPhase()
+        return BeforeTestSuitePhase()
+
+
+class GlobalParameterCyclePhase(BaseExecutionPhase):
+    def update(self) -> BaseExecutionPhase | None:
+        root = suite_stack[-1]
+        pop_suite_stack()
+
+        root.advance_to_next_parameter_set()
+        if root.has_all_parameters_been_processed:
+            return EndPhase()
+
+        return StartPhase(root)
 
 
 def test_command() -> bool:

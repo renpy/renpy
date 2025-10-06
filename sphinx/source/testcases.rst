@@ -64,6 +64,16 @@ It takes the following properties:
     If the test does fail, it will be marked as xfailed instead of failed.
     Defaults to ``False``.
 
+.. var:: parameter
+
+    A variable name (or tuple of variable names) and a list of values (or
+    list of tuples of values). The test will run once for each value (or
+    tuple of values) in the list.
+
+    A test may have multiple ``parameter`` properties, in which case
+    the test will run for every possible combination of the values.
+
+    See :ref:`parameterized-tests` for more information.
 
 
 Testsuite Statement
@@ -116,8 +126,6 @@ The ``testsuite`` statement can contain the following hooks:
     fails or raises an exception.
 
 The ``before *`` and ``after *`` hooks take the following properties:
-
-.. var:: xfail
 
 .. var:: depth
 
@@ -342,6 +350,133 @@ If *all* tests are skipped in a testsuite, then the ``setup`` and
 ``before testsuite`` and ``after testsuite`` hooks will not be executed from
 the parent testsuite(s).
 
+.. _parameterized-tests:
+
+Parameterized Tests
+--------------------
+
+A test case can run multiple times with different values by using the ``parameter`` property.
+
+To do this, give a variable name and a list of values. The test will run once
+for each value in the list. For example::
+
+    testcase example:
+        parameter x = [1, 2, 3]
+        assert eval (x > 0)
+
+This will run the test three times: once with ``x = 1``, once with ``x = 2``,
+and once with ``x = 3``.
+
+Each run will execute the ``before testcase`` and ``after testcase`` hooks,
+and each test is reported separately in the test report.
+
+Grouped Parameters
+^^^^^^^^^^^^^^^^^^
+
+It is possible to specify several variables at once by grouping them
+in parentheses and giving a list of value groups. For example::
+
+    testcase addition:
+        parameter (x, y, z) = [ (1, 2, 3), (2, 3, 5), (3, 5, 8) ]
+
+        assert eval (x + y == z)
+
+This will run three times, each time using one set of values:
+``(1, 2, 3)``, ``(2, 3, 5)``, and ``(3, 5, 8)``.
+
+Parameter Combinations
+^^^^^^^^^^^^^^^^^^^^^^
+
+If multiple ``parameter`` properties are provided, the test case will run
+for every possible combination of the values. For example::
+
+    testcase combinations:
+        parameter a = [1, 2]
+        parameter b = [3, 4]
+        parameter c = [5, 6]
+
+        assert eval (a + b + c in [9, 10, 11, 12])
+
+This will run eight times, once for each combination of ``(a, b, c)``:
+
+    ``(1, 3, 5)``, ``(1, 3, 6)``, ``(1, 4, 5)``, ``(1, 4, 6)``, ``(2, 3, 5)``, ``(2, 3, 6)``, ``(2, 4, 5)``, ``(2, 4, 6)``
+
+It is possible to mix grouped parameters with non-grouped parameters. For example::
+
+    testcase mixed:
+        parameter a = [1, 2]
+        parameter (b, c) = [ (3, 5), (4, 6) ]
+
+        assert eval (a + b + c in [9, 10, 11, 12])
+
+This will run four times, using these combinations for ``(a, (b, c))``:
+
+    ``(1, (3, 5))``, ``(1, (4, 6))``, ``(2, (3, 5))``, ``(2, (4, 6))``
+
+
+Selective Enable and Xfail
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If a parameterized test case has its ``enabled`` property evaluate to ``False``,
+that particular run will be skipped, but other runs will continue to execute.
+
+Similarly, if the ``xfail`` property evaluates to ``True``, that particular
+run will be marked as xfailed if it fails, but other runs will pass or fail normally.
+
+For example, the following test will pass for ``x=0`` and ``x=1``, and will xfail for ``x=2``::
+
+    testcase choice_test:
+        parameter x = [0, 1, 2]
+        xfail x == 2
+
+        assert eval (x < 2)
+
+
+Test Suites
+^^^^^^^^^^^
+Parameters can also be provided to the whole test suite. In this case, all hooks and test cases
+inside the suite will run once for each parameter set.
+
+Each parameterized run will execute the ``setup``, ``before/after testsuite``,
+and ``teardown`` hooks.
+
+For example::
+
+    testsuite math_tests:
+        parameter (x, y, z) [ (1, 2, 3), (2, 3, 5), (3, 5, 8) ]
+
+        setup:
+            $ print(f"Running math tests with x={x}, y={y}, z={z}")
+
+        testcase addition:
+            assert eval (x + y == z)
+
+        testcase multiplication:
+            assert eval (x*y == z*y - y*y)
+
+Parameters may be nested, and all combinations will be tested. For example::
+
+    testsuite parameter_field:
+        parameter choice_text = ["first", "second"]
+
+        testcase param_test2:
+            parameter (x, y) = [(0.0, 0.0), (0.5,0.5)]
+
+            advance until screen "choice"
+            click choice_text
+            click pos (x, y)
+
+This will run four times, once for each combination of ``(choice_text, (x, y))``:
+
+    ``("first", (0.0, 0.0))``, ``("first", (0.5, 0.5))``,
+    ``("second", (0.0, 0.0))``, ``("second", (0.5, 0.5))``
+
+.. warning::
+
+    Test parameters are passed directly to tests, without any copying. If you change
+    a parameter that is mutable (eg. a list or dictionary) inside a test, that change
+    will affect other tests using the same object.
+
 Exceptions And Failures
 -----------------------
 If an error occurs during a test case:
@@ -388,7 +523,8 @@ Test Reporting
 ===================
 
 After a test run, a report is printed to the console, listing all test cases
-that were executed, skipped, failed, or raised an error.
+and their results. If the ``--print_details`` option is provided, the report
+will include additional information about each test.
 
 Below is an example of a test report after successfully testing "The Question":
 
@@ -396,6 +532,23 @@ Below is an example of a test report after successfully testing "The Question":
     :alt: Test report example
     :class: screenshot
 
+Test results
+------------
+
+A test can have one of the following results:
+
+- **Passed**: The test executed successfully, without any errors.
+- **Failed**: The test executed, but one of the statements failed.
+- **XFailed**: The test was expected to fail (because its ``xfail``
+  property evaluated to ``True``), and it did fail.
+- **XPassed**: The test was expected to fail (because its ``xfail``
+  property evaluated to ``True``), but it passed instead.
+- **Skipped**: The test was skipped, either because its ``enabled``
+  property evaluated to ``False``, or because another test with ``only True``
+  exists.
+
+In general, a test is considered successful if it passed or xfailed,
+and unsuccessful if it failed or xpassed.
 
 Test Settings
 =================
@@ -880,7 +1033,6 @@ the texts ``"CATALOG"`` and ``"illogical"``, the target
 will be the ``"CATALOG"`` text.
 
 
-
 ::
 
     # This may be in a button
@@ -927,7 +1079,6 @@ assertion fails. If the condition is not met, the assertion passes.
 
     - `Python asserts <https://docs.python.org/reference/simple_stmts.html#the-assert-statement>`__
     - `Boolean evaluation <https://docs.python.org/library/stdtypes.html#truth-value-testing>`__
-
 
 
 If
@@ -1012,6 +1163,14 @@ the ``--overwrite_screenshots`` command-line option.
     screenshot "screens/inventory" max_pixel_difference 0.01
     screenshot "button.png" crop (10, 10, 100, 50)
 
+This may be used in a parameterized test to take multiple screenshots::
+
+    testcase screen_tester:
+        parameter screen_name = ["inventory", "stats", "map"]
+
+        run Show(screen_name)
+        screenshot f"screens/{screen_name}.png"
+
 Until
 ^^^^^^^^^
 
@@ -1030,9 +1189,6 @@ is executed repeatedly until the condition is ready.
 If a ``timeout`` is given, the statement will wait up to that many seconds
 for the condition to be met. If the condition is not met within that time,
 a RenpyTestTimeoutError is raised.
-
-If the timeout is ``None``, the statement will wait indefinitely
-for the condition to be met.
 
 This timeout temporarily overrides the global ``_test.timeout`` setting.
 

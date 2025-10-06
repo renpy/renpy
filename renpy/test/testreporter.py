@@ -46,8 +46,9 @@ class OutcomeStatus(Enum):
     NOT_RUN = "not_run"
     PENDING = "pending"
     PASSED = "passed"
-    XFAILED = "xfailed"
+    XFAILED = "xfailed"  # Expected fail
     FAILED = "failed"
+    XPASSED = "xpassed"  # Unexpected pass
     SKIPPED = "skipped"
 
 
@@ -58,21 +59,29 @@ class BaseOutcome:
     produces one of these.
     """
 
-    node: BaseTestBlock = field(repr=False)
+    test_block: BaseTestBlock = field(repr=False)
     name: str = "<unnamed>"
+    full_path: str = "<unnamed_path>"
+
+    parent: "BaseOutcome | None" = field(default=None, repr=False)
     num_asserts: int = 0
     num_asserts_passed: int = 0
     num_asserts_xfailed: int = 0
     num_asserts_failed: int = 0
+    num_asserts_xpassed: int = 0
 
     start_time: float = field(default=0.0, repr=False)
     end_time: float = field(default=0.0, repr=False)
     duration: float = 0.0
-    status: OutcomeStatus = field(default=OutcomeStatus.NOT_RUN, repr=False)
-    final_status: OutcomeStatus = OutcomeStatus.NOT_RUN
+    status: OutcomeStatus = OutcomeStatus.NOT_RUN
     exception: str = ""
 
     def begin(self) -> None:
+        if self.name == "<unnamed>":
+            self.name = self.test_block.current_parameterized_name
+        if self.full_path == "<unnamed_path>":
+            self.full_path = self.test_block.full_path
+
         self.start_time = renpy.display.core.get_time()
         self.end_time = 0.0
         self.status = OutcomeStatus.PENDING
@@ -104,105 +113,65 @@ class BaseOutcome:
         elif self.status == OutcomeStatus.PENDING:
             if self.num_asserts_failed > 0:
                 self.status = OutcomeStatus.FAILED
+            elif self.num_asserts_xfailed > 0 and self.num_asserts_passed == 0:
+                self.status = OutcomeStatus.XFAILED
             else:
                 self.status = OutcomeStatus.PASSED
 
 
 @dataclass
 class TestHookOutcome(BaseOutcome):
-    num_runs_passed: int = 0
-    num_runs_failed: int = 0
-    num_runs_skipped: int = 0
-
-    def end(self, status: OutcomeStatus | None) -> None:
-        super().end(status)
-
-        if self.status == OutcomeStatus.PASSED:
-            self.num_runs_passed += 1
-        elif self.status == OutcomeStatus.FAILED:
-            self.num_runs_failed += 1
-        elif self.status == OutcomeStatus.SKIPPED:
-            self.num_runs_skipped += 1
-
-        if self.num_runs_failed > 0:
-            self.final_status = OutcomeStatus.FAILED
-        elif self.num_runs_passed > 0 and self.num_runs_failed == 0:
-            self.final_status = OutcomeStatus.PASSED
-        elif self.num_runs_skipped > 0 and self.num_runs_passed == 0:
-            self.final_status = OutcomeStatus.SKIPPED
+    test_block: TestHook = field(repr=False)
 
 
 @dataclass
 class TestCaseOutcome(BaseOutcome):
-    def end(self, status: OutcomeStatus | None) -> None:
-        super().end(status)
-        self.final_status = self.status
+    test_block: TestCase = field(repr=False)
 
 
 @dataclass
 class TestSuiteOutcome(TestCaseOutcome):
+    test_block: TestSuite = field(repr=False)
+    name: str = ""
+
+    children: list[BaseOutcome] = field(default_factory=list, repr=False)
+
     num_testsuites: int = 0
     num_testsuites_passed: int = 0
     num_testsuites_xfailed: int = 0
     num_testsuites_failed: int = 0
+    num_testsuites_xpassed: int = 0
     num_testsuites_skipped: int = 0
 
     num_testcases: int = 0
     num_testcases_passed: int = 0
     num_testcases_xfailed: int = 0
     num_testcases_failed: int = 0
+    num_testcases_xpassed: int = 0
     num_testcases_skipped: int = 0
 
     num_hooks: int = 0
     num_hooks_passed: int = 0
     num_hooks_xfailed: int = 0
     num_hooks_failed: int = 0
+    num_hooks_xpassed: int = 0
     num_hooks_skipped: int = 0
 
-    children: list["BaseOutcome"] = field(default_factory=list, repr=False)
+    def get_child_by_test_block(self, test_block: BaseTestBlock) -> BaseOutcome:
+        for child in self.children:
+            if child.test_block == test_block and child.name == test_block.current_parameterized_name:
+                return child
 
-    @property
-    def num_testsuites_not_run(self) -> int:
-        return (
-            self.num_testsuites
-            - self.num_testsuites_passed
-            - self.num_testsuites_xfailed
-            - self.num_testsuites_failed
-            - self.num_testsuites_skipped
+        if isinstance(test_block, TestHook):
+            # Create TestHookOutcome dynamically
+            outcome = TestHookOutcome(test_block)
+            self.children.append(outcome)
+            return outcome
+
+        raise ValueError(
+            f"Outcomes for '{test_block.current_full_parameterized_path}' not found in '{self.name}'.\n"
+            f"Available names: {[c.name for c in self.children]}"
         )
-
-    @property
-    def num_testcases_not_run(self) -> int:
-        return (
-            self.num_testcases
-            - self.num_testcases_passed
-            - self.num_testcases_xfailed
-            - self.num_testcases_failed
-            - self.num_testcases_skipped
-        )
-
-    @property
-    def num_hooks_not_run(self) -> int:
-        return (
-            self.num_hooks
-            - self.num_hooks_passed
-            - self.num_hooks_xfailed
-            - self.num_hooks_failed
-            - self.num_hooks_skipped
-        )
-
-    def populate_children(self, node: TestSuite) -> None:
-        for hook in node.hooks:
-            self.children.append(TestHookOutcome(hook.name))
-
-        for child in node.subtests:
-            if isinstance(child, TestSuite):
-                r = TestSuiteOutcome(child.name)
-                r.populate_children(child)
-                self.children.append(r)
-
-            elif isinstance(child, TestCase):
-                self.children.append(TestCaseOutcome(child.name))
 
     def end(self, status: OutcomeStatus | None = None) -> None:
         """
@@ -215,12 +184,7 @@ class TestSuiteOutcome(TestCaseOutcome):
         if self.end_time > 0.0:
             return  # Already ended
 
-        now = renpy.display.core.get_time()
-        if self.start_time == 0.0:
-            self.start_time = now
-
-        self.end_time = now
-        self.duration = self.end_time - self.start_time
+        self.finalize_time()
 
         for child in self.children:
             self.num_asserts += child.num_asserts
@@ -233,12 +197,14 @@ class TestSuiteOutcome(TestCaseOutcome):
                 self.num_testsuites_passed += child.num_testsuites_passed
                 self.num_testsuites_xfailed += child.num_testsuites_xfailed
                 self.num_testsuites_failed += child.num_testsuites_failed
+                self.num_testsuites_xpassed += child.num_testsuites_xpassed
                 self.num_testsuites_skipped += child.num_testsuites_skipped
 
                 self.num_testcases += child.num_testcases
                 self.num_testcases_passed += child.num_testcases_passed
                 self.num_testcases_xfailed += child.num_testcases_xfailed
                 self.num_testcases_failed += child.num_testcases_failed
+                self.num_testcases_xpassed += child.num_testcases_xpassed
                 self.num_testcases_skipped += child.num_testcases_skipped
 
                 if child.status == OutcomeStatus.PASSED:
@@ -247,6 +213,8 @@ class TestSuiteOutcome(TestCaseOutcome):
                     self.num_testsuites_xfailed += 1
                 elif child.status == OutcomeStatus.FAILED:
                     self.num_testsuites_failed += 1
+                elif child.status == OutcomeStatus.XPASSED:
+                    self.num_testsuites_xpassed += 1
                 elif child.status == OutcomeStatus.SKIPPED:
                     self.num_testsuites_skipped += 1
 
@@ -258,6 +226,8 @@ class TestSuiteOutcome(TestCaseOutcome):
                     self.num_testcases_xfailed += 1
                 elif child.status == OutcomeStatus.FAILED:
                     self.num_testcases_failed += 1
+                elif child.status == OutcomeStatus.XPASSED:
+                    self.num_testcases_xpassed += 1
                 elif child.status == OutcomeStatus.SKIPPED:
                     self.num_testcases_skipped += 1
 
@@ -269,6 +239,8 @@ class TestSuiteOutcome(TestCaseOutcome):
                     self.num_hooks_xfailed += 1
                 elif child.status == OutcomeStatus.FAILED:
                     self.num_hooks_failed += 1
+                elif child.status == OutcomeStatus.XPASSED:
+                    self.num_hooks_xpassed += 1
                 elif child.status == OutcomeStatus.SKIPPED:
                     self.num_hooks_skipped += 1
 
@@ -280,29 +252,99 @@ class TestSuiteOutcome(TestCaseOutcome):
                 self.status = OutcomeStatus.FAILED
             elif self.num_testcases_skipped == self.num_testcases:
                 self.status = OutcomeStatus.SKIPPED
+            elif self.num_testcases_xfailed > 0 and self.num_testcases_passed == 0:
+                self.status = OutcomeStatus.XFAILED
             else:
                 self.status = OutcomeStatus.PASSED
 
-        self.final_status = self.status
 
-    def get_outcome_by_name(self, name: str) -> BaseOutcome:
-        if name == self.name:
-            return self
+class OutcomeManager(TestSuiteOutcome):
+    @property
+    def num_testsuites_not_run(self) -> int:
+        return (
+            self.num_testsuites
+            - self.num_testsuites_passed
+            - self.num_testsuites_xfailed
+            - self.num_testsuites_failed
+            - self.num_testsuites_xpassed
+            - self.num_testsuites_skipped
+        )
 
-        def _flatten_test_suite_outcomes(outcomes: TestSuiteOutcome) -> dict[str, "BaseOutcome"]:
-            rv = {}
-            for child in outcomes.children:
-                rv[child.name] = child
-                if isinstance(child, TestSuiteOutcome):
-                    rv.update(_flatten_test_suite_outcomes(child))
-            return rv
+    @property
+    def num_testcases_not_run(self) -> int:
+        return (
+            self.num_testcases
+            - self.num_testcases_passed
+            - self.num_testcases_xfailed
+            - self.num_testcases_failed
+            - self.num_testcases_xpassed
+            - self.num_testcases_skipped
+        )
 
-        # rv = _recursive_search(self)
-        outcomes = _flatten_test_suite_outcomes(self)
-        if rv := outcomes.get(name, None):
-            return rv
+    @property
+    def num_hooks_not_run(self) -> int:
+        return (
+            self.num_hooks
+            - self.num_hooks_passed
+            - self.num_hooks_xfailed
+            - self.num_hooks_failed
+            - self.num_hooks_xpassed
+            - self.num_hooks_skipped
+        )
 
-        raise ValueError(f"outcomes for '{name}' not found in {self.name}. Available names: {list(outcomes.keys())}")
+    def __init__(self, root: TestSuite):
+        super().__init__(root, root.current_parameterized_name)
+        self.root = root
+        self.children = self.build_outcome_hierarchy(root, self)
+
+    def build_outcome_hierarchy(self, suite: TestSuite, parent_outcome: TestSuiteOutcome) -> list[BaseOutcome]:
+        ## NOTE: TestHookOutcomes are created dynamically during execution, not here.
+        rv: list[BaseOutcome] = []
+        for parent_idx in range(len(suite.parameters) or 1):
+            suite_param_outcome = TestSuiteOutcome(suite, suite.get_parameterized_name(parent_idx))
+            suite_param_outcome.parent = parent_outcome
+            rv.append(suite_param_outcome)
+
+            for subtest in suite.subtests:
+                if isinstance(subtest, TestSuite):
+                    suite_param_outcome.children.extend(self.build_outcome_hierarchy(subtest, suite_param_outcome))
+
+                elif isinstance(subtest, TestCase):
+                    for idx in range(len(subtest.parameters) or 1):
+                        outcome = TestCaseOutcome(subtest, subtest.get_parameterized_name(idx))
+                        outcome.parent = suite_param_outcome
+                        suite_param_outcome.children.append(outcome)
+
+                else:
+                    raise ValueError(f"Unsupported: {type(suite)}")
+
+        return rv
+
+    def get_outcome_by_test_block(self, test_block: BaseTestBlock) -> BaseOutcome:
+        """Get the outcome object corresponding to the given test block (with parameterization)."""
+
+        # Build the path from the target block back to the root
+        path: list[BaseTestBlock] = []
+        current = test_block
+        while current:
+            path.append(current)
+            current = current.parent
+
+        # Start at the root and traverse down to the target
+        current_outcome: TestSuiteOutcome = self
+
+        for i, n in enumerate(reversed(path)):
+            n_outcome = current_outcome.get_child_by_test_block(n)
+
+            if i == len(path) - 1:
+                return n_outcome
+
+            if not isinstance(n_outcome, TestSuiteOutcome):
+                raise ValueError(f"Expected TestSuiteOutcome at '{n.full_path}', got {type(n_outcome).__name__}")
+
+            current_outcome = n_outcome
+
+        raise ValueError(f"Outcomes for '{test_block.current_full_parameterized_path}' not found.")
 
 
 def get_exception_string(
@@ -344,9 +386,6 @@ def get_exception_string(
 
 
 def get_assertion_error_string(epc: renpy.error.ExceptionPrintContext, assert_node: Assert, node_name: str) -> str:
-    if not assert_node.failed:
-        return ""
-
     force_color = not os.environ.get("FORCE_COLOR") and isinstance(epc, renpy.error.ANSIColoredPrintContext)
     if force_color:
         os.environ["FORCE_COLOR"] = "1"
@@ -363,7 +402,6 @@ def get_assertion_error_string(epc: renpy.error.ExceptionPrintContext, assert_no
 
         epc.location(filename, assert_node.linenumber, node_name)
         epc.final_exception_line("AssertionError", expr)
-        # self._print(f"{ANSIColors.RED}FAILED:{ANSIColors.RESET} {expr}\n")
 
     if force_color:
         del os.environ["FORCE_COLOR"]
@@ -379,11 +417,11 @@ class Reporter(abc.ABC):
     def __init__(self):
         self.epc: renpy.error.ExceptionPrintContext = renpy.error.MaybeColoredExceptionPrintContext()
 
-    def test_run_start(self, outcomes: TestSuiteOutcome) -> None:
+    def test_run_start(self, outcomes: OutcomeManager) -> None:
         """Called when the entire test run starts."""
         pass
 
-    def test_run_end(self, outcomes: TestSuiteOutcome) -> None:
+    def test_run_end(self, outcomes: OutcomeManager) -> None:
         """Called when the entire test run ends."""
         pass
 
@@ -415,7 +453,7 @@ class Reporter(abc.ABC):
         """Called when a test case is skipped."""
         pass
 
-    def log_assert(self, assert_node: Assert, node_name: str = "") -> None:
+    def log_assert(self, assert_node: Assert, status: OutcomeStatus, node_name: str = "") -> None:
         """Called for each assert in the test case, even if it did not fail."""
         pass
 
@@ -483,6 +521,8 @@ class ConsoleReporter(Reporter):
             return f"{ANSIColors.MAGENTA}{msg}{ANSIColors.RESET}"
         elif status == OutcomeStatus.FAILED:
             return f"{ANSIColors.RED}{msg}{ANSIColors.RESET}"
+        elif status == OutcomeStatus.XPASSED:
+            return f"{ANSIColors.RED}{msg}{ANSIColors.RESET}"
         elif status == OutcomeStatus.PENDING:
             return f"{ANSIColors.CYAN}{msg}{ANSIColors.RESET}"
         elif status in [OutcomeStatus.SKIPPED, OutcomeStatus.NOT_RUN]:
@@ -497,21 +537,25 @@ class ConsoleReporter(Reporter):
         text = status.name.upper().replace("_", " ").ljust(7)
         return self._format_with_status_color(text, status)
 
-    def _print_detailed_outcome(self, outcome: BaseOutcome, depth=0) -> None:
+    def _print_detailed_outcome(self, outcome: BaseOutcome, depth=-1) -> None:
         """
         Prints all outcomes in a tree-like structure.
         """
 
-        if depth == 0:
+        if depth == -1:
             self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Test outcomes (Detailed)")
 
         if outcome.status == OutcomeStatus.SKIPPED and not _test.print_skipped:
             return
 
-        test_name = outcome.name.split(".")[-1]
-        status_text = self._get_status_text(outcome.final_status)
+        test_name = outcome.name
+        status_text = self._get_status_text(outcome.status)
 
-        if isinstance(outcome, TestSuiteOutcome):
+        if isinstance(outcome, OutcomeManager):
+            for child in outcome.children:
+                self._print_detailed_outcome(child, depth + 1)
+
+        elif isinstance(outcome, TestSuiteOutcome):
             self._print(
                 f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
                 + "  " * (depth)
@@ -530,12 +574,12 @@ class ConsoleReporter(Reporter):
                 + (f" - ({format_seconds(outcome.duration)})" if outcome.duration > 0 else "")
             )
 
-        if depth == 0:
+        if depth == -1:
             self._print("")
             self._print("=" * 20)
             self._print("")
 
-    def _print_summarized_outcomes(self, outcome: TestSuiteOutcome) -> None:
+    def _print_summarized_outcomes(self, outcome: OutcomeManager) -> None:
         self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Test outcomes (Summary)")
 
         self._print(
@@ -547,6 +591,8 @@ class ConsoleReporter(Reporter):
             f"{outcome.num_testsuites_xfailed:5d} xfailed{ANSIColors.RESET} | "
             f"{ANSIColors.RED if outcome.num_testsuites_failed else ANSIColors.RESET}"
             f"{outcome.num_testsuites_failed:5d} failed{ANSIColors.RESET} | "
+            f"{ANSIColors.RED if outcome.num_testsuites_xpassed else ANSIColors.RESET}"
+            f"{outcome.num_testsuites_xpassed:5d} xpassed{ANSIColors.RESET} | "
             f"{ANSIColors.YELLOW if outcome.num_testsuites_skipped else ANSIColors.RESET}"
             f"{outcome.num_testsuites_skipped:5d} skipped{ANSIColors.RESET} | "
             f"{ANSIColors.YELLOW if outcome.num_testsuites_not_run else ANSIColors.RESET}"
@@ -562,6 +608,8 @@ class ConsoleReporter(Reporter):
             f"{outcome.num_testcases_xfailed:5d} xfailed{ANSIColors.RESET} | "
             f"{ANSIColors.RED if outcome.num_testcases_failed else ANSIColors.RESET}"
             f"{outcome.num_testcases_failed:5d} failed{ANSIColors.RESET} | "
+            f"{ANSIColors.RED if outcome.num_testcases_xpassed else ANSIColors.RESET}"
+            f"{outcome.num_testcases_xpassed:5d} xpassed{ANSIColors.RESET} | "
             f"{ANSIColors.YELLOW if outcome.num_testcases_skipped else ANSIColors.RESET}"
             f"{outcome.num_testcases_skipped:5d} skipped{ANSIColors.RESET} | "
             f"{ANSIColors.YELLOW if outcome.num_testcases_not_run else ANSIColors.RESET}"
@@ -577,6 +625,8 @@ class ConsoleReporter(Reporter):
             f"{outcome.num_hooks_xfailed:5d} xfailed{ANSIColors.RESET} | "
             f"{ANSIColors.RED if outcome.num_hooks_failed else ANSIColors.RESET}"
             f"{outcome.num_hooks_failed:5d} failed{ANSIColors.RESET} | "
+            f"{ANSIColors.RED if outcome.num_hooks_xpassed else ANSIColors.RESET}"
+            f"{outcome.num_hooks_xpassed:5d} xpassed{ANSIColors.RESET} | "
             f"{ANSIColors.YELLOW if outcome.num_hooks_skipped else ANSIColors.RESET}"
             f"{outcome.num_hooks_skipped:5d} skipped{ANSIColors.RESET} | "
             f"{ANSIColors.YELLOW if outcome.num_hooks_not_run else ANSIColors.RESET}"
@@ -592,13 +642,13 @@ class ConsoleReporter(Reporter):
             f"{outcome.num_asserts_xfailed:5d} xfailed{ANSIColors.RESET} | "
             f"{ANSIColors.RED if outcome.num_asserts_failed else ANSIColors.RESET}"
             f"{outcome.num_asserts_failed:5d} failed{ANSIColors.RESET} | "
+            f"{ANSIColors.RED if outcome.num_asserts_xpassed else ANSIColors.RESET}"
+            f"{outcome.num_asserts_xpassed:5d} xpassed{ANSIColors.RESET} | "
         )
 
         self._print("")
         self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Time: {format_seconds(outcome.duration)}")
-        self._print(
-            f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Status: {self._get_status_text(outcome.final_status)}"
-        )
+        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Status: {self._get_status_text(outcome.status)}")
 
     ##################################
     ## Reporter Interface Methods
@@ -623,7 +673,6 @@ class ConsoleReporter(Reporter):
 
     def test_suite_end(self, outcome, depth=0) -> None:
         pass
-        # self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {node.name} done")
 
     def test_case_start(self, outcome, depth=0) -> None:
         self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}- {outcome.name}")
@@ -636,19 +685,22 @@ class ConsoleReporter(Reporter):
         )
 
     def test_hook_start(self, outcome, depth=0) -> None:
-        self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}  {outcome.name}")
+        self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}  {outcome.full_path}")
 
     def test_hook_end(self, outcome, depth=0) -> None:
         self._erase_line()
         self._print(
             f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}  "
-            f"{self._format_with_status_color(outcome.name, outcome.status)} ({format_seconds(outcome.duration)})"
+            f"{self._format_with_status_color(outcome.full_path, outcome.status)} ({format_seconds(outcome.duration)})"
         )
 
     def test_case_skipped(self, outcome, depth=0) -> None:
         pass
 
-    def log_assert(self, assert_node, node_name="") -> None:
+    def log_assert(self, assert_node, status, node_name="") -> None:
+        if status in (OutcomeStatus.PASSED, OutcomeStatus.XFAILED):
+            return
+
         if msg := get_assertion_error_string(self.epc, assert_node, node_name):
             self._print(msg)
 
@@ -675,109 +727,114 @@ class ReporterManager:
 
     reporters: list["Reporter"] = []
 
-    all_outcomes: TestSuiteOutcome | None = None
-    "A TestSuiteoutcomes object that contains the outcomes of all testcases to be executed."
+    outcome_manager: OutcomeManager | None = None
+    "A TestSuiteOutcome object that contains the outcomes of all testcases to be executed."
 
     suites: list[TestSuite] = []
     testcase: TestCase | None = None
     hook: TestHook | None = None
 
     def initialize_test_outcomes(self, suite: TestSuite) -> None:
-        self.all_outcomes = TestSuiteOutcome(suite.name)
-        self.all_outcomes.populate_children(suite)
+        self.outcome_manager = OutcomeManager(suite)
 
     @property
     def has_failed(self) -> bool:
-        return self.all_outcomes is not None and self.all_outcomes.final_status == OutcomeStatus.FAILED
+        return self.outcome_manager is not None and (
+            self.outcome_manager.status == OutcomeStatus.FAILED or self.outcome_manager.status == OutcomeStatus.XPASSED
+        )
 
     def add_reporter(self, reporter: Reporter) -> None:
         self.reporters.append(reporter)
 
     def test_run_start(self) -> None:
-        if self.all_outcomes is None:
+        if self.outcome_manager is None:
             raise RuntimeError("Called before initializing test outcomes.")
-        self.all_outcomes.begin()
+        self.outcome_manager.begin()
 
         for reporter in self.reporters:
-            reporter.test_run_start(self.all_outcomes)
+            reporter.test_run_start(self.outcome_manager)
 
     def test_run_end(self) -> None:
-        if self.all_outcomes is None:
+        if self.outcome_manager is None:
             raise RuntimeError("Called before initializing test outcomes.")
-        self.all_outcomes.end()
+        self.outcome_manager.end()
 
         for reporter in self.reporters:
-            reporter.test_run_end(self.all_outcomes)
+            reporter.test_run_end(self.outcome_manager)
 
-    def test_suite_start(self, node: TestSuite, depth: int = 0) -> None:
-        self.suites.append(node)
+    def test_suite_start(self, suite: TestSuite, depth: int = 0) -> None:
+        self.suites.append(suite)
         self.testcase = None
         self.hook = None
 
-        outcome = self.all_outcomes.get_outcome_by_name(node.name)
+        outcome = self.outcome_manager.get_outcome_by_test_block(suite)
+        assert isinstance(outcome, TestSuiteOutcome)
         outcome.begin()
 
         for reporter in self.reporters:
             reporter.test_suite_start(outcome, depth=depth)
 
-    def test_suite_end(self, node: TestSuite, status: OutcomeStatus | None = None, depth: int = 0) -> None:
+    def test_suite_end(self, suite: TestSuite, status: OutcomeStatus | None = None, depth: int = 0) -> None:
         removed = self.suites.pop()
-        if removed != node:
+        if removed != suite:
             raise RuntimeError("Mismatched test suite start/end calls.")
         self.testcase = None
         self.hook = None
 
-        outcome = self.all_outcomes.get_outcome_by_name(node.name)
+        outcome = self.outcome_manager.get_outcome_by_test_block(suite)
         assert isinstance(outcome, TestSuiteOutcome)
         outcome.end(status)
 
         for reporter in self.reporters:
             reporter.test_suite_end(outcome, depth=depth)
 
-    def test_case_start(self, node: TestCase, depth: int = 0) -> None:
-        self.testcase = node
+    def test_case_start(self, test_case: TestCase, depth: int = 0) -> None:
+        self.testcase = test_case
         self.hook = None
 
-        outcome = self.all_outcomes.get_outcome_by_name(node.name)
+        outcome = self.outcome_manager.get_outcome_by_test_block(test_case)
+        assert isinstance(outcome, TestCaseOutcome)
         outcome.begin()
 
         for reporter in self.reporters:
             reporter.test_case_start(outcome, depth)
 
-    def test_case_end(self, node: TestCase, status: OutcomeStatus | None = None, depth: int = 0) -> None:
+    def test_case_end(self, test_case: TestCase, status: OutcomeStatus | None = None, depth: int = 0) -> None:
         self.testcase = None
         self.hook = None
 
-        outcome = self.all_outcomes.get_outcome_by_name(node.name)
+        outcome = self.outcome_manager.get_outcome_by_test_block(test_case)
         assert isinstance(outcome, TestCaseOutcome)
         outcome.end(status)
 
         for reporter in self.reporters:
             reporter.test_case_end(outcome, depth)
 
-    def test_hook_start(self, node: TestHook, depth: int = 0) -> None:
+    def test_hook_start(self, hook: TestHook, depth: int = 0) -> None:
         self.testcase = None
-        self.hook = node
+        self.hook = hook
 
-        outcome = self.all_outcomes.get_outcome_by_name(node.name)
+        outcome = self.outcome_manager.get_outcome_by_test_block(hook)
+        assert isinstance(outcome, TestHookOutcome)
         outcome.begin()
 
         for reporter in self.reporters:
             reporter.test_hook_start(outcome, depth=depth)
 
-    def test_hook_end(self, node: TestHook, status=None, depth: int = 0) -> None:
+    def test_hook_end(self, hook: TestHook, status=None, depth: int = 0) -> None:
         self.testcase = None
         self.hook = None
 
-        outcome = self.all_outcomes.get_outcome_by_name(node.name)
+        outcome = self.outcome_manager.get_outcome_by_test_block(hook)
         assert isinstance(outcome, TestHookOutcome)
         outcome.end(status)
 
         for reporter in self.reporters:
             reporter.test_hook_end(outcome, depth=depth)
 
-    def test_case_skipped(self, node: TestCase, depth: int = 0) -> None:
-        outcome = self.all_outcomes.get_outcome_by_name(node.name)
+    def test_case_skipped(self, test_case: TestCase, depth: int = 0) -> None:
+        outcome = self.outcome_manager.get_outcome_by_test_block(test_case)
+        assert isinstance(outcome, TestCaseOutcome)
         outcome.end(OutcomeStatus.SKIPPED)
 
         for reporter in self.reporters:
@@ -787,20 +844,38 @@ class ReporterManager:
         outcome = self._get_current_outcomes()
         outcome.num_asserts += 1
 
-        if assert_node.xfail:
-            outcome.num_asserts_xfailed += 1
-        elif assert_node.failed:
-            if outcome.node.xfail:
-                outcome.num_asserts_xfailed += 1
-            else:
-                outcome.num_asserts_failed += 1
-            raise RenpyTestAssertionError(f"Assertion failed: {assert_node}")
-        else:
-            outcome.num_asserts_passed += 1
+        status = self._determine_assert_status(assert_node, outcome)
+        self._update_assert_counters(outcome, status)
 
-        block_name = self._current_block_name()
+        test_block = self._current_test_block()
         for reporter in self.reporters:
-            reporter.log_assert(assert_node, block_name)
+            reporter.log_assert(assert_node, status, test_block.current_full_parameterized_path)
+
+        if status in (OutcomeStatus.FAILED, OutcomeStatus.XPASSED):
+            raise RenpyTestAssertionError(f"{status.value}: {assert_node}")
+
+    def _determine_assert_status(self, assert_node: Assert, outcome: BaseOutcome) -> OutcomeStatus:
+        """Determine the outcome status for an assertion."""
+        is_expected_failure = outcome.test_block.xfail if outcome.test_block else False
+        is_true = assert_node.is_assertion_true
+
+        if assert_node.xfail:
+            return OutcomeStatus.XPASSED if is_true else OutcomeStatus.XFAILED
+        elif is_expected_failure and not is_true:
+            return OutcomeStatus.XFAILED
+        else:
+            return OutcomeStatus.PASSED if is_true else OutcomeStatus.FAILED
+
+    def _update_assert_counters(self, outcome: BaseOutcome, status: OutcomeStatus) -> None:
+        """Update assertion counters based on status."""
+        if status == OutcomeStatus.PASSED:
+            outcome.num_asserts_passed += 1
+        elif status == OutcomeStatus.XFAILED:
+            outcome.num_asserts_xfailed += 1
+        elif status == OutcomeStatus.FAILED:
+            outcome.num_asserts_failed += 1
+        elif status == OutcomeStatus.XPASSED:
+            outcome.num_asserts_xpassed += 1
 
     def log_exception(
         self, exception: Exception, run_stack: list[renpy.error.FrameSummary], xfailed: bool = False
@@ -822,21 +897,21 @@ class ReporterManager:
         for reporter in self.reporters:
             reporter.on_reload()
 
-    def _current_block_name(self) -> str:
+    def _current_test_block(self) -> BaseTestBlock:
         if self.hook is not None:
-            return self.hook.name
+            return self.hook
         elif self.testcase is not None:
-            return self.testcase.name
+            return self.testcase
         elif self.suites:
-            return self.suites[-1].name
+            return self.suites[-1]
         else:
             raise RuntimeError("No current test case, hook, or suite to end outcomes for.")
 
     def _get_current_outcomes(self) -> BaseOutcome:
-        if self.all_outcomes is None:
+        if self.outcome_manager is None:
             raise RuntimeError("Called before initializing test outcomes.")
 
-        return self.all_outcomes.get_outcome_by_name(self._current_block_name())
+        return self.outcome_manager.get_outcome_by_test_block(self._current_test_block())
 
 
 reporter = ReporterManager()
