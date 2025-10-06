@@ -29,6 +29,10 @@ block of test statements (see below). Test cases are similar to Ren'Py
 
 It takes the following properties:
 
+.. var:: description
+
+    A string describing the test case. This is used in the test report.
+
 .. var:: enabled
 
     If this expression evaluates to ``False``, this test is skipped.
@@ -60,9 +64,7 @@ It takes the following properties:
     If the test does fail, it will be marked as xfailed instead of failed.
     Defaults to ``False``.
 
-.. var:: description
 
-    A string describing the test case. This is used in the test report.
 
 Testsuite Statement
 ===================
@@ -148,7 +150,7 @@ executed, and how the hooks are called. The following example illustrates this:
                 skip until main_menu
 
             before testsuite:
-                if not screen "main_menu":
+                if not screen ""main_menu"":
                     run MainMenu(confirm=False)
                 click ""Start""
 
@@ -447,7 +449,7 @@ divided into three categories: command statements, condition/selector statements
 control statements.
 
 Basic Commands
--------------
+--------------
 
 .. _test-advance-statement:
 
@@ -682,7 +684,7 @@ Simulates a scroll event. It takes the following optional properties:
         run Scroll("inventory_scroll", "increase", amount="step", delay=1.0)
 
 Keyboard Commands
-----------------
+-----------------
 
 Keysym
 ^^^^^^^^^^
@@ -748,7 +750,7 @@ These are always ready. ::
 
 
 Boolean Operations
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 
     Conditions support the ``not``, ``and`` and ``or`` operators.
     That expression may or may not be enclosed in parentheses. ::
@@ -962,7 +964,7 @@ Repeat
 
     Type: :dfn:`Control`
 
-    .. describe:: <command> repeat <number>
+    .. describe:: <command> repeat <number> [timeout (float)]
 
 Repeats a statement for a given number of times. It consists of an
 Command statement on the left-hand side and a number of repetitions
@@ -1015,7 +1017,7 @@ Until
 
     Type: :dfn:`Control`
 
-    .. describe:: <command> until <condition> [timeout (float or None)]
+    .. describe:: <command> until <condition> [timeout (float)]
 
 Repeats a statement until a condition is met. It consists of an
 Command statement on the left-hand side and a condition on the right-hand
