@@ -100,7 +100,7 @@ The transforms are:
 
 .. var:: offscreenright
 
-    Places the displayable off the left side of the screen, aligned to the
+    Places the displayable off the right side of the screen, aligned to the
     bottom of the screen.
 
 .. var:: reset
