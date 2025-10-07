@@ -172,17 +172,6 @@ def quit_handler() -> int:
     return 0
 
 
-def report_testcase_skipped(node: TestCase) -> None:
-    """
-    Marks all children (if any) of the given testcase as skipped.
-    """
-    if isinstance(node, TestSuite):
-        for child in node.subtests:
-            report_testcase_skipped(child)
-
-    testreporter.reporter.test_case_skipped(node)
-
-
 def set_action(a: Callable) -> None:
     """
     Sets an action to run before continuing the test execution.
@@ -755,7 +744,7 @@ class NextTestTransitionPhase(BaseExecutionPhase):
             raise RuntimeError("No current test to run.")
 
         if not current_test.enabled:
-            report_testcase_skipped(current_test)
+            testreporter.reporter.test_case_skipped(current_test)
             current_test.advance_to_next_parameter_set()
             if current_test.has_all_parameters_been_processed:
                 suite_stack[-1].advance_to_next_subtest()

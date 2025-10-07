@@ -96,7 +96,7 @@ class BaseOutcome:
             self.end_time = now
             self.duration = self.end_time - self.start_time
 
-    def end(self, status: OutcomeStatus | None) -> None:
+    def end(self, status: OutcomeStatus | None = None) -> None:
         """
         Finalize the test case outcomes.
 
@@ -188,12 +188,14 @@ class TestSuiteOutcome(TestCaseOutcome):
         self.finalize_time()
 
         for child in self.children:
+            if status == OutcomeStatus.SKIPPED:
+                child.end(OutcomeStatus.SKIPPED)
+
             self.num_asserts += child.num_asserts
             self.num_asserts_passed += child.num_asserts_passed
             self.num_asserts_failed += child.num_asserts_failed
 
             if isinstance(child, TestSuiteOutcome):
-                child.end()
                 self.num_testsuites += child.num_testsuites + 1
                 self.num_testsuites_passed += child.num_testsuites_passed
                 self.num_testsuites_xfailed += child.num_testsuites_xfailed
@@ -207,6 +209,13 @@ class TestSuiteOutcome(TestCaseOutcome):
                 self.num_testcases_failed += child.num_testcases_failed
                 self.num_testcases_xpassed += child.num_testcases_xpassed
                 self.num_testcases_skipped += child.num_testcases_skipped
+
+                self.num_hooks += child.num_hooks
+                self.num_hooks_passed += child.num_hooks_passed
+                self.num_hooks_xfailed += child.num_hooks_xfailed
+                self.num_hooks_failed += child.num_hooks_failed
+                self.num_hooks_xpassed += child.num_hooks_xpassed
+                self.num_hooks_skipped += child.num_hooks_skipped
 
                 if child.status == OutcomeStatus.PASSED:
                     self.num_testsuites_passed += 1
