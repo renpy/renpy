@@ -70,21 +70,15 @@ testsuite parameter_field:
 
 
 
-
-
 testsuite screenshot:
-    testcase screenshot:
-        parameter screen_name = ["preferences", "about"]
+    testcase main_menu:
+        screenshot "main_menu.png" #crop (0, 0, 400, 300)
 
+    testcase menus:
+        parameter screen_name = ["preferences", "save"]
 
-        # run Show(screen_name)
-        screenshot "main_menu.png"
-
-        # run Start()
-        # advance
-        # # click "Text"
-        # # pause 0.1
-        # screenshot "main_menu.png" #crop (0, 0, 400, 300)
+        run Show(screen_name)
+        screenshot f"screens/{screen_name}.png"
 
 testsuite execution_order:
     before testcase:

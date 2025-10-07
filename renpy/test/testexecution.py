@@ -84,6 +84,8 @@ def execute() -> None:
         if getattr(e, "test", False):
             return
 
+    # NOTE: The action is called here rather than in the NodeExecutor to handle
+    # abnormal game flow caused by JumpException and similar exceptions.
     if action:
         old_action = action
         action = None

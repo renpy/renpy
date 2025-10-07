@@ -937,7 +937,7 @@ class Action(Node):
 
     __slots__ = "expr"
 
-    def __init__(self, loc: NodeLocation, expr):
+    def __init__(self, loc: NodeLocation, expr: str):
         super(Action, self).__init__(loc)
         self.expr = expr
 
