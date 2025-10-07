@@ -822,9 +822,6 @@ class Layout(object):
             # A list of glyphs in the paragraph.
             par_glyphs = [g for _, gl in seg_glyphs for g in gl]
 
-            all_glyphs.extend(par_glyphs)
-            all_seg_glyphs.extend(seg_glyphs)
-
             # RTL - Reverse each line, segment, so that we can use LTR
             # linebreaking algorithms. Also necessary for timings.
             if rtl:
@@ -832,6 +829,9 @@ class Layout(object):
                 seg_glyphs.reverse()
                 for ts, glyphs in seg_glyphs:
                     glyphs.reverse()
+
+            all_glyphs.extend(par_glyphs)
+            all_seg_glyphs.extend(seg_glyphs)
 
             self.paragraph_glyphs.append(list(par_glyphs))
 
