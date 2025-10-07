@@ -499,7 +499,7 @@ Test Launch Options
 
 The test system accepts the following :doc:`command-line options <cli>`:
 
-.. option:: --ignore_enabled_flag
+.. option:: --enable_all
 
     If provided, all test cases and test suites will be executed, regardless
     of their ``enabled`` property.
@@ -509,15 +509,29 @@ The test system accepts the following :doc:`command-line options <cli>`:
     If provided, existing screenshots will be overwritten when a
     :ref:`screenshot statement <test-screenshot-statement>` is executed.
 
-.. option:: --print_details
+.. option:: --hide-header
 
-    If provided, the test report will include details about each test case,
-    including its description and the time it took to execute.
+    If provided, the header at the start of the test run will be disabled.
 
-.. option:: --print_skipped
+.. option:: --hide-execution [no|hooks|testcases|all]
 
-    If provided, the test report will include information about skipped
-    test cases and test suites. Requires ``--print_details`` to be enabled as well.
+    If provided, test execution output will be hidden. ``hooks`` hides hooks,
+    ``testcases`` hides test cases and hooks, and ``all`` hides everything.
+
+.. option:: --hide-summary
+
+    If provided, the summary at the end of the test run will be disabled.
+
+.. option:: --report-detailed
+
+    If provided, detailed information about each test will be shown during
+    the run.
+
+.. option:: --report-skipped
+
+    If provided, information about skipped tests will be shown. This option
+    should be used together with ``--report-detailed``.
+
 
 Test Reporting
 ===================

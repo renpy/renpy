@@ -24,39 +24,56 @@ import subprocess
 
 
 @dataclass
+class TestReportSettings:
+    hide_header: bool = False
+    """Whether to hide the header at the start of the test run."""
+
+    hide_execution: str = "no"
+    """Whether to hide test execution output. One of 'no', 'hooks', 'testcases', or 'all'."""
+
+    hide_summary: bool = False
+    """Whether to hide the summary at the end of the test run."""
+
+    report_detailed: bool = False
+    """Whether to report detailed information about each test case."""
+
+    report_skipped: bool = False
+    """
+    Whether to include skipped test cases in the summary.
+    Requires 'report_detailed' to be True to have any effect.
+    """
+
+
+@dataclass
 class TestSettings:
-    maximum_framerate: bool = True
-    """Should we use maximum framerate mode?"""
-
-    timeout: float = 5.0
-    """How long should we wait before declaring the test stuck?"""
-
-    force: bool = False
-    """Should we force the test to proceed despite suppress_underlay?"""
-
-    transition_timeout: float = 5.0
-    """How long should we wait for a transition before we proceed?"""
+    enable_all: bool = False
+    """Set all test cases to enabled, ignoring their enabled flag."""
 
     focus_trials: int = 100
-    """How many times should we try to find a good spot to place the mouse?"""
+    """The number of times to try to find a mouse focus before giving up."""
+
+    force: bool = False
+    """Force the test to proceed despite suppress_underlay"""
+
+    git_revision: str = ""
+    """The git revision of the current source tree, if available."""
+
+    maximum_framerate: bool = True
+    """Use the maximum framerate (unlocked framerate) during tests."""
+
+    overwrite_screenshots: bool = False
+    """Whether to overwrite existing screenshots. If True, no comparison is done."""
 
     screenshot_directory: str = "tests/screenshots"
     """The directory to store screenshots in."""
 
-    ignore_enabled_flag: bool = False
-    """Should we ignore the enabled flag when executing test scripts?"""
+    timeout: float = 5.0
+    """The number of seconds to wait for a test to complete before failing it."""
 
-    overwrite_screenshots: bool = False
-    """Should we overwrite existing screenshots when a screenshot statement is executed?"""
+    transition_timeout: float = 5.0
+    """The number of seconds to wait for a transition to complete before skipping it."""
 
-    print_details: bool = False
-    """Should we print details about the test cases?"""
-
-    print_skipped: bool = False
-    """Should we print skipped test cases?"""
-
-    git_revision: str = ""
-    """The git revision of the current source tree, if available."""
+    report = TestReportSettings()
 
     def __post_init__(self) -> None:
         if not self.git_revision:

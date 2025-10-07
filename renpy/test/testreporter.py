@@ -20,11 +20,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import abc
+import contextlib
 from dataclasses import dataclass, field
 from enum import Enum
 import io
 import os
-import contextlib
+import platform
 
 import renpy
 from renpy.error import ANSIColors
@@ -545,7 +546,7 @@ class ConsoleReporter(Reporter):
         if depth == -1:
             self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Test outcomes (Detailed)")
 
-        if outcome.status == OutcomeStatus.SKIPPED and not _test.print_skipped:
+        if outcome.status == OutcomeStatus.SKIPPED and not _test.report.report_skipped:
             return
 
         test_name = outcome.name
@@ -655,29 +656,46 @@ class ConsoleReporter(Reporter):
     ##################################
 
     def test_run_start(self, outcomes) -> None:
+        if _test.report.hide_header:
+            return
+
         self._print("")
         self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Starting test run")
-        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Ren'Py Version:   {renpy.version}")
-        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Game Version:     {renpy.store.config.version}")
+        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Platform:      {platform.platform()}")
+        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Python:        {platform.python_version()}")
+        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Ren'Py:        {renpy.version}")
+        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Game Version:  {renpy.store.config.version}")
         self._print("")
 
     def test_run_end(self, outcomes) -> None:
         self._print("")
-        if _test.print_details:
+
+        if _test.report.report_detailed:
             self._print_detailed_outcome(outcomes)
-        self._print_summarized_outcomes(outcomes)
-        self._print("")
+
+        if not _test.report.hide_summary:
+            self._print_summarized_outcomes(outcomes)
+            self._print("")
 
     def test_suite_start(self, outcome, depth=0) -> None:
+        if _test.report.hide_execution == "all":
+            return
+
         self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}+ {outcome.name}")
 
     def test_suite_end(self, outcome, depth=0) -> None:
         pass
 
     def test_case_start(self, outcome, depth=0) -> None:
+        if _test.report.hide_execution in ("all", "testcases"):
+            return
+
         self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}- {outcome.name}")
 
     def test_case_end(self, outcome, depth=0) -> None:
+        if _test.report.hide_execution in ("all", "testcases"):
+            return
+
         self._erase_line()
         self._print(
             f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}- "
@@ -685,9 +703,15 @@ class ConsoleReporter(Reporter):
         )
 
     def test_hook_start(self, outcome, depth=0) -> None:
+        if _test.report.hide_execution in ("all", "testcases", "hooks"):
+            return
+
         self._print(f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}  {outcome.full_path}")
 
     def test_hook_end(self, outcome, depth=0) -> None:
+        if _test.report.hide_execution in ("all", "testcases", "hooks"):
+            return
+
         self._erase_line()
         self._print(
             f"{ANSIColors.CYAN}[rpytest] [exc]{ANSIColors.RESET} {'  ' * depth}  "

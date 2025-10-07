@@ -19,6 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import argparse
 from textwrap import dedent
 from typing import Callable, Any
 
@@ -390,16 +391,16 @@ def select_testcase(node: TestCase) -> None:
 
 def update_suite_enabled_flag(node: TestSuite) -> None:
     """
-    Updates the enabled flag for a TestSuite and its children based on the ignore_enabled_flag setting.
+    Updates the enabled flag for a TestSuite and its children based on the enable_all setting.
     """
     for child in node.subtests:
         if isinstance(child, TestSuite):
             update_suite_enabled_flag(child)
         else:
-            child.enabled = _test.ignore_enabled_flag or child.enabled
+            child.enabled = _test.enable_all or child.enabled
 
     is_child_enabled = any(child.enabled for child in node.subtests)
-    node.enabled = _test.ignore_enabled_flag or (node.enabled and is_child_enabled)
+    node.enabled = _test.enable_all or (node.enabled and is_child_enabled)
 
 
 ################################################################################
@@ -929,41 +930,98 @@ def test_command() -> bool:
     if initialized:
         return True
 
-    ap = renpy.arguments.ArgumentParser(description="Runs a testcase.")
-    ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?", default=global_testsuite_name)
+    ap = argparse.ArgumentParser(description="Run a Ren'Py test case or suite.")
+    # ap = renpy.arguments.ArgumentParser(description="Runs a testcase.")
+
     ap.add_argument(
-        "--ignore_enabled_flag",
-        action="store_true",
-        dest="ignore_enabled_flag",
-        default=False,
-        help="Enable all testcases and testsuites.",
+        "basedir",
+        help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.",
     )
+
     ap.add_argument(
-        "--overwrite_screenshots",
-        action="store_true",
-        dest="overwrite_screenshots",
-        default=False,
-        help="Overwrite existing screenshots when a screenshot statement is executed.",
+        "test",
+        help="The command to execute ('test' in this case).",
     )
+
     ap.add_argument(
-        "--print-details",
-        action="store_true",
-        dest="print_details",
-        default=False,
-        help="Print detailed information for entire run.",
+        "testcase",
+        help=f"Name of the test case or suite to run (default: {global_testsuite_name}).",
+        nargs="?",
+        type=str,
+        default=global_testsuite_name,
     )
-    ap.add_argument(
-        "--print-skipped",
+
+    group = ap.add_argument_group(title="Test Execution")
+    group.add_argument(
+        "--enable-all",
+        dest="_test.enable_all",
         action="store_true",
-        dest="print_skipped",
         default=False,
-        help="Print information about skipped testcases. Requires --print-detailed.",
+        help="Run all test cases and test suites, even if they are disabled. "
+        "Does not work if a specific test case or suite is specified.",
+    )
+    group.add_argument(
+        "--overwrite-screenshots",
+        dest="_test.overwrite_screenshots",
+        action="store_true",
+        default=False,
+        help="Replace existing screenshots when a screenshot is taken during tests.",
+    )
+
+    group = ap.add_argument_group(title="Console Reporting")
+    group.add_argument(
+        "--hide-header",
+        dest="_test.report.hide_header",
+        action="store_true",
+        default=False,
+        help="Disable header at start of run",
+    )
+    group.add_argument(
+        "--hide-execution",
+        dest="_test.report.hide_execution",
+        action="store",
+        choices=["no", "hooks", "testcases", "all"],
+        default="no",
+        help="Hide test execution output. 'hooks' hides hooks, 'testcases' hides test cases and hooks, and 'all' hides everything including test suites.",
+    )
+    group.add_argument(
+        "--hide-summary",
+        dest="_test.report.hide_summary",
+        action="store_true",
+        default=False,
+        help="Disable summary",
+    )
+    group.add_argument(
+        "--report-detailed",
+        dest="_test.report.report_detailed",
+        action="store_true",
+        default=False,
+        help="Show detailed information about each test during the run.",
+    )
+    group.add_argument(
+        "--report-skipped",
+        dest="_test.report.report_skipped",
+        action="store_true",
+        default=False,
+        help="Show information about skipped tests (use with --report-detailed).",
     )
 
     args = ap.parse_args()
-    _test.ignore_enabled_flag = args.ignore_enabled_flag
-    _test.print_skipped = args.print_skipped
-    _test.print_details = args.print_details
+
+    for key, value in vars(args).items():
+        key_parts = key.split(".")
+
+        if key_parts[0] != "_test":
+            continue
+        obj = _test
+
+        for part in key_parts[1:-1]:
+            obj = getattr(obj, part)
+
+        if hasattr(obj, key_parts[-1]):
+            setattr(obj, key_parts[-1], value)
+        else:
+            raise AttributeError(f"Unknown test setting: {key}")
 
     testreporter.reporter.add_reporter(testreporter.ConsoleReporter())
     initialize(args.testcase)
