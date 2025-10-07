@@ -35,7 +35,6 @@ from renpy.test.testsettings import _test
 initialized: bool = False
 global_testsuite_name = "global"
 
-action: Callable | None = None
 reached_labels: set[str] = set()
 suite_stack: list[TestSuite] = []
 scope_stack: list[dict[str, Any]] = [{}]
@@ -66,8 +65,6 @@ def execute() -> None:
     This allows test code to generate events, if desired.
     """
 
-    global action
-
     if not is_in_test():
         return
 
@@ -83,13 +80,6 @@ def execute() -> None:
     for e in pygame.event.copy_event_queue():  # type: ignore
         if getattr(e, "test", False):
             return
-
-    # NOTE: The action is called here rather than in the NodeExecutor to handle
-    # abnormal game flow caused by JumpException and similar exceptions.
-    if action:
-        old_action = action
-        action = None
-        renpy.display.behavior.run(old_action)
 
     try:
         phase_controller.update()
@@ -172,16 +162,6 @@ def quit_handler() -> int:
     if testreporter.reporter.has_failed:
         return 1
     return 0
-
-
-def set_action(a: Callable) -> None:
-    """
-    Sets an action to run before continuing the test execution.
-    This action will be run once, and then cleared.
-    """
-
-    global action
-    action = a
 
 
 def set_next_execution_node(next_node: Node | None) -> None:
@@ -315,7 +295,9 @@ def setup_global_test_suite() -> TestSuite:
 
 def get_testcase_by_id(id: str) -> TestCase:
     if id not in testcases:
-        raise KeyError(f"TestCase {id} not found. Available tests are: {', '.join(testcases.keys())}")
+        if suggestion := renpy.error.compute_closest_value(id, list(testcases.keys())):
+            raise KeyError(f"TestCase {id} not found. Did you mean: {suggestion}?")
+        raise KeyError(f"TestCase {id} not found.")
 
     return testcases[id]
 
@@ -478,6 +460,11 @@ class NodeExecutor:
                 self.next_node = None
                 self.move_to_next_node_if_possible()
                 raise
+        except renpy.game.CONTROL_EXCEPTIONS:
+            self.node_state = None
+            self.next_node = self.node.next
+            self.move_to_next_node_if_possible()
+            raise
 
         self.move_to_next_node_if_possible()
 
@@ -549,7 +536,7 @@ class TestPhaseController:
                 next_phase = self.active_phase.update()
                 self.transition_to_new_phase(next_phase)
 
-        except renpy.game.QuitException:
+        except renpy.game.CONTROL_EXCEPTIONS:
             raise
 
         except Exception as exc:

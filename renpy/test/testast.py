@@ -945,16 +945,11 @@ class Action(Node):
         action = scoped_eval(self.expr)
         return renpy.display.behavior.is_sensitive(action)
 
-    def start(self):
-        renpy.test.testexecution.action = scoped_eval(self.expr)
-        return True
-
     def execute(self, state, t):
-        if renpy.test.testexecution.action:
-            return state
-        else:
-            next_node(self.next)
-            return None
+        action = scoped_eval(self.expr)
+        renpy.display.behavior.run(action)
+        next_node(self.next)
+        return None
 
 
 class Pause(Node):
@@ -1418,6 +1413,7 @@ class Screenshot(Node):
         self.max_pixel_difference = max_pixel_difference
         self.crop = crop
         self.filename_expr = filename  # Note: self.filename refers to the Node attribute.
+        super().__init__(loc)
 
     def start(self):
         filename = scoped_eval(self.filename_expr)
