@@ -643,7 +643,7 @@ class HookPhase(BaseExecutionPhase):
 
         testreporter.reporter.test_hook_end(self.block, status, depth=len(suite_stack))
         self.block.increment_call_count()
-        return RemoveSubSuitePhase()
+        return SuiteTeardownPhase()
 
 
 class HookLoopPhase(HookPhase):
@@ -768,7 +768,7 @@ class AddSubSuitePhase(BaseExecutionPhase):
         return SuiteSetupPhase()
 
 
-class SuiteSetupPhase(BaseExecutionPhase):
+class SuiteSetupPhase(HookPhase):
     def enter(self) -> None:
         self.block = suite_stack[-1].get_hook(HookType.SETUP)
         if self.block is not None:
@@ -838,7 +838,7 @@ class TestCaseParameterCyclePhase(BaseExecutionPhase):
         return BeforeTestCasePhase()
 
 
-class SuiteTeardownPhase(BaseExecutionPhase):
+class SuiteTeardownPhase(HookPhase):
     def enter(self) -> None:
         self.block = suite_stack[-1].get_hook(HookType.TEARDOWN)
         if self.block is not None:
@@ -854,6 +854,10 @@ class SuiteTeardownPhase(BaseExecutionPhase):
             return RemoveSubSuitePhase()
         else:
             return GlobalParameterCyclePhase()
+
+    def error(self, status):
+        super().error(status)
+        return self.update()
 
 
 class RemoveSubSuitePhase(BaseExecutionPhase):
