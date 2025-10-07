@@ -743,13 +743,13 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
 
     while True:
         if l.keyword("screen"):
-            screen = l.require(l.simple_expression)
+            screen = l.require(l.simple_expression, operator=False)
 
         elif l.keyword("id"):
-            id = l.require(l.simple_expression)
+            id = l.require(l.simple_expression, operator=False)
 
         elif l.keyword("layer"):
-            layer = l.require(l.simple_expression)
+            layer = l.require(l.simple_expression, operator=False)
 
         elif l.keyword("focused"):
             focused = True
