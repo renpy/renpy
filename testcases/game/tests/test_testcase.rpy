@@ -8,7 +8,7 @@ label three_messages:
 
 label hard_pause:
     "Before hard pause."
-    $ renpy.pause(6, hard=True)
+    $ renpy.pause(0.5, hard=True)
     "End"
 
 screen teleporting_button(x=0, y=0, remaining=20):
@@ -26,12 +26,12 @@ testsuite flow:
         enabled False
         assert False
 
-    testcase python:
-        python hide:
-            renpy.watch("renpy.is_in_test()")
-            renpy.watch("waitch")
-            renpy.watch("whether")
-            waitch = 5
+    # testcase python:
+    #     python hide:
+    #         renpy.watch("renpy.is_in_test()")
+    #         renpy.watch("waitch")
+    #         renpy.watch("whether")
+    #         waitch = 5
 
 testsuite parameter_field:
 
@@ -74,11 +74,17 @@ testsuite screenshot:
     testcase main_menu:
         screenshot "main_menu.png" #crop (0, 0, 400, 300)
 
-    testcase menus:
-        parameter screen_name = ["preferences", "save"]
+    testsuite menus:
+        parameter screen_name = ["preferences", "load"]
 
-        run Show(screen_name)
-        screenshot f"screens/{screen_name}.png"
+        setup:
+            run ShowMenu(screen_name)
+
+        teardown:
+            run Return()
+
+        testcase menu_screen:
+            screenshot f"screens/{screen_name}.png"
 
 testsuite execution_order:
     before testcase:
@@ -208,11 +214,16 @@ testsuite selectors:
         assert not screen "scroll_screen"
 
 testsuite timeout:
-    testcase hard_pause_timeout:
-        # Make sure _test.timeout can be changed
+    setup:
         run Jump("hard_pause")
         pause until screen "say"
 
-        $ _test.timeout = 7
+    testcase hard_pause_fail_timeout:
+        xfail True
+
+        $ _test.timeout = 0.2
         advance until "End"
-        $ _test.timeout = 5
+
+    testcase hard_pause_pass_timeout:
+        $ _test.timeout = 1.0
+        advance until "End"

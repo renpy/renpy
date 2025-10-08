@@ -610,7 +610,6 @@ class DisplayableSelector(Selector):
             screen = None if self.screen is None else scoped_eval(self.screen)
             rv = renpy.exports.get_screen(screen, layer)
         else:
-            # rv = renpy.exports.get_displayable(self.screen, self.id, self.layer)
             rv = self.get_displayable()
 
         return rv
@@ -680,17 +679,26 @@ class TextSelector(Selector):
         identifier recognized by `renpy.test.testfocus.find_focus`.
     """
 
-    __slots__ = ("pattern",)
+    __slots__ = ("pattern", "translate", "substitute")
 
-    def __init__(self, loc: NodeLocation, pattern: str, wait_for_focus: bool = False):
+    def __init__(
+        self,
+        loc: NodeLocation,
+        wait_for_focus: bool = False,
+        pattern: str = "",
+        translate: bool = True,
+        substitute: bool = True,
+    ):
         super(TextSelector, self).__init__(loc, wait_for_focus)
         self.pattern = pattern
+        self.translate = translate
+        self.substitute = substitute
 
     def get_repr_params(self) -> str:
-        return f"pattern={self.pattern!r}"
+        return f"pattern={self.pattern!r}, translate={self.translate}, substitute={self.substitute}"
 
     def get_element(self) -> Focus | None:
-        rv = renpy.test.testfocus.find_focus(self.pattern)
+        rv = renpy.test.testfocus.find_focus(self.pattern, self.translate, self.substitute)
         return rv
 
     def element_not_found_during_perform(self) -> None:

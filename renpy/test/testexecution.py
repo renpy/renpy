@@ -963,7 +963,7 @@ def test_command() -> bool:
         dest="_test.report.hide_execution",
         action="store",
         choices=["no", "hooks", "testcases", "all"],
-        default="no",
+        default="hooks",
         help="Hide test execution output. 'hooks' hides hooks, 'testcases' hides test cases and hooks, and 'all' hides everything including test suites.",
     )
     group.add_argument(

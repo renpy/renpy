@@ -1033,18 +1033,24 @@ Text Selector
 
     Type: :dfn:`Condition, Selector`
 
-    .. describe:: "<text>"
+    .. describe:: "<text>" [untranslated] [unsubstituted]
 
 The ``text`` selector takes a string which resolves to a target
 found on the screen. The search is performed by going through all focusable
 elements on the screen (which are typically buttons and the main textbox),
-and looking through their :propref:`alt` text.
-
+and looking through their text and :propref:`alt` text.
 
 This search is case-insensitive and looks for the shortest match.
 For example, if the string ``"log"`` is given, and the screen contains
 the texts ``"CATALOG"`` and ``"illogical"``, the target
 will be the ``"CATALOG"`` text.
+
+If ``untranslated`` is given, the search is performed on the untranslated
+text, as given in the source code. If not given, the search is performed
+on the current translated text.
+
+If ``unsubstituted`` is given, the search is performed on the text
+without any :ref:` substitutions or interpolation <text-interpolation>` applied.
 
 
 ::
@@ -1057,6 +1063,12 @@ will be the ``"CATALOG"`` text.
 
     # Case-insensitive search
     assert "AsK HeR RighT AwaY"
+
+    # Search untranslated text
+    assert "start" untranslated
+
+    # Search unsubstituted text
+    assert "Welcome, [player_name]!" unsubstituted
 
 
 Control Statements
