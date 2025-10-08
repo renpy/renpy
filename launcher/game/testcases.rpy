@@ -14,12 +14,19 @@ testcase change_language:
     click id "pref_general_btn"
     click id f"pref_change_language_btn_{lang}"
 
-    click id "pref_options_btn"
-    click id "pref_theme_btn"
-    click id "pref_install_btn"
-    click id "pref_actions_btn"
-    click id "pref_lint_btn"
-    click id "return_btn"
+    click "Options" raw
+    click "Theme" raw
+    click "Install Libraries" raw
+    click "Actions" raw
+    click "Lint" raw
+    click "Return" raw
+
+    # click id "pref_options_btn"
+    # click id "pref_theme_btn"
+    # click id "pref_install_btn"
+    # click id "pref_actions_btn"
+    # click id "pref_lint_btn"
+    # click id "return_btn"
 
 testcase themes:
     click id "pref_btn"

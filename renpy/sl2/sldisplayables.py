@@ -113,9 +113,9 @@ class ShowIf(renpy.display.layout.Container):
     def get_placement(self):
         return self.child.get_placement()
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         if self.condition:
-            return self._tts_common()
+            return self._tts_common(raw=raw)
         else:
             return ""
 

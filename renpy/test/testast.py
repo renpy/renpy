@@ -677,28 +677,30 @@ class TextSelector(Selector):
         The pattern string used to find a focus.
         This could be a text string, alt text, or another
         identifier recognized by `renpy.test.testfocus.find_focus`.
+
+    `raw`
+        If True, the raw text is used for matching before translation and
+        substitution. If False, the processed text is used.
     """
 
-    __slots__ = ("pattern", "translate", "substitute")
+    __slots__ = ("pattern", "raw")
 
     def __init__(
         self,
         loc: NodeLocation,
         wait_for_focus: bool = False,
         pattern: str = "",
-        translate: bool = True,
-        substitute: bool = True,
+        raw: bool = False,
     ):
         super(TextSelector, self).__init__(loc, wait_for_focus)
         self.pattern = pattern
-        self.translate = translate
-        self.substitute = substitute
+        self.raw = raw
 
     def get_repr_params(self) -> str:
-        return f"pattern={self.pattern!r}, translate={self.translate}, substitute={self.substitute}"
+        return f"pattern={self.pattern!r}, raw={self.raw}"
 
     def get_element(self) -> Focus | None:
-        rv = renpy.test.testfocus.find_focus(self.pattern, self.translate, self.substitute)
+        rv = renpy.test.testfocus.find_focus(self.pattern, self.raw)
         return rv
 
     def element_not_found_during_perform(self) -> None:

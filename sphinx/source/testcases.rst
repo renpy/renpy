@@ -1052,7 +1052,7 @@ Text Selector
 
     Type: :dfn:`Condition, Selector`
 
-    .. describe:: "<text>" [untranslated] [unsubstituted]
+    .. describe:: "<text>" [raw]
 
 The ``text`` selector takes a string which resolves to a target
 found on the screen. The search is performed by going through all focusable
@@ -1064,13 +1064,10 @@ For example, if the string ``"log"`` is given, and the screen contains
 the texts ``"CATALOG"`` and ``"illogical"``, the target
 will be the ``"CATALOG"`` text.
 
-If ``untranslated`` is given, the search is performed on the untranslated
-text, as given in the source code. If not given, the search is performed
-on the current translated text.
-
-If ``unsubstituted`` is given, the search is performed on the text
-without any :ref:` substitutions or interpolation <text-interpolation>` applied.
-
+If ``raw`` is given, the search is performed on the text as given in the
+script, before translation and :ref:`interpolation <text-interpolation>`.
+If not given, the search is performed on the text as it appears on screen,
+after translation and interpolation.
 
 ::
 
@@ -1083,11 +1080,14 @@ without any :ref:` substitutions or interpolation <text-interpolation>` applied.
     # Case-insensitive search
     assert "AsK HeR RighT AwaY"
 
-    # Search untranslated text
-    assert "start" untranslated
-
     # Search unsubstituted text
-    assert "Welcome, [player_name]!" unsubstituted
+    assert "Welcome, Eileen!"
+    assert "Welcome, [player_name]!" raw
+
+    # Search untranslated text after changing the language
+    run Language("japanese")
+    assert "スタート"
+    assert "Start" raw
 
 
 Control Statements

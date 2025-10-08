@@ -2461,29 +2461,29 @@ class Text(renpy.display.displayable.Displayable):
 
         return list(self.displayables)  # type: ignore
 
-    def _tts(self):
-        rv = []
+    def _tts(self, raw: bool) -> str:
+        if raw:
+            text = self.text_parameter
+        else:
+            text = self.text
 
-        for i in self.text:
-            if not isinstance(i, str):
-                continue
+        rv = "".join(i for i in text if isinstance(i, str))
 
-            rv.append(i)
-
-        rv = "".join(rv)
-        rv, _, _ = rv.partition("{done}")
-        _, _, rv = rv.rpartition("{fast}")
-
-        rv = renpy.text.extras.filter_alt_text(rv)
+        if not raw:
+            rv, _, _ = rv.partition("{done}")
+            _, _, rv = rv.rpartition("{fast}")
+            rv = renpy.text.extras.filter_alt_text(rv)
 
         alt = self.style.alt
-
         if alt is not None:
-            rv = renpy.substitutions.substitute(alt, scope={"text": rv})[0]
+            if raw:
+                rv = alt
+            else:
+                rv = renpy.substitutions.substitute(alt, scope={"text": rv})[0]
 
         return rv
 
-    _tts_all = _tts  # type: ignore
+    _tts_all = _tts
 
     def kill_layout(self):
         """

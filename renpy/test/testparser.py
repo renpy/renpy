@@ -740,8 +740,7 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
     id = None
     layer = None
     focused = False
-    translate = True
-    substitute = True
+    raw = False
 
     while True:
         if l.keyword("screen"):
@@ -756,11 +755,8 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
         elif l.keyword("focused"):
             focused = True
 
-        elif l.keyword("untranslated"):
-            translate = False
-
-        elif l.keyword("unsubstituted"):
-            substitute = False
+        elif l.keyword("raw"):
+            raw = True
 
         else:
             temp = l.string()
@@ -778,7 +774,7 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
         l.error("A text pattern may not be specified with a screen or id.")
 
     if pattern is not None:
-        return testast.TextSelector(loc, focused, pattern, translate, substitute)
+        return testast.TextSelector(loc, focused, pattern, raw)
 
     return testast.DisplayableSelector(loc, screen, id, layer, focused)
 
