@@ -333,7 +333,6 @@ def process_only_flag() -> None:
             if parent in processed:
                 break
             processed.add(parent)
-            parent.enabled = True
             parent = parent.parent
 
         # Mark children so they are not skipped later
@@ -345,8 +344,7 @@ def process_only_flag() -> None:
         enable_relatives(tc)
 
     for tc in testcases.values():
-        if tc not in processed:
-            tc.enabled = False
+        tc.enabled = tc in processed
 
 
 def select_testcase(node: TestCase) -> None:
