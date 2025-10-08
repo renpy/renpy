@@ -84,7 +84,7 @@ init python:
                     self.tmpfile.write(data)
 
                     if length > 0:
-                        self.progress = 1.0 * count / length
+                        self.progress = max(1.0 * count / length, 1.0)
 
                     if self.cancelled:
                         break
@@ -92,10 +92,6 @@ init python:
                 self.tmpfile.close()
 
                 if self.cancelled:
-                    return
-
-                if length and count != length:
-                    self.failure = "Download length does not match content length."
                     return
 
                 self.safe_unlink(self.dest)

@@ -530,6 +530,11 @@ Text Style Properties
     If not None, this should be a dictionary mapping OpenType layout features to values.
     The keys of the dictionary should be the four-character OpenType feature tags, and
     the values should be booleans.
+    For example::
+
+        style default:
+            font "SomeFont.ttf"
+            font_features { "liga" : True, "smcp" : True, "calt" : False }
 
     A list of layout features can be found `here <https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags>`_.
 
