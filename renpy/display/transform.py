@@ -19,24 +19,130 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-from typing import Any
-
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
+from typing import final, overload
+
 import math
 
 import renpy
+from renpy.types import Position
 from renpy.display.displayable import Displayable
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
-from renpy.atl import position, DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
-from renpy.display.core import absolute
+from renpy.atl import DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
+from renpy.display.core import absolute, absolute as _absolute
 
-# A List of fields that have displayables in them.
-displayable_uniform_fields = set()
+
+@final
+class position:
+    """
+    A combination of relative and absolute coordinates.
+    """
+
+    __slots__ = ["absolute", "relative"]
+
+    absolute: _absolute
+    relative: float
+
+    @overload
+    def __new__(cls, _: "position", /) -> "position": ...
+
+    @overload
+    def __new__(cls, absolute: int | _absolute = 0, /) -> "position": ...
+
+    @overload
+    def __new__(cls, absolute: int | _absolute, relative: float, /) -> "position": ...
+
+    def __new__(
+        cls,
+        absolute: "int | _absolute | position" = 0,
+        relative: "float | None" = None,
+        /,
+    ) -> "position":
+        """
+        If passed two parameters, takes them as an absolute and a relative.
+        If passed only one parameter, converts it.
+        """
+
+        # Using __new__ so that passing a position returns it unchanged.
+        if relative is None:
+            return cls.from_any(absolute)
+        else:
+            if isinstance(absolute, position):
+                raise TypeError("When absolute is a position, relative must be None.")
+
+            self = super().__new__(cls)
+            self.absolute = _absolute(absolute)
+            self.relative = float(relative)
+            return self
+
+    @classmethod
+    def from_any(cls, other: "Position | position") -> "position":
+        if isinstance(other, position):
+            return other
+        elif isinstance(other, (int, absolute)):
+            return cls(other, 0)
+        else:
+            return cls(0, other)
+
+    def simplify(self) -> "int | absolute | float | position":
+        """
+        Tries to represent this position as an int, float, or absolute, if possible.
+        """
+
+        if self.relative == 0.0:
+            if self.absolute.is_integer():
+                return int(self.absolute)
+            else:
+                return absolute(self.absolute)
+        elif self.absolute == 0:
+            return float(self.relative)
+        else:
+            return self
+
+    def __add__(self, other: "position", /) -> "position":
+        if isinstance(other, position):
+            return position(self.absolute + other.absolute, self.relative + other.relative)
+
+        return NotImplemented
+
+    __radd__ = __add__
+
+    def __sub__(self, other: "position", /) -> "position":
+        if isinstance(other, position):
+            return position(self.absolute - other.absolute, self.relative - other.relative)
+
+        return NotImplemented
+
+    def __mul__(self, other: int | float, /) -> "position":
+        if isinstance(other, (int, float)):
+            return position(self.absolute * other, self.relative * other)
+
+        return NotImplemented
+
+    __rmul__ = __mul__
+
+    def __truediv__(self, other: int | float, /) -> "position":
+        if isinstance(other, (int, float)):
+            return position(self.absolute / other, self.relative / other)
+
+        return NotImplemented
+
+    __rtruediv__ = __truediv__
+
+    def __pos__(self) -> "position":
+        return self
+
+    def __neg__(self) -> "position":
+        return position(-self.absolute, -self.relative)
+
+    def __repr__(self) -> str:
+        absolute = self.absolute
+        if self.absolute.is_integer():
+            absolute = int(self.absolute)
+
+        return f"position(absolute={absolute}, relative={self.relative})"
 
 
 class Camera(renpy.object.Object):
@@ -544,14 +650,8 @@ class TransformState(renpy.object.Object):
         relative_dx = relative_anchorradius * math.sin(relative_anchorangle)
         relative_dy = -relative_anchorradius * math.cos(relative_anchorangle)
 
-        self.xanchor = position(
-            absolute=xanchoraround.absolute + absolute_dx,
-            relative=xanchoraround.relative + relative_dx,
-        )
-        self.yanchor = position(
-            absolute=yanchoraround.absolute + absolute_dy,
-            relative=yanchoraround.relative + relative_dy,
-        )
+        self.xanchor = position(xanchoraround.absolute + absolute_dx, xanchoraround.relative + relative_dx)
+        self.yanchor = position(yanchoraround.absolute + absolute_dy, yanchoraround.relative + relative_dy)
 
     anchorangle = property(get_anchorangle, set_anchorangle)
     anchorradius = property(get_anchorradius, set_anchorradius)

@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import NotRequired, TypedDict, Any
+from typing import Callable, SupportsIndex, NotRequired, TypedDict, Any, final, overload
 
 import sys
 import os
@@ -29,10 +29,12 @@ import threading
 import gc
 import atexit
 import platform
+import functools
 
 import renpy
 import renpy.pygame as pygame
 
+from renpy.types import Position
 from renpy.atl import position
 
 # Imports for backward compatibility.
@@ -192,9 +194,23 @@ class EndInteraction(Exception):
         self.value = value
 
 
+def _absolute_wrap[**P](func: Callable[P, float], *args: P.args, **kwargs: P.kwargs) -> "absolute":
+    """
+    Wraps func into a method of absolute. The wrapped method
+    converts a float result back to absolute.
+    """
+
+    rv = func(*args, **kwargs)
+    if isinstance(rv, float):
+        return absolute(rv)
+
+    return rv  # type: ignore
+
+
+@final
 class absolute(float):
     """
-    This represents an absolute float coordinate.
+    This represents an absolute float coordinate, where the fractional part is a subpixel value.
     """
 
     __slots__ = ()
@@ -202,14 +218,95 @@ class absolute(float):
     def __repr__(self):
         return f"absolute({float.__repr__(self)})"
 
+    # Special case, should return floats.
     def __divmod__(self, value: float, /):
         return self // value, self % value
 
     def __rdivmod__(self, value: float, /):
         return value // self, value % self
 
+    # Wrap all dunder methods that return floats to return absolutes.
+    def __add__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__add__, value)
+
+    def __radd__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__radd__, value)
+
+    def __sub__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__sub__, value)
+
+    def __rsub__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__rsub__, value)
+
+    def __mul__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__mul__, value)
+
+    def __rmul__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__rmul__, value)
+
+    def __truediv__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__truediv__, value)
+
+    def __rtruediv__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__rtruediv__, value)
+
+    def __floordiv__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__floordiv__, value)
+
+    def __rfloordiv__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__rfloordiv__, value)
+
+    def __mod__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__mod__, value)
+
+    def __rmod__(self, value: float, /) -> "absolute":
+        return _absolute_wrap(super().__rmod__, value)
+
+    def __pow__(self, value: float, mod: None = None, /) -> Any:
+        return _absolute_wrap(super().__pow__, value)
+
+    def __rpow__(self, value: float, mod: None = None, /) -> Any:
+        return _absolute_wrap(super().__rpow__, value)
+
+    def __neg__(self) -> "absolute":
+        return absolute(super().__neg__())
+
+    def __pos__(self) -> "absolute":
+        return absolute(super().__pos__())
+
+    def __abs__(self) -> "absolute":
+        return absolute(super().__abs__())
+
+    @overload
+    def __round__(self, ndigits: None = None, /) -> int: ...
+    @overload
+    def __round__(self, ndigits: SupportsIndex, /) -> "absolute": ...
+
+    def __round__(self, ndigits: SupportsIndex | None = None) -> "absolute | int":
+        rv = super().__round__(ndigits)
+        if isinstance(rv, float):
+            return absolute(rv)
+        else:
+            return rv
+
+    def conjugate(self) -> "absolute":
+        return absolute(super().conjugate())
+
+    def fromhex(self, s: str, /) -> "absolute":
+        return absolute(super().fromhex(s))
+
+    # Other methods should return non-floats.
+
+    @overload
     @staticmethod
-    def compute_raw(value: "position | absolute | float | int", room: float) -> "absolute | float | int":
+    def compute_raw(value: position, room: float) -> float: ...
+
+    @overload
+    @staticmethod
+    def compute_raw[T: (Position)](value: T, room: float) -> T: ...
+
+    @staticmethod
+    def compute_raw(value: Position | position, room: float) -> Position:
         """
         Converts a position from one of the many supported position types
         into an absolute number of pixels, without regard for the return type.
@@ -228,77 +325,12 @@ class absolute(float):
             raise TypeError(f"Value {value} of type {type(value)} not recognized as a position.")
 
     @staticmethod
-    def compute(value: "position | absolute | float | int", room: float) -> "absolute":
+    def compute(value: Position | position, room: float) -> "absolute":
         """
         Does the same, but converts the result to the absolute type.
         """
 
         return absolute(absolute.compute_raw(value, room))
-
-
-def _absolute_wrap(func):
-    """
-    Wraps func into a method of absolute. The wrapped method
-    converts a float result back to absolute.
-    """
-
-    def wrapper(*args):
-        rv = func(*args)
-
-        if type(rv) is float:
-            return absolute(rv)
-        else:
-            return rv
-
-    return wrapper
-
-
-fn = f = None
-
-for fn in (
-    "__abs__",
-    "__add__",
-    # '__bool__', # non-float
-    "__ceil__",
-    # '__divmod__', # special-cased above, tuple of floats
-    # '__eq__', # non-float
-    "__floordiv__",
-    # '__format__', # non-float
-    # '__ge__', # non-float
-    # '__gt__', # non-float
-    # '__hash__', # non-float
-    # '__int__', # non-float
-    # '__le__', # non-float
-    # '__lt__', # non-float
-    "__mod__",
-    "__mul__",
-    # '__ne__', # non-float
-    "__neg__",
-    "__pos__",
-    "__pow__",
-    "__radd__",
-    # '__rdivmod__', # special-cased above, tuple of floats
-    "__rfloordiv__",
-    "__rmod__",
-    "__rmul__",
-    "__round__",
-    "__rpow__",
-    "__rsub__",
-    "__rtruediv__",
-    # '__str__', # non-float
-    "__sub__",
-    "__truediv__",
-    # '__trunc__', # non-float
-    # 'as_integer_ratio', # tuple of non-floats
-    "conjugate",
-    "fromhex",
-    # 'hex', # non-float
-    # 'is_integer', # non-float
-):
-    f = getattr(float, fn)
-    setattr(absolute, fn, _absolute_wrap(f))
-
-del _absolute_wrap, fn, f
 
 
 class MouseMove:
