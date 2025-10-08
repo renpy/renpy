@@ -49,20 +49,23 @@ class position:
     def __new__(cls, _: "position", /) -> "position": ...
 
     @overload
-    def __new__(cls, absolute: int | _absolute = 0, /) -> "position": ...
+    def __new__(cls, absolute: int | float = 0, /) -> "position": ...
 
     @overload
-    def __new__(cls, absolute: int | _absolute, relative: float, /) -> "position": ...
+    def __new__(cls, absolute: int | float, relative: float, /) -> "position": ...
 
     def __new__(
         cls,
-        absolute: "int | _absolute | position" = 0,
+        absolute: "int | float | position" = 0,
         relative: "float | None" = None,
         /,
     ) -> "position":
         """
-        If passed two parameters, takes them as an absolute and a relative.
-        If passed only one parameter, converts it.
+        If passed two parameters, takes them as an absolute and a relative values of the position.
+        If passed only one parameter, convert it with the following rules:
+        - If it is a position, return it unchanged.
+        - If it is an integer or absolute, use it as an absolute value.
+        - Otherwise it should be a float which is treated as a relative value.
         """
 
         # Using __new__ so that passing a position returns it unchanged.
@@ -78,13 +81,13 @@ class position:
             return self
 
     @classmethod
-    def from_any(cls, other: "Position | position") -> "position":
-        if isinstance(other, position):
-            return other
-        elif isinstance(other, (int, absolute)):
-            return cls(other, 0)
+    def from_any(cls, value: "Position | position", /) -> "position":
+        if isinstance(value, position):
+            return value
+        elif isinstance(value, (int, absolute)):
+            return cls(value, 0)
         else:
-            return cls(0, other)
+            return cls(0, value)
 
     def simplify(self) -> "int | absolute | float | position":
         """
@@ -101,31 +104,31 @@ class position:
         else:
             return self
 
-    def __add__(self, other: "position", /) -> "position":
-        if isinstance(other, position):
-            return position(self.absolute + other.absolute, self.relative + other.relative)
+    def __add__(self, value: "position", /) -> "position":
+        if isinstance(value, position):
+            return position(self.absolute + value.absolute, self.relative + value.relative)
 
         return NotImplemented
 
     __radd__ = __add__
 
-    def __sub__(self, other: "position", /) -> "position":
-        if isinstance(other, position):
-            return position(self.absolute - other.absolute, self.relative - other.relative)
+    def __sub__(self, value: "position", /) -> "position":
+        if isinstance(value, position):
+            return position(self.absolute - value.absolute, self.relative - value.relative)
 
         return NotImplemented
 
-    def __mul__(self, other: int | float, /) -> "position":
-        if isinstance(other, (int, float)):
-            return position(self.absolute * other, self.relative * other)
+    def __mul__(self, value: int | float, /) -> "position":
+        if isinstance(value, (int, float)):
+            return position(self.absolute * value, self.relative * value)
 
         return NotImplemented
 
     __rmul__ = __mul__
 
-    def __truediv__(self, other: int | float, /) -> "position":
-        if isinstance(other, (int, float)):
-            return position(self.absolute / other, self.relative / other)
+    def __truediv__(self, value: int | float, /) -> "position":
+        if isinstance(value, (int, float)):
+            return position(self.absolute / value, self.relative / value)
 
         return NotImplemented
 
