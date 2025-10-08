@@ -414,22 +414,41 @@ This will run four times, using these combinations for ``(a, (b, c))``:
     ``(1, (3, 5))``, ``(1, (4, 6))``, ``(2, (3, 5))``, ``(2, (4, 6))``
 
 
-Selective Enable and Xfail
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Using Parameters in Expressions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If a parameterized test case has its ``enabled`` property evaluate to ``False``,
-that particular run will be skipped, but other runs will continue to execute.
+You can use parameters in any test property that takes an expression.
 
-Similarly, if the ``xfail`` property evaluates to ``True``, that particular
-run will be marked as xfailed if it fails, but other runs will pass or fail normally.
-
-For example, the following test will pass for ``x=0`` and ``x=1``, and will xfail for ``x=2``::
+For example, here's a test that runs three times, once for each value of ``x``.
+The test will pass when ``x`` is 0 or 1, and will be expected to fail (``xfail``) when ``x`` is 2::
 
     testcase choice_test:
         parameter x = [0, 1, 2]
         xfail x == 2
 
         assert eval (x < 2)
+
+You can also use parameters to select screens or buttons by name.
+For example, this test will click either the "first" or "second" choice,
+depending on the value of ``choice_text``::
+
+    testcase show_menu:
+        parameter screen_name = ["preferences", "load"]
+
+        $ print(f"Showing screen '{screen_name}'")
+        run ShowMenu(screen_name)
+        pause until screen screen_name
+        run Return()
+
+Parameters can also be used inside Python code blocks.
+For example, this test prints the current values of ``x`` and ``y``,
+and then clicks at that position::
+
+    testcase param_test:
+        parameter (x, y) = [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0)]
+
+        $ print(f"Clicking at position ({x}, {y})")
+        click pos (x, y)
 
 
 Test Suites
