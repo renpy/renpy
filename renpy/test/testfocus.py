@@ -45,7 +45,7 @@ def find_focus(pattern: str, raw: bool) -> Focus | None:
         if pattern in text.casefold():
             candidates.append((len(text), focus))
 
-    return min(candidates, default=(None, None))[1]
+    return min(candidates, key=lambda x: x[0], default=(None, None))[1]
 
 
 def _get_default_focus_text(raw: bool) -> str:

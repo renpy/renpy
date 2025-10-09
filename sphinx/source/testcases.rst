@@ -1177,7 +1177,7 @@ Screenshot
 
     Type: :dfn:`Command`
 
-    .. describe:: screenshot <path> [max_pixel_difference (int or float)] [crop (x1, y1, x2, y2)]
+    .. describe:: screenshot <path> [max_pixel_difference (int or float)] [crop (x, y, width, height)]
 
 Takes a screenshot of the current screen and saves it to the provided path.
 
@@ -1189,7 +1189,7 @@ Takes a screenshot of the current screen and saves it to the provided path.
   Integer values specify the number of pixels, while float values
   specify a percentage of the total number of pixels. Defaults to ``0``.
 - ``crop`` specifies a rectangle to crop the screenshot to, given as
-  ``(x1, y1, x2, y2)``. Coordinates must be given as integers.
+  ``(x, y, width, height)``. Coordinates must be given as integers.
 
 If the project is in a git repository, the hash of the current commit is
 automatically appended to the filename as ``@{hash}.png``. This allows

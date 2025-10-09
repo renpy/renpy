@@ -550,9 +550,9 @@ def screenshot_statement(l: Lexer, loc: NodeLocation) -> testast.Screenshot:
 
     while True:
         if l.keyword("max_pixel_difference"):
-            rv.max_pixel_difference = renpy.python.py_eval(l.require(l.float))
+            rv.max_pixel_difference = l.require(l.simple_expression)
         elif l.keyword("crop"):
-            rv.crop = renpy.python.py_eval(l.require(l.simple_expression))
+            rv.crop = l.require(l.simple_expression)
         else:
             break
 

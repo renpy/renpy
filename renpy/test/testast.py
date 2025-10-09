@@ -1417,8 +1417,8 @@ class Screenshot(Node):
         self,
         loc: NodeLocation,
         filename: str,
-        max_pixel_difference: int | float = 0,
-        crop: tuple[int, int, int, int] | None = None,
+        max_pixel_difference: str | None = None,
+        crop: str | None = None,
     ):
         self.max_pixel_difference = max_pixel_difference
         self.crop = crop
@@ -1454,7 +1454,7 @@ class Screenshot(Node):
 
             if self.crop:
                 # img = renpy.display.scale.smoothscale(img, (renpy.config.screen_width, renpy.config.screen_height))
-                img = img.subsurface(self.crop)
+                img = img.subsurface(scoped_eval(self.crop))
 
             base_filename, ext = os.path.splitext(filename)
             ref_img_path = self.get_reference_image_path(filename)
@@ -1503,14 +1503,19 @@ class Screenshot(Node):
                     else:
                         diff.set_at(pos, color_black)
 
-            if isinstance(self.max_pixel_difference, float) and 0 < self.max_pixel_difference < 1:
-                self.max_pixel_difference = int(self.max_pixel_difference * img.get_width() * img.get_height())
+            max_pixel_difference = 0
+            if self.max_pixel_difference is not None:
+                max_pixel_difference = scoped_eval(self.max_pixel_difference)
+                if not isinstance(max_pixel_difference, (int, float)):
+                    raise ValueError("max_pixel_difference must be an int or float.")
+                if isinstance(max_pixel_difference, float) and 0 < max_pixel_difference < 1:
+                    max_pixel_difference = int(max_pixel_difference * img.get_width() * img.get_height())
 
-            if diff_count > self.max_pixel_difference:
+            if diff_count > max_pixel_difference:
                 self.save_image(img, new_fname)
                 self.save_image(diff, diff_fname)
                 raise RenpyTestScreenshotError(
-                    f"{filename} (pixel difference: {diff_count} > {self.max_pixel_difference})\n"
+                    f"{filename} (pixel difference: {diff_count} > {max_pixel_difference})\n"
                     f"Current image saved to {new_fname}\n"
                     f"Difference image saved to {diff_fname}"
                 )
