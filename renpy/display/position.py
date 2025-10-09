@@ -23,6 +23,7 @@ from typing import final, overload, SupportsIndex, Any
 
 from renpy.types import Position
 
+
 @final
 class absolute(float):
     """
@@ -42,47 +43,103 @@ class absolute(float):
         return value // self, value % self
 
     # Wrap all dunder methods that return floats to return absolutes.
-    def __add__(self, value:float, /) -> "absolute":
-        return absolute(super().__add__(value))
+    def __add__(self, value: float, /) -> "absolute":
+        rv = super().__add__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __radd__(self, value: float, /) -> "absolute":
-        return absolute(super().__radd__(value))
+        rv = super().__radd__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __sub__(self, value: float, /) -> "absolute":
-        return absolute(super().__sub__(value))
+        rv = super().__sub__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __rsub__(self, value: float, /) -> "absolute":
-        return absolute(super().__rsub__(value))
+        rv = super().__rsub__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __mul__(self, value: float, /) -> "absolute":
-        return absolute(super().__mul__(value))
+        rv = super().__mul__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __rmul__(self, value: float, /) -> "absolute":
-        return absolute(super().__rmul__(value))
+        rv = super().__rmul__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __truediv__(self, value: float, /) -> "absolute":
-        return absolute(super().__truediv__(value))
+        rv = super().__truediv__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __rtruediv__(self, value: float, /) -> "absolute":
-        return absolute(super().__rtruediv__(value))
+        rv = super().__rtruediv__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __floordiv__(self, value: float, /) -> "absolute":
-        return absolute(super().__floordiv__(value))
+        rv = super().__floordiv__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __rfloordiv__(self, value: float, /) -> "absolute":
-        return absolute(super().__rfloordiv__(value))
+        rv = super().__rfloordiv__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __mod__(self, value: float, /) -> "absolute":
-        return absolute(super().__mod__(value))
+        rv = super().__mod__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __rmod__(self, value: float, /) -> "absolute":
-        return absolute(super().__rmod__(value))
+        rv = super().__rmod__(value)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __pow__(self, value: float, mod: None = None, /) -> Any:
-        return absolute(super().__pow__(value))
+        rv = super().__pow__(value, mod)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __rpow__(self, value: float, mod: None = None, /) -> Any:
-        return absolute(super().__rpow__(value))
+        rv = super().__rpow__(value, mod)
+        if rv is NotImplemented:
+            return NotImplemented
+
+        return absolute(rv)
 
     def __neg__(self) -> "absolute":
         return absolute(super().__neg__())
@@ -119,15 +176,13 @@ class absolute(float):
 
     @overload
     @staticmethod
-    def compute_raw[T: (Position)](value: T, room: float) -> "int|float|absolute": ...
-
-
+    def compute_raw[T: ("int | float | absolute")](value: T, room: float) -> T: ...
 
     @staticmethod
-    def compute_raw(value: "Position | position", room: float) -> "int | float | absolute":
+    def compute_raw(value: Position, room: float) -> "int | float | absolute":
         """
-        Converts a position from one of the many supported position types
-        into an absolute number of pixels, without regard for the return type.
+        Converts a position from one of the Ren'Py position types into an
+        absolute number of pixels, without regard for the return type.
         """
 
         if isinstance(value, position):
@@ -143,9 +198,10 @@ class absolute(float):
             raise TypeError(f"Value {value} of type {type(value)} not recognized as a position.")
 
     @staticmethod
-    def compute(value: "Position | position", room: float) -> "absolute":
+    def compute(value: Position, room: float) -> "absolute":
         """
-        Does the same, but converts the result to the absolute type.
+        Converts a position from one of the Ren'Py position types into an
+        absolute number of pixels, and returns it as an absolute instance.
         """
 
         return absolute(absolute.compute_raw(value, room))
@@ -172,7 +228,7 @@ class position:
     def __new__(cls, absolute: int | _absolute = 0, /) -> "position": ...
 
     @overload
-    def __new__(cls, relaitve: float = 0.0, /) -> "position": ...
+    def __new__(cls, relative: float = 0.0, /) -> "position": ...
 
     @overload
     def __new__(cls, absolute: int | float, relative: float, /) -> "position": ...
@@ -204,7 +260,7 @@ class position:
             return self
 
     @classmethod
-    def from_any(cls, value: "Position | position", /) -> "position":
+    def from_any(cls, value: Position, /) -> "position":
         if isinstance(value, position):
             return value
         elif isinstance(value, (int, absolute)):
@@ -212,7 +268,7 @@ class position:
         else:
             return cls(0, value)
 
-    def simplify(self) -> "int | absolute | float | position":
+    def simplify(self) -> Position:
         """
         Tries to represent this position as an int, float, or absolute, if possible.
         """
@@ -268,4 +324,4 @@ class position:
         if self.absolute.is_integer():
             absolute = int(self.absolute)
 
-        return f"position(absolute={absolute}, relative={self.relative})"
+        return f"position({absolute}, {self.relative})"
