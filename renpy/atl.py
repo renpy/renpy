@@ -19,9 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
 import random
 
 import renpy
@@ -30,11 +27,11 @@ from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
 
 
 def late_imports():
-    global Displayable, Matrix, Camera
+    global Displayable, Matrix, Camera, position
 
     from renpy.display.displayable import Displayable
     from renpy.display.matrix import Matrix
-    from renpy.display.transform import Camera
+    from renpy.display.transform import Camera, position
 
 
 def compiling(loc):
@@ -74,89 +71,6 @@ def pause(t):
 @atl_warper
 def instant(t):
     return 1.0
-
-
-class position(object):
-    """
-    A combination of relative and absolute coordinates.
-    """
-
-    __slots__ = ("absolute", "relative")
-
-    def __new__(cls, absolute=0, relative=None):
-        """
-        If passed two parameters, takes them as an absolute and a relative.
-        If passed only one parameter, converts it.
-        Using __new__ so that passing a position returns it unchanged.
-        """
-        if relative is None:
-            self = cls.from_any(absolute)
-        else:
-            self = object.__new__(cls)
-            self.absolute = absolute
-            self.relative = relative
-        return self
-
-    @classmethod
-    def from_any(cls, other):
-        if isinstance(other, cls):
-            return other
-        elif type(other) is float:
-            return cls(0, other)
-        else:
-            return cls(other, 0)
-
-    def simplify(self):
-        """
-        Tries to represent this position as an int, float, or absolute, if
-        possible.
-        """
-
-        if self.relative == 0.0:
-            if self.absolute == int(self.absolute):
-                return int(self.absolute)
-            else:
-                return renpy.display.core.absolute(self.absolute)
-        elif self.absolute == 0:
-            return float(self.relative)
-        else:
-            return self
-
-    def __add__(self, other):
-        if isinstance(other, position):
-            return position(self.absolute + other.absolute, self.relative + other.relative)
-        # elif isinstance(other, (int, float)):
-        #     return self + position.from_any(other)
-        return NotImplemented
-
-    __radd__ = __add__
-
-    def __sub__(self, other):
-        return self + -other
-
-    def __rsub__(self, other):
-        return other + -self
-
-    def __mul__(self, other):
-        if isinstance(other, (int, float)):
-            return position(self.absolute * other, self.relative * other)
-        return NotImplemented
-
-    __rmul__ = __mul__
-
-    def __truediv__(self, other):
-        if isinstance(other, (int, float)):
-            return self * (1 / other)
-        return NotImplemented
-
-    def __pos__(self):
-        return position(renpy.display.core.absolute(self.absolute), float(self.relative))
-
-    def __neg__(self):
-        return -1 * self
-
-    def __repr__(self):
-        return "position(absolute={}, relative={})".format(self.absolute, self.relative)
 
 
 class DualAngle(object):
