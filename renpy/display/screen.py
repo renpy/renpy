@@ -820,7 +820,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return ""
 
         if self.modal:
-            return renpy.display.tts.TTSDone(self._tts_common(), raw=raw)
+            return renpy.display.tts.TTSDone(self._tts_common(raw=raw))
         else:
             return self._tts_common(raw=raw)
 
