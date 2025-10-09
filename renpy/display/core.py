@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Callable, SupportsIndex, NotRequired, TypedDict, Any, final, overload
+from typing import NotRequired, TypedDict, Any
 
 import sys
 import os
@@ -29,15 +29,12 @@ import threading
 import gc
 import atexit
 import platform
-import functools
 
 import renpy
 import renpy.pygame as pygame
 
-from renpy.types import Position
-from renpy.display.position import absolute, position
-
 # Imports for backward compatibility.
+from renpy.display.position import absolute as absolute, position as position
 from renpy.display.displayable import Displayable, DisplayableArguments as DisplayableArguments, place as place
 from renpy.display.scenelists import SceneListEntry as SceneListEntry, SceneLists as SceneLists
 
@@ -192,8 +189,6 @@ class EndInteraction(Exception):
 
     def __init__(self, value: Any):
         self.value = value
-
-
 
 
 class MouseMove:
@@ -2203,7 +2198,6 @@ class Interface:
         step = 1
 
         while True:
-
             if self.event_peek(False) and not self.force_prediction:
                 break
 

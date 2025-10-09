@@ -30,7 +30,6 @@ from renpy.display.displayable import Displayable
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
 from renpy.atl import DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
-from renpy.display.position import absolute
 
 
 class Camera(renpy.object.Object):

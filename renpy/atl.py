@@ -32,7 +32,7 @@ def late_imports():
     from renpy.display.position import position
     from renpy.display.displayable import Displayable
     from renpy.display.matrix import Matrix
-    from renpy.display.transform import Camera, position
+    from renpy.display.transform import Camera
 
 
 def compiling(loc):
