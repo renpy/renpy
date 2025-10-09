@@ -30,6 +30,7 @@ import renpy
 import typing
 
 if typing.TYPE_CHECKING:
+    from . import bidi as bidi
     from . import emoji_trie as emoji_trie
     from . import extras as extras
     from . import font as font

@@ -469,6 +469,7 @@ def import_all():
 
     import renpy.display
 
+    import renpy.display.position
     import renpy.display.presplash
     import renpy.display.pgrender
     import renpy.display.scale
@@ -775,12 +776,14 @@ if typing.TYPE_CHECKING:
     from . import substitutions as substitutions
     from . import test as test
     from . import text as text
+    from . import tfd as tfd
     from . import translation as translation
     from . import types as types
     from . import uguu as uguu
     from . import ui as ui
     from . import update as update
     from . import util as util
+    from . import vc_version as vc_version
     from . import versions as versions
     from . import warp as warp
     from . import webloader as webloader
