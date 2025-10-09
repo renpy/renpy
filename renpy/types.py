@@ -45,7 +45,7 @@ Apart from Displayable itself, this could be one of:
 - renpy.color.Color object.
 """
 
-type Position = int | float | renpy.display.position.absolute
+type Position = int | float | renpy.display.position.absolute | renpy.display.position.position
 """
 This describes a position, which can be one of:
 - An integer - treated as pixels from the top left corner of the area.
@@ -53,4 +53,5 @@ This describes a position, which can be one of:
   area.
 - An absolute position - treated as pixels from the top left corner of the
   area, where fractional part is a subpixel offset.
+- A position instance - special type that combines absolute and relative positions.
 """

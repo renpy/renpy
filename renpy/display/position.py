@@ -176,13 +176,13 @@ class absolute(float):
 
     @overload
     @staticmethod
-    def compute_raw[T: (Position)](value: T, room: float) -> T: ...
+    def compute_raw[T: ("int | float | absolute")](value: T, room: float) -> T: ...
 
     @staticmethod
-    def compute_raw(value: "Position | position", room: float) -> "int | float | absolute":
+    def compute_raw(value: Position, room: float) -> "int | float | absolute":
         """
-        Converts a position from one of the many supported position types
-        into an absolute number of pixels, without regard for the return type.
+        Converts a position from one of the Ren'Py position types into an
+        absolute number of pixels, without regard for the return type.
         """
 
         if isinstance(value, position):
@@ -198,9 +198,10 @@ class absolute(float):
             raise TypeError(f"Value {value} of type {type(value)} not recognized as a position.")
 
     @staticmethod
-    def compute(value: "Position | position", room: float) -> "absolute":
+    def compute(value: Position, room: float) -> "absolute":
         """
-        Does the same, but converts the result to the absolute type.
+        Converts a position from one of the Ren'Py position types into an
+        absolute number of pixels, and returns it as an absolute instance.
         """
 
         return absolute(absolute.compute_raw(value, room))
@@ -259,7 +260,7 @@ class position:
             return self
 
     @classmethod
-    def from_any(cls, value: "Position | position", /) -> "position":
+    def from_any(cls, value: Position, /) -> "position":
         if isinstance(value, position):
             return value
         elif isinstance(value, (int, absolute)):
@@ -267,7 +268,7 @@ class position:
         else:
             return cls(0, value)
 
-    def simplify(self) -> "int | absolute | float | position":
+    def simplify(self) -> Position:
         """
         Tries to represent this position as an int, float, or absolute, if possible.
         """
@@ -323,4 +324,4 @@ class position:
         if self.absolute.is_integer():
             absolute = int(self.absolute)
 
-        return f"position(absolute={absolute}, relative={self.relative})"
+        return f"position({absolute}, {self.relative})"
