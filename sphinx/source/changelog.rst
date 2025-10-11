@@ -49,6 +49,10 @@ having been updated. (This includes most Unicode 16 emoji, but not unicode 17 em
 Other Changes
 -------------
 
+The new :var:`config.locale_to_language_map` variable is a dictionary mapping locale strings to
+language names, allowing :var:`config.enable_language_autodetect` to be customized more easily.
+
+
 :func:`Movie` displayables now allocate channels dynamically when the movie is playing. Previously, each
 Movie would allocate a channel when the movie was created, which could lead to large amounts of memory in
 use to store the channels and associated buffers.

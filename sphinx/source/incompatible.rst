@@ -18,6 +18,9 @@ such changes only take effect when the GUI is regenerated.
 8.5.0
 -----
 
+**Language Detection** Ren'Py now prefers the language name ("en") over the region name ("us"), if both are
+valid languages. The combination ("en_us") is preferred to both.
+
 **pygame_sdl2** The pygame_sdl2 module is no longer included with Ren'Py. It's been replace by
 the renpy.pygame package, which is compatible and included with Ren'Py. This packaged has been aliased
 to `pygame` and `pygame_sdl2` for compatibility, so existing imports will work.

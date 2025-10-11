@@ -1997,15 +1997,34 @@ Translation
     to use based on the locale of the player's system. If successful,
     this language will be used as the default language.
 
+    This can be customized with :var:`config.locale_to_language_function`
+    below, the default implementation of which uses :var:`config.locale_to_language_map`.
+
 .. var:: config.locale_to_language_function : Callable
 
     A function that determines the language the game should use,
     based on the user's locale.
     It takes 2 string arguments that give the ISO code of the locale
-    and the ISO code of the region.
+    and the ISO code of the region. These are normalized to lower case
+    before this function is called.
 
     It should return a string giving the name of a translation to use, or
     None to use the default translation.
+
+    :var:`config.enable_language_autodetect` must be True for this function
+    to be called.
+
+.. var:: config.locale_to_language_map = { ... }
+
+    This is a table used by the default implementation of locale_to_language_function.
+    It maps (locale, region) pairs to language names. The default value of this table
+    can be found in the locale symbol of `renpy/translation/__init__.py <https://github.com/renpy/renpy/blob/master/renpy/translation/__init__.py#L959>`_
+
+    The following things are looked up in this table, in order, until a match is found:
+
+    1. language_region (en_us)
+    2. language (en)
+    3. region (us)
 
 .. var:: config.new_translate_order = True
 

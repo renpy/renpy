@@ -782,6 +782,9 @@ enable_language_autodetect = False
 # A function from (locale, region) -> existing language.
 locale_to_language_function = None
 
+# The table used by the default locale_to_language_function.
+locale_to_language_map: dict[str, str] = { }
+
 # Should we pass the full argument list to the say screen?
 old_say_args = False
 
@@ -1649,6 +1652,8 @@ def init():
     error_suggestion_handlers[renpy.script.LabelNotFound] = renpy.script.LabelNotFound.get_suggestion
     error_suggestion_handlers[renpy.display.screen.ScreenNotFound] = renpy.display.screen.ScreenNotFound.get_suggestion
     error_suggestion_handlers[renpy.display.image.ImageNotFound] = renpy.display.image.ImageNotFound.get_suggestion
+
+    locale_to_language_map.update(renpy.translation.locales)
 
 
 def post_init():
