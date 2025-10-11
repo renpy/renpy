@@ -527,7 +527,7 @@ style game_menu_label:
     ysize gui.scale(120)
 
 style game_menu_label_text:
-    size gui.title_text_size
+    size gui.scale(50)
     color gui.accent_color
     yalign 0.5
 
