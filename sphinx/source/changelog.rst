@@ -49,6 +49,10 @@ having been updated. (This includes most Unicode 16 emoji, but not unicode 17 em
 Other Changes
 -------------
 
+:func:`Movie` displayables now allocate channels dynamically when the movie is playing. Previously, each
+Movie would allocate a channel when the movie was created, which could lead to large amounts of memory in
+use to store the channels and associated buffers.
+
 The `init_priority` argument to the :func:`renpy.register_statement` function can now be a function that
 returns the init priority, rather than an integer.
 
