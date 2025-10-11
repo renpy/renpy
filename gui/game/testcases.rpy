@@ -1,4 +1,8 @@
-﻿testcase default:
+﻿testsuite global:
+    teardown:
+        exit
+
+testcase default:
     $ _test.transition_timeout = 0.05
     click "Start"
     pause .6
@@ -50,7 +54,6 @@
     # menu_1
     advance until screen "choice"
     click "Choice A"
-
 
     # input
     type "Test User\n"

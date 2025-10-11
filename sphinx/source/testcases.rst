@@ -29,6 +29,10 @@ block of test statements (see below). Test cases are similar to Ren'Py
 
 It takes the following properties:
 
+.. var:: description
+
+    A string describing the test case. This is used in the test report.
+
 .. var:: enabled
 
     If this expression evaluates to ``False``, this test is skipped.
@@ -54,9 +58,23 @@ It takes the following properties:
 
     See :ref:`skipping-testcases` for more information.
 
-.. var:: description
+.. var:: xfail
 
-    A string describing the test case. This is used in the test report.
+    If this expression evaluates to ``True``, the test is expected to fail.
+    If the test does fail, it will be marked as xfailed instead of failed.
+    Defaults to ``False``.
+
+.. var:: parameter
+
+    A variable name (or tuple of variable names) and a list of values (or
+    list of tuples of values). The test will run once for each value (or
+    tuple of values) in the list.
+
+    A test may have multiple ``parameter`` properties, in which case
+    the test will run for every possible combination of the values.
+
+    See :ref:`parameterized-tests` for more information.
+
 
 Testsuite Statement
 ===================
@@ -140,7 +158,7 @@ executed, and how the hooks are called. The following example illustrates this:
                 skip until main_menu
 
             before testsuite:
-                if not screen "main_menu":
+                if not screen ""main_menu"":
                     run MainMenu(confirm=False)
                 click ""Start""
 
@@ -332,6 +350,152 @@ If *all* tests are skipped in a testsuite, then the ``setup`` and
 ``before testsuite`` and ``after testsuite`` hooks will not be executed from
 the parent testsuite(s).
 
+.. _parameterized-tests:
+
+Parameterized Tests
+--------------------
+
+A test case can run multiple times with different values by using the ``parameter`` property.
+
+To do this, give a variable name and a list of values. The test will run once
+for each value in the list. For example::
+
+    testcase example:
+        parameter x = [1, 2, 3]
+        assert eval (x > 0)
+
+This will run the test three times: once with ``x = 1``, once with ``x = 2``,
+and once with ``x = 3``.
+
+Each run will execute the ``before testcase`` and ``after testcase`` hooks,
+and each test is reported separately in the test report.
+
+Grouped Parameters
+^^^^^^^^^^^^^^^^^^
+
+It is possible to specify several variables at once by grouping them
+in parentheses and giving a list of value groups. For example::
+
+    testcase addition:
+        parameter (x, y, z) = [ (1, 2, 3), (2, 3, 5), (3, 5, 8) ]
+
+        assert eval (x + y == z)
+
+This will run three times, each time using one set of values:
+``(1, 2, 3)``, ``(2, 3, 5)``, and ``(3, 5, 8)``.
+
+Parameter Combinations
+^^^^^^^^^^^^^^^^^^^^^^
+
+If multiple ``parameter`` properties are provided, the test case will run
+for every possible combination of the values. For example::
+
+    testcase combinations:
+        parameter a = [1, 2]
+        parameter b = [3, 4]
+        parameter c = [5, 6]
+
+        assert eval (a + b + c in [9, 10, 11, 12])
+
+This will run eight times, once for each combination of ``(a, b, c)``:
+
+    ``(1, 3, 5)``, ``(1, 3, 6)``, ``(1, 4, 5)``, ``(1, 4, 6)``, ``(2, 3, 5)``, ``(2, 3, 6)``, ``(2, 4, 5)``, ``(2, 4, 6)``
+
+It is possible to mix grouped parameters with non-grouped parameters. For example::
+
+    testcase mixed:
+        parameter a = [1, 2]
+        parameter (b, c) = [ (3, 5), (4, 6) ]
+
+        assert eval (a + b + c in [9, 10, 11, 12])
+
+This will run four times, using these combinations for ``(a, (b, c))``:
+
+    ``(1, (3, 5))``, ``(1, (4, 6))``, ``(2, (3, 5))``, ``(2, (4, 6))``
+
+
+Using Parameters in Expressions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can use parameters in any test property that takes an expression.
+
+For example, here's a test that runs three times, once for each value of ``x``.
+The test will pass when ``x`` is 0 or 1, and will be expected to fail (``xfail``) when ``x`` is 2::
+
+    testcase choice_test:
+        parameter x = [0, 1, 2]
+        xfail x == 2
+
+        assert eval (x < 2)
+
+You can also use parameters to select screens or buttons by name.
+For example, this test will click either the "first" or "second" choice,
+depending on the value of ``choice_text``::
+
+    testcase show_menu:
+        parameter screen_name = ["preferences", "load"]
+
+        $ print(f"Showing screen '{screen_name}'")
+        run ShowMenu(screen_name)
+        pause until screen screen_name
+        run Return()
+
+Parameters can also be used inside Python code blocks.
+For example, this test prints the current values of ``x`` and ``y``,
+and then clicks at that position::
+
+    testcase param_test:
+        parameter (x, y) = [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0)]
+
+        $ print(f"Clicking at position ({x}, {y})")
+        click pos (x, y)
+
+
+Test Suites
+^^^^^^^^^^^
+Parameters can also be provided to the whole test suite. In this case, all hooks and test cases
+inside the suite will run once for each parameter set.
+
+Each parameterized run will execute the ``setup``, ``before/after testsuite``,
+and ``teardown`` hooks.
+
+For example::
+
+    testsuite math_tests:
+        parameter (x, y, z) [ (1, 2, 3), (2, 3, 5), (3, 5, 8) ]
+
+        setup:
+            $ print(f"Running math tests with x={x}, y={y}, z={z}")
+
+        testcase addition:
+            assert eval (x + y == z)
+
+        testcase multiplication:
+            assert eval (x*y == z*y - y*y)
+
+Parameters may be nested, and all combinations will be tested. For example::
+
+    testsuite parameter_field:
+        parameter choice_text = ["first", "second"]
+
+        testcase param_test2:
+            parameter (x, y) = [(0.0, 0.0), (0.5,0.5)]
+
+            advance until screen "choice"
+            click choice_text
+            click pos (x, y)
+
+This will run four times, once for each combination of ``(choice_text, (x, y))``:
+
+    ``("first", (0.0, 0.0))``, ``("first", (0.5, 0.5))``,
+    ``("second", (0.0, 0.0))``, ``("second", (0.5, 0.5))``
+
+.. warning::
+
+    Test parameters are passed directly to tests, without any copying. If you change
+    a parameter that is mutable (eg. a list or dictionary) inside a test, that change
+    will affect other tests using the same object.
+
 Exceptions And Failures
 -----------------------
 If an error occurs during a test case:
@@ -354,26 +518,46 @@ Test Launch Options
 
 The test system accepts the following :doc:`command-line options <cli>`:
 
-.. option:: --ignore_enabled_flag
+.. option:: --enable_all
 
     If provided, all test cases and test suites will be executed, regardless
     of their ``enabled`` property.
 
-.. option:: --print_details
+.. option:: --overwrite_screenshots
 
-    If provided, the test report will include details about each test case,
-    including its description and the time it took to execute.
+    If provided, existing screenshots will be overwritten when a
+    :ref:`screenshot statement <test-screenshot-statement>` is executed.
 
-.. option:: --print_skipped
+.. option:: --hide-header
 
-    If provided, the test report will include information about skipped
-    test cases and test suites. Requires ``--print_details`` to be enabled as well.
+    If provided, the header at the start of the test run will be disabled.
+
+.. option:: --hide-execution [no|hooks|testcases|all]
+
+    If provided, test execution output will be hidden. ``hooks`` hides hooks,
+    ``testcases`` hides test cases and hooks, and ``all`` hides everything.
+
+.. option:: --hide-summary
+
+    If provided, the summary at the end of the test run will be disabled.
+
+.. option:: --report-detailed
+
+    If provided, detailed information about each test will be shown during
+    the run.
+
+.. option:: --report-skipped
+
+    If provided, information about skipped tests will be shown. This option
+    should be used together with ``--report-detailed``.
+
 
 Test Reporting
 ===================
 
 After a test run, a report is printed to the console, listing all test cases
-that were executed, skipped, failed, or raised an error.
+and their results. If the ``--print_details`` option is provided, the report
+will include additional information about each test.
 
 Below is an example of a test report after successfully testing "The Question":
 
@@ -381,6 +565,23 @@ Below is an example of a test report after successfully testing "The Question":
     :alt: Test report example
     :class: screenshot
 
+Test results
+------------
+
+A test can have one of the following results:
+
+- **Passed**: The test executed successfully, without any errors.
+- **Failed**: The test executed, but one of the statements failed.
+- **XFailed**: The test was expected to fail (because its ``xfail``
+  property evaluated to ``True``), and it did fail.
+- **XPassed**: The test was expected to fail (because its ``xfail``
+  property evaluated to ``True``), but it passed instead.
+- **Skipped**: The test was skipped, either because its ``enabled``
+  property evaluated to ``False``, or because another test with ``only True``
+  exists.
+
+In general, a test is considered successful if it passed or xfailed,
+and unsuccessful if it failed or xpassed.
 
 Test Settings
 =================
@@ -418,7 +619,10 @@ The following variables can be set to change the behavior of tests:
     a valid spot to :ref:`move the mouse <test-move-statement>` when using a
     selector without a position. Defaults to ``100``.
 
+.. var:: _test.screenshot_directory
 
+    A string specifying the directory to store screenshots in.
+    Defaults to ``tests/screenshots``.
 
 
 .. _test-statements:
@@ -431,7 +635,7 @@ divided into three categories: command statements, condition/selector statements
 control statements.
 
 Basic Commands
--------------
+--------------
 
 .. _test-advance-statement:
 
@@ -666,7 +870,7 @@ Simulates a scroll event. It takes the following optional properties:
         run Scroll("inventory_scroll", "increase", amount="step", delay=1.0)
 
 Keyboard Commands
-----------------
+-----------------
 
 Keysym
 ^^^^^^^^^^
@@ -732,7 +936,7 @@ These are always ready. ::
 
 
 Boolean Operations
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 
     Conditions support the ``not``, ``and`` and ``or`` operators.
     That expression may or may not be enclosed in parentheses. ::
@@ -848,20 +1052,22 @@ Text Selector
 
     Type: :dfn:`Condition, Selector`
 
-    .. describe:: "<text>"
+    .. describe:: "<text>" [raw]
 
 The ``text`` selector takes a string which resolves to a target
 found on the screen. The search is performed by going through all focusable
 elements on the screen (which are typically buttons and the main textbox),
-and looking through their :propref:`alt` text.
-
+and looking through their text and :propref:`alt` text.
 
 This search is case-insensitive and looks for the shortest match.
 For example, if the string ``"log"`` is given, and the screen contains
 the texts ``"CATALOG"`` and ``"illogical"``, the target
 will be the ``"CATALOG"`` text.
 
-
+If ``raw`` is given, the search is performed on the text as given in the
+script, before translation and :ref:`interpolation <text-interpolation>`.
+If not given, the search is performed on the text as it appears on screen,
+after translation and interpolation.
 
 ::
 
@@ -874,6 +1080,15 @@ will be the ``"CATALOG"`` text.
     # Case-insensitive search
     assert "AsK HeR RighT AwaY"
 
+    # Search unsubstituted text
+    assert "Welcome, Eileen!"
+    assert "Welcome, [player_name]!" raw
+
+    # Search untranslated text after changing the language
+    run Language("japanese")
+    assert "スタート"
+    assert "Start" raw
+
 
 Control Statements
 ------------------
@@ -885,7 +1100,7 @@ Assert
 
     Type: :dfn:`Control`
 
-    .. describe:: assert <condition> [timeout (float)]
+    .. describe:: assert <condition> [timeout (float)] [xfail (bool)]
 
 This statement takes a condition and raise a
 RenpyTestAssertionError if the condition is not met at the time when
@@ -894,6 +1109,10 @@ the assert statement executes.
 If a ``timeout`` is given, the statement will wait up to that many seconds
 for the condition to be met. If the condition is not met within that time,
 the assertion fails.
+
+If ``xfail`` is set to ``True``, the assert statement is expected to fail.
+This inverts the meaning of the statement: if the condition is met, the
+assertion fails. If the condition is not met, the assertion passes.
 
 ::
 
@@ -905,7 +1124,6 @@ the assertion fails.
 
     - `Python asserts <https://docs.python.org/reference/simple_stmts.html#the-assert-statement>`__
     - `Boolean evaluation <https://docs.python.org/library/stdtypes.html#truth-value-testing>`__
-
 
 
 If
@@ -942,7 +1160,7 @@ Repeat
 
     Type: :dfn:`Control`
 
-    .. describe:: <command> repeat <number>
+    .. describe:: <command> repeat <number> [timeout (float)]
 
 Repeats a statement for a given number of times. It consists of an
 Command statement on the left-hand side and a number of repetitions
@@ -952,12 +1170,58 @@ on the right-hand side, separated by the word ``repeat``. ::
     keysym "K_BACKSPACE" repeat 10
     advance repeat 3
 
+.. _test-screenshot-statement:
+
+Screenshot
+^^^^^^^^^^
+
+    Type: :dfn:`Command`
+
+    .. describe:: screenshot <path> [max_pixel_difference (int or float)] [crop (x, y, width, height)]
+
+Takes a screenshot of the current screen and saves it to the provided path.
+
+- ``path`` specifies the path (relative to ``_test.screenshot_directory``)
+  where the screenshot will be saved. It may include a file extension.
+  Only ``.png`` is supported.
+- ``max_pixel_difference`` specifies how many pixels may differ between
+  the taken screenshot and an existing screenshot for the test to pass.
+  Integer values specify the number of pixels, while float values
+  specify a percentage of the total number of pixels. Defaults to ``0``.
+- ``crop`` specifies a rectangle to crop the screenshot to, given as
+  ``(x, y, width, height)``. Coordinates must be given as integers.
+
+If the project is in a git repository, the hash of the current commit is
+automatically appended to the filename as ``@{hash}.png``. This allows
+the developer to track changes to screenshots over time.
+
+If the file already exists, the current screenshot is compared to the existing
+file. If the files differ by more than ``max_pixel_difference`` pixels, a
+RenpyTestScreenshotError is raised.
+
+To overwrite an existing screenshot, either delete the file or run the test with
+the ``--overwrite_screenshots`` command-line option.
+
+::
+
+    screenshot "screens/main_menu.png"
+    screenshot "screens/inventory" max_pixel_difference 0.01
+    screenshot "button.png" crop (10, 10, 100, 50)
+
+This may be used in a parameterized test to take multiple screenshots::
+
+    testcase screen_tester:
+        parameter screen_name = ["inventory", "stats", "map"]
+
+        run Show(screen_name)
+        screenshot f"screens/{screen_name}.png"
+
 Until
 ^^^^^^^^^
 
     Type: :dfn:`Control`
 
-    .. describe:: <command> until <condition> [timeout (float or None)]
+    .. describe:: <command> until <condition> [timeout (float)]
 
 Repeats a statement until a condition is met. It consists of an
 Command statement on the left-hand side and a condition on the right-hand
@@ -970,9 +1234,6 @@ is executed repeatedly until the condition is ready.
 If a ``timeout`` is given, the statement will wait up to that many seconds
 for the condition to be met. If the condition is not met within that time,
 a RenpyTestTimeoutError is raised.
-
-If the timeout is ``None``, the statement will wait indefinitely
-for the condition to be met.
 
 This timeout temporarily overrides the global ``_test.timeout`` setting.
 

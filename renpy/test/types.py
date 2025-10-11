@@ -35,6 +35,10 @@ class RenpyTestAssertionError(AssertionError):
     pass
 
 
+class RenpyTestScreenshotError(RenpyTestException):
+    pass
+
+
 class RenpyTestTimeoutError(TimeoutError):
     pass
 

@@ -133,7 +133,7 @@ screen preferences():
                     add HALF_SPACER
 
                     for i, l in preference_tabs:
-                        textbutton l action SetVariable("preference_tab", i) style "l_list"
+                        textbutton l id f"pref_{i}_btn" action SetVariable("preference_tab", i) style "l_list"
 
                 if preference_tab == "general":
 
@@ -200,6 +200,7 @@ screen preferences():
                                     vbox:
                                         for tlid, tlname in tran:
                                             textbutton tlname:
+                                                id f"pref_change_language_btn_{tlid}"
                                                 xmaximum (TWOTHIRDS//3)
                                                 action [Language(tlid), project.SelectTutorial(True)]
                                                 style "l_list"
@@ -236,7 +237,7 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            if renpy.windows or renpy.macintosh:   
+                            if renpy.windows or renpy.macintosh:
                                 textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "use_console")
 
                             textbutton _("Skip splashscreen") style "l_checkbox" action ToggleField(persistent, "skip_splashscreen")
@@ -286,9 +287,9 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
-                            textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark"), RestartAtPreferences()]
-                            textbutton _("Custom theme") style "l_checkbox" action [SetField(persistent, "theme", "custom"), RestartAtPreferences()]
+                            textbutton _("Default theme") id "pref_theme_default_btn" style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
+                            textbutton _("Dark theme") id "pref_theme_dark_btn" style "l_checkbox" action [SetField(persistent, "theme", "dark"), RestartAtPreferences()]
+                            textbutton _("Custom theme") id "pref_theme_custom_btn" style "l_checkbox" action [SetField(persistent, "theme", "custom"), RestartAtPreferences()]
 
                             add SPACER
 
@@ -384,7 +385,7 @@ screen preferences():
                                 action ToggleSetMembership(persistent.lint_options, "--all-problems")
 
 
-    textbutton _("Return") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") id "return_btn" action Jump("front_page") style "l_left_button"
 
 label clean_tmp:
     python hide:
