@@ -712,7 +712,7 @@ class SayBehavior(renpy.display.layout.Null):
 
         self.dialogue_pause = dialogue_pause
 
-    def _tts_all(self):
+    def _tts_all(self, raw: bool) -> str:
         raise renpy.display.tts.TTSRoot()
 
     def set_text(self, *args):
@@ -849,11 +849,11 @@ class DismissBehavior(renpy.display.displayable.Displayable):
         self.modal = modal
         self.keysym = keysym
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         return ""
 
-    def _tts_all(self):
-        rv = self._tts_common(alt(self.action))
+    def _tts_all(self, raw: bool) -> str:
+        rv = self._tts_common(alt(self.action), raw=raw)
         return rv
 
     def find_focusable(self, callback, focus_name):
@@ -1193,14 +1193,14 @@ class Button(renpy.display.layout.Window):
         if root:
             super(Button, self).set_style_prefix(prefix, root)
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         return ""
 
-    def _tts_all(self):
-        rv = self._tts_common(alt(self.action))
+    def _tts_all(self, raw: bool) -> str:
+        rv = self._tts_common(alt(self.action), raw=raw)
 
         if self.style.prefix.startswith("selected_") and (self.style.alt == self.style._hover_alt()):
-            rv += " " + renpy.minstore.__("selected")
+            rv += " selected" if raw else " " + renpy.minstore.__("selected")
 
         return rv
 
@@ -2597,16 +2597,17 @@ class Bar(renpy.display.displayable.Displayable):
 
             super(Bar, self).set_style_prefix(prefix, root)
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         return ""
 
-    def _tts_all(self):
+    def _tts_all(self, raw: bool) -> str:
         if self.value is not None:
             alt = self.value.alt
         else:
             alt = ""
 
-        return self._tts_common(alt) + renpy.minstore.__("bar")
+        label = "bar" if raw else renpy.minstore.__("bar")
+        return self._tts_common(alt, raw=raw) + label
 
 
 class Conditional(renpy.display.layout.Container):

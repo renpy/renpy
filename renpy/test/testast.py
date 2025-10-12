@@ -19,14 +19,25 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from math import isnan
+import itertools
+from typing import Any
+import glob
+import os
 
 import renpy
 from renpy.display.focus import Focus
 from renpy.display.displayable import Displayable
 from renpy.test.testmouse import click_mouse, move_mouse, scroll_mouse
 from renpy.test.testsettings import _test
-from renpy.test.types import NodeState, NodeLocation, Position, RenpyTestException, RenpyTestTimeoutError, HookType
+from renpy.test.types import (
+    HookType,
+    NodeLocation,
+    NodeState,
+    Position,
+    RenpyTestException,
+    RenpyTestScreenshotError,
+    RenpyTestTimeoutError,
+)
 
 
 class SelectorException(RenpyTestException):
@@ -118,7 +129,7 @@ class Node(object):
         """
         pass
 
-    def cleanup_after_error(self) -> None:
+    def cleanup_after_error(self, state: NodeState) -> None:
         """
         Called if an exception is raised during the execution of this node.
         This can be used to clean up any state that was set by this node.
@@ -138,7 +149,11 @@ class Block(Node):
     def chain(self, next):
         if self.block:
             self.next = self.block[0]
-            chain_block(self.block, next)
+
+            for a, b in zip(self.block, self.block[1:]):
+                a.chain(b)
+
+            self.block[-1].chain(next)
         else:
             super().chain(next)
 
@@ -159,49 +174,174 @@ class Block(Node):
         return None
 
 
-class TestCase(Block):
-    __slots__ = ("description", "enabled", "only", "parent")
+class BaseTestBlock(Block):
+    """
+    A base class for TestCase, TestSuite, and TestHook.
+    """
+
+    __slots__ = ("parent", "xfail_expr")
 
     def __init__(
         self,
         loc: NodeLocation,
-        name: str,
         block: list[Node],
+        name: str,
+        parent: "TestSuite | None" = None,
+        xfail_expr: str = "False",
+    ):
+        self.parent = parent
+        self.xfail_expr = xfail_expr
+        super().__init__(loc, block, name)
+
+    def __hash__(self):
+        return hash(self.full_path)
+        # return hash(self.parameterized_id)
+
+    def get_repr_params(self) -> str:
+        return f"name={self.current_full_parameterized_path!r}"
+
+    def get_parameterized_name(self, index: int | None = None) -> str:
+        """
+        Returns the name with the parameters for the given index shown.
+        If index is None, uses the current parameters.
+        """
+        raise NotImplementedError
+
+    @property
+    def xfail(self) -> bool:
+        return bool(scoped_eval(self.xfail_expr))
+
+    @property
+    def current_parameters(self) -> dict[str, Any]:
+        """The current parameters for this test block, or an empty dict if there are none."""
+        raise NotImplementedError
+
+    @property
+    def full_path(self) -> str:
+        """The full hierarchical path using `.` to separate testsuites and `::` to separate testcases."""
+        if self.parent:
+            return f"{self.parent.full_path}::{self.name}"
+        return self.name
+
+    @property
+    def current_parameterized_name(self) -> str:
+        """The name with current parameters shown."""
+        return self.get_parameterized_name(None)
+
+    @property
+    def current_full_parameterized_path(self) -> str:
+        """The full hierarchical path with current parameters shown."""
+        if self.parent:
+            return f"{self.parent.current_full_parameterized_path}::{self.current_parameterized_name}"
+        return self.current_parameterized_name
+
+
+class TestHook(BaseTestBlock):
+    __slots__ = ("depth", "call_count")
+
+    def __init__(
+        self,
+        loc: NodeLocation,
+        block: list[Node],
+        name: str,
+        parent: "TestSuite | None" = None,
+        xfail_expr: str = "False",
+        depth: int = 0,
+    ):
+        self.depth = depth
+        self.call_count = 0
+        super().__init__(loc, block, name, parent, xfail_expr)
+
+    def increment_call_count(self) -> None:
+        self.call_count += 1
+
+    def __hash__(self):
+        return hash(self.current_full_parameterized_path)
+
+    def get_parameterized_name(self, index=None):
+        if index is None:
+            index = self.call_count
+        return f"{self.name}({index})"
+
+
+class TestCase(BaseTestBlock):
+    __slots__ = ("description", "enabled", "only", "parameters", "parameter_index")
+
+    def __init__(
+        self,
+        loc: NodeLocation,
+        block: list[Node],
+        name: str,
+        parent: "TestSuite | None" = None,
+        xfail_expr: str = "False",
         description: str = "",
         enabled: bool = True,
         only: bool = False,
-        parent: "TestCase | None" = None,
+        parameters: list[list[dict[str, Any]]] | None = None,
     ):
-        super().__init__(loc, block, name)
-        self.name = name
-        self.block = block
         self.description = description
         self.enabled = enabled
         self.only = only
-        self.parent = parent
+        self.parameters = self.generate_parameter_combinations(parameters)
+        self.parameter_index = 0
+        super().__init__(loc, block, name, parent, xfail_expr)
 
         if not self.enabled and self.only:
             raise ValueError(f"Test case '{self.name}' must be enabled before setting 'only' to True.")
 
-    def __hash__(self):
-        return hash(self.name)
+    def restart(self) -> None:
+        self.parameter_index = 0
+        return super().restart()
 
-    def get_repr_params(self) -> str:
-        return f"name={self.name!r}"
+    def generate_parameter_combinations(self, parameters: list[list[dict[str, Any]]] | None) -> list[dict[str, Any]]:
+        if parameters is None:
+            return []
 
+        if len(parameters) == 1:
+            return parameters[0]
 
-class TestHook(Block):
-    __slots__ = "depth"
+        # Cartesian product of parameter lists.
+        rv = []
+        product = itertools.product(*parameters)
+        for param_tuple in product:
+            merged_dict = {}
+            for d in param_tuple:
+                merged_dict.update(d)
+            rv.append(merged_dict)
 
-    def __init__(
-        self,
-        loc: NodeLocation,
-        name: str,
-        block: list[Node],
-        depth: int = 0,
-    ):
-        super().__init__(loc, block, name)
-        self.depth = depth
+        return rv
+
+    def advance_to_next_parameter_set(self):
+        """
+        Advances the test case to the next parameter set.
+
+        Returns True if there are no more parameter sets to advance to.
+        """
+        self.parameter_index += 1
+
+    def get_parameterized_name(self, index=None):
+        if not self.parameters:
+            return self.name
+
+        if index is None:
+            index = self.parameter_index
+
+        # if index >= len(self.parameters):
+        #     return f"{self.name}(<no more parameters>)"
+
+        params = self.parameters[index]
+        param_str = ", ".join(f"{k}={v!r}" for k, v in params.items())
+        return f"{self.name}({param_str})"
+
+    @property
+    def current_parameters(self) -> dict[str, Any]:
+        if not self.parameters:
+            return {}
+        return self.parameters[self.parameter_index]
+
+    @property
+    def has_all_parameters_been_processed(self) -> bool:
+        return self.parameter_index >= len(self.parameters)
 
 
 class TestSuite(TestCase):
@@ -224,10 +364,12 @@ class TestSuite(TestCase):
         self,
         loc: NodeLocation,
         name: str,
+        parent: "TestSuite | None" = None,
+        xfail_expr: str = "False",
         description: str = "",
         enabled: bool = True,
         only: bool = False,
-        parent: "TestCase | None" = None,
+        parameters: list[list[dict[str, Any]]] | None = None,
         subtests: list[TestCase] | None = None,
         setup: TestHook | None = None,
         before_testsuite: TestHook | None = None,
@@ -236,20 +378,23 @@ class TestSuite(TestCase):
         after_testcase: TestHook | None = None,
         teardown: TestHook | None = None,
     ):
-        super().__init__(loc, name, [], description, enabled, only, parent)
+        self.subtest_index = 0
 
-        self.subtest_index = -1
-
-        self.subtests = subtests if subtests is not None else []
-        for subtest in self.subtests:
-            subtest.parent = self
-
+        self.subtests: list[TestCase] = []
         self.setup = setup
         self.before_testsuite = before_testsuite
         self.before_testcase = before_testcase
         self.after_testcase = after_testcase
         self.after_testsuite = after_testsuite
         self.teardown = teardown
+        super().__init__(loc, [], name, parent, xfail_expr, description, enabled, only, parameters)
+
+        if subtests is not None:
+            for subtest in subtests:
+                self.add(subtest)
+
+        for hook in self.hooks:
+            hook.parent = self
 
     def chain(self, next: Node | None) -> None:
         for block in self.hooks:
@@ -259,16 +404,43 @@ class TestSuite(TestCase):
             subtest.chain(None)
 
     def add(self, child: TestCase) -> None:
+        child.parent = self
         self.subtests.append(child)
 
-    def advance(self) -> Block | None:
+    def restart(self) -> None:
+        self.parameter_index = 0
+        self.subtest_index = 0
+        for subtest in self.subtests:
+            subtest.restart()
+        for hook in self.hooks:
+            hook.restart()
+        return super().restart()
+
+    def advance_to_next_subtest(self) -> None:
         """
         Advances the test suite to the next block.
-
-        NOTE: Must be run at the start of a test suite run to correctly set
-        the testcase_index to 0.
         """
-        self.subtest_index += 1
+        test = self.current_test
+        if test is None:
+            raise RenpyTestException("No current test to advance to.")
+
+        if test.enabled:
+            test.advance_to_next_parameter_set()
+            if test.has_all_parameters_been_processed:
+                test.parameter_index = 0
+                self.subtest_index += 1
+        else:
+            self.subtest_index += 1
+
+    def advance_to_next_parameter_set(self):
+        """
+        Advances the test case to the next parameter set.
+
+        Returns True if there are no more parameter sets to advance to.
+        """
+
+        super().advance_to_next_parameter_set()
+        self.subtest_index = 0
 
     def get_hook(self, hook_type: HookType) -> TestHook | None:
         """Returns the hook of the given type, or None if no such hook exists."""
@@ -312,8 +484,20 @@ class TestSuite(TestCase):
         return len(self.subtests)
 
     @property
-    def is_all_tests_completed(self) -> bool:
+    def has_completed_all_subtests(self) -> bool:
         return self.subtest_index >= len(self.subtests)
+
+    @property
+    def full_path(self) -> str:
+        if self.parent:
+            return f"{self.parent.full_path}.{self.name}"
+        return self.name
+
+    @property
+    def current_full_parameterized_path(self) -> str:
+        if self.parent:
+            return f"{self.parent.current_full_parameterized_path}.{self.current_parameterized_name}"
+        return self.current_parameterized_name
 
 
 class Condition(Node):
@@ -414,16 +598,18 @@ class DisplayableSelector(Selector):
 
     def ready(self) -> bool:
         ## Needs to be checked here and not in __init__ since screens are not be defined yet.
-        if self.screen is not None and not renpy.exports.has_screen(self.screen):
-            raise ValueError(f"The screen {self.screen!r} does not exist.")
+        if self.screen is not None:
+            if not renpy.exports.has_screen(scoped_eval(self.screen)):
+                raise ValueError(f"The screen {self.screen!r} does not exist.")
 
         return super().ready()
 
     def get_element(self) -> Displayable | None:
         if self.screen and self.id is None:
-            rv = renpy.exports.get_screen(self.screen, self.layer)
+            layer = None if self.layer is None else scoped_eval(self.layer)
+            screen = None if self.screen is None else scoped_eval(self.screen)
+            rv = renpy.exports.get_screen(screen, layer)
         else:
-            # rv = renpy.exports.get_displayable(self.screen, self.id, self.layer)
             rv = self.get_displayable()
 
         return rv
@@ -437,22 +623,26 @@ class DisplayableSelector(Selector):
         """
         ## NOTE: Move to renpy.exports.get_displayable() eventually?
 
+        layer = None if self.layer is None else scoped_eval(self.layer)
+        screen = None if self.screen is None else scoped_eval(self.screen)
+        id = None if self.id is None else scoped_eval(self.id)
+
         ctx: renpy.execution.Context = renpy.game.context()
-        for layer, sles in ctx.scene_lists.layers.items():
-            layer: str
+        for context_layer, sles in ctx.scene_lists.layers.items():
+            context_layer: str
             sles: list[renpy.display.scenelists.SceneListEntry]
 
-            if self.layer and self.layer != layer:
+            if layer and layer != context_layer:
                 continue
 
             for sle in sles:
                 if not isinstance(sle.displayable, renpy.display.screen.ScreenDisplayable):
                     continue
 
-                if self.screen and sle.name != self.screen:
+                if screen and sle.name != screen:
                     continue
 
-                rv = sle.displayable.widgets.get(self.id, None)
+                rv = sle.displayable.widgets.get(id, None)
 
                 if rv is not None:
                     return rv
@@ -487,19 +677,30 @@ class TextSelector(Selector):
         The pattern string used to find a focus.
         This could be a text string, alt text, or another
         identifier recognized by `renpy.test.testfocus.find_focus`.
+
+    `raw`
+        If True, the raw text is used for matching before translation and
+        substitution. If False, the processed text is used.
     """
 
-    __slots__ = ("pattern",)
+    __slots__ = ("pattern", "raw")
 
-    def __init__(self, loc: NodeLocation, pattern: str, wait_for_focus: bool = False):
+    def __init__(
+        self,
+        loc: NodeLocation,
+        wait_for_focus: bool = False,
+        pattern: str = "",
+        raw: bool = False,
+    ):
         super(TextSelector, self).__init__(loc, wait_for_focus)
         self.pattern = pattern
+        self.raw = raw
 
     def get_repr_params(self) -> str:
-        return f"pattern={self.pattern!r}"
+        return f"pattern={self.pattern!r}, raw={self.raw}"
 
     def get_element(self) -> Focus | None:
-        rv = renpy.test.testfocus.find_focus(self.pattern)
+        rv = renpy.test.testfocus.find_focus(self.pattern, self.raw)
         return rv
 
     def element_not_found_during_perform(self) -> None:
@@ -583,7 +784,7 @@ class SelectorDrivenNode(Node):
         """
         position: Position | tuple[None, None] = (None, None)
         if self.position is not None:
-            position = renpy.python.py_eval(self.position)
+            position = scoped_eval(self.position)
             if not (isinstance(position, tuple) and len(position) == 2):
                 raise ValueError("Position expression must evaluate to a tuple of (x, y).")
 
@@ -746,24 +947,19 @@ class Action(Node):
 
     __slots__ = "expr"
 
-    def __init__(self, loc: NodeLocation, expr):
+    def __init__(self, loc: NodeLocation, expr: str):
         super(Action, self).__init__(loc)
         self.expr = expr
 
     def ready(self):
-        action = renpy.python.py_eval(self.expr)
+        action = scoped_eval(self.expr)
         return renpy.display.behavior.is_sensitive(action)
 
-    def start(self):
-        renpy.test.testexecution.action = renpy.python.py_eval(self.expr)
-        return True
-
     def execute(self, state, t):
-        if renpy.test.testexecution.action:
-            return state
-        else:
-            next_node(self.next)
-            return None
+        action = scoped_eval(self.expr)
+        renpy.display.behavior.run(action)
+        next_node(self.next)
+        return None
 
 
 class Pause(Node):
@@ -777,7 +973,7 @@ class Pause(Node):
         return f"{self.expr}"
 
     def start(self):
-        return float(renpy.python.py_eval(self.expr)), 0
+        return float(scoped_eval(self.expr)), 0
 
     def execute(self, state, t):
         delay, _ = state
@@ -811,7 +1007,7 @@ class Eval(Condition):
         self.expr = expr
 
     def ready(self):
-        return bool(renpy.python.py_eval(self.expr))
+        return bool(scoped_eval(self.expr))
 
 
 class RepeatCounter(Condition):
@@ -1033,13 +1229,11 @@ class Until(Node):
         The condition that must be ready for the node to stop executing.
     `timeout`
         The maximum time in seconds to wait for `right` to be ready.
-        If None, the node will never time out.
-        If float("NaN"), uses the global test timeout setting.
     """
 
     __slots__ = ("left", "right", "timeout")
 
-    def __init__(self, loc: NodeLocation, left: Node, right: Condition, timeout: float | None = float("NaN")):
+    def __init__(self, loc: NodeLocation, left: Node, right: Condition, timeout: str = "None"):
         Node.__init__(self, loc)
         self.left = left
         self.right = right
@@ -1054,24 +1248,32 @@ class Until(Node):
         return self.left.ready() or self.right.ready()
 
     def start(self):
-        if isinstance(self.timeout, float) and isnan(self.timeout):
-            self.timeout = _test.timeout
+        old_timeout = _test.timeout
+        timeout = scoped_eval(self.timeout)
+        if isinstance(timeout, (int, float)):
+            _test.timeout = timeout
+        elif timeout is not None:
+            raise ValueError("Timeout must be a float or None.")
 
-        return (None, 0, False)
+        child_state = None
+        start_time = 0
+        has_started = False
 
-    def execute(self, state, t):
-        if self.timeout is not None and t > self.timeout:
-            msg = f"Until Statement timed out after {self.timeout} seconds."
+        return (old_timeout, child_state, start_time, has_started)
+
+    def execute(self, state: tuple[float | None, Any, float, bool], t):
+        old_timeout, child_state, start_time, has_started = state
+
+        if t > _test.timeout:
+            msg = f"Until Statement timed out after {_test.timeout} seconds."
             raise RenpyTestTimeoutError(msg)
 
         if self.right.ready():
-            self.left.after_until()
+            self.cleanup_after_error(state)
             next_node(self.next)
             return None
 
         ## The right hand side is not ready, so we execute the left hand side.
-        child_state, start_time, has_started = state
-
         if not has_started and self.left.ready():
             child_state = self.left.start()
             start_time = t
@@ -1082,12 +1284,14 @@ class Until(Node):
 
         next_node(self)
         if child_state is None:
-            return (None, 0, False)
+            start_time = 0
+            has_started = False
 
-        return child_state, start_time, has_started
+        return old_timeout, child_state, start_time, has_started
 
-    def cleanup_after_error(self) -> None:
-        return self.left.after_until()
+    def cleanup_after_error(self, state) -> None:
+        _test.timeout = state[0]
+        self.left.after_until()
 
 
 class Repeat(Until):
@@ -1095,7 +1299,7 @@ class Repeat(Until):
     Executes `left` for `count` times.
     """
 
-    def __init__(self, loc: NodeLocation, left: Node, count: int, timeout: float | None = float("NaN")):
+    def __init__(self, loc: NodeLocation, left: Node, count: int, timeout: str = "None"):
         ## Multiplied by 2 to account for Until.execute() calling ready twice per iteration.
         right = RepeatCounter(loc, count * 2)
         super(Repeat, self).__init__(loc, left, right, timeout)
@@ -1134,26 +1338,18 @@ class If(Node):
 
 
 class Python(Node):
-    __slots__ = ("code", "hide")
+    __slots__ = ("source", "hide")
 
-    def __init__(self, loc: NodeLocation, code: renpy.ast.PyCode, hide: bool = False):
+    def __init__(self, loc: NodeLocation, source: str, hide: bool = False):
         Node.__init__(self, loc)
-        self.code = code
+        self.source = source
         self.hide = hide
 
-    def __call__(self):
-        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
-
-    def start(self):
-        renpy.test.testexecution.set_action(self)
-        return True
-
     def execute(self, state, t):
-        if renpy.test.testexecution.action:
-            return state
-        else:
-            next_node(self.next)
-            return None
+        scoped_exec(self.source, self.hide)
+
+        next_node(self.next)
+        return None
 
 
 class Assert(Node):
@@ -1165,30 +1361,201 @@ class Assert(Node):
         A `Condition` instance that should be ready for the assertion to pass.
     `timeout`
         The maximum delay to wait for the condition to be ready.
+    `xfail_expr`
+        If True, the test is expected to fail. If the condition is not met,
+        the test will be marked as xfailed instead of failed.
     """
 
-    __slots__ = ("condition", "timeout", "failed")
+    __slots__ = ("condition", "timeout", "xfail_expr", "is_assertion_true")
 
-    def __init__(self, loc: NodeLocation, condition: Condition, timeout: float = 0.0):
+    def __init__(self, loc: NodeLocation, condition: Condition, timeout: str = "None", xfail_expr: str = "False"):
         Node.__init__(self, loc)
         self.condition = condition
         self.timeout = timeout
-        self.failed = False
+        self.xfail_expr = xfail_expr
+        self.is_assertion_true = False  # Whether the assertion was true or not
+
+    def start(self):
+        old_timeout = _test.timeout
+        timeout = scoped_eval(self.timeout)
+        if isinstance(timeout, (int, float)):
+            _test.timeout = timeout
+        elif timeout is None:
+            _test.timeout = 0
+        else:
+            raise ValueError("Timeout must be a float or None.")
+
+        return old_timeout
 
     def execute(self, state, t):
         """
         Executes the assertion. If the condition is not ready, it waits up to
         `self.timeout` seconds.
         """
-        if not self.condition.ready():
-            if t < self.timeout:
+        if (not self.condition.ready()) ^ self.xfail:
+            if t < _test.timeout:
                 return state
 
-            self.failed = True
-
+        self.is_assertion_true = self.condition.ready()
         renpy.test.testreporter.reporter.log_assert(self)
+        self.cleanup_after_error(state)
         next_node(self.next)
         return None
+
+    def cleanup_after_error(self, state) -> None:
+        _test.timeout = state
+
+    @property
+    def xfail(self) -> bool:
+        return bool(scoped_eval(self.xfail_expr))
+
+
+class Screenshot(Node):
+    __slots__ = ("filename_expr", "max_pixel_difference", "crop")
+
+    def __init__(
+        self,
+        loc: NodeLocation,
+        filename: str,
+        max_pixel_difference: str | None = None,
+        crop: str | None = None,
+    ):
+        self.max_pixel_difference = max_pixel_difference
+        self.crop = crop
+        self.filename_expr = filename  # Note: self.filename refers to the Node attribute.
+        super().__init__(loc)
+
+    def start(self):
+        filename = scoped_eval(self.filename_expr)
+        if not isinstance(filename, str):
+            raise ValueError("Filename must be a string.")
+
+        filename = filename.replace("\\", "/")
+        filename = filename.lstrip("/")
+        filename = os.path.join(_test.screenshot_directory, filename)
+        filename = os.path.normpath(filename)
+
+        base_filename, ext = os.path.splitext(filename)
+        if ext.lower() != ".png":
+            ext = ".png"
+            filename = base_filename + ext
+
+        return filename
+
+    def execute(self, state, t):
+        filename = state
+
+        img: renpy.pygame.Surface | None = None
+        old_img: renpy.pygame.Surface | None = None
+        diff: renpy.pygame.Surface | None = None
+
+        try:
+            img = renpy.display.draw.screenshot(renpy.game.interface.surftree)
+
+            if self.crop:
+                # img = renpy.display.scale.smoothscale(img, (renpy.config.screen_width, renpy.config.screen_height))
+                img = img.subsurface(scoped_eval(self.crop))
+
+            base_filename, ext = os.path.splitext(filename)
+            ref_img_path = self.get_reference_image_path(filename)
+            new_fname = f"{base_filename}.new{ext}"
+            diff_fname = f"{base_filename}.diff{ext}"
+
+            if _test.overwrite_screenshots and ref_img_path is not None:
+                os.remove(ref_img_path)
+                ref_img_path = None
+
+            if ref_img_path is None:
+                if _test.git_revision:
+                    fname = f"{base_filename}@{_test.git_revision}{ext}"
+                else:
+                    fname = filename
+                self.save_image(img, fname)
+
+                next_node(self.next)
+                return None
+
+            old_img = renpy.pygame.image.load(ref_img_path)  # type: ignore
+
+            if img.get_size() != old_img.get_size():
+                raise RenpyTestScreenshotError(f"{filename} (size mismatch: {img.get_size()} != {old_img.get_size()})")
+
+            if img.get_bitsize() != old_img.get_bitsize():
+                raise RenpyTestScreenshotError(
+                    f"{filename} (bit size mismatch: {img.get_bitsize()} != {old_img.get_bitsize()})"
+                )
+
+            diff = renpy.pygame.Surface(img.get_size(), 0, img)
+            # diff_count = renpy.pygame.transform.threshold(  # type: ignore
+            #     diff, img, (0, 0, 0), (0, 0, 0), (255, 255, 255), 1, old_img, True
+            # )
+
+            diff_count = 0
+            color_white = (255, 255, 255, 255)
+            color_black = (0, 0, 0, 255)
+
+            for x in range(img.get_width()):
+                for y in range(img.get_height()):
+                    pos = (x, y)
+                    if img.get_at(pos) != old_img.get_at(pos):
+                        diff_count += 1
+                        diff.set_at(pos, color_white)
+                    else:
+                        diff.set_at(pos, color_black)
+
+            max_pixel_difference = 0
+            if self.max_pixel_difference is not None:
+                max_pixel_difference = scoped_eval(self.max_pixel_difference)
+                if not isinstance(max_pixel_difference, (int, float)):
+                    raise ValueError("max_pixel_difference must be an int or float.")
+                if isinstance(max_pixel_difference, float) and 0 < max_pixel_difference < 1:
+                    max_pixel_difference = int(max_pixel_difference * img.get_width() * img.get_height())
+
+            if diff_count > max_pixel_difference:
+                self.save_image(img, new_fname)
+                self.save_image(diff, diff_fname)
+                raise RenpyTestScreenshotError(
+                    f"{filename} (pixel difference: {diff_count} > {max_pixel_difference})\n"
+                    f"Current image saved to {new_fname}\n"
+                    f"Difference image saved to {diff_fname}"
+                )
+            else:
+                if os.path.exists(new_fname):
+                    os.remove(new_fname)
+                if os.path.exists(diff_fname):
+                    os.remove(diff_fname)
+
+            next_node(self.next)
+            return None
+
+        finally:
+            # Clear up surfaces to avoid memory leaks.
+            if diff is not None:
+                del diff
+            if old_img is not None:
+                del old_img
+            if img is not None:
+                del img
+
+    def get_reference_image_path(self, filename: str) -> str | None:
+        if os.path.exists(filename):
+            return filename
+
+        base_filename, ext = os.path.splitext(filename)
+        fnames = glob.glob(os.path.join(base_filename + "@*" + ext))
+        if len(fnames) > 1:
+            raise RuntimeError(f"Multiple reference images found for {filename}: {', '.join(fnames)}")
+        elif len(fnames) == 1:
+            return fnames[0]
+
+        return None
+
+    def save_image(self, img: renpy.pygame.Surface, filename: str) -> None:
+        path = os.path.dirname(filename)
+        if path:
+            os.makedirs(path, exist_ok=True)
+
+        renpy.display.scale.image_save_unscaled(img, filename)
 
 
 ################################################################################
@@ -1205,25 +1572,13 @@ class Exit(Node):
 ################################################################################
 
 
-def chain_block(block: list[Node], next: Node | None) -> None:
-    """
-    This is called to chain together all of the nodes in a block. Node
-    n is chained with node n+1, while the last node is chained with
-    next.
-    """
-
-    if not block:
-        return
-
-    for a, b in zip(block, block[1:]):
-        a.chain(b)
-
-    block[-1].chain(next)
-
-
 def next_node(node: Node | None):
-    """
-    Indicates the next node that should be executed.
-    """
-
     renpy.test.testexecution.set_next_execution_node(node)
+
+
+def scoped_eval(expr: str) -> Any:
+    return renpy.test.testexecution.scoped_eval(expr)
+
+
+def scoped_exec(source: str, hide: bool = False) -> None:
+    renpy.test.testexecution.scoped_exec(source, hide)

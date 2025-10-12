@@ -27,53 +27,41 @@ from renpy.display.displayable import Displayable
 from renpy.test.types import Position
 
 
-def find_focus(pattern: str | None) -> Focus | None:
+def find_focus(pattern: str, raw: bool) -> Focus | None:
     """
-    Tries to find the focus with the shortest alt text containing `pattern`.
-    If found, returns a random coordinate within that displayable.
-
-    If `pattern` is None, returns a random coordinate that will trigger the
-    default focus.
-
-    If `pattern` could not be found, returns None.
+    Finds the focus with the shortest alt text containing `pattern`.
+    Returns the Focus if found, else None.
     """
 
-    if pattern is not None:
-        pattern = pattern.casefold()
+    pattern = pattern.casefold()
+    candidates: list[tuple[int, Focus]] = []
 
-    # {focus : (len(alt), alt)}
-    matching: dict[Focus, tuple[int, str]] = {}
-
-    for f in renpy.display.focus.focus_list:
-        alt = match(f, pattern)
-
-        if alt is not None:
-            matching[f] = (len(alt), alt)
-
-    # This gets the matching displayable with the shortest alt text, which
-    # is likely what we want.
-    return min(matching, key=matching.get, default=None)  # type: ignore
-
-
-def match(f: Focus, pattern: str | None) -> str | None:
-    if pattern is None:
-        if f.x is None:
-            # one focus, at most, ever branches here
-            # the main "click to continue" one
-            # it's the only one, if any, to be retained in the matching list
-            return "default"
+    for focus in renpy.display.focus.focus_list:
+        if focus.x is None:
+            text = _get_default_focus_text(raw)
         else:
-            return None
+            text = focus.widget._tts_all(raw)
 
-    if f.x is None:
-        t = renpy.display.tts.root._tts_all()
-    else:
-        t = f.widget._tts_all()
+        if pattern in text.casefold():
+            candidates.append((len(text), focus))
 
-    if pattern in t.casefold():
-        return t
-    else:
-        return None
+    return min(candidates, key=lambda x: x[0], default=(None, None))[1]
+
+
+def _get_default_focus_text(raw: bool) -> str:
+    """
+    Searches for the current say node, and if found, uses its text.
+    If not found, falls back to using TTS text from the root widget.
+    """
+    current_node = renpy.game.script.lookup(renpy.game.context().current)
+
+    if not isinstance(current_node, renpy.ast.TranslateSay):
+        return renpy.display.tts.root._tts_all(raw)
+
+    untranslated_node: renpy.ast.TranslateSay = renpy.game.script.translator.default_translates[current_node.identifier]
+    if raw:
+        return untranslated_node.what
+    return renpy.substitutions.substitute(untranslated_node.what, None)[0]
 
 
 def relative_to_absolute(posx: int | float, width: int) -> int:

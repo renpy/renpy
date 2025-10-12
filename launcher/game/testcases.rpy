@@ -2,30 +2,51 @@
     teardown:
         exit
 
-testcase dark_theme:
-    python hide:
-        renpy.watch("renpy.is_in_test()")
-        renpy.watch("waitch")
-        renpy.watch("whether")
-        waitch = 5
-    click "preferences"
-    click "theme"
-    click "dEfAuLt theme"
-    click "theme"
-    click "dark the"
-    click "return"
-    # exit
-    # click "quit"
+testcase change_language:
+    parameter lang = [
+        "arabic", "danish", "finnish", "french", "german",
+        "greek", "indonesian", "italian", "japanese", "korean",
+        "malay", "persian", "piglatin", "polish", "portuguese",
+        "russian", "schinese", "spanish", "tchinese", "turkish",
+        "ukrainian", "vietnamese", "None"]
 
+    click id "pref_btn"
+    click id "pref_general_btn"
+    click id f"pref_change_language_btn_{lang}"
 
-init python:
-    import shutil
-    import tempfile
+    click "Options" raw
+    click "Theme" raw
+    click "Install Libraries" raw
+    click "Actions" raw
+    click "Lint" raw
+    click "Return" raw
+
+    # click id "pref_options_btn"
+    # click id "pref_theme_btn"
+    # click id "pref_install_btn"
+    # click id "pref_actions_btn"
+    # click id "pref_lint_btn"
+    # click id "return_btn"
+
+testcase themes:
+    click id "pref_btn"
+
+    click id "pref_theme_btn"
+    click id "pref_theme_dark_btn"
+    click id "pref_theme_btn"
+    click id "pref_theme_default_btn"
+    # click id "pref_theme_btn"
+    # click id "pref_theme_dark_btn"
+
+    click id "return_btn"
 
 
 testsuite default:
     setup:
         python:
+            import shutil
+            import tempfile
+
             persistent.old_projects_directory = persistent.projects_directory
 
             if persistent.temp_projects_directory:

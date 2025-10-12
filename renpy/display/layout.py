@@ -1293,11 +1293,11 @@ class MultiBox(Container):
 
         return None
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         if self.layers or self.scene_list:
-            return self._tts_common(reverse=renpy.config.tts_front_to_back)
+            return self._tts_common(reverse=renpy.config.tts_front_to_back, raw=raw)
         else:
-            return self._tts_common()
+            return self._tts_common(raw=raw)
 
 
 def Fixed(**properties):
@@ -2575,9 +2575,9 @@ class NearRect(Container):
         else:
             return None
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         if self.parent_rect is not None:
-            return self._tts_common()
+            return self._tts_common(raw=raw)
         else:
             return ""
 

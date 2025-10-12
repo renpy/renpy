@@ -316,9 +316,6 @@ testsuite default:
         $ _preferences.self_voicing = False
         $ _preferences.afm_time = 1
 
-
-        $ testvar = time.time()
-
         click "Auto"
         scroll "Bar" until "Player Experience"
         click "Player Experience"
@@ -335,16 +332,11 @@ testsuite default:
         if "Yes":
             click "Yes"
 
-        $ testvar = "value not comparable with a number"
-        $ testvar = "value not comparable with a number"
-
         click "Load"
         pause .5
 
         click "Load Slot 1"
         click "Yes"
-
-        assert eval (time.time() - testvar < 15) ## BUG: This assert should fail
 
         click "Prefs"
         pause .5
