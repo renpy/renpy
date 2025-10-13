@@ -49,6 +49,9 @@ having been updated. (This includes most Unicode 16 emoji, but not unicode 17 em
 Other Changes
 -------------
 
+The new ``before_load`` :ref:`special label <special-labels>` and :var:`config.before_load_callbacks`
+make it possible to change what is displayed and what sounds are played as a load happens.
+
 The new :var:`config.locale_to_language_map` variable is a dictionary mapping locale strings to
 language names, allowing :var:`config.enable_language_autodetect` to be customized more easily.
 

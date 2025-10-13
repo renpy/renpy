@@ -1074,7 +1074,7 @@ Saving and Loading
 
 .. var:: config.after_load_callbacks = [ ... ]
 
-    A list of functions that are called (with no arguments) when a load
+    A list of functions that are called (with no arguments) after a load
     occurs.
 
     If these callbacks change data (for example, migrating data from an
@@ -1133,6 +1133,14 @@ Saving and Loading
 .. var:: config.autosave_slots = 10
 
     The number of slots used by autosaves.
+
+.. var:: config.before_load_callbacks = [ ... ]
+
+    A list of functions that are called (with no arguments) before a load
+    occurs.
+
+    This can stop or change music before the load happens, but state changes
+    will be forgotten when the load occurs.
 
 .. var:: config.file_slotname_callback = None
 

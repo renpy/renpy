@@ -552,7 +552,7 @@ def register_sl_displayable(*args, **kwargs):
 
 
     `unique`
-        This should be set to true if the function returns a  displayable with
+        This should be set to true if the function returns a displayable with
         no other references to it.
 
     The following arguments should be passed in using keyword arguments:

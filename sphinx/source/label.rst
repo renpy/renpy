@@ -216,6 +216,16 @@ The following labels are used by Ren'Py:
     changes from being reverted if the player rolls back past the load
     point.
 
+``before_load``
+    If it exists, this label is called in a new context just before a game
+    is loaded. It can be used to prepare for the load, by changing music or
+    displaying an animation.
+
+    Once this label returns, Ren'Py will proceed with the load. The screen
+    will not be updated until after the load is complete, so animations
+    will not be run. When the load is finished, the state of the game will
+    be replaced by the load state, and so changed in this label will be lost.
+
 ``splashscreen``
     If it exists, this label is called when the game is first run, before
     showing the main menu. Please see :ref:`Adding a Splashscreen <adding-a-splashscreen>`.

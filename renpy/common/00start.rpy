@@ -56,6 +56,9 @@ init -1600 python hide:
     # Callbacks to run after load.
     config.after_load_callbacks = [ ]
 
+    # Callback to run before load.
+    config.before_load_callbacks = [ ]
+
     # Should we suppress overlay during the splashscreen?
     config.splashscreen_suppress_overlay = True
 
@@ -81,6 +84,18 @@ init -1600 python:
         language = os.environ.get("RENPY_LANGUAGE") or config.language or _preferences.language
 
         renpy.change_language(language, force=True)
+
+# Called before a load.
+label _before_load:
+
+    if renpy.has_label("before_load"):
+        call expression "before_load"
+
+    python hide:
+        for i in config.before_load_callbacks:
+            i()
+
+    return
 
 # This fixes up the context, if necessary, then calls the real
 # after_load.
