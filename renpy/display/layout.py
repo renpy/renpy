@@ -27,7 +27,6 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 
 import renpy
-from renpy.display.position import absolute
 import renpy.pygame as pygame
 from renpy.display.render import render, Render
 
@@ -1380,10 +1379,10 @@ class Window(Container):
         xmaximum = self.style.xmaximum
         ymaximum = self.style.ymaximum
 
-        if xmaximum is not None:
-            xmaximum = absolute.compute(xmaximum, width)
-        if ymaximum is not None:
-            ymaximum = absolute.compute(ymaximum, height)
+        if type(xmaximum) is float:
+            xmaximum = width
+        if type(ymaximum) is float:
+            ymaximum = height
 
         size_group = self.style.size_group
         if size_group and size_group in size_groups:
