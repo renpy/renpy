@@ -47,6 +47,8 @@ init -1100 python:
             config.images_directory = "images"
             config.image_directories = [ ]
             store.pygame_sdl2 = renpy.pygame
+            config.frame_child_maximum_size = False
+            config.frame_float_maximum = False
 
         if version <= (8, 3, 99):
             config.old_show_expression = True
@@ -159,6 +161,7 @@ init -1100 python:
 
         if version <= (7, 4, 8):
             config.relative_transform_size = False
+            config.frame_float_maximum = True
 
         if version <= (7, 4, 6):
             config.adjust_minimums = False

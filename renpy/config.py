@@ -1611,6 +1611,16 @@ If True, Ren'Py will attempt to enable vsync when creating the OpenGL context. I
 This is mostly intended to be set by renpy.test to disable vsync during tests.
 """
 
+frame_child_maximum_size: bool = True
+"""
+If True, frames will limit the maximum size of their child to the xmaximum and ymaximum of the frame.
+"""
+
+frame_float_maximum: bool = True
+"""
+If True, frames will allow floating point values for xmaximum and ymaximum. If False, these will be ignored.
+"""
+
 
 del os
 del collections
