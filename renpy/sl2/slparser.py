@@ -1137,6 +1137,8 @@ class ScreenParser(Parser):
     def parse(self, loc, l, parent, name="_name", keyword=True):
         screen = slast.SLScreen(loc)
 
+        l.expect_block("screen statement")
+
         screen.name = l.require(l.word)
         screen.parameters = renpy.parser.parse_parameters(l)  # type: ignore
 
