@@ -1381,16 +1381,9 @@ class Window(Container):
         ymaximum = self.style.ymaximum
 
         if xmaximum is not None:
-            if renpy.config.frame_float_maximum:
-                xmaximum = absolute.compute(xmaximum, width)
-            else:
-                xmaximum = width
-
+            xmaximum = absolute.compute(xmaximum, width)
         if ymaximum is not None:
-            if renpy.config.frame_float_maximum:
-                ymaximum = absolute.compute(ymaximum, height)
-            else:
-                ymaximum = height
+            ymaximum = absolute.compute(ymaximum, height)
 
         size_group = self.style.size_group
         if size_group and size_group in size_groups:
@@ -1443,18 +1436,8 @@ class Window(Container):
 
             self.current_child = child
 
-        if xmaximum is not None and renpy.config.frame_child_maximum_size:
-            offer_width = min(width, xmaximum)
-        else:
-            offer_width = width
-
-        if ymaximum is not None and renpy.config.frame_child_maximum_size:
-            offer_height = min(height, ymaximum)
-        else:
-            offer_height = height
-
         # Render the child.
-        surf = render(child, offer_width - cxmargin - cxpadding, offer_height - cymargin - cypadding, st, at)
+        surf = render(child, width - cxmargin - cxpadding, height - cymargin - cypadding, st, at)
 
         sw, sh = surf.get_size()
 
