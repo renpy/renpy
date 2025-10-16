@@ -1,0 +1,16 @@
+define mc = Character("[player_name]") # Define a character whose name will be dynamic
+
+label start:
+    # Prompt the player to enter their name
+    $ player_name = renpy.input("What is your name?")
+
+    # Remove any leading or trailing whitespace from the input
+    $ player_name = player_name.strip()
+
+    # Set a default name if the player leaves the input blank
+    if player_name == "":
+        $ player_name = "Hero"
+
+    # Now the character 'mc' will use the chosen name
+    mc "Hello, [player_name]! Welcome to the game."
+    "I hope you enjoy your adventure."
