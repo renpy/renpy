@@ -261,6 +261,8 @@ def resize_movie(r, width, height):
     dimensions.
     """
 
+
+
     if r is None:
         return None
 
@@ -688,14 +690,11 @@ class Movie(renpy.display.displayable.Displayable):
         if (not not_playing) and (tex is not None):
             width, height = tex.get_size()
 
-            rv = renpy.display.render.Render(width, height)
-            rv.blit(tex, (0, 0))
-
             if self.playing_oversample != 1:
-                rv.reverse = renpy.display.matrix.Matrix2D(
-                    1.0 / self.playing_oversample, 0.0, 0.0, 1.0 / self.playing_oversample
-                )
-                rv.forward = renpy.display.matrix.Matrix2D(self.playing_oversample, 0.0, 0.0, self.playing_oversample)
+                rv = resize_movie(tex, int(width / self.playing_oversample), int(height / self.playing_oversample))
+            else:
+                rv = renpy.display.render.Render(width, height)
+                rv.blit(tex, (0, 0))
 
         elif (not not_playing) and (self.start_image is not None):
             surf = renpy.display.render.render(self.start_image, width, height, st, at)
