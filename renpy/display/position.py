@@ -186,7 +186,7 @@ class absolute(float):
         """
 
         if isinstance(value, position):
-            return value.relative * room + value.absolute
+            return float(value.relative * room + value.absolute)
 
         elif isinstance(value, (absolute, int)):
             return value

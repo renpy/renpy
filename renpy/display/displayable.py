@@ -24,8 +24,22 @@ from typing import Any, Callable, Literal, Self, TypedDict, Unpack
 import copy
 
 import renpy
+from renpy.types import Position
+from renpy.display.position import absolute
 
-type Placement = tuple[float | None, float | None, float | None, float | None, float | None, float | None, bool]
+type Placement = tuple[
+    Position | None,
+    Position | None,
+    Position | None,
+    Position | None,
+    absolute | int | None,
+    absolute | int | None,
+    bool,
+]
+"""
+A tuple of (xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel)
+that represents the placement of a displayable.
+"""
 
 def place(width: float, height: float, sw: float, sh: float, placement: Placement) -> tuple[float, float]:
     """
@@ -44,36 +58,23 @@ def place(width: float, height: float, sw: float, sh: float, placement: Placemen
     Returns a tuple of (xpos, ypos) to where displayable should be placed.
     """
 
-    xpos, ypos, xanchor, yanchor, xoffset, yoffset, _subpixel = placement
+    (
+        xpos,
+        ypos,
+        xanchor,
+        yanchor,
+        xoffset,
+        yoffset,
+        _,
+    ) = placement
 
-    compute_raw = renpy.display.core.absolute.compute_raw
+    compute_raw = absolute.compute_raw
 
-    if xpos is None:
-        xpos = 0
-    if ypos is None:
-        ypos = 0
-    if xanchor is None:
-        xanchor = 0
-    if yanchor is None:
-        yanchor = 0
-    if xoffset is None:
-        xoffset = 0
-    if yoffset is None:
-        yoffset = 0
-
-    xpos = compute_raw(xpos, width)
-
-    xanchor = compute_raw(xanchor, sw)
-
-    x = xpos + xoffset - xanchor
-
-    ypos = compute_raw(ypos, height)
-
-    yanchor = compute_raw(yanchor, sh)
-
-    y = ypos + yoffset - yanchor
-
-    return x, y
+    xpos = 0 if xpos is None else compute_raw(xpos, width)
+    ypos = 0 if ypos is None else compute_raw(ypos, height)
+    xanchor = 0 if xanchor is None else compute_raw(xanchor, sw)
+    yanchor = 0 if yanchor is None else compute_raw(yanchor, sh)
+    return xpos + (xoffset or 0) - xanchor, ypos + (yoffset or 0) - yanchor
 
 
 class DisplayableArguments(renpy.object.Object):
@@ -565,13 +566,13 @@ class Displayable(renpy.object.Object):
 
         return False
 
-    def _hide(self, st: float, at: float, kind: Literal["hide", "replace", "cancel"]) -> "Displayable | None":
+    def _hide(self, st: float, at: float, kind: Literal["hide", "replaced", "cancel"]) -> "Displayable | None":
         """
         Returns None if this displayable is ready to be hidden, or
         a replacement displayable if it doesn't want to be hidden
         quite yet.
 
-        Kind may be "hide", "replace", or "cancel", with the latter
+        Kind may be "hide", "replaced", or "cancel", with the latter
         being called when the hide is being hidden itself because
         another displayable is shown.
         """

@@ -21,15 +21,130 @@
 
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
+from typing import Any, Callable, Literal, Protocol, TYPE_CHECKING, Self, assert_never
 
 import math
 
 import renpy
-from renpy.display.position import absolute, position
-from renpy.display.displayable import Displayable
+from renpy.types import DisplayableLike, Position
+from renpy.display.displayable import Displayable, DisplayableArguments, Placement
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
-from renpy.atl import DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
+from renpy.display.position import position, absolute
+
+
+class DualAngle:
+    def __init__(self, absolute: float, relative: float):
+        self.absolute = absolute
+        self.relative = relative
+
+    @classmethod
+    def from_any(cls, other):
+        if isinstance(other, cls):
+            return other
+
+        elif type(other) is float:
+            return cls(other, other)
+
+        else:
+            raise TypeError(f"Cannot convert {other.__class__} to DualAngle")
+
+    def __add__(self, value: "DualAngle", /):
+        if isinstance(value, DualAngle):
+            return DualAngle(self.absolute + value.absolute, self.relative + value.relative)
+
+        return NotImplemented
+
+    def __sub__(self, value: "DualAngle", /):
+        if isinstance(value, DualAngle):
+            return DualAngle(self.absolute - value.absolute, self.relative - value.relative)
+
+        return NotImplemented
+
+    def __mul__(self, value: int | float, /):
+        if isinstance(value, (int, float)):
+            return DualAngle(self.absolute * value, self.relative * value)
+
+        return NotImplemented
+
+    __rmul__ = __mul__
+
+    @staticmethod
+    def get_pos_polar_vector(ts: "TransformState") -> tuple[float, float]:
+        """
+        Return a tuple of (x, y) representing the position of the anchor point.
+        """
+
+        xpos = position(first_not_none(ts.xpos, ts.inherited_xpos, 0))
+        xpos = absolute.compute_raw(xpos, ts.available_width)
+
+        ypos = position(first_not_none(ts.ypos, ts.inherited_ypos, 0))
+        ypos = absolute.compute_raw(ypos, ts.available_height)
+
+        xaround = absolute.compute_raw(position(ts.xaround), ts.available_width)
+        yaround = absolute.compute_raw(position(ts.yaround), ts.available_height)
+
+        return (xpos - xaround, ypos - yaround)
+
+    @staticmethod
+    def get_anchor_polar_vector(ts: "TransformState") -> tuple[tuple[float, float], tuple[float, float]]:
+        """
+        Returns a 2-tuple of 2-tuples,
+        where the first small tuple is absolute and the second tuple is relative,
+        and the first element of each tuple is in x and the second in y.
+        They represent the vector from the anchoraround point to the final anchor point.
+        """
+
+        xanchoraround = position(ts.xanchoraround)
+        yanchoraround = position(ts.yanchoraround)
+        xanchor = position(first_not_none(ts.xanchor, ts.inherited_xanchor, 0))
+        yanchor = position(first_not_none(ts.yanchor, ts.inherited_yanchor, 0))
+
+        absolute_vector = (
+            xanchor.absolute - xanchoraround.absolute,
+            yanchor.absolute - yanchoraround.absolute,
+        )
+        relative_vector = (
+            xanchor.relative - xanchoraround.relative,
+            yanchor.relative - yanchoraround.relative,
+        )
+
+        return absolute_vector, relative_vector
+
+    @staticmethod
+    def set_pos_from_angle_and_radius(ts: "TransformState", angle: float, radius: float):
+        xaround = absolute.compute_raw(position(ts.xaround), ts.available_width)
+        yaround = absolute.compute_raw(position(ts.yaround), ts.available_height)
+
+        angle = angle * math.pi / 180
+
+        dx = radius * math.sin(angle)
+        dy = -radius * math.cos(angle)
+
+        ts.xpos = absolute(xaround + dx)
+        ts.ypos = absolute(yaround + dy)
+
+    @staticmethod
+    def set_anchor_from_anchorangle_and_anchorradius(
+        ts: "TransformState",
+        absolute_anchorangle: float,
+        relative_anchorangle: float,
+        absolute_anchorradius: float,
+        relative_anchorradius: float,
+    ):
+        xanchoraround = position(ts.xanchoraround)
+        yanchoraround = position(ts.yanchoraround)
+
+        absolute_anchorangle = absolute_anchorangle * math.pi / 180
+        relative_anchorangle = relative_anchorangle * math.pi / 180
+
+        absolute_dx = absolute_anchorradius * math.sin(absolute_anchorangle)
+        absolute_dy = -absolute_anchorradius * math.cos(absolute_anchorangle)
+        relative_dx = relative_anchorradius * math.sin(relative_anchorangle)
+        relative_dy = -relative_anchorradius * math.cos(relative_anchorangle)
+
+        ts.xanchor = position(xanchoraround.absolute + absolute_dx, xanchoraround.relative + relative_dx)
+        ts.yanchor = position(yanchoraround.absolute + absolute_dy, yanchoraround.relative + relative_dy)
 
 
 class Camera(renpy.object.Object):
@@ -43,12 +158,12 @@ class Camera(renpy.object.Object):
         The name of the layer.
     """
 
-    def __init__(self, layer="master"):
-        self.layer = layer
+    def __init__(self, layer: str = "master"):
+        self.layer: str = layer
 
 
 # The null object that's used if we don't have a defined child.
-null = None
+null: renpy.display.layout.Null | None = None
 
 
 def get_null():
@@ -61,7 +176,7 @@ def get_null():
     return null
 
 
-def first_not_none(*args):
+def first_not_none[T, T2](*args: *tuple[*tuple[T | None, ...], T2]) -> T | T2:
     """
     Returns the first argument that is not None, or the last argument if
     all are None.
@@ -74,7 +189,7 @@ def first_not_none(*args):
     return args[-1]
 
 
-def limit_angle(n):
+def limit_angle(n: float) -> float:
     """
     Limits an angle to the range 0 and 360 degrees.
     """
@@ -87,72 +202,336 @@ def limit_angle(n):
     return n
 
 
-class TextureUniform(object):
-    """
-    Descriptor for a sampler2D uniform.
-    """
+def position_or_none(x: Any) -> Position | None:
+    if x is None:
+        return None
 
-    def __init__(self, name):
+    return position(x)
+
+
+def any_object(x: Any) -> object:
+    return x
+
+
+def bool_or_none(x: Any) -> bool | None:
+    if x is None:
+        return x
+
+    return bool(x)
+
+
+def float_or_none(x: Any) -> float | None:
+    if x is None:
+        return x
+
+    return float(x)
+
+
+class MatrixLike(Protocol):
+    origin: "MatrixLike | None" = None
+
+    def __call__(self, other: "MatrixLike", done: float, /) -> renpy.display.matrix.Matrix: ...
+
+
+def matrix_or_none(x: Any) -> MatrixLike | renpy.display.matrix.Matrix | None:
+    if x is None:
+        return None
+    elif callable(x):
+        return x  # type: ignore
+    else:
+        return renpy.display.matrix.Matrix(x)
+
+
+type MeshValue = tuple[int, int] | bool
+
+
+def mesh_or_none(x: Any) -> MeshValue | None:
+    if x is None:
+        return None
+    elif isinstance(x, tuple):
+        return x
+    else:
+        return bool(x)
+
+
+type MeshPadValue = tuple[int, int] | tuple[int, int, int, int]
+type FitValue = Literal["contain", "cover", "fill", "scale-down", "scale-up"]
+type PerspectiveValue = bool | float | tuple[float, float, float]
+type PointToValue = tuple[float, float, float] | Camera
+
+
+class TransformProperty[T]:
+    name: str
+    atl_type: Callable[[object], T] | tuple[Callable[[object], T], ...]
+    default: T
+    diff: Literal[2, None]
+    kind: Literal["field", "alias", "gl", "uniform"]
+
+    def __init__(
+        self,
+        name: str,
+        atl_type: Any = any_object,
+        default: T = None,
+        diff: Literal[2, None] = 2,
+        kind: Literal["field", "alias", "gl", "uniform"] = "field",
+    ):
         self.name = name
+        self.atl_type = atl_type
+        self.default = default
+        self.diff = diff
+        self.kind = kind
 
-    def __get__(self, instance, owner):
-        return instance.__dict__.get(self.name, None)
+        if isinstance(atl_type, tuple) and default is not None:
+            if not isinstance(default, tuple):
+                raise TypeError("Default value must be a tuple if atl_type is a tuple.")
 
-    def __set__(self, instance, value):
-        if isinstance(value, str):
-            value = renpy.easy.displayable(value)
+            if len(atl_type) != len(default):
+                raise TypeError("Length of atl_type and default must be the same.")
 
-        if isinstance(value, Displayable):
-            value = renpy.display.im.unoptimized_texture(value)
+    def __get__(self, instance: "TransformProperties", owner) -> T: ...
 
-            if instance.texture_uniforms is None:
-                instance.texture_uniforms = set()
-
-            instance.texture_uniforms.add(self.name)
-
-        instance.__dict__[self.name] = value
+    def __set__(self, instance: "TransformProperties", value: T): ...
 
 
-class TransformState(renpy.object.Object):
-    last_angle = 0.0
-    last_relative_anchorangle = 0.0
-    last_absolute_anchorangle = 0.0
-    last_events = True
+class TransformProperties(Protocol):
+    # NOTE: Explicit type annotation for protocol member forces type checker to
+    # take precedence over the type annotation in the protocol implementation.
 
-    available_width = 0
-    available_height = 0
+    # Positioning
+    pos: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
+        "pos", (position_or_none,) * 2, (None, None), kind="alias"
+    )
+    xpos: TransformProperty[Position | None] = TransformProperty("xpos", position_or_none)
+    ypos: TransformProperty[Position | None] = TransformProperty("ypos", position_or_none)
 
-    radius_type = absolute
+    anchor: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
+        "anchor", (position_or_none,) * 2, (None, None), kind="alias"
+    )
+    xanchor: TransformProperty[Position | None] = TransformProperty("xanchor", position_or_none)
+    yanchor: TransformProperty[Position | None] = TransformProperty("yanchor", position_or_none)
 
-    radius_sign = 1
-    relative_anchor_radius_sign = 1
-    absolute_anchor_radius_sign = 1
+    align: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
+        "align", (position_or_none,) * 2, (None, None), kind="alias"
+    )
+    xalign: TransformProperty[Position | None] = TransformProperty("xalign", position_or_none, kind="alias")
+    yalign: TransformProperty[Position | None] = TransformProperty("yalign", position_or_none, kind="alias")
 
-    texture_uniforms = None
+    xycenter: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
+        "xycenter", (position_or_none,) * 2, (None, None), kind="alias"
+    )
+    xcenter: TransformProperty[Position | None] = TransformProperty("xcenter", position_or_none, kind="alias")
+    ycenter: TransformProperty[Position | None] = TransformProperty("ycenter", position_or_none, kind="alias")
 
-    def __init__(self):
-        # Most fields on this object are set by add_property, at the bottom
-        # of this file.
+    offset: TransformProperty[tuple[absolute | int, absolute | int]] = TransformProperty(
+        "offset", (absolute,) * 2, (absolute(0), absolute(0)), kind="alias"
+    )
+    xoffset: TransformProperty[absolute | int] = TransformProperty("xoffset", absolute, absolute(0))
+    yoffset: TransformProperty[absolute | int] = TransformProperty("yoffset", absolute, absolute(0))
 
-        # An xpos (etc) inherited from our child overrides an xpos inherited
-        # from an old transform, but not an xpos set in the current transform.
-        #
-        # inherited_xpos stores the inherited_xpos, which is overridden by the
-        # xpos, if not None.
-        self.inherited_xpos = None
-        self.inherited_ypos = None
-        self.inherited_xanchor = None
-        self.inherited_yanchor = None
+    subpixel: TransformProperty[bool] = TransformProperty("subpixel", bool, False)
 
-        # The last angle that was rotated to.
-        self.last_angle = None
+    # Rotation
+    rotate: TransformProperty[float | None] = TransformProperty("rotate", float_or_none)
+    rotate_pad: TransformProperty[bool] = TransformProperty("rotate_pad", bool, True)
+    transform_anchor: TransformProperty[bool] = TransformProperty("transform_anchor", bool, False)
 
-    def take_state(self, ts):
+    # Zoom and Flip
+    zoom: TransformProperty[float] = TransformProperty("zoom", float, 1.0)
+    xzoom: TransformProperty[float] = TransformProperty("xzoom", float, 1.0)
+    yzoom: TransformProperty[float] = TransformProperty("yzoom", float, 1.0)
+
+    # Pixel Effects
+    nearest: TransformProperty[bool | None] = TransformProperty("nearest", bool_or_none)
+    alpha: TransformProperty[float] = TransformProperty("alpha", float, 1.0)
+    additive: TransformProperty[float] = TransformProperty("additive", float, 0.0)
+    matrixcolor: TransformProperty[MatrixLike | renpy.display.matrix.Matrix | None] = TransformProperty(
+        "matrixcolor", matrix_or_none
+    )
+    blur: TransformProperty[float | None] = TransformProperty("blur", float_or_none)
+
+    # Polar Positioning
+    around: TransformProperty[tuple[Position, Position]] = TransformProperty(
+        "around", (position,) * 2, (position(0), position(0)), kind="alias"
+    )
+    xaround: TransformProperty[Position] = TransformProperty("xaround", position, position(0))
+    yaround: TransformProperty[Position] = TransformProperty("yaround", position, position(0))
+    angle: TransformProperty[float] = TransformProperty("angle", float, 0.0, kind="alias")
+    radius: TransformProperty[Position] = TransformProperty("radius", position, position(0), kind="alias")
+
+    # Polar Positioning of the Anchor
+    anchoraround: TransformProperty[tuple[Position, Position]] = TransformProperty(
+        "anchoraround", (position,) * 2, (0.5, 0.5), kind="alias"
+    )
+    xanchoraround: TransformProperty[Position] = TransformProperty("xanchoraround", position, 0.5)
+    yanchoraround: TransformProperty[Position] = TransformProperty("yanchoraround", position, 0.5)
+    anchorangle: TransformProperty[DualAngle | float] = TransformProperty(
+        "anchorangle", DualAngle.from_any, 0.0, kind="alias"
+    )
+    anchorradius: TransformProperty[Position] = TransformProperty("anchorradius", position, position(0), kind="alias")
+
+    # Cropping and Resizing
+    crop: TransformProperty[tuple[Position, Position, Position, Position] | None] = TransformProperty(
+        "crop", (position,) * 4
+    )
+    corner1: TransformProperty[tuple[Position, Position] | None] = TransformProperty("corner1", (position,) * 2)
+    corner2: TransformProperty[tuple[Position, Position] | None] = TransformProperty("corner2", (position,) * 2)
+
+    xysize: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
+        "xysize", (position_or_none,) * 2, (None, None), kind="alias"
+    )
+    xsize: TransformProperty[Position | None] = TransformProperty("xsize", position_or_none)
+    ysize: TransformProperty[Position | None] = TransformProperty("ysize", position_or_none)
+
+    fit: TransformProperty[FitValue | None] = TransformProperty("fit")
+
+    # Panning and Tiling
+    xpan: TransformProperty[float | None] = TransformProperty("xpan", float_or_none)
+    ypan: TransformProperty[float | None] = TransformProperty("ypan", float_or_none)
+    xtile: TransformProperty[int] = TransformProperty("xtile", int, 1)
+    ytile: TransformProperty[int] = TransformProperty("ytile", int, 1)
+
+    # Transitions
+    delay: TransformProperty[float] = TransformProperty("delay", float, 0.0)
+    events: TransformProperty[bool] = TransformProperty("events", bool, True)
+
+    # Other
+    fps: TransformProperty[float | None] = TransformProperty("fps", float_or_none)
+    show_cancels_hide: TransformProperty[bool] = TransformProperty("show_cancels_hide", bool, True)
+
+    # 3D Stage properties
+    point_to: TransformProperty[PointToValue | None] = TransformProperty("point_to")
+
+    orientation: TransformProperty[tuple[float, float, float] | None] = TransformProperty(
+        "orientation", (float_or_none,) * 3
+    )
+    xrotate: TransformProperty[float | None] = TransformProperty("xrotate", float_or_none)
+    yrotate: TransformProperty[float | None] = TransformProperty("yrotate", float_or_none)
+    zrotate: TransformProperty[float | None] = TransformProperty("zrotate", float_or_none)
+
+    matrixanchor: TransformProperty[tuple[Position, Position] | None] = TransformProperty(
+        "matrixanchor", (position_or_none,) * 2
+    )
+    matrixtransform: TransformProperty[MatrixLike | renpy.display.matrix.Matrix | None] = TransformProperty(
+        "matrixtransform", matrix_or_none
+    )
+    perspective: TransformProperty[PerspectiveValue | None] = TransformProperty("perspective")
+    zpos: TransformProperty[float] = TransformProperty("zpos", float, 0.0)
+    zzoom: TransformProperty[bool] = TransformProperty("zzoom", bool, False)
+
+    # Model-based rendering properties
+    mesh: TransformProperty[MeshValue | None] = TransformProperty("mesh", mesh_or_none, diff=None)
+    mesh_pad: TransformProperty[MeshPadValue | None] = TransformProperty("mesh_pad")
+    shader: TransformProperty[str | list[str] | None] = TransformProperty("shader", diff=None)
+    blend: TransformProperty[str | None] = TransformProperty("blend")
+
+    # GL Properties
+    gl_anisotropic: TransformProperty[Any | None] = TransformProperty("gl_anisotropic", diff=None, kind="gl")
+    gl_blend_func: TransformProperty[Any | None] = TransformProperty("gl_blend_func", diff=None, kind="gl")
+    gl_color_mask: TransformProperty[Any | None] = TransformProperty("gl_color_mask", diff=None, kind="gl")
+    gl_cull_face: TransformProperty[Any | None] = TransformProperty("gl_cull_face", diff=None, kind="gl")
+    gl_depth: TransformProperty[Any | None] = TransformProperty("gl_depth", diff=None, kind="gl")
+    gl_drawable_resolution: TransformProperty[Any | None] = TransformProperty(
+        "gl_drawable_resolution", diff=None, kind="gl"
+    )
+    gl_mipmap: TransformProperty[Any | None] = TransformProperty("gl_mipmap", diff=None, kind="gl")
+    gl_pixel_perfect: TransformProperty[Any | None] = TransformProperty("gl_pixel_perfect", diff=None, kind="gl")
+    gl_texture_scaling: TransformProperty[Any | None] = TransformProperty("gl_texture_scaling", diff=None, kind="gl")
+    gl_texture_wrap: TransformProperty[Any | None] = TransformProperty("gl_texture_wrap", diff=None, kind="gl")
+    gl_texture_wrap_tex0: TransformProperty[Any | None] = TransformProperty(
+        "gl_texture_wrap_tex0", diff=None, kind="gl"
+    )
+    gl_texture_wrap_tex1: TransformProperty[Any | None] = TransformProperty(
+        "gl_texture_wrap_tex1", diff=None, kind="gl"
+    )
+    gl_texture_wrap_tex2: TransformProperty[Any | None] = TransformProperty(
+        "gl_texture_wrap_tex2", diff=None, kind="gl"
+    )
+    gl_texture_wrap_tex3: TransformProperty[Any | None] = TransformProperty(
+        "gl_texture_wrap_tex3", diff=None, kind="gl"
+    )
+
+    # Other
+    debug: TransformProperty[Any | None] = TransformProperty("debug")
+    _reset: TransformProperty[bool] = TransformProperty("_reset", bool, False, kind="alias")
+
+    # Deprecated properties
+    if not TYPE_CHECKING:
+        crop_relative: TransformProperty[bool | None] = TransformProperty("crop_relative", bool_or_none)
+        alignaround: TransformProperty[tuple[float, float]] = TransformProperty(
+            "alignaround", (float,) * 2, (0.0, 0.0), kind="alias"
+        )
+        size: TransformProperty[tuple[int, int] | None] = TransformProperty("size", (int,) * 2, kind="alias")
+        maxsize: TransformProperty[tuple[int, int] | None] = TransformProperty("maxsize", (int,) * 2)
+
+
+class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING else object):
+    # Most fields on this object are set by _register_properties at the bottom of this file.
+
+    # An xpos (etc) inherited from our child overrides an xpos inherited
+    # from an old transform, but not an xpos set in the current transform.
+
+    # inherited_xpos stores the oldts.xpos, which is overridden by the xpos, if not None.
+    inherited_xpos: Position | None = None
+    inherited_ypos: Position | None = None
+    inherited_xanchor: Position | None = None
+    inherited_yanchor: Position | None = None
+
+    # This is used to schedule event on transform when ts.events changes.
+    last_events: bool = True
+    "Last value of events property."
+
+    # Set in transform render, and used in various properties to determine
+    # the available space.
+    available_width: float = 0
+    available_height: float = 0
+
+    # Those fields are used by polar positioning.
+    last_angle: float | None = None
+    last_relative_anchorangle: float | None = None
+    last_absolute_anchorangle: float | None = None
+    radius_sign: Literal[1, -1] = 1
+    relative_anchor_radius_sign: Literal[1, -1] = 1
+    absolute_anchor_radius_sign: Literal[1, -1] = 1
+
+    texture_uniforms: set[str] | None = None
+    "If not None, the set of uniforms that provide textures."
+
+    if TYPE_CHECKING:
+        # Other properties, e.g. shader uniforms can be defined at runtime,
+        # and accessing them is valid.
+        def __getattr__(self, name: str) -> Any: ...
+
+    def take_state(self, ts: "TransformState", /):
+        """
+        Update this transform state from `ts`.
+        """
+
+        # Take all non-default values from ts and reset the rest to default.
         d = self.__dict__
+        ts_d = ts.__dict__
+        for name in all_properties:
+            # But skip inheritable properties.
+            if name in ("xpos", "ypos", "xanchor", "yanchor"):
+                continue
 
-        for k in all_properties:
-            d[k] = getattr(ts, k)
+            if name in ts_d:
+                d[name] = ts_d[name]
+            else:
+                d.pop(name, None)
 
+        # Take placement of ts, but put it in inherited_ properties, and also
+        # take the computed position properties, not the raw ones.
+        (
+            self.inherited_xpos,
+            self.inherited_ypos,
+            self.inherited_xanchor,
+            self.inherited_yanchor,
+            _,
+            _,
+            _,
+        ) = ts.get_placement()
+
+        # Update other state-only properties.
         self.last_angle = ts.last_angle
         self.radius_sign = ts.radius_sign
         self.relative_anchor_radius_sign = ts.relative_anchor_radius_sign
@@ -164,26 +543,12 @@ class TransformState(renpy.object.Object):
         self.available_width = ts.available_width
         self.available_height = ts.available_height
 
-        # Set the position and anchor to None, so inheritance works.
-        if self.perspective is None:  # type: ignore
-            self.xpos = None
-            self.ypos = None
-            self.xanchor = None
-            self.yanchor = None
+    def diff(self, newts: "TransformState", /) -> dict[str, tuple[Any, Any]]:
+        """
+        Returns a dict, with p -> (old, new) where p is a property that
+        has changed between this object and the new object.
+        """
 
-        # Take the computed position properties, not the
-        # raw ones.
-        (self.inherited_xpos, self.inherited_ypos, self.inherited_xanchor, self.inherited_yanchor, _, _, _) = (
-            ts.get_placement()
-        )
-
-        self.xoffset = ts.xoffset
-        self.yoffset = ts.yoffset
-        self.subpixel = ts.subpixel
-
-    # Returns a dict, with p -> (old, new) where p is a property that
-    # has changed between this object and the new object.
-    def diff(self, newts):
         rv = {}
 
         for prop in diff2_properties:
@@ -193,23 +558,23 @@ class TransformState(renpy.object.Object):
             if new != old:
                 rv[prop] = (old, new)
 
-        for prop in diff4_properties:
+        for prop in ("xpos", "ypos", "xanchor", "yanchor"):
             new = getattr(newts, prop)
-            old = getattr(self, prop)
-
             if new is None:
-                new = getattr(newts, "inherited_" + prop)
+                new = getattr(newts, f"inherited_{prop}")
+
+            old = getattr(self, prop)
             if old is None:
-                old = getattr(self, "inherited_" + prop)
+                old = getattr(self, f"inherited_{prop}")
 
             if new != old:
                 rv[prop] = (old, new)
 
         return rv
 
-    def get(self, prop):
+    def get(self, prop: str, /) -> Any | None:
         """
-        Returns the value of an attribute.
+        Returns the value of a property, taking inherited values into account.
         """
 
         old_xpos = self.xpos
@@ -230,7 +595,7 @@ class TransformState(renpy.object.Object):
             if self.yanchor is None:
                 self.yanchor = self.inherited_yanchor
 
-            return getattr(self, prop, None)
+            return getattr(self, prop)
 
         finally:
             self.xpos = old_xpos
@@ -238,17 +603,9 @@ class TransformState(renpy.object.Object):
             self.xanchor = old_xanchor
             self.yanchor = old_yanchor
 
-    def get_placement(self, cxoffset=0, cyoffset=0):
-        if self.perspective is not None:  # type: ignore
-            return (
-                0,
-                0,
-                0,
-                0,
-                cxoffset,
-                cyoffset,
-                False,
-            )
+    def get_placement(self, cxoffset: absolute | int = 0, cyoffset: absolute | int = 0) -> Placement:
+        if self.perspective is not None:
+            return (0, 0, 0, 0, cxoffset, cyoffset, False)
 
         return (
             first_not_none(self.xpos, self.inherited_xpos),
@@ -260,67 +617,94 @@ class TransformState(renpy.object.Object):
             self.subpixel,
         )
 
-    # These update various properties.
-    def get_xalign(self):
+    # Define all alias transform properties as data descriptors.
+    @property
+    def pos(self) -> tuple[Position | None, Position | None]:
+        return self.xpos, self.ypos
+
+    @pos.setter
+    def pos(self, value: tuple[Position | None, Position | None]):
+        self.xpos, self.ypos = value
+
+    @property
+    def anchor(self) -> tuple[Position | None, Position | None]:
+        return self.xanchor, self.yanchor
+
+    @anchor.setter
+    def anchor(self, value: tuple[Position | None, Position | None]):
+        self.xanchor, self.yanchor = value
+
+    @property
+    def align(self) -> tuple[Position | None, Position | None]:
+        return self.xpos, self.ypos
+
+    @align.setter
+    def align(self, value: tuple[Position | None, Position | None]):
+        self.xpos, self.ypos = self.xanchor, self.yanchor = value
+
+    @property
+    def xalign(self) -> Position | None:
         return self.xpos
 
-    def set_xalign(self, v):
-        self.xpos = v
-        self.xanchor = v
+    @xalign.setter
+    def xalign(self, value: Position | None):
+        self.xpos = self.xanchor = value
 
-    xalign = property(get_xalign, set_xalign)
-
-    def get_yalign(self):
+    @property
+    def yalign(self) -> Position | None:
         return self.ypos
 
-    def set_yalign(self, v):
-        self.ypos = v
-        self.yanchor = v
+    @yalign.setter
+    def yalign(self, value: Position | None):
+        self.ypos = self.yanchor = value
 
-    yalign = property(get_yalign, set_yalign)
+    @property
+    def xycenter(self) -> tuple[Position | None, Position | None]:
+        return self.xpos, self.ypos
 
-    @staticmethod
-    def scale(value, available):
-        """
-        Converts value to a float, scaled by the available area, if
-        required.
-        """
+    @xycenter.setter
+    def xycenter(self, value: tuple[Position | None, Position | None]):
+        self.xpos, self.ypos = value
+        self.xanchor = 0.5
+        self.yanchor = 0.5
 
-        return float(absolute.compute_raw(value, available))
+    @property
+    def xcenter(self) -> Position | None:
+        return self.xpos
 
-    def get_around(self):
-        return (self.xaround, self.yaround)
+    @xcenter.setter
+    def xcenter(self, value: Position | None):
+        self.xpos = value
+        self.xanchor = 0.5
 
-    def set_around(self, value):
+    @property
+    def ycenter(self) -> Position | None:
+        return self.ypos
+
+    @ycenter.setter
+    def ycenter(self, value: Position | None):
+        self.ypos = value
+        self.yanchor = 0.5
+
+    @property
+    def offset(self) -> tuple[absolute | int, absolute | int]:
+        return self.xoffset, self.yoffset
+
+    @offset.setter
+    def offset(self, value: tuple[absolute | int, absolute | int]):
+        self.xoffset, self.yoffset = value
+
+    @property
+    def around(self) -> tuple[Position, Position]:
+        return self.xaround, self.yaround
+
+    @around.setter
+    def around(self, value: tuple[Position, Position]):
         self.xaround, self.yaround = value
 
-    def set_alignaround(self, value):
-        self.xanchor, self.yanchor = value
-        self.xaround, self.yaround = value
-        self.xanchoraround, self.yanchoraround = value
-
-    around = property(get_around, set_around)
-    alignaround = property(get_around, set_alignaround)
-
-    def get_anchoraround(self):
-        return (self.xanchoraround, self.yanchoraround)
-
-    def set_anchoraround(self, value):
-        self.xanchoraround, self.yanchoraround = value
-
-    anchoraround = property(get_anchoraround, set_anchoraround)
-
-    def get_pos_polar_vector(self):
-        xpos = self.scale(first_not_none(self.xpos, self.inherited_xpos, 0), self.available_width)
-        ypos = self.scale(first_not_none(self.ypos, self.inherited_ypos, 0), self.available_height)
-
-        xaround = self.scale(self.xaround, self.available_width)
-        yaround = self.scale(self.yaround, self.available_height)
-
-        return (xpos - xaround, ypos - yaround)
-
-    def get_angle(self, vector=None):
-        vector_x, vector_y = vector or self.get_pos_polar_vector()
+    @property
+    def angle(self) -> float:
+        vector_x, vector_y = DualAngle.get_pos_polar_vector(self)
 
         radius = math.hypot(vector_x, vector_y)
         angle = math.atan2(vector_x, -vector_y) / math.pi * 180
@@ -330,85 +714,57 @@ class TransformState(renpy.object.Object):
 
         if radius < 0.001 and self.last_angle is not None:
             angle = self.last_angle
-        elif self.radius_sign < 0:
+        elif self.radius_sign == -1:
             angle = limit_angle(angle + 180)
 
         return angle
 
-    def get_radius(self, vector=None):
-        vector_x, vector_y = vector or self.get_pos_polar_vector()
+    @angle.setter
+    def angle(self, value: float):
+        self.last_angle = limit_angle(value)
 
+        radius = self.radius
+
+        if radius < 0:
+            value = limit_angle(value + 180)
+            radius = -radius
+
+        DualAngle.set_pos_from_angle_and_radius(self, value, radius)
+
+    @property
+    def radius(self) -> absolute:
+        vector_x, vector_y = DualAngle.get_pos_polar_vector(self)
         return absolute(math.hypot(vector_x, vector_y) * self.radius_sign)
 
-    def set_angle(self, angle):
-        self.last_angle = limit_angle(angle)
+    @radius.setter
+    def radius(self, value: Position):
+        room = min(self.available_width, self.available_height)
+        value = absolute.compute_raw(position(value), room)
+        angle = self.angle
 
-        radius = self.get_radius()
-
-        if radius < 0:
+        if value < 0:
             angle = limit_angle(angle + 180)
-            radius = -radius
-
-        self.set_pos_from_angle_and_radius(angle, radius)
-
-    def set_radius(self, radius):
-        radius = self.scale(radius, min(self.available_width, self.available_height))
-        vector = self.get_pos_polar_vector()
-        angle = self.get_angle(vector)
-
-        if radius < 0:
-            angle = limit_angle(angle + 180)
-            radius = -radius
+            value = -value
             self.radius_sign = -1
-        elif radius > 0:
+        elif value > 0:
             self.radius_sign = 1
 
-        self.set_pos_from_angle_and_radius(angle, radius)
+        DualAngle.set_pos_from_angle_and_radius(self, angle, value)
 
-    def set_pos_from_angle_and_radius(self, angle, radius):
-        xaround = self.scale(self.xaround, self.available_width)
-        yaround = self.scale(self.yaround, self.available_height)
+    @property
+    def anchoraround(self) -> tuple[Position, Position]:
+        return self.xanchoraround, self.yanchoraround
 
-        angle = angle * math.pi / 180
+    @anchoraround.setter
+    def anchoraround(self, value: tuple[Position, Position]):
+        self.xanchoraround, self.yanchoraround = value
 
-        dx = radius * math.sin(angle)
-        dy = -radius * math.cos(angle)
-
-        self.xpos = absolute(xaround + dx)
-        self.ypos = absolute(yaround + dy)
-
-    angle = property(get_angle, set_angle)
-    radius = property(get_radius, set_radius)
-
-    # Anchor polar motions.
-
-    def get_anchor_polar_vector(self):
-        """
-        Returns a 2-tuple of 2-tuples,
-        where the first small tuple is absolute and the second tuple is relative,
-        and the first element of each tuple is in x and the second in y.
-        They represent the vector from the anchoraround point to the final anchor point.
-        """
-        xanchoraround = position.from_any(self.xanchoraround)
-        yanchoraround = position.from_any(self.yanchoraround)
-        xanchor = position.from_any(first_not_none(self.xanchor, self.inherited_xanchor, 0))
-        yanchor = position.from_any(first_not_none(self.yanchor, self.inherited_yanchor, 0))
-
-        absolute_vector = (xanchor.absolute - xanchoraround.absolute, yanchor.absolute - yanchoraround.absolute)
-        relative_vector = (xanchor.relative - xanchoraround.relative, yanchor.relative - yanchoraround.relative)
-
-        return absolute_vector, relative_vector
-
-    def get_anchorangle(self, polar_vectors=None):
-        """
-        Returns a DualAngle object, from the oriented angle in degrees, with 0 as the top direction and 90 as the right,
-        of the vector going from (xanchoraround, yanchoraround) to (xanchor, yanchor).
-        The absolute part of the angle is the angle between the absolute parts of the vectors,
-        and the relative part, of the relative parts.
-        """
-        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = (
-            polar_vectors or self.get_anchor_polar_vector()
-        )
+    @property
+    def anchorangle(self) -> DualAngle:
+        (
+            (absolute_vector_x, absolute_vector_y),
+            (relative_vector_x, relative_vector_y),
+        ) = DualAngle.get_anchor_polar_vector(self)
 
         absolute_radius = math.hypot(absolute_vector_x, absolute_vector_y)
         relative_radius = math.hypot(relative_vector_x, relative_vector_y)
@@ -435,62 +791,54 @@ class TransformState(renpy.object.Object):
 
         return DualAngle(absolute_angle, relative_angle)
 
-    def get_anchorradius(self, polar_vectors=None):
-        """
-        Returns the distance between (xanchoraround, yanchoraround) and (xanchor, yanchor),
-        as a position object.
-        """
-        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = (
-            polar_vectors or self.get_anchor_polar_vector()
-        )
-
-        return position(
-            absolute=math.hypot(absolute_vector_x, absolute_vector_y) * self.absolute_anchor_radius_sign,  # type: ignore
-            relative=math.hypot(relative_vector_x, relative_vector_y) * self.relative_anchor_radius_sign,  # type: ignore
-        )
-
-    def set_anchorangle(self, angle):
-        """
-        Computes the anchorradius (as a position object),
-        and set xanchor and yanchor such that the anchorradius (both the absolute and relative parts)
-        remain the same, and the anchorangle (as explained above) is the given one.
-        """
-        if isinstance(angle, DualAngle):
-            absolute_anchorangle = angle.absolute
-            relative_anchorangle = angle.relative
+    @anchorangle.setter
+    def anchorangle(self, value: DualAngle | float):
+        if isinstance(value, DualAngle):
+            absolute_anchorangle = value.absolute
+            relative_anchorangle = value.relative
         else:
-            absolute_anchorangle = relative_anchorangle = angle
+            absolute_anchorangle = relative_anchorangle = value
 
         self.last_absolute_anchorangle = limit_angle(absolute_anchorangle)
         self.last_relative_anchorangle = limit_angle(relative_anchorangle)
 
-        anchorradius = position(self.anchorradius.absolute, self.anchorradius.relative)
+        anchorradius = self.anchorradius
+        absolute_anchorradius = anchorradius.absolute
+        relative_anchorradius = anchorradius.relative
 
-        if anchorradius.absolute < 0:
+        if absolute_anchorradius < 0:
             absolute_anchorangle = limit_angle(absolute_anchorangle + 180)
-            anchorradius.absolute = -anchorradius.absolute
-        if anchorradius.relative < 0:
+            absolute_anchorradius = -absolute_anchorradius
+        if relative_anchorradius < 0:
             relative_anchorangle = limit_angle(relative_anchorangle + 180)
-            anchorradius.relative = -anchorradius.relative
+            relative_anchorradius = -relative_anchorradius
 
-        self.set_anchor_from_anchorangle_and_anchorradius(
+        DualAngle.set_anchor_from_anchorangle_and_anchorradius(
+            self,
             absolute_anchorangle,
             relative_anchorangle,
-            anchorradius.absolute,
-            anchorradius.relative,
+            absolute_anchorradius,
+            relative_anchorradius,
         )
 
-    def set_anchorradius(self, anchorradius):
-        """
-        Computes the anchorangle (as a DualAngle object),
-        and set xanchor and yanchor such that the anchorangle stays the same,
-        and the anchorradius (as explained above) is the given one.
-        """
-        anchorradius = position.from_any(anchorradius)
+    @property
+    def anchorradius(self) -> position:
+        (
+            (absolute_vector_x, absolute_vector_y),
+            (relative_vector_x, relative_vector_y),
+        ) = DualAngle.get_anchor_polar_vector(self)
 
-        polar_vectors = self.get_anchor_polar_vector()
-        anchorangle = self.get_anchorangle(polar_vectors)
-        old_anchorradius = self.get_anchorradius(polar_vectors)
+        return position(
+            math.hypot(absolute_vector_x, absolute_vector_y) * self.absolute_anchor_radius_sign,
+            math.hypot(relative_vector_x, relative_vector_y) * self.relative_anchor_radius_sign,
+        )
+
+    @anchorradius.setter
+    def anchorradius(self, value: Position):
+        value = position(value)
+
+        anchorangle = self.anchorangle
+        old_anchorradius = self.anchorradius
 
         absolute_anchorangle = anchorangle.absolute
         relative_anchorangle = anchorangle.relative
@@ -500,159 +848,75 @@ class TransformState(renpy.object.Object):
         if (not old_anchorradius.relative) and (self.last_relative_anchorangle is not None):
             relative_anchorangle = self.last_relative_anchorangle
 
-        if anchorradius.absolute < 0:
+        if value.absolute < 0:
             absolute_anchorangle = limit_angle(absolute_anchorangle + 180)
             self.absolute_anchor_radius_sign = -1
-        elif anchorradius.absolute > 0:
+        elif value.absolute > 0:
             self.absolute_anchor_radius_sign = 1
 
-        if anchorradius.relative < 0:
+        if value.relative < 0:
             relative_anchorangle = limit_angle(relative_anchorangle + 180)
             self.relative_anchor_radius_sign = -1
-        elif anchorradius.relative > 0:
+        elif value.relative > 0:
             self.relative_anchor_radius_sign = 1
 
-        self.set_anchor_from_anchorangle_and_anchorradius(
+        DualAngle.set_anchor_from_anchorangle_and_anchorradius(
+            self,
             absolute_anchorangle,
             relative_anchorangle,
-            anchorradius.absolute,
-            anchorradius.relative,
+            value.absolute,
+            value.relative,
         )
 
-    def set_anchor_from_anchorangle_and_anchorradius(
-        self,
-        absolute_anchorangle,
-        relative_anchorangle,
-        absolute_anchorradius,
-        relative_anchorradius,
-    ):
-        xanchoraround = position.from_any(self.xanchoraround)
-        yanchoraround = position.from_any(self.yanchoraround)
-
-        absolute_anchorangle = absolute_anchorangle * math.pi / 180
-        relative_anchorangle = relative_anchorangle * math.pi / 180
-
-        absolute_dx = absolute_anchorradius * math.sin(absolute_anchorangle)
-        absolute_dy = -absolute_anchorradius * math.cos(absolute_anchorangle)
-        relative_dx = relative_anchorradius * math.sin(relative_anchorangle)
-        relative_dy = -relative_anchorradius * math.cos(relative_anchorangle)
-
-        self.xanchor = position(xanchoraround.absolute + absolute_dx, xanchoraround.relative + relative_dx)
-        self.yanchor = position(yanchoraround.absolute + absolute_dy, yanchoraround.relative + relative_dy)
-
-    anchorangle = property(get_anchorangle, set_anchorangle)
-    anchorradius = property(get_anchorradius, set_anchorradius)
-
-    def get_pos(self):
-        return self.xpos, self.ypos
-
-    def set_pos(self, value):
-        self.xpos, self.ypos = value
-
-    pos = property(get_pos, set_pos)
-
-    def get_anchor(self):
-        return self.xanchor, self.yanchor
-
-    def set_anchor(self, value):
-        self.xanchor, self.yanchor = value
-
-    anchor = property(get_anchor, set_anchor)
-
-    def set_align(self, value):
-        self.xanchor, self.yanchor = value
-        self.xpos, self.ypos = value
-
-    align = property(get_pos, set_align)
-
-    def get_offset(self):
-        return self.xoffset, self.yoffset
-
-    def set_offset(self, value):
-        self.xoffset, self.yoffset = value
-
-    offset = property(get_offset, set_offset)
-
-    def get_xysize(self):
+    @property
+    def xysize(self) -> tuple[Position | None, Position | None]:
         return self.xsize, self.ysize
 
-    def set_xysize(self, value):
-        if value is None:
-            value = (None, None)
+    @xysize.setter
+    def xysize(self, value: tuple[Position | None, Position | None]):
         self.xsize, self.ysize = value
 
-    xysize = property(get_xysize, set_xysize)
-
-    def set_size(self, value):
-        if value is None:
-            self.xysize = None
-        else:
-            self.xysize = tuple(int(x) if isinstance(x, float) else x for x in value)
-
-    size = property(get_xysize, set_size)
-
-    def set_xcenter(self, value):
-        self.xpos = value
-        self.xanchor = 0.5
-
-    def get_xpos(self):
-        return self.xpos
-
-    def set_ycenter(self, value):
-        self.ypos = value
-        self.yanchor = 0.5
-
-    def get_ypos(self):
-        return self.ypos
-
-    xcenter = property(get_xpos, set_xcenter)
-    ycenter = property(get_ypos, set_ycenter)
-
-    def set_xycenter(self, value):
-        if value is None:
-            value = (None, None)
-        self.xcenter, self.ycenter = value
-
-    xycenter = property(get_pos, set_xycenter)
-
-    def get_reset(self):
+    @property
+    def _reset(self) -> bool:
         return False
 
-    def set_reset(self, value):
+    @_reset.setter
+    def _reset(self, value: bool):
         if value:
-            self.take_state(RESET_STATE)
+            self.take_state(TransformState())
 
-    _reset = property(get_reset, set_reset)
+    # Deprecated properties.
+    if not TYPE_CHECKING:
+
+        @property
+        def alignaround(self) -> tuple[float, float]:
+            return self.xaround, self.yaround
+
+        @alignaround.setter
+        def alignaround(self, value: tuple[float, float]):
+            self.xanchor, self.yanchor = value
+            self.xaround, self.yaround = value
+            self.xanchoraround, self.yanchoraround = value
+
+        @property
+        def size(self) -> tuple[int, int] | None:
+            if self.xsize is None or self.ysize is None:
+                return None
+
+            xsize = int(absolute.compute_raw(self.xsize, self.available_width))
+            ysize = int(absolute.compute_raw(self.ysize, self.available_height))
+            return xsize, ysize
+
+        @size.setter
+        def size(self, value: tuple[int | float, int | float] | None):
+            if value is None:
+                self.xsize = self.ysize = None
+            else:
+                self.xsize = int(value[0])
+                self.ysize = int(value[1])
 
 
-RESET_STATE = TransformState()
-
-
-def simplify_position(v):
-    if isinstance(v, tuple):
-        return tuple(simplify_position(i) for i in v)
-    elif isinstance(v, position):
-        return v.simplify()
-    else:
-        return v
-
-
-class Proxy(object):
-    """
-    This class proxies a field from the transform to its state.
-    """
-
-    def __init__(self, name):
-        self.name = name
-
-    def __get__(self, instance, owner):
-        return simplify_position(getattr(instance.state, self.name))
-
-    def __set__(self, instance, value):
-        return setattr(instance.state, self.name, value)
-
-
-class Transform(Container):
+class Transform(Container, TransformProperties if TYPE_CHECKING else object):
     """
     Documented in sphinx, because we can't scan this object.
     """
@@ -665,15 +929,15 @@ class Transform(Container):
             self.active = False
             self.state = TransformState()
 
-            self.state.xpos = self.xpos or 0  # type: ignore
-            self.state.ypos = self.ypos or 0  # type: ignore
-            self.state.xanchor = self.xanchor or 0  # type: ignore
-            self.state.yanchor = self.yanchor or 0  # type: ignore
-            self.state.alpha = self.alpha  # type: ignore
-            self.state.rotate = self.rotate  # type: ignore
-            self.state.zoom = self.zoom  # type: ignore
-            self.state.xzoom = self.xzoom  # type: ignore
-            self.state.yzoom = self.yzoom  # type: ignore
+            self.state.xpos = self.xpos or 0
+            self.state.ypos = self.ypos or 0
+            self.state.xanchor = self.xanchor or 0
+            self.state.yanchor = self.yanchor or 0
+            self.state.alpha = self.alpha
+            self.state.rotate = self.rotate
+            self.state.zoom = self.zoom
+            self.state.xzoom = self.xzoom
+            self.state.yzoom = self.yzoom
 
             self.hide_request = False
             self.hide_response = True
@@ -694,7 +958,7 @@ class Transform(Container):
             self.replaced_request = False
             self.replaced_response = True
 
-    DEFAULT_ARGUMENTS = {
+    DEFAULT_ARGUMENTS: dict[str, dict[str, Any]] = {
         "selected_activate": {},
         "selected_hover": {},
         "selected_idle": {},
@@ -706,37 +970,83 @@ class Transform(Container):
         "": {},
     }
 
-    # Compatibility with old versions of the class.
+    children: list[Displayable] = []
+    child: Displayable | None = None
+    original_child: Displayable | None = None
+
     active = False
-    children = []
-    arguments = DEFAULT_ARGUMENTS
+    "True if the transform was updated at least once."
 
-    # Default before we set this.
-    child_size = (0, 0)
+    arguments: dict[str, dict[str, Any]] | None = DEFAULT_ARGUMENTS
+    """
+    A map from prefix to a dictionary of properties for that prefix, computed from
+    the arguments that were passed to the transform constructor.
+    Transform will update its state to the values of current active prefix on
+    each redraw, but before using transform function, so any changes made from
+    the outside will be overwritten.
 
-    original_child = None
+    If no properties were given, this will be None.
+    """
+
+    child_size: tuple[float, float] = (0, 0)
+    "Size of the child. This is set after the first render."
+
+    render_size: tuple[float, float] = (0, 0)
+    "Size of the render after apllying transform properties. This is set after the first render."
+
+    type TransformFunction = Callable[["Transform", float, float], float | None]
+    """
+    A function that takes a current transform, show time, animation time, and
+    returns the amount of seconds it should be redrawn in, or None to stop redrawing.
+    """
+
+    forward: renpy.display.matrix.Matrix | None = None
+    reverse: renpy.display.matrix.Matrix | None = None
+
+    hide_request: bool = False
+    "True if the transform has been requested to be hidden."
+
+    hide_response: bool = True
+    "True if transform and its child is ready to be hidden."
+
+    replaced_request: bool = False
+    "True if the transform has been requested to be replaced."
+
+    replaced_response: bool = True
+    "True if transform and its is child ready to be replaced."
+
+    st: float = 0
+    at: float = 0
+    st_offset: float = 0
+    at_offset: float = 0
+
+    child_st_base: float = 0
+    """
+    Offset of the child's show time. This is used to reset the child's show time
+    when transform child is changed.
+    """
 
     def __init__(
         self,
-        child=None,
-        function=None,
-        style="default",
-        focus=None,
-        default=False,
-        _args=None,
+        child: DisplayableLike | None = None,
+        function: TransformFunction | None = None,
+        style: str = "default",
+        focus: str | None = None,
+        default: bool = False,
+        _args: DisplayableArguments | None = None,
         *,
-        reset=False,
-        **kwargs,
+        reset: bool = False,
+        **kwargs: Any,
     ):
         properties = {k: kwargs.pop(k) for k in style_properties if k in kwargs}
 
         if reset:
-            kwargs = {"_reset": True} | kwargs
+            kwargs.setdefault("_reset", True)
 
-        self.kwargs = kwargs
+        self.kwargs: dict[str, Any] = kwargs
         self.style_arg = style
 
-        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args, **properties)
+        super().__init__(style=style, focus=focus, default=default, _args=_args, **properties)
 
         self.function = function
 
@@ -744,75 +1054,138 @@ class Transform(Container):
         if child is not None:
             self.add(child)
 
-        self.original_child: renpy.display.displayable.Displayable = child
+        self.original_child = child
         "The child that was passed to the constructor."
 
-        self.state = TransformState()  # type: Any
+        self.state = TransformState()
 
         if kwargs:
-            # A map from prefix -> (prop -> value)
+            prefixes = Transform.DEFAULT_ARGUMENTS
+            splited_kwargs = renpy.easy.split_properties(kwargs, *prefixes)
+
             self.arguments = {}
+            known_properties = renpy.atl.PROPERTIES
+            for prefix, dictionary in zip(prefixes, splited_kwargs):
+                if not dictionary:
+                    continue
 
-            # Fill self.arguments with a
-            for k, v in kwargs.items():
-                prefix = ""
-                prop = k
-
-                while True:
-                    if prop in renpy.atl.PROPERTIES and (not prefix or prefix in Transform.DEFAULT_ARGUMENTS):
-                        if prefix not in self.arguments:
-                            self.arguments[prefix] = {}
-
-                        self.arguments[prefix][prop] = v
-                        break
-
-                    new_prefix, _, prop = prop.partition("_")
-
-                    if not prop:
-                        raise Exception("Unknown transform property: %r" % k)
-
-                    if prefix:
-                        prefix = prefix + "_" + new_prefix
+                self.arguments[prefix] = {}
+                for k, v in dictionary.items():
+                    if k in known_properties:
+                        self.arguments[prefix][k] = v
                     else:
-                        prefix = new_prefix
+                        raise Exception(f"Unknown transform property: {k}")
 
-            if "" in self.arguments:
-                for k, v in self.arguments[""].items():
-                    setattr(self.state, k, v)
+            # Apply the default values.
+            for k, v in self.arguments.get("", {}).items():
+                setattr(self.state, k, v)
 
         else:
             self.arguments = None
 
-        # This is the matrix transforming our coordinates into child coordinates.
-        self.forward = None  # type: renpy.display.matrix.Matrix|None
-        self.reverse = None  # type: renpy.display.matrix.Matrix|None
+    def take_state(self, t: "Transform", /):
+        """
+        Takes the transformation state from transform `t` into current transform.
 
-        # Have we called the function at least once?
-        self.active = False
+        That is, apllies all changed transform properties from t, as well as
+        takes the child from `t` if current transform has no child.
 
-        # Have we been requested to hide?
-        self.hide_request = False
+        Note, that this will cancel any changed transform properties made on
+        current transform.
+        """
 
-        # True if it's okay for us to hide.
-        self.hide_response = True
+        if self is t:
+            return
 
-        # Have we been requested to replaced?
-        self.replaced_request = False
+        if not isinstance(t, Transform):
+            return
 
-        # True if it's okay for us to replaced.
-        self.replaced_response = True
+        self.state.take_state(t.state)
 
-        self.st = 0
-        self.at = 0
-        self.st_offset = 0
-        self.at_offset = 0
+        if isinstance(self.child, Transform) and isinstance(t.child, Transform):
+            self.child.take_state(t.child)
 
-        self.child_st_base = 0
+        if (self.child is None) and (t.child is not None):
+            self.add(t.child)
+            self.child_st_base = t.child_st_base
 
-        self.child_size = (0, 0)
-        self.render_size = (0, 0)
+        # The arguments will be applied when the default function is
+        # called.
 
-    def visit(self):
+    def take_execution_state(self, t: "Transform", /):
+        """
+        Takes the execution state from object t into this object.
+
+        That is, takes the placement from t and child show time offset.
+
+        This is overridden by renpy.atl.TransformBase.
+        """
+
+        if self is t:
+            return
+
+        if not isinstance(t, Transform):
+            return
+
+        self.hide_request = t.hide_request
+        self.replaced_request = t.replaced_request
+
+        self.state.xpos = t.state.xpos
+        self.state.ypos = t.state.ypos
+        self.state.xanchor = t.state.xanchor
+        self.state.yanchor = t.state.yanchor
+
+        self.child_st_base = t.child_st_base
+
+        if isinstance(self.child, Transform) and isinstance(t.child, Transform):
+            self.child.take_execution_state(t.child)
+
+    def __call__(
+        self,
+        child: DisplayableLike | None = None,
+        take_state: bool = True,
+        _args: DisplayableArguments | None = None,
+    ) -> "Transform":
+        """
+        Creates a new transform with the same properties as this transform,
+        with a duplicated child.
+
+        `child`
+            The child to use for the new transform. If None, the child of
+            this transform is used.
+        """
+
+        child = self.child if child is None else child
+        child = renpy.easy.displayable_or_none(child)
+        if child is not None and child._duplicatable:
+            child = child._duplicate(_args)
+
+        rv = Transform(
+            child=child,
+            function=self.function,
+            style=self.style_arg,
+            _args=_args,
+            **self.kwargs,
+        )
+
+        rv.take_state(self)
+        return rv
+
+    def copy(self) -> "Transform":
+        """
+        Makes a copy of this transform including execution state.
+        """
+
+        d = self()
+        d.kwargs = {}
+        # take_state already called in __call__
+        d.take_execution_state(self)
+        d.st = self.st
+        d.at = self.at
+
+        return d
+
+    def visit(self) -> list[Displayable]:
         if self.child is None:
             return []
         else:
@@ -820,7 +1193,7 @@ class Transform(Container):
 
     # The default function chooses entries from self.arguments that match
     # the style prefix, and applies them to the state.
-    def default_function(self, state, st, at):
+    def default_function(self, state: "Transform", st: float, at: float) -> None:
         if self.arguments is None:
             return None
 
@@ -844,76 +1217,14 @@ class Transform(Container):
 
         return None
 
-    def set_transform_event(self, event):
+    def set_transform_event(self, event: str):
         if self.child is not None:
             self.child.set_transform_event(event)
             self.last_child_transform_event = event
 
-        super(Transform, self).set_transform_event(event)
+        super().set_transform_event(event)
 
-    def take_state(self, t):
-        """
-        Takes the transformation state from object t into this object.
-        """
-
-        if self is t:
-            return
-
-        if not isinstance(t, Transform):
-            return
-
-        self.state.take_state(t.state)
-
-        if isinstance(self.child, Transform) and isinstance(t.child, Transform):
-            self.child.take_state(t.child)
-
-        if (self.child is None) and (t.child is not None):
-            self.add(t.child)
-            self.child_st_base = t.child_st_base
-
-        # The arguments will be applied when the default function is
-        # called.
-
-    def take_execution_state(self, t):
-        """
-        Takes the execution state from object t into this object. This is
-        overridden by renpy.atl.TransformBase.
-        """
-
-        if self is t:
-            return
-
-        if not isinstance(t, Transform):
-            return
-
-        self.hide_request = t.hide_request
-        self.replaced_request = t.replaced_request
-
-        self.state.xpos = t.state.xpos
-        self.state.ypos = t.state.ypos
-        self.state.xanchor = t.state.xanchor
-        self.state.yanchor = t.state.yanchor
-
-        self.child_st_base = t.child_st_base
-
-        if isinstance(self.child, Transform) and isinstance(t.child, Transform):
-            self.child.take_execution_state(t.child)
-
-    def copy(self):
-        """
-        Makes a copy of this transform.
-        """
-
-        d = self()
-        d.kwargs = {}
-        d.take_state(self)
-        d.take_execution_state(self)
-        d.st = self.st
-        d.at = self.at
-
-        return d
-
-    def _change_transform_child(self, child):
+    def _change_transform_child(self, child) -> "Transform":
         rv = self.copy()
 
         if self.child is not None:
@@ -921,7 +1232,7 @@ class Transform(Container):
 
         return rv
 
-    def _handles_event(self, event):
+    def _handles_event(self, event: str):
         if (event == "replaced") and (not self.active):
             return True
 
@@ -933,21 +1244,20 @@ class Transform(Container):
 
         return False
 
-    def adjust_for_fps(self, st, at):
-        # The timebases, adjusted for fps.
-        fst = st
-        fat = at
+    def adjust_for_fps(self, st: float, at: float, /) -> tuple[float, float]:
+        "Adjusts timebases for fps transform property."
 
-        if self.state.fps:
-            modulus = 1.0 / self.state.fps
-            fst += modulus / 2
-            fst -= fst % modulus
-            fat += modulus / 2
-            fat -= fat % modulus
+        if self.state.fps is None:
+            return st, at
 
-        return fst, fat
+        modulus = 1.0 / self.state.fps
+        st += modulus / 2
+        st -= st % modulus
+        at += modulus / 2
+        at -= at % modulus
+        return st, at
 
-    def _hide(self, st, at, kind):
+    def _hide(self, st, at, kind) -> "Self | None":
         if kind == "cancel":
             if self.state.show_cancels_hide:
                 return None
@@ -978,13 +1288,15 @@ class Transform(Container):
         d.st_offset = self.st_offset
         d.at_offset = self.at_offset
 
-        if isinstance(self, ATLTransform):
-            d.atl_st_offset = self.atl_st_offset if (self.atl_st_offset is not None) else self.st_offset  # type: ignore
+        if isinstance(self, ATLTransform) and isinstance(d, ATLTransform):
+            d.atl_st_offset = self.st_offset if self.atl_st_offset is None else self.atl_st_offset
 
         if kind == "hide":
             d.hide_request = True
-        else:
+        elif kind == "replaced":
             d.replaced_request = True
+        else:
+            assert_never(kind)
 
         d.hide_response = True
         d.replaced_response = True
@@ -996,20 +1308,29 @@ class Transform(Container):
         elif isinstance(d, ATLTransform):
             d.execute(d, fst, fat)
 
-        new_child = d.child._hide(st - self.st_offset, at - self.at_offset, kind)
+        new_child = d.child._hide(
+            st - self.st_offset,
+            at - self.at_offset,
+            kind,
+        )
 
         if new_child is not None:
             d.child = new_child
             d.hide_response = False
             d.replaced_response = False
 
-        if (not d.hide_response) or (not d.replaced_response):
-            renpy.display.render.redraw(d, 0)
-            return d
+        # if (not d.hide_response) or (not d.replaced_response):
+        if d.hide_response and d.replaced_response:
+            return None
 
-        return None
+        renpy.display.render.redraw(d, 0)
+        return d  # type: ignore
 
-    def set_child(self, child, duplicate=True):
+    def set_child(self, child: DisplayableLike, duplicate: bool = True) -> None:
+        """
+        Change the child of this transform and rerender it immediately.
+        """
+
         child = renpy.easy.displayable(child)
 
         if duplicate and child._duplicatable:
@@ -1057,7 +1378,7 @@ class Transform(Container):
                 renpy.game.interface.timeout(0)
             self.state.last_events = self.state.events
 
-    def render(self, width, height, st, at):
+    def render(self, width: float, height: float, st: float, at: float) -> renpy.display.render.Render:
         # Prevent time from ticking backwards, as can happen if we replace a
         # transform but keep its state.
         if st + self.st_offset <= self.st:
@@ -1080,7 +1401,7 @@ class Transform(Container):
         if self.hide_request:
             return None
 
-        if not self.state.events:  # type: ignore
+        if not self.state.events:
             return
 
         children = self.children
@@ -1105,19 +1426,6 @@ class Transform(Container):
 
         return None
 
-    def __call__(self, child=None, take_state=True, _args=None):
-        if child is None:
-            child = self.child
-
-        if getattr(child, "_duplicatable", False):
-            child = child._duplicate(_args)
-
-        rv = Transform(child=child, function=self.function, style=self.style_arg, _args=_args, **self.kwargs)
-
-        rv.take_state(self)
-
-        return rv
-
     def _unique(self):
         if self._duplicatable:
             if self.child is not None:
@@ -1125,12 +1433,20 @@ class Transform(Container):
 
             self._duplicatable = False
 
-    def get_placement(self):
+    def get_placement(self) -> Placement:
         if not self.active:
             self.update_state()
 
         if self.child is not None:
-            cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
+            (
+                cxpos,
+                cypos,
+                cxanchor,
+                cyanchor,
+                cxoffset,
+                cyoffset,
+                csubpixel,
+            ) = self.child.get_placement()
 
             # Use non-None elements of the child placement as defaults.
             state = self.state
@@ -1191,7 +1507,7 @@ class Transform(Container):
 
     _duplicatable = True
 
-    def _duplicate(self, args):
+    def _duplicate(self, args: DisplayableArguments) -> Self:
         if args and args.args:
             args.extraneous()
 
@@ -1201,7 +1517,7 @@ class Transform(Container):
         rv = self(_args=args)
         rv.take_execution_state(self)
 
-        return rv
+        return rv  # type: ignore
 
     def _in_current_store(self):
         if self.child is None:
@@ -1225,7 +1541,16 @@ class Transform(Container):
 
 
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
-    def __init__(self, atl, child=None, context={}, parameters=None, **properties):
+    raw_child: Displayable | None = None
+
+    def __init__(
+        self,
+        atl: "renpy.atl.RawBlock",
+        child: DisplayableLike | None = None,
+        context: dict[str, Any] = {},
+        parameters: "renpy.parameter.Signature | None" = None,
+        **properties: Any,
+    ):
         renpy.atl.ATLTransformBase.__init__(self, atl, context, parameters)
         Transform.__init__(self, child=child, **properties)
 
@@ -1258,42 +1583,110 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         return repr((self.child, self.atl.loc))
 
 
-# Names of style properties that should be sent to the parent.
-style_properties = {"alt"}
+style_properties: set[str] = {"alt"}
+"Names of style properties that should be sent to the parent."
 
-# Names of transform properties, and if the property should be handled with
-# diff2 or diff4.
-all_properties = set()
-diff2_properties = set()
-diff4_properties = set()
+all_properties: dict[str, Any] = {}
+"Names of all non-alias transform properties, and its default values."
 
-# Uniforms and GL properties.
-uniforms = set()
-gl_properties = set()
+diff2_properties: set[str] = set()
+"Names of transform properties that should be handled with diff2."
+
+uniforms: set[str] = set()
+"Names of transform properties that are uniforms."
+
+gl_properties: set[str] = set()
+"Names of transform properties that are GL properties."
 
 
-def add_property(name, atl=any_object, default=None, diff=2):  # type: (str, Any, Any, int|None) -> None
+# Register all transform properties from TransformProperties attributes.
+class Proxy:
     """
-    Adds an ATL property.
+    This class proxies a field from the transform to its state.
     """
 
-    if name in all_properties:
-        return
+    def __init__(self, name: str):
+        self.name = name
 
-    all_properties.add(name)
-    setattr(TransformState, name, default)
-    setattr(Transform, name, Proxy(name))
-    renpy.atl.PROPERTIES[name] = atl
+    def __get__(self, instance: Transform | None, owner: Any) -> Any:
+        if instance is None:
+            return self
 
-    if diff == 2:
-        diff2_properties.add(name)
-    elif diff == 4:
-        diff4_properties.add(name)
+        rv = getattr(instance.state, self.name)
+        if isinstance(rv, tuple):
+            return tuple(i.simplify() if isinstance(i, position) else i for i in rv)
+        elif isinstance(rv, position):
+            return rv.simplify()
+        else:
+            return rv
+
+    def __set__(self, instance: Transform, value: Any) -> None:
+        return setattr(instance.state, self.name, value)
 
 
-def add_uniform(name, uniform_type):
+def _register_properties():
+    for value in TransformProperties.__dict__.values():
+        if not isinstance(value, TransformProperty):
+            continue
+
+        if value.name in all_properties:
+            raise Exception(f"Transform property {value.name} is already defined.")
+
+        # Aliases should be known by ATL and Transform class.
+        setattr(Transform, value.name, Proxy(value.name))
+        renpy.atl.PROPERTIES[value.name] = value.atl_type
+
+        if value.kind == "alias":
+            if not hasattr(TransformState, value.name):
+                raise Exception(f"Transform property {value.name} is an alias, but TransformState does not define it.")
+
+            continue
+
+        setattr(TransformState, value.name, value.default)
+
+        all_properties[value.name] = value.default
+        if value.diff == 2:
+            diff2_properties.add(value.name)
+
+        if value.kind == "uniform":
+            uniforms.add(value.name)
+        elif value.kind == "gl":
+            gl_properties.add(value.name)
+
+
+_register_properties()
+del _register_properties
+
+
+class TextureUniform:
+    """
+    Descriptor for a sampler2D uniform.
+    """
+
+    def __init__(self, name: str):
+        self.name = name
+
+    def __get__(self, instance: "TransformState", owner) -> Displayable | None:
+        return instance.__dict__.get(self.name, None)
+
+    def __set__(self, instance: "TransformState", value: DisplayableLike):
+        value = renpy.easy.displayable(value)
+
+        value = renpy.display.im.unoptimized_texture(value)
+
+        if instance.texture_uniforms is None:
+            instance.texture_uniforms = set()
+
+        instance.texture_uniforms.add(self.name)
+
+        instance.__dict__[self.name] = value
+
+
+def add_uniform(name: str, uniform_type: str):
     """
     Adds a uniform with `name` to Transform and ATL.
+
+    This is called from places that define GLSL uniforms, e.g. register_shader.
     """
 
     if not name.startswith("u_"):
@@ -1302,119 +1695,19 @@ def add_uniform(name, uniform_type):
     if name in renpy.gl2.gl2draw.standard_uniforms:
         return
 
-    add_property(name, diff=2)
+    if name in all_properties:
+        return
+
+    setattr(TransformProperties, name, TransformProperty(name, kind="uniform"))
 
     if uniform_type == "sampler2D":
         setattr(TransformState, name, TextureUniform(name))
+    else:
+        setattr(TransformState, name, None)
 
-    uniforms.add(name)
-
-
-def add_gl_property(name):
-    """
-    Adds a GL property with `name` to Transform and ATL.
-    """
-
-    add_property(name, diff=None)
-
-    gl_properties.add(name)
-
-
-add_property("additive", float, 0.0)
-add_property("alpha", float, 1.0)
-add_property("blend", any_object, None)
-add_property("blur", float_or_none, None)
-add_property("corner1", (position_or_none, position_or_none), None)
-add_property("corner2", (position_or_none, position_or_none), None)
-add_property("crop", (position_or_none, position_or_none, position_or_none, position_or_none), None)
-add_property("crop_relative", bool_or_none, None)
-add_property("debug", any_object, None)
-add_property("delay", float, 0)
-add_property("events", bool, True)
-add_property("fit", str, None)
-add_property("fps", float_or_none, None)
-add_property("matrixanchor", (position_or_none, position_or_none), None)
-add_property("matrixcolor", matrix, None)
-add_property("matrixtransform", matrix, None)
-add_property("maxsize", (int, int), None)
-add_property("mesh", mesh, False, diff=None)
-add_property("mesh_pad", any_object, None)
-add_property("nearest", bool_or_none, None)
-add_property("perspective", any_object, None)
-add_property("rotate", float, None)
-add_property("rotate_pad", bool, True)
-add_property("point_to", any_object, None)
-add_property("orientation", (float, float, float), None)
-add_property("xrotate", float, None)
-add_property("yrotate", float, None)
-add_property("zrotate", float, None)
-add_property("shader", any_object, None, diff=None)
-add_property("show_cancels_hide", bool, True)
-add_property("subpixel", bool, False)
-add_property("transform_anchor", bool, False)
-add_property("zoom", float, 1.0)
-
-add_property("xanchoraround", position_or_none, 0.5)
-add_property("xanchor", position_or_none, None, diff=4)
-add_property("xaround", position_or_none, 0.0)
-add_property("xoffset", absolute, 0.0)
-add_property("xpan", float_or_none, None)
-add_property("xpos", position_or_none, None, diff=4)
-add_property("xsize", position_or_none, None)
-add_property("xtile", int, 1)
-add_property("xzoom", float, 1.0)
-
-add_property("yanchoraround", position_or_none, 0.5)
-add_property("yanchor", position_or_none, None, diff=4)
-add_property("yaround", position_or_none, 0.0)
-add_property("yoffset", absolute, 0.0)
-add_property("ypan", float_or_none, None)
-add_property("ypos", position_or_none, None, diff=4)
-add_property("ysize", position_or_none, None)
-add_property("ytile", int, 1)
-add_property("yzoom", float, 1.0)
-
-add_property("zpos", float, 0.0)
-add_property("zzoom", bool, False)
-
-add_gl_property("gl_anisotropic")
-add_gl_property("gl_blend_func")
-add_gl_property("gl_color_mask")
-add_gl_property("gl_cull_face")
-add_gl_property("gl_depth")
-add_gl_property("gl_drawable_resolution")
-add_gl_property("gl_mipmap")
-add_gl_property("gl_pixel_perfect")
-add_gl_property("gl_texture_scaling")
-add_gl_property("gl_texture_wrap")
-add_gl_property("gl_texture_wrap_tex0")
-add_gl_property("gl_texture_wrap_tex1")
-add_gl_property("gl_texture_wrap_tex2")
-add_gl_property("gl_texture_wrap_tex3")
-
-ALIASES = {
-    "alignaround": (float, float),
-    "align": (position_or_none, position_or_none),  # documented as (float, float)
-    "anchor": (position_or_none, position_or_none),
-    "anchorangle": DualAngle.from_any,
-    "anchoraround": (position_or_none, position_or_none),
-    "anchorradius": position_or_none,
-    "angle": float,
-    "around": (position_or_none, position_or_none),
-    "offset": (absolute, absolute),
-    "pos": (position_or_none, position_or_none),
-    "radius": position_or_none,
-    "size": (int, int),
-    "xalign": position_or_none,  # documented as float,
-    "xcenter": position_or_none,
-    "xycenter": (position_or_none, position_or_none),
-    "xysize": (position_or_none, position_or_none),
-    "yalign": position_or_none,  # documented as float
-    "ycenter": position_or_none,
-    "_reset": bool,
-}
-
-renpy.atl.PROPERTIES.update(ALIASES)
-
-for name in ALIASES:
     setattr(Transform, name, Proxy(name))
+    renpy.atl.PROPERTIES[name] = any_object
+
+    all_properties[name] = None
+    diff2_properties.add(name)
+    uniforms.add(name)
