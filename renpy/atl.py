@@ -316,6 +316,8 @@ class Context(object):
     def __ne__(self, other):
         return not (self == other)
 
+    def __repr__(self):
+        return "Context({})".format(repr(self.context))
 
 class ATLTransformBase(renpy.object.Object):
     """
@@ -555,6 +557,7 @@ class ATLTransformBase(renpy.object.Object):
         #         scope[kwargs_param_name].update(var_kwargs)
         #     else:
         #         scope[kwargs_param_name] = var_kwargs
+
 
         scope.update(new_scope)
 

@@ -1215,6 +1215,10 @@ class Transform(Container):
         child._unique()
 
         rv = self(child=child)
+        if isinstance(self, ATLTransform):
+            assert isinstance(rv, ATLTransform)
+            rv.block = self.block
+
         rv.take_execution_state(self)
         rv._unique()
 
