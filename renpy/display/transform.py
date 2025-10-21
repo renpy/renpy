@@ -149,11 +149,13 @@ def matrix_or_none(x):
         return renpy.display.matrix.Matrix(x)
 
 
-def mesh(x):
-    if isinstance(x, (renpy.gl2.gl2mesh2.Mesh2, renpy.gl2.gl2mesh3.Mesh3, tuple)):
+def mesh_or_none(x):
+    if x is None:
+        return None
+    elif isinstance(x, tuple):
         return x
-
-    return bool(x)
+    else:
+        return bool(x)
 
 
 class TextureUniform(object):
@@ -1410,7 +1412,7 @@ add_property("matrixanchor", (position_or_none, position_or_none), None)
 add_property("matrixcolor", matrix_or_none, None)
 add_property("matrixtransform", matrix_or_none, None)
 add_property("maxsize", (int, int), None)
-add_property("mesh", mesh, False, diff=None)
+add_property("mesh", mesh_or_none, None, diff=None)
 add_property("mesh_pad", any_object, None)
 add_property("nearest", bool_or_none, None)
 add_property("perspective", any_object, None)

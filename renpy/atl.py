@@ -42,7 +42,7 @@ def late_imports():
         bool_or_none,
         float_or_none,
         matrix_or_none as matrix,
-        mesh,
+        mesh_or_none as mesh,
     )
 
 
