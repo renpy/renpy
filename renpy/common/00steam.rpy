@@ -51,7 +51,7 @@ init -1499 python in _renpysteam:
         called with no parameters if and when the statistics become available.
         """
 
-        steamapi.SteamUserStats().RequestCurrentStats()
+        pass # RequestCurrentStats has been removed in Steamworks SDK 1.61.
 
 
     def store_stats():
@@ -480,12 +480,15 @@ init -1499 python in _renpysteam:
 
     ########################################################################### UGC
 
-    def get_subscribed_items():
+    def get_subscribed_items(include_disabled=False):
         """
         :doc: steam_ugc
 
         Returns a list of the item ids the user has subscribed to in the steam
         workshop.
+
+        `include_disabled`
+            If true, include items that are disabled.
         """
 
         from ctypes import c_ulonglong, pointer, POINTER, cast
@@ -494,7 +497,8 @@ init -1499 python in _renpysteam:
 
         count = steamapi.SteamUGC().GetSubscribedItems(
             cast(pointer(subscribed), POINTER(c_ulonglong)),
-            512)
+            512,
+            include_disabled)
 
         rv = [ ]
 
@@ -555,7 +559,7 @@ init -1499 python in _renpysteam:
         """
         :doc: steam_timeline
 
-        Adds an event to the timeline.
+        Adds an event to the timeline. Note that the order of arguments here is different than in the Steam API.
 
         `icon`
             The icon to display for the event. This should be a string giving one of the standard steam icons,
@@ -584,14 +588,26 @@ init -1499 python in _renpysteam:
         if possible_clip is None:
             possible_clip = CLIP_PRIORITY_STANDARD
 
-        steamapi.SteamTimeline().AddTimelineEvent(
-            icon.encode("utf-8"),
-            title.encode("utf-8"),
-            description.encode("utf-8"),
-            priority,
-            start_offset,
-            duration,
-            possible_clip)
+        if duration:
+
+            steamapi.SteamTimeline().AddInstantaneousTimelineEvent(
+                title.encode("utf-8"),
+                description.encode("utf-8"),
+                icon.encode("utf-8"),
+                priority,
+                start_offset,
+                possible_clip)
+
+        else:
+
+            steamapi.SteamTimeline().AddRangeTimelineEvent(
+                title.encode("utf-8"),
+                description.encode("utf-8"),
+                icon.encode("utf-8"),
+                priority,
+                start_offset,
+                duration,
+                possible_clip)
 
 
     def set_timeline_game_mode(mode):
