@@ -538,29 +538,43 @@ With spline motion (curved path):
     .. table::
         :widths: auto
 
-        ====================  =====================  ===========
-        Name                  Type                   Description
-        ====================  =====================  ===========
-        knot_value            (float, float) (expr)  Knot value given as ``(time, value)``, where time is between 0.0 and 1.0
-        ====================  =====================  ===========
-
-    The ``time`` in the knot value represents the fraction of the way through the interpolation,
-    and ``value`` is the value of the property at that time.
+        ==========  =============  ===========
+        Name        Type           Description
+        ==========  =============  ===========
+        knot_value  Varies (expr)  Value of the property control point
+        ==========  =============  ===========
 
     The starting point is the value of the property at the start of the interpolation,
-    the end point is the given value, and the knots are used to control the
-    spline. A quadratic curve is used for a single knot, Bezier is used when there
-    are two and Catmull-Rom is used for three or more knots. In the former two
+    the end point is the value given in ``<atl_property>``. The knots are used to control the
+    spline.
+
+    A quadratic `Bezier curve <https://en.wikipedia.org/wiki/B%C3%A9zier_curve>`_
+    is used for a single knot, a cubic Bezier is used when there
+    are two, and Catmull-Rom is used for three or more knots. In the former two
     cases, the knot or knots are simply control nodes. For Catmull-Rom, the first
     and last knot are control nodes (often outside the displayed path) and the
     other knots are points the path passes through.
 
     ::
 
-        show logo base:
-            xalign 1.0 yalign 0.0
+        transform spline_motion_single_property:
+            # Start at the bottom right, zoomed out a bit.
+            zoom 0.5 xalign 1.0 yalign 1.0
 
-            # Use a spline motion to move us around the screen.
+            # Move from to the bottom center, overshooting a bit. Quadratic Bezier curve.
+            linear 2.0 xalign 0.5 knot 0.0
+
+            # Move to the top, slowing down at the center. Cubic Bezier curve.
+            linear 2.0 yalign 0.0 knot 0.2 knot 0.8
+
+            # Move to the left, oscillating first. Catmull-Rom spline.
+            linear 2.0 xalign 0.0 knot 1.0 knot 0.5 knot 0.0
+
+        transform spline_motion_multi_property:
+            # Start at the bottom right, zoomed out a bit.
+            zoom 0.5 align (1.0, 0.0)
+
+            # Use a spline motion to move (x, y) simultaneously in a slight S shape.
             linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
 
 With circular motion
