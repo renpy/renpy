@@ -573,13 +573,13 @@ class Displayable(renpy.object.Object):
 
         return False
 
-    def _hide(self, st: float, at: float, kind: Literal["hide", "replace", "cancel"]) -> "Displayable | None":
+    def _hide(self, st: float, at: float, kind: Literal["hide", "replaced", "cancel"]) -> "Displayable | None":
         """
         Returns None if this displayable is ready to be hidden, or
         a replacement displayable if it doesn't want to be hidden
         quite yet.
 
-        Kind may be "hide", "replace", or "cancel", with the latter
+        Kind may be "hide", "replaced", or "cancel", with the latter
         being called when the hide is being hidden itself because
         another displayable is shown.
         """
