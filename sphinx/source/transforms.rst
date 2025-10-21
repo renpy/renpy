@@ -10,6 +10,9 @@ create them. The built-in transforms are used to control where an image is
 placed on the screen, while user-defined transforms can cause more complex
 effects, like motion, zoom, rotation, up to complex color effects.
 
+Quickstart
+==========
+
 Transforms can be applied to images by passing them to the ``at`` clause of the
 :ref:`show <show-statement>` or scene statements. The following applies the
 ``right`` transform to the ``eileen happy`` image::
@@ -21,33 +24,35 @@ transforms are applied from left-to-right. ::
 
     show eileen happy at halfsize, right
 
+Simple ATL transform::
 
-Applying transforms to displayables in Python
-=============================================
+    transform slide_right:
+        xalign 0.0
+        linear 1.0 xalign 1.0
 
-There are several ways to apply transform ``t`` to displayable ``d`` in Python:
+    label start:
+        show eileen happy at slide_right
+        pause
 
-#. The most universal and most recommended way is ``At(d, t)`` (see below). It
-   works with all transforms.
+Showing transforms with Python::
 
-#. ``d(child=t)`` works with all :ref:`ATL transforms <atl>`.
+    label start:
+        $ renpy.show("eileen happy", at_list=right)
+        pause
 
-#. ``t(d)`` works with all :ref:`Python transforms <transforms-python>`, as well
-   as with ATL transforms that don't have any positional parameters.
+Simple Python transform using ``At()``::
 
-.. include:: inc/disp_at
+    init python:
+        def show_eileen_rotated():
+            rotated = Transform(rotate=45)
+            show_stmt = At("eileen happy", rotated)
+            renpy.show("eileen", what=show_stmt)
 
-.. note::
-    The resulting value may not be able to be displayed, if there remains
-    parameters of the transform that have not been given a value, as can be the
-    case with transforms defined using the :ref:`transform-statement`.
+    label start:
+        $ show_eileen_rotated()
+        pause
 
-.. note::
-    The resulting value may still be a transform that can be applied to yet
-    another displayable (overriding its previous child) ; that's the case with
-    ATL transforms which are still usable as transforms even when having their
-    child set.
-
+.. Add a "common pitfalls" section here.
 
 Built-in Transforms
 ===================
@@ -58,19 +63,19 @@ transform will position an image.
 
 .. code-block:: none
 
-                 +-----------------------------------------------------------+
-                 |topleft, reset               top                   topright|
-                 |                                                           |
-                 |                                                           |
-                 |                                                           |
-                 |                                                           |
-                 |                          truecenter                       |
-                 |                                                           |
-                 |                                                           |
-                 |                                                           |
-                 |                                                           |
-    offscreenleft|left                   center, default                right|offscreenright
-                 +-----------------------------------------------------------+
+                  +-----------------------------------------------------------+
+                  | topleft, reset               top                 topright |
+                  |                                                           |
+                  |                                                           |
+                  |                                                           |
+                  |                                                           |
+                  |                          truecenter                       |
+                  |                                                           |
+                  |                                                           |
+                  |                                                           |
+                  |                                                           |
+    offscreenleft | left                   center, default              right | offscreenright
+                  +-----------------------------------------------------------+
 
 The :var:`offscreenleft` and :var:`offscreenright` transforms position images
 off the edges of the screen. These transforms can be used to move things off
@@ -144,6 +149,7 @@ down below, are displayables and can be used as such (even though they will be
 transparent when their child displayable is not set) : they can be passed to a
 screen's :ref:`sl-add` element, or to a :ref:`show-expression-statement`
 statement, or to the :func:`renpy.show` function.
+
 
 Ren'Py script statements
 ------------------------
@@ -228,11 +234,11 @@ The transform is created during :ref:`init time <init-phase>` (when the game sta
         transform ariana.left:
             xalign .3
 
-        transform animated_ariana_disp(delay=1.0):
+        transform animated_ariana_disp(duration=1.0):
             "ariana"
-            pause delay
+            pause duration
             "ariana_reverse"
-            pause delay
+            pause duration
             repeat
 
         label start:
@@ -816,12 +822,15 @@ the last choice in the choice set.
             repeat
 
 
+.. _animation-atl-statement:
 
 Animation Statement
 ~~~~~~~~~~~~~~~~~~~
 
 The ``animation`` statement must be the first statement in an ATL block, and
-tells Ren'Py that the block uses the animation timebase.
+tells Ren'Py that the block uses the animation timebase (``at``) rather
+than the normal showing timebase (``st``). For more information,
+see :ref:`atl-timebases`.
 
 **Syntax**
 
@@ -831,9 +840,9 @@ tells Ren'Py that the block uses the animation timebase.
 
 **Usage**
 
-    As compared to the normal showing timebase, the animation timebase starts when
-    an image or screen with the same tag is shown. This is generally used to have
-    one image replaced by a second one at the same apparent time.
+    The animation timebase starts when an image or screen with the same tag is shown.
+    This is generally used to have one image replaced by a second one at the
+    same apparent time.
 
 **Example**
 
@@ -946,12 +955,14 @@ You can also optionally add a transition effect when changing from one displayab
     .. table::
         :widths: auto
 
-        ===============  =============================================  ===========
-        Name             Type                                           Description
-        ===============  =============================================  ===========
-        displayable      str, :doc:`Displayable <displayables>` (expr)  The new child image or visual element to display
-        transition       :doc:`Transition <transitions>` (expr)         (Optional) Transition when changing displayables
-        ===============  =============================================  ===========
+        ===============  ========================================  ===========
+        Name             Type                                      Description
+        ===============  ========================================  ===========
+        displayable      :doc:`Displayable <displayables>` (expr)  The new child image or visual element to display
+        transition       :doc:`Transition <transitions>` (expr)    (Optional) Transition when changing displayables
+
+                                                                   (eg. ``dissolve``, ``fade``)
+        ===============  ========================================  ===========
 
     .. note::
         Not all transitions work in this context. In particular, :ref:`dict-transitions`,
@@ -1158,8 +1169,8 @@ The ``function`` statement allows ATL to use Python code.
     * The first argument is a transform object. :doc:`transform_properties` can be
       set as attributes on this object.
 
-    * The second argument is the shown timebase, the number of seconds since the
-      function began executing.
+    * The second argument is the shown :ref:`timebase <atl-timebases>`,
+      the number of seconds since the function began executing.
 
     * The third argument is the animation timebase, which is the number of
       seconds something with the same tag has been on the screen.
@@ -1481,6 +1492,8 @@ When an ATL transform, a built-in transform or a transform defined using the
 the properties of the outgoing transform are inherited by the incoming
 transform. That inheritance doesn't apply for other kinds of transforms.
 
+.. Explain why this is important
+
 When the :ref:`show statement <show-statement>` has multiple transforms in the
 ``at`` list, the transforms are matched from last to first, until one list runs
 out. For example::
@@ -1536,9 +1549,26 @@ applied to a displayable (but keep the position), you can use::
         pass
     "But I'm happy when it settles down."
 
+.. _atl-timebases:
 
-The Transform Class
-===================
+Timebases
+=========
+
+Two timebases exist and are commonly confused:
+
+* ``st`` (shown timebase): begins when this displayable is first shown on the screen.
+* ``at`` (animation timebase): begins when an image with the same tag was shown,
+  without being hidden.
+
+When the displayable is shown without a tag, ``st`` and ``at`` are the same.
+
+.. note::
+
+    By default, transforms use ``st``.
+    Use :ref:`animation <animation-atl-statement>` to switch to ``at``.
+
+Transform Class
+===============
 
 One equivalent to to the simplest ATL transforms is the Transform class.
 
@@ -1557,7 +1587,7 @@ One equivalent to to the simplest ATL transforms is the Transform class.
         when it is shown, rather than inheriting those properties from the
         transforms it replaces.
 
-    .. function:: function(trans: Transform, st: float, at: float, /) -> int|None
+    .. function:: function(trans: Transform, st: float, at: float, /) -> float|None
 
         If not None, this function will be called when the transform is
         rendered, with three positional arguments:
@@ -1607,6 +1637,32 @@ One equivalent to to the simplest ATL transforms is the Transform class.
         This should be called when a transform property field is updated outside
         of the function passed as the `function` argument, to ensure that the
         change takes effect.
+
+Applying transforms to displayables in Python
+=============================================
+
+There are several ways to apply transform ``t`` to displayable ``d`` in Python:
+
+#. The most universal and most recommended way is ``At(d, t)`` (see below). It
+   works with all transforms.
+
+#. ``d(child=t)`` works with all :ref:`ATL transforms <atl>`.
+
+#. ``t(d)`` works with all :ref:`Python transforms <transforms-python>`, as well
+   as with ATL transforms that don't have any positional parameters.
+
+.. include:: inc/disp_at
+
+.. note::
+    The resulting value may not be able to be displayed, if there remains
+    parameters of the transform that have not been given a value, as can be the
+    case with transforms defined using the :ref:`transform-statement`.
+
+.. note::
+    The resulting value may still be a transform that can be applied to yet
+    another displayable (overriding its previous child) ; that's the case with
+    ATL transforms which are still usable as transforms even when having their
+    child set.
 
 .. _transforms-python:
 
