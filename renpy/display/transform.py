@@ -29,7 +29,6 @@ from renpy.display.position import absolute, position
 from renpy.display.displayable import Displayable
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
-from renpy.atl import DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
 
 
 class Camera(renpy.object.Object):
@@ -45,6 +44,38 @@ class Camera(renpy.object.Object):
 
     def __init__(self, layer="master"):
         self.layer = layer
+
+
+class DualAngle(object):
+    def __init__(self, absolute, relative):  # for tests, convert to PY2 after
+        self.absolute = absolute
+        self.relative = relative
+
+    @classmethod
+    def from_any(cls, other):
+        if isinstance(other, cls):
+            return other
+        elif type(other) is float:
+            return cls(other, other)
+        raise TypeError("Cannot convert {} to DualAngle".format(type(other)))
+
+    def __add__(self, other):
+        if isinstance(other, DualAngle):
+            return DualAngle(self.absolute + other.absolute, self.relative + other.relative)
+        return NotImplemented
+
+    def __sub__(self, other):
+        return self + -other
+
+    def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            return DualAngle(self.absolute * other, self.relative * other)
+        return NotImplemented
+
+    __rmul__ = __mul__
+
+    def __neg__(self):
+        return -1 * self
 
 
 # The null object that's used if we don't have a defined child.
@@ -85,6 +116,44 @@ def limit_angle(n):
         n += 360
 
     return n
+
+
+def position_or_none(x):
+    if x is None:
+        return None
+    return position.from_any(x)
+
+
+def any_object(x):
+    return x
+
+
+def bool_or_none(x):
+    if x is None:
+        return x
+    return bool(x)
+
+
+def float_or_none(x):
+    if x is None:
+        return x
+    return float(x)
+
+
+def matrix_or_none(x):
+    if x is None:
+        return None
+    elif callable(x):
+        return x
+    else:
+        return renpy.display.matrix.Matrix(x)
+
+
+def mesh(x):
+    if isinstance(x, (renpy.gl2.gl2mesh2.Mesh2, renpy.gl2.gl2mesh3.Mesh3, tuple)):
+        return x
+
+    return bool(x)
 
 
 class TextureUniform(object):
@@ -1338,8 +1407,8 @@ add_property("events", bool, True)
 add_property("fit", str, None)
 add_property("fps", float_or_none, None)
 add_property("matrixanchor", (position_or_none, position_or_none), None)
-add_property("matrixcolor", matrix, None)
-add_property("matrixtransform", matrix, None)
+add_property("matrixcolor", matrix_or_none, None)
+add_property("matrixtransform", matrix_or_none, None)
 add_property("maxsize", (int, int), None)
 add_property("mesh", mesh, False, diff=None)
 add_property("mesh_pad", any_object, None)
