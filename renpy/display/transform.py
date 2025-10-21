@@ -22,9 +22,12 @@
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 
+from typing import Any
+
 import math
 
 import renpy
+from renpy.types import DisplayableLike
 from renpy.display.position import absolute, position
 from renpy.display.displayable import Displayable
 from renpy.display.layout import Container
@@ -158,32 +161,6 @@ def mesh_or_none(x):
         return bool(x)
 
 
-class TextureUniform(object):
-    """
-    Descriptor for a sampler2D uniform.
-    """
-
-    def __init__(self, name):
-        self.name = name
-
-    def __get__(self, instance, owner):
-        return instance.__dict__.get(self.name, None)
-
-    def __set__(self, instance, value):
-        if isinstance(value, str):
-            value = renpy.easy.displayable(value)
-
-        if isinstance(value, Displayable):
-            value = renpy.display.im.unoptimized_texture(value)
-
-            if instance.texture_uniforms is None:
-                instance.texture_uniforms = set()
-
-            instance.texture_uniforms.add(self.name)
-
-        instance.__dict__[self.name] = value
-
-
 class TransformState(renpy.object.Object):
     last_angle = 0.0
     last_relative_anchorangle = 0.0
@@ -199,7 +176,7 @@ class TransformState(renpy.object.Object):
     relative_anchor_radius_sign = 1
     absolute_anchor_radius_sign = 1
 
-    texture_uniforms = None
+    texture_uniforms: set[str] | None = None
 
     def __init__(self):
         # Most fields on this object are set by add_property, at the bottom
@@ -697,30 +674,6 @@ class TransformState(renpy.object.Object):
 
 
 RESET_STATE = TransformState()
-
-
-def simplify_position(v):
-    if isinstance(v, tuple):
-        return tuple(simplify_position(i) for i in v)
-    elif isinstance(v, position):
-        return v.simplify()
-    else:
-        return v
-
-
-class Proxy(object):
-    """
-    This class proxies a field from the transform to its state.
-    """
-
-    def __init__(self, name):
-        self.name = name
-
-    def __get__(self, instance, owner):
-        return simplify_position(getattr(instance.state, self.name))
-
-    def __set__(self, instance, value):
-        return setattr(instance.state, self.name, value)
 
 
 class Transform(Container):
@@ -1347,6 +1300,30 @@ uniforms = set()
 gl_properties = set()
 
 
+def _simplify_position(v):
+    if isinstance(v, tuple):
+        return tuple(_simplify_position(i) for i in v)
+    elif isinstance(v, position):
+        return v.simplify()
+    else:
+        return v
+
+
+class Proxy:
+    """
+    This class proxies a field from the transform to its state.
+    """
+
+    def __init__(self, name):
+        self.name = name
+
+    def __get__(self, instance: Transform | None, owner: Any) -> Any:
+        return _simplify_position(getattr(instance.state, self.name))
+
+    def __set__(self, instance: Transform, value: Any) -> None:
+        return setattr(instance.state, self.name, value)
+
+
 def add_property(name, atl=any_object, default=None, diff=2):  # type: (str, Any, Any, int|None) -> None
     """
     Adds an ATL property.
@@ -1364,6 +1341,30 @@ def add_property(name, atl=any_object, default=None, diff=2):  # type: (str, Any
         diff2_properties.add(name)
     elif diff == 4:
         diff4_properties.add(name)
+
+
+class TextureUniform:
+    """
+    Descriptor for a sampler2D uniform.
+    """
+
+    def __init__(self, name: str):
+        self.name = name
+
+    def __get__(self, instance: "TransformState", owner) -> Displayable | None:
+        return instance.__dict__.get(self.name, None)
+
+    def __set__(self, instance: "TransformState", value: DisplayableLike):
+        value = renpy.easy.displayable(value)
+
+        value = renpy.display.im.unoptimized_texture(value)
+
+        if instance.texture_uniforms is None:
+            instance.texture_uniforms = set()
+
+        instance.texture_uniforms.add(self.name)
+
+        instance.__dict__[self.name] = value
 
 
 def add_uniform(name, uniform_type):
