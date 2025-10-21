@@ -495,7 +495,7 @@ interpolation progresses over time.
 
     Using warper function::
 
-        show logo base(warper_expr="ease_in"):
+        show logo base(warper_expr="easein"):
             xalign 0.0 yalign 0.0
 
             # Use the warper in the parameter to move to the right side of the screen.
