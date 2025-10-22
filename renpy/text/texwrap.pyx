@@ -201,9 +201,8 @@ cdef class WordWrapper(object):
             if g.split == SPLIT_IGNORE:
                 ignored += g.advance
                 continue
-
             else:
-                x += g.advance + ignored
+                x += ignored
                 ignored = 0
 
             if g.split == SPLIT_INSTEAD:
@@ -226,6 +225,7 @@ cdef class WordWrapper(object):
                 start_x = x
                 start_glyph = g
 
+            x += g.advance
 
         x += ignored
 
