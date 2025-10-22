@@ -239,14 +239,14 @@ class TransformProperties(Protocol):
     pos: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
         "pos", (position_or_none,) * 2, (None, None), kind="alias"
     )
-    xpos: TransformProperty[Position | None] = TransformProperty("xpos", position_or_none)
-    ypos: TransformProperty[Position | None] = TransformProperty("ypos", position_or_none)
+    xpos: TransformProperty[Position | None] = TransformProperty("xpos", position_or_none, diff=4)
+    ypos: TransformProperty[Position | None] = TransformProperty("ypos", position_or_none, diff=4)
 
     anchor: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
         "anchor", (position_or_none,) * 2, (None, None), kind="alias"
     )
-    xanchor: TransformProperty[Position | None] = TransformProperty("xanchor", position_or_none)
-    yanchor: TransformProperty[Position | None] = TransformProperty("yanchor", position_or_none)
+    xanchor: TransformProperty[Position | None] = TransformProperty("xanchor", position_or_none, diff=4)
+    yanchor: TransformProperty[Position | None] = TransformProperty("yanchor", position_or_none, diff=4)
 
     align: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
         "align", (position_or_none,) * 2, (None, None), kind="alias"
