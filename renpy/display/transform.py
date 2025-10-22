@@ -1296,7 +1296,9 @@ diff2_properties = set()
 diff4_properties = set()
 
 # Uniforms and GL properties.
-uniforms = set()
+uniforms: dict[str, str] = {}
+"Dict of names of uniforms that are accessible on transforms to their uniform type."
+
 gl_properties = set()
 
 
@@ -1367,7 +1369,7 @@ class TextureUniform:
         instance.__dict__[self.name] = value
 
 
-def add_uniform(name, uniform_type):
+def add_uniform(name: str, uniform_type: str):
     """
     Adds a uniform with `name` to Transform and ATL.
     """
@@ -1378,12 +1380,21 @@ def add_uniform(name, uniform_type):
     if name in renpy.gl2.gl2draw.standard_uniforms:
         return
 
-    add_property(name, diff=2)
+    if (old_type := uniforms.get(name)) == uniform_type:
+        return
+    elif old_type is not None:
+        raise Exception(f"Uniform {name} is already defined as {old_type!r}.")
+
+    all_properties.add(name)
+    diff2_properties.add(name)
+    uniforms[name] = uniform_type
+    renpy.atl.PROPERTIES[name] = any_object
 
     if uniform_type == "sampler2D":
         setattr(TransformState, name, TextureUniform(name))
-
-    uniforms.add(name)
+    else:
+        setattr(TransformState, name, None)
+    setattr(Transform, name, Proxy(name))
 
 
 def add_gl_property(name):
