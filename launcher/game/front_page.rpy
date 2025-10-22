@@ -206,6 +206,9 @@ screen front_page_project:
             frame style "l_indent":
                 has vbox
 
+                for button_name, path in p.get_renpy_launcher()["actions"].items():
+                    textbutton button_name action RunScript(os.path.join(p.path, path))
+
                 textbutton _("Navigate Script") action Jump("navigation")
                 textbutton _("Check Script (Lint)") action Call("lint")
                 textbutton _("Launch tests") action Jump("launch_tests")

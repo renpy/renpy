@@ -191,6 +191,8 @@ init python in project:
                     "options.rpy": "game/options.rpy",
                     "gui.rpy": "game/gui.rpy",
                     "screens.rpy": "game/screens.rpy"
+                },
+                "actions": {
                 }
             }
 

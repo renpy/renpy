@@ -814,6 +814,45 @@ init -1500 python:
 
             except Exception:
                 pass
+    
+    @renpy.pure
+    class RunScript(Action, DictEquality):
+        """
+        :doc: other_action
+        :args: (path)
+
+        Runs a script or executable relative to config.basedir.
+        Works on Windows (.exe/.bat) and Unix/macOS (.sh, executable files).
+        """
+
+        alt = _("Run [text] script/executable.")
+
+        def __init__(self, path):
+            self.path = os.path.join(renpy.config.basedir, path)
+            # Set REN_PY_SDK_ROOT only if it doesn't exist
+            # Enironment variable useful for custom scripts
+            if "REN_PY_SDK_ROOT" not in os.environ:
+                os.environ["REN_PY_SDK_ROOT"] = renpy.config.basedir
+
+        def get_sensitive(self):
+            return os.path.exists(self.path)
+
+        def __call__(self):
+            if not self.get_sensitive():
+                renpy.exports.log(f"RunScript: file does not exist: {self.path}")
+                return
+
+            try:
+                if renpy.windows:
+                    # Use powershell.exe
+                    powershell_exe = "powershell.exe"
+                    subprocess.run([powershell_exe, "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", self.path], check=True)
+
+                else:
+                    os.chmod(self.path, 0o755)
+                    subprocess.Popen([self.path])
+            except Exception as e:
+                pass
 
     @renpy.pure
     class CaptureFocus(Action, DictEquality):
