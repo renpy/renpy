@@ -27,7 +27,7 @@ from typing import Any, Callable, Literal, Protocol, TYPE_CHECKING
 import math
 
 import renpy
-from renpy.types import DisplayableLike
+from renpy.types import DisplayableLike, Position
 from renpy.display.position import absolute, position
 from renpy.display.displayable import Displayable
 from renpy.display.layout import Container
@@ -161,6 +161,19 @@ def mesh_or_none(x):
         return bool(x)
 
 
+class MatrixLike(Protocol):
+    origin: "MatrixLike | None" = None
+
+    def __call__(self, other: "MatrixLike", done: float, /) -> renpy.display.matrix.Matrix: ...
+
+
+type MeshValue = tuple[int, int] | bool
+type MeshPadValue = tuple[int, int] | tuple[int, int, int, int]
+type FitValue = Literal["contain", "cover", "fill", "scale-down", "scale-up"]
+type PerspectiveValue = bool | float | tuple[float, float, float]
+type PointToValue = tuple[float, float, float] | Camera
+
+
 class TransformProperty[T]:
     """
     A descriptor that describes a transform property.
@@ -221,6 +234,172 @@ class TransformProperties(Protocol):
     NOTE: Explicit type annotation for protocol member forces type checker to
     take precedence over the type annotation in the protocol implementation.
     """
+
+    # Positioning
+    pos: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
+        "pos", (position_or_none,) * 2, (None, None), kind="alias"
+    )
+    xpos: TransformProperty[Position | None] = TransformProperty("xpos", position_or_none)
+    ypos: TransformProperty[Position | None] = TransformProperty("ypos", position_or_none)
+
+    anchor: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
+        "anchor", (position_or_none,) * 2, (None, None), kind="alias"
+    )
+    xanchor: TransformProperty[Position | None] = TransformProperty("xanchor", position_or_none)
+    yanchor: TransformProperty[Position | None] = TransformProperty("yanchor", position_or_none)
+
+    align: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
+        "align", (position_or_none,) * 2, (None, None), kind="alias"
+    )
+    xalign: TransformProperty[Position | None] = TransformProperty("xalign", position_or_none, kind="alias")
+    yalign: TransformProperty[Position | None] = TransformProperty("yalign", position_or_none, kind="alias")
+
+    xycenter: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
+        "xycenter", (position_or_none,) * 2, (None, None), kind="alias"
+    )
+    xcenter: TransformProperty[Position | None] = TransformProperty("xcenter", position_or_none, kind="alias")
+    ycenter: TransformProperty[Position | None] = TransformProperty("ycenter", position_or_none, kind="alias")
+
+    offset: TransformProperty[tuple[absolute | int, absolute | int]] = TransformProperty(
+        "offset", (absolute,) * 2, (absolute(0), absolute(0)), kind="alias"
+    )
+    xoffset: TransformProperty[absolute | int] = TransformProperty("xoffset", absolute, absolute(0))
+    yoffset: TransformProperty[absolute | int] = TransformProperty("yoffset", absolute, absolute(0))
+
+    subpixel: TransformProperty[bool] = TransformProperty("subpixel", bool, False)
+
+    # Rotation
+    rotate: TransformProperty[float | None] = TransformProperty("rotate", float_or_none)
+    rotate_pad: TransformProperty[bool] = TransformProperty("rotate_pad", bool, True)
+    transform_anchor: TransformProperty[bool] = TransformProperty("transform_anchor", bool, False)
+
+    # Zoom and Flip
+    zoom: TransformProperty[float] = TransformProperty("zoom", float, 1.0)
+    xzoom: TransformProperty[float] = TransformProperty("xzoom", float, 1.0)
+    yzoom: TransformProperty[float] = TransformProperty("yzoom", float, 1.0)
+
+    # Pixel Effects
+    nearest: TransformProperty[bool | None] = TransformProperty("nearest", bool_or_none)
+    alpha: TransformProperty[float] = TransformProperty("alpha", float, 1.0)
+    additive: TransformProperty[float] = TransformProperty("additive", float, 0.0)
+    matrixcolor: TransformProperty[MatrixLike | renpy.display.matrix.Matrix | None] = TransformProperty(
+        "matrixcolor", matrix_or_none
+    )
+    blur: TransformProperty[float | None] = TransformProperty("blur", float_or_none)
+
+    # Polar Positioning
+    around: TransformProperty[tuple[Position, Position]] = TransformProperty(
+        "around", (position,) * 2, (position(0), position(0)), kind="alias"
+    )
+    xaround: TransformProperty[Position] = TransformProperty("xaround", position, position(0))
+    yaround: TransformProperty[Position] = TransformProperty("yaround", position, position(0))
+    angle: TransformProperty[float] = TransformProperty("angle", float, 0.0, kind="alias")
+    radius: TransformProperty[Position] = TransformProperty("radius", position, position(0), kind="alias")
+
+    # Polar Positioning of the Anchor
+    anchoraround: TransformProperty[tuple[Position, Position]] = TransformProperty(
+        "anchoraround", (position,) * 2, (0.5, 0.5), kind="alias"
+    )
+    xanchoraround: TransformProperty[Position] = TransformProperty("xanchoraround", position, 0.5)
+    yanchoraround: TransformProperty[Position] = TransformProperty("yanchoraround", position, 0.5)
+    anchorangle: TransformProperty[DualAngle | float] = TransformProperty(
+        "anchorangle", DualAngle.from_any, 0.0, kind="alias"
+    )
+    anchorradius: TransformProperty[Position] = TransformProperty("anchorradius", position, position(0), kind="alias")
+
+    # Cropping and Resizing
+    crop: TransformProperty[tuple[Position, Position, Position, Position] | None] = TransformProperty(
+        "crop", (position,) * 4
+    )
+    corner1: TransformProperty[tuple[Position, Position] | None] = TransformProperty("corner1", (position,) * 2)
+    corner2: TransformProperty[tuple[Position, Position] | None] = TransformProperty("corner2", (position,) * 2)
+
+    xysize: TransformProperty[tuple[Position | None, Position | None]] = TransformProperty(
+        "xysize", (position_or_none,) * 2, (None, None), kind="alias"
+    )
+    xsize: TransformProperty[Position | None] = TransformProperty("xsize", position_or_none)
+    ysize: TransformProperty[Position | None] = TransformProperty("ysize", position_or_none)
+
+    fit: TransformProperty[FitValue | None] = TransformProperty("fit")
+
+    # Panning and Tiling
+    xpan: TransformProperty[float | None] = TransformProperty("xpan", float_or_none)
+    ypan: TransformProperty[float | None] = TransformProperty("ypan", float_or_none)
+    xtile: TransformProperty[int] = TransformProperty("xtile", int, 1)
+    ytile: TransformProperty[int] = TransformProperty("ytile", int, 1)
+
+    # Transitions
+    delay: TransformProperty[float] = TransformProperty("delay", float, 0.0)
+    events: TransformProperty[bool] = TransformProperty("events", bool, True)
+
+    # Other
+    fps: TransformProperty[float | None] = TransformProperty("fps", float_or_none)
+    show_cancels_hide: TransformProperty[bool] = TransformProperty("show_cancels_hide", bool, True)
+
+    # 3D Stage properties
+    point_to: TransformProperty[PointToValue | None] = TransformProperty("point_to")
+
+    orientation: TransformProperty[tuple[float, float, float] | None] = TransformProperty(
+        "orientation", (float_or_none,) * 3
+    )
+    xrotate: TransformProperty[float | None] = TransformProperty("xrotate", float_or_none)
+    yrotate: TransformProperty[float | None] = TransformProperty("yrotate", float_or_none)
+    zrotate: TransformProperty[float | None] = TransformProperty("zrotate", float_or_none)
+
+    matrixanchor: TransformProperty[tuple[Position, Position] | None] = TransformProperty(
+        "matrixanchor", (position_or_none,) * 2
+    )
+    matrixtransform: TransformProperty[MatrixLike | renpy.display.matrix.Matrix | None] = TransformProperty(
+        "matrixtransform", matrix_or_none
+    )
+    perspective: TransformProperty[PerspectiveValue | None] = TransformProperty("perspective")
+    zpos: TransformProperty[float] = TransformProperty("zpos", float, 0.0)
+    zzoom: TransformProperty[bool] = TransformProperty("zzoom", bool, False)
+
+    # Model-based rendering properties
+    mesh: TransformProperty[MeshValue | None] = TransformProperty("mesh", mesh_or_none, diff=None)
+    mesh_pad: TransformProperty[MeshPadValue | None] = TransformProperty("mesh_pad")
+    shader: TransformProperty[str | list[str] | None] = TransformProperty("shader", diff=None)
+    blend: TransformProperty[str | None] = TransformProperty("blend")
+
+    # GL Properties
+    gl_anisotropic: TransformProperty[Any | None] = TransformProperty("gl_anisotropic", diff=None, kind="gl")
+    gl_blend_func: TransformProperty[Any | None] = TransformProperty("gl_blend_func", diff=None, kind="gl")
+    gl_color_mask: TransformProperty[Any | None] = TransformProperty("gl_color_mask", diff=None, kind="gl")
+    gl_cull_face: TransformProperty[Any | None] = TransformProperty("gl_cull_face", diff=None, kind="gl")
+    gl_depth: TransformProperty[Any | None] = TransformProperty("gl_depth", diff=None, kind="gl")
+    gl_drawable_resolution: TransformProperty[Any | None] = TransformProperty(
+        "gl_drawable_resolution", diff=None, kind="gl"
+    )
+    gl_mipmap: TransformProperty[Any | None] = TransformProperty("gl_mipmap", diff=None, kind="gl")
+    gl_pixel_perfect: TransformProperty[Any | None] = TransformProperty("gl_pixel_perfect", diff=None, kind="gl")
+    gl_texture_scaling: TransformProperty[Any | None] = TransformProperty("gl_texture_scaling", diff=None, kind="gl")
+    gl_texture_wrap: TransformProperty[Any | None] = TransformProperty("gl_texture_wrap", diff=None, kind="gl")
+    gl_texture_wrap_tex0: TransformProperty[Any | None] = TransformProperty(
+        "gl_texture_wrap_tex0", diff=None, kind="gl"
+    )
+    gl_texture_wrap_tex1: TransformProperty[Any | None] = TransformProperty(
+        "gl_texture_wrap_tex1", diff=None, kind="gl"
+    )
+    gl_texture_wrap_tex2: TransformProperty[Any | None] = TransformProperty(
+        "gl_texture_wrap_tex2", diff=None, kind="gl"
+    )
+    gl_texture_wrap_tex3: TransformProperty[Any | None] = TransformProperty(
+        "gl_texture_wrap_tex3", diff=None, kind="gl"
+    )
+
+    # Other
+    debug: TransformProperty[Any | None] = TransformProperty("debug")
+    _reset: TransformProperty[bool] = TransformProperty("_reset", bool, False, kind="alias")
+
+    # Deprecated properties
+    if not TYPE_CHECKING:
+        crop_relative: TransformProperty[bool | None] = TransformProperty("crop_relative", bool_or_none)
+        alignaround: TransformProperty[tuple[float, float]] = TransformProperty(
+            "alignaround", (float,) * 2, (0.0, 0.0), kind="alias"
+        )
+        size: TransformProperty[tuple[int, int] | None] = TransformProperty("size", (int,) * 2, kind="alias")
+        maxsize: TransformProperty[tuple[int, int] | None] = TransformProperty("maxsize", (int,) * 2)
 
 
 class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING else object):
@@ -1438,123 +1617,6 @@ def add_uniform(name: str, uniform_type: str):
     else:
         setattr(TransformState, name, None)
     setattr(Transform, name, Proxy(name))
-
-
-def add_property(
-    name: str,
-    atl: Any = any_object,
-    default: Any = None,
-    diff: Literal[2, 4] | None = 2,
-    kind: Literal["field", "alias", "gl"] = "field",
-):
-    """
-    Adds an ATL property.
-    """
-
-    if hasattr(TransformProperties, name):
-        return
-
-    prop = TransformProperty(
-        name,
-        atl,
-        default,
-        diff,
-        kind,
-    )
-    setattr(TransformProperties, name, prop)
-
-
-add_property("additive", float, 0.0)
-add_property("alpha", float, 1.0)
-add_property("blend", any_object, None)
-add_property("blur", float_or_none, None)
-add_property("corner1", (position_or_none, position_or_none), None)
-add_property("corner2", (position_or_none, position_or_none), None)
-add_property("crop", (position_or_none, position_or_none, position_or_none, position_or_none), None)
-add_property("crop_relative", bool_or_none, None)
-add_property("debug", any_object, None)
-add_property("delay", float, 0)
-add_property("events", bool, True)
-add_property("fit", str, None)
-add_property("fps", float_or_none, None)
-add_property("matrixanchor", (position_or_none, position_or_none), None)
-add_property("matrixcolor", matrix_or_none, None)
-add_property("matrixtransform", matrix_or_none, None)
-add_property("maxsize", (int, int), None)
-add_property("mesh", mesh_or_none, None, diff=None)
-add_property("mesh_pad", any_object, None)
-add_property("nearest", bool_or_none, None)
-add_property("perspective", any_object, None)
-add_property("rotate", float, None)
-add_property("rotate_pad", bool, True)
-add_property("point_to", any_object, None)
-add_property("orientation", (float, float, float), None)
-add_property("xrotate", float, None)
-add_property("yrotate", float, None)
-add_property("zrotate", float, None)
-add_property("shader", any_object, None, diff=None)
-add_property("show_cancels_hide", bool, True)
-add_property("subpixel", bool, False)
-add_property("transform_anchor", bool, False)
-add_property("zoom", float, 1.0)
-
-add_property("xanchoraround", position_or_none, 0.5)
-add_property("xanchor", position_or_none, None, diff=4)
-add_property("xaround", position_or_none, 0.0)
-add_property("xoffset", absolute, 0.0)
-add_property("xpan", float_or_none, None)
-add_property("xpos", position_or_none, None, diff=4)
-add_property("xsize", position_or_none, None)
-add_property("xtile", int, 1)
-add_property("xzoom", float, 1.0)
-
-add_property("yanchoraround", position_or_none, 0.5)
-add_property("yanchor", position_or_none, None, diff=4)
-add_property("yaround", position_or_none, 0.0)
-add_property("yoffset", absolute, 0.0)
-add_property("ypan", float_or_none, None)
-add_property("ypos", position_or_none, None, diff=4)
-add_property("ysize", position_or_none, None)
-add_property("ytile", int, 1)
-add_property("yzoom", float, 1.0)
-
-add_property("zpos", float, 0.0)
-add_property("zzoom", bool, False)
-
-add_property("gl_anisotropic", diff=None, kind="gl")
-add_property("gl_blend_func", diff=None, kind="gl")
-add_property("gl_color_mask", diff=None, kind="gl")
-add_property("gl_cull_face", diff=None, kind="gl")
-add_property("gl_depth", diff=None, kind="gl")
-add_property("gl_drawable_resolution", diff=None, kind="gl")
-add_property("gl_mipmap", diff=None, kind="gl")
-add_property("gl_pixel_perfect", diff=None, kind="gl")
-add_property("gl_texture_scaling", diff=None, kind="gl")
-add_property("gl_texture_wrap", diff=None, kind="gl")
-add_property("gl_texture_wrap_tex0", diff=None, kind="gl")
-add_property("gl_texture_wrap_tex1", diff=None, kind="gl")
-add_property("gl_texture_wrap_tex2", diff=None, kind="gl")
-add_property("gl_texture_wrap_tex3", diff=None, kind="gl")
-
-add_property("alignaround", (float, float), kind="alias")
-add_property("align", (position_or_none, position_or_none), kind="alias")  # documented as (float, float)
-add_property("anchor", (position_or_none, position_or_none), kind="alias")
-add_property("anchorangle", DualAngle.from_any, kind="alias")
-add_property("anchoraround", (position_or_none, position_or_none), kind="alias")
-add_property("anchorradius", position_or_none, kind="alias")
-add_property("angle", float, kind="alias")
-add_property("around", (position_or_none, position_or_none), kind="alias")
-add_property("offset", (absolute, absolute), kind="alias")
-add_property("pos", (position_or_none, position_or_none), kind="alias")
-add_property("radius", position_or_none, kind="alias")
-add_property("size", (int, int), kind="alias")
-add_property("xalign", position_or_none, kind="alias")  # documented as float,
-add_property("xcenter", position_or_none, kind="alias")
-add_property("xycenter", (position_or_none, position_or_none), kind="alias")
-add_property("xysize", (position_or_none, position_or_none), kind="alias")
-add_property("yalign", position_or_none, kind="alias")  # documented as float
-add_property("ycenter", position_or_none, kind="alias")
-add_property("_reset", bool, kind="alias")
 
 
 def _register_properties():
