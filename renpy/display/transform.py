@@ -22,7 +22,7 @@
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 
-from typing import Any
+from typing import Any, Callable, Literal, Protocol, TYPE_CHECKING
 
 import math
 
@@ -161,7 +161,69 @@ def mesh_or_none(x):
         return bool(x)
 
 
-class TransformState(renpy.object.Object):
+class TransformProperty[T]:
+    """
+    A descriptor that describes a transform property.
+
+    This class is not intended to be used in runtime, but to help type checkers
+    infer types of the properties.
+
+    T is the type of all possible values of the property, including the default.
+    """
+
+    name: str
+    "Name of the property."
+    atl_type: Callable[[object], T] | tuple[Callable[[object], T], ...]
+    "Callback (or tuple of callbacks) that converts the value to the correct type in the ATL."
+    default: T
+    "Default value of the property."
+    diff: Literal[2, 4, None]
+    "2 or 4 if property can be interpolated with ATL or None if not."
+    kind: Literal["field", "alias", "gl"]
+    """
+    The kind of property, one of:
+    * "field" - a field on the TransformState object.
+    * "alias" - an alias for a field(s) on the TransformState object.
+    * "gl" - a GL property, i.e. Any | None.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        atl_type: Any = any_object,
+        default: T = None,
+        diff: Literal[2, 4, None] = 2,
+        kind: Literal["field", "alias", "gl"] = "field",
+    ):
+        self.name = name
+        self.atl_type = atl_type
+        self.default = default
+        self.diff = diff
+        self.kind = kind
+
+    def __get__(self, instance: "TransformProperties", owner) -> T:
+        raise NotImplementedError("Do not use TransformProperty directly.")
+
+    def __set__(self, instance: "TransformProperties", value: T) -> None:
+        raise NotImplementedError("Do not use TransformProperty directly.")
+
+
+class TransformProperties(Protocol):
+    """
+    Protocol that defines all statically known transform properties.
+
+    This class is not used directly in runtime, but helps the type checker
+    to infer types of the properties for various classes that implement it.
+
+    NOTE: Because Protocol inherits from ABCMeta, it is advised not to inherit
+    from it in runtime to avoid metaclass conflicts.
+
+    NOTE: Explicit type annotation for protocol member forces type checker to
+    take precedence over the type annotation in the protocol implementation.
+    """
+
+
+class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING else object):
     last_angle = 0.0
     last_relative_anchorangle = 0.0
     last_absolute_anchorangle = 0.0
@@ -676,7 +738,7 @@ class TransformState(renpy.object.Object):
 RESET_STATE = TransformState()
 
 
-class Transform(Container):
+class Transform(Container, TransformProperties if TYPE_CHECKING else object):
     """
     Documented in sphinx, because we can't scan this object.
     """
