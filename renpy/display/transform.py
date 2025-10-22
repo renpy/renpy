@@ -555,8 +555,8 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
         )
 
         return position(
-            absolute=math.hypot(absolute_vector_x, absolute_vector_y) * self.absolute_anchor_radius_sign,  # type: ignore
-            relative=math.hypot(relative_vector_x, relative_vector_y) * self.relative_anchor_radius_sign,  # type: ignore
+            math.hypot(absolute_vector_x, absolute_vector_y) * self.absolute_anchor_radius_sign,
+            math.hypot(relative_vector_x, relative_vector_y) * self.relative_anchor_radius_sign,
         )
 
     def set_anchorangle(self, angle):
