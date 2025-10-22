@@ -1388,25 +1388,6 @@ class Proxy:
         return setattr(instance.state, self.name, value)
 
 
-def add_property(name, atl=any_object, default=None, diff=2):  # type: (str, Any, Any, int|None) -> None
-    """
-    Adds an ATL property.
-    """
-
-    if name in all_properties:
-        return
-
-    all_properties.add(name)
-    setattr(TransformState, name, default)
-    setattr(Transform, name, Proxy(name))
-    renpy.atl.PROPERTIES[name] = atl
-
-    if diff == 2:
-        diff2_properties.add(name)
-    elif diff == 4:
-        diff4_properties.add(name)
-
-
 class TextureUniform:
     """
     Descriptor for a sampler2D uniform.
@@ -1459,14 +1440,28 @@ def add_uniform(name: str, uniform_type: str):
     setattr(Transform, name, Proxy(name))
 
 
-def add_gl_property(name):
+def add_property(
+    name: str,
+    atl: Any = any_object,
+    default: Any = None,
+    diff: Literal[2, 4] | None = 2,
+    kind: Literal["field", "alias", "gl"] = "field",
+):
     """
-    Adds a GL property with `name` to Transform and ATL.
+    Adds an ATL property.
     """
 
-    add_property(name, diff=None)
+    if hasattr(TransformProperties, name):
+        return
 
-    gl_properties.add(name)
+    prop = TransformProperty(
+        name,
+        atl,
+        default,
+        diff,
+        kind,
+    )
+    setattr(TransformProperties, name, prop)
 
 
 add_property("additive", float, 0.0)
@@ -1526,44 +1521,71 @@ add_property("yzoom", float, 1.0)
 add_property("zpos", float, 0.0)
 add_property("zzoom", bool, False)
 
-add_gl_property("gl_anisotropic")
-add_gl_property("gl_blend_func")
-add_gl_property("gl_color_mask")
-add_gl_property("gl_cull_face")
-add_gl_property("gl_depth")
-add_gl_property("gl_drawable_resolution")
-add_gl_property("gl_mipmap")
-add_gl_property("gl_pixel_perfect")
-add_gl_property("gl_texture_scaling")
-add_gl_property("gl_texture_wrap")
-add_gl_property("gl_texture_wrap_tex0")
-add_gl_property("gl_texture_wrap_tex1")
-add_gl_property("gl_texture_wrap_tex2")
-add_gl_property("gl_texture_wrap_tex3")
+add_property("gl_anisotropic", diff=None, kind="gl")
+add_property("gl_blend_func", diff=None, kind="gl")
+add_property("gl_color_mask", diff=None, kind="gl")
+add_property("gl_cull_face", diff=None, kind="gl")
+add_property("gl_depth", diff=None, kind="gl")
+add_property("gl_drawable_resolution", diff=None, kind="gl")
+add_property("gl_mipmap", diff=None, kind="gl")
+add_property("gl_pixel_perfect", diff=None, kind="gl")
+add_property("gl_texture_scaling", diff=None, kind="gl")
+add_property("gl_texture_wrap", diff=None, kind="gl")
+add_property("gl_texture_wrap_tex0", diff=None, kind="gl")
+add_property("gl_texture_wrap_tex1", diff=None, kind="gl")
+add_property("gl_texture_wrap_tex2", diff=None, kind="gl")
+add_property("gl_texture_wrap_tex3", diff=None, kind="gl")
 
-ALIASES = {
-    "alignaround": (float, float),
-    "align": (position_or_none, position_or_none),  # documented as (float, float)
-    "anchor": (position_or_none, position_or_none),
-    "anchorangle": DualAngle.from_any,
-    "anchoraround": (position_or_none, position_or_none),
-    "anchorradius": position_or_none,
-    "angle": float,
-    "around": (position_or_none, position_or_none),
-    "offset": (absolute, absolute),
-    "pos": (position_or_none, position_or_none),
-    "radius": position_or_none,
-    "size": (int, int),
-    "xalign": position_or_none,  # documented as float,
-    "xcenter": position_or_none,
-    "xycenter": (position_or_none, position_or_none),
-    "xysize": (position_or_none, position_or_none),
-    "yalign": position_or_none,  # documented as float
-    "ycenter": position_or_none,
-    "_reset": bool,
-}
+add_property("alignaround", (float, float), kind="alias")
+add_property("align", (position_or_none, position_or_none), kind="alias")  # documented as (float, float)
+add_property("anchor", (position_or_none, position_or_none), kind="alias")
+add_property("anchorangle", DualAngle.from_any, kind="alias")
+add_property("anchoraround", (position_or_none, position_or_none), kind="alias")
+add_property("anchorradius", position_or_none, kind="alias")
+add_property("angle", float, kind="alias")
+add_property("around", (position_or_none, position_or_none), kind="alias")
+add_property("offset", (absolute, absolute), kind="alias")
+add_property("pos", (position_or_none, position_or_none), kind="alias")
+add_property("radius", position_or_none, kind="alias")
+add_property("size", (int, int), kind="alias")
+add_property("xalign", position_or_none, kind="alias")  # documented as float,
+add_property("xcenter", position_or_none, kind="alias")
+add_property("xycenter", (position_or_none, position_or_none), kind="alias")
+add_property("xysize", (position_or_none, position_or_none), kind="alias")
+add_property("yalign", position_or_none, kind="alias")  # documented as float
+add_property("ycenter", position_or_none, kind="alias")
+add_property("_reset", bool, kind="alias")
 
-renpy.atl.PROPERTIES.update(ALIASES)
 
-for name in ALIASES:
-    setattr(Transform, name, Proxy(name))
+def _register_properties():
+    for value in TransformProperties.__dict__.values():
+        if not isinstance(value, TransformProperty):
+            continue
+
+        if value.name in all_properties:
+            raise Exception(f"Transform property {value.name} is already defined.")
+
+        # Aliases should be known by ATL and Transform class.
+        setattr(Transform, value.name, Proxy(value.name))
+        renpy.atl.PROPERTIES[value.name] = value.atl_type
+
+        if value.kind == "alias":
+            if not hasattr(TransformState, value.name):
+                raise Exception(f"Transform property {value.name} is an alias, but TransformState does not define it.")
+
+            continue
+
+        setattr(TransformState, value.name, value.default)
+
+        all_properties.add(value.name)
+        if value.diff == 2:
+            diff2_properties.add(value.name)
+        elif value.diff == 4:
+            diff4_properties.add(value.name)
+
+        if value.kind == "gl":
+            gl_properties.add(value.name)
+
+
+_register_properties()
+del _register_properties
