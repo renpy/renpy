@@ -54,6 +54,7 @@ clockwise
 counterclockwise
 circles
 knot
+warp
 """
 
 # SL2 Keywords (that aren't statements).
