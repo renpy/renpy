@@ -36,105 +36,105 @@ class absolute(float):
         return f"absolute({float.__repr__(self)})"
 
     # Special case, should return floats.
-    def __divmod__(self, value: float, /):
+    def __divmod__(self, value: float,):
         return self // value, self % value
 
-    def __rdivmod__(self, value: float, /):
+    def __rdivmod__(self, value: float):
         return value // self, value % self
 
     # Wrap all dunder methods that return floats to return absolutes.
-    def __add__(self, value: float, /) -> "absolute":
+    def __add__(self, value: float) -> "absolute":
         rv = super().__add__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __radd__(self, value: float, /) -> "absolute":
+    def __radd__(self, value: float) -> "absolute":
         rv = super().__radd__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __sub__(self, value: float, /) -> "absolute":
+    def __sub__(self, value: float) -> "absolute":
         rv = super().__sub__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __rsub__(self, value: float, /) -> "absolute":
+    def __rsub__(self, value: float) -> "absolute":
         rv = super().__rsub__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __mul__(self, value: float, /) -> "absolute":
+    def __mul__(self, value: float) -> "absolute":
         rv = super().__mul__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __rmul__(self, value: float, /) -> "absolute":
+    def __rmul__(self, value: float) -> "absolute":
         rv = super().__rmul__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __truediv__(self, value: float, /) -> "absolute":
+    def __truediv__(self, value: float) -> "absolute":
         rv = super().__truediv__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __rtruediv__(self, value: float, /) -> "absolute":
+    def __rtruediv__(self, value: float) -> "absolute":
         rv = super().__rtruediv__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __floordiv__(self, value: float, /) -> "absolute":
+    def __floordiv__(self, value: float) -> "absolute":
         rv = super().__floordiv__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __rfloordiv__(self, value: float, /) -> "absolute":
+    def __rfloordiv__(self, value: float) -> "absolute":
         rv = super().__rfloordiv__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __mod__(self, value: float, /) -> "absolute":
+    def __mod__(self, value: float) -> "absolute":
         rv = super().__mod__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __rmod__(self, value: float, /) -> "absolute":
+    def __rmod__(self, value: float) -> "absolute":
         rv = super().__rmod__(value)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __pow__(self, value: float, mod: None = None, /) -> Any:
+    def __pow__(self, value: float, mod: None = None) -> Any:
         rv = super().__pow__(value, mod)
         if rv is NotImplemented:
             return NotImplemented
 
         return absolute(rv)
 
-    def __rpow__(self, value: float, mod: None = None, /) -> Any:
+    def __rpow__(self, value: float, mod: None = None) -> Any:
         rv = super().__rpow__(value, mod)
         if rv is NotImplemented:
             return NotImplemented
@@ -151,9 +151,9 @@ class absolute(float):
         return absolute(super().__abs__())
 
     @overload
-    def __round__(self, ndigits: None = None, /) -> int: ...
+    def __round__(self, ndigits: None = None) -> int: ...
     @overload
-    def __round__(self, ndigits: SupportsIndex, /) -> "absolute": ...
+    def __round__(self, ndigits: SupportsIndex) -> "absolute": ...
 
     def __round__(self, ndigits: SupportsIndex | None = None) -> "absolute | int":
         rv = super().__round__(ndigits)
@@ -165,7 +165,7 @@ class absolute(float):
     def conjugate(self) -> "absolute":
         return absolute(super().conjugate())
 
-    def fromhex(self, s: str, /) -> "absolute":
+    def fromhex(self, s: str) -> "absolute":
         return absolute(super().fromhex(s))
 
     # Other methods should return non-floats.
@@ -222,22 +222,21 @@ class position:
     relative: float
 
     @overload
-    def __new__(cls, _: "position", /) -> "position": ...
+    def __new__(cls, _: "position") -> "position": ...
 
     @overload
-    def __new__(cls, absolute: int | _absolute = 0, /) -> "position": ...
+    def __new__(cls, absolute: int | _absolute = 0) -> "position": ...
 
     @overload
-    def __new__(cls, relative: float = 0.0, /) -> "position": ...
+    def __new__(cls, relative: float = 0.0) -> "position": ...
 
     @overload
-    def __new__(cls, absolute: int | float, relative: float, /) -> "position": ...
+    def __new__(cls, absolute: int | float, relative: float) -> "position": ...
 
     def __new__(
         cls,
         absolute: "int | float | position" = 0,
         relative: "float | None" = None,
-        /,
     ) -> "position":
         """
         If passed two parameters, takes them as an absolute and a relative values of the position.
@@ -260,7 +259,7 @@ class position:
             return self
 
     @classmethod
-    def from_any(cls, value: Position, /) -> "position":
+    def from_any(cls, value: Position) -> "position":
         if isinstance(value, position):
             return value
         elif isinstance(value, (int, absolute)):
@@ -283,7 +282,7 @@ class position:
         else:
             return self
 
-    def __add__(self, value: "position", /) -> "position":
+    def __add__(self, value: "position") -> "position":
         if isinstance(value, position):
             return position(self.absolute + value.absolute, self.relative + value.relative)
 
@@ -291,13 +290,13 @@ class position:
 
     __radd__ = __add__
 
-    def __sub__(self, value: "position", /) -> "position":
+    def __sub__(self, value: "position") -> "position":
         if isinstance(value, position):
             return position(self.absolute - value.absolute, self.relative - value.relative)
 
         return NotImplemented
 
-    def __mul__(self, value: int | float, /) -> "position":
+    def __mul__(self, value: int | float) -> "position":
         if isinstance(value, (int, float)):
             return position(self.absolute * value, self.relative * value)
 
@@ -305,7 +304,7 @@ class position:
 
     __rmul__ = __mul__
 
-    def __truediv__(self, value: int | float, /) -> "position":
+    def __truediv__(self, value: int | float) -> "position":
         if isinstance(value, (int, float)):
             return position(self.absolute / value, self.relative / value)
 
