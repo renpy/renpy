@@ -632,24 +632,82 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
             self.subpixel,
         )
 
-    # These update various properties.
-    def get_xalign(self):
+    # Define all alias transform properties as data descriptors.
+    @property
+    def pos(self) -> tuple[Position | None, Position | None]:
+        return self.xpos, self.ypos
+
+    @pos.setter
+    def pos(self, value: tuple[Position | None, Position | None]):
+        self.xpos, self.ypos = value
+
+    @property
+    def anchor(self) -> tuple[Position | None, Position | None]:
+        return self.xanchor, self.yanchor
+
+    @anchor.setter
+    def anchor(self, value: tuple[Position | None, Position | None]):
+        self.xanchor, self.yanchor = value
+
+    @property
+    def align(self) -> tuple[Position | None, Position | None]:
+        return self.xpos, self.ypos
+
+    @align.setter
+    def align(self, value: tuple[Position | None, Position | None]):
+        self.xpos, self.ypos = self.xanchor, self.yanchor = value
+
+    @property
+    def xalign(self) -> Position | None:
         return self.xpos
 
-    def set_xalign(self, v):
-        self.xpos = v
-        self.xanchor = v
+    @xalign.setter
+    def xalign(self, value: Position | None):
+        self.xpos = self.xanchor = value
 
-    xalign = property(get_xalign, set_xalign)
-
-    def get_yalign(self):
+    @property
+    def yalign(self) -> Position | None:
         return self.ypos
 
-    def set_yalign(self, v):
-        self.ypos = v
-        self.yanchor = v
+    @yalign.setter
+    def yalign(self, value: Position | None):
+        self.ypos = self.yanchor = value
 
-    yalign = property(get_yalign, set_yalign)
+    @property
+    def xycenter(self) -> tuple[Position | None, Position | None]:
+        return self.xpos, self.ypos
+
+    @xycenter.setter
+    def xycenter(self, value: tuple[Position | None, Position | None]):
+        self.xpos, self.ypos = value
+        self.xanchor = 0.5
+        self.yanchor = 0.5
+
+    @property
+    def xcenter(self) -> Position | None:
+        return self.xpos
+
+    @xcenter.setter
+    def xcenter(self, value: Position | None):
+        self.xpos = value
+        self.xanchor = 0.5
+
+    @property
+    def ycenter(self) -> Position | None:
+        return self.ypos
+
+    @ycenter.setter
+    def ycenter(self, value: Position | None):
+        self.ypos = value
+        self.yanchor = 0.5
+
+    @property
+    def offset(self) -> tuple[absolute | int, absolute | int]:
+        return self.xoffset, self.yoffset
+
+    @offset.setter
+    def offset(self, value: tuple[absolute | int, absolute | int]):
+        self.xoffset, self.yoffset = value
 
     @property
     def around(self) -> tuple[Position, Position]:
@@ -825,90 +883,25 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
             value.relative,
         )
 
-    def get_pos(self):
-        return self.xpos, self.ypos
-
-    def set_pos(self, value):
-        self.xpos, self.ypos = value
-
-    pos = property(get_pos, set_pos)
-
-    def get_anchor(self):
-        return self.xanchor, self.yanchor
-
-    def set_anchor(self, value):
-        self.xanchor, self.yanchor = value
-
-    anchor = property(get_anchor, set_anchor)
-
-    def set_align(self, value):
-        self.xanchor, self.yanchor = value
-        self.xpos, self.ypos = value
-
-    align = property(get_pos, set_align)
-
-    def get_offset(self):
-        return self.xoffset, self.yoffset
-
-    def set_offset(self, value):
-        self.xoffset, self.yoffset = value
-
-    offset = property(get_offset, set_offset)
-
-    def get_xysize(self):
+    @property
+    def xysize(self) -> tuple[Position | None, Position | None]:
         return self.xsize, self.ysize
 
-    def set_xysize(self, value):
-        if value is None:
-            value = (None, None)
+    @xysize.setter
+    def xysize(self, value: tuple[Position | None, Position | None]):
         self.xsize, self.ysize = value
 
-    xysize = property(get_xysize, set_xysize)
-
-    def set_size(self, value):
-        if value is None:
-            self.xysize = None
-        else:
-            self.xysize = tuple(int(x) if isinstance(x, float) else x for x in value)
-
-    size = property(get_xysize, set_size)
-
-    def set_xcenter(self, value):
-        self.xpos = value
-        self.xanchor = 0.5
-
-    def get_xpos(self):
-        return self.xpos
-
-    def set_ycenter(self, value):
-        self.ypos = value
-        self.yanchor = 0.5
-
-    def get_ypos(self):
-        return self.ypos
-
-    xcenter = property(get_xpos, set_xcenter)
-    ycenter = property(get_ypos, set_ycenter)
-
-    def set_xycenter(self, value):
-        if value is None:
-            value = (None, None)
-        self.xcenter, self.ycenter = value
-
-    xycenter = property(get_pos, set_xycenter)
-
-    def get_reset(self):
+    @property
+    def _reset(self) -> bool:
         return False
 
-    def set_reset(self, value):
+    @_reset.setter
+    def _reset(self, value: bool):
         if value:
             self.take_state(RESET_STATE)
 
-    _reset = property(get_reset, set_reset)
-
     # Deprecated properties.
     if not TYPE_CHECKING:
-
         @property
         def alignaround(self) -> tuple[float, float]:
             return self.xaround, self.yaround
@@ -918,6 +911,23 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
             self.xanchor, self.yanchor = value
             self.xaround, self.yaround = value
             self.xanchoraround, self.yanchoraround = value
+
+        @property
+        def size(self) -> tuple[int, int] | None:
+            if self.xsize is None or self.ysize is None:
+                return None
+
+            xsize = int(absolute.compute_raw(self.xsize, self.available_width))
+            ysize = int(absolute.compute_raw(self.ysize, self.available_height))
+            return xsize, ysize
+
+        @size.setter
+        def size(self, value: tuple[int | float, int | float] | None):
+            if value is None:
+                self.xsize = self.ysize = None
+            else:
+                self.xsize = int(value[0])
+                self.ysize = int(value[1])
 
 
 RESET_STATE = TransformState()
