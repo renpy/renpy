@@ -565,7 +565,7 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
         self.available_height = ts.available_height
 
         # Set the position and anchor to None, so inheritance works.
-        if self.perspective is None:  # type: ignore
+        if self.perspective is None:
             self.xpos = None
             self.ypos = None
             self.xanchor = None
@@ -642,7 +642,7 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
             self.yanchor = old_yanchor
 
     def get_placement(self, cxoffset: absolute | int = 0, cyoffset: absolute | int = 0) -> Placement:
-        if self.perspective is not None:  # type: ignore
+        if self.perspective is not None:
             return (
                 0,
                 0,
@@ -978,15 +978,15 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
             self.active = False
             self.state = TransformState()
 
-            self.state.xpos = self.xpos or 0  # type: ignore
-            self.state.ypos = self.ypos or 0  # type: ignore
-            self.state.xanchor = self.xanchor or 0  # type: ignore
-            self.state.yanchor = self.yanchor or 0  # type: ignore
-            self.state.alpha = self.alpha  # type: ignore
-            self.state.rotate = self.rotate  # type: ignore
-            self.state.zoom = self.zoom  # type: ignore
-            self.state.xzoom = self.xzoom  # type: ignore
-            self.state.yzoom = self.yzoom  # type: ignore
+            self.state.xpos = self.xpos or 0
+            self.state.ypos = self.ypos or 0
+            self.state.xanchor = self.xanchor or 0
+            self.state.yanchor = self.yanchor or 0
+            self.state.alpha = self.alpha
+            self.state.rotate = self.rotate
+            self.state.zoom = self.zoom
+            self.state.xzoom = self.xzoom
+            self.state.yzoom = self.yzoom
 
             self.hide_request = False
             self.hide_response = True
@@ -1377,7 +1377,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
         if (not d.hide_response) or (not d.replaced_response):
             renpy.display.render.redraw(d, 0)
-            return d
+            return d  # type: ignore
 
         return None
 
@@ -1456,7 +1456,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
         if self.hide_request:
             return None
 
-        if not self.state.events:  # type: ignore
+        if not self.state.events:
             return
 
         children = self.children
@@ -1500,7 +1500,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
             child = self.child
 
         if getattr(child, "_duplicatable", False):
-            child = child._duplicate(_args)
+            child = child._duplicate(_args)  # type: ignore
 
         rv = Transform(child=child, function=self.function, style=self.style_arg, _args=_args, **self.kwargs)
 
@@ -1591,7 +1591,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
         rv = self(_args=args)
         rv.take_execution_state(self)
 
-        return rv
+        return rv  # type: ignore
 
     def _in_current_store(self):
         if self.child is None:
