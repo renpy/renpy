@@ -639,7 +639,8 @@ fix_dlc("renios", "renios")
             # The destination directory.
             if destination is None:
                 destination = build["destination"]
-                parent = os.path.dirname(project.path)
+                path, sep, package = project.path.rpartition(project.name)
+                parent = path or package
                 self.destination = os.path.join(parent, destination)
             else:
                 self.destination = destination
