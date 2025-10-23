@@ -22,14 +22,14 @@
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 
-from typing import Any, Callable, Literal, Protocol, TYPE_CHECKING
+from typing import Any, Callable, Literal, Protocol, Self, TYPE_CHECKING
 
 import math
 
 import renpy
 from renpy.types import DisplayableLike, Position
 from renpy.display.position import absolute, position
-from renpy.display.displayable import Displayable
+from renpy.display.displayable import Displayable, DisplayableArguments, Placement
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
 
@@ -45,8 +45,8 @@ class Camera(renpy.object.Object):
         The name of the layer.
     """
 
-    def __init__(self, layer="master"):
-        self.layer = layer
+    def __init__(self, layer: str = "master"):
+        self.layer: str = layer
 
 
 class DualAngle:
@@ -165,7 +165,7 @@ class DualAngle:
 
 
 # The null object that's used if we don't have a defined child.
-null = None
+null: renpy.display.layout.Null | None = None
 
 
 def get_null():
@@ -178,7 +178,7 @@ def get_null():
     return null
 
 
-def first_not_none(*args):
+def first_not_none[T, T2](*args: *tuple[*tuple[T | None, ...], T2]) -> T | T2:
     """
     Returns the first argument that is not None, or the last argument if
     all are None.
@@ -191,7 +191,7 @@ def first_not_none(*args):
     return args[-1]
 
 
-def limit_angle(n):
+def limit_angle(n: float) -> float:
     """
     Limits an angle to the range 0 and 360 degrees.
     """
@@ -204,38 +204,41 @@ def limit_angle(n):
     return n
 
 
-def position_or_none(x):
+def position_or_none(x: Any) -> Position | None:
     if x is None:
         return None
-    return position.from_any(x)
+
+    return position(x)
 
 
-def any_object(x):
+def any_object(x: Any) -> object:
     return x
 
 
-def bool_or_none(x):
+def bool_or_none(x: Any) -> bool | None:
     if x is None:
         return x
+
     return bool(x)
 
 
-def float_or_none(x):
+def float_or_none(x: Any) -> float | None:
     if x is None:
         return x
+
     return float(x)
 
 
-def matrix_or_none(x):
+def matrix_or_none(x: Any) -> "MatrixLike | renpy.display.matrix.Matrix | None":
     if x is None:
         return None
     elif callable(x):
-        return x
+        return x  # type: ignore
     else:
         return renpy.display.matrix.Matrix(x)
 
 
-def mesh_or_none(x):
+def mesh_or_none(x: Any) -> "MeshValue | None":
     if x is None:
         return None
     elif isinstance(x, tuple):
@@ -486,21 +489,41 @@ class TransformProperties(Protocol):
 
 
 class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING else object):
-    last_angle = 0.0
-    last_relative_anchorangle = 0.0
-    last_absolute_anchorangle = 0.0
-    last_events = True
+    # Most fields on this object are set by _register_properties at the bottom of this file.
 
-    available_width = 0
-    available_height = 0
+    # An xpos (etc) inherited from our child overrides an xpos inherited
+    # from an old transform, but not an xpos set in the current transform.
 
-    radius_type = absolute
+    # inherited_xpos stores the oldts.xpos, which is overridden by the xpos, if not None.
+    inherited_xpos: Position | None = None
+    inherited_ypos: Position | None = None
+    inherited_xanchor: Position | None = None
+    inherited_yanchor: Position | None = None
 
-    radius_sign = 1
-    relative_anchor_radius_sign = 1
-    absolute_anchor_radius_sign = 1
+    # This is used to schedule event on transform when ts.events changes.
+    last_events: bool = True
+    "Last value of events property."
+
+    # Set in transform render, and used in various properties to determine
+    # the available space.
+    available_width: float = 0
+    available_height: float = 0
+
+    # Those fields are used by polar positioning.
+    last_angle: float | None = None
+    last_relative_anchorangle: float | None = None
+    last_absolute_anchorangle: float | None = None
+    radius_sign: Literal[1, -1] = 1
+    relative_anchor_radius_sign: Literal[1, -1] = 1
+    absolute_anchor_radius_sign: Literal[1, -1] = 1
 
     texture_uniforms: set[str] | None = None
+    "If not None, the set of uniforms that provide textures."
+
+    if TYPE_CHECKING:
+        # Other properties, e.g. shader uniforms can be defined at runtime,
+        # and accessing them is valid.
+        def __getattr__(self, name: str) -> Any: ...
 
     def __init__(self):
         # Most fields on this object are set by add_property, at the bottom
@@ -519,12 +542,17 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
         # The last angle that was rotated to.
         self.last_angle = None
 
-    def take_state(self, ts):
+    def take_state(self, ts: "TransformState"):
+        """
+        Update this transform state from `ts`.
+        """
+
         d = self.__dict__
 
         for k in all_properties:
             d[k] = getattr(ts, k)
 
+        # Update other state-only properties.
         self.last_angle = ts.last_angle
         self.radius_sign = ts.radius_sign
         self.relative_anchor_radius_sign = ts.relative_anchor_radius_sign
@@ -553,9 +581,12 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
         self.yoffset = ts.yoffset
         self.subpixel = ts.subpixel
 
-    # Returns a dict, with p -> (old, new) where p is a property that
-    # has changed between this object and the new object.
-    def diff(self, newts):
+    def diff(self, newts: "TransformState") -> dict[str, tuple[Any, Any]]:
+        """
+        Returns a dict, with p -> (old, new) where p is a property that
+        has changed between this object and the new object.
+        """
+
         rv = {}
 
         for prop in diff2_properties:
@@ -579,9 +610,9 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
 
         return rv
 
-    def get(self, prop):
+    def get(self, prop: str) -> Any | None:
         """
-        Returns the value of an attribute.
+        Returns the value of a property, taking inherited values into account.
         """
 
         old_xpos = self.xpos
@@ -610,7 +641,7 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
             self.xanchor = old_xanchor
             self.yanchor = old_yanchor
 
-    def get_placement(self, cxoffset=0, cyoffset=0):
+    def get_placement(self, cxoffset: absolute | int = 0, cyoffset: absolute | int = 0) -> Placement:
         if self.perspective is not None:  # type: ignore
             return (
                 0,
@@ -902,6 +933,7 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
 
     # Deprecated properties.
     if not TYPE_CHECKING:
+
         @property
         def alignaround(self) -> tuple[float, float]:
             return self.xaround, self.yaround
@@ -975,7 +1007,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
             self.replaced_request = False
             self.replaced_response = True
 
-    DEFAULT_ARGUMENTS = {
+    DEFAULT_ARGUMENTS: dict[str, dict[str, Any]] = {
         "selected_activate": {},
         "selected_hover": {},
         "selected_idle": {},
@@ -987,27 +1019,76 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
         "": {},
     }
 
-    # Compatibility with old versions of the class.
+    children: list[Displayable] = []
+    child: Displayable | None = None
+    original_child: Displayable | None = None
+
     active = False
-    children = []
-    arguments = DEFAULT_ARGUMENTS
+    "True if the transform was updated at least once."
 
-    # Default before we set this.
-    child_size = (0, 0)
+    arguments: dict[str, dict[str, Any]] | None = DEFAULT_ARGUMENTS
+    """
+    A map from prefix to a dictionary of properties for that prefix, computed from
+    the arguments that were passed to the transform constructor.
+    Transform will update its state to the values of current active prefix on
+    each redraw, but before using transform function, so any changes made from
+    the outside will be overwritten.
 
-    original_child = None
+    If no properties were given, this will be None.
+    """
+
+    kwargs: dict[str, Any]
+    "Dict of keyword arguments passed to the constructor."
+
+    child_size: tuple[float, float] = (0, 0)
+    "Size of the child. This is set after the first render."
+
+    render_size: tuple[float, float] = (0, 0)
+    "Size of the render after apllying transform properties. This is set after the first render."
+
+    type TransformFunction = Callable[["Transform", float, float], float | None]
+    """
+    A function that takes a current transform, show time, animation time, and
+    returns the amount of seconds it should be redrawn in, or None to stop redrawing.
+    """
+
+    forward: renpy.display.matrix.Matrix | None = None
+    reverse: renpy.display.matrix.Matrix | None = None
+
+    hide_request: bool = False
+    "True if the transform has been requested to be hidden."
+
+    hide_response: bool = True
+    "True if transform and its child is ready to be hidden."
+
+    replaced_request: bool = False
+    "True if the transform has been requested to be replaced."
+
+    replaced_response: bool = True
+    "True if transform and its is child ready to be replaced."
+
+    st: float = 0
+    at: float = 0
+    st_offset: float = 0
+    at_offset: float = 0
+
+    child_st_base: float = 0
+    """
+    Offset of the child's show time. This is used to reset the child's show time
+    when transform child is changed.
+    """
 
     def __init__(
         self,
-        child=None,
-        function=None,
-        style="default",
-        focus=None,
-        default=False,
-        _args=None,
+        child: DisplayableLike | None = None,
+        function: TransformFunction | None = None,
+        style: str = "default",
+        focus: str | None = None,
+        default: bool = False,
+        _args: DisplayableArguments | None = None,
         *,
-        reset=False,
-        **kwargs,
+        reset: bool = False,
+        **kwargs: Any,
     ):
         properties = {k: kwargs.pop(k) for k in style_properties if k in kwargs}
 
@@ -1025,10 +1106,10 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
         if child is not None:
             self.add(child)
 
-        self.original_child: renpy.display.displayable.Displayable = child
+        self.original_child = child
         "The child that was passed to the constructor."
 
-        self.state = TransformState()  # type: Any
+        self.state = TransformState()
 
         if kwargs:
             # A map from prefix -> (prop -> value)
@@ -1065,8 +1146,8 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
             self.arguments = None
 
         # This is the matrix transforming our coordinates into child coordinates.
-        self.forward = None  # type: renpy.display.matrix.Matrix|None
-        self.reverse = None  # type: renpy.display.matrix.Matrix|None
+        self.forward = None
+        self.reverse = None
 
         # Have we called the function at least once?
         self.active = False
@@ -1093,7 +1174,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
         self.child_size = (0, 0)
         self.render_size = (0, 0)
 
-    def visit(self):
+    def visit(self) -> list[Displayable]:
         if self.child is None:
             return []
         else:
@@ -1101,7 +1182,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
     # The default function chooses entries from self.arguments that match
     # the style prefix, and applies them to the state.
-    def default_function(self, state, st, at):
+    def default_function(self, state: "Transform", st: float, at: float) -> None:
         if self.arguments is None:
             return None
 
@@ -1125,16 +1206,22 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
         return None
 
-    def set_transform_event(self, event):
+    def set_transform_event(self, event: str):
         if self.child is not None:
             self.child.set_transform_event(event)
             self.last_child_transform_event = event
 
         super(Transform, self).set_transform_event(event)
 
-    def take_state(self, t):
+    def take_state(self, t: "Transform"):
         """
-        Takes the transformation state from object t into this object.
+        Takes the transformation state from transform `t` into current transform.
+
+        That is, apllies all changed transform properties from t, as well as
+        takes the child from `t` if current transform has no child.
+
+        Note, that this will cancel any changed transform properties made on
+        current transform.
         """
 
         if self is t:
@@ -1155,10 +1242,13 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
         # The arguments will be applied when the default function is
         # called.
 
-    def take_execution_state(self, t):
+    def take_execution_state(self, t: "Transform"):
         """
-        Takes the execution state from object t into this object. This is
-        overridden by renpy.atl.TransformBase.
+        Takes the execution state from object t into this object.
+
+        That is, takes the placement from t and child show time offset.
+
+        This is overridden by renpy.atl.TransformBase.
         """
 
         if self is t:
@@ -1180,9 +1270,9 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
         if isinstance(self.child, Transform) and isinstance(t.child, Transform):
             self.child.take_execution_state(t.child)
 
-    def copy(self):
+    def copy(self) -> "Transform":
         """
-        Makes a copy of this transform.
+        Makes a copy of this transform including execution state.
         """
 
         d = self()
@@ -1194,7 +1284,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
         return d
 
-    def _change_transform_child(self, child):
+    def _change_transform_child(self, child) -> "Transform":
         rv = self.copy()
 
         if self.child is not None:
@@ -1202,7 +1292,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
         return rv
 
-    def _handles_event(self, event):
+    def _handles_event(self, event: str):
         if (event == "replaced") and (not self.active):
             return True
 
@@ -1214,8 +1304,9 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
         return False
 
-    def adjust_for_fps(self, st, at):
-        # The timebases, adjusted for fps.
+    def adjust_for_fps(self, st: float, at: float, /) -> tuple[float, float]:
+        "Adjusts timebases for fps transform property."
+
         fst = st
         fat = at
 
@@ -1228,7 +1319,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
         return fst, fat
 
-    def _hide(self, st, at, kind):
+    def _hide(self, st, at, kind) -> "Self | None":
         if kind == "cancel":
             if self.state.show_cancels_hide:
                 return None
@@ -1290,7 +1381,11 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
         return None
 
-    def set_child(self, child, duplicate=True):
+    def set_child(self, child: DisplayableLike, duplicate: bool = True) -> None:
+        """
+        Change the child of this transform and rerender it immediately.
+        """
+
         child = renpy.easy.displayable(child)
 
         if duplicate and child._duplicatable:
@@ -1338,7 +1433,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
                 renpy.game.interface.timeout(0)
             self.state.last_events = self.state.events
 
-    def render(self, width, height, st, at):
+    def render(self, width: float, height: float, st: float, at: float) -> renpy.display.render.Render:
         # Prevent time from ticking backwards, as can happen if we replace a
         # transform but keep its state.
         if st + self.st_offset <= self.st:
@@ -1386,7 +1481,21 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
         return None
 
-    def __call__(self, child=None, take_state=True, _args=None):
+    def __call__(
+        self,
+        child: DisplayableLike | None = None,
+        take_state: bool = True,
+        _args: DisplayableArguments | None = None,
+    ) -> "Transform":
+        """
+        Creates a new transform with the same properties as this transform,
+        with a duplicated child.
+
+        `child`
+            The child to use for the new transform. If None, the child of
+            this transform is used.
+        """
+
         if child is None:
             child = self.child
 
@@ -1406,7 +1515,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
             self._duplicatable = False
 
-    def get_placement(self):
+    def get_placement(self) -> Placement:
         if not self.active:
             self.update_state()
 
@@ -1472,7 +1581,7 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
     _duplicatable = True
 
-    def _duplicate(self, args):
+    def _duplicate(self, args: DisplayableArguments) -> Self:
         if args and args.args:
             args.extraneous()
 
@@ -1510,7 +1619,16 @@ class Transform(Container, TransformProperties if TYPE_CHECKING else object):
 
 
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
-    def __init__(self, atl, child=None, context={}, parameters=None, **properties):
+    raw_child: Displayable | None = None
+
+    def __init__(
+        self,
+        atl: "renpy.atl.RawBlock",
+        child: DisplayableLike | None = None,
+        context: dict[str, Any] = {},
+        parameters: "renpy.parameter.Signature | None" = None,
+        **properties: Any,
+    ):
         renpy.atl.ATLTransformBase.__init__(self, atl, context, parameters)
         Transform.__init__(self, child=child, **properties)
 
@@ -1543,20 +1661,23 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         return repr((self.child, self.atl.loc))
 
 
-# Names of style properties that should be sent to the parent.
-style_properties = {"alt"}
+style_properties: set[str] = {"alt"}
+"Names of style properties that should be sent to the parent."
 
-# Names of transform properties, and if the property should be handled with
-# diff2 or diff4.
-all_properties = set()
-diff2_properties = set()
-diff4_properties = set()
+all_properties: set[str] = set()
+"Names of all non-alias transform properties."
 
-# Uniforms and GL properties.
+diff2_properties: set[str] = set()
+"Names of transform properties that should be handled with diff2."
+
+diff4_properties: set[str] = set()
+"Names of transform properties that should be handled with diff4."
+
 uniforms: dict[str, str] = {}
 "Dict of names of uniforms that are accessible on transforms to their uniform type."
 
-gl_properties = set()
+gl_properties: set[str] = set()
+"Names of transform properties that are GL properties."
 
 
 def _simplify_position(v):
@@ -1573,7 +1694,7 @@ class Proxy:
     This class proxies a field from the transform to its state.
     """
 
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
 
     def __get__(self, instance: Transform | None, owner: Any) -> Any:
