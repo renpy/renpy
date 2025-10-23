@@ -49,36 +49,41 @@ class Camera(renpy.object.Object):
         self.layer = layer
 
 
-class DualAngle(object):
-    def __init__(self, absolute, relative):  # for tests, convert to PY2 after
-        self.absolute = absolute
-        self.relative = relative
+class DualAngle:
+    def __init__(self, absolute: float, relative: float):
+        self.absolute: float = absolute
+        self.relative: float = relative
 
     @classmethod
     def from_any(cls, other):
         if isinstance(other, cls):
             return other
+
         elif type(other) is float:
             return cls(other, other)
-        raise TypeError("Cannot convert {} to DualAngle".format(type(other)))
 
-    def __add__(self, other):
-        if isinstance(other, DualAngle):
-            return DualAngle(self.absolute + other.absolute, self.relative + other.relative)
+        else:
+            raise TypeError(f"Cannot convert {other.__class__} to DualAngle")
+
+    def __add__(self, value: "DualAngle") -> "DualAngle":
+        if isinstance(value, DualAngle):
+            return DualAngle(self.absolute + value.absolute, self.relative + value.relative)
+
         return NotImplemented
 
-    def __sub__(self, other):
-        return self + -other
+    def __sub__(self, value: "DualAngle") -> "DualAngle":
+        if isinstance(value, DualAngle):
+            return DualAngle(self.absolute - value.absolute, self.relative - value.relative)
 
-    def __mul__(self, other):
-        if isinstance(other, (int, float)):
-            return DualAngle(self.absolute * other, self.relative * other)
+        return NotImplemented
+
+    def __mul__(self, value: int | float) -> "DualAngle":
+        if isinstance(value, (int, float)):
+            return DualAngle(self.absolute * value, self.relative * value)
+
         return NotImplemented
 
     __rmul__ = __mul__
-
-    def __neg__(self):
-        return -1 * self
 
 
 # The null object that's used if we don't have a defined child.
