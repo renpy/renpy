@@ -85,6 +85,84 @@ class DualAngle:
 
     __rmul__ = __mul__
 
+    # Those methods are used in TransformState to help polar properties calculations.
+    @staticmethod
+    def get_pos_polar_vector(ts: "TransformState") -> tuple[float, float]:
+        """
+        Return a tuple of (x, y) representing the position of the anchor point.
+        """
+
+        xpos = position(first_not_none(ts.xpos, ts.inherited_xpos, 0))
+        xpos = absolute.compute_raw(xpos, ts.available_width)
+
+        ypos = position(first_not_none(ts.ypos, ts.inherited_ypos, 0))
+        ypos = absolute.compute_raw(ypos, ts.available_height)
+
+        xaround = absolute.compute_raw(position(ts.xaround), ts.available_width)
+        yaround = absolute.compute_raw(position(ts.yaround), ts.available_height)
+
+        return (xpos - xaround, ypos - yaround)
+
+    @staticmethod
+    def get_anchor_polar_vector(ts: "TransformState") -> tuple[tuple[float, float], tuple[float, float]]:
+        """
+        Returns a 2-tuple of 2-tuples,
+        where the first small tuple is absolute and the second tuple is relative,
+        and the first element of each tuple is in x and the second in y.
+        They represent the vector from the anchoraround point to the final anchor point.
+        """
+
+        xanchoraround = position(ts.xanchoraround)
+        yanchoraround = position(ts.yanchoraround)
+        xanchor = position(first_not_none(ts.xanchor, ts.inherited_xanchor, 0))
+        yanchor = position(first_not_none(ts.yanchor, ts.inherited_yanchor, 0))
+
+        absolute_vector = (
+            xanchor.absolute - xanchoraround.absolute,
+            yanchor.absolute - yanchoraround.absolute,
+        )
+        relative_vector = (
+            xanchor.relative - xanchoraround.relative,
+            yanchor.relative - yanchoraround.relative,
+        )
+
+        return absolute_vector, relative_vector
+
+    @staticmethod
+    def set_pos_from_angle_and_radius(ts: "TransformState", angle: float, radius: float):
+        xaround = absolute.compute_raw(position(ts.xaround), ts.available_width)
+        yaround = absolute.compute_raw(position(ts.yaround), ts.available_height)
+
+        angle = angle * math.pi / 180
+
+        dx = radius * math.sin(angle)
+        dy = -radius * math.cos(angle)
+
+        ts.xpos = absolute(xaround + dx)
+        ts.ypos = absolute(yaround + dy)
+
+    @staticmethod
+    def set_anchor_from_anchorangle_and_anchorradius(
+        ts: "TransformState",
+        absolute_anchorangle: float,
+        relative_anchorangle: float,
+        absolute_anchorradius: float,
+        relative_anchorradius: float,
+    ):
+        xanchoraround = position(ts.xanchoraround)
+        yanchoraround = position(ts.yanchoraround)
+
+        absolute_anchorangle = absolute_anchorangle * math.pi / 180
+        relative_anchorangle = relative_anchorangle * math.pi / 180
+
+        absolute_dx = absolute_anchorradius * math.sin(absolute_anchorangle)
+        absolute_dy = -absolute_anchorradius * math.cos(absolute_anchorangle)
+        relative_dx = relative_anchorradius * math.sin(relative_anchorangle)
+        relative_dy = -relative_anchorradius * math.cos(relative_anchorangle)
+
+        ts.xanchor = position(xanchoraround.absolute + absolute_dx, xanchoraround.relative + relative_dx)
+        ts.yanchor = position(yanchoraround.absolute + absolute_dy, yanchoraround.relative + relative_dy)
+
 
 # The null object that's used if we don't have a defined child.
 null = None
@@ -573,48 +651,17 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
 
     yalign = property(get_yalign, set_yalign)
 
-    @staticmethod
-    def scale(value, available):
-        """
-        Converts value to a float, scaled by the available area, if
-        required.
-        """
+    @property
+    def around(self) -> tuple[Position, Position]:
+        return self.xaround, self.yaround
 
-        return float(absolute.compute_raw(value, available))
-
-    def get_around(self):
-        return (self.xaround, self.yaround)
-
-    def set_around(self, value):
+    @around.setter
+    def around(self, value: tuple[Position, Position]):
         self.xaround, self.yaround = value
 
-    def set_alignaround(self, value):
-        self.xanchor, self.yanchor = value
-        self.xaround, self.yaround = value
-        self.xanchoraround, self.yanchoraround = value
-
-    around = property(get_around, set_around)
-    alignaround = property(get_around, set_alignaround)
-
-    def get_anchoraround(self):
-        return (self.xanchoraround, self.yanchoraround)
-
-    def set_anchoraround(self, value):
-        self.xanchoraround, self.yanchoraround = value
-
-    anchoraround = property(get_anchoraround, set_anchoraround)
-
-    def get_pos_polar_vector(self):
-        xpos = self.scale(first_not_none(self.xpos, self.inherited_xpos, 0), self.available_width)
-        ypos = self.scale(first_not_none(self.ypos, self.inherited_ypos, 0), self.available_height)
-
-        xaround = self.scale(self.xaround, self.available_width)
-        yaround = self.scale(self.yaround, self.available_height)
-
-        return (xpos - xaround, ypos - yaround)
-
-    def get_angle(self, vector=None):
-        vector_x, vector_y = vector or self.get_pos_polar_vector()
+    @property
+    def angle(self) -> float:
+        vector_x, vector_y = DualAngle.get_pos_polar_vector(self)
 
         radius = math.hypot(vector_x, vector_y)
         angle = math.atan2(vector_x, -vector_y) / math.pi * 180
@@ -624,85 +671,57 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
 
         if radius < 0.001 and self.last_angle is not None:
             angle = self.last_angle
-        elif self.radius_sign < 0:
+        elif self.radius_sign == -1:
             angle = limit_angle(angle + 180)
 
         return angle
 
-    def get_radius(self, vector=None):
-        vector_x, vector_y = vector or self.get_pos_polar_vector()
+    @angle.setter
+    def angle(self, value: float):
+        self.last_angle = limit_angle(value)
 
+        radius = self.radius
+
+        if radius < 0:
+            value = limit_angle(value + 180)
+            radius = -radius
+
+        DualAngle.set_pos_from_angle_and_radius(self, value, radius)
+
+    @property
+    def radius(self) -> absolute:
+        vector_x, vector_y = DualAngle.get_pos_polar_vector(self)
         return absolute(math.hypot(vector_x, vector_y) * self.radius_sign)
 
-    def set_angle(self, angle):
-        self.last_angle = limit_angle(angle)
+    @radius.setter
+    def radius(self, value: Position):
+        room = min(self.available_width, self.available_height)
+        value = absolute.compute_raw(position(value), room)
+        angle = self.angle
 
-        radius = self.get_radius()
-
-        if radius < 0:
+        if value < 0:
             angle = limit_angle(angle + 180)
-            radius = -radius
-
-        self.set_pos_from_angle_and_radius(angle, radius)
-
-    def set_radius(self, radius):
-        radius = self.scale(radius, min(self.available_width, self.available_height))
-        vector = self.get_pos_polar_vector()
-        angle = self.get_angle(vector)
-
-        if radius < 0:
-            angle = limit_angle(angle + 180)
-            radius = -radius
+            value = -value
             self.radius_sign = -1
-        elif radius > 0:
+        elif value > 0:
             self.radius_sign = 1
 
-        self.set_pos_from_angle_and_radius(angle, radius)
+        DualAngle.set_pos_from_angle_and_radius(self, angle, value)
 
-    def set_pos_from_angle_and_radius(self, angle, radius):
-        xaround = self.scale(self.xaround, self.available_width)
-        yaround = self.scale(self.yaround, self.available_height)
+    @property
+    def anchoraround(self) -> tuple[Position, Position]:
+        return self.xanchoraround, self.yanchoraround
 
-        angle = angle * math.pi / 180
+    @anchoraround.setter
+    def anchoraround(self, value: tuple[Position, Position]):
+        self.xanchoraround, self.yanchoraround = value
 
-        dx = radius * math.sin(angle)
-        dy = -radius * math.cos(angle)
-
-        self.xpos = absolute(xaround + dx)
-        self.ypos = absolute(yaround + dy)
-
-    angle = property(get_angle, set_angle)
-    radius = property(get_radius, set_radius)
-
-    # Anchor polar motions.
-
-    def get_anchor_polar_vector(self):
-        """
-        Returns a 2-tuple of 2-tuples,
-        where the first small tuple is absolute and the second tuple is relative,
-        and the first element of each tuple is in x and the second in y.
-        They represent the vector from the anchoraround point to the final anchor point.
-        """
-        xanchoraround = position.from_any(self.xanchoraround)
-        yanchoraround = position.from_any(self.yanchoraround)
-        xanchor = position.from_any(first_not_none(self.xanchor, self.inherited_xanchor, 0))
-        yanchor = position.from_any(first_not_none(self.yanchor, self.inherited_yanchor, 0))
-
-        absolute_vector = (xanchor.absolute - xanchoraround.absolute, yanchor.absolute - yanchoraround.absolute)
-        relative_vector = (xanchor.relative - xanchoraround.relative, yanchor.relative - yanchoraround.relative)
-
-        return absolute_vector, relative_vector
-
-    def get_anchorangle(self, polar_vectors=None):
-        """
-        Returns a DualAngle object, from the oriented angle in degrees, with 0 as the top direction and 90 as the right,
-        of the vector going from (xanchoraround, yanchoraround) to (xanchor, yanchor).
-        The absolute part of the angle is the angle between the absolute parts of the vectors,
-        and the relative part, of the relative parts.
-        """
-        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = (
-            polar_vectors or self.get_anchor_polar_vector()
-        )
+    @property
+    def anchorangle(self) -> DualAngle:
+        (
+            (absolute_vector_x, absolute_vector_y),
+            (relative_vector_x, relative_vector_y),
+        ) = DualAngle.get_anchor_polar_vector(self)
 
         absolute_radius = math.hypot(absolute_vector_x, absolute_vector_y)
         relative_radius = math.hypot(relative_vector_x, relative_vector_y)
@@ -729,62 +748,54 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
 
         return DualAngle(absolute_angle, relative_angle)
 
-    def get_anchorradius(self, polar_vectors=None):
-        """
-        Returns the distance between (xanchoraround, yanchoraround) and (xanchor, yanchor),
-        as a position object.
-        """
-        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = (
-            polar_vectors or self.get_anchor_polar_vector()
+    @anchorangle.setter
+    def anchorangle(self, value: DualAngle | float):
+        if isinstance(value, DualAngle):
+            absolute_anchorangle = value.absolute
+            relative_anchorangle = value.relative
+        else:
+            absolute_anchorangle = relative_anchorangle = value
+
+        self.last_absolute_anchorangle = limit_angle(absolute_anchorangle)
+        self.last_relative_anchorangle = limit_angle(relative_anchorangle)
+
+        anchorradius = self.anchorradius
+        absolute_anchorradius = anchorradius.absolute
+        relative_anchorradius = anchorradius.relative
+
+        if absolute_anchorradius < 0:
+            absolute_anchorangle = limit_angle(absolute_anchorangle + 180)
+            absolute_anchorradius = -absolute_anchorradius
+        if relative_anchorradius < 0:
+            relative_anchorangle = limit_angle(relative_anchorangle + 180)
+            relative_anchorradius = -relative_anchorradius
+
+        DualAngle.set_anchor_from_anchorangle_and_anchorradius(
+            self,
+            absolute_anchorangle,
+            relative_anchorangle,
+            absolute_anchorradius,
+            relative_anchorradius,
         )
+
+    @property
+    def anchorradius(self) -> position:
+        (
+            (absolute_vector_x, absolute_vector_y),
+            (relative_vector_x, relative_vector_y),
+        ) = DualAngle.get_anchor_polar_vector(self)
 
         return position(
             math.hypot(absolute_vector_x, absolute_vector_y) * self.absolute_anchor_radius_sign,
             math.hypot(relative_vector_x, relative_vector_y) * self.relative_anchor_radius_sign,
         )
 
-    def set_anchorangle(self, angle):
-        """
-        Computes the anchorradius (as a position object),
-        and set xanchor and yanchor such that the anchorradius (both the absolute and relative parts)
-        remain the same, and the anchorangle (as explained above) is the given one.
-        """
-        if isinstance(angle, DualAngle):
-            absolute_anchorangle = angle.absolute
-            relative_anchorangle = angle.relative
-        else:
-            absolute_anchorangle = relative_anchorangle = angle
+    @anchorradius.setter
+    def anchorradius(self, value: Position):
+        value = position(value)
 
-        self.last_absolute_anchorangle = limit_angle(absolute_anchorangle)
-        self.last_relative_anchorangle = limit_angle(relative_anchorangle)
-
-        anchorradius = position(self.anchorradius.absolute, self.anchorradius.relative)
-
-        if anchorradius.absolute < 0:
-            absolute_anchorangle = limit_angle(absolute_anchorangle + 180)
-            anchorradius.absolute = -anchorradius.absolute
-        if anchorradius.relative < 0:
-            relative_anchorangle = limit_angle(relative_anchorangle + 180)
-            anchorradius.relative = -anchorradius.relative
-
-        self.set_anchor_from_anchorangle_and_anchorradius(
-            absolute_anchorangle,
-            relative_anchorangle,
-            anchorradius.absolute,
-            anchorradius.relative,
-        )
-
-    def set_anchorradius(self, anchorradius):
-        """
-        Computes the anchorangle (as a DualAngle object),
-        and set xanchor and yanchor such that the anchorangle stays the same,
-        and the anchorradius (as explained above) is the given one.
-        """
-        anchorradius = position.from_any(anchorradius)
-
-        polar_vectors = self.get_anchor_polar_vector()
-        anchorangle = self.get_anchorangle(polar_vectors)
-        old_anchorradius = self.get_anchorradius(polar_vectors)
+        anchorangle = self.anchorangle
+        old_anchorradius = self.anchorradius
 
         absolute_anchorangle = anchorangle.absolute
         relative_anchorangle = anchorangle.relative
@@ -794,48 +805,25 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
         if (not old_anchorradius.relative) and (self.last_relative_anchorangle is not None):
             relative_anchorangle = self.last_relative_anchorangle
 
-        if anchorradius.absolute < 0:
+        if value.absolute < 0:
             absolute_anchorangle = limit_angle(absolute_anchorangle + 180)
             self.absolute_anchor_radius_sign = -1
-        elif anchorradius.absolute > 0:
+        elif value.absolute > 0:
             self.absolute_anchor_radius_sign = 1
 
-        if anchorradius.relative < 0:
+        if value.relative < 0:
             relative_anchorangle = limit_angle(relative_anchorangle + 180)
             self.relative_anchor_radius_sign = -1
-        elif anchorradius.relative > 0:
+        elif value.relative > 0:
             self.relative_anchor_radius_sign = 1
 
-        self.set_anchor_from_anchorangle_and_anchorradius(
+        DualAngle.set_anchor_from_anchorangle_and_anchorradius(
+            self,
             absolute_anchorangle,
             relative_anchorangle,
-            anchorradius.absolute,
-            anchorradius.relative,
+            value.absolute,
+            value.relative,
         )
-
-    def set_anchor_from_anchorangle_and_anchorradius(
-        self,
-        absolute_anchorangle,
-        relative_anchorangle,
-        absolute_anchorradius,
-        relative_anchorradius,
-    ):
-        xanchoraround = position.from_any(self.xanchoraround)
-        yanchoraround = position.from_any(self.yanchoraround)
-
-        absolute_anchorangle = absolute_anchorangle * math.pi / 180
-        relative_anchorangle = relative_anchorangle * math.pi / 180
-
-        absolute_dx = absolute_anchorradius * math.sin(absolute_anchorangle)
-        absolute_dy = -absolute_anchorradius * math.cos(absolute_anchorangle)
-        relative_dx = relative_anchorradius * math.sin(relative_anchorangle)
-        relative_dy = -relative_anchorradius * math.cos(relative_anchorangle)
-
-        self.xanchor = position(xanchoraround.absolute + absolute_dx, xanchoraround.relative + relative_dx)
-        self.yanchor = position(yanchoraround.absolute + absolute_dy, yanchoraround.relative + relative_dy)
-
-    anchorangle = property(get_anchorangle, set_anchorangle)
-    anchorradius = property(get_anchorradius, set_anchorradius)
 
     def get_pos(self):
         return self.xpos, self.ypos
@@ -917,6 +905,19 @@ class TransformState(renpy.object.Object, TransformProperties if TYPE_CHECKING e
             self.take_state(RESET_STATE)
 
     _reset = property(get_reset, set_reset)
+
+    # Deprecated properties.
+    if not TYPE_CHECKING:
+
+        @property
+        def alignaround(self) -> tuple[float, float]:
+            return self.xaround, self.yaround
+
+        @alignaround.setter
+        def alignaround(self, value: tuple[float, float]):
+            self.xanchor, self.yanchor = value
+            self.xaround, self.yaround = value
+            self.xanchoraround, self.yanchoraround = value
 
 
 RESET_STATE = TransformState()
