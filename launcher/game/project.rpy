@@ -60,7 +60,7 @@ init python in project:
 
     class Project(object):
 
-        def __init__(self, path, name=None):
+        def __init__(self, path, name=None, parent_path=None):
 
             while path.endswith("/"):
                 path = path[:-1]
@@ -73,8 +73,16 @@ init python in project:
 
             self.name = name
 
-            # The path to the project.
+            # The path to the project. In the case of a mac app, this is to the base directory
+            # buried inside the app.
             self.path = path
+
+            # The path to the project's parent directory. This is logical - in the case of a mac app,
+            # this is the directory outside the app.
+            if parent_path is not None:
+                self.parent_path = parent_path
+            else:
+                self.parent_path = os.path.dirname(path)
 
             # The path to the game directory.
             gamedir = os.path.join(path, "game")
@@ -651,7 +659,7 @@ init python in project:
                     name = os.path.split(ppath)[1]
 
                     # We have a project directory, so create a Project.
-                    p = Project(p_path, name)
+                    p = Project(p_path, name, parent_path=full_path)
 
                     # Adds the project to the ProjectFolder
                     pf.add(p)
@@ -743,7 +751,7 @@ init python in project:
                     self.scanned.add(p_path)
 
                     # We have a project directory, so create a Project.
-                    p = Project(p_path, name)
+                    p = Project(p_path, name, parent_path=os.path.dirname(ppath))
 
                     if project_filter and (p.name not in project_filter):
                         return
