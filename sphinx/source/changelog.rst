@@ -49,6 +49,8 @@ having been updated. (This includes most Unicode 16 emoji, but not unicode 17 em
 Other Changes
 -------------
 
+Setting :var:`config.tracesave_screenshot` makes it possible to control if a screenshot is taken when a traceback save is made.
+
 The new ``before_load`` :ref:`special label <special-labels>` and :var:`config.before_load_callbacks`
 make it possible to change what is displayed and what sounds are played as a load happens.
 

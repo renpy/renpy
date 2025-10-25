@@ -1744,7 +1744,7 @@ def report_exception(e: Exception, editor=True) -> TracebackException:
         try:
             if not renpy.session.get("traceback_load", False):
                 renpy.loadsave.cycle_saves("_tracesave-", 10)
-                renpy.loadsave.save("_tracesave-1", extra_json={"_traceback": te.full})
+                renpy.loadsave.save("_tracesave-1", extra_json={"_traceback": te.full}, include_screenshot=renpy.config.tracesave_screenshot)
         except Exception:
             pass
 

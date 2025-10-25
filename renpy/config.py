@@ -1611,6 +1611,11 @@ If True, Ren'Py will attempt to enable vsync when creating the OpenGL context. I
 This is mostly intended to be set by renpy.test to disable vsync during tests.
 """
 
+tracesave_screenshot: bool = True
+"""
+If True, trace saves will include a screenshot of the game at the time of the save.
+"""
+
 
 del os
 del collections

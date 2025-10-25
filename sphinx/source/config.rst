@@ -1463,6 +1463,11 @@ Screenshots
     See also :var:`_screenshot_pattern`, which is used in preference to this
     variable if not None.
 
+.. var:: config.tracesave_screenshot = True
+
+    If True, a screenshot is taken when a traceback save is made. If False, no
+    screenshot is taken.
+
 
 Self-Voicing / Text to Speech
 -----------------------------
