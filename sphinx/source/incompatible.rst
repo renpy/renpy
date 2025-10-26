@@ -42,10 +42,6 @@ to::
     define config.image_directories = [ "myimages" ]
 
 
-.. _incompatible-8.4.2:
-
-8.4.2
------
 
 **Zoom and the Z-Axis** In Ren'Py 8.4, the :tpref:`zoom` transform property applies to the z-axis as well as the x and y
 axes. This can cause a behavior change in older games that did not expect the z-axis to be zoomed. To revert this

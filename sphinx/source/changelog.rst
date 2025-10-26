@@ -4,19 +4,16 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
-
 .. _renpy-8.5.0:
 
 8.5.0
 =====
 
-
 Live2D Web
 ----------
 
-Ren'Py's Live2D support now supports the web platform. This support includes both launcher support for installing
-the Cubism SDL for Web, and support in Ren'Py for loading Live2D models in the web environment. This solves perhaps
-the largest difference between the web platform and other platforms.
+Ren'Py now supports Live2D models on the web platform. This support includes both launcher support for installing
+the Cubism SDL for Web, and support in Ren'Py for loading Live2D models in the web environment.
 
 Automated Testing
 -----------------
@@ -29,6 +26,10 @@ reaches the end without crashing, even when the game or engine is changed.
 The testing framework is intended to be run in an environment with working GUI support - most notably, working OpenGL
 is required, as the testing framework exercises the full engine, including the portions of the engine that render the
 game.
+
+Testing can be run from the launcher, or from the command line using the :ref:`test command <cli-test>`. The 'Run testcases'
+command is only present if at least one testcase exists in the game. The Tutorial is a good project to use to see automated
+testing in action.
 
 Local Labels
 ------------
@@ -66,6 +67,20 @@ Ren'Py's unicode support has been updated to include support for Unicode 17 char
 The emoji font used by Ren'Py has been updated to include 435 more glyphs, with other glyphs
 having been updated. (This includes most Unicode 16 emoji, but not unicode 17 emoji.)
 
+Gui Default Changes
+-------------------
+
+There have been multiple changes to how the gui namespace interacts with the ``default`` statement, designed to
+make how Ren'Py behaves match how `it was documented to behave <gui-default>`_. As of this release, gui variables
+set with ``default``...
+
+* ... are set when the game starts or restarts.
+* ... can be changed in python blocks.
+* ... retain the last set value when the language changes.
+* ... are saved and loaded like other variables.
+
+These changes only apply to variables that are initially set with ``default``. All variables in the gui namespace
+should be set with one of ``default`` or ``define``.
 
 Pygame_SDL2 Removal
 -------------------
@@ -81,9 +96,10 @@ is now the recommended way to import pygame-like functionality.
 This change simplifies the Ren'Py build process. On Linux, it's now possible to create a build of Ren'Py for development
 purposes using the uv tool.
 
-
 Other Changes
 -------------
+
+The ``screen`` statement now requires a block. It always was documented as requiring a block, but this was not enforced.
 
 Setting :var:`config.tracesave_screenshot` makes it possible to control if a screenshot is taken when a traceback save is made.
 
@@ -92,7 +108,6 @@ make it possible to change what is displayed and what sounds are played as a loa
 
 The new :var:`config.locale_to_language_map` variable is a dictionary mapping locale strings to
 language names, allowing :var:`config.enable_language_autodetect` to be customized more easily.
-
 
 :func:`Movie` displayables now allocate channels dynamically when the movie is playing. Previously, each
 Movie would allocate a channel when the movie was created, which could lead to large amounts of memory in
@@ -113,35 +128,31 @@ filename and line number returned by :func:`renpy.get_filename_line`.
 The config.images_directory variable has been superseded by :var:`config.image_directories`, which is a list of
 directories that Ren'Py searches for images.
 
+The new :var:`config.context_callbacks` variable makes it possible to define multiple callbacks that are called
+when a new context is entered.
+
 The game.zip file produced by the web platform no longer contains .py files.
 
-
-.. _renpy-8.4.1:
-
-8.4.2
-=====
-
-Gui Default Changes
--------------------
-
-There have been multiple changes to how the gui namespace interacts with the ``default`` statement, designed to
-make how Ren'Py behaves match how `it was documented to behave <gui-default>`_. As of this release, gui variables
-set with ``default``...
-
-* ... are set when the game starts or restarts.
-* ... can be changed in python blocks.
-* ... retain the last set value when the language changes.
-* ... are saved and loaded like other variables.
-
-These changes only apply to variables that are initially set with ``default``. All variables in the gui namespace
-should be set with one of ``default`` or ``define``.
-
-
-Other Changes
--------------
-
 Ren'Py will now prompt you to close other Ren'Py games before an upgrade. This addresses problems on Windows
-that could be caused by launcher files in use by games that are running during the upgrade.
+that could be caused by launcher files in use by games that are running during the upgra
+
+Support for RTL languages is now enabled by default, so it is no longer necessary to set config.rtl.
+
+The new :var:`config.adjust_audio_amplitude` allows a global adjustment of the amplitude of all audio played
+through Ren'Py.
+
+Fixes
+-----
+
+A crash caused by improperly stored video textures has been fixed.
+
+Alpha premultiplication is now properly performed on image-based fonts, allowing proper alpha blending of these fonts.
+
+Several problems editing the script (manifesting in in the interactive director and the add from to calls command) hav
+been fixed.
+
+An issue with the scaling of oversampled videos has been fixed.
+
 
 
 .. _renpy-8.4.1:
