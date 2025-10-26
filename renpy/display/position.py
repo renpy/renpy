@@ -282,6 +282,15 @@ class position:
         else:
             return self
 
+    def __eq__(self, other):
+        if isinstance(other, position):
+            return self.absolute == other.absolute and \
+                   self.relative == other.relative
+
+        simple = self.simplify()
+
+        return type(simple) is not position and simple == other
+
     def __add__(self, value: "position") -> "position":
         if isinstance(value, position):
             return position(self.absolute + value.absolute, self.relative + value.relative)
@@ -293,6 +302,12 @@ class position:
     def __sub__(self, value: "position") -> "position":
         if isinstance(value, position):
             return position(self.absolute - value.absolute, self.relative - value.relative)
+
+        return NotImplemented
+
+    def __rsub__(self, value: "position") -> "position":
+        if isinstance(value, position):
+            return position(value.absolute - self.absolute, value.relative - self.relative)
 
         return NotImplemented
 
@@ -310,7 +325,11 @@ class position:
 
         return NotImplemented
 
-    __rtruediv__ = __truediv__
+    def __rtruediv__(self, value: int | float) -> "position":
+        if isinstance(value, (int, float)):
+            return position(value / self.absolute, value / self.relative)
+
+        return NotImplemented
 
     def __pos__(self) -> "position":
         return self
