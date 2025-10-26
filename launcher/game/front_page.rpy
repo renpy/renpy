@@ -208,13 +208,14 @@ screen front_page_project:
 
                 textbutton _("Navigate Script") action Jump("navigation")
                 textbutton _("Check Script (Lint)") action Call("lint")
-                textbutton _("Run Testcases") action Jump("run_testcases")
 
-                if project.current.exists("game/gui.rpy"):
+                if p.dump.get("test", {}).get("has_default_testcase", False):
+                    textbutton _("Run Testcases") action Jump("run_testcases")
+
+                if p.exists("game/gui.rpy"):
                     textbutton _("Change/Update GUI") action Jump("change_gui")
                 else:
                     textbutton _("Change Theme") action Jump("choose_theme")
-
 
                 textbutton _("Delete Persistent") action Jump("rmpersistent")
                 textbutton _("Force Recompile") action Jump("force_recompile")
