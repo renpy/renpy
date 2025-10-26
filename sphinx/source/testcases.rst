@@ -1,6 +1,6 @@
-==================
+=================
 Automated Testing
-==================
+=================
 
 Ren'Py allows creators to put automated tests in their games to make sure that
 alterations to the game don't break existing functionality. This is especially
@@ -11,6 +11,21 @@ The two main components of the testing system are the ``testcase`` and
 
 The :func:`renpy.is_in_test` function is helpful to know whether a test is currently
 executing or not.
+
+.. _running-testcases:
+
+Running Testcases
+=================
+
+Testcases can be run in two ways. The first is from the laucher, by selecting the
+"Run Testcases" button. The second is from the command line, using the
+:ref:`test command <cli-test>`. In both cases, the testcase or test suite named
+``global`` is run by default.
+
+The "Run Testcases" button is only present in the launcher if at least one testcase
+exists in global test suite. Testcauses and test suites found at the top level of a Ren'Py
+script file are automatically added to the global test suite. When adding the first testcase
+to a projecrt, you may need to hit 'refesh' in the launcher to see the button appear.
 
 .. _testcase-statement:
 
@@ -25,7 +40,7 @@ block of test statements (see below). Test cases are similar to Ren'Py
   takes test statements (listed on this page). They are mutually exclusive.
 - There is no testcase equivalent of the return statement.
 - There can be no test statement outside of a test block, while there can be
-  Ren'Py code outside labels (in init blocks for example).
+  Ren'Py code outside labels.
 
 It takes the following properties:
 
@@ -512,44 +527,6 @@ If an error occurs during a hook (eg. ``before testcase``):
 2. If the suite was called by another suite, the parent suite will continue
    executing.
 3. If no parent suite exists, the game will end the test run.
-
-Command-Line Options
-====================
-
-The test system accepts the following :doc:`command-line options <cli>`:
-
-.. option:: --enable_all
-
-    If provided, all test cases and test suites will be executed, regardless
-    of their ``enabled`` property.
-
-.. option:: --overwrite_screenshots
-
-    If provided, existing screenshots will be overwritten when a
-    :ref:`screenshot statement <test-screenshot-statement>` is executed.
-
-.. option:: --hide-header
-
-    If provided, the header at the start of the test run will be disabled.
-
-.. option:: --hide-execution [no|hooks|testcases|all]
-
-    If provided, test execution output will be hidden. ``hooks`` hides hooks,
-    ``testcases`` hides test cases and hooks, and ``all`` hides everything.
-
-.. option:: --hide-summary
-
-    If provided, the summary at the end of the test run will be disabled.
-
-.. option:: --report-detailed
-
-    If provided, detailed information about each test will be shown during
-    the run.
-
-.. option:: --report-skipped
-
-    If provided, information about skipped tests will be shown. This option
-    should be used together with ``--report-detailed``.
 
 
 Test Reporting

@@ -23,6 +23,84 @@ as required.
     base directory of the project.
 
 
+Check and Test Commands
+=======================
+
+Check Script (Lint)
+-------------------
+
+::
+
+    ./renpy.sh <base> lint [ filename ] [ options... ]
+
+This runs a lint report on the game. It's equivalent to the "Check Script (Lint)"
+button in the launcher.
+
+.. option:: filename
+
+    If given, the lint report will be written to this file rather than
+    printed to standard output.
+
+Lint takes many options, which can change from release to release. To view
+them, run:
+
+::
+
+    ./renpy.sh <base> lint --help
+
+
+.. _cli-test:
+
+Run Testcases
+-------------
+
+::
+
+    ./renpy.sh <base> test [ testcase ] [ options... ]
+
+This runs :file:`automated tests <testcases>` on the game.
+
+.. option:: testcase
+
+    The name of the testcase or test suite to run. If not given, the "global"
+    test suite will be run.
+
+.. option:: --enable_all
+
+    If provided, all test cases and test suites will be executed, regardless
+    of their ``enabled`` property.
+
+.. option:: --overwrite_screenshots
+
+    If provided, existing screenshots will be overwritten when a
+    :ref:`screenshot statement <test-screenshot-statement>` is executed.
+
+.. option:: --hide-header
+
+    If provided, the header at the start of the test run will be disabled.
+
+.. option:: --hide-execution [no|hooks|testcases|all]
+
+    If provided, test execution output will be hidden. ``hooks`` hides hooks,
+    ``testcases`` hides test cases and hooks, and ``all`` hides everything.
+
+.. option:: --hide-summary
+
+    If provided, the summary at the end of the test run will be disabled.
+
+.. option:: --report-detailed
+
+    If provided, detailed information about each test will be shown during
+    the run.
+
+.. option:: --report-skipped
+
+    If provided, information about skipped tests will be shown. This option
+    should be used together with ``--report-detailed``.
+
+
+
+
 Build Commands
 ==============
 
@@ -83,28 +161,6 @@ locate the return point of calls in a modified game.
 
     This will modify your game's script files, and assumes that you will include
     the changes it makes into your game.
-
-Check Script (Lint)
--------------------
-
-::
-
-    ./renpy.sh <base> lint [ filename ] [ options... ]
-
-This runs a lint report on the game. It's equivalent to the "Check Script (Lint)"
-button in the launcher.
-
-.. option:: filename
-
-    If given, the lint report will be written to this file rather than
-    printed to standard output.
-
-Lint takes many options, which can change from release to release. To view
-them, run:
-
-::
-
-    ./renpy.sh <base> lint --help
 
 
 Compile
