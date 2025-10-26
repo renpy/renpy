@@ -88,7 +88,7 @@ class Object:
     def __init_subclass__(cls) -> None:
         # Check that type doesn't have slots.
         if getattr(cls, "__slots__", ()):
-            raise TypeError("nonempty __slots__ not supported for subtype of 'renpy.object.Object")
+            raise TypeError("nonempty __slots__ not supported for subtype of 'renpy.object.Object'")
 
 
 sentinels: dict[str, "Sentinel"] = {}
