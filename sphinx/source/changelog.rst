@@ -10,6 +10,26 @@ Changelog (Ren'Py 7.x-)
 8.5.0
 =====
 
+
+Live2D Web
+----------
+
+Ren'Py's Live2D support now supports the web platform. This support includes both launcher support for installing
+the Cubism SDL for Web, and support in Ren'Py for loading Live2D models in the web environment. This solves perhaps
+the largest difference between the web platform and other platforms.
+
+Automated Testing
+-----------------
+
+Ren'Py now includes a testing framework that makes it possible to define and run automated tests of the functional
+game, and of the Ren'Py engine itself. The testing framework is designed to perform automated functional testing of
+the game - for example, clicking through a predefined sequence of dialogue and choice, and making sure the game
+reaches the end without crashing, even when the game or engine is changed.
+
+The testing framework is intended to be run in an environment with working GUI support - most notably, working OpenGL
+is required, as the testing framework exercises the full engine, including the portions of the engine that render the
+game.
+
 Local Labels
 ------------
 
@@ -45,6 +65,22 @@ Ren'Py's unicode support has been updated to include support for Unicode 17 char
 
 The emoji font used by Ren'Py has been updated to include 435 more glyphs, with other glyphs
 having been updated. (This includes most Unicode 16 emoji, but not unicode 17 emoji.)
+
+
+Pygame_SDL2 Removal
+-------------------
+
+Ren'Py no longer depends on the pygame_sdl2 project. To support future development, such as a port to SDL3, most of
+pygame_sdl2 has been merged into Ren'Py as the ``renpy.pygame`` package. For compatibility's sake, renpy.pygame is importable
+as ``pygame`` or ``pygame_sdl2``, though::
+
+    import renpy.pygame as pygame
+
+is now the recommended way to import pygame-like functionality.
+
+This change simplifies the Ren'Py build process. On Linux, it's now possible to create a build of Ren'Py for development
+purposes using the uv tool.
+
 
 Other Changes
 -------------

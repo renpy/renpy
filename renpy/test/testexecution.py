@@ -910,18 +910,7 @@ def test_command() -> bool:
     if initialized:
         return True
 
-    ap = argparse.ArgumentParser(description="Run a Ren'Py test case or suite.")
-    # ap = renpy.arguments.ArgumentParser(description="Runs a testcase.")
-
-    ap.add_argument(
-        "basedir",
-        help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.",
-    )
-
-    ap.add_argument(
-        "test",
-        help="The command to execute ('test' in this case).",
-    )
+    ap = renpy.arguments.ArgumentParser(description="Run a Ren'Py test case or suite.")
 
     ap.add_argument(
         "testcase",
