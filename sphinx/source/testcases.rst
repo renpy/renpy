@@ -513,8 +513,8 @@ If an error occurs during a hook (eg. ``before testcase``):
    executing.
 3. If no parent suite exists, the game will end the test run.
 
-Test Launch Options
-===================
+Command-Line Options
+====================
 
 The test system accepts the following :doc:`command-line options <cli>`:
 
