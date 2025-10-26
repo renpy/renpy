@@ -19,9 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
+from typing import Any, Callable, ClassVar, final
 
 # Allow pickling NoneType.
 import builtins
@@ -29,16 +27,29 @@ import builtins
 builtins.NoneType = type(None)  # type: ignore
 
 
-class Object(object):
+class Object:
     """
-    Our own base class. Contains methods to simplify serialization.
+    Base class for various things in Ren'Py.
+    Contains methods to simplify serialization.
     """
 
-    __version__ = 0
+    __version__: ClassVar[int] = 0
+    """
+    Version of the type. Setting this on instance would be silently ignored.
 
-    nosave = []
+    This is used when type is changed in a way that requires a some extra
+    work to be done when unpickling the object. When you only add a new field,
+    you could use class variable with a sensible default value.
+    """
 
-    def __getstate__(self):
+    nosave: list[str] = []
+    """
+    A list of field names that would be automatically removed from the
+    pickle data. This is used to prevent storing unpickleable, cached
+    or otherwise unnecessary data.
+    """
+
+    def __getstate__(self) -> dict[str, Any]:
         rv = vars(self).copy()
 
         for f in self.nosave:
@@ -49,35 +60,53 @@ class Object(object):
 
         return rv
 
-    # None, to prevent this from being called when unnecessary.
-    after_setstate = None
+    after_setstate: Callable[[], Any] | None = None
+    """
+    A function that is called after the object is unpickled.
+    This is mostly used to set values for `nosave` fields.
+    """
 
-    def __setstate__(self, new_dict):
+    def after_upgrade(self, version: int):
+        """
+        This is called after the object is unpickled, and the version
+        in pickled object is less than the current version.
+
+        `version` is the version of the pickled object.
+        """
+
+    def __setstate__(self, new_dict: dict[str, Any]):
         version = new_dict.pop("__version__", 0)
 
-        self.__dict__.update(new_dict)
+        vars(self).update(new_dict)
 
         if version != self.__version__:
-            self.after_upgrade(version)  # type: ignore
+            self.after_upgrade(version)
 
-        if self.after_setstate:
-            self.after_setstate()  # E1102
+        if self.after_setstate is not None:
+            self.after_setstate()
 
-
-# We don't handle slots with this mechanism, since the call to vars should
-# throw an error.
-
-
-sentinels = {}
+    def __init_subclass__(cls) -> None:
+        # Check that type doesn't have slots.
+        if getattr(cls, "__slots__", ()):
+            raise TypeError("nonempty __slots__ not supported for subtype of 'renpy.object.Object")
 
 
-class Sentinel(object):
+sentinels: dict[str, "Sentinel"] = {}
+
+
+@final
+class Sentinel:
     """
     This is used to represent a sentinel object. There will be exactly one
     sentinel object with a name existing in the system at any time.
     """
 
-    def __new__(cls, name):
+    # NOTE: This is intentionally returns Any, not Sentinel, so one could
+    # type hint arguments like `str | None = Sentinel` or check `if x is Sentinel`
+    # and not see type errors, but that mean that from typing perspective
+    # different sentinels are the same.
+
+    def __new__(cls, name: str) -> Any:
         rv = sentinels.get(name, None)
 
         if rv is None:
@@ -86,8 +115,11 @@ class Sentinel(object):
 
         return rv
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, name: str):
+        self.name: str = name
+
+    def __repr__(self):
+        return f"{type(self).__module__}.{type(self).__name__}({self.name!r})"
 
     def __reduce__(self):
         return (Sentinel, (self.name,))
