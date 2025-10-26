@@ -325,7 +325,11 @@ class position:
 
         return NotImplemented
 
-    __rtruediv__ = __truediv__
+    def __rtruediv__(self, value: int | float) -> "position":
+        if isinstance(value, (int, float)):
+            return position(value / self.absolute, value / self.relative)
+
+        return NotImplemented
 
     def __pos__(self) -> "position":
         return self
