@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Any, Callable, ClassVar, final
+from typing import Any, Callable, ClassVar, Self, final
 
 # Allow pickling NoneType.
 import builtins
@@ -42,7 +42,7 @@ class Object:
     you could use class variable with a sensible default value.
     """
 
-    nosave: list[str] = []
+    nosave: ClassVar[list[str]] = []
     """
     A list of field names that would be automatically removed from the
     pickle data. This is used to prevent storing unpickleable, cached
@@ -52,15 +52,14 @@ class Object:
     def __getstate__(self) -> dict[str, Any]:
         rv = vars(self).copy()
 
-        for f in self.nosave:
-            if f in rv:
-                del rv[f]
+        for f in type(self).nosave:
+            rv.pop(f, None)
 
         rv["__version__"] = self.__version__
 
         return rv
 
-    after_setstate: Callable[[], Any] | None = None
+    after_setstate: ClassVar[Callable[[Self], Any] | None] = None
     """
     A function that is called after the object is unpickled.
     This is mostly used to set values for `nosave` fields.
