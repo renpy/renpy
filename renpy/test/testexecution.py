@@ -117,6 +117,14 @@ def initialize(specified_test: str) -> None:
     phase_controller = TestPhaseController(root)
     initialized = True
 
+def has_default_testcase() -> bool:
+    """
+    Returns True if at least one testcase exists.
+    """
+
+    root = setup_global_test_suite()
+    return root.has_testcase()
+
 
 def on_reload() -> None:
     if add_reached_label not in renpy.config.label_callbacks:
@@ -267,11 +275,19 @@ def register_testcase(node: TestCase, parent: TestSuite | None = None) -> None:
         link_top_level_testcase_to_parent(node)
 
 
+global_test_suite: TestSuite | None = None
+"Caches the global test suite, once it's been set up."
+
+
 def setup_global_test_suite() -> TestSuite:
     """
     Set up the global test suite, which contains all top-level testcases,
     and contains hooks for before and after each test.
     """
+
+    global global_test_suite
+    if global_test_suite is not None:
+        return global_test_suite
 
     root_children = []
     for node_name, node in testcases.items():
@@ -289,6 +305,8 @@ def setup_global_test_suite() -> TestSuite:
     except KeyError:
         root = TestSuite(name=global_testsuite_name, loc=("", 0), subtests=root_children)
         register_testcase(root)
+
+    global_test_suite = root
 
     return root
 

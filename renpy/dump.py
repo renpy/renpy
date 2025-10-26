@@ -239,6 +239,10 @@ def dump(error):
     except Exception:
         pass
 
+    result["test"] = {
+        "has_default_testcase" : renpy.test.testexecution.has_default_testcase(),
+    }
+
     filename = renpy.exports.fsdecode(args.json_dump)  # type: ignore
 
     if filename != "-":

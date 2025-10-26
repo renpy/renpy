@@ -343,6 +343,13 @@ class TestCase(BaseTestBlock):
     def has_all_parameters_been_processed(self) -> bool:
         return self.parameter_index >= len(self.parameters)
 
+    def has_testcase(self) -> bool:
+        """
+        Returns True if there is at least one test case defined.
+        """
+
+        return True
+
 
 class TestSuite(TestCase):
     """
@@ -498,6 +505,16 @@ class TestSuite(TestCase):
         if self.parent:
             return f"{self.parent.current_full_parameterized_path}.{self.current_parameterized_name}"
         return self.current_parameterized_name
+
+    def has_testcase(self) -> bool:
+        """
+        Returns True if there is at least one test case defined.
+        """
+
+        if self.subtests is None:
+            return False
+
+        return any(subtest.has_testcase() for subtest in self.subtests)
 
 
 class Condition(Node):
