@@ -914,6 +914,11 @@ init python in project:
             current = self.project
             persistent.active_project = self.project.name
 
+            try:
+                current.update_dump()
+            except Exception:
+                pass
+
             renpy.restart_interaction()
 
             if self.label is not None:
@@ -946,6 +951,11 @@ init python in project:
 
             current = p
             persistent.active_project = p.name
+
+            try:
+                current.update_dump()
+            except Exception:
+                pass
 
             renpy.restart_interaction()
 
@@ -1011,6 +1021,12 @@ init python in project:
             manager.scan()
             renpy.restart_interaction()
 
+            if current is not None:
+                try:
+                    current.update_dump(force=True, gui=False)
+                except Exception:
+                    pass
+
     # NOTE: Action class for ProjectFolder
     class CollapseFolder(Action):
         def __init__(self, pf):
@@ -1034,13 +1050,11 @@ init 10 python:
         if not directory_is_writable(persistent.projects_directory):
             persistent.projects_directory = None
 
-label after_load:
-    python:
-        if project.current is not None:
+    if project.current is not None:
+        try:
             project.current.update_dump()
-
-    return
-
+        except Exception:
+            pass
 
 ###############################################################################
 # Code to choose the projects directory.
