@@ -171,7 +171,7 @@ executed, and how the hooks are called. The following example illustrates this:
             after testsuite:
                 $ print(""Finished a testsuite."")
 
-            teardown
+            teardown:
                 exit
 
             # Subtests
@@ -190,7 +190,7 @@ executed, and how the hooks are called. The following example illustrates this:
                 after testcase:
                     $ print(""Finished a choice test."")
 
-                teardown
+                teardown:
                     $ print(""Finished all choice tests."")
 
                 # Subtests
@@ -334,7 +334,7 @@ integer (for a specific depth).
     statement in the ``after`` hook of the testsuite. For example::
 
         testsuite global:
-            teardown
+            teardown:
                 exit
 
 .. _skipping-testcases:
