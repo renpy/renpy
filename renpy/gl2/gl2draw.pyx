@@ -774,7 +774,7 @@ cdef class GL2Draw:
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size)
         glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size)
 
-        max_texture_size = max(max_texture_size, 1024)
+        max_texture_size = self.info["max_texture_size"] = max(max_texture_size, 1024)
         max_renderbuffer_size = max(max_renderbuffer_size, 1024)
 
         # The number of pixels of additional border, so we can load textures with
