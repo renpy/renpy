@@ -23,14 +23,12 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from typing import Any, Protocol, TypeGuard
 
 import __future__
 
 import random
 import weakref
-import sys
 import copyreg
 import functools
 
@@ -60,6 +58,58 @@ def _reconstructor(cls, base, state):
 
 
 copyreg._reconstructor = _reconstructor  # type: ignore
+
+
+##############################################################################
+class RevertableType(Protocol):
+    """
+    Protocol that defines the methods that a revertable type must implement.
+
+    Apart from the methods defined here, the class must also be weak-referencable.
+    """
+
+    type Clean = Any
+    type Compressed = Any
+
+    def _clean(self) -> Clean:
+        """
+        Gets a representation of this object before any mutation in current
+        rollback session.
+
+        This is not necessarily a pickleable object.
+
+        Commonly, this is a shallow copy of the object.
+        """
+
+        raise NotImplementedError
+
+    def _compress(self, clean: Clean) -> Compressed:
+        """
+        Takes a result of `_clean` and returns a possibly compressed version of
+        the data that would be stored in rollback data, and should be pickleable.
+        """
+
+        raise NotImplementedError
+
+    def _rollback(self, compressed: Compressed) -> None:
+        """
+        Rolls this object back, using the information created by `_compress`.
+
+        Since compressed can come from a save file, this method also has to
+        recognize and deal with old data.
+        """
+
+        raise NotImplementedError
+
+
+def is_revertable(obj: object) -> TypeGuard[RevertableType]:
+    """
+    Returns True if `obj` implements the RevertableType protocol.
+    """
+
+    # At runtime we do only a weak check to reduce the overhead of runtime_checkable
+    # protocol.
+    return hasattr(obj, "_rollback")
 
 
 # This is set to True whenever a mutation occurs. The save code uses
@@ -202,18 +252,9 @@ class RevertableList(list):
         del self[:]
 
     def _clean(self):
-        """
-        Gets a clean copy of this object before any mutation occurs.
-        """
-
         return self[:]
 
     def _compress(self, clean):
-        """
-        Takes a clean copy of this object, compresses it, and returns compressed
-        information that can be passed to rollback.
-        """
-
         if not self or not clean:
             return clean
 
@@ -226,13 +267,6 @@ class RevertableList(list):
         return CompressedList(clean, self)
 
     def _rollback(self, compressed):
-        """
-        Rolls this object back, using the information created by _compress.
-
-        Since compressed can come from a save file, this method also has to
-        recognize and deal with old data.
-        """
-
         if isinstance(compressed, CompressedList):
             self[:] = compressed.decompress(self)
         else:
