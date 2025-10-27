@@ -352,52 +352,43 @@ def revertable_sorted(*args, **kwargs):
 
 
 class RevertableDict[KT, VT](dict[KT, VT]):
-    def __init__(self, *args, **kwargs):
-        log = renpy.game.log
+    if not TYPE_CHECKING:
+        __init__ = _creator(dict)
 
-        if log is not None:
-            log.mutated[id(self)] = None
+        __delitem__ = _mutator(dict.__delitem__)
+        __setitem__ = _mutator(dict.__setitem__)
+        clear = _mutator(dict.clear)
+        pop = _mutator(dict.pop)
+        popitem = _mutator(dict.popitem)
+        setdefault = _mutator(dict.setdefault)
+        update = _mutator(dict.update)
 
-        dict.__init__(self, *args, **kwargs)
+        # Keep some Python 2 methods for compatibility with old games.
+        itervalues = dict.values
+        iterkeys = dict.keys
+        iteritems = dict.items
 
-    __delitem__ = mutator(dict.__delitem__)
-    __setitem__ = mutator(dict.__setitem__)
-    clear = mutator(dict.clear)
-    pop = mutator(dict.pop)
-    popitem = mutator(dict.popitem)
-    setdefault = mutator(dict.setdefault)
-    update = mutator(dict.update)
+        def has_key(self, key):
+            return key in self
 
-    itervalues = dict.values
-    iterkeys = dict.keys
-    iteritems = dict.items
-
-    def has_key(self, key):
-        return key in self
-
-    # https://peps.python.org/pep-0584 methods
-    def __or__(self, other):
+    def __or__[KT2, VT2](self, other: dict[KT2, VT2]) -> "RevertableDict[KT | KT2, VT | VT2]":
         if not isinstance(other, dict):
             return NotImplemented
-        rv = RevertableDict(self)
-        rv.update(other)
-        return rv
 
-    def __ror__(self, other):
+        return RevertableDict(super().__or__(other))
+
+    def __ror__[KT2, VT2](self, other: dict[KT2, VT2]) -> "RevertableDict[KT | KT2, VT | VT2]":
         if not isinstance(other, dict):
             return NotImplemented
-        rv = RevertableDict(other)
-        rv.update(self)
-        return rv
 
-    def __ior__(self, other):
+        return RevertableDict(super().__ror__(other))
+
+    def __ior__(self, other: dict[KT, VT] | Iterable[tuple[KT, VT]]) -> "RevertableDict[KT, VT]":
         self.update(other)
         return self
 
-    def copy(self):
-        rv = RevertableDict()
-        rv.update(self)
-        return rv
+    def copy(self) -> "RevertableDict[KT, VT]":
+        return RevertableDict(self)
 
     if TYPE_CHECKING:
         type Clean = list[tuple[KT, VT]]
