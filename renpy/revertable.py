@@ -23,7 +23,7 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from typing import Any, Protocol, TypeGuard, TYPE_CHECKING
+from typing import Any, Protocol, TypeGuard, TYPE_CHECKING, final
 
 import __future__
 
@@ -135,7 +135,8 @@ def mutator(method):
     return do_mutation
 
 
-class CompressedList:
+@final
+class CompressedList[T]:
     """
     Compresses the changes in a queue-like list. What this does is to try
     to find a central sub-list for which has objects in both lists. It
@@ -146,12 +147,12 @@ class CompressedList:
     results are efficient even if this doesn't work.
     """
 
-    pre: list[Any]
+    pre: list[T]
     start: int
     end: int
-    post: list[Any]
+    post: list[T]
 
-    def __init__(self, old: list[Any], new: list[Any]):
+    def __new__(cls, old: list[T], new: list[T]) -> "list[T] | CompressedList[T]":
         # Pick out a pivot element near the center of the list.
         new_center = (len(new) - 1) // 2
         new_pivot = new[new_center]
@@ -169,12 +170,7 @@ class CompressedList:
                 break
         else:
             # If we couldn't, give up.
-            self.pre = old
-            self.start = 0
-            self.end = 0
-            self.post = []
-
-            return
+            return old
 
         # Figure out the position of the overlap in the center of the two lists.
         new_start = new_center
@@ -195,12 +191,14 @@ class CompressedList:
             old_end += 1
 
         # Now that we have this, we can put together the object.
+        self = object.__new__(cls)
         self.pre = list.__getitem__(old, slice(0, old_start))
         self.start = new_start
         self.end = new_end
         self.post = list.__getitem__(old, slice(old_end, len_old))
+        return self
 
-    def decompress(self, new: list[Any]) -> list[Any]:
+    def decompress(self, new: list[T]) -> list[T]:
         return self.pre + new[self.start : self.end] + self.post
 
     def __repr__(self):
@@ -260,25 +258,26 @@ class RevertableList[T](list[T]):
         del self[:]
 
     if TYPE_CHECKING:
-        type Clean = RevertableList[T]
-        type Compressed = RevertableList[T] | CompressedList
+        type Clean = list[T]
+        type Compressed = list[T] | CompressedList[T]
 
-    def _clean(self):
-        return self[:]
+    def _clean(self) -> "Clean":
+        return super().copy()
 
-    def _compress(self, clean):
+    def _compress(self, clean: "Clean") -> "Compressed":
         if not self or not clean:
             return clean
 
-        if renpy.config.list_compression_length is None:
+        list_compression_length = renpy.config.list_compression_length
+        if list_compression_length is None:
             return clean
 
-        if len(self) < renpy.config.list_compression_length or len(clean) < renpy.config.list_compression_length:
+        if len(self) < list_compression_length or len(clean) < list_compression_length:
             return clean
 
         return CompressedList(clean, self)
 
-    def _rollback(self, compressed):
+    def _rollback(self, compressed: "Compressed"):
         if isinstance(compressed, CompressedList):
             self[:] = compressed.decompress(self)
         else:
