@@ -23,7 +23,7 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from typing import Any, Protocol, TypeGuard, TYPE_CHECKING, final
+from typing import Any, Callable, Protocol, Iterable, SupportsIndex, TypeGuard, TYPE_CHECKING, final, overload
 
 import __future__
 
@@ -119,7 +119,35 @@ this to check to see if store has changed after save started.
 """
 
 
-def mutator(method):
+def _creator(base: type):
+    """
+    Helper function to wrap base class constructor and prevent mutations
+    registeration before new rollback session starts.
+    """
+
+    method = base.__init__
+
+    @functools.wraps(method)
+    def do_init(self, *args, **kwargs):
+        log = renpy.game.log
+
+        if log is not None:
+            # Init to None so we don't call _clean for an object that could be
+            # destroyed before rollback session ends. If user rolls back here,
+            # it would be deleted from anywhere it was referenced.
+            log.mutated[id(self)] = None
+
+        method(self, *args, **kwargs)
+
+    return do_init
+
+
+def _mutator(method: Callable):
+    """
+    Helper function to wrap methods that mutate object to get clean state before
+    any mutation occurs in current rollback session.
+    """
+
     @functools.wraps(method)
     def do_mutation(self, *args, **kwargs):
         global mutate_flag
@@ -206,56 +234,51 @@ class CompressedList[T]:
 
 
 class RevertableList[T](list[T]):
-    def __init__(self, *args):
-        log = renpy.game.log
+    # Mutations does not change the signature of those methods, so let IDE
+    # show the original.
+    if not TYPE_CHECKING:
+        __init__ = _creator(list)
 
-        if log is not None:
-            log.mutated[id(self)] = None
+        __delitem__ = _mutator(list.__delitem__)
+        __setitem__ = _mutator(list.__setitem__)
+        __iadd__ = _mutator(list.__iadd__)
+        __imul__ = _mutator(list.__imul__)
+        append = _mutator(list.append)
+        extend = _mutator(list.extend)
+        insert = _mutator(list.insert)
+        pop = _mutator(list.pop)
+        remove = _mutator(list.remove)
+        reverse = _mutator(list.reverse)
+        sort = _mutator(list.sort)
+        clear = _mutator(list.clear)
 
-        list.__init__(self, *args)
+    def __add__[S](self, other: list[S]) -> "RevertableList[T | S]":
+        # Python list would raise if other is not a list.
+        return RevertableList(super().__add__(other))
 
-    __delitem__ = mutator(list.__delitem__)
-    __setitem__ = mutator(list.__setitem__)
-    __iadd__ = mutator(list.__iadd__)
-    __imul__ = mutator(list.__imul__)
-    append = mutator(list.append)
-    extend = mutator(list.extend)
-    insert = mutator(list.insert)
-    pop = mutator(list.pop)
-    remove = mutator(list.remove)
-    reverse = mutator(list.reverse)
-    sort = mutator(list.sort)
+    # List does not define __radd__, so list + RevertableList would return list.
 
-    @staticmethod
-    def wrapper(method):
-        @functools.wraps(method)
-        def newmethod(*args, **kwargs):
-            l = method(*args, **kwargs)
-            if l is NotImplemented:
-                return l
-            return RevertableList(l)
+    def __mul__(self, other: SupportsIndex) -> "RevertableList[T]":
+        # Python list would raise if other could not be converted to int.
+        return RevertableList(super().__mul__(other))
 
-        return newmethod
+    def __rmul__(self, other: SupportsIndex) -> "RevertableList[T]":
+        # Python list would raise if other could not be converted to int.
+        return RevertableList(super().__rmul__(other))
 
-    __add__ = wrapper(list.__add__)
-    __mul__ = wrapper(list.__mul__)
-    __rmul__ = wrapper(list.__rmul__)
+    @overload
+    def __getitem__(self, index: SupportsIndex) -> T: ...
+    @overload
+    def __getitem__(self, index: slice) -> "RevertableList[T]": ...
 
-    del wrapper
-
-    def __getitem__(self, index):
-        rv = list.__getitem__(self, index)
-
+    def __getitem__(self, index: SupportsIndex | slice) -> "RevertableList[T] | T":
         if isinstance(index, slice):
-            return RevertableList(rv)
+            return RevertableList(super().__getitem__(index))
         else:
-            return rv
+            return super().__getitem__(index)
 
-    def copy(self):
-        return self[:]
-
-    def clear(self):
-        del self[:]
+    def copy(self) -> "RevertableList[T]":
+        return RevertableList(self)
 
     if TYPE_CHECKING:
         type Clean = list[T]
