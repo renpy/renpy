@@ -307,6 +307,42 @@ class RevertableList[T](list[T]):
             self[:] = compressed
 
 
+if TYPE_CHECKING:
+
+    @overload
+    def revertable_range(start: SupportsIndex, /) -> RevertableList[int]: ...
+
+    @overload
+    def revertable_range(
+        start: SupportsIndex, stop: SupportsIndex, step: SupportsIndex = ..., /
+    ) -> RevertableList[int]: ...
+
+    class SupportsDunderLT(Protocol):
+        def __lt__(self, other: Any, /) -> bool: ...
+
+    class SupportsDunderGT(Protocol):
+        def __gt__(self, other: Any, /) -> bool: ...
+
+    type SupportsRichComparison = SupportsDunderLT | SupportsDunderGT
+
+    @overload
+    def revertable_sorted[T: SupportsRichComparison](
+        iterable: Iterable[T],
+        /,
+        *,
+        key: None = None,
+        reverse: bool = False,
+    ) -> RevertableList[T]: ...
+    @overload
+    def revertable_sorted[T](
+        iterable: Iterable[T],
+        /,
+        *,
+        key: Callable[[T], SupportsRichComparison],
+        reverse: bool = False,
+    ) -> RevertableList[T]: ...
+
+
 def revertable_range(*args):
     return RevertableList(range(*args))
 
