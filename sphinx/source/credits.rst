@@ -32,6 +32,7 @@ the omission in future versions.
 * Arda Güler
 * Arman
 * Arowana-vx
+* Arsym
 * Asfdfdfd
 * Auro-Cyanide
 * Avonder
