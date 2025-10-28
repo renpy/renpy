@@ -746,21 +746,42 @@ class RollbackRandom(random.Random):
 
 class DetRandom(random.Random):
     """
-    This is renpy.random.
+    This is a class that lives in `renpy.rollback.rng` and referenced by user
+    with `renpy.random`.
+
+    This is essentially a wrapper of `random.Random` where after rollback it
+    will produce the same random numbers.
     """
 
     def __init__(self):
-        super(DetRandom, self).__init__()
-        self.stack = []
+        super().__init__()
 
-    choices = list_wrapper(random.Random.choices)
-    sample = list_wrapper(random.Random.sample)
+        self.stack: list[float] = []
 
-    def random(self):
+    def choices[T](
+        self,
+        population: Sequence[T],
+        weights: Sequence[float] | None = None,
+        *,
+        cum_weights: Sequence[float] | None = None,
+        k: int = 1,
+    ) -> RevertableList[T]:
+        return RevertableList(super().choices(population, weights, cum_weights=cum_weights, k=k))
+
+    def sample[T](
+        self,
+        population: Sequence[T],
+        k: int,
+        *,
+        counts: Iterable[int] | None = None,
+    ) -> RevertableList[T]:
+        return RevertableList(super().sample(population, k, counts=counts))
+
+    def random(self) -> float:
         if self.stack:
             rv = self.stack.pop()
         else:
-            rv = super(DetRandom, self).random()
+            rv = super().random()
 
         log = renpy.game.log
 
@@ -771,32 +792,24 @@ class DetRandom(random.Random):
 
         return rv
 
-    def pushback(self, l):
+    def pushback(self, numbers: list[float], /):
         """
-        Pushes the random numbers in l onto the stack so they will be generated
+        Pushes the random numbers onto the stack so they will be generated
         in the order given.
         """
 
-        ll = l[:]
-        ll.reverse()
-
-        self.stack.extend(ll)
+        self.stack.extend(reversed(numbers))
 
     def reset(self):
         """
         Resets the RNG, removing all of the pushbacked numbers.
         """
 
-        del self.stack[:]
+        self.stack.clear()
 
-    def Random(self, seed=None):
+    def Random(self, seed: float | None = None):
         """
         Returns a new RNG object separate from the main one.
         """
 
-        if seed is None:
-            seed = self.random()
-
-        new = RollbackRandom()
-        new.seed(seed)
-        return new
+        return RollbackRandom()
