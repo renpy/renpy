@@ -26,6 +26,7 @@
 from typing import (
     Any,
     Callable,
+    ClassVar,
     Protocol,
     Iterable,
     AbstractSet,
@@ -113,14 +114,17 @@ class RevertableType(Protocol):
         raise NotImplementedError
 
 
-def is_revertable(obj: object) -> TypeGuard[RevertableType]:
+def is_revertable(obj: object | type) -> TypeGuard[RevertableType]:
     """
     Returns True if `obj` implements the RevertableType protocol.
     """
 
-    # At runtime we do only a weak check to reduce the overhead of runtime_checkable
+    # At runtime we make a weak check to reduce the overhead of runtime_checkable
     # protocol.
-    return hasattr(obj, "_rollback")
+    if not isinstance(obj, type):
+        obj = type(obj)
+
+    return callable(getattr(obj, "_rollback", None))
 
 
 mutate_flag: bool = True
@@ -628,30 +632,34 @@ class MultiRevertable:
     object fields.
     """
 
-    def _rollback_types(self):
-        rv: list[type[RevertableType]] = []
+    _rollback_types: ClassVar[tuple[type[RevertableType]]]
 
-        for i in self.__class__.__mro__:
+    def __init_subclass__(cls):
+        rv = []
+
+        for i in cls.__mro__:
             if i is MultiRevertable:
                 continue
 
-            if "_rollback" in i.__dict__:
+            if is_revertable(i):
                 rv.append(i)
 
-        return rv
+        cls._rollback_types = tuple(rv)
+
+        super().__init_subclass__()
 
     if TYPE_CHECKING:
         type Clean = tuple[Any, ...]
         type Compressed = Clean
 
     def _clean(self):
-        return tuple(i._clean(self) for i in self._rollback_types())
+        return tuple(i._clean(self) for i in self._rollback_types)
 
     def _compress(self, clean):
-        return tuple(i._compress(self, c) for i, c in zip(self._rollback_types(), clean))
+        return tuple(i._compress(self, c) for i, c in zip(self._rollback_types, clean))
 
     def _rollback(self, compressed):
-        for i, c in zip(self._rollback_types(), compressed):
+        for i, c in zip(self._rollback_types, compressed):
             i._rollback(self, c)
 
 
