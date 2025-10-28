@@ -134,6 +134,16 @@ this to check to see if store has changed after save started.
 """
 
 
+def _object_born(obj: RevertableType):
+    log = renpy.game.log
+
+    if log is not None:
+        # Init to None so we don't call _clean for an object that could be
+        # destroyed before rollback session ends. If user rolls back here,
+        # it would be deleted from anywhere it was referenced.
+        log.mutated[id(obj)] = None
+
+
 def _creator(base: type):
     """
     Helper function to wrap base class constructor and prevent mutations
@@ -144,17 +154,20 @@ def _creator(base: type):
 
     @functools.wraps(method)
     def do_init(self, *args, **kwargs):
-        log = renpy.game.log
-
-        if log is not None:
-            # Init to None so we don't call _clean for an object that could be
-            # destroyed before rollback session ends. If user rolls back here,
-            # it would be deleted from anywhere it was referenced.
-            log.mutated[id(self)] = None
-
+        _object_born(self)
         method(self, *args, **kwargs)
 
     return do_init
+
+
+def _object_mutated(obj: RevertableType):
+    global mutate_flag
+
+    mutated = renpy.game.log.mutated
+
+    if id(obj) not in mutated:
+        mutated[id(obj)] = (weakref.ref(obj), obj._clean())
+        mutate_flag = True
 
 
 def _mutator(method: Callable):
@@ -165,14 +178,7 @@ def _mutator(method: Callable):
 
     @functools.wraps(method)
     def do_mutation(self, *args, **kwargs):
-        global mutate_flag
-
-        mutated = renpy.game.log.mutated
-
-        if id(self) not in mutated:
-            mutated[id(self)] = (weakref.ref(self), self._clean())
-            mutate_flag = True
-
+        _object_mutated(self)
         return method(self, *args, **kwargs)
 
     return do_mutation
@@ -578,9 +584,7 @@ class RevertableObject:
     def __new__(cls, *args, **kwargs):
         self = super(RevertableObject, cls).__new__(cls)
 
-        log = renpy.game.log
-        if log is not None:
-            log.mutated[id(self)] = None
+        _object_born(self)
 
         return self
 
