@@ -23,7 +23,18 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from typing import Any, Callable, Protocol, Iterable, SupportsIndex, TypeGuard, TYPE_CHECKING, final, overload
+from typing import (
+    Any,
+    Callable,
+    Protocol,
+    Iterable,
+    AbstractSet,
+    SupportsIndex,
+    TypeGuard,
+    TYPE_CHECKING,
+    final,
+    overload,
+)
 
 import __future__
 
@@ -473,52 +484,74 @@ class RevertableSet[T](set[T]):
     __reduce__ = object.__reduce__
     __reduce_ex__ = object.__reduce_ex__
 
-    def __init__(self, *args):
-        log = renpy.game.log
+    if not TYPE_CHECKING:
+        __init__ = _creator(set)
 
-        if log is not None:
-            log.mutated[id(self)] = None
+        __iand__ = _mutator(set.__iand__)
+        __ior__ = _mutator(set.__ior__)
+        __isub__ = _mutator(set.__isub__)
+        __ixor__ = _mutator(set.__ixor__)
+        add = _mutator(set.add)
+        clear = _mutator(set.clear)
+        difference_update = _mutator(set.difference_update)
+        discard = _mutator(set.discard)
+        intersection_update = _mutator(set.intersection_update)
+        pop = _mutator(set.pop)
+        remove = _mutator(set.remove)
+        symmetric_difference_update = _mutator(set.symmetric_difference_update)
+        update = _mutator(set.update)
 
-        set.__init__(self, *args)
+        union_update = _mutator(set.update)
 
-    __iand__ = mutator(set.__iand__)
-    __ior__ = mutator(set.__ior__)
-    __isub__ = mutator(set.__isub__)
-    __ixor__ = mutator(set.__ixor__)
-    add = mutator(set.add)
-    clear = mutator(set.clear)
-    difference_update = mutator(set.difference_update)
-    discard = mutator(set.discard)
-    intersection_update = mutator(set.intersection_update)
-    pop = mutator(set.pop)
-    remove = mutator(set.remove)
-    symmetric_difference_update = mutator(set.symmetric_difference_update)
-    union_update = mutator(set.update)
-    update = mutator(set.update)
+    # Can not be in non-typing block above because we change return type.
+    def __and__(self, other: AbstractSet[Any]) -> "RevertableSet[T]":
+        rv = super().__and__(other)
+        if isinstance(rv, set):
+            return RevertableSet(rv)
+        else:
+            return rv
 
-    @staticmethod
-    def wrapper(method):
-        @functools.wraps(method)
-        def newmethod(*args, **kwargs):
-            rv = method(*args, **kwargs)
-            if isinstance(rv, set):
-                return RevertableSet(rv)
-            else:
-                return rv
+    def __or__[T2](self, other: AbstractSet[T2]) -> "RevertableSet[T | T2]":
+        rv = super().__or__(other)
+        if isinstance(rv, set):
+            return RevertableSet(rv)
+        else:
+            return rv
 
-        return newmethod
+    def __sub__(self, other: AbstractSet[Any]) -> "RevertableSet[T]":
+        rv = super().__sub__(other)
+        if isinstance(rv, set):
+            return RevertableSet(rv)
+        else:
+            return rv
 
-    __and__ = wrapper(set.__and__)
-    __sub__ = wrapper(set.__sub__)
-    __xor__ = wrapper(set.__xor__)
-    __or__ = wrapper(set.__or__)
-    copy = wrapper(set.copy)
-    difference = wrapper(set.difference)
-    intersection = wrapper(set.intersection)
-    symmetric_difference = wrapper(set.symmetric_difference)
-    union = wrapper(set.union)
+    def __xor__[T2](self, other: AbstractSet[T2]) -> "RevertableSet[T | T2]":
+        rv = super().__xor__(other)
+        if isinstance(rv, set):
+            return RevertableSet(rv)
+        else:
+            return rv
 
-    del wrapper
+    # FIXME: No __r...__ methods here, which probably is incorrect.
+
+    def copy(self) -> "RevertableSet[T]":
+        return RevertableSet(self)
+
+    def difference(self, *s: Iterable[Any]) -> "RevertableSet[T]":
+        return RevertableSet(super().difference(*s))
+
+    def intersection(self, *s: Iterable[Any]) -> "RevertableSet[T]":
+        return RevertableSet(super().intersection(*s))
+
+    def symmetric_difference(self, s: Iterable[Any]) -> "RevertableSet[T]":
+        return RevertableSet(super().symmetric_difference(s))
+
+    def union(self, *s: Iterable[Any]) -> "RevertableSet[T]":
+        return RevertableSet(super().union(*s))
+
+    if TYPE_CHECKING:
+        type Clean = list[T]
+        type Compressed = Clean
 
     def _clean(self):
         return list(self)
@@ -527,8 +560,8 @@ class RevertableSet[T](set[T]):
         return clean
 
     def _rollback(self, compressed):
-        set.clear(self)
-        set.update(self, compressed)
+        super().clear()
+        super().update(compressed)
 
 
 class RevertableObject:
