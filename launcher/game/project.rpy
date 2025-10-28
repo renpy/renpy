@@ -111,6 +111,9 @@ init python in project:
             # and directories removed.
             self.renpy_launcher = None
 
+            # Caches the todo list.
+            self.todos = None
+
         def get_dump_filename(self):
 
             if os.path.exists(os.path.join(self.gamedir, "saves")):
@@ -447,8 +450,7 @@ init python in project:
             try:
                 with open(dump_filename, "r") as f:
                     self.dump = json.load(f)
-                # add todo list to dump data
-                self.update_todos()
+                    self.todos = None
 
             except Exception:
                 self.dump["error"] = True
@@ -458,6 +460,10 @@ init python in project:
             Scans the scriptfiles for lines TODO comments and add them to
             the dump data.
             """
+
+            if self.todos is not None:
+                self.dump.setdefault("location", {})["todo"] = self.todos
+                return
 
             todos = self.dump.setdefault("location", {})["todo"] = {}
 
@@ -488,6 +494,7 @@ init python in project:
 
                     todos[todo_text] = [f, l]
 
+            self.todos = todos
 
         def unelide_filename(self, fn):
             """

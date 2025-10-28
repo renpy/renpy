@@ -161,7 +161,9 @@ init python in navigation:
 
 screen navigation:
 
-    $ todo_count = len(project.current.dump.get("location", {}).get("todo", []))
+    python:
+        project.current.update_todos()
+        todo_count = len(project.current.dump.get("location", {}).get("todo", []))
 
     frame:
         style_group "l"
