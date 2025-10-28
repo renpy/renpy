@@ -29,6 +29,7 @@ from typing import (
     ClassVar,
     Protocol,
     Iterable,
+    Sequence,
     AbstractSet,
     SupportsIndex,
     TypeGuard,
@@ -667,23 +668,21 @@ class MultiRevertable:
             i._rollback(self, c)
 
 
-def checkpointing(method):
+def _checkpointing(method):
+    """
+    Helper function to wrap methods that not only mutate object, but also
+    set a force checkpoint in current interaction.
+    """
+
     @functools.wraps(method)
     def do_checkpoint(self, *args, **kwargs):
         renpy.game.context().force_checkpoint = True
 
+        _object_mutated(self)
+
         return method(self, *args, **kwargs)
 
     return do_checkpoint
-
-
-def list_wrapper(method):
-    @functools.wraps(method)
-    def newmethod(*args, **kwargs):
-        l = method(*args, **kwargs)
-        return RevertableList(l)
-
-    return newmethod
 
 
 class RollbackRandom(random.Random):
@@ -691,13 +690,45 @@ class RollbackRandom(random.Random):
     This is used for Random objects returned by renpy.random.Random.
     """
 
-    def __init__(self):
-        log = renpy.game.log
+    if not TYPE_CHECKING:
+        __init__ = _creator(random.Random)
 
-        if log is not None:
-            log.mutated[id(self)] = None
+        setstate = _checkpointing(random.Random.setstate)
 
-        super(RollbackRandom, self).__init__()
+        getrandbits = _checkpointing(random.Random.getrandbits)
+        seed = _checkpointing(random.Random.seed)
+        random = _checkpointing(random.Random.random)
+
+    def choices[T](
+        self,
+        population: Sequence[T],
+        weights: Sequence[float] | None = None,
+        *,
+        cum_weights: Sequence[float] | None = None,
+        k: int = 1,
+    ) -> RevertableList[T]:
+        return RevertableList(super().choices(population, weights, cum_weights=cum_weights, k=k))
+
+    def sample[T](
+        self,
+        population: Sequence[T],
+        k: int,
+        *,
+        counts: Iterable[int] | None = None,
+    ) -> RevertableList[T]:
+        return RevertableList(super().sample(population, k, counts=counts))
+
+    def Random(self, seed: float | None = None) -> "RollbackRandom":
+        """
+        Returns a new RNG object separate from the main one.
+        """
+
+        if seed is None:
+            seed = self.random()
+
+        new = RollbackRandom()
+        new.seed(seed)
+        return new
 
     if TYPE_CHECKING:
         type Clean = tuple[Any, ...]
@@ -711,27 +742,6 @@ class RollbackRandom(random.Random):
 
     def _rollback(self, compressed):
         super(RollbackRandom, self).setstate(compressed)
-
-    setstate = checkpointing(mutator(random.Random.setstate))
-
-    choices = list_wrapper(random.Random.choices)
-    sample = list_wrapper(random.Random.sample)
-
-    getrandbits = checkpointing(mutator(random.Random.getrandbits))
-    seed = checkpointing(mutator(random.Random.seed))
-    random = checkpointing(mutator(random.Random.random))
-
-    def Random(self, seed=None):
-        """
-        Returns a new RNG object separate from the main one.
-        """
-
-        if seed is None:
-            seed = self.random()
-
-        new = RollbackRandom()
-        new.seed(seed)
-        return new
 
 
 class DetRandom(random.Random):
