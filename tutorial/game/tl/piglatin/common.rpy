@@ -473,55 +473,55 @@ translate piglatin strings:
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 
-    # renpy/common/00gui.rpy:446
+    # renpy/common/00gui.rpy:448
     old "Are you sure?"
     new "Reaay ouyay uresay?"
 
-    # renpy/common/00gui.rpy:447
+    # renpy/common/00gui.rpy:449
     old "Are you sure you want to delete this save?"
     new "Reaay ouyay uresay ouyay antway otay eleteday histay avesay?"
 
-    # renpy/common/00gui.rpy:448
+    # renpy/common/00gui.rpy:450
     old "Are you sure you want to overwrite your save?"
     new "Reaay ouyay uresay ouyay antway otay overwriteay ouryay avesay?"
 
-    # renpy/common/00gui.rpy:449
+    # renpy/common/00gui.rpy:451
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Oadinglay illway oselay unsaveday rogresspay.\nReaay ouyay uresay ouyay antway otay oday histay?"
 
-    # renpy/common/00gui.rpy:450
+    # renpy/common/00gui.rpy:452
     old "Are you sure you want to quit?"
     new "Reaay ouyay uresay ouyay antway otay uitqay?"
 
-    # renpy/common/00gui.rpy:451
+    # renpy/common/00gui.rpy:453
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Reaay ouyay uresay ouyay antway otay eturnray otay hetay ainmay enumay?\nHistay illway oselay unsaveday rogresspay."
 
-    # renpy/common/00gui.rpy:452
+    # renpy/common/00gui.rpy:454
     old "Are you sure you want to continue where you left off?"
     new "Reaay ouyay uresay ouyay antway otay ontinuecay hereway ouyay eftlay offay?"
 
-    # renpy/common/00gui.rpy:453
+    # renpy/common/00gui.rpy:455
     old "Are you sure you want to end the replay?"
     new "Reaay ouyay uresay ouyay antway otay enday hetay eplayray?"
 
-    # renpy/common/00gui.rpy:454
+    # renpy/common/00gui.rpy:456
     old "Are you sure you want to begin skipping?"
     new "Reaay ouyay uresay ouyay antway otay eginbay kippingsay?"
 
-    # renpy/common/00gui.rpy:455
+    # renpy/common/00gui.rpy:457
     old "Are you sure you want to skip to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay otay hetay extnay oicechay?"
 
-    # renpy/common/00gui.rpy:456
+    # renpy/common/00gui.rpy:458
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
-    # renpy/common/00gui.rpy:457
+    # renpy/common/00gui.rpy:459
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
     new "Histay avesay asway reatedcay onay aay ifferentday eviceday. Aliciouslymay onstructedcay avesay ilesfay ancay armhay ouryay omputercay. Oday ouyay usttray histay avesay'say reatorcay anday everyoneay howay ouldcay avehay angedchay hetay ilefay?"
 
-    # renpy/common/00gui.rpy:458
+    # renpy/common/00gui.rpy:460
     old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
     new "Oday ouyay usttray hetay eviceday hetay avesay asway reatedcay onay? Ouyay ouldshay onlyay oosechay esyay ifay ouyay areay hetay eviceday'say olesay useray."
 
