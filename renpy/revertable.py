@@ -278,7 +278,7 @@ class RevertableList[T](list[T]):
         # Python list would raise if other is not a list.
         return RevertableList(super().__add__(other))
 
-    # List does not define __radd__, so list + RevertableList would return list.
+    # FIXME: No __radd__ method here, which probably is incorrect.
 
     def __mul__(self, other: SupportsIndex) -> "RevertableList[T]":
         # Python list would raise if other could not be converted to int.
@@ -416,13 +416,13 @@ class RevertableDict[KT, VT](dict[KT, VT]):
         type Clean = list[tuple[KT, VT]]
         type Compressed = Clean
 
-    def _clean(self):
+    def _clean(self) -> "Clean":
         return list(self.items())
 
-    def _compress(self, clean):
+    def _compress(self, clean: "Clean") -> "Compressed":
         return clean
 
-    def _rollback(self, compressed):
+    def _rollback(self, compressed: "Compressed"):
         self.clear()
 
         for k, v in compressed:
@@ -564,13 +564,13 @@ class RevertableSet[T](set[T]):
         type Clean = list[T]
         type Compressed = Clean
 
-    def _clean(self):
+    def _clean(self) -> "Clean":
         return list(self)
 
-    def _compress(self, clean):
+    def _compress(self, clean: "Clean") -> "Compressed":
         return clean
 
-    def _rollback(self, compressed):
+    def _rollback(self, compressed: "Compressed"):
         super().clear()
         super().update(compressed)
 
@@ -608,13 +608,13 @@ class RevertableObject:
         type Clean = dict[str, Any]
         type Compressed = Clean
 
-    def _clean(self):
+    def _clean(self) -> "Clean":
         return self.__dict__.copy()
 
-    def _compress(self, clean):
+    def _compress(self, clean: "Clean") -> "Compressed":
         return clean
 
-    def _rollback(self, compressed):
+    def _rollback(self, compressed: "Compressed"):
         self.__dict__.clear()
         self.__dict__.update(compressed)
 
@@ -657,13 +657,13 @@ class MultiRevertable:
         type Clean = tuple[Any, ...]
         type Compressed = Clean
 
-    def _clean(self):
+    def _clean(self) -> "Clean":
         return tuple(i._clean(self) for i in self._rollback_types)
 
-    def _compress(self, clean):
+    def _compress(self, clean: "Clean") -> "Compressed":
         return tuple(i._compress(self, c) for i, c in zip(self._rollback_types, clean))
 
-    def _rollback(self, compressed):
+    def _rollback(self, compressed: "Compressed"):
         for i, c in zip(self._rollback_types, compressed):
             i._rollback(self, c)
 
@@ -734,13 +734,13 @@ class RollbackRandom(random.Random):
         type Clean = tuple[Any, ...]
         type Compressed = Clean
 
-    def _clean(self):
+    def _clean(self) -> "Clean":
         return self.getstate()
 
-    def _compress(self, clean):
+    def _compress(self, clean: "Clean") -> "Compressed":
         return clean
 
-    def _rollback(self, compressed):
+    def _rollback(self, compressed: "Compressed"):
         super(RollbackRandom, self).setstate(compressed)
 
 
