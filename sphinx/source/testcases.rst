@@ -25,7 +25,8 @@ Testcases can be run in two ways. The first is from the laucher, by selecting th
 The "Run Testcases" button is only present in the launcher if at least one testcase
 exists in global test suite. Testcauses and test suites found at the top level of a Ren'Py
 script file are automatically added to the global test suite. When adding the first testcase
-to a projecrt, you may need to hit 'refesh' in the launcher to see the button appear.
+to a project, launch the game normally, then hit 'refresh' in the launcher to have the
+"Run Testcases" button appear.
 
 .. _testcase-statement:
 

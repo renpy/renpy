@@ -413,7 +413,7 @@ init python in project:
 
             return ["osascript", "-e", 'tell app "Terminal" to do script "'+python_launch_string+' && exit"']
 
-        def update_dump(self, force=False, gui=True, compile=False):
+        def update_dump(self, force=False, gui=True, compile=False, only_existing=False):
             """
             If the dumpfile does not exist, runs Ren'Py to create it. Otherwise,
             loads it in iff it's newer than the one that's already loaded.
@@ -422,6 +422,9 @@ init python in project:
             dump_filename = self.get_dump_filename()
 
             if force or not os.path.exists(dump_filename):
+
+                if only_existing and not os.path.exists(dump_filename):
+                    return
 
                 if gui:
                     interface.processing(_("Ren'Py is scanning the project..."))
@@ -915,7 +918,7 @@ init python in project:
             persistent.active_project = self.project.name
 
             try:
-                current.update_dump()
+                current.update_dump(only_existing=True)
             except Exception:
                 pass
 
@@ -953,7 +956,7 @@ init python in project:
             persistent.active_project = p.name
 
             try:
-                current.update_dump()
+                current.update_dump(only_existing=True)
             except Exception:
                 pass
 
@@ -1023,7 +1026,7 @@ init python in project:
 
             if current is not None:
                 try:
-                    current.update_dump(force=True, gui=False)
+                    current.update_dump(gui=False, only_existing=True)
                 except Exception:
                     pass
 
@@ -1052,7 +1055,7 @@ init 10 python:
 
     if project.current is not None:
         try:
-            project.current.update_dump()
+            project.current.update_dump(only_existing=True)
         except Exception:
             pass
 
