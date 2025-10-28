@@ -565,12 +565,11 @@ class RevertableSet[T](set[T]):
 
 
 class RevertableObject:
-    # All RenPy's objects have  __dict__, so _rollback is fast, i.e
+    # All RenPy's objects have __dict__, so _rollback is fast, i.e
     # one update, not iterating over all attributes.
     # __weakref__ should exist, so mutator can work.
-    # Other slots are forbidden because they cannot be reverted in easy way.
+    # Other slots are forbidden because it will complicate rollback too much.
     # For more details, see https://github.com/renpy/renpy/pull/3282
-    # __slots__ = ("__weakref__", "__dict__")
 
     def __new__(cls, *args, **kwargs):
         self = super(RevertableObject, cls).__new__(cls)
@@ -582,20 +581,23 @@ class RevertableObject:
         return self
 
     def __init__(self, *args, **kwargs):
-        if (args or kwargs) and renpy.config.developer:
-            raise TypeError("object() takes no parameters.")
+        if renpy.config.developer and (args or kwargs):
+            raise TypeError("object() takes no arguments")
 
     def __init_subclass__(cls):
-        if renpy.config.developer and "__slots__" in cls.__dict__:
-            raise TypeError(
-                "Classes with __slots__ do not support rollback. "
-                "To create a class with slots, inherit from python_object instead."
-            )
+        if renpy.config.developer and cls.__dict__.get("__slots__", ()):
+            err = TypeError("nonempty __slots__ not supported for subtype of 'renpy.revertable.RevertableObject'")
+            err.add_note("To create a class with slots, inherit from python_object instead.")
+            raise err
 
         super().__init_subclass__()
 
-    __setattr__ = mutator(object.__setattr__)
-    __delattr__ = mutator(object.__delattr__)
+    if not TYPE_CHECKING:
+        __setattr__ = _mutator(object.__setattr__)
+        __delattr__ = _mutator(object.__delattr__)
+    else:
+        type Clean = dict[str, Any]
+        type Compressed = Clean
 
     def _clean(self):
         return self.__dict__.copy()
