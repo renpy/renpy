@@ -23,7 +23,7 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from typing import AbstractSet, Any, Callable, Iterable, Protocol, Sequence, SupportsIndex, overload
+from typing import AbstractSet, Any, Callable, Iterable, Mapping, Never, Protocol, Sequence, SupportsIndex, overload
 
 import __future__
 
@@ -156,13 +156,13 @@ class CompressedList:
 
 
 class RevertableList[T](list[T]):
-    def __init__(self, *args):
+    def __init__(self, iterable: Iterable[T], /):
         log = renpy.game.log
 
         if log is not None:
             log.mutated[id(self)] = None
 
-        list.__init__(self, *args)
+        super().__init__(iterable)
 
     __delitem__ = mutator(list.__delitem__)
     __setitem__ = mutator(list.__setitem__)
@@ -293,13 +293,32 @@ def revertable_sorted(*args, **kwargs):
 
 
 class RevertableDict[KT, VT](dict[KT, VT]):
-    def __init__(self, *args, **kwargs):
+    # Typeshed actually have more correct overloads, but for our case, we only
+    # care about str: VT when kwargs are present, and KT: VT if not.
+    @overload
+    def __init__(self, /) -> None: ...  # RevertableDict[Unknown, Unknown] case.
+    @overload
+    def __init__(
+        self: "RevertableDefaultDict[str, VT]",  # pyright: ignore[reportInvalidTypeVarUse]
+        iterable: Mapping[str, VT] | Iterable[tuple[str, VT]] = (),
+        /,
+        **kwargs: VT,
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        iterable: Mapping[KT, VT] | Iterable[tuple[KT, VT]] = (),
+        /,
+    ) -> None: ...
+
+    def __init__(self, iterable=(), /, **kwargs):
         log = renpy.game.log
 
         if log is not None:
             log.mutated[id(self)] = None
 
-        dict.__init__(self, *args, **kwargs)
+        super().__init__(iterable, **kwargs)
 
     __delitem__ = mutator(dict.__delitem__)
     __setitem__ = mutator(dict.__setitem__)
@@ -370,25 +389,27 @@ class RevertableDefaultDict[KT, VT](RevertableDict[KT, VT]):
     # Typeshed actually have more correct overloads, but for our case, we only
     # care about str: VT when kwargs are present, and KT: VT if not.
     @overload
+    def __init__(self, /) -> None: ...  # RevertableDefaultDict[Unknown, Unknown] case.
+    @overload
     def __init__(
         self: "RevertableDefaultDict[str, VT]",  # pyright: ignore[reportInvalidTypeVarUse]
         default_factory: Callable[[], VT] | None = None,
-        iterable: dict[str, VT] | Iterable[tuple[str, VT]] = (),
+        iterable: Mapping[str, VT] | Iterable[tuple[str, VT]] = (),
         /,
         **kwargs: VT,
-    ): ...
+    ) -> None: ...
 
     @overload
     def __init__(
         self,
         default_factory: Callable[[], VT] | None = None,
-        iterable: dict[KT, VT] | Iterable[tuple[KT, VT]] = (),
+        iterable: Mapping[KT, VT] | Iterable[tuple[KT, VT]] = (),
         /,
-    ): ...
+    ) -> None: ...
 
-    def __init__(self, default_factory=None, *args, **kwargs):
+    def __init__(self, default_factory=None, iterable=(), /, **kwargs):
         self.default_factory = default_factory
-        super(RevertableDefaultDict, self).__init__(*args, **kwargs)
+        super().__init__(iterable, **kwargs)
 
     def __missing__(self, key) -> VT:
         if self.default_factory is None:
@@ -511,7 +532,7 @@ class RevertableObject:
 
         return self
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Never, **kwargs: Never):
         if (args or kwargs) and renpy.config.developer:
             raise TypeError("object() takes no parameters.")
 
