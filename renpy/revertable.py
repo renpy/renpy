@@ -320,6 +320,8 @@ class RevertableDict[KT, VT](dict[KT, VT]):
 
         super().__init__(iterable, **kwargs)
 
+    # FIXME: Missing dict.fromkeys
+
     __delitem__ = mutator(dict.__delitem__)
     __setitem__ = mutator(dict.__setitem__)
     clear = mutator(dict.clear)
