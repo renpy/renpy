@@ -365,11 +365,32 @@ class RevertableDefaultDict[KT, VT](RevertableDict[KT, VT]):
     participate in rollback, and so should not be changed.
     """
 
+    default_factory: Callable[[], VT] | None
+
+    # Typeshed actually have more correct overloads, but for our case, we only
+    # care about str: VT when kwargs are present, and KT: VT if not.
+    @overload
+    def __init__(
+        self: "RevertableDefaultDict[str, VT]",  # pyright: ignore[reportInvalidTypeVarUse]
+        default_factory: Callable[[], VT] | None = None,
+        iterable: dict[str, VT] | Iterable[tuple[str, VT]] = (),
+        /,
+        **kwargs: VT,
+    ): ...
+
+    @overload
+    def __init__(
+        self,
+        default_factory: Callable[[], VT] | None = None,
+        iterable: dict[KT, VT] | Iterable[tuple[KT, VT]] = (),
+        /,
+    ): ...
+
     def __init__(self, default_factory=None, *args, **kwargs):
         self.default_factory = default_factory
         super(RevertableDefaultDict, self).__init__(*args, **kwargs)
 
-    def __missing__(self, key):
+    def __missing__(self, key) -> VT:
         if self.default_factory is None:
             raise KeyError(key)
 
