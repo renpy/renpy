@@ -255,6 +255,10 @@ def revertable_range(
 ) -> RevertableList[int]: ...
 
 
+def revertable_range(*args):
+    return RevertableList(range(*args))
+
+
 class SupportsDunderLT(Protocol):
     def __lt__(self, other: Any, /) -> bool: ...
 
@@ -266,18 +270,14 @@ class SupportsDunderGT(Protocol):
 type SupportsRichComparison = SupportsDunderLT | SupportsDunderGT
 
 
-def revertable_range(*args):
-    return RevertableList(range(*args))
-
-
 @overload
-def revertable_sorted[T: SupportsRichComparison](
-    iterable: Iterable[T],
+def revertable_sorted[SupportsRichComparisonT: SupportsRichComparison](
+    iterable: Iterable[SupportsRichComparisonT],
     /,
     *,
     key: None = None,
     reverse: bool = False,
-) -> RevertableList[T]: ...
+) -> RevertableList[SupportsRichComparisonT]: ...
 @overload
 def revertable_sorted[T](
     iterable: Iterable[T],
