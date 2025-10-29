@@ -66,18 +66,19 @@ this to check to see if store has changed after save started.
 """
 
 
-def mutator(method):
+def mutator[**P, R](method: Callable[P, R]) -> Callable[P, R]:
     @functools.wraps(method)
-    def do_mutation(self, *args, **kwargs):
+    def do_mutation(*args: P.args, **kwargs: P.kwargs) -> R:
         global mutate_flag
 
+        self = args[0]
         mutated = renpy.game.log.mutated
 
         if id(self) not in mutated:
-            mutated[id(self)] = (weakref.ref(self), self._clean())
+            mutated[id(self)] = (weakref.ref(self), self._clean())  # type: ignore
             mutate_flag = True
 
-        return method(self, *args, **kwargs)
+        return method(*args, **kwargs)
 
     return do_mutation
 
@@ -578,12 +579,12 @@ class MultiRevertable:
             i._rollback(self, c)
 
 
-def checkpointing(method):
+def checkpointing[**P, R](method: Callable[P, R]) -> Callable[P, R]:
     @functools.wraps(method)
-    def do_checkpoint(self, *args, **kwargs):
+    def do_checkpoint(*args: P.args, **kwargs: P.kwargs) -> R:
         renpy.game.context().force_checkpoint = True
 
-        return method(self, *args, **kwargs)
+        return method(*args, **kwargs)
 
     return do_checkpoint
 
