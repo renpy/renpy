@@ -316,26 +316,23 @@ class RevertableDict[KT, VT](dict[KT, VT]):
         def has_key(self, key):
             return key in self
 
-    # https://peps.python.org/pep-0584 methods
-    def __or__(self, other):
+    def __or__[KT2, VT2](self, other: dict[KT2, VT2]) -> "RevertableDict[KT | KT2, VT | VT2]":
         if not isinstance(other, dict):
             return NotImplemented
-        rv = RevertableDict(self)
-        rv.update(other)
-        return rv
 
-    def __ror__(self, other):
+        return RevertableDict(super().__or__(other))
+
+    def __ror__[KT2, VT2](self, other: dict[KT2, VT2]) -> "RevertableDict[KT | KT2, VT | VT2]":
         if not isinstance(other, dict):
             return NotImplemented
-        rv = RevertableDict(other)
-        rv.update(self)
-        return rv
 
-    def __ior__(self, other):
+        return RevertableDict(super().__ror__(other))
+
+    def __ior__(self, other: dict[KT, VT] | Iterable[tuple[KT, VT]]) -> "RevertableDict[KT, VT]":
         self.update(other)
         return self
 
-    def copy(self):
+    def copy(self) -> "RevertableDict[KT, VT]":
         rv = RevertableDict()
         rv.update(self)
         return rv
