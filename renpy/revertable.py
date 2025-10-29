@@ -23,7 +23,7 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, SupportsIndex, overload
 
 import __future__
 
@@ -177,32 +177,32 @@ class RevertableList[T](list[T]):
         reverse = mutator(list.reverse)
         sort = mutator(list.sort)
 
-    @staticmethod
-    def wrapper(method):
-        @functools.wraps(method)
-        def newmethod(*args, **kwargs):
-            l = method(*args, **kwargs)
-            if l is NotImplemented:
-                return l
-            return RevertableList(l)
+    def __add__[S](self, other: list[S]) -> "RevertableList[T | S]":
+        # Python list would raise if other is not a list.
+        return RevertableList(super().__add__(other))
 
-        return newmethod
+    # FIXME: No __radd__ method here, which probably is incorrect.
 
-    __add__ = wrapper(list.__add__)
-    __mul__ = wrapper(list.__mul__)
-    __rmul__ = wrapper(list.__rmul__)
+    def __mul__(self, other: SupportsIndex) -> "RevertableList[T]":
+        # Python list would raise if other could not be converted to int.
+        return RevertableList(super().__mul__(other))
 
-    del wrapper
+    def __rmul__(self, other: SupportsIndex) -> "RevertableList[T]":
+        # Python list would raise if other could not be converted to int.
+        return RevertableList(super().__rmul__(other))
 
-    def __getitem__(self, index):
-        rv = list.__getitem__(self, index)
+    @overload
+    def __getitem__(self, index: SupportsIndex) -> T: ...
+    @overload
+    def __getitem__(self, index: slice) -> "RevertableList[T]": ...
 
+    def __getitem__(self, index: SupportsIndex | slice):
         if isinstance(index, slice):
-            return RevertableList(rv)
+            return RevertableList(super().__getitem__(index))
         else:
-            return rv
+            return super().__getitem__(index)
 
-    def copy(self):
+    def copy(self) -> "RevertableList[T]":
         return self[:]
 
     def clear(self):
