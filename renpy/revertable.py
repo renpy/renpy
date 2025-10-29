@@ -23,14 +23,12 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from typing import Any
 
 import __future__
 
 import random
 import weakref
-import sys
 import copyreg
 import functools
 
@@ -61,10 +59,11 @@ def _reconstructor(cls, base, state):
 
 copyreg._reconstructor = _reconstructor  # type: ignore
 
-
-# This is set to True whenever a mutation occurs. The save code uses
-# this to check to see if a background-save is valid.
-mutate_flag = True
+mutate_flag: bool = True
+"""
+This is set to True whenever a mutation occurs. The background save code uses
+this to check to see if store has changed after save started.
+"""
 
 
 def mutator(method):
@@ -83,7 +82,7 @@ def mutator(method):
     return do_mutation
 
 
-class CompressedList(object):
+class CompressedList:
     """
     Compresses the changes in a queue-like list. What this does is to try
     to find a central sub-list for which has objects in both lists. It
@@ -94,7 +93,12 @@ class CompressedList(object):
     results are efficient even if this doesn't work.
     """
 
-    def __init__(self, old, new):
+    pre: list[Any]
+    start: int
+    end: int
+    post: list[Any]
+
+    def __init__(self, old: list[Any], new: list[Any]):
         # Pick out a pivot element near the center of the list.
         new_center = (len(new) - 1) // 2
         new_pivot = new[new_center]
@@ -143,14 +147,14 @@ class CompressedList(object):
         self.end = new_end
         self.post = list.__getitem__(old, slice(old_end, len_old))
 
-    def decompress(self, new):
+    def decompress(self, new: list[Any]) -> list[Any]:
         return self.pre + new[self.start : self.end] + self.post
 
     def __repr__(self):
-        return "<CompressedList {} [{}:{}] {}>".format(self.pre, self.start, self.end, self.post)
+        return f"<CompressedList {self.pre} [{self.start}:{self.end}] {self.post}>"
 
 
-class RevertableList(list):
+class RevertableList[T](list[T]):
     def __init__(self, *args):
         log = renpy.game.log
 
@@ -171,19 +175,20 @@ class RevertableList(list):
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
 
-    def wrapper(method):  # type: ignore
+    @staticmethod
+    def wrapper(method):
         @functools.wraps(method)
         def newmethod(*args, **kwargs):
-            l = method(*args, **kwargs)  # type: ignore
+            l = method(*args, **kwargs)
             if l is NotImplemented:
                 return l
             return RevertableList(l)
 
         return newmethod
 
-    __add__ = wrapper(list.__add__)  # type: ignore
-    __mul__ = wrapper(list.__mul__)  # type: ignore
-    __rmul__ = wrapper(list.__rmul__)  # type: ignore
+    __add__ = wrapper(list.__add__)
+    __mul__ = wrapper(list.__mul__)
+    __rmul__ = wrapper(list.__rmul__)
 
     del wrapper
 
@@ -247,7 +252,7 @@ def revertable_sorted(*args, **kwargs):
     return RevertableList(sorted(*args, **kwargs))
 
 
-class RevertableDict(dict):
+class RevertableDict[KT, VT](dict[KT, VT]):
     def __init__(self, *args, **kwargs):
         log = renpy.game.log
 
@@ -308,7 +313,7 @@ class RevertableDict(dict):
             self[k] = v
 
 
-class RevertableDefaultDict(RevertableDict):
+class RevertableDefaultDict[KT, VT](RevertableDict[KT, VT]):
     """
     :doc: rollbackclasses
     :name: defaultdict
@@ -336,7 +341,7 @@ class RevertableDefaultDict(RevertableDict):
         return rv
 
 
-class RevertableSet(set):
+class RevertableSet[T](set[T]):
     def __setstate__(self, state):
         if isinstance(state, tuple):
             self.update(state[0].keys())
@@ -374,10 +379,11 @@ class RevertableSet(set):
     union_update = mutator(set.update)
     update = mutator(set.update)
 
-    def wrapper(method):  # type: ignore
+    @staticmethod
+    def wrapper(method):
         @functools.wraps(method)
         def newmethod(*args, **kwargs):
-            rv = method(*args, **kwargs)  # type: ignore
+            rv = method(*args, **kwargs)
             if isinstance(rv, set):
                 return RevertableSet(rv)
             else:
@@ -385,15 +391,15 @@ class RevertableSet(set):
 
         return newmethod
 
-    __and__ = wrapper(set.__and__)  # type: ignore
-    __sub__ = wrapper(set.__sub__)  # type: ignore
-    __xor__ = wrapper(set.__xor__)  # type: ignore
-    __or__ = wrapper(set.__or__)  # type: ignore
-    copy = wrapper(set.copy)  # type: ignore
-    difference = wrapper(set.difference)  # type: ignore
-    intersection = wrapper(set.intersection)  # type: ignore
-    symmetric_difference = wrapper(set.symmetric_difference)  # type: ignore
-    union = wrapper(set.union)  # type: ignore
+    __and__ = wrapper(set.__and__)
+    __sub__ = wrapper(set.__sub__)
+    __xor__ = wrapper(set.__xor__)
+    __or__ = wrapper(set.__or__)
+    copy = wrapper(set.copy)
+    difference = wrapper(set.difference)
+    intersection = wrapper(set.intersection)
+    symmetric_difference = wrapper(set.symmetric_difference)
+    union = wrapper(set.union)
 
     del wrapper
 
@@ -408,7 +414,7 @@ class RevertableSet(set):
         set.update(self, compressed)
 
 
-class RevertableObject(object):
+class RevertableObject:
     # All RenPy's objects have  __dict__, so _rollback is fast, i.e
     # one update, not iterating over all attributes.
     # __weakref__ should exist, so mutator can work.
@@ -452,7 +458,7 @@ class RevertableObject(object):
         self.__dict__.update(compressed)
 
 
-class MultiRevertable(object):
+class MultiRevertable:
     """
     :doc: rollbackclasses
     :name: MultiRevertable
