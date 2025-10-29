@@ -23,7 +23,7 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from typing import AbstractSet, Any, TYPE_CHECKING, Callable, Iterable, Protocol, Sequence, SupportsIndex, overload
+from typing import AbstractSet, Any, Callable, Iterable, Protocol, Sequence, SupportsIndex, overload
 
 import __future__
 
@@ -155,27 +155,25 @@ class CompressedList:
 
 
 class RevertableList[T](list[T]):
-    if not TYPE_CHECKING:
+    def __init__(self, *args):
+        log = renpy.game.log
 
-        def __init__(self, *args):
-            log = renpy.game.log
+        if log is not None:
+            log.mutated[id(self)] = None
 
-            if log is not None:
-                log.mutated[id(self)] = None
+        list.__init__(self, *args)
 
-            list.__init__(self, *args)
-
-        __delitem__ = mutator(list.__delitem__)
-        __setitem__ = mutator(list.__setitem__)
-        __iadd__ = mutator(list.__iadd__)
-        __imul__ = mutator(list.__imul__)
-        append = mutator(list.append)
-        extend = mutator(list.extend)
-        insert = mutator(list.insert)
-        pop = mutator(list.pop)
-        remove = mutator(list.remove)
-        reverse = mutator(list.reverse)
-        sort = mutator(list.sort)
+    __delitem__ = mutator(list.__delitem__)
+    __setitem__ = mutator(list.__setitem__)
+    __iadd__ = mutator(list.__iadd__)
+    __imul__ = mutator(list.__imul__)
+    append = mutator(list.append)
+    extend = mutator(list.extend)
+    insert = mutator(list.insert)
+    pop = mutator(list.pop)
+    remove = mutator(list.remove)
+    reverse = mutator(list.reverse)
+    sort = mutator(list.sort)
 
     def __add__[S](self, other: list[S]) -> "RevertableList[T | S]":
         # Python list would raise if other is not a list.
@@ -246,44 +244,47 @@ class RevertableList[T](list[T]):
             self[:] = compressed
 
 
-if TYPE_CHECKING:
+@overload
+def revertable_range(start: SupportsIndex, /) -> RevertableList[int]: ...
 
-    @overload
-    def revertable_range(start: SupportsIndex, /) -> RevertableList[int]: ...
 
-    @overload
-    def revertable_range(
-        start: SupportsIndex, stop: SupportsIndex, step: SupportsIndex = ..., /
-    ) -> RevertableList[int]: ...
+@overload
+def revertable_range(
+    start: SupportsIndex, stop: SupportsIndex, step: SupportsIndex = ..., /
+) -> RevertableList[int]: ...
 
-    class SupportsDunderLT(Protocol):
-        def __lt__(self, other: Any, /) -> bool: ...
 
-    class SupportsDunderGT(Protocol):
-        def __gt__(self, other: Any, /) -> bool: ...
+class SupportsDunderLT(Protocol):
+    def __lt__(self, other: Any, /) -> bool: ...
 
-    type SupportsRichComparison = SupportsDunderLT | SupportsDunderGT
 
-    @overload
-    def revertable_sorted[T: SupportsRichComparison](
-        iterable: Iterable[T],
-        /,
-        *,
-        key: None = None,
-        reverse: bool = False,
-    ) -> RevertableList[T]: ...
-    @overload
-    def revertable_sorted[T](
-        iterable: Iterable[T],
-        /,
-        *,
-        key: Callable[[T], SupportsRichComparison],
-        reverse: bool = False,
-    ) -> RevertableList[T]: ...
+class SupportsDunderGT(Protocol):
+    def __gt__(self, other: Any, /) -> bool: ...
+
+
+type SupportsRichComparison = SupportsDunderLT | SupportsDunderGT
 
 
 def revertable_range(*args):
     return RevertableList(range(*args))
+
+
+@overload
+def revertable_sorted[T: SupportsRichComparison](
+    iterable: Iterable[T],
+    /,
+    *,
+    key: None = None,
+    reverse: bool = False,
+) -> RevertableList[T]: ...
+@overload
+def revertable_sorted[T](
+    iterable: Iterable[T],
+    /,
+    *,
+    key: Callable[[T], SupportsRichComparison],
+    reverse: bool = False,
+) -> RevertableList[T]: ...
 
 
 def revertable_sorted(*args, **kwargs):
@@ -291,30 +292,28 @@ def revertable_sorted(*args, **kwargs):
 
 
 class RevertableDict[KT, VT](dict[KT, VT]):
-    if not TYPE_CHECKING:
+    def __init__(self, *args, **kwargs):
+        log = renpy.game.log
 
-        def __init__(self, *args, **kwargs):
-            log = renpy.game.log
+        if log is not None:
+            log.mutated[id(self)] = None
 
-            if log is not None:
-                log.mutated[id(self)] = None
+        dict.__init__(self, *args, **kwargs)
 
-            dict.__init__(self, *args, **kwargs)
+    __delitem__ = mutator(dict.__delitem__)
+    __setitem__ = mutator(dict.__setitem__)
+    clear = mutator(dict.clear)
+    pop = mutator(dict.pop)
+    popitem = mutator(dict.popitem)
+    setdefault = mutator(dict.setdefault)
+    update = mutator(dict.update)
 
-        __delitem__ = mutator(dict.__delitem__)
-        __setitem__ = mutator(dict.__setitem__)
-        clear = mutator(dict.clear)
-        pop = mutator(dict.pop)
-        popitem = mutator(dict.popitem)
-        setdefault = mutator(dict.setdefault)
-        update = mutator(dict.update)
+    itervalues = dict.values
+    iterkeys = dict.keys
+    iteritems = dict.items
 
-        itervalues = dict.values
-        iterkeys = dict.keys
-        iteritems = dict.items
-
-        def has_key(self, key):
-            return key in self
+    def has_key(self, key):
+        return key in self
 
     def __or__[KT2, VT2](self, other: dict[KT2, VT2]) -> "RevertableDict[KT | KT2, VT | VT2]":
         if not isinstance(other, dict):
@@ -414,30 +413,28 @@ class RevertableSet[T](set[T]):
     __reduce__ = object.__reduce__
     __reduce_ex__ = object.__reduce_ex__
 
-    if not TYPE_CHECKING:
+    def __init__(self, *args):
+        log = renpy.game.log
 
-        def __init__(self, *args):
-            log = renpy.game.log
+        if log is not None:
+            log.mutated[id(self)] = None
 
-            if log is not None:
-                log.mutated[id(self)] = None
+        set.__init__(self, *args)
 
-            set.__init__(self, *args)
-
-        __iand__ = mutator(set.__iand__)
-        __ior__ = mutator(set.__ior__)
-        __isub__ = mutator(set.__isub__)
-        __ixor__ = mutator(set.__ixor__)
-        add = mutator(set.add)
-        clear = mutator(set.clear)
-        difference_update = mutator(set.difference_update)
-        discard = mutator(set.discard)
-        intersection_update = mutator(set.intersection_update)
-        pop = mutator(set.pop)
-        remove = mutator(set.remove)
-        symmetric_difference_update = mutator(set.symmetric_difference_update)
-        union_update = mutator(set.update)
-        update = mutator(set.update)
+    __iand__ = mutator(set.__iand__)
+    __ior__ = mutator(set.__ior__)
+    __isub__ = mutator(set.__isub__)
+    __ixor__ = mutator(set.__ixor__)
+    add = mutator(set.add)
+    clear = mutator(set.clear)
+    difference_update = mutator(set.difference_update)
+    discard = mutator(set.discard)
+    intersection_update = mutator(set.intersection_update)
+    pop = mutator(set.pop)
+    remove = mutator(set.remove)
+    symmetric_difference_update = mutator(set.symmetric_difference_update)
+    union_update = mutator(set.update)
+    update = mutator(set.update)
 
     # Wrap return set into RevertableSet for creator methods.
     def __and__(self, other: AbstractSet[Any]) -> "RevertableSet[T]":
@@ -504,20 +501,18 @@ class RevertableObject:
     # For more details, see https://github.com/renpy/renpy/pull/3282
     # __slots__ = ("__weakref__", "__dict__")
 
-    if not TYPE_CHECKING:
+    def __new__(cls, *args, **kwargs):
+        self = super(RevertableObject, cls).__new__(cls)
 
-        def __new__(cls, *args, **kwargs):
-            self = super(RevertableObject, cls).__new__(cls)
+        log = renpy.game.log
+        if log is not None:
+            log.mutated[id(self)] = None
 
-            log = renpy.game.log
-            if log is not None:
-                log.mutated[id(self)] = None
+        return self
 
-            return self
-
-        def __init__(self, *args, **kwargs):
-            if (args or kwargs) and renpy.config.developer:
-                raise TypeError("object() takes no parameters.")
+    def __init__(self, *args, **kwargs):
+        if (args or kwargs) and renpy.config.developer:
+            raise TypeError("object() takes no parameters.")
 
     def __init_subclass__(cls):
         if renpy.config.developer and "__slots__" in cls.__dict__:
@@ -528,9 +523,8 @@ class RevertableObject:
 
         super().__init_subclass__()
 
-    if not TYPE_CHECKING:
-        __setattr__ = mutator(object.__setattr__)
-        __delattr__ = mutator(object.__delattr__)
+    __setattr__ = mutator(object.__setattr__)
+    __delattr__ = mutator(object.__delattr__)
 
     def _clean(self):
         return self.__dict__.copy()
@@ -616,8 +610,7 @@ class RollbackRandom(random.Random):
     def _rollback(self, compressed):
         super(RollbackRandom, self).setstate(compressed)
 
-    if not TYPE_CHECKING:
-        setstate = checkpointing(mutator(random.Random.setstate))
+    setstate = checkpointing(mutator(random.Random.setstate))
 
     def choices[T](
         self,
@@ -638,10 +631,9 @@ class RollbackRandom(random.Random):
     ) -> RevertableList[T]:
         return RevertableList(super().sample(population, k, counts=counts))
 
-    if not TYPE_CHECKING:
-        getrandbits = checkpointing(mutator(random.Random.getrandbits))
-        seed = checkpointing(mutator(random.Random.seed))
-        random = checkpointing(mutator(random.Random.random))
+    getrandbits = checkpointing(mutator(random.Random.getrandbits))
+    seed = checkpointing(mutator(random.Random.seed))
+    random = checkpointing(mutator(random.Random.random))
 
     def Random(self, seed: int | float | str | bytes | bytearray | None = None):
         """
