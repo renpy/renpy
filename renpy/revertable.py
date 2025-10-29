@@ -23,7 +23,19 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from typing import AbstractSet, Any, Callable, Iterable, Mapping, Never, Protocol, Sequence, SupportsIndex, overload
+from typing import (
+    AbstractSet,
+    Any,
+    Callable,
+    Iterable,
+    Mapping,
+    Never,
+    Protocol,
+    Self,
+    Sequence,
+    SupportsIndex,
+    overload,
+)
 
 import __future__
 
@@ -341,15 +353,19 @@ class RevertableDict[KT, VT](dict[KT, VT]):
         if not isinstance(other, dict):
             return NotImplemented
 
-        return RevertableDict(super().__or__(other))
+        rv: RevertableDict[Any, Any] = RevertableDict(self)
+        rv.update(other)
+        return rv
 
     def __ror__[KT2, VT2](self, other: dict[KT2, VT2]) -> "RevertableDict[KT | KT2, VT | VT2]":
         if not isinstance(other, dict):
             return NotImplemented
 
-        return RevertableDict(super().__ror__(other))
+        rv: RevertableDict[Any, Any] = RevertableDict(other)
+        rv.update(self)
+        return rv
 
-    def __ior__(self, other: dict[KT, VT] | Iterable[tuple[KT, VT]]) -> "RevertableDict[KT, VT]":
+    def __ior__(self, other: dict[KT, VT] | Iterable[tuple[KT, VT]]) -> Self:
         self.update(other)
         return self
 
