@@ -643,7 +643,7 @@ class RollbackRandom(random.Random):
         seed = checkpointing(mutator(random.Random.seed))
         random = checkpointing(mutator(random.Random.random))
 
-    def Random(self, seed=None):
+    def Random(self, seed: int | float | str | bytes | bytearray | None = None):
         """
         Returns a new RNG object separate from the main one.
         """
@@ -663,7 +663,7 @@ class DetRandom(random.Random):
 
     def __init__(self):
         super(DetRandom, self).__init__()
-        self.stack = []
+        self.stack: list[float] = []
 
     def choices[T](
         self,
@@ -699,13 +699,13 @@ class DetRandom(random.Random):
 
         return rv
 
-    def pushback(self, l):
+    def pushback(self, lst: list[float]):
         """
-        Pushes the random numbers in l onto the stack so they will be generated
+        Pushes the random numbers in lst onto the stack so they will be generated
         in the order given.
         """
 
-        ll = l[:]
+        ll = lst[:]
         ll.reverse()
 
         self.stack.extend(ll)
@@ -717,7 +717,7 @@ class DetRandom(random.Random):
 
         del self.stack[:]
 
-    def Random(self, seed=None):
+    def Random(self, seed: int | float | str | bytes | bytearray | None = None):
         """
         Returns a new RNG object separate from the main one.
         """
