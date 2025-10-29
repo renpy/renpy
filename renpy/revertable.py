@@ -23,7 +23,7 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from typing import AbstractSet, Any, TYPE_CHECKING, Callable, Iterable, Protocol, SupportsIndex, overload
+from typing import AbstractSet, Any, TYPE_CHECKING, Callable, Iterable, Protocol, Sequence, SupportsIndex, overload
 
 import __future__
 
@@ -594,15 +594,6 @@ def checkpointing(method):
     return do_checkpoint
 
 
-def list_wrapper(method):
-    @functools.wraps(method)
-    def newmethod(*args, **kwargs):
-        l = method(*args, **kwargs)
-        return RevertableList(l)
-
-    return newmethod
-
-
 class RollbackRandom(random.Random):
     """
     This is used for Random objects returned by renpy.random.Random.
@@ -628,8 +619,24 @@ class RollbackRandom(random.Random):
     if not TYPE_CHECKING:
         setstate = checkpointing(mutator(random.Random.setstate))
 
-    choices = list_wrapper(random.Random.choices)
-    sample = list_wrapper(random.Random.sample)
+    def choices[T](
+        self,
+        population: Sequence[T],
+        weights: Sequence[float] | None = None,
+        *,
+        cum_weights: Sequence[float] | None = None,
+        k: int = 1,
+    ) -> RevertableList[T]:
+        return RevertableList(super().choices(population, weights, cum_weights=cum_weights, k=k))
+
+    def sample[T](
+        self,
+        population: Sequence[T],
+        k: int,
+        *,
+        counts: Iterable[int] | None = None,
+    ) -> RevertableList[T]:
+        return RevertableList(super().sample(population, k, counts=counts))
 
     if not TYPE_CHECKING:
         getrandbits = checkpointing(mutator(random.Random.getrandbits))
@@ -658,8 +665,24 @@ class DetRandom(random.Random):
         super(DetRandom, self).__init__()
         self.stack = []
 
-    choices = list_wrapper(random.Random.choices)
-    sample = list_wrapper(random.Random.sample)
+    def choices[T](
+        self,
+        population: Sequence[T],
+        weights: Sequence[float] | None = None,
+        *,
+        cum_weights: Sequence[float] | None = None,
+        k: int = 1,
+    ) -> RevertableList[T]:
+        return RevertableList(super().choices(population, weights, cum_weights=cum_weights, k=k))
+
+    def sample[T](
+        self,
+        population: Sequence[T],
+        k: int,
+        *,
+        counts: Iterable[int] | None = None,
+    ) -> RevertableList[T]:
+        return RevertableList(super().sample(population, k, counts=counts))
 
     def random(self):
         if self.stack:
