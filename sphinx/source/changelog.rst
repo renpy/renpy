@@ -13,14 +13,14 @@ Live2D Web
 ----------
 
 Ren'Py now supports Live2D models on the web platform. This support includes both launcher support for installing
-the Cubism SDL for Web, and support in Ren'Py for loading Live2D models in the web environment.
+the Cubism SDK for Web, and support in Ren'Py for loading Live2D models in the web environment.
 
 Automated Testing
 -----------------
 
-Ren'Py now includes a testing framework that makes it possible to define and run automated tests of the functional
-game, and of the Ren'Py engine itself. The testing framework is designed to perform automated functional testing of
-the game - for example, clicking through a predefined sequence of dialogue and choice, and making sure the game
+Ren'Py now includes a testing framework that makes it possible to define and run automate tests of games and of
+Ren'Py itself. The testing framework is designed to perform automated functional testing -
+for example, clicking through a predefined sequence of dialogue and choice, and making sure the game
 reaches the end without crashing, even when the game or engine is changed.
 
 The testing framework is intended to be run in an environment with working GUI support - most notably, working OpenGL
