@@ -343,3 +343,6 @@ class position:
             absolute = int(self.absolute)
 
         return f"position({absolute}, {self.relative})"
+
+    def __hash__(self) -> int:
+        return hash((self.absolute, self.relative))
