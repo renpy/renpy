@@ -466,8 +466,7 @@ interpolation progresses over time.
         Name              Type                             Description
         ================  ===============================  ===========
         warper_name       word                             Name of a :ref:`built-in warper <warpers>`
-        warper_function   str, function (expr)             Warping function
-                                                           with signature ``(t: float) -> float``
+        warper_function   str, function (expr)             Warping function with signature ``(t: float) -> float``
         duration          float, int (expr)                Time in seconds for the interpolation
         atl_property      :ref:`atl-properties-statement`  Property to interpolate
         ================  ===============================  ===========
@@ -1174,8 +1173,7 @@ The ``function`` statement allows ATL to use Python code.
         ==========  ===============  ===========
         Name        Type             Description
         ==========  ===============  ===========
-        func        function (expr)  Function to call, with signature
-                                    ``(trans: Transform, st: float, at: float) -> float | None``
+        func        function (expr)  Function to call, with signature ``(trans: Transform, st: float, at: float) -> float | None``
         ==========  ===============  ===========
 
     The functions have the same signature as those used with :func:`Transform`:
