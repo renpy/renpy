@@ -631,7 +631,7 @@ init -1499 python in _renpysteam:
         """
 
         steamapi.SteamTimeline().StartGamePhase()
-        steamapi.SteamTimeline().SetGamePhaseID(identifier)
+        steamapi.SteamTimeline().SetGamePhaseID(identifier.encode("utf-8"))
 
     def end_game_phase():
         """
@@ -715,10 +715,10 @@ init -1499 python in _renpysteam:
                 callback_state.menu = new_menu
 
             if store.save_name != callback_state.save_name:
-                if callback_state.save_name:
+                if callback_state.save_name and isinstance(callback_state.save_name, str):
                     end_game_phase()
 
-                if store.save_name:
+                if store.save_name and isinstance(store.save_name, str):
                     start_game_phase(store.save_name)
 
                 callback_state.save_name = store.save_name
