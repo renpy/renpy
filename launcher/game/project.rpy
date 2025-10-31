@@ -523,7 +523,7 @@ init python in project:
             def is_script(fn):
                 fn = fn.lower()
 
-                for i in [ ".rpy", ".rpym", "_ren.py" ]:
+                for i in [ ".rpy", ".rpym", "_ren.py", "_rpym.py" ]:
                     if fn.endswith(i):
                         return True
 
