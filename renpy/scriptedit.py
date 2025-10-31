@@ -315,11 +315,6 @@ def insert_line_before(code, filename, linenumber):
 
     ensure_loaded(filename)
 
-    for k, v in lines.items():
-        if k[0] == filename:
-            print(k, repr(v.full_text))
-
-
     old_line = lines[filename, linenumber]
 
     if code:
