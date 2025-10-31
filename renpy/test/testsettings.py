@@ -21,6 +21,7 @@
 
 from dataclasses import dataclass
 import subprocess
+import sys
 
 
 @dataclass
@@ -76,12 +77,17 @@ class TestSettings:
     report = TestReportSettings()
 
     def __post_init__(self) -> None:
+        # Skip git detection entirely on Web (Emscripten can't spawn processes).
+        if sys.platform == "emscripten":
+            return
+
         if not self.git_revision:
             try:
                 self.git_revision = subprocess.check_output(
                     ["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL, text=True
                 ).strip()
-            except (subprocess.CalledProcessError, FileNotFoundError):
+            except (subprocess.CalledProcessError, FileNotFoundError, OSError):
+                # OSError covers "emscripten does not support processes", but we already early-returned above.
                 pass
 
 
