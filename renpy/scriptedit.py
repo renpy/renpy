@@ -82,8 +82,8 @@ def load_lines(filename, elided_filename):
     global original_filename
     original_filename = filename
 
-    with open(filename, "rb") as f:
-        data = f.read().decode("utf-8", "python_strict")
+    with open(filename, "r", encoding="utf-8") as f:
+        data = f.read()
 
     filename = elided_filename
 
@@ -314,11 +314,6 @@ def insert_line_before(code, filename, linenumber):
         raise Exception("config.clear_lines must be False for script editing to work.")
 
     ensure_loaded(filename)
-
-    for k, v in lines.items():
-        if k[0] == filename:
-            print(k, repr(v.full_text))
-
 
     old_line = lines[filename, linenumber]
 
