@@ -182,3 +182,65 @@ that are available to click on. To do this, create project.json with the lines b
 
 If the file already exists, you'll want to edit in the renpy_launcher key and the lines below it.
 You can then edit the dictionaries to change the available files and directories.
+
+.. _rpe-extensions:
+
+Ren'Py Extensions
+-----------------
+
+Ren'Py Extensions (RPE) allow you to patch the Ren'Py engine before any other file
+of your game is interpreted. The purpose of this is to allow developers to to create
+debugging and development tools, and to test changes to the engine.
+
+They are useful for:
+
+- Modifying or replacing functions in the engine.
+- Creating IDE integrations or debugging tools (warp, inspect, trace, etc.).
+- Short-lived hotfixes or developer-only tooling.
+
+.. note::
+
+    RPE files are excluded by default from build distributions. You need to
+    manually include them if you want them in your builds.
+
+Usage
+^^^^^
+Supported formats:
+
+- ``.rpe.py``: a plain Python file.
+- ``.rpe``: a ZIP file that contains ``autorun.py`` at the root. Other modules
+  may be included as python files and imported by the autorun script.
+
+Put extensions in one of these locations:
+
+- ``game/``
+- ``game/libs/``
+- Any directory specified in :var:`config.searchpath`
+
+Changes to RPE files are not monitored by Ren'Py during a session. After editing
+an RPE, you must do a full reload / restart of the game to see the changes.
+One way to mitigate this during development is to write and test code
+in a regular ``.rpy`` file first, then copy the stable code into an
+``.rpe.py`` file when ready.
+
+Example Extension
+^^^^^^^^^^^^^^^^^
+
+The following steps demonstrate the creation of a simple extension that
+alters the behavior of :doc:`screenshot` by printing a message to the
+console instead of taking a screenshot.
+
+- Create ``game/example.rpe.py`` with the following contents::
+
+    import renpy
+
+    def altered_screenshot(filename):
+            # This example prints a message instead of taking a screenshot.
+            print(f"[RPE] Screenshot requested: {filename}")
+
+    renpy.exports.screenshot = altered_screenshot
+
+- Run the game
+
+- Press "S" to request a screenshot. Instead of taking a screenshot,
+  the altered function will print a message to the console.
