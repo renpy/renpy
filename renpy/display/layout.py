@@ -1376,19 +1376,18 @@ class Window(Container):
 
         xminimum, yminimum = xyminimums(style, width, height)
 
-        # Store the maximums for use below. We only use the style to determine if it's set or not. The
-        # value will have been computed in renpy.display.render.render(), and so we don't need to recompute
-        # it here.
+        # Store the maximums for use below. When the type is float, a computation will have been done in
+        # renpy.display.render.render(), and used to set width and height. Rather than repeating that computation,
+        # we use the width and height as the maximums in that case.
 
-        if style.xmaximum is not None:
+        xmaximum = style.xmaximum
+        ymaximum = style.ymaximum
+
+        if type(xmaximum) is float:
             xmaximum = width
-        else:
-            xmaximum = None
 
-        if style.ymaximum is not None:
+        if type(ymaximum) is float:
             ymaximum = height
-        else:
-            ymaximum = None
 
         size_group = self.style.size_group
         if size_group and size_group in size_groups:
