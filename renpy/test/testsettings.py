@@ -21,6 +21,7 @@
 
 from dataclasses import dataclass
 import subprocess
+import os
 
 
 @dataclass
@@ -55,8 +56,8 @@ class TestSettings:
     force: bool = False
     """Force the test to proceed despite suppress_underlay"""
 
-    git_revision: str = ""
-    """The git revision of the current source tree, if available."""
+    vc_revision: str = os.environ.get("RENPY_TEST_VC_REVISION", "")
+    """The version control (often git) revision of the current source tree, if available."""
 
     maximum_framerate: bool = True
     """Use the maximum framerate (unlocked framerate) during tests."""
@@ -74,15 +75,6 @@ class TestSettings:
     """The number of seconds to wait for a transition to complete before skipping it."""
 
     report = TestReportSettings()
-
-    def __post_init__(self) -> None:
-        if not self.git_revision:
-            try:
-                self.git_revision = subprocess.check_output(
-                    ["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL, text=True
-                ).strip()
-            except (subprocess.CalledProcessError, FileNotFoundError):
-                pass
 
 
 _test = TestSettings()

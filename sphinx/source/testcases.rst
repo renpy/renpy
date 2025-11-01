@@ -572,7 +572,7 @@ The following variables can be set to change the behavior of tests:
     This will unlock the framerate beyond your screens refresh rate if possible.
     Defaults to ``True``.
 
-.. var :: _test.timeout
+.. var:: _test.timeout
 
     A float specifying the maximum number of seconds a test statement
     should wait for a condition to be met. Defaults to ``10.0``.
@@ -601,6 +601,11 @@ The following variables can be set to change the behavior of tests:
 
     A string specifying the directory to store screenshots in.
     Defaults to ``tests/screenshots``.
+
+.. var:: _test.vc_revision
+
+    The version control (often git) revision of the current source tree, if available.
+    Defaults to the :env:`RENPY_TEST_VC_REVISION` environment variable, or an empty string if not set.
 
 
 .. _test-statements:

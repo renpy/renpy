@@ -1483,8 +1483,8 @@ class Screenshot(Node):
                 ref_img_path = None
 
             if ref_img_path is None:
-                if _test.git_revision:
-                    fname = f"{base_filename}@{_test.git_revision}{ext}"
+                if _test.vc_revision:
+                    fname = f"{base_filename}@{_test.vc_revision}{ext}"
                 else:
                     fname = filename
                 self.save_image(img, fname)
