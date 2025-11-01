@@ -318,7 +318,7 @@ visual novel.
 **macOS**
 
 * Version: 10.10+
-* CPU: 2.0 Ghz 64-bit Intel-compatible (Apple silicon supported through Rosetta 2)
+* CPU: 2.0 Ghz 64-bit Intel-compatible or M1+
 * RAM: 2.0 GB
 * Graphics: OpenGL 3.0
 
