@@ -227,10 +227,17 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         width, height = d._offer_size
 
     if xmaximum is not None:
-        width = min(renpy.display.core.absolute.compute_raw(xmaximum, width), width)
+        if renpy.config.maximum_embiggens:
+            width = renpy.display.core.absolute.compute_raw(xmaximum, width)
+        else:
+            width = min(renpy.display.core.absolute.compute_raw(xmaximum, width), width)
 
     if ymaximum is not None:
-        height = min(renpy.display.core.absolute.compute_raw(ymaximum, height), height)
+        if renpy.config.maximum_embiggens:
+            height = renpy.display.core.absolute.compute_raw(ymaximum, height)
+        else:
+            height = min(renpy.display.core.absolute.compute_raw(ymaximum, height), height)
+
 
     if width < 0:
         width = 0

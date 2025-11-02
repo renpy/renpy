@@ -1616,6 +1616,13 @@ tracesave_screenshot: bool = True
 If True, trace saves will include a screenshot of the game at the time of the save.
 """
 
+maximum_embiggens: bool = True
+"""
+If True, the xmaximum and ymaximum properties can increase the space offered of a displayable beyond what
+is offered by its container.
+"""
+
+
 
 del os
 del collections

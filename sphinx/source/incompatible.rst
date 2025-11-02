@@ -18,6 +18,12 @@ such changes only take effect when the GUI is regenerated.
 8.5.0
 -----
 
+**Maximum Can Increase Size** The :propref:`xmaximum` and :propref:`ymaximum` properties can be used to
+request a size larger than what the container offers. This can lead to displayables being larger than in previous
+versions of Ren'Py, when asked to be. To revert to the old behavior, add to your game::
+
+    define config.maximum_embiggens = False
+
 **Language Detection** Ren'Py now prefers the language name ("en") over the region name ("us"), if both are
 valid languages. The combination ("en_us") is preferred to both.
 
@@ -40,8 +46,6 @@ the config.images_directory variable shoul be migrated. For example, change::
 to::
 
     define config.image_directories = [ "myimages" ]
-
-
 
 **Zoom and the Z-Axis** In Ren'Py 8.4, the :tpref:`zoom` transform property applies to the z-axis as well as the x and y
 axes. This can cause a behavior change in older games that did not expect the z-axis to be zoomed. To revert this

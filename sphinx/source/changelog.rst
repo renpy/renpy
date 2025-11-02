@@ -99,6 +99,9 @@ purposes using the uv tool.
 Other Changes
 -------------
 
+The :propref:`xmaximum` and :propref:`ymaximum` properties can now increase the size offered to a displayable beyond
+what is offered by its container.
+
 The ``screen`` statement now requires a block. It always was documented as requiring a block, but this was not enforced.
 
 Setting :var:`config.tracesave_screenshot` makes it possible to control if a screenshot is taken when a traceback save is made.

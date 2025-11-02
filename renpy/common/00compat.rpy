@@ -47,6 +47,7 @@ init -1100 python:
             config.images_directory = "images"
             config.image_directories = [ ]
             store.pygame_sdl2 = renpy.pygame
+            config.maximum_embiggens = False
 
         if version <= (8, 3, 99):
             config.old_show_expression = True
