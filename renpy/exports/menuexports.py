@@ -263,8 +263,8 @@ def display_menu(
     If you need to supply per-item arguments, use :class:`renpy.Choice` objects as the values. For example::
 
         renpy.display_menu([
-            ("East", renpy.Choice("east", icon="right_arrow"),
-            ("West", renpy.Choice("west", icon="left_arrow"),
+            ("East", renpy.Choice("east", icon="right_arrow")),
+            ("West", renpy.Choice("west", icon="left_arrow"))
             ])
     """
 
