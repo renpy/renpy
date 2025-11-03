@@ -26,8 +26,6 @@ It supports the playback of expressions and motions.
 
 .. warning::
 
-    Live2D is not supported on the web platform.
-
     Installing Live2D on iOS requires copying the static libraries into your
     iOS project by hand.
 
