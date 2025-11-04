@@ -1622,7 +1622,10 @@ If True, the xmaximum and ymaximum properties can increase the space offered of 
 is offered by its container.
 """
 
-
+extend_like_characters: set[str] = { "extend" }
+"""
+A set of character names that will be treated like the "extend" character for the purpose of dialogue export.
+"""
 
 del os
 del collections

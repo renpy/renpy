@@ -217,6 +217,8 @@ class DialogueFile(object):
 
         translator = renpy.game.script.translator
 
+        prior_who = ""
+
         for label, t in translator.file_translates[self.filename]:
             if label is None:
                 label = ""
@@ -241,6 +243,11 @@ class DialogueFile(object):
                         who = ""
                     else:
                         who = n.who
+
+                    if who in renpy.config.extend_like_characters:
+                        who = who + " " + prior_who
+                    else:
+                        prior_who = who
 
                     what = n.what
 

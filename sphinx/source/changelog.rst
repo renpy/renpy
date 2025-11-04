@@ -99,6 +99,9 @@ purposes using the uv tool.
 Other Changes
 -------------
 
+When exporting dialogue, Ren'Py will detect the special :var:`extend` character and include the prior character's
+name in the exported dialogue line.
+
 The :propref:`xmaximum` and :propref:`ymaximum` properties can now increase the size offered to a displayable beyond
 what is offered by its container.
 
