@@ -67,6 +67,7 @@ init python in navigation:
         """
 
         project.current.update_dump()
+        project.current.update_todos()
 
         sort = persistent.navigation_sort[kind]
 
@@ -162,7 +163,6 @@ init python in navigation:
 screen navigation:
 
     python:
-        project.current.update_todos()
         todo_count = len(project.current.dump.get("location", {}).get("todo", []))
 
     frame:
