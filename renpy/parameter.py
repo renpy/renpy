@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Any, ClassVar, Final, Iterable, Mapping, Self, TypedDict, Unpack
+from typing import Any, Final, Iterable, Mapping, Self, TypedDict, Unpack
 from itertools import chain as _chain
 
 import renpy
