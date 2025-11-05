@@ -137,8 +137,6 @@ class ValuedParameter(Parameter):
     class empty:  # type: ignore
         pass  # singleton, should be picklable
 
-    default: Any
-
     def __init__(self, name, kind, *, default=empty):
         # this method is redefined in order to change default's default value
         super().__init__(name, kind, default=default)
