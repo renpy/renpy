@@ -19,15 +19,19 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
+from typing import Any, ClassVar, Final, Iterable, Mapping, Self, TypedDict, Unpack
 from itertools import chain as _chain
 
 import renpy
 
 
-class Parameter(object):
+class _ReplaceKwargs(TypedDict, total=False):
+    name: str
+    kind: int
+    default: Any
+
+
+class Parameter:
     """
     The default value (if any) of this class of parameters is a string,
     evaluable to the actual default value. This is how most Ren'Py callables
@@ -35,34 +39,69 @@ class Parameter(object):
     and screens), where the actual value is computed at the time of the call.
     """
 
-    __slots__ = (
+    __slots__ = [
         "name",
         "kind",
         "default",
-    )
+    ]
 
-    POSITIONAL_ONLY, POSITIONAL_OR_KEYWORD, VAR_POSITIONAL, KEYWORD_ONLY, VAR_KEYWORD = range(5)
+    POSITIONAL_ONLY = 0
+    "Value for kind when the parameter is positional-only."
+    POSITIONAL_OR_KEYWORD = 1
+    "Value for kind when the parameter is positional or keyword."
+    VAR_POSITIONAL = 2
+    "Value for kind when the parameter is a variable-length positional."
+    KEYWORD_ONLY = 3
+    "Value for kind when the parameter is keyword-only."
+    VAR_KEYWORD = 4
+    "Value for kind when the parameter is a variable-length keyword."
 
-    empty = None
+    name: str
+    "The name of the parameter."
+    kind: int
+    "The kind of the parameter."
+    default: Any
+    """
+    The default value of the parameter.
 
-    def __init__(self, name, kind, *, default=empty):
+    If the parameter has no default value, this is an opaque object, and
+    to check if the parameter has a default value, use the `has_default`
+    property.
+    """
+
+    empty: Final[Any] = None
+
+    def __init__(self, name: str, kind: int, *, default: str = empty):
         self.name = name
         self.kind = kind
         self.default = default
 
     @property
     def has_default(self):
+        """
+        True if this parameter has a default value.
+        """
+
         return self.default is not self.empty
 
-    def default_value(self, locals=None, globals=None):
+    def default_value(
+        self,
+        locals: dict[str, Any] | None = None,
+        globals: dict[str, Any] | None = None,
+    ) -> Any:
+        """
+        Evaluates the default value of this parameter.
+        """
+
         return renpy.python.py_eval(self.default, locals=locals, globals=globals)
 
-    def replace(self, **kwargs):
-        d = dict(name=self.name, kind=self.kind, default=self.default)
-        d.update(kwargs)
-        return type(self)(**d)
+    def replace(self, **kwargs: Unpack[_ReplaceKwargs]) -> Self:
+        kwargs.setdefault("name", self.name)
+        kwargs.setdefault("kind", self.kind)
+        kwargs.setdefault("default", self.default)
+        return self.__class__(**kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
         kind = self.kind
         formatted = self.name
 
@@ -71,14 +110,14 @@ class Parameter(object):
         elif kind == self.VAR_KEYWORD:
             formatted = "**" + formatted
         elif self.default is not self.empty:
-            formatted += "=" + self.default  # type: ignore
+            formatted += "=" + self.default
 
         return formatted
 
-    def __repr__(self):
-        return "<Parameter {}>".format(self)
+    def __repr__(self) -> str:
+        return f"<Parameter {self}>"
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         return (self is other) or (
             isinstance(other, Parameter)
             and (self.name == other.name)
@@ -95,14 +134,16 @@ class ValuedParameter(Parameter):
 
     __slots__ = ()
 
-    class empty:
+    class empty:  # type: ignore
         pass  # singleton, should be picklable
+
+    default: Any
 
     def __init__(self, name, kind, *, default=empty):
         # this method is redefined in order to change default's default value
-        super(ValuedParameter, self).__init__(name, kind, default=default)
+        super().__init__(name, kind, default=default)
 
-    def default_value(self, *args, **kwargs):
+    def default_value(self, locals=None, globals=None):
         return self.default
 
     def __str__(self):
@@ -114,27 +155,33 @@ class ValuedParameter(Parameter):
         elif kind == self.VAR_KEYWORD:
             formatted = "**" + formatted
         elif self.default is not self.empty:
-            formatted = "{}={!r}".format(formatted, self.default)
+            formatted = f"{formatted}={self.default!r}"
 
         return formatted
 
 
-class Signature(object):
+class Signature:
     """
     This class is used to store information about parameters (to a label, screen, ATL...)
     It has the same interface as inspect.Signature for the most part.
     """
 
-    __slots__ = ("parameters",)
+    __slots__ = ["parameters"]
 
-    def __init__(self, parameters=None):
-        if parameters is None:
-            self.parameters = {}
-        else:
-            self.parameters = {param.name: param for param in parameters}
+    parameters: dict[str, Parameter]
+
+    def __init__(self, parameters: Iterable[Parameter] = ()):
+        self.parameters = {param.name: param for param in parameters}
 
     @staticmethod
-    def legacy_params(parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
+    def legacy_params(
+        parameters: Iterable[tuple[str, str | None]],
+        positional: Iterable[str],
+        extrapos: str | None,
+        extrakw: str | None,
+        last_posonly: str | None = None,
+        first_kwonly: str | None = None,
+    ) -> list[Parameter]:
         """
         Creates a list of Parameter from the legacy parameters format.
 
@@ -203,7 +250,7 @@ class Signature(object):
             # default behavior on py3, could be a super() call but this is faster and py2-compatible
             self.parameters = state[1]["parameters"]
 
-    def apply_defaults(self, mapp, scope=None):
+    def apply_defaults(self, mapp: dict[str, Any], scope: dict[str, Any] | None = None) -> None:
         """
         From a mapping representing the inner scope of the callable after binding,
         this mutates the mapping to apply the evaluated default values of the parameters.
@@ -211,6 +258,7 @@ class Signature(object):
         Evaluation occurs lazily : the default value of parameters already passed
         is not calculated.
         """
+
         # code inspired from stdlib's inspect.BoundArguments.apply_defaults
         # but optimized as to mutate the dict in-place
         # (because ordering doesn't matter to us)
@@ -228,7 +276,7 @@ class Signature(object):
                     continue
                 mapp[name] = val
 
-    def with_pos_only_as_pos_or_kw(self):
+    def with_pos_only_as_pos_or_kw(self) -> "Signature":
         """
         Returns a new Signature object where positional-only parameters are
         turned into positional-or-keyword parameters.
@@ -244,17 +292,38 @@ class Signature(object):
                 break
         return Signature(new_params)
 
-    def apply(self, args, kwargs, ignore_errors=False, partial=False, apply_defaults=True):
+    def apply(
+        self,
+        args: Iterable[Any],
+        kwargs: Mapping[str, Any],
+        ignore_errors: bool = False,
+        partial: bool = False,
+        apply_defaults: bool = True,
+    ) -> dict[str, Any]:
         """
         Takes args and kwargs, and returns a mapping corresponding to the
         inner scope of the callable as a result of that call.
 
-        Improvements on the original inspect.Signature._bind :
-        - manages _ignore_extra_kwargs (near the end of the method)
-        - avoids creating a BoundArguments object, just returns the scope dict
-        - ignore_errors
-        - applies the defaults automatically (and lazily, as per the above)
+        If `ignore_errors` is True, any binding errors will be ignored and the
+        best-effort mapping will be returned.
+
+        If `partial` is True, does not error if the callable does not receive
+        all the required arguments (but still errors if passed arguments are
+        incorrect).
+
+        If `apply_defaults` is True, applies the callable's default values to
+        the parameters that are missing.
+
+        If `_ignore_extra_kwargs` is in the `kwargs` and is True, ignores any
+        extra keyword arguments. This is used to pass a bunch of arguments that
+        could be used by the user, without forcing them to write `**ignored`.
         """
+
+        # Improvements on the original inspect.Signature._bind:
+        # - manages _ignore_extra_kwargs (near the end of the method)
+        # - avoids creating a BoundArguments object, just returns the scope dict
+        # - process ignore_errors
+        # - applies the defaults automatically (and lazily, as per the above)
 
         if not renpy.config.developer:
             ignore_errors = True
@@ -316,9 +385,8 @@ class Signature(object):
                                 argtype = " keyword-only"
                             else:
                                 argtype = ""
-                            msg = "missing a required{argtype} argument: {arg!r}"
-                            msg = msg.format(arg=param.name, argtype=argtype)
-                            raise TypeError(msg) from None
+
+                            raise TypeError(f"missing a required{argtype} argument: {param.name!r}") from None
             else:
                 # We have a positional argument to process
                 try:
@@ -376,7 +444,7 @@ class Signature(object):
                     and param.kind != param.VAR_POSITIONAL
                     and param.default is param.empty
                 ):
-                    raise TypeError("missing a required argument: {arg!r}".format(arg=param_name)) from None
+                    raise TypeError(f"missing a required argument: {param_name!r}") from None
 
             else:
                 if param.kind == param.POSITIONAL_ONLY:
@@ -395,15 +463,17 @@ class Signature(object):
                 # Process our '**kwargs'-like parameter
                 arguments[kwargs_param.name] = kwargs
             elif not (ignore_errors or kwargs.pop("_ignore_extra_kwargs", False)):
-                raise TypeError("got an unexpected keyword argument {arg!r}".format(arg=next(iter(kwargs))))
+                raise TypeError(f"got an unexpected keyword argument {next(iter(kwargs))!r}")
 
         if apply_defaults:
             self.apply_defaults(arguments)
+
         return arguments
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if self is other:
             return True
+
         if not isinstance(other, Signature):
             return False
 
@@ -446,16 +516,21 @@ class Signature(object):
             # flag was not reset to 'False'
             result.append("/")
 
-        return "({})".format(", ".join(result))
+        return f"({', '.join(result)})"
 
     def __repr__(self):
-        return "<Signature {}>".format(self)
+        return f"<Signature {self}>"
 
 
 ParameterInfo = Signature
 
 
-def apply_arguments(parameters, args, kwargs, ignore_errors=False):
+def apply_arguments(
+    parameters: Signature | None,
+    args: Iterable[Any],
+    kwargs: Mapping[str, Any],
+    ignore_errors: bool = False,
+) -> dict[str, Any]:
     if not renpy.config.developer:
         ignore_errors = True
 
@@ -469,9 +544,16 @@ def apply_arguments(parameters, args, kwargs, ignore_errors=False):
 
 
 class ArgumentInfo(renpy.object.Object):
+    """
+    This class is used to store information about arguments that are passed to
+    a some sort of call (label, screen, ATL, etc.).
+    """
+
     __version__ = 1
-    starred_indexes = frozenset()
-    doublestarred_indexes = frozenset()
+
+    arguments: list[tuple[str | None, str]]
+    starred_indexes: set[int] = set()
+    doublestarred_indexes: set[int] = set()
 
     def after_upgrade(self, version):
         if version < 1:
@@ -487,20 +569,25 @@ class ArgumentInfo(renpy.object.Object):
                 self.doublestarred_indexes = {length - 1}
                 arguments.append((None, extrakw))
 
-    def __init__(self, arguments, starred_indexes=None, doublestarred_indexes=None):
+    def __init__(
+        self,
+        arguments: Iterable[tuple[str | None, str]],
+        starred_indexes: Iterable[int] | None = None,
+        doublestarred_indexes: Iterable[int] | None = None,
+    ):
         # A list of (keyword, expression) pairs.
         # If the keyword is None, the argument is thought of as positional.
-        self.arguments = arguments
+        self.arguments = list(arguments)
 
         # Indexes of arguments to be considered as * unpacking
         if starred_indexes is not None:
-            self.starred_indexes = starred_indexes
+            self.starred_indexes = set(starred_indexes)
 
         # Indexes of arguments to be considered as ** unpacking.
         if doublestarred_indexes is not None:
-            self.doublestarred_indexes = doublestarred_indexes
+            self.doublestarred_indexes = set(doublestarred_indexes)
 
-    def evaluate(self, scope=None):
+    def evaluate(self, scope: dict[str, Any] | None = None) -> tuple[tuple[Any, ...], dict[str, Any]]:
         """
         Evaluates the arguments, returning a tuple of arguments and a
         dictionary of keyword arguments.
@@ -525,27 +612,27 @@ class ArgumentInfo(renpy.object.Object):
 
         return tuple(args), kwargs
 
-    def get_code(self):
-        l = []
+    def get_code(self) -> str:
+        rv = []
 
         for i, (keyword, expression) in enumerate(self.arguments):
             if i in self.starred_indexes:
-                l.append("*" + expression)
+                rv.append("*" + expression)
 
             elif i in self.doublestarred_indexes:
-                l.append("**" + expression)
+                rv.append("**" + expression)
 
             elif keyword is not None:
-                l.append("{}={}".format(keyword, expression))
+                rv.append(f"{keyword}={expression}")
             else:
-                l.append(expression)
+                rv.append(expression)
 
-        return "(" + ", ".join(l) + ")"
+        return f"({', '.join(rv)})"
 
     __str__ = get_code
 
     def __repr__(self):
-        return "<ArgumentInfo {}>".format(self)
+        return f"<ArgumentInfo {self}>"
 
 
 EMPTY_PARAMETERS = Signature()
