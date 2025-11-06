@@ -1449,7 +1449,7 @@ class Screenshot(Node):
 
         filename = filename.replace("\\", "/")
         filename = filename.lstrip("/")
-        filename = os.path.join(_test.screenshot_directory, filename)
+        filename = os.path.join(renpy.config.basedir, _test.screenshot_directory, filename)
         filename = os.path.normpath(filename)
 
         base_filename, ext = os.path.splitext(filename)
