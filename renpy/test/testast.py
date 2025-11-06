@@ -1503,22 +1503,8 @@ class Screenshot(Node):
                 )
 
             diff = renpy.pygame.Surface(img.get_size(), 0, img)
-            # diff_count = renpy.pygame.transform.threshold(  # type: ignore
-            #     diff, img, (0, 0, 0), (0, 0, 0), (255, 255, 255), 1, old_img, True
-            # )
 
-            diff_count = 0
-            color_white = (255, 255, 255, 255)
-            color_black = (0, 0, 0, 255)
-
-            for x in range(img.get_width()):
-                for y in range(img.get_height()):
-                    pos = (x, y)
-                    if img.get_at(pos) != old_img.get_at(pos):
-                        diff_count += 1
-                        diff.set_at(pos, color_white)
-                    else:
-                        diff.set_at(pos, color_black)
+            diff_count = renpy.pygame.transform._diff(diff, img, old_img, (0, 0, 0, 255), (255, 255, 255, 255))
 
             max_pixel_difference = 0
             if self.max_pixel_difference is not None:
