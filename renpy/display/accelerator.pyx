@@ -1064,7 +1064,10 @@ cdef class RenderTransform:
         else:
             transform.forward = IDENTITY
 
-        pos = (self.xo, self.yo)
+        if perspective:
+            pos = (0, 0)
+        else:
+            pos = (self.xo, self.yo)
 
         if state.alpha <= 0.0:
             rv.depends_on(self.cr, focus=True)
@@ -1073,13 +1076,16 @@ cdef class RenderTransform:
         else:
             rv.blit(self.cr, pos)
 
-
         # perspective
         if perspective:
             rv.matrix_kind = MATRIX_VIEW
 
             prv = Render(self.width, self.height)
-            prv.blit(rv, (0, 0))
+
+            if state.subpixel:
+                prv.subpixel_blit(rv, (self.xo, self.yo))
+            else:
+                prv.blit(rv, (self.xo, self.yo))
 
             near, z_one_one, far = perspective
             prv.reverse = Matrix.perspective(self.width, self.height, near, z_one_one, far)
