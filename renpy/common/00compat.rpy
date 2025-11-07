@@ -53,7 +53,7 @@ init -1100 python:
             config.old_show_expression = True
             config.cds_label_callbacks = False
             config.mesh_pad_compat = True
-            config.zoom_zaxis = True
+            config.zoom_zaxis = False
 
         if _compat_versions(version, (7, 7, 99), (8, 2, 99)):
             config.character_callback_compat = True
