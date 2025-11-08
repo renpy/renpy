@@ -2272,8 +2272,6 @@ class Bar(renpy.display.displayable.Displayable):
         self.adjustment = adjustment
         self.focusable = True
 
-        self.thumb_align = properties.pop("thumb_align", 0.0)
-
         # These are set when we are first rendered.
         self.thumb_dim = 0
         self.height = 0
@@ -2392,7 +2390,7 @@ class Bar(renpy.display.displayable.Displayable):
         fore_size += fore_gutter
         aft_size += aft_gutter
 
-        thumb_align = self.thumb_align
+        thumb_align = self.style.thumb_align
 
         rv = renpy.display.render.Render(width, height)
 
@@ -2411,8 +2409,8 @@ class Bar(renpy.display.displayable.Displayable):
             else:
                 foresurf = render(self.style.fore_bar, width, height, st, at)
                 aftsurf = render(self.style.aft_bar, width, height, st, at)
-                fore_leftover = (thumb_dim2 - foresurf.width) * self.thumb_align
-                aft_leftover = (thumb_dim2 - aftsurf.width) * self.thumb_align
+                fore_leftover = (thumb_dim2 - foresurf.width) * thumb_align
+                aft_leftover = (thumb_dim2 - aftsurf.width) * thumb_align
 
                 rv.blit(thumb_shadow, (0, fore_size - fore_thumb_offset))
                 rv.blit(foresurf.subsurface((0, 0, width, fore_size)), (fore_leftover, 0), main=False)
@@ -2427,8 +2425,8 @@ class Bar(renpy.display.displayable.Displayable):
             if self.style.bar_resizing:
                 foresurf = render(self.style.fore_bar, fore_size, height, st, at)
                 aftsurf = render(self.style.aft_bar, aft_size, height, st, at)
-                fore_leftover = (thumb_dim2 - foresurf.height) * self.thumb_align
-                aft_leftover = (thumb_dim2 - aftsurf.height) * self.thumb_align
+                fore_leftover = (thumb_dim2 - foresurf.height) * thumb_align
+                aft_leftover = (thumb_dim2 - aftsurf.height) * thumb_align
 
                 rv.blit(thumb_shadow, (fore_size - fore_thumb_offset, 0))
                 rv.blit(foresurf, (0, fore_leftover), main=False)
@@ -2438,8 +2436,8 @@ class Bar(renpy.display.displayable.Displayable):
             else:
                 foresurf = render(self.style.fore_bar, width, height, st, at)
                 aftsurf = render(self.style.aft_bar, width, height, st, at)
-                fore_leftover = (thumb_dim2 - foresurf.height) * self.thumb_align
-                aft_leftover = (thumb_dim2 - aftsurf.height) * self.thumb_align
+                fore_leftover = (thumb_dim2 - foresurf.height) * thumb_align
+                aft_leftover = (thumb_dim2 - aftsurf.height) * thumb_align
 
                 rv.blit(thumb_shadow, (fore_size - fore_thumb_offset, 0))
                 rv.blit(foresurf.subsurface((0, 0, fore_size, height)), (0, fore_leftover), main=False)

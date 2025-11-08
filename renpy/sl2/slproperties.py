@@ -198,6 +198,7 @@ bar_property_names = [
     "bottom_bar",
     "base_bar",
     "thumb",
+    "thumb_align",
     "thumb_shadow",
     "thumb_offset",
     "mouse",

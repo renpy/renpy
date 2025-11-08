@@ -273,7 +273,6 @@ Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
 Keyword("released")
-Keyword("thumb_align")
 add(bar_properties)
 
 
@@ -308,7 +307,6 @@ Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
 Keyword("released")
-Keyword("thumb_align")
 add(bar_properties)
 
 # Omit autobar. (behavior)

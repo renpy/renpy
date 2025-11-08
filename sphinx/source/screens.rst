@@ -464,13 +464,6 @@ data. It takes the following properties:
     An action to run when the bar button is released. This will be invoked
     even if the bar has not changed its value.
 
-.. screen-property:: thumb_align
-
-    The alignment of the bar thumb, relative to the bar. If the bar and
-    thumb are different sizes - for example, the thumb is taller than the
-    height of a horizontal bar - thumb_align can be set to 0.5 so the centers
-    of the bar and thumb are aligned.
-
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
 
@@ -2222,7 +2215,7 @@ occurs. It takes one parameter, a string giving the name of an
 event. This should be one of:
 
 * ``"show"``
-    This event occurs when the screen is shown (note that if a screen with 
+    This event occurs when the screen is shown (note that if a screen with
     the same tag is already showing, the event is ``"replace"`` instead).
 
 * ``"hide"``

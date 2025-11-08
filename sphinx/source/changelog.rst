@@ -99,6 +99,9 @@ purposes using the uv tool.
 Other Changes
 -------------
 
+The :propref:`thumb_align` property is now a style property rather than a keywork property, and is supported
+in styles.
+
 When exporting dialogue, Ren'Py will detect the special :var:`extend` character and include the prior character's
 name in the exported dialogue line.
 
