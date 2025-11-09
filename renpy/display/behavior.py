@@ -1717,6 +1717,26 @@ class Input(renpy.text.text.Text):
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
+        elif map_event(ev, "input_up") and self.arrowkeys:
+            above = self.get_caret_above_below_pos()[0]
+
+            if above is not None:
+                self.caret_pos = above
+                self.update_text(self.content, self.editable)
+            
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+    
+        elif map_event(ev, "input_down") and self.arrowkeys:
+            below = self.get_caret_above_below_pos()[1]
+
+            if below is not None:
+                self.caret_pos = below
+                self.update_text(self.content, self.editable)
+            
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+
         elif map_event(ev, "input_delete"):
             if self.caret_pos < l:
                 content = self.content[0 : self.caret_pos] + self.content[self.caret_pos + 1 : l]
@@ -1832,6 +1852,34 @@ class Input(renpy.text.text.Text):
                 self.update_text(content, self.editable, check_size=True)
 
             raise renpy.display.core.IgnoreEvent()
+
+    def get_caret_above_below_pos(self):
+        line_positions = [ (0, 0) ]
+
+        line_index = -1
+
+        for i, line in enumerate(self.content.splitlines(True)):
+            first_line_position = line_positions[-1][1]
+            last_line_position = first_line_position + len(line)
+
+            line_positions.append((first_line_position, last_line_position))
+
+            if first_line_position <= self.caret_pos <= last_line_position:
+                line_index = i + 1
+
+        line_positions[-1] = (line_positions[-1][0], line_positions[-1][1] + 1)
+        line_positions.append(line_positions[-1])
+
+        if line_index == -1:
+            caret_above = caret_below = None
+
+        else:
+            offset = self.caret_pos - line_positions[line_index][0]
+
+            caret_above = 0 if (line_index - 1 == 0) else min(line_positions[line_index - 1][0] + offset, line_positions[line_index - 1][1] - 1)
+            caret_below = len(self.content) if ((line_index + 1) == len(line_positions) - 1) else min(line_positions[line_index + 1][0] + offset, line_positions[line_index + 1][1] - 1)
+
+        return caret_above, caret_below
 
     def render(self, width, height, st, at):
         self.st = st
