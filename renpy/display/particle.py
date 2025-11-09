@@ -611,7 +611,7 @@ class SnowBlossomParticle(renpy.rollback.NoRollback):
 
         if fast:
             self.ystart = distribution(-border, sh + border)
-            self.xstart = distribution(0, sw)
+            self.xstart = distribution(x0, x1)
 
     def update(self, st):
         to = st - self.start
