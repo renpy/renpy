@@ -262,6 +262,17 @@ class SpriteManager(renpy.display.displayable.Displayable):
         self.width = None
         self.height = None
 
+    _duplicatable = True
+
+    def _duplicate(self, args):
+        return SpriteManager(
+            update=self.update_function,
+            event=self.event_function,
+            predict=self.predict_function,
+            ignore_time=self.ignore_time,
+            animation=self.animation,
+        )
+
     def create(self, d):
         """
         :doc: sprites method
@@ -403,6 +414,8 @@ class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback
 
     nosave = ["particles"]
 
+    properties = { }
+
     def after_upgrade(self, version):
         if version < 1:
             self.sm = SpriteManager(update=self.update_callback, predict=self.predict_callback)
@@ -421,6 +434,13 @@ class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback
 
         self.factory = factory
         self.particles = None
+
+        self.properties = properties
+
+    _duplicatable = True
+
+    def _duplicate(self, args):
+        return Particles(self.factory, animation=self.sm.animation, **self.properties)
 
     def update_callback(self, st):
         particles = self.particles
