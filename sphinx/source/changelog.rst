@@ -99,6 +99,9 @@ purposes using the uv tool.
 Other Changes
 -------------
 
+Multiline input displayables now support the use of the up arrow and down arrow keys to move the cursor to the
+next and previous line. As this works using the character offset, it will work best with monospaced fonts.
+
 The :propref:`thumb_align` property is now a style property rather than a keywork property, and is supported
 in styles.
 
