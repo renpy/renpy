@@ -675,7 +675,7 @@ def display_say(
             retain_count += 1
             retain_tag = "_retain_{}".format(retain_count)
 
-            if not renpy.exports.get_screen(retain_tag):
+            if not renpy.exports.get_screen(retain_tag, renpy.store.bubble.retain_layer):
                 break
 
     # Call the begin callback.
