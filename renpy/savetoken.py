@@ -28,6 +28,7 @@ import os
 import zipfile
 
 import renpy
+import renpy.ecsign
 
 
 # The directory containing the save token information.
@@ -87,10 +88,13 @@ def sign_data(data):
     rv = ""
 
     for i in signing_keys:
+        sig = renpy.ecsign.SignDataWithDER(data, i)
+        # rv += encode_line("signature", public, sig)  TODO get public key
+
         sk = ecdsa.SigningKey.from_der(i)
 
         if sk is not None and sk.verifying_key is not None:
-            sig = sk.sign(data)
+            # sig = sk.sign(data)
             rv += encode_line("signature", sk.verifying_key.to_der(), sig)
 
     return rv
@@ -111,12 +115,14 @@ def verify_data(data, signatures, check_verifying=True):
             if check_verifying and key not in verifying_keys:
                 continue
 
-            try:
-                vk = ecdsa.VerifyingKey.from_der(key)
-                if vk.verify(sig, data):
-                    return True
-            except Exception:
-                continue
+            return renpy.ecsign.VerifyDataWithDER(data, key, sig)
+
+            # try:
+            #     vk = ecdsa.VerifyingKey.from_der(key)
+            #     if vk.verify(sig, data):
+            #         return True
+            # except Exception:
+            #     continue
 
     return False
 
