@@ -176,6 +176,10 @@ def expanded_sl2_properties():
     return rv
 
 
+def style_property_regex():
+    style_properties = set(renpy.style.all_properties)
+    return "(?:" + "|".join(sorted(style_properties)) + ")"
+
 def write_keywords(srcdir='source'):
     outf = os.path.join(srcdir, 'keywords.py')
 
@@ -203,6 +207,8 @@ def write_keywords(srcdir='source'):
 
         f.write("properties = %s\n" % pprint.pformat(properties))
         f.write("property_regexes = %s\n" % pprint.pformat(sl2_regexps()))
+        f.write("style_property_regex = %s\n" % pprint.pformat(style_property_regex()))
+
 
     shutil.copy(outf, os.path.join(srcdir, "../../tutorial/game/keywords.py"))
 
