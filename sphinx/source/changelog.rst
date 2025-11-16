@@ -99,6 +99,9 @@ purposes using the uv tool.
 Other Changes
 -------------
 
+Ren'Py's support for 32-bit ARM platforms is now built using 16 KB pages, which
+prevents the Play Console from producing a warning.
+
 Multiline input displayables now support the use of the up arrow and down arrow keys to move the cursor to the
 next and previous line. As this works using the character offset, it will work best with monospaced fonts.
 
