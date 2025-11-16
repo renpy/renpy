@@ -13,9 +13,14 @@ Code is partially based on Demos from OpenSSL. They are released with following 
 
  ***********************************************************************************/
 
+#include "ec_sign_core.h"
+
 #include <openssl/evp.h>
 #include <openssl/decoder.h>
+#include <openssl/encoder.h>
 #include <openssl/err.h>
+#include <openssl/core_names.h>
+
 #include <string.h>
 
 /*******************************
@@ -23,8 +28,8 @@ Code is partially based on Demos from OpenSSL. They are released with following 
  ********************************/
 
 static int AddNumberToDER(char *der, int offset, const char *number);
-static int Sign(OSSL_LIB_CTX *libctx, EVP_PKEY *priv_key, const void *data, size_t data_len, void **sign, size_t *sign_len);
-static int Verify(OSSL_LIB_CTX *libctx, EVP_PKEY *pub_key, const void *data, size_t data_len, const void *sign, size_t sign_len);
+static int Sign(EVP_PKEY *priv_key, const void *data, size_t data_len, void **sign, size_t *sign_len);
+static int Verify(EVP_PKEY *pub_key, const void *data, size_t data_len, const void *sign, size_t sign_len);
 
 /*******************************
  *     Global functions
@@ -32,7 +37,6 @@ static int Verify(OSSL_LIB_CTX *libctx, EVP_PKEY *pub_key, const void *data, siz
 
 int SignDer(const unsigned char *priv_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len)
 {
-    OSSL_LIB_CTX *libctx = NULL;
     OSSL_DECODER_CTX *dctx = NULL;
     EVP_PKEY *pkey = NULL;
     int ret = 0;
@@ -43,25 +47,19 @@ int SignDer(const unsigned char *priv_key_der, size_t key_len, const char *data,
         goto cleanup;
     }
 
-    libctx = OSSL_LIB_CTX_new();
-    if (libctx == NULL)
-    {
-        goto cleanup;
-    }
-
     dctx = OSSL_DECODER_CTX_new_for_pkey(&pkey, "DER", NULL, "EC",
-                                         EVP_PKEY_KEYPAIR, libctx, NULL);
+                                         EVP_PKEY_KEYPAIR, NULL, NULL);
     (void)OSSL_DECODER_from_data(dctx, &priv_key_der, &key_len);
     OSSL_DECODER_CTX_free(dctx);
 
     char *sign;
     size_t sign_len;
-    ret = Sign(libctx, pkey, data, data_len, &sign, &sign_len);
+    ret = Sign(pkey, data, data_len, (void **)&sign, &sign_len);
 
     if (ret)
     {
-        fprintf(stdout, "Calculated signature as DER:\n");
-        BIO_dump_indent_fp(stdout, sign, sign_len, 2);
+        // fprintf(stdout, "Calculated signature as DER:\n");
+        // BIO_dump_indent_fp(stdout, sign, sign_len, 2);
 
         // Copy R and S from DER sign to raw signature output
         // Check if it has a extra leading 0 to skip (added to keep value positive in DER format)
@@ -76,42 +74,34 @@ int SignDer(const unsigned char *priv_key_der, size_t key_len, const char *data,
 cleanup:
     free(sign);
     EVP_PKEY_free(pkey);
-    OSSL_LIB_CTX_free(libctx);
     return ret;
 }
 
 int VerifyDer(const unsigned char *public_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len)
 {
-    OSSL_LIB_CTX *libctx = NULL;
     OSSL_DECODER_CTX *dctx = NULL;
     EVP_PKEY *pkey = NULL;
     int ret = 0;
 
     if (signature_len != 64)
     {
-        fprintf(stderr, "sign size is %d bytes, but expect 64 bytes\n", signature_len);
+        fprintf(stderr, "sign size is %d bytes, but expect 64 bytes\n", (int)signature_len);
         goto cleanup;
     }
 
     // fprintf(stderr, "Verify got: key size: %d data size: %d and sign size: %d\n", key_len, data_len, signature_len);
 
-    libctx = OSSL_LIB_CTX_new();
-    if (libctx == NULL)
-    {
-        goto cleanup;
-    }
-
     dctx = OSSL_DECODER_CTX_new_for_pkey(&pkey, "DER", NULL, "EC",
-                                         EVP_PKEY_PUBLIC_KEY, libctx, NULL);
+                                         EVP_PKEY_PUBLIC_KEY, NULL, NULL);
     if (OSSL_DECODER_from_data(dctx, &public_key_der, &key_len) <= 0)
     {
-        fprintf(stderr, "Failed to decode public key.\nDER data was: (len: %d)", key_len);
+        fprintf(stderr, "Failed to decode public key.\nDER data was: (len: %d)", (int)key_len);
         BIO_dump_indent_fp(stdout, public_key_der, key_len, 2);
     }
     OSSL_DECODER_CTX_free(dctx);
 
     // Convert signature to DER
-    unsigned char der_sign[72];
+    char der_sign[72];
     int offset = 2;
     // Set header (skip length)
     der_sign[0] = 0x30;
@@ -128,11 +118,125 @@ int VerifyDer(const unsigned char *public_key_der, size_t key_len, const char *d
     // fprintf(stdout, "Provided signature as DER:\n");
     // BIO_dump_indent_fp(stdout, der_sign, 72, 2);
 
-    ret = Verify(libctx, pkey, data, data_len, der_sign, offset);
+    ret = Verify(pkey, data, data_len, der_sign, offset);
 
 cleanup:
     EVP_PKEY_free(pkey);
-    OSSL_LIB_CTX_free(libctx);
+    return ret;
+}
+
+void GeneratePrivateKey(unsigned char **priv_key_der, size_t *priv_len)
+{
+    OSSL_ENCODER_CTX *ectx = NULL;
+    EVP_PKEY *privkey = NULL;
+    OSSL_PARAM params[3];
+    EVP_PKEY_CTX *genctx = NULL;
+    const char *curvename = "P-256"; // stands for prime256v1 which is also known as SECP256R1 & NIST256p
+    int use_cofactordh = 1;
+
+    genctx = EVP_PKEY_CTX_new_from_name(NULL, "EC", NULL);
+    if (genctx == NULL)
+    {
+        fprintf(stderr, "EVP_PKEY_CTX_new_from_name() failed\n");
+        goto cleanup;
+    }
+
+    if (EVP_PKEY_keygen_init(genctx) <= 0)
+    {
+        fprintf(stderr, "EVP_PKEY_keygen_init() failed\n");
+        goto cleanup;
+    }
+
+    params[0] = OSSL_PARAM_construct_utf8_string(OSSL_PKEY_PARAM_GROUP_NAME,
+                                                 (char *)curvename, 0);
+    /*
+     * This is an optional parameter.
+     * For many curves where the cofactor is 1, setting this has no effect.
+     */
+    params[1] = OSSL_PARAM_construct_int(OSSL_PKEY_PARAM_USE_COFACTOR_ECDH,
+                                         &use_cofactordh);
+    params[2] = OSSL_PARAM_construct_end();
+    if (!EVP_PKEY_CTX_set_params(genctx, params))
+    {
+        fprintf(stderr, "EVP_PKEY_CTX_set_params() failed\n");
+        goto cleanup;
+    }
+
+    if (EVP_PKEY_generate(genctx, &privkey) <= 0)
+    {
+        fprintf(stderr, "EVP_PKEY_generate() failed\n");
+        goto cleanup;
+    }
+
+    // char out_curvename[80];
+    // if (EVP_PKEY_get_utf8_string_param(privkey, OSSL_PKEY_PARAM_GROUP_NAME,
+    //                                    out_curvename, sizeof(out_curvename),
+    //                                    NULL))
+    // {
+    //     fprintf(stdout, "Curve name: %s\n", out_curvename);
+    // }
+
+    // Convert private key to DER
+    ectx = OSSL_ENCODER_CTX_new_for_pkey(privkey, EVP_PKEY_KEYPAIR, "DER", NULL, NULL);
+    if (OSSL_ENCODER_to_data(ectx, priv_key_der, priv_len) <= 0)
+    {
+        fprintf(stderr, "Failed to get public key\n");
+        free(*priv_key_der);
+        *priv_key_der = NULL;
+        *priv_len = 0;
+    }
+    OSSL_ENCODER_CTX_free(ectx);
+
+cleanup:
+    EVP_PKEY_CTX_free(genctx);
+    EVP_PKEY_free(privkey);
+}
+
+void GetPublicKeyFromPrivate(const unsigned char *priv_key_der, size_t priv_len, unsigned char **public_key_der, size_t *pub_len)
+{
+    OSSL_DECODER_CTX *dctx = NULL;
+    OSSL_ENCODER_CTX *ectx = NULL;
+    EVP_PKEY *privkey = NULL;
+
+    // Get private key from DER
+    dctx = OSSL_DECODER_CTX_new_for_pkey(&privkey, "DER", NULL, "EC",
+                                         EVP_PKEY_KEYPAIR, NULL, NULL);
+    (void)OSSL_DECODER_from_data(dctx, &priv_key_der, &priv_len);
+    OSSL_DECODER_CTX_free(dctx);
+
+    // Create public key in DER
+    ectx = OSSL_ENCODER_CTX_new_for_pkey(privkey, EVP_PKEY_PUBLIC_KEY, "DER", NULL, NULL);
+    if (OSSL_ENCODER_to_data(ectx, public_key_der, pub_len) <= 0)
+    {
+        fprintf(stderr, "Failed to get public key\n");
+        free(*public_key_der);
+        *public_key_der = NULL;
+        *pub_len = 0;
+    }
+    OSSL_ENCODER_CTX_free(ectx);
+
+    EVP_PKEY_free(privkey);
+}
+
+int VerifyKeyDer(int public, const unsigned char *key_der, size_t key_len)
+{
+    OSSL_DECODER_CTX *dctx = NULL;
+    EVP_PKEY *pkey = NULL;
+    int selection = public ? EVP_PKEY_PUBLIC_KEY : EVP_PKEY_KEYPAIR;
+    int ret = 1;
+
+    // Get private key from DER
+    dctx = OSSL_DECODER_CTX_new_for_pkey(&pkey, "DER", NULL, "EC",
+                                         selection, NULL, NULL);
+    if (OSSL_DECODER_from_data(dctx, &key_der, &key_len) <= 0)
+    {
+        fprintf(stderr, "Invalid key provided\n");
+        ret = 0;
+    }
+
+    OSSL_DECODER_CTX_free(dctx);
+    EVP_PKEY_free(pkey);
+
     return ret;
 }
 
@@ -157,7 +261,7 @@ static int AddNumberToDER(char *der, int offset, const char *number)
     return offset + 32;
 }
 
-static int Sign(OSSL_LIB_CTX *libctx, EVP_PKEY *priv_key, const void *data, size_t data_len, void **sign, size_t *sign_len)
+static int Sign(EVP_PKEY *priv_key, const void *data, size_t data_len, void **sign, size_t *sign_len)
 {
     int ret = 0;
     const char *sig_name = "SHA1";
@@ -179,7 +283,7 @@ static int Sign(OSSL_LIB_CTX *libctx, EVP_PKEY *priv_key, const void *data, size
      * sign provider.
      */
     if (!EVP_DigestSignInit_ex(sign_context, NULL, sig_name,
-                               libctx, NULL, priv_key, NULL))
+                               NULL, NULL, priv_key, NULL))
     {
         fprintf(stderr, "EVP_DigestSignInit_ex failed.\n");
         goto cleanup;
@@ -228,7 +332,7 @@ cleanup:
     return ret;
 }
 
-static int Verify(OSSL_LIB_CTX *libctx, EVP_PKEY *pub_key, const void *data, size_t data_len, const void *sign, size_t sign_len)
+static int Verify(EVP_PKEY *pub_key, const void *data, size_t data_len, const void *sign, size_t sign_len)
 {
     int ret = 0;
     const char *sig_name = "SHA1";
@@ -246,7 +350,7 @@ static int Verify(OSSL_LIB_CTX *libctx, EVP_PKEY *pub_key, const void *data, siz
     }
     /* Verify */
     if (!EVP_DigestVerifyInit_ex(verify_context, NULL, sig_name,
-                                 libctx, NULL, pub_key, NULL))
+                                 NULL, NULL, pub_key, NULL))
     {
         fprintf(stderr, "EVP_DigestVerifyInit failed.\n");
         goto cleanup;

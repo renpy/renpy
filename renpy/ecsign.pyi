@@ -19,9 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+def GeneratePrivateKeyAsDER() -> bytes | None:
+    """
+        Generates a EC private key
+    """
+
 def SignDataWithDER(data : bytes, private_key : bytes) -> bytes:
     """
-        return ecdsa signature for data using sha1 hash
+        returns ecdsa signature for data using sha1 hash
 
         `data`
             The data to sign
@@ -42,4 +47,22 @@ def VerifyDataWithDER(data : bytes, public_key : bytes, sign : bytes) -> bool:
 
         `sign`
             The signature to verify
+    """
+
+def GetPublicKeyFromPrivateDER(private_key : bytes) -> bytes | None:
+    """
+        returns public key from the private key
+
+        `private_key`
+            The private key to use (EC)
+    """
+
+def VerifyPrivateKeyDER(private_key : bytes) -> bool:
+    """
+        Verifies if given key is a valid private key
+    """
+
+def VerifyPublicKeyDER(public_key : bytes) -> bool:
+    """
+        Verifies if given key is a valid public key
     """
