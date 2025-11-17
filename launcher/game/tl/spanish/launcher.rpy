@@ -2270,3 +2270,7 @@
     # game/preferences.rpy:258
     old "Prefer the web documentation"
     new "PrefiePreferir ra la documentación web"
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Compilar motor a bytecode"

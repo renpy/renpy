@@ -1186,3 +1186,7 @@
     # updater.rpy:195
     old "Proceed"
     new "Tiếp tục"
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Biên dịch engine thành bytecode"

@@ -2078,3 +2078,7 @@
     # game/navigation.rpy:230
     old "Show translation files"
     new "顯示翻譯資料"
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "將引擎編譯為位元組碼"

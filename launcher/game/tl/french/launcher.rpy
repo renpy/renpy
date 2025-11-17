@@ -2167,3 +2167,7 @@
     # game/new_project.rpy:66
     old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
     new "Attention : vous utilisez Ren'Py 7. Il est recommandé d'utiliser Ren'Py 8 pour de nouveaux projets."
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Compiler le moteur en bytecode"

@@ -2036,3 +2036,7 @@
     old "A nightly build of fixes to the release version of Ren'Py."
     new "Una build nightly con correzioni alla versione di rilascio di Ren'Py."
 
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Compila motore in bytecode"

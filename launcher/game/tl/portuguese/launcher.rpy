@@ -1234,3 +1234,7 @@ translate portuguese strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Uma compilação noturna de correções para a versão de lançamento do Ren'Py."
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Compilar motor para bytecode"

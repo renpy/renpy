@@ -1952,3 +1952,7 @@
     old "Splashscreen skipped in launcher preferences."
     new "Opstartsskærm sprunget over i launcher-præferencer."
 
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Kompiler motor til bytekode"

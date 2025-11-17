@@ -2299,3 +2299,7 @@ translate japanese strings:
     old "Prefer the web documentation"
     new "Web上のドキュメントを優先する"
 
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "エンジンをバイトコードにコンパイル"

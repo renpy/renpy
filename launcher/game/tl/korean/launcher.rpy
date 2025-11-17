@@ -2155,3 +2155,7 @@ translate korean strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Ren'Py 릴리스 버전에 대한 수정 사항이 포함된 야간 빌드입니다."
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "엔진을 바이트코드로 컴파일"

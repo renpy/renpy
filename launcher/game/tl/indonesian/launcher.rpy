@@ -2175,3 +2175,7 @@ translate indonesian strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Perbaikan versi malam hari untuk versi rilis Ren'Py."
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Kompilasi mesin ke bytecode"

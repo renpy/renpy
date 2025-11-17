@@ -2227,3 +2227,7 @@ translate russian strings:
     # game/updater.rpy:78
     old "Nightly Fix (Ren'Py 7, Python 2)"
     new "Ежедневные исправления (Ren'Py 7, Python 2)"
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Скомпилировать движок в байткод"
