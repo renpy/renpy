@@ -272,8 +272,8 @@ label add_update_pem:
     python hide:
         interface.info("You're trying to build an update, but an update.pem file doesn't exist.\n\nThis file is used to sign updates, and will be automatically created in your projects's base directory.\n\nYou'll need to back up update.pem and keep it safe.", cancel=Jump("build_distributions"))
 
-        import ecdsa
-        key = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p).to_pem()
+        import renpy.ecsign
+        key = renpy.ecsign.DERtoPEM(renpy.ecsign.GeneratePrivateKeyAsDER(), "PRIVATE")
 
         with open(os.path.join(project.current.path, "update.pem"), "wb") as f:
             f.write(key)

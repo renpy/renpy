@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from libc.stdlib cimport free
+import base64
 
 cdef extern from "ec_sign_core.h":
     int SignDer(const unsigned char *priv_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len);
@@ -76,3 +77,25 @@ def VerifyPrivateKeyDER(private_key : bytes) -> bool:
 
 def VerifyPublicKeyDER(public_key : bytes) -> bool:
     return VerifyKeyDer(1, public_key, len(public_key))
+
+def PEMtoDER(pem : bytes | str) -> bytes:
+    if isinstance(pem, str):  # pragma: no branch
+        pem = pem.encode()
+    d = b"".join(
+        [
+            l.strip()
+            for l in pem.split(b"\n")
+            if l and not l.startswith(b"-----")
+        ]
+    )
+    return base64.b64decode(d)
+
+
+def DERtoPEM(der : bytes, name : str) -> bytes:
+    b64 = base64.b64encode(der)
+    lines = [("-----BEGIN %s KEY-----\n" % name).encode()]
+    lines.extend(
+        [b64[start : start + 76] + b"\n" for start in range(0, len(b64), 76)]
+    )
+    lines.append(("-----END %s KEY-----\n" % name).encode())
+    return b"".join(lines)

@@ -43,7 +43,7 @@ def VerifyDataWithDER(data : bytes, public_key : bytes, sign : bytes) -> bool:
             The data to sign
 
         `public_key`
-            The private key to use (EC)
+            The public key to use (EC)
 
         `sign`
             The signature to verify
@@ -65,4 +65,14 @@ def VerifyPrivateKeyDER(private_key : bytes) -> bool:
 def VerifyPublicKeyDER(public_key : bytes) -> bool:
     """
         Verifies if given key is a valid public key
+    """
+
+def PEMtoDER(pem : bytes | str) -> bytes:
+    """
+        unpacks DER from a PEM file
+    """
+
+def DERtoPEM(der : bytes, name : str) -> bytes:
+    """
+        packs a DER into a PEM file
     """
