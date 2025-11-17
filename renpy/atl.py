@@ -25,14 +25,25 @@ import renpy
 from renpy.parameter import Signature, ValuedParameter
 from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
 
-
+# renpy.atl is imported before any renpy.display.* modules, so we can't
+# import them at module level.
 def late_imports():
-    global Displayable, Matrix, Camera, position
+    global Displayable, Matrix, position, Camera, DualAngle, position_or_none
 
-    from renpy.display.position import position
     from renpy.display.displayable import Displayable
     from renpy.display.matrix import Matrix
-    from renpy.display.transform import Camera
+    from renpy.display.position import position
+    from renpy.display.transform import Camera, DualAngle, position_or_none
+
+    # Kept for backwards compatibility.
+    global any_object, bool_or_none, float_or_none, matrix, mesh
+    from renpy.display.transform import (
+        any_object,
+        bool_or_none,
+        float_or_none,
+        matrix_or_none as matrix,
+        mesh_or_none as mesh,
+    )
 
 
 def compiling(loc):
@@ -72,76 +83,6 @@ def pause(t):
 @atl_warper
 def instant(t):
     return 1.0
-
-
-class DualAngle(object):
-    def __init__(self, absolute, relative):  # for tests, convert to PY2 after
-        self.absolute = absolute
-        self.relative = relative
-
-    @classmethod
-    def from_any(cls, other):
-        if isinstance(other, cls):
-            return other
-        elif type(other) is float:
-            return cls(other, other)
-        raise TypeError("Cannot convert {} to DualAngle".format(type(other)))
-
-    def __add__(self, other):
-        if isinstance(other, DualAngle):
-            return DualAngle(self.absolute + other.absolute, self.relative + other.relative)
-        return NotImplemented
-
-    def __sub__(self, other):
-        return self + -other
-
-    def __mul__(self, other):
-        if isinstance(other, (int, float)):
-            return DualAngle(self.absolute * other, self.relative * other)
-        return NotImplemented
-
-    __rmul__ = __mul__
-
-    def __neg__(self):
-        return -1 * self
-
-
-def position_or_none(x):
-    if x is None:
-        return None
-    return position.from_any(x)
-
-
-def any_object(x):
-    return x
-
-
-def bool_or_none(x):
-    if x is None:
-        return x
-    return bool(x)
-
-
-def float_or_none(x):
-    if x is None:
-        return x
-    return float(x)
-
-
-def matrix(x):
-    if x is None:
-        return None
-    elif callable(x):
-        return x
-    else:
-        return renpy.display.matrix.Matrix(x)
-
-
-def mesh(x):
-    if isinstance(x, (renpy.gl2.gl2mesh2.Mesh2, renpy.gl2.gl2mesh3.Mesh3, tuple)):
-        return x
-
-    return bool(x)
 
 
 # A dictionary giving property names and the corresponding type or
