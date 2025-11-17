@@ -606,6 +606,16 @@ fix_dlc("renios", "renios")
                 self.log.close()
                 return
 
+            if project.data['force_recompile']:
+                import compileall
+
+                compileall.compile_dir(
+                    os.path.join(config.renpy_base, "renpy"),
+                    ddir="renpy/",
+                    force=True,
+                    quiet=True,
+                )
+
             if project.dump.get("error", False):
                 raise Exception("Could not get build data from the project. Please ensure the project runs.")
 
