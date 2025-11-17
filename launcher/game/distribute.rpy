@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+﻿﻿﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -722,7 +722,7 @@ fix_dlc("renios", "renios")
             # Rename the executable-like files.
             self.rename()
 
-            # Компиляция файлов движка RenPy в байткод для дистрибутива
+            # Compile RenPy engine files to bytecode for distribution
             if project.data.get('compile_engine_bytecode', False):
                 self.compile_renpy_to_bytecode()
 
@@ -780,20 +780,20 @@ fix_dlc("renios", "renios")
 
         def compile_renpy_to_bytecode(self):
             """
-            Компилирует все файлы renpy/ в байткод для дистрибутива.
-            Этот метод создаёт скомпилированные .pyc файлы во временной директории
-            и добавляет их в file_lists вместо исходных .py файлов.
+            Compiles all renpy/ files to bytecode for distribution.
+            This method creates compiled .pyc files in a temporary directory
+            and adds them to file_lists instead of the original .py files.
             """
             
             import compileall
             
             self.reporter.info(_("Compiling Ren'Py files to bytecode..."))
             
-            # Создаём временную директорию для скомпилированных файлов
+            # Create temporary directory for compiled files
             compiled_renpy_dir = self.temp_filename("renpy_compiled")
             os.makedirs(compiled_renpy_dir, exist_ok=True)
             
-            # Копируем файлы renpy во временную директорию
+            # Copy renpy files to temporary directory
             renpy_source = os.path.join(config.renpy_base, "renpy")
             renpy_temp = os.path.join(compiled_renpy_dir, "renpy")
             
@@ -802,7 +802,7 @@ fix_dlc("renios", "renios")
             
             shutil.copytree(renpy_source, renpy_temp, symlinks=True)
             
-            # Компилируем все .py файлы в .pyc
+            # Compile all .py files to .pyc
             compileall.compile_dir(
                 renpy_temp,
                 ddir="renpy/",
@@ -812,7 +812,7 @@ fix_dlc("renios", "renios")
                 optimize=-1
             )
             
-            # Обрабатываем все file lists, содержащие файлы renpy/
+            # Process all file lists containing renpy/ files
             pyc_suffix = py(".cpython-{major}{minor}.pyc")
             
             for list_name, file_list in self.file_lists.items():
@@ -821,19 +821,19 @@ fix_dlc("renios", "renios")
                 files_to_add = []
                 
                 for f in file_list:
-                    # Пропускаем директории и не-renpy файлы
+                    # Skip directories and non-renpy files
                     if f.directory or not f.name.startswith("renpy/"):
                         new_file_list.append(f)
                         continue
                     
-                    # Если это .py файл, заменяем его на .pyc
+                    # If this is a .py file, replace it with .pyc
                     if f.name.endswith(".py"):
-                        # Находим соответствующий .pyc файл
+                        # Find the corresponding .pyc file
                         py_relative = f.name[len("renpy/"):]
                         py_dir = os.path.dirname(py_relative)
-                        py_name = os.path.basename(py_relative)[:-3]  # убираем .py
+                        py_name = os.path.basename(py_relative)[:-3]  # remove .py
                         
-                        # Формируем путь к .pyc файлу
+                        # Build path to .pyc file
                         if py_dir:
                             pyc_path = os.path.join(
                                 renpy_temp,
@@ -842,7 +842,7 @@ fix_dlc("renios", "renios")
                                 py_name + pyc_suffix
                             )
                         else:
-                            # Файл в корневой директории renpy/
+                            # File in renpy/ root directory
                             pyc_path = os.path.join(
                                 renpy_temp,
                                 "__pycache__",
@@ -850,14 +850,14 @@ fix_dlc("renios", "renios")
                             )
                         
                         if os.path.exists(pyc_path):
-                            # Добавляем .pyc файл вместо .py
+                            # Add .pyc file instead of .py
                             pyc_name = f.name[:-3] + ".pyc"
                             new_file_list.append(File(pyc_name, pyc_path, False, False))
                         else:
-                            # Если .pyc не найден, оставляем оригинальный .py
+                            # If .pyc not found, keep original .py
                             new_file_list.append(f)
                     else:
-                        # Не-.py файлы renpy оставляем как есть
+                        # Keep non-.py renpy files as is
                         new_file_list.append(f)
                 
                 self.file_lists[list_name] = new_file_list
