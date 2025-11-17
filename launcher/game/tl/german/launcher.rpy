@@ -2133,3 +2133,11 @@ translate german strings:
     # game/distribute_gui.rpy:250
     old "Compile Engine to Bytecode"
     new "Engine zu Bytecode kompilieren"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Kompiliere Ren'Py-Dateien zu Bytecode..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Bytecode-Kompilierung abgeschlossen."

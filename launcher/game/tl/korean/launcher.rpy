@@ -2159,3 +2159,11 @@ translate korean strings:
     # game/distribute_gui.rpy:250
     old "Compile Engine to Bytecode"
     new "엔진을 바이트코드로 컴파일"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Ren'Py 파일을 바이트코드로 컴파일 중..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "바이트코드 컴파일 완료."

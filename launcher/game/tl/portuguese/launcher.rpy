@@ -1238,3 +1238,11 @@ translate portuguese strings:
     # game/distribute_gui.rpy:250
     old "Compile Engine to Bytecode"
     new "Compilar motor para bytecode"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Compilando arquivos Ren'Py para bytecode..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Compilação para bytecode concluída."

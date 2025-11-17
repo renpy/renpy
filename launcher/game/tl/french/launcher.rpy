@@ -2171,3 +2171,11 @@
     # game/distribute_gui.rpy:250
     old "Compile Engine to Bytecode"
     new "Compiler le moteur en bytecode"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Compilation des fichiers Ren'Py en bytecode..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Compilation en bytecode terminée."

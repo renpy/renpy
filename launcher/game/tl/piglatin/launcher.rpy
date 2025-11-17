@@ -1925,3 +1925,11 @@ translate piglatin strings:
     # game/distribute_gui.rpy:250
     old "Compile Engine to Bytecode"
     new "Ompilecay ngineeay otay ytebodecay"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Ompilingcay Enray'Ypay ilesfay otay ytebodecay..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Ytebodecay ompilationcay ompletecay."

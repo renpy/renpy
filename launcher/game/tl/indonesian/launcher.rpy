@@ -2179,3 +2179,11 @@ translate indonesian strings:
     # game/distribute_gui.rpy:250
     old "Compile Engine to Bytecode"
     new "Kompilasi mesin ke bytecode"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Mengompilasi file Ren'Py ke bytecode..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Kompilasi bytecode selesai."

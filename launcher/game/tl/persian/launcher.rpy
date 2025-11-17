@@ -1889,3 +1889,11 @@ translate persian strings:
     # game/distribute_gui.rpy:250
     old "Compile Engine to Bytecode"
     new "کامپایل موتور به بایت‌کد"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "در حال کامپایل فایل‌های Ren'Py به بایت‌کد..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "کامپایل بایت‌کد تکمیل شد."

@@ -1905,3 +1905,11 @@ translate ukrainian strings:
     # game/distribute_gui.rpy:250
     old "Compile Engine to Bytecode"
     new "Скомпілювати рушій у байткод"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Компіляція файлів Ren'Py у байткод..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Компіляцію у байткод завершено."

@@ -2133,3 +2133,11 @@ translate finnish strings:
     # game/distribute_gui.rpy:250
     old "Compile Engine to Bytecode"
     new "Käännä moottori tavukoodiksi"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Käännetään Ren'Py-tiedostoja tavukoodiksi..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Tavukoodin kääntäminen valmis."

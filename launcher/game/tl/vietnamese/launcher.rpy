@@ -1190,3 +1190,11 @@
     # game/distribute_gui.rpy:250
     old "Compile Engine to Bytecode"
     new "Biên dịch engine thành bytecode"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Đang biên dịch các tệp Ren'Py thành bytecode..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Biên dịch bytecode hoàn tất."
