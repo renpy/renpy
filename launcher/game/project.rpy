@@ -149,6 +149,7 @@ init python in project:
             data.setdefault("packages", [ "pc", "mac" ])
             data.setdefault("add_from", True)
             data.setdefault("force_recompile", True)
+            data.setdefault("compile_engine_bytecode", False)
             data.setdefault("android_build", "Release")
             data.setdefault("tutorial", False)
 

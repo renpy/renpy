@@ -247,6 +247,7 @@ screen build_distributions:
 
                         textbutton _("Add from clauses to calls") action DataToggle("add_from") style "l_checkbox"
                         textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
+                        textbutton _("Compile Engine to Bytecode") action DataToggle("compile_engine_bytecode") style "l_checkbox"
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
