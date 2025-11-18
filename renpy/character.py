@@ -797,7 +797,7 @@ def display_say(
             if multiple:
                 show_args["multiple"] = multiple
 
-            if retain:
+            if retain and last_pause:
                 show_args["retain"] = retain_tag
 
             what_text = show_function(who, what_string, **show_args)
@@ -923,6 +923,8 @@ def display_say(
                 if not last_pause:
                     for i in renpy.config.say_sustain_callbacks:
                         i()
+
+
 
     except (renpy.game.JumpException, renpy.game.CallException) as e:
         exception = e
