@@ -246,14 +246,14 @@ def index_files():
     game_files.clear()
     lower_map.clear()
 
+    if renpy.android:
+        find_apks()
+
     for _dir, fn in listdirfiles():
         lower_map[unicodedata.normalize("NFC", fn.lower())] = fn
 
     for fn in remote_files:
         lower_map[unicodedata.normalize("NFC", fn.lower())] = fn
-
-    if renpy.android:
-        find_apks()
 
 
 def index_archives():
