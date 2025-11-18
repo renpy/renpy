@@ -27,6 +27,10 @@ that occurred. Possible events are:
     after "end", in cases where dialogue does not cause an interaction
     to occur.
 
+"interact_done"
+    Called after the interaction ends. Note that entering a new context (like the game menu)
+    does not end the interaction.
+
 "end"
     Called at the end of a say statement.
 
@@ -44,7 +48,7 @@ The callback is called with at the keyword arguments:
 `multiple`
     The `multiple` argument to :func:`Character`.
 
-The "show" and "slow_done" callbacks are also given additional keyword
+The "show", "slow_done", and "interact_done" callbacks are also given additional keyword
 arguments:
 
 `start`
@@ -60,6 +64,11 @@ arguments:
 `last_segment`
     True if this is the last segment of dialogue in the say statement, False otherwise.
 
+The "interact_done" callback takes an additional keyword argument:
+
+`exception`
+    True if the interaction ended due to an exception, False otherwise. Exceptions include
+    things like loading the game and rollback.
 
 Other values of the positional argument and additional keyword arguments may
 be supplied to the callback. The callback should be written to ignore keyword arguments it

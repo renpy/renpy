@@ -883,10 +883,18 @@ def display_say(
             if not slow:
                 slow_done()
 
+            had_exception = False
+
             if final:
                 try:
                     rv = renpy.ui.interact(mouse="say", type=type, roll_forward=roll_forward)
+                except Exception as e:
+                    had_exception = True
+                    raise
                 finally:
+
+                    pause_callback("interact_done", exception=had_exception)
+
                     if retain and what_ctc:
                         if ctc_position == "nestled":
                             what_text.set_ctc(["{_end}", what_ctc])

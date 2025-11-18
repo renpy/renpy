@@ -4,6 +4,21 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+
+.. _renpy-8.5.0:
+
+8.5.1
+-----
+
+Fixes
+-----
+
+Other Changes
+-------------
+
+There is a new "interact_done" :ref:`character callback <character-callbacks>`, which is called after
+each interaction ends.
+
 .. _renpy-8.5.0:
 
 8.5.0
