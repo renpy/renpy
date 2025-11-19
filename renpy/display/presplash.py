@@ -72,7 +72,7 @@ class ProgressBar(object):
 
 
 def find_file(base_name, root):
-    allowed_exts = [".png", ".jpg"]
+    allowed_exts = [".png", ".jpg", ".webp"]
     for ext in allowed_exts:
         fn = os.path.join(root, base_name + ext)
         if os.path.exists(fn):
