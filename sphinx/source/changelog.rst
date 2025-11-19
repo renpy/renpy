@@ -5,6 +5,17 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.6.0:
+
+8.6.0
+-----
+
+Other Changes
+-------------
+
+Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
+
+
 .. _renpy-8.5.0:
 
 8.5.1
