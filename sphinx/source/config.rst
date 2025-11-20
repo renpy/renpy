@@ -1365,6 +1365,11 @@ Screen Language
     Contains a list of screens that are removed when a context is copied
     for rollback or saving.
 
+.. var:: config.game_menu_action = None
+
+    If not None, this is an Action that is run when the user asks to enter the game
+    menu. This does not automatically start a new context - it's up to the action to do that.
+
 .. var:: config.help = None
 
     The default value for the :func:`Help` action.
