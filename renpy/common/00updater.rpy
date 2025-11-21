@@ -69,6 +69,27 @@ init -1500 python in updater:
     if persistent._update_last_checked is None:
         persistent._update_last_checked = { }
 
+    def zsync_path(command):
+        """
+        Returns the full platform-specific path to command, which is one
+        of zsync or zsyncmake. If the file doesn't exists, returns the
+        command so the system-wide copy is used.
+        """
+
+        if renpy.windows:
+            suffix = ".exe"
+        else:
+            suffix = ""
+
+        executable = renpy.fsdecode(sys.executable)
+
+        rv = os.path.join(os.path.dirname(executable), command + suffix)
+
+        if os.path.exists(rv):
+            return rv
+
+        return command + suffix
+
     class UpdateError(Exception):
         """
         Used to report known errors.
@@ -203,6 +224,9 @@ init -1500 python in updater:
 
             # Do we prompt for confirmation?
             self.confirm = confirm
+
+            # Should rpu updates be preferred?
+            self.prefer_rpu = prefer_rpu
 
             # Should the update be allowed even if current.json is empty?
             self.allow_empty = allow_empty
@@ -362,15 +386,30 @@ init -1500 python in updater:
             import os
 
             has_rpu = False
+            has_zsync = False
+
+            prefer_rpu = self.prefer_rpu or "RPU_UPDATE" in os.environ
 
             for i in self.modules:
 
                 for d in self.updates:
                     if "rpu_url" in self.updates[d]:
                         has_rpu = True
+                    if "zsync_url" in self.updates[d]:
+                        has_zsync = True
 
-            if has_rpu:
+            if has_rpu and has_zsync:
+
+                if prefer_rpu:
+                    self.rpu_update()
+                else:
+                    self.zsync_update()
+
+            elif has_rpu:
                 self.rpu_update()
+
+            elif has_zsync:
+                self.zsync_update()
 
             else:
                 raise UpdateError(_("No update methods found."))
@@ -553,6 +592,66 @@ init -1500 python in updater:
             self.can_cancel = False
 
             renpy.restart_interaction()
+
+        def zsync_update(self):
+
+            self.prompt_confirm()
+            self.can_cancel = self.allow_cancel
+
+            if self.patch:
+                for i in self.modules:
+                    self.prepare(i)
+
+            self.progress = 0.0
+            self.state = self.DOWNLOADING
+            renpy.restart_interaction()
+
+            for i in self.modules:
+
+                if self.patch:
+
+                    try:
+                        self.download(i)
+                    except Exception:
+                        self.download(i, standalone=True)
+
+                else:
+                    self.download_direct(i)
+
+            self.clean_old()
+
+            self.can_cancel = False
+            self.progress = 0.0
+            self.state = self.UNPACKING
+            renpy.restart_interaction()
+
+            for i in self.modules:
+                self.unpack(i)
+
+            self.progress = None
+            self.state = self.FINISHING
+            renpy.restart_interaction()
+
+            self.move_files()
+            self.delete_obsolete()
+            self.save_state()
+            self.clean_new()
+
+            persistent._update_version[self.url] = None
+
+            if self.restart:
+                self.state = self.DONE
+            else:
+                self.state = self.DONE_NO_RESTART
+
+            self.message = None
+            self.progress = None
+            self.can_proceed = self.done_pause
+            self.can_cancel = False
+
+            renpy.restart_interaction()
+
+            return
 
         def simulation(self):
             """
@@ -878,13 +977,23 @@ init -1500 python in updater:
         def add_dlc_state(self, name):
 
             has_rpu = "rpu_url" in self.updates[name]
+            has_zsync = "zsync_url" in self.updates[name]
+
+            prefer_rpu = self.prefer_rpu or "RPU_UPDATE" in os.environ
+
+            if has_rpu and has_zsync:
+                if prefer_rpu:
+                    has_zsync = False
+                else:
+                    has_rpu = False
 
             if has_rpu:
                 fl = self.fetch_files_rpu(name)
                 d = { name : fl.to_current_json() }
-
             else:
-                raise UpdateError(_("The update source does not support RPU updates."))
+                url = urlparse.urljoin(self.url, self.updates[name]["json_url"])
+                f = urlopen(url)
+                d = json.load(f)
 
             d[name]["version"] = 0
             self.current_state.update(d)
@@ -928,6 +1037,506 @@ init -1500 python in updater:
 
             return rv
 
+        def update_filename(self, module, new):
+            """
+            Returns the update filename for the given module.
+            """
+
+            rv = os.path.join(self.updatedir, module + ".update")
+            if new:
+                return rv + ".new"
+
+            return rv
+
+        def prepare(self, module):
+            """
+            Creates a tarfile creating the files that make up module.
+            """
+
+            state = self.current_state[module]
+
+            xbits = set(state["xbit"])
+            directories = set(state["directories"])
+            all = state["files"] + state["directories"]
+            all.sort()
+
+            # Add the update directory and state file.
+            all.append("update")
+            directories.add("update")
+            all.append("update/current.json")
+
+            with tarfile.open(self.update_filename(module, False), "w") as tf:
+                for i, name in enumerate(all):
+
+                    if self.cancelled:
+                        raise UpdateCancelled()
+
+                    self.progress = 1.0 * i / len(all)
+
+                    directory = name in directories
+                    xbit = name in xbits
+
+                    path = self.path(name)
+
+                    if directory:
+                        info = tarfile.TarInfo(name)
+                        info.size = 0
+                        info.type = tarfile.DIRTYPE
+                    else:
+                        if not os.path.exists(path):
+                            continue
+
+                        info = tf.gettarinfo(path, name)
+
+                        if not info.isreg():
+                            continue
+
+                    info.uid = 1000
+                    info.gid = 1000
+                    info.mtime = 0
+                    info.uname = "renpy"
+                    info.gname = "renpy"
+
+                    if xbit or directory:
+                        info.mode = 0o777
+                    else:
+                        info.mode = 0o666
+
+                    if info.isreg():
+                        with open(path, "rb") as f:
+                            tf.addfile(info, f)
+                    else:
+                        tf.addfile(info)
+
+        def split_inputs(self, sfn):
+            """
+            Given an input file `sfn`, returns a list of option arguments and
+            input files that can be supplied to zsync.
+            """
+
+            size = os.path.getsize(sfn)
+
+            if size < (1 << 30):
+                return [ "-i", sfn ]
+
+            rv = [ ]
+
+            with open(sfn, "rb") as f:
+                count = 0
+
+                while count * (1 << 30) < size:
+                    count += 1
+
+                    out_fn = sfn + "." + str(count)
+
+                    with open(out_fn, "wb") as out_f:
+
+                        for i in range(1 << 4):
+
+                            data = f.read(1 << 26)
+
+                            if not data:
+                                break
+
+                            out_f.write(data)
+
+                    rv.extend([ "-i", out_fn ])
+
+            return rv
+
+        def download(self, module, standalone=False):
+            """
+            Uses zsync to download the module.
+            """
+
+            start_progress = None
+
+            new_fn = self.update_filename(module, True)
+
+            # Download the sums file.
+            sums = [ ]
+
+            f = urlopen(urlparse.urljoin(self.url, self.updates[module]["sums_url"]))
+            data = f.read()
+
+            for i in range(0, len(data), 4):
+                try:
+                    sums.append(struct.unpack("<I", data[i:i+4])[0])
+                except Exception:
+                    pass
+
+            f.close()
+
+            # Figure out the zsync command.
+
+            zsync_fn = os.path.join(self.updatedir, module + ".zsync")
+
+            # May not exist, but if it does, we want to delete it.
+            try:
+                os.unlink(zsync_fn + ".part")
+            except Exception:
+                pass
+
+            try:
+                os.unlink(new_fn)
+            except Exception:
+                pass
+
+            cmd = [
+                zsync_path("zsync"),
+                "-o", new_fn,
+                ]
+
+            if not standalone:
+                cmd.extend([
+                    "-k", zsync_fn,
+                ])
+
+            if os.path.exists(new_fn + ".part"):
+                self.rename(new_fn + ".part", new_fn + ".part.old")
+
+                if not standalone:
+                    cmd.extend(self.split_inputs(new_fn + ".part.old"))
+
+            if not standalone:
+                for i in self.modules:
+                    cmd.extend(self.split_inputs(self.update_filename(i, False)))
+
+            cmd.append(urlparse.urljoin(self.url, self.updates[module]["zsync_url"]))
+
+            cmd = [ fsencode(i) for i in cmd ]
+
+            self.log.write("running %r\n" % cmd)
+            self.log.flush()
+
+            if renpy.windows:
+
+                CREATE_NO_WINDOW=0x08000000
+                p = subprocess.Popen(cmd,
+                    stdin=subprocess.PIPE,
+                    stdout=self.log,
+                    stderr=self.log,
+                    creationflags=CREATE_NO_WINDOW,
+                    cwd=renpy.fsencode(self.updatedir))
+            else:
+
+                p = subprocess.Popen(cmd,
+                    stdin=subprocess.PIPE,
+                    stdout=self.log,
+                    stderr=self.log,
+                    cwd=renpy.fsencode(self.updatedir))
+
+            p.stdin.close()
+
+            while True:
+                if self.cancelled:
+                    p.kill()
+                    break
+
+                time.sleep(1)
+
+                if p.poll() is not None:
+                    break
+
+                try:
+                    f = open(new_fn + ".part", "rb")
+                except Exception:
+                    self.log.write("partfile does not exist\n")
+                    continue
+
+                done_sums = 0
+
+                with f:
+                    for i in sums:
+
+                        if self.cancelled:
+                            break
+
+                        data = f.read(65536)
+
+                        if not data:
+                            break
+
+                        if (zlib.adler32(data) & 0xffffffff) == i:
+                            done_sums += 1
+
+                raw_progress = 1.0 * done_sums / len(sums)
+
+                if raw_progress == 1.0:
+                    start_progress = None
+                    self.progress = 1.0
+                    continue
+
+                if start_progress is None:
+                    start_progress = raw_progress
+                    self.progress = 0.0
+                    continue
+
+                self.progress = (raw_progress - start_progress) / (1.0 - start_progress)
+
+            p.wait()
+
+            self.log.seek(0, 2)
+
+            if self.cancelled:
+                raise UpdateCancelled()
+
+            # Check the existence of the downloaded file.
+            if not os.path.exists(new_fn):
+                if os.path.exists(new_fn + ".part"):
+                    os.rename(new_fn + ".part", new_fn)
+                else:
+                    raise UpdateError(_("The update file was not downloaded."))
+
+            # Check that the downloaded file has the right digest.
+            import hashlib
+            with open(new_fn, "rb") as f:
+                hash = hashlib.sha256()
+
+                while True:
+                    data = f.read(1024 * 1024)
+
+                    if not data:
+                        break
+
+                    hash.update(data)
+
+                digest = hash.hexdigest()
+
+            if digest != self.updates[module]["digest"]:
+                raise UpdateError(_("The update file does not have the correct digest - it may have been corrupted."))
+
+            if os.path.exists(new_fn + ".part.old"):
+                os.unlink(new_fn + ".part.old")
+
+            if self.cancelled:
+                raise UpdateCancelled()
+
+
+        def download_direct(self, module):
+            """
+            Uses zsync to download the module.
+            """
+
+            import requests
+
+            start_progress = None
+
+            new_fn = self.update_filename(module, True)
+            part_fn = new_fn + ".part.gz"
+
+            # Figure out the zsync command.
+
+            zsync_fn = os.path.join(self.updatedir, module + ".zsync")
+
+            try:
+                os.unlink(new_fn)
+            except Exception:
+                pass
+
+            zsync_url = self.updates[module]["zsync_url"][:-6] + ".update.gz"
+            url = urlparse.urljoin(self.url, zsync_url)
+
+            self.log.write("downloading %r\n" % url)
+            self.log.flush()
+
+            resp = requests.get(url, stream=True, proxies=renpy.exports.proxies, timeout=15)
+
+            if not resp.ok:
+                raise UpdateError(_("The update file was not downloaded."))
+
+            try:
+                length = int(resp.headers.get("Content-Length", "20000000"))
+            except Exception:
+                length = 20000000
+
+            done = 0
+
+            with open(part_fn, "wb") as part_f:
+
+                for data in resp.iter_content(1000000):
+
+                    if self.cancelled:
+                        break
+
+                    part_f.write(data)
+
+                    done += len(data)
+
+                    self.progress = min(1.0, 1.0 * done / length)
+
+            resp.close()
+
+            if self.cancelled:
+                raise UpdateCancelled()
+
+            # Decompress the file.
+            import gzip
+
+            with gzip.open(part_fn, "rb") as gz_f:
+                with open(new_fn, "wb") as new_f:
+
+                    while True:
+                        data = gz_f.read(1000000)
+
+                        if not data:
+                            break
+
+                        new_f.write(data)
+
+            os.unlink(part_fn)
+
+            # Check that the downloaded file has the right digest.
+            import hashlib
+            with open(new_fn, "rb") as f:
+                hash = hashlib.sha256()
+
+                while True:
+                    data = f.read(1024 * 1024)
+
+                    if not data:
+                        break
+
+                    hash.update(data)
+
+                digest = hash.hexdigest()
+
+            if digest != self.updates[module]["digest"]:
+                raise UpdateError(_("The update file does not have the correct digest - it may have been corrupted."))
+
+            if self.cancelled:
+                raise UpdateCancelled()
+
+
+
+        def unpack(self, module):
+            """
+            This unpacks the module. Directories are created immediately, while files are
+            created as filename.new, and marked to be moved into position when all packing
+            is done.
+            """
+
+            update_fn = self.update_filename(module, True)
+
+            # First pass, just figure out how many tarinfo objects are in the tarfile.
+            tf_len = 0
+            with tarfile.open(update_fn, "r") as tf:
+                for i in tf:
+                    tf_len += 1
+
+            with tarfile.open(update_fn, "r") as tf:
+                for i, info in enumerate(tf):
+
+                    self.progress = 1.0 * i / tf_len
+
+                    if info.name == "update":
+                        continue
+
+                    # Process the status info for the current module.
+                    if info.name == "update/current.json":
+                        tff = tf.extractfile(info)
+                        state = json.load(tff)
+                        tff.close()
+
+                        self.new_state[module] = state[module]
+
+                        continue
+
+                    path = self.path(info.name)
+
+                    # Extract directories.
+                    if info.isdir():
+                        try:
+                            os.makedirs(path)
+                        except Exception:
+                            pass
+
+                        continue
+
+                    if not info.isreg():
+                        raise UpdateError(__("While unpacking {}, unknown type {}.").format(info.name, info.type))
+
+                    # Extract regular files.
+                    tff = tf.extractfile(info)
+                    new_path = path + ".new"
+                    with open(new_path, "wb") as f:
+                        while True:
+                            data = tff.read(1024 * 1024)
+                            if not data:
+                                break
+                            f.write(data)
+
+                    tff.close()
+
+                    if info.mode & 1:
+                        # If the xbit is set in the tar info, set it on disk if we can.
+                        try:
+                            umask = os.umask(0)
+                            os.umask(umask)
+
+                            os.chmod(new_path, 0o777 & (~umask))
+                        except Exception:
+                            pass
+
+                    self.moves.append(path)
+
+        def move_files(self):
+            """
+            Move new files into place.
+            """
+
+            for path in self.moves:
+
+                try:
+                    self.unlink(path)
+                    os.rename(path + ".new", path)
+                except Exception:
+                    renpy.update.deferred.defer_rename(path)
+
+
+        def delete_obsolete(self):
+            """
+            Delete files and directories that have been made obsolete by the upgrade.
+            """
+
+            def flatten_path(d, key):
+                rv = set()
+
+                for i in d.values():
+                    for j in i[key]:
+                        rv.add(self.path(j))
+
+                return rv
+
+            old_files = flatten_path(self.current_state, 'files')
+            old_directories = flatten_path(self.current_state, 'directories')
+
+            new_files = flatten_path(self.new_state, 'files')
+            new_directories = flatten_path(self.new_state, 'directories')
+
+            old_files -= new_files
+            old_directories -= new_directories
+
+            old_files = list(old_files)
+            old_files.sort()
+            old_files.reverse()
+
+            old_directories = list(old_directories)
+            old_directories.sort()
+            old_directories.reverse()
+
+            for i in old_files:
+                self.unlink(i)
+
+                if os.path.exists(i):
+                    renpy.update.deferred.defer_unlink(i)
+
+            for i in old_directories:
+                try:
+                    os.rmdir(i)
+                except Exception:
+                    renpy.update.deferred.defer_unlink(i)
+
         def save_state(self):
             """
             Saves the current state to update/current.json
@@ -953,6 +1562,11 @@ init -1500 python in updater:
         def clean_old(self):
             for i in self.modules:
                 self.clean(i + ".update")
+
+        def clean_new(self):
+            for i in self.modules:
+                self.clean(i + ".update.new")
+                self.clean(i + ".zsync")
 
     installed_state_cache = None
 
@@ -1081,7 +1695,8 @@ init -1500 python in updater:
             This is ignored if the RPU update format is being used.
 
         `prefer_rpu`
-            No longer used, but kept for backwards compatibility.
+            If True, Ren'Py will prefer the RPU format for updates, if both
+            zsync and RPU are available.
 
         `allow_empty`
             If True, Ren'Py will allow the update to proceed even if the
