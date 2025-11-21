@@ -13,6 +13,9 @@ Changelog (Ren'Py 7.x-)
 Other Changes
 -------------
 
+The ability to apply zsync-based updates has been removed. This was an older update format that has been replaced.
+The ability to create these updates will be removed in Ren'Py 8.7.0.
+
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
 
 

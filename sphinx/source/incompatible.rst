@@ -12,6 +12,16 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+Upcoming Deprecations
+----------------------
+
+The ability to create zsync updates will be removed when Ren'Py 8.7 is released.
+
+.. _incompatible-8.6.0:
+
+8.6.0
+-----
+
 
 .. _incompatible-8.5.0:
 
