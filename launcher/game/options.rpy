@@ -421,6 +421,7 @@ init python:
     libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
     source_and_binary(libpython, "binary", "binary", py='pyc')
 
+    build.classify_renpy("lib/py3-windows-x86_64/zsync.exe", None)
     build.classify_renpy("lib/python**", None)
     build.classify_renpy("lib/py2-**", None)
 
