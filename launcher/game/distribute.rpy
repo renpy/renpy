@@ -722,6 +722,10 @@ fix_dlc("renios", "renios")
             # Rename the executable-like files.
             self.rename()
 
+            # Compile RenPy engine files to bytecode for distribution
+            if project.data.get('compile_engine_bytecode', False):
+                self.compile_renpy_to_bytecode()
+
             # Sign the mac app once on Ren'Py.
             if self.build["renpy"]:
                 fl = self.file_lists['binary']
@@ -773,6 +777,92 @@ fix_dlc("renios", "renios")
 
             if open_directory:
                 renpy.run(store.OpenDirectory(self.destination, absolute=True))
+
+        def compile_renpy_to_bytecode(self):
+            """
+            Compiles all renpy/ files to bytecode for distribution.
+            This method creates compiled .pyc files in a temporary directory
+            and adds them to file_lists instead of the original .py files.
+            """
+            
+            import compileall
+            
+            self.reporter.info(_("Compiling Ren'Py files to bytecode..."))
+            
+            # Create temporary directory for compiled files
+            compiled_renpy_dir = self.temp_filename("renpy_compiled")
+            os.makedirs(compiled_renpy_dir, exist_ok=True)
+            
+            # Copy renpy files to temporary directory
+            renpy_source = os.path.join(config.renpy_base, "renpy")
+            renpy_temp = os.path.join(compiled_renpy_dir, "renpy")
+            
+            if os.path.exists(renpy_temp):
+                shutil.rmtree(renpy_temp)
+            
+            shutil.copytree(renpy_source, renpy_temp, symlinks=True)
+            
+            # Compile all .py files to .pyc
+            compileall.compile_dir(
+                renpy_temp,
+                ddir="renpy/",
+                force=True,
+                quiet=1,
+                legacy=False,
+                optimize=-1
+            )
+            
+            # Process all file lists containing renpy/ files
+            pyc_suffix = py(".cpython-{major}{minor}.pyc")
+            
+            for list_name, file_list in self.file_lists.items():
+                new_file_list = FileList()
+                files_to_remove = []
+                files_to_add = []
+                
+                for f in file_list:
+                    # Skip directories and non-renpy files
+                    if f.directory or not f.name.startswith("renpy/"):
+                        new_file_list.append(f)
+                        continue
+                    
+                    # If this is a .py file, replace it with .pyc
+                    if f.name.endswith(".py"):
+                        # Find the corresponding .pyc file
+                        py_relative = f.name[len("renpy/"):]
+                        py_dir = os.path.dirname(py_relative)
+                        py_name = os.path.basename(py_relative)[:-3]  # remove .py
+                        
+                        # Build path to .pyc file
+                        if py_dir:
+                            pyc_path = os.path.join(
+                                renpy_temp,
+                                py_dir,
+                                "__pycache__",
+                                py_name + pyc_suffix
+                            )
+                        else:
+                            # File in renpy/ root directory
+                            pyc_path = os.path.join(
+                                renpy_temp,
+                                "__pycache__",
+                                py_name + pyc_suffix
+                            )
+                        
+                        if os.path.exists(pyc_path):
+                            # Add .pyc file instead of .py
+                            pyc_name = f.name[:-3] + ".pyc"
+                            new_file_list.append(File(pyc_name, pyc_path, False, False))
+                        else:
+                            # If .pyc not found, keep original .py
+                            new_file_list.append(f)
+                    else:
+                        # Keep non-.py renpy files as is
+                        new_file_list.append(f)
+                
+                self.file_lists[list_name] = new_file_list
+            
+            self.reporter.info(_("Bytecode compilation complete."))
 
         def list_update_formats(self):
             """

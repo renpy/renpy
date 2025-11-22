@@ -2062,3 +2062,15 @@ translate polish strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Nocna kompilacja poprawek do wydanej wersji Ren'Py."
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Kompiluj silnik do bajtkodu"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Kompilowanie plików Ren'Py do bajtkodu..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Kompilacja do bajtkodu zakończona."

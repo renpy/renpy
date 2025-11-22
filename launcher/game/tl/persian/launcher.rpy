@@ -1885,3 +1885,15 @@ translate persian strings:
     # game/web.rpy:571
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "قبل از بسته‌بندی برنامه‌های وب، شما باید RenPyWeb، پشتیبانی وب Ren'Py را دانلود کنید. آیا در حال حاضر مایل به دانلود RenPyWeb هستید؟"
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "کامپایل موتور به بایت‌کد"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "در حال کامپایل فایل‌های Ren'Py به بایت‌کد..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "کامپایل بایت‌کد تکمیل شد."

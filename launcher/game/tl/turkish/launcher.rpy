@@ -2102,3 +2102,15 @@ translate turkish strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Ren'Py'nin sürümüne yönelik düzeltmelerden oluşan bir gece derlemesi."
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Motoru bayt koduna derle"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Ren'Py dosyaları bayt koduna derleniyor..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Bayt kodu derlemesi tamamlandı."

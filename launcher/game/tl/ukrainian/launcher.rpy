@@ -1901,3 +1901,15 @@ translate ukrainian strings:
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Перш ніж створювати пакети вебзастосунків, вам потрібно буде завантажити RenPyWeb, вебпідтримку Ren'Py. Бажаєте завантажити RenPyWeb зараз?"
 
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Скомпілювати рушій у байткод"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Компіляція файлів Ren'Py у байткод..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Компіляцію у байткод завершено."

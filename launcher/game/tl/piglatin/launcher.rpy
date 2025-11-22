@@ -1921,3 +1921,15 @@ translate piglatin strings:
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Eforebay ackagingpay ebway appsay, ouyay'llay eednay otay ownloadday Enpywebray, Enray'Ypay'say ebway upportsay. Ouldway ouyay ikelay otay ownloadday Enpywebray ownay?"
 
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Ompilecay ngineeay otay ytebodecay"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Ompilingcay Enray'Ypay ilesfay otay ytebodecay..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Ytebodecay ompilationcay ompletecay."

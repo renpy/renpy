@@ -1186,3 +1186,15 @@
     # updater.rpy:195
     old "Proceed"
     new "استمرار"
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "تجميع المحرك إلى رمز بايت"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "جاري تجميع ملفات Ren'Py إلى رمز بايت..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "اكتمل تجميع رمز البايت."

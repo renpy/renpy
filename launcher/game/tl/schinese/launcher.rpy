@@ -2009,3 +2009,15 @@
     # game/updater.rpy:78
     old "Nightly Fix (Ren'Py 7, Python 2)"
     new "每夜修复版（Ren'Py 7，Python 2）"
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "将引擎编译为字节码"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "正在将 Ren'Py 文件编译为字节码..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "字节码编译完成。"

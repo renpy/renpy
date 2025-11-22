@@ -2129,3 +2129,15 @@ translate german strings:
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
     new "Ein nightly Build mit Korrekturen für die Release-Version von Ren'Py."
+
+    # game/distribute_gui.rpy:250
+    old "Compile Engine to Bytecode"
+    new "Engine zu Bytecode kompilieren"
+
+    # game/distribute.rpy:791
+    old "Compiling Ren'Py files to bytecode..."
+    new "Kompiliere Ren'Py-Dateien zu Bytecode..."
+
+    # game/distribute.rpy:857
+    old "Bytecode compilation complete."
+    new "Bytecode-Kompilierung abgeschlossen."
