@@ -161,6 +161,28 @@ init python in distribute:
             self.tarfile.close()
 
 
+    def zsync_path(command):
+        """
+        Returns the full platform-specific path to command, which is one
+        of zsync or zsyncmake. If the file doesn't exists, returns the
+        command so the system-wide copy is used.
+        """
+
+        if renpy.windows:
+            suffix = ".exe"
+        else:
+            suffix = ""
+
+        executable = renpy.fsdecode(sys.executable)
+
+        rv = os.path.join(os.path.dirname(executable), command + suffix)
+
+        if os.path.exists(rv):
+            return rv
+
+        return command + suffix
+
+
     class UpdatePackage(TarPackage):
 
         def __init__(self, filename, basename, destination):
@@ -174,7 +196,7 @@ init python in distribute:
             TarPackage.close(self)
 
             cmd = [
-                updater.zsync_path("zsyncmake"),
+                zsync_path("zsyncmake"),
                 "-z",
                 # -u url to gzipped data - not a local filename!
                 "-u", self.basename + ".update.gz",
