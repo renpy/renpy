@@ -517,7 +517,7 @@ init -1500 python in iap:
         p = get_product(product)
 
         # Consumables always return False because they can be repurchased.
-        if store_name === "play" and p.consumable:
+        if store_name == "play" and p.consumable:
             return False
 
         # Check the cache first, since we might be off line.
