@@ -310,7 +310,7 @@ visual novel.
 
 **Windows**
 
-* Version: Windows 7 or higher.
+* Version: Windows 10 or higher.
 * CPU: 2.0 Ghz 64-bit Intel-compatible
 * RAM: 2.0 GB
 * Graphics: OpenGL 3.0 or DirectX 11
@@ -324,7 +324,7 @@ visual novel.
 
 **Linux**
 
-* Version: Ubuntu 16.04+
+* Version: Ubuntu 20.04+
 * CPU: 2.0 Ghz 64-bit Intel-compatible
 * RAM: 2.0 GB
 * Graphics: OpenGL 3.0
