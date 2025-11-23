@@ -1,5 +1,6 @@
 import argparse
 import pathlib
+import re
 
 try:
     from clang import cindex
@@ -65,6 +66,16 @@ class Generator:
 
         return pathlib.Path(node.location.file.name).is_relative_to(self.sdl3_path)
 
+    def clean_code(self, code: str) -> str:
+        """
+        Clean up the code by removing unnecessary whitespace and newlines.
+        """
+
+        code = code.replace("SDLCALL", "")
+        return code
+
+
+
     def function(self, node: cindex.Cursor):
         if not self.is_relevant(node):
             return
@@ -89,16 +100,51 @@ class Generator:
 
         self.declare(node, f"    {sig}")
 
+    def typedef(self, node: cindex.Cursor):
+        if not self.is_relevant(node):
+            return
+
+        # if list(node.get_children()):
+        #     print(node.spelling, "has children", list(i.kind for i in node.get_children()))
+
+        tokens = node.get_tokens()
+
+
+        if node.spelling == node.underlying_typedef_type.get_declaration().spelling:
+            return
+
+        # if children:
+        #     child = children[0]
+        #     if child.kind == CursorKind.STRUCT_DECL:
+        #         return
+        #     elif child.kind == CursorKind.UNION_DECL:
+        #         return
+        #     elif child.kind == CursorKind.ENUM_DECL:
+        #         return
+
+        decl = " ".join(token.spelling for token in tokens if token.spelling not in { "typedef", "struct", "union", "enum" })
+        decl = self.clean_code(decl)
+
+        if not decl.strip():
+            self.declare(node, f"// Skipping empty typedef {node.spelling}")
+            return
+
+        self.declare(node, f"    ctypedef {decl}")
+
+
     def traverse(self, node: cindex.Cursor, depth: int):
+
+        for child in node.get_children():
+            self.traverse(child, depth+1)
 
         # print("  " * depth, node.kind, node.location, repr(node.spelling)[:100])
 
         if node.kind == CursorKind.FUNCTION_DECL:
             self.function(node)
 
+        elif node.kind == CursorKind.TYPEDEF_DECL:
+            self.typedef(node)
 
-        for child in node.get_children():
-            self.traverse(child, depth+1)
 
 def main():
     ap = argparse.ArgumentParser(description="SDL3 Binding Generator")
@@ -120,7 +166,8 @@ def main():
 
     index = cindex.Index.create()
     options = cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD
-    index_args = [f"-I{include_dir}", "-DSDL_MAIN_HANDLED"]
+    index_args = [f"-I{include_dir}", "-DSDL_MAIN_HANDLED" ]
+
 
     tu = index.parse(str(args.header), args=index_args, options=options)
 
