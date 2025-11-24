@@ -109,15 +109,15 @@ def problem_listing(header, problems):
         print("{}:".format(filename))
 
         if args.all_problems:
+            for line, message in file_problems:
+                print("    * line {:>5d} {}".format(line, message))
+
+        else:
             for line, message in file_problems[:4]:
                 print("    * line {:>5d} {}".format(line, message))
 
             if len(file_problems) > 4:
                 print("    * and {} more.".format(len(file_problems) - 4))
-
-        else:
-            for line, message in file_problems:
-                print("    * line {:>5d} {}".format(line, message))
 
     global error_reported
     error_reported = True
