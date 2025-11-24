@@ -78,8 +78,8 @@ translate ukrainian strings:
     new "    [name!q] [attributes!q] (приховано)"
 
     # renpy/common/_developer/developer.rpym:152
-    old "   [name!q] [attributes!q]"
-    new "   [name!q] [attributes!q]"
+    old "    [name!q] [attributes!q]"
+    new "    [name!q] [attributes!q]"
 
     # renpy/common/_developer/developer.rpym:205
     old "Nothing to inspect."
@@ -193,87 +193,79 @@ translate ukrainian strings:
     old "The console is using short representations. To disable this, type 'long', and to re-enable, type 'short'"
     new "Консоль використовує короткі представлення. Введіть «long» для вимкнення, або введіть «short» для увімкнення наново"
 
-    # renpy/common/00console.rpy:810
+    # renpy/common/00console.rpy:813
     old "help: show this help\n help <expr>: show signature and documentation of <expr>"
     new "help: показати цю довідку\n help <вираз>: показати підпис і документацію <виразу>"
 
-    # renpy/common/00console.rpy:834
+    # renpy/common/00console.rpy:837
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
     new "У довідці можуть бути недокументовані функції. Будь ласка, перевірте, чи бажана функція або\nклас задокументовано.\n\n"
 
-    # renpy/common/00console.rpy:843
+    # renpy/common/00console.rpy:846
     old "commands:\n"
     new "команди:\n"
 
-    # renpy/common/00console.rpy:853
+    # renpy/common/00console.rpy:856
     old " <renpy script statement>: run the statement\n"
     new " <оператор скрипту renpy>: запустити оператор\n"
 
-    # renpy/common/00console.rpy:855
+    # renpy/common/00console.rpy:858
     old " <python expression or statement>: run the expression or statement"
     new " <вираз або оператор python>: запустити вираз або оператор"
 
-    # renpy/common/00console.rpy:863
+    # renpy/common/00console.rpy:866
     old "clear: clear the console history"
     new "clear: очистити історію консолі"
 
-    # renpy/common/00console.rpy:867
+    # renpy/common/00console.rpy:870
     old "exit: exit the console"
     new "exit: вийти із консолі"
 
-    # renpy/common/00console.rpy:875
+    # renpy/common/00console.rpy:878
     old "stack: print the return stack"
     new "stack: вивести стек повернення"
 
-    # renpy/common/00console.rpy:897
+    # renpy/common/00console.rpy:900
     old "load <slot>: loads the game from slot"
     new "load <комірка>: завантажує гру з комірки"
 
-    # renpy/common/00console.rpy:910
+    # renpy/common/00console.rpy:913
     old "save <slot>: saves the game in slot"
     new "save <комірка>: зберігає гру у комірці"
 
-    # renpy/common/00console.rpy:921
+    # renpy/common/00console.rpy:924
     old "reload: reloads the game, refreshing the scripts"
     new "reload: перезавантажує гру, оновлює скрипти"
 
-    # renpy/common/00console.rpy:929
+    # renpy/common/00console.rpy:932
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
     new "watch <вираз>: дивитися за виразом python\n watch short: робить представлення відстежених виразів коротким (за стандартом)\n watch long: робить представлення відстежених виразів як є"
 
-    # renpy/common/00console.rpy:966
+    # renpy/common/00console.rpy:969
     old "unwatch <expression>: stop watching an expression"
     new "unwatch <вираз>: припинити дивитися за виразом"
 
-    # renpy/common/00console.rpy:1012
+    # renpy/common/00console.rpy:1015
     old "unwatchall: stop watching all expressions"
     new "unwatchall: припинити дивитися за всіма виразами"
 
-    # renpy/common/00console.rpy:1033
+    # renpy/common/00console.rpy:1036
     old "jump <label>: jumps to label"
     new "jump <мітка>: перейти на мітку"
 
-    # renpy/common/00console.rpy:1049
+    # renpy/common/00console.rpy:1052
     old "short: Shorten the representation of objects on the console (default)."
     new "short: Скоротити представлення об’єктів у консолі (за стандартом)."
 
-    # renpy/common/00console.rpy:1053
+    # renpy/common/00console.rpy:1056
     old "long: Print the full representation of objects on the console."
     new "long: Вивести повне представлення об’єктів у консолі."
 
-    # renpy/common/00console.rpy:1057
+    # renpy/common/00console.rpy:1060
     old "escape: Enables escaping of unicode symbols in unicode strings."
     new "escape: Вмикає екранування символів Unicode у рядках Unicode."
 
-    # renpy/common/00console.rpy:1061
+    # renpy/common/00console.rpy:1064
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
     new "unescape: Вимикає екранування символів Unicode у рядках Unicode і друкує їх як є (за стандартом)."
-
-# TODO: Translation updated at 2025-08-14 20:10
-
-translate ukrainian strings:
-
-    # renpy/common/_developer/developer.rpym:152
-    old "    [name!q] [attributes!q]"
-    new ""
 

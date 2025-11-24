@@ -537,75 +537,75 @@ translate ukrainian strings:
     old "The command is being run in a new operating system console window."
     new "Команда виконується у новому вікні консолі операційної системи."
 
-    # game/distribute.rpy:554
+    # game/distribute.rpy:600
     old "Scanning project files..."
     new "Сканування файлів проєкту..."
 
-    # game/distribute.rpy:558
+    # game/distribute.rpy:604
     old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
     new "Помилка збірки файлів розповсюдження:\n\nПроєкт є навчальним посібником Ren'Py, який не може поширюватися за межами Ren'Py. Подумайте про проєкт «Запитання» як тестового проєкту."
 
-    # game/distribute.rpy:585
+    # game/distribute.rpy:631
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
     new "Помилка збірки файлів розповсюдження:\n\nЗмінна «build.directory_name» не може містити пробіл, двокрапку або крапку з комою."
 
-    # game/distribute.rpy:585
+    # game/distribute.rpy:631
     old "This may be derived from build.name and config.version or build.version."
     new "Це можна отримати з «build.name» та «config.version» або «build.version»."
 
-    # game/distribute.rpy:635
+    # game/distribute.rpy:680
     old "No packages are selected, so there's nothing to do."
     new "Жодні пакети не вибрано, створювати нічого."
 
-    # game/distribute.rpy:647
+    # game/distribute.rpy:692
     old "Scanning Ren'Py files..."
     new "Сканування файлів Ren'Py..."
 
-    # game/distribute.rpy:726
+    # game/distribute.rpy:771
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
     new "Усі пакети зібрано.\n\nЧерез наявність інформації про дозволи, розпакування та перепакування файлів розповсюдження Linux та Macintosh у Windows не підтримується."
 
-    # game/distribute.rpy:963
+    # game/distribute.rpy:1008
     old "Archiving files..."
     new "Пакування файлів..."
 
-    # game/distribute.rpy:1322
+    # game/distribute.rpy:1367
     old "Unpacking the Macintosh application for signing..."
     new "Розпакування застосунку Macintosh для підписання..."
 
-    # game/distribute.rpy:1332
+    # game/distribute.rpy:1377
     old "Signing the Macintosh application...\n(This may take a long time.)"
     new "Підписання застосунку Macintosh...\n(Це може зайняти багато часу.)"
 
-    # game/distribute.rpy:1355
+    # game/distribute.rpy:1400
     old "Creating the Macintosh DMG..."
     new "Створення Macintosh DMG..."
 
-    # game/distribute.rpy:1366
+    # game/distribute.rpy:1411
     old "Signing the Macintosh DMG..."
     new "Підписання Macintosh DMG..."
 
-    # game/distribute.rpy:1592
+    # game/distribute.rpy:1640
     old "Writing the [variant] [format] package."
     new "Записування пакета [variant] [format]."
 
-    # game/distribute.rpy:1605
+    # game/distribute.rpy:1653
     old "Making the [variant] update zsync file."
     new "Примусове оновлення файлу zsync від [variant]."
 
-    # game/distribute.rpy:1608
+    # game/distribute.rpy:1656
     old "Finishing the [variant] [format] package."
     new "Завершення пакету [variant] [format]."
 
-    # game/distribute.rpy:1728
+    # game/distribute.rpy:1776
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
     new "Оброблено {b}[complete]{/b} з {b}[total]{/b} файлів."
 
-    # game/distribute.rpy:1789
+    # game/distribute.rpy:1837
     old "Recompiling all rpy files into rpyc files..."
     new "Перекомпіляція усіх файлів rpy у файли rpyc..."
 
-    # game/distribute.rpy:1805
+    # game/distribute.rpy:1853
     old "Copying files..."
     new "Копіювання файлів..."
 
@@ -874,48 +874,56 @@ translate ukrainian strings:
     new "Перевірити скрипти (Lint)"
 
     # game/front_page.rpy:213
+    old "Run Testcases"
+    new "Запустити тести"
+
+    # game/front_page.rpy:216
     old "Change/Update GUI"
     new "Змінити/оновити GUI"
 
-    # game/front_page.rpy:215
+    # game/front_page.rpy:218
     old "Change Theme"
     new "Змінити тему"
 
-    # game/front_page.rpy:218
+    # game/front_page.rpy:220
     old "Delete Persistent"
     new "Видалити постійні дані"
 
-    # game/front_page.rpy:227
+    # game/front_page.rpy:229
     old "Build Distributions"
     new "Зібрати файли розповсюдження"
 
-    # game/front_page.rpy:229
+    # game/front_page.rpy:231
     old "Android"
     new "Android"
 
-    # game/front_page.rpy:230
+    # game/front_page.rpy:232
     old "iOS"
     new "iOS"
 
-    # game/front_page.rpy:231
+    # game/front_page.rpy:233
     old "Web"
     new "Web"
 
-    # game/front_page.rpy:232
+    # game/front_page.rpy:234
     old "Generate Translations"
     new "Згенерувати переклади"
 
-    # game/front_page.rpy:233
+    # game/front_page.rpy:235
     old "Extract Dialogue"
     new "Витягнути діалог"
 
-    # game/front_page.rpy:275
+    # game/front_page.rpy:277
     old "Checking script for potential problems..."
     new "Перевірка скриптів на наявність потенційних проблем..."
 
-    # game/front_page.rpy:294
+    # game/front_page.rpy:296
     old "Deleting persistent data..."
     new "Видалення постійних даних..."
+
+    # game/front_page.rpy:312
+    old "Running testcases..."
+    new "Виконання тестувань..."
 
     # game/gui7.rpy:29
     old "The game/libs/ directory is meant for third-party libraries that ask to be\nput in game/libs.\n\nWhen this file (game/libs/libs.txt) is present, Ren'Py will load all files\nin libs before any other file in game/, and will ignore the first directory\nname under game/libs when determining the order to load files.\n"
@@ -1001,39 +1009,47 @@ translate ukrainian strings:
     old "Successfully installed [name!t]."
     new "[name!t] успішно встановлено."
 
-    # game/install.rpy:107
+    # game/install.rpy:117
     old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
     new "Тут ви можете встановити бібліотеки, які не можуть бути розповсюджені разом з Ren'Py. Деякі з цих бібліотек можуть вимагати, щоб ви погодилися з ліцензією третіх сторін перед використанням або розповсюдженням."
 
-    # game/install.rpy:113
+    # game/install.rpy:123
     old "Install Steam Support"
     new "Установити підтримку Steam"
 
-    # game/install.rpy:122
+    # game/install.rpy:132
     old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
     new "Перш ніж установлювати підтримку Steam, переконайтеся, що ви є {a=https://partner.steamgames.com/}партнером Steam{/a}."
 
-    # game/install.rpy:134
+    # game/install.rpy:144
     old "Steam support has already been installed."
     new "Підтримку Steam вже встановлено."
 
-    # game/install.rpy:138
+    # game/install.rpy:148
     old "Install Live2D Cubism SDK for Native"
     new "Установити Live2D Cubism SDK for Native"
 
-    # game/install.rpy:152
+    # game/install.rpy:153
+    old "Install Live2D Cubism SDK for Web"
+    new "Установити Live2D Cubism SDK for Web"
+
+    # game/install.rpy:166
     old "Install Libraries"
     new "Установлення бібліотек"
 
-    # game/install.rpy:178
-    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
-    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} додає підтримку відображення моделей Live2D. Розмістіть файл CubismSdkForNative-{i}версія{/i}.zip у теку Ren'Py SDK, і натисніть кнопку «Установити». Розповсюдження гри з Live2D вимагає від вас прийняття ліцензії від Live2D, Inc."
+    # game/install.rpy:199
+    old "The {a=https://www.live2d.com/en/sdk/download/web/}Cubism SDK for Web{/a} adds support for displaying Live2D models. Place CubismSdkForWeb-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "{a=https://www.live2d.com/en/sdk/download/web/}Cubism SDK for Web{/a} додає підтримку для показу моделей Live2D. Розмістіть CubismSdkForWeb-{i}версія{/i}.zip у кореневу теку Ren'Py SDK, а потім натисніть «Установити». Для розповсюдження гри з Live2D необхідно прийняти ліцензію від Live2D, Inc."
 
-    # game/install.rpy:182
-    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
-    new "Live2D в Ren'Py не підтримує Web, Android x86_64 (включно з емуляторами та Chrome OS) і має бути доданий до проєктів на iOS вручну. Live2D необхідно перевстановити після оновлення Ren'Py або встановлення підтримки Android."
+    # game/install.rpy:201
+    old "The {a=https://www.live2d.com/en/sdk/download/native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "{a=https://www.live2d.com/en/sdk/download/native/}Cubism SDK for Native{/a} додає підтримку для показу моделей Live2D. Розмістіть CubismSdkForNative-{i}версія{/i}.zip у кореневу теку Ren'Py SDK, а потім натисніть «Установити». Для розповсюдження гри з Live2D необхідно прийняти ліцензію від Live2D, Inc."
 
-    # game/install.rpy:187
+    # game/install.rpy:205
+    old "Live2D doesn't support Android x86_64 (including emulators and Chrome OS) and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new "Live2D не підтримує Android x86_64 (включаючи емулятори та Chrome OS) і повинен бути доданий до проєктів iOS вручну. Live2D необхідно переінсталювати після оновлення Ren'Py або встановлення підтримки Android."
+
+    # game/install.rpy:208
     old "Open Ren'Py SDK Directory"
     new "Відкрити теку Ren'Py SDK"
 
@@ -1253,71 +1269,71 @@ translate ukrainian strings:
     old "{a=%s}%s{/a}"
     new "{a=%s}%s{/a}"
 
-    # game/navigation.rpy:176
+    # game/navigation.rpy:178
     old "Navigate: [project.current.display_name!q]"
     new "Навігація: [project.current.display_name!q]"
 
-    # game/navigation.rpy:186
+    # game/navigation.rpy:188
     old "Order: "
     new "Порядок: "
 
-    # game/navigation.rpy:187
+    # game/navigation.rpy:189
     old "alphabetical"
     new "за алфавітом"
 
-    # game/navigation.rpy:189
+    # game/navigation.rpy:191
     old "by-file"
     new "за файлом"
 
-    # game/navigation.rpy:191
+    # game/navigation.rpy:193
     old "natural"
     new "нормальний"
 
-    # game/navigation.rpy:203
+    # game/navigation.rpy:205
     old "Category:"
     new "Категорія:"
 
-    # game/navigation.rpy:206
+    # game/navigation.rpy:208
     old "files"
     new "файли"
 
-    # game/navigation.rpy:207
+    # game/navigation.rpy:209
     old "labels"
     new "мітки"
 
-    # game/navigation.rpy:208
+    # game/navigation.rpy:210
     old "defines"
     new "визначення"
 
-    # game/navigation.rpy:209
+    # game/navigation.rpy:211
     old "transforms"
     new "трансформації"
 
-    # game/navigation.rpy:210
+    # game/navigation.rpy:212
     old "screens"
     new "екрани"
 
-    # game/navigation.rpy:211
+    # game/navigation.rpy:213
     old "callables"
     new "викликувані"
 
-    # game/navigation.rpy:212
+    # game/navigation.rpy:214
     old "TODOs"
     new "TODO"
 
-    # game/navigation.rpy:230
+    # game/navigation.rpy:232
     old "Show translation files"
     new "Показати файли перекладу"
 
-    # game/navigation.rpy:255
+    # game/navigation.rpy:257
     old "+ Add script file"
     new "+ Додати файл скрипта"
 
-    # game/navigation.rpy:263
+    # game/navigation.rpy:265
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
     new "Не знайдено жодного коментаря TODO.\n\nЩоб створити його, вставте «# TODO» у ваш скрипт."
 
-    # game/navigation.rpy:270
+    # game/navigation.rpy:272
     old "The list of names is empty."
     new "Список імен порожній."
 
@@ -1331,7 +1347,7 @@ translate ukrainian strings:
 
     # game/new_project.rpy:42
     old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
-    new "Ви створите проєкт мовою: [new_project_language]{#this substitution may be localized}. Щоб створити проєкт іншою мовою, змініть мову запускача у налаштуваннях."
+    new "Ви створите проєкт з українською мовою. Щоб створити проєкт іншою мовою, змініть мову запускача у налаштуваннях."
 
     # game/new_project.rpy:46
     old "Please select a template project to use."
@@ -1405,141 +1421,141 @@ translate ukrainian strings:
     old "Language:"
     new "Мова"
 
-    # game/preferences.rpy:220
+    # game/preferences.rpy:221
     old "Navigation Options:"
     new "Параметри навігації:"
 
-    # game/preferences.rpy:224
+    # game/preferences.rpy:225
     old "Include private names"
     new "Включати приватні назви"
 
-    # game/preferences.rpy:225
+    # game/preferences.rpy:226
     old "Include library names"
     new "Включати назви бібліотек"
 
-    # game/preferences.rpy:234
+    # game/preferences.rpy:235
     old "Game Options:"
     new "Параметри гри:"
 
-    # game/preferences.rpy:239
+    # game/preferences.rpy:240
     old "Console output"
     new "Вивід консолі"
 
-    # game/preferences.rpy:241
+    # game/preferences.rpy:242
     old "Skip splashscreen"
     new "Пропускати заставку"
 
-    # game/preferences.rpy:250
+    # game/preferences.rpy:251
     old "Launcher Options:"
     new "Параметри запускача:"
 
-    # game/preferences.rpy:254
+    # game/preferences.rpy:255
     old "Show edit file section"
     new "Показувати розділ «Редагувати файл»"
 
-    # game/preferences.rpy:255
+    # game/preferences.rpy:256
     old "Show tutorial projects"
     new "Показувати повчальні проєкти"
 
-    # game/preferences.rpy:256
+    # game/preferences.rpy:257
     old "Large fonts"
     new "Великі шрифти"
 
-    # game/preferences.rpy:259
+    # game/preferences.rpy:260
     old "Prefer the web documentation"
     new "Надавати перевагу вебдокументації"
 
-    # game/preferences.rpy:261
+    # game/preferences.rpy:262
     old "Sponsor message"
     new "Повідомлення про спонсорів"
 
-    # game/preferences.rpy:263
+    # game/preferences.rpy:264
     old "Restore window position"
     new "Відновлювати позицію вікна"
 
-    # game/preferences.rpy:266
+    # game/preferences.rpy:267
     old "Daily check for update"
     new "Щоденна перевірка оновлень"
 
-    # game/preferences.rpy:267
+    # game/preferences.rpy:268
     old "Prefer RPU updates"
     new "Надавати перевагу оновленням RPU"
 
-    # game/preferences.rpy:284
+    # game/preferences.rpy:285
     old "Launcher Theme:"
     new "Тема запускача:"
 
-    # game/preferences.rpy:288
+    # game/preferences.rpy:289
     old "Default theme"
     new "Стандартна тема"
 
-    # game/preferences.rpy:289
+    # game/preferences.rpy:290
     old "Dark theme"
     new "Темна тема"
 
-    # game/preferences.rpy:290
+    # game/preferences.rpy:291
     old "Custom theme"
     new "Власна тема"
 
-    # game/preferences.rpy:296
+    # game/preferences.rpy:297
     old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
     new "Інформацію про створення власної теми можна знайти у {a=[skins_url]}документації Ren'Py{/a}."
 
-    # game/preferences.rpy:313
+    # game/preferences.rpy:314
     old "Install Libraries:"
     new "Установлення бібліотек:"
 
-    # game/preferences.rpy:338
+    # game/preferences.rpy:339
     old "Open launcher project"
     new "Відкрити проєкт запускача"
 
-    # game/preferences.rpy:339
+    # game/preferences.rpy:340
     old "Open projects.txt"
     new "Відкрити projects.txt"
 
-    # game/preferences.rpy:347
+    # game/preferences.rpy:348
     old "Reset window size"
     new "Скинути розмір вікна"
 
-    # game/preferences.rpy:348
+    # game/preferences.rpy:349
     old "Clean temporary files"
     new "Очистити тимчасові файли"
 
-    # game/preferences.rpy:365
+    # game/preferences.rpy:366
     old "Lint toggles:"
     new "Параметри перевірки скриптів (Lint):"
 
-    # game/preferences.rpy:369
+    # game/preferences.rpy:370
     old "Check for orphan/obsolete translations"
     new "Перевірка на наявність непотрібних/застарілих перекладів"
 
-    # game/preferences.rpy:372
+    # game/preferences.rpy:373
     old "Check parameters shadowing reserved names"
     new "Перевірка параметрів перезаписування зарезервованих імен"
 
-    # game/preferences.rpy:375
+    # game/preferences.rpy:376
     old "Print block, word, and character counts by speaking character."
     new "Друкувати кількість блоків, слів і символів кожного персонажа."
 
-    # game/preferences.rpy:378
+    # game/preferences.rpy:379
     old "Unclosed text tags"
     new "Незакриті текстові теги"
 
-    # game/preferences.rpy:381
+    # game/preferences.rpy:382
     old "Show all unreachable blocks and orphaned translations."
     new "Показувати всі недосяжні блоки та непотрібні переклади."
 
-    # game/preferences.rpy:390
+    # game/preferences.rpy:391
     old "Cleaning temporary files..."
     new "Очищення тимчасових файлів..."
 
-    # game/preferences.rpy:420
+    # game/preferences.rpy:421
     old "{#in language font}Welcome! Please choose a language"
     new "{#in language font}Вітаємо! Оберіть мову застосунку"
 
-    # game/preferences.rpy:455
+    # game/preferences.rpy:456
     old "{#in language font}Start using Ren'Py in [lang_name]"
-    new "{#in language font}Використовувати Ren'Py мовою: [lang_name]"
+    new "{#in language font}Почати творити в Ren'Py українською"
 
     # game/project.rpy:53
     old "After making changes to the script, press shift+R to reload your game."
@@ -1561,43 +1577,43 @@ translate ukrainian strings:
     old "Lint checks your game for potential mistakes, and gives you statistics."
     new "Lint перевіряє вашу гру на наявність потенційних помилок і надає вам статистику."
 
-    # game/project.rpy:346
+    # game/project.rpy:357
     old "Launching the project failed."
     new "Не вдалося запустити проєкт."
 
-    # game/project.rpy:346
+    # game/project.rpy:357
     old "This may be because the project is not writeable."
     new "Це може бути пов’язано з тим, що проєкт не доступний для запису."
 
-    # game/project.rpy:348
+    # game/project.rpy:359
     old "Please ensure that your project launches normally before running this command."
     new "Перш ніж запускати цю команду, переконайтеся, що ваш проєкт запускається нормально."
 
-    # game/project.rpy:378
+    # game/project.rpy:433
     old "Ren'Py is scanning the project..."
     new "Ren'Py сканує проєкт..."
 
-    # game/project.rpy:963
+    # game/project.rpy:1014
     old "Splashscreen skipped in launcher preferences."
     new "Заставку пропущено у налаштуваннях запускача."
 
-    # game/project.rpy:967
+    # game/project.rpy:1018
     old "Launching"
     new "Запуск"
 
-    # game/project.rpy:1021
+    # game/project.rpy:1076
     old "PROJECTS DIRECTORY"
     new "ТЕКА ПРОЄКТІВ"
 
-    # game/project.rpy:1021
+    # game/project.rpy:1076
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Будь ласка, оберіть теку проєктів через засіб вибору теки.\n{b}Засіб вибору теки міг відкритися за цим вікном.{/b}"
 
-    # game/project.rpy:1021
+    # game/project.rpy:1076
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Цей запускач буде шукати проєкти, створювати нові проєкти й розміщувати створені проєкти у цій теці."
 
-    # game/project.rpy:1026
+    # game/project.rpy:1081
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py встановив дану теку для проєктів:"
 
@@ -1781,123 +1797,127 @@ translate ukrainian strings:
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
     new "Кривавий край розробки Ren'Py. Може мати найновіші функції, а може не працювати взагалі."
 
-    # game/updater.rpy:102
+    # game/updater.rpy:105
     old "Select Update Channel"
     new "Обрати канал оновлення"
 
-    # game/updater.rpy:113
+    # game/updater.rpy:116
     old "The update channel controls the version of Ren'Py the updater will download."
     new "Канал оновлення контролює версію Ren'Py, яку завантажить оновлювач."
 
-    # game/updater.rpy:121
+    # game/updater.rpy:127
     old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/doc/html/changelog.html}Проглянути перелік змін{/a}"
 
-    # game/updater.rpy:123
+    # game/updater.rpy:129
     old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Проглянути перелік змін{/a}"
 
-    # game/updater.rpy:129
+    # game/updater.rpy:135
     old "• This version is installed and up-to-date."
     new "• Цю версію установлено та є актуальною."
 
-    # game/updater.rpy:139
+    # game/updater.rpy:145
     old "%B %d, %Y"
     new "%d %B, %Y"
 
-    # game/updater.rpy:162
+    # game/updater.rpy:168
     old "An error has occurred:"
     new "Сталася помилка:"
 
-    # game/updater.rpy:164
+    # game/updater.rpy:170
     old "Checking for updates."
     new "Перевірка оновлень."
 
-    # game/updater.rpy:166
+    # game/updater.rpy:172
     old "Ren'Py is up to date."
     new "Ren'Py вже оновлено."
 
-    # game/updater.rpy:168
+    # game/updater.rpy:174
     old "[u.version] is now available. Do you want to install it?"
     new "[u.version] тепер доступно. Бажаєте встановити?"
 
-    # game/updater.rpy:170
+    # game/updater.rpy:176
     old "Preparing to download the update."
     new "Підготовка до завантаження оновлення."
 
-    # game/updater.rpy:172
+    # game/updater.rpy:178
     old "Downloading the update."
     new "Завантаження оновлення."
 
-    # game/updater.rpy:174
+    # game/updater.rpy:180
     old "Unpacking the update."
     new "Розпакування оновлення."
 
-    # game/updater.rpy:176
+    # game/updater.rpy:182
     old "Finishing up."
     new "Завершення."
 
-    # game/updater.rpy:178
+    # game/updater.rpy:184
     old "The update has been installed. Ren'Py will restart."
     new "Оновлення було встановлено. Ren'Py перезапуститься."
 
-    # game/updater.rpy:180
+    # game/updater.rpy:186
     old "The update has been installed."
     new "Оновлення було встановлено."
 
-    # game/updater.rpy:182
+    # game/updater.rpy:188
     old "The update was cancelled."
     new "Оновлення було скасовано."
 
-    # game/updater.rpy:199
+    # game/updater.rpy:205
     old "Ren'Py Update"
     new "Оновлення Ren'Py"
 
-    # game/updater.rpy:205
+    # game/updater.rpy:211
     old "Proceed"
     new "Продовжити"
 
-    # game/updater.rpy:219
+    # game/updater.rpy:224
+    old "Updating while Ren'Py games are running on this computer can cause problems. Please close all Ren'Py games before proceeding."
+    new "Оновлювати під час запуску ігор Ren'Py на цьому пристрої може спричинити проблеми. Перед продовженням закрийте всі ігри Ren'Py."
+
+    # game/updater.rpy:235
     old "Fetching the list of update channels"
     new "Отримання списку каналів оновлення"
 
-    # game/updater.rpy:226
+    # game/updater.rpy:242
     old "downloading the list of update channels"
     new "завантаження списку каналів оновлення"
 
-    # game/web.rpy:430
+    # game/web.rpy:427
     old "Preparing progressive download"
     new "Підготовка поступового завантаження"
 
-    # game/web.rpy:482
+    # game/web.rpy:479
     old "Creating package..."
     new "Створення пакету..."
 
-    # game/web.rpy:503
+    # game/web.rpy:502
     old "Web: [project.current.display_name!q]"
     new "Web: [project.current.display_name!q]"
 
-    # game/web.rpy:533
+    # game/web.rpy:532
     old "Build Web Application"
     new "Зібрати вебзастосунок"
 
-    # game/web.rpy:534
+    # game/web.rpy:533
     old "Build and Open in Browser"
     new "Зібрати та відкрити в браузері"
 
-    # game/web.rpy:535
+    # game/web.rpy:534
     old "Open in Browser"
     new "Відкрити в браузері"
 
-    # game/web.rpy:536
+    # game/web.rpy:535
     old "Open build directory"
     new "Відкрити теку збірки"
 
-    # game/web.rpy:558
+    # game/web.rpy:557
     old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
     new "Зображення та музики можуть бути завантажені під час гри. Буде створено файл «progressive_download.txt», щоб ви могли налаштувати цю поведінку."
 
-    # game/web.rpy:566
+    # game/web.rpy:565
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Перш ніж створювати пакети вебзастосунків, вам потрібно буде завантажити RenPyWeb, вебпідтримку Ren'Py. Бажаєте завантажити RenPyWeb зараз?"
 
