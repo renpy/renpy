@@ -672,3 +672,4 @@ translate ukrainian strings:
     # gui/game/screens.rpy:1536
     old "Menu"
     new "Меню"
+
