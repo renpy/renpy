@@ -552,7 +552,7 @@ def register_sl_displayable(*args, **kwargs):
 
 
     `unique`
-        This should be set to true if the function returns a  displayable with
+        This should be set to true if the function returns a displayable with
         no other references to it.
 
     The following arguments should be passed in using keyword arguments:
@@ -1136,6 +1136,8 @@ class ScreenParser(Parser):
 
     def parse(self, loc, l, parent, name="_name", keyword=True):
         screen = slast.SLScreen(loc)
+
+        l.expect_block("screen statement")
 
         screen.name = l.require(l.word)
         screen.parameters = renpy.parser.parse_parameters(l)  # type: ignore

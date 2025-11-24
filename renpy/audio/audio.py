@@ -28,7 +28,6 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import time
-import pygame_sdl2  # @UnusedImport
 import os
 import re
 import threading
@@ -1144,7 +1143,7 @@ def fadeout_all():
     periodic()
 
 
-def quit():  # @ReservedAssignment
+def quit():
     global periodic_thread_quit
 
     global pcm_ok

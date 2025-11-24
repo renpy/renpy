@@ -27,8 +27,8 @@ import math
 import time
 import os
 
-import pygame_sdl2 as pygame
 import renpy
+import renpy.pygame as pygame
 from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE, PIXELLATE, FLATTEN
 
 
@@ -249,7 +249,7 @@ def copy_surface(surf):
     w, h = surf.get_size()
     rv = surface(w, h, True)
 
-    renpy.display.accelerator.nogil_copy(surf, rv)  # @UndefinedVariable
+    renpy.display.accelerator.nogil_copy(surf, rv)
     return rv
 
 
@@ -735,7 +735,7 @@ class SWDraw(object):
     def resize(self):
         return
 
-    def quit(self):  # @ReservedAssignment
+    def quit(self):
         return
 
     def translate_point(self, x, y):

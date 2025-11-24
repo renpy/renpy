@@ -31,9 +31,9 @@ globals()["Matrix"] = Matrix
 globals()["Matrix2D"] = Matrix2D
 
 import collections
-import pygame_sdl2 as pygame
 import threading
 import renpy
+import renpy.pygame as pygame
 import gc
 import math
 
@@ -227,10 +227,17 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         width, height = d._offer_size
 
     if xmaximum is not None:
-        width = min(renpy.display.core.absolute.compute_raw(xmaximum, width), width)
+        if renpy.config.maximum_embiggens:
+            width = renpy.display.core.absolute.compute_raw(xmaximum, width)
+        else:
+            width = min(renpy.display.core.absolute.compute_raw(xmaximum, width), width)
 
     if ymaximum is not None:
-        height = min(renpy.display.core.absolute.compute_raw(ymaximum, height), height)
+        if renpy.config.maximum_embiggens:
+            height = renpy.display.core.absolute.compute_raw(ymaximum, height)
+        else:
+            height = min(renpy.display.core.absolute.compute_raw(ymaximum, height), height)
+
 
     if width < 0:
         width = 0
@@ -511,6 +518,14 @@ def mark_sweep():
 
     worklist.extend(renpy.display.im.cache.get_renders())
 
+    for t in renpy.display.video.texture.values():
+        if isinstance(t, Render) and t not in worklist:
+            worklist.append(t)
+
+    for t in renpy.display.video.group_texture.values():
+        if isinstance(t, Render) and t not in worklist:
+            worklist.append(t)
+
     for r in worklist:
         r.mark = True
 
@@ -525,12 +540,6 @@ def mark_sweep():
                 worklist.append(j)
 
         i += 1
-
-    if renpy.emscripten:
-        # Do not kill Renders that cache the last video frame
-        for o in renpy.display.video.texture.values():
-            if isinstance(o, Render):
-                o.mark = True
 
     for r in live_renders:
         if not r.mark:
@@ -1534,7 +1543,7 @@ cdef class Render:
         Fills this Render with the given color.
         """
 
-        color = renpy.easy.color(color)
+        color = renpy.color.Color(color)
         solid = renpy.display.imagelike.Solid(color)
         surf = render(solid, self.width, self.height, 0, 0)
         self.blit(surf, (0, 0), focus=False, main=False)
@@ -1695,7 +1704,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.rect(self.surf,
-                             renpy.easy.color(color),
+                             renpy.color.Color(color),
                              rect,
                              width)
         finally:
@@ -1705,7 +1714,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.polygon(self.surf,
-                                renpy.easy.color(color),
+                                renpy.color.Color(color),
                                 pointlist,
                                 width)
         finally:
@@ -1716,7 +1725,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.circle(self.surf,
-                               renpy.easy.color(color),
+                               renpy.color.Color(color),
                                pos,
                                radius,
                                width)
@@ -1728,7 +1737,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.ellipse(self.surf,
-                                renpy.easy.color(color),
+                                renpy.color.Color(color),
                                 rect,
                                 width)
         finally:
@@ -1739,7 +1748,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.arc(self.surf,
-                            renpy.easy.color(color),
+                            renpy.color.Color(color),
                             rect,
                             start_angle,
                             stop_angle,
@@ -1752,7 +1761,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.line(self.surf,
-                             renpy.easy.color(color),
+                             renpy.color.Color(color),
                              start_pos,
                              end_pos,
                              width)
@@ -1763,7 +1772,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.lines(self.surf,
-                              renpy.easy.color(color),
+                              renpy.color.Color(color),
                               closed,
                               pointlist,
                               width)
@@ -1774,7 +1783,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.aaline(self.surf,
-                               renpy.easy.color(color),
+                               renpy.color.Color(color),
                                startpos,
                                endpos,
                                blend)
@@ -1785,7 +1794,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.aalines(self.surf,
-                                renpy.easy.color(color),
+                                renpy.color.Color(color),
                                 closed,
                                 pointlist,
                                 blend)

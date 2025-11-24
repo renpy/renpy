@@ -62,7 +62,7 @@ if static:
 cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
 # The include and library dirs that we compile against.
-include_dirs = ["src"]
+include_dirs = ["src", gen]
 library_dirs = []
 
 # Extra arguments that will be given to the compiler.
@@ -163,18 +163,18 @@ def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_ar
     deps = [fn]
 
     with open(fn) as f:
-        for l in f:
-            m = re.search(r"from\s*([\w.]+)\s*cimport", l)
+        for line in f:
+            m = re.search(r"from\s*([\w.]+)\s*cimport", line)
             if m:
                 deps.append(m.group(1).replace(".", "/") + ".pxd")
                 continue
 
-            m = re.search(r"cimport\s*([\w.]+)", l)
+            m = re.search(r"cimport\s*([\w.]+)", line)
             if m:
                 deps.append(m.group(1).replace(".", "/") + ".pxd")
                 continue
 
-            m = re.search(r'include\s*"(.*?)"', l)
+            m = re.search(r'include\s*"(.*?)"', line)
             if m:
                 deps.append(m.group(1))
                 continue
@@ -201,7 +201,7 @@ def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_ar
     # print c_fn, "depends on", deps
 
     for dep_fn in deps:
-        for d in [module_dir, ".", "src", gen]:
+        for d in [module_dir, ".", "src", "src/pygame/include", gen]:
             prepended = os.path.join(d, dep_fn)
             if os.path.exists(prepended):
                 dep_fn = prepended
@@ -255,18 +255,16 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
     else:
         coverage_args = []
 
+    includes = ["-Isrc", "-Isrc/pygame/include", f"-I{gen}", "-I."]
+
+    xargs = ["-X", "profile=False", "-X", "embedsignature=True", "-X", "embedsignature.format=python"]
+
+    cmd = [cython_command] + includes + annotate + lang_args + coverage_args + xargs + [fn, "-o", c_fn]
+
+    print(" ".join(cmd))
+
     p = subprocess.Popen(
-        [
-            cython_command,
-            "-Isrc",
-            "-I" + gen,
-            "-I.",
-            "-3",
-        ]
-        + annotate
-        + lang_args
-        + coverage_args
-        + ["-X", "profile=False", "-X", "embedsignature=True", fn, "-o", c_fn],
+        cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )

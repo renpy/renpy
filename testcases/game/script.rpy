@@ -55,6 +55,9 @@ label start:
         "Gallery":
             call gallery
 
+        "Drag and Drop":
+            call drag_and_drop
+
         "Done.":
             return
 
@@ -244,5 +247,64 @@ label retain_after_load:
 
     return
 
+###############################################################################
+# Drag and Drop
+###############################################################################
 
+init python:
+
+    def peg_dragged(drags, drop):
+        if not drop:
+            SetScreenVariable("success", False)()
+        else:
+            SetScreenVariable("success", True)()
+
+
+screen drag_and_drop():
+    default success = False
+
+    draggroup:
+
+        drag:
+            id "peg"
+            drag_name "Square Peg"
+            draggable True
+            droppable False
+            dragged peg_dragged
+            xpos 100 ypos 100
+
+            add Solid("#f00", xysize=(100, 100))
+
+        drag:
+            id "hole"
+            drag_name "Square Hole"
+            draggable True
+            droppable True
+            xpos 450 ypos 140
+
+            add Solid("#800", xysize=(150, 150))
+
+    if success:
+        text "Success!" xpos 300 ypos 300 id "success"
+
+label drag_and_drop:
+    call screen drag_and_drop
     return
+
+###############################################################################
+# Scroll
+###############################################################################
+
+screen scroll_screen:
+    viewport:
+        id "scroll_vp"
+        draggable True
+        mousewheel True
+
+        vbox:
+            spacing 10
+
+            for i in range(50):
+                text "This is line [i]."
+
+            textbutton "Close" action Hide("scroll_screen") id "close_screen_button"

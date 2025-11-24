@@ -22,6 +22,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
+import contextlib
+
 import renpy
 from renpy.exports.commonexports import renpy_pure
 
@@ -40,6 +42,31 @@ def warp_to_line(warp_spec):
     renpy.exports.full_restart()
 
 
+filename_line_override_stack: list[tuple[str, int]] = []
+"""
+A stack of filename/line override pairs.
+"""
+
+@contextlib.contextmanager
+def filename_line_override(filename: str, line: int):
+    """
+    :doc: debug
+
+    Temporarily overrides the filename and line number. This is a context manager,
+    use it like::
+
+        with renpy.filename_line_override("myfile.rpy", 42):
+            # ...
+
+    """
+
+    filename_line_override_stack.append((filename, line))
+    try:
+        yield
+    finally:
+        filename_line_override_stack.pop()
+
+
 def get_filename_line():
     """
     :doc: debug
@@ -47,6 +74,9 @@ def get_filename_line():
     Returns a pair giving the filename and line number of the current
     statement.
     """
+
+    if filename_line_override_stack:
+        return filename_line_override_stack[-1]
 
     n = renpy.game.script.namemap.get(renpy.game.context().current, None)
 

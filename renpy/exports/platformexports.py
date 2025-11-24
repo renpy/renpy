@@ -27,7 +27,7 @@ import sys
 import threading
 
 import renpy
-import pygame_sdl2
+import renpy.pygame as pygame
 
 from renpy.exports.commonexports import renpy_pure
 
@@ -68,7 +68,7 @@ def vibrate(duration):
         duration = 0.01
 
     if renpy.android:
-        import android  # @UnresolvedImport
+        import android
 
         android.vibrate(duration)
 
@@ -159,11 +159,11 @@ def get_on_battery():
 
     global old_battery
 
-    pi = pygame_sdl2.power.get_power_info()  # @UndefinedVariable
+    pi = pygame.power.get_power_info()
 
-    if pi.state == pygame_sdl2.POWERSTATE_UNKNOWN:  # @UndefinedVariable
+    if pi.state == pygame.POWERSTATE_UNKNOWN:
         return old_battery
-    elif pi.state == pygame_sdl2.POWERSTATE_ON_BATTERY:  # @UndefinedVariable
+    elif pi.state == pygame.POWERSTATE_ON_BATTERY:
         old_battery = True
         return True
     else:
@@ -233,7 +233,7 @@ def get_sdl_window_pointer():
     """
 
     try:
-        window = pygame_sdl2.display.get_window()
+        window = pygame.display.get_window()
 
         if window is None:
             return None

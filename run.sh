@@ -9,15 +9,6 @@ export RENPY_CYTHON=cython
 ROOT="$(dirname $(realpath $0))"
 QUIET=${RENPY_QUIET- --quiet}
 
-renpy_branch=$(git branch --show-current)
-pushd "$ROOT/pygame_sdl2" >/dev/null
-pygame_sdl2_branch=$(git branch --show-current)
-popd >/dev/null
-
-if [ "$renpy_branch" != "$pygame_sdl2_branch" ]; then
-    echo "warning: Ren'Py branch: $renpy_branch, pygame_sdl2 branch: $pygame_sdl2_branch"
-fi
-
 if [ -n "$RENPY_COVERAGE" ]; then
     variant="renpy-coverage"
 else
@@ -29,27 +20,24 @@ if [ -n "$RENPY_VIRTUAL_ENV" ] ; then
 fi
 
 if [ -z "$VIRTUAL_ENV" ] ; then
-    echo Please install into a virtualenv.
-    exit 1
+    if [ -d "$ROOT/.venv" ] ; then
+        . "$ROOT/.venv/bin/activate"
+    else
+        echo "Please create a virtual environment first (see the README)."
+        exit 1
+    fi
 fi
 
 BUILD_J="-j $(nproc)"
-ADAPT_TO_SETUPTOOLS="--old-and-unmanageable"
 
 setup () {
     pushd $1 >/dev/null
 
     python setup.py $QUIET \
-        build -b tmp/build/lib.$variant -t tmp/build/tmp.$variant $BUILD_J \
-        $RENPY_BUILD_ARGS install $ADAPT_TO_SETUPTOOLS
+        build_ext -b tmp/build/lib.$variant -t tmp/build/tmp.$variant --inplace $BUILD_J \
 
     popd >/dev/null
 }
-
-if [ -e "$ROOT/pygame_sdl2" ]; then
-    setup "$ROOT/pygame_sdl2/"
-fi
-
 
 if [ -e "$ROOT/cubism" ]; then
     export CUBISM="$ROOT/cubism"

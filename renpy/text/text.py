@@ -26,8 +26,8 @@ from typing import Any, Optional, Callable
 
 import math
 
-import pygame_sdl2
 import renpy
+import renpy.pygame as pygame
 
 from renpy.text.textsupport import TAG, TEXT, PARAGRAPH, DISPLAYABLE
 
@@ -39,7 +39,7 @@ from renpy.text.emoji_trie import emoji, UNQUALIFIED
 
 from renpy.gl2.gl2polygon import Polygon
 
-from _renpybidi import LTR, ON, RTL, WLTR, WRTL, get_embedding_levels, log2vis  # @UnresolvedImport
+from renpy.text.bidi import LTR, ON, RTL, WLTR, WRTL, get_embedding_levels, log2vis
 
 
 BASELINE = -65536
@@ -232,7 +232,7 @@ class DrawInfo(object):
 
     # No implementation, this is set up in the layout object.
 
-    surface = None  # type: Optional[pygame_sdl2.surface.Surface]
+    surface = None  # type: Optional[pygame.Surface]
     override_color = None  # type: Optional[tuple[int, int, int, int]]
     outline = 0  # type: float
     displayable_blits = None  # type: Optional[list[tuple[renpy.display.displayable.Displayable, int, int]]]
@@ -822,9 +822,6 @@ class Layout(object):
             # A list of glyphs in the paragraph.
             par_glyphs = [g for _, gl in seg_glyphs for g in gl]
 
-            all_glyphs.extend(par_glyphs)
-            all_seg_glyphs.extend(seg_glyphs)
-
             # RTL - Reverse each line, segment, so that we can use LTR
             # linebreaking algorithms. Also necessary for timings.
             if rtl:
@@ -833,10 +830,13 @@ class Layout(object):
                 for ts, glyphs in seg_glyphs:
                     glyphs.reverse()
 
+            all_glyphs.extend(par_glyphs)
+            all_seg_glyphs.extend(seg_glyphs)
+
             self.paragraph_glyphs.append(list(par_glyphs))
 
             if splits_from:
-                textsupport.copy_splits(splits_from.paragraph_glyphs[p_num], par_glyphs)  # @UndefinedVariable
+                textsupport.copy_splits(splits_from.paragraph_glyphs[p_num], par_glyphs)
 
             else:
                 # Tag the glyphs that are eligible for line breaking, and if
@@ -953,7 +953,7 @@ class Layout(object):
 
             textsupport.adjust_glyph_spacing(
                 all_glyphs, lines, target_x_delta, target_y_delta, maxx, y
-            )  # @UndefinedVariable
+            )
 
             maxx = target_x
             y = target_y
@@ -1295,7 +1295,7 @@ class Layout(object):
 
         done = False
 
-        for type, text in tokens:  # @ReservedAssignment
+        for type, text in tokens:
             try:
                 if type == PARAGRAPH:
                     # Note that this code is duplicated for the p tag, and for
@@ -1477,13 +1477,13 @@ class Layout(object):
                     if len(value) < 1:
                         raise Exception("empty value supplied for tag %r" % tag)
 
-                    push().color = renpy.easy.color(value)
+                    push().color = renpy.color.Color(value)
 
                 elif tag == "outlinecolor":
                     if len(value) < 1:
                         raise Exception("empty value supplied for tag %r" % tag)
 
-                    push().outline_color = renpy.easy.color(value)
+                    push().outline_color = renpy.color.Color(value)
 
                 elif tag == "alpha":
                     if len(value) < 1:
@@ -1919,6 +1919,7 @@ class Layout(object):
                     line.height - line.baseline,
                     self.add_left,
                     self.add_top,
+                    True,
                 )
 
             # Generate the actual glyphs.
@@ -1974,6 +1975,7 @@ class Layout(object):
                         g.descent,
                         self.add_left,
                         self.add_top,
+                        False,
                     )
 
                 last_time = g.time
@@ -2003,6 +2005,7 @@ class Layout(object):
                     line.height - line.baseline,
                     self.add_left,
                     self.add_top,
+                    True,
                 )
 
             top = bottom
@@ -2458,29 +2461,29 @@ class Text(renpy.display.displayable.Displayable):
 
         return list(self.displayables)  # type: ignore
 
-    def _tts(self):
-        rv = []
+    def _tts(self, raw: bool) -> str:
+        if raw:
+            text = self.text_parameter
+        else:
+            text = self.text
 
-        for i in self.text:
-            if not isinstance(i, str):
-                continue
+        rv = "".join(i for i in text if isinstance(i, str))
 
-            rv.append(i)
-
-        rv = "".join(rv)
-        rv, _, _ = rv.partition("{done}")
-        _, _, rv = rv.rpartition("{fast}")
-
-        rv = renpy.text.extras.filter_alt_text(rv)
+        if not raw:
+            rv, _, _ = rv.partition("{done}")
+            _, _, rv = rv.rpartition("{fast}")
+            rv = renpy.text.extras.filter_alt_text(rv)
 
         alt = self.style.alt
-
         if alt is not None:
-            rv = renpy.substitutions.substitute(alt, scope={"text": rv})[0]
+            if raw:
+                rv = alt
+            else:
+                rv = renpy.substitutions.substitute(alt, scope={"text": rv})[0]
 
         return rv
 
-    _tts_all = _tts  # type: ignore
+    _tts_all = _tts
 
     def kill_layout(self):
         """

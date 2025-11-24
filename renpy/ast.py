@@ -2195,7 +2195,8 @@ class UserStatement(Node):
         return renpy.statements.call(method, parsed, *args, **kwargs)
 
     def execute_init(self):
-        self.call("execute_init")
+        with renpy.exports.filename_line_override(self.filename, self.linenumber):
+            self.call("execute_init")
 
         if renpy.statements.get("execute_default", self.parsed):
             default_statements.append(self)
@@ -2210,6 +2211,15 @@ class UserStatement(Node):
             return None
 
         init_priority = renpy.statements.get("init_priority", self.parsed)
+
+        if callable(init_priority):
+            parsed = self.parsed
+
+            if parsed is None:
+                parsed = renpy.statements.parse(self, self.line, self.block)
+                self.parsed = parsed
+
+            init_priority = init_priority(parsed[1])
 
         # Statement init priority and init offset from the file.
         return init_priority + self.init_offset
@@ -2231,7 +2241,8 @@ class UserStatement(Node):
             self.call("execute")
 
     def execute_default(self, start):
-        self.call("execute_default")
+        with renpy.exports.filename_line_override(self.filename, self.linenumber):
+            self.call("execute_default")
 
     def predict(self):
         predictions = self.call("predict")
@@ -2686,23 +2697,20 @@ class Style(Node):
 
 
 class Testcase(Node):
-    label: str
-    test: "renpy.test.testast.Block"
+    test: "renpy.test.testast.TestCase"
 
-    def __init__(self, loc, label, test):
+    def __init__(self, loc, test):
         super(Testcase, self).__init__(loc)
 
-        self.label = label
         self.test = test
+        self.name = test.name
 
     def diff_info(self):
-        return (Testcase, self.label)
+        return (Testcase, self.name)
 
     def execute(self):
         next_node(self.next)
         statement_name("testcase")
-
-        renpy.test.testexecution.testcases[self.label] = self.test
 
 
 class RPY(Node):

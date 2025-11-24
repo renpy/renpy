@@ -28,8 +28,8 @@ import os
 import re
 import subprocess
 
-import pygame_sdl2 as pygame
 import renpy
+import renpy.pygame as pygame
 
 
 class TTSDone(str):
@@ -392,7 +392,7 @@ def displayable(d):
 
     while True:
         try:
-            s = d._tts_all()
+            s = d._tts_all(raw=False)
             break
         except TTSRoot:
             if d is root:

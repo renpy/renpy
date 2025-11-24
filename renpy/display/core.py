@@ -19,29 +19,29 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import NotRequired, TypedDict
+from typing import NotRequired, TypedDict, Any
 
 import sys
 import os
 import time
 import io
 import threading
-import copy
 import gc
 import atexit
 import platform
 
-import pygame_sdl2 as pygame
 import renpy
+import renpy.pygame as pygame
 
-from renpy.atl import position
-from renpy.display.displayable import Displayable, DisplayableArguments, place
-from renpy.display.scenelists import SceneListEntry, SceneLists
+# Imports for backward compatibility.
+from renpy.display.position import absolute as absolute, position as position
+from renpy.display.displayable import Displayable, DisplayableArguments as DisplayableArguments, place as place
+from renpy.display.scenelists import SceneListEntry as SceneListEntry, SceneLists as SceneLists
 
 import_time = time.time()
 
 try:
-    import android  # @UnresolvedImport
+    import android
 
     android.init  # Check to see if we have the right module.
 except Exception:
@@ -49,6 +49,8 @@ except Exception:
 
 if renpy.emscripten:
     import emscripten
+else:
+    emscripten = None
 
 TIMEEVENT = pygame.event.register("TIMEEVENT")
 PERIODIC = pygame.event.register("PERIODIC")
@@ -56,11 +58,11 @@ REDRAW = pygame.event.register("REDRAW")
 EVENTNAME = pygame.event.register("EVENTNAME")
 
 # All events except for TIMEEVENT and REDRAW
-ALL_EVENTS = set(pygame.event.get_standard_events())  # @UndefinedVariable
+ALL_EVENTS: set[int] = set(pygame.event.get_standard_events())
 ALL_EVENTS.add(PERIODIC)
 ALL_EVENTS.add(EVENTNAME)
 
-enabled_events = {
+enabled_events: set[int] = {
     pygame.QUIT,
     pygame.APP_TERMINATING,
     pygame.APP_LOWMEMORY,
@@ -98,7 +100,7 @@ enabled_events = {
     EVENTNAME,
 }
 
-input_events = {
+input_events: set[int] = {
     pygame.KEYDOWN,
     pygame.KEYUP,
     pygame.TEXTEDITING,
@@ -121,7 +123,7 @@ input_events = {
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
 
-null = None
+null: "renpy.display.layout.Null | None" = None
 
 # Time management.
 time_base = 0.0
@@ -142,12 +144,12 @@ def init_time():
     time_mult = float(warp)
 
 
-def get_time():
+def get_time() -> float:
     t = time.time()
     return time_base + (t - time_base) * time_mult
 
 
-def get_size():
+def get_size() -> tuple[int, int]:
     """
     Returns the screen size. Always returns at least (256, 256), to make sure
     that we don't divide by zero.
@@ -164,7 +166,7 @@ def get_size():
     return (max(size[0], 256), max(size[1], 256))
 
 
-def displayable_by_tag(layer, tag):
+def displayable_by_tag(layer: str, tag: str) -> Displayable | None:
     """
     Get the displayable on the given layer with the given tag.
     """
@@ -185,117 +187,16 @@ class EndInteraction(Exception):
     a displayable) to end the current interaction immediately.
     """
 
-    def __init__(self, value):
+    def __init__(self, value: Any):
         self.value = value
 
 
-def absolute_wrap(func):
-    """
-    Wraps func into a method of absolute. The wrapped method
-    converts a float result back to absolute.
-    """
-
-    def wrapper(*args):
-        rv = func(*args)
-
-        if type(rv) is float:
-            return absolute(rv)
-        else:
-            return rv
-
-    return wrapper
-
-
-class absolute(float):
-    """
-    This represents an absolute float coordinate.
-    """
-
-    __slots__ = ()
-
-    def __repr__(self):
-        return "absolute({})".format(float.__repr__(self))
-
-    def __divmod__(self, value):
-        return self // value, self % value
-
-    def __rdivmod__(self, value):
-        return value // self, value % self
-
-    @staticmethod
-    def compute_raw(value, room):
-        """
-        Converts a position from one of the many supported position types
-        into an absolute number of pixels, without regard for the return type.
-        """
-        if isinstance(value, position):
-            return value.relative * room + value.absolute
-        elif isinstance(value, (absolute, int)):
-            return value
-        elif isinstance(value, float):
-            return value * room
-        raise TypeError("Value {} of type {} not recognized as a position.".format(value, type(value)))
-
-    @staticmethod
-    def compute(value, room):
-        """
-        Does the same, but converts the result to the absolute type.
-        """
-        return absolute(absolute.compute_raw(value, room))
-
-
-for fn in (
-    "__abs__",
-    "__add__",
-    # '__bool__', # non-float
-    "__ceil__",
-    # '__divmod__', # special-cased above, tuple of floats
-    # '__eq__', # non-float
-    "__floordiv__",
-    # '__format__', # non-float
-    # '__ge__', # non-float
-    # '__gt__', # non-float
-    # '__hash__', # non-float
-    # '__int__', # non-float
-    # '__le__', # non-float
-    # '__lt__', # non-float
-    "__mod__",
-    "__mul__",
-    # '__ne__', # non-float
-    "__neg__",
-    "__pos__",
-    "__pow__",
-    "__radd__",
-    # '__rdivmod__', # special-cased above, tuple of floats
-    "__rfloordiv__",
-    "__rmod__",
-    "__rmul__",
-    "__round__",
-    "__rpow__",
-    "__rsub__",
-    "__rtruediv__",
-    # '__str__', # non-float
-    "__sub__",
-    "__truediv__",
-    # '__trunc__', # non-float
-    # 'as_integer_ratio', # tuple of non-floats
-    "conjugate",
-    "fromhex",
-    # 'hex', # non-float
-    # 'is_integer', # non-float
-):
-    f = getattr(float, fn)
-    setattr(absolute, fn, absolute_wrap(f))
-
-del absolute_wrap, fn, f  # type: ignore
-
-
-class MouseMove(object):
+class MouseMove:
     """
     This contains information about the current mouse move.
     """
 
-    def __init__(self, x, y, duration):
+    def __init__(self, x: int, y: int, duration: float | None):
         self.start = get_time()
 
         if duration is not None:
@@ -308,7 +209,7 @@ class MouseMove(object):
         self.end_x = x
         self.end_y = y
 
-    def perform(self):
+    def perform(self) -> bool:
         """
         Performs the mouse move. Returns True if this should be called
         again, or False if the move has finished.
@@ -329,7 +230,7 @@ class MouseMove(object):
         return True
 
 
-def get_safe_mode():
+def get_safe_mode() -> bool:
     """
     Returns true if we should go into safe mode.
     """
@@ -346,8 +247,8 @@ def get_safe_mode():
 
             VK_SHIFT = 0x10
 
-            ctypes.windll.user32.GetKeyState.restype = ctypes.c_ushort  # type: ignore
-            if ctypes.windll.user32.GetKeyState(VK_SHIFT) & 0x8000:  # type: ignore
+            ctypes.windll.user32.GetKeyState.restype = ctypes.c_ushort
+            if ctypes.windll.user32.GetKeyState(VK_SHIFT) & 0x8000:
                 return True
             else:
                 return False
@@ -370,7 +271,7 @@ class RendererInfo(TypedDict):
     gpu_driver_version: NotRequired[str]
 
 
-class Renderer(object):
+class Renderer:
     """
     A Renderer (also known as a draw object) is responsible for drawing a
     tree of displayables to the window. It also provides other services that
@@ -380,7 +281,7 @@ class Renderer(object):
     and renpy.game.preferences.physical_size preferences, when these are
     changed from outside the game.
 
-    A renderer has an info dict, that contains the keys from pygame_sdl2.display.Info(),
+    A renderer has an info dict, that contains the keys from pygame.display.Info(),
     and then:
     - "renderer", the name of the Renderer.
     - "resizable", true if the window can be resized.
@@ -537,14 +438,14 @@ class Renderer(object):
         Translates (`x`, `y`) from physical to virtual coordinates.
         """
 
-        return (0, 0)  # type
+        return (0, 0)
 
     def untranslate_point(self, x, y):
         """
         Untranslates (`x`, `y`) from virtual to physical coordinates.
         """
 
-        return (0, 0)  # type
+        return (0, 0)
 
     def mouse_event(self, ev):
         """
@@ -559,7 +460,7 @@ class Renderer(object):
         Returns the x and y coordinates of the mouse, in virtual coordinates.
         """
 
-        return (0, 0)  # type
+        return (0, 0)
 
     def set_mouse_pos(self, x, y):
         """
@@ -591,7 +492,7 @@ class Renderer(object):
 initial_maximum_framerate = 0.0
 
 
-class Interface(object):
+class Interface:
     """
     This represents the user interface that interacts with the user.
     It manages the Display objects that display things to the user, and
@@ -852,7 +753,7 @@ class Interface(object):
         self.frame_duration = 1.0 / 60.0
 
         # The cursor cache.
-        self.cursor_cache = None  # type: dict|None
+        self.cursor_cache: dict | None = None
 
         # The old mouse.
         self.old_mouse = None
@@ -926,16 +827,16 @@ class Interface(object):
             import ctypes
             from ctypes import c_void_p, c_int
 
-            ctypes.windll.user32.SetProcessDPIAware()  # type: ignore
+            ctypes.windll.user32.SetProcessDPIAware()
 
-            GetDC = ctypes.windll.user32.GetDC  # type: ignore
+            GetDC = ctypes.windll.user32.GetDC
             GetDC.restype = c_void_p
             GetDC.argtypes = [c_void_p]
 
-            ReleaseDC = ctypes.windll.user32.ReleaseDC  # type: ignore
+            ReleaseDC = ctypes.windll.user32.ReleaseDC
             ReleaseDC.argtypes = [c_void_p, c_void_p]
 
-            GetDeviceCaps = ctypes.windll.gdi32.GetDeviceCaps  # type: ignore
+            GetDeviceCaps = ctypes.windll.gdi32.GetDeviceCaps
             GetDeviceCaps.restype = c_int
             GetDeviceCaps.argtypes = [c_void_p, c_int]
 
@@ -985,8 +886,6 @@ class Interface(object):
         """
         Starts the interface, by opening a window and setting the mode.
         """
-
-        import traceback
 
         if self.started:
             return
@@ -1052,8 +951,8 @@ class Interface(object):
 
             cursors = {}
 
-            for key, cursor_list in renpy.config.mouse.items():
-                l = []
+            for key, cursor_list in renpy.config.mouse.items():  # type: ignore
+                color_cursor_list = []
 
                 for i in cursor_list:
                     if i not in cursors:
@@ -1061,9 +960,9 @@ class Interface(object):
                         surf = renpy.display.im.load_surface(fn)
                         cursors[i] = pygame.mouse.ColorCursor(surf, x, y)
 
-                    l.append(cursors[i])
+                    color_cursor_list.append(cursors[i])
 
-                self.cursor_cache[key] = l
+                self.cursor_cache[key] = color_cursor_list
 
             if ("default" not in self.cursor_cache) and (None in self.cursor_cache):
                 self.cursor_cache["default"] = self.cursor_cache[None]
@@ -1276,7 +1175,7 @@ class Interface(object):
         if renpy.display.draw is None:
             return
 
-        if keep_const_size:
+        if keep_const_size and not (renpy.android or renpy.ios):
             renpy.display.im.cache.clear_variable_size()
         else:
             renpy.display.im.cache.clear()
@@ -1307,8 +1206,8 @@ class Interface(object):
         self.kill_textures(keep_const_size=not self.display_reset)
 
         if not renpy.mobile:
-            pygame.key.stop_text_input()  # @UndefinedVariable
-            pygame.key.set_text_input_rect(None)  # @UndefinedVariable
+            pygame.key.stop_text_input()
+            pygame.key.set_text_input_rect(None)
             self.text_rect = None
             self.old_text_rect = None
 
@@ -1345,11 +1244,11 @@ class Interface(object):
         virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
 
         if renpy.display.draw:
-            draws = [renpy.display.draw]
+            draws = [("current", renpy.display.draw)]
         else:
             draws = self.get_draw_constructors()
 
-        for name, draw in draws:  # type: ignore
+        for name, draw in draws:
             renpy.display.log.write("")
             renpy.display.log.write("Initializing {0} renderer:".format(name))
             if draw.init(virtual_size):
@@ -1547,10 +1446,10 @@ class Interface(object):
             return
 
         if renpy.config.empty_window:
-            old_history = renpy.store._history  # @UndefinedVariable
+            old_history = renpy.store._history
             renpy.store._history = False
 
-            PPP("empty window")  # type: ignore
+            renpy.performance.PPP("empty window")
 
             old_say_attributes = renpy.game.context().say_attributes
             old_temporary_attributes = renpy.game.context().temporary_attributes
@@ -1586,7 +1485,7 @@ class Interface(object):
         be transitioning from.
         """
 
-        PPP("start of with none")  # type: ignore
+        renpy.performance.PPP("start of with none")
 
         # Show the window, if that's necessary.
         self.show_window()
@@ -1624,7 +1523,7 @@ class Interface(object):
 
         layers = list(self.ongoing_transition)
 
-        for l in layers:
+        for l in layers:  # noqa: E741
             if l is None:
                 self.ongoing_transition.pop(None, None)
                 self.instantiated_transition.pop(None, None)
@@ -1862,7 +1761,7 @@ class Interface(object):
         return visible
 
     def get_mouse_name(self, cache_only=False, interaction=True):
-        mouse_kind = renpy.display.focus.get_mouse()  # str|None
+        mouse_kind = renpy.display.focus.get_mouse()
 
         if interaction and (mouse_kind is None):
             mouse_kind = self.mouse
@@ -1871,7 +1770,7 @@ class Interface(object):
             mouse_kind = "default"
 
         if pygame.mouse.get_pressed()[0]:
-            mouse_kind = "pressed_" + mouse_kind  # type: ignore
+            mouse_kind = "pressed_" + mouse_kind
 
         if cache_only and (mouse_kind not in self.cursor_cache):  # type: ignore
             # if the mouse_kind cursor is not in cache, use a replacement
@@ -2007,7 +1906,7 @@ class Interface(object):
 
         try:
             self.mobile_save()
-        except Exception as e:
+        except Exception:
             import traceback
 
             traceback.print_exc()
@@ -2112,13 +2011,11 @@ class Interface(object):
         Updates the text input state and text rectangle.
         """
 
-        if renpy.store._text_rect is not None:  # @UndefinedVariable
-            self.text_rect = renpy.store._text_rect  # @UndefinedVariable
+        if renpy.store._text_rect is not None:
+            self.text_rect = renpy.store._text_rect
 
         if self.text_rect is not None:
-            not_shown = (
-                pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown()
-            )  # @UndefinedVariable
+            not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown()
             if self.touch_keyboard:
                 not_shown = renpy.exports.get_screen("_touch_keyboard", layer="screens") is None
 
@@ -2128,10 +2025,10 @@ class Interface(object):
                 x1, y1 = renpy.display.draw.untranslate_point(x + w, y + h)
                 rect = (x0, y0, x1 - x0, y1 - y0)
 
-                pygame.key.set_text_input_rect(rect)  # @UndefinedVariable
+                pygame.key.set_text_input_rect(rect)
 
             if not self.old_text_rect or not_shown:
-                pygame.key.start_text_input()  # @UndefinedVariable
+                pygame.key.start_text_input()
 
                 if self.touch_keyboard:
                     renpy.exports.restart_interaction()  # required in mobile mode
@@ -2144,8 +2041,8 @@ class Interface(object):
 
         else:
             if self.old_text_rect:
-                pygame.key.stop_text_input()  # @UndefinedVariable
-                pygame.key.set_text_input_rect(None)  # @UndefinedVariable
+                pygame.key.stop_text_input()
+                pygame.key.set_text_input_rect(None)
 
                 if self.touch_keyboard:
                     renpy.exports.hide_screen("_touch_keyboard", layer="screens")
@@ -2207,6 +2104,7 @@ class Interface(object):
             self.interaction_counter = 0
 
             repeat = True
+            rv = None
 
             pause_start = get_time()
 
@@ -2223,11 +2121,11 @@ class Interface(object):
                     pause_start=pause_start,
                     pause_modal=pause_modal,
                     **kwargs,
-                )  # type: ignore
+                )
 
                 self.start_interact = False
 
-            return rv  # type: ignore
+            return rv
 
         finally:
             renpy.game.context().deferred_translate_identifier = None
@@ -2300,7 +2198,6 @@ class Interface(object):
         step = 1
 
         while True:
-
             if self.event_peek(False) and not self.force_prediction:
                 break
 
@@ -2698,7 +2595,7 @@ class Interface(object):
                 root_widget.add(sb)
                 focus_roots.append(sb)
 
-                pb = renpy.display.behavior.PauseBehavior(trans.delay)  # type: ignore
+                pb = renpy.display.behavior.PauseBehavior(trans.delay)
                 root_widget.add(pb, transition_time, transition_time)
                 focus_roots.append(pb)
 
@@ -2921,6 +2818,7 @@ class Interface(object):
                             in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION]
                         ):
                             x, y = renpy.display.draw.get_mouse_pos()
+                            x, y = renpy.test.testmouse.get_mouse_pos(x, y)
                             ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
 
                             if self.ignore_touch:
@@ -3175,7 +3073,9 @@ class Interface(object):
 
                 # Handle videoresize.
                 if ev.type == pygame.VIDEORESIZE:
-                    pygame.event.get(pygame.VIDEORESIZE)
+                    evs = pygame.event.get(pygame.VIDEORESIZE)
+                    ev = evs[-1] if evs else ev
+                    renpy.display.log.write("Resize event: %r", ev)
 
                     if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
                         renpy.display.draw.full_redraw = True
@@ -3290,7 +3190,7 @@ class Interface(object):
 
                 try:
                     if self.touch:
-                        renpy.display.gesture.recognizer.event(ev, x, y)  # @UndefinedVariable
+                        renpy.display.gesture.recognizer.event(ev, x, y)
 
                     renpy.plog(1, "start mouse focus handling")
 
@@ -3313,17 +3213,17 @@ class Interface(object):
                     # Handle displayable inspector.
                     if renpy.config.inspector:
                         if renpy.display.behavior.map_event(ev, "inspector"):
-                            l = self.surftree.main_displayables_at_point(
+                            d = self.surftree.main_displayables_at_point(
                                 x,
                                 y,
                                 renpy.config.transient_layers
                                 + renpy.config.context_clear_layers
                                 + renpy.config.overlay_layers,
                             )
-                            renpy.game.invoke_in_new_context(renpy.config.inspector, l)
+                            renpy.game.invoke_in_new_context(renpy.config.inspector, d)
                         elif renpy.display.behavior.map_event(ev, "full_inspector"):
-                            l = self.surftree.main_displayables_at_point(x, y, renpy.config.layers)
-                            renpy.game.invoke_in_new_context(renpy.config.inspector, l)
+                            d = self.surftree.main_displayables_at_point(x, y, renpy.config.layers)
+                            renpy.game.invoke_in_new_context(renpy.config.inspector, d)
 
                     # Handle the dismissing of non trans_pause transitions.
                     if (

@@ -27,8 +27,8 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import operator
 
-import pygame_sdl2 as pygame
 import renpy
+import renpy.pygame as pygame
 
 # The focus storage api.
 

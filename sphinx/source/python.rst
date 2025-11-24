@@ -62,6 +62,7 @@ behavior:
    default store, the Python will execute in the store with that
    name.
 
+.. _dollar-line:
 
 One-line Python Statement
 -------------------------
@@ -200,12 +201,13 @@ example::
     default points = 0
 
 When the variable ``points`` is not defined at game start, this statement is
-equivalent to::
+roughly equivalent to::
 
     label start:
         $ points = 0
 
-When the variable ``points`` is not defined at game load, it's equivalent to::
+The actual point in which the variable is set is before the splashscreen and main menu
+are run.  When the variable ``points`` is not defined at game load, it's equivalent to::
 
     label after_load:
         $ points = 0
@@ -385,15 +387,34 @@ block::
     init python:
         import dateutil.parser
 
-.. warning::
-
-    Python defined in .rpy files is transformed to allow rollback
-    to work. Python imported from .py files is not. As a result,
-    objects created in Python will not work with rollback, and
-    probably should not be changed after creation.
-
-    Not all Python packages are compatible with Ren'Py. It's up to you
-    to audit the packages you install and make sure the packages will
-    work.
+Not all Python packages are compatible with Ren'Py. It's up to you
+to audit the packages you install and make sure the packages will
+work.
 
 
+Rollback and Isinstance
+-----------------------
+
+Python defined in .rpy files is transformed to allow rollback
+to work. Python imported from .py files is not. As a result,
+objects created in Python will not work with rollback, and
+probably should not be changed after creation.
+
+As part of the transformation, Ren'Py replaces the dict, list, and set classes
+with its own versions that support rollback. These classes are subclasses of the
+built-in classes, and so all methods will work. However, these classes will not
+match instances of the python built-in dict, list, and set classes.
+
+To fix this problem, Ren'Py makes available the Python classes.
+
+.. class:: python_dict
+
+    The python_dict class is the Python built-in dict class.
+
+.. class:: python_list
+
+    The python_list class is the Python built-in list class.
+
+.. class:: python_set
+
+    The python_set class is the Python built-in set class.

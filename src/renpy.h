@@ -128,5 +128,6 @@ int subpixel32(
     PyObject *pysrc, PyObject *pydst,
     float xoffset, float yoffset, int ashift);
 
+void premultiply_alpha_core(PyObject *pysrc, PyObject *pydst);
 
 #endif

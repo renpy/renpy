@@ -214,7 +214,7 @@ def parse_menu(stmtl, loc, arguments):
     has_caption = False
 
     with_ = None
-    set = None  # @ReservedAssignment
+    set = None
 
     # Tuples of (label, condition, block)
     items = []
@@ -229,7 +229,7 @@ def parse_menu(stmtl, loc, arguments):
             continue
 
         if l.keyword("set"):
-            set = l.require(l.simple_expression)  # @ReservedAssignment
+            set = l.require(l.simple_expression)
             l.expect_eol()
             l.expect_noblock("set menuitem")
 
@@ -683,7 +683,7 @@ def pass_statement(l, loc):
 @statement("menu")
 def menu_statement(l, loc):
     l.expect_block("menu statement")
-    label = l.label_name_declare()
+    label = l.label_name()
     l.set_global_label(label)
 
     arguments = parse_arguments(l)
@@ -761,7 +761,7 @@ def call_statement(l, loc):
     rv = [ast.Call(loc, target, expression, arguments, (expression and l.global_label or ""))]  # type: list[ast.Call|ast.Label|ast.Pass]
 
     if l.keyword("from"):
-        name = l.require(l.label_name_declare)
+        name = l.require(l.label_name)
         rv.append(ast.Label(loc, name, [], None))
     else:
         if expression:
@@ -1100,7 +1100,7 @@ def python_statement(l, loc):
 
 @statement("label")
 def label_statement(l, loc, init=False):
-    name = l.require(l.label_name_declare)
+    name = l.require(l.label_name)
     l.set_global_label(name)
     parameters = parse_parameters(l)
 
@@ -1157,9 +1157,11 @@ def init_statement(l, loc):
 
     else:
         old_init = l.init
+        old_init_priority = l.init_priority
 
         try:
             l.init = True
+            l.init_priority = priority + l.init_offset
 
             checkpoint = l.checkpoint()
 
@@ -1173,6 +1175,7 @@ def init_statement(l, loc):
 
         finally:
             l.init = old_init
+            l.init_priority = old_init_priority
 
     return ast.Init(loc, block, priority + l.init_offset)
 
@@ -1217,22 +1220,18 @@ def screen_statement(l, loc):
 
 @statement("testcase")
 def testcase_statement(l, loc):
-    name = l.require(l.name)
-    l.require(":")
-    l.expect_eol()
-    l.expect_block("testcase statement")
+    test = renpy.test.testparser.testcase_statement(l, loc)
 
-    ll = l.subblock_lexer()
-    ll.set_global_label(name)
+    rv = renpy.ast.Testcase(loc, test)
 
-    test = renpy.test.testparser.parse_block(ll, loc)
+    return rv
 
-    l.advance()
 
-    rv = ast.Testcase(loc, name, test)
+@statement("testsuite")
+def testsuite_statement(l, loc):
+    test = renpy.test.testparser.testsuite_statement(l, loc)
 
-    if not l.init:
-        rv = ast.Init(loc, [rv], 500 + l.init_offset)
+    rv = renpy.ast.Testcase(loc, test)
 
     return rv
 
@@ -1390,7 +1389,7 @@ def style_statement(l, loc):
         if l.keyword("del"):
             propname = l.require(l.name)
 
-            if propname not in renpy.style.prefixed_all_properties:  # @UndefinedVariable
+            if propname not in renpy.style.prefixed_all_properties:
                 l.error("style property %s is not known." % propname)
 
             rv.delattr.append(propname)  # type: ignore
@@ -1409,7 +1408,7 @@ def style_statement(l, loc):
         if propname is not None:
             if (propname != "properties") and (
                 propname not in renpy.style.prefixed_all_properties
-            ):  # @UndefinedVariable
+            ):
                 l.error("style property %s is not known." % propname)
 
             if propname in rv.properties:  # type: ignore

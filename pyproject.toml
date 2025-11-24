@@ -1,5 +1,37 @@
-[tool.pyright]
+[project]
+name = "renpy"
+readme = "README.rst"
+license = "MIT"
+version= "8.99.99"
+requires-python = "==3.12.*"
+dependencies = [
+    "future",
+    "six",
+    "pefile",
+    "requests",
+    "ecdsa",
+    "rsa",
+    "setuptools",
+    "cython",
+    "ruff",
+    "sphinx",
+    "sphinx_rtd_theme",
+    "sphinx_rtd_dark_mode",
+    "jinja2",
+]
 
+
+# For now those are listed in project requirements until build system is updated.
+# [project.optional-dependencies]
+# dev = ["setuptools", "cython", "ruff"]
+
+# For now, Ren'Py isn't using a build system, as build isolation makes building too slow.
+
+# [build-system]
+# requires = ["setuptools", "cython"]
+# build-backend = "setuptools.build_meta:__legacy__"
+
+[tool.pyright]
 include = [
     "*.py",
     "renpy/",
@@ -14,6 +46,8 @@ ignore = [
     "renpycoverage.py"
 ]
 
+typeCheckingMode = "basic"
+
 reportOptionalSubscript = false
 reportOptionalMemberAccess = false
 reportOptionalCall = false
@@ -21,7 +55,8 @@ reportOptionalIterable = false
 reportOptionalContextManager = false
 reportOptionalOperand = false
 reportMissingModuleSource = false
-
+reportUnnecessaryTypeIgnoreComment = "information"
+reportTypeCommentUsage = "information"
 
 [tool.cyright]
 include = [

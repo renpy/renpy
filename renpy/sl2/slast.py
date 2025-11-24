@@ -181,6 +181,10 @@ class SLContext(renpy.ui.Addable):
         # A map from a sticky property to its value.
         self.sticky = {}  # type: dict[str, Any]
 
+        # Does the new_cache have the same version as the old_cache, allowing direct reuse of
+        # cached displayables?
+        self.same_version: bool = True
+
     def add(self, d, key):
         self.children.append(d)
 
@@ -886,7 +890,7 @@ class SLDisplayable(SLBlock):
         if debug:
             self.debug_line()
 
-        if cache.constant and (cache.style_prefix == context.style_prefix):
+        if cache.constant and (cache.style_prefix == context.style_prefix) and context.same_version:
             for i, local_scope, context_scope in cache.constant_uses_scope:
                 if context_scope is None:
                     context_scope = context.root_scope
@@ -1009,6 +1013,7 @@ class SLDisplayable(SLBlock):
                 and (positional == cache.positional)
                 and (keywords == cache.keywords)
                 and (context.style_prefix == cache.style_prefix)
+                and context.same_version
             )
             if (self.variable is not None) and copy_on_change:
                 can_reuse = False
@@ -1775,7 +1780,7 @@ class SLFor(SLBlock):
             except SLContinueException:
                 continue
 
-            if context.unlikely:
+            if context.unlikely and self.constant == NOT_CONST:
                 break
 
         context.new_cache[self.serial] = newcaches
@@ -2680,7 +2685,7 @@ class SLScreen(SLBlock):
         def get_cache(d):
             rv = d.get(name, None)
 
-            if (not isinstance(rv, dict)) or (rv.get("version", None) != self.version):
+            if (not isinstance(rv, dict)) or "version" not in rv:
                 rv = {"version": self.version}
                 d[name] = rv
 
@@ -2689,6 +2694,7 @@ class SLScreen(SLBlock):
         context.old_cache = get_cache(current_screen.cache)
         context.miss_cache = get_cache(current_screen.miss_cache)
         context.new_cache = {"version": self.version}
+        context.same_version = context.old_cache.get("version", None) == self.version
 
         context.old_use_cache = current_screen.use_cache
         context.new_use_cache = {}

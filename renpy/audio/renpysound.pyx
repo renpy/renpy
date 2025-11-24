@@ -52,8 +52,8 @@ from __future__ import print_function
 
 from libc.stdint cimport uintptr_t
 
-from pygame_sdl2 cimport *
-import_pygame_sdl2()
+from renpy.pygame.rwobject cimport RWopsFromPython
+from sdl2 cimport SDL_RWops
 
 cdef extern from "renpysound_core.h":
 

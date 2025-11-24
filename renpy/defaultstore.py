@@ -123,7 +123,7 @@ style = None
 config = _Config()
 library = config
 
-eval = renpy.python.py_eval  # @ReservedAssignment
+eval = renpy.python.py_eval
 
 # Displayables.
 Bar = renpy.display.behavior.Bar
@@ -179,7 +179,7 @@ DragGroup = renpy.display.dragdrop.DragGroup
 Sprite = renpy.display.particle.Sprite
 SpriteManager = renpy.display.particle.SpriteManager
 
-Matrix = renpy.display.matrix.Matrix  # @UndefinedVariable
+Matrix = renpy.display.matrix.Matrix
 
 Live2D = renpy.gl2.live2d.Live2D
 

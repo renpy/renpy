@@ -155,7 +155,9 @@ def register(
 
     `init_priority`
         An integer that determines the priority of initialization of the
-        init block created by `init` and `execute_init` function.
+        init block created by `init` and `execute_init` function. This can
+        also be a function that is called with the parsed block, and should
+        return an integer.
 
     `translation_strings`
         A function that is called with the parsed block. It's expected to
@@ -318,7 +320,7 @@ def register(
             rv.atl = atl
             rv.subparses = l.subparses
 
-            if execute_init or execute_default:
+            if execute_init or execute_default or init:
                 rv.init_offset = l.init_offset
             else:
                 rv.init_offset = None
@@ -335,7 +337,7 @@ def register(
             if not isinstance(rv, list):
                 rv = [rv]
 
-            rv = renpy.ast.Init(loc, rv, init_priority + l.init_offset)
+            rv = renpy.ast.Init(loc, rv, rv[0].get_init())
 
         return rv
 

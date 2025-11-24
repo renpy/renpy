@@ -168,6 +168,17 @@ class Script(object):
 
         self.scan_script_files()
 
+        # If recompiling everything, remove orphan .rpyc files.
+        # Otherwise, will fail in case orphan .rpyc have same
+        # labels as in other scripts (usually happens on script rename).
+        if (renpy.game.args.command == "compile") and not (renpy.game.args.keep_orphan_rpyc):
+
+            self.clean_script_files()
+
+            # Reindex files so that .rpyc's are cleared out.
+            renpy.loader.index_files()
+            self.scan_script_files()
+
         self.translator.chain_translates()
 
         self.compress()
@@ -199,7 +210,7 @@ class Script(object):
             if renpy.loader.loadable(i):
                 return None
 
-        backups = renpy.__main__.path_to_saves(renpy.config.gamedir, "backups")  # @UndefinedVariable
+        backups = renpy.__main__.path_to_saves(renpy.config.gamedir, "backups")
 
         if backups is None:
             return
@@ -265,6 +276,10 @@ class Script(object):
         """
 
         for dir, fn in dirlist:
+
+            if fn.rpartition("/")[2].startswith("."):
+                continue
+
             if fn.endswith("_ren.py"):
                 if dir is None:
                     continue
@@ -323,6 +338,26 @@ class Script(object):
         self.classify_script_files(
             renpy.loader.listdirfiles(common=False, game=True), self.script_files, self.module_files
         )
+
+
+    def clean_script_files(self):
+        """
+        Delete .rpyc files that have no corresponding .rpy or _ren.py file.
+        """
+
+        for fn, dn in self.script_files:
+            if dn is None:
+                continue
+
+            if not os.path.isfile(os.path.join(dn, fn + ".rpy")) and not os.path.isfile(
+                os.path.join(dn, fn + "_ren.py")
+            ):
+                try:
+                    name = os.path.join(dn, fn + ".rpyc")
+                    os.rename(name, name + ".bak")
+                except OSError:
+                    # This perhaps shouldn't happen since either .rpy or .rpyc should exist
+                    pass
 
     def script_filter(self, fn, dir):
         """
@@ -401,7 +436,7 @@ class Script(object):
         count = 0
         skipped = 0
 
-        for fn, dir in script_files:  # @ReservedAssignment
+        for fn, dir in script_files:
             count += 1
             renpy.display.presplash.progress("Loading script...", count, len(script_files))
 
@@ -434,7 +469,7 @@ class Script(object):
         return initcode
 
     def load_module(self, name):
-        files = [(fn, dir) for fn, dir in self.module_files if fn == name]  # @ReservedAssignment
+        files = [(fn, dir) for fn, dir in self.module_files if fn == name]
 
         if not files:
             raise Exception("Module %s could not be loaded." % name)
@@ -442,7 +477,7 @@ class Script(object):
         if len(files) > 2:
             raise Exception("Module %s ambiguous, multiple variants exist." % name)
 
-        fn, dir = files[0]  # @ReservedAssignment
+        fn, dir = files[0]
         initcode = []
 
         self.load_appropriate_file(".rpymc", [".rpym"], dir, fn, initcode)
@@ -670,11 +705,16 @@ class Script(object):
         for node in all_stmts:
             name = node.name
 
-            check_name(node)
+            if isinstance(node, renpy.ast.Testcase):
+                # Handle testcases specially, as they are not part of the script.
+                renpy.test.testexecution.register_testcase(node.test)
 
-            # Add the name to the namemap. This uses the node as both key and value, as the node is equal to and
-            # hashes as its name.
-            self.namemap[node] = node
+            else:
+                check_name(node)
+
+                # Add the name to the namemap. This uses the node as both key and value, as the node is equal to and
+                # hashes as its name.
+                self.namemap[node] = node
 
             # Add any init nodes to self.initcode.
             if (priority := node.get_init()) is not None:
@@ -775,7 +815,7 @@ class Script(object):
         # Generate translate nodes.
         renpy.translation.restructure(stmts)
 
-    def load_file(self, dir, fn):  # @ReservedAssignment
+    def load_file(self, dir, fn):
         # Used to only find the deferred parse errors from this file.
         old_deferred_parse_errors = renpy.parser.deferred_parse_errors
         renpy.parser.deferred_parse_errors = collections.defaultdict(list)
@@ -920,7 +960,7 @@ class Script(object):
 
             renpy.parser.deferred_parse_errors = old_deferred_parse_errors
 
-    def load_appropriate_file(self, compiled, source_extensions, dir, fn, initcode):  # @ReservedAssignment
+    def load_appropriate_file(self, compiled, source_extensions, dir, fn, initcode):
         data = None
 
         source = source_extensions[-1]

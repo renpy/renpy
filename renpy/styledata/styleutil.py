@@ -28,7 +28,7 @@ import renpy
 
 def none_is_null(o):
     if o is None:
-        return renpy.display.layout.Null()  # @UndefinedVariable
+        return renpy.display.layout.Null()
     else:
         return renpy.easy.displayable(o)
 
@@ -58,9 +58,9 @@ def expand_outlines(l):
 
     for i in l:
         if len(i) == 2:
-            rv.append((i[0], renpy.easy.color(i[1]), 0, 0))
+            rv.append((i[0], renpy.color.Color(i[1]), 0, 0))
         else:
-            rv.append((i[0], renpy.easy.color(i[1]), i[2], i[3]))
+            rv.append((i[0], renpy.color.Color(i[1]), i[2], i[3]))
 
     return rv
 

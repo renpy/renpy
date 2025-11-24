@@ -44,7 +44,15 @@ For example::
         "..resides a local one."
         jump .another_local
     label .another_local:
-        "And another !"
+        "And another!"
+        jump .local_label
+
+A local label can also be declared by its full name, consisting of the global
+label name followed by the local label name, separated by a dot. This will not
+declare the local label. ::
+
+    label global_label.yet_another_local:
+        "Yet another!"
         jump .local_label
 
 Local labels can be referenced directly inside the same global label they are
@@ -207,6 +215,16 @@ The following labels are used by Ren'Py:
     label, :func:`renpy.block_rollback` should be called to prevent those
     changes from being reverted if the player rolls back past the load
     point.
+
+``before_load``
+    If it exists, this label is called in a new context just before a game
+    is loaded. It can be used to prepare for the load, by changing music or
+    displaying an animation.
+
+    Once this label returns, Ren'Py will proceed with the load. The screen
+    will not be updated until after the load is complete, so animations
+    will not be run. When the load is finished, the state of the game will
+    be replaced by the load state, and so changed in this label will be lost.
 
 ``splashscreen``
     If it exists, this label is called when the game is first run, before

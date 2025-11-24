@@ -71,6 +71,164 @@ class Line(object):
         return "<Line {}:{} {!r}>".format(self.filename, self.number, self.text)
 
 
+def load_lines(filename, elided_filename):
+    """
+    Loads the lines out of `filename`.
+
+    This is very similar to renpy.lexer.list_logical_lines, but it includes empty lines
+    and lines with only comments.
+    """
+
+    global original_filename
+    original_filename = filename
+
+    with open(filename, "r", encoding="utf-8") as f:
+        data = f.read()
+
+    filename = elided_filename
+
+    if not data.endswith("\n"):
+        data += "\n"
+
+    # The line number in the physical file.
+    number = 1
+
+    # The current position we're looking at in the buffer.
+    pos = 0
+
+    # Are we looking at a triple-quoted string?
+
+    # Skip the BOM, if any.
+    if len(data) and data[0] == u'\ufeff':
+        pos += 1
+
+    len_data = len(data)
+
+    files.add(filename)
+
+    line = 0
+    start_number = 0
+
+    # Looping over the lines in the file.
+    while pos < len_data:
+
+        # The line number of the start of this logical line.
+        start_number = number
+
+        # The number of open parenthesis there are right now.
+        parendepth = 0
+
+        loc = (filename, start_number)
+        lines[loc] = renpy.scriptedit.Line(original_filename, start_number, pos)
+
+        endpos = None
+
+        while pos < len_data:
+
+            startpos = pos
+            c = data[pos]
+
+            if c == u'\n' and not parendepth:
+
+                if endpos is None:
+                    endpos = pos
+
+                lines[loc].end_delim = endpos + 1
+
+                while data[endpos - 1] in u' \r':
+                    endpos -= 1
+
+                lines[loc].end = endpos
+                lines[loc].text = data[lines[loc].start:lines[loc].end]
+                lines[loc].full_text = data[lines[loc].start:lines[loc].end_delim]
+
+                pos += 1
+                number += 1
+                endpos = None
+                break
+
+            if c == u'\n':
+                number += 1
+                endpos = None
+
+            if c == u"\r":
+                pos += 1
+                continue
+
+            # Backslash/newline.
+            if c == u"\\" and data[pos + 1] == u"\n":
+                pos += 2
+                number += 1
+                continue
+
+            # Parenthesis.
+            if c in u'([{':
+                parendepth += 1
+
+            if (c in u'}])') and parendepth:
+                parendepth -= 1
+
+            # Comments.
+            if c == u'#':
+                endpos = pos
+
+                while data[pos] != u'\n':
+                    pos += 1
+
+                continue
+
+            # Strings.
+            if c in u'"\'`':
+                delim = c
+                pos += 1
+
+                escape = False
+                triplequote = False
+
+                if (pos < len_data - 1) and (data[pos] == delim) and (data[pos + 1] == delim):
+                    pos += 2
+                    triplequote = True
+
+                while pos < len_data:
+
+                    c = data[pos]
+
+                    if c == u'\n':
+                        number += 1
+
+                    if c == u'\r':
+                        pos += 1
+                        continue
+
+                    if escape:
+                        escape = False
+                        pos += 1
+                        continue
+
+                    if c == delim:
+
+                        if not triplequote:
+                            pos += 1
+                            break
+
+                        if (pos < len_data - 2) and (data[pos + 1] == delim) and (data[pos + 2] == delim):
+                            pos += 3
+                            break
+
+                    if c == u'\\':
+                        escape = True
+
+                    pos += 1
+
+                    continue
+
+                continue
+
+            _word, _magic, end = renpy.lexer.match_logical_word(data, pos)
+
+            pos = end
+
+
 def ensure_loaded(filename):
     """
     Ensures that the given filename and linenumber are loaded. Doesn't do
@@ -86,7 +244,7 @@ def ensure_loaded(filename):
     files.add(filename)
 
     fn = renpy.lexer.unelide_filename(filename)
-    renpy.lexer.list_logical_lines(fn, add_lines=True)
+    load_lines(fn, filename)
 
 
 def get_line_text(filename, linenumber):

@@ -150,6 +150,8 @@ python early hide:
         def get(self, name):
             raise Exception("The define statement can not be used with the preferences namespace.")
 
+    # Variables in GUI that have been set using default.
+    gui._defaults = set()
 
     class _GuiNamespace(object):
         pure = True
@@ -161,6 +163,8 @@ python early hide:
 
         def set_default(self, name, value):
             setattr(gui, name, value)
+            renpy.mark_changed("gui", name)
+            gui._defaults.add(name)
 
         def get(self, name):
             return getattr(gui, name)

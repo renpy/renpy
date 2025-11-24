@@ -76,6 +76,7 @@ class SlottedNoRollback(object):
 class NoRollback(SlottedNoRollback):
     """
     :doc: norollback class
+    :name: NoRollback
 
     Instances of this class, and classes inheriting from this class,
     do not participate in rollback. Objects reachable through an instance
@@ -956,7 +957,7 @@ class RollbackLog(renpy.object.Object):
         force_checkpoint = False
 
         # Try to rollback to just after the previous checkpoint.
-        while greedy and self.log:
+        while greedy and self.log and not (revlog and revlog[-1].retain_after_load):
             rb = self.log[-1]
 
             if not renpy.game.script.has_label(rb.context.current):
@@ -966,9 +967,6 @@ class RollbackLog(renpy.object.Object):
                 break
 
             if rb.not_greedy:
-                break
-
-            if rb.retain_after_load:
                 break
 
             revlog.append(self.log.pop())
@@ -1110,7 +1108,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         # Fix up old screens.
-        renpy.display.screen.before_restart()  # @UndefinedVariable
+        renpy.display.screen.before_restart()
 
         # Set us up as the game log.
         renpy.game.log = self

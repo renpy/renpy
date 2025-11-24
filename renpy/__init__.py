@@ -217,12 +217,17 @@ backup_blacklist = {
     "renpy.display.test",
     "renpy.six",
     "renpy.text.ftfont",
+    "renpy.text.hbfont",
+    "renpy.text.bidi",
     "renpy.test",
     "renpy.test.testast",
     "renpy.test.testexecution",
     "renpy.test.testkey",
     "renpy.test.testmouse",
     "renpy.test.testparser",
+    "renpy.test.testreporter",
+    "renpy.test.testsettings",
+    "renpy.tfd",
     "renpy.gl2",
     "renpycoverage",
 }
@@ -302,6 +307,9 @@ class Backup:
             return
 
         if not name.startswith("renpy"):
+            return
+
+        if name.startswith("renpy.pygame"):
             return
 
         if name in backup_blacklist:
@@ -385,6 +393,9 @@ def import_all():
 
     import renpy
 
+    import renpy.types
+
+    import renpy.error
     import renpy.config
     import renpy.log
 
@@ -458,6 +469,7 @@ def import_all():
 
     import renpy.display
 
+    import renpy.display.position
     import renpy.display.presplash
     import renpy.display.pgrender
     import renpy.display.scale
@@ -558,15 +570,24 @@ def import_all():
     import renpy.defaultstore
 
     import renpy.test
+    import renpy.test.testsettings
     import renpy.test.testmouse
     import renpy.test.testfocus
     import renpy.test.testkey
     import renpy.test.testast
     import renpy.test.testparser
+    import renpy.test.testreporter
     import renpy.test.testexecution
 
     import renpy.update
     import renpy.update.deferred
+
+
+    try:
+        import renpy.tfd
+        sys.modules["_renpytfd"] = renpy.tfd
+    except ImportError:
+        pass
 
     import renpy.main
 
@@ -682,6 +703,8 @@ def reload_all():
     # Re-initialize the importer.
     renpy.importer.init_importer()
 
+    renpy.test.testexecution.on_reload()
+
     # Reset main log clock.
     renpy.main.reset_clock()
 
@@ -737,6 +760,7 @@ if typing.TYPE_CHECKING:
     from . import preferences as preferences
     from . import pyanalysis as pyanalysis
     from . import pydict as pydict
+    from . import pygame as pygame
     from . import python as python
     from . import revertable as revertable
     from . import rollback as rollback
@@ -752,7 +776,9 @@ if typing.TYPE_CHECKING:
     from . import substitutions as substitutions
     from . import test as test
     from . import text as text
+    from . import tfd as tfd
     from . import translation as translation
+    from . import types as types
     from . import uguu as uguu
     from . import ui as ui
     from . import update as update

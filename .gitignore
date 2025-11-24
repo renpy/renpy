@@ -11,14 +11,19 @@ ehthumbs_vista.db
 [Dd]esktop.ini
 
 # Python related files.
+/.venv
 *.pyc
 *.pyo
 *.egg-info
+*.cpython-*.so
+*.cpython-*.pyd
+/build
 
 # Editor/tool files.
 *~
 *.bak
 .gdb_history
+uv.lock
 
 # Compiled Ren'Py files.
 *.rpyc
@@ -144,6 +149,7 @@ renpy/display/matrix.pyi
 renpy/display/quaternion.pyi
 renpy/display/render.pyi
 renpy/encryption.pyi
+renpy/gl2/assimp.pyi
 renpy/gl2/gl2draw.pyi
 renpy/gl2/gl2mesh.pyi
 renpy/gl2/gl2mesh2.pyi
@@ -152,8 +158,28 @@ renpy/gl2/gl2model.pyi
 renpy/gl2/gl2polygon.pyi
 renpy/gl2/gl2shader.pyi
 renpy/gl2/gl2texture.pyi
+renpy/gl2/gl2uniform.pyi
 renpy/gl2/live2dmodel.pyi
 renpy/pydict.pyi
+renpy/pygame/color.pyi
+renpy/pygame/controller.pyi
+renpy/pygame/display.pyi
+renpy/pygame/draw.pyi
+renpy/pygame/error.pyi
+renpy/pygame/event.pyi
+renpy/pygame/gfxdraw.pyi
+renpy/pygame/image.pyi
+renpy/pygame/joystick.pyi
+renpy/pygame/key.pyi
+renpy/pygame/locals.pyi
+renpy/pygame/mouse.pyi
+renpy/pygame/power.pyi
+renpy/pygame/pygame_time.pyi
+renpy/pygame/rect.pyi
+renpy/pygame/rwobject.pyi
+renpy/pygame/scrap.pyi
+renpy/pygame/surface.pyi
+renpy/pygame/transform.pyi
 renpy/style.pyi
 renpy/style.pyi
 renpy/styledata/style_activate_functions.pyi
@@ -168,9 +194,11 @@ renpy/styledata/style_selected_idle_functions.pyi
 renpy/styledata/style_selected_insensitive_functions.pyi
 renpy/styledata/styleclass.pyi
 renpy/styledata/stylesets.pyi
+renpy/text/bidi.pyi
 renpy/text/ftfont.pyi
 renpy/text/hbfont.pyi
 renpy/text/textsupport.pyi
 renpy/text/texwrap.pyi
+renpy/tfd.pyi
 renpy/uguu/gl.pyi
 renpy/uguu/uguu.pyi

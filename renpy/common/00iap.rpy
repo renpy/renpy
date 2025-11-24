@@ -246,12 +246,13 @@ init -1500 python in iap:
                 renpy.pause.
             """
 
+            import renpy.pygame as pygame
+
             while not self.helper.finished:
                 if interact:
                     renpy.pause(.1)
                 else:
-                    import pygame_sdl2
-                    pygame_sdl2.event.pump()
+                    pygame.event.pump()
                     time.sleep(.1)
 
         def validate_products(self, interact):

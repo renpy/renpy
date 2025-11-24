@@ -159,7 +159,7 @@ def is_empty_extend(t):
     return True
 
 
-def write_translates(filename, language, filter):  # @ReservedAssignment
+def write_translates(filename, language, filter):
     fn, common = shorten_filename(filename)
 
     # The common directory should not have dialogue in it.
@@ -232,15 +232,15 @@ def translation_filename(s):
     return filename
 
 
-def write_strings(language, filter, min_priority, max_priority, common_only, only_strings=[]):  # @ReservedAssignment
+def write_strings(language, filter, min_priority, max_priority, common_only, only_strings=[]):
     """
     Writes strings to the file.
     """
 
     if language == "None":
-        stl = renpy.game.script.translator.strings[None]  # @UndefinedVariable
+        stl = renpy.game.script.translator.strings[None]
     else:
-        stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+        stl = renpy.game.script.translator.strings[language]
 
     # If this function changes, count_missing may also need to
     # change.
@@ -467,7 +467,7 @@ def count_missing(language, min_priority, max_priority, common_only):
 
     missing_strings = 0
 
-    stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+    stl = renpy.game.script.translator.strings[language]
 
     strings = renpy.translation.scanstrings.scan(min_priority, max_priority, common_only)
 
@@ -556,13 +556,13 @@ def translate_command():
         return False
 
     if args.rot13:
-        filter = rot13_filter  # @ReservedAssignment
+        filter = rot13_filter
     elif args.piglatin:
-        filter = piglatin_filter  # @ReservedAssignment
+        filter = piglatin_filter
     elif args.empty:
-        filter = empty_filter  # @ReservedAssignment
+        filter = empty_filter
     else:
-        filter = null_filter  # @ReservedAssignment
+        filter = null_filter
 
     if not args.strings_only:
         for filename in translate_list_files():

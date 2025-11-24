@@ -331,9 +331,9 @@ def annotate_anywhere(list glyphs):
 
 # This is used to tailor the unicode break algorithm. If a character in this
 # array is mapped to not
-cdef char break_tailor[65536]
+cdef char[BREAK_CHARACTER_COUNT] break_tailor
 
-for i in range(0, 65536):
+for i in range(0, BREAK_CHARACTER_COUNT):
     break_tailor[i] = BC_XX
 
 def language_tailor(chars, cls):
@@ -357,6 +357,8 @@ def language_tailor(chars, cls):
     ncls = CLASSES.get(cls, BC_XX)
 
     for c in chars:
+        if ord(c) >= BREAK_CHARACTER_COUNT:
+            raise Exception("Character U+{0:04x} is out of range for language_tailor.".format(ord(c)))
         break_tailor[ord(c)] = ncls
 
 # cjk
@@ -378,8 +380,10 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
     cdef char bc
     cdef Glyph g, g1, old_g
     cdef char *break_classes
+    cdef bint new_hyphen, old_hyphen
 
-    old_type = BC_WJ
+    new_type = BC_WJ
+    new_hyphen = False
     pos = 1
     space_pos = 0
 
@@ -399,18 +403,24 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
     for pos in range(1, len_glyphs):
 
+        old_type = new_type
+        old_hyphen = new_hyphen
+
         g = glyphs[pos]
         c = g.character
 
-        if 0x20000 <= c <= 0x2ffff: # Supplemental Ideographic Plane
-            new_type = BC_ID
-            tailor_type = BC_XX
-        elif c > 65535: # Other non-basic planes.
-            new_type = BC_AL
-            tailor_type = BC_XX
-        else: # Basic plane - use lookup table.
+        if c < BREAK_CHARACTER_COUNT:
             new_type = break_classes[c]
             tailor_type = break_tailor[c]
+        elif c < 0xE0000:
+            new_type = BC_ID
+            tailor_type = BC_XX
+        elif new_type < 0xF0000:
+            new_type = BC_CM
+            tailor_type = BC_XX
+        else:
+            new_type = BC_XX
+            tailor_type = BC_XX
 
         # If given no-ideographs, then turn ideographs and hangul syllables
         # into alphabetic characters.
@@ -424,22 +434,29 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
             new_type = BC_AL
 
+        if tailor_type != BC_XX:
+            new_type = tailor_type
+
+        # Is this a hyphen (and not immediately after a space)?
+        new_hyphen = (new_type == BC_HY or new_type == BC_HH) and not old_type == BC_SP
+
         # Normalize the class by turning various groups into AL.
         if (new_type >= BC_PITCH and new_type != BC_SP and new_type != BC_CB):
             new_type = BC_AL
-
-        if tailor_type != BC_XX:
-            new_type = tailor_type
 
         # If we have a space, record it and continue.
         if new_type == BC_SP:
             g.split = SPLIT_NONE
             space_pos = pos
+
+            new_type = old_type
             continue
 
         # If we have a combining mark, continue.
         if new_type == BC_CM:
             g.split = SPLIT_NONE
+
+            new_type = old_type
             continue
 
         if new_type == BC_CB:
@@ -448,6 +465,8 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
             else:
                 g.split = SPLIT_BEFORE
 
+
+            new_type = old_type
             continue
 
         if old_type == BC_CB:
@@ -460,6 +479,8 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
         if new_type == BC_CL or new_type == BC_CP:
             g.split = SPLIT_IGNORE
+
+            new_type = old_type
             continue
 
         # Figure out the type of break opportunity we have here.
@@ -489,7 +510,11 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
         else:
             g.split = SPLIT_NONE
 
-        old_type = new_type
+        # If it's a hyphen, split after. But suppress the split if there's a number after an HY-hyphen.
+        if old_hyphen and g.split == SPLIT_NONE:
+            if old_type != BC_HY or new_type != BC_NU:
+                g.split = SPLIT_BEFORE
+
         space_pos = 0
 
     # Deal with ruby, by marking it as non-spacing.
@@ -508,7 +533,6 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
             g.split = SPLIT_NONE
 
         old_g = g
-
 
 
 def linebreak_greedy(list glyphs, int first_width, int rest_width):

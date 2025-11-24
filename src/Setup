@@ -1,5 +1,4 @@
 _renpy ../tmp/gen/_renpy.c IMG_savepng.c core.c
-_renpybidi ../tmp/gen/_renpybidi.c renpybidicore.c
 renpy.audio.renpysound ../tmp/gen/renpy.audio.renpysound.c renpysound_core.c ffmedia.c
 renpy.audio.filter ../tmp/gen/renpy.audio.filter.c
 renpy.astsupport ../tmp/gen/renpy.astsupport.c
@@ -37,7 +36,27 @@ renpy.gl2.gl2texture ../tmp/gen/renpy.gl2.gl2texture.c
 renpy.gl2.gl2uniform ../tmp/gen/renpy.gl2.gl2uniform.c
 renpy.gl2.gl2shader ../tmp/gen/renpy.gl2.gl2shader.c
 renpy.gl2.live2dmodel ../tmp/gen/renpy.gl2.live2dmodel.c live2dcsm.c
+renpy.pygame.error ../tmp/gen/renpy.pygame.error.c
+renpy.pygame.color ../tmp/gen/renpy.pygame.color.c
+renpy.pygame.controller ../tmp/gen/renpy.pygame.controller.c
+renpy.pygame.rect ../tmp/gen/renpy.pygame.rect.c
+renpy.pygame.rwobject ../tmp/gen/renpy.pygame.rwobject.c
+renpy.pygame.surface ../tmp/gen/renpy.pygame.surface.c pygame/alphablit.c
+renpy.pygame.display ../tmp/gen/renpy.pygame.display.c
+renpy.pygame.event ../tmp/gen/renpy.pygame.event.c
+renpy.pygame.locals ../tmp/gen/renpy.pygame.locals.c
+renpy.pygame.key ../tmp/gen/renpy.pygame.key.c
+renpy.pygame.mouse ../tmp/gen/renpy.pygame.mouse.c
+renpy.pygame.joystick ../tmp/gen/renpy.pygame.joystick.c
+renpy.pygame.power ../tmp/gen/renpy.pygame.power.c
+renpy.pygame.pygame_time ../tmp/gen/renpy.pygame.pygame_time.c
+renpy.pygame.image ../tmp/gen/renpy.pygame.image.c pygame/write_jpeg.c pygame/write_png.c
+renpy.pygame.transform ../tmp/gen/renpy.pygame.transform.c pygame/SDL2_rotozoom.c
+renpy.pygame.gfxdraw ../tmp/gen/renpy.pygame.gfxdraw.c pygame/SDL_gfxPrimitives.c
+renpy.pygame.draw ../tmp/gen/renpy.pygame.draw.c
+renpy.pygame.scrap ../tmp/gen/renpy.pygame.scrap.c
 renpy.text.textsupport ../tmp/gen/renpy.text.textsupport.c
 renpy.text.texwrap ../tmp/gen/renpy.text.texwrap.c
 renpy.text.ftfont ../tmp/gen/renpy.text.ftfont.c ftsupport.c ttgsubtable.c
 renpy.text.hbfont ../tmp/gen/renpy.text.hbfont.c
+renpy.text.bidi ../tmp/gen/renpy.text.bidi.c renpybidicore.c

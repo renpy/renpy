@@ -29,8 +29,8 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import sys
 import threading
 
-import pygame_sdl2 as pygame
 import renpy
+import renpy.pygame as pygame
 
 
 # Sample surfaces, with and without alpha.
@@ -125,7 +125,7 @@ def copy_surface(surf, alpha=True):  # (Surface, bool|Surface) -> Surface
     """
 
     rv = surface_unscaled(surf.get_size(), alpha)
-    renpy.display.accelerator.nogil_copy(surf, rv)  # @UndefinedVariable
+    renpy.display.accelerator.nogil_copy(surf, rv)
     return rv
 
 

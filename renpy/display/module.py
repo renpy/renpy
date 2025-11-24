@@ -25,8 +25,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
-
-import pygame_sdl2
 import renpy
 import _renpy
 
@@ -147,7 +145,7 @@ def linmap(src, dst, rmap, gmap, bmap, amap):
 save_png = _renpy.save_png
 
 
-def map(src, dst, rmap, gmap, bmap, amap):  # @ReservedAssignment
+def map(src, dst, rmap, gmap, bmap, amap):
     """
     This maps the colors between two surfaces. The various map
     parameters must be 256 character long strings, with the value
@@ -158,7 +156,7 @@ def map(src, dst, rmap, gmap, bmap, amap):  # @ReservedAssignment
     convert_and_call(_renpy.map, src, dst, *endian_order(dst, rmap, gmap, bmap, amap))
 
 
-def blur(src, wrk, dst, xrad, yrad=None):  # @ReservedAssignment
+def blur(src, wrk, dst, xrad, yrad=None):
     """
     This blurs the source surface. It approximates a Gaussian blur
     using several box blurs with box sizes based on the desired
@@ -288,3 +286,13 @@ def colormatrix(src, dst, matrix):
 def subpixel(src, dst, x, y):
     shift = src.get_shifts()[3]
     _renpy.subpixel(src, dst, x, y, shift)
+
+
+def premultiply_alpha(src):
+    """
+    Performs alpha premultiplication on `src` and stores the result in `dst`.
+    """
+
+    dst = renpy.display.pgrender.surface(src.get_size(), True)
+    _renpy.premultiply_alpha(src, dst)
+    return dst

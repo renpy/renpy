@@ -321,7 +321,8 @@ cdef class Sampler2DSetter(Setter):
 
         # None case.
         if value is None:
-            raise Exception(f"Uniform {self.uniform_name} in shader {context.shader_name} given None.")
+            shader_name = "+".join(sorted(context.shaders))
+            raise Exception(f"Uniform {self.uniform_name} in shader {shader_name} given None.")
 
         # Int case.
         if type(value) is int:

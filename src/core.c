@@ -1,7 +1,7 @@
 #include "renpy.h"
 #include "IMG_savepng.h"
 #include <SDL2/SDL.h>
-#include <pygame_sdl2/pygame_sdl2.h>
+#include <renpy.pygame.surface_api.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -12,7 +12,7 @@
 /* Initializes the stuff found in this file.
  */
 void core_init() {
-    import_pygame_sdl2();
+    import_renpy__pygame__surface();
 }
 
 void save_png_core(PyObject *pysurf, SDL_RWops *rw, int compress) {
@@ -1647,6 +1647,54 @@ void staticgray_core(PyObject *pysrc, PyObject *pydst,
             sum += *s++ * bmul;
             sum += *s++ * amul;
             *d++ = (unsigned char) vmap[sum >> shift];
+        }
+    }
+
+    Py_END_ALLOW_THREADS;
+}
+
+void premultiply_alpha_core(PyObject *pysrc, PyObject *pydst) {
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+
+    int srcpitch, dstpitch;
+    unsigned short dstw, dsth;
+    unsigned short x, y;
+
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+
+    Py_BEGIN_ALLOW_THREADS;
+
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+
+    dstw = dst->w;
+    dsth = dst->h;
+
+    for (y = 0; y < dsth; y++) {
+        unsigned char *s = &srcpixels[y * srcpitch];
+        unsigned char *d = &dstpixels[y * dstpitch];
+
+        for (x = 0; x < dstw; x++) {
+
+            unsigned short a, b, g, r;
+
+            r = *s++;
+            g = *s++;
+            b = *s++;
+            a = *s++;
+
+            *d++ = (unsigned char) a;
+            *d++ = (unsigned char) ((b * a) / 255);
+            *d++ = (unsigned char) ((g * a) / 255);
+            *d++ = (unsigned char) ((r * a) / 255);
         }
     }
 

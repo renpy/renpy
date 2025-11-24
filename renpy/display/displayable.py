@@ -19,15 +19,15 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from typing import Any, Callable, Literal, Self, TypedDict, Unpack
 
 import copy
 
 import renpy
 
+type Placement = tuple[float | None, float | None, float | None, float | None, float | None, float | None, bool]
 
-def place(width, height, sw, sh, placement):
+def place(width: float, height: float, sw: float, sh: float, placement: Placement) -> tuple[float, float]:
     """
     Performs the Ren'Py placement algorithm.
 
@@ -40,6 +40,8 @@ def place(width, height, sw, sh, placement):
 
     `placement`
         The tuple returned by Displayable.get_placement().
+
+    Returns a tuple of (xpos, ypos) to where displayable should be placed.
     """
 
     xpos, ypos, xanchor, yanchor, xoffset, yoffset, _subpixel = placement
@@ -80,20 +82,26 @@ class DisplayableArguments(renpy.object.Object):
     displayable.
     """
 
-    # The name of the displayable without any arguments.
-    name = ()  # type: tuple
+    name: tuple[str, ...] = ()
+    "The name of the displayable without any arguments."
 
-    # Arguments supplied.
-    args = ()  # type: tuple
+    args: tuple[str, ...] = ()
+    "Arguments supplied."
 
-    # The style prefix in play. This is used by DynamicImage to figure
-    # out the prefix list to apply.
-    prefix = None  # Optional[str]
+    # This is used by DynamicImage to figure out the prefix list to apply.
+    prefix: str | None = None
+    "The style prefix in play."
 
-    # True if lint is in use.
-    lint = False
+    lint: bool = False
+    "True if lint is in use."
 
-    def copy(self, **kwargs):
+    class _DisplayableArguments(TypedDict, total=False):
+        name: tuple[str, ...]
+        args: tuple[str, ...]
+        prefix: str | None
+        lint: bool
+
+    def copy(self, **kwargs: Unpack[_DisplayableArguments]) -> "DisplayableArguments":
         """
         Returns a copy of this object with the various fields set to the
         values they were given in kwargs.
@@ -136,81 +144,98 @@ class Displayable(renpy.object.Object):
     # get_placement can be called at any time, so can't
     # assume anything.
 
-    # If True this displayable can accept focus.
-    # If False, it can't, but it keeps its place in the focus order.
-    # If None, it does not have a place in the focus order.
-    focusable = None
+    focusable: bool | None = None
+    """
+    If True this displayable can accept focus.
+    If False, it can't, but it keeps its place in the focus order.
+    If None, it does not have a place in the focus order.
+    """
 
-    # This is the focus named assigned by the focus code.
-    full_focus_name = None
+    full_focus_name: tuple[str, int] | None = None
+    "This is the focus named assigned by the focus code."
 
-    # A role ('selected_' or '' that prefixes the style).
-    role = ""
+    role: str = ""
+    "A role (e.g. 'selected_') that prefixes the style."
 
-    # The event we'll pass on to our parent transform.
-    transform_event = None
+    transform_event: str | None = None
+    "The event we'll pass on to our parent transform."
 
-    # Can we change our look in response to transform_events?
-    transform_event_responder = False
+    transform_event_responder: bool = False
+    "True if it can change the look in response to transform_events"
 
-    # The main displayable, if this displayable is the root of a composite
-    # displayable. (This is used by SL to figure out where to add children
-    # to.) If None, it is itself.
-    _main = None
+    # This is used by SL to figure out where to add children to.
+    _main: "Displayable | None" = None
+    """The main displayable, if this displayable is the root of a composite
+    displayable. If None, it is itself."""
 
-    # A list of the children that make up this composite displayable.
-    _composite_parts = []
+    _composite_parts: list["Displayable"] = []
+    "A list of the children that make up this composite displayable."
 
-    # The location the displayable was created at, if known.
-    _location = None
+    _location: tuple[str, int] | None = None
+    "The location the displayable was created at, if known."
 
-    # Does this displayable use the scope?
-    _uses_scope = False
+    _uses_scope: bool = False
+    "True if the displayable uses the scope."
 
-    # Arguments supplied to this displayable.
     _args = DisplayableArguments()
+    "Arguments supplied to this displayable."
 
-    # Set to true of the displayable is duplicatable (has a non-trivial
-    # duplicate method), or one of its children is.
-    _duplicatable = False
+    _duplicatable: bool = False
+    """
+    Subclasses should set this to True if displayable is duplicatable (has a
+    non-trivial duplicate method), or one of its children is.
+    """
 
-    # Does this displayable require clipping?
-    _clipping = False
+    _clipping: bool = False
+    "True if this displayable requires clipping."
 
-    # Does this displayable have a tooltip?
-    _tooltip = None
+    _tooltip: Any | None = None
+    "Tooltip of this displayable or None if there is none."
 
-    # Should hbox and vbox skip this displayable?
-    _box_skip = False
+    _box_skip: bool = False
+    "True if this displayable should be skipped by hbox and vbox."
 
-    # If not None, this should be a (width, height) tuple that overrides the
-    # amount of space offered to the displayable.
-    _offer_size = None
+    _offer_size: tuple[int, int] | None = None
+    """
+    If not None, this should be a (width, height) tuple that overrides the
+    amount of space offered to the displayable.
+    """
 
-    # If true, this displayable will be treated as draggable in its own right.
-    # This is used by viewport to decide if a drag is meant for the viewport
-    # or for its child.
     _draggable = False
+    """
+    If true, this displayable will be treated as draggable in its own right.
+    This is used by viewport to decide if a drag is meant for the viewport
+    or for its child.
+    """
 
-    # Used by a transition (or transition-like object) to determine how long to
-    # delay for.
-    delay = None  # type: float|None
+    delay: float | None = None
+    """
+    Used by a transition (or transition-like object) to determine how long to
+    delay for.
+    """
 
-    # An id that can be used to identify this displayable.
-    id = None  # type: str|None
+    id: str | None = None
+    "An id that can be used to identify this displayable."
 
     def __ne__(self, o):
         return not (self == o)
 
     def __init__(
-        self, focus=None, default=False, style="default", _args=None, tooltip=None, default_focus=False, **properties
+        self,
+        focus: str | None = None,
+        default: bool = False,
+        style: str = "default",
+        _args: DisplayableArguments | None = None,
+        tooltip: Any | None = None,
+        default_focus: bool = False,
+        **properties: Any,
     ):
         global default_style
 
-        if (style == "default") and (not properties):
+        if style == "default" and not properties:
             self.style = default_style
         else:
-            self.style = renpy.style.Style(style, properties)  # @UndefinedVariable
+            self.style = renpy.style.Style(style, properties)
 
         self.focus_name = focus
         self.default = default or default_focus
@@ -219,7 +244,7 @@ class Displayable(renpy.object.Object):
         if _args is not None:
             self._args = _args
 
-    def _copy(self, args=None):
+    def _copy(self, args: DisplayableArguments | None = None) -> Self:
         """
         Makes a shallow copy of the displayable. If `args` is provided,
         replaces the arguments with the stored copy.
@@ -232,7 +257,7 @@ class Displayable(renpy.object.Object):
 
         return rv
 
-    def _duplicate(self, args):
+    def _duplicate(self, args: DisplayableArguments | None = None) -> Self:
         """
         Makes a duplicate copy of the following kids of displayables:
 
@@ -254,14 +279,14 @@ class Displayable(renpy.object.Object):
 
         return self
 
-    def _get_tooltip(self):
+    def _get_tooltip(self) -> Any | None:
         """
         Returns the tooltip of this displayable.
         """
 
         return self._tooltip
 
-    def _in_current_store(self):
+    def _in_current_store(self) -> Self:
         """
         Returns a version of this displayable that will not change as it is
         rendered.
@@ -277,8 +302,6 @@ class Displayable(renpy.object.Object):
 
         self._duplicatable = False
 
-        return
-
     def parameterize(self, name, parameters):
         """
         Obsolete alias for _duplicate.
@@ -287,7 +310,7 @@ class Displayable(renpy.object.Object):
         a = self._args.copy(name=name, args=parameters)
         return self._duplicate(a)
 
-    def _equals(self, o):
+    def _equals(self, o: object):
         """
         This is a utility method that can be called by a Displayable's
         __eq__ method, to compare displayables for type and displayable
@@ -297,19 +320,19 @@ class Displayable(renpy.object.Object):
         if type(self) is not type(o):
             return False
 
-        if self.focus_name != o.focus_name:
+        if self.focus_name != o.focus_name:  # type: ignore
             return False
 
-        if self.style != o.style:
+        if self.style != o.style:  # type: ignore
             return False
 
-        if self.default != o.default:
+        if self.default != o.default:  # type: ignore
             return False
 
         return True
 
-    def _repr_info(self):
-        return None
+    def _repr_info(self) -> str | None:
+        "Extra information to display in the repr."
 
     def __repr__(self):
         rep = object.__repr__(self)
@@ -321,7 +344,7 @@ class Displayable(renpy.object.Object):
         parto = rep.rpartition(" at ")
         return " ".join((parto[0], reprinfo, "at", parto[2]))
 
-    def find_focusable(self, callback, focus_name):
+    def find_focusable(self, callback: Callable[["Displayable | None", str], None], focus_name: str):
         focus_name = self.focus_name or focus_name
 
         if self.focusable:
@@ -335,7 +358,7 @@ class Displayable(renpy.object.Object):
 
             i.find_focusable(callback, focus_name)
 
-    def focus(self, default=False):
+    def focus(self, default: bool = False):
         """
         Called to indicate that this widget has the focus.
         """
@@ -345,20 +368,22 @@ class Displayable(renpy.object.Object):
         if not default:
             renpy.exports.play(self.style.hover_sound)
 
-    def unfocus(self, default=False):
+    def unfocus(self, default: bool = False):
         """
         Called to indicate that this widget has become unfocused.
         """
 
         self.set_style_prefix(self.role + "idle_", True)
 
-    def is_focused(self):
+    def is_focused(self) -> bool:
+        "True if this displayable is currently focused."
+
         if renpy.display.focus.grab and renpy.display.focus.grab is not self:
-            return
+            return False
 
         return renpy.game.context().scene_lists.focused is self
 
-    def set_style_prefix(self, prefix, root):
+    def set_style_prefix(self, prefix: str, root: bool):
         """
         Called to set the style prefix of this widget and its child
         widgets, if any.
@@ -373,7 +398,7 @@ class Displayable(renpy.object.Object):
         self.style.set_prefix(prefix)
         renpy.display.render.redraw(self, 0)
 
-    def render(self, width, height, st, at):
+    def render(self, width: float, height: float, st: float, at: float) -> renpy.display.render.Render:
         """
         Called to display this displayable. This is called with width
         and height parameters, which give the largest width and height
@@ -388,7 +413,7 @@ class Displayable(renpy.object.Object):
 
         raise Exception("Render not implemented.")
 
-    def event(self, ev, x, y, st):
+    def event(self, ev: renpy.pygame.event.EventType, x: int, y: int, st: float) -> Any | None:
         """
         Called to report than an event has occurred. Ev is the raw
         pygame event object representing that event. If the event
@@ -402,7 +427,7 @@ class Displayable(renpy.object.Object):
 
         return None
 
-    def get_placement(self):
+    def get_placement(self) -> Placement:
         """
         Returns a style object containing placement information for
         this Displayable. Children are expected to overload this
@@ -411,7 +436,7 @@ class Displayable(renpy.object.Object):
 
         return self.style.get_placement()
 
-    def visit_all(self, callback, seen=None):
+    def visit_all(self, callback: Callable[["Displayable"], None], seen: set[int] | None = None):
         """
         Calls the callback on this displayable, and then on all children
         of this displayable.
@@ -433,7 +458,7 @@ class Displayable(renpy.object.Object):
 
         callback(self)
 
-    def visit(self):
+    def visit(self) -> list["Displayable | None"]:
         """
         Called to ask the displayable to return a list of its children
         (including children taken from styles). For convenience, this
@@ -465,7 +490,16 @@ class Displayable(renpy.object.Object):
 
         return
 
-    def place(self, dest, x, y, width, height, surf, main=True):
+    def place(
+        self,
+        dest: renpy.display.render.Render | None,
+        x: float,
+        y: float,
+        width: float,
+        height: float,
+        surf: renpy.display.render.Render,
+        main: bool = True,
+    ) -> tuple[float, float]:
         """
         This places a render (which must be of this displayable)
         within a bounding area. Returns an (x, y) tuple giving the location
@@ -505,7 +539,7 @@ class Displayable(renpy.object.Object):
 
     _store_transform_event = False
 
-    def set_transform_event(self, event):
+    def set_transform_event(self, event: str):
         """
         Sets the transform event of this displayable to event.
 
@@ -524,14 +558,14 @@ class Displayable(renpy.object.Object):
             if self.transform_event_responder:
                 renpy.display.render.redraw(self, 0)
 
-    def _handles_event(self, event):
+    def _handles_event(self, event: str) -> bool:
         """
         Returns True if the displayable handles event, False otherwise.
         """
 
         return False
 
-    def _hide(self, st, at, kind):
+    def _hide(self, st: float, at: float, kind: Literal["hide", "replace", "cancel"]) -> "Displayable | None":
         """
         Returns None if this displayable is ready to be hidden, or
         a replacement displayable if it doesn't want to be hidden
@@ -549,7 +583,7 @@ class Displayable(renpy.object.Object):
         No longer used.
         """
 
-    def _target(self):
+    def _target(self) -> "Displayable":
         """
         If this displayable is part of a chain of one or more references,
         returns the ultimate target of those references. Otherwise, returns
@@ -558,7 +592,7 @@ class Displayable(renpy.object.Object):
 
         return self
 
-    def _change_transform_child(self, child):
+    def _change_transform_child(self, child) -> Self:
         """
         If this is a transform, makes a copy of the transform and sets
         the child of the innermost transform to this. Otherwise,
@@ -574,19 +608,18 @@ class Displayable(renpy.object.Object):
 
         return
 
-    def _tts_common(self, default_alt=None, reverse=False):
+    def _tts_common(self, default_alt: str | None = None, reverse: bool = False, raw: bool = False) -> str:
         rv = []
 
+        children = self.visit()
         if reverse:
-            order = -1
-        else:
-            order = 1
+            children = reversed(children)
 
         speech = ""
 
-        for i in self.visit()[::order]:
+        for i in children:
             if i is not None:
-                speech = i._tts()
+                speech = i._tts(raw=raw)
 
                 if isinstance(speech, renpy.display.tts.TTSDone):
                     if speech.strip():
@@ -608,24 +641,27 @@ class Displayable(renpy.object.Object):
             alt = default_alt
 
         if alt is not None:
-            rv = renpy.substitutions.substitute(alt, scope={"text": rv})[0]
+            if raw:
+                rv = alt
+            else:
+                rv = renpy.substitutions.substitute(alt, scope={"text": rv})[0]
 
         rv = type(speech)(rv)
 
         return rv
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         """
         Returns the self-voicing text of this displayable and all of its
         children that cannot take focus. If the displayable can take focus,
         returns the empty string.
         """
 
-        return self._tts_common()
+        return self._tts_common(raw=raw)
 
-    def _tts_all(self):
+    def _tts_all(self, raw: bool) -> str:
         """
         Returns the self-voicing text of this displayable and all of its
         children that cannot take focus.
         """
-        return self._tts_common()
+        return self._tts_common(raw=raw)

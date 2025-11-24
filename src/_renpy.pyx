@@ -26,8 +26,10 @@ def version():
     return (6, 12, 0)
 
 from sdl2 cimport *
-from pygame_sdl2 cimport *
-from pygame_sdl2 import Surface
+
+from renpy.pygame.rwobject cimport RWopsFromPython
+
+import renpy
 
 cdef extern from "renpy.h":
 
@@ -94,14 +96,14 @@ cdef extern from "renpy.h":
     void staticgray_core(object, object,
                          int, int, int, int, int, char *)
 
+    void premultiply_alpha_core(object, object)
+
     void PyErr_Clear()
 
 
-from pygame_sdl2 import Surface as PygameSurface
-
 def save_png(surf, file, compress=-1):
 
-    if not isinstance(surf, PygameSurface):
+    if not isinstance(surf, renpy.pygame.Surface):
         raise Exception("save_png requires a pygame Surface as its first argument.")
 
     save_png_core(surf, RWopsFromPython(file), compress)
@@ -109,10 +111,10 @@ def save_png(surf, file, compress=-1):
 
 def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
 
-    if not isinstance(pysrc, PygameSurface):
+    if not isinstance(pysrc, renpy.pygame.Surface):
         raise Exception("pixellate requires a pygame Surface as its first argument.")
 
-    if not isinstance(pydst, PygameSurface):
+    if not isinstance(pydst, renpy.pygame.Surface):
         raise Exception("pixellate requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -139,10 +141,10 @@ def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
 # system, and needs to be determined at a higher level.
 def map(pysrc, pydst, r, g, b, a): # @ReservedAssignment
 
-    if not isinstance(pysrc, PygameSurface):
+    if not isinstance(pysrc, renpy.pygame.Surface):
         raise Exception("map requires a pygame Surface as its first argument.")
 
-    if not isinstance(pydst, PygameSurface):
+    if not isinstance(pydst, renpy.pygame.Surface):
         raise Exception("map requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -171,10 +173,10 @@ def map(pysrc, pydst, r, g, b, a): # @ReservedAssignment
 # system, and needs to be determined at a higher level.
 def linmap(pysrc, pydst, r, g, b, a):
 
-    if not isinstance(pysrc, PygameSurface):
+    if not isinstance(pysrc, renpy.pygame.Surface):
         raise Exception("map requires a pygame Surface as its first argument.")
 
-    if not isinstance(pydst, PygameSurface):
+    if not isinstance(pydst, renpy.pygame.Surface):
         raise Exception("map requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -200,13 +202,13 @@ def linmap(pysrc, pydst, r, g, b, a):
 
 def blur(pysrc, pywrk, pydst, xrad, yrad=None):
 
-    if not isinstance(pysrc, PygameSurface):
+    if not isinstance(pysrc, renpy.pygame.Surface):
         raise Exception("blur requires a pygame Surface as its first argument.")
 
-    if not isinstance(pywrk, PygameSurface):
+    if not isinstance(pywrk, renpy.pygame.Surface):
         raise Exception("blur requires a pygame Surface as its second argument.")
 
-    if not isinstance(pydst, PygameSurface):
+    if not isinstance(pydst, renpy.pygame.Surface):
         raise Exception("blur requires a pygame Surface as its third argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -242,10 +244,10 @@ def blur(pysrc, pywrk, pydst, xrad, yrad=None):
 
 def linblur(pysrc, pydst, radius, vertical=0):
 
-    if not isinstance(pysrc, PygameSurface):
+    if not isinstance(pysrc, renpy.pygame.Surface):
         raise Exception("linblur requires a pygame Surface as its first argument.")
 
-    if not isinstance(pydst, PygameSurface):
+    if not isinstance(pydst, renpy.pygame.Surface):
         raise Exception("linblur requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -274,10 +276,10 @@ def linblur(pysrc, pydst, radius, vertical=0):
 
 def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
-    if not isinstance(pysrc, PygameSurface):
+    if not isinstance(pysrc, renpy.pygame.Surface):
         raise Exception("alpha_munge requires a pygame Surface as its first argument.")
 
-    if not isinstance(pydst, PygameSurface):
+    if not isinstance(pydst, renpy.pygame.Surface):
         raise Exception("alpha_munge requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -306,10 +308,10 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
 # def stretch(pysrc, pydst, rect):
 
-#     if not isinstance(pysrc, PygameSurface):
+#     if not isinstance(pysrc, renpy.pygame.Surface):
 #         raise Exception("stretch requires a pygame Surface as its first argument.")
 
-#     if not isinstance(pydst, PygameSurface):
+#     if not isinstance(pydst, renpy.pygame.Surface):
 #         raise Exception("stretch requires a pygame Surface as its second argument.")
 
 #     if pydst.get_bitsize() != pysrc.get_bitsize():
@@ -329,10 +331,10 @@ def bilinear(pysrc, pydst,
              dest_xoff=0.0, dest_yoff=0.0, dest_width=None, dest_height=None,
              precise=0):
 
-    if not isinstance(pysrc, PygameSurface):
+    if not isinstance(pysrc, renpy.pygame.Surface):
         raise Exception("bilinear requires a pygame Surface as its first argument.")
 
-    if not isinstance(pydst, PygameSurface):
+    if not isinstance(pydst, renpy.pygame.Surface):
         raise Exception("bilinear requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -366,7 +368,7 @@ def bilinear(pysrc, pydst,
 
 
 def check(surf):
-    if not isinstance(surf, PygameSurface):
+    if not isinstance(surf, renpy.pygame.Surface):
         raise Exception("Surface must be a pygame surface.")
 
     if surf.get_bitsize() != 32:
@@ -458,7 +460,17 @@ def subpixel(pysrc, pydst, xoffset, yoffset, shift):
     pydst.blit(pysrc, (int(xoffset), int(yoffset)))
 
 
+def premultiply_alpha(pysrc, pydst):
+    """
+    Performs alpha premultiplication on `pysrc` and stores the result in `pydst`.
+    """
+
+    check(pysrc)
+    check(pydst)
+
+    premultiply_alpha_core(pysrc, pydst)
+
+
 # Be sure to update scale.py when adding something new here!
 
-import_pygame_sdl2()
 core_init()

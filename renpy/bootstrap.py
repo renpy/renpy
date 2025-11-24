@@ -25,6 +25,7 @@ import subprocess
 import io
 import textwrap
 
+
 # Encoding and sys.stderr/stdout handling ######################################
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
@@ -204,6 +205,19 @@ def excepthook(type, value, traceback):
     te.format(renpy.error.MaybeColoredExceptionPrintContext(sys.stderr))
 
 
+def relaunch():
+    """
+    Call this to launch a new copy of the same game.
+    """
+
+    if hasattr(sys, "renpy_executable"):
+        subprocess.Popen([sys.renpy_executable] + sys.argv[1:])  # type: ignore
+    else:
+        subprocess.Popen([sys.executable] + sys.argv)
+
+
+
+
 def bootstrap(renpy_base):
     global renpy
 
@@ -216,6 +230,15 @@ def bootstrap(renpy_base):
 
     if not isinstance(renpy_base, str):
         renpy_base = str(renpy_base, FSENCODING)
+
+    renpy.config.renpy_base = renpy_base
+
+    # Handle any file deletions or renamed that were deferred from a previous update.
+
+    import renpy.update.deferred
+    if renpy.update.deferred.init() and renpy.windows:
+        relaunch()
+        sys.exit(0)
 
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
@@ -285,22 +308,21 @@ def bootstrap(renpy_base):
     # Set up Ren'Py specific exception handling.
     sys.excepthook = excepthook
 
+
     # Check that we have installed pygame properly. This also deals with
     # weird cases on Windows and Linux where we can't import modules. (On
     # windows ";" is a directory separator in PATH, so if it's in a parent
     # directory, we won't get the libraries in the PATH, and hence pygame
     # won't import.)
     try:
-        import pygame_sdl2
-
-        if not ("pygame" in sys.modules):
-            pygame_sdl2.import_as_pygame()
+        import renpy.pygame
+        renpy.pygame.import_as_pygame()
     except Exception as e:
         e.add_note(
             textwrap.dedent(f"""
-        Could not import pygame_sdl2. Please ensure that this program has been built
-        and unpacked properly. Also, make sure that the directories containing
-        this program do not contain : or ; in their names.
+        Could not import renpy.pygame. Please ensure that this program has been built
+        and unpacked properly. Also, make sure that the directories containing this
+        program do not contain : or ; in their names.
 
         You may be using a system install of python. Please run {name}.sh,
         {name}.exe, or {name}.app instead.
@@ -313,7 +335,7 @@ def bootstrap(renpy_base):
 
     # If we're not given a command, show the presplash.
     if args.command == "run" and not renpy.mobile:
-        import renpy.display.presplash  # @Reimport
+        import renpy.display.presplash
 
         renpy.display.presplash.start(basedir, gamedir)
 
@@ -367,7 +389,6 @@ def bootstrap(renpy_base):
                     sys.path.insert(0, basedir)
 
                 renpy.game.args = args
-                renpy.config.renpy_base = renpy_base
                 renpy.config.basedir = basedir
                 renpy.config.gamedir = gamedir
                 renpy.config.args = []  # type: ignore
@@ -391,10 +412,7 @@ def bootstrap(renpy_base):
                 exit_status = e.status
 
                 if e.relaunch:
-                    if hasattr(sys, "renpy_executable"):
-                        subprocess.Popen([sys.renpy_executable] + sys.argv[1:])  # type: ignore
-                    else:
-                        subprocess.Popen([sys.executable] + sys.argv)
+                    relaunch()
 
             except renpy.game.ParseErrorException:
                 pass

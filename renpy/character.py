@@ -553,7 +553,7 @@ def display_say(
     cb_args,
     with_none,
     callback,
-    type,  # @ReservedAssignment
+    type,
     checkpoint=True,
     ctc_timedpause=None,
     ctc_force=False,
@@ -675,7 +675,7 @@ def display_say(
             retain_count += 1
             retain_tag = "_retain_{}".format(retain_count)
 
-            if not renpy.exports.get_screen(retain_tag):
+            if not renpy.exports.get_screen(retain_tag, renpy.store.bubble.retain_layer):
                 break
 
     # Call the begin callback.
@@ -797,7 +797,7 @@ def display_say(
             if multiple:
                 show_args["multiple"] = multiple
 
-            if retain:
+            if retain and last_pause:
                 show_args["retain"] = retain_tag
 
             what_text = show_function(who, what_string, **show_args)
@@ -830,7 +830,7 @@ def display_say(
                     ctc = None
 
             if interact or what_string or (what_ctc is not None) or (behavior and afm):
-                if not isinstance(what_text, renpy.text.text.Text):  # @UndefinedVariable
+                if not isinstance(what_text, renpy.text.text.Text):
                     raise Exception("The say screen (or show_function) must return a Text object.")
 
                 if what_ctc:
@@ -883,10 +883,18 @@ def display_say(
             if not slow:
                 slow_done()
 
+            had_exception = False
+
             if final:
                 try:
                     rv = renpy.ui.interact(mouse="say", type=type, roll_forward=roll_forward)
+                except Exception as e:
+                    had_exception = True
+                    raise
                 finally:
+
+                    pause_callback("interact_done", exception=had_exception)
+
                     if retain and what_ctc:
                         if ctc_position == "nestled":
                             what_text.set_ctc(["{_end}", what_ctc])
@@ -915,6 +923,8 @@ def display_say(
                 if not last_pause:
                     for i in renpy.config.say_sustain_callbacks:
                         i()
+
+
 
     except (renpy.game.JumpException, renpy.game.CallException) as e:
         exception = e

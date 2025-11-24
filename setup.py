@@ -67,8 +67,10 @@ def main():
     library("harfbuzz")
     library("freetype")
     library("fribidi")
+    library("SDL2_image")
     library("SDL2")
     library("png")
+    library("jpeg")
     library("z")
 
     if windows:
@@ -85,8 +87,6 @@ def main():
 
     # src/ directory.
     cython("_renpy", [ "src/IMG_savepng.c", "src/core.c" ])
-    cython("_renpybidi", [ "src/renpybidicore.c" ])
-    cython("_renpytfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
 
     # renpy
     cython("renpy.astsupport")
@@ -95,6 +95,7 @@ def main():
     cython("renpy.pydict")
     cython("renpy.style")
     cython("renpy.encryption")
+    cython("renpy.tfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
 
     # renpy.audio
     cython("renpy.audio.renpysound", [ "src/renpysound_core.c", "src/ffmedia.c" ],
@@ -140,6 +141,28 @@ def main():
     cython("renpy.text.texwrap")
     cython("renpy.text.ftfont", [ "src/ftsupport.c", "src/ttgsubtable.c" ])
     cython("renpy.text.hbfont", [ "src/ftsupport.c" ])
+    cython("renpy.text.bidi", [ "src/renpybidicore.c" ])
+
+    # renpy.pygame
+    cython("renpy.pygame.error")
+    cython("renpy.pygame.color")
+    cython("renpy.pygame.controller")
+    cython("renpy.pygame.rect")
+    cython("renpy.pygame.rwobject")
+    cython("renpy.pygame.surface", source=[ "src/pygame/alphablit.c" ])
+    cython("renpy.pygame.display")
+    cython("renpy.pygame.event")
+    cython("renpy.pygame.locals")
+    cython("renpy.pygame.key")
+    cython("renpy.pygame.mouse")
+    cython("renpy.pygame.joystick")
+    cython("renpy.pygame.power")
+    cython("renpy.pygame.pygame_time")
+    cython("renpy.pygame.image", source=[ "src/pygame/write_jpeg.c", "src/pygame/write_png.c" ])
+    cython("renpy.pygame.transform", source=[ "src/pygame/SDL2_rotozoom.c" ])
+    cython("renpy.pygame.gfxdraw", source=[ "src/pygame/SDL_gfxPrimitives.c" ])
+    cython("renpy.pygame.draw")
+    cython("renpy.pygame.scrap")
 
     generate_all_cython()
     find_unnecessary_gen()
@@ -152,10 +175,7 @@ def main():
     env("CFLAGS", f"pkg-config --cflags {pkgconfig_packages}")
     env("LDFLAGS", f"pkg-config --libs {pkgconfig_packages}")
 
-    import renpy
-    version = renpy.version[7:].partition(".")[0] + ".99.99"
-
-    setuplib.setup("renpy", version)
+    setuplib.setup("renpy", "8.99.99")
 
 
 if __name__ == "__main__":

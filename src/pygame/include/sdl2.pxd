@@ -39,6 +39,20 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     void SDL_free(void *mem)
 
+    ctypedef void *(*SDL_malloc_func)(size_t size)
+
+    ctypedef void *(*SDL_calloc_func)(size_t nmemb, size_t size)
+
+    ctypedef void *(*SDL_realloc_func)(void *mem, size_t size)
+
+    ctypedef void (*SDL_free_func)(void *mem)
+
+    void SDL_GetMemoryFunctions(SDL_malloc_func *malloc_func, SDL_calloc_func *calloc_func, SDL_realloc_func *realloc_func, SDL_free_func *free_func)
+
+    int SDL_SetMemoryFunctions(SDL_malloc_func malloc_func, SDL_calloc_func calloc_func, SDL_realloc_func realloc_func, SDL_free_func free_func)
+
+    int SDL_GetNumAllocations()
+
     char *SDL_getenv(const char *name)
 
     int SDL_setenv(const char *name, const char *value, int overwrite)
@@ -63,11 +77,15 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     int SDL_memcmp(const void *s1, const void *s2, size_t len)
 
+    wchar_t *SDL_wcsdup(const wchar_t *wstr)
+
     size_t SDL_wcslen(const wchar_t *wstr)
 
     size_t SDL_wcslcpy(wchar_t *dst, const wchar_t *src, size_t maxlen)
 
     size_t SDL_wcslcat(wchar_t *dst, const wchar_t *src, size_t maxlen)
+
+    int SDL_wcscmp(const wchar_t *str1, const wchar_t *str2)
 
     size_t SDL_strlen(const char *str)
 
@@ -90,6 +108,8 @@ cdef extern from "SDL2/SDL.h" nogil:
     char *SDL_strrchr(const char *str, int c)
 
     char *SDL_strstr(const char *haystack, const char *needle)
+
+    size_t SDL_utf8strlen(const char *str)
 
     char *SDL_itoa(int value, char *str, int radix)
 
@@ -131,35 +151,75 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     double SDL_acos(double x)
 
+    float SDL_acosf(float x)
+
     double SDL_asin(double x)
+
+    float SDL_asinf(float x)
 
     double SDL_atan(double x)
 
+    float SDL_atanf(float x)
+
     double SDL_atan2(double x, double y)
+
+    float SDL_atan2f(float x, float y)
 
     double SDL_ceil(double x)
 
+    float SDL_ceilf(float x)
+
     double SDL_copysign(double x, double y)
+
+    float SDL_copysignf(float x, float y)
 
     double SDL_cos(double x)
 
     float SDL_cosf(float x)
 
+    double SDL_exp(double x)
+
+    float SDL_expf(float x)
+
     double SDL_fabs(double x)
+
+    float SDL_fabsf(float x)
 
     double SDL_floor(double x)
 
+    float SDL_floorf(float x)
+
+    double SDL_fmod(double x, double y)
+
+    float SDL_fmodf(float x, float y)
+
     double SDL_log(double x)
+
+    float SDL_logf(float x)
+
+    double SDL_log10(double x)
+
+    float SDL_log10f(float x)
 
     double SDL_pow(double x, double y)
 
+    float SDL_powf(float x, float y)
+
     double SDL_scalbn(double x, int n)
+
+    float SDL_scalbnf(float x, int n)
 
     double SDL_sin(double x)
 
     float SDL_sinf(float x)
 
     double SDL_sqrt(double x)
+
+    float SDL_sqrtf(float x)
+
+    double SDL_tan(double x)
+
+    float SDL_tanf(float x)
 
     ctypedef _SDL_iconv_t *SDL_iconv_t
 
@@ -171,29 +231,31 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     char *SDL_iconv_string(const char *tocode, const char *fromcode, const char *inbuf, size_t inbytesleft)
 
+    ctypedef int (*SDL_main_func)(int argc, char *argv[])
+
     int SDL_main(int argc, char *argv[])
 
     void SDL_SetMainReady()
 
-    ctypedef enum SDL_assert_state:
+    ctypedef enum SDL_AssertState:
         SDL_ASSERTION_RETRY
         SDL_ASSERTION_BREAK
         SDL_ASSERTION_ABORT
         SDL_ASSERTION_IGNORE
         SDL_ASSERTION_ALWAYS_IGNORE
 
-    ctypedef struct SDL_assert_data:
+    ctypedef struct SDL_AssertData:
         int always_ignore
         unsigned int trigger_count
         const char *condition
         const char *filename
         int linenum
         const char *function
-        const SDL_assert_data *next
+        const SDL_AssertData *next
 
-    SDL_assert_state SDL_ReportAssertion(SDL_assert_data *, const char *, const char *, int)
+    SDL_AssertState SDL_ReportAssertion(SDL_AssertData *, const char *, const char *, int)
 
-    ctypedef SDL_assert_state (*SDL_AssertionHandler)(const SDL_assert_data *data, void *userdata)
+    ctypedef SDL_AssertState (*SDL_AssertionHandler)(const SDL_AssertData *data, void *userdata)
 
     void SDL_SetAssertionHandler(SDL_AssertionHandler handler, void *userdata)
 
@@ -201,7 +263,7 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     SDL_AssertionHandler SDL_GetAssertionHandler(void **puserdata)
 
-    const SDL_assert_data *SDL_GetAssertionReport()
+    const SDL_AssertData *SDL_GetAssertionReport()
 
     void SDL_ResetAssertionReport()
 
@@ -212,6 +274,10 @@ cdef extern from "SDL2/SDL.h" nogil:
     void SDL_AtomicLock(SDL_SpinLock *lock)
 
     void SDL_AtomicUnlock(SDL_SpinLock *lock)
+
+    void SDL_MemoryBarrierReleaseFunction()
+
+    void SDL_MemoryBarrierAcquireFunction()
 
     ctypedef struct SDL_atomic_t:
         int value
@@ -300,10 +366,13 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_THREAD_PRIORITY_LOW
         SDL_THREAD_PRIORITY_NORMAL
         SDL_THREAD_PRIORITY_HIGH
+        SDL_THREAD_PRIORITY_TIME_CRITICAL
 
     ctypedef int (*SDL_ThreadFunction)(void *data)
 
     SDL_Thread *SDL_CreateThread(SDL_ThreadFunction fn, const char *name, void *data)
+
+    SDL_Thread *SDL_CreateThreadWithStackSize(SDL_ThreadFunction fn, const char *name, const size_t stacksize, void *data)
 
     const char *SDL_GetThreadName(SDL_Thread *thread)
 
@@ -362,6 +431,22 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     void SDL_FreeRW(SDL_RWops *area)
 
+    Sint64 SDL_RWsize(SDL_RWops *context)
+
+    Sint64 SDL_RWseek(SDL_RWops *context, Sint64 offset, int whence)
+
+    Sint64 SDL_RWtell(SDL_RWops *context)
+
+    size_t SDL_RWread(SDL_RWops *context, void *ptr, size_t size, size_t maxnum)
+
+    size_t SDL_RWwrite(SDL_RWops *context, const void *ptr, size_t size, size_t num)
+
+    int SDL_RWclose(SDL_RWops *context)
+
+    void *SDL_LoadFile_RW(SDL_RWops *src, size_t *datasize, int freesrc)
+
+    void *SDL_LoadFile(const char *file, size_t *datasize)
+
     Uint8 SDL_ReadU8(SDL_RWops *src)
 
     Uint16 SDL_ReadLE16(SDL_RWops *src)
@@ -417,7 +502,7 @@ cdef extern from "SDL2/SDL.h" nogil:
         int len_cvt
         int len_mult
         double len_ratio
-        SDL_AudioFilter filters[10]
+        SDL_AudioFilter filters[9 + 1]
         int filter_index
 
     int SDL_GetNumAudioDrivers()
@@ -461,9 +546,33 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     int SDL_ConvertAudio(SDL_AudioCVT *cvt)
 
+    ctypedef struct SDL_AudioStream
+
+    SDL_AudioStream *SDL_NewAudioStream(const SDL_AudioFormat src_format, const Uint8 src_channels, const int src_rate, const SDL_AudioFormat dst_format, const Uint8 dst_channels, const int dst_rate)
+
+    int SDL_AudioStreamPut(SDL_AudioStream *stream, const void *buf, int len)
+
+    int SDL_AudioStreamGet(SDL_AudioStream *stream, void *buf, int len)
+
+    int SDL_AudioStreamAvailable(SDL_AudioStream *stream)
+
+    int SDL_AudioStreamFlush(SDL_AudioStream *stream)
+
+    void SDL_AudioStreamClear(SDL_AudioStream *stream)
+
+    void SDL_FreeAudioStream(SDL_AudioStream *stream)
+
     void SDL_MixAudio(Uint8 *dst, const Uint8 *src, Uint32 len, int volume)
 
     void SDL_MixAudioFormat(Uint8 *dst, const Uint8 *src, SDL_AudioFormat format, Uint32 len, int volume)
+
+    int SDL_QueueAudio(SDL_AudioDeviceID dev, const void *data, Uint32 len)
+
+    Uint32 SDL_DequeueAudio(SDL_AudioDeviceID dev, void *data, Uint32 len)
+
+    Uint32 SDL_GetQueuedAudioSize(SDL_AudioDeviceID dev)
+
+    void SDL_ClearQueuedAudio(SDL_AudioDeviceID dev)
 
     void SDL_LockAudio()
 
@@ -507,7 +616,19 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     SDL_bool SDL_HasAVX()
 
+    SDL_bool SDL_HasAVX2()
+
+    SDL_bool SDL_HasAVX512F()
+
+    SDL_bool SDL_HasNEON()
+
     int SDL_GetSystemRAM()
+
+    size_t SDL_SIMDGetAlignment()
+
+    void *SDL_SIMDAlloc(const size_t len)
+
+    void SDL_SIMDFree(void *ptr)
 
     cdef  enum:
         SDL_PIXELTYPE_UNKNOWN
@@ -559,7 +680,7 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_PACKEDLAYOUT_2101010
         SDL_PACKEDLAYOUT_1010102
 
-    cdef  enum:
+    ctypedef enum SDL_PixelFormatEnum:
         SDL_PIXELFORMAT_UNKNOWN
         SDL_PIXELFORMAT_INDEX1LSB
         SDL_PIXELFORMAT_INDEX1MSB
@@ -591,11 +712,18 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_PIXELFORMAT_ABGR8888
         SDL_PIXELFORMAT_BGRA8888
         SDL_PIXELFORMAT_ARGB2101010
+        SDL_PIXELFORMAT_RGBA32
+        SDL_PIXELFORMAT_ARGB32
+        SDL_PIXELFORMAT_BGRA32
+        SDL_PIXELFORMAT_ABGR32
         SDL_PIXELFORMAT_YV12
         SDL_PIXELFORMAT_IYUV
         SDL_PIXELFORMAT_YUY2
         SDL_PIXELFORMAT_UYVY
         SDL_PIXELFORMAT_YVYU
+        SDL_PIXELFORMAT_NV12
+        SDL_PIXELFORMAT_NV21
+        SDL_PIXELFORMAT_EXTERNAL_OES
 
     ctypedef struct SDL_Color:
         Uint8 r
@@ -662,11 +790,21 @@ cdef extern from "SDL2/SDL.h" nogil:
         int x
         int y
 
+    ctypedef struct SDL_FPoint:
+        float x
+        float y
+
     ctypedef struct SDL_Rect:
         int x
         int y
         int w
         int h
+
+    ctypedef struct SDL_FRect:
+        float x
+        float y
+        float w
+        float h
 
     SDL_bool SDL_HasIntersection(const SDL_Rect *A, const SDL_Rect *B)
 
@@ -683,6 +821,28 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_BLENDMODE_BLEND
         SDL_BLENDMODE_ADD
         SDL_BLENDMODE_MOD
+        SDL_BLENDMODE_INVALID
+
+    ctypedef enum SDL_BlendOperation:
+        SDL_BLENDOPERATION_ADD
+        SDL_BLENDOPERATION_SUBTRACT
+        SDL_BLENDOPERATION_REV_SUBTRACT
+        SDL_BLENDOPERATION_MINIMUM
+        SDL_BLENDOPERATION_MAXIMUM
+
+    ctypedef enum SDL_BlendFactor:
+        SDL_BLENDFACTOR_ZERO
+        SDL_BLENDFACTOR_ONE
+        SDL_BLENDFACTOR_SRC_COLOR
+        SDL_BLENDFACTOR_ONE_MINUS_SRC_COLOR
+        SDL_BLENDFACTOR_SRC_ALPHA
+        SDL_BLENDFACTOR_ONE_MINUS_SRC_ALPHA
+        SDL_BLENDFACTOR_DST_COLOR
+        SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR
+        SDL_BLENDFACTOR_DST_ALPHA
+        SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA
+
+    SDL_BlendMode SDL_ComposeCustomBlendMode(SDL_BlendFactor srcColorFactor, SDL_BlendFactor dstColorFactor, SDL_BlendOperation colorOperation, SDL_BlendFactor srcAlphaFactor, SDL_BlendFactor dstAlphaFactor, SDL_BlendOperation alphaOperation)
 
     ctypedef struct SDL_Surface:
         Uint32 flags
@@ -700,9 +860,19 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     ctypedef int (*SDL_blit)(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
 
+    ctypedef enum SDL_YUV_CONVERSION_MODE:
+        SDL_YUV_CONVERSION_JPEG
+        SDL_YUV_CONVERSION_BT601
+        SDL_YUV_CONVERSION_BT709
+        SDL_YUV_CONVERSION_AUTOMATIC
+
     SDL_Surface *SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 
+    SDL_Surface *SDL_CreateRGBSurfaceWithFormat(Uint32 flags, int width, int height, int depth, Uint32 format)
+
     SDL_Surface *SDL_CreateRGBSurfaceFrom(void *pixels, int width, int height, int depth, int pitch, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+
+    SDL_Surface *SDL_CreateRGBSurfaceWithFormatFrom(void *pixels, int width, int height, int depth, int pitch, Uint32 format)
 
     void SDL_FreeSurface(SDL_Surface *surface)
 
@@ -719,6 +889,8 @@ cdef extern from "SDL2/SDL.h" nogil:
     int SDL_SetSurfaceRLE(SDL_Surface *surface, int flag)
 
     int SDL_SetColorKey(SDL_Surface *surface, int flag, Uint32 key)
+
+    SDL_bool SDL_HasColorKey(SDL_Surface *surface)
 
     int SDL_GetColorKey(SDL_Surface *surface, Uint32 *key)
 
@@ -737,6 +909,8 @@ cdef extern from "SDL2/SDL.h" nogil:
     SDL_bool SDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
 
     void SDL_GetClipRect(SDL_Surface *surface, SDL_Rect *rect)
+
+    SDL_Surface *SDL_DuplicateSurface(SDL_Surface *surface)
 
     SDL_Surface *SDL_ConvertSurface(SDL_Surface *src, const SDL_PixelFormat *fmt, Uint32 flags)
 
@@ -757,6 +931,12 @@ cdef extern from "SDL2/SDL.h" nogil:
     int SDL_UpperBlitScaled(SDL_Surface *src, const SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
 
     int SDL_LowerBlitScaled(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
+
+    void SDL_SetYUVConversionMode(SDL_YUV_CONVERSION_MODE mode)
+
+    SDL_YUV_CONVERSION_MODE SDL_GetYUVConversionMode()
+
+    SDL_YUV_CONVERSION_MODE SDL_GetYUVConversionModeForResolution(int width, int height)
 
     ctypedef struct SDL_DisplayMode:
         Uint32 format
@@ -782,6 +962,13 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_WINDOW_FULLSCREEN_DESKTOP
         SDL_WINDOW_FOREIGN
         SDL_WINDOW_ALLOW_HIGHDPI
+        SDL_WINDOW_MOUSE_CAPTURE
+        SDL_WINDOW_ALWAYS_ON_TOP
+        SDL_WINDOW_SKIP_TASKBAR
+        SDL_WINDOW_UTILITY
+        SDL_WINDOW_TOOLTIP
+        SDL_WINDOW_POPUP_MENU
+        SDL_WINDOW_VULKAN
 
     ctypedef enum SDL_WindowEventID:
         SDL_WINDOWEVENT_NONE
@@ -799,6 +986,19 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_WINDOWEVENT_FOCUS_GAINED
         SDL_WINDOWEVENT_FOCUS_LOST
         SDL_WINDOWEVENT_CLOSE
+        SDL_WINDOWEVENT_TAKE_FOCUS
+        SDL_WINDOWEVENT_HIT_TEST
+
+    ctypedef enum SDL_DisplayEventID:
+        SDL_DISPLAYEVENT_NONE
+        SDL_DISPLAYEVENT_ORIENTATION
+
+    ctypedef enum SDL_DisplayOrientation:
+        SDL_ORIENTATION_UNKNOWN
+        SDL_ORIENTATION_LANDSCAPE
+        SDL_ORIENTATION_LANDSCAPE_FLIPPED
+        SDL_ORIENTATION_PORTRAIT
+        SDL_ORIENTATION_PORTRAIT_FLIPPED
 
     ctypedef void *SDL_GLContext
 
@@ -827,6 +1027,9 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_GL_CONTEXT_PROFILE_MASK
         SDL_GL_SHARE_WITH_CURRENT_CONTEXT
         SDL_GL_FRAMEBUFFER_SRGB_CAPABLE
+        SDL_GL_CONTEXT_RELEASE_BEHAVIOR
+        SDL_GL_CONTEXT_RESET_NOTIFICATION
+        SDL_GL_CONTEXT_NO_ERROR
 
     ctypedef enum SDL_GLprofile:
         SDL_GL_CONTEXT_PROFILE_CORE
@@ -838,6 +1041,14 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG
         SDL_GL_CONTEXT_ROBUST_ACCESS_FLAG
         SDL_GL_CONTEXT_RESET_ISOLATION_FLAG
+
+    ctypedef enum SDL_GLcontextReleaseFlag:
+        SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE
+        SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH
+
+    ctypedef enum SDL_GLContextResetNotification:
+        SDL_GL_CONTEXT_RESET_NO_NOTIFICATION
+        SDL_GL_CONTEXT_RESET_LOSE_CONTEXT
 
     int SDL_GetNumVideoDrivers()
 
@@ -854,6 +1065,12 @@ cdef extern from "SDL2/SDL.h" nogil:
     const char *SDL_GetDisplayName(int displayIndex)
 
     int SDL_GetDisplayBounds(int displayIndex, SDL_Rect *rect)
+
+    int SDL_GetDisplayUsableBounds(int displayIndex, SDL_Rect *rect)
+
+    int SDL_GetDisplayDPI(int displayIndex, float *ddpi, float *hdpi, float *vdpi)
+
+    SDL_DisplayOrientation SDL_GetDisplayOrientation(int displayIndex)
 
     int SDL_GetNumDisplayModes(int displayIndex)
 
@@ -901,6 +1118,8 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     void SDL_GetWindowSize(SDL_Window *window, int *w, int *h)
 
+    int SDL_GetWindowBordersSize(SDL_Window *window, int *top, int *left, int *bottom, int *right)
+
     void SDL_SetWindowMinimumSize(SDL_Window *window, int min_w, int min_h)
 
     void SDL_GetWindowMinimumSize(SDL_Window *window, int *w, int *h)
@@ -910,6 +1129,8 @@ cdef extern from "SDL2/SDL.h" nogil:
     void SDL_GetWindowMaximumSize(SDL_Window *window, int *w, int *h)
 
     void SDL_SetWindowBordered(SDL_Window *window, SDL_bool bordered)
+
+    void SDL_SetWindowResizable(SDL_Window *window, SDL_bool resizable)
 
     void SDL_ShowWindow(SDL_Window *window)
 
@@ -935,13 +1156,39 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     SDL_bool SDL_GetWindowGrab(SDL_Window *window)
 
+    SDL_Window *SDL_GetGrabbedWindow()
+
     int SDL_SetWindowBrightness(SDL_Window *window, float brightness)
 
     float SDL_GetWindowBrightness(SDL_Window *window)
 
+    int SDL_SetWindowOpacity(SDL_Window *window, float opacity)
+
+    int SDL_GetWindowOpacity(SDL_Window *window, float *out_opacity)
+
+    int SDL_SetWindowModalFor(SDL_Window *modal_window, SDL_Window *parent_window)
+
+    int SDL_SetWindowInputFocus(SDL_Window *window)
+
     int SDL_SetWindowGammaRamp(SDL_Window *window, const Uint16 *red, const Uint16 *green, const Uint16 *blue)
 
     int SDL_GetWindowGammaRamp(SDL_Window *window, Uint16 *red, Uint16 *green, Uint16 *blue)
+
+    ctypedef enum SDL_HitTestResult:
+        SDL_HITTEST_NORMAL
+        SDL_HITTEST_DRAGGABLE
+        SDL_HITTEST_RESIZE_TOPLEFT
+        SDL_HITTEST_RESIZE_TOP
+        SDL_HITTEST_RESIZE_TOPRIGHT
+        SDL_HITTEST_RESIZE_RIGHT
+        SDL_HITTEST_RESIZE_BOTTOMRIGHT
+        SDL_HITTEST_RESIZE_BOTTOM
+        SDL_HITTEST_RESIZE_BOTTOMLEFT
+        SDL_HITTEST_RESIZE_LEFT
+
+    ctypedef SDL_HitTestResult (*SDL_HitTest)(SDL_Window *win, const SDL_Point *area, void *data)
+
+    int SDL_SetWindowHitTest(SDL_Window *window, SDL_HitTest callback, void *callback_data)
 
     void SDL_DestroyWindow(SDL_Window *window)
 
@@ -1225,6 +1472,8 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_SCANCODE_SLEEP
         SDL_SCANCODE_APP1
         SDL_SCANCODE_APP2
+        SDL_SCANCODE_AUDIOREWIND
+        SDL_SCANCODE_AUDIOFASTFORWARD
         SDL_NUM_SCANCODES
 
     ctypedef Sint32 SDL_Keycode
@@ -1466,6 +1715,10 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDLK_KBDILLUMUP
         SDLK_EJECT
         SDLK_SLEEP
+        SDLK_APP1
+        SDLK_APP2
+        SDLK_AUDIOREWIND
+        SDLK_AUDIOFASTFORWARD
 
     ctypedef enum SDL_Keymod:
         KMOD_NONE
@@ -1537,15 +1790,25 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_SYSTEM_CURSOR_HAND
         SDL_NUM_SYSTEM_CURSORS
 
+    ctypedef enum SDL_MouseWheelDirection:
+        SDL_MOUSEWHEEL_NORMAL
+        SDL_MOUSEWHEEL_FLIPPED
+
     SDL_Window *SDL_GetMouseFocus()
 
     Uint32 SDL_GetMouseState(int *x, int *y)
+
+    Uint32 SDL_GetGlobalMouseState(int *x, int *y)
 
     Uint32 SDL_GetRelativeMouseState(int *x, int *y)
 
     void SDL_WarpMouseInWindow(SDL_Window *window, int x, int y)
 
+    int SDL_WarpMouseGlobal(int x, int y)
+
     int SDL_SetRelativeMouseMode(SDL_bool enabled)
+
+    int SDL_CaptureMouse(SDL_bool enabled)
 
     SDL_bool SDL_GetRelativeMouseMode()
 
@@ -1572,17 +1835,66 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     ctypedef Sint32 SDL_JoystickID
 
+    ctypedef enum SDL_JoystickType:
+        SDL_JOYSTICK_TYPE_UNKNOWN
+        SDL_JOYSTICK_TYPE_GAMECONTROLLER
+        SDL_JOYSTICK_TYPE_WHEEL
+        SDL_JOYSTICK_TYPE_ARCADE_STICK
+        SDL_JOYSTICK_TYPE_FLIGHT_STICK
+        SDL_JOYSTICK_TYPE_DANCE_PAD
+        SDL_JOYSTICK_TYPE_GUITAR
+        SDL_JOYSTICK_TYPE_DRUM_KIT
+        SDL_JOYSTICK_TYPE_ARCADE_PAD
+        SDL_JOYSTICK_TYPE_THROTTLE
+
+    ctypedef enum SDL_JoystickPowerLevel:
+        SDL_JOYSTICK_POWER_UNKNOWN
+        SDL_JOYSTICK_POWER_EMPTY
+        SDL_JOYSTICK_POWER_LOW
+        SDL_JOYSTICK_POWER_MEDIUM
+        SDL_JOYSTICK_POWER_FULL
+        SDL_JOYSTICK_POWER_WIRED
+        SDL_JOYSTICK_POWER_MAX
+
+    void SDL_LockJoysticks()
+
+    void SDL_UnlockJoysticks()
+
     int SDL_NumJoysticks()
 
     const char *SDL_JoystickNameForIndex(int device_index)
 
-    SDL_Joystick *SDL_JoystickOpen(int device_index)
-
-    const char *SDL_JoystickName(SDL_Joystick *joystick)
+    int SDL_JoystickGetDevicePlayerIndex(int device_index)
 
     SDL_JoystickGUID SDL_JoystickGetDeviceGUID(int device_index)
 
+    Uint16 SDL_JoystickGetDeviceVendor(int device_index)
+
+    Uint16 SDL_JoystickGetDeviceProduct(int device_index)
+
+    Uint16 SDL_JoystickGetDeviceProductVersion(int device_index)
+
+    SDL_JoystickType SDL_JoystickGetDeviceType(int device_index)
+
+    SDL_JoystickID SDL_JoystickGetDeviceInstanceID(int device_index)
+
+    SDL_Joystick *SDL_JoystickOpen(int device_index)
+
+    SDL_Joystick *SDL_JoystickFromInstanceID(SDL_JoystickID joyid)
+
+    const char *SDL_JoystickName(SDL_Joystick *joystick)
+
+    int SDL_JoystickGetPlayerIndex(SDL_Joystick *joystick)
+
     SDL_JoystickGUID SDL_JoystickGetGUID(SDL_Joystick *joystick)
+
+    Uint16 SDL_JoystickGetVendor(SDL_Joystick *joystick)
+
+    Uint16 SDL_JoystickGetProduct(SDL_Joystick *joystick)
+
+    Uint16 SDL_JoystickGetProductVersion(SDL_Joystick *joystick)
+
+    SDL_JoystickType SDL_JoystickGetType(SDL_Joystick *joystick)
 
     void SDL_JoystickGetGUIDString(SDL_JoystickGUID guid, char *pszGUID, int cbGUID)
 
@@ -1606,13 +1918,19 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     Sint16 SDL_JoystickGetAxis(SDL_Joystick *joystick, int axis)
 
+    SDL_bool SDL_JoystickGetAxisInitialState(SDL_Joystick *joystick, int axis, Sint16 *state)
+
     Uint8 SDL_JoystickGetHat(SDL_Joystick *joystick, int hat)
 
     int SDL_JoystickGetBall(SDL_Joystick *joystick, int ball, int *dx, int *dy)
 
     Uint8 SDL_JoystickGetButton(SDL_Joystick *joystick, int button)
 
+    int SDL_JoystickRumble(SDL_Joystick *joystick, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble, Uint32 duration_ms)
+
     void SDL_JoystickClose(SDL_Joystick *joystick)
+
+    SDL_JoystickPowerLevel SDL_JoystickCurrentPowerLevel(SDL_Joystick *joystick)
 
     ctypedef struct SDL_GameController
 
@@ -1639,6 +1957,10 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     int SDL_GameControllerAddMapping(const char *mappingString)
 
+    int SDL_GameControllerNumMappings()
+
+    char *SDL_GameControllerMappingForIndex(int mapping_index)
+
     char *SDL_GameControllerMappingForGUID(SDL_JoystickGUID guid)
 
     char *SDL_GameControllerMapping(SDL_GameController *gamecontroller)
@@ -1647,9 +1969,21 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     const char *SDL_GameControllerNameForIndex(int joystick_index)
 
+    char *SDL_GameControllerMappingForDeviceIndex(int joystick_index)
+
     SDL_GameController *SDL_GameControllerOpen(int joystick_index)
 
+    SDL_GameController *SDL_GameControllerFromInstanceID(SDL_JoystickID joyid)
+
     const char *SDL_GameControllerName(SDL_GameController *gamecontroller)
+
+    int SDL_GameControllerGetPlayerIndex(SDL_GameController *gamecontroller)
+
+    Uint16 SDL_GameControllerGetVendor(SDL_GameController *gamecontroller)
+
+    Uint16 SDL_GameControllerGetProduct(SDL_GameController *gamecontroller)
+
+    Uint16 SDL_GameControllerGetProductVersion(SDL_GameController *gamecontroller)
 
     SDL_bool SDL_GameControllerGetAttached(SDL_GameController *gamecontroller)
 
@@ -1704,11 +2038,19 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     Uint8 SDL_GameControllerGetButton(SDL_GameController *gamecontroller, SDL_GameControllerButton button)
 
+    int SDL_GameControllerRumble(SDL_GameController *gamecontroller, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble, Uint32 duration_ms)
+
     void SDL_GameControllerClose(SDL_GameController *gamecontroller)
 
     ctypedef Sint64 SDL_TouchID
 
     ctypedef Sint64 SDL_FingerID
+
+    ctypedef enum SDL_TouchDeviceType:
+        SDL_TOUCH_DEVICE_INVALID
+        SDL_TOUCH_DEVICE_DIRECT
+        SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE
+        SDL_TOUCH_DEVICE_INDIRECT_RELATIVE
 
     ctypedef struct SDL_Finger:
         SDL_FingerID id
@@ -1719,6 +2061,8 @@ cdef extern from "SDL2/SDL.h" nogil:
     int SDL_GetNumTouchDevices()
 
     SDL_TouchID SDL_GetTouchDevice(int index)
+
+    SDL_TouchDeviceType SDL_GetTouchDeviceType(SDL_TouchID touchID)
 
     int SDL_GetNumTouchFingers(SDL_TouchID touchID)
 
@@ -1743,12 +2087,14 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_APP_DIDENTERBACKGROUND
         SDL_APP_WILLENTERFOREGROUND
         SDL_APP_DIDENTERFOREGROUND
+        SDL_DISPLAYEVENT
         SDL_WINDOWEVENT
         SDL_SYSWMEVENT
         SDL_KEYDOWN
         SDL_KEYUP
         SDL_TEXTEDITING
         SDL_TEXTINPUT
+        SDL_KEYMAPCHANGED
         SDL_MOUSEMOTION
         SDL_MOUSEBUTTONDOWN
         SDL_MOUSEBUTTONUP
@@ -1774,13 +2120,30 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_MULTIGESTURE
         SDL_CLIPBOARDUPDATE
         SDL_DROPFILE
+        SDL_DROPTEXT
+        SDL_DROPBEGIN
+        SDL_DROPCOMPLETE
+        SDL_AUDIODEVICEADDED
+        SDL_AUDIODEVICEREMOVED
+        SDL_SENSORUPDATE
         SDL_RENDER_TARGETS_RESET
+        SDL_RENDER_DEVICE_RESET
         SDL_USEREVENT
         SDL_LASTEVENT
 
     ctypedef struct SDL_CommonEvent:
         Uint32 type
         Uint32 timestamp
+
+    ctypedef struct SDL_DisplayEvent:
+        Uint32 type
+        Uint32 timestamp
+        Uint32 display
+        Uint8 event
+        Uint8 padding1
+        Uint8 padding2
+        Uint8 padding3
+        Sint32 data1
 
     ctypedef struct SDL_WindowEvent:
         Uint32 type
@@ -1847,6 +2210,7 @@ cdef extern from "SDL2/SDL.h" nogil:
         Uint32 which
         Sint32 x
         Sint32 y
+        Uint32 direction
 
     ctypedef struct SDL_JoyAxisEvent:
         Uint32 type
@@ -1918,6 +2282,15 @@ cdef extern from "SDL2/SDL.h" nogil:
         Uint32 timestamp
         Sint32 which
 
+    ctypedef struct SDL_AudioDeviceEvent:
+        Uint32 type
+        Uint32 timestamp
+        Uint32 which
+        Uint8 iscapture
+        Uint8 padding1
+        Uint8 padding2
+        Uint8 padding3
+
     ctypedef struct SDL_TouchFingerEvent:
         Uint32 type
         Uint32 timestamp
@@ -1954,6 +2327,13 @@ cdef extern from "SDL2/SDL.h" nogil:
         Uint32 type
         Uint32 timestamp
         char *file
+        Uint32 windowID
+
+    ctypedef struct SDL_SensorEvent:
+        Uint32 type
+        Uint32 timestamp
+        Sint32 which
+        float data[6]
 
     ctypedef struct SDL_QuitEvent:
         Uint32 type
@@ -1981,6 +2361,7 @@ cdef extern from "SDL2/SDL.h" nogil:
     ctypedef union SDL_Event:
         Uint32 type
         SDL_CommonEvent common
+        SDL_DisplayEvent display
         SDL_WindowEvent window
         SDL_KeyboardEvent key
         SDL_TextEditingEvent edit
@@ -1996,6 +2377,8 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_ControllerAxisEvent caxis
         SDL_ControllerButtonEvent cbutton
         SDL_ControllerDeviceEvent cdevice
+        SDL_AudioDeviceEvent adevice
+        SDL_SensorEvent sensor
         SDL_QuitEvent quit
         SDL_UserEvent user
         SDL_SysWMEvent syswm
@@ -2215,6 +2598,8 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     const char *SDL_GetHint(const char *name)
 
+    SDL_bool SDL_GetHintBoolean(const char *name, SDL_bool default_value)
+
     ctypedef void (*SDL_HintCallback)(void *userdata, const char *name, const char *oldValue, const char *newValue)
 
     void SDL_AddHintCallback(const char *name, SDL_HintCallback callback, void *userdata)
@@ -2427,6 +2812,10 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     void SDL_RenderGetLogicalSize(SDL_Renderer *renderer, int *w, int *h)
 
+    int SDL_RenderSetIntegerScale(SDL_Renderer *renderer, SDL_bool enable)
+
+    SDL_bool SDL_RenderGetIntegerScale(SDL_Renderer *renderer)
+
     int SDL_RenderSetViewport(SDL_Renderer *renderer, const SDL_Rect *rect)
 
     void SDL_RenderGetViewport(SDL_Renderer *renderer, SDL_Rect *rect)
@@ -2434,6 +2823,8 @@ cdef extern from "SDL2/SDL.h" nogil:
     int SDL_RenderSetClipRect(SDL_Renderer *renderer, const SDL_Rect *rect)
 
     void SDL_RenderGetClipRect(SDL_Renderer *renderer, SDL_Rect *rect)
+
+    SDL_bool SDL_RenderIsClipEnabled(SDL_Renderer *renderer)
 
     int SDL_RenderSetScale(SDL_Renderer *renderer, float scaleX, float scaleY)
 
@@ -2469,6 +2860,26 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     int SDL_RenderCopyEx(SDL_Renderer *renderer, SDL_Texture *texture, const SDL_Rect *srcrect, const SDL_Rect *dstrect, const double angle, const SDL_Point *center, const SDL_RendererFlip flip)
 
+    int SDL_RenderDrawPointF(SDL_Renderer *renderer, float x, float y)
+
+    int SDL_RenderDrawPointsF(SDL_Renderer *renderer, const SDL_FPoint *points, int count)
+
+    int SDL_RenderDrawLineF(SDL_Renderer *renderer, float x1, float y1, float x2, float y2)
+
+    int SDL_RenderDrawLinesF(SDL_Renderer *renderer, const SDL_FPoint *points, int count)
+
+    int SDL_RenderDrawRectF(SDL_Renderer *renderer, const SDL_FRect *rect)
+
+    int SDL_RenderDrawRectsF(SDL_Renderer *renderer, const SDL_FRect *rects, int count)
+
+    int SDL_RenderFillRectF(SDL_Renderer *renderer, const SDL_FRect *rect)
+
+    int SDL_RenderFillRectsF(SDL_Renderer *renderer, const SDL_FRect *rects, int count)
+
+    int SDL_RenderCopyF(SDL_Renderer *renderer, SDL_Texture *texture, const SDL_Rect *srcrect, const SDL_FRect *dstrect)
+
+    int SDL_RenderCopyExF(SDL_Renderer *renderer, SDL_Texture *texture, const SDL_Rect *srcrect, const SDL_FRect *dstrect, const double angle, const SDL_FPoint *center, const SDL_RendererFlip flip)
+
     int SDL_RenderReadPixels(SDL_Renderer *renderer, const SDL_Rect *rect, Uint32 format, void *pixels, int pitch)
 
     void SDL_RenderPresent(SDL_Renderer *renderer)
@@ -2477,9 +2888,79 @@ cdef extern from "SDL2/SDL.h" nogil:
 
     void SDL_DestroyRenderer(SDL_Renderer *renderer)
 
+    int SDL_RenderFlush(SDL_Renderer *renderer)
+
     int SDL_GL_BindTexture(SDL_Texture *texture, float *texw, float *texh)
 
     int SDL_GL_UnbindTexture(SDL_Texture *texture)
+
+    void *SDL_RenderGetMetalLayer(SDL_Renderer *renderer)
+
+    void *SDL_RenderGetMetalCommandEncoder(SDL_Renderer *renderer)
+
+    ctypedef struct SDL_Sensor
+
+    ctypedef Sint32 SDL_SensorID
+
+    ctypedef enum SDL_SensorType:
+        SDL_SENSOR_INVALID
+        SDL_SENSOR_UNKNOWN
+        SDL_SENSOR_ACCEL
+        SDL_SENSOR_GYRO
+
+    int SDL_NumSensors()
+
+    const char *SDL_SensorGetDeviceName(int device_index)
+
+    SDL_SensorType SDL_SensorGetDeviceType(int device_index)
+
+    int SDL_SensorGetDeviceNonPortableType(int device_index)
+
+    SDL_SensorID SDL_SensorGetDeviceInstanceID(int device_index)
+
+    SDL_Sensor *SDL_SensorOpen(int device_index)
+
+    SDL_Sensor *SDL_SensorFromInstanceID(SDL_SensorID instance_id)
+
+    const char *SDL_SensorGetName(SDL_Sensor *sensor)
+
+    SDL_SensorType SDL_SensorGetType(SDL_Sensor *sensor)
+
+    int SDL_SensorGetNonPortableType(SDL_Sensor *sensor)
+
+    SDL_SensorID SDL_SensorGetInstanceID(SDL_Sensor *sensor)
+
+    int SDL_SensorGetData(SDL_Sensor *sensor, float *data, int num_values)
+
+    void SDL_SensorClose(SDL_Sensor *sensor)
+
+    void SDL_SensorUpdate()
+
+    SDL_Window *SDL_CreateShapedWindow(const char *title, unsigned int x, unsigned int y, unsigned int w, unsigned int h, Uint32 flags)
+
+    SDL_bool SDL_IsShapedWindow(const SDL_Window *window)
+
+    ctypedef enum WindowShapeMode:
+        ShapeModeDefault
+        ShapeModeBinarizeAlpha
+        ShapeModeReverseBinarizeAlpha
+        ShapeModeColorKey
+
+    ctypedef union SDL_WindowShapeParams:
+        Uint8 binarizationCutoff
+        SDL_Color colorKey
+
+    ctypedef struct SDL_WindowShapeMode:
+        WindowShapeMode mode
+        SDL_WindowShapeParams parameters
+
+    int SDL_SetWindowShape(SDL_Window *window, SDL_Surface *shape, SDL_WindowShapeMode *shape_mode)
+
+    int SDL_GetShapedWindowMode(SDL_Window *window, SDL_WindowShapeMode *shape_mode)
+
+    int SDL_LinuxSetThreadPriority(Sint64 threadID, int priority)
+
+    SDL_bool SDL_IsTablet()
 
     Uint32 SDL_GetTicks()
 
@@ -2545,17 +3026,14 @@ cdef extern from "SDL2/SDL.h" nogil:
         RW_SEEK_END
         RW_SEEK_SET
         SDLK_SCANCODE_MASK
+        SDL_AUDIOCVT_MAX_FILTERS
         SDL_AUDIOCVT_PACKED
         SDL_AUDIO_ALLOW_ANY_CHANGE
         SDL_AUDIO_ALLOW_CHANNELS_CHANGE
         SDL_AUDIO_ALLOW_FORMAT_CHANGE
         SDL_AUDIO_ALLOW_FREQUENCY_CHANGE
+        SDL_AUDIO_ALLOW_SAMPLES_CHANGE
         SDL_AUDIO_BITSIZE
-        SDL_AUDIO_DRIVER_ALSA
-        SDL_AUDIO_DRIVER_DISK
-        SDL_AUDIO_DRIVER_DUMMY
-        SDL_AUDIO_DRIVER_OSS
-        SDL_AUDIO_DRIVER_PULSEAUDIO
         SDL_AUDIO_ISBIGENDIAN
         SDL_AUDIO_ISFLOAT
         SDL_AUDIO_ISINT
@@ -2592,7 +3070,6 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_HAPTIC_INERTIA
         SDL_HAPTIC_INFINITY
         SDL_HAPTIC_LEFTRIGHT
-        SDL_HAPTIC_LINUX
         SDL_HAPTIC_PAUSE
         SDL_HAPTIC_POLAR
         SDL_HAPTIC_RAMP
@@ -2614,30 +3091,88 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_HAT_UP
         SDL_HINT_ACCELEROMETER_AS_JOYSTICK
         SDL_HINT_ALLOW_TOPMOST
+        SDL_HINT_ANDROID_APK_EXPANSION_MAIN_FILE_VERSION
+        SDL_HINT_ANDROID_APK_EXPANSION_PATCH_FILE_VERSION
+        SDL_HINT_ANDROID_BLOCK_ON_PAUSE
+        SDL_HINT_ANDROID_TRAP_BACK_BUTTON
+        SDL_HINT_APPLE_TV_CONTROLLER_UI_EVENTS
+        SDL_HINT_APPLE_TV_REMOTE_ALLOW_ROTATION
+        SDL_HINT_AUDIO_CATEGORY
+        SDL_HINT_AUDIO_RESAMPLING_MODE
+        SDL_HINT_BMP_SAVE_LEGACY_FORMAT
+        SDL_HINT_EMSCRIPTEN_KEYBOARD_ELEMENT
+        SDL_HINT_ENABLE_STEAM_CONTROLLERS
+        SDL_HINT_EVENT_LOGGING
         SDL_HINT_FRAMEBUFFER_ACCELERATION
         SDL_HINT_GAMECONTROLLERCONFIG
+        SDL_HINT_GAMECONTROLLERCONFIG_FILE
+        SDL_HINT_GAMECONTROLLER_IGNORE_DEVICES
+        SDL_HINT_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT
         SDL_HINT_GRAB_KEYBOARD
         SDL_HINT_IDLE_TIMER_DISABLED
+        SDL_HINT_IME_INTERNAL_EDITING
+        SDL_HINT_IOS_HIDE_HOME_INDICATOR
         SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS
+        SDL_HINT_JOYSTICK_HIDAPI
+        SDL_HINT_JOYSTICK_HIDAPI_PS4
+        SDL_HINT_JOYSTICK_HIDAPI_PS4_RUMBLE
+        SDL_HINT_JOYSTICK_HIDAPI_STEAM
+        SDL_HINT_JOYSTICK_HIDAPI_SWITCH
+        SDL_HINT_JOYSTICK_HIDAPI_XBOX
+        SDL_HINT_MAC_BACKGROUND_APP
         SDL_HINT_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK
+        SDL_HINT_MOUSE_DOUBLE_CLICK_RADIUS
+        SDL_HINT_MOUSE_DOUBLE_CLICK_TIME
+        SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH
+        SDL_HINT_MOUSE_NORMAL_SPEED_SCALE
         SDL_HINT_MOUSE_RELATIVE_MODE_WARP
+        SDL_HINT_MOUSE_RELATIVE_SPEED_SCALE
+        SDL_HINT_MOUSE_TOUCH_EVENTS
+        SDL_HINT_NO_SIGNAL_HANDLERS
+        SDL_HINT_OPENGL_ES_DRIVER
         SDL_HINT_ORIENTATIONS
+        SDL_HINT_QTWAYLAND_CONTENT_ORIENTATION
+        SDL_HINT_QTWAYLAND_WINDOW_FLAGS
+        SDL_HINT_RENDER_BATCHING
+        SDL_HINT_RENDER_DIRECT3D11_DEBUG
         SDL_HINT_RENDER_DIRECT3D_THREADSAFE
         SDL_HINT_RENDER_DRIVER
+        SDL_HINT_RENDER_LOGICAL_SIZE_MODE
         SDL_HINT_RENDER_OPENGL_SHADERS
         SDL_HINT_RENDER_SCALE_QUALITY
         SDL_HINT_RENDER_VSYNC
+        SDL_HINT_RETURN_KEY_HIDES_IME
+        SDL_HINT_RPI_VIDEO_LAYER
+        SDL_HINT_THREAD_STACK_SIZE
         SDL_HINT_TIMER_RESOLUTION
+        SDL_HINT_TOUCH_MOUSE_EVENTS
+        SDL_HINT_TV_REMOTE_AS_JOYSTICK
         SDL_HINT_VIDEO_ALLOW_SCREENSAVER
+        SDL_HINT_VIDEO_DOUBLE_BUFFER
         SDL_HINT_VIDEO_HIGHDPI_DISABLED
         SDL_HINT_VIDEO_MAC_FULLSCREEN_SPACES
         SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS
         SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT
         SDL_HINT_VIDEO_WIN_D3DCOMPILER
+        SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR
+        SDL_HINT_VIDEO_X11_NET_WM_PING
         SDL_HINT_VIDEO_X11_XINERAMA
         SDL_HINT_VIDEO_X11_XRANDR
         SDL_HINT_VIDEO_X11_XVIDMODE
+        SDL_HINT_WAVE_FACT_CHUNK
+        SDL_HINT_WAVE_RIFF_CHUNK_SIZE
+        SDL_HINT_WAVE_TRUNCATION
+        SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING
+        SDL_HINT_WINDOWS_ENABLE_MESSAGELOOP
+        SDL_HINT_WINDOWS_INTRESOURCE_ICON
+        SDL_HINT_WINDOWS_INTRESOURCE_ICON_SMALL
+        SDL_HINT_WINDOWS_NO_CLOSE_ON_ALT_F4
+        SDL_HINT_WINDOW_FRAME_USABLE_WHILE_CURSOR_HIDDEN
+        SDL_HINT_WINRT_HANDLE_BACK_BUTTON
+        SDL_HINT_WINRT_PRIVACY_POLICY_LABEL
+        SDL_HINT_WINRT_PRIVACY_POLICY_URL
         SDL_HINT_XINPUT_ENABLED
+        SDL_HINT_XINPUT_USE_OLD_JOYSTICK_MAPPING
         SDL_IGNORE
         SDL_INIT_AUDIO
         SDL_INIT_EVENTS
@@ -2646,6 +3181,7 @@ cdef extern from "SDL2/SDL.h" nogil:
         SDL_INIT_HAPTIC
         SDL_INIT_JOYSTICK
         SDL_INIT_NOPARACHUTE
+        SDL_INIT_SENSOR
         SDL_INIT_TIMER
         SDL_INIT_VIDEO
         SDL_LIL_ENDIAN

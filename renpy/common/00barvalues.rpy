@@ -112,6 +112,57 @@ init -1500 python:
                 self.old_value = other.value
                 self.start_time = None
 
+    class CallableValue(BarValue, DictEquality):
+        """
+        A bar value that displays the result of a periodic call
+        to the `_callable` every `delay` seconds.
+
+        `_callable`
+            Callable object. It should return a number.
+
+        `range`
+            The range of the value.
+
+        `delay`
+            The time after which the bar will be updated as a result
+            of calling the `_callable` again
+            (set 0 for the fastest possible call).
+        """
+
+        def __init__(self, _callable, range=1.0, delay=0.0):
+
+            if not callable(_callable):
+                raise ValueError("The argument must be callable.")
+
+            self._callable = _callable
+            self.range = range
+            self.delay = delay
+
+            self.adjustment = None
+            self.st = None
+
+        def periodic(self, st):
+
+            if (self.st is None) or (self.delay <= 0.0):
+                redraw = 0.0
+            else:
+                redraw = self.delay - (st - self.st)
+
+            if redraw <= 0.0:
+                self.st = st
+                self.adjustment.change(self._callable())
+                return 0.0
+
+            return redraw
+
+        def get_adjustment(self):
+            self.adjustment = ui.adjustment(
+                value=self._callable(),
+                range=self.range,
+                adjustable=False
+            )
+            return self.adjustment
+
     class __GenericValue(BarValue, FieldEquality):
         # pickle defaults
         offset = 0

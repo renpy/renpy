@@ -21,24 +21,21 @@
 
 """Functions that make the user's life easier."""
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-from typing import Any
+from typing import Any, Callable
+from collections.abc import Iterable
 
 import contextlib
 import time
 
 import renpy
 
-Color = renpy.color.Color
-color = renpy.color.Color
+from renpy.types import Displayable, DisplayableLike
+
+# Kept for backwards compatibility.
+from renpy.color import Color as Color, Color as color  # noqa: F401
 
 
-from collections.abc import Iterable
-
-
-def lookup_displayable_prefix(d):
+def lookup_displayable_prefix(d: str) -> Displayable | None:
     """
     Given `d`, a string given a displayable, returns the displayable it
     corresponds to or None if it does not correspond to one.
@@ -56,7 +53,11 @@ def lookup_displayable_prefix(d):
     return displayable(fn(arg))
 
 
-def displayable_or_none(d, scope=None, dynamic=True):  # type: (Any, dict|None, bool) -> renpy.display.displayable.Displayable|None
+def displayable_or_none(
+    d: DisplayableLike | None,
+    scope: dict[str, Any] | None = None,
+    dynamic: bool = True,
+) -> Displayable | None:
     if isinstance(d, renpy.display.displayable.Displayable):
         return d
 
@@ -81,22 +82,22 @@ def displayable_or_none(d, scope=None, dynamic=True):  # type: (Any, dict|None, 
             return renpy.store.ImageReference(tuple(d.split()))
 
     if isinstance(d, Color):
-        return renpy.store.Solid(d)  # type: ignore
+        return renpy.store.Solid(d)
 
     if isinstance(d, list):
-        return renpy.display.image.DynamicImage(d, scope=scope)  # type: ignore
+        return renpy.display.image.DynamicImage(d, scope=scope)
 
     # We assume the user knows what he's doing in this case.
     if hasattr(d, "_duplicate"):
         return d
 
     if d is True or d is False:
-        return d
+        return d  # type: ignore
 
-    raise Exception("Not a displayable: %r" % (d,))
+    raise Exception(f"Not a displayable: {d!r}")
 
 
-def displayable(d, scope=None):  # type(d, dict|None=None) -> renpy.display.displayable.Displayable|None
+def displayable(d: DisplayableLike, scope: dict[str, Any] | None = None) -> Displayable:
     """
     :doc: udd_utility
     :name: renpy.displayable
@@ -137,12 +138,17 @@ def displayable(d, scope=None):  # type(d, dict|None=None) -> renpy.display.disp
         return d
 
     if d is True or d is False:
-        return d
+        return d  # type: ignore
 
     raise Exception("Not a displayable: %r" % (d,))
 
 
-def dynamic_image(d, scope=None, prefix=None, search=None):  # type: (Any, dict|None, str|None, list|None) -> renpy.display.displayable.Displayable|None
+def dynamic_image(
+    d: Any,
+    scope: dict[str, Any] | None = None,
+    prefix: str | None = None,
+    search: list[str] | None = None,
+) -> Displayable | None:
     """
     Substitutes a scope into `d`, then returns a displayable.
 
@@ -179,7 +185,7 @@ def dynamic_image(d, scope=None, prefix=None, search=None):  # type: (Any, dict|
             else:
                 scope = {}
 
-            for p in renpy.styledata.stylesets.prefix_search[prefix]:  # @UndefinedVariable
+            for p in renpy.styledata.stylesets.prefix_search[prefix]:
                 scope["prefix_"] = p
 
                 rv = renpy.substitutions.substitute(i, scope=scope, force=True, translate=False)[0]
@@ -207,7 +213,7 @@ def dynamic_image(d, scope=None, prefix=None, search=None):  # type: (Any, dict|
     return None
 
 
-def predict(d):
+def predict(d: Any):
     d = renpy.easy.displayable_or_none(d)
 
     if d is not None:
@@ -215,13 +221,13 @@ def predict(d):
 
 
 @contextlib.contextmanager
-def timed(name):
+def timed(name: str):
     start = time.time()
     yield
-    print("{0}: {1:.2f} ms".format(name, (time.time() - start) * 1000.0))
+    print(f"{name}: {(time.time() - start) * 1000.0:.2f} ms")
 
 
-def split_properties(properties, *prefixes):
+def split_properties(properties: dict[str, Any], *prefixes: str) -> list[dict[str, Any]]:
     """
     :doc: other
 
@@ -239,11 +245,7 @@ def split_properties(properties, *prefixes):
         text_properties, button_properties = renpy.split_properties(properties, "text_", "")
     """
 
-    rv = []
-
-    for _i in prefixes:
-        rv.append({})
-
+    rv = [{} for _ in prefixes]
     if not properties:
         return rv
 
@@ -252,58 +254,74 @@ def split_properties(properties, *prefixes):
     for k, v in properties.items():
         for prefix, d in prefix_d:
             if k.startswith(prefix):
-                d[k[len(prefix) :]] = v
+                d[k.removeprefix(prefix)] = v
                 break
         else:
-            raise Exception("Property {} begins with an unknown prefix.".format(k))
+            raise Exception(f"Property {k} begins with an unknown prefix.")
 
     return rv
 
 
-def to_list(value, copy=False):
+def to_list[T](value: T | Iterable[T], copy: bool = False) -> list[T]:
     """
     If the value is an iterable, turns it into a list, otherwise wraps it into one.
     If a list is provided and `copy` is True, a new list will be returned.
     """
+
     if isinstance(value, list):
         return list(value) if copy else value
 
-    if not isinstance(value, str) and isinstance(value, Iterable):
+    elif isinstance(value, str):
+        return [value]  # type: ignore
+
+    elif isinstance(value, Iterable):
         return list(value)
 
-    return [value]
+    else:
+        return [value]
 
 
-def to_tuple(value):
+def to_tuple[T](value: T | Iterable[T]) -> tuple[T, ...]:
     """
     Same as to_list, but with tuples.
     """
+
     if isinstance(value, tuple):
         return value
 
-    if not isinstance(value, str) and isinstance(value, Iterable):
+    elif isinstance(value, str):
+        return (value,)  # type: ignore
+
+    elif isinstance(value, Iterable):
         return tuple(value)
 
-    return (value,)
+    else:
+        return (value,)
 
 
-def run_callbacks(cb, *args, **kwargs):
+def run_callbacks[**P, R](
+    cb: Callable[P, R] | list[Callable[P, R]] | None,
+    *args: P.args,
+    **kwargs: P.kwargs,
+) -> R | None:
     """
-    Runs a callback or list of callbacks that do not expect results
+    Runs a callback or list of callbacks applying the arguments.
+
+    Returns the result of the last callback that returns a value, or None if
+    no callback returns a value.
     """
 
     if cb is None:
         return None
 
-    if isinstance(cb, (list, tuple)):
-        rv = None
+    if not isinstance(cb, (list, tuple)):
+        cb = [cb]
 
-        for i in cb:
-            new_rv = run_callbacks(i, *args, **kwargs)
+    rv = None
 
-            if new_rv is not None:
-                rv = new_rv
+    for i in cb:
+        new_rv = i(*args, **kwargs)
+        if new_rv is not None:
+            rv = new_rv
 
-        return rv
-
-    return cb(*args, **kwargs)
+    return rv

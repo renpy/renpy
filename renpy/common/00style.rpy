@@ -230,6 +230,7 @@ init -1800:
         fore_bar Null()
         aft_bar Null()
         thumb None
+        thumb_align 0.0
         thumb_shadow None
         left_gutter 0
         right_gutter 0

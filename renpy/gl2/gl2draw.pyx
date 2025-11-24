@@ -32,12 +32,11 @@ from sdl2 cimport *
 from renpy.uguu.gl cimport *
 import renpy.gl2.gl2functions
 
-from pygame_sdl2 cimport *
-import_pygame_sdl2()
+from renpy.pygame.surface cimport PySurface_AsSurface
 
 import renpy
-import pygame_sdl2 as pygame
-from pygame_sdl2 import Surface
+import renpy.pygame as pygame
+from renpy.pygame import Surface
 
 import os
 import os.path
@@ -272,6 +271,9 @@ cdef class GL2Draw:
         Selects the GL attributes and hints to use.
         """
 
+        global vsync
+
+
         pygame.display.gl_reset_attributes()
 
         pygame.display.gl_set_attribute(pygame.GL_RED_SIZE, 8)
@@ -281,6 +283,9 @@ cdef class GL2Draw:
 
         if renpy.config.depth_size:
             pygame.display.gl_set_attribute(pygame.GL_DEPTH_SIZE, renpy.config.depth_size)
+
+        if not renpy.config.gl_vsync:
+            vsync = 0
 
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
 
@@ -670,7 +675,10 @@ cdef class GL2Draw:
         else:
             maximized = renpy.game.preferences.maximized
 
+        renpy.display.log.write("Requested resize to %dx%d, fullscreen=%d, maximized=%d", width, height, fullscreen, maximized)
         pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen, maximized=maximized)
+
+        renpy.display.interface.fullscreen = fullscreen
 
     def update(self, force=False):
         """
@@ -766,7 +774,7 @@ cdef class GL2Draw:
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size)
         glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size)
 
-        max_texture_size = max(max_texture_size, 1024)
+        max_texture_size = self.info["max_texture_size"] = max(max_texture_size, 1024)
         max_renderbuffer_size = max(max_renderbuffer_size, 1024)
 
         # The number of pixels of additional border, so we can load textures with

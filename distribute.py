@@ -259,22 +259,10 @@ def main():
     # Sign the update.
     if not args.fast:
         subprocess.check_call([
+            "uv", "run",
             "scripts/sign_update.py",
             "/home/tom/ab/keys/renpy_private.pem",
             os.path.join(destination, "updates.json"),
-            ])
-
-    # Package pygame_sdl2.
-    if not args.fast:
-        subprocess.check_call([
-            "pygame_sdl2/setup.py",
-            "-q",
-            "egg_info",
-            "--tag-build",
-            "+renpy" + args.version.replace("+", "-"),
-            "sdist",
-            "-d",
-            os.path.abspath(destination)
             ])
 
     # Write 7z.exe.

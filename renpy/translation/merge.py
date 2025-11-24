@@ -45,7 +45,7 @@ def merge_strings():
     if language == "None":
         language = None
 
-    if language not in renpy.game.script.translator.strings:  # @UndefinedVariable
+    if language not in renpy.game.script.translator.strings:
         raise Exception("Language %r does not have any translations." % language)
 
     with open(args.source, "r", encoding="utf-8") as f:
@@ -59,7 +59,7 @@ def merge_strings():
 
         data = new_data
 
-    st = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+    st = renpy.game.script.translator.strings[language]
 
     renpy.config.clear_lines = False
 

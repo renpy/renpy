@@ -1074,7 +1074,7 @@ Saving and Loading
 
 .. var:: config.after_load_callbacks = [ ... ]
 
-    A list of functions that are called (with no arguments) when a load
+    A list of functions that are called (with no arguments) after a load
     occurs.
 
     If these callbacks change data (for example, migrating data from an
@@ -1133,6 +1133,14 @@ Saving and Loading
 .. var:: config.autosave_slots = 10
 
     The number of slots used by autosaves.
+
+.. var:: config.before_load_callbacks = [ ... ]
+
+    A list of functions that are called (with no arguments) before a load
+    occurs.
+
+    This can stop or change music before the load happens, but state changes
+    will be forgotten when the load occurs.
 
 .. var:: config.file_slotname_callback = None
 
@@ -1357,6 +1365,11 @@ Screen Language
     Contains a list of screens that are removed when a context is copied
     for rollback or saving.
 
+.. var:: config.game_menu_action = None
+
+    If not None, this is an Action that is run when the user asks to enter the game
+    menu. This does not automatically start a new context - it's up to the action to do that.
+
 .. var:: config.help = None
 
     The default value for the :func:`Help` action.
@@ -1454,6 +1467,11 @@ Screenshots
 
     See also :var:`_screenshot_pattern`, which is used in preference to this
     variable if not None.
+
+.. var:: config.tracesave_screenshot = True
+
+    If True, a screenshot is taken when a traceback save is made. If False, no
+    screenshot is taken.
 
 
 Self-Voicing / Text to Speech
@@ -1997,15 +2015,34 @@ Translation
     to use based on the locale of the player's system. If successful,
     this language will be used as the default language.
 
+    This can be customized with :var:`config.locale_to_language_function`
+    below, the default implementation of which uses :var:`config.locale_to_language_map`.
+
 .. var:: config.locale_to_language_function : Callable
 
     A function that determines the language the game should use,
     based on the user's locale.
     It takes 2 string arguments that give the ISO code of the locale
-    and the ISO code of the region.
+    and the ISO code of the region. These are normalized to lower case
+    before this function is called.
 
     It should return a string giving the name of a translation to use, or
     None to use the default translation.
+
+    :var:`config.enable_language_autodetect` must be True for this function
+    to be called.
+
+.. var:: config.locale_to_language_map = { ... }
+
+    This is a table used by the default implementation of locale_to_language_function.
+    It maps (locale, region) pairs to language names. The default value of this table
+    can be found in the locale symbol of `renpy/translation/__init__.py <https://github.com/renpy/renpy/blob/master/renpy/translation/__init__.py#L959>`_
+
+    The following things are looked up in this table, in order, until a match is found:
+
+    1. language_region (en_us)
+    2. language (en)
+    3. region (us)
 
 .. var:: config.new_translate_order = True
 

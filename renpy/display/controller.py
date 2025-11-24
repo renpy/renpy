@@ -25,12 +25,12 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import os
 
-import pygame_sdl2
-from pygame_sdl2 import CONTROLLERDEVICEADDED, CONTROLLERDEVICEREMOVED
-from pygame_sdl2 import CONTROLLERAXISMOTION, CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP
-from pygame_sdl2.controller import Controller, get_string_for_axis, get_string_for_button
+import renpy.pygame as pygame
 
-pygame = pygame_sdl2
+from renpy.pygame import CONTROLLERDEVICEADDED, CONTROLLERDEVICEREMOVED
+from renpy.pygame import CONTROLLERAXISMOTION, CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP
+from renpy.pygame.controller import Controller, get_string_for_axis, get_string_for_button
+
 
 import renpy
 
@@ -38,19 +38,19 @@ import renpy
 def load_mappings():
     try:
         with renpy.loader.load("renpycontrollerdb.txt", tl=False) as f:
-            pygame_sdl2.controller.add_mappings(f)
+            pygame.controller.add_mappings(f)
     except Exception:
         pass
 
     try:
         with renpy.loader.load("gamecontrollerdb.txt", tl=False) as f:
-            pygame_sdl2.controller.add_mappings(f)
+            pygame.controller.add_mappings(f)
     except Exception:
         pass
 
     try:
         with open(os.path.join(renpy.config.renpy_base, "gamecontrollerdb.txt"), "rb") as f:
-            pygame_sdl2.controller.add_mappings(f)
+            pygame.controller.add_mappings(f)
     except Exception:
         pass
 
@@ -64,14 +64,14 @@ def init():
         return
 
     try:
-        pygame_sdl2.controller.init()
+        pygame.controller.init()
         load_mappings()
     except Exception:
         renpy.display.log.exception()
 
     if not renpy.display.interface.safe_mode:
         try:
-            for i in range(pygame_sdl2.controller.get_count()):
+            for i in range(pygame.controller.get_count()):
                 start(i)
         except Exception:
             renpy.display.log.exception()
@@ -115,7 +115,7 @@ def post_event(control, state, repeat):
     else:
         names.extend(renpy.config.pad_bindings.get(name, ()))
 
-    ev = pygame_sdl2.event.Event(renpy.display.core.EVENTNAME, {"eventnames": names, "controller": name, "up": False})
+    ev = pygame.event.Event(renpy.display.core.EVENTNAME, {"eventnames": names, "controller": name, "up": False})
 
     pygame.event.post(ev)
 
@@ -131,7 +131,7 @@ def exists():
         return False
 
 
-def quit(index):  # @ReservedAssignment
+def quit(index):
     """
     Quits the controller at index.
     """
@@ -253,7 +253,7 @@ def event(ev):
         return rv
 
     elif ev.type == CONTROLLERAXISMOTION:
-        pygame_sdl2.event.pump()
+        pygame.event.pump()
         events = [ev] + pygame.event.get(CONTROLLERAXISMOTION)
 
         for ev in events:

@@ -21,8 +21,6 @@
 
 init -1500 python:
 
-    import pygame_sdl2
-
     @renpy.pure
     class _TouchKeyboardTextInput(Action, DictEquality):
         """
@@ -33,9 +31,8 @@ init -1500 python:
             self.char = char
 
         def __call__(self):
-            import pygame_sdl2
-            pygame_sdl2.event.post(pygame_sdl2.event.Event(
-                pygame_sdl2.TEXTINPUT,
+            renpy.pygame.event.post(renpy.pygame.event.Event(
+                renpy.pygame.TEXTINPUT,
                 text=self.char))
 
     @renpy.pure
@@ -45,16 +42,16 @@ init -1500 python:
          """
 
         def __call__(self):
-            pygame_sdl2.event.post(pygame_sdl2.event.Event(
-                pygame_sdl2.KEYDOWN,
-                key=pygame_sdl2.K_BACKSPACE,
-                scancode=pygame_sdl2.K_BACKSPACE,
+            renpy.pygame.event.post(renpy.pygame.event.Event(
+                renpy.pygame.KEYDOWN,
+                key=renpy.pygame.K_BACKSPACE,
+                scancode=renpy.pygame.K_BACKSPACE,
                 unicode='', mod=0, repeat=False,
             ))
-            pygame_sdl2.event.post(pygame_sdl2.event.Event(
-                pygame_sdl2.KEYUP,
-                key=pygame_sdl2.K_BACKSPACE,
-                scancode=pygame_sdl2.K_BACKSPACE,
+            renpy.pygame.event.post(renpy.pygame.event.Event(
+                renpy.pygame.KEYUP,
+                key=renpy.pygame.K_BACKSPACE,
+                scancode=renpy.pygame.K_BACKSPACE,
                 unicode='', mod=0, repeat=False,
             ))
 
@@ -65,22 +62,21 @@ init -1500 python:
          """
 
         def __call__(self):
-            import pygame_sdl2
 
             # avoid loop when K_RETURN activates our button
             renpy.exports.hide_screen('_touch_keyboard', layer='screens')
             renpy.restart_interaction()
 
-            pygame_sdl2.event.post(pygame_sdl2.event.Event(
-                pygame_sdl2.KEYDOWN,
-                key=pygame_sdl2.K_RETURN,
-                scancode=pygame_sdl2.K_RETURN,
+            renpy.pygame.event.post(renpy.pygame.event.Event(
+                renpy.pygame.KEYDOWN,
+                key=renpy.pygame.K_RETURN,
+                scancode=renpy.pygame.K_RETURN,
                 unicode='', mod=0, repeat=False,
             ))
-            pygame_sdl2.event.post(pygame_sdl2.event.Event(
-                pygame_sdl2.KEYUP,
-                key=pygame_sdl2.K_RETURN,
-                scancode=pygame_sdl2.K_RETURN,
+            renpy.pygame.event.post(renpy.pygame.event.Event(
+                renpy.pygame.KEYUP,
+                key=renpy.pygame.K_RETURN,
+                scancode=renpy.pygame.K_RETURN,
                 unicode='', mod=0, repeat=False,
             ))
 

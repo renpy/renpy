@@ -79,8 +79,8 @@ init -1200 python in _gamepad:
     # Do not participate in saves.
     _constant = True
 
-    from pygame_sdl2 import JOYHATMOTION, JOYAXISMOTION, JOYBUTTONDOWN
-    import pygame_sdl2
+    from renpy.pygame import JOYHATMOTION, JOYAXISMOTION, JOYBUTTONDOWN
+    import renpy.pygame as pygame
     import os
 
     class EventWatcher(renpy.Displayable):
@@ -131,7 +131,7 @@ init -1200 python in _gamepad:
             for i in range(renpy.display.joystick.count()):
 
                 try:
-                    j = pygame_sdl2.joystick.Joystick(i)
+                    j = pygame.joystick.Joystick(i)
                     j.init()
                     name = j.get_name()
                     j.quit()
@@ -151,9 +151,9 @@ init -1200 python in _gamepad:
 #         renpy.display.controller.ignore = True
         renpy.display.controller.quit(index)
 
-        platform = pygame_sdl2.get_platform()
+        platform = pygame.get_platform()
 
-        guid = pygame_sdl2.controller.Controller(index).get_guid_string()
+        guid = pygame.controller.Controller(index).get_guid_string()
         if guid is None:
             return
 

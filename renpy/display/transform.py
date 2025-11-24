@@ -19,24 +19,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-from typing import Any
-
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
+
 import math
 
 import renpy
+from renpy.display.position import absolute, position
 from renpy.display.displayable import Displayable
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
-from renpy.atl import position, DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
-from renpy.display.core import absolute
-
-# A List of fields that have displayables in them.
-displayable_uniform_fields = set()
+from renpy.atl import DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
 
 
 class Camera(renpy.object.Object):
@@ -544,14 +537,8 @@ class TransformState(renpy.object.Object):
         relative_dx = relative_anchorradius * math.sin(relative_anchorangle)
         relative_dy = -relative_anchorradius * math.cos(relative_anchorangle)
 
-        self.xanchor = position(
-            absolute=xanchoraround.absolute + absolute_dx,
-            relative=xanchoraround.relative + relative_dx,
-        )
-        self.yanchor = position(
-            absolute=yanchoraround.absolute + absolute_dy,
-            relative=yanchoraround.relative + relative_dy,
-        )
+        self.xanchor = position(xanchoraround.absolute + absolute_dx, xanchoraround.relative + relative_dx)
+        self.yanchor = position(yanchoraround.absolute + absolute_dy, yanchoraround.relative + relative_dy)
 
     anchorangle = property(get_anchorangle, set_anchorangle)
     anchorradius = property(get_anchorradius, set_anchorradius)
@@ -1228,6 +1215,10 @@ class Transform(Container):
         child._unique()
 
         rv = self(child=child)
+        if isinstance(self, ATLTransform):
+            assert isinstance(rv, ATLTransform)
+            rv.block = self.block
+
         rv.take_execution_state(self)
         rv._unique()
 

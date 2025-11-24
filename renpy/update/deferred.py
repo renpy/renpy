@@ -44,6 +44,50 @@ import traceback
 # Deferred commands that cannot be accomplished on start are ignored.
 DEFERRED_UPDATE_FILE: str
 
+# A directory containing files to be deleted on next startup.
+DELETED_DIRECTORY: str
+
+# True if this is the first delete operation to need to be deferred.
+first_deferred_delete = False
+
+
+def delete(fn: str):
+    """
+    Deletes the file `fn`. If deletion fails, renames the file into the
+    deleted directory, to be deleted on next startup.
+    """
+
+    global first_deferred_delete
+
+    if not os.path.exists(fn):
+        return
+
+    try:
+        os.unlink(fn)
+    except Exception:
+
+        if first_deferred_delete:
+            attempts = 5
+            delay = 1
+            first_deferred_delete = False
+        else:
+            attempts = 1
+            delay = 0
+
+        for i in range(attempts):
+
+            try:
+                if not os.path.exists(DELETED_DIRECTORY):
+                    os.makedirs(DELETED_DIRECTORY, exist_ok=True)
+                os.rename(fn, os.path.join(DELETED_DIRECTORY, os.path.basename(fn)))
+
+                return
+
+            except Exception:
+                pass
+
+            time.sleep(delay)
+
 
 def process_deferred_line(l):
     cmd, _, fn = l.partition(" ")
@@ -55,16 +99,18 @@ def process_deferred_line(l):
             newfn = fn + ".new"
 
         if not os.path.exists(newfn):
-            return
+            return False
 
         if os.path.exists(fn):
-            os.unlink(fn)
+            delete(fn)
 
         os.rename(newfn, fn)
+        return True
 
     elif cmd == "D":
         if os.path.exists(fn):
-            os.unlink(fn)
+            delete(fn)
+            return True
 
     elif cmd == "":
         pass
@@ -72,12 +118,24 @@ def process_deferred_line(l):
     else:
         raise Exception("Bad command. %r (%r %r)" % (l, cmd, fn))
 
+    return False
+
 
 def process_deferred():
+    """
+    Process the deferred update file.
+
+    Returns True if a change was made, False otherwise.
+    """
+
+    global first_deferred_delete
+    first_deferred_delete = True
+
+
     DEFERRED_UPDATE_LOG = os.path.join(renpy.config.renpy_base, "update", "log.txt")
 
     if not os.path.exists(DEFERRED_UPDATE_FILE):
-        return
+        return False
 
     # Give a previous process time to quit (and let go of the
     # open files.)
@@ -88,6 +146,8 @@ def process_deferred():
     except Exception:
         log = io.StringIO()
 
+    rv = False
+
     with open(DEFERRED_UPDATE_FILE, "r") as f:
         for l in f:
             l = l.rstrip("\r\n")
@@ -95,7 +155,9 @@ def process_deferred():
             log.write(l)
 
             try:
-                process_deferred_line(l)
+                if process_deferred_line(l):
+                    rv = True
+
             except Exception:
                 traceback.print_exc(file=log)
 
@@ -111,22 +173,22 @@ def process_deferred():
 
     log.close()
 
+    return rv
+
 
 def process_deleted():
     """
-    Delete files in the update/deleted directory. This stopped being created in
-    Ren'Py 8.4, and so can be removed in Ren'Py 8.6.
+    Delete files in the update/deleted directory.
     """
 
-    DELETED = os.path.join(renpy.config.renpy_base, "update", "deleted")
 
-    if not os.path.exists(DELETED):
+    if not os.path.exists(DELETED_DIRECTORY):
         return
 
     import shutil
 
     try:
-        shutil.rmtree(DELETED)
+        shutil.rmtree(DELETED_DIRECTORY)
     except Exception as e:
         pass
 
@@ -155,7 +217,11 @@ def init():
     """
 
     global DEFERRED_UPDATE_FILE
+    global DELETED_DIRECTORY
     DEFERRED_UPDATE_FILE = os.path.join(renpy.config.renpy_base, "update", "deferred.txt")
+    DELETED_DIRECTORY = os.path.join(renpy.config.renpy_base, "update", "deleted")
 
-    process_deferred()
+    rv = process_deferred()
     process_deleted()
+
+    return rv

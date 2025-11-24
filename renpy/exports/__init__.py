@@ -35,7 +35,7 @@ import fnmatch
 import os
 
 import renpy
-import pygame_sdl2
+import renpy.pygame as pygame_sdl2  # As a public export.
 
 try:
     import emscripten
@@ -226,6 +226,7 @@ from renpy.pyanalysis import (
 )
 
 from renpy.python import (
+    mark_changed,
     py_eval as eval,
 )
 
@@ -334,6 +335,7 @@ from renpy.exports.contextexports import (
     get_skipping,
     get_statement_name,
     invoke_in_new_context,
+    is_in_test,
     is_init_phase,
     is_skipping,
     jump_out_of_context,
@@ -348,6 +350,7 @@ from renpy.exports.contextexports import (
 
 from renpy.exports.debugexports import (
     error,
+    filename_line_override,
     get_filename_line,
     log,
     pop_error_handler,
@@ -593,7 +596,7 @@ else:
 
 
 @renpy_pure
-def version(tuple=False):  # @ReservedAssignment
+def version(tuple=False):
     """
     :doc: renpy_version
 
