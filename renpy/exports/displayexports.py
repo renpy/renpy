@@ -1533,7 +1533,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
     This function may only be called after the Ren'Py display system has started, so it can't be
     called during the init phase or before the first interaction.
 
-    Ren'Py not rescan files while the game is running, so this shouldn't be used to sythesize
+    Ren'Py will not rescan files while the game is running, so this shouldn't be used to sythesize
     assets that are used as part of the game.
     """
 
