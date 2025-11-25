@@ -1515,7 +1515,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
         to the base directory. This must end with .png.
 
     `width`
-        The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
+        The width to offer `d`, in virtual pixels. If None, :var:`config.screen_width`.
 
     `height`
         The height to offer `d`, in virtual pixels. If None, :var:`config.screen_height`.
