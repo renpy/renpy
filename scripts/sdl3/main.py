@@ -106,6 +106,11 @@ class Generator:
             if child.kind == CursorKind.ENUM_CONSTANT_DECL:
                 self.declare(child, f"        {child.spelling}")
 
+    def type_spelling(self, t: cindex.Type) -> str:
+        spelling = t.spelling
+
+        spelling = re.sub(r'\b(struct|union|enum)\b\s*', '', spelling)
+        return spelling.strip()
 
     def function(self, node: cindex.Cursor):
         if not self.is_relevant(node):
@@ -133,6 +138,27 @@ class Generator:
             sig = f"{ret_type} {name}({', '.join(params)})"
 
         self.declare(node, f"    {sig}")
+
+    def struct(self, node: cindex.Cursor):
+        if not self.is_relevant(node):
+            return
+
+        if not self.check_new_name(node.spelling):
+            return
+
+        self.declare(node, f"    cdef struct {node.spelling}:")
+
+        has_fields = False
+
+        for child in node.get_children():
+            if child.kind == CursorKind.FIELD_DECL:
+                field_type = self.type_spelling(child.type)
+                field_name = child.spelling
+                self.declare(child, f"        {field_type} {field_name}")
+                has_fields = True
+
+        if not has_fields:
+            self.declare(node, f"        pass")
 
     def typedef(self, node: cindex.Cursor):
         if not self.is_relevant(node):
@@ -183,6 +209,9 @@ class Generator:
 
         elif node.kind == CursorKind.ENUM_DECL:
             self.enum(node)
+
+        elif node.kind == CursorKind.STRUCT_DECL:
+            self.struct(node)
 
 def main():
     ap = argparse.ArgumentParser(description="SDL3 Binding Generator")
