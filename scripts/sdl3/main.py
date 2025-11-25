@@ -25,6 +25,8 @@ class Generator:
         Aa list of (header, declaration_text) tuples.
         """
 
+        self.declared_names = set()
+
     def declare(self, cursor: cindex.Cursor, decl: str):
         """
         Add a declaration to the list of declarations.
@@ -58,13 +60,30 @@ class Generator:
 
     def is_relevant(self, node: cindex.Cursor) -> bool:
         """
-        Returns True if the node exists in the SDL3 directory, False otherwise.
+        Returns True if the node exists in the SDL3 directory, False otherwise. T
         """
 
         if node.location.file is None:
             return False
 
         return pathlib.Path(node.location.file.name).is_relative_to(self.sdl3_path)
+
+
+    def check_new_name(self, name: str) -> bool:
+        """
+        Check if the name has already been declared. If not, add it to the set of declared names.
+
+        `name`
+            The name to check.
+
+        Returns True if the name is new, False otherwise.
+        """
+
+        if name in self.declared_names:
+            return False
+
+        self.declared_names.add(name)
+        return True
 
     def clean_code(self, code: str) -> str:
         """
@@ -75,12 +94,27 @@ class Generator:
         return code
 
 
+    def enum(self, node: cindex.Cursor):
+        if not self.is_relevant(node):
+            return
+
+        if not self.check_new_name(node.spelling):
+            return
+
+        self.declare(node, f"    cpdef enum {node.spelling}:")
+        for child in node.get_children():
+            if child.kind == CursorKind.ENUM_CONSTANT_DECL:
+                self.declare(child, f"        {child.spelling}")
+
 
     def function(self, node: cindex.Cursor):
         if not self.is_relevant(node):
             return
 
         name = node.spelling
+
+        if not self.check_new_name(name):
+            return
 
         ret_type = node.result_type.spelling
         params = []
@@ -104,11 +138,13 @@ class Generator:
         if not self.is_relevant(node):
             return
 
+        if not self.check_new_name(node.spelling):
+            return
+
         # if list(node.get_children()):
         #     print(node.spelling, "has children", list(i.kind for i in node.get_children()))
 
         tokens = node.get_tokens()
-
 
         if node.spelling == node.underlying_typedef_type.get_declaration().spelling:
             return
@@ -126,7 +162,7 @@ class Generator:
         decl = self.clean_code(decl)
 
         if not decl.strip():
-            self.declare(node, f"// Skipping empty typedef {node.spelling}")
+            self.declare(node, f"    # Skipping empty typedef {node.spelling}")
             return
 
         self.declare(node, f"    ctypedef {decl}")
@@ -134,10 +170,10 @@ class Generator:
 
     def traverse(self, node: cindex.Cursor, depth: int):
 
+        # print("  " * depth, node.kind, node.location, repr(node.spelling)[:100])
+
         for child in node.get_children():
             self.traverse(child, depth+1)
-
-        # print("  " * depth, node.kind, node.location, repr(node.spelling)[:100])
 
         if node.kind == CursorKind.FUNCTION_DECL:
             self.function(node)
@@ -145,6 +181,8 @@ class Generator:
         elif node.kind == CursorKind.TYPEDEF_DECL:
             self.typedef(node)
 
+        elif node.kind == CursorKind.ENUM_DECL:
+            self.enum(node)
 
 def main():
     ap = argparse.ArgumentParser(description="SDL3 Binding Generator")
