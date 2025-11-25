@@ -1524,7 +1524,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
         The time of the render, in the shown timebase.
 
     `at`
-        The time of the rendem in the animation timebase. If None, `st` is used.
+        The time of the render in the animation timebase. If None, `st` is used.
 
     `resize`
         If True, the image will be resized to the virtual size of the displayable or render. This
