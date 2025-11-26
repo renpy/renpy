@@ -1515,7 +1515,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
         to the base directory. This must end with .png.
 
     `width`
-        The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
+        The width to offer `d`, in virtual pixels. If None, :var:`config.screen_width`.
 
     `height`
         The height to offer `d`, in virtual pixels. If None, :var:`config.screen_height`.
@@ -1524,7 +1524,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
         The time of the render, in the shown timebase.
 
     `at`
-        The time of the rendem in the animation timebase. If None, `st` is used.
+        The time of the render in the animation timebase. If None, `st` is used.
 
     `resize`
         If True, the image will be resized to the virtual size of the displayable or render. This
@@ -1533,7 +1533,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
     This function may only be called after the Ren'Py display system has started, so it can't be
     called during the init phase or before the first interaction.
 
-    Ren'Py not rescan files while the game is running, so this shouldn't be used to sythesize
+    Ren'Py will not rescan files while the game is running, so this shouldn't be used to sythesize
     assets that are used as part of the game.
     """
 
