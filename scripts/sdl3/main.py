@@ -85,15 +85,6 @@ class Generator:
         self.declared_names.add(name)
         return True
 
-    def clean_code(self, code: str) -> str:
-        """
-        Clean up the code by removing unnecessary whitespace and newlines.
-        """
-
-        code = code.replace("SDLCALL", "")
-        return code
-
-
     def enum(self, node: cindex.Cursor):
         if not self.is_relevant(node):
             return
@@ -105,6 +96,24 @@ class Generator:
         for child in node.get_children():
             if child.kind == CursorKind.ENUM_CONSTANT_DECL:
                 self.declare(child, f"        {child.spelling}")
+
+    def elide_tokens(self, t: cindex.Cursor) -> str:
+        tokens = t.get_tokens()
+        parts = []
+        for token in tokens:
+            if token.spelling in { "typedef", "struct", "union", "enum", "__attribute__", "__extension__", "__inline__", "SDLCALL" }:
+                continue
+            parts.append(token.spelling)
+
+        joined = " ".join(parts)
+
+        joined = re.sub(r'\( ', '(', joined)
+        joined = re.sub(r' \)', ')', joined)
+        joined = re.sub(r'\) \(', ')(', joined)
+        joined = re.sub(r' ,', ',', joined)
+        joined = re.sub(r'\* ', '*', joined)
+
+        return joined
 
     def type_spelling(self, t: cindex.Type) -> str:
         spelling = t.spelling
@@ -131,7 +140,6 @@ class Generator:
             else:
                 params.append(f"{param_type} {param_name}")
 
-
         if ret_type.endswith("*"):
             sig = f"{ret_type}{name}({', '.join(params)})"
         else:
@@ -152,9 +160,7 @@ class Generator:
 
         for child in node.get_children():
             if child.kind == CursorKind.FIELD_DECL:
-                field_type = self.type_spelling(child.type)
-                field_name = child.spelling
-                self.declare(child, f"        {field_type} {field_name}")
+                self.declare(child, f"        {self.elide_tokens(child)}")
                 has_fields = True
 
         if not has_fields:
@@ -167,25 +173,7 @@ class Generator:
         if not self.check_new_name(node.spelling):
             return
 
-        # if list(node.get_children()):
-        #     print(node.spelling, "has children", list(i.kind for i in node.get_children()))
-
-        tokens = node.get_tokens()
-
-        if node.spelling == node.underlying_typedef_type.get_declaration().spelling:
-            return
-
-        # if children:
-        #     child = children[0]
-        #     if child.kind == CursorKind.STRUCT_DECL:
-        #         return
-        #     elif child.kind == CursorKind.UNION_DECL:
-        #         return
-        #     elif child.kind == CursorKind.ENUM_DECL:
-        #         return
-
-        decl = " ".join(token.spelling for token in tokens if token.spelling not in { "typedef", "struct", "union", "enum" })
-        decl = self.clean_code(decl)
+        decl = self.elide_tokens(node)
 
         if not decl.strip():
             self.declare(node, f"    # Skipping empty typedef {node.spelling}")
@@ -193,8 +181,10 @@ class Generator:
 
         self.declare(node, f"    ctypedef {decl}")
 
-
     def traverse(self, node: cindex.Cursor, depth: int):
+
+        if node.spelling == "SDL_GamepadBinding":
+            return
 
         # print("  " * depth, node.kind, node.location, repr(node.spelling)[:100])
 
@@ -218,9 +208,7 @@ def main():
 
     ap.add_argument("header", help="Path to the SDL3/SDL.h header file.", type=pathlib.Path)
 
-
     args = ap.parse_args()
-
 
     sdl_h_path: pathlib.Path = args.header.absolute()
     "The path to the SDL3/SDL.h header file, made absolute."
@@ -234,7 +222,6 @@ def main():
     index = cindex.Index.create()
     options = cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD
     index_args = [f"-I{include_dir}", "-DSDL_MAIN_HANDLED" ]
-
 
     tu = index.parse(str(args.header), args=index_args, options=options)
 
