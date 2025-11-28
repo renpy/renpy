@@ -514,6 +514,10 @@ class Cache:
         Creates it lazily if needed. Returns None if parallel decoding is disabled.
         """
 
+        # Multithreading is not supported on Web
+        if renpy.emscripten:
+            return None
+
         if self.decode_pool is not None:
             return self.decode_pool
 
