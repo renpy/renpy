@@ -46,6 +46,14 @@ class Generator:
     def generate(self):
         old_header: pathlib.Path|None = None
 
+        print
+        print("from libc.stdint cimport *")
+        print("from libc.stddef cimport wchar_t")
+        print("from libcpp cimport bool as cbool")
+        print("ctypedef struct va_list")
+        print()
+
+
         for header, decl in self.declarations:
             if header != old_header:
                 if old_header is not None:
@@ -103,7 +111,11 @@ class Generator:
         for token in tokens:
             if token.spelling in { "typedef", "struct", "union", "enum", "__attribute__", "__extension__", "__inline__", "SDLCALL" }:
                 continue
-            parts.append(token.spelling)
+
+            if token.spelling == "bool":
+                parts.append("cbool")
+            else:
+                parts.append(token.spelling)
 
         joined = " ".join(parts)
 
@@ -112,6 +124,7 @@ class Generator:
         joined = re.sub(r'\) \(', ')(', joined)
         joined = re.sub(r' ,', ',', joined)
         joined = re.sub(r'\* ', '*', joined)
+        joined = re.sub(r'\(void\)', '()', joined)
 
         return joined
 
@@ -133,12 +146,15 @@ class Generator:
         ret_type = node.result_type.spelling
         params = []
         for arg in node.get_arguments():
-            param_type = arg.type.spelling
-            param_name = arg.spelling or "_"  # Cython permits unnamed but keep underscore
-            if param_type.endswith("*"):
-                params.append(f"{param_type}{param_name}")
-            else:
-                params.append(f"{param_type} {param_name}")
+
+            params.append(self.elide_tokens(arg))
+
+            # param_type = arg.type.spelling
+            # param_name = arg.spelling or "_"  # Cython permits unnamed but keep underscore
+            # if param_type.endswith("*"):
+            #     params.append(f"{param_type}{param_name}")
+            # else:
+            #     params.append(f"{param_type} {param_name}")
 
         if ret_type.endswith("*"):
             sig = f"{ret_type}{name}({', '.join(params)})"
@@ -155,6 +171,28 @@ class Generator:
             return
 
         self.declare(node, f"    cdef struct {node.spelling}:")
+
+        has_fields = False
+
+        for child in node.get_children():
+            if child.kind == CursorKind.FIELD_DECL:
+                self.declare(child, f"        {self.elide_tokens(child)}")
+                has_fields = True
+
+        if not has_fields:
+            self.declare(node, f"        pass")
+
+    def union(self, node: cindex.Cursor):
+        if not self.is_relevant(node):
+            return
+
+        if "unnamed at" in node.spelling:
+            return
+
+        if not self.check_new_name(node.spelling):
+            return
+
+        self.declare(node, f"    cdef union {node.spelling}:")
 
         has_fields = False
 
@@ -202,6 +240,9 @@ class Generator:
 
         elif node.kind == CursorKind.STRUCT_DECL:
             self.struct(node)
+
+        if node.kind == CursorKind.UNION_DECL:
+            self.union(node)
 
 def main():
     ap = argparse.ArgumentParser(description="SDL3 Binding Generator")
