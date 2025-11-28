@@ -2,6 +2,8 @@ import argparse
 import pathlib
 import re
 
+from Cython.Shadow import typedef
+
 try:
     from clang import cindex
     from clang.cindex import CursorKind
@@ -43,27 +45,30 @@ class Generator:
         header = pathlib.Path(cursor.location.file.name).relative_to(self.sdl3_path)
         self.declarations.append((header, decl))
 
-    def generate(self):
+    def generate(self, destination_filename: pathlib.Path):
         old_header: pathlib.Path|None = None
 
-        print
-        print("from libc.stdint cimport *")
-        print("from libc.stddef cimport wchar_t")
-        print("from libcpp cimport bool as cbool")
-        print("ctypedef struct va_list")
-        print()
+        with open(destination_filename, "w") as f:
+
+            print("from libc.stdint cimport *", file=f)
+            print("from libc.stddef cimport wchar_t", file=f)
+            print("from libcpp cimport bool as cbool", file=f)
+            print("ctypedef struct va_list", file=f)
+            print(file=f)
+
+            print("cdef extern from \"SDL3/SDL.h\":", file=f)
 
 
-        for header, decl in self.declarations:
-            if header != old_header:
-                if old_header is not None:
-                    print()
+            for header, decl in self.declarations:
+                if header != old_header:
+                    print(file=f)
+                    print(f"    # Definitions from {header}", file=f)
 
-                print(f"cdef extern from \"{header}\":")
+                    old_header = header
 
-                old_header = header
+                print(decl, file=f)
 
-            print(decl)
+        self.declarations.clear()
 
 
     def is_relevant(self, node: cindex.Cursor) -> bool:
@@ -125,6 +130,8 @@ class Generator:
         joined = re.sub(r' ,', ',', joined)
         joined = re.sub(r'\* ', '*', joined)
         joined = re.sub(r'\(void\)', '()', joined)
+
+        joined = joined.replace("[ SDL_MESSAGEBOX_COLOR_COUNT ]", "[]")
 
         return joined
 
@@ -219,7 +226,25 @@ class Generator:
 
         self.declare(node, f"    ctypedef {decl}")
 
+    def before(self, node: cindex.Cursor, name: str):
+
+        match name:
+
+            # Cindex gets wrong.
+            case "SDL_SetEventFilter":
+                self.declare(node, "    ctypedef cbool (*SDL_EventFilter)(void *userdata, SDL_Event *event)")
+
+            # Cindex gets wrong.
+            case "SDL_SetX11EventHook":
+                self.declare(node, "    ctypedef void (*SDL_X11EventHook)(void *userdata, XEvent *event)")
+
+            # We don't support anonymous structs/unions.
+            case "SDL_GetGamepadBindings":
+                self.declare(node, """    ctypedef struct SDL_GamepadBinding""")
+
     def traverse(self, node: cindex.Cursor, depth: int):
+
+        self.before(node, node.spelling)
 
         if node.spelling == "SDL_GamepadBinding":
             return
@@ -248,6 +273,7 @@ def main():
     ap = argparse.ArgumentParser(description="SDL3 Binding Generator")
 
     ap.add_argument("header", help="Path to the SDL3/SDL.h header file.", type=pathlib.Path)
+    ap.add_argument("--destination", help="Path to the directory to which .pxd files will be written.", type=pathlib.Path, default=pathlib.Path("."))
 
     args = ap.parse_args()
 
@@ -267,8 +293,12 @@ def main():
     tu = index.parse(str(args.header), args=index_args, options=options)
 
     generator = Generator(sdl3_path)
+
+    destination = args.destination / (args.header.stem.lower() + ".pxd")
+    "The path to the destination .pxd file."
+
     generator.traverse(tu.cursor, 0)
-    generator.generate()
+    generator.generate(destination)
 
 if __name__ == "__main__":
     main()
