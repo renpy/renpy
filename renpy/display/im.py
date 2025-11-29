@@ -31,8 +31,9 @@ import zipfile
 import threading
 import time
 import io
-import os.path
+import os
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import renpy
 
@@ -117,6 +118,10 @@ class Cache:
             self.preload_thread.start()
         else:
             self.preload_thread = None
+
+        # Thread pool for parallel image decoding
+        self.decode_pool: ThreadPoolExecutor | None = None
+        self.decode_pool_workers: int = 0
 
         # Have we been added this tick?
         self.added: set[ImageBase] = set()
@@ -503,6 +508,34 @@ class Cache:
         with self.preload_lock:
             self.preload_lock.notify()
 
+    def get_decode_pool(self) -> ThreadPoolExecutor | None:
+        """
+        Returns the thread pool for parallel image decoding.
+        Creates it lazily if needed. Returns None if parallel decoding is disabled.
+        """
+
+        # Multithreading is not supported on Web
+        if renpy.emscripten:
+            return None
+
+        if self.decode_pool is not None:
+            return self.decode_pool
+
+        num_threads = renpy.config.preload_threads
+
+        # 0 means auto (use CPU count, always leaving at least 2 free)
+        if num_threads == 0:
+            num_threads = min((os.cpu_count() - 2) or 1, renpy.config.preload_thread_autocap)
+
+        # 1 means disabled
+        if num_threads <= 1:
+            return None
+
+        self.decode_pool = ThreadPoolExecutor(max_workers=num_threads, thread_name_prefix="decode")
+        self.decode_pool_workers = num_threads
+
+        return self.decode_pool
+
     def preload_thread_main(self):
         while self.keep_preloading:
             self.preload_lock.acquire()
@@ -514,17 +547,24 @@ class Cache:
     def preload_thread_pass(self):
         renpy.gl2.assimp.preload()
 
-        while self.preloads and self.keep_preloading:
-            # If the size of the current generation is bigger than the
-            # total cache size, stop preloading.
+        pool = self.get_decode_pool()
 
-            # If the cache is overfull, clean it out.
+        if pool is None:
+            self._preload_thread_pass_serial() # Serial decoding
+        else:
+            self._preload_thread_pass_parallel(pool) # Parallel decoding
+
+    def _preload_thread_pass_serial(self):
+        """Serial preloading - processes images one at a time."""
+
+        while self.preloads and self.keep_preloading:
             if not self.cleanout():
                 if renpy.config.debug_image_cache:
                     for i in self.preloads:
                         renpy.display.ic_log.write(f"Overfull {i!r}")
 
                 self.preloads.clear()
+
                 return
 
             try:
@@ -537,6 +577,45 @@ class Cache:
                         self.preload_blacklist.add(image)
             except Exception:
                 pass
+
+        self.cleanout()
+
+    def _preload_thread_pass_parallel(self, pool: ThreadPoolExecutor):
+        """Parallel preloading - decodes multiple images concurrently."""
+
+        while self.preloads and self.keep_preloading:
+            if not self.cleanout():
+                if renpy.config.debug_image_cache:
+                    for i in self.preloads:
+                        renpy.display.ic_log.write(f"Overfull {i!r}")
+
+                self.preloads.clear()
+
+                return
+
+            # Extract batch using slice
+            batch_size = min(len(self.preloads), self.decode_pool_workers * 2)
+            candidates = self.preloads[:batch_size]
+
+            del self.preloads[:batch_size]
+
+            batch = [img for img in candidates if img not in self.preload_blacklist]
+
+            if not batch:
+                continue
+
+            futures = {pool.submit(self.preload_texture, image): image for image in batch}
+
+            for future in as_completed(futures):
+                image = futures[future]
+
+                try:
+                    future.result()
+                except Exception:
+                    self.preload_blacklist.add(image)
+
+                if not self.keep_preloading:
+                    break
 
         self.cleanout()
 
