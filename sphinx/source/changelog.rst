@@ -27,8 +27,14 @@ Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, i
 Fixes
 -----
 
+Speech bubble dialogue is only retained at the end of a sequence of pauses, not every time.
+
 Other Changes
 -------------
+
+The :var:`bubble.area_property` variable has become documented. This controls how the area of a
+speech bubble is supplied to dialogue. It's now documented how to supply the area as an argument
+to the bubble screen for further control.
 
 There is a new "interact_done" :ref:`character callback <character-callbacks>`, which is called after
 each interaction ends.

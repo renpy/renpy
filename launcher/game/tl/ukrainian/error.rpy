@@ -117,75 +117,75 @@ translate ukrainian strings:
     old "Back (B)"
     new "Назад (B)"
 
-    # renpy/common/_errorhandling.rpym:757
+    # renpy/common/_errorhandling.rpym:758
     old "Open"
     new "Відкрити"
 
-    # renpy/common/_errorhandling.rpym:759
+    # renpy/common/_errorhandling.rpym:760
     old "Opens the traceback.txt file in a text editor."
     new "Відкриває файл traceback.txt у текстовому редакторі."
 
-    # renpy/common/_errorhandling.rpym:761
+    # renpy/common/_errorhandling.rpym:762
     old "Copy BBCode"
     new "Копіювати BBCode"
 
-    # renpy/common/_errorhandling.rpym:763
+    # renpy/common/_errorhandling.rpym:764
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
     new "Копіює вміст файлу traceback.txt у буфер обміну як BBCode для форумів як https://lemmasoft.renai.us/."
 
-    # renpy/common/_errorhandling.rpym:765
+    # renpy/common/_errorhandling.rpym:766
     old "Copy Markdown"
     new "Копіювати Markdown"
 
-    # renpy/common/_errorhandling.rpym:767
+    # renpy/common/_errorhandling.rpym:768
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
     new "Копіює вміст файлу traceback.txt у буфер обміну як Markdown для Discord."
 
-    # renpy/common/_errorhandling.rpym:799
+    # renpy/common/_errorhandling.rpym:800
     old "An exception has occurred."
     new "Стався виняток."
 
-    # renpy/common/_errorhandling.rpym:828
+    # renpy/common/_errorhandling.rpym:829
     old "Rollback"
     new "Відкотити"
 
-    # renpy/common/_errorhandling.rpym:830
+    # renpy/common/_errorhandling.rpym:831
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Спробує відкотити до попереднього часу, дозволяючи вам зберегтися або вибрати інший вибір."
 
-    # renpy/common/_errorhandling.rpym:833
+    # renpy/common/_errorhandling.rpym:834
     old "Ignore"
     new "Ігнорувати"
 
-    # renpy/common/_errorhandling.rpym:837
+    # renpy/common/_errorhandling.rpym:838
     old "Ignores the exception, allowing you to continue."
     new "Ігнорує виняток, дозволяючи вам продовжити."
 
-    # renpy/common/_errorhandling.rpym:839
+    # renpy/common/_errorhandling.rpym:840
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Ігнорує виняток, дозволяючи вам продовжити. Найчастіше призводить до додаткових помилок."
 
-    # renpy/common/_errorhandling.rpym:843
+    # renpy/common/_errorhandling.rpym:844
     old "Reload"
     new "Перезавантажити"
 
-    # renpy/common/_errorhandling.rpym:845
+    # renpy/common/_errorhandling.rpym:846
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Перезавантажує гру з диска, зберігаючи та відновлюючи її стан, якщо можливо."
 
-    # renpy/common/_errorhandling.rpym:848
+    # renpy/common/_errorhandling.rpym:849
     old "Console"
     new "Консоль"
 
-    # renpy/common/_errorhandling.rpym:850
+    # renpy/common/_errorhandling.rpym:851
     old "Opens a console to allow debugging the problem."
     new "Відкриває консоль, що дозволяє налагодити проблему."
 
-    # renpy/common/_errorhandling.rpym:863
+    # renpy/common/_errorhandling.rpym:864
     old "Quits the game."
     new "Виходить з гри."
 
-    # renpy/common/_errorhandling.rpym:885
+    # renpy/common/_errorhandling.rpym:886
     old "Parsing the script failed."
     new "Помилка аналізу скрипта."
 
