@@ -523,9 +523,10 @@ class Cache:
 
         num_threads = renpy.config.preload_threads
 
-        # 0 means auto (use CPU count, always leaving at least 2 free)
+        # 0 means auto (use CPU count, always leaving at least 2 free, and at least 1 thread)
         if num_threads == 0:
-            num_threads = min((os.cpu_count() - 2) or 1, renpy.config.preload_thread_autocap)
+            num_threads = min((os.cpu_count() - 2), renpy.config.preload_thread_autocap)
+            num_threads = max(1, num_threads)
 
         # 1 means disabled
         if num_threads <= 1:
