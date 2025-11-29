@@ -1,3 +1,6 @@
+build/
+__pycache__/
 .venv
-*.pxd
+sdl.pyx
+sdl.pxd
 *.c
