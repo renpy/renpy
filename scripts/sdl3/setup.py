@@ -2,8 +2,8 @@ from setuptools import setup, Extension
 
 ext_modules = [
     Extension(
-        "sdl",
-        sources=["sdl.c"],
+        "pygame.sdl",
+        sources=["pygame/sdl.c"],
         libraries=["SDL3"],
     )
 ]

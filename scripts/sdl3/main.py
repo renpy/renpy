@@ -298,7 +298,7 @@ def main():
     ap = argparse.ArgumentParser(description="SDL3 Binding Generator")
 
     ap.add_argument("header", help="Path to the SDL3/SDL.h header file.", type=pathlib.Path)
-    ap.add_argument("--destination", help="Path to the directory to which .pxd files will be written.", type=pathlib.Path, default=pathlib.Path("."))
+    ap.add_argument("--destination", help="Path to the directory to which .pxd files will be written.", type=pathlib.Path, default=pathlib.Path("pygame"))
 
     args = ap.parse_args()
 
