@@ -16,6 +16,7 @@ def cython(module: str, source: list[str] = [ ]) -> None:
 
 cython("pygame.sdl")
 cython("pygame.color")
+cython("pygame.rect")
 
 # cython("pygame.surface")
 
