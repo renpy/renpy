@@ -65,7 +65,7 @@ class Generator:
             print("ctypedef struct va_list", file=f)
             print(file=f)
 
-            print('cdef extern from "SDL3/SDL.h":', file=f)
+            print('cdef extern from "SDL3/SDL.h" nogil:', file=f)
 
             for header, decl in self.declarations:
                 if header != old_header:
@@ -75,6 +75,9 @@ class Generator:
                     old_header = header
 
                 print(decl, file=f)
+
+            print(file=f)
+            print("    int SDL_MUSTLOCK(SDL_Surface *surface)", file=f)
 
         self.declarations.clear()
 
