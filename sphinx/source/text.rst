@@ -350,7 +350,8 @@ Tags that apply to all text are:
 
     The outline text tag changes all the outlines (including drop
     shadows) to the given color. The color should be in #rgb, #rgba,
-    #rrggbb, or #rrggbbaa format. ::
+    #rrggbb, or #rrggbbaa format. This will only adjust existing outlines,
+    it does not add them. ::
 
         "Let's have a {outlinecolor=#00ff00}Green{/outlinecolor} outline."
 
