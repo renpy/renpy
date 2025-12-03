@@ -1,4 +1,5 @@
 import argparse
+import ast
 import collections
 import pathlib
 import re
@@ -30,6 +31,8 @@ class Generator:
         self.declared_names = set()
 
         self.enum_values: dict[str, list[str]] = collections.defaultdict(list)
+
+        self.macros = list()
 
     def declare(self, cursor: cindex.Cursor, decl: str):
         """
@@ -79,7 +82,13 @@ class Generator:
             print(file=f)
             print("    int SDL_MUSTLOCK(SDL_Surface *surface)", file=f)
 
+            print(file=f)
+            print("    cdef enum:", file=f)
+            for macro in self.macros:
+                print(f"        {macro}", file=f)
+
         self.declarations.clear()
+        self.macros.clear()
 
         with open(destination_pyx, "w") as f:
             print(
@@ -265,6 +274,40 @@ class Generator:
         if not has_fields:
             self.declare(node, f"        pass")
 
+    def macro(self, node: cindex.Cursor):
+        if not self.is_relevant(node):
+            return
+
+        if not node.spelling.startswith("SDL_"):
+            return
+
+        if node.spelling.startswith("SDL_PLATFORM_"):
+            return
+
+        if not self.check_new_name(node.spelling):
+            return
+
+        def clean_token(t: str) -> str:
+            t = re.sub(r"(\d+)[lLuU]*", r"\1", t)
+            return t.strip()
+
+        tokens = [clean_token(t.spelling) for t in node.get_tokens()]
+        tokens = tokens[1:]  # Skip the macro name.
+
+        decl = "".join(tokens).strip()
+
+        if not decl:
+            return
+
+        try:
+            value = ast.literal_eval(decl)
+        except Exception:
+            return
+
+        if isinstance(value, (str, int)):
+            self.macros.append(node.spelling)
+
+
     def typedef(self, node: cindex.Cursor):
         if not self.is_relevant(node):
             return
@@ -317,8 +360,11 @@ class Generator:
         elif node.kind == CursorKind.STRUCT_DECL:
             self.struct(node)
 
-        if node.kind == CursorKind.UNION_DECL:
+        elif node.kind == CursorKind.UNION_DECL:
             self.union(node)
+
+        elif node.kind == CursorKind.MACRO_DEFINITION:
+            self.macro(node)
 
 
 def main():
