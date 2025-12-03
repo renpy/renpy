@@ -18,6 +18,7 @@ cython("pygame.sdl")
 cython("pygame.color")
 cython("pygame.rect")
 cython("pygame.error")
+cython("pygame.surface")
 
 # cython("pygame.surface")
 
