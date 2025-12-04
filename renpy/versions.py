@@ -19,13 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+import os
+import sys
+import site
 
 py_branch_to_version = {}
-
-import sys
-import os
 
 
 class Version(object):
@@ -84,7 +82,32 @@ def make_dict(branch, suffix="00000000", official=False, nightly=False):
     }
 
 
-def get_version():
+def get_vc_version():
+    """
+    Return version dict from vc_version.py if it exists or None otherwise.
+    """
+
+    # vc_version.py contains:
+    # branch - Name of the branch from which this the file was generated.
+    # official - True if it were an official build.
+    # nightly - True if it were a nightly build.
+    # version - Semver as a string.
+    # version_name - Name of the version.
+    try:
+        import renpy.vc_version as vc_version  # type: ignore
+    except ImportError:
+        return None
+
+    return dict(
+        branch=vc_version.branch,
+        official=vc_version.official and getattr(site, "renpy_build_official", False),
+        nightly=vc_version.nightly,
+        version=vc_version.version,
+        name=vc_version.version_name,
+    )
+
+
+def get_git_version():
     """
     Tries to return a version dict without using the information in
     vc_version.
@@ -104,12 +127,23 @@ def get_version():
                 branch = m.group(1)
                 break
 
-    except:
+    except Exception:
         import traceback
 
         traceback.print_exc()
 
     return make_dict(branch)
+
+
+def get_version():
+    """
+    Return a version dict either from local vc_version or from git.
+    """
+
+    if (vc_version := get_vc_version()) is not None:
+        return vc_version
+
+    return get_git_version()
 
 
 def generate_vc_version(nightly=False):
