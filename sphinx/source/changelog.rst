@@ -18,6 +18,12 @@ Speech bubble dialogue is only retained at the end of a sequence of pauses, not 
 Other Changes
 -------------
 
+The new :var:`config.tlid_only_considers_say` variable prevents non-say statements, such as the ``voice``
+statement, from contributing to translation identifiers. (Translation identifiers are used for
+other things as well, like tracking speech bubbles.) This variable defaults to False, but will
+become True in Ren'Py 8.6. Setting this to true has the potential to change Translation
+identifier if your game uses voice statements.
+
 The :var:`bubble.area_property` variable has become documented. This controls how the area of a
 speech bubble is supplied to dialogue. It's now documented how to supply the area as an argument
 to the bubble screen for further control.

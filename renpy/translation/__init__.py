@@ -342,9 +342,16 @@ class Restructurer(object):
 
         md5 = hashlib.md5()
 
-        for i in block:
-            code = i.get_code()
-            md5.update((code + "\r\n").encode("utf-8"))
+        digest_block = block
+
+        if renpy.config.tlid_only_considers_say:
+            if any(isinstance(i, renpy.ast.Say) for i in block):
+                digest_block = [i for i in block if isinstance(i, renpy.ast.Say)]
+
+        for i in digest_block:
+            if isinstance(i, renpy.ast.Say):
+                code = i.get_code()
+                md5.update((code + "\r\n").encode("utf-8"))
 
         digest = md5.hexdigest()[:8]
 
