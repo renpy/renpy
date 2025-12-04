@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from typing import TypedDict
+
 import os
 import sys
 import site
@@ -52,6 +54,23 @@ Version("main", 3, "8.6.0", "Real Artists Ship")
 Version("fix", 3, "8.5.1", "In Good Health")
 
 
+class VersionDict(TypedDict):
+    """
+    Dictionary that stores all the data about current running version.
+    """
+
+    version: str
+    "The full version number with suffixes as a string."
+    name: str
+    "The name of the version."
+    branch: str
+    "The name of the branch from which this version was made."
+    official: bool
+    "True if this is an official release."
+    nightly: bool
+    "True if this is a nightly build."
+
+
 def make_dict(branch, suffix="00000000", official=False, nightly=False):
     """
     Returns a dictionary that contains the information usually stored
@@ -82,7 +101,7 @@ def make_dict(branch, suffix="00000000", official=False, nightly=False):
     }
 
 
-def get_vc_version():
+def get_vc_version() -> VersionDict | None:
     """
     Return version dict from vc_version.py if it exists or None otherwise.
     """
@@ -98,7 +117,7 @@ def get_vc_version():
     except ImportError:
         return None
 
-    return dict(
+    return VersionDict(
         branch=vc_version.branch,
         official=vc_version.official and getattr(site, "renpy_build_official", False),
         nightly=vc_version.nightly,
@@ -107,7 +126,7 @@ def get_vc_version():
     )
 
 
-def get_git_version():
+def get_git_version() -> VersionDict:
     """
     Tries to return a version dict without using the information in
     vc_version.
@@ -135,7 +154,7 @@ def get_git_version():
     return make_dict(branch)
 
 
-def get_version():
+def get_version() -> VersionDict:
     """
     Return a version dict either from local vc_version or from git.
     """
