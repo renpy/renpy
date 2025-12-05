@@ -115,7 +115,7 @@ class VersionTuple(NamedTuple):
     commit: int
 
 
-version_tuple = VersionTuple(*(int(i) for i in version_only.split(".")))
+version_tuple = VersionTuple(*version_dict["semver"])
 "A NamedTuple giving the version numbers as (major, minor, patch, commit)."
 
 version: str = f"Ren'Py {version_only}"
