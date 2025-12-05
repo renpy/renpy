@@ -61,6 +61,8 @@ class VersionDict(TypedDict):
     Dictionary that stores all the data about current running version.
     """
 
+    semver: tuple[int, int, int, int]
+    "The Ren'Py version number, a tuple of (major, minor, patch, commit)."
     version: str
     "The full version number with suffixes as a string."
     name: str
@@ -73,6 +75,30 @@ class VersionDict(TypedDict):
     "True if this is a nightly build."
     dirty: bool
     "True if working tree was dirty when this version was made."
+
+
+def _make_version_string(
+    semver: tuple[int, int, int, int],
+    branch: str,
+    official: bool,
+    nightly: bool,
+    dirty: bool,
+) -> str:
+    major, minor, patch, commit = semver
+
+    suffixes: list[str] = []
+    if not official:
+        suffixes.append("unofficial")
+    elif nightly:
+        suffixes.append("nightly")
+
+    if dirty:
+        suffixes.append("dirty")
+
+    if branch != "main" or dirty:
+        suffixes.append(branch)
+
+    return f"{major}.{minor}.{patch}.{commit:08d}+{'.'.join(suffixes)}"
 
 
 def get_vc_version() -> VersionDict | None:
@@ -91,13 +117,25 @@ def get_vc_version() -> VersionDict | None:
     except ImportError:
         return None
 
+    major, minor, patch, commit = vc_version.version.split(".")
+    semver = (int(major), int(minor), int(patch), int(commit))
+    official = vc_version.official and getattr(site, "renpy_build_official", False)
+    dirty = getattr(vc_version, "dirty", False)
+
     return VersionDict(
         branch=vc_version.branch,
-        official=vc_version.official and getattr(site, "renpy_build_official", False),
+        official=official,
         nightly=vc_version.nightly,
-        version=vc_version.version,
+        semver=semver,
+        version=_make_version_string(
+            semver,
+            vc_version.branch,
+            official,
+            vc_version.nightly,
+            dirty,
+        ),
         name=vc_version.version_name,
-        dirty=getattr(vc_version, "dirty", False),
+        dirty=dirty,
     )
 
 
@@ -122,7 +160,7 @@ def get_git_version(nightly: bool = False) -> VersionDict:
 
         commits_per_day = collections.Counter[str](commits.split())
         key = max(commits_per_day.keys())
-        commit = f"{key}{commits_per_day[key]:02d}"
+        commit = int(f"{key}{commits_per_day[key]:02d}")
 
     except Exception:
         import traceback
@@ -130,19 +168,27 @@ def get_git_version(nightly: bool = False) -> VersionDict:
         traceback.print_exc()
 
         branch = "unknown"
-        commit = "00000000"
+        commit = 0
 
     if branch in branch_to_version:
         version_obj = branch_to_version[branch]
     else:
         version_obj = branch_to_version["main"]
     major, minor, patch = version_obj.semver
+    official = socket.gethostname() == "eileen"
 
     return VersionDict(
-        version=f"{major}.{minor}.{patch}.{commit}",
+        semver=(major, minor, patch, commit),
+        version=_make_version_string(
+            (major, minor, patch, commit),
+            branch,
+            official,
+            nightly,
+            dirty,
+        ),
         name=version_obj.name,
         branch=branch,
-        official=socket.gethostname() == "eileen",
+        official=official,
         nightly=nightly,
         dirty=dirty,
     )
