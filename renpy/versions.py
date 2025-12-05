@@ -108,6 +108,7 @@ def get_vc_version() -> VersionDict | None:
 
     # vc_version.py contains:
     # branch - Name of the branch from which this the file was generated.
+    # dirty - True if the working tree is dirty.
     # official - True if it were an official build.
     # nightly - True if it were a nightly build.
     # version - Semver as a string.
@@ -119,23 +120,21 @@ def get_vc_version() -> VersionDict | None:
 
     major, minor, patch, commit = vc_version.version.split(".")
     semver = (int(major), int(minor), int(patch), int(commit))
-    official = vc_version.official and getattr(site, "renpy_build_official", False)
-    dirty = getattr(vc_version, "dirty", False)
 
     return VersionDict(
-        branch=vc_version.branch,
-        official=official,
-        nightly=vc_version.nightly,
         semver=semver,
         version=_make_version_string(
             semver,
             vc_version.branch,
-            official,
+            vc_version.official,
             vc_version.nightly,
-            dirty,
+            vc_version.dirty,
         ),
         name=vc_version.version_name,
-        dirty=dirty,
+        branch=vc_version.branch,
+        nightly=vc_version.nightly,
+        official=vc_version.official and getattr(site, "renpy_build_official", False),
+        dirty=getattr(vc_version, "dirty", False),
     )
 
 
@@ -166,21 +165,22 @@ def get_git_version(nightly: bool = False) -> VersionDict:
         import traceback
 
         traceback.print_exc()
-
         branch = "unknown"
+        dirty = False
         commit = 0
 
     if branch in branch_to_version:
         version_obj = branch_to_version[branch]
     else:
         version_obj = branch_to_version["main"]
-    major, minor, patch = version_obj.semver
+
+    semver = (*version_obj.semver, commit)
     official = socket.gethostname() == "eileen"
 
     return VersionDict(
-        semver=(major, minor, patch, commit),
+        semver=semver,
         version=_make_version_string(
-            (major, minor, patch, commit),
+            semver,
             branch,
             official,
             nightly,
@@ -223,7 +223,7 @@ def generate_vc_version(nightly: bool = False) -> VersionDict:
             print("dirty = True", file=f)
         print(f"official = {version_dict['official']}", file=f)
         print(f"nightly = {version_dict['nightly']}", file=f)
-        print(f"version = {version_dict['version']!r}", file=f)
+        print(f"version = {version_dict['version'].split('+')[0]!r}", file=f)
         print(f"version_name = {version_dict['name']!r}", file=f)
 
     return version_dict
