@@ -13,6 +13,10 @@ Changelog (Ren'Py 7.x-)
 Other Changes
 -------------
 
+The :var:`config.tlid_only_considers_say` variable has been set to True by default. This prevents non-say statements,
+such as the ``voice`` statement, from contributing to translation identifiers. This can change trasnslation identifiers.
+See the inconpatible changes for more information.
+
 The ability to apply zsync-based updates has been removed. This was an older update format that has been replaced.
 The ability to create these updates will be removed in Ren'Py 8.7.0.
 

@@ -1636,7 +1636,7 @@ extend_like_characters: set[str] = { "extend" }
 A set of character names that will be treated like the "extend" character for the purpose of dialogue export.
 """
 
-tlid_only_considers_say: bool = False
+tlid_only_considers_say: bool = True
 """
 If True, only say statements will be assigned translation ids.
 """
