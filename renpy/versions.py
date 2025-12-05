@@ -27,33 +27,33 @@ import pathlib
 import subprocess
 import collections
 
-py_branch_to_version = {}
 
-
-class Version(object):
-    def __init__(self, branch, python, version, name):
+class Version:
+    def __init__(self, branch: str, semver: tuple[int, int, int], name: str):
         """
         `branch`
             The name of the branch, as a string.
-        `python`
-            The version of python, 2 or 3.
-        `version`
-            The Ren'Py version number, a string.
+
+        `semver`
+            The Ren'Py version number, a tuple of (major, minor, patch).
+
         `name`
             The Ren'Py version name.
         """
 
         self.branch = branch
-        self.python = python
-        self.version = version
+        self.semver = semver
         self.name = name
 
-        py_branch_to_version[(python, branch)] = self
+        branch_to_version[branch] = self
 
 
-Version("main", 3, "8.6.0", "Real Artists Ship")
+branch_to_version: dict[str, Version] = {}
 
-Version("fix", 3, "8.5.1", "In Good Health")
+
+Version("main", (8, 6, 0), "Real Artists Ship")
+
+Version("fix", (8, 5, 1), "In Good Health")
 
 
 class VersionDict(TypedDict):
@@ -132,13 +132,14 @@ def get_git_version(nightly: bool = False) -> VersionDict:
         branch = "unknown"
         commit = "00000000"
 
-    if (3, branch) in py_branch_to_version:
-        version_obj = py_branch_to_version[3, branch]
+    if branch in branch_to_version:
+        version_obj = branch_to_version[branch]
     else:
-        version_obj = py_branch_to_version[3, "main"]
+        version_obj = branch_to_version["main"]
+    major, minor, patch = version_obj.semver
 
     return VersionDict(
-        version=f"{version_obj.version}.{commit}",
+        version=f"{major}.{minor}.{patch}.{commit}",
         name=version_obj.name,
         branch=branch,
         official=socket.gethostname() == "eileen",
