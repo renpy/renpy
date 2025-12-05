@@ -124,7 +124,7 @@ class ArgumentParser(argparse.ArgumentParser):
         )
 
         self.add_argument(
-            "--version", action="version", version=renpy.version, help="Displays the version of Ren'Py in use."
+            "--version", action="version", version=renpy.version_only, help="Displays the version of Ren'Py in use."
         )
 
         self.add_argument(
