@@ -22,7 +22,6 @@
 from typing import TypedDict
 
 import site
-import time
 import socket
 import pathlib
 import subprocess
@@ -72,6 +71,8 @@ class VersionDict(TypedDict):
     "True if this is an official release."
     nightly: bool
     "True if this is a nightly build."
+    dirty: bool
+    "True if working tree was dirty when this version was made."
 
 
 def get_vc_version() -> VersionDict | None:
@@ -96,6 +97,7 @@ def get_vc_version() -> VersionDict | None:
         nightly=vc_version.nightly,
         version=vc_version.version,
         name=vc_version.version_name,
+        dirty=getattr(vc_version, "dirty", False),
     )
 
 
@@ -119,13 +121,8 @@ def get_git_version(nightly: bool = False) -> VersionDict:
         commits = get_output(["git", "log", "-99", "--pretty=%cd", "--date=format:%y%m%d"])
 
         commits_per_day = collections.Counter[str](commits.split())
-
-        if dirty:
-            key = time.strftime("%y%m%d")
-            commit = f"{key}{commits_per_day[key] + 1:02d}"
-        else:
-            key = max(commits_per_day.keys())
-            commit = f"{key}{commits_per_day[key]:02d}"
+        key = max(commits_per_day.keys())
+        commit = f"{key}{commits_per_day[key]:02d}"
 
     except Exception:
         import traceback
@@ -146,6 +143,7 @@ def get_git_version(nightly: bool = False) -> VersionDict:
         branch=branch,
         official=socket.gethostname() == "eileen",
         nightly=nightly,
+        dirty=dirty,
     )
 
 
@@ -174,6 +172,8 @@ def generate_vc_version(nightly: bool = False) -> VersionDict:
 
     with vc_version_path.open("w") as f:
         print(f"branch = '{version_dict['branch']}'", file=f)
+        if version_dict["dirty"]:
+            print("dirty = True", file=f)
         print(f"official = {version_dict['official']}", file=f)
         print(f"nightly = {version_dict['nightly']}", file=f)
         print(f"version = {version_dict['version']!r}", file=f)
