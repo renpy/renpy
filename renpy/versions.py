@@ -120,21 +120,23 @@ def get_vc_version() -> VersionDict | None:
 
     major, minor, patch, commit = vc_version.version.split(".")
     semver = (int(major), int(minor), int(patch), int(commit))
+    official = vc_version.official and getattr(site, "renpy_build_official", False)
+    dirty = getattr(vc_version, "dirty", False)
 
     return VersionDict(
         semver=semver,
         version=_make_version_string(
             semver,
             vc_version.branch,
-            vc_version.official,
+            official,
             vc_version.nightly,
-            vc_version.dirty,
+            dirty,
         ),
         name=vc_version.version_name,
         branch=vc_version.branch,
         nightly=vc_version.nightly,
-        official=vc_version.official and getattr(site, "renpy_build_official", False),
-        dirty=getattr(vc_version, "dirty", False),
+        official=official,
+        dirty=dirty,
     )
 
 
