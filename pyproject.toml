@@ -2,7 +2,7 @@
 name = "renpy"
 readme = "README.rst"
 license = "MIT"
-version= "8.99.99"
+dynamic = ["version"]
 requires-python = "==3.12.*"
 dependencies = [
     "future",
@@ -11,9 +11,6 @@ dependencies = [
     "requests",
     "ecdsa",
     "rsa",
-    "setuptools",
-    "cython",
-    "ruff",
     "sphinx",
     "sphinx_rtd_theme",
     "sphinx_rtd_dark_mode",
@@ -21,15 +18,13 @@ dependencies = [
 ]
 
 
-# For now those are listed in project requirements until build system is updated.
-# [project.optional-dependencies]
-# dev = ["setuptools", "cython", "ruff"]
+[project.optional-dependencies]
+dev = ["setuptools", "cython", "ruff", "pyproject-metadata", "packaging"]
 
-# For now, Ren'Py isn't using a build system, as build isolation makes building too slow.
-
-# [build-system]
-# requires = ["setuptools", "cython"]
-# build-backend = "setuptools.build_meta:__legacy__"
+[build-system]
+requires = []
+build-backend = "build_backend"
+backend-path = ["scripts"]
 
 [tool.pyright]
 include = [
@@ -89,3 +84,11 @@ line-length = 120
 
 [tool.ruff.format]
 preview = true
+
+[tool.uv]
+cache-keys = [
+    { file = "pyproject.toml" },
+    { file = "renpy/versions.py" },
+    { file = "**/*.pyx" }
+]
+cache-dir = "./tmp/uv_cache"
