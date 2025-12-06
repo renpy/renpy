@@ -150,6 +150,7 @@ The transformations are done in the following order:
 #. ``l`` (lowercase)
 #. ``c`` (capitalize)
 
+If you want to get the resulting string, with the arguments replaced with actual data, you can pass it to :ref:`renpy.substitute <renpy.substitute>`.
 
 Styling and Text Tags
 =====================
