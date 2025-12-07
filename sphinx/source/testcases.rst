@@ -126,13 +126,13 @@ The ``testsuite`` statement can contain the following hooks:
 .. describe:: after testcase
 
     A block of test statements that is executed repeatedly, running after each test case
-    in the current suite. The is run even if the testcase fails or raises an
+    in the current suite. This is run even if the testcase fails or raises an
     exception.
 
 .. describe:: after testsuite
 
     A block of test statements that is executed repeatedly, running after each test suite
-    in the current suite. The is run even if the testsuite fails or raises an
+    in the current suite. This is run even if the testsuite fails or raises an
     exception.
 
 .. describe:: teardown
