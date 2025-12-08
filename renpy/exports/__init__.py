@@ -138,6 +138,7 @@ from renpy.display.screen import (
 from renpy.display.tts import (
     speak as alt,
     speak_extra_alt,
+    stop_tts,
 )
 
 from renpy.display.video import (
