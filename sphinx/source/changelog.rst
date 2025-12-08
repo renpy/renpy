@@ -18,6 +18,8 @@ Speech bubble dialogue is only retained at the end of a sequence of pauses, not 
 Other Changes
 -------------
 
+Playing a voice line now stops ongoing self-voicing playback.
+
 The new :var:`config.tlid_only_considers_say` variable prevents non-say statements, such as the ``voice``
 statement, from contributing to translation identifiers. (Translation identifiers are used for
 other things as well, like tracking speech bubbles.) This variable defaults to False, but will
