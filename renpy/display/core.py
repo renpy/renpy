@@ -2299,7 +2299,7 @@ class Interface:
         trans_pause=False,
         suppress_overlay=False,
         suppress_underlay=False,
-        mouse="default",
+        mouse: str|None = None,
         preloads=[],
         roll_forward=None,
         pause=None,
@@ -2387,6 +2387,14 @@ class Interface:
         self.restart_interaction = False
 
         # Setup the mouse.
+        if mouse is None:
+            if getattr(renpy.store, "main_menu", False):
+                mouse = "mainmenu"
+            elif getattr(renpy.store, "_menu", False):
+                mouse = "gamemenu"
+            else:
+                mouse = "default"
+
         self.mouse = mouse
 
         # The start and end times of this interaction.
