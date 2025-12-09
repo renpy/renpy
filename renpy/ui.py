@@ -510,7 +510,7 @@ class Wrapper(renpy.object.Object):
                 do_add = False
 
         if old_transfers:
-            old_main = screen.old_widgets.get(widget_id, None)  # type: ignore
+            old_main = screen.old_widgets.get(widget_id, None)
 
             if self.replaces and old_main is not None:
                 keyword["replaces"] = old_main
