@@ -18,6 +18,8 @@ Speech bubble dialogue is only retained at the end of a sequence of pauses, not 
 Other Changes
 -------------
 
+:class:`MouseDisplayable` now allows a mouse cursor to be None, to use the system cursor.
+
 Playing a voice line now stops ongoing self-voicing playback.
 
 The new :var:`config.tlid_only_considers_say` variable prevents non-say statements, such as the ``voice``

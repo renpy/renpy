@@ -1795,10 +1795,17 @@ class Interface:
         visible = self.is_mouse_visible()
 
         if mouse_displayable is not None:
+
             x, y = renpy.exports.get_mouse_pos()
 
+            cursor_function = getattr(mouse_displayable, "_has_mouse_cursor", None)
+            if cursor_function is not None:
+                has_cursor = cursor_function()
+            else:
+                has_cursor = True
+
             if (0 <= x < renpy.config.screen_width) and (0 <= y < renpy.config.screen_height):
-                visible = False
+                visible = not has_cursor
 
         # If not visible, hide the mouse.
         if not visible:
