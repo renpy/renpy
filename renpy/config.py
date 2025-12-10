@@ -175,7 +175,7 @@ sticky_layers = ["master"]
 
 # Layers not automatically added to a scene and inherently sticky,
 # primarily for use with the Layer displayable.
-detached_layers = []
+detached_layers: list[str] = []
 
 # True if we want to show overlays during wait statements, or
 # false otherwise.
@@ -711,7 +711,7 @@ default_tag_layer = "master"
 tag_transform = {}
 
 # A map from the tag to the default zorder that's used for that tag.
-tag_zorder = {}
+tag_zorder: dict[str, int] = {}
 
 # The width of lines logged with renpy.log.
 log_width = 78
@@ -1471,7 +1471,7 @@ say_replace_event = True
 screens_never_cancel_hide = True
 
 # A list of transforms that are applied to entire layers.
-layer_transforms = {}
+layer_transforms = {}  # type: dict[str | None, list[renpy.display.motion.Transform | Callable[[renpy.display.displayable.Displayable], renpy.display.displayable.Displayable]]]
 
 # True if xfill or yfill can cause a window to shrink.
 fill_shrinks_frame = False

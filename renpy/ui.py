@@ -107,7 +107,7 @@ class Addable(object):
     def close(self, d):
         raise NotImplementedError
 
-    def get_layer(self):
+    def get_layer(self) -> str:
         return Exception("Operation can only be performed on a layer.")
 
 
