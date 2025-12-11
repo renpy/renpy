@@ -1786,6 +1786,10 @@ class Interface:
         return rv
 
     def get_mouse_name(self, cache_only=False, interaction=True):
+        """
+        This is now legacy, used to support a public api but not by Ren'Py.
+        """
+
         mouse_kind = renpy.display.focus.get_mouse()
 
         if interaction and (mouse_kind is None):
@@ -1850,11 +1854,11 @@ class Interface:
             self.set_mouse(True)
             return
 
-        mouse_kind = self.get_mouse_name(True)
-
-        if mouse_kind in self.cursor_cache:
-            anim = self.cursor_cache[mouse_kind]
-            cursor = anim[self.ticks % len(anim)]
+        for mouse_kind in self.get_mouse_names():
+            if mouse_kind in self.cursor_cache:
+                anim = self.cursor_cache[mouse_kind]
+                cursor = anim[self.ticks % len(anim)]
+                break
         else:
             cursor = True
 

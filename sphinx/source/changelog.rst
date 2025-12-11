@@ -15,10 +15,17 @@ Fixes
 
 Speech bubble dialogue is only retained at the end of a sequence of pauses, not every time.
 
-Other Changes
--------------
+Mouse Changes/Fixes
+-------------------
+
+Ren'Py now cycles through a set of possible mouse cursor names when determining which cursor to use.
+This includes the cursor based on the displayable (eg. button), the screen type (eg. gamemenu), and
+the default.
 
 :class:`MouseDisplayable` now allows a mouse cursor to be None, to use the system cursor.
+
+Other Changes
+-------------
 
 Playing a voice line now stops ongoing self-voicing playback.
 
