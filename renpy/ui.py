@@ -256,7 +256,7 @@ renpy.game.post_init.append(reset)
 def interact(type="misc", roll_forward=None, **kwargs):
     """
     :doc: ui
-    :args: (*, roll_forward=None, mouse='default')
+    :args: (*, roll_forward=None, mouse=None)
 
     Causes an interaction with the user, and returns the result of that
     interaction. This causes Ren'Py to redraw the screen and begin processing
@@ -282,7 +282,9 @@ def interact(type="misc", roll_forward=None, **kwargs):
         function.
 
     `mouse`
-        The style of mouse cursor to use during this function.
+        The style of mouse cursor to use during this function. If None, picks between
+        'default', 'mainmenu', and 'gamemenu' based on whether the main menu or game menu
+        is active.
     """
 
     if stack is None:

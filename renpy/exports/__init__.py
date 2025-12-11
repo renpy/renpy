@@ -138,6 +138,7 @@ from renpy.display.screen import (
 from renpy.display.tts import (
     speak as alt,
     speak_extra_alt,
+    stop_tts,
 )
 
 from renpy.display.video import (
@@ -386,6 +387,7 @@ from renpy.exports.displayexports import (
     get_image_bounds,
     get_image_load_log,
     get_mouse_name,
+    get_mouse_names,
     get_mouse_pos,
     get_ongoing_transition,
     get_physical_size,
