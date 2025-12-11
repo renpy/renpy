@@ -72,17 +72,13 @@ init -1500 python:
             """
             Return the name of the cursor that will be used.
             """
+
             # Determine the name of the mouse to use.
-            name = renpy.get_mouse_name(True)
+            for name in renpy.get_mouse_names():
+                if name in self.cursors:
+                    return name
 
-            # If it doesn't exist, use the default.
-            if (name not in self.cursors) or (name == "default"):
-                name = getattr(store, "default_mouse", "default")
-
-            if name not in self.cursors:
-                name = "default"
-
-            return name
+            return "default"
 
         def _has_mouse_cursor(self):
             """

@@ -1760,6 +1760,31 @@ class Interface:
 
         return visible
 
+    def get_mouse_names(self):
+        """
+        Return a list of possible mice that can be displayed, in priority order.
+        """
+
+        rv = [ ]
+
+        mouse_kind = renpy.display.focus.get_mouse()
+        if mouse_kind:
+            rv.append(mouse_kind)
+
+        if self.mouse:
+            rv.append(self.mouse)
+
+        rv.append(getattr(renpy.store, "default_mouse", "default"))
+
+        if pygame.mouse.get_pressed()[0]:
+            new_rv = [ ]
+            for i in rv:
+                new_rv.extend([ "pressed_" + i, i ])
+
+            rv = new_rv
+
+        return rv
+
     def get_mouse_name(self, cache_only=False, interaction=True):
         mouse_kind = renpy.display.focus.get_mouse()
 
@@ -1790,6 +1815,7 @@ class Interface:
             mouse_kind = getattr(renpy.store, "default_mouse", "default")
 
         return mouse_kind
+
 
     def update_mouse(self, mouse_displayable):
         visible = self.is_mouse_visible()
