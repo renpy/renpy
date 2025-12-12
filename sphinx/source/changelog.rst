@@ -24,6 +24,9 @@ the default.
 
 :class:`MouseDisplayable` now allows a mouse cursor to be None, to use the system cursor.
 
+Ren'Py now merges MOUSEMOTION events that occur in rapid succession at a lower level,
+making the game more responsive when faced with mice that produce many events per frame.
+
 Other Changes
 -------------
 
