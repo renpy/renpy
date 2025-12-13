@@ -52,7 +52,7 @@ class Object:
     def __getstate__(self):
         rv = self.__dict__.copy()
 
-        for f in type(self).nosave:
+        for f in self.nosave:
             rv.pop(f, None)
 
         rv["__version__"] = self.__version__
@@ -91,7 +91,7 @@ class Object:
         # This also prevents the class from removing __dict__ slot, which is
         # necessary for fast pickle/unpickle of Object.
         if getattr(cls, "__slots__", None):
-            raise Exception("nonempty __slots__ not supported for subtype of 'renpy.object.Object'")
+            raise TypeError("nonempty __slots__ not supported for subtype of 'renpy.object.Object'")
 
 
 
