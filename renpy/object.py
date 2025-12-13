@@ -91,3 +91,6 @@ class Sentinel(object):
 
     def __reduce__(self):
         return (Sentinel, (self.name,))
+
+    def __repr__(self):
+        return f"renpy.object.Sentinel({self.name!r})"
