@@ -88,11 +88,11 @@ class Object:
             self.after_setstate()
 
     def __init_subclass__(cls):
-        # This also prevents the class from removing __dict__ slot, which is
-        # necessary for fast pickle/unpickle of Object.
         if getattr(cls, "__slots__", None):
             raise TypeError("nonempty __slots__ not supported for subtype of 'renpy.object.Object'")
 
+        if cls.__version__ and cls.after_upgrade is Object.after_upgrade:
+            raise TypeError(f"class {cls.__name__} does not override 'after_upgrade' method")
 
 
 sentinels = {}
