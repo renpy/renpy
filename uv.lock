@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = "==3.12.*"
 
 [[package]]
@@ -192,41 +192,61 @@ wheels = [
 ]
 
 [[package]]
-name = "renpy"
-version = "8.99.99"
-source = { virtual = "." }
+name = "pyproject-metadata"
+version = "0.10.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cython" },
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/75/bd/74706b3671c443944f487a42a0148a507b733c60600df1d34cde41e6d10b/pyproject_metadata-0.10.0.tar.gz", hash = "sha256:7f5bd0ef398b60169556cb17ea261d715caf7f8561238151f51b2305084ba8d4", size = 40568, upload-time = "2025-11-21T15:29:23.573Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c0/57/e69a1de45ec7a99a707e9f1a5defa035a48de0cae2d8582451c72d2db456/pyproject_metadata-0.10.0-py3-none-any.whl", hash = "sha256:b1e439a9f7560f9792ee5975dcf5e89d2510b1fc84a922d7e5d665aa9102d966", size = 19806, upload-time = "2025-11-21T15:29:22.062Z" },
+]
+
+[[package]]
+name = "renpy"
+source = { editable = "." }
+dependencies = [
     { name = "ecdsa" },
     { name = "future" },
     { name = "jinja2" },
     { name = "pefile" },
     { name = "requests" },
     { name = "rsa" },
-    { name = "ruff" },
-    { name = "setuptools" },
     { name = "six" },
     { name = "sphinx" },
     { name = "sphinx-rtd-dark-mode" },
     { name = "sphinx-rtd-theme" },
 ]
 
+[package.optional-dependencies]
+dev = [
+    { name = "cython" },
+    { name = "packaging" },
+    { name = "pyproject-metadata" },
+    { name = "ruff" },
+    { name = "setuptools" },
+]
+
 [package.metadata]
 requires-dist = [
-    { name = "cython" },
+    { name = "cython", marker = "extra == 'dev'" },
     { name = "ecdsa" },
     { name = "future" },
     { name = "jinja2" },
+    { name = "packaging", marker = "extra == 'dev'" },
     { name = "pefile" },
+    { name = "pyproject-metadata", marker = "extra == 'dev'" },
     { name = "requests" },
     { name = "rsa" },
-    { name = "ruff" },
-    { name = "setuptools" },
+    { name = "ruff", marker = "extra == 'dev'" },
+    { name = "setuptools", marker = "extra == 'dev'" },
     { name = "six" },
     { name = "sphinx" },
     { name = "sphinx-rtd-dark-mode" },
     { name = "sphinx-rtd-theme" },
 ]
+provides-extras = ["dev"]
 
 [[package]]
 name = "requests"
