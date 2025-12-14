@@ -30,6 +30,10 @@ making the game more responsive when faced with mice that produce many events pe
 Other Changes
 -------------
 
+Ren'Py now includes a cut-down version of the brotli python module. This version supports the
+decompress method and Decompressor object, but leaves out the Compressor object. It's intended
+to allow requests to handle brotli-compressed responses.
+
 Playing a voice line now stops ongoing self-voicing playback.
 
 The new :var:`config.tlid_only_considers_say` variable prevents non-say statements, such as the ``voice``
