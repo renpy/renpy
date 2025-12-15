@@ -135,7 +135,6 @@ import typing
 
 if typing.TYPE_CHECKING:
     from . import color as color
-    from . import compat as compat
     from . import controller as controller
     from . import display as display
     from . import draw as draw
