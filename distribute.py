@@ -259,6 +259,7 @@ def main():
     # Sign the update.
     if not args.fast:
         subprocess.check_call([
+            "uv", "run",
             "scripts/sign_update.py",
             "/home/tom/ab/keys/renpy_private.pem",
             os.path.join(destination, "updates.json"),

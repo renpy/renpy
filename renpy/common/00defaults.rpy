@@ -145,17 +145,21 @@ init 1500 python hide:
 
 init -1500 python:
     def _locale_to_language_function(locale, region):
-        lang_name = renpy.translation.locales.get(locale + "_" + region)
+        locale_map = config.locale_to_language_map
+
+        lang_name = locale_map.get(locale + "_" + region)
         if lang_name is not None and lang_name in renpy.known_languages():
             return lang_name
 
-        lang_name = renpy.translation.locales.get(region)
+        lang_name = locale_map.get(locale)
         if lang_name is not None and lang_name in renpy.known_languages():
             return lang_name
 
-        lang_name = renpy.translation.locales.get(locale)
+        lang_name = locale_map.get(region)
         if lang_name is not None and lang_name in renpy.known_languages():
             return lang_name
+
+        return None
 
     config.locale_to_language_function = _locale_to_language_function
 

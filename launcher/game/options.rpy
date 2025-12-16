@@ -314,7 +314,7 @@ init python:
 
     # main source.
 
-    def source_and_binary(pattern, source="source", binary="binary", py=True):
+    def source_and_binary(pattern, source="source", binary="binary", py=True, so=False):
         """
         Classifies source and binary files beginning with `pattern`.
         .pyo, .rpyc, .rpycm, and .rpyb go into binary, everything
@@ -345,8 +345,9 @@ init python:
             build.classify_renpy(pattern + "/**.pyc", None)
             build.classify_renpy(pattern + "/**.pyo", None)
 
-        build.classify_renpy(pattern + "/**.so", None)
-        build.classify_renpy(pattern + "/**.pyd", None)
+        if not so:
+            build.classify_renpy(pattern + "/**.so", None)
+            build.classify_renpy(pattern + "/**.pyd", None)
 
         build.classify_renpy(pattern + "/**.pyi", "source_only")
         build.classify_renpy(pattern + "/**.pyx", "source_only")
@@ -415,11 +416,12 @@ init python:
 
     build.classify_renpy("lib/py3-linux-armv7l", None)
     build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
-    source_and_binary("lib/py3-**", "binary", "binary")
+    source_and_binary("lib/py3-**", "binary", "binary", so=True)
 
     libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
     source_and_binary(libpython, "binary", "binary", py='pyc')
 
+    build.classify_renpy("lib/py3-windows-x86_64/zsync.exe", None)
     build.classify_renpy("lib/python**", None)
     build.classify_renpy("lib/py2-**", None)
 

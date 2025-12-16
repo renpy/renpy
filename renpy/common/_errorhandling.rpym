@@ -154,6 +154,7 @@ init label _errorhandling:
         thumb_shadow None
         left_gutter 0
         right_gutter 0
+        thumb_align 0.0
         thumb_offset 0
         unscrollable None
         bar_invert False

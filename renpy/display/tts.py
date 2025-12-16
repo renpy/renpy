@@ -88,6 +88,9 @@ class AndroidTTS(object):
     def speak(self, s):
         self.tts.speak(s, self.TextToSpeech.QUEUE_FLUSH, None)
 
+    def stop(self):
+        self.tts.stop()
+
 
 class AppleTTS(object):
     def __init__(self):
@@ -105,6 +108,9 @@ class AppleTTS(object):
     def speak(self, s):
         utterance = self.AVSpeechUtterance.alloc().initWithString_(self.objc_str(s))
         self.synth.speakUtterance_(utterance)
+
+    def stop(self):
+        self.synth.stopSpeakingAtBoundary_(0)  # AVSpeechBoundaryImmediate
 
 
 platform_tts = None  # The platform-specific TTS object, used on Android or iOS.
@@ -194,6 +200,33 @@ def default_tts_function(s):
     elif platform_tts is not None:
         platform_tts.speak(s)
 
+
+def stop_tts():
+    """
+    :undocumented:
+
+    Stops any currently playing TTS.
+    """
+
+    if renpy.emscripten and renpy.config.webaudio:
+        from renpy.audio.webaudio import call
+
+        call("tts", "", 1.0)
+        return
+
+    if platform_tts is not None:
+        platform_tts.stop()
+        return
+
+    global process
+    if process is not None:
+        try:
+            process.terminate()
+            process.wait()
+        except Exception:
+            pass
+
+        process = None
 
 # A List of (regex, string) pairs.
 tts_substitutions = []
@@ -392,7 +425,7 @@ def displayable(d):
 
     while True:
         try:
-            s = d._tts_all()
+            s = d._tts_all(raw=False)
             break
         except TTSRoot:
             if d is root:

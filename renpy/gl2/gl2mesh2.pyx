@@ -253,7 +253,8 @@ cdef class Mesh2(Mesh):
         double left, double top, double right, double bottom,
         double left_time, double right_time,
         double ascent, double descent,
-        double xoffset, double yoffset
+        double xoffset, double yoffset,
+        double pseudo_glyph
         ):
         """
         Adds a glyph to a mesh created by `text_mesh`.
@@ -304,6 +305,7 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 11] = height
         self.attribute[attribute + 12] = ascent
         self.attribute[attribute + 13] = descent
+        self.attribute[attribute + 14] = pseudo_glyph
 
         attribute += stride
 
@@ -324,6 +326,7 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 11] = height
         self.attribute[attribute + 12] = ascent
         self.attribute[attribute + 13] = descent
+        self.attribute[attribute + 14] = pseudo_glyph
 
         attribute += stride
 
@@ -344,6 +347,7 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 11] = height
         self.attribute[attribute + 12] = ascent
         self.attribute[attribute + 13] = descent
+        self.attribute[attribute + 14] = pseudo_glyph
 
         attribute += stride
 
@@ -364,6 +368,7 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 11] = height
         self.attribute[attribute + 12] = ascent
         self.attribute[attribute + 13] = descent
+        self.attribute[attribute + 14] = pseudo_glyph
 
         cdef int triangle = self.triangles * 3
 

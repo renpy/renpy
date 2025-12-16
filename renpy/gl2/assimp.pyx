@@ -393,6 +393,9 @@ cdef class Loader:
         zoom: float,
         report: bool) -> None:
 
+        if not renpy.loader.loadable(filename):
+            raise FileNotFoundError(f"GLTFModel not loadable: {filename}")
+
         self.filename = filename
 
         self.shaders = shaders
@@ -820,21 +823,17 @@ class GLTFModel(Displayable):
         if model_data is None:
 
             with loader_lock:
-                model_data = cache[self] = ModelData()
+                model_data = ModelData()
 
-                try:
+                loader.load(
+                    model_data,
+                    self.filename,
+                    self.shaders,
+                    self.tangents,
+                    self.zoom,
+                    self.report)
 
-                    loader.load(
-                        model_data,
-                        self.filename,
-                        self.shaders,
-                        self.tangents,
-                        self.zoom,
-                        self.report)
-
-                except Exception as e:
-                    del cache[self]
-                    raise
+                cache[self] = model_data
 
             for i in cache[self].mesh_info:
                 for d in i.texture_uniforms.values():

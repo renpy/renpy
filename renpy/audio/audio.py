@@ -1143,7 +1143,7 @@ def fadeout_all():
     periodic()
 
 
-def quit():  # @ReservedAssignment
+def quit():
     global periodic_thread_quit
 
     global pcm_ok

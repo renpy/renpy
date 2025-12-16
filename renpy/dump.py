@@ -80,7 +80,7 @@ def dump(error):
     if not args.json_dump:  # type: ignore
         return
 
-    def name_filter(name, filename):  # @ReservedAssignment
+    def name_filter(name, filename):
         """
         Returns true if the name is included by the name_filter, or false if it is excluded.
         """
@@ -238,6 +238,10 @@ def dump(error):
         result["build"] = renpy.store.build.dump()  # type: ignore
     except Exception:
         pass
+
+    result["test"] = {
+        "has_default_testcase" : renpy.test.testexecution.has_default_testcase(),
+    }
 
     filename = renpy.exports.fsdecode(args.json_dump)  # type: ignore
 

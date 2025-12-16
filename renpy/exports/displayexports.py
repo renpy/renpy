@@ -1205,7 +1205,7 @@ def cancel_gesture():
     This should be called by displayables that have gesture-like behavior.
     """
 
-    renpy.display.gesture.recognizer.cancel()  # @UndefinedVariable
+    renpy.display.gesture.recognizer.cancel()
 
 
 def add_layer(layer, above=None, below=None, menu_clear=True, sticky=None):
@@ -1400,16 +1400,29 @@ def get_mouse_name(interaction=False):
 
     `interaction`
         If true, get a mouse name that is based on the type of interaction
-        occurring. (This is rarely useful.)
+        occurring.
     """
 
     if not renpy.display.interface:
         return "default"
 
-    return renpy.display.interface.get_mouse_name(interaction=interaction)
+    return renpy.display.interface.get_mouse_name(cache_only=False, interaction=interaction)
 
 
-def set_focus(screen, id, layer="screens"):  # @ReservedAssignment
+def get_mouse_names():
+    """
+    :doc: other
+
+    Return a list of mouse names that may be displayed, in priority order.
+    """
+
+    if not renpy.display.interface:
+        return [ "default" ]
+
+    return renpy.display.interface.get_mouse_names()
+
+
+def set_focus(screen, id, layer="screens"):
     """
     :doc: screens
 
@@ -1515,7 +1528,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
         to the base directory. This must end with .png.
 
     `width`
-        The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
+        The width to offer `d`, in virtual pixels. If None, :var:`config.screen_width`.
 
     `height`
         The height to offer `d`, in virtual pixels. If None, :var:`config.screen_height`.
@@ -1524,7 +1537,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
         The time of the render, in the shown timebase.
 
     `at`
-        The time of the rendem in the animation timebase. If None, `st` is used.
+        The time of the render in the animation timebase. If None, `st` is used.
 
     `resize`
         If True, the image will be resized to the virtual size of the displayable or render. This
@@ -1533,7 +1546,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
     This function may only be called after the Ren'Py display system has started, so it can't be
     called during the init phase or before the first interaction.
 
-    Ren'Py not rescan files while the game is running, so this shouldn't be used to sythesize
+    Ren'Py will not rescan files while the game is running, so this shouldn't be used to sythesize
     assets that are used as part of the game.
     """
 

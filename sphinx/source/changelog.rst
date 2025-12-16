@@ -5,10 +5,94 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.6.0:
+
+8.6.0
+-----
+
+Other Changes
+-------------
+
+The :var:`config.tlid_only_considers_say` variable has been set to True by default. This prevents non-say statements,
+such as the ``voice`` statement, from contributing to translation identifiers. This can change trasnslation identifiers.
+See the inconpatible changes for more information.
+
+The ability to apply zsync-based updates has been removed. This was an older update format that has been replaced.
+The ability to create these updates will be removed in Ren'Py 8.7.0.
+
+Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
+
+
+.. _renpy-8.5.0:
+
+8.5.1
+-----
+
+Fixes
+-----
+
+Speech bubble dialogue is only retained at the end of a sequence of pauses, not every time.
+
+Mouse Changes/Fixes
+-------------------
+
+Ren'Py now cycles through a set of possible mouse cursor names when determining which cursor to use.
+This includes the cursor based on the displayable (eg. button), the screen type (eg. gamemenu), and
+the default.
+
+:class:`MouseDisplayable` now allows a mouse cursor to be None, to use the system cursor.
+
+Ren'Py now merges MOUSEMOTION events that occur in rapid succession at a lower level,
+making the game more responsive when faced with mice that produce many events per frame.
+
+Other Changes
+-------------
+
+Ren'Py now includes a cut-down version of the brotli python module. This version supports the
+decompress method and Decompressor object, but leaves out the Compressor object. It's intended
+to allow requests to handle brotli-compressed responses.
+
+Playing a voice line now stops ongoing self-voicing playback.
+
+The new :var:`config.tlid_only_considers_say` variable prevents non-say statements, such as the ``voice``
+statement, from contributing to translation identifiers. (Translation identifiers are used for
+other things as well, like tracking speech bubbles.) This variable defaults to False, but will
+become True in Ren'Py 8.6. Setting this to true has the potential to change Translation
+identifier if your game uses voice statements.
+
+The :var:`bubble.area_property` variable has become documented. This controls how the area of a
+speech bubble is supplied to dialogue. It's now documented how to supply the area as an argument
+to the bubble screen for further control.
+
+There is a new "interact_done" :ref:`character callback <character-callbacks>`, which is called after
+each interaction ends.
+
 .. _renpy-8.5.0:
 
 8.5.0
 =====
+
+Live2D Web
+----------
+
+Ren'Py now supports Live2D models on the web platform. This support includes both launcher support for installing
+the Cubism SDK for Web, and support in Ren'Py for loading Live2D models in the web environment.
+
+Automated Testing
+-----------------
+
+Ren'Py now includes a testing framework that makes it possible to define and run automate tests of games and of
+Ren'Py itself. The testing framework is designed to perform automated functional testing -
+for example, clicking through a predefined sequence of dialogue and choice, and making sure the game
+reaches the end without crashing, even when the game or engine is changed.
+
+The testing framework is intended to be run in an environment with working GUI support - most notably, working OpenGL
+is required, as the testing framework exercises the full engine, including the portions of the engine that render the
+game.
+
+Testing can be run from the launcher, or from the command line using the :ref:`test command <cli-test>`. The 'Run testcases'
+command is only present if at least one testcase exists in the game. The Tutorial is a good project to use to see automated
+testing in action.
 
 Local Labels
 ------------
@@ -46,8 +130,66 @@ Ren'Py's unicode support has been updated to include support for Unicode 17 char
 The emoji font used by Ren'Py has been updated to include 435 more glyphs, with other glyphs
 having been updated. (This includes most Unicode 16 emoji, but not unicode 17 emoji.)
 
+Gui Default Changes
+-------------------
+
+There have been multiple changes to how the gui namespace interacts with the ``default`` statement, designed to
+make how Ren'Py behaves match how `it was documented to behave <gui-default>`_. As of this release, gui variables
+set with ``default``...
+
+* ... are set when the game starts or restarts.
+* ... can be changed in python blocks.
+* ... retain the last set value when the language changes.
+* ... are saved and loaded like other variables.
+
+These changes only apply to variables that are initially set with ``default``. All variables in the gui namespace
+should be set with one of ``default`` or ``define``.
+
+Pygame_SDL2 Removal
+-------------------
+
+Ren'Py no longer depends on the pygame_sdl2 project. To support future development, such as a port to SDL3, most of
+pygame_sdl2 has been merged into Ren'Py as the ``renpy.pygame`` package. For compatibility's sake, renpy.pygame is importable
+as ``pygame`` or ``pygame_sdl2``, though::
+
+    import renpy.pygame as pygame
+
+is now the recommended way to import pygame-like functionality.
+
+This change simplifies the Ren'Py build process. On Linux, it's now possible to create a build of Ren'Py for development
+purposes using the uv tool.
+
 Other Changes
 -------------
+
+Ren'Py's support for 32-bit ARM platforms is now built using 16 KB pages, which
+prevents the Play Console from producing a warning.
+
+Multiline input displayables now support the use of the up arrow and down arrow keys to move the cursor to the
+next and previous line. As this works using the character offset, it will work best with monospaced fonts.
+
+The :propref:`thumb_align` property is now a style property rather than a keywork property, and is supported
+in styles.
+
+When exporting dialogue, Ren'Py will detect the special :var:`extend` character and include the prior character's
+name in the exported dialogue line.
+
+The :propref:`xmaximum` and :propref:`ymaximum` properties can now increase the size offered to a displayable beyond
+what is offered by its container.
+
+The ``screen`` statement now requires a block. It always was documented as requiring a block, but this was not enforced.
+
+Setting :var:`config.tracesave_screenshot` makes it possible to control if a screenshot is taken when a traceback save is made.
+
+The new ``before_load`` :ref:`special label <special-labels>` and :var:`config.before_load_callbacks`
+make it possible to change what is displayed and what sounds are played as a load happens.
+
+The new :var:`config.locale_to_language_map` variable is a dictionary mapping locale strings to
+language names, allowing :var:`config.enable_language_autodetect` to be customized more easily.
+
+:func:`Movie` displayables now allocate channels dynamically when the movie is playing. Previously, each
+Movie would allocate a channel when the movie was created, which could lead to large amounts of memory in
+use to store the channels and associated buffers.
 
 The `init_priority` argument to the :func:`renpy.register_statement` function can now be a function that
 returns the init priority, rather than an integer.
@@ -64,35 +206,31 @@ filename and line number returned by :func:`renpy.get_filename_line`.
 The config.images_directory variable has been superseded by :var:`config.image_directories`, which is a list of
 directories that Ren'Py searches for images.
 
+The new :var:`config.context_callbacks` variable makes it possible to define multiple callbacks that are called
+when a new context is entered.
+
 The game.zip file produced by the web platform no longer contains .py files.
 
-
-.. _renpy-8.4.1:
-
-8.4.2
-=====
-
-Gui Default Changes
--------------------
-
-There have been multiple changes to how the gui namespace interacts with the ``default`` statement, designed to
-make how Ren'Py behaves match how `it was documented to behave <gui-default>`_. As of this release, gui variables
-set with ``default``...
-
-* ... are set when the game starts or restarts.
-* ... can be changed in python blocks.
-* ... retain the last set value when the language changes.
-* ... are saved and loaded like other variables.
-
-These changes only apply to variables that are initially set with ``default``. All variables in the gui namespace
-should be set with one of ``default`` or ``define``.
-
-
-Other Changes
--------------
-
 Ren'Py will now prompt you to close other Ren'Py games before an upgrade. This addresses problems on Windows
-that could be caused by launcher files in use by games that are running during the upgrade.
+that could be caused by launcher files in use by games that are running during the upgra
+
+Support for RTL languages is now enabled by default, so it is no longer necessary to set config.rtl.
+
+The new :var:`config.adjust_audio_amplitude` allows a global adjustment of the amplitude of all audio played
+through Ren'Py.
+
+Fixes
+-----
+
+A crash caused by improperly stored video textures has been fixed.
+
+Alpha premultiplication is now properly performed on image-based fonts, allowing proper alpha blending of these fonts.
+
+Several problems editing the script (manifesting in in the interactive director and the add from to calls command) hav
+been fixed.
+
+An issue with the scaling of oversampled videos has been fixed.
+
 
 
 .. _renpy-8.4.1:

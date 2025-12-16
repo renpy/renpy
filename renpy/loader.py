@@ -71,7 +71,15 @@ apks = []
 game_apks = []
 split_apks = []
 
-if renpy.android:
+def find_apks() -> None:
+    """
+    Finds APKs to load data from, and adds them to apks, game_apks, and
+    split_apks.
+    """
+
+    if apks:
+        return
+
     import android.apk  # type: ignore
 
     packs = [
@@ -238,6 +246,9 @@ def index_files():
     game_files.clear()
     lower_map.clear()
 
+    if renpy.android:
+        find_apks()
+
     for _dir, fn in listdirfiles():
         lower_map[unicodedata.normalize("NFC", fn.lower())] = fn
 
@@ -272,7 +283,7 @@ def index_archives():
         renpy.config.archives.append(stem)
 
 
-def walkdir(path, elide=None):  # @ReservedAssignment
+def walkdir(path, elide=None):
     if elide is None:
         # Only existence check the top level for speed.
         if not os.path.exists(path) and not renpy.config.developer:
@@ -367,9 +378,9 @@ def scandirfiles_from_apk(add, seen):
 
     for apk in apks:
         if apk not in game_apks:
-            files = common_files  # @UnusedVariable
+            files = common_files
         else:
-            files = game_files  # @UnusedVariable
+            files = game_files
 
         for f in apk.list():
             # Strip off the "x-" in front of each filename, which is there
@@ -423,9 +434,9 @@ def scandirfiles_from_filesystem(add, seen):
 
     for i in renpy.config.searchpath:
         if i == renpy.config.commondir:
-            files = common_files  # @UnusedVariable
+            files = common_files
         else:
-            files = game_files  # @UnusedVariable
+            files = game_files
 
         i = os.path.join(renpy.config.basedir, i)
 
@@ -680,7 +691,7 @@ def get_prefixes(tl=True, directory=None):
 
 
 def load(name, directory=None, tl=True):
-    if renpy.display.predict.predicting:  # @UndefinedVariable
+    if renpy.display.predict.predicting:
         if threading.current_thread().name == "MainThread":
             if not (renpy.emscripten or os.environ.get("RENPY_SIMULATE_DOWNLOAD", False)):
                 raise Exception("Refusing to open {} while predicting.".format(name))

@@ -124,7 +124,7 @@ class ArgumentParser(argparse.ArgumentParser):
         )
 
         self.add_argument(
-            "--version", action="version", version=renpy.version, help="Displays the version of Ren'Py in use."
+            "--version", action="version", version=renpy.version_only, help="Displays the version of Ren'Py in use."
         )
 
         self.add_argument(
@@ -240,7 +240,7 @@ def run():
         renpy.session["_warped"] = True
         renpy.warp.warp_spec = args.warp
 
-    if args.profile_display:  # @UndefinedVariable
+    if args.profile_display:
         renpy.config.profile = True
 
     if args.debug_image_cache:
@@ -249,7 +249,7 @@ def run():
     return True
 
 
-def compile():  # @ReservedAssignment
+def compile():
     """
     This command forces the game script to be recompiled.
     """
@@ -259,7 +259,7 @@ def compile():  # @ReservedAssignment
     return False
 
 
-def quit():  # @ReservedAssignment
+def quit():
     """
     This command is used to quit without doing anything.
     """

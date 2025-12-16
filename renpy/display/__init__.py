@@ -92,6 +92,7 @@ if typing.TYPE_CHECKING:
     from . import movetransition as movetransition
     from . import particle as particle
     from . import pgrender as pgrender
+    from . import position as position
     from . import predict as predict
     from . import presplash as presplash
     from . import quaternion as quaternion

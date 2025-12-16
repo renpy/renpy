@@ -23,6 +23,7 @@ the omission in future versions.
 * Alex
 * Alexandre Detiste
 * Alexandre Tranchant
+* Aliengeo
 * Alisha Taylor
 * Altskop
 * Andrej
@@ -32,6 +33,7 @@ the omission in future versions.
 * Arda Güler
 * Arman
 * Arowana-vx
+* Arsym
 * Asfdfdfd
 * Auro-Cyanide
 * Avonder
@@ -84,6 +86,7 @@ the omission in future versions.
 * Donghyeok Tak
 * DragoonHP
 * Duanemoody
+* Dynamiclinking
 * Edward Betts
 * Edward Nicholes Jr.
 * Edwin

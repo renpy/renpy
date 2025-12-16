@@ -428,3 +428,13 @@ def get_statement_name():
     """
 
     return renpy.ast.current_statement_name
+
+def is_in_test():
+    """
+    :doc: other
+
+    Returns True if Ren'py is currently executing a test.
+    This always returns False at init time.
+    """
+
+    return renpy.test.testexecution.is_in_test()

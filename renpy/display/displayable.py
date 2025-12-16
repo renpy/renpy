@@ -608,7 +608,7 @@ class Displayable(renpy.object.Object):
 
         return
 
-    def _tts_common(self, default_alt: str | None = None, reverse: bool = False) -> str:
+    def _tts_common(self, default_alt: str | None = None, reverse: bool = False, raw: bool = False) -> str:
         rv = []
 
         children = self.visit()
@@ -619,7 +619,7 @@ class Displayable(renpy.object.Object):
 
         for i in children:
             if i is not None:
-                speech = i._tts()
+                speech = i._tts(raw=raw)
 
                 if isinstance(speech, renpy.display.tts.TTSDone):
                     if speech.strip():
@@ -641,24 +641,27 @@ class Displayable(renpy.object.Object):
             alt = default_alt
 
         if alt is not None:
-            rv = renpy.substitutions.substitute(alt, scope={"text": rv})[0]
+            if raw:
+                rv = alt
+            else:
+                rv = renpy.substitutions.substitute(alt, scope={"text": rv})[0]
 
         rv = type(speech)(rv)
 
         return rv
 
-    def _tts(self) -> str:
+    def _tts(self, raw: bool) -> str:
         """
         Returns the self-voicing text of this displayable and all of its
         children that cannot take focus. If the displayable can take focus,
         returns the empty string.
         """
 
-        return self._tts_common()
+        return self._tts_common(raw=raw)
 
-    def _tts_all(self) -> str:
+    def _tts_all(self, raw: bool) -> str:
         """
         Returns the self-voicing text of this displayable and all of its
         children that cannot take focus.
         """
-        return self._tts_common()
+        return self._tts_common(raw=raw)

@@ -111,7 +111,7 @@ init -1150 python in bubble:
     def character_callback(event, interact=True, **kwargs):
         global current_dialogue
 
-        if event == "end" and interact:
+        if event == "interact_done" and interact:
             current_dialogue = [ ]
 
 

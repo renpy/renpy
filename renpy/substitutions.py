@@ -354,7 +354,7 @@ def substitute(s, scope=None, force=False, translate=True):
     try:
         s = interpolate(s, variables)  # type: ignore
     except Exception:
-        if renpy.display.predict.predicting:  # @UndefinedVariable
+        if renpy.display.predict.predicting:
             return " ", True
         raise
 

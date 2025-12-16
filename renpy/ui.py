@@ -256,7 +256,7 @@ renpy.game.post_init.append(reset)
 def interact(type="misc", roll_forward=None, **kwargs):
     """
     :doc: ui
-    :args: (*, roll_forward=None, mouse='default')
+    :args: (*, roll_forward=None, mouse=None)
 
     Causes an interaction with the user, and returns the result of that
     interaction. This causes Ren'Py to redraw the screen and begin processing
@@ -282,7 +282,9 @@ def interact(type="misc", roll_forward=None, **kwargs):
         function.
 
     `mouse`
-        The style of mouse cursor to use during this function.
+        The style of mouse cursor to use during this function. If None, picks between
+        'default', 'mainmenu', and 'gamemenu' based on whether the main menu or game menu
+        is active.
     """
 
     if stack is None:
@@ -1375,6 +1377,10 @@ def _hotbar(spot, adjustment=None, range=None, value=None, **properties):
     properties.setdefault("xanchor", 0)
     properties.setdefault("yanchor", 0)
 
+    properties.setdefault("thumb", None)
+    properties.setdefault("thumb_shadow", None)
+    properties.setdefault("thumb_offset", 0)
+
     fore_bar = imagemap.cache.crop(imagemap.selected_idle, spot)
     aft_bar = imagemap.cache.crop(imagemap.idle, spot)
     hover_fore_bar = imagemap.cache.crop(imagemap.selected_hover, spot)
@@ -1398,9 +1404,6 @@ def _hotbar(spot, adjustment=None, range=None, value=None, **properties):
         fore_gutter=0,
         aft_gutter=0,
         bar_resizing=False,
-        thumb=None,
-        thumb_shadow=None,
-        thumb_offset=0,
         xmaximum=w,
         ymaximum=h,
         **properties,

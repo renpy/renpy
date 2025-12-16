@@ -25,6 +25,8 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy.pygame as pygame
 
+import renpy
+from renpy.test.testast import Node
 
 code_to_unicode = {
     pygame.K_UNKNOWN: "",
@@ -271,7 +273,12 @@ for k, v in sorted(code_to_unicode.items()):
         unicode_to_code[v] = k
 
 
-def get_keycode(node, keysym):
+def get_keycode(node: Node, keysym: str) -> tuple[int, str | None, int]:
+    """
+    Returns the keycode, unicode character, and modifier flags for a given keysym.
+    If the keysym is not recognized, an exception is raised.
+    """
+
     c = keysym.split("_")
 
     mods = 0
@@ -308,7 +315,7 @@ def get_keycode(node, keysym):
         mods |= pygame.KMOD_LSHIFT
 
     else:
-        code = getattr(pygame, "K_" + key, None)
+        code = getattr(pygame, key, None)
 
         if code is None:
             raise Exception("Could not find keysym {!r} at {}:{}.".format(keysym, node.filename, node.linenumber))
@@ -323,7 +330,10 @@ def get_keycode(node, keysym):
     return code, u, mods
 
 
-def down(node, keysym):
+def down(node: Node, keysym: str) -> None:
+    """
+    Posts a KEYDOWN event for the given keysym, which is a string like "ctrl_K_a".
+    """
     code, u, mods = get_keycode(node, keysym)
 
     if pygame.key.text_input:
@@ -343,9 +353,39 @@ def down(node, keysym):
         )
 
 
-def up(node, keysym):
+def up(node: Node, keysym: str) -> None:
+    """
+    Posts a KEYUP event for the given keysym, which is a string like "ctrl_K_a".
+    """
     code, _, mods = get_keycode(node, keysym)
 
     pygame.event.post(
         pygame.event.Event(pygame.KEYUP, key=code, scancode=code, mod=mods, repeat=False, test=True)
     )
+
+
+def queue_keysym(node: Node, name: str) -> None:
+    """
+    Trigger a keysym event, which is a string like "ctrl_K_a" or "mouseup_1"
+    or an event name in `config.keymap` like "skip" or "dismiss".
+    """
+
+    if name in renpy.config.keymap:
+        renpy.exports.queue_event(name)
+        return
+
+    elif "pad_" in name:
+        parts = name.split("_")
+
+        control = parts[-2]
+        state = parts[-1]
+        repeat = parts[0] == "repeat"
+
+        renpy.display.controller.post_event(control, state, repeat)
+        return
+
+    down(node, name)
+    up(node, name)
+
+#         keysym = config.keymap[keysym][0]
+#     return keysym

@@ -19,71 +19,59 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-
-import renpy
 import random
 
+import renpy
+from renpy.display.focus import Focus
+from renpy.display.displayable import Displayable
+from renpy.test.types import Position
 
-def find_focus(pattern):
+
+def find_focus(pattern: str, raw: bool) -> Focus | None:
     """
-    Trues to find the focus with the shortest alt text containing `pattern`.
-    If found, returns a random coordinate within that displayable.
-
-    If `pattern` is None, returns a random coordinate that will trigger the
-    default focus.
-
-    If `pattern` could not be found, returns None, None.
+    Finds the focus with the shortest alt text containing `pattern`.
+    Returns the Focus if found, else None.
     """
 
-    def match(f):
-        if pattern is None:
-            if f.x is None:
-                return "default"
-            else:
-                return None
+    pattern = pattern.casefold()
+    candidates: list[tuple[int, Focus]] = []
 
-        if f.x is None:
-            t = renpy.display.tts.root._tts_all()  # @UndefinedVariable
+    for focus in renpy.display.focus.focus_list:
+        if focus.x is None:
+            text = _get_default_focus_text(raw)
         else:
-            t = f.widget._tts_all()
+            text = focus.widget._tts_all(raw)
 
-        if pattern.lower() in t.lower():
-            return t
-        else:
-            return None
+        if pattern in text.casefold():
+            candidates.append((len(text), focus))
 
-    # A list of alt_text, focus pairs.
-    matching = []
-
-    for f in renpy.display.focus.focus_list:
-        alt = match(f)
-
-        if alt is not None:
-            matching.append((alt, f))
-
-    if not matching:
-        return None
-
-    # This gets the matching displayable with the shortest alt text, which
-    # is likely what we want.
-    matching.sort(key=lambda a: (len(a[0]), a[0]))
-    return matching[0][1]
+    return min(candidates, key=lambda x: x[0], default=(None, None))[1]
 
 
-def relative_position(x, posx, width):
-    if posx is not None:
-        if isinstance(posx, float):
-            x = int(posx * (width - 1))
-        else:
-            x = posx
+def _get_default_focus_text(raw: bool) -> str:
+    """
+    Searches for the current say node, and if found, uses its text.
+    If not found, falls back to using TTS text from the root widget.
+    """
+    current_node = renpy.game.script.lookup(renpy.game.context().current)
 
-    return int(x)
+    if not isinstance(current_node, renpy.ast.TranslateSay):
+        return renpy.display.tts.root._tts_all(raw)
+
+    untranslated_node: renpy.ast.TranslateSay = renpy.game.script.translator.default_translates[current_node.identifier]
+    if raw:
+        return untranslated_node.what
+    return renpy.substitutions.substitute(untranslated_node.what, None)[0]
 
 
-def find_position(f, position):
+def relative_to_absolute(posx: int | float, width: int) -> int:
+    if isinstance(posx, float):
+        return int(posx * (width - 1))
+    else:
+        return posx
+
+
+def find_position(f: Focus | Displayable | None, position: Position | tuple[None, None]) -> tuple[int, int]:
     """
     Returns the virtual position of a coordinate located within focus `f`.
     If position is (None, None) returns the current mouse position (if in
@@ -91,21 +79,30 @@ def find_position(f, position):
 
     If `f` is None, returns a position relative to the screen as a whole.
     """
+    f_original = f
+
+    if isinstance(f, Displayable):
+        f = focus_from_displayable(f)
 
     posx, posy = position
 
-    # Avoid moving the mouse when unnecessary.
-    if renpy.test.testmouse.mouse_pos is not None:
-        x, y = renpy.test.testmouse.mouse_pos
-    else:
-        x = random.randrange(renpy.config.screen_width)
-        y = random.randrange(renpy.config.screen_height)
-
     if f is None:
-        return (
-            relative_position(x, posx, renpy.config.screen_width),
-            relative_position(y, posy, renpy.config.screen_height),
-        )
+        # No target, avoid moving the mouse when unnecessary.
+        if posx is not None:
+            x = relative_to_absolute(posx, renpy.config.screen_width)
+        elif renpy.test.testmouse.mouse_pos is not None:
+            x = renpy.test.testmouse.mouse_pos[0]
+        else:
+            x = random.randrange(renpy.config.screen_width)
+
+        if posy is not None:
+            y = relative_to_absolute(posy, renpy.config.screen_height)
+        elif renpy.test.testmouse.mouse_pos is not None:
+            y = renpy.test.testmouse.mouse_pos[1]
+        else:
+            y = random.randrange(renpy.config.screen_height)
+
+        return x, y
 
     orig_f = f
 
@@ -116,15 +113,26 @@ def find_position(f, position):
         f.y = 0
         f.w = renpy.config.screen_width
         f.h = renpy.config.screen_height
+    else:
+        f = f.copy()
+        f.x = int(f.x)
+        f.y = int(f.y)
+        f.w = int(f.w)
+        f.h = int(f.h)
 
-    x = relative_position(x, posx, f.w) + f.x
-    y = relative_position(y, posy, f.h) + f.y
+    for _i in range(renpy.test.testsettings._test.focus_trials):
+        # Randomize position if not specified
+        if posx is not None:
+            x = relative_to_absolute(posx, f.w) + f.x
+        else:
+            x = random.randrange(f.x, f.x + f.w)
 
-    for _i in range(100):
-        x = int(x)
-        y = int(y)
+        if posy is not None:
+            y = relative_to_absolute(posy, f.h) + f.y
+        else:
+            y = random.randrange(f.y, f.y + f.h)
 
-        nf = renpy.display.render.focus_at_point(x, y)
+        nf = renpy.display.render.focus_at_point(x, y)  # type: ignore
 
         if nf is None:
             if orig_f.x is None:
@@ -133,10 +141,43 @@ def find_position(f, position):
             if (nf.widget == f.widget) and (nf.arg == f.arg):
                 return x, y
 
-        x = random.randrange(f.x, int(f.x + f.w))
-        y = random.randrange(f.y, int(f.y + f.h))
+    if isinstance(f_original, Displayable):
+        ## It's not guaranteed that the displayable is in the focus list, so we
+        ## return our best guess.
+        return f.x, f.y
 
-    else:
-        print()
+    raise Exception("Could not locate the displayable.")
 
-        raise Exception("Could not locate the displayable.")
+
+def focus_from_displayable(d: Displayable) -> Focus | None:
+    """
+    Returns a Focus object for the given displayable `d`.
+
+    If the displayable is not in the focus list, we create a Focus object for
+    it from the render tree,
+    """
+
+    for f in renpy.display.focus.focus_list:
+        if f.widget == d:
+            return f
+
+    ## If we reach here, the displayable is not in the focus list.
+    ## Search the render tree for it.
+    stack = [(renpy.display.render.screen_render, 0, 0, None)]  # type: ignore
+    while stack:
+        r, x, y, screen = stack.pop()
+
+        if not isinstance(r, renpy.display.render.Render):  # type: ignore
+            continue
+
+        if d in r.render_of:
+            return Focus(widget=d, arg=None, x=x, y=y, w=r.width, h=r.height, screen=screen)
+
+        if r.render_of and isinstance(r.render_of[0], renpy.display.screen.ScreenDisplayable):
+            screen = r.render_of[0]
+
+        for r in r.children:
+            ## We care about the absolute position of the displayable, not the position relative to the parent.
+            stack.append((r[0], x + r[1], y + r[2], screen))
+
+    return None

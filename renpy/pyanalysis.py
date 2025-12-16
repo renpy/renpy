@@ -25,7 +25,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import builtins
 
-import renpy  # @UnusedImport
+import renpy
 from renpy.python import py_compile
 
 # Import the Python AST module, instead of the Ren'Py ast module.

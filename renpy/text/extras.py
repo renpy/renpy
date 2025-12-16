@@ -95,7 +95,7 @@ def check_text_tags(s, check_unclosed=False):
 
     tag_stack = []
 
-    for type, text in tokens:  # @ReservedAssignment
+    for type, text in tokens:
         if type != TAG:
             continue
 
@@ -178,7 +178,7 @@ def filter_text_tags(s, allow=None, deny=None):
     return "".join(rv)
 
 
-def filter_alt_text(s):
+def filter_alt_text(s) -> str:
     """
     Returns a copy of `s` with the contents of text tags that shouldn't be in
     alt text filtered. This returns just the text to say, with no text tags
@@ -216,7 +216,7 @@ def filter_alt_text(s):
                 else:
                     active.add(kind)
         elif tokentype == DISPLAYABLE:
-            rv.append(text._tts())
+            rv.append(text._tts(raw=False))
         else:
             if not active:
                 rv.append(text)

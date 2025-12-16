@@ -162,7 +162,7 @@ def choose_variants():
 
     renpy.config.variants = [None]
 
-    if renpy.android:  # @UndefinedVariable
+    if renpy.android:
         renpy.config.variants.insert(0, "mobile")  # type: ignore
         renpy.config.variants.insert(0, "android")  # type: ignore
 
@@ -314,8 +314,6 @@ def load_build_info():
 
 
 def main():
-    # Handle any file deletions or renamed that were deferred from a previous update.
-    renpy.update.deferred.init()
 
     gc.set_threshold(*renpy.config.gc_thresholds)
 
@@ -382,7 +380,7 @@ def main():
     renpy.store.store = sys.modules["store"]  # type: ignore
 
     # Set up styles.
-    game.style = renpy.style.StyleManager()  # @UndefinedVariable
+    game.style = renpy.style.StyleManager()
     renpy.store.style = game.style
 
     # Run init code in its own context. (Don't log.)
@@ -405,31 +403,10 @@ def main():
         renpy.exports.load_module("tl/None/common")
 
     renpy.config.init_system_styles()
-    renpy.style.build_styles()  # @UndefinedVariable
+    renpy.style.build_styles()
 
     log_clock("Loading error handling")
 
-    # If recompiling everything, remove orphan .rpyc files.
-    # Otherwise, will fail in case orphan .rpyc have same
-    # labels as in other scripts (usually happens on script rename).
-    if (renpy.game.args.command == "compile") and not (renpy.game.args.keep_orphan_rpyc):  # type: ignore
-        for fn, dn in renpy.game.script.script_files:
-            if dn is None:
-                continue
-
-            if not os.path.isfile(os.path.join(dn, fn + ".rpy")) and not os.path.isfile(
-                os.path.join(dn, fn + "_ren.py")
-            ):
-                try:
-                    name = os.path.join(dn, fn + ".rpyc")
-                    os.rename(name, name + ".bak")
-                except OSError:
-                    # This perhaps shouldn't happen since either .rpy or .rpyc should exist
-                    pass
-
-        # Reindex files so that .rpyc's are cleared out.
-        renpy.loader.index_files()
-        renpy.game.script.scan_script_files()
 
     # Load all .rpy files.
     renpy.game.script.load_script()  # sets renpy.game.script.
@@ -491,7 +468,7 @@ def main():
         # Initialize persistent variables.
         renpy.store.persistent = game.persistent  # type: ignore
         renpy.store._preferences = game.preferences  # type: ignore
-        renpy.store._test = renpy.test.testast._test  # type: ignore
+        renpy.store._test = renpy.test.testsettings._test  # type: ignore
 
         if renpy.parser.report_parse_errors():
             raise renpy.game.ParseErrorException()
@@ -515,7 +492,7 @@ def main():
         renpy.game.exception_info = "After initialization, but before game start."
 
         # Check if we should simulate android.
-        renpy.android = renpy.android or renpy.config.simulate_android  # @UndefinedVariable
+        renpy.android = renpy.android or renpy.config.simulate_android
 
         # Re-set up the logging.
         renpy.log.post_init()

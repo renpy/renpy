@@ -71,7 +71,7 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
 
     # Filter the list of items on the set_expr:
     if set_expr:
-        set = renpy.python.py_eval(set_expr)  # @ReservedAssignment
+        set = renpy.python.py_eval(set_expr)
 
         new_items = []
         new_item_arguments = []
@@ -84,7 +84,7 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
         items = new_items
         item_arguments = new_item_arguments
     else:
-        set = None  # @ReservedAssignment
+        set = None
 
     # Filter the list of items to only include ones for which the
     # condition is true.
@@ -212,7 +212,7 @@ def display_menu(
     scope=(),
     widget_properties=None,
     screen="choice",
-    type="menu",  # @ReservedAssignment
+    type="menu",
     predict_only=False,
     _layer=None,
     _args=None,
@@ -263,8 +263,8 @@ def display_menu(
     If you need to supply per-item arguments, use :class:`renpy.Choice` objects as the values. For example::
 
         renpy.display_menu([
-            ("East", renpy.Choice("east", icon="right_arrow"),
-            ("West", renpy.Choice("west", icon="left_arrow"),
+            ("East", renpy.Choice("east", icon="right_arrow")),
+            ("West", renpy.Choice("west", icon="left_arrow"))
             ])
     """
 

@@ -19,9 +19,66 @@
 
 from sdl2 cimport *
 from sdl2_gfx cimport *
+from renpy.pygame.color cimport map_color
 from renpy.pygame.surface cimport *
 from renpy.pygame.error import error
 
+
+def _diff(Surface dest, Surface a, Surface b, same_color, different_color):
+    """
+    This is Ren'Py specific, and implements a subset of the pygame threshold API.
+
+    This computes the differences in a and b. Pixels that are the same in a are set to same_color in
+    dest, and pixels that are different are set to different_color.
+
+    dest, a, ab and b must all be the same size and format.
+
+    same_color and different_color may be any color accepted by map_color().
+
+    Returns the count of different pixels.
+    """
+
+    if dest.get_size() != a.get_size() or dest.get_size() != b.get_size():
+        raise error("Surface sizes do not match.")
+
+    cdef SDL_Surface *dest_surf = dest.surface
+    cdef SDL_Surface *a_surf = a.surface
+    cdef SDL_Surface *b_surf = b.surface
+
+    cdef Uint32 same_c = map_color(dest_surf, same_color)
+    cdef Uint32 diff_c = map_color(dest_surf, different_color)
+
+    cdef Uint32 *a_pixel
+    cdef Uint32 *a_end
+
+    cdef Uint32 *b_pixel
+    cdef Uint32 *dest_pixel
+
+    cdef int y
+
+    cdef int diff_count = 0
+
+    with nogil:
+        for y in range(0, a_surf.h):
+
+            a_pixel = <Uint32 *> ((<Uint8 *> a_surf.pixels) + y * a_surf.pitch)
+            b_pixel = <Uint32 *> ((<Uint8 *> b_surf.pixels) + y * b_surf.pitch)
+            dest_pixel = <Uint32 *> ((<Uint8 *> dest_surf.pixels) + y * dest_surf.pitch)
+
+            a_end = a_pixel + a_surf.w
+
+            while a_pixel < a_end:
+                if a_pixel[0] == b_pixel[0]:
+                    dest_pixel[0] = same_c
+                else:
+                    dest_pixel[0] = diff_c
+                    diff_count += 1
+
+                a_pixel += 1
+                b_pixel += 1
+                dest_pixel += 1
+
+    return diff_count
 
 def flip(Surface surface, bint xbool, bint ybool):
 
@@ -38,7 +95,7 @@ def flip(Surface surface, bint xbool, bint ybool):
     cdef int y
 
     with nogil:
-        for 0 <= y < src.h:
+        for y in range(0, src.h):
 
             src_pixel = <Uint32 *> ((<Uint8 *> src.pixels) + y * src.pitch)
             src_end = src_pixel + src.w

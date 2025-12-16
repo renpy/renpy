@@ -1293,11 +1293,11 @@ class MultiBox(Container):
 
         return None
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         if self.layers or self.scene_list:
-            return self._tts_common(reverse=renpy.config.tts_front_to_back)
+            return self._tts_common(reverse=renpy.config.tts_front_to_back, raw=raw)
         else:
-            return self._tts_common()
+            return self._tts_common(raw=raw)
 
 
 def Fixed(**properties):
@@ -1376,11 +1376,16 @@ class Window(Container):
 
         xminimum, yminimum = xyminimums(style, width, height)
 
-        xmaximum = self.style.xmaximum
-        ymaximum = self.style.ymaximum
+        # Store the maximums for use below. When the type is float, a computation will have been done in
+        # renpy.display.render.render(), and used to set width and height. Rather than repeating that computation,
+        # we use the width and height as the maximums in that case.
+
+        xmaximum = style.xmaximum
+        ymaximum = style.ymaximum
 
         if type(xmaximum) is float:
             xmaximum = width
+
         if type(ymaximum) is float:
             ymaximum = height
 
@@ -2575,9 +2580,9 @@ class NearRect(Container):
         else:
             return None
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         if self.parent_rect is not None:
-            return self._tts_common()
+            return self._tts_common(raw=raw)
         else:
             return ""
 

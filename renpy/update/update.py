@@ -228,7 +228,7 @@ class Update(object):
             return
 
         try:
-            os.unlink(filename)
+            deferred.delete(filename)
             return
         except Exception:
             pass
@@ -237,8 +237,7 @@ class Update(object):
 
     def rename(self, old_filename, new_filename):
         try:
-            if os.path.exists(new_filename):
-                os.unlink(new_filename)
+            deferred.delete(new_filename)
             os.rename(old_filename, new_filename)
         except Exception:
             deferred.defer_rename(new_filename)

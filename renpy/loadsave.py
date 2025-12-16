@@ -631,6 +631,8 @@ def load(filename):
 
     renpy.session["traceback_load"] = "_traceback" in json
 
+    renpy.exports.call_in_new_context("_before_load")
+
     roots, log = loads(log_data)
 
     log.unfreeze(roots, label="_after_load")

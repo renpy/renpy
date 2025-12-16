@@ -113,9 +113,9 @@ class ShowIf(renpy.display.layout.Container):
     def get_placement(self):
         return self.child.get_placement()
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         if self.condition:
-            return self._tts_common()
+            return self._tts_common(raw=raw)
         else:
             return ""
 
@@ -243,7 +243,7 @@ add(text_text_properties)
 
 
 def sl2bar(context=None, **properties):
-    range = 1  # @ReservedAssignment
+    range = 1
     value = 0
     width = None
     height = None
@@ -253,7 +253,7 @@ def sl2bar(context=None, **properties):
     if "height" in properties:
         height = properties.pop("height")
     if "range" in properties:
-        range = properties.pop("range")  # @ReservedAssignment
+        range = properties.pop("range")
     if "value" in properties:
         value = properties.pop("value")
 
@@ -273,12 +273,11 @@ Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
 Keyword("released")
-Keyword("thumb_align")
 add(bar_properties)
 
 
 def sl2vbar(context=None, **properties):
-    range = 1  # @ReservedAssignment
+    range = 1
     value = 0
     width = None
     height = None
@@ -288,7 +287,7 @@ def sl2vbar(context=None, **properties):
     if "height" in properties:
         height = properties.pop("height")
     if "range" in properties:
-        range = properties.pop("range")  # @ReservedAssignment
+        range = properties.pop("range")
     if "value" in properties:
         value = properties.pop("value")
 
@@ -308,7 +307,6 @@ Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
 Keyword("released")
-Keyword("thumb_align")
 add(bar_properties)
 
 # Omit autobar. (behavior)

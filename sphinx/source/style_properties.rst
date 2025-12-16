@@ -530,6 +530,11 @@ Text Style Properties
     If not None, this should be a dictionary mapping OpenType layout features to values.
     The keys of the dictionary should be the four-character OpenType feature tags, and
     the values should be booleans.
+    For example::
+
+        style default:
+            font "SomeFont.ttf"
+            font_features { "liga" : True, "smcp" : True, "calt" : False }
 
     A list of layout features can be found `here <https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags>`_.
 
@@ -1085,6 +1090,13 @@ left and right sides are used.
 
     If not None, this is a displayable that is drawn over the break
     between the sides of the bar.
+
+.. style-property:: thumb_align float
+
+    The alignment of the bar thumb, relative to the bar. If the bar and
+    thumb are different sizes - for example, the thumb is taller than the
+    height of a horizontal bar - thumb_align can be set to 0.5 so the centers
+    of the bar and thumb are aligned.
 
 .. style-property:: thumb_shadow displayable or None
 

@@ -37,6 +37,7 @@ def report_missing(target, filename, loc):
     is missing a from clause.
     """
 
+    loc = (filename, loc[1])
     missing[filename].append((loc, target))
 
 

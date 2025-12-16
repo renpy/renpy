@@ -214,7 +214,7 @@ def parse_menu(stmtl, loc, arguments):
     has_caption = False
 
     with_ = None
-    set = None  # @ReservedAssignment
+    set = None
 
     # Tuples of (label, condition, block)
     items = []
@@ -229,7 +229,7 @@ def parse_menu(stmtl, loc, arguments):
             continue
 
         if l.keyword("set"):
-            set = l.require(l.simple_expression)  # @ReservedAssignment
+            set = l.require(l.simple_expression)
             l.expect_eol()
             l.expect_noblock("set menuitem")
 
@@ -1220,22 +1220,18 @@ def screen_statement(l, loc):
 
 @statement("testcase")
 def testcase_statement(l, loc):
-    name = l.require(l.name)
-    l.require(":")
-    l.expect_eol()
-    l.expect_block("testcase statement")
+    test = renpy.test.testparser.testcase_statement(l, loc)
 
-    ll = l.subblock_lexer()
-    ll.set_global_label(name)
+    rv = renpy.ast.Testcase(loc, test)
 
-    test = renpy.test.testparser.parse_block(ll, loc)
+    return rv
 
-    l.advance()
 
-    rv = ast.Testcase(loc, name, test)
+@statement("testsuite")
+def testsuite_statement(l, loc):
+    test = renpy.test.testparser.testsuite_statement(l, loc)
 
-    if not l.init:
-        rv = ast.Init(loc, [rv], 500 + l.init_offset)
+    rv = renpy.ast.Testcase(loc, test)
 
     return rv
 
@@ -1256,7 +1252,7 @@ def translate_strings(init_loc, language, l):
         s = s.strip()
 
         try:
-            bc = compile(s, "<string>", "eval", renpy.python.new_compile_flags, True)
+            bc = compile(s, "<string>", "eval", dont_inherit=True)
             return eval(bc, renpy.store.__dict__)
         except Exception:
             ll.error("could not parse string")
@@ -1393,7 +1389,7 @@ def style_statement(l, loc):
         if l.keyword("del"):
             propname = l.require(l.name)
 
-            if propname not in renpy.style.prefixed_all_properties:  # @UndefinedVariable
+            if propname not in renpy.style.prefixed_all_properties:
                 l.error("style property %s is not known." % propname)
 
             rv.delattr.append(propname)  # type: ignore
@@ -1412,7 +1408,7 @@ def style_statement(l, loc):
         if propname is not None:
             if (propname != "properties") and (
                 propname not in renpy.style.prefixed_all_properties
-            ):  # @UndefinedVariable
+            ):
                 l.error("style property %s is not known." % propname)
 
             if propname in rv.properties:  # type: ignore

@@ -10,6 +10,9 @@ create them. The built-in transforms are used to control where an image is
 placed on the screen, while user-defined transforms can cause more complex
 effects, like motion, zoom, rotation, up to complex color effects.
 
+Quickstart
+==========
+
 Transforms can be applied to images by passing them to the ``at`` clause of the
 :ref:`show <show-statement>` or scene statements. The following applies the
 ``right`` transform to the ``eileen happy`` image::
@@ -21,33 +24,35 @@ transforms are applied from left-to-right. ::
 
     show eileen happy at halfsize, right
 
+Simple ATL transform::
 
-Applying transforms to displayables in Python
-=============================================
+    transform slide_right:
+        xalign 0.0
+        linear 1.0 xalign 1.0
 
-There are several ways to apply transform ``t`` to displayable ``d`` in Python:
+    label start:
+        show eileen happy at slide_right
+        pause
 
-#. The most universal and most recommended way is ``At(d, t)`` (see below). It
-   works with all transforms.
+Showing transforms with Python::
 
-#. ``d(child=t)`` works with all :ref:`ATL transforms <atl>`.
+    label start:
+        $ renpy.show("eileen happy", at_list=right)
+        pause
 
-#. ``t(d)`` works with all :ref:`Python transforms <transforms-python>`, as well
-   as with ATL transforms that don't have any positional parameters.
+Simple Python transform using ``At()``::
 
-.. include:: inc/disp_at
+    init python:
+        def show_eileen_rotated():
+            rotated = Transform(rotate=45)
+            show_stmt = At("eileen happy", rotated)
+            renpy.show("eileen", what=show_stmt)
 
-.. note::
-    The resulting value may not be able to be displayed, if there remains
-    parameters of the transform that have not been given a value, as can be the
-    case with transforms defined using the :ref:`transform-statement`.
+    label start:
+        $ show_eileen_rotated()
+        pause
 
-.. note::
-    The resulting value may still be a transform that can be applied to yet
-    another displayable (overriding its previous child) ; that's the case with
-    ATL transforms which are still usable as transforms even when having their
-    child set.
-
+.. Add a "common pitfalls" section here.
 
 Built-in Transforms
 ===================
@@ -58,19 +63,19 @@ transform will position an image.
 
 .. code-block:: none
 
-                 +-----------------------------------------------------------+
-                 |topleft, reset               top                   topright|
-                 |                                                           |
-                 |                                                           |
-                 |                                                           |
-                 |                                                           |
-                 |                          truecenter                       |
-                 |                                                           |
-                 |                                                           |
-                 |                                                           |
-                 |                                                           |
-    offscreenleft|left                   center, default                right|offscreenright
-                 +-----------------------------------------------------------+
+                  +-----------------------------------------------------------+
+                  | topleft, reset               top                 topright |
+                  |                                                           |
+                  |                                                           |
+                  |                                                           |
+                  |                                                           |
+                  |                          truecenter                       |
+                  |                                                           |
+                  |                                                           |
+                  |                                                           |
+                  |                                                           |
+    offscreenleft | left                   center, default              right | offscreenright
+                  +-----------------------------------------------------------+
 
 The :var:`offscreenleft` and :var:`offscreenright` transforms position images
 off the edges of the screen. These transforms can be used to move things off
@@ -100,7 +105,7 @@ The transforms are:
 
 .. var:: offscreenright
 
-    Places the displayable off the left side of the screen, aligned to the
+    Places the displayable off the right side of the screen, aligned to the
     bottom of the screen.
 
 .. var:: reset
@@ -145,6 +150,7 @@ transparent when their child displayable is not set) : they can be passed to a
 screen's :ref:`sl-add` element, or to a :ref:`show-expression-statement`
 statement, or to the :func:`renpy.show` function.
 
+
 Ren'Py script statements
 ------------------------
 
@@ -155,52 +161,91 @@ There are three Ren'Py script statements which can include ATL code.
 Transform Statement
 ~~~~~~~~~~~~~~~~~~~
 
-The ``transform`` statement creates a new transform. The syntax is:
+The ``transform`` statement creates a new transform that you can use to animate
+and position displayables in your game. The transform is reusable, and can be
+applied to images and other displayables throughout your game using the
+``at`` clause of the :ref:`show <show-statement>` and scene statements.
 
-.. productionlist:: script
-    atl_transform : "transform" `qualname` ( "(" `parameters` ")" )? ":"
-                  :    `atl_block`
+Transforms can also act as :doc:`displayables` and be displayed directly.
+However, unlike other displayables which exist in the global image namespace
+(see :ref:`defining-images`), transforms are created as variables in the appropriate
+:ref:`named store <named-stores>` (or the default store).
 
-The transform statement is run at :ref:`init time <init-phase>`. The transform
-may take a list of parameters, which works much the same way as a Python
-function definition, except that several kinds of parameters are currently
-forbidden, though they may be allowed in the future:
+The transform is created during :ref:`init time <init-phase>` (when the game starts up).
 
-#. Positional-only parameters
-#. Keyword-only parameters without a default value
-#. Variadic positional parameters (``*args``)
-#. Variadic keyword parameters (``**kwargs``)
+**Syntax**
 
-..
-    update the special child section with this section
+    Basic form::
 
-The created object cannot be used as a transform until and unless all its
-parameters have been given a value.
+        transform <transform_name>:
+            <atl_block>
 
-*See also :* :ref:`atl-partial`
+    With parameters::
 
-`qualname`, the name of the transform, must be a set of dot-separated Python
-identifiers. The transform created by the ATL block will be bound to that name,
-within the provided :ref:`store <named-stores>` if one was provided. ::
+        transform <transform_name>( <parameters> ):
+            <atl_block>
 
-    transform left_to_right:
-        xalign 0.
-        linear 2 xalign 1.
-        repeat
+**Usage**
 
-    transform ariana.left:
-        xalign .3
+    .. table::
+        :widths: auto
 
-    transform animated_ariana_disp:
-        "ariana"
-        pause 1.
-        "ariana_reverse"
-        pause 1.
-        repeat
+        ==============  =========  ===========
+        Name            Type       Description
+        ==============  =========  ===========
+        transform_name  word       Name of the transform.
 
-The created object is both a transform and a displayable, but as opposed to the
-``image`` statement, it is created as a variable (or a constant), rather than in
-the namespace of :ref:`images <defining-images>`.
+                                   Must be valid Python identifiers separated by dots
+
+                                   (e.g., ``my_transform`` or ``sprites.bounce``)
+        parameters      --         (Optional) Parameters of the transform
+        atl_block       block      ATL code block defining the transform
+        ==============  =========  ===========
+
+    ..
+        update the special child section with this section
+
+    You can add parameters to make your transforms flexible and reusable. Parameters
+    work similarly to Python function parameters.
+
+    Currently not supported:
+
+    * Positional-only parameters (using ``/``)
+    * Required keyword-only parameters (after ``*`` without defaults)
+    * ``*args`` (variadic positional parameters)
+    * ``**kwargs`` (variadic keyword parameters)
+
+    .. note ::
+
+        * If your transform has parameters without default values, you must provide
+          values for all of them before you can use it as a transform
+        * See also: :ref:`atl-partial`
+
+
+**Example**
+
+    ::
+
+        transform left_to_right:
+            xalign 0.
+            linear 2 xalign 1.
+            repeat
+
+        transform ariana.left:
+            xalign .3
+
+        transform animated_ariana_disp(duration=1.0):
+            "ariana"
+            pause duration
+            "ariana_reverse"
+            pause duration
+            repeat
+
+        label start:
+            show eileen happy at left_to_right
+            pause
+            show animated_ariana_disp
+            pause
 
 .. _atl-image-statement:
 
@@ -210,42 +255,77 @@ Image Statement with ATL Block
 The second way to include ATL code in a script is as part of an :ref:`image
 statement <image-statement>`. As its inline counterpart, it binds an image name
 (which may contain spaces) to the given transform. As there is no way to supply
-with parameters, it's only useful if the transform defines an animation. The
-syntax is:
+with parameters, it's only useful if the transform defines an animation.
 
-.. productionlist:: script
-    atl_image : "image" `image_name` ":"
-              :    `atl_block`
+**Syntax**
 
-::
+    ::
 
-    image animated_ariana_img:
-        "ariana"
-        pause 1.
-        "ariana_reverse"
-        pause 1.
-        repeat
+        image <image_name>:
+            <atl_block>
+
+**Usage**
+
+    .. table::
+        :widths: auto
+
+        ============  =========  ===========
+        Name          Type       Description
+        ============  =========  ===========
+        image_name    word(s)    Name of the image
+        atl_block     block      ATL code block defining the transform
+        ============  =========  ===========
+
+**Example**
+
+    ::
+
+        image animated_ariana_img:
+            "ariana"
+            pause 1.
+            "ariana_reverse"
+            pause 1.
+            repeat
+
 
 Scene and Show Statements with ATL Block
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The final way to use ATL is as part of a :ref:`show <show-statement>` or scene
 statement. This wraps the image that's being shown inside an ATL transformation
-which is created on the fly and applied to the image. The syntax is:
+which is created on the fly and applied to the image.
 
-.. productionlist:: script
-    atl_show  : `stmt_show` ":"
-              :    `atl_block`
-    atl_scene : `stmt_scene` ":"
-              :    `atl_block`
+**Syntax**
 
-::
+    ::
 
-    show eileen happy:
-        xalign 1.
+        show <image_name>:
+            <atl_block>
 
-    scene bg washington:
-        zoom 2.
+        scene <image_name>:
+            <atl_block>
+
+**Usage**
+
+    .. table::
+        :widths: auto
+
+        ============  =========  ===========
+        Name          Type       Description
+        ============  =========  ===========
+        image_name    word(s)    Name of the image
+        atl_block     block      ATL code block defining the transform
+        ============  =========  ===========
+
+**Example**
+
+    ::
+
+        show eileen happy:
+            xalign 1.
+
+        scene bg washington:
+            zoom 2.
 
 ..
     include here, after #4405, how to change the child then get back to it
@@ -264,279 +344,438 @@ particular ATL statement is executed.
 
 The following are the ATL statements.
 
-.. _inline-contains-atl-statement:
-
-Inline Contains Statement
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The inline contains statement takes a single expression evaluating to a
-:doc:`displayable <displayables>`.
-
-.. productionlist:: atl
-    atl_contains : "contains" `simple_expression`
-
-This statement sets (or replaces) the child of the current ATL transform to the
-value of the expression, making it useful for animation. ::
-
-    transform an_animation:
-        "1.png"
-        pause 2
-        "2.png"
-        pause 2
-        repeat
-
-    image move_an_animation:
-        contains an_animation
-
-        # If we didn't use contains, we'd still be looping
-        # and would never reach here.
-        xalign 0.0
-        linear 1.0 yalign 1.0
-
-The :ref:`displayable-atl-statement` is less explicit and bears ambiguity with
-the transform expression statement, but it allows for a
-:doc:`transition <transitions>` to be used for replacing the child. This
-statement can be particularly useful when an ATL transform wishes to contain,
-rather than include, a second ATL transform.
-
-Number Statement
-~~~~~~~~~~~~~~~~
-
-The number statement consists of a simple expression evaluating to an integer or
-floating-point number. It can optionally be preceded by the keyword "pause".
-
-.. productionlist:: atl
-    atl_number : "pause"? `simple_expression`
-
-It is used as a number of seconds to pause execution for. ::
-
-    image atl example:
-        # Displays logo_base.png
-        contains "logo_base.png"
-
-        # Pause for 1.0 seconds.
-        pause 1.0
-
-        # Show logo_bw.png, with a dissolve.
-        "logo_bw.png" with Dissolve(0.5, alpha=True)
-
-        # Pause for 3 seconds
-        3
-
-        repeat
+.. _atl-properties-statement:
 
 Properties Statement
 ~~~~~~~~~~~~~~~~~~~~
 
-This statement sets one or more transform properties to a new value.
+This statement sets the value of a transform property.
 
-.. productionlist:: atl
-    atl_properties : `atl_property`+
+**Syntax**
 
-.. productionlist:: atl
-    atl_property : `transform_property` `simple_expression`
+    ::
 
-The statement first gives a series (at least one) of property names, each
-followed by the new value to set it to. See :ref:`transform-properties` for a
-list of transform properties, their meaning and the values they take. ::
+        <property_name> <property_value>
 
-    transform rightoid:
-        xalign .9
+**Usage**
 
-    transform ariana.left:
-        xanchor .3 xpos 100
+    .. table::
+        :widths: auto
+
+        ==============  ======  ===========
+        Name            Type    Description
+        ==============  ======  ===========
+        property_name   word    Name of transform property (eg. :tpref:`xalign`, :tpref:`alpha`, ...)
+        property_value  Varies  Value of property
+        ==============  ======  ===========
+
+    The statement first gives a series (at least one) of property names, each
+    followed by the new value to set it to. See :ref:`transform-properties` for a
+    list of transform properties, their meaning and the values they take.
+
+**Example**
+
+    ::
+
+        transform rightoid:
+            xalign .9
+
+        transform ariana.left:
+            xanchor .3 xpos 100
+
+
+Number Statement
+~~~~~~~~~~~~~~~~
+
+This statement pauses the execution of the ATL block for the given duration.
+The "pause" keyword is optional.
+
+**Syntax**
+
+    ::
+
+        pause <duration>
+
+
+**Usage**
+
+    .. table::
+        :widths: auto
+
+        ========  =================  ===========
+        Name      Type               Description
+        ========  =================  ===========
+        "pause"   keyword            (Optional) Keyword indicating a pause
+        duration  float, int (expr)  Time in seconds to pause
+        ========  =================  ===========
+
+**Examples**
+
+    ::
+
+        transform pause_example(duration=0.5):
+            xalign 0.0
+
+            # Pause for 2.0 seconds.
+            pause 2.0
+            xalign 1.0
+
+            # Pause for `duration` seconds.
+            pause duration
+            xalign 0.5
+
+            # Pause for 3.0 seconds.
+            3.0
+
+            repeat
+
 
 Interpolation Statement
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The interpolation statement is the main way of getting smoothly animated
-transformations.
+transformations. The values change over time from their starting value to the
+given value.
 
-.. productionlist:: atl
-    atl_interp : ((`warper` `simple_expression`) | ("warp" `simple_expression` `simple_expression`)) (`atl_interp_target`+ | (":"
-               :    `atl_interp_target`+ ))
+A :ref:`warping function <warpers>` is used to control how the
+interpolation progresses over time.
 
-.. productionlist:: atl
-    atl_interp_target : (`atl_property`+ ("knot" `simple_expression`)* )
-                      : | `atl_transform_expression`
-                      : | "clockwise"
-                      : | "counterclockwise"
-                      : | ("circles" `simple_expression`)
+**Syntax**
 
-Some sample interpolations::
+    Basic form::
 
-    show logo base:
-        # Show the logo at the upper right side of the screen.
-        xalign 1.0 yalign 0.0
+        <warper_name> <duration> <atl_property> [<atl_property> ...]
 
-        # Take 1.0 seconds to move things back to the left.
-        linear 1.0 xalign 0.0
+    Using a warper function::
 
-        # Take 1.0 seconds to move things to the location specified in the
-        # truecenter transform. Use the ease warper to do this.
-        ease 1.0 truecenter
+        warp <warper_function> <duration> <atl_property> [<atl_property> ...]
 
-        # Set the location to circle around.
-        anchor (0.5, 0.5)
+    Block form::
 
-        # Use circular motion to bring us to spiral out to the top of
-        # the screen. Take 2 seconds to do so.
-        linear 2.0 yalign 0.0 clockwise circles 3
+        <warper_name> <duration>:
+            <atl_property>
+            <atl_property>
+            ...
 
-        # Use a spline motion to move us around the screen.
-        linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
+**Usage**
 
-        # Changes xalign and yalign at the same time.
-        linear 2.0 xalign 1.0 yalign 1.0
+    .. table::
+        :widths: auto
 
-        # The same thing, using a block.
-        linear 2.0:
-            xalign 1.0
-            yalign 1.0
+        ================  ===============================  ===========
+        Name              Type                             Description
+        ================  ===============================  ===========
+        warper_name       word                             Name of a :ref:`built-in warper <warpers>`
+        warper_function   str, function (expr)             Warping function with signature ``(t: float) -> float``
+        duration          float, int (expr)                Time in seconds for the interpolation
+        atl_property      :ref:`atl-properties-statement`  Property to interpolate
+        ================  ===============================  ===========
 
-The first part of the interpolation is used to select a function that time-warps
-the interpolation. That means, a function that maps linear time to non-linear
-time, see :ref:`warpers` for more information about that. Selecting a warper can
-either be done by giving the name of a registered warper, or by giving the
-keyword "warp" followed by an expression giving a warping function.
+    The interpolation will persist for the given duration, and at least one
+    frame.
 
-In either case, it's followed by a number giving the number of seconds the interpolation should take. ::
+    When :doc:`transform_properties` are given, the value each is given is the value
+    it will be set to at the end of the interpolation statement.
 
-    transform builtin_warper:
-        xpos 0
-        ease 5 xpos 520
+    It is also possible to interpolate a :ref:`transform-expression-atl-statement`,
+    which should in this case be an ATL transform containing only a single
+    properties statement. The properties from the transform will be processed as if
+    they were written directly in this interpolation.
 
-    init python:
-        def my_warper(t):
-            return t**4.4
+**Examples**
 
-    define my_warpers = [my_warper]
+    Basic usage::
 
-    transform accessed_as_function:
-        xpos 0
-        warp my_warpers[0] 5 xpos 520
-        warp my_warper 3 xpos 100
+        show logo base:
+            xalign 0.0 yalign 0.0
 
-The interpolation will persist for the given amount of time, and at least one
-frame.
+            # Take 2.0 seconds to move things to the bottom-left corner.
+            linear 2.0 yalign 1.0
 
-When :doc:`transform_properties` are given, the value each is given is the value
-it will be set to at the end of the interpolation statement. This can be tweaked
-in several ways:
+    Using warper function::
 
-* If the value is followed by one or more knots, then spline motion is used. The
-  starting point is the value of the property at the start of the interpolation,
-  the end point is the given value, and the knots are used to control the
-  spline. A quadratic curve is used for a single knot, Bezier is used when there
-  are two and Catmull-Rom is used for three or more knots. In the former two
-  cases, the knot or knots are simply control nodes. For Catmull-Rom, the first
-  and last knot are control nodes (often outside the displayed path) and the
-  other knots are points the path passes through.
+        show logo base(warper_expr="easein"):
+            xalign 0.0 yalign 0.0
 
-* If the interpolation statement contains a "clockwise" or "counterclockwise"
-  clause, circular motion is used. In that case, Ren'Py will compare the start
-  and end locations (which are set by :tpref:`pos`, :tpref:`align`,
-  :tpref:`angle` and :tpref:`radius`, ...) and figure out the polar coordinate
-  center (which is :tpref:`around`). Ren'Py will then compute the number of
-  degrees it will take to go from the start angle to the end angle, in the
-  specified direction of rotation. If the circles clause is given, Ren'Py will
-  ensure that the appropriate number of circles will be made.
+            # Use the warper in the parameter to move to the right side of the screen.
+            warp warper_expr 1.0 xalign 1.0
 
-* Otherwise, the value is linearly interpolated between the start and end
-  locations.
+    Multiple properties::
 
-It is also possible to interpolate a :ref:`transform-expression-atl-statement`,
-which should in this case be an ATL transform containing only a single
-properties statement. The properties from the transform will be processed as if
-they were written directly in this interpolation.
+        show logo base:
+            xalign 0.0 yalign 0.0
 
-A warper may be followed by a colon (:). In that case, it may be followed by one
-or more lines, in an indented block, containing the clauses described above.
-This lets you break an interpolation of many different things up into several
-lines.
+            # Changes xalign and yalign at the same time.
+            linear 2.0 xalign 0.5 yalign 0.5
+
+            # The same thing, using a block.
+            linear 2.0:
+                xalign 0.5
+                yalign 0.5
+
+    Creator-defined warper::
+
+        init python:
+            def my_warper(t):
+                return t**4.4
+
+            my_warpers = [my_warper]
+
+        transform custom_warper_example:
+            xpos 0
+            warp my_warper 3 xpos 100
+            warp my_warpers[0] 5 xpos 520
+
+**Property Interpolation**
+
+With spline motion (curved path):
+
+    ::
+
+        <atl_property> knot <knot_value> [knot <knot_value> ...]
+
+    .. table::
+        :widths: auto
+
+        ==========  =============  ===========
+        Name        Type           Description
+        ==========  =============  ===========
+        knot_value  Varies (expr)  Value of the property control point
+        ==========  =============  ===========
+
+    The starting point is the value of the property at the start of the interpolation,
+    the end point is the value given in ``<atl_property>``. The knots are used to control the
+    spline.
+
+    A quadratic `Bezier curve <https://en.wikipedia.org/wiki/B%C3%A9zier_curve>`_
+    is used for a single knot, a cubic Bezier is used when there
+    are two, and Catmull-Rom is used for three or more knots. In the former two
+    cases, the knot or knots are simply control nodes. For Catmull-Rom, the first
+    and last knot are control nodes (often outside the displayed path) and the
+    other knots are points the path passes through.
+
+    ::
+
+        transform spline_motion_single_property:
+            # Start at the bottom right, zoomed out a bit.
+            zoom 0.5 xalign 1.0 yalign 1.0
+
+            # Move from to the bottom center, overshooting a bit. Quadratic Bezier curve.
+            linear 2.0 xalign 0.5 knot 0.0
+
+            # Move to the top, slowing down at the center. Cubic Bezier curve.
+            linear 2.0 yalign 0.0 knot 0.2 knot 0.8
+
+            # Move to the left, oscillating first. Catmull-Rom spline.
+            linear 2.0 xalign 0.0 knot 1.0 knot 0.5 knot 0.0
+
+        transform spline_motion_multi_property:
+            # Start at the bottom right, zoomed out a bit.
+            zoom 0.5 align (1.0, 0.0)
+
+            # Use a spline motion to move (x, y) simultaneously in a slight S shape.
+            linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
+
+With circular motion
+
+    ::
+
+        <atl_property> clockwise
+        <atl_property> counterclockwise
+        <atl_property> circles <number_of_circles>
+
+    .. table::
+        :widths: auto
+
+        ====================  ===========  ===========
+        Name                  Type         Description
+        ====================  ===========  ===========
+        number_of_circles     int (expr)   Number of full rotations for circular motion
+        ====================  ===========  ===========
+
+    The start and end locations are compared (which are set by :tpref:`pos`, :tpref:`align`,
+    :tpref:`angle` and :tpref:`radius`, ...) and the polar coordinate
+    center is determined (which is :tpref:`around`). Ren'Py will then compute the number of
+    degrees it will take to go from the start angle to the end angle, in the
+    specified direction of rotation. If the circles clause is given, Ren'Py will
+    ensure that the appropriate number of circles will be made.
+
+    ::
+
+        show logo base:
+            xalign 1.0 yalign 0.0
+
+            # Set the location to circle around.
+            anchor (0.5, 0.5)
+
+            # Use circular motion to bring us to spiral out to the top of
+            # the screen. Take 2 seconds to do so.
+            linear 2.0 yalign 0.0 clockwise circles 3
+
+With a transform expression
+
+    ::
+
+        <transform_expression>
+
+    .. table::
+        :widths: auto
+
+        ====================  ======================================  ===========
+        Name                  Type                                    Description
+        ====================  ======================================  ===========
+        transform_expression  :ref:`Transform <transform-statement>`
+                              (expr)                                  Transform to interpolate to
+        ====================  ======================================  ===========
+
+    In this case, the  be an ATL transform containing only a single
+    properties statement. The properties from the transform will be processed as if
+    they were written directly in this interpolation.
+
+    ::
+
+        show logo base:
+            xalign 1.0 yalign 0.0
+
+            # Move to the location specified in the truecenter transform in 1.0 seconds
+            ease 1.0 truecenter
 
 Pass Statement
 ~~~~~~~~~~~~~~
 
-.. productionlist:: atl
-    atl_pass : "pass"
+The ``pass`` statement causes nothing to happen: a no-op.
 
-The ``pass`` statement is a simple statement that causes nothing to happen : a
-no-op. This can be used when there's a desire to separate statements, like when
-two sets of choice statements (see below) would otherwise be back-to-back. It
-can also be useful when the syntax requires a block to be created but you need
-it to be empty, for example to make one of the choice blocks not do anything.
+**Syntax**
+
+    ::
+
+        pass
+
+    This can be used when there's a desire to separate statements, like when
+    two sets of choice statements (see below) would otherwise be back-to-back. It
+    can also be useful when the syntax requires a block to be created but you need
+    it to be empty, for example to make one of the choice blocks not do anything.
 
 Repeat Statement
 ~~~~~~~~~~~~~~~~
 
-The ``repeat`` statement is a simple statement that causes the block containing
+The ``repeat`` statement causes the block containing
 it to resume execution from the beginning.
 
-.. productionlist:: atl
-    atl_repeat : "repeat" (`simple_expression`)?
+**Syntax**
 
-If the expression is present, then it is evaluated to give an integer number of
-times the block will execute. (So a block ending with ``repeat 2`` will execute
-at most twice in total, and ``repeat 1`` does not repeat.)
+    Basic form::
 
-The repeat statement must be the last statement in a block::
-
-    show logo base:
-        xalign 0.0
-        linear 1.0 xalign 1.0
-        linear 1.0 xalign 0.0
         repeat
+
+    With count parameter::
+
+        repeat <count>
+
+**Usage**
+
+    .. table::
+        :widths: auto
+
+        ==========  ==========  ===========
+        Name        Type        Description
+        ==========  ==========  ===========
+        count       int (expr)  (Optional) Number of times to execute the block
+        ==========  ==========  ===========
+
+    A block ending with ``repeat 2`` will execute
+    at most twice in total, and ``repeat 1`` does not repeat.
+
+    The repeat statement must be the last statement in a block
+
+**Example**
+
+    ::
+
+        show logo base:
+            xalign 0.0
+            linear 1.0 xalign 1.0
+            linear 1.0 xalign 0.0
+            repeat
 
 Block Statement
 ~~~~~~~~~~~~~~~
 
 The ``block`` statement simply contains a block of ATL statements.
+This can be used to group statements that will repeat.
 
-.. productionlist:: atl
-    atl_block_stmt : "block" ":"
-                   :      `atl_block`
+**Syntax**
 
-This can be used to group statements that will repeat::
-
-    show logo base:
-        alpha 0.0 xalign 0.0 yalign 0.0
-        linear 1.0 alpha 1.0
+    ::
 
         block:
-            linear 1.0 xalign 1.0
-            linear 1.0 xalign 0.0
-            repeat
+            <atl_block>
+
+
+**Example**
+
+    ::
+
+        show logo base:
+            alpha 0.0 xalign 0.0 yalign 0.0
+            linear 1.0 alpha 1.0
+
+            block:
+                linear 1.0 xalign 1.0
+                linear 1.0 xalign 0.0
+                repeat
 
 Parallel Statement
 ~~~~~~~~~~~~~~~~~~
 
 The ``parallel`` statement defines a set of ATL blocks to execute in parallel.
 
-.. productionlist:: atl
-    atl_parallel : ("parallel" ":"
-                 :    `atl_block`)+
+**Syntax**
 
-Parallel statements are greedily grouped into a parallel set when more than
-one parallel block appears consecutively in a block. The set of all parallel
-blocks are then executed simultaneously. The parallel statement terminates when
-the last block terminates.
+    ::
 
-The blocks within a set should be independent of each other, and manipulate
-different :doc:`transform_properties`. When two blocks change the same property,
-the result is undefined. ::
-
-    show logo base:
         parallel:
-            xalign 0.0
-            linear 1.3 xalign 1.0
-            linear 1.3 xalign 0.0
-            repeat
-        parallel:
-            yalign 0.0
-            linear 1.6 yalign 1.0
-            linear 1.6 yalign 0.0
-            repeat
+            <atl_block>
+
+**Usage**
+
+    .. table::
+        :widths: auto
+
+        ============  =========  ===========
+        Name          Type       Description
+        ============  =========  ===========
+        "parallel"    keyword    One or more parallel blocks
+        atl_block     block      ATL block for this parallel branch
+        ============  =========  ===========
+
+    When you use multiple parallel blocks, they all run at the same time.
+    The parallel statement finishes when the last block finishes.
+
+    Each parallel block should be independent and modify different
+    :doc:`transform_properties`. For example, one block might control horizontal
+    movement (:tpref:`xalign`) while another controls vertical movement (:tpref:`yalign`).
+    If two blocks try to change the same property at the same time, the behavior is
+    unpredictable and should be avoided.
+
+    Parallel statements are greedily grouped into a parallel set when more than
+    one parallel block appears consecutively in a block.
+
+**Example**
+
+    ::
+
+        show logo base:
+            parallel:
+                xalign 0.0
+                linear 1.3 xalign 1.0
+                linear 1.3 xalign 0.0
+                repeat
+            parallel:
+                yalign 0.0
+                linear 1.6 yalign 1.0
+                linear 1.6 yalign 0.0
+                repeat
 
 Choice Statement
 ~~~~~~~~~~~~~~~~
@@ -546,102 +785,226 @@ potential choices. Ren'Py will pick one of the choices in the set, and
 execute the ATL block associated with it, and then continue execution after
 the last choice in the choice set.
 
-.. productionlist:: atl
-   atl_choice : ("choice" (`simple_expression`)? ":"
-              :     `atl_block`)+
+**Syntax**
 
-Choice statements are greedily grouped into a choice set when more than one
-choice statement appears consecutively in a block. If the `simple_expression`
-is supplied, it is a floating-point weight given to that block, otherwise 1.0
-is assumed. ::
+    Basic form::
 
-    image eileen random:
         choice:
-            "eileen happy"
-        choice:
-            "eileen vhappy"
-        choice:
-            "eileen concerned"
+            <atl_block>
 
-        pause 1.0
-        repeat
+    With weight::
 
-The ``pass`` statement can be useful in order to break several sets of choice
-blocks into several choice statements, or to make an empty choice block.
+        choice <weight>:
+            <atl_block>
+
+**Usage**
+
+    .. table::
+        :widths: auto
+
+        ==========  ============  ===========
+        Name        Type          Description
+        ==========  ============  ===========
+        "choice"    keyword       One or more choices
+        weight      float (expr)  (Optional) Weight of this choice, defaults to 1.0
+        atl_block   block         ATL block for this choice
+        ==========  ============  ===========
+
+    Choice statements are greedily grouped into a choice set when more than one
+    choice statement appears consecutively in a block. If the `simple_expression`
+    is supplied, it is a floating-point weight given to that block, otherwise 1.0
+    is assumed.
+
+    The ``pass`` statement can be useful in order to break several sets of choice
+    blocks into several choice statements, or to make an empty choice block.
+
+**Example**
+
+    ::
+
+        image eileen random:
+            choice:
+                "eileen happy"
+            choice:
+                "eileen vhappy"
+            choice 2.0:
+                # More likely to be chosen.
+                "eileen concerned"
+
+            pause 1.0
+            repeat
+
+
+.. _animation-atl-statement:
 
 Animation Statement
 ~~~~~~~~~~~~~~~~~~~
 
 The ``animation`` statement must be the first statement in an ATL block, and
-tells Ren'Py that the block uses the animation timebase.
+tells Ren'Py that the block uses the animation timebase (``at``) rather
+than the normal showing timebase (``st``). For more information,
+see :ref:`atl-timebases`.
 
-.. productionlist:: atl
-    atl_animation : "animation"
+**Syntax**
 
-As compared to the normal showing timebase, the animation timebase starts when
-an image or screen with the same tag is shown. This is generally used to have
-one image replaced by a second one at the same apparent time. For example::
+    ::
 
-    image eileen happy moving:
         animation
-        "eileen happy"
-        xalign 0.0
-        linear 5.0 xalign 1.0
-        repeat
 
-    image eileen vhappy moving:
-        animation
-        "eileen vhappy"
-        xalign 0.0
-        linear 5.0 xalign 1.0
-        repeat
+**Usage**
 
-    label start:
-        show eileen happy moving
-        pause
-        show eileen vhappy moving
-        pause
+    The animation timebase starts when an image or screen with the same tag is shown.
+    This is generally used to have one image replaced by a second one at the
+    same apparent time.
 
-This example will cause Eileen to change expression when the first pause
-finishes, but will not cause her position to change, as both animations share
-the same animation time, and hence will place her sprite in the same place.
-Without the animation statement, the position would reset when the player
-clicks.
+**Example**
+
+    ::
+
+        image eileen happy moving:
+            animation
+            "eileen happy"
+            xalign 0.0
+            linear 5.0 xalign 1.0
+            repeat
+
+        image eileen vhappy moving:
+            animation
+            "eileen vhappy"
+            xalign 0.0
+            linear 5.0 xalign 1.0
+            repeat
+
+        label start:
+            show eileen happy moving
+            pause
+            show eileen vhappy moving
+            pause
+
+    This example will cause Eileen to change expression when the first pause
+    finishes, but will not cause her position to change, as both animations share
+    the same animation time, and hence will place her sprite in the same place.
+    Without the animation statement, the position would reset when the player
+    clicks.
 
 On Statement
 ~~~~~~~~~~~~
 
 The ``on`` statement defines an event handler.
 
-.. productionlist:: atl
-   atl_on : "on" `name` ("," `name`)* ":"
-          :      `atl_block`
+**Syntax**
 
-``on`` blocks are greedily grouped into a single statement. On statement can
-handle a single event name, or a comma-separated list of event names.
+    For one event ::
 
-This statement is used to handle events. When an event is handled, handling of
-any other event ends and handing of the new event immediately starts. When an
-event handler ends without another event occurring, the ``default`` event is
-produced (unless the ``default`` event is already being handled).
+        on <event_name>:
+            <atl_block>
 
-Execution of the on statement will never naturally end. (But it can be ended
-by the time statement, or an enclosing event handler.)
+    For multiple events ::
 
-See the event statement for a way to produce arbitrary events, and see
-:ref:`external-atl-events` for a list of naturally-produced events. ::
+        on <event_name>, <event_name>, ...:
+            <atl_block>
 
-    show logo base:
-        on show:
-            alpha 0.0
-            linear .5 alpha 1.0
-        on hide:
-            linear .5 alpha 0.0
+**Usage**
 
-    transform pulse_button:
-        on hover, idle:
-            linear .25 zoom 1.25
-            linear .25 zoom 1.0
+    .. table::
+        :widths: auto
+
+        ============  =======  ===========
+        Name          Type     Description
+        ============  =======  ===========
+        event_name    word     Name of one or more :ref:`events <external-atl-events>` to handle
+        atl_block     block    ATL block to execute when event occurs
+        ============  =======  ===========
+
+    ``on`` blocks are greedily grouped into a single statement. On statement can
+    handle a single event name, or a comma-separated list of event names.
+
+    This statement is used to handle events. When an event is handled, handling of
+    any other event ends and handing of the new event immediately starts. When an
+    event handler ends without another event occurring, the ``default`` event is
+    produced (unless the ``default`` event is already being handled).
+
+    Execution of the on statement will never naturally end. (But it can be ended
+    by the time statement, or an enclosing event handler.)
+
+**Example**
+
+    ::
+
+        show logo base:
+            on show:
+                alpha 0.0
+                linear .5 alpha 1.0
+            on hide:
+                linear .5 alpha 0.0
+
+        transform pulse_button:
+            on hover, idle:
+                linear .25 zoom 1.25
+                linear .25 zoom 1.0
+
+.. _displayable-atl-statement:
+
+
+Displayable Statement
+~~~~~~~~~~~~~~~~~~~~~
+
+The displayable statement sets or replaces the child :doc:`displayable <displayables>`
+of the transform when the statement executes.
+You can also optionally add a transition effect when changing from one displayable to another.
+
+**Syntax**
+
+    Basic form::
+
+        <displayable>
+
+    With transition::
+
+        <displayable> with <transition>
+
+**Usage**
+
+    .. table::
+        :widths: auto
+
+        ===============  ========================================  ===========
+        Name             Type                                      Description
+        ===============  ========================================  ===========
+        displayable      :doc:`Displayable <displayables>` (expr)  The new child image or visual element to display
+        transition       :doc:`Transition <transitions>` (expr)    (Optional) Transition when changing displayables
+
+                                                                   (eg. ``dissolve``, ``fade``)
+        ===============  ========================================  ===========
+
+    .. note::
+        Not all transitions work in this context. In particular, :ref:`dict-transitions`,
+        and :var:`move- <move>` and :var:`ease- <ease>` transitions won't work here.
+
+    **Using transforms as displayables:** If you pass another ATL transform that already
+    has a child displayable, your current ATL block will pause and wait for that
+    included transform's animation to finish before continuing.
+
+    .. warning::
+
+        If you pass a transform without a child, it will make your transform transparent
+        and won't display anything. A child-less ATL transforms might be interpreted as
+        a :ref:`transform-expression-atl-statement`, which will yield different results.
+
+        **For beginners**: Always make sure your displayable is something visible, like an
+        image filename (``"logo.png"``) or a displayable with content.
+
+
+**Example**
+
+    ::
+
+        image atl example:
+            "logo_base.png"
+
+            pause 1.0
+
+            "logo_bw.png" with Dissolve(0.5, alpha=True)
 
 .. _transform-expression-atl-statement:
 
@@ -650,64 +1013,105 @@ Transform Expression Statement
 
 This statement includes another ATL transform as part of the current ATL block.
 
-.. productionlist:: atl
-    atl_transform_expression : `simple_expression`
+**Syntax**
 
-This only applies if the ATL transform has **not** been supplied a child (see
-the top of the page for how to do that), otherwise it will be interpreted as a
-:ref:`displayable-atl-statement`. The contents of the provided ATL transform
-are included at the location of this statement. ::
+    ::
 
-    transform move_right:
-        linear 1.0 xalign 1.0
+        <transform_expression>
 
-    image atl example:
-        # Display logo_base.png
-        "logo_base.png"
+**Usage**
 
-        # Run the move_right transform.
-        move_right
+    .. table::
+        :widths: auto
 
-.. _displayable-atl-statement:
+        ====================  ======================================  ===========
+        Name                  Type                                    Description
+        ====================  ======================================  ===========
+        transform_expression  :ref:`Transform <transform-statement>`
+                              (expr)                                  Transform to interpolate to
+        ====================  ======================================  ===========
 
-Displayable Statement
-~~~~~~~~~~~~~~~~~~~~~
+    This only applies if the ATL transform has **not** been supplied a child (see
+    the top of the page for how to do that), otherwise it will be interpreted as a
+    :ref:`displayable-atl-statement`. The contents of the provided ATL transform
+    are included at the location of this statement.
 
-The displayable statement consists of a simple Python expression evaluating to
-a :doc:`displayable <displayables>`, optionally followed by a with clause
-containing a second simple expression.
+**Example**
 
-.. productionlist:: atl
-    atl_displayable : `simple_expression` ("with" `simple_expression`)?
+    ::
 
-It is used to set or replace the child of the transform when the statement
-executes.
+        transform move_right:
+            linear 1.0 xalign 1.0
 
-If a ``with`` clause is present, the second expression is evaluated as a
-:doc:`transition <transitions>`, and the transition is applied between the old
-child and the new child. Be careful in that not all transitions will work in
-this situation, notably :ref:`dict-transitions` and :var:`move- <move>` and
-:var:`ease- <ease>` transitions. ::
+        image atl example:
+            # Display logo_base.png
+            "logo_base.png"
 
-    image atl example:
-        # Displays logo_base.png
-        "logo_base.png"
+            # Run the move_right transform.
+            move_right
 
-        # Pause for 1.0 seconds.
-        1.0
 
-        # Show logo_bw.png, with a dissolve.
-        "logo_bw.png" with Dissolve(0.5, alpha=True)
+.. _inline-contains-atl-statement:
 
-.. warning::
+Contains Inline Statement
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    If passing any child-less transform is pointless as it will make the
-    transform transparent and ineffective, passing child-less ATL transforms may
-    be interpreted as a :ref:`transform-expression-atl-statement`, which will
-    yield different results.
+This statement sets (or replaces) the child of the current ATL transform to the
+value of the expression, making it useful for animation.
 
-If the expression evaluates to an ATL transform **with** a child, the execution
-of this ATL block will only continue after the includee's ATL code runs.
+**Syntax**
+
+    ::
+
+        contains <displayable>
+
+**Usage**
+
+    .. table::
+        :widths: auto
+
+        ===========  =============================================  ===========
+        Name         Type                                           Description
+        ===========  =============================================  ===========
+        displayable  :doc:`Displayable <displayables>`,
+                     :ref:`Transform <transform-statement>` (expr)  Child displayable or transform
+        ===========  =============================================  ===========
+
+    The :ref:`displayable-atl-statement` is less explicit and bears ambiguity with
+    the transform expression statement, but it allows for a
+    :doc:`transition <transitions>` to be used for replacing the child. This
+    statement can be particularly useful when an ATL transform wishes to contain,
+    rather than include, a second ATL transform.
+
+    .. note ::
+
+        Use this statement when you want your ATL transform to contain another ATL
+        transform as its child. This is particularly helpful when you need the child
+        to be a separate transform object rather than just including its code directly.
+
+        Otherwise, the :ref:`displayable-atl-statement` is a simpler way to set the child
+        displayable, and it has the advantage of specifying a :doc:`transition <transitions>`
+        that plays when replacing the old child with a new one.
+
+**Example**
+
+    ::
+
+        transform an_animation:
+            "1.png"
+            pause 2
+            "2.png"
+            pause 2
+            repeat
+
+        image move_an_animation:
+            contains an_animation
+
+            # If we didn't use contains, we'd still be looping
+            # and would never reach here.
+            xalign 0.0
+            linear 1.0 yalign 1.0
+
 
 Contains Block Statement
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -716,128 +1120,183 @@ The contains block, like its
 :ref:`inline counterpart <inline-contains-atl-statement>`, sets the child of the
 transform but in a different way.
 
-.. productionlist:: atl
-    atl_counts : "contains" ":"
-               :    `atl_block`
+**Syntax**
 
-One or more contains blocks will be greedily grouped together inside a single
-contains statement, wrapped inside a :func:`Fixed`, and set as the child of the
-transform.
-
-Each block should define a displayable to use, otherwise an error will occur.
-The contains statement executes instantaneously, without waiting for the
-children to complete. ::
-
-    image test double:
-        contains:
-            "logo.png"
-            xalign 0.0
-            linear 1.0 xalign 1.0
-            repeat
+    ::
 
         contains:
-            "logo.png"
-            xalign 1.0
-            linear 1.0 xalign 0.0
-            repeat
+            <atl_block>
+
+**Usage**
+
+    One or more contains blocks will be greedily grouped together inside a single
+    contains statement, wrapped inside a :func:`Fixed`, and set as the child of the
+    transform.
+
+    Each block should define a displayable to use, otherwise an error will occur.
+    The contains statement executes instantaneously, without waiting for the
+    children to complete.
+
+**Example**
+
+    ::
+
+        image test double:
+            contains:
+                "logo.png"
+                xalign 0.0
+                linear 1.0 xalign 1.0
+                repeat
+
+            contains:
+                "logo.png"
+                xalign 1.0
+                linear 1.0 xalign 0.0
+                repeat
 
 Function Statement
 ~~~~~~~~~~~~~~~~~~
 
 The ``function`` statement allows ATL to use Python code.
 
-.. productionlist:: atl
-    atl_function : "function" `simple_expression`
+**Syntax**
 
-The functions have the same signature as those used with :func:`Transform`:
+    ::
 
-* The first argument is a transform object. :doc:`transform_properties` can be
-  set as attributes on this object.
+        function <func>
 
-* The second argument is the shown timebase, the number of seconds since the
-  function began executing.
+**Usage**
 
-* The third argument is the animation timebase, which is the number of
-  seconds something with the same tag has been on the screen.
+    .. table::
+        :widths: auto
 
-* If the function returns a number, it will be called again after that number of
-  seconds has elapsed. (0 seconds means to call the function as soon as
-  possible.) If the function returns None, control will pass to the next ATL
-  statement.
+        ==========  ===============  ===========
+        Name        Type             Description
+        ==========  ===============  ===========
+        func        function (expr)  Function to call, with signature ``(trans: Transform, st: float, at: float) -> float | None``
+        ==========  ===============  ===========
 
-This function should not have side effects other than changing the transform
-object in the first argument, and may be called at any time with any value as
-part of prediction.
+    The functions have the same signature as those used with :func:`Transform`:
 
-Note that ``function`` is not a transform property, and that it doesn't have the
-exact same behavior as :func:`Transform`\ 's `function` parameter. ::
+    * The first argument is a transform object. :doc:`transform_properties` can be
+      set as attributes on this object.
 
-    init python:
-        def slide_vibrate(trans, st, at, /):
-            if st > 1.0:
-                trans.xalign = 1.0
-                trans.yoffset = 0
-                return None
-            else:
-                trans.xalign = st
-                trans.yoffset = random.randrange(-10, 11)
-                return 0
+    * The second argument is the shown :ref:`timebase <atl-timebases>`,
+      the number of seconds since the function began executing.
 
-    label start:
-        show logo base:
-            function slide_vibrate
-            pause 1.0
-            repeat
+    * The third argument is the animation timebase, which is the number of
+      seconds something with the same tag has been on the screen.
+
+    * If the function returns a number, it will be called again after that number of
+      seconds has elapsed. (0 seconds means to call the function as soon as
+      possible.) If the function returns None, control will pass to the next ATL
+      statement.
+
+    This function should not have side effects other than changing the transform
+    object in the first argument, and may be called at any time with any value as
+    part of prediction.
+
+    Note that ``function`` is not a transform property, and that it doesn't have the
+    exact same behavior as :func:`Transform`\ 's `function` parameter.
+
+**Example**
+
+    ::
+
+        init python:
+            def slide_vibrate(trans, st, at, /):
+                if st > 1.0:
+                    trans.xalign = 1.0
+                    trans.yoffset = 0
+                    return None
+                else:
+                    trans.xalign = st
+                    trans.yoffset = random.randrange(-10, 11)
+                    return 0
+
+        label start:
+            show logo base:
+                function slide_vibrate
+                pause 1.0
+                repeat
 
 Time Statement
 ~~~~~~~~~~~~~~
 
 The ``time`` statement is a control statement.
 
-.. productionlist:: atl
-    atl_time : "time" `simple_expression`
+**Syntax**
 
-It contains a single expression, which is evaluated to give a time expressed as
-seconds from the start of execution of the containing block. When the time given
-in the statement is reached, the following statement begins to execute. This
-transfer of control occurs even if a previous statement is still executing, and
-causes any such prior statement to immediately terminate.
+    ::
 
-Time statements are implicitly preceded by a pause statement with an infinite
-time. This means that if control would otherwise reach the time statement, it
-waits until the time statement would take control.
+        time <value>
 
-When there are multiple time statements in a block, they must strictly
-increase in order. ::
+**Usage**
 
-    image backgrounds:
-        "bg band"
-        xoffset 0
-        block:
-            linear 1 xoffset 10
-            linear 1 xoffset 0
-            repeat # control would never exit this block
+    .. table::
+        :widths: auto
 
-        time 2.0
-        xoffset 0
-        "bg whitehouse"
+        =======  ================  ===========
+        Name     Type              Description
+        =======  ================  ===========
+        value    float/int (expr)  Time in seconds from start of block execution
+        =======  ================  ===========
 
-        time 4.0
-        "bg washington"
+    When the value given in the statement is reached, the next statement begins to execute.
+    This transfer of control occurs even if a previous statement is still executing, and
+    causes any such prior statement to immediately terminate.
+
+    If the time statement is reached before the given value, the transform pauses and
+    waits until the time statement would take control.
+
+    When there are multiple time statements in a block, they must strictly
+    increase in order.
+
+**Example**
+
+    ::
+
+        image backgrounds:
+            "bg band"
+            xoffset 0
+            block:
+                linear 1 xoffset 10
+                linear 1 xoffset 0
+                repeat # control would never exit this block
+
+            time 2.0
+            xoffset 0
+            "bg whitehouse"
+
+            time 4.0
+            "bg washington"
 
 Event Statement
 ~~~~~~~~~~~~~~~
 
-The ``event`` statement is a simple statement that causes an event with the
-given name to be produced.
+The ``event`` statement causes an event with the given name to be produced.
 
-.. productionlist:: atl
-    atl_event : "event" `name`
+**Syntax**
 
-When an event is produced inside a block, the block is checked to see if an
-event handler for the given name exists. If it does, control is transferred
-to the event handler. Otherwise, the event propagates to any containing event
-handler.
+    ::
+
+        event <event_name>
+
+**Usage**
+
+    .. table::
+        :widths: auto
+
+        ============  =======  ===========
+        Name          Type     Description
+        ============  =======  ===========
+        event_name    word     Name of event to produce
+        ============  =======  ===========
+
+    When an event is produced inside a block, the block is checked to see if an
+    event handler for the given name exists. If it does, control is transferred
+    to the event handler. Otherwise, the event propagates to any containing event
+    handler.
 
 
 .. _external-atl-events:
@@ -1045,6 +1504,8 @@ When an ATL transform, a built-in transform or a transform defined using the
 the properties of the outgoing transform are inherited by the incoming
 transform. That inheritance doesn't apply for other kinds of transforms.
 
+.. Explain why this is important
+
 When the :ref:`show statement <show-statement>` has multiple transforms in the
 ``at`` list, the transforms are matched from last to first, until one list runs
 out. For example::
@@ -1100,9 +1561,26 @@ applied to a displayable (but keep the position), you can use::
         pass
     "But I'm happy when it settles down."
 
+.. _atl-timebases:
 
-The Transform Class
-===================
+Timebases
+=========
+
+Two timebases exist and are commonly confused:
+
+* ``st`` (shown timebase): begins when this displayable is first shown on the screen.
+* ``at`` (animation timebase): begins when an image with the same tag was shown,
+  without being hidden.
+
+When the displayable is shown without a tag, ``st`` and ``at`` are the same.
+
+.. note::
+
+    By default, transforms use ``st``.
+    Use :ref:`animation <animation-atl-statement>` to switch to ``at``.
+
+Transform Class
+===============
 
 One equivalent to to the simplest ATL transforms is the Transform class.
 
@@ -1121,7 +1599,7 @@ One equivalent to to the simplest ATL transforms is the Transform class.
         when it is shown, rather than inheriting those properties from the
         transforms it replaces.
 
-    .. function:: function(trans: Transform, st: float, at: float, /) -> int|None
+    .. function:: function(trans: Transform, st: float, at: float, /) -> float|None
 
         If not None, this function will be called when the transform is
         rendered, with three positional arguments:
@@ -1171,6 +1649,32 @@ One equivalent to to the simplest ATL transforms is the Transform class.
         This should be called when a transform property field is updated outside
         of the function passed as the `function` argument, to ensure that the
         change takes effect.
+
+Applying transforms to displayables in Python
+=============================================
+
+There are several ways to apply transform ``t`` to displayable ``d`` in Python:
+
+#. The most universal and most recommended way is ``At(d, t)`` (see below). It
+   works with all transforms.
+
+#. ``d(child=t)`` works with all :ref:`ATL transforms <atl>`.
+
+#. ``t(d)`` works with all :ref:`Python transforms <transforms-python>`, as well
+   as with ATL transforms that don't have any positional parameters.
+
+.. include:: inc/disp_at
+
+.. note::
+    The resulting value may not be able to be displayed, if there remains
+    parameters of the transform that have not been given a value, as can be the
+    case with transforms defined using the :ref:`transform-statement`.
+
+.. note::
+    The resulting value may still be a transform that can be applied to yet
+    another displayable (overriding its previous child) ; that's the case with
+    ATL transforms which are still usable as transforms even when having their
+    child set.
 
 .. _transforms-python:
 

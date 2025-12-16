@@ -106,7 +106,7 @@ class ImageFont(object):
             return rv
 
         for c in s:
-            g = textsupport.Glyph()  # @UndefinedVariable
+            g = textsupport.Glyph()
 
             g.character = ord(c)
             g.ascent = self.baseline
@@ -348,7 +348,7 @@ def parse_bmfont_line(l):
     if not line:
         line = [""]
 
-    map = dict(i.split("=", 1) for i in line[1:])  # @ReservedAssignment
+    map = dict(i.split("=", 1) for i in line[1:])
     return line[0], map
 
 
@@ -676,9 +676,9 @@ def load_face(fn, shaper):
         raise Exception("Could not find font {0!r}.".format(orig_fn))
 
     if shaper == "harfbuzz":
-        rv = hbfont.HBFace(font_file, index, orig_fn)  # @UndefinedVariable
+        rv = hbfont.HBFace(font_file, index, orig_fn)
     else:
-        rv = ftfont.FTFace(font_file, index, orig_fn)  # @UndefinedVariable
+        rv = ftfont.FTFace(font_file, index, orig_fn)
 
     face_cache[key] = rv
 
@@ -760,11 +760,11 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
     if shaper == "harfbuzz":
         rv = hbfont.HBFont(
             face, int(size * scale), bold, italics, outline, antialias, vertical, hinting, instance, axis, features
-        )  # @UndefinedVariable
+        )
     else:
         rv = ftfont.FTFont(
             face, int(size * scale), bold, italics, outline, antialias, vertical, hinting
-        )  # @UndefinedVariable
+        )
 
     font_cache[key] = rv
 

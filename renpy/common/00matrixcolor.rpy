@@ -283,7 +283,7 @@ init -1500 python:
         :doc: colormatrix
 
         A ColorMatrix that can be used with :tpref:`matrixcolor` to change
-        the brightness of an image, while leaving the Alpha channel
+        the contrast of an image, while leaving the Alpha channel
         alone.
 
         `value`

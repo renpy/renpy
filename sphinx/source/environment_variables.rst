@@ -99,6 +99,10 @@ The following environment variables control the behavior of Ren'Py:
     can prevent sound from skipping, at the cost of a larger delay from when a
     sound is invoked to when it is played.
 
+``RENPY_TEST_VC_REVISION``
+    This is used as the default value of :var:`_test.vc_revision`, part of the
+    automated testing framework.
+
 ``RENPY_TIMEWARP``
     This can be set to make time run faster or slower. For example, setting
     a timewarp of 0.5 makes things run at half-speed, while a timewarp of

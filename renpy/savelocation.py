@@ -657,7 +657,7 @@ def run_scan_thread():
 
     while not quit_scan_thread:
         try:
-            renpy.loadsave.location.scan()  # @UndefinedVariable
+            renpy.loadsave.location.scan()
         except Exception:
             pass
 
@@ -665,7 +665,7 @@ def run_scan_thread():
             scan_thread_condition.wait(5.0)
 
 
-def quit():  # @ReservedAssignment
+def quit():
     global quit_scan_thread
 
     with scan_thread_condition:

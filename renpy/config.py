@@ -99,6 +99,15 @@ image_cache_size = None
 # The size of the image cache, in megabytes.
 image_cache_size_mb = 400
 
+# The number of threads to use for parallel image decoding during preloading.
+# Set to 0 for automatic (based on CPU count, capped as below and always leaving
+# at least 2 free) or 1 to disable parallel decoding.
+preload_threads = 0
+
+# The maximum number of threads to use for preloading when the above is
+# set to automatic.
+preload_thread_autocap = 4
+
 # The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a
 # BFS along all paths, rather than the depth along any particular
@@ -781,6 +790,9 @@ enable_language_autodetect = False
 
 # A function from (locale, region) -> existing language.
 locale_to_language_function = None
+
+# The table used by the default locale_to_language_function.
+locale_to_language_map: dict[str, str] = { }
 
 # Should we pass the full argument list to the say screen?
 old_say_args = False
@@ -1602,6 +1614,33 @@ live2d_max_memory: int = 32 * 1024 * 1024
 The maximum amount of memory, in bytes, that can be used by live2d and models on the web platform.
 """
 
+gl_vsync: bool = True
+"""
+If True, Ren'Py will attempt to enable vsync when creating the OpenGL context. If False, vsync will be disabled.
+This is mostly intended to be set by renpy.test to disable vsync during tests.
+"""
+
+tracesave_screenshot: bool = True
+"""
+If True, trace saves will include a screenshot of the game at the time of the save.
+"""
+
+maximum_embiggens: bool = True
+"""
+If True, the xmaximum and ymaximum properties can increase the space offered of a displayable beyond what
+is offered by its container.
+"""
+
+extend_like_characters: set[str] = { "extend" }
+"""
+A set of character names that will be treated like the "extend" character for the purpose of dialogue export.
+"""
+
+tlid_only_considers_say: bool = True
+"""
+If True, only say statements will be assigned translation ids.
+"""
+
 
 del os
 del collections
@@ -1643,6 +1682,8 @@ def init():
     error_suggestion_handlers[renpy.script.LabelNotFound] = renpy.script.LabelNotFound.get_suggestion
     error_suggestion_handlers[renpy.display.screen.ScreenNotFound] = renpy.display.screen.ScreenNotFound.get_suggestion
     error_suggestion_handlers[renpy.display.image.ImageNotFound] = renpy.display.image.ImageNotFound.get_suggestion
+
+    locale_to_language_map.update(renpy.translation.locales)
 
 
 def post_init():

@@ -26,8 +26,6 @@ It supports the playback of expressions and motions.
 
 .. warning::
 
-    Live2D is not supported on the web platform.
-
     Installing Live2D on iOS requires copying the static libraries into your
     iOS project by hand.
 
@@ -209,9 +207,9 @@ defining different zooms and scaling factors. ::
     image hiyori far = Live2D("Resources/Hiyori", base=.9)
 
 Keep in mind that the user's hardware may be unable to init Live2D, and in that
-case a single call to Live2D() will keep the entire project from loading. The same
-happens in the case of a game distributed in a web version. If your game should be able
-to work even without Live2D, you could use a wrapper or workaround, for example::
+case a single call to Live2D() will keep the entire project from loading. 
+If your game should be able to work even without Live2D, you could use a wrapper
+or workaround, for example::
 
     init python:
         def MyLive2D(*args, fallback=Placeholder(text="no live2d"), **kwargs):

@@ -22,20 +22,20 @@
 # This file ensures that renpy packages will be imported in the right
 # order.
 
-from __future__ import annotations
-
 from typing import Any, NamedTuple
-import sys
+
 import os
+import sys
 import types
-import site
+import platform
+
 
 # Set up the hook for any renpy __init__ modules to import binary modules from
 # a libexec directory if it available.
 # This is relevant only for development RenPy itself, when compiled binaries
 # are stored in the libexec directory.
 try:
-    import _renpy  # type: ignore
+    import _renpy
 
     if getattr(_renpy, "__file__", "built-in") != "built-in":
         import importlib.util
@@ -87,36 +87,25 @@ import renpy.compat.pickle as pickle
 
 # Initial import of the __main__ module. This gets replaced in renpy.py
 # whatever that module has been imported as.
-import __main__
+import __main__ as __main__
 
 ################################################################################
 # Version information
 ################################################################################
+import renpy.versions
+
+version_dict = renpy.versions.get_version()
 
 # Version numbers.
-official: bool
-nightly: bool
-version_name: str
-version: str
-try:
-    from renpy.vc_version import (  # type: ignore
-        official,
-        nightly,
-        version_name,
-        version,
-    )
+official: bool = version_dict["official"]
+"True if this is an official release."
+nightly: bool = version_dict["nightly"]
+"True if this is a nightly build."
+version_name: str = version_dict["name"]
+"The name of the version."
 
-except ImportError:
-    import renpy.versions
-
-    version_dict = renpy.versions.get_version()
-
-    official = version_dict["official"]
-    nightly = version_dict["nightly"]
-    version_name = version_dict["version_name"]
-    version = version_dict["version"]
-
-official = official and getattr(site, "renpy_build_official", False)
+version_only: str = version_dict["version"]
+"A string giving the version number and optional suffixes."
 
 
 class VersionTuple(NamedTuple):
@@ -126,18 +115,11 @@ class VersionTuple(NamedTuple):
     commit: int
 
 
-version_tuple = VersionTuple(*(int(i) for i in version.split(".")))
+version_tuple = VersionTuple(*version_dict["semver"])
+"A NamedTuple giving the version numbers as (major, minor, patch, commit)."
 
-# A string giving the version number only (8.0.1.123), with a suffix if needed.
-version_only = ".".join(str(i) for i in version_tuple)
-
-if not official:
-    version_only += "+unofficial"
-elif nightly:
-    version_only += "+nightly"
-
-# A verbose string giving the version.
-version = "Ren'Py " + version_only
+version: str = f"Ren'Py {version_only}"
+"A verbose string giving the whole version."
 
 # Other versions.
 script_version: int = 5003000
@@ -160,8 +142,6 @@ emscripten: bool = False
 
 # Should we enable experimental features and debugging?
 experimental = "RENPY_EXPERIMENTAL" in os.environ
-
-import platform
 
 if platform.win32_ver()[0]:
     windows = True
@@ -225,6 +205,8 @@ backup_blacklist = {
     "renpy.test.testkey",
     "renpy.test.testmouse",
     "renpy.test.testparser",
+    "renpy.test.testreporter",
+    "renpy.test.testsettings",
     "renpy.tfd",
     "renpy.gl2",
     "renpycoverage",
@@ -234,8 +216,6 @@ type_blacklist = (types.ModuleType,)
 
 name_blacklist = {
     "renpy.loadsave.autosave_not_running",
-    "renpy.python.unicode_re",
-    "renpy.python.string_re",
     "renpy.python.store_dicts",
     "renpy.python.store_modules",
     "renpy.text.text.VERT_FORWARD",
@@ -467,6 +447,7 @@ def import_all():
 
     import renpy.display
 
+    import renpy.display.position
     import renpy.display.presplash
     import renpy.display.pgrender
     import renpy.display.scale
@@ -567,19 +548,21 @@ def import_all():
     import renpy.defaultstore
 
     import renpy.test
+    import renpy.test.testsettings
     import renpy.test.testmouse
     import renpy.test.testfocus
     import renpy.test.testkey
     import renpy.test.testast
     import renpy.test.testparser
+    import renpy.test.testreporter
     import renpy.test.testexecution
 
     import renpy.update
     import renpy.update.deferred
 
-
     try:
         import renpy.tfd
+
         sys.modules["_renpytfd"] = renpy.tfd
     except ImportError:
         pass
@@ -698,6 +681,8 @@ def reload_all():
     # Re-initialize the importer.
     renpy.importer.init_importer()
 
+    renpy.test.testexecution.on_reload()
+
     # Reset main log clock.
     renpy.main.reset_clock()
 
@@ -769,12 +754,14 @@ if typing.TYPE_CHECKING:
     from . import substitutions as substitutions
     from . import test as test
     from . import text as text
+    from . import tfd as tfd
     from . import translation as translation
     from . import types as types
     from . import uguu as uguu
     from . import ui as ui
     from . import update as update
     from . import util as util
+    from . import vc_version as vc_version
     from . import versions as versions
     from . import warp as warp
     from . import webloader as webloader

@@ -12,11 +12,37 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+Upcoming Deprecations
+----------------------
+
+The ability to create zsync updates will be removed when Ren'Py 8.7 is released.
+
+.. _incompatible-8.6.0:
+
+8.6.0
+-----
+
+**Voice Statement and Translation Identifiers** By default, the ``voice`` statement no longer contributes to
+translation identifiers. This means that adding or removing voice statements will not change the translation ID.
+If your game both had voice statements and translations, translation identifiers may have changed. To change them
+back, add::
+
+    define config.tlid_only_considers_say = False
+
 
 .. _incompatible-8.5.0:
 
 8.5.0
 -----
+
+**Maximum Can Increase Size** The :propref:`xmaximum` and :propref:`ymaximum` properties can be used to
+request a size larger than what the container offers. This can lead to displayables being larger than in previous
+versions of Ren'Py, when asked to be. To revert to the old behavior, add to your game::
+
+    define config.maximum_embiggens = False
+
+**Language Detection** Ren'Py now prefers the language name ("en") over the region name ("us"), if both are
+valid languages. The combination ("en_us") is preferred to both.
 
 **pygame_sdl2** The pygame_sdl2 module is no longer included with Ren'Py. It's been replace by
 the renpy.pygame package, which is compatible and included with Ren'Py. This packaged has been aliased
@@ -37,12 +63,6 @@ the config.images_directory variable shoul be migrated. For example, change::
 to::
 
     define config.image_directories = [ "myimages" ]
-
-
-.. _incompatible-8.4.2:
-
-8.4.2
------
 
 **Zoom and the Z-Axis** In Ren'Py 8.4, the :tpref:`zoom` transform property applies to the z-axis as well as the x and y
 axes. This can cause a behavior change in older games that did not expect the z-axis to be zoomed. To revert this

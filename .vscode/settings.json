@@ -314,5 +314,9 @@
     },
     "C_Cpp.default.defines": [
         "__EMSCRIPTEN__"
+    ],
+    "cython.includePaths": [
+        "src",
+        "src/pygame/include"
     ]
 }

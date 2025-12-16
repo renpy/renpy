@@ -137,8 +137,8 @@ screen bottom_info:
                                 text_color "#F96854"
                                 text_hover_color Color("#F96854").tint(.8)
 
-                    textbutton _("preferences") style "l_link" action Jump("preferences")
-                    textbutton _("quit") style "l_link" action Quit(confirm=False)
+                    textbutton _("preferences") id "pref_btn" style "l_link" action Jump("preferences")
+                    textbutton _("quit") id "quit_btn" style "l_link" action Quit(confirm=False)
 
             if persistent.sponsor_message and not interface.NO_LAUNCHER_LINKS:
 

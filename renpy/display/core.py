@@ -33,9 +33,8 @@ import platform
 import renpy
 import renpy.pygame as pygame
 
-from renpy.atl import position
-
 # Imports for backward compatibility.
+from renpy.display.position import absolute as absolute, position as position
 from renpy.display.displayable import Displayable, DisplayableArguments as DisplayableArguments, place as place
 from renpy.display.scenelists import SceneListEntry as SceneListEntry, SceneLists as SceneLists
 
@@ -190,115 +189,6 @@ class EndInteraction(Exception):
 
     def __init__(self, value: Any):
         self.value = value
-
-
-class absolute(float):
-    """
-    This represents an absolute float coordinate.
-    """
-
-    __slots__ = ()
-
-    def __repr__(self):
-        return f"absolute({float.__repr__(self)})"
-
-    def __divmod__(self, value: float, /):
-        return self // value, self % value
-
-    def __rdivmod__(self, value: float, /):
-        return value // self, value % self
-
-    @staticmethod
-    def compute_raw(value: "position | absolute | float | int", room: float) -> "absolute | float | int":
-        """
-        Converts a position from one of the many supported position types
-        into an absolute number of pixels, without regard for the return type.
-        """
-
-        if isinstance(value, position):
-            return value.relative * room + value.absolute
-
-        elif isinstance(value, (absolute, int)):
-            return value
-
-        elif isinstance(value, float):
-            return value * room
-
-        else:
-            raise TypeError(f"Value {value} of type {type(value)} not recognized as a position.")
-
-    @staticmethod
-    def compute(value: "position | absolute | float | int", room: float) -> "absolute":
-        """
-        Does the same, but converts the result to the absolute type.
-        """
-
-        return absolute(absolute.compute_raw(value, room))
-
-
-def _absolute_wrap(func):
-    """
-    Wraps func into a method of absolute. The wrapped method
-    converts a float result back to absolute.
-    """
-
-    def wrapper(*args):
-        rv = func(*args)
-
-        if type(rv) is float:
-            return absolute(rv)
-        else:
-            return rv
-
-    return wrapper
-
-
-fn = f = None
-
-for fn in (
-    "__abs__",
-    "__add__",
-    # '__bool__', # non-float
-    "__ceil__",
-    # '__divmod__', # special-cased above, tuple of floats
-    # '__eq__', # non-float
-    "__floordiv__",
-    # '__format__', # non-float
-    # '__ge__', # non-float
-    # '__gt__', # non-float
-    # '__hash__', # non-float
-    # '__int__', # non-float
-    # '__le__', # non-float
-    # '__lt__', # non-float
-    "__mod__",
-    "__mul__",
-    # '__ne__', # non-float
-    "__neg__",
-    "__pos__",
-    "__pow__",
-    "__radd__",
-    # '__rdivmod__', # special-cased above, tuple of floats
-    "__rfloordiv__",
-    "__rmod__",
-    "__rmul__",
-    "__round__",
-    "__rpow__",
-    "__rsub__",
-    "__rtruediv__",
-    # '__str__', # non-float
-    "__sub__",
-    "__truediv__",
-    # '__trunc__', # non-float
-    # 'as_integer_ratio', # tuple of non-floats
-    "conjugate",
-    "fromhex",
-    # 'hex', # non-float
-    # 'is_integer', # non-float
-):
-    f = getattr(float, fn)
-    setattr(absolute, fn, _absolute_wrap(f))
-
-del _absolute_wrap, fn, f
 
 
 class MouseMove:
@@ -1285,7 +1175,7 @@ class Interface:
         if renpy.display.draw is None:
             return
 
-        if keep_const_size:
+        if keep_const_size and not (renpy.android or renpy.ios):
             renpy.display.im.cache.clear_variable_size()
         else:
             renpy.display.im.cache.clear()
@@ -1870,7 +1760,36 @@ class Interface:
 
         return visible
 
+    def get_mouse_names(self):
+        """
+        Return a list of possible mice that can be displayed, in priority order.
+        """
+
+        rv = [ ]
+
+        mouse_kind = renpy.display.focus.get_mouse()
+        if mouse_kind:
+            rv.append(mouse_kind)
+
+        if self.mouse:
+            rv.append(self.mouse)
+
+        rv.append(getattr(renpy.store, "default_mouse", "default"))
+
+        if pygame.mouse.get_pressed()[0]:
+            new_rv = [ ]
+            for i in rv:
+                new_rv.extend([ "pressed_" + i, i ])
+
+            rv = new_rv
+
+        return rv
+
     def get_mouse_name(self, cache_only=False, interaction=True):
+        """
+        This is now legacy, used to support a public api but not by Ren'Py.
+        """
+
         mouse_kind = renpy.display.focus.get_mouse()
 
         if interaction and (mouse_kind is None):
@@ -1901,14 +1820,22 @@ class Interface:
 
         return mouse_kind
 
+
     def update_mouse(self, mouse_displayable):
         visible = self.is_mouse_visible()
 
         if mouse_displayable is not None:
+
             x, y = renpy.exports.get_mouse_pos()
 
+            cursor_function = getattr(mouse_displayable, "_has_mouse_cursor", None)
+            if cursor_function is not None:
+                has_cursor = cursor_function()
+            else:
+                has_cursor = True
+
             if (0 <= x < renpy.config.screen_width) and (0 <= y < renpy.config.screen_height):
-                visible = False
+                visible = not has_cursor
 
         # If not visible, hide the mouse.
         if not visible:
@@ -1927,11 +1854,11 @@ class Interface:
             self.set_mouse(True)
             return
 
-        mouse_kind = self.get_mouse_name(True)
-
-        if mouse_kind in self.cursor_cache:
-            anim = self.cursor_cache[mouse_kind]
-            cursor = anim[self.ticks % len(anim)]
+        for mouse_kind in self.get_mouse_names():
+            if mouse_kind in self.cursor_cache:
+                anim = self.cursor_cache[mouse_kind]
+                cursor = anim[self.ticks % len(anim)]
+                break
         else:
             cursor = True
 
@@ -2308,7 +2235,6 @@ class Interface:
         step = 1
 
         while True:
-
             if self.event_peek(False) and not self.force_prediction:
                 break
 
@@ -2410,7 +2336,7 @@ class Interface:
         trans_pause=False,
         suppress_overlay=False,
         suppress_underlay=False,
-        mouse="default",
+        mouse: str|None = None,
         preloads=[],
         roll_forward=None,
         pause=None,
@@ -2498,6 +2424,14 @@ class Interface:
         self.restart_interaction = False
 
         # Setup the mouse.
+        if mouse is None:
+            if getattr(renpy.store, "main_menu", False):
+                mouse = "mainmenu"
+            elif getattr(renpy.store, "_menu", False):
+                mouse = "gamemenu"
+            else:
+                mouse = "default"
+
         self.mouse = mouse
 
         # The start and end times of this interaction.
@@ -2929,6 +2863,7 @@ class Interface:
                             in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION]
                         ):
                             x, y = renpy.display.draw.get_mouse_pos()
+                            x, y = renpy.test.testmouse.get_mouse_pos(x, y)
                             ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
 
                             if self.ignore_touch:
@@ -3183,7 +3118,9 @@ class Interface:
 
                 # Handle videoresize.
                 if ev.type == pygame.VIDEORESIZE:
-                    pygame.event.get(pygame.VIDEORESIZE)
+                    evs = pygame.event.get(pygame.VIDEORESIZE)
+                    ev = evs[-1] if evs else ev
+                    renpy.display.log.write("Resize event: %r", ev)
 
                     if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
                         renpy.display.draw.full_redraw = True

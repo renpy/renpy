@@ -22,7 +22,7 @@
 import collections
 import os
 
-from io import StringIO  # @UnusedImport
+from io import StringIO
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -206,6 +206,7 @@ style_properties = sorted_dict(
     text_y_fudge=None,
     textshader=None,
     thumb="none_is_null",
+    thumb_align=None,
     thumb_offset=None,
     thumb_shadow="none_is_null",
     time_policy=None,

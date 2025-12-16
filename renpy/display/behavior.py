@@ -712,7 +712,7 @@ class SayBehavior(renpy.display.layout.Null):
 
         self.dialogue_pause = dialogue_pause
 
-    def _tts_all(self):
+    def _tts_all(self, raw: bool) -> str:
         raise renpy.display.tts.TTSRoot()
 
     def set_text(self, *args):
@@ -849,11 +849,11 @@ class DismissBehavior(renpy.display.displayable.Displayable):
         self.modal = modal
         self.keysym = keysym
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         return ""
 
-    def _tts_all(self):
-        rv = self._tts_common(alt(self.action))
+    def _tts_all(self, raw: bool) -> str:
+        rv = self._tts_common(alt(self.action), raw=raw)
         return rv
 
     def find_focusable(self, callback, focus_name):
@@ -1193,14 +1193,14 @@ class Button(renpy.display.layout.Window):
         if root:
             super(Button, self).set_style_prefix(prefix, root)
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         return ""
 
-    def _tts_all(self):
-        rv = self._tts_common(alt(self.action))
+    def _tts_all(self, raw: bool) -> str:
+        rv = self._tts_common(alt(self.action), raw=raw)
 
         if self.style.prefix.startswith("selected_") and (self.style.alt == self.style._hover_alt()):
-            rv += " " + renpy.minstore.__("selected")
+            rv += " selected" if raw else " " + renpy.minstore.__("selected")
 
         return rv
 
@@ -1212,7 +1212,7 @@ class Button(renpy.display.layout.Window):
 def TextButton(text, style="button", text_style="button_text", clicked=None, **properties):
     text_properties, button_properties = renpy.easy.split_properties(properties, "text_", "")
 
-    text = renpy.text.text.Text(text, style=text_style, **text_properties)  # @UndefinedVariable
+    text = renpy.text.text.Text(text, style=text_style, **text_properties)
     return Button(text, style=style, clicked=clicked, **button_properties)
 
 
@@ -1391,7 +1391,7 @@ class CaretBlink(renpy.display.displayable.Displayable):
         return rv
 
 
-class Input(renpy.text.text.Text):  # @UndefinedVariable
+class Input(renpy.text.text.Text):
     """
     This is a Displayable that takes text as input.
     """
@@ -1717,6 +1717,26 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
+        elif map_event(ev, "input_up") and self.arrowkeys:
+            above = self.get_caret_above_below_pos()[0]
+
+            if above is not None:
+                self.caret_pos = above
+                self.update_text(self.content, self.editable)
+            
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+    
+        elif map_event(ev, "input_down") and self.arrowkeys:
+            below = self.get_caret_above_below_pos()[1]
+
+            if below is not None:
+                self.caret_pos = below
+                self.update_text(self.content, self.editable)
+            
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+
         elif map_event(ev, "input_delete"):
             if self.caret_pos < l:
                 content = self.content[0 : self.caret_pos] + self.content[self.caret_pos + 1 : l]
@@ -1832,6 +1852,34 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
                 self.update_text(content, self.editable, check_size=True)
 
             raise renpy.display.core.IgnoreEvent()
+
+    def get_caret_above_below_pos(self):
+        line_positions = [ (0, 0) ]
+
+        line_index = -1
+
+        for i, line in enumerate(self.content.splitlines(True)):
+            first_line_position = line_positions[-1][1]
+            last_line_position = first_line_position + len(line)
+
+            line_positions.append((first_line_position, last_line_position))
+
+            if first_line_position <= self.caret_pos <= last_line_position:
+                line_index = i + 1
+
+        line_positions[-1] = (line_positions[-1][0], line_positions[-1][1] + 1)
+        line_positions.append(line_positions[-1])
+
+        if line_index == -1:
+            caret_above = caret_below = None
+
+        else:
+            offset = self.caret_pos - line_positions[line_index][0]
+
+            caret_above = 0 if (line_index - 1 == 0) else min(line_positions[line_index - 1][0] + offset, line_positions[line_index - 1][1] - 1)
+            caret_below = len(self.content) if ((line_index + 1) == len(line_positions) - 1) else min(line_positions[line_index + 1][0] + offset, line_positions[line_index + 1][1] - 1)
+
+        return caret_above, caret_below
 
     def render(self, width, height, st, at):
         self.st = st
@@ -2038,7 +2086,7 @@ class Adjustment(renpy.object.Object):
         if self.restart_interaction_at_range:
             renpy.exports.restart_interaction()
 
-    range = property(get_range, set_range)  # @ReservedAssignment
+    range = property(get_range, set_range)
 
     def get_page(self):
         if self._page is not None:
@@ -2212,7 +2260,7 @@ class Bar(renpy.display.displayable.Displayable):
 
     def __init__(
         self,
-        range=None,  # @ReservedAssignment
+        range=None,
         value=None,
         width=None,
         height=None,
@@ -2272,8 +2320,6 @@ class Bar(renpy.display.displayable.Displayable):
         self.adjustment = adjustment
         self.focusable = True
 
-        self.thumb_align = properties.pop("thumb_align", 0.0)
-
         # These are set when we are first rendered.
         self.thumb_dim = 0
         self.height = 0
@@ -2321,7 +2367,7 @@ class Bar(renpy.display.displayable.Displayable):
         # Store the width and height for the event function to use.
         self.width = width
         self.height = height
-        range = self.adjustment.range  # @ReservedAssignment
+        range = self.adjustment.range
         value = self.adjustment.value
         page = self.adjustment.page
 
@@ -2392,7 +2438,7 @@ class Bar(renpy.display.displayable.Displayable):
         fore_size += fore_gutter
         aft_size += aft_gutter
 
-        thumb_align = self.thumb_align
+        thumb_align = self.style.thumb_align
 
         rv = renpy.display.render.Render(width, height)
 
@@ -2411,8 +2457,8 @@ class Bar(renpy.display.displayable.Displayable):
             else:
                 foresurf = render(self.style.fore_bar, width, height, st, at)
                 aftsurf = render(self.style.aft_bar, width, height, st, at)
-                fore_leftover = (thumb_dim2 - foresurf.width) * self.thumb_align
-                aft_leftover = (thumb_dim2 - aftsurf.width) * self.thumb_align
+                fore_leftover = (thumb_dim2 - foresurf.width) * thumb_align
+                aft_leftover = (thumb_dim2 - aftsurf.width) * thumb_align
 
                 rv.blit(thumb_shadow, (0, fore_size - fore_thumb_offset))
                 rv.blit(foresurf.subsurface((0, 0, width, fore_size)), (fore_leftover, 0), main=False)
@@ -2427,8 +2473,8 @@ class Bar(renpy.display.displayable.Displayable):
             if self.style.bar_resizing:
                 foresurf = render(self.style.fore_bar, fore_size, height, st, at)
                 aftsurf = render(self.style.aft_bar, aft_size, height, st, at)
-                fore_leftover = (thumb_dim2 - foresurf.height) * self.thumb_align
-                aft_leftover = (thumb_dim2 - aftsurf.height) * self.thumb_align
+                fore_leftover = (thumb_dim2 - foresurf.height) * thumb_align
+                aft_leftover = (thumb_dim2 - aftsurf.height) * thumb_align
 
                 rv.blit(thumb_shadow, (fore_size - fore_thumb_offset, 0))
                 rv.blit(foresurf, (0, fore_leftover), main=False)
@@ -2438,8 +2484,8 @@ class Bar(renpy.display.displayable.Displayable):
             else:
                 foresurf = render(self.style.fore_bar, width, height, st, at)
                 aftsurf = render(self.style.aft_bar, width, height, st, at)
-                fore_leftover = (thumb_dim2 - foresurf.height) * self.thumb_align
-                aft_leftover = (thumb_dim2 - aftsurf.height) * self.thumb_align
+                fore_leftover = (thumb_dim2 - foresurf.height) * thumb_align
+                aft_leftover = (thumb_dim2 - aftsurf.height) * thumb_align
 
                 rv.blit(thumb_shadow, (fore_size - fore_thumb_offset, 0))
                 rv.blit(foresurf.subsurface((0, 0, fore_size, height)), (0, fore_leftover), main=False)
@@ -2480,7 +2526,7 @@ class Bar(renpy.display.displayable.Displayable):
         if self.hidden:
             return None
 
-        range = self.adjustment.range  # @ReservedAssignment
+        range = self.adjustment.range
         old_value = self.adjustment.value
         value = old_value
 
@@ -2597,16 +2643,17 @@ class Bar(renpy.display.displayable.Displayable):
 
             super(Bar, self).set_style_prefix(prefix, root)
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         return ""
 
-    def _tts_all(self):
+    def _tts_all(self, raw: bool) -> str:
         if self.value is not None:
             alt = self.value.alt
         else:
             alt = ""
 
-        return self._tts_common(alt) + renpy.minstore.__("bar")
+        label = "bar" if raw else renpy.minstore.__("bar")
+        return self._tts_common(alt, raw=raw) + label
 
 
 class Conditional(renpy.display.layout.Container):

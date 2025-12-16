@@ -625,7 +625,7 @@ def init(freq, stereo, samples, status=False, equal_mono=False, linear_fades=Fal
 
 
 @proxy_call_both
-def quit():  # @ReservedAssignment
+def quit():
     """
     De-initializes the audio system.
     """

@@ -32,7 +32,7 @@ class Curry(object):
 
     hash = None
 
-    def __init__(self, callable, *args, **kwargs):  # @ReservedAssignment
+    def __init__(self, callable, *args, **kwargs):
         self.callable = callable
         self.args = args
         self.kwargs = kwargs

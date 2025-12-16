@@ -209,11 +209,13 @@ screen front_page_project:
                 textbutton _("Navigate Script") action Jump("navigation")
                 textbutton _("Check Script (Lint)") action Call("lint")
 
-                if project.current.exists("game/gui.rpy"):
+                if p.dump.get("test", {}).get("has_default_testcase", False):
+                    textbutton _("Run Testcases") action Jump("run_testcases")
+
+                if p.exists("game/gui.rpy"):
                     textbutton _("Change/Update GUI") action Jump("change_gui")
                 else:
                     textbutton _("Change Theme") action Jump("choose_theme")
-
 
                 textbutton _("Delete Persistent") action Jump("rmpersistent")
                 textbutton _("Force Recompile") action Jump("force_recompile")
@@ -301,5 +303,13 @@ label force_recompile:
     python hide:
         interface.processing(_("Recompiling all rpy files into rpyc files..."))
         project.current.launch([ 'compile' ], wait=True)
+
+    jump front_page
+
+label run_testcases:
+
+    python hide:
+        interface.processing(_("Running testcases..."))
+        project.current.launch_console_command([ 'test' ])
 
     jump front_page

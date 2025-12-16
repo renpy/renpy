@@ -17,21 +17,12 @@
 ##
 ##    Pete Shinners
 ##    pete@shinners.org
+
+import os
+import sys
 import glob
 
 "sysfont, used in the font module to find system fonts"
-
-import os, sys
-
-#Python 3 compatibility
-try:
-    bytes
-except NameError:
-    def toascii(raw):
-        return raw.decode('ascii', 'ignore').encode('ascii')
-else:
-    def toascii(raw):
-        return raw.decode('ascii', 'ignore')
 
 #create simple version of the font name
 def _simplename(name):
@@ -250,7 +241,7 @@ def initsysfonts_win32():
         try:
             key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, key_name)
             keys.append(key)
-        except WindowsError: # @UndefinedVariable
+        except WindowsError:
             pass
 
     for key in keys:
@@ -463,7 +454,7 @@ def initsysfonts_unix(path = "fc-list"):
     except Exception:
         return fonts
 
-    entries = toascii(flout)
+    entries = flout.decode("ascii", "ignore")
     try:
         for line in entries.split('\n'):
             try:

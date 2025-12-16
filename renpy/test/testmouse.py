@@ -19,21 +19,16 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-from typing import Optional
-
 import renpy.pygame as pygame
 
 # The overridden positioning of the mouse.
-mouse_pos = None  # type: Optional[tuple[int, int]]
+mouse_pos: tuple[int, int] | None = None
 
 # The mouse buttons.
 mouse_buttons = [0, 0, 0]
 
 
-def get_mouse_pos(x, y):
+def get_mouse_pos(x: int, y: int) -> tuple[int, int]:
     """
     Called to get the overridden mouse position.
     """
@@ -44,11 +39,11 @@ def get_mouse_pos(x, y):
     return mouse_pos
 
 
-def post(event_type, **kwargs):
-    pygame.event.post(pygame.event.Event(event_type, test=True, **kwargs))
+def post(event_type: int, **kwargs) -> None:
+    pygame.event.post(pygame.event.Event(event_type, test=True, **kwargs))  # type: ignore
 
 
-def move_mouse(x, y):
+def move_mouse(x: int, y: int) -> None:
     """
     Moves the mouse to x, y.
     """
@@ -63,33 +58,33 @@ def move_mouse(x, y):
         else:
             rel = (0, 0)
 
-        post(pygame.MOUSEMOTION, pos=pos, rel=rel, buttons=tuple(mouse_buttons))
+        post(pygame.MOUSEMOTION, pos=pos, rel=rel, buttons=tuple(mouse_buttons))  # type: ignore
 
     mouse_pos = pos
 
 
-def press_mouse(button):
+def press_mouse(button: int) -> None:
     """
     Presses mouse button `button`.
     """
 
-    post(pygame.MOUSEBUTTONDOWN, pos=mouse_pos, button=button)
+    post(pygame.MOUSEBUTTONDOWN, pos=mouse_pos, button=button)  # type: ignore
 
     if button < 3:
         mouse_buttons[button - 1] = 1
 
 
-def release_mouse(button):
+def release_mouse(button: int) -> None:
     """
     Releases mouse button `button`.
     """
-    post(pygame.MOUSEBUTTONUP, pos=mouse_pos, button=button)
+    post(pygame.MOUSEBUTTONUP, pos=mouse_pos, button=button)  # type: ignore
 
     if button < 3:
         mouse_buttons[button - 1] = 0
 
 
-def click_mouse(button, x, y):
+def click_mouse(button: int, x: int, y: int) -> None:
     """
     Clicks the mouse at x, y
     """
@@ -99,7 +94,21 @@ def click_mouse(button, x, y):
     release_mouse(button)
 
 
-def reset():
+def scroll_mouse(amount: int, x: int, y: int) -> None:
+    """
+    Scrolls the mouse wheel at x, y
+    """
+
+    move_mouse(x, y)
+    # post(pygame.MOUSEWHEEL, pos=mouse_pos, x=0, y=amount)  # type: ignore
+
+    btn = 4 if amount > 0 else 5
+    for i in range(abs(amount)):
+        post(pygame.MOUSEBUTTONDOWN, pos=mouse_pos, button=btn)  # type: ignore
+        post(pygame.MOUSEBUTTONUP, pos=mouse_pos, button=btn)  # type: ignore
+
+
+def reset() -> None:
     """
     Resets mouse handling once the test has ended.
     """

@@ -261,6 +261,8 @@ def resize_movie(r, width, height):
     dimensions.
     """
 
+
+
     if r is None:
         return None
 
@@ -354,16 +356,18 @@ def find_oversampled(new, filename):
     return filename
 
 
-def default_play_callback(old, new):  # @UnusedVariable
+def default_play_callback(old, new):
     if new.mask:
         renpy.audio.music.play(find_oversampled(new, new.mask), channel=new.mask_channel, loop=new.loop)
 
     renpy.audio.music.play(find_oversampled(new, new._play), channel=new.channel, loop=new.loop)
 
 
-# A serial number that's used to generated movie channels.
-movie_channel_serial = 0
-
+allocated_channels: set[str] = set()
+"""
+The set of channels that have been dynamically allocated. This only includes the main channel, and not the
+mask channel.
+"""
 
 class Movie(renpy.display.displayable.Displayable):
     """
@@ -469,7 +473,7 @@ class Movie(renpy.display.displayable.Displayable):
         false. (This behavior will also occur if `group` is set.)
 
     `oversample`
-        If this is greater than 1, the movieis considered to be oversampled,
+        If this is greater than 1, the movie is considered to be oversampled,
         with more pixels than its logical size would imply. For example, if
         an movie file is 1280x720 and oversample is 2, then the image will
         be treated as a 640x360 movie for the purpose of layout.
@@ -508,6 +512,13 @@ class Movie(renpy.display.displayable.Displayable):
     playing_oversample: float = 1
     """The oversampling factor of the movie that is currently playing."""
 
+    dynamic_channel: bool = False
+    """
+    If true, dynamically allocate the channel name. This makes the channel names "movie" and "movie_mask" until
+    the movie is on screen. Then a new channel name is allocated. When the channel leaves the screen, the
+    channel name is freed.
+    """
+
     @staticmethod
     def any_loadable(name):
         """
@@ -533,12 +544,10 @@ class Movie(renpy.display.displayable.Displayable):
 
         global movie_channel_serial
 
-        if (self.channel is not None) and ((" " in self.channel) or ("/" in self.channel)):
-            self.channel = "_movie_{}".format(movie_channel_serial)
-            movie_channel_serial += 1
-
+        if self.dynamic_channel or ((self.channel is not None) and ((" " in self.channel) or ("/" in self.channel))):
+            self.channel = "movie"
             if self.mask_channel is not None:
-                self.mask_channel = self.channel + "_mask"
+                self.mask_channel = "movie_mask"
 
     def ensure_channel(self, name):
         if name is None:
@@ -557,8 +566,34 @@ class Movie(renpy.display.displayable.Displayable):
         )
 
     def ensure_channels(self):
+        if self.channel == "movie" and self.dynamic_channel:
+            serial = 1
+            while True:
+                cn = "_movie_" + str(serial)
+                if cn not in allocated_channels:
+                    break
+
+                serial += 1
+
+            self.channel = cn
+            allocated_channels.add(cn)
+
+            if self.mask_channel == "movie_mask":
+                self.mask_channel = cn + "_mask"
+
         self.ensure_channel(self.channel)
         self.ensure_channel(self.mask_channel)
+
+    def release_channel(self):
+        """
+        Releases the channel if it was dynamically allocated.
+        """
+
+        if self.dynamic_channel:
+            allocated_channels.discard(self.channel)
+            self.channel = "movie"
+            if self.mask_channel:
+                self.mask_channel = "movie_mask"
 
     keep_last_frame_serial = 0
 
@@ -587,8 +622,7 @@ class Movie(renpy.display.displayable.Displayable):
         if channel == "movie" and play and renpy.config.single_movie_channel:
             channel = renpy.config.single_movie_channel
         elif channel == "movie" and play and renpy.config.auto_movie_channel:
-            channel = "_movie_{}".format(movie_channel_serial)
-            movie_channel_serial += 1
+            self.dynamic_channel = True
 
         self.size = size
         self.channel = channel
@@ -611,8 +645,6 @@ class Movie(renpy.display.displayable.Displayable):
             self.mask_channel = mask_channel
 
         self.side_mask = side_mask
-
-        self.ensure_channels()
 
         self.image = renpy.easy.displayable_or_none(image)
         self.start_image = renpy.easy.displayable_or_none(start_image)
@@ -688,14 +720,11 @@ class Movie(renpy.display.displayable.Displayable):
         if (not not_playing) and (tex is not None):
             width, height = tex.get_size()
 
-            rv = renpy.display.render.Render(width, height)
-            rv.blit(tex, (0, 0))
-
             if self.playing_oversample != 1:
-                rv.reverse = renpy.display.matrix.Matrix2D(
-                    1.0 / self.playing_oversample, 0.0, 0.0, 1.0 / self.playing_oversample
-                )
-                rv.forward = renpy.display.matrix.Matrix2D(self.playing_oversample, 0.0, 0.0, self.playing_oversample)
+                rv = resize_movie(tex, int(width / self.playing_oversample), int(height / self.playing_oversample))
+            else:
+                rv = renpy.display.render.Render(width, height)
+                rv.blit(tex, (0, 0))
 
         elif (not not_playing) and (self.start_image is not None):
             surf = renpy.display.render.render(self.start_image, width, height, st, at)
@@ -807,11 +836,14 @@ def update_playing():
         if c not in channel_movie:
             stopped.add(c)
             m.stop()
+            m.release_channel()
 
     for c, m in old_channel_movie.items():
         if c not in channel_movie:
             if c not in stopped:
+                stopped.add(c)
                 m.stop()
+                m.release_channel()
 
     renpy.game.context().movie = last_channel_movie = dict(channel_movie)
     reset_channels.clear()

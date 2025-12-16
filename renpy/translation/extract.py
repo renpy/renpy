@@ -28,10 +28,10 @@ import json
 
 
 def extract_strings_core(language, destination, merge=False, force=False):
-    if (not force) and (language not in renpy.game.script.translator.strings):  # @UndefinedVariable
+    if (not force) and (language not in renpy.game.script.translator.strings):
         raise Exception("Language %r does not have any translations." % language)
 
-    st = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+    st = renpy.game.script.translator.strings[language]
 
     result = {}
 

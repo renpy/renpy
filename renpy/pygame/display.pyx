@@ -139,7 +139,7 @@ cdef class Window:
 
         # If we do not get the AVOID_GL hint, we always create a GL-compatible
         # window. This lets us change the OPENGL flag later on.
-        if int(_get_hint("renpy.pygame_AVOID_GL", "0")):
+        if int(_get_hint("renpy.pygame_AVOID_GL", "0")) or os.environ.get("SDL_VIDEODRIVER") == "dummy":
             gl_flag = 0
         else:
             gl_flag = SDL_WINDOW_OPENGL
@@ -172,6 +172,9 @@ cdef class Window:
                     pos[0], pos[1],
                     resolution[0], resolution[1], flags | gl_flag)
 
+                if not self.window:
+                    raise error()
+
                 SDL_SetWindowShape(self.window, shape.surface, &shape_mode)
 
             else:
@@ -180,6 +183,9 @@ cdef class Window:
                     title,
                     pos[0], pos[1],
                     resolution[0], resolution[1], flags | gl_flag)
+
+                if not self.window:
+                    raise error()
 
             if pos != (SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED):
                 SDL_SetWindowPosition(self.window, pos[0], pos[1])

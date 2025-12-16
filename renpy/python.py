@@ -23,10 +23,7 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-from typing import Optional, Any
+from typing import Any
 import contextlib
 
 # Import the python ast module, not ours.
@@ -37,45 +34,41 @@ import __future__
 
 import collections
 import marshal
-import random
 import weakref
-import re
 import sys
-import time
-import io
 import types
 import copyreg
-import functools
 import warnings
 
 import renpy
 
 from renpy.astsupport import hash32
+from renpy.pydict import DictItems, find_changes
 
 # Import these for pickle-compatibility.
 from renpy.revertable import (
-    CompressedList,
-    DetRandom,
-    RevertableDict,
-    RevertableList,
-    RevertableObject,
-    RevertableSet,
-    RollbackRandom,
-    revertable_range,
-    revertable_sorted,
+    CompressedList as CompressedList,
+    DetRandom as DetRandom,
+    RevertableDict as RevertableDict,
+    RevertableList as RevertableList,
+    RevertableObject as RevertableObject,
+    RevertableSet as RevertableSet,
+    RollbackRandom as RollbackRandom,
+    revertable_range as revertable_range,
+    revertable_sorted as revertable_sorted,
 )
 
 from renpy.rollback import (
-    deleted,
-    StoreDeleted,
-    AlwaysRollback,
-    NoRollback,
-    SlottedNoRollback,
-    rng,
-    reached,
-    reached_vars,
-    Rollback,
-    RollbackLog,
+    deleted as deleted,
+    StoreDeleted as StoreDeleted,
+    AlwaysRollback as AlwaysRollback,
+    NoRollback as NoRollback,
+    SlottedNoRollback as SlottedNoRollback,
+    rng as rng,
+    reached as reached,
+    reached_vars as reached_vars,
+    Rollback as Rollback,
+    RollbackLog as RollbackLog,
 )
 
 
@@ -109,9 +102,6 @@ class StoreModule(object):
 
 def get_store_module(name):
     return sys.modules[name]
-
-
-from renpy.pydict import DictItems, find_changes
 
 
 class StoreDict(dict):
@@ -241,10 +231,8 @@ def create_store(name):
     d = store_dicts.setdefault(name, StoreDict())
     d.reset()
 
-    pyname = pystr(name)
-
     # Set the name.
-    d.update(__name__=pyname, __package__=pyname)
+    d.update(__name__=name, __package__=name)
 
     # Set up the default contents of the store.
     eval("1", d)
@@ -260,12 +248,12 @@ def create_store(name):
 
     # Create or reuse the corresponding module.
     if name in store_modules:
-        sys.modules[pyname] = store_modules[name]
+        sys.modules[name] = store_modules[name]
     else:
-        store_modules[name] = sys.modules[pyname] = StoreModule(d)  # type: ignore
+        store_modules[name] = sys.modules[name] = StoreModule(d)  # type: ignore
 
     if parent:
-        store_dicts[parent][var] = sys.modules[pyname]
+        store_dicts[parent][var] = sys.modules[name]
 
 
 class StoreBackup:
@@ -311,7 +299,7 @@ class StoreBackup:
             self.restore_one(k)
 
 
-clean_store_backup = None  # type: Optional[StoreBackup]
+clean_store_backup: StoreBackup | None = None
 
 
 def make_clean_stores():
@@ -333,7 +321,7 @@ def clean_stores():
     Revert the store to the clean copy.
     """
 
-    clean_store_backup.restore()  # type: ignore
+    clean_store_backup.restore()
 
 
 def clean_store(name):
@@ -344,7 +332,7 @@ def clean_store(name):
     if not name.startswith("store."):
         name = "store." + name
 
-    clean_store_backup.restore_one(name)  # type: ignore
+    clean_store_backup.restore_one(name)
 
 
 def reset_store_changes(name):
@@ -782,42 +770,6 @@ _execute_python_hide()
     tree.body = hide.body
 
 
-unicode_re = re.compile(r"[\u0080-\uffff]")
-
-
-def unicode_sub(m):
-    """
-    If the string s contains a unicode character, make it into a
-    unicode string.
-    """
-
-    s = m.group(0)
-
-    if not unicode_re.search(s):
-        return s
-
-    prefix = m.group(1)
-    sep = m.group(2)
-    body = m.group(3)
-
-    if "u" not in prefix and "U" not in prefix:
-        prefix = "u" + prefix
-
-    rv = prefix + sep + body + sep
-
-    return rv
-
-
-string_re = re.compile(r'([uU]?[rR]?)("""|"|\'\'\'|\')((\\.|.)*?)\2')
-
-
-def escape_unicode(s):
-    if unicode_re.search(s):
-        s = string_re.sub(unicode_sub, s)
-
-    return s
-
-
 # A list of warnings that were issued during compilation.
 compile_warnings = []
 
@@ -845,16 +797,6 @@ def save_warnings():
     finally:
         warnings.showwarning = old
 
-
-# Flags used by py_compile.
-old_compile_flags = __future__.nested_scopes.compiler_flag | __future__.with_statement.compiler_flag
-
-new_compile_flags = (
-    old_compile_flags
-    | __future__.absolute_import.compiler_flag
-    | __future__.print_function.compiler_flag
-    | __future__.unicode_literals.compiler_flag
-)
 
 # A set of __future__ flag overrides for each file.
 file_compiler_flags = collections.defaultdict(int)
@@ -1260,15 +1202,15 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
         raise e
 
 
-def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"):  # @ReservedAssignment
+def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"):
     if hide:
-        locals = {}  # @ReservedAssignment
+        locals = {}
 
     if globals is None:
-        globals = store_dicts[store]  # @ReservedAssignment
+        globals = store_dicts[store]
 
     if locals is None:
-        locals = globals  # @ReservedAssignment
+        locals = globals
 
     exec(bytecode, globals, locals)
 
@@ -1278,27 +1220,27 @@ def py_exec(source, hide=False, store=None):
         store = store_dicts["store"]
 
     if hide:
-        locals = {}  # @ReservedAssignment
+        locals = {}
     else:
-        locals = store  # @ReservedAssignment
+        locals = store
 
     exec(py_compile(source, "exec"), store, locals)
 
 
-def py_eval_bytecode(bytecode, globals=None, locals=None):  # @ReservedAssignment
+def py_eval_bytecode(bytecode, globals=None, locals=None):
     if bytecode.__class__ is tuple:
         return bytecode[1]
 
     if globals is None:
-        globals = store_dicts["store"]  # @ReservedAssignment
+        globals = store_dicts["store"]
 
     if locals is None:
-        locals = globals  # @ReservedAssignment
+        locals = globals
 
     return eval(bytecode, globals, locals)
 
 
-def py_eval(code, globals=None, locals=None):  # @ReservedAssignment
+def py_eval(code, globals=None, locals=None):
     if isinstance(code, str):
         code = py_compile(code, "eval")
 
@@ -1333,13 +1275,13 @@ def raise_at_location(e, loc):
 # with cases where it might have leaked into a pickle.
 class StoreProxy(object):
     def __getattr__(self, k):
-        return getattr(renpy.store, k)  # @UndefinedVariable
+        return getattr(renpy.store, k)
 
     def __setattr__(self, k, v):
-        setattr(renpy.store, k, v)  # @UndefinedVariable
+        setattr(renpy.store, k, v)
 
     def __delattr__(self, k):
-        delattr(renpy.store, k)  # @UndefinedVariable
+        delattr(renpy.store, k)
 
 
 # This needs to exist even after PY2 support is dropped, to load older saves.
