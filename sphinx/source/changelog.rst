@@ -13,6 +13,9 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+Ren'Py now skips files and directories beginning with a dot (e.g. .hidden.rpy) when scanning the
+filesystem. These files often have special meaning on unix and mac platforms.
+
 Speech bubble dialogue is only retained at the end of a sequence of pauses, not every time.
 
 Mouse Changes/Fixes
