@@ -176,6 +176,11 @@ or operator is generally used to concatenate sets. For example::
     define config.keymap["dismiss"] += [ "K_KP_PLUS" ]
     define endings |= { "best_ending" }
 
+The define statement takes an optional init priority, between ``define``
+and the variable name. When a priority is not given, 0 is used. For example::
+
+    define -1 config.image_directories = [ "images", "dlc/images" ]
+
 One advantage of using the define statement is that it records the
 filename and line number at which the assignment occurred, and
 makes that available to the navigation feature of the launcher.
