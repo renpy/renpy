@@ -293,6 +293,9 @@ def walkdir(path, elide=None):
         elide = len(path) + 1
 
     for de in os.scandir(path):
+        if de.name[0] == ".":
+            continue
+
         if de.is_dir():
             yield from walkdir(de.path, elide)
         else:

@@ -41,7 +41,7 @@ init -1900 python:
 
         for prefix in directories:
 
-            prefix = prefix.rstrip('/') + '/'
+            prefix = prefix.strip('/') + '/'
 
             non_oversampled_images = [ ]
 
