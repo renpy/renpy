@@ -189,7 +189,7 @@ init -1500 python in iap:
                 self.store.consumePurchase(identifier)
                 self.wait_for_result(interact=False)
                 persistent._iap_purchases[p.identifier] = False
-                return True
+                return self.store.getConsumePurchaseResult()
             return False
 
         def is_deferred(self, p):

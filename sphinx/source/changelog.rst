@@ -13,6 +13,8 @@ Changelog (Ren'Py 7.x-)
 Other Changes
 -------------
 
+It is now possible to consume in-app purchases on Android, as well as on iOS.
+
 The :var:`config.tlid_only_considers_say` variable has been set to True by default. This prevents non-say statements,
 such as the ``voice`` statement, from contributing to translation identifiers. This can change trasnslation identifiers.
 See the inconpatible changes for more information.
