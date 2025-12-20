@@ -150,6 +150,7 @@ The transformations are done in the following order:
 #. ``l`` (lowercase)
 #. ``c`` (capitalize)
 
+If you want to get the resulting string, with the arguments replaced with actual data, you can pass it to :ref:`renpy.substitute <renpy.substitute>`.
 
 Styling and Text Tags
 =====================
@@ -350,7 +351,8 @@ Tags that apply to all text are:
 
     The outline text tag changes all the outlines (including drop
     shadows) to the given color. The color should be in #rgb, #rgba,
-    #rrggbb, or #rrggbbaa format. ::
+    #rrggbb, or #rrggbbaa format. This will only adjust existing outlines,
+    it does not add them. ::
 
         "Let's have a {outlinecolor=#00ff00}Green{/outlinecolor} outline."
 

@@ -100,7 +100,7 @@ image_cache_size = None
 image_cache_size_mb = 400
 
 # The number of threads to use for parallel image decoding during preloading.
-# Set to 0 for automatic (based on CPU count, capped as below and always leaving 
+# Set to 0 for automatic (based on CPU count, capped as below and always leaving
 # at least 2 free) or 1 to disable parallel decoding.
 preload_threads = 0
 
@@ -1635,6 +1635,12 @@ extend_like_characters: set[str] = { "extend" }
 """
 A set of character names that will be treated like the "extend" character for the purpose of dialogue export.
 """
+
+tlid_only_considers_say: bool = True
+"""
+If True, only say statements will be assigned translation ids.
+"""
+
 
 del os
 del collections

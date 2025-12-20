@@ -24,8 +24,6 @@ from libc.stdio cimport FILE, fopen, fclose, fseek, ftell, fread, SEEK_SET, SEEK
 from libc.stdlib cimport calloc, free
 from libc.stdint cimport uintptr_t
 
-from renpy.pygame.compat import file_type, bytes_, unicode_
-
 import sys
 import io
 
@@ -382,7 +380,7 @@ cdef SDL_RWops *to_rwops(filelike, mode="rb", base=None, length=None) except NUL
 
     cdef RWopsIOImpl rwopsio
 
-    if not isinstance(mode, bytes_):
+    if not isinstance(mode, bytes):
         mode = mode.encode("ascii")
 
     name = filelike
@@ -404,13 +402,13 @@ cdef SDL_RWops *to_rwops(filelike, mode="rb", base=None, length=None) except NUL
         rwopsio.ops = NULL
         return rv
 
-    if isinstance(filelike, (file_type, io.IOBase)) and mode == "rb":
+    if isinstance(filelike, (io.FileIO, io.IOBase)) and mode == "rb":
         name = getattr(filelike, "name", None)
 
     # Try to open as a file.
-    if isinstance(name, bytes_):
+    if isinstance(name, bytes):
         name = name.decode(fsencoding)
-    elif isinstance(name, unicode_):
+    elif isinstance(name, str):
         pass
     else:
         name = None

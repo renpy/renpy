@@ -19,6 +19,8 @@
 
 from cpython.ref cimport Py_INCREF, Py_DECREF
 
+from libc.string cimport memcpy
+
 from sdl2 cimport *
 from renpy.pygame.display cimport Window, main_window
 import threading
@@ -357,13 +359,55 @@ cdef int poll_sdl() except 1:
     queue.
     """
 
+    # This also merges MOUSEMOTION events.
+
+    cdef bint last_mousemotion = False
+
     cdef SDL_Event evt
+    cdef SDL_Event old_evt
+
+    cdef SDL_MouseMotionEvent *mm_evt = <SDL_MouseMotionEvent *> &evt
+    cdef SDL_MouseMotionEvent *old_mm_evt = <SDL_MouseMotionEvent *> &old_evt
 
     with lock:
         while SDL_PollEvent(&evt):
-            e = make_event(&evt)
-            e.timestamp = evt.common.timestamp
+            if evt.type == SDL_MOUSEMOTION:
+
+                # We can merge the event.
+                if last_mousemotion and mm_evt.state == old_mm_evt.state and mm_evt.which == old_mm_evt.which:
+                    old_mm_evt.timestamp = mm_evt.timestamp
+                    old_mm_evt.x = mm_evt.x
+                    old_mm_evt.y = mm_evt.y
+                    old_mm_evt.xrel += mm_evt.xrel
+                    old_mm_evt.yrel += mm_evt.yrel
+                    continue
+
+                # We can't merge the event.
+                if last_mousemotion:
+                    e = make_mousemotion_event(old_mm_evt)
+                    e.timestamp = evt.common.timestamp
+                    event_queue.append(e)
+
+                memcpy(&old_evt, &evt, sizeof(SDL_Event))
+                last_mousemotion = True
+
+            else:
+                if last_mousemotion:
+                    e = make_mousemotion_event(old_mm_evt)
+                    e.timestamp = evt.common.timestamp
+                    event_queue.append(e)
+                    last_mousemotion = False
+
+                e = make_event(&evt)
+                e.timestamp = evt.common.timestamp
+                event_queue.append(e)
+                last_mousemotion = False
+
+        if last_mousemotion:
+            e = make_mousemotion_event(old_mm_evt)
+            e.timestamp = old_evt.common.timestamp
             event_queue.append(e)
+            last_mousemotion = False
 
     return 0
 

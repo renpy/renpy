@@ -8,7 +8,9 @@ Ren'Py supports a self-voicing mode in which a speech synthesizer is used
 to read out text and other interface elements. This is intended to make
 Ren'Py games accessible to the vision impaired.
 
-The Self-voicing mode can be toggled by pressing the ``v`` key.
+The Self-voicing mode can be toggled by pressing the ``v`` key. Self-voicing
+modes can be selected through the accessibility menu, which can be accessed
+by pressing `Shift+A.
 
 When in self-voicing mode, keyboard navigation is changed so that the
 up and down arrow keys with iterate through all focusable displayables
@@ -42,7 +44,11 @@ Linux
     work.
 
 Android, iOS, Chrome OS
-    Self-voicing mode is not supported on Android, iOS, or Chrome OS.
+    These use the platform's built-in text-to-speech services.
+
+Web
+    This uses the Web Speech API, which is supported by modern browsers.
+
 
 The default voice can be selected on a per-platform basis, using the
 :var:`config.tts_voice` variable. For example::
@@ -57,6 +63,25 @@ The default voice can be selected on a per-platform basis, using the
             config.tts_voice = "english_rp"
 
 The available voice vary based on the platform.
+
+Other Modes
+-----------
+
+There are two other modes related to self-voicing.
+
+Clipboard
+    Clipboard mode can be toggled by pressing Shift+C. In clipboard
+    mode, the text is copied to the clipboard instead of being played
+    through TTS. This can be with screen readers or other assistive
+    technologies that will present the clipboard contents to the user.
+
+    It may also be useful for translation software that can read from the
+    clipboard.
+
+Debug
+    Debug mode can be toggled by pressing Shift+Alt+V. In debug mode,
+    the text that would be spoken is displayed on the screen, to help
+    with development.
 
 
 Creator Concerns

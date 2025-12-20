@@ -1400,13 +1400,26 @@ def get_mouse_name(interaction=False):
 
     `interaction`
         If true, get a mouse name that is based on the type of interaction
-        occurring. (This is rarely useful.)
+        occurring.
     """
 
     if not renpy.display.interface:
         return "default"
 
-    return renpy.display.interface.get_mouse_name(interaction=interaction)
+    return renpy.display.interface.get_mouse_name(cache_only=False, interaction=interaction)
+
+
+def get_mouse_names():
+    """
+    :doc: other
+
+    Return a list of mouse names that may be displayed, in priority order.
+    """
+
+    if not renpy.display.interface:
+        return [ "default" ]
+
+    return renpy.display.interface.get_mouse_names()
 
 
 def set_focus(screen, id, layer="screens"):

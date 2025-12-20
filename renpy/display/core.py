@@ -1760,7 +1760,36 @@ class Interface:
 
         return visible
 
+    def get_mouse_names(self):
+        """
+        Return a list of possible mice that can be displayed, in priority order.
+        """
+
+        rv = [ ]
+
+        mouse_kind = renpy.display.focus.get_mouse()
+        if mouse_kind:
+            rv.append(mouse_kind)
+
+        if self.mouse:
+            rv.append(self.mouse)
+
+        rv.append(getattr(renpy.store, "default_mouse", "default"))
+
+        if pygame.mouse.get_pressed()[0]:
+            new_rv = [ ]
+            for i in rv:
+                new_rv.extend([ "pressed_" + i, i ])
+
+            rv = new_rv
+
+        return rv
+
     def get_mouse_name(self, cache_only=False, interaction=True):
+        """
+        This is now legacy, used to support a public api but not by Ren'Py.
+        """
+
         mouse_kind = renpy.display.focus.get_mouse()
 
         if interaction and (mouse_kind is None):
@@ -1791,14 +1820,22 @@ class Interface:
 
         return mouse_kind
 
+
     def update_mouse(self, mouse_displayable):
         visible = self.is_mouse_visible()
 
         if mouse_displayable is not None:
+
             x, y = renpy.exports.get_mouse_pos()
 
+            cursor_function = getattr(mouse_displayable, "_has_mouse_cursor", None)
+            if cursor_function is not None:
+                has_cursor = cursor_function()
+            else:
+                has_cursor = True
+
             if (0 <= x < renpy.config.screen_width) and (0 <= y < renpy.config.screen_height):
-                visible = False
+                visible = not has_cursor
 
         # If not visible, hide the mouse.
         if not visible:
@@ -1817,11 +1854,11 @@ class Interface:
             self.set_mouse(True)
             return
 
-        mouse_kind = self.get_mouse_name(True)
-
-        if mouse_kind in self.cursor_cache:
-            anim = self.cursor_cache[mouse_kind]
-            cursor = anim[self.ticks % len(anim)]
+        for mouse_kind in self.get_mouse_names():
+            if mouse_kind in self.cursor_cache:
+                anim = self.cursor_cache[mouse_kind]
+                cursor = anim[self.ticks % len(anim)]
+                break
         else:
             cursor = True
 
@@ -2299,7 +2336,7 @@ class Interface:
         trans_pause=False,
         suppress_overlay=False,
         suppress_underlay=False,
-        mouse="default",
+        mouse: str|None = None,
         preloads=[],
         roll_forward=None,
         pause=None,
@@ -2387,6 +2424,14 @@ class Interface:
         self.restart_interaction = False
 
         # Setup the mouse.
+        if mouse is None:
+            if getattr(renpy.store, "main_menu", False):
+                mouse = "mainmenu"
+            elif getattr(renpy.store, "_menu", False):
+                mouse = "gamemenu"
+            else:
+                mouse = "default"
+
         self.mouse = mouse
 
         # The start and end times of this interaction.

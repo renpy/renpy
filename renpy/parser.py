@@ -925,9 +925,11 @@ def image_statement(l, loc):
 
 @statement("define")
 def define_statement(l, loc):
+    create_init = not l.init
     priority = l.integer()
     if priority:
         priority = int(priority)
+        create_init = True
     else:
         priority = 0
 
@@ -961,7 +963,7 @@ def define_statement(l, loc):
 
     rv = ast.Define(loc, store, name, index, operator, expr)
 
-    if not l.init:
+    if create_init:
         rv = ast.Init(loc, [rv], priority + l.init_offset)
 
     l.advance()
@@ -971,9 +973,11 @@ def define_statement(l, loc):
 
 @statement("default")
 def default_statement(l, loc):
+    create_init = not l.init
     priority = l.integer()
     if priority:
         priority = int(priority)
+        create_init = True
     else:
         priority = 0
 
@@ -994,7 +998,7 @@ def default_statement(l, loc):
 
     rv = ast.Default(loc, store, name, expr)
 
-    if not l.init:
+    if create_init:
         rv = ast.Init(loc, [rv], priority + l.init_offset)
 
     l.advance()
@@ -1004,9 +1008,11 @@ def default_statement(l, loc):
 
 @statement("transform")
 def transform_statement(l, loc):
+    create_init = not l.init
     priority = l.integer()
     if priority:
         priority = int(priority)
+        create_init = True
     else:
         priority = 0
 
@@ -1047,7 +1053,7 @@ def transform_statement(l, loc):
 
     rv = ast.Transform(loc, store, name, atl, parameters)  # type: ignore
 
-    if not l.init:
+    if create_init:
         rv = ast.Init(loc, [rv], priority + l.init_offset)
 
     l.advance()
@@ -1252,7 +1258,7 @@ def translate_strings(init_loc, language, l):
         s = s.strip()
 
         try:
-            bc = compile(s, "<string>", "eval", renpy.python.new_compile_flags, True)
+            bc = compile(s, "<string>", "eval", dont_inherit=True)
             return eval(bc, renpy.store.__dict__)
         except Exception:
             ll.error("could not parse string")

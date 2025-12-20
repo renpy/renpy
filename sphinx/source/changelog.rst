@@ -13,6 +13,12 @@ Changelog (Ren'Py 7.x-)
 Other Changes
 -------------
 
+It is now possible to consume in-app purchases on Android, as well as on iOS.
+
+The :var:`config.tlid_only_considers_say` variable has been set to True by default. This prevents non-say statements,
+such as the ``voice`` statement, from contributing to translation identifiers. This can change trasnslation identifiers.
+See the inconpatible changes for more information.
+
 The ability to apply zsync-based updates has been removed. This was an older update format that has been replaced.
 The ability to create these updates will be removed in Ren'Py 8.7.0.
 
@@ -27,10 +33,37 @@ Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, i
 Fixes
 -----
 
+Ren'Py now skips files and directories beginning with a dot (e.g. .hidden.rpy) when scanning the
+filesystem. These files often have special meaning on unix and mac platforms.
+
 Speech bubble dialogue is only retained at the end of a sequence of pauses, not every time.
+
+Mouse Changes/Fixes
+-------------------
+
+Ren'Py now cycles through a set of possible mouse cursor names when determining which cursor to use.
+This includes the cursor based on the displayable (eg. button), the screen type (eg. gamemenu), and
+the default.
+
+:class:`MouseDisplayable` now allows a mouse cursor to be None, to use the system cursor.
+
+Ren'Py now merges MOUSEMOTION events that occur in rapid succession at a lower level,
+making the game more responsive when faced with mice that produce many events per frame.
 
 Other Changes
 -------------
+
+Ren'Py now includes a cut-down version of the brotli python module. This version supports the
+decompress method and Decompressor object, but leaves out the Compressor object. It's intended
+to allow requests to handle brotli-compressed responses.
+
+Playing a voice line now stops ongoing self-voicing playback.
+
+The new :var:`config.tlid_only_considers_say` variable prevents non-say statements, such as the ``voice``
+statement, from contributing to translation identifiers. (Translation identifiers are used for
+other things as well, like tracking speech bubbles.) This variable defaults to False, but will
+become True in Ren'Py 8.6. Setting this to true has the potential to change Translation
+identifier if your game uses voice statements.
 
 The :var:`bubble.area_property` variable has become documented. This controls how the area of a
 speech bubble is supplied to dialogue. It's now documented how to supply the area as an argument

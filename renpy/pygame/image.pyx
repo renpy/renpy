@@ -22,7 +22,6 @@ from renpy.pygame.surface cimport *
 from renpy.pygame.rwobject cimport to_rwops
 
 from renpy.pygame.error import error
-from renpy.pygame.compat import bytes_, unicode_, filesystem_encode
 
 import sys
 import os
@@ -57,7 +56,7 @@ def quit(): # @ReservedAssignment
 cdef process_namehint(namehint):
     # Accepts "foo.png", ".png", or "png"
 
-    if not isinstance(namehint, bytes_):
+    if not isinstance(namehint, bytes):
         namehint = namehint.encode("ascii", "replace")
 
     if not namehint:
@@ -154,7 +153,7 @@ cdef extern from "pygame/write_png.h":
 
 def save(Surface surface not None, filename, compression=-1):
 
-    if not isinstance(filename, unicode_):
+    if not isinstance(filename, str):
         filename = filename.decode(sys.getfilesystemencoding())
 
     ext = os.path.splitext(filename)[1]
