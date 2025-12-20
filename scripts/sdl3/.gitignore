@@ -3,4 +3,4 @@ __pycache__/
 .venv
 sdl.pyx
 sdl.pxd
-*.c
+pygame/*.c

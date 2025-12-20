@@ -9,6 +9,7 @@ def cython(module: str, source: list[str] = [ ]) -> None:
         Extension(
             module,
             sources=[module.replace(".", "/") + ".pyx"] + source,
+            include_dirs=[ "src/" ],
             libraries=["SDL3"],
         )
     )
@@ -19,8 +20,8 @@ cython("pygame.color")
 cython("pygame.rect")
 cython("pygame.error")
 cython("pygame.surface")
-
-# cython("pygame.surface")
+cython("pygame.draw")
+cython("pygame.gfxdraw", source=[ "src/SDL3_gfxPrimitives.c" ])
 
 setup(
     name="sdl",
