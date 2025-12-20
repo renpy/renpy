@@ -21,7 +21,7 @@ cython("pygame.rect")
 cython("pygame.error")
 cython("pygame.surface")
 cython("pygame.draw")
-cython("pygame.gfxdraw", source=[ "src/SDL3_gfxPrimitives.c" ])
+cython("pygame.gfxdraw", source=[ "c/SDL3_gfxPrimitives.c" ])
 
 setup(
     name="sdl",

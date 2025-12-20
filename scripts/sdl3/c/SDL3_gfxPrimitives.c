@@ -1,4 +1,4 @@
-/* 
+/*
 
 SDL3_gfxPrimitives.c: graphics primitives for SDL3 renderers
 
@@ -58,13 +58,13 @@ bool pixel(SDL_Renderer *renderer, float x, float y)
 \param renderer The renderer to draw on.
 \param x X (horizontal) coordinate of the pixel.
 \param y Y (vertical) coordinate of the pixel.
-\param color The color value of the pixel to draw (0xRRGGBBAA). 
+\param color The color value of the pixel to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool pixelColor(SDL_Renderer * renderer, float x, float y, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return pixelRGBA(renderer, x, y, c[0], c[1], c[2], c[3]);
 }
 
@@ -74,7 +74,7 @@ bool pixelColor(SDL_Renderer * renderer, float x, float y, Uint32 color)
 \param renderer The renderer to draw on.
 \param x X (horizontal) coordinate of the pixel.
 \param y Y (vertical) coordinate of the pixel.
-\param r The red color value of the pixel to draw. 
+\param r The red color value of the pixel to draw.
 \param g The green color value of the pixel to draw.
 \param b The blue color value of the pixel to draw.
 \param a The alpha value of the pixel to draw.
@@ -96,7 +96,7 @@ bool pixelRGBA(SDL_Renderer * renderer, float x, float y, Uint8 r, Uint8 g, Uint
 \param renderer The renderer to draw on.
 \param x The horizontal coordinate of the pixel.
 \param y The vertical position of the pixel.
-\param r The red color value of the pixel to draw. 
+\param r The red color value of the pixel to draw.
 \param g The green color value of the pixel to draw.
 \param b The blue color value of the pixel to draw.
 \param a The alpha value of the pixel to draw.
@@ -107,7 +107,7 @@ bool pixelRGBA(SDL_Renderer * renderer, float x, float y, Uint8 r, Uint8 g, Uint
 bool pixelRGBAWeight(SDL_Renderer * renderer, float x, float y, Uint8 r, Uint8 g, Uint8 b, Uint8 a, Uint32 weight)
 {
 	/*
-	* Modify Alpha by weight 
+	* Modify Alpha by weight
 	*/
 	Uint32 ax = a;
 	ax = ((ax * weight) >> 8);
@@ -145,13 +145,13 @@ bool hline(SDL_Renderer * renderer, float x1, float x2, float y)
 \param x1 X coordinate of the first point (i.e. left) of the line.
 \param x2 X coordinate of the second point (i.e. right) of the line.
 \param y Y coordinate of the points of the line.
-\param color The color value of the line to draw (0xRRGGBBAA). 
+\param color The color value of the line to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool hlineColor(SDL_Renderer * renderer, float x1, float x2, float y, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return hlineRGBA(renderer, x1, x2, y, c[0], c[1], c[2], c[3]);
 }
 
@@ -162,10 +162,10 @@ bool hlineColor(SDL_Renderer * renderer, float x1, float x2, float y, Uint32 col
 \param x1 X coordinate of the first point (i.e. left) of the line.
 \param x2 X coordinate of the second point (i.e. right) of the line.
 \param y Y coordinate of the points of the line.
-\param r The red value of the line to draw. 
-\param g The green value of the line to draw. 
-\param b The blue value of the line to draw. 
-\param a The alpha value of the line to draw. 
+\param r The red value of the line to draw.
+\param g The green value of the line to draw.
+\param b The blue value of the line to draw.
+\param a The alpha value of the line to draw.
 
 \returns Returns true on success, false on failure.
 */
@@ -202,13 +202,13 @@ bool vline(SDL_Renderer * renderer, float x, float y1, float y2)
 \param x X coordinate of the points of the line.
 \param y1 Y coordinate of the first point (i.e. top) of the line.
 \param y2 Y coordinate of the second point (i.e. bottom) of the line.
-\param color The color value of the line to draw (0xRRGGBBAA). 
+\param color The color value of the line to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool vlineColor(SDL_Renderer * renderer, float x, float y1, float y2, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return vlineRGBA(renderer, x, y1, y2, c[0], c[1], c[2], c[3]);
 }
 
@@ -219,10 +219,10 @@ bool vlineColor(SDL_Renderer * renderer, float x, float y1, float y2, Uint32 col
 \param x X coordinate of the points of the line.
 \param y1 Y coordinate of the first point (i.e. top) of the line.
 \param y2 Y coordinate of the second point (i.e. bottom) of the line.
-\param r The red value of the line to draw. 
-\param g The green value of the line to draw. 
-\param b The blue value of the line to draw. 
-\param a The alpha value of the line to draw. 
+\param r The red value of the line to draw.
+\param g The green value of the line to draw.
+\param b The blue value of the line to draw.
+\param a The alpha value of the line to draw.
 
 \returns Returns true on success, false on failure.
 */
@@ -245,13 +245,13 @@ bool vlineRGBA(SDL_Renderer * renderer, float x, float y1, float y2, Uint8 r, Ui
 \param y1 Y coordinate of the first point (i.e. top right) of the rectangle.
 \param x2 X coordinate of the second point (i.e. bottom left) of the rectangle.
 \param y2 Y coordinate of the second point (i.e. bottom left) of the rectangle.
-\param color The color value of the rectangle to draw (0xRRGGBBAA). 
+\param color The color value of the rectangle to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool rectangleColor(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return rectangleRGBA(renderer, x1, y1, x2, y2, c[0], c[1], c[2], c[3]);
 }
 
@@ -263,10 +263,10 @@ bool rectangleColor(SDL_Renderer * renderer, float x1, float y1, float x2, float
 \param y1 Y coordinate of the first point (i.e. top right) of the rectangle.
 \param x2 X coordinate of the second point (i.e. bottom left) of the rectangle.
 \param y2 Y coordinate of the second point (i.e. bottom left) of the rectangle.
-\param r The red value of the rectangle to draw. 
-\param g The green value of the rectangle to draw. 
-\param b The blue value of the rectangle to draw. 
-\param a The alpha value of the rectangle to draw. 
+\param r The red value of the rectangle to draw.
+\param g The green value of the rectangle to draw.
+\param b The blue value of the rectangle to draw.
+\param a The alpha value of the rectangle to draw.
 
 \returns Returns true on success, false on failure.
 */
@@ -277,7 +277,7 @@ bool rectangleRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float 
 	SDL_FRect rect;
 
 	/*
-	* Test for special cases of straight lines or single point 
+	* Test for special cases of straight lines or single point
 	*/
 	if (x1 == x2) {
 		if (y1 == y2) {
@@ -292,7 +292,7 @@ bool rectangleRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float 
 	}
 
 	/*
-	* Swap x1, x2 if required 
+	* Swap x1, x2 if required
 	*/
 	if (x1 > x2) {
 		tmp = x1;
@@ -301,7 +301,7 @@ bool rectangleRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float 
 	}
 
 	/*
-	* Swap y1, y2 if required 
+	* Swap y1, y2 if required
 	*/
 	if (y1 > y2) {
 		tmp = y1;
@@ -309,20 +309,20 @@ bool rectangleRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float 
 		y2 = tmp;
 	}
 
-	/* 
+	/*
 	* Create destination rect
-	*/	
+	*/
 	rect.x = x1;
 	rect.y = y1;
 	rect.w = x2 - x1;
 	rect.h = y2 - y1;
-	
+
 	/*
 	* Draw
 	*/
 	result = true;
 	result &= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
-	result &= SDL_SetRenderDrawColor(renderer, r, g, b, a);	
+	result &= SDL_SetRenderDrawColor(renderer, r, g, b, a);
 	result &= SDL_RenderRect(renderer, &rect);
 	return result;
 }
@@ -338,13 +338,13 @@ bool rectangleRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float 
 \param x2 X coordinate of the second point (i.e. bottom left) of the rectangle.
 \param y2 Y coordinate of the second point (i.e. bottom left) of the rectangle.
 \param rad The radius of the corner arc.
-\param color The color value of the rectangle to draw (0xRRGGBBAA). 
+\param color The color value of the rectangle to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool roundedRectangleColor(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, float rad, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return roundedRectangleRGBA(renderer, x1, y1, x2, y2, rad, c[0], c[1], c[2], c[3]);
 }
 
@@ -357,10 +357,10 @@ bool roundedRectangleColor(SDL_Renderer * renderer, float x1, float y1, float x2
 \param x2 X coordinate of the second point (i.e. bottom left) of the rectangle.
 \param y2 Y coordinate of the second point (i.e. bottom left) of the rectangle.
 \param rad The radius of the corner arc.
-\param r The red value of the rectangle to draw. 
-\param g The green value of the rectangle to draw. 
-\param b The blue value of the rectangle to draw. 
-\param a The alpha value of the rectangle to draw. 
+\param r The red value of the rectangle to draw.
+\param g The green value of the rectangle to draw.
+\param b The blue value of the rectangle to draw.
+\param a The alpha value of the rectangle to draw.
 
 \returns Returns true on success, false on failure.
 */
@@ -395,7 +395,7 @@ bool roundedRectangleRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 	}
 
 	/*
-	* Test for special cases of straight lines or single point 
+	* Test for special cases of straight lines or single point
 	*/
 	if (x1 == x2) {
 		if (y1 == y2) {
@@ -410,7 +410,7 @@ bool roundedRectangleRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 	}
 
 	/*
-	* Swap x1, x2 if required 
+	* Swap x1, x2 if required
 	*/
 	if (x1 > x2) {
 		tmp = x1;
@@ -419,7 +419,7 @@ bool roundedRectangleRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 	}
 
 	/*
-	* Swap y1, y2 if required 
+	* Swap y1, y2 if required
 	*/
 	if (y1 > y2) {
 		tmp = y1;
@@ -428,7 +428,7 @@ bool roundedRectangleRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 	}
 
 	/*
-	* Calculate width&height 
+	* Calculate width&height
 	*/
 	w = x2 - x1;
 	h = y2 - y1;
@@ -436,7 +436,7 @@ bool roundedRectangleRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 	/*
 	* Maybe adjust radius
 	*/
-	if ((rad * 2) > w)  
+	if ((rad * 2) > w)
 	{
 		rad = (Sint32) w / 2;
 	}
@@ -483,13 +483,13 @@ bool roundedRectangleRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 \param x2 X coordinate of the second point (i.e. bottom left) of the box.
 \param y2 Y coordinate of the second point (i.e. bottom left) of the box.
 \param rad The radius of the corner arcs of the box.
-\param color The color value of the box to draw (0xRRGGBBAA). 
+\param color The color value of the box to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool roundedBoxColor(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, float rad, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return roundedBoxRGBA(renderer, x1, y1, x2, y2, rad, c[0], c[1], c[2], c[3]);
 }
 
@@ -502,10 +502,10 @@ bool roundedBoxColor(SDL_Renderer * renderer, float x1, float y1, float x2, floa
 \param x2 X coordinate of the second point (i.e. bottom left) of the box.
 \param y2 Y coordinate of the second point (i.e. bottom left) of the box.
 \param rad The radius of the corner arcs of the box.
-\param r The red value of the box to draw. 
-\param g The green value of the box to draw. 
-\param b The blue value of the box to draw. 
-\param a The alpha value of the box to draw. 
+\param r The red value of the box to draw.
+\param g The green value of the box to draw.
+\param b The blue value of the box to draw.
+\param a The alpha value of the box to draw.
 
 \returns Returns true on success, false on failure.
 */
@@ -525,8 +525,8 @@ bool roundedBoxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 	float ypcy, ymcy, ypcx, ymcx;
 	float x, y, dx, dy;
 
-	/* 
-	* Check destination renderer 
+	/*
+	* Check destination renderer
 	*/
 	if (renderer == NULL)
 	{
@@ -548,7 +548,7 @@ bool roundedBoxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 	}
 
 	/*
-	* Test for special cases of straight lines or single point 
+	* Test for special cases of straight lines or single point
 	*/
 	if (x1 == x2) {
 		if (y1 == y2) {
@@ -563,7 +563,7 @@ bool roundedBoxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 	}
 
 	/*
-	* Swap x1, x2 if required 
+	* Swap x1, x2 if required
 	*/
 	if (x1 > x2) {
 		tmp = x1;
@@ -572,7 +572,7 @@ bool roundedBoxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 	}
 
 	/*
-	* Swap y1, y2 if required 
+	* Swap y1, y2 if required
 	*/
 	if (y1 > y2) {
 		tmp = y1;
@@ -581,7 +581,7 @@ bool roundedBoxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 	}
 
 	/*
-	* Calculate width&height 
+	* Calculate width&height
 	*/
 	w = x2 - x1 + 1;
 	h = y2 - y1 + 1;
@@ -590,7 +590,7 @@ bool roundedBoxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 	* Maybe adjust radius
 	*/
 	r2 = rad + rad;
-	if (r2 > w)  
+	if (r2 > w)
 	{
 		rad = (Sint32) w / 2;
 		r2 = rad + rad;
@@ -647,7 +647,7 @@ bool roundedBoxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 		}
 
 		/*
-		* Update 
+		* Update
 		*/
 		if (df < 0) {
 			df += d_e;
@@ -680,13 +680,13 @@ bool roundedBoxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2,
 \param y1 Y coordinate of the first point (i.e. top right) of the box.
 \param x2 X coordinate of the second point (i.e. bottom left) of the box.
 \param y2 Y coordinate of the second point (i.e. bottom left) of the box.
-\param color The color value of the box to draw (0xRRGGBBAA). 
+\param color The color value of the box to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool boxColor(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return boxRGBA(renderer, x1, y1, x2, y2, c[0], c[1], c[2], c[3]);
 }
 
@@ -698,9 +698,9 @@ bool boxColor(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, U
 \param y1 Y coordinate of the first point (i.e. top right) of the box.
 \param x2 X coordinate of the second point (i.e. bottom left) of the box.
 \param y2 Y coordinate of the second point (i.e. bottom left) of the box.
-\param r The red value of the box to draw. 
-\param g The green value of the box to draw. 
-\param b The blue value of the box to draw. 
+\param r The red value of the box to draw.
+\param g The green value of the box to draw.
+\param b The blue value of the box to draw.
 \param a The alpha value of the box to draw.
 
 \returns Returns true on success, false on failure.
@@ -712,7 +712,7 @@ bool boxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, Ui
 	SDL_FRect rect;
 
 	/*
-	* Test for special cases of straight lines or single point 
+	* Test for special cases of straight lines or single point
 	*/
 	if (x1 == x2) {
 		if (y1 == y2) {
@@ -727,7 +727,7 @@ bool boxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, Ui
 	}
 
 	/*
-	* Swap x1, x2 if required 
+	* Swap x1, x2 if required
 	*/
 	if (x1 > x2) {
 		tmp = x1;
@@ -736,7 +736,7 @@ bool boxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, Ui
 	}
 
 	/*
-	* Swap y1, y2 if required 
+	* Swap y1, y2 if required
 	*/
 	if (y1 > y2) {
 		tmp = y1;
@@ -744,20 +744,20 @@ bool boxRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, Ui
 		y2 = tmp;
 	}
 
-	/* 
+	/*
 	* Create destination rect
-	*/	
+	*/
 	rect.x = x1;
 	rect.y = y1;
 	rect.w = x2 - x1 + 1;
 	rect.h = y2 - y1 + 1;
-	
+
 	/*
 	* Draw
 	*/
 	result = true;
 	result &= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
-	result &= SDL_SetRenderDrawColor(renderer, r, g, b, a);	
+	result &= SDL_SetRenderDrawColor(renderer, r, g, b, a);
 	result &= SDL_RenderFillRect(renderer, &rect);
 	return result;
 }
@@ -791,13 +791,13 @@ bool line(SDL_Renderer * renderer, float x1, float y1, float x2, float y2)
 \param y1 Y coordinate of the first point of the line.
 \param x2 X coordinate of the second point of the line.
 \param y2 Y coordinate of the seond point of the line.
-\param color The color value of the line to draw (0xRRGGBBAA). 
+\param color The color value of the line to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool lineColor(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return lineRGBA(renderer, x1, y1, x2, y2, c[0], c[1], c[2], c[3]);
 }
 
@@ -809,9 +809,9 @@ bool lineColor(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, 
 \param y1 Y coordinate of the first point of the line.
 \param x2 X coordinate of the second point of the line.
 \param y2 Y coordinate of the second point of the line.
-\param r The red value of the line to draw. 
-\param g The green value of the line to draw. 
-\param b The blue value of the line to draw. 
+\param r The red value of the line to draw.
+\param g The green value of the line to draw.
+\param b The blue value of the line to draw.
 \param a The alpha value of the line to draw.
 
 \returns Returns true on success, false on failure.
@@ -823,7 +823,7 @@ bool lineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, U
 	*/
 	bool result = true;
 	result &= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
-	result &= SDL_SetRenderDrawColor(renderer, r, g, b, a);	
+	result &= SDL_SetRenderDrawColor(renderer, r, g, b, a);
 	result &= SDL_RenderLine(renderer, x1, y1, x2, y2);
 	return result;
 }
@@ -848,9 +848,9 @@ with alpha<255.
 \param y1 Y coordinate of the first point of the aa-line.
 \param x2 X coordinate of the second point of the aa-line.
 \param y2 Y coordinate of the second point of the aa-line.
-\param r The red value of the aa-line to draw. 
-\param g The green value of the aa-line to draw. 
-\param b The blue value of the aa-line to draw. 
+\param r The red value of the aa-line to draw.
+\param g The green value of the aa-line to draw.
+\param b The blue value of the aa-line to draw.
 \param a The alpha value of the aa-line to draw.
 \param draw_endpoint Flag indicating if the endpoint should be drawn; draw if non-zero.
 
@@ -865,7 +865,7 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 	Sint32 dx, dy, tmp, xdir, y0p1, x0pxdir;
 
 	/*
-	* Keep on working with 32bit numbers 
+	* Keep on working with 32bit numbers
 	*/
 	xx0 = x1;
 	yy0 = y1;
@@ -873,7 +873,7 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 	yy1 = y2;
 
 	/*
-	* Reorder points to make dy positive 
+	* Reorder points to make dy positive
 	*/
 	if (yy0 > yy1) {
 		tmp = yy0;
@@ -885,13 +885,13 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 	}
 
 	/*
-	* Calculate distance 
+	* Calculate distance
 	*/
 	dx = xx1 - xx0;
 	dy = yy1 - yy0;
 
 	/*
-	* Adjust for negative dx and set xdir 
+	* Adjust for negative dx and set xdir
 	*/
 	if (dx >= 0) {
 		xdir = 1;
@@ -899,13 +899,13 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 		xdir = -1;
 		dx = (-dx);
 	}
-	
+
 	/*
-	* Check for special cases 
+	* Check for special cases
 	*/
 	if (dx == 0) {
 		/*
-		* Vertical line 
+		* Vertical line
 		*/
 		if (draw_endpoint)
 		{
@@ -919,7 +919,7 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 		}
 	} else if (dy == 0) {
 		/*
-		* Horizontal line 
+		* Horizontal line
 		*/
 		if (draw_endpoint)
 		{
@@ -945,12 +945,12 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 	result = true;
 
 	/*
-	* Zero accumulator 
+	* Zero accumulator
 	*/
 	erracc = 0;
 
 	/*
-	* # of bits by which to shift erracc to get intensity level 
+	* # of bits by which to shift erracc to get intensity level
 	*/
 	intshift = 32 - AAbits;
 
@@ -960,22 +960,22 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 	result &= pixelRGBA(renderer, x1, y1, r, g, b, a);
 
 	/*
-	* x-major or y-major? 
+	* x-major or y-major?
 	*/
 	if (dy > dx) {
 
 		/*
 		* y-major.  Calculate 16-bit fixed point fractional part of a pixel that
 		* X advances every time Y advances 1 pixel, truncating the result so that
-		* we won't overrun the endpoint along the X axis 
+		* we won't overrun the endpoint along the X axis
 		*/
 		/*
-		* Not-so-portable version: erradj = ((Uint64)dx << 32) / (Uint64)dy; 
+		* Not-so-portable version: erradj = ((Uint64)dx << 32) / (Uint64)dy;
 		*/
 		erradj = ((dx << 16) / dy) << 16;
 
 		/*
-		* draw all pixels other than the first and last 
+		* draw all pixels other than the first and last
 		*/
 		x0pxdir = xx0 + xdir;
 		while (--dy) {
@@ -983,7 +983,7 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 			erracc += erradj;
 			if (erracc <= erracctmp) {
 				/*
-				* rollover in error accumulator, x coord advances 
+				* rollover in error accumulator, x coord advances
 				*/
 				xx0 = x0pxdir;
 				x0pxdir += xdir;
@@ -993,7 +993,7 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 			/*
 			* the AAbits most significant bits of erracc give us the intensity
 			* weighting for this pixel, and the complement of the weighting for
-			* the paired pixel. 
+			* the paired pixel.
 			*/
 			wgt = (erracc >> intshift) & 255;
 			result &= pixelRGBAWeight (renderer, xx0, yy0, r, g, b, a, 255 - wgt);
@@ -1005,15 +1005,15 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 		/*
 		* x-major line.  Calculate 16-bit fixed-point fractional part of a pixel
 		* that Y advances each time X advances 1 pixel, truncating the result so
-		* that we won't overrun the endpoint along the X axis. 
+		* that we won't overrun the endpoint along the X axis.
 		*/
 		/*
-		* Not-so-portable version: erradj = ((Uint64)dy << 32) / (Uint64)dx; 
+		* Not-so-portable version: erradj = ((Uint64)dy << 32) / (Uint64)dx;
 		*/
 		erradj = ((dy << 16) / dx) << 16;
 
 		/*
-		* draw all pixels other than the first and last 
+		* draw all pixels other than the first and last
 		*/
 		y0p1 = yy0 + 1;
 		while (--dx) {
@@ -1022,7 +1022,7 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 			erracc += erradj;
 			if (erracc <= erracctmp) {
 				/*
-				* Accumulator turned over, advance y 
+				* Accumulator turned over, advance y
 				*/
 				yy0 = y0p1;
 				y0p1++;
@@ -1031,7 +1031,7 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 			/*
 			* the AAbits most significant bits of erracc give us the intensity
 			* weighting for this pixel, and the complement of the weighting for
-			* the paired pixel. 
+			* the paired pixel.
 			*/
 			wgt = (erracc >> intshift) & 255;
 			result &= pixelRGBAWeight (renderer, xx0, yy0, r, g, b, a, 255 - wgt);
@@ -1040,12 +1040,12 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 	}
 
 	/*
-	* Do we have to draw the endpoint 
+	* Do we have to draw the endpoint
 	*/
 	if (draw_endpoint) {
 		/*
 		* Draw final pixel, always exactly intersected by the line and doesn't
-		* need to be weighted. 
+		* need to be weighted.
 		*/
 		result &= pixelRGBA (renderer, x2, y2, r, g, b, a);
 	}
@@ -1067,7 +1067,7 @@ bool _aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 */
 bool aalineColor(SDL_Renderer * renderer, float x1, float y1, float x2, float y2, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return _aalineRGBA(renderer, x1, y1, x2, y2, c[0], c[1], c[2], c[3], true);
 }
 
@@ -1079,9 +1079,9 @@ bool aalineColor(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 \param y1 Y coordinate of the first point of the aa-line.
 \param x2 X coordinate of the second point of the aa-line.
 \param y2 Y coordinate of the second point of the aa-line.
-\param r The red value of the aa-line to draw. 
-\param g The green value of the aa-line to draw. 
-\param b The blue value of the aa-line to draw. 
+\param r The red value of the aa-line to draw.
+\param g The green value of the aa-line to draw.
+\param b The blue value of the aa-line to draw.
 \param a The alpha value of the aa-line to draw.
 
 \returns Returns true on success, false on failure.
@@ -1100,13 +1100,13 @@ bool aalineRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2,
 \param x X coordinate of the center of the circle.
 \param y Y coordinate of the center of the circle.
 \param rad Radius in pixels of the circle.
-\param color The color value of the circle to draw (0xRRGGBBAA). 
+\param color The color value of the circle to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool circleColor(SDL_Renderer * renderer, float x, float y, float rad, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return ellipseRGBA(renderer, x, y, rad, rad, c[0], c[1], c[2], c[3]);
 }
 
@@ -1117,9 +1117,9 @@ bool circleColor(SDL_Renderer * renderer, float x, float y, float rad, Uint32 co
 \param x X coordinate of the center of the circle.
 \param y Y coordinate of the center of the circle.
 \param rad Radius in pixels of the circle.
-\param r The red value of the circle to draw. 
-\param g The green value of the circle to draw. 
-\param b The blue value of the circle to draw. 
+\param r The red value of the circle to draw.
+\param g The green value of the circle to draw.
+\param b The blue value of the circle to draw.
 \param a The alpha value of the circle to draw.
 
 \returns Returns true on success, false on failure.
@@ -1140,13 +1140,13 @@ bool circleRGBA(SDL_Renderer * renderer, float x, float y, float rad, Uint8 r, U
 \param rad Radius in pixels of the arc.
 \param start Starting radius in degrees of the arc. 0 degrees is down, increasing counterclockwise.
 \param end Ending radius in degrees of the arc. 0 degrees is down, increasing counterclockwise.
-\param color The color value of the arc to draw (0xRRGGBBAA). 
+\param color The color value of the arc to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool arcColor(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start, Sint32 end, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return arcRGBA(renderer, x, y, rad, start, end, c[0], c[1], c[2], c[3]);
 }
 
@@ -1159,9 +1159,9 @@ bool arcColor(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start
 \param rad Radius in pixels of the arc.
 \param start Starting radius in degrees of the arc. 0 degrees is down, increasing counterclockwise.
 \param end Ending radius in degrees of the arc. 0 degrees is down, increasing counterclockwise.
-\param r The red value of the arc to draw. 
-\param g The green value of the arc to draw. 
-\param b The blue value of the arc to draw. 
+\param r The red value of the arc to draw.
+\param g The green value of the arc to draw.
+\param b The blue value of the arc to draw.
 \param a The alpha value of the arc to draw.
 
 \returns Returns true on success, false on failure.
@@ -1182,14 +1182,14 @@ bool arcRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start,
 	double dstart, dend, temp = 0.;
 
 	/*
-	* Sanity check radius 
+	* Sanity check radius
 	*/
 	if (rad < 0) {
 		return (false);
 	}
 
 	/*
-	* Special case for rad=0 - draw a point 
+	* Special case for rad=0 - draw a point
 	*/
 	if (rad == 0) {
 		return (pixelRGBA(renderer, x, y, r, g, b, a));
@@ -1197,7 +1197,7 @@ bool arcRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start,
 
 	/*
 	 Octant labeling
-	      
+
 	  \ 5 | 6 /
 	   \  |  /
 	  4 \ | / 7
@@ -1213,7 +1213,7 @@ bool arcRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start,
 	 the set whether or not to keep drawing a given octant.
 	 For example: 0x00111100 means we're drawing in octants 2-5
 	*/
-	drawoct = 0; 
+	drawoct = 0;
 
 	/*
 	* Fixup angles
@@ -1238,7 +1238,7 @@ bool arcRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start,
 		if (oct == startoct) {
 			/* need to compute stopval_start for this octant.  Look at picture above if this is unclear */
 			dstart = (double)start;
-			switch (oct) 
+			switch (oct)
 			{
 			case 0:
 			case 3:
@@ -1262,7 +1262,7 @@ bool arcRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start,
 			temp *= rad;
 			stopval_start = (int)temp;
 
-			/* 
+			/*
 			This isn't arbitrary, but requires graph paper to explain well.
 			The basic idea is that we're always changing drawoct after we draw, so we
 			stop immediately after we render the last sensible pixel at x = ((int)temp).
@@ -1309,7 +1309,7 @@ bool arcRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start,
 				} else {
 					drawoct &= 255 - (1 << oct);
 				}
-			} 
+			}
 			else if (oct % 2) drawoct &= 255 - (1 << oct);
 			else			  drawoct |= (1 << oct);
 		} else if (oct != startoct) { /* already verified that it's != endoct */
@@ -1320,14 +1320,14 @@ bool arcRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start,
 	/* so now we have what octants to draw and when to draw them. all that's left is the actual raster code. */
 
 	/*
-	* Set color 
+	* Set color
 	*/
 	result = true;
 	result &= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
 	result &= SDL_SetRenderDrawColor(renderer, r, g, b, a);
 
 	/*
-	* Draw arc 
+	* Draw arc
 	*/
 	do {
 		ypcy = y + cy;
@@ -1364,9 +1364,9 @@ bool arcRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start,
 		* Update whether we're drawing an octant
 		*/
 		if (stopval_start == cx) {
-			/* works like an on-off switch. */  
+			/* works like an on-off switch. */
 			/* This is just in case start & end are in the same octant. */
-			if (drawoct & (1 << startoct)) drawoct &= 255 - (1 << startoct);		
+			if (drawoct & (1 << startoct)) drawoct &= 255 - (1 << startoct);
 			else						   drawoct |= (1 << startoct);
 		}
 		if (stopval_end == cx) {
@@ -1402,13 +1402,13 @@ bool arcRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start,
 \param x X coordinate of the center of the aa-circle.
 \param y Y coordinate of the center of the aa-circle.
 \param rad Radius in pixels of the aa-circle.
-\param color The color value of the aa-circle to draw (0xRRGGBBAA). 
+\param color The color value of the aa-circle to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool aacircleColor(SDL_Renderer * renderer, float x, float y, float rad, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return aaellipseRGBA(renderer, x, y, rad, rad, c[0], c[1], c[2], c[3]);
 }
 
@@ -1419,9 +1419,9 @@ bool aacircleColor(SDL_Renderer * renderer, float x, float y, float rad, Uint32 
 \param x X coordinate of the center of the aa-circle.
 \param y Y coordinate of the center of the aa-circle.
 \param rad Radius in pixels of the aa-circle.
-\param r The red value of the aa-circle to draw. 
-\param g The green value of the aa-circle to draw. 
-\param b The blue value of the aa-circle to draw. 
+\param r The red value of the aa-circle to draw.
+\param g The green value of the aa-circle to draw.
+\param b The blue value of the aa-circle to draw.
 \param a The alpha value of the aa-circle to draw.
 
 \returns Returns true on success, false on failure.
@@ -1429,7 +1429,7 @@ bool aacircleColor(SDL_Renderer * renderer, float x, float y, float rad, Uint32 
 bool aacircleRGBA(SDL_Renderer * renderer, float x, float y, float rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
 	/*
-	* Draw 
+	* Draw
 	*/
 	return aaellipseRGBA(renderer, x, y, rad, rad, r, g, b, a);
 }
@@ -1467,7 +1467,7 @@ bool _drawQuadrants(SDL_Renderer * renderer,  float x, float y, float dx, float 
 				result &= pixel(renderer, x, ymdy);
 			}
 		}
-	} else {	
+	} else {
 		xpdx = x + dx;
 		xmdx = x - dx;
 		ypdy = y + dy;
@@ -1494,9 +1494,9 @@ bool _drawQuadrants(SDL_Renderer * renderer,  float x, float y, float dx, float 
 \param y Y coordinate of the center of the ellipse.
 \param rx Horizontal radius in pixels of the ellipse.
 \param ry Vertical radius in pixels of the ellipse.
-\param r The red value of the ellipse to draw. 
-\param g The green value of the ellipse to draw. 
-\param b The blue value of the ellipse to draw. 
+\param r The red value of the ellipse to draw.
+\param g The green value of the ellipse to draw.
+\param b The blue value of the ellipse to draw.
 \param a The alpha value of the ellipse to draw.
 \param f Flag indicating if the ellipse should be filled (1) or not (0).
 
@@ -1515,7 +1515,7 @@ bool _ellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry,
 	Sint32 ellipseOverscan;
 
 	/*
-	* Sanity check radii 
+	* Sanity check radii
 	*/
 	if ((rx < 0) || (ry < 0)) {
 		return (false);
@@ -1529,7 +1529,7 @@ bool _ellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry,
 	result &= SDL_SetRenderDrawColor(renderer, r, g, b, a);
 
 	/*
-	* Special cases for rx=0 and/or ry=0: draw a hline/vline/pixel 
+	* Special cases for rx=0 and/or ry=0: draw a hline/vline/pixel
 	*/
 	if (rx == 0) {
 		if (ry == 0) {
@@ -1562,7 +1562,7 @@ bool _ellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry,
 	if (rxi >= 512 || ryi >= 512)
 	{
 		ellipseOverscan = DEFAULT_ELLIPSE_OVERSCAN / 4;
-	} 
+	}
 	else if (rxi >= 256 || ryi >= 256)
 	{
 		ellipseOverscan = DEFAULT_ELLIPSE_OVERSCAN / 2;
@@ -1590,19 +1590,19 @@ bool _ellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry,
     curY = ryi;
     deltaX = 0;
     deltaY = rx22 * curY;
- 
-	/* Points in segment 1 */ 
+
+	/* Points in segment 1 */
     error = ry2 - rx2 * ryi + rx2 / 4;
     while (deltaX <= deltaY)
     {
           curX++;
           deltaX += ry22;
- 
-          error +=  deltaX + ry2; 
+
+          error +=  deltaX + ry2;
           if (error >= 0)
           {
                curY--;
-               deltaY -= rx22; 
+               deltaY -= rx22;
                error -= deltaY;
           }
 
@@ -1616,7 +1616,7 @@ bool _ellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry,
     }
 
 	/* Points in segment 2 */
-	if (curY > 0) 
+	if (curY > 0)
 	{
 		curXp1 = curX + 1;
 		curYm1 = curY - 1;
@@ -1628,8 +1628,8 @@ bool _ellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry,
 
 			error += rx2;
 			error -= deltaY;
- 
-			if (error <= 0) 
+
+			if (error <= 0)
 			{
                curX++;
                deltaX += ry22;
@@ -1649,7 +1649,7 @@ bool _ellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry,
 				}
   				oldX = scrX;
 				oldY = scrY;
-		    }		
+		    }
 		}
 
 		/* Remaining points in vertical */
@@ -1672,13 +1672,13 @@ bool _ellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry,
 \param y Y coordinate of the center of the ellipse.
 \param rx Horizontal radius in pixels of the ellipse.
 \param ry Vertical radius in pixels of the ellipse.
-\param color The color value of the ellipse to draw (0xRRGGBBAA). 
+\param color The color value of the ellipse to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool ellipseColor(SDL_Renderer * renderer, float x, float y, float rx, float ry, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return _ellipseRGBA(renderer, x, y, rx, ry, c[0], c[1], c[2], c[3], false);
 }
 
@@ -1690,9 +1690,9 @@ bool ellipseColor(SDL_Renderer * renderer, float x, float y, float rx, float ry,
 \param y Y coordinate of the center of the ellipse.
 \param rx Horizontal radius in pixels of the ellipse.
 \param ry Vertical radius in pixels of the ellipse.
-\param r The red value of the ellipse to draw. 
-\param g The green value of the ellipse to draw. 
-\param b The blue value of the ellipse to draw. 
+\param r The red value of the ellipse to draw.
+\param g The green value of the ellipse to draw.
+\param b The blue value of the ellipse to draw.
 \param a The alpha value of the ellipse to draw.
 
 \returns Returns true on success, false on failure.
@@ -1711,13 +1711,13 @@ bool ellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry, 
 \param x X coordinate of the center of the filled circle.
 \param y Y coordinate of the center of the filled circle.
 \param rad Radius in pixels of the filled circle.
-\param color The color value of the filled circle to draw (0xRRGGBBAA). 
+\param color The color value of the filled circle to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool filledCircleColor(SDL_Renderer * renderer, float x, float y, float rad, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return filledEllipseRGBA(renderer, x, y, rad, rad, c[0], c[1], c[2], c[3]);
 }
 
@@ -1728,9 +1728,9 @@ bool filledCircleColor(SDL_Renderer * renderer, float x, float y, float rad, Uin
 \param x X coordinate of the center of the filled circle.
 \param y Y coordinate of the center of the filled circle.
 \param rad Radius in pixels of the filled circle.
-\param r The red value of the filled circle to draw. 
-\param g The green value of the filled circle to draw. 
-\param b The blue value of the filled circle to draw. 
+\param r The red value of the filled circle to draw.
+\param g The green value of the filled circle to draw.
+\param b The blue value of the filled circle to draw.
 \param a The alpha value of the filled circle to draw.
 
 \returns Returns true on success, false on failure.
@@ -1748,15 +1748,15 @@ bool filledCircleRGBA(SDL_Renderer * renderer, float x, float y, float rad, Uint
 /* Detect 64bit and use intrinsic version */
 #ifdef _M_X64
 #include <emmintrin.h>
-static __inline long 
-	lrint(float f) 
+static __inline long
+	lrint(float f)
 {
 	return _mm_cvtss_si32(_mm_load_ss(&f));
 }
 #elif defined(_M_IX86)
 __inline long int
 	lrint (double flt)
-{	
+{
 	int intgr;
 	_asm
 	{
@@ -1791,13 +1791,13 @@ __declspec(naked) long int
 \param y Y coordinate of the center of the aa-ellipse.
 \param rx Horizontal radius in pixels of the aa-ellipse.
 \param ry Vertical radius in pixels of the aa-ellipse.
-\param color The color value of the aa-ellipse to draw (0xRRGGBBAA). 
+\param color The color value of the aa-ellipse to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool aaellipseColor(SDL_Renderer * renderer, float x, float y, float rx, float ry, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return aaellipseRGBA(renderer, x, y, rx, ry, c[0], c[1], c[2], c[3]);
 }
 
@@ -1809,9 +1809,9 @@ bool aaellipseColor(SDL_Renderer * renderer, float x, float y, float rx, float r
 \param y Y coordinate of the center of the aa-ellipse.
 \param rx Horizontal radius in pixels of the aa-ellipse.
 \param ry Vertical radius in pixels of the aa-ellipse.
-\param r The red value of the aa-ellipse to draw. 
-\param g The green value of the aa-ellipse to draw. 
-\param b The blue value of the aa-ellipse to draw. 
+\param r The red value of the aa-ellipse to draw.
+\param g The green value of the aa-ellipse to draw.
+\param b The blue value of the aa-ellipse to draw.
 \param a The alpha value of the aa-ellipse to draw.
 
 \returns Returns true on success, false on failure.
@@ -1827,14 +1827,14 @@ bool aaellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry
 	Uint8 weight, iweight;
 
 	/*
-	* Sanity check radii 
+	* Sanity check radii
 	*/
 	if ((rx < 0) || (ry < 0)) {
 		return (false);
 	}
 
 	/*
-	* Special cases for rx=0 and/or ry=0: draw a hline/vline/pixel 
+	* Special cases for rx=0 and/or ry=0: draw a hline/vline/pixel
 	*/
 	if (rx == 0) {
 		if (ry == 0) {
@@ -1991,7 +1991,7 @@ bool aaellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry
 		result &= pixelRGBAWeight(renderer, xx, yp, r, g, b, a, weight);
 
 		result &= pixelRGBAWeight(renderer, xs, yy, r, g, b, a, weight);
-		result &= pixelRGBAWeight(renderer, xx, yy, r, g, b, a, weight);		
+		result &= pixelRGBAWeight(renderer, xx, yy, r, g, b, a, weight);
 	}
 
 	return (result);
@@ -2007,13 +2007,13 @@ bool aaellipseRGBA(SDL_Renderer * renderer, float x, float y, float rx, float ry
 \param y Y coordinate of the center of the filled ellipse.
 \param rx Horizontal radius in pixels of the filled ellipse.
 \param ry Vertical radius in pixels of the filled ellipse.
-\param color The color value of the filled ellipse to draw (0xRRGGBBAA). 
+\param color The color value of the filled ellipse to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool filledEllipseColor(SDL_Renderer * renderer, float x, float y, float rx, float ry, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return _ellipseRGBA(renderer, x, y, rx, ry, c[0], c[1], c[2], c[3], true);
 }
 
@@ -2025,9 +2025,9 @@ bool filledEllipseColor(SDL_Renderer * renderer, float x, float y, float rx, flo
 \param y Y coordinate of the center of the filled ellipse.
 \param rx Horizontal radius in pixels of the filled ellipse.
 \param ry Vertical radius in pixels of the filled ellipse.
-\param r The red value of the filled ellipse to draw. 
-\param g The green value of the filled ellipse to draw. 
-\param b The blue value of the filled ellipse to draw. 
+\param r The red value of the filled ellipse to draw.
+\param g The green value of the filled ellipse to draw.
+\param b The blue value of the filled ellipse to draw.
 \param a The alpha value of the filled ellipse to draw.
 
 \returns Returns true on success, false on failure.
@@ -2050,9 +2050,9 @@ Note: Determines vertex array and uses polygon or filledPolygon drawing routines
 \param rad Radius in pixels of the pie.
 \param start Starting radius in degrees of the pie.
 \param end Ending radius in degrees of the pie.
-\param r The red value of the pie to draw. 
-\param g The green value of the pie to draw. 
-\param b The blue value of the pie to draw. 
+\param r The red value of the pie to draw.
+\param g The green value of the pie to draw.
+\param b The blue value of the pie to draw.
 \param a The alpha value of the pie to draw.
 \param filled Flag indicating if the pie should be filled (=1) or not (=0).
 
@@ -2069,7 +2069,7 @@ bool _pieRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start
 	float *vx, *vy;
 
 	/*
-	* Sanity check radii 
+	* Sanity check radii
 	*/
 	if (rad < 0) {
 		return (false);
@@ -2082,14 +2082,14 @@ bool _pieRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start
 	end = end % 360;
 
 	/*
-	* Special case for rad=0 - draw a point 
+	* Special case for rad=0 - draw a point
 	*/
 	if (rad == 0) {
 		return (pixelRGBA(renderer, x, y, r, g, b, a));
 	}
 
 	/*
-	* Variable setup 
+	* Variable setup
 	*/
 	dr = (double) rad;
 	deltaAngle = 3.0 / dr;
@@ -2170,14 +2170,14 @@ bool _pieRGBA(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start
 \param rad Radius in pixels of the pie.
 \param start Starting radius in degrees of the pie.
 \param end Ending radius in degrees of the pie.
-\param color The color value of the pie to draw (0xRRGGBBAA). 
+\param color The color value of the pie to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool pieColor(SDL_Renderer * renderer, float x, float y, float rad,
 	Sint32 start, Sint32 end, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return _pieRGBA(renderer, x, y, rad, start, end, c[0], c[1], c[2], c[3], false);
 }
 
@@ -2190,9 +2190,9 @@ bool pieColor(SDL_Renderer * renderer, float x, float y, float rad,
 \param rad Radius in pixels of the pie.
 \param start Starting radius in degrees of the pie.
 \param end Ending radius in degrees of the pie.
-\param r The red value of the pie to draw. 
-\param g The green value of the pie to draw. 
-\param b The blue value of the pie to draw. 
+\param r The red value of the pie to draw.
+\param g The green value of the pie to draw.
+\param b The blue value of the pie to draw.
 \param a The alpha value of the pie to draw.
 
 \returns Returns true on success, false on failure.
@@ -2212,13 +2212,13 @@ bool pieRGBA(SDL_Renderer * renderer, float x, float y, float rad,
 \param rad Radius in pixels of the filled pie.
 \param start Starting radius in degrees of the filled pie.
 \param end Ending radius in degrees of the filled pie.
-\param color The color value of the filled pie to draw (0xRRGGBBAA). 
+\param color The color value of the filled pie to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool filledPieColor(SDL_Renderer * renderer, float x, float y, float rad, Sint32 start, Sint32 end, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return _pieRGBA(renderer, x, y, rad, start, end, c[0], c[1], c[2], c[3], true);
 }
 
@@ -2231,9 +2231,9 @@ bool filledPieColor(SDL_Renderer * renderer, float x, float y, float rad, Sint32
 \param rad Radius in pixels of the filled pie.
 \param start Starting radius in degrees of the filled pie.
 \param end Ending radius in degrees of the filled pie.
-\param r The red value of the filled pie to draw. 
-\param g The green value of the filled pie to draw. 
-\param b The blue value of the filled pie to draw. 
+\param r The red value of the filled pie to draw.
+\param g The green value of the filled pie to draw.
+\param b The blue value of the filled pie to draw.
 \param a The alpha value of the filled pie to draw.
 
 \returns Returns true on success, false on failure.
@@ -2258,7 +2258,7 @@ Note: Creates vertex array and uses polygon routine to render.
 \param y2 Y coordinate of the second point of the trigon.
 \param x3 X coordinate of the third point of the trigon.
 \param y3 Y coordinate of the third point of the trigon.
-\param color The color value of the trigon to draw (0xRRGGBBAA). 
+\param color The color value of the trigon to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
@@ -2287,9 +2287,9 @@ bool trigonColor(SDL_Renderer * renderer, float x1, float y1, float x2, float y2
 \param y2 Y coordinate of the second point of the trigon.
 \param x3 X coordinate of the third point of the trigon.
 \param y3 Y coordinate of the third point of the trigon.
-\param r The red value of the trigon to draw. 
-\param g The green value of the trigon to draw. 
-\param b The blue value of the trigon to draw. 
+\param r The red value of the trigon to draw.
+\param g The green value of the trigon to draw.
+\param b The blue value of the trigon to draw.
 \param a The alpha value of the trigon to draw.
 
 \returns Returns true on success, false on failure.
@@ -2308,7 +2308,7 @@ bool trigonRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, float y2,
 	vy[2]=y3;
 
 	return(polygonRGBA(renderer,vx,vy,3,r,g,b,a));
-}				 
+}
 
 /* ------ AA-Trigon */
 
@@ -2324,7 +2324,7 @@ Note: Creates vertex array and uses aapolygon routine to render.
 \param y2 Y coordinate of the second point of the aa-trigon.
 \param x3 X coordinate of the third point of the aa-trigon.
 \param y3 Y coordinate of the third point of the aa-trigon.
-\param color The color value of the aa-trigon to draw (0xRRGGBBAA). 
+\param color The color value of the aa-trigon to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
@@ -2353,9 +2353,9 @@ bool aatrigonColor(SDL_Renderer * renderer, float x1, float y1, float x2, float 
 \param y2 Y coordinate of the second point of the aa-trigon.
 \param x3 X coordinate of the third point of the aa-trigon.
 \param y3 Y coordinate of the third point of the aa-trigon.
-\param r The red value of the aa-trigon to draw. 
-\param g The green value of the aa-trigon to draw. 
-\param b The blue value of the aa-trigon to draw. 
+\param r The red value of the aa-trigon to draw.
+\param g The green value of the aa-trigon to draw.
+\param b The blue value of the aa-trigon to draw.
 \param a The alpha value of the aa-trigon to draw.
 
 \returns Returns true on success, false on failure.
@@ -2374,7 +2374,7 @@ bool aatrigonRGBA(SDL_Renderer * renderer,  float x1, float y1, float x2, float 
 	vy[2]=y3;
 
 	return(aapolygonRGBA(renderer,vx,vy,3,r,g,b,a));
-}				   
+}
 
 /* ------ Filled Trigon */
 
@@ -2390,7 +2390,7 @@ Note: Creates vertex array and uses aapolygon routine to render.
 \param y2 Y coordinate of the second point of the filled trigon.
 \param x3 X coordinate of the third point of the filled trigon.
 \param y3 Y coordinate of the third point of the filled trigon.
-\param color The color value of the filled trigon to draw (0xRRGGBBAA). 
+\param color The color value of the filled trigon to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
@@ -2421,9 +2421,9 @@ Note: Creates vertex array and uses aapolygon routine to render.
 \param y2 Y coordinate of the second point of the filled trigon.
 \param x3 X coordinate of the third point of the filled trigon.
 \param y3 Y coordinate of the third point of the filled trigon.
-\param r The red value of the filled trigon to draw. 
-\param g The green value of the filled trigon to draw. 
-\param b The blue value of the filled trigon to draw. 
+\param r The red value of the filled trigon to draw.
+\param g The green value of the filled trigon to draw.
+\param b The blue value of the filled trigon to draw.
 \param a The alpha value of the filled trigon to draw.
 
 \returns Returns true on success, false on failure.
@@ -2453,13 +2453,13 @@ bool filledTrigonRGBA(SDL_Renderer * renderer, float x1, float y1, float x2, flo
 \param vx Vertex array containing X coordinates of the points of the polygon.
 \param vy Vertex array containing Y coordinates of the points of the polygon.
 \param n Number of points in the vertex array. Minimum number is 3.
-\param color The color value of the polygon to draw (0xRRGGBBAA). 
+\param color The color value of the polygon to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool polygonColor(SDL_Renderer * renderer, const float * vx, const float * vy, Sint32 n, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return polygonRGBA(renderer, vx, vy, n, c[0], c[1], c[2], c[3]);
 }
 
@@ -2476,14 +2476,14 @@ bool polygonColor(SDL_Renderer * renderer, const float * vx, const float * vy, S
 bool polygon(SDL_Renderer * renderer, const float * vx, const float * vy, Sint32 n)
 {
 	/*
-	* Draw 
+	* Draw
 	*/
 	bool result = true;
 	Sint32 i, nn;
 	SDL_FPoint* points;
 
 	/*
-	* Vertex array NULL check 
+	* Vertex array NULL check
 	*/
 	if (vx == NULL) {
 		return (false);
@@ -2493,7 +2493,7 @@ bool polygon(SDL_Renderer * renderer, const float * vx, const float * vy, Sint32
 	}
 
 	/*
-	* Sanity check 
+	* Sanity check
 	*/
 	if (n < 3) {
 		return (false);
@@ -2517,7 +2517,7 @@ bool polygon(SDL_Renderer * renderer, const float * vx, const float * vy, Sint32
 	points[n].y = vy[0];
 
 	/*
-	* Draw 
+	* Draw
 	*/
 	result &= SDL_RenderLines(renderer, points, nn);
 	free(points);
@@ -2532,55 +2532,26 @@ bool polygon(SDL_Renderer * renderer, const float * vx, const float * vy, Sint32
 \param vx Vertex array containing X coordinates of the points of the polygon.
 \param vy Vertex array containing Y coordinates of the points of the polygon.
 \param n Number of points in the vertex array. Minimum number is 3.
-\param r The red value of the polygon to draw. 
-\param g The green value of the polygon to draw. 
-\param b The blue value of the polygon to draw. 
+\param r The red value of the polygon to draw.
+\param g The green value of the polygon to draw.
+\param b The blue value of the polygon to draw.
 \param a The alpha value of the polygon to draw.
 
 \returns Returns true on success, false on failure.
 */
 bool polygonRGBA(SDL_Renderer * renderer, const float * vx, const float * vy, Sint32 n, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
-	/*
-	* Draw 
-	*/
 	bool result;
-	const float *x1, *y1, *x2, *y2;
 
 	/*
-	* Vertex array NULL check 
-	*/
-	if (vx == NULL) {
-		return (false);
-	}
-	if (vy == NULL) {
-		return (false);
-	}
-
-	/*
-	* Sanity check 
-	*/
-	if (n < 3) {
-		return (false);
-	}
-
-	/*
-	* Pointer setup 
-	*/
-	x1 = x2 = vx;
-	y1 = y2 = vy;
-	x2++;
-	y2++;
-
-	/*
-	* Set color 
+	* Set color
 	*/
 	result = true;
 	result &= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
-	result &= SDL_SetRenderDrawColor(renderer, r, g, b, a);	
+	result &= SDL_SetRenderDrawColor(renderer, r, g, b, a);
 
 	/*
-	* Draw 
+	* Draw
 	*/
 	result &= polygon(renderer, vx, vy, n);
 
@@ -2596,13 +2567,13 @@ bool polygonRGBA(SDL_Renderer * renderer, const float * vx, const float * vy, Si
 \param vx Vertex array containing X coordinates of the points of the aa-polygon.
 \param vy Vertex array containing Y coordinates of the points of the aa-polygon.
 \param n Number of points in the vertex array. Minimum number is 3.
-\param color The color value of the aa-polygon to draw (0xRRGGBBAA). 
+\param color The color value of the aa-polygon to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool aapolygonColor(SDL_Renderer * renderer, const float * vx, const float * vy, Sint32 n, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return aapolygonRGBA(renderer, vx, vy, n, c[0], c[1], c[2], c[3]);
 }
 
@@ -2613,9 +2584,9 @@ bool aapolygonColor(SDL_Renderer * renderer, const float * vx, const float * vy,
 \param vx Vertex array containing X coordinates of the points of the aa-polygon.
 \param vy Vertex array containing Y coordinates of the points of the aa-polygon.
 \param n Number of points in the vertex array. Minimum number is 3.
-\param r The red value of the aa-polygon to draw. 
-\param g The green value of the aa-polygon to draw. 
-\param b The blue value of the aa-polygon to draw. 
+\param r The red value of the aa-polygon to draw.
+\param g The green value of the aa-polygon to draw.
+\param b The blue value of the aa-polygon to draw.
 \param a The alpha value of the aa-polygon to draw.
 
 \returns Returns true on success, false on failure.
@@ -2627,7 +2598,7 @@ bool aapolygonRGBA(SDL_Renderer * renderer, const float * vx, const float * vy, 
 	const float *x1, *y1, *x2, *y2;
 
 	/*
-	* Vertex array NULL check 
+	* Vertex array NULL check
 	*/
 	if (vx == NULL) {
 		return (false);
@@ -2637,14 +2608,14 @@ bool aapolygonRGBA(SDL_Renderer * renderer, const float * vx, const float * vy, 
 	}
 
 	/*
-	* Sanity check 
+	* Sanity check
 	*/
 	if (n < 3) {
 		return (false);
 	}
 
 	/*
-	* Pointer setup 
+	* Pointer setup
 	*/
 	x1 = x2 = vx;
 	y1 = y2 = vy;
@@ -2652,7 +2623,7 @@ bool aapolygonRGBA(SDL_Renderer * renderer, const float * vx, const float * vy, 
 	y2++;
 
 	/*
-	* Draw 
+	* Draw
 	*/
 	result = true;
 	for (i = 1; i < n; i++) {
@@ -2700,15 +2671,15 @@ static bool gfxPrimitivesPolyAllocatedGlobal = false;
 /*!
 \brief Draw filled polygon with alpha blending (multi-threaded capable).
 
-Note: The last two parameters are optional; but are required for multithreaded operation.  
+Note: The last two parameters are optional; but are required for multithreaded operation.
 
 \param renderer The renderer to draw on.
 \param vx Vertex array containing X coordinates of the points of the filled polygon.
 \param vy Vertex array containing Y coordinates of the points of the filled polygon.
 \param n Number of points in the vertex array. Minimum number is 3.
-\param r The red value of the filled polygon to draw. 
-\param g The green value of the filled polygon to draw. 
-\param b The blue value of the filled polygon to draw. 
+\param r The red value of the filled polygon to draw.
+\param g The green value of the filled polygon to draw.
+\param b The blue value of the filled polygon to draw.
 \param a The alpha value of the filled polygon to draw.
 \param polyInts Preallocated, temporary vertex array used for sorting vertices. Required for multithreaded operation; set to NULL otherwise.
 \param polyAllocated Flag indicating if temporary vertex array was allocated. Required for multithreaded operation; set to NULL otherwise.
@@ -2717,7 +2688,7 @@ Note: The last two parameters are optional; but are required for multithreaded o
 */
 bool filledPolygonRGBAMT(SDL_Renderer * renderer, const float * vx, const float * vy, Sint32 n, Uint8 r, Uint8 g, Uint8 b, Uint8 a, Sint32 **polyInts, bool *polyAllocated)
 {
-	bool result;
+	bool result = false;
 	Sint32 i;
 	Sint32 y, xa, xb;
 	Sint32 miny, maxy;
@@ -2730,7 +2701,7 @@ bool filledPolygonRGBAMT(SDL_Renderer * renderer, const float * vx, const float 
 	bool gfxPrimitivesPolyAllocated = false;
 
 	/*
-	* Vertex array NULL check 
+	* Vertex array NULL check
 	*/
 	if (vx == NULL) {
 		return (false);
@@ -2747,7 +2718,7 @@ bool filledPolygonRGBAMT(SDL_Renderer * renderer, const float * vx, const float 
 	}
 
 	/*
-	* Map polygon cache  
+	* Map polygon cache
 	*/
 	if ((polyInts==NULL) || (polyAllocated==NULL)) {
 		/* Use global cache */
@@ -2760,7 +2731,7 @@ bool filledPolygonRGBAMT(SDL_Renderer * renderer, const float * vx, const float 
 	}
 
 	/*
-	* Allocate temp array, only grow array 
+	* Allocate temp array, only grow array
 	*/
 	if (!gfxPrimitivesPolyAllocated) {
 		gfxPrimitivesPolyInts = (Sint32 *) malloc(sizeof(int) * n);
@@ -2784,14 +2755,14 @@ bool filledPolygonRGBAMT(SDL_Renderer * renderer, const float * vx, const float 
 	/*
 	* Check temp array
 	*/
-	if (gfxPrimitivesPolyInts==NULL) {        
+	if (gfxPrimitivesPolyInts==NULL) {
 		gfxPrimitivesPolyAllocated = 0;
 	}
 
 	/*
 	* Update cache variables
 	*/
-	if ((polyInts==NULL) || (polyAllocated==NULL)) { 
+	if ((polyInts==NULL) || (polyAllocated==NULL)) {
 		gfxPrimitivesPolyIntsGlobal =  gfxPrimitivesPolyInts;
 		gfxPrimitivesPolyAllocatedGlobal = gfxPrimitivesPolyAllocated;
 	} else {
@@ -2807,7 +2778,7 @@ bool filledPolygonRGBAMT(SDL_Renderer * renderer, const float * vx, const float 
 	}
 
 	/*
-	* Determine Y maxima 
+	* Determine Y maxima
 	*/
 	miny = vy[0];
 	maxy = vy[0];
@@ -2820,7 +2791,7 @@ bool filledPolygonRGBAMT(SDL_Renderer * renderer, const float * vx, const float 
 	}
 
 	/*
-	* Draw, scanning y 
+	* Draw, scanning y
 	*/
 	for (y = miny; (y <= maxy); y++) {
 		ints = 0;
@@ -2847,13 +2818,13 @@ bool filledPolygonRGBAMT(SDL_Renderer * renderer, const float * vx, const float 
 			}
 			if ( ((y >= y1) && (y < y2)) || ((y == maxy) && (y > y1) && (y <= y2)) ) {
 				gfxPrimitivesPolyInts[ints++] = ((65536 * (y - y1)) / (y2 - y1)) * (x2 - x1) + (65536 * x1);
-			} 	    
+			}
 		}
 
 		qsort(gfxPrimitivesPolyInts, ints, sizeof(int), _gfxPrimitivesCompareInt);
 
 		/*
-		* Set color 
+		* Set color
 		*/
 		result = true;
 	    result &= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
@@ -2878,13 +2849,13 @@ bool filledPolygonRGBAMT(SDL_Renderer * renderer, const float * vx, const float 
 \param vx Vertex array containing X coordinates of the points of the filled polygon.
 \param vy Vertex array containing Y coordinates of the points of the filled polygon.
 \param n Number of points in the vertex array. Minimum number is 3.
-\param color The color value of the filled polygon to draw (0xRRGGBBAA). 
+\param color The color value of the filled polygon to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool filledPolygonColor(SDL_Renderer * renderer, const float * vx, const float * vy, Sint32 n, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return filledPolygonRGBAMT(renderer, vx, vy, n, c[0], c[1], c[2], c[3], NULL, NULL);
 }
 
@@ -2895,9 +2866,9 @@ bool filledPolygonColor(SDL_Renderer * renderer, const float * vx, const float *
 \param vx Vertex array containing X coordinates of the points of the filled polygon.
 \param vy Vertex array containing Y coordinates of the points of the filled polygon.
 \param n Number of points in the vertex array. Minimum number is 3.
-\param r The red value of the filled polygon to draw. 
-\param g The green value of the filled polygon to draw. 
-\param b The blue value of the filed polygon to draw. 
+\param r The red value of the filled polygon to draw.
+\param g The green value of the filled polygon to draw.
+\param b The blue value of the filed polygon to draw.
 \param a The alpha value of the filled polygon to draw.
 
 \returns Returns true on success, false on failure.
@@ -2978,7 +2949,7 @@ bool _HLineTextured(SDL_Renderer *renderer, float x1, float x2, float y, SDL_Tex
 		dst_rect.x= x1;
 		dst_rect.w = source_rect.w;
 		result = SDL_RenderTexture(renderer, texture, &source_rect, &dst_rect);
-	} else { 
+	} else {
 		/* we need to draw multiple times */
 		/* draw the first segment */
 		pixels_written = texture_w  - texture_x_walker;
@@ -3008,14 +2979,14 @@ bool _HLineTextured(SDL_Renderer *renderer, float x1, float x2, float y, SDL_Tex
 }
 
 /*!
-\brief Draws a polygon filled with the given texture (Multi-Threading Capable). 
+\brief Draws a polygon filled with the given texture (Multi-Threading Capable).
 
 \param renderer The renderer to draw on.
 \param vx array of x vector components
 \param vy array of x vector components
 \param n the amount of vectors in the vx and vy array
 \param texture the sdl surface to use to fill the polygon
-\param texture_dx the offset of the texture relative to the screeen. If you move the polygon 10 pixels 
+\param texture_dx the offset of the texture relative to the screeen. If you move the polygon 10 pixels
 to the left and want the texture to apear the same you need to increase the texture_dx value
 \param texture_dy see texture_dx
 \param polyInts Preallocated temp array storage for vertex sorting (used for multi-threaded operation)
@@ -3047,7 +3018,7 @@ bool texturedPolygonMT(SDL_Renderer *renderer, const float * vx, const float * v
 	}
 
 	/*
-	* Map polygon cache  
+	* Map polygon cache
 	*/
 	if ((polyInts==NULL) || (polyAllocated==NULL)) {
 		/* Use global cache */
@@ -3060,7 +3031,7 @@ bool texturedPolygonMT(SDL_Renderer *renderer, const float * vx, const float * v
 	}
 
 	/*
-	* Allocate temp array, only grow array 
+	* Allocate temp array, only grow array
 	*/
 	if (!gfxPrimitivesPolyAllocated) {
 		gfxPrimitivesPolyInts = (Sint32 *) malloc(sizeof(int) * n);
@@ -3080,14 +3051,14 @@ bool texturedPolygonMT(SDL_Renderer *renderer, const float * vx, const float * v
 	/*
 	* Check temp array
 	*/
-	if (gfxPrimitivesPolyInts==NULL) {        
+	if (gfxPrimitivesPolyInts==NULL) {
 		gfxPrimitivesPolyAllocated = 0;
 	}
 
 	/*
 	* Update cache variables
 	*/
-	if ((polyInts==NULL) || (polyAllocated==NULL)) { 
+	if ((polyInts==NULL) || (polyAllocated==NULL)) {
 		gfxPrimitivesPolyIntsGlobal =  gfxPrimitivesPolyInts;
 		gfxPrimitivesPolyAllocatedGlobal = gfxPrimitivesPolyAllocated;
 	} else {
@@ -3098,12 +3069,12 @@ bool texturedPolygonMT(SDL_Renderer *renderer, const float * vx, const float * v
 	/*
 	* Check temp array again
 	*/
-	if (gfxPrimitivesPolyInts==NULL) {        
+	if (gfxPrimitivesPolyInts==NULL) {
 		return false;
 	}
 
 	/*
-	* Determine X,Y minima,maxima 
+	* Determine X,Y minima,maxima
 	*/
 	miny = vy[0];
 	maxy = vy[0];
@@ -3129,9 +3100,9 @@ bool texturedPolygonMT(SDL_Renderer *renderer, const float * vx, const float * v
 		return false;
 	}
 	SDL_SetTextureBlendMode(textureAsTexture, SDL_BLENDMODE_BLEND);
-	
+
 	/*
-	* Draw, scanning y 
+	* Draw, scanning y
 	*/
 	result = true;
 	for (y = miny; (y <= maxy); y++) {
@@ -3159,7 +3130,7 @@ bool texturedPolygonMT(SDL_Renderer *renderer, const float * vx, const float * v
 			}
 			if ( ((y >= y1) && (y < y2)) || ((y == maxy) && (y > y1) && (y <= y2)) ) {
 				gfxPrimitivesPolyInts[ints++] = ((65536 * (y - y1)) / (y2 - y1)) * (x2 - x1) + (65536 * x1);
-			} 
+			}
 		}
 
 		qsort(gfxPrimitivesPolyInts, ints, sizeof(int), _gfxPrimitivesCompareInt);
@@ -3179,7 +3150,7 @@ bool texturedPolygonMT(SDL_Renderer *renderer, const float * vx, const float * v
 }
 
 /*!
-\brief Draws a polygon filled with the given texture. 
+\brief Draws a polygon filled with the given texture.
 
 This standard version is calling multithreaded versions with NULL cache parameters.
 
@@ -3188,7 +3159,7 @@ This standard version is calling multithreaded versions with NULL cache paramete
 \param vy array of x vector components
 \param n the amount of vectors in the vx and vy array
 \param texture the sdl surface to use to fill the polygon
-\param texture_dx the offset of the texture relative to the screeen. if you move the polygon 10 pixels 
+\param texture_dx the offset of the texture relative to the screeen. if you move the polygon 10 pixels
 to the left and want the texture to apear the same you need to increase the texture_dx value
 \param texture_dy see texture_dx
 
@@ -3210,17 +3181,17 @@ bool texturedPolygon(SDL_Renderer *renderer, const float * vx, const float * vy,
 static SDL_Texture *gfxPrimitivesFont[256];
 
 /*!
-\brief Pointer to the current font data. Default is a 8x8 pixel internal font. 
+\brief Pointer to the current font data. Default is a 8x8 pixel internal font.
 */
 static const unsigned char *currentFontdata = gfxPrimitivesFontdata;
 
 /*!
-\brief Width of the current font. Default is 8. 
+\brief Width of the current font. Default is 8.
 */
 static Uint32 charWidth = 8;
 
 /*!
-\brief Height of the current font. Default is 8. 
+\brief Height of the current font. Default is 8.
 */
 static Uint32 charHeight = 8;
 
@@ -3235,27 +3206,27 @@ static Uint32 charWidthLocal = 8;
 static Uint32 charHeightLocal = 8;
 
 /*!
-\brief Pitch of the current font in bytes. Default is 1. 
+\brief Pitch of the current font in bytes. Default is 1.
 */
 static Uint32 charPitch = 1;
 
 /*!
-\brief Characters 90deg clockwise rotations. Default is 0. Max is 3. 
+\brief Characters 90deg clockwise rotations. Default is 0. Max is 3.
 */
 static Uint32 charRotation = 0;
 
 /*!
-\brief Character data size in bytes of the current font. Default is 8. 
+\brief Character data size in bytes of the current font. Default is 8.
 */
 static Uint32 charSize = 8;
 
 /*!
 \brief Sets or resets the current global font data.
 
-The font data array is organized in follows: 
+The font data array is organized in follows:
 [fontdata] = [character 0][character 1]...[character 255] where
 [character n] = [byte 1 row 1][byte 2 row 1]...[byte {pitch} row 1][byte 1 row 2] ...[byte {pitch} row height] where
-[byte n] = [bit 0]...[bit 7] where 
+[byte n] = [bit 0]...[bit 7] where
 [bit n] = [0 for transparent pixel|1 for colored pixel]
 
 \param fontdata Pointer to array of font data. Set to NULL, to reset global font to the default 8x8 font.
@@ -3301,7 +3272,7 @@ void gfxPrimitivesSetFont(const void *fontdata, Uint32 cw, Uint32 ch)
 }
 
 /*!
-\brief Sets current global font character rotation steps. 
+\brief Sets current global font character rotation steps.
 
 Default is 0 (no rotation). 1 = 90deg clockwise. 2 = 180deg clockwise. 3 = 270deg clockwise.
 Changing the rotation, will reset the character cache.
@@ -3347,9 +3318,9 @@ void gfxPrimitivesSetFontRotation(Uint32 rotation)
 \param x X (horizontal) coordinate of the upper left corner of the character.
 \param y Y (vertical) coordinate of the upper left corner of the character.
 \param c The character to draw.
-\param r The red value of the character to draw. 
-\param g The green value of the character to draw. 
-\param b The blue value of the character to draw. 
+\param r The red value of the character to draw.
+\param g The green value of the character to draw.
+\param b The blue value of the character to draw.
 \param a The alpha value of the character to draw.
 
 \returns Returns true on success, false on failure.
@@ -3407,7 +3378,7 @@ bool characterRGBA(SDL_Renderer *renderer, float x, float y, char c, Uint8 r, Ui
 		pitch = character->pitch;
 
 		/*
-		* Drawing loop 
+		* Drawing loop
 		*/
 		patt = 0;
 		for (iy = 0; iy < charHeight; iy++) {
@@ -3441,7 +3412,7 @@ bool characterRGBA(SDL_Renderer *renderer, float x, float y, char c, Uint8 r, Ui
 		SDL_DestroySurface(character);
 
 		/*
-		* Check pointer 
+		* Check pointer
 		*/
 		if (gfxPrimitivesFont[ci] == NULL) {
 			return (false);
@@ -3449,14 +3420,14 @@ bool characterRGBA(SDL_Renderer *renderer, float x, float y, char c, Uint8 r, Ui
 	}
 
 	/*
-	* Set color 
+	* Set color
 	*/
 	result = true;
 	result &= SDL_SetTextureColorMod(gfxPrimitivesFont[ci], r, g, b);
 	result &= SDL_SetTextureAlphaMod(gfxPrimitivesFont[ci], a);
 
 	/*
-	* Draw texture onto destination 
+	* Draw texture onto destination
 	*/
 	result &= SDL_RenderTexture(renderer, gfxPrimitivesFont[ci], &srect, &drect);
 
@@ -3471,13 +3442,13 @@ bool characterRGBA(SDL_Renderer *renderer, float x, float y, char c, Uint8 r, Ui
 \param x X (horizontal) coordinate of the upper left corner of the character.
 \param y Y (vertical) coordinate of the upper left corner of the character.
 \param c The character to draw.
-\param color The color value of the character to draw (0xRRGGBBAA). 
+\param color The color value of the character to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool characterColor(SDL_Renderer * renderer, float x, float y, char c, Uint32 color)
 {
-	Uint8 *co = (Uint8 *)&color; 
+	Uint8 *co = (Uint8 *)&color;
 	return characterRGBA(renderer, x, y, c, co[0], co[1], co[2], co[3]);
 }
 
@@ -3485,20 +3456,20 @@ bool characterColor(SDL_Renderer * renderer, float x, float y, char c, Uint32 co
 /*!
 \brief Draw a string in the currently set font.
 
-The spacing between consequtive characters in the string is the fixed number of pixels 
+The spacing between consequtive characters in the string is the fixed number of pixels
 of the character width of the current global font.
 
 \param renderer The renderer to draw on.
 \param x X (horizontal) coordinate of the upper left corner of the string.
 \param y Y (vertical) coordinate of the upper left corner of the string.
 \param s The string to draw.
-\param color The color value of the string to draw (0xRRGGBBAA). 
+\param color The color value of the string to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool stringColor(SDL_Renderer * renderer, float x, float y, const char *s, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return stringRGBA(renderer, x, y, s, c[0], c[1], c[2], c[3]);
 }
 
@@ -3509,9 +3480,9 @@ bool stringColor(SDL_Renderer * renderer, float x, float y, const char *s, Uint3
 \param x X (horizontal) coordinate of the upper left corner of the string.
 \param y Y (vertical) coordinate of the upper left corner of the string.
 \param s The string to draw.
-\param r The red value of the string to draw. 
-\param g The green value of the string to draw. 
-\param b The blue value of the string to draw. 
+\param r The red value of the string to draw.
+\param g The green value of the string to draw.
+\param b The blue value of the string to draw.
 \param a The alpha value of the string to draw.
 
 \returns Returns true on success, false on failure.
@@ -3571,7 +3542,7 @@ double _evaluateBezier (double *data, Sint32 ndata, double t)
 		return(data[ndata-1]);
 	}
 
-	/* Adjust t to the range 0.0 to 1.0 */ 
+	/* Adjust t to the range 0.0 to 1.0 */
 	mu=t/(double)ndata;
 
 	/* Calculate interpolate */
@@ -3612,13 +3583,13 @@ double _evaluateBezier (double *data, Sint32 ndata, double t)
 \param vy Vertex array containing Y coordinates of the points of the bezier curve.
 \param n Number of points in the vertex array. Minimum number is 3.
 \param s Number of steps for the interpolation. Minimum number is 2.
-\param color The color value of the bezier curve to draw (0xRRGGBBAA). 
+\param color The color value of the bezier curve to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool bezierColor(SDL_Renderer * renderer, const float * vx, const float * vy, Sint32 n, Sint32 s, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return bezierRGBA(renderer, vx, vy, n, s, c[0], c[1], c[2], c[3]);
 }
 
@@ -3630,9 +3601,9 @@ bool bezierColor(SDL_Renderer * renderer, const float * vx, const float * vy, Si
 \param vy Vertex array containing Y coordinates of the points of the bezier curve.
 \param n Number of points in the vertex array. Minimum number is 3.
 \param s Number of steps for the interpolation. Minimum number is 2.
-\param r The red value of the bezier curve to draw. 
-\param g The green value of the bezier curve to draw. 
-\param b The blue value of the bezier curve to draw. 
+\param r The red value of the bezier curve to draw.
+\param g The green value of the bezier curve to draw.
+\param b The blue value of the bezier curve to draw.
 \param a The alpha value of the bezier curve to draw.
 
 \returns Returns true on success, false on failure.
@@ -3645,7 +3616,7 @@ bool bezierRGBA(SDL_Renderer * renderer, const float * vx, const float * vy, Sin
 	float x1, y1, x2, y2;
 
 	/*
-	* Sanity check 
+	* Sanity check
 	*/
 	if (n < 3) {
 		return (false);
@@ -3655,7 +3626,7 @@ bool bezierRGBA(SDL_Renderer * renderer, const float * vx, const float * vy, Sin
 	}
 
 	/*
-	* Variable setup 
+	* Variable setup
 	*/
 	stepsize=(double)1.0/(double)s;
 
@@ -3666,23 +3637,23 @@ bool bezierRGBA(SDL_Renderer * renderer, const float * vx, const float * vy, Sin
 	if ((y=(double *)malloc(sizeof(double)*(n+1)))==NULL) {
 		free(x);
 		return(false);
-	}    
+	}
 	for (i=0; i<n; i++) {
 		x[i]=(double)vx[i];
 		y[i]=(double)vy[i];
-	}      
+	}
 	x[n]=(double)vx[0];
 	y[n]=(double)vy[0];
 
 	/*
-	* Set color 
+	* Set color
 	*/
 	result = true;
 	result &= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
 	result &= SDL_SetRenderDrawColor(renderer, r, g, b, a);
 
 	/*
-	* Draw 
+	* Draw
 	*/
 	t=0.0;
 	x1=(Sint32)lrint(_evaluateBezier(x,n+1,t));
@@ -3713,13 +3684,13 @@ bool bezierRGBA(SDL_Renderer * renderer, const float * vx, const float * vy, Sin
 \param x2 X coordinate of the second point of the line.
 \param y2 Y coordinate of the second point of the line.
 \param width Width of the line in pixels. Must be >0.
-\param color The color value of the line to draw (0xRRGGBBAA). 
+\param color The color value of the line to draw (0xRRGGBBAA).
 
 \returns Returns true on success, false on failure.
 */
 bool thickLineColor(SDL_Renderer *renderer, float x1, float y1, float x2, float y2, float width, Uint32 color)
 {
-	Uint8 *c = (Uint8 *)&color; 
+	Uint8 *c = (Uint8 *)&color;
 	return thickLineRGBA(renderer, x1, y1, x2, y2, width, c[0], c[1], c[2], c[3]);
 }
 
@@ -3732,9 +3703,9 @@ bool thickLineColor(SDL_Renderer *renderer, float x1, float y1, float x2, float 
 \param x2 X coordinate of the second point of the line.
 \param y2 Y coordinate of the second point of the line.
 \param width Width of the line in pixels. Must be >0.
-\param r The red value of the character to draw. 
-\param g The green value of the character to draw. 
-\param b The blue value of the character to draw. 
+\param r The red value of the character to draw.
+\param g The green value of the character to draw.
+\param b The blue value of the character to draw.
 \param a The alpha value of the character to draw.
 
 \returns Returns true on success, false on failure.
@@ -3757,12 +3728,12 @@ bool thickLineRGBA(SDL_Renderer *renderer, float x1, float y1, float x2, float y
 	/* Special case: thick "point" */
 	if ((x1 == x2) && (y1 == y2)) {
 		wh = width / 2;
-		return boxRGBA(renderer, x1 - wh, y1 - wh, x2 + width, y2 + width, r, g, b, a);		
+		return boxRGBA(renderer, x1 - wh, y1 - wh, x2 + width, y2 + width, r, g, b, a);
 	}
 
 	/* Special case: width == 1 */
 	if (width == 1) {
-		return lineRGBA(renderer, x1, y1, x2, y2, r, g, b, a);		
+		return lineRGBA(renderer, x1, y1, x2, y2, r, g, b, a);
 	}
 
 	/* Calculate offsets for sides */
