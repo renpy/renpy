@@ -20,29 +20,37 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1900 python:
-    config.audio_directory = 'audio'
+    config.audio_directory = None
+
+    config.audio_directories = [ "audio" ]
+
+    confuig,
 
     def _scan_audio_directory():
 
+        directories = config.audio_directories
+
+        if config.audio_directory and config.audio_directory not in directories:
+            directories = directories + [ config.audio_directory ]
+
         import os
 
-        if not config.audio_directory:
-            return
+        for directory in directories:
 
-        prefix = config.audio_directory.rstrip('/') + '/'
+            prefix = directory.strip('/') + '/'
 
-        for fn in renpy.list_files():
-            if not fn.startswith(prefix):
-                continue
+            for fn in renpy.list_files():
+                if not fn.startswith(prefix):
+                    continue
 
-            basename = os.path.basename(fn)
-            base, ext = os.path.splitext(basename)
+                basename = os.path.basename(fn)
+                base, ext = os.path.splitext(basename)
 
-            if not ext.lower() in [ ".wav", ".mp2", ".mp3", ".ogg", ".opus", ".flac" ]:
-                continue
+                if not ext.lower() in [ ".wav", ".mp2", ".mp3", ".ogg", ".opus", ".flac" ]:
+                    continue
 
-            base = base.lower()
-            audio.__dict__.setdefault(base, fn)
+                base = base.lower()
+                audio.__dict__.setdefault(base, fn)
 
 init python:
     _scan_audio_directory()

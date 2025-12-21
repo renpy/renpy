@@ -10,6 +10,13 @@ Changelog (Ren'Py 7.x-)
 8.6.0
 -----
 
+
+Features
+--------
+
+The new :var:`config.audio_directories` variable is a list of directories that are searched for audio Files
+and used to populate the :ref:`audio-namespace <audio-namespace>`.
+
 Other Changes
 -------------
 

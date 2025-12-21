@@ -700,6 +700,11 @@ Layers
 Media (Music, Sound, and Video)
 -------------------------------
 
+.. var:: config.audio_directories = [ 'audio' ]
+
+    A list of directories that are searched for audio files and used to populate the
+    :ref:`audio-namespace`.
+
 .. var:: config.audio_filename_callback = None
 
     If not None, this is a function that is called with an audio filename,

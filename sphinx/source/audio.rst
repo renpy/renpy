@@ -77,6 +77,8 @@ can be played with::
 
     play music town_theme
 
+The directories that are searched for files can be changed by modifying :var:`config.audio_directories`.
+
 The usable name is determined by stripping the extension and forcing the rest of
 the filename to lower case. This is only the case for audio files with names that
 can be expressed as Python variables, for example: :file:`my song.mp3`, :file:`8track.opus`,
