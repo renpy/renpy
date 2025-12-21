@@ -192,9 +192,6 @@ that feature.
     "say"
         Normal say statements.
 
-    "say-bubble"
-        Say statements in bubble mode.
-
     "say-nvl"
         Say statements in NVL mode.
 
