@@ -24,8 +24,6 @@ init -1900 python:
 
     config.audio_directories = [ "audio" ]
 
-    confuig,
-
     def _scan_audio_directory():
 
         directories = config.audio_directories
