@@ -21,8 +21,11 @@
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+#ifdef __EMSCRIPTEN__
+
 #include <stdlib.h>
 #include <emscripten.h>
+#include <emscripten/console.h>
 
 #include "ec_sign_core.h"
 
@@ -221,12 +224,15 @@ int VerifyDer(const unsigned char *public_key_der, size_t key_len, const char *d
 void GeneratePrivateKey(unsigned char **priv_key_der, size_t *priv_len)
 {
     int len;
+    emscripten_console_log("Key generated started");
     if (generateKey((char **)priv_key_der, &len))
     {
+        emscripten_console_log("Key generated successful");
         *priv_len = len;
     }
     else
     {
+        emscripten_console_log("Key generated failed");
         *priv_len = 0;
         *priv_key_der = NULL;
     }
@@ -257,3 +263,5 @@ int VerifyKeyDer(int public, const unsigned char *key_der, size_t key_len)
         return CheckPrivateKey((char *)key_der, (int)key_len);
     }
 }
+
+#endif // __EMSCRIPTEN__
