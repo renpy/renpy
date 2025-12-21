@@ -43,7 +43,7 @@ init -1100 python:
         if "RENPY_EXPERIMENTAL" in os.environ:
             return
 
-        if version <= (8, 5, 0):
+        if version <= (8, 4, 99):
             config.images_directory = "images"
             config.image_directories = [ ]
             store.pygame_sdl2 = renpy.pygame
