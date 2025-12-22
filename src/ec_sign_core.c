@@ -13,8 +13,6 @@ Code is partially based on Demos from OpenSSL. They are released with following 
 
  ***********************************************************************************/
 
-#ifndef __EMSCRIPTEN__
-
 #include "ec_sign_core.h"
 
 #include <openssl/evp.h>
@@ -382,5 +380,3 @@ cleanup:
     EVP_MD_CTX_free(verify_context);
     return ret;
 }
-
-#endif // __EMSCRIPTEN__
