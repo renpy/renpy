@@ -1182,10 +1182,13 @@ class Lexer(object):
         if label and label[0] != ".":
             self.global_label = label.split(".")[0]
 
-    def label_name(self):
+    def label_name(self, declare=False):
         """
         Try to parse label name. Returns name in form of "global.local" if local
         is present, "global" otherwise; or None if it doesn't parse.
+
+        `declare`
+            Unused, retained for public api compatibility.
         """
 
         old_pos = self.pos
