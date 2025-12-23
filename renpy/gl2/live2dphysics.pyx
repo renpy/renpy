@@ -98,7 +98,6 @@ cdef class Live2DPhysics:
         cdef int i
         cdef int setting_index
         cdef int base_index
-        cdef float radius_y
         cdef Particle *particle
         cdef Particle *prev_particle
         cdef Particle *base_particle
@@ -116,9 +115,8 @@ cdef class Live2DPhysics:
             for i in range(1, self.settings[setting_index].particle_count):
                 particle = &self.particles[base_index + i]
                 prev_particle = &self.particles[base_index + i - 1]
-                radius_y = self.particles[i].radius
 
-                vec2_set(&particle.initial_position, prev_particle.initial_position.x, prev_particle.initial_position.y + radius_y)
+                vec2_set(&particle.initial_position, prev_particle.initial_position.x, prev_particle.initial_position.y + particle.radius)
                 particle.position = particle.initial_position
                 particle.last_position = particle.initial_position
                 vec2_set(&particle.last_gravity, 0.0, 1.0)
