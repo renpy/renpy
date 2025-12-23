@@ -190,6 +190,7 @@ cdef class Live2DModel:
     cdef const csmVector4 *drawable_screen_colors
 
     cdef public dict parameters
+    cdef dict parameter_indices
     cdef public dict parts
 
     cdef public dict parameter_groups
@@ -285,6 +286,7 @@ cdef class Live2DModel:
         self.drawable_screen_colors = csmGetDrawableScreenColors(self.model)
 
         self.parameters = { }
+        self.parameter_indices = {}
 
         for i in range(self.parameter_count):
             name = self.parameter_ids[i].decode("utf-8")
@@ -294,6 +296,8 @@ cdef class Live2DModel:
                 self.parameter_maximum_values[i],
                 self.parameter_default_values[i],
                 )
+
+            self.parameter_indices[name] = i
 
         self.parts = { }
 
@@ -310,7 +314,7 @@ cdef class Live2DModel:
         physics_path = model_json.get("Physics", None)
 
         if physics_path:
-            with renpy.loader.load(self.base + physics_path, directory = "images") as f:
+            with renpy.loader.load(base + physics_path, directory = "images") as f:
                 physics_json = json.load(f)
 
             self.physics = Live2DPhysics()
