@@ -125,6 +125,9 @@ cubism
 CubismSdkForNative-*.zip
 CubismSdkForWeb-*.zip
 
+# Inochi2D
+/inochi2d
+
 # Created files.
 /screenshot*
 .android.json
