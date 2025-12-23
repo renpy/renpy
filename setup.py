@@ -133,6 +133,7 @@ def main():
 
     if cubism:
         cython("renpy.gl2.live2dmodel", [ "src/live2dcsm.c" ],)
+        cython("renpy.gl2.live2dphysics")
 
     cython("renpy.gl2.assimp", [ "src/assimpio.cc" ], language="c++")
 

@@ -281,7 +281,7 @@ class Live2DCommon(object):
             self.model_json = json.load(f)
 
         # The model created from the moc3 file.
-        self.model = renpy.gl2.live2dmodel.Live2DModel(self.base + self.model_json["FileReferences"]["Moc"])  # type: ignore
+        self.model = renpy.gl2.live2dmodel.Live2DModel(self.base, self.model_json["FileReferences"])  # type: ignore
 
         # The texture images.
         self.textures = []
@@ -1096,6 +1096,8 @@ class Live2D(renpy.display.displayable.Displayable):
             user_redraw = None
         else:
             user_redraw = common.update_function(self, st)
+
+        model.evaluate_physics(st)
 
         # Determine when to redraw.
         redraws = [new_redraw, old_redraw, expression_redraw, user_redraw]
