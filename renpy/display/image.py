@@ -834,7 +834,7 @@ class ShownImageInfo(renpy.object.Object):
 
             # A set of (layer, tag) pairs that are being shown on the
             # screen right now.
-            self.shown = set()
+            self.shown: set[tuple[str, str]] = set()
 
         else:
             self.attributes = old.attributes.copy()
@@ -860,7 +860,7 @@ class ShownImageInfo(renpy.object.Object):
 
         return self.attributes.get((layer, tag), default)
 
-    def showing(self, layer, name, exact=False):
+    def showing(self, layer: str, name: tuple[str, ...], exact: bool = False) -> bool | None:
         """
         Returns true if name is the prefix of an image that is showing
         on layer, or false otherwise.
@@ -888,7 +888,7 @@ class ShownImageInfo(renpy.object.Object):
 
         return True
 
-    def get_showing_tags(self, layer):
+    def get_showing_tags(self, layer: str) -> set[str]:
         """
         Returns the set of tags being shown on `layer`.
         """
