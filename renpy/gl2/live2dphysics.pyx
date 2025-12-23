@@ -494,7 +494,7 @@ cdef class Live2DPhysics:
 
             last_gravity_copy.x = particle.last_gravity.x
             last_gravity_copy.y = particle.last_gravity.y
-            radian = direction_to_radian_vec2(&last_gravity_copy, &current_gravity) / air_resistance
+            radian = direction_to_radian(last_gravity_copy.x, last_gravity_copy.y, current_gravity.x, current_gravity.y) / air_resistance
 
             cos_radian = cos(radian)
             sin_radian = sin(radian)
@@ -636,7 +636,7 @@ cdef inline float output_get_value(OutputData *out, float translation_x, float t
             gravity_x = -1.0 * parent_gravity_x
             gravity_y = -1.0 * parent_gravity_y
 
-        output = direction_to_radian_floats(gravity_x, gravity_y, translation_x, translation_y)
+        output = direction_to_radian(gravity_x, gravity_y, translation_x, translation_y)
 
     if out.reflect:
         return -output
@@ -698,25 +698,13 @@ cdef inline float normalize_angle(float ret) noexcept nogil:
 
     return ret
 
-cdef inline float direction_to_radian_floats(float from_x, float from_y, float to_x, float to_y) noexcept nogil:
+cdef inline float direction_to_radian(float from_x, float from_y, float to_x, float to_y) noexcept nogil:
     """
     Calculate the angle between two direction vectors.
     """
 
     cdef float q1 = atan2(to_y, to_x)
     cdef float q2 = atan2(from_y, from_x)
-
-    return normalize_angle(q1 - q2)
-
-cdef inline float direction_to_radian_vec2(Vec2 *from_direction, Vec2 *to_direction) noexcept nogil:
-    """
-    Calculate the angle between two direction vectors.
-
-    Optimized for nogil contexts where Vec2 structs are already available.
-    """
-    
-    cdef float q1 = atan2(to_direction.y, to_direction.x)
-    cdef float q2 = atan2(from_direction.y, from_direction.x)
 
     return normalize_angle(q1 - q2)
 
