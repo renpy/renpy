@@ -716,7 +716,6 @@ cdef inline float normalize_parameter_value(float value, float parameter_minimum
     """
     
     cdef float result = 0.0
-    cdef float minimum
     cdef float max_value = fmax(parameter_minimum, parameter_maximum)
     cdef float min_value
     cdef float min_norm_value, max_norm_value, middle_norm_value
@@ -735,8 +734,7 @@ cdef inline float normalize_parameter_value(float value, float parameter_minimum
     max_norm_value = fmax(normalized_minimum, normalized_maximum)
     middle_norm_value = normalized_default
 
-    minimum = fmin(min_value, max_value)
-    middle_value = minimum + 0.5 * fmax(min_value, max_value) - minimum
+    middle_value = 0.5 * (fmin(min_value, max_value) + fmax(min_value, max_value))
 
     param_value = value - middle_value
 
