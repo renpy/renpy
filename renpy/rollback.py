@@ -845,12 +845,6 @@ class RollbackLog(renpy.object.Object):
 
         renpy.game.context().force_checkpoint = True
 
-    def can_rollback(self):
-        """
-        Returns True if we can rollback.
-        """
-
-        return self.rollback_limit > 0
 
     def load_failed(self):
         """
@@ -876,6 +870,34 @@ class RollbackLog(renpy.object.Object):
         renpy.game.contexts[0].goto_label(lfl)
 
         raise renpy.game.RestartTopContext()
+
+    def can_rollback(self, checkpoints=1, force=False):
+        """
+        This checks to see if we can rollback the specified number
+        of checkpoints. If we can, it returns True. If we can't,
+        it returns False.
+        """
+
+        if checkpoints and (self.rollback_limit <= 0) and not force:
+            return False
+
+        # Find the place to roll back to.
+        for rb in reversed(self.log):
+
+            if rb.hard_checkpoint:
+                if self.rollback_limit:
+                    checkpoints -= 1
+                elif self.rollback_block:
+                    self.rollback_block -= 1
+
+            if rb.hard_checkpoint:
+                checkpoints -= 1
+
+            if checkpoints <= 0:
+                if renpy.game.script.has_label(rb.context.current):
+                    return True
+
+        return False
 
     def rollback(
         self, checkpoints, force=False, label=None, greedy=True, on_load=False, abnormal=True, current_label=None
