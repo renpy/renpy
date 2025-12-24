@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2026 B.Kats and Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -18,6 +18,22 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+########################################
+## WARNING for when editing this file ##
+########################################
+
+# This file contain functions that need to support async handling for the web build
+# Renaming or reordering any functions will break the async handling
+# The cython generated names for the following functions need to be listed
+# in the ASYNCIFY_ONLY list: (tasks/renpython.py; 2 names for each function)
+# - generate_private_key
+# - sign_data
+# - verify_data
+# - get_public_key_from_private
+# - validate_private_key
+# - validate_public_key
 
 from libc.stdlib cimport free
 import base64
