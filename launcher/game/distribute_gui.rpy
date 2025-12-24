@@ -273,7 +273,7 @@ label add_update_pem:
         interface.info("You're trying to build an update, but an update.pem file doesn't exist.\n\nThis file is used to sign updates, and will be automatically created in your projects's base directory.\n\nYou'll need to back up update.pem and keep it safe.", cancel=Jump("build_distributions"))
 
         import renpy.ecsign
-        key = renpy.ecsign.DERtoPEM(renpy.ecsign.GeneratePrivateKeyAsDER(), "PRIVATE")
+        key = renpy.ecsign.der_to_pem(renpy.ecsign.generate_private_key(), "PRIVATE")
 
         with open(os.path.join(project.current.path, "update.pem"), "wb") as f:
             f.write(key)

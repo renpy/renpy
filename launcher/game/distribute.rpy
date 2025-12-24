@@ -1720,11 +1720,11 @@ fix_dlc("renios", "renios")
 
             # Write the signed file.
             with open(self.find_update_pem(), "rb") as f:
-                signing_key = renpy.ecsign.PEMtoDER(f.read())
+                signing_key = renpy.ecsign.pem_to_der(f.read())
 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.ecdsa"))
             with open(fn, "wb") as f:
-                f.write(renpy.ecsign.SignDataWithDER(update_data, signing_key))
+                f.write(renpy.ecsign.sign_data(update_data, signing_key))
 
         def find_update_pem(self):
             if self.build['renpy']:
@@ -1734,11 +1734,11 @@ fix_dlc("renios", "renios")
 
         def make_key_pem(self):
             with open(self.find_update_pem(), "rb") as f:
-                signing_key = renpy.ecsign.PEMtoDER(f.read())
+                signing_key = renpy.ecsign.pem_to_der(f.read())
 
             key_pem = self.temp_filename("key.pem")
             with open(key_pem, "wb") as f:
-                f.write(renpy.ecsign.DERtoPEM(renpy.ecsign.GetPublicKeyFromPrivateDER(signing_key), "PUBLIC"))
+                f.write(renpy.ecsign.der_to_pem(renpy.ecsign.get_public_key_from_private(signing_key), "PUBLIC"))
 
         def dump(self):
             for k, v in sorted(self.file_lists.items()):

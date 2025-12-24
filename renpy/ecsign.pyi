@@ -19,12 +19,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-def GeneratePrivateKeyAsDER() -> bytes | None:
+def generate_private_key() -> bytes | None:
     """
-        Generates a EC private key
+        Generates a EC private key and return key in DER format
     """
 
-def SignDataWithDER(data : bytes, private_key : bytes) -> bytes:
+def sign_data(data : bytes, private_key : bytes) -> bytes:
     """
         returns ecdsa signature for data using sha1 hash
 
@@ -32,10 +32,10 @@ def SignDataWithDER(data : bytes, private_key : bytes) -> bytes:
             The data to sign
 
         `private_key`
-            The private key to use (EC)
+            The private key to use in DER format
     """
 
-def VerifyDataWithDER(data : bytes, public_key : bytes, sign : bytes) -> bool:
+def verify_data(data : bytes, public_key : bytes, sign : bytes) -> bool:
     """
         verifies ecdsa signature for data using sha1 hash and returns result
 
@@ -43,36 +43,36 @@ def VerifyDataWithDER(data : bytes, public_key : bytes, sign : bytes) -> bool:
             The data to sign
 
         `public_key`
-            The public key to use (EC)
+            The public key to use in DER format
 
         `sign`
             The signature to verify
     """
 
-def GetPublicKeyFromPrivateDER(private_key : bytes) -> bytes | None:
+def get_public_key_from_private(private_key : bytes) -> bytes | None:
     """
-        returns public key from the private key
+        returns public key in DER format from the private key
 
         `private_key`
-            The private key to use (EC)
+            The private key to use in DER format
     """
 
-def VerifyPrivateKeyDER(private_key : bytes) -> bool:
+def validate_private_key(private_key : bytes) -> bool:
     """
-        Verifies if given key is a valid private key
-    """
-
-def VerifyPublicKeyDER(public_key : bytes) -> bool:
-    """
-        Verifies if given key is a valid public key
+        Validates if given key is a private key
     """
 
-def PEMtoDER(pem : bytes | str) -> bytes:
+def validate_public_key(public_key : bytes) -> bool:
+    """
+        Validates if given key is a public key
+    """
+
+def pem_to_der(pem : bytes | str) -> bytes:
     """
         unpacks DER from a PEM file
     """
 
-def DERtoPEM(der : bytes, name : str) -> bytes:
+def der_to_pem(der : bytes, name : str) -> bytes:
     """
         packs a DER into a PEM file
     """

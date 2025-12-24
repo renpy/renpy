@@ -26,12 +26,12 @@
 
 #include <stdlib.h>
 
-int SignDer(const unsigned char *priv_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len);
-int VerifyDer(const unsigned char *public_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len);
+int ECSign(const unsigned char *priv_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len);
+int ECVerify(const unsigned char *public_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len);
 
-void GeneratePrivateKey(unsigned char **priv_key_der, size_t *priv_len);
-void GetPublicKeyFromPrivate(const unsigned char *priv_key_der, size_t priv_len, unsigned char **public_key_der, size_t *pub_len);
+void ECGeneratePrivateKey(unsigned char **priv_key_der, size_t *priv_len);
+void ECGetPublicKeyFromPrivate(const unsigned char *priv_key_der, size_t priv_len, unsigned char **public_key_der, size_t *pub_len);
 
-int VerifyKeyDer(int public, const unsigned char *key_der, size_t key_len);
+int ECValidateKey(int public, const unsigned char *key_der, size_t key_len);
 
 #endif

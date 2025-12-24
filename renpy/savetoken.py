@@ -87,8 +87,8 @@ def sign_data(data):
     rv = ""
 
     for i in signing_keys:
-        sig = renpy.ecsign.SignDataWithDER(data, i)
-        public = renpy.ecsign.GetPublicKeyFromPrivateDER(i)
+        sig = renpy.ecsign.sign_data(data, i)
+        public = renpy.ecsign.get_public_key_from_private(i)
         rv += encode_line("signature", public, sig)
 
     return rv
@@ -109,7 +109,7 @@ def verify_data(data, signatures, check_verifying=True):
             if check_verifying and key not in verifying_keys:
                 continue
 
-            return renpy.ecsign.VerifyDataWithDER(data, key, sig)
+            return renpy.ecsign.verify_data(data, key, sig)
 
     return False
 
@@ -202,10 +202,10 @@ def create_token(filename):
     except Exception:
         pass
 
-    sk = renpy.ecsign.GeneratePrivateKeyAsDER()
+    sk = renpy.ecsign.generate_private_key()
     if sk is None:
         raise Exception("Failed to generate signing key")
-    vk = renpy.ecsign.GetPublicKeyFromPrivateDER(sk)
+    vk = renpy.ecsign.get_public_key_from_private(sk)
     if vk is not None:
         line = encode_line("signing-key", sk, vk)
 
@@ -274,7 +274,7 @@ def load_tokens(keys_fn):
             kind, key, _ = decode_line(l)
 
             if kind == "signing-key":
-                public = renpy.ecsign.GetPublicKeyFromPrivateDER(key)
+                public = renpy.ecsign.get_public_key_from_private(key)
                 if public is not None:
                     signing_keys.append(key)
                     verifying_keys.append(public)
@@ -312,11 +312,11 @@ def init_tokens():
 
     for tk in renpy.config.save_token_keys:
         k = base64.b64decode(tk)
-        if renpy.ecsign.VerifyPublicKeyDER(k):
+        if renpy.ecsign.validate_public_key(k):
             verifying_keys.append(k)
         else:
-            if renpy.ecsign.VerifyPrivateKeyDER(k):
-                public = renpy.ecsign.GetPublicKeyFromPrivateDER(k)
+            if renpy.ecsign.validate_private_key(k):
+                public = renpy.ecsign.get_public_key_from_private(k)
                 if public is not None:
                     vk = base64.b64encode(public).decode("utf-8")
                 else:
@@ -368,7 +368,7 @@ def get_save_token_keys():
     rv = []
 
     for i in signing_keys:
-        public = renpy.ecsign.GetPublicKeyFromPrivateDER(i)
+        public = renpy.ecsign.get_public_key_from_private(i)
 
         if public is not None:
             rv.append(base64.b64encode(public).decode("utf-8"))

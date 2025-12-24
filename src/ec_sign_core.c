@@ -13,6 +13,8 @@ Code is partially based on Demos from OpenSSL. They are released with following 
 
  ***********************************************************************************/
 
+#ifndef __EMSCRIPTEN__
+
 #include "ec_sign_core.h"
 
 #include <openssl/evp.h>
@@ -40,7 +42,7 @@ static int Verify(EVP_PKEY *pub_key, const void *data, size_t data_len, const vo
 *******************************
 */
 
-int SignDer(const unsigned char *priv_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len)
+int ECSign(const unsigned char *priv_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len)
 {
     EVP_PKEY *pkey = NULL;
     int ret = 0;
@@ -79,7 +81,7 @@ cleanup:
     return ret;
 }
 
-int VerifyDer(const unsigned char *public_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len)
+int ECVerify(const unsigned char *public_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len)
 {
     EVP_PKEY *pkey = NULL;
     int ret = 0;
@@ -118,7 +120,7 @@ cleanup:
     return ret;
 }
 
-void GeneratePrivateKey(unsigned char **priv_key_der, size_t *priv_len)
+void ECGeneratePrivateKey(unsigned char **priv_key_der, size_t *priv_len)
 {
     OSSL_ENCODER_CTX *ectx = NULL;
     EVP_PKEY *privkey = NULL;
@@ -185,7 +187,7 @@ cleanup:
     EVP_PKEY_free(privkey);
 }
 
-void GetPublicKeyFromPrivate(const unsigned char *priv_key_der, size_t priv_len, unsigned char **public_key_der, size_t *pub_len)
+void ECGetPublicKeyFromPrivate(const unsigned char *priv_key_der, size_t priv_len, unsigned char **public_key_der, size_t *pub_len)
 {
     OSSL_ENCODER_CTX *ectx = NULL;
     EVP_PKEY *privkey = NULL;
@@ -207,7 +209,7 @@ void GetPublicKeyFromPrivate(const unsigned char *priv_key_der, size_t priv_len,
     EVP_PKEY_free(privkey);
 }
 
-int VerifyKeyDer(int public, const unsigned char *key_der, size_t key_len)
+int ECValidateKey(int public, const unsigned char *key_der, size_t key_len)
 {
     // Get key from DER
     EVP_PKEY *pkey = GetKeyFromDer(public, key_der, key_len);
@@ -380,3 +382,5 @@ cleanup:
     EVP_MD_CTX_free(verify_context);
     return ret;
 }
+
+#endif // __EMSCRIPTEN__
