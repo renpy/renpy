@@ -941,6 +941,10 @@ class RollbackLog(renpy.object.Object):
         if checkpoints and (self.rollback_limit <= 0) and (not force):
             return
 
+        raise RollbackException(self, checkpoints, label, greedy, on_load, abnormal, current_label)
+
+    def rollback_core(self, checkpoints, label=None, greedy=True, on_load=False, abnormal=True, current_label=None):
+
         self.purge_unreachable(self.get_roots())
 
         revlog = []
@@ -969,7 +973,7 @@ class RollbackLog(renpy.object.Object):
             revlog.reverse()
             self.log.extend(revlog)
 
-            if force:
+            if on_load:
                 self.load_failed()
             else:
                 print("Can't find a place to rollback to. Not rolling back.")
@@ -993,47 +997,28 @@ class RollbackLog(renpy.object.Object):
 
             revlog.append(self.log.pop())
 
-        # Decide if we're replacing the current context (rollback command),
-        # or creating a new set of contexts (loading).
+        if on_load and revlog[-1].retain_after_load:
+            retained = revlog.pop()
+            self.retain_after_load_flag = True
+        else:
+            retained = None
 
-        old_contexts = list(renpy.game.contexts)
+        come_from = None
 
-        try:
-            if renpy.game.context().rollback:
-                replace_context = False
-                other_contexts = []
-            else:
-                replace_context = True
-                other_contexts = renpy.game.contexts[1:]
-                renpy.game.contexts = renpy.game.contexts[0:1]
+        if current_label is not None:
+            come_from = renpy.game.context().current
+            label = current_label
 
-            if on_load and revlog[-1].retain_after_load:
-                retained = revlog.pop()
-                self.retain_after_load_flag = True
-            else:
-                retained = None
+        # Actually roll things back.
+        for rb in revlog:
+            rb.rollback()
 
-            come_from = None
+            if rb.forward is not None:
+                self.forward.insert(0, Forward(rb.context.current, rb.forward, rb.fixed))
 
-            if current_label is not None:
-                come_from = renpy.game.context().current
-                label = current_label
-
-            # Actually roll things back.
-            for rb in revlog:
-                rb.rollback()
-
-                if rb.forward is not None:
-                    self.forward.insert(0, Forward(rb.context.current, rb.forward, rb.fixed))
-
-            if retained is not None:
-                retained.rollback_control()
-                self.log.append(retained)
-
-        except Exception:
-            # If there was an exception, restore the context list.
-            renpy.game.contexts = old_contexts
-            raise
+        if retained is not None:
+            retained.rollback_control()
+            self.log.append(retained)
 
         # Preserve come_from.
         if (label is not None) and (come_from is None):
@@ -1046,7 +1031,7 @@ class RollbackLog(renpy.object.Object):
         renpy.game.interface.suppress_transition = abnormal
 
         # If necessary, reset the RNG.
-        if force:
+        if on_load:
             rng.reset()
             del self.forward[:]
 
@@ -1060,37 +1045,20 @@ class RollbackLog(renpy.object.Object):
         for i in renpy.game.contexts:
             i.scene_lists.remove_all_hidden()
 
-        renpy.game.contexts.extend(other_contexts)
-
         renpy.exports.execute_default_statement(False)
 
         self.mutated.clear()
         renpy.python.begin_stores()
 
         # Restart the context or the top context.
-        if replace_context:
-            if force_checkpoint:
-                renpy.game.contexts[0].force_checkpoint = True
+        self.current = Rollback()
+        self.current.context = renpy.game.context().rollback_copy()
 
-            self.current = Rollback()
-            self.current.context = renpy.game.contexts[0].rollback_copy()
+        if self.log is not None:
+            self.log.append(self.current)
 
-            if self.log is not None:
-                self.log.append(self.current)
-
-            raise renpy.game.RestartTopContext()
-
-        else:
-            self.current = Rollback()
-            self.current.context = renpy.game.context().rollback_copy()
-
-            if self.log is not None:
-                self.log.append(self.current)
-
-            if force_checkpoint:
-                renpy.game.context().force_checkpoint = True
-
-            raise renpy.game.RestartContext()
+        if force_checkpoint:
+            renpy.game.context().force_checkpoint = True
 
     def freeze(self, wait=None):
         """
@@ -1117,16 +1085,24 @@ class RollbackLog(renpy.object.Object):
         frozen state.
         """
 
+
     def unfreeze(self, roots, label=None):
         """
         Used to unfreeze the game state after a load of this log
-        object. This call will always throw an exception. If we're
-        lucky, it's the one that indicates load was successful.
+        object.
 
         @param roots: The roots returned from freeze.
 
         @param label: The label that is jumped to in the game script
         after rollback has finished, if it exists.
+        """
+
+        raise UnfreezeException(self, roots, label)
+
+    def unfreeze_core(self, roots, label=None):
+        """
+        Called after an UnfreezeException is raised to actually perform
+        the unfreeze.
         """
 
         # Fix up old screens.
@@ -1162,7 +1138,7 @@ class RollbackLog(renpy.object.Object):
         greedy = getattr(renpy.store, "_greedy_rollback", True)
         greedy = renpy.session.pop("_greedy_rollback", greedy)
 
-        self.rollback(0, force=True, label=label, greedy=greedy, on_load=True)
+        self.rollback_core(0, label=label, greedy=greedy, on_load=True)
 
         # Because of the rollback, we never make it this far.
 
@@ -1192,3 +1168,54 @@ class RollbackLog(renpy.object.Object):
     def get_identifier_checkpoints(self, identifier):
         self.build_identifier_cache()
         return self.identifier_cache.get(identifier, None)
+
+
+class UnfreezeException(BaseException):
+    """
+    This exception is raised to indicate that the game should
+    unfreeze from a saved state.
+    """
+
+    def __init__(self, log: RollbackLog, roots: dict[str, renpy.python.StoreDict]|None=None, label: str|None=None):
+        super().__init__()
+        self.log: RollbackLog = log
+        self.roots: dict[str, renpy.python.StoreDict]|None = roots
+        self.label: str|None = label
+
+    def perform_unfreeze(self):
+        renpy.game.log.unfreeze_core(self.roots)
+
+
+class RollbackException(BaseException):
+    """
+    This exception is raised to indicate that a rollback should occur.
+    """
+
+    def __init__(
+            self,
+            checkpoints: int,
+            label: str|None=None,
+            greedy: bool=True,
+            on_load: bool=False,
+            abnormal: bool=True,
+            current_label: str|None=None,
+            ):
+
+        super().__init__()
+        self.checkpoints: int = checkpoints
+        self.label: str|None = label
+        self.greedy: bool = greedy
+        self.on_load: bool = on_load
+        self.abnormal: bool = abnormal
+        self.current_label: str|None = current_label
+
+    def perform_rollback(self):
+
+        renpy.game.log.rollback_core(
+            self.checkpoints,
+            label=self.label,
+            greedy=self.greedy,
+            on_load=self.on_load,
+            abnormal=self.abnormal,
+            current_label=self.current_label,
+        )
