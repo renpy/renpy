@@ -941,9 +941,12 @@ class RollbackLog(renpy.object.Object):
         if checkpoints and (self.rollback_limit <= 0) and (not force):
             return
 
-        raise RollbackException(self, checkpoints, label, greedy, on_load, abnormal, current_label)
+        raise RollbackException(checkpoints, label, greedy, on_load, abnormal, current_label)
 
     def rollback_core(self, checkpoints, label=None, greedy=True, on_load=False, abnormal=True, current_label=None):
+
+        if not on_load:
+            self.complete(False)
 
         self.purge_unreachable(self.get_roots())
 
@@ -951,6 +954,7 @@ class RollbackLog(renpy.object.Object):
 
         # Find the place to roll back to.
         while self.log:
+
             rb = self.log.pop()
             revlog.append(rb)
 
@@ -1176,14 +1180,14 @@ class UnfreezeException(BaseException):
     unfreeze from a saved state.
     """
 
-    def __init__(self, log: RollbackLog, roots: dict[str, renpy.python.StoreDict]|None=None, label: str|None=None):
+    def __init__(self, log: RollbackLog, roots: dict[str, Any]|None=None, label: str|None=None):
         super().__init__()
         self.log: RollbackLog = log
-        self.roots: dict[str, renpy.python.StoreDict]|None = roots
+        self.roots: dict[str, Any]|None = roots
         self.label: str|None = label
 
     def perform_unfreeze(self):
-        renpy.game.log.unfreeze_core(self.roots)
+        self.log.unfreeze_core(self.roots, self.label)
 
 
 class RollbackException(BaseException):

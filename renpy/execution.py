@@ -1032,14 +1032,14 @@ def run_context(top):
 
             return rv
 
-        except renpy.game.RestartContext:
-            continue
+        except renpy.rollback.RollbackException as e:
+            e.perform_rollback()
 
-        except renpy.game.RestartTopContext:
+        except renpy.rollback.UnfreezeException as e:
             if top:
-                continue
-
+                e.perform_unfreeze()
             else:
+                context.pop_all_dynamic()
                 raise
 
         except Exception:
