@@ -129,20 +129,6 @@ class ExceptionInfo(object):
         return False
 
 
-class RestartContext(Exception):
-    """
-    Restarts the current context. If `label` is given, calls that label
-    in the restarted context.
-    """
-
-
-class RestartTopContext(Exception):
-    """
-    Restarts the top context. If `label` is given, calls that label
-    in the restarted context.
-    """
-
-
 class FullRestartException(Exception):
     """
     An exception of this type forces a hard restart, completely
@@ -231,8 +217,6 @@ class ParseErrorException(Exception):
 # A tuple of exceptions that should not be caught by the
 # exception reporting mechanism.
 CONTROL_EXCEPTIONS = (
-    RestartContext,
-    RestartTopContext,
     FullRestartException,
     UtterRestartException,
     QuitException,
@@ -300,22 +284,12 @@ def invoke_in_new_context(callable, *args, **kwargs):
     try:
         return callable(*args, **kwargs)
 
-    except renpy.game.RestartContext:
-        restart_context = True
-        raise
-
-    except renpy.game.RestartTopContext:
-        restart_context = True
-        raise
-
     except renpy.game.JumpOutException as e:
         contexts[-2].force_checkpoint = True
         contexts[-2].abnormal = True
         raise renpy.game.JumpException(e.args[0])
 
     finally:
-        if not restart_context:
-            context.pop_all_dynamic()
 
         contexts.pop()
         contexts[-1].do_deferred_rollback()
