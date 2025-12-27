@@ -938,7 +938,8 @@ class RollbackLog(renpy.object.Object):
 
         # If we have exceeded the rollback limit, and don't have force,
         # give up.
-        if checkpoints and (self.rollback_limit <= 0) and (not force):
+
+        if not self.can_rollback(checkpoints, force):
             return
 
         raise RollbackException(checkpoints, label, greedy, on_load, abnormal, current_label)
@@ -979,8 +980,6 @@ class RollbackLog(renpy.object.Object):
 
             if on_load:
                 self.load_failed()
-            else:
-                print("Can't find a place to rollback to. Not rolling back.")
 
             return
 
@@ -1100,6 +1099,10 @@ class RollbackLog(renpy.object.Object):
         @param label: The label that is jumped to in the game script
         after rollback has finished, if it exists.
         """
+
+        if not self.can_rollback(0, True):
+            if not renpy.config.load_failed_label:
+                raise Exception("Could not load the game. Perhaps the script changed in an incompatible way.")
 
         raise UnfreezeException(self, roots, label)
 
