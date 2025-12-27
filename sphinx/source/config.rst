@@ -498,7 +498,7 @@ Images
     The directories are searched in order, and the first directory that contains the image is used.
 
     This should be set at init priority -1 or lower to ensure that it is set before the images are defined. This
-    cab be done with::
+    can be done with::
 
         define -1 config.image_directories = [ "images", "dlc/images" ]
 
