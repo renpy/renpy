@@ -2234,6 +2234,9 @@ class Text(renpy.display.displayable.Displayable):
         # If true, a safe mode is engaged that will render text with text tag errors.
         self.safe = safe
 
+        # If true, a safe mode is engaged that will render text with text tag errors.
+        self.safe = safe
+
         if isinstance(replaces, Text):
             self.slow = replaces.slow
             self.slow_done = replaces.slow_done
