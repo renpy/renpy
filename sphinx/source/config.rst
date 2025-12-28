@@ -1824,6 +1824,12 @@ Text and Fonts
 
     .. seealso:: :var:`config.say_menu_text_filter`
 
+.. var:: config.safe_text = ...
+
+    If True, Ren'Py will attempt to display text even if it contains errors, like unmatched text tags.
+    If False, Ren'Py will raise an error when such text is encountered. This defaults to True in released games, and
+    False in developer mode.
+
 .. var:: config.say_menu_text_filter = None
 
     If not None, then this is a function that is given the text found

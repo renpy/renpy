@@ -118,8 +118,12 @@ text_property_names = [
     "instance",
 ]
 
-text_properties = [Style(i) for i in text_property_names]
-text_text_properties = [PrefixStyle("text_", i) for i in text_property_names]
+text_keyword_property_names = [
+    "safe"
+]
+
+text_properties = [Style(i) for i in text_property_names] + [ Keyword(i) for i in text_keyword_property_names ]
+text_text_properties = [PrefixStyle("text_", i) for i in text_property_names] + [ Keyword("text_" + i) for i in text_keyword_property_names ]
 
 margin_properties = [
     Style(i)

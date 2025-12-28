@@ -69,6 +69,9 @@ making the game more responsive when faced with mice that produce many events pe
 Other Changes
 -------------
 
+There is now a text safe mode that will display text with text-tag errors, when the :var:`config.safe_text`
+is set. This variable defaults to True in released games, and False in developer mode.
+
 Ren'Py now includes a cut-down version of the brotli python module. This version supports the
 decompress method and Decompressor object, but leaves out the Compressor object. It's intended
 to allow requests to handle brotli-compressed responses.

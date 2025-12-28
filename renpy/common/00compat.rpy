@@ -363,6 +363,7 @@ python early hide:
 
         config.early_script_version = script_version
         config.early_developer = not script_version
+        config.safe_text = not config.early_developer
 
         if script_version >= (8, 0, 0) and script_version < (8, 2, 0):
             config.future_annotations = True
@@ -373,6 +374,7 @@ python early hide:
     except Exception:
         config.early_script_version = None
         config.early_developer = True
+        config.safe_text = False
         pass
 
 
