@@ -13,6 +13,10 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+Ren'Py now unwinds the call stack before performing a rollback or load. This prevents issues with caused
+``except`` and ``finally`` blocks being executed after a rollback, which could lead to the rolled-back data
+being changed.
+
 Ren'Py now skips files and directories beginning with a dot (e.g. .hidden.rpy) when scanning the
 filesystem. These files often have special meaning on unix and mac platforms.
 
