@@ -1109,15 +1109,15 @@ screen _console:
                     if he.command is not None:
                         frame style "_console_command":
                             xfill True
-                            text "[he.command!q]" style "_console_command_text"
+                            text "[he.command!q]" style "_console_command_text" safe True
 
                     if he.result is not None:
 
                         frame style "_console_result":
                             if he.is_error:
-                                text "[he.result]" style "_console_error_text"
+                                text "[he.result]" style "_console_error_text" safe True
                             else:
-                                text "[he.result!q]" style "_console_result_text"
+                                text "[he.result!q]" style "_console_result_text" safe True
 
         # Draw the current input.
         frame style "_console_input":

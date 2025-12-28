@@ -812,11 +812,11 @@ screen _exception:
 
             text "[renpy.game.exception_info]" size gui._scale(22)
             frame style '_trace':
-                text fmt_short substitute False
+                text fmt_short substitute False safe True
 
             text "Full traceback:" size gui._scale(22)
             frame style '_trace':
-                text fmt_full substitute False
+                text fmt_full substitute False safe True
 
         hbox:
             vbox:
@@ -896,7 +896,7 @@ screen _parse_errors(errors, error_fn, reload_action):
 
             has vbox
 
-            text fmt_errors substitute False
+            text fmt_errors substitute False safe True
 
         vbox:
 
