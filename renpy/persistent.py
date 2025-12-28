@@ -231,8 +231,8 @@ def load(filename):
             do = zlib.decompressobj()
             s = do.decompress(f.read())
 
-            if not renpy.savetoken.check_persistent(s, do.unused_data.decode("utf-8")):
-                return None
+            # if not renpy.savetoken.check_persistent(s, do.unused_data.decode("utf-8")):
+            #     return None
 
         persistent = loads(s)
 

@@ -1632,6 +1632,11 @@ tlid_only_considers_say: bool = False
 If True, only say statements will be assigned translation ids.
 """
 
+safe_text: bool = False
+"""
+If True, invalid text is displayed. If False, it's ignored.
+"""
+
 
 del os
 del collections
