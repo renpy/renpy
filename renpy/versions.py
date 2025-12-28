@@ -49,7 +49,7 @@ class Version(object):
         py_branch_to_version[(python, branch)] = self
 
 
-Version("main", 3, "8.5.0", "Real Artists Ship")
+Version("main", 3, "8.6.0", "Real Artists Ship")
 
 Version("fix", 3, "8.5.1", "In Good Health")
 
