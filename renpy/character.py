@@ -108,6 +108,9 @@ class DialogueTextTags(object):
         # The index in the produced string where each pause starts.
         self.pause_start = [0]
 
+        # The index in the produced string where the afm text starts.
+        self.afm_start = [0]
+
         # The index in the produced string where each pause ends.
         self.pause_end = []
 
@@ -144,6 +147,7 @@ class DialogueTextTags(object):
                 if tag == "p" or tag == "w":
                     if not less_pauses:
                         self.pause_start.append(len(self.text))
+                        self.afm_start.append(len(self.text))
                         self.pause_end.append(len(self.text))
                         self.pause_delay.append(value)
 
@@ -152,11 +156,16 @@ class DialogueTextTags(object):
 
                     if value is not None and not less_pauses:
                         self.pause_start.append(len(self.text))
+                        self.afm_start.append(len(self.text))
                         self.pause_end.append(len(self.text))
                         self.pause_delay.append(value)
 
                 elif tag == "fast":
                     self.pause_start = [len(self.text)]
+                    if self.no_wait:
+                        self.afm_start = [self.afm_start[-1]]
+                    else:
+                        self.afm_start = [len(self.text)]
                     self.pause_end = []
                     self.pause_delay = []
                     self.no_wait = False
@@ -657,10 +666,12 @@ def display_say(
         dtt = DialogueTextTags(what)
 
     if all_at_once:
+        afm_starts = [ dtt.afm_start[0] ]
         pause_start = [dtt.pause_start[0]]
         pause_end = [dtt.pause_end[-1]]
         pause_delay = [dtt.pause_delay[-1]]
     else:
+        afm_starts = dtt.afm_start
         pause_start = dtt.pause_start
         pause_end = dtt.pause_end
         pause_delay = dtt.pause_delay
@@ -687,7 +698,7 @@ def display_say(
             i()
 
     try:
-        for i, (start, end, delay) in enumerate(zip(pause_start, pause_end, pause_delay)):
+        for i, (afm_start, start, end, delay) in enumerate(zip(afm_starts, pause_start, pause_end, pause_delay)):
             # True if the is the last pause in a line of dialogue.
             last_pause = i == len(pause_start) - 1
 
@@ -860,6 +871,7 @@ def display_say(
                         what_text.text[0] += extend_text
 
                     # Update the properties of the what_text widget.
+                    what_text.afm_start = afm_start
                     what_text.start = start
                     what_text.end = end
                     what_text.slow = slow

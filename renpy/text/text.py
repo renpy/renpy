@@ -2227,8 +2227,9 @@ class Text(renpy.display.displayable.Displayable):
 
         # The index of the start and end strings in the first segment of text.
         # (None to show the whole text.)
-        self.start = None  # type: int|None
-        self.end = None  # type: int|None
+        self.afm_start: int|None = None
+        self.start: int|None = None
+        self.end: int|None = None
 
         # If true, a safe mode is engaged that will render text with text tag errors.
         self.safe = safe
@@ -2238,6 +2239,7 @@ class Text(renpy.display.displayable.Displayable):
             self.slow_done = replaces.slow_done
             self.slow_done_time = replaces.slow_done_time
             self.ctc = replaces.ctc
+            self.afm_start = replaces.afm_start
             self.start = replaces.start
             self.end = replaces.end
 
