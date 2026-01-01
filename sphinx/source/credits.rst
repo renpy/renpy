@@ -30,6 +30,7 @@ the omission in future versions.
 * Andrí Wilford
 * Andy_kl
 * Apricotorange
+* Atlas Cove
 * Arda Güler
 * Arman
 * Arowana-vx
