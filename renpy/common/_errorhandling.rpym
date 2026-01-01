@@ -509,9 +509,9 @@ init python:
             )
 
         def _escape_limit(self, s: str):
-            s = s.replace("{", "{{")
             if len(s) > 400:
                 s = s[:200] + " ... " + s[-200:]
+            s = s.replace("{", "{{")
 
             return s
 

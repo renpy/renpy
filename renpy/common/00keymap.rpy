@@ -572,12 +572,11 @@ label _load_reload_game:
             renpy.session["_did_load_reload"] = True
             renpy.load(renpy.session["_reload_slot"])
 
-        except (renpy.game.RestartTopContext, renpy.game.RestartContext):
+        finally:
 
             renpy.rename_save(renpy.session["_reload_slot"], "_reload-2")
             del renpy.session["_reload_slot"]
             del renpy.session["_did_load_reload"]
-            raise
 
 
     return

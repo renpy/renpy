@@ -10,7 +10,7 @@ Ren'Py games accessible to the vision impaired.
 
 The Self-voicing mode can be toggled by pressing the ``v`` key. Self-voicing
 modes can be selected through the accessibility menu, which can be accessed
-by pressing `Shift+A.
+by pressing ``Shift+A``.
 
 When in self-voicing mode, keyboard navigation is changed so that the
 up and down arrow keys with iterate through all focusable displayables

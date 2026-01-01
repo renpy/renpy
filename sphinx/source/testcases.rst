@@ -605,7 +605,8 @@ The following variables can be set to change the behavior of tests:
 .. var:: _test.vc_revision
 
     The version control (often git) revision of the current source tree, if available.
-    Defaults to the :env:`RENPY_TEST_VC_REVISION` environment variable, or an empty string if not set.
+    Defaults to the RENPY_TEST_VC_REVISION :doc:`environment variable <environment_variables>`,
+    or an empty string if not set.
 
 
 .. _test-statements:
