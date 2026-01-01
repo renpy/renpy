@@ -133,8 +133,9 @@ class JSONDB(_object):
 
         define balloonData = JSONDB("balloon.json", default={ "enabled" : False })
 
-    This creates a JSONDB that is stored in the file balloon.json, and has a
-    default values. The second leval values can be used as normal dictionaries::
+    This creates a JSONDB that is stored in the file, balloon.json, and has
+	the default value of `enabled` set to False. The second level values can be used
+	as normal dictionaries::
 
         screen say(who, what):
 
