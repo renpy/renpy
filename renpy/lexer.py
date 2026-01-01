@@ -303,7 +303,7 @@ ANY_OPERATOR_REGEX = re.compile(
 )
 
 # Matches any amount of blank lines, comment-only lines, and backslash-newlines.
-IGNORE_REGEX = re.compile(r"""(?:\ *\n|\ *\#[^\n]*\n|\ *\\\n)*""")
+IGNORE_REGEX = re.compile(r"(?:\ *+(?:#[^\n]*+)?(?:\\)?\n)*+")
 
 
 def list_logical_lines(
