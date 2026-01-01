@@ -60,13 +60,10 @@ def process_file(fn):
         for l in f:
             l = re.sub(r"Copyright (\d{4})-\d{4} Tom Rothamel", r"Copyright \1-{} Tom Rothamel".format(year), l)
 
-            if re.search(r"Copyright .* Tom Rothamel", l):
                 if has_copyright:
                     continue
 
                 has_copyright = True
-
-            l = l.replace("# See LICENSE.txt for license details.", full_copyright)
 
             if first:
                 if fn.endswith(".rpy") or fn.endswith(".rpym"):
@@ -91,4 +88,6 @@ def process(root):
 process_file("renpy.py")
 process("renpy")
 process("module")
+process("src")
+process("scripts")
 process("launcher/game")
