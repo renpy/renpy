@@ -26,22 +26,9 @@ import linecache
 import os
 import re
 import sys
-from typing import TYPE_CHECKING, Callable, NamedTuple
+from typing import Callable, NamedTuple
 
 import renpy
-
-
-def match_logical_word(s: str, pos: int) -> tuple[str, bool, int]: ...
-def make_pyexpr(s: str, filename: str, linenumber: int, column: int, text: str, pos: int) -> "renpy.ast.PyExpr": ...
-
-
-if not TYPE_CHECKING:
-    # If Ren'Py is run with system Python, we can't import cython functions.
-    try:
-        from renpy.astsupport import make_pyexpr
-        from renpy.lexersupport import match_logical_word
-    except ImportError:
-        pass
 
 
 class ParseError(SyntaxError):
@@ -325,6 +312,8 @@ def list_logical_lines(
     If `filedata` is given, it should be a unicode string giving the file
     contents. In that case, `filename` need not exist.
     """
+
+    from renpy.lexersupport import match_logical_word
 
     global original_filename
 
@@ -1307,6 +1296,8 @@ class Lexer(object):
         return rv
 
     def expr(self, s, expr):
+        from renpy.astsupport import make_pyexpr
+
         if not expr:
             return s
 
