@@ -345,8 +345,8 @@ def list_logical_lines(
     if data[0] == "\ufeff":
         pos += 1
 
-    # Result tuples of (string, start line number, start pos, end pos).
-    rv: list[tuple[str, int, int, int]] = []
+    # Result tuples of (filename, line number, line) for each logical line.
+    result: list[tuple[str, int, str]] = []
 
     # The line number in the physical file.
     number = linenumber
@@ -363,15 +363,8 @@ def list_logical_lines(
     open_parens: list[tuple[str, int, int]] = []
 
     # Position at the beginning of current physical line.
-    # This is used to calculate column offset by pos - line_start_pos.
+    # This is used to calculate current column offset by pos - line_startpos.
     line_startpos = pos
-
-    # The starting position of the current logical line.
-    startpos = pos
-
-    # The ending position of the current logical line without comment and whitespace/newline
-    # or None if the same as pos.
-    endpos = None
 
     ignore_regex = IGNORE_REGEX
 
@@ -388,8 +381,6 @@ def list_logical_lines(
 
         start_number = number
         line_startpos = pos
-        startpos = pos
-        endpos = None
         line.clear()
 
         # Looping over parts of single logical line.
@@ -491,16 +482,15 @@ def list_logical_lines(
                     pos += 1
                     number += 1
                     line_startpos = pos
-                    endpos = None
                     continue
 
                 rv_line = "".join(line)
 
                 if not rv_line.strip():
-                    raise Exception(f"{filename}:{start_number}:{startpos} empty line")
+                    raise Exception(f"{filename}:{start_number}:{line_startpos} empty line")
 
                 # Add to the results.
-                rv.append((rv_line, start_number, startpos, endpos or pos))
+                result.append((filename, start_number, rv_line))
                 break
 
             # Parenthesis.
@@ -537,8 +527,6 @@ def list_logical_lines(
 
             # Comments.
             if c == "#":
-                endpos = pos
-
                 pos = data.index("\n", pos)
                 continue
 
@@ -563,7 +551,7 @@ def list_logical_lines(
                 line.append(c)
                 pos += 1
 
-    return [(filename, number, line) for line, number, _, _ in rv]
+    return result
 
 
 class GroupedLine(NamedTuple):
