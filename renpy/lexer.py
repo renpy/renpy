@@ -140,11 +140,6 @@ def unicode_filename(fn):
     return fn.decode("latin-1")
 
 
-# Matches either a word, or something else. Most magic is taken care of
-# before this.
-lllword = re.compile(r"__(\w+)|\w+| +|.", re.S)
-
-
 def munge_filename(fn):
     # The prefix that's used when __ is found in the file.
     rv = os.path.basename(fn)
