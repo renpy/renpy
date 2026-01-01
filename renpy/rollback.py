@@ -900,7 +900,7 @@ class RollbackLog(renpy.object.Object):
         return False
 
     def rollback(
-        self, checkpoints, force=False, label=None, greedy=True, on_load=False, abnormal=True, current_label=None
+        self, checkpoints, force=False, label=None, greedy=True, on_load=False, abnormal=True, current_label=None, forget=None
     ):
         """
         This rolls the system back to the first valid rollback point
@@ -934,6 +934,10 @@ class RollbackLog(renpy.object.Object):
             A label that is called when control returns to the current statement,
             after rollback. (At most one of `current_label` and `label` can be
             provided.)
+
+        `forget`
+            If true, any roll-forward data is cleared. Defaults to True
+            when on_load, and False otherwise.
         """
 
         # If we have exceeded the rollback limit, and don't have force,
@@ -942,9 +946,9 @@ class RollbackLog(renpy.object.Object):
         if not self.can_rollback(checkpoints, force):
             return
 
-        raise RollbackException(checkpoints, label, greedy, on_load, abnormal, current_label)
+        raise RollbackException(checkpoints, label, greedy, on_load, abnormal, current_label, forget)
 
-    def rollback_core(self, checkpoints, label=None, greedy=True, on_load=False, abnormal=True, current_label=None):
+    def rollback_core(self, checkpoints, label=None, greedy=True, on_load=False, abnormal=True, current_label=None, forget=None):
 
         if not on_load:
             self.complete(False)
@@ -1012,11 +1016,14 @@ class RollbackLog(renpy.object.Object):
             come_from = renpy.game.context().current
             label = current_label
 
+        if forget is None:
+            forget = on_load
+
         # Actually roll things back.
         for rb in revlog:
             rb.rollback()
 
-            if rb.forward is not None:
+            if not forget and rb.forward is not None:
                 self.forward.insert(0, Forward(rb.context.current, rb.forward, rb.fixed))
 
         if retained is not None:
@@ -1036,6 +1043,9 @@ class RollbackLog(renpy.object.Object):
         # If necessary, reset the RNG.
         if on_load:
             rng.reset()
+
+        # If necessary, clear roll-forward data.
+        if forget:
             del self.forward[:]
 
         # Flag that we're in the transition immediately after a rollback.
@@ -1206,6 +1216,7 @@ class RollbackException(BaseException):
             on_load: bool=False,
             abnormal: bool=True,
             current_label: str|None=None,
+            forget: bool|None=None,
             ):
 
         super().__init__()
@@ -1215,6 +1226,7 @@ class RollbackException(BaseException):
         self.on_load: bool = on_load
         self.abnormal: bool = abnormal
         self.current_label: str|None = current_label
+        self.forget: bool|None = forget
 
     def perform_rollback(self):
 
@@ -1225,4 +1237,5 @@ class RollbackException(BaseException):
             on_load=self.on_load,
             abnormal=self.abnormal,
             current_label=self.current_label,
+            forget=self.forget,
         )
