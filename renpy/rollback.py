@@ -885,12 +885,6 @@ class RollbackLog(renpy.object.Object):
         for rb in reversed(self.log):
 
             if rb.hard_checkpoint:
-                if self.rollback_limit:
-                    checkpoints -= 1
-                elif self.rollback_block:
-                    self.rollback_block -= 1
-
-            if rb.hard_checkpoint:
                 checkpoints -= 1
 
             if checkpoints <= 0:
