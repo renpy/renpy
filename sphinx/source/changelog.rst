@@ -8,8 +8,7 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-8.6.0:
 
 8.6.0
------
-
+=====
 
 Features
 --------
