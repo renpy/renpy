@@ -878,8 +878,8 @@ class RollbackLog(renpy.object.Object):
         it returns False.
         """
 
-        if checkpoints and (self.rollback_limit <= 0) and not force:
-            return False
+        if not force:
+            return checkpoints <= self.rollback_limit
 
         # Find the place to roll back to.
         for rb in reversed(self.log):
