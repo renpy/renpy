@@ -10,6 +10,10 @@ import datetime
 
 year = datetime.date.today().year
 
+IGNORE = [
+    "scripts/update_copyright.py"
+]
+
 ENDINGS = [
     ".rpy",
     ".rpym",
@@ -43,6 +47,10 @@ full_copyright = """\
 
 
 def process_file(fn):
+
+    if fn in IGNORE:
+        return
+
     for i in ENDINGS:
         if fn.endswith(i):
             break
@@ -60,6 +68,7 @@ def process_file(fn):
         for l in f:
             l = re.sub(r"Copyright (\d{4})-\d{4} Tom Rothamel", r"Copyright \1-{} Tom Rothamel".format(year), l)
 
+            if re.search(r"Copyright .* Tom Rothamel", l):
                 if has_copyright:
                     continue
 
