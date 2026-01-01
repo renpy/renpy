@@ -76,14 +76,22 @@ class ParseError(SyntaxError):
                 if self.offset is not None:
                     from renpy.error import normalize_renpy_line_offset
 
-                    offset = normalize_renpy_line_offset(filename, lineno, self.offset, self.text)
+                    offset = normalize_renpy_line_offset(
+                        filename,
+                        lineno,
+                        self.offset,
+                        self.text,
+                    )
 
                     # Fallback to single caret for cases end_offset is before offset.
                     if self.end_offset is None or self.end_offset <= offset:
                         end_offset = offset + 1
                     else:
                         end_offset = normalize_renpy_line_offset(
-                            filename, self.end_lineno or lineno, self.end_offset, self.text
+                            filename,
+                            self.end_lineno or lineno,
+                            self.end_offset,
+                            self.text,
                         )
 
                     left_spaces = len(text) - len(text.lstrip())
@@ -391,7 +399,11 @@ def list_logical_lines(
                 # This can happen only if we have unclosed parens.
                 c, lineno, column = open_parens[-1]
                 raise ParseError(
-                    f"'{c}' was never closed", filename, lineno, column + 1, linecache.getline(filename, lineno)
+                    f"'{c}' was never closed",
+                    filename,
+                    lineno,
+                    column + 1,
+                    linecache.getline(filename, lineno),
                 )
 
             # Name and runs of spaces are the most common cases, so it's first.
@@ -1486,9 +1498,16 @@ class Lexer(object):
         by a previous checkpoint operation on this lexer.
         """
 
-        self.line, self.filename, self.number, self.text, self.subblock, self.pos, self.column, pyexpr_checkpoint = (
-            state
-        )
+        (
+            self.line,
+            self.filename,
+            self.number,
+            self.text,
+            self.subblock,
+            self.pos,
+            self.column,
+            pyexpr_checkpoint,
+        ) = state
 
         renpy.ast.PyExpr.revert(pyexpr_checkpoint)
 
