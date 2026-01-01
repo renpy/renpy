@@ -242,7 +242,7 @@ def get_string_munger(prefix: str) -> Callable[[str], str]:
 original_filename = ""
 
 # Matches one operator that contains special characters.
-_ANY_OPERATOR_REGEX = re.compile(
+ANY_OPERATOR_REGEX = re.compile(
     "|".join(
         re.escape(i)
         for i in (
@@ -275,6 +275,7 @@ _ANY_OPERATOR_REGEX = re.compile(
             ":=",
             "<=",
             ">=",
+            "<>",
             "==",
             "->",
             "!=",
@@ -292,6 +293,9 @@ _ANY_OPERATOR_REGEX = re.compile(
         )
     )
 )
+
+# Matches any amount of blank lines, comment-only lines, and backslash-newlines.
+IGNORE_REGEX = re.compile(r"""(?:\ *\n|\ *\#[^\n]*\n|\ *\\\n)*""")
 
 
 def list_logical_lines(
@@ -369,10 +373,9 @@ def list_logical_lines(
     # or None if the same as pos.
     endpos = None
 
-    # Matches any amount of blank lines, comment-only lines, and backslash-newlines.
-    ignore_regex = re.compile(r"""(?:\ *\n|\ *\#[^\n]*\n|\ *\\\n)*""")
+    ignore_regex = IGNORE_REGEX
 
-    operator_regex = _ANY_OPERATOR_REGEX
+    operator_regex = ANY_OPERATOR_REGEX
 
     # Looping over whole file to find logical lines.
     while match := ignore_regex.match(data, pos):
