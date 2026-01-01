@@ -216,19 +216,7 @@ def unelide_filename(fn: str) -> str:
 
 def get_string_munger(prefix: str) -> Callable[[str], str]:
     if renpy.config.munge_in_strings:
-
-        def munge_string(m: re.Match[str]):
-            g1 = m.group(1)
-
-            if "__" in g1:
-                return m.group(0)
-
-            if g1.startswith("_"):
-                return m.group(0)
-
-            return prefix + m.group(1)
-
-        return functools.partial(re.sub, r"\b__(\w+)", munge_string)
+        return functools.partial(re.sub, NEED_MUNGE_PATTERN, rf"{prefix}\1")
 
     else:
 
@@ -304,6 +292,9 @@ ANY_OPERATOR_REGEX = re.compile(
 
 # Matches any amount of blank lines, comment-only lines, and backslash-newlines.
 IGNORE_REGEX = re.compile(r"(?:\ *+(?:#[^\n]*+)?(?:\\)?\n)*+")
+
+# Matches a word that should be munged.
+NEED_MUNGE_PATTERN = re.compile(r"\b__([^_\s]+(?:_[^_\s]+)*_?)\b")
 
 
 def list_logical_lines(
