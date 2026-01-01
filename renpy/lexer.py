@@ -19,16 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-from typing import TYPE_CHECKING, Callable, NamedTuple
-
-import io
-import re
-import sys
-import os
 import contextlib
 import functools
+import io
 import linecache
+import os
+import re
+import sys
+from typing import TYPE_CHECKING, Callable, NamedTuple
 
 import renpy
 
@@ -40,8 +38,8 @@ def make_pyexpr(s: str, filename: str, linenumber: int, column: int, text: str, 
 if not TYPE_CHECKING:
     # If Ren'Py is run with system Python, we can't import cython functions.
     try:
-        from renpy.lexersupport import match_logical_word
         from renpy.astsupport import make_pyexpr
+        from renpy.lexersupport import match_logical_word
     except ImportError:
         pass
 
@@ -122,8 +120,6 @@ class ParseError(SyntaxError):
 
 
 # Something to hold the expected line number.
-
-
 class LineNumberHolder(object):
     """
     Holds the expected line number.
@@ -607,7 +603,12 @@ def group_logical_lines(lines: list[tuple[str, int, str]]) -> list[GroupedLine]:
     filename, number, text = lines[0]
 
     if text.startswith(" "):
-        raise ParseError("Unexpected indentation at start of file.", filename, number, text=text)
+        raise ParseError(
+            "Unexpected indentation at start of file.",
+            filename,
+            number,
+            text=text,
+        )
 
     stack: list[tuple[int, list[GroupedLine]]] = [(0, [])]
     block_indent, block = stack[-1]
@@ -907,7 +908,13 @@ class Lexer(object):
         if (self.line == -1) and self.block:
             self.filename, self.number, self.column, self.text, self.subblock = self.block[0]
 
-        ParseError(msg, self.filename, self.number, self.pos + 1, self.text).defer(queue)
+        ParseError(
+            msg,
+            self.filename,
+            self.number,
+            self.pos + 1,
+            self.text,
+        ).defer(queue)
 
     def eol(self):
         """
@@ -1207,7 +1214,6 @@ class Lexer(object):
                 return None
         else:
             if self.match(r"\."):
-
                 local_name = self.name()
                 if not local_name:
                     self.pos = old_pos
@@ -1306,7 +1312,14 @@ class Lexer(object):
 
         pos = self.pos - len(s)
 
-        return make_pyexpr(s, self.filename, self.number, self.column, self.text, pos)
+        return make_pyexpr(
+            s,
+            self.filename,
+            self.number,
+            self.column,
+            self.text,
+            pos,
+        )
 
     def delimited_python(self, delim, expr=True):
         """
@@ -1670,30 +1683,30 @@ def ren_py_to_rpy_offsets(lines: list[str], filename: str):
     if lines and lines[0] and lines[0][0] == "\ufeff":
         lines[0] = lines[0][1:]
 
-    for linenumber, l in enumerate(lines, start=1):
+    for linenumber, line in enumerate(lines, start=1):
         if state != RENPY:
-            if l.startswith('"""renpy'):
+            if line.startswith('"""renpy'):
                 state = RENPY
                 open_linenumber = linenumber
                 yield None
                 continue
 
         if state == RENPY:
-            if l.strip() == '"""':
+            if line.strip() == '"""':
                 yield None
 
                 state = PYTHON
                 continue
 
             # Ignore empty and comments.
-            sl = l.strip()
+            sl = line.strip()
             if not sl or sl[0] == "#":
                 yield 0
                 continue
 
             # Determine the prefix.
             current_offset = 0
-            for i in l:
+            for i in line:
                 if i != " ":
                     break
                 current_offset += 1
@@ -1707,7 +1720,7 @@ def ren_py_to_rpy_offsets(lines: list[str], filename: str):
             continue
 
         if state == PYTHON:
-            if l == "\n":
+            if line == "\n":
                 # Don't add spaces to empty lines to not interfere with multiline strings.
                 yield 0
             else:
@@ -1719,10 +1732,18 @@ def ren_py_to_rpy_offsets(lines: list[str], filename: str):
             continue
 
     if state == IGNORE:
-        raise ParseError(f'There are no \'"""renpy\' blocks, so every line is ignored.', filename, open_linenumber)
+        raise ParseError(
+            'There are no \'"""renpy\' blocks, so every line is ignored.',
+            filename,
+            open_linenumber,
+        )
 
     if state == RENPY:
-        raise ParseError(f'\'"""renpy\' block was not terminated by """.', filename, open_linenumber)
+        raise ParseError(
+            '\'"""renpy\' block was not terminated by """.',
+            filename,
+            open_linenumber,
+        )
 
 
 def ren_py_to_rpy(text: str, filename: str | None) -> str:
