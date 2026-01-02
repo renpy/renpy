@@ -19,31 +19,16 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-from typing import TYPE_CHECKING, Callable, NamedTuple
-
-import io
-import re
-import sys
-import os
 import contextlib
 import functools
+import io
 import linecache
+import os
+import re
+import sys
+from typing import Callable, NamedTuple
 
 import renpy
-
-
-def match_logical_word(s: str, pos: int) -> tuple[str, bool, int]: ...
-def make_pyexpr(s: str, filename: str, linenumber: int, column: int, text: str, pos: int) -> "renpy.ast.PyExpr": ...
-
-
-if not TYPE_CHECKING:
-    # If Ren'Py is run with system Python, we can't import cython functions.
-    try:
-        from renpy.lexersupport import match_logical_word
-        from renpy.astsupport import make_pyexpr
-    except ImportError:
-        pass
 
 
 class ParseError(SyntaxError):
@@ -91,14 +76,22 @@ class ParseError(SyntaxError):
                 if self.offset is not None:
                     from renpy.error import normalize_renpy_line_offset
 
-                    offset = normalize_renpy_line_offset(filename, lineno, self.offset, self.text)
+                    offset = normalize_renpy_line_offset(
+                        filename,
+                        lineno,
+                        self.offset,
+                        self.text,
+                    )
 
                     # Fallback to single caret for cases end_offset is before offset.
                     if self.end_offset is None or self.end_offset <= offset:
                         end_offset = offset + 1
                     else:
                         end_offset = normalize_renpy_line_offset(
-                            filename, self.end_lineno or lineno, self.end_offset, self.text
+                            filename,
+                            self.end_lineno or lineno,
+                            self.end_offset,
+                            self.text,
                         )
 
                     left_spaces = len(text) - len(text.lstrip())
@@ -122,8 +115,6 @@ class ParseError(SyntaxError):
 
 
 # Something to hold the expected line number.
-
-
 class LineNumberHolder(object):
     """
     Holds the expected line number.
@@ -155,11 +146,6 @@ def unicode_filename(fn):
 
     # Insane systems, mojibake.
     return fn.decode("latin-1")
-
-
-# Matches either a word, or something else. Most magic is taken care of
-# before this.
-lllword = re.compile(r"__(\w+)|\w+| +|.", re.S)
 
 
 def munge_filename(fn):
@@ -264,7 +250,7 @@ def get_string_munger(prefix: str) -> Callable[[str], str]:
 original_filename = ""
 
 # Matches one operator that contains special characters.
-_ANY_OPERATOR_REGEX = re.compile(
+ANY_OPERATOR_REGEX = re.compile(
     "|".join(
         re.escape(i)
         for i in (
@@ -297,6 +283,7 @@ _ANY_OPERATOR_REGEX = re.compile(
             ":=",
             "<=",
             ">=",
+            "<>",
             "==",
             "->",
             "!=",
@@ -315,6 +302,9 @@ _ANY_OPERATOR_REGEX = re.compile(
     )
 )
 
+# Matches any amount of blank lines, comment-only lines, and backslash-newlines.
+IGNORE_REGEX = re.compile(r"""(?:\ *\n|\ *\#[^\n]*\n|\ *\\\n)*""")
+
 
 def list_logical_lines(
     filename: str,
@@ -329,6 +319,8 @@ def list_logical_lines(
     If `filedata` is given, it should be a unicode string giving the file
     contents. In that case, `filename` need not exist.
     """
+
+    from renpy.lexersupport import match_logical_word
 
     global original_filename
 
@@ -361,8 +353,8 @@ def list_logical_lines(
     if data[0] == "\ufeff":
         pos += 1
 
-    # Result tuples of (string, start line number, start pos, end pos).
-    rv: list[tuple[str, int, int, int]] = []
+    # Result tuples of (filename, line number, line) for each logical line.
+    result: list[tuple[str, int, str]] = []
 
     # The line number in the physical file.
     number = linenumber
@@ -379,20 +371,12 @@ def list_logical_lines(
     open_parens: list[tuple[str, int, int]] = []
 
     # Position at the beginning of current physical line.
-    # This is used to calculate column offset by pos - line_start_pos.
+    # This is used to calculate current column offset by pos - line_startpos.
     line_startpos = pos
 
-    # The starting position of the current logical line.
-    startpos = pos
+    ignore_regex = IGNORE_REGEX
 
-    # The ending position of the current logical line without comment and whitespace/newline
-    # or None if the same as pos.
-    endpos = None
-
-    # Matches any amount of blank lines, comment-only lines, and backslash-newlines.
-    ignore_regex = re.compile(r"""(?:\ *\n|\ *\#[^\n]*\n|\ *\\\n)*""")
-
-    operator_regex = _ANY_OPERATOR_REGEX
+    operator_regex = ANY_OPERATOR_REGEX
 
     # Looping over whole file to find logical lines.
     while match := ignore_regex.match(data, pos):
@@ -405,8 +389,6 @@ def list_logical_lines(
 
         start_number = number
         line_startpos = pos
-        startpos = pos
-        endpos = None
         line.clear()
 
         # Looping over parts of single logical line.
@@ -417,7 +399,11 @@ def list_logical_lines(
                 # This can happen only if we have unclosed parens.
                 c, lineno, column = open_parens[-1]
                 raise ParseError(
-                    f"'{c}' was never closed", filename, lineno, column + 1, linecache.getline(filename, lineno)
+                    f"'{c}' was never closed",
+                    filename,
+                    lineno,
+                    column + 1,
+                    linecache.getline(filename, lineno),
                 )
 
             # Name and runs of spaces are the most common cases, so it's first.
@@ -508,16 +494,15 @@ def list_logical_lines(
                     pos += 1
                     number += 1
                     line_startpos = pos
-                    endpos = None
                     continue
 
                 rv_line = "".join(line)
 
                 if not rv_line.strip():
-                    raise Exception(f"{filename}:{start_number}:{startpos} empty line")
+                    raise Exception(f"{filename}:{start_number}:{line_startpos} empty line")
 
                 # Add to the results.
-                rv.append((rv_line, start_number, startpos, endpos or pos))
+                result.append((filename, start_number, rv_line))
                 break
 
             # Parenthesis.
@@ -554,8 +539,6 @@ def list_logical_lines(
 
             # Comments.
             if c == "#":
-                endpos = pos
-
                 pos = data.index("\n", pos)
                 continue
 
@@ -580,7 +563,7 @@ def list_logical_lines(
                 line.append(c)
                 pos += 1
 
-    return [(filename, number, line) for line, number, _, _ in rv]
+    return result
 
 
 class GroupedLine(NamedTuple):
@@ -607,7 +590,12 @@ def group_logical_lines(lines: list[tuple[str, int, str]]) -> list[GroupedLine]:
     filename, number, text = lines[0]
 
     if text.startswith(" "):
-        raise ParseError("Unexpected indentation at start of file.", filename, number, text=text)
+        raise ParseError(
+            "Unexpected indentation at start of file.",
+            filename,
+            number,
+            text=text,
+        )
 
     stack: list[tuple[int, list[GroupedLine]]] = [(0, [])]
     block_indent, block = stack[-1]
@@ -907,7 +895,13 @@ class Lexer(object):
         if (self.line == -1) and self.block:
             self.filename, self.number, self.column, self.text, self.subblock = self.block[0]
 
-        ParseError(msg, self.filename, self.number, self.pos + 1, self.text).defer(queue)
+        ParseError(
+            msg,
+            self.filename,
+            self.number,
+            self.pos + 1,
+            self.text,
+        ).defer(queue)
 
     def eol(self):
         """
@@ -1207,7 +1201,6 @@ class Lexer(object):
                 return None
         else:
             if self.match(r"\."):
-
                 local_name = self.name()
                 if not local_name:
                     self.pos = old_pos
@@ -1301,12 +1294,21 @@ class Lexer(object):
         return rv
 
     def expr(self, s, expr):
+        from renpy.astsupport import make_pyexpr
+
         if not expr:
             return s
 
         pos = self.pos - len(s)
 
-        return make_pyexpr(s, self.filename, self.number, self.column, self.text, pos)
+        return make_pyexpr(
+            s,
+            self.filename,
+            self.number,
+            self.column,
+            self.text,
+            pos,
+        )
 
     def delimited_python(self, delim, expr=True):
         """
@@ -1496,9 +1498,16 @@ class Lexer(object):
         by a previous checkpoint operation on this lexer.
         """
 
-        self.line, self.filename, self.number, self.text, self.subblock, self.pos, self.column, pyexpr_checkpoint = (
-            state
-        )
+        (
+            self.line,
+            self.filename,
+            self.number,
+            self.text,
+            self.subblock,
+            self.pos,
+            self.column,
+            pyexpr_checkpoint,
+        ) = state
 
         renpy.ast.PyExpr.revert(pyexpr_checkpoint)
 
@@ -1670,30 +1679,30 @@ def ren_py_to_rpy_offsets(lines: list[str], filename: str):
     if lines and lines[0] and lines[0][0] == "\ufeff":
         lines[0] = lines[0][1:]
 
-    for linenumber, l in enumerate(lines, start=1):
+    for linenumber, line in enumerate(lines, start=1):
         if state != RENPY:
-            if l.startswith('"""renpy'):
+            if line.startswith('"""renpy'):
                 state = RENPY
                 open_linenumber = linenumber
                 yield None
                 continue
 
         if state == RENPY:
-            if l.strip() == '"""':
+            if line.strip() == '"""':
                 yield None
 
                 state = PYTHON
                 continue
 
             # Ignore empty and comments.
-            sl = l.strip()
+            sl = line.strip()
             if not sl or sl[0] == "#":
                 yield 0
                 continue
 
             # Determine the prefix.
             current_offset = 0
-            for i in l:
+            for i in line:
                 if i != " ":
                     break
                 current_offset += 1
@@ -1707,7 +1716,7 @@ def ren_py_to_rpy_offsets(lines: list[str], filename: str):
             continue
 
         if state == PYTHON:
-            if l == "\n":
+            if line == "\n":
                 # Don't add spaces to empty lines to not interfere with multiline strings.
                 yield 0
             else:
@@ -1719,10 +1728,18 @@ def ren_py_to_rpy_offsets(lines: list[str], filename: str):
             continue
 
     if state == IGNORE:
-        raise ParseError(f'There are no \'"""renpy\' blocks, so every line is ignored.', filename, open_linenumber)
+        raise ParseError(
+            'There are no \'"""renpy\' blocks, so every line is ignored.',
+            filename,
+            open_linenumber,
+        )
 
     if state == RENPY:
-        raise ParseError(f'\'"""renpy\' block was not terminated by """.', filename, open_linenumber)
+        raise ParseError(
+            '\'"""renpy\' block was not terminated by """.',
+            filename,
+            open_linenumber,
+        )
 
 
 def ren_py_to_rpy(text: str, filename: str | None) -> str:
