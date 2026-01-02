@@ -23,21 +23,21 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import base64
-import ecdsa
 import os
 import zipfile
 
 import renpy
+import renpy.ecsign
 
 
 # The directory containing the save token information.
 token_dir = None  # type: str|None
 
-# A list of the keys used to sign saves, stored as DER-encoded strings.
-signing_keys = []  # type: list[str]
+# A list of the keys used to sign saves, stored as DER-encoded bytes.
+signing_keys = []  # type: list[bytes]
 
-# A list of the keys used to verify saves, stored as DER-encoded strings.
-verifying_keys = []  # type: list[str]
+# A list of the keys used to verify saves, stored as DER-encoded bytes.
+verifying_keys = []  # type: list[bytes]
 
 # True if the save files and persistent data should be upgraded.
 should_upgrade = False  # type: bool
@@ -87,11 +87,9 @@ def sign_data(data):
     rv = ""
 
     for i in signing_keys:
-        sk = ecdsa.SigningKey.from_der(i)
-
-        if sk is not None and sk.verifying_key is not None:
-            sig = sk.sign(data)
-            rv += encode_line("signature", sk.verifying_key.to_der(), sig)
+        sig = renpy.ecsign.sign_data(data, i)
+        public = renpy.ecsign.get_public_key_from_private(i)
+        rv += encode_line("signature", public, sig)
 
     return rv
 
@@ -105,18 +103,13 @@ def verify_data(data, signatures, check_verifying=True):
         kind, key, sig = decode_line(i)
 
         if kind == "signature":
-            if key is None:
+            if key is None or sig is None:
                 continue
 
             if check_verifying and key not in verifying_keys:
                 continue
 
-            try:
-                vk = ecdsa.VerifyingKey.from_der(key)
-                if vk.verify(sig, data):
-                    return True
-            except Exception:
-                continue
+            return renpy.ecsign.verify_data(data, key, sig)
 
     return False
 
@@ -209,10 +202,12 @@ def create_token(filename):
     except Exception:
         pass
 
-    sk = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p)
-    vk = sk.verifying_key
+    sk = renpy.ecsign.generate_private_key()
+    if sk is None:
+        raise Exception("Failed to generate signing key")
+    vk = renpy.ecsign.get_public_key_from_private(sk)
     if vk is not None:
-        line = encode_line("signing-key", sk.to_der(), vk.to_der())
+        line = encode_line("signing-key", sk, vk)
 
         with open(filename, "a") as f:
             f.write(line)
@@ -279,12 +274,12 @@ def load_tokens(keys_fn):
             kind, key, _ = decode_line(l)
 
             if kind == "signing-key":
-                sk = ecdsa.SigningKey.from_der(key)
-                if sk is not None and sk.verifying_key is not None:
-                    signing_keys.append(sk.to_der())  # type: ignore
-                    verifying_keys.append(sk.verifying_key.to_der())
+                public = renpy.ecsign.get_public_key_from_private(key)
+                if public is not None:
+                    signing_keys.append(key)
+                    verifying_keys.append(public)
             elif kind == "verifying-key":
-                verifying_keys.append(key)  # type: ignore
+                verifying_keys.append(key)
 
 
 def init_tokens():
@@ -317,25 +312,23 @@ def init_tokens():
 
     for tk in renpy.config.save_token_keys:
         k = base64.b64decode(tk)
-        try:
-            vk = ecdsa.VerifyingKey.from_der(k)
-            verifying_keys.append(k)  # type: ignore
-        except Exception:
-            try:
-                sk = ecdsa.SigningKey.from_der(k)
-            except Exception:
-                raise Exception("In config.save_token_keys, the key {!r} is not a valid key.".format(tk))
+        if renpy.ecsign.validate_public_key(k):
+            verifying_keys.append(k)
+        else:
+            if renpy.ecsign.validate_private_key(k):
+                public = renpy.ecsign.get_public_key_from_private(k)
+                if public is not None:
+                    vk = base64.b64encode(public).decode("utf-8")
+                else:
+                    vk = ""
 
-            if sk.verifying_key is not None:
-                vk = base64.b64encode(sk.verifying_key.to_der()).decode("utf-8")
-            else:
-                vk = ""
-
-            raise Exception(
-                "In config.save_token_keys, the signing key {!r} was provided, but the verifying key {!r} is required.".format(
-                    tk, vk
+                raise Exception(
+                    "In config.save_token_keys, the signing key {!r} was provided, but the verifying key {!r} is required.".format(
+                        tk, vk
+                    )
                 )
-            )  # type: ignore
+            else:
+                raise Exception("In config.save_token_keys, the key {!r} is not a valid key.".format(tk))
 
     # Determine if we need to upgrade the current game.
 
@@ -375,9 +368,9 @@ def get_save_token_keys():
     rv = []
 
     for i in signing_keys:
-        sk = ecdsa.SigningKey.from_der(i)
+        public = renpy.ecsign.get_public_key_from_private(i)
 
-        if sk.verifying_key is not None:
-            rv.append(base64.b64encode(sk.verifying_key.to_der()).decode("utf-8"))
+        if public is not None:
+            rv.append(base64.b64encode(public).decode("utf-8"))
 
     return rv
