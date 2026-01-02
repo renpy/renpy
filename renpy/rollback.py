@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -883,12 +883,6 @@ class RollbackLog(renpy.object.Object):
 
         # Find the place to roll back to.
         for rb in reversed(self.log):
-
-            if rb.hard_checkpoint:
-                if self.rollback_limit:
-                    checkpoints -= 1
-                elif self.rollback_block:
-                    self.rollback_block -= 1
 
             if rb.hard_checkpoint:
                 checkpoints -= 1
