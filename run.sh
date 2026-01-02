@@ -45,6 +45,11 @@ if [ -e "$ROOT/cubism" ]; then
     export LD_LIBRARY_PATH="$CUBISM/Core/dll/$CUBISM_PLATFORM"
 fi
 
+if [ -e "$ROOT/inochi2d" ]; then
+    export INOCHI="$ROOT/inochi2d"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$INOCHI/"
+fi
+
 setup "$ROOT/"
 
 python "$ROOT/distribute.py" --link-directories
