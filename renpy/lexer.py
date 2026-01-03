@@ -237,61 +237,8 @@ def get_string_munger(prefix: str) -> Callable[[str], str]:
 # The filename that the start and end positions are relative to.
 original_filename = ""
 
-# Matches one operator that contains special characters.
-ANY_OPERATOR_REGEX = re.compile(
-    "|".join(
-        re.escape(i)
-        for i in (
-            "//=",
-            ">>=",
-            "<<=",
-            "**=",
-            "+=",
-            "-=",
-            "*=",
-            "/=",
-            "%=",
-            "@=",
-            "&=",
-            "|=",
-            "^=",
-            "//",
-            ">>",
-            "<<",
-            "**",
-            "+",
-            "-",
-            "*",
-            "/",
-            "%",
-            "@",
-            "&",
-            "|",
-            "^",
-            ":=",
-            "<=",
-            ">=",
-            "<>",
-            "==",
-            "->",
-            "!=",
-            ",",
-            ":",
-            "!",
-            ".",
-            ";",
-            "=",
-            "~",
-            "<",
-            ">",
-            "$",
-            "?",
-        )
-    )
-)
-
 # Matches any amount of blank lines, comment-only lines, and backslash-newlines.
-IGNORE_REGEX = re.compile(r"(?:\ *+(?:#[^\n]*+)?(?:\\)?\n)*+")
+IGNORE_PATTERN = re.compile(r"(?:\ *+(?:#[^\n]*+)?(?:\\)?\n)*+")
 
 # Matches a word that should be munged.
 NEED_MUNGE_PATTERN = re.compile(r"\b__([^_\s]+(?:_[^_\s]+)*_?)\b")
@@ -311,7 +258,7 @@ def list_logical_lines(
     contents. In that case, `filename` need not exist.
     """
 
-    from renpy.lexersupport import match_logical_word
+    from renpy.lexersupport import match_logical_word, match_whitespace, match_operator, match_string
 
     global original_filename
 
@@ -365,9 +312,9 @@ def list_logical_lines(
     # This is used to calculate current column offset by pos - line_startpos.
     line_startpos = pos
 
-    ignore_regex = IGNORE_REGEX
+    ignore_regex = IGNORE_PATTERN
 
-    operator_regex = ANY_OPERATOR_REGEX
+    need_munge_regex = NEED_MUNGE_PATTERN
 
     # Looping over whole file to find logical lines.
     while match := ignore_regex.match(data, pos):
@@ -380,10 +327,65 @@ def list_logical_lines(
 
         start_number = number
         line_startpos = pos
+        last_append_pos = pos
         line.clear()
 
         # Looping over parts of single logical line.
         while True:
+            # # Most tokens are split by spaces, so just skip over them.
+            # # That includes initial indent.
+            if spaces_pos := match_whitespace(data, pos):
+                pos = spaces_pos
+
+            # Words, i.e. number parts, identifiers or image name components are
+            # the most frequent tokens, so we want to try to match them first.
+            word_pos = match_logical_word(data, pos)
+
+            # But string prefixes are valid words, so check if we have a
+            # string literal here.
+            if string_match := match_string(data, pos, word_pos or pos):
+                if string_match == -1:
+                    raise ParseError(
+                        "unterminated string literal",
+                        filename,
+                        start_number,
+                        text=linecache.getline(filename, start_number),
+                    )
+
+                (
+                    string_endpos,
+                    need_munge,
+                    newlines,
+                    new_line_startpos,
+                ) = string_match
+
+                if newlines:
+                    number += newlines
+
+                if new_line_startpos is not None:
+                    line_startpos = new_line_startpos
+
+                if need_munge:
+                    # There is `__` in a string.
+                    line.append(data[last_append_pos:pos])
+                    line.append(munge_string(data[pos:string_endpos]))
+                    last_append_pos = pos = string_endpos
+                else:
+                    pos = string_endpos
+
+                continue
+
+            elif word_pos is not None:
+                if data[pos] == "_" and (m := need_munge_regex.match(data, pos)):
+                    line.append(data[last_append_pos:pos])
+                    line.append(f"{prefix}{m[1]}")
+                    last_append_pos = pos = word_pos
+
+                else:
+                    pos = word_pos
+
+                continue
+
             try:
                 c = data[pos]
             except IndexError:
@@ -397,100 +399,20 @@ def list_logical_lines(
                     linecache.getline(filename, lineno),
                 )
 
-            # Name and runs of spaces are the most common cases, so it's first.
-            if c in " _" or c.isalnum():
-                word, magic, end = match_logical_word(data, pos)
-
-                if magic and word[2] != "_":
-                    rest = word[2:]
-
-                    if "__" not in rest:
-                        word = prefix + rest
-
-                line.append(word)
-                pos = end
-                continue
-
-            # Strings are second common case.
-            if c in "\"'`":
-                string_startpos = pos
-
-                # Compute quote size.
-                if data[pos + 1] == c:
-                    if data[pos + 2] == c:
-                        pos += 3
-                        quote_size = 3
-                    else:
-                        # Empty string.
-                        pos += 2
-                        line.append(f"{c}{c}")
-                        continue
-                else:
-                    pos += 1
-                    quote_size = 1
-
-                quote = c
-
-                end_quote_size = 0
-                c = data[pos]
-                while end_quote_size != quote_size:
-                    # Skip escaped char.
-                    while c == "\\":
-                        end_quote_size = 0
-                        pos += 2
-                        c = data[pos]
-
-                    pos += 1
-
-                    if c == "\n":
-                        end_quote_size = 0
-                        line_startpos = pos
-                        number += 1
-
-                    elif c == quote:
-                        end_quote_size += 1
-                    else:
-                        end_quote_size = 0
-
-                    # TODO: disallow same quote nested f-strings.
-
-                    try:
-                        c = data[pos]
-                    except IndexError:
-                        raise ParseError(
-                            "unterminated string literal",
-                            filename,
-                            start_number,
-                            text=linecache.getline(filename, start_number),
-                        )
-
-                s = data[string_startpos:pos]
-                if "__" in s:
-                    s = munge_string(s)
-
-                line.append(s)
-
-                continue
-
-            # Operator.
-            if match := operator_regex.match(data, pos):
-                line.append(match[0])
-                pos = match.end()
-                continue
-
             # Newline.
             if c == "\n":
                 if open_parens:
-                    line.append("\n")
                     pos += 1
                     number += 1
                     line_startpos = pos
                     continue
 
+                if last_append_pos != pos:
+                    line.append(data[last_append_pos:pos])
+
                 rv_line = "".join(line)
 
-                if not rv_line.strip():
-                    raise Exception(f"{filename}:{start_number}:{line_startpos} empty line")
+                assert rv_line.strip(), f"Got empty logical line in {filename}:{start_number}:{line_startpos}."
 
                 # Add to the results.
                 result.append((filename, start_number, rv_line))
@@ -499,7 +421,6 @@ def list_logical_lines(
             # Parenthesis.
             if c in "([{":
                 open_parens.append((c, number, pos - line_startpos))
-                line.append(c)
                 pos += 1
                 continue
 
@@ -524,8 +445,12 @@ def list_logical_lines(
                         linecache.getline(filename, number),
                     )
 
-                line.append(c)
                 pos += 1
+                continue
+
+            # Operator.
+            if op_pos := match_operator(data, pos):
+                pos = op_pos
                 continue
 
             # Comments.
@@ -538,7 +463,6 @@ def list_logical_lines(
                 pos += 2
                 number += 1
                 line_startpos = pos
-                line.append("\\\n")
                 continue
 
             if c == "\t":
@@ -549,9 +473,8 @@ def list_logical_lines(
                     text=linecache.getline(filename, number),
                 )
 
-            # Some kind of non alpha-numeric character outside of ASCII range.
+            # Some kind of non alpha-numeric character in ASCII range.
             else:
-                line.append(c)
                 pos += 1
 
     return result
