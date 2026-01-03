@@ -5,6 +5,17 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.5.2:
+
+8.5.2
+=====
+
+Fixes
+-----
+
+Fixes an issue where each time Ren'Py checked to see if rollback is possible, one level of rollback would
+be consumed.
+
 .. _renpy-8.5.1:
 
 8.5.1
