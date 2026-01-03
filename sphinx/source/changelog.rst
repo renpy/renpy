@@ -36,7 +36,18 @@ The ability to create these updates will be removed in Ren'Py 8.7.0.
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
 
 
-.. _renpy-8.5.0:
+.. _renpy-8.5.2:
+
+8.5.2
+=====
+
+Fixes
+-----
+
+Fixes an issue where each time Ren'Py checked to see if rollback is possible, one level of rollback would
+be consumed.
+
+.. _renpy-8.5.1:
 
 8.5.1
 =====
