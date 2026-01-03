@@ -9,7 +9,16 @@ support can be used for many things, from setting a flag to creating
 new displayables. This chapter covers ways in which Ren'Py scripts can
 directly invoke Python, through the various Python statements.
 
-Ren'Py 7 supports Python 2.7. Ren'Py 8 supports Python 3.9.
+
++----------------+----------------+
+| Ren'Py Version | Python Version |
++================+================+
+| 7              | 2.7            |
++----------------+----------------+
+| 8              | 3.9            |
++----------------+----------------+
+| 8.4            | 3.12           |
++----------------+----------------+
 
 .. note::
     If you know Python, you'll be able to take advantage of that. However,
