@@ -258,7 +258,7 @@ def list_logical_lines(
     contents. In that case, `filename` need not exist.
     """
 
-    from renpy.lexersupport import match_logical_word, match_whitespace, match_operator, match_string
+    from renpy.lexersupport import match_logical_word, match_operator, match_string, match_whitespace
 
     global original_filename
 
@@ -309,12 +309,12 @@ def list_logical_lines(
     open_parens: list[tuple[str, int, int]] = []
 
     # Position at the beginning of current physical line.
-    # This is used to calculate current column offset by pos - line_startpos.
-    line_startpos = pos
+    # This is used to calculate current column offset by pos - physical_line_start.
+    physical_line_start = pos
 
-    ignore_regex = IGNORE_PATTERN
-
-    need_munge_regex = NEED_MUNGE_PATTERN
+    # Put some frequently used variables in locals.
+    ignore_pattern = IGNORE_PATTERN
+    need_munge_pattern = NEED_MUNGE_PATTERN
 
     # Position at which last append to current line happened.
     # This is used to speed up join later as there would be less parts to join.
@@ -326,12 +326,12 @@ def list_logical_lines(
     # Looping over whole file to find logical lines.
     while pos < len_data:
         if new_logical_line:
-            if match := ignore_regex.match(data, pos):
+            if match := ignore_pattern.match(data, pos):
                 pos = match.end()
                 number += match[0].count("\n")
 
             start_number = number
-            line_startpos = pos
+            physical_line_start = pos
             last_append_pos = pos
             line.clear()
             new_logical_line = False
@@ -370,7 +370,7 @@ def list_logical_lines(
                 number += newlines
 
             if new_line_startpos is not None:
-                line_startpos = new_line_startpos
+                physical_line_start = new_line_startpos
 
             if need_munge:
                 # There is `__` in a string.
@@ -383,7 +383,7 @@ def list_logical_lines(
             continue
 
         elif word_pos is not None:
-            if data[pos] == "_" and (m := need_munge_regex.match(data, pos)):
+            if data[pos] == "_" and (m := need_munge_pattern.match(data, pos)):
                 line.append(data[last_append_pos:pos])
                 line.append(f"{prefix}{m[1]}")
                 last_append_pos = pos = word_pos
@@ -411,7 +411,7 @@ def list_logical_lines(
             if open_parens:
                 pos += 1
                 number += 1
-                line_startpos = pos
+                physical_line_start = pos
                 continue
 
             if last_append_pos != pos:
@@ -419,7 +419,7 @@ def list_logical_lines(
 
             rv_line = "".join(line)
 
-            assert rv_line.strip(), f"Got empty logical line in {filename}:{start_number}:{line_startpos}."
+            assert rv_line.strip(), f"Got empty logical line in {filename}:{start_number}:{physical_line_start}."
 
             # Add to the results.
             result.append((filename, start_number, rv_line))
@@ -428,7 +428,7 @@ def list_logical_lines(
 
         # Parenthesis.
         if c in "([{":
-            open_parens.append((c, number, pos - line_startpos))
+            open_parens.append((c, number, pos - physical_line_start))
             pos += 1
             continue
 
@@ -438,7 +438,7 @@ def list_logical_lines(
                     f"unmatched '{c}'",
                     filename,
                     number,
-                    pos - line_startpos + 1,
+                    pos - physical_line_start + 1,
                     linecache.getline(filename, number),
                 )
 
@@ -449,7 +449,7 @@ def list_logical_lines(
                     f"closing parenthesis '{c}' does not match opening parenthesis '{open_c}'",
                     filename,
                     number,
-                    pos - line_startpos + 1,
+                    pos - physical_line_start + 1,
                     linecache.getline(filename, number),
                 )
 
@@ -470,7 +470,7 @@ def list_logical_lines(
         if c == "\\" and data[pos + 1] == "\n":
             pos += 2
             number += 1
-            line_startpos = pos
+            physical_line_start = pos
             continue
 
         if c == "\t":
