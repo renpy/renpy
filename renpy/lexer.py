@@ -241,7 +241,7 @@ original_filename = ""
 IGNORE_PATTERN = re.compile(r"(?:\ *+(?:#[^\n]*+)?(?:\\)?\n)*+")
 
 # Matches a word that should be munged.
-NEED_MUNGE_PATTERN = re.compile(r"\b__([^_\s]+(?:_[^_\s]+)*_?)\b")
+NEED_MUNGE_PATTERN = re.compile(r"\b__([a-zA-Z0-9\u0080-\U0010FFFF]+(?:_[a-zA-Z0-9\u0080-\U0010FFFF]+)*_?)\b")
 
 
 def list_logical_lines(
