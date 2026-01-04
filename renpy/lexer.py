@@ -316,166 +316,174 @@ def list_logical_lines(
 
     need_munge_regex = NEED_MUNGE_PATTERN
 
+    # Position at which last append to current line happened.
+    # This is used to speed up join later as there would be less parts to join.
+    last_append_pos = pos
+
+    # True if we are at the start of a new logical line.
+    new_logical_line = True
+
     # Looping over whole file to find logical lines.
-    while match := ignore_regex.match(data, pos):
-        pos = match.end()
+    while pos < len_data:
+        if new_logical_line:
+            if match := ignore_regex.match(data, pos):
+                pos = match.end()
+                number += match[0].count("\n")
 
-        if pos >= len_data:
-            break
-
-        number += match[0].count("\n")
-
-        start_number = number
-        line_startpos = pos
-        last_append_pos = pos
-        line.clear()
+            start_number = number
+            line_startpos = pos
+            last_append_pos = pos
+            line.clear()
+            new_logical_line = False
+            continue
 
         # Looping over parts of single logical line.
-        while True:
-            # # Most tokens are split by spaces, so just skip over them.
-            # # That includes initial indent.
-            if spaces_pos := match_whitespace(data, pos):
-                pos = spaces_pos
 
-            # Words, i.e. number parts, identifiers or image name components are
-            # the most frequent tokens, so we want to try to match them first.
-            word_pos = match_logical_word(data, pos)
+        # Most tokens are split by spaces, so just skip over them.
+        # That includes initial indent.
+        if spaces_pos := match_whitespace(data, pos):
+            pos = spaces_pos
 
-            # But string prefixes are valid words, so check if we have a
-            # string literal here.
-            if string_match := match_string(data, pos, word_pos or pos):
-                if string_match == -1:
-                    raise ParseError(
-                        "unterminated string literal",
-                        filename,
-                        start_number,
-                        text=linecache.getline(filename, start_number),
-                    )
+        # Words, i.e. number parts, identifiers or image name components are
+        # the most frequent tokens, so we want to try to match them first.
+        word_pos = match_logical_word(data, pos)
 
-                (
-                    string_endpos,
-                    need_munge,
-                    newlines,
-                    new_line_startpos,
-                ) = string_match
-
-                if newlines:
-                    number += newlines
-
-                if new_line_startpos is not None:
-                    line_startpos = new_line_startpos
-
-                if need_munge:
-                    # There is `__` in a string.
-                    line.append(data[last_append_pos:pos])
-                    line.append(munge_string(data[pos:string_endpos]))
-                    last_append_pos = pos = string_endpos
-                else:
-                    pos = string_endpos
-
-                continue
-
-            elif word_pos is not None:
-                if data[pos] == "_" and (m := need_munge_regex.match(data, pos)):
-                    line.append(data[last_append_pos:pos])
-                    line.append(f"{prefix}{m[1]}")
-                    last_append_pos = pos = word_pos
-
-                else:
-                    pos = word_pos
-
-                continue
-
-            try:
-                c = data[pos]
-            except IndexError:
-                # This can happen only if we have unclosed parens.
-                c, lineno, column = open_parens[-1]
+        # But string prefixes are valid words, so check if we have a
+        # string literal here.
+        if string_match := match_string(data, pos, word_pos or pos):
+            if string_match == -1:
                 raise ParseError(
-                    f"'{c}' was never closed",
+                    "unterminated string literal",
                     filename,
-                    lineno,
-                    column + 1,
-                    linecache.getline(filename, lineno),
+                    start_number,
+                    text=linecache.getline(filename, start_number),
                 )
 
-            # Newline.
-            if c == "\n":
-                if open_parens:
-                    pos += 1
-                    number += 1
-                    line_startpos = pos
-                    continue
+            (
+                string_endpos,
+                need_munge,
+                newlines,
+                new_line_startpos,
+            ) = string_match
 
-                if last_append_pos != pos:
-                    line.append(data[last_append_pos:pos])
+            if newlines:
+                number += newlines
 
-                rv_line = "".join(line)
+            if new_line_startpos is not None:
+                line_startpos = new_line_startpos
 
-                assert rv_line.strip(), f"Got empty logical line in {filename}:{start_number}:{line_startpos}."
+            if need_munge:
+                # There is `__` in a string.
+                line.append(data[last_append_pos:pos])
+                line.append(munge_string(data[pos:string_endpos]))
+                last_append_pos = pos = string_endpos
+            else:
+                pos = string_endpos
 
-                # Add to the results.
-                result.append((filename, start_number, rv_line))
-                break
+            continue
 
-            # Parenthesis.
-            if c in "([{":
-                open_parens.append((c, number, pos - line_startpos))
+        elif word_pos is not None:
+            if data[pos] == "_" and (m := need_munge_regex.match(data, pos)):
+                line.append(data[last_append_pos:pos])
+                line.append(f"{prefix}{m[1]}")
+                last_append_pos = pos = word_pos
+
+            else:
+                pos = word_pos
+
+            continue
+
+        try:
+            c = data[pos]
+        except IndexError:
+            # This can happen only if we have unclosed parens.
+            c, lineno, column = open_parens[-1]
+            raise ParseError(
+                f"'{c}' was never closed",
+                filename,
+                lineno,
+                column + 1,
+                linecache.getline(filename, lineno),
+            )
+
+        # Newline.
+        if c == "\n":
+            if open_parens:
                 pos += 1
-                continue
-
-            elif c in "}])":
-                if not open_parens:
-                    raise ParseError(
-                        f"unmatched '{c}'",
-                        filename,
-                        number,
-                        pos - line_startpos + 1,
-                        linecache.getline(filename, number),
-                    )
-
-                open_c, _, _ = open_parens.pop()
-
-                if not (c == ")" and open_c == "(" or c == "]" and open_c == "[" or c == "}" and open_c == "{"):
-                    raise ParseError(
-                        f"closing parenthesis '{c}' does not match opening parenthesis '{open_c}'",
-                        filename,
-                        number,
-                        pos - line_startpos + 1,
-                        linecache.getline(filename, number),
-                    )
-
-                pos += 1
-                continue
-
-            # Operator.
-            if op_pos := match_operator(data, pos):
-                pos = op_pos
-                continue
-
-            # Comments.
-            if c == "#":
-                pos = data.index("\n", pos)
-                continue
-
-            # Backslash/newline.
-            if c == "\\" and data[pos + 1] == "\n":
-                pos += 2
                 number += 1
                 line_startpos = pos
                 continue
 
-            if c == "\t":
+            if last_append_pos != pos:
+                line.append(data[last_append_pos:pos])
+
+            rv_line = "".join(line)
+
+            assert rv_line.strip(), f"Got empty logical line in {filename}:{start_number}:{line_startpos}."
+
+            # Add to the results.
+            result.append((filename, start_number, rv_line))
+            new_logical_line = True
+            continue
+
+        # Parenthesis.
+        if c in "([{":
+            open_parens.append((c, number, pos - line_startpos))
+            pos += 1
+            continue
+
+        elif c in "}])":
+            if not open_parens:
                 raise ParseError(
-                    "Tab characters are not allowed in Ren'Py scripts.",
+                    f"unmatched '{c}'",
                     filename,
                     number,
-                    text=linecache.getline(filename, number),
+                    pos - line_startpos + 1,
+                    linecache.getline(filename, number),
                 )
 
-            # Some kind of non alpha-numeric character in ASCII range.
-            else:
-                pos += 1
+            open_c, _, _ = open_parens.pop()
+
+            if not (c == ")" and open_c == "(" or c == "]" and open_c == "[" or c == "}" and open_c == "{"):
+                raise ParseError(
+                    f"closing parenthesis '{c}' does not match opening parenthesis '{open_c}'",
+                    filename,
+                    number,
+                    pos - line_startpos + 1,
+                    linecache.getline(filename, number),
+                )
+
+            pos += 1
+            continue
+
+        # Operator.
+        if op_pos := match_operator(data, pos):
+            pos = op_pos
+            continue
+
+        # Comments.
+        if c == "#":
+            pos = data.index("\n", pos)
+            continue
+
+        # Backslash/newline.
+        if c == "\\" and data[pos + 1] == "\n":
+            pos += 2
+            number += 1
+            line_startpos = pos
+            continue
+
+        if c == "\t":
+            raise ParseError(
+                "Tab characters are not allowed in Ren'Py scripts.",
+                filename,
+                number,
+                text=linecache.getline(filename, number),
+            )
+
+        # Some kind of non alpha-numeric character in ASCII range.
+        else:
+            pos += 1
 
     return result
 
