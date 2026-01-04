@@ -400,7 +400,11 @@ def list_logical_lines(
             # Comments should not appear in final line so user don't have to
             # worry about them using regexes.
             line.append(data[last_append_pos:pos])
-            last_append_pos = pos = data.index("\n", pos)
+            pos = data.find("\n", pos)
+            if pos == -1:
+                pos = len_data
+
+            last_append_pos = pos
             c = "\n"
 
         # Newline.

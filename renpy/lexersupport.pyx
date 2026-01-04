@@ -210,9 +210,11 @@ def match_string(unicode data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /
 
                 # Do not catch braces inside comments.
                 if c == '#':
-                    pos = data.index("\n", pos)
-                    # Unterminated string literal.
-                    if pos == -1:
+                    for i in range(pos, length):
+                        if _get_c_unbounded(data, i) != '\n':
+                            break
+                    else:
+                        # Unterminated string literal.
                         return -1
 
                     c = '\n'
