@@ -406,6 +406,14 @@ def list_logical_lines(
                 linecache.getline(filename, lineno),
             )
 
+        # Comments.
+        if c == "#":
+            # Comments should not appear in final line so user don't have to
+            # worry about them using regexes.
+            line.append(data[last_append_pos:pos])
+            last_append_pos = pos = data.index("\n", pos)
+            c = "\n"
+
         # Newline.
         if c == "\n":
             if open_parens:
@@ -459,11 +467,6 @@ def list_logical_lines(
         # Operator.
         if op_pos := match_operator(data, pos):
             pos = op_pos
-            continue
-
-        # Comments.
-        if c == "#":
-            pos = data.index("\n", pos)
             continue
 
         # Backslash/newline.
