@@ -393,18 +393,7 @@ def list_logical_lines(
 
             continue
 
-        try:
-            c = data[pos]
-        except IndexError:
-            # This can happen only if we have unclosed parens.
-            c, lineno, column = open_parens[-1]
-            raise ParseError(
-                f"'{c}' was never closed",
-                filename,
-                lineno,
-                column + 1,
-                linecache.getline(filename, lineno),
-            )
+        c = data[pos]
 
         # Comments.
         if c == "#":
@@ -487,6 +476,16 @@ def list_logical_lines(
         # Some kind of non alpha-numeric character in ASCII range.
         else:
             pos += 1
+
+    if open_parens:
+        c, lineno, column = open_parens[-1]
+        raise ParseError(
+            f"'{c}' was never closed",
+            filename,
+            lineno,
+            column + 1,
+            linecache.getline(filename, lineno),
+        )
 
     return result
 
