@@ -465,17 +465,21 @@ def list_logical_lines(
             physical_line_start = pos
             continue
 
+        assert ord(c) < 32 or ord(c) == 127, f"Got printable character {c!r} at {pos} in {filename}."
+
         if c == "\t":
-            raise ParseError(
-                "Tab characters are not allowed in Ren'Py scripts.",
-                filename,
-                number,
-                text=linecache.getline(filename, number),
-            )
+            name = "Tab character"
 
         # Some kind of non alpha-numeric character in ASCII range.
         else:
-            pos += 1
+            name = f"ASCII control character '{c}'"
+
+        raise ParseError(
+            f"{name} is not allowed in Ren'Py scripts.",
+            filename,
+            number,
+            text=linecache.getline(filename, number),
+        )
 
     if open_parens:
         c, lineno, column = open_parens[-1]
