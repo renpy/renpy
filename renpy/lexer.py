@@ -459,10 +459,19 @@ def list_logical_lines(
             continue
 
         # Backslash/newline.
-        if c == "\\" and data[pos + 1] == "\n":
-            pos += 2
-            number += 1
+        if c == "\\":
+            if data[pos + 1] != "\n":
+                raise ParseError(
+                    "unexpected character after line continuation character.",
+                    filename,
+                    number,
+                    pos - physical_line_start + 1,
+                    text=linecache.getline(filename, number),
+                )
+
             physical_line_start = pos
+            number += 1
+            pos += 2
             continue
 
         assert ord(c) < 32 or ord(c) == 127, f"Got printable character {c!r} at {pos} in {filename}."
