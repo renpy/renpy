@@ -637,7 +637,13 @@ def group_logical_lines(lines: Iterable[LogicalLine]) -> list[GroupedLine]:
                 stack.pop()
 
             else:
-                raise ParseError("Indentation mismatch.", filename, number, text=text)
+                raise ParseError(
+                    "unindent does not match any outer indentation level",
+                    filename,
+                    number,
+                    indent + 1,
+                    rest,
+                )
 
         block.append(GroupedLine(filename, number, indent, rest, []))
 
