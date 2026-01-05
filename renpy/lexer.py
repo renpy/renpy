@@ -561,6 +561,22 @@ class GroupedLine(NamedTuple):
 
     block: list["GroupedLine"]
 
+    @classmethod
+    def from_legacy(
+        cls,
+        filename: str,
+        line: int,
+        text: str,
+        subblock: list,
+    ) -> "GroupedLine":
+        return GroupedLine(
+            filename,
+            line,
+            0,
+            text,
+            [GroupedLine.from_legacy(*args) for args in subblock],
+        )
+
     def __repr__(self):
         filename = self.filename
         if len(filename) > 20:
@@ -718,7 +734,7 @@ class Lexer(object):
         # Older version of Lexer had block being a list of tuples. Those lists can be found in UserStatements,
         # and so need to be upgraded.
         if block and not isinstance(block[0], GroupedLine):
-            block = [GroupedLine(filename, line, 0, text, subblock) for filename, line, text, subblock in block]
+            block = [GroupedLine.from_legacy(*args) for args in block]
 
         # Are we underneath an init block?
         self.init = init
