@@ -244,3 +244,7 @@ html[data-theme='dark'] .execution-entry3 {
     border: 1px solid #6a9bfd;
     color: #6a9bfd;
 }
+
+.highlighted {
+    color: #000000;
+}
