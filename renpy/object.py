@@ -94,6 +94,8 @@ class Object:
         if cls.__version__ and cls.after_upgrade is Object.after_upgrade:
             raise TypeError(f"class {cls.__name__} does not override 'after_upgrade' method")
 
+        super().__init_subclass__()
+
 
 sentinels = {}
 
