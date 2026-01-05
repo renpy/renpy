@@ -244,15 +244,47 @@ IGNORE_PATTERN = re.compile(r"(?:\ *+(?:#[^\n]*+)?(?:\\)?\n)*+")
 NEED_MUNGE_PATTERN = re.compile(r"\b__([a-zA-Z0-9\u0080-\U0010FFFF]+(?:_[a-zA-Z0-9\u0080-\U0010FFFF]+)*_?)\b")
 
 
+class LogicalLine(NamedTuple):
+    """
+    This class represent one logical line of Ren'Py script.
+
+    It has the same meaning as Python's logical line, but additionally
+    single-quoted strings could also span multiple lines without explicit
+    continuation characters.
+
+    Logical lines can have leading indentation, but does not have ending
+    newline.
+    """
+
+    filename: str
+    "Elided filename of the file that this logical line is from."
+
+    number: int
+    "Line number of the first physical line in the file."
+
+    text: str
+
+    def __repr__(self):
+        filename = self.filename
+        if len(filename) > 20:
+            filename = f"{filename[:10]}...{filename[-10:]}"
+
+        text = self.text
+        if len(text) > 20:
+            text = f"{text[:10]}...{text[-10:]}"
+
+        return f"<GroupedLine('{filename}:{self.number}', {text!r})>"
+
+
 def list_logical_lines(
     filename: str,
     filedata: str | None = None,
     linenumber: int = 1,
-) -> list[tuple[str, int, str]]:
+) -> list[LogicalLine]:
     """
     Reads `filename`, and divides it into logical lines.
 
-    Returns a list of (filename, line number, line text) triples.
+    Returns a list of `LogicalLine` objects.
 
     If `filedata` is given, it should be a unicode string giving the file
     contents. In that case, `filename` need not exist.
@@ -291,8 +323,8 @@ def list_logical_lines(
     if data[0] == "\ufeff":
         pos += 1
 
-    # Result tuples of (filename, line number, line) for each logical line.
-    result: list[tuple[str, int, str]] = []
+    # Result list of logical lines.
+    result: list[LogicalLine] = []
 
     # The line number in the physical file.
     number = linenumber
@@ -423,7 +455,7 @@ def list_logical_lines(
             assert rv_line.strip(), f"Got empty logical line in {filename}:{start_number}:{physical_line_start}."
 
             # Add to the results.
-            result.append((filename, start_number, rv_line))
+            result.append(LogicalLine(filename, start_number, rv_line))
             new_logical_line = True
             continue
 
@@ -508,15 +540,40 @@ def list_logical_lines(
 
 
 class GroupedLine(NamedTuple):
-    # The filename the line is from.
+    """
+    This is a logical line that has a block of logical lines that
+    are one indentation level deeper than it.
+
+    When logical line is converted to a grouped line its leading indentation
+    is stripped from the text and stored in a field.
+    """
+
     filename: str
+    "Elided filename of the file that this logical line is from."
+
     number: int
+    "Line number of the first physical line of the logical line."
+
     indent: int
+    "The indentation of the first physical line of the logical line."
+
     text: str
+
     block: list["GroupedLine"]
 
+    def __repr__(self):
+        filename = self.filename
+        if len(filename) > 20:
+            filename = f"{filename[:10]}...{filename[-10:]}"
 
-def group_logical_lines(lines: list[tuple[str, int, str]]) -> list[GroupedLine]:
+        text = self.text
+        if len(text) > 20:
+            text = f"{text[:10]}...{text[-10:]}"
+
+        return f"<GroupedLine('{filename}:{self.number}', {text!r}, {len(self.block)} subblocks)>"
+
+
+def group_logical_lines(lines: list[LogicalLine]) -> list[GroupedLine]:
     """
     This takes as input the list of logical line triples output from
     list_logical_lines, and breaks the lines into blocks. Each block
