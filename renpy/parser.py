@@ -1676,23 +1676,29 @@ def parse(fn, filedata=None, linenumber=1):
 
     renpy.game.exception_info = "While parsing " + fn + "."
 
+    max_linenumber = linenumber
+
+    def _list_logical_lines():
+        nonlocal max_linenumber
+        for line in list_logical_lines(fn, filedata, linenumber):
+            max_linenumber = max(max_linenumber, line.number)
+            yield line
+
     try:
-        lines = list_logical_lines(fn, filedata, linenumber)
-        nested = group_logical_lines(lines)
+        nested = group_logical_lines(_list_logical_lines())
     except ParseError as e:
         parse_errors.append(e.message)
         return None
 
-    l = Lexer(nested)
+    lex = Lexer(nested)
 
-    rv = parse_block(l)
+    rv = parse_block(lex)
 
     if parse_errors:
         return None
 
     if rv:
-        linenumber = max(i[1] for i in lines) + 1
-        rv.append(ast.Return((rv[-1].filename, linenumber), None))
+        rv.append(ast.Return((rv[-1].filename, max_linenumber + 1), None))
 
     return rv
 

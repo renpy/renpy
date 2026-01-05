@@ -26,7 +26,7 @@ import linecache
 import os
 import re
 import sys
-from typing import Callable, NamedTuple
+from typing import Callable, Iterable, Iterator, NamedTuple
 
 import renpy
 
@@ -280,11 +280,11 @@ def list_logical_lines(
     filename: str,
     filedata: str | None = None,
     linenumber: int = 1,
-) -> list[LogicalLine]:
+) -> Iterator[LogicalLine]:
     """
     Reads `filename`, and divides it into logical lines.
 
-    Returns a list of `LogicalLine` objects.
+    Yields `LogicalLine` objects.
 
     If `filedata` is given, it should be a unicode string giving the file
     contents. In that case, `filename` need not exist.
@@ -322,9 +322,6 @@ def list_logical_lines(
     # Skip the BOM, if any.
     if data[0] == "\ufeff":
         pos += 1
-
-    # Result list of logical lines.
-    result: list[LogicalLine] = []
 
     # The line number in the physical file.
     number = linenumber
@@ -454,8 +451,8 @@ def list_logical_lines(
 
             assert rv_line.strip(), f"Got empty logical line in {filename}:{start_number}:{physical_line_start}."
 
-            # Add to the results.
-            result.append(LogicalLine(filename, start_number, rv_line))
+            yield LogicalLine(filename, start_number, rv_line)
+
             new_logical_line = True
             continue
 
@@ -536,8 +533,6 @@ def list_logical_lines(
             linecache.getline(filename, lineno),
         )
 
-    return result
-
 
 class GroupedLine(NamedTuple):
     """
@@ -589,32 +584,39 @@ class GroupedLine(NamedTuple):
         return f"<GroupedLine('{filename}:{self.number}', {text!r}, {len(self.block)} subblocks)>"
 
 
-def group_logical_lines(lines: list[LogicalLine]) -> list[GroupedLine]:
+def group_logical_lines(lines: Iterable[LogicalLine]) -> list[GroupedLine]:
     """
-    This takes as input the list of logical line triples output from
+    This takes as input the iterable of logical line triples output from
     list_logical_lines, and breaks the lines into blocks. Each block
     is represented as a list of (filename, line number, starting column, line text,
     block) tuples, where block is a block list (which may be empty if
     no block is associated with this line.)
     """
 
-    if not lines:
+    iter_lines = iter(lines)
+
+    try:
+        filename, number, text = next(iter_lines)
+    except StopIteration:
         return []
 
-    filename, number, text = lines[0]
-
-    if text.startswith(" "):
+    if text[0] == " ":
+        rest = text.lstrip(" ")
+        indent = len(text) - len(rest)
         raise ParseError(
-            "Unexpected indentation at start of file.",
+            "unexpected indentation at start of file.",
             filename,
             number,
-            text=text,
+            indent + 1,
+            rest,
         )
 
-    stack: list[tuple[int, list[GroupedLine]]] = [(0, [])]
+    grouped = GroupedLine(filename, number, 0, text, [])
+    stack: list[tuple[int, list[GroupedLine]]] = [(0, [grouped])]
+
     block_indent, block = stack[-1]
 
-    for filename, number, text in lines:
+    for filename, number, text in iter_lines:
         rest = text.lstrip(" ")
         indent = len(text) - len(rest)
 
