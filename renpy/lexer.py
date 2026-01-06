@@ -1202,32 +1202,23 @@ class Lexer(object):
         if self.eol():
             return False
 
-        old_pos = self.pos
+        start_pos = self.pos
 
-        # Delimiter.
-        start = self.match(r'[urfURF]*("""|\'\'\'|"|\')')
+        from renpy.lexersupport import match_string, match_logical_word
 
-        if not start:
-            self.pos = old_pos
+        delim_pos = match_logical_word(self.text, start_pos)
+
+        # match_string would match backtick string otherwise.
+        if self.text[delim_pos or start_pos] not in "\"'":
             return None
 
-        delim = start.lstrip("urfURF")
-
-        # String contents.
-        while True:
-            if self.eol():
+        if m := match_string(self.text, self.pos, delim_pos or start_pos):
+            if m == -1:
                 self.error("end of line reached while parsing string.")
 
-            if self.match(delim):
-                break
+            self.pos = m[0]
 
-            if self.match(r"\\"):
-                self.pos += 1
-                continue
-
-            self.match(r'.[^\'"\\]*')
-
-        return self.text[old_pos : self.pos]
+        return self.text[start_pos : self.pos]
 
     def dotted_name(self):
         """
@@ -1287,8 +1278,7 @@ class Lexer(object):
             if c in delim:
                 return self.expr(self.text[start : self.pos], expr)
 
-            if c in "'\"":
-                self.python_string()
+            if self.python_string():
                 continue
 
             if self.parenthesised_python():
