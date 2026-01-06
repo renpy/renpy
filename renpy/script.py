@@ -26,7 +26,6 @@ from typing import Any
 
 import __future__
 import collections
-import pickletools
 import hashlib
 import os
 import difflib
@@ -874,14 +873,16 @@ class Script(object):
 
                 self.assign_names(stmts, renpy.lexer.elide_filename(fullfn))
 
-                pickle_data_before_static_transforms = pickletools.optimize(
-                    dumps((data, stmts), bad_reduction_name=f"<{fn} rpyc data>")
+                pickle_data_before_static_transforms = dumps(
+                    (data, stmts),
+                    bad_reduction_name=f"<{fn} rpyc data>",
                 )
 
                 self.static_transforms(stmts)
 
-                pickle_data_after_static_transforms = pickletools.optimize(
-                    dumps((data, stmts), bad_reduction_name=f"<{fn} transformed rpyc data>")
+                pickle_data_after_static_transforms = dumps(
+                    (data, stmts),
+                    bad_reduction_name=f"<{fn} transformed rpyc data>",
                 )
 
                 if not renpy.macapp:
