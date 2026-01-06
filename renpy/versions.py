@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -52,7 +52,7 @@ branch_to_version: dict[str, Version] = {}
 
 Version("main", (8, 6, 0), "Real Artists Ship")
 
-Version("fix", (8, 5, 1), "In Good Health")
+Version("fix", (8, 5, 3), "In Good Health")
 
 
 class VersionDict(TypedDict):

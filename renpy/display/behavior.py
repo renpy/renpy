@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -722,7 +722,7 @@ class SayBehavior(renpy.display.layout.Null):
 
         for text in args:
             try:
-                afm_text = text.text[0][text.start : text.end]
+                afm_text = text.text[0][text.afm_start : text.end]
                 afm_text = renpy.text.extras.filter_text_tags(afm_text, allow=[])
                 self.afm_length += max(len(afm_text), 1)
             except Exception:
@@ -1723,17 +1723,17 @@ class Input(renpy.text.text.Text):
             if above is not None:
                 self.caret_pos = above
                 self.update_text(self.content, self.editable)
-            
+
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
-    
+
         elif map_event(ev, "input_down") and self.arrowkeys:
             below = self.get_caret_above_below_pos()[1]
 
             if below is not None:
                 self.caret_pos = below
                 self.update_text(self.content, self.editable)
-            
+
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 

@@ -30,6 +30,7 @@ the omission in future versions.
 * Andrí Wilford
 * Andy_kl
 * Apricotorange
+* Atlas Cove
 * Arda Güler
 * Arman
 * Arowana-vx
@@ -43,6 +44,7 @@ the omission in future versions.
 * Bas Couwenberg
 * Bbs3223474
 * Ben Wright
+* Bkats
 * BlackDragonHunt/Mangagamer
 * Brainos
 * Brimbel
@@ -295,6 +297,7 @@ the omission in future versions.
 * Veydzh3r
 * Viktoras Agejevas
 * Viliam Búr
+* VivianTu789
 * Vladya
 * Vollschauer
 * William Tumeo

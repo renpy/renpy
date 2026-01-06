@@ -9,7 +9,6 @@ sleep 2
 
 (
     set -e
-    . ~/.virtualenvs/renpy3/bin/activate
     cd sphinx
     ./build.sh
 )

@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1007,11 +1007,20 @@ class Context(renpy.object.Object):
             self.call_location_stack.append("unknown location")
             self.dynamic_stack.append({})
 
+class RestartContext(BaseException):
+    """
+    Restarts the current context.
+    """
+
+class RestartTopContext(BaseException):
+    """
+    Restarts the current context.
+    """
 
 def run_context(top):
     """
     Runs the current context until it can't be run anymore, while handling
-    the RestartContext and RestartTopContext exceptions.
+    various exceptions.
     """
 
     if renpy.config.context_callback is not None:
@@ -1041,6 +1050,15 @@ def run_context(top):
             else:
                 context.pop_all_dynamic()
                 raise
+
+        except RestartContext:
+            continue
+
+        except RestartTopContext:
+            if top:
+                continue
+            else:
+                context.pop_all_dynamic()
 
         except Exception:
             context.pop_all_dynamic()
@@ -1084,4 +1102,4 @@ def reset_all_contexts():
     c.goto_label(old.next_node.name)
 
     renpy.game.contexts.append(c)
-    raise renpy.game.RestartTopContext()
+    raise RestartTopContext()

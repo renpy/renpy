@@ -8,8 +8,7 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-8.6.0:
 
 8.6.0
------
-
+=====
 
 Features
 --------
@@ -37,13 +36,30 @@ The ability to create these updates will be removed in Ren'Py 8.7.0.
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
 
 
-.. _renpy-8.5.0:
+.. _renpy-8.5.2:
 
-8.5.1
------
+8.5.2
+=====
 
 Fixes
 -----
+
+Fixes an issue where each time Ren'Py checked to see if rollback is possible, one level of rollback would
+be consumed.
+
+.. _renpy-8.5.1:
+
+8.5.1
+=====
+
+Fixes
+-----
+
+Ren'Py will now properly compute the auto-forward time for text ending with the no-wait ({nw}) text tag,
+followed by extend, as in::
+
+    e "This is {nw}"
+    extend "more text."
 
 Ren'Py now unwinds the call stack before performing a rollback or load. This prevents issues with caused
 ``except`` and ``finally`` blocks being executed after a rollback, which could lead to the rolled-back data
