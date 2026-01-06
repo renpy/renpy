@@ -34,9 +34,16 @@ def match_whitespace(unicode data not None, Py_ssize_t pos, /):
     if current position is not at the start of whitespace.
     """
 
+    cdef Py_ssize_t i = pos
+    cdef Py_ssize_t length = len(data)
+
     for i in range(pos, len(data)):
         if _get_c_unbounded(data, i) != ' ':
-            return None if i == pos else i
+            break
+    else:
+        i = length
+
+    return None if i == pos else i
 
 
 def match_logical_word(unicode data not None, Py_ssize_t pos, /):
@@ -46,9 +53,11 @@ def match_logical_word(unicode data not None, Py_ssize_t pos, /):
     start of a logical word.
     """
 
+    cdef Py_ssize_t i = pos
+    cdef Py_ssize_t length = len(data)
     cdef Py_UCS4 c
 
-    for i in range(pos, len(data)):
+    for i in range(pos, length):
         c = _get_c_unbounded(data, i)
         # Condition is the same as `is_potential_identifier_char` in CPython.
         if not (
@@ -58,7 +67,11 @@ def match_logical_word(unicode data not None, Py_ssize_t pos, /):
             c == '_' or
             c >= 128
         ):
-            return None if i == pos else i
+            break
+    else:
+        i = length
+
+    return None if i == pos else i
 
 
 def match_operator(unicode data not None, Py_ssize_t pos, /):
