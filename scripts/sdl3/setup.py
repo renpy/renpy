@@ -22,8 +22,10 @@ cython("pygame.error")
 cython("pygame.surface")
 cython("pygame.draw")
 cython("pygame.gfxdraw", source=[ "c/SDL3_gfxPrimitives.c" ])
+cython("pygame.joystick")
 
 setup(
     name="sdl",
     ext_modules=cythonize(extensions),
+    packages=["pygame"],
 )
