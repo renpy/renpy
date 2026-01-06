@@ -679,11 +679,11 @@ class Lexer(object):
 
         # These are set by advance.
         self.filename = ""
-        self.text = ""
+        self.text: str = ""
         self.number = 0
         self.subblock = []
         self.global_label = global_label
-        self.pos = 0
+        self.pos: int = 0
         self.word_cache_pos = -1
         self.word_cache_newpos = -1
         self.word_cache = ""
@@ -743,7 +743,7 @@ class Lexer(object):
         if self.eob:
             return None
 
-        if self.pos == len(self.text):
+        if self.pos >= len(self.text):
             return None
 
         m = re.compile(regexp, re.DOTALL).match(self.text, self.pos)
@@ -760,7 +760,17 @@ class Lexer(object):
         Advances the current position beyond any contiguous whitespace.
         """
 
-        self.match_regexp(r"(\s+|\\\n)+")
+        pos = self.pos
+        text = self.text
+        text_len = len(text)
+        if pos >= text_len:
+            return
+
+        if text[pos] not in " \\\n":
+            return
+
+        if m := IGNORE_PATTERN.match(text, pos):
+            self.pos = m.end()
 
     def match(self, regexp):
         """
