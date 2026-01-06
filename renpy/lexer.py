@@ -1116,7 +1116,10 @@ class Lexer(object):
 
         if new_pos := match_logical_word(self.text, self.pos):
             rv = self.text[self.pos : new_pos]
-            self.pos = new_pos
+            if rv.isidentifier():
+                self.pos = new_pos
+            else:
+                rv = None
         else:
             rv = None
 
