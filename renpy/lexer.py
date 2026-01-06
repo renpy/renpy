@@ -763,14 +763,29 @@ class Lexer(object):
         pos = self.pos
         text = self.text
         text_len = len(text)
+
         if pos >= text_len:
             return
 
         if text[pos] not in " \\\n":
             return
 
-        if m := IGNORE_PATTERN.match(text, pos):
-            self.pos = m.end()
+        from renpy.lexersupport import match_whitespace
+
+        try:
+            while True:
+                if spaces_pos := match_whitespace(text, pos):
+                    pos = spaces_pos
+
+                elif text[pos] == "\\" and text[pos + 1] == "\n":
+                    pos += 2
+
+                else:
+                    self.pos = pos
+                    return
+
+        except IndexError:
+            self.pos = text_len
 
     def match(self, regexp):
         """
