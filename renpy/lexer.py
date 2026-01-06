@@ -773,16 +773,20 @@ class Lexer(object):
         from renpy.lexersupport import match_whitespace
 
         try:
-            while True:
+            while pos < text_len:
                 if spaces_pos := match_whitespace(text, pos):
                     pos = spaces_pos
+
+                elif text[pos] == "\n":
+                    pos += 1
 
                 elif text[pos] == "\\" and text[pos + 1] == "\n":
                     pos += 2
 
                 else:
-                    self.pos = pos
-                    return
+                    break
+
+            self.pos = pos
 
         except IndexError:
             self.pos = text_len
