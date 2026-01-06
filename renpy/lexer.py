@@ -1223,6 +1223,9 @@ class Lexer(object):
 
         delim_pos = match_logical_word(self.text, start_pos)
 
+        if (delim_pos or start_pos) >= len(self.text):
+            return None
+
         # match_string would match backtick string otherwise.
         if self.text[delim_pos or start_pos] not in "\"'":
             return None
