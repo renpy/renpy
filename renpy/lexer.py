@@ -1089,8 +1089,18 @@ class Lexer(object):
             self.pos = self.word_cache_newpos
             return self.word_cache
 
+        from renpy.lexersupport import match_logical_word
+
         self.word_cache_pos = self.pos
-        rv = self.match(word_regexp)
+
+        self.skip_whitespace()
+
+        if new_pos := match_logical_word(self.text, self.pos):
+            rv = self.text[self.pos : new_pos]
+            self.pos = new_pos
+        else:
+            rv = None
+
         self.word_cache = rv
         self.word_cache_newpos = self.pos
 
