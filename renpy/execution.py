@@ -1033,23 +1033,24 @@ def run_context(top):
         context = renpy.game.context()
 
         try:
-            context.run()
+            try:
+                context.run()
 
-            rv = renpy.store._return
+                rv = renpy.store._return
 
-            context.pop_all_dynamic()
-
-            return rv
-
-        except renpy.rollback.RollbackException as e:
-            e.perform_rollback()
-
-        except renpy.rollback.UnfreezeException as e:
-            if top:
-                e.perform_unfreeze()
-            else:
                 context.pop_all_dynamic()
-                raise
+
+                return rv
+
+            except renpy.rollback.RollbackException as e:
+                e.perform_rollback()
+
+            except renpy.rollback.UnfreezeException as e:
+                if top:
+                    e.perform_unfreeze()
+                else:
+                    context.pop_all_dynamic()
+                    raise
 
         except RestartContext:
             continue
