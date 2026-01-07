@@ -544,13 +544,6 @@ label _load_reload_game:
     if not renpy.session.get("_reload_slot", None):
         return
 
-    if renpy.session.get("_did_load_reload", False):
-        python:
-            renpy.rename_save(renpy.session["_reload_slot"], "_reload-2")
-            del renpy.session["_reload_slot"]
-            del renpy.session["_did_load_reload"]
-        return
-
     if not renpy.can_load(renpy.session["_reload_slot"]):
         $ del renpy.session["_reload_slot"]
         return
@@ -569,14 +562,11 @@ label _load_reload_game:
             ui.pausebehavior(0)
             ui.interact(suppress_underlay=True, suppress_overlay=True)
 
-            renpy.session["_did_load_reload"] = True
             renpy.load(renpy.session["_reload_slot"])
 
         finally:
 
             renpy.rename_save(renpy.session["_reload_slot"], "_reload-2")
             del renpy.session["_reload_slot"]
-            del renpy.session["_did_load_reload"]
-
 
     return
