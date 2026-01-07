@@ -16,12 +16,12 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from pygame.sdl cimport *
-from pygame.surface cimport Surface
+from .sdl cimport *
+from .surface cimport Surface
 
-import renpy.pygame.gfxdraw as gfxdraw
-from renpy.pygame.rect import Rect
-from renpy.pygame.error import error
+from . import gfxdraw
+from .rect import Rect
+from .error import error
 
 def rect(Surface surface, color, rect, width=0):
     if not isinstance(rect, Rect):

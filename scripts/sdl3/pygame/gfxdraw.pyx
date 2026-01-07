@@ -16,14 +16,14 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from pygame.sdl cimport *
-from pygame.sdl3_gfx cimport *
+from .sdl cimport *
+from .sdl3_gfx cimport *
 from libc.stdlib cimport malloc, free
-from pygame.surface cimport Surface
-from pygame.color cimport Color
+from .surface cimport Surface
+from .color cimport Color
 
-from pygame.error import error
-from pygame.rect import Rect
+from .error import error
+from .rect import Rect
 
 cdef class GFXCanvas:
     cdef Surface surface

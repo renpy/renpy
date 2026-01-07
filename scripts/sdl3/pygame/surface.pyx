@@ -18,13 +18,13 @@
 # 3. This notice may not be removed or altered from any source distribution.
 
 from libc.string cimport memmove
-from pygame.sdl cimport *
+from .sdl cimport *
 
-from pygame.color cimport map_color, get_color
-from pygame.rect cimport to_sdl_rect
-from pygame.rect import Rect
+from .color cimport map_color, get_color
+from .rect cimport to_sdl_rect
+from .rect import Rect
 
-from pygame.error import error
+from .error import error
 # from pygame.locals import SRCALPHA
 
 import warnings
