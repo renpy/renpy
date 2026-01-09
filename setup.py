@@ -96,6 +96,7 @@ def main():
     cython("renpy.style")
     cython("renpy.encryption")
     cython("renpy.tfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
+    cython("renpy.ecsign", [ "src/ec_sign_core.c" ])
 
     # renpy.audio
     cython("renpy.audio.renpysound", [ "src/renpysound_core.c", "src/ffmedia.c" ],
