@@ -23,54 +23,49 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from typing import Any
-import contextlib
-
-# Import the python ast module, not ours.
-import ast
-
 # Import the future module itself.
 import __future__
 
+# Import the python ast module, not ours.
+import ast
 import collections
+import contextlib
+import copyreg
 import marshal
-import weakref
 import sys
 import types
-import copyreg
 import warnings
+import weakref
+from typing import Any
 
 import renpy
-
 from renpy.astsupport import hash32
 from renpy.pydict import DictItems, find_changes
 
 # Import these for pickle-compatibility.
-from renpy.revertable import (
-    CompressedList as CompressedList,
-    DetRandom as DetRandom,
-    RevertableDict as RevertableDict,
-    RevertableList as RevertableList,
-    RevertableObject as RevertableObject,
-    RevertableSet as RevertableSet,
-    RollbackRandom as RollbackRandom,
-    revertable_range as revertable_range,
-    revertable_sorted as revertable_sorted,
+from renpy.revertable import (  # noqa: F401
+    CompressedList,
+    DetRandom,
+    RevertableDict,
+    RevertableList,
+    RevertableObject,
+    RevertableSet,
+    RollbackRandom,
+    revertable_range,
+    revertable_sorted,
 )
-
-from renpy.rollback import (
-    deleted as deleted,
-    StoreDeleted as StoreDeleted,
-    AlwaysRollback as AlwaysRollback,
-    NoRollback as NoRollback,
-    SlottedNoRollback as SlottedNoRollback,
-    rng as rng,
-    reached as reached,
-    reached_vars as reached_vars,
-    Rollback as Rollback,
-    RollbackLog as RollbackLog,
+from renpy.rollback import (  # noqa: F401
+    AlwaysRollback,
+    NoRollback,
+    Rollback,
+    RollbackLog,
+    SlottedNoRollback,
+    StoreDeleted,
+    deleted,
+    reached,
+    reached_vars,
+    rng,
 )
-
 
 ##############################################################################
 # Code that implements the store.
@@ -358,7 +353,6 @@ def mark_changed(name: str, variable: str):
 
 
 # Code that replaces literals will calls to magic constructors.
-
 class LoadedVariables(ast.NodeVisitor):
     """
     This is used to implement find_loaded_variables.
@@ -724,7 +718,7 @@ class WrapNode(ast.NodeTransformer):
         if not names:
             return node
 
-        rv = [node]
+        rv: list[ast.AST] = [node]
 
         args = []
 
@@ -841,7 +835,7 @@ class LocationFixer:
 
         self.fix(node, 1 + line_delta, first_line_col_delta)
 
-    def fix(self, node: ast.stmt, lineno: int, col_offset: int):
+    def fix(self, node: Any, lineno: int, col_offset: int):
         # Not all nodes have location attributes, e.g. expr_context.
         # But it's either none of them, or all 4 of them.
         if "lineno" not in node._attributes:
@@ -882,7 +876,7 @@ class LocationFixer:
 
             # Not all children may have end location attributes.
             if "lineno" in c._attributes:
-                if end < (c_end := (c.end_lineno, c.end_col_offset)):
+                if end < (c_end := (c.end_lineno, c.end_col_offset)):  # type: ignore
                     end = c_end
 
         node.end_lineno, node.end_col_offset = end
@@ -1312,5 +1306,7 @@ copyreg.pickle(types.ModuleType, module_pickle)
 def construct_None(*args):
     return None
 
+def pickle_weakref(r):
+    return (construct_None, ())
 
-copyreg.pickle(weakref.ReferenceType, lambda r: (construct_None, tuple()))
+copyreg.pickle(weakref.ReferenceType, pickle_weakref)
