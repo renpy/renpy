@@ -23,6 +23,7 @@ cython("pygame.surface")
 cython("pygame.draw")
 cython("pygame.gfxdraw", source=[ "c/SDL3_gfxPrimitives.c" ])
 cython("pygame.joystick")
+cython("pygame.display")
 
 setup(
     name="sdl",

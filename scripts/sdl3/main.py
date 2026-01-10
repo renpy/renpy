@@ -283,6 +283,11 @@ class Generator:
         if not has_fields:
             self.declare(node, f"        pass")
 
+    extra_macros = {
+        "SDL_WINDOWPOS_UNDEFINED",
+        "SDL_WINDOWPOS_CENTERED",
+    }
+
     def macro(self, node: cindex.Cursor):
         if not self.is_relevant(node):
             return
@@ -312,7 +317,9 @@ class Generator:
         try:
             value = ast.literal_eval(decl)
         except Exception:
-            return
+            if node.spelling not in Generator.extra_macros:
+                return
+            value = -1 # Just to pass the test below.
 
         if isinstance(value, (str, int)):
             self.macros.append(node.spelling)

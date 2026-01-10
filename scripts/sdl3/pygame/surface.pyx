@@ -529,27 +529,13 @@ cdef class Surface:
         cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
         return (format.Rmask, format.Gmask, format.Bmask, format.Amask)
 
-    def set_masks(self, masks):
-        warnings.warn("Surface.set_masks is not supported.")
-
-    def get_shifts(self):
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
-        return (format.Rshift, format.Gshift, format.Bshift, format.Ashift)
-
-    def set_shifts(self, shifts):
-        warnings.warn("Surface.set_shifts is not supported.")
-
     def get_shifts(self):
         cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
         return (format.Rshift, format.Gshift, format.Bshift, format.Ashift)
 
     def get_losses(self):
         cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
-        return (format.Rshift, format.Gshift, format.Bshift, format.Ashift)
-
-    def get_shifts(self):
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
-        return (format.Rshift, format.Gshift, format.Bshift, format.Ashift)
+        return (8-format.Rbits, 8-format.Gbits, 8-format.Bbits, 8-format.Abits)
 
     def get_bounding_rect(self, min_alpha=1):
 
