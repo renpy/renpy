@@ -34,6 +34,14 @@ class Generator:
 
         self.macros = list()
 
+    def clear(self):
+        """
+        Clears names that may have been declared elsewhere.
+        """
+        self.declarations.clear()
+        self.enum_values.clear()
+        self.macros.clear()
+
     def declare(self, cursor: cindex.Cursor, decl: str):
         """
         Add a declaration to the list of declarations.
@@ -168,6 +176,7 @@ class Generator:
                 "SDLCALL",
                 "SDL_MALLOC",
                 "SDL_DECLSPEC",
+                "SDLMAIN_DECLSPEC",
                 "SDL_SCANF_FORMAT_STRING",
                 "SDL_PRINTF_FORMAT_STRING",
                 "SDL_ANALYZER_NORETURN",
@@ -370,7 +379,8 @@ class Generator:
 def main():
     ap = argparse.ArgumentParser(description="SDL3 Binding Generator")
 
-    ap.add_argument("header", help="Path to the SDL3/SDL.h header file.", type=pathlib.Path)
+    ap.add_argument("--early", nargs="*", help="Paths to any early header files to ignore definitions from.", type=pathlib.Path)
+    ap.add_argument("header", nargs="*", help="Path to the header file.", type=pathlib.Path)
     ap.add_argument(
         "--destination",
         help="Path to the directory to which .pxd files will be written.",
@@ -380,29 +390,43 @@ def main():
 
     args = ap.parse_args()
 
-    sdl_h_path: pathlib.Path = args.header.absolute()
+    early_headers: list[pathlib.Path] = []
+    "A list of early header files to ignore definitions from."
+
+    if args.early:
+        early_headers = [ i.absolute() for i in args.early ]
+
+    headers: list[pathlib.Path] = [ i.absolute() for i in args.header ]
     "The path to the SDL3/SDL.h header file, made absolute."
 
-    sdl3_path: pathlib.Path = sdl_h_path.parent
+    sdl3_path: pathlib.Path = headers[0].parent
     "If SDL3 is in /usr/include/SDL3/SDL.h, then sdl3_path is /usr/include/SDL3."
 
     include_dir: pathlib.Path = sdl3_path.parent
     "If SDL3 is in /usr/include/SDL3, then include_dir is /usr/include."
 
+    generator = Generator(sdl3_path)
+
     index = cindex.Index.create()
     options = cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD
     index_args = [f"-I{include_dir}", "-DSDL_MAIN_HANDLED"]
 
-    tu = index.parse(str(args.header), args=index_args, options=options)
 
-    generator = Generator(sdl3_path)
+    for i in early_headers:
+        tu = index.parse(str(i), args=index_args, options=options)
+        generator.traverse(tu.cursor, 0)
 
-    destination_pxd = args.destination / (args.header.stem.lower() + ".pxd")
+    generator.clear()
+
+    for i in headers:
+        tu = index.parse(str(i), args=index_args, options=options)
+        generator.traverse(tu.cursor, 0)
+
+    destination_pxd = args.destination / (headers[0].stem.lower() + ".pxd")
     "The path to the destination .pxd file."
 
-    destination_pyx = args.destination / (args.header.stem.lower() + ".pyx")
+    destination_pyx = args.destination / (headers[0].stem.lower() + ".pyx")
 
-    generator.traverse(tu.cursor, 0)
     generator.generate(destination_pxd, destination_pyx)
 
 
