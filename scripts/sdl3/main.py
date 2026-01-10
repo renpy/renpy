@@ -304,6 +304,7 @@ class Generator:
         tokens = tokens[1:]  # Skip the macro name.
 
         decl = "".join(tokens).strip()
+        decl = re.sub(r"SDL_UINT64_C\((.*?)\)", r"\1", decl)
 
         if not decl:
             return
