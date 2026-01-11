@@ -13,6 +13,8 @@ Changelog (Ren'Py 7.x-)
 Features
 --------
 
+Layered images now support ``at`` and ``at transform`` clauses at the same time.
+
 The new :var:`config.special_directory_map` variable maps special directory names
 ('images', 'audio', 'fonts') to a list of directories that will be searched for that kind of file. This isn't
 used when defining images and variables in the audio namespace - for automatic definition of images and audio,
