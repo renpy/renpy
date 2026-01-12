@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1007,11 +1007,20 @@ class Context(renpy.object.Object):
             self.call_location_stack.append("unknown location")
             self.dynamic_stack.append({})
 
+class RestartContext(BaseException):
+    """
+    Restarts the current context.
+    """
+
+class RestartTopContext(BaseException):
+    """
+    Restarts the current context.
+    """
 
 def run_context(top):
     """
     Runs the current context until it can't be run anymore, while handling
-    the RestartContext and RestartTopContext exceptions.
+    various exceptions.
     """
 
     if renpy.config.context_callback is not None:
@@ -1024,23 +1033,33 @@ def run_context(top):
         context = renpy.game.context()
 
         try:
-            context.run()
+            try:
+                context.run()
 
-            rv = renpy.store._return
+                rv = renpy.store._return
 
-            context.pop_all_dynamic()
+                context.pop_all_dynamic()
 
-            return rv
+                return rv
 
-        except renpy.game.RestartContext:
+            except renpy.rollback.RollbackException as e:
+                e.perform_rollback()
+
+            except renpy.rollback.UnfreezeException as e:
+                if top:
+                    e.perform_unfreeze()
+                else:
+                    context.pop_all_dynamic()
+                    raise
+
+        except RestartContext:
             continue
 
-        except renpy.game.RestartTopContext:
+        except RestartTopContext:
             if top:
                 continue
-
             else:
-                raise
+                context.pop_all_dynamic()
 
         except Exception:
             context.pop_all_dynamic()
@@ -1084,4 +1103,4 @@ def reset_all_contexts():
     c.goto_label(old.next_node.name)
 
     renpy.game.contexts.append(c)
-    raise renpy.game.RestartTopContext()
+    raise RestartTopContext()

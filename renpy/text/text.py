@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -739,6 +739,9 @@ class Layout(object):
         self.width = width
         self.height = height
 
+        # Should we be in safe text mode?
+        self.safe: bool = text.safe
+
         # The default characters-per-second for this displayable.
         self.cps = style.slow_cps
         if self.cps is None or self.cps is True:
@@ -1324,17 +1327,22 @@ class Layout(object):
                 tag, _, value = text.partition("=")
 
                 if tag and tag[0] == "/":
+
+                    if len(tss) < 2:
+                        if renpy.config.safe_text or self.safe:
+                            line.extend(self.create_text_segments(text, tss[-1], style))
+                            continue
+                        else:
+                            tag = tag[1:]
+
+                            if not renpy.text.extras.text_tags.get(tag, True):
+                                raise Exception(
+                                    "{/%s} isn't valid, since the %s text tag doesn't take a close tag." % (tag, tag)
+                                )
+
+                            raise Exception("%r closes a text tag that isn't open." % text)
+
                     tss.pop()
-
-                    if not tss:
-                        tag = tag[1:]
-
-                        if not renpy.text.extras.text_tags.get(tag, True):
-                            raise Exception(
-                                "{/%s} isn't valid, since the %s text tag doesn't take a close tag." % (tag, tag)
-                            )
-
-                        raise Exception("%r closes a text tag that isn't open." % text)
 
                 elif tag == "_start":
                     fs = FlagSegment()
@@ -1601,7 +1609,10 @@ class Layout(object):
                     pass
 
                 else:
-                    raise Exception("Unknown text tag %r" % text)
+                    if renpy.config.safe_text or self.safe:
+                        line.extend(self.create_text_segments(text, tss[-1], style))
+                    else:
+                        raise Exception("Unknown text tag %r" % text)
 
             except Exception:
                 if done:
@@ -2136,6 +2147,7 @@ class Text(renpy.display.displayable.Displayable):
     last_ctc = None
     tokenized = False
     slow_done_time = None
+    safe = False
 
     def after_upgrade(self, version):
         if version < 3:
@@ -2161,6 +2173,7 @@ class Text(renpy.display.displayable.Displayable):
         replaces=None,
         mask=None,
         tokenized=False,
+        safe=False,
         **properties,
     ):
         super(Text, self).__init__(**properties)
@@ -2214,14 +2227,22 @@ class Text(renpy.display.displayable.Displayable):
 
         # The index of the start and end strings in the first segment of text.
         # (None to show the whole text.)
-        self.start = None  # type: int|None
-        self.end = None  # type: int|None
+        self.afm_start: int|None = None
+        self.start: int|None = None
+        self.end: int|None = None
+
+        # If true, a safe mode is engaged that will render text with text tag errors.
+        self.safe = safe
+
+        # If true, a safe mode is engaged that will render text with text tag errors.
+        self.safe = safe
 
         if isinstance(replaces, Text):
             self.slow = replaces.slow
             self.slow_done = replaces.slow_done
             self.slow_done_time = replaces.slow_done_time
             self.ctc = replaces.ctc
+            self.afm_start = replaces.afm_start
             self.start = replaces.start
             self.end = replaces.end
 
@@ -2944,14 +2965,18 @@ class Text(renpy.display.displayable.Displayable):
         tokens = []
 
         for i in text:
-            if isinstance(i, str):
-                tokens.extend(textsupport.tokenize(i))
+            try:
+                if isinstance(i, str):
+                    tokens.extend(textsupport.tokenize(i))
 
-            elif isinstance(i, renpy.display.displayable.Displayable):
-                tokens.append((DISPLAYABLE, i))
+                elif isinstance(i, renpy.display.displayable.Displayable):
+                    tokens.append((DISPLAYABLE, i))
 
-            else:
-                raise Exception("Can't display {0!r} as Text.".format(i))
+                else:
+                    raise Exception("Can't display {0!r} as Text.".format(i))
+            except Exception as e:
+                if renpy.config.safe_text or self.safe:
+                    tokens.append((TEXT, i))
 
         return tokens
 

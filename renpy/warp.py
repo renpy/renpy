@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -183,4 +183,4 @@ def warp():
 
     renpy.game.context().goto_label(node.name)
     renpy.game.context().come_from(node.name, "_after_warp")
-    raise renpy.game.RestartContext()
+    raise renpy.execution.RestartContext()

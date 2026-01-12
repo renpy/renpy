@@ -192,9 +192,6 @@ that feature.
     "say"
         Normal say statements.
 
-    "say-bubble"
-        Say statements in bubble mode.
-
     "say-nvl"
         Say statements in NVL mode.
 
@@ -461,6 +458,14 @@ File I/O
     environment variable.
 
 
+.. var:: config.special_directory_map = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ], ... }
+
+    This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
+    be searched for that kind of file. These are only used when loading a filename - for automatic definition
+    of images and audiom see :var:`config.image_directories` and :var:`config.audio_directories`. New special
+    directory names may be added in future versions of Ren'Py.
+
+
 History
 -------
 
@@ -493,7 +498,7 @@ Images
     The directories are searched in order, and the first directory that contains the image is used.
 
     This should be set at init priority -1 or lower to ensure that it is set before the images are defined. This
-    cab be done with::
+    can be done with::
 
         define -1 config.image_directories = [ "images", "dlc/images" ]
 
@@ -699,6 +704,11 @@ Layers
 
 Media (Music, Sound, and Video)
 -------------------------------
+
+.. var:: config.audio_directories = [ 'audio' ]
+
+    A list of directories that are searched for audio files and used to populate the
+    :ref:`audio-namespace`.
 
 .. var:: config.audio_filename_callback = None
 
@@ -1813,6 +1823,12 @@ Text and Fonts
         config.replace_text = replace_text
 
     .. seealso:: :var:`config.say_menu_text_filter`
+
+.. var:: config.safe_text = ...
+
+    If True, Ren'Py will attempt to display text even if it contains errors, like unmatched text tags.
+    If False, Ren'Py will raise an error when such text is encountered. This defaults to True in released games, and
+    False in developer mode.
 
 .. var:: config.say_menu_text_filter = None
 

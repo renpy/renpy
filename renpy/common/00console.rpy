@@ -734,13 +734,13 @@ init -1500 python in _console:
                 else:
                     result = renpy.python.py_eval(code)
                     if persistent._console_short and not getattr(result, "_console_always_long", False):
-                        he.result = aRepr.repr(result)
+                        he.result = aRepr.repr(result).replace("{", "{{")
 
                         if not self.did_short_warning and he.result != repr(result):
                             self.did_short_warning = True
                             he.result += "\n\n" + __("The console is using short representations. To disable this, type 'long', and to re-enable, type 'short'")
                     else:
-                        he.result = repr(result)
+                        he.result = repr(result).replace("{", "{{")
 
                     he.update_lines()
                     return
@@ -1109,15 +1109,15 @@ screen _console:
                     if he.command is not None:
                         frame style "_console_command":
                             xfill True
-                            text "[he.command!q]" style "_console_command_text"
+                            text "[he.command!q]" style "_console_command_text" safe True
 
                     if he.result is not None:
 
                         frame style "_console_result":
                             if he.is_error:
-                                text "[he.result]" style "_console_error_text"
+                                text "[he.result]" style "_console_error_text" safe True
                             else:
-                                text "[he.result!q]" style "_console_result_text"
+                                text "[he.result!q]" style "_console_result_text" safe True
 
         # Draw the current input.
         frame style "_console_input":

@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1639,6 +1639,17 @@ A set of character names that will be treated like the "extend" character for th
 tlid_only_considers_say: bool = True
 """
 If True, only say statements will be assigned translation ids.
+"""
+
+safe_text: bool = False
+"""
+If True, invalid text is displayed. If False, it's ignored.
+"""
+
+special_directory_map: dict[str, list[str]] = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ] }
+"""
+This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
+be searched for that kind of file.
 """
 
 

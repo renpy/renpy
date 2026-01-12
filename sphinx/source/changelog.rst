@@ -8,7 +8,20 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-8.6.0:
 
 8.6.0
------
+=====
+
+Features
+--------
+
+Layered images now support ``at`` and ``at transform`` clauses at the same time.
+
+The new :var:`config.special_directory_map` variable maps special directory names
+('images', 'audio', 'fonts') to a list of directories that will be searched for that kind of file. This isn't
+used when defining images and variables in the audio namespace - for automatic definition of images and audio,
+see :var:`config.image_directories` and :var:`config.audio_directories`.
+
+The new :var:`config.audio_directories` variable is a list of directories that are searched for audio Files
+and used to populate the :ref:`audio-namespace <audio-namespace>`.
 
 Other Changes
 -------------
@@ -25,13 +38,34 @@ The ability to create these updates will be removed in Ren'Py 8.7.0.
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
 
 
-.. _renpy-8.5.0:
+.. _renpy-8.5.2:
 
-8.5.1
------
+8.5.2
+=====
 
 Fixes
 -----
+
+Fixes an issue where each time Ren'Py checked to see if rollback is possible, one level of rollback would
+be consumed.
+
+.. _renpy-8.5.1:
+
+8.5.1
+=====
+
+Fixes
+-----
+
+Ren'Py will now properly compute the auto-forward time for text ending with the no-wait ({nw}) text tag,
+followed by extend, as in::
+
+    e "This is {nw}"
+    extend "more text."
+
+Ren'Py now unwinds the call stack before performing a rollback or load. This prevents issues with caused
+``except`` and ``finally`` blocks being executed after a rollback, which could lead to the rolled-back data
+being changed.
 
 Ren'Py now skips files and directories beginning with a dot (e.g. .hidden.rpy) when scanning the
 filesystem. These files often have special meaning on unix and mac platforms.
@@ -52,6 +86,9 @@ making the game more responsive when faced with mice that produce many events pe
 
 Other Changes
 -------------
+
+There is now a text safe mode that will display text with text-tag errors, when the :var:`config.safe_text`
+is set. This variable defaults to True in released games, and False in developer mode.
 
 Ren'Py now includes a cut-down version of the brotli python module. This version supports the
 decompress method and Decompressor object, but leaves out the Compressor object. It's intended

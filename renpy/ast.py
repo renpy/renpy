@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -2900,9 +2900,11 @@ class TranslateSay(Say):
     def execute(self):
         next_node(self.next)
 
-        renpy.game.context().translate_identifier = self.identifier
-        renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
-        renpy.game.context().translated = False
+        ctx = renpy.game.context()
+
+        ctx.translate_identifier = self.identifier
+        ctx.alternate_translate_identifier = getattr(self, "alternate", None)
+        ctx.translated = False
 
         if self.language is None:
             # Potentially, jump to a translation.
@@ -2937,8 +2939,8 @@ class TranslateSay(Say):
                 renpy.game.new_translates_count += 1
 
             # Perform the equivalent of an endtranslate block.
-            renpy.game.context().translate_identifier = None
-            renpy.game.context().alternate_translate_identifier = None
+            ctx.translate_identifier = None
+            ctx.alternate_translate_identifier = None
 
     def predict(self) -> list[Node | None]:
         renpy.display.predict.tlids = [self.identifier, getattr(self, "alternate", None)]
