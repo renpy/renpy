@@ -30,6 +30,11 @@ from typing import Callable, NamedTuple
 
 import renpy
 
+try:
+    from renpy.lexersupport import match_logical_word, match_operator, match_string, match_whitespace
+    from renpy.astsupport import make_pyexpr
+except ImportError:
+    pass
 
 class ParseError(SyntaxError):
     """
@@ -257,8 +262,6 @@ def list_logical_lines(
     If `filedata` is given, it should be a unicode string giving the file
     contents. In that case, `filename` need not exist.
     """
-
-    from renpy.lexersupport import match_logical_word, match_operator, match_string, match_whitespace
 
     global original_filename
 
@@ -776,8 +779,6 @@ class Lexer(object):
         if text[pos] not in " \\\n":
             return
 
-        from renpy.lexersupport import match_whitespace
-
         try:
             while pos < text_len:
                 if spaces_pos := match_whitespace(text, pos):
@@ -1114,8 +1115,6 @@ class Lexer(object):
             self.pos = self.word_cache_newpos
             return self.word_cache
 
-        from renpy.lexersupport import match_logical_word
-
         self.word_cache_pos = self.pos
 
         self.skip_whitespace()
@@ -1232,8 +1231,6 @@ class Lexer(object):
 
         start_pos = self.pos
 
-        from renpy.lexersupport import match_string, match_logical_word
-
         delim_pos = match_logical_word(self.text, start_pos)
 
         if (delim_pos or start_pos) >= len(self.text):
@@ -1277,7 +1274,6 @@ class Lexer(object):
         return rv
 
     def expr(self, s, expr):
-        from renpy.astsupport import make_pyexpr
 
         if not expr:
             return s
