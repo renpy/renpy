@@ -27,6 +27,16 @@ from libc.stdint cimport uintptr_t
 import sys
 import io
 
+cdef extern from "SDL/SDL3.h":
+    ctypedef struct SDL_IOStreamInterface:
+        size_t size
+        Sint64 (*size)(void *userdata) noexcept
+        Sint64 (*seek)(void *userdata, Sint64 offset, SDL_IOWhence whence) noexcept
+        size_t (*read)(void *userdata, void *ptr, size_t size, SDL_IOStatus *status) noexcept
+        size_t (*write)(void *userdata, const void *ptr, size_t size, SDL_IOStatus *status) noexcept
+        bool (*flush)(void *userdata, SDL_IOStatus *status) noexcept
+        int (*close)(void *userdata) noexcept
+
 # The fsencoding.
 fsencoding = sys.getfilesystemencoding() or "utf-8"
 
@@ -39,8 +49,8 @@ cdef set_error(e):
     msg = <char *> e
     SDL_SetError("%s", msg)
 
-cdef Sint64 python_size(SDL_IOstream *context) noexcept with gil:
-    f = <object> context.hidden.unknown.data1
+cdef Sint64 python_size(void *userdata) noexcept with gil:
+    f = <object> userdata
 
     try:
         cur = f.tell()
@@ -52,8 +62,8 @@ cdef Sint64 python_size(SDL_IOstream *context) noexcept with gil:
 
     return rv
 
-cdef Sint64 python_seek(SDL_IOstream *context, Sint64 seek, int whence) noexcept with gil:
-    f = <object> context.hidden.unknown.data1
+cdef Sint64 python_seek(void *userdata, Sint64 seek, int whence) noexcept with gil:
+    f = <object> userdata
 
     try:
         f.seek(seek, whence)
@@ -64,45 +74,57 @@ cdef Sint64 python_seek(SDL_IOstream *context, Sint64 seek, int whence) noexcept
 
     return rv
 
-cdef size_t python_read(SDL_IOstream *context, void *ptr, size_t size, size_t maxnum) noexcept with gil:
-    f = <object> context.hidden.unknown.data1
+cdef size_t python_read(void *userdata, void *ptr, size_t size, SDL_IOStatus *status) noexcept with gil:
+    f = <object> userdata
 
     try:
-        data = f.read(size * maxnum)
+        data = f.read(size)
     except Exception as e:
+        status[0] = SDL_IO_STATUS_ERROR
         set_error(e)
         return -1
 
     memcpy(ptr, <void *><char *> data, len(data))
     return len(data)
 
-cdef size_t python_write(SDL_IOstream *context, const void *ptr, size_t size, size_t maxnum) noexcept with gil:
-    f = <object> context.hidden.unknown.data1
-    data = (<char *> ptr)[:size * maxnum]
+cdef size_t python_write(void *userdata, const void *ptr, size_t size, SDL_IOStatus *status) noexcept with gil:
+    f = <object> userdata
+    data = (<char *> ptr)[:size]
 
     try:
         f.write(data)
     except Exception as e:
+        status[0] = SDL_IO_STATUS_ERROR
         set_error(e)
         return -1
 
     return len(data)
 
-cdef int python_close(SDL_IOstream *context) noexcept with gil:
-    if context != NULL:
-        if context.hidden.unknown.data1 != NULL:
-            f = <object> context.hidden.unknown.data1
+cdef bool python_flush(void *userdata, SDL_IOStatus *status) noexcept with gil:
+    f = <object> userdata
 
-            try:
-                f.close()
-            except Exception as e:
-                set_error(e)
-                return -1
+    try:
+        f.flush()
+    except Exception as e:
+        status[0] = SDL_IO_STATUS_ERROR
+        set_error(e)
+        return False
 
-            Py_DECREF(f)
+    return True
 
-            context.hidden.unknown.data1 = NULL
-        SDL_FreeRW(context)
+cdef int python_close(void *userdata) noexcept with gil:
+    if userdata != NULL:
+        f = <object> userdata
+
+        try:
+            f.close()
+        except Exception as e:
+            set_error(e)
+            return -1
+
+        Py_DECREF(f)
+
+        userdata = NULL
     return 0
 
 cdef SDL_IOStreamInterface python_iointerface
@@ -111,6 +133,7 @@ python_iointerface.size = python_size
 python_iointerface.seek = python_seek
 python_iointerface.read = python_read
 python_iointerface.write = python_write
+python_iointerface.flush = python_flush
 python_iointerface.close = python_close
 
 
