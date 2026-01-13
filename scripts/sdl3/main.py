@@ -249,17 +249,22 @@ class Generator:
         if not self.check_new_name(node.spelling):
             return
 
-        self.declare(node, f"    cdef struct {node.spelling}:")
 
+        first_field = True
         has_fields = False
 
-        for child in node.get_children():
-            if child.kind == CursorKind.FIELD_DECL:
-                self.declare(child, f"        {self.elide_tokens(child)}")
-                has_fields = True
+        if not node.spelling == "SDL_IOStreamInterface":
+            for child in node.get_children():
+                if child.kind == CursorKind.FIELD_DECL:
+
+                    if first_field:
+                        self.declare(node, f"    cdef struct {node.spelling}:")
+                        first_field = False
+                    self.declare(child, f"        {self.elide_tokens(child)}")
+                    has_fields = True
 
         if not has_fields:
-            self.declare(node, f"        pass")
+            self.declare(node, f"    cdef struct {node.spelling}")
 
     def union(self, node: cindex.Cursor):
         if not self.is_relevant(node):
