@@ -7,6 +7,7 @@ renpy.lexersupport ../tmp/gen/renpy.lexersupport.c
 renpy.pydict ../tmp/gen/renpy.pydict.c
 renpy.style ../tmp/gen/renpy.style.c
 renpy.encryption ../tmp/gen/renpy.encryption.c
+renpy.ecsign  ../tmp/gen/renpy.ecsign.c ec_sign_core.c ec_sign_core_web.c
 renpy.styledata.styleclass ../tmp/gen/renpy.styledata.styleclass.c
 renpy.styledata.stylesets ../tmp/gen/renpy.styledata.stylesets.c
 renpy.styledata.style_selected_hover_functions ../tmp/gen/renpy.styledata.style_selected_hover_functions.c
