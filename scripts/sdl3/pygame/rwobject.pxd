@@ -16,7 +16,7 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from .sdl cimport SDL_IOstream
+from .sdl cimport SDL_IOStream
 
-cdef SDL_IOstream *to_rwops(filelike, mode=*, base=*, length=*) except NULL
-cdef SDL_IOstream *RWopsFromPython(filelike) except NULL
+cdef SDL_IOStream *to_rwops(filelike, mode=*, base=*, length=*) except NULL
+cdef SDL_IOStream *RWopsFromPython(filelike) except NULL

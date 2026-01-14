@@ -9,12 +9,13 @@ def cython(module: str, source: list[str] = [ ]) -> None:
         Extension(
             module,
             sources=[module.replace(".", "/") + ".pyx"] + source,
-            include_dirs=[ "src/" ],
+            include_dirs=[ "c" ],
             libraries=["SDL3"],
         )
     )
 
 
+cython("pygame.rwobject")
 cython("pygame.sdl")
 cython("pygame.color")
 cython("pygame.rect")

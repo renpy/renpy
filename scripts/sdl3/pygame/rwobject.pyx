@@ -16,31 +16,32 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from sdl cimport *
+from .sdl cimport *
 from cpython.ref cimport Py_INCREF, Py_DECREF
 from cpython.buffer cimport PyObject_CheckBuffer, PyObject_GetBuffer, PyBuffer_Release, PyBUF_CONTIG, PyBUF_CONTIG_RO
 from libc.string cimport memcpy
 from libc.stdio cimport FILE, fopen, fclose, fseek, ftell, fread, SEEK_SET, SEEK_CUR, SEEK_END
 from libc.stdlib cimport calloc, free
 from libc.stdint cimport uintptr_t
+from libcpp cimport bool
 
 import sys
 import io
 
-cdef extern from "SDL/SDL3.h":
-    ctypedef struct SDL_IOStreamInterface:
-        size_t size
-        Sint64 (*size)(void *userdata) noexcept
-        Sint64 (*seek)(void *userdata, Sint64 offset, SDL_IOWhence whence) noexcept
-        size_t (*read)(void *userdata, void *ptr, size_t size, SDL_IOStatus *status) noexcept
-        size_t (*write)(void *userdata, const void *ptr, size_t size, SDL_IOStatus *status) noexcept
-        bool (*flush)(void *userdata, SDL_IOStatus *status) noexcept
-        int (*close)(void *userdata) noexcept
+cdef extern from "SDL3/SDL.h":
+    cdef struct SDL_IOStreamInterface:
+        Uint32 version
+        Sint64 (*size)(void *userdata) noexcept nogil
+        Sint64 (*seek)(void *userdata, Sint64 offset, SDL_IOWhence whence) noexcept nogil
+        size_t (*read)(void *userdata, void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil
+        size_t (*write)(void *userdata, const void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil
+        bool (*flush)(void *userdata, SDL_IOStatus *status) noexcept nogil
+        bool (*close)(void *userdata) noexcept nogil
 
 # The fsencoding.
 fsencoding = sys.getfilesystemencoding() or "utf-8"
 
-cdef extern from "pygame/python_threads.h":
+cdef extern from "python_threads.h":
     void init_python_threads()
 
 cdef set_error(e):
@@ -62,7 +63,7 @@ cdef Sint64 python_size(void *userdata) noexcept with gil:
 
     return rv
 
-cdef Sint64 python_seek(void *userdata, Sint64 seek, int whence) noexcept with gil:
+cdef Sint64 python_seek(void *userdata, Sint64 seek, SDL_IOWhence whence) noexcept with gil:
     f = <object> userdata
 
     try:
@@ -112,7 +113,7 @@ cdef bool python_flush(void *userdata, SDL_IOStatus *status) noexcept with gil:
 
     return True
 
-cdef int python_close(void *userdata) noexcept with gil:
+cdef bool python_close(void *userdata) noexcept with gil:
     if userdata != NULL:
         f = <object> userdata
 
@@ -120,12 +121,12 @@ cdef int python_close(void *userdata) noexcept with gil:
             f.close()
         except Exception as e:
             set_error(e)
-            return -1
+            return False
 
         Py_DECREF(f)
 
         userdata = NULL
-    return 0
+    return True
 
 cdef SDL_IOStreamInterface python_iointerface
 python_iointerface.version = sizeof(SDL_IOStreamInterface)
@@ -138,142 +139,180 @@ python_iointerface.close = python_close
 
 
 cdef struct SubFile:
-    SDL_RWops *rw
+    SDL_IOStream *rw
     Sint64 base
     Sint64 length
     Sint64 tell
 
-cdef Sint64 subfile_size(SDL_RWops *context) noexcept nogil:
-    cdef SubFile *sf = <SubFile *> context.hidden.unknown.data1
+
+cdef Sint64 subfile_size(void *userdata) noexcept nogil:
+    cdef SubFile *sf = <SubFile *> userdata
     return sf.length
 
-cdef Sint64 subfile_seek(SDL_RWops *context, Sint64 seek, int whence) noexcept nogil:
-    cdef SubFile *sf = <SubFile *> context.hidden.unknown.data1
+cdef Sint64 subfile_seek(void *userdata, Sint64 offset, SDL_IOWhence whence) noexcept nogil:
+    cdef SubFile *sf = <SubFile *> userdata
 
-    if whence == RW_SEEK_SET:
-        sf.tell = SDL_RWseek(sf.rw, seek + sf.base, RW_SEEK_SET) - sf.base
-    elif whence == RW_SEEK_CUR:
-        sf.tell = SDL_RWseek(sf.rw, seek, RW_SEEK_CUR) - sf.base
-    elif whence == RW_SEEK_END:
-        sf.tell = SDL_RWseek(sf.rw, sf.base + sf.length + seek, RW_SEEK_SET) - sf.base
+    if whence == SDL_IO_SEEK_SET:
+        sf.tell = SDL_SeekIO(sf.rw, offset + sf.base, SDL_IO_SEEK_SET) - sf.base
+    elif whence == SDL_IO_SEEK_CUR:
+        sf.tell = SDL_SeekIO(sf.rw, offset, SDL_IO_SEEK_CUR) - sf.base
+    elif whence == SDL_IO_SEEK_END:
+        sf.tell = SDL_SeekIO(sf.rw, sf.base + sf.length + offset, SDL_IO_SEEK_SET) - sf.base
 
     return sf.tell
 
-cdef size_t subfile_read(SDL_RWops *context, void *ptr, size_t size, size_t maxnum) noexcept nogil:
-    cdef SubFile *sf = <SubFile *> context.hidden.unknown.data1
+cdef size_t subfile_read(void *userdata, void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil:
+    cdef SubFile *sf = <SubFile *> userdata
 
     cdef Sint64 left = sf.length - sf.tell
     cdef size_t rv
 
-    if size * maxnum > left:
-        maxnum = left // size
+    if size > left:
+        size = left
 
-    if maxnum == 0:
+    if size == 0:
+        status[0] = SDL_IO_STATUS_EOF
         return 0
 
-    rv = SDL_RWread(sf.rw, ptr, size, maxnum)
+    rv = SDL_ReadIO(sf.rw, ptr, size)
 
     if rv > 0:
-        sf.tell += size * rv
+        sf.tell += rv
+        status[0] = SDL_IO_STATUS_READY
+    else:
+        status[0] = SDL_IO_STATUS_ERROR
 
     return rv
 
-cdef int subfile_close(SDL_RWops *context) noexcept nogil:
-    cdef SubFile *sf
-
-    if context != NULL:
-        sf = <SubFile *> context.hidden.unknown.data1
-        if sf.rw != NULL:
-            SDL_RWclose(sf.rw)
-        if sf != NULL:
-            free(sf)
-            context.hidden.unknown.data1 = NULL
-        SDL_FreeRW(context)
-
+cdef size_t subfile_write(void *userdata, const void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil:
+    status[0] = SDL_IO_STATUS_READONLY
     return 0
+
+cdef bool subfile_flush(void *userdata, SDL_IOStatus *status) noexcept nogil:
+    status[0] = SDL_IO_STATUS_READY
+    return True
+
+cdef bool subfile_close(void *userdata) noexcept nogil:
+    cdef SubFile *sf = <SubFile *> userdata
+
+    if sf != NULL:
+        if sf.rw != NULL:
+            SDL_CloseIO(sf.rw)
+        free(sf)
+
+    return True
+
+cdef SDL_IOStreamInterface subfile_iointerface
+subfile_iointerface.version = sizeof(SDL_IOStreamInterface)
+subfile_iointerface.size = subfile_size
+subfile_iointerface.seek = subfile_seek
+subfile_iointerface.read = subfile_read
+subfile_iointerface.write = subfile_write
+subfile_iointerface.flush = subfile_flush
+subfile_iointerface.close = subfile_close
 
 
 cdef struct SplitFile:
-    SDL_RWops *a
-    SDL_RWops *b
+    SDL_IOStream *a
+    SDL_IOStream *b
     Sint64 split
     Sint64 tell
 
-cdef Sint64 splitfile_size(SDL_RWops *context) noexcept nogil:
-    cdef SplitFile *sf = <SplitFile *> context.hidden.unknown.data1
+cdef Sint64 splitfile_size(void *userdata) noexcept nogil:
+    cdef SplitFile *sf = <SplitFile *> userdata
     cdef Sint64 rv
 
-    return SDL_RWsize(sf.a) + SDL_RWsize(sf.b)
+    return SDL_GetIOSize(sf.a) + SDL_GetIOSize(sf.b)
 
-cdef Sint64 splitfile_seek(SDL_RWops *context, Sint64 seek, int whence) noexcept nogil:
-    cdef SplitFile *sf = <SplitFile *> context.hidden.unknown.data1
+cdef Sint64 splitfile_seek(void *userdata, Sint64 offset, SDL_IOWhence whence) noexcept nogil:
+    cdef SplitFile *sf = <SplitFile *> userdata
     cdef Sint64 rv
 
-    if whence == RW_SEEK_SET:
-        sf.tell = seek
-    elif whence == RW_SEEK_CUR:
-        sf.tell += seek
-    elif whence == RW_SEEK_END:
-        sf.tell = splitfile_size(context) + seek
+    if whence == SDL_IO_SEEK_SET:
+        sf.tell = offset
+    elif whence == SDL_IO_SEEK_CUR:
+        sf.tell += offset
+    elif whence == SDL_IO_SEEK_END:
+        sf.tell = splitfile_size(userdata) + offset
 
     if sf.tell < sf.split:
-        rv = SDL_RWseek(sf.a, sf.tell, RW_SEEK_SET)
-        SDL_RWseek(sf.b, 0, RW_SEEK_SET)
+        rv = SDL_SeekIO(sf.a, sf.tell, SDL_IO_SEEK_SET)
+        SDL_SeekIO(sf.b, 0, SDL_IO_SEEK_SET)
     else:
-        SDL_RWseek(sf.a, sf.split, RW_SEEK_SET)
-        rv = SDL_RWseek(sf.b, sf.tell - sf.split, RW_SEEK_SET)
+        SDL_SeekIO(sf.a, sf.split, SDL_IO_SEEK_SET)
+        rv = SDL_SeekIO(sf.b, sf.tell - sf.split, SDL_IO_SEEK_SET)
 
     if rv < 0:
         return rv
     else:
         return sf.tell
 
-cdef size_t splitfile_read(SDL_RWops *context, void *ptr, size_t size, size_t maxnum) noexcept nogil:
-    cdef SplitFile *sf = <SplitFile *> context.hidden.unknown.data1
-    cdef Sint64 left = splitfile_size(context) - sf.tell
+cdef size_t splitfile_read(void *userdata, void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil:
+    cdef SplitFile *sf = <SplitFile *> userdata
+    cdef Sint64 left = splitfile_size(userdata) - sf.tell
     cdef size_t rv
 
     cdef size_t total_read
     cdef size_t left_read
     cdef size_t right_read
-    cdef size_t ret
 
-    total_read = size * maxnum
+    if size > left:
+        size = left
 
-    left_read = min(total_read, sf.split - sf.tell)
+    if size == 0:
+        status[0] = SDL_IO_STATUS_EOF
+        return 0
+
+    left_read = min(size, sf.split - sf.tell)
     left_read = max(left_read, 0)
 
     if left_read > 0:
-        left_read = SDL_RWread(sf.a, ptr, 1, left_read)
+        left_read = SDL_ReadIO(sf.a, ptr, left_read)
         if left_read < 0:
-            return left_read
+            status[0] = SDL_IO_STATUS_ERROR
+            return 0
 
-    right_read = total_read - left_read
+    right_read = size - left_read
 
     if right_read > 0:
-        right_read = SDL_RWread(sf.b, <char *> ptr + left_read, 1, right_read)
+        right_read = SDL_ReadIO(sf.b, <char *> ptr + left_read, right_read)
         if right_read < 0:
-            return right_read
+            status[0] = SDL_IO_STATUS_ERROR
+            return 0
 
     sf.tell += left_read + right_read
 
-    return (left_read + right_read) // size
+    status[0] = SDL_IO_STATUS_READY
+    return left_read + right_read
 
-cdef int splitfile_close(SDL_RWops *context) noexcept nogil:
-    cdef SplitFile *sf
-
-    if context != NULL:
-        sf = <SplitFile *> context.hidden.unknown.data1
-        if sf.a != NULL:
-            SDL_RWclose(sf.a)
-        if sf.b != NULL:
-            SDL_RWclose(sf.b)
-        if sf != NULL:
-            free(sf)
-            context.hidden.unknown.data1 = NULL
-        SDL_FreeRW(context)
-
+cdef size_t splitfile_write(void *userdata, const void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil:
+    status[0] = SDL_IO_STATUS_READONLY
     return 0
+
+cdef bool splitfile_flush(void *userdata, SDL_IOStatus *status) noexcept nogil:
+    status[0] = SDL_IO_STATUS_READY
+    return True
+
+cdef bool splitfile_close(void *userdata) noexcept nogil:
+    cdef SplitFile *sf = <SplitFile *> userdata
+
+    if sf != NULL:
+        if sf.a != NULL:
+            SDL_CloseIO(sf.a)
+        if sf.b != NULL:
+            SDL_CloseIO(sf.b)
+        free(sf)
+
+    return True
+
+cdef SDL_IOStreamInterface splitfile_iointerface
+splitfile_iointerface.version = sizeof(SDL_IOStreamInterface)
+splitfile_iointerface.size = splitfile_size
+splitfile_iointerface.seek = splitfile_seek
+splitfile_iointerface.read = splitfile_read
+splitfile_iointerface.write = splitfile_write
+splitfile_iointerface.flush = splitfile_flush
+splitfile_iointerface.close = splitfile_close
 
 
 cdef struct BufFile:
@@ -282,25 +321,23 @@ cdef struct BufFile:
     Uint8 *here
     Uint8 *stop
 
-cdef Sint64 buffile_size(SDL_RWops *context) noexcept nogil:
-    cdef BufFile *bf = <BufFile *> context.hidden.unknown.data1
+cdef Sint64 buffile_size(void *userdata) noexcept nogil:
+    cdef BufFile *bf = <BufFile *> userdata
 
     return bf.stop - bf.base
 
-cdef Sint64 buffile_seek(SDL_RWops *context, Sint64 offset, int whence) noexcept nogil:
-    cdef BufFile *bf = <BufFile *> context.hidden.unknown.data1
+cdef Sint64 buffile_seek(void *userdata, Sint64 offset, SDL_IOWhence whence) noexcept nogil:
+    cdef BufFile *bf = <BufFile *> userdata
 
     cdef Uint8 *newpos
 
-    if whence == RW_SEEK_SET:
+    if whence == SDL_IO_SEEK_SET:
         newpos = bf.base + offset
-    elif whence == RW_SEEK_CUR:
+    elif whence == SDL_IO_SEEK_CUR:
         newpos = bf.here + offset
-    elif whence == RW_SEEK_END:
+    elif whence == SDL_IO_SEEK_END:
         newpos = bf.stop + offset
     else:
-        with gil:
-            set_error("Unknown value for 'whence'")
         return -1
     if newpos < bf.base:
         newpos = bf.base
@@ -310,52 +347,64 @@ cdef Sint64 buffile_seek(SDL_RWops *context, Sint64 offset, int whence) noexcept
 
     return bf.here - bf.base
 
-cdef size_t buffile_read(SDL_RWops *context, void *ptr, size_t size, size_t maxnum) noexcept nogil:
-    cdef BufFile *bf = <BufFile *> context.hidden.unknown.data1
-    cdef size_t total_bytes = 0
+cdef size_t buffile_read(void *userdata, void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil:
+    cdef BufFile *bf = <BufFile *> userdata
     cdef size_t mem_available = 0
 
-    total_bytes = maxnum * size
-    if (maxnum == 0) or (size == 0) or ((total_bytes // maxnum) != size):
+    mem_available = bf.stop - bf.here
+    if size > mem_available:
+        size = mem_available
+
+    if size == 0:
+        status[0] = SDL_IO_STATUS_EOF
         return 0
 
-    mem_available = bf.stop - bf.here
-    if total_bytes > mem_available:
-        total_bytes = mem_available
+    memcpy(ptr, bf.here, size)
+    bf.here += size
 
-    SDL_memcpy(ptr, bf.here, total_bytes)
-    bf.here += total_bytes
+    status[0] = SDL_IO_STATUS_READY
+    return size
 
-    return (total_bytes // size)
-
-cdef size_t buffile_write(SDL_RWops *context, const void *ptr, size_t size, size_t num) noexcept nogil:
-    cdef BufFile *bf = <BufFile *> context.hidden.unknown.data1
+cdef size_t buffile_write(void *userdata, const void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil:
+    cdef BufFile *bf = <BufFile *> userdata
 
     if bf.view.readonly != 0:
+        status[0] = SDL_IO_STATUS_READONLY
         return 0
 
-    if (bf.here + (num * size)) > bf.stop:
-        num = (bf.stop - bf.here) // size
-    SDL_memcpy(bf.here, ptr, num * size)
-    bf.here += num * size
+    if (bf.here + size) > bf.stop:
+        size = bf.stop - bf.here
 
-    return num
+    memcpy(bf.here, ptr, size)
+    bf.here += size
 
-cdef int buffile_close(SDL_RWops *context) noexcept with gil:
-    cdef BufFile *bf
+    status[0] = SDL_IO_STATUS_READY
+    return size
 
-    if context != NULL:
-        bf = <BufFile *> context.hidden.unknown.data1
-        if bf != NULL:
-            PyBuffer_Release(&bf.view)
-            free(bf)
-            bf = NULL
-        SDL_FreeRW(context)
+cdef bool buffile_flush(void *userdata, SDL_IOStatus *status) noexcept nogil:
+    status[0] = SDL_IO_STATUS_READY
+    return True
 
-    return 0
+cdef bool buffile_close(void *userdata) noexcept with gil:
+    cdef BufFile *bf = <BufFile *> userdata
+
+    if bf != NULL:
+        PyBuffer_Release(&bf.view)
+        free(bf)
+
+    return True
+
+cdef SDL_IOStreamInterface buffile_iointerface
+buffile_iointerface.version = sizeof(SDL_IOStreamInterface)
+buffile_iointerface.size = buffile_size
+buffile_iointerface.seek = buffile_seek
+buffile_iointerface.read = buffile_read
+buffile_iointerface.write = buffile_write
+buffile_iointerface.flush = buffile_flush
+buffile_iointerface.close = buffile_close
 
 
-cdef SDL_RWops *to_rwops(filelike, mode="rb", base=None, length=None) except NULL:
+cdef SDL_IOStream *to_rwops(filelike, mode="rb", base=None, length=None) except NULL:
     """
     This accepts, in order:
 
@@ -383,8 +432,8 @@ cdef SDL_RWops *to_rwops(filelike, mode="rb", base=None, length=None) except NUL
 
     cdef FILE *f
     cdef SubFile *sf
-    cdef SDL_RWops *rv
-    cdef SDL_RWops *rw
+    cdef SDL_IOStream *rv
+    cdef SDL_IOStream *rw
     cdef char *cname
     cdef char *cmode
 
@@ -430,7 +479,7 @@ cdef SDL_RWops *to_rwops(filelike, mode="rb", base=None, length=None) except NUL
         cmode = mode
 
         with nogil:
-            rv = SDL_RWFromFile(cname, cmode)
+            rv = SDL_IOFromFile(cname, cmode)
 
         if rv == NULL:
             raise IOError("Could not open {!r}: {}".format(name, SDL_GetError()))
@@ -449,7 +498,7 @@ cdef SDL_RWops *to_rwops(filelike, mode="rb", base=None, length=None) except NUL
 
             rw = rv
 
-            SDL_RWseek(rw, base, RW_SEEK_SET);
+            SDL_SeekIO(rw, base, SDL_IO_SEEK_SET);
 
             sf = <SubFile *> calloc(sizeof(SubFile), 1)
             sf.rw = rw
@@ -457,14 +506,7 @@ cdef SDL_RWops *to_rwops(filelike, mode="rb", base=None, length=None) except NUL
             sf.length = length
             sf.tell = 0
 
-            rv = SDL_AllocRW()
-            rv.size = subfile_size
-            rv.seek = subfile_seek
-            rv.read = subfile_read
-            rv.write = NULL
-            rv.close = subfile_close
-            rv.type = 0
-            rv.hidden.unknown.data1 = <void *> sf
+            rv = SDL_OpenIO(&subfile_iointerface, <void *> sf)
 
         try:
             filelike.close()
@@ -478,43 +520,36 @@ cdef SDL_RWops *to_rwops(filelike, mode="rb", base=None, length=None) except NUL
 
     Py_INCREF(filelike)
 
-    rv = SDL_AllocRW()
-    rv.size = python_size
-    rv.seek = python_seek
-    rv.read = python_read
-    rv.write = python_write
-    rv.close = python_close
-    rv.type = 0
-    rv.hidden.unknown.data1 = <void *> filelike
+    rv = SDL_OpenIO(&python_iointerface, <void *> filelike)
 
     return rv
 
 
 whence_mapping = {
-    io.SEEK_SET : RW_SEEK_SET,
-    io.SEEK_CUR : RW_SEEK_CUR,
-    io.SEEK_END : RW_SEEK_END,
+    io.SEEK_SET : SDL_IO_SEEK_SET,
+    io.SEEK_CUR : SDL_IO_SEEK_CUR,
+    io.SEEK_END : SDL_IO_SEEK_END,
 }
 
 cdef class RWopsIOImpl:
     """
-    This wraps an SDL_RWops object in a Python file-like object.
+    This wraps an SDL_IOStream object in a Python file-like object.
     """
 
-    cdef SDL_RWops *ops
+    cdef SDL_IOStream *ops
     cdef public object name
     cdef public object base
     cdef public object length
 
     def __dealloc__(self):
         if self.ops != NULL:
-            SDL_RWclose(self.ops)
+            SDL_CloseIO(self.ops)
             self.ops = NULL
 
     def __init__(self, filelike, mode="rb", base=None, length=None, name=None):
         """
         Creates a new RWopsIO object. All parameter are passed to to_rwops
-        to create the SDL_RWops object.
+        to create the SDL_IOstream object.
         """
 
         if name is not None:
@@ -537,23 +572,23 @@ cdef class RWopsIOImpl:
         # A closed file may be closed again.
 
         if self.ops:
-            SDL_RWclose(self.ops)
+            SDL_CloseIO(self.ops)
             self.ops = NULL
 
     def is_closed(self):
         return not self.ops
 
     def seek(self, long long offset, whence=0):
-        cdef int whence_rw
+        cdef SDL_IOWhence whence_io
         cdef long long rv
 
         if not self.ops:
             raise ValueError("I/O operation on closed file.")
 
-        whence_rw = whence_mapping.get(whence, RW_SEEK_SET)
+        whence_io = whence_mapping.get(whence, SDL_IO_SEEK_SET)
 
         with nogil:
-            rv = SDL_RWseek(self.ops, offset, whence_rw)
+            rv = SDL_SeekIO(self.ops, offset, whence_io)
 
         if rv < 0:
             raise IOError("Could not seek: {}".format(SDL_GetError()))
@@ -564,7 +599,7 @@ cdef class RWopsIOImpl:
         cdef long long rv
 
         with nogil:
-          rv = SDL_RWtell(self.ops)
+            rv = SDL_TellIO(self.ops)
 
         return rv
 
@@ -582,7 +617,7 @@ cdef class RWopsIOImpl:
             PyObject_GetBuffer(b, &view, PyBUF_CONTIG)
 
             with nogil:
-                rv = SDL_RWread(self.ops, view.buf, 1, view.len)
+                rv = SDL_WriteIO(self.ops, view.buf, view.len)
         finally:
             PyBuffer_Release(&view)
 
@@ -604,7 +639,7 @@ cdef class RWopsIOImpl:
         try:
             PyObject_GetBuffer(b, &view, PyBUF_CONTIG_RO)
             with nogil:
-                rv = SDL_RWwrite(self.ops, view.buf, 1, view.len)
+                rv = SDL_WriteIO(self.ops, view.buf, view.len)
         finally:
             PyBuffer_Release(&view)
 
@@ -614,7 +649,7 @@ cdef class RWopsIOImpl:
         return rv
 
 
-cdef SDL_RWops *RWopsFromPython(filelike) except NULL:
+cdef SDL_IOStream *RWopsFromPython(filelike) except NULL:
     return to_rwops(filelike, "rb", None, None)
 
 
@@ -698,7 +733,7 @@ class RWopsIO(io.RawIOBase):
         """
 
         cdef BufFile *bf
-        cdef SDL_RWops *rw
+        cdef SDL_IOStream *stream
 
         if not PyObject_CheckBuffer(buffer):
             raise ValueError("Passed in object does not support buffer protocol")
@@ -715,17 +750,10 @@ class RWopsIO(io.RawIOBase):
         bf.here = bf.base
         bf.stop = bf.base + bf.view.len
 
-        rw = SDL_AllocRW()
-        rw.size = buffile_size
-        rw.seek = buffile_seek
-        rw.read = buffile_read
-        rw.write = buffile_write
-        rw.close = buffile_close
-        rw.type = 0
-        rw.hidden.unknown.data1 = <void *> bf
+        stream = SDL_OpenIO(&buffile_iointerface, <void *> bf)
 
         rv = RWopsIO(None, name=name)
-        (<RWopsIOImpl> rv.raw).ops = rw
+        (<RWopsIOImpl> rv.raw).ops = stream
         return rv
 
     @staticmethod
@@ -736,7 +764,7 @@ class RWopsIO(io.RawIOBase):
         """
 
         cdef SplitFile *sf
-        cdef SDL_RWops *rw
+        cdef SDL_IOStream *rw
 
         sf = <SplitFile *> calloc(sizeof(SplitFile), 1)
         if sf == NULL:
@@ -744,17 +772,10 @@ class RWopsIO(io.RawIOBase):
 
         sf.a = to_rwops(a)
         sf.b = to_rwops(b)
-        sf.split = SDL_RWsize(sf.a)
+        sf.split = SDL_GetIOSize(sf.a)
         sf.tell = 0
 
-        rw = SDL_AllocRW()
-        rw.size = splitfile_size
-        rw.seek = splitfile_seek
-        rw.read = splitfile_read
-        rw.write = NULL
-        rw.close = splitfile_close
-        rw.type = 0
-        rw.hidden.unknown.data1 = <void *> sf
+        rw = SDL_OpenIO(&splitfile_iointerface, <void *> sf)
 
         rv = RWopsIO(None, name=name)
         (<RWopsIOImpl> rv.raw).ops = rw
