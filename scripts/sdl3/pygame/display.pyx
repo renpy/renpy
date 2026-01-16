@@ -26,6 +26,9 @@ from . import register_init, register_quit
 from .error import error
 import pygame
 
+cdef extern from "SDL3/SDL_main.h":
+    pass
+
 import warnings
 import os
 
@@ -351,9 +354,9 @@ cdef class Window:
         rv = SDL_GetWindowFlags(self.window)
 
         if self.gl_context:
-            rv |= SDL_WINDOW_OPENGL
+            rv = rv & SDL_WINDOW_OPENGL
         else:
-            rv &= ~SDL_WINDOW_OPENGL
+            rv = rv & ~SDL_WINDOW_OPENGL
 
         return rv
 
