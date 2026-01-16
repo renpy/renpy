@@ -297,7 +297,7 @@ class Generator:
         if not self.is_relevant(node):
             return
 
-        if not node.spelling.startswith("SDL_"):
+        if not node.spelling.startswith("SDL_") and not node.spelling.startswith("SDLK_"):
             return
 
         if node.spelling.startswith("SDL_PLATFORM_"):
