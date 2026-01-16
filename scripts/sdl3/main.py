@@ -291,6 +291,11 @@ class Generator:
     extra_macros = {
         "SDL_WINDOWPOS_UNDEFINED",
         "SDL_WINDOWPOS_CENTERED",
+        "SDL_BUTTON_LMASK",
+        "SDL_BUTTON_MMASK",
+        "SDL_BUTTON_RMASK",
+        "SDL_BUTTON_X1MASK",
+        "SDL_BUTTON_X2MASK",
     }
 
     def macro(self, node: cindex.Cursor):
