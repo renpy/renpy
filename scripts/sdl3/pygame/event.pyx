@@ -177,7 +177,7 @@ USEREVENT_MAX = SDL_EVENT_LAST - 6
 cdef bint mousewheel_buttons = 1
 
 cdef unsigned int SDL_TOUCH_MOUSEID
-SDL_TOUCH_MOUSEID = <unsigned int> -1
+SDL_TOUCH_MOUSEID = <unsigned int> -1 # type: ignore
 
 class EventType(object):
 
@@ -249,14 +249,14 @@ cdef make_keyboard_event(SDL_KeyboardEvent *e):
         if e.type == SDL_EVENT_KEY_DOWN:
             # Be careful to only check for a TEXTINPUT event when you know that
             # there will be one associated with this KEYDOWN event.
-            if e.keysym.sym < 0x20:
-                dargs['unicode'] = chr(e.keysym.sym)
-            elif e.keysym.sym <= 0xFFFF:
+            if e.key < 0x20:
+                dargs['unicode'] = chr(e.key)
+            elif e.key <= 0xFFFF:
                 dargs['unicode'] = get_textinput()
 
     else:
-        if e.type == SDL_EVENT_KEY_DOWN and not(e.keysym.mod & SDL_KMOD_NUM):
-            if SDLK_KP_1 <= e.keysym.sym <= SDLK_KP_0:
+        if e.type == SDL_EVENT_KEY_DOWN and not(e.key & SDL_KMOD_NUM):
+            if SDLK_KP_1 <= e.key <= SDLK_KP_0:
                 get_textinput()
                 dargs['unicode'] = ''
 
@@ -287,11 +287,10 @@ cdef make_mousewheel_event(SDL_MouseWheelEvent *e):
 
     # Otherwise, follow the SDL1 approach.
 
-    cdef int y = e.y
+    cdef float y = e.y
 
-# TODO: Implement when 2.0.4 becomes widespread.
-#     if e.direction == SDL_MOUSEWHEEL_FLIPPED:
-#         y = -y
+    if e.direction == SDL_MOUSEWHEEL_FLIPPED:
+        y = -y
 
     if y > 0:
         btn = 4
@@ -306,7 +305,6 @@ cdef make_mousewheel_event(SDL_MouseWheelEvent *e):
     # MOUSEBUTTONUP event should follow immediately after
     event_queue.insert(0, EventType(SDL_EVENT_MOUSE_BUTTON_UP, which=e.which, button=btn, pos=(mx, my), touch=(SDL_TOUCH_MOUSEID == e.which)))
     return EventType(SDL_EVENT_MOUSE_BUTTON_DOWN, which=e.which, button=btn, pos=(mx, my), touch=(SDL_TOUCH_MOUSEID == e.which))
-
 
 cdef make_joyaxis_event(SDL_JoyAxisEvent *e):
     return EventType(e.type, joy=e.which, instance_id=e.which, axis=e.axis, value=e.value/32768.0)
@@ -341,19 +339,16 @@ cdef make_drop_event(SDL_DropEvent *e):
     return EventType(e.type, file=file, window_id=e.windowID)
 
 cdef make_window_event(SDL_WindowEvent *e):
-    # SDL_APPMOUSEFOCUS
     if e.type == SDL_EVENT_WINDOW_MOUSE_ENTER:
         return EventType(ACTIVEEVENT, state=1, gain=1)
     elif e.type == SDL_EVENT_WINDOW_MOUSE_LEAVE:
         return EventType(ACTIVEEVENT, state=1, gain=0)
 
-    # SDL_APPINPUTFOCUS
     elif e.type == SDL_EVENT_WINDOW_FOCUS_GAINED:
         return EventType(ACTIVEEVENT, state=2, gain=1)
     elif e.type == SDL_EVENT_WINDOW_FOCUS_LOST:
         return EventType(ACTIVEEVENT, state=2, gain=0)
 
-    # SDL_APPACTIVE
     elif e.type == SDL_EVENT_WINDOW_RESTORED:
         return EventType(ACTIVEEVENT, state=4, gain=1)
     elif e.type == SDL_EVENT_WINDOW_MINIMIZED:
@@ -618,34 +613,34 @@ def event_name(t):
 def set_blocked(t=None):
     if t == None:
         for et in event_names.keys():
-            SDL_EventState(et, SDL_ENABLE)
+            SDL_SetEventEnabled(et, False)
     elif isinstance(t, int):
-        SDL_EventState(t, SDL_IGNORE)
+        SDL_SetEventEnabled(t, False)
     else:
         for et in t:
-            SDL_EventState(et, SDL_IGNORE)
+            SDL_SetEventEnabled(et, False)
 
 def set_allowed(t=None):
     if t == None:
         for et in event_names.keys():
-            SDL_EventState(et, SDL_IGNORE)
+            SDL_SetEventEnabled(et, True)
     elif isinstance(t, int):
-        SDL_EventState(t, SDL_ENABLE)
+        SDL_SetEventEnabled(t, True)
     else:
         for et in t:
-            SDL_EventState(et, SDL_ENABLE)
+            SDL_SetEventEnabled(et, True)
 
 def get_blocked(t):
-    return SDL_EventState(t, SDL_QUERY) == SDL_IGNORE
+    return not SDL_EventEnabled(t)
 
 def set_grab(on):
-    SDL_SetWindowGrab(main_window.window, on)
+    SDL_SetWindowMouseGrab(main_window.window, on)
 
-    if SDL_ShowCursor(SDL_QUERY) == SDL_DISABLE:
-        SDL_SetRelativeMouseMode(on)
+    if not SDL_CursorVisible():
+        SDL_SetWindowRelativeMouseMode(main_window.window, on)
 
 def get_grab():
-    return SDL_GetWindowGrab(main_window.window)
+    return SDL_GetWindowMouseGrab(main_window.window)
 
 def set_mousewheel_buttons(flag):
     """
@@ -711,6 +706,8 @@ def copy_event_queue():
 # Usually called by display.init.
 def init():
     if not SDL_WasInit(SDL_INIT_EVENTS):
+
+        from . import display
 
         display.sdl_main_init()
 
