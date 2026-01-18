@@ -237,9 +237,9 @@ cdef get_textinput():
     return u''
 
 cdef make_keyboard_event(SDL_KeyboardEvent *e):
-    dargs = { 'scancode' : e.keysym.scancode,
-              'key' : e.keysym.sym,
-              'mod' : e.keysym.mod,
+    dargs = { 'scancode' : e.scancode,
+              'key' : e.key,
+              'mod' : e.mod,
               'unicode' : '',
               'repeat' : e.repeat,
                }
@@ -279,7 +279,7 @@ cdef make_mousebtn_event(SDL_MouseButtonEvent *e):
 
 cdef make_mousewheel_event(SDL_MouseWheelEvent *e):
 
-    cdef int x, y
+    cdef float mx, my
 
     # SDL2-style, if the user has opted-in.
     if not mousewheel_buttons:
@@ -287,7 +287,7 @@ cdef make_mousewheel_event(SDL_MouseWheelEvent *e):
 
     # Otherwise, follow the SDL1 approach.
 
-    y = e.y
+    cdef int y = e.y
 
 # TODO: Implement when 2.0.4 becomes widespread.
 #     if e.direction == SDL_MOUSEWHEEL_FLIPPED:
@@ -301,11 +301,11 @@ cdef make_mousewheel_event(SDL_MouseWheelEvent *e):
         return EventType(0) # x axis scrolling produces no event in pygame
 
     # This is not the mouse position at the time of the event
-    SDL_GetMouseState(&x, &y)
+    SDL_GetMouseState(&mx, &my)
 
     # MOUSEBUTTONUP event should follow immediately after
-    event_queue.insert(0, EventType(SDL_EVENT_MOUSE_BUTTON_UP, which=e.which, button=btn, pos=(x,y), touch=(SDL_TOUCH_MOUSEID == e.which)))
-    return EventType(SDL_EVENT_MOUSE_BUTTON_DOWN, which=e.which, button=btn, pos=(x,y), touch=(SDL_TOUCH_MOUSEID == e.which))
+    event_queue.insert(0, EventType(SDL_EVENT_MOUSE_BUTTON_UP, which=e.which, button=btn, pos=(mx, my), touch=(SDL_TOUCH_MOUSEID == e.which)))
+    return EventType(SDL_EVENT_MOUSE_BUTTON_DOWN, which=e.which, button=btn, pos=(mx, my), touch=(SDL_TOUCH_MOUSEID == e.which))
 
 
 cdef make_joyaxis_event(SDL_JoyAxisEvent *e):
@@ -333,9 +333,8 @@ cdef make_textediting_event(SDL_TextEditingEvent *e):
         return EventType(e.type, text='', start=e.start, length=e.length)
 
 cdef make_drop_event(SDL_DropEvent *e):
-    if e.file:
-        file = e.file.decode("utf-8")
-        SDL_free(e.file)
+    if e.data:
+        file = e.data.decode("utf-8")
     else:
         file = None
 
@@ -343,79 +342,77 @@ cdef make_drop_event(SDL_DropEvent *e):
 
 cdef make_window_event(SDL_WindowEvent *e):
     # SDL_APPMOUSEFOCUS
-    if e.event == SDL_WINDOWEVENT_ENTER:
+    if e.type == SDL_EVENT_WINDOW_MOUSE_ENTER:
         return EventType(ACTIVEEVENT, state=1, gain=1)
-    elif e.event == SDL_WINDOWEVENT_LEAVE:
+    elif e.type == SDL_EVENT_WINDOW_MOUSE_LEAVE:
         return EventType(ACTIVEEVENT, state=1, gain=0)
 
     # SDL_APPINPUTFOCUS
-    elif e.event == SDL_WINDOWEVENT_FOCUS_GAINED:
+    elif e.type == SDL_EVENT_WINDOW_FOCUS_GAINED:
         return EventType(ACTIVEEVENT, state=2, gain=1)
-    elif e.event == SDL_WINDOWEVENT_FOCUS_LOST:
+    elif e.type == SDL_EVENT_WINDOW_FOCUS_LOST:
         return EventType(ACTIVEEVENT, state=2, gain=0)
 
     # SDL_APPACTIVE
-    elif e.event == SDL_WINDOWEVENT_RESTORED:
+    elif e.type == SDL_EVENT_WINDOW_RESTORED:
         return EventType(ACTIVEEVENT, state=4, gain=1)
-    elif e.event == SDL_WINDOWEVENT_MINIMIZED:
+    elif e.type == SDL_EVENT_WINDOW_MINIMIZED:
         return EventType(ACTIVEEVENT, state=4, gain=0)
 
-    elif e.event == SDL_WINDOWEVENT_RESIZED:
+    elif e.type == SDL_EVENT_WINDOW_RESIZED:
         return EventType(VIDEORESIZE, size=(e.data1, e.data2), w=e.data1, h=e.data2)
 
-    elif e.event == SDL_WINDOWEVENT_EXPOSED:
+    elif e.type == SDL_EVENT_WINDOW_EXPOSED:
         return EventType(VIDEOEXPOSE)
 
-    elif e.event == SDL_WINDOWEVENT_MOVED:
+    elif e.type == SDL_EVENT_WINDOW_MOVED:
         return EventType(WINDOWMOVED, pos=(e.data1, e.data2), x=e.data1, y=e.data2)
 
-    return EventType(SDL_WINDOWEVENT, event=e.event, data1=e.data1, data2=e.data2)
+    return EventType(e.type, data1=e.data1, data2=e.data2)
 
 cdef make_event(SDL_Event *e):
     cdef object o
 
-    if e.type == SDL_MOUSEMOTION:
+    if e.type == SDL_EVENT_MOUSE_MOTION:
         return make_mousemotion_event(<SDL_MouseMotionEvent*>e)
-    elif e.type in (SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP):
+    elif e.type in (SDL_EVENT_MOUSE_BUTTON_DOWN, SDL_EVENT_MOUSE_BUTTON_UP):
         return make_mousebtn_event(<SDL_MouseButtonEvent*>e)
 
-    elif e.type == SDL_MOUSEWHEEL:
+    elif e.type == SDL_EVENT_MOUSE_WHEEL:
         return make_mousewheel_event(<SDL_MouseWheelEvent*>e)
-    elif e.type in (SDL_KEYDOWN, SDL_KEYUP):
+    elif e.type in (SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP):
         return make_keyboard_event(<SDL_KeyboardEvent*>e)
-    elif e.type == SDL_JOYAXISMOTION:
+    elif e.type == SDL_EVENT_JOYSTICK_AXIS_MOTION:
         return make_joyaxis_event(<SDL_JoyAxisEvent*>e)
-    elif e.type == SDL_JOYBALLMOTION:
+    elif e.type == SDL_EVENT_JOYSTICK_BALL_MOTION:
         return make_joyball_event(<SDL_JoyBallEvent*>e)
-    elif e.type == SDL_JOYHATMOTION:
+    elif e.type == SDL_EVENT_JOYSTICK_HAT_MOTION:
         return make_joyhat_event(<SDL_JoyHatEvent*>e)
-    elif e.type in (SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP):
+    elif e.type in (SDL_EVENT_JOYSTICK_BUTTON_DOWN, SDL_EVENT_JOYSTICK_BUTTON_UP):
         return make_joybtn_event(<SDL_JoyButtonEvent*>e)
-    elif e.type in (SDL_JOYDEVICEADDED, SDL_JOYDEVICEREMOVED):
+    elif e.type in (SDL_EVENT_JOYSTICK_ADDED, SDL_EVENT_JOYSTICK_REMOVED):
         return EventType(e.type, which=e.jdevice.which)
-    elif e.type == SDL_WINDOWEVENT:
+    elif SDL_EVENT_WINDOW_FIRST <= e.type <= SDL_EVENT_WINDOW_LAST:
         return make_window_event(<SDL_WindowEvent*>e)
-    elif e.type == SDL_TEXTINPUT:
+    elif e.type == SDL_EVENT_TEXT_INPUT:
         return make_textinput_event(<SDL_TextInputEvent *> e)
-    elif e.type == SDL_TEXTEDITING:
+    elif e.type == SDL_EVENT_TEXT_EDITING:
         return make_textediting_event(<SDL_TextEditingEvent *> e)
-    elif e.type == SDL_CONTROLLERAXISMOTION:
-        return EventType(e.type, which=e.caxis.which, axis=e.caxis.axis, value=e.caxis.value)
-    elif e.type in (SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLERBUTTONUP):
-        return EventType(e.type, which=e.cbutton.which, button=e.cbutton.button, state=e.cbutton.state)
-    elif e.type in (SDL_CONTROLLERDEVICEADDED, SDL_CONTROLLERDEVICEREMOVED, SDL_CONTROLLERDEVICEREMAPPED):
-        return EventType(e.type, which=e.cdevice.which)
-    elif e.type in (SDL_FINGERMOTION, SDL_FINGERDOWN, SDL_FINGERUP):
+    elif e.type == SDL_EVENT_GAMEPAD_AXIS_MOTION:
+        return EventType(e.type, which=e.gaxis.which, axis=e.gaxis.axis, value=e.gaxis.value)
+    elif e.type in (SDL_EVENT_GAMEPAD_BUTTON_DOWN, SDL_EVENT_GAMEPAD_BUTTON_UP):
+        return EventType(e.type, which=e.gbutton.which, button=e.gbutton.button, state=e.gbutton.down)
+    elif e.type in (SDL_EVENT_GAMEPAD_ADDED, SDL_EVENT_GAMEPAD_REMOVED, SDL_EVENT_GAMEPAD_REMAPPED):
+        return EventType(e.type, which=e.gdevice.which)
+    elif e.type in (SDL_EVENT_FINGER_MOTION, SDL_EVENT_FINGER_DOWN, SDL_EVENT_FINGER_UP):
         return EventType(e.type, touchId=e.tfinger.touchId, fingerId=e.tfinger.fingerId, touch_id=e.tfinger.touchId, finger_id=e.tfinger.fingerId, x=e.tfinger.x, y=e.tfinger.y, dx=e.tfinger.dx, dy=e.tfinger.dy, pressure=e.tfinger.pressure)
-    elif e.type == SDL_MULTIGESTURE:
-        return EventType(e.type, touchId=e.mgesture.touchId, dTheta=e.mgesture.dTheta, dDist=e.mgesture.dDist, x=e.mgesture.x, y=e.mgesture.y, numFingers=e.mgesture.numFingers, touch_id=e.mgesture.touchId, rotated=e.mgesture.dTheta, pinched=e.mgesture.dDist, num_fingers=e.mgesture.numFingers)
-    elif e.type in (SDL_DROPFILE, SDL_DROPTEXT, SDL_DROPBEGIN, SDL_DROPCOMPLETE):
+    elif e.type in (SDL_EVENT_DROP_FILE, SDL_EVENT_DROP_TEXT, SDL_EVENT_DROP_BEGIN, SDL_EVENT_DROP_COMPLETE):
         return make_drop_event(<SDL_DropEvent*> e)
     elif e.type == POSTEDEVENT:
         o = <object> e.user.data1
         Py_DECREF(o)
         return o
-    elif e.type >= SDL_USEREVENT:
+    elif e.type >= SDL_EVENT_USER:
         # Can't do anything useful with data1 and data2 here.
         return EventType(e.type, code=e.user.code)
 
@@ -490,7 +487,7 @@ cdef int poll_sdl() except 1:
 
     with lock:
         while SDL_PollEvent(&evt):
-            if evt.type == SDL_MOUSEMOTION:
+            if evt.type == SDL_EVENT_MOUSE_MOTION:
 
                 # We can merge the event.
                 if last_mousemotion and mm_evt.state == old_mm_evt.state and mm_evt.which == old_mm_evt.which:
@@ -610,7 +607,7 @@ def get_standard_events():
     Returns a list of standard events that renpy.pygame knows about.
     """
 
-    return [ i for i in event_names.keys() if (i < SDL_USEREVENT) or (i > USEREVENT_MAX) ]
+    return [ i for i in event_names.keys() if (i < SDL_EVENT_USER) or (i > USEREVENT_MAX) ]
 
 def event_name(t):
     try:
