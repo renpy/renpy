@@ -15,6 +15,8 @@ def cython(module: str, source: list[str] = [ ]) -> None:
     )
 
 
+cython("pygame.key")
+cython("pygame.mouse")
 cython("pygame.event")
 cython("pygame.display")
 cython("pygame.rwobject")
@@ -25,7 +27,6 @@ cython("pygame.error")
 cython("pygame.surface")
 cython("pygame.draw")
 cython("pygame.gfxdraw", source=[ "c/SDL3_gfxPrimitives.c" ])
-cython("pygame.joystick")
 
 setup(
     name="sdl",

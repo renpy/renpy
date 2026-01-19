@@ -299,6 +299,7 @@ class Generator:
     }
 
     def macro(self, node: cindex.Cursor):
+
         if not self.is_relevant(node):
             return
 
@@ -312,6 +313,7 @@ class Generator:
             return
 
         def clean_token(t: str) -> str:
+            t = re.sub(r"(0x[\da-fA-F]+)[UuLl]*", r"\1", t)
             t = re.sub(r"(\d+)[lLuU]*", r"\1", t)
             return t.strip()
 
