@@ -13,7 +13,9 @@ def cython(module: str, source: list[str] = [ ]) -> None:
             libraries=["SDL3"],
         )
     )
-
+cython("pygame.controller")
+cython("pygame.joystick")
+cython("pygame.pygame_time")
 cython("pygame.power")
 cython("pygame.transform", source=[ "c/SDL3_rotozoom.c" ])
 cython("pygame.scrap")
