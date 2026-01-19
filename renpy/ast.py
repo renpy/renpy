@@ -1318,8 +1318,6 @@ class Transform(Node):
         renpy.dump.transforms.append((self.varname, self.filename, self.linenumber))
 
         renpy.exports.pure(f"{self.store}.{self.varname}")
-        if not self.store or self.store == "store":
-            renpy.exports.pure(self.varname)
 
         ns, _special = get_namespace(self.store)
         ns.set(self.varname, trans)
