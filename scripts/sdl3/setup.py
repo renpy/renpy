@@ -14,7 +14,9 @@ def cython(module: str, source: list[str] = [ ]) -> None:
         )
     )
 
-
+cython("pygame.power")
+cython("pygame.transform", source=[ "c/SDL3_rotozoom.c" ])
+cython("pygame.scrap")
 cython("pygame.key")
 cython("pygame.mouse")
 cython("pygame.event")
