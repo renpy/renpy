@@ -16,19 +16,15 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from .sdl cimport *
+from sdl2 cimport *
 
-from .error import error
-
-from . import register_init, register_quit
+import renpy.pygame
+from renpy.pygame.error import error
+from renpy.pygame import register_init, register_quit
 
 @register_init
 def init():
-    # TODO:
-
-    from .display import sdl_main_init
-
-    # renpy.pygame.display.sdl_main_init()
+    renpy.pygame.display.sdl_main_init()
 
     if SDL_InitSubSystem(SDL_INIT_JOYSTICK):
         raise error()
@@ -40,29 +36,8 @@ def quit(): # @ReservedAssignment
 def get_init():
     return SDL_WasInit(SDL_INIT_JOYSTICK) != 0
 
-
-def get_joystick_ids():
-    """
-    Returns a list of joystick IDs for all connected joysticks.
-    """
-
-    cdef int count
-    cdef SDL_JoystickID *joyids = SDL_GetJoysticks(&count)
-    cdef list rv = []
-    cdef int i
-
-    if joyids == NULL:
-        raise error()
-
-    for i in range(count):
-        rv.append(joyids[i])
-    SDL_free(joyids)
-
-    return rv
-
-
 def get_count():
-    return len(get_joystick_ids())
+    return SDL_NumJoysticks()
 
 
 cdef class Joystick:
@@ -70,7 +45,7 @@ cdef class Joystick:
     cdef object __weakref__
 
     cdef SDL_Joystick *joystick
-    cdef Uint32 joyid
+    cdef int joyid
 
     def __cinit__(self):
         self.joystick = NULL
@@ -80,13 +55,13 @@ cdef class Joystick:
 
     def init(self):
         if self.joystick == NULL:
-            self.joystick = SDL_OpenJoystick(self.joyid)
+            self.joystick = SDL_JoystickOpen(self.joyid)
             if self.joystick == NULL:
                 raise error()
 
     def quit(self): # @ReservedAssignment
         if self.joystick != NULL:
-            SDL_CloseJoystick(self.joystick)
+            SDL_JoystickClose(self.joystick)
             self.joystick = NULL
 
     def get_init(self):
@@ -99,15 +74,15 @@ cdef class Joystick:
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        return self.joyid
+        return SDL_JoystickInstanceID(self.joystick)
 
     def get_name(self):
-        cdef const char *rv
+        cdef char *rv
 
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        rv = SDL_GetJoystickName(self.joystick)
+        rv = SDL_JoystickName(self.joystick)
 
         if rv:
             return rv.decode("utf-8")
@@ -118,31 +93,31 @@ cdef class Joystick:
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        return SDL_GetNumJoystickAxes(self.joystick)
+        return SDL_JoystickNumAxes(self.joystick)
 
     def get_numballs(self):
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        return SDL_GetNumJoystickBalls(self.joystick)
+        return SDL_JoystickNumBalls(self.joystick)
 
     def get_numbuttons(self):
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        return SDL_GetNumJoystickButtons(self.joystick)
+        return SDL_JoystickNumButtons(self.joystick)
 
     def get_numhats(self):
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        return SDL_GetNumJoystickHats(self.joystick)
+        return SDL_JoystickNumHats(self.joystick)
 
     def get_axis(self, axis_number):
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        return SDL_GetJoystickAxis(self.joystick, axis_number) / 32768.0
+        return SDL_JoystickGetAxis(self.joystick, axis_number) / 32768.0
 
     def get_ball(self, ball_number):
         cdef int dx, dy
@@ -150,7 +125,7 @@ cdef class Joystick:
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        if SDL_GetJoystickBall(self.joystick, ball_number, &dx, &dy) == 0:
+        if SDL_JoystickGetBall(self.joystick, ball_number, &dx, &dy) == 0:
             return (dx, dy)
         else:
             raise error()
@@ -159,13 +134,13 @@ cdef class Joystick:
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        return SDL_GetJoystickButton(self.joystick, button) == 1
+        return SDL_JoystickGetButton(self.joystick, button) == 1
 
     def get_hat(self, hat_number):
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        state = SDL_GetJoystickHat(self.joystick, hat_number)
+        state = SDL_JoystickGetHat(self.joystick, hat_number)
         hx = hy = 0
         if state & SDL_HAT_LEFT:
             hx = -1

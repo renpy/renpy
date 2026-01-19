@@ -25,14 +25,6 @@ from typing import Callable
 init_functions: list[Callable[[], None]] = []
 quit_functions: list[Callable[[], None]] = []
 
-def register_init(fn):
-    init_functions.append(fn)
-    return fn
-
-def register_quit(fn):
-    quit_functions.append(fn)
-    return fn
-
 def init():
     numpass = 0
     numfail = 0
@@ -87,6 +79,8 @@ from .rect import Rect as Rect
 # Fill this module with locals.
 # TODO: RESTORE
 # from .locals import *
+
+# TODO: Init functions.
 
 
 def import_as_pygame():

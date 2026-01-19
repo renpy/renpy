@@ -22,7 +22,6 @@ from .surface cimport *
 from .rect cimport to_sdl_rect
 
 from libc.stdlib cimport calloc, free
-from . import register_init, register_quit
 from .error import error
 import pygame
 
@@ -88,7 +87,6 @@ def sdl_main_init():
 # True if init has been called without quit being called.
 init_done = False
 
-@register_init
 def init():
 
     if init_done:
@@ -107,7 +105,6 @@ def init():
 
 
 
-@register_quit
 def quit(): # @ReservedAssignment
 
     global init_done

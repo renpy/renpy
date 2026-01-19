@@ -34,4 +34,4 @@ cdef class Window:
     # The flags the window was created with.
     cdef Uint32 create_flags
 
-cdef Window main_window = None
+cdef Window main_window
