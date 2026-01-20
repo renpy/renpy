@@ -59,6 +59,7 @@ def main():
     sdl2
     """
 
+    library("crypto")
     library("avformat")
     library("avcodec")
     library("avutil")
