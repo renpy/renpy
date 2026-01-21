@@ -55,8 +55,11 @@ class Generator:
         if cursor.location.file is None:
             return
 
-        header = pathlib.Path(cursor.location.file.name).relative_to(self.sdl3_path)
-        self.declarations.append((header, decl))
+        try:
+            header = pathlib.Path(cursor.location.file.name).relative_to(self.sdl3_path)
+            self.declarations.append((header, decl))
+        except ValueError:
+            pass
 
     def generate(self, destination_pxd: pathlib.Path, destination_pyx: pathlib.Path):
         old_header: pathlib.Path | None = None

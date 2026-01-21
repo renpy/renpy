@@ -3,5 +3,7 @@ __pycache__/
 .venv
 sdl.pyx
 sdl.pxd
+sdl_image.pyx
+sdl_image.pxd
 pygame/*.c
 pygame/*.h
