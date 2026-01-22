@@ -13,6 +13,9 @@ def cython(module: str, source: list[str] = [ ]) -> None:
             libraries=["SDL3"],
         )
     )
+
+cython("pygame.image", source=[ "c/write_png.c", "c/write_jpeg.c" ])
+cython("pygame.sdl_image")
 cython("pygame.controller")
 cython("pygame.joystick")
 cython("pygame.pygame_time")

@@ -15,13 +15,13 @@ except ImportError as e:
 
 
 class Generator:
-    def __init__(self, sdl3_path: pathlib.Path):
+    def __init__(self, include_path: pathlib.Path):
         """
         `sdl3_path`
             The path to the SDL3 directory.
         """
 
-        self.sdl3_path: pathlib.Path = sdl3_path
+        self.include_path: pathlib.Path = include_path
 
         self.declarations: list[tuple[pathlib.Path, str]] = []
         """
@@ -55,13 +55,10 @@ class Generator:
         if cursor.location.file is None:
             return
 
-        try:
-            header = pathlib.Path(cursor.location.file.name).relative_to(self.sdl3_path)
-            self.declarations.append((header, decl))
-        except ValueError:
-            pass
+        header = pathlib.Path(cursor.location.file.name).relative_to(self.include_path)
+        self.declarations.append((header, decl))
 
-    def generate(self, destination_pxd: pathlib.Path, destination_pyx: pathlib.Path):
+    def generate(self, destination_pxd: pathlib.Path, destination_pyx: pathlib.Path, main_header: str):
         old_header: pathlib.Path | None = None
 
         with open(destination_pxd, "w") as f:
@@ -79,7 +76,12 @@ class Generator:
             print("ctypedef struct va_list", file=f)
             print(file=f)
 
-            print('cdef extern from "SDL3/SDL.h" nogil:', file=f)
+            if destination_pxd.stem != "sdl":
+                print("from .sdl cimport *", file=f)
+
+
+            print(f'cdef extern from "{main_header}" nogil:', file=f)
+
 
             for header, decl in self.declarations:
                 if header != old_header:
@@ -132,7 +134,7 @@ class Generator:
         if node.location.file is None:
             return False
 
-        return pathlib.Path(node.location.file.name).is_relative_to(self.sdl3_path)
+        return pathlib.Path(node.location.file.name).is_relative_to(self.include_path)
 
     def check_new_name(self, name: str) -> bool:
         """
@@ -428,7 +430,7 @@ def main():
     include_dir: pathlib.Path = sdl3_path.parent
     "If SDL3 is in /usr/include/SDL3, then include_dir is /usr/include."
 
-    generator = Generator(sdl3_path)
+    generator = Generator(include_dir)
 
     index = cindex.Index.create()
     options = cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD
@@ -450,7 +452,10 @@ def main():
 
     destination_pyx = args.destination / (headers[0].stem.lower() + ".pyx")
 
-    generator.generate(destination_pxd, destination_pyx)
+    header = headers[0].relative_to(include_dir)
+    print(header)
+
+    generator.generate(destination_pxd, destination_pyx, header)
 
 
 if __name__ == "__main__":
