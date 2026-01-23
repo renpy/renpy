@@ -113,14 +113,14 @@ calling its save method. Undefined fields default to None. To ensure the
 object can be loaded again in a different game, we strongly advise against
 storing instances of user-defined types in the object.
 
-.. class:: MultiPersistent(key, save_on_quit=False)
+.. class:: MultiPersistent(name, save_on_quit=False)
 
     Creates a new ``MultiPersistent`` object. This should only be called at init time,
-    and it returns a new ``MultiPersistent`` with the given key.
+    and it returns a new ``MultiPersistent`` with the given name.
 
-    `key`
-        The key used to to access the multipersistent data. Games using the
-        same key will access the same multipersistent data.
+    `name`
+        The name used to to access the multipersistent data. Games using the
+        same name will access the same multipersistent data.
 
     `save_on_quit`
         If it is True, this object will be automatically saved when Ren'Py terminates.
