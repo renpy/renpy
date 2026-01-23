@@ -150,27 +150,14 @@ event_names = {
     SDL_EVENT_ENUM_PADDING: "ENUMPADDING",
 }
 
-
-# Add events to emulate SDL 1 and 2. These also need to be added in locals.
-ACTIVEEVENT = SDL_EVENT_LAST - 1
-VIDEORESIZE = SDL_EVENT_LAST - 2
-VIDEOEXPOSE = SDL_EVENT_LAST - 3
-WINDOWMOVED = SDL_EVENT_LAST - 4
-# (Do not add events here.)
-
-event_names[ACTIVEEVENT] = "ACTIVEEVENT"
-event_names[VIDEORESIZE] = "VIDEORESIZE"
-event_names[VIDEOEXPOSE] = "VIDEOEXPOSE"
-event_names[WINDOWMOVED] = "WINDOWMOVED"
-
 # This is used for events posted to the event queue. This won't be returned
 # to the user - it's just used internally, with the event object itself
 # giving the type.
 cdef unsigned int POSTEDEVENT
-POSTEDEVENT = SDL_EVENT_LAST - 5
+POSTEDEVENT = SDL_EVENT_LAST - 1
 
 # The maximum number of a user-defined event.
-USEREVENT_MAX = SDL_EVENT_LAST - 6
+USEREVENT_MAX = SDL_EVENT_LAST - 2
 
 # If true, the mousewheel is mapped to buttons 4 and 5. Otherwise, a
 # MOUSEWHEEL event is created.
@@ -190,7 +177,7 @@ class EventType(object):
         self.__dict__.update(kwargs)
 
     def __repr__(self):
-        if SDL_EVENT_USER <= self.type < WINDOWMOVED:
+        if SDL_EVENT_USER <= self.type <= USEREVENT_MAX:
             ename = "UserEvent%d" % (self.type - SDL_EVENT_USER)
         else:
             try:
@@ -339,30 +326,6 @@ cdef make_drop_event(SDL_DropEvent *e):
     return EventType(e.type, file=file, window_id=e.windowID)
 
 cdef make_window_event(SDL_WindowEvent *e):
-    if e.type == SDL_EVENT_WINDOW_MOUSE_ENTER:
-        return EventType(ACTIVEEVENT, state=1, gain=1)
-    elif e.type == SDL_EVENT_WINDOW_MOUSE_LEAVE:
-        return EventType(ACTIVEEVENT, state=1, gain=0)
-
-    elif e.type == SDL_EVENT_WINDOW_FOCUS_GAINED:
-        return EventType(ACTIVEEVENT, state=2, gain=1)
-    elif e.type == SDL_EVENT_WINDOW_FOCUS_LOST:
-        return EventType(ACTIVEEVENT, state=2, gain=0)
-
-    elif e.type == SDL_EVENT_WINDOW_RESTORED:
-        return EventType(ACTIVEEVENT, state=4, gain=1)
-    elif e.type == SDL_EVENT_WINDOW_MINIMIZED:
-        return EventType(ACTIVEEVENT, state=4, gain=0)
-
-    elif e.type == SDL_EVENT_WINDOW_RESIZED:
-        return EventType(VIDEORESIZE, size=(e.data1, e.data2), w=e.data1, h=e.data2)
-
-    elif e.type == SDL_EVENT_WINDOW_EXPOSED:
-        return EventType(VIDEOEXPOSE)
-
-    elif e.type == SDL_EVENT_WINDOW_MOVED:
-        return EventType(WINDOWMOVED, pos=(e.data1, e.data2), x=e.data1, y=e.data2)
-
     return EventType(e.type, data1=e.data1, data2=e.data2)
 
 cdef make_event(SDL_Event *e):
