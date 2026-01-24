@@ -1,4 +1,4 @@
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
+# Copyright 2014-2026 Tom Rothamel <tom@rothamel.us>
 # Copyright 2014 Patrick Dawson <pat@dw.is>
 #
 # This software is provided 'as-is', without any express or implied
@@ -52,35 +52,51 @@ from .error import *
 from .surface import Surface as Surface
 from .rect import Rect as Rect
 
-# TODO: RESTORE
-# from . import (
-#     rect as rect,
-#     surface as surface,
-#     color as color,
-#     display as display,
-#     event as event,
-#     key as key,
-#     locals as locals,
-#     time as time,
-#     version as version,
-#     locals as constants,
-#     controller as controller,
-#     draw as draw,
-#     image as image,
-#     joystick as joystick,
-#     mouse as mouse,
-#     power as power,
-#     transform as transform,
-#     scrap as scrap,
-#     sysfont as sysfont,
-# )
+from . import (
+    rect as rect,
+    surface as surface,
+    color as color,
+    display as display,
+    event as event,
+    key as key,
+    locals as locals,
+    time as time,
+    locals as constants,
+    controller as controller,
+    draw as draw,
+    image as image,
+    joystick as joystick,
+    mouse as mouse,
+    power as power,
+    transform as transform,
+    scrap as scrap,
+)
 
 
 # Fill this module with locals.
-# TODO: RESTORE
-# from .locals import *
+from .locals import *
+from .locals import LIL_ENDIAN, SDL_VERSION_TUPLE
 
-# TODO: Init functions.
+# Add init functions.
+
+init_functions = [
+    display.init,
+    event.init,
+    time.init,
+    controller.init,
+    joystick.init,
+    mouse.init,
+    scrap.init,
+]
+
+
+quit_functions = [
+    scrap.quit,
+    mouse.quit,
+    joystick.quit,
+    controller.quit,
+    display.quit,
+]
 
 
 def import_as_pygame():
@@ -111,7 +127,7 @@ def import_as_pygame():
 
 
 def get_sdl_byteorder():
-    return BYTEORDER
+    return LIL_ENDIAN
 
 
 def get_sdl_version():

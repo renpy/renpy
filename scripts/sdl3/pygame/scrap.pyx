@@ -28,6 +28,9 @@ except ImportError:
 def init():
     pass
 
+def quit():
+    pass
+
 SCRAP_TEXT = "text/plain"
 
 def get(type):

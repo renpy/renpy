@@ -4,17 +4,17 @@ from Cython.Build import cythonize
 
 extensions: list[Extension] = [ ]
 
-def cython(module: str, source: list[str] = [ ]) -> None:
+def cython(module: str, source: list[str] = [ ], libraries: list[str] = [ ]) -> None:
     extensions.append(
         Extension(
             module,
             sources=[module.replace(".", "/") + ".pyx"] + source,
             include_dirs=[ "c" ],
-            libraries=["SDL3"],
+            libraries=libraries + ["SDL3"],
         )
     )
 cython("pygame.locals")
-cython("pygame.image", source=[ "c/write_png.c", "c/write_jpeg.c" ])
+cython("pygame.image", source=[ "c/write_png.c", "c/write_jpeg.c" ], libraries=[ "SDL3_image", "jpeg", "png", "z"])
 cython("pygame.sdl_image")
 cython("pygame.controller")
 cython("pygame.joystick")
@@ -33,7 +33,7 @@ cython("pygame.rect")
 cython("pygame.error")
 cython("pygame.surface")
 cython("pygame.draw")
-cython("pygame.gfxdraw", source=[ "c/SDL3_gfxPrimitives.c" ])
+cython("pygame.gfxdraw", source=[ "c/SDL3_gfxPrimitives.c",  "c/SDL3_rotozoom.c" ])
 
 setup(
     name="sdl",
