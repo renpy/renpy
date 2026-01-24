@@ -35,6 +35,7 @@ def init():
             numpass += 1
         except Exception:
             numfail += 1
+            raise
 
     return numpass, numfail
 

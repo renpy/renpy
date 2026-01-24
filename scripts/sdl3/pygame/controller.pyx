@@ -28,7 +28,7 @@ def init():
     from .display import sdl_main_init
     sdl_main_init()
 
-    if SDL_InitSubSystem(SDL_INIT_GAMEPAD):
+    if not SDL_InitSubSystem(SDL_INIT_GAMEPAD):
         raise error()
 
 def quit(): # @ReservedAssignment
@@ -67,7 +67,7 @@ def add_mapping(mapping):
     Adds a game controller mapping from the string in `mapping`.
     """
 
-    if SDL_AddGamepadMapping(mapping) == -1:
+    if not SDL_AddGamepadMapping(mapping):
         raise error()
 
 def add_mappings(mapping_file):
@@ -84,7 +84,7 @@ def add_mappings(mapping_file):
 
     cdef SDL_IOStream *rwops = to_rwops(mapping_file)
 
-    if SDL_AddGamepadMappingsFromIO(rwops, 1) == -1:
+    if not SDL_AddGamepadMappingsFromIO(rwops, 1):
         raise error()
 
 def get_axis_from_string(name):

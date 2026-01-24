@@ -26,7 +26,7 @@ def init():
 
     sdl_main_init()
 
-    if SDL_InitSubSystem(SDL_INIT_JOYSTICK):
+    if not SDL_InitSubSystem(SDL_INIT_JOYSTICK):
         raise error()
 
 def quit(): # @ReservedAssignment
