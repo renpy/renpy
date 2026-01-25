@@ -497,7 +497,7 @@ cdef class Window:
 default_icon = None
 
 # The title that's used for new windows.
-default_title = "pygame window"
+default_title = "renpy.pygame window"
 
 # The default gl_swap_control
 default_swap_control = 1

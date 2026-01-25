@@ -19,7 +19,7 @@
 from .sdl cimport *
 from .sdl_image cimport *
 from .surface cimport *
-from .rwobject cimport to_rwops
+from .iostream cimport to_sdl_iostream
 
 from .error import error
 
@@ -64,7 +64,7 @@ def load(fi, namehint="", size=None):
     cdef SDL_Surface *img
     cdef SDL_Surface *new_surface
 
-    cdef SDL_IOStream *rwops
+    cdef SDL_IOStream *iostream
     cdef char *ftype
 
     cdef int width
@@ -75,11 +75,11 @@ def load(fi, namehint="", size=None):
         if fi.lower().endswith('.tga'):
             namehint = "TGA"
 
-    rwops = to_rwops(fi)
+    iostream = to_sdl_iostream(fi)
 
     if namehint == "":
         with nogil:
-            img = IMG_Load_IO(rwops, 1)
+            img = IMG_Load_IO(iostream, 1)
 
     else:
         namehint = process_namehint(namehint)
@@ -89,14 +89,14 @@ def load(fi, namehint="", size=None):
             width, height = size
 
             with nogil:
-                img = IMG_LoadSizedSVG_IO(rwops, width, height)
+                img = IMG_LoadSizedSVG_IO(iostream, width, height)
 
         else:
 
             with nogil:
-                img = IMG_LoadTyped_IO(rwops, 1, ftype)
+                img = IMG_LoadTyped_IO(iostream, 1, ftype)
 
-    SDL_CloseIO(rwops)
+    SDL_CloseIO(iostream)
 
     if img == NULL:
         raise error()
@@ -137,7 +137,6 @@ def save(Surface surface not None, filename, compression=-1):
         with nogil:
             err = Pygame_SDL2_SavePNG(fn, surface.surface, compression_level)
     elif ext == b'.BMP':
-        rwops = to_rwops(filename, "wb")
         with nogil:
             err = SDL_SaveBMP(surface.surface, fn)
     elif ext == b".JPG" or ext == b".JPEG":

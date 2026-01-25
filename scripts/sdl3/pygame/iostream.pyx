@@ -404,14 +404,14 @@ buffile_iointerface.flush = buffile_flush
 buffile_iointerface.close = buffile_close
 
 
-cdef SDL_IOStream *to_rwops(filelike, mode="rb", base=None, length=None) except NULL:
+cdef SDL_IOStream *to_sdl_iostream(filelike, mode="rb", base=None, length=None) except NULL:
     """
     This accepts, in order:
 
     * An io.BufferedIOBase object, which is unwrapped to get the
       underlying file object. (Which is then processed as below.)
 
-    * A RWopsIO object, which is closed and the underlying SDL_RWops
+    * An IOStream object, which is closed and the underlying SDL_IOStream
       object is returned.
 
     * A filename, which is opened.
@@ -427,7 +427,7 @@ cdef SDL_IOStream *to_rwops(filelike, mode="rb", base=None, length=None) except 
 
     * A file-like object, which is wrapped in a Python file-like object
 
-    It returns an SDL_RWops object, or NULL on error.
+    It returns an SDL_IOStream object, or NULL on error.
     """
 
     cdef FILE *f
@@ -437,14 +437,14 @@ cdef SDL_IOStream *to_rwops(filelike, mode="rb", base=None, length=None) except 
     cdef char *cname
     cdef char *cmode
 
-    cdef RWopsIOImpl rwopsio
+    cdef IOStreamImpl iostream
 
     if not isinstance(mode, bytes):
         mode = mode.encode("ascii")
 
     name = filelike
 
-    # Handle turning BufferedIOBase and RWopsIO objects into their underlying
+    # Handle turning BufferedIOBase and IOStream objects into their underlying
     # objects.
     try:
         while True:
@@ -452,13 +452,13 @@ cdef SDL_IOStream *to_rwops(filelike, mode="rb", base=None, length=None) except 
     except AttributeError:
         pass
 
-    if isinstance(filelike, RWopsIOImpl):
-        rwopsio = <RWopsIOImpl> filelike
-        if not rwopsio.ops:
+    if isinstance(filelike, IOStreamImpl):
+        iostream = <IOStreamImpl> filelike
+        if not iostream.ops:
             raise ValueError("I/O on closed file.")
 
-        rv = rwopsio.ops
-        rwopsio.ops = NULL
+        rv = iostream.ops
+        iostream.ops = NULL
         return rv
 
     if isinstance(filelike, (io.FileIO, io.IOBase)) and mode == "rb":
@@ -531,7 +531,7 @@ whence_mapping = {
     io.SEEK_END : SDL_IO_SEEK_END,
 }
 
-cdef class RWopsIOImpl:
+cdef class IOStreamImpl:
     """
     This wraps an SDL_IOStream object in a Python file-like object.
     """
@@ -548,7 +548,7 @@ cdef class RWopsIOImpl:
 
     def __init__(self, filelike, mode="rb", base=None, length=None, name=None):
         """
-        Creates a new RWopsIO object. All parameter are passed to to_rwops
+        Creates a new IOStreamImpl object. All parameter are passed to to_sdl_iostream
         to create the SDL_IOstream object.
         """
 
@@ -563,7 +563,7 @@ cdef class RWopsIOImpl:
         self.length = length
 
         if filelike is not None:
-            self.ops = to_rwops(filelike, mode, base, length)
+            self.ops = to_sdl_iostream(filelike, mode, base, length)
         else:
             self.ops = NULL
 
@@ -649,21 +649,20 @@ cdef class RWopsIOImpl:
         return rv
 
 
-cdef SDL_IOStream *RWopsFromPython(filelike) except NULL:
-    return to_rwops(filelike, "rb", None, None)
+cdef SDL_IOStream *SDLIOStreamFromPython(filelike) except NULL:
+    return to_sdl_iostream(filelike, "rb", None, None)
 
 
-class RWopsIO(io.RawIOBase):
+class IOStream(io.RawIOBase):
 
     def __init__(self, filelike, mode='rb', base=None, length=None, name=None):
         """
-        Creates a new RWopsIO object. All parameter are passed to to_rwops
-        to create the SDL_RWops object.
+        Creates a new IOStream object.
         """
 
         io.RawIOBase.__init__(self)
 
-        self.raw = RWopsIOImpl(filelike, mode=mode, base=base, length=length, name=name)
+        self.raw = IOStreamImpl(filelike, mode=mode, base=base, length=length, name=name)
 
         self.close = self.raw.close
         self.seek = self.raw.seek
@@ -673,9 +672,9 @@ class RWopsIO(io.RawIOBase):
 
     def __repr__(self):
         if self.raw.base is not None:
-            return "<RWopsIO {!r} base={!r} length={!r}>".format(self.raw.name, self.raw.base, self.raw.length)
+            return "<SDLIOStreamIO {!r} base={!r} length={!r}>".format(self.raw.name, self.raw.base, self.raw.length)
         else:
-            return "<RWopsIO {!r}>".format(self.raw.name)
+            return "<SDLIOStreamIO {!r}>".format(self.raw.name)
 
     # Implemented class: io.IOBase
 
@@ -752,8 +751,8 @@ class RWopsIO(io.RawIOBase):
 
         stream = SDL_OpenIO(&buffile_iointerface, <void *> bf)
 
-        rv = RWopsIO(None, name=name)
-        (<RWopsIOImpl> rv.raw).ops = stream
+        rv = IOStream(None, name=name)
+        (<IOStreamImpl> rv.raw).ops = stream
         return rv
 
     @staticmethod
@@ -770,15 +769,15 @@ class RWopsIO(io.RawIOBase):
         if sf == NULL:
             raise MemoryError()
 
-        sf.a = to_rwops(a)
-        sf.b = to_rwops(b)
+        sf.a = to_sdl_iostream(a)
+        sf.b = to_sdl_iostream(b)
         sf.split = SDL_GetIOSize(sf.a)
         sf.tell = 0
 
         rw = SDL_OpenIO(&splitfile_iointerface, <void *> sf)
 
-        rv = RWopsIO(None, name=name)
-        (<RWopsIOImpl> rv.raw).ops = rw
+        rv = IOStream(None, name=name)
+        (<IOStreamImpl> rv.raw).ops = rw
         return rv
 
 

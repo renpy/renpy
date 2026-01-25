@@ -18,7 +18,7 @@
 
 from .sdl cimport *
 from .error import error
-from .rwobject cimport to_rwops
+from .iostream cimport to_sdl_iostream
 
 def init():
     """
@@ -82,9 +82,9 @@ def add_mappings(mapping_file):
     multiple times to add multiple database files.
     """
 
-    cdef SDL_IOStream *rwops = to_rwops(mapping_file)
+    cdef SDL_IOStream *iostream = to_sdl_iostream(mapping_file)
 
-    if not SDL_AddGamepadMappingsFromIO(rwops, 1):
+    if not SDL_AddGamepadMappingsFromIO(iostream, 1):
         raise error()
 
 def get_axis_from_string(name):

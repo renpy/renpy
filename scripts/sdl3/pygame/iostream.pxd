@@ -18,5 +18,5 @@
 
 from .sdl cimport SDL_IOStream
 
-cdef SDL_IOStream *to_rwops(filelike, mode=*, base=*, length=*) except NULL
-cdef SDL_IOStream *RWopsFromPython(filelike) except NULL
+cdef SDL_IOStream *to_sdl_iostream(filelike, mode=*, base=*, length=*) except NULL
+cdef SDL_IOStream *SDLIOStreamFromPython(filelike) except NULL
