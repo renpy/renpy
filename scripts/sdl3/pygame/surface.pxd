@@ -1,5 +1,5 @@
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 # Copyright 2014 Patrick Dawson
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages

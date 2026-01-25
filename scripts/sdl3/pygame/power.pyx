@@ -1,4 +1,4 @@
-# Copyright 2017 Tom Rothamel <tom@rothamel.us>
+# Copyright 2017-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages
