@@ -199,13 +199,18 @@ def match_string(unicode data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /
         last_c = c
         c = _get_c_unbounded(data, pos)
 
+        pos += 1
+
         # Skip escaped char.
         if c == '\\':
-            end_quote_size = 0
-            pos += 2
-            continue
+            # But line continuation should add to newlines.
+            if _get_c_unbounded(data, pos) == '\n':
+                line_startpos = pos
+                newlines += 1
 
-        pos += 1
+            end_quote_size = 0
+            pos += 1
+            continue
 
         # In f-string, it is valid to have _anything_ inside {}, even comments
         # and strings with the same quotes. So here we look for closing brace
