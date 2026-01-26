@@ -240,7 +240,7 @@ def pure(fn):
     name = fn
 
     if not isinstance(name, str):
-        name = fn.__name__
+        name = fn.__qualname__
 
         module = fn.__module__
         name = module + "." + name

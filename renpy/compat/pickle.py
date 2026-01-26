@@ -62,101 +62,112 @@ def dump_paths(filename: str, **roots: object):
         return size
 
     def visit(o: object, path: str) -> int:
-        ido = id(o)
+        try:
 
-        if ido in o_repr_cache:
-            f.write(f"{0: 7d} {path} = alias {o_repr_cache[ido]}\n")
-            return 0
+            ido = id(o)
 
-        if isinstance(o, (int, float, complex, types.NoneType, types.ModuleType, type)):
-            o_repr = repr(o)
+            if ido in o_repr_cache:
+                f.write(f"{0: 7d} {path} = alias {o_repr_cache[ido]}\n")
+                return 0
 
-        elif isinstance(o, str):
-            if len(o) <= 80:
+            if isinstance(o, (int, float, complex, types.NoneType, types.ModuleType, type)):
                 o_repr = repr(o)
+
+            elif isinstance(o, str):
+                if len(o) <= 80:
+                    o_repr = repr(o)
+                else:
+                    o_repr = repr(o[:40] + "..." + o[-40:])
+
+            elif isinstance(o, bytes):
+                if len(o) <= 80:
+                    o_repr = repr(o)
+                else:
+                    o_repr = repr(o[:40] + b"..." + o[-40:])
+
+            elif isinstance(o, (tuple, list, dict)):
+                o_repr = f"<{o.__class__.__name__}>"
+
+            elif isinstance(o, types.MethodType):
+                o_repr = f"<method {o.__self__.__class__}.{o.__name__}>"
+
+            elif isinstance(o, types.FunctionType):
+                name = o.__qualname__ or o.__name__
+
+                o_repr = f"{o.__module__}.{name}"
+
+            elif isinstance(o, object):
+                o_repr = f"<{type(o).__name__}>"
+
             else:
-                o_repr = repr(o[:40] + "..." + o[-40:])
+                o_repr = f"BAD TYPE <{type(o).__name__}>"
 
-        elif isinstance(o, bytes):
-            if len(o) <= 80:
-                o_repr = repr(o)
-            else:
-                o_repr = repr(o[:40] + b"..." + o[-40:])
+            o_repr_cache[ido] = o_repr
 
-        elif isinstance(o, (tuple, list, dict)):
-            o_repr = f"<{o.__class__.__name__}>"
+            if isinstance(o, (int, float, complex, types.NoneType, types.ModuleType, type)):
+                size = 1
 
-        elif isinstance(o, types.MethodType):
-            o_repr = f"<method {o.__self__.__class__}.{o.__name__}>"
+            elif isinstance(o, (bytes, str)):
+                size = len(o) // 40 + 1
 
-        elif isinstance(o, types.FunctionType):
-            name = o.__qualname__ or o.__name__
+            elif isinstance(o, (tuple, list)):
+                size = visit_seq(o, path)
 
-            o_repr = f"{o.__module__}.{name}"
+            elif isinstance(o, dict):
+                size = visit_map(o, path)
 
-        elif isinstance(o, object):
-            o_repr = f"<{type(o).__name__}>"
+            elif isinstance(o, types.MethodType):
+                size = 1 + visit(o.__self__, f"{path}.__self__")
 
-        else:
-            o_repr = f"BAD TYPE <{type(o).__name__}>"
-
-        o_repr_cache[ido] = o_repr
-
-        if isinstance(o, (int, float, complex, types.NoneType, types.ModuleType, type)):
-            size = 1
-
-        elif isinstance(o, (bytes, str)):
-            size = len(o) // 40 + 1
-
-        elif isinstance(o, (tuple, list)):
-            size = visit_seq(o, path)
-
-        elif isinstance(o, dict):
-            size = visit_map(o, path)
-
-        elif isinstance(o, types.MethodType):
-            size = 1 + visit(o.__self__, f"{path}.__self__")
-
-        elif isinstance(o, types.FunctionType):
-            size = 1
-
-        else:
-            try:
-                reduction = o.__reduce_ex__(PROTOCOL)
-            except Exception:
-                reduction = ()
-                o_repr_cache[ido] = "BAD REDUCTION " + o_repr
-
-            if isinstance(reduction, str):
-                o_repr_cache[ido] = f"{o.__module__}.{reduction}"
+            elif isinstance(o, types.FunctionType):
                 size = 1
 
             else:
-                reduction = [*reduction] + [None] * (5 - len(reduction))
-                _, _, state, seq, map, *_ = reduction
+                try:
+                    reduction = o.__reduce_ex__(PROTOCOL)
+                except Exception:
+                    reduction = ()
+                    o_repr_cache[ido] = "BAD REDUCTION " + o_repr
 
-                # An estimate of the size of the object, in arbitrary units.
-                # (These units are about 20-25 bytes on my computer.)
-                size = 1
+                if isinstance(reduction, str):
+                    o_repr_cache[ido] = f"{o.__module__}.{reduction}"
+                    size = 1
 
-                if isinstance(state, tuple):
-                    state, slots = state
-                    for k, v in slots.items():
-                        size += 1
-                        size += visit(v, f"{path}.{k}")
+                else:
+                    reduction = [*reduction] + [None] * (5 - len(reduction))
+                    _, _, state, seq, map, *_ = reduction
 
-                if state is not None:
-                    size += visit(state, f"{path}.__getstate__()")
+                    # An estimate of the size of the object, in arbitrary units.
+                    # (These units are about 20-25 bytes on my computer.)
+                    size = 1
 
-                if seq is not None:
-                    visit(seq, path)
+                    if isinstance(state, tuple):
+                        try:
+                            state, slots = state
+                            for k, v in slots.items():
+                                size += 1
+                                size += visit(v, f"{path}.{k}")
+                        except Exception:
+                            pass
 
-                if map is not None:
-                    visit(map, path)
+                    if state is not None:
+                        size += visit(state, f"{path}.__getstate__()")
 
-        f.write(f"{size: 7d} {path} = {o_repr_cache[ido]}\n")
+                    if seq is not None:
+                            visit(seq, path)
 
-        return size
+
+                    if map is not None:
+                        visit(map, path)
+
+            f.write(f"{size: 7d} {path} = {o_repr_cache[ido]}\n")
+
+            return size
+
+        except Exception as e:
+            f.write(f"{size: 7d} {path} = dump failed: {e!s}\n")
+
+
 
     f, _ = renpy.error.open_error_file(filename, "w")
 
