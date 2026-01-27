@@ -810,7 +810,7 @@ screen _exception:
 
             has vbox
 
-            text "[renpy.game.exception_info]" size gui._scale(22)
+            text "[renpy.game.exception_info!q]" size gui._scale(22)
             frame style '_trace':
                 text fmt_short substitute False safe True
 
