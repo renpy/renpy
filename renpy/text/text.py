@@ -342,7 +342,16 @@ class TextSegment(object):
                 % (context,)
             )
 
-        self.shader = renpy.text.shader.get_textshader(style.textshader)
+        new_shader = renpy.text.shader.get_textshader(style.textshader)
+
+        if context and self.shader and not new_shader:
+
+            raise Exception(
+                "%s removes a textshader, but the Text displayable already has a textshader. Textshaders cannot be removed once applied. Consider using config.default_textshader."
+                % (context,)
+            )
+
+        self.shader = new_shader
 
     # From here down is the public glyph API.
 
