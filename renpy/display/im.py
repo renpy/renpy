@@ -692,7 +692,10 @@ class ImageBase(renpy.display.displayable.Displayable):
         self.identity = (type(self).__name__,) + args + flat_properties
 
         if self.obsolete and renpy.game.context().init_phase:
-            frame = sys._getframe(2)
+            frame = sys._getframe()
+            current_filename = frame.f_code.co_filename
+            while frame.f_code.co_filename == current_filename and frame.f_back:
+                frame = frame.f_back
             filename = frame.f_code.co_filename
             line = frame.f_lineno
             classname = type(self).__name__
