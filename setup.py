@@ -83,6 +83,10 @@ def main():
     if cubism:
         setuplib.include_dirs.append("{}/Core/include".format(cubism))
 
+    inochi2d = os.environ.get("INOCHI", None)
+    if inochi2d:
+        setuplib.include_dirs.append("{}/include".format(inochi2d))
+
     pkgconfig_packages = "assimp\n" + pkgconfig_packages
     library("assimp")
 
@@ -135,6 +139,9 @@ def main():
 
     if cubism:
         cython("renpy.gl2.live2dmodel", [ "src/live2dcsm.c" ],)
+    
+    if inochi2d:
+        cython("renpy.gl2.inochi2dmodel", [ "src/inochi2d_ldr.c" ],)
 
     cython("renpy.gl2.assimp", [ "src/assimpio.cc" ], language="c++")
 

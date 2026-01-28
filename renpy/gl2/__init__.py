@@ -23,3 +23,4 @@ if typing.TYPE_CHECKING:
     from . import live2d as live2d
     from . import live2dmodel as live2dmodel
     from . import live2dmotion as live2dmotion
+    from . import inochi2d as inochi2d

@@ -178,6 +178,10 @@ from renpy.gl2.live2d import (
     has_live2d,
 )
 
+from renpy.gl2.inochi2d import (
+    has_inochi2d,
+)
+
 from renpy.lexer import (
     unelide_filename,
     lex_string,
