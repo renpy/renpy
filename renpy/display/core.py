@@ -1776,6 +1776,8 @@ class Interface:
 
         rv.append(getattr(renpy.store, "default_mouse", "default"))
 
+        rv = [ i for i in rv if i is not None ]
+
         if pygame.mouse.get_pressed()[0]:
             new_rv = [ ]
             for i in rv:
