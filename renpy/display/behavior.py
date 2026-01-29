@@ -2241,6 +2241,7 @@ class Bar(renpy.display.displayable.Displayable):
 
     _store_transform_event = True
     extra_changed = None
+    action = None
 
     @property
     def _draggable(self):
@@ -2276,6 +2277,7 @@ class Bar(renpy.display.displayable.Displayable):
         hovered=None,
         unhovered=None,
         released=None,
+        action=None,
         **properties,
     ):
         self.value = None
@@ -2332,6 +2334,7 @@ class Bar(renpy.display.displayable.Displayable):
         self.unhovered = unhovered
 
         self.released = released
+        self.action = action
 
     def per_interact(self):
         if self.value is not None:
@@ -2635,6 +2638,11 @@ class Bar(renpy.display.displayable.Displayable):
 
             if self.extra_changed is not None:
                 rv = run(self.extra_changed, value)
+                if rv is not None:
+                    return rv
+
+            if self.action is not None:
+                rv = run(self.action)
                 if rv is not None:
                     return rv
 
