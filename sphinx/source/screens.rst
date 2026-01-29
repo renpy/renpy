@@ -440,7 +440,7 @@ data. It takes the following properties:
 .. screen-property:: range
 
     The maximum value of the bar. This is required if `value` is a
-    number.
+    number. It is ignored if `value` is a bar value object.
 
 .. screen-property:: adjustment
 

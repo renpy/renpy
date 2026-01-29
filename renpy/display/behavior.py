@@ -2240,6 +2240,7 @@ class Bar(renpy.display.displayable.Displayable):
     """
 
     _store_transform_event = True
+    extra_changed = None
 
     @property
     def _draggable(self):
@@ -2286,6 +2287,7 @@ class Bar(renpy.display.displayable.Displayable):
 
                 self.value = value
                 adjustment = value.get_adjustment()
+                self.extra_changed = changed
 
                 if renpy.game.interface is not None:
                     renpy.game.interface.timeout(0)
@@ -2630,6 +2632,11 @@ class Bar(renpy.display.displayable.Displayable):
             rv = self.adjustment.change(value)
             if rv is not None:
                 return rv
+
+            if self.extra_changed is not None:
+                rv = run(self.extra_changed, value)
+                if rv is not None:
+                    return rv
 
         if ignore_event:
             raise renpy.display.core.IgnoreEvent()

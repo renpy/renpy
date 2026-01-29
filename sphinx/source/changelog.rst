@@ -13,6 +13,8 @@ Changelog (Ren'Py 7.x-)
 Features
 --------
 
+The `changed` property of bars can now be supplied in addition to a bar value.
+
 Layered images now support ``at`` and ``at transform`` clauses at the same time.
 
 The new :var:`config.special_directory_map` variable maps special directory names
