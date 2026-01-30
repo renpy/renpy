@@ -224,10 +224,15 @@ def load_lines(filename, elided_filename):
 
                 continue
 
-            _word, _magic, end = renpy.lexer.match_logical_word(data, pos)
+            if spaces_pos := renpy.lexer.match_whitespace(data, pos):
+                pos = spaces_pos
+                continue
 
-            pos = end
+            if word_pos := renpy.lexer.match_logical_word(data, pos):
+                pos = word_pos
+                continue
 
+            pos += 1
 
 def ensure_loaded(filename):
     """
