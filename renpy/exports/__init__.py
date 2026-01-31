@@ -580,6 +580,7 @@ from renpy.exports.statementexports import (
     call_screen,
     call,
     execute_default_statement,
+    get_statement_name,
     imagemap,
     jump,
     pause,
