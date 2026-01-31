@@ -128,6 +128,9 @@ The ``!i`` flag will make additional interpolate for the interpolated string::
 This should be used to substitute the text that has a substitution inside.
 It's often useful in screen language, see :ref:`Const Text <const-text>`.
 
+The ``!f`` flag will pass the resulting string through :var:`config.say_menu_text_filter`,
+if it is not None. This allows filtering of interpolated text.
+
 The ``!u`` flag forces the text to uppercase and the ``!l`` flag forces the
 text to lowercase. The ``!c`` flag acts only on the first character,
 capitalizing it. These flags may be combined, for example using ``!cl`` would
