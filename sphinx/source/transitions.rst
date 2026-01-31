@@ -197,6 +197,10 @@ dialogue is being shown on the screen. For example::
 
 The dissolve will take place while the text is displayed on the screen.
 
+The exception to this is when a dict transition has a `None` key. If a dict
+transition maps the `None` layer to a transition, this transition will run with
+the standard pause. This can be used with `NoTransition` to create a pause.
+
 Dict layer transitions can't be used every place a transition can be used, only
 in places where applying transitions to a layer is possible. It can be used with
 the :ref:`with-statement` and ``with`` cause of the
