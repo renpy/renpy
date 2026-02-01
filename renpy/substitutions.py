@@ -288,6 +288,9 @@ def convert(value, conv, scope):
         except RecursionError:
             raise ValueError(f"Substitution {value!r} refers to itself in a loop.")
 
+    if "f" in conv and renpy.config.say_menu_text_filter is not None:
+        value = renpy.config.say_menu_text_filter(value)
+
     if "q" in conv:
         value = value.replace("{", "{{")
 

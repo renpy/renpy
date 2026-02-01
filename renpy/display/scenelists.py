@@ -624,7 +624,10 @@ class SceneLists(renpy.object.Object):
             self.layer_at_list[layer] = (None, list(at_list))
 
         if reset:
-            self.layer_transform[layer] = None
+            if camera:
+                self.camera_transform[layer] = None
+            else:
+                self.layer_transform[layer] = None
 
     def set_times(self, time):
         """

@@ -13,6 +13,15 @@ Changelog (Ren'Py 7.x-)
 Features
 --------
 
+Text interpolation now supports the ``!f`` flag, which passes interpolated text through :var:`config.say_menu_text_filter`.
+
+The new :func:`renpy.get_statement_name` function returns the name of the current statement.
+
+The `changed` property of bars can now be supplied in addition to a bar value.
+
+Bars now take an `action` property, which is an action that is run when the bar value changes. Unlike `change`, `action`
+is not supplied the bar value, and so can be used with the same actions as buttons.
+
 Layered images now support ``at`` and ``at transform`` clauses at the same time.
 
 The new :var:`config.special_directory_map` variable maps special directory names

@@ -1316,7 +1316,8 @@ class Transform(Node):
 
         trans = renpy.display.motion.ATLTransform(self.atl, parameters=parameters)
         renpy.dump.transforms.append((self.varname, self.filename, self.linenumber))
-        renpy.exports.pure(self.varname)
+
+        renpy.exports.pure(f"{self.store}.{self.varname}")
 
         ns, _special = get_namespace(self.store)
         ns.set(self.varname, trans)
