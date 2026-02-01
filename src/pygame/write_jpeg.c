@@ -1,5 +1,5 @@
 /* Copyright 2006 Rene Dudfield
- * Copyright 2014 Tom Rothamel
+ * Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the authors be held liable for any damages
@@ -18,8 +18,8 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+#include "write_jpeg.h"
 #include <stdio.h>
-#include <SDL.h>
 #include <jpeglib.h>
 
 static int write_jpeg (
@@ -72,7 +72,7 @@ int Pygame_SDL2_SaveJPEG(SDL_Surface *surface, const char *file, int quality) {
 		quality = 90;
 	}
 
-	rgb_surf = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB24, 0);
+	rgb_surf = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGB24);
 
     if (! rgb_surf) {
     	return -1;
@@ -81,7 +81,7 @@ int Pygame_SDL2_SaveJPEG(SDL_Surface *surface, const char *file, int quality) {
     samples = (JSAMPROW *) malloc (sizeof(JSAMPROW) * rgb_surf->h);
 
     if (!samples) {
-    	SDL_FreeSurface(rgb_surf);
+    	SDL_DestroySurface(rgb_surf);
     	return -1;
     }
 
@@ -94,7 +94,7 @@ int Pygame_SDL2_SaveJPEG(SDL_Surface *surface, const char *file, int quality) {
     rv = write_jpeg(file, samples, surface->w, surface->h, quality);
 
     free(samples);
-    SDL_FreeSurface(rgb_surf);
+    SDL_DestroySurface(rgb_surf);
 
     return rv;
 }
