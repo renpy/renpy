@@ -17,7 +17,7 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from pygame.sdl cimport *
+from .sdl cimport *
 
 cdef Uint32 map_color(SDL_Surface *surface, color) except? 0xaabbccdd
 cdef object get_color(Uint32 pixel, SDL_Surface *surface)

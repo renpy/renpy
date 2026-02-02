@@ -113,10 +113,10 @@ def load(fi, namehint="", size=None):
 
     return surf
 
-cdef extern from "write_jpeg.h":
+cdef extern from "pygame/write_jpeg.h":
     int Pygame_SDL2_SaveJPEG(SDL_Surface *, char *, int) nogil
 
-cdef extern from "write_png.h":
+cdef extern from "pygame/write_png.h":
     int Pygame_SDL2_SavePNG(const char *, SDL_Surface *, int) nogil
 
 def save(Surface surface not None, filename, compression=-1):

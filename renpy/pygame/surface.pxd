@@ -18,7 +18,7 @@
 # 3. This notice may not be removed or altered from any source distribution.
 
 
-from pygame.sdl cimport SDL_Surface
+from .sdl cimport SDL_Surface
 
 cdef class Surface:
     # Allow weak references.

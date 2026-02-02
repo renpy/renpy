@@ -184,16 +184,34 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
     # Figure out what it depends on.
     deps = [fn]
 
+    def dep(m):
+        """
+        From a module name, return the corresponding .pxd file, resolving
+        relative imports.
+        """
+
+        mod_name = m.group(1)
+        if mod_name.startswith("."):
+            level = len(mod_name) - len(mod_name.lstrip("."))
+            base = split_name[:-level]
+            rel_mod = mod_name.lstrip(".")
+            if rel_mod:
+                base.append(rel_mod)
+            mod_name = ".".join(base)
+
+        return mod_name.replace(".", "/") + ".pxd"
+
+
     with open(fn) as f:
         for line in f:
             m = re.search(r"from\s*([\w.]+)\s*cimport", line)
             if m:
-                deps.append(m.group(1).replace(".", "/") + ".pxd")
+                deps.append(dep(m))
                 continue
 
             m = re.search(r"cimport\s*([\w.]+)", line)
             if m:
-                deps.append(m.group(1).replace(".", "/") + ".pxd")
+                deps.append(dep(m))
                 continue
 
             m = re.search(r'include\s*"(.*?)"', line)
@@ -202,7 +220,7 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
                 continue
 
     # Filter out cython stdlib dependencies.
-    deps = [i for i in deps if (not i.startswith("cpython/")) and (not i.startswith("libc/"))]
+    deps = [i for i in deps if (not i.startswith("cpython/")) and (not i.startswith("libc/")) and (not i.startswith("libcpp"))]
 
     # Determine if any of the dependencies are newer than the c file.
 
