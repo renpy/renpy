@@ -331,6 +331,13 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
                 count=1,
                 flags=re.DOTALL,
             )  # Py3
+            ccode = re.sub(
+                r"^__Pyx_PyMODINIT_FUNC PyInit_",
+                "__Pyx_PyMODINIT_FUNC PyInit_" + parent_module_identifier + "_",
+                ccode,
+                count=0,
+                flags=re.MULTILINE,
+            )  # Py3 Cython 0.28+
 
         with open(c_fn, "w") as f:
             f.write(ccode)
