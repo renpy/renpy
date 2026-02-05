@@ -101,8 +101,8 @@ that feature.
 
     A list of functions that are called (with no arguments) whenever
     default statements are processed. The default statements are
-    run after the init phase, but before the game starts; when the
-    a save is loaded; after rollback; before lint; and potentially at
+    run after the init phase, but before the game starts; when a save 
+    is loaded; after rollback; before lint; and potentially at
     other times.
 
     Similar to the default statement, these callbacks are a good place
@@ -110,8 +110,8 @@ that feature.
 
 .. var:: config.context_callbacks = [ ]
 
-    These are callbacks that are called wioh no arguments when Ren'Py enters
-    a new context, such as a at the start of the game, when entering the game
+    These are callbacks that are called with no arguments when Ren'Py enters
+    a new context, such as at the start of the game, when entering the game
     or main menus, or when beginning a replay.
 
 .. var:: config.interact_callbacks = [ ... ]
@@ -121,7 +121,7 @@ that feature.
 
 .. var:: config.label_callbacks = [ ]
 
-    This is a list of callbacks that are called whenever a labels is
+    This is a list of callbacks that are called whenever a label is
     reached. The callbacks are called with two arguments. The first is the name
     of the label. The second is True if the label was reached through
     jumping, calling, or creating a new context, and False otherwise.
@@ -132,15 +132,14 @@ that feature.
 
 .. var:: config.python_callbacks = [ ... ]
 
-    A list of functions. The functions in this list are called, without
-    any arguments, whenever a Python block is run outside of the init
-    phase.
+    A list of functions that are called, without arguments, whenever a 
+    Python block is run outside of the init phase.
 
     One possible use of this would be to have a function limit a variable
     to within a range each time it is adjusted.
 
     The functions may be called while Ren'Py is starting up, before the start
-    of the game proper, and  potentially before the variables the
+    of the game proper, and potentially before the variables the
     function depends on are initialized. The functions are required to deal
     with this, perhaps by using ``hasattr(store, 'varname')`` to check if
     a variable is defined.
@@ -148,10 +147,10 @@ that feature.
 .. var:: config.python_exit_callbacks = [ ]
 
     A list of functions that are called when Ren'Py is about to exit to
-    the operating system. This is intended to be used to deinitalize
-    python modules.
+    the operating system. This is intended to be used to deinitialize
+    Python modules.
 
-    Much of Ren'Py is deinitalized before these functions are called,
+    Much of Ren'Py is deinitialized before these functions are called,
     so it's not safe to use Ren'Py functions in these callbacks.
 
 .. var:: config.scene_callbacks = [ ... ]
@@ -201,7 +200,7 @@ that feature.
     "say-centered"
         Say statements using the :var:`centered` character.
 
-    "menu":
+    "menu"
         Normal menu statements.
 
     "menu-nvl"
@@ -321,7 +320,7 @@ Choice Menus
 
 .. var:: config.narrator_menu = True
 
-    If true, narration inside a menu is displayed using the narrator
+    If True, narration inside a menu is displayed using the narrator
     character. Otherwise, narration is displayed as captions
     within the menu itself.
 
@@ -359,7 +358,7 @@ Display
     This contains a list of functions that are called after Ren'Py
     displays a window, but before the first frame is rendered. The
     main use of this is to allow libraries to gain access to resources
-    that need an initializd gui, like OpenGL functions.
+    that need an initialized gui, like OpenGL functions.
 
 .. var:: config.gl_clear_color = "#000"
 
@@ -411,7 +410,7 @@ Display
 .. var:: config.physical_width = None
 
     If set, this is the default height of the window containing the Ren'Py
-    game, in pixels. If not set, the height of the window defaults to
+    game, in pixels. If not set, the width of the window defaults to
     :var:`config.screen_width`.
 
 .. var:: config.screen_height = 600
@@ -469,11 +468,11 @@ History
     to that object.
 
     Ren'Py uses history callbacks internally, so creators should append
-    their own callbacks to this  list, rather than replacing it entirely.
+    their own callbacks to this list, rather than replacing it entirely.
 
 .. var:: config.history_current_dialogue = True
 
-    If true, the current dialogue will appear in the history screen.
+    If True, the current dialogue will appear in the history screen.
 
 .. var:: config.history_length = None
 
@@ -490,7 +489,7 @@ Images
     The directories are searched in order, and the first directory that contains the image is used.
 
     This should be set at init priority -1 or lower to ensure that it is set before the images are defined. This
-    cab be done with::
+    can be done with::
 
         define -1 config.image_directories = [ "images", "dlc/images" ]
 
@@ -506,14 +505,14 @@ Input, Focus, and Events
 
 .. var:: config.allow_screensaver = True
 
-    If True, the screensaver may activite while the game is running. If
+    If True, the screensaver may activate while the game is running. If
     False, the screensaver is disabled.
 
 .. var:: config.controller_blocklist = [ ... ]
 
     A list of strings, where each string is matched against the GUID
-    of a game controller. These strings are mached as a prefix to the
-    controller GUID (which cand be found in :file:`log.txt`), and if matched,
+    of a game controller. These strings are matched as a prefix to the
+    controller GUID (which can be found in :file:`log.txt`), and if matched,
     prevent the controller from being initialized.
 
 .. var:: config.focus_crossrange_penalty = 1024
@@ -553,12 +552,12 @@ Input, Focus, and Events
 
 .. var:: config.pass_controller_events = False
 
-    If true, pygame-like CONTROLLER events are passed to Displayables event
+    If True, pygame-like CONTROLLER events are passed to Displayables event
     handlers. If not, those are consumed by Ren'Py.
 
 .. var:: config.pass_joystick_events = False
 
-    If true, pygame-like JOYSTICK events are passed to Displayables event
+    If True, pygame-like JOYSTICK events are passed to Displayables event
     handlers. If not, those are consumed by Ren'Py.
 
 .. var:: config.web_input = True
@@ -594,7 +593,7 @@ Layers
     This is a list of names of layers that are displayed beneath all
     other layers, and do not participate in a transition that is
     applied to all layers. If a layer name is listed here, it should
-    not be listed in :var:`config.layers`` or :var:`config.top_layers`.
+    not be listed in :var:`config.layers` or :var:`config.top_layers`.
 
 .. var:: config.choice_layer = "screens"
 
@@ -640,7 +639,7 @@ Layers
     are applied last, after ``show layer``  and ``camera`` transforms have
     already been applied.
 
-    If the layer name is None, then the transforms are applied to to the
+    If the layer name is None, then the transforms are applied to the
     combination of all layers in :var:`config.layers`, after any
     transition has been applied.
 
@@ -685,7 +684,7 @@ Layers
     This is a list of names of layers that are displayed above all
     other layers, and do not participate in a transition that is
     applied to all layers. If a layer name is listed here, it should
-    not be listed in :var:`config.layers`` or :var:`config.bottom_layers`.
+    not be listed in :var:`config.layers` or :var:`config.bottom_layers`.
 
 .. var:: config.transient_layers = [ 'transient', ... ]
 
@@ -704,7 +703,7 @@ Media (Music, Sound, and Video)
     will be played.
 
     This is intended for use when an a games has audio file formats changed,
-    but it's not destired to update the game script.
+    but it's not desired to update the game script.
 
 .. var:: config.auto_channels = { "audio" : ( "sfx", "", ""  ), ... }
 
@@ -720,7 +719,7 @@ Media (Music, Sound, and Video)
     If True, and the `play` argument is given to :func:`Movie`, an
     audio channel name is automatically generated for each movie.
 
-    :var:`config.single_movie_channel` takes precendece over this
+    :var:`config.single_movie_channel` takes precedence over this
     variable.
 
 .. var:: config.context_fadein_music = 0
@@ -748,7 +747,7 @@ Media (Music, Sound, and Video)
     The default audio fadeout time that's used to fade out audio, when
     audio is stopped with the ``stop`` statement or :func:`renpy.music.stop`,
     or when a new audio track is started with the ``play`` statement or
-    :func:`renpy.music.play`. This is not used when queued audio beings.
+    :func:`renpy.music.play`. This is not used when queued audio begins.
 
     A short fadeout is the default to prevent clicks and pops when
     audio is stopped or changed.
@@ -759,20 +758,20 @@ Media (Music, Sound, and Video)
 
 .. var:: config.has_music = True
 
-    If true, the "music" mixer is enabled. Audio channels will not be assigned the "music" mixer when this is false. The
-    default GUI will hide the music mixer if this is false. When this, config.has_sound, and config.has_voice are all
-    false, the default GUI will hide the main mixer as well.
+    If True, the "music" mixer is enabled. Audio channels will not be assigned the "music" mixer when this is False. The
+    default GUI will hide the music mixer if this is False. When this, config.has_sound, and config.has_voice are all
+    False, the default GUI will hide the main mixer as well.
 
 .. var:: config.has_sound = True
 
-    If true, the "sfx" mixer is enabled. Audio channels will not be assigned the "sfx" mixer when this is false.
-    The default GUI will hide the sound mixer if this is false.
+    If True, the "sfx" mixer is enabled. Audio channels will not be assigned the "sfx" mixer when this is False.
+    The default GUI will hide the sound mixer if this is False.
 
 .. var:: config.has_voice = True
 
-    If true, the "voice" mixer is enabled. Ren'Py's voice statement and other voice-related functionality will be
-    disabled when this is false. Audio channels will not be assigned the "voice" mixer when this is  false. The default
-    GUI will hide the voice mixer if this is false.
+    If True, the "voice" mixer is enabled. Ren'Py's voice statement and other voice-related functionality will be
+    disabled when this is False. Audio channels will not be assigned the "voice" mixer when this is False. The default
+    GUI will hide the voice mixer if this is False.
 
 .. var:: config.main_menu_music = None
 
@@ -918,8 +917,8 @@ Mouse
 
 .. var:: config.mouse_focus_clickthrough = False
 
-    If true, clicks that cause a window to be focused will be processed
-    normally. If false, such clicks will be ignored.
+    If True, clicks that cause a window to be focused will be processed
+    normally. If False, such clicks will be ignored.
 
 .. var:: config.mouse_hide_time = 30
 
@@ -1048,7 +1047,7 @@ Rollback
 
     If False, the default, rolling back will skip any pauses (timed or
     not) and stop only at other interactions such as dialogues, menus...
-    If True, renpy will include timeless pauses to the valid places a
+    If True, Ren'Py will include timeless pauses to the valid places a
     rollback can take the user.
 
 .. var:: config.rollback_enabled = True
@@ -1160,7 +1159,7 @@ Saving and Loading
     `name`
         The is a string that contains the name of the slot on the page.
         It may also contain a regular expression pattern
-        (like r'\d+'), in which  case the same pattern should be included
+        (like r'\d+'), in which case the same pattern should be included
         in the result.
 
     The default behavior is equivalent to::
@@ -1177,13 +1176,13 @@ Saving and Loading
 
 .. var:: config.has_autosave = True
 
-    If true, the game will autosave. If false, no autosaving will
+    If True, the game will autosave. If False, no autosaving will
     occur.
 
 .. var:: config.keep_screenshot_entering_menu = False
 
-    If true, a screenshot taken with :class:`FileTakeScreenshot` will be kept
-    when entering the game menu. When false, a new screenshot will be taken
+    If True, a screenshot taken with :class:`FileTakeScreenshot` will be kept
+    when entering the game menu. When False, a new screenshot will be taken
     just before menu entry.
 
 .. var:: config.load_failed_label = None
@@ -1601,7 +1600,7 @@ Showing Images
     4 bytes per pixel, otherwise it takes 8 bytes per pixel.
 
     If set too large, this can waste memory. If set too small, images
-    can be repeatedly loaded, hurting performance. If not none,
+    can be repeatedly loaded, hurting performance. If not None,
     :var:`config.image_cache_size` is used instead of this variable.
 
 .. var:: config.keep_running_transform = True
@@ -1905,8 +1904,8 @@ Transitions
 
 .. var:: config.pause_with_transition = False
 
-    If false, :func:`renpy.pause` is always used by the ``pause`` statement.
-    If true, when given a delay, ``pause 5`` is equivalent to ``with Pause(5)``.
+    If False, :func:`renpy.pause` is always used by the ``pause`` statement.
+    If True, when given a delay, ``pause 5`` is equivalent to ``with Pause(5)``.
 
 .. var:: config.say_attribute_transition = None
 
@@ -2006,7 +2005,7 @@ Translation
 
 .. var:: config.defer_styles = False
 
-    When true, the execution of style statements is deferred until after
+    When True, the execution of style statements is deferred until after
     all ``translate python`` blocks have executed. This lets a ``translate
     python`` block update variables that are then used in style (not
     translate style) statements.
@@ -2021,7 +2020,7 @@ Translation
 
 .. var:: config.enable_language_autodetect = False
 
-    If true, Ren'Py will attempt to determine the name of the language
+    If True, Ren'Py will attempt to determine the name of the language
     to use based on the locale of the player's system. If successful,
     this language will be used as the default language.
 
@@ -2242,7 +2241,8 @@ Development
 
 .. var:: config.console = False
 
-    This enables the console in the case :var:`config.developer` is not true.
+    This enables the console in the case :var:`config.developer` is not 
+    set to True.
 
 .. var:: config.developer = "auto"
 
@@ -2260,7 +2260,7 @@ Debugging
 
 .. var:: config.clear_log = False
 
-    If true, the log created by :var:`config.log` is cleared each time
+    If True, the log created by :var:`config.log` is cleared each time
     Ren'Py starts.
 
 .. var:: config.debug_image_cache = False
@@ -2284,7 +2284,7 @@ Debugging
 
 .. var:: config.debug_text_overflow = False
 
-    When true, Ren'Py will log text overflows to text_overflow.txt. A text
+    When True, Ren'Py will log text overflows to text_overflow.txt. A text
     overflow occurs when a :class:`Text` displayable renders to a size
     larger than that allocated to it. By setting this to True and setting
     the :propref:`xmaximum` and :propref:`ymaximum` style properties of the dialogue
@@ -2293,7 +2293,7 @@ Debugging
 
 .. var:: config.disable_input = False
 
-    When true, :func:`renpy.input` terminates immediately and returns its
+    When True, :func:`renpy.input` terminates immediately and returns its
     `default` argument.
 
 .. var:: config.exception_handler = None
@@ -2313,14 +2313,14 @@ Debugging
 
 .. var:: config.lint_character_statistics = True
 
-    If true, and :var:`config.developer` is true, the lint report will include
+    If True, and :var:`config.developer` is True, the lint report will include
     statistics about the number of dialogue blocks spoken for each character.
     The character statistics are disabled when the game is packaged, to
     prevent spoilers.
 
 .. var:: config.lint_show_names = False
 
-    If true, and :var:`lint_character_statistics` is true, the lint report will expand the aliases
+    If True, and :var:`lint_character_statistics` is True, the lint report will expand the aliases
     of the character names to the name parameter given it :func:`Character`, if possible.
 
 .. var:: config.lint_hooks = [ ... ]
@@ -2338,7 +2338,7 @@ Debugging
 
 .. var:: config.log_events = False
 
-    If true, Ren'Py will log pygame-style events to the log.txt file. This will hurt performance, but might be
+    If True, Ren'Py will log pygame-style events to the log.txt file. This will hurt performance, but might be
     useful for debugging certain problems.
 
 .. var:: config.log_width = 78
