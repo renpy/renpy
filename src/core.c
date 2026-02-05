@@ -15,7 +15,7 @@ void core_init() {
     import_renpy__pygame__surface();
 }
 
-void save_png_core(PyObject *pysurf, SDL_RWops *rw, int compress) {
+void save_png_core(PyObject *pysurf, SDL_IOStream *rw, int compress) {
     SDL_Surface *surf;
 
     surf = PySurface_AsSurface(pysurf);

@@ -25,9 +25,9 @@ from __future__ import print_function
 def version():
     return (6, 12, 0)
 
-from sdl2 cimport *
+from renpy.pygame.sdl cimport *
 
-from renpy.pygame.rwobject cimport RWopsFromPython
+from renpy.pygame.iostream cimport SDLIOStreamFromPython
 
 import renpy
 
@@ -35,7 +35,7 @@ cdef extern from "renpy.h":
 
     void core_init()
 
-    void save_png_core(object, SDL_RWops *, int)
+    void save_png_core(object, SDL_IOStream *, int)
 
     void pixellate32_core(object, object, int, int, int, int)
     void pixellate24_core(object, object, int, int, int, int)
@@ -106,7 +106,7 @@ def save_png(surf, file, compress=-1):
     if not isinstance(surf, renpy.pygame.Surface):
         raise Exception("save_png requires a pygame Surface as its first argument.")
 
-    save_png_core(surf, RWopsFromPython(file), compress)
+    save_png_core(surf, SDLIOStreamFromPython(file), compress)
 
 
 def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):

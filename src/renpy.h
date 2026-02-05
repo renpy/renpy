@@ -2,12 +2,12 @@
 #define RENPY_H
 
 #include <Python.h>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 void core_init(void);
 void subpixel_init(void);
 
-void save_png_core(PyObject *pysurf, SDL_RWops *file, int compress);
+void save_png_core(PyObject *pysurf, SDL_IOStream *file, int compress);
 
 void pixellate32_core(PyObject *pysrc,
                       PyObject *pydst,

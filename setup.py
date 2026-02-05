@@ -51,6 +51,9 @@ def main():
     if cubism:
         setuplib.include_dirs.append("{}/Core/include".format(cubism))
 
+    # src/ directory.
+    cython("_renpy", [ "src/IMG_savepng.c", "src/core.c" ], packages="sdl3 libpng")
+
     # renpy.pygame
     cython("renpy.pygame.iostream", packages="sdl3")
     cython("renpy.pygame.locals", packages="sdl3")
@@ -75,9 +78,6 @@ def main():
     cython("renpy.pygame.gfxdraw", source=[ "src/pygame/SDL3_gfxPrimitives.c",  "src/pygame/SDL3_rotozoom.c" ], packages="sdl3")
 
     if False:
-
-        # src/ directory.
-        cython("_renpy", [ "src/IMG_savepng.c", "src/core.c" ], packages="sdl2 libpng")
 
         # renpy
         cython("renpy.astsupport")
