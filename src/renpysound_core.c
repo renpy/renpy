@@ -23,15 +23,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "renpysound_core.h"
 #include <Python.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_thread.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_thread.h>
 #include <stdio.h>
 #include <string.h>
 #include <renpy.pygame.surface_api.h>
 
 apply_audio_filter_type RPS_apply_audio_filter = NULL;
 
-SDL_mutex *name_mutex;
+SDL_Mutex *name_mutex;
 
 #ifdef __EMSCRIPTEN__
 
@@ -46,8 +46,8 @@ SDL_mutex *name_mutex;
 /* These prevent the audio callback from running when held. Use this to
    prevent the audio callback from running while the state of the audio
    system is being changed. */
-#define LOCK_AUDIO() { SDL_LockAudio(); }
-#define UNLOCK_AUDIO() { SDL_UnlockAudio(); }
+#define LOCK_AUDIO() { SDL_LockAudioStream(audio_stream); }
+#define UNLOCK_AUDIO() { SDL_UnlockAudioStream(audio_stream); }
 
 /* This is held while the current track is being changed by the audio callback,
    and can also be held to the current track doesn't change while things are
@@ -65,7 +65,7 @@ void media_init(int rate, int status, int equal_mono);
 
 void media_advance_time(void);
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba);
-MediaState *media_open(SDL_RWops *, const char *);
+MediaState *media_open(SDL_IOStream *, const char *);
 void media_want_video(MediaState *, int);
 void media_start_end(MediaState *, double, double);
 void media_start(MediaState *);
@@ -319,6 +319,11 @@ struct Channel *channels = NULL;
  */
 SDL_AudioSpec audio_spec;
 
+/*
+ * The audio stream.
+ */
+SDL_AudioStream *audio_stream;
+
 static int ms_to_samples(int ms) {
     return ((long long) ms) * audio_spec.freq / 1000;
 }
@@ -417,7 +422,7 @@ void RPS_set_channel_count(int count) {
     channel_count = count;
 }
 
-static void callback(void *userdata, Uint8 *stream, int length) {
+static void callback(void *userdata, SDL_AudioStream *stream, int additional_amount, int length) {
 
     // Convert the length to samples.
     length /= (2 * sizeof(float));
@@ -589,9 +594,11 @@ static void callback(void *userdata, Uint8 *stream, int length) {
             right = -1.0;
         }
 
-        ((float *) stream)[i * 2] = left;
-        ((float *) stream)[i * 2 + 1] = right;
+        mix_buffer[i * 2] = left;
+        mix_buffer[i * 2 + 1] = right;
     }
+
+    SDL_PutAudioStreamData(stream, mix_buffer, length * 2 * sizeof(float));
 }
 
 
@@ -642,7 +649,7 @@ static int check_channel(int c) {
  * Loads the provided stream. Returns the stream on success, NULL on
  * failure.
  */
-struct MediaState *load_stream(SDL_RWops *rw, const char *ext, double start, double end, int video) {
+struct MediaState *load_stream(SDL_IOStream *rw, const char *ext, double start, double end, int video) {
     struct MediaState *rv;
     rv = media_open(rw, ext);
     if (rv == NULL)
@@ -660,7 +667,7 @@ struct MediaState *load_stream(SDL_RWops *rw, const char *ext, double start, dou
 }
 
 
-void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
+void RPS_play(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
 
     struct Channel *c;
 
@@ -735,7 +742,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
     error(SUCCESS);
 }
 
-void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
+void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
 
     struct Channel *c;
 
@@ -1054,7 +1061,11 @@ void RPS_pause(int channel, int pause) {
 void RPS_global_pause(int pause) {
     int i;
 
-    SDL_PauseAudio(pause);
+    if (pause) {
+        SDL_PauseAudioStreamDevice(audio_stream);
+    } else {
+        SDL_ResumeAudioStreamDevice(audio_stream);
+    }
 
     for (i = 0; i < num_channels; i++) {
         if (channels[i].playing) {
@@ -1348,20 +1359,19 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int
     }
 
     audio_spec.freq = freq;
-    audio_spec.format = AUDIO_F32;
+    audio_spec.format = SDL_AUDIO_F32;
     audio_spec.channels = stereo;
-    audio_spec.samples = samples;
-    audio_spec.callback = callback;
-    audio_spec.userdata = NULL;
+    // callback and userdata are passed to SDL_OpenAudioDeviceStream
 
-    if (SDL_OpenAudio(&audio_spec, NULL)) {
+    audio_stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audio_spec, callback, NULL);
+    if (audio_stream == NULL) {
         error(SDL_ERROR);
         return;
     }
 
     media_init(audio_spec.freq, status, equal_mono);
 
-    SDL_PauseAudio(0);
+    SDL_ResumeAudioStreamDevice(audio_stream);
 
     linear_fades = linear_fades_;
 
@@ -1379,14 +1389,14 @@ void RPS_quit() {
     int i;
 
     LOCK_AUDIO();
-    SDL_PauseAudio(1);
+    SDL_PauseAudioStreamDevice(audio_stream);
     UNLOCK_AUDIO();
 
     for (i = 0; i < num_channels; i++) {
         RPS_stop(i);
     }
 
-    SDL_CloseAudio();
+    SDL_DestroyAudioStream(audio_stream);
 
     num_channels = 0;
     initialized = 0;

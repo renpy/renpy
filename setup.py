@@ -77,33 +77,31 @@ def main():
     cython("renpy.pygame.draw", packages="sdl3")
     cython("renpy.pygame.gfxdraw", source=[ "src/pygame/SDL3_gfxPrimitives.c",  "src/pygame/SDL3_rotozoom.c" ], packages="sdl3")
 
-    if False:
+    # renpy
+    cython("renpy.astsupport")
+    cython("renpy.cslots")
+    cython("renpy.lexersupport")
+    cython("renpy.pydict")
+    cython("renpy.style")
+    cython("renpy.encryption")
+    cython("renpy.tfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
+    cython("renpy.ecsign", [ "src/ec_sign_core.c" ], packages="openssl")
 
-        # renpy
-        cython("renpy.astsupport")
-        cython("renpy.cslots")
-        cython("renpy.lexersupport")
-        cython("renpy.pydict")
-        cython("renpy.style")
-        cython("renpy.encryption")
-        cython("renpy.tfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
-        cython("renpy.ecsign", [ "src/ec_sign_core.c" ], packages="openssl")
+    # renpy.audio
+    cython(
+        "renpy.audio.renpysound",
+        [ "src/renpysound_core.c", "src/ffmedia.c" ],
+        compile_args=[ "-Wno-deprecated-declarations" ] if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ) else [ ],
+        packages="libavformat libavcodec libavutil libswresample libswscale sdl3")
 
-        # renpy.audio
-        cython(
-            "renpy.audio.renpysound",
-            [ "src/renpysound_core.c", "src/ffmedia.c" ],
-            compile_args=[ "-Wno-deprecated-declarations" ] if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ) else [ ],
-            packages="libavformat libavcodec libavutil libswresample libswscale sdl2")
+    cython("renpy.audio.filter")
 
-        cython("renpy.audio.filter")
+    # renpy.styledata
+    cython("renpy.styledata.styleclass")
+    cython("renpy.styledata.stylesets")
 
-        # renpy.styledata
-        cython("renpy.styledata.styleclass")
-        cython("renpy.styledata.stylesets")
-
-        for p in generate_styles.prefixes:
-            cython("renpy.styledata.style_{}functions".format(p), pyx=setuplib.gen + "/style_{}functions.pyx".format(p))
+    for p in generate_styles.prefixes:
+        cython("renpy.styledata.style_{}functions".format(p), pyx=setuplib.gen + "/style_{}functions.pyx".format(p))
 
     if True:
 

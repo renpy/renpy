@@ -52,13 +52,13 @@ from __future__ import print_function
 
 from libc.stdint cimport uintptr_t
 
-from renpy.pygame.rwobject cimport RWopsFromPython
-from sdl2 cimport SDL_RWops
+from renpy.pygame.iostream cimport SDLIOStreamFromPython
+from renpy.pygame.sdl cimport SDL_IOStream
 
 cdef extern from "renpysound_core.h":
 
-    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
-    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
+    void RPS_play(int channel, SDL_IOStream *rw, char *ext, char* name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
+    void RPS_queue(int channel, SDL_IOStream *rw, char *ext, char *name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
@@ -143,15 +143,15 @@ def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=
         The audio filter to apply when the file is being played.
     """
 
-    cdef SDL_RWops *rw
+    cdef SDL_IOStream *rw
 
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    rw = RWopsFromPython(file)
+    rw = SDLIOStreamFromPython(file)
 
     if rw == NULL:
-        raise Exception("Could not create RWops.")
+        raise Exception("Could not create IOStream.")
 
     if tight:
         tight = 1
@@ -171,15 +171,15 @@ def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start
     The other arguments are as for play.
     """
 
-    cdef SDL_RWops *rw
+    cdef SDL_IOStream *rw
 
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    rw = RWopsFromPython(file)
+    rw = SDLIOStreamFromPython(file)
 
     if rw == NULL:
-        raise Exception("Could not create RWops.")
+        raise Exception("Could not create IOStream.")
 
     if tight:
         tight = 1

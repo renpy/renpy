@@ -5,8 +5,8 @@
 #include <libavutil/pixfmt.h>
 #include <libswscale/swscale.h>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_thread.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_thread.h>
 
 #include <stdlib.h>
 
@@ -55,13 +55,13 @@ static SDL_Surface *rgba_surface = NULL;
 // http://dranger.com/ffmpeg/
 
 /*******************************************************************************
- * SDL_RWops <-> AVIOContext
+ * SDL_IOStream <-> AVIOContext
  */
 
 static int rwops_read(void *opaque, uint8_t *buf, int buf_size) {
-    SDL_RWops *rw = (SDL_RWops *) opaque;
+    SDL_IOStream *rw = (SDL_IOStream *) opaque;
 
-    int rv = rw->read(rw, buf, 1, buf_size);
+    size_t rv = SDL_ReadIO(rw, buf, buf_size);
 
 	if (rv == 0) {
 		return AVERROR_EOF;
@@ -81,23 +81,23 @@ static int rwops_write(void *opaque, const uint8_t *buf, int buf_size) {
 }
 
 static int64_t rwops_seek(void *opaque, int64_t offset, int whence) {
-    SDL_RWops *rw = (SDL_RWops *) opaque;
+    SDL_IOStream *rw = (SDL_IOStream *) opaque;
 
     if (whence == AVSEEK_SIZE) {
-    	return rw->size(rw);
+    	return SDL_GetIOSize(rw);
     }
 
     // Ignore flags like AVSEEK_FORCE.
     whence &= (SEEK_SET | SEEK_CUR | SEEK_END);
 
-    int64_t rv = rw->seek(rw, (int) offset, whence);
+    int64_t rv = SDL_SeekIO(rw, offset, whence);
     return rv;
 }
 
 #define RWOPS_BUFFER 65536
 
 
-static AVIOContext *rwops_open(SDL_RWops *rw) {
+static AVIOContext *rwops_open(SDL_IOStream *rw) {
 
     unsigned char *buffer = av_malloc(RWOPS_BUFFER);
 	if (buffer == NULL) {
@@ -119,8 +119,8 @@ static AVIOContext *rwops_open(SDL_RWops *rw) {
     return rv;
 }
 
-static void rwops_close(SDL_RWops *rw) {
-	rw->close(rw);
+static void rwops_close(SDL_IOStream *rw) {
+	SDL_CloseIO(rw);
 }
 
 static double current_time = 0;
@@ -152,7 +152,7 @@ typedef struct SurfaceQueueEntry {
 	/* The format. This is not refcounted, but it's kept alive by being
 	 * the format of one of the sampel surfaces.
 	 */
-	SDL_PixelFormat *format;
+	SDL_PixelFormat format;
 
 	/* As with SDL_Surface. */
 	int w, h, pitch;
@@ -169,10 +169,10 @@ typedef struct MediaState {
     SDL_Thread *thread;
 
 	/* The condition and lock. */
-	SDL_cond* cond;
-	SDL_mutex* lock;
+	SDL_Condition* cond;
+	SDL_Mutex* lock;
 
-	SDL_RWops *rwops;
+	SDL_IOStream *rwops;
 	char *filename;
 
 	/*
@@ -285,7 +285,7 @@ static SurfaceQueueEntry *dequeue_surface(SurfaceQueueEntry **queue);
 static MediaState *deallocate_queue = NULL;
 
 /* A mutex that discards deallocate_queue. */
-SDL_mutex *deallocate_mutex = NULL;
+SDL_Mutex *deallocate_mutex = NULL;
 
 /* Deallocates a single MediaState. */
 static void deallocate(MediaState *ms) {
@@ -364,7 +364,7 @@ static void deallocate(MediaState *ms) {
 
 	/* Destroy alloc stuff. */
 	if (ms->cond) {
-		SDL_DestroyCond(ms->cond);
+		SDL_DestroyCondition(ms->cond);
 	}
 	if (ms->lock) {
 		SDL_DestroyMutex(ms->lock);
@@ -785,7 +785,7 @@ static enum AVPixelFormat get_pixel_format(SDL_Surface *surf) {
     uint32_t pixel;
     uint8_t *bytes = (uint8_t *) &pixel;
 
-	pixel = SDL_MapRGBA(surf->format, 1, 2, 3, 4);
+	pixel = SDL_MapRGBA(SDL_GetPixelFormatDetails(surf->format), NULL, 1, 2, 3, 4);
 
 	enum AVPixelFormat fmt;
 
@@ -895,7 +895,9 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	rv->w = ms->video_decode_frame->width + FRAME_PADDING * 2;
 	rv->h = ms->video_decode_frame->height + FRAME_PADDING * 2;
 
-	rv->pitch = rv->w * sample->format->BytesPerPixel;
+	const SDL_PixelFormatDetails *sample_fmt = SDL_GetPixelFormatDetails(sample->format);
+
+	rv->pitch = rv->w * sample_fmt->bytes_per_pixel;
 
 	if (rv->pitch % ROW_ALIGNMENT) {
 	    rv->pitch += ROW_ALIGNMENT - (rv->pitch % ROW_ALIGNMENT);
@@ -916,7 +918,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	rv->pts = pts;
 
 	uint8_t *surf_pixels = (uint8_t *) rv->pixels;
-	uint8_t *surf_data[] = { &surf_pixels[FRAME_PADDING * rv->pitch + FRAME_PADDING * sample->format->BytesPerPixel] };
+	uint8_t *surf_data[] = { &surf_pixels[FRAME_PADDING * rv->pitch + FRAME_PADDING * sample_fmt->bytes_per_pixel] };
 	int surf_linesize[] = { rv->pitch };
 
 	sws_scale(
@@ -1052,7 +1054,7 @@ done:
 	/* Only signal if we've consumed something. */
 	if (consumed) {
 		ms->needs_decode = 1;
-		SDL_CondBroadcast(ms->cond);
+		SDL_BroadcastCondition(ms->cond);
 	}
 
 	SDL_UnlockMutex(ms->lock);
@@ -1076,7 +1078,7 @@ SDL_Surface *media_read_video(MediaState *ms) {
 
 #ifndef __EMSCRIPTEN__
 	while (!ms->ready) {
-	    SDL_CondWait(ms->cond, ms->lock);
+	    SDL_WaitCondition(ms->cond, ms->lock);
 	}
 #endif
 
@@ -1104,26 +1106,22 @@ done:
 	if (sqe) {
 		ms->needs_decode = 1;
 		ms->video_read_time = offset_time;
-		SDL_CondBroadcast(ms->cond);
+		SDL_BroadcastCondition(ms->cond);
 	}
 
 	SDL_UnlockMutex(ms->lock);
 
 	if (sqe) {
-		rv = SDL_CreateRGBSurfaceFrom(
-			sqe->pixels,
+		rv = SDL_CreateSurfaceFrom(
 			sqe->w,
 			sqe->h,
-			sqe->format->BitsPerPixel,
-			sqe->pitch,
-			sqe->format->Rmask,
-			sqe->format->Gmask,
-			sqe->format->Bmask,
-			sqe->format->Amask
+			sqe->format,
+			sqe->pixels,
+			sqe->pitch
 		);
 
 		/* Force SDL to take over management of pixels. */
-		rv->flags &= ~SDL_PREALLOC;
+		rv->flags &= ~SDL_SURFACE_PREALLOCATED;
 		av_free(sqe);
 	}
 
@@ -1231,11 +1229,11 @@ static int decode_thread(void *arg) {
 
 		if (!ms->ready) {
 			ms->ready = 1;
-			SDL_CondBroadcast(ms->cond);
+			SDL_BroadcastCondition(ms->cond);
 		}
 
 		if (!(ms->needs_decode || ms->quit)) {
-			SDL_CondWait(ms->cond, ms->lock);
+			SDL_WaitCondition(ms->cond, ms->lock);
 		}
 
 		ms->needs_decode = 0;
@@ -1254,11 +1252,11 @@ finish:
 	/* Ensures that every stream becomes ready. */
 	if (!ms->ready) {
 		ms->ready = 1;
-		SDL_CondBroadcast(ms->cond);
+		SDL_BroadcastCondition(ms->cond);
 	}
 
 	while (!ms->quit) {
-		SDL_CondWait(ms->cond, ms->lock);
+		SDL_WaitCondition(ms->cond, ms->lock);
 	}
 
 	SDL_UnlockMutex(ms->lock);
@@ -1281,11 +1279,11 @@ void media_read_sync_finish(struct MediaState *ms) {
 	/* Ensures that every stream becomes ready. */
 	if (!ms->ready) {
 		ms->ready = 1;
-		SDL_CondBroadcast(ms->cond);
+		SDL_BroadcastCondition(ms->cond);
 	}
 
 	while (!ms->quit) {
-		/* SDL_CondWait(ms->cond, ms->lock); */
+		/* SDL_WaitCondition(ms->cond, ms->lock); */
 	}
 
 	SDL_UnlockMutex(ms->lock);
@@ -1406,11 +1404,11 @@ void media_read_sync(struct MediaState *ms) {
 
 		if (!ms->ready) {
 			ms->ready = 1;
-			SDL_CondBroadcast(ms->cond);
+			SDL_BroadcastCondition(ms->cond);
 		}
 
 		if (!(ms->needs_decode || ms->quit)) {
-			/* SDL_CondWait(ms->cond, ms->lock); */
+			/* SDL_WaitCondition(ms->cond, ms->lock); */
 		}
 
 		ms->needs_decode = 0;
@@ -1489,7 +1487,7 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 	/* Only signal if we've consumed something. */
 	if (rv) {
 		ms->needs_decode = 1;
-		SDL_CondBroadcast(ms->cond);
+		SDL_BroadcastCondition(ms->cond);
 	}
 
 	SDL_UnlockMutex(ms->lock);
@@ -1531,7 +1529,7 @@ void media_start(MediaState *ms) {
 }
 
 
-MediaState *media_open(SDL_RWops *rwops, const char *filename) {
+MediaState *media_open(SDL_IOStream *rwops, const char *filename) {
 
     deallocate_deferred();
 
@@ -1548,7 +1546,7 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 	ms->rwops = rwops;
 
 #ifndef __EMSCRIPTEN__
-	ms->cond = SDL_CreateCond();
+	ms->cond = SDL_CreateCondition();
 	if (ms->cond == NULL) {
 		deallocate(ms);
 		return NULL;
@@ -1620,7 +1618,7 @@ void media_close(MediaState *ms) {
 	media_read_sync_finish(ms);
 #endif
 
-	SDL_CondBroadcast(ms->cond);
+	SDL_BroadcastCondition(ms->cond);
 	SDL_UnlockMutex(ms->lock);
 
 }
