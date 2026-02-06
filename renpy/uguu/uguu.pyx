@@ -159,7 +159,7 @@ cdef class BytesListBuffer(Buffer):
 
         cdef int i
 
-        for i in range(self.length):
+        for 0 <= i < self.length:
             (<const char **> self.data)[i] = <const char *> (<ptr> self.value[i]).ptr
 
 cdef class IntBuffer(Buffer):
@@ -170,7 +170,7 @@ cdef class IntBuffer(Buffer):
 
         cdef int i
 
-        for i in range(self.length):
+        for 0 <= i < self.length:
             (<int*> self.data)[i] = <int> value[i]
 
     def __getitem__(self, index):
@@ -187,7 +187,7 @@ cdef class FloatBuffer(Buffer):
 
         cdef int i
 
-        for i in range(self.length):
+        for 0 <= i < self.length:
             (<float *> self.data)[i] = <float> value[i]
 
     def __getitem__(self, index):
@@ -195,7 +195,6 @@ cdef class FloatBuffer(Buffer):
             raise IndexError("index out of range")
 
         return (<float *> self.data)[index]
-
 
 from renpy.uguu.gl cimport GLenum
 from renpy.uguu.gl cimport GLboolean

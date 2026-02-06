@@ -103,19 +103,18 @@ def main():
     for p in generate_styles.prefixes:
         cython("renpy.styledata.style_{}functions".format(p), pyx=setuplib.gen + "/style_{}functions.pyx".format(p))
 
-    if True:
+    # renpy.display
+    cython("renpy.display.matrix")
+    cython("renpy.display.render")
+    cython("renpy.display.accelerator", packages="sdl3")
+    cython("renpy.display.quaternion")
 
-        # renpy.display
-        cython("renpy.display.matrix")
-        cython("renpy.display.render")
-        cython("renpy.display.accelerator", packages="sdl3")
-        cython("renpy.display.quaternion")
+
+    # renpy.uguu
+    cython("renpy.uguu.gl", packages="sdl3")
+    cython("renpy.uguu.uguu", packages="sdl3")
 
     if False:
-
-        # renpy.uguu
-        cython("renpy.uguu.gl", packages="sdl2")
-        cython("renpy.uguu.uguu", packages="sdl2")
 
         # renpy.gl2
         cython("renpy.gl2.gl2mesh")
