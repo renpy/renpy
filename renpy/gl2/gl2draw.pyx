@@ -28,7 +28,7 @@ DEF ANGLE = False
 
 from libc.stdlib cimport malloc, free
 from libc.math cimport roundf
-from sdl2 cimport *
+from renpy.pygame.sdl cimport *
 from renpy.uguu.gl cimport *
 import renpy.gl2.gl2functions
 

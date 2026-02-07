@@ -1,10 +1,10 @@
 #pragma once
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <assimp/IOSystem.hpp>
 
 int assimp_loadable(const char *filename);
-SDL_RWops *assimp_load(const char *filename);
+SDL_IOStream *assimp_load(const char *filename);
 
 class RenpyIOSystem : public Assimp::IOSystem {
 public:

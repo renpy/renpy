@@ -114,23 +114,24 @@ def main():
     cython("renpy.uguu.gl", packages="sdl3")
     cython("renpy.uguu.uguu", packages="sdl3")
 
+
+    # renpy.gl2
+    cython("renpy.gl2.gl2mesh")
+    cython("renpy.gl2.gl2mesh2")
+    cython("renpy.gl2.gl2mesh3")
+    cython("renpy.gl2.gl2polygon")
+    cython("renpy.gl2.gl2model")
+    cython("renpy.gl2.gl2draw", packages="sdl3")
+    cython("renpy.gl2.gl2texture", packages="sdl3")
+    cython("renpy.gl2.gl2uniform")
+    cython("renpy.gl2.gl2shader")
+
+    if cubism:
+        cython("renpy.gl2.live2dmodel", [ "src/live2dcsm.c" ],)
+
+    cython("renpy.gl2.assimp", [ "src/assimpio.cc" ], language="c++", packages="assimp sdl3")
+
     if False:
-
-        # renpy.gl2
-        cython("renpy.gl2.gl2mesh")
-        cython("renpy.gl2.gl2mesh2")
-        cython("renpy.gl2.gl2mesh3")
-        cython("renpy.gl2.gl2polygon")
-        cython("renpy.gl2.gl2model")
-        cython("renpy.gl2.gl2draw")
-        cython("renpy.gl2.gl2texture")
-        cython("renpy.gl2.gl2uniform")
-        cython("renpy.gl2.gl2shader")
-
-        if cubism:
-            cython("renpy.gl2.live2dmodel", [ "src/live2dcsm.c" ],)
-
-        cython("renpy.gl2.assimp", [ "src/assimpio.cc" ], language="c++", packages="assimp sdl2")
 
         # renpy.text
         cython("renpy.text.textsupport")
