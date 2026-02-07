@@ -131,14 +131,13 @@ def main():
 
     cython("renpy.gl2.assimp", [ "src/assimpio.cc" ], language="c++", packages="assimp sdl3")
 
-    if False:
 
-        # renpy.text
-        cython("renpy.text.textsupport")
-        cython("renpy.text.texwrap")
-        cython("renpy.text.ftfont", [ "src/ftsupport.c", "src/ttgsubtable.c" ], packages="freetype2 harfbuzz")
-        cython("renpy.text.hbfont", [ "src/ftsupport.c" ], packages="freetype2 harfbuzz")
-        cython("renpy.text.bidi", [ "src/renpybidicore.c" ], packages="fribidi")
+    # renpy.text
+    cython("renpy.text.textsupport")
+    cython("renpy.text.texwrap")
+    cython("renpy.text.ftfont", [ "src/ftsupport.c", "src/ttgsubtable.c" ], packages="freetype2 harfbuzz sdl3")
+    cython("renpy.text.hbfont", [ "src/ftsupport.c" ], packages="freetype2 harfbuzz sdl3")
+    cython("renpy.text.bidi", [ "src/renpybidicore.c" ], packages="fribidi")
 
 
     generate_all_cython()
