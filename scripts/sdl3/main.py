@@ -379,8 +379,6 @@ class Generator:
 
         if node.spelling == "SDL_GamepadBinding":
             return
-        q
-        # print("  " * depth, node.kind, node.location, repr(node.spelling)[:100])
 
         for child in node.get_children():
             self.traverse(child, depth + 1)
