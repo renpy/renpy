@@ -3705,12 +3705,6 @@ cdef extern from "SDL3/SDL.h" nogil:
     int SDL_GetVersion ()
     const char *SDL_GetRevision ()
 
-    # Definitions from SDL3/SDL_gamepad.h
-    ctypedef struct SDL_GamepadBinding
-
-    # Definitions from SDL3/SDL_events.h
-    ctypedef cbool (*SDL_EventFilter)(void *userdata, SDL_Event *event)
-
     # Definitions from SDL3/SDL_main.h
     ctypedef int (*SDL_main_func)(int argc, char *argv [ ])
     int SDL_main (int argc, char *argv [ ])

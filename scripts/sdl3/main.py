@@ -358,6 +358,9 @@ class Generator:
         self.declare(node, f"    ctypedef {decl}")
 
     def before(self, node: cindex.Cursor, name: str):
+        if name in self.declared_names:
+            return
+
         match name:
             # Cindex gets wrong.
             case "SDL_SetEventFilter":
@@ -376,7 +379,7 @@ class Generator:
 
         if node.spelling == "SDL_GamepadBinding":
             return
-
+        q
         # print("  " * depth, node.kind, node.location, repr(node.spelling)[:100])
 
         for child in node.get_children():
@@ -410,7 +413,7 @@ def main():
         "--destination",
         help="Path to the directory to which .pxd files will be written.",
         type=pathlib.Path,
-        default=pathlib.Path("pygame"),
+        default=pathlib.Path(__file__).parent.parent.parent / "renpy" / "pygame",
     )
 
     args = ap.parse_args()
@@ -453,7 +456,6 @@ def main():
     destination_pyx = args.destination / (headers[0].stem.lower() + ".pyx")
 
     header = headers[0].relative_to(include_dir)
-    print(header)
 
     generator.generate(destination_pxd, destination_pyx, header)
 
