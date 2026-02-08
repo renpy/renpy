@@ -24,7 +24,6 @@ from .rect cimport to_sdl_rect
 
 from libc.stdlib cimport calloc, free
 from .error import error
-import pygame
 
 cdef extern from "SDL3/SDL_main.h":
     pass
