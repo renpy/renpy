@@ -617,7 +617,7 @@ cdef class IOStreamImpl:
             PyObject_GetBuffer(b, &view, PyBUF_CONTIG)
 
             with nogil:
-                rv = SDL_WriteIO(self.ops, view.buf, view.len)
+                rv = SDL_ReadIO(self.ops, view.buf, view.len)
         finally:
             PyBuffer_Release(&view)
 
