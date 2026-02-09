@@ -653,6 +653,8 @@ def get_display_bounds():
         else:
             raise error()
 
+    return tuple(rv)
+
 def get_usable_display_bounds():
     """
     For each active display, returns a tuple (x, y, w, h) the position and size

@@ -862,11 +862,7 @@ class Interface:
         Get the display layout. A list of rectangles that have monitors in them.
         """
 
-        rv = []
-        for i in range(pygame.display.get_num_video_displays()):
-            rv.append(pygame.display.get_display_bounds(i))
-
-        return tuple(rv)
+        return tuple(pygame.display.get_display_bounds())
 
     def on_move(self, pos):
         """
