@@ -33,7 +33,7 @@ import os
 
 # Pick a value for GL_SWAP_CONTROL that is unlikely to conflict with
 # future SDL values.
-GL_SWAP_CONTROL = -42
+GL_SWAP_CONTROL = -1
 
 # True if we are on ios.
 ios = ("PYGAME_IOS" in os.environ)
