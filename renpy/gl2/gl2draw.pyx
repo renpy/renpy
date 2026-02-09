@@ -192,7 +192,7 @@ cdef class GL2Draw:
         visible_h = info.current_h
 
         # Determine the visible area of the current head.
-        bounds = pygame.display.get_display_bounds(0)
+        bounds = pygame.display.get_display_bounds()[0]
 
         renpy.display.log.write("primary display bounds: %r", bounds)
 
@@ -414,14 +414,14 @@ cdef class GL2Draw:
             gles = True
 
         elif renpy.ios:
-            window_flags |= pygame.WINDOW_ALLOW_HIGHDPI | pygame.RESIZABLE
+            window_flags |= pygame.WINDOW_HIGH_PIXEL_DENSITY | pygame.RESIZABLE
             pwidth = 0
             pheight = 0
             gles = True
 
         else:
             if self.dpi_scale == 1.0:
-                window_flags |= pygame.WINDOW_ALLOW_HIGHDPI
+                window_flags |= pygame.WINDOW_HIGH_PIXEL_DENSITY
 
             if renpy.config.gl_resize:
                 window_flags |= pygame.RESIZABLE
