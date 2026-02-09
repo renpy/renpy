@@ -80,7 +80,7 @@ def load(fi, namehint="", size=None):
 
     if namehint == "":
         with nogil:
-            img = IMG_Load_IO(iostream, 1)
+            img = IMG_Load_IO(iostream, 0)
 
     else:
         namehint = process_namehint(namehint)
@@ -95,13 +95,12 @@ def load(fi, namehint="", size=None):
         else:
 
             with nogil:
-                img = IMG_LoadTyped_IO(iostream, 1, ftype)
+                img = IMG_LoadTyped_IO(iostream, 0, ftype)
 
     SDL_CloseIO(iostream)
 
     if img == NULL:
         raise error()
-
 
     if img.format != SDL_PIXELFORMAT_RGBA32:
         new_surface = SDL_ConvertSurface(img, SDL_PIXELFORMAT_RGBA32)
