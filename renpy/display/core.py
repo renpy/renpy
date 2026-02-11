@@ -64,14 +64,37 @@ ALL_EVENTS.add(EVENTNAME)
 
 enabled_events: set[int] = {
     pygame.QUIT,
-    # pygame.APP_TERMINATING,
-    # pygame.APP_LOWMEMORY,
-    # pygame.APP_WILLENTERBACKGROUND,
-    # pygame.APP_DIDENTERBACKGROUND,
-    # pygame.APP_WILLENTERFOREGROUND,
-    # pygame.APP_DIDENTERFOREGROUND,
-    # pygame.WINDOWEVENT,
-    # pygame.SYSWMEVENT,
+    pygame.TERMINATING,
+    pygame.LOWMEMORY,
+    pygame.WILLENTERBACKGROUND,
+    pygame.DIDENTERBACKGROUND,
+    pygame.WILLENTERFOREGROUND,
+    pygame.DIDENTERFOREGROUND,
+    pygame.WINDOWSHOWN,
+    pygame.WINDOWHIDDEN,
+    pygame.WINDOWEXPOSED,
+    pygame.WINDOWMOVED,
+    pygame.WINDOWRESIZED,
+    pygame.WINDOWPIXELSIZECHANGED,
+    pygame.WINDOWMETALVIEWRESIZED,
+    pygame.WINDOWMINIMIZED,
+    pygame.WINDOWMAXIMIZED,
+    pygame.WINDOWRESTORED,
+    pygame.WINDOWMOUSEENTER,
+    pygame.WINDOWMOUSELEAVE,
+    pygame.WINDOWFOCUSGAINED,
+    pygame.WINDOWFOCUSLOST,
+    pygame.WINDOWCLOSEREQUESTED,
+    pygame.WINDOWHITTEST,
+    pygame.WINDOWICCPROFCHANGED,
+    pygame.WINDOWDISPLAYCHANGED,
+    pygame.WINDOWDISPLAYSCALECHANGED,
+    pygame.WINDOWSAFEAREACHANGED,
+    pygame.WINDOWOCCLUDED,
+    pygame.WINDOWENTERFULLSCREEN,
+    pygame.WINDOWLEAVEFULLSCREEN,
+    pygame.WINDOWDESTROYED,
+    pygame.WINDOWHDRSTATECHANGED,
     pygame.KEYDOWN,
     pygame.KEYUP,
     pygame.TEXTEDITING,
@@ -1924,7 +1947,7 @@ class Interface:
         Handles the SDL2 suspend process.
         """
 
-        if ev.type != pygame.APP_WILLENTERBACKGROUND:
+        if ev.type != pygame.WILLENTERBACKGROUND:
             return False
 
         print("Pausing audio.")
@@ -1977,10 +2000,10 @@ class Interface:
         while True:
             ev = pygame.event.wait()
 
-            if ev.type == pygame.APP_TERMINATING:
+            if ev.type == pygame.TERMINATING:
                 sys.exit(0)
 
-            if ev.type == pygame.APP_DIDENTERFOREGROUND:
+            if ev.type == pygame.DIDENTERFOREGROUND:
                 break
 
         print("Entering foreground. -------------------------------------------")
@@ -3104,7 +3127,7 @@ class Interface:
                 elif self.text_editing and ev.type in [pygame.KEYDOWN, pygame.KEYUP]:
                     continue
 
-                if ev.type == pygame.VIDEOEXPOSE:
+                if ev.type == pygame.WINDOWEXPOSED:
                     # Needed to force the display to redraw after expose in
                     # the software renderer.
 
@@ -3115,8 +3138,8 @@ class Interface:
                     continue
 
                 # Handle videoresize.
-                if ev.type == pygame.VIDEORESIZE:
-                    evs = pygame.event.get(pygame.VIDEORESIZE)
+                if ev.type == pygame.WINDOWRESIZED:
+                    evs = pygame.event.get(pygame.WINDOWRESIZED)
                     ev = evs[-1] if evs else ev
                     renpy.display.log.write("Resize event: %r", ev)
 
@@ -3172,38 +3195,48 @@ class Interface:
                         renpy.display.render.redraw(mouse_displayable, 0)
 
                 # Handle focus notifications.
-                if ev.type == pygame.ACTIVEEVENT:
-                    if ev.state & 1:
-                        if not ev.gain:
-                            renpy.display.focus.clear_focus()
+                if ev.type == pygame.WINDOWMOUSELEAVE:
+                    renpy.display.foucus.clear_focus()
 
-                        self.mouse_focused = ev.gain
+                    self.mouse_focused = False
 
-                        if mouse_displayable:
-                            renpy.display.render.redraw(mouse_displayable, 0)
+                    if mouse_displayable:
+                        renpy.display.render.redraw(mouse_displayable, 0)
 
-                    if ev.state & 2:
-                        self.keyboard_focused = ev.gain
+                elif ev.type == pygame.WINDOWMOUSEENTER:
 
-                        if not renpy.game.preferences.audio_when_unfocused and not renpy.emscripten:
-                            if not ev.gain:
-                                renpy.audio.audio.pause_all()
-                            else:
-                                renpy.audio.audio.unpause_all()
+                    self.mouse_focused = True
 
-                    # If the window becomes inactive as a result of this event
-                    # pause the audio according to preference
-                    if not renpy.game.preferences.audio_when_minimized and not renpy.emscripten:
-                        if not pygame.display.get_active() and not self.audio_paused:
-                            renpy.audio.audio.pause_all()
-                            self.audio_paused = True
-                        # If the window had not gone inactive or has regained activity
-                        # unpause the audio
-                        elif pygame.display.get_active() and self.audio_paused:
-                            renpy.audio.audio.unpause_all()
-                            self.audio_paused = False
+                    if mouse_displayable:
+                        renpy.display.render.redraw(mouse_displayable, 0)
+
+                elif ev.type == pygame.WINDOWFOCUSGAINED:
+
+                    self.keyboard_focused = True
+
+                    if not renpy.game.preferences.audio_when_unfocused and not renpy.emscripten:
+                        renpy.audio.audio.unpause_all()
 
                     pygame.key.set_mods(pygame.key.get_mods() & (pygame.KMOD_NUM | pygame.KMOD_CAPS))
+
+                elif ev.type == pygame.WINDOWFOCUSLOST:
+
+                    self.keyboard_focused = False
+
+                    if not renpy.game.preferences.audio_when_unfocused and not renpy.emscripten:
+                        renpy.audio.audio.pause_all()
+
+                elif ev.type == pygame.WINDOWMINIMIZED:
+                    if not renpy.game.preferences.audio_when_minimized and not renpy.emscripten:
+                        renpy.audio.audio.pause_all()
+                        self.audio_paused = True
+
+                elif ev.type == pygame.WINDOWRESTORED or ev.type == pygame.WINDOWMAXIMIZED:
+
+                        # unpause the audio
+                        if pygame.display.get_active() and self.audio_paused:
+                            renpy.audio.audio.unpause_all()
+                            self.audio_paused = False
 
                 # This returns the event location. It also updates the
                 # mouse state as necessary.
