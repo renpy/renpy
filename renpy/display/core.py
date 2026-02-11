@@ -887,7 +887,7 @@ class Interface:
 
         return tuple(pygame.display.get_display_bounds())
 
-    def on_move(self, pos):
+    def on_move(self):
         """
         Called when the player moves the window.
         """
@@ -897,6 +897,8 @@ class Interface:
 
         if renpy.game.preferences.fullscreen or renpy.game.preferences.maximized:
             return
+
+        pos = pygame.display.get_position()
 
         renpy.game.preferences.window_position = pos
         renpy.game.preferences.window_position_layout = self.get_display_layout()
@@ -3152,7 +3154,7 @@ class Interface:
 
                 # Handle window moves.
                 if ev.type == pygame.WINDOWMOVED:
-                    self.on_move(ev.pos)
+                    self.on_move()
                     continue
 
                 # If we're ignoring touch events, and get a mouse up, stop
@@ -3196,7 +3198,7 @@ class Interface:
 
                 # Handle focus notifications.
                 if ev.type == pygame.WINDOWMOUSELEAVE:
-                    renpy.display.foucus.clear_focus()
+                    renpy.display.focus.clear_focus()
 
                     self.mouse_focused = False
 
