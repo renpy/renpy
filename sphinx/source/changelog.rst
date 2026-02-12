@@ -13,6 +13,8 @@ Changelog (Ren'Py 7.x-)
 Features
 --------
 
+Text shaders now support the ``u_text_time`` uniform, which is the time in seconds since the start of the text effect.
+
 Text interpolation now supports the ``!f`` flag, which passes interpolated text through :var:`config.say_menu_text_filter`.
 
 The new :func:`renpy.get_statement_name` function returns the name of the current statement.

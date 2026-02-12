@@ -2949,6 +2949,7 @@ class Text(renpy.display.displayable.Displayable):
         if self.slow and layout.cps:
             slow_time = min(slow_time, st)
 
+        render.add_uniform("u_text_time", st)
         render.add_uniform("u_text_slow_time", slow_time)
 
         if layout.cps:
