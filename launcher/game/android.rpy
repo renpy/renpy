@@ -716,7 +716,11 @@ init python:
         ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
         ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building the 'android' package.")
 
+
         args = ap.parse_args()
+
+        if not RAPT_PATH:
+            raise SystemExit("Android support (RAPT) is not available. Please download RAPT through the launcher or from the website, and try again.")
 
         if args.launch:
             args.install = True
