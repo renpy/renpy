@@ -602,6 +602,9 @@ init python:
 
         args = ap.parse_args()
 
+        if not WEB_PATH:
+            raise SystemExit("Web support is not available. Please download web support through the launcher or from the website, and try again.")
+
         p = project.Project(args.web_project)
 
         build_web(p=p, gui=False, launch=args.launch, destination=args.destination)
