@@ -34,7 +34,7 @@ import collections
 
 
 update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
-flags = frozenset("rstiqulc!")
+flags = frozenset("rstiqulcf!")
 formatter = string.Formatter()
 
 SIMPLE_NAME = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
