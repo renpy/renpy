@@ -432,6 +432,9 @@ init python:
 
         args = ap.parse_args()
 
+        if not RENIOS_PATH:
+            raise SystemExit("iOS support (renios) is not available. Please download renios through the launcher or from the website, and try again.")
+
         p = project.Project(args.project)
 
         ios_create(p, False, args.destination)
@@ -447,6 +450,9 @@ init python:
         ap.add_argument("destination", help="The path the iOS project that will be created.")
 
         args = ap.parse_args()
+
+        if not RENIOS_PATH:
+            raise SystemExit("iOS support (renios) is not available. Please download renios through the launcher or from the website, and try again.")
 
         p = project.Project(args.project)
 
