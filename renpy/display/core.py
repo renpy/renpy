@@ -924,6 +924,7 @@ class Interface:
         renpy.display.presplash.end()
 
         # Initialize audio.
+        pygame.display.hint("SDL_APP_ID", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
         pygame.display.hint("SDL_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
         pygame.display.hint("SDL_AUDIO_DEVICE_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
 
@@ -1010,13 +1011,11 @@ class Interface:
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
         pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
         pygame.display.hint("SDL_IME_SHOW_UI", "1")
+        pygame.display.hint("SDL_ANDROID_BLOCK_ON_PAUSE", "0")
 
         if renpy.config.mouse_focus_clickthrough:
             pygame.display.hint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1")
 
-        # Needed for Ubuntu Unity.
-        wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
-        os.environ["SDL_VIDEO_X11_WMCLASS"] = wmclass
 
         self.set_window_caption(force=True)
         self.set_icon()
