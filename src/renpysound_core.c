@@ -1353,7 +1353,7 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int
 
 
 
-    if (SDL_Init(SDL_INIT_AUDIO)) {
+    if (! SDL_Init(SDL_INIT_AUDIO)) {
         error(SDL_ERROR);
         return;
     }
