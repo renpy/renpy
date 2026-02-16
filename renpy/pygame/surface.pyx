@@ -78,7 +78,6 @@ cdef class Surface:
 
     def __init__(self, size, flags=0, depth=32, masks=None):
 
-        self.locklist = None
         self.parent = None
 
         self.offset_x = 0
@@ -255,8 +254,6 @@ cdef class Surface:
         srcptr += srcy * self.surface.pitch + srcx * per_pixel
         destptr += desty * self.surface.pitch + destx * per_pixel
 
-        self.lock()
-
         with nogil:
             move_pixels(
                 srcptr,
@@ -266,64 +263,20 @@ cdef class Surface:
                 self.surface.pitch,
                 self.surface.pitch)
 
-        self.unlock()
-
-
     def lock(self, lock=None):
-        cdef Surface root = self
-
-        while root.parent:
-            root = root.parent
-
-        if lock is None:
-            lock = self
-
-        if root.locklist is None:
-            root.locklist = [ ]
-
-        root.locklist.append(lock)
-
-        if SDL_LockSurface(root.surface):
-            raise error()
+        pass
 
     def unlock(self, lock=None):
-        cdef Surface root = self
-
-        while root.parent:
-            root = root.parent
-
-        if lock is None:
-            lock = self
-
-        if root.locklist is None:
-            root.locklist = [ ]
-
-        root.locklist.remove(lock)
-
-        SDL_UnlockSurface(root.surface)
+        pass
 
     def mustlock(self):
-        cdef Surface root = self
-
-        while root.parent:
-            root = root.parent
-
-        return SDL_MUSTLOCK(root.surface)
+        pass
 
     def get_locked(self):
-        if self.locklist:
-            return True
+        return False
 
     def get_locks(self):
-        cdef Surface root = self
-
-        while root.parent:
-            root = root.parent
-
-        if root.locklist is None:
-            root.locklist = [ ]
-
-        return root.locklist
+        return [ ]
 
     def get_at(self, pos):
         cdef int x, y
@@ -334,15 +287,11 @@ cdef class Surface:
         if not (0 <= x < self.surface.w) or not (0 <= y < self.surface.h):
             raise IndexError("Position outside surface.")
 
-        self.lock()
-
         p = <Uint8 *> self.surface.pixels
         p += y * self.surface.pitch
         p += x * 4
 
         cdef Uint32 pixel = (<Uint32 *> p)[0]
-
-        self.unlock()
 
         return get_color(pixel, self.surface)
 
@@ -358,15 +307,11 @@ cdef class Surface:
 
         pixel = map_color(self.surface, color)
 
-        self.lock()
-
         p = <Uint8 *> self.surface.pixels
         p += y * self.surface.pitch
         p += x * 4
 
         (<Uint32 *> p)[0] = pixel
-
-        self.unlock()
 
     def get_at_mapped(self, pos):
         cdef int x, y
@@ -377,15 +322,11 @@ cdef class Surface:
         if not (0 <= x < self.surface.w) or not (0 <= y < self.surface.h):
             raise ValueError("Position outside surface.")
 
-        self.lock()
-
         p = <Uint8 *> self.surface.pixels
         p += y * self.surface.pitch
         p += x * 4
 
         cdef Uint32 pixel = (<Uint32 *> p)[0]
-
-        self.unlock()
 
         return pixel
 
@@ -562,7 +503,6 @@ cdef class Surface:
         if (not amask) or (self.surface.w == 0) or (self.surface.h == 0):
             return Rect((0, 0, self.surface.w, self.surface.h))
 
-        self.lock()
 
         cdef Uint8 *pixels = <Uint8 *> self.surface.pixels
 
@@ -599,8 +539,6 @@ cdef class Surface:
                                 maxx = x
                             if maxy < y:
                                 maxy = y
-
-        self.unlock()
 
         # Totally empty surface.
         if minx > maxx:
