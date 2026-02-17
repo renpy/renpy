@@ -60,8 +60,6 @@ int renpy_IMG_SavePNG_RW(SDL_IOStream *src, SDL_Surface *surf,int compression){
 	const SDL_PixelFormatDetails *fmt=NULL;
 	SDL_Surface *tempsurf=NULL;
 	int ret;
-	png_colorp palette;
-	Uint8 *palette_alpha=NULL;
 	png_byte **row_pointers=NULL;
 	Uint32 target_format;
 
@@ -164,12 +162,6 @@ savedone: /* clean up and return */
 	png_destroy_write_struct(&png_ptr,&info_ptr);
 
 savedone2:
-	if (palette) {
-		free(palette);
-	}
-	if (palette_alpha) {
-		free(palette_alpha);
-	}
 	if (row_pointers) {
 		free(row_pointers);
 	}
