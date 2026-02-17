@@ -52,7 +52,7 @@ cdef class KeyboardState:
         memcpy(self.data, state, self.numkeys)
 
     def __getitem__(self, int key):
-        if SDLK_DELETE < key < SDLK_CAPSLOCK:
+        if <int> SDLK_DELETE < key < <int> SDLK_CAPSLOCK:
             raise IndexError("Out of range.")
 
         cdef int sc = <int>SDL_GetScancodeFromKey(key, NULL)

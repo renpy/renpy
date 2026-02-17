@@ -91,7 +91,7 @@ cdef class Joystick:
         return self.joyid
 
     def get_name(self):
-        cdef char *rv
+        cdef const char *rv
 
         if self.joystick == NULL:
             raise error("joystick not initialized")

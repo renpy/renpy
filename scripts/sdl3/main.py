@@ -323,7 +323,7 @@ class Generator:
                 return
             value = -1 # Just to pass the test below.
 
-        if isinstance(value, (str, int)):
+        if isinstance(value, int):
             self.macros.append(node.spelling)
 
 

@@ -562,7 +562,7 @@ def get_driver():
 class Info(object):
 
     def __init__(self):
-        cdef SDL_DisplayMode *dm
+        cdef const SDL_DisplayMode *dm
         cdef const SDL_PixelFormatDetails *format
         cdef const SDL_DisplayID *display_ids
 

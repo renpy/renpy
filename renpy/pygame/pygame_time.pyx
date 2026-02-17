@@ -47,7 +47,7 @@ def delay(milliseconds):
 
 cdef Uint32 timer_callback(Uint32 interval, void *param) nogil:
     cdef SDL_Event e
-    e.type = <unsigned short> param
+    e.type = <unsigned short> <unsigned long long> param
     e.user.code = <unsigned char> 0
     e.user.data1 = NULL
     e.user.data2 = NULL
@@ -66,7 +66,7 @@ def set_timer(eventid, milliseconds):
         timer_id = 0
 
     if milliseconds > 0:
-        timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_callback, <void*><int>eventid)
+        timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_callback, <void*><unsigned long long>eventid)
         if timer_id == 0:
             raise error()
 
