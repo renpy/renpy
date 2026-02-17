@@ -161,7 +161,7 @@ cdef Sint64 subfile_seek(void *userdata, Sint64 offset, SDL_IOWhence whence) noe
 cdef size_t subfile_read(void *userdata, void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil:
     cdef SubFile *sf = <SubFile *> userdata
 
-    cdef Sint64 left = sf.length - sf.tell
+    cdef size_t left = <size_t> (sf.length - sf.tell)
     cdef size_t rv
 
     if size > left:
@@ -246,7 +246,7 @@ cdef Sint64 splitfile_seek(void *userdata, Sint64 offset, SDL_IOWhence whence) n
 
 cdef size_t splitfile_read(void *userdata, void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil:
     cdef SplitFile *sf = <SplitFile *> userdata
-    cdef Sint64 left = splitfile_size(userdata) - sf.tell
+    cdef size_t left = <size_t> (splitfile_size(userdata) - sf.tell)
     cdef size_t rv
 
     cdef size_t total_read
@@ -260,8 +260,8 @@ cdef size_t splitfile_read(void *userdata, void *ptr, size_t size, SDL_IOStatus 
         status[0] = SDL_IO_STATUS_EOF
         return 0
 
-    left_read = min(size, sf.split - sf.tell)
-    left_read = max(left_read, 0)
+    left_read = min(size, <size_t> (sf.split - sf.tell))
+    left_read = max(left_read, <size_t> 0)
 
     if left_read > 0:
         left_read = SDL_ReadIO(sf.a, ptr, left_read)
