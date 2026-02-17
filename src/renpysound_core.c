@@ -1345,14 +1345,6 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int
 
     name_mutex = SDL_CreateMutex();
 
-#ifndef __EMSCRIPTEN__
-#if PY_VERSION_HEX < 0x03070000
-    PyEval_InitThreads();
-#endif
-#endif
-
-
-
     if (! SDL_Init(SDL_INIT_AUDIO)) {
         error(SDL_ERROR);
         return;

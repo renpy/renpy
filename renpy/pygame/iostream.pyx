@@ -41,9 +41,6 @@ cdef extern from "SDL3/SDL.h":
 # The fsencoding.
 fsencoding = sys.getfilesystemencoding() or "utf-8"
 
-cdef extern from "pygame/python_threads.h":
-    void init_python_threads()
-
 cdef set_error(e):
     cdef char *msg
     e = str(e)
@@ -779,7 +776,3 @@ class IOStream(io.RawIOBase):
         rv = IOStream(None, name=name)
         (<IOStreamImpl> rv.raw).ops = rw
         return rv
-
-
-
-init_python_threads()
