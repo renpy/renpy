@@ -111,21 +111,6 @@ class Generator:
                 file=f,
             )
 
-            for enum_name, enum_values in sorted(self.enum_values.items()):
-                if not enum_name.startswith("SDL_"):
-                    continue
-
-                lower_enum_name = enum_name.lower()
-
-                print(file=f)
-                print(f"{lower_enum_name}_enum = {{", file=f)
-
-                for value in enum_values:
-                    if value.startswith("SDL_"):
-                        print(f"    '{value}': {value},", file=f)
-
-                print("    }", file=f)
-
     def is_relevant(self, node: cindex.Cursor) -> bool:
         """
         Returns True if the node exists in the SDL3 directory, False otherwise. T
