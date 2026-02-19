@@ -301,6 +301,9 @@ class Displayable(renpy.object.Object):
         """
 
         self._duplicatable = False
+        return self
+
+    unique = _unique
 
     def parameterize(self, name, parameters):
         """
