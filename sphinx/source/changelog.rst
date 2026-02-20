@@ -1950,6 +1950,10 @@ projects from the command line.
 Other Changes
 -------------
 
+The :ref:`nearrect <sl-nearrect>` displayable now takes a `preferred_side` parameter,
+which lets it use left and right in addition to top and bottom. The new `invert_offsets`
+parameter inverts the offsets if the other side is used, due to no room.
+
 Hide and replace transform events that are applied to screens are now always
 allowed to run to completion, even if the same screen is shown again. This
 makes it possible to use transform events with screens that may be shown
