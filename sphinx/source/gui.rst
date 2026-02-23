@@ -809,7 +809,7 @@ Scrollbars are bars that are used to scroll viewports. In the GUI,
 the most obvious place a scrollbar is used is the history screen,
 but vertical scrollbars can be used on other screens as well.
 
-Sliders are customized with the following images:
+Scrollbars are customized with the following images:
 
 gui/scrollbar/horizontal_idle_bar.png, gui/scrollbar/horizontal_hover_bar.png, gui/scrollbar/vertical_idle_bar.png, gui/scrollbar/vertical_hover_bar.png
     Images used for vertical and idle bar backgrounds in idle and

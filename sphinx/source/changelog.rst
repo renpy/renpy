@@ -13,6 +13,8 @@ Changelog (Ren'Py 7.x-)
 Features
 --------
 
+Text shaders now support the ``u_text_time`` uniform, which is the time in seconds since the start of the text effect.
+
 Text interpolation now supports the ``!f`` flag, which passes interpolated text through :var:`config.say_menu_text_filter`.
 
 The new :func:`renpy.get_statement_name` function returns the name of the current statement.
@@ -57,6 +59,14 @@ Fixes
 
 Fixes an issue where each time Ren'Py checked to see if rollback is possible, one level of rollback would
 be consumed.
+
+Features
+--------
+
+Add the Transform.unique() method, which marks a transform as unique. This prevents the transform from being
+copied when added to a displayable, which allows the transform to maintain state across multiple uses, or be
+referenced from outside its function argument.
+
 
 .. _renpy-8.5.1:
 
@@ -1939,6 +1949,10 @@ projects from the command line.
 
 Other Changes
 -------------
+
+The :ref:`nearrect <sl-nearrect>` displayable now takes a `preferred_side` parameter,
+which lets it use left and right in addition to top and bottom. The new `invert_offsets`
+parameter inverts the offsets if the other side is used, due to no room.
 
 Hide and replace transform events that are applied to screens are now always
 allowed to run to completion, even if the same screen is shown again. This

@@ -32,7 +32,6 @@ import warnings
 import pathlib
 import platform
 import subprocess
-import pkgconfig
 import collections
 
 from concurrent.futures import ThreadPoolExecutor
@@ -53,6 +52,9 @@ coverage = "RENPY_COVERAGE" in os.environ
 
 # Are we doing a static build?
 static = "RENPY_STATIC" in os.environ
+
+# Are we generating without building?
+generate = (len(sys.argv) >= 2) and (sys.argv[1] == "generate")
 
 gen = "tmp/gen3"
 PY2 = False
@@ -83,7 +85,13 @@ def package_flags(*packages: str) -> dict[str, Any]:
     """
 
     rv = collections.defaultdict(list)
+
+    if generate:
+        return rv
+
     rv["include_dirs"] = include_dirs
+
+    import pkgconfig
 
     for package in packages:
         if package in pkgconfig_cache:
@@ -341,6 +349,13 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
                 count=1,
                 flags=re.DOTALL,
             )  # Py3
+            ccode = re.sub(
+                r"^__Pyx_PyMODINIT_FUNC PyInit_",
+                "__Pyx_PyMODINIT_FUNC PyInit_" + parent_module_identifier + "_",
+                ccode,
+                count=0,
+                flags=re.MULTILINE,
+            )  # Py3 Cython 0.28+
 
         with open(c_fn, "w") as f:
             f.write(ccode)
@@ -477,7 +492,7 @@ def setup(name, version):
     Calls the distutils setup function.
     """
 
-    if (len(sys.argv) >= 2) and (sys.argv[1] == "generate"):
+    if generate:
         return
 
     setuptools.setup(
