@@ -54,6 +54,13 @@ Ren'Py store (rather than in an isolated module), and the Python code is subject
 to the transformations that enable rollback and save/load to work - see
 :doc:`python` and :ref:`rollback`.
 
+Modular counterpart
+-------
+Replacing \_ren.py with \_rpym.py turns the regular script file into a loadable module.
+So, if you want to load `path/to/some_module_rpym.py`, you can do it as follows::
+
+    renpy.load_module('path/to/some_module') # _rpym.py suffix would be redundant
+
 Example
 -------
 
