@@ -45,7 +45,6 @@ int renpy_IMG_SavePNG(const char *file, SDL_Surface *surf,int compression){
 	}
 
 	ret=renpy_IMG_SavePNG_RW(fp,surf,compression);
-	SDL_CloseIO(fp);
 	return ret;
 }
 
@@ -165,5 +164,8 @@ savedone2:
 	if (row_pointers) {
 		free(row_pointers);
 	}
+
+	SDL_CloseIO(src);
+
 	return ret;
 }

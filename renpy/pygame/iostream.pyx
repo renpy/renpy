@@ -114,12 +114,6 @@ cdef bool python_close(void *userdata) noexcept with gil:
     if userdata != NULL:
         f = <object> userdata
 
-        try:
-            f.close()
-        except Exception as e:
-            set_error(e)
-            return False
-
         Py_DECREF(f)
 
         userdata = NULL
