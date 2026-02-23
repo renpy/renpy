@@ -678,18 +678,26 @@ def get_prefixes(tl=True, directory=None):
     else:
         language = None
 
-    for prefix in renpy.config.search_prefixes:
-        if language is not None:
-            rv.append(renpy.config.tl_directory + "/" + language + "/" + prefix)
+    search_prefixes = renpy.config.search_prefixes
+    tl_directory = renpy.config.tl_directory
+    special_map = renpy.config.special_directory_map
 
+    if language is not None:
+        tl_base = tl_directory + "/" + language + "/"
+    else:
+        tl_base = None
+
+    for prefix in search_prefixes:
+        if tl_base is not None:
+            rv.append(tl_base + prefix)
         rv.append(prefix)
 
     if directory is not None:
 
-        for mapped_directory in renpy.config.special_directory_map.get(directory, [ directory ]):
+        for mapped_directory in special_map.get(directory, [directory]):
 
-            if language is not None:
-                rv.append(renpy.config.tl_directory + "/" + language + "/" + mapped_directory + "/")
+            if tl_base is not None:
+                rv.append(tl_base + mapped_directory + "/")
 
             rv.append(mapped_directory + "/")
 
