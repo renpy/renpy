@@ -629,10 +629,12 @@ Text Style Properties
         between adjacent Korean characters.
 
     ``"thaic90"``
-        Used for Thai text displayed in fonts that support the
-        `C90 encoding for Thai <http://www.bakoma-tex.com/doc/fonts/enc/c90/c90.pdf>`_.
-        This combines groups of characters into single glyphs, allowing for better
-        display of vowel and tone marks. Line breaking uses the unicode algorithm.
+        Used for Thai text displayed in fonts that support the C90 encoding.
+        It maps character sequences to PUA glyph code points to achieve
+        correct glyph positioning. Line breaking uses the Unicode algorithm.
+
+        In most cases, Thai text should use ``"unicode"`` (the default).
+        This is only necessary when using Ren'Py versions earlier than 8.4.
 
     ``"western"``
         Allows breaking only at whitespace. Suitable for most
