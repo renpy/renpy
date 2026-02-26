@@ -43,6 +43,11 @@ init -1100 python:
         if "RENPY_EXPERIMENTAL" in os.environ:
             return
 
+        if version <= (8, 5, 99):
+            config.audio_directory = "audio"
+            config.audio_directories = [ ]
+            config.late_audio_scan = False
+
         if version <= (8, 4, 99):
             config.images_directory = "images"
             config.image_directories = [ ]
