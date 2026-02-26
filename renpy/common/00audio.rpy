@@ -21,8 +21,9 @@
 
 init -1900 python:
     config.audio_directory = None
-
     config.audio_directories = [ "audio" ]
+
+    config.late_audio_scan = False
 
     def _scan_audio_directory():
 
