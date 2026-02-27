@@ -19,100 +19,194 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from typing import TypedDict
 
-py_branch_to_version = {}
+import site
+import socket
+import pathlib
+import subprocess
+import collections
 
-import sys
-import os
 
-
-class Version(object):
-    def __init__(self, branch, python, version, name):
+class Version:
+    def __init__(self, branch: str, semver: tuple[int, int, int], name: str):
         """
         `branch`
             The name of the branch, as a string.
-        `python`
-            The version of python, 2 or 3.
-        `version`
-            The Ren'Py version number, a string.
+
+        `semver`
+            The Ren'Py version number, a tuple of (major, minor, patch).
+
         `name`
             The Ren'Py version name.
         """
 
         self.branch = branch
-        self.python = python
-        self.version = version
+        self.semver = semver
         self.name = name
 
-        py_branch_to_version[(python, branch)] = self
+        branch_to_version[branch] = self
 
 
-Version("main", 3, "8.6.0", "Real Artists Ship")
+branch_to_version: dict[str, Version] = {}
 
-Version("fix", 3, "8.5.3", "In Good Health")
+Version("main", (8, 6, 0), "Real Artists Ship")
+
+Version("fix", (8, 5, 3), "In Good Health")
 
 
-def make_dict(branch, suffix="00000000", official=False, nightly=False):
+class VersionDict(TypedDict):
     """
-    Returns a dictionary that contains the information usually stored
-    in vc_version.py.
-
-    `branch`
-        The branch.
-
-    `suffix`
-        The suffix, normally the YYMMDDCC code.
-
-    `official`
-        True if this is an official release.
-
-    `nightly`
-        True if this is a nightly release.
+    Dictionary that stores all the data about current running version.
     """
 
-    py = sys.version_info.major
-    version = py_branch_to_version.get((py, branch)) or py_branch_to_version[(py, "main")]
+    semver: tuple[int, int, int, int]
+    "The Ren'Py version number, a tuple of (major, minor, patch, commit)."
+    version: str
+    "The full version number with suffixes as a string."
+    name: str
+    "The name of the version."
+    branch: str
+    "The name of the branch from which this version was made."
+    official: bool
+    "True if this is an official release."
+    nightly: bool
+    "True if this is a nightly build."
+    dirty: bool
+    "True if working tree was dirty when this version was made."
 
-    return {
-        "version": version.version + "." + str(suffix),
-        "version_name": version.name,
-        "official": official,
-        "nightly": nightly,
-        "branch": branch,
-    }
+
+def _make_version_string(
+    semver: tuple[int, int, int, int],
+    branch: str,
+    official: bool,
+    nightly: bool,
+    dirty: bool,
+) -> str:
+    major, minor, patch, commit = semver
+
+    suffixes: list[str] = []
+    if not official:
+        suffixes.append("unofficial")
+    elif nightly:
+        suffixes.append("nightly")
+
+    if dirty:
+        suffixes.append("dirty")
+
+    if branch != "main" or dirty:
+        suffixes.append(branch)
+
+    return f"{major}.{minor}.{patch}.{commit:08d}+{'.'.join(suffixes)}"
 
 
-def get_version():
+def get_vc_version() -> VersionDict | None:
     """
-    Tries to return a version dict without using the information in
-    vc_version.
+    Return version dict from vc_version.py if it exists or None otherwise.
     """
 
-    import re
+    # vc_version.py contains:
+    # branch - Name of the branch from which this the file was generated.
+    # dirty - True if the working tree is dirty.
+    # official - True if it were an official build.
+    # nightly - True if it were a nightly build.
+    # version - Semver as a string.
+    # version_name - Name of the version.
+    try:
+        import renpy.vc_version as vc_version  # type: ignore
+    except ImportError:
+        return None
 
-    git_head = os.path.join(os.path.dirname(__file__), "..", ".git", "HEAD")
+    major, minor, patch, commit = vc_version.version.split(".")
+    semver = (int(major), int(minor), int(patch), int(commit))
+    official = vc_version.official and getattr(site, "renpy_build_official", False)
+    dirty = getattr(vc_version, "dirty", False)
 
-    branch = "main"
+    return VersionDict(
+        semver=semver,
+        version=_make_version_string(
+            semver,
+            vc_version.branch,
+            official,
+            vc_version.nightly,
+            dirty,
+        ),
+        name=vc_version.version_name,
+        branch=vc_version.branch,
+        nightly=vc_version.nightly,
+        official=official,
+        dirty=dirty,
+    )
+
+
+def get_git_version(nightly: bool = False) -> VersionDict:
+    """
+    Return `Version` read from the git repository if it exists or None otherwise.
+    """
+
+    def get_output(args: list[str]) -> str:
+        return subprocess.check_output(args, encoding="utf-8").strip()
 
     try:
-        for l in open(git_head, "r"):
-            l = l.rstrip()
-            m = re.match(r"ref: refs/heads/(.*)", l)
-            if m:
-                branch = m.group(1)
-                break
+        git_root = get_output(["git", "rev-parse", "--show-toplevel"])
 
-    except:
+        root = pathlib.Path(__file__).parent.parent
+        if not root.samefile(git_root):
+            raise Exception("Current git repository is not Ren'Py repository.")
+
+        branch = get_output(["git", "branch", "--show-current"])
+        dirty = get_output(["git", "status", "--porcelain"]) != ""
+        commits = get_output(["git", "log", "-99", "--pretty=%cd", "--date=format:%y%m%d"])
+
+        commits_per_day = collections.Counter[str](commits.split())
+        key = max(commits_per_day.keys())
+        commit = int(f"{key}{commits_per_day[key]:02d}")
+
+    except Exception:
         import traceback
 
         traceback.print_exc()
+        branch = "unknown"
+        dirty = False
+        commit = 0
 
-    return make_dict(branch)
+    if branch in branch_to_version:
+        version_obj = branch_to_version[branch]
+    else:
+        version_obj = branch_to_version["main"]
+
+    semver = (*version_obj.semver, commit)
+    official = socket.gethostname() == "eileen"
+
+    return VersionDict(
+        semver=semver,
+        version=_make_version_string(
+            semver,
+            branch,
+            official,
+            nightly,
+            dirty,
+        ),
+        name=version_obj.name,
+        branch=branch,
+        official=official,
+        nightly=nightly,
+        dirty=dirty,
+    )
 
 
-def generate_vc_version(nightly=False):
+def get_version() -> VersionDict:
+    """
+    Return a version dict either from local vc_version or from git.
+    """
+
+    if (vc_version := get_vc_version()) is not None:
+        return vc_version
+
+    return get_git_version()
+
+
+def generate_vc_version(nightly: bool = False) -> VersionDict:
     """
     Generates the vc_version.py file.
 
@@ -120,55 +214,18 @@ def generate_vc_version(nightly=False):
         If true, the nightly flag is set.
     """
 
-    import subprocess
-    import collections
-    import socket
-    import time
+    version_dict = get_git_version(nightly)
 
-    try:
-        branch = subprocess.check_output(["git", "branch", "--show-current"]).decode("utf-8").strip()
+    vc_version_path = pathlib.Path(__file__).parent / "vc_version.py"
 
-        s = (
-            subprocess.check_output([
-                "git",
-                "describe",
-                "--tags",
-                "--dirty",
-            ])
-            .decode("utf-8")
-            .strip()
-        )
-        parts = s.strip().split("-")
-        dirty = "dirty" in parts
-
-        commits_per_day = collections.defaultdict(int)
-
-        for i in (
-            subprocess.check_output(["git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d"])
-            .decode("utf-8")
-            .split()
-        ):
-            commits_per_day[i[2:]] += 1
-
-        if dirty:
-            key = time.strftime("%Y%m%d")[2:]
-            vc_version = "{}{:02d}".format(key, commits_per_day[key] + 1)
-        else:
-            key = max(commits_per_day.keys())
-            vc_version = "{}{:02d}".format(key, commits_per_day[key])
-
-    except Exception:
-        branch = "main"
-        vc_version = "00000000"
-        official = False
-
-    version_dict = make_dict(branch, suffix=vc_version, official=socket.gethostname() == "eileen", nightly=nightly)
-
-    vc_version_fn = os.path.join(os.path.dirname(__file__), "vc_version.py")
-
-    with open(vc_version_fn, "w") as f:
-        for k, v in sorted(version_dict.items()):
-            f.write("{} = {!r}\n".format(k, v))
+    with vc_version_path.open("w") as f:
+        print(f"branch = '{version_dict['branch']}'", file=f)
+        if version_dict["dirty"]:
+            print("dirty = True", file=f)
+        print(f"official = {version_dict['official']}", file=f)
+        print(f"nightly = {version_dict['nightly']}", file=f)
+        print(f"version = {version_dict['version'].split('+')[0]!r}", file=f)
+        print(f"version_name = {version_dict['name']!r}", file=f)
 
     return version_dict
 

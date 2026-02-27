@@ -2243,6 +2243,9 @@ class Text(renpy.display.displayable.Displayable):
         # If true, a safe mode is engaged that will render text with text tag errors.
         self.safe = safe
 
+        # If true, a safe mode is engaged that will render text with text tag errors.
+        self.safe = safe
+
         if isinstance(replaces, Text):
             self.slow = replaces.slow
             self.slow_done = replaces.slow_done
@@ -2946,6 +2949,7 @@ class Text(renpy.display.displayable.Displayable):
         if self.slow and layout.cps:
             slow_time = min(slow_time, st)
 
+        render.add_uniform("u_text_time", st)
         render.add_uniform("u_text_slow_time", slow_time)
 
         if layout.cps:

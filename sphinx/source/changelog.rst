@@ -5,6 +5,50 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.6.0:
+
+8.6.0
+=====
+
+Features
+--------
+
+Text shaders now support the ``u_text_time`` uniform, which is the time in seconds since the start of the text effect.
+
+Text interpolation now supports the ``!f`` flag, which passes interpolated text through :var:`config.say_menu_text_filter`.
+
+The new :func:`renpy.get_statement_name` function returns the name of the current statement.
+
+The `changed` property of bars can now be supplied in addition to a bar value.
+
+Bars now take an `action` property, which is an action that is run when the bar value changes. Unlike `change`, `action`
+is not supplied the bar value, and so can be used with the same actions as buttons.
+
+Layered images now support ``at`` and ``at transform`` clauses at the same time.
+
+The new :var:`config.special_directory_map` variable maps special directory names
+('images', 'audio', 'fonts') to a list of directories that will be searched for that kind of file. This isn't
+used when defining images and variables in the audio namespace - for automatic definition of images and audio,
+see :var:`config.image_directories` and :var:`config.audio_directories`.
+
+The new :var:`config.audio_directories` variable is a list of directories that are searched for audio Files
+and used to populate the :ref:`audio-namespace <audio-namespace>`.
+
+Other Changes
+-------------
+
+It is now possible to consume in-app purchases on Android, as well as on iOS.
+
+The :var:`config.tlid_only_considers_say` variable has been set to True by default. This prevents non-say statements,
+such as the ``voice`` statement, from contributing to translation identifiers. This can change trasnslation identifiers.
+See the inconpatible changes for more information.
+
+The ability to apply zsync-based updates has been removed. This was an older update format that has been replaced.
+The ability to create these updates will be removed in Ren'Py 8.7.0.
+
+Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
+
+
 .. _renpy-8.5.2:
 
 8.5.2

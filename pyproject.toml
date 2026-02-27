@@ -9,7 +9,6 @@ dependencies = [
     "six",
     "pefile",
     "requests",
-    "ecdsa",
     "rsa",
     "setuptools",
     "cython",
@@ -18,6 +17,7 @@ dependencies = [
     "sphinx_rtd_theme",
     "sphinx_rtd_dark_mode",
     "jinja2",
+    "pkgconfig>=1.5.5",
 ]
 
 

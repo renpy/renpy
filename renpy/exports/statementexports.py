@@ -376,3 +376,14 @@ def execute_default_statement(start=False):
 
     for i in renpy.config.after_default_callbacks:
         i()
+
+
+def get_statement_name():
+    """
+    :doc: other
+
+    Returns the name of the current statement being executed. This returns the last
+    value provided to :var:`config.statement_callbacks`.
+    """
+
+    return renpy.ast.current_statement_name

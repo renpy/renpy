@@ -1553,7 +1553,7 @@ class Interface:
             return None
 
         start = self.transition_time.get(layer, self.frame_time) or self.frame_time
-        delay = getattr(transition, "delay", 0)
+        delay = getattr(transition, "delay", 0) or 0
 
         if (self.frame_time - start) < delay:
             return rv

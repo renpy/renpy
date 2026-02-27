@@ -27,25 +27,29 @@ init -1900 python:
 
     def _scan_audio_directory():
 
+        directories = config.audio_directories
+
+        if config.audio_directory and config.audio_directory not in directories:
+            directories = directories + [ config.audio_directory ]
+
         import os
 
-        if not config.audio_directory:
-            return
+        for directory in directories:
 
-        prefix = config.audio_directory.rstrip('/') + '/'
+            prefix = directory.strip('/') + '/'
 
-        for fn in renpy.list_files():
-            if not fn.startswith(prefix):
-                continue
+            for fn in renpy.list_files():
+                if not fn.startswith(prefix):
+                    continue
 
-            basename = os.path.basename(fn)
-            base, ext = os.path.splitext(basename)
+                basename = os.path.basename(fn)
+                base, ext = os.path.splitext(basename)
 
-            if not ext.lower() in [ ".wav", ".mp2", ".mp3", ".ogg", ".opus", ".flac" ]:
-                continue
+                if not ext.lower() in [ ".wav", ".mp2", ".mp3", ".ogg", ".opus", ".flac" ]:
+                    continue
 
-            base = base.lower()
-            audio.__dict__.setdefault(base, fn)
+                base = base.lower()
+                audio.__dict__.setdefault(base, fn)
 
 init python
     if not config.late_audio_scan:

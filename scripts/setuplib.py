@@ -32,9 +32,13 @@ import warnings
 import pathlib
 import platform
 import subprocess
+import collections
+
 from concurrent.futures import ThreadPoolExecutor
 
 import setuptools
+
+from typing import Any
 
 warnings.simplefilter("ignore", category=setuptools.SetuptoolsDeprecationWarning)
 
@@ -48,6 +52,9 @@ coverage = "RENPY_COVERAGE" in os.environ
 
 # Are we doing a static build?
 static = "RENPY_STATIC" in os.environ
+
+# Are we generating without building?
+generate = (len(sys.argv) >= 2) and (sys.argv[1] == "generate")
 
 gen = "tmp/gen3"
 PY2 = False
@@ -63,41 +70,63 @@ cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
 # The include and library dirs that we compile against.
 include_dirs = ["src", gen]
-library_dirs = []
 
-# Extra arguments that will be given to the compiler.
+# Cache for pkgconfig results.
+pkgconfig_cache: dict[str, dict[str, list]] = { }
+
+# Extra arguments to supply to all extensions.
 extra_compile_args = []
 extra_link_args = []
+
+def package_flags(*packages: str) -> dict[str, Any]:
+    """
+    Given a list of pkgconfig packages, returns a dict keys that will be supplied to
+    Extension to set up the include_dirs, library_dirs, libraries, extra_compile_args,
+    """
+
+    rv = collections.defaultdict(list)
+
+    if generate:
+        return rv
+
+    rv["include_dirs"] = include_dirs
+
+    import pkgconfig
+
+    for package in packages:
+        if package in pkgconfig_cache:
+            pc = pkgconfig_cache[package]
+        else:
+            try:
+                pc = pkgconfig.parse(package)
+            except pkgconfig.PackageNotFoundError:
+                raise SystemExit(f"Could not find pkg-config package '{package}'.")
+                continue
+
+            pkgconfig_cache[package] = pc
+
+        for k, v in pc.items():
+            for i in v:
+                if i not in rv[k]:
+                    rv[k].append(i)
+    return rv
+
 
 
 # The libraries that we link against.
 libraries = []
 
 
-def library(name):
-    """
-    Links `name` into the build.
-    """
-
-    libraries.append(name)
-
-
 # A list of extension objects that we use.
 extensions = []
 
-# A list of macros that are defined for all modules.
-global_macros = []
 
-
-def cmodule(name, source, define_macros=[], language="c", compile_args=[]):
+def cmodule(name, source, language="c", define_macros=[], compile_args=[], packages=""):
     """
     Compiles `name`, as a Python module.
 
     `source`
         A list of source files that make up the module.
-
-    `define_macros`
-        A list of macros that are defined when compiling the module files.
 
     `language`
         The language that the module is written in. This is either "c" or "c++".
@@ -106,22 +135,23 @@ def cmodule(name, source, define_macros=[], language="c", compile_args=[]):
         A list of additional arguments that are passed to the compiler.
     """
 
-    eca = list(extra_compile_args) + compile_args
+    kwargs = package_flags(*packages.split())
 
     if language == "c":
-        eca.insert(0, "-std=gnu99")
+        kwargs["extra_compile_args"].insert(0, "-std=gnu99")
+
+    kwargs["include_dirs"] = include_dirs + kwargs["include_dirs"]
+    kwargs["extra_compile_args"].extend(compile_args)
+    kwargs["extra_compile_args"].extend(extra_compile_args)
+    kwargs["define_macros"].extend(define_macros)
+    kwargs["extra_link_args"].extend(extra_link_args)
 
     extensions.append(
         setuptools.Extension(
             name,
             source,
-            include_dirs=include_dirs,
-            library_dirs=library_dirs,
-            extra_compile_args=eca,
-            extra_link_args=extra_link_args,
-            libraries=libraries,
-            define_macros=define_macros + global_macros,
             language=language,
+            **kwargs,
         )
     )
 
@@ -133,7 +163,7 @@ necessary_gen = []
 generate_cython_queue = []
 
 
-def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_args=[]):
+def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macros=[], packages=""):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
@@ -228,7 +258,7 @@ def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_ar
     if mod_coverage:
         define_macros = define_macros + [("CYTHON_TRACE", "1")]
 
-    cmodule(name, [c_fn] + source, define_macros=define_macros, language=language, compile_args=compile_args)
+    cmodule(name, [c_fn] + source, compile_args=compile_args, define_macros=define_macros, language=language, packages=packages)
 
 
 lock = threading.Condition()
@@ -302,26 +332,12 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
                 flags=re.DOTALL,
             )  # Py3
             ccode = re.sub(
-                r"^__Pyx_PyMODINIT_FUNC init",
-                "__Pyx_PyMODINIT_FUNC init" + parent_module_identifier + "_",
-                ccode,
-                count=0,
-                flags=re.MULTILINE,
-            )  # Py2 Cython 0.28+
-            ccode = re.sub(
                 r"^__Pyx_PyMODINIT_FUNC PyInit_",
                 "__Pyx_PyMODINIT_FUNC PyInit_" + parent_module_identifier + "_",
                 ccode,
                 count=0,
                 flags=re.MULTILINE,
             )  # Py3 Cython 0.28+
-            ccode = re.sub(
-                r"^PyMODINIT_FUNC init",
-                "PyMODINIT_FUNC init" + parent_module_identifier + "_",
-                ccode,
-                count=0,
-                flags=re.MULTILINE,
-            )  # Py2 Cython 0.25.2
 
         with open(c_fn, "w") as f:
             f.write(ccode)
@@ -458,7 +474,7 @@ def setup(name, version):
     Calls the distutils setup function.
     """
 
-    if (len(sys.argv) >= 2) and (sys.argv[1] == "generate"):
+    if generate:
         return
 
     setuptools.setup(

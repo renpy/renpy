@@ -134,7 +134,10 @@ init -1500 python in iap:
             for p in products.values():
                 print("Adding sku:", self.identifier(p))
 
-                self.store.addSKU(self.identifier(p))
+                if self.store_name == "play" and p.consumable:
+                    self.store.addConsumableSKU(self.identifier(p))
+                else:
+                    self.store.addSKU(self.identifier(p))
 
         def get_store_name(self):
             return self.store_name
@@ -181,6 +184,12 @@ init -1500 python in iap:
             return self.store.hasPurchased(identifier)
 
         def consume(self, p):
+            if self.store_name == "play" and p.consumable:
+                identifier = self.identifier(p)
+                self.store.consumePurchase(identifier)
+                self.wait_for_result(interact=False)
+                persistent._iap_purchases[p.identifier] = False
+                return self.store.getConsumePurchaseResult()
             return False
 
         def is_deferred(self, p):
@@ -351,8 +360,8 @@ init -1500 python in iap:
             iOS. If not given, defaults to `identifier`.
 
         `consumable`
-            True if this is a consumable purchase. Right now, consumable purchases
-            are only supported on iOS.
+            True if this is a consumable purchase. Consumable purchases
+            support iOS and Android (GooglePlay).
         """
 
         if product in products:
@@ -502,10 +511,14 @@ init -1500 python in iap:
         :doc: iap
 
         Returns True if the user has purchased `product` in the past, and
-        False otherwise.
+        False otherwise. if `product` is a consumable and comes from Google Play, this always returns False.
         """
 
         p = get_product(product)
+
+        # Consumables always return False because they can be repurchased.
+        if store_name == "play" and p.consumable:
+            return False
 
         # Check the cache first, since we might be off line.
         if persistent._iap_purchases.get(p.identifier, False):

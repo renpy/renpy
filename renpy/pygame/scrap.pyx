@@ -21,8 +21,6 @@ from sdl2 cimport *
 from renpy.pygame.error import error
 from renpy.pygame.locals import SCRAP_TEXT
 
-from renpy.pygame.compat import bytes_
-
 try:
     import emscripten
 except ImportError:
@@ -37,7 +35,7 @@ def get(type):
         text = SDL_GetClipboardText()
         if text == NULL:
             raise error()
-        rv = bytes_(text)
+        rv = bytes(text)
         SDL_free(text)
         return rv
     else:
@@ -58,7 +56,7 @@ def put(type, data):
         emscripten.run_script(script)
         return
 
-    data = bytes_(data)
+    data = bytes(data)
 
     if SDL_SetClipboardText(data) != 0:
         raise error()

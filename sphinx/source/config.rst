@@ -457,6 +457,14 @@ File I/O
     environment variable.
 
 
+.. var:: config.special_directory_map = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ], ... }
+
+    This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
+    be searched for that kind of file. These are only used when loading a filename - for automatic definition
+    of images and audiom see :var:`config.image_directories` and :var:`config.audio_directories`. New special
+    directory names may be added in future versions of Ren'Py.
+
+
 History
 -------
 
@@ -695,6 +703,11 @@ Layers
 
 Media (Music, Sound, and Video)
 -------------------------------
+
+.. var:: config.audio_directories = [ 'audio' ]
+
+    A list of directories that are searched for audio files and used to populate the
+    :ref:`audio-namespace`.
 
 .. var:: config.audio_filename_callback = None
 

@@ -95,18 +95,6 @@ wheels = [
 ]
 
 [[package]]
-name = "ecdsa"
-version = "0.19.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c0/1f/924e3caae75f471eae4b26bd13b698f6af2c44279f67af317439c2f4c46a/ecdsa-0.19.1.tar.gz", hash = "sha256:478cba7b62555866fcb3bb3fe985e06decbdb68ef55713c4e5ab98c57d508e61", size = 201793, upload-time = "2025-03-13T11:52:43.25Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/cb/a3/460c57f094a4a165c84a1341c373b0a4f5ec6ac244b998d5021aade89b77/ecdsa-0.19.1-py2.py3-none-any.whl", hash = "sha256:30638e27cf77b7e15c4c4cc1973720149e1033827cfd00661ca5c8cc0cdb24c3", size = 150607, upload-time = "2025-03-13T11:52:41.757Z" },
-]
-
-[[package]]
 name = "future"
 version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -183,6 +171,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pkgconfig"
+version = "1.5.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c4/e0/e05fee8b5425db6f83237128742e7e5ef26219b687ab8f0d41ed0422125e/pkgconfig-1.5.5.tar.gz", hash = "sha256:deb4163ef11f75b520d822d9505c1f462761b4309b1bb713d08689759ea8b899", size = 6082, upload-time = "2021-07-19T18:49:51.669Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/32/af/89487c7bbf433f4079044f3dc32f9a9f887597fe04614a37a292e373e16b/pkgconfig-1.5.5-py3-none-any.whl", hash = "sha256:d20023bbeb42ee6d428a0fac6e0904631f545985a10cdd71a20aa58bc47a4209", size = 6732, upload-time = "2021-07-19T18:49:50.195Z" },
+]
+
+[[package]]
 name = "pyasn1"
 version = "0.6.2"
 source = { registry = "https://pypi.org/simple" }
@@ -206,10 +203,10 @@ version = "8.99.99"
 source = { virtual = "." }
 dependencies = [
     { name = "cython" },
-    { name = "ecdsa" },
     { name = "future" },
     { name = "jinja2" },
     { name = "pefile" },
+    { name = "pkgconfig" },
     { name = "requests" },
     { name = "rsa" },
     { name = "ruff" },
@@ -223,10 +220,10 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "cython" },
-    { name = "ecdsa" },
     { name = "future" },
     { name = "jinja2" },
     { name = "pefile" },
+    { name = "pkgconfig", specifier = ">=1.5.5" },
     { name = "requests" },
     { name = "rsa" },
     { name = "ruff" },
