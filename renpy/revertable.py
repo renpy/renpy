@@ -23,14 +23,24 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from typing import (
+    AbstractSet,
+    Any,
+    Callable,
+    Iterable,
+    Mapping,
+    Never,
+    Protocol,
+    Self,
+    Sequence,
+    SupportsIndex,
+    overload,
+)
 
 import __future__
 
 import random
 import weakref
-import sys
 import copyreg
 import functools
 
@@ -61,29 +71,31 @@ def _reconstructor(cls, base, state):
 
 copyreg._reconstructor = _reconstructor  # type: ignore
 
+mutate_flag: bool = True
+"""
+This is set to True whenever a mutation occurs. The background save code uses
+this to check to see if store has changed after save started.
+"""
 
-# This is set to True whenever a mutation occurs. The save code uses
-# this to check to see if a background-save is valid.
-mutate_flag = True
 
-
-def mutator(method):
+def mutator[**P, R](method: Callable[P, R]) -> Callable[P, R]:
     @functools.wraps(method)
-    def do_mutation(self, *args, **kwargs):
+    def do_mutation(*args: P.args, **kwargs: P.kwargs) -> R:
         global mutate_flag
 
+        self = args[0]
         mutated = renpy.game.log.mutated
 
         if id(self) not in mutated:
-            mutated[id(self)] = (weakref.ref(self), self._clean())
+            mutated[id(self)] = (weakref.ref(self), self._clean())  # type: ignore
             mutate_flag = True
 
-        return method(self, *args, **kwargs)
+        return method(*args, **kwargs)
 
     return do_mutation
 
 
-class CompressedList(object):
+class CompressedList:
     """
     Compresses the changes in a queue-like list. What this does is to try
     to find a central sub-list for which has objects in both lists. It
@@ -94,7 +106,12 @@ class CompressedList(object):
     results are efficient even if this doesn't work.
     """
 
-    def __init__(self, old, new):
+    pre: list[Any]
+    start: int
+    end: int
+    post: list[Any]
+
+    def __init__(self, old: list[Any], new: list[Any]):
         # Pick out a pivot element near the center of the list.
         new_center = (len(new) - 1) // 2
         new_pivot = new[new_center]
@@ -143,21 +160,21 @@ class CompressedList(object):
         self.end = new_end
         self.post = list.__getitem__(old, slice(old_end, len_old))
 
-    def decompress(self, new):
+    def decompress(self, new: list[Any]) -> list[Any]:
         return self.pre + new[self.start : self.end] + self.post
 
     def __repr__(self):
-        return "<CompressedList {} [{}:{}] {}>".format(self.pre, self.start, self.end, self.post)
+        return f"<CompressedList {self.pre} [{self.start}:{self.end}] {self.post}>"
 
 
-class RevertableList(list):
-    def __init__(self, *args):
+class RevertableList[T](list[T]):
+    def __init__(self, iterable: Iterable[T], /):
         log = renpy.game.log
 
         if log is not None:
             log.mutated[id(self)] = None
 
-        list.__init__(self, *args)
+        super().__init__(iterable)
 
     __delitem__ = mutator(list.__delitem__)
     __setitem__ = mutator(list.__setitem__)
@@ -171,31 +188,32 @@ class RevertableList(list):
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
 
-    def wrapper(method):  # type: ignore
-        @functools.wraps(method)
-        def newmethod(*args, **kwargs):
-            l = method(*args, **kwargs)  # type: ignore
-            if l is NotImplemented:
-                return l
-            return RevertableList(l)
+    def __add__[S](self, other: list[S]) -> "RevertableList[T | S]":
+        # Python list would raise if other is not a list.
+        return RevertableList(super().__add__(other))
 
-        return newmethod
+    # FIXME: No __radd__ method here, which probably is incorrect.
 
-    __add__ = wrapper(list.__add__)  # type: ignore
-    __mul__ = wrapper(list.__mul__)  # type: ignore
-    __rmul__ = wrapper(list.__rmul__)  # type: ignore
+    def __mul__(self, other: SupportsIndex) -> "RevertableList[T]":
+        # Python list would raise if other could not be converted to int.
+        return RevertableList(super().__mul__(other))
 
-    del wrapper
+    def __rmul__(self, other: SupportsIndex) -> "RevertableList[T]":
+        # Python list would raise if other could not be converted to int.
+        return RevertableList(super().__rmul__(other))
 
-    def __getitem__(self, index):
-        rv = list.__getitem__(self, index)
+    @overload
+    def __getitem__(self, index: SupportsIndex) -> T: ...
+    @overload
+    def __getitem__(self, index: slice) -> "RevertableList[T]": ...
 
+    def __getitem__(self, index: SupportsIndex | slice):
         if isinstance(index, slice):
-            return RevertableList(rv)
+            return RevertableList(super().__getitem__(index))
         else:
-            return rv
+            return super().__getitem__(index)
 
-    def copy(self):
+    def copy(self) -> "RevertableList[T]":
         return self[:]
 
     def clear(self):
@@ -239,22 +257,82 @@ class RevertableList(list):
             self[:] = compressed
 
 
+@overload
+def revertable_range(start: SupportsIndex, /) -> RevertableList[int]: ...
+
+
+@overload
+def revertable_range(
+    start: SupportsIndex, stop: SupportsIndex, step: SupportsIndex = ..., /
+) -> RevertableList[int]: ...
+
+
 def revertable_range(*args):
     return RevertableList(range(*args))
+
+
+class SupportsDunderLT(Protocol):
+    def __lt__(self, other: Any, /) -> bool: ...
+
+
+class SupportsDunderGT(Protocol):
+    def __gt__(self, other: Any, /) -> bool: ...
+
+
+type SupportsRichComparison = SupportsDunderLT | SupportsDunderGT
+
+
+@overload
+def revertable_sorted[SupportsRichComparisonT: SupportsRichComparison](
+    iterable: Iterable[SupportsRichComparisonT],
+    /,
+    *,
+    key: None = None,
+    reverse: bool = False,
+) -> RevertableList[SupportsRichComparisonT]: ...
+@overload
+def revertable_sorted[T](
+    iterable: Iterable[T],
+    /,
+    *,
+    key: Callable[[T], SupportsRichComparison],
+    reverse: bool = False,
+) -> RevertableList[T]: ...
 
 
 def revertable_sorted(*args, **kwargs):
     return RevertableList(sorted(*args, **kwargs))
 
 
-class RevertableDict(dict):
-    def __init__(self, *args, **kwargs):
+class RevertableDict[KT, VT](dict[KT, VT]):
+    # Typeshed actually have more correct overloads, but for our case, we only
+    # care about str: VT when kwargs are present, and KT: VT if not.
+    @overload
+    def __init__(self, /) -> None: ...  # RevertableDict[Unknown, Unknown] case.
+    @overload
+    def __init__(
+        self: "RevertableDefaultDict[str, VT]",  # pyright: ignore[reportInvalidTypeVarUse]
+        iterable: Mapping[str, VT] | Iterable[tuple[str, VT]] = (),
+        /,
+        **kwargs: VT,
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        iterable: Mapping[KT, VT] | Iterable[tuple[KT, VT]] = (),
+        /,
+    ) -> None: ...
+
+    def __init__(self, iterable=(), /, **kwargs):
         log = renpy.game.log
 
         if log is not None:
             log.mutated[id(self)] = None
 
-        dict.__init__(self, *args, **kwargs)
+        super().__init__(iterable, **kwargs)
+
+    # FIXME: Missing dict.fromkeys
 
     __delitem__ = mutator(dict.__delitem__)
     __setitem__ = mutator(dict.__setitem__)
@@ -271,26 +349,27 @@ class RevertableDict(dict):
     def has_key(self, key):
         return key in self
 
-    # https://peps.python.org/pep-0584 methods
-    def __or__(self, other):
+    def __or__[KT2, VT2](self, other: dict[KT2, VT2]) -> "RevertableDict[KT | KT2, VT | VT2]":
         if not isinstance(other, dict):
             return NotImplemented
-        rv = RevertableDict(self)
+
+        rv: RevertableDict[Any, Any] = RevertableDict(self)
         rv.update(other)
         return rv
 
-    def __ror__(self, other):
+    def __ror__[KT2, VT2](self, other: dict[KT2, VT2]) -> "RevertableDict[KT | KT2, VT | VT2]":
         if not isinstance(other, dict):
             return NotImplemented
-        rv = RevertableDict(other)
+
+        rv: RevertableDict[Any, Any] = RevertableDict(other)
         rv.update(self)
         return rv
 
-    def __ior__(self, other):
+    def __ior__(self, other: dict[KT, VT] | Iterable[tuple[KT, VT]]) -> Self:
         self.update(other)
         return self
 
-    def copy(self):
+    def copy(self) -> "RevertableDict[KT, VT]":
         rv = RevertableDict()
         rv.update(self)
         return rv
@@ -308,7 +387,7 @@ class RevertableDict(dict):
             self[k] = v
 
 
-class RevertableDefaultDict(RevertableDict):
+class RevertableDefaultDict[KT, VT](RevertableDict[KT, VT]):
     """
     :doc: rollbackclasses
     :name: defaultdict
@@ -323,11 +402,34 @@ class RevertableDefaultDict(RevertableDict):
     participate in rollback, and so should not be changed.
     """
 
-    def __init__(self, default_factory=None, *args, **kwargs):
-        self.default_factory = default_factory
-        super(RevertableDefaultDict, self).__init__(*args, **kwargs)
+    default_factory: Callable[[], VT] | None
 
-    def __missing__(self, key):
+    # Typeshed actually have more correct overloads, but for our case, we only
+    # care about str: VT when kwargs are present, and KT: VT if not.
+    @overload
+    def __init__(self, /) -> None: ...  # RevertableDefaultDict[Unknown, Unknown] case.
+    @overload
+    def __init__(
+        self: "RevertableDefaultDict[str, VT]",  # pyright: ignore[reportInvalidTypeVarUse]
+        default_factory: Callable[[], VT] | None = None,
+        iterable: Mapping[str, VT] | Iterable[tuple[str, VT]] = (),
+        /,
+        **kwargs: VT,
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        default_factory: Callable[[], VT] | None = None,
+        iterable: Mapping[KT, VT] | Iterable[tuple[KT, VT]] = (),
+        /,
+    ) -> None: ...
+
+    def __init__(self, default_factory=None, iterable=(), /, **kwargs):
+        self.default_factory = default_factory
+        super().__init__(iterable, **kwargs)
+
+    def __missing__(self, key) -> VT:
         if self.default_factory is None:
             raise KeyError(key)
 
@@ -336,7 +438,7 @@ class RevertableDefaultDict(RevertableDict):
         return rv
 
 
-class RevertableSet(set):
+class RevertableSet[T](set[T]):
     def __setstate__(self, state):
         if isinstance(state, tuple):
             self.update(state[0].keys())
@@ -374,28 +476,51 @@ class RevertableSet(set):
     union_update = mutator(set.update)
     update = mutator(set.update)
 
-    def wrapper(method):  # type: ignore
-        @functools.wraps(method)
-        def newmethod(*args, **kwargs):
-            rv = method(*args, **kwargs)  # type: ignore
-            if isinstance(rv, set):
-                return RevertableSet(rv)
-            else:
-                return rv
+    # Wrap return set into RevertableSet for creator methods.
+    def __and__(self, other: AbstractSet[Any]) -> "RevertableSet[T]":
+        rv = super().__and__(other)
+        if isinstance(rv, set):
+            return RevertableSet(rv)
+        else:
+            return rv
 
-        return newmethod
+    def __or__[T2](self, other: AbstractSet[T2]) -> "RevertableSet[T | T2]":
+        rv = super().__or__(other)
+        if isinstance(rv, set):
+            return RevertableSet(rv)
+        else:
+            return rv
 
-    __and__ = wrapper(set.__and__)  # type: ignore
-    __sub__ = wrapper(set.__sub__)  # type: ignore
-    __xor__ = wrapper(set.__xor__)  # type: ignore
-    __or__ = wrapper(set.__or__)  # type: ignore
-    copy = wrapper(set.copy)  # type: ignore
-    difference = wrapper(set.difference)  # type: ignore
-    intersection = wrapper(set.intersection)  # type: ignore
-    symmetric_difference = wrapper(set.symmetric_difference)  # type: ignore
-    union = wrapper(set.union)  # type: ignore
+    def __sub__(self, other: AbstractSet[Any]) -> "RevertableSet[T]":
+        rv = super().__sub__(other)
+        if isinstance(rv, set):
+            return RevertableSet(rv)
+        else:
+            return rv
 
-    del wrapper
+    def __xor__[T2](self, other: AbstractSet[T2]) -> "RevertableSet[T | T2]":
+        rv = super().__xor__(other)
+        if isinstance(rv, set):
+            return RevertableSet(rv)
+        else:
+            return rv
+
+    # FIXME: No __r...__ methods here, which probably is incorrect.
+
+    def copy(self) -> "RevertableSet[T]":
+        return RevertableSet(self)
+
+    def difference(self, *s: Iterable[Any]) -> "RevertableSet[T]":
+        return RevertableSet(super().difference(*s))
+
+    def intersection(self, *s: Iterable[Any]) -> "RevertableSet[T]":
+        return RevertableSet(super().intersection(*s))
+
+    def symmetric_difference(self, s: Iterable[Any]) -> "RevertableSet[T]":
+        return RevertableSet(super().symmetric_difference(s))
+
+    def union(self, *s: Iterable[Any]) -> "RevertableSet[T]":
+        return RevertableSet(super().union(*s))
 
     def _clean(self):
         return list(self)
@@ -408,7 +533,7 @@ class RevertableSet(set):
         set.update(self, compressed)
 
 
-class RevertableObject(object):
+class RevertableObject:
     # All RenPy's objects have  __dict__, so _rollback is fast, i.e
     # one update, not iterating over all attributes.
     # __weakref__ should exist, so mutator can work.
@@ -425,7 +550,7 @@ class RevertableObject(object):
 
         return self
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Never, **kwargs: Never):
         if (args or kwargs) and renpy.config.developer:
             raise TypeError("object() takes no parameters.")
 
@@ -452,7 +577,7 @@ class RevertableObject(object):
         self.__dict__.update(compressed)
 
 
-class MultiRevertable(object):
+class MultiRevertable:
     """
     :doc: rollbackclasses
     :name: MultiRevertable
@@ -493,23 +618,14 @@ class MultiRevertable(object):
             i._rollback(self, c)
 
 
-def checkpointing(method):
+def checkpointing[**P, R](method: Callable[P, R]) -> Callable[P, R]:
     @functools.wraps(method)
-    def do_checkpoint(self, *args, **kwargs):
+    def do_checkpoint(*args: P.args, **kwargs: P.kwargs) -> R:
         renpy.game.context().force_checkpoint = True
 
-        return method(self, *args, **kwargs)
+        return method(*args, **kwargs)
 
     return do_checkpoint
-
-
-def list_wrapper(method):
-    @functools.wraps(method)
-    def newmethod(*args, **kwargs):
-        l = method(*args, **kwargs)
-        return RevertableList(l)
-
-    return newmethod
 
 
 class RollbackRandom(random.Random):
@@ -536,14 +652,30 @@ class RollbackRandom(random.Random):
 
     setstate = checkpointing(mutator(random.Random.setstate))
 
-    choices = list_wrapper(random.Random.choices)
-    sample = list_wrapper(random.Random.sample)
+    def choices[T](
+        self,
+        population: Sequence[T],
+        weights: Sequence[float] | None = None,
+        *,
+        cum_weights: Sequence[float] | None = None,
+        k: int = 1,
+    ) -> RevertableList[T]:
+        return RevertableList(super().choices(population, weights, cum_weights=cum_weights, k=k))
+
+    def sample[T](
+        self,
+        population: Sequence[T],
+        k: int,
+        *,
+        counts: Iterable[int] | None = None,
+    ) -> RevertableList[T]:
+        return RevertableList(super().sample(population, k, counts=counts))
 
     getrandbits = checkpointing(mutator(random.Random.getrandbits))
     seed = checkpointing(mutator(random.Random.seed))
     random = checkpointing(mutator(random.Random.random))
 
-    def Random(self, seed=None):
+    def Random(self, seed: int | float | str | bytes | bytearray | None = None):
         """
         Returns a new RNG object separate from the main one.
         """
@@ -563,10 +695,26 @@ class DetRandom(random.Random):
 
     def __init__(self):
         super(DetRandom, self).__init__()
-        self.stack = []
+        self.stack: list[float] = []
 
-    choices = list_wrapper(random.Random.choices)
-    sample = list_wrapper(random.Random.sample)
+    def choices[T](
+        self,
+        population: Sequence[T],
+        weights: Sequence[float] | None = None,
+        *,
+        cum_weights: Sequence[float] | None = None,
+        k: int = 1,
+    ) -> RevertableList[T]:
+        return RevertableList(super().choices(population, weights, cum_weights=cum_weights, k=k))
+
+    def sample[T](
+        self,
+        population: Sequence[T],
+        k: int,
+        *,
+        counts: Iterable[int] | None = None,
+    ) -> RevertableList[T]:
+        return RevertableList(super().sample(population, k, counts=counts))
 
     def random(self):
         if self.stack:
@@ -583,13 +731,13 @@ class DetRandom(random.Random):
 
         return rv
 
-    def pushback(self, l):
+    def pushback(self, lst: list[float]):
         """
-        Pushes the random numbers in l onto the stack so they will be generated
+        Pushes the random numbers in lst onto the stack so they will be generated
         in the order given.
         """
 
-        ll = l[:]
+        ll = lst[:]
         ll.reverse()
 
         self.stack.extend(ll)
@@ -601,7 +749,7 @@ class DetRandom(random.Random):
 
         del self.stack[:]
 
-    def Random(self, seed=None):
+    def Random(self, seed: int | float | str | bytes | bytearray | None = None):
         """
         Returns a new RNG object separate from the main one.
         """
