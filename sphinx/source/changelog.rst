@@ -1701,26 +1701,29 @@ displayed. Clicking on the filename and line will open
 the file in the default text editor, at the given line,
 if possible.
 
-Data Actions
-------------
+Actions and Screen Values
+-------------------------
 
-The :ref:`data-actions` are now presented and explained in a more
-condensed manner. These actions have been reimplemented using a data
-manager that describes what to do with the data (Set-, Toggle-, Cycle-, Increment-)
-and a data accessor that describes the kind of data to change (-Variable, -ScreenVariable,  -LocalVariable, -Field, -Dict).
+The :ref:`data-actions` are now presented and explained in a more condensed
+manner. These actions have been reimplemented using a data manager that
+describes what to do with the data (Set-, Toggle-, Cycle-, Increment-) and a
+data accessor that describes the kind of data to change
+(-Variable, -ScreenVariable,  -LocalVariable, -Field, -Dict).
 
 There are two new managers:
 
-* The Cycle- actions (CycleVariable, CycleLocalVariable, CycleField...)
-  take a list of values and each time the action is run (i.e each time
-  the button is clicked), the target value is set to be the next element in
-  the list.
+* The Cycle- actions (CycleVariable, CycleLocalVariable, CycleField...) take a
+  list of values and each time the action is run (i.e each time the button is
+  clicked), the target value is set to be the next element in the list.
 * The Increment- actions (IncrementVariable, IncrementDict, IncrementField...)
-  add a certain value (by default, 1) to the target value. These can also be used
-  to decrement the field.
+  add a certain value (by default, 1) to the target value. These can also be
+  used to decrement the field.
 
 The :class:`LocalVariableValue` bar value and :class:`LocalVariableInputValue` input
 values have been added, for completeness.
+
+:ref:`input-values` now take an optional `disable_on_enter` parameter which
+makes them disable themselves when the enter key is pressed.
 
 HTTPS/HTTP Fetch
 ----------------
