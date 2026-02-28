@@ -72,10 +72,14 @@ def confirm(message, **kwargs):
     `message`
         The message that will be displayed.
 
+    `screen`
+        If provided, this screen will be used instead of the default screen.
+
     Additional keyword arguments not beginning with _ are passed to the screen.
 
     See :func:`Confirm` for a similar Action.
     """
     Return = renpy.store.Return
-    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False), **kwargs)
+    screen = kwargs.pop("screen", None)
+    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False), _screen=screen, **kwargs)
     return renpy.ui.interact()
