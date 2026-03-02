@@ -634,7 +634,8 @@ Text Style Properties
         correct glyph positioning. Line breaking uses the Unicode algorithm.
 
         In most cases, Thai text should use ``"unicode"`` (the default).
-        This is only necessary when using Ren'Py versions earlier than 8.4.
+        This is only necessary when using Ren'Py versions earlier than 8.4,
+        or when using ``"freetype"`` as the shaper.
 
     ``"western"``
         Allows breaking only at whitespace. Suitable for most
