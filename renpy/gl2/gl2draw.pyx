@@ -537,7 +537,7 @@ cdef class GL2Draw:
                 self.shader_cache.clear()
 
         if full_reset:
-            if pygame.display.get_window().recreate_gl_context():
+            if pygame.display.get_window().recreate_gl_context() or renpy.emscripten:
                 renpy.display.interface.kill_textures()
 
         # Are we in fullscreen mode?
