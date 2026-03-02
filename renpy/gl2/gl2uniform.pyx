@@ -355,6 +355,12 @@ cdef class Sampler2DSetter(Setter):
             if "texture_scaling" in context.properties:
                 mag_filter, min_filter = TEXTURE_SCALING[context.properties["texture_scaling"]]
 
+        if renpy.display.draw.gles and mag_filter == GL_NEAREST and min_filter == GL_NEAREST:
+            # If anisotropy is not set to 1.0, linear filtering will be used by ANGLE.
+            # This is a Windows only issue affecting "gles" and "angle2", but also any
+            # Web browsers running on Windows.
+            anisotropy = 1.0
+
         if wrap_s != texture.wrap_s:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
             texture.wrap_s = wrap_s
