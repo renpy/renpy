@@ -81,6 +81,9 @@ The following environment variables control the behavior of Ren'Py:
     %d substitution in it. For example, setting this to "screenshot%04d.jpg" will
     cause Ren'Py to write out jpeg screenshots rather than the usual pngs.
 
+    By default, this is relative to the game's base directory. An absolute path can
+    be used to place screenshots elsewhere on the filesystem.
+
 ``RENPY_SEARCHPATH``
     If set, a double-colon (\:\:) separated list of additional paths that
     are added to :var:`config.searchpath`.
