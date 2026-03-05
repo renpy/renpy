@@ -871,12 +871,14 @@ class CompileCache:
         if renpy.game.args.compile_python:
             return
 
-        with contextlib.suppress(Exception):
+        try:
             with renpy.loader.load(CompileCache.BYTECODE_FILE) as f:
                 version, cache = loads(zlib.decompress(f.read()))
                 if version == CompileCache.BYTECODE_VERSION:
                     self.old_compile_cache = {k: v for k, v in cache.items() if k[0] != "warnings"}
                     self.warnings = {k: v for k, v in cache.items() if k[0] == "warnings"}
+        except Exception:
+            pass
 
     def save(self):
         """
@@ -889,7 +891,7 @@ class CompileCache:
         if not self.bytecode_dirty:
             return
 
-        with contextlib.suppress(Exception):
+        try:
             fn = renpy.loader.get_path(CompileCache.BYTECODE_FILE)
 
             with open(fn, "wb") as f:
@@ -898,10 +900,14 @@ class CompileCache:
                     self.new_bytecode_cache | self.warnings,
                 )
                 f.write(zlib.compress(dumps(data), 3))
+        except Exception:
+            pass
 
         fn = renpy.loader.get_path(CompileCache.OLD_BYTECODE_FILE)
-        with contextlib.suppress(Exception):
+        try:
             os.unlink(fn)
+        except Exception:
+            pass
 
     def reload(self):
         self.old_compile_cache = self.new_compile_cache
@@ -928,12 +934,14 @@ class CompileCache:
             return rv
 
         if bytecode := self.old_bytecode_cache.get(key):
-            with contextlib.suppress(Exception):
+            try:
                 rv = marshal.loads(bytecode)
                 self.new_compile_cache[key] = rv
                 self.new_bytecode_cache[key] = bytecode
 
                 return rv
+            except Exception:
+                pass
 
         return None
 
@@ -1222,12 +1230,14 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
 
     if mode == "eval" and not ast_node:
         # If possible, compute the value of immutable literals.
-        with contextlib.suppress(Exception):
+        try:
             rv = ast.literal_eval(source)
             if is_immutable_value(rv):
                 rv = ("literal", rv)
                 compile_cache.put(key, rv, [])
                 return rv
+        except Exception:
+            pass
 
         source = quote_eval(source)
 
