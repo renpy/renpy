@@ -21,8 +21,9 @@
 
 init -1900 python:
     config.audio_directory = None
-
     config.audio_directories = [ "audio" ]
+
+    config.late_audio_scan = True
 
     def _scan_audio_directory():
 
@@ -50,5 +51,10 @@ init -1900 python:
                 base = base.lower()
                 audio.__dict__.setdefault(base, fn)
 
-init python:
-    _scan_audio_directory()
+init python
+    if not config.late_audio_scan:
+        _scan_audio_directory()
+
+init 1900 python:
+    if config.late_audio_scan:
+        _scan_audio_directory()
