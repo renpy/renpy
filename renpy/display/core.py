@@ -1951,6 +1951,9 @@ class Interface:
         if ev.type != pygame.WILLENTERBACKGROUND:
             return False
 
+        if not renpy.mobile:
+            return False
+
         print("Pausing audio.")
 
         renpy.audio.audio.pause_all()
