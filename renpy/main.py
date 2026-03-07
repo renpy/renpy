@@ -85,7 +85,7 @@ def run(restart):
         renpy.pyanalysis.save_cache()
         log_clock("Save pyanalysis")
 
-        renpy.game.script.save_bytecode()
+        renpy.python.compile_cache.save()
         log_clock("Save bytecode")
 
     # Handle arguments and commands.

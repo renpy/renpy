@@ -48,6 +48,8 @@ RPYC_MAGIC = b"_2025-07-06"
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
 
+# Kept for backwards compatibility.
+BYTECODE_FILE = renpy.python.CompileCache.BYTECODE_FILE
 
 class ScriptError(Exception):
     """
@@ -149,7 +151,6 @@ class Script(object):
         self.bytecode_dirty = False
 
         self.translator = renpy.translation.ScriptTranslator()
-        self.init_bytecode()
 
         self.scan_script_files()
 
