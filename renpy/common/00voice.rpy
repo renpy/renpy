@@ -505,7 +505,7 @@ init -1500 python hide:
 
             store._last_voice_play = _voice.play
 
-        elif not _voice.sustain:
+        elif not _voice.sustain and not (getattr(renpy.context(), "_menu", False) and _preferences.voice_after_game_menu):
             renpy.sound.stop(channel="voice")
             _invoke_voice_callbacks("stop")
             _voice.playing_info = None
