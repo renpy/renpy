@@ -111,6 +111,11 @@ cdef class Render:
     # A flag that tells us if uniforms has a render in it.
     cdef public bint uniforms_has_render
 
+    # This is the width and height of this Render if .subsurface was not allowed to
+    # expand the size of the displayable.
+    cdef public float cropped_width, cropped_height
+
+
     # operations ###############################################################
 
     cpdef int blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
