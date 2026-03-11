@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from typing import Iterable, Literal, NamedTuple, overload
+from importlib._bootstrap_external import _classify_pyc, _compile_bytecode
 
 import renpy
 import sys
@@ -172,43 +173,60 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 
     def _visit_dir(self, *path: str, files: Iterable[str]):
         dir_to_fn: dict[str, list[str]] = {}
-
         seen_init = False
         prefix = ""
         if path:
             prefix += "/".join(path) + "/"
+        mod_name_base = ".".join(path) if path else ""
 
         for fn in files:
             if "/" in fn:
-                top_directory, _, fn = fn.partition("/")
+                top_directory, _, sub_fn = fn.partition("/")
                 if top_directory not in dir_to_fn:
                     dir_to_fn[top_directory] = []
-
-                dir_to_fn[top_directory].append(fn)
+                dir_to_fn[top_directory].append(sub_fn)
                 continue
 
-            mod_name = ".".join(path)
-            if path and fn == "__init__.py":
+            if fn.endswith(".py"):
+                stem = fn[:-3]
+            elif fn.endswith(".pyc"):
+                stem = fn[:-4]
+
+            if stem is None:
+                continue
+
+            if stem == "__init__":
                 seen_init = True
+                mod_name = mod_name_base
                 is_package = True
             else:
-                if mod_name:
-                    mod_name += "." + fn[:-3]
-                else:
-                    mod_name = fn[:-3]
-
                 is_package = False
 
-            mod_info = RenpyImporter._ModuleInfo(prefix + fn, is_package, False)
+                mod_name = mod_name_base + ("." + stem if mod_name_base else stem)
 
+            py_file  = stem + ".py"
+            pyc_file = stem + ".pyc"
+
+            if py_file in files:
+                chosen_filename = prefix+py_file
+            elif pyc_file in files:
+                chosen_filename = prefix+pyc_file
+                # Optional: log when falling back
+                # print(f"Falling back to {chosen_filename} (no {py_full})")
+            else:
+                # Should not happen because fn came from files, but safety
+                continue
+            
+            #print('mod_name', mod_name, is_package, '->', chosen_filename)
+            mod_info = RenpyImporter._ModuleInfo(chosen_filename, is_package, False)
             yield mod_name, mod_info
 
         if path and not seen_init:
-            yield ".".join(path), RenpyImporter._ModuleInfo(prefix, True, True)
+            yield mod_name_base, RenpyImporter._ModuleInfo(prefix, True, True)
 
-        for add_dir, files in dir_to_fn.items():
-            yield from self._visit_dir(*path, add_dir, files=files)
-
+        for add_dir, subfiles in dir_to_fn.items():
+            yield from self._visit_dir(*path, add_dir, files=subfiles)
+            
     def _cache_entries(self) -> dict[str, _ModuleInfo]:
         if self._finder_cache is not None:
             return self._finder_cache
@@ -217,7 +235,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
             renpy.loader.scandirfiles()
 
         self._finder_cache = dict(
-            self._visit_dir(files=(fn for _, fn in renpy.loader.game_files if fn.endswith(".py") if not fn.endswith("_ren.py")))
+            self._visit_dir(files=(fn for _, fn in renpy.loader.game_files if (fn.endswith(".py") or fn.endswith(".pyc")) if not fn.endswith("_ren.py")))
         )
         return self._finder_cache
 
@@ -260,8 +278,12 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
                 spec.submodule_search_locations = [filename.rpartition("/")[0]]
 
             if not module_info.is_namespace:
-                spec.origin = filename
-                spec.cached = filename + "c"
+                if filename[-4:] == '.pyc':
+                    spec.origin = filename
+                    spec.cached = filename
+                else:
+                    spec.origin = filename
+                    spec.cached = filename + "c"
 
             return spec
 
@@ -298,6 +320,10 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         if module_info.is_namespace:
             return None
 
+        if module_info.filename.endswith(".pyc"):
+            # no source for .pyc-only modules
+            return None
+        
         with renpy.loader.load(module_info.filename, tl=False) as f:
             bindata = f.read()
 
@@ -307,12 +333,28 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         module_info = self._get_module_info(fullname)
         if module_info is None:
             raise ImportError
-
         if module_info.is_namespace:
             return compile("", module_info.filename, "exec", dont_inherit=True)
 
-        # TODO: add bytecode handling?
+        filename = module_info.filename
+        if filename.endswith(".pyc"):
+            # === BYTECODE ===
+            with renpy.loader.load(filename, tl=False) as f:
+                data = f.read()
 
+            # Validate header (magic, hash/timestamp, etc.) exactly like CPython does
+            exc_details = {"name": fullname, "path": filename}
+            _classify_pyc(data, fullname, exc_details)
+
+            # Skip the fixed 16-byte header (Python 3.7+) and compile
+            return _compile_bytecode(
+                memoryview(data)[16:],
+                name=fullname,
+                bytecode_path=filename,
+            )
+
+
+        # === SOURCE ===
         with renpy.loader.load(module_info.filename, tl=False) as f:
             source = f.read()
 
