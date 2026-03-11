@@ -705,7 +705,9 @@ def load(name, directory=None, tl=True):
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
-    name = re.sub(r"/+", "/", name).lstrip("/")
+    while "//" in name:
+        name = name.replace("//", "/")
+    name = name.lstrip("/")
 
     for p in get_prefixes(directory=directory, tl=tl):
         rv = load_core(p + name)
