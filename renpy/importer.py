@@ -77,18 +77,18 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
     """
 
     def __init__(self):
-        self.prefixes: list[str] = []
+        self.prefixes: list[RenpyPath] = []
         "List of prefixes where modules can be found."
 
-        self._finder_cache: dict[str, RenpyImporter._ModuleInfo] | None = None
+        self._finder_cache: dict[str, RenpyImporter._ModuleInfo] = {}
         """
         A dict from module name to module info of that module for all paths that
         can be loaded with this importer.
         """
 
-    def add_prefix(self, prefix: str):
-        if prefix and not prefix.endswith("/"):
-            prefix = prefix + "/"
+    def add_prefix(self, prefix: str | RenpyPath):
+        if isinstance(prefix, str):
+            prefix = RenpyPath(prefix)
 
         if prefix in self.prefixes:
             return
@@ -101,70 +101,42 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         is_package: bool
         is_namespace: bool
 
-    def _visit_dir(self, *path: str, files: Iterable[str]):
-        dir_to_fn: dict[str, list[str]] = {}
+    def _get_module_info(self, fullname: str) -> _ModuleInfo | None:
 
-        seen_init = False
-        prefix = ""
-        if path:
-            prefix += "/".join(path) + "/"
-
-        for fn in files:
-            if "/" in fn:
-                top_directory, _, fn = fn.partition("/")
-                if top_directory not in dir_to_fn:
-                    dir_to_fn[top_directory] = []
-
-                dir_to_fn[top_directory].append(fn)
-                continue
-
-            mod_name = ".".join(path)
-            if path and fn == "__init__.py":
-                seen_init = True
-                is_package = True
-            else:
-                if mod_name:
-                    mod_name += "." + fn[:-3]
-                else:
-                    mod_name = fn[:-3]
-
-                is_package = False
-
-            mod_info = RenpyImporter._ModuleInfo(prefix + fn, is_package, False)
-
-            yield mod_name, mod_info
-
-        if path and not seen_init:
-            yield ".".join(path), RenpyImporter._ModuleInfo(prefix, True, True)
-
-        for add_dir, files in dir_to_fn.items():
-            yield from self._visit_dir(*path, add_dir, files=files)
-
-    def _cache_entries(self) -> dict[str, _ModuleInfo]:
-        if self._finder_cache is not None:
-            return self._finder_cache
-
-        if not renpy.loader.game_files:
+        if not self._finder_cache and not renpy.loader.game_files:
             renpy.loader.scandirfiles()
 
-        self._finder_cache = dict(
-            self._visit_dir(files=(fn for _, fn in renpy.loader.game_files if fn.endswith(".py") if not fn.endswith("_ren.py")))
-        )
-        return self._finder_cache
+        try:
+            return self._finder_cache[fullname]
+        except KeyError:
+            pass
 
-    def _get_module_info(self, fullname: str) -> _ModuleInfo | None:
-        cache_entries = self._cache_entries()
+        fullname_base = fullname.replace(".", "/")
 
+        info = None
         for prefix in self.prefixes:
-            prefix = prefix.replace("/", ".")
-            if rv := cache_entries.get(prefix + fullname):
-                return rv
+            dir: pathlib.Path = prefix / fullname_base
 
-        return None
+            if dir.is_dir():
+                init = dir / '__init__.py'
+                if init.exists():
+                    info = RenpyImporter._ModuleInfo(str(init), True, False)
+                else:
+                    info = RenpyImporter._ModuleInfo(str(dir), True, True)
+                break
+            else:
+                file = dir.with_name(f'{dir.name}.py')
+                if file.exists() and file.is_file():
+                    if not file.name.endswith('_ren.py'):
+                        info = RenpyImporter._ModuleInfo(str(file), False, False)
+                    break
+
+        self._finder_cache[fullname] = info
+        return info
 
     # MetaPathFinder interface
     def invalidate_caches(self):
-        self._finder_cache = None
+        self._finder_cache.clear()
 
     def find_spec(self, fullname, path, target=None):
         if module_info := self._get_module_info(fullname):
@@ -268,7 +240,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 meta_backup = []
 
 
-def add_python_directory(path: str):
+def add_python_directory(path: str | RenpyPath):
     """
     :doc: other
 
