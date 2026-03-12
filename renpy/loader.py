@@ -32,11 +32,19 @@ import io
 import unicodedata
 import time
 import pathlib
+import contextlib
+import functools
+
 
 from renpy.pygame.rwobject import RWopsIO
 
 from renpy.compat.pickle import loads
 from renpy.webloader import DownloadNeeded
+
+from bisect import bisect_left, bisect_right
+from pathlib import Path, PosixPath, PurePosixPath, _make_selector
+from typing import Generator, IO, Any, Iterator
+
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
@@ -372,6 +380,15 @@ def scandirfiles():
 
     for i in scandirfiles_callbacks:
         i(add, seen)
+
+    from operator import itemgetter
+    def rpy_path_normalize_file_list(fn):
+        return tuple(sorted(map(normalize_renpy_path, map(itemgetter(1), fn))))
+
+    RenpyPath._paths = rpy_path_normalize_file_list(game_files)
+    RenpyCommonPath._paths = rpy_path_normalize_file_list(common_files)
+    pos = bisect_left(RenpyPath._paths, RenpyCommonPath._paths[0])
+    RenpyAllPath._paths = RenpyPath._paths[:pos] + RenpyCommonPath._paths + RenpyPath._paths[pos:]
 
 
 def scandirfiles_from_apk(add, seen):
@@ -1035,3 +1052,405 @@ def auto_quit():
         auto_lock.notify_all()
 
     auto_thread.join()
+
+
+_FILE_SEPARATOR = '\x00'
+_DIR_SEPARATOR = '\x01'
+
+def normalize_renpy_path(path: str) -> str:
+    """Convert unix path to alphabetically sortable path: 'a/b/c.txt' -> 'a\\x01b\\x00c.txt'"""
+    parent, separator, name = path.rpartition('/')
+    return parent.replace('/', _DIR_SEPARATOR) + _FILE_SEPARATOR + name
+
+def denormalize_renpy_path(path: str) -> str:
+    """Convert from alphabetically sortable path back to unix format: 'a\\x01b\\x00c.txt' -> 'a/b/c.txt'"""
+    parent, separator, name = path.rpartition(_FILE_SEPARATOR)
+    if not separator:
+        return name.replace(_DIR_SEPARATOR, '/')
+    if parent:
+        return parent.replace(_DIR_SEPARATOR, '/') + '/' + name
+    return name
+
+
+
+class RenpyPathDirEntry:
+    """Lightweight directory entry, analogous to os.DirEntry."""
+    __slots__ = ('name', '_raw_path', '_is_dir', '_path')
+
+    def __init__(self, raw_path: str, range_start: int, range_end: int, is_dir: bool, child_prefix_len: int, parent_prefix_len: int) -> None:
+        self._raw_path = raw_path
+        self._is_dir = is_dir
+        self.name = raw_path[parent_prefix_len:]
+
+    @property
+    def path(self) -> str:
+        try:
+            return self._path
+        except AttributeError:
+            self._path = denormalize_renpy_path(self._raw_path)
+            return self._path
+
+    def is_dir(self, *, follow_symlinks: bool = True) -> bool:
+        return self._is_dir
+
+    def is_file(self, *, follow_symlinks: bool = True) -> bool:
+        return not self._is_dir
+
+    def is_symlink(self) -> bool:
+        return False
+
+    def __fspath__(self) -> str:
+        return self.path
+
+    def __repr__(self) -> str:
+        return f"<VirtualDirEntry '{self.name}'>"
+
+
+
+@functools.lru_cache(maxsize=32768, typed=True)
+def _compile_pattern(pat, case_sensitive):
+    from fnmatch import translate
+    import re
+    flags = re.NOFLAG if case_sensitive else re.IGNORECASE
+    return re.compile(translate(pat), flags).match
+
+
+type RenpyLoadableMode = Literal["r", "rb", "br"]
+
+class RenpyPath(PurePosixPath):
+    __slots__ = ('_range_start', '_range_end', '_is_dir', '_prefix_length', '_as_path')
+
+    _paths: tuple[str, ...]
+    _base = renpy.config.gamedir
+
+
+    def _create(self, raw_path: str, range_start: int, range_end: int, is_dir: bool, child_prefix_len: int, parent_prefix_len: int | None = None) -> 'RenpyPath':
+
+        if parent_prefix_len is not None:
+            instance = self._from_parsed_parts('', '', self._tail_cached + [raw_path[parent_prefix_len:]])
+        else:
+            instance = self.with_segments(denormalize_renpy_path(raw_path))
+        instance._range_start = range_start
+        instance._range_end = range_end
+        instance._is_dir = is_dir
+        instance._prefix_length = child_prefix_len
+        return instance
+
+    @staticmethod
+    def _detangle_tail(tail: list[str]) -> list[str]:
+        skip_count = 0
+        rv = []
+        for e in tail[::-1]:
+            if e == '..':
+                skip_count += 1
+            elif e == '.':
+                continue
+            elif skip_count > 0:
+                skip_count -= 1
+            else:
+                rv.append(e)
+        if skip_count > 0:
+            return []
+
+        rv.reverse()
+        return rv
+
+
+    def _find_ranges(self) -> None:
+        tail = self._tail
+
+        if '.' in tail or '..' in tail:
+            tail = self._detangle_tail(tail)
+
+        if len(tail) < 2 and (len(tail) == 0 or tail[0] == ''):
+            self._prefix_length = 0
+            self._range_start = 0
+            self._range_end = len(self._paths)
+            self._is_dir = True
+            return
+
+        file_key = _DIR_SEPARATOR.join(tail[:-1]) + _FILE_SEPARATOR + tail[-1]
+
+        self._prefix_length = len(file_key.lstrip(_FILE_SEPARATOR))
+        self._is_dir = False
+
+        self._range_start = bisect_left(self._paths, file_key)
+        try:
+            if self._paths[self._range_start] == file_key:
+                self._range_end = self._range_start + 1
+                return
+        except IndexError:
+            self._range_end = self._range_start
+            return
+
+        dir_key = _DIR_SEPARATOR.join(tail)
+        self._range_start = bisect_left(self._paths, dir_key + _FILE_SEPARATOR, self._range_start)
+        self._range_end = bisect_right(self._paths, dir_key + '\x02', self._range_start)
+        self._is_dir = self._range_start < self._range_end
+
+
+    def exists(self, *, follow_symlinks: bool = True) -> bool:
+        try:
+            return self._range_start < self._range_end
+        except AttributeError:
+            self._find_ranges()
+            return self._range_start < self._range_end
+
+    def is_dir(self) -> bool:
+        try:
+            return self._is_dir
+        except AttributeError:
+            self._find_ranges()
+            return self._is_dir
+
+    def is_file(self) -> bool:
+        try:
+            return not self._is_dir and self._range_start + 1 == self._range_end
+        except AttributeError:
+            self._find_ranges()
+            return not self._is_dir and self._range_start + 1 == self._range_end
+
+    def is_remote_file(self):
+        if not self.is_file():
+            return False
+        tail = self._tail
+        if '.' in tail or '..' in tail:
+            tail = self._detangle_tail(tail)
+        return '/'.join(tail) in remote_files
+
+    def samefile(self, other):
+        try:
+            # Ranges are fastest to compare but slowest to calculate
+            return self is other or (
+                self._range_start == other._range_start and
+                self._range_end == other._range_end and
+                self._prefix_length == other._prefix_length
+            )
+        except AttributeError:
+            if self._raw_paths == other._raw_paths:
+                return True
+            return self.resolve()._tail == other.resolve()._tail
+
+
+    def _iter_children(self, create):
+        if not self.exists():
+            raise FileNotFoundError(f"No such file or directory: '{self}'")
+        if not self.is_dir():
+            raise NotADirectoryError(f"Not a directory: '{self}'")
+
+        prefix_length = self._prefix_length
+        _paths = self._paths
+
+        # Files: fn[prefix_length] == FILE_SEPARATOR
+        file_i = self._range_start
+        for file_i, fn in enumerate(_paths[self._range_start:self._range_end], start=self._range_start):
+            if fn[prefix_length] != _FILE_SEPARATOR:
+                break
+            yield create(fn, file_i, file_i + 1, False, prefix_length, prefix_length + 1)
+
+        if prefix_length:
+            prefix_length += 1
+
+        # Directories
+        while file_i < self._range_end:
+            fn = _paths[file_i]
+            slash_pos = fn.find(_DIR_SEPARATOR, prefix_length)
+            if slash_pos == -1:
+                slash_pos = fn.find(_FILE_SEPARATOR, prefix_length)
+                if slash_pos == -1:
+                    break
+            child_path = fn[:slash_pos]
+            child_range_end = bisect_left(_paths, child_path + '\x02', file_i, self._range_end)
+            yield create(child_path, file_i, child_range_end, True, len(child_path), prefix_length)
+            file_i = child_range_end
+
+    def iterdir(self) -> Generator['RenpyPath', None, None]:
+        yield from self._iter_children(self._create)
+
+    @contextlib.contextmanager
+    def scandir(self) -> Generator[Iterator[RenpyPathDirEntry], None, None]:
+        yield self._iter_children(RenpyPathDirEntry)
+
+    _scandir = scandir
+
+    def walk(self, top_down: bool = True, on_error=None, follow_symlinks: bool = False):
+        if not self.is_dir():
+            return
+
+        dir_paths: list[RenpyPath] = []
+        dir_names: list[str] = []
+        file_names: list[str] = []
+
+        for child in self.iterdir():
+            if child.is_dir():
+                dir_paths.append(child)
+                dir_names.append(child.name)
+            else:
+                file_names.append(child.name)
+
+        if top_down:
+            yield self, dir_names, file_names
+        for d in dir_paths:
+            yield from d.walk(top_down=True, on_error=on_error)
+        if not top_down:
+            yield self, dir_names, file_names
+
+    _make_child_relpath = Path._make_child_relpath
+
+    def glob(self, pattern: str, *, case_sensitive: bool | None = None) -> Generator['RenpyPath', None, None]:
+        if not self.exists():
+            raise FileNotFoundError(f"[Errno 2] No such file or directory: '{self}'")
+        if pattern == '*':
+            yield from self.iterdir()
+        elif pattern in ('**', '**/*'):
+            yield from self.rglob('*', case_sensitive=case_sensitive)
+        elif '*' not in pattern and '?' not in pattern:
+            child = self / pattern
+            if child.exists():
+                yield child
+        elif '**' not in pattern and '/' not in pattern:
+            matcher = _compile_pattern(pattern, case_sensitive)
+            with self.scandir() as entries:
+                for entry in entries:
+                    if matcher(entry.name):
+                        yield self / entry.name
+        else:
+            yield from _make_selector(tuple(pattern.split('/')), self._flavour, case_sensitive).select_from(self)
+
+
+    def rglob(self, pattern: str, *, case_sensitive: bool | None = None) -> Generator['RenpyPath', None, None]:
+        """Direct tuple slice iteration - cache friendly and fast."""
+        import fnmatch
+
+        if not self.exists():
+            raise FileNotFoundError(f"[Errno 2] No such file or directory: '{self}'")
+
+        yield from _make_selector(("**",) + tuple(pattern.split('/')), self._flavour, case_sensitive).select_from(self)
+
+
+    def is_absolute(self) -> bool:
+        return False
+
+    def as_path(self) -> Path:
+        try:
+            return self._as_path
+        except AttributeError:
+            pass
+
+        # similar to transpath but not using transpath because requires support to directories
+        path = str(self)
+        path = Path(lower_map.get(unicodedata.normalize("NFC", path.lower()), path))
+        base_path = Path(renpy.config.basedir)
+
+        for d in renpy.config.searchpath:
+            file_path = base_path / d / path
+
+            if file_path.exists():
+                self._as_path = file_path
+                return self._as_path
+
+        self._as_path = Path(self._base) / self
+        return self._as_path
+
+
+    def open(self, mode: RenpyLoadableMode = "r", *args, tl=False, **kwargs) -> io.BufferedReader | io.TextIOWrapper:  # type:ignore[reportIncompatibleMethodOverride]
+        """
+        Opens the resource for reading.
+        """
+
+        if not self.is_file():
+            raise IsADirectoryError(f"Only files may be opened. A directory was provided instead: {str(self)}")
+
+        f = renpy.loader.load(str(self), tl=tl)
+
+        if 'b' in mode:
+            return f
+        else:
+            return io.TextIOWrapper(f, *args, **kwargs)
+
+
+    def read_text(self, encoding=None) -> str:
+        with self.open("r", encoding=encoding) as f:
+            assert isinstance(f, io.TextIOWrapper)
+            return f.read()
+
+    def read_bytes(self) -> bytes:
+        with self.open("rb") as f:
+            assert isinstance(f, io.BufferedReader)
+            return f.read()
+
+    def resolve(self, strict=False):
+        tail = self._tail
+        if '.' not in tail and '..' not in tail:
+            return self
+
+        tail = self._detangle_tail(tail)
+        resolved_path: RenpyPath = self._from_parsed_parts('', '', tail)
+        if not strict or os.path.ALLOW_MISSING:
+            return resolved_path
+
+        if not resolved_path.exists():
+            raise FileNotFoundError(f"[Errno 2] No such file or directory: '{resolved_path}'")
+
+        return resolved_path
+
+
+
+    @classmethod
+    def current_path_line(cls):
+        from renpy.exports.debugexports import get_filename_line
+        fn, line = get_filename_line()
+        path = cls._from_parsed_parts('', '', os.path.split(fn))
+        return path, line
+
+    def rpy_path(self):
+        if self.is_dir():
+            raise IsADirectoryError(f"Directories are not python files and can't be rpyc. '{str(self)}' is a directory")
+
+        if self.suffix in ('.rpy', '.rpym') or self.name.endswith('_ren.py'):
+            return self
+
+        if self.suffix not in (".rpyc", ".rpymc"):
+            raise Exception(f"Only rpyc/rpymc files can have rpy/rpym/_ren.py counter-parts. '{str(self)}' is none of those")
+
+        as_ren_py = self.with_name(self.stem + '_ren.py')
+
+        if as_ren_py.exists():
+            return as_ren_py
+
+        without_c = self.with_suffix(self.suffix[:-1])
+        return without_c
+
+    def rpyc_path(self):
+
+        if self.is_dir():
+            raise IsADirectoryError(f"Directories are not python files and can't be rpy. '{str(self)}' is a directory")
+
+        if self.suffix in ('.rpyc', '.rpymc'):
+            return self
+
+        name = self.name
+        if self.suffix not in (".rpy", ".rpym") or not name.endswith('_ren.py'):
+            raise Exception(f"Only rpy/rpym/_ren.py files can have rpyc counter-parts. '{str(self)}' is none of those")
+
+        if name.endswith('_ren.py'):
+            name = name[:-7] + '.rpy'
+
+        return name + "c"
+
+    def build_classify(self, file_list):
+        from renpy import store
+
+        pattern = '/'.join(self._parts)
+
+        if self.is_dir():
+            pattern += '/**'
+
+        store.build.classify(pattern, file_list)
+
+
+class RenpyCommonPath(RenpyPath):
+    _base = renpy.config.commondir
+
+class RenpyAllPath(RenpyPath):
+    _base = renpy.config.basedir
