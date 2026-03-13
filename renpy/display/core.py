@@ -117,6 +117,7 @@ enabled_events: set[int] = {
     pygame.CONTROLLERDEVICEADDED,
     pygame.CONTROLLERDEVICEREMOVED,
     pygame.RENDERTARGETSRESET,
+    pygame.RENDERDEVICERESET,
     TIMEEVENT,
     PERIODIC,
     REDRAW,
@@ -3241,6 +3242,9 @@ class Interface:
                         if pygame.display.get_active() and self.audio_paused:
                             renpy.audio.audio.unpause_all()
                             self.audio_paused = False
+
+                elif ev.type == pygame.RENDERDEVICERESET:
+                    self.display_reset = True
 
                 # This returns the event location. It also updates the
                 # mouse state as necessary.
