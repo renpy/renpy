@@ -479,16 +479,20 @@ class Parser(object):
 
         return self
 
-    def copy_properties(self, name):
-        global parser
-        parser = self
-
+    def copy_positionals(self, name):
         parser_to_copy = statements.get(name, None)
         if parser_to_copy is None:
             raise Exception("{!r} is not a known screen statement".format(name))
 
         for p in parser_to_copy.positional:
             Positional(p.name)
+
+        return self
+
+    def copy_keywords(self, name):
+        parser_to_copy = statements.get(name, None)
+        if parser_to_copy is None:
+            raise Exception("{!r} is not a known screen statement".format(name))
 
         for v in set(parser_to_copy.keyword.values()):
             if isinstance(v, Keyword):
@@ -500,6 +504,11 @@ class Parser(object):
             elif isinstance(v, PrefixStyle):
                 PrefixStyle(v.prefix, v.name)
 
+        return self
+
+    def copy_properties(self, name):
+        self.copy_positionals(name)
+        self.copy_keywords(name)
         return self
 
 
@@ -608,6 +617,14 @@ def register_sl_displayable(*args, **kwargs):
 
         These correspond to groups of :doc:`style_properties`. Group can
         also be "ui", in which case it adds the :ref:`common ui properties <common-properties>`.
+
+    .. method:: copy_positionals(name)
+    
+        Adds positional arguments that can be passed to the `name` screen statement.
+        
+    .. method:: copy_keywords(name)
+    
+        Adds all styles and keyword arguments that can be passed to the `name` screen statement.
 
     .. method:: copy_properties(name)
 

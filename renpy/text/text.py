@@ -1642,9 +1642,8 @@ class Layout(object):
     def thaic90_paragraph(self, p):
         """
         Given a paragraph (a list of (segment, text) tuples), converts the
-        text into c90-encoded thai text. This is an encoding that combines
-        multiple characters (base character, upper vowel, lower vowel, and
-        tone mark) into a single character in a unicode reserved space.
+        text to Thai C90 Encoding by mapping Thai base characters and combining marks
+        to PUA code points for correct glyph positioning in C90-compatible fonts.
         """
 
         rv = []
