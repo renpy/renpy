@@ -31,7 +31,7 @@ import importlib.abc
 import importlib.util
 import importlib.resources.abc
 
-from renpy.loader import TreeEntry
+from renpy.loader import RenpyPath
 
 PREFER_LOADER: bool = False
 "This can be set to True to prefer the Ren'Py loader for Python imports, for testing purposes."
@@ -41,78 +41,12 @@ if PREFER_LOADER:
 
 # Package Resources
 
-class RenpyPath(importlib.resources.abc.Traversable):
-    """
-    A class that represents a traversable resource in a Ren'Py package.
-    """
 
-    path: str
-    "The path to the resource, relative to the game directory."
 
-    tree: TreeEntry | None
-    "The tree structure of the resource, or None if it is a file."
+class TraversableRenpyPath(importlib.resources.abc.Traversable, RenpyPath):
 
-    def __init__(self, path: str, tree: TreeEntry|None):
-        self.path = path
-        self.tree = tree
-
-    @property
-    def name(self) -> str:
-        return self.path.rpartition("/")[2]
-
-    def iterdir(self):
-        if not isinstance(self.tree, dict):
-            return NotADirectoryError(f"Not a directory: {self.path}")
-
-        for name, entry in self.tree.items():
-            yield RenpyPath(self.path + "/" + name, entry)
-
-    def is_dir(self) -> bool:
-        return isinstance(self.tree, dict)
-
-    def is_file(self) -> bool:
-        return self.tree is True
-
-    def __truediv__(self, other: str) -> "RenpyPath":
-        path = f"{self.path}/{other}"
-
-        if isinstance(self.tree, dict):
-            return RenpyPath(path, self.tree.get(other, None))
-        else:
-            return RenpyPath(path, None)
-
-    def joinpath(self, *args: str) -> "RenpyPath":
-        rv = self
-
-        for i in args:
-            for j in i.strip("/").split("/"):
-                rv = rv / j
-
-        return rv
-
-    def open(self, mode: str = "r", *args, **kwargs) -> io.BufferedReader | io.TextIOWrapper:  # type:ignore[reportIncompatibleMethodOverride]
-        """
-        Opens the resource for reading.
-        """
-        if not self.is_file():
-            raise NotADirectoryError(f"Not a file: {self.path}")
-
-        f = renpy.loader.load(self.path)
-
-        if mode == "r":
-            return io.TextIOWrapper(f, *args, **kwargs)
-        else:
-            return f
-
-    def read_text(self, encoding=None) -> str:
-        with self.open("r", encoding=encoding) as f:
-            assert isinstance(f, io.TextIOWrapper)
-            return f.read()
-
-    def read_bytes(self) -> bytes:
-        with self.open("rb") as f:
-            assert isinstance(f, io.BufferedReader)
-            return f.read()
+    def open(self, *args, **kwargs) -> "TraversableRenpyPath":
+        return self.open(*args, tl=True, **kwargs)
 
 
 class RenpyResourceReader(importlib.resources.abc.TraversableResources):
@@ -130,10 +64,7 @@ class RenpyResourceReader(importlib.resources.abc.TraversableResources):
 
         path = self.path[6:]
 
-        rv = RenpyPath("", renpy.loader.tree)  # type:ignore[reportAbstractUsage]
-
-        for i in path.strip("/").split("/"):
-            rv = rv / i
+        rv = TraversableRenpyPath(path.lstrip("/"))
 
         return rv
 
@@ -146,18 +77,18 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
     """
 
     def __init__(self):
-        self.prefixes: list[str] = []
+        self.prefixes: list[RenpyPath] = []
         "List of prefixes where modules can be found."
 
-        self._finder_cache: dict[str, RenpyImporter._ModuleInfo] | None = None
+        self._finder_cache: dict[str, RenpyImporter._ModuleInfo] = {}
         """
         A dict from module name to module info of that module for all paths that
         can be loaded with this importer.
         """
 
-    def add_prefix(self, prefix: str):
-        if prefix and not prefix.endswith("/"):
-            prefix = prefix + "/"
+    def add_prefix(self, prefix: str | RenpyPath):
+        if isinstance(prefix, str):
+            prefix = RenpyPath(prefix)
 
         if prefix in self.prefixes:
             return
@@ -170,70 +101,42 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         is_package: bool
         is_namespace: bool
 
-    def _visit_dir(self, *path: str, files: Iterable[str]):
-        dir_to_fn: dict[str, list[str]] = {}
+    def _get_module_info(self, fullname: str) -> _ModuleInfo | None:
 
-        seen_init = False
-        prefix = ""
-        if path:
-            prefix += "/".join(path) + "/"
-
-        for fn in files:
-            if "/" in fn:
-                top_directory, _, fn = fn.partition("/")
-                if top_directory not in dir_to_fn:
-                    dir_to_fn[top_directory] = []
-
-                dir_to_fn[top_directory].append(fn)
-                continue
-
-            mod_name = ".".join(path)
-            if path and fn == "__init__.py":
-                seen_init = True
-                is_package = True
-            else:
-                if mod_name:
-                    mod_name += "." + fn[:-3]
-                else:
-                    mod_name = fn[:-3]
-
-                is_package = False
-
-            mod_info = RenpyImporter._ModuleInfo(prefix + fn, is_package, False)
-
-            yield mod_name, mod_info
-
-        if path and not seen_init:
-            yield ".".join(path), RenpyImporter._ModuleInfo(prefix, True, True)
-
-        for add_dir, files in dir_to_fn.items():
-            yield from self._visit_dir(*path, add_dir, files=files)
-
-    def _cache_entries(self) -> dict[str, _ModuleInfo]:
-        if self._finder_cache is not None:
-            return self._finder_cache
-
-        if not renpy.loader.game_files:
+        if not self._finder_cache and not renpy.loader.game_files:
             renpy.loader.scandirfiles()
 
-        self._finder_cache = dict(
-            self._visit_dir(files=(fn for _, fn in renpy.loader.game_files if fn.endswith(".py") if not fn.endswith("_ren.py")))
-        )
-        return self._finder_cache
+        try:
+            return self._finder_cache[fullname]
+        except KeyError:
+            pass
 
-    def _get_module_info(self, fullname: str) -> _ModuleInfo | None:
-        cache_entries = self._cache_entries()
+        fullname_base = fullname.replace(".", "/")
 
+        info = None
         for prefix in self.prefixes:
-            prefix = prefix.replace("/", ".")
-            if rv := cache_entries.get(prefix + fullname):
-                return rv
+            dir: pathlib.Path = prefix / fullname_base
 
-        return None
+            if dir.is_dir():
+                init = dir / '__init__.py'
+                if init.exists():
+                    info = RenpyImporter._ModuleInfo(str(init), True, False)
+                else:
+                    info = RenpyImporter._ModuleInfo(str(dir), True, True)
+                break
+            else:
+                file = dir.with_name(f'{dir.name}.py')
+                if file.exists() and file.is_file():
+                    if not file.name.endswith('_ren.py'):
+                        info = RenpyImporter._ModuleInfo(str(file), False, False)
+                    break
+
+        self._finder_cache[fullname] = info
+        return info
 
     # MetaPathFinder interface
     def invalidate_caches(self):
-        self._finder_cache = None
+        self._finder_cache.clear()
 
     def find_spec(self, fullname, path, target=None):
         if module_info := self._get_module_info(fullname):
@@ -337,7 +240,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 meta_backup = []
 
 
-def add_python_directory(path: str):
+def add_python_directory(path: str | RenpyPath):
     """
     :doc: other
 
