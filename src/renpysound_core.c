@@ -1441,7 +1441,10 @@ void RPS_periodic() {
     UNLOCK_NAME();
 
     while (d) {
-        media_close(d->stream);
+		if (d->stream) {
+        	media_close(d->stream);
+		}
+		
         struct Dying *next_d = d->next;
 
         if (d->audio_filter) {
