@@ -49,7 +49,7 @@ For example::
 
 A local label can also be declared by its full name, consisting of the global
 label name followed by the local label name, separated by a dot. This will not
-declare the local label. ::
+declare the global label. ::
 
     label global_label.yet_another_local:
         "Yet another!"
