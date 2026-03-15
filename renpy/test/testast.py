@@ -698,9 +698,13 @@ class TextSelector(Selector):
     `raw`
         If True, the raw text is used for matching before translation and
         substitution. If False, the processed text is used.
+
+    `expression`
+        If True, the pattern is treated as a Python expression that is
+        evaluated to get the actual pattern string.
     """
 
-    __slots__ = ("pattern", "raw")
+    __slots__ = ("pattern", "raw", "expression")
 
     def __init__(
         self,
@@ -708,16 +712,22 @@ class TextSelector(Selector):
         wait_for_focus: bool = False,
         pattern: str = "",
         raw: bool = False,
+        expression: bool = False,
     ):
         super(TextSelector, self).__init__(loc, wait_for_focus)
         self.pattern = pattern
         self.raw = raw
+        self.expression = expression
 
     def get_repr_params(self) -> str:
         return f"pattern={self.pattern!r}, raw={self.raw}"
 
     def get_element(self) -> Focus | None:
-        rv = renpy.test.testfocus.find_focus(self.pattern, self.raw)
+        pattern = self.pattern
+        if getattr(self, "expression", False):
+            pattern = scoped_eval(self.pattern)
+
+        rv = renpy.test.testfocus.find_focus(pattern, self.raw)
         return rv
 
     def element_not_found_during_perform(self) -> None:
