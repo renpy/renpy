@@ -741,6 +741,7 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
     layer = None
     focused = False
     raw = False
+    expression = False
 
     while True:
         if l.keyword("screen"):
@@ -754,6 +755,14 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
 
         elif l.keyword("focused"):
             focused = True
+
+        elif l.keyword("expression"):
+            expression = True
+            if pattern is not None:
+                l.error("Only one text pattern may be specified in a selector.")
+
+            pattern = l.require(l.simple_expression, operator=False)
+
 
         elif l.keyword("raw"):
             raw = True

@@ -380,8 +380,12 @@ for each value in the list. For example::
         parameter x = [1, 2, 3]
         assert eval (x > 0)
 
+    testcase clicks:
+        parameter button = ["A","B"]
+        click expression button
+
 This will run the test three times: once with ``x = 1``, once with ``x = 2``,
-and once with ``x = 3``.
+and once with ``x = 3``. It then clicks the buttons with the name "A" and "B".
 
 Each run will execute the ``before testcase`` and ``after testcase`` hooks,
 and each test is reported separately in the test report.
@@ -455,6 +459,15 @@ depending on the value of ``choice_text``::
         run ShowMenu(screen_name)
         pause until screen screen_name
         run Return()
+
+
+Parameters can be used, preceded by ``expression``, to select a button by
+parameter name.
+
+    testcase click_buttons:
+        parameter button_name = ["Load", "Save"]
+
+        click expression button_name
 
 Parameters can also be used inside Python code blocks.
 For example, this test prints the current values of ``x`` and ``y``,
@@ -1037,6 +1050,7 @@ Text Selector
     Type: :dfn:`Condition, Selector`
 
     .. describe:: "<text>" [raw]
+    .. describe:: expression <expression> [raw]
 
 The ``text`` selector takes a string which resolves to a target
 found on the screen. The search is performed by going through all focusable
@@ -1052,6 +1066,8 @@ If ``raw`` is given, the search is performed on the text as given in the
 script, before translation and :ref:`interpolation <text-interpolation>`.
 If not given, the search is performed on the text as it appears on screen,
 after translation and interpolation.
+
+If ``expression`` is given, the string to search for is determined by evaluating the provided expression.
 
 ::
 
