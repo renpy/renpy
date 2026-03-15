@@ -31,7 +31,7 @@ import importlib.abc
 import importlib.util
 import importlib.resources.abc
 
-from renpy.loader import TreeEntry
+from renpy.loader import RenpyPath
 
 PREFER_LOADER: bool = False
 "This can be set to True to prefer the Ren'Py loader for Python imports, for testing purposes."
@@ -41,78 +41,12 @@ if PREFER_LOADER:
 
 # Package Resources
 
-class RenpyPath(importlib.resources.abc.Traversable):
-    """
-    A class that represents a traversable resource in a Ren'Py package.
-    """
 
-    path: str
-    "The path to the resource, relative to the game directory."
 
-    tree: TreeEntry | None
-    "The tree structure of the resource, or None if it is a file."
+class TraversableRenpyPath(importlib.resources.abc.Traversable, RenpyPath):
 
-    def __init__(self, path: str, tree: TreeEntry|None):
-        self.path = path
-        self.tree = tree
-
-    @property
-    def name(self) -> str:
-        return self.path.rpartition("/")[2]
-
-    def iterdir(self):
-        if not isinstance(self.tree, dict):
-            return NotADirectoryError(f"Not a directory: {self.path}")
-
-        for name, entry in self.tree.items():
-            yield RenpyPath(self.path + "/" + name, entry)
-
-    def is_dir(self) -> bool:
-        return isinstance(self.tree, dict)
-
-    def is_file(self) -> bool:
-        return self.tree is True
-
-    def __truediv__(self, other: str) -> "RenpyPath":
-        path = f"{self.path}/{other}"
-
-        if isinstance(self.tree, dict):
-            return RenpyPath(path, self.tree.get(other, None))
-        else:
-            return RenpyPath(path, None)
-
-    def joinpath(self, *args: str) -> "RenpyPath":
-        rv = self
-
-        for i in args:
-            for j in i.strip("/").split("/"):
-                rv = rv / j
-
-        return rv
-
-    def open(self, mode: str = "r", *args, **kwargs) -> io.BufferedReader | io.TextIOWrapper:  # type:ignore[reportIncompatibleMethodOverride]
-        """
-        Opens the resource for reading.
-        """
-        if not self.is_file():
-            raise NotADirectoryError(f"Not a file: {self.path}")
-
-        f = renpy.loader.load(self.path)
-
-        if mode == "r":
-            return io.TextIOWrapper(f, *args, **kwargs)
-        else:
-            return f
-
-    def read_text(self, encoding=None) -> str:
-        with self.open("r", encoding=encoding) as f:
-            assert isinstance(f, io.TextIOWrapper)
-            return f.read()
-
-    def read_bytes(self) -> bytes:
-        with self.open("rb") as f:
-            assert isinstance(f, io.BufferedReader)
-            return f.read()
+    def open(self, *args, **kwargs) -> "TraversableRenpyPath":
+        return self.open(*args, _tl=True, **kwargs)
 
 
 class RenpyResourceReader(importlib.resources.abc.TraversableResources):
@@ -130,10 +64,7 @@ class RenpyResourceReader(importlib.resources.abc.TraversableResources):
 
         path = self.path[6:]
 
-        rv = RenpyPath("", renpy.loader.tree)  # type:ignore[reportAbstractUsage]
-
-        for i in path.strip("/").split("/"):
-            rv = rv / i
+        rv = TraversableRenpyPath(path.lstrip("/"))
 
         return rv
 

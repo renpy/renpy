@@ -330,11 +330,6 @@ remote_files = {}
 scandirfiles_callbacks = []
 
 
-type TreeEntry = dict[str, "TreeEntry"] | Literal[True]
-tree: TreeEntry = {}
-"""This is a tree of files and directories, used to allow resource traversal. directories are represented as
-   dicts, and files as True."""
-
 
 def scandirfiles():
     """
@@ -359,24 +354,6 @@ def scandirfiles():
         files.append((dn, fn))
         seen.add(fn)
         loadable_cache[unicodedata.normalize("NFC", fn.lower())] = True
-
-        # Build the tree used to traverse files.
-
-        parts = fn.split("/")
-        rest = parts[-1]
-        first = parts[:-1]
-
-        t = tree
-        for i in first:
-            assert t is not True
-
-            if (i not in t) or (t[i] is True):
-                t[i] = {}
-
-            t = t[i]
-
-        assert t is not True
-        t[rest] = True
 
     for i in scandirfiles_callbacks:
         i(add, seen)
