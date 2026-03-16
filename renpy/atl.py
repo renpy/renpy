@@ -814,6 +814,9 @@ class Statement(renpy.object.Object):
     def visit(self):
         return []
 
+    def in_current_store(self):
+        return self
+
     # Does this respond to an event?
     def _handles_event(self, event):
         return False
@@ -906,6 +909,10 @@ class Block(Statement):
                 self.times.append((s.time, i + 1))
 
         self.times.sort()
+
+    def in_current_store(self):
+        statements = [i.in_current_store() for i in self.statements]
+        return Block(self.loc, statements)
 
     def _handles_event(self, event):
         for i in self.statements:
@@ -1350,6 +1357,10 @@ class Child(Statement):
 
         return "next", st, None
 
+    def in_current_store(self):
+        child = self.child._in_current_store()
+        return Child(self.loc, child, self.transition)
+
     def visit(self):
         return [self.child]
 
@@ -1681,6 +1692,10 @@ class Parallel(Statement):
         super(Parallel, self).__init__(loc)
         self.blocks = blocks
 
+    def in_current_store(self):
+        blocks = [i.in_current_store() for i in self.blocks]
+        return Parallel(self.loc, blocks)
+
     def _handles_event(self, event):
         for i in self.blocks:
             if i._handles_event(event):
@@ -1757,6 +1772,10 @@ class Choice(Statement):
         super(Choice, self).__init__(loc)
 
         self.choices = choices
+
+    def in_current_store(self):
+        choices = [(chance, block.in_current_store()) for chance, block in self.choices]
+        return Choice(self.loc, choices)
 
     def _handles_event(self, event):
         for i in self.choices:
@@ -1866,6 +1885,10 @@ class On(Statement):
         super(On, self).__init__(loc)
 
         self.handlers = handlers
+
+    def in_current_store(self):
+        handlers = {k: v.in_current_store() for k, v in self.handlers.items()}
+        return On(self.loc, handlers)
 
     def _handles_event(self, event):
         if event in self.handlers:
