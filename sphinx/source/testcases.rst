@@ -387,8 +387,8 @@ for each value in the list. For example::
 This will run the test three times: once with ``x = 1``, once with ``x = 2``,
 and once with ``x = 3``. It then clicks the buttons with the name "A" and "B".
 
-Each run will execute the ``before testcase`` and ``after testcase`` hooks,
-and each test is reported separately in the test report.
+Parameters should be thought of as defining multiple testsuites or testcases, with
+the hooks (inculuding ``setup`` and ``teardown``) being run multiple times.
 
 Grouped Parameters
 ^^^^^^^^^^^^^^^^^^
