@@ -1220,6 +1220,10 @@ class Transform(Container):
         return rv
 
     def _in_current_store(self):
+
+        if not self.active:
+            self.update_state()
+
         if self.child is None:
             return self
 
