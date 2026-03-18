@@ -1652,6 +1652,12 @@ This maps the special directory names ('images', 'audio', 'fonts') to a list of 
 be searched for that kind of file.
 """
 
+font_size_adjust: dict[str, float|Callable[[str, float], float]] = {}
+"""
+A map from font name to a multiplier or function that's used to adjust the size of a font.
+"""
+
+
 
 del os
 del collections

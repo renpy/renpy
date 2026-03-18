@@ -725,6 +725,13 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
 
         return rv
 
+    font_size_adjust = renpy.config.font_size_adjust.get(fn, None)
+    if font_size_adjust is not None:
+        if callable(font_size_adjust):
+            size = font_size_adjust(fn, size)
+        else:
+            size = size * font_size_adjust
+
     features = None if features is None else tuple(sorted(features.items()))
 
     # Check for a cached TTF.

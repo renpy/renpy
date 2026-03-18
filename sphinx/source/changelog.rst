@@ -13,6 +13,11 @@ Changelog (Ren'Py 7.x-)
 Features
 --------
 
+The new :var:`config.font_size_adjust` variable is a dictionary mapping font names to
+either a multiplier or a function that adjusts the size of the font. This allows you to
+adjust the size of fonts without needing to change the font files themselves, which can be
+to adjust fonts to the same relative size.
+
 Text shaders now support the ``u_text_time`` uniform, which is the time in seconds since the start of the text effect.
 
 Text interpolation now supports the ``!f`` flag, which passes interpolated text through :var:`config.say_menu_text_filter`.

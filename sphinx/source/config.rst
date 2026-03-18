@@ -101,7 +101,7 @@ that feature.
 
     A list of functions that are called (with no arguments) whenever
     default statements are processed. The default statements are
-    run after the init phase, but before the game starts; when a save 
+    run after the init phase, but before the game starts; when a save
     is loaded; after rollback; before lint; and potentially at
     other times.
 
@@ -132,7 +132,7 @@ that feature.
 
 .. var:: config.python_callbacks = [ ... ]
 
-    A list of functions that are called, without arguments, whenever a 
+    A list of functions that are called, without arguments, whenever a
     Python block is run outside of the init phase.
 
     One possible use of this would be to have a function limit a variable
@@ -1765,6 +1765,16 @@ Text and Fonts
     will get a bold italic version of vera, rather than a bold version
     of the italic vera.
 
+.. var:: config.font_size_adjust = { }
+
+    This is a dictionary mapping font names to size adjustments. The name is a string.
+    The size adjustment may be a float, in which case it is multiplied with the original
+    size. The size adjustment may also be a function that takes the filename (a string) and
+    the original size (a float) as arguments, and returns the adjusted size.
+
+    This can be used to adjust multiple font families to be the same visual size.
+    This only works with scalable fonts.
+
 .. var:: config.hyperlink_handlers = { ... }
 
     A dictionary mapping a hyperlink protocol to the handler for that
@@ -2254,7 +2264,7 @@ Development
 
 .. var:: config.console = False
 
-    This enables the console in the case :var:`config.developer` is not 
+    This enables the console in the case :var:`config.developer` is not
     set to True.
 
 .. var:: config.developer = "auto"
