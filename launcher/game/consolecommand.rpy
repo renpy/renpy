@@ -20,6 +20,37 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init python:
+    import shutil
+
+    def find_linux_terminal_emulator():
+        """
+        Find an available terminal emulator, starting with xdg-terminal-exec.
+        Returns a tuple of (terminal_name, args_list) for the first available terminal,
+        or (None, None) if none found.
+        """
+        terminals = [
+            ("xdg-terminal-exec", ["bash", "-c"]),
+            ("x-terminal-emulator", ["-e"]),
+            ("kgx", ["-e", "bash", "-c"]),
+            ("gnome-terminal", ["--", "bash", "-c"]),
+            ("konsole", ["-e", "bash", "-c"]),
+            ("xfce4-terminal", ["-e"]),
+            ("mate-terminal", ["-e"]),
+            ("foot", ["bash", "-c"]),
+            ("alacritty", ["-e", "bash", "-c"]),
+            ("kitty", ["bash", "-c"]),
+            ("wezterm", ["start", "--", "bash", "-c"]),
+            ("ghostty", ["-e", "bash", "-c"]),
+            ("tilix", ["-e"]),
+            ("terminology", ["-e"]),
+        ]
+
+        for terminal, args in terminals:
+            path = shutil.which(terminal)
+            if path:
+                return terminal, args
+
+        return None, None
 
     class ConsoleCommand():
         """
@@ -83,7 +114,9 @@ init python:
 
             if renpy.linux:
                 command = renpy.fsencode('"{}"'.format(self.fn.replace("\"", "\\\"")))
-                subprocess.Popen([ "x-terminal-emulator", "-e", command ])
+                terminal, args = find_linux_terminal_emulator()
+                if terminal and args:
+                    subprocess.Popen([terminal] + args + [command])
             else:
                 command = renpy.fsencode(self.fn)
                 os.startfile(command)
