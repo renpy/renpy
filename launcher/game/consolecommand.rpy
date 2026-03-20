@@ -87,8 +87,15 @@ init python:
             Adds a command to be run.
             """
 
-            args = [ b'"' + renpy.fsencode(i, force=True) + b'"' for i in args]
-            self.f.write(b" ".join(args) + self.nl)
+            if renpy.windows:
+                import subprocess
+                quoted = subprocess.list2cmdline(list(args))
+            else:
+                import shlex
+                quoted = shlex.join(args)
+
+
+            self.f.write(renpy.fsencode(quoted, force=True) + self.nl)
 
         def write(self, *args):
             """

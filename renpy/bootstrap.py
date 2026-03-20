@@ -109,8 +109,8 @@ def mac_start(fn):
     """
     os.start compatibility for mac.
     """
-
-    os.system("open " + fn)  # type: ignore
+    import shlex
+    os.system("open " + shlex.quote(fn))  # type: ignore
 
 
 def popen_del(self, *args, **kwargs):
