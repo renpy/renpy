@@ -448,6 +448,11 @@ def main():
     if game.persistent._virtual_size:
         renpy.config.screen_width, renpy.config.screen_height = game.persistent._virtual_size
 
+    # Reinitialize styles with the new screen size.
+    renpy.game.call_in_new_context("_errorhandling")
+    renpy.config.init_system_styles()
+    renpy.style.build_styles()
+
     # Init save locations and loadsave.
     renpy.savelocation.init()
 
