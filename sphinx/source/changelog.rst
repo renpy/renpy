@@ -68,6 +68,9 @@ be consumed.
 Features
 --------
 
+Support has been added for a system-installed copy of the VSCodium text editor. This is a libre build of the
+same source code that makes Visual Studio Code.
+
 Add the Transform.unique() method, which marks a transform as unique. This prevents the transform from being
 copied when added to a displayable, which allows the transform to maintain state across multiple uses, or be
 referenced from outside its function argument.
