@@ -8,7 +8,8 @@ class Editor(renpy.editor.Editor):
 
     has_projects = True
 
-    system = __file__.endswith(" (System).edit.py")
+    codium = __file__.endswith("VSCodium (System).edit.py")
+    system = __file__.endswith(" (System).edit.py") and not codium
 
     def get_code(self):
         """
@@ -27,6 +28,19 @@ class Editor(renpy.editor.Editor):
                 return "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
 
             return "code"
+
+        elif self.codium:
+
+            if "RENPY_VSCODE" in os.environ:
+                return os.environ["RENPY_VSCODE"]
+
+            if renpy.windows:
+                return "codium.cmd"
+
+            if renpy.macintosh and os.path.exists("/Applications/VSCodium.app/Contents/Resources/app/bin/codium"):
+                return "/Applications/VSCodium.app/Contents/Resources/app/bin/codium"
+
+            return "codium"
 
         else:
 
