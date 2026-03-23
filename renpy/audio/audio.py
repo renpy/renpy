@@ -382,8 +382,9 @@ class Channel(object):
         context.music = mcd
 
         ctx = self.get_context().copy()
-
         mcd[self.name] = ctx
+
+        context.movie = dict(context.movie)
         return ctx
 
     def split_filename(self, filename: str | AudioData, looped: bool) -> tuple[str | AudioData, float, float, float]:
@@ -715,6 +716,22 @@ class Channel(object):
                 renpysound.stop(self.number)
             else:
                 renpysound.fadeout(self.number, secs)
+
+            # Mark the movie as having ended.
+
+            context_movie = renpy.game.context().movie
+
+            if self.name in context_movie:
+                context_movie = dict(context_movie)
+                del context_movie[self.name]
+                renpy.game.context().movie = context_movie
+
+            last_channel_movie = renpy.display.video.last_channel_movie
+
+            if self.name in last_channel_movie:
+                last_channel_movie = dict(last_channel_movie)
+                del last_channel_movie[self.name]
+                renpy.display.video.last_channel_movie = last_channel_movie
 
     def reload(self):
         """
