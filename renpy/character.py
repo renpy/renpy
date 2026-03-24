@@ -845,8 +845,8 @@ def display_say(
                     raise Exception("The say screen (or show_function) must return a Text object.")
 
                 if what_ctc:
-                    if extend_text or not last_pause:
-                        if ctc_position == "nestled" or ctc_position == "nestled-close":
+                    if ctc_position == "nestled" or ctc_position == "nestled-close":
+                        if retain or (type == "nvl") or  extend_text or not last_pause:
                             what_ctc = CTCPauseHolder(what_ctc)
 
                     if ctc_position == "nestled":
