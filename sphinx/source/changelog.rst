@@ -13,6 +13,10 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+A "nestled" or "nestled-close" click-to-continue indicator will now be rendered at 0 width in NVL mode
+and retained bubbles. This prevents text from jumping when advancing, but may lead to the CTC indicator
+being placed slightly outside the text area. (This is is similar to how {w}, {p}, and extend is handled.)
+
 Fixes an issue where each time Ren'Py checked to see if rollback is possible, one level of rollback would
 be consumed.
 
