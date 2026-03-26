@@ -47,6 +47,7 @@ init -1100 python:
             config.audio_directory = "audio"
             config.audio_directories = [ ]
             config.late_audio_scan = False
+            config.scene_uses_tag_layer = False
 
         if version <= (8, 4, 99):
             config.images_directory = "images"

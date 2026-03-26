@@ -318,5 +318,6 @@
     "cython.includePaths": [
         "src",
         "src/pygame/include"
-    ]
+    ],
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }

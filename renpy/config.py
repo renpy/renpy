@@ -713,7 +713,7 @@ always_shown_screens = []
 # A map from tag to the default layer that tag should be displayed on.
 tag_layer = {}
 
-# The default layer for tags not in in tag_layer.
+# The default layer for tags not in tag_layer.
 default_tag_layer = "master"
 
 # A map from tag to the default transform that's used for that tag.
@@ -1657,6 +1657,10 @@ font_size_adjust: dict[str, float|Callable[[str, float], float]] = {}
 A map from font name to a multiplier or function that's used to adjust the size of a font.
 """
 
+scene_uses_tag_layer: bool = True
+"""
+If True, the scene statement will use the tag layer if a tag is known.
+"""
 
 
 del os

@@ -633,6 +633,28 @@ tuple[tuple[str, ...], str | None, str | None, list[str], str | None, str | None
 tuple[tuple[str, ...], list[str], str | None]
 """
 
+def get_imspec_tag(imspec: ImspecType) -> str | None:
+    """
+    Returns the tag of the given imspec, or None if it doesn't have one.
+    """
+
+    if len(imspec) == 7:
+        name, expression, tag, at_expr_list, layer, _zorder, _behind = imspec
+
+    elif len(imspec) == 6:
+        name, expression, tag, at_expr_list, layer, _zorder = imspec
+
+    else:
+        name, at_expr_list, layer = imspec
+        tag = None
+        expression = None
+
+    rv = tag or name
+    if isinstance(rv, tuple):
+        return rv[0]
+    else:
+        return rv
+
 
 def predict_imspec(imspec: ImspecType, scene=False, atl: "renpy.atl.RawBlock | None" = None):
     """
@@ -1475,7 +1497,12 @@ class Scene(Node):
         next_node(self.next)
         statement_name("scene")
 
-        renpy.config.scene(self.layer)
+        if self.imspec:
+            tag = get_imspec_tag(self.imspec)
+        else:
+            tag = None
+
+        renpy.config.scene(self.layer, tag=tag)
 
         if self.imspec:
             show_imspec(self.imspec, atl=getattr(self, "atl", None))

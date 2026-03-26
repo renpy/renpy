@@ -42,6 +42,8 @@ and used to populate the :ref:`audio-namespace <audio-namespace>`.
 Other Changes
 -------------
 
+The ``scene`` statenment now respects :var:`config.tag_layer` when deciding which later to clear.
+
 It is now possible to consume in-app purchases on Android, as well as on iOS.
 
 The :var:`config.tlid_only_considers_say` variable has been set to True by default. This prevents non-say statements,
