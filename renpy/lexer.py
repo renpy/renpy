@@ -159,6 +159,8 @@ def munge_filename(fn):
 
     if rv.endswith("_ren.py"):
         rv = rv[:-7]
+    elif rv.endswith("_rpym.py"):
+        rv = rv[:-8]
 
     rv = os.path.splitext(rv)[0]
     rv = rv.replace(" ", "_")
@@ -281,7 +283,7 @@ def list_logical_lines(
     with data_io:
         data = data_io.read()
 
-    if filename.endswith("_ren.py"):
+    if filename.endswith(("_ren.py", "_rpym.py")):
         data = ren_py_to_rpy(data, filename)
 
     # Add couple empty lines, so we can safely check for pos + 2 for triple-string.
