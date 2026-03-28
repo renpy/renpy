@@ -232,7 +232,7 @@ related to the ``default`` statement.
 
     It is highly recommended to ``default`` every variable in your game that is
     susceptible to change. If you use ``init python`` or ``define`` to declare a
-    variable, when a player play a game and changes that variable, then goes
+    variable, when a player plays a game and changes that variable, then goes
     back to the main menu and starts a new game, the variable will not have the
     value set in ``init python`` and so the former game will "leak" in the newly
     started one. If you create these variables in the start label instead, they
