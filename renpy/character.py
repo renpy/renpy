@@ -216,7 +216,7 @@ class CTCPauseHolder(renpy.display.displayable.Displayable):
 
     def render(self, width, height, st, at):
         cr = renpy.display.render.render(self.ctc, width, height, st, at)
-        rv = renpy.display.render.Render(0, cr.width)
+        rv = renpy.display.render.Render(0, cr.height)
         rv.blit(cr, (0, 0))
 
         return rv
