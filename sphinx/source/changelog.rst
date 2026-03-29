@@ -61,12 +61,13 @@ Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, i
 8.5.2
 =====
 
-Fixes
------
+Fixes and Changes
+-----------------
 
-A "nestled" or "nestled-close" click-to-continue indicator will now be rendered at 0 width in NVL mode
-and retained bubbles. This prevents text from jumping when advancing, but may lead to the CTC indicator
-being placed slightly outside the text area. (This is is similar to how {w}, {p}, and extend is handled.)
+Nestled and nestled-close click-to-continue indicators are now rendered at 0 width in all circumstances. This prevents
+a class of issues that could occur when with NVL-mode, retained bubbles, and other configurations. This is equivalent to
+to rendering the text without a click-to-continue indicator, and then placing the CTC indicator next to the end of the
+rendered text. (This is is similar how {w}, {p}, and extend were already handled.)
 
 Fixes an issue where each time Ren'Py checked to see if rollback is possible, one level of rollback would
 be consumed.
