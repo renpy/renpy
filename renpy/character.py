@@ -846,8 +846,7 @@ def display_say(
 
                 if what_ctc:
                     if ctc_position == "nestled" or ctc_position == "nestled-close":
-                        if retain or (type == "nvl") or  extend_text or not last_pause:
-                            what_ctc = CTCPauseHolder(what_ctc)
+                        what_ctc = CTCPauseHolder(what_ctc)
 
                     if ctc_position == "nestled":
                         what_text.set_ctc(what_ctc)
@@ -855,15 +854,6 @@ def display_say(
                         what_text.set_ctc([
                             "\ufeff",
                             what_ctc,
-                        ])
-
-                if (extend_text or not last_pause) and ctc:
-                    if ctc_position == "nestled":
-                        what_text.set_last_ctc(ctc)
-                    elif ctc_position == "nestled-close":
-                        what_text.set_last_ctc([
-                            "\ufeff",
-                            ctc,
                         ])
 
                 if what_text.text[0] == what_string:
