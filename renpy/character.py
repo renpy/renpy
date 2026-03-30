@@ -213,11 +213,21 @@ class CTCPauseHolder(renpy.display.displayable.Displayable):
 
         self.ctc = ctc
         self._duplicatable = ctc._duplicatable
+        self.rtl = False
+
+    def set_rtl(self, rtl):
+        if rtl != self.rtl:
+            self.rtl = rtl
+            renpy.display.render.invalidate(self)
 
     def render(self, width, height, st, at):
         cr = renpy.display.render.render(self.ctc, width, height, st, at)
         rv = renpy.display.render.Render(0, cr.height)
-        rv.blit(cr, (0, 0))
+
+        if self.rtl:
+            rv.blit(cr, (-cr.width, 0))
+        else:
+            rv.blit(cr, (0, 0))
 
         return rv
 
