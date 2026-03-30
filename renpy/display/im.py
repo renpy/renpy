@@ -1197,7 +1197,7 @@ class Composite(ImageBase):
         self.images = [image(i) for i in args[1::2]]
 
         # Only supports all the images having the same oversample factor
-        self.oversample = self.images[0].get_oversample()
+        self.oversample = self.images[0].get_oversample() if self.images else 1
 
         self.const_size = all(i.const_size for i in self.images)
 
