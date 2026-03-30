@@ -32,7 +32,7 @@ import time
 import renpy
 from json import dumps as json_dumps
 
-from renpy.compat.pickle import dump, loads, dump_paths, find_bad_reduction
+from renpy.compat.pickle import dump, dumps, loads, dump_paths, find_bad_reduction
 
 
 # This is used as a quick and dirty way of versioning savegame
