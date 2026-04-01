@@ -6,7 +6,7 @@ set -e
 
 export RENPY_CYTHON=cython
 
-ROOT="$(dirname $(realpath $0))"
+ROOT="$(cd "$(dirname "$0")" && pwd)"
 QUIET=${RENPY_QUIET- --quiet}
 
 if [ -n "$RENPY_COVERAGE" ]; then
@@ -23,18 +23,29 @@ if [ -z "$VIRTUAL_ENV" ] ; then
     if [ -d "$ROOT/.venv" ] ; then
         . "$ROOT/.venv/bin/activate"
     else
-        echo "Please create a virtual environment first (see the README)."
+        echo "Please use 'uv sync' to creat the virtual environment."
         exit 1
     fi
 fi
 
-BUILD_J="-j $(nproc)"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    CPUS=$(sysctl -n hw.logicalcpu)
+else
+    CPUS=$(nproc)
+fi
+
+BUILD_J="-j $CPUS"
 
 setup () {
     pushd $1 >/dev/null
 
-    python setup.py $QUIET \
-        build_ext -b tmp/build/lib.$variant -t tmp/build/tmp.$variant --inplace $BUILD_J \
+    if ! python setup.py $QUIET build_ext -b tmp/build/lib.$variant -t tmp/build/tmp.$variant --inplace $BUILD_J; then
+        if [ "$(which python)" != "$ROOT/.venv/bin/python" ]; then
+            echo "Warning: Running using $(which python)"
+        fi
+
+        exit 1
+    fi
 
     popd >/dev/null
 }
