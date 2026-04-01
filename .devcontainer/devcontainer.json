@@ -1,0 +1,66 @@
+{
+  "name": "Ren'Py",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+        "editor.formatOnSave": false,
+        "[python]": {
+          "editor.defaultFormatter": null,
+          "editor.formatOnSave": false
+        }
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "renpy.language-renpy",
+        "ktnrg45.vscode-cython",
+        "vincaslt.highlight-matching-tag"
+      ]
+    }
+  },
+  "remoteUser": "vscode",
+  "runArgs": [
+    "--gpus=all",
+    "--device=/dev/dri",
+    "--volume=${localEnv:XDG_RUNTIME_DIR}:/tmp/host_xdg",
+    "--volume=/tmp/.X11-unix:/tmp/.X11-unix",
+    "--volume=/dev/shm:/dev/shm",
+    "--volume=${localEnv:HOME}/.Xauthority:/home/vscode/.Xauthority:ro"
+  ],
+  "mounts": [
+    "source=renpy-uv-cache,target=/home/vscode/.cache/uv,type=volume",
+    "source=renpy-ccache-cache,target=/home/vscode/.ccache,type=volume",
+    "type=tmpfs,target=${containerWorkspaceFolder}/tmp"
+  ],
+  "containerEnv": {
+    "XDG_SESSION_TYPE": "${localEnv:XDG_SESSION_TYPE}",
+    "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
+    "XDG_RUNTIME_DIR": "/tmp/host_xdg",
+    "XDG_CURRENT_DESKTOP": "${localEnv:XDG_CURRENT_DESKTOP}",
+    "DESKTOP_SESSION": "${localEnv:DESKTOP_SESSION}",
+    "GTK_THEME": "${localEnv:GTK_THEME}",
+    "XCURSOR_THEME": "${localEnv:XCURSOR_THEME}",
+    "XCURSOR_SIZE": "${localEnv:XCURSOR_SIZE}",
+    "DBUS_SESSION_BUS_ADDRESS": "unix:path=/tmp/host_xdg/bus",
+    "PULSE_SERVER": "unix:/tmp/host_xdg/pulse/native",
+    "DISPLAY": "${localEnv:DISPLAY}",
+    "XAUTHORITY": "/home/vscode/.Xauthority",
+    "SDL_VIDEO_WAYLAND_ALLOW_LIBDECOR": "1",
+    "SDL_VIDEO_WAYLAND_PREFER_LIBDECOR": "1",
+    "SDL_VIDEODRIVER": "wayland,x11",
+    "NVIDIA_VISIBLE_DEVICES": "all",
+    "NVIDIA_DRIVER_CAPABILITIES": "all",
+    "RENPY_CC": "ccache gcc",
+    "RENPY_LD": "ccache gcc",
+    "NO_AT_BRIDGE": "1"
+  },
+  "forwardPorts": [
+    8042
+  ],
+  "postStartCommand": "sudo chmod a+rw /dev/dri/* || true",
+  "postCreateCommand": "sudo usermod -a -G video,render vscode || true && sudo chown -R vscode:vscode /home/vscode/.cache /home/vscode/.ccache tmp && (uv sync || true)"
+}

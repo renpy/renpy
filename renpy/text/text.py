@@ -1668,6 +1668,9 @@ class Layout(object):
 
         for ts, s in p:
             if not isinstance(ts, TextSegment):
+                if isinstance(ts, DisplayableSegment) and isinstance(ts.d, renpy.character.CTCPauseHolder):
+                    ts.d.set_rtl(direction in (RTL, WRTL))
+
                 rv.append((ts, ts.glyphs(s, self)))
 
             elif ts.shaper == "harfbuzz":

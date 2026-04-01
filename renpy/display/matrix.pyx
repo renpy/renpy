@@ -156,6 +156,8 @@ cdef class Matrix:
                 self.m[i] = state[fields[i]]
 
         self.origin = state.get("origin", None)
+        self.inverse_cache = None
+        self.transpose_cache = None
 
     def __mul__(Matrix self, Matrix other):
 
@@ -242,6 +244,9 @@ cdef class Matrix:
         self.wdz = wdz
         self.wdw = wdw
 
+        self.inverse_cache = None
+        self.transpose_cache = None
+
         return self
 
     cdef Matrix inplace_offset(Matrix self, float xo, float yo):
@@ -264,6 +269,9 @@ cdef class Matrix:
         self.ydw = ydw
         self.zdw = zdw
         self.wdw = wdw
+
+        self.inverse_cache = None
+        self.transpose_cache = None
 
         return self
 
@@ -303,6 +311,9 @@ cdef class Matrix:
         self.zdz = zdz
         self.zdw = zdw
 
+        self.inverse_cache = None
+        self.transpose_cache = None
+
         return self
 
     def __repr__(Matrix self):
@@ -329,6 +340,9 @@ cdef class Matrix:
 
         for i in range(16):
             m[i] = om[i]
+
+        self.inverse_cache = None
+        self.transpose_cache = None
 
         return self
 
@@ -539,6 +553,10 @@ cdef class Matrix:
 
         if det == 0:
             m[15] = 1.0
+
+            self.inverse_cache = None
+            self.transpose_cache = None
+
             return self
 
         det = 1 / det
@@ -564,6 +582,9 @@ cdef class Matrix:
 
         for i in range(16):
             m[i] = im[i]
+
+        self.inverse_cache = None
+        self.transpose_cache = None
 
         return self
 
@@ -642,6 +663,9 @@ cdef class Matrix:
         self.wdy = wdy
         self.wdz = wdz
         self.wdw = wdw
+
+        self.inverse_cache = None
+        self.transpose_cache = None
 
         return self
 

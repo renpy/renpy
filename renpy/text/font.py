@@ -25,24 +25,16 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy.pygame as pygame
 
-try:
-    import xml.etree.ElementTree as etree
-except Exception:
-    pass
+import xml.etree.ElementTree as etree
 
 import renpy
 import os
 
 import renpy.text.ftfont as ftfont
-
 ftfont.init()
 
-try:
-    import renpy.text.hbfont as hbfont
-
-    hbfont.init()
-except ImportError:
-    hbfont = None
+import renpy.text.hbfont as hbfont
+hbfont.init()
 
 import renpy.text.textsupport as textsupport
 
