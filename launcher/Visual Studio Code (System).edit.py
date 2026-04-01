@@ -11,9 +11,6 @@ class Editor(renpy.editor.Editor):
     codium = __file__.endswith("VSCodium (System).edit.py")
     system = __file__.endswith(" (System).edit.py") and not codium
 
-    print("CODIUM", codium)
-    print("SYSTEM", system)
-
     def get_code(self):
         """
         Returns the path to the code executable.
@@ -88,8 +85,6 @@ class Editor(renpy.editor.Editor):
             args = [ code, "--no-sandbox", "-g" ] + self.args
 
         args = [ renpy.exports.fsencode(i) for i in args ]
-
-        print(args)
 
         if renpy.windows:
             CREATE_NO_WINDOW = 0x08000000
