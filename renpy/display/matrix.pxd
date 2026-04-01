@@ -79,6 +79,9 @@ cdef class Matrix:
         self.wdz = other.wdz
         self.wdw = other.wdw
 
+        self.inverse_cache = None
+        self.transpose_cache = None
+
     cdef Matrix inplace_multiply(Matrix self, Matrix other)
     cdef Matrix inplace_offset(Matrix self, float xo, float yo)
     cdef Matrix inplace_reverse_offset(Matrix self, float xo, float yo)
