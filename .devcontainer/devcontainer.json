@@ -6,7 +6,7 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+        "python.defaultInterpreterPath": "/home/vscode/.venv-${localWorkspaceFolderBasename}/bin/python",
         "editor.formatOnSave": false,
         "[python]": {
           "editor.defaultFormatter": null,
@@ -37,6 +37,9 @@
     "type=tmpfs,target=${containerWorkspaceFolder}/tmp"
   ],
   "containerEnv": {
+    "UV_PROJECT_ENVIRONMENT": "/home/vscode/.venv-${localWorkspaceFolderBasename}",
+    "RENPY_VIRTUAL_ENV": "/home/vscode/.venv-${localWorkspaceFolderBasename}",
+    "UV_LINK_MODE": "copy",
     "XDG_SESSION_TYPE": "${localEnv:XDG_SESSION_TYPE}",
     "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
     "XDG_RUNTIME_DIR": "/tmp/host_xdg",
@@ -61,6 +64,6 @@
   "forwardPorts": [
     8042
   ],
-  "postStartCommand": "sudo chmod a+rw /dev/dri/* || true",
-  "postCreateCommand": "sudo usermod -a -G video,render vscode || true && sudo chown -R vscode:vscode /home/vscode/.cache /home/vscode/.ccache tmp && (uv sync || true)"
+  "postStartCommand": "/usr/local/bin/start.sh",
+  "postCreateCommand": "/usr/local/bin/create.sh"
 }
