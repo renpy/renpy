@@ -84,6 +84,66 @@ def fetch_pause():
     renpy.exports.pause(0)
 
 
+class FetchProgress(object):
+    def __init__(self, data):
+        if data is None:
+            self.data = b""
+        elif isinstance(data, basestring):
+            self.data = data.encode("utf-8")
+        else:
+            self.data = data
+
+        self.upload_expected = len(self.data)
+        self.upload_current = 0
+        self.offset = 0
+
+        self.download_expected = 0
+        self.download_current = 0
+        self.monitoring_download = False
+
+    def __len__(self):
+        return self.upload_expected
+
+    def read(self, size=-1):
+        if size == -1:
+            chunk = self.data[self.offset:]
+            self.offset = self.upload_expected
+        else:
+            chunk = self.data[self.offset:self.offset+size]
+            self.offset += len(chunk)
+
+        self.upload_current += len(chunk)
+        return chunk
+
+    def get_progress(self):
+        if self.monitoring_download:
+            if self.download_expected == 0:
+                # If we don't know the size, return 0.0 until done.
+                return 0.0
+            return min(self.download_current / self.download_expected, 1.0)
+        else:
+            if self.upload_expected == 0:
+                return 1.0
+            return min(self.upload_current / self.upload_expected, 1.0)
+
+
+active_fetch_requests: set[FetchProgress] = set()
+"""The set of active fetch requests."""
+
+def get_fetch_requests_progress():
+    """
+    :undocumented:
+
+    Returns the progress of the currently active fetch requests as a float
+    between 0.0 and 1.0. If no fetches are in progress, returns 1.0.
+    """
+    if not active_fetch_requests:
+        return 1.0
+
+    total = sum(req.get_progress() for req in active_fetch_requests)
+    return total / len(active_fetch_requests)
+
+
 def fetch_requests(url, method, data, content_type, timeout, headers):
     """
     :undocumented:
@@ -99,23 +159,46 @@ def fetch_requests(url, method, data, content_type, timeout, headers):
     # Because we don't have nonlocal yet.
     resp = [None]
 
+    progress = FetchProgress(data)
+    active_fetch_requests.add(progress)
+
     if data is not None:
         headers = dict(headers)
         headers["Content-Type"] = content_type
 
     def make_request():
         try:
-            r = requests.request(method, url, data=data, timeout=timeout, headers=headers, proxies=proxies)
+            r = requests.request(
+                method, url,
+                data=progress if data is not None else None,
+                timeout=timeout,
+                headers=headers,
+                proxies=proxies,
+                stream=True
+            )
             r.raise_for_status()
-            resp[0] = r.content  # type: ignore
+
+            progress.monitoring_download = True
+            progress.download_expected = int(r.headers.get("Content-Length", 0))
+
+            chunks = []
+            for chunk in r.iter_content(chunk_size=65536):
+                if chunk:
+                    chunks.append(chunk)
+                    progress.download_current += len(chunk)
+
+            resp[0] = b"".join(chunks)
         except Exception as e:
-            resp[0] = FetchError(str(e), e)  # type: ignore
+            resp[0] = FetchError(str(e), e)
 
     t = threading.Thread(target=make_request)
     t.start()
 
-    while resp[0] is None:
-        fetch_pause()
+    try:
+        while resp[0] is None:
+            fetch_pause()
+    finally:
+        active_fetch_requests.discard(progress)
 
     t.join()
 
@@ -286,3 +369,17 @@ def fetch(
             return _json.loads(content)
     except Exception as e:
         raise FetchError("Failed to decode the result: " + str(e), e)
+
+
+def get_fetch_progress():
+    """
+    :doc: fetch
+
+    Returns the progress of the currently active fetch requests as a float
+    between 0.0 and 1.0. If no fetches are in progress, returns 1.0.
+    """
+
+    if renpy.emscripten:
+        return 0.0
+
+    return get_fetch_requests_progress()
