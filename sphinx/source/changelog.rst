@@ -56,21 +56,21 @@ The ability to create these updates will be removed in Ren'Py 8.7.0.
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
 
 
-.. _renpy-8.5.2:
+.. _renpy-8.5.3:
 
-8.5.2
+8.5.3
 =====
 
 Fixes and Changes
 -----------------
 
+The :ref:`camera <camera>` statement is now documented to propagate transform state. (This was always true,
+but was not documented.)
+
 Nestled and nestled-close click-to-continue indicators are now rendered at 0 width in all circumstances. This prevents
 a class of issues that could occur when with NVL-mode, retained bubbles, and other configurations. This is equivalent to
 to rendering the text without a click-to-continue indicator, and then placing the CTC indicator next to the end of the
 rendered text. (This is is similar how {w}, {p}, and extend were already handled.)
-
-Fixes an issue where each time Ren'Py checked to see if rollback is possible, one level of rollback would
-be consumed.
 
 Features
 --------
@@ -81,6 +81,18 @@ same source code that makes Visual Studio Code.
 Add the Transform.unique() method, which marks a transform as unique. This prevents the transform from being
 copied when added to a displayable, which allows the transform to maintain state across multiple uses, or be
 referenced from outside its function argument.
+
+
+.. _renpy-8.5.2:
+
+8.5.2
+=====
+
+Fixes
+-----
+
+Fixes an issue where each time Ren'Py checked to see if rollback is possible, one level of rollback would
+be consumed.
 
 
 .. _renpy-8.5.1:
