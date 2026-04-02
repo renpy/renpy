@@ -530,11 +530,12 @@ The camera statement takes an optional layer name, between ``camera`` and
 The ``show layer`` statement is an older version of ``camera``, with some
 differences, that is still useful. ::
 
-
     show layer master:
         blur 10
 
 The differences are:
+
+* Camera propagates transform state, while show layer resets transform state.
 
 * The transforms applied with ``show layer`` are cleared at the
   next ``scene`` statement, while ``camera`` transforms last until

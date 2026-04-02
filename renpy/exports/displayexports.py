@@ -797,7 +797,7 @@ def get_at_list(name, layer=None):
     return list(transforms)
 
 
-def show_layer_at(at_list, layer="master", reset=True, camera=False):
+def show_layer_at(at_list, layer="master", reset=None, camera=False):
     """
     :doc: se_images
     :name: renpy.show_layer_at
@@ -809,7 +809,11 @@ def show_layer_at(at_list, layer="master", reset=True, camera=False):
         If true, the transform state is reset to the start when it is shown.
         If false, the transform state is persisted, allowing the new transform
         to update that state.
+        If None, true for show layer and false for camera.
     """
+
+    if reset is None:
+        reset = not camera
 
     at_list = renpy.easy.to_list(at_list)
 

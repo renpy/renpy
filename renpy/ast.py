@@ -1433,7 +1433,7 @@ class Camera(Node):
             atl = renpy.display.motion.ATLTransform(self.atl)
             at_list.append(atl)
 
-        renpy.exports.layer_at_list(at_list, layer=self.layer, camera=True)
+        renpy.exports.layer_at_list(at_list, layer=self.layer, camera=True, reset=False)
 
     def predict(self):
         return [self.next]
