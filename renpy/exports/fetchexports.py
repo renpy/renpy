@@ -130,7 +130,7 @@ class FetchProgress(object):
 active_fetch_requests: set[FetchProgress] = set()
 """The set of active fetch requests."""
 
-def get_fetch_requests_progress():
+def get_fetch_requests_progress() -> float:
     """
     :undocumented:
 
@@ -264,6 +264,15 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
     finally:
         os.unlink(fn)
 
+def get_fetch_emscripten_progress() -> float:
+    """
+    Returns the fetch progress on emscripten systems as a float between 0.0 and 1.0.
+    """
+
+    import emscripten
+
+    return emscripten.run_script_int("""fetchFileProgress() * 1000""") / 1000.0
+
 
 def fetch(
     url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes", params=None, headers={}
@@ -371,7 +380,7 @@ def fetch(
         raise FetchError("Failed to decode the result: " + str(e), e)
 
 
-def get_fetch_progress():
+def get_fetch_progress() -> float:
     """
     :doc: fetch
 
@@ -380,6 +389,6 @@ def get_fetch_progress():
     """
 
     if renpy.emscripten:
-        return 0.0
-
-    return get_fetch_requests_progress()
+        return get_fetch_emscripten_progress()
+    else:
+        return get_fetch_requests_progress()
