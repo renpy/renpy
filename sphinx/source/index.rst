@@ -123,6 +123,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    custom_text_tags
    character_callbacks
    file_python
+   renpy_path_class
    color_class
    matrix
    model

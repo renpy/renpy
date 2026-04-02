@@ -13,6 +13,9 @@ Changelog (Ren'Py 7.x-)
 Features
 --------
 
+Added :class:`RenpyPath`, a `PathLike <https://docs.python.org/3/library/os.html#os.PathLike>`_
+convenience wrapper around Ren'Py's own file listing. See :doc:`renpy_path_class`.
+
 The new :var:`config.font_size_adjust` variable is a dictionary mapping font names to
 either a multiplier or a function that adjusts the size of the font. This allows you to
 adjust the size of fonts without needing to change the font files themselves, which can be

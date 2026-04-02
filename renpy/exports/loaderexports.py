@@ -140,6 +140,12 @@ def list_files(common=False):
     `common`
         If true, files in the common directory are included in the
         listing.
+
+    For targeted path operations (listing a directory, listing many
+    directories, globbing a subtree) :class:`RenpyPath` is usually more
+    performant, convenient, and easier to use. ``list_files`` is better
+    when you need all files and not just a subset, or if your only filter
+    is a file name or extension but you do not know where it is located.
     """
 
     rv = []

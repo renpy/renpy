@@ -368,6 +368,9 @@ def At(d, *args):
 Color = renpy.color.Color
 color = renpy.color.Color
 
+# The RenpyPath class.
+RenpyPath = renpy.loader.RenpyPath
+
 # The default menu functions.
 menu = renpy.exports.display_menu
 predict_menu = renpy.exports.predict_menu
