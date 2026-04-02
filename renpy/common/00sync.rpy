@@ -285,7 +285,11 @@ init -1100 python in _sync:
         url = config.sync_server + "/api/sync/v1/" + hashed
         url = url + "?game=" + hash_game()
 
+        renpy.show_screen("sync_progress")
+
         error = upload_content(contents, url)
+
+        renpy.hide_screen("sync_progress")
 
         if error:
             report_error(error)
@@ -330,7 +334,11 @@ init -1100 python in _sync:
 
         url = config.sync_server + "/api/sync/v1/" + hashed
 
+        renpy.show_screen("sync_progress")
+
         error, content = download_content(url)
+
+        renpy.hide_screen("sync_progress")
 
         if error:
             report_error(content)
@@ -542,6 +550,33 @@ init -1100:
                 textbutton _("Continue"):
                     action Return(True)
                     xalign 0.5
+
+        ## Right-click and escape answer "no".
+        key "game_menu" action Return(False)
+
+
+    screen sync_progress():
+        style_prefix "sync"
+        layer config.interface_layer
+        zorder 100
+
+        frame:
+            style "sync_overlay"
+
+        frame:
+            xalign .5
+            yalign .5
+            xpadding gui._scale(40)
+            ypadding gui._scale(40)
+
+            vbox:
+                spacing gui._scale(30)
+
+                label _("Sync Progress"):
+                    xalign 0.5
+
+                bar value FetchProgressValue() xsize 0.5 xalign 0.5
+
 
         ## Right-click and escape answer "no".
         key "game_menu" action Return(False)

@@ -16,6 +16,8 @@ Features
 The new :func:`FetchProgressValue` bar value allows the progress of fetch requests to be displayed. The same
 information is also available through the :func:`renpy.get_fetch_progress` function.
 
+Ren'Py sync now displays a progress bar while uploading and downloading data, using the :func:`FetchProgressValue` bar value.
+
 The new :var:`config.font_size_adjust` variable is a dictionary mapping font names to
 either a multiplier or a function that adjusts the size of the font. This allows you to
 adjust the size of fonts without needing to change the font files themselves, which can be
