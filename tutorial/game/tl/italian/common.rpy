@@ -784,8 +784,6 @@
     old "Opens the errors.txt file in a text editor."
     new "Apre il file errors.txt in un editor di testo."
 
-    translate italian strings:
-
     # _errorhandling.rpym:540
     old "Copy BBCode"
     new "Copia BBCode"
@@ -809,8 +807,6 @@
     # _errorhandling.rpym:685
     old "Copies errors.txt file to clipboard as Markdown for Discord."
     new "Copia il file errors.txt negli appunti come Markdown per Discord."
-
-    translate italian strings:
 
     # 00accessibility.rpy:76
     old "Font Override"

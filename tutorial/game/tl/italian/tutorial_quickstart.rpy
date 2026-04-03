@@ -761,22 +761,6 @@ translate italian tutorial_menus_e1e25b6c:
     # e "Finally, this shows how you can show dialogue and menus at the same time. Understand?"
     e "Infine, questo mostra come puoi mostrare dialoghi e menu allo stesso tempo. Hai capito?"
 
-# game/tutorial_quickstart.rpy:562
-translate italian tutorial_menus_4b6a4474:
-
-    # "Yes.":
-    #     e "Great."
-    "Sì.":
-        e "Ottimo."
-
-# game/tutorial_quickstart.rpy:566
-translate italian tutorial_menus_c80a9d6d:
-
-    # "No.":
-    #     e "If you look at the example, before the first choice, there's an indented say statement."
-    "No.":
-        e "Se guardi l'esempio, prima della prima scelta, c'è un'istruzione say indentata."
-
 # game/tutorial_quickstart.rpy:574
 translate italian tutorial_menus_cb4739c5:
 
