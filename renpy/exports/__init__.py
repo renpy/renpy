@@ -437,9 +437,10 @@ from renpy.exports.displayexports import (
 )
 
 from renpy.exports.fetchexports import (
+    FetchError as FetchError,
     fetch as fetch,
     get_fetch_progress as get_fetch_progress,
-    FetchError as FetchError,
+    proxies as proxies,
 )
 
 from renpy.exports.inputexports import (
