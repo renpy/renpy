@@ -77,6 +77,8 @@ _autosave = True
 # Should live2d fading happen?
 _live2d_fade = True
 
+# Should the mouse be hidden when a controller event happens?
+_controller_hides_mouse = True
 
 class _Config(object):
     def __getstate__(self):

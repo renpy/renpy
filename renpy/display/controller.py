@@ -19,10 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-
 import os
 
 import renpy.pygame as pygame
@@ -192,7 +188,7 @@ class PadEvent(object):
 
         post_event(self.control, self.state, False)
 
-        if renpy.display.interface is not None:
+        if renpy.display.interface is not None and renpy.store._controller_hides_mouse:
             renpy.display.interface.hide_mouse()
 
     def repeat(self):
