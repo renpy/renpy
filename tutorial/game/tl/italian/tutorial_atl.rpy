@@ -640,13 +640,13 @@ translate italian strings:
 
     # game/tutorial_atl.rpy:275
     old "xpos 1.0 ypos .5"
-    new ""
+    new "xpos 1.0 ypos .5"
 
     # game/tutorial_atl.rpy:281
     old "xpos .75 ypos .25"
-    new ""
+    new "xpos .75 ypos .25"
 
     # game/tutorial_atl.rpy:285
     old "xpos .25 ypos .33"
-    new ""
+    new "xpos .25 ypos .33"
 

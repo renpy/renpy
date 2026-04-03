@@ -1552,21 +1552,21 @@ translate italian strings:
 
     # game/tutorial_quickstart.rpy:2
     old "Lucy"
-    new ""
+    new "Lucy"
 
     # game/tutorial_quickstart.rpy:499
     old "Yes, I do."
-    new ""
+    new "Sì, lo faccio."
 
     # game/tutorial_quickstart.rpy:502
     old "No, I don't."
-    new ""
+    new "No, non lo faccio."
 
     # game/tutorial_quickstart.rpy:589
     old "What's your name?"
-    new ""
+    new "Qual è il tuo nome?"
 
     # game/tutorial_quickstart.rpy:591
     old "Guy Shy"
-    new ""
+    new "Timido"
 

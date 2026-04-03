@@ -100,9 +100,9 @@ translate italian strings:
 
     # game/tutorial_nvlmode.rpy:55
     old "Yes."
-    new ""
+    new "Sì."
 
     # game/tutorial_nvlmode.rpy:61
     old "No."
-    new ""
+    new "No."
 
