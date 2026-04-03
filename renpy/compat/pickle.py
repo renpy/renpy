@@ -272,9 +272,9 @@ def make_datetime(cls, *args, **kwargs):
 
 
 class Unpickler(pickle.Unpickler):
-    date = functools.partial(make_datetime, datetime.date)
-    time = functools.partial(make_datetime, datetime.time)
-    datetime = functools.partial(make_datetime, datetime.datetime)
+    date = staticmethod(functools.partial(make_datetime, datetime.date))
+    time = staticmethod(functools.partial(make_datetime, datetime.time))
+    datetime = staticmethod(functools.partial(make_datetime, datetime.datetime))
 
     def find_class(self, module, name):
         if module == "datetime":
