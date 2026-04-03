@@ -328,3 +328,27 @@ translate italian strings:
     # game/screens.rpy:1083
     old "Opens accessibility menu."
     new "Apre il menu di accessibilità."
+# TODO: Translation updated at 2026-04-03 00:05
+
+translate italian strings:
+
+    # game/screens.rpy:1042
+    old "Advances dialogue and activates the interface."
+    new ""
+
+    # game/screens.rpy:1050
+    old "Navigate the interface."
+    new ""
+
+    # game/screens.rpy:1054
+    old "Accesses the game menu."
+    new ""
+
+    # game/screens.rpy:1074
+    old "Hides the user interface."
+    new ""
+
+    # game/screens.rpy:1086
+    old "Opens the accessibility menu."
+    new ""
+
