@@ -708,41 +708,41 @@ translate italian strings:
 
     # game/tutorial_screen_displayables.rpy:13
     old "Common properties all displayables share."
-    new ""
+    new "Proprietà comuni condivise da tutti i visualizzabili."
 
     # game/tutorial_screen_displayables.rpy:16
     old "Adding images and other displayables."
-    new ""
+    new "Aggiunta di immagini e altri visualizzabili."
 
     # game/tutorial_screen_displayables.rpy:19
     old "Text."
-    new ""
+    new "Testo."
 
     # game/tutorial_screen_displayables.rpy:22
     old "Boxes and other layouts."
-    new ""
+    new "Box e altri layout."
 
     # game/tutorial_screen_displayables.rpy:25
     old "Windows and frames."
-    new ""
+    new "Finestre e cornici."
 
     # game/tutorial_screen_displayables.rpy:28
     old "Buttons."
-    new ""
+    new "Pulsanti."
 
     # game/tutorial_screen_displayables.rpy:31
     old "Bars."
-    new ""
+    new "Barre."
 
     # game/tutorial_screen_displayables.rpy:34
     old "Viewports."
-    new ""
+    new "Area di visualizzazione."
 
     # game/tutorial_screen_displayables.rpy:37
     old "Imagemaps."
-    new ""
+    new "Imagemaps."
 
     # game/tutorial_screen_displayables.rpy:40
     old "That's all for now."
-    new ""
+    new "Questo è tutto per ora."
 

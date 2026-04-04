@@ -182,5 +182,5 @@ translate italian strings:
 
     # game/script.rpy:69
     old "Tools and the Interactive Director"
-    new ""
+    new "Strumenti e il Regista Interattivo"
 
