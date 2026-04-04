@@ -762,6 +762,10 @@ class SayBehavior(renpy.display.layout.Null):
 
         for dismiss_event, check_focus in dismiss:
             if map_event(ev, dismiss_event):
+
+                if renpy.display.focus.get_grab() is not None:
+                    continue
+
                 if check_focus and not self.is_focused():
                     continue
 
