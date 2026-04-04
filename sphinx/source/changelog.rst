@@ -13,6 +13,9 @@ Changelog (Ren'Py 7.x-)
 Fixes and Changes
 -----------------
 
+The say behavior (used by dialogue) no longer lets you dismiss dialogue if the screen is grabbed by another
+displayable, such as a viewport being dragged.
+
 The :ref:`camera <camera>` statement is now documented to propagate transform state. (This was always true,
 but was not documented.)
 
