@@ -8,10 +8,7 @@ init 1000000 python:
 
     del object.__init__
 
-    srcdir = 'source'
-    if os.path.isdir('sphinx') and os.path.split(os.getcwd())[-1] == 'renpy':
-        srcdir = os.path.join('sphinx', 'source') # ran from renpy/. cwd using sphinx in-game project
-
+    srcdir = os.path.join(renpy.config.basedir, "source")
     incdir = os.path.join(srcdir, 'inc')
 
     shaderdoc.shaders(incdir=incdir)

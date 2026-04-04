@@ -6,7 +6,9 @@ import textwrap
 
 import re
 
-def shaders(incdir="source/inc"):
+INCDIR = os.path.join(renpy.config.basedir, "source", "inc")
+
+def shaders(incdir=INCDIR):
 
     def p(s):
         print(s, file=outf)
@@ -83,7 +85,7 @@ def shaders(incdir="source/inc"):
                 indented(s)
 
 
-def textshaders(incdir="source/inc"):
+def textshaders(incdir=INCDIR):
 
     with open(incdir + "/builtintextshaders", "w") as outf:
 

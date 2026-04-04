@@ -6,7 +6,7 @@ import json
 import renpy
 import doc
 
-SPHINX = renpy.config.renpy_base + "/sphinx"
+SPHINX = renpy.config.basedir
 
 DEPRECATED = [
     "ui."
