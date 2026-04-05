@@ -74,76 +74,6 @@ translate italian strings:
     old "Sixth Child"
     new "Sesto Figlio"
 
-    # game/indepth_style.rpy:22
-    old "Button 2"
-    new ""
-
-    # game/indepth_style.rpy:112
-    old "This text is colored green."
-    new ""
-
-    # game/indepth_style.rpy:126
-    old "Danger"
-    new ""
-
-    # game/indepth_style.rpy:142
-    old "This text is colored red."
-    new ""
-
-    # game/indepth_style.rpy:170
-    old "This text is colored blue."
-    new ""
-
-    # game/indepth_style.rpy:248
-    old "Orbiting Earth in the spaceship, I saw how beautiful our planet is.\n–Yuri Gagarin"
-    new ""
-
-    # game/indepth_style.rpy:303
-    old "\"Orbiting Earth in the spaceship, I saw how beautiful our planet is.\" Said by Yuri Gagarin."
-    new ""
-
-    # game/indepth_style.rpy:326
-    old "Vertical"
-    new ""
-
-    # game/indepth_style.rpy:329
-    old "Far better it is to dare mighty things, to win glorious triumphs, even though checkered by failure, than to rank with those poor spirits who neither enjoy nor suffer much, because they live in the gray twilight that knows not victory nor defeat.\n\n–Theodore Roosevelt"
-    new ""
-
-    # game/indepth_style.rpy:561
-    old "Top Choice"
-    new ""
-
-    # game/indepth_style.rpy:566
-    old "Bottom Choice"
-    new ""
-
-    # game/indepth_style.rpy:877
-    old "First Child"
-    new ""
-
-    # game/indepth_style.rpy:878
-    old "Second Child"
-    new ""
-
-    # game/indepth_style.rpy:879
-    old "Third Child"
-    new ""
-
-    # game/indepth_style.rpy:882
-    old "Fourth Child"
-    new ""
-
-    # game/indepth_style.rpy:883
-    old "Fifth Child"
-    new ""
-
-    # game/indepth_style.rpy:884
-    old "Sixth Child"
-    new ""
-
-# TODO: Translation updated at 2026-04-02 23:57
-
 # game/indepth_style.rpy:40
 translate italian new_gui_17a0326e:
 
@@ -1575,4 +1505,3 @@ translate italian strings:
     # game/indepth_style.rpy:91
     old "That's all I want to know."
     new "È tutto quello che voglio sapere."
-
