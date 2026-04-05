@@ -10,6 +10,26 @@ Changelog (Ren'Py 7.x-)
 8.5.3
 =====
 
+Ren'Py Stores as Python Packages
+--------------------------------
+
+Ren'Py now treats Ren'Py stores as Python packages, as was documented by not implemented. This means imports can
+work from other stores. For example::
+
+  init python in store.substore1
+      A = 42
+
+  init python in store.substore2
+      B = 37
+
+  init python:
+      from store.substore1 import A
+      from store.substore2 import B
+
+Note that such imports assign names, but do not create aliases. Updating A in the main store will not change its
+value in substore1, and vice versa.
+
+
 Fixes and Changes
 -----------------
 
