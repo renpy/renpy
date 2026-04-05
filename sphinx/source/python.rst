@@ -320,14 +320,14 @@ store will not update the variable in the store. For example::
 
     init python in mystore:
 
-        $ value = 0
+        value = 0
 
     init python:
         from store.mystore import value
 
     label start:
 
-        value = 1
+        $ value = 1
 
         "[value] equals 1, but [mystore.value] remains 0."
 
