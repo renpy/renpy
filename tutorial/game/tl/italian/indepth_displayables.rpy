@@ -1,12 +1,10 @@
-﻿# TODO: Translation updated at 2026-04-02 23:06
-
+﻿
 translate italian strings:
 
     # game/indepth_displayables.rpy:67
     old "This is a text displayable."
     new "Questo è un testo visualizzabile."
 
-# TODO: Translation updated at 2026-04-02 23:57
 
 # game/indepth_displayables.rpy:15
 translate italian simple_displayables_db46fd25:

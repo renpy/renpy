@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2026-04-02 23:57
-
+﻿
 # game/indepth_transitions.rpy:56
 translate italian demo_transitions_5bbc72fe:
 

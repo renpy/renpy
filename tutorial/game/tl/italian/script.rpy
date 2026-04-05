@@ -176,7 +176,6 @@ translate italian strings:
     # script.rpy:170
     old "Is there anything else you'd like to see?"
     new "C'è altro che vorresti vedere?"
-# TODO: Translation updated at 2026-04-03 00:05
 
 translate italian strings:
 

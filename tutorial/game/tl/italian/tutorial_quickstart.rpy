@@ -814,7 +814,6 @@ translate italian tutorial_input_466d5d0b:
 
     # e "Variable interpolation also works with other variables. Here, the answer is [answer] and the flag is [flag]."
     e "L'interpolazione di variabili funziona anche con altre variabili. Qui, la risposta è [answer] e il flag è [flag]."
-# TODO: Translation updated at 2026-04-03 00:05
 
 # game/tutorial_quickstart.rpy:89
 translate italian tutorial_dialogue_8989713f:

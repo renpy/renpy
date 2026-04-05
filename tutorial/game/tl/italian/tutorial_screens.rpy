@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2026-04-02 23:06
-
+﻿
 translate italian strings:
 
     # game/tutorial_screens.rpy:26
@@ -146,7 +145,6 @@ translate italian strings:
     old "There's not much left to see."
     new ""
 
-# TODO: Translation updated at 2026-04-02 23:57
 
 # game/tutorial_screens.rpy:165
 translate italian tutorial_screens_2faa22e5:

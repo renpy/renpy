@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2026-04-02 23:06
-
+﻿
 translate italian strings:
 
     # game/tutorial_screen_displayables.rpy:55
@@ -78,7 +77,6 @@ translate italian strings:
     old "You clicked the other button."
     new ""
 
-# TODO: Translation updated at 2026-04-02 23:57
 
 # game/tutorial_screen_displayables.rpy:3
 translate italian screen_displayables_7c897a6d:

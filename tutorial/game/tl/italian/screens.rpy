@@ -328,7 +328,6 @@ translate italian strings:
     # game/screens.rpy:1083
     old "Opens accessibility menu."
     new "Apre il menu di accessibilità."
-# TODO: Translation updated at 2026-04-03 00:05
 
 translate italian strings:
 

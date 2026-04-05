@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2026-04-02 23:57
-
+﻿
 # game/tutorial_director.rpy:5
 translate italian director_e4543d9b:
 
