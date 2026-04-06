@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2026-04-02 23:06
-
+﻿
 translate italian strings:
 
     # game/indepth_style.rpy:20

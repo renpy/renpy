@@ -947,7 +947,6 @@
     # renpy/common/00gamepad.rpy:58
     old "Press or move the '[control!s]' [kind]."
     new "Premi o muovi il '[control!s]' [kind]."
-# TODO: Translation updated at 2026-04-03 00:05
 
 translate italian strings:
 
@@ -1462,4 +1461,3 @@ translate italian strings:
     # renpy/common/_errorhandling.rpym:886
     old "Parsing the script failed."
     new "Analisi dello script fallita."
-

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2025-07-03 12:39
-
+﻿
 translate persian strings:
 
     # renpy/common/_layout/classic_joystick_preferences.rpym:94

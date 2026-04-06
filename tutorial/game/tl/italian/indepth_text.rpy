@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2026-04-02 23:06
-
+﻿
 translate italian strings:
 
     # game/indepth_text.rpy:115
@@ -10,7 +9,6 @@ translate italian strings:
     old "translatable text"
     new "testo traducibile"
 
-# TODO: Translation updated at 2026-04-02 23:57
 
 # game/indepth_text.rpy:22
 translate italian a_label_8d79d234:
@@ -341,4 +339,3 @@ translate italian after_a_label_fb106a95:
 
     # e "Finally, certain characters are special. [[, {{, and \\ need to be doubled if included in text. The %% character should be doubled if used in dialogue."
     e ""
-

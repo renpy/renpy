@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2026-04-02 23:06
-
+﻿
 translate italian strings:
 
     # game/indepth_minigame.rpy:198
@@ -10,7 +9,6 @@ translate italian strings:
     old "Click to Begin"
     new "Clicca per Iniziare"
 
-# TODO: Translation updated at 2026-04-02 23:57
 
 # game/indepth_minigame.rpy:220
 translate italian demo_minigame_8f14835c:
@@ -147,4 +145,3 @@ translate italian strings:
     # game/indepth_minigame.rpy:263
     old "No thanks."
     new "No, grazie."
-

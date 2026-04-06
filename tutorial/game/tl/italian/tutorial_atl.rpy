@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2026-04-02 23:57
-
+﻿
 # game/tutorial_atl.rpy:208
 translate italian tutorial_positions_a09a3fd1:
 
@@ -649,4 +648,3 @@ translate italian strings:
     # game/tutorial_atl.rpy:285
     old "xpos .25 ypos .33"
     new "xpos .25 ypos .33"
-

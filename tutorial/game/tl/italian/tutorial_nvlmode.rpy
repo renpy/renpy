@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2026-04-02 23:57
-
+﻿
 # game/tutorial_nvlmode.rpy:19
 translate italian tutorial_nvlmode_d41d8cd9:
 
@@ -105,4 +104,3 @@ translate italian strings:
     # game/tutorial_nvlmode.rpy:61
     old "No."
     new "No."
-

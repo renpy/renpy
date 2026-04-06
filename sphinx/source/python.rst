@@ -315,6 +315,21 @@ For example::
         python in character_stats.chloe_substore:
             friends.add("Jeremy")
 
+Note that, as in Python, imports rebind names, rather than creating aliases. Updating a variable imported from a named
+store will not update the variable in the store. For example::
+
+    init python in mystore:
+
+        value = 0
+
+    init python:
+        from store.mystore import value
+
+    label start:
+
+        $ value = 1
+
+        "[value] equals 1, but [mystore.value] remains 0."
 
 From a ``python in`` block, the default "outer" store can be
 accessed using either ``renpy.store``, or ``import store``.

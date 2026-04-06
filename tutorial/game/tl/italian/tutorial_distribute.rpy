@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2026-04-02 23:57
-
+﻿
 # game/tutorial_distribute.rpy:3
 translate italian distribute_7db9b042:
 
@@ -71,4 +70,3 @@ translate italian distribute_500b3e7f:
 
     # e "I hope that soon, yours will be one of them!"
     e ""
-

@@ -206,7 +206,7 @@ store_modules = {}
 initialized_store_dicts = set()
 
 
-def create_store(name):
+def create_store(name: str):
     """
     Creates the store with `name`.
     """
@@ -218,8 +218,10 @@ def create_store(name):
 
     if parent:
         create_store(parent)
-
-    name = str(name)
+        package = parent
+    else:
+        package = "store"
+        parent = "store"
 
     if name in initialized_store_dicts:
         return
@@ -230,8 +232,8 @@ def create_store(name):
     d = store_dicts.setdefault(name, StoreDict())
     d.reset()
 
-    # Set the name.
-    d.update(__name__=name, __package__=name)
+    # Set up the contents of a normal module.
+    d.update(__name__=name, __package__=package, __loader__=None, __spec__=None, __path__=None)
 
     # Set up the default contents of the store.
     eval("1", d)
@@ -253,6 +255,9 @@ def create_store(name):
 
     if parent:
         store_dicts[parent][var] = sys.modules[name]
+
+        # Make sure the parent is a package. (In the case of store, it's its own parent, so always is a package.)
+        store_dicts[parent].update(__path__=[], __package__=parent)
 
 
 class StoreBackup:

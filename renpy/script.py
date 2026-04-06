@@ -408,11 +408,18 @@ class Script(object):
                 else:
                     sort_key = parts[1]
 
+            priority *= 2
+            if fn >= "A":
+                priority += 1
+
             return (priority, sort_key, fn, dn)
 
         self.script_files.sort(key=game_key)
 
-        return self.common_script_files + self.script_files
+        rv = [ (0,) + item for item in self.common_script_files ]
+        rv.extend((game_key(item)[0],) + item for item in self.script_files)
+
+        return rv
 
     def load_script(self):
         script_files = self.sort_script_files()
@@ -422,7 +429,15 @@ class Script(object):
         count = 0
         skipped = 0
 
-        for fn, dir in script_files:
+        last_priority = 0
+
+        for priority, fn, dir in script_files:
+
+            if priority != last_priority:
+                if renpy.parser.has_parse_errors():
+                    skipped += len(script_files) - count
+                    break
+
             count += 1
             renpy.display.presplash.progress("Loading script...", count, len(script_files))
 
