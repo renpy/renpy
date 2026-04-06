@@ -30,6 +30,18 @@ Note that such imports assign names, but do not create aliases. Updating A in th
 value in substore1, and vice versa.
 
 
+Parse Error Limitations
+-----------------------
+
+Parse errors now reported at the end of each priority level (libs, then the game, then mods). Within a priority level,
+parse errors in filenames that begin with a number (like 01statement.rpy or 01lib/statement.rpy) are reported before parse
+errors in files that begin with letters.
+
+This change is meant to allow parse errors in files defining creator-defined statements to be reported before parse
+errors in the game script caused by the use of a statement that is not properly defined. This allows creators to more
+easily identify and fix problems with their creator-defined statements.
+
+
 Fixes and Changes
 -----------------
 
@@ -43,6 +55,7 @@ Nestled and nestled-close click-to-continue indicators are now rendered at 0 wid
 a class of issues that could occur when with NVL-mode, retained bubbles, and other configurations. This is equivalent to
 to rendering the text without a click-to-continue indicator, and then placing the CTC indicator next to the end of the
 rendered text. (This is is similar how {w}, {p}, and extend were already handled.)
+
 
 Features
 --------
