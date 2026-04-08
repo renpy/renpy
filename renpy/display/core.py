@@ -1705,12 +1705,17 @@ class Interface:
 
             # Make the screen more suitable for interactions.
             renpy.exports.movie_stop(only_fullscreen=True)
-            renpy.store.mouse_visible = True
+
+            old_mouse_visible = renpy.store.mouse_visible
+
+            if not renpy.store.mouse_visible:
+                renpy.store.mouse_visible = True
 
             try:
                 self.in_quit_event = True
                 renpy.display.behavior.run(renpy.config.quit_action)
             finally:
+                renpy.store.mouse_visible = old_mouse_visible
                 self.in_quit_event = False
 
         else:
@@ -1757,6 +1762,9 @@ class Interface:
             visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
 
         visible = visible and self.show_mouse and not (renpy.display.video.fullscreen)
+
+        if renpy.store.mouse_visible == "always":
+             visible = True
 
         return visible
 
