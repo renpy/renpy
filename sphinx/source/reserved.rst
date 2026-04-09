@@ -15,7 +15,7 @@ In addition, Python has rules for what names are valid:
 
 * A name must start with a letter
 * A name cannot start with a number
-* A name can only contain alpha-numeric characters and underscores (A-z, 0-9, and _ )
+* A name can only contain alpha-numeric characters and underscores (A-z, 0-9, and \_ )
 
 The following is a list of names that are used by Python. Re-using these
 names can lead to obscure problems.
