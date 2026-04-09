@@ -11,6 +11,12 @@ Ren'Py reserves all names beginning with a single underscore (\_). Do not
 use names beginning with an underscore, as that may cause your game to break
 in future versions of Ren'Py.
 
+In addition, Python has rules for what names are valid:
+
+* A name must start with a letter
+* A name cannot start with a number
+* A name can only contain alpha-numeric characters and underscores (A-z, 0-9, and \_ )
+
 The following is a list of names that are used by Python. Re-using these
 names can lead to obscure problems.
 

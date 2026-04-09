@@ -101,6 +101,8 @@ easily identify and fix problems with their creator-defined statements.
 Fixes and Changes
 -----------------
 
+The value if :var:`mouse_visible` is now properly restored when exiting the game menu.
+
 The say behavior (used by dialogue) no longer lets you dismiss dialogue if the screen is grabbed by another
 displayable, such as a viewport being dragged.
 
@@ -115,6 +117,9 @@ rendered text. (This is is similar how {w}, {p}, and extend were already handled
 
 Features
 --------
+
+The :var:`mouse_visible` variable now has a new "always" value, which makes the mouse always visible. This is useful for
+games that need to force the mouse to be shown for minigame purposes.
 
 Support has been added for a system-installed copy of the VSCodium text editor. This is a libre build of the
 same source code that makes Visual Studio Code.
