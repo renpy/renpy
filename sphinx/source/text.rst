@@ -34,7 +34,7 @@ displays text. A creator needs to be aware of these characters to
 ensure that their writing is not accidentally misinterpreted by the engine.
 
 \ (backslash)
-    The backslash character is used to introduce when writing a Ren'Py
+    The backslash character is used to escape characters when writing a Ren'Py
     or Python string. Some common escape codes are:
 
     \\" (backslash-doublequote)
@@ -49,7 +49,7 @@ ensure that their writing is not accidentally misinterpreted by the engine.
         space character.
 
     \\n (backslash-n)
-        Includes a newline character in the text.
+        Includes a newline character in the text, causing a new line to start.
 
     \\\\ (backslash-backslash)
         Includes a backslash character in the text.
@@ -580,7 +580,7 @@ algorithm, use::
 
     define gui.language = "greedy"
 
-The faster line-breaking algorithm is not be necessary unless the
+The faster line-breaking algorithm is not necessary unless the
 game is displaying huge amounts of text, such as in NVL-mode.
 
 The line breaking algorithms can be further configured using the
@@ -655,7 +655,7 @@ For example::
 
 Once Ren'Py has been configured, ruby text can be included in two way.
 
-**Lenticular brackets.** Ruby text can be written by enclosing it
+**Lenticular brackets.** Ruby text can be written by enclosing it inside
 full-width lenticular brackets (【】), with the full-width or half-width
 vertical line character (｜ or \|) separating the bottom text from the top text.
 For example::
@@ -749,7 +749,7 @@ Font Groups
 -----------
 
 When creating a multilingual game, it may not be possible to find a single
-font that covers every writing system the game use while projecting the
+font that covers every writing system the game uses while projecting the
 the mood the creator intends. To support this, Ren'Py supports font groups
 that can take characters from two or more fonts and combine them into a
 single font.
@@ -897,7 +897,7 @@ There are two text tags that support the use of variable fonts.
 
         "This is {axis:width=125}{axis:weight=200}wide and bold{/axis}{/axis} text."
 
-    The value of on the right side of the equals is expected to be a floating
+    The value on the right side of the equals is expected to be a floating
     point number.
 
 To get the available instances and axes of a font, use the :func:`renpy.variable_font_info`
