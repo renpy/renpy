@@ -243,9 +243,7 @@ class CodeGenerator(object):
 
         self.update_defines(replacements)
 
-    def write_target(self, filename):
-
-        target = os.path.join(self.p.prefix, filename)
+    def write_target(self, target):
 
         if os.path.exists(target):
 
@@ -421,7 +419,7 @@ class CodeGenerator(object):
             self.translate_comments()
             self.add_code(fn)
 
-        self.write_target(fn)
+        self.write_target(os.path.join(self.p.prefix, fn))
 
     def generate_code(self, fn):
 
@@ -439,4 +437,4 @@ class CodeGenerator(object):
 
         self.add_code(fn)
 
-        self.write_target(fn)
+        self.write_target(target)
