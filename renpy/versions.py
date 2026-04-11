@@ -51,7 +51,7 @@ class Version(object):
 
 Version("main", 3, "8.6.0", "Real Artists Ship")
 
-Version("fix", 3, "8.5.3", "Better Every Day")
+Version("fix", 3, "8.5.3", "We Can Go to the Moon")
 
 
 def make_dict(branch, suffix="00000000", official=False, nightly=False):
