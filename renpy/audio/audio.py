@@ -283,7 +283,7 @@ class Channel(object):
         # once all channels are ready.
         self.synchro_start = False
 
-        # Does this participate in synchro start by default
+        # Does this participate in synchro start by default.
         self.default_synchro_start: bool|renpy.object.Sentinel = synchro_start
 
         # The time the music in this channel was last changed.
@@ -317,6 +317,9 @@ class Channel(object):
 
         # Are we paused?
         self.paused = None
+
+        self.default_loop: bool
+        self.default_loop_set: bool
 
         if default_loop is NotSet:
             # By default, should we loop the music?
