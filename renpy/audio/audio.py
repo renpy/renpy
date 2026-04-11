@@ -27,6 +27,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
+from typing import Literal
+
 import time
 import os
 import re
@@ -281,8 +283,8 @@ class Channel(object):
         # once all channels are ready.
         self.synchro_start = False
 
-        # Does this participate in synchro start by default.
-        self.default_synchro_start = synchro_start
+        # Does this participate in synchro start by default
+        self.default_synchro_start: bool|renpy.object.Sentinel = synchro_start
 
         # The time the music in this channel was last changed.
         self.last_changed = 0
@@ -777,6 +779,11 @@ class Channel(object):
     ):
         if synchro_start is None:
             synchro_start = self.default_synchro_start
+
+            # This case triggers when the default loop not being set causes the default synchro start to be
+            # NotSet.
+            if synchro_start is NotSet:
+                synchro_start = self.default_loop
 
         with lock:
             for filename in filenames:
