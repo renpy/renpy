@@ -60,10 +60,20 @@ cdef Uint32 timer_callback(Uint32 interval, void *param) nogil:
     SDL_PushEvent(&e)
     return interval
 
+cdef Uint32 timer_once_callback(Uint32 interval, void *param) nogil:
+    cdef SDL_Event e
+    e.type = <int>param
+    e.user.code = 0
+    e.user.data1 = NULL
+    e.user.data2 = NULL
+    SDL_PushEvent(&e)
+    return 0
+
+
 # A map from eventid to SDL_Timer_ID.
 cdef dict timer_by_event = { }
 
-def set_timer(eventid, milliseconds):
+def set_timer(eventid, milliseconds, once=False):
 
     cdef int timer_id = timer_by_event.get(eventid, 0)
 
@@ -72,7 +82,10 @@ def set_timer(eventid, milliseconds):
         timer_id = 0
 
     if milliseconds > 0:
-        timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_callback, <void*><int>eventid)
+        if once:
+            timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_once_callback, <void*><int>eventid)
+        else:
+            timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_callback, <void*><int>eventid)
         if timer_id == 0:
             raise error()
 
