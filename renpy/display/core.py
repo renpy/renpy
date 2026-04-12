@@ -2950,12 +2950,14 @@ class Interface:
                 if self.maximum_framerate_time > get_time():
                     can_block = False
 
-                if (redraw_time is not None) and (not needs_redraw) and can_block:
-                    if redraw_time != old_redraw_time:
-                        time_left = redraw_time - get_time()
-                        time_left = min(time_left, 3600)
-                        _redraw_in = time_left
 
+                # Compute the redraw time and set the redraw timer.
+                if redraw_time is not None:
+                    time_left = redraw_time - get_time()
+                    time_left = min(time_left, 1.0)
+                    _redraw_in = time_left
+
+                    if redraw_time != old_redraw_time:
                         if time_left <= 0:
                             try:
                                 pygame.event.post(self.redraw_event)
@@ -2965,10 +2967,14 @@ class Interface:
                         else:
                             pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
 
-                        old_redraw_time = redraw_time
-                else:
-                    _redraw_in = 3600
-                    pygame.time.set_timer(REDRAW, 0)
+                elif redraw_time is None:
+
+                    if old_redraw_time is not None:
+                        pygame.time.set_timer(REDRAW, 0)
+                    _redraw_in = 1.0
+
+                old_redraw_time = redraw_time
+
 
                 # Handle the timeout timer.
                 if not self.timeout_time:
