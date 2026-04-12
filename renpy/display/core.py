@@ -2965,7 +2965,7 @@ class Interface:
                                 pass
                             pygame.time.set_timer(REDRAW, 0)
                         else:
-                            pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
+                            pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1), once=True)
 
                 elif redraw_time is None:
 
