@@ -32,13 +32,31 @@ init python in archiver:
 
     from pickle import dumps, HIGHEST_PROTOCOL
 
+    try:
+        from renpy.archiver.packer import RPAPacker, derive_key, RPA_ENCRYPTION_KEY_SIZE
+        _HAS_CXX_PACKER = True
+    except ImportError:
+        _HAS_CXX_PACKER = False
+
 
     class Archive(object):
         """
         Adds files from disk to a rpa archive.
         """
 
-        def __init__(self, filename):
+        def __init__(self, filename, encryption_password=None):
+
+            # Use C++ packer if available
+            if _HAS_CXX_PACKER:
+                encryption_key = None
+                if encryption_password:
+                    encryption_key = derive_key(encryption_password)
+                self.cxx_packer = RPAPacker(filename, encryption_key=encryption_key)
+                self.use_cxx = True
+                return
+
+            # Fall back to Python implementation
+            self.use_cxx = False
 
             # The archive file.
             self.f = open(filename, "wb")
@@ -57,6 +75,10 @@ init python in archiver:
             Adds a file to the archive.
             """
 
+            if self.use_cxx:
+                self.cxx_packer.add_file(name, path)
+                return
+
             self.index[name] = _list()
 
             with open(path, "rb") as df:
@@ -74,6 +96,10 @@ init python in archiver:
             self.index[name].append((offset ^ self.key, dlen ^ self.key, b""))
 
         def close(self):
+
+            if self.use_cxx:
+                self.cxx_packer.close()
+                return
 
             indexoff = self.f.tell()
 

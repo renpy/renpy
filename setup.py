@@ -67,6 +67,9 @@ def main():
     # renpy.loader
     cython("renpy.loader.rpa_archive", [ "src/rpa_archive.c" ], packages="sdl2 zlib")
 
+    # renpy.archiver
+    cython("renpy.archiver.packer", [ "src/rpa_packer.c", "src/rpa_encryption.c" ], packages="zlib")
+
     # renpy.audio
     cython(
         "renpy.audio.renpysound",

@@ -1,4 +1,5 @@
 #include "rpa_archive.h"
+#include "rpa_encryption.h"
 #include <zlib.h>
 #include <string.h>
 #include <stdlib.h>
@@ -450,6 +451,11 @@ int rpa_archive_open(const char* path, RPAArchive** out_archive) {
         return RPA_ERROR_FILE_NOT_FOUND;
     }
 
+    // Initialize encryption system
+    if (rpa_encryption_init() != RPA_ENCRYPTION_OK) {
+        return RPA_ERROR_ZLIB_ERROR;
+    }
+
     SDL_RWops* file = SDL_RWFromFile(path, "rb");
     if (!file) {
         return RPA_ERROR_FILE_NOT_FOUND;
@@ -500,6 +506,8 @@ int rpa_archive_open_v3(const char* path, RPAArchive** out_archive) {
     archive->file = file;
     archive->version = RPA_VERSION_3;
     archive->is_open = true;
+    archive->is_encrypted = false;
+    memset(archive->encryption_key, 0, RPA_ENCRYPTION_KEY_SIZE);
 
     int result = read_v3_index(archive);
     if (result != RPA_OK) {

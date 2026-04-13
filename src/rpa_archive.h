@@ -22,6 +22,8 @@ typedef struct {
     char* start;
 } RPAEntry;
 
+#include "rpa_encryption.h"
+
 typedef struct {
     char* filename;
     int version;
@@ -32,6 +34,8 @@ typedef struct {
     char** entry_names;
     int entry_count;
     bool is_open;
+    bool is_encrypted;
+    uint8_t encryption_key[RPA_ENCRYPTION_KEY_SIZE];
 } RPAArchive;
 
 typedef enum {
