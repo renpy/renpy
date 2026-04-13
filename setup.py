@@ -64,6 +64,9 @@ def main():
     cython("renpy.tfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
     cython("renpy.ecsign", [ "src/ec_sign_core.c" ], packages="openssl")
 
+    # renpy.loader
+    cython("renpy.loader.rpa_archive", [ "src/rpa_archive.c" ], packages="sdl2 zlib")
+
     # renpy.audio
     cython(
         "renpy.audio.renpysound",

@@ -38,6 +38,21 @@ from renpy.pygame.rwobject import RWopsIO
 from renpy.compat.pickle import loads
 from renpy.webloader import DownloadNeeded
 
+try:
+    from renpy.loader.rpa_cxx import (
+        get_rpa_reader,
+        read_from_rpa,
+        has_in_rpa,
+        preload_rpa_index,
+        _HAS_CXX_READER,
+    )
+except ImportError:
+    _HAS_CXX_READER = False
+    get_rpa_reader = None
+    read_from_rpa = None
+    has_in_rpa = None
+    preload_rpa_index = None
+
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
 "".encode("utf-8")
@@ -579,9 +594,13 @@ def load_from_archive(name):
         if not name in index:
             continue
 
+        if _HAS_CXX_READER and get_rpa_reader is not None:
+            data = read_from_rpa(afn, name)
+            if data is not None:
+                return io.BytesIO(data)
+
         data = []
 
-        # Direct path.
         if len(index[name]) == 1:
             t = index[name][0]
             if len(t) == 2:
@@ -599,7 +618,6 @@ def load_from_archive(name):
                 rv = RWopsIO.from_split(a, b, name=name)
                 rv = io.BufferedReader(rv)
 
-        # Compatibility path.
         else:
             with open(afn, "rb") as f:
                 for offset, dlen in index[name]:
