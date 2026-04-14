@@ -36,18 +36,21 @@ To install it:
     sudo apt install libnss3 python3-tk
 
 To install a version of Ren'Py, open a terminal and run (changing the version as
-appropriate)::
+appropriate):
 
-    wget https://www.renpy.org/dl/8.2.0/renpy-8.2.0-sdkarm.tar.bz2
-    tar xaf renpy-8.2.0-sdkarm.tar.bz2
+.. parsed-literal::
 
-To run that version of Ren'Py, open a terminal and run::
+    wget https://www.renpy.org/dl/|RELEASE_VERSION|/renpy-|RELEASE_VERSION|-sdkarm.tar.bz2
+    tar xaf renpy-|RELEASE_VERSION|-sdkarm.tar.bz2
 
-    cd ~/ab/renpy-8.2.0-sdkarm
+To run that version of Ren'Py, open a terminal and run:
+
+.. parsed-literal::
+
+    cd ~/ab/renpy-|RELEASE_VERSION|-sdkarm
     ./renpy.sh
 
-Note that this works with other versions of Ren'Py if you change 8.2.0
-for a later version.
+Note that this works with other versions of Ren'Py if you change |RELEASE_VERSION| to the version you want.
 
 An SDK installed in this way can be used to run games that do not natively
 support ARM Chromebooks on an ARM Chromebook. Just unpack the game into
