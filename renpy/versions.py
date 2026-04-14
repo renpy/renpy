@@ -95,7 +95,7 @@ def _make_version_string(
     if dirty:
         suffixes.append("dirty")
 
-    if not official and branch != "main" or dirty:
+    if not official and branch not in { "main", "master" }:
         suffixes.append(branch)
 
     return f"{major}.{minor}.{patch}.{commit:08d}+{'.'.join(suffixes)}"
