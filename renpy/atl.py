@@ -452,12 +452,13 @@ class ATLTransformBase(renpy.object.Object):
 
         super(ATLTransformBase, self).take_execution_state(t)  # type: ignore
 
+        if self is t:
+            return
+
         self.atl_st_offset = None
         self.atl_state = None
 
-        if self is t:
-            return
-        elif not isinstance(t, ATLTransformBase):
+        if not isinstance(t, ATLTransformBase):
             return
         elif t.atl is not self.atl:
             return
