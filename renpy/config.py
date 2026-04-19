@@ -1460,6 +1460,25 @@ save = True
 # Should the persistent file be updated?
 save_persistent = True
 
+# If True, renpy.load_from_string is permitted on web builds (where
+# the existing sandbox-based trust model applies). Default False --
+# web games must explicitly opt in before accepting pasted save
+# strings.
+allow_save_string_web = False
+
+# Maximum length in characters of a string accepted by
+# renpy.load_from_string. Rejected-early before any decoding work,
+# so malicious / runaway input cannot allocate large buffers. 2 MB of
+# ASCII is comfortable headroom for any realistic save.
+save_string_max_length = 2 * 1024 * 1024
+
+# Maximum total uncompressed size (in bytes) of zip entries inside a
+# save-string payload. Guards against zip-bomb attacks where a small
+# input expands to gigabytes of decompressed data. 32 MB covers even
+# long-running story-heavy games (real saves typically 1-10 MB
+# decompressed); bump further if a game hits the ceiling legitimately.
+save_string_max_decoded_size = 32 * 1024 * 1024
+
 # Should new drags be added to the top of a drag group.
 drag_group_add_top = True
 

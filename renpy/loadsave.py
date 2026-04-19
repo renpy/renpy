@@ -30,7 +30,10 @@ import os
 import time
 
 import renpy
-from json import dumps as json_dumps
+import base64
+import binascii
+import io as _io
+from json import dumps as json_dumps, loads as json_loads, JSONDecodeError
 
 from renpy.compat.pickle import dump, loads, dump_paths, find_bad_reduction
 
@@ -654,6 +657,221 @@ def get_save_data(filename):
     roots, log = loads(log_data)
 
     return {k[6:]: v for k, v in roots.items() if k.startswith("store.")}
+
+
+# --- Save string export/import --------------------------------------------
+
+# Magic prefix identifying a save-string wire format v1. Strings produced by
+# save_to_string start with this; load_from_string rejects anything without
+# it. Future format revisions bump the numeric suffix (RPYS2-, ...).
+_SAVE_STRING_MAGIC = "RPYS1-"
+
+
+class SaveStringError(Exception):
+    """
+    Base class for save-string import failures.
+    """
+
+
+class InvalidSaveStringFormat(SaveStringError):
+    """
+    The string does not start with the expected prefix, is not valid
+    base64, does not contain a valid save zip, is missing required
+    entries, or the embedded payload is corrupt.
+    """
+
+
+class SaveStringSignatureError(SaveStringError):
+    """
+    The save signature did not validate (and the player declined the
+    unknown-token prompt), or load_from_string was invoked on a web
+    build without ``config.allow_save_string_web`` set to True.
+    """
+
+
+def save_to_string(slotname):  # type: (str) -> str | None
+    """
+    :doc: loadsave
+
+    Returns a portable string representation of the save in `slotname`,
+    suitable for copy-paste transport. The string is prefixed with
+    ``RPYS1-`` and encodes a small in-memory zip carrying the save's
+    log, signatures, and JSON metadata as URL-safe base64.
+
+    Returns ``None`` if `renpy.config.save` is False, if the slot does
+    not exist, or if the slot cannot be read.
+
+    The returned string does not include the screenshot or the slot's
+    ``extra_info`` name. The json metadata (including ``_save_name``,
+    ``_renpy_version``, and any fields added via
+    :var:`config.save_json_callbacks`) is preserved.
+
+    Does not verify the signature of the on-disk save before export.
+    A corrupt source save will produce a string that fails on import;
+    callers may wish to call :func:`renpy.can_load` first.
+
+    Example::
+
+        $ renpy.take_screenshot()
+        $ renpy.save("backup")
+        $ code = renpy.save_to_string("backup")
+    """
+
+    if not renpy.config.save:
+        return None
+
+    try:
+        log_data, signature = location.load(slotname)
+    except (KeyError, OSError, zipfile.BadZipFile):
+        return None
+
+    try:
+        meta_dict = location.json(slotname) or {}
+    except (OSError, zipfile.BadZipFile, ValueError):
+        meta_dict = {}
+
+    buf = _io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("log", log_data)
+        zf.writestr("signatures", signature or "")
+        zf.writestr("json", json_dumps(meta_dict))
+
+    encoded = base64.urlsafe_b64encode(buf.getvalue()).decode("ascii").rstrip("=")
+    return _SAVE_STRING_MAGIC + encoded
+
+
+def load_from_string(save_string, slotname="_imported"):  # type: (str, str) -> None
+    """
+    :doc: loadsave
+
+    Loads a save previously produced by :func:`renpy.save_to_string`.
+
+    The decoded save is first written to `slotname` (default
+    ``"_imported"``) via the normal save pipeline (re-signed with this
+    install's keys), then loaded via :func:`renpy.load`. On success
+    this function **never returns** -- control jumps to ``_after_load``
+    via the standard Ren'Py load pipeline.
+
+    The original string's signature is verified *before* persisting;
+    a string that fails signature verification is rejected without
+    writing to disk. On a web build the call is disabled unless
+    :var:`config.allow_save_string_web` is set to True.
+
+    Raises :exc:`InvalidSaveStringFormat` if the string is malformed,
+    empty, oversized, or the payload is corrupt. Raises
+    :exc:`SaveStringSignatureError` if signature verification fails
+    (after the player declines the unknown-token prompt, if shown) or
+    if the web opt-in is off.
+
+    Example::
+
+        try:
+            renpy.load_from_string(pasted_code)
+        except renpy.InvalidSaveStringFormat:
+            renpy.notify("That doesn't look like a save code.")
+    """
+
+    # Call-context check -- load_from_string delegates to renpy.load,
+    # which assumes it runs during interaction so the UNKNOWN_TOKEN
+    # prompt can render. Calling from `init python:` or a non-
+    # interactive callback is a dev error; fail fast with a clear
+    # message rather than crashing mid-load.
+    try:
+        _context = renpy.game.context()
+    except Exception:
+        _context = None
+    if _context is None or getattr(_context, "init_phase", False):
+        raise SaveStringError(
+            "load_from_string must be called from interaction context "
+            "(e.g. a screen action or jump target); calling from init "
+            "python or a non-interactive callback is not supported"
+        )
+
+    # Input validation -- reject non-string, empty, and oversized
+    # inputs before any decoding work.
+    if not isinstance(save_string, str):
+        raise InvalidSaveStringFormat(
+            "expected a str, got %s" % type(save_string).__name__
+        )
+
+    if len(save_string) > renpy.config.save_string_max_length:
+        raise InvalidSaveStringFormat(
+            "save string exceeds config.save_string_max_length (%d > %d)"
+            % (len(save_string), renpy.config.save_string_max_length)
+        )
+
+    # Web opt-in gate -- fires before any parsing so web builds without
+    # the opt-in cannot probe format validity.
+    if getattr(renpy, "emscripten", False) and not renpy.config.allow_save_string_web:
+        raise SaveStringSignatureError(
+            "save-string import is disabled on web builds; "
+            "set config.allow_save_string_web = True to enable"
+        )
+
+    if not save_string.startswith(_SAVE_STRING_MAGIC):
+        raise InvalidSaveStringFormat("expected %r prefix" % _SAVE_STRING_MAGIC)
+
+    try:
+        zip_bytes = base64.urlsafe_b64decode(save_string[len(_SAVE_STRING_MAGIC):] + "===")
+    except (ValueError, binascii.Error) as e:
+        raise InvalidSaveStringFormat("payload is not valid base64") from e
+
+    try:
+        with zipfile.ZipFile(_io.BytesIO(zip_bytes), "r") as zf:
+            total = sum(i.file_size for i in zf.infolist())
+            if total > renpy.config.save_string_max_decoded_size:
+                raise InvalidSaveStringFormat(
+                    "save string decompresses to %d bytes, exceeds "
+                    "config.save_string_max_decoded_size (%d)"
+                    % (total, renpy.config.save_string_max_decoded_size)
+                )
+            try:
+                log_data = zf.read("log")
+            except KeyError as e:
+                raise InvalidSaveStringFormat("save string missing 'log' entry") from e
+            try:
+                signature = zf.read("signatures").decode("utf-8")
+            except KeyError:
+                signature = ""
+            except UnicodeDecodeError as e:
+                raise InvalidSaveStringFormat("signature entry is not valid utf-8") from e
+            try:
+                meta_bytes = zf.read("json").decode("utf-8")
+            except KeyError:
+                meta_bytes = "{}"
+            except UnicodeDecodeError as e:
+                raise InvalidSaveStringFormat("json entry is not valid utf-8") from e
+    except zipfile.BadZipFile as e:
+        raise InvalidSaveStringFormat("payload is not a valid save zip") from e
+
+    # Verify the ORIGINAL signature before persisting. If we persisted
+    # first and then loaded, we would re-sign with this install's keys
+    # and lose the trust property entirely.
+    if not renpy.savetoken.check_load(log_data, signature):
+        raise SaveStringSignatureError("signature verification failed or declined")
+
+    # Extract save_name from the json metadata, defensively. If the
+    # metadata is malformed, not a dict, or _save_name is not a str,
+    # fall back to empty -- SaveRecord.write_file requires str so we
+    # must not hand it arbitrary types from attacker-crafted input.
+    try:
+        meta_parsed = json_loads(meta_bytes)
+    except JSONDecodeError:
+        meta_parsed = None
+    if isinstance(meta_parsed, dict):
+        save_name = meta_parsed.get("_save_name")
+        extra_info = save_name if isinstance(save_name, str) else ""
+    else:
+        extra_info = ""
+
+    # Persist under this install's signing keys, then delegate to the
+    # normal load pipeline. renpy.load() never returns on success.
+    sr = SaveRecord(None, extra_info, meta_bytes, log_data)
+    location.save(slotname, sr)
+    location.scan()
+    clear_slot(slotname)
+
+    load(slotname)
 
 
 def unlink_save(filename):
