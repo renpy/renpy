@@ -1,4 +1,5 @@
-﻿
+﻿# TODO: Translation updated at 2025-07-03 12:39
+
 translate persian strings:
 
     # renpy/common/00gltest.rpy:90
@@ -111,7 +112,7 @@ translate persian strings:
 
     # renpy/common/00gamepad.rpy:36
     old "No Gamepads Available"
-    new "هیچ دستۀ بازی موجود نیست"
+    new "هیچ‌دستۀ بازی موجود نیست"
 
     # renpy/common/00gamepad.rpy:56
     old "Calibrating [name] ([i]/[total])"
@@ -139,7 +140,7 @@ translate persian strings:
 
     # renpy/common/_errorhandling.rpym:678
     old "Copy BBCode"
-    new "ذخیرۀ بی‌بی‌کد"
+    new "کپی کردن بی‌بی‌کد"
 
     # renpy/common/_errorhandling.rpym:680
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
@@ -147,7 +148,7 @@ translate persian strings:
 
     # renpy/common/_errorhandling.rpym:682
     old "Copy Markdown"
-    new "ذخیرۀ مارک‌داون"
+    new "کپی کردن مارک‌داون"
 
     # renpy/common/_errorhandling.rpym:684
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
@@ -171,11 +172,11 @@ translate persian strings:
 
     # renpy/common/_errorhandling.rpym:748
     old "Ignores the exception, allowing you to continue."
-    new "استثناء را نادیده می‌گیرد و به شما اجازۀ ادامه دادن را می‌دهد."
+    new "استثناء را نادیده می‌گیرد و به شما اجازۀ ادامه دادن را می‌دهد."
 
     # renpy/common/_errorhandling.rpym:750
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "استثناء را نادیده می‌گیرد و به شما اجازۀ ادامه دادن را می‌دهد. این معمولاً سبب خطاهای بیشتر می‌شود."
+    new "استثناء را نادیده می‌گیرد و به شما اجازۀ ادامه دادن را می‌دهد. این معمولاً سبب خطاهای بیشتر می‌شود."
 
     # renpy/common/_errorhandling.rpym:754
     old "Reload"

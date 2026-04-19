@@ -1,4 +1,5 @@
-﻿
+﻿# TODO: Translation updated at 2025-07-03 12:39
+
 translate persian strings:
 
     # game/about.rpy:39
@@ -7,7 +8,7 @@ translate persian strings:
 
     # game/about.rpy:43
     old "View license"
-    new "مشاهدۀ مجوز"
+    new "مشاهدۀ مجوز"
 
     # game/add_file.rpy:28
     old "FILENAME"
@@ -31,7 +32,7 @@ translate persian strings:
 
     # game/add_file.rpy:61
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
-    new "# Ren'Py be surat-e xodkār hame-ye file hā-ye dārā-ye pasvand-e .rpy rā\n# bārgozāri mikonad. Barā-ye estefāde az in file, yek barčasb\n# ta'rif konid va az yeh file-e digar be ān pareš konid.\n"
+    new "# Ren'Py be surat-e xodkār hame-ye file-hā-ye dārā-ye pasvand-e .rpy rā\n# bārgozāri mikonad. Barā-ye estefāde az in file, yek barčasb\n# ta'rif konid va az yeh file-e digar be ān pareš konid.\n"
 
     # game/android.rpy:36
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
@@ -39,11 +40,11 @@ translate persian strings:
 
     # game/android.rpy:37
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "\u200fRAPT نصب شده است، ولی شما باید SDK اندروید را قبل از ساختن بسته‌های اندروید نصب کنید. برای این کار، گزینۀ نصب SDK را انتخاب کنید."
+    new "\u200fRAPT نصب شده است، ولی شما باید SDK اندروید را قبل از ساختن بسته‌های اندروید نصب کنید. برای این کار، گزینۀ نصب SDK را انتخاب کنید."
 
     # game/android.rpy:38
     old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
-    new "\u200fRAPT نصب شده است، ولی کلیدی برای آن تنظیم نشده است. لطفاً کلیدهای جدید برای آن تولید کرده، یا android.keystore و bundle.keystore را به پوشۀ پایه کپی کنید."
+    new "\u200fRAPT نصب شده است، ولی کلیدی برای آن تنظیم نشده است. لطفاً کلیدهای جدید برای آن تولید کرده، یا android.keystore و bundle.keystore را به پوشۀ پایه کپی کنید."
 
     # game/android.rpy:39
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
@@ -67,7 +68,7 @@ translate persian strings:
 
     # game/android.rpy:45
     old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "تلاش برای شبیه‌سازی یک کنسول اندروید تلویزیون.\n\nورودی کنترل به کلیدهای فلش تطبیق داده شده، Enter به دکمۀ انتخاب تطبیق داده شده، Escape به دکمۀ منو تطبیق داده شده، و PageUp به دکمۀ عقب تطبیق داده شده است."
+    new "تلاش برای شبیه‌سازی یک کنسول اندروید تلویزیون.\n\nورودی کنترل به کلیدهای جهت تطبیق داده شده، Enter به دکمۀ انتخاب تطبیق داده شده، Escape به دکمۀ منو تطبیق داده شده، و PageUp به دکمۀ عقب تطبیق داده شده است."
 
     # game/android.rpy:47
     old "Downloads and installs the Android SDK and supporting packages."
@@ -267,7 +268,7 @@ translate persian strings:
 
     # game/androidstrings.rpy:11
     old "Updating project."
-    new "در حال به روزرسانی پروژه."
+    new "در حال به‌روزرسانی پروژه."
 
     # game/androidstrings.rpy:12
     old "Creating assets directory."
@@ -383,11 +384,11 @@ translate persian strings:
 
     # game/androidstrings.rpy:40
     old "Neither."
-    new "هیچ کدام."
+    new "هیچ‌کدام."
 
     # game/androidstrings.rpy:41
     old "Do you want to automatically update the Java source code?"
-    new "آیا مایل به به روزرسانی خودکار کد منبع جاوا هستید؟"
+    new "آیا مایل به به‌روزرسانی خودکار کد منبع جاوا هستید؟"
 
     # game/androidstrings.rpy:42
     old "Yes. This is the best choice for most projects."
@@ -395,7 +396,7 @@ translate persian strings:
 
     # game/androidstrings.rpy:43
     old "No. This may require manual updates when Ren'Py or the project configuration changes."
-    new "خیر. این ممکن است نیاز به به روزرسانی دستی بعد از تغییر تنظیمات Ren'Py یا پروژه باشد."
+    new "خیر. این ممکن است نیاز به به‌روزرسانی دستی بعد از تغییر تنظیمات Ren'Py یا پروژه باشد."
 
     # game/androidstrings.rpy:44
     old "Unknown configuration variable: {}"
@@ -403,7 +404,7 @@ translate persian strings:
 
     # game/androidstrings.rpy:45
     old "I'm compiling a short test program, to see if you have a working JDK on your system."
-    new "من دارم یک برنامۀ کوتاه آزمایشی را هم‌گردانی می‌کنم، تا ببینم آیا دستگاه شما دارای یک JDK قابل استفاده است."
+    new "من دارم یک برنامۀ کوتاه آزمایشی را هم‌گردانی می‌کنم، تا ببینم آیا دستگاه شما دارای یک JDK قابل استفاده است."
 
     # game/androidstrings.rpy:46
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please install JDK [JDK_REQUIREMENT], and add it to your PATH.\n\nWithout a working JDK, I can't continue."
@@ -411,7 +412,7 @@ translate persian strings:
 
     # game/androidstrings.rpy:47
     old "The version of Java on your computer does not appear to be JDK [JDK_REQUIREMENT], which is required to build Android apps. If you need to install a newer JDK, you can download it from:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, and add it to your PATH.\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
-    new "نسخۀ جاوا در رایانۀ شما به نظر می‌رسد JDK [JDK_REQUIREMENT] نباشد، که برای ساختن برنامه‌های اندروید نیاز است. اگر به نصب کردن یک JDK جدیدتر نیاز دارید، می‌توانید آن را از اینجا دانلود کنید:\n\n\u200f{a=https://adoptium.net/}https://adoptium.net/{/a}، و آن را به PATH خود اضافه کنید.\n\nهمچنین می‌توانید متغیر محیط JAVA_HOME را تنظیم کنید که از یک نسخۀ دیگری از جاوا استفاده کند."
+    new "نسخۀ جاوا در رایانۀ شما به نظر می‌رسد JDK [JDK_REQUIREMENT] نباشد، که برای ساختن برنامه‌های اندروید نیاز است. اگر به نصب کردن یک JDK جدیدتر نیاز دارید، می‌توانید آن را از اینجا دانلود کنید:\n\n\u200f{a=https://adoptium.net/}https://adoptium.net/{/a}، و آن را به PATH خود اضافه کنید.\n\nهمچنین می‌توانید متغیر محیط JAVA_HOME را تنظیم کنید که از یک نسخۀ دیگری از جاوا استفاده کند."
 
     # game/androidstrings.rpy:48
     old "The JDK is present and working. Good!"
@@ -467,7 +468,7 @@ translate persian strings:
 
     # game/androidstrings.rpy:62
     old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
-    new "من کلید را داخل فایل android.keystore خواهم ساخت.\n\nشما باید این فایل را در محل دیگری نیز ذخیره کنید. اگر آن را از دست دهید، دیگر قادر به ارتقای برنامۀ خود نخواهید بود.\n\nشما همچنین باید این کلید را در محلی امن نگه دارید. اگر افراد بدکار به این فایل دسترسی پیدا کنند، آن‌ها می‌توانند نسخه‌های جعلی از برنامۀ شما بسازند، و یا حتیٰ اطلاعات کاربران شما را بدزدند.\n\nآیا از android.keystore یک نسخۀ دیگر ساخته و در جایی امن نگه خواهید داشت؟"
+    new "من کلید را داخل فایل android.keystore خواهم ساخت.\n\nشما باید این فایل را در مکان دیگری نیز ذخیره کنید. اگر آن را از دست دهید، دیگر قادر به ارتقای برنامۀ خود نخواهید بود.\n\nشما همچنین باید این کلید را در مکانی امن نگه دارید. اگر افراد بدکار به این فایل دسترسی پیدا کنند، آن‌ها می‌توانند نسخه‌های جعلی از برنامۀ شما بسازند، و یا حتیٰ اطلاعات کاربران شما را بدزدند.\n\nآیا از android.keystore یک نسخۀ دیگر ساخته و در جایی امن نگه خواهید داشت؟"
 
     # game/androidstrings.rpy:63
     old "\n\nSaying 'No' will prevent key creation."
@@ -495,7 +496,7 @@ translate persian strings:
 
     # game/choose_directory.rpy:72
     old "No directory was selected, but one is required."
-    new "هیچ پوشه‌ای انتخاب نشد، ولی یک پوشه نیاز است."
+    new "هیچ‌پوشه‌ای انتخاب نشد، ولی یک پوشه نیاز است."
 
     # game/choose_directory.rpy:80
     old "The selected directory does not exist."
@@ -555,7 +556,7 @@ translate persian strings:
 
     # game/distribute.rpy:639
     old "No packages are selected, so there's nothing to do."
-    new "هیچ بسته‌ای انتخاب نشده است، بنابراین کاری برای انجام وجود ندارد."
+    new "هیچ‌بسته‌ای انتخاب نشده است، بنابراین کاری برای انجام وجود ندارد."
 
     # game/distribute.rpy:651
     old "Scanning Ren'Py files..."
@@ -571,7 +572,7 @@ translate persian strings:
 
     # game/distribute.rpy:1342
     old "Unpacking the Macintosh application for signing..."
-    new "در حال باز کردن برنامۀ مکینتاش برای امضاء کردن..."
+    new "در حال باز کردن برنامۀ مکینتاش برای امضاء کردن..."
 
     # game/distribute.rpy:1352
     old "Signing the Macintosh application...\n(This may take a long time.)"
@@ -591,7 +592,7 @@ translate persian strings:
 
     # game/distribute.rpy:1627
     old "Making the [variant] update zsync file."
-    new "در حال ساختن فایل به روزرسانی zsync [variant]."
+    new "در حال ساختن فایل به‌روزرسانی zsync [variant]."
 
     # game/distribute.rpy:1630
     old "Finishing the [variant] [format] package."
@@ -635,7 +636,7 @@ translate persian strings:
 
     # game/distribute_gui.rpy:195
     old "Update old-game"
-    new "به روزرسانی بازی قدیمی"
+    new "به‌روزرسانی بازی قدیمی"
 
     # game/distribute_gui.rpy:196
     old "Refresh"
@@ -659,7 +660,7 @@ translate persian strings:
 
     # game/distribute_gui.rpy:246
     old "Build Updates"
-    new "ساختن به روزرسانی‌ها"
+    new "ساختن به‌روزرسانی‌ها"
 
     # game/distribute_gui.rpy:248
     old "Add from clauses to calls"
@@ -687,7 +688,7 @@ translate persian strings:
 
     # game/dmgcheck.rpy:50
     old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
-    new "این احتمالاً به علت اجرای مستقیم Ren'Py از یک درایو ایمیج مکینتاش است. برای رفع این مشکل، از راه‌انداز خارج شده، پوشۀ %s را به محلی دیگر در کامپیوتر خود کپی کرده، و سپس مجدداً Ren'Py را اجرا کنید."
+    new "این احتمالاً به علت اجرای مستقیم Ren'Py از یک درایو ایمیج مکینتاش است. برای رفع این مشکل، از راه‌انداز خارج شده، پوشۀ %s را به مکانی دیگر در کامپیوتر خود کپی کرده، و سپس مجدداً Ren'Py را اجرا کنید."
 
     # game/editor.rpy:175
     old "A modern editor with many extensions including advanced Ren'Py integration."
@@ -863,7 +864,7 @@ translate persian strings:
 
     # game/front_page.rpy:201
     old "Change/Update GUI"
-    new "تغییر/به روزرسانی GUI"
+    new "تغییر/به‌روزرسانی GUI"
 
     # game/front_page.rpy:203
     old "Change Theme"
@@ -915,7 +916,7 @@ translate persian strings:
 
     # game/gui7.rpy:306
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}هشدار{/b}\nادامه دادن تصویرهای شخصی‌سازی شدۀ ملیه، دکمه، خانۀ ذخیره، اسکرول بار، و اهرم لغزنده را بازنویسی خواهد کرد.\n\nمایل به چه کاری هستید؟"
+    new "{b}هشدار{/b}\nادامه دادن تصویرهای شخصی‌سازی شدۀ ملیه، دکمه، خانۀ ذخیره، اسکرول بار، و اهرم لغزنده را بازنویسی خواهد کرد.\n\nمایل به چه کاری هستید؟"
 
     # game/gui7.rpy:306
     old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
@@ -967,7 +968,7 @@ translate persian strings:
 
     # game/gui7.rpy:426
     old "Updating the project..."
-    new "در حال به روزرسانی پروژه..."
+    new "در حال به‌روزرسانی پروژه..."
 
     # game/gui7.rpy:428
     old "creating a new project"
@@ -1047,7 +1048,7 @@ translate persian strings:
 
     # game/interface.rpy:135
     old "update"
-    new "به روزرسانی"
+    new "به‌روزرسانی"
 
     # game/interface.rpy:140
     old "preferences"
@@ -1119,7 +1120,7 @@ translate persian strings:
 
     # game/ios.rpy:31
     old "An Xcode project exists. Choose 'Update Xcode Project' to update it with the latest game files, or use Xcode to build and install it."
-    new "یک پروژۀ Xcode وجود دارد. برای به روزرسانی آن با جدیدترین فایل‌های بازی «به روزرسانی پروژۀ Xcode» را انتخاب کنید، و یا از Xcode برای ساختن و نصب کردن آن استفاده کنید."
+    new "یک پروژۀ Xcode وجود دارد. برای به‌روزرسانی آن با جدیدترین فایل‌های بازی «به‌روزرسانی پروژۀ Xcode» را انتخاب کنید، و یا از Xcode برای ساختن و نصب کردن آن استفاده کنید."
 
     # game/ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
@@ -1139,11 +1140,11 @@ translate persian strings:
 
     # game/ios.rpy:38
     old "Updates the Xcode project with the latest game files. This must be done each time the Ren'Py project changes."
-    new "پروژۀ Xcode را با جدیدترین فایل‌های بازی به روزرسانی می‌کند. این کار باید هر دفعه پروژۀ Ren'Py تغییر بکند انجام شود."
+    new "پروژۀ Xcode را با جدیدترین فایل‌های بازی به‌روزرسانی می‌کند. این کار باید هر دفعه پروژۀ Ren'Py تغییر بکند انجام شود."
 
     # game/ios.rpy:39
     old "Opens the Xcode project in Xcode."
-    new "پروژۀ Xcode را داخل Xcode باز می‌کند."
+    new "پروژۀ Xcode را داخل Xcode باز می‌کند."
 
     # game/ios.rpy:41
     old "Opens the directory containing Xcode projects."
@@ -1151,7 +1152,7 @@ translate persian strings:
 
     # game/ios.rpy:142
     old "The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"
-    new "پروژۀ Xcode وجود دارد. آیا مایل به نامگذاری مجدد پروژۀ قدیمی هستید، یا جایگزین کردن آن با پروژۀ جدید؟"
+    new "پروژۀ Xcode وجود دارد. آیا مایل به نامگذاری مجدد پروژۀ قدیمی هستید، یا جایگزین کردن آن با پروژۀ جدید؟"
 
     # game/ios.rpy:272
     old "iOS: [project.current.display_name!q]"
@@ -1175,7 +1176,7 @@ translate persian strings:
 
     # game/ios.rpy:333
     old "Update Xcode Project"
-    new "به روزرسانی پروژۀ Xcode"
+    new "به‌روزرسانی پروژۀ Xcode"
 
     # game/ios.rpy:338
     old "Launch Xcode"
@@ -1199,7 +1200,7 @@ translate persian strings:
 
     # game/ios.rpy:407
     old "Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "لطفاً پوشۀ پروژۀ Xcode را از طریق انتخاب‌گر پوشه انتخاب کنید.\n{b}انتخاب‌گر پوشه ممکن است پشت این پنجره باز شده باشد.{/b}"
+    new "لطفاً پوشۀ پروژۀ Xcode را از طریق انتخاب‌گر پوشه انتخاب کنید.\n{b}انتخاب‌گر پوشه ممکن است پشت این پنجره باز شده باشد.{/b}"
 
     # game/ios.rpy:412
     old "Ren'Py has set the Xcode Projects Directory to:"
@@ -1223,7 +1224,7 @@ translate persian strings:
 
     # game/itch.rpy:117
     old "Please install the itch.io app, which includes butler, and try again."
-    new "لطفاً برنامۀ itch.io، که شامل butler می‌شود را نصب کرده و مجدداً تلاش کنید."
+    new "لطفاً برنامۀ itch.io، که شامل butler می‌شود را نصب کرده و مجدداً تلاش کنید."
 
     # game/itch.rpy:126
     old "The name of the itch project has not been set."
@@ -1299,7 +1300,7 @@ translate persian strings:
 
     # game/navigation.rpy:263
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
-    new "هیچ کامنت TODO پیدا نشد.\n\nبرای ساختن آن، در اسکریپت خود \"# TODO\" قرار دهید."
+    new "هیچ‌کامنت TODO پیدا نشد.\n\nبرای ساختن آن، در اسکریپت خود \"# TODO\" قرار دهید."
 
     # game/navigation.rpy:270
     old "The list of names is empty."
@@ -1443,11 +1444,11 @@ translate persian strings:
 
     # game/preferences.rpy:265
     old "Daily check for update"
-    new "چک روزانه برای به روزرسانی"
+    new "چک روزانه برای به‌روزرسانی"
 
     # game/preferences.rpy:266
     old "Prefer RPU updates"
-    new "ترجیح دادن به روزرسانی‌های RPU"
+    new "ترجیح دادن به‌روزرسانی‌های RPU"
 
     # game/preferences.rpy:283
     old "Launcher Theme:"
@@ -1539,7 +1540,7 @@ translate persian strings:
 
     # game/project.rpy:46
     old "Have you backed up your projects recently?"
-    new "آیا اخیراً از پروژۀ خود نسخۀ پشتیبان تهیه کردید؟"
+    new "آیا اخیراً از پروژۀ خود نسخۀ پشتیبان تهیه کردید؟"
 
     # game/project.rpy:46
     old "Lint checks your game for potential mistakes, and gives you statistics."
@@ -1563,7 +1564,7 @@ translate persian strings:
 
     # game/project.rpy:776
     old "Splashscreen skipped in launcher preferences."
-    new "صفحۀ اسپلش در تنظیمات راه‌انداز رد شده است"
+    new "صفحۀ اسپلش در تنظیمات راه‌انداز رد شده است"
 
     # game/project.rpy:780
     old "Launching"
@@ -1575,7 +1576,7 @@ translate persian strings:
 
     # game/project.rpy:822
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "لطفاً پوشۀ پروژه‌ها را از طریق انتخاب‌گر انتخاب کنید.\n{b}انتخاب‌گر پوشه ممکن است پشت این پنجره باز شده باشد.{/b}"
+    new "لطفاً پوشۀ پروژه‌ها را از طریق انتخاب‌گر انتخاب کنید.\n{b}انتخاب‌گر پوشه ممکن است پشت این پنجره باز شده باشد.{/b}"
 
     # game/project.rpy:822
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
@@ -1599,7 +1600,7 @@ translate persian strings:
 
     # game/translations.rpy:176
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "تولید یا به روزرسانی فایل‌های ترجمه. این فایل‌ها داخل game/tl/[persistent.translate_language!q] قرار خواهند گرفت."
+    new "تولید یا به‌روزرسانی فایل‌های ترجمه. این فایل‌ها داخل game/tl/[persistent.translate_language!q] قرار خواهند گرفت."
 
     # game/translations.rpy:196
     old "Extract String Translations"
@@ -1619,7 +1620,7 @@ translate persian strings:
 
     # game/translations.rpy:208
     old "Update Default Interface Translations"
-    new "به روزرسانی ترجمه‌های پیش‌فرض رابط"
+    new "به‌روزرسانی ترجمه‌های پیش‌فرض رابط"
 
     # game/translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
@@ -1651,7 +1652,7 @@ translate persian strings:
 
     # game/translations.rpy:313
     old "Updating default interface translations..."
-    new "در حال به روزرسانی ترجمه‌های پیش‌فرض رابط..."
+    new "در حال به‌روزرسانی ترجمه‌های پیش‌فرض رابط..."
 
     # game/translations.rpy:342
     old "Extract Dialogue: [project.current.display_name!q]"
@@ -1767,11 +1768,11 @@ translate persian strings:
 
     # game/updater.rpy:102
     old "Select Update Channel"
-    new "انتخاب کانال به روزرسانی"
+    new "انتخاب کانال به‌روزرسانی"
 
     # game/updater.rpy:113
     old "The update channel controls the version of Ren'Py the updater will download."
-    new "کانال به روزرسانی نسخه‌ای از Ren'Py که به روزرساننده دانلود خواهد کرد را کنترل می‌کند."
+    new "کانال به‌روزرسانی نسخه‌ای از Ren'Py که به روزرساننده دانلود خواهد کرد را کنترل می‌کند."
 
     # game/updater.rpy:121
     old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
@@ -1795,7 +1796,7 @@ translate persian strings:
 
     # game/updater.rpy:164
     old "Checking for updates."
-    new "در حال چک برای به روزرسانی‌ها."
+    new "در حال چک برای به‌روزرسانی‌ها."
 
     # game/updater.rpy:166
     old "Ren'Py is up to date."
@@ -1807,15 +1808,15 @@ translate persian strings:
 
     # game/updater.rpy:170
     old "Preparing to download the update."
-    new "در حال آماده‌سازی برای دانلود به روزرسانی."
+    new "در حال آماده‌سازی برای دانلود به‌روزرسانی."
 
     # game/updater.rpy:172
     old "Downloading the update."
-    new "در حال دانلود به روزرسانی."
+    new "در حال دانلود به‌روزرسانی."
 
     # game/updater.rpy:174
     old "Unpacking the update."
-    new "در حال خارج کردن به روزرسانی از حالت فشرده."
+    new "در حال خارج کردن به‌روزرسانی از حالت فشرده."
 
     # game/updater.rpy:176
     old "Finishing up."
@@ -1823,19 +1824,19 @@ translate persian strings:
 
     # game/updater.rpy:178
     old "The update has been installed. Ren'Py will restart."
-    new "به روزرسانی نصب شد. Ren'Py مجدداً باز خواهد شد."
+    new "به‌روزرسانی نصب شد. Ren'Py مجدداً باز خواهد شد."
 
     # game/updater.rpy:180
     old "The update has been installed."
-    new "به روزرسانی نصب شد."
+    new "به‌روزرسانی نصب شد."
 
     # game/updater.rpy:182
     old "The update was cancelled."
-    new "به روزرسانی لغو شد."
+    new "به‌روزرسانی لغو شد."
 
     # game/updater.rpy:199
     old "Ren'Py Update"
-    new "به روزرسانی Ren'Py"
+    new "به‌روزرسانی Ren'Py"
 
     # game/updater.rpy:205
     old "Proceed"
@@ -1843,11 +1844,11 @@ translate persian strings:
 
     # game/updater.rpy:219
     old "Fetching the list of update channels"
-    new "در حال دریافت لیست کانال‌های به روزرسانی"
+    new "در حال دریافت لیست کانال‌های به‌روزرسانی"
 
     # game/updater.rpy:226
     old "downloading the list of update channels"
-    new "در حال دانلود لیست کانال‌های به روزرسانی"
+    new "در حال دانلود لیست کانال‌های به‌روزرسانی"
 
     # game/web.rpy:430
     old "Preparing progressive download"

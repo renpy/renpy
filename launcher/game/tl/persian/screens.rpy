@@ -1,13 +1,14 @@
-﻿
+﻿# TODO: Translation updated at 2025-07-03 12:39
+
 translate persian strings:
 
     # gui/game/screens.rpy:9
     old "## Styles"
-    new "## Style hā"
+    new "## Style-hā"
 
     # gui/game/screens.rpy:81
     old "## In-game screens"
-    new "## Menu hā-ye darun-e bāzi"
+    new "## Menu-hā-ye darun-e bāzi"
 
     # gui/game/screens.rpy:85
     old "## Say screen"
@@ -19,7 +20,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:92
     old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
-    new "## In safhe bāyad yek displayable-e matni bā šenāse-ye \"what\" besāzad, čerā ke Ren'Py az in barā-ye modiriyat-e namāyeš-e matn estefāde mikonad. In safhe hamčenin mitavānad displayable hāyi bā šenāse hā-ye \"who\" va \"window\" barā-ye e'māl-e vižegi hā-ye style besāzad."
+    new "## In safhe bāyad yek displayable-e matni bā šenāse-ye \"what\" besāzad, čerā ke Ren'Py az in barā-ye modiriyat-e namāyeš-e matn estefāde mikonad. In safhe hamčenin mitavānad displayable-hāyi bā šenāse-hā-ye \"who\" va \"window\" barā-ye e'māl-e vižegi-hā-ye style besāzad."
 
     # gui/game/screens.rpy:96
     old "## https://www.renpy.org/doc/html/screen_special.html#say"
@@ -43,7 +44,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:169
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
-    new "## In safhe bāyad yek displayable-e vorudi bā šenāse-ye \"input\" barā-ye daryāft-e pārāmetr hā-ye vorudi-ye moxtalef besāzad."
+    new "## In safhe bāyad yek displayable-e vorudi bā šenāse-ye \"input\" barā-ye daryāft-e pārāmetr-hā-ye vorudi-ye moxtalef besāzad."
 
     # gui/game/screens.rpy:172
     old "## https://www.renpy.org/doc/html/screen_special.html#input"
@@ -55,7 +56,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:201
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
-    new "## In safhe barā-ye namāyeš-e entexāb hā-ye darun-e bāzi-ye erā'e šode tavassot-e gozāre-ye menu estefāde mišavad. Tanhā pārāmetr-e ān, items, yek list az ašiyā' ast, ke har kodām dārā-ye xāne hā-ye onvān va amal hastand."
+    new "## In safhe barā-ye namāyeš-e entexāb-hā-ye darun-e bāzi-ye erā'e šode tavassot-e gozāre-ye menu estefāde mišavad. Tanhā pārāmetr-e ān, items, yek list az ašiyā' ast, ke har kodām dārā-ye xāne-hā-ye onvān va amal hastand."
 
     # gui/game/screens.rpy:205
     old "## https://www.renpy.org/doc/html/screen_special.html#choice"
@@ -67,7 +68,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:235
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
-    new "## Menu-ye sari' dāxel-e bāzi barā-ye farāham kardan-e dastresi-ye sari' be menu hā-ye birun-e bāzi namāyeš dāde mišavad."
+    new "## Menu-ye sari' dāxel-e bāzi barā-ye farāham kardan-e dastresi-ye sari' be menu-hā-ye birun-e bāzi namāyeš dāde mišavad."
 
     # gui/game/screens.rpy:240
     old "## Ensure this appears on top of other screens."
@@ -95,7 +96,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:256
     old "Q.Save"
-    new "ذخیرۀ سریع"
+    new "ذخیرۀ سریع"
 
     # gui/game/screens.rpy:257
     old "Q.Load"
@@ -111,7 +112,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:279
     old "## Main and Game Menu Screens"
-    new "## Safhe hā-ye menu-ye asli va bāzi"
+    new "## Safhe-hā-ye menu-ye asli va bāzi"
 
     # gui/game/screens.rpy:282
     old "## Navigation screen"
@@ -119,7 +120,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:284
     old "## This screen is included in the main and game menus, and provides navigation to other menus, and to start the game."
-    new "## In safhe dar menu hā-ye asli va bāzi vojud dāšte, va peymāyeš be menu hā-ye digar, va šoru'-e bāzi rā farāham mikonad."
+    new "## In safhe dar menu-hā-ye asli va bāzi vojud dāšte, va peymāyeš be menu-hā-ye digar, va šoru'-e bāzi rā farāham mikonad."
 
     # gui/game/screens.rpy:299
     old "Start"
@@ -147,7 +148,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:323
     old "## Help isn't necessary or relevant to mobile devices."
-    new "## Komak barā-ye dastgāh hā-ye hamrāh elzāmi va yā be ān hā mortabet nist."
+    new "## Komak barā-ye dastgāh-hā-ye hamrāh elzāmi va yā be ān-hā mortabet nist."
 
     # gui/game/screens.rpy:324
     old "Help"
@@ -211,7 +212,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:539
     old "## This screen gives credit and copyright information about the game and Ren'Py."
-    new "## In safhe ettelā'āt-e e'tebār hā (credit) va haqq-e taksir-e (copyright) marbut be bāzi va Ren'Py rā namāyeš midahad."
+    new "## In safhe ettelā'āt-e e'tebār-hā (credit) va haqq-e taksir-e (copyright) marbut be bāzi va Ren'Py rā namāyeš midahad."
 
     # gui/game/screens.rpy:542
     old "## There's nothing special about this screen, and hence it also serves as an example of how to make a custom screen."
@@ -259,7 +260,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:607
     old "## This ensures the input will get the enter event before any of the buttons do."
-    new "## In az gereftan-e ruydād-e vorud tavassot-e vorudi qabl az har yek az dokme hā motma'en misāzad."
+    new "## In az gereftan-e ruydād-e vorud tavassot-e vorudi qabl az har yek az dokme-hā motma'en misāzad."
 
     # gui/game/screens.rpy:611
     old "## The page name, which can be edited by clicking on a button."
@@ -267,7 +268,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:623
     old "## The grid of file slots."
-    new "## Šabake-ye xāne hā-ye file hā."
+    new "## Šabake-ye xāne-hā-ye file-hā."
 
     # gui/game/screens.rpy:643
     old "{#file_time}%A, %B %d %Y, %H:%M"
@@ -279,7 +280,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:651
     old "## Buttons to access other pages."
-    new "## Dokme hāyi barā-ye dastresi be safahāt-e digar."
+    new "## Dokme-hāyi barā-ye dastresi be safahāt-e digar."
 
     # gui/game/screens.rpy:663
     old "<"
@@ -339,7 +340,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:752
     old "After Choices"
-    new "پس‌انتخاب‌ها"
+    new "بعد از انتخاب‌ها"
 
     # gui/game/screens.rpy:753
     old "Transitions"
@@ -347,7 +348,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:755
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
-    new "## vbox hā-ye bištar az no'-e \"radio_pref\" yā \"check_pref\" rā mitavān barā-ye ezāfe kardan-e tarjihāt-e ta'rif šode tavassot-e sāzande-ye bištar injā ezāfe kard."
+    new "## vbox-hā-ye bištar az no'-e \"radio_pref\" yā \"check_pref\" rā mitavān barā-ye ezāfe kardan-e tarjihāt-e ta'rif šode tavassot-e sāzande-ye bištar injā ezāfe kard."
 
     # gui/game/screens.rpy:766
     old "Text Speed"
@@ -407,7 +408,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:926
     old "## This determines what tags are allowed to be displayed on the history screen."
-    new "## In ta'in mikonad če tag hāyi rā mitavān dar safhe-ye tārixče namāyeš dād."
+    new "## In ta'in mikonad če tag-hāyi rā mitavān dar safhe-ye tārixče namāyeš dād."
 
     # gui/game/screens.rpy:971
     old "## Help screen"
@@ -447,7 +448,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:1017
     old "Arrow Keys"
-    new "کلیدهای فلش‌ها"
+    new "کلیدهای جهت"
 
     # gui/game/screens.rpy:1018
     old "Navigate the interface."
@@ -607,7 +608,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:1225
     old "## This transform is used to blink the arrows one after another."
-    new "## In tabdil barā-ye češmak zadan-e feleš hā yeki pas az digari estefāde mišavad."
+    new "## In tabdil barā-ye češmak zadan-e peykān-hā yeki pas az digari estefāde mišavad."
 
     # gui/game/screens.rpy:1252
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
@@ -631,7 +632,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:1298
     old "## This screen is used for NVL-mode dialogue and menus."
-    new "## In safhe barā-ye diālog va menu hā-ye NVL-mode estefāde mišavad."
+    new "## In safhe barā-ye diālog va menu-hā-ye NVL-mode estefāde mišavad."
 
     # gui/game/screens.rpy:1300
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
@@ -647,7 +648,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:1354
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
-    new "## In hadd-e aksar te'dād-e vorudi hā-ye NVL-mode ke mitavānand ham zamān namāyeš dāde šavand rā control mikonad."
+    new "## In hadd-e aksar te'dād-e vorudi-hā-ye NVL-mode ke mitavānand ham zamān namāyeš dāde šavand rā control mikonad."
 
     # gui/game/screens.rpy:1414
     old "## Bubble screen"
@@ -655,7 +656,7 @@ translate persian strings:
 
     # gui/game/screens.rpy:1416
     old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
-    new "## Safhe-ye abr barā-ye namāyeš-e diālog be bāzigar hengām-e estefāde az abrnevise estefāde mišavad. Safhe-ye abr parametr hā-ye yeksāni ba safhe-ye goftār migirad, bāyad yek displayable bā šenāse-ye \"what\" besāzad, va mitavānad displayable hāyi bā šenāse hā-ye \"namebox\", \"who\", va \"window\" besāzad."
+    new "## Safhe-ye abr barā-ye namāyeš-e diālog be bāzigar hengām-e estefāde az abrnevise estefāde mišavad. Safhe-ye abr parametr-hā-ye yeksāni ba safhe-ye goftār migirad, bāyad yek displayable bā šenāse-ye \"what\" besāzad, va mitavānad displayable-hāyi bā šenāse-hā-ye \"namebox\", \"who\", va \"window\" besāzad."
 
     # gui/game/screens.rpy:1421
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
@@ -663,11 +664,11 @@ translate persian strings:
 
     # gui/game/screens.rpy:1505
     old "## Mobile Variants"
-    new "## Hālat hā-ye hamrāh"
+    new "## Hālat-hā-ye hamrāh"
 
     # gui/game/screens.rpy:1512
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
-    new "## Az ānjāyi ke yek mušvāre momken ast mowjud nabāšad, mā menu-ye sari' rā bā yek nosxe ke az dokme hā-ye kamtar va bozorgtar ke barā-ye lams kardan rāhat tarand estefāde mikonim."
+    new "## Az ānjāyi ke yek mušvāre momken ast mowjud nabāšad, mā menu-ye sari' rā bā yek nosxe ke az dokme-hā-ye kamtar va bozorgtar ke barā-ye lams kardan rāhat tarand estefāde mikonim."
 
     # gui/game/screens.rpy:1530
     old "Menu"
