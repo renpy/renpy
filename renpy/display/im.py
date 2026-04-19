@@ -442,7 +442,7 @@ class Cache:
 
         to_flush = []
 
-        for ce in self.cache.values():
+        for ce in list(self.cache.values()):
             if fn in ce.what.predict_files():
                 to_flush.append(ce)
 
