@@ -372,8 +372,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         #  will use mouse coordinates to select droppable
         self.mouse_drop = mouse_drop
 
-        # We're focusable if we can be dragged.
-        self.focusable = draggable
+        # We're focusable if we can be interacted with in some way.
+        self.focusable = draggable or clicked or hovered or unhovered or activated or alternate
 
         self.child = None
 
