@@ -430,9 +430,9 @@ def bootstrap(renpy_base):
 
         renpy.display.tts.tts(None)  # type: ignore
 
-        renpy.display.im.cache.quit()  # type: ignore
 
         if renpy.display.draw:  # type: ignore
+            renpy.display.im.cache.quit()  # type: ignore
             renpy.display.draw.quit()  # type: ignore
 
         renpy.audio.audio.quit()
