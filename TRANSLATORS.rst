@@ -62,3 +62,14 @@ Translation to Ukrainian language. Most of translations provided by Veydzher.
 Feel free to report me any mistakes, fixes or improvements.
 
 * Veydzher <veydzherdgswift008@gmail.com>
+
+Persian
+---------
+
+Translation to the Persian language. Some translated terms have the original
+English term in brackets, and some terms have only been transliterated, as the
+original term is more commonly used. The translated comments are written based
+on the United Nations Romanization System for Persian, rather than actual
+Persian to avoid issues in text and code editors.
+
+* Gekkou Translations <gekkoutranslations@gmail.com>

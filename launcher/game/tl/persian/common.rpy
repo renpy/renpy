@@ -1,4 +1,5 @@
-﻿
+﻿# TODO: Translation updated at 2025-07-03 12:39
+
 translate persian strings:
 
     # renpy/common/00accessibility.rpy:28
@@ -51,7 +52,7 @@ translate persian strings:
 
     # renpy/common/00accessibility.rpy:122
     old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
-    new "منوی دسترس‌پذیری. از کلیدهای فلش بالا و پایین برای هدایت، و از کلید enter برای فعال کردن دکمه‌ها و میله‌ها استفاده کنید."
+    new "منوی دسترس‌پذیری. از کلیدهای جهت بالا و پایین برای هدایت، و از کلید enter برای فعال کردن دکمه‌ها و میله‌ها استفاده کنید."
 
     # renpy/common/00accessibility.rpy:141
     old "Font Override"
@@ -91,7 +92,7 @@ translate persian strings:
 
     # renpy/common/00accessibility.rpy:199
     old "Self-voicing support is limited when using a touch screen."
-    new "پشتیبانی گفتار خودکار هنگام استفاده از صفحۀ لمسی محدود است."
+    new "پشتیبانی گفتار خودکار هنگام استفاده از صفحۀ لمسی محدود است."
 
     # renpy/common/00accessibility.rpy:203
     old "Off"
@@ -119,59 +120,59 @@ translate persian strings:
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Monday"
-    new "شنبه"
+    new "دوشنبه"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Tuesday"
-    new "یک شنبه"
+    new "سه‌شنبه"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Wednesday"
-    new "دو شنبه"
+    new "چهارشنبه"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Thursday"
-    new "سه شنبه"
+    new "پنج‌شنبه"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Friday"
-    new "چهار شنبه"
+    new "جمعه"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Saturday"
-    new "پنج شنبه"
+    new "شنبه"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Sunday"
-    new "جمعه"
+    new "یک‌شنبه"
 
     # renpy/common/00action_file.rpy:37
     old "{#weekday_short}Mon"
-    new "شنبه"
-
-    # renpy/common/00action_file.rpy:37
-    old "{#weekday_short}Tue"
-    new "یک"
-
-    # renpy/common/00action_file.rpy:37
-    old "{#weekday_short}Wed"
     new "دو"
 
     # renpy/common/00action_file.rpy:37
-    old "{#weekday_short}Thu"
+    old "{#weekday_short}Tue"
     new "سه"
 
     # renpy/common/00action_file.rpy:37
-    old "{#weekday_short}Fri"
+    old "{#weekday_short}Wed"
     new "چهار"
 
     # renpy/common/00action_file.rpy:37
-    old "{#weekday_short}Sat"
+    old "{#weekday_short}Thu"
     new "پنج"
 
     # renpy/common/00action_file.rpy:37
+    old "{#weekday_short}Fri"
+    new "جم"
+
+    # renpy/common/00action_file.rpy:37
+    old "{#weekday_short}Sat"
+    new "شن"
+
+    # renpy/common/00action_file.rpy:37
     old "{#weekday_short}Sun"
-    new "جمعه"
+    new "یک"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}January"
@@ -243,11 +244,11 @@ translate persian strings:
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Jun"
-    new "ژوئن"
+    new "ژون"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Jul"
-    new "ژوئی"
+    new "ژوی"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Aug"
@@ -327,7 +328,7 @@ translate persian strings:
 
     # renpy/common/00director.rpy:712
     old "The interactive director is not enabled here."
-    new "مدیریت تعاملی در اینجا فعال نشده است."
+    new "کارگردان تعاملی در اینجا فعال نشده است."
 
     # renpy/common/00director.rpy:1512
     old "⬆"
@@ -375,7 +376,7 @@ translate persian strings:
 
     # renpy/common/00director.rpy:1664
     old "Add"
-    new "اضافه کردن"
+    new "افزودن"
 
     # renpy/common/00director.rpy:1667
     old "Cancel"
@@ -383,19 +384,19 @@ translate persian strings:
 
     # renpy/common/00director.rpy:1670
     old "Remove"
-    new "حذف کردن"
+    new "حذف"
 
     # renpy/common/00director.rpy:1705
     old "Statement:"
-    new "گزاره:"
+    new "گزاره (Statement):"
 
     # renpy/common/00director.rpy:1726
     old "Tag:"
-    new "تگ:"
+    new "تگ (Tag):"
 
     # renpy/common/00director.rpy:1742
     old "Attributes:"
-    new "صفات:"
+    new "صفات (Attributes):"
 
     # renpy/common/00director.rpy:1753
     old "Click to toggle attribute, right click to toggle negative attribute."
@@ -403,7 +404,7 @@ translate persian strings:
 
     # renpy/common/00director.rpy:1765
     old "Transforms:"
-    new "تبدیلات:"
+    new "تبدیلات (Transforms):"
 
     # renpy/common/00director.rpy:1776
     old "Click to set transform, right click to add to transform list."
@@ -423,7 +424,7 @@ translate persian strings:
 
     # renpy/common/00director.rpy:1812
     old "Transition:"
-    new "گذار:"
+    new "گذار (Transition):"
 
     # renpy/common/00director.rpy:1822
     old "Click to set."
@@ -435,7 +436,7 @@ translate persian strings:
 
     # renpy/common/00director.rpy:1835
     old "Channel:"
-    new "کانال:"
+    new "کانال (Channel):"
 
     # renpy/common/00director.rpy:1846
     old "Customize director.audio_channels to add more channels."
@@ -487,7 +488,7 @@ translate persian strings:
 
     # renpy/common/00gui.rpy:458
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "آیا مایل به رد کردن دیالوگ نادیده تا انتخاب بعدی هستید؟"
+    new "آیا مایل به رد کردن دیالوگ دیده نشده تا انتخاب بعدی هستید؟"
 
     # renpy/common/00gui.rpy:459
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
@@ -515,7 +516,7 @@ translate persian strings:
 
     # renpy/common/00preferences.rpy:290
     old "display"
-    new "نمایش"
+    new "نمایش (display)"
 
     # renpy/common/00preferences.rpy:310
     old "transitions"
@@ -551,11 +552,11 @@ translate persian strings:
 
     # renpy/common/00preferences.rpy:357
     old "skip unseen [text]"
-    new "رد کردن [text] نادیده"
+    new "رد کردن [text] دیده نشده"
 
     # renpy/common/00preferences.rpy:362
     old "skip unseen text"
-    new "رد کردن نوشتۀ نادیده"
+    new "رد کردن متن دیده نشده"
 
     # renpy/common/00preferences.rpy:364
     old "begin skipping"
@@ -563,11 +564,11 @@ translate persian strings:
 
     # renpy/common/00preferences.rpy:368
     old "after choices"
-    new "پس‌انتخاب‌ها"
+    new "بعد از انتخاب‌ها"
 
     # renpy/common/00preferences.rpy:375
     old "skip after choices"
-    new "رد کردن پس‌انتخاب‌ها"
+    new "رد کردن بعد از انتخاب‌ها"
 
     # renpy/common/00preferences.rpy:377
     old "auto-forward time"
@@ -791,7 +792,7 @@ translate persian strings:
 
     # renpy/common/00sync.rpy:316
     old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
-    new "لطفاً شناسۀ همگام‌سازی را که ساخته‌اید را وارد کنید.\nبه هیچ وجه شناسۀ همگام‌سازی که خودتان نساخته‌اید را وارد نکنید."
+    new "لطفاً شناسۀ همگام‌سازی را که ساخته‌اید را وارد کنید.\nبه هیچ‌وجه شناسۀ همگام‌سازی که خودتان نساخته‌اید را وارد نکنید."
 
     # renpy/common/00sync.rpy:335
     old "The sync ID is not in the correct format."
@@ -815,7 +816,7 @@ translate persian strings:
 
     # renpy/common/00sync.rpy:472
     old "Enter Sync ID"
-    new "شناسۀ همگام‌سازی را وارد کنید"
+    new "شناسۀ همگام‌سازی را وارد کنید"
 
     # renpy/common/00sync.rpy:483
     old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
@@ -859,7 +860,7 @@ translate persian strings:
 
     # renpy/common/00updater.rpy:505
     old "No update methods found."
-    new "هیچ روش به روزرسانی پیدا نشد."
+    new "هیچ‌روش به‌روزرسانی پیدا نشد."
 
     # renpy/common/00updater.rpy:552
     old "Could not download file list: "
@@ -867,7 +868,7 @@ translate persian strings:
 
     # renpy/common/00updater.rpy:555
     old "File list digest does not match."
-    new "لیست فایل چکیده مطابقت ندارد."
+    new "لیست فایل digest مطابقت ندارد."
 
     # renpy/common/00updater.rpy:765
     old "An error is being simulated."
@@ -875,27 +876,27 @@ translate persian strings:
 
     # renpy/common/00updater.rpy:953
     old "Either this project does not support updating, or the update status file was deleted."
-    new "این پروژه از به روزرسانی پشتیبانی نمی‌کند، یا فایل وضعیت به روزرسانی حذف شده است."
+    new "این پروژه از به‌روزرسانی پشتیبانی نمی‌کند، یا فایل وضعیت به‌روزرسانی حذف شده است."
 
     # renpy/common/00updater.rpy:967
     old "This account does not have permission to perform an update."
-    new "این حساب اجازۀ شروع یک به روزرسانی را ندارد."
+    new "این حساب اجازۀ شروع یک به‌روزرسانی را ندارد."
 
     # renpy/common/00updater.rpy:970
     old "This account does not have permission to write the update log."
-    new "این حساب اجازۀ نوشتن گزارش به روزرسانی را ندارد."
+    new "این حساب اجازۀ نوشتن گزارش به‌روزرسانی را ندارد."
 
     # renpy/common/00updater.rpy:1050
     old "Could not verify update signature."
-    new "امضای به روزرسانی موفق به تأیید نشد."
+    new "امضای به‌روزرسانی موفق به تأیید نشد."
 
     # renpy/common/00updater.rpy:1373
     old "The update file was not downloaded."
-    new "فایل به روزرسانی دانلود نشد."
+    new "فایل به‌روزرسانی دانلود نشد."
 
     # renpy/common/00updater.rpy:1391
     old "The update file does not have the correct digest - it may have been corrupted."
-    new "فایل به روزرسانی دارای چکیدۀ درست نمی‌باشد - این فایل ممکن است خراب شده باشد."
+    new "فایل به‌روزرسانی دارای digest درست نمی‌باشد - این فایل ممکن است خراب شده باشد."
 
     # renpy/common/00updater.rpy:1541
     old "While unpacking {}, unknown type {}."
@@ -915,27 +916,27 @@ translate persian strings:
 
     # renpy/common/00updater.rpy:2037
     old "Preparing to download the updates."
-    new "در حال آماده‌سازی برای دانلود به روزرسانی‌ها."
+    new "در حال آماده‌سازی برای دانلود به‌روزرسانی‌ها."
 
     # renpy/common/00updater.rpy:2039
     old "Downloading the updates."
-    new "در حال دانلود به روزرسانی‌ها."
+    new "در حال دانلود به‌روزرسانی‌ها."
 
     # renpy/common/00updater.rpy:2041
     old "Unpacking the updates."
-    new "در حال باز کردن به روزرسانی‌ها."
+    new "در حال باز کردن به‌روزرسانی‌ها."
 
     # renpy/common/00updater.rpy:2045
     old "The updates have been installed. The program will restart."
-    new "به روزرسانی‌ها نصب شدند. برنامه مجدداً باز خواهد شد."
+    new "به‌روزرسانی‌ها نصب شدند. برنامه مجدداً باز خواهد شد."
 
     # renpy/common/00updater.rpy:2047
     old "The updates have been installed."
-    new "به روزرسانی‌ها نصب شدند."
+    new "به‌روزرسانی‌ها نصب شدند."
 
     # renpy/common/00updater.rpy:2049
     old "The updates were cancelled."
-    new "به روزرسانی‌ها لغو شدند."
+    new "به‌روزرسانی‌ها لغو شدند."
 
     # renpy/common/00updater.rpy:2080
     old "Preparing to download the game data."
@@ -951,7 +952,7 @@ translate persian strings:
 
     # renpy/common/00updater.rpy:2086
     old "An error occured when trying to download game data:"
-    new "یک خطا هنگام دانلود اطلاعات بازی اتفاق افتاد:"
+    new "یک خطا هنگام دانلود اطلاعات بازی رخ داد:"
 
     # renpy/common/00updater.rpy:2091
     old "This game cannot be run until the game data has been downloaded."

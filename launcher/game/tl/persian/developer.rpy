@@ -1,4 +1,5 @@
-﻿
+﻿# TODO: Translation updated at 2025-07-03 12:39
+
 translate persian strings:
 
     # renpy/common/_developer/developer.rpym:39
@@ -27,7 +28,7 @@ translate persian strings:
 
     # renpy/common/_developer/developer.rpym:54
     old "Image Location Picker"
-    new "انتخاب کنندۀ محل عکس"
+    new "انتخاب کنندۀ مکان عکس"
 
     # renpy/common/_developer/developer.rpym:56
     old "Filename List"
@@ -103,7 +104,7 @@ translate persian strings:
 
     # renpy/common/_developer/developer.rpym:370
     old "Mouse position: %r"
-    new "موقعیت مکان‌نما: %r"
+    new "موقعیت موشواره: %r"
 
     # renpy/common/_developer/developer.rpym:375
     old "Right-click or escape to quit."
@@ -139,7 +140,7 @@ translate persian strings:
 
     # renpy/common/_developer/inspector.rpym:39
     old "Displayable Inspector"
-    new "بازبین دیسپلیبل"
+    new "بازبین Displayable"
 
     # renpy/common/_developer/inspector.rpym:62
     old "Size"
@@ -151,7 +152,7 @@ translate persian strings:
 
     # renpy/common/_developer/inspector.rpym:72
     old "Location"
-    new "محل"
+    new "مکان"
 
     # renpy/common/_developer/inspector.rpym:124
     old "Inspecting Styles of [displayable_name!q]"
@@ -159,11 +160,11 @@ translate persian strings:
 
     # renpy/common/_developer/inspector.rpym:141
     old "displayable:"
-    new "دیسپلیبل:"
+    new "Displayable:"
 
     # renpy/common/_developer/inspector.rpym:147
     old "        (no properties affect the displayable)"
-    new "        (هیچ ویژگی بر دیسپلیبل تأثیرگذار نیست)"
+    new "        (هیچ‌ویژگی بر displayable تأثیرگذار نیست)"
 
     # renpy/common/_developer/inspector.rpym:149
     old "        (default properties omitted)"
