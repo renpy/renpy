@@ -1250,8 +1250,7 @@ class SLDisplayable(SLBlock):
                     if not context.updating:
                         old_outer_transform = None
 
-                    d.take_state(old_outer_transform)
-                    d.take_execution_state(old_outer_transform)
+                    renpy.display.transform.transfer_state(old_outer_transform, d, execution=True)
 
         else:
             cache.inner_transform = None

@@ -455,7 +455,7 @@ class ImageReference(renpy.display.displayable.Displayable):
 
         if isinstance(new_transform, renpy.display.transform.Transform):
             if self.old_transform is not None:
-                new_transform.take_state(self.old_transform)
+                renpy.display.transform.transfer_state(self.old_transform, new_transform)
 
             self.old_transform = new_transform
 
@@ -726,7 +726,7 @@ class DynamicImage(renpy.display.displayable.Displayable):
         if not isinstance(target, renpy.display.motion.Transform):
             self.target = target = renpy.display.motion.Transform(child=target)
 
-        target.take_state(old_target)
+        renpy.display.transform.transfer_state(old_target, target)
 
         return True
 

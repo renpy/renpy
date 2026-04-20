@@ -862,13 +862,13 @@ class Transform(Container):
         Takes the transformation state from object t into this object.
         """
 
-        if self is t:
-            return
+        self.take_local_state(t)
 
         if not isinstance(t, Transform):
             return
 
-        self.state.take_state(t.state)
+        if self is t:
+            return
 
         if isinstance(self.child, Transform) and isinstance(t.child, Transform):
             self.child.take_state(t.child)
@@ -880,10 +880,39 @@ class Transform(Container):
         # The arguments will be applied when the default function is
         # called.
 
+    def take_local_state(self, t):
+        """
+        Takes only the state for this transform from object t.
+        """
+
+        if self is t:
+            return
+
+        if not isinstance(t, Transform):
+            return
+
+        self.state.take_state(t.state)
+
     def take_execution_state(self, t):
         """
         Takes the execution state from object t into this object. This is
         overridden by renpy.atl.TransformBase.
+        """
+
+        self.take_local_execution_state(t)
+
+        if not isinstance(t, Transform):
+            return
+
+        if self is t:
+            return
+
+        if isinstance(self.child, Transform) and isinstance(t.child, Transform):
+            self.child.take_execution_state(t.child)
+
+    def take_local_execution_state(self, t):
+        """
+        Takes only the execution state for this transform from object t.
         """
 
         if self is t:
@@ -901,9 +930,6 @@ class Transform(Container):
         self.state.yanchor = t.state.yanchor
 
         self.child_st_base = t.child_st_base
-
-        if isinstance(self.child, Transform) and isinstance(t.child, Transform):
-            self.child.take_execution_state(t.child)
 
     def copy(self):
         """
@@ -1283,6 +1309,115 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
     def _repr_info(self):
         return repr((self.child, self.atl.loc))
+
+
+def transform_chain(d):
+    """
+    Returns the transforms wrapping `d`, from outermost to innermost.
+    """
+
+    rv = []
+
+    while isinstance(d, Transform):
+        rv.append(d)
+        d = d.child
+
+    return rv
+
+
+def compatible_state_transfer(old_transform, new_transform):
+    """
+    Returns True if state can be safely transferred between these transforms.
+    """
+
+    if type(old_transform) is not type(new_transform):
+        return False
+
+    if isinstance(old_transform, ATLTransform):
+        return old_transform.atl is new_transform.atl
+
+    return (
+        old_transform.function == new_transform.function
+        and old_transform.style_arg == new_transform.style_arg
+        and old_transform.kwargs == new_transform.kwargs
+    )
+
+
+def transform_state_pairs(old_transform, new_transform):
+    """
+    Pairs transforms so inserting or removing one level doesn't shift state
+    onto unrelated transforms elsewhere in the chain.
+    """
+
+    old_chain = transform_chain(old_transform)
+    new_chain = transform_chain(new_transform)
+
+    old_len = len(old_chain)
+    new_len = len(new_chain)
+
+    dp = [[0] * (new_len + 1) for _ in range(old_len + 1)]
+
+    for i in range(old_len - 1, -1, -1):
+        for j in range(new_len - 1, -1, -1):
+            if compatible_state_transfer(old_chain[i], new_chain[j]):
+                dp[i][j] = dp[i + 1][j + 1] + 1
+            else:
+                dp[i][j] = max(dp[i + 1][j], dp[i][j + 1])
+
+    anchors = []
+    i = 0
+    j = 0
+
+    while (i < old_len) and (j < new_len):
+        if compatible_state_transfer(old_chain[i], new_chain[j]) and (dp[i][j] == dp[i + 1][j + 1] + 1):
+            anchors.append((i, j))
+            i += 1
+            j += 1
+        elif dp[i + 1][j] >= dp[i][j + 1]:
+            i += 1
+        else:
+            j += 1
+
+    rv = []
+    old_start = 0
+    new_start = 0
+
+    for old_anchor, new_anchor in anchors:
+        rv.extend(zip(old_chain[old_start:old_anchor], new_chain[new_start:new_anchor]))
+        rv.append((old_chain[old_anchor], new_chain[new_anchor]))
+        old_start = old_anchor + 1
+        new_start = new_anchor + 1
+
+    rv.extend(zip(old_chain[old_start:], new_chain[new_start:]))
+
+    return rv
+
+
+def transfer_state(old_transform, new_transform, execution=False):
+    """
+    Transfers state between transform chains while keeping unrelated transforms
+    from inheriting each other's state.
+    """
+
+    if (old_transform is None) or (new_transform is None):
+        return
+
+    if not isinstance(old_transform, Transform):
+        return
+
+    if not isinstance(new_transform, Transform):
+        return
+
+    pairs = transform_state_pairs(old_transform, new_transform)
+
+    for old_transform, new_transform in pairs:
+        if not old_transform.active:
+            old_transform.update_state()
+
+        new_transform.take_local_state(old_transform)
+
+        if execution:
+            new_transform.take_local_execution_state(old_transform)
 
 
 # Names of style properties that should be sent to the parent.

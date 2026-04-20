@@ -1,6 +1,6 @@
 testsuite global:
     setup:
-        $ _test.screenshot_directory = "tests/screenshots/testcases"
+        $ _test.screenshot_directory = "screenshots"
 
     before testsuite:
         $ _test.transition_timeout = 0.05

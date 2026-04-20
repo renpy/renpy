@@ -1,0 +1,98 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ccache \
+            python3-dev \
+            libassimp-dev \
+            libavcodec-dev \
+            libavformat-dev \
+            libswresample-dev \
+            libswscale-dev \
+            libharfbuzz-dev \
+            libfreetype6-dev \
+            libfribidi-dev \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-gfx-dev \
+            libsdl2-mixer-dev \
+            libsdl2-ttf-dev \
+            libjpeg-dev \
+            pkg-config
+
+      - name: Create virtual environment
+        run: uv sync
+
+      - name: Build extension modules
+        run: ./run.sh --build
+
+      - name: Run unit tests
+        run: ./scripts/run_unit_tests.sh
+
+  engine-tests:
+    name: Engine Tests
+    runs-on: ubuntu-24.04
+    env:
+      RENPY_PATH_TO_SAVES: ${{ github.workspace }}/.renpy-saves
+      SDL_AUDIODRIVER: dummy
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ccache \
+            python3-dev \
+            libassimp-dev \
+            libavcodec-dev \
+            libavformat-dev \
+            libswresample-dev \
+            libswscale-dev \
+            libharfbuzz-dev \
+            libfreetype6-dev \
+            libfribidi-dev \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-gfx-dev \
+            libsdl2-mixer-dev \
+            libsdl2-ttf-dev \
+            libjpeg-dev \
+            pkg-config \
+            xvfb
+
+      - name: Create virtual environment
+        run: uv sync
+
+      - name: Build extension modules
+        run: ./run.sh --build
+
+      - name: Run engine tests
+        run: xvfb-run -a ./scripts/run_engine_tests.sh global --hide-execution testcases

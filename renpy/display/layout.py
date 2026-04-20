@@ -1435,8 +1435,7 @@ class Window(Container):
                 if isinstance(old_target, renpy.display.transform.Transform) and isinstance(
                     new_target, renpy.display.transform.Transform
                 ):
-                    new_target.take_state(old_target)
-                    new_target.take_execution_state(old_target)
+                    renpy.display.transform.transfer_state(old_target, new_target, execution=True)
 
             self.current_child = child
 
@@ -1627,8 +1626,7 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
             if isinstance(self.child, renpy.display.transform.Transform) and isinstance(
                 child, renpy.display.transform.Transform
             ):
-                child.take_state(self.child)
-                child.take_execution_state(self.child)
+                renpy.display.transform.transfer_state(self.child, child, execution=True)
 
             child.visit_all(lambda c: c.per_interact())
 

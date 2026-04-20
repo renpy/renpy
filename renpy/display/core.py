@@ -2554,8 +2554,7 @@ class Interface:
             if isinstance(trans, renpy.display.transform.Transform) and isinstance(
                 old_trans, renpy.display.transform.Transform
             ):
-                trans.take_state(old_trans)
-                trans.take_execution_state(old_trans)
+                renpy.display.transform.transfer_state(old_trans, trans, execution=True)
 
             self.instantiated_transition[layer] = trans
 

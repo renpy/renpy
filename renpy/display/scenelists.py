@@ -292,9 +292,6 @@ class SceneLists(renpy.object.Object):
         if not isinstance(old_transform, renpy.display.motion.Transform):
             return new_thing
 
-        if not old_transform.active:
-            old_transform.update_state()
-
         if renpy.config.take_state_from_target:
             new_transform = new_thing._target()
         else:
@@ -303,10 +300,7 @@ class SceneLists(renpy.object.Object):
         if not isinstance(new_transform, renpy.display.motion.Transform):
             new_thing = new_transform = renpy.display.motion.Transform(child=new_thing)
 
-        new_transform.take_state(old_transform)
-
-        if execution:
-            new_transform.take_execution_state(old_transform)
+        renpy.display.transform.transfer_state(old_transform, new_transform, execution=execution)
 
         return new_thing
 

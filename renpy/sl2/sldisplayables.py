@@ -464,8 +464,7 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
     Transform = renpy.display.motion.Transform
 
     if (replaces is not None) and isinstance(rv, Transform):
-        rv.take_state(replaces)
-        rv.take_execution_state(replaces)
+        renpy.display.transform.transfer_state(replaces, rv, execution=True)
 
     if kwargs:
         rv = Transform(child=d, **kwargs)

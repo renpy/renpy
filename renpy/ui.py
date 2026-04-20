@@ -576,8 +576,7 @@ class Wrapper(renpy.object.Object):
                 else:
                     oldt = None
 
-                atw.take_state(oldt)
-                atw.take_execution_state(oldt)
+                renpy.display.transform.transfer_state(oldt, atw, execution=True)
 
         # Clear out the add_tag.
         add_tag = None

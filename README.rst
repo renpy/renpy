@@ -91,6 +91,27 @@ After that, compile extension modules and run Ren'Py using the command::
     ./run.sh
 
 
+Testing
+-------
+
+The automated tests are organized by type:
+
+``tests/unit``
+    Python unit tests for engine internals.
+
+``tests/engine``
+    A Ren'Py project that exercises engine behavior using the built-in
+    testcase system.
+
+Once the virtual environment exists, you can run the unit tests with::
+
+    ./.venv/bin/python -m unittest discover -s tests/unit -t .
+
+And the engine tests with::
+
+    ./run.sh tests/engine test
+
+
 Other Platforms
 ---------------
 

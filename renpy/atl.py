@@ -445,12 +445,24 @@ class ATLTransformBase(renpy.object.Object):
             return None
 
     def take_execution_state(self, t):
+        self.take_local_execution_state(t)
+
+        if not isinstance(t, renpy.display.motion.Transform):
+            return
+
+        if self is t:
+            return
+
+        if isinstance(self.child, renpy.display.motion.Transform) and isinstance(t.child, renpy.display.motion.Transform):
+            self.child.take_execution_state(t.child)
+
+    def take_local_execution_state(self, t):
         """
         Updates self to begin executing from the same point as t. This
         requires that t.atl is self.atl.
         """
 
-        super(ATLTransformBase, self).take_execution_state(t)  # type: ignore
+        super(ATLTransformBase, self).take_local_execution_state(t)  # type: ignore
 
         if self is t:
             return
