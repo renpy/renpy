@@ -62,8 +62,8 @@ translate piglatin demo_character_66d08d98:
 # game/indepth_character.rpy:39
 translate piglatin demo_character_7e0d75aa:
 
-    # e "Properties beginning with window apply to the textbox, those with what apply to the dialogue, and those with who to the name of Character speaking."
-    e "Ropertiespay eginningbay ithway indowway applyay otay hetay extboxtay, hosetay ithway hatway applyay otay hetay hetay ialogueday, anday hosetay ithway howay otay hetay amenay ofay Haractercay peakingsay."
+    # e "Properties beginning with window apply to the textbox, those with what apply to the dialogue, and those with who to the name of Character speaking." id demo_character_7e0d75aa
+    e "Ropertiespay eginningbay ithway indowway applyay otay hetay extboxtay, hosetay ithway hatway applyay otay hetay ialogueday, anday hosetay ithway howay otay hetay amenay ofay Haractercay peakingsay." id demo_character_7e0d75aa
 
 # game/indepth_character.rpy:41
 translate piglatin demo_character_56703784:
@@ -208,3 +208,4 @@ translate piglatin demo_character_0c8f314a:
 
     # "I think I do."
     "Iay hinktay Iay oday."
+

@@ -8,7 +8,8 @@ class Editor(renpy.editor.Editor):
 
     has_projects = True
 
-    system = __file__.endswith(" (System).edit.py")
+    codium = __file__.endswith("VSCodium (System).edit.py")
+    system = __file__.endswith(" (System).edit.py") and not codium
 
     def get_code(self):
         """
@@ -27,6 +28,19 @@ class Editor(renpy.editor.Editor):
                 return "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
 
             return "code"
+
+        elif self.codium:
+
+            if "RENPY_VSCODE" in os.environ:
+                return os.environ["RENPY_VSCODE"]
+
+            if renpy.windows:
+                return "codium.cmd"
+
+            if renpy.macintosh and os.path.exists("/Applications/VSCodium.app/Contents/Resources/app/bin/codium"):
+                return "/Applications/VSCodium.app/Contents/Resources/app/bin/codium"
+
+            return "codium"
 
         else:
 
@@ -55,8 +69,8 @@ class Editor(renpy.editor.Editor):
             filename = "{}:{}".format(filename, line)
         self.args.append(filename)
 
-    def open_project(self, project):
-        self.args.append(project)
+    def open_project(self, directory):
+        self.args.append(directory)
 
     def begin(self, new_window=False, **kwargs):
         self.args = [ ]
@@ -75,6 +89,17 @@ class Editor(renpy.editor.Editor):
         if renpy.windows:
             CREATE_NO_WINDOW = 0x08000000
             subprocess.Popen(args, creationflags=CREATE_NO_WINDOW)
+        elif renpy.linux and self.system:
+            try:
+                subprocess.Popen(args)
+            except FileNotFoundError as missingvscode:
+                flatpak_code = [ "flatpak", "run", "com.visualstudio.code" ]
+                flatpak_args = flatpak_code + [ "-g" ] + self.args
+                flatpak_args = [ renpy.exports.fsencode(i) for i in flatpak_args ]
+                try:
+                    subprocess.Popen(flatpak_args)
+                except:
+                    raise missingvscode
         else:
             subprocess.Popen(args)
 

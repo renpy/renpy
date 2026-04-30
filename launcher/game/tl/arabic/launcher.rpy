@@ -364,7 +364,7 @@
     new "{b}نقترح.{/b} محرر نص له واجهة سهلة الاستعمال ويعين على كتابة النصوص البرمجية يفضل برنامج يحتوي على مدقق لغوي. Editraحالياً لا يدعم اللغات الأجنبية مثل اللغه الكورية و الصينية و اليابانية. على نظام لينوكس, Editra يحتاج wxPython."
 
     # editor.rpy:167
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "قد يكون سبب ذلك ان wxPython غير موجود في نظام التشغيل لديك"
 
     # editor.rpy:169
@@ -380,7 +380,7 @@
     new "مطلوب تحميل ملف بحجم 1.8 ميغا بايت."
 
     # editor.rpy:182
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "قد يكون السبب ان الجافا غير موجوده على هذا الجهاز."
 
     # editor.rpy:191
@@ -392,7 +392,7 @@
     new "يمنع رينباي من فتح اي محرر نصوص"
 
     # editor.rpy:359
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "حصل استثناء اثناء فتح المحرر: \n[exception!q]"
 
     # editor.rpy:457
@@ -608,7 +608,7 @@
     new "خطأ"
 
     # interface.rpy:356
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "حصل خطأ أثناء [what!qt]"
 
     # interface.rpy:356
@@ -1136,7 +1136,7 @@
     new "أحدث نسخة طازجة من رينباي التجريبي, قد يحتوي على آخر مستجدات رينباي و قد لا يعمل مطلقاً"
 
     # updater.rpy:152
-    old "An error has occured:"
+    old "An error has occurred:"
     new "حصل خطأ:"
 
     # updater.rpy:154

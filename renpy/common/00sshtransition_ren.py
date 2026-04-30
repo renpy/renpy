@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,10 +32,10 @@ init -1150 python:
 """
 
 # Statements that are considered scene, show, or hide statements.
-config.scene_show_hide_statements = [ "scene", "show", "hide" ]
+config.scene_show_hide_statements = ["scene", "show", "hide"]
 
 # Statements that are considered with statements.
-config.scene_show_hide_end_statements = [ "with", "window show", "window hide", "window auto" ]
+config.scene_show_hide_end_statements = ["with", "window show", "window hide", "window auto"]
 
 # The transition to use after show, scene, and hide statements.
 _scene_show_hide_transition = None

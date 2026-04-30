@@ -73,6 +73,24 @@ the changes did not affect speech bubble placement.
 
 It's possible to apply transforms to the speech bubble by editing the :ref:`bubble-screen`.
 
+.. _bubble-ctc:
+
+If you'd like a CTC indicator to be part of the bubble screen, consider giving the
+`ctc_position` argument to Character the value of "screen-variable". You may also need
+to add::
+
+    showif ctc:
+        add ctc
+
+to the end of the bubble screen, if this is not present. You'd then define the character as:
+
+    define e = Character(
+        None,
+        image="eileen",
+        kind=bubble,
+        ctc_position="screen-variable",
+        ctc=Transform("ctc_image.png", align=(0.5, 1.0))
+
 
 Configuration Variables
 -----------------------
@@ -82,10 +100,13 @@ and by the ``bubble`` screen and its associated styles.
 
 The ``bubble`` namespace contains the following variables:
 
-.. var:: bubble.db_filename = "bubble.json"
+.. var:: bubble.area_property = "window_area"
 
-    The database file, stored in the game directory, that contains the
-    speech bubble information.
+    The name of the property that contains the area of the speech bubble. This is given as if
+    it was supplied to :func:`Character`, with the same prefixing system. By default, this is
+    ``"window_area"``, which means that the area is given as a property to the window displayable.
+    Another useful choice is ``"show_area"``, which will cause the area to be supplied as the
+    `area` argument to the bubble screen.
 
 .. var:: bubble.clear_retain_statements = [ "call screen", "menu",  "say", "say-centered", "say-nvl", "scene", ]
 
@@ -95,6 +116,11 @@ The ``bubble`` namespace contains the following variables:
 
     The granularity of the grid that's used to position and size speech bubbles,
     in the horizontal direction.
+
+.. var:: bubble.db_filename = "bubble.json"
+
+    The database file, stored in the game directory, that contains the
+    speech bubble information.
 
 .. var:: bubble.default_area = (15, 1, 8, 5)
 

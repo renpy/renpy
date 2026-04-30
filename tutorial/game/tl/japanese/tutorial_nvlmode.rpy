@@ -8,7 +8,7 @@ translate japanese tutorial_nvlmode_76b2fe88:
 # game/tutorial_nvlmode.rpy:20
 translate japanese tutorial_nvlmode_ac125210:
 
-    # nvle "NVL-style games are games that cover the full screen with text, rather then placing it in a window at the bottom of the screen. Like this."
+    # nvle "NVL-style games are games that cover the full screen with text, rather than placing it in a window at the bottom of the screen. Like this."
     nvle "NVLスタイルゲームは、テキストが画面下部に位置するのではなく、このように画面全体を覆うゲームです。"
 
 # game/tutorial_nvlmode.rpy:24

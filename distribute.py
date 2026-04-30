@@ -15,6 +15,7 @@ import subprocess
 import argparse
 import time
 import collections
+import pathlib
 
 try:
     from importlib import reload
@@ -67,7 +68,7 @@ def copy_tutorial_file(src, dest):
 def link_directory(dirname):
     dn = os.path.join(ROOT, dirname)
 
-    if os.path.exists(dn):
+    if os.path.lexists(dn):
         os.unlink(dn)
 
     if PY2:
@@ -77,6 +78,22 @@ def link_directory(dirname):
 
     if os.path.exists(source):
         os.symlink(source, dn)
+
+def force_even_timestamps():
+    """
+    Forces the timestamps of all .py files in the renpy directory to be even.
+
+    This ensures that the timestamps can be represented in a zip file, which
+    can only represent timestamps that are even multiples of 2 seconds.
+
+    See https://github.com/renpy/renpy-build/pull/166
+    """
+
+    for fn in pathlib.Path("renpy").rglob("*.py"):
+        if fn.is_file():
+            st = fn.stat()
+            if st.st_mtime % 2 != 0:
+                os.utime(fn, (st.st_atime, st.st_mtime + 1))
 
 def main():
 
@@ -172,6 +189,8 @@ def main():
     else:
         renpy_sh = "./renpy2.sh"
 
+    force_even_timestamps()
+
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir="renpy/", force=True, quiet=1)
 
@@ -240,22 +259,10 @@ def main():
     # Sign the update.
     if not args.fast:
         subprocess.check_call([
+            "uv", "run",
             "scripts/sign_update.py",
             "/home/tom/ab/keys/renpy_private.pem",
             os.path.join(destination, "updates.json"),
-            ])
-
-    # Package pygame_sdl2.
-    if not args.fast:
-        subprocess.check_call([
-            "pygame_sdl2/setup.py",
-            "-q",
-            "egg_info",
-            "--tag-build",
-            "+renpy" + args.version,
-            "sdist",
-            "-d",
-            os.path.abspath(destination)
             ])
 
     # Write 7z.exe.

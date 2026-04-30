@@ -110,8 +110,8 @@ translate piglatin style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate piglatin style_basics_ac6a8414:
 
-    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
-    e "Inallyfay, heretay isay hetay hetay ylestay atementstay, hichway reatescay oray angeschay aay amednay ylestay. Ybay ivinggay Exttay hetay ylestay argumentay, eway elltay itay otay useay hetay ue_textblay ylestay."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style." id style_basics_ac6a8414
+    e "Inallyfay, heretay isay hetay ylestay atementstay, hichway reatescay oray angeschay aay amednay ylestay. Ybay ivinggay Exttay hetay ylestay argumentay, eway elltay itay otay useay hetay ue_textblay ylestay." id style_basics_ac6a8414
 
 # game/indepth_style.rpy:180
 translate piglatin style_basics_3d9bdff7:
@@ -122,8 +122,8 @@ translate piglatin style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate piglatin style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
-    e "Ybay efaultday hetay arentpay ofay hetay ylestay ashay hetay amesay amenay, ithway hetay refixpay upay otay hetay hetay irstfay underscoreay emovedray. Fiay hetay ylestay oesday otnay avehay anay underscoreay inay itsay amenay, 'efaultday' isay useday."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used." id style_basics_49c5fbfe
+    e "Ybay efaultday hetay arentpay ofay hetay ylestay ashay hetay amesay amenay, ithway hetay refixpay upay otay hetay irstfay underscoreay emovedray. Fiay hetay ylestay oesday otnay avehay anay underscoreay inay itsay amenay, 'efaultday' isay useday." id style_basics_49c5fbfe
 
 # game/indepth_style.rpy:184
 translate piglatin style_basics_6ab170a3:
@@ -146,8 +146,8 @@ translate piglatin style_basics_6007040b:
 # game/indepth_style.rpy:196
 translate piglatin style_basics_35db9a05:
 
-    # e "In a screen, a displayable can be given the style_prefix property to give a prefix for that displayable and its children."
-    e "Niay aay creensay, aay isplayableday ancay ebay ivengay hetay yle_prefixstay ropertypay otay ivegay aay refixpay orfay hattay isplayableday anday itsay ildrenchay."
+    # e "In a screen, a displayable can be given the style_prefix property to give a prefix for that displayable and its children." id style_basics_35db9a05
+    e "Niay aay creensay, aay isplayableday ancay ebay ivengay hetay yle_prefixstay ropertypay otay ivegay aay refixpay orfay hattay isplayableday anday itsay ildrenchay." id style_basics_35db9a05
 
 # game/indepth_style.rpy:198
 translate piglatin style_basics_422a87f7:
@@ -332,20 +332,20 @@ translate piglatin style_text_5a0c2c02:
 # game/indepth_style.rpy:443
 translate piglatin style_text_430c1959:
 
-    # e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
-    e "Hetay extaligntay ropertypay ontrolscay hetay ositioningpay ofay ultiplemay ineslay ofay exttay insideay hetay exttay isplayableday. Orfay exampleay, 0.5 eansmay enteredcay."
+    # e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered." id style_text_430c1959
+    e "Hetay extaligntay ropertypay ontrolscay hetay ositioningpay ofay ultiplemay ineslay ofay exttay insideay hetay exttay isplayableday. Orfay exampleay, 0.5 eansmay enteredcay." id style_text_430c1959
 
 # game/indepth_style.rpy:445
 translate piglatin style_text_19aa0833:
 
-    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value."
-    e "Tiay oesnday'tay angechay hetay ositionpay ofay hetay exttay isplayableday itselfay. Orfay hattay, ouyay'llay oftenay antway otay etsay hetay extaligntay anday alignxay otay hetay amesay aluevay."
+    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value." id style_text_19aa0833
+    e "Tiay oesnday'tay angechay hetay ositionpay ofay hetay exttay isplayableday itselfay. Orfay hattay, ouyay'llay oftenay antway otay etsay hetay extaligntay anday alignxay otay hetay amesay aluevay." id style_text_19aa0833
 
 # game/indepth_style.rpy:455
 translate piglatin style_text_efc3c392:
 
-    # e "When both textalign and xalign are set to 1.0, the text is properly right-justified."
-    e "Henway othbay extaligntay anday alignxay areay etsay otay 1.0, hetay exttay isay roperlypay ightray-ustifiedjay."
+    # e "When both textalign and xalign are set to 1.0, the text is properly right-justified." id style_text_efc3c392
+    e "Henway othbay extaligntay anday alignxay areay etsay otay 1.0, hetay exttay isay roperlypay ightray-ustifiedjay." id style_text_efc3c392
 
 # game/indepth_style.rpy:464
 translate piglatin style_text_43be63b9:
@@ -422,14 +422,14 @@ translate piglatin style_button_255a18e4:
 # game/indepth_style.rpy:593
 translate piglatin style_button_9b53ce93:
 
-    # e "I'll start off with this style, which everything will inherit from. To make our lives easier, it inherits from the default style, rather than the customized buttons in this game's GUI."
-    e "Iay'llay artstay offay ithway histay ylestay, hichway everythingay illway inheritay omfray. Otay akemay ouray iveslay easieray, itay inheritsay omfray hetay efaultday ylestay, atherray hantay hetay ustomizedcay uttonsbay inay histay amegay'say Uigay."
+    # e "I'll start off with this style, which everything will inherit from. To make our lives easier, it inherits from the default style, rather than the customized buttons in this game's GUI." id style_button_9b53ce93
+    e "Iay'llay artstay offay ithway histay ylestay, hichway everythingay illway inheritay omfray. Otay akemay ouray iveslay easieray, itay inheritsay omfray hetay efaultday ylestay, atherray hantay hetay ustomizedcay uttonsbay inay histay amegay'say Uigay." id style_button_9b53ce93
 
 # game/indepth_style.rpy:595
 translate piglatin style_button_aece4a8c:
 
-    # e "The first style property is the background property. It adds a background to a button or window. Since this is a button, idle and hover variants choose different backgrounds when focused."
-    e "Hetay irstfay ylestay ropertypay isay hetay ackgroundbay ropertypay. Tiay addsay aay ackgroundbay otay aay uttonbay oray indowway. Incesay histay isay aay uttonbay, idleay anday overhay ariantsvay oosechay ifferentday ackgroundsbay henway ocusedfay."
+    # e "The first style property is the background property. It adds a background to a button or window. Since this is a button, idle and hover variants choose different backgrounds when focused." id style_button_aece4a8c
+    e "Hetay irstfay ylestay ropertypay isay hetay ackgroundbay ropertypay. Tiay addsay aay ackgroundbay otay aay uttonbay oray indowway. Incesay histay isay aay uttonbay, idleay anday overhay ariantsvay oosechay ifferentday ackgroundsbay henway ocusedfay." id style_button_aece4a8c
 
 # game/indepth_style.rpy:597
 translate piglatin style_button_b969f04a:
@@ -542,8 +542,8 @@ translate piglatin style_bar_cca67222:
 # game/indepth_style.rpy:817
 translate piglatin style_bar_7d361bac:
 
-    # e "The thumb style property gives a thumb image, that's placed based on the bar's value. In the case of a scrollbar, it's resized if possible."
-    e "Hetay humbtay ylestay ropertypay ivesgay aay humbtay imageay, hattay'say acedplay asedbay onay hetay arbay'say aluevay. Niay hetay asecay ofay aay crollbarsay, itay'say esizedray ifay ossiblepay."
+    # e "The thumb style property gives a thumb image, that's placed based on the bar's value. In the case of a scrollbar, it's resized if possible." id style_bar_7d361bac
+    e "Hetay humbtay ylestay ropertypay ivesgay aay humbtay imageay, hattay'say acedplay asedbay onay hetay arbay'say aluevay. Niay hetay asecay ofay aay crollbarsay, itay'say esizedray ifay ossiblepay." id style_bar_7d361bac
 
 # game/indepth_style.rpy:819
 translate piglatin style_bar_b6dfb61b:
@@ -711,35 +711,35 @@ translate piglatin strings:
     old "Button 2"
     new "Uttonbay 2"
 
-    # game/indepth_style.rpy:66
+    # game/indepth_style.rpy:70
     old "Style basics."
     new "Tylesay asicsbay."
 
-    # game/indepth_style.rpy:66
+    # game/indepth_style.rpy:73
     old "General style properties."
     new "Eneralgay ylestay ropertiespay."
 
-    # game/indepth_style.rpy:66
+    # game/indepth_style.rpy:76
     old "Text style properties."
     new "Exttay ylestay ropertiespay."
 
-    # game/indepth_style.rpy:66
+    # game/indepth_style.rpy:79
     old "Window and Button style properties."
     new "Indowway anday Uttonbay ylestay ropertiespay."
 
-    # game/indepth_style.rpy:66
+    # game/indepth_style.rpy:82
     old "Bar style properties."
     new "Arbay ylestay ropertiespay."
 
-    # game/indepth_style.rpy:66
+    # game/indepth_style.rpy:85
     old "Box, Grid, and Fixed style properties."
     new "Oxbay, Ridgay, anday Ixedfay ylestay ropertiespay."
 
-    # game/indepth_style.rpy:66
+    # game/indepth_style.rpy:88
     old "The Displayable Inspector."
     new "Hetay Isplayableday Nspectoriay."
 
-    # game/indepth_style.rpy:66
+    # game/indepth_style.rpy:91
     old "That's all I want to know."
     new "Hattay'say allay Iay antway otay nowkay."
 
@@ -806,3 +806,4 @@ translate piglatin strings:
     # game/indepth_style.rpy:884
     old "Sixth Child"
     new "Ixthsay Hildcay"
+

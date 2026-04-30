@@ -40,7 +40,7 @@ your template.
 Distributing a Template Project
 -------------------------------
 
-You can distribut a template project by zipping it up manually. (You
+You can distribute a template project by zipping it up manually. (You
 should not use the Distribute command.) It might make sense to delete
 the ``game/saves`` and ``game/cache`` directories before zipping it
 up, though this is not required.

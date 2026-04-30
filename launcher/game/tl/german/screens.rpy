@@ -1,4 +1,4 @@
-
+﻿
 translate german strings:
 
     # screens.rpy:9

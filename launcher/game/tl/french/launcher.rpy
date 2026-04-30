@@ -365,7 +365,7 @@
     new "{b}Recommandé.{/b} Un éditeur en version beta avec une interface simple et des fonctionnalités d’assistance au développement. Editra manque pour le moment du support pour les textes en chinois, japonais et coréen. Sur GNU-Linux, Editra nécessite wxPython."
 
     # editor.rpy:167
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Cela est sans doute dû au fait que wxPython n’est pas installé sur votre système."
 
     # editor.rpy:169
@@ -381,7 +381,7 @@
     new "1.8 Mo de téléchargement requis."
 
     # editor.rpy:182
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Cela est sans doute produit parce que Java n’est pas installé sur ce système."
 
     # editor.rpy:191
@@ -393,7 +393,7 @@
     new "Empêcher Ren’Py d’ouvrir un éditeur de texte."
 
     # editor.rpy:359
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Une exception est survenue lors du lancement de l’éditeur de texte :\n[exception!q]"
 
     # editor.rpy:457
@@ -609,7 +609,7 @@
     new "ERREUR"
 
     # interface.rpy:356
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "Pendant que [what!qt], une erreur est survenue :"
 
     # interface.rpy:356
@@ -1177,7 +1177,7 @@
     new "Une version journalière qui corrige les bugs de la dernière version stable."
 
     # updater.rpy:152
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Une erreur est survenue :"
 
     # updater.rpy:154

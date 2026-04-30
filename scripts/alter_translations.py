@@ -9,11 +9,10 @@ import argparse
 ENDINGS = [
     ".rpy",
     ".rpym",
-    ]
+]
 
 
 def process_file(fn):
-
     for i in ENDINGS:
         if fn.endswith(i):
             break
@@ -22,10 +21,9 @@ def process_file(fn):
 
     print("Processing", fn)
 
-    lines = [ ]
+    lines = []
     with open(fn, "rb") as f:
         for l in f:
-
             l = l.replace(codecs.BOM_UTF8, "")
 
             l = l.replace(args.old, args.new)
@@ -40,7 +38,6 @@ def process_file(fn):
 
 
 def process(root):
-
     for dirname, _dirs, files in os.walk(root):
         for fn in files:
             fn = os.path.join(dirname, fn)

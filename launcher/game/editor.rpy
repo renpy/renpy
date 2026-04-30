@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -225,7 +225,7 @@ init 1 python in editor:
             _("JEdit is deprecated, using another editor is recommended."),
             "jedit",
             _("1.8 MB download required."),
-            _("This may have occured because Java is not installed on this system."),
+            _("This may have occurred because Java is not installed on this system."),
             deprecated=True,
             )
 
@@ -236,7 +236,13 @@ init 1 python in editor:
         fei.append(FancyEditorInfo(
             3,
             _("Visual Studio Code (System)"),
-            _("Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."),
+            _("Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the renpy.language-renpy extension to add support for Ren'Py files."),
+            ))
+
+        fei.append(FancyEditorInfo(
+            3,
+            _("VSCodium (System)"),
+            _("Uses a copy of VSCodium that you have installed outside of Ren'Py. It's recommended you install the renpy.language-renpy extension to add support for Ren'Py files."),
             ))
 
         fei.append(FancyEditorInfo(
@@ -246,7 +252,7 @@ init 1 python in editor:
             None))
 
         for k in editors:
-            if k in [ "Visual Studio Code", "Visual Studio Code (System)", "Atom", "jEdit", "System Editor", "None" ]:
+            if k in [ "Visual Studio Code", "Visual Studio Code (System)", "VSCodium (System)", "Atom", "jEdit", "System Editor", "None" ]:
                 continue
 
             fei.append(FancyEditorInfo(
@@ -411,7 +417,7 @@ init 1 python in editor:
 
             except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
-                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+                renpy.invoke_in_new_context(interface.error, _("An exception occurred while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
     class EditAbsolute(Action):
         def __init__(self, filename, line=None, check=False):
@@ -457,7 +463,7 @@ init 1 python in editor:
 
             except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
-                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+                renpy.invoke_in_new_context(interface.error, _("An exception occurred while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
 
     class EditAll(Action):
@@ -495,7 +501,7 @@ init 1 python in editor:
 
             except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
-                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+                renpy.invoke_in_new_context(interface.error, _("An exception occurred while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
 
     class EditProject(Action):
@@ -518,7 +524,7 @@ init 1 python in editor:
 
             except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
-                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+                renpy.invoke_in_new_context(interface.error, _("An exception occurred while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
 
     def CanEditProject():

@@ -1,6 +1,6 @@
 #@PydevCodeAnalysisIgnore
 #cython: profile=False
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,8 +27,8 @@ DEF ANGLE = False
 
 
 from sdl2 cimport *
-from pygame_sdl2 cimport *
-import_pygame_sdl2()
+
+from renpy.pygame.surface cimport PySurface_AsSurface
 
 from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy
@@ -113,6 +113,12 @@ cdef class TextureLoader:
         rv.from_surface(surf, properties)
 
         if bl or bt or br or bb:
+
+            rv.bl = bl
+            rv.bt = bt
+            rv.br = br
+            rv.bb = bb
+
             w, h = size
 
             pw = w - bl - br
@@ -128,7 +134,10 @@ cdef class TextureLoader:
                     0.0, 0.0, pw, ph,
                     0.0, 0.0, 0.0, 0.0)
 
-            rv = GL2Model((pw, ph), mesh, ("renpy.texture",), { "tex0" : rv, "res0" : (rv.texture_width, rv.texture_height) })
+
+            old_rv = rv
+            rv = GL2Model((pw, ph), mesh, ("renpy.texture",) )
+            rv.set_texture(0, old_rv)
 
         return rv
 
@@ -156,7 +165,7 @@ cdef class TextureLoader:
 
             rv = [ ]
 
-            for i in xrange(tiles):
+            for i in range(tiles):
                 start = int(i * tile_length)
                 end = int((i + 1) * tile_length)
 
@@ -197,13 +206,13 @@ cdef class TextureLoader:
 
         return rv
 
-    def render_to_texture(self, what, properties):
+    def render_to_texture(self, what, properties, oversample=1.0):
         """
         Renders `what` to a texture.
         """
 
         rv = Texture(what.get_size(), self)
-        rv.from_render(what, properties)
+        rv.from_render(what, properties, oversample)
         return rv
 
 
@@ -218,7 +227,7 @@ cdef class TextureLoader:
             texnums[0] = texture_number
             glDeleteTextures(1, texnums)
 
-            if texture_number not in self.allocated:
+            if texture_number not in self.allocated and texture_number:
                 print("Leaking texture:", texture_number)
 
             self.allocated.discard(texture_number)
@@ -276,6 +285,21 @@ cdef class GLTexture(GL2Model):
         # Update the loader.
         self.loader = loader
 
+        # Borders.
+        self.bl = 0
+        self.bt = 0
+        self.br = 0
+        self.bb = 0
+
+        # States used by gl2unfiorm.
+        self.wrap_s = GL_CLAMP_TO_EDGE
+        self.wrap_t = GL_CLAMP_TO_EDGE
+        self.anisotropy = loader.max_anisotropy
+        self.mag_filter = GL_LINEAR
+        self.min_filter = GL_LINEAR
+        self.default_mag_filter = GL_LINEAR
+        self.default_min_filter = GL_LINEAR
+
         if renpy.emscripten and generate:
             # Generate a texture name to access video frames for web
             glGenTextures(1, &number)
@@ -286,15 +310,25 @@ cdef class GLTexture(GL2Model):
                 0.0, 0.0, width, height,
                 0.0, 0.0, 1.0, 1.0,
                 )
-            self.properties = { }
+            self.properties = {
+                "mipmap" : self.should_have_mipmaps({}),
+                }
 
-    def has_mipmaps(GLTexture self):
+    def should_have_mipmaps(GLTexture self, properties):
         """
         Returns true if this texture has mipmaps (or will have mipmaps
         when it's loaded).
         """
 
-        return self.properties.get("mipmap", True)
+        rv = properties.get("mipmap", renpy.config.mipmap)
+
+        if rv == "auto":
+            rv = renpy.display.draw.auto_mipmap
+
+        return rv
+
+    cdef bint has_mipmaps(self):
+        return self.properties["mipmap"]
 
     def get_number(GLTexture self):
         return self.number if renpy.emscripten else None
@@ -305,7 +339,8 @@ cdef class GLTexture(GL2Model):
         """
 
         self.surface = surface
-        self.properties = properties
+        self.properties = dict(properties)
+        self.properties["mipmap"] = self.should_have_mipmaps(properties)
 
         self.mesh = Mesh2.texture_rectangle(
             0.0, 0.0, self.width, self.height,
@@ -314,13 +349,13 @@ cdef class GLTexture(GL2Model):
 
         self.loader.texture_load_queue.add(self)
 
-    def from_render(GLTexture self, what, properties):
+    def from_render(GLTexture self, what, properties, oversample=1.0):
         """
         This renders `what` to this texture.
         """
 
         self.properties = {
-            "mipmap" : properties.get("mipmap", True),
+            "mipmap" : self.should_have_mipmaps(properties),
             "pixel_perfect" : properties.get("pixel_perfect", False),
             }
 
@@ -335,15 +370,15 @@ cdef class GLTexture(GL2Model):
 
         if drawable:
 
-            tw, th = draw.virt_to_draw.transform(cw, ch)
+            tw, th = draw.virt_to_draw.transform(cw * oversample, ch * oversample)
 
             tw = round(tw)
             th = round(th)
 
         else:
 
-            tw = cw = round(cw)
-            th = ch = round(ch)
+            tw = cw = round(cw * oversample)
+            th = ch = round(ch * oversample)
 
         tw = min(tw, loader.max_texture_width)
         th = min(th, loader.max_texture_height)
@@ -383,8 +418,7 @@ cdef class GLTexture(GL2Model):
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-        context = renpy.gl2.gl2draw.GL2DrawingContext(draw, tw, th)
-        context.draw(what, transform)
+        renpy.gl2.gl2draw.draw_render(what, tw, th, transform, invert_front_face=True)
 
         glBindTexture(GL_TEXTURE_2D, premultiplied)
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, tw, th, 0)
@@ -452,7 +486,6 @@ cdef class GLTexture(GL2Model):
             glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STATIC_DRAW)
             glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, <void *> 0)
-            glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER)
             glDeleteBuffers(1, &pixel_buffer)
 
         else:
@@ -471,10 +504,7 @@ cdef class GLTexture(GL2Model):
 
         # Draw.
         program = self.loader.ftl_program
-        program.start({})
-        program.set_uniform("tex0", tex)
-        program.draw(mesh)
-        program.finish()
+        program.draw_ftl(tex, mesh)
 
         # Create premultiplied.
         self.allocate_texture(premultiplied, self.width, self.height, self.properties)
@@ -572,7 +602,7 @@ cdef class GLTexture(GL2Model):
 
         max_level = renpy.config.max_mipmap_level
 
-        if not properties.get("mipmap", True):
+        if not self.has_mipmaps():
             max_level = 0
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, max_level)
@@ -580,9 +610,13 @@ cdef class GLTexture(GL2Model):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
         if max_level:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+            self.min_filter = GL_LINEAR_MIPMAP_NEAREST
         else:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+            self.min_filter = GL_LINEAR
+
+        self.default_min_filter = self.min_filter
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, self.min_filter)
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
@@ -617,7 +651,7 @@ cdef class GLTexture(GL2Model):
 
         cdef GLuint level = renpy.config.max_mipmap_level
 
-        if not properties.get("mipmap", True):
+        if not self.has_mipmaps():
             level = 0
 
         glBindTexture(GL_TEXTURE_2D, tex)
@@ -632,6 +666,24 @@ cdef class GLTexture(GL2Model):
         glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST)
         glGenerateMipmap(GL_TEXTURE_2D)
 
+    def add_mipmap(self):
+        """
+        Adds a mipmap to this texture, if it doesn't exist.
+        """
+
+        if self.properties["mipmap"]:
+            return
+
+        self.properties["mipmap"] = True
+        self.loader.total_texture_size += int(self.width * self.height * 4 * .34)
+
+        # This leaves the texture selected.
+        self.mipmap_texture(self.number, self.width, self.height, self.properties)
+
+        self.min_filter = GL_LINEAR_MIPMAP_NEAREST
+        self.default_min_filter = self.min_filter
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, self.min_filter)
+
     def __del__(self):
         try:
             if self.loaded:
@@ -641,7 +693,7 @@ cdef class GLTexture(GL2Model):
                     self.loader.total_texture_size -= int(self.width * self.height * 4 * 1.34)
                 else:
                     self.loader.total_texture_size -= int(self.width * self.height * 4)
-        except TypeError:
+        except (TypeError, AttributeError):
             pass # Let's not error on shutdown.
 
     def load(self):
@@ -651,18 +703,21 @@ cdef class GLTexture(GL2Model):
         else:
             self.load_gltexture()
 
-    def program_uniforms(self, shader):
-        shader.set_uniform("tex0", self)
-        shader.set_uniform("res0", (self.texture_width, self.texture_height))
-
     cpdef subsurface(self, rect):
         rv = GL2Model.subsurface(self, rect)
         if rv is not self:
-            rv.uniforms = {
-                "tex0" : self,
-                "res0" : (self.texture_width, self.texture_height),
-                }
+            rv.set_texture(0, self)
         return rv
+
+    cpdef GL2Model get_texture(self, int i):
+        """
+        Returns the texture at index `i`.
+        """
+
+        if i == 0:
+            return self
+        else:
+            raise IndexError("GLTexture.get_texture: index out of range")
 
 class Texture(GLTexture):
     """

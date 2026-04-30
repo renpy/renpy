@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -275,21 +275,18 @@ init -1600 python:
             renpy.call_in_new_context(help)
             return
 
-        _preferences.fullscreen = False
-
         try:
-            import webbrowser
             import os
 
             if help.startswith('http://') or help.startswith('https://'):
-                webbrowser.open_new(help)
+                renpy.open_url(help)
                 return
 
             file_path = os.path.join(config.basedir, help)
             if not os.path.isfile(file_path):
                 return
 
-            webbrowser.open_new("file:///" + file_path)
+            renpy.open_url("file:///" + file_path)
         except Exception:
             pass
 
@@ -521,6 +518,9 @@ label _save_reload_game:
 
         renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
+        for i in config.bottom_layers + config.layers + config.top_layers:
+            renpy.scene(layer=i)
+
         ui.add(Solid((0, 0, 0, 255)))
         ui.text("Saving game...",
                 size=32, xalign=0.5, yalign=0.5, color="#fff", style="_text")
@@ -552,6 +552,9 @@ label _load_reload_game:
 
         try:
 
+            for i in config.bottom_layers + config.layers + config.top_layers:
+                renpy.scene(layer=i)
+
             ui.add(Solid((0, 0, 0, 255)))
             ui.text("Reloading game...",
                     size=32, xalign=0.5, yalign=0.5, color="#fff", style="_text")
@@ -561,11 +564,9 @@ label _load_reload_game:
 
             renpy.load(renpy.session["_reload_slot"])
 
-        except (renpy.game.RestartTopContext, renpy.game.RestartContext):
+        finally:
 
             renpy.rename_save(renpy.session["_reload_slot"], "_reload-2")
             del renpy.session["_reload_slot"]
-            raise
-
 
     return

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -79,9 +79,6 @@ init 1100 python:
     else:
         config.has_sync = None
 
-    if renpy.emscripten and PY2:
-        config.has_sync = None
-
 init -1100 python in _sync:
 
     # Do not participate in saves.
@@ -149,10 +146,7 @@ init -1100 python in _sync:
         for _ in range(10000):
             hashed = hashlib.sha256(hashed).digest()
 
-        if PY2:
-            return hashed.encode("hex")
-        else:
-            return hashed.hex()
+        return hashed.hex()
 
 
     def key_and_hash(sync_id):
@@ -175,10 +169,7 @@ init -1100 python in _sync:
         for _ in range(10000):
             hashed = hashlib.sha256(hashed).digest()
 
-        if PY2:
-            return key, hashed.encode("hex")
-        else:
-            return key, hashed.hex()
+        return key, hashed.hex()
 
     def verbose_error(e):
         renpy.display.log.write("Sync error:")
@@ -260,8 +251,6 @@ init -1100 python in _sync:
 
             sd = renpy.config.save_directory
             if sd:
-                if PY2:
-                    sd = sd.encode("utf-8")
                 zf.writestr("save_directory", sd)
 
             persistent = location.path("persistent")[1]
@@ -296,7 +285,11 @@ init -1100 python in _sync:
         url = config.sync_server + "/api/sync/v1/" + hashed
         url = url + "?game=" + hash_game()
 
+        renpy.show_screen("sync_progress")
+
         error = upload_content(contents, url)
+
+        renpy.hide_screen("sync_progress")
 
         if error:
             report_error(error)
@@ -341,7 +334,11 @@ init -1100 python in _sync:
 
         url = config.sync_server + "/api/sync/v1/" + hashed
 
+        renpy.show_screen("sync_progress")
+
         error, content = download_content(url)
+
+        renpy.hide_screen("sync_progress")
 
         if error:
             report_error(content)
@@ -388,11 +385,7 @@ init -1100 python in _sync:
 
                 zi = zf.getinfo(fn)
 
-                if PY2:
-                    epoch = datetime.datetime.utcfromtimestamp(0)
-                    timestamp = (datetime.datetime(*zi.date_time) - epoch).total_seconds()
-                else:
-                    timestamp = datetime.datetime(*zi.date_time).timestamp()
+                timestamp = datetime.datetime(*zi.date_time).timestamp()
 
                 data = zf.read(fn)
 
@@ -562,11 +555,28 @@ init -1100:
         key "game_menu" action Return(False)
 
 
-    if renpy.loadable("gui/overlay/confirm.png"):
-        style sync_overlay is empty:
-            background "gui/overlay/confirm.png"
-    else:
-        style sync_overlay is empty:
-            background "#000a"
+    screen sync_progress():
+        style_prefix "sync"
+        layer config.interface_layer
+        zorder 100
 
-    style sync_text is gui_text
+        frame:
+            style "sync_overlay"
+
+        frame:
+            xalign .5
+            yalign .5
+            xpadding gui._scale(40)
+            ypadding gui._scale(40)
+
+            vbox:
+                spacing gui._scale(30)
+
+                label _("Sync Progress"):
+                    xalign 0.5
+
+                bar value FetchProgressValue() xsize 0.5 xalign 0.5
+
+
+        ## Right-click and escape answer "no".
+        key "game_menu" action Return(False)

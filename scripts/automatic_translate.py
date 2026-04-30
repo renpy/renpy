@@ -40,7 +40,6 @@ tl = deepl.Translator(os.environ["DEEPL_TOKEN"])
 
 
 def add_tags(s):
-
     pos = 0
 
     rv = ""
@@ -54,18 +53,16 @@ def add_tags(s):
         return s[pos]
 
     while pos < len(s):
-
         c = consume()
 
         if c == "{":
-
             if peek() == "{":
                 consume()
                 rv += "{{"
 
                 continue
 
-            rv += "<span translate=\"no\">{"
+            rv += '<span translate="no">{'
 
             while True:
                 c = consume()
@@ -78,14 +75,13 @@ def add_tags(s):
             continue
 
         if c == "[":
-
             if peek() == "[":
                 consume()
                 rv += "[["
 
                 continue
 
-            rv += "<span translate=\"no\">["
+            rv += '<span translate="no">['
 
             count = 1
 
@@ -106,13 +102,12 @@ def add_tags(s):
         rv += c
 
     # rv = rv.replace("Ren'Py", "<span translate=\"no\">Ren'Py</span>")
-    rv = rv.replace("</span><span translate=\"no\">", "")
+    rv = rv.replace('</span><span translate="no">', "")
 
     return rv
 
 
 def translate(s, lang, source_fn):
-
     if not s:
         return s
 
@@ -143,7 +138,7 @@ def translate(s, lang, source_fn):
     s = add_tags(s)
 
     s = tl.translate_text(s, source_lang="EN", target_lang=lang, tag_handling="html").text
-    s = s.replace("<span translate=\"no\">", "")
+    s = s.replace('<span translate="no">', "")
     s = s.replace("</span>", "")
 
     s = s.replace("&lt;", "<")
@@ -154,17 +149,19 @@ def translate(s, lang, source_fn):
 
     return s
 
+
 def translate_lines(s, lang, source_fn):
-    rv = [ ]
+    rv = []
 
     for l in s.split("\n"):
         rv.append(translate(l, lang, source_fn))
 
     return "\n".join(rv)
 
+
 def quote_unicode(s):
     s = s.replace("\\", "\\\\")
-    s = s.replace("\"", "\\\"")
+    s = s.replace('"', '\\"')
     s = s.replace("\a", "\\a")
     s = s.replace("\b", "\\b")
     s = s.replace("\f", "\\f")
@@ -173,12 +170,10 @@ def quote_unicode(s):
     s = s.replace("\t", "\\t")
     s = s.replace("\v", "\\v")
 
-
     return f'"{s}"'
 
+
 def process_file(fn, language, only_strings=[]):
-
-
     def should_translate(s):
         if "{#" in s:
             return False
@@ -199,7 +194,6 @@ def process_file(fn, language, only_strings=[]):
         lines = f.readlines()
 
     for l in lines:
-
         if l.startswith("    old"):
             result.append(l)
             old = ast.literal_eval(l.strip().partition(" ")[2])
@@ -212,7 +206,6 @@ def process_file(fn, language, only_strings=[]):
                 new = translate_lines(old, language, source_fn)
 
                 if new != old or new != orig_new:
-
                     if new != old:
                         result.append("    # Automatic translation.\n")
 
@@ -227,12 +220,11 @@ def process_file(fn, language, only_strings=[]):
 
             result.append(l)
 
-
     with open(fn, "w") as f:
         f.write("".join(result))
 
-def main():
 
+def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("language")
     ap.add_argument("files", nargs="+")

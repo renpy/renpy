@@ -384,7 +384,7 @@
     new "Penyunting matang. Editra tiada sokongan IME yang diperlukan untuk input tulisan bahasa Cina, Jepun, dan Korea. Di Linux, Editra memerlukan wxPython."
 
     # editor.rpy:195
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Ini mungkin berlaku kerana wxPython tidak dipasangkan di sistem ini."
 
     # editor.rpy:197
@@ -400,7 +400,7 @@
     new "1.8 MB muat turun diperlukan."
 
     # editor.rpy:210
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Ini munhkin berlaku kerana Java tidak dipasangkan di sistem ini."
 
     # editor.rpy:219
@@ -424,7 +424,7 @@
     new "Sunting [text]"
 
     # editor.rpy:387
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Telah berlakunya pengecualian ralat ketika melancarkan penyunting tulisan:\n[exception!q]"
 
     # editor.rpy:519
@@ -1216,7 +1216,7 @@
     new "Penjujuhan pinggir pembangunan Ren'Py. Ini mungkin ada ciri-ciri paling baru, atau mungkin tak boleh dijalankan langsung."
 
     # updater.rpy:158
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Telah berlakunya ralat:"
 
     # updater.rpy:160

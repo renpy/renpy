@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,8 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import sys
@@ -29,8 +28,8 @@ import os
 import re
 import subprocess
 
-import pygame_sdl2 as pygame
 import renpy
+import renpy.pygame as pygame
 
 
 class TTSDone(str):
@@ -66,7 +65,6 @@ def periodic():
 
     if process is not None:
         if process.poll() is not None:
-
             if process.returncode:
                 if renpy.config.tts_voice is not None:
                     renpy.config.tts_voice = None
@@ -76,47 +74,46 @@ def periodic():
 
 
 def is_active():
-
     return process is not None
 
 
 class AndroidTTS(object):
-
     def __init__(self):
-
         from jnius import autoclass
-        PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
-        self.TextToSpeech = autoclass('android.speech.tts.TextToSpeech')
-        self.tts = self.TextToSpeech(PythonSDLActivity.mActivity, None)
 
+        PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
+        self.TextToSpeech = autoclass("android.speech.tts.TextToSpeech")
+        self.tts = self.TextToSpeech(PythonSDLActivity.mActivity, None)
 
     def speak(self, s):
         self.tts.speak(s, self.TextToSpeech.QUEUE_FLUSH, None)
 
+    def stop(self):
+        self.tts.stop()
+
 
 class AppleTTS(object):
-
     def __init__(self):
-
-        from pyobjus import autoclass, objc_str # type: ignore
-        from pyobjus.dylib_manager import load_framework # type: ignore
+        from pyobjus import autoclass, objc_str  # type: ignore
+        from pyobjus.dylib_manager import load_framework  # type: ignore
 
         self.objc_str = objc_str
 
-        load_framework('/System/Library/Frameworks/AVFoundation.framework')
-        self.AVSpeechUtterance = autoclass('AVSpeechUtterance')
-        AVSpeechSynthesizer = autoclass('AVSpeechSynthesizer')
+        load_framework("/System/Library/Frameworks/AVFoundation.framework")
+        self.AVSpeechUtterance = autoclass("AVSpeechUtterance")
+        AVSpeechSynthesizer = autoclass("AVSpeechSynthesizer")
 
         self.synth = AVSpeechSynthesizer.alloc().init()
-
 
     def speak(self, s):
         utterance = self.AVSpeechUtterance.alloc().initWithString_(self.objc_str(s))
         self.synth.speakUtterance_(utterance)
 
+    def stop(self):
+        self.synth.stopSpeakingAtBoundary_(0)  # AVSpeechBoundaryImmediate
 
 
-platform_tts = None # The platform-specific TTS object, used on Android or iOS.
+platform_tts = None  # The platform-specific TTS object, used on Android or iOS.
 
 
 def default_tts_function(s):
@@ -159,52 +156,80 @@ def default_tts_function(s):
     amplitude_100 = int(amplitude * 100)
 
     if "RENPY_TTS_COMMAND" in os.environ:
-
-        process = subprocess.Popen([ os.environ["RENPY_TTS_COMMAND"], fsencode(s) ])
+        process = subprocess.Popen([os.environ["RENPY_TTS_COMMAND"], fsencode(s)])
 
     elif renpy.linux:
-
-        cmd = [ "espeak", "-a", fsencode(str(amplitude_100)) ]
+        cmd = ["espeak", "-a", fsencode(str(amplitude_100))]
 
         if renpy.config.tts_voice is not None:
-            cmd.extend([ "-v", fsencode(renpy.config.tts_voice) ])
+            cmd.extend(["-v", fsencode(renpy.config.tts_voice)])
 
         cmd.append(fsencode(s))
 
         process = subprocess.Popen(cmd)
 
     elif renpy.macintosh:
-
         s = "[[volm {:.02f}]]".format(amplitude) + s
 
         if renpy.config.tts_voice is None:
-            process = subprocess.Popen([ "say", fsencode(s) ])
+            process = subprocess.Popen(["say", fsencode(s)])
         else:
-            process = subprocess.Popen([ "say", "-v", fsencode(renpy.config.tts_voice), fsencode(s) ])
+            process = subprocess.Popen(["say", "-v", fsencode(renpy.config.tts_voice), fsencode(s)])
 
     elif renpy.windows:
-
         if renpy.config.tts_voice is None:
-            voice = "default voice" # something that is unlikely to match.
+            voice = "default voice"  # something that is unlikely to match.
         else:
             voice = renpy.config.tts_voice
 
         say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
         s = s.replace('"', "")
-        process = subprocess.Popen([ "wscript", fsencode(say_vbs), fsencode(s), fsencode(voice), fsencode(str(amplitude_100)) ])
+        process = subprocess.Popen([
+            "wscript",
+            fsencode(say_vbs),
+            fsencode(s),
+            fsencode(voice),
+            fsencode(str(amplitude_100)),
+        ])
 
     elif renpy.emscripten and renpy.config.webaudio:
-
         from renpy.audio.webaudio import call
+
         call("tts", s, amplitude)
 
     elif platform_tts is not None:
         platform_tts.speak(s)
 
+
+def stop_tts():
+    """
+    :undocumented:
+
+    Stops any currently playing TTS.
+    """
+
+    if renpy.emscripten and renpy.config.webaudio:
+        from renpy.audio.webaudio import call
+
+        call("tts", "", 1.0)
+        return
+
+    if platform_tts is not None:
+        platform_tts.stop()
+        return
+
+    global process
+    if process is not None:
+        try:
+            process.terminate()
+            process.wait()
+        except Exception:
+            pass
+
+        process = None
+
 # A List of (regex, string) pairs.
-tts_substitutions = [ ]
-
-
+tts_substitutions = []
 
 
 def init():
@@ -215,16 +240,14 @@ def init():
     global platform_tts
 
     for pattern, replacement in renpy.config.tts_substitutions:
-
-        if isinstance(pattern, basestring):
-            pattern = r'\b' + re.escape(pattern) + r'\b'
+        if isinstance(pattern, str):
+            pattern = r"\b" + re.escape(pattern) + r"\b"
             pattern = re.compile(pattern, re.IGNORECASE)
             replacement = replacement.replace("\\", "\\\\")
 
         tts_substitutions.append((pattern, replacement))
 
     try:
-
         if renpy.android:
             platform_tts = AndroidTTS()
 
@@ -261,22 +284,22 @@ def apply_substitutions(s):
 
 
 # A queue of tts utterances.
-tts_queue = [ ]
+tts_queue = []
 
 
 # The last text spoken.
 last_spoken = ""
+
 
 def tick():
     if not tts_queue:
         return
 
     s = " ".join(tts_queue)
-    tts_queue[:] = [ ]
+    tts_queue[:] = []
 
     global last_spoken
     last_spoken = s
-
 
     try:
         renpy.config.tts_function(s)
@@ -291,6 +314,9 @@ def tts(s):
 
     if not renpy.game.preferences.self_voicing:
         return
+
+    if not renpy.config.tts_queue:
+        tts_queue[:] = []
 
     tts_queue.append(s)
 
@@ -314,6 +340,10 @@ def speak(s, translate=True, force=False):
         s = renpy.translation.translate_string(s)
 
     s = apply_substitutions(s)
+
+    if not renpy.config.tts_queue:
+        tts_queue[:] = []
+
     tts_queue.append(s)
 
 
@@ -395,7 +425,7 @@ def displayable(d):
 
     while True:
         try:
-            s = d._tts_all()
+            s = d._tts_all(raw=False)
             break
         except TTSRoot:
             if d is root:

@@ -108,7 +108,8 @@ Optional arguments
 
 .. option:: --help, -h
 
-    If given, displays a help message showing commands and syntax, then exits.
+    If given, displays a help message showing commands and syntax, then exits. This returns
+    the most up-to-date command information.
 
 .. note::
 
@@ -168,7 +169,7 @@ Basic Commands
 
 .. _cli_run:
 
-Run
+Run Project
 -----------
 
 .. tabs::
@@ -206,34 +207,8 @@ Runs the current project normally. This is the default command that is run if no
     The :ref:`warp feature <warping_to_a_line>` requires :var:`config.developer` to be True to operate.
 
 
-.. _cli_add_from:
-
-Add From To Calls
------------------
-
-.. tabs::
-
-    .. tab:: Linux / macOS
-
-        .. code-block:: bash
-
-            ./renpy.sh <basedir> add_from
-
-    .. tab:: Windows
-
-        .. code-block:: bat
-
-            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> add_from
-
-This command adds a ``from`` clause to each :ref:`call statement <call-statement>`
-that does not have one. Generally, this should be done before a release, to help
-Ren'Py locate the return point of calls in a modified game.
-
-.. note::
-
-    This will modify your game's script files, and assumes that you will include
-    the changes it makes into your game.
-
+Check and Test Commands
+=======================
 
 .. _cli_lint:
 
@@ -290,6 +265,108 @@ in the launcher.
 .. option:: --all-problems
 
     If given, all problems of a kind are reported, not just the first ten.
+
+
+.. _cli_test:
+
+Run Testcases
+-------------
+
+.. tabs::
+
+    .. tab:: Linux / macOS
+
+        .. code-block:: bash
+
+            ./renpy.sh <basedir> test [ testcase ]  [ options... ]
+
+    .. tab:: Windows
+
+        .. code-block:: bat
+
+            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> test [ testcase ]  [ options... ]
+
+This runs :file:`automated tests <testcases>` on the game.
+
+Examples:
+ * `<https://github.com/renpy/renpy/blob/master/tutorial/game/testcases.rpy>`_
+ * `<https://github.com/renpy/renpy/blob/master/gui/game/testcases.rpy>`_
+ * `<https://github.com/renpy/renpy/blob/master/launcher/game/testcases.rpy>`_
+
+.. option:: <testcase>
+
+    The name of the testcase or test suite to run. If not given, the "global"
+    test suite will be run.
+
+.. option:: testcase
+
+    The name of the testcase or test suite to run. If not given, the "global"
+    test suite will be run.
+
+.. option:: --enable_all
+
+    If provided, all test cases and test suites will be executed, regardless
+    of their ``enabled`` property.
+
+.. option:: --overwrite_screenshots
+
+    If provided, existing screenshots will be overwritten when a
+    :ref:`screenshot statement <test-screenshot-statement>` is executed.
+
+.. option:: --hide-header
+
+    If provided, the header at the start of the test run will be disabled.
+
+.. option:: --hide-execution [no|hooks|testcases|all]
+
+    If provided, test execution output will be hidden. ``hooks`` hides hooks,
+    ``testcases`` hides test cases and hooks, and ``all`` hides everything.
+
+.. option:: --hide-summary
+
+    If provided, the summary at the end of the test run will be disabled.
+
+.. option:: --report-detailed
+
+    If provided, detailed information about each test will be shown during
+    the run.
+
+.. option:: --report-skipped
+
+    If provided, information about skipped tests will be shown. This option
+    should be used together with ``--report-detailed``.
+
+
+Build Commands
+==============
+
+.. _cli_add_from:
+
+Add From To Calls
+-----------------
+
+.. tabs::
+
+    .. tab:: Linux / macOS
+
+        .. code-block:: bash
+
+            ./renpy.sh <basedir> add_from
+
+    .. tab:: Windows
+
+        .. code-block:: bat
+
+            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> add_from
+
+This command adds a ``from`` clause to each :ref:`call statement <call-statement>`
+that does not have one. Generally, this should be done before a release, to help
+Ren'Py locate the return point of calls in a modified game.
+
+.. note::
+
+    This will modify your game's script files, and assumes that you will include
+    the changes it makes into your game.
 
 
 .. _cli_compile:
@@ -366,41 +443,10 @@ This command is used to delete :doc:`persistent`. This can be handy since persis
 the game save folder, AND the location specified by :var:`config.save_directory`.
 
 
-.. _cli_test:
-
-Test
------------
-
-.. tabs::
-
-    .. tab:: Linux / macOS
-
-        .. code-block:: bash
-
-            ./renpy.sh <basedir> test <testcase>
-
-    .. tab:: Windows
-
-        .. code-block:: bat
-
-            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> test <testcase>
-
-Runs a testcase to automatically test a user interface or gameplay flow.
-
-Examples:
- * `<https://github.com/renpy/renpy/blob/master/tutorial/game/testcases.rpy>`_
- * `<https://github.com/renpy/renpy/blob/master/gui/game/testcases.rpy>`_
- * `<https://github.com/renpy/renpy/blob/master/launcher/game/testcases.rpy>`_
-
-.. option:: <testcase>
-
-    The name of the testcase to run
-
-
 .. _cli_update:
 
-Update
------------
+Update Project
+--------------
 
 .. tabs::
 

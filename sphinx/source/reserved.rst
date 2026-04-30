@@ -11,10 +11,29 @@ Ren'Py reserves all names beginning with a single underscore (\_). Do not
 use names beginning with an underscore, as that may cause your game to break
 in future versions of Ren'Py.
 
+In addition, Python has rules for what names are valid. Valid names are composed of the following characters:
+
+* uppercase and lowercase letters (A-Z and a-z),
+* the underscore (_),
+* digits (0 through 9), which cannot appear as the first character, and
+* non-ASCII characters. Valid names may only contain “letter-like” and “digit-like” characters; see `Non-ASCII characters in names <https://docs.python.org/3/reference/lexical_analysis.html#lexical-names-nonascii>`_ for details.
+
 The following is a list of names that are used by Python. Re-using these
 names can lead to obscure problems.
 
 .. include:: inc/reserved_builtins
+
+The following are reserved names imported from the Python
+`typing <https://docs.python.org/3/library/typing.html>`_  module into all Ren'Py stores.
+
+* Any
+* Callable
+* Literal
+* Self
+* cast
+* final
+* overload
+* override
 
 The following is a list of names that are used by Ren'Py. While in some
 cases it makes sense to redefine these names, one should be aware that doing

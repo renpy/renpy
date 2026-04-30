@@ -92,8 +92,14 @@ and rolled-back when rollback occurs.
 
 .. var:: mouse_visible = True
 
-    Controls if the mouse is visible. This is automatically set to true when
-    entering the standard game menus.
+    Controls if the mouse is visible. There are three values:
+
+    - "always" - The mouse is always visible.
+    - True - The mouse is visible when moved, but hides after :var:`config.mouse_hide_time` seconds of inactivity, or
+      after controller input.
+    - False - The mouse is never visible.
+
+    If false whe entering the game menu, mouse_visible will be set to true upon entry and restored upon exit.
 
 .. var:: name_only = Character(...)
 
@@ -150,7 +156,9 @@ and rolled-back when rollback occurs.
 
 .. var:: save_name = ""
 
-    A save name that is included with saves.
+    A save name that is included with saves. This is also used by the steam timeline if
+    :var:`config.automatic_steam_timeline` is true, and is best considered to be a chapter
+    name.
 
 .. var:: _scene_show_hide_transition = None
 

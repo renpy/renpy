@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,9 +31,9 @@ globals()["Matrix"] = Matrix
 globals()["Matrix2D"] = Matrix2D
 
 import collections
-import pygame_sdl2 as pygame
 import threading
 import renpy
+import renpy.pygame as pygame
 import gc
 import math
 
@@ -227,10 +227,17 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         width, height = d._offer_size
 
     if xmaximum is not None:
-        width = min(renpy.display.core.absolute.compute_raw(xmaximum, width), width)
+        if renpy.config.maximum_embiggens:
+            width = renpy.display.core.absolute.compute_raw(xmaximum, width)
+        else:
+            width = min(renpy.display.core.absolute.compute_raw(xmaximum, width), width)
 
     if ymaximum is not None:
-        height = min(renpy.display.core.absolute.compute_raw(ymaximum, height), height)
+        if renpy.config.maximum_embiggens:
+            height = renpy.display.core.absolute.compute_raw(ymaximum, height)
+        else:
+            height = min(renpy.display.core.absolute.compute_raw(ymaximum, height), height)
+
 
     if width < 0:
         width = 0
@@ -275,6 +282,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         rv.render_of.append(d)
         renpy.plog(4, "after clipping")
 
+    rv.debug = style.debug or rv.debug
 
     if not sizing:
 
@@ -421,7 +429,7 @@ def redraw(d, when):
     redraw_queue.append((when + renpy.game.interface.frame_time, d))
 
 
-IDENTITY = Matrix2D(1, 0, 0, 1)
+IDENTITY = renpy.display.matrix.IDENTITY
 
 
 def take_focuses(focuses):
@@ -501,14 +509,25 @@ def mark_sweep():
     cdef list worklist
     cdef int i
     cdef Render r, j
+    cdef object o
 
     worklist = [ ]
 
     if screen_render is not None:
         worklist.append(screen_render)
 
-    cache_renders = renpy.display.im.cache.get_renders()
-    worklist.extend(cache_renders)
+    worklist.extend(renpy.display.im.cache.get_renders())
+
+    for t in renpy.display.video.texture.values():
+        if isinstance(t, Render) and t not in worklist:
+            worklist.append(t)
+
+    for t in renpy.display.video.group_texture.values():
+        if isinstance(t, Render) and t not in worklist:
+            worklist.append(t)
+
+    for r in worklist:
+        r.mark = True
 
     i = 0
 
@@ -522,12 +541,6 @@ def mark_sweep():
 
         i += 1
 
-    if screen_render is not None:
-        screen_render.mark = True
-
-    for r in cache_renders:
-        r.mark = True
-
     for r in live_renders:
         if not r.mark:
             r.kill()
@@ -537,12 +550,18 @@ def mark_sweep():
     live_renders = worklist
 
 
-# Possible operations that can be done as part of a render.
+# Possible operations that can be done as part of a render. Not used anymore, but kept
+# for compatibility.
 BLIT = 0
 DISSOLVE = 1
 IMAGEDISSOLVE = 2
 PIXELLATE = 3
 FLATTEN = 4
+
+# Possible matrix kinds.
+MATRIX_VIEW = 0
+MATRIX_MODEL = 1
+MATRIX_PROJECTION = 2
 
 cdef class Render:
 
@@ -568,6 +587,9 @@ cdef class Render:
         self.width = width
         self.height = height
 
+        self.cropped_width = width
+        self.cropped_height = height
+
         self.layer_name = layer_name
 
         # A list of (surface/render, xoffset, yoffset, focus, main) tuples, ordered from
@@ -584,6 +606,9 @@ cdef class Render:
         # be of the (0, 0) point in the child coordinate space.
         self.forward = None
         self.reverse = None
+
+        # The kind of matrix that is being updated by this displayable.
+        self.matrix_kind = MATRIX_MODEL
 
         # This is used to adjust the alpha of children of this render.
         self.alpha = 1
@@ -673,6 +698,9 @@ cdef class Render:
         # Have the textures been loaded?
         self.loaded = False
 
+        # Do the uniforms have a render in them?
+        self.uniforms_has_render = False
+
         live_renders.append(self)
 
     _types = """\
@@ -712,6 +740,7 @@ cdef class Render:
         cached_texture: Any
         cached_model: Any
         loaded: bool
+        uniforms_has_render: bool
         """
 
     def __repr__(self): #@DuplicatedSignature
@@ -895,7 +924,6 @@ cdef class Render:
         * The length of the overlap in pixels. (can be <= 0)
         """
 
-
         s_end = sx + sw
         c_end = cx + cw
 
@@ -939,8 +967,6 @@ cdef class Render:
             bw = w
             bh = h
 
-        rv = Render(w, h)
-
         reverse = self.reverse
 
         this = self
@@ -951,6 +977,10 @@ cdef class Render:
             this.add_shader("renpy.texture")
             this.blit(self, (0, 0), focus=focus, main=True)
             reverse = None
+
+        rv = Render(w, h)
+        rv.cropped_width = min(self.cropped_width - x, w)
+        rv.cropped_height = min(self.cropped_height - y, h)
 
         if ((reverse is not None) and
             (reverse.xdx != 1.0 or
@@ -967,24 +997,6 @@ cdef class Render:
 
             # Try to avoid clipping if a surface fits entirely inside the
             # rectangle.
-
-            if (reverse is None) or (reverse.xdx > 0.0 and
-                                     reverse.xdy == 0.0 and
-                                     reverse.ydx == 0.0 and
-                                     reverse.ydy > 0.0):
-
-                forward = this.forward or IDENTITY
-
-                tx, ty = forward.transform(x, y)
-                tw, th = forward.transform(w + x, h + y)
-                rw, rh = forward.transform(this.width, this.height)
-
-                if (tx <= 0) and (tw >= rw):
-                    rv.xclipping = False
-
-                if (ty <= 0) and (th >= rh):
-                    rv.yclipping = False
-
 
             if subpixel:
                 rv.subpixel_blit(this, (-x, -y), focus=focus, main=True)
@@ -1020,20 +1032,30 @@ cdef class Render:
                 if isinstance(child, Render):
 
                     if child.xclipping:
+                        end = min(cw, cbx+bw)
+                        cbx = max(0, cbx)
+                        cbw = end - cbx
+
                         cropw = cw
                     else:
                         cropw = w - xo
+                        cbw = bw
 
                     if child.yclipping:
+                        end = min(ch, cby+bh)
+                        cby = max(0, cby)
+                        cbh = end - cby
+
                         croph = ch
                     else:
                         croph = h - yo
+                        cbh = bh
 
                     crop = (cx, cy, cropw, croph)
-                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel, bounds=(cbx, cby, bw, bh))
-                    newchild.width = cw
-                    newchild.height = ch
-                    newchild.render_of = child.render_of[:]
+                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel, bounds=(cbx, cby, cbw, cbh))
+                    # newchild.render_of = child.render_of[:]
+                    newchild.xclipping = child.xclipping or newchild.xclipping
+                    newchild.yclipping = child.yclipping or newchild.yclipping
 
                 else:
 
@@ -1093,6 +1115,8 @@ cdef class Render:
         rv.properties = self.properties
 
         rv.text_input = self.text_input
+
+        rv.render_of = self.render_of[:]
 
         return rv
 
@@ -1187,6 +1211,7 @@ cdef class Render:
         self.cached_texture = None
         self.cached_model = None
 
+    NO_MOUSE_FOCUS = renpy.object.Sentinel("NO_MOUSE_FOCUS")
 
     def add_focus(self, d, arg=None, x=0, y=0, w=None, h=None, mx=None, my=None, mask=None):
         """
@@ -1350,6 +1375,9 @@ cdef class Render:
             if y < 0 or y >= self.height:
                 return None
 
+        if self.forward and self.forward.is_2d_null():
+            return None
+
         rv = None
 
         if self.pass_focuses:
@@ -1379,6 +1407,9 @@ cdef class Render:
             for (d, arg, xo, yo, w, h, mx, my, mask) in reversed(self.focuses):
 
                 if xo is None or xo is False:
+                    continue
+
+                if arg is self.NO_MOUSE_FOCUS:
                     continue
 
                 elif mx is not None:
@@ -1438,14 +1469,14 @@ cdef class Render:
 
         rv = [ ]
 
-        if x < 0 or y < 0 or x >= self.width or y >= self.height:
+        if x < 0 or y < 0 or x >= self.cropped_width or y >= self.cropped_height:
             return rv
 
         is_screen = False
 
         if depth is not None:
             for d in self.render_of:
-                rv.append((depth, self.width, self.height, d))
+                rv.append((depth, self.cropped_width, self.cropped_height, d))
                 depth += 1
 
                 if isinstance(d, renpy.display.screen.ScreenDisplayable):
@@ -1518,7 +1549,7 @@ cdef class Render:
         Fills this Render with the given color.
         """
 
-        color = renpy.easy.color(color)
+        color = renpy.color.Color(color)
         solid = renpy.display.imagelike.Solid(color)
         surf = render(solid, self.width, self.height, 0, 0)
         self.blit(surf, (0, 0), focus=False, main=False)
@@ -1636,6 +1667,10 @@ cdef class Render:
         to the shaders that render this Render and its children.
         """
 
+        if type(value) is Render:
+            self.depends_on(value)
+            self.uniforms_has_render = True
+
         if self.uniforms is None:
             self.uniforms = { name : value }
         else:
@@ -1654,6 +1689,17 @@ cdef class Render:
         else:
             self.properties[name] = value
 
+    def get_property(self, name, default):
+
+        if self.properties is None:
+            return default
+
+        if name[:3] == "gl_":
+            name = name[3:]
+
+        return self.properties.get(name, default)
+
+
 class Canvas(object):
 
     def __init__(self, surf): #@DuplicatedSignature
@@ -1664,7 +1710,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.rect(self.surf,
-                             renpy.easy.color(color),
+                             renpy.color.Color(color),
                              rect,
                              width)
         finally:
@@ -1674,7 +1720,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.polygon(self.surf,
-                                renpy.easy.color(color),
+                                renpy.color.Color(color),
                                 pointlist,
                                 width)
         finally:
@@ -1685,7 +1731,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.circle(self.surf,
-                               renpy.easy.color(color),
+                               renpy.color.Color(color),
                                pos,
                                radius,
                                width)
@@ -1697,7 +1743,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.ellipse(self.surf,
-                                renpy.easy.color(color),
+                                renpy.color.Color(color),
                                 rect,
                                 width)
         finally:
@@ -1708,7 +1754,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.arc(self.surf,
-                            renpy.easy.color(color),
+                            renpy.color.Color(color),
                             rect,
                             start_angle,
                             stop_angle,
@@ -1721,7 +1767,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.line(self.surf,
-                             renpy.easy.color(color),
+                             renpy.color.Color(color),
                              start_pos,
                              end_pos,
                              width)
@@ -1732,7 +1778,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.lines(self.surf,
-                              renpy.easy.color(color),
+                              renpy.color.Color(color),
                               closed,
                               pointlist,
                               width)
@@ -1743,7 +1789,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.aaline(self.surf,
-                               renpy.easy.color(color),
+                               renpy.color.Color(color),
                                startpos,
                                endpos,
                                blend)
@@ -1754,7 +1800,7 @@ class Canvas(object):
         try:
             blit_lock.acquire()
             pygame.draw.aalines(self.surf,
-                                renpy.easy.color(color),
+                                renpy.color.Color(color),
                                 closed,
                                 pointlist,
                                 blend)

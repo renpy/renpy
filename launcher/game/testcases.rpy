@@ -1,191 +1,226 @@
-﻿init python:
-    TEST_PROJECTS = u"/tmp/renpy-moé"
-    import shutil
+﻿testsuite global:
+    teardown:
+        exit
+
+testcase change_language:
+    parameter lang = [
+        "arabic", "danish", "finnish", "french", "german",
+        "greek", "indonesian", "italian", "japanese", "korean",
+        "malay", "persian", "piglatin", "polish", "portuguese",
+        "russian", "schinese", "spanish", "tchinese", "turkish",
+        "ukrainian", "vietnamese", "None"]
+
+    click id "pref_btn"
+    click id "pref_general_btn"
+    click id f"pref_change_language_btn_{lang}"
+
+    click "Options" raw
+    click "Theme" raw
+    click "Install Libraries" raw
+    click "Actions" raw
+    click "Lint" raw
+    click "Return" raw
+
+    # click id "pref_options_btn"
+    # click id "pref_theme_btn"
+    # click id "pref_install_btn"
+    # click id "pref_actions_btn"
+    # click id "pref_lint_btn"
+    # click id "return_btn"
+
+testcase themes:
+    click id "pref_btn"
+
+    click id "pref_theme_btn"
+    click id "pref_theme_dark_btn"
+    click id "pref_theme_btn"
+    click id "pref_theme_default_btn"
+    # click id "pref_theme_btn"
+    # click id "pref_theme_dark_btn"
+
+    click id "return_btn"
 
 
-testcase default:
+testsuite default:
+    setup:
+        python:
+            import shutil
+            import tempfile
 
-    call new_project
-    call translate_project
-    call extract_dialogue
+            persistent.old_projects_directory = persistent.projects_directory
 
-    "Delete Persistent"
-    "Force Recompile"
+            if persistent.temp_projects_directory:
+                if os.path.exists(persistent.temp_projects_directory):
+                    shutil.rmtree(persistent.temp_projects_directory)
 
-    call build_project
+                os.mkdir(persistent.temp_projects_directory, 0o777)
+            else:
+                persistent.temp_projects_directory = tempfile.mkdtemp(prefix="renpy-test-")
 
-    "quit"
+            persistent.projects_directory = persistent.temp_projects_directory
 
+    before testcase:
+        $ _test.timeout = 5.0
 
-testcase new_project:
-    python:
-        if os.path.exists(TEST_PROJECTS):
-            shutil.rmtree(TEST_PROJECTS)
+    teardown:
+        python:
+            persistent.projects_directory = persistent.old_projects_directory
+            if os.path.exists(persistent.temp_projects_directory):
+                shutil.rmtree(persistent.temp_projects_directory)
 
-        os.mkdir(TEST_PROJECTS, 0o777)
-
-        persistent.projects_directory = TEST_PROJECTS
-
-    "refresh"
-    "Create New Project"
-
-    "Continue"
-
-    # Name
-    type "Test Project"
-    "Continue"
-
-    # Size
-    "1280x720"
-    "Continue"
-
-    # Color Selection
-    "Continue"
+            persistent.temp_projects_directory = None
 
 
-testcase choose_colors:
-    "Change/Update GUI"
-    "Choose new colors"
-    "Continue"
-    "Continue"
+    testcase new_project:
+        click "refresh"
+        click "Create New Project"
 
-    "Change/Update GUI"
-    "Regenerate the"
-    "Continue"
+        click "Continue"
 
+        # Name
+        type "Test Project"
+        click "Continue"
 
-testcase delete10:
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
+        # Size
+        click "1280x720"
+        click "Continue"
+
+        # Color Selection
+        click "Continue"
 
 
-testcase delete30:
-    call delete10
-    call delete10
-    call delete10
+    testcase translate_project:
+        click "Generate Translations"
+
+        keysym "K_BACKSPACE" repeat 30
+
+        type "piglatin"
+
+        click "Generate Translations"
+        click "Continue"
+
+        click "Generate Translations"
+        click "Extract String Translations"
+        click "Continue"
+
+        click "Generate Translations"
+        click "Merge String Translations"
+        click "Continue"
+
+        click "Generate Translations"
+        click "Update Default"
 
 
-testcase translate_project:
-    "Generate Translations"
+    testsuite extract_dialogue:
+        before testcase:
+            click "Extract Dialogue"
+            click "Strip text tags"
+            click "Escape quotes"
+            click "Extract all"
 
-    call delete30
+        testcase tab_delimited:
+            click "Tab-delimited"
+            click "Continue"
+            click "Continue"
 
-    type "piglatin"
-
-    "Generate Translations"
-    "Continue"
-
-    "Generate Translations"
-    "Extract String Translations"
-    "Continue"
-
-    "Generate Translations"
-    "Merge String Translations"
-    "Continue"
-
-    "Generate Translations"
-    "Update Default"
+        testcase text_only:
+            click "Text Only"
+            click "Continue"
+            click "Continue"
 
 
-testcase build_project:
-    "Build Distributions"
-    "Build"
+    testcase recompile:
+        click "Delete Persistent"
+        click "Force Recompile"
 
 
-testcase extract_dialogue_common:
-    "Extract Dialogue"
-    "Strip text tags"
-    "Escape quotes"
-    "Extract all"
+    testcase build_project:
+        $ _test.timeout = 60.0
+        click "Build Distributions"
+        click "Build"
+        pause until "Return"
+        click "Return"
 
-testcase extract_dialogue:
-    call extract_dialogue_common
-    "Tab-delimited"
-    "Continue"
-    "Continue"
 
-    call extract_dialogue_common
-    "Text Only"
-    "Continue"
-    "Continue"
+    testcase choose_colors:
+        click "Change/Update GUI"
+        click "Choose new colors"
+        click "Continue"
+        click "Continue"
+
+        click "Change/Update GUI"
+        click "Regenerate the"
+        click "Continue"
 
 
 testcase android:
+    enabled False
 
     $ _test.timeout = 60.0
     $ _test.maximum_framerate = False
 
-    "Tutorial"
-    "Android"
+    click "Tutorial"
+    pause 0.5
+    click "Android"
 
     # Download and install RAPT.
     if "Yes":
 
-        "Yes"
-        "Proceed"
+        click "Yes"
+        click "Proceed"
 
-    "Install SDK"
-    "Yes" until "Continue"
+    click "Install SDK"
+    click "Yes" until "Continue"
 
     # We have to create the key.
     if "Cancel":
         type "Test Key"
-        "Continue"
-        "Continue"
+        click "Continue"
+        click "Continue"
 
     # Configure the application.
-    "Configure"
+    click "Configure"
 
     $ _test.maximum_framerate = True
 
-    call delete30
+    keysym "K_BACKSPACE" repeat 30
     type "Ren'Py Tutorial"
-    "Continue"
+    click "Continue"
 
-    call delete30
+    keysym "K_BACKSPACE" repeat 30
     type "Ren'Py Tutorial"
-    "Continue"
+    click "Continue"
 
-    call delete30
+    keysym "K_BACKSPACE" repeat 30
     type "org.renpy.tutorial"
-    "Continue"
+    click "Continue"
 
-    call delete30
+    keysym "K_BACKSPACE" repeat 30
     type "1.2.3"
-    "Continue"
+    click "Continue"
 
-    call delete30
+    keysym "K_BACKSPACE" repeat 30
     type "10203"
-    "Continue"
+    click "Continue"
 
     $ _test.maximum_framerate = False
 
-    "In landscape"
-    "Continue"
+    click "In landscape"
+    click "Continue"
 
-    "Neither"
-    "Continue"
+    click "Neither"
+    click "Continue"
 
-    "No."
-    "Continue"
+    click "No."
+    click "Continue"
 
-    "Android 4.0"
-    "Continue"
+    click "Android 4.0"
+    click "Continue"
 
     # Access the internet.
-    "No"
-    "Continue"
+    click "No"
+    click "Continue"
 
     # Build the package.
-    "Build Package"
-    "Continue"
-
-    "quit"
+    click "Build Package"
+    click "Continue"

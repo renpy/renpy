@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -52,7 +52,7 @@ init python:
             # This is set to true by cancel() to indicate the download should be cancelled.
             self.cancelled = False
 
-            # Set on succes or failure.
+            # Set on success or failure.
             self.success = False
             self.failure = None
 
@@ -84,7 +84,7 @@ init python:
                     self.tmpfile.write(data)
 
                     if length > 0:
-                        self.progress = 1.0 * count / length
+                        self.progress = max(1.0 * count / length, 1.0)
 
                     if self.cancelled:
                         break
@@ -92,10 +92,6 @@ init python:
                 self.tmpfile.close()
 
                 if self.cancelled:
-                    return
-
-                if length and count != length:
-                    self.failure = "Download length does not match content length."
                     return
 
                 self.safe_unlink(self.dest)

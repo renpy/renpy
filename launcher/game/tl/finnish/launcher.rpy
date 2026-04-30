@@ -364,7 +364,7 @@
     new "{b}Suositeltu.{/b} Helppokäyttöinen beta-asteella oleva tekstieditori, joka sisältää kehitystä helpottavia toimintoja. Toistaiseksi Editrasta puuttuu täysin kiinalaisen, japanilaisen ja korealaisen tekstin kannatus."
 
     # editor.rpy:167
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Tämä saattoi tapahtua, koska wxPythonia ei ole asennettu järjestelmään."
 
     # editor.rpy:169
@@ -380,7 +380,7 @@
     new "1.8 MB lataus vaaditaan."
 
     # editor.rpy:182
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Tämä saattoi tapahtua, koska Javaa ei ole asennettu."
 
     # editor.rpy:191
@@ -392,7 +392,7 @@
     new "Estää Ren'Py-ohjelmaa avaamasta tekstieditoria."
 
     # editor.rpy:359
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Virhe käynnistäessä tekstieditoria:\n[exception!q]"
 
     # editor.rpy:457
@@ -610,7 +610,7 @@
     new "VIRHE"
 
     # interface.rpy:356
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "Kun [what!qt], tapahtui virhe:"
 
     # interface.rpy:356
@@ -1138,7 +1138,7 @@
     new "Upouudet Ren'Py-kehitysjulkaisut. Voi sisältää uusimmat toiminnot, tai ei ehkä toimi lainkaan."
 
     # updater.rpy:152
-    old "An error has occured:"
+    old "An error has occurred:"
     new "On tapahtunut virhe:"
 
     # updater.rpy:154

@@ -96,7 +96,6 @@ style frame:
 ## https://www.renpy.org/doc/html/screen_special.html#say
 
 screen say(who, what):
-    style_prefix "say"
 
     window:
         id "window"
@@ -174,7 +173,7 @@ screen input(prompt):
     window:
 
         vbox:
-            xalign gui.dialogue_text_xalign
+            xanchor gui.dialogue_text_xalign
             xpos gui.dialogue_xpos
             xsize gui.dialogue_width
             ypos gui.dialogue_ypos
@@ -1516,6 +1515,10 @@ style game_menu_navigation_frame:
 style game_menu_content_frame:
     variant "small"
     top_margin 0
+
+style game_menu_viewport:
+    variant "small"
+    xsize 870
 
 style pref_vbox:
     variant "small"

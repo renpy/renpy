@@ -620,7 +620,7 @@
     new "Gelişmiş bir düzenleyici. Editra; Çince, Japonca ve Korece metin girişi için gerekli olan IME desteğinden yoksundur. Linux'ta Editra wxPython gerektirir."
 
     # editor.rpy:195
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Bu sistemde wxPython kurulu olmadığı için olabilir."
 
     # editor.rpy:197
@@ -636,7 +636,7 @@
     new "1.8 MB indirme gerekir."
 
     # editor.rpy:210
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Bunun sebebi sistemde Java kurulu olmaması olabilir."
 
     # editor.rpy:219
@@ -660,7 +660,7 @@
     new "Düzenle [text]."
 
     # editor.rpy:387
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Metin düzenleyicisini başlatırken bir hata oluştu:\n[exception!q]"
 
     # editor.rpy:519
@@ -896,7 +896,7 @@
     new "HATA"
 
     # interface.rpy:394
-    old "While [what!q], an error occured:"
+    old "While [what!q], an error occurred:"
     new "[what!q] sırasında bir hata meydana geldi:"
 
     # interface.rpy:394
@@ -1465,7 +1465,7 @@
     new "B %d, %Y"
 
     # updater.rpy:140
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Bir hata meydana geldi:"
 
     # updater.rpy:142
@@ -1913,7 +1913,7 @@ translate turkish strings:
     new "günlük dosyasının açılması"
 
     # game/interface.rpy:407
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     # Automatic translation.
     new "[what!qt] adresindeyken bir hata oluştu:"
 

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -67,6 +67,7 @@ init python in navigation:
         """
 
         project.current.update_dump()
+        project.current.update_todos()
 
         sort = persistent.navigation_sort[kind]
 
@@ -161,7 +162,8 @@ init python in navigation:
 
 screen navigation:
 
-    $ todo_count = len(project.current.dump.get("location", {}).get("todo", []))
+    python:
+        todo_count = len(project.current.dump.get("location", {}).get("todo", []))
 
     frame:
         style_group "l"

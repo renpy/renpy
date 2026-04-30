@@ -31,31 +31,31 @@ translate tchinese strings:
 
     # 00action_file.rpy:37
     old "{#weekday_short}Mon"
-    new "{#weekday_short}周一"
+    new "{#weekday_short}週一"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Tue"
-    new "{#weekday_short}周二"
+    new "{#weekday_short}週二"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Wed"
-    new "{#weekday_short}周三"
+    new "{#weekday_short}週三"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Thu"
-    new "{#weekday_short}周四"
+    new "{#weekday_short}週四"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Fri"
-    new "{#weekday_short}周五"
+    new "{#weekday_short}週五"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sat"
-    new "{#weekday_short}周六"
+    new "{#weekday_short}週六"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sun"
-    new "{#weekday_short}周日"
+    new "{#weekday_short}週日"
 
     # 00action_file.rpy:47
     old "{#month}January"
@@ -207,15 +207,15 @@ translate tchinese strings:
 
     # 00library.rpy:142
     old "Self-voicing disabled."
-    new "Self-voicing 已禁用。"
+    new "Self-voicing 已停用。"
 
     # 00library.rpy:143
     old "Clipboard voicing enabled. "
-    new "Clipboard voicing 已啓用。 "
+    new "Clipboard voicing 已啟用。 "
 
     # 00library.rpy:144
     old "Self-voicing enabled. "
-    new "Self-voicing 已啓用。 "
+    new "Self-voicing 已啟用。 "
 
     # 00library.rpy:179
     old "Skip Mode"
@@ -223,19 +223,19 @@ translate tchinese strings:
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "該程式包含許多許可證下的自由軟體，包括 MIT 許可證和 GNU 寬通用公共許可證。 {a=https://www.renpy.org/l/license}這裏{/a} 可以找到完整的軟體列表，包括完整原始碼的鏈接。 "
+    new "該程式包含許多授權下的自由軟體，包括 MIT 授權和 GNU 寬通用公共授權。 {a=https://www.renpy.org/l/license}這裡{/a} 可以找到完整的軟體列表，包括完整原始碼的連結。 "
 
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "Clipboard voicing 已啟用。按 'shift+C' 禁用"
+    new "Clipboard voicing 已啟用。按 'shift+C' 停用"
 
     # 00preferences.rpy:424
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Self-voicing 會開始朗讀 \"[renpy.display.tts.last]\"。 按 'alt+shift+V' 來禁用。"
+    new "Self-voicing 會開始朗讀 \"[renpy.display.tts.last]\"。 按 'alt+shift+V' 來停用。"
 
     # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Self-voicing 已啟用。按 'v' 禁用。"
+    new "Self-voicing 已啟用。按 'v' 停用。"
 
     # _compat/gamemenu.rpym:198
     old "Empty Slot."
@@ -259,7 +259,7 @@ translate tchinese strings:
 
     # _compat/preferences.rpym:428
     old "Joystick Mapping"
-    new "遊戲桿映射"
+    new "遊戲桿對映"
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
@@ -299,7 +299,7 @@ translate tchinese strings:
 
     # 00updater.rpy:1049
     old "While unpacking {}, unknown type {}."
-    new "正在解壓缩 {}，未知類型 {}。"
+    new "正在解壓縮 {}，未知類型 {}。"
 
     # 00updater.rpy:1393
     old "Updater"
@@ -395,7 +395,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:120
     old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
-    new "輔助功能選單。使用向上和向下箭頭進行導航，並使用 Enter 啟動按鈕和欄位。"
+    new "輔助功能選單。使用向上和向下箭頭進行導覽，並使用 Enter 啟動按鈕和欄位。"
 
     # renpy/common/00accessibility.rpy:139
     old "Font Override"
@@ -419,7 +419,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:163
     old "Reset"
-    new "重置"
+    new "重設"
 
     # renpy/common/00accessibility.rpy:169
     old "Line Spacing Scaling"
@@ -439,7 +439,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:202
     old "Text-to-speech"
-    new "文本轉語音"
+    new "文字轉語音"
 
     # renpy/common/00accessibility.rpy:206
     old "Clipboard"
@@ -447,7 +447,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:210
     old "Debug"
-    new "調試"
+    new "除錯"
 
     # renpy/common/00accessibility.rpy:224
     old "Self-Voicing Volume Drop"
@@ -455,7 +455,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:235
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    new "此選單上的選項旨在提高可訪問性。它們可能不適用於所有遊戲，並且某些選項組合可能導致遊戲無法玩。這不是遊戲或引擎的問題。為了在更改字形時獲得最佳效果，盡量保持文字大小與原來一樣。"
+    new "此選單上的選項是為了提高可存取性。它們可能不適用於所有遊戲，並且某些選項組合可能導致遊戲無法玩。這不是遊戲或引擎的問題。為了在更改字形時獲得最佳效果，盡量保持文字大小與原來一樣。"
 
     # renpy/common/00action_file.rpy:395
     old "Save slot %s: [text]"
@@ -495,7 +495,7 @@ translate tchinese strings:
 
     # renpy/common/00action_file.rpy:982
     old "Quick load."
-    new "快速加載"
+    new "快速載入"
 
     # renpy/common/00action_other.rpy:383
     old "Language [text]"
@@ -579,7 +579,7 @@ translate tchinese strings:
 
     # renpy/common/00director.rpy:1775
     old "Click to set transform, right click to add to transform list."
-    new "點擊設定變換，右鍵加入到變換列表"
+    new "點選設定變換，右鍵加入到變換列表"
 
     # renpy/common/00director.rpy:1776
     old "Customize director.transforms to add more transforms."
@@ -591,7 +591,7 @@ translate tchinese strings:
 
     # renpy/common/00director.rpy:1799
     old "Click to set, right click to add to behind list."
-    new "點擊設置，右鍵新增到後部列表。"
+    new "點選設定，右鍵新增到後部列表。"
 
     # renpy/common/00director.rpy:1811
     old "Transition:"
@@ -599,7 +599,7 @@ translate tchinese strings:
 
     # renpy/common/00director.rpy:1821
     old "Click to set."
-    new "點擊設定。"
+    new "點選設定。"
 
     # renpy/common/00director.rpy:1822
     old "Customize director.transitions to add more transitions."
@@ -627,7 +627,7 @@ translate tchinese strings:
 
     # renpy/common/00gui.rpy:460
     old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
-    new "您信任創建保存的設備嗎？只有當您是該設備的唯一用戶時，才應選擇“是”。"
+    new "您信任建立儲存的裝置嗎？只有當您是該裝置的唯一使用者時，才應選擇“是”。"
 
     # renpy/common/00keymap.rpy:323
     old "Failed to save screenshot as %s."
@@ -687,7 +687,7 @@ translate tchinese strings:
 
     # renpy/common/00sync.rpy:538
     old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
-    new "這會將您的儲存上傳到 {a=https://sync.renpy.org} Ren'Py 同步服務器 {/a} 。 \n 你想要繼續嗎？"
+    new "這會將您的儲存上傳到 {a=https://sync.renpy.org} Ren'Py 同步伺服器 {/a} 。 \n 你想要繼續嗎？"
 
     # renpy/common/00sync.rpy:569
     old "Enter Sync ID"
@@ -695,7 +695,7 @@ translate tchinese strings:
 
     # renpy/common/00sync.rpy:580
     old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
-    new "這將聯繫 {a=https://sync.renpy.org} Ren'Py 同步服務器 {/a} 。"
+    new "這將聯絡 {a=https://sync.renpy.org} Ren'Py 同步伺服器 {/a} 。"
 
     # renpy/common/00sync.rpy:609
     old "Sync Success"
@@ -707,7 +707,7 @@ translate tchinese strings:
 
     # renpy/common/00sync.rpy:618
     old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
-    new "您可以使用此ID 在另一台裝置上下載您的保存內容。 \n 此同步將在一小時後過期。 \n Ren'Py 同步 由{a=https://www.renpy.org/sponsors.html} Ren'Py 的贊助商 {/a} 支持。"
+    new "您可以使用此ID 在另一臺裝置上下載您的儲存內容。 \n 此同步將在一小時後過期。 \n Ren'Py 同步 由{a=https://www.renpy.org/sponsors.html} Ren'Py 的贊助商 {/a} 支援。"
 
     # renpy/common/00sync.rpy:646
     old "Sync Error"
@@ -738,12 +738,12 @@ translate tchinese strings:
     new "遊戲資料已下載。"
 
     # renpy/common/00updater.rpy:2078
-    old "An error occured when trying to download game data:"
+    old "An error occurred when trying to download game data:"
     new "嘗試下載遊戲資料時發生錯誤："
 
     # renpy/common/00updater.rpy:2083
     old "This game cannot be run until the game data has been downloaded."
-    new "在遊戲資料下載完畢之前，該遊戲還無法運行。"
+    new "在遊戲資料下載完畢之前，該遊戲還無法運作。"
 
     # renpy/common/00updater.rpy:2090
     old "Retry"
@@ -771,15 +771,15 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:337
     old "text speed"
-    new "文本速度"
+    new "文字速度"
 
     # renpy/common/00preferences.rpy:345
     old "joystick"
-    new "游戲桿"
+    new "遊戲桿"
 
     # renpy/common/00preferences.rpy:345
     old "joystick..."
-    new "游戲桿..."
+    new "遊戲桿..."
 
     # renpy/common/00preferences.rpy:352
     old "skip"
@@ -791,7 +791,7 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:360
     old "skip unseen text"
-    new "跳過未見過的文本"
+    new "跳過未見過的文字"
 
     # renpy/common/00preferences.rpy:362
     old "begin skipping"
@@ -799,11 +799,11 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:366
     old "after choices"
-    new "選項后"
+    new "選項後"
 
     # renpy/common/00preferences.rpy:373
     old "skip after choices"
-    new "選項后快進"
+    new "選項後快進"
 
     # renpy/common/00preferences.rpy:375
     old "auto-forward time"
@@ -819,7 +819,7 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:399
     old "auto-forward after click"
-    new "點擊後自動推進"
+    new "點選後自動推進"
 
     # renpy/common/00preferences.rpy:408
     old "automatic move"
@@ -839,11 +839,11 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:438
     old "self voicing enable"
-    new "self voicing 已啓用"
+    new "self voicing 已啟用"
 
     # renpy/common/00preferences.rpy:440
     old "self voicing disable"
-    new "self voicing 已禁用"
+    new "self voicing 已停用"
 
     # renpy/common/00preferences.rpy:444
     old "self voicing volume drop"
@@ -855,11 +855,11 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:455
     old "clipboard voicing enable"
-    new "clipboard voicing 已啓用"
+    new "clipboard voicing 已啟用"
 
     # renpy/common/00preferences.rpy:457
     old "clipboard voicing disable"
-    new "clipboard voicing 已禁用"
+    new "clipboard voicing 已停用"
 
     # renpy/common/00preferences.rpy:461
     old "debug voicing"
@@ -867,15 +867,15 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:464
     old "debug voicing enable"
-    new "debug voicing 已啓用"
+    new "debug voicing 已啟用"
 
     # renpy/common/00preferences.rpy:466
     old "debug voicing disable"
-    new "debug voicing 已禁用"
+    new "debug voicing 已停用"
 
     # renpy/common/00preferences.rpy:470
     old "emphasize audio"
-    new "强調音頻"
+    new "強調音訊"
 
     # renpy/common/00preferences.rpy:479
     old "rollback side"
@@ -919,15 +919,15 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:535
     old "high contrast text"
-    new "高對比文本"
+    new "高對比文字"
 
     # renpy/common/00preferences.rpy:544
     old "audio when minimized"
-    new "最小化時的音頻"
+    new "最小化時的音訊"
 
     # renpy/common/00preferences.rpy:553
     old "audio when unfocused"
-    new "未聚焦時的音頻"
+    new "未聚焦時的音訊"
 
     # renpy/common/00preferences.rpy:562
     old "web cache preload"
@@ -943,7 +943,7 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:595
     old "reset"
-    new "重置"
+    new "重設"
 
     # renpy/common/00preferences.rpy:608
     old "main volume"

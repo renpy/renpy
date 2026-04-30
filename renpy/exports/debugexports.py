@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,11 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+
+import contextlib
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
+
 
 def warp_to_line(warp_spec):
     """
@@ -39,6 +42,31 @@ def warp_to_line(warp_spec):
     renpy.exports.full_restart()
 
 
+filename_line_override_stack: list[tuple[str, int]] = []
+"""
+A stack of filename/line override pairs.
+"""
+
+@contextlib.contextmanager
+def filename_line_override(filename: str, line: int):
+    """
+    :doc: debug
+
+    Temporarily overrides the filename and line number. This is a context manager,
+    use it like::
+
+        with renpy.filename_line_override("myfile.rpy", 42):
+            # ...
+
+    """
+
+    filename_line_override_stack.append((filename, line))
+    try:
+        yield
+    finally:
+        filename_line_override_stack.pop()
+
+
 def get_filename_line():
     """
     :doc: debug
@@ -46,6 +74,9 @@ def get_filename_line():
     Returns a pair giving the filename and line number of the current
     statement.
     """
+
+    if filename_line_override_stack:
+        return filename_line_override_stack[-1]
 
     n = renpy.game.script.namemap.get(renpy.game.context().current, None)
 
@@ -77,14 +108,14 @@ def log(msg):
         return
 
     try:
-        msg = unicode(msg)
+        msg = str(msg)
     except Exception:
         pass
 
     try:
-
         if not logfile:
             import os
+
             if renpy.config.clear_log:
                 file_mode = "w"
             else:
@@ -96,14 +127,14 @@ def log(msg):
 
         import textwrap
 
-        wrapped = [ ]
+        wrapped = []
 
-        for line in msg.split('\n'):
+        for line in msg.split("\n"):
             line = textwrap.fill(line, renpy.config.log_width)
-            line = unicode(line)
+            line = str(line)
             wrapped.append(line)
 
-        wrapped = '\n'.join(wrapped)
+        wrapped = "\n".join(wrapped)
 
         logfile.write(wrapped + "\n")
         logfile.flush()
@@ -116,7 +147,9 @@ def log(msg):
 def _error(msg):
     raise Exception(msg)
 
-_error_handlers = [ _error ]
+
+_error_handlers = [_error]
+
 
 def push_error_handler(eh):
     _error_handlers.append(eh)

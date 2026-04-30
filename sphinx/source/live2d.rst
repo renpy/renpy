@@ -21,12 +21,10 @@ processes the motions and expressions to determine the values of
 the parameters. This is passed to the Cubism SDK for Native, which gives
 Ren'Py back a list of meshes to show. Ren'Py then renders these meshes, and the result is a Live2D character on the screen.
 
-Ren'Py supports Live2D animations in the Cubism 3 and Cubism 4 formats.
+Ren'Py supports Live2D animations in the Cubism 3, 4 and 5 formats.
 It supports the playback of expressions and motions.
 
 .. warning::
-
-    Live2D is not supported on the web platform.
 
     Installing Live2D on iOS requires copying the static libraries into your
     iOS project by hand.
@@ -95,14 +93,14 @@ Live2D animations are defined using the Live2D displayable and the image stateme
 
     `nonexclusive`
         If not None, this should be a list of names of nonexclusive expressions.
-        Expressions default to being exlcusive, with only one beign shown at
+        Expressions default to being exclusive, with only one being shown at
         a time. If listed here, any number of nonexclusive expressions can be
         shown, in addition to one exclusive expression.
 
     `seamless`
         This determines if seamless looping should be used. Seamless looping
         avoids fading between loops of a single motion. This may be True to
-        enable seamless looping all the time, False to dispable it all the
+        enable seamless looping all the time, False to disable it all the
         time, or a set of motions to be looped.
 
     `default_fade`
@@ -121,7 +119,7 @@ Live2D animations are defined using the Live2D displayable and the image stateme
     `attribute_filter`
         If not None, this is a function that takes a tuple of attributes,
         and returns a second tuple of attributes. This is usually used to
-        filter out nonexclusice attributes that conflict with each other. The attributes
+        filter out nonexclusive attributes that conflict with each other. The attributes
         are ordered such that more recently requested attributes come first,
         meaning that in the case of a conflict, the first attribute should
         win.
@@ -209,9 +207,9 @@ defining different zooms and scaling factors. ::
     image hiyori far = Live2D("Resources/Hiyori", base=.9)
 
 Keep in mind that the user's hardware may be unable to init Live2D, and in that
-case a single call to Live2D() will keep the entire project from loading. The same
-happens in the case of a game distributed in a web version. If your game should be able
-to work even without Live2D, you could use a wrapper or workaround, for example::
+case a single call to Live2D() will keep the entire project from loading. 
+If your game should be able to work even without Live2D, you could use a wrapper
+or workaround, for example::
 
     init python:
         def MyLive2D(*args, fallback=Placeholder(text="no live2d"), **kwargs):

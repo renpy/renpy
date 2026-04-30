@@ -125,8 +125,9 @@ line of narration.
 
 To try this out, from the top screen of the launcher select "My Question"
 project, and then choose "script.rpy" from under Edit File. If this is
-your first time, Ren'Py will ask you to select an editor (we recommend
-Editra for first time creators), and will download the editor you choose.
+your first time, Ren'Py will ask you to select an editor. We recommend Visual
+Studio Code for new creators - in addition to being a solid choice, the launcher
+can also download it for you.
 Then it will open the script file in the editor.
 
 Once the editor opens, erase everything in :file:`script.rpy`. We're starting
@@ -209,7 +210,7 @@ defines a character with the short name of "s", the long name
 are red-green-blue hex triples, as used in web pages.)
 
 The second line creates a character with a short name "m", a long name
-"Me", with the name shown in a reddish color. Other characters can be
+"Me", with the name shown in a bluish color. Other characters can be
 defined by copying one of the character lines, and changing the short
 name, long name, and color.
 
@@ -706,7 +707,7 @@ The game folder in the created project includes below folders and files.
 
 **\*.rpyc**
     Those files are result of compiling each :file:`.rpy` files to reduce loading time.
-    You don't need to edit those files without deleting the corresonding :file:`.rpy`
+    You don't need to edit those files without deleting the corresponding :file:`.rpy`
     file. See :doc:`language_basics` for more details.
 
 Releasing Your Game
@@ -757,7 +758,7 @@ before releasing it:
     * The `Completed Games section of the Lemma Soft Forums <https://lemmasoft.renai.us/forums/viewforum.php?f=11>`_ is a
       good place to tell fellow creators about your game.
 
-More advanced vays of customizing the building of the distribution of your game
+More advanced ways of customizing the building of the distribution of your game
 can be found in the :doc:`build` section.
 
 Script of The Question

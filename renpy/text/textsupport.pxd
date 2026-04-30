@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -107,7 +107,7 @@ cdef class Glyph:
         public object shader
 
         # The index of this displayable - the order in which it is shown.
-        public short index
+        public int index
 
 
 cdef class Line:

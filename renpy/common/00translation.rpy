@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -33,8 +33,8 @@ screen _translation_info():
 
         if identifier:
             copy = (SetScreenVariable("show_copy", True),
-                    Function(pygame_sdl2.scrap.put,
-                             pygame_sdl2.scrap.SCRAP_TEXT,
+                    Function(renpy.pygame.scrap.put,
+                             renpy.pygame.scrap.SCRAP_TEXT,
                              identifier.encode("utf8")))
 
 

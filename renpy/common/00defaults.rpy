@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -135,15 +135,6 @@ init 1500 python hide:
 
     config.emphasize_audio_volume = _vol(config.emphasize_audio_volume)
 
-    if not persistent._linearized_volumes:
-        for k, v in _preferences.volumes.items():
-            _preferences.volumes[k] = v ** 2
-
-        for k, v in persistent._character_volume.items():
-            persistent._character_volume[k] = v ** 2
-
-        persistent._linearized_volumes = True
-
     _apply_default_preferences()
 
     error = _preferences.check()
@@ -154,17 +145,21 @@ init 1500 python hide:
 
 init -1500 python:
     def _locale_to_language_function(locale, region):
-        lang_name = renpy.translation.locales.get(locale + "_" + region)
+        locale_map = config.locale_to_language_map
+
+        lang_name = locale_map.get(locale + "_" + region)
         if lang_name is not None and lang_name in renpy.known_languages():
             return lang_name
 
-        lang_name = renpy.translation.locales.get(region)
+        lang_name = locale_map.get(locale)
         if lang_name is not None and lang_name in renpy.known_languages():
             return lang_name
 
-        lang_name = renpy.translation.locales.get(locale)
+        lang_name = locale_map.get(region)
         if lang_name is not None and lang_name in renpy.known_languages():
             return lang_name
+
+        return None
 
     config.locale_to_language_function = _locale_to_language_function
 
@@ -230,11 +225,7 @@ init -1500 python:
         if protocol in config.hyperlink_handlers:
             return config.hyperlink_handlers[protocol](value)
         else:
-            try:
-                import webbrowser
-                webbrowser.open(target)
-            except Exception:
-                pass
+            renpy.open_url(target)
 
     def hyperlink_sensitive(target):
 

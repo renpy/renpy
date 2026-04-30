@@ -12,7 +12,7 @@ displayables can be used in many ways.
 * Assignment to certain style properties.
 
 When a Ren'Py function or variable expects a displayable, there are
-five things that can be provided:
+several things that can be provided:
 
 * An object of type Displayable, created by calling one of the
   functions given below.
@@ -129,7 +129,7 @@ render properly into paths.
 Ren'Py will render SVG images as if the virtual screen was 96dpi.
 If the window is enlarged or shrunk, the SVG image will be scaled
 up or down, respectively, and :ref:`oversampling <oversampling>` will
-be used to ensture the image is rendered at the correct virtual
+be used to ensure the image is rendered at the correct virtual
 size.
 
 This ensures the SVG will be rendered sharp if it is not scaled.

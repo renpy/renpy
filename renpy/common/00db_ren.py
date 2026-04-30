@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,10 +27,9 @@ from renpy.minstore import _dict, _object
 init -1200 python:
 """
 
+
 class _JSONDBDict(_dict):
-
     def __init__(self, *args, **kwargs):
-
         # This is true if the database entry has been changed, in this session.
         # or another session. This is used to determine if it needs to be persisted
         # to the json file.
@@ -62,7 +61,6 @@ class _JSONDBDict(_dict):
         self.changed = True
 
     def __delitem__(self, key):
-
         super(_JSONDBDict, self).__delitem__(key)
 
         self.dirty = True
@@ -75,7 +73,6 @@ class _JSONDBDict(_dict):
         self.changed = True
 
     def setdefault(self, key, default=None):
-
         if key not in self:
             self.check(default)
             self.dirty = True
@@ -84,7 +81,6 @@ class _JSONDBDict(_dict):
         return super(_JSONDBDict, self).setdefault(key, default)
 
     def update(self, *args, **kwargs):
-
         d = dict()
         d.update(*args, **kwargs)
         self.check(d)
@@ -105,7 +101,7 @@ class JSONDB(_object):
     """
     :doc: jsondb
 
-    A JSONDB is a two-level database that uses JSON to store its data
+    A JSONDB is a two-level database that uses JSON to store its data.
     It's intended to be used by game developers to store data in a
     database that can be version-controlled as part of the game script.
     For example, this can store information associated with each
@@ -137,8 +133,11 @@ class JSONDB(_object):
 
         define balloonData = JSONDB("balloon.json", default={ "enabled" : False })
 
-    This creates a JSONDB that is stored in the file balloon.json, and has a
-    default values. The second leval values can be used as normal dictionaries::
+    This creates a JSONDB that is stored in the file, balloon.json, and has
+	the default value of `enabled` set to False. The second level values can be used
+	as normal dictionaries
+
+    ::
 
         screen say(who, what):
 
@@ -167,9 +166,7 @@ class JSONDB(_object):
         it is saved.
     """
 
-
     def __init__(self, filename, default=None):
-
         if not renpy.is_init_phase():
             raise Exception("JSONDBs can only be created during init.")
 
@@ -177,7 +174,7 @@ class JSONDB(_object):
         self.fn = filename
 
         # The data contained in the database.
-        self.data = { }
+        self.data = {}
 
         # True of the database as a whole needs to be saved. There are
         # also dirty flags for each entry, the database is saved if
@@ -188,7 +185,7 @@ class JSONDB(_object):
         if default is not None:
             self.default = default.copy()
         else:
-            self.default = { }
+            self.default = {}
 
         # Schedule the database to be saved when the game quits.
         config.at_exit_callbacks.append(self.save)
@@ -211,11 +208,10 @@ class JSONDB(_object):
             self.data[k] = d
 
     def save(self):
-
-        if not(self.dirty or any(i.dirty for i in self.data.values())):
+        if not (self.dirty or any(i.dirty for i in self.data.values())):
             return
 
-        d = { k : v for k, v in self.data.items() if v.changed }
+        d = {k: v for k, v in self.data.items() if v.changed}
 
         import os, json
 
@@ -231,7 +227,6 @@ class JSONDB(_object):
             os.rename(fn + ".new", fn)
 
     def __getitem__(self, key):
-
         if key not in self.data:
             self.data[key] = _JSONDBDict(self.default.copy())
 

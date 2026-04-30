@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -42,7 +42,7 @@ init python:
 
     PHONE_TEXT = _("Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button.")
     TABLET_TEXT = _("Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button.")
-    OUYA_TEXT = _("Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button.")
+    OUYA_TEXT = _("Attempts to emulate a television-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button.")
 
     INSTALL_SDK_TEXT = _("Downloads and installs the Android SDK and supporting packages.")
     GENERATE_KEYS_TEXT = _("Generates the keys required to sign the package.")
@@ -716,7 +716,11 @@ init python:
         ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
         ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building the 'android' package.")
 
+
         args = ap.parse_args()
+
+        if not RAPT_PATH:
+            raise SystemExit("Android support (RAPT) is not available. Please download RAPT through the launcher or from the website, and try again.")
 
         if args.launch:
             args.install = True

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,9 +20,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 default persistent.show_edit_funcs = True
-default persistent.windows_console = False
+default persistent.use_console = False
 default persistent.lint_options = set()
 default persistent.use_web_doc = False
+default persistent.show_tutorial_projects = True
 
 init python:
     from math import ceil
@@ -132,7 +133,7 @@ screen preferences():
                     add HALF_SPACER
 
                     for i, l in preference_tabs:
-                        textbutton l action SetVariable("preference_tab", i) style "l_list"
+                        textbutton l id f"pref_{i}_btn" action SetVariable("preference_tab", i) style "l_list"
 
                 if preference_tab == "general":
 
@@ -199,6 +200,7 @@ screen preferences():
                                     vbox:
                                         for tlid, tlname in tran:
                                             textbutton tlname:
+                                                id f"pref_change_language_btn_{tlid}"
                                                 xmaximum (TWOTHIRDS//3)
                                                 action [Language(tlid), project.SelectTutorial(True)]
                                                 style "l_list"
@@ -235,8 +237,8 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            if renpy.windows:
-                                textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
+                            if renpy.windows or renpy.macintosh:
+                                textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "use_console")
 
                             textbutton _("Skip splashscreen") style "l_checkbox" action ToggleField(persistent, "skip_splashscreen")
 
@@ -252,6 +254,7 @@ screen preferences():
                             add HALF_SPACER
 
                             textbutton _("Show edit file section") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
+                            textbutton _("Show tutorial projects") style "l_checkbox" action ToggleField(persistent, "show_tutorial_projects")
                             textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
 
                             if interface.local_doc_exists:
@@ -284,9 +287,9 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
-                            textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark"), RestartAtPreferences()]
-                            textbutton _("Custom theme") style "l_checkbox" action [SetField(persistent, "theme", "custom"), RestartAtPreferences()]
+                            textbutton _("Default theme") id "pref_theme_default_btn" style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
+                            textbutton _("Dark theme") id "pref_theme_dark_btn" style "l_checkbox" action [SetField(persistent, "theme", "dark"), RestartAtPreferences()]
+                            textbutton _("Custom theme") id "pref_theme_custom_btn" style "l_checkbox" action [SetField(persistent, "theme", "custom"), RestartAtPreferences()]
 
                             add SPACER
 
@@ -382,7 +385,7 @@ screen preferences():
                                 action ToggleSetMembership(persistent.lint_options, "--all-problems")
 
 
-    textbutton _("Return") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") id "return_btn" action Jump("front_page") style "l_left_button"
 
 label clean_tmp:
     python hide:

@@ -11,7 +11,7 @@ translate tchinese strings:
 
     # options.rpy:10
     old "## Basics"
-    new "## 基礎"
+    new "## 基本"
 
     # options.rpy:12
     old "## A human-readable name of the game. This is used to set the default window title, and shows up in the interface and error reports."
@@ -23,7 +23,7 @@ translate tchinese strings:
 
     # options.rpy:17
     old "Ren'Py 7 Default GUI"
-    new "Ren'Py 7 默認 GUI"
+    new "Ren'Py 7 預設 GUI"
 
     # options.rpy:20
     old "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
@@ -51,7 +51,7 @@ translate tchinese strings:
 
     # options.rpy:55
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
-    new "## 要允許用戶在聲音或語音通道上播放測試聲音，請取消註釋下面的行並使用它來設定要播放的範例聲音。"
+    new "## 要允許使用者在聲音或語音通道上播放測試聲音，請取消註釋下面的行並使用它來設定要播放的範例聲音。"
 
     # options.rpy:62
     old "## Uncomment the following line to set an audio file that will be played while the player is at the main menu. This file will continue playing into the game, until it is stopped or another file is played."
@@ -115,7 +115,7 @@ translate tchinese strings:
 
     # options.rpy:131
     old "## Controls the platform-specific place Ren'Py will place the save files for this game. The save files will be placed in:"
-    new "## 控制Ren'Py將放置該遊戲的儲存文檔的平台特定位置。儲存文檔將放置在："
+    new "## 控制Ren'Py將放置該遊戲的儲存文件的平臺特定位置。儲存文件將放置在："
 
     # options.rpy:134
     old "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
@@ -135,7 +135,7 @@ translate tchinese strings:
 
     # options.rpy:146
     old "## Icon ########################################################################'"
-    new "## 圖標 ########################################################################'"
+    new "## 圖示 ########################################################################'"
 
     # options.rpy:148
     old "## The icon displayed on the taskbar or dock."
@@ -143,15 +143,15 @@ translate tchinese strings:
 
     # options.rpy:153
     old "## Build configuration"
-    new "## 構置配置"
+    new "## 構置設定"
 
     # options.rpy:155
     old "## This section controls how Ren'Py turns your project into distribution files."
-    new "## 本節控制Ren'Py如何將您的專案轉換為釋出版。"
+    new "## 本節控制Ren'Py如何將您的專案轉換為發布版本。"
 
     # options.rpy:160
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
-    new "## 以下函數採用檔案模式。 檔案模式不區分大小寫，並與相對於基底目錄的路徑進行匹配，無論是否有前導 /。 如果多個模式匹配，則使用第一個模式。"
+    new "## 以下函式採用檔案模式。 檔案模式不區分大小寫，並與相對於基底目錄的路徑進行匹配，無論是否有前導 /。 如果多個模式匹配，則使用第一個模式。"
 
     # options.rpy:165
     old "## In a pattern:"
@@ -167,7 +167,7 @@ translate tchinese strings:
 
     # options.rpy:171
     old "## ** matches all characters, including the directory separator."
-    new "## ** 匹配所有字符，包括目錄分隔符。"
+    new "## ** 匹配所有字元，包括目錄分隔符。"
 
     # options.rpy:173
     old "## For example, \"*.txt\" matches txt files in the base directory, \"game/**.ogg\" matches ogg files in the game directory or any of its subdirectories, and \"**.psd\" matches psd files anywhere in the project."
@@ -175,7 +175,7 @@ translate tchinese strings:
 
     # options.rpy:177
     old "## Classify files as None to exclude them from the built distributions."
-    new "## 將檔案分類為 None 以將它們從建置的釋出版中排除。"
+    new "## 將檔案分類為 None 以將它們從建置的發布版本中排除。"
 
     # options.rpy:185
     old "## To archive files, classify them as 'archive'."
@@ -187,11 +187,11 @@ translate tchinese strings:
 
     # options.rpy:196
     old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
-    new "## 下載擴充檔案和執行應用程式內購買需要 Google Play 許可證金鑰。 它可以在 Google Play 開發者控制台的 \"Services & APIs\" 頁面上找到。"
+    new "## 下載擴充檔案和執行應用程式內購買需要 Google Play 授權金鑰。 它可以在 Google Play 開發者控制台的 \"Services & APIs\" 頁面上找到。"
 
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."
-    new "## 與 itch.io 項目關聯的使用者名稱和項目名稱，以斜線分隔。"
+    new "## 與 itch.io 專案關聯的使用者名稱和專案名稱，以斜線分隔。"
 
     # gui/game/options.rpy:31
     old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
@@ -207,9 +207,9 @@ translate tchinese strings:
 
     # gui/game/options.rpy:152
     old "## Icon"
-    new "## 圖標"
+    new "## 圖示"
 
     # gui/game/options.rpy:203
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
-    new "## 執行應用程式內購買需要 Google Play 許可證密鑰。它可以在 Google Play 開發者控制台的 \"Monetize\" > \"Monetization Setup\" > \"Licensing\" 下找到。"
+    new "## 執行應用程式內購買需要 Google Play 授權金鑰。它可以在 Google Play 開發者控制台的 \"Monetize\" > \"Monetization Setup\" > \"Licensing\" 下找到。"
 

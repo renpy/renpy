@@ -929,7 +929,7 @@
     new "Spildataene er blevet hentet."
 
     # renpy/common/00updater.rpy:2078
-    old "An error occured when trying to download game data:"
+    old "An error occurred when trying to download game data:"
     new "En fejl opstod under forsøg på hentning af spildata:"
 
     # renpy/common/00updater.rpy:2083

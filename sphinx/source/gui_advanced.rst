@@ -41,6 +41,9 @@ and::
 
 are different.
 
+
+.. _gui-default:
+
 The default statement, the gui namespace, and gui.rebuild
 ---------------------------------------------------------
 
@@ -66,6 +69,17 @@ However, if as part of the game script, we have::
 Ren'Py will only re-run the define, so it will set the hover color to
 the accent color, and then update the styles. This makes it possible
 to have parts of the GUI that change as the game progresses.
+
+When setting gui variables at runtime, it may be necessary to call gui.rebuild in the
+``after_load`` label::
+
+    label after_load:
+        $ gui.rebuild()
+        return
+
+This only applies to variables set with ``default``. All variables in the gui namespace should be set
+with ``default`` or ``define``.
+
 
 .. _gui-preferences:
 

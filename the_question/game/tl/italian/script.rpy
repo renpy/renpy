@@ -1,4 +1,4 @@
-
+﻿
 # game/script.rpy:18
 translate italian start_915cb944:
 

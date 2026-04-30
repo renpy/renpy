@@ -27,6 +27,8 @@ to be considered when using renpy.fetch, especially when displaying media
 returned this way. (Ren'Py is generally not hardened against malicious images,
 movies, and audio files.)
 
+The progress of ongoing fetch requests can be displayed using the :class:`FetchProgressValue` bar value.
+
 .. include:: inc/fetch
 
 Requests

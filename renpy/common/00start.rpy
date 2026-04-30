@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -56,6 +56,9 @@ init -1600 python hide:
     # Callbacks to run after load.
     config.after_load_callbacks = [ ]
 
+    # Callback to run before load.
+    config.before_load_callbacks = [ ]
+
     # Should we suppress overlay during the splashscreen?
     config.splashscreen_suppress_overlay = True
 
@@ -80,7 +83,19 @@ init -1600 python:
 
         language = os.environ.get("RENPY_LANGUAGE") or config.language or _preferences.language
 
-        renpy.change_language(language)
+        renpy.change_language(language, force=True)
+
+# Called before a load.
+label _before_load:
+
+    if renpy.has_label("before_load"):
+        call expression "before_load"
+
+    python hide:
+        for i in config.before_load_callbacks:
+            i()
+
+    return
 
 # This fixes up the context, if necessary, then calls the real
 # after_load.
@@ -92,8 +107,6 @@ label _after_load:
         main_menu = False
         _in_replay = None
 
-        _init_language()
-
         # Older save games could have this set to non-None, so reset it.
         _side_image_attributes = None
 
@@ -102,6 +115,8 @@ label _after_load:
 
         for i in config.after_load_callbacks:
             i()
+
+        _init_language()
 
         if config.after_load_transition:
             renpy.transition(config.after_load_transition, force=True)
@@ -134,6 +149,8 @@ label _after_warp:
         renpy.context()._main_menu = False
         main_menu = False
         _in_replay = None
+
+        _init_language()
 
     if renpy.has_label("after_warp"):
         jump expression "after_warp"
@@ -197,6 +214,7 @@ label _start:
         call _start_store
 
     python:
+        _init_language()
 
         # Predict the main menu. When a load occurs, the loaded data will
         # overwrite the prediction requests.

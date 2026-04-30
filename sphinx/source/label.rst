@@ -44,7 +44,15 @@ For example::
         "..resides a local one."
         jump .another_local
     label .another_local:
-        "And another !"
+        "And another!"
+        jump .local_label
+
+A local label can also be declared by its full name, consisting of the global
+label name followed by the local label name, separated by a dot. This will not
+declare the global label. ::
+
+    label global_label.yet_another_local:
+        "Yet another!"
         jump .local_label
 
 Local labels can be referenced directly inside the same global label they are
@@ -208,6 +216,16 @@ The following labels are used by Ren'Py:
     changes from being reverted if the player rolls back past the load
     point.
 
+``before_load``
+    If it exists, this label is called in a new context just before a game
+    is loaded. It can be used to prepare for the load, by changing music or
+    displaying an animation.
+
+    Once this label returns, Ren'Py will proceed with the load. The screen
+    will not be updated until after the load is complete, so animations
+    will not be run. When the load is finished, the state of the game will
+    be replaced by the load state, and so changed in this label will be lost.
+
 ``splashscreen``
     If it exists, this label is called when the game is first run, before
     showing the main menu. Please see :ref:`Adding a Splashscreen <adding-a-splashscreen>`.
@@ -236,6 +254,14 @@ The following labels are used by Ren'Py:
     cancelled (it's assumed the hide has occurred). Otherwise, the hide
     continues.
 
+Ren'Py also uses the following labels to show some of the :doc:`special screens <screen_special>`:
+
+* ``main_menu_screen``
+* ``load_screen``
+* ``save_screen``
+* ``preferences_screen``
+* ``joystick_preferences_screen``
+
 Labels & Control Flow Functions
 -------------------------------
 
@@ -252,13 +278,13 @@ state of the game. Contexts include:
 * the currently running Ren'Py statement,
 * the call stack, as described above, and the names and former values of dynamic
   variables created by :func:`renpy.dynamic`,
-* the images currently being shown (and informations about them like their attributes,
+* the images currently being shown (and information about them like their attributes,
   the transforms applied to them and so on),
 * the screens being shown, and the variables inside them,
 * the audio that is playing or queued.
 
 Most of the time there is only one context at play, and only one instance of each
-of these elements exists. This changes when entering the main or game game menus;
+of these elements exists. This changes when entering the main or game menus;
 everything above can be changed, and will be restored when leaving the menu
 context. Some of these changes are automatic, like the screens layer being
 cleared when entering a context.

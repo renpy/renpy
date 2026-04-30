@@ -41,7 +41,7 @@ Variables that control achievements are:
 
     This currently consists of:
 
-    * Updating the state description to match :var:`save_name`, if the variables is set.
+    * Updating the game phase to match :var:`save_name`, if that variable is set.
     * Updating the game mode to reflect when the player is inside a menu.
 
 

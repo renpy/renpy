@@ -34,7 +34,7 @@ displays text. A creator needs to be aware of these characters to
 ensure that their writing is not accidentally misinterpreted by the engine.
 
 \ (backslash)
-    The backslash character is used to introduce when writing a Ren'Py
+    The backslash character is used to escape characters when writing a Ren'Py
     or Python string. Some common escape codes are:
 
     \\" (backslash-doublequote)
@@ -49,7 +49,7 @@ ensure that their writing is not accidentally misinterpreted by the engine.
         space character.
 
     \\n (backslash-n)
-        Includes a newline character in the text.
+        Includes a newline character in the text, causing a new line to start.
 
     \\\\ (backslash-backslash)
         Includes a backslash character in the text.
@@ -128,6 +128,9 @@ The ``!i`` flag will make additional interpolate for the interpolated string::
 This should be used to substitute the text that has a substitution inside.
 It's often useful in screen language, see :ref:`Const Text <const-text>`.
 
+The ``!f`` flag will pass the resulting string through :var:`config.say_menu_text_filter`,
+if it is not None. This allows filtering of interpolated text.
+
 The ``!u`` flag forces the text to uppercase and the ``!l`` flag forces the
 text to lowercase. The ``!c`` flag acts only on the first character,
 capitalizing it. These flags may be combined, for example using ``!cl`` would
@@ -150,6 +153,7 @@ The transformations are done in the following order:
 #. ``l`` (lowercase)
 #. ``c`` (capitalize)
 
+If you want to get the resulting string, with the arguments replaced with actual data, you can pass it to :ref:`renpy.substitute <renpy.substitute>`.
 
 Styling and Text Tags
 =====================
@@ -292,6 +296,18 @@ Tags that apply to all text are:
 
         "{cps=20}Fixed Speed{/cps} {cps=*2}Double Speed{/cps}
 
+
+.. text-tag:: feature
+
+    The feature tag enables or disables OpenType layout features. The name of
+    the feature is part of the tag, separated by a colon. The argument
+    should be 1 to enable the feature, or 0 to disable it. For example,
+    to disable ligatures, use the following: ::
+
+        "{feature:liga=0}Traffic{/feature} is light today."
+
+    A list of layout features can be found `here <https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags>`_.
+
 .. text-tag:: font
 
     The font tag renders the text between itself and its closing tag
@@ -338,7 +354,8 @@ Tags that apply to all text are:
 
     The outline text tag changes all the outlines (including drop
     shadows) to the given color. The color should be in #rgb, #rgba,
-    #rrggbb, or #rrggbbaa format. ::
+    #rrggbb, or #rrggbbaa format. This will only adjust existing outlines,
+    it does not add them. ::
 
         "Let's have a {outlinecolor=#00ff00}Green{/outlinecolor} outline."
 
@@ -373,7 +390,7 @@ Tags that apply to all text are:
     The shader tag applies a text shader to a section of text.
     The argument is the name of the shader to apply. ::
 
-        "This text is {shader=jitter:speed=3}jittery{/shader}."
+        "This text is {shader=jitter:u__jitter=1.0, 3.0}jittery{/shader}."
 
     See :doc:`textshaders` for more information.
 
@@ -567,7 +584,7 @@ algorithm, use::
 
     define gui.language = "greedy"
 
-The faster line-breaking algorithm is not be necessary unless the
+The faster line-breaking algorithm is not necessary unless the
 game is displaying huge amounts of text, such as in NVL-mode.
 
 The line breaking algorithms can be further configured using the
@@ -642,7 +659,7 @@ For example::
 
 Once Ren'Py has been configured, ruby text can be included in two way.
 
-**Lenticular brackets.** Ruby text can be written by enclosing it
+**Lenticular brackets.** Ruby text can be written by enclosing it inside
 full-width lenticular brackets (【】), with the full-width or half-width
 vertical line character (｜ or \|) separating the bottom text from the top text.
 For example::
@@ -678,21 +695,24 @@ and the :propref:`altruby_style` property (instead of :propref:`ruby_style`).
 Fonts
 =====
 
-Ren'Py supports TrueType/OpenType fonts and collections, and
-Image-Based fonts.
+Ren'Py supports scalable fonts in the OpenType, TrueType, WOFF, and WOFF2 formats.
 
-A TrueType or OpenType font is specified by giving the name of the font
-file. The file must be present in the game directory or one of the archive
-files.
+Scalable fonts are specified by giving the name of the font file, as a string.
+Fonts are searched for in the :file:`game` directory and in archive files.
+If the font is not found it is searched for using the :file:`fonts/` prefix.
+For example, when looking for "test.ttf", Ren'Py will first search for
+:file:`game/test.ttf`, and then for :file:`game/fonts/test.ttf`. (It will also
+search in archive files.)
 
-Ren'Py also supports TrueType/OpenType collections that define more than one
+Ren'Py supports TrueType/OpenType collections that define more than one
 font. When accessing a collection, use the 0-based font index,
 followed by an at-sign and the file name. For example, "0\@font.ttc" is
 the first font in a collection, "1\@font.ttc" the second, and so on.
 
-When looking for a font files, if the file is not found, Ren'Py will search
-in the :file:`game/fonts` directory. For example, when looking for "test.ttf", Ren'Py
-will first search for :file:`game/test.ttf`, and then for :file:`game/fonts/test.ttf`.
+While Ren'Py supports font files of any size (subject to system memory limitations),
+WOFF2 compression tools may have problems with very large font files. See :ghbug:`6605`
+for discussion of this.
+
 
 Font Replacement
 ----------------
@@ -726,30 +746,6 @@ enable :ref:`fontgroup` to be used by these tags. ::
         e "Sorry, what does {font=jap}Black holes and revelations{/font} mean ?"
         y "You pronounce it {font=tjap}Black Holes And Revelations{/font}." # the capital letters appear in OrthodoxHerbertarian
 
-Image-Based Fonts
------------------
-
-Image based fonts can be registered by calling one of the following
-registration functions. Registering an image-based font requires the
-specification of a name, size, boldness, italicness, and
-underline. When all of these properties match the registered font,
-the registered font is used.
-
-.. include:: inc/image_fonts
-
-As BMFont is the most complete of the three image font formats Ren'Py
-supports, it's the one recommended for new projects. An example of
-BMFont use is::
-
-    init python:
-        renpy.register_bmfont("bmfont", 22, filename="bmfont.fnt")
-
-    define ebf = Character('Eileen', what_font="bmfont", what_size=22)
-
-    label demo_bmfont:
-
-        ebf "Finally, Ren'Py supports BMFonts."
-
 
 .. _fontgroup:
 
@@ -757,7 +753,7 @@ Font Groups
 -----------
 
 When creating a multilingual game, it may not be possible to find a single
-font that covers every writing system the game use while projecting the
+font that covers every writing system the game uses while projecting the
 the mood the creator intends. To support this, Ren'Py supports font groups
 that can take characters from two or more fonts and combine them into a
 single font.
@@ -777,6 +773,30 @@ For example::
 Note that while FontGroups can be given a name using :var:`config.font_name_map`,
 a FontGroup only takes filepaths as fonts, and does not recognize names or aliases
 defined using that variable.
+
+Image-Based Fonts
+-----------------
+
+.. note:: Image-based fonts are not recommended for use in new projects. Applying graphical effects to fonts can be done with text shaders.
+
+Image based fonts can be registered by calling one of the following
+registration functions. Registering an image-based font requires the
+specification of a name, size, boldness, italicness, and
+underline. When all of these properties match the registered font,
+the registered font is used.
+
+.. include:: inc/image_fonts
+
+An example of BMFont use is::
+
+    init python:
+        renpy.register_bmfont("bmfont", 22, filename="bmfont.fnt")
+
+    define ebf = Character('Eileen', what_font="bmfont", what_size=22)
+
+    label demo_bmfont:
+
+        ebf "Finally, Ren'Py supports BMFonts."
 
 
 .. _text-displayables:
@@ -881,7 +901,7 @@ There are two text tags that support the use of variable fonts.
 
         "This is {axis:width=125}{axis:weight=200}wide and bold{/axis}{/axis} text."
 
-    The value of on the right side of the equals is expected to be a floating
+    The value on the right side of the equals is expected to be a floating
     point number.
 
 To get the available instances and axes of a font, use the :func:`renpy.variable_font_info`

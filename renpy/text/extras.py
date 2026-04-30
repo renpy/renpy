@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,8 +22,7 @@
 # Other text-related things.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -44,6 +43,7 @@ text_tags = dict(
     p=False,
     w=False,
     fast=False,
+    feature=True,
     b=True,
     i=True,
     u=True,
@@ -62,8 +62,8 @@ text_tags = dict(
     k=True,
     cps=True,
     space=False,
-    vspace=False
-    )
+    vspace=False,
+)
 
 text_tags[""] = True
 
@@ -93,9 +93,9 @@ def check_text_tags(s, check_unclosed=False):
     except Exception as e:
         return e.args[0]
 
-    tag_stack = [ ]
+    tag_stack = []
 
-    for type, text in tokens: # @ReservedAssignment
+    for type, text in tokens:
         if type != TAG:
             continue
 
@@ -103,14 +103,14 @@ def check_text_tags(s, check_unclosed=False):
             continue
 
         # Strip off arguments for tags.
-        text = text.partition('=')[0]
-        text = text.partition(':')[0]
+        text = text.partition("=")[0]
+        text = text.partition(":")[0]
 
-        if text.find('=') != -1:
-            text = text[:text.find('=')]
+        if text.find("=") != -1:
+            text = text[: text.find("=")]
 
         # Closing tag.
-        if text and text[0] == '/':
+        if text and text[0] == "/":
             if not tag_stack:
                 return "Close text tag '{%s}' does not match an open text tag." % text
 
@@ -127,7 +127,7 @@ def check_text_tags(s, check_unclosed=False):
             tag_stack.append(text)
 
     if check_unclosed and tag_stack:
-            return "One or more text tags were left open at the end of the string: " + ", ".join(repr(i) for i in tag_stack)
+        return "One or more text tags were left open at the end of the string: " + ", ".join(repr(i) for i in tag_stack)
 
     return None
 
@@ -154,10 +154,9 @@ def filter_text_tags(s, allow=None, deny=None):
 
     tokens = textsupport.tokenize(str(s))
 
-    rv = [ ]
+    rv = []
 
     for tokentype, text in tokens:
-
         if tokentype == PARAGRAPH:
             rv.append("\n")
         elif tokentype == TAG:
@@ -179,7 +178,7 @@ def filter_text_tags(s, allow=None, deny=None):
     return "".join(rv)
 
 
-def filter_alt_text(s):
+def filter_alt_text(s) -> str:
     """
     Returns a copy of `s` with the contents of text tags that shouldn't be in
     alt text filtered. This returns just the text to say, with no text tags
@@ -188,15 +187,18 @@ def filter_alt_text(s):
 
     tokens = textsupport.tokenize(str(s))
 
-    if renpy.config.custom_text_tags or renpy.config.self_closing_custom_text_tags or (renpy.config.replace_text is not None):
+    if (
+        renpy.config.custom_text_tags
+        or renpy.config.self_closing_custom_text_tags
+        or (renpy.config.replace_text is not None)
+    ):
         tokens = renpy.text.text.Text.apply_custom_tags(tokens)
 
-    rv = [ ]
+    rv = []
 
     active = set()
 
     for tokentype, text in tokens:
-
         if tokentype == PARAGRAPH:
             rv.append("\n")
         elif tokentype == TAG:
@@ -214,7 +216,7 @@ def filter_alt_text(s):
                 else:
                     active.add(kind)
         elif tokentype == DISPLAYABLE:
-            rv.append(text._tts())
+            rv.append(text._tts(raw=False))
         else:
             if not active:
                 rv.append(text)
@@ -248,19 +250,18 @@ class ParameterizedText(object):
             show top_text "This text is shown at the center-top of the screen"
     """
 
-    def __init__(self, style='default', **properties):
+    def __init__(self, style="default", **properties):
         self.style = style
         self.properties = properties
 
     _duplicatable = True
 
     def _duplicate(self, args):
-
         if args.lint:
             return renpy.text.text.Text("", style=self.style, **self.properties)
 
         if len(args.args) == 0:
-            raise Exception("'%s' takes a single string parameter." % ' '.join(args.name))
+            raise Exception("'%s' takes a single string parameter." % " ".join(args.name))
 
         param = "".join(args.args)
         string = renpy.python.py_eval(param)
@@ -281,15 +282,14 @@ def textwrap(s, width=78, asian=False):
 
     import unicodedata
 
-    glyphs = [ ]
+    glyphs = []
 
     for c in str(s):
-
         eaw = unicodedata.east_asian_width(c)
 
         if (eaw == "F") or (eaw == "W"):
             gwidth = 20
-        elif (eaw == "A"):
+        elif eaw == "A":
             if asian:
                 gwidth = 20
             else:
@@ -313,17 +313,15 @@ def textwrap(s, width=78, asian=False):
 
 def thaic90(s):
     """
-    Reencodes `s` to the Thai C90 encoding, which is used by Thai-specific
-    fonts to combine base characters, upper vowels, lower vowls, and tone marks
-    into singe precomposed characters in thje unicode private use area.
+    Reencodes `s` to the Thai C90 encoding, a legacy font-specific scheme
+    used to render Thai text with correct glyph positioning in C90-compatible fonts
+    by mapping character sequences to PUA glyph code points.
     """
-
 
     # Copyright (c) 2021 SahabandhSthabara, Saamkhaih Kyakya
     # MIT License.
-    # Taken from https://gitlab.com/sahabandha/renpy-thai-font-adjuster/-/blob/main/renpythaic90.py
+    # Taken from https://gitlab.com/sahabandha/renpy-thai-font-adjuster/
 
-    # http://www.bakoma-tex.com/doc/fonts/enc/c90/c90.pdf
     # ========== EXTENDED CHARACTER TABLE ==========
     # F700:     uni0E10.descless    (base.descless)
     # F701~04:  uni0E34~37.left     (upper.left)
@@ -335,118 +333,101 @@ def thaic90(s):
     # F718~1A:  uni0E38~3A.low      (lower.low)
     # ==============================================
 
-    def isBase(c):
-        return (u'\u0E01' <= c <= u'\u0E30') or c == u"\u0E30" or c == u"\u0E40" or c == u"\u0E41"
-
-    def isBaseAsc(c):
-        return c == u'\u0E1B' or c == u'\u0E1D' or c == u'\u0E1F' or c == u'\u0E2C'
-
-    def isBaseDesc(c):
-        return c == u'\u0E0E' or c == u'\u0E0F'
-
-    def isTop(c):
-        # Tone Mark, THANTHAKHAT
-        if u"\u0E48" <= c <= u"\u0E4C":
-            return True
-
-    def isLower(c):
-        #SARA U, SARA UU, PHINTHU
-        return c >= u"\u0E38" and c <= u"\u0E3A"
-
-    def isUpper(c):
-        return c == u'\u0E31' or c == u'\u0E34' or c == u'\u0E35' or c == u'\u0E36' or c == u'\u0E37' or c == u'\u0E47' or c == u'\u0E4D'
-
-    rv = [ ]
-
-    # [sara am] -> [nikhahit] [sara aa]
-    s = s.replace(u"\u0E33", u"\u0E4D\u0E32")
-    s = s.replace(u"\u0E48\u0E4D", u"\u0E4D\u0E48")
-    s = s.replace(u"\u0E49\u0E4D", u"\u0E4D\u0E49")
-    s = s.replace(u"\u0E4A\u0E4D", u"\u0E4D\u0E4A")
-    s = s.replace(u"\u0E4B\u0E4D", u"\u0E4D\u0E4B")
-    s = s.replace(u"\u0E4C\u0E4D", u"\u0E4D\u0E4C")
-
+    # Precompute lookup tables
+    TOP_LEFT = str.maketrans(
+        '\u0E48\u0E49\u0E4A\u0E4B\u0E4C',
+        '\uF713\uF714\uF715\uF716\uF717'
+    )
+    TOP_LOWLEFT = str.maketrans(
+        '\u0E48\u0E49\u0E4A\u0E4B\u0E4C',
+        '\uF705\uF706\uF707\uF708\uF709'
+    )
+    TOP_LOW = str.maketrans(
+        '\u0E48\u0E49\u0E4A\u0E4B\u0E4C',
+        '\uF70A\uF70B\uF70C\uF70D\uF70E'
+    )
+    UPPER_LEFT = str.maketrans(
+        '\u0E31\u0E34\u0E35\u0E36\u0E37\u0E4D\u0E47',
+        '\uF710\uF701\uF702\uF703\uF704\uF711\uF712'
+    )
+    LOWER_DESC = str.maketrans(
+        '\u0E38\u0E39\u0E3A',
+        '\uF718\uF719\uF71A'
+    )
+    UPPER      = frozenset('\u0E31\u0E34\u0E35\u0E36\u0E37\u0E47\u0E4D')
+    BASE_ASC   = frozenset('\u0E1B\u0E1D\u0E1F\u0E2C')
+    BASE_DESC  = frozenset('\u0E0E\u0E0F')
+    result: list[str] = []
     length = len(s)
-    for z in range(length):
+    z = 0
+    while z < length:
         c = s[z]
+        if c == '\u0E33':
+            base = ''
+            if z >= 2 and '\u0E38' <= s[z-1] <= '\u0E3A':
+                base = s[z - 2]
+            elif z >= 1:
+                base = s[z - 1]
 
-        #  [base] ~ [top]
-        if isTop(c) and z > 0:
-                # [base]             [top] -> [base]             [top.low]
-                # [base]     [lower] [top] -> [base]     [lower] [top.low]
-                # [base.asc]         [top] -> [base.asc]         [top.lowleft]
-                # [base.asc] [lower] [top] -> [base.asc] [lower] [top.lowleft]
-            b = s[z - 1];
-            if isLower(b) and z > 0:
-                b = s[z -2]
-            if isBase(b):
-                Nikhahit = (z < length - 1 and (s[z + 1] == u'\u0E33' or s[z + 1] == u'\u0E4D'))
-                if isBaseAsc(b):
-                    if Nikhahit:
-                        # [base.asc] [nikhahit] [top] -> [base.asc] [nikhahit] [top.left]
-                        choices = {
-                            u'\u0E48': u'\uF713',
-                            u'\u0E49': u'\uF714',
-                            u'\u0E4A': u'\uF715',
-                            u'\u0E4B': u'\uF716',
-                            u'\u0E4C': u'\uF717'
-                            }
-                        c = choices.get(c, 'error')
+            if base in BASE_ASC:
+                result.append('\uF711')
+            else:
+                result.append('\u0E4D')
+            result.append('\u0E32')
+            z += 1
+            continue
+        if '\u0E48' <= c <= '\u0E4C' and z > 0:
+            prev = s[z - 1]
+            prev2 = s[z - 2] if z > 1 else ''
+            base = s[z-2] if z >= 2 and '\u0E38' <= prev <= '\u0E3A' else prev
+            if z + 1 < length:
+                next_c = s[z+1]
+                if next_c == '\u0E4D':
+                    if base in BASE_ASC:
+                        result.append('\uF711')
+                        result.append(c.translate(TOP_LEFT))
                     else:
-                        choices = {
-                            u'\u0E48': u'\uF705',
-                            u'\u0E49': u'\uF706',
-                            u'\u0E4A': u'\uF707',
-                            u'\u0E4B': u'\uF708',
-                            u'\u0E4C': u'\uF709'
-                            }
-                        c = choices.get(c, 'error')
-                else:
-                    if Nikhahit == False:
-                        choices = {
-                            u'\u0E48': u'\uF70A',
-                            u'\u0E49': u'\uF70B',
-                            u'\u0E4A': u'\uF70C',
-                            u'\u0E4B': u'\uF70D',
-                            u'\u0E4C': u'\uF70E'
-                            }
-                        c = choices.get(c, 'error')
-            # [base.asc] [upper] [top] -> [base.asc] [upper] [top.left]
-            if (z > 1 and isUpper(s[z -1]) and isBaseAsc(s[z - 2])):
-                choices = {
-                    u'\u0E48': u'\uF713',
-                    u'\u0E49': u'\uF714',
-                    u'\u0E4A': u'\uF715',
-                    u'\u0E4B': u'\uF716',
-                    u'\u0E4C': u'\uF717'
-                    }
-                c = choices.get(c, 'error')
-        # [base.asc] [upper] -> [base.asc] [upper-left]
-        elif (isUpper(c)and z > 0 and isBaseAsc(s[z -1])):
-            choices = {
-                u'\u0E31': u'\uF710',
-                u'\u0E34': u'\uF701',
-                u'\u0E35': u'\uF702',
-                u'\u0E36': u'\uF703',
-                u'\u0E37': u'\uF704',
-                u'\u0E4D': u'\uF711',
-                u'\u0E47': u'\uF712'
-                }
-            c = choices.get(c, 'error')
-        elif (isLower(c) and z > 0 and isBaseDesc(s[z -1])):
-            choices = {
-                u'\u0E38': u'\uF718',
-                u'\u0E39': u'\uF719',
-                u'\u0E3A': u'\uF71A'
-                }
-            c = choices.get(c, 'error')
-        elif (c == u'\u0E0D' and z < length -1 and isLower(s[z + 1])):
-            c = u'\uF70F'
-        elif (c == u'\u0E10' and z < length -1 and isLower(s[z + 1])):
-            c = u'\uF700'
-        else:
-            c = s[z]
-
-        rv.append(c)
-
-    return u''.join(rv)
+                        result.append('\u0E4D')
+                        result.append(c)
+                    z += 2
+                    continue
+                if next_c == '\u0E33':
+                    if base in BASE_ASC:
+                        result.append('\uF711')
+                        result.append(c.translate(TOP_LEFT))
+                    else:
+                        result.append('\u0E4D')
+                        result.append(c)
+                    result.append('\u0E32')
+                    z += 2
+                    continue
+            if prev in UPPER:
+                if prev2 in BASE_ASC:
+                    result.append(c.translate(TOP_LEFT))
+                else :
+                    result.append(c)
+            elif base in BASE_ASC:
+                result.append(c.translate(TOP_LOWLEFT))
+            else:
+                result.append(c.translate(TOP_LOW))
+            z += 1
+            continue
+        elif c in UPPER and z > 0 and s[z - 1] in BASE_ASC:
+            result.append(c.translate(UPPER_LEFT))
+            z += 1
+            continue
+        elif '\u0E38' <= c <= '\u0E3A' and z > 0 and s[z - 1] in BASE_DESC:
+            result.append(c.translate(LOWER_DESC))
+            z += 1
+            continue
+        elif c == '\u0E0D' and z < length - 1 and '\u0E38' <= s[z + 1] <= '\u0E3A':
+            result.append('\uF70F')
+            z += 1
+            continue
+        elif c == '\u0E10' and z < length - 1 and '\u0E38' <= s[z + 1] <= '\u0E3A':
+            result.append('\uF700')
+            z += 1
+            continue
+        result.append(c)
+        z += 1
+    return ''.join(result)

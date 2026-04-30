@@ -72,8 +72,9 @@ use.
     directory.
 
     This variable should not contain special characters like spaces,
-    colons, and semicolons. If not set, it defaults to :var:`build.name`
-    a dash, and :var:`config.version`.
+    colons, and semicolons. If not set, it defaults to :var:`build.name`,
+    a dash, and the version. The version is taken from :var:`build.version`,
+    if set, or :var:`config.version`.
 
 .. var:: build.executable_name = "..."
 
@@ -265,28 +266,35 @@ exist until after you're gone.
 The Old-game Directory
 ----------------------
 
-When making multiple releases, like when a game is distributed through
-early access or platforms like Patreon, it's necessary to keep the
-old .rpyc files around. The .rpyc files contain information that is
-necessary to ensure that saves can be loaded, and omitting these
-files can cause problems.
+Ren'Py uses compiled script files (called `.rpyc` files) to run your game quickly.
+These files also store important details, like unique IDs for each line of dialogue
+or scene, that save files rely on. When a game is updated and `.rpy` scripts change,
+Ren'Py updates or creates accompanying `.rpyc` files when the game is launched.
 
-At the same time, Ren'Py will update the .rpyc files in the game
-directory when these files are changed, making the files unsuitable
-for inclusion in version control.
+This updating nature of `.rpyc` files can create a challenge for developers who
+are making multiple releases, like when a game is distributed through early access
+or platforms like Patreon, or are working on large, multi-developer games. During
+development, it's easy to make a series of changes to an `.rpy` file that causes the
+resulting `.rpyc` file to have different IDs than the ones used in your current stable
+release. For teams, this is an even larger challenge because multiple developers might
+edit the same `.rpy`.
+Without a single `.rpyc` file as the definite source, how can Ren'Py preserve its IDs?
 
-To solve this problem, Ren'Py allows you to place the .rpyc files from
-a previous distribution into the old-game directory, which is alongside
-the game directory. The directory structure of :file:`old-game/` should match
-the directory structure of :file:`game/`. For example, :file:`game/scripts/day1.rpyc`
-should be moved to :file:`old-game/scripts/day1.rpyc`. Files in old-game that are
-not .rpyc files are ignored.
+To keep these changes from breaking save game compatibility, developers can use the
+`old-game`-directory. This special folder, which sits next to the `game`-directory in
+your project folder, lets you save a copy of the `.rpyc` files from your previous release.
+Its structure should match the `game`-directory. For example, move `game/scripts/day1.rpyc`
+to `old-game/scripts/day1.rpyc`. Files in `old-game` that aren't `.rpyc` files are ignored.
 
-The advantage of using old-game is that the old-game .rpyc files can be
-checked in, and that Ren'Py will always start from a known source when
-generating .rpyc files. While this might not be necessary for a
-single-developer game with minor changes, old-game is useful for large
-multiple developer games.
+When you have an `old-game`-directory with `.rpyc` files from your last release, Ren'Py
+uses them to help create new `.rpyc` files for changed `.rpy` scripts. It keeps the same
+IDs for parts of your script that haven't changed, so older save files can still load properly.
+
+**How to make the most of the `old-game`-directory:**
+
+* When launching the game, if an `.rpy` file has changed and there's a matching `.rpyc` file in `old-game`, Ren'Py uses that `.rpyc` file to update the one in `game`. This keeps its IDs consistent with your last release for maximum save compatibility.
+* Before building a new release, enable "Force Recompile" on the build-page of the Ren'Py SDK, and click "Update old-game" before pressing "Build". This recompiles all `.rpyc` files using the ones in `old-game` as a starting point, then updates `old-game` with these new, stable `.rpyc` files for your next release.
+* If you've already released your game, you can still benefit from `old-game` by copying the `.rpyc` files from your latest release's game directory into your project's `old-game` directory, matching the same folder structure.
 
 More information about how .rpyc files help with loading saves into changed
 games can be found at:
@@ -304,7 +312,7 @@ visual novel.
 
 **Windows**
 
-* Version: Windows 7 or higher.
+* Version: Windows 10 or higher.
 * CPU: 2.0 Ghz 64-bit Intel-compatible
 * RAM: 2.0 GB
 * Graphics: OpenGL 3.0 or DirectX 11
@@ -312,13 +320,13 @@ visual novel.
 **macOS**
 
 * Version: 10.10+
-* CPU: 2.0 Ghz 64-bit Intel-compatible (Apple silicon supported through Rosetta 2)
+* CPU: 2.0 Ghz 64-bit Intel-compatible or M1+
 * RAM: 2.0 GB
 * Graphics: OpenGL 3.0
 
 **Linux**
 
-* Version: Ubuntu 16.04+
+* Version: Ubuntu 20.04+
 * CPU: 2.0 Ghz 64-bit Intel-compatible
 * RAM: 2.0 GB
 * Graphics: OpenGL 3.0
@@ -408,6 +416,14 @@ The following variables provide further control of the build process:
     If true, empty directories (including directories left empty by
     file archiving) will be removed from generated packages. If false,
     empty directories will be included.
+
+
+.. var:: build.game_only_update = False
+
+    If true, :var:`build.include_update` is enabled, and
+    the "Game-Only Update for Mobile" package becomes available.
+
+
 .. var:: build.include_i686 = True
 
     If true, files necessary to run on 32-bit x86 processors will be included
@@ -462,7 +478,7 @@ The following variables provide further control of the build process:
     updating using the earlier zsync-based updates, add "zsync' to the
     list.
 
-.. var:: build.game_only_update = False
+.. var:: build.version = None
 
-    If true, :var:`build.include_update` is enabled, and
-    the "Game-Only Update for Mobile" package becomes available.
+    Gives a version of the build used by the build process. If None, this defaults to config.version. The main use
+    of this is to allow config.version to have characters that are not valid in file or directory names.

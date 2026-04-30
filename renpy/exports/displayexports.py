@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,15 +19,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
 import gc
 import time
 import os
 
 import renpy
-import pygame_sdl2
+import renpy.pygame as pygame
 
 from renpy.exports.commonexports import renpy_pure
 
@@ -94,6 +91,11 @@ def copy_images(old, new):
     `new`
         A space-separated string giving the components of the new image
         name.
+
+    This function may only be run from inside an init block. It is an
+    error to run this function once the game has started. As the ``image``
+    statement runs with init priority 500, this should generally be called
+    with init priority 501 or higher.
     """
 
     if not isinstance(old, tuple):
@@ -104,7 +106,7 @@ def copy_images(old, new):
 
     lenold = len(old)
 
-    for k, v in renpy.display.image.images.items():
+    for k, v in list(renpy.display.image.images.items()):
         if len(k) < lenold:
             continue
 
@@ -132,8 +134,8 @@ def default_layer(layer, tag, expression=False):
     elif " " in tag:
         tag = tag.split()[0]
 
-    return scene_lists().sticky_tags.get(tag, None) or \
-           renpy.config.tag_layer.get(tag, renpy.config.default_tag_layer)
+    return scene_lists().sticky_tags.get(tag, None) or renpy.config.tag_layer.get(tag, renpy.config.default_tag_layer)
+
 
 def can_show(name, layer=None, tag=None):
     """
@@ -191,7 +193,7 @@ def showing(name, layer=None):
     return renpy.game.context().images.showing(layer, name)
 
 
-def get_showing_tags(layer='master', sort=False):
+def get_showing_tags(layer="master", sort=False):
     """
     :doc: image_func
 
@@ -205,7 +207,7 @@ def get_showing_tags(layer='master', sort=False):
     return renpy.game.context().images.get_showing_tags(layer)
 
 
-def get_hidden_tags(layer='master'):
+def get_hidden_tags(layer="master"):
     """
     :doc: image_func
 
@@ -251,8 +253,8 @@ def clear_attributes(tag, layer=None):
 
     shown = showing(tag, default_layer(layer, tag))
 
-    current = tuple('-'+a for a in current)
-    set_tag_attributes((tag,)+current, layer)
+    current = tuple("-" + a for a in current)
+    set_tag_attributes((tag,) + current, layer)
 
     if shown:
         show(tag, layer=layer)
@@ -267,14 +269,12 @@ def _find_image(layer, key, name, what):
 
     # If a specific image is requested, use it.
     if what is not None:
-
-        if isinstance(what, basestring):
+        if isinstance(what, str):
             what = tuple(what.split())
 
         return name, what
 
     if renpy.config.image_attributes:
-
         new_image = renpy.game.context().images.apply_attributes(layer, key, name)
         if new_image is not None:
             image = new_image
@@ -290,7 +290,7 @@ def _find_image(layer, key, name, what):
     return name, name
 
 
-def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
+def predict_show(name, layer=None, what=None, tag=None, at_list=[]):
     """
     :undocumented:
 
@@ -320,9 +320,8 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
         base = img = what
 
     else:
-
         name, what = _find_image(layer, key, name, what)
-        base = img = renpy.display.image.ImageReference(what, style='image_placement')
+        base = img = renpy.display.image.ImageReference(what, style="image_placement")
 
         if not base.find_target():
             return
@@ -369,7 +368,18 @@ def set_tag_attributes(name, layer=None):
         renpy.game.context().images.predict_show(layer, name, False)
 
 
-def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
+def show(
+    name,
+    at_list=[],
+    layer=None,
+    what=None,
+    zorder=None,
+    tag=None,
+    behind=[],
+    atl=None,
+    transient=False,
+    munge_name=True,
+):
     """
     :doc: se_images
     :args: (name, at_list=[], layer=None, what=None, zorder=0, tag=None, behind=[], atl=None, **kwargs)
@@ -459,9 +469,8 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
             at_list = renpy.easy.to_list(tt, copy=True)
 
     if isinstance(what, renpy.display.displayable.Displayable):
-
         if renpy.config.wrap_shown_transforms and isinstance(what, renpy.display.motion.Transform):
-            base = img = renpy.display.image.ImageReference(what, style='image_placement')
+            base = img = renpy.display.image.ImageReference(what, style="image_placement")
 
             # Semi-principled, but mimics pre-6.99.6 behavior - if `what` is
             # already a transform, do not apply the default transform to it.
@@ -472,7 +481,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
 
     else:
         name, what = _find_image(layer, key, name, what)
-        base = img = renpy.display.image.ImageReference(what, style='image_placement')
+        base = img = renpy.display.image.ImageReference(what, style="image_placement")
 
         if not base.find_target() and renpy.config.missing_show:
             result = renpy.config.missing_show(name, what, layer)
@@ -486,13 +495,14 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if isinstance(i, renpy.display.motion.Transform):
             img = i(child=img)
         else:
-            img = i(img) # type: ignore
+            img = i(img)  # type: ignore
 
         # Mark the newly created images unique.
         img._unique()
 
     # Update the list of images we have ever seen.
-    renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
+    if renpy.exports.is_seen_allowed():
+        renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
 
     if tag and munge_name:
         name = (tag,) + name[1:]
@@ -500,7 +510,18 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
     if renpy.config.missing_hide:
         renpy.config.missing_hide(name, layer)
 
-    sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name, atl=atl, default_transform=default_transform, transient=transient)
+    sls.add(
+        layer,
+        img,
+        key,
+        zorder,
+        behind,
+        at_list=at_list,
+        name=name,
+        atl=atl,
+        default_transform=default_transform,
+        transient=transient,
+    )
 
 
 def hide(name, layer=None):
@@ -535,7 +556,7 @@ def hide(name, layer=None):
         renpy.config.missing_hide(name, layer)
 
 
-def scene(layer='master'):
+def scene(layer=None, tag=None):
     """
     :doc: se_images
 
@@ -551,10 +572,17 @@ def scene(layer='master'):
 
         $ renpy.scene()
         $ renpy.show("bg beach")
+
+    `tag`
+        If not None and `layer` is None, the default later for the tag is used.
+        Otherwise, `layer` defaults to "master".
     """
 
+    if tag is not None and renpy.config.scene_uses_tag_layer:
+        layer = default_layer(layer, tag)
+
     if layer is None:
-        layer = 'master'
+        layer = "master"
 
     if renpy.game.context().init_phase:
         raise Exception("Scene may not run while in init phase.")
@@ -578,10 +606,10 @@ def toggle_fullscreen():
     Toggles the fullscreen mode.
     """
 
-    renpy.game.preferences.fullscreen = not renpy.game.preferences.fullscreen # type: ignore
+    renpy.game.preferences.fullscreen = not renpy.game.preferences.fullscreen  # type: ignore
 
 
-def take_screenshot(scale=None, background=False):
+def take_screenshot(scale=None, background=False, keep_existing=False):
     """
     :doc: loadsave
     :args: ()
@@ -593,7 +621,7 @@ def take_screenshot(scale=None, background=False):
     if scale is None:
         scale = (renpy.config.thumbnail_width, renpy.config.thumbnail_height)
 
-    renpy.game.interface.take_screenshot(scale, background=background)
+    renpy.game.interface.take_screenshot(scale, background=background, keep_existing=keep_existing)
 
 
 def screenshot(filename):
@@ -639,7 +667,6 @@ def screenshot_to_bytes(size):
     return renpy.game.interface.screenshot_to_bytes(size)
 
 
-
 def transition(trans, layer=None, always=False, force=False):
     """
     :doc: other
@@ -661,7 +688,7 @@ def transition(trans, layer=None, always=False, force=False):
             transition(t, layer=ly, always=always, force=force)
         return
 
-    if (not always) and not renpy.game.preferences.transitions: # type: ignore
+    if (not always) and not renpy.game.preferences.transitions:  # type: ignore
         trans = None
 
     if renpy.config.skipping:
@@ -698,7 +725,6 @@ def get_ongoing_transition(layer=None):
     """
 
     return renpy.display.interface.get_ongoing_transition(layer)
-
 
 
 def restart_interaction():
@@ -744,9 +770,6 @@ def image_size(im):
     using the image cache. This can be slow.
     """
 
-    # Index the archives, if we haven't already.
-    renpy.loader.index_archives()
-
     im = renpy.easy.displayable(im)
 
     if not isinstance(im, renpy.display.im.Image):
@@ -767,7 +790,7 @@ def get_at_list(name, layer=None):
     If `layer` is None, uses the default layer for the given tag.
     """
 
-    if isinstance(name, basestring):
+    if isinstance(name, str):
         name = tuple(name.split())
 
     tag = name[0]
@@ -781,7 +804,7 @@ def get_at_list(name, layer=None):
     return list(transforms)
 
 
-def show_layer_at(at_list, layer='master', reset=True, camera=False):
+def show_layer_at(at_list, layer="master", reset=None, camera=False):
     """
     :doc: se_images
     :name: renpy.show_layer_at
@@ -793,7 +816,11 @@ def show_layer_at(at_list, layer='master', reset=True, camera=False):
         If true, the transform state is reset to the start when it is shown.
         If false, the transform state is persisted, allowing the new transform
         to update that state.
+        If None, true for show layer and false for camera.
     """
+
+    if reset is None:
+        reset = not camera
 
     at_list = renpy.easy.to_list(at_list)
 
@@ -909,7 +936,6 @@ def shown_window():
 
 
 class placement(renpy.revertable.RevertableObject):
-
     def __init__(self, p):
         super(placement, self).__init__()
 
@@ -989,6 +1015,7 @@ def get_image_bounds(tag, width=None, height=None, layer=None):
 
     return scene_lists().get_image_bounds(layer, tag, width, height)
 
+
 # User-Defined Displayable stuff.
 
 
@@ -996,6 +1023,7 @@ Render = renpy.display.render.Render
 render = renpy.display.render.render
 IgnoreEvent = renpy.display.core.IgnoreEvent
 redraw = renpy.display.render.redraw
+
 
 def is_pixel_opaque(d, width, height, st, at, x, y):
     """
@@ -1017,7 +1045,7 @@ class Container(renpy.display.layout.Container, renpy.revertable.RevertableObjec
     _list_type = renpy.revertable.RevertableList
 
 
-def get_renderer_info():
+def get_renderer_info() -> renpy.display.core.RendererInfo:
     """
     :doc: other
 
@@ -1036,10 +1064,27 @@ def get_renderer_info():
     ``"model"``
         Present and true if model-based rendering is supported.
 
-    Other, renderer-specific, keys may also exist. The dictionary should
-    be treated as immutable. This should only be called once the display
-    has been started (that is, after the init phase has finished).
+    When using the GL2 renderer, the following keys are also defined:
+
+    ``"gpu_vendor"``
+        A string giving the GPU vendor.
+
+    ``"gpu_name"``
+        A string giving the GPU name.
+
+    ``"gpu_driver_version"``
+        A string giving the driver version.
+
+    Other, renderer-specific, keys may also exist.
+
+    The dictionary should be treated as immutable.
+
+    This should only be called once the display has been started (that is,
+    not sooner than first interaction).
     """
+
+    if renpy.exports.is_init_phase():
+        raise Exception("get_renderer_info may not be called during the init phase.")
 
     return renpy.display.draw.info
 
@@ -1075,11 +1120,10 @@ def set_physical_size(size):
     width = int(size[0])
     height = int(size[1])
 
-    renpy.game.preferences.fullscreen = False # type: ignore
+    renpy.game.preferences.fullscreen = False  # type: ignore
 
     if get_renderer_info()["resizable"]:
-
-        renpy.game.preferences.physical_size = (width, height) # type: ignore
+        renpy.game.preferences.physical_size = (width, height)  # type: ignore
 
         if renpy.display.draw is not None:
             renpy.display.draw.resize()
@@ -1091,11 +1135,14 @@ def reset_physical_size():
 
     Attempts to set the size of the physical window to the size specified
     using :var:`renpy.config.physical_height` and :var:`renpy.config.physical_width`,
-    or the size set using :var:`renpy.config.screen_width` and :var:`renpy.config.screen_height`
-    if not set.
+    or, if those are not set, the size set using :var:`renpy.config.screen_width`
+    and :var:`renpy.config.screen_height`.
     """
 
-    set_physical_size((renpy.config.physical_width or renpy.config.screen_width, renpy.config.physical_height or renpy.config.screen_height))
+    set_physical_size((
+        renpy.config.physical_width or renpy.config.screen_width,
+        renpy.config.physical_height or renpy.config.screen_height,
+    ))
 
 
 def get_image_load_log(age=None):
@@ -1147,7 +1194,11 @@ def set_mouse_pos(x, y, duration=0):
     :doc: other
 
     Jump the mouse pointer to the location given by arguments x and y.
-    If the device does not have a mouse pointer, this does nothing.
+    If the device does not have a mouse pointer, or if it is not possible for
+    Ren'Py to move that pointer, this does nothing.
+
+    This is unlikely to work on the Linux with Wayland, Android, iOS, or Web
+    platforms.
 
     `duration`
         The time it will take to perform the move, in seconds.
@@ -1165,7 +1216,7 @@ def cancel_gesture():
     This should be called by displayables that have gesture-like behavior.
     """
 
-    renpy.display.gesture.recognizer.cancel() # @UndefinedVariable
+    renpy.display.gesture.recognizer.cancel()
 
 
 def add_layer(layer, above=None, below=None, menu_clear=True, sticky=None):
@@ -1224,7 +1275,7 @@ def add_layer(layer, above=None, below=None, menu_clear=True, sticky=None):
     layers.insert(index, layer)
 
     if menu_clear:
-        renpy.config.menu_clear_layers.append(layer) # type: ignore # Set in 00gamemenu.rpy.
+        renpy.config.menu_clear_layers.append(layer)  # type: ignore # Set in 00gamemenu.rpy.
 
     if sticky or sticky is None and renpy.config.sticky_layers:
         renpy.config.sticky_layers.append(layer)
@@ -1251,7 +1302,7 @@ def is_start_interact():
     """
     :doc: other
 
-    Returns true if restart_interaction has not been called during the current
+    Returns True if restart_interaction has not been called during the current
     interaction. This can be used to determine if the interaction is just being
     started, or has been restarted.
     """
@@ -1278,11 +1329,8 @@ def get_refresh_rate(precision=5):
         to 1 disables this.
     """
 
-    if PY2:
-        precision = float(precision)
-
     info = renpy.display.get_info()
-    rv = info.refresh_rate # type: ignore
+    rv = info.refresh_rate  # type: ignore
     rv = round(rv / precision) * precision
 
     return rv
@@ -1363,16 +1411,29 @@ def get_mouse_name(interaction=False):
 
     `interaction`
         If true, get a mouse name that is based on the type of interaction
-        occuring. (This is rarely useful.)
+        occurring.
     """
 
     if not renpy.display.interface:
-        return 'default'
+        return "default"
 
-    return renpy.display.interface.get_mouse_name(interaction=interaction)
+    return renpy.display.interface.get_mouse_name(cache_only=False, interaction=interaction)
 
 
-def set_focus(screen, id, layer="screens"): # @ReservedAssignment
+def get_mouse_names():
+    """
+    :doc: other
+
+    Return a list of mouse names that may be displayed, in priority order.
+    """
+
+    if not renpy.display.interface:
+        return [ "default" ]
+
+    return renpy.display.interface.get_mouse_names()
+
+
+def set_focus(screen, id, layer="screens"):
     """
     :doc: screens
 
@@ -1416,14 +1477,14 @@ def render_to_surface(d, width=None, height=None, st=0.0, at=None, resize=False)
     """
     :doc: screenshot
 
-    This takes a displayable or Render, and returns a pygame_sdl2 surface. The render is performed by
+    This takes a displayable or Render, and returns a pygame Surface. The render is performed by
     Ren'Py's display system, such that if the window is upscaled the render will be upscaled as well.
 
     `d`
         The displayable or Render to render. If a Render, `width`, `height`, `st`, and `at` are ignored.
 
     `width`
-        The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
+        The width to offer `d`, in virtual pixels. If None, :var:`config.screen_width`.
 
     `height`
         The height to offer `d`, in virtual pixels. If None, :var:`config.screen_height`.
@@ -1432,7 +1493,7 @@ def render_to_surface(d, width=None, height=None, st=0.0, at=None, resize=False)
         The time of the render, in the shown timebase.
 
     `at`
-        The time of the rendem in the animation timebase. If None, `st` is used.
+        The time of the render in the animation timebase. If None, `st` is used.
 
     `resize`
         If True, the surface will be resized to the virtual size of the displayable or render. This
@@ -1450,7 +1511,6 @@ def render_to_surface(d, width=None, height=None, st=0.0, at=None, resize=False)
 
     if at is None:
         at = st
-
 
     if not isinstance(d, Render):
         d = renpy.easy.displayable(d)
@@ -1479,7 +1539,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
         to the base directory. This must end with .png.
 
     `width`
-        The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
+        The width to offer `d`, in virtual pixels. If None, :var:`config.screen_width`.
 
     `height`
         The height to offer `d`, in virtual pixels. If None, :var:`config.screen_height`.
@@ -1488,7 +1548,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
         The time of the render, in the shown timebase.
 
     `at`
-        The time of the rendem in the animation timebase. If None, `st` is used.
+        The time of the render in the animation timebase. If None, `st` is used.
 
     `resize`
         If True, the image will be resized to the virtual size of the displayable or render. This
@@ -1497,10 +1557,10 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize
     This function may only be called after the Ren'Py display system has started, so it can't be
     called during the init phase or before the first interaction.
 
-    Ren'Py not rescan files while the game is running, so this shouldn't be used to sythesize
+    Ren'Py will not rescan files while the game is running, so this shouldn't be used to sythesize
     assets that are used as part of the game.
     """
 
     filename = os.path.join(renpy.config.basedir, filename)
     surface = render_to_surface(d, width, height, st, at, resize)
-    pygame_sdl2.image.save(surface, filename)
+    pygame.image.save(surface, filename)

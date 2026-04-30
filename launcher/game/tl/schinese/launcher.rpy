@@ -697,7 +697,7 @@
     new "需要下载 1.8 MB 的文件。"
 
     # game/editor.rpy:200
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "这可能是由于您的系统中尚未安装 Java 造成的。"
 
     # game/editor.rpy:209
@@ -729,7 +729,7 @@
     new "编辑 [text]。"
 
     # game/editor.rpy:390
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "启动编辑器时发生异常：\n[exception!q]"
 
     # game/editor.rpy:522
@@ -1037,7 +1037,7 @@
     new "打开日志文件"
 
     # game/interface.rpy:399
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "[what!qt]时出错："
 
     # game/interface.rpy:399
@@ -1697,7 +1697,7 @@
     new "%Y-%m-%d"
 
     # game/updater.rpy:157
-    old "An error has occured:"
+    old "An error has occurred:"
     new "发生错误："
 
     # game/updater.rpy:159

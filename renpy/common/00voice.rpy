@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -50,6 +50,7 @@ init -1500 python:
     _voice.tlid = None
     _voice.auto_file = None
     _voice.info = None
+    _voice.playing_info = None
     _voice.last_playing = 0.0
 
     # If true, the voice system ignores the interaction.
@@ -62,9 +63,22 @@ init -1500 python:
     # exists, it's played as a voice file.
     config.auto_voice = None
 
+    # A list of voice callbacks.
+    config.voice_callbacks = []
+
     # The last sound played on the voice channel. (This is used to replay
     # it.)
     _last_voice_play = None
+
+
+    def _invoke_voice_callbacks(event):
+        """
+        Invokes the voice callback if _voice.playing_info is not None.
+        """
+
+        if _voice.playing_info is not None:
+            for callback in config.voice_callbacks:
+                callback(event, _voice.playing_info, _unknown_kwarg=True)
 
 
     # Call this to specify the voice file that will be played for
@@ -183,15 +197,6 @@ init -1500 python:
         if volume is None:
             return _CharacterVolumeValue(voice_tag)
         else:
-            if volume > 0:
-                if config.quadratic_volumes:
-                    volume = volume ** 2
-                else:
-                    volume = (1 - volume) * config.volume_db_range
-                    volume = pow(10, volume / 20.0)
-
-            else:
-                volume = 0
             return SetDict(persistent._character_volume, voice_tag, volume)
 
 
@@ -212,11 +217,17 @@ init -1500 python:
         :doc: voice_action
 
         This plays `sample` on the voice channel, as if said by a
-        character with `voice_tag`.
+        character with `voice_tag`. This will set the volume, but will
+        not perform and other voice-related handling of the file - it's
+        intended for use in menus to help the user determine the
+        character volume.
+
+        `voice_tag`
+            The voice tag of the character that is speaking. This is used
+            to determine the volume that will be used.
 
         `sample`
-            The full path to a sound file. No voice-related handling
-            of this file is done.
+            The full path to a sound file.
 
         `selected`
             If True, buttons using this action will be marked as selected
@@ -240,6 +251,9 @@ init -1500 python:
 
             volume = persistent._character_volume.get(self.voice_tag, 1.0)
             renpy.music.get_channel("voice").set_volume(volume)
+
+            _invoke_voice_callbacks("stop")
+            _voice.playing_info = None
 
             renpy.sound.play(self.sample, channel="voice")
             renpy.restart_interaction()
@@ -317,31 +331,43 @@ init -1500 python:
         An object returned by VoiceInfo and get_voice_info().
         """
 
-        def __init__(self):
+        def __init__(self, predict=False, tag=None):
 
-            self.filename = _voice.play
+            if not predict:
+                self.filename = _voice.play
+                self.sustain = _voice.sustain
+                self.tag = _voice.tag
+            else:
+                self.filename = None
+                self.sustain = False
+                self.tag = tag
+
             self.auto_filename = None
             self.tlid = None
-            self.sustain = _voice.sustain
-            self.tag = _voice.tag
 
             if not self.filename and config.auto_voice:
 
-                for tlid in [
-                    renpy.game.context().translate_identifier,
-                    renpy.game.context().alternate_translate_identifier,
-                    renpy.game.context().deferred_translate_identifier,
-                    ]:
+                if predict:
+                    tlids = renpy.display.predict.tlids
+                else:
+                    tlids = [
+                        renpy.game.context().translate_identifier,
+                        renpy.game.context().alternate_translate_identifier,
+                        renpy.game.context().deferred_translate_identifier,
+                    ]
+
+                for tlid in tlids:
 
                     if tlid is None:
                         continue
 
-                    if isinstance(config.auto_voice, (str, unicode)):
+                    if isinstance(config.auto_voice, str):
                         fn = config.auto_voice.format(id=tlid)
                     else:
                         fn = config.auto_voice(tlid)
 
-                    self.auto_filename = fn
+                    if self.auto_filename is None:
+                        self.auto_filename = fn
 
                     if fn and renpy.loadable(fn, directory="audio"):
 
@@ -436,6 +462,8 @@ init -1500 python hide:
 
         if getattr(renpy.context(), "_menu", False) and not _preferences.voice_after_game_menu:
             renpy.sound.stop(channel="voice")
+            _invoke_voice_callbacks("stop")
+            _voice.playing_info = None
             return
 
         if _preferences.voice_sustain and not _voice.sustain:
@@ -462,20 +490,32 @@ init -1500 python hide:
 
         if (not volume) or (_voice.tag in persistent._voice_mute):
             renpy.sound.stop(channel="voice")
+            _invoke_voice_callbacks("stop")
             store._last_voice_play = _voice.play
+            _voice.playing_info = None
 
         elif _voice.play:
             if not config.skipping:
+                renpy.stop_tts()
                 renpy.music.get_channel("voice").set_volume(volume)
-                renpy.sound.play(_voice.play, channel="voice")
+                renpy.sound.play(_voice.play, channel="voice", synchro_start=False)
+                _invoke_voice_callbacks("stop")
+                _voice.playing_info = vi
+                _invoke_voice_callbacks("play")
 
             store._last_voice_play = _voice.play
 
-        elif not _voice.sustain:
+        elif not _voice.sustain and not (getattr(renpy.context(), "_menu", False) and _preferences.voice_after_game_menu):
             renpy.sound.stop(channel="voice")
+            _invoke_voice_callbacks("stop")
+            _voice.playing_info = None
 
             if not getattr(renpy.context(), "_menu", False):
                 store._last_voice_play = None
+
+        if config.skipping:
+            renpy.sound.stop(channel="voice")
+            _invoke_voice_callbacks("stop")
 
         _voice.play = None
         _voice.sustain = False
@@ -505,6 +545,37 @@ init -1500 python hide:
             _voice.tag = voice_tag
 
     config.voice_tag_callback = voice_tag_callback
+
+    def _voice_periodic_callback():
+        if _voice.playing_info is not None and not renpy.sound.is_playing(channel="voice"):
+            _invoke_voice_callbacks("stop")
+            _voice.playing_info = None
+
+    config.periodic_callbacks.append(_voice_periodic_callback)
+
+
+    def _auto_voice_predict_callback(tag):
+        """
+        Called to perform auto-voice prediction.
+        """
+
+        if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+            vi = VoiceInfo(predict=True, tag=tag)
+
+            fn = vi.filename
+
+            if not fn:
+                return
+
+            try:
+                with renpy.loader.load(fn, directory="audio") as f:
+                    pass
+
+                renpy.webloader.extend(fn)
+            except renpy.webloader.DownloadNeeded as exception:
+                renpy.webloader.enqueue(exception.relpath, 'voice', None)
+
+    config.auto_voice_predict_callback = _auto_voice_predict_callback
 
 
 screen _auto_voice:
@@ -550,6 +621,8 @@ python early hide:
             try:
                 with renpy.loader.load(fn, directory="audio") as f:
                     pass
+
+                renpy.webloader.extend(fn)
             except renpy.webloader.DownloadNeeded as exception:
                 renpy.webloader.enqueue(exception.relpath, 'voice', None)
         return [ ]
@@ -558,7 +631,7 @@ python early hide:
         _voice.seen_in_lint = True
 
         fn = _try_eval(fn, 'voice filename')
-        if not isinstance(fn, basestring):
+        if not isinstance(fn, str):
             return
 
         try:
@@ -569,12 +642,13 @@ python early hide:
         if not renpy.music.playable(fn, 'voice'):
             renpy.error('voice file %r is not playable' % fn)
 
-    renpy.statements.register('voice',
-                              parse=parse_voice,
-                              execute=execute_voice,
-                              predict=predict_voice,
-                              lint=lint_voice,
-                              translatable=True)
+    renpy.statements.register(
+        'voice',
+        parse=parse_voice,
+        execute=execute_voice,
+        predict=predict_voice,
+        lint=lint_voice,
+        translatable=True)
 
     def parse_voice_sustain(l):
         if not l.eol():
@@ -585,7 +659,8 @@ python early hide:
     def execute_voice_sustain(parsed):
         voice_sustain()
 
-    renpy.statements.register('voice sustain',
-                              parse=parse_voice_sustain,
-                              execute=execute_voice_sustain,
-                              translatable=True)
+    renpy.statements.register(
+        'voice sustain',
+        parse=parse_voice_sustain,
+        execute=execute_voice_sustain,
+        translatable=True)

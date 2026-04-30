@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -382,8 +382,6 @@ init python:
         with io.open(os.path.join(destination, "manifest.json"), encoding='utf-8') as f:
             manifest = json.load(f)
 
-
-
         # Replace the project name with the ones in the game
         manifest["name"] = p.dump['build']['display_name']
 
@@ -397,7 +395,6 @@ init python:
             f.write(json.dumps(manifest))
 
         generate_files_catalog(destination)
-
 
     def build_web(p, gui=True, destination=None, launch=True):
 
@@ -425,7 +422,7 @@ init python:
 
         # Use the distributor to make game.zip.
         distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"),
-                reporter=reporter, noarchive=True, scan=False, files_filter=files_filter)
+                reporter=reporter, noarchive=True, scan=False, files_filter=files_filter, web_transform_renpy=True,)
 
         reporter.info(_("Preparing progressive download"))
         files_filter.finalize()
@@ -440,36 +437,31 @@ init python:
         # Find the presplash and copy it over.
         presplash = None
 
-        if not PY2:
-            for fn in [ "web-presplash.png", "web-presplash.jpg", "web-presplash.webp" ]:
-                fullfn = os.path.join(project.current.path, fn)
+        for fn in [ "web-presplash.png", "web-presplash.jpg", "web-presplash.webp" ]:
+            fullfn = os.path.join(p.path, fn)
 
-                if os.path.exists(fullfn):
-                    presplash = fn
-                    break
+            if os.path.exists(fullfn):
+                presplash = fn
+                break
 
         if presplash:
             os.unlink(os.path.join(destination, "web-presplash.jpg"))
-            shutil.copy(os.path.join(project.current.path, presplash), os.path.join(destination, presplash))
+            shutil.copy(os.path.join(p.path, presplash), os.path.join(destination, presplash))
 
         # Copy over index.html.
         with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
             html = f.read()
 
-        if PY2:
-            html = html.replace("%%TITLE%%", display_name)
-        else:
-            html = html.replace("Ren'Py Web Game", display_name)
+        html = html.replace("Ren'Py Web Game", display_name)
 
-            if presplash:
-                html = html.replace("web-presplash.jpg", presplash)
+        if presplash:
+            html = html.replace("web-presplash.jpg", presplash)
 
         with io.open(os.path.join(destination, "index.html"), "w", encoding='utf-8') as f:
             f.write(html)
 
-        if not PY2:
-            generate_web_icons(p, destination)
-            prepare_pwa_files(p, destination)
+        generate_web_icons(p, destination)
+        prepare_pwa_files(p, destination)
 
         # Zip up the game.
 
@@ -484,7 +476,9 @@ init python:
         with zipfile.ZipFile(destination + ".zip", 'w') as zf:
             for i, target in enumerate(zip_targets):
                 zf.write(target, os.path.relpath(target, destination))
-                reporter.progress(_("Creating package..."), i + 1, len(zip_targets))
+                reporter.progress(_("Creating package..."), i, len(zip_targets))
+
+        reporter.progress_done()
 
         # Start the web server.
 
@@ -607,6 +601,9 @@ init python:
         ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
 
         args = ap.parse_args()
+
+        if not WEB_PATH:
+            raise SystemExit("Web support is not available. Please download web support through the launcher or from the website, and try again.")
 
         p = project.Project(args.web_project)
 

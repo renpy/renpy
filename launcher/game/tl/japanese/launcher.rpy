@@ -364,7 +364,7 @@
     new "{b}推奨{/b} 使いやすいインターフェースと、スペルチュックのような開発を補助する機能を持つベータエディターです。Editra は現在、中国、韓国、日本語の入力に必要な IME のサポートに欠陥があります。Linux では Editra は wxpython を必要とします。"
 
     # editor.rpy:167
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "このエラーは wxPython がこのシステムにインストールされていないため発生したと思われます。"
 
     # editor.rpy:169
@@ -380,7 +380,7 @@
     new "1.8 MB のダウンロードが必要です。"
 
     # editor.rpy:182
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "このエラーは Java がこのシステムにインストールされていないため発生しましたと思われます。"
 
     # editor.rpy:191
@@ -392,7 +392,7 @@
     new "Ren'Py のテキストエディターの実行を停止します。"
 
     # editor.rpy:359
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "テキストエディターの選択中にエラーが発生しました:\n[exception!q]"
 
     # editor.rpy:457
@@ -608,7 +608,7 @@
     new "エラー"
 
     # interface.rpy:356
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "[what!qt] 中にエラーが発生しました:"
 
     # interface.rpy:356
@@ -1136,7 +1136,7 @@
     new "Ren'Py の開発版で極めて不安定です。このバージョンには最新の機能が含まれていますが、全く動かないかもしれません。"
 
     # updater.rpy:152
-    old "An error has occured:"
+    old "An error has occurred:"
     new "エラーが発生しました。"
 
     # updater.rpy:154

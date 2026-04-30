@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -82,7 +82,7 @@ init -1700 python:
 
         renpy.movie_stop(only_fullscreen=True)
         if not renpy.context()._menu:
-            renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
+            renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height), keep_existing=config.keep_screenshot_entering_menu)
 
         for i in config.menu_clear_layers:
             renpy.scene(layer=i)
@@ -102,6 +102,9 @@ init -1700 python:
         renpy.context_dynamic("_side_image_attributes")
         renpy.context_dynamic("_side_image_attributes_reset")
 
+        renpy.context_dynamic("mouse_visible")
+        renpy.context_dynamic("suppress_overlay")
+
         store._window_subtitle = config.menu_window_subtitle
         store._window = False
         store._history = False
@@ -109,7 +112,9 @@ init -1700 python:
         store._side_image_attributes = None
         store._side_image_attributes_reset = False
 
-        store.mouse_visible = True
+        if not store.mouse_visible:
+            store.mouse_visible = True
+
         store.suppress_overlay = True
 
         ui.clear()

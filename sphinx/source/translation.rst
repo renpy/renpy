@@ -387,7 +387,7 @@ More usually, the font used for dialogue is set with :var:`gui.text_font`.
 The font used for system text, like the exception screen, the accessibility menu,
 and the gui menu, can be customized with :var:`gui.system_font`. The system font
 should be able to express both ASCII and the translated language. Together, these
-can be customized with.
+can be customized with::
 
     translate piglatin python:
         gui.text_font = "stonecutter.ttf"
@@ -440,9 +440,9 @@ The default language is chosen using the following method:
   used.
 * If this is the first time the game has been run and
   :var:`config.enable_language_autodetect` is True, Ren'Py tries to
-  autodetect the language using :var:`config.locale_to_language_function`.
-* If this is the first time the game has been run,
-  :var:`config.default_language` is used.
+  autodetect the language using :var:`config.locale_to_language_function`
+  or :var:`config.locale_to_language_map`.
+* If this is the first time the game has been run, :var:`config.default_language` is used.
 * Otherwise, the None language is used.
 
 
@@ -494,6 +494,15 @@ translation:
     to the list of translatable strings. Note that the string may be
     double-translated, if it matches a string translation when it
     is displayed.
+
+.. function:: ___(s)
+
+    (Triple underscore) Immediately translates `s` into the current
+    language. If a :ref:`text interpolation <text-interpolation>` is
+    found, the interpolation will be performed using the local
+    variables in the scope that called this function. Note that
+    the string may be double-translated, if it matches a string
+    translation when it is displayed.
 
 .. include:: inc/underscore_p
 

@@ -19,13 +19,6 @@ SOURCE = [
 
 from renpy.versions import generate_vc_version
 
-version = generate_vc_version()["version"]
-short_version = version.rpartition(".")[0]
-major = version.partition(".")[0]
-print("Version", version)
-
-if major == '7':
-    SOURCE.append("/home/tom/ab/renpy-build-fix/renpyweb")
 
 ap = argparse.ArgumentParser()
 
@@ -37,8 +30,19 @@ ap.add_argument("--push-tags", action="store_true")
 ap.add_argument("--delete-tag")
 ap.add_argument("--github", action="store_true")
 ap.add_argument("--real", action="store_true")
+ap.add_argument("--version")
 
 args = ap.parse_args()
+
+if args.version:
+    version = args.version
+else:
+    version = generate_vc_version()["version"]
+
+short_version = version.rpartition(".")[0]
+major = version.partition(".")[0]
+
+print("Version", version)
 
 if not args.real:
     print("Did you want to use scripts/add_all.sh? If not, give --real.")

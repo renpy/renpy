@@ -12,12 +12,169 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
-Pending Deprecations
---------------------
+Upcoming Deprecations
+----------------------
 
-Ren'Py 7.8 is the last release to support Python 2.
+The ability to create zsync updates will be removed when Ren'Py 8.7 is released.
 
-Ren'Py 8.4 will drop support for the original OpenGL renderer (gl1), and for Windows 7, 8, and 8.1.
+.. _incompatible-8.6.0:
+
+8.6.0
+-----
+
+**Late Audio Scan** Ren'Py now defines automatic audio files at a late init level, rather than at init 0.
+To revert to the prior behavior, add to your game::
+
+    define -1 config.late_audio_scan = False
+
+**Voice Statement and Translation Identifiers** By default, the ``voice`` statement no longer contributes to
+translation identifiers. This means that adding or removing voice statements will not change the translation ID.
+If your game both had voice statements and translations, translation identifiers may have changed. To change them
+back, add::
+
+    define config.tlid_only_considers_say = False
+
+
+.. _incompatible-8.5.3:
+
+8.5.3
+-----
+
+**Live2D** Ren'Py now supports and requires Live2D 5.3. You may need to update Live2D to continue to use it in Ren'Py 5.3.
+
+
+.. _incompatible-8.5.0:
+
+8.5.0
+-----
+
+**Maximum Can Increase Size** The :propref:`xmaximum` and :propref:`ymaximum` properties can be used to
+request a size larger than what the container offers. This can lead to displayables being larger than in previous
+versions of Ren'Py, when asked to be. To revert to the old behavior, add to your game::
+
+    define config.maximum_embiggens = False
+
+**Language Detection** Ren'Py now prefers the language name ("en") over the region name ("us"), if both are
+valid languages. The combination ("en_us") is preferred to both.
+
+**pygame_sdl2** The pygame_sdl2 module is no longer included with Ren'Py. It's been replace by
+the renpy.pygame package, which is compatible and included with Ren'Py. This packaged has been aliased
+to `pygame` and `pygame_sdl2` for compatibility, so existing imports will work.
+
+Before this version, ``pygame_sdl2`` was imported into the store namespace. This import has been removed. If
+required, it can be added back with::
+
+    init python:
+        import renpy.pygame as pygame_sdl2
+
+**Image Directories** The config.images_directory variable has been superseded by
+:var:`config.image_directories`, which is a list of directories that Ren'Py searches for images. Scripts that change
+the config.images_directory variable shoul be migrated. For example, change::
+
+    define config.images_directory = "myimages"
+
+to::
+
+    define config.image_directories = [ "myimages" ]
+
+**Zoom and the Z-Axis** In Ren'Py 8.4, the :tpref:`zoom` transform property applies to the z-axis as well as the x and y
+axes. This can cause a behavior change in older games that did not expect the z-axis to be zoomed. To revert this
+change, add to your game::
+
+    define config.zoom_zaxis = False
+
+
+.. _incompatible-8.4.1:
+
+8.4.1
+-----
+
+**Constant-power Audio Panning** It's now possible to revert the change to
+constant-power audio panning that was introduced in 8.1.0. To do this, add to
+your game::
+
+    define config.adjust_audio_amplitude = 1.0 / 0.7071067811865476
+
+
+.. _incompatible-8.4.0:
+
+8.4.0
+-----
+
+
+**Automatic Oversamping** When Ren'Py is scaled up enough, it can search the image files for
+higher resolution images, and load those instead. See :ref:`the documentation <automatic-oversampling>` for more informaiton.
+This can be disabled with:
+
+    define config.automatic_oversampling = None
+
+As this can be useful for older games, and is unlikely to cause problems, automatic oversampling is
+left enabled when running older games.
+
+**Show expression.** The ``show expression`` statement has been changed so that::
+
+    show expression "bg washington"
+
+is exactly equivalent to:
+
+    show bg washington
+
+Previously, this would use the expression itself as the tag. When the expression is not a string,
+a unique tag is created for the show expression statement. This change can be reverted with::
+
+    define config.old_show_expression = True
+
+**LayeredImage** The "variant" and "prefix" properties, if passed unquoted names, now read them as an unquoted string instead of a variable to be evaluated at init time. It is unlikely to cause any issue, but if it does, you can use::
+
+    variant f"{old_expression}"
+
+Also, naming a group "multiple" is no longer supported.
+
+**Creator-defined Statements and config.label_callbacks** Creator-defined statements now call :var:`config.label_callbacks`,
+when a label is defined. To revert to the old behavior of not calling config.label_callbacks, add to your game::
+
+    define config.cds_label_callbacks = False
+
+**Mesh Padding** The behavior of :tpref:`mesh_pad` has been changed when left or top padding is present. Previously, this would
+offset the child by the padding amount. Now, the child remains in the same place, with the padding added to the
+left and top of the child.
+
+**Small GUI Viewport Size**
+While not strictly incompatible, we recommend adding the following to games that use the default GUI::
+
+    style game_menu_viewport:
+        variant "small"
+        xsize 1305
+
+This ensures menus will have a scrollbar on phones and televisions. The number 1305 is suitable for a 1920 pixel wide
+game. For a 1280 pixel wide game, use 870. For a 3840 pixel wide game, use 2010. (Other resolutions should use
+0.68 times the width of the game, rounded down to an integer.)
+
+**Shader Order**
+In previous versions of Ren'Py, the order in which shader parts that shared the same
+priority were applied was undefined. Now, the parts are ordered by the name of the shader, producing
+a reliable order, but this reliable order may be diferent than what was seen on particular systems.
+
+**Python Module Paths**
+When a Python module is loaded from the game/ directory, the ``__file__`` variable is set to the relative path of the
+module, which can be passed to :func:`renpy.open_file`. Previously, ``__file__`` could be set to the absolute path of
+the module in some cases, and the relative path in others.
+
+.. _incompatible-8.3.4:
+.. _incompatible-7.8.4:
+
+8.3.4 / 7.8.4
+-------------
+
+**Dissolving Different-Sized Displayables, part two.** When ImageDissolving or AlphaDissolving between
+displayables of different sizes, Ren'Py will give the result the size of the largest displayable, in
+each access. To revert to the pre-8.1.2 behavior (the smallest size on each axis), add to your game::
+
+    define config.dissolve_shrinks = True
+
+**Removal of the ATL 'update' event.** Previous versions of Ren'Py could deliver and "update" event to ATL
+inside screens when the screen was changed in major ways, such as when changing translations. This event
+was not delivered reliably, and is unlikely to have been used, so it has been removed.
 
 
 .. _incompatible-8.3.0:
@@ -317,6 +474,21 @@ disappear. Now, the event will be allowed to run to completion.
 To disable this, add to your game::
 
     define config.screens_never_cancel_hide = False
+
+
+.. _incompatible-8.1.2:
+.. _incompatible-7.6.2:
+
+8.1.2 / 7.6.2
+-------------
+
+**Dissolving Different-Sized Displayables** When dissolving between two displayables
+of different sizes, Ren'Py will give the result the size of the largest displayable, in
+each access. To revert to the previous behavior (the smallest size on each axis), add to your game::
+
+    define config.dissolve_shrinks = True
+
+
 
 
 .. _incompatible-8.1.1:
@@ -877,7 +1049,7 @@ to be given. To revert to the old interface, use::
 
 It's mode parameter has also been slightly changed, and will now return
 a value of ``both`` when both a ``permanent`` and ``temporary``
-attribute transition is occuring.
+attribute transition is occurring.
 
 .. _incompatible-7.2.2:
 
@@ -1036,7 +1208,7 @@ underneath the game directory) for images, and define them based on their
 filename. To disable this behavior, use the code::
 
     init python:
-        config.image_directory = None
+        config.images_directory = None
 
 
 .. _incompatible-6.18:

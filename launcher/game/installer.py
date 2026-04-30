@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -169,7 +169,7 @@ def _check_hash(filename, hashj):
 download_file = ""
 download_url = ""
 
-def download(url, filename, hash=None):
+def download(url, filename, hash=None, headers=None, requests_kwargs={}):
     """
     Downloads `url` to `filename`, a tempfile.
     """
@@ -188,9 +188,13 @@ def download(url, filename, hash=None):
 
     progress_time = time.time()
 
+    all_headers = {"User-Agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36 renpy/8'}
+    if headers:
+        all_headers.update(headers)
+
     try:
 
-        response = requests.get(url, stream=True, proxies=renpy.exports.proxies, timeout=15)
+        response = requests.get(url, stream=True, proxies=renpy.exports.proxies, timeout=15, headers=all_headers, **requests_kwargs)
         response.raise_for_status()
 
         total_size = int(response.headers.get('content-length', 1))
@@ -446,7 +450,7 @@ def manifest(url, renpy=False, insecure=False):
         If true, verificaiton is disabled.
     """
 
-    import ecdsa
+    import renpy.ecsign
 
     download(url, "temp:manifest.py")
 
@@ -459,9 +463,9 @@ def manifest(url, renpy=False, insecure=False):
         with open(_path("temp:manifest.py.sig"), "rb") as f:
             sig = f.read()
 
-        key = ecdsa.VerifyingKey.from_pem(_renpy.exports.open_file("renpy_ecdsa_public.pem").read())
+        key = renpy.ecsign.pem_to_der(_renpy.exports.open_file("renpy_ecdsa_public.pem").read())
 
-        if not key.verify(sig, manifest):
+        if not renpy.ecsign.verify_data(manifest, key, sig):
             error(_("The manifest signature is not valid."))
             return
 

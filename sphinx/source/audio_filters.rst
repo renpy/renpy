@@ -49,7 +49,7 @@ a single channel.
 Silence Padding
 ---------------
 
-When an audio filter is active and the last queued sound on a channel finises
+When an audio filter is active and the last queued sound on a channel finishes
 playing, Ren'Py will add 2 seconds of silence to the channel, to ensure that
 delay and reverb filters have time to finish playing.
 

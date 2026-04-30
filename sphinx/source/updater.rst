@@ -74,7 +74,7 @@ screen. Here's an example screen::
             vbox:
 
                if u.state == u.ERROR:
-                  text _("An error has occured:")
+                  text _("An error has occurred:")
                elif u.state == u.CHECKING:
                   text _("Checking for updates.")
                elif u.state == u.UPDATE_NOT_AVAILABLE:

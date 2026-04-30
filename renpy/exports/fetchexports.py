@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,8 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import re
@@ -34,18 +34,12 @@ except ImportError:
 
 import renpy
 
-if PY2:
-    from urllib import urlencode as _urlencode # type: ignore
-else:
-    from urllib.parse import urlencode as _urlencode
+from urllib.parse import urlencode as _urlencode
 
 try:
-    if PY2:
-        import urllib
-        proxies = urllib.getproxies() # type: ignore
-    else:
-        import urllib.request
-        proxies = urllib.request.getproxies()
+    import urllib.request
+
+    proxies = urllib.request.getproxies()
 except Exception as e:
     proxies = {}
 
@@ -62,7 +56,7 @@ class FetchError(Exception):
 
         self.original_exception = exception
 
-        m = re.search(r'\d\d\d', message)
+        m = re.search(r"\d\d\d", message)
         if m is not None:
             self.status_code = int(m.group(0))
         else:
@@ -78,8 +72,8 @@ def fetch_pause():
         return
 
     if renpy.game.context().interacting:
-        import pygame_sdl2
-        pygame_sdl2.event.pump()
+
+        renpy.pygame.event.pump()
         renpy.audio.audio.periodic()
 
         if renpy.emscripten:
@@ -88,6 +82,66 @@ def fetch_pause():
         return
 
     renpy.exports.pause(0)
+
+
+class FetchProgress(object):
+    def __init__(self, data):
+        if data is None:
+            self.data = b""
+        elif isinstance(data, basestring):
+            self.data = data.encode("utf-8")
+        else:
+            self.data = data
+
+        self.upload_expected = len(self.data)
+        self.upload_current = 0
+        self.offset = 0
+
+        self.download_expected = 0
+        self.download_current = 0
+        self.monitoring_download = False
+
+    def __len__(self):
+        return self.upload_expected
+
+    def read(self, size=-1):
+        if size == -1:
+            chunk = self.data[self.offset:]
+            self.offset = self.upload_expected
+        else:
+            chunk = self.data[self.offset:self.offset+size]
+            self.offset += len(chunk)
+
+        self.upload_current += len(chunk)
+        return chunk
+
+    def get_progress(self):
+        if self.monitoring_download:
+            if self.download_expected == 0:
+                # If we don't know the size, return 0.0 until done.
+                return 0.0
+            return min(self.download_current / self.download_expected, 1.0)
+        else:
+            if self.upload_expected == 0:
+                return 1.0
+            return min(self.upload_current / self.upload_expected, 1.0)
+
+
+active_fetch_requests: set[FetchProgress] = set()
+"""The set of active fetch requests."""
+
+def get_fetch_requests_progress() -> float:
+    """
+    :undocumented:
+
+    Returns the progress of the currently active fetch requests as a float
+    between 0.0 and 1.0. If no fetches are in progress, returns 1.0.
+    """
+    if not active_fetch_requests:
+        return 1.0
+
+    total = sum(req.get_progress() for req in active_fetch_requests)
+    return total / len(active_fetch_requests)
 
 
 def fetch_requests(url, method, data, content_type, timeout, headers):
@@ -103,7 +157,10 @@ def fetch_requests(url, method, data, content_type, timeout, headers):
     import requests
 
     # Because we don't have nonlocal yet.
-    resp = [ None ]
+    resp = [None]
+
+    progress = FetchProgress(data)
+    active_fetch_requests.add(progress)
 
     if data is not None:
         headers = dict(headers)
@@ -111,17 +168,37 @@ def fetch_requests(url, method, data, content_type, timeout, headers):
 
     def make_request():
         try:
-            r = requests.request(method, url, data=data, timeout=timeout, headers=headers, proxies=proxies)
+            r = requests.request(
+                method, url,
+                data=progress if data is not None else None,
+                timeout=timeout,
+                headers=headers,
+                proxies=proxies,
+                stream=True
+            )
             r.raise_for_status()
-            resp[0] = r.content # type: ignore
+
+            progress.monitoring_download = True
+            progress.download_expected = int(r.headers.get("Content-Length", 0))
+
+            chunks = []
+            for chunk in r.iter_content(chunk_size=65536):
+                if chunk:
+                    chunks.append(chunk)
+                    progress.download_current += len(chunk)
+
+            resp[0] = b"".join(chunks)
         except Exception as e:
-            resp[0] = FetchError(str(e), e) # type: ignore
+            resp[0] = FetchError(str(e), e)
 
     t = threading.Thread(target=make_request)
     t.start()
 
-    while resp[0] is None:
-        fetch_pause()
+    try:
+        while resp[0] is None:
+            fetch_pause()
+    finally:
+        active_fetch_requests.discard(progress)
 
     t.join()
 
@@ -145,16 +222,21 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
         if data is not None:
             f.write(data)
 
-    url = url.replace('"' , '\\"')
+    url = url.replace('"', '\\"')
 
     import json
+
     headers = json.dumps(headers)
     headers = headers.replace("\\", "\\\\").replace('"', '\\"')
 
     if method == "GET" or method == "HEAD":
-        command = """fetchFile("{method}", "{url}", null, "{fn}", null, "{headers}")""".format( method=method, url=url, fn=fn, content_type=content_type, headers=headers)
+        command = """fetchFile("{method}", "{url}", null, "{fn}", null, "{headers}")""".format(
+            method=method, url=url, fn=fn, content_type=content_type, headers=headers
+        )
     else:
-        command = """fetchFile("{method}", "{url}", "{fn}", "{fn}", "{content_type}", "{headers}")""".format( method=method, url=url, fn=fn, content_type=content_type, headers=headers)
+        command = """fetchFile("{method}", "{url}", "{fn}", "{fn}", "{content_type}", "{headers}")""".format(
+            method=method, url=url, fn=fn, content_type=content_type, headers=headers
+        )
 
     fetch_id = emscripten.run_script_int(command)
 
@@ -172,7 +254,6 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
             break
 
     try:
-
         if status == "OK":
             with open(fn, "rb") as f:
                 return f.read()
@@ -183,9 +264,19 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
     finally:
         os.unlink(fn)
 
+def get_fetch_emscripten_progress() -> float:
+    """
+    Returns the fetch progress on emscripten systems as a float between 0.0 and 1.0.
+    """
+
+    import emscripten
+
+    return emscripten.run_script_int("""fetchFileProgress() * 1000""") / 1000.0
 
 
-def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes", params=None, headers={}):
+def fetch(
+    url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes", params=None, headers={}
+):
     """
     :doc: fetch
 
@@ -246,11 +337,10 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
 
     import json as _json
 
-
     if data is not None and json is not None:
         raise FetchError("data and json arguments are mutually exclusive.")
 
-    if result not in ( "bytes", "text", "json" ):
+    if result not in ("bytes", "text", "json"):
         raise FetchError("result must be one of 'bytes', 'text', or 'json'.")
 
     if params is not None:
@@ -277,14 +367,28 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
         content = fetch_requests(url, method, data, content_type, timeout, headers=headers)
 
     if isinstance(content, Exception):
-        raise content # type: ignore
+        raise content  # type: ignore
 
     try:
         if result == "bytes":
             return content
         elif result == "text":
-            return content.decode("utf-8") # type: ignore
+            return content.decode("utf-8")  # type: ignore
         elif result == "json":
             return _json.loads(content)
     except Exception as e:
         raise FetchError("Failed to decode the result: " + str(e), e)
+
+
+def get_fetch_progress() -> float:
+    """
+    :doc: fetch
+
+    Returns the progress of the currently active fetch requests as a float
+    between 0.0 and 1.0. If no fetches are in progress, returns 1.0.
+    """
+
+    if renpy.emscripten:
+        return get_fetch_emscripten_progress()
+    else:
+        return get_fetch_requests_progress()

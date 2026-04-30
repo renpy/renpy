@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,6 +22,10 @@
 
 from renpy.display.matrix cimport Matrix, Matrix2D
 
+cdef public int MATRIX_MODEL
+cdef public int MATRIX_VIEW
+cdef public int MATRIX_PROJECTION
+
 cdef class Render:
 
     cdef public bint mark, cache_killed, killed
@@ -44,6 +48,9 @@ cdef class Render:
 
     # The transform toward screen space.
     cdef public Matrix reverse
+
+    # The kind of matrix Reverse is.
+    cdef public int matrix_kind
 
     # Alpha multiplication - this is multipled with r, g, b, and a, to reduce
     # the alpha of this Render and its children.
@@ -100,6 +107,14 @@ cdef class Render:
 
     # A flag that's used to enable debugging on a per-render basis.
     cdef public bint debug
+
+    # A flag that tells us if uniforms has a render in it.
+    cdef public bint uniforms_has_render
+
+    # This is the width and height of this Render if .subsurface was not allowed to
+    # expand the size of the displayable.
+    cdef public float cropped_width, cropped_height
+
 
     # operations ###############################################################
 

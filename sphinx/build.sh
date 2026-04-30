@@ -4,13 +4,15 @@ set -e
 
 SPHINX="$(dirname $(python -c "import os;print(os.path.realpath('$0'))"))"
 
+
 cd "$SPHINX"
+export PATH="../.venv/bin:$PATH"
 
 # Make the inc folder.
 mkdir -p source/inc
 
 # Run a Ren'Py game that generates documentation.
-python ../renpy.py . || ../renpy3.sh .
+../run.sh . || ../renpy3.sh .
 
 # Clear out generated images.
 rm -Rf ../doc-web/_images || true

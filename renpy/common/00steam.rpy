@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -35,7 +35,8 @@ init -1499 python in _renpysteam:
     import collections
     import time
 
-    from renpy.store import store, config
+    from renpy.store import store, config, NoRollback
+    from renpy.store import store, config, NoRollback
 
     ticket = None
 
@@ -50,7 +51,7 @@ init -1499 python in _renpysteam:
         called with no parameters if and when the statistics become available.
         """
 
-        steamapi.SteamUserStats().RequestCurrentStats()
+        pass # RequestCurrentStats has been removed in Steamworks SDK 1.61.
 
 
     def store_stats():
@@ -424,7 +425,7 @@ init -1499 python in _renpysteam:
         return get_csteam_id() & 0xffffffff
 
 
-    def get_session_ticket():
+    def get_session_ticket(identity=None):
         """
         :doc: steam_user
 
@@ -442,7 +443,8 @@ init -1499 python in _renpysteam:
         ticket_buf = create_string_buffer(2048)
         ticket_len = c_uint()
 
-        h_ticket = steamapi.SteamUser().GetAuthSessionTicket(ticket_buf, 2048, byref(ticket_len))
+        identity = identity or steamapi.SteamNetworkingIdentity()
+        h_ticket = steamapi.SteamUser().GetAuthSessionTicket(ticket_buf, 2048, byref(ticket_len), identity)
 
         if h_ticket:
             ticket = ticket_buf.raw[0:ticket_len.value]
@@ -478,12 +480,15 @@ init -1499 python in _renpysteam:
 
     ########################################################################### UGC
 
-    def get_subscribed_items():
+    def get_subscribed_items(include_disabled=False):
         """
         :doc: steam_ugc
 
         Returns a list of the item ids the user has subscribed to in the steam
         workshop.
+
+        `include_disabled`
+            If true, include items that are disabled.
         """
 
         from ctypes import c_ulonglong, pointer, POINTER, cast
@@ -492,7 +497,8 @@ init -1499 python in _renpysteam:
 
         count = steamapi.SteamUGC().GetSubscribedItems(
             cast(pointer(subscribed), POINTER(c_ulonglong)),
-            512)
+            512,
+            include_disabled)
 
         rv = [ ]
 
@@ -538,7 +544,7 @@ init -1499 python in _renpysteam:
             The time since the last state change.
         """
 
-        steamapi.SteamTimeline().SetTimelineStateDescription(description.encode("utf-8"), time_delta)
+        steamapi.SteamTimeline().SetTimelineTooltip(description.encode("utf-8"), time_delta)
 
     def clear_timeline_state_description(time_delta):
         """
@@ -547,13 +553,13 @@ init -1499 python in _renpysteam:
         Clears the description of the current state in the timeline.
         """
 
-        steamapi.SteamTimeline().ClearTimelineStateDescription(time_delta)
+        steamapi.SteamTimeline().ClearTimelineTooltip(time_delta)
 
     def add_timeline_event(icon, title, description, priority=0, start_offset=0.0, duration=0.0, possible_clip=None):
         """
         :doc: steam_timeline
 
-        Adds an event to the timeline.
+        Adds an event to the timeline. Note that the order of arguments here is different than in the Steam API.
 
         `icon`
             The icon to display for the event. This should be a string giving one of the standard steam icons,
@@ -582,14 +588,26 @@ init -1499 python in _renpysteam:
         if possible_clip is None:
             possible_clip = CLIP_PRIORITY_STANDARD
 
-        steamapi.SteamTimeline().AddTimelineEvent(
-            icon.encode("utf-8"),
-            title.encode("utf-8"),
-            description.encode("utf-8"),
-            priority,
-            start_offset,
-            duration,
-            possible_clip)
+        if duration:
+
+            steamapi.SteamTimeline().AddInstantaneousTimelineEvent(
+                title.encode("utf-8"),
+                description.encode("utf-8"),
+                icon.encode("utf-8"),
+                priority,
+                start_offset,
+                possible_clip)
+
+        else:
+
+            steamapi.SteamTimeline().AddRangeTimelineEvent(
+                title.encode("utf-8"),
+                description.encode("utf-8"),
+                icon.encode("utf-8"),
+                priority,
+                start_offset,
+                duration,
+                possible_clip)
 
 
     def set_timeline_game_mode(mode):
@@ -606,6 +624,22 @@ init -1499 python in _renpysteam:
         """
 
         steamapi.SteamTimeline().SetTimelineGameMode(mode)
+
+    def start_game_phase(identifier: str):
+        """
+        Starts a Steam Timeline game phase, and sets its identifier to `identifier`.
+        """
+
+        steamapi.SteamTimeline().StartGamePhase()
+        steamapi.SteamTimeline().SetGamePhaseID(identifier.encode("utf-8"))
+
+    def end_game_phase():
+        """
+        Ends a Steam Timeline game phase.
+        """
+
+        steamapi.SteamTimeline().EndGamePhase()
+
 
 
     ############################################ Import API after steam is found.
@@ -649,16 +683,17 @@ init -1499 python in _renpysteam:
 
     callback_handlers = collections.defaultdict(list)
 
-    old_menu = None
-    old_save_name = None
+    callback_state = NoRollback()
+    callback_state.menu = None
+    callback_state.save_name = None
+    callback_state = NoRollback()
+    callback_state.menu = None
+    callback_state.save_name = None
 
     def periodic():
         """
         Called periodically to run Steam callbacks.
         """
-
-        global old_menu
-        global old_save_name
 
         for cb in steamapi.generate_callbacks():
             # print(type(cb).__name__, {k : getattr(cb, k) for k in dir(cb) if not k.startswith("_")})
@@ -675,18 +710,18 @@ init -1499 python in _renpysteam:
             else:
                 new_menu = TIMELINE_GAME_MODE_PLAYING
 
-            if old_menu != new_menu:
+            if callback_state.menu != new_menu:
                 set_timeline_game_mode(new_menu)
-                old_menu = new_menu
+                callback_state.menu = new_menu
 
-        if store.save_name != old_save_name:
-            if not store.save_name:
-                clear_timeline_state_description(0.0)
-            else:
-                set_timeline_state_description(store.save_name, 0.0)
+            if store.save_name != callback_state.save_name:
+                if callback_state.save_name and isinstance(callback_state.save_name, str):
+                    end_game_phase()
 
-            old_save_name = store.save_name
+                if store.save_name and isinstance(store.save_name, str):
+                    start_game_phase(store.save_name)
 
+                callback_state.save_name = store.save_name
 
 
     ################################################################## Keyboard
@@ -720,15 +755,17 @@ init -1499 python in _renpysteam:
 
     def keyboard_periodic():
 
+        global keyboard_mode
         global keyboard_showing
         global keyboard_primed
         global keyboard_shift
         global keyboard_baseline
 
+        if keyboard_mode == "always":
+            keyboard_mode = "once"
+
         if keyboard_mode == "never":
             return
-        elif keyboard_mode == "always":
-            keyboard_primed = True
         elif keyboard_mode != "once":
             raise Exception("Bad steam keyboard_mode.")
 
@@ -935,8 +972,11 @@ init -1499 python in achievement:
         steam_appid_fn = os.path.join(os.path.dirname(sys.executable), "steam_appid.txt")
 
         if config.steam_appid is not None:
-            with open(steam_appid_fn, "w") as f:
-                f.write(str(config.steam_appid) + "\n")
+            try:
+                with open(steam_appid_fn, "w") as f:
+                    f.write(str(config.steam_appid) + "\n")
+            except Exception as e:
+                renpy.write_log("Failed to write steam_appid.txt: %r", e)
         else:
             try:
                 os.unlink(steam_appid_fn)
@@ -982,8 +1022,8 @@ init -1499 python in achievement:
             if not config.enable_steam:
                 return
 
-            # if "RENPY_NO_STEAM" in os.environ:
-            #     return
+            if "RENPY_NO_STEAM" in os.environ:
+                return
 
             dll = ctypes.cdll[dll_path]
 

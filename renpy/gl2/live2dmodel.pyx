@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,9 +34,12 @@ from renpy.uguu.gl cimport GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD,
 
 import renpy
 
-cdef extern from "SDL.h" nogil:
-    void* SDL_LoadObject(const char* sofile)
-    void* SDL_LoadFunction(void* handle, const char* name)
+cdef extern from "live2dcsm.h" nogil:
+    void* load_live2d_object(const char* sofile)
+    void* load_live2d_function(void* handle, const char* name)
+    void deallocate_live2d_moc(void *moc)
+    void deallocate_live2d_model(void *model)
+
 
 cdef extern from "Live2DCubismCore.h":
 
@@ -88,7 +91,7 @@ include "live2dcsm.pxi"
 
 
 # Enable logging.
-cdef void __stdcall log_function(const char *message):
+cdef void __stdcall log_function(const char *message) noexcept:
     print(message)
 
 def post_init():
@@ -135,6 +138,7 @@ class Part(object):
         self.default_opacity = default_opacity
         self.remaining = 1.0
 
+
 cdef class Live2DModel:
     """
     Represents a Live2D model, generated from a MOC.
@@ -170,7 +174,7 @@ cdef class Live2DModel:
     cdef const csmFlags *drawable_dynamic_flags
     cdef const int *drawable_texture_indices
     cdef const int *drawable_draw_orders
-    cdef const int *drawable_render_orders
+    cdef const int *render_orders
     cdef const float *drawable_opacities
     cdef const int *drawable_mask_counts
     cdef const int **drawable_masks
@@ -190,6 +194,8 @@ cdef class Live2DModel:
 
     cdef list meshes
 
+    cdef object filename
+
     _types = """
         parameters : dict[str, Parameter]
         parts : dict[str, Part]
@@ -197,12 +203,26 @@ cdef class Live2DModel:
         opacity_groups : dict
         """
 
+
+    def __dealloc__(self):
+        """
+        Deallocates the model, and the MOC.
+        """
+
+        if self.model is not NULL:
+            deallocate_live2d_model(self.model)
+
+        if self.moc is not NULL:
+            deallocate_live2d_moc(self.moc)
+
     def __init__(self, fn):
         """
         Loads the Live2D model.
         """
 
         cdef int i
+
+        self.filename = fn
 
         with renpy.loader.load(fn, directory="images") as f:
             data = f.read()
@@ -247,7 +267,7 @@ cdef class Live2DModel:
         self.drawable_dynamic_flags = csmGetDrawableDynamicFlags(self.model)
         self.drawable_texture_indices = csmGetDrawableTextureIndices(self.model)
         self.drawable_draw_orders = csmGetDrawableDrawOrders(self.model)
-        self.drawable_render_orders = csmGetDrawableRenderOrders(self.model)
+        self.render_orders = csmGetRenderOrders(self.model)
         self.drawable_opacities = csmGetDrawableOpacities(self.model)
         self.drawable_mask_counts = csmGetDrawableMaskCounts(self.model)
         self.drawable_masks = csmGetDrawableMasks(self.model)
@@ -261,7 +281,7 @@ cdef class Live2DModel:
 
         self.parameters = { }
 
-        for 0 <= i < self.parameter_count:
+        for i in range(self.parameter_count):
             name = self.parameter_ids[i].decode("utf-8")
             self.parameters[name] = Parameter(
                 i, name,
@@ -272,7 +292,7 @@ cdef class Live2DModel:
 
         self.parts = { }
 
-        for 0 <= i < self.part_count:
+        for i in range(self.part_count):
             name = self.part_ids[i].decode("utf-8")
             self.parts[name] = Part(i, name, self.part_opacities[i])
 
@@ -280,6 +300,13 @@ cdef class Live2DModel:
         self.parameter_groups = { }
 
         csmUpdateModel(self.model)
+
+    def __repr__(self):
+        """
+        Returns a string representation of the model.
+        """
+
+        return f"<Live2DModel {self.filename}>"
 
     def reset_parameters(self):
         """
@@ -383,30 +410,21 @@ cdef class Live2DModel:
         cdef Render rv
 
         shaders = ("renpy.texture", "live2d.flip_texture", "live2d.colors")
-        mask_shaders = ("live2d.mask", "live2d.flip_texture")
-        inverted_mask_shaders = ("live2d.inverted_mask", "live2d.flip_texture")
+        mask_shaders = ("-renpy.texture", "live2d.mask", "live2d.flip_texture")
+        inverted_mask_shaders = ("-renpy.texture", "live2d.inverted_mask", "live2d.flip_texture")
 
         csmUpdateModel(self.model)
 
         # Render the model.
-        w = int(zoom * self.pixel_size.X)
-        h = int(zoom * self.pixel_size.Y)
+        w = self.pixel_size.X * zoom
+        h = self.pixel_size.Y * zoom
+
+        offset_x = self.pixel_origin.X * zoom
+        offset_y = self.pixel_origin.Y * zoom
 
         ppu = self.pixels_per_unit * zoom
 
-        if ppu:
-            invppu = 1 / ppu
-        else:
-            invppu = 0
-
-        offset = (w / 2.0 - ppu, h / 2.0 - ppu)
-
-        reverse = Matrix([
-            ppu, 0, 0, ppu,
-            0, -ppu, 0, ppu,
-            0, 0, 1, 0,
-            0, 0, 0, 1, ])
-
+        reverse = Matrix.offset(offset_x, offset_y, 0.0) * Matrix.scale(ppu, -ppu, 1.0)
         forward = reverse.inverse()
 
         rv = Render(w, h)
@@ -418,7 +436,34 @@ cdef class Live2DModel:
         cdef csmVector4 multiply
         cdef csmVector4 screen
 
-        for 0 <= i < self.drawable_count:
+        # The indexes of layers that have been used as masks.
+        used_masks = set()
+
+        for i in range(self.drawable_count):
+
+            # If this drawable is not visible, skip it.
+            if self.drawable_dynamic_flags[i] & csmIsVisible == 0:
+                continue
+
+            if self.drawable_opacities[i] == 0.0:
+                continue
+
+            for j in range(self.drawable_mask_counts[i]):
+                used_masks.add(self.drawable_masks[i][j])
+
+        for i in range(self.drawable_count):
+
+            # True if the layers is visible.
+            is_visible = self.drawable_dynamic_flags[i] & csmIsVisible and self.drawable_opacities[i] != 0.0
+
+            # True if the layer is used as a mask by a visible layer.
+            is_mask = i in used_masks
+
+            if not is_visible and not is_mask:
+                mask_renders.append(None)
+                raw_renders.append(None)
+
+                continue
 
             multiply = self.drawable_multiply_colors[i]
             screen = self.drawable_screen_colors[i]
@@ -433,48 +478,55 @@ cdef class Live2DModel:
             memcpy(mesh.attribute, self.drawable_vertex_uvs[i], sizeof(float) * mesh.points * 2)
 
             mesh.triangles = self.drawable_index_counts[i] // 3
-            memcpy(mesh.triangle, self.drawable_indices[i],  sizeof(unsigned short) * mesh.triangles * 3)
+
+            for j in range(mesh.triangles * 3):
+                mesh.triangle[j] = self.drawable_indices[i][j]
 
             tex = textures[self.drawable_texture_indices[i]]
 
-            # Create a render that can be used as a mask.
-            mr = Render(ppu * 2, ppu * 2)
-            mr.reverse = reverse
-            mr.forward = forward
-            mr.mesh = mesh
+            if is_mask:
 
-            mr.add_uniform("u_multiply", multiply_tuple)
-            mr.add_uniform("u_screen", screen_tuple)
+                # Create a render that can be used as a mask.
+                mr = Render(w, h)
+                mr.reverse = reverse
+                mr.forward = forward
+                mr.mesh = mesh
 
-            for s in shaders:
-                mr.add_shader(s)
+                mr.add_uniform("u_multiply", multiply_tuple)
+                mr.add_uniform("u_screen", screen_tuple)
 
-            mr.blit(tex, (0, 0))
+                for s in shaders:
+                    mr.add_shader(s)
 
-            mask_renders.append(mr)
+                mr.blit(tex, (0, 0))
 
-            # Create the render that is actually drawn.
-            r = Render(ppu * 2, ppu * 2)
-            r.reverse = reverse
-            r.forward = forward
-            r.mesh = mesh
+                mask_renders.append(mr)
 
-            r.add_uniform("u_multiply", multiply_tuple)
-            r.add_uniform("u_screen", screen_tuple)
+            else:
+                mask_renders.append(None)
 
-            for s in shaders:
-                r.add_shader(s)
+            if is_visible:
 
-            r.blit(tex, (0, 0))
+                # Create the render that is actually drawn.
+                r = Render(w, h)
+                r.reverse = reverse
+                r.forward = forward
+                r.mesh = mesh
 
-            raw_renders.append(r)
+                r.add_uniform("u_multiply", multiply_tuple)
+                r.add_uniform("u_screen", screen_tuple)
 
-            if self.drawable_constant_flags[i] & csmBlendAdditive:
-                r.add_property("blend_func", (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE))
-            elif self.drawable_constant_flags[i] & csmBlendMultiplicative:
-                r.add_property("blend_func", (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE))
+                for s in shaders:
+                    r.add_shader(s)
 
-            if self.drawable_dynamic_flags[i] & csmIsVisible:
+                r.blit(tex, (0, 0))
+
+                raw_renders.append(r)
+
+                if self.drawable_constant_flags[i] & csmBlendAdditive:
+                    r.add_property("blend_func", (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE))
+                elif self.drawable_constant_flags[i] & csmBlendMultiplicative:
+                    r.add_property("blend_func", (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE))
 
                 alpha = self.drawable_opacities[i]
 
@@ -484,11 +536,14 @@ cdef class Live2DModel:
                     r.add_uniform("u_renpy_alpha", alpha)
                     r.add_uniform("u_renpy_over", 1.0)
 
-                renders.append((self.drawable_render_orders[i], r))
+                renders.append((self.render_orders[i], r))
+
+            else:
+                raw_renders.append(None)
 
         multi_masks = { }
 
-        for 0 <= i < self.drawable_count:
+        for i in range(self.drawable_count):
 
             multiply = self.drawable_multiply_colors[i]
             screen = self.drawable_screen_colors[i]
@@ -498,13 +553,18 @@ cdef class Live2DModel:
 
             r = raw_renders[i]
 
+            # Layer is not visible.
+            if r is None:
+                continue
+
             if self.drawable_mask_counts[i] == 1:
                 m = mask_renders[self.drawable_masks[i][0]]
+
             else:
 
                 key = [ ]
 
-                for 0 <= j < self.drawable_mask_counts[i]:
+                for j in range(self.drawable_mask_counts[i]):
                     key.append(self.drawable_masks[i][j])
 
                 key = tuple(key)
@@ -512,7 +572,7 @@ cdef class Live2DModel:
                 m = multi_masks.get(key, None)
 
                 if m is None:
-                    m = renpy.display.render.Render(ppu * 2, ppu * 2)
+                    m = renpy.display.render.Render(w, h)
 
                     for j in key:
                         m.blit(mask_renders[j], (0, 0))
@@ -528,11 +588,14 @@ cdef class Live2DModel:
             for s in shaders:
                 r.add_shader(s)
 
+            r.add_uniform("u_live2d_ppu", ppu)
+            r.add_uniform("u_live2d_offset", (offset_x, offset_y))
+
             r.blit(m, (0, 0))
 
         renders.sort()
 
         for t in renders:
-            rv.subpixel_blit(t[1], offset)
+            rv.subpixel_blit(t[1], (0, 0))
 
         return rv

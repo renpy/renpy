@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -163,9 +163,6 @@ init python:
         """
 
         print("Eliminating __pycache__...")
-
-        if PY2:
-            return
 
         import pathlib
         import sys
@@ -435,6 +432,9 @@ init python:
 
         args = ap.parse_args()
 
+        if not RENIOS_PATH:
+            raise SystemExit("iOS support (renios) is not available. Please download renios through the launcher or from the website, and try again.")
+
         p = project.Project(args.project)
 
         ios_create(p, False, args.destination)
@@ -450,6 +450,9 @@ init python:
         ap.add_argument("destination", help="The path to the iOS project that will be created.")
 
         args = ap.parse_args()
+
+        if not RENIOS_PATH:
+            raise SystemExit("iOS support (renios) is not available. Please download renios through the launcher or from the website, and try again.")
 
         p = project.Project(args.project)
 

@@ -14,8 +14,8 @@ def process(fn):
 
     data = data.decode("utf-8")
     data = data.replace("\r", "")
-    data = data.replace(u"\ufeff", "")
-    data = u"\ufeff" + data
+    data = data.replace("\ufeff", "")
+    data = "\ufeff" + data
     data = data.encode("utf-8")
 
     with open(fn, "wb") as f:
@@ -23,7 +23,6 @@ def process(fn):
 
 
 for dn in sys.argv[1:]:
-
     for directory, dirs, files in os.walk(dn):
         for fn in files:
             fn = os.path.join(directory, fn)

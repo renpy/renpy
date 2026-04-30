@@ -338,7 +338,7 @@ translate japanese button_displayables_220b020d:
 # game/tutorial_screen_displayables.rpy:558
 translate japanese button_displayables_b89d12aa:
 
-    # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
+    # e "Of course, it's pretty rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
     e "もちろん、このようにスクリーン内でボタンをカスタマイズすることは非常に稀です。代わりに、カスタムスタイルを作りRen'Pyにそれを使うよう指示します。"
 
 # game/tutorial_screen_displayables.rpy:577

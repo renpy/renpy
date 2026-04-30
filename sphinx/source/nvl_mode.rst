@@ -214,7 +214,7 @@ The following config variables control nvl-related functionality.
 .. var:: config.nvl_list_length = None
 
     If not None, the maximum length of the list of NVL dialogue.
-    This can be set (often in conjuction with forcing the dialogue to
+    This can be set (often in conjunction with forcing the dialogue to
     have a fixed height) in order to emulate an infinite scrolling
     NVL window.
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,15 +24,15 @@
 # going on.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import os
 import sys
 import time
 
-import pygame_sdl2
 import renpy
+import renpy.pygame as pygame
 
 if renpy.emscripten:
     import emscripten
@@ -48,11 +48,10 @@ start_time = time.time()
 
 
 class ProgressBar(object):
-
     def __init__(self, foreground, background):
         super(ProgressBar, self).__init__()
-        self.foreground = pygame_sdl2.image.load(foreground)
-        self.background = pygame_sdl2.image.load(background)
+        self.foreground = pygame.image.load(foreground)
+        self.background = pygame.image.load(background)
         self.width, self.height = self.background.get_size()
 
     def convert_alpha(self, surface=None):
@@ -73,7 +72,7 @@ class ProgressBar(object):
 
 
 def find_file(base_name, root):
-    allowed_exts = [ ".png", ".jpg" ]
+    allowed_exts = [".png", ".jpg", ".webp", ".avif"]
     for ext in allowed_exts:
         fn = os.path.join(root, base_name + ext)
         if os.path.exists(fn):
@@ -89,34 +88,33 @@ def start(basedir, gamedir):
     if "RENPY_LESS_UPDATES" in os.environ:
         return
 
-    presplash_fn = find_file("presplash", root=gamedir)
+    foreground_fn = find_file("presplash_foreground", root=gamedir)
+    background_fn = find_file("presplash_background", root=gamedir)
 
-    if not presplash_fn:
-        foreground_fn = find_file("presplash_foreground", root=gamedir)
-        background_fn = find_file("presplash_background", root=gamedir)
+    if not foreground_fn or not background_fn:
+        presplash_fn = find_file("presplash", root=gamedir)
 
-        if not foreground_fn or not background_fn:
+        if not presplash_fn:
             return
 
     if renpy.windows:
-
         import ctypes
 
-        ctypes.windll.user32.SetProcessDPIAware() # type: ignore
+        ctypes.windll.user32.SetProcessDPIAware()  # type: ignore
 
-    pygame_sdl2.display.init()
+    pygame.display.init()
 
     global progress_bar
 
-    if presplash_fn:
-        presplash = pygame_sdl2.image.load(presplash_fn)
-    else:
-        presplash = ProgressBar(foreground_fn, background_fn) # type: ignore
+    if foreground_fn and background_fn:
+        presplash = ProgressBar(foreground_fn, background_fn)  # type: ignore
         progress_bar = presplash
+    else:
+        presplash = pygame.image.load(presplash_fn)
 
     global window
 
-    bounds = pygame_sdl2.display.get_display_bounds(0)
+    bounds = pygame.display.get_display_bounds(0)
 
     sw, sh = presplash.get_size()
     x = bounds[0] + bounds[2] // 2 - sw // 2
@@ -130,19 +128,16 @@ def start(basedir, gamedir):
     if isinstance(shape, ProgressBar):
         shape = shape.background
 
-    window = pygame_sdl2.display.Window(
-        sys.argv[0],
-        (sw, sh),
-        flags=pygame_sdl2.WINDOW_BORDERLESS,
-        pos=(x, y),
-        shape=shape)
+    window = pygame.display.Window(
+        sys.argv[0], (sw, sh), flags=pygame.WINDOW_BORDERLESS, pos=(x, y), shape=shape
+    )
 
-    if presplash_fn:
-        presplash = presplash.convert_alpha(window.get_surface())
-        window.get_surface().blit(presplash, (0, 0))
-    else:
+    if foreground_fn and background_fn:
         presplash.convert_alpha(window.get_surface())
         presplash.draw(window.get_surface(), 0)
+    else:
+        presplash = presplash.convert_alpha(window.get_surface())
+        window.get_surface().blit(presplash, (0, 0))
 
     window.update()
 
@@ -152,11 +147,13 @@ last_pump_time = 0
 
 # The number of times the progress was pumped.
 pump_count = 0
+pump_clock = 21
+pump_total = 0
+
 
 def pump_window():
-
     global last_pump_time
-    global pump_count
+    global pump_count, pump_total
 
     pump_count += 1
 
@@ -166,18 +163,27 @@ def pump_window():
     if window is None:
         return
 
-    if last_pump_time + 1/24 > time.time():
+    if last_pump_time + 1 / 24 > time.time():
         return
 
     last_pump_time = time.time()
 
-    if progress_bar and renpy.game.script:
-        progress_bar.draw(window.get_surface(), pump_count / (len(renpy.game.script.script_files) + 23))
-        window.update()
-
-    for ev in pygame_sdl2.event.get():
-        if ev.type == pygame_sdl2.QUIT:
+    for ev in pygame.event.get():
+        if ev.type == pygame.QUIT:
             raise renpy.game.QuitException(relaunch=False, status=0)
+
+    if not progress_bar:
+        return
+
+    if not pump_total:
+        if not renpy.game.script:
+            return
+
+        pump_total = (len(renpy.game.script.common_script_files) + len(renpy.game.script.script_files)) + pump_clock
+
+    progress_bar.draw(window.get_surface(), pump_count / pump_total)
+    window.update()
+
 
 # Becomes true when the presplash is done.
 done = False
@@ -206,6 +212,8 @@ def end():
     global progress_bar
     progress_bar = None
 
+    pygame.display.quit()
+
 
 def sleep():
     """
@@ -222,6 +230,7 @@ def sleep():
 
 
 progress_kind = None
+
 
 def progress(kind, done, total):
     """
@@ -246,14 +255,12 @@ def progress(kind, done, total):
     if done == total:
         return
 
-    if not PY2:
+    if progress_kind != kind:
+        print()
+        print(kind)
+        progress_kind = kind
+        sys.stdout.flush()
 
-        if progress_kind != kind:
-            print()
-            print(kind)
-            progress_kind = kind
-            sys.stdout.flush()
-
-        emscripten.run_script(r"""progress(%d, %d);""" % (done, total))
+    emscripten.run_script(r"""progress(%d, %d);""" % (done, total))
 
     emscripten.sleep(0)

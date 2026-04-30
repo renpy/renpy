@@ -19,7 +19,7 @@ label tutorial_nvlmode:
     nvl clear
     nvl show dissolve
 
-    nvle "NVL-style games are games that cover the full screen with text, rather then placing it in a window at the bottom of the screen. Like this."
+    nvle "NVL-style games are games that cover the full screen with text, rather than placing it in a window at the bottom of the screen. Like this." id tutorial_nvlmode_ac125210
 
     show example nvl1 bottom
 

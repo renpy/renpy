@@ -1493,6 +1493,7 @@ style director_icon_action_button is director_action_button:
 
 style director_icon_action_button_text is director_action_button_text:
     font "DejaVuSans.ttf"
+    emoji_font None
 
 style director_statement_text is director_text:
     size 20

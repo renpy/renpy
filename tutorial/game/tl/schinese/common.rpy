@@ -834,7 +834,7 @@ translate schinese strings:
     new "更新器"
 
     # renpy/common/00updater.rpy:1446
-    old "An error has occured:"
+    old "An error has occurred:"
     new "发生错误："
 
     # renpy/common/00updater.rpy:1448

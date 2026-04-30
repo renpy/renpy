@@ -8,7 +8,7 @@ translate french tutorial_nvlmode_76b2fe88:
 # game/tutorial_nvlmode.rpy:20
 translate french tutorial_nvlmode_ac125210:
 
-    # nvle "NVL-style games are games that cover the full screen with text, rather then placing it in a window at the bottom of the screen. Like this."
+    # nvle "NVL-style games are games that cover the full screen with text, rather than placing it in a window at the bottom of the screen. Like this."
     nvle "Les jeux de style NVL sont des jeux dont les dialogues couvrent l’écran en entier, plutôt que d’être placés dans une fenêtre en bas de l’écran. Comme ceci."
 
 # game/tutorial_nvlmode.rpy:24

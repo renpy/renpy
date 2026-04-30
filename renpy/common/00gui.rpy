@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -108,13 +108,10 @@ init -1150 python in gui:
 
         return f
 
-    def rebuild():
+    def _apply_rebuild():
         """
-        :doc: gui
-
-        Rebuilds the GUI.
-
-        Note: This is a very slow function.
+        Called by renpy.translation.change_language to rebuild the gui
+        when the language changes.
         """
 
         global variant_functions
@@ -128,12 +125,17 @@ init -1150 python in gui:
             if renpy.variant(variant):
                 f()
 
-        for i in config.translate_clean_stores:
-            renpy.python.clean_store_backup.backup_one("store." + i)
+    def rebuild():
+        """
+        :doc: gui
 
-        # Do the same sort of reset we'd do when changing language, without
-        # actually changing the language.
-        renpy.change_language(_preferences.language, force=True)
+        Rebuilds the GUI.
+
+        Note: This is a very slow function.
+        """
+
+        renpy.translation.change_language(_preferences.language, force=True, rebuild=True)
+        renpy.exports.restart_interaction()
 
     not_set = object()
 
@@ -255,7 +257,7 @@ init -1150 python in gui:
     button_image_extension = ".png"
 
     def button_properties(kind):
-        """
+        r"""
         :doc: gui
 
         Given a `kind` of button, returns a dictionary giving standard style
@@ -339,8 +341,6 @@ init -1150 python in gui:
         :name: gui.text_properties
         :doc: gui
 
-        Given a `kind` of button, returns a dictionary giving standard style
-        properties for that button. This sets:
         Given a `kind` of textbutton, returns a dictionary giving standard style
         properties for the text inside that button. This sets:
 
@@ -471,7 +471,7 @@ init -1150 python in gui:
         import store.gui as gui
         from store import config, Color
 
-        import pygame_sdl2
+        import renpy.pygame as pygame
         import os
 
         if not config.developer:
@@ -482,7 +482,7 @@ init -1150 python in gui:
         class Image(object):
 
             def __init__(self, dn, fn, width, height):
-                self.s = pygame_sdl2.Surface((width, height), pygame_sdl2.SRCALPHA)
+                self.s = pygame.Surface((width, height), pygame.SRCALPHA)
 
 
                 if phone:
@@ -519,7 +519,7 @@ init -1150 python in gui:
                     if not gui._skip_backup:
                         os.rename(fn, bfn)
 
-                pygame_sdl2.image.save(s, fn, 3)
+                pygame.image.save(s, fn, 3)
 
             def fill(self, color=None):
                 if color is None:

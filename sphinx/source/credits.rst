@@ -19,32 +19,42 @@ the omission in future versions.
 * Ajkahn96
 * Aleema
 * Alessio
+* Aleksandar Belic Aleksanchez
 * Alex
+* Alexandre Detiste
 * Alexandre Tranchant
+* Aliengeo
 * Alisha Taylor
 * Altskop
 * Andrej
 * Andrí Wilford
 * Andy_kl
 * Apricotorange
+* Atlas Cove
 * Arda Güler
+* Arman
 * Arowana-vx
+* Arsym
 * Asfdfdfd
 * Auro-Cyanide
+* Avonder
 * Awakening
 * Ayowel
 * Baekansi
 * Bas Couwenberg
 * Bbs3223474
 * Ben Wright
+* Bkats
 * BlackDragonHunt/Mangagamer
 * Brainos
+* Brimbel
 * Bryan Tsang
 * Carl
 * Capntrips
 * Caryoscelus
 * CensoredUsername (C)
 * Charles Surett
+* Chengtian He
 * Cherie Davidson
 * Chrisclone
 * Chris Mear
@@ -53,6 +63,7 @@ the omission in future versions.
 * Clinton Nguyen
 * CobaltCore
 * CodePsy
+* Craig de Stigter
 * Craig P. Donson
 * 被诅咒的章鱼
 * DaFool
@@ -69,17 +80,22 @@ the omission in future versions.
 * Diapolo10
 * DinakiS
 * Dipesh Aggarwal
+* Dm1sh
 * Do10HM
 * Dogtopus
+* Doohyeon Won
 * Doomfest
 * Donghyeok Tak
 * DragoonHP
 * Duanemoody
+* Dynamiclinking
 * Edward Betts
+* Edward Nicholes Jr.
 * Edwin
 * Eevee (Lexy Munroe)
 * Elckarow
 * Eliza Velasquez
+* Emmanuel Ferdman
 * Emmanuel Marty
 * Emmeken
 * Enerccio
@@ -87,6 +103,7 @@ the omission in future versions.
 * Eric Ahn
 * Erufailon4
 * Evilantishad0w
+* Farzher
 * Felix Lampe
 * Franck_v
 * Frédéric Chapoton
@@ -101,6 +118,7 @@ the omission in future versions.
 * GNCanva
 * Gouvernathor
 * Gratusfr
+* Gregor Riepl
 * Gregory Pease
 * Grey
 * Gustavo Carvalho
@@ -122,14 +140,17 @@ the omission in future versions.
 * JackkelDragon
 * Jackmcbarn
 * Jacob Kauffmann
+* Jade Macho
 * JaHIY
 * Jake Staines
+* Jamaine
 * James Broadhead
 * James Pearson Hughes
 * JamiesonC
 * Jan Beich
 * Jan Masek
 * Javimat
+* Jaybe Games
 * Jeremy Rand
 * Jesusaves
 * Joaquin Garmendia Cabrera
@@ -152,6 +173,7 @@ the omission in future versions.
 * Konstantin Mozheyko
 * Konstantin Nikolayev
 * KorDen
+* Kuro
 * Kuroonehalf
 * Kyouryuukunn
 * Lapalissiano
@@ -166,13 +188,17 @@ the omission in future versions.
 * Liu Wenyuan
 * Lore
 * Lucas Ramage
+* Luejerry
+* M-From-Space
 * Maciej Katafiasz
 * Maissara Moustafa
 * Mal Graty
 * Marcel
+* Mark
 * Markus Koschany
 * Mason Chou
 * Matias B.
+* Matěj Račinský
 * Matt George
 * Matthew Vimislik
 * Max le Fou
@@ -190,6 +216,7 @@ the omission in future versions.
 * Muhammad Nur Hidayat Yasuyoshi
 * Multimokia
 * NattyanTV
+* Naughty Road
 * Neotus
 * Neyunse
 * NetGenSuperstar
@@ -197,23 +224,31 @@ the omission in future versions.
 * NoJoker
 * Nolanlemahn
 * Noriverwater
+* Npckc
+* Nullvoid8
 * Numerlor
 * Nxcrft
 * Nyaatrap
+* OctoSpacc
 * OleSTEEP
+* Opolis13
 * Oscar Six
 * Oshi-Shinobu
 * Patrick Dawson
 * Paul J Martinez
 * Paul Morio
 * Pavel Langwell
+* Peter Dave Hello
 * Peter DeVita
+* Petr Abdulin
 * Philat
 * Pionere
 * Piroshki
 * Pratomo Asta Nugraha
 * Project Gardares
 * Psunbury
+* Puxap-3opre
+* Quetz
 * Raj Singh Chauhan
 * Raspberry-soft
 * Rastagong
@@ -243,23 +278,31 @@ the omission in future versions.
 * Siege-Wizard
 * SleepKirby
 * Spiky Caterpillar
+* Stanislau Tsitsianok
+* Sunrise Sarsaparilla
 * Susnux
 * Sylvain Beucler
 * Symegac
+* TDCMC
 * Tey
 * The66F95
 * Thuong Nguyen Huu
 * Tichq
+* Tinyboxvk
 * Tlm-2501
 * Tmrwiz
 * Totally a booplicate
 * Vadim Karpenko
 * Valery Iwanofu
+* Veydzh3r
+* Viktoras Agejevas
 * Viliam Búr
+* VivianTu789
 * Vladya
 * Vollschauer
 * William Tumeo
 * Winter Wolves
+* Woolion
 * Xavi-Mat
 * Xareyli
 * Xela

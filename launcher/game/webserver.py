@@ -17,6 +17,8 @@ root = ""
 
 import renpy
 
+class BannedException(Exception):
+    pass
 
 class WebHandler(http.server.BaseHTTPRequestHandler):
 
@@ -59,7 +61,13 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
         None, in which case the caller has nothing further to do.
 
         """
-        path = self.translate_path(self.path)
+
+        try:
+            path = self.translate_path(self.path)
+        except BannedException:
+            self.send_error(403, "File not found")
+            return None
+
         f = None
         if os.path.isdir(path):
             parts = urllib.parse.urlsplit(self.path)
@@ -192,6 +200,9 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
         path = root
 
         for word in words:
+            if word.startswith("."):
+                raise BannedException("Invalid path.")
+
             if os.path.dirname(word) or word in (os.curdir, os.pardir):
                 # Ignore components that are not a simple file/directory name
                 continue

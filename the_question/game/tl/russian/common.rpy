@@ -282,7 +282,7 @@ translate russian strings:
     new "Обновление"
 
     # 00updater.rpy:1406
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Возникла ошибка:"
 
     # 00updater.rpy:1408

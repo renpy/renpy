@@ -24,6 +24,11 @@ special id should be assigned to a displayable of a given type. It can
 cause properties to be assigned to that displayable, and can make that
 displayable accessible to the part of Ren'Py that displays the screen.
 
+.. note::
+
+    The examples of screens on this page may not be the screens included with a newly
+    created game.
+
 In-Game Screens
 ===============
 
@@ -288,12 +293,12 @@ single parameter:
 `message`
     The message to display.
 
-The default notify screen, and its associated transform, are::
+An example of a notify screen is::
 
     screen notify(message):
         zorder 100
 
-        text message at _notify_transform
+        text "[message!tq]" at _notify_transform
 
         # This controls how long it takes between when the screen is
         # first shown, and when it begins hiding.

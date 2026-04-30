@@ -555,7 +555,7 @@ label button_displayables:
             idle_color "#c0c0c0"
             hover_color "#ffffff"
 
-    e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
+    e "Of course, it's pretty rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
 
     hide example
     return

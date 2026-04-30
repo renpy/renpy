@@ -770,7 +770,7 @@ translate spanish strings:
     new "Actualizador"
 
     # 00updater.rpy:1446
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Ha sucedido un error:"
 
     # 00updater.rpy:1448

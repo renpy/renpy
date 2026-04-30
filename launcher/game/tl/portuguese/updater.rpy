@@ -44,7 +44,7 @@
     new "Última versão, ainda instavél, do Ren'Py. Pode ter as últimas características ou pode não funcionar de vez."
 
     # game/updater.rpy:119
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Um erro ocorreu:"
 
     # game/updater.rpy:121

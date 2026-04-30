@@ -11,17 +11,15 @@ a linked image tag::
 
     define e = Character("Eileen", image="eileen")
 
-When a character with a linked image tag speaks, Ren'Py creates a pool of
-image attributes. The linked image tag is added to this pool, as are the
-current image attributes that are associated with that tag.
+When a character speaks, Ren'Py will search for a side image to show. The
+side image must have:
 
-In addition to the tag, there must be at least one attribute in the pool.
-If not, no side image is shown.
+* The "side" tag.
+* An attribute corresponding to the linked image tag of the speaking character (in this case, "eileen").
+* As many attributes as possible that are currently associated with the linked image tag of the speaking character.
 
-To determine the side image associated with a tag, Ren'Py tries to find
-an image with the tag "side", and the largest number of attributes from
-the pool. If no image can be found, or more than one image has the same
-number of attributes, a :class:`Null` is shown instead.
+Ren'Py will then search for a unique image matching these criteria. If one is found, it will be used as the side
+image. If no image or more than one image is found, then no side image will be shown.
 
 For example, say we have the following script::
 
@@ -29,9 +27,13 @@ For example, say we have the following script::
 
     image eileen happy = "eileen_happy.png"
     image eileen concerned = "eileen_concerned.png"
+    image eileen space suit = "eileen_space_suit.png"
+
 
     image side eileen happy = "side_eileen_happy.png"
     image side eileen = "side_eileen.png"
+    image side eileen space = "side_eileen_space.png"
+    image side eileen suit = "side_eileen_suit.png"
 
     label start:
 
@@ -41,16 +43,22 @@ For example, say we have the following script::
 
         e concerned "And this one is point B."
 
+        e space suit "And this one is point C."
+
 At point A, the character ``e`` is speaking, which is linked to the image
-tag "eileen". The "eileen happy" image is showing, so the pool of attributes
-is "eileen" and "happy". We look for an image with the "side" tag, and as
+tag "eileen". The "eileen happy" image is showing, so "eileen" must be included,
+and "happy" may be. We look for an image with the "side" tag, and as
 many of those attributes as possible – and we match "side eileen happy",
 which is the side image Ren'Py will display.
 
-At point B, the "eileen concerned" image is showing. The pool of attributes
-is now "eileen" and "concerned". The only matching image is "side eileen",
-so that's what Ren'Py selects. If there was a "side concerned" image, there
-would be ambiguity, and Ren'Py wouldn't display an image.
+At point B, the "eileen concerned" image is showing. The "eileen" attribute must be included, and "concerned" may be.
+We look for an image with the "side" tag, and as many of those attributes as possible, and we match "side eileen",
+as the "side eileen concerned" image doesn't exist.
+
+Finally, at point C, the "eileen space suit" image is showing, the "eileen" attribute must be included, and "space" and
+"suit" may be. We look for an image with the "side" tag, and as many of those attributes as possible, and we match
+"side eileen space" and "side eileen suit". Since both of these have the same number of attributes, Ren'Py refuses
+to choose between them, and no side image is shown.
 
 
 Invisible Characters

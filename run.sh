@@ -2,12 +2,11 @@
 # This builds out of date modules using the default C compiler, and then
 # runs them.
 
+set -e
+
 export RENPY_CYTHON=cython
 
-try () {
-    "$@" || exit -1
-}
-
+ROOT="$(cd "$(dirname "$0")" && pwd)"
 QUIET=${RENPY_QUIET- --quiet}
 
 if [ -n "$RENPY_COVERAGE" ]; then
@@ -21,32 +20,35 @@ if [ -n "$RENPY_VIRTUAL_ENV" ] ; then
 fi
 
 if [ -z "$VIRTUAL_ENV" ] ; then
-    echo Please install into a virtualenv.
-    exit 1
+    if [ -d "$ROOT/.venv" ] ; then
+        . "$ROOT/.venv/bin/activate"
+    else
+        echo "Please use 'uv sync' to creat the virtual environment."
+        exit 1
+    fi
 fi
 
-PY_VERSION=$(python -c 'import sys; print(sys.version_info.major)')
-
-if [ $PY_VERSION != "2" ]; then
-    BUILD_J="-j $(nproc)"
-    ADAPT_TO_SETUPTOOLS="--old-and-unmanageable"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    CPUS=$(sysctl -n hw.logicalcpu)
+else
+    CPUS=$(nproc)
 fi
 
-ROOT="$(dirname $(realpath $0))"
+BUILD_J="-j $CPUS"
 
 setup () {
     pushd $1 >/dev/null
 
-    try python setup.py $QUIET \
-        build -b build/lib.$variant -t build/tmp.$variant $BUILD_J \
-        $RENPY_BUILD_ARGS install $ADAPT_TO_SETUPTOOLS
+    if ! python setup.py $QUIET build_ext -b tmp/build/lib.$variant -t tmp/build/tmp.$variant --inplace $BUILD_J; then
+        if [ "$(which python)" != "$ROOT/.venv/bin/python" ]; then
+            echo "Warning: Running using $(which python)"
+        fi
+
+        exit 1
+    fi
 
     popd >/dev/null
 }
-
-if [ -e "$ROOT/pygame_sdl2" ]; then
-    setup "$ROOT/pygame_sdl2/"
-fi
 
 if [ -e "$ROOT/cubism" ]; then
     export CUBISM="$ROOT/cubism"
@@ -54,12 +56,13 @@ if [ -e "$ROOT/cubism" ]; then
     export LD_LIBRARY_PATH="$CUBISM/Core/dll/$CUBISM_PLATFORM"
 fi
 
-setup "$ROOT/module/"
+setup "$ROOT/"
 
 python "$ROOT/distribute.py" --link-directories
 
 if  [ "$1" = "--build" ] ; then
     echo "Ren'Py build complete."
+    exit 0
 else
-    exec $RENPY_GDB python -O $ROOT/renpy.py "$@"
+    exec $RENPY_GDB python $ROOT/renpy.py "$@"
 fi

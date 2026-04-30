@@ -15,11 +15,11 @@ RENPY = pathlib.Path(__file__).resolve().parent.parent
 TESTS = RENPY.parent / os.environ.get("RENPY_TESTS", "tests")
 
 # The currently-selected test.
-CURRENT = TESTS / 'current'
+CURRENT = TESTS / "current"
 
 
 def list_command(args):
-    modtimes = [ ]
+    modtimes = []
 
     for i in TESTS.iterdir():
         if not i.is_dir():
@@ -34,7 +34,7 @@ def list_command(args):
 
     if not args.all:
         last = modtimes[-1][0]
-        modtimes = [ i for i in modtimes if i[0] > last - 7 * 86400 ]
+        modtimes = [i for i in modtimes if i[0] > last - 7 * 86400]
 
     for t, p in modtimes:
         print(time.strftime("%Y-%m-%d %H:%M", time.localtime(t)), p.name)
@@ -53,7 +53,8 @@ def select(dn):
         RENPY / "launcher",
         "set_project",
         TESTS / dn,
-        ])
+    ])
+
 
 def select_command(args):
     select(args.path)
@@ -64,32 +65,34 @@ def selected_command(args):
 
 
 def edit_command(args):
-    subprocess.call([ "code", CURRENT.resolve(), CURRENT.resolve() / "game/script.rpy" ])
+    subprocess.call(["code", CURRENT.resolve(), CURRENT.resolve() / "game/script.rpy"])
 
 
 def new_command(args):
-
     p = TESTS / pathlib.Path(args.name)
 
     if p.exists():
         if not args.force:
-            print(f'{p} exists.')
+            print(f"{p} exists.")
             return
 
         shutil.rmtree(p)
 
-    shutil.copytree(RENPY / 'gui', p)
-    shutil.copy(RENPY / 'scripts/rt/script.rpy', p / 'game')
-    shutil.copy(RENPY / 'scripts/rt/augustina.rpy', p / 'game')
+    shutil.copytree(RENPY / "gui", p)
+    shutil.copy(RENPY / "scripts/rt/script.rpy", p / "game")
+    shutil.copy(RENPY / "scripts/rt/augustina.rpy", p / "game")
 
     subprocess.call([
         RENPY / "run.sh",
         RENPY / "launcher",
         "generate_gui",
         "--start",
-        "--width", "1280",
-        "--template", RENPY / "gui",
-        p])
+        "--width",
+        "1280",
+        "--template",
+        RENPY / "gui",
+        p,
+    ])
 
     def copy(src, dst):
         for i in RENPY.glob(src):
@@ -100,7 +103,6 @@ def new_command(args):
     copy("tutorial/game/images/bg *", "game/images")
     copy("scripts/rt/*.png", "game/images")
 
-
     (p / "project.json").unlink()
     (p / "game" / "guisupport.rpy").unlink()
     (p / "game" / "guisupport.rpyc").unlink()
@@ -108,46 +110,45 @@ def new_command(args):
     select(p)
     edit_command(None)
 
-def run_command(args):
 
-    dash_args = [ i for i in args.args if i.startswith("-") if (i != "--") ]
-    nodash_args = [ i for i in args.args if not i.startswith("-") ]
+def run_command(args):
+    dash_args = [i for i in args.args if i.startswith("-") if (i != "--")]
+    nodash_args = [i for i in args.args if not i.startswith("-")]
 
     if args.lint:
         dash_args.insert(0, "--lint")
     if args.compile:
         dash_args.insert(0, "--compile")
 
-    args = [ RENPY / "run.sh" ] + dash_args + [ CURRENT.resolve() ] + nodash_args
+    args = [RENPY / "run.sh"] + dash_args + [CURRENT.resolve()] + nodash_args
 
     os.execv(args[0], args)
 
 
 def main():
-
     ap = argparse.ArgumentParser()
     asp = ap.add_subparsers()
 
-    sp = asp.add_parser('list')
+    sp = asp.add_parser("list")
     sp.set_defaults(func=list_command)
-    sp.add_argument("--all", action='store_true')
+    sp.add_argument("--all", action="store_true")
 
-    sp = asp.add_parser('select')
+    sp = asp.add_parser("select")
     sp.set_defaults(func=select_command)
     sp.add_argument("path")
 
-    sp = asp.add_parser('selected')
+    sp = asp.add_parser("selected")
     sp.set_defaults(func=selected_command)
 
-    sp = asp.add_parser('edit')
+    sp = asp.add_parser("edit")
     sp.set_defaults(func=edit_command)
 
-    sp = asp.add_parser('new', aliases=['project'])
+    sp = asp.add_parser("new", aliases=["project"])
     sp.set_defaults(func=new_command)
     sp.add_argument("name")
-    sp.add_argument("--force", action='store_true')
+    sp.add_argument("--force", action="store_true")
 
-    sp = asp.add_parser('run')
+    sp = asp.add_parser("run")
     sp.set_defaults(func=run_command)
     sp.add_argument("--lint", action="store_true")
     sp.add_argument("--compile", action="store_true")

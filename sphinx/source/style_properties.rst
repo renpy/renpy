@@ -525,6 +525,19 @@ Text Style Properties
     image-based font, this should be the name used to register the
     font.
 
+.. style-property:: font_features dict or None
+
+    If not None, this should be a dictionary mapping OpenType layout features to values.
+    The keys of the dictionary should be the four-character OpenType feature tags, and
+    the values should be booleans.
+    For example::
+
+        style default:
+            font "SomeFont.ttf"
+            font_features { "liga" : True, "smcp" : True, "calt" : False }
+
+    A list of layout features can be found `here <https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags>`_.
+
 .. style-property:: hinting str
 
     Controls how the font will be hinted. This should be one of the following
@@ -616,10 +629,13 @@ Text Style Properties
         between adjacent Korean characters.
 
     ``"thaic90"``
-        Used for Thai text displayed in fonts that support the
-        `C90 encoding for Thai <http://www.bakoma-tex.com/doc/fonts/enc/c90/c90.pdf>`_.
-        This combines groups of characters into single glyphs, allowing for better
-        display of vowel and tone marks. Line breaking uses the unicode algorithm.
+        Used for Thai text displayed in fonts that support the C90 encoding.
+        It maps character sequences to PUA glyph code points to achieve
+        correct glyph positioning. Line breaking uses the Unicode algorithm.
+
+        In most cases, Thai text should use ``"unicode"`` (the default).
+        This is only necessary when using Ren'Py versions earlier than 8.4,
+        or when using ``"freetype"`` as the shaper.
 
     ``"western"``
         Allows breaking only at whitespace. Suitable for most
@@ -725,9 +741,37 @@ Text Style Properties
 
 .. style-property:: prefer_emoji boolean
 
-    Some unicode characters have both Emoji and non-Emjoji presentations. This
+    Some unicode characters have both Emoji and non-Emoji presentations. This
     style property chooses if such characters are given the Emoji presentation
     or not.
+
+.. style-property:: reading_order string
+
+    This controls the how text is presented for reading when RTL support has
+    been enabled. The main use of this is to influence directionally neutral
+    lines, such as those made up purely of punctuation.
+
+    ``None``
+        The default, the reading order will be determined based on the text.
+        Most neutral lines will be treated as left-to-right.
+
+    ``"ltr"``
+        Forces left-to-right presentation, even when a line is predominantly
+        made up of runs of RTL characters.
+
+    ``"rtl"``
+        Forces right-to-left presentation, even when a line is predominantly
+        made up of runs of LTR characters.
+
+    ``"wltr"``
+        Prefers left-to-right presentation, but will switch to right-to-left
+        presentation if it makes more sense for the current text. Useful for
+        impacting punctuation-only lines such as ``"..!"``.
+
+    ``"wrtl"``
+        Prefers right-to-left presentation, but will switch to left-to-right
+        presentation if it makes more sense for the current text. Useful for
+        impacting punctuation-only lines such as ``"..!"``.
 
 .. style-property:: rest_indent int
 
@@ -1050,16 +1094,26 @@ left and right sides are used.
     If not None, this is a displayable that is drawn over the break
     between the sides of the bar.
 
+.. style-property:: thumb_align float
+
+    The alignment of the bar thumb, relative to the bar. If the bar and
+    thumb are different sizes - for example, the thumb is taller than the
+    height of a horizontal bar - thumb_align can be set to 0.5 so the centers
+    of the bar and thumb are aligned.
+
 .. style-property:: thumb_shadow displayable or None
 
     If not None, this is a displayable that is drawn over the break
     between the sides of the bar.
 
-.. style-property:: thumb_offset int
+.. style-property:: thumb_offset int or tuple of (int, int)
 
     The amount that by which the thumb overlaps the bars, in
     pixels. To have the left and right bars continue unbroken, set
-    this to half the width of the thumb in pixels.
+    this to half the width of the thumb in pixels. This may also be
+    a tuple, in which case the first number is used for the left/top
+    thumb offset, and the second number is used for the right/bottom
+    thumb offset.
 
 .. style-property:: mouse string
 
