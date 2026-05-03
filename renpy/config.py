@@ -1589,7 +1589,7 @@ mesh_pad_compat: bool = False
 Should mesh pad work the way it did before 8.4? (That is, it shifts things to the right/down by pad_left/pad_top.)
 """
 
-mesh_oversample: float = 1.0
+mesh_oversample: float = 8.0
 """
 Determines how much mesh textures can be oversampled by. This, in turn, controls the maximum amount a mesh can be scaled up by before it introduces additional blurriness.
 """
