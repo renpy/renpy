@@ -341,14 +341,11 @@ class Viewport(renpy.display.layout.Container):
         elif draggable:
             if grab is None and renpy.display.behavior.map_event(ev, "viewport_drag_end"):
                 self.drag_position = None
-            elif ev.type == pygame.MOUSEMOTION and not any(ev.buttons):
-                self.drag_position = None
         else:
             self.drag_position = None
 
-
         if inside and draggable and (self.drag_position is not None) and (grab is not self):
-            if ev.type == pygame.MOUSEMOTION:
+            if ev.type == pygame.MOUSEMOTION and ev.buttons[0]:
                 oldx, oldy = self.drag_position
 
                 grabbed = getattr(grab, "_draggable", False) and grab.is_focused()
