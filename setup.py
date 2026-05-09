@@ -102,7 +102,8 @@ def main():
     cython("renpy.gl2.gl2shader")
 
     if cubism:
-        cython("renpy.gl2.live2dmodel", [ "src/live2dcsm.c" ], packages="sdl2")
+        cython("renpy.gl2.live2dmodel", [ "src/live2dcsm.c" ],)
+        cython("renpy.gl2.live2dphysics")
 
     cython("renpy.gl2.assimp", [ "src/assimpio.cc" ], language="c++", packages="assimp sdl2")
 
