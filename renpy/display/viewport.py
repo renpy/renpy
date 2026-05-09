@@ -343,9 +343,10 @@ class Viewport(renpy.display.layout.Container):
                 self.drag_position = None
             elif ev.type == pygame.MOUSEMOTION and not any(ev.buttons):
                 self.drag_position = None
+                if renpy.display.focus.get_grab() is self:
+                    renpy.display.focus.set_grab(None)
         else:
             self.drag_position = None
-
 
         if inside and draggable and (self.drag_position is not None) and (grab is not self):
             if ev.type == pygame.MOUSEMOTION:
