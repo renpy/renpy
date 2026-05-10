@@ -160,14 +160,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         roll_forward = None
 
     if (delay is not None) and renpy.game.after_rollback and not renpy.config.pause_after_rollback:
-        rv = roll_forward
-        if rv is None:
-            rv = False
-
-        if checkpoint:
-            renpy.exports.checkpoint(rv, keep_rollback=True, hard=False)
-
-        return rv
+        delay = 0
 
     renpy.exports.mode("pause")
 
