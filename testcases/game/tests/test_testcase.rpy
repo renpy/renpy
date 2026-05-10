@@ -69,7 +69,6 @@ testsuite parameter_field:
             assert eval (a + b + c == x or a + b + c == y)
 
 
-
 testsuite screenshot:
     testcase main_menu:
         screenshot "main_menu.png" #crop (0, 0, 400, 300)
@@ -227,3 +226,24 @@ testsuite timeout:
     testcase hard_pause_pass_timeout:
         $ _test.timeout = 1.0
         advance until "End"
+
+testsuite context:
+    testcase replay_action:
+        description "Tests that the Replay action properly updates context variables."
+
+        $ replay_scope = {"context_test_inner_val": True}
+        run Replay("start", scope=replay_scope)
+        assert eval (not "replay_scope" in globals())
+        assert eval ("context_test_inner_val" in globals())
+        $ renpy.end_replay()
+        assert eval ("replay_scope" in globals())
+
+    testcase replay_python:
+        description "Tests that `renpy.call_replay` properly updates context variables."
+
+        $ replay_scope = {"context_test_inner_val": True}
+        $ renpy.call_replay("start", scope=replay_scope)
+        assert eval (not "replay_scope" in globals())
+        assert eval ("context_test_inner_val" in globals())
+        $ renpy.end_replay()
+        assert eval ("replay_scope" in globals())
