@@ -161,7 +161,9 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
     message = "Pending."
 
     start = time.time()
-    while time.time() - start < timeout:
+
+    while True:
+
         fetch_pause()
 
         result = emscripten.run_script_string("""fetchFileResult({})""".format(fetch_id))
@@ -169,6 +171,10 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
 
         if status != "PENDING":
             break
+
+        if time.time() > start + timeout:
+            status = "TIMEOUT"
+            message = "Fetch timed out."
 
     try:
         if status == "OK":
