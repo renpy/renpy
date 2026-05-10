@@ -341,10 +341,8 @@ class Viewport(renpy.display.layout.Container):
         elif draggable:
             if grab is None and renpy.display.behavior.map_event(ev, "viewport_drag_end"):
                 self.drag_position = None
-            elif ev.type == pygame.MOUSEMOTION and not any(ev.buttons):
+            elif (grab is not self) and ev.type == pygame.MOUSEMOTION and not any(ev.buttons):
                 self.drag_position = None
-                if renpy.display.focus.get_grab() is self:
-                    renpy.display.focus.set_grab(None)
         else:
             self.drag_position = None
 
@@ -385,6 +383,10 @@ class Viewport(renpy.display.layout.Container):
                 new_yspeed = old_yspeed + done * (new_yspeed - old_yspeed)
 
                 self.drag_speed = (new_xspeed, new_yspeed)
+
+            if ev.type == pygame.MOUSEMOTION and not any(ev.buttons):
+                self.drag_position = None
+                self.drag_position_time = None
 
             if renpy.display.behavior.map_event(ev, "viewport_drag_end"):
                 renpy.display.focus.set_grab(None)
