@@ -982,10 +982,26 @@ class Action(Node):
         action = scoped_eval(self.expr)
         return renpy.display.behavior.is_sensitive(action)
 
+    def start(self):
+        return {"executed_already": False}
+
     def execute(self, state, t):
+        # execute() may be re-run when an action like Replay creates a new context,
+        # and the test executor keeps ticking inside that context.
+        # We advance to the next node inside the replay context so the test continues,
+        # and we skip the redundant next_node() call when run() eventually returns.
+
+        if t > 0:
+            state["executed_already"] = True
+            next_node(self.next)
+            return None
+
         action = scoped_eval(self.expr)
         renpy.display.behavior.run(action)
-        next_node(self.next)
+
+        if not state["executed_already"]:
+            next_node(self.next)
+
         return None
 
 
@@ -1393,10 +1409,25 @@ class Python(Node):
         self.source = source
         self.hide = hide
 
+    def start(self):
+        return {"executed_already": False}
+
     def execute(self, state, t):
+        # execute() may be re-run when an action like Replay creates a new context,
+        # and the test executor keeps ticking inside that context.
+        # We advance to the next node inside the replay context so the test continues,
+        # and we skip the redundant next_node() call when run() eventually returns.
+
+        if t > 0:
+            state["executed_already"] = True
+            next_node(self.next)
+            return None
+
         scoped_exec(self.source, self.hide)
 
-        next_node(self.next)
+        if not state["executed_already"]:
+            next_node(self.next)
+
         return None
 
 
