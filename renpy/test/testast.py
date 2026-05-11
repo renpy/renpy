@@ -1400,16 +1400,6 @@ class ControlFrame(Node):
     The corresponding frame instance is kept in `testexecution.control_frame_stack`.
     """
 
-    __slots__ = ("data",)
-
-    def __init__(
-        self,
-        loc: NodeLocation,
-        data: dict[str, Any] | None = None,
-    ):
-        super(ControlFrame, self).__init__(loc)
-        self.data = data or {}
-
     def execute(self, state, t):
         self.on_end_execution()
         next_node(self.next)
