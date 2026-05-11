@@ -247,3 +247,298 @@ testsuite context:
         assert eval ("context_test_inner_val" in globals())
         $ renpy.end_replay()
         assert eval ("replay_scope" in globals())
+
+testsuite for_loops:
+    description "Tests `for` loop statements with various patterns."
+
+    testcase range:
+        description "Basic `for` loop with `range`, variable accessible after loop"
+
+        $ counter = 0
+        for i in range(4):
+            $ counter += 1
+
+        assert eval (i == 3)
+        assert eval (counter == 4)
+
+    testcase tuple_unpacking:
+        description "Tuple unpacking"
+
+        $ counter = 0
+        for (x, y) in [(1, 2), (3, 4), (5, 6)]:
+            $ counter += 1
+
+        # After loop, variables should have last iteration values
+        assert eval (x == 5)
+        assert eval (y == 6)
+        assert eval (counter == 3)
+
+    testcase tuple_unpacking2:
+        description "Tuple unpacking with nested tuples"
+
+        $ counter = 0
+        for z, (x, y) in [("a", (1, 2)), ("b", (3, 4)), ("c", (5, 6))]:
+            $ counter += 1
+
+        # After loop, variables should have last iteration values
+        assert eval (z == "c")
+        assert eval (x == 5)
+        assert eval (y == 6)
+        assert eval (counter == 3)
+
+    testcase break:
+        description "`break` statement exits the loop early"
+
+        $ counter = 0
+        for i in range(10):
+            $ counter += 1
+            if eval (i == 3):
+                break
+
+        assert eval (i == 3)
+        assert eval (counter == 4)
+
+    testcase continue:
+        description "`continue` statement skips to the next iteration"
+
+        $ counter = 0
+        for i in range(4):
+            $ counter += 1
+            if eval (i == 1):
+                continue
+
+        # After continue, loop should have continued normally
+        assert eval (i == 3)
+        assert eval (counter == 4)
+
+    testcase string:
+        description "Iterating over a string"
+
+        $ counter = 0
+        for char in "hello":
+            $ counter += 1
+
+        assert eval (char == 'o')
+        assert eval (counter == 5)
+
+    testcase empty_loop:
+        description "Empty iterable"
+
+        $ counter = 0
+        for test_for_empty_loop_i in []:
+            $ counter = 0
+
+        # Loop should not execute, so i is undefined (or should not exist)
+        assert eval (not "test_for_empty_loop_i" in locals() and not "test_for_empty_loop_i" in globals())
+        assert eval (counter == 0)
+
+    testcase list:
+        description "Iterating over a list"
+
+        $ counter = 0
+        for item in [10, 20, 30, 40]:
+            $ counter += 1
+
+        assert eval (item == 40)
+        assert eval (counter == 4)
+
+    testcase enumerate:
+        description "Enumerate with tuple unpacking"
+
+        $ counter = 0
+        for i, val in enumerate(['a', 'b', 'c']):
+            $ counter += 1
+
+        # After loop, i and val should have last iteration values
+        assert eval (i == 2)
+        assert eval (val == 'c')
+        assert eval (counter == 3)
+
+    testcase enumerate_break:
+        description "Enumerate with `break` in middle"
+
+        $ counter = 0
+        for idx, val in enumerate(['x', 'y', 'z']):
+            $ counter += 1
+            if eval (idx == 1):
+                break
+
+        assert eval (idx == 1)
+        assert eval (val == 'y')
+        assert eval (counter == 2)
+
+    testcase nested_loops:
+        description "Nested for loops"
+
+        $ counter = 0
+        for i in range(3):
+            for j in range(2):
+                $ counter += 1
+
+        # After nested loops, both should have last iteration values
+        assert eval (i == 2)
+        assert eval (j == 1)
+        assert eval (counter == 6)
+
+    testcase break_inner_loop:
+        description "Break in inner loop should not affect outer loop"
+
+        $ counter = 0
+        for i in range(3):
+            for j in range(3):
+                $ counter += 1
+                if eval (j == 1):
+                    break
+
+        assert eval (i == 2)
+        assert eval (j == 1)
+        assert eval (counter == 6)
+
+    testcase continue_inner_loop:
+        description "Continue in inner loop should skip to next iteration of inner loop"
+
+        $ counter = 0
+        for i in range(3):
+            for j in range(3):
+                if eval (j == 1):
+                    continue
+                $ counter += 1
+
+        assert eval (i == 2)
+        assert eval (j == 2)
+        assert eval (counter == 6)
+
+    testcase break_outer_loop:
+        description "Break in outer loop should exit both loops"
+
+        $ counter = 0
+        for i in range(3):
+            for j in range(3):
+                $ counter += 1
+            if eval (i == 1):
+                break
+        assert eval (i == 1)
+        assert eval (j == 2)
+        assert eval (counter == 6)
+
+    testcase continue_outer_loop:
+        description "Continue in outer loop should skip to next iteration of outer loop"
+        $ counter = 0
+        for i in range(3):
+            if eval (i == 1):
+                continue
+            for j in range(3):
+                $ counter += 1
+
+        assert eval (i == 2)
+        assert eval (j == 2)
+        assert eval (counter == 6)
+
+    testcase menu_choices:
+        description "Clicks menu choices on loop"
+
+        run Start("branching.variable_test")
+        pause until screen "choice"
+
+        for option in ["Increment", "Increment", "Decrement", "Increment", "Increment"]:
+            click expression option
+
+        assert "Value: 3" timeout 2.0
+        click "Done"
+
+
+testsuite while_loops:
+    description "Tests `while` loop statements with various patterns."
+
+    testcase basic_while:
+        description "Basic while loop increments until condition becomes false"
+
+        $ i = 0
+        $ counter = 0
+
+        while eval (i < 4):
+            $ counter += 1
+            $ i += 1
+
+        assert eval (i == 4)
+        assert eval (counter == 4)
+
+    testcase while_break:
+        description "`break` exits the loop early"
+
+        $ i = 0
+        $ counter = 0
+
+        while eval (i < 10):
+            $ counter += 1
+            if eval (i == 3):
+                break
+            $ i += 1
+
+        assert eval (i == 3)
+        assert eval (counter == 4)
+
+    testcase while_continue:
+        description "`continue` skips body segment and keeps iterating"
+
+        $ i = 0
+        $ counter = 0
+        $ hits = []
+
+        while eval (i < 5):
+            $ i += 1
+            if eval (i == 3):
+                continue
+            $ counter += 1
+            $ hits.append(i)
+
+        assert eval (i == 5)
+        assert eval (counter == 4)
+        assert eval (hits == [1, 2, 4, 5])
+
+    testcase while_never_runs:
+        description "Does not execute when condition starts false"
+
+        $ i = 10
+        $ counter = 0
+
+        while eval (i < 5):
+            $ counter += 1
+            $ i += 1
+
+        assert eval (i == 10)
+        assert eval (counter == 0)
+
+    testcase nested_while:
+        description "Nested while loops"
+
+        $ i = 0
+        $ counter = 0
+
+        while eval (i < 3):
+            $ j = 0
+            while eval (j < 2):
+                $ counter += 1
+                $ j += 1
+            $ i += 1
+
+        assert eval (i == 3)
+        assert eval (j == 2)
+        assert eval (counter == 6)
+
+    testcase real_choices:
+        description "Clicks menu choices on loop"
+
+        run Start("branching.variable_test")
+        pause until screen "choice"
+
+        $ clicks = 0
+        while eval (menu_var < 3):
+            click "Increment"
+            click "Increment"
+            click "Decrement"
+            $ clicks += 1
+
+        assert eval (clicks == 3)
+        assert "Value: 3" timeout 2.0
+        click "Done"

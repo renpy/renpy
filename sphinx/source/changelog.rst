@@ -60,6 +60,8 @@ The ability to create these updates will be removed in Ren'Py 8.7.0.
 
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
 
+It is now possible to use `for` and `while` loops in automated tests.
+
 
 .. _renpy-8.5.3:
 
@@ -263,7 +265,7 @@ the Cubism SDK for Web, and support in Ren'Py for loading Live2D models in the w
 Automated Testing
 -----------------
 
-Ren'Py now includes a testing framework that makes it possible to define and run automate tests of games and of
+Ren'Py now includes a :doc:`testing framework <testcases>` that makes it possible to define and run automate tests of games and of
 Ren'Py itself. The testing framework is designed to perform automated functional testing -
 for example, clicking through a predefined sequence of dialogue and choice, and making sure the game
 reaches the end without crashing, even when the game or engine is changed.

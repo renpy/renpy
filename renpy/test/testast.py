@@ -44,6 +44,16 @@ class SelectorException(RenpyTestException):
     pass
 
 
+class LoopBreakException(Exception):
+    """Exception raised to break out of a loop."""
+    pass
+
+
+class LoopContinueException(Exception):
+    """Exception raised to continue to the next iteration of a loop."""
+    pass
+
+
 class Node(object):
     """
     An AST node for a test script.
@@ -1380,25 +1390,177 @@ class If(Node):
         return None
 
 
-class While(Node):
+class ControlFrame(Node):
+    """
+    Control-flow frame for nodes like For and While.
 
-    def __init__(self, loc: NodeLocation, condition: Condition,block):
+    This node sets up a context for the loop body to execute in, and provides hooks for handling
+    the end of the body, exceptions raised in the body, and the end of execution of the loop.
+
+    The corresponding frame instance is kept in `testexecution.control_frame_stack`.
+    """
+
+    __slots__ = ("data",)
+
+    def __init__(
+        self,
+        loc: NodeLocation,
+        data: dict[str, Any] | None = None,
+    ):
+        super(ControlFrame, self).__init__(loc)
+        self.data = data or {}
+
+    def execute(self, state, t):
+        self.on_end_execution()
+        next_node(self.next)
+        return None
+
+    def on_end_execution(self) -> None:
+        """
+        Called when execution of the control frame is ending, either by normal termination,
+        loop breaking, or exception raising.
+        """
+        return None
+
+    def on_exception(self, exc: Exception) -> bool:
+        """
+        Handles an exception raised during execution of the loop body.
+        Returns True if the exception was handled and should be suppressed, or False to propagate it.
+        """
+        return False
+
+
+class For(ControlFrame):
+    """
+    A for loop node that iterates over an expression.
+
+    `variable`
+        The loop variable pattern (e.g., "i" or "(x, y)").
+    `expression`
+        The iterable expression.
+    `block`
+        A Block containing the statements to execute in each iteration.
+    """
+
+    __slots__ = ("variable", "expression", "block", "loop_iterator")
+
+    def __init__(self, loc: NodeLocation, variable: str, expression: str, block: Block):
+        Node.__init__(self, loc)
+        self.variable = variable
+        self.expression = expression
+        self.block = block
+        self.loop_iterator = None
+
+    def chain(self, next):
+        self.next = next
+        self.block.chain(self)
+
+    def start(self) -> NodeState:
+        """Initialize and push a control frame for this loop."""
+
+        if self.loop_iterator is None:
+            iterable = scoped_eval(self.expression)
+            self.loop_iterator = iter(iterable)
+
+        renpy.test.testexecution.push_control_frame(self)
+        return self.loop_iterator
+
+    def execute(self, state: NodeState, t: float) -> NodeState:
+        """Execute the loop body or advance to the next iteration."""
+
+        iterator = state
+
+        try:
+            loop_value = next(iterator)
+            scope = renpy.test.testexecution.get_current_scope()
+
+            temp_name = "__renpy_test_loop_value__"
+            scope[temp_name] = loop_value
+            try:
+                scoped_exec(f"{self.variable} = {temp_name}")
+            finally:
+                scope.pop(temp_name, None)
+
+            if self.block.block:
+                self.block.restart()
+                next_node(self.block.block[0])
+                return None
+            else:
+                next_node(self)
+                return state
+
+        except StopIteration:
+            self.loop_iterator = None
+            renpy.test.testexecution.pop_control_frame(self)
+            next_node(self.next)
+            return None
+
+    def on_exception(self, exc: Exception) -> bool:
+        if isinstance(exc, LoopContinueException):
+            next_node(self)
+            return True
+
+        if isinstance(exc, LoopBreakException):
+            self.loop_iterator = None
+            renpy.test.testexecution.pop_control_frame(self)
+            next_node(self.next)
+            return True
+
+        return False
+
+    def get_repr_params(self) -> str:
+        return f"variable={self.variable!r}, expression={self.expression!r}"
+
+
+class While(ControlFrame):
+    def __init__(self, loc: NodeLocation, condition: Condition, block: Block):
         Node.__init__(self,loc)
-        
+
         self.condition = condition
         self.block = block
 
+    def start(self) -> NodeState:
+        renpy.test.testexecution.push_control_frame(self)
+        return 0
+
     def chain(self,next):
         self.next = next
-    
+        self.block.chain(self)
+
     def execute(self, state, t):
         if self.condition.ready():
-            self.block.chain(self)
+            self.block.restart()
             next_node(self.block.block[0])
             return None
-        
+
         next_node(self.next)
         return None
+
+    def on_exception(self, exc: Exception) -> bool:
+        if isinstance(exc, LoopContinueException):
+            next_node(self)
+            return True
+
+        if isinstance(exc, LoopBreakException):
+            renpy.test.testexecution.pop_control_frame(self)
+            next_node(self.next)
+            return True
+
+        return False
+
+
+class Break(Node):
+    """Breaks out of the nearest enclosing loop."""
+
+    def execute(self, state, t):
+        raise LoopBreakException()
+
+
+class Continue(Node):
+    """Continues to the next iteration of the nearest enclosing loop."""
+
+    def execute(self, state, t):
+        raise LoopContinueException()
 
 
 class Python(Node):

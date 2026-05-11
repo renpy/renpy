@@ -120,6 +120,39 @@ def while_statement(l: Lexer, loc: NodeLocation) -> testast.While:
     return testast.While(loc, condition, block)
 
 
+@test_statement("for")
+def for_statement(l: Lexer, loc: NodeLocation) -> testast.For:
+    variable_pattern = l.require(l.simple_expression, comma=True, operator=False)
+    l.require("in")
+    expression = l.require(l.simple_expression)
+    l.require(":")
+    l.expect_eol()
+    l.expect_block("for statement")
+
+    block, _ = parse_block(l.subblock_lexer(False), loc)
+
+    l.advance()
+    return testast.For(loc, variable_pattern, expression, block)
+
+
+@test_statement("break")
+def break_statement(l: Lexer, loc: NodeLocation) -> testast.Break:
+    l.expect_eol()
+    l.expect_noblock("break statement")
+    l.advance()
+
+    return testast.Break(loc)
+
+
+@test_statement("continue")
+def continue_statement(l: Lexer, loc: NodeLocation) -> testast.Continue:
+    l.expect_eol()
+    l.expect_noblock("continue statement")
+    l.advance()
+
+    return testast.Continue(loc)
+
+
 ##############################################################################
 # Statement functions: Actions
 

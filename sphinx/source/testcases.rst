@@ -740,7 +740,7 @@ Click
 
     Type: :dfn:`Command`
 
-    .. describe:: click [button (int)] [selector] [pos (x, y)]
+    .. describe:: click [button (int)] [selector] [expression (expr)] [pos (x, y)]
 
 Executes a simulated click on the screen. It takes the following optional
 properties:
@@ -749,6 +749,9 @@ properties:
     with. It takes an integer and defaults to 1. 1 is a left-click, 2 is a
     right-click, 3 is a middle-click, 4 and 5 are additional buttons found on
     some mouses. Normally only 1 and 2 trigger any response from Ren'Py.
+- ``expression`` specifies a test expression that identifies the click target.
+    It is evaluated according to the rules of the :ref:`pattern <test-text-selector>`\ -taking
+    clause.
 
 If ``selector`` and/or ``pos`` are given, the virtual test mouse is moved according to
 the rules of the :ref:`move statement <test-move-statement>` before the click is sent.
@@ -759,7 +762,24 @@ Click behaves like a :ref:`pattern <test-text-selector>`\ -taking clause which w
 not be given a pattern: if no ``pos`` is provided, it will look for a neutral
 place where a click would not occur on a focusable element.
 
-.. give example for both
+::
+
+    # Click at the current mouse position
+    click
+
+    # Click a button with specific text
+    click "Start"
+
+    # Right-click on a specific target.
+    click id "inventory_button" button 2
+
+    # Click the center of the selected target.
+    click id "inventory_button" pos (0.5, 0.5)
+
+    # Click a button using an expression.
+    $ button_name = "Load"
+    click expression button_name
+
 
 .. note::
 
@@ -1125,6 +1145,36 @@ assertion fails. If the condition is not met, the assertion passes.
     - `Python asserts <https://docs.python.org/reference/simple_stmts.html#the-assert-statement>`__
     - `Boolean evaluation <https://docs.python.org/library/stdtypes.html#truth-value-testing>`__
 
+For
+^^^
+
+    Type: :dfn:`Control`
+
+    .. describe:: for <variable> in <iterable>
+
+This statement executes a block of test statements for each item in the provided
+iterable. You can use `break` and `continue` statements to control the flow of the loop.
+
+Example::
+
+    # Click "Next" three times
+    for _ in range(3):
+        click "Next"
+
+    # Click each of the choices, skipping "Trade" if the shop is not unlocked
+    for choice in ["Talk", "Trade", "Leave"]:
+        if eval (choice == "Trade" and not persistent.shop_unlocked):
+            continue
+        click expression choice
+        if screen "shop":
+            break
+
+    # Click each of the tabs in the stats screen, skipping "Quests" if quests are not enabled
+    for stat_tab in ["Stats", "Skills", "Quests"]:
+        click expression stat_tab
+        if eval (stat_tab == "Quests" and not persistent.quests_enabled):
+            continue
+        assert text stat_tab timeout 2.0
 
 If
 ^^^^^^^^^
@@ -1246,20 +1296,25 @@ This timeout temporarily overrides the global ``_test.timeout`` setting.
     skip until screen "inventory" timeout 20.0
 
 While
-^^^^^^^^^
+^^^^^
 
     Type: :dfn:`Control`
 
     .. describe:: while <condition>
 
 This statement executes a block of test statements while the provided
-condition remains met.
+condition remains met. You can use `break` and `continue` statements
+to control the flow of the loop.
 
 Example::
 
-    while eval shouldAdvance:
+    $ should_advance = True
+    while eval should_advance:
         advance
-        $ shouldAdvance = some_evaluation_function()
+        if screen "main_menu":
+            break
+
+        $ should_advance = some_evaluation_function()
 
 Python Blocks And Dollar-Lines
 ------------------------------
