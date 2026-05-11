@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import range, str  # *
 
 import math
 import collections
@@ -687,7 +687,7 @@ class Movie(renpy.display.displayable.Displayable):
     def render(self, width, height, st, at):
         self.ensure_channels()
 
-        if self._play and not (renpy.game.preferences.video_image_fallback is True):
+        if self._play and renpy.game.preferences.video_image_fallback is not True:
             if channel_movie.get(self.channel, None) is not self:
                 channel_movie[self.channel] = self
 

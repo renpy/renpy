@@ -20,14 +20,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import range, round, str  # *
 
-from typing import Any, Optional, Callable
 
 import math
 
 import renpy
-import renpy.pygame as pygame
 
 from renpy.text.textsupport import TAG, TEXT, PARAGRAPH, DISPLAYABLE
 
@@ -2991,7 +2989,7 @@ class Text(renpy.display.displayable.Displayable):
 
                 else:
                     raise Exception("Can't display {0!r} as Text.".format(i))
-            except Exception as e:
+            except Exception:
                 if renpy.config.safe_text or self.safe:
                     tokens.append((TEXT, i))
 

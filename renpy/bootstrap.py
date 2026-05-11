@@ -341,7 +341,7 @@ def bootstrap(renpy_base):
 
     # Ditto for the Ren'Py module.
     try:
-        import _renpy  # type: ignore
+        pass  # type: ignore
     except Exception as e:
         e.add_note(
             textwrap.dedent(f"""

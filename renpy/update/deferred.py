@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import open, range, str  # *
 
 import os
 
@@ -189,7 +189,7 @@ def process_deleted():
 
     try:
         shutil.rmtree(DELETED_DIRECTORY)
-    except Exception as e:
+    except Exception:
         pass
 
 

@@ -79,7 +79,7 @@ added = {}
 
 
 def add(msg, *args):
-    if not msg in added:
+    if msg not in added:
         added[msg] = True
         msg = str(msg) % args
         print(msg)
@@ -750,7 +750,7 @@ def check_parameters(kind, node_name, parameter_info):
                     kind, node_name, name, cat
                 )
             )
-            if not "_" in name:
+            if "_" not in name:
                 add("This can be fixed by naming it '{}_'".format(name))
         elif rv:
             last = rv.pop()

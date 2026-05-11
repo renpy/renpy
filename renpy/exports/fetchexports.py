@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import basestring, open, str  # *
 
 
 import re
@@ -40,7 +40,7 @@ try:
     import urllib.request
 
     proxies = urllib.request.getproxies()
-except Exception as e:
+except Exception:
     proxies = {}
 
 
@@ -231,7 +231,7 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
 
     if method == "GET" or method == "HEAD":
         command = """fetchFile("{method}", "{url}", null, "{fn}", null, "{headers}")""".format(
-            method=method, url=url, fn=fn, content_type=content_type, headers=headers
+            method=method, url=url, fn=fn, headers=headers
         )
     else:
         command = """fetchFile("{method}", "{url}", "{fn}", "{fn}", "{content_type}", "{headers}")""".format(

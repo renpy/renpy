@@ -59,7 +59,7 @@ class TranslateInfo(object):
         for i in block:
             try:
                 self.source.append(i.get_code())
-            except Exception as e:
+            except Exception:
                 pass
 
 
@@ -326,7 +326,7 @@ class Restructurer(object):
         while True:
             identifier = base + suffix
 
-            if not self.id_exists(identifier) and not (identifier in self.preexisting_identifiers):
+            if not self.id_exists(identifier) and identifier not in self.preexisting_identifiers:
                 break
 
             i += 1

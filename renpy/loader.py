@@ -19,12 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Iterable, Literal, NamedTuple
+from typing import Literal
 
 import renpy
 import os
 import os.path
-import sys
 import threading
 import zlib
 import re
@@ -576,7 +575,7 @@ def load_from_archive(name):
     Returns an open python file object of the given type from an archive file.
     """
     for afn, index in archives:
-        if not name in index:
+        if name not in index:
             continue
 
         data = []

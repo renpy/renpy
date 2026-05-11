@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import str  # *
 
 import fnmatch
 
@@ -49,7 +49,7 @@ def expand_predict(d):
     if not isinstance(d, str):
         return [d]
 
-    if not "*" in d:
+    if "*" not in d:
         return [d]
 
     if "." in d:

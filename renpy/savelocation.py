@@ -25,7 +25,7 @@
 # The current save location is stored in the location variable in loadsave.py.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import open, str  # *
 
 import os
 import zipfile
@@ -335,7 +335,7 @@ class FileLocation(object):
 
                 try:
                     token = zf.read("signatures").decode("utf-8")
-                except:
+                except Exception:
                     token = ""
 
             return log, token

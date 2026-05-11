@@ -20,12 +20,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import open, str  # *
 
 import contextlib
 
 import renpy
-from renpy.exports.commonexports import renpy_pure
 
 
 def warp_to_line(warp_spec):

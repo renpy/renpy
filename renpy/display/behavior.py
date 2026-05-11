@@ -22,8 +22,7 @@
 # This contains various Displayables that handle events.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-from typing import Callable
+from renpy.compat import round, str  # *
 
 import json
 import math
@@ -140,7 +139,7 @@ def compile_event(key, keydown):
         else:
             rv += " and (not ev.repeat)"
 
-    if not "anymod" in modifiers:
+    if "anymod" not in modifiers:
         if key not in ["K_LALT", "K_RALT"]:
             if "alt" in modifiers or (renpy.macintosh and "osctrl" in modifiers):
                 rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
@@ -1123,7 +1122,7 @@ class Button(renpy.display.layout.Window):
 
         # If we have a child, try passing the event to it. (For keyboard
         # events, this only happens if we're focused.)
-        if (not (ev.type in KEY_EVENTS)) or self.style.key_events:
+        if (ev.type not in KEY_EVENTS) or self.style.key_events:
             rv = super(Button, self).event(ev, x, y, st)
             if rv is not None:
                 return rv

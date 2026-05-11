@@ -22,7 +22,7 @@
 # The public API for music in games.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import str  # *
 
 
 import renpy
@@ -30,7 +30,6 @@ import renpy
 from renpy.audio.audio import get_channel, get_serial
 
 # Part of the public api:
-from renpy.audio.audio import register_channel, alias_channel
 
 
 def play(

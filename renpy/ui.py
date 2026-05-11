@@ -27,12 +27,11 @@
 # All functions in the is file should be documented in the wiki.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import str  # *
 
 import sys
 
 import renpy
-from renpy.display.behavior import is_selected, is_sensitive
 
 ##############################################################################
 # Special classes that can be subclassed from the outside.
@@ -526,7 +525,7 @@ class Wrapper(renpy.object.Object):
 
         try:
             w = self.function(*args, **keyword)
-        except TypeError as e:
+        except TypeError:
             _etype, e, tb = sys.exc_info()
 
             if tb.tb_next is None:

@@ -20,9 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import open, range  # *
 
-from typing import Tuple, List, Dict, Set, Optional, Iterable, Any
 
 import os
 import sys
@@ -245,7 +244,6 @@ def choose_variants():
 
     elif renpy.emscripten:
         import emscripten  # type: ignore
-        import re
 
         # web
         renpy.config.variants.insert(0, "web")  # type: ignore

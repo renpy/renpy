@@ -23,7 +23,6 @@
 # operation.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -32,8 +31,6 @@ import datetime
 import traceback
 import os
 import builtins
-import io
-import time
 
 real_open = builtins.open
 
@@ -68,7 +65,7 @@ def replacement_open(*args, **kwargs):
 
 
 def init_main_thread_open():
-    if not "RENPY_DEBUG_MAIN_THREAD_OPEN" in os.environ:
+    if "RENPY_DEBUG_MAIN_THREAD_OPEN" not in os.environ:
         return
 
     builtins.open = replacement_open

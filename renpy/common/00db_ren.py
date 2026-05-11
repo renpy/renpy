@@ -213,7 +213,8 @@ class JSONDB(_object):
 
         d = {k: v for k, v in self.data.items() if v.changed}
 
-        import os, json
+        import os
+        import json
 
         fn = os.path.join(config.gamedir, self.fn)
 

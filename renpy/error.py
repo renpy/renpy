@@ -1075,7 +1075,7 @@ class StackSummary(list[FrameSummary]):
 def _safe_string(value, what, func: Callable[..., str] = str):
     try:
         return func(value)
-    except:
+    except Exception:
         return f"<{what} {func.__name__}() failed>"
 
 

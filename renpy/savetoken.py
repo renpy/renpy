@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import open  # *
 
 import base64
 import os
@@ -246,7 +246,7 @@ def upgrade_all_savefiles():
     for fn in renpy.loadsave.location.list_files():
         try:
             upgrade_savefile(fn)
-        except:
+        except Exception:
             renpy.display.log.write("Error upgrading save file:")
             renpy.display.log.exception()
 

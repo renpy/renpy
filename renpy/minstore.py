@@ -20,9 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import PY2, basestring, bchr, bord, open, range, str, tobytes, unicode  # *
 
-from typing import Callable, Any, Self, Literal, cast, overload, final, override
 
 
 xrange = range
@@ -58,7 +57,6 @@ from renpy.revertable import RevertableObject as object
 from renpy.revertable import revertable_range as range
 from renpy.revertable import revertable_sorted as sorted
 
-from renpy.revertable import MultiRevertable
 
 import renpy.ui as ui
 
@@ -99,7 +97,6 @@ def _(s):
 
 
 from renpy.translation import translate_string as __
-from renpy.substitutions import ___
 
 
 def _p(s):

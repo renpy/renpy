@@ -23,7 +23,7 @@
 # the screen.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import range, str  # *
 
 
 import renpy
@@ -1879,7 +1879,7 @@ class Side(Container):
         seen = set()
 
         for i in positions:
-            if not i in Side.possible_positions:
+            if i not in Side.possible_positions:
                 raise Exception("Side used with impossible position '%s'." % (i,))
 
             if i in seen:
@@ -2437,7 +2437,7 @@ class NearRect(Container):
             self.preferred_side = "top"
         self.invert_offsets = invert_offsets
 
-        if not self.preferred_side in NearRect.possible_positions:
+        if self.preferred_side not in NearRect.possible_positions:
             raise Exception("preferred_side used with impossible position '%s'." % (self.preferred_side,))
 
         if replaces is not None:

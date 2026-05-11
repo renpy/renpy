@@ -25,15 +25,13 @@
 # at least pcm_ok, we have no sound whatsoever.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import open, str  # *
 
-from typing import Literal
 
 import time
 import os
 import re
 import threading
-import sys
 import io
 
 import renpy
@@ -1355,7 +1353,7 @@ def interact():
                 if ctx.raw_audio_filter != c.raw_audio_filter:
                     c.set_audio_filter(ctx.raw_audio_filter, True)
 
-                if not c.name in renpy.display.video.last_channel_movie:
+                if c.name not in renpy.display.video.last_channel_movie:
                     if c.loop != filenames:
                         c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))
 

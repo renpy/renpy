@@ -23,12 +23,11 @@
 # and the textual representation of Ren'Py code.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import open, str  # *
 
 
 import renpy
 import re
-import codecs
 
 # A map from line loc (elided filename, line) to the Line object representing
 # that line.

@@ -23,7 +23,7 @@
 # called when parsing is necessary, and creates an AST from the script.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import str  # *
 
 import collections
 import time
@@ -38,11 +38,6 @@ from renpy.lexer import (
     group_logical_lines,
     ParseError,
     Lexer,
-    # Kept imported for older games.
-    munge_filename,
-    elide_filename,
-    unelide_filename,
-    SubParse,
 )
 
 # A list of parse error messages.

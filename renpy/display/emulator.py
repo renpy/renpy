@@ -22,7 +22,6 @@
 # This file contains code to emulate various other devices on the PC.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import os
@@ -79,13 +78,13 @@ def touch_emulator(ev, x, y):
     elif ev.type == pygame.KEYDOWN and not ios:
         if ev.mod & pygame.KMOD_SHIFT:
             pass
-        elif not ev.key in TOUCH_KEYS:
+        elif ev.key not in TOUCH_KEYS:
             return None, x, y
 
     elif ev.type == pygame.KEYUP and not ios:
         if ev.mod & pygame.KMOD_SHIFT:
             pass
-        if not ev.key in TOUCH_KEYS:
+        if ev.key not in TOUCH_KEYS:
             return None, x, y
 
     return ev, x, y
@@ -106,10 +105,10 @@ def tv_emulator(ev, x, y):
     elif ev.type == pygame.MOUSEMOTION:
         return None, x, y
     elif ev.type == pygame.KEYDOWN:
-        if not ev.key in TV_KEYS:
+        if ev.key not in TV_KEYS:
             return None, x, y
     elif ev.type == pygame.KEYDOWN:
-        if not ev.key in TV_KEYS:
+        if ev.key not in TV_KEYS:
             return None, x, y
 
     return ev, x, y

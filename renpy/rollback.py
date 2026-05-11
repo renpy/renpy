@@ -24,20 +24,13 @@
 # game state to some time in the past.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import range, str  # *
 
-from typing import Optional, Any
+from typing import Any
 
-import marshal
-import random
-import weakref
-import re
-import sys
 import time
 import io
 import types
-import copyreg
-import functools
 
 import renpy
 

@@ -24,9 +24,9 @@
 # methods that perform standard tasks, like the say and menu methods.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import str  # *
 
-from typing import Any, Optional, List, Callable
+from typing import Any, Callable
 
 
 import collections

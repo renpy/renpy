@@ -22,9 +22,8 @@
 # The Character object (and friends).
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import range, str  # *
 
-from typing import Any, Literal
 
 import renpy
 
@@ -900,7 +899,7 @@ def display_say(
             if final:
                 try:
                     rv = renpy.ui.interact(mouse="say", type=type, roll_forward=roll_forward)
-                except Exception as e:
+                except Exception:
                     had_exception = True
                     raise
                 finally:

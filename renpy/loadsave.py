@@ -626,7 +626,7 @@ def load(filename):
 
     try:
         json = slot_json(filename)
-    except Exception as e:
+    except Exception:
         json = {}
 
     renpy.session["traceback_load"] = "_traceback" in json

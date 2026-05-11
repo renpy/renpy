@@ -45,7 +45,8 @@ to_unlink = {}
 queue_lock = threading.RLock()
 
 if renpy.emscripten:
-    import emscripten, json  # type: ignore
+    import emscripten
+    import json  # type: ignore
 
     # Space-efficient, copy-less download share
     # Note: could be reimplement with pyodide's jsproxy, but let's keep things small
@@ -111,7 +112,10 @@ elif os.environ.get("RENPY_SIMULATE_DOWNLOAD", False):
     # simulate
     # Ex: rm -rf odrdtest-simu && unzip -d odrdtest-simu/ odrdtest-1.0-dists/odrdtest-1.0-web/game.zip && RENPY_SIMULATE_DOWNLOAD=1 ./renpy.sh odrdtest-simu
 
-    import urllib, urllib.parse, random, requests
+    import urllib
+    import urllib.parse
+    import random
+    import requests
 
     class XMLHttpRequest(object):
         def __init__(self, filename):

@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import chr, open, range, round, str  # *
 
 
 import renpy.pygame as pygame
@@ -28,7 +28,6 @@ import renpy.pygame as pygame
 import xml.etree.ElementTree as etree
 
 import renpy
-import os
 
 import renpy.text.ftfont as ftfont
 ftfont.init()
@@ -953,7 +952,7 @@ class FontGroup(object):
                 i = ord(i)
             if not ((None in self.map) or (i in self.map)):
                 raise Exception("Character U+{0:04x} has no font in this FontGroup".format(i))
-            if not i in self.char_map:
+            if i not in self.char_map:
                 # means the character has not already been remapped
                 self.char_map[i] = target
 

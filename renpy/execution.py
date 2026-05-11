@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING, Callable, Any
 
 # FrameType can't be pickled!
 if TYPE_CHECKING:
-    from types import FrameType
+    pass
 
 import sys
 import time

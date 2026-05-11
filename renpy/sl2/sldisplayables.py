@@ -23,7 +23,7 @@
 # Definitions of screen language statements.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import str  # *
 
 
 import renpy
@@ -32,7 +32,7 @@ from renpy.sl2.slparser import Positional, Keyword, Style, PrefixStyle, add
 from renpy.sl2.slparser import DisplayableParser, many
 
 from renpy.sl2.slproperties import text_properties, box_properties, window_properties
-from renpy.sl2.slproperties import bar_properties, button_properties, position_properties
+from renpy.sl2.slproperties import bar_properties, button_properties
 from renpy.sl2.slproperties import text_position_properties, text_text_properties
 from renpy.sl2.slproperties import side_position_properties
 from renpy.sl2.slproperties import scrollbar_bar_properties, scrollbar_position_properties

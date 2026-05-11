@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import open  # *
 
 import argparse
 import os
@@ -589,8 +589,7 @@ class Update(object):
         for i in self.new_files:
             if not i.segments:
                 self.log("Create empty file %s.", i.data_filename)
-                with open(i.data_filename + ".new.rpu", "wb") as f:
-                    pass
+                open(i.data_filename + ".new.rpu", "wb").close()
 
     def rename_new_files(self):
         """
@@ -617,7 +616,7 @@ class Update(object):
             self.log("Remove directory %s.", i)
             try:
                 os.rmdir(os.path.join(self.targetdir, i))
-            except:
+            except OSError:
                 pass
 
     def set_xbit(self):
@@ -629,7 +628,7 @@ class Update(object):
             if i.xbit:
                 try:
                     os.chmod(i.data_filename, 0o755)
-                except:
+                except OSError:
                     raise UpdateError("Could not set the executable bit on %s." % i.data_filename)
 
 

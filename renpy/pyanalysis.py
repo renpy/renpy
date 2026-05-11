@@ -20,10 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import open, str  # *
 
 
-import builtins
 
 import renpy
 from renpy.python import py_compile
@@ -488,7 +487,7 @@ class Analysis(object):
         Marks `name` as a potential local constant.
         """
 
-        if not name in self.not_constant:
+        if name not in self.not_constant:
             self.local_constant.add(name)
             self.global_constant.discard(name)
             self.pure_functions.discard(name)

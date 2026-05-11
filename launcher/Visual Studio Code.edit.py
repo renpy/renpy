@@ -98,7 +98,7 @@ class Editor(renpy.editor.Editor):
                 flatpak_args = [ renpy.exports.fsencode(i) for i in flatpak_args ]
                 try:
                     subprocess.Popen(flatpak_args)
-                except:
+                except Exception:
                     raise missingvscode
         else:
             subprocess.Popen(args)

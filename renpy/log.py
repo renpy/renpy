@@ -22,7 +22,7 @@
 # This module handles the logging of messages to a file.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # type: ignore
+from renpy.compat import open, str  # type: ignore
 
 
 import os
@@ -34,7 +34,6 @@ import sys
 import io
 import re
 
-import encodings.latin_1
 
 import renpy
 
@@ -301,7 +300,7 @@ class StdioRedirector(object):
         return []
 
 
-if not "RENPY_NO_REDIRECT_STDIO" in os.environ:
+if "RENPY_NO_REDIRECT_STDIO" not in os.environ:
 
     class StdoutRedirector(StdioRedirector):
         real_file = real_stdout

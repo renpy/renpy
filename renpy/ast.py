@@ -28,16 +28,12 @@
 
 from typing import Any, Callable, ClassVar, Literal, Never
 
-import time
-import hashlib
-import ast
 import re
 import sys
-import zlib
 
 import renpy
 
-from renpy.cslots import Object, Slot, IntegerSlot
+from renpy.cslots import Object
 from renpy.astsupport import hash32, PyExpr
 
 from renpy.parameter import (
@@ -49,11 +45,7 @@ from renpy.parameter import (
 
 # For pickle compatibility.
 if True:
-    from renpy.parameter import (
-        Parameter,
-        Signature,
-        EMPTY_ARGUMENTS,
-    )
+    pass
 
 
 # Config variables that are set twice - once when the rpy is first loaded,
@@ -564,7 +556,7 @@ def probably_side_effect_free(expr: str) -> bool:
     doesn't allow for a function call.
     """
 
-    return not ("(" in expr)
+    return "(" not in expr
 
 
 def chain_block(block: list[Node], next: Node | None) -> None:

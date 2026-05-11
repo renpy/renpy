@@ -16,7 +16,6 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-import renpy.pygame
 
 vernum = (2, 1, 0)
 ver = ".".join(str(i) for i in vernum)

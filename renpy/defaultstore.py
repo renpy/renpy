@@ -20,7 +20,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 from renpy.minstore import *
@@ -29,7 +28,6 @@ from renpy.minstore import *
 # of user code, unless we re-import it.
 import renpy
 
-import renpy.display.im as im
 import renpy.display.anim as anim
 
 _restart = None
@@ -475,7 +473,5 @@ _quit_slot = None
 _screenshot_pattern = None
 
 # Make these available to user code.
-import sys
-import os
 
 globals()["renpy"] = renpy.exports

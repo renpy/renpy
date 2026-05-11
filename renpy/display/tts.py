@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.compat import str  # *
 
 
 import sys
@@ -254,7 +254,7 @@ def init():
         if renpy.ios:
             platform_tts = AppleTTS()
 
-    except Exception as e:
+    except Exception:
         renpy.display.log.write("Failed to initialize TTS.")
         renpy.display.log.exception()
 

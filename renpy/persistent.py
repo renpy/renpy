@@ -283,7 +283,8 @@ def init():
 
 
 def init_debug_pickler():
-    import io, pickle
+    import io
+    import pickle
 
     class DebugPickler(pickle.Pickler):
         safe_types: set[type] = set()
