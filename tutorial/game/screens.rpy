@@ -638,6 +638,7 @@ screen file_slots(title):
                     $ slot = i + 1
 
                     button:
+                        id f"save_slot_{slot}"
                         action FileAction(slot)
 
                         has vbox
@@ -1200,8 +1201,8 @@ screen confirm(message, yes_action, no_action):
                 xalign 0.5
                 spacing 100
 
-                textbutton _("Yes") action yes_action
-                textbutton _("No") action no_action
+                textbutton _("Yes") id "confirm_yes_button" action yes_action
+                textbutton _("No") id "confirm_no_button" action no_action
 
     ## Right-click and escape answer "no".
     key "game_menu" action no_action
