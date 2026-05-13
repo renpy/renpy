@@ -817,19 +817,6 @@ def update_playing():
 
     old_channel_movie = renpy.game.context().movie
 
-    for c, m in channel_movie.items():
-        old = old_channel_movie.get(c, None)
-        last = last_channel_movie.get(c, None)
-
-        if (c in reset_channels) and renpy.config.replay_movie_sprites:
-            m.play(old)
-        elif old is m or last is m:
-            continue
-        elif old is not m:
-            m.play(old)
-        elif m.loop and last is not m:
-            m.play(last)
-
     stopped = set()
 
     for c, m in last_channel_movie.items():
@@ -845,8 +832,22 @@ def update_playing():
                 m.stop()
                 m.release_channel()
 
+    for c, m in channel_movie.items():
+        old = old_channel_movie.get(c, None)
+        last = last_channel_movie.get(c, None)
+
+        if (c in reset_channels) and renpy.config.replay_movie_sprites:
+            m.play(old)
+        elif old is m and last is m:
+            continue
+        elif old is not m:
+            m.play(old)
+        elif m.loop and last is not m:
+            m.play(last)
+
     renpy.game.context().movie = last_channel_movie = dict(channel_movie)
     reset_channels.clear()
+
 
 
 def frequent():
