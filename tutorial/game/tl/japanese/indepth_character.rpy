@@ -15,7 +15,7 @@ translate japanese demo_character_d7908a94:
 translate japanese demo_character_275ef8b9:
 
     # e "Each statement creates a Character object, and gives it a single argument, a name. If the name is None, no name is displayed."
-    e "書くステートメントはキャラクターオブジェクトを作成し、引数として名前を与えます。名前がNoneなら名前は表示されません。"
+    e "各ステートメントはキャラクターオブジェクトを作成し、引数として名前を与えます。名前がNoneなら名前は表示されません。"
 
 # game/indepth_character.rpy:21
 translate japanese demo_character_a63aea0c:
@@ -62,14 +62,14 @@ translate japanese demo_character_66d08d98:
 # game/indepth_character.rpy:39
 translate japanese demo_character_7e0d75aa:
 
-    # e "Properties beginning with window apply to the textbox, those with what apply to the the dialogue, and those with who to the name of Character speaking."
-    e "windowで始まるプロパティーはテキストボックスに適用され、whatで始まるものは台詞に、適用され、whoで始まるものは離しているキャラクターの名前に適用されます。"
+    # e "Properties beginning with window apply to the textbox, those with what apply to the dialogue, and those with who to the name of Character speaking."
+    e "windowで始まるプロパティーはテキストボックスに適用され、whatで始まるものは台詞に適用され、whoで始まるものは発言しているキャラクターの名前に適用されます。"
 
 # game/indepth_character.rpy:41
 translate japanese demo_character_56703784:
 
     # e "If you leave a prefix out, the style customizes the name of the speaker."
-    e "接頭辞がないと、そのスタイルは離しているキャラクターの名前をカスタムします。"
+    e "接頭辞がないと、そのスタイルは発言しているキャラクターの名前をカスタムします。"
 
 # game/indepth_character.rpy:43
 translate japanese demo_character_b456f0a9:
@@ -81,7 +81,7 @@ translate japanese demo_character_b456f0a9:
 translate japanese demo_character_31ace18e:
 
     # e1 "The window_background property sets the image that's used for the background of the textbox, which should be the same size as the default in gui/textbox.png."
-    e1 "window_backgroundプロパティーはテキストボックスの背景に使用される画像を設定し、画像はデフォルトではgui/textbox.pngと同じサイズであるべきです。"
+    e1 "window_backgroundプロパティーはテキストボックスの背景に使用される画像を設定します。画像はデフォルトではgui/textbox.pngと同じサイズであるべきです。"
 
 # game/indepth_character.rpy:54
 translate japanese demo_character_18ba073d:
@@ -208,4 +208,3 @@ translate japanese demo_character_0c8f314a:
 
     # "I think I do."
     "そう思います。"
-

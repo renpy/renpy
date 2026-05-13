@@ -1,4 +1,4 @@
-
+﻿
 translate spanish strings:
 
     # screens.rpy:9
@@ -198,8 +198,8 @@ translate spanish strings:
     new "## Esto distribuye la estructura de base del menú del juego. Es llamado con el título de la pantalla y presenta el fondo, el título y la navegación."
 
     # screens.rpy:413
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## El parámetro 'scroll' puede ser 'None', \"viewport\" o \"vpgrid\". Cuando se usa esta pantalla con uno o más elementos, que son transcluídos (situados) en su interior."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## El parámetro 'scroll' puede ser 'None', \"viewport\" o \"vpgrid\". Se usa esta pantalla con uno o más elementos, que son transcluídos (situados) en su interior."
 
     # screens.rpy:431
     old "## Reserve space for the navigation section."
@@ -534,8 +534,8 @@ translate spanish strings:
     new "Clic derecho"
 
     # screens.rpy:1063
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Rueda del ratón arriba\nClic en lado de retroceso"
+    old "Mouse Wheel Up"
+    new "Rueda del ratón arriba"
 
     # screens.rpy:1067
     old "Mouse Wheel Down"
@@ -654,8 +654,8 @@ translate spanish strings:
     new "## Presenta el diálogo en una 'vpgrid' o una 'vbox'."
 
     # screens.rpy:1316
-    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
-    new "## Presenta el menú, si lo hay. El menú puede ser presentado incorrectamente si 'config.narrator_menu' está ajustado a 'True', como lo es más arriba."
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    new "## Presenta el menú, si lo hay. El menú puede ser presentado incorrectamente si 'config.narrator_menu' está ajustado a 'True'."
 
     # screens.rpy:1346
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
@@ -681,3 +681,34 @@ translate spanish strings:
     old "Opens the accessibility menu."
     new "Abre el menú de accesibilidad."
 
+    # gui/game/screens.rpy:1397
+    old "## Bubble screen"
+    new "## Pantalla de globos"
+
+    # gui/game/screens.rpy:1399
+    old "## The Bubble screen is used to display dialogue to the player when using speech bubbles. The Bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    new "## La pantalla globos se utiliza para mostrar el diálogo al jugador cuando se utilizan globos de dialogo. La pantalla de globos toma los mismos parámetros que la pantalla say, debe crear un displayable con el id de \"what\", y puede crear displayables con los ids de \"namebox\", \"who\", y \"window\"."
+
+    # gui/game/screens.rpy:1404
+    old "## https://www.renpy.org/doc/html/screen_special.html#bubble"
+    new "## https://www.renpy.org/doc/html/screen_special.html#bubble"
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    new "Subir Sync"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    new "Descargar Sync"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    new "## La pantalla de burbujas se utiliza para mostrar el diálogo al jugador cuando se utilizan burbujas de diálogo. La pantalla de burbujas toma los mismos parámetros que la pantalla \"say\", debe crear un visualizable con el id de \"what\", y puede crear visualizables con los ids \"namebox\", \"who\", y \"window\"."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+
+    # gui/game/screens.rpy:1098
+    old "Start, Guide, B/Right Button"
+    new "Inicio, Guía, B/Botón Derecho"

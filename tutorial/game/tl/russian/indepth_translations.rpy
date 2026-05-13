@@ -15,7 +15,7 @@ translate russian translations_20b9a600:
 translate russian translations_07c7643c:
 
     # e "While Ren'Py can find dialogue and menu choice strings for you, you'll have to indicate which other strings need translation."
-    e "В то время как Ren'Py может обнаружить диалоги и выборы, остальные строки вам нужно обозначить, как доcтупные для перевода."
+    e "В то время как Ren'Py может обнаружить диалоги и выборы, остальные строки вам нужно обозначить, как доступные для перевода."
 
 # game/indepth_translations.rpy:20
 translate russian translations_317d73e5:

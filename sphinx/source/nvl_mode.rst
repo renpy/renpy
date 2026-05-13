@@ -1,5 +1,3 @@
-.. _nvl-mode:
-
 NVL-Mode Tutorial
 =================
 
@@ -119,18 +117,19 @@ Showing and Hiding the NVL-mode Window
 --------------------------------------
 
 The NVL-mode window can be controlled with the standard ``window show``
-and ``window hide`` statements. To enable this, add the following
-to your game::
+and ``window hide`` statements. To select the default transitions to be
+used for showing and hiding the window, add the following to your game::
 
     init python:
-        config.empty_window = nvl_show_core
         config.window_hide_transition = dissolve
         config.window_show_transition = dissolve
 
-Setting :var:`config.empty_window` to ``nvl_show_core``
-will cause the NVL-mode window to be displayed during a
-transition. (The last two lines select the default transitions to be
-used for showing and hiding the window.)
+The default :var:`config.empty_window` should select appropriate window
+automatically, but setting :var:`config.empty_window` to ``nvl_show_core``
+will force the NVL-mode window to be displayed during a transition.::
+
+    init python:
+        config.empty_window = nvl_show_core
 
 An example of using the window commands to show and hide the window is::
 
@@ -214,8 +213,8 @@ The following config variables control nvl-related functionality.
 
 .. var:: config.nvl_list_length = None
 
-    If not None, the maximum length of the the list of NVL dialogue.
-    This can be set (often in conjuction with forcing the dialogue to
+    If not None, the maximum length of the list of NVL dialogue.
+    This can be set (often in conjunction with forcing the dialogue to
     have a fixed height) in order to emulate an infinite scrolling
     NVL window.
 
@@ -258,4 +257,4 @@ Script of The Question (NVL-mode Edition)
 -----------------------------------------
 
 You can view the full script of the NVL-mode edition of ''The Question''
-:ref:`here <thequestion_nvl>`.
+:doc:`here <thequestion_nvl>`.

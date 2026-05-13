@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,6 +29,9 @@
 # appropriate.
 
 init -1 python hide:
+
+    # Update the searchpath to find additional fonts.
+    config.searchpath.append(config.renpy_base + "/sdk-fonts")
 
     # Should we enable the use of developer tools? This should be
     # set to False before the game is released, so the user can't
@@ -181,9 +184,17 @@ init -1 python hide:
     #####################
     # More customizations can go here.
 
-    config.sound = False
+    config.has_sound = False
+    config.has_music = False
+    config.has_voice = False
+    config.force_sound = False
     config.quit_action = Quit(confirm=False)
-    config.window_icon = "images/logo.png"
+
+    if renpy.macintosh:
+        config.window_icon = "images/window-icon-mac.png"
+    else:
+        config.window_icon = "images/window-icon.png"
+
     config.has_autosave = False
     config.log_enable = False
     config.mouse_hide_time = None
@@ -239,9 +250,11 @@ init python:
     # allows the updater to run.
     build.include_update = True
 
+    # Build both kinds of updates.
+    build.update_formats = [ "zsync", "rpu" ]
+
     # Allow empty directories, so we can distribute the images directory.
     build.exclude_empty_directories = False
-
 
     # Mac signing options.
     import os
@@ -267,23 +280,8 @@ init python:
     build.classify_renpy("**/thumbs.db", None)
     build.classify_renpy("**/.*", None)
 
-    # Atom rules. These have to be very early, since Atom uses names like
-    # tmp for packages.
-    build.classify_renpy("atom/", "atom-all source_only")
-    build.classify_renpy("atom/Atom.edit.py", "atom-all source_only")
-    build.classify_renpy("atom/default-dot-atom/**", "atom-all")
-    build.classify_renpy("atom/atom-windows/**", "atom-windows")
-    build.classify_renpy("atom/Atom.app/**", "atom-mac")
-    build.classify_renpy("atom/atom-linux**", "atom-linux")
-
-    try:
-        with open(os.path.join(config.renpy_base, "atom", "executable.txt")) as f:
-            for l in f:
-                build.executable(l.strip())
-    except Exception:
-        pass
-
     build.classify_renpy("rapt/**/libLive2DCubismCore.so", None)
+    build.classify_renpy("rapt/symbols/", None)
     build.classify_renpy("rapt/**", "rapt")
     build.executable("rapt/prototype/gradlew")
 
@@ -303,6 +301,8 @@ init python:
     build.classify_renpy("**.new", None)
     build.classify_renpy("**.bak", None)
 
+    build.classify_renpy("**.keystore", None)
+
     build.classify_renpy("**/log.txt", None)
     build.classify_renpy("**/traceback.txt", None)
     build.classify_renpy("**/errors.txt", None)
@@ -314,40 +314,76 @@ init python:
 
     # main source.
 
-    def source_and_binary(pattern, source="source", binary="binary"):
+    def source_and_binary(pattern, source="source", binary="binary", py=True, so=False):
         """
         Classifies source and binary files beginning with `pattern`.
         .pyo, .rpyc, .rpycm, and .rpyb go into binary, everything
-        else goes into source.
+        else but .pyi files go into source.
         """
 
-        if PY2:
-            build.classify_renpy(pattern + "/__pycache__/", None)
-            build.classify_renpy(pattern + "/**.pyo", binary)
-        else:
-            build.classify_renpy(pattern + "/__pycache__/", binary)
-            build.classify_renpy(pattern + "/__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), binary)
+        if py is True:
+            py = 'pycache'
+
+        if py == 'pycache':
+            build.classify_renpy(pattern + "/**__pycache__/", binary)
+            build.classify_renpy(pattern + "/**__pycache__/*.{}.pyc".format(sys.implementation.cache_tag), binary)
+            build.classify_renpy(pattern + "/**.pyc", None)
+            build.classify_renpy(pattern + "/**.pyo", None)
+
+        elif py == 'pyc':
+            build.classify_renpy(pattern + "/**__pycache__/", None)
             build.classify_renpy(pattern + "/**.pyc", binary)
             build.classify_renpy(pattern + "/**.pyo", None)
 
+        elif py == 'pyo':
+            build.classify_renpy(pattern + "/**__pycache__/", None)
+            build.classify_renpy(pattern + "/**.pyc", None)
+            build.classify_renpy(pattern + "/**.pyo", binary)
+
+        else:
+            build.classify_renpy(pattern + "/**__pycache__/", None)
+            build.classify_renpy(pattern + "/**.pyc", None)
+            build.classify_renpy(pattern + "/**.pyo", None)
+
+        if not so:
+            build.classify_renpy(pattern + "/**.so", None)
+            build.classify_renpy(pattern + "/**.pyd", None)
+
+        build.classify_renpy(pattern + "/**.pyi", "source_only")
+        build.classify_renpy(pattern + "/**.pyx", "source_only")
+        build.classify_renpy(pattern + "/**.pxd", "source_only")
+
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
+
+        build.classify_renpy(pattern + "/**/" + renpy.script.BYTECODE_FILE, binary)
+        build.classify_renpy(pattern + "/**/cache/bytecode-*.rpyb", None)
+
         build.classify_renpy(pattern + "/**/cache/*", binary)
 
         build.classify_renpy(pattern + "/**", source)
+
+    build.classify_renpy("renpy/gl/", None)
 
     build.classify_renpy("renpy.py", "binary")
     source_and_binary("renpy")
 
     # games.
     build.classify_renpy("launcher/game/theme/", None)
-    build.classify_renpy("gui/game/gui/", None)
 
-    source_and_binary("launcher")
-    source_and_binary("gui", binary=None)
+    build.classify_renpy("gui/game/gui/", "source")
+    build.classify_renpy("gui/game/gui/bubble.png", "source")
+    build.classify_renpy("gui/game/gui/thoughtbubble.png", "source")
+    build.classify_renpy("gui/game/gui/*", None)
+
+    source_and_binary("launcher", py=False)
+    source_and_binary("gui", binary=None, py=False)
 
     source_and_binary("the_question")
     source_and_binary("tutorial")
+
+    # extra fonts.
+    build.classify_renpy("sdk-fonts/**", "source")
 
     # docs.
     build.classify_renpy("doc/", "source")
@@ -363,62 +399,50 @@ init python:
     build.classify_renpy("sphinx/source/inc/", None)
     build.classify_renpy("sphinx/source/**", "source_only")
 
-
-    # module.
-    build.classify_renpy("module/", "source")
-    build.classify_renpy("module/*.c", "source")
-    build.classify_renpy("module/gen/", None)
-    build.classify_renpy("module/*.h", "source")
-    build.classify_renpy("module/*.py*", "source")
-    build.classify_renpy("module/include/", "source")
-    build.classify_renpy("module/include/*.pxd", "source")
-    build.classify_renpy("module/include/*.pxi", "source")
-    build.classify_renpy("module/pysdlsound/", "source")
-    build.classify_renpy("module/pysdlsound/*.py", "source")
-    build.classify_renpy("module/pysdlsound/*.pyx", "source")
-    build.classify_renpy("module/fribidi-src/**", "source")
+    # Build System.
+    build.classify_renpy("setup.py", "source_only")
+    build.classify_renpy("src/**", "source_only")
+    build.classify_renpy("scripts/", "source_only")
+    build.classify_renpy("scripts/setuplib.py", "source_only")
+    build.classify_renpy("scripts/generate_styles.py", "source_only")
 
     # all-platforms binary.
-    build.classify_renpy("lib/**/_renpysteam*", "steam")
+    build.classify_renpy("lib/**/libpython{}.{}.dll".format(sys.version_info.major, sys.version_info.minor), "binary")
+    build.classify_renpy("lib/**/libpython*.dll", None)
+
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
-    build.classify_renpy("lib/*linux-armv7l/", "raspi")
-    build.classify_renpy("lib/*linux-armv7l/**", "raspi")
+    build.classify_renpy("lib/**/*live2d*", None)
 
-    if PY2:
-        source_and_binary("lib/py2-**", "binary", "binary")
-        source_and_binary("lib/python2**", "binary", "binary")
-        build.classify_renpy("renpy2.sh", "binary")
-    else:
-        source_and_binary("lib/py3-**", "binary", "binary")
-        source_and_binary("lib/python3**", "binary", "binary")
-        build.classify_renpy("renpy3.sh", "binary")
+    build.classify_renpy("lib/py3-linux-armv7l", None)
+    build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
+    source_and_binary("lib/py3-**", "binary", "binary", so=True)
+
+    libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
+    source_and_binary(libpython, "binary", "binary", py='pyc')
+
+    build.classify_renpy("lib/py3-windows-x86_64/zsync.exe", None)
+    build.classify_renpy("lib/python**", None)
+    build.classify_renpy("lib/py2-**", None)
+
+    build.classify_renpy("renpy3.sh", "binary")
 
     build.classify_renpy("lib/", "binary")
-
-    # renpy.app is now built from scratch from distribute.rpy.
-
-    # jedit rules.
-    build.classify_renpy("jedit/**", "jedit")
 
     # Packages.
     build.packages = [ ]
 
     build.package("sdk", "zip tar.bz2 dmg", "source binary")
+    build.package("sdkarm", "tar.bz2", "source binary linux_arm")
     build.package("source", "tar.bz2", "source source_only", update=False)
-    build.package("raspi", "tar.bz2", "raspi", dlc=True, update=False)
     build.package("steam", "zip", "steam", dlc=True)
-
-    build.package("jedit", "zip", "jedit", dlc=True)
-
-    build.package("atom-linux", "tar.bz2", "atom-all atom-linux", dlc=True)
-    build.package("atom-mac", "zip", "atom-all atom-mac", dlc=True)
-    build.package("atom-windows", "zip", "atom-all atom-windows", dlc=True)
 
     build.package("rapt", "zip", "rapt", dlc=True)
     build.package("renios", "zip", "renios", dlc=True)
     build.package("web", "zip", "web", dlc=True)
 
+# The identifier for the SDK.
+define build.mac_info_plist["CFBundleIdentifier"] = "org.renpy.sdk"
 
 # Enable the special launcher translation mode.
 define config.translate_launcher = True
@@ -429,7 +453,16 @@ define config.mouse_focus_clickthrough = True
 # Reduce the rate of screen updates.
 default preferences.gl_powersave = True
 
+# Enable rtl.
+define config.rtl = True
 
 # Disable steam.
 python early:
     config.enable_steam = False
+
+# Since the launcher can be run directly or can be run from the SDK directory,
+# uneliding files needs to be handled slightly differently.
+define config.alternate_unelide_path = os.path.join(config.basedir, "launcher")
+
+# Disable skipping.
+define config.allow_skipping = False

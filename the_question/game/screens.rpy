@@ -96,7 +96,6 @@ style frame:
 ## https://www.renpy.org/doc/html/screen_special.html#say
 
 screen say(who, what):
-    style_prefix "say"
 
     window:
         id "window"
@@ -155,6 +154,8 @@ style say_dialogue:
     xsize gui.dialogue_width
     ypos gui.dialogue_ypos
 
+    adjust_spacing False
+
 
 ## Input screen ################################################################
 ##
@@ -172,7 +173,7 @@ screen input(prompt):
     window:
 
         vbox:
-            xalign gui.dialogue_text_xalign
+            xanchor gui.dialogue_text_xalign
             xpos gui.dialogue_xpos
             xsize gui.dialogue_width
             ypos gui.dialogue_ypos
@@ -207,11 +208,6 @@ screen choice(items):
             textbutton i.caption action i.action
 
 
-## When this is true, menu captions will be spoken by the narrator. When false,
-## menu captions will be displayed as empty buttons.
-define config.narrator_menu = True
-
-
 style choice_vbox is vbox
 style choice_button is button
 style choice_button_text is button_text
@@ -227,7 +223,7 @@ style choice_button is default:
     properties gui.button_properties("choice_button")
 
 style choice_button_text is default:
-    properties gui.button_text_properties("choice_button")
+    properties gui.text_properties("choice_button")
 
 
 ## Quick Menu screen ###########################################################
@@ -272,7 +268,7 @@ style quick_button:
     properties gui.button_properties("quick_button")
 
 style quick_button_text:
-    properties gui.button_text_properties("quick_button")
+    properties gui.text_properties("quick_button")
 
 
 ################################################################################
@@ -337,7 +333,7 @@ style navigation_button:
     properties gui.button_properties("navigation_button")
 
 style navigation_button_text:
-    properties gui.button_text_properties("navigation_button")
+    properties gui.text_properties("navigation_button")
 
 
 ## Main Menu screen ############################################################
@@ -369,7 +365,7 @@ screen main_menu():
             text "[config.name!t]":
                 style "main_menu_title"
 
-            text "[config.version!t]":
+            text _("Ren'Py 7+ Edition"):
                 style "main_menu_version"
 
 
@@ -609,7 +605,7 @@ style about_label_text:
 style about_small:
     size 20
     minwidth 260
-    text_align 1.0
+    textalign 1.0
     yalign 0.9
 
 
@@ -698,6 +694,7 @@ screen file_slots(title):
                 spacing gui.page_spacing
 
                 textbutton _("<") action FilePagePrevious()
+                key "save_page_prev" action FilePagePrevious()
 
                 if config.has_autosave:
                     textbutton _("{#auto_page}A") action FilePage("auto")
@@ -710,6 +707,7 @@ screen file_slots(title):
                     textbutton "[page]" action FilePage(page)
 
                 textbutton _(">") action FilePageNext()
+                key "save_page_next" action FilePageNext()
 
 
 style page_label is gui_label
@@ -727,7 +725,7 @@ style page_label:
     ypadding 3
 
 style page_label_text:
-    text_align 0.5
+    textalign 0.5
     layout "subtitle"
     hover_color gui.hover_color
 
@@ -735,13 +733,13 @@ style page_button:
     properties gui.button_properties("page_button")
 
 style page_button_text:
-    properties gui.button_text_properties("page_button")
+    properties gui.text_properties("page_button")
 
 style slot_button:
     properties gui.button_properties("slot_button")
 
 style slot_button_text:
-    properties gui.button_text_properties("slot_button")
+    properties gui.text_properties("slot_button")
 
 
 ## Preferences screen ##########################################################
@@ -776,38 +774,39 @@ screen preferences():
                         textbutton _("Fullscreen") action Preference("display", "fullscreen")
 
                 vbox:
-                    style_prefix "radio"
-                    label _("Rollback Side")
-                    textbutton _("Disable") action Preference("rollback side", "disable")
-                    textbutton _("Left") action Preference("rollback side", "left")
-                    textbutton _("Right") action Preference("rollback side", "right")
-
-                vbox:
                     style_prefix "check"
                     label _("Skip")
                     textbutton _("Unseen Text") action Preference("skip", "toggle")
                     textbutton _("After Choices") action Preference("after choices", "toggle")
                     textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
 
-                if renpy.loadable("../../launcher/game/fonts/SourceHanSansLite.ttf"):
+                ## Additional vboxes of type "radio_pref" or "check_pref" can be
+                ## added here, to add additional creator-defined preferences.
 
 #begin language_picker
-                    ## Additional vboxes of type "radio_pref" or "check_pref" can be
-                    ## added here, to add additional creator-defined preferences.
 
-                    vbox:
-                        style_prefix "radio"
-                        label _("Language")
+                vbox:
+                    style_prefix "radio"
+                    label _("Language")
 
-                        textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
-                        textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
-                        textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
-                        textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
-                        textbutton "한국어" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("korean")
-                        textbutton "简体中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("schinese")
-                        textbutton "繁體中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("tchinese")
-                        textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
-                        textbutton "日本語" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("japanese")
+                    textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
+                    textbutton "Česky" text_font "DejaVuSans.ttf" action Language("czech")
+                    textbutton "Dansk" text_font "DejaVuSans.ttf" action Language("danish")
+                    textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
+                    textbutton "Italiano" text_font "DejaVuSans.ttf" action Language("italian")
+                    textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
+                    textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+
+                vbox:
+                    style_prefix "radio"
+                    label _(" ")
+
+                    textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
+                    textbutton "Українська" text_font "DejaVuSans.ttf" action Language("ukrainian")
+                    textbutton "日本語" text_font "SourceHanSansLite.ttf" action Language("japanese")
+                    textbutton "한국어" text_font "SourceHanSansLite.ttf" action Language("korean")
+                    textbutton "简体中文" text_font "SourceHanSansLite.ttf" action Language("schinese")
+                    textbutton "繁體中文" text_font "SourceHanSansLite.ttf" action Language("tchinese")
 
 #end language_picker
 
@@ -907,7 +906,7 @@ style radio_button:
     foreground "gui/button/radio_[prefix_]foreground.png"
 
 style radio_button_text:
-    properties gui.button_text_properties("radio_button")
+    properties gui.text_properties("radio_button")
 
 style check_vbox:
     spacing gui.pref_button_spacing
@@ -917,7 +916,7 @@ style check_button:
     foreground "gui/button/check_[prefix_]foreground.png"
 
 style check_button_text:
-    properties gui.button_text_properties("check_button")
+    properties gui.text_properties("check_button")
 
 style slider_slider:
     xsize 350
@@ -928,7 +927,7 @@ style slider_button:
     left_margin 10
 
 style slider_button_text:
-    properties gui.button_text_properties("slider_button")
+    properties gui.text_properties("slider_button")
 
 style slider_vbox:
     xsize 450
@@ -979,7 +978,7 @@ screen history():
         if not _history_list:
             label _("The dialogue history is empty.")
 
-define gui.history_allow_tags = set()
+define gui.history_allow_tags = { "alt", "noalt", "rt", "rb", "art" }
 
 style history_window is empty
 
@@ -1004,7 +1003,7 @@ style history_name:
 
 style history_name_text:
     min_width gui.history_name_width
-    text_align gui.history_name_xalign
+    textalign gui.history_name_xalign
 
 style history_text:
     xpos gui.history_text_xpos
@@ -1012,7 +1011,7 @@ style history_text:
     xanchor gui.history_text_xalign
     xsize gui.history_text_width
     min_width gui.history_text_width
-    text_align gui.history_text_xalign
+    textalign gui.history_text_xalign
     layout ("subtitle" if gui.history_text_xalign else "tex")
 
 style history_label:
@@ -1123,7 +1122,7 @@ screen mouse_help():
         text _("Accesses the game menu.")
 
     hbox:
-        label _("Mouse Wheel Up\nClick Rollback Side")
+        label _("Mouse Wheel Up")
         text _("Rolls back to earlier dialogue.")
 
     hbox:
@@ -1171,7 +1170,7 @@ style help_button:
     xmargin 8
 
 style help_button_text:
-    properties gui.button_text_properties("help_button")
+    properties gui.text_properties("help_button")
 
 style help_label:
     xsize 250
@@ -1180,7 +1179,7 @@ style help_label:
 style help_label_text:
     size gui.text_size
     xalign 1.0
-    text_align 1.0
+    textalign 1.0
 
 
 
@@ -1242,14 +1241,14 @@ style confirm_frame:
     yalign .5
 
 style confirm_prompt_text:
-    text_align 0.5
+    textalign 0.5
     layout "subtitle"
 
 style confirm_button:
     properties gui.button_properties("confirm_button")
 
 style confirm_button_text:
-    properties gui.button_text_properties("confirm_button")
+    properties gui.text_properties("confirm_button")
 
 
 ## Skip indicator screen #######################################################
@@ -1376,7 +1375,7 @@ screen nvl(dialogue, items=None):
             use nvl_dialogue(dialogue)
 
         ## Displays the menu, if given. The menu may be displayed incorrectly if
-        ## config.narrator_menu is set to True, as it is above.
+        ## config.narrator_menu is set to True.
         for i in items:
 
             textbutton i.caption:
@@ -1436,7 +1435,7 @@ style nvl_label:
     yanchor 0.0
     xsize gui.nvl_name_width
     min_width gui.nvl_name_width
-    text_align gui.nvl_name_xalign
+    textalign gui.nvl_name_xalign
 
 style nvl_dialogue:
     xpos gui.nvl_text_xpos
@@ -1444,7 +1443,7 @@ style nvl_dialogue:
     ypos gui.nvl_text_ypos
     xsize gui.nvl_text_width
     min_width gui.nvl_text_width
-    text_align gui.nvl_text_xalign
+    textalign gui.nvl_text_xalign
     layout ("subtitle" if gui.nvl_text_xalign else "tex")
 
 style nvl_thought:
@@ -1453,7 +1452,7 @@ style nvl_thought:
     ypos gui.nvl_thought_ypos
     xsize gui.nvl_thought_width
     min_width gui.nvl_thought_width
-    text_align gui.nvl_thought_xalign
+    textalign gui.nvl_thought_xalign
     layout ("subtitle" if gui.nvl_text_xalign else "tex")
 
 style nvl_button:
@@ -1462,7 +1461,7 @@ style nvl_button:
     xanchor gui.nvl_button_xalign
 
 style nvl_button_text:
-    properties gui.button_text_properties("nvl_button")
+    properties gui.text_properties("nvl_button")
 
 
 
@@ -1516,6 +1515,10 @@ style game_menu_navigation_frame:
 style game_menu_content_frame:
     variant "small"
     top_margin 0
+
+style game_menu_viewport:
+    variant "small"
+    xsize 870
 
 style pref_vbox:
     variant "small"

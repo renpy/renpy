@@ -19,7 +19,8 @@ translate polish strings:
 
     # renpy/common/00console.rpy:750
     old "commands:\n"
-    new "commands:\n"
+    # Automatic translation.
+    new "polecenia:\n"
 
     # renpy/common/00console.rpy:760
     old " <renpy script statement>: run the statement\n"
@@ -80,4 +81,32 @@ translate polish strings:
     # renpy/common/00console.rpy:929
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
     new "unescape: uniemożliwia ucieczkę symboli Unicode w ciągach Unicode i wyświetla je bez zmian (domyślnie)."
+
+
+translate polish strings:
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    # Automatic translation.
+    new "Trwała przeglądarka"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    # Automatic translation.
+    new "Edytor baniek językowych (Shift+B)"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    # Automatic translation.
+    new "help: pokaż tę pomoc\n help <expr>: pokaż podpis i dokumentację <expr>"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    # Automatic translation.
+    new "Pomoc może wyświetlać nieudokumentowane funkcje. Proszę sprawdzić, czy funkcja lub\nklasa, której chcesz użyć, jest udokumentowana.\n\n"
+
+    # renpy/common/00console.rpy:854
+    old "stack: print the return stack"
+    # Automatic translation.
+    new "stack: wydrukować stos powrotny"
 

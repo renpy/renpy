@@ -3,7 +3,7 @@
 translate japanese tutorial_screens_2faa22e5:
 
     # e "Screens are the most powerful part of Ren'Py. Screens let you customize the out-of-game interface, and create new in-game interface components."
-    e "スクリーンはRen'pyで最も強力な部分です。スクリーンでは(訳注メインメニューやゲームメニューのような)ゲーム外のインターフェースをカスタマイズしたり、ゲーム内の新しいインターフェース構成を作成できます。"
+    e "スクリーンはRen'Pyで最も強力な部分です。スクリーンでは(訳注メインメニューやゲームメニューのような)ゲーム外のインターフェースをカスタマイズしたり、ゲーム内の新しいインターフェース構成を作成できます。"
 
 # game/tutorial_screens.rpy:171
 translate japanese screens_menu_7f31d730:
@@ -15,7 +15,7 @@ translate japanese screens_menu_7f31d730:
 translate japanese screens_demo_115a4b8f:
 
     # e "Screens are how we create the user interface in Ren'Py. With the exception of images and transitions, everything you see comes from a screen."
-    e "スクリーンはRen'pyでユーザーインターフェースを作成する手段です。画像やトランジションを除き、見えるものは全てスクリーンで出来ています。"
+    e "スクリーンはRen'Pyでユーザーインターフェースを作成する手段です。画像やトランジションを除き、見えるものは全てスクリーンで出来ています。"
 
 # game/tutorial_screens.rpy:203
 translate japanese screens_demo_ce100e07:
@@ -57,7 +57,7 @@ translate japanese screens_demo_27476d11:
 translate japanese screens_demo_a699b1cb:
 
     # e "You aren't limited to these screens either. In Ren'Py, you can make your own screens, and use them for your game's interface."
-    e "これらのスクリーンに限らず、Ren'pyではあなた自身のスクリーンを作成し、ゲームのインターフェースに使用できます。"
+    e "これらのスクリーンに限らず、Ren'Pyではあなた自身のスクリーンを作成し、ゲームのインターフェースに使用できます。"
 
 # game/tutorial_screens.rpy:230
 translate japanese screens_demo_a136e191:
@@ -87,7 +87,7 @@ translate japanese screens_demo_62c184f8:
 translate japanese screens_showing_1b51e9a4:
 
     # e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen, and it's name is simple_screen."
-    e "こちらは非常にシンプルなスクリーンの一例です。screenステートメントは、これがスクリーンであることとsimple_screenという名前であることをRen'pyに示すために用いられます。"
+    e "こちらは非常にシンプルなスクリーンの一例です。screenステートメントは、これがスクリーンであることとsimple_screenという名前であることをRen'Pyに示すために用いられます。"
 
 # game/tutorial_screens.rpy:267
 translate japanese screens_showing_5a6bbad0:
@@ -135,7 +135,7 @@ translate japanese screens_showing_80425bf3:
 translate japanese screens_showing_7d2deb37:
 
     # e "The first is the show screen statement, which displays a screen and lets Ren'Py keep going."
-    e "１つ目はshow screenステートメントで、これはスクリーンを表示したままRen'pyを継続させます。"
+    e "１つ目はshow screenステートメントで、これはスクリーンを表示したままRen'Pyを継続させます。"
 
 # game/tutorial_screens.rpy:293
 translate japanese screens_showing_7626dc8b:
@@ -153,7 +153,7 @@ translate japanese screens_showing_c79038a4:
 translate japanese screens_showing_8f78a97d:
 
     # e "The call screen statement stops Ren'Py from executing script until the screen either returns a value, or jumps the script somewhere else."
-    e "call screenステートメントは、スクリーンがいずれかの値を返すか、どこかへジャンプするまでRen'pyスクリプトの実行を停止します。"
+    e "call screenステートメントは、スクリーンがいずれかの値を返すか、どこかへジャンプするまでRen'Pyスクリプトの実行を停止します。"
 
 # game/tutorial_screens.rpy:303
 translate japanese screens_showing_b52e420c:
@@ -189,7 +189,7 @@ translate japanese screens_parameters_cf95b914:
 translate japanese screens_parameters_4ce03111:
 
     # e "Each parameter is a variable that is defined inside the screen. Inside the screen, these variables take priority over those used in the rest of Ren'Py."
-    e "それぞれのパラメータはスクリーン内で定義される変数です。スクリーン内ではこれらの変数はRen'pyの他の場所で用いられる変数より優先されます。"
+    e "それぞれのパラメータはスクリーン内で定義される変数です。スクリーン内ではこれらの変数はRen'Pyの他の場所で用いられる変数より優先されます。"
 
 # game/tutorial_screens.rpy:343
 translate japanese screens_parameters_106c2a04:
@@ -285,7 +285,7 @@ translate japanese screens_properties_560ca08a:
 translate japanese screens_properties_c7ad3a8e:
 
     # e "This can save a lot of typing when styling screens with many displayables in them."
-    e "これで、多くのdisplayableを含むスクリーンのスタイルを指定するときも、入力の手間を省くことができます。"
+    e "これで、多くのdisplayableを含むスクリーンのスタイルを指定するときも、入力の手間を省けます。"
 
 # game/tutorial_screens.rpy:491
 translate japanese screens_control_4a1d8d7c:
@@ -315,7 +315,7 @@ translate japanese screens_control_ba8f5f13:
 translate japanese screens_control_f75fa254:
 
     # e "The reason for this is that Ren'Py will run a screen, and the Python in it, during screen prediction."
-    e "これは、Ren'pyがスクリーンを予測している間にスクリーンとその中のPythonを実行してしまうためです。"
+    e "これは、Ren'Pyがスクリーンを予測している間にスクリーンとその中のPythonを実行してしまうためです。"
 
 # game/tutorial_screens.rpy:536
 translate japanese screens_control_40c12afa:

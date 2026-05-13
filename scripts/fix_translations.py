@@ -1,18 +1,19 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from __future__ import print_function
 
-import os.path
+import os
 import codecs
 
 ENDINGS = [
     ".rpy",
     ".rpym",
-    ]
+]
+
+BOM = "\ufeff"
 
 
 def process_file(fn):
-
     for i in ENDINGS:
         if fn.endswith(i):
             break
@@ -21,13 +22,12 @@ def process_file(fn):
 
     print("Processing", fn)
 
-    lines = [ ]
-    with open(fn, "rb") as f:
+    lines = []
+    with open(fn, "r") as f:
         for l in f:
+            l = l.replace(BOM, "")
 
-            l = l.replace(codecs.BOM_UTF8, "")
-
-            if l.startswith("# TODO: Translation updated"):
+            if l.startswith("# TO" + "DO: Translation updated"):
                 continue
 
             l = l.rstrip()
@@ -35,12 +35,11 @@ def process_file(fn):
 
             lines.append(l)
 
-    with open(fn, "wb") as f:
-        f.write(codecs.BOM_UTF8 + "".join(lines))
+    with open(fn, "w") as f:
+        f.write(BOM + "".join(lines))
 
 
 def process(root):
-
     for dirname, _dirs, files in os.walk(root):
         for fn in files:
             fn = os.path.join(dirname, fn)

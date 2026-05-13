@@ -1,5 +1,4 @@
 .. _menus:
-.. _menu-statement:
 
 =============
 In-Game Menus
@@ -68,6 +67,9 @@ The third choice will only be presented if the ``drank_tea`` variable is
 true. (However if, the :var:`config.menu_include_disabled` variable is set
 to True, it will be shown as a disabled button.)
 
+If all menu options have their if conditions unfulfilled, the menu will be
+skipped and control will advance to the statement following it.
+
 
 .. _menu-set:
 
@@ -79,8 +81,8 @@ with captions that are not in the set are displayed as part of the menu.
 When a choice is selected, the caption of that choice can be added to the
 set.
 
-As with all menus, if no choices are available it advances to the statement
-after the menu.
+As with if clauses, if no choice is available, control advances to the
+statement after the menu.
 
 For historical reasons, the set can be either a set object or a list.
 
@@ -133,10 +135,7 @@ the ``if`` keyword or colon. ::
 
 Menu arguments passed to the menu itself become arguments to the screen,
 except the `screen` argument which selects the screen, and the `nvl` argument
-that selects the :ref:`NVL-mode menu <nvl-mode-menu>`. There is also a special
-keyword `_mode` which will set the mode of this interaction, by default "menu".
-The arguments to the choices become arguments to the items passed to the
-menu screen.
+that selects the :ref:`NVL-mode menu <nvl-mode-menu>`.
 
 See the documentation for :ref:`the choice screen <choice-screen>` and
 :var:`config.menu_arguments_callback`.

@@ -57,25 +57,25 @@ translate japanese styles_menu_a4a6913e:
 translate japanese style_basics_9a79ef89:
 
     # e "Styles let a displayable look different from game to game, or even inside the same game."
-    e "スタイルはDisplayableにゲームごとや同じゲーム内で多様な外見をとらせます。"
+    e "スタイルはDisplayableにゲームごとにも、同じゲーム内でも多様な外見をとらせます。"
 
 # game/indepth_style.rpy:103
 translate japanese style_basics_48777f2c:
 
     # e "Both of these buttons use the same displayables. But since different styles have been applied, the buttons look different from each other."
-    e "これらのボタンは共に同じDisplayableですが、異るスタイルが適用されているため、ボタンの外観は互いに異なっています。"
+    e "これらのボタンはどちらも同じDisplayableですが、異なるスタイルが適用されているため、ボタンの外観が互いに異なっています。"
 
 # game/indepth_style.rpy:108
 translate japanese style_basics_57704d8c:
 
     # e "Styles are a combination of information from four different places."
-    e "スタイルは4つの異る場所からの情報で構成されます。"
+    e "スタイルは4つの異なる指定方法からの情報で構成されます。"
 
 # game/indepth_style.rpy:121
 translate japanese style_basics_144731f6:
 
     # e "The first place Ren'Py can get style information from is part of a screen. Each displayable created by a screen can take a style name and style properties."
-    e "Ren'Pyがスタイルの情報を得られる1つ目の場所はスクリーンの一部です。スクリーンで作成される各Displayableはスタイル名とスタイルプロパティーをとれます。"
+    e "Ren'Pyにスタイルの情報を指定できる一つ目の方法はスクリーンに含めることです。スクリーンで作成される各Displayableはスタイル名とスタイルプロパティーをとれます。"
 
 # game/indepth_style.rpy:138
 translate japanese style_basics_67e48162:
@@ -87,7 +87,7 @@ translate japanese style_basics_67e48162:
 translate japanese style_basics_03516b4a:
 
     # e "The next is as part of a displayable created in an image statement. Style properties are just arguments to the displayable."
-    e "二つ目はimageステートメントで作成されるDisplayableの一部です。スタイルプロパティーは単にDisplayableの引数になります。"
+    e "二つ目の方法はimageステートメントで作成されるDisplayableの含めることです。スタイルプロパティーは単にDisplayableの引数になります。"
 
 # game/indepth_style.rpy:160
 translate japanese style_basics_ccc0d1ca:
@@ -110,7 +110,7 @@ translate japanese style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate japanese style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "最後はstyleステートメントで、これは名前つきのスタイルを作成または変更します。Textにstyle引数を与えて、blue_textスタイルを使用するよう指示します。"
 
 # game/indepth_style.rpy:180
@@ -122,8 +122,8 @@ translate japanese style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate japanese style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
-    e "デフォルトでは、スタイルの親は最初の接頭辞が除去された同じ名前で、スタイル名にアンダースコアがなければ'default'が使用されます。"
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    e "デフォルトでは、スタイルの親は最初の接頭辞が除去された同じ名前であり、スタイル名にアンダースコアがなければ'default'が使用されます。"
 
 # game/indepth_style.rpy:184
 translate japanese style_basics_6ab170a3:
@@ -135,7 +135,7 @@ translate japanese style_basics_6ab170a3:
 translate japanese style_basics_f78117a7:
 
     # e "The parent can be explicitly changed by giving the style statement an 'is' clause. In this case, we're explictly setting the style to the parent of text."
-    e "親は'is'を与えて明示的に変更できます。この例では、スタイルの親にをtextを設定しています。"
+    e "親は'is'を与えて明示的に変更できます。この例では、スタイルの親にtextを設定しています。"
 
 # game/indepth_style.rpy:194
 translate japanese style_basics_6007040b:
@@ -159,7 +159,7 @@ translate japanese style_basics_422a87f7:
 translate japanese style_basics_bad2e207:
 
     # e "Lastly, when a displayable is a button, or inside a button, it can take style prefixes."
-    e "最後に、Displayableがbuttonまたはbutton内部のものならば、スタイル接頭辞がとれます。"
+    e "最後に、Displayableがbuttonまたはbutton内部のものならば、スタイル接頭辞が受け取とれます。"
 
 # game/indepth_style.rpy:202
 translate japanese style_basics_22ed20a1:
@@ -183,7 +183,7 @@ translate japanese style_basics_0cdcb8c3:
 translate japanese style_basics_aed05094:
 
     # e "Those are the basics of styles. If GUI customization isn't enough for you, styles let you customize just about everything in Ren'Py."
-    e "これらはスタイルの基本です。GUIカスタマイズでは不満ならば、スタイルを用いてRen'Pyのすべてをカスタマイズできます。"
+    e "これらがスタイルの基本です。GUIカスタマイズでは不満ならば、スタイルを用いてRen'Pyのすべてをカスタマイズできます。"
 
 # game/indepth_style.rpy:253
 translate japanese style_general_81f3c8ff:
@@ -201,7 +201,7 @@ translate japanese style_general_a8d99699:
 translate japanese style_general_58d4a18f:
 
     # e "The xmaximum and ymaximum properties set the maximum width and height of the displayable, respectively. This will cause Ren'Py to shrink things, if possible."
-    e "xmaximumとymaximumプロパティーはそれぞれDisplayableの最大幅と高さを設定します。これは可能ならばRen'Pyに対象を縮めさせます。'"
+    e "xmaximumとymaximumプロパティーはそれぞれDisplayableの最大幅と高さを設定します。これは可能ならばRen'Pyに対象を縮めさせます。"
 
 # game/indepth_style.rpy:277
 translate japanese style_general_cae9a39f:
@@ -213,7 +213,7 @@ translate japanese style_general_cae9a39f:
 translate japanese style_general_5928c24e:
 
     # e "Similarly, the xminimum and yminimum properties set the minimum width and height. If the displayable is smaller, Ren'Py will try to make it bigger."
-    e "同様に、xminimumとyminimumプロパティーも最小の幅と高さを設定します。そのDisplayableがより小さければ、Ren'Pyは拡大します。'"
+    e "同様に、xminimumとyminimumプロパティーも最小の幅と高さを設定します。そのDisplayableがより小さければ、Ren'Pyは拡大します。"
 
 # game/indepth_style.rpy:289
 translate japanese style_general_35a8ee5e:
@@ -243,7 +243,7 @@ translate japanese style_general_e5a58f0b:
 translate japanese style_text_fe457b8f:
 
     # e "The text style properties apply to text and input displayables."
-    e "textスタイルプロパティーはテキストと入力Displayableに使用されます。"
+    e "textスタイルプロパティーはTextとInput Displayableに使用されます。"
 
 # game/indepth_style.rpy:337
 translate japanese style_text_7ab53f03:
@@ -332,20 +332,20 @@ translate japanese style_text_5a0c2c02:
 # game/indepth_style.rpy:443
 translate japanese style_text_430c1959:
 
-    # e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
-    e "text_alignプロパティーはtext Displayable内の複数行の配置を制御します。例えば、0.5は中央です。"
+    # e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+    e "textalignプロパティーはtext Displayable内の複数行の配置を制御します。例えば、0.5は中央です。"
 
 # game/indepth_style.rpy:445
 translate japanese style_text_19aa0833:
 
-    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
-    e "text Displayable自体の位置は変更しません。そのため、text_alignとxalignは同じ値にすることが多いでしょう。"
+    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value."
+    e "text Displayable自体の位置は変更しません。そのため、textalignとxalignは同じ値にすることが多いでしょう。"
 
 # game/indepth_style.rpy:455
 translate japanese style_text_efc3c392:
 
-    # e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
-    e "text_alignとxalignが共に1.0だと、テキストは右寄せになります。"
+    # e "When both textalign and xalign are set to 1.0, the text is properly right-justified."
+    e "textalignとxalignが共に1.0だと、テキストは右寄せになります。"
 
 # game/indepth_style.rpy:464
 translate japanese style_text_43be63b9:
@@ -363,7 +363,7 @@ translate japanese style_text_343f6d34:
 translate japanese style_text_e7204a95:
 
     # e "By default, text in Ren'Py is antialiased, to smooth the edges. The antialias property can turn that off, and make the text a little more jagged."
-    e "デフォルトでは、Ren'Pyのテキストはアンチエイリアシングでエッジを滑らかにしています。antialiasプロパティーはオフにしてテキストを少しジャギーにできます。'"
+    e "デフォルトでは、Ren'Pyのテキストはアンチエイリアシングでエッジを滑らかにしています。antialiasプロパティーはオフにしてテキストを少しジャギーにできます。"
 
 # game/indepth_style.rpy:487
 translate japanese style_text_a5316e4c:
@@ -417,13 +417,13 @@ translate japanese style_button_300b6af5:
 translate japanese style_button_255a18e4:
 
     # e "These properties also apply to buttons, in-game and out-of-game. To Ren'Py, a button is a window you can click."
-    e "これらのプロパティーはゲーム内またはゲーム外のボタンにも適用されます。Ren'Pyにとってはボタンはクリックできるウィンドウです。'"
+    e "これらのプロパティーはゲーム内またはゲーム外のボタンにも適用されます。Ren'Pyにとってはボタンはクリックできるウィンドウです。"
 
 # game/indepth_style.rpy:593
 translate japanese style_button_9b53ce93:
 
     # e "I'll start off with this style, which everything will inherit from. To make our lives easier, it inherits from the default style, rather than the customizes buttons in this game's GUI."
-    e "すべてが継承するこのスタイルから始めます。簡単のため、ゲームのGUIでカスタマイズされたボタンではなくデフォルトスタイルから継承します。"
+    e "このスタイルから始めます。これはすべてのスタイルが継承します。簡単のため、ゲームのGUIでカスタマイズされたボタンではなくデフォルトスタイルから継承します。"
 
 # game/indepth_style.rpy:595
 translate japanese style_button_aece4a8c:
@@ -447,7 +447,7 @@ translate japanese style_button_269ae069:
 translate japanese style_button_1009f3e1:
 
     # e "Without any padding around the text, the button looks odd. Ren'Py has padding properties that add space inside the button's background."
-    e "テキスト回りをパッディングしないとボタンが奇妙に見えます。Ren'Pyにはパッディングプロパティーがあり、ボタンの背景の内側に空間を追加します。'"
+    e "テキスト回りをパッディングしないとボタンが奇妙に見えます。Ren'Pyには padding プロパティーがあり、ボタンの背景の内側に空間を追加します。"
 
 # game/indepth_style.rpy:621
 translate japanese style_button_5bdfa45a:
@@ -459,7 +459,7 @@ translate japanese style_button_5bdfa45a:
 translate japanese style_button_81283d42:
 
     # e "The margin style properties work the same way, except they add space outside the background. The full set exists: left_margin, right_margin, top_margin, bottom_margin, xmargin, and ymargin."
-    e "marginスタイルプロパティーも背景の外側に空間を追加する以外は同様に動作します。フルセットも用意しています: left_margin, right_margin, top_margin, bottom_margin, xmargin, ymargin"
+    e "marginスタイルプロパティーも背景の外側に空間を追加する以外は同様に動作します。次のセットが用意されています: left_margin, right_margin, top_margin, bottom_margin, xmargin, ymargin"
 
 # game/indepth_style.rpy:638
 translate japanese style_button_0b7aca6b:
@@ -519,7 +519,7 @@ translate japanese style_bar_8ae6a14b:
 translate japanese style_bar_7f0f50e5:
 
     # e "Also by default, both the left and right displayables are rendered at the full width of the bar, and then cropped to the appropriate size."
-    e "また、デフォルトでは左右のDisplayableは完全なバー幅でレンダリングされ、適切なサイズに切り取られます。"
+    e "また、デフォルトでは左右のDisplayableはバーの最大幅でレンダリングされ、適切なサイズに切り取られます。"
 
 # game/indepth_style.rpy:777
 translate japanese style_bar_9ef4f62f:
@@ -615,7 +615,7 @@ translate japanese style_box_e513c946:
 translate japanese style_box_6ae4f94d:
 
     # e "The first_spacing style property is similar, but it only adds space between the first and second children. This is useful when the first child is a title that needs different spacing."
-    e "first_spacingプロパティーも同じですが、1つ目と2つ目の子の間だけスペースを空けます。これは最初の子をタイトルで、異るスペースが必要なときに便利です。"
+    e "first_spacingプロパティーも同じですが、1つ目と2つ目の子の間だけスペースを空けます。これは最初の子をタイトルで、異なるスペースが必要なときに便利です。"
 
 # game/indepth_style.rpy:1008
 translate japanese style_box_0c518d9f:
@@ -813,4 +813,3 @@ translate japanese strings:
     # game/indepth_style.rpy:329
     old "Far better it is to dare mighty things, to win glorious triumphs, even though checkered by failure, than to rank with those poor spirits who neither enjoy nor suffer much, because they live in the gray twilight that knows not victory nor defeat.\n\n–Theodore Roosevelt"
     new "Far better it is to dare mighty things, to win glorious triumphs, even though checkered by failure, than to rank with those poor spirits who neither enjoy nor suffer much, because they live in the gray twilight that knows not victory nor defeat.\n\n–Theodore Roosevelt"
-

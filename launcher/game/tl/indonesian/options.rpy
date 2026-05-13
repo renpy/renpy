@@ -210,3 +210,21 @@ translate indonesian strings:
     old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
     new "## Atur ini ke string yang berisi ID Developer Aplikasi Apple mu untuk mengaktifkan codesigning di Mac. Pastikan untuk mengganti nya ke ID mu sendiri yang sudah di berikan oleh Apple."
 
+
+translate indonesian strings:
+
+    # gui/game/options.rpy:31
+    old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
+    # Automatic translation.
+    new "## Teks yang ditempatkan pada layar tentang game. Tempatkan teks di antara tanda kutip tiga, dan biarkan baris kosong di antara paragraf."
+
+    # gui/game/options.rpy:47
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    # Automatic translation.
+    new "## Ketiga variabel ini mengontrol, antara lain, mixer mana yang ditampilkan kepada pemain secara default. Menetapkan salah satu dari variabel ini ke False akan menyembunyikan mixer yang sesuai."
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    # Automatic translation.
+    new "## Kunci lisensi Google Play diperlukan untuk melakukan pembelian dalam aplikasi. Kunci ini dapat ditemukan di konsol pengembang Google Play, di bawah \"Monetisasi\" > \"Pengaturan Monetisasi\" > \"Lisensi\"."
+

@@ -6,23 +6,28 @@
 
     # game/choose_theme.rpy:332
     old "Display"
-    new "Display"
+    # Automatic translation.
+    new "Tela"
 
     # game/choose_theme.rpy:333
     old "Window"
-    new "Window"
+    # Automatic translation.
+    new "Janela"
 
     # game/choose_theme.rpy:334
     old "Fullscreen"
-    new "Fullscreen"
+    # Automatic translation.
+    new "Tela cheia"
 
     # game/choose_theme.rpy:335
     old "Planetarium"
-    new "Planetarium"
+    # Automatic translation.
+    new "Planetário"
 
     # game/choose_theme.rpy:342
     old "Sound Volume"
-    new "Sound Volume"
+    # Automatic translation.
+    new "Volume do som"
 
     # game/choose_theme.rpy:376
     old "Choose Theme"

@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -112,6 +112,9 @@ class CodeGenerator(object):
 
         self.p = parameters
 
+    def target_exists(self, filename):
+        return os.path.exists(os.path.join(self.p.prefix, filename))
+
     def load_template(self, filename):
 
         target = os.path.join(self.p.prefix, filename)
@@ -121,8 +124,13 @@ class CodeGenerator(object):
         else:
             template = os.path.join(self.p.template, filename)
 
-        with codecs.open(template, "r", "utf-8") as f:
-            self.lines = [ i.rstrip().replace(u"\ufeff", "") for i in f ]
+        if not os.path.exists(template):
+            return False
+        else:
+            with codecs.open(template, "r", "utf-8") as f:
+                self.lines = [ i.rstrip().replace(u"\ufeff", "") for i in f ]
+
+            return True
 
     def remove_scale(self):
 
@@ -167,7 +175,7 @@ class CodeGenerator(object):
 
         for l in self.lines:
 
-            m = re.match('^(\s*)define (.*?) =', l)
+            m = re.match(r'^(\s*)define (.*?) =', l)
 
             if m:
                 indent = m.group(1)
@@ -214,7 +222,8 @@ class CodeGenerator(object):
             'gui.insensitive_color' : repr(self.p.insensitive_color.hexcode),
             'gui.text_color' : repr(self.p.text_color.hexcode),
             'gui.interface_text_color' : repr(self.p.text_color.hexcode),
-            'gui.choice_text_color' : repr(self.p.choice_color.hexcode),
+            'gui.choice_button_text_idle_color' : repr(self.p.idle_color.hexcode),
+            'gui.choice_button_text_insensitive_color' : repr(self.p.insensitive_color.hexcode),
             }
 
         self.update_defines(replacements, language_defines[self.p.language])
@@ -356,7 +365,7 @@ class CodeGenerator(object):
     def copy_files(self):
 
         for src, dst in language_copies[self.p.language]:
-            src = os.path.join(renpy.config.gamedir, src)
+            src = os.path.join(renpy.config.renpy_base, src)
             dst = os.path.join(self.p.prefix, dst)
 
             if os.path.exists(dst):
@@ -369,10 +378,8 @@ class CodeGenerator(object):
 
             shutil.copy(src, dst)
 
-    def copy_script(self, name):
-        dst = os.path.join(self.p.prefix, name)
-
-        if os.path.exists(dst):
+    def copy_script(self, fn):
+        if self.target_exists(fn):
             return
 
         language = renpy.store._preferences.language # @UndefinedVariable
@@ -380,14 +387,16 @@ class CodeGenerator(object):
         if language is None:
             language = "None"
 
-        src = os.path.join(renpy.config.gamedir, "tl", language, name + "m")
+        src = os.path.join(renpy.config.gamedir, "tl", language, fn + "m")
 
         if not os.path.exists(src):
-            src = os.path.join(self.p.template, name)
+            src = os.path.join(self.p.template, fn)
 
-        self.load_template(src)
+        if not self.load_template(src):
+            return
+
         self.remove_scale()
-        self.write_target(dst)
+        self.write_target(fn)
 
     def add_code(self, fn):
 
@@ -400,7 +409,8 @@ class CodeGenerator(object):
         if not self.p.update_code:
             return
 
-        self.load_template(fn)
+        if not self.load_template(fn):
+            return
 
         if defines:
             self.update_gui_defines()
@@ -416,12 +426,11 @@ class CodeGenerator(object):
 
     def generate_code(self, fn):
 
-        target = os.path.join(self.p.prefix, fn)
-
-        if os.path.exists(target):
+        if self.target_exists(fn):
             return
 
-        self.load_template(fn)
+        if not self.load_template(fn):
+            return
 
         self.translate_strings()
         self.translate_comments()

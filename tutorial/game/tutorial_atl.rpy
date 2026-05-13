@@ -1,4 +1,4 @@
-image bg band = Transform("concert1", zoom=.75)
+﻿image bg band = Transform("concert1", zoom=.75)
 image logo small = Transform("logo base", zoom=.66)
 
 image concert:
@@ -530,7 +530,7 @@ label tutorial_atl:
     show example atl_image
     show eileen animated
 
-    e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
+    e "To introduce ATL, let's start by looking at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement." id tutorial_atl_fbc9bf83
 
     e "To change a displayable, simply mention it on a line of ATL. Here, we're switching back and forth between two images."
 
@@ -545,11 +545,10 @@ label tutorial_atl:
 
     e "If we were to write repeat 2 instead, the animation would loop twice, then stop."
 
-    show example atl_image1
+    show example atl_image2
     show eileen animated once
 
     e "Omitting the repeat statement means that the animation stops once we reach the end of the block of ATL code."
-
 
     show example atl_with
     show bg atl transitions
@@ -570,7 +569,7 @@ label tutorial_atl:
 
     show example atl_transform
 
-    e "The simplest thing we can to is to statically position an image. This is done by giving the names of the position properties, followed by the property values."
+    e "The simplest thing we can do is to statically position an image. This is done by giving the names of the position properties, followed by the property values." id tutorial_atl_ddc55039
 
     show example atl_transform1
     show logo base at move_jump

@@ -20,19 +20,19 @@ manage, edit, and run Ren'Py projects.
 Once you've downloaded Ren'Py, you'll want to extract and run it.
 
 * On Windows, double click on the executable file you download. It will
-  extract Ren'Py into a folder named ``renpy-<version>``. You can change
-  into that folder and run ``renpy.exe``. (The renpy.exe file may be presented
-  as renpy if extensions are hidden.)
+  extract Ren'Py into a folder named :file:`renpy-{<version>}`. You can change
+  into that folder and run :file:`renpy.exe`. (It may be presented
+  as :file:`renpy` if extensions are hidden.)
 
 * On Mac OS X, double-click on the downloaded drive image to mount it as a
-  drive. When the drive opens, copy the folder named ``renpy-<version>``
+  drive. When the drive opens, copy the folder named :file:`renpy-{<version>}`
   somewhere else. (Where does not matter, but it has to be moved out of
   the read-only drive image. Do not move the renpy app out of the folder it's in
-  – it won't work elsewhere.) Then change into it, and run the ``renpy``
+  – it won't work elsewhere.) Then change into it, and run the :file:`renpy`
   application.
 
-* On Linux, unpack the tarball, change into the ``renpy-<version>``
-  directory, and then run ``renpy.sh``.
+* On Linux, unpack the tarball, change into the :file:`renpy-{<version>}`
+  directory, and then run :file:`renpy.sh`.
 
 After running this, the Ren'Py launcher should run.
 
@@ -86,8 +86,8 @@ The launcher will then ask you for a project name. Since
 "The Question" is already taken, you should enter something different,
 like "My Question", and type enter.
 
-After that, the launcher will ask you to select the project resolution. The
-default of 1280x720 is a good compromise between game size and image quality.
+After that, the launcher will ask you to select the project resolution.
+1280x720 is a good compromise between game size and image quality.
 For the purpose of this tutorial, we will select 1280x720 to match
 "The Question" game art, then click "Continue".
 
@@ -125,13 +125,14 @@ line of narration.
 
 To try this out, from the top screen of the launcher select "My Question"
 project, and then choose "script.rpy" from under Edit File. If this is
-your first time, Ren'Py will ask you to select an editor (we recommend
-Editra for first time creators), and will download the editor you choose.
+your first time, Ren'Py will ask you to select an editor. We recommend Visual
+Studio Code for new creators - in addition to being a solid choice, the launcher
+can also download it for you.
 Then it will open the script file in the editor.
 
-Once the editor opens, erase everything in script.rpy. We're starting
+Once the editor opens, erase everything in :file:`script.rpy`. We're starting
 from scratch, so you don't need what's there. Copy the example above into
-script.rpy, and save it.
+:file:`script.rpy`, and save it.
 
 You're now ready to run this example. Go back to the launcher, and
 choose "Launch Project". Ren'Py will start up. Notice how, without any
@@ -141,14 +142,14 @@ and play through this example game.
 
 This example shows some of the commonly-used Ren'Py statements.
 
-The first line is a label statement. The label statement is used to
-give a name to a place in the program. In this case, we create a label
-named ``start``. The start label is special, as it's where Ren'Py
-scripts begin running when the user clicks "Start Game" on the main
-menu.
+The first line is a :ref:`label statement <label-statement>`. The label
+statement is used to give a name to a place in the program. In this case,
+we create a label named ``start``. The start label is special, as it's
+where Ren'Py scripts begin running when the user clicks "Start Game" on
+the main menu.
 
-The other lines are say statements. There are two forms of the say
-statement. The first is a string (beginning with a double-quote,
+The other lines are :ref:`say statements <say-statement>`. There are two
+forms of the say statement. The first is a string (beginning with a double-quote,
 containing characters, and ending with a double-quote) on a line by
 itself, which is used for narration, and the thoughts of the main
 character. The second form consists of two strings. It's used for
@@ -174,6 +175,8 @@ in a little bit, but first, let's see how to define characters.
 
 Characters
 ----------
+
+*Main article:* :ref:`defining-character-objects`
 
 One problem with the first example is that it requires you to
 repeatedly type the name of a character each time they speak. In a
@@ -207,7 +210,7 @@ defines a character with the short name of "s", the long name
 are red-green-blue hex triples, as used in web pages.)
 
 The second line creates a character with a short name "m", a long name
-"Me", with the name shown in a reddish color. Other characters can be
+"Me", with the name shown in a bluish color. Other characters can be
 defined by copying one of the character lines, and changing the short
 name, long name, and color.
 
@@ -217,6 +220,8 @@ we defined.
 
 Images
 ------
+
+*Main article:* :doc:`displaying_images`
 
 A visual novel isn't much of a visual novel without pictures. Here's another
 scene from "The Question". This also includes statements that show images
@@ -279,8 +284,9 @@ happens on line 26.
 
 Ren'Py searches for image files in the images directory, which can be
 found by selecting "images" in the "Open Directory" section of the
-launcher. Ren'Py expects character art to be an PNG or WEBP file,
-while background art should be a JPG, JPEG, PNG, or WEBP file.
+launcher. Ren'Py expects character art to be an PNG, WEBP, or AVIF file,
+while background art should be a JPG, JPEG, PNG, WEBP, or AVIF file.
+SVG files are also supported, but mostly used to customize the interface.
 The name of a file is very important – the extension is removed, the file
 name is forced to lowercase, and that's used as the image name.
 
@@ -332,11 +338,13 @@ The image statement is run at init time, before label start and the rest
 of the game script that interacts with the player.
 
 The image statement can also be used for more complex tasks, but that's
-discussed :ref:`elsewhere <displaying-images>`.
+discussed :doc:`elsewhere <displaying_images>`.
 
 
 Transitions
 -----------
+
+*Main article:* :doc:`transitions`
 
 In the script above, pictures pop in and out instantaneously. Since
 changing location or having a character enter or leave a scene is
@@ -414,6 +422,8 @@ anything to the player.
 Positions
 ---------
 
+*Main article:* :doc:`transforms`
+
 By default, images are shown centered horizontally, and with their
 bottom edge touching the bottom of the screen. This is usually okay
 for backgrounds and single characters, but when showing more than one
@@ -438,6 +448,8 @@ but that's outside of the scope of this quickstart.
 
 Music and Sound
 ---------------
+
+*Main article:* :doc:`audio`
 
 Most Ren'Py games play music in the background. Music is played with the
 ``play music`` statement. The play music statement takes a filename that
@@ -475,18 +487,20 @@ effects do not loop. ::
         play sound "audio/effect.ogg"
 
 
-When a filename is in the "game/audio" directory, and the name without the
+When a filename is in the :file:`game/audio` directory, and the name without the
 file extension can be used as a Python variable (that is, it begins with
 a letter, and contains only letters, numbers, and underscores), it is possible
 to play that file without using quotes.
 
-For example, if "game/audio/illurock.ogg" exists, we can write::
+For example, if :file:`game/audio/illurock.ogg` exists, we can write::
 
     ###
         play music illurock
 
 See :ref:`the audio namespace <audio-namespace>` for more details.
 
+
+.. _pause-statement:
 
 Pause Statement
 ---------------
@@ -522,6 +536,8 @@ presents menus to the user.
 
 Menus, Labels, and Jumps
 -------------------------
+
+*Main articles:* :doc:`menus` *and* :doc:`label`
 
 The ``menu`` statement lets presents a choice to the player::
 
@@ -582,8 +598,10 @@ in how you organize the script of a larger game.
 Supporting Flags using the Default, Python and If Statements
 ------------------------------------------------------------
 
+*Main articles:* :doc:`python` *and* :doc:`conditional`
+
 While some games can be made by only using the statements given above,
-other games requires data to be stored and recalled later. For example,
+other games require data to be stored and recalled later. For example,
 it might make sense for a game to remember a choice a player has made,
 return to a common section of the script, and act on the choice later. This
 is one of the reasons why Ren'Py has embedded Python support.
@@ -642,6 +660,56 @@ used to store the player's name, a points score, or for any other
 purpose. Since Ren'Py includes the ability to use the full Python
 programming language, many things are possible.
 
+Files In Template
+-------------------
+
+The game folder in the created project includes below folders and files.
+
+**audio/**
+    This folder is intended to include audio files. See :doc:`audio`
+    for more details.
+
+**cache/**
+    This folder includes cache files. You don't need to edit those files.
+
+**gui/**
+    This folder includes images which are used by the gui. See the :ref:`GUI
+    Customization Guide <gui>` for more details.
+
+**images/**
+    This folder is intended to include images files.
+    See :doc:`displaying_images` for more details.
+
+**tl/**
+    This folder includes translation files. See :doc:`translation`
+    for more details.
+
+**gui.rpy**
+    The gui variables are defined in this file. See the :ref:`GUI
+    Customization Guide <gui>` for more details.
+
+**options.rpy**
+     Config and Build variables, a part of preferences and a part of gui
+     variables are defined in this file. See :doc:`config`, :doc:`preferences`,
+     :doc:`build` and the :ref:`GUI Customization Guide <gui>` for more
+     details.
+
+**screens.rpy**
+     Screens are defined in this file. You should edit this for :ref:`more
+     advanced gui customization <more_advanced_gui>`. Also see
+     :doc:`style`, :doc:`style_properties`, :doc:`screens`, :doc:`screen_actions`,
+     :doc:`screen_special` and :doc:`screen_optimization` for more details.
+
+**script.rpy**
+    This file is intended to include other scripts which include a scenario.
+    You can also add or delete any :file:`.rpy`. See :doc:`language_basics` for
+    more details.
+
+**\*.rpyc**
+    Those files are result of compiling each :file:`.rpy` files to reduce loading time.
+    You don't need to edit those files without deleting the corresponding :file:`.rpy`
+    file. See :doc:`language_basics` for more details.
+
 Releasing Your Game
 -------------------
 
@@ -655,7 +723,7 @@ before releasing it:
     versions and view a list of changes at `https://www.renpy.org/latest.html <https://www.renpy.org/latest.html>`_.
 
     Rarely, changes to Ren'Py will require you to make a change to your game's
-    script. `https://www.renpy.org/doc/html/incompatible.html <https://www.renpy.org/doc/html/incompatible.html>`_ has
+    script. :doc:`incompatible` has
     a list of these changes.
 
 **Check the Script.**
@@ -689,6 +757,9 @@ before releasing it:
 
     * The `Completed Games section of the Lemma Soft Forums <https://lemmasoft.renai.us/forums/viewforum.php?f=11>`_ is a
       good place to tell fellow creators about your game.
+
+More advanced ways of customizing the building of the distribution of your game
+can be found in the :doc:`build` section.
 
 Script of The Question
 -----------------------

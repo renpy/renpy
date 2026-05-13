@@ -13,7 +13,6 @@ label start:
     # aggiungere un file (chiamato "bg room.png" oppure "bg room.jpg")
     # alla directory 'images' per cambiarla.
 
-
     scene bg room
 
     # Mostra lo sprite di un personaggio.
@@ -26,11 +25,11 @@ label start:
 
     "Funziona davvero!"
 
-    e "Hai creato un nuovo gioco Ren'py."
+    e "Hai creato un nuovo gioco Ren'Py."
 
     e "Quando aggiungerai una storia, immagini e musica, potrai distribuirlo nel mondo!"
 
-    # Questo finisce il gioco.
+    # Questo termina il gioco.
 
     return
 

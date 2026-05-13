@@ -881,3 +881,195 @@ translate turkish strings:
     old "return"
     new "dön"
 
+
+translate turkish strings:
+
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    # Automatic translation.
+    new "Yüksek Kontrastlı Metin"
+
+    # renpy/common/00accessibility.rpy:223
+    old "Self-Voicing Volume Drop"
+    # Automatic translation.
+    new "Kendi Kendine Seslenen Hacim Düşüşü"
+
+    # renpy/common/00accessibility.rpy:234
+    old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
+    # Automatic translation.
+    new "Bu menüdeki seçenekler erişilebilirliği iyileştirmek için tasarlanmıştır. Tüm oyunlarda çalışmayabilir ve bazı seçenek kombinasyonları oyunu oynanamaz hale getirebilir. Bu, oyun veya motorla ilgili bir sorun değildir. Yazı tiplerini değiştirirken en iyi sonuçları elde etmek için metin boyutunu orijinal boyutuyla aynı tutmaya çalışın."
+
+    # renpy/common/00director.rpy:1745
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    # Automatic translation.
+    new "Özniteliği değiştirmek için tıklayın, negatif özniteliği değiştirmek için sağ tıklayın."
+
+    # renpy/common/00director.rpy:1768
+    old "Click to set transform, right click to add to transform list."
+    # Automatic translation.
+    new "Dönüşümü ayarlamak için tıklayın, dönüşüm listesine eklemek için sağ tıklayın."
+
+    # renpy/common/00director.rpy:1789
+    old "Click to set, right click to add to behind list."
+    # Automatic translation.
+    new "Ayarlamak için tıklayın, arka listeye eklemek için sağ tıklayın."
+
+    # renpy/common/00gui.rpy:456
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    # Automatic translation.
+    new "Bu kayıt farklı bir cihazda oluşturuldu. Kötü niyetle oluşturulmuş kayıt dosyaları bilgisayarınıza zarar verebilir. Bu kaydın yaratıcısına ve dosyayı değiştirmiş olabilecek herkese güveniyor musunuz?"
+
+    # renpy/common/00gui.rpy:457
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    # Automatic translation.
+    new "Kaydın oluşturulduğu cihaza güveniyor musunuz? Evet seçeneğini yalnızca cihazın tek kullanıcısı sizseniz seçmelisiniz."
+
+    # renpy/common/00preferences.rpy:419
+    old "self voicing volume drop"
+    # Automatic translation.
+    new "kendi kendine seslendirme ses seviyesi düşüşü"
+
+    # renpy/common/00preferences.rpy:495
+    old "system cursor"
+    # Automatic translation.
+    new "sistem imleci"
+
+    # renpy/common/00preferences.rpy:504
+    old "renderer menu"
+    # Automatic translation.
+    new "işleyici menüsü"
+
+    # renpy/common/00preferences.rpy:507
+    old "accessibility menu"
+    # Automatic translation.
+    new "eri̇şi̇lebi̇li̇rli̇k menüsü"
+
+    # renpy/common/00preferences.rpy:510
+    old "high contrast text"
+    # Automatic translation.
+    new "yüksek kontrastlı metin"
+
+    # renpy/common/00preferences.rpy:519
+    old "audio when minimized"
+    # Automatic translation.
+    new "simge durumuna küçültüldüğünde ses"
+
+    # renpy/common/00preferences.rpy:528
+    old "audio when unfocused"
+    # Automatic translation.
+    new "odaklanılmadığında ses"
+
+    # renpy/common/00preferences.rpy:537
+    old "web cache preload"
+    # Automatic translation.
+    new "web önbelleği ön yükleme"
+
+    # renpy/common/00preferences.rpy:552
+    old "voice after game menu"
+    # Automatic translation.
+    new "oyun menüsünden sonra ses"
+
+    # renpy/common/00preferences.rpy:571
+    old "main volume"
+    # Automatic translation.
+    new "ana hacim"
+
+    # renpy/common/00preferences.rpy:575
+    old "mute main"
+    # Automatic translation.
+    new "ana sesi kapat"
+
+    # renpy/common/00speechbubble.rpy:344
+    old "Speech Bubble Editor"
+    # Automatic translation.
+    new "Konuşma Balonu Düzenleyici"
+
+    # renpy/common/00speechbubble.rpy:349
+    old "(hide)"
+    # Automatic translation.
+    new "(gizle)"
+
+    # renpy/common/00sync.rpy:70
+    old "Sync downloaded."
+    # Automatic translation.
+    new "Senkronizasyon indirildi."
+
+    # renpy/common/00sync.rpy:190
+    old "Could not connect to the Ren'Py Sync server."
+    # Automatic translation.
+    new "Ren'Py Sync sunucusuna bağlanılamadı."
+
+    # renpy/common/00sync.rpy:192
+    old "The Ren'Py Sync server timed out."
+    # Automatic translation.
+    new "Ren'Py Sync sunucusu zaman aşımına uğradı."
+
+    # renpy/common/00sync.rpy:194
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    # Automatic translation.
+    new "Ren'Py Sync sunucusuna bağlanırken bilinmeyen bir hata oluştu."
+
+    # renpy/common/00sync.rpy:267
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    # Automatic translation.
+    new "Ren'Py Sync sunucusu bu senkronizasyonun bir kopyasına sahip değil. Senkronizasyon kimliği geçersiz olabilir veya zaman aşımına uğramış olabilir."
+
+    # renpy/common/00sync.rpy:409
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    # Automatic translation.
+    new "Lütfen oluşturduğunuz senkronizasyon kimliğini girin.\nAsla kendi oluşturmadığınız bir senkronizasyon kimliği girmeyin."
+
+    # renpy/common/00sync.rpy:428
+    old "The sync ID is not in the correct format."
+    # Automatic translation.
+    new "Senkronizasyon kimliği doğru formatta değil."
+
+    # renpy/common/00sync.rpy:448
+    old "The sync could not be decrypted."
+    # Automatic translation.
+    new "Senkronizasyonun şifresi çözülemedi."
+
+    # renpy/common/00sync.rpy:471
+    old "The sync belongs to a different game."
+    # Automatic translation.
+    new "Senkronizasyon farklı bir oyuna aittir."
+
+    # renpy/common/00sync.rpy:476
+    old "The sync contains a file with an invalid name."
+    # Automatic translation.
+    new "Senkronizasyon geçersiz ada sahip bir dosya içeriyor."
+
+    # renpy/common/00sync.rpy:529
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    # Automatic translation.
+    new "Bu işlem kayıtlarınızı {a=https://sync.renpy.org}Ren'Py Sync Server{/a} adresine yükleyecektir.\nDevam etmek istiyor musun?"
+
+    # renpy/common/00sync.rpy:558
+    old "Enter Sync ID"
+    # Automatic translation.
+    new "Senkronizasyon Kimliğini Girin"
+
+    # renpy/common/00sync.rpy:569
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    # Automatic translation.
+    new "Bu, {a=https://sync.renpy.org}Ren'Py Sync Server{/a} ile iletişime geçecektir."
+
+    # renpy/common/00sync.rpy:596
+    old "Sync Success"
+    # Automatic translation.
+    new "Senkronizasyon Başarısı"
+
+    # renpy/common/00sync.rpy:599
+    old "The Sync ID is:"
+    # Automatic translation.
+    new "Senkronizasyon Kimliği:"
+
+    # renpy/common/00sync.rpy:605
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    # Automatic translation.
+    new "Kaydınızı başka bir cihaza indirmek için bu kimliği kullanabilirsiniz.\nBu senkronizasyon bir saat içinde sona erecektir.\nRen'Py Sync, {a=https://www.renpy.org/sponsors.html}Ren'Py'nin Sponsorları{/a} tarafından desteklenmektedir."
+
+    # renpy/common/00sync.rpy:631
+    old "Sync Error"
+    # Automatic translation.
+    new "Senkronizasyon Hatası"

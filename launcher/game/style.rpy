@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -18,6 +18,50 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+# Defaults for custom theme properties.
+init -99 python:
+    # The color of non-interactive text.
+    custom_text = "#545454"
+
+    # Colors for buttons in various states.
+    custom_idle = "#42637b"
+    custom_hover = "#d86b45"
+    custom_disable = "#808080"
+
+    # Colors for reversed text buttons (selected list entries).
+    custom_reverse_idle = "#78a5c5"
+    reverse_hover = "#d86b45"
+    custom_reverse_text = "#ffffff"
+
+    # Colors for the scrollbar thumb.
+    custom_scrollbar_idle = "#dfdfdf"
+    custom_scrollbar_hover = "#d86b45"
+    # An image used as a separator pattern.
+    custom_pattern = "images/pattern.png"
+
+    # A displayable used for the background of everything.
+    custom_background = "images/background.png"
+
+    # A displayable used for the background of the projects list.
+    custom_projects_window = Null()
+
+    # A displayable used the background of information boxes.
+    custom_info_window = "#f9f9f9c0"
+
+    # Colors for the titles of information boxes.
+    custom_error_color = "#d15353"
+    custom_info_color = "#545454"
+    custom_interaction_color = "#d19753"
+    custom_question_color = "#d19753"
+
+    # The color of input text.
+    custom_input_color = "#d86b45"
+
+    # A displayable used for the background of windows
+    # containing commands, preferences, and navigation info.
+    custom_window = Frame(Fixed(Solid(custom_reverse_idle, xsize=4, xalign=0), Solid(custom_info_window, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
+
 
 init -1:
 
@@ -56,11 +100,7 @@ init -1 python:
     PATTERN = "images/pattern.png"
 
     # A displayable used for the background of everything.
-    BACKGROUND = "background"
-
-    # A displayable used for the background of windows
-    # containing commands, preferences, and navigation info.
-    WINDOW = Frame("window", 0, 0, tile=True)
+    BACKGROUND = Fixed(Solid(REVERSE_TEXT), xsize=800, ysize=600)
 
     # A displayable used for the background of the projects list.
     PROJECTS_WINDOW = Null()
@@ -76,6 +116,10 @@ init -1 python:
 
     # The color of input text.
     INPUT_COLOR = "#d86b45"
+
+    # A displayable used for the background of windows
+    # containing commands, preferences, and navigation info.
+    WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
     if persistent.theme == 'dark':
         # The color of non-interactive text.
@@ -120,51 +164,8 @@ init -1 python:
         # containing commands, preferences, and navigation info.
         WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
-    elif persistent.theme == 'clear':
 
-        # The color of non-interactive text.
-        TEXT = "#545454"
-
-        # Colors for buttons in various states.
-        IDLE = "#42637b"
-        HOVER = "#d86b45"
-        DISABLED = "#808080"
-
-        # Colors for reversed text buttons (selected list entries).
-        REVERSE_IDLE = "#78a5c5"
-        REVERSE_HOVER = "#d86b45"
-        REVERSE_TEXT = "#ffffff"
-
-        # Colors for the scrollbar thumb.
-        SCROLLBAR_IDLE = "#dfdfdf"
-        SCROLLBAR_HOVER = "#d86b45"
-
-        # An image used as a separator pattern.
-        PATTERN = "images/pattern.png"
-
-        # A displayable used for the background of everything.
-        BACKGROUND = Fixed(Solid(REVERSE_TEXT), xsize=800, ysize=600)
-
-        # A displayable used for the background of the projects list.
-        PROJECTS_WINDOW = Null()
-
-        # A displayable used the background of information boxes.
-        INFO_WINDOW = "#f9f9f9"
-
-        # Colors for the titles of information boxes.
-        ERROR_COLOR = "#d15353"
-        INFO_COLOR = "#545454"
-        INTERACTION_COLOR = "#d19753"
-        QUESTION_COLOR = "#d19753"
-
-        # The color of input text.
-        INPUT_COLOR = "#d86b45"
-
-        # A displayable used for the background of windows
-        # containing commands, preferences, and navigation info.
-        WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
-
-    elif renpy.exists("skin.rpy") and persistent.theme == 'custom':
+    elif persistent.theme == 'custom':
 
         # The color of non-interactive text.
         TEXT = custom_text
@@ -202,12 +203,15 @@ init -1 python:
         QUESTION_COLOR = custom_question_color
 
         # The color of input text.
-        INPUT_COLOR = custom_imput_color
+        INPUT_COLOR = custom_input_color
 
         # A displayable used for the background of windows
         # containing commands, preferences, and navigation info.
         WINDOW = custom_window
 
+
+    def folder_icon(color):
+        return Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(color))
 
 
 init 1 python:
@@ -311,8 +315,8 @@ style l_left_button_text is l_right_button_text
 style l_root is l_default:
     background BACKGROUND
     xpadding 10
-    top_padding 64
-    bottom_padding 128
+    top_padding 32
+    bottom_padding 120
 
 # An inner window.
 style l_window is l_default:
@@ -358,7 +362,7 @@ style l_alternate is l_default:
 style l_alternate_text is l_default:
     size size(14)
     font light_font()
-    text_align 1.0
+    textalign 1.0
 
 style l_small_button is l_button
 
@@ -378,7 +382,7 @@ style l_indent_margin is l_indent:
 
 # Lists.
 style l_list is l_default:
-    left_padding HALF_INDENT
+    left_padding INDENT
     xfill True
     selected_background REVERSE_IDLE
     selected_hover_background REVERSE_HOVER
@@ -389,6 +393,18 @@ style l_list_text is l_default:
     selected_idle_color REVERSE_TEXT
     selected_hover_color REVERSE_TEXT
     insensitive_color DISABLED
+
+style l_folder is l_default:
+    left_padding 25 + 5
+    yminimum 25
+    xfill True
+    background folder_icon(IDLE)
+    hover_background Fixed(REVERSE_HOVER, folder_icon(REVERSE_TEXT))
+
+style l_folder_text is l_default:
+    idle_color IDLE
+    hover_color REVERSE_TEXT
+    yalign 0.5
 
 style l_list2 is l_list:
     left_padding (HALF_INDENT + INDENT)
@@ -444,7 +460,7 @@ style l_info_button is l_button:
     xmargin 50
 
 style l_info_button_text is l_button_text:
-    text_align 0.5
+    textalign 0.5
     layout "subtitle"
 
 # Progress bar.

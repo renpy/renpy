@@ -62,7 +62,7 @@ translate korean demo_character_66d08d98:
 # game/indepth_character.rpy:39
 translate korean demo_character_7e0d75aa:
 
-    # e "Properties beginning with window apply to the textbox, those with what apply to the the dialogue, and those with who to the name of Character speaking."
+    # e "Properties beginning with window apply to the textbox, those with what apply to the dialogue, and those with who to the name of Character speaking."
     e "창(window)으로 시작하는 속성은 텍스트 상자, 대화 상자에 적용되는 내용 및 말하는 캐릭터의 이름에 적용돼."
 
 # game/indepth_character.rpy:41
@@ -208,4 +208,3 @@ translate korean demo_character_0c8f314a:
 
     # "I think I do."
     "나는 할 수 있을 거야."
-

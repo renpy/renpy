@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,6 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1500 python in iap:
+    # Do not participate in saves.
+    _constant = True
 
     from store import persistent, Action
     import time
@@ -111,6 +113,13 @@ init -1500 python in iap:
 
             return
 
+        def request_review(self):
+            """
+            Called to request that the user review the application.
+            """
+
+            return False
+
     class AndroidBackend(object):
         """
         The IAP backend that is used when IAP is supported.
@@ -125,7 +134,10 @@ init -1500 python in iap:
             for p in products.values():
                 print("Adding sku:", self.identifier(p))
 
-                self.store.addSKU(self.identifier(p))
+                if self.store_name == "play" and p.consumable:
+                    self.store.addConsumableSKU(self.identifier(p))
+                else:
+                    self.store.addSKU(self.identifier(p))
 
         def get_store_name(self):
             return self.store_name
@@ -172,6 +184,12 @@ init -1500 python in iap:
             return self.store.hasPurchased(identifier)
 
         def consume(self, p):
+            if self.store_name == "play" and p.consumable:
+                identifier = self.identifier(p)
+                self.store.consumePurchase(identifier)
+                self.wait_for_result(interact=False)
+                persistent._iap_purchases[p.identifier] = False
+                return self.store.getConsumePurchaseResult()
             return False
 
         def is_deferred(self, p):
@@ -181,13 +199,16 @@ init -1500 python in iap:
             identifier = self.identifier(p)
             return self.store.getPrice(identifier)
 
+        def request_review(self):
+            return self.store.requestReview()
+
         def init(self):
             restore(False)
 
     if renpy.renpy.ios:
         import pyobjus
-        IAPHelper = pyobjus.autoclass(b"IAPHelper")
-        NSMutableArray = pyobjus.autoclass(b"NSMutableArray")
+        IAPHelper = pyobjus.autoclass("IAPHelper")
+        NSMutableArray = pyobjus.autoclass("NSMutableArray")
 
         from pyobjus import objc_str, objc_arr
 
@@ -234,12 +255,13 @@ init -1500 python in iap:
                 renpy.pause.
             """
 
+            import renpy.pygame as pygame
+
             while not self.helper.finished:
                 if interact:
                     renpy.pause(.1)
                 else:
-                    import pygame_sdl2
-                    pygame_sdl2.event.pump()
+                    pygame.event.pump()
                     time.sleep(.1)
 
         def validate_products(self, interact):
@@ -287,9 +309,15 @@ init -1500 python in iap:
             rv = self.helper.formatPrice_(identifier)
 
             if rv is not None:
-                rv = rv.UTF8String().decode("utf-8")
+                rv = rv.UTF8String()
+                if isinstance(rv, bytes):
+                    rv = rv.decode("utf-8")
 
             return rv
+
+        def request_review(self):
+            self.helper.requestReview()
+            return True
 
         def init(self):
             self.helper.validateProductIdentifiersInBackground()
@@ -332,8 +360,8 @@ init -1500 python in iap:
             iOS. If not given, defaults to `identifier`.
 
         `consumable`
-            True if this is a consumable purchase. Right now, consumable purchases
-            are only supported on iOS.
+            True if this is a consumable purchase. Consumable purchases
+            support iOS and Android (GooglePlay).
         """
 
         if product in products:
@@ -483,10 +511,14 @@ init -1500 python in iap:
         :doc: iap
 
         Returns True if the user has purchased `product` in the past, and
-        False otherwise.
+        False otherwise. if `product` is a consumable and comes from Google Play, this always returns False.
         """
 
         p = get_product(product)
+
+        # Consumables always return False because they can be repurchased.
+        if store_name == "play" and p.consumable:
+            return False
 
         # Check the cache first, since we might be off line.
         if persistent._iap_purchases.get(p.identifier, False):
@@ -539,6 +571,21 @@ init -1500 python in iap:
 
         return backend.get_store_name()
 
+    def request_review():
+        """
+        :doc: iap
+
+        When called, the app store is asked to request a review from the user.
+        This returns true if the request was successful, and false if the
+        request was not. Note that a successful request does not mean that
+        the user will be asked to review the app, as app stores determine
+        if the user is actually asked.
+
+        This is supported on Google Play and the Apple App Store, only.
+        """
+
+        return backend.request_review()
+
     def missing_products():
         """
         Determines if any products are missing from persistent._iap_purchases
@@ -556,7 +603,7 @@ init -1500 python in iap:
         """
 
         from jnius import autoclass
-        Store = autoclass(b'org.renpy.iap.Store')
+        Store = autoclass('org.renpy.iap.Store')
         store = Store.getStore()
 
         store_name = store.getStoreName()
@@ -568,10 +615,17 @@ init -1500 python in iap:
 
     def init():
         """
-        Called to initialize the IAP system.
+        :doc: iap
+
+        Initialize iap. This should be called after all calls to iap.register(),
+        but before any other iap function. If not called explicitly, this is
+        automatically called at the end of the initialization phase.
         """
 
         global backend
+
+        if not isinstance(backend, NoneBackend):
+            return
 
         if persistent._iap_purchases is None:
             persistent._iap_purchases = { }
@@ -586,7 +640,10 @@ init -1500 python in iap:
 
         # Set up the back end.
         if renpy.renpy.android:
-            backend = init_android()
+            try:
+                backend = init_android()
+            except Exception:
+                backend = NoneBackend()
         elif renpy.renpy.ios:
             backend = IOSBackend()
         else:

@@ -197,3 +197,16 @@ translate polish strings:
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Nazwa użytkownika i nazwa projektu powiązane z projektem itch.io, oddzielone ukośnikiem"
 
+
+translate polish strings:
+
+    # gui/game/options.rpy:47
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    # Automatic translation.
+    new "## Te trzy zmienne kontrolują między innymi to, które miksery są domyślnie pokazywane graczowi. Ustawienie jednej z nich na False spowoduje ukrycie odpowiedniego miksera."
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    # Automatic translation.
+    new "## Klucz licencyjny Google Play jest wymagany do wykonywania zakupów w aplikacji. Można go znaleźć w konsoli deweloperskiej Google Play, w zakładce \"Monetyzuj\" > \"Konfiguracja monetyzacji\" > \"Licencjonowanie\"."
+

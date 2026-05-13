@@ -350,8 +350,8 @@ translate spanish strings:
     new "Clic derecho"
 
     # screens.rpy:1120
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Rueda del ratón arriba\nClic en lado de retroceso"
+    old "Mouse Wheel Up"
+    new "Rueda del ratón arriba"
 
     # screens.rpy:1124
     old "Mouse Wheel Down"

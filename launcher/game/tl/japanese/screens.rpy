@@ -23,7 +23,7 @@ translate japanese strings:
 
     # screens.rpy:102
     old "## https://www.renpy.org/doc/html/screen_special.html#say"
-    new "## https://www.renpy.org/doc/html/screen_special.html#say"
+    new "## https://ja.renpy.org/doc/html/screen_special.html#say"
 
     # screens.rpy:119
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
@@ -43,7 +43,7 @@ translate japanese strings:
 
     # screens.rpy:177
     old "## http://www.renpy.org/doc/html/screen_special.html#input"
-    new "## http://www.renpy.org/doc/html/screen_special.html#input"
+    new "## http://ja.renpy.org/doc/html/screen_special.html#input"
 
     # screens.rpy:205
     old "## Choice screen"
@@ -55,7 +55,7 @@ translate japanese strings:
 
     # screens.rpy:211
     old "## http://www.renpy.org/doc/html/screen_special.html#choice"
-    new "## http://www.renpy.org/doc/html/screen_special.html#choice"
+    new "## http://ja.renpy.org/doc/html/screen_special.html#choice"
 
     # screens.rpy:221
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
@@ -170,7 +170,7 @@ translate japanese strings:
 
     # screens.rpy:354
     old "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
-    new "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new "## http://ja.renpy.org/doc/html/screen_special.html#main-menu"
 
     # screens.rpy:357
     old "## This ensures that any other menu screen is replaced."
@@ -193,7 +193,7 @@ translate japanese strings:
     new "## このスクリーンは、様々なゲームメニューの基本的な共通構造をレイアウトします。各ゲームメニュースクリーンによって呼び出され、背景・現在のスクリーンタイトル・ナビゲーションを表示します。"
 
     # screens.rpy:418
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
     new "## scroll パラメーターは None 、\"viewport\" 、\"vpgrid\" のいずれかをとります。呼び出し親のスクリーンのコンテンツは、このスクリーンの中の transclude の部分に配置されます。"
 
     # screens.rpy:435
@@ -222,7 +222,7 @@ translate japanese strings:
 
     # screens.rpy:561
     old "Version [config.version!t]\n"
-    new "Version [config.version!t]\n"
+    new "バージョン [config.version!t]\n"
 
     # screens.rpy:563
     old "## gui.about is usually set in options.rpy."
@@ -230,7 +230,7 @@ translate japanese strings:
 
     # screens.rpy:567
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
-    new "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
+    new "Made with {a=https://ja.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
 
     # screens.rpy:570
     old "## This is redefined in options.rpy to add text to the about screen."
@@ -246,7 +246,7 @@ translate japanese strings:
 
     # screens.rpy:588
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
-    new "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
+    new "## https://ja.renpy.org/doc/html/screen_special.html#save https://ja.renpy.org/doc/html/screen_special.html#load"
 
     # screens.rpy:607
     old "Page {}"
@@ -314,7 +314,7 @@ translate japanese strings:
 
     # screens.rpy:716
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
-    new "## https://www.renpy.org/doc/html/screen_special.html#preferences"
+    new "## https://ja.renpy.org/doc/html/screen_special.html#preferences"
 
     # screens.rpy:738
     old "Display"
@@ -350,7 +350,7 @@ translate japanese strings:
 
     # screens.rpy:753
     old "After Choices"
-    new "選択肢の後"
+    new "選択肢後"
 
     # screens.rpy:754
     old "Transitions"
@@ -398,7 +398,7 @@ translate japanese strings:
 
     # screens.rpy:888
     old "## https://www.renpy.org/doc/html/history.html"
-    new "## https://www.renpy.org/doc/html/history.html"
+    new "## https://ja.renpy.org/doc/html/history.html"
 
     # screens.rpy:894
     old "## Avoid predicting this screen, as it can be very large."
@@ -438,7 +438,7 @@ translate japanese strings:
 
     # screens.rpy:1003
     old "Enter"
-    new "Enter"
+    new "エンター"
 
     # screens.rpy:1004
     old "Advances dialogue and activates the interface."
@@ -446,7 +446,7 @@ translate japanese strings:
 
     # screens.rpy:1007
     old "Space"
-    new "Space"
+    new "スペース"
 
     # screens.rpy:1008
     old "Advances dialogue without selecting choices."
@@ -462,7 +462,7 @@ translate japanese strings:
 
     # screens.rpy:1015
     old "Escape"
-    new "Escape"
+    new "ESC"
 
     # screens.rpy:1016
     old "Accesses the game menu."
@@ -510,7 +510,7 @@ translate japanese strings:
 
     # screens.rpy:1044
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "{a=https://www.renpy.org/l/voicing}セルフボイシング{/a}を有効化する。"
+    new "{a=https://ja.renpy.org/l/voicing}セルフボイシング{/a}を有効化する。"
 
     # screens.rpy:1050
     old "Left Click"
@@ -525,8 +525,8 @@ translate japanese strings:
     new "右クリック"
 
     # screens.rpy:1062
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "マウスホイール上回転\n画面サイドをタッチ"
+    old "Mouse Wheel Up"
+    new "マウスホイール上回転"
 
     # screens.rpy:1066
     old "Mouse Wheel Down"
@@ -573,7 +573,7 @@ translate japanese strings:
 
     # screens.rpy:1133
     old "## http://www.renpy.org/doc/html/screen_special.html#confirm"
-    new "## http://www.renpy.org/doc/html/screen_special.html#confirm"
+    new "## http://ja.renpy.org/doc/html/screen_special.html#confirm"
 
     # screens.rpy:1137
     old "## Ensure other screens do not get input while this screen is displayed."
@@ -601,7 +601,7 @@ translate japanese strings:
 
     # screens.rpy:1196
     old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
-    new "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
+    new "## https://ja.renpy.org/doc/html/screen_special.html#skip-indicator"
 
     # screens.rpy:1208
     old "Skipping"
@@ -621,7 +621,7 @@ translate japanese strings:
 
     # screens.rpy:1252
     old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
-    new "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
+    new "## https://ja.renpy.org/doc/html/screen_special.html#notify-screen"
 
     # screens.rpy:1286
     old "## NVL screen"
@@ -633,7 +633,7 @@ translate japanese strings:
 
     # screens.rpy:1290
     old "## http://www.renpy.org/doc/html/screen_special.html#nvl"
-    new "## http://www.renpy.org/doc/html/screen_special.html#nvl"
+    new "## http://ja.renpy.org/doc/html/screen_special.html#nvl"
 
     # screens.rpy:1301
     old "## Displays dialogue in either a vpgrid or the vbox."
@@ -669,27 +669,27 @@ translate japanese strings:
 
     # screens.rpy:172
     old "## https://www.renpy.org/doc/html/screen_special.html#input"
-    new "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new "## https://ja.renpy.org/doc/html/screen_special.html#input"
 
     # screens.rpy:205
     old "## https://www.renpy.org/doc/html/screen_special.html#choice"
-    new "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new "## https://ja.renpy.org/doc/html/screen_special.html#choice"
 
     # screens.rpy:350
     old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
-    new "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new "## https://ja.renpy.org/doc/html/screen_special.html#main-menu"
 
     # screens.rpy:916
     old "## This determines what tags are allowed to be displayed on the history screen."
-    new "## This determines what tags are allowed to be displayed on the history screen."
+    new "## 履歴画面に表示できるタグを決定します。"
 
     # screens.rpy:1132
     old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
-    new "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+    new "## https://ja.renpy.org/doc/html/screen_special.html#confirm"
 
     # screens.rpy:1289
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
-    new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+    new "## https://ja.renpy.org/doc/html/screen_special.html#nvl"
 
     # gui/game/screens.rpy:333
     old "## The quit button is banned on iOS and unnecessary on Android and Web."
@@ -697,5 +697,34 @@ translate japanese strings:
 
     # gui/game/screens.rpy:1049
     old "Opens the accessibility menu."
-    new "アクセス性メニューを開きます。"
+    new "アクセシビリティーメニューを開きます。"
+
+    # gui/game/screens.rpy:1307
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    new "## 指定されれば選択肢を表示します。config.narrator_menuがTrueだと、メニューは正常に表示されないでしょう。"
+
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    new "同期のアップロード"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    new "同期のダウンロード"
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    new "## バブルスクリーン"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    new "## バブルスクリーンは、吹き出しを使用する際に、プレイヤーにダイアログを表示するために使用されます。バブルスクリーンはSayスクリーンと同じパラメータを持ち、idが \"what \"のdisplayableを作成しなければならず、idが \"namebox\", \"who\", \"window \"のdisplayableを作成できます。"
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+
+    # gui/game/screens.rpy:1098
+    old "Start, Guide, B/Right Button"
+    new "スタート、ガイド、 B / Right ボタン"
 

@@ -25,7 +25,7 @@ cdef inline void selection_sort(Item *array, int size):
     cdef PyObject *minkey
     cdef Item tmp
 
-    for 0 <= i < size - 1:
+    for i in range(size - 1):
 
         min = i
 
@@ -42,7 +42,11 @@ cdef inline int partition(Item *a, int size):
     cdef int i = 0
     cdef int j = size - 1
 
-    # Use the last key as the pivot.
+    # Swap the middle element with the last element.
+    # This produces better behavior when the list is sorted.
+    swap(a, j, j // 2)
+
+    # Use that new last element as a pivot.
     cdef PyObject *pivot = a[j].key
 
     while True:
@@ -73,7 +77,6 @@ cdef void quicksort_items(Item *array, int size):
     cdef int left_size = split
     cdef int right_size = size - split - 1
 
-
     if left_size >= 2:
         quicksort_items(array, split)
 
@@ -89,7 +92,7 @@ cdef class DictItems(object):
     def __dealloc__(self):
         cdef int i
 
-        for 0 <= i < self.size:
+        for i in range(self.size):
             Py_XDECREF(self.items[i].key)
             Py_XDECREF(self.items[i].value)
 
@@ -118,7 +121,7 @@ cdef class DictItems(object):
 
         rv = { }
 
-        for 0 <= i < self.size:
+        for i in range(self.size):
             rv[<object> self.items[i].key] = <object> self.items[i].value
 
         return rv

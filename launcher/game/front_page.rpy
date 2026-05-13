@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,41 +25,6 @@ init python:
 
     import datetime
 
-    import os
-    import subprocess
-
-    class OpenDirectory(Action):
-        """
-        Opens `directory` in a file browser. `directory` is relative to
-        the project root.
-        """
-
-        alt = _("Open [text] directory.")
-
-        def __init__(self, directory, absolute=False):
-            if absolute:
-                self.directory = directory
-            else:
-                self.directory = os.path.join(project.current.path, directory)
-
-        def get_sensitive(self):
-            return os.path.exists(self.directory)
-
-        def __call__(self):
-
-            try:
-                directory = renpy.fsencode(self.directory)
-
-                if renpy.windows:
-                    os.startfile(directory)
-                elif renpy.macintosh:
-                    subprocess.Popen([ "open", directory ])
-                else:
-                    subprocess.Popen([ "xdg-open", directory ])
-
-            except Exception:
-                pass
-
     # Used for testing.
     def Relaunch():
         renpy.quit(relaunch=True)
@@ -81,7 +46,7 @@ screen front_page:
             right_margin 2
 
             top_padding 20
-            bottom_padding 26
+            bottom_padding 13
 
             side "t c b":
 
@@ -133,43 +98,59 @@ screen front_page:
         key "K_F5" action project.Launch()
 
 
-
 # This is used by front_page to display the list of known projects on the screen.
 screen front_page_project_list:
 
+    $ folders = project.manager.folders
     $ projects = project.manager.projects
     $ templates = project.manager.templates
 
     vbox:
 
-        if templates and persistent.show_templates:
-
-            for p in templates:
-
-                textbutton _("[p.name!q] (template)"):
-                    action project.Select(p)
-                    alt _("Select project [text].")
-                    style "l_list"
-
-            null height 12
-
         if projects:
-
             for p in projects:
 
-                textbutton "[p.name!q]":
+                textbutton ("[p.display_name]" if p.display_name else "[p.name!q]"):
                     action project.Select(p)
                     alt _("Select project [text].")
                     style "l_list"
 
-            null height 12
+            null height 6
 
-        textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
-        textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
+        if folders:
+            for pf in folders:
+
+                textbutton "[pf.name.capitalize()]":
+                    action project.CollapseFolder(pf)
+                    alt _("Open folder [text].")
+                    selected_alt _("Close folder [text].")
+                    style "l_folder"
+
+                if not pf.hidden:
+                    for p in pf.projects:
+                        textbutton _(f"[p.display_name]" if p.display_name else "[p.name!q]"):
+                            action project.Select(p)
+                            alt _("Select project [text].")
+                            style "l_list"
+
+            null height 6
+
+        if persistent.show_tutorial_projects:
+
+            if folders:
+                textbutton _("Tutorials"):
+                    action ToggleDict(persistent.collapsed_folders, "Tutorials")
+                    alt _("Select folder [text].")
+                    style "l_folder"
+
+            if (not folders) or (not persistent.collapsed_folders["Tutorials"]):
+                textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
+                textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
 
 
 # This is used for the right side of the screen, which is where the project-specific
 # buttons are.
+
 screen front_page_project:
 
     $ p = project.current
@@ -192,13 +173,11 @@ screen front_page_project:
                 label _("Open Directory") style "l_label_small"
 
                 frame style "l_indent":
-                    has vbox
+                    has grid 2 max(5, (len(p.get_renpy_launcher()["open_directory"]) + 1) // 2):
+                        transpose True xfill True
 
-                    textbutton _("game") action OpenDirectory("game")
-                    textbutton _("base") action OpenDirectory(".")
-                    textbutton _("images") action OpenDirectory("game/images")
-                    textbutton _("audio") action OpenDirectory("game/audio")
-                    textbutton _("gui") action OpenDirectory("game/gui")
+                    for button_name, path in p.get_renpy_launcher()["open_directory"].items():
+                        textbutton button_name action OpenDirectory(os.path.join(p.path, path), absolute=True)
 
             vbox:
                 if persistent.show_edit_funcs:
@@ -208,10 +187,8 @@ screen front_page_project:
                     frame style "l_indent":
                         has vbox
 
-                        textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
-                        textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
-                        textbutton "gui.rpy" action editor.Edit("game/gui.rpy", check=True)
-                        textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
+                        for button_name, path in p.get_renpy_launcher()["edit_file"].items():
+                            textbutton button_name action editor.Edit(path, check=True)
 
                         if editor.CanEditProject():
                             textbutton _("Open project") action editor.EditProject()
@@ -230,13 +207,15 @@ screen front_page_project:
                 has vbox
 
                 textbutton _("Navigate Script") action Jump("navigation")
-                textbutton _("Check Script (Lint)") action Jump("lint")
+                textbutton _("Check Script (Lint)") action Call("lint")
 
-                if project.current.exists("game/gui.rpy"):
+                if p.dump.get("test", {}).get("has_default_testcase", False):
+                    textbutton _("Run Testcases") action Jump("run_testcases")
+
+                if p.exists("game/gui.rpy"):
                     textbutton _("Change/Update GUI") action Jump("change_gui")
                 else:
                     textbutton _("Change Theme") action Jump("choose_theme")
-
 
                 textbutton _("Delete Persistent") action Jump("rmpersistent")
                 textbutton _("Force Recompile") action Jump("force_recompile")
@@ -251,7 +230,7 @@ screen front_page_project:
 
                 textbutton _("Android") action Jump("android")
                 textbutton _("iOS") action Jump("ios")
-                textbutton _("Web") + " " + _("(Beta)") action Jump("web")
+                textbutton _("Web") action Jump("web")
                 textbutton _("Generate Translations") action Jump("translate")
                 textbutton _("Extract Dialogue") action Jump("extract_dialogue")
 
@@ -262,11 +241,27 @@ label start:
     show screen bottom_info
     $ dmgcheck()
 
-    jump expression renpy.session.pop("launcher_start_label", "front_page")
+    jump expression renpy.session.pop("launcher_start_label", "before_front_page")
 
+default persistent.has_chosen_language = False
 default persistent.has_update = False
 
+label before_front_page:
+
+    if (not persistent.has_chosen_language) or ("RENPY_CHOOSE_LANGUAGE" in os.environ):
+
+        if (_preferences.language is None) or ("RENPY_CHOOSE_LANGUAGE" in os.environ):
+            hide screen bottom_info
+            call choose_language
+            show screen bottom_info
+
+        $ persistent.has_chosen_language = True
+
+    call editor_check
+
+label post_editor_check:
 label front_page:
+
     if persistent.daily_update_check and ((not persistent.last_update_check) or (datetime.date.today() > persistent.last_update_check)):
         python hide:
             persistent.last_update_check = datetime.date.today()
@@ -282,14 +277,18 @@ label lint:
         interface.processing(_("Checking script for potential problems..."))
         lint_fn = project.current.temp_filename("lint.txt")
 
-        project.current.launch([ 'lint', lint_fn ], wait=True)
+        persistent.lint_options.discard("--orphan-tl") # compat
+        persistent.lint_options.discard("--builtins-parameters") # compat
+        persistent.lint_options.discard("--words-char-count") # compat
+
+        project.current.launch([ 'lint', lint_fn, ] + list(persistent.lint_options), wait=True)
 
         e = renpy.editor.editor
         e.begin(True)
         e.open(lint_fn)
         e.end()
 
-    jump front_page
+    return
 
 label rmpersistent:
 
@@ -304,5 +303,13 @@ label force_recompile:
     python hide:
         interface.processing(_("Recompiling all rpy files into rpyc files..."))
         project.current.launch([ 'compile' ], wait=True)
+
+    jump front_page
+
+label run_testcases:
+
+    python hide:
+        interface.processing(_("Running testcases..."))
+        project.current.launch_console_command([ 'test' ])
 
     jump front_page

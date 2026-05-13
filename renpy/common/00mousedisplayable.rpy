@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,55 +29,89 @@ init -1500 python:
         it to move across the screen when the player moves their mouse.
 
         `cursor`
-            A displayable that is used to draw the mouse.
+            A displayable that is used to draw the mouse. If this is None,
+            the hardware cursor is used.
 
         `x`, `y`
             The coordinates of the hotspot, relative to the upper left
             corner of the mouse, in virtual pixels.
+        """
 
-        .. method MouseDisplayable.add(name, cursor, x, y)
+        cursor = None
+
+        def __init__(self, cursor, x=0, y=0):
+
+            super(MouseDisplayable, self).__init__()
+
+            if cursor:
+                self.cursors = { 'default': ( renpy.displayable(cursor), x, y) }
+            else:
+                self.cursors = { 'default': None }
+
+
+            self.last_cursor = "_default_"
+            self.last_cursor_st = 0
+
+        def add(self, name, cursor, x=0, y=0):
+            """
+            :doc: mouse_displayable
 
             This adds a second cursor, that is used when the `name`
             mouse is displayed. This returns the MouseDisplayable,
             so that calls to this method can be chained.
             """
 
-        def __init__(self, cursor, x, y):
+            if cursor is None:
+                self.cursors[name] = None
+                return
 
-            super(MouseDisplayable, self).__init__()
-
-            self.cursors = { 'default': ( renpy.displayable(cursor), x, y) }
-
-            self.last_cursor = "_default_"
-            self.last_cursor_st = 0
-
-
-        def add(self, name, cursor, x, y):
             self.cursors[name] = ( renpy.displayable(cursor), x, y )
             return self
 
-        def render(self, width, height, st, at):
+        def get_cursor_name(self):
+            """
+            Return the name of the cursor that will be used.
+            """
 
             # Determine the name of the mouse to use.
-            name = renpy.get_mouse_name()
+            for name in renpy.get_mouse_names():
+                if name in self.cursors:
+                    return name
 
-            # If it doesn't exist, use the default.
-            if name not in self.cursors:
-                name = "default"
+            return "default"
 
-            # Adjust st when the cursor changes.
-            if name != self.last_cursor:
-                self.last_cursor = name
-                self.last_cursor_st = st
+        def _has_mouse_cursor(self):
+            """
+            Returns True if this displayable will draw the mouse cursor,
+            False if it won't.
+            """
 
-            st = st - self.last_cursor_st
+            name = self.get_cursor_name()
+            return self.cursors.get(name, None) is not None
+
+        def render(self, width, height, st, at):
+
+
+            name = self.get_cursor_name()
 
             # Render this displayable.
             rv = renpy.Render(width, height)
 
+            if self.cursors[name] is None:
+                return rv
+
+            # Adjust st when the cursor changes.
+            if (name != self.last_cursor) or (self.cursor is None):
+                self.last_cursor = name
+                self.last_cursor_st = st
+                self.cursor = self.cursors[name][0]._duplicate(None)
+
+            st = st - self.last_cursor_st
+
             # If the user is on the screen,
             x, y = renpy.get_mouse_pos()
-            d, xo, yo = self.cursors[name]
+            _, xo, yo = self.cursors[name]
+            d = self.cursor
 
             if (0 <= x < width) and (0 <= y < height) and renpy.is_mouse_visible():
 
@@ -90,9 +124,4 @@ init -1500 python:
             return rv
 
         def visit(self):
-            return [ i[0] for i in self.cursors.values() ]
-
-
-
-
-
+            return [ i[0] for i in self.cursors.values() if i ]

@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -37,7 +37,7 @@ cdef class TextureLoader:
 
     # The total size (in bytes) of all the textures that have been allocated
     # but not deallocated.
-    cdef int total_texture_size
+    cdef object total_texture_size
 
     # The program used for fast texture loading
     cdef Program ftl_program
@@ -46,10 +46,10 @@ cdef class TextureLoader:
     cdef object texture_load_queue
 
     # The maximum size of a texture.
-    cdef GLint max_texture_width
-    cdef GLint max_texture_height
+    cdef public GLint max_texture_width
+    cdef public GLint max_texture_height
 
-    cdef GLfloat max_anisotropy
+    cdef public GLfloat max_anisotropy
 
 
 cdef class GLTexture(GL2Model):
@@ -73,4 +73,24 @@ cdef class GLTexture(GL2Model):
     cdef public int texture_width
     cdef public int texture_height
 
+    # Borders
+    cdef public int bl
+    cdef public int bt
+    cdef public int br
+    cdef public int bb
+
+    # The last texture states set in gl2uniform.
+    cdef public GLint wrap_s
+    cdef public GLint wrap_t
+    cdef public GLfloat anisotropy
+
+    cdef public GLint mag_filter
+    cdef public GLint min_filter
+    cdef public GLint default_mag_filter
+    cdef public GLint default_min_filter
+
+    cdef bint has_mipmaps(self)
+
     cpdef subsurface(GLTexture self, t)
+
+    cpdef GL2Model get_texture(self, int i)

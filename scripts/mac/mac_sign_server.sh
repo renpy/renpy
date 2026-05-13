@@ -19,20 +19,7 @@ zip -r /tmp/renpy.app.zip "$APP"
 date
 echo "Submitting for notarization."
 
-xcrun altool --asc-provider XHTE5H7Z79 -u tom@rothamel.us -p "@keychain:altool"  \
-    --notarize-app \
-    --transport Aspera \
-    --primary-bundle-id org.renpy.renpy \
-    -f /tmp/renpy.app.zip
-
-
-date
-echo "Submitted app for notarization."
-
-$(dirname $0)/wait_notarization.py
-
-sleep 15
-
+xcrun notarytool submit --keychain-profile developer-signing --wait /tmp/renpy.app.zip
 xcrun stapler staple "$APP"
 
 tar cf "signed-$TARBALL" "$APP"

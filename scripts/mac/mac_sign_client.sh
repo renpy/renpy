@@ -10,16 +10,16 @@ APPDIRBASE=$(basename $APPDIR)
 
 TARBALL=$APPDIRBASE.tar
 
+HOST=mary21.local
+
 pushd $APPDIR
 tar cf /tmp/$TARBALL $APPBASE
-rsync -a /tmp/$TARBALL tom@mary12:/tmp
+rsync -a /tmp/$TARBALL tom@$HOST:/tmp
 
-rsync -a $(dirname $0)/ tom@mary12.local:/tmp/renpy-mac-scripts/
+rsync -a $(dirname $0)/ tom@$HOST:/tmp/renpy-mac-scripts/
 
-ssh -t tom@mary12.local "'/tmp/renpy-mac-scripts/mac_sign_server.sh' '$IDENTITY' '$TARBALL' '$APPBASE'"
+ssh -t tom@$HOST "'/tmp/renpy-mac-scripts/mac_sign_server.sh' '$IDENTITY' '$TARBALL' '$APPBASE'"
 
-rsync -a tom@mary12.local:/tmp/signed-$TARBALL /tmp
+rsync -a tom@$HOST:/tmp/signed-$TARBALL /tmp
 tar xf /tmp/signed-$TARBALL
 popd
-
-

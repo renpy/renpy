@@ -1,6 +1,4 @@
-﻿.. _custom-text-tags:
-
-================
+﻿================
 Custom Text Tags
 ================
 
@@ -9,19 +7,26 @@ can manipulate the text and text tags defined within, including adding
 and removing text and other text tags.
 
 Custom text tags are created by assigning a text tag function to an
-entry in the config.custom_text_tags dictionary or the
-config.self_closing_custom_tags dictionary.
+entry in one of the following dictionaries.
 
-.. var:: config.custom_text_tags
+.. var:: config.custom_text_tags = { }
 
     Maps text tag names to text tag functions, when the text tag can
     wrap other text.
 
 
-.. var:: config.self_closing_custom_text_tags
+.. var:: config.self_closing_custom_text_tags = { }
 
     Maps text tag names to a self-closing text tag functions, when the text tag
     does not wrap other text.
+
+.. warning::
+
+    The functions may be called at any moment as part of the prediction
+    process. For that reason, their behavior should not depend on the state
+    of the game (global variables, typically) and they should not induce
+    side-effects (calling :doc:`statement_equivalents` for example, or
+    changing global variables).
 
 A text tag function takes three arguments: The tag itself, the argument
 for the tag, and a list of content tuples. For example, for the text::
@@ -62,12 +67,14 @@ renpy.TEXT_PARAGRAPH
 A self-closing text tag function is similar, except that it does not take
 the third argument.
 
-Caveats
--------
+Lists of tokens can be passed to :func:`Text` when its `tokenized`
+argument is True.
 
-The dialogue text tags {p}, {w}, {nw}, and {fast} are processed before
-custom text tags, and should either be not included inside a custom
-text tag, or passed through unchanged.
+.. warning::
+
+    The dialogue text tags {p}, {w}, {nw}, and {fast} are processed before
+    custom text tags, and should either be not included inside a custom
+    text tag, or passed through unchanged.
 
 Examples
 --------

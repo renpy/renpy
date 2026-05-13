@@ -1,5 +1,7 @@
-﻿
-translate vietnamese strings:
+﻿translate vietnamese strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=fonts/Roboto-Light.ttf}Tiếng Việt{/font}"
 
     # about.rpy:39
     old "[version!q]"
@@ -355,14 +357,14 @@ translate vietnamese strings:
 
     # editor.rpy:150
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
-    new "{b}Khuyến khích{/ b} Một trình biên tập có giao diện thân thiện và chức năng hỗ trợ phát triển, chẳng hạn như kiểm tra lỗi chính tả. Editra hiện đang thiếu sự hỗ trợ IME cần thiết để nhập văn bản Trung Quốc, Nhật Bản, và Hàn Quốc."
+    new "{b}Khuyến khích{/b} Một trình biên tập có giao diện thân thiện và chức năng hỗ trợ phát triển, chẳng hạn như kiểm tra lỗi chính tả. Editra hiện đang thiếu sự hỗ trợ IME cần thiết để nhập văn bản Trung Quốc, Nhật Bản, và Hàn Quốc."
 
     # editor.rpy:151
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
-    new "{b}Khuyến khích{/ b} Một trình biên tập có giao diện thân thiện và chức năng hỗ trợ phát triển, chẳng hạn như kiểm tra lỗi chính tả. Editra hiện đang thiếu sự hỗ trợ IME cần thiết để nhập văn bản Trung Quốc, Nhật Bản, và Hàn Quốc. Với Linux Editra cần thêm wxPython."
+    new "{b}Khuyến khích{/b} Một trình biên tập có giao diện thân thiện và chức năng hỗ trợ phát triển, chẳng hạn như kiểm tra lỗi chính tả. Editra hiện đang thiếu sự hỗ trợ IME cần thiết để nhập văn bản Trung Quốc, Nhật Bản, và Hàn Quốc. Với Linux Editra cần thêm wxPython."
 
     # editor.rpy:167
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Lỗi xảy ra có thể là do wxPython chưa được cài đặt vào hệ thống."
 
     # editor.rpy:169
@@ -378,7 +380,7 @@ translate vietnamese strings:
     new "Cần tải về 1.8 MB tập tin"
 
     # editor.rpy:182
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Lỗi xảy ra có thể là do Java chưa được cài đặt vào hệ thống."
 
     # editor.rpy:191
@@ -390,7 +392,7 @@ translate vietnamese strings:
     new "Chặn Ren'py mở một trình biên tập văn bản"
 
     # editor.rpy:359
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Một lỗi xuất hiện khi đang mở trình biên tập văn bản:\n[exception!q]"
 
     # editor.rpy:457
@@ -606,7 +608,7 @@ translate vietnamese strings:
     new "LỖI"
 
     # interface.rpy:356
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "Trong khi [what!qt], một lỗi xảy ra:"
 
     # interface.rpy:356
@@ -1134,7 +1136,7 @@ translate vietnamese strings:
     new "Rìa gần nhất tới sự phát triển của Ren'Py. Nó có thể chứa các tính năng mới nhất hoặc chẳng chạy được luôn."
 
     # updater.rpy:152
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Một lỗi đã xảy ra:"
 
     # updater.rpy:154
@@ -1184,4 +1186,3 @@ translate vietnamese strings:
     # updater.rpy:195
     old "Proceed"
     new "Tiếp tục"
-

@@ -203,23 +203,23 @@ translate italian strings:
 
     # gui.rpy:220
     old "## File Slot Buttons"
-    new "## Pulsanti Slot"
+    new "## Pulsanti Slot File"
 
     # gui.rpy:222
     old "## A file slot button is a special kind of button. It contains a thumbnail image, and text describing the contents of the save slot. A save slot uses image files in gui/button, like the other kinds of buttons."
-    new "## Un pulsante Slot è un tipo di pulsante speciale. Contiene un'immagine miniatura, e testo che riporta i contenuti dello slot. Uno Slot Save usa immagini presenti in gui/button, come tutti gli altri tipi di pulsante."
+    new "## Un pulsante slot è un tipo di pulsante speciale. Contiene un'immagine miniatura, e testo che riporta i contenuti dello slot. Uno slot di salvataggio usa immagini presenti in gui/button, come tutti gli altri tipi di pulsante."
 
     # gui.rpy:226
     old "## The save slot button."
-    new "## Il pulsante slot."
+    new "## Il pulsante slot salvataggio."
 
     # gui.rpy:234
     old "## The width and height of thumbnails used by the save slots."
-    new "## Larghezza e altezza delle miniature usate dallo slot."
+    new "## Larghezza e altezza delle miniature usate dallo slot di salvataggio."
 
     # gui.rpy:238
     old "## The number of columns and rows in the grid of save slots."
-    new "## Numero di colonne e righe della griglia degli slot."
+    new "## Numero di colonne e righe della griglia degli slot di salvataggio."
 
     # gui.rpy:243
     old "## Positioning and Spacing"
@@ -327,7 +327,7 @@ translate italian strings:
 
     # gui.rpy:331
     old "## History"
-    new "## History"
+    new "## Cronologia"
 
     # gui.rpy:333
     old "## The history screen displays dialogue that the player has already dismissed."
@@ -379,7 +379,7 @@ translate italian strings:
 
     # gui.rpy:403
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
-    new "## Questo aumenta la dimensione dei Pulsanti Rapidi per renderli più facili da toccare su tablet e telefoni."
+    new "## Questo aumenta la dimensione dei pulsanti rapidi per renderli più facili da toccare su tablet e telefoni."
 
     # gui.rpy:409
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
@@ -407,7 +407,7 @@ translate italian strings:
 
     # gui.rpy:456
     old "## Quick buttons."
-    new "## Pulsanti Rapidi."
+    new "## Pulsanti rapidi."
 
     # gui.rpy:17
     old "## GUI Configuration Variables"
@@ -432,4 +432,32 @@ translate italian strings:
     # gui.rpy:405
     old "## Mobile devices"
     new "## Dispositivi mobili"
+
+    # gui/game/gui.rpy:5
+    old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
+    new "## L'istruzione init offset fa sì che le istruzioni di inizializzazione in questo file vengano eseguite prima di quelle di inizializzazione in qualsiasi altro file."
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    new "## Abilita i controlli per proprietà non valide o instabili nelle schermate o nelle trasformazioni"
+
+    # gui/game/gui.rpy:278
+    old "## The position of the main menu text."
+    new "## La posizione del testo del menu principale."
+
+    # gui/game/gui.rpy:287
+    old "## Generic frames."
+    new "## Cornici generiche."
+
+    # gui/game/gui.rpy:307
+    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    new "## L'interfaccia grafica predefinita usa solo cursori e barre di scorrimento verticali. Tutte le altre barre sono utilizzate solo in schermate scritte dai creatori di giochi."
+
+    # gui/game/gui.rpy:368
+    old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
+    new "## Il numero massimo di voci in modalità NVL che Ren'Py visualizzerà. Se ne devono essere visualizzate di più, la voce più vecchia verrà rimossa."
+
+    # gui/game/gui.rpy:446
+    old "## Change the size and spacing of various things."
+    new "## Cambia dimensione e spaziatura di vari elementi."
 

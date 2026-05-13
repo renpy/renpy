@@ -338,7 +338,7 @@ translate spanish button_displayables_220b020d:
 # game/tutorial_screen_displayables.rpy:558
 translate spanish button_displayables_b89d12aa:
 
-    # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
+    # e "Of course, it's pretty rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
     e "Por supuesto, es muy raro que personalicemos un botón en una pantalla como esa. En su lugar, crearíamos estilos personalizados y le diríamos a Ren'Py que los use."
 
 # game/tutorial_screen_displayables.rpy:577

@@ -110,7 +110,7 @@ translate schinese style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate schinese style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "最后是样式语句，它创建或更改命名样式。通过给Text指定样式参数，我们告诉它使用blue_text样式。"
 
 # game/indepth_style.rpy:180
@@ -122,7 +122,7 @@ translate schinese style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate schinese style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "默认情况下，父样式具有相同的名称，只是删除了第一个下划线之前的前缀。如果样式名中没有下划线，则使用“default”。"
 
 # game/indepth_style.rpy:184
@@ -332,20 +332,20 @@ translate schinese style_text_5a0c2c02:
 # game/indepth_style.rpy:443
 translate schinese style_text_430c1959:
 
-    # e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
-    e "text_align属性控制文本可视组件中多行文本的位置。例如，0.5表示居中。"
+    # e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+    e "textalign属性控制文本可视组件中多行文本的位置。例如，0.5表示居中。"
 
 # game/indepth_style.rpy:445
 translate schinese style_text_19aa0833:
 
-    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
-    e "它不会改变文本可视组件本身的位置。为此，通常需要将text_align和xalign设置为相同的值。"
+    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value."
+    e "它不会改变文本可视组件本身的位置。为此，通常需要将textalign和xalign设置为相同的值。"
 
 # game/indepth_style.rpy:455
 translate schinese style_text_efc3c392:
 
-    # e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
-    e "当text_align和xalign都设置为1.0时，文本将正确右对齐。"
+    # e "When both textalign and xalign are set to 1.0, the text is properly right-justified."
+    e "当textalign和xalign都设置为1.0时，文本将正确右对齐。"
 
 # game/indepth_style.rpy:464
 translate schinese style_text_43be63b9:

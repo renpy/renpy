@@ -34,7 +34,7 @@
 
     # screens.rpy:174
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
-    new "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
+    new "## Cet écran doit créer une entrée affichable avec l'id \"input\" pour accepter les différents paramètres."
 
     # screens.rpy:177
     old "## http://www.renpy.org/doc/html/screen_special.html#input"
@@ -54,7 +54,7 @@
 
     # screens.rpy:221
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
-    new "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
+    new "## Lorsque cette option est activée, les sous-titres du menu sont dits par \"narrator\". Si cette valeur est fausse, les légendes du menu seront affichées sous forme de boutons vides."
 
     # screens.rpy:244
     old "## Quick Menu screen"
@@ -162,7 +162,7 @@
 
     # screens.rpy:369
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
-    new "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
+    new "## L'instruction use inclut un autre écran à l'intérieur de celui-ci. Le vrai contenu du menu principal se trouve dans l'écran \"navigation\"."
 
     # screens.rpy:413
     old "## Game Menu screen"
@@ -170,11 +170,11 @@
 
     # screens.rpy:415
     old "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
-    new "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
+    new "## Ceci présente la structure commune de base d'un écran du menu de jeu. Il est appelé en lui passant le titre de l'écran, et il affiche l'arrière-plan, le titre et la navigation."
 
     # screens.rpy:418
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## Le paramètre de défilement peut être None, ou \"viewport\" ou \"vpgrid\". Cet écran est destiné à être utilisé avec un ou plusieurs enfants, qui sont transclus (placés) à l'intérieur de l'écran."
 
     # screens.rpy:476
     old "Return"
@@ -182,7 +182,7 @@
 
     # screens.rpy:539
     old "## About screen"
-    new "## Écran « À propos... »"
+    new "## Écran « À propos... »"
 
     # screens.rpy:541
     old "## This screen gives credit and copyright information about the game and Ren'Py."
@@ -450,7 +450,7 @@
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."
-    new "Active ou désactives les «sauts des dialogues»."
+    new "Active ou désactive les «sauts des dialogues»."
 
     # screens.rpy:1027
     old "Page Up"
@@ -621,8 +621,8 @@
     new "## Les dialogues sont affichés soit dans une vpgrid soit dans une vbox."
 
     # screens.rpy:1314
-    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
-    new "## Si fourni, affiche le menu. Le menu peut s’afficher de manière incorrecte si config.narrator_menu est initialisé à True, comme c’est le cas au-dessus."
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    new "## Si fourni, affiche le menu. Le menu peut s’afficher de manière incorrecte si config.narrator_menu est initialisé à True."
 
     # screens.rpy:1344
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
@@ -697,8 +697,8 @@
     new "## Ceci détermine quels tags peuvent être affichés sur le screen de l'historique."
 
     # gui/game/screens.rpy:1063
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Molette vers le haut\nClic sur le côté du Rollback"
+    old "Mouse Wheel Up"
+    new "Molette vers le haut"
 
     # gui/game/screens.rpy:1078
     old "Left Trigger\nLeft Shoulder"
@@ -719,3 +719,23 @@
     # gui/game/screens.rpy:1049
     old "Opens the accessibility menu."
     new "Ouvre le menu d'accessibilité."
+
+    # gui/game/screens.rpy:1397
+    old "## Bubble screen"
+    new "## Screen des bulles"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    new "## Le screen des bulles est utilisé pour afficher des dialogues en utilisant des bulles de dialogue. Ce screen prend les mêmes paramètres que le screen say, doit prévoir un displayable avec l'id \"what\", et peut créer des displayables avec les ids \"namebox\", \"who\", et \"window\"."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    new "Uploader Sync"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    new "Télécharger Sync"

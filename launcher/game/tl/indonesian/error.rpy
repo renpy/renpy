@@ -204,3 +204,110 @@ translate indonesian strings:
     # _errorhandling.rpym:585
     old "Ignores the exception, allowing you to continue."
     new "Hiraukan Kesalahan, memperbolehkan kamu untuk melanjutkan."
+
+translate indonesian strings:
+
+    # renpy/common/00gltest.rpy:89
+    old "Renderer"
+    new "Renderer"
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "Force GL Renderer"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "Force ANGLE Renderer"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "Force GLES Renderer"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "Force GL2 Renderer"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    # Automatic translation.
+    new "Paksa Penyaji ANGLE2"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "Force GLES2 Renderer"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    # Automatic translation.
+    new "Aktifkan (Tanpa Daftar Blokir)"
+
+    # renpy/common/00gltest.rpy:159
+    old "Powersave"
+    new "Powersave"
+
+    # renpy/common/00gltest.rpy:173
+    old "Framerate"
+    new "Framerate"
+
+    # renpy/common/00gltest.rpy:177
+    old "Screen"
+    # Automatic translation.
+    new "Layar"
+
+    # renpy/common/00gltest.rpy:181
+    old "60"
+    new "60"
+
+    # renpy/common/00gltest.rpy:185
+    old "30"
+    new "30"
+
+    # renpy/common/00gltest.rpy:191
+    old "Tearing"
+    new "Tearing"
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    # Automatic translation.
+    new "Game ini membutuhkan penggunaan GL2 yang tidak dapat diinisialisasi."
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    # Automatic translation.
+    new "File {a=edit:1:log.txt}log.txt{/a} mungkin berisi informasi untuk membantu Anda menentukan apa yang salah dengan komputer Anda."
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    # Automatic translation.
+    new "Rincian lebih lanjut tentang cara memperbaikinya dapat ditemukan di dokumentasi {a=[url]}{/a} ."
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    # Automatic translation.
+    new "Mengubah opsi render"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    # Automatic translation.
+    new "Tekan atau pindahkan '[control!s]' [kind]."
+
+    # renpy/common/_errorhandling.rpym:559
+    old "Copy BBCode"
+    # Automatic translation.
+    new "Salin BBCode"
+
+    # renpy/common/_errorhandling.rpym:561
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    # Automatic translation.
+    new "Menyalin file traceback.txt ke clipboard sebagai BBcode untuk forum seperti https://lemmasoft.renai.us/."
+
+    # renpy/common/_errorhandling.rpym:563
+    old "Copy Markdown"
+    # Automatic translation.
+    new "Salin Penurunan Harga"
+
+    # renpy/common/_errorhandling.rpym:565
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    # Automatic translation.
+    new "Menyalin file traceback.txt ke papan klip sebagai Markdown untuk Discord."
+

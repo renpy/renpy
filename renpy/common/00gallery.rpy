@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -49,7 +49,11 @@ init -1500 python:
 
 
     class __GalleryImage(object):
-        def __init__(self, gallery, displayables):
+
+        show_properties = None
+        movie = False
+
+        def __init__(self, gallery, displayables, movie=False, **properties):
 
             # The gallery object we belong to.
             self.gallery = gallery
@@ -64,6 +68,9 @@ init -1500 python:
             # to not apply a transform.
             self.transforms = [ None ] * len(displayables)
 
+            self.movie = movie
+
+            self.show_properties, = renpy.split_properties(properties, "show_")
 
         def check_unlock(self, all_prior):
             """
@@ -76,12 +83,17 @@ init -1500 python:
 
             return True
 
-        def show(self, locked, index, count):
+        def show(self, locked, index, count, first):
             """
             Shows this image when it's unlocked.
             """
 
-            renpy.transition(self.gallery.transition)
+            if first:
+                transition = getattr(self.gallery, "enter_transition", self.gallery.transition)
+            else:
+                transition = getattr(self.gallery, "intra_transition", self.gallery.transition)
+
+            renpy.transition(transition)
             ui.saybehavior()
 
             displayables = [ ]
@@ -97,9 +109,15 @@ init -1500 python:
 
                 displayables.append(d)
 
-            renpy.show_screen("_gallery", locked=locked, index=index + 1, count=count, displayables=displayables, gallery=self.gallery)
+            renpy.show_screen(self.gallery.image_screen, locked=locked, index=index + 1, count=count, displayables=displayables, gallery=self.gallery, **self.show_properties)
 
-            return ui.interact()
+            rv = ui.interact()
+
+            if self.movie:
+                renpy.hide_screen(self.gallery.image_screen)
+                renpy.pause(0)
+
+            return rv
 
 
     class __GalleryButton(object):
@@ -136,6 +154,7 @@ init -1500 python:
         def get_selected(self):
             return self.gallery.slideshow
 
+
     @renpy.pure
     class __GalleryAction(Action, FieldEquality):
 
@@ -149,6 +168,7 @@ init -1500 python:
         def __call__(self):
             renpy.invoke_in_new_context(self.gallery.show, self.index)
 
+
     class Gallery(object):
         """
         :doc: gallery class
@@ -157,9 +177,25 @@ init -1500 python:
         locking of images, providing an action that can show one or more images,
         and a providing method that creates buttons that use that action.
 
+        .. attribute:: enter_transition
+
+            The transition that is used when displaying the first image associated
+            with a gallery button.
+
+        .. attribute:: intra_transition
+
+            The transition that is used when displaying images associated with
+            gallery buttons, apart from the first.
+
+        .. attribute:: exit_transition
+
+            The transition that is used when returning from the last image associated
+            with a gallery button to the gallery screen.
+
         .. attribute:: transition
 
-            The transition that is used when changing images.
+            This is used in place of enter_transition, intra_transition, or exit_transition
+            if one or more of them has not been set.
 
         .. attribute:: locked_button
 
@@ -184,7 +220,7 @@ init -1500 python:
 
             To customize the look of the navigation, you may override the
             gallery_navigation screen. The default screen is defined in
-            common/00gallery.rpy
+            renpy/common/00gallery.rpy
 
         .. attribute:: span_buttons
 
@@ -194,6 +230,27 @@ init -1500 python:
 
             The time it will take for the gallery to advance between images
             in slideshow mode.
+
+        .. attribute:: image_screen = "_gallery"
+
+            The screen that is used to show individual images in this gallery.
+            This screen is supplied the following keyword arguments:
+
+            `locked`
+                True if the image is locked.
+            `displayables`
+                A list of transformed displayables that should be shown to the user.
+            `index`
+                A 1-based index of the image being shown.
+            `count`
+                The number of images attached to the current button.
+            `gallery`
+                The image gallery object.
+
+            Additional arguments may be supplied by prefixing them with
+            `show_` in calls to Gallery.image and Gallery.unlock image.
+
+            The default screen is defined at the bottom of renpy/common/00gallery.rpy.
         """
 
         transition = None
@@ -202,6 +259,8 @@ init -1500 python:
         idle_border = None
 
         locked_button = None
+
+        image_screen = "_gallery"
 
         def __init__(self):
 
@@ -226,6 +285,8 @@ init -1500 python:
 
             self.slideshow = False
 
+            self.image_screen = "_gallery"
+
         def button(self, name):
             """
             :doc: gallery method
@@ -243,16 +304,27 @@ init -1500 python:
             self.button_list.append(button)
             self.button_ = button
 
-        def image(self, *displayables):
+        def image(self, *displayables, **properties):
             """
             :doc: gallery method
             :name: image
 
             Adds a new image to the current button, where an image consists
             of one or more displayables.
+
+            Properties beginning with `show_` have that prefix stripped off,
+            and are passed to the gallery.image_screen screen as additional
+            keyword arguments.
+
+            This takes one keword argument:
+
+            `movie`
+                This should be set to true if one of the displayables is a
+                movie with sound. This will cause the movie to be hidden
+                during a transition.
             """
 
-            self.image_ = __GalleryImage(self, displayables)
+            self.image_ = __GalleryImage(self, displayables, **properties)
             self.button_.images.append(self.image_)
             self.unlockable = self.image_
 
@@ -293,7 +365,7 @@ init -1500 python:
                 A string giving a Python expression.
             """
 
-            if not isinstance(expression, basestring):
+            if not isinstance(expression, str):
                 raise Exception("Gallery condition must be a string containing an expression.")
 
             self.unlockable.conditions.append(__GalleryArbitraryCondition(expression))
@@ -308,18 +380,19 @@ init -1500 python:
 
             self.unlockable.conditions.append(__GalleryAllPriorCondition())
 
-        def unlock_image(self, *images):
+        def unlock_image(self, *images, **properties):
             """
             :doc: gallery method
 
             A convenience method that is equivalent to calling image and unlock
-            with the same parameters. This will cause an image to be displayed
+            with the same parameters. (Keyword arguments beginning with ``show_`` are
+            only passed to image.) This will cause an image to be displayed
             if it has been seen before.
 
             The images should be specified as strings giving image names.
             """
 
-            self.image(*images)
+            self.image(*images, **properties)
             self.unlock(*images)
 
         def Action(self, name):
@@ -403,7 +476,7 @@ init -1500 python:
             :doc: gallery method
 
             Returns a text string giving the number of unlocked images and total number of images in the button
-            named `name`.
+            named `name`. If `name` is None, returns the same information for all buttons.
 
             `format`
                 A Python format string that's used to format the numbers. This has three values that
@@ -422,7 +495,15 @@ init -1500 python:
 
             all_prior = True
 
-            for i in self.buttons[name].images:
+            if name is not None:
+                images = self.buttons[name].images
+            else:
+                images = [ ]
+
+                for b in self.button_list:
+                    images.extend(b.images)
+
+            for i in images:
                 total += 1
                 if i.check_unlock(all_prior):
                     seen += 1
@@ -467,6 +548,8 @@ init -1500 python:
 
             self.slideshow = False
 
+            first = True
+
             # Loop, displaying the images.
             while True:
 
@@ -480,7 +563,9 @@ init -1500 python:
 
                 i = b.images[image]
 
-                result = i.show((button, image) not in unlocked_images, image, len(b.images))
+                result = i.show((button, image) not in unlocked_images, image, len(b.images), first)
+
+                first = False
 
                 # Default action for click.
 
@@ -520,7 +605,7 @@ init -1500 python:
                 button = new_button
                 image = new_image
 
-            renpy.transition(self.transition)
+            renpy.transition(getattr(self, "exit_transition", self.transition))
 
         def Return(self):
             """
@@ -584,7 +669,7 @@ init -1500:
     #     The number of images attached to the current button.
     # gallery
     #     The image gallery object.
-    screen _gallery:
+    screen _gallery(locked, displayables, index, count, gallery, **properties):
 
         if locked:
             add "#000"
@@ -599,9 +684,9 @@ init -1500:
         key "game_menu" action gallery.Return()
 
         if gallery.navigation:
-            use gallery_navigation
+            use gallery_navigation(gallery=gallery)
 
-    screen gallery_navigation:
+    screen gallery_navigation(gallery):
         hbox:
             spacing 20
 

@@ -1,4 +1,4 @@
-example minigame:
+﻿example minigame:
 
     init python:
 
@@ -223,14 +223,14 @@ label demo_minigame:
 
     e "Screens will work for many simulation-style games and RPGs."
 
-    e "When screens are not enough you can write a creator-defined displayable to extend Ren'Py itself. A Creator-defined displayables can process raw events and draw to the screen."
+    e "When screens are not enough, you can write a creator-defined displayable to extend Ren'Py itself. A creator-defined displayable can process raw events and draw to the screen." id demo_minigame_a92baa6b
 
     e "That makes it possible to create all kinds of minigames. Would you like to play some pong?"
 
 example minigame hide:
     label play_pong:
 
-        window hide  # Hide the window and  quick menu while in pong
+        window hide  # Hide the window and quick menu while in pong
         $ quick_menu = False
 
         call screen pong

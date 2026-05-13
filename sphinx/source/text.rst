@@ -5,7 +5,7 @@ Text
 ====
 
 Ren'Py contains several ways of displaying text. The :ref:`say <say-statement>`
-and :ref:`menu <menu-statement>` statements are primarily concerned with the
+and :doc:`menu <menus>` statements are primarily concerned with the
 display of text to the user. The user interface often contains text,
 displayed using the :ref:`text <sl-text>`, :ref:`textbutton <sl-textbutton>`,
 and :ref:`label <sl-label>` screen language statements. These
@@ -34,7 +34,7 @@ displays text. A creator needs to be aware of these characters to
 ensure that their writing is not accidentally misinterpreted by the engine.
 
 \ (backslash)
-    The backslash character is used to introduce when writing a Ren'Py
+    The backslash character is used to escape characters when writing a Ren'Py
     or Python string. Some common escape codes are:
 
     \\" (backslash-doublequote)
@@ -49,10 +49,15 @@ ensure that their writing is not accidentally misinterpreted by the engine.
         space character.
 
     \\n (backslash-n)
-        Includes a newline character in the text.
+        Includes a newline character in the text, causing a new line to start.
 
     \\\\ (backslash-backslash)
         Includes a backslash character in the text.
+
+    \\% (backslash-percent)
+        Includes a protected percent character in the text. It's also
+        possible to write it as %% : both protections will result in a
+        single % character being written in the end.
 
 [ (left bracket)
     The left bracket is used to introduce interpolation of a value
@@ -63,6 +68,10 @@ ensure that their writing is not accidentally misinterpreted by the engine.
     The left brace is used to introduce a text tag. To include a left
     brace in your text, double it – write ``{{``.
 
+【 (left lenticular bracket)
+    The left lenticular bracket is used to to introduce ruby/furigana
+    text. To include a left lenticular bracket in your text, double it
+    – write ``【【``.
 
 .. _text-interpolation:
 
@@ -75,24 +84,24 @@ displayed. For example, if the player's name is stored in the
 
     g "Welcome to the Nekomimi Institute, [playername]!"
 
-Ren'Py will interpolate variables found in the global store. When
-using a text widget in a screen, Ren'Py will also interpolate screen
-local variables. (This can be overridden by supplying an explicit
-scope argument to the Text displayable.)
+Ren'Py will search for variables in the following order:
+
+* When used in a screen, screen-local variables.
+* Variables found in the ``interpolate`` namespace.
+* Variables found in the global namespace.
 
 Ren'Py isn't limited to interpolating simple variables. It can also
-interpolate fields and components of tuples. So it's possible to have::
+interpolate any valid Python expression. So it's possible to have::
 
     g "My first name is [player.names[0]]."
 
 It's possible to apply formatting when displaying numbers. This
 will display a floating point number to two decimal places::
 
-    $ percent = 100.0 * points / max_points
-    g "I like you [percent:.2] percent!"
+    g "I like you [100.0 * points / max_points:.2] percent!"
 
-Ren'Py's string interpolation is taken from the :pep:`3101` string
-formatting syntax. Ren'Py uses [ to introduce string formatting
+Ren'Py's string formatting is taken from the :pep:`3101` string
+formatting syntax. Ren'Py uses [ to introduce string interpolation
 because { was taken by text tags.
 
 Along with the ``!s`` and ``!r`` conversion flags supported by Python, Ren'Py
@@ -119,18 +128,39 @@ The ``!i`` flag will make additional interpolate for the interpolated string::
 This should be used to substitute the text that has a substitution inside.
 It's often useful in screen language, see :ref:`Const Text <const-text>`.
 
+The ``!f`` flag will pass the resulting string through :var:`config.say_menu_text_filter`,
+if it is not None. This allows filtering of interpolated text.
+
 The ``!u`` flag forces the text to uppercase and the ``!l`` flag forces the
 text to lowercase. The ``!c`` flag acts only on the first character,
 capitalizing it. These flags may be combined, for example using ``!cl`` would
 capitalize the first character, and force the remaining text to lowercase.
 
+It should be noted that:
+
+- the order in which the flags are given does not change the result : ``!cl``
+  will do just the same as ``!lc``.
+- Supplementary exclamation marks will be ignored, and will not circumvent
+  the previous rule : ``!l!c`` will do the same as ``!c!l`` or ``!cl``.
+
+The transformations are done in the following order:
+
+#. ``r``/``s`` (repr or str)
+#. ``t`` (translate)
+#. ``i`` (recursive interpolation)
+#. ``q`` (quoting)
+#. ``u`` (uppercase)
+#. ``l`` (lowercase)
+#. ``c`` (capitalize)
+
+If you want to get the resulting string, with the arguments replaced with actual data, you can pass it to :ref:`renpy.substitute <renpy.substitute>`.
 
 Styling and Text Tags
 =====================
 
 In Ren'Py, text gains style information in two ways. The first is from
 the style that is applied to the entire block of text. Please see the
-section about the :ref:`style system <styles>` for more details,
+section about the :doc:`style system <style>` for more details,
 especially the section on :ref:`text style properties <text-style-properties>`.
 
 The second way is through text tags. Text tags are suitable for
@@ -139,16 +169,22 @@ blocks in the program. If you find yourself applying the same text
 tags to every line of text, consider using a style instead.
 
 There are two types of text tags. Some text tags are self-closing, while others
-require a closing tag. When multiple closing tags are used, they
-should be closed last open, first closed order – Ren'Py will reject
-incorrect nesting. For example::
+allow a closing tag. The close tag starts with a slash (/), and tags are
+closed in last-in, first-out order. Each closing tag should match the
+corresponding opening tag. If not, Ren'Py will produce a lint warning.
+
+For example::
 
     # This line is correct.
     "Plain {b}Bold {i}Bold-Italic{/i} Bold{/b} Plain"
 
-    # This line is incorrect, and will cause an error or incorrect
-    # behavior.
+    # This line is incorrect, and will cause incorrect behavior.
     "Plain {b}Bold {i}Bold-Italic{/b} Italic{/i} Plain"
+
+It is not necessary to close all text tags. Ren'Py will close all
+tags that are open at the end of the text block. For example::
+
+    "{size=+20}This is big!"
 
 Some text tags take an argument. In that case, the tag name is
 followed by an equals sign (=), and the argument. The argument may
@@ -160,7 +196,6 @@ General Text Tags
 
 Tags that apply to all text are:
 
-.. _a-tag:
 .. text-tag:: a
 
     The anchor tag creates a hyperlink between itself and its closing
@@ -223,7 +258,7 @@ Tags that apply to all text are:
 
 .. text-tag:: alt
 
-    The alt tag prevents text from being rendered, while still maing the
+    The alt tag prevents text from being rendered, while still making the
     text available for the text-to-speech system. ::
 
        g "Good to see you! {image=heart.png}{alt}heart{/alt}"
@@ -260,6 +295,18 @@ Tags that apply to all text are:
     at, in characters per second. ::
 
         "{cps=20}Fixed Speed{/cps} {cps=*2}Double Speed{/cps}
+
+
+.. text-tag:: feature
+
+    The feature tag enables or disables OpenType layout features. The name of
+    the feature is part of the tag, separated by a colon. The argument
+    should be 1 to enable the feature, or 0 to disable it. For example,
+    to disable ligatures, use the following: ::
+
+        "{feature:liga=0}Traffic{/feature} is light today."
+
+    A list of layout features can be found `here <https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags>`_.
 
 .. text-tag:: font
 
@@ -298,8 +345,8 @@ Tags that apply to all text are:
 .. text-tag:: noalt
 
     The noalt tag prevents text from being spoken by the text-to-speech
-    system. This is often used in conjuction with the alt tag, to provide
-    accessible and visual optiopns  ::
+    system. This is often used in conjunction with the alt tag, to provide
+    accessible and visual options  ::
 
        g "Good to see you! {noalt}<3{/noalt}{alt}heart{/alt}"
 
@@ -307,7 +354,8 @@ Tags that apply to all text are:
 
     The outline text tag changes all the outlines (including drop
     shadows) to the given color. The color should be in #rgb, #rgba,
-    #rrggbb, or #rrggbbaa format. ::
+    #rrggbb, or #rrggbbaa format. This will only adjust existing outlines,
+    it does not add them. ::
 
         "Let's have a {outlinecolor=#00ff00}Green{/outlinecolor} outline."
 
@@ -337,6 +385,15 @@ Tags that apply to all text are:
 
        g "It's good {s}to see you{/s}."
 
+.. text-tag:: shader
+
+    The shader tag applies a text shader to a section of text.
+    The argument is the name of the shader to apply. ::
+
+        "This text is {shader=jitter:u__jitter=1.0, 3.0}jittery{/shader}."
+
+    See :doc:`textshaders` for more information.
+
 .. text-tag:: size
 
    The size tag changes the size of text between itself and its
@@ -346,6 +403,12 @@ Tags that apply to all text are:
    decreased by that amount. ::
 
        "{size=+10}Bigger{/size} {size=-10}Smaller{/size} {size=24}24 px{/size}."
+
+   You can also provide a floating point number preceded by a \*, in
+   which case the size will be multiplied by that number and then
+   rounded down. ::
+
+       "{size=*2}Twice as big{/size} {size=*0.5}half as big.{/size}"
 
 .. text-tag:: space
 
@@ -382,6 +445,57 @@ Dialogue Text Tags
 
 Text tags that only apply to dialogue are:
 
+.. text-tag:: w
+
+    The wait tag is a self-closing tag that waits for the user to
+    click to continue. If it is given an argument, the argument is
+    interpreted as a number, and the wait automatically ends after
+    that many seconds have passed. ::
+
+        "Line 1{w} Line 1{w=1.0} Line 1"
+
+.. text-tag:: p
+
+    The paragraph pause tag is a self-closing tag that terminates the
+    current paragraph, and waits for the user to click to continue. If
+    it is given an argument, the argument is interpreted as a number,
+    and the wait automatically ends after that many seconds have
+    passed. ::
+
+        "Line 1{p}Line 2{p=1.0}Line 3"
+
+.. text-tag:: nw
+
+    The no-wait tag is a self-closing tag that causes the current line
+    of dialogue to automatically dismiss itself once the end of line
+    has been displayed. ::
+
+        g "Looks like they're{nw}"
+        show trebuchet
+        g "Looks like they're{fast} playing with their trebuchet again."
+
+    If it is given an argument, the argument is interpreted as a number,
+    and the wait automatically ends after that many seconds have passed. ::
+
+        g "I'm gonna fall in a few seconds!{nw=2}"
+        show g_gone
+
+    The no-wait tag will wait for self-voicing to complete before
+    advancing.
+
+.. text-tag:: fast
+
+    If the fast tag is displayed in a line of text, then all text
+    before it is displayed instantly, even in slow text mode. The
+    fast tag is a self-closing tag. ::
+
+        g "Looks like they're{nw}"
+        show trebuchet
+        g "Looks like they're{fast} playing with their trebuchet again."
+
+    If present, the {fast} tag will cause voice to be sustained from
+    the previous line.
+
 .. text-tag:: done
 
     Text after the done tag is not displayed. Why would you want this?
@@ -395,49 +509,6 @@ Text tags that only apply to dialogue are:
         g "Looks like they're{nw}{done} playing with their trebuchet again."
         show trebuchet
         g "Looks like they're{fast} playing with their trebuchet again."
-
-.. text-tag:: fast
-
-    If the fast tag is displayed in a line of text, then all text
-    before it is displayed instantly, even in slow text mode. The
-    fast tag is a self-closing tag. ::
-
-        g "Looks like they're{nw}"
-        show trebuchet
-        g "Looks like they're{fast} playing with their trebuchet again."
-
-.. text-tag:: nw
-
-    The no-wait tag is a self-closing tag that causes the current line
-    of dialogue to automatically dismiss itself once the end of line
-    has been displayed. ::
-
-        g "Looks like they're{nw}"
-        show trebuchet
-        g "Looks like they're{fast} playing with their trebuchet again."
-
-    The no-wait tag will wait for voice and self-voicing to complete before
-    advancing.
-
-.. text-tag:: p
-
-    The paragraph pause tag is a self-closing tag that terminates the
-    current paragraph, and waits for the user to click to continue. If
-    it is given an argument, the argument is interpreted as a number,
-    and the wait automatically ends after that many seconds have
-    passed. ::
-
-        "Line 1{p}Line 2{p=1.0}Line 3"
-
-.. text-tag:: w
-
-    The wait tag is a self-closing tag that waits for the user to
-    click to continue. If it is given an argument, the argument is
-    interpreted as a number, and the wait automatically ends after
-    that many seconds have passed. ::
-
-        "Line 1{w} Line 1{w=1.0} Line 1"
-
 
 .. text-tag:: clear
 
@@ -457,8 +528,10 @@ Text tags that only apply to dialogue are:
         """
 
 
-It's also possible to define :ref:`custom text tags <custom-text-tags>` using
+It's also possible to define :doc:`custom text tags <custom_text_tags>` using
 Python.
+
+.. _style-text-tags:
 
 Style Text Tags
 ---------------
@@ -466,21 +539,30 @@ Style Text Tags
 Ren'Py supports text tags that access styles. These are text tags
 where the tag name is empty. In this case, the argument
 is taken to be the name of a style. For example, the {=mystyle} tag
-will acces the ``mystyle`` style.
+will access the ``mystyle`` style.
 
 The text between the tag and the corresponding closing tag has the following
 properties set to those defined in the style:
 
-* antialias
-* font
-* size
-* bold
-* italic
-* underline
-* strikethrough
-* color
-* black_color
-* kerning
+* :propref:`antialias` (May be None)
+* :propref:`axis` (May be None)
+* :propref:`black_color` (May be None)
+* :propref:`bold` (May be None)
+* :propref:`color` (May be None)
+* :propref:`font`  (May be None)
+* :propref:`font_features` (May be None)
+* :propref:`hinting` (May be None)
+* :propref:`instance` (May be None)
+* :propref:`italic` (May be None)
+* :propref:`kerning`
+* :propref:`size` (May be None)
+* :propref:`slow_cps`
+* :propref:`slow_cps_multiplier`
+* :propref:`strikethrough`
+* :propref:`textshader` (May be None)
+* :propref:`underline`
+
+When a field is None in a style, it gains its value in the parent text.
 
 
 Non-English Languages
@@ -513,7 +595,7 @@ algorithm, use::
 
     define gui.language = "greedy"
 
-The faster line-breaking algorithm is not be necessary unless the
+The faster line-breaking algorithm is not necessary unless the
 game is displaying huge amounts of text, such as in NVL-mode.
 
 The line breaking algorithms can be further configured using the
@@ -558,30 +640,74 @@ steps required for your game to support ruby text.
 First, you must set up styles for the ruby text. The following style
 changes are required:
 
-1. The :propref:`line_leading` property must be used to leave enough
-   vertical space for the ruby text.
+1. One of the :propref:`line_leading` or :propref:`ruby_line_leading` properties
+   must be used to leave enough vertical space for the ruby text.
 2. A new named style must be created. The properties of this style,
    such as :propref:`size` should be set in a fashion appropriate
    for ruby text.
 3. The :propref:`yoffset` of the new style should be set, in order to move the
    ruby text above the baseline.
 4. The :propref:`ruby_style` field of the text's style should be set
-   to the newly-created style.
+   to the newly-created style, for both dialogue and history window
+   text.
+
+The following taggs may be set in the new style.
+
+* :propref:`antialias` (May be None)
+* :propref:`axis` (May be None)
+* :propref:`black_color` (May be None)
+* :propref:`bold` (May be None)
+* :propref:`color` (May be None)
+* :propref:`font`  (May be None)
+* :propref:`font_features` (May be None)
+* :propref:`hinting` (May be None)
+* :propref:`instance` (May be None)
+* :propref:`italic` (May be None)
+* :propref:`kerning`
+* :propref:`size` (May be None)
+* :propref:`slow_cps`
+* :propref:`slow_cps_multiplier`
+* :propref:`strikethrough`
+* :propref:`textshader` (May be None)
+* :propref:`underline`
+* :propref:`yoffset`
+
+If property is None, it gains its value in the parent text.
 
 For example::
 
     style ruby_style is default:
         size 12
         yoffset -20
+        color None # Use the same color as the parent text.
+        font None # Use the same font as the parent text.
 
     style say_dialogue:
-        line_leading 12
+        ruby_line_leading 12
+        ruby_style style.ruby_style
+
+    style history_text:
+        ruby_line_leading 12
         ruby_style style.ruby_style
 
 (Use ``style.style_name`` to refer to a style for this purpose.)
 
-Once Ren'Py has been configured, ruby text can be included using the
-{rt} and {rb} text tags. The {rt} tag is used to mark one or more characters
+Once Ren'Py has been configured, ruby text can be included in two way.
+
+**Lenticular brackets.** Ruby text can be written by enclosing it inside
+full-width lenticular brackets (【】), with the full-width or half-width
+vertical line character (｜ or \|) separating the bottom text from the top text.
+For example::
+
+    e "Ruby can be used for furigana (【東｜とう】 【京｜きょう】)."
+
+    e "It's also used for translations (【東京｜Tokyo】)."
+
+Ruby text will only trigger if a vertical line is present. The left lenticular
+bracket can be quoted by doubling it. Lenticular ruby text may not contain
+other text tags.
+
+**The {rt} and {rb} text tags.** The {rt} tag is used to mark one or more characters
 to be displayed as ruby text. If the ruby text is preceded by text
 enclosed in the {rb} tag, the ruby text is centered over that
 text. Otherwise, it is centered over the preceding character.
@@ -604,17 +730,23 @@ and the :propref:`altruby_style` property (instead of :propref:`ruby_style`).
 Fonts
 =====
 
-Ren'Py supports TrueType/OpenType fonts and collections, and
-Image-Based fonts.
+Ren'Py supports scalable fonts in the OpenType, TrueType, WOFF, and WOFF2 formats.
 
-A TrueType or OpenType font is specified by giving the name of the font
-file. The file must be present in the game directory or one of the archive
-files.
+Scalable fonts are specified by giving the name of the font file, as a string.
+Fonts are searched for in the :file:`game` directory and in archive files.
+If the font is not found it is searched for using the :file:`fonts/` prefix.
+For example, when looking for "test.ttf", Ren'Py will first search for
+:file:`game/test.ttf`, and then for :file:`game/fonts/test.ttf`. (It will also
+search in archive files.)
 
-Ren'Py also supports TrueType/OpenType collections that define more than one
+Ren'Py supports TrueType/OpenType collections that define more than one
 font. When accessing a collection, use the 0-based font index,
 followed by an at-sign and the file name. For example, "0\@font.ttc" is
 the first font in a collection, "1\@font.ttc" the second, and so on.
+
+While Ren'Py supports font files of any size (subject to system memory limitations),
+WOFF2 compression tools may have problems with very large font files. See :ghbug:`6605`
+for discussion of this.
 
 
 Font Replacement
@@ -634,36 +766,29 @@ download the oblique font from the web)::
 
 This mapping can improve the look of italic text.
 
-Image-Based Fonts
------------------
+Font names and aliases
+----------------------
 
-Image based fonts can be registered by calling one of the following
-registration functions. Registering an image-based font requires the
-specification of a name, size, boldness, italicness, and
-underline. When all of these properties match the registered font,
-the registered font is used.
+The :var:`config.font_name_map` variable is used to give names
+or aliases to fonts. This allows two things : first, to make dialogues
+using the ``{font}`` tag shorter and easier to use, and second, to
+enable :ref:`fontgroup` to be used by these tags. ::
 
-.. include:: inc/image_fonts
+    define config.font_name_map["jap"] = "electroharmonix.ttf"
+    define config.font_name_map["tjap"] = FontGroup().add("OrthodoxHerbertarian.ttf", "A", "Z").add("electroharmonix.ttf", None, None)
 
-As BMFont is the most complete of the three image font formats Ren'Py
-supports, it's the one recommended for new projects. An example of
-BMFont use is::
+    label yamato:
+        e "Sorry, what does {font=jap}Black holes and revelations{/font} mean ?"
+        y "You pronounce it {font=tjap}Black Holes And Revelations{/font}." # the capital letters appear in OrthodoxHerbertarian
 
-    init python:
-        renpy.register_bmfont("bmfont", 22, filename="bmfont.fnt")
 
-    define ebf = Character('Eileen', what_font="bmfont", what_size=22)
-
-    label demo_bmfont:
-
-        ebf "Finally, Ren'Py supports BMFonts."
-
+.. _fontgroup:
 
 Font Groups
 -----------
 
 When creating a multilingual game, it may not be possible to find a single
-font that covers every writing system the game use while projecting the
+font that covers every writing system the game uses while projecting the
 the mood the creator intends. To support this, Ren'Py supports font groups
 that can take characters from two or more fonts and combine them into a
 single font.
@@ -676,9 +801,37 @@ points, and the first range to cover a point is used.
 For example::
 
     style default:
-         font FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
+        font FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
 
 .. include:: inc/font_group
+
+Note that while FontGroups can be given a name using :var:`config.font_name_map`,
+a FontGroup only takes filepaths as fonts, and does not recognize names or aliases
+defined using that variable.
+
+Image-Based Fonts
+-----------------
+
+.. note:: Image-based fonts are not recommended for use in new projects. Applying graphical effects to fonts can be done with text shaders.
+
+Image based fonts can be registered by calling one of the following
+registration functions. Registering an image-based font requires the
+specification of a name, size, boldness, italicness, and
+underline. When all of these properties match the registered font,
+the registered font is used.
+
+.. include:: inc/image_fonts
+
+An example of BMFont use is::
+
+    init python:
+        renpy.register_bmfont("bmfont", 22, filename="bmfont.fnt")
+
+    define ebf = Character('Eileen', what_font="bmfont", what_size=22)
+
+    label demo_bmfont:
+
+        ebf "Finally, Ren'Py supports BMFonts."
 
 
 .. _text-displayables:
@@ -686,7 +839,7 @@ For example::
 Text Displayables
 =================
 
-Text can also be used as a :ref:`displayable <displayables>`, which
+Text can also be used as a :doc:`displayable <displayables>`, which
 allows you to apply transforms to text, displaying it as if it was an
 image and moving it around the screen.
 
@@ -734,3 +887,64 @@ necessary.
 
 Whenever text is displayed that overflows the available area, Ren'Py
 will log an error to the text_overflow.txt file.
+
+.. _variable-fonts:
+
+Variable Fonts
+==============
+
+Ren'Py has support for OpenType variable fonts. These fonts may support
+multiple axes, such as weight and width, and based on the value of these
+axes, the display of the font can change. Variable fonts may also have
+named instances, which provide different values for the axes. For example,
+the "bold" named instance will likely provide the bold version of a  font,
+while "regular" will be a more normal version.
+
+Variable fonts require the use of the harfbuzz text shaper, controlled by
+the :propref:`shaper` style property. Once this is set, the :propref:`instance`
+property selects a named instance, while the :propref:`axis` property sets
+the value of one or more axes.
+
+These can also be set in the gui system. For example one can use::
+
+    define gui.text_font = "nunito.ttf"
+    define gui.text_instance = "light"
+    define gui.text_axis = {"width" : 125}
+
+Will start with the light instance, and make it wide.
+
+If no instance is given, Ren'Py will default to "regular" for non-bold text,
+and "bold" for bold text.
+
+There are two text tags that support the use of variable fonts.
+
+.. text-tag:: instance
+
+    The instance tag changes the instance that is being used. For example::
+
+        "This is {instance=heavy}heavy{/instance} text."
+
+    When the instance tag is used, the axis properties are overridden.
+
+.. text-tag:: axis
+
+    The axis tag changes the value of one or more axes. For example::
+
+        "This is {axis:width=125}wide{/axis} text."
+
+    The axis tag can be used multiple times, and the values will be combined.
+
+        "This is {axis:width=125}{axis:weight=200}wide and bold{/axis}{/axis} text."
+
+    The value on the right side of the equals is expected to be a floating
+    point number.
+
+To get the available instances and axes of a font, use the :func:`renpy.variable_font_info`
+function. This function is intended to be called from the console. To access it, hit
+shift+O to open the console, and then type::
+
+    renpy.variable_font_info("nunito.ttf")
+
+This will display information for the nunito.ttf font.
+
+.. include:: inc/variable_fonts

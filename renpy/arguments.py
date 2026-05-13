@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,28 +27,31 @@
 # decide if the game runs or some other action occurs.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import argparse
 import os
+import sys
+
 import renpy
 
 try:
     import site
-    site._renpy_argv_emulation() # type: ignore
+
+    site._renpy_argv_emulation()  # type: ignore
 except Exception:
     pass
 
 # A map from command name to a (function, flag) tuple. The flag is true if the
 # function will parse command line arguments, and false otherwise.
-commands = { }
+commands = {}
 
 # True if the command requires the display, false if it doesn't.
-display = { }
+display = {}
 
 # Commands that force compile to be set.
-compile_commands = { "compile", "add_from", "merge_strings" }
+compile_commands = {"compile", "add_from", "merge_strings"}
 
 
 class ArgumentParser(argparse.ArgumentParser):
@@ -77,70 +80,114 @@ class ArgumentParser(argparse.ArgumentParser):
         command_names = ", ".join(sorted(commands))
 
         if require_command:
-
             self.add_argument(
                 "basedir",
-                help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
-
-            self.add_argument(
-                "command",
-                help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.")
-
-        else:
-
-            self.add_argument(
-                "basedir",
-                default='',
-                nargs='?',
-                help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
+                help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.",
+            )
 
             self.add_argument(
                 "command",
                 help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
-                nargs='?',
-                default="run")
+            )
+
+        else:
+            self.add_argument(
+                "basedir",
+                default="",
+                nargs="?",
+                help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.",
+            )
+
+            self.add_argument(
+                "command",
+                help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
+                nargs="?",
+                default="run",
+            )
 
         self.add_argument(
-            "--savedir", dest='savedir', default=None, metavar="DIRECTORY",
-            help="The directory where saves and persistent data are placed.")
+            "--savedir",
+            dest="savedir",
+            default=None,
+            metavar="DIRECTORY",
+            help="The directory where saves and persistent data are placed.",
+        )
 
         self.add_argument(
-            '--trace', dest='trace', action='store', default=0, type=int, metavar="LEVEL",
-            help="The level of trace Ren'Py will log to trace.txt. (1=per-call, 2=per-line)")
+            "--trace",
+            dest="trace",
+            action="store",
+            default=0,
+            type=int,
+            metavar="LEVEL",
+            help="The level of trace Ren'Py will log to trace.txt. (1=per-call, 2=per-line)",
+        )
 
         self.add_argument(
-            "--version", action='version', version=renpy.version,
-            help="Displays the version of Ren'Py in use.")
+            "--version", action="version", version=renpy.version_only, help="Displays the version of Ren'Py in use."
+        )
 
         self.add_argument(
-            "--compile", action='store_true', dest='compile',
-            help='Forces all .rpy scripts to be recompiled before proceeding.')
+            "--compile",
+            action="store_true",
+            dest="compile",
+            help="Forces all .rpy scripts to be recompiled before proceeding.",
+        )
 
         self.add_argument(
-            "--keep-orphan-rpyc", action="store_true",
-            help="Prevents the compile command from deleting orphan rpyc files.")
+            "--compile-python",
+            action="store_true",
+            dest="compile_python",
+            help="Forces all Python to be recompiled, rather than read from game/cache/bytecode-*.rpyb.",
+        )
 
         self.add_argument(
-            "--lint", action="store_true", dest="lint",
-            help=argparse.SUPPRESS)
+            "--keep-orphan-rpyc",
+            action="store_true",
+            help="Prevents the compile command from deleting orphan rpyc files.",
+        )
+
+        self.add_argument("--lint", action="store_true", dest="lint", help=argparse.SUPPRESS)
+
+        self.add_argument("--errors-in-editor", action="store_true", help="Causes errors to open in a text editor.")
 
         self.add_argument(
-            "--errors-in-editor", action="store_true",
-            help="Causes errors to open in a text editor.")
+            "--safe-mode",
+            dest="safe_mode",
+            action="store_true",
+            default=False,
+            help="Forces Ren'Py to start in safe mode, allowing the player to configure graphics.",
+        )
 
         self.add_argument(
-            '--safe-mode', dest='safe_mode', action='store_true', default=False,
-            help="Forces Ren'Py to start in safe mode, allowing the player to configure graphics.")
+            "--warp",
+            dest="warp",
+            default=None,
+            help="This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number. It is only valid in conjuction with the run command.",
+        )
 
-        dump = self.add_argument_group("JSON dump arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
+        dump = self.add_argument_group(
+            "JSON dump arguments",
+            description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.",
+        )
         dump.add_argument("--json-dump", action="store", metavar="FILE", help="The name of the JSON file.")
-        dump.add_argument("--json-dump-private", action="store_true", default=False, help="Include private names. (Names beginning with _.)")
-        dump.add_argument("--json-dump-common", action="store_true", default=False, help="Include names defined in the common directory.")
+        dump.add_argument(
+            "--json-dump-private",
+            action="store_true",
+            default=False,
+            help="Include private names. (Names beginning with _.)",
+        )
+        dump.add_argument(
+            "--json-dump-common",
+            action="store_true",
+            default=False,
+            help="Include names defined in the common directory.",
+        )
 
         if second_pass:
             self.add_argument("-h", "--help", action="help", help="Displays this help message, then exits.")
 
-            command = renpy.game.args.command # type: ignore
+            command = renpy.game.args.command  # type: ignore
             self.group = self.add_argument_group("{0} command arguments".format(command), description)
 
     def add_argument(self, *args, **kwargs):
@@ -149,19 +196,11 @@ class ArgumentParser(argparse.ArgumentParser):
         else:
             self.group.add_argument(*args, **kwargs)
 
-    def parse_args(self, *args, **kwargs):
-        rv = argparse.ArgumentParser.parse_args(self, *args, **kwargs)
-
-        if rv.command in compile_commands:
-            rv.compile = True
-
-        if renpy.session.get("compile", False):
-            rv.compile = True
-
-        return rv
-
     def parse_known_args(self, *args, **kwargs):
         args, rest = argparse.ArgumentParser.parse_known_args(self, *args, **kwargs)
+
+        if renpy.session.get("_reload", False):
+            args.compile = False
 
         if args.command in compile_commands:
             args.compile = True
@@ -180,23 +219,28 @@ def run():
     ap = ArgumentParser(description="Runs the current project normally.", require_command=False)
 
     ap.add_argument(
-        '--profile-display', dest='profile_display', action='store_true', default=False,
-        help="If present, Ren'Py will report the amount of time it takes to draw the screen.")
+        "--profile-display",
+        dest="profile_display",
+        action="store_true",
+        default=False,
+        help="If present, Ren'Py will report the amount of time it takes to draw the screen.",
+    )
 
     ap.add_argument(
-        '--debug-image-cache', dest='debug_image_cache', action='store_true', default=False,
-        help="If present, Ren'Py will log information regarding the contents of the image cache.")
-
-    ap.add_argument(
-        '--warp', dest='warp', default=None,
-        help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
+        "--debug-image-cache",
+        dest="debug_image_cache",
+        action="store_true",
+        default=False,
+        help="If present, Ren'Py will log information regarding the contents of the image cache.",
+    )
 
     args = renpy.game.args = ap.parse_args()
 
-    if args.warp:
+    if args.warp and not renpy.session.get("_warped", False):
+        renpy.session["_warped"] = True
         renpy.warp.warp_spec = args.warp
 
-    if args.profile_display: # @UndefinedVariable
+    if args.profile_display:
         renpy.config.profile = True
 
     if args.debug_image_cache:
@@ -205,7 +249,7 @@ def run():
     return True
 
 
-def compile(): # @ReservedAssignment
+def compile():
     """
     This command forces the game script to be recompiled.
     """
@@ -215,7 +259,7 @@ def compile(): # @ReservedAssignment
     return False
 
 
-def quit(): # @ReservedAssignment
+def quit():
     """
     This command is used to quit without doing anything.
     """
@@ -232,7 +276,7 @@ def rmpersistent():
 
     takes_no_arguments("Deletes the persistent data.")
 
-    renpy.loadsave.location.unlink_persistent() # type: ignore
+    renpy.loadsave.location.unlink_persistent()  # type: ignore
     renpy.persistent.should_save_persistent = False
 
     return False
@@ -265,8 +309,14 @@ def bootstrap():
     unknown arguments. Returns the parsed arguments, and a list of unknown arguments.
     """
 
+    clean_epic_arguments()
+    clean_macos_arguments()
+
     ap = ArgumentParser(False, require_command=False)
     args, _rest = ap.parse_known_args()
+
+    if args.command == "lint":
+        args.lint = True
 
     return args
 
@@ -290,9 +340,9 @@ def post_init():
     if execution should continue and False otherwise.
     """
 
-    command = renpy.game.args.command # type: ignore
+    command = renpy.game.args.command  # type: ignore
 
-    if command == "run" and renpy.game.args.lint: # type: ignore
+    if command == "run" and renpy.game.args.lint:  # type: ignore
         command = "lint"
 
     if command not in commands:
@@ -311,3 +361,38 @@ def takes_no_arguments(description=None):
     """
 
     ArgumentParser(description=description).parse_args()
+
+
+# If we're running from the Epic Game Store, we need to clean out the
+# arguments passed in from the store, as they're not compatible with
+# Ren'Py.
+
+epic_arguments = None
+
+
+def clean_epic_arguments():
+    for i in sys.argv[1:]:
+        if i.lower().startswith("-epicapp="):
+            break
+    else:
+        return
+
+    global epic_arguments
+    epic_arguments = sys.argv[1:]
+
+    sys.argv = [sys.argv[0]]
+
+
+# On macOS a file with the quarantine flag will cause an error on game start:
+# error: unrecognized arguments: -psn_0_some_number_here
+# Let's ignore this -psn argument
+
+
+def clean_macos_arguments():
+    for i in sys.argv[1:]:
+        if i.lower().startswith("-psn"):
+            break
+    else:
+        return
+
+    sys.argv = [sys.argv[0]]

@@ -23,7 +23,7 @@ define gui.show_name = True
 
 ## The version of the game.
 
-define config.version = _("Ren'Py 7 Edition")
+define config.version = "7.0"
 
 
 ## Text that is placed on the game's about screen. To insert a blank line
@@ -162,6 +162,11 @@ define config.window_icon = "gui/window_icon.png"
 
 init python:
 
+    # SDK Fonts.
+    config.searchpath.append(config.renpy_base + "/sdk-fonts")
+    build.classify_renpy("sdk-fonts/**", "all")
+    build._sdk_fonts = True
+
     ## The following functions take file patterns. File patterns are case-
     ## insensitive, and matched against the path relative to the base directory,
     ## with and without a leading /. If multiple patterns match, the first is
@@ -209,3 +214,7 @@ init python:
 ## by a slash.
 
 define build.itch_project = "renpytom/the-question"
+
+
+# Enable the console.
+define config.console = True

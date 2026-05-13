@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 screen _gamepad_select(joysticks):
+    layer config.interface_layer
 
     modal True
     style_group ""
@@ -42,6 +43,7 @@ screen _gamepad_select(joysticks):
         textbutton _("Cancel") action Return("cancel")
 
 screen _gamepad_control(name, control, kind, mappings, back, i, total):
+    layer config.interface_layer
 
     modal True
     style_group ""
@@ -74,8 +76,11 @@ screen _gamepad_control(name, control, kind, mappings, back, i, total):
 
 
 init -1200 python in _gamepad:
-    from pygame_sdl2 import JOYHATMOTION, JOYAXISMOTION, JOYBUTTONDOWN
-    import pygame_sdl2
+    # Do not participate in saves.
+    _constant = True
+
+    from renpy.pygame import JOYHATMOTION, JOYAXISMOTION, JOYBUTTONDOWN
+    import renpy.pygame as pygame
     import os
 
     class EventWatcher(renpy.Displayable):
@@ -126,7 +131,7 @@ init -1200 python in _gamepad:
             for i in range(renpy.display.joystick.count()):
 
                 try:
-                    j = pygame_sdl2.joystick.Joystick(i)
+                    j = pygame.joystick.Joystick(i)
                     j.init()
                     name = j.get_name()
                     j.quit()
@@ -146,9 +151,9 @@ init -1200 python in _gamepad:
 #         renpy.display.controller.ignore = True
         renpy.display.controller.quit(index)
 
-        platform = pygame_sdl2.get_platform()
+        platform = pygame.get_platform()
 
-        guid = pygame_sdl2.controller.Controller(index).get_guid_string()
+        guid = pygame.controller.Controller(index).get_guid_string()
         if guid is None:
             return
 
@@ -256,6 +261,9 @@ init -1200 python:
             Forces this function to always return true while :var:`config.developer`
             is true.
         """
+
+        if developer and config.developer:
+            return True
 
         return renpy.display.controller.exists()
 

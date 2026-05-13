@@ -154,7 +154,7 @@
 
     # options.rpy:165
     old "## In a pattern:"
-    new "## Dans le format:"
+    new "## Dans le format :"
 
     # options.rpy:167
     old "## / is the directory separator."
@@ -185,8 +185,8 @@
     new "## Les fichiers correspondant au format de documentation sont dupliqués pour les compilation sur Mac, c'est pourquoi ils apparaissent deux fois dans l’archive zip."
 
     # options.rpy:196
-    old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
-    new "## Une clé de licence A Google Play est requise pour télécharger les fichiers et permettre les achats dans l'application. Vous pourrez la trouver sur la page « Services & APIs » de la console de développement Google Play."
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new "## Une clé de licence Google Play est requise pour permettre les achats depuis l'application. Vous pourrez la trouver dans la console de développement Google Play, sous \"Monétiser\" > \"Configuration de la monétisation\" > \"Licences\"."
 
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."

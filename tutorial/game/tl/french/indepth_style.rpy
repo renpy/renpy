@@ -110,7 +110,7 @@ translate french style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate french style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "Enfin, il y a des déclarations de style qui créent ou changent un style nommé. En fournissant l’argument de style à Text, nous lui disons d’utiliser le style 'blue_text'."
 
 # game/indepth_style.rpy:180
@@ -122,7 +122,7 @@ translate french style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate french style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "Par défaut, le parent d’un style a le même nom sans le préfixe. Si le style n’a pas de préfixe, alors il hérite des valeurs du style 'default'."
 
 # game/indepth_style.rpy:184
@@ -332,20 +332,20 @@ translate french style_text_5a0c2c02:
 # game/indepth_style.rpy:443
 translate french style_text_430c1959:
 
-    # e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
-    e "La propriété 'text_align' contrôle l’alignement d’un texte de plusieurs lignes. Par exemple, 0.5 centre le texte."
+    # e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+    e "La propriété 'textalign' contrôle l’alignement d’un texte de plusieurs lignes. Par exemple, 0.5 centre le texte."
 
 # game/indepth_style.rpy:445
 translate french style_text_19aa0833:
 
-    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
-    e "Cela ne change pas directement la position du texte. Pour cela, vous allez souvent initialiser les propriétés 'text_align' et 'xalign' avec la même valeur."
+    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value."
+    e "Cela ne change pas directement la position du texte. Pour cela, vous allez souvent initialiser les propriétés 'textalign' et 'xalign' avec la même valeur."
 
 # game/indepth_style.rpy:455
 translate french style_text_efc3c392:
 
-    # e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
-    e "Ainsi, quand 'text_align' et 'xalign' sont initialisées à 1, alors le texte est aligné à droite."
+    # e "When both textalign and xalign are set to 1.0, the text is properly right-justified."
+    e "Ainsi, quand 'textalign' et 'xalign' sont initialisées à 1, alors le texte est aligné à droite."
 
 # game/indepth_style.rpy:464
 translate french style_text_43be63b9:

@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+
 
 from renpy.minstore import *
 
@@ -42,7 +43,7 @@ _kwargs = None
 _window = False
 
 # The window subtitle.
-_window_subtitle = ''
+_window_subtitle = ""
 
 # Should rollback be allowed?
 _rollback = True
@@ -61,7 +62,7 @@ _config = renpy.config
 
 # Used by the ui functions.
 _widget_by_id = None
-_widget_properties = { }
+_widget_properties = {}
 
 # The text rectangle, or None to use the automatic code.
 _text_rect = None
@@ -78,33 +79,28 @@ _live2d_fade = True
 
 
 class _Config(object):
-
     def __getstate__(self):
         return None
 
     def __setstate__(self, data):
         return
 
-    def register(self, name, default, cat=None, help=None): # @ReservedAssignment
-        setattr(self, name, default)
-        _config.help.append((cat, name, help))
-
     def __getattr__(self, name):
         cvars = vars(_config)
 
         if name not in cvars:
-            raise Exception('config.%s is not a known configuration variable.' % (name))
+            raise Exception("config.%s is not a known configuration variable." % (name))
 
         return cvars[name]
 
     def __setattr__(self, name, value):
-        cvars = vars(_config)
+        cvars = _config.__dict__
 
         if name not in cvars and renpy.config.locked:
-            raise Exception('config.%s is not a known configuration variable.' % (name))
+            raise Exception("config.%s is not a known configuration variable." % (name))
 
         if name == "script_version":
-            renpy.store._set_script_version(value) # type: ignore
+            renpy.store._set_script_version(value)  # type: ignore
 
         if name == "developer":
             if value == "auto":
@@ -116,10 +112,9 @@ class _Config(object):
 
     def __delattr__(self, name):
         if renpy.config.locked:
-            raise Exception('Deleting configuration variables is not supported.')
+            raise Exception("Deleting configuration variables is not supported.")
         else:
             delattr(renpy.config, name)
-
 
 
 # The styles object.
@@ -128,7 +123,7 @@ style = None
 config = _Config()
 library = config
 
-eval = renpy.python.py_eval # @ReservedAssignment
+eval = renpy.python.py_eval
 
 # Displayables.
 Bar = renpy.display.behavior.Bar
@@ -164,8 +159,10 @@ DynamicDisplayable = renpy.display.layout.DynamicDisplayable
 ConditionSwitch = renpy.display.layout.ConditionSwitch
 ShowingSwitch = renpy.display.layout.ShowingSwitch
 AlphaMask = renpy.display.layout.AlphaMask
+Layer = renpy.display.layout.Layer
 
-Transform = renpy.display.motion.Transform
+Transform = renpy.display.transform.Transform
+Camera = renpy.display.transform.Camera
 
 Animation = anim.Animation
 Movie = renpy.display.video.Movie
@@ -182,11 +179,12 @@ DragGroup = renpy.display.dragdrop.DragGroup
 Sprite = renpy.display.particle.Sprite
 SpriteManager = renpy.display.particle.SpriteManager
 
-Matrix = renpy.display.matrix.Matrix # @UndefinedVariable
+Matrix = renpy.display.matrix.Matrix
 
 Live2D = renpy.gl2.live2d.Live2D
 
 Model = renpy.display.model.Model
+GLTFModel = renpy.gl2.assimp.GLTFModel
 
 # Currying things.
 Alpha = renpy.curry.curry(renpy.display.layout.Alpha)
@@ -234,10 +232,11 @@ AudioData = renpy.audio.audio.AudioData
 # NOTE: When exporting something from here, decide if we need to add it to
 # renpy.pyanalysis.pure_functions.
 
-Style = renpy.style.Style # type: ignore
+Style = renpy.style.Style  # type: ignore
 
 SlottedNoRollback = renpy.rollback.SlottedNoRollback
 NoRollback = renpy.rollback.NoRollback
+
 
 class _layout_class(__builtins__["object"]):
     """
@@ -252,9 +251,8 @@ class _layout_class(__builtins__["object"]):
         self.__doc__ = doc
 
     def __call__(self, *args, **properties):
-
-        conargs = args[:self.nargs]
-        kids = args[self.nargs:]
+        conargs = args[: self.nargs]
+        kids = args[self.nargs :]
 
         kwargs = self.extra_kwargs.copy()
         kwargs.update(properties)
@@ -266,7 +264,9 @@ class _layout_class(__builtins__["object"]):
         return rv
 
 
-Fixed = _layout_class(renpy.display.layout.MultiBox, """
+Fixed = _layout_class(
+    renpy.display.layout.MultiBox,
+    """
 :name: Fixed
 :doc: disp_box
 :args: (*args, **properties)
@@ -274,23 +274,35 @@ Fixed = _layout_class(renpy.display.layout.MultiBox, """
 A box that fills the screen. Its members are laid out
 from back to front, with their position properties
 controlling their position.
-""", layout="fixed")
+""",
+    layout="fixed",
+)
 
-HBox = _layout_class(renpy.display.layout.MultiBox, """
+HBox = _layout_class(
+    renpy.display.layout.MultiBox,
+    """
 :doc: disp_box
 :args: (*args, **properties)
 
 A box that lays out its members from left to right.
-""", layout='horizontal')
+""",
+    layout="horizontal",
+)
 
-VBox = _layout_class(renpy.display.layout.MultiBox, """
+VBox = _layout_class(
+    renpy.display.layout.MultiBox,
+    """
 :doc: disp_box
 :args: (*args, **properties)
 
 A layout that lays out its members from top to bottom.
-""", layout='vertical')
+""",
+    layout="vertical",
+)
 
-Grid = _layout_class(renpy.display.layout.Grid, """
+Grid = _layout_class(
+    renpy.display.layout.Grid,
+    """
 :doc: disp_grid
 :args: (cols, rows, *args, **properties)
 
@@ -298,7 +310,10 @@ Lays out displayables in a grid. The first two positional arguments
 are the number of columns and rows in the grid. This must be followed
 by `columns * rows` positional arguments giving the displayables that
 fill the grid.
-""", nargs=2, layout='vertical')
+""",
+    nargs=2,
+    layout="vertical",
+)
 
 
 def AlphaBlend(control, old, new, alpha=False):
@@ -321,6 +336,7 @@ def AlphaBlend(control, old, new, alpha=False):
 def At(d, *args):
     """
     :doc: disp_at
+    :name: At
 
     Given a displayable `d`, applies each of the transforms in `args`
     to it. The transforms are applied in left-to-right order, so that
@@ -333,13 +349,14 @@ def At(d, *args):
             repeat
 
         image birds = At("birds.png", birds_transform)
-        """
+    """
 
     rv = renpy.easy.displayable(d)
 
     for i in args:
-
         if isinstance(i, renpy.display.motion.Transform):
+            # fails to set the child if the transform has a **kwargs parameter and no child parameter
+            # intended corner-case
             rv = i(child=rv)
         else:
             rv = i(rv)
@@ -365,41 +382,39 @@ mouse_visible = True
 suppress_overlay = False
 
 # The default ADVCharacter.
-adv = ADVCharacter(None,
-                who_prefix='',
-                who_suffix='',
-                what_prefix='',
-                what_suffix='',
-
-                show_function=renpy.exports.show_display_say,
-                predict_function=renpy.exports.predict_show_display_say,
-
-                condition=None,
-                dynamic=False,
-                image=None,
-
-                interact=True,
-                slow=True,
-                slow_abortable=True,
-                afm=True,
-                ctc=None,
-                ctc_pause=None,
-                ctc_timedpause=None,
-                ctc_position="nestled",
-                all_at_once=False,
-                with_none=None,
-                callback=None,
-                type='say',
-                advance=True,
-
-                who_style='say_label',
-                what_style='say_dialogue',
-                window_style='say_window',
-                screen='say',
-                mode='say',
-                voice_tag=None,
-
-                kind=False)
+adv = ADVCharacter(
+    None,
+    who_prefix="",
+    who_suffix="",
+    what_prefix="",
+    what_suffix="",
+    show_function=renpy.exports.show_display_say,
+    predict_function=renpy.exports.predict_show_display_say,
+    condition=None,
+    dynamic=False,
+    image=None,
+    interact=True,
+    slow=True,
+    slow_abortable=True,
+    afm=True,
+    ctc=None,
+    ctc_pause=None,
+    ctc_timedpause=None,
+    ctc_position="nestled",
+    all_at_once=False,
+    with_none=None,
+    callback=None,
+    type="say",
+    advance=True,
+    retain=False,
+    who_style="say_label",
+    what_style="say_dialogue",
+    window_style="say_window",
+    screen="say",
+    mode="say",
+    voice_tag=None,
+    kind=False,
+)
 
 # predict_say and who are defined in 00library.rpy, but we add default
 # versions here in case there is a problem with initialization. (And
@@ -416,14 +431,14 @@ def predict_say(who, what):
 
 def say(who, what, interact=True, *args, **kwargs):
     who = Character(who, kind=adv)
-    who(what, interact=interact, *args, **kwargs)
+    who(what, *args, interact=interact, **kwargs)
 
 
 # Used by renpy.reshow_say and extend.
 _last_say_who = None
 _last_say_what = None
 _last_say_args = ()
-_last_say_kwargs = { }
+_last_say_kwargs = {}
 
 # Used to store the things pinned into the cache.
 _cache_pin_set = set()

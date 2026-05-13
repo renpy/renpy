@@ -188,7 +188,7 @@ screen main_menu:
         textbutton _("Music Room") action ShowMenu("music_room")
         textbutton _("Load Game") action ShowMenu("load")
         textbutton _("Preferences") action ShowMenu("preferences")
-        textbutton _("Help") action Help()
+        textbutton _("Help") action Help(help='http://renpy.org/doc/html/index.html')
         textbutton _("Quit") action Quit(confirm=False)
 
     if autotest:
@@ -495,4 +495,4 @@ screen yesno_prompt:
 
 init -2 python:
     style.yesno_button.size_group = "yesno"
-    style.yesno_label_text.text_align = 0.5
+    style.yesno_label_text.textalign = 0.5

@@ -338,7 +338,7 @@ translate french button_displayables_220b020d:
 # game/tutorial_screen_displayables.rpy:558
 translate french button_displayables_b89d12aa:
 
-    # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
+    # e "Of course, it's pretty rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
     e "Bien sûr, il est particulièrement rare de personnaliser un bouton de cette façon là. À la place, on va plutôt créer un style personnalisé et dire à Ren’Py de l’utiliser."
 
 # game/tutorial_screen_displayables.rpy:577
@@ -610,24 +610,6 @@ translate french viewport_displayables_54dd6e7b:
 
     # e "The xinitial and yinitial properties set the initial amount of scrolling, as a fraction of the amount that can be scrolled."
     e "Les propriétés 'xinitial' et 'yinitial' indique le décalage initial, comme une fraction de ce qui peut être déplacé."
-
-# game/tutorial_screen_displayables.rpy:885
-translate french viewport_displayables_c047efb5:
-
-    # e "Finally, there's the child_size property. To explain what it does, I first have to show you what happens when we don't have it."
-    e "Finalement, il y a la propriété 'child_size'. Pour vous expliquez ce qu’elle fait, je vais commencer par vous montrer ce qui se passe quand elle n’est pas présente."
-
-# game/tutorial_screen_displayables.rpy:887
-translate french viewport_displayables_c563019f:
-
-    # e "As you can see, the text wraps. That's because Ren'Py is offering it space that isn't big enough."
-    e "Comme vous pouvez le voir, le texte est coupé. C’est parce que Ren’Py ne lui offre pas un espace suffisant."
-
-# game/tutorial_screen_displayables.rpy:909
-translate french viewport_displayables_4bcf0ad0:
-
-    # e "When we give the screen a child_size, it offers more space to its children, allowing scrolling. It takes a horizontal and vertical size. If one component is None, it takes the size of the viewport."
-    e "Quand nous donnons à l’écran une 'child_size', cela permet d’obtenir plus d’espace pour le contenu, nous autorisant le déplacement. Il prend une taille horizontale et une taille verticale. Si l’un des composants vaut None, alors il prend la taille du 'viewport'."
 
 # game/tutorial_screen_displayables.rpy:936
 translate french viewport_displayables_ae4ff821:

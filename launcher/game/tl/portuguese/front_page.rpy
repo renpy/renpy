@@ -18,7 +18,8 @@
 
     # game/front_page.rpy:122
     old "[p.name!q] (template)"
-    new "[p.name!q] (template)"
+    # Automatic translation.
+    new "[p.name!q] (modelo)"
 
     # game/front_page.rpy:127
     old "Tutorial"
@@ -26,7 +27,8 @@
 
     # game/front_page.rpy:128
     old "The Question"
-    new "The Question"
+    # Automatic translation.
+    new "A pergunta"
 
     # game/front_page.rpy:144
     old "Active Project"

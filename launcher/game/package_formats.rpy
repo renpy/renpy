@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,96 +31,24 @@ init python in distribute:
     import sys
     import threading
 
-    from renpy import six
     from zipfile import crc32
 
-
     # Since the long type doesn't exist on py3, define it here
-    if six.PY3:
-        long = int
+    long = int
 
     zlib.Z_DEFAULT_COMPRESSION = 5
 
     class ZipFile(zipfile.ZipFile):
 
-
         def write_with_info(self, zinfo, filename):
-            """Put the bytes from filename into the archive under the name
-            arcname."""
-            if not self.fp:
-                raise RuntimeError(
-                      "Attempt to write to ZIP archive that was already closed")
 
-            st = os.stat(filename)
-            isdir = stat.S_ISDIR(st.st_mode)
-
-            zinfo.file_size = st.st_size
-            zinfo.flag_bits = 0x00
-            zinfo.header_offset = self.fp.tell()    # Start of header bytes
-
-            self._writecheck(zinfo)
-            self._didModify = True
-
-            if isdir:
-                zinfo.file_size = 0
-                zinfo.compress_size = 0
-                zinfo.CRC = 0
-                self.filelist.append(zinfo)
-                self.NameToInfo[zinfo.filename] = zinfo
-                self.fp.write(zinfo.FileHeader())
-                return
-
-            with open(filename, "rb") as fp:
-                # Must overwrite CRC and sizes with correct data later
-                zinfo.CRC = CRC = 0
-                zinfo.compress_size = compress_size = 0
-                file_size = 0
-
-                zip64 = self._allowZip64 and \
-                        zinfo.file_size * 1.05 > zipfile.ZIP64_LIMIT
-
-                self.fp.write(zinfo.FileHeader(zip64))
-
-                if zinfo.compress_type == zipfile.ZIP_DEFLATED:
-                    cmpr = zlib.compressobj(zlib.Z_DEFAULT_COMPRESSION,
-                         zlib.DEFLATED, -15)
-                else:
-                    cmpr = None
-                while 1:
-                    buf = fp.read(1024 * 1024)
-                    if not buf:
-                        break
-                    file_size = file_size + len(buf)
-                    CRC = crc32(buf, CRC) & 0xffffffff
-                    if cmpr:
-                        buf = cmpr.compress(buf)
-                        compress_size = compress_size + len(buf)
-                    self.fp.write(buf)
-            if cmpr:
-                buf = cmpr.flush()
-                compress_size = compress_size + len(buf)
-                self.fp.write(buf)
-                zinfo.compress_size = compress_size
+            if zinfo.filename.endswith("/"):
+                data = b''
             else:
-                zinfo.compress_size = file_size
-            zinfo.CRC = CRC
-            zinfo.file_size = file_size
+                with open(filename, "rb") as f:
+                    data = f.read()
 
-            if not zip64 and self._allowZip64:
-                if file_size > zipfile.ZIP64_LIMIT:
-                    raise RuntimeError('File size has increased during compressing')
-                if compress_size > zipfile.ZIP64_LIMIT:
-                    raise RuntimeError('Compressed size larger than uncompressed size')
-
-            # Seek backwards and write CRC and file sizes
-            position = self.fp.tell()       # Preserve current position in file
-            self.fp.seek(zinfo.header_offset, 0)
-
-            self.fp.write(zinfo.FileHeader(zip64))
-
-            self.fp.seek(position, 0)
-            self.filelist.append(zinfo)
-            self.NameToInfo[zinfo.filename] = zinfo
+            self.writestr(zinfo, data)
 
 
     class ZipPackage(object):
@@ -181,7 +109,7 @@ init python in distribute:
 
             self.zipfile.write_with_info(zi, path)
 
-        def close(self):
+        def close(self, progress=None):
             self.zipfile.close()
 
 
@@ -193,7 +121,7 @@ init python in distribute:
                 If true, times will be forced to the epoch.
             """
 
-            self.tarfile = tarfile.open(filename, mode)
+            self.tarfile = tarfile.open(filename, mode, format=tarfile.PAX_FORMAT)
             self.tarfile.dereference = True
             self.notime = notime
 
@@ -229,8 +157,31 @@ init python in distribute:
         def add_directory(self, name, path):
             self.add_file(name, path, True)
 
-        def close(self):
+        def close(self, progress=None):
             self.tarfile.close()
+
+
+    def zsync_path(command):
+        """
+        Returns the full platform-specific path to command, which is one
+        of zsync or zsyncmake. If the file doesn't exists, returns the
+        command so the system-wide copy is used.
+        """
+
+        if renpy.windows:
+            suffix = ".exe"
+        else:
+            suffix = ""
+
+        executable = renpy.fsdecode(sys.executable)
+
+        rv = os.path.join(os.path.dirname(executable), command + suffix)
+
+        if os.path.exists(rv):
+            return rv
+
+        return command + suffix
+
 
     class UpdatePackage(TarPackage):
 
@@ -241,11 +192,11 @@ init python in distribute:
 
             TarPackage.__init__(self, filename, "w", notime=True)
 
-        def close(self):
+        def close(self, progress=None):
             TarPackage.close(self)
 
             cmd = [
-                updater.zsync_path("zsyncmake"),
+                zsync_path("zsyncmake"),
                 "-z",
                 # -u url to gzipped data - not a local filename!
                 "-u", self.basename + ".update.gz",
@@ -267,7 +218,6 @@ init python in distribute:
                             break
 
                         sums.write(struct.pack("<I", zlib.adler32(data) & 0xffffffff))
-
 
 
     class DirectoryPackage(object):
@@ -301,8 +251,9 @@ init python in distribute:
             fn = os.path.join(self.path, name)
             self.mkdir(fn)
 
-        def close(self):
+        def close(self, progress=None):
             return
+
 
     class ExternalZipPackage(object):
 
@@ -317,7 +268,7 @@ init python in distribute:
         def add_directory(self, name, path):
             self.dp.add_directory(name, path)
 
-        def close(self):
+        def close(self, progress=None):
             self.dp.close()
 
             if os.path.exists(self.path):
@@ -336,15 +287,63 @@ init python in distribute:
             shutil.rmtree(self.directory)
 
 
-
     class DMGPackage(DirectoryPackage):
         def __init__(self, path, make_dmg):
             self.make_dmg = make_dmg
             DirectoryPackage.__init__(self, path)
 
-        def close(self):
+        def close(self, progress=None):
             DirectoryPackage.close(self)
             self.make_dmg()
+
+
+    class RPUPackage(object):
+
+        generator = None
+
+        def __init__(self, directory, variant):
+            import renpy.update.common
+
+            self.directory = directory + "/rpu"
+            self.variant = variant
+            self.file_list = renpy.update.common.FileList()
+
+            if not os.path.exists(self.directory):
+                os.mkdir(self.directory)
+
+        def add_file(self, name, path, xbit):
+            self.file_list.add_file(name, path, xbit)
+
+        def add_directory(self, name, _path):
+            self.file_list.add_directory(name)
+
+        def close(self, progress=None):
+            import renpy.update.generate
+
+            if RPUPackage.generator is None:
+                RPUPackage.generator = renpy.update.generate.BlockGenerator(self.directory)
+
+            RPUPackage.generator.generate(self.variant, self.file_list, progress)
+
+        @staticmethod
+        def reset():
+            RPUPackage.generator = None
+
+
+    class NullPackage(object):
+        """
+        A package format that doesn't create an output file,
+        only updates.
+        """
+
+        def add_file(self, name, path, xbit):
+            return
+
+        def add_directory(self, name, _path):
+            return
+
+        def close(self, progress=None):
+            return
 
 
     parallel_threads = [ ]
@@ -364,7 +363,7 @@ init python in distribute:
         def add_directory(self, name, path):
             self.worklist.append((True, name, path, True))
 
-        def close(self):
+        def close(self, progress=None):
             t = threading.Thread(target=self.run)
             t.start()
 
@@ -407,3 +406,5 @@ init python in distribute:
         for i in parallel_threads:
             if i.done:
                 i.done()
+
+        parallel_threads.clear()

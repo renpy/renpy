@@ -23,7 +23,7 @@ translate tchinese strings:
 
     # 00gltest.rpy:93
     old "Enable"
-    new "Enable"
+    new "啟用"
 
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
@@ -91,27 +91,27 @@ translate tchinese strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Select Gamepad to Calibrate"
+    new "選擇要校準的遊戲手柄"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No Gamepads Available"
+    new "沒有可用的遊戲手柄"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
-    new "Calibrating [name] ([i]/[total])"
+    new "矯正 [name] 中 ([i]/[total])"
 
     # 00gamepad.rpy:58
     old "Press or move the [control!s] [kind]."
-    new "Press or move the [control!s] [kind]."
+    new "按下或者移動 [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Skip (A)"
+    new "跳過 (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    new "Back (B)"
+    new "返回 (B)"
 
     # _errorhandling.rpym:495
     old "Open Traceback"
@@ -123,11 +123,11 @@ translate tchinese strings:
 
     # _errorhandling.rpym:499
     old "Copy to Clipboard"
-    new "Copy to Clipboard"
+    new "複製到剪貼簿"
 
     # _errorhandling.rpym:501
     old "Copies the traceback.txt file to the clipboard."
-    new "Copies the traceback.txt file to the clipboard."
+    new "已經將 traceback.txt 檔案複製到剪貼簿。"
 
     # _errorhandling.rpym:519
     old "An exception has occurred."
@@ -175,4 +175,112 @@ translate tchinese strings:
 
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
-    new "Copies the errors.txt file to the clipboard."
+    new "已經將 errors.txt 檔案複製到剪貼簿。"
+
+    # renpy/common/00gltest.rpy:89
+    old "Renderer"
+    new "渲染器"
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "強制 GL 渲染器"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "強制 ANGLE 渲染器"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "強制 GLES 渲染器"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "強制 GL2 渲染器"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "強制 ANGLE2 渲染器"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "強制 GLES2 渲染器"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "啟用（無封鎖清單）"
+
+    # renpy/common/00gltest.rpy:159
+    old "Powersave"
+    new "省電"
+
+    # renpy/common/00gltest.rpy:173
+    old "Framerate"
+    new "幀率"
+
+    # renpy/common/00gltest.rpy:177
+    old "Screen"
+    new "畫面"
+
+    # renpy/common/00gltest.rpy:181
+    old "60"
+    new "60"
+
+    # renpy/common/00gltest.rpy:185
+    old "30"
+    new "30"
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    new "這個遊戲需要使用無法初始化的GL2。"
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new " {a=edit:1:log.txt}log.txt{/a} 檔案可能包含可幫助您確定電腦出現問題的資訊。"
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "有關如何解決此問題的更多詳細資訊，請參閱 {a=[url]} 文件 {/a} 。"
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    new "更改渲染選項"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "按下或移動 '[control!s]' [kind] 。"
+
+    # renpy/common/_errorhandling.rpym:662
+    old "Open"
+    new "開啟"
+
+    # renpy/common/_errorhandling.rpym:666
+    old "Copy BBCode"
+    new "複製 BBCode"
+
+    # renpy/common/_errorhandling.rpym:668
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "已將 traceback.txt 檔案作為 BBcode 複製到剪貼簿，用於 https://lemmasoft.renai.us/ 等論壇。"
+
+    # renpy/common/_errorhandling.rpym:670
+    old "Copy Markdown"
+    new "複製 Markdown"
+
+    # renpy/common/_errorhandling.rpym:672
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "已將 traceback.txt 檔案作為適用於 Discord 的 Markdown 複製到剪貼簿。"
+
+    # renpy/common/_errorhandling.rpym:735
+    old "Ignores the exception, allowing you to continue."
+    new "忽略異常，允許您繼續。"
+
+    # renpy/common/_errorhandling.rpym:746
+    old "Console"
+    new "控制台"
+
+    # renpy/common/_errorhandling.rpym:748
+    old "Opens a console to allow debugging the problem."
+    new "開啟控制台以除錯問題。"
+
+    # renpy/common/00gltest.rpy:191
+    old "Tearing"
+    new "撕裂"

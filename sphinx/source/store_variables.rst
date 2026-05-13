@@ -21,11 +21,19 @@ and rolled-back when rollback occurs.
     set to False during the splashscreen, and is ignored when in the main
     menu.
 
+.. var:: _constant
+
+    If set to true in a store, indicates the store is constant.
+    See :ref:`constant-stores`.
+
 .. var:: default_mouse
 
     This is undefined by default. If defined, and if :var:`config.mouse` is
     set at game startup, this is a key that is used to look up a mouse cursor
-    in config.mouse when the current cursor does not exist, or is the default.
+    when the current cursor does not exist, or is the default. This is used by
+    :var:`config.mouse` and :func:`MouseDisplayable`.
+
+    See :doc:`mouse` for more information.
 
 .. var:: _dismiss_pause = True
 
@@ -41,15 +49,22 @@ and rolled-back when rollback occurs.
     This is set to None at the start of the splashscreen, and restored to its
     original value when the splashscreen ends.
 
+.. var:: _greedy_rollback = True
+
+    Determines if the game performs a greedy rollback after a load. A greedy
+    rollback will rollback to just after the last statement that interacted,
+    rather than to just before the statement that the game was in during
+    the load.
+
 .. var:: _history = True
 
     If true, Ren'Py will record dialogue history when a line is shown. (Note
-    that :var:`config.history_list_length` must be set as well.)
+    that :var:`config.history_length` must be set as well.)
 
 .. var:: _history_list = [ ]
 
     This is a list of history objects, corresponding to each line of history
-    from oldest to newest. See the :ref:`History <history>` section for more
+    from oldest to newest. See the :doc:`History <history>` section for more
     information.
 
 .. var:: _ignore_action = None
@@ -72,13 +87,19 @@ and rolled-back when rollback occurs.
 .. var:: menu = renpy.display_menu
 
     The function that's called to display the in-game menu. It should take the same
-    arguments as :func:`renpy.display_menu`. Assigning :func:`nvl_menu` to this
-    will display an nvl-mode menu.
+    arguments as :func:`renpy.display_menu`, and pass unknown keyword arguments
+    unchanged. Assigning :func:`nvl_menu` to this will display an nvl-mode menu.
 
 .. var:: mouse_visible = True
 
-    Controls if the mouse is visible. This is automatically set to true when
-    entering the standard game menus.
+    Controls if the mouse is visible. There are three values:
+
+    - "always" - The mouse is always visible.
+    - True - The mouse is visible when moved, but hides after :var:`config.mouse_hide_time` seconds of inactivity, or
+      after controller input.
+    - False - The mouse is never visible.
+
+    If false whe entering the game menu, mouse_visible will be set to true upon entry and restored upon exit.
 
 .. var:: name_only = Character(...)
 
@@ -114,16 +135,20 @@ and rolled-back when rollback occurs.
 
     Controls if rollback is allowed.
 
-.. var:: say = ...
+.. var:: say : Callable
 
-    A function that is called by Ren'Py to display dialogue. This is called
-    with three arguments. The first argument (`who`) is the character saying the
-    dialogue (or None for the narrator). The second argument (`what`) is what dialogue
-    is being said.
+    A function that is called by Ren'Py to display dialogue, when a string is
+    used in place of the speaking character::
 
-    The third argument must be a keyword argument named `interact` and defaulting
-    to True. If true, the say function will wait for a click. If false, it will
-    immediately return with the dialogue displayed on the screen.
+        define e = Character("Eileen", who_color="#0f0")
+
+        label start:
+            "Eileen" "My name is Eileen." # will call the say function
+            e "I like trains !" # will not call the say function
+
+    This function should have the same signature as :func:`renpy.say`.
+    It should not call :func:`renpy.say` but rather use the other
+    :doc:`say statement equivalents <statement_equivalents>`.
 
     It's rare to call this function directly, as one can simply call a character
     with dialogue. This variable mostly exists to be redefined, as a way of
@@ -131,7 +156,17 @@ and rolled-back when rollback occurs.
 
 .. var:: save_name = ""
 
-    A save name that is included with saves.
+    A save name that is included with saves. This is also used by the steam timeline if
+    :var:`config.automatic_steam_timeline` is true, and is best considered to be a chapter
+    name.
+
+.. var:: _scene_show_hide_transition = None
+
+    If not None, this is a transition that will be performed using the
+    with statement after a series of scene, show, and hide statements
+    that are not followed by a with statement, or by a window transition.
+
+    .. seealso:: :ref:`scene-show-hide-transition`
 
 .. var:: _screenshot_pattern = None
 
@@ -168,4 +203,3 @@ and rolled-back when rollback occurs.
     This is appended to :var:`config.window_title` to produce the caption for the game
     window. This is automatically set to :var:`config.menu_window_subtitle` while in
     the game menu.
-

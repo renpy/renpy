@@ -6,18 +6,18 @@ Ren'Py includes support for playing back voice in conjunction with
 dialogue. This is done through the ``voice`` statement, which gives the
 voice filename to play::
 
-  voice "line0001.ogg"
-  "Welcome to Ren'Py"
+    voice "line0001.ogg"
+    "Welcome to Ren'Py"
 
 Normally, a playing voice is stopped at the start of the next
 interaction. The ``voice sustain`` statement can sustain voice playback
 through an interaction. ::
 
-  voice "line0001.ogg"
-  "Welcome to Ren'Py..."
+    voice "line0001.ogg"
+    "Welcome to Ren'Py..."
 
-  voice sustain
-  "... your digital storytelling engine."
+    voice sustain
+    "... your digital storytelling engine."
 
 The :var:`config.voice_filename_format` variable allows you to customize
 the voice filename, making it possible to omit directories and extensions.
@@ -33,25 +33,25 @@ player to toggle the voice.
 
 For example::
 
-  define e = Character("Eileen", voice_tag="eileen")
-  define l = Character("Lucy", voice_tag="lucy")
+    define e = Character("Eileen", voice_tag="eileen")
+    define l = Character("Lucy", voice_tag="lucy")
 
-  screen voice_toggle:
-      vbox:
-          textbutton "Mute Eileen" action ToggleVoiceMute("eileen")
-          textbutton "Mute Lucy" action ToggleVoiceMute("lucy")
+    screen voice_toggle:
+        vbox:
+            textbutton "Mute Eileen" action ToggleVoiceMute("eileen")
+            textbutton "Mute Lucy" action ToggleVoiceMute("lucy")
 
-  label start:
-      show screen voice_toggle
+    label start:
+        show screen voice_toggle
 
-      voice "e01.ogg"
-      e "You can turn a character's voice on and off."
+        voice "e01.ogg"
+        e "You can turn a character's voice on and off."
 
-      voice "l01.ogg"
-      l "Yeah! Now I can finally shut you up!"
+        voice "l01.ogg"
+        l "Yeah! Now I can finally shut you up!"
 
-      voice "l02.ogg"
-      l "Wait... that means they can mute me as well! Really?"
+        voice "l02.ogg"
+        l "Wait... that means they can mute me as well! Really?"
 
 .. _automatic-voice:
 
@@ -82,17 +82,36 @@ For example, if we have::
 
 And the dialogue identifier is ``demo_minigame_03fc91ef``, then when
 the corresponding line is shown, Ren'Py will look for the file
-``voice/demo_minigame_03fc91ef.ogg``. If the file exists, Ren'Py will
+:file:`voice/demo_minigame_03fc91ef.ogg`. If the file exists, Ren'Py will
 play it.
 
+Multilingual Voice
+------------------
+
+To benefit from Ren'Py's translation system when dubbing a game in several
+languages, it's possible to make use of :ref:`image-file-translation`.
+For a game whose original language is English and dubbed in French, and the
+following dialogue::
+
+    voice "omelette.ogg"
+    e "I like scrambled eggs with cheese..."
+
+Placing the english version in :file:`game/omelette.ogg` and the french translation
+in :file:`game/tl/french/omelette.ogg` will make Ren'Py use the french version when
+the french language is activated in the game.
+
+It works just the same for automatic voice, as long as the filepath of the
+translation file starting from :file:`game/tl/{<language>}/` matches the filepath of
+the original file starting from :file:`game/`\ .
 
 Voice Functions
 ---------------
 
 .. include:: inc/voice
 
+.. _voice-actions:
+
 Voice Actions
 -------------
 
 .. include:: inc/voice_action
-

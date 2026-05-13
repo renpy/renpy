@@ -1,4 +1,4 @@
-#!/home/tom/ab/renpy/lib/py2-linux-x86_64/python -O
+#!/home/tom/ab/renpy/lib/py3-linux-x86_64/python
 
 # Builds a distribution of Ren'Py.
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
@@ -15,15 +15,36 @@ import subprocess
 import argparse
 import time
 import collections
-
+import pathlib
 
 try:
-    # reload is built-in in Python 2, in importlib in Python 3
-    reload # type: ignore
-except NameError:
     from importlib import reload
+except ImportError:
+    pass
+
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+
+
+def zip_rapt_symbols(destination):
+    """
+    Zips up the rapt symbols.
+    """
+
+    import zipfile
+
+    if PY2:
+        zf = zipfile.ZipFile(destination + "/android-native-symbols.zip", "w", zipfile.ZIP_DEFLATED)
+    else:
+        zf = zipfile.ZipFile(destination + "/android-native-symbols.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=3)
+
+    for dn, dirs, files in os.walk("rapt/symbols"):
+        for fn in dirs + files:
+            fn = os.path.join(dn, fn)
+            arcname = os.path.relpath(fn, "rapt/symbols")
+            zf.write(fn, arcname)
+
+    zf.close()
 
 def copy_tutorial_file(src, dest):
     """
@@ -44,13 +65,39 @@ def copy_tutorial_file(src, dest):
                 if copy:
                     df.write(l)
 
+def link_directory(dirname):
+    dn = os.path.join(ROOT, dirname)
+
+    if os.path.lexists(dn):
+        os.unlink(dn)
+
+    if PY2:
+        source = dn + "2"
+    else:
+        source = dn + "3"
+
+    if os.path.exists(source):
+        os.symlink(source, dn)
+
+def force_even_timestamps():
+    """
+    Forces the timestamps of all .py files in the renpy directory to be even.
+
+    This ensures that the timestamps can be represented in a zip file, which
+    can only represent timestamps that are even multiples of 2 seconds.
+
+    See https://github.com/renpy/renpy-build/pull/166
+    """
+
+    for fn in pathlib.Path("renpy").rglob("*.py"):
+        if fn.is_file():
+            st = fn.stat()
+            if st.st_mtime % 2 != 0:
+                os.utime(fn, (st.st_atime, st.st_mtime + 1))
 
 def main():
 
     start = time.time()
-
-    if PY2 and not sys.flags.optimize:
-        raise Exception("Not running with python optimization.")
 
     ap = argparse.ArgumentParser()
     ap.add_argument("version", nargs="?")
@@ -62,62 +109,64 @@ def main():
     ap.add_argument("--nosign", action="store_false", dest="sign")
     ap.add_argument("--notarized", action="store_true", dest="notarized")
     ap.add_argument("--vc-version-only", action="store_true")
+    ap.add_argument("--link-directories", action="store_true")
+    ap.add_argument("--append-version", action="store_true")
+    ap.add_argument("--nightly", action="store_true")
+    ap.add_argument("--print-version", action="store_true")
 
     args = ap.parse_args()
+
+    link_directory("rapt")
+    link_directory("renios")
+    link_directory("web")
+
+    import renpy.versions
+    renpy.versions.generate_vc_version(nightly=args.nightly)
+
+    if args.link_directories or args.vc_version_only:
+        return
+
+    if not os.path.abspath(sys.executable).startswith(ROOT + "/lib"):
+        raise Exception("Distribute must be run with the python in lib/.")
 
     if args.sign:
         os.environ["RENPY_MAC_IDENTITY"] = "Developer ID Application: Tom Rothamel (XHTE5H7Z79)"
 
-    # Revision updating is done early, so we can do it even if the rest
-    # of the program fails.
-
-    # Determine the version. We grab the current revision, and if any
-    # file has changed, bump it by 1.
-    import renpy
-
-    if args.version is None:
-        args.version = ".".join(str(i) for i in renpy.version_tuple[:-1]) # @UndefinedVariable
+    if PY2 and not sys.flags.optimize:
+        raise Exception("Not running with python optimization.")
 
     try:
-        s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", ]).decode("utf-8").strip()
-        parts = s.strip().split("-")
-        dirty = "dirty" in parts
+        vc_version_base = os.path.splitext(renpy.vc_version.__file__)[0]
 
-        commits_per_day = collections.defaultdict(int)
+        # Delete the .pyc and .pyo files, as reload can choose one of them instead
+        # of the new .py file.
+        for fn in [ vc_version_base + ".pyc", vc_version_base + ".pyo" ]:
+            if os.path.exists(fn):
+                os.unlink(fn)
 
-        for i in subprocess.check_output([ "git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d", "--follow", "HEAD", "--", "." ]).decode("utf-8").split():
-            commits_per_day[i[2:]] += 1
+        reload(renpy.vc_version)
+    except Exception:
+        import renpy.vc_version
 
-        if dirty:
-            key = time.strftime("%Y%m%d")[2:]
-            vc_version = "{}{:02d}".format(key, commits_per_day[key] + 1)
-        else:
-            key = max(commits_per_day.keys())
-            vc_version = "{}{:02d}".format(key, commits_per_day[key])
-    except:
-        vc_version = 0
+    # A normal reload is fine, as renpy/__init__.py won't change.
+    reload(renpy)
 
-    with open("renpy/vc_version.py", "w") as f:
-        import socket
-        official = socket.gethostname() == "eileen"
-        nightly = args.version and "nightly" in args.version
-
-        f.write("vc_version = {}\n".format(vc_version))
-        f.write("official = {}\n".format(official))
-        f.write("nightly = {}\n".format(nightly))
-
-    if args.vc_version_only:
+    if args.print_version:
+        print(renpy.version_only)
         return
 
-    try:
-        reload(sys.modules['renpy.vc_version']) # @UndefinedVariable
-    except Exception:
-        import renpy.vc_version # @UnusedImport
+    if args.version is None:
+        if args.nightly:
+            args.version = renpy.version_only
+        else:
+            args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])
 
-    reload(sys.modules['renpy'])
+    if args.append_version:
+        args.version += "-"  + renpy.version_only
 
     # Check that the versions match.
     full_version = renpy.version_only # @UndefinedVariable
+
     if "-" not in args.version \
             and not full_version.startswith(args.version):
         raise Exception("The command-line and Ren'Py versions do not match.")
@@ -140,10 +189,7 @@ def main():
     else:
         renpy_sh = "./renpy2.sh"
 
-    # Perhaps autobuild.
-    if "RENPY_BUILD_ALL" in os.environ:
-        print("Autobuild...")
-        subprocess.check_call(["scripts/autobuild.sh"])
+    force_even_timestamps()
 
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir="renpy/", force=True, quiet=1)
@@ -152,7 +198,7 @@ def main():
     if not args.fast:
         for i in [ 'tutorial', 'launcher', 'the_question' ]:
             print("Compiling", i)
-            subprocess.check_call([renpy_sh, i, "quit" ])
+            subprocess.check_call([renpy_sh, i, "compile" ])
 
     # Kick off the rapt build.
     if not args.fast:
@@ -175,6 +221,7 @@ def main():
     if not os.path.exists(destination):
         os.makedirs(destination)
 
+    zip_rapt_symbols(destination)
 
     if args.fast:
 
@@ -212,22 +259,10 @@ def main():
     # Sign the update.
     if not args.fast:
         subprocess.check_call([
+            "uv", "run",
             "scripts/sign_update.py",
             "/home/tom/ab/keys/renpy_private.pem",
             os.path.join(destination, "updates.json"),
-            ])
-
-    # Package pygame_sdl2.
-    if not args.fast:
-        subprocess.check_call([
-            "pygame_sdl2/setup.py",
-            "-q",
-            "egg_info",
-            "--tag-build",
-            "-for-renpy-" + args.version,
-            "sdist",
-            "-d",
-            os.path.abspath(destination)
             ])
 
     # Write 7z.exe.

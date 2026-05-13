@@ -110,7 +110,7 @@ translate korean style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate korean style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "마지막으로, 명명된 스타일을 생성하거나 변경하는 style 문이 있어. 우리는 Text에 blue_text 스타일을 사용하도록 지시했어."
 
 # game/indepth_style.rpy:180
@@ -122,7 +122,7 @@ translate korean style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate korean style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "기본적으로 스타일의 부모는 첫 번째 밑줄까지 접두사가 제거된 동일한 이름을 가져. 스타일의 이름에 밑줄이 없으면 기본(default)이 사용돼."
 
 # game/indepth_style.rpy:184
@@ -332,20 +332,20 @@ translate korean style_text_5a0c2c02:
 # game/indepth_style.rpy:443
 translate korean style_text_430c1959:
 
-    # e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
-    e "text_align 속성은 글자 디스플레이어블 안에 있는 여러 줄의 글자 위치를 제어해. 예를 들면, 0.5는 가운데 정렬을 의미해.."
+    # e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+    e "textalign 속성은 글자 디스플레이어블 안에 있는 여러 줄의 글자 위치를 제어해. 예를 들면, 0.5는 가운데 정렬을 의미해.."
 
 # game/indepth_style.rpy:445
 translate korean style_text_19aa0833:
 
-    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
-    e "그것은 글자 디스플레이어블의 위치 자체를 변경하진 않아. 이를 위해, 종종 text_align과 xalign을 동일한 값으로 설정하게 될 거야."
+    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value."
+    e "그것은 글자 디스플레이어블의 위치 자체를 변경하진 않아. 이를 위해, 종종 textalign과 xalign을 동일한 값으로 설정하게 될 거야."
 
 # game/indepth_style.rpy:455
 translate korean style_text_efc3c392:
 
-    # e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
-    e "text_align과 xalign이 모두 1.0으로 설정되면 글자가 오른쪽으로 맞춤 정렬돼."
+    # e "When both textalign and xalign are set to 1.0, the text is properly right-justified."
+    e "textalign과 xalign이 모두 1.0으로 설정되면 글자가 오른쪽으로 맞춤 정렬돼."
 
 # game/indepth_style.rpy:464
 translate korean style_text_43be63b9:
@@ -709,7 +709,7 @@ translate korean strings:
 
     # indepth_style.rpy:22
     old "Button 2"
-    new "{font=../../launcher/game/fonts/SourceHanSansLite.ttf}버튼 2{/font}"
+    new "{font=SourceHanSansLite.ttf}버튼 2{/font}"
 
     # indepth_style.rpy:66
     old "Style basics."
@@ -806,4 +806,3 @@ translate korean strings:
     # indepth_style.rpy:886
     old "Sixth Child"
     new "여섯 번째 자식"
-

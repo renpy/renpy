@@ -338,7 +338,7 @@ translate russian button_displayables_220b020d:
 # game/tutorial_screen_displayables.rpy:558
 translate russian button_displayables_b89d12aa:
 
-    # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
+    # e "Of course, it's pretty rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
     e "И конечно, мы очень редко настраиваем каждую кнопку на подобных экранах. Вместо этого мы создаём отдельный стиль и говорим Ren'Py его использовать."
 
 # game/tutorial_screen_displayables.rpy:577
@@ -387,7 +387,7 @@ translate russian bar_displayables_c2aa4725:
 translate russian bar_displayables_2fc44226:
 
     # e "Finally, the bottom style is the 'scrollbar' style, which is used for horizontal scrollbars. When used as a scrollbar, the thumb in the center changes size to reflect the visible area of a viewport."
-    e "И наконец, нижний стиль — 'scrollbar', используемый для горинтальных полос прокрутки. При использовании полос прокрутки, тумблер в центре воздействует на порт просмотра, позволяя его перемещать."
+    e "И наконец, нижний стиль — 'scrollbar', используемый для горизонтальных полос прокрутки. При использовании полос прокрутки, тумблер в центре воздействует на порт просмотра, позволяя его перемещать."
 
 # game/tutorial_screen_displayables.rpy:623
 translate russian bar_displayables_26eb88bf:

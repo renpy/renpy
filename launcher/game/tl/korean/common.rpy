@@ -586,7 +586,8 @@
 
     # _developer\developer.rpym:90
     old "[name] [attributes] (hidden)"
-    new "[name] [attributes] (hidden)"
+    # Automatic translation.
+    new "[name] [attributes] (숨김)"
 
     # _developer\developer.rpym:94
     old "[name] [attributes]"
@@ -788,3 +789,176 @@
     # 00preferences.rpy:464
     old "system cursor"
     new "시스템 커서"
+
+translate korean strings:
+
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    # Automatic translation.
+    new "고대비 텍스트"
+
+    # renpy/common/00director.rpy:1745
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    # Automatic translation.
+    new "속성을 전환하려면 클릭하고, 음수 속성을 전환하려면 마우스 오른쪽 버튼을 클릭합니다."
+
+    # renpy/common/00director.rpy:1768
+    old "Click to set transform, right click to add to transform list."
+    # Automatic translation.
+    new "클릭하여 트랜스폼을 설정하고 마우스 오른쪽 버튼을 클릭하여 트랜스폼 목록에 추가합니다."
+
+    # renpy/common/00director.rpy:1789
+    old "Click to set, right click to add to behind list."
+    # Automatic translation.
+    new "클릭하여 설정하고 마우스 오른쪽 버튼을 클릭하여 비하인드 목록에 추가합니다."
+
+    # renpy/common/00gui.rpy:456
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    # Automatic translation.
+    new "이 저장 파일이 다른 장치에서 생성되었습니다. 악의적으로 생성된 저장 파일은 컴퓨터를 손상시킬 수 있습니다. 이 저장 파일을 만든 사람과 파일을 변경했을 수 있는 모든 사람을 신뢰하시나요?"
+
+    # renpy/common/00gui.rpy:457
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    # Automatic translation.
+    new "저장한 디바이스를 신뢰하시나요? 장치의 유일한 사용자인 경우에만 예를 선택해야 합니다."
+
+    # renpy/common/00preferences.rpy:504
+    old "renderer menu"
+    # Automatic translation.
+    new "렌더러 메뉴"
+
+    # renpy/common/00preferences.rpy:507
+    old "accessibility menu"
+    # Automatic translation.
+    new "접근성 메뉴"
+
+    # renpy/common/00preferences.rpy:510
+    old "high contrast text"
+    # Automatic translation.
+    new "고대비 텍스트"
+
+    # renpy/common/00preferences.rpy:519
+    old "audio when minimized"
+    # Automatic translation.
+    new "오디오 최소화 시"
+
+    # renpy/common/00preferences.rpy:528
+    old "audio when unfocused"
+    # Automatic translation.
+    new "초점이 맞지 않을 때 오디오"
+
+    # renpy/common/00preferences.rpy:537
+    old "web cache preload"
+    # Automatic translation.
+    new "웹 캐시 사전 로드"
+
+    # renpy/common/00preferences.rpy:552
+    old "voice after game menu"
+    # Automatic translation.
+    new "게임 메뉴 후 음성"
+
+    # renpy/common/00preferences.rpy:571
+    old "main volume"
+    # Automatic translation.
+    new "메인 볼륨"
+
+    # renpy/common/00preferences.rpy:575
+    old "mute main"
+    # Automatic translation.
+    new "메인 음소거"
+
+    # renpy/common/00speechbubble.rpy:344
+    old "Speech Bubble Editor"
+    # Automatic translation.
+    new "말풍선 편집기"
+
+    # renpy/common/00speechbubble.rpy:349
+    old "(hide)"
+    # Automatic translation.
+    new "(숨기기)"
+
+    # renpy/common/00sync.rpy:70
+    old "Sync downloaded."
+    # Automatic translation.
+    new "동기화가 다운로드되었습니다."
+
+    # renpy/common/00sync.rpy:190
+    old "Could not connect to the Ren'Py Sync server."
+    # Automatic translation.
+    new "Ren'Py 동기화 서버에 연결할 수 없습니다."
+
+    # renpy/common/00sync.rpy:192
+    old "The Ren'Py Sync server timed out."
+    # Automatic translation.
+    new "Ren'Py 동기화 서버가 시간 초과되었습니다."
+
+    # renpy/common/00sync.rpy:194
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    # Automatic translation.
+    new "Ren'Py 동기화 서버에 연결하는 동안 알 수 없는 오류가 발생했습니다."
+
+    # renpy/common/00sync.rpy:267
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    # Automatic translation.
+    new "Ren'Py 동기화 서버에 이 동기화의 복사본이 없습니다. 동기화 ID가 유효하지 않거나 시간이 초과되었을 수 있습니다."
+
+    # renpy/common/00sync.rpy:409
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    # Automatic translation.
+    new "생성한 동기화 ID를 입력하세요.\n직접 만들지 않은 동기화 ID는 절대로 입력하지 마세요."
+
+    # renpy/common/00sync.rpy:428
+    old "The sync ID is not in the correct format."
+    # Automatic translation.
+    new "동기화 ID의 형식이 올바르지 않습니다."
+
+    # renpy/common/00sync.rpy:448
+    old "The sync could not be decrypted."
+    # Automatic translation.
+    new "동기화를 해독할 수 없습니다."
+
+    # renpy/common/00sync.rpy:471
+    old "The sync belongs to a different game."
+    # Automatic translation.
+    new "동기화는 다른 게임에 속합니다."
+
+    # renpy/common/00sync.rpy:476
+    old "The sync contains a file with an invalid name."
+    # Automatic translation.
+    new "동기화에 잘못된 이름의 파일이 포함되어 있습니다."
+
+    # renpy/common/00sync.rpy:529
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    # Automatic translation.
+    new "그러면 저장된 내용이 {a=https://sync.renpy.org}Ren'Py 동기화 서버{/a} 에 업로드됩니다.\n계속하시겠습니까?"
+
+    # renpy/common/00sync.rpy:558
+    old "Enter Sync ID"
+    # Automatic translation.
+    new "동기화 ID 입력"
+
+    # renpy/common/00sync.rpy:569
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    # Automatic translation.
+    new "그러면 {a=https://sync.renpy.org}Ren'Py 동기화 서버{/a} 에 연결됩니다."
+
+    # renpy/common/00sync.rpy:596
+    old "Sync Success"
+    # Automatic translation.
+    new "동기화 성공"
+
+    # renpy/common/00sync.rpy:599
+    old "The Sync ID is:"
+    # Automatic translation.
+    new "동기화 ID는 다음과 같습니다:"
+
+    # renpy/common/00sync.rpy:605
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    # Automatic translation.
+    new "이 ID를 사용하여 다른 장치에서 저장 내용을 다운로드할 수 있습니다.\n이 동기화는 1시간 후에 만료됩니다.\nRen'Py Sync는 {a=https://www.renpy.org/sponsors.html}Ren'Py의 스폰서{/a} 에서 지원합니다."
+
+    # renpy/common/00sync.rpy:631
+    old "Sync Error"
+    # Automatic translation.
+    new "동기화 오류"
+

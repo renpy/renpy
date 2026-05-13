@@ -6,7 +6,7 @@
 The 3D Stage, named after the stages that plays are performed on, is a concept
 that allows displayables to be positioned in 3 dimensions. Ren'Py will then
 render the displayables with the proper perspective, and will also make the
-z dimension avalable, to make things like lighting and depth rendering
+z dimension available, to make things like lighting and depth rendering
 possible.
 
 Coordinates
@@ -66,22 +66,36 @@ smaller, while decreasing it will make everything bigger.
 
 Finally, :tpref:`perspective` and :var:`config.perspective` describe the
 near and far planes, defaulting to 100 and 100000, respectively. This
-means than when an image is closer than 100 z-units from the camera,
+means that when an image is closer than 100 z-units from the camera,
 it disappears, and it also disappears if it's more than 100,000 z-units
 away.
+
+.. var:: config.perspective = (100, z, 100000)
+
+    The default value used when :tpref:`perspective` is not set to a 3-tuple.
+    ``z`` depends on the size of the game, as defined above.
 
 
 Using the 3D Stage
 ------------------
 
 The first thing to do to use the 3D stage is to enable it for a layer, using
-the ``camera`` statement. This is usually done with::
+the ``camera`` statement. If no layer name is provided, ``master`` is used by
+default. This is usually done with::
 
+    # Enabling the 3D stage for the master layer.
     camera:
         perspective True
 
 though it's possible that you'll want to include a default camera position, as
 described below.
+
+Alternatively, you can provide a specific layer name to enable the 3D stage only
+for that layer. ::
+
+    # Enabling the 3D stage for the background layer.
+    camera background:
+        perspective True
 
 Showing images (backgrounds and sprites) works the same way as it does in
 when using 2D coordinates. ::
@@ -128,11 +142,11 @@ displayable in the x and y axes. Of course, transforms can also be used. ::
 If you try this, you'll see an empty space around the background. That's
 because by moving it back, it becomes smaller, and doesn't fill the screen.
 Ren'Py has an easy way of fixing this problem - :tpref:`zzoom`. Setting
-the tpref:`zzoom` property to True will scale an image by the amount it was shrunk
+the :tpref:`zzoom` property to True will scale an image by the amount it was shrunk
 due to having a negative zpos. It's useful for backgrounds. ::
 
     transform zbg:
-        zpos -100 zzoom False
+        zpos -100 zzoom True
 
 It's also possible to use ATL to vary zpos, just like you would xpos and
 ypos. ::
@@ -202,7 +216,7 @@ of the images being displayed.
 Ren'Py uses the :tpref:`matrixanchor` transform property to make applying a
 matrix easier. This defaults to (0.5, 0.5), and is translated to a pixel offset
 inside the image being transformed using the usual Ren'Py anchor rules. (If it's
-an integer or abolute, it's considered a number of pixels, otherwise it's a
+an integer or absolute, it's considered a number of pixels, otherwise it's a
 fraction of the size of the image.)
 
 Ren'Py applies the image by first shifting the image so the anchor is at (0, 0, 0).
@@ -229,6 +243,25 @@ about them being applied right to left. In this example::
 The image will be shifted up by 300 pixels, and then will be rotated around
 the X axis.
 
+Structural Similarity
+^^^^^^^^^^^^^^^^^^^^^^
+
+In ATL, interpolating the :tpref:`matrixtransform` property requires the
+use of TransformMatrixes that have structural similarity. That means the same
+types of TransformMatrix, multiplied together in the same order.
+
+As an example, the following will rotate and offset, then move back::
+
+    show eileen happy at center:
+        matrixtransform RotateMatrix(0, 0, 0) * OffsetMatrix(0, 0, 0)
+        linear 2.0 matrixtransform RotateMatrix(45, 0, 0) * OffsetMatrix(0, -300, 0)
+        linear 2.0 matrixtransform RotateMatrix(0, 0, 0) * OffsetMatrix(0, 0, 0)
+
+While the first setting of matrixtransform may seem unnecessary, it is required
+to provide a base for the first linear interpolation. If it wasn't present, that
+interpolation would be skipped.
+
+
 TransformMatrix
 ---------------
 
@@ -237,7 +270,7 @@ useful for animating changing transformations. It's also useful to have a way of
 taking common matrices and encapsulating them in a way that allows the
 matrix to be parameterized.
 
-The TransformMatrix is a base class that is is extended by a number of
+The TransformMatrix is a base class that is extended by a number of
 Matrix-creating classes. Instances of TransformMatrix are called by Ren'Py,
 and return Matrixes. TransformMatrix is well integrated with ATL, allowing
 for matrixtransform animations. ::
@@ -258,6 +291,8 @@ This method takes:
 Built-In TransformMatrix Subclasses
 -----------------------------------
 
+.. seealso:: :class:`SplineMatrix`, which works with TransformMatrix subclasses.
+
 The following is the list of TransformMatrix subclasses that are built into
 Ren'Py.
 
@@ -269,8 +304,6 @@ Transform Properties
 
 The following transform properties are used by the 3D Stage.
 
-    :tpref:`perspective`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
-
 .. transform-property:: matrixanchor
 
     :type: (position, position)
@@ -280,8 +313,81 @@ The following transform properties are used by the 3D Stage.
     variables are floats, this is relative to the size of the child, otherwise
     it's absolute pixels.
 
-    This sets the location of the (0, 0, 0) point that matrixtransform applies
-    its transform to.
+    This sets the location of the (0, 0, 0) point that point_to, orientation,
+    xrotate, yrotate, zrotate and matrixtransform apply their transforms to.
+
+.. transform-property:: point_to
+
+    :type: (float, float, float), Camera, or None
+    :default: None
+
+    This gives a position to which to point. The camera or the
+    displayable being transformed are rotated to face that point,
+    even if the position of the camera or the displayable is changed.
+
+    If this is None, no point-of-interest rotation is applied.
+
+    If this is not None, this is a 3-tuple or an instance of :func:`Camera`.
+    An (x, y, z) format tuple represents the position of the point of interest.
+    An instance of Camera means to point at the camera.
+
+    Note point_to isn't updated automatically. so, you should write like below if
+    you want it is updated::
+
+        # eileen always faces to the camera.
+        show eileen happy at center:
+            point_to Camera()
+            0
+            repeat
+
+    .. include:: inc/point_to_camera
+
+.. transform-property:: orientation
+
+    :type: (float, float, float) or None
+    :default: None
+
+    This rotates the camera or the displayable. The three values are the
+    x, y, and z rotations, in degrees. The rotations are applied in x, y, z
+    order for displayables, and z, y, x order for the camera.
+
+    When interpolation is used with orientation, the shortest path is taken
+    between the old and new orientations.
+
+    If this is None, no orientation is applied.
+
+.. transform-property:: xrotate
+
+    :type: float or None
+    :default: None
+
+    This rotates the camera or the displayable around the x axis. The value is
+    the rotation, in degrees. Rotations are applied to displayables in x, y, z
+    order. Rotations are applied to the camera in z, y, x order.
+
+    If this is None, no x-axis rotation is applied.
+
+.. transform-property:: yrotate
+
+    :type: float or None
+    :default: None
+
+    This rotates the camera or the displayable around the y axis. The value is
+    the rotation, in degrees. Rotations are applied to displayables in x, y, z
+    order. Rotations are applied to the camera in z, y, x order.
+
+    If this is None, no y-axis rotation is applied.
+
+.. transform-property:: zrotate
+
+    :type: float or None
+    :default: None
+
+    This rotates the camera or the displayable around the z axis. The value is
+    the rotation, in degrees. Rotations are applied to displayables in x, y, z
+    order. Rotations are applied to the camera in z, y, x order.
+
+    If this is None, no z-axis rotation is applied.
 
 .. transform-property:: matrixtransform
 
@@ -292,10 +398,14 @@ The following transform properties are used by the 3D Stage.
     of the child of the transform. The transformation goes from the coordinates
     used by the screen to the coordinates used by the child of the transform.
 
+    Interpolations involving this property are only supported when using a
+    TransformMatrix, and when the TransformMatrix values are structurally similar,
+    as described above.
+
 .. transform-property:: perspective
 
     :type: True or False or Float or (Float, Float, Float)
-    :default: False
+    :default: None
 
     When applied to a transform, this enables perspective rendering. This
     takes a triple, giving the near plane, z-distance to the 1:1 plane, and
@@ -309,7 +419,7 @@ The following transform properties are used by the 3D Stage.
     :tpref:`zpos`, and :tpref:`rotate` are inverted, providing the effect of positioning the
     camera rather than the child.
 
-    As the perspective transformation assumes it's aligned wiht the window,
+    As the perspective transformation assumes it's aligned with the window,
     it doesn't make sense to reposition it using :tpref:`xanchor`, and :tpref:`yanchor`,
     or properties that set those, such as :tpref:`anchor`, :tpref:`align`, :tpref:`center`,
     etc.
@@ -337,8 +447,3 @@ The following transform properties are used by the 3D Stage.
     The intended use for this is in displaying a background with a negative `zpos`, which
     would normally make the background small. Setting this to true means that the background
     will be displayed at 1:1 size.
-
-
-
-
-

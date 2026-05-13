@@ -10,7 +10,8 @@
 
     # game/updater.rpy:70
     old "Release"
-    new "Release"
+    # Automatic translation.
+    new "Liberação"
 
     # game/updater.rpy:76
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
@@ -18,7 +19,8 @@
 
     # game/updater.rpy:81
     old "Prerelease"
-    new "Prerelease"
+    # Automatic translation.
+    new "Pré-lançamento"
 
     # game/updater.rpy:87
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -34,14 +36,15 @@
 
     # game/updater.rpy:106
     old "Nightly"
-    new "Nightly"
+    # Automatic translation.
+    new "Todas as noites"
 
     # game/updater.rpy:112
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
     new "Última versão, ainda instavél, do Ren'Py. Pode ter as últimas características ou pode não funcionar de vez."
 
     # game/updater.rpy:119
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Um erro ocorreu:"
 
     # game/updater.rpy:121

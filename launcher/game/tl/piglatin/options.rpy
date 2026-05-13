@@ -23,7 +23,7 @@ translate piglatin strings:
 
     # gui/game/options.rpy:17
     old "Ren'Py 7 Default GUI"
-    new "Enray'Ypay 7ay Efaultday Uigay"
+    new "Enray'Ypay 7 Efaultday Uigay"
 
     # gui/game/options.rpy:20
     old "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
@@ -107,11 +107,11 @@ translate piglatin strings:
 
     # gui/game/options.rpy:123
     old "## Controls the default text speed. The default, 0, is infinite, while any other number is the number of characters per second to type out."
-    new "## Ontrolscay hetay efaultday exttay peedsay. Hetay efaultday, 0ay, isay infiniteay, hileway anyay otheray umbernay isay hetay umbernay ofay aracterschay erpay econdsay otay ypetay outay."
+    new "## Ontrolscay hetay efaultday exttay peedsay. Hetay efaultday, 0, isay infiniteay, hileway anyay otheray umbernay isay hetay umbernay ofay aracterschay erpay econdsay otay ypetay outay."
 
     # gui/game/options.rpy:129
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
-    new "## Hetay efaultday autoay-orwardfay elayday. Argerlay umbersnay eadlay otay ongerlay aitsway, ithway 0ay otay 03ay eingbay hetay alidvay angeray."
+    new "## Hetay efaultday autoay-orwardfay elayday. Argerlay umbersnay eadlay otay ongerlay aitsway, ithway 0 otay 30 eingbay hetay alidvay angeray."
 
     # gui/game/options.rpy:135
     old "## Save directory"
@@ -190,8 +190,8 @@ translate piglatin strings:
     new "## Ilesfay atchingmay ocumentationday atternspay areay uplicatedday inay aay acmay appay uildbay, osay heytay appearay inay othbay hetay appay anday hetay ipzay ilefay."
 
     # gui/game/options.rpy:203
-    old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
-    new "## Aay Ooglegay Laypay icenselay eykay isay equiredray otay ownloadday expansionay ilesfay anday erformpay inay-appay urchasespay. Tiay ancay ebay oundfay onay hetay \"Ervicessay & Pisaay\" agepay ofay hetay Ooglegay Laypay eveloperday onsolecay."
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new "## Aay Ooglegay Laypay icenselay eykay isay equiredray otay erformpay inay-appay urchasespay. Tiay ancay ebay oundfay inay hetay Ooglegay Laypay eveloperday onsolecay, underay \"Onetizemay\" > \"Onetizationmay Etupsay\" > \"Icensinglay\"."
 
     # gui/game/options.rpy:210
     old "## The username and project name associated with an itch.io project, separated by a slash."

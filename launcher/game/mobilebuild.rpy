@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,7 +32,7 @@ init -1 python:
         if not renpy.loadable(fn1):
             return True
 
-        hash1 = renpy.file(fn1).read()
+        hash1 = renpy.open_file(fn1, encoding="utf-8").read()
 
         if not os.path.exists(fn2):
             return False
@@ -91,13 +91,17 @@ init -1 python:
         def log(self, msg):
             with open(self.filename, "a") as f:
                 f.write("\n")
-                f.write(unicode(msg))
+                f.write(msg)
                 f.write("\n")
 
         def info(self, prompt):
             self.info_msg = prompt
             interface.processing(prompt, pause=False)
             self.log(prompt)
+
+        def open_directory(self, directory, prompt):
+            renpy.run(store.OpenDirectory(directory, absolute=True))
+            interface.info(prompt)
 
         def yesno(self, prompt, submessage=None):
             return interface.yesno(prompt, submessage=submessage)
@@ -155,12 +159,11 @@ init -1 python:
 
             try:
                 while self.run_yes:
-                    self.process.stdin.write('y\n')
+                    self.process.stdin.write(b'y\n')
                     self.process.stdin.flush()
                     time.sleep(.2)
             except Exception:
-                import traceback
-                traceback.print_exc()
+                pass
 
         def call(self, cmd, cancel=False, use_path=False, yes=False):
 
@@ -170,7 +173,7 @@ init -1 python:
 
             self.cmd = cmd
 
-            f = open(self.filename, "ab")
+            f = open(self.filename, "a")
 
             f.write("\n\n\n")
 
@@ -216,7 +219,11 @@ init -1 python:
                 if yes and self.yes_thread:
                     self.run_yes = False
                     self.yes_thread.join()
-                    self.process.stdin.close()
+
+                    try:
+                        self.process.stdin.close()
+                    except Exception:
+                        pass
 
                 self.process = None
                 self.yes_thread = None

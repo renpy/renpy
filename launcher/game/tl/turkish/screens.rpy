@@ -1,5 +1,4 @@
-﻿
-translate turkish strings:
+﻿translate turkish strings:
 
     # screens.rpy:9
     old "## Styles"
@@ -198,7 +197,7 @@ translate turkish strings:
     new "## Bu, bir oyun menüsünün temel yapısını ortaya koyar. Ekran başlığı ile çağrılır; arka planı, başlığı ve gezinmeyi gösterir."
 
     # screens.rpy:413
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
     new "## Kaydırma parametresi Hiçbiri (None), \"viewport\" veya \"vpgrid\" olabilir. Bu ekran, içine yerleştirilen bir veya birden çok alt nesne (children) ile kullanılmak içindir."
 
     # screens.rpy:431
@@ -311,7 +310,7 @@ translate turkish strings:
 
     # screens.rpy:710
     old "## Preferences screen"
-    new "Tercihler ekranı"
+    new "## Tercihler ekranı"
 
     # screens.rpy:712
     old "## The preferences screen allows the player to configure the game to better suit themselves."
@@ -443,11 +442,13 @@ translate turkish strings:
 
     # screens.rpy:993
     old "Gamepad"
-    new "Gamepad"
+    # Automatic translation.
+    new "Oyun Kumandası"
 
     # screens.rpy:1006
     old "Enter"
-    new "Enter"
+    # Automatic translation.
+    new "Girin"
 
     # screens.rpy:1007
     old "Advances dialogue and activates the interface."
@@ -471,7 +472,8 @@ translate turkish strings:
 
     # screens.rpy:1018
     old "Escape"
-    new "Escape"
+    # Automatic translation.
+    new "Kaçış"
 
     # screens.rpy:1019
     old "Accesses the game menu."
@@ -495,7 +497,8 @@ translate turkish strings:
 
     # screens.rpy:1030
     old "Page Up"
-    new "Page Up"
+    # Automatic translation.
+    new "Sayfa Yukarı"
 
     # screens.rpy:1031
     old "Rolls back to earlier dialogue."
@@ -503,7 +506,8 @@ translate turkish strings:
 
     # screens.rpy:1034
     old "Page Down"
-    new "Page Down"
+    # Automatic translation.
+    new "Sayfa Aşağı"
 
     # screens.rpy:1035
     old "Rolls forward to later dialogue."
@@ -534,8 +538,8 @@ translate turkish strings:
     new "Sağ Tıklama"
 
     # screens.rpy:1065
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Fare Tekerleği Yukarı\nGeri Sarma Tarafına Tıklama"
+    old "Mouse Wheel Up"
+    new "Fare Tekerleği Yukarı"
 
     # screens.rpy:1069
     old "Mouse Wheel Down"
@@ -673,3 +677,44 @@ translate turkish strings:
     old "Menu"
     new "Menü"
 
+
+translate turkish strings:
+
+    # gui/game/screens.rpy:329
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
+    # Automatic translation.
+    new "## Çıkış düğmesi iOS'ta yasaklanmıştır ve Android ve Web'de gereksizdir."
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    # Automatic translation.
+    new "Yükleme Senkronizasyonu"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    # Automatic translation.
+    new "Sync'i İndirin"
+
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    # Automatic translation.
+    new "Erişilebilirlik menüsünü açar."
+
+    # gui/game/screens.rpy:1320
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    # Automatic translation.
+    new "## Verilmişse menüyü görüntüler. config.narrator_menu True olarak ayarlanırsa menü yanlış görüntülenebilir."
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    # Automatic translation.
+    new "## Kabarcık ekranı"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## Baloncuk ekranı, konuşma balonları kullanıldığında oyuncuya diyalog görüntülemek için kullanılır. Kabarcık ekranı say ekranı ile aynı parametreleri alır, \"what\" id'si ile bir görüntülenebilir oluşturmalıdır ve \"namebox\", \"who\" ve \"window\" id'leri ile görüntülenebilir oluşturabilir."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"

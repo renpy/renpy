@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,7 +28,7 @@ import renpy
 
 def none_is_null(o):
     if o is None:
-        return renpy.display.layout.Null()  # @UndefinedVariable
+        return renpy.display.layout.Null()
     else:
         return renpy.easy.displayable(o)
 
@@ -54,13 +54,13 @@ def expand_focus_mask(v):
 
 
 def expand_outlines(l):
-    rv = [ ]
+    rv = []
 
     for i in l:
         if len(i) == 2:
-            rv.append((i[0], renpy.easy.color(i[1]), 0, 0))
+            rv.append((i[0], renpy.color.Color(i[1]), 0, 0))
         else:
-            rv.append((i[0], renpy.easy.color(i[1]), i[2], i[3]))
+            rv.append((i[0], renpy.color.Color(i[1]), i[2], i[3]))
 
     return rv
 
@@ -72,7 +72,7 @@ ANCHORS = dict(
     center=0.5,
     top=0.0,
     bottom=1.0,
-    )
+)
 
 
 def expand_anchor(v):

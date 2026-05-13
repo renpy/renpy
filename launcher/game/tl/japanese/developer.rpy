@@ -187,7 +187,7 @@ translate japanese strings:
 
     # renpy/common/00console.rpy:814
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
-    new "watch <expression>: python式をウォッチ\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    new "watch <expression>: python式をウォッチ\n watch short: トレースされた式を短く表現する (デフォルト)\n watch long: そのままの表現にする"
 
     # renpy/common/00console.rpy:925
     old "escape: Enables escaping of unicode symbols in unicode strings."
@@ -197,3 +197,62 @@ translate japanese strings:
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
     new "unescape: ユニコード文字列中でのユニコードシンボルのエスケープを無効化し (default) として表示"
 
+    # renpy/common/00console.rpy:784
+    old "stack: print the return stack"
+    new "stack: リターンスタックの出力"
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    new "永続データビューア"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    new "スピーチバブルエディター（Shift+B）"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    new "help: このヘルプを表示する\n help <expr>: <expr>の署名とドキュメントを表示する"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    new "ヘルプでは、文書化されていない機能が表示されることがあります。ドキュメントで使用したい関数や\nクラスを確認してください。\n\n"
+
+    # renpy/common/_developer/developer.rpym:69
+    old "Show Translation Identifiers"
+    new "飜訳識別子を表示します"
+
+    # renpy/common/_developer/developer.rpym:72
+    old "Hide Translation Identifiers"
+    new "飜訳識別子を非表示します"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Filename and Line"
+    new "ファイル名と行を表示します"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Filename and Line"
+    new "ファイル名と行を非表示します"
+
+    # renpy/common/_developer/developer.rpym:127
+    old "Layer [l]:"
+    new "Layer [l]:"
+
+    # renpy/common/_developer/developer.rpym:131
+    old "    [name] [attributes] (hidden)"
+    new "    [name] [attributes] (hidden)"
+
+    # renpy/common/_developer/developer.rpym:135
+    old "    [name] [attributes]"
+    new "    [name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:606
+    old "\n{color=#fff}Copied to clipboard.{/color}"
+    new "\n{color=#fff}クリップボードにコピー{/color}"
+
+    # renpy/common/_developer/developer.rpym:612
+    old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
+    new "\n{color=#fff}クリックでコピー.\nドラッグで移動します{/color}"
+
+    # renpy/common/_developer/developer.rpym:657
+    old "Click to open in editor."
+    new "エディターで開く"

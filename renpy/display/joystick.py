@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,10 +23,11 @@
 # been removed, save for a few compatibility functions.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
-import pygame_sdl2
+
 import renpy
+import renpy.pygame as pygame
 
 
 # Do we have a joystick enabled?
@@ -39,23 +40,20 @@ class JoyBehavior(renpy.display.layout.Null):
     event occurs, this returns it as a string.
     """
 
-    pass
 
-
-joysticks = { }
+joysticks = {}
 
 
 def count():
-    return pygame_sdl2.joystick.get_count()
+    return pygame.joystick.get_count()
 
 
 def get(n):
-
     if n in joysticks:
         return joysticks[n]
 
     try:
-        joysticks[n] = pygame_sdl2.joystick.Joystick(n)
+        joysticks[n] = pygame.joystick.Joystick(n)
         return joysticks[n]
     except Exception:
         return None

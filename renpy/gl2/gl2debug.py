@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -42,11 +42,10 @@ def geometry(mesh, transform, width, height):
 
     print(" ".join(l))
 
-    sxlist = [ ]
-    sylist = [ ]
+    sxlist = []
+    sylist = []
 
     for i, p in enumerate(points):
-
         px, py, pz, pw = p
         tx, ty, tz, tw = transform.transform(px, py, pz, pw, components=4)
 
@@ -56,11 +55,11 @@ def geometry(mesh, transform, width, height):
         sx = width * (dtx + 1.0) / 2.0
         sy = height * (1.0 - dty) / 2.0
 
-        print("{:3g}: {: >9.4f} {: >9.4f} {: >3.1f} {: >3.1f} | {: >9.6f} {: >9.6f} {:>3.1f} {:>3.1f} | {:> 9.4f} {:< 9.4f}".format(
-            i,
-            px, py, pz, pw,
-            tx, ty, tz, tw,
-            sx, sy))
+        print(
+            "{:3g}: {: >9.4f} {: >9.4f} {: >3.1f} {: >3.1f} | {: >9.6f} {: >9.6f} {:>3.1f} {:>3.1f} | {:> 9.4f} {:< 9.4f}".format(
+                i, px, py, pz, pw, tx, ty, tz, tw, sx, sy
+            )
+        )
 
         sxlist.append(sx)
         sylist.append(sy)

@@ -9,7 +9,7 @@ translate japanese tutorial_video_f34a17f5:
 translate japanese tutorial_video_4aefd413:
 
     # e "The first way allows you to show a movie as an image, along with every other image that's displayed on the screen."
-    e "1つ目の方法は動画を画像として表示する方法で、他の画像と共に画面に表示されます。"
+    e "1つ目の方法は動画を画像として表示する方法で、他の画像と同様に画面に表示されます。"
 
 # game/tutorial_video.rpy:16
 translate japanese tutorial_video_b56ccf19:
@@ -39,5 +39,5 @@ translate japanese tutorial_video_a66b154c:
 translate japanese tutorial_video_63e75209:
 
     # e "A Movie displayable can also take a mask with an alpha channel, which lets you make movie sprites. But that's more complicated, so I'll stop here for now."
-    e "Movie Displayableはアルファチャンネルのマスクも作成できます。これで動画のスプライトも作成できます。しかし、複雑になるのでここではこれまでとします。"
+    e "Movie Displayableにはアルファチャンネルのマスクも作成できます。これにより動画によるスプライトも作成できます。しかし、複雑になるのでここではこれまでとします。"
 

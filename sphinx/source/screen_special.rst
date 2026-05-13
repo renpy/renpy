@@ -1,5 +1,3 @@
-.. _screen-special:
-
 ====================
 Special Screen Names
 ====================
@@ -25,6 +23,11 @@ Some of the screens also have special ids associated with them. A
 special id should be assigned to a displayable of a given type. It can
 cause properties to be assigned to that displayable, and can make that
 displayable accessible to the part of Ren'Py that displays the screen.
+
+.. note::
+
+    The examples of screens on this page may not be the screens included with a newly
+    created game.
 
 In-Game Screens
 ===============
@@ -114,6 +117,9 @@ with the menu statement. It is given the following parameter:
 
         This is a dictionary that contains any keyword arguments passed
         to the menu choice.
+
+    These items, and the actions within, become invalid when the menu
+    statement ends.
 
 In addition, any arguments passed to a menu statement are passed in during
 the call to the screen.
@@ -211,7 +217,7 @@ the following parameter:
 
     .. attribute:: multiple
 
-        If :ref:`multiple character dialogue <multiple-character-dialogue>`, this is
+        If :doc:`multiple character dialogue <multiple>`, this is
         a two component tuple. The first component is the one-based number
         of the dialogue block, and the second is the total number of dialogue
         blocks in the multiple statement.
@@ -287,12 +293,12 @@ single parameter:
 `message`
     The message to display.
 
-The default notify screen, and its associated transform, are::
+An example of a notify screen is::
 
     screen notify(message):
         zorder 100
 
-        text message at _notify_transform
+        text "[message!tq]" at _notify_transform
 
         # This controls how long it takes between when the screen is
         # first shown, and when it begins hiding.
@@ -366,10 +372,14 @@ Here's a very simple ctc screen::
 
         zorder 100
 
-        text _("Click to Continue"):
-            size 12
+        hbox:
             xalign 0.98
             yalign 0.98
+
+            add arg
+
+            text _("Click to Continue"):
+                size 12
 
 
 
@@ -706,7 +716,7 @@ The ``confirm`` screen is used to ask yes/no choices of the
 user. It takes the following parameters:
 
 `message`
-    The message to display to the user. This is one of:
+    The message to display to the user. At least the following messages are used by Ren'Py:
 
     * gui.ARE_YOU_SURE - "Are you sure?" This should be the default if the message is unknown.
     * gui.DELETE_SAVE - "Are you sure you want to delete this save?"
@@ -714,11 +724,14 @@ user. It takes the following parameters:
     * gui.LOADING - "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     * gui.QUIT - "Are you sure you want to quit?"
     * gui.MAIN_MENU - "Are you sure you want to return to the main\nmenu? This will lose unsaved progress."
+    * gui.CONTINUE - "Are you sure you want to continue where you left off?"
     * gui.END_REPLAY - "Are you sure you want to end the replay?"
     * gui.SLOW_SKIP - "Are you sure you want to begin skipping?"
     * gui.FAST_SKIP_SEEN - "Are you sure you want to skip to the next choice?"
     * gui.FAST_SKIP_UNSEEN - "Are you sure you want to skip unseen dialogue to the next choice?"
-
+    * UNKNOWN_TOKEN - This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's
+      creator and everyone who could have changed the file?
+    * TRUST_TOKEN - Do you trust the device the save was created on? You should only choose yes if you are the device's sole user.
 
     The values of the variables are strings, which means they can be
     displayed using a text displayable.
@@ -731,6 +744,8 @@ user. It takes the following parameters:
 
 Until Ren'Py 6.99.10, this screen was known as the ``yesno_prompt`` screen.
 If no ``confirm`` screen is present, ``yesno_prompt`` is used instead.
+
+This screen will also be called by the :func:`renpy.confirm` function and the :func:`Confirm` action.
 
 ::
 
@@ -754,7 +769,7 @@ If no ``confirm`` screen is present, ``yesno_prompt`` is used instead.
                 spacing 25
 
                 text _(message):
-                    text_align 0.5
+                    textalign 0.5
                     xalign 0.5
 
                 hbox:

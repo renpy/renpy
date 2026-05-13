@@ -23,7 +23,7 @@ translate italian strings:
 
     # options.rpy:17
     old "Ren'Py 7 Default GUI"
-    new "Ren'Py 7 Default GUI"
+    new "GUI predefinita di Ren'Py 7"
 
     # options.rpy:20
     old "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
@@ -196,4 +196,20 @@ translate italian strings:
     # options.rpy:146
     old "## Icon"
     new "## Icona"
+
+    # gui/game/options.rpy:31
+    old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
+    new "## Testo che viene inserito nella schermata informazioni del gioco. Inserisci il testo tra triple virgolette e lascia una riga vuota tra i paragrafi."
+
+    # gui/game/options.rpy:47
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    new "## Queste tre variabili controllano, tra le altre cose, quali mixer vengono mostrati al giocatore per impostazione predefinita. Impostando una di queste a False, si nasconde il mixer appropriato."
+
+    # gui/game/options.rpy:82
+    old "## Between screens of the game menu."
+    new "## Tra le schermate del menu di gioco."
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new "## Per eseguire gli acquisti in-app è necessaria una chiave di licenza Google Play. Si trova nella console per sviluppatori di Google Play, in \"Monetizzazione\" > \"Impostazione monetizzazione\" > \"Licenze\"."
 

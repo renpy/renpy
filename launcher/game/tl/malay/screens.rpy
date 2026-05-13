@@ -197,8 +197,8 @@
     new "## Ini meletakkan struktur biasa asas untuk skrin menu permainan. Ia dipanggil dengan tajuk skrin, dan memaparkan latar belakang, tajuk, dan navigasi."
 
     # screens.rpy:413
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## Parameter tatal boleh jadi None, atau salah satu dari \"viewport\" atau \"vpgrid\". Apabila skrin ini bertujuan untuk digunakan dengan satu atau lebih anak, yang mana mereka ditransklusikan (diletakkan) ke dalamnya."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## Parameter tatal boleh jadi None, atau salah satu dari \"viewport\" atau \"vpgrid\". Skrin ini bertujuan untuk digunakan dengan satu atau lebih anak, yang mana mereka ditransklusikan (diletakkan) ke dalamnya."
 
     # screens.rpy:431
     old "## Reserve space for the navigation section."
@@ -533,8 +533,8 @@
     new "Klik Kanan"
 
     # screens.rpy:1063
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Tatal Ke Atas\nKlik Sisi Undur"
+    old "Mouse Wheel Up"
+    new "Tatal Ke Atas"
 
     # screens.rpy:1067
     old "Mouse Wheel Down"
@@ -671,4 +671,3 @@
     # screens.rpy:1431
     old "Menu"
     new "Menu"
-

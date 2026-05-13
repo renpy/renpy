@@ -1,3 +1,24 @@
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 from libc.stdlib cimport calloc, free
 from libc.string cimport memcpy
 
@@ -24,7 +45,7 @@ cdef class Polygon:
 
         rv = "<Polygon"
 
-        for 0 <= i < self.points:
+        for i in range(self.points):
             rv += " "
             rv += point2str(self.point[i])
 
@@ -45,8 +66,8 @@ cdef class Polygon:
     cpdef void ensure_winding(Polygon self):
         """
         Checks to ensure that the winding of this polygon is what
-        Ren'Py expects (CCW). If not, rearranges the points to
-        ensure the winding is correct.
+        Ren'Py expects (CCW virtual/physical/drawable coordinates). If not,
+        rearranges the points to ensure the winding is correct.
         """
 
         cdef float ax, ay, bx, by
@@ -62,7 +83,7 @@ cdef class Polygon:
 
         empty = not (ax or ay)
 
-        for 2 <= i < self.points:
+        for i in range(2, self.points):
 
             bx = self.point[i].x - self.point[0].x
             by = self.point[i].y - self.point[0].y
@@ -98,7 +119,7 @@ cdef class Polygon:
         cdef Polygon rv = Polygon(points)
         rv.points = points
 
-        for 0 <= i < points:
+        for i in range(points):
             rv.point[i].x = l[i * 2 + 0]
             rv.point[i].y = l[i * 2 + 1]
 
@@ -147,7 +168,7 @@ cdef class Polygon:
 
         j = p.points - 1
 
-        for 0 <= i < p.points:
+        for i in range(p.points):
             rv = intersectOnce(p.point[j], p.point[i], rv)
 
             if rv is None:
@@ -176,7 +197,7 @@ cdef class Polygon:
 
         cdef int i
 
-        for 0 <= i < self.points:
+        for i in range(self.points):
             m.transform2(&self.point[i].x, &self.point[i].y, self.point[i].x, self.point[i].y, 0, 1)
 
     cpdef Polygon multiply_matrix(Polygon self, Matrix m):
@@ -187,6 +208,26 @@ cdef class Polygon:
 
         cdef Polygon rv = self.copy()
         rv.multiply_matrix_inplace(m)
+        return rv
+
+    cpdef void offset_inplace(Polygon self, float x, float y):
+        """
+        Offsets the polygon by (x, y), in place.
+        """
+
+        cdef int i
+
+        for i in range(self.points):
+            self.point[i].x += x
+            self.point[i].y += y
+
+    cpdef Polygon offset(Polygon self, float x, float y):
+        """
+        Offsets the polygon by (x, y), in place, and returns a copy.
+        """
+
+        cdef Polygon rv = self.copy()
+        rv.offset_inplace(x, y)
         return rv
 
 
@@ -200,6 +241,11 @@ cdef void intersectLines(Point2 a0, Point2 a1, Point2 b0, Point2 b1, Point2 *p):
     p.x = ((a0.x * a1.y - a0.y * a1.x) * (b0.x - b1.x) - (a0.x - a1.x) * (b0.x * b1.y - b0.y * b1.x)) / denom
     p.y = ((a0.x * a1.y - a0.y * a1.x) * (b0.y - b1.y) - (a0.y - a1.y) * (b0.x * b1.y - b0.y * b1.x)) / denom
 
+    # Round the points to a grid.
+    p.x += .005
+    p.y += .005
+    p.x = p.x - p.x % 0.01
+    p.y = p.y - p.y % 0.01
 
 
 cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
@@ -223,11 +269,11 @@ cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
     cdef bint inside[1024]
 
     # Figure out which points are 'inside' the wound line.
-    for 0 <= i < p.points:
+    for i in range(p.points):
         px = p.point[i].x - a0.x
         py = p.point[i].y - a0.y
 
-        inside[i] = (lx * py - ly * px) > -0.000001
+        inside[i] = (lx * py - ly * px) > -0.005
 
         allin = allin and inside[i]
         allout = allout and not inside[i]
@@ -245,7 +291,7 @@ cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
 
     j = p.points - 1
 
-    for 0 <= i < p.points:
+    for i in range(p.points):
         if inside[i]:
             if not inside[j]:
                 intersectLines(a0, a1, p.point[j], p.point[i], &rv.point[rv.points])

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -37,13 +37,13 @@ python early in icon:
 
             for p in path:
                 fn = p + prefix + self.name + ".png"
-                if renpy.loadable(fn):
+                if renpy.loadable(fn, directory="images"):
                     return fn
 
             for p in path:
                 fn = p + self.name + ".png"
 
-                if renpy.loadable(fn):
+                if renpy.loadable(fn, directory="images"):
                     c = self.style.color
 
                     if c is not None:

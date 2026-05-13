@@ -1,3 +1,5 @@
+.. _model:
+
 Model-Based Rendering
 =====================
 
@@ -13,19 +15,6 @@ can be used without understanding how Model-Based rendering works, and more
 such features will be added to the understanding. This documentation is
 intended for very advanced creators, and for developers looking to add
 to Ren'Py itself.
-
-As of Ren'Py 7.4 (late 2020), Model-Based rendering needs to be enabled to
-be used. This is done by setting config.gl2 to True, using::
-
-    define config.gl2 = True
-
-.. var:: config.gl2 = False
-
-    If true, Ren'Py will default to using a model-based renderer.
-
-As it's expected that model-based rendering will become the only renderer
-in the near future, the rest of this documentation is written as if model-based
-rendering is enabled all the time.
 
 Model-Based Rendering is one of the most advanced features in Ren'Py, and
 this documentation may be hard to understand without first looking at the
@@ -51,7 +40,7 @@ consists of the following things:
   per model. A texture is a rectangle containing image data that's been loaded
   on the GPU, either directly or using a render-to-texture operation.
 
-* A list of shader part names. Ren'Py uses these shader parts to created shaders,
+* A list of shader part names. Ren'Py uses these shader parts to create shaders,
   which are programs that are run on the GPU to render the model. Shader part
   names can be prefixed with a "-" to prevent that shader part from being used.
 
@@ -83,7 +72,7 @@ as described below.) A Render contains:
 Ren'Py draws the screen by performing a depth-first walk through the tree of
 Renders, until a Model is encountered. During this walk, Ren'Py updates a
 matrix transforming the location of the Model, a clipping polygon, and
-lists of shader parts, uniforms, and gl properties. When a Model is encountered
+lists of shader parts, uniforms, and GL properties. When a Model is encountered
 as part of this walk, the appropriate shader program is activated on the GPU,
 all information is transferred, and a drawing operation occurs.
 
@@ -115,7 +104,7 @@ Live2D
     one Model for each layer.
 
 :func:`Transform` and ATL
-    A Transform creates a model if :tpref:`mesh` is true, or if :tpref:`blur`
+    A Transform creates a model if :tpref:`mesh` is True, or if :tpref:`blur`
     is being used. In this case, the children of the Transform are rendered
     to textures, with the mesh of the first texture being used for the mesh
     associated with the model.
@@ -127,8 +116,8 @@ Live2D
 
 :class:`Render`
     A Transform creates a model if its ``mesh`` attribute is True.
-    is being used. In this case, the children of the Render are rendered
-    to textures, with the mesh of the first texture being used for
+    In this case, the children of the Render are rendered to
+    textures, with the mesh of the first texture being used for
     the mesh associated with the model.
 
 It's expected that Ren'Py will add more ways of creating models in the
@@ -148,9 +137,14 @@ leading "-". (So "-renpy.geometry" will cause itself and "renpy.geometry"
 to be removed.)
 
 Ren'Py then takes the list of shader parts, and retrieves lists of variables,
-functions, vertex shade parts, and fragment shader parts. These are, in turn,
+functions, vertex shader parts, and fragment shader parts. These are, in turn,
 used to generate the source code for shaders, with the parts of the vertex and
-fragement shaders being included in low-number to high-number priority order.
+fragment shaders being included in low-number to high-number priority order.
+
+This means that any variable created by one of the shaders will be accessible
+by every other fragment from any other shader in the list of shader parts.
+There is no scope like in Python functions to protect interference between
+shaders.
 
 Ren'Py keeps a cache of all combinations of shader parts that have ever been
 used in game/cache/shaders.txt, and loads them at startup. If major changes
@@ -178,8 +172,19 @@ Ren'Py supports only the following variable types:
 * vec2 (a tuple of 2 floats)
 * vec3 (a tuple of 3 floats)
 * vec4 (a tuple of 4 floats)
+* int (a Python integer)
+* ivec2 (a tuple of 2 integers)
+* ivec3 (a tuple of 3 integers)
+* ivec4 (a tuple of 4 integers)
+* bool (a Python boolean)
+* bvec2 (a tuple of 2 booleans)
+* bvec3 (a tuple of 3 booleans)
+* bvec4 (a tuple of 4 booleans)
+* type[n] (an array of [n] elements of [type] (any of the types above) (for instance, int[5] would be an array of 5 integers))
+* mat2 (a :class:`Matrix`)
+* mat3 (a :class:`Matrix`)
 * mat4 (a :class:`Matrix`)
-* sampler2D (supplied by Ren'Py)
+* sampler2D (a Displayabe, including strings that give Displayables, or a Render)
 
 Uniform variables should begin with u\_, attributes with a\_, and varying
 variables with v\_. Names starting with u_renpy\_, a_renpy, and v_renpy
@@ -203,7 +208,8 @@ each model it is used to render::
         """, vertex_300="""
             v_gradient_done = a_position.x / u_model_size.x;
         """, fragment_300="""
-            gl_FragColor *= mix(u_gradient_left, u_gradient_right, v_gradient_done);
+            float gradient_done = v_gradient_done;
+            gl_FragColor *= mix(u_gradient_left, u_gradient_right, gradient_done);
         """)
 
 The custom shader can then be applied using a transform::
@@ -215,12 +221,43 @@ The custom shader can then be applied using a transform::
 
     show eileen happy at gradient
 
+As stated before, the ``gradient_done`` variable from the example.gradient shader
+will be accessible by any and all other shaders applied from the same list. This
+can be useful when having optional parts in a given shader system, but it can also
+lead to name collisions when using two independent shaders.
+
+**GLSL Version.**
+The version of GLSL supported depends on platform, but the most restrictive
+are mobile and web platforms, which use GLSL ES 1.00. Ren'Py declares variables
+to have highp precision, which supports floating point numbers in the range
+2\ :sup:`-62` to 2\ :sup:`62`. Non-zero floating point numbers should have a
+magnitude betwee 2\ :sup:`-62` and 2\ :sup:`62`, and integers should be in the range
+range -2\ :sup:`16` to 2\ :sup:`16`.  Actual hardware often supports a larger range,
+but this isn't guaranteed.
+
 There is a variable that can help in debugging custom shaders:
 
 .. var:: config.log_gl_shaders = False
 
     If true, source code for the GLSL shader programs will be written to
     log.txt on start.
+
+
+.. _shader-local-variables:
+
+Shader Part Local Variables
+---------------------------
+
+Variables can be declared shader-local by using one of ``u__``, ``a__``,
+``v__``, or ``l__`` as a prefix. When this is done, the double underscores
+are filled in with the shader name with all dots replaced with underscores.
+For example, if the shader name is ``example.gradient``, the prefix
+``u__`` will be replaced with ``u_example_gradient_``.
+
+The main use of this is with :doc:`text shaders <textshaders>`, where most
+uniforms are shader-local. Also, local variables inside the shader should
+be declared with ``l__``.
+
 
 Transforms and Model-Based Rendering
 ------------------------------------
@@ -235,26 +272,29 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     If not None, this Transform will be rendered as a model. This means:
 
     * A mesh will be created. If this is a 2-component tuple, it's taken
-      as the number of points in the mesh, in the x and y directions. (Eacn
+      as the number of points in the mesh, in the x and y directions. (Each
       dimension must be at least 2.) If True, the mesh is taken from the
       child.
     * The child of this transform will be rendered to a texture.
     * The renpy.texture shader will be added.
+
+    By default, the texture used by the mesh will not be mipmapped. If
+    mipmaps are desired, :tpref:`gl_mipmap` should be set to True.
 
 .. transform-property:: mesh_pad
 
     :type: None or tuple
     :default: None
 
-    If not None, this can either be a 2 or 4 component tuple. If mesh is
-    true and this is given, this applies padding to the size of the textues
-    applied to the the textures used by the mesh. A two component tuple applies
-    padding to the right and bottom, while a four component tuple applies
+    If not None, this can either be a 2 or 4-component tuple. If mesh is
+    True and this is given, this applies padding to the size of the textures
+    applied to the textures used by the mesh. A 2-component tuple applies
+    padding to the right and bottom, while a 4-component tuple applies
     padding to the left, top, right, and bottom.
 
-    This can be used, in conjunction with the pixel_perfect property, to
-    render text into a mesh. In Ren'Py, text is rendered at the screen
-    resoltution, which might overflow the boundaries of the texture that
+    This can be used, in conjunction with the ``gl_pixel_perfect`` property,
+    to render text into a mesh. In Ren'Py, text is rendered at the screen
+    resolution, which might overflow the boundaries of the texture that
     will be applied to the mesh. Adding a few pixels of padding makes the
     texture bigger, which will display all pixels. For example::
 
@@ -273,7 +313,7 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     :default: None
 
     If not None, a shader part name or list of shader part names that will be
-    applied to the  this Render (if a Model is created) or the Models reached
+    applied to this Render (if a Model is created) or the Models reached
     through this Render.
 
 .. transform-property:: blend
@@ -282,14 +322,14 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     :default: None
 
     if not None, this should be a string. This string is looked up in
-    :var:`config.gl_blend_func` to  get the value for the gl_blend_func
+    :var:`config.gl_blend_func` to get the value for the gl_blend_func
     property. It's used to use alternate blend modes.
 
     The default blend modes this supports are "normal", "add", "multiply",
     "min", and "max".
 
 
-In addition, uniforms that start with u\_ and not u_renpy are made available
+In addition, uniforms that start with u\_ but not with u_renpy are made available
 as Transform properties. GL properties are made available as transform
 properties starting with gl\_. For example, the color_mask property is made
 available as gl_color_mask.
@@ -299,8 +339,8 @@ Blend Functions
 
 .. var:: config.gl_blend_func = { ... }
 
-    A dictionaryt used to map a blend mode name to a blend function. The
-    blend modes are suppled to the blend func property, given below.
+    A dictionary used to map a blend mode name to a blend function. The
+    blend modes are supplied to the :ref:`gl_blend_func <gl-blend-func>` property, given below.
 
 The default blend modes are::
 
@@ -310,14 +350,22 @@ The default blend modes are::
     gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
 
+As Ren'Py uses premultiplied alpha, the results of some of these may be counterintuitive when a pixel
+is not opaque. In the GPU, the color (r, g, b, a) is represented as (r * a, g * a, b * a, a), and the blend function
+uses these premultiplied colors. This may be a different result that you get for these blend modes in a paint program,
+when what is drawn is not fully opaque.
 
-Uniforms and Attributes
------------------------
+.. _model-uniforms:
 
-The following uniforms are made available to all Models.
+Float, Sample, and Vector Uniforms
+-----------------------------------
+
+The following uniforms are made available to all models.
 
 ``vec2 u_model_size``
-    The width and height of the model.
+    The width and height of the model, as supplied to Ren'Py. This
+    is only available for 2D models that supply a size, and is (0, 0)
+    for 3d models.
 
 .. _u-lod-bias:
 
@@ -326,9 +374,6 @@ The following uniforms are made available to all Models.
     set in a Transform. The default value, taken from :var:`config.gl_lod_bias`
     and defaulting to -0.5, biases Ren'Py to always pick the next bigger
     level and scale it down.
-
-``mat4 u_transform``
-    The transform used to project virtual pixels to the OpenGL viewport.
 
 ``float u_time``
     The time of the frame. The epoch is undefined, so it's best to treat
@@ -340,10 +385,24 @@ The following uniforms are made available to all Models.
     likelyhood) different from frame to frame.
 
 ``vec4 u_viewport``
-    This gives the current viewport being drawn into. u_viewport.xy is 
+    This gives the current viewport being drawn into. u_viewport.xy is
     are the coordinates of the bottom-left corner of the viewport, relative
-    to the bottom-left corner of the window. u_viewport.pq is the width 
+    to the bottom-left corner of the window. u_viewport.pq is the width
     and height of the viewport.
+
+``vec2 u_virtual_size``
+
+    This is the virtual size of the game (:var:`config.screen_width`, :var:`config.screen_height`).
+    This can be used to convert from gl_Position to virtual coordinates using:
+
+    .. code-block:: glsl
+
+        v_position = u_virtual_size * vec2(gl_Position.x * .5 + .5, -gl_Position.y * .5 + .5)
+
+``vec2 u_drawable_size``
+    The size of the drawable are of the windows, in pixels, at the resolution
+    the game is running at. For example, if a 1280x720 game is scaled up to
+    1980x1080, this will be (1920, 1080).
 
 ``sampler2D tex0``, ``sampler2D tex1``, ``sampler2D tex2``
     If textures are available, the corresponding samplers are placed in
@@ -355,15 +414,85 @@ The following uniforms are made available to all Models.
     image file. After a render to texture, it's the number of drawable pixels
     the rendered texture covered.
 
-The following attributes are available to all models:
+If a sampler uniform is available, then suffixing it with ``__res`` will give a vec2
+containing the underlying texture size. For example, ``u_markup__res`` will give the size of the
+``u_markup`` texture.
+
+If a vec4 uniform is available, then suffixing it with ``__premul`` will give a vec4
+containing the premultiplied color. For example, ``u_color__premul`` will give a vec4
+where the red, green, and blue channels are multiplied by the alpha channel.
+
+Matrix Uniforms
+----------------
+
+The following uniforms are made available to all models. This assumes that only one transform with the
+:tpref:`perspective` property is used to render a model. When multiple transforms with the :tpref:`perspective`
+are used, the innermost transformation with perspective set defines the world and view spaces.
+
+``mat4 u_projection``
+    This is a matrix that transforms coordinates from view space to the OpenGL viewport.
+    This is sent by Ren'Py, and is updated by transforms with the :tpref:`perspective` property
+    to encapsulate the effects of that property.
+
+``mat4 u_view``
+    This is a matrix that transforms vertex coordinates from the world space to the view space. This
+    defaults to the identity matrix, but can be set by transforms with the :tpref:`perspective` property,
+    in which case the effects of positioning, rotation, and scaling are encapsulated in this matrix.
+
+``mat4 u_model``
+    This is a matrix that transforms vertex coordinates from the model space to the world space.
+
+``mat4 u_projectionview``
+    This matrix contains ``u_projection * u_view``. It exists to minimize the number of uniforms that need
+    to be sent to the GPU, and the amount of work that needs to be done in the shader.
+
+``mat4 u_transform``
+    This is the same as ``u_projectionview * u_model``. It's the matrix that transforms vertex coordinates
+    directly to the OpenGL viewport. It exists to minimize the number of uniforms that need to be sent to the GPU,
+    the amount of work that needs to be done in the shader, and for compatibility with older versions of Ren'Py.
+
+In addition to these methods, Ren'Py can synthesize matrices with certain functions applied when suffixes are
+appended to the matrix
+
+``__inverse``
+    When appended to a matrix, this returns the inverse of the matrix. For example, ``u_projection__inverse``
+    is the inverse of the projection matrix.
+
+``__transpose``
+    When appended to a matrix, this returns the transpose of the matrix. For example, ``u_view__transpose``
+    is the transpose of the view matrix.
+
+``__inverse_transpose``
+    When appended to a matrix, this returns the inverse of the transpose of the matrix. For example,
+    ``u_model__inverse_transpose`` is the inverse of the transpose of the model matrix. This is useful for
+    transforming normals.
+
+Attributes
+----------
+
+The following attribute is available to all models:
 
 ``vec4 a_position``
-    The position of the vertex being rendered.
+    The position of the vertex being rendered. This is in virtual pixels, relative to the upper
+    left corner of the texture.
 
 If textures are available, so is the following attribute:
 
 ``vec2 a_tex_coord``
     The coordinate that this vertex projects to inside the textures.
+
+If normals are available, so is the following attribute:
+
+``vec3 a_normal``
+    The normal of the vertex being rendered.
+
+If tangents are available, so are the following attributes:
+
+``vec3 a_tangent``
+    The tangent of the vertex being rendered.
+
+``vec3 a_bitangent``
+    The bitangent of the vertex being rendered.
 
 .. _gl-properties:
 
@@ -373,6 +502,8 @@ GL Properties
 GL properties change the global state of OpenGL, or the Model-Based renderer.
 These properties can be used with a Transform, or with the :func:`Render.add_property`
 function.
+
+.. _gl-blend-func:
 
 ``gl_blend_func``
     If present, this is expected to be a six-component tuple, which is
@@ -398,11 +529,18 @@ function.
 ``gl_color_mask``
     This is expecting to be a 4-tuple of booleans, corresponding to the four
     channels of a pixel (red, green, blue, and alpha). If a given channel is
-    true, the draw operation will write to that pixel. Otherwise, it will
+    True, the draw operation will write to that pixel. Otherwise, it will
     not.
 
+``gl_cull_face``
+    If not None, this enables face culling, which is the process of removing
+    triangles that are facing away from the camera. To do this, we need to
+    know which face is the front face, and which is the back face. The front face
+    is determined using the winding order of the vertices, which is one of "cw" (clockwise) or "ccw" (counter-clockwise).
+    The values are done in the Ren'Py coordinate system (with +Y down), which is the opposite of the OpenGL coordinate system.
+
 ``gl_depth``
-    If true, this will clear the depth buffer, and then enable depth
+    If True, this will clear the depth buffer, and then enable depth
     rendering for this displayable and the children of this displayable.
 
     Note that drawing any pixel, even transparent pixels, will update
@@ -419,9 +557,10 @@ The following properties only take effect when a texture is being created,
 by a Transform with :tpref:`mesh` set, or by :func:`Model`, where these
 can be supplied the property method.
 
-``gl_mipmap``
-    If supplied, this determines if the textures supplied to a mesh are
-    created with mipmaps. This defaults to true.
+``gl_drawable_resolution``
+    If True or not set, the texture is rendered at the same resolution
+    as the window displaying the game. If False, it's rendered at the
+    virtual resolution of the displayable.
 
 ``gl_anisotropic``
     If supplied, this determines if the textures applied to a mesh are
@@ -429,26 +568,107 @@ can be supplied the property method.
     texels (texture pixels) to be sampled when a texture is zoomed by a
     different amount in X and Y.
 
-    This defaults to true. Ren'Py sets this to False for certain effects,
+    This defaults to True. Ren'Py sets this to False for certain effects,
     like the Pixellate transition.
+
+``gl_mipmap``
+    If supplied, this determines if the textures supplied to a mesh are
+    created with mipmaps. This defaults to True.
 
 ``gl_texture_wrap``
     When supplied, this determines how the textures applied to a mesh
     are wrapped. This expects a 2-component tuple, where the first
     component is used to set GL_TEXTURE_WRAP_S and the second component
     is used to set GL_TEXTURE_WRAP_T, which conventionally are the X and Y
-    axes of the created textyure.
+    axes of the created texture.
 
     The values should be OpenGL constants imported from renpy.uguu::
 
         init python:
             from renpy.uguu import GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, GL_REPEAT
 
+    This can also be customized for specific textures. `gl_texture_wrap_tex0` controls
+    the first texture, `gl_texture_wrap_tex1` the second, `gl_texture_wrap_tex2`, the third,
+    and `gl_texture_wrap_tex3` the fourth. While only these four are avalable through Transforms,
+    it's possibe to supply "texture_wrap_tex4" or "texture_wrap_myuniform" to Render.add_property.
+
+GLTFModel Displayable
+-----------------------
+
+The GLTFModel displayble allow you to load 3D models in the GLTF file format. This is what you should use
+if you have a 3D model you created in another program and want to display in Ren'Py.
+
+.. include:: inc/assimp
+
+Some things we noticed:
+
+* Some models are very small, and need to be zoomed by 100x or 1000x to be useful.
+* The uniforms generating by each model can vary.
+
+We recommend creating GLTF models with report=True, and then looking at log.txt to see
+the size and  what's available. It's then possible to scale the model and to
+create a suitable shader.
+
+Limitations
+^^^^^^^^^^^
+
+GLTFModel currently does not include a default shader, so you must define and include a shader.
+Here is one possible shader that can be used with GLTFModel::
+
+    init python:
+
+        renpy.register_shader("example.lighting", variables="""
+            uniform mat4 u_model__inverse_transpose;
+            uniform vec4 u_color_diffuse;
+            uniform vec4 u_color_specular;
+            uniform sampler2D u_tex_diffuse;
+
+            varying vec3 v_normal;
+            varying vec2 v_tex_coord;
+
+            attribute vec3 a_normal;
+            attribute vec2 a_tex_coord;
+    """, vertex_201="""
+            v_normal = (u_model__inverse_transpose * vec4(a_normal, 1.0)).xyz;
+            v_tex_coord = a_tex_coord;
+    """, fragment_201="""
+
+            // The direction of the light.
+            vec3 lightDir = normalize(vec3(0.0, -1000.0, 1000.0));
+
+            vec3 normal = normalize(v_normal);
+
+            float lambertian = max(dot(normal, lightDir), 0.0);
+            vec4 diffuse_color = texture2D(u_tex_diffuse, v_tex_coord.xy);
+            diffuse_color *= vec4(lambertian * u_color_diffuse.rgb * u_color_diffuse.a, u_color_diffuse.a);
+
+            vec3 viewDir = normalize(vec3(0.0, 0.0, -1.0));
+            vec3 halfDir = normalize(lightDir + viewDir);
+            float specular = pow(max(dot(normal, halfDir), 0.0), 4.0);
+
+            vec4 specular_color = vec4(u_color_specular.rgb * u_color_specular.a * specular, u_color_specular.a * specular);
+
+            gl_FragColor = diffuse_color + specular_color;
+
+            if (gl_FragColor.a < 0.9) {
+                discard;
+            }
+    """)
+
+This is a very simple shader that applies diffuse and specular lighting to the model based
+on a single light source, meant for experimentation until better shaders are created.
+
+GLTFModel does not support transparent surfaces well. While the discard command above emulates
+transparency, the ordering is a bit wrong and can lead to artifacts.
+
+
+
 Model Displayable
 -----------------
 
 The Model displayable acts as a factory to created models for use with the
-model-based renderer.
+model-based renderer. This is an older API you may wish to use when you want to create
+models in Python.
 
 .. include:: inc/model_displayable
 
@@ -469,7 +689,31 @@ a built-in shader to create the Dissolve transform::
 Using the Model displayable as the child of a displayable is incompatible
 with :tpref:`mesh`, as the two both create models inside Ren'Py.
 
-Default Shader Parts
---------------------
+Animated Shaders
+----------------
 
-.. include:: inc/shadersource
+When using shaders that depend on ``u_time`` to animate, one must be aware,
+that even though every shader on screen will run on every frame displayed,
+Ren'Py does not run on constant FPS, and will fall back to the minimum frame
+rate of 5 FPS if no displayables require to be redrawn.
+
+When using an animating shader in an ATL transform, this can cause that shader
+to "stutter" and only animate properly while some other object on screen
+animates as well, in case the transform you're using it in does not cause
+redraws otherwise. In this case, an empty ATL loop can be introduced to force
+redraws to happen::
+
+    transform fancy_shader:
+        shader 'my_fancy_shader'
+        pause 0
+        repeat
+
+``pause 0`` will cycle the frames as fast as possible. You can also set
+different values for ``pause`` to specify a minimum frame rate, like
+``pause 1.0/30``.
+
+
+Shader Parts
+------------
+
+For a list of shader parts that Ren'Py uses, see the :doc:`shader_parts`.

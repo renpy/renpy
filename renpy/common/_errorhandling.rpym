@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -49,9 +49,15 @@ init label _errorhandling:
         from store import config
 
         def _scale(n):
+            if renpy.variant("small"):
+                n *= 1.25
+
             return int(min(n * config.screen_width / 960, n * config.screen_height / 720))
 
         _wide = (config.screen_width >  (config.screen_height * 1.5))
+
+        if renpy.variant("small"):
+            _wide = False
 
     style _default:
 
@@ -72,7 +78,7 @@ init label _errorhandling:
         outlines [ ]
         outline_scaling "step"
         minwidth 0
-        text_align 0
+        textalign 0
         justify False
         text_y_fudge 0
         first_indent 0
@@ -81,12 +87,17 @@ init label _errorhandling:
         line_leading 0
         line_overlap_split 0
         layout "tex"
+        ruby_line_leading 0
         subtitle_width 0.9
         slow_cps None
         slow_cps_multiplier 1.0
         slow_abortable False
-        hinting "auto"
+        hinting True
         adjust_spacing True
+        emoji_font "TwemojiCOLRv0.ttf"
+        prefer_emoji True
+        shaper "harfbuzz"
+        reading_order None
 
         # Window properties
         background None
@@ -119,6 +130,8 @@ init label _errorhandling:
         # Box properties
         spacing 0
         first_spacing None
+        box_align None
+        box_justify False
         box_layout None
         box_wrap False
         box_wrap_spacing 0
@@ -141,6 +154,7 @@ init label _errorhandling:
         thumb_shadow None
         left_gutter 0
         right_gutter 0
+        thumb_align 0.0
         thumb_offset 0
         unscrollable None
         bar_invert False
@@ -207,13 +221,23 @@ init label _errorhandling:
         left_padding gui._scale(15)
         ypadding gui._scale(2)
 
+    style _big_radio_button is _button
+
+    style _big_radio_button_text is _button_text:
+        size gui._scale(26)
+        selected_color "#404040"
+
     style _label is _default:
-        top_margin gui._scale(10)
-        bottom_margin gui._scale(15)
+        top_margin gui._scale(15)
+        bottom_margin gui._scale(5)
 
     style _label_text is _default:
-        size gui._scale(30)
+        size gui._scale(26)
         kerning -1
+
+    style _trace:
+        left_margin gui._scale(10)
+        top_margin gui._scale(5)
 
     style _bar is _default:
         left_bar "#468"
@@ -251,6 +275,13 @@ init label _errorhandling:
         color "#468"
         hover_color Color("#24C")
 
+    style _image_error is _default:
+        xalign 0.5
+        yalign 0.0
+        color "#fcc"
+        outlines [ (1, "#000", 0, 0) ]
+        size gui._scale(20)
+
     return
 
 # Invokes _errorhanding when this is first loaded.
@@ -265,11 +296,7 @@ init python:
 
     def _error_hyperlink_function(target):
         if target.startswith("http:") or target.startswith("https:"):
-            try:
-                import webbrowser
-                webbrowser.open(target)
-            except Exception:
-                pass
+            renpy.open_url(target)
 
         if target.startswith("edit:"):
             prefix, line, filename = target.split(":", 2)
@@ -282,159 +309,332 @@ init python:
 
 init python:
 
-    # The keymap we use before the real keymap is defined.
+
     config.keymap = dict(
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        toggle_fullscreen = [ 'noshift_K_f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-        reload_game = [ 'shift_K_r' ],
-        quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
-        iconify = [ 'meta_m', 'alt_m' ],
-        choose_renderer = [ 'shift_K_g' ],
+        rollback = [ 'any_K_PAGEUP', 'any_KP_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
+        screenshot = [ 'alt_K_s', 'alt_shift_K_s', 'noshift_K_s' ],
+        toggle_afm = [ ],
+        toggle_fullscreen = [ 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11', 'noshift_K_f' ],
+        game_menu = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
+        hide_windows = [ 'mouseup_2', 'noshift_K_h' ],
+        launch_editor = [ 'shift_K_e' ],
+        dump_styles = [ ],
+        reload_game = [ 'alt_K_r', 'shift_K_r' ],
+        inspector = [ 'alt_K_i', 'shift_K_i' ],
+        full_inspector = [ 'alt_shift_K_i' ],
+        developer = [ 'alt_K_d', 'shift_K_d', ],
+        quit = [ ],
+        iconify = [ ],
+        help = [ 'K_F1', 'meta_shift_/' ],
+        choose_renderer = ['alt_K_g', 'shift_K_g' ],
+        progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
+        bubble_editor = [ 'alt_K_b', 'shift_K_b' ],
+
+        # Accessibility.
+        accessibility = [ 'shift_K_a' ],
+        self_voicing = [ 'alt_K_v', 'K_v' ],
+        clipboard_voicing = [ 'alt_shift_K_c', 'shift_K_c' ],
+        debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
+
+        # Say.
+        rollforward = [ 'any_K_PAGEDOWN', 'any_KP_PAGEDOWN', 'mousedown_5', ],
+        dismiss = [ 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT', 'mouseup_1' ],
+        dismiss_unfocused = [ ],
+
+        # Pause.
+        dismiss_hard_pause = [ ],
 
         # Focus.
-        focus_left = [ 'K_LEFT' ],
-        focus_right = [ 'K_RIGHT' ],
-        focus_up = [ 'K_UP' ],
-        focus_down = [ 'K_DOWN' ],
+        focus_left = [ 'any_K_LEFT', 'any_KP_LEFT' ],
+        focus_right = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
+        focus_up = [ 'any_K_UP', 'any_KP_UP' ],
+        focus_down = [ 'any_K_DOWN', 'any_KP_DOWN' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
-        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
+        button_select = [ 'K_RETURN', 'K_KP_ENTER', 'K_SELECT', 'mouseup_1',  ],
+        button_alternate = [ 'mouseup_3' ],
+        button_alternate_ignore = [ 'mousedown_3' ],
+
+        # Input.
+        input_backspace = [ 'any_K_BACKSPACE' ],
+        input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
+        input_next_line = [ 'shift_K_RETURN', 'shift_K_KP_ENTER' ],
+        input_left = [ 'any_K_LEFT', 'any_KP_LEFT' ],
+        input_right = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
+        input_up = [ 'any_K_UP', 'any_KP_UP' ],
+        input_down = [ 'any_K_DOWN', 'any_KP_DOWN' ],
+        input_delete = [ 'any_K_DELETE', 'any_KP_DELETE' ],
+        input_home = [ 'K_HOME', 'KP_HOME', 'meta_K_LEFT' ],
+        input_end = [ 'K_END', 'KP_END', 'meta_K_RIGHT' ],
+        input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c', 'meta_noshift_K_c' ],
+        input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v', 'meta_noshift_K_v' ],
+        input_jump_word_left = [ 'osctrl_K_LEFT', 'osctrl_KP_LEFT' ],
+        input_jump_word_right = [ 'osctrl_K_RIGHT', 'osctrl_KP_RIGHT' ],
+        input_delete_word = [ 'osctrl_K_BACKSPACE' ],
+        input_delete_full = [ 'meta_K_BACKSPACE' ],
 
         # Viewport.
-        viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],
-        viewport_rightarrow = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
-        viewport_uparrow = [ 'K_UP', 'repeat_K_UP' ],
-        viewport_downarrow = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        viewport_leftarrow = [ 'any_K_LEFT', 'any_KP_LEFT' ],
+        viewport_rightarrow = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
+        viewport_uparrow = [ 'any_K_UP', 'any_KP_UP' ],
+        viewport_downarrow = [ 'any_K_DOWN', 'any_KP_DOWN' ],
         viewport_wheelup = [ 'mousedown_4' ],
         viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
-        viewport_pageup = [  'K_PAGEUP', 'repeat_K_PAGEUP' ],
-        viewport_pagedown = [  'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
+        viewport_pageup = [ 'any_K_PAGEUP', 'any_KP_PAGEUP'],
+        viewport_pagedown = [ 'any_K_PAGEDOWN', 'any_KP_PAGEDOWN' ],
 
-        # These control the bar.
+        # These keys control skipping.
+        skip = [ 'K_LCTRL', 'K_RCTRL' ],
+        stop_skipping = [ ],
+        toggle_skip = [ 'K_TAB' ],
+        fast_skip = [ '>', 'shift_K_PERIOD' ],
+
+        # Bar.
         bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
         bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
-        bar_decrease = [ 'K_LEFT' ],
-        bar_increase = [ 'K_RIGHT' ],
+        bar_left = [ 'any_K_LEFT', 'any_KP_LEFT' ],
+        bar_right = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
+        bar_up = [ 'any_K_UP', 'any_KP_UP' ],
+        bar_down = [ 'any_K_DOWN', 'any_KP_DOWN' ],
 
-        # Null console, just in case.
-        console = [ ],
-        )
+        # Delete a save.
+        save_delete = [ 'K_DELETE', 'KP_DELETE' ],
+
+        # Draggable.
+        drag_activate = [ 'mousedown_1' ],
+        drag_deactivate = [ 'mouseup_1' ],
+
+        # Debug console.
+        console = [ 'shift_K_o', 'alt_shift_K_o' ],
+        console_exit = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
+        console_older = [ 'any_K_UP', 'any_KP_UP' ],
+        console_newer = [ 'any_K_DOWN', 'any_KP_DOWN' ],
+
+        # Director
+        director = [ 'noshift_K_d' ],
+
+        # Ignored (kept for backwards compatibility).
+        toggle_music = [ ],
+        viewport_up = [ ],
+        viewport_down = [ ],
+
+        # Profile commands.
+        performance = [ 'K_F3' ],
+        image_load_log = [ 'K_F4' ],
+        profile_once = [ 'K_F8' ],
+        memory_profile = [ 'K_F7' ],
+    )
 
     config.pad_bindings = {
         "pad_leftshoulder_press" : [ "rollback", ],
         "pad_lefttrigger_pos" : [ "rollback", ],
         "pad_back_press" : [ "rollback", ],
 
+        "repeat_pad_leftshoulder_press" : [ "rollback", ],
+        "repeat_pad_lefttrigger_pos" : [ "rollback", ],
+        "repeat_pad_back_press" : [ "rollback", ],
+
         "pad_guide_press" : [ "game_menu", ],
         "pad_start_press" : [ "game_menu", ],
 
         "pad_y_press" : [ "hide_windows", ],
+        "pad_x_press" : [ "button_alternate" ],
 
         "pad_rightshoulder_press" : [ "rollforward", ],
+        "repeat_pad_rightshoulder_press" : [ "rollforward", ],
 
-        "pad_righttrigger_pos" : [ "dismiss", "button_select" ],
-        "pad_a_press" : [ "dismiss", "button_select" ],
-        "pad_b_press" : [ "button_alternate" ],
+        "pad_righttrigger_pos" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate" ],
+        "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
+        "pad_b_press" : [ "game_menu" ],
 
-        "pad_dpleft_press" : [ "focus_left", "bar_left" ],
-        "pad_leftx_neg" : [ "focus_left", "bar_left" ],
-        "pad_rightx_neg" : [ "focus_left", "bar_left" ],
+        "pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "pad_rightx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
 
-        "pad_dpright_press" : [ "focus_right", "bar_right" ],
-        "pad_leftx_pos" : [ "focus_right", "bar_right" ],
-        "pad_rightx_pos" : [ "focus_right", "bar_right" ],
+        "pad_dpright_press" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "pad_leftx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "pad_rightx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
 
-        "pad_dpup_press" : [ "focus_up", "bar_up" ],
-        "pad_lefty_neg" :  [ "focus_up", "bar_up" ],
-        "pad_righty_neg" : [ "focus_up", "bar_up" ],
+        "pad_dpup_press" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "pad_lefty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "pad_righty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
 
-        "pad_dpdown_press" : [ "focus_down", "bar_down" ],
-        "pad_lefty_pos" : [ "focus_down", "bar_down" ],
-        "pad_righty_pos" : [ "focus_down", "bar_down" ],
+        "pad_dpdown_press" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "pad_lefty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+
+        "repeat_pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "repeat_pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "repeat_pad_rightx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+
+        "repeat_pad_dpright_press" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "repeat_pad_leftx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "repeat_pad_rightx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+
+        "repeat_pad_dpup_press" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "repeat_pad_lefty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "repeat_pad_righty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+
+        "repeat_pad_dpdown_press" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "repeat_pad_lefty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "repeat_pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
     }
+
+
 
     # Null translation function. This gets redefined once things start
     # successfully.
     def _(s):
         return s
 
-    def __limit_lines(lines):
+
+    class _ExceptionPrintContext(renpy.renpy.error.TextIOExceptionPrintContext):
+        BRIGHT_RED = "#e00000"
+        RED = "#800000"
+
+        def __init__(self, *, filter_private: bool, emit_context=True):
+            import io
+            super().__init__(
+                io.StringIO(),
+                filter_private=filter_private,
+                max_group_width=5,
+                max_group_depth=1,
+                emit_context=emit_context
+            )
+
+        def _escape_limit(self, s: str):
+            if len(s) > 400:
+                s = s[:200] + " ... " + s[-200:]
+            s = s.replace("{", "{{")
+
+            return s
+
+        def _color(self, text: str, color: str):
+            return f"{{color={color}}}{text}{{/color}}"
+
+        def location(self, filename, lineno, name):
+            self._print(
+                f'{{a=edit:{lineno}:{filename}}}'
+                f'File "{filename}", line {lineno}'
+                f'{{/a}}, in {name}')
+
+        def source_carets(self, line, carets):
+            if line and line[0] == " ":
+                line = line.replace(" ", "\u00a0") #NBSP
+
+            if carets is None:
+                self._print(self._escape_limit(line))
+                return
+
+            from itertools import groupby
+
+            zipped = zip(line, carets, strict=True)
+            colorized_line_parts: list[str] = []
+            for color, group in groupby(zipped, key=lambda x: x[1]):
+                caret_group = list(group)
+                line_part = "".join(char for char, _ in caret_group)
+                line_part = self._escape_limit(line_part)
+                if color == "^":
+                    line_part = self._color(line_part, self.BRIGHT_RED)
+                elif color == "~":
+                    line_part = self._color(line_part, self.RED)
+
+                colorized_line_parts.append(line_part)
+
+            self._print("".join(colorized_line_parts))
+
+        def string(self, text: str):
+            self._print(self._escape_limit(text))
+
+        def final_exception_line(self, exc_type: str, text: str | None):
+            exc_type = self._escape_limit(exc_type)
+            if text is None:
+                self._print(exc_type)
+            else:
+                text = self._escape_limit(text)
+                self._print(f"{exc_type}: {text}")
+
+
+    def __simple_traceback(traceback_exception):
+        return traceback_exception.format(_ExceptionPrintContext(
+            filter_private=True, emit_context=False))
+
+    def __full_traceback(traceback_exception):
+        return traceback_exception.format(_ExceptionPrintContext(
+            filter_private=False, emit_context=False))
+
+    def __format_parse_errors(errors: list[str]):
         """
-        Limit the number of lines shown.
+        Takes list of ParseError messages and transforms it
+        to string of sane length to be used as child of viewport.
         """
 
-        if len(lines) < 401:
-            return lines
-
-        return lines[:200] + [ "..." ] + lines[-200:]
-
-    # This function is responsible for taking a traceback, and converting
-    # it to a string that can be shown with text.
-    def __format_traceback(s):
         import re
 
-        lines = [ i.replace("{", "{{") for i in s.split("\n") ]
-        lines = __limit_lines(lines)
+        rv = []
+        rv_len = 0
+        for error in errors:
+            lines = error.split("\n")
 
-        rv = [ ("{size=%d}" % gui._scale(22)) + lines[0] + "{/size}" ]
+            # Do not count first line in total to include those as much as
+            # possible.
+            rv.append(re.sub(
+                r'(File "(.*)", line (\d+))',
+                r'{a=edit:\3:\2}\1{/a}',
+                lines.pop(0).replace("{", "{{")))
 
-        for i in lines[1:]:
-            i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
-            rv.append("  " + i)
+            error_rv = []
+            error_len = 0
+            for i, line in enumerate(lines):
+                if line and line[0] == " ":
+                    line = line.replace(" ", "\u00a0") #NBSP
 
-        rv[1] = "{vspace=5}" + rv[1]
+                # In case we have single insanely lengthy single error.
+                error_len += len(line)
+                if error_len > 65536:
+                    error_rv.clear()
+                    break
+
+                if set(line.strip()) == {"^"}:
+                    idx = line.find("^")
+                    count = line.count("^", idx)
+
+                    prev_line = lines[i - 1]
+
+                    line = prev_line[:idx].replace("{", "{{")
+
+                    if count == 1:
+                        if len(prev_line) < idx + count:
+                            mark = "\u2190"
+                        else:
+                            mark = "\u2192"
+                            count = 0
+                    else:
+                        mark = prev_line[idx:idx + count]
+                    line += "{b}{color=#a00}"
+                    line += mark
+                    line += "{/color}{/b}"
+                    line += prev_line[idx + count:].replace("{", "{{")
+
+                    error_rv[-1] = line
+                    continue
+
+                error_rv.append(line.replace("{", "{{"))
+
+            rv_len += error_len
+            if rv_len > 1048576:
+                break
+
+            rv.extend(error_rv)
+            rv.append("")
 
         return "\n".join(rv)
-
-    def __format_parse_errors(s):
-        import re
-
-        rv = ""
-
-        lines = s.split("\n")
-        lines = __limit_lines(lines)
-        len_lines = len(lines)
-
-        ln = 0
-
-        while ln < len_lines:
-            line = lines[ln]
-            ln += 1
-
-            if ln < len_lines and lines[ln].endswith("^"):
-                highlight = len(lines[ln]) - 1
-                ln += 1
-            else:
-                highlight = -1
-
-            pos = 0
-
-            for c in line:
-                if pos == highlight:
-                    rv += u"{color=#c00}\u2192{/color}"
-                    highlight = -1
-
-                pos += 1
-
-                if c == "{":
-                    rv += "{{"
-                else:
-                    rv += c
-
-            if highlight > 0:
-                rv += u"{color=#c00}\u2190{/color}"
-
-            rv += "\n"
-
-
-        rv = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', rv)
-
-        return rv
 
     class _EditFile(Action):
         def __init__(self, filename, line=1):
@@ -443,7 +643,15 @@ init python:
 
         def __call__(self):
             try:
-                renpy.launch_editor([ self.filename ], self.line, transient=1)
+                if renpy.android:
+                    try:
+                        import jnius
+                        activity = jnius.autoclass("org.renpy.android.PythonSDLActivity")
+                        activity.mActivity.openEditor(renpy.exports.fsencode(self.filename))
+                    except Exception:
+                        traceback.print_exc()
+                else:
+                    renpy.launch_editor([ self.filename ], self.line, transient=1)
             except Exception:
                 pass
 
@@ -453,7 +661,7 @@ init python:
             self.template = template
 
         def __call__(self):
-            import pygame_sdl2.scrap
+            import renpy.pygame as pygame
 
             with open(self.filename, "rb") as f:
                 f.read(3) # skip the BOM.
@@ -462,7 +670,7 @@ init python:
             s = s.replace("\n", "\r\n")
             s = s.replace("\r\r", "\r")
 
-            pygame_sdl2.scrap.put(pygame_sdl2.SCRAP_TEXT, s.encode("utf-8"))
+            pygame.scrap.put(pygame.SCRAP_TEXT, s.encode("utf-8"))
 
     def __can_open_traceback():
         return True
@@ -525,7 +733,9 @@ init python:
         """
 
         def __call__(self):
-            renpy.quit(status=1)
+            # We use 'exception' instead of exports.quit
+            # to not call quit label since it may raise another error.
+            raise renpy.game.QuitException(status=1)
 
     class __EnterConsole(Action):
         """
@@ -550,9 +760,10 @@ init python:
 # added arguments.
 screen _exception_actions(traceback_fn, tt, *args):
 
-    textbutton _("Open"):
-        action _EditFile(traceback_fn)
-        hovered tt.action(_("Opens the traceback.txt file in a text editor."))
+    if not any([renpy.ios, renpy.emscripten]):
+        textbutton _("Open"):
+            action _EditFile(traceback_fn)
+            hovered tt.action(_("Opens the traceback.txt file in a text editor."))
 
     textbutton _("Copy BBCode"):
         action _CopyFile(traceback_fn, u"[code]\n{}[/code]\n")
@@ -565,6 +776,8 @@ screen _exception_actions(traceback_fn, tt, *args):
 
 
 python early in _errorhandling:
+    # Do not participate in saves.
+    _constant = True
 
     # These enable various error handling modes.
     rollback = True
@@ -575,11 +788,12 @@ python early in _errorhandling:
 # The screen that is used for error handling.
 screen _exception:
     modal True
+    layer config.interface_layer
     zorder 1090
 
     default tt = __Tooltip("")
-    default fmt_short = __format_traceback(short)
-    default fmt_full = __format_traceback(full)
+    default fmt_short = __simple_traceback(traceback_exception)
+    default fmt_full = __full_traceback(traceback_exception)
 
     frame:
         style_group ""
@@ -590,19 +804,25 @@ screen _exception:
         side "c r":
             xfill True
             label _("An exception has occurred.") text_size gui._scale(40)
-            text "{size=-3}[config.version!q]\n[renpy.version_only!q]\n[renpy.platform!q]{/size}" text_align 1.0 yalign 0.5
+            text "{size=-3}[config.version!q]\n[renpy.version_only!q]\n[renpy.platform!q]{/size}":
+                textalign 1.0 yalign 0.5
 
         viewport:
             id "viewport"
-            child_size (4000, None)
+            child_size (None, None)
             mousewheel True
             draggable True
             scrollbars "both"
 
             has vbox
 
-            text fmt_short substitute False
-            text fmt_full substitute False
+            text "[renpy.game.exception_info!q]" size gui._scale(22)
+            frame style '_trace':
+                text fmt_short substitute False safe True
+
+            text "Full traceback:" size gui._scale(22)
+            frame style '_trace':
+                text fmt_full substitute False safe True
 
         hbox:
             vbox:
@@ -636,7 +856,7 @@ screen _exception:
                                 action __EnterConsole()
                                 hovered tt.action(_("Opens a console to allow debugging the problem."))
 
-                    use _exception_actions(traceback_fn, tt)
+                    use _exception_actions(traceback_exception.traceback_fn, tt)
 
                 # Tooltip.
                 text tt.value
@@ -655,8 +875,9 @@ screen _exception:
     key "console" action __EnterConsole()
 
 # The screen that is used for error handling.
-screen _parse_errors:
+screen _parse_errors(errors, error_fn, reload_action):
     modal True
+    layer config.interface_layer
     zorder 1090
 
     default tt = __Tooltip("")
@@ -672,7 +893,7 @@ screen _parse_errors:
 
         viewport:
             id "viewport"
-            child_size (4000, None)
+            child_size (None, None)
             mousewheel True
             draggable True
             scrollbars "both"
@@ -681,7 +902,7 @@ screen _parse_errors:
 
             has vbox
 
-            text fmt_errors substitute False
+            text fmt_errors substitute False safe True
 
         vbox:
 

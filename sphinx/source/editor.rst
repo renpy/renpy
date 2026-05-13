@@ -5,9 +5,8 @@ Text Editor Integration
 =======================
 
 Ren'Py uses a text editor to allow the user to edit game scripts from the
-launcher, and to report errors to the user. By default, Ren'Py uses jEdit
-as the text editor when launched from the launcher and the system default
-editor otherwise. This can be customized by the user as necessary.
+launcher, and to report errors to the user. The editor to be used can be
+customized by the user as necessary.
 
 The editor is customized by creating an Editor class in a .edit.py file. This
 class contains methods that are called to manage text editing.

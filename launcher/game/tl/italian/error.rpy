@@ -11,15 +11,15 @@ translate italian strings:
 
     # 00gltest.rpy:75
     old "Force Angle/DirectX Renderer"
-    new "Forza Renderer Angle/DirectX"
+    new "Forza Renderizzatore Angle/DirectX"
 
     # 00gltest.rpy:79
     old "Force OpenGL Renderer"
-    new "Forza Renderer OpenGL"
+    new "Forza Renderizzatore OpenGL"
 
     # 00gltest.rpy:83
     old "Force Software Renderer"
-    new "Forza Renderer Software"
+    new "Forza Renderizzatore Software"
 
     # 00gltest.rpy:93
     old "Enable"
@@ -31,7 +31,7 @@ translate italian strings:
 
     # 00gltest.rpy:141
     old "Performance Warning"
-    new "Avviso Prestazioni"
+    new "Avviso sulle Prestazioni"
 
     # 00gltest.rpy:146
     old "This computer is using software rendering."
@@ -39,7 +39,7 @@ translate italian strings:
 
     # 00gltest.rpy:148
     old "This computer is not using shaders."
-    new "Questo computer non fa uso degli shader."
+    new "Questo computer non sta usando gli shader."
 
     # 00gltest.rpy:150
     old "This computer is displaying graphics slowly."
@@ -135,7 +135,7 @@ translate italian strings:
 
     # _errorhandling.rpym:538
     old "Rollback"
-    new "Regredisci"
+    new "Riavvolgi"
 
     # _errorhandling.rpym:540
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
@@ -167,7 +167,7 @@ translate italian strings:
 
     # _errorhandling.rpym:606
     old "Open Parse Errors"
-    new "Apri errori di analisi"
+    new "Apri Errori di Analisi"
 
     # _errorhandling.rpym:608
     old "Opens the errors.txt file in a text editor."
@@ -176,4 +176,112 @@ translate italian strings:
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
     new "Copia il file errors.txt negli appunti."
+
+    # renpy/common/00gltest.rpy:89
+    old "Renderer"
+    new "Renderizzatore"
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "Forza Renderizzatore GL"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "Forza Renderizzatore ANGLE"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "Forza Renderizzatore GLES"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "Forza Renderizzatore GL2"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "Forza Renderizzatore ANGLE2"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "Forza Renderizzatore GLES2"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "Abilita (nessuna lista di blocco)"
+
+    # renpy/common/00gltest.rpy:159
+    old "Powersave"
+    new "Risparmio energetico"
+
+    # renpy/common/00gltest.rpy:173
+    old "Framerate"
+    new "Framerate"
+
+    # renpy/common/00gltest.rpy:177
+    old "Screen"
+    new "Schermo"
+
+    # renpy/common/00gltest.rpy:181
+    old "60"
+    new "60"
+
+    # renpy/common/00gltest.rpy:185
+    old "30"
+    new "30"
+
+    # renpy/common/00gltest.rpy:191
+    old "Tearing"
+    new "Tearing"
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    new "Questo gioco richiede l'uso di GL2, che non può essere inizializzato."
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "Il file {a=edit:1:log.txt}log.txt{/a} può contenere informazioni che possono aiutarti a determinare il problema del tuo computer."
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "Maggiori dettagli su come risolvere questo problema sono disponibili nella documentazione di {a=[url]}{/a}."
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    new "Modifica le opzioni di rendering"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "Premi o sposta l'input '[control!s]'[kind]."
+
+    # renpy/common/_errorhandling.rpym:555
+    old "Open"
+    new "Apri"
+
+    # renpy/common/_errorhandling.rpym:559
+    old "Copy BBCode"
+    new "Copia BBCode"
+
+    # renpy/common/_errorhandling.rpym:561
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Copia il file traceback.txt negli appunti come BBcode per forum come https://lemmasoft.renai.us/."
+
+    # renpy/common/_errorhandling.rpym:563
+    old "Copy Markdown"
+    new "Copia Markdown"
+
+    # renpy/common/_errorhandling.rpym:565
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "Copia il file traceback.txt negli appunti come Markdown per Discord."
+
+    # renpy/common/_errorhandling.rpym:626
+    old "Ignores the exception, allowing you to continue."
+    new "Ignora l'eccezione, permettendo di continuare l'esecuzione."
+
+    # renpy/common/_errorhandling.rpym:637
+    old "Console"
+    new "Console"
+
+    # renpy/common/_errorhandling.rpym:639
+    old "Opens a console to allow debugging the problem."
+    new "Apre una console per consentire il debug del problema."
 

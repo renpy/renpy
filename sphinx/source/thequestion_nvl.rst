@@ -1,4 +1,4 @@
-.. _thequestion_nvl:
+:orphan:
 
 NVL-mode script for The Question
 ================================
@@ -301,4 +301,3 @@ of the ``script.rpy`` file with the following code.
         "{b}Bad Ending{/b}."
 
         return
-

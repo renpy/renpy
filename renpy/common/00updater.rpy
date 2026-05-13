@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,6 +21,9 @@
 
 # This code applies an update.
 init -1500 python in updater:
+    # Do not participate in saves.
+    _constant = True
+
     from store import renpy, config, Action, DictEquality, persistent
     import store.build as build
 
@@ -38,16 +41,15 @@ init -1500 python in updater:
     import zlib
     import codecs
     import io
-    import future.utils
 
     def urlopen(url):
         import requests
-        return io.BytesIO(requests.get(url).content)
+        return io.BytesIO(requests.get(url, proxies=renpy.exports.proxies, timeout=15).content)
 
     def urlretrieve(url, fn):
         import requests
 
-        data = requests.get(url).content
+        data = requests.get(url, proxies=renpy.exports.proxies, timeout=15).content
 
         with open(fn, "wb") as f:
             f.write(data)
@@ -66,90 +68,6 @@ init -1500 python in updater:
     # A map from update URL to the time we last checked that URL.
     if persistent._update_last_checked is None:
         persistent._update_last_checked = { }
-
-    # A file containing deferred update commands, one per line. Right now,
-    # there are two commands:
-    # R <path>
-    #     Rename <path>.new to <path>.
-    # D <path>
-    #     Delete <path>.
-    # Deferred commands that cannot be accomplished on start are ignored.
-    DEFERRED_UPDATE_FILE = os.path.join(config.renpy_base, "update", "deferred.txt")
-    DEFERRED_UPDATE_LOG = os.path.join(config.renpy_base, "update", "log.txt")
-
-    def process_deferred_line(l):
-        cmd, _, fn = l.partition(" ")
-
-        if cmd == "R":
-            if os.path.exists(fn + ".new"):
-
-                if os.path.exists(fn):
-                    os.unlink(fn)
-
-                os.rename(fn + ".new", fn)
-
-        elif cmd == "D":
-
-            if os.path.exists(fn):
-                os.unlink(fn)
-
-        else:
-            raise Exception("Bad command.")
-
-    def process_deferred():
-        if not os.path.exists(DEFERRED_UPDATE_FILE):
-            return
-
-        # Give a previous process time to quit (and let go of the
-        # open files.)
-        time.sleep(3)
-
-        try:
-            log = open(DEFERRED_UPDATE_LOG, "a")
-        except Exception:
-            log = io.BytesIO()
-
-        with log:
-            with open(DEFERRED_UPDATE_FILE, "r") as f:
-                for l in f:
-
-                    l = l.rstrip("\r\n")
-
-                    log.write(l)
-
-                    try:
-                        process_deferred_line(l)
-                    except Exception:
-                        traceback.print_exc(file=log)
-
-            try:
-                os.unlink(DEFERRED_UPDATE_FILE)
-            except Exception:
-                traceback.print_exc(file=log)
-
-    # Process deferred updates on startup, if any exist.
-    process_deferred()
-
-    def zsync_path(command):
-        """
-        Returns the full platform-specific path to command, which is one
-        of zsync or zsyncmake. If the file doesn't exists, returns the
-        command so the system-wide copy is used.
-        """
-
-        if renpy.windows:
-            suffix = ".exe"
-        else:
-            suffix = ""
-
-        executable = renpy.fsdecode(sys.executable)
-
-        rv = os.path.join(os.path.dirname(executable), command + suffix)
-
-        if os.path.exists(rv):
-            return rv
-
-        return command + suffix
 
     class UpdateError(Exception):
         """
@@ -171,7 +89,7 @@ init -1500 python in updater:
             The state that the updater is in.
 
         self.message
-            In an error state, the error message that occured.
+            In an error state, the error message that occurred.
 
         self.progress
             If not None, a number between 0.0 and 1.0 giving some sort of
@@ -184,7 +102,7 @@ init -1500 python in updater:
 
         # Here are the possible states.
 
-        # An error occured during the update process.
+        # An error occurred during the update process.
         # self.message is set to the error message.
         ERROR = "ERROR"
 
@@ -227,10 +145,13 @@ init -1500 python in updater:
         # The update was cancelled.
         CANCELLED = "CANCELLED"
 
-        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True, patch=True):
+        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True, patch=True, prefer_rpu=True, size_only=False, allow_empty=False, done_pause=True, allow_cancel=True):
             """
             Takes the same arguments as update().
             """
+
+            # Make sure the URL has the right type.
+            url = str(url)
 
             self.patch = patch
 
@@ -283,6 +204,25 @@ init -1500 python in updater:
             # Do we prompt for confirmation?
             self.confirm = confirm
 
+            # Should the update be allowed even if current.json is empty?
+            self.allow_empty = allow_empty
+
+            # Should the user be asked to proceed when done.
+            self.done_pause = done_pause
+
+            # Should the user be allowed to cancel the update?
+            self.allow_cancel = False
+
+            # Public attributes set by the RPU updater
+            self.new_disk_size = None
+            self.old_disk_size = None
+
+            self.download_total = None
+            self.download_done = None
+
+            self.write_total = None
+            self.write_done = None
+
             # The base path of the game that we're updating, and the path to the update
             # directory underneath it.
 
@@ -315,8 +255,12 @@ init -1500 python in updater:
             # where each file is moved from <file>.new to <file>.
             self.moves = [ ]
 
+            if self.allow_empty:
+                if not os.path.isdir(self.updatedir):
+                    os.makedirs(self.updatedir)
+
             if public_key is not None:
-                with renpy.file(public_key) as f:
+                with renpy.open_file(public_key, False) as f:
                     self.public_key = rsa.PublicKey.load_pkcs1(f.read())
             else:
                 self.public_key = None
@@ -346,8 +290,8 @@ init -1500 python in updater:
                     self.update()
 
             except UpdateCancelled as e:
-                self.can_cancel = True
-                self.can_proceed = False
+                self.can_cancel = False
+                self.can_proceed = True
                 self.progress = None
                 self.message = None
                 self.state = self.CANCELLED
@@ -358,8 +302,8 @@ init -1500 python in updater:
 
             except UpdateError as e:
                 self.message = e.args[0]
-                self.can_cancel = True
-                self.can_proceed = False
+                self.can_cancel = False
+                self.can_proceed = True
                 self.state = self.ERROR
 
                 if self.log:
@@ -367,9 +311,9 @@ init -1500 python in updater:
                     self.log.flush()
 
             except Exception as e:
-                self.message = _type(e).__name__ + ": " + unicode(e)
-                self.can_cancel = True
-                self.can_proceed = False
+                self.message = _type(e).__name__ + ": " + str(e)
+                self.can_cancel = False
+                self.can_proceed = True
                 self.state = self.ERROR
 
                 if self.log:
@@ -386,14 +330,11 @@ init -1500 python in updater:
             Performs the update.
             """
 
-            if getattr(renpy, "mobile", False):
-                raise UpdateError(_("The Ren'Py Updater is not supported on mobile devices."))
-
             self.load_state()
             self.test_write()
             self.check_updates()
 
-            pretty_version = self.check_versions()
+            self.pretty_version = self.check_versions()
 
             if not self.modules:
                 self.can_cancel = False
@@ -403,88 +344,201 @@ init -1500 python in updater:
                 renpy.restart_interaction()
                 return
 
-            persistent._update_version[self.url] = pretty_version
+            persistent._update_version[self.url] = self.pretty_version
 
             if self.check_only:
                 renpy.restart_interaction()
                 return
 
-            if self.confirm and (not self.add):
-
-                # Confirm with the user that the update is available.
-                with self.condition:
-                    self.can_cancel = True
-                    self.can_proceed = True
-                    self.state = self.UPDATE_AVAILABLE
-                    self.version = pretty_version
-
-                    renpy.restart_interaction()
-
-                    while True:
-                        if self.cancelled or self.proceeded:
-                            break
-
-                        self.condition.wait()
-
-            if self.cancelled:
-                raise UpdateCancelled()
-
-            self.can_cancel = True
-            self.can_proceed = False
-
             # Disable autoreload.
             renpy.set_autoreload(False)
 
-            # Perform the update.
             self.new_state = dict(self.current_state)
             renpy.restart_interaction()
 
             self.progress = 0.0
             self.state = self.PREPARING
 
-            if self.patch:
-                for i in self.modules:
-                    self.prepare(i)
+            import os
 
-            self.progress = 0.0
-            self.state = self.DOWNLOADING
-            renpy.restart_interaction()
+            has_rpu = False
 
             for i in self.modules:
 
-                if self.patch:
+                for d in self.updates:
+                    if "rpu_url" in self.updates[d]:
+                        has_rpu = True
 
-                    try:
-                        self.download(i)
-                    except Exception:
-                        self.download(i, standalone=True)
+            if has_rpu:
+                self.rpu_update()
 
-                else:
-                    self.download_direct(i)
+            else:
+                raise UpdateError(_("No update methods found."))
 
-            self.clean_old()
+
+        def prompt_confirm(self):
+            """
+            Prompts the user to confirm the update. Returns if the update
+            should proceed, or raises UpdateCancelled if it should not.
+            """
+
+            if self.confirm:
+
+                self.progress = None
+
+                # Confirm with the user that the update is available.
+                with self.condition:
+                    self.can_cancel = self.allow_cancel
+                    self.can_proceed = True
+                    self.state = self.UPDATE_AVAILABLE
+                    self.version = self.pretty_version
+
+                    renpy.restart_interaction()
+
+                    while self.confirm:
+                        if self.cancelled or self.proceeded:
+                            break
+
+                        self.condition.wait(.1)
+
+            if self.cancelled:
+                raise UpdateCancelled()
 
             self.can_cancel = False
-            self.progress = 0.0
-            self.state = self.UNPACKING
-            renpy.restart_interaction()
+            self.can_proceed = False
+
+        def fetch_files_rpu(self, module):
+            """
+            Fetches the rpu file list for the given module.
+            """
+
+            import requests, zlib
+
+            url = urlparse.urljoin(self.url, self.updates[module]["rpu_url"])
+
+            try:
+                resp = requests.get(url, proxies=renpy.exports.proxies, timeout=15)
+                resp.raise_for_status()
+            except Exception as e:
+                raise UpdateError(__("Could not download file list: ") + str(e))
+
+            if hashlib.sha256(resp.content).hexdigest() != self.updates[module]["rpu_digest"]:
+                raise UpdateError(__("File list digest does not match."))
+
+            data = zlib.decompress(resp.content)
+
+            from renpy.update.common import FileList
+
+            rv = FileList.from_json(json.loads(data))
+            return rv
+
+        def rpu_copy_fields(self):
+            """
+            Copy fields from the rpu object.
+            """
+
+            self.old_disk_total = self.u.old_disk_total
+            self.new_disk_total = self.u.new_disk_total
+
+            self.download_total = self.u.download_total
+            self.download_done = self.u.download_done
+
+            self.write_total = self.u.write_total
+            self.write_done = self.u.write_done
+
+        def rpu_progress(self, state, progress):
+            """
+            Called by the rpu code to update the progress.
+            """
+
+            self.rpu_copy_fields()
+
+            old_state = self.state
+
+            self.state = state
+            self.progress = progress
+
+            if state != old_state or progress == 1.0 or progress == 0.0:
+                renpy.restart_interaction()
+
+        def rpu_update(self):
+            """
+            Perform an update using the .rpu files.
+            """
+
+            from renpy.update.common import FileList
+            from renpy.update.update import Update
+
+            # 1. Load the current files.
+
+            target_file_lists = [ ]
 
             for i in self.modules:
-                self.unpack(i)
+                target_file_lists.append(FileList.from_current_json(self.current_state[i]))
 
-            self.progress = None
-            self.state = self.FINISHING
-            renpy.restart_interaction()
+            # 2. Fetch the file lists.
 
-            self.move_files()
-            self.delete_obsolete()
+            source_file_lists = [ ]
+            module_lists = { }
+
+            for i in self.modules:
+                fl = self.fetch_files_rpu(i)
+                module_lists[i] = fl
+                source_file_lists.append(fl)
+
+            # 3. Compute the update, and confirm it.
+
+            self.u = Update(
+                urlparse.urljoin(self.url, "rpu"),
+                source_file_lists,
+                self.base,
+                target_file_lists,
+                progress_callback=self.rpu_progress,
+                logfile=self.log
+            )
+
+            self.u.init()
+
+            self.rpu_copy_fields()
+
+            self.prompt_confirm()
+
+            self.can_cancel = False
+
+            # 4. Remove the version.json file.
+
+            version_json = os.path.join(self.updatedir, "version.json")
+
+            if os.path.exists(version_json):
+                os.unlink(version_json)
+
+            # 5. Apply the update.
+            self.u.update()
+
+            # 6. Update the new state.
+            for i in self.modules:
+                d = module_lists[i].to_current_json()
+                d["version"] = self.updates[i]["version"]
+                d["renpy_version"] = self.updates[i]["renpy_version"]
+                d["pretty_version"] = self.updates[i]["pretty_version"]
+                self.new_state[i] = d
+
+            # 7. Write the version.json file.
+            version_state = { }
+
+            for i in self.modules:
+                version_state[i] = {
+                    "version" : self.updates[i]["version"],
+                    "renpy_version" : self.updates[i]["renpy_version"],
+                    "pretty_version" : self.updates[i]["pretty_version"]
+                    }
+
+                with open(os.path.join(self.updatedir, "version.json"), "w") as f:
+                    json.dump(version_state, f)
+
+            # 8. Finish up.
+
             self.save_state()
-            self.clean_new()
-
-            self.message = None
-            self.progress = None
-            self.can_proceed = True
-            self.can_cancel = False
 
             persistent._update_version[self.url] = None
 
@@ -493,9 +547,12 @@ init -1500 python in updater:
             else:
                 self.state = self.DONE_NO_RESTART
 
-            renpy.restart_interaction()
+            self.message = None
+            self.progress = None
+            self.can_proceed = self.done_pause
+            self.can_cancel = False
 
-            return
+            renpy.restart_interaction()
 
         def simulation(self):
             """
@@ -525,8 +582,8 @@ init -1500 python in updater:
                 persistent._update_version[self.url] = None
                 return
 
-            pretty_version = build.version or build.directory_name
-            persistent._update_version[self.url] = pretty_version
+            self.pretty_version = build.version or build.directory_name
+            persistent._update_version[self.url] = self.pretty_version
 
             if self.check_only:
                 renpy.restart_interaction()
@@ -534,21 +591,7 @@ init -1500 python in updater:
 
             # Confirm with the user that the update is available.
 
-            if self.confirm:
-
-                with self.condition:
-                    self.can_cancel = True
-                    self.can_proceed = True
-                    self.state = self.UPDATE_AVAILABLE
-                    self.version = pretty_version
-
-                    while True:
-                        if self.cancelled or self.proceeded:
-                            break
-
-                        self.condition.wait()
-
-            self.can_proceed = False
+            self.prompt_confirm()
 
             if self.cancelled:
                 raise UpdateCancelled()
@@ -578,11 +621,6 @@ init -1500 python in updater:
 
             time.sleep(1.5)
 
-            self.message = None
-            self.progress = None
-            self.can_proceed = True
-            self.can_cancel = False
-
             persistent._update_version[self.url] = None
 
             if self.restart:
@@ -590,29 +628,42 @@ init -1500 python in updater:
             else:
                 self.state = self.DONE_NO_RESTART
 
+            self.message = None
+            self.progress = None
+            self.can_proceed = self.done_pause
+            self.can_cancel = False
+
             renpy.restart_interaction()
 
             return
 
-        def proceed(self):
+        def periodic(self):
+            """
+            Called periodically by the screen.
+            """
+
+            renpy.restart_interaction()
+
+            if self.state == self.DONE or self.state == self.DONE_NO_RESTART:
+                if not self.done_pause:
+                    return self.proceed(force=True)
+
+        def proceed(self, force=False):
             """
             Causes the upgraded to proceed with the next step in the process.
             """
 
-            if not self.can_proceed:
+            if not self.can_proceed and not force:
                 return
 
-            if self.state == self.UPDATE_NOT_AVAILABLE:
-                renpy.full_restart()
-
-            elif self.state == self.ERROR:
-                renpy.full_restart()
-
-            elif self.state == self.CANCELLED:
-                renpy.full_restart()
+            if self.state == self.UPDATE_NOT_AVAILABLE or self.state == self.ERROR or self.state == self.CANCELLED:
+                return False
 
             elif self.state == self.DONE:
-                renpy.quit(relaunch=True)
+                if self.restart == "utter":
+                    renpy.utter_restart()
+                else:
+                    renpy.quit(relaunch=True)
 
             elif self.state == self.DONE_NO_RESTART:
                 return True
@@ -641,15 +692,21 @@ init -1500 python in updater:
             Tries to unlink the file at `path`.
             """
 
-            if os.path.exists(path + ".old"):
-                os.unlink(path + ".old")
-
             if os.path.exists(path):
+
+                import random
+
+                newname = os.path.join(DELETED, os.path.basename(path) + "." + str(random.randint(0, 1000000)))
+
+                try:
+                    os.mkdir(DELETED)
+                except Exception:
+                    pass
 
                 # This might fail because of a sharing violation on Windows.
                 try:
-                    os.rename(path, path + ".old")
-                    os.unlink(path + ".old")
+                    os.rename(path, newname)
+                    os.unlink(newname)
                 except Exception:
                     pass
 
@@ -700,6 +757,10 @@ init -1500 python in updater:
             fn = os.path.join(self.updatedir, "current.json")
 
             if not os.path.exists(fn):
+                if self.allow_empty:
+                    self.current_state = { }
+                    return
+
                 raise UpdateError(_("Either this project does not support updating, or the update status file was deleted."))
 
             with open(fn, "r") as f:
@@ -728,35 +789,105 @@ init -1500 python in updater:
             fn = os.path.join(self.updatedir, "updates.json")
             urlretrieve(self.url, fn)
 
-            with open(fn, "r") as f:
-                self.updates = json.load(f)
-
             with open(fn, "rb") as f:
                 updates_json = f.read()
 
-            if self.public_key is not None:
-                fn = os.path.join(self.updatedir, "updates.json.sig")
-                urlretrieve(self.url + ".sig", fn)
+            # Was updates.json verified?
+            verified = False
 
-                with open(fn, "rb") as f:
-                    import codecs
-                    signature = codecs.decode(f.read(), "base64")
+            # Does updates.json need to be verified?
+            require_verified = False
+
+            # The key for either the current game, or a downloaded game.
+            key = os.path.join(self.updatedir, "key.pem")
+
+            # A key that comes with the downloader app, to seed it.
+            if not os.path.exists(key):
+                key = os.path.join(config.basedir, "public_key.pem")
+
+            # This game's included key, used for initial downloades if the downloader app
+            # doesn't have a key.
+            if not os.path.exists(key):
+                key = os.path.join(config.basedir, "update", "key.pem")
+
+            if os.path.exists(key):
+                require_verified = True
+
+                self.log.write("Verifying with ECDSA.\n")
 
                 try:
-                    rsa.verify(updates_json, signature, self.public_key)
-                except Exception:
-                    raise UpdateError(_("Could not verify update signature."))
 
-                if "monkeypatch" in self.updates:
-                    future.utils.exec_(self.updates["monkeypatch"], globals(), globals())
+                    import renpy.ecsign
+                    verifying_key = renpy.ecsign.pem_to_der(open(key, "rb").read())
+
+                    url = urlparse.urljoin(self.url, "updates.ecdsa")
+                    f = urlopen(url)
+
+                    while True:
+                        signature = f.read(64)
+                        if not signature:
+                            break
+
+                        if renpy.ecsign.verify_data(updates_json, verifying_key, signature):
+                            verified = True
+
+                    self.log.write("Verified with ECDSA.\n")
+
+                except Exception:
+                    if self.log:
+                        import traceback
+                        traceback.print_exc(None, self.log)
+
+            # Old-style RSA signature.
+            if self.public_key is not None:
+                require_verified = True
+
+                self.log.write("Verifying with RSA.\n")
+
+                try:
+
+                    fn = os.path.join(self.updatedir, "updates.json.sig")
+                    urlretrieve(self.url + ".sig", fn)
+
+                    with open(fn, "rb") as f:
+                        import codecs
+                        signature = codecs.decode(f.read(), "base64")
+
+                    rsa.verify(updates_json, signature, self.public_key)
+                    verified = True
+
+                    self.log.write("Verified with RSA.\n")
+
+                except Exception:
+                    if self.log:
+                        import traceback
+                        traceback.print_exc(None, self.log)
+
+            if require_verified and not verified:
+                raise UpdateError(_("Could not verify update signature."))
+
+            self.updates = json.loads(updates_json)
+
+            if "RENPY_TEST_MONKEYPATCH" in os.environ:
+                with open(os.environ["RENPY_TEST_MONKEYPATCH"], "r") as f:
+                    monkeypatch = f.read()
+                    exec(monkeypatch, globals(), globals())
+            elif verified and "monkeypatch" in self.updates:
+                exec(self.updates["monkeypatch"], globals(), globals())
 
         def add_dlc_state(self, name):
-            url = urlparse.urljoin(self.url, self.updates[name]["json_url"])
-            f = urlopen(url)
-            d = json.load(f)
+
+            has_rpu = "rpu_url" in self.updates[name]
+
+            if has_rpu:
+                fl = self.fetch_files_rpu(name)
+                d = { name : fl.to_current_json() }
+
+            else:
+                raise UpdateError(_("The update source does not support RPU updates."))
+
             d[name]["version"] = 0
             self.current_state.update(d)
-
 
         def check_versions(self):
             """
@@ -797,482 +928,6 @@ init -1500 python in updater:
 
             return rv
 
-        def update_filename(self, module, new):
-            """
-            Returns the update filename for the given module.
-            """
-
-            rv = os.path.join(self.updatedir, module + ".update")
-            if new:
-                return rv + ".new"
-
-            return rv
-
-        def prepare(self, module):
-            """
-            Creates a tarfile creating the files that make up module.
-            """
-
-            state = self.current_state[module]
-
-            xbits = set(state["xbit"])
-            directories = set(state["directories"])
-            all = state["files"] + state["directories"]
-            all.sort()
-
-            # Add the update directory and state file.
-            all.append("update")
-            directories.add("update")
-            all.append("update/current.json")
-
-            with tarfile.open(self.update_filename(module, False), "w") as tf:
-                for i, name in enumerate(all):
-
-                    if self.cancelled:
-                        raise UpdateCancelled()
-
-                    self.progress = 1.0 * i / len(all)
-
-                    directory = name in directories
-                    xbit = name in xbits
-
-                    path = self.path(name)
-
-                    if directory:
-                        info = tarfile.TarInfo(name)
-                        info.size = 0
-                        info.type = tarfile.DIRTYPE
-                    else:
-                        if not os.path.exists(path):
-                            continue
-
-                        info = tf.gettarinfo(path, name)
-
-                        if not info.isreg():
-                            continue
-
-                    info.uid = 1000
-                    info.gid = 1000
-                    info.mtime = 0
-                    info.uname = "renpy"
-                    info.gname = "renpy"
-
-                    if xbit or directory:
-                        info.mode = 0o777
-                    else:
-                        info.mode = 0o666
-
-                    if info.isreg():
-                        with open(path, "rb") as f:
-                            tf.addfile(info, f)
-                    else:
-                        tf.addfile(info)
-
-        def download(self, module, standalone=False):
-            """
-            Uses zsync to download the module.
-            """
-
-            start_progress = None
-
-            new_fn = self.update_filename(module, True)
-
-            # Download the sums file.
-            sums = [ ]
-
-            f = urlopen(urlparse.urljoin(self.url, self.updates[module]["sums_url"]))
-            data = f.read()
-
-            for i in range(0, len(data), 4):
-                try:
-                    sums.append(struct.unpack("<I", data[i:i+4])[0])
-                except Exception:
-                    pass
-
-            f.close()
-
-            # Figure out the zsync command.
-
-            zsync_fn = os.path.join(self.updatedir, module + ".zsync")
-
-            # May not exist, but if it does, we want to delete it.
-            try:
-                os.unlink(zsync_fn + ".part")
-            except Exception:
-                pass
-
-            try:
-                os.unlink(new_fn)
-            except Exception:
-                pass
-
-            cmd = [
-                zsync_path("zsync"),
-                "-o", new_fn,
-                ]
-
-            if not standalone:
-                cmd.extend([
-                    "-k", zsync_fn,
-                ])
-
-            if os.path.exists(new_fn + ".part"):
-                self.rename(new_fn + ".part", new_fn + ".part.old")
-
-                if not standalone:
-                    cmd.append("-i")
-                    cmd.append(new_fn + ".part.old")
-
-            if not standalone:
-                for i in self.modules:
-                    cmd.append("-i")
-                    cmd.append(self.update_filename(module, False))
-
-            cmd.append(urlparse.urljoin(self.url, self.updates[module]["zsync_url"]))
-
-            cmd = [ fsencode(i) for i in cmd ]
-
-            self.log.write("running %r\n" % cmd)
-            self.log.flush()
-
-            if renpy.windows:
-
-                CREATE_NO_WINDOW=0x08000000
-                p = subprocess.Popen(cmd,
-                    stdin=subprocess.PIPE,
-                    stdout=self.log,
-                    stderr=self.log,
-                    creationflags=CREATE_NO_WINDOW,
-                    cwd=renpy.fsencode(self.updatedir))
-            else:
-
-                p = subprocess.Popen(cmd,
-                    stdin=subprocess.PIPE,
-                    stdout=self.log,
-                    stderr=self.log,
-                    cwd=renpy.fsencode(self.updatedir))
-
-            p.stdin.close()
-
-            while True:
-                if self.cancelled:
-                    p.kill()
-                    break
-
-                time.sleep(1)
-
-                if p.poll() is not None:
-                    break
-
-                try:
-                    f = open(new_fn + ".part", "rb")
-                except Exception:
-                    self.log.write("partfile does not exist\n")
-                    continue
-
-                done_sums = 0
-
-                with f:
-                    for i in sums:
-
-                        if self.cancelled:
-                            break
-
-                        data = f.read(65536)
-
-                        if not data:
-                            break
-
-                        if (zlib.adler32(data) & 0xffffffff) == i:
-                            done_sums += 1
-
-                raw_progress = 1.0 * done_sums / len(sums)
-
-                if raw_progress == 1.0:
-                    start_progress = None
-                    self.progress = 1.0
-                    continue
-
-                if start_progress is None:
-                    start_progress = raw_progress
-                    self.progress = 0.0
-                    continue
-
-                self.progress = (raw_progress - start_progress) / (1.0 - start_progress)
-
-            p.wait()
-
-            self.log.seek(0, 2)
-
-            if self.cancelled:
-                raise UpdateCancelled()
-
-            # Check the existence of the downloaded file.
-            if not os.path.exists(new_fn):
-                if os.path.exists(new_fn + ".part"):
-                    os.rename(new_fn + ".part", new_fn)
-                else:
-                    raise UpdateError(_("The update file was not downloaded."))
-
-            # Check that the downloaded file has the right digest.
-            import hashlib
-            with open(new_fn, "rb") as f:
-                hash = hashlib.sha256()
-
-                while True:
-                    data = f.read(1024 * 1024)
-
-                    if not data:
-                        break
-
-                    hash.update(data)
-
-                digest = hash.hexdigest()
-
-            if digest != self.updates[module]["digest"]:
-                raise UpdateError(_("The update file does not have the correct digest - it may have been corrupted."))
-
-            if os.path.exists(new_fn + ".part.old"):
-                os.unlink(new_fn + ".part.old")
-
-            if self.cancelled:
-                raise UpdateCancelled()
-
-
-        def download_direct(self, module):
-            """
-            Uses zsync to download the module.
-            """
-
-            import requests
-
-            start_progress = None
-
-            new_fn = self.update_filename(module, True)
-            part_fn = new_fn + ".part.gz"
-
-            # Figure out the zsync command.
-
-            zsync_fn = os.path.join(self.updatedir, module + ".zsync")
-
-            try:
-                os.unlink(new_fn)
-            except Exception:
-                pass
-
-            zsync_url = self.updates[module]["zsync_url"][:-6] + ".update.gz"
-            url = urlparse.urljoin(self.url, zsync_url)
-
-            self.log.write("downloading %r\n" % url)
-            self.log.flush()
-
-            resp = requests.get(url, stream=True)
-
-            if not resp.ok:
-                raise UpdateError(_("The update file was not downloaded."))
-
-            try:
-                length = int(resp.headers.get("Content-Length", "20000000"))
-            except Exception:
-                length = 20000000
-
-            done = 0
-
-            with open(part_fn, "wb") as part_f:
-
-                for data in resp.iter_content(1000000):
-
-                    if self.cancelled:
-                        break
-
-                    part_f.write(data)
-
-                    done += len(data)
-
-                    self.progress = min(1.0, 1.0 * done / length)
-
-            resp.close()
-
-            if self.cancelled:
-                raise UpdateCancelled()
-
-            # Decompress the file.
-            import gzip
-
-            with gzip.open(part_fn, "rb") as gz_f:
-                with open(new_fn, "wb") as new_f:
-
-                    while True:
-                        data = gz_f.read(1000000)
-
-                        if not data:
-                            break
-
-                        new_f.write(data)
-
-            os.unlink(part_fn)
-
-            # Check that the downloaded file has the right digest.
-            import hashlib
-            with open(new_fn, "rb") as f:
-                hash = hashlib.sha256()
-
-                while True:
-                    data = f.read(1024 * 1024)
-
-                    if not data:
-                        break
-
-                    hash.update(data)
-
-                digest = hash.hexdigest()
-
-            if digest != self.updates[module]["digest"]:
-                raise UpdateError(_("The update file does not have the correct digest - it may have been corrupted."))
-
-            if self.cancelled:
-                raise UpdateCancelled()
-
-
-
-        def unpack(self, module):
-            """
-            This unpacks the module. Directories are created immediately, while files are
-            created as filename.new, and marked to be moved into position when all packing
-            is done.
-            """
-
-            update_fn = self.update_filename(module, True)
-
-            # First pass, just figure out how many tarinfo objects are in the tarfile.
-            tf_len = 0
-            with tarfile.open(update_fn, "r") as tf:
-                for i in tf:
-                    tf_len += 1
-
-            with tarfile.open(update_fn, "r") as tf:
-                for i, info in enumerate(tf):
-
-                    self.progress = 1.0 * i / tf_len
-
-                    if info.name == "update":
-                        continue
-
-                    # Process the status info for the current module.
-                    if info.name == "update/current.json":
-                        tff = tf.extractfile(info)
-                        state = json.load(tff)
-                        tff.close()
-
-                        self.new_state[module] = state[module]
-
-                        continue
-
-                    path = self.path(info.name)
-
-                    # Extract directories.
-                    if info.isdir():
-                        try:
-                            os.makedirs(path)
-                        except Exception:
-                            pass
-
-                        continue
-
-                    if not info.isreg():
-                        raise UpdateError(__("While unpacking {}, unknown type {}.").format(info.name, info.type))
-
-                    # Extract regular files.
-                    tff = tf.extractfile(info)
-                    new_path = path + ".new"
-                    with open(new_path, "wb") as f:
-                        while True:
-                            data = tff.read(1024 * 1024)
-                            if not data:
-                                break
-                            f.write(data)
-
-                    tff.close()
-
-                    if info.mode & 1:
-                        # If the xbit is set in the tar info, set it on disk if we can.
-                        try:
-                            umask = os.umask(0)
-                            os.umask(umask)
-
-                            os.chmod(new_path, 0o777 & (~umask))
-                        except Exception:
-                            pass
-
-                    self.moves.append(path)
-
-        def move_files(self):
-            """
-            Move new files into place.
-            """
-
-            for path in self.moves:
-
-                self.unlink(path)
-
-                if os.path.exists(path):
-                    self.log.write("could not rename file %s" % path)
-
-                    with open(DEFERRED_UPDATE_FILE, "a") as f:
-                        f.write("R " + path + "\r\n")
-
-                    continue
-
-                try:
-                    os.rename(path + ".new", path)
-                except Exception:
-                    pass
-
-        def delete_obsolete(self):
-            """
-            Delete files and directories that have been made obsolete by the upgrade.
-            """
-
-            def flatten_path(d, key):
-                rv = set()
-
-                for i in d.values():
-                    for j in i[key]:
-                        rv.add(self.path(j))
-
-                return rv
-
-            old_files = flatten_path(self.current_state, 'files')
-            old_directories = flatten_path(self.current_state, 'directories')
-
-            new_files = flatten_path(self.new_state, 'files')
-            new_directories = flatten_path(self.new_state, 'directories')
-
-            old_files -= new_files
-            old_directories -= new_directories
-
-            old_files = list(old_files)
-            old_files.sort()
-            old_files.reverse()
-
-            old_directories = list(old_directories)
-            old_directories.sort()
-            old_directories.reverse()
-
-            for i in old_files:
-                self.unlink(i)
-
-                if os.path.exists(i):
-                    self.log.write("could not delete file %s" % i)
-                    with open(DEFERRED_UPDATE_FILE, "w") as f:
-                        f.write("D " + i + "\r\n")
-
-            for i in old_directories:
-                try:
-                    os.rmdir(i)
-                except Exception:
-                    pass
-
         def save_state(self):
             """
             Saves the current state to update/current.json
@@ -1281,7 +936,7 @@ init -1500 python in updater:
             fn = os.path.join(self.updatedir, "current.json")
 
             with open(fn, "w") as f:
-                json.dump(self.new_state, f)
+                json.dump(self.new_state, f, indent=2)
 
         def clean(self, fn):
             """
@@ -1298,11 +953,6 @@ init -1500 python in updater:
         def clean_old(self):
             for i in self.modules:
                 self.clean(i + ".update")
-
-        def clean_new(self):
-            for i in self.modules:
-                self.clean(i + ".update.new")
-                self.clean(i + ".zsync")
 
     installed_state_cache = None
 
@@ -1379,7 +1029,7 @@ init -1500 python in updater:
         return not not get_installed_packages(base)
 
 
-    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True, patch=True):
+    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True, patch=True, prefer_rpu=True, allow_empty=False, done_pause=True, allow_cancel=True, screen="updater"):
         """
         :doc: updater
 
@@ -1414,7 +1064,9 @@ init -1500 python in updater:
             for dlc.
 
         `restart`
-            Restart the game after the update.
+            If true, the game will be re-run when the update completes. If
+            "utter", :func:`renpy.utter_restart` will be called instead. If False,
+            the update will simply end.
 
         `confirm`
             Should Ren'Py prompt the user to confirm the update? If False, the
@@ -1425,14 +1077,55 @@ init -1500 python in updater:
             changed data. If false, Ren'Py will download a complete copy of
             the game, and update from that. This is set to false automatically
             when the url does not begin with "http:".
+
+            This is ignored if the RPU update format is being used.
+
+        `prefer_rpu`
+            No longer used, but kept for backwards compatibility.
+
+        `allow_empty`
+            If True, Ren'Py will allow the update to proceed even if the
+            base directory does not contain update information. (`add` must
+            be provided in this case.)
+
+        `done_pause`
+            If true, the game will pause after the update is complete. If false,
+            it will immediately proceed (either to a restart, or a return).
+
+        `allow_cancel`
+            If true, the user will be allowed to cancel the update. If false,
+            the user will not be allowed to cancel the update.
+
+        `screen`
+            The name of the screen to use.
         """
 
         global installed_packages_cache
         installed_packages_cache = None
 
-        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart, confirm=confirm, patch=patch)
-        ui.timer(.1, repeat=True, action=renpy.restart_interaction)
-        renpy.call_screen("updater", u=u)
+        u = Updater(
+            url=url,
+            base=base,
+            force=force,
+            public_key=public_key,
+            simulate=simulate,
+            add=add,
+            restart=restart,
+            confirm=confirm,
+            patch=patch,
+            prefer_rpu=prefer_rpu,
+            allow_empty=allow_empty,
+            done_pause=done_pause,
+            allow_cancel=allow_cancel,
+        )
+
+        ui.timer(.1, repeat=True, action=u.periodic)
+
+        if not renpy.call_screen(screen, u=u):
+            renpy.full_restart()
+        else:
+            return
+
 
 
     @renpy.pure
@@ -1541,8 +1234,73 @@ init -1500 python in updater:
 
     renpy.arguments.register_command("update", update_command)
 
+
+    # The update object that's being used to update the game.
+    downloader = None
+    downloader_kwargs = None
+
+    def start_game_download(url, **kwargs):
+        """
+        :doc: downloader
+
+        Starts downloading the game data from `url`. This begins the process
+        of determining what needs to be downloaded, and returns an Update object.
+        """
+
+        default_kargs = dict(
+            url=url,
+            base=renpy.get_alternate_base(config.basedir, True),
+            add=["gameonly"],
+            prefer_rpu=True,
+            restart="utter",
+            allow_empty=True,
+            allow_cancel=False,
+            done_pause=False,
+        )
+
+        for k, v in default_kargs.items():
+            kwargs.setdefault(k, v)
+
+        global downloader
+        global downloader_kwargs
+
+        downloader_kwargs = kwargs
+        downloader = Updater(confirm=True, **kwargs)
+
+        return downloader
+
+    def continue_game_download(screen="downloader"):
+        """
+        :doc: downloader
+
+        Continues downloading the game data. This will loop until the
+        download is complete, or the user exits the game.
+        """
+
+        global downloader
+
+        # Avoid showing the update_available screen.
+
+        downloader.confirm = False
+
+        while downloader.state == downloader.UPDATE_AVAILABLE:
+            renpy.pause(.1)
+
+        # Loop, attempting to download the game until the download
+        # completes or the player gives up.
+
+        while True:
+
+            ui.timer(.1, repeat=True, action=downloader.periodic)
+            renpy.call_screen(screen, u=downloader)
+
+            downloader = Updater(confirm=False, **downloader_kwargs)
+
+
 init -1500:
-    screen updater:
+
+    screen updater(u):
+        layer config.interface_layer
 
         add "#000"
 
@@ -1559,7 +1317,7 @@ init -1500:
                 vbox:
 
                     if u.state == u.ERROR:
-                        text _("An error has occured:")
+                        text _("An error has occurred:")
                     elif u.state == u.CHECKING:
                         text _("Checking for updates.")
                     elif u.state == u.UPDATE_NOT_AVAILABLE:
@@ -1598,3 +1356,57 @@ init -1500:
 
                 if u.can_cancel:
                     textbutton _("Cancel") action u.cancel
+
+
+    screen downloader(u):
+        layer config.interface_layer
+
+        style_prefix "downloader"
+
+        frame:
+
+            has vbox
+
+            if u.state == u.CHECKING or u.state == u.PREPARING:
+                text _("Preparing to download the game data.")
+            elif u.state == u.DOWNLOADING or u.state == u.UNPACKING:
+                text _("Downloading the game data.")
+            elif u.state == u.FINISHING or u.state == u.DONE:
+                text _("The game data has been downloaded.")
+            else: # An error or unknown state.
+                text _("An error occurred when trying to download game data:")
+
+                if u.message is not None:
+                    text "[u.message!q]"
+
+                text _("This game cannot be run until the game data has been downloaded.")
+
+            if u.progress is not None:
+                null height gui._scale(10)
+                bar value (u.progress or 0.0) range 1.0
+
+            if u.can_proceed:
+                textbutton _("Retry") action u.proceed
+
+    style downloader_frame:
+        xalign 0.5
+        xsize 0.5
+        xpadding gui._scale(20)
+
+        ypos .25
+        ypadding gui._scale(20)
+
+    style downloader_vbox:
+        xfill True
+        spacing gui._scale(10)
+
+    style downloader_text:
+        xalign 0.5
+        text_align 0.5
+        layout "subtitle"
+
+    style downloader_label:
+        xalign 0.5
+
+    style downloader_button:
+        xalign 0.5

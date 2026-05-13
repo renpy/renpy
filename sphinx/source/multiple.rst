@@ -1,5 +1,3 @@
-.. _multiple-character-dialogue:
-
 Multiple Character Dialogue
 ===========================
 
@@ -39,9 +37,9 @@ multiple times, with the styles of various displayables systematically
 renamed to reflect the block number and the number of blocks in total.
 
 Specifically, multiple dialogue uses styles with names of the form
-block`n`_multiple`m`_\`style`, where `n` is the one-based number of
-the block, and `m` is the number of blocks of dialogue being
-displayed at once.
+block\ `n`\ _multiple\ `m`\ _\ `stylename`\ , where `n` is the number
+of the block (starting from 1, not 0), and `m` is the number of blocks
+of dialogue being displayed at once.
 
 In our example above, the window corresponding to each block of dialogue
 are given the names:

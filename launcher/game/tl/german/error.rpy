@@ -23,7 +23,7 @@ translate german strings:
 
     # 00gltest.rpy:93
     old "Enable"
-    new "Enable"
+    new "Aktivieren"
 
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
@@ -39,7 +39,7 @@ translate german strings:
 
     # 00gltest.rpy:148
     old "This computer is not using shaders."
-    new "Dieser Computer verwendet keine Shaders."
+    new "Dieser Computer verwendet keine Shader."
 
     # 00gltest.rpy:150
     old "This computer is displaying graphics slowly."
@@ -91,27 +91,31 @@ translate german strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Select Gamepad to Calibrate"
+    # Automatic translation.
+    new "Gamepad zum Kalibrieren auswählen"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No Gamepads Available"
+    # Automatic translation.
+    new "Keine Gamepads verfügbar"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
-    new "Calibrating [name] ([i]/[total])"
+    # Automatic translation.
+    new "Kalibrierung von [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
     old "Press or move the [control!s] [kind]."
-    new "Press or move the [control!s] [kind]."
+    new "Drücke oder bewege [control!s] [kind] ."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Skip (A)"
+    # Automatic translation.
+    new "Überspringen (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    new "Back (B)"
+    new "Zurück (B)"
 
     # _errorhandling.rpym:495
     old "Open Traceback"
@@ -123,11 +127,13 @@ translate german strings:
 
     # _errorhandling.rpym:499
     old "Copy to Clipboard"
-    new "Copy to Clipboard"
+    # Automatic translation.
+    new "In die Zwischenablage kopieren"
 
     # _errorhandling.rpym:501
     old "Copies the traceback.txt file to the clipboard."
-    new "Copies the traceback.txt file to the clipboard."
+    # Automatic translation.
+    new "Kopiert die Datei traceback.txt in die Zwischenablage."
 
     # _errorhandling.rpym:519
     old "An exception has occurred."
@@ -135,11 +141,11 @@ translate german strings:
 
     # _errorhandling.rpym:538
     old "Rollback"
-    new "Zurückscrollen"
+    new "Zurückspulen"
 
     # _errorhandling.rpym:540
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Versucht zu einem früheren Zeitpunkt zu gehen und ermöglicht es zu speichern oder eine andere Auswahl zu treffen."
+    new "Versucht zu einem früheren Zeitpunkt zu spulen, damit Du erneut speichern oder eine andere Entscheidung treffen kannst."
 
     # _errorhandling.rpym:543
     old "Ignore"
@@ -147,7 +153,7 @@ translate german strings:
 
     # _errorhandling.rpym:545
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "Ignoriert den Fehler und ermöglicht es, fortzusetzen. Dies führt oft zu weiteren Fehlern."
+    new "Ignoriert den Fehler und ermöglicht es, fortzufahren. Dies führt oft zu weiteren Fehlern."
 
     # _errorhandling.rpym:548
     old "Reload"
@@ -167,7 +173,7 @@ translate german strings:
 
     # _errorhandling.rpym:606
     old "Open Parse Errors"
-    new "Parse Errors öffnen"
+    new "Syntaxfehler öffnen"
 
     # _errorhandling.rpym:608
     old "Opens the errors.txt file in a text editor."
@@ -175,5 +181,131 @@ translate german strings:
 
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
-    new "Copies the errors.txt file to the clipboard."
+    # Automatic translation.
+    new "Kopiert die Datei errors.txt in die Zwischenablage."
+
+
+translate german strings:
+
+    # renpy/common/00gltest.rpy:89
+    old "Renderer"
+    new "Renderer"
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "Force GL Renderer"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "Force ANGLE Renderer"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    # Automatic translation.
+    new "GLES-Renderer erzwingen"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    # Automatic translation.
+    new "GL2-Renderer erzwingen"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    # Automatic translation.
+    new "ANGLE2-Renderer erzwingen"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    # Automatic translation.
+    new "GLES2-Renderer erzwingen"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    # Automatic translation.
+    new "Aktivieren (keine Sperrliste)"
+
+    # renpy/common/00gltest.rpy:159
+    old "Powersave"
+    new "Energiesparen"
+
+    # renpy/common/00gltest.rpy:173
+    old "Framerate"
+    new "Framerate"
+
+    # renpy/common/00gltest.rpy:177
+    old "Screen"
+    # Automatic translation.
+    new "Bildschirm"
+
+    # renpy/common/00gltest.rpy:181
+    old "60"
+    new "60"
+
+    # renpy/common/00gltest.rpy:185
+    old "30"
+    new "30"
+
+    # renpy/common/00gltest.rpy:191
+    old "Tearing"
+    new "Tearing"
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    # Automatic translation.
+    new "Dieses Spiel erfordert die Verwendung von GL2, das nicht initialisiert werden kann."
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "Die Datei {a=edit:1:log.txt}log.txt{/a} kann Informationen enthalten, die Dir helfen, das Problem mit Deinem Computer zu lösen."
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "Weitere Einzelheiten zur Behebung dieses Problems findest Du in der Dokumentation {a=[url]}{/a} ."
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    # Automatic translation.
+    new "Renderoptionen ändern"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "Drücke oder bewege die Taste '[control!s]' [kind]."
+
+    # renpy/common/_errorhandling.rpym:555
+    old "Open"
+    new "Öffnen"
+
+    # renpy/common/_errorhandling.rpym:559
+    old "Copy BBCode"
+    # Automatic translation.
+    new "BBCode kopieren"
+
+    # renpy/common/_errorhandling.rpym:561
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    # Automatic translation.
+    new "Kopiert die Datei traceback.txt in die Zwischenablage als BBcode für Foren wie https://lemmasoft.renai.us/."
+
+    # renpy/common/_errorhandling.rpym:563
+    old "Copy Markdown"
+    # Automatic translation.
+    new "Markdown kopieren"
+
+    # renpy/common/_errorhandling.rpym:565
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    # Automatic translation.
+    new "Kopiert die Datei traceback.txt in die Zwischenablage als Markdown für Discord."
+
+    # renpy/common/_errorhandling.rpym:626
+    old "Ignores the exception, allowing you to continue."
+    new "Ignoriert den Fehler, so dass Du fortfahren kannst."
+
+    # renpy/common/_errorhandling.rpym:637
+    old "Console"
+    # Automatic translation.
+    new "Konsole"
+
+    # renpy/common/_errorhandling.rpym:639
+    old "Opens a console to allow debugging the problem."
+    # Automatic translation.
+    new "Öffnet eine Konsole, um das Problem zu beheben."
 

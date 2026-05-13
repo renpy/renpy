@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,8 +27,7 @@
 init -1400:
 
     transform reset:
-        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False
-        xsize None ysize None fit None crop None
+        _reset True
 
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
@@ -63,7 +62,7 @@ init -1400:
         xpos 1.0 xanchor 0.0 ypos 1.0 yanchor 1.0
 
     transform default:
-        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False
+        alpha 1.0 rotate None zoom 1.0 xzoom 1.0 yzoom 1.0 align (0, 0) alignaround (0, 0) subpixel False
         xsize None ysize None fit None crop None
         xpos 0.5 xanchor 0.5 ypos 1.0 yanchor 1.0
 
@@ -105,32 +104,20 @@ init -1400 python:
 
     _define = define = object()
 
-    # Ease images around. These are basically cosine-warped moves.
-    def _ease_out_time_warp(x):
-        import math
-        return 1.0 - math.cos(x * math.pi / 2.0)
-
-    def _ease_in_time_warp(x):
-        import math
-        return math.cos((1.0 - x) * math.pi / 2.0)
-
-    def _ease_time_warp(x):
-        import math
-        return .5 - math.cos(math.pi * x) / 2.0
-
-    # Back up the move transition, so that if MoveTransition gets replaced by
-    # renpy.compat, this still works.
-    __MoveTransition = MoveTransition
+    _ease_out_time_warp = _warper.easeout
+    _ease_in_time_warp = _warper.easein
+    _ease_time_warp = _warper.ease
 
     # This defines a family of move transitions, using the old-style methods.
     def move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
-        """
+        r"""
         :doc: transition_family
 
-        This defines a family of move transitions, similar to the move and ease
-        transitions. For a given `prefix`, this defines the transitions:
+        This defines a family of :class:`move transitions <MoveTransition>`,
+        similar to the :var:`move` and :var:`ease` transitions. For a given
+        `prefix`, this defines the transitions:
 
-        * *prefix*- A transition that takes `delay` seconds to move images that
+        * *prefix* - A transition that takes `delay` seconds to move images that
           changed positions to their new locations.
 
         * *prefix*\ inleft, *prefix*\ inright, *prefix*\ intop, *prefix*\ inbottom - Transitions
@@ -143,10 +130,13 @@ init -1400 python:
           positions to their new locations, with newly hidden images leaving via
           the appropriate side.
 
+        The other parameters are as :class:`MoveTransition` takes them:
+
         `time_warp`, `in_time_warp`, `out_time_warp`
-            Time warp functions that are given a time from 0.0 to 1.0 representing
-            the fraction of the move that is complete, and return a value in the same
-            range giving the fraction of a linear move that is complete.
+            :ref:`Time warp functions <warpers>` that are given a time from 0.0
+            to 1.0 representing the fraction of the move that is complete, and
+            return a value in the same range giving the fraction of a linear
+            move that is complete.
 
             This can be used to define functions that ease the images around,
             rather than moving them at a constant speed.
@@ -155,7 +145,9 @@ init -1400 python:
             newly shown images, and newly hidden images, respectively.
 
         `old`
-            If true, the transitions to move the old displayables, rather than the new ones.
+            If true, when a tag gets its image changed during the transition,
+            the old image will be used in preference to the new one. Otherwise,
+            the new images will be used.
 
         `layers`
             The layers the transition will apply to.
@@ -166,7 +158,6 @@ init -1400 python:
             # with "move".
             init python:
                 define.move_transitions("move", 0.5)
-
         """
 
         moves = {
@@ -174,7 +165,8 @@ init -1400 python:
                 delay,
                 old=old,
                 layers=layers,
-                time_warp=time_warp),
+                time_warp=time_warp,
+                ),
 
             "inright" : MoveTransition(
                 delay,
@@ -372,8 +364,8 @@ init -1400:
     define hpunch = Move((15, 0), (-15, 0), .10, bounce=True, repeat=True, delay=.275)
 
     # These use the ImageDissolve to do some nifty effects.
-    define blinds = ImageDissolve(im.Tile("blindstile.png"), 1.0, 8)
-    define squares = ImageDissolve(im.Tile("squarestile.png"), 1.0, 256)
+    define blinds = ImageDissolve(Tile("blindstile.png"), 1.0, 8)
+    define squares = ImageDissolve(Tile("squarestile.png"), 1.0, 256)
 
     transform Swing(delay=1.0, vertical=False, reverse=False, background="#000", flatten=True, new_widget=None, old_widget=None):
         delay delay
@@ -383,6 +375,7 @@ init -1400:
 
         contains:
             perspective True
+            events False
 
             # Note: (bool(x) * v) == v when x is true, or 0 otherwise.
 
@@ -393,6 +386,8 @@ init -1400:
                 bool(vertical) * (-90.0 if reverse else 90.0),
                 bool(not vertical) * (-90.0 if reverse else 90.0),
                 0.0)
+
+            events True
 
             Transform(new_widget, mesh=flatten)
             matrixtransform RotateMatrix(
@@ -435,20 +430,20 @@ init -1400:
 
         swing = Swing()
 
-init -1400:
+init -1400 python:
 
     # The default narrator.
-    define _narrator = Character(None, kind=adv, what_style='say_thought')
-    define centered = Character(None, what_style="centered_text", window_style="centered_window", statement_name="say-centered")
-    define vcentered = Character(None, what_style="centered_vtext", window_style="centered_window", statement_name="say-centered")
+    _narrator = Character(None, kind=adv, what_style='say_thought')
+    adv_narrator = _narrator
+
+    # Centered characters.
+    centered = Character(None, what_style="centered_text", window_style="centered_window", statement_name="say-centered")
+    vcentered = Character(None, what_style="centered_vtext", window_style="centered_window", statement_name="say-centered")
 
 
 init 1400 python:
     if not hasattr(store, 'narrator'):
         narrator = _narrator
-
-    renpy.pure('narrator')
-    renpy.pure('name_only')
 
     # This is necessary to ensure that config.default_transform works.
     if config.default_transform:

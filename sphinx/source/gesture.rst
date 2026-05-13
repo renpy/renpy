@@ -1,3 +1,5 @@
+.. _gesture:
+
 Gestures
 ========
 
@@ -24,11 +26,10 @@ a touchscreen device.
 
     A map from gesture to the event activated by the gesture.
 
-.. var:: config.dispatch_gesture = None
+.. var:: config.dispatch_gesture : Callable
 
     The function that is used to dispatch gestures. This function is
     passed the raw gesture string. If it returns non-None, the
-    interaction ends. If this variable is None, a default dispatch
-    function is used.
+    interaction ends.
 
 .. include:: inc/gesture

@@ -5,11 +5,11 @@ import os
 import re
 
 import pathlib
+
 base = pathlib.Path(__file__).absolute().parent.parent
 
 
 def main():
-
     with open(base / "launcher" / "game" / "installer.rpy", "w") as out:
         out.write("""
 # This file imports the extensions API into the default store, and makes it

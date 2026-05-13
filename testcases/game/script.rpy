@@ -1,4 +1,4 @@
-init python:
+﻿init python:
     import os
 
     autotest = False
@@ -21,7 +21,7 @@ init python:
 
     renpy.arguments.register_command("auto", auto_command)
 
-    JAPANESE = "../../launcher/game/fonts/MTLc3m.ttf"
+    JAPANESE = "../../sdk-fonts/SourceHanSansLite.ttf"
 
 image eileen happy = "eileen_happy.png"
 image eileen vhappy = "eileen_vhappy.png"
@@ -54,6 +54,9 @@ label start:
 
         "Gallery":
             call gallery
+
+        "Drag and Drop":
+            call drag_and_drop
 
         "Done.":
             return
@@ -91,7 +94,7 @@ screen vtext_test:
     text "「可愛いね〜」と、彼女は言った。":
         vertical True
         font JAPANESE
-        xpos 400 ypos 200
+        xpos 400 ypos 100
         xanchor 0.5
         yanchor 0.0
 
@@ -115,7 +118,7 @@ screen text1:
             drop_shadow_color "#000"
 
         text "Testing outlines.":
-           outlines [ (2, "#000", 0, 0) ]
+            outlines [ (2, "#000", 0, 0) ]
 
         text "Testing changing the kerning value, with AA turned off.":
             kerning 2
@@ -138,14 +141,14 @@ screen text1:
             language "korean-with-spaces"
             layout "subtitle"
             xalign 0.5
-            text_align 0.5
+            textalign 0.5
 
         text "ビジュアルノベル、ヴィジュアルノベル（visual novel）とは、コンピュータゲームの一ジャンルである。ビジュアルノベルそれ自体もアドベンチャーゲームの一種に分類される。ノベルゲームやサウンドノベルと呼ばれることもある。":
             font JAPANESE
 
-        text "Min-width & Text_align":
+        text "Min-width & Textalign":
             min_width 400
-            text_align 1.0
+            textalign 1.0
 
         text "This will be typed out slowly.":
             slow_cps 40
@@ -244,5 +247,64 @@ label retain_after_load:
 
     return
 
+###############################################################################
+# Drag and Drop
+###############################################################################
 
+init python:
+
+    def peg_dragged(drags, drop):
+        if not drop:
+            SetScreenVariable("success", False)()
+        else:
+            SetScreenVariable("success", True)()
+
+
+screen drag_and_drop():
+    default success = False
+
+    draggroup:
+
+        drag:
+            id "peg"
+            drag_name "Square Peg"
+            draggable True
+            droppable False
+            dragged peg_dragged
+            xpos 100 ypos 100
+
+            add Solid("#f00", xysize=(100, 100))
+
+        drag:
+            id "hole"
+            drag_name "Square Hole"
+            draggable True
+            droppable True
+            xpos 450 ypos 140
+
+            add Solid("#800", xysize=(150, 150))
+
+    if success:
+        text "Success!" xpos 300 ypos 300 id "success"
+
+label drag_and_drop:
+    call screen drag_and_drop
     return
+
+###############################################################################
+# Scroll
+###############################################################################
+
+screen scroll_screen:
+    viewport:
+        id "scroll_vp"
+        draggable True
+        mousewheel True
+
+        vbox:
+            spacing 10
+
+            for i in range(50):
+                text "This is line [i]."
+
+            textbutton "Close" action Hide("scroll_screen") id "close_screen_button"

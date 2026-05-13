@@ -1,3 +1,5 @@
+.. _live2d:
+
 Live2D Cubism
 =============
 
@@ -19,16 +21,10 @@ processes the motions and expressions to determine the values of
 the parameters. This is passed to the Cubism SDK for Native, which gives
 Ren'Py back a list of meshes to show. Ren'Py then renders these meshes, and the result is a Live2D character on the screen.
 
-Ren'Py supports Live2D animations in the Cubism 3 and Cubism 4 formats.
+Ren'Py supports Live2D animations in the Cubism 3, 4 and 5 formats.
 It supports the playback of expressions and motions.
 
 .. warning::
-
-    Live2D is not supported on the x86_64 Android platform, as a DLL is not
-    provided for this platform. This means that it may have problems running
-    on the Android emulator or ChromeOS.
-
-    Live2D is not supported on the web platform.
 
     Installing Live2D on iOS requires copying the static libraries into your
     iOS project by hand.
@@ -44,21 +40,10 @@ business makes more than a certain amount of money a year.
 
 Once you've downloaded Live2D, you can install it from the Ren'Py launcher. To
 install, go to "preferences", then click "Install libraries". Place the
-CubismSdkForNative-4-r.1.zip file in the Ren'Py SDK directory, which can
+:file:`CubismSdkForNative-5-r.1.zip` file in the Ren'Py SDK directory, which can
 be accessed using the button in the bottom right of the install libraries
 screen. Then click "Install Live2D Cubism SDK for Native". After a short
 amount of time, Live2D will be installed.
-
-Opt in to GL2
--------------
-
-To use Live2D, you'll need to opt in to the Model-based renderer, by adding
-the line::
-
-    define config.gl2 = True
-
-to your game. This has to be done once per game.
-
 
 Defining Animations
 -------------------
@@ -108,14 +93,14 @@ Live2D animations are defined using the Live2D displayable and the image stateme
 
     `nonexclusive`
         If not None, this should be a list of names of nonexclusive expressions.
-        Expressions default to being exlcusive, with only one beign shown at
+        Expressions default to being exclusive, with only one being shown at
         a time. If listed here, any number of nonexclusive expressions can be
         shown, in addition to one exclusive expression.
 
     `seamless`
         This determines if seamless looping should be used. Seamless looping
         avoids fading between loops of a single motion. This may be True to
-        enable seamless looping all the time, False to dispable it all the
+        enable seamless looping all the time, False to disable it all the
         time, or a set of motions to be looped.
 
     `default_fade`
@@ -134,7 +119,7 @@ Live2D animations are defined using the Live2D displayable and the image stateme
     `attribute_filter`
         If not None, this is a function that takes a tuple of attributes,
         and returns a second tuple of attributes. This is usually used to
-        filter out nonexclusice attributes that conflict with each other. The attributes
+        filter out nonexclusive attributes that conflict with each other. The attributes
         are ordered such that more recently requested attributes come first,
         meaning that in the case of a conflict, the first attribute should
         win.
@@ -151,8 +136,8 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         method of the passed Live2D object.
         The function should return a delay, in seconds, after which it will
         be called again, or None to be called again at the start of the next
-        interaction. Note that as long the motion is running, this function
-        will also be called every frame.
+        interaction. The function is also called whenever the displayable is
+        re-rendered.
 
     The difference between `attribute_function` and `attribute_filter` is
     that the former is generally used to compute replacement - the presence
@@ -170,8 +155,25 @@ Live2D animations are defined using the Live2D displayable and the image stateme
 
     .. method:: blend_parameter(name, blend, value, weight=1.0)
 
-        This method blends the current value of the parameter with passed.
-        This have no effect outside of `update_function`.
+        This method blends the current value of the parameter with `value`
+        This has no effect outside of `update_function`.
+
+        `name`
+            A string giving the name of the parameter to change.
+
+        `blend`
+            One of "Add", "Multiply" or "Overwrite". The blend kind that will be used.
+
+        `value`
+            A float giving the value that will be blended in.
+
+        `weight`
+            A float between 0.0 and 1.0, the weight by which the new value will change the current value.
+
+    .. method:: blend_opacity(name, blend, value, weight=1.0)
+
+        This method blends the current value of the part opacity with `value`
+        This has no effect outside of `update_function`.
 
         `name`
             Name of parameter to change defined for this model.
@@ -180,10 +182,11 @@ Live2D animations are defined using the Live2D displayable and the image stateme
             One of "Add", "Multiply" or "Overwrite". The blend kind that will be used.
 
         `value`
-            The value to be used.
+            A float giving the opacity value that will be blended in.
 
         `weight`
-            Float from 0.0 to 1.0, the weight by which the new value will change the current value.
+            A float between 0.0 and 1.0, the weight by which the new value will change the current value.
+
 
 There is a config variable that can help in debugging what motions and
 expressions were loaded from .model3.json files:
@@ -202,6 +205,21 @@ defining different zooms and scaling factors. ::
 
     image hiyori close = Live2D("Resources/Hiyori", base=.6)
     image hiyori far = Live2D("Resources/Hiyori", base=.9)
+
+Keep in mind that the user's hardware may be unable to init Live2D, and in that
+case a single call to Live2D() will keep the entire project from loading. 
+If your game should be able to work even without Live2D, you could use a wrapper
+or workaround, for example::
+
+    init python:
+        def MyLive2D(*args, fallback=Placeholder(text="no live2d"), **kwargs):
+            if renpy.has_live2d():
+                return Live2D(*args, **kwargs)
+            else:
+                return fallback
+
+    image kobayashi = MyLive2D(...)
+    image eileen moving = MyLive2D(..., fallback="eileen happy")
 
 Using Animations
 ----------------

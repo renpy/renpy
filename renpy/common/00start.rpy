@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -56,6 +56,9 @@ init -1600 python hide:
     # Callbacks to run after load.
     config.after_load_callbacks = [ ]
 
+    # Callback to run before load.
+    config.before_load_callbacks = [ ]
+
     # Should we suppress overlay during the splashscreen?
     config.splashscreen_suppress_overlay = True
 
@@ -64,6 +67,9 @@ init -1600 python hide:
 
     # When should start_store happen?
     config.early_start_store = False
+
+    # A list of channes to stop playing when entering the main menu.
+    config.main_menu_stop_channels = [ "sound", "voice", "movie" ]
 
 init -1600 python:
 
@@ -77,7 +83,19 @@ init -1600 python:
 
         language = os.environ.get("RENPY_LANGUAGE") or config.language or _preferences.language
 
-        renpy.change_language(language)
+        renpy.change_language(language, force=True)
+
+# Called before a load.
+label _before_load:
+
+    if renpy.has_label("before_load"):
+        call expression "before_load"
+
+    python hide:
+        for i in config.before_load_callbacks:
+            i()
+
+    return
 
 # This fixes up the context, if necessary, then calls the real
 # after_load.
@@ -89,12 +107,16 @@ label _after_load:
         main_menu = False
         _in_replay = None
 
-        _init_language()
+        # Older save games could have this set to non-None, so reset it.
+        _side_image_attributes = None
+
 
     python hide:
 
         for i in config.after_load_callbacks:
             i()
+
+        _init_language()
 
         if config.after_load_transition:
             renpy.transition(config.after_load_transition, force=True)
@@ -127,6 +149,8 @@ label _after_warp:
         renpy.context()._main_menu = False
         main_menu = False
         _in_replay = None
+
+        _init_language()
 
     if renpy.has_label("after_warp"):
         jump expression "after_warp"
@@ -169,12 +193,9 @@ label _splashscreen:
     python:
 
         if config.splashscreen_suppress_overlay:
-            renpy.dynamic("suppress_overlay", "_confirm_quit")
-            suppress_overlay = True
-            _confirm_quit = False
+            renpy.dynamic(suppress_overlay=True, _confirm_quit=False)
 
-        renpy.dynamic("_autosave")
-        _autosave = False
+        renpy.dynamic(_autosave=False)
 
     jump expression "splashscreen"
 
@@ -193,6 +214,7 @@ label _start:
         call _start_store
 
     python:
+        _init_language()
 
         # Predict the main menu. When a load occurs, the loaded data will
         # overwrite the prediction requests.
@@ -229,6 +251,10 @@ label _start:
     $ _old_history = _history
     $ _history = False
 
+    python hide:
+        for i in config.main_menu_stop_channels:
+            renpy.music.stop(channel=i, fadeout=0.0)
+
     if renpy.has_label("splashscreen") and (not _restart) and (not renpy.os.environ.get("RENPY_SKIP_SPLASHSCREEN", None)):
         call _splashscreen from _call_splashscreen_1
 
@@ -243,8 +269,6 @@ label _start:
         $ renpy.music.play(config.main_menu_music, if_changed=True, fadein=config.main_menu_music_fadein)
     else:
         $ renpy.music.stop()
-
-    $ renpy.music.stop(channel="movie")
 
     scene black
 
@@ -292,8 +316,7 @@ label _main_menu(_main_menu_screen="_main_menu_screen"):
 
         _enter_menu()
 
-        renpy.dynamic("_load_prompt")
-        _load_prompt = False
+        renpy.dynamic(_load_prompt=False)
 
         renpy.context()._main_menu = True
         store.main_menu = True

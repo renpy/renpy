@@ -1,5 +1,7 @@
-﻿
-translate arabic strings:
+﻿translate arabic strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=DejaVuSans.ttf}العربية{/font}"
 
     # about.rpy:39
     old "[version!q]"
@@ -362,7 +364,7 @@ translate arabic strings:
     new "{b}نقترح.{/b} محرر نص له واجهة سهلة الاستعمال ويعين على كتابة النصوص البرمجية يفضل برنامج يحتوي على مدقق لغوي. Editraحالياً لا يدعم اللغات الأجنبية مثل اللغه الكورية و الصينية و اليابانية. على نظام لينوكس, Editra يحتاج wxPython."
 
     # editor.rpy:167
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "قد يكون سبب ذلك ان wxPython غير موجود في نظام التشغيل لديك"
 
     # editor.rpy:169
@@ -378,7 +380,7 @@ translate arabic strings:
     new "مطلوب تحميل ملف بحجم 1.8 ميغا بايت."
 
     # editor.rpy:182
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "قد يكون السبب ان الجافا غير موجوده على هذا الجهاز."
 
     # editor.rpy:191
@@ -390,7 +392,7 @@ translate arabic strings:
     new "يمنع رينباي من فتح اي محرر نصوص"
 
     # editor.rpy:359
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "حصل استثناء اثناء فتح المحرر: \n[exception!q]"
 
     # editor.rpy:457
@@ -606,7 +608,7 @@ translate arabic strings:
     new "خطأ"
 
     # interface.rpy:356
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "حصل خطأ أثناء [what!qt]"
 
     # interface.rpy:356
@@ -1134,7 +1136,7 @@ translate arabic strings:
     new "أحدث نسخة طازجة من رينباي التجريبي, قد يحتوي على آخر مستجدات رينباي و قد لا يعمل مطلقاً"
 
     # updater.rpy:152
-    old "An error has occured:"
+    old "An error has occurred:"
     new "حصل خطأ:"
 
     # updater.rpy:154
@@ -1184,4 +1186,3 @@ translate arabic strings:
     # updater.rpy:195
     old "Proceed"
     new "استمرار"
-

@@ -6,7 +6,6 @@ in the game directory, RPA archives, or as Android assets.
 
 .. include:: inc/file
 
-
 Rarely Used
 -----------
 

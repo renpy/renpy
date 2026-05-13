@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,4 +31,5 @@ all_properties : dict[str, list[str]]
 prefix_priority : dict[str, int]
 prefix_alts : dict[str, list[str]]
 prefix_search : dict[str, list[str]]
+proxy_properties: dict[str, frozenset[str]]
 """

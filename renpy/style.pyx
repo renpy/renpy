@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -570,6 +570,13 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
+    def _hover_alt(self):
+        """
+        Returns the value of the alt property in the hover state. Use by button TTS.
+        """
+
+        return self._get_unoffset(HOVER_PREFIX + ALT_INDEX)
+
     def inspect(StyleCore self):
         """
         Inspects this style.
@@ -686,6 +693,7 @@ cpdef build_style(StyleCore s):
         # Build the properties cache.
         if not s.properties:
             s.cache = NULL
+            s.built = True
             return
 
         memset(cache_priorities, 0, sizeof(int) * PREFIX_COUNT * STYLE_PROPERTY_COUNT)
@@ -723,7 +731,7 @@ cpdef unbuild_style(StyleCore s):
 
     if s.cache != NULL:
 
-        for 0 <= i < PREFIX_COUNT * STYLE_PROPERTY_COUNT:
+        for i in range(PREFIX_COUNT * STYLE_PROPERTY_COUNT):
             Py_XDECREF(s.cache[i])
 
         free(s.cache)
@@ -796,7 +804,7 @@ def rebuild(prepare_screens=True):
 
     renpy.display.screen.prepared = False
 
-    if not renpy.game.context().init_phase:
+    if prepare_screens and not renpy.game.context().init_phase:
         renpy.display.screen.prepare_screens()
 
     renpy.exports.restart_interaction()
@@ -855,5 +863,5 @@ prefix_priority : dict[str, int]
 prefix_alts : dict[str, list[str]]
 prefix_search : dict[str, list[str]]
 affects : dict[str, list[str]]
-styles: dict[str, Style]
+styles: dict[str, Any]
 """

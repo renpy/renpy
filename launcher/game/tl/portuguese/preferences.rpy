@@ -54,7 +54,7 @@
 
     # game/preferences.rpy:169
     old "Open launcher project"
-    new "Abrir o launcher"
+    new "Abrir projeto do launcher"
 
     # game/preferences.rpy:183
     old "Language:"
@@ -79,4 +79,3 @@
     # game/preferences.rpy:176
     old "Generate empty strings for translations"
     new "Gerar strings vazias para as traduções"
-

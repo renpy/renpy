@@ -7,17 +7,24 @@ import re
 import codecs
 
 import datetime
+
 year = datetime.date.today().year
+
+IGNORE = [
+    "scripts/update_copyright.py"
+]
 
 ENDINGS = [
     ".rpy",
     ".rpym",
     ".py",
     ".pyx",
+    ".pxd",
+    ".pyi",
     ".pxf",
-    ]
+]
 
-full_copyright="""\
+full_copyright = """\
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -41,6 +48,9 @@ full_copyright="""\
 
 def process_file(fn):
 
+    if fn in IGNORE:
+        return
+
     for i in ENDINGS:
         if fn.endswith(i):
             break
@@ -49,17 +59,14 @@ def process_file(fn):
 
     print("Processing", fn)
 
-    lines = [ ]
+    lines = []
 
     has_copyright = False
     first = True
 
-    with open(fn, "rb") as f:
+    with open(fn, "r") as f:
         for l in f:
-            l = re.sub(
-                r"Copyright (\d{4})-\d{4} Tom Rothamel",
-                r"Copyright \1-{} Tom Rothamel".format(year),
-                l)
+            l = re.sub(r"Copyright (\d{4})-\d{4} Tom Rothamel", r"Copyright \1-{} Tom Rothamel".format(year), l)
 
             if re.search(r"Copyright .* Tom Rothamel", l):
                 if has_copyright:
@@ -67,24 +74,21 @@ def process_file(fn):
 
                 has_copyright = True
 
-            l = l.replace("# See LICENSE.txt for license details.", full_copyright)
-
             if first:
                 if fn.endswith(".rpy") or fn.endswith(".rpym"):
-                    if codecs.BOM_UTF8 not in l:
-                        l = codecs.BOM_UTF8 + l
+                    if "\ufeff" not in l:
+                        l = "\ufeff" + l
 
                 first = False
 
             lines.append(l)
 
-    with open(fn, "wb") as f:
+    with open(fn, "w") as f:
         f.write("".join(lines))
 
 
 def process(root):
-
-    for dirname, _dirs, files in os.walk(root):
+    for dirname, _dirs, files in os.walk(root):  # type: ignore
         for fn in files:
             fn = os.path.join(dirname, fn)
             process_file(fn)
@@ -93,4 +97,6 @@ def process(root):
 process_file("renpy.py")
 process("renpy")
 process("module")
+process("src")
+process("scripts")
 process("launcher/game")

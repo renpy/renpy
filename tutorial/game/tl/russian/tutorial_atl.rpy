@@ -33,7 +33,7 @@ translate russian tutorial_positions_8e7d3e52:
 translate russian tutorial_positions_fdcf9d8b:
 
     # e "Let me get out of the way, and I'll show you where some positions are."
-    e "Позвольте мне уйти и я покажу вам, где распологаются некоторые позиции."
+    e "Позвольте мне уйти и я покажу вам, где располагаются некоторые позиции."
 
 # game/tutorial_atl.rpy:229
 translate russian tutorial_positions_76d7a5bf:
@@ -237,7 +237,7 @@ translate russian tutorial_positions_e0fe2d81:
 translate russian tutorial_positions_0f4ca2b6:
 
     # e "Once you understand positions, you can use transformations to move things around the Ren'Py screen."
-    e "Как только вы разберётесь с позициями, вы сможете воспользоваться трансформациями для перемещения объектов на экранэ."
+    e "Как только вы разберётесь с позициями, вы сможете воспользоваться трансформациями для перемещения объектов на экран."
 
 # game/tutorial_atl.rpy:418
 translate russian tutorial_atl_d5d6b62a:
@@ -405,7 +405,7 @@ translate russian tutorial_atl_43516492:
 translate russian tutorial_atl_fb979287:
 
     # e "This example starts the image off at the top-right of the screen, and waits a second. It then moves it to the left side, waits another second, and repeats."
-    e "Этот пример размещает изображение в правом верхнем углу и ждёт секунду. Затём изображение передвигается в левый угол, ждёт ещё одну секунду и повторяет цикл."
+    e "Этот пример размещает изображение в правом верхнем углу и ждёт секунду. Затем изображение передвигается в левый угол, ждёт ещё одну секунду и повторяет цикл."
 
 # game/tutorial_atl.rpy:579
 translate russian tutorial_atl_7650ec09:
@@ -471,7 +471,7 @@ translate russian tutorial_atl_331126c1:
 translate russian tutorial_atl_24f67b67:
 
     # e "We also have the time statement, which runs after the given number of seconds have elapsed from the start of the block. It will run even if another statement is running, stopping the other statement."
-    e "Также у нас есть оператор time, который запускается после заданного времени с начала блока. Он запустится, даже при запуске другого оператора, таким образом останавив его действие."
+    e "Также у нас есть оператор time, который запускается после заданного времени с начала блока. Он запустится, даже при запуске другого оператора, таким образом остановив его действие."
 
 # game/tutorial_atl.rpy:639
 translate russian tutorial_atl_b7709507:
@@ -495,7 +495,7 @@ translate russian tutorial_atl_5d0f8f9d:
 translate russian tutorial_atl_28a7d27e:
 
     # e "Finally, the choice statement makes Ren'Py randomly pick a block of ATL code. This allows you to add some variation as to what Ren'Py shows."
-    e "И наконец, оператор choice позволяет Ren'Py выбрать, использовать ли блок ATL. Это позволяет вам добавить несколько вариантов того, что может быть показано игрокy."
+    e "И наконец, оператор choice позволяет Ren'Py выбрать, использовать ли блок ATL. Это позволяет вам добавить несколько вариантов того, что может быть показано игроку."
 
 # game/tutorial_atl.rpy:675
 translate russian tutorial_atl_2265254b:

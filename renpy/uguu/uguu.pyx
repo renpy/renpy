@@ -122,7 +122,7 @@ cdef class Buffer:
     def __getbuffer__(self, Py_buffer *buffer, int flags):
 
         buffer.buf = self.data
-        buffer.format = self.format
+        buffer.format = <char *> self.format
         buffer.internal = NULL
         buffer.itemsize = self.itemsize
         buffer.len = self.length * self.itemsize
@@ -159,7 +159,7 @@ cdef class BytesListBuffer(Buffer):
 
         cdef int i
 
-        for 0 <= i < self.length:
+        for i in range(self.length):
             (<const char **> self.data)[i] = <const char *> (<ptr> self.value[i]).ptr
 
 cdef class IntBuffer(Buffer):
@@ -170,7 +170,7 @@ cdef class IntBuffer(Buffer):
 
         cdef int i
 
-        for 0 <= i < self.length:
+        for i in range(self.length):
             (<int*> self.data)[i] = <int> value[i]
 
     def __getitem__(self, index):
@@ -187,7 +187,7 @@ cdef class FloatBuffer(Buffer):
 
         cdef int i
 
-        for 0 <= i < self.length:
+        for i in range(self.length):
             (<float *> self.data)[i] = <float> value[i]
 
     def __getitem__(self, index):

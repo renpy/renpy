@@ -34,23 +34,28 @@
 
     # game/navigation.rpy:180
     old "defines"
-    new "defines"
+    # Automatic translation.
+    new "define"
 
     # game/navigation.rpy:181
     old "transforms"
-    new "transforms"
+    # Automatic translation.
+    new "transformações"
 
     # game/navigation.rpy:182
     old "screens"
-    new "screens"
+    # Automatic translation.
+    new "telas"
 
     # game/navigation.rpy:183
     old "callables"
-    new "callables"
+    # Automatic translation.
+    new "chamáveis"
 
     # game/navigation.rpy:184
     old "TODOs"
-    new "TODOs"
+    # Automatic translation.
+    new "TAREFAS"
 
     # game/navigation.rpy:223
     old "+ Add script file"

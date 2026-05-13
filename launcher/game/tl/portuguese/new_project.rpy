@@ -1,5 +1,4 @@
 ﻿translate portuguese strings:
-
     # game/new_project.rpy:22
     old "Choose Project Template"
     new "Escolha um template para o projeto"
@@ -32,3 +31,6 @@
     old "The projects directory could not be set. Giving up."
     new "A pasta do projeto não pode ser colocada. Abandonando."
 
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=fonts/Roboto-Light.ttf}Português{/font}"

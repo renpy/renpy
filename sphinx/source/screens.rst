@@ -40,11 +40,48 @@ in Python.
 
 Screens are updated at the start of each interaction, and each time an
 interaction is restarted. Note that a ``with None`` statement does not
-cause an interaction to happen, and hence won't update a screen.
+cause an interaction to happen, and hence won't update a screen. A
+``with Pause(0)`` will be enough to trigger one, if necessary.
 
-A screen has a scope associated with it, giving values to some
-variables. When a variable is accessed by a screen, it's first looked
-up in the scope, and then looked up as a global variable.
+A screen has a scope associated with it, giving values to some variables. There are different kinds
+of variables, in screens, which are resolved as shown in the following list:
+
+- First are local variables. These only exist in a screen that is being included in another with
+  the :ref:`use <sl-use>` statement instead of being shown (or called) on its own. They are very
+  similar with screen variables (see below), and created the same way, except that local variables
+  can only be accessed by the used screen. Those are set using :class:`SetLocalVariable`, among
+  other actions, or by a python block or line in the used screen. Actions such as
+  :class:`SetScreenVariable` will *not work* on local variables.
+
+  - Local parameters are the parameters taken by the used screen. They live in the same scope as
+    local variables, and follow the same behavior and constraints as screen parameters - see
+    below.
+
+- If a name cannot be resolved among local variables - or if we are not in a screen being
+  :ref:`used <sl-use>` by another - the name is searched for in screen variables. These are
+  variables created with the in-screen :ref:`sl-default` or :ref:`sl-python` statements, in the
+  top-level screen. Screen variables can be set through the :class:`SetScreenVariable` action,
+  among others, or by a python block or line in the top-level screen, or any used screen if no
+  local variable has the same name.
+
+  - Screen parameters (that is, values defined and passed through the parentheses of the screen
+    statement) live in the same scope as screen variables (that is, they can't have the same
+    name), but they can't be set or edited through actions, since they will be reset to their
+    original value at arbitrary times, including every time an action is executed. So, if their
+    value were edited through the :class:`SetScreenVariable` action (or any other action really),
+    it would be reset immediately afterwards. This is also the case for variables defined in
+    in-screen python blocks, since these blocks are executed at arbitrary times, as opposed to
+    the in-screen :ref:`default <sl-default>` statement which executes only at the time the
+    screen gets shown.
+
+- In last resort, a variable name is looked for in the general store, where all of Ren'Py's global
+  variables are. Such variables can be set through the :class:`SetVariable` action, among others.
+
+.. note::
+
+    If you want an action to set a variable inside a screen, and you want that screen to be
+    sometimes shown directly and sometimes used inside another, use :class:`SetLocalVariable`. It
+    will be far less efficient, but it will work in both cases.
 
 **Screens must not cause side effects that are visible from
 outside the screen.** Ren'Py will run a screen multiple times, as
@@ -111,6 +148,7 @@ in a block may be one of two things:
 * A property list.
 * A screen language statement.
 
+.. _screen-statement:
 
 Screen Statement
 ----------------
@@ -122,42 +160,69 @@ common syntax.
 It takes one parameter, the name of the screen. This is a name, not an
 expression. It takes the following properties:
 
-`modal`
+.. screen-property:: modal
+
     If True, the screen is modal. A modal screen prevents the user
     from interacting with displayables below it, except
     for the default keymap. This is evaluated once, when the
     game starts.
 
-`sensitive`
+.. screen-property:: sensitive
+
     An expression that determines whether the screen is sensitive or not.
     This expression is evaluated at least once per interaction.
 
-`tag`
+.. screen-property:: tag
+
     Parsed as a name, not an expression. This specifies a tag
     associated with this screen. Showing a screen replaces other
     screens with the same tag. This can be used to ensure that only
     one screen of a menu is shown at a time, in the same context.
 
-`zorder`
+.. screen-property:: zorder
+
     This controls how close to the user a screen is displayed. The
     larger the number, the closer the screen is displayed to the
     user. It defaults to 0.
 
-`variant`
+.. screen-property:: variant
+
     If present, this should be a string or list of strings giving the
     variant of screen to be defined. See :ref:`screen-variants`.
 
-`style_prefix`
+.. screen-property:: style_prefix
+
     A string that's used to provide a prefix for the style for the
     children of this screen, as :ref:`described below <style-prefix>`.
 
-`layer`
+.. screen-property:: layer
+
     A string giving the name of the layer the screen is shown on by
     default.
+
+.. screen-property:: roll_forward
+
+    If true, roll forward will be enabled when the screen is used in a
+    ``call screen`` statement. If false, roll forward is disabled, and
+    if None or not given, the value of :var:`config.call_screen_roll_forward`
+    is used.
+
+    When roll forwarding from a ``call screen`` statement, return values
+    and terminal jumps are preserved, but other side effects will not
+    occur. This means that if the screen only contains :func:`Jump`
+    and :func:`Return` actions, it's safe to enable `roll_forward`. Other
+    actions may have side-effects that will not occur during the roll_forward.
+
+If the first line of a screen is a Python string, it is used as the docstring for
+the screen. The docstring can be retrieved with :func:`renpy.get_screen_docstring`.
 
 ::
 
    screen hello_world():
+        """
+        Displays a hello world message.
+        """
+
         tag example
         zorder 1
         modal False
@@ -168,6 +233,15 @@ A screen can take a parameter list::
 
    screen center_text(s, size=42):
         text s size size
+
+If a screen has no parameters, it still should be given empty
+parentheses. If any other screen ``use``\ s a screen with no
+parentheses, the difference in behavior are described in the section
+concerning :ref:`the use statement <sl-use>`. If no other screen
+``use`` a given screen, not giving parentheses to that screen leads to
+pure inefficiency in the way Ren'py works internally, see the
+:doc:`screen optimization section <screen_optimization>` concerning
+parameters.
 
 
 User Interface Statements
@@ -182,7 +256,8 @@ allow the game to react to various events.
 
 All user interface statements take the following common properties:
 
-`at`
+.. screen-property:: at
+
     This can be a transform, or a list of transforms, or an anonymous
     transform (a transform that is defined directly in at) ::
 
@@ -192,10 +267,9 @@ All user interface statements take the following common properties:
 
         screen hello_title():
             text "Hello." at hello_t
-            text "Hello.":
-                at transform:
-                    align (0.2, 0.5) alpha 0.0
-                    linear 0.5 alpha 1.0
+            text "Hello." at transform:
+                align (0.2, 0.5) alpha 0.0
+                linear 0.5 alpha 1.0
 
     This transforms are used to wrap this displayable. The show, hide,
     replace, and replaced external events are delivered to a transform
@@ -206,24 +280,85 @@ All user interface statements take the following common properties:
     a transform wraps a textbutton that is added to the vbox, this
     second transform is not given events.
 
-`default_focus`
+    It's possible for a single statement to have both an `at` property
+    and an ``at transform``. The property must come first, and is
+    applied first. ::
+
+        screen title():
+            add "title background":
+                at sepia
+
+            text "The Title of the Game":
+                at sepia, truecenter
+                at transform:
+                    alpha 0.0
+                    linear 0.5 alpha 1.0
+
+.. screen-property:: default_focus
+
     If given and true, the displayable is focused by default. When
     multiple displayables have this, the values are compared and the
     displayable with the greatest default focus becomes the default.
 
-`id`
+    The default focus is only used when the last interaction was not
+    a mouse click, mouse movement, or touch.
+
+.. screen-property:: extra_alt
+
+    This is used to specify extra alt text for :doc:`self_voicing`.
+    If defined, the extra alt text is spoken to the player when the
+    '?' key is pressed, and self-voicing ie enabled.
+
+    The ``extra_alt`` is inherited by all children of the displayable,
+    unless they have a more specific ``extra_alt`` set.
+
+    Extra alt text is intended to provide vision-impaired players with
+    additional information about groups of displayables.
+
+.. screen-property:: focus
+
+    Takes a string or integer, and gives a name to the displayable
+    for focus purposes. Ren'Py looks for structural similarity between
+    focus names when deciding with displayable to give focus to at the
+    start of an interaction. If a box is given a focus name, and the
+    third button in that box is focused at the end of an interaction,
+    the third button of a box with the same will be highlighted at
+    the start of the next interaction.
+
+.. screen-property:: group_alt
+
+    This is used to specify a group prefix for :doc:`self_voicing`.
+    When self-voicing is enabled, a group prefix is spoken the first time a displayable
+    with the same group prefix is focused, but will not be spoken again until a
+    displayable with a different group prefix is focused.
+
+    The ``group_alt`` is inherited by all children of the displayable,
+    unless they have a more specific ``group_alt`` set.
+
+.. screen-property:: id
+
     An identifier for the user-interface statement. When a screen is
     shown, property values can be supplied for the displayables with a
     given identifier. Some screens will require that a displayable
     with a given identifier is created.
 
-    By default, the ``id`` is automatically-generated.
+    When a displayable is created with an id, the id is stored as a
+    string ion a attribute named id on the Displayable object.
 
-`style`
+.. screen-property:: prefer_screen_to_id
+
+    If true, when a property is provided by both the screen and a
+    displayable identifier, the screen property is used. If false, the
+    default, the displayable property is used. (This can be used to
+    decide if the screen overrides properties set by a Character.)
+
+.. screen-property:: style
+
     A string giving the name of the style applied to this displayable. The
     style gives default values for style properties.
 
-`style_prefix`
+.. screen-property:: style_prefix
+
     .. _style-prefix:
 
     Provides a prefix to the style of this displayable and all of its
@@ -243,10 +378,12 @@ All user interface statements take the following common properties:
     does not exist. Setting a prefix of ``None`` removes the prefix from
     this displayable and its children.
 
-`style_group`
+.. screen-property:: style_group
+
     An alias for `style_prefix`, used in older versions of Ren'Py.
 
-`style_suffix`
+.. screen-property:: style_suffix
+
     Specifies the suffix that is combined with the `style_prefix` to
     generate a style name. If this is ``"small_button"`` and the
     style prefix is ``"pref"``, the style ``"pref_small_button"`` is
@@ -256,16 +393,8 @@ All user interface statements take the following common properties:
     the style. A style suffix applies to a single displayable only, not
     a displayable and all children.
 
-`focus`
-    Takes a string or integer, and gives a name to the displayable
-    for focus purposes. Ren'Py looks for structural similarity between
-    focus names when deciding with displayable to give focus to at the
-    start of an interaction. If a box is given a focus name, and the
-    third button in that box is focused at the end of an interaction,
-    the third button of a box with the same will be highlighted at
-    the start of the next interaction.
+.. screen-property:: tooltip
 
-`tooltip`
     Assigns a tooltip to this displayable. When the displayable gains
     focus, the value of this property will be made available from the
     :func:`GetTooltip` function. See the :ref:`tooltips` section for
@@ -274,11 +403,13 @@ All user interface statements take the following common properties:
     Objects passed to tooltip must support equality. If equality is
     not supported, an infinite loop may occur.
 
-`arguments`
+.. screen-property:: arguments
+
     A tuple or list containing additional positional arguments that
     are given to the displayable.
 
-`properties`
+.. screen-property:: properties
+
     A dictionary containing additional properties given to the
     displayable.
 
@@ -301,30 +432,41 @@ Bar
 Creates a horizontally-oriented bar that can be used to view or adjust
 data. It takes the following properties:
 
-`value`
+.. screen-property:: value
+
     The current value of the bar. This can be either a :ref:`bar value <bar-values>`
     object, or a number.
 
-`range`
-    The maximum value of the bar. This is required if `value` is a
-    number.
+.. screen-property:: range
 
-`adjustment`
+    The maximum value of the bar. This is required if `value` is a
+    number. It is ignored if `value` is a bar value object.
+
+.. screen-property:: adjustment
+
     A :func:`ui.adjustment` object that this bar adjusts.
 
-`changed`
+.. screen-property:: changed
+
     If given, this should be a Python function. The function is called
     with the value of the adjustment when the adjustment is changed.
 
-`hovered`
+.. screen-property:: hovered
+
     An action to run when the bar gains focus.
 
-`unhovered`
+.. screen-property:: unhovered
+
     An action to run when the bar loses focus.
 
-`released`
+.. screen-property:: released
+
     An action to run when the bar button is released. This will be invoked
     even if the bar has not changed its value.
+
+.. screen-property:: action
+
+    An action to run when the bar value is changed.
 
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
@@ -353,41 +495,49 @@ Button
 Creates an area of the screen that can be activated to run an
 action. A button takes no parameters, and the following properties.
 
-`action`
+.. screen-property:: action
+
     The action to run when the button is activated. A button is activated
     when it is clicked, or when the player selects it and hits enter on the
     keyboard. This also controls if the button is sensitive if `sensitive`
-    is not provided, and if the button is selected if `selected` is not
-    provided.
+    is not provided or None, and if the button is selected if `selected` is not
+    provided or None.
 
-`alternate`
+.. screen-property:: alternate
+
     An action that is run if the button is activated in an alternate manner.
     Alternate activation occurs when the player right-clicks on the button
     on a mouse-based platform, or when the player long presses the button
     on a touch-based platform.
 
-`hovered`
+.. screen-property:: hovered
+
     An action to run when the button gains focus.
 
-`unhovered`
+.. screen-property:: unhovered
+
     An action to run when the button loses focus.
 
-`selected`
+.. screen-property:: selected
+
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
-`sensitive`
+.. screen-property:: sensitive
+
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
-`keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+.. screen-property:: keysym
+
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the action of this button.
 
-`alternate_keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+.. screen-property:: alternate_keysym
+
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the alternate action of this button.
 
 It also takes:
@@ -397,9 +547,72 @@ It also takes:
 * :ref:`window-style-properties`
 * :ref:`button-style-properties`
 
-It takes one children. If zero, two, or more children are supplied,
+It takes one child. If zero, two, or more children are supplied,
 they are implicitly added to a fixed, which is added to the button.
 
+
+.. _sl-dismiss:
+
+Dismiss
+-------
+
+The dismiss statement creates the highly specialized dismiss displayable,
+which gains focus when no other displayable has focus,
+and runs an action when it's activated. In this regard, it works
+very similarly to the behavior of the say statement.
+
+This is rarely used, and mostly to allow a modal frame to be
+dismissed when the player clicks outside it, as might be the case
+with a popup window.
+
+This takes the following properties:
+
+.. screen-property:: action
+
+    The action performed when the dismiss is activated. This property is
+    required.
+
+.. screen-property:: keysym
+
+    A string giving a :doc:`keysym <keymap>` describing a key that,
+    when pressed, invokes the action of this dismiss. This replaces the default
+    "dismiss" keysym.
+
+.. screen-property:: modal
+
+    By default, the dismiss is modal, preventing events from being processed
+    by displayables "behind" it.
+
+
+It also takes:
+
+* :ref:`Common Properties <common-properties>`
+* The :propref:`hover_sound` and :propref:`activate_sound` style properties.
+
+Here's an example of dismiss being used::
+
+    screen dismiss_test():
+
+        dismiss action Return()
+
+        frame:
+            modal True
+
+            align (.5, .3)
+            padding (20, 20)
+
+            has vbox
+
+            text "This is a very important message.":
+                xalign 0.5
+                textalign 0.5
+
+            # Dismiss can be confusing on its own, so we'll add a button as well.
+            textbutton "Dismiss":
+                xalign 0.5
+                action Return()
+
+See also how dismiss is used in conjunction with :ref:`nearrect <sl-nearrect>`.
 
 .. _sl-fixed:
 
@@ -476,12 +689,25 @@ This displays its children in a grid. Each child is given an area of
 the same size, the size of the largest child.
 
 It takes two parameters. The first is the number of columns in the
-grid, and the second is the number of rows in the grid. It takes the
-following property:
+grid, and the second is the number of rows in the grid. If the grid
+is not full, the remaining cells are filled with the ``null`` displayable.
 
-`transpose`
+Grid takes several properties related to the way its children are placed:
+
+.. screen-property:: transpose
+
     If False (the default), rows are filled before columns. If True,
     then columns are filled before rows.
+
+.. screen-property:: right_to_left
+
+    If True, cells are filled from right to left, instead of the default
+    left to right.
+
+.. screen-property:: bottom_to_top
+
+    If True, cells are filled from bottom to top, instead of the default
+    top to bottom.
 
 It also takes:
 
@@ -536,7 +762,8 @@ Creates a button consisting of images, that change state when the user
 hovers over them. This takes no parameters, and the following
 properties:
 
-`auto`
+.. screen-property:: auto
+
     Used to automatically define the images used by this button. This
     should be a string that contains %s in it. If it is, and one of
     the image properties is omitted, %s is replaced with the name of
@@ -551,54 +778,67 @@ properties:
     :var:`config.imagemap_auto_function`.
 
 
-`insensitive`
+.. screen-property:: insensitive
+
     The image used when the button is insensitive.
 
-`idle`
+.. screen-property:: idle
+
     The image used when the button is not focused.
 
-`hover`
+.. screen-property:: hover
+
     The image used when the button is focused.
 
-`selected_idle`
+.. screen-property:: selected_idle
+
     The image used when the button is selected and idle.
 
-`selected_hover`
+.. screen-property:: selected_hover
+
     The image used when the button is selected and hovered.
 
-`action`
-    The action to run when the button is activated. This also controls if
-    the button is sensitive if `sensitive` is not provided, and if the button
-    is selected if `selected` is not provided.
+.. screen-property:: action
 
-`alternate`
+    The action to run when the button is activated. This also controls if
+    the button is sensitive if `sensitive` is not provided or None, and if the button
+    is selected if `selected` is not provided or None.
+
+.. screen-property:: alternate
+
     An action that is run if the button is activated in an alternate manner.
     Alternate activation occurs when the player right-clicks on the button
     on a mouse-based platform, or when the player long presses the button
     on a touch-based platform.
 
-`hovered`
+.. screen-property:: hovered
+
     An action to run when the button gains focus.
 
-`unhovered`
+.. screen-property:: unhovered
+
     An action to run when the button loses focus.
 
-`selected`
+.. screen-property:: selected
+
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
-`sensitive`
+.. screen-property:: sensitive
+
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
-`keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+.. screen-property:: keysym
+
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the action of this button.
 
-`alternate_keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+.. screen-property:: alternate_keysym
+
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the alternate action of this button.
 
 It also takes:
@@ -630,9 +870,13 @@ the user presses return, the text will be returned by the
 interaction. (When the screen is invoked through ``call screen``, the result
 will be placed in the ``_return`` variable.)
 
+Due to limitations in supporting libraries, on Android and the web platform
+the input displayable is limited to alphabetic characters.
+
 The input statement takes no parameters, and the following properties:
 
-`value`
+.. screen-property:: value
+
     An :ref:`input value <input-values>` object that this input uses.
     InputValue objects determine where the default value is taken from,
     what happens when the text is changed, what happens when enter is
@@ -640,45 +884,77 @@ The input statement takes no parameters, and the following properties:
 
     This should not be given at the same time as `default` and `changed`.
 
-`default`
+.. screen-property:: default
+
     The default text in this input.
 
-`length`
+.. screen-property:: length
+
     The maximum length of the text in this input.
 
-`pixel_width`
+.. screen-property:: pixel_width
+
     The maximum pixel width of the input. If typing a character would
     cause the input to exceed this width, the keypress is ignored.
 
-`allow`
+.. screen-property:: allow
+
     A string containing characters that are allowed to be typed into
     this input. (By default, allow all characters.)
 
-`exclude`
+.. screen-property:: exclude
+
     A string containing characters that are disallowed from being
     typed into this input. (By default, "{}".)
 
-`copypaste`
+.. screen-property:: copypaste
+
     If True, it becomes possible to copy and paste
     into this input. (By default, disabled.)
 
-`prefix`
+.. screen-property:: prefix
+
     An immutable string to prepend to what the user has typed.
 
-`suffix`
+.. screen-property:: suffix
+
     An immutable string to append to what the user has typed.
 
-`changed`
+.. screen-property:: changed
+
     A Python function that is called with what the user has typed,
     when the string changes.
 
-`mask`
+.. screen-property:: mask
+
     If given, a string that replaces each displayable character in
     the text. This can be used to mask out a password.
 
-`caret_blink`
+.. screen-property:: caret_blink
+
     If not False, the blinking period of the default caret.
     Overrides :var:`config.input_caret_blink`.
+
+.. screen-property:: multiline
+
+    If true, it becomes possible to move caret on the next line
+    using keyboard (Shift+Enter by default,
+    can be changed by modifying config.keymap['input_next_line']).
+
+.. screen-property:: action
+
+    If not None, an action that is run when enter is pressed and the
+    input is active. This overrides the default action of returning
+    the input value.
+
+    Generally, this is is used with a `value` that stores the input into
+    a variable, so the action can access it.
+
+.. screen-property:: arrowkeys
+
+    If True (the default), the arrow keys can be used to move the caret left and right
+    within the input. If False, arrow keys are ignored, making them available for other uses,
+    like changing focus.
 
 
 It also takes:
@@ -709,12 +985,20 @@ or one of the keys in a given list. Key is used in a loose sense here,
 as it also allows joystick and mouse events.
 
 Key takes one positional parameter, a string giving the key to
-bind. See the :ref:`keymap` section for a description of available
-keysyms. It takes one property:
+bind. See the :doc:`keymap` section for a description of available
+keysyms. It takes two properties:
 
-`action`
+.. screen-property:: action
+
     This gives an action that is run when the key is pressed. This
     property is mandatory.
+
+.. screen-property:: capture
+
+    If true, the default, the event will capture, and will not be
+    processed by other displayables. If false and the action does
+    not end the interaction, the event will be processed by other
+    displayables.
 
 It takes no children.
 
@@ -738,12 +1022,14 @@ frame.
 It takes one positional argument, the text of the label. It takes
 the property:
 
-`text_style`
+.. screen-property:: text_style
+
     The name of the style to use for the button text. If not supplied,
     and the `style` property is a string, then ``"_text"`` is appended
     to that string to give the default text style.
 
-`text_`-
+.. screen-property:: text_-
+
    Other properties prefixed with text_ have this prefix stripped, and
    are then passed to the text displayable.
 
@@ -777,13 +1063,16 @@ entering or leaving it. Unlike a button, a mouse area does not take
 focus, so it's possible to have a mouse area with buttons inside it.
 The ``mousearea`` statement takes no parameters, and the following properties:
 
-`hovered`
+.. screen-property:: hovered
+
     An action to run when the mouse enters the mouse area.
 
-`unhovered`
+.. screen-property:: unhovered
+
     An action to run when the mouse leaves the mouse area.
 
-`focus_mask`
+.. screen-property:: focus_mask
+
     The :propref:`focus_mask` style property, which may be a Displayable
     or None. If a displayable, the mousearea will only be hovered if the
     mouse is over an opaque portion of the displayable. (The displayable
@@ -825,6 +1114,137 @@ take up the entire screen, a less useful behavior.
     label start:
         show screen button_overlay
 
+.. _sl-nearrect:
+
+Nearrect
+--------
+
+The ``nearrect`` statement takes a single child, and lays that child out
+at a location near a rectangle. Usually, this is a rectangle focus captured using
+the :func:`CaptureFocus` action. This can be used for tooltips and dropdown or
+pulldown menus.
+
+Nearrect takes the following properties:
+
+.. screen-property:: rect
+
+    If given, this should be an (x, y, w, h) rectangle that the child is
+    positioned relative to, as described below.
+
+.. screen-property:: focus
+
+    If given, this should be a string. This string is passed to the equivalent of
+    :func:`GetFocusRect` to find the rectangle. If a focus rectangle with that
+    name is found, the child is rendered.
+
+    Passing "tooltip" to this uses the location of the last displayable that
+    was focused while displaying a tooltip.
+
+    If present, overrides `rect`
+
+.. screen-property:: preferred_side
+
+    One of ``"left"``, ``"top"``, ``"right"``, ``"bottom"`` to prefer that
+    position for the nearrect. If there is not room on one side, the opposite
+    side is used. By default, the preferred side is "bottom".
+
+.. screen-property:: prefer_top
+
+    Deprecated. Equivalent to ``preferred_side "top"``
+
+.. screen-property:: invert_offsets
+
+    If True and there isn't enough space on the preferred side, multiply
+    xoffset and yoffset by -1 since the child will be on the opposite side of
+    the rectangle. False by default.
+
+It also takes:
+
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+
+
+Nearrect differs from the other layouts in that it positions its child near the
+given rectangle, rather than inside it. For a `preferred_side` of ``"top"`` or
+``"bottom"`` (resp. ``"left"``, ``"right"``), the child is first rendered with
+the full width (resp. height) available, and the maximum of the height
+(resp. width) above and below the rectangle. The y position (resp. x position)
+is then computed as followed.
+
+* If the child will fit on the `preferred_side` of the rectangle, the child is
+  positioned directly adjacent to the rectangle.
+* Otherwise, if the child can fit opposite the `preferred_side` of the
+  rectangle, it's positioned there.
+* Otherwise, the child is positioned directly adjacent to the rectangles's
+  `preferred_side`.
+
+The x positioning (resp. y position) is computed using the normal rules, using
+the :propref:`xpos` and :propref:`xanchor` properties (resp. :propref:`ypos`,
+:propref:`yanchor`) of the child, and properties that set them, such as
+:propref:`xalign`. The pos properties are relative to the x coordinate
+(resp. y coordinate) of the rectangle, and in the case of a floating point
+number, the width (resp. height).
+
+At the end of positioning, the :propref:`xoffset` and :propref:`yoffset`
+properties are applied as normal.
+
+If the child of the nearrect is a transform, the transform is given ``show``
+and ``hide`` events. However, the position will change instantly. Nearrect
+works best on the top of a screen, with transforms and positioning applied
+to its child, rather the nearrect.
+
+One use of nearrect is for dropdown menus::
+
+    default difficulty = "Easy"
+
+    screen select_difficulty():
+
+        # This frame can be a very complex layout, if required.
+        frame:
+            align (.5, .3)
+            padding (20, 20)
+
+            has vbox
+
+            # This is the button that is clicked to enable the dropdown
+            textbutton "Difficulty: [difficulty]":
+
+                # This action captures the focus rectangle, and in doing so,
+                # displays the dropdown.
+                action CaptureFocus("diff_drop")
+
+            textbutton "Done":
+                action Return()
+
+        # All sorts of other screen elements could be here, but the nearrect needs
+        # to be at the top level, and the last thing shown, apart from its child.
+
+        # Only if the focus has been captured, display the dropdown.
+        # You could also use showif instead of basic if
+        if GetFocusRect("diff_drop"):
+
+            # If the player clicks outside the frame, dismiss the dropdown.
+            # The ClearFocus action dismisses this dropdown.
+            dismiss action ClearFocus("diff_drop")
+
+            # This positions the displayable near (usually under) the button above.
+            nearrect:
+                focus "diff_drop"
+
+                # Finally, this frame contains the choices in the dropdown, with
+                # each using ClearFocus to dismiss the dropdown.
+                frame:
+                    modal True
+
+                    has vbox
+
+                    textbutton "Easy" action [ SetVariable("difficulty", "Easy"), ClearFocus("diff_drop") ]
+                    textbutton "Medium" action [ SetVariable("difficulty", "Medium"), ClearFocus("diff_drop") ]
+                    textbutton "Hard" action [ SetVariable("difficulty", "Hard"), ClearFocus("diff_drop") ]
+                    textbutton "Nightmare" action [ SetVariable("difficulty", "Nightmare"), ClearFocus("diff_drop") ]
+
+Dropdowns may benefit from improved styling, which isn't done here.
+
 
 .. _sl-null:
 
@@ -835,10 +1255,12 @@ The null statement inserts an empty area on the screen. This can be
 used to space things out. The null statement takes no parameters, and
 the following properties:
 
-`width`
+.. screen-property:: width
+
     The width of the empty area, in pixels.
 
-`height`
+.. screen-property:: height
+
     The height of the empty area, in pixels.
 
 It also takes:
@@ -873,7 +1295,8 @@ one of:
 
 A side takes the following properties:
 
-`spacing`
+.. screen-property:: spacing
+
     The spacing between the rows and columns of the grid.
 
 
@@ -931,49 +1354,59 @@ Creates a button containing a text label. The button takes a single
 parameter, the text to include as part of the button. It takes the
 following properties:
 
-`action`
-    The action to run when the button is activated. This also controls if
-    the button is sensitive if `sensitive` is not provided, and if the button
-    is selected if `selected` is not provided.
+.. screen-property:: action
 
-`alternate`
+    The action to run when the button is activated. This also controls if
+    the button is sensitive if `sensitive` is not provided or None, and if the button
+    is selected if `selected` is not provided or None.
+
+.. screen-property:: alternate
+
     An action that is run if the button is activated in an alternate manner.
     Alternate activation occurs when the player right-clicks on the button
     on a mouse-based platform, or when the player long presses the button
     on a touch-based platform.
 
-`hovered`
+.. screen-property:: hovered
+
     An action to run when the button gains focus.
 
-`unhovered`
+.. screen-property:: unhovered
+
     An action to run when the button loses focus.
 
-`selected`
+.. screen-property:: selected
+
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
-`sensitive`
+.. screen-property:: sensitive
+
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
-`keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+.. screen-property:: keysym
+
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the action of this button.
 
-`alternate_keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+.. screen-property:: alternate_keysym
+
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the alternate action of this button.
 
-`text_style`
+.. screen-property:: text_style
+
     The name of the style to use for the button text. If not supplied,
     and the `style` property is a string, then ``"_text"`` is appended
     to that string to give the default text style.
 
-`text_`-
-   Other properties prefixed with text_ have this prefix stripped, and are
-   then passed to the text displayable.
+.. screen-property:: text_-
+
+    Other properties prefixed with text_ have this prefix stripped, and are
+    then passed to the text displayable.
 
 It also takes:
 
@@ -1001,14 +1434,23 @@ This creates a timer that runs an action when time runs out. It takes
 one positional parameter, giving the timeout time, in seconds. It
 takes the properties:
 
-`action`
+.. screen-property:: action
+
     This gives an action that is run when the timer expires. This
     property is mandatory.
 
-`repeat`
+.. screen-property:: repeat
+
     If True, the timer repeats after it times out.
 
-It takes no children.
+.. screen-property:: modal
+
+    If True, the timer will not fire if it is blocked by a modal
+    screen. If false or not given, the timer will fire even if it
+    is blocked by a modal screen.
+
+
+Timer takes no children.
 
 ::
 
@@ -1085,12 +1527,15 @@ with the mouse wheel, or with scrollbars. It can be used to display
 part of something that is bigger than the screen. It takes the
 following properties:
 
-`child_size`
+.. screen-property:: child_size
+
     The size that is offered to the child for rendering. An (`xsize`,
     `ysize`) tuple. This can usually be omitted, when the child can
     compute it's own size. If either component is None, the child's
     size is used.
-`mousewheel`
+
+.. screen-property:: mousewheel
+
     This should be one of:
 
     False
@@ -1108,9 +1553,15 @@ following properties:
         bottom.)
     "horizontal-change"
         Combines horizontal scrolling with change mode.
-`draggable`
-    If True, dragging the mouse will scroll the viewport.
-`edgescroll`
+
+.. screen-property:: draggable
+
+    If True, dragging the mouse will scroll the viewport. This can also be
+    a :ref:`variant <screen-variants>`, in which case the viewport will be draggable
+    if the variant is in place. (For example, ``draggable "touch"``.)
+
+.. screen-property:: edgescroll
+
     Controlls scrolling when the mouse reaches the edge of the
     viewport. If not None, this should be a two- or three-element
     tuple:
@@ -1130,21 +1581,30 @@ following properties:
       that returned -1.0 or 1.0 based on the sign of its input would
       implement constant-speed scrolling.
 
-`xadjustment`
+.. screen-property:: xadjustment
+
     The :func:`ui.adjustment` used for the x-axis of the
     viewport. When omitted, a new adjustment is created.
-`yadjustment`
+
+.. screen-property:: yadjustment
+
     The :func:`ui.adjustment` used for the y-axis of the
     viewport. When omitted, a new adjustment is created.
-`xinitial`
+
+.. screen-property:: xinitial
+
     The initial horizontal offset of the viewport. This may be an integer
     giving the number of pixels, or a float giving a fraction of the
     possible offset.
-`yinitial`
+
+.. screen-property:: yinitial
+
     The initial vertical offset of the viewport. This may be an integer
     giving the number of pixels, or a float giving a fraction of the
     possible offset.
-`scrollbars`
+
+.. screen-property:: scrollbars
+
     If not None, scrollbars are added along with this viewport.
     This works by creating a side layout, and placing the created
     viewport in the center of the side. If `scrollbars` is "horizontal",
@@ -1153,14 +1613,26 @@ following properties:
     viewport. If `scrollbars` is "both", both horizontal and vertical
     scrollbars are created.
 
-    If `scrollbars` is not None, the viewport takes properties prefixed
-    with "side_". These are passed to the created side layout.
-`arrowkeys`
+    When `scrollbars` is not None, the `viewport` takes prefixed properties:
+
+    * Properties beginning with ``viewport_`` are passed to the viewport.
+    * Properties beginning with ``side_`` are passed to the side.
+    * Properties beginning with ``scrollbar_`` are passed to the horizontal scrollbar, if it exists.
+    * Properties beginning with ``vscrollbar_`` are passed to the vertical scrollbar, if it exists.
+
+    Unprefixed properties are also accepted. :ref:`position-style-properties` are
+    passed to the side, while other unprefixed properties are supplied to the
+    viewport.
+
+.. screen-property:: arrowkeys
+
     If true, the viewport can be scrolled with the left, right, up, and down
     arrow keys. This takes precedence over the usual function of these keys,
     which is changing focus. However, the arrow keys will change focus when the
     viewport reaches its limits.
-`pagekeys`
+
+.. screen-property:: pagekeys
+
     If true, the viewport can be scrolled up and down by the pageup and
     pagedown keys. This disables the usual functionality of these keys,
     which is to cause rollback and rollforward.
@@ -1208,18 +1680,21 @@ incorrectly, please ensure that all children are of the same size.
 
 A vpgrid must be given at least one of the `cols` and `rows` properties.
 If one is omitted or None, the other is automatically determined from the
-size, spacing, and number of children. If there are not enough children to
-fill all cells, any empty cells will not be rendered.
+size, spacing, and number of children. If a row or column would be underfull,
+``null`` displayable are used to fill the remaining space.
 
-Vpgrids take the the following properties:
+Vpgrids take the following properties:
 
-`cols`
+.. screen-property:: cols
+
     The number of columns in the grid.
 
-`rows`
+.. screen-property:: rows
+
     The number of rows in the grid.
 
-`transpose`
+.. screen-property:: transpose
+
     If true, columns are filled before rows. The default of this depends
     on the `cols` and `rows` properties. If `cols` is given, columns
     are filled before rows, otherwise rows are filled before columns.
@@ -1230,6 +1705,10 @@ and the following groups of style properties:
 * :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`
 * :ref:`grid-style-properties`
+
+When the `scrollbar` property is given, prefixed properties are passed to
+the vpgrid in the same way as they are with viewports. (Properties prefixed
+with ``viewport_`` are passed to the vpgrid itself.)
 
 ::
 
@@ -1244,11 +1723,11 @@ and the following groups of style properties:
 
             scrollbars "vertical"
 
-            # Since we have scrollbars, we have to position the side, rather
-            # than the vpgrid proper.
-            side_xalign 0.5
+            # Since we have scrollbars, this positions the side, rather than
+            # the vpgrid.
+            xalign 0.5
 
-            for i in range(1, 100):
+            for i in range(1, 101):
 
                 textbutton "Button [i]":
                     xysize (200, 50)
@@ -1323,7 +1802,8 @@ Imagemap
 The imagemap statement is used to specify an imagemap. It takes no
 parameters, and the following properties:
 
-`auto`
+.. screen-property:: auto
+
     Used to automatically define the images used by this imagemap. This
     should be a string that contains %s in it. If it is, and one of
     the image properties is omitted, %s is replaced with the name of
@@ -1337,35 +1817,43 @@ parameters, and the following properties:
     The behavior of `auto` can be customized by changing
     :var:`config.imagemap_auto_function`.
 
-`ground`
+.. screen-property:: ground
+
     The image used for portions of the imagemap that are not part of a
     hotspot or hotbar.
 
-`insensitive`
+.. screen-property:: insensitive
+
     The image used when a hotspot or hotbar is insensitive.
 
-`idle`
+.. screen-property:: idle
+
     The image used when a hotspot is not selected and not focused, and
     for the empty portion of unfocused hotbars.
 
-`hover`
+.. screen-property:: hover
+
     The image used when a hotspot is not selected and focused, and
     for the empty portion of focused hotbars.
 
-`selected_idle`
+.. screen-property:: selected_idle
+
     The image used when a hotspot is selected and not focused, and
     for the full portion of unfocused hotbars.
 
-`selected_hover`
+.. screen-property:: selected_hover
+
     The image used when a hotspot is selected and focused, and
     for the full portion of focused hotbars.
 
-`alpha`
+.. screen-property:: alpha
+
     If true, the default, a hotspot only gains focus when the mouse is
     in an area of the hover image that is opaque. If false, the hotspot
     gains focus whenever the mouse is within its rectangular boundary.
 
-`cache`
+.. screen-property:: cache
+
     If true, the default, hotspot data is cached in to improve performance
     at the cost of some additional disk space.
 
@@ -1389,38 +1877,46 @@ contains it. It takes a single parameter, a (x, y, width, height)
 tuple giving the area of the imagemap that makes up the button. It
 also takes the following properties:
 
-`action`
+.. screen-property:: action
+
     The action to run when the button is activated. This also controls
     if the button is sensitive, and if the button is selected.
 
-`alternate`
+.. screen-property:: alternate
+
     An action that is run if the hotspot is activated in an alternate manner.
     Alternate activation occurs when the player right-clicks on the hotspot
     on a mouse-based platform, or when the player long presses the hotspot
     on a touch-based platform.
 
-`hovered`
+.. screen-property:: hovered
+
     An action to run when the button gains focus.
 
-`unhovered`
+.. screen-property:: unhovered
+
     An action to run when the button loses focus.
 
-`selected`
+.. screen-property:: selected
+
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
-`sensitive`
+.. screen-property:: sensitive
+
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
-`keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+.. screen-property:: keysym
+
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the action of this button.
 
-`alternate_keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+.. screen-property:: alternate_keysym
+
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the alternate action of this button.
 
 It also takes:
@@ -1445,15 +1941,18 @@ contains it. It takes a single parameter, a (x, y, width, height)
 tuple giving the area of the imagemap that makes up the button. It
 also takes the following properties:
 
-`value`
+.. screen-property:: value
+
     The current value of the bar. This can be either a :ref:`bar value <input-values>`
     object, or a number.
 
-`range`
+.. screen-property:: range
+
     The maximum value of the bar. This is required if `value` is a
     number.
 
-`adjustment`
+.. screen-property:: adjustment
+
     A :func:`ui.adjustment` object that this bar adjusts.
 
 One of `value` or `adjustment` must be given. In addition, this
@@ -1470,7 +1969,7 @@ self-voicing feature to work.
 Add Statement
 =============
 
-The add statement is a bit special, as it adds an already-exising displayble
+The add statement is a bit special, as it adds an already-existing displayble
 to the screen. As a result, it doesn't take the properties common to the
 user interface statements.
 
@@ -1508,15 +2007,80 @@ properties.
 
 The advanced displayable statements are:
 
-``drag``
-    Creates a :class:`Drag`. A drag can be given an optional child,
-    or the :propref:`child` style property can be used to supply the child,
-    and its focused variants. Drags also take the :propref:`focus_mask`
-    style property.
+.. _sl-areapicker:
 
-``draggroup``
-    Creates a :class:`DragGroup`. A drag group may have zero or more
-    drags as its children.
+Areapicker
+----------
+
+Intended for use in development tools, this lets the user select a
+rectangular area on the screen. It takes the following properties:
+
+.. screen-property:: cols
+
+    If not None, the default, this divides the screen up into a grid
+    with this many columns.
+
+.. screen-property:: rows
+
+    If not None, the default, this divides the screen up into a grid
+    with this many rows.
+
+.. screen-property:: position
+
+    If not None, the default, this is a function called with the
+    x and y coordinates of the location the user first clicked,
+    rounded to the grid.
+
+.. screen-property:: changed
+
+    This is called with the rectangle, an (x, y, width, height) tuple,
+    whenever the user changes the selected area.
+
+.. screen-property:: finished
+
+    This is called with the rectangle, an (x, y, width, height) tuple,
+    when the user finishes selecting an area.
+
+.. screen-property:: persist
+
+    If true, the child will be shown in the selected area when the
+    selection is complete. If false, the default, the child will be
+    hidden once the selection is complete.
+
+It takes the following group of properties:
+
+* :ref:`Common Properties <common-properties>`
+
+An areapicker takes one child. The child is displayed on the screen in the
+selected area.
+
+Drag
+----
+
+Creates a :class:`Drag` that can be dragged around the screen. With the
+exception of `d`, which is supplied by the screen language, this takes
+all properties defined in that class.
+
+It also takes the following properties:
+
+* :ref:`Common Properties <common-properties>`
+* The :propref:`hover_sound` and :propref:`activate_sound` style
+  properties
+* The :propref:`focus_mask` style_property.
+
+A drag takes one child, or the :propref:`child` style property can be
+used to supply the child and its focused variants.
+
+Draggroup
+---------
+
+Creates a :class:`DragGroup`.  This takes the same properties as :class:`DragGroup`,
+and also takes the following properties:
+
+* :ref:`Common Properties <common-properties>`
+
+A drag group may have zero or more drags as its children. It may also have
+non-drags as children, in which case it functions like fixed.
 
 
 .. _sl-has:
@@ -1599,7 +2163,8 @@ For
 ---
 
 The ``for`` statement is similar to the Python ``for`` statement, except that
-it does not support the ``else`` clause. It supports assignment to
+it does not support the ``else`` clause (it does, however, support the
+``continue`` and ``break`` statements). It supports assignment to
 (optionally nested) tuple patterns, as well as variables.
 
 ::
@@ -1639,7 +2204,7 @@ statement. It supports the ``if``, ``elif``, and ``else`` clauses.
 ::
 
     screen skipping_indicator():
-        if config.skipping:
+        if renpy.is_skipping():
              text "Skipping."
         else:
              text "Not Skipping."
@@ -1654,9 +2219,18 @@ occurs. It takes one parameter, a string giving the name of an
 event. This should be one of:
 
 * ``"show"``
+    This event occurs when the screen is shown (note that if a screen with
+    the same tag is already showing, the event is ``"replace"`` instead).
+
 * ``"hide"``
+    This event occurs when the screen is hidden (note that if it's replaced
+    by a screen with the same tag, the event is ``"replaced"`` instead).
+
 * ``"replace"``
+    This event occurs the screen is shown, replacing a screen with the same tag.
+
 * ``"replaced"``
+    This event occurs when the screen is replaced by a screen with the same tag.
 
 It then takes an action property, giving an action to run if the event
 occurs.
@@ -1684,12 +2258,10 @@ The ``use`` statement allows a screen to include another. The use
 statement takes the name of the screen to use. This can optionally be
 followed by an argument list, in parenthesis.
 
-If the used screen includes parameters, its scope is initialized to the
-result of assigning the arguments to those parameters. Otherwise, it
-is passed the scope of the current screen, updated with any keyword
-arguments passed to the screen.
-
-::
+If the used screen has no parentheses, it has read and write access
+to the scope of the current screen, updated with any keyword arguments
+passed via the ``use`` statement. Otherwise, its scope is initialized
+to the result of assigning the arguments to those parameters. ::
 
     screen file_slot(slot):
         button:
@@ -1709,8 +2281,11 @@ arguments passed to the screen.
                   use file_slot(i)
 
 
-The use statement may take one property, ``id``, which must be placed
-after the parameter list if present. This screen is only useful when
+The use statement may take clauses properties, ``id`` and ``as``. These properties must be placed
+after the parameter list, if present, and must be on the first line of the statement, not in
+th block.
+
+The ``id`` clause is only useful when
 two screens with the same tag use the same screen. In this case,
 when one screen replaces the other, the state of the used screen
 is transfered from old to new.
@@ -1740,6 +2315,18 @@ is transfered from old to new.
         show screen s2
         pause
         return
+
+The ``as`` clause should be followed by a variable name. When the used screen finishes, the binding of the `main`
+variable in the screen is assigned to the given variable. For example::
+
+    screen child():
+        add MyCreatorDefinedDisplayable() as main
+
+    screen parent():
+        use child as mycdd
+
+        # Here, the MyCreatorDefinedDisplaybale instance is assigned to cdd.
+
 
 Instead of the name of the screen, the keyword ``expression`` can be
 given, followed by an expression giving the name of the screen to use.
@@ -1846,7 +2433,7 @@ The ``showif`` statement wraps its children in a displayable that manages
 the show and hide process.
 
 Multiple showif statements can be grouped together into a single
-``showif``/``elif``/``else`` construct, similiar to an if statement.
+``showif``/``elif``/``else`` construct, similar to an if statement.
 **Unlike the if statement, showif executes all of its blocks, including Python, even if the condition is false.**
 This is because the showif statement needs to create the children that it is
 hiding.
@@ -1907,23 +2494,58 @@ Screen Statements
 In addition to the screen statement, there are three Ren'Py script
 language statements that involve screens.
 
+.. _show-screen-statement:
+
 Show Screen
 -----------
 
 The ``show screen`` statement causes a screen to be shown. It takes an
-screen name, and an optional Python argument list. If present, the arguments
-are used to initialize the scope of the screen. There are also some
-specific keywords passed to :func:`show_screen` and :func:`call_screen`.
+screen name, a series of optional clauses, and optional Python arguments
+which are passed to the screen. :func:`renpy.show_screen` and
+:func:`renpy.call_screen` take additional specific keywords.
 
-The show screen statement takes an optional ``nopredict`` keyword, that
-prevents screen prediction from occurring. During screen prediction,
-arguments to the screen are evaluated. Please ensure that evaluating
-the screen arguments does not cause unexpected side-effects to occur.
+The ``show screen`` statement takes the following clauses, some of them similar
+to the clauses of the :ref:`show-statement`:
 
-.. warning::
+``as``
+    The ``as`` clause takes a name. If not specified, it defaults to the
+    tag associated with the screen (see the :ref:`screen-statement`).
+    If that's not specified, it defaults to the name of the screen.
 
-    If evaluating the arguments to a screen causes side-effects to occur,
-    your game may behave in unexpected ways.
+``onlayer``
+    The layer to show the screen on.
+
+``zorder``
+    The zorder to show the screen on. If not specified, defaults to
+    the zorder associated with the screen. If that's not specified,
+    it is 0 by default.
+
+``expression``
+    If the ``expression`` keyword is given, the expression following it will be evaluated
+    as the screen name. To pass arguments to the screen with the expression keyword,
+    separate the expression and arguments with the ``pass`` keyword::
+
+        $ screen_name = "my_screen"
+        show screen expression screen_name
+        # Or if you need to pass some arguments
+        show screen expression screen_name pass ("Foo", message="Bar")
+
+``with``
+    This is interpreted in the same way that the with clause of a ``show``
+    statement is::
+
+        show screen clock_screen with dissolve
+
+``nopredict``
+    The ``nopredict`` keyword doesn't take a value. It prevents screen prediction
+    from occurring. During screen prediction, arguments to the screen are evaluated.
+    Please ensure that evaluating the screen arguments does not cause unexpected
+    side-effects to occur.
+
+    .. warning::
+
+        If evaluating the arguments to a screen causes side-effects to occur,
+        your game may behave in unexpected ways.
 
 Screens shown in this way are displayed until they are explicitly
 hidden. This allows them to be used for overlay purposes.
@@ -1936,44 +2558,101 @@ hidden. This allows them to be used for overlay purposes.
     if rare_case:
         show rare_screen nopredict
 
-
-The ``show screen`` statement takes a with clause, which is interpreted in the
-same way that the with clause of a ``show`` statement is. ::
-
-    show screen clock_screen with dissolve
+.. _hide-screen-statement:
 
 Hide Screen
 -----------
 
 The ``hide screen`` statement is used to hide a screen that is currently
-being shown. If the screen is not being shown, nothing happens. The with
-clause is interpreted the same way the ``with`` clause of a show statement
-is.
+being shown. It takes a screen tag. It first tries to find a screen with
+the given tag on the given layer (see the ``onlayer`` clause). If none is
+found, it looks for a screen with that name on the layer, regardless of
+the tag the screen is shown as. If none is found, nothing happens::
+
+    show screen A
+    show screen B as A # B replaces A (which hides it)
+    hide screen A # hides B, tagged as A
+
+::
+
+    show screen A as B
+    show screen B as C
+
+    hide screen B
+    # hides the A screen, shown as B
+    # the B screen, shown as C, stays shown
+
+    hide screen B
+    # hides the B screen
+
+It also takes the ``onlayer`` clause, which defaults to the ``screens``
+layer.
+
+The with clause is interpreted the same way the ``with`` clause of a
+:ref:`show-statement` is.
+
+Similar to the ``show screen`` statement, ``hide screen`` also takes the
+``expression`` keyword, allowing to use an arbitrary expression as the screen name.
 
 ::
 
     hide screen rare_screen
     hide screen clock_screen with dissolve
     hide screen overlay_screen
+    $ screen_name = "some_screen"
+    hide screen expression screen_name
+
+.. _call-screen-statement:
 
 Call Screen
 -----------
 
 The ``call screen`` statement shows a screen, and then hides it again at
 the end of the current interaction. If the screen returns a value,
-then the value is placed in ``_return``.
+then the value is placed in the global ``_return`` variable.
 
 This can be used to display an imagemap. The imagemap can place a
 value into the ``_return`` variable using the :func:`Return` action,
 or can jump to a label using the :func:`Jump` action.
 
-The call screen statement takes an optional ``nopredict`` keyword, which
-prevents screen prediction from occurring. During screen prediction,
-arguments to the screen are evaluated. Please ensure that evaluating
-the screen arguments does not cause unexpected side-effects to occur.
+The call screen statement takes various optional clauses, most of them similar to
+those of the :ref:`show-screen-statement`:
 
-In a call screen statement, the ``with`` clause causes a transition
-to occur when the screen is shown.
+``as``
+    The ``as`` clause takes a name. If not specified, it defaults to the
+    tag associated with the screen (see the :ref:`screen-statement`).
+    If that's not specified, it defaults to the name of the screen.
+
+``onlayer``
+    The layer to show the screen on.
+
+``zorder``
+    The zorder to show the screen on. If not specified, defaults to
+    the zorder associated with the screen. If that's not specified,
+    it is 0 by default.
+
+``nopredict``
+    This keyword prevents screen prediction from occurring. During screen prediction,
+    arguments to the screen are evaluated. Please ensure that evaluating
+    the screen arguments does not cause unexpected side-effects to occur.
+
+    .. warning::
+
+        If evaluating the arguments to a screen causes side-effects to occur,
+        your game may behave in unexpected ways.
+
+``expression``
+    Similar to the ``show screen`` statement, ``call screen`` also takes the
+    ``expression`` keyword, allowing to use an arbitrary expression as the screen
+    name. This also comes with the ``pass`` keyword, allowing arguments to be
+    passed to the screen.
+
+``with``
+    In a call screen statement, the ``with`` clause causes a transition
+    to occur when the screen is shown.
+
+    This does **not** cause a ``with None`` occur before the screen is shown, so all show and hide statements before
+    the screen will run. If you need a ``with None``, add one.
 
 Since calling a screen is an interaction, and interactions trigger
 an implicit ``with None``, using a ``with`` statement after the
@@ -1984,11 +2663,6 @@ special keyword argument to the screen, as in the example below.
 
 Other ways of triggering transitions also work, such as the
 ``[ With(dissolve), Return() ]`` action list.
-
-.. warning::
-
-    If evaluating the arguments to a screen causes side-effects to occur,
-    your game may behave in unexpected ways.
 
 ::
 
@@ -2004,6 +2678,9 @@ Other ways of triggering transitions also work, such as the
     # Shows the screen with dissolve and hides it with pixellate.
     call screen my_other_screen(_with_none=False) with dissolve
     with pixellate
+
+    $ screen_name = "my_screen"
+    call screen expression screen_name pass (foo="bar")
 
 .. _screen-variants:
 
@@ -2030,69 +2707,72 @@ If the environment variable is not present, a list of variants is
 built up automatically, by going through the following list in order
 and choosing the entries that apply to the current platform.
 
+``"steam_deck"``
+    True if running on a Steam Deck or equivalent hardware.
+
+``"steam_big_picture"``
+    True if running in Steam Big Picture mode.
+
 ``"large"``
-   A screen large enough that relatively small text can be
-   comfortably read, and buttons can be easily clicked. This
-   is used for computer screens.
+    A screen large enough that relatively small text can be
+    comfortably read, and buttons can be easily clicked. This
+    is used for computer screens.
 
 ``"medium"``
-   A screen where smallish text can be read, but buttons may
-   need to grow in size so they can be comfortably pressed.
-   This is used for tablets.
+    A screen where smallish text can be read, but buttons may
+    need to grow in size so they can be comfortably pressed.
+    This is used for tablets.
 
 ``"small"``
-   A screen where text must be expanded in order to be read. This
-   is used for phones and televisions. (A television might be
-   physically large, but it's often far away, making it hard
-   to read.)
+    A screen where text must be expanded in order to be read. This
+    is used for phones and televisions. (A television might be
+    physically large, but it's often far away, making it hard
+    to read.)
 
 ``"tablet"``
-   Defined on touchscreen based devices where the screen has a
-   diagonal size of 6 inches or more. (In general, ``"medium"`` should
-   be used instead of ``"tablet"``.)
+    Defined on touchscreen based devices where the screen has a
+    diagonal size of 6 inches or more. (In general, ``"medium"`` should
+    be used instead of ``"tablet"``.)
 
 ``"phone"``
-   Defined on touchscreen-based devices where the diagonal size of
-   the screen is less than 6 inches. On such a small device, it's
-   important to make buttons large enough a user can easily choose
-   them. (In general, ``"small"`` should be used instead of ``"phone"``.)
+    Defined on touchscreen-based devices where the diagonal size of
+    the screen is less than 6 inches. On such a small device, it's
+    important to make buttons large enough a user can easily choose
+    them. (In general, ``"small"`` should be used instead of ``"phone"``.)
 
 ``"touch"``
-   Defined on touchscreen-based devices.
+    Defined on touchscreen-based devices.
 
 ``"tv"``
-   Defined on television-based devices.
-
-``"ouya"``
-   Defined on the OUYA console. (``"tv"`` and ``"small"`` are also defined.)
+    Defined on television-based devices.
 
 ``"firetv"``
-   Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
+    Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
 
 ``"chromeos"``
-   Defined when running as an Android app on a Chromebook.
+    Defined when running as an Android app on a Chromebook.
 
 ``"android"``
-   Defined on all Android devices.
+    Defined on all Android devices.
 
 ``"ios"``
-   Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
-   are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
-   also defined).
+    Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
+    are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
+    also defined).
 
 ``"mobile"``
-   Defined on mobile platforms, such as Android, iOS and mobile web browsers.
+    Defined on mobile platforms, such as Android, iOS and mobile web browsers.
 
 ``"pc"``
-   Defined on Windows, Mac OS X, and Linux. A PC is expected to have
-   a mouse and keyboard present, to allow buttons to be hovered, and
-   to allow precise pointing.
+    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
+    a mouse and keyboard present, to allow buttons to be hovered, and
+    to allow precise pointing.
 
 ``"web"``
-   Defined when running inside a web browser.
+    Defined when running inside a web browser.
 
 ``None``
-   Always defined.
+    Always defined.
 
 An example of defining a screen variant is:
 
@@ -2107,3 +2787,15 @@ An example of defining a screen variant is:
         variant "small"
 
         text "Hello, World." size 30
+
+See also
+========
+
+:doc:`screen_actions` : a comprehensive list of actions and other tools
+to be used with screens.
+
+:doc:`screen_optimization` : some useful ways of making screens as
+efficient as possible.
+
+:doc:`screen_python` : go from using Ren'Py's predefined tools, to
+extending Ren'Py.

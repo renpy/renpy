@@ -9,7 +9,7 @@ to :func:`Character`, or setting the :var:`config.character_callback` or
 :var:`config.all_character_callbacks` variables.
 
 The character callback is called with a single positional argument, the event
-that occured. Possible events are:
+that occurred. Possible events are:
 
 "begin"
     Called at the start of a say statement.
@@ -27,16 +27,51 @@ that occured. Possible events are:
     after "end", in cases where dialogue does not cause an interaction
     to occur.
 
+"interact_done"
+    Called after the interaction ends. Note that entering a new context (like the game menu)
+    does not end the interaction.
+
 "end"
     Called at the end of a say statement.
 
-The callback is called with at least one keyword argument:
+The callback is called with at the keyword arguments:
 
 `interact`
     This is true if the dialogue causes an interaction to occur.
 
+`type`
+    The type of character (e.g. "nvl", "adv", "bubble").
+
+`what`
+    The text that is going to be supplied to the what displayable.
+
+`multiple`
+    The `multiple` argument to :func:`Character`.
+
+The "show", "slow_done", and "interact_done" callbacks are also given additional keyword
+arguments:
+
+`start`
+    The start of the current segment of dialogue, in the `what` string.
+
+`end`
+    The end of the current segment of dialogue, in the `what` string.
+
+`delay`
+    The amount of time Ren'Py will pause after the current segment of dialogue is shown,
+    or None if Ren'Py will pause until the player clicks.
+
+`last_segment`
+    True if this is the last segment of dialogue in the say statement, False otherwise.
+
+The "interact_done" callback takes an additional keyword argument:
+
+`exception`
+    True if the interaction ended due to an exception, False otherwise. Exceptions include
+    things like loading the game and rollback.
+
 Other values of the positional argument and additional keyword arguments may
-be supplied in the future. The callback should written to ignore arguments it
+be supplied to the callback. The callback should be written to ignore keyword arguments it
 does not understand.
 
 Example
@@ -60,3 +95,19 @@ text is enabled::
     label start:
 
         pike "So, hanging out on Talos IV, minding my own business, when..."
+
+To specialize a general callback with for specific characters, you can
+pass arguments to the callback function with the `cb_` prefix::
+
+    init python:
+        def boopy_voice(event, interact=True, boopfile="normal_boop.ogg", **kwargs):
+            if not interact:
+                return
+
+            if event == "show_done":
+                renpy.sound.play(boopfile)
+            elif event == "slow_done":
+                renpy.sound.stop()
+
+    define chrisjen = Character("Chrisjen", callback=boopy_voice)
+    define nagata = Character("Naomi", callback=boopy_voice, cb_boopfile="sfx-blipmale.ogg")

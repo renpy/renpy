@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,8 +27,7 @@ init -1500:
     python:
         class _SetRenderer(Action):
             """
-            Sets the preferred renderer to one of "auto", "angle", "gl", or
-            "sw".
+            Sets the preferred renderer.
             """
 
             def __init__(self, renderer):
@@ -48,6 +47,7 @@ init -1500:
     # This screen can be customized by the creator, provided the actions
     # remain available.
     screen _choose_renderer:
+        layer config.interface_layer
 
         $ gl = False
         $ gles = False
@@ -88,29 +88,9 @@ init -1500:
 
                     label _("Renderer")
 
-                    null height 10
-
                     textbutton _("Automatically Choose"):
                         action _SetRenderer("auto")
                         style_suffix "radio_button"
-
-                    if not config.gl2:
-
-                        if gl:
-                            textbutton _("Force GL Renderer"):
-                                action _SetRenderer("gl")
-                                style_suffix "radio_button"
-
-                        if angle:
-                            textbutton _("Force ANGLE Renderer"):
-                                action _SetRenderer("angle")
-                                style_suffix "radio_button"
-
-                        if gles:
-                            textbutton _("Force GLES Renderer"):
-                                action _SetRenderer("gles")
-                                style_suffix "radio_button"
-
 
                     if gl:
                         textbutton _("Force GL2 Renderer"):
@@ -127,11 +107,7 @@ init -1500:
                             action _SetRenderer("gles2")
                             style_suffix "radio_button"
 
-                    null height 10
-
                     label _("Gamepad")
-
-                    null height 10
 
                     textbutton _("Enable (No Blocklist)"):
                         action SetField(_preferences, "pad_enabled", "all")
@@ -158,8 +134,6 @@ init -1500:
 
                     label _("Powersave")
 
-                    null height 10
-
                     textbutton _("Enable"):
                         action Preference("gl powersave", True)
                         style_suffix "radio_button"
@@ -168,11 +142,7 @@ init -1500:
                         action Preference("gl powersave", False)
                         style_suffix "radio_button"
 
-                    null height 10
-
                     label _("Framerate")
-
-                    null height 10
 
                     textbutton _("Screen"):
                         action Preference("gl framerate", None)
@@ -186,11 +156,7 @@ init -1500:
                         action Preference("gl framerate", 30)
                         style_suffix "radio_button"
 
-                    null height 10
-
                     label _("Tearing")
-
-                    null height 10
 
                     textbutton _("Enable"):
                         action Preference("gl tearing", True)
@@ -199,8 +165,6 @@ init -1500:
                     textbutton _("Disable"):
                         action Preference("gl tearing", False)
                         style_suffix "radio_button"
-
-                    null height 10
 
             vbox:
 
@@ -223,7 +187,7 @@ init -1500:
 
     # This is displayed when a display performance problem occurs.
     #
-    # `problem` is the kind of problem that is occuring. It can be:
+    # `problem` is the kind of problem that is occurring. It can be:
     # - "sw" if the software renderer was selected.
     # - "gl2" if GL2 should be used but wasn't selected.
     # - other things, added in the future.
@@ -233,6 +197,7 @@ init -1500:
     #
     # `allow_continue` controls whether this error can be ignored.
     screen _performance_warning:
+        layer config.interface_layer
 
         frame:
             style_group ""
@@ -335,8 +300,6 @@ init -1500 python:
         if renpy.mobile:
             return
 
-        renpy.renpy.display.log.write("Performance test:")
-
         # This will cause the screen to start displaying.
         ui.pausebehavior(0)
         ui.interact(suppress_underlay=True, suppress_overlay=True)
@@ -349,14 +312,9 @@ init -1500 python:
 
         renderer_info = renpy.get_renderer_info()
 
-         # Software renderer check.
+        # Software renderer check.
         if config.renderer != "sw" and renderer_info["renderer"] == "sw":
             problem = "sw"
-            allow_continue = False
-
-        # Game require gl2 that wasn't initialized.
-        elif config.gl2 and not renderer_info.get("models", False):
-            problem = "gl2"
             allow_continue = False
 
         if problem is None:
@@ -383,14 +341,14 @@ label _gl_test:
         return
 
     # Show the test image.
-    scene black
+    scene black zorder 0
     show expression config.gl_test_image
     with None
 
     $ __gl_test()
 
     # Hide the test image.
-    scene black
+    scene black zorder 0
 
     return
 

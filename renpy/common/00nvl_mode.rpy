@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,7 @@
 # dialogue in a fullscreen way, like NVL-style games. Multiple lines
 # of dialogue are shown on the screen at once, whenever a line of
 # dialogue is said by a NVLCharacter. Calling the nvl_clear function
-# clears the screen, ensuring that the the next line will appear at
+# clears the screen, ensuring that the next line will appear at
 # the top of the screen.
 #
 # You can also have menus appear on the screen, by running:
@@ -62,7 +62,7 @@ init -1500 python:
 
     # Set up nvl mode styles.
     style.nvl_label.minwidth = 150
-    style.nvl_label.text_align = 1.0
+    style.nvl_label.textalign = 1.0
 
     style.nvl_window.background = "#0008"
     style.nvl_window.yfill = True
@@ -247,12 +247,17 @@ init -1500 python:
         """
 
         nvl_show_core()
-        renpy.with_statement(with_)
+        store._window = True
         store._last_say_who = "nvl"
+        renpy.with_statement(with_)
 
-    def nvl_hide(with_):
+        renpy.mode("window show")
+
+
+    def nvl_hide(with_, modes=True):
         """
         :doc: nvl
+        :args: (with_)
 
         The Python equivalent of the ``nvl hide`` statement.
 
@@ -261,9 +266,16 @@ init -1500 python:
         """
 
         nvl_show_core()
+
+        if modes:
+            store._window = False
+
         renpy.with_statement(None)
-        renpy.with_statement(with_)
         store._last_say_who = None
+        renpy.with_statement(with_)
+
+        if modes:
+            renpy.mode("window hide")
 
     def nvl_erase():
         if nvl_list:
@@ -304,6 +316,8 @@ init -1500 python:
                 self.clear = properties.pop("clear")
             else:
                 self.clear = kind.clear
+
+            properties.setdefault("statement_name", "say-nvl")
 
             ADVCharacter.__init__(
                 self,
@@ -349,7 +363,9 @@ init -1500 python:
             while config.nvl_list_length and (len(nvl_list) + 1 > config.nvl_list_length):
                 nvl_list.pop(0)
 
-        def do_display(self, who, what, multiple=None, **display_args):
+        def do_display(self, who, what, multiple=None, retain=None, **display_args):
+
+            renpy.translation.check_language()
 
             page = self.clear or nvl_clear_next()
 
@@ -361,8 +377,12 @@ init -1500 python:
                 if page:
                     checkpoint = True
                 else:
-                    if renpy.in_rollback():
+                    rfi = renpy.roll_forward_info()
+
+                    if rfi is not None:
+                        renpy.checkpoint(rfi, keep_rollback=True, hard=False)
                         return
+
                     checkpoint = False
             else:
                 checkpoint = True
@@ -542,7 +562,7 @@ init -1500 python:
         if config.nvl_adv_transition:
             if mode == "say" or mode == "menu":
                 if old == "nvl" or old == "nvl_menu":
-                    nvl_hide(config.nvl_adv_transition)
+                    nvl_hide(config.nvl_adv_transition, modes=False)
 
     config.mode_callbacks.append(_nvl_adv_callback)
 

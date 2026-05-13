@@ -28,12 +28,12 @@ the English translation.
 Translation Files
 -----------------
 
-The translation files live in launcher/game/tl/`language`/. With the
-exception of script.rpy, all files consist of string translations that
+The translation files live in :file:`launcher/game/tl/{language}/`. With the
+exception of :file:`script.rpy`, all files consist of string translations that
 can be translated using the :ref:`string translation <string-translations>`
 syntax. Some strings might begin with "## ". These are comments that
-are translated, wrapped, and included in the options.rpy and gui.rpy
-files.
+are translated, wrapped, and included in the :file:`options.rpy` and
+:file:`gui.rpy` files.
 
 The translation files are:
 
@@ -75,21 +75,46 @@ style.rpy
     It configures the launcher styles, and the font that is used by a
     generated game.
 
+Language-Specific Translations
+------------------------------
+
+There is one translation that is not a straight-up translation. The
+"{#language name and font}" translation should be replaced with the
+name of the language, optionally wrapped in a launcher font, if
+non-ASCII characters are used. For example::
+
+    translate french strings:
+
+        old "{#language name and font}"
+        new "{font=fonts/Roboto-Light.ttf}Français{/font}"
+
+This is used to display the language name when the launcher is
+not in that language.
+
+Translations beginning with "{#in language font}" need to be wrapped
+in the same way. For example::
+
+    translate french strings:
+
+        old "{#in language font}Start using Ren'Py in [lang_name]"
+        new "{font=fonts/Roboto-Light.ttf}Commencez à utiliser Ren'Py en [lang_name]{/font}"
+
 
 Changing Fonts
 --------------
 
 Ren'Py ships with a default font (DejaVuSans) that covers most western
 languages, but other fonts are often needed. A font can be configured by
-editing launcher/game/tl/language/style.rpy, and adding::
+editing :file:`launcher/game/tl/language/style.rpy`, and adding::
 
     init python:
         translate_font("language", "myfont.ttf")
 
 Where "language" is the language in question (for example, "japanese"), and
 "myfont.ttf" is the font that should be used (for example, "MTLc3m.ttf").
-The font file should be placed in the launcher/game/tl/language directory,
-so it can be found by the launcher.
+The font file should be placed in the :file:`launcher/game/tl/language`
+directory, so it can be found by the launcher.
+
 
 
 Changing the Launcher Style
@@ -168,4 +193,3 @@ They should be called from the ``init python`` block.
     For example, the following changes the size of dialogue text::
 
         translate_define("martian", "gui.text_size", 12)
-

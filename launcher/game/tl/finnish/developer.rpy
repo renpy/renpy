@@ -75,7 +75,8 @@ translate finnish strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    # Automatic translation.
+    new "\n{color=#cfc}✔ ennustettu kuva (hyvä){/color}\n{color=#fcc}✘ ennakoimaton kuva (huono){/color}\n{color=#fff}Siirrä vetämällä.{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
@@ -176,4 +177,111 @@ translate finnish strings:
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <tunnus>: hyppää 'script.rpy'-tiedosto(i)ssa olevaan, tunnuksella merkittyyn kohtaan"
+
+
+translate finnish strings:
+
+    # renpy/common/_developer/developer.rpym:43
+    old "Interactive Director (D)"
+    # Automatic translation.
+    new "Interaktiivinen johtaja (D)"
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    # Automatic translation.
+    new "Pysyvä katseluohjelma"
+
+    # renpy/common/_developer/developer.rpym:59
+    old "Show Image Load Log (F4)"
+    # Automatic translation.
+    new "Näytä kuvan latausloki (F4)"
+
+    # renpy/common/_developer/developer.rpym:62
+    old "Hide Image Load Log (F4)"
+    # Automatic translation.
+    new "Piilota kuvan latausloki (F4)"
+
+    # renpy/common/_developer/developer.rpym:65
+    old "Image Attributes"
+    # Automatic translation.
+    new "Kuva-attribuutit"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    # Automatic translation.
+    new "Puhekuplaeditori (Shift+B)"
+
+    # renpy/common/_developer/developer.rpym:97
+    old "[name] [attributes] (hidden)"
+    # Automatic translation.
+    new "[name] [attributes] (piilotettu)"
+
+    # renpy/common/_developer/developer.rpym:101
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:162
+    old "Hide deleted"
+    # Automatic translation.
+    new "Piilota poistettu"
+
+    # renpy/common/_developer/developer.rpym:162
+    old "Show deleted"
+    # Automatic translation.
+    new "Näytä poistettu"
+
+    # renpy/common/_developer/developer.rpym:389
+    old "Type to filter: "
+    # Automatic translation.
+    new "Suodatettava tyyppi: "
+
+    # renpy/common/_developer/developer.rpym:507
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    # Automatic translation.
+    new "Tekstuurit: [tex_count] ([tex_size_mb:.1f] MB)"
+
+    # renpy/common/_developer/developer.rpym:511
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    # Automatic translation.
+    new "Kuvien välimuisti: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    # Automatic translation.
+    new "help: näytä tämä apu\n help <expr>: näytä <expr>:n allekirjoitus ja dokumentaatio"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    # Automatic translation.
+    new "Ohje saattaa näyttää dokumentoimattomia toimintoja. Tarkista, että toiminto tai\nluokkaa, jota haluat käyttää, on dokumentoitu.\n\n"
+
+    # renpy/common/00console.rpy:854
+    old "stack: print the return stack"
+    # Automatic translation.
+    new "stack: tulostaa paluupinon"
+
+    # renpy/common/00console.rpy:908
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    # Automatic translation.
+    new "watch <expression>: katsella python-lauseketta\n watch short: tekee jäljitettyjen lausekkeiden esityksestä lyhyen (oletusarvo)\n watch long: tekee jäljitettyjen ilmaisujen esittämisen sellaiseksi kuin se on."
+
+    # renpy/common/00console.rpy:1028
+    old "short: Shorten the representation of objects on the console (default)."
+    # Automatic translation.
+    new "short: Lyhentää objektien esitystä konsolissa (oletus)."
+
+    # renpy/common/00console.rpy:1032
+    old "long: Print the full representation of objects on the console."
+    # Automatic translation.
+    new "long: Tulostaa objektien täydellisen esityksen konsoliin."
+
+    # renpy/common/00console.rpy:1036
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    # Automatic translation.
+    new "escape: Mahdollistaa unicode-symbolien pakenemisen unicode-merkkijonoissa."
+
+    # renpy/common/00console.rpy:1040
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    # Automatic translation.
+    new "unescape: Poistaa unicode-merkkijonojen unicode-symbolien eskandoimisen ja tulostaa ne sellaisenaan (oletus)."
 

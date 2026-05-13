@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -41,6 +41,13 @@ init python in project:
     if persistent.blurb is None:
         persistent.blurb = 0
 
+    # Added this persistent variable to retain any
+    # previous folder that was collapsed or shown
+    if persistent.collapsed_folders is None:
+        persistent.collapsed_folders = { }
+
+    persistent.collapsed_folders.setdefault("Tutorials", False)
+
     project_filter = [ i.strip() for i in os.environ.get("RENPY_PROJECT_FILTER", "").split(":") if i.strip() ]
 
     LAUNCH_BLURBS = [
@@ -48,25 +55,34 @@ init python in project:
         _("Press shift+O (the letter) to access the console."),
         _("Press shift+D to access the developer menu."),
         _("Have you backed up your projects recently?"),
+        _("Lint checks your game for potential mistakes, and gives you statistics."),
     ]
 
     class Project(object):
 
-        def __init__(self, path, name=None):
-
-            if name is None:
-                name = os.path.basename(path)
+        def __init__(self, path, name=None, parent_path=None):
 
             while path.endswith("/"):
                 path = path[:-1]
+
+            if name is None:
+                name = os.path.basename(path)
 
             if not os.path.exists(path):
                 raise Exception("{} does not exist.".format(path))
 
             self.name = name
 
-            # The path to the project.
+            # The path to the project. In the case of a mac app, this is to the base directory
+            # buried inside the app.
             self.path = path
+
+            # The path to the project's parent directory. This is logical - in the case of a mac app,
+            # this is the directory outside the app.
+            if parent_path is not None:
+                self.parent_path = parent_path
+            else:
+                self.parent_path = os.path.dirname(path)
 
             # The path to the game directory.
             gamedir = os.path.join(path, "game")
@@ -91,6 +107,13 @@ init python in project:
             # The mtime of the last dump file loaded.
             self.dump_mtime = 0
 
+            # A processed version of data['renpy_launcher'] with missing files
+            # and directories removed.
+            self.renpy_launcher = None
+
+            # Caches the todo list.
+            self.todos = None
+
         def get_dump_filename(self):
 
             if os.path.exists(os.path.join(self.gamedir, "saves")):
@@ -101,7 +124,7 @@ init python in project:
 
         def load_data(self):
             try:
-                with open(os.path.join(self.path, "project.json"), "rb") as f:
+                with open(os.path.join(self.path, "project.json"), "r") as f:
                     self.data = json.load(f)
             except Exception:
                 self.data = { }
@@ -114,8 +137,8 @@ init python in project:
             """
 
             try:
-                with open(os.path.join(self.path, "project.json"), "wb") as f:
-                    json.dump(self.data, f)
+                with open(os.path.join(self.path, "project.json"), "w") as f:
+                    json.dump(self.data, f, indent=2)
             except Exception:
                 self.load_data()
 
@@ -127,6 +150,7 @@ init python in project:
             data.setdefault("add_from", True)
             data.setdefault("force_recompile", True)
             data.setdefault("android_build", "Release")
+            data.setdefault("tutorial", False)
 
             if "renamed_all" not in data:
                 dp = data["packages"]
@@ -152,6 +176,43 @@ init python in project:
                         dp.append("market")
 
                 data["renamed_steam"] = True
+
+
+        def get_renpy_launcher(self):
+
+            if self.renpy_launcher is not None:
+                return self.renpy_launcher
+
+            rv = { }
+
+            default_values = {
+                "open_directory":
+                {
+                    "game": "game",
+                    "base": ".",
+                    "images": "game/images",
+                    "audio": "game/audio",
+                    "gui": "game/gui",
+                    "libs": "game/libs",
+                    "mods": "game/mods",
+                },
+                "edit_file":
+                {
+                    "script.rpy": "game/script.rpy",
+                    "options.rpy": "game/options.rpy",
+                    "gui.rpy": "game/gui.rpy",
+                    "screens.rpy": "game/screens.rpy"
+                }
+            }
+
+            for k, default_d in default_values.items():
+                d = self.data.get("renpy_launcher", {}).get(k, default_d)
+                rv[k] = { name : path for name, path in d.items() if os.path.exists(os.path.join(self.path, path)) }
+
+            self.renpy_launcher = rv
+
+            return rv
+
 
 
         def make_tmp(self):
@@ -224,7 +285,7 @@ init python in project:
             else:
                 extension = ""
 
-            if persistent.windows_console:
+            if persistent.use_console:
                 executables = [ "python" + extension ]
             else:
                 executables = [ "pythonw" + extension ]
@@ -258,7 +319,15 @@ init python in project:
 
             environ = dict(os.environ)
             environ["RENPY_LAUNCHER_LANGUAGE"] = _preferences.language or "english"
+
+            if persistent.skip_splashscreen:
+                environ["RENPY_SKIP_SPLASHSCREEN"] = "1"
+
             environ.update(env)
+
+            # Filter out system PYTHON* environment variables.
+            if hasattr(sys, "renpy_executable"):
+                environ = { k : v for k, v in environ.items() if not k.startswith("PYTHON") }
 
             encoded_environ = { }
 
@@ -271,16 +340,83 @@ init python in project:
             # Launch the project.
             cmd = [ renpy.fsencode(i) for i in cmd ]
 
+            if persistent.use_console and renpy.macintosh:
+                cmd = self.generate_mac_launch_string(cmd)
+
             p = subprocess.Popen(cmd, env=encoded_environ)
 
             if wait:
                 if p.wait():
-                    interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
+
+                    print(f"Launch failed (returned {p.returncode}).")
+
+                    command = " ".join(repr(i) for i in cmd)
+                    print(f"Command: {command}")
+
+                    if args and not self.is_writeable():
+                        interface.error(_("Launching the project failed."), _("This may be because the project is not writeable."))
+                    else:
+                        interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
 
             renpy.not_infinite_loop(30)
 
+        def launch_console_command(self, args=[]):
+            """
+            This launcher the project, displaying console output in a new terminal emulator window. The window will
+            remain open until the user actively closes it, making it possible to display output to the user.
 
-        def update_dump(self, force=False, gui=True, compile=False):
+            `args`
+                Additional arguments to give to the project.
+            """
+
+            self.make_tmp()
+
+            # Find the python executable to run.
+            executable_path = os.path.dirname(renpy.fsdecode(sys.executable))
+
+            if renpy.renpy.windows:
+                extension = ".exe"
+            else:
+                extension = ""
+
+            executables = [ "python" + extension ]
+
+            executables.append(sys.executable)
+
+            for i in executables:
+                executable = os.path.join(executable_path, i)
+                if os.path.exists(executable):
+                    break
+            else:
+                raise Exception("Python interpreter not found: %r", executables)
+
+            # Put together the basic command line.
+            cmd = [ executable, sys.argv[0] ]
+
+            cmd.append(self.path)
+            cmd.extend(args)
+
+            from store import ConsoleCommand
+
+            console = ConsoleCommand()
+            console.add(*cmd)
+            console.run()
+
+        def generate_mac_launch_string(self, cmd):
+            """
+            replaces the existing launch arguments,
+            with the correct ones to open up a console window on MacOS based systems
+            """
+            python_launch_string = ""
+
+            for argument in cmd:
+                python_launch_string += argument
+                # adding spacing between arguments
+                python_launch_string += " "
+
+            return ["osascript", "-e", 'tell app "Terminal" to do script "'+python_launch_string+' && exit"']
+
+        def update_dump(self, force=False, gui=True, compile=False, only_existing=False):
             """
             If the dumpfile does not exist, runs Ren'Py to create it. Otherwise,
             loads it in iff it's newer than the one that's already loaded.
@@ -289,6 +425,9 @@ init python in project:
             dump_filename = self.get_dump_filename()
 
             if force or not os.path.exists(dump_filename):
+
+                if only_existing and not os.path.exists(dump_filename):
+                    return
 
                 if gui:
                     interface.processing(_("Ren'Py is scanning the project..."))
@@ -311,8 +450,7 @@ init python in project:
             try:
                 with open(dump_filename, "r") as f:
                     self.dump = json.load(f)
-                # add todo list to dump data
-                self.update_todos()
+                    self.todos = None
 
             except Exception:
                 self.dump["error"] = True
@@ -322,6 +460,10 @@ init python in project:
             Scans the scriptfiles for lines TODO comments and add them to
             the dump data.
             """
+
+            if self.todos is not None:
+                self.dump.setdefault("location", {})["todo"] = self.todos
+                return
 
             todos = self.dump.setdefault("location", {})["todo"] = {}
 
@@ -335,11 +477,6 @@ init python in project:
                     l += 1
 
                     line = line[:1024]
-
-                    try:
-                        line = line.decode("utf-8")
-                    except Exception:
-                        continue
 
                     m = re.search(r"#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
 
@@ -357,6 +494,7 @@ init python in project:
 
                     todos[todo_text] = [f, l]
 
+            self.todos = todos
 
         def unelide_filename(self, fn):
             """
@@ -382,9 +520,18 @@ init python in project:
             can be included in the project.
             """
 
+            def is_script(fn):
+                fn = fn.lower()
+
+                for i in [ ".rpy", ".rpym", "_ren.py" ]:
+                    if fn.endswith(i):
+                        return True
+
+                return False
+
             rv = [ ]
             rv.extend(i for i, isdir in util.walk(self.path)
-                if (not isdir) and (i.endswith(".rpy") or i.endswith(".rpym")) and (not i.startswith("tmp/")) )
+                if (not isdir) and is_script(i) and (not i.startswith("tmp/")) )
 
             return rv
 
@@ -395,6 +542,34 @@ init python in project:
 
             return os.path.exists(os.path.join(self.path, fn))
 
+        def is_writeable(self):
+            """
+            Returns true if it's possible to write a file in the projects
+            directory.
+            """
+
+            return os.access(self.path, os.W_OK)
+
+    class ProjectFolder(object):
+        """
+        This handles the folder name and the projects within
+        this folder.
+        """
+
+        def __init__(self, name):
+            # The folder name.
+            self.name = name
+
+            # Normal projects, in alphabetical order by lowercase name.
+            self.projects = [ ]
+
+            # Controls wether the folder is collapsed or shown.
+            self.hidden = True
+
+        # NOTE
+        # Vague function name but context is self explanatory
+        def add(self, p):
+            self.projects.append(p)
 
     class ProjectManager(object):
         """
@@ -406,6 +581,9 @@ init python in project:
 
             # The projects directory.
             self.projects_directory = ""
+
+            # NOTE: Folder of projects, in alphabetical order by lowercase name.
+            self.folders = [ ]
 
             # Normal projects, in alphabetical order by lowercase name.
             self.projects = [ ]
@@ -420,7 +598,7 @@ init python in project:
             self.scanned = set()
 
             # The tutorial game, and the language it's for.
-            self.tutoral = None
+            self.tutorial = None
             self.tutorial_language = "the meowing of a cat"
 
             self.scan()
@@ -446,6 +624,7 @@ init python in project:
 
             self.projects_directory = persistent.projects_directory
 
+            self.folders = [ ]
             self.projects = [ ]
             self.templates = [ ]
             self.all_projects = [ ]
@@ -454,13 +633,12 @@ init python in project:
             if self.projects_directory is not None:
                 self.scan_directory(self.projects_directory)
 
-
             self.scan_directory(config.renpy_base)
-            self.scan_directory(os.path.join(config.renpy_base, "templates"))
 
+            # NOTE: Added `self.folders` that holds the ProjectFolder objects
+            self.folders.sort(key=lambda p : p.name.lower())
             self.projects.sort(key=lambda p : p.name.lower())
             self.templates.sort(key=lambda p : p.name.lower())
-
 
             # Select the default project.
             if persistent.active_project is not None:
@@ -472,29 +650,101 @@ init python in project:
 
             current = self.get_tutorial()
 
+        # NOTE
+        # Turned this `has_game` function part of the class as static
+        # Because it was used in a few places due the changes.
+        @staticmethod
+        def has_game(dn):
+            return os.path.isdir(os.path.join(dn, "game"))
+
+        # NOTE
+        # This function remove any folder that was saved
+        # that doesn't exist anymore in `self.projects_directory`
+        def clear_collapsed_folders(self):
+            prefix = os.path.normpath(self.projects_directory)
+
+            for name in [*persistent.collapsed_folders.keys()]:
+                dpath = os.path.join(prefix, name)
+
+                if not os.path.isdir(dpath) and not "Tutorials":
+                    persistent.collapsed_folders.pop(name)
+
+
+        def find_folder_projects(self, d):
+            """
+            Finds projects that exist in folders, rather than in
+            the base directory.
+            """
+
+            nd = os.path.normpath(d)
+            prefix = os.path.normpath(self.projects_directory)
+
+            if nd.startswith(prefix):
+                fpath, fname = os.path.split(nd)
+                full_path = os.path.join(fpath, fname)
+
+                pf = ProjectFolder(fname)
+
+                # If the key was found in `persistent.collapsed_folders`
+                # uses the value stored there
+                try:
+                    pf.hidden = persistent.collapsed_folders[fname]
+
+                except KeyError:
+                    pf.hidden = (fname != "master")
+
+                for pdir in util.listdir(full_path):
+                    ppath = os.path.join(full_path, pdir)
+
+                    if not os.path.isdir(ppath):
+                        continue
+
+                    p_path = self.find_basedir(ppath)
+
+                    if not p_path or p_path in self.scanned:
+                        continue
+
+                    self.scanned.add(p_path)
+
+                    # Get the name of the project
+                    name = os.path.split(ppath)[1]
+
+                    # We have a project directory, so create a Project.
+                    p = Project(p_path, name, parent_path=full_path)
+
+                    # Adds the project to the ProjectFolder
+                    pf.add(p)
+
+                    self.all_projects.append(p)
+
+                    project_type = p.data.get("type", "normal")
+                    if project_type == "template":
+                        self.templates.append(p)
+
+                if not pf.hidden and not pf.projects:
+                    pf.hidden = True
+
+                # Return None if the project folder is emtpy.
+                if not pf.projects:
+                    return None
+
+                # Return the project folder object.
+                return pf
+
+            return None
 
         def find_basedir(self, d):
             """
             Try to find a project basedir in d.
             """
 
-            def has_game(dn):
-                return os.path.isdir(os.path.join(dn, "game"))
-
-            if has_game(d):
+            if self.has_game(d):
                 return d
 
-            dn = os.path.join(d, "Contents", "Resources", "autorun")
-            if has_game(dn):
-                return dn
+            if d.endswith(".app"):
+                dn = os.path.join(d, "Contents", "Resources", "autorun")
 
-            for dn in os.listdir(d):
-                if not dn.endswith(".app"):
-                    continue
-
-                dn = os.path.join(d, dn, "Contents", "Resources", "autorun")
-
-                if has_game(dn):
+                if self.has_game(dn):
                     return dn
 
             return None
@@ -525,6 +775,10 @@ init python in project:
 
                     for path in f:
                         path = path.strip()
+
+                        if path.startswith("#"):
+                            continue
+
                         if len(path) > 0:
                             self.scan_directory_direct(path)
 
@@ -540,35 +794,45 @@ init python in project:
                 return
 
             try:
-                ppath = self.find_basedir(ppath)
+                if p_path := self.find_basedir(ppath):
+
+                    if p_path in self.scanned:
+                        return
+
+                    self.scanned.add(p_path)
+
+                    # We have a project directory, so create a Project.
+                    p = Project(p_path, name, parent_path=os.path.dirname(ppath))
+
+                    if project_filter and (p.name not in project_filter):
+                        return
+
+                    project_type = p.data.get("type", "normal")
+
+                    if project_type == "hidden":
+                        pass
+
+                    elif project_type == "template":
+                        self.projects.append(p)
+                        self.templates.append(p)
+
+                    else:
+                        self.projects.append(p)
+
+                    self.all_projects.append(p)
+
+                else:
+                    self.clear_collapsed_folders()
+
+                    pf = self.find_folder_projects(ppath)
+
+                    if pf is None:
+                        return
+
+                    self.folders.append(pf)
+
             except Exception:
                 return
-
-            if ppath is None:
-                return
-
-            if ppath in self.scanned:
-                return
-
-            self.scanned.add(ppath)
-
-            # We have a project directory, so create a Project.
-            p = Project(ppath, name)
-
-            if project_filter and (p.name not in project_filter):
-                return
-
-            project_type = p.data.get("type", "normal")
-
-            if project_type == "hidden":
-                pass
-            elif project_type == "template":
-                self.templates.append(p)
-            else:
-                self.projects.append(p)
-
-            self.all_projects.append(p)
-
 
         def get(self, name):
             """
@@ -636,7 +900,7 @@ init python in project:
                 The label to jump to when clicked.
             """
 
-            if isinstance(p, basestring):
+            if isinstance(p, str):
                 p = manager.get(p)
 
             self.project = p
@@ -659,6 +923,11 @@ init python in project:
 
             current = self.project
             persistent.active_project = self.project.name
+
+            try:
+                current.update_dump(only_existing=True)
+            except Exception:
+                pass
 
             renpy.restart_interaction()
 
@@ -693,6 +962,11 @@ init python in project:
             current = p
             persistent.active_project = p.name
 
+            try:
+                current.update_dump(only_existing=True)
+            except Exception:
+                pass
+
             renpy.restart_interaction()
 
         def get_sensitive(self):
@@ -724,7 +998,7 @@ init python in project:
         def __init__(self, p=None):
             if p is None:
                 self.project = current
-            elif isinstance(p, basestring):
+            elif isinstance(p, str):
                 self.project = manager.get(p)
             else:
                 self.project = p
@@ -736,7 +1010,12 @@ init python in project:
             blurb = LAUNCH_BLURBS[persistent.blurb % len(LAUNCH_BLURBS)]
             persistent.blurb += 1
 
-            interface.interaction(_("Launching"), blurb, pause=2.5)
+            if persistent.skip_splashscreen:
+                submessage = _("Splashscreen skipped in launcher preferences.")
+            else:
+                submessage = None
+
+            interface.interaction(_("Launching"), blurb, submessage=submessage, pause=2.5)
 
 
         def __call__(self):
@@ -752,6 +1031,24 @@ init python in project:
             manager.scan()
             renpy.restart_interaction()
 
+            if current is not None:
+                try:
+                    current.update_dump(gui=False, only_existing=True)
+                except Exception:
+                    pass
+
+    # NOTE: Action class for ProjectFolder
+    class CollapseFolder(Action):
+        def __init__(self, pf):
+            self.pf = pf
+
+        def __call__(self):
+            self.pf.hidden = not self.pf.hidden
+            persistent.collapsed_folders[self.pf.name] = self.pf.hidden
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            return (not self.pf.hidden)
 
     manager.scan()
 
@@ -763,13 +1060,11 @@ init 10 python:
         if not directory_is_writable(persistent.projects_directory):
             persistent.projects_directory = None
 
-label after_load:
-    python:
-        if project.current is not None:
-            project.current.update_dump()
-
-    return
-
+    if project.current is not None:
+        try:
+            project.current.update_dump(only_existing=True)
+        except Exception:
+            pass
 
 ###############################################################################
 # Code to choose the projects directory.
@@ -820,3 +1115,24 @@ init python:
         return False
 
     renpy.arguments.register_command("get_projects_directory", get_projects_directory_command)
+
+    def set_project_command():
+        ap = renpy.arguments.ArgumentParser()
+        ap.add_argument("project", help="The full path to the project to select.")
+
+        args = ap.parse_args()
+
+        projects = os.path.dirname(os.path.abspath(args.project))
+        name = os.path.basename(args.project)
+
+        persistent.projects_directory = renpy.fsdecode(projects)
+        project.multipersistent.projects_directory = persistent.projects_directory
+
+        persistent.active_project = name
+
+        project.multipersistent.save()
+        renpy.save_persistent()
+
+        return False
+
+    renpy.arguments.register_command("set_project", set_project_command)

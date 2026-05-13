@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,9 +23,12 @@
 # distributions.
 
 init -1500 python in build:
+    # Do not participate in saves.
+    _constant = True
 
-    from store import config
+    from store import config, store
 
+    import sys, os
 
     def make_file_lists(s):
         """
@@ -39,11 +42,10 @@ init -1500 python in build:
             return s
         elif isinstance(s, list):
             return s
-        elif isinstance(s, basestring):
+        elif isinstance(s, str):
             return s.split()
 
         raise Exception("Expected a string, list, or None.")
-
 
 
     def pattern_list(l):
@@ -58,16 +60,28 @@ init -1500 python in build:
 
         return rv
 
-    # Patterns that are used to classify Ren'Py.
+
+    renpy_sh = "renpy.sh"
+
     renpy_patterns = pattern_list([
+        ("renpy/**__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), "all"),
+        ("renpy/**__pycache__", "all"),
+    ])
+
+    if os.path.exists(os.path.join(config.renpy_base, "renpy3.sh")):
+        renpy_sh = "renpy3.sh"
+
+
+    # Patterns that are used to classify Ren'Py.
+    renpy_patterns.extend(pattern_list([
         ( "**~", None),
         ( "**/#*", None),
         ( "**/.*", None),
         ( "**.old", None),
         ( "**.new", None),
         ( "**.rpa", None),
-
-        ( "**/*.pyc", None),
+        ( "**.rpe", None),
+        ( "**.rpe.py", None),
 
         ( "**/steam_appid.txt", None),
 
@@ -75,9 +89,16 @@ init -1500 python in build:
 
         ( "renpy/", "all"),
         ( "renpy/**.py", "renpy"),
-        ( "renpy/**.pyx", "renpy"),
-        ( "renpy/**.pyd", "renpy"),
-        ( "renpy/**.pxi", "renpy"),
+
+        # Ignore Cython source files.
+        ( "renpy/**.pxd", None),
+        ( "renpy/**.pxi", None),
+        ( "renpy/**.pyx", None),
+
+        # Ignore legacy Python bytcode files (unless allowed above).
+        ( "renpy/**.pyc", None),
+        ( "renpy/**.pyo", None),
+
         ( "renpy/common/", "all"),
         ( "renpy/common/_compat/**", "renpy"),
         ( "renpy/common/**.rpy", "renpy"),
@@ -91,24 +112,33 @@ init -1500 python in build:
         ( "lib/*/renpy.exe", None),
         ( "lib/*/pythonw.exe", None),
 
+        # Ignore the wrong Python.
+        ( "lib/py2-*/", None),
+
         # Windows patterns.
         ( "lib/py*-windows-i686/**", "windows_i686"),
         ( "lib/py*-windows-x86_64/**", "windows"),
 
         # Linux patterns.
         ( "lib/py*-linux-i686/**", "linux_i686"),
+        ( "lib/py*-linux-aarch64/**", "linux_arm"),
+        ( "lib/py*-linux-armv7l/**", "linux_arm"),
         ( "lib/py*-linux-*/**", "linux"),
 
         # Mac patterns.
         ( "lib/py*-mac-*/**", "mac"),
 
+        # Web patterns.
+        ( "lib/web/**", "web"),
+
         # Old Python library.
-        ( "lib/python3.*/**" if PY2 else "lib/python2.*/**", None),
+        ( "lib/python2.*/**", None),
 
         # Shared patterns.
         ( "lib/**", "windows linux mac android ios"),
-        ( "renpy.sh", "linux mac"),
-    ])
+        ( renpy_sh, "linux mac"),
+    ]))
+
 
     def classify_renpy(pattern, groups):
         """
@@ -125,6 +155,10 @@ init -1500 python in build:
         ("*.app/", None),
         ("*.dll", None),
         ("*.manifest", None),
+        ("*.keystore", None),
+        ( "**.rpe.py", None),
+
+        ("update.pem", None),
 
         ("lib/", None),
         ("renpy/", None),
@@ -133,6 +167,7 @@ init -1500 python in build:
         ("update/", None),
 
         ("old-game/", None),
+        ("base/", None),
 
         ("icon.ico", None),
         ("icon.icns", None),
@@ -160,6 +195,7 @@ init -1500 python in build:
 
         ("game/presplash*.*", "all"),
 
+        ("android.json", "android"),
         (".android.json", "android"),
         ("android-*.png", "android"),
         ("android-*.jpg", "android"),
@@ -172,16 +208,28 @@ init -1500 python in build:
         ("web-presplash.png", "web"),
         ("web-presplash.jpg", "web"),
         ("web-presplash.webp", "web"),
+        ("web-icon.png", "web"),
         ("progressive_download.txt", "web"),
 
         ("steam_appid.txt", None),
 
-        ])
+        ("game/" + renpy.script.BYTECODE_FILE, "all"),
+        ("game/cache/bytecode-*.rpyb", None),
+        ("game/cache/build_info.json", None),
+        ("game/cache/build_time.txt", None),
+
+    ])
+
 
     base_patterns = [ ]
 
     late_base_patterns = pattern_list([
         (".*", None),
+        ("**/desktop.ini", None),
+        ("**/Thumbs.db", None),
+        ("**/ehthumbs.db", None),
+        ("**/ehthumbs_vista.db", None),
+        ("**/$RECYCLE.BIN", None),
         ("**", "all")
         ])
 
@@ -189,7 +237,11 @@ init -1500 python in build:
         """
         :doc: build
 
-        Classifies files that match `pattern` into `file_list`.
+        Classifies files that match `pattern` into `file_list`, which can
+        also be an archive name.
+
+        If the name given as `file_list` doesn't exist as an archive or file
+        list name, it is created and added to the set of valid file lists.
         """
 
         base_patterns.append((pattern, make_file_lists(file_list)))
@@ -208,7 +260,7 @@ init -1500 python in build:
         Removes the pattern from the list.
         """
 
-        l[:] = [ (p, fl) for i in l if p != pattern ]
+        l[:] = [ (p, fl) for p, fl in l if p != pattern ]
 
     # Archiving.
 
@@ -218,9 +270,23 @@ init -1500 python in build:
         """
         :doc: build
 
-        Declares the existence of an archive. If one or more files are
-        classified with `name`, `name`.rpa is build as an archive. The
-        archive is included in the named file lists.
+        Declares the existence of an archive, whose `name` is added to the
+        list of available archive names, which can be passed to
+        :func:`build.classify`.
+
+        If one or more files are classified with `name`, `name`.rpa is
+        built as an archive, and then distributed in packages including
+        the `file_list` given here. ::
+
+            build.archive("secret", "windows")
+
+        If any file is included in the "secret" archive using the
+        :func:`build.classify` function, the file will be included inside
+        the secret.rpa archive in the windows builds.
+
+        As with the :func:`build.classify` function, if the name given as
+        `file_list` doesn't exist as a file list name, it is created and
+        added to the set of valid file lists.
         """
 
         archives.append((name, make_file_lists(file_list)))
@@ -265,7 +331,7 @@ init -1500 python in build:
 
     packages = [ ]
 
-    def package(name, format, file_lists, description=None, update=True, dlc=False, hidden=False):
+    def package(name, format, file_lists, description=None, update=True, dlc=False, hidden=False, update_only=False):
         """
         :doc: build
 
@@ -288,18 +354,29 @@ init -1500 python in build:
             dmg
                 A Macintosh DMG containing the files.
             app-zip
-                A zip file containing a macintosh application.
+                A zip file containing a macintosh application. This format
+                doesn't support the Ren'Py updater.
             app-directory
-                A directory containing the mac app.
+                A directory containing the mac app. This format
+                doesn't support the Ren'Py updater.
             app-dmg
-                A macintosh drive image containing a dmg. (Mac only.)
+                A macintosh drive image containing a dmg. (Mac only.) This format
+                doesn't support the Ren'Py updater.
+            bare-zip
+                A zip file without :var:`build.directory_name`
+                prepended.
+            bare-tar.bz2
+                A zip file without :var:`build.directory_name`
+                prepended.
+            null
+                Used to produce only updates, without the main package.
 
             The empty string will not build any package formats (this
             makes dlc possible).
 
         `file_lists`
-            A list containing the file lists that will be contained
-            within the package.
+            A list containing the file lists that will be included
+            in the package.
 
         `description`
             An optional description of the package to be built.
@@ -320,7 +397,7 @@ init -1500 python in build:
         formats = format.split()
 
         for i in formats:
-            if i not in [ "zip", "app-zip", "tar.bz2", "directory", "dmg", "app-directory", "app-dmg" ]:
+            if i not in { "zip", "app-zip", "tar.bz2", "directory", "dmg", "app-directory", "app-dmg", "bare-zip", "bare-tar.bz2", "null" }:
                 raise Exception("Format {} not known.".format(i))
 
         if description is None:
@@ -336,17 +413,23 @@ init -1500 python in build:
             "hidden" : hidden,
             }
 
+        global packages
+        packages = [ i for i in packages if i["name"] != name ]
+
         packages.append(d)
 
+    package("gameonly", "null", "all", "Game-Only Update for Mobile", hidden=True)
+
     package("pc", "zip", "windows linux renpy all", "PC: Windows and Linux")
-    package("linux", "tar.bz2", "linux renpy all", "Linux")
+    package("linux", "tar.bz2", "linux linux_arm renpy all", "Linux")
     package("mac", "app-zip app-dmg", "mac renpy all", "Macintosh")
     package("win", "zip", "windows renpy all", "Windows")
-    package("market", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
+    package("market", "bare-zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
+
     package("steam", "zip", "windows linux mac renpy all", hidden=True)
     package("android", "directory", "android all", hidden=True, update=False, dlc=True)
     package("ios", "directory", "ios all", hidden=True, update=False, dlc=True)
-    package("web", "zip", "web all", hidden=True, update=False, dlc=True)
+    package("web", "zip", "web renpy all", hidden=True, update=False, dlc=True)
 
     # Data that we expect the user to set.
 
@@ -390,6 +473,17 @@ init -1500 python in build:
     # The itch.io project name.
     itch_project = None
 
+    # Maps from files to itch.io channels.
+    itch_channels = {
+        "*-all.zip" : "win-osx-linux",
+        "*-market.zip" : "win-osx-linux",
+        "*-pc.zip" : "win-linux",
+        "*-win.zip" : "win",
+        "*-mac.zip" : "osx",
+        "*-linux.tar.bz2" : "linux",
+        "*-release.apk" : "android",
+    }
+
     # Should we include the old Ren'Py themes?
     include_old_themes = True
 
@@ -423,9 +517,27 @@ init -1500 python in build:
     # A list of additional android permission names.
     android_permissions = [ ]
 
+    # Should the sdk-fonts directory be renamed to game?
+    _sdk_fonts = False
+
+    # Which update formats should be built?
+    update_formats = [ "rpu" ]
+
+    # Should the gameonly update be available?
+    game_only_update = False
+
+    # The time at which the game was built.
+    time = store.renpy.game.build_info.get("time", None)
+
+    # Information about the game that is stored in cache/build_info.json.
+    info = store.renpy.game.build_info.get("info", { })
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
+        import time
+
+        global include_update
 
         rv = { }
 
@@ -445,6 +557,14 @@ init -1500 python in build:
             excludes.extend([
                 ( "lib/**/_ssl.*", None),
             ])
+
+        if game_only_update:
+
+            include_update = True
+
+            for i in packages:
+                if i["name"] == "gameonly":
+                    i["hidden"] = False
 
         rv["directory_name"] = directory_name
         rv["executable_name"] = executable_name
@@ -483,6 +603,8 @@ init -1500 python in build:
         if itch_project:
             rv["itch_project"] = itch_project
 
+        rv["itch_channels"] = itch_channels
+
         if mac_identity:
             rv["mac_identity"] = mac_identity
             rv["mac_codesign_command"] = mac_codesign_command
@@ -502,7 +624,19 @@ init -1500 python in build:
 
         rv["android_permissions"] = android_permissions
 
+        rv["_sdk_fonts"] = _sdk_fonts
+
+        rv["update_formats"] = update_formats
+
+        rv["info"] = {
+            "info" : info,
+            "time" : time.time(),
+            "name" : config.name,
+            "version" : config.version,
+            }
+
         return rv
+
 
 init 1500 python in build:
 

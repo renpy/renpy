@@ -1,10 +1,8 @@
-.. _style-properties:
-
 ================
 Style Properties
 ================
 
-The style properties associated with :ref:`styles <styles>` control how
+The style properties associated with :doc:`styles <style>` control how
 Displayables are shown. Style properties can be either given without a prefix,
 in which case they apply to all states of the displayable, or with a prefix
 that limits the property to a limited number of states.
@@ -82,18 +80,18 @@ text inside the button. The :propref:`background` style property sets the
 background of a button, while the :propref:`color` property sets the color of
 text.::
 
-     # The button background is gray when insensitive, light
-     # blue when hovered, and dark blue otherwise.
-     style button:
-         background "#006"
-         insensitive_background "#444"
-         hover_background "#00a"
+    # The button background is gray when insensitive, light
+    # blue when hovered, and dark blue otherwise.
+    style button:
+        background "#006"
+        insensitive_background "#444"
+        hover_background "#00a"
 
-     # The button text is yellow when selected, and white
-     # otherwise.
-     style button_text:
-         color "#fff"
-         selected_color "#ff0"
+    # The button text is yellow when selected, and white
+    # otherwise.
+    style button_text:
+        color "#fff"
+        selected_color "#ff0"
 
 
 Style Property Values
@@ -103,55 +101,75 @@ Each style property expects a specific kind of data. Many of these are
 standard Python types, but a few are novel. Here are descriptions of the
 novel kinds of value a style property can expect.
 
-`position`
-    Positions are used to specify locations relative to the upper-left
-    corner of the containing area. (For positions, the containing area is
-    given by the layout the displayable is in, if one is given, or the screen
-    otherwise. For anchors, the containing area is the size of the
-    displayable itself.)
+.. glossary::
 
-    The way a position value is interpreted depends on the type of the
-    value:
+    position
+        Positions are used to specify locations relative to the upper-left
+        corner of the containing area. (For placement and size, the containing
+        area is given by the layout the displayable is in, if one is given, or
+        the screen otherwise. For anchors, the containing area is the size of
+        the displayable itself.)
 
-    int (like 0, 1, 37, or 42)
-        An integer is interpreted as the number of pixels from the left
-        or top side of the containing area.
-    float (like 0.0, 0.5, or 1.0)
-        A floating-point number is interpreted as a fraction of the
-        containing area. For example, 0.5 is a point halfway between the
-        sides of the containing area, while 1.0 is on the right or bottom
-        side.
-    absolute (like absolute(100.25))
-        An ``absolute`` number is interpreted as the number of pixels from the
-        left or top side of the screen, when using subpixel-precise rendering.
+        The way a position value is interpreted depends on the type of the
+        value:
 
-`displayable`
-    Any displayable. If a displayable contains a "[prefix\_]" substitution,
-    a prefix search is performed as described below.
+        int (like 0, 1, 37, or 42)
+            An integer is interpreted as the number of pixels from the left
+            or top side of the containing area.
+        float (like 0.0, 0.5, or 1.0)
+            A floating-point number is interpreted as a fraction of the
+            containing area. For example, 0.5 is a point halfway between the
+            sides of the containing area, while 1.0 is on the right or bottom
+            side.
 
-`color`
-    Colors in Ren'Py can be expressed as strings beginning with the hash
-    mark (#), followed by a hex triple or hex quadruple, with each of the
-    three or four elements consisting of a one or two hexadecimal character
-    color code.
+        .. function:: absolute(value, /)
 
-    In a triple, the components represent red, green, and blue. In a
-    quadruple, the components represent red, green, blue, and alpha. For
-    example:
+            For example, ``absolute(100.25)``, or ``absolute(a+b)`` when both
+            ``a`` and ``b`` may be floats or ints.
 
-    * ``"#f00"`` and ``"#ff0000"`` represent an opaque red color.
-    * ``"#0f08"`` and ``#00ff0080"`` represent a semi-transparent green
-      color.
+            An ``absolute`` number is interpreted as the number of pixels from
+            the left or top side of the screen, when using subpixel-precise
+            rendering.
 
-    The color triples are the same as used in HTML.
+        .. function:: position(absolute, relative, /)
 
-    Colors can also be represented as a 4-component tuple, with the 4
-    components being integers between 0 and 255. The components correspond to
-    red, green, blue, and alpha, in that order.
+            For example, ``position(-10, .5)``.
 
-    * ``(0, 0, 255, 255)`` represents an opaque blue color.
+            A combination of `absolute`, which will be treated as an absolute
+            position, and `relative`, which will be treated as a relative
+            position, both being as described above. The two components are
+            added together to form the final position.
 
-    Finally, colors can be an instance of :class:`Color`.
+            Both parameters should always be passed, otherwise unspecified
+            results may occur.
+
+    displayable
+        Any displayable. If a displayable contains a "[prefix\_]" substitution,
+        a prefix search is performed as described below.
+
+    color
+        Colors in Ren'Py can be expressed as strings beginning with the hash
+        mark (#), followed by a hex triple or hex quadruple, with each of the
+        three or four elements consisting of a one or two hexadecimal character
+        color code.
+
+        In a triple, the components represent red, green, and blue. In a
+        quadruple, the components represent red, green, blue, and alpha. For
+        example:
+
+        * ``"#f00"`` and ``"#ff0000"`` represent an opaque red color.
+        * ``"#0f08"`` and ``"#00ff0080"`` represent a semi-transparent green
+          color.
+
+        The color triples are the same as used in HTML.
+
+        Colors can also be represented as a 4-component tuple, with the 4
+        components being integers between 0 and 255. The components correspond to
+        red, green, blue, and alpha, in that order.
+
+        * ``(0, 0, 255, 255)`` represents an opaque blue color.
+
+        Finally, colors can be an instance of :class:`Color`.
 
 
 .. _style-prefix-search:
@@ -205,8 +223,8 @@ the next prefix.
 The style prefix is passed through displayables that do not take user input,
 including containers, transforms, and frames.
 
-As an example of how this can be used, if the files "idle\_button.png" and
-"hover\_button.png" exist (and no other files ending in "button.png" do)::
+As an example of how this can be used, if the files :file:`idle_button.png` and
+:file:`hover_button.png` exist (and no other files ending in :file:`button.png` do)::
 
     style button:
         background "[prefix_]button.png"
@@ -243,7 +261,7 @@ or on the screen when not inside a layout.
 .. style-property:: alt string or None
 
     Alternative text used for the displayable when self-voicing is
-    enabled. See the :ref:`self voicing <self-voicing>` section for
+    enabled. See the :doc:`self voicing <self_voicing>` section for
     more information.
 
 .. style-property:: xpos position
@@ -309,6 +327,11 @@ or on the screen when not inside a layout.
     Equivalent to setting ypos to the value of this property, and
     yanchor to 0.5.
 
+.. style-property:: xycenter tuple of (position, position)
+
+    Equivalent to setting xcenter to the first component of the tuple,
+    and ycenter to the second.
+
 .. style-property:: xoffset int
 
     Gives a number of pixels that are added to the horizontal position
@@ -319,10 +342,10 @@ or on the screen when not inside a layout.
     Gives a number of pixels that are added to the vertical position
     computed using ypos and yalign.
 
-.. style-property:: offset tuple of (position, position)
+.. style-property:: offset tuple of (int, int)
 
-    Equivalent to setting xpos to the first component of the tuple,
-    and ypos to the second component of the tuple.
+    Equivalent to setting xoffset to the first component of the tuple,
+    and yoffset to the second component of the tuple.
 
 .. style-property:: xmaximum int
 
@@ -352,21 +375,22 @@ or on the screen when not inside a layout.
     Equivalent to setting xminimum to the first component of the
     tuple, and yminimum to the second.
 
-.. style-property:: xsize int
+.. style-property:: xsize int or float
 
     Equivalent to setting xminimum and xmaximum to the same value. This
-    has the effect of setting the width of the displayable.
+    has the effect of setting the width of the displayable.  f the size
+    is a float, it's relative to the width of the containing area.
 
-.. style-property:: ysize int
+.. style-property:: ysize int or float
 
     Equivalent to setting yminimum and ymaximum to the same value. This
-    has the effect of setting the height of the displayable.
+    has the effect of setting the height of the displayable. If the size
+    is a float, it's relative to the height of the containing area.
 
-.. style-property:: xysize tuple of (int, int)
+.. style-property:: xysize tuple of (int or float, int or float)
 
-    Equivalent to setting xminimum and xmaximum to the first component of
-    the tuple, and yminimum and ymaximum to the second component. This
-    has the effect of setting the size of the displayable.
+    Equivalent to setting xsize to the first component of
+    the tuple, and ysize to the second component.
 
 .. style-property:: xfill boolean
 
@@ -439,10 +463,23 @@ Text Style Properties
     If not None, this should be a style object. The style that's used for
     alternate ruby text.
 
+.. style-property:: axis dict or None
+
+    This allows the axes of a :ref:`variable font <variable-fonts>` to be
+    set. If not None, this should be a dictionary mapping axis names to
+    values. For example::
+
+        style default:
+            font "VariableFont.ttf"
+            axis { "weight" : 500, "width" : 95 }
+
 .. style-property:: black_color color
 
     When rendering an image-based font, black will be mapped to this
     color. This has no effect for TrueType fonts.
+
+    This may be None in the case of ruby/furigana text, to use the same
+    color as the parent text.
 
 .. style-property:: bold boolean
 
@@ -463,6 +500,15 @@ Text Style Properties
     the font is rendered in this color. When using an image-based
     font, white is mapped to this color.
 
+    This may be None in the case of ruby/furigana text, to use the same
+    color as the parent text.
+
+.. style-property:: emoji_font string
+
+    The font that's used to render Emoji characters. This is automatically
+    used when a sequence of one or more Emoji are encountered, and no
+    font text tag is in use.
+
 .. style-property:: first_indent int
 
     The amount that the first line of text in a paragraph is indented
@@ -479,11 +525,61 @@ Text Style Properties
     image-based font, this should be the name used to register the
     font.
 
-.. style-property:: size int
+.. style-property:: font_features dict or None
 
-    The size of the font on the screen. While this is nominally in
-    pixels, font files may have creative interpretations of this
-    value.
+    If not None, this should be a dictionary mapping OpenType layout features to values.
+    The keys of the dictionary should be the four-character OpenType feature tags, and
+    the values should be booleans.
+    For example::
+
+        style default:
+            font "SomeFont.ttf"
+            font_features { "liga" : True, "smcp" : True, "calt" : False }
+
+    A list of layout features can be found `here <https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags>`_.
+
+.. style-property:: hinting str
+
+    Controls how the font will be hinted. This should be one of the following
+    strings:
+
+    "auto"
+        The default, forces use of the Freetype auto hinter.
+    "auto-light"
+        Forces the use of the freetype auto hinter in light mode, which only
+        hints vertically.
+    "bytecode"
+        Uses bytecode hinting information found in the font.
+    "none"
+        Does not hint the font.
+
+    This may also be True, in which case the value is looked up in
+    :var:`config.font_hinting`.
+
+.. style-property:: hyperlink_functions tuple of (function, function, function)
+
+    This is a tuple of three functions relating to hyperlinks in text.
+
+    The first item is the hyperlink style function. When called with a single
+    argument, the argument of the hyperlink, it must return a style object to
+    use for the hyperlink, such as ``style.hyperlink_text``. Note that a
+    style object is not a string.
+
+    The second item is the hyperlink clicked function. This function is called
+    when a hyperlink is chosen by the user. If it returns a value other than
+    None, the interaction returns that value.
+
+    The third item is the hyperlink focus function. This function is called
+    with the argument of the hyperlink when the hyperlink gains focus, and
+    with None when it loses focus. If it returns a value other than None,
+    the interaction returns that value.
+
+.. style-property:: instance string or None
+
+    When using a :ref:`variable font <variable-fonts>`, this can be
+    a string giving a named instance of the font to use. For example,
+    if the font has a "Bold" instance, this can be set to "Bold" to
+    use that instance.
 
 .. style-property:: italic boolean
 
@@ -506,8 +602,8 @@ Text Style Properties
 
 .. style-property:: language string
 
-    Controls the language family used to break text into lines. Legal
-    values are:
+    Controls the language family used to break text into lines, and
+    for certain other text transformations. Legal values are:
 
     ``"unicode"`` (default)
         Uses the Unicode linebreaking algorithm, which is suitable for
@@ -532,9 +628,21 @@ Text Style Properties
         Used for Korean text delimited by whitespace. This prevents linebreaking
         between adjacent Korean characters.
 
+    ``"thaic90"``
+        Used for Thai text displayed in fonts that support the C90 encoding.
+        It maps character sequences to PUA glyph code points to achieve
+        correct glyph positioning. Line breaking uses the Unicode algorithm.
+
+        In most cases, Thai text should use ``"unicode"`` (the default).
+        This is only necessary when using Ren'Py versions earlier than 8.4,
+        or when using ``"freetype"`` as the shaper.
+
     ``"western"``
         Allows breaking only at whitespace. Suitable for most
         languages.
+
+    ``"anywhere"``
+        Allows breaking at anywhere without ruby.
 
     The three Japanese breaking modes are taken from the `CSS3 text module <http://www.w3.org/TR/css3-text/#line-break>`_.
 
@@ -573,7 +681,7 @@ Text Style Properties
 .. style-property:: min_width int
 
     Sets the minimum width of each line of that. If a line is shorter
-    than this, it is padded to this length, with ``text_align`` used to
+    than this, it is padded to this length, with ``textalign`` used to
     specify where such padding is placed.
 
 .. style-property:: newline_indent boolean
@@ -604,38 +712,98 @@ Text Style Properties
 
     will always produce a 1 pixel-wide border.
 
-    Outlines only work with TrueType fonts.
+    Outlines only work with TrueType fonts. Outlines only work when applied
+    to an entire Text displayable. They do not work when applied to a hyperlink,
+    text tag, or other method that applies to only a portion of the text.
 
 .. style-property:: outline_scaling string
 
-    This determines how outline suzels or offsets are scaled when the
+    This determines how outline sizes and offsets are scaled when the
     window is scaled.
 
+    ``"linear"``
+        The default, best for text with thick outlines. The window scaling factor
+        is applied to the outline size, and then rounded to an integer.
+        This looks better for thick outlines, but concentric outlines of similar
+        thickness may become indistinguishable.
+
+        The resulting width is always at least 1 pixel.
+
     ``"step"``
-        The default, best for text that uses thin outlines and text
+        Best for text that uses thin outlines and text
         that uses multiple outlines. The window scaling factor is
-        rounded down to an integer and applied ot the outline size
-        and offsets.
+        rounded down to an integer and applied to the outline size
+        and offsets. This ensures that multiple outlines all scale together,
+        without risk of eclipsing one another, but this yields different visual
+        results depending on the size of the game window.
 
         The window scaling factor is always above 1.
 
-    ``"linear"``
-        Best for text with thick outlines. The window scaling factor
-        is applied to the outline size, and then rounded to an integer.
-        This looks better for thick outlines, but small outlines can
-        dissappear.
+.. style-property:: prefer_emoji boolean
 
-        The resulting width is always at least 1 pixel.
+    Some unicode characters have both Emoji and non-Emoji presentations. This
+    style property chooses if such characters are given the Emoji presentation
+    or not.
+
+.. style-property:: reading_order string
+
+    This controls the how text is presented for reading when RTL support has
+    been enabled. The main use of this is to influence directionally neutral
+    lines, such as those made up purely of punctuation.
+
+    ``None``
+        The default, the reading order will be determined based on the text.
+        Most neutral lines will be treated as left-to-right.
+
+    ``"ltr"``
+        Forces left-to-right presentation, even when a line is predominantly
+        made up of runs of RTL characters.
+
+    ``"rtl"``
+        Forces right-to-left presentation, even when a line is predominantly
+        made up of runs of LTR characters.
+
+    ``"wltr"``
+        Prefers left-to-right presentation, but will switch to right-to-left
+        presentation if it makes more sense for the current text. Useful for
+        impacting punctuation-only lines such as ``"..!"``.
+
+    ``"wrtl"``
+        Prefers right-to-left presentation, but will switch to left-to-right
+        presentation if it makes more sense for the current text. Useful for
+        impacting punctuation-only lines such as ``"..!"``.
 
 .. style-property:: rest_indent int
 
     Specifies the number of pixels the second and later lines in a
     paragraph are indented by.
 
+.. style-property:: ruby_line_leading int
+
+    The number of pixels of spacing to include above each line that
+    contains :ref:`ruby text <ruby-text>`. This is in addition to
+    :propref:`line_leading`.
+
 .. style-property:: ruby_style style or None
 
     If not None, this should be a style object. The style that's used for
     ruby text.
+
+.. style-property:: shaper "harfbuzz" or "freetype".
+
+    The shaper used on text. This should be one of "harfbuzz" or "freetype".
+    The harfbuzz shaper is more capable but only works on Ren'Py 8, while
+    "freetype" works in Ren'Py 7 as well.
+
+    The shaper takes a series of characters and turns it into a series of
+    positioned glyphs. This is used for things like ligatures, Indic/Bhramic
+    languages, and combining emjoi.
+
+.. style-property:: size int
+
+    The size of the font on the screen. While this is nominally in
+    pixels, font files may have creative interpretations of this
+    value.
 
 .. style-property:: slow_abortable boolean
 
@@ -659,7 +827,7 @@ Text Style Properties
 
     If True, a line is drawn through the text.
 
-.. style-property:: text_align float
+.. style-property:: textalign float
 
     This is used when a line is shorter than the width of the text
     displayable. It determines how much of the extra space is placed
@@ -672,40 +840,24 @@ Text Style Properties
 
     If True, an underline will be added to the text.
 
-.. style-property:: hyperlink_functions tuple of (function, function, function)
-
-    This is a tuple of three functions relating to hyperlinks in text.
-
-    The first item is the hyperlink style function. When called with a single
-    argument, the argument of the hyperlink, it must return a style object to
-    use for the hyperlink, such as ``style.hyperlink_text``. Note that a
-    style object is not a string.
-
-    The second item is the hyperlink clicked function. This function is called
-    when a hyperlink is chosen by the user. If it returns a value other than
-    None, the interaction returns that value.
-
-    The third item is the hyperlink focus function. This function is called
-    with the argument of the hyperlink when the hyperlink gains focus, and
-    with None when it loses focus. If it returns a value other than None,
-    the interaction returns that value.
-
 .. style-property:: vertical boolean
 
     If True, the text will be rendered vertically.
 
-.. style-property:: hinting str
+    There are multiple caveats:
 
-    Controls how the font will be hinted. This should be one of the following
-    strings:
+    * If :propref:`shaper` is "freetype", vertical layout will likely be incorrect.
 
-    "auto"
-        The default, forces use of the Freetype auto hinter.
-    "bytecode"
-        Uses bytecode hinting information found in the font.
-    "none"
-        Does not hint the font.
+    * Harfbuzz will convert horizontal forms to vertical forms if those
+      forms are present in the font.
 
+    * Characters will be laid out top to bottom, right to left, but will
+      not be rotated. This means that horizontal characters will be laid
+      out one on top of another.
+
+    * If vertical text information is not present in the font, it will be
+      synthesized, but may be incorrect. Generally, ideographic text works
+      better than non-ideographic text.
 
 .. _window-style-properties:
 
@@ -774,7 +926,7 @@ buttons. :ref:`margin-style-properties` also form part of this group.
 .. style-property:: modal boolean or callable
 
     If True, the window is treated as modal. Events will stop propagating
-    through layers whole the mouse is within the window or button. If False,
+    through layers while the mouse is within the window or button. If False,
     the window is not modal.
 
     This may also be a callable function. If it is, the function is called
@@ -802,7 +954,8 @@ Button Style Properties
 
 .. style-property:: activate_sound string
 
-    A sound that is played when the button is clicked.
+    A sound that is played when the button is activated (clicked). This is also
+    played when a bar or drag is activated.
 
 .. style-property:: mouse string
 
@@ -826,8 +979,13 @@ Button Style Properties
         If a non-displayable callable (like a function, method, or object
         with a ``__call__`` method) is given, the function is called with two
         arguments, the x and y offset from the top-left corner of the
-        displayable. If the function returns True, the displayable is
-        focused.
+        displayable.
+
+        If the function returns a callable when called with two arguments,
+        that callable is called with four arguments - the x and y offsets, and the width
+        and height of the displayable.
+
+        If the function returns true, the displayable is focused.
     None
         If none is given, the entire button can be focused.
 
@@ -836,7 +994,18 @@ Button Style Properties
    If True, the default, this button can be focused using the keyboard focus
    mechanism, if it can be focused at all. If False, the keyboard focus
    mechanism will skip this button. (The keyboard focus mechanism is used
-   by keyboards and keyboard-like devices, such as joypads.)
+   by keyboards and keyboard-like devices, such as gamepads.)
+
+.. style-property:: keyboard_focus_insets (int, int, int, int) or None
+
+    If not None, this should be a tuple of four integers, giving the
+    number of pixels that are used to shrink the left, top, right, and
+    bottom sides of the focus rectangle, when it's used for keyboard
+    focus.
+
+    This can be useful when buttons overlap. The keyboard focus algorithm
+    doesn't work with overlapping buttons, and so this can be used to to
+    shrink the size of the buttons internally, allowing focus to work.
 
 .. style-property:: key_events boolean
 
@@ -925,16 +1094,26 @@ left and right sides are used.
     If not None, this is a displayable that is drawn over the break
     between the sides of the bar.
 
+.. style-property:: thumb_align float
+
+    The alignment of the bar thumb, relative to the bar. If the bar and
+    thumb are different sizes - for example, the thumb is taller than the
+    height of a horizontal bar - thumb_align can be set to 0.5 so the centers
+    of the bar and thumb are aligned.
+
 .. style-property:: thumb_shadow displayable or None
 
     If not None, this is a displayable that is drawn over the break
     between the sides of the bar.
 
-.. style-property:: thumb_offset int
+.. style-property:: thumb_offset int or tuple of (int, int)
 
     The amount that by which the thumb overlaps the bars, in
     pixels. To have the left and right bars continue unbroken, set
-    this to half the width of the thumb in pixels.
+    this to half the width of the thumb in pixels. This may also be
+    a tuple, in which case the first number is used for the left/top
+    thumb offset, and the second number is used for the right/bottom
+    thumb offset.
 
 .. style-property:: mouse string
 
@@ -999,12 +1178,35 @@ These are used for the horizontal and vertical box layouts.
     or columns. (So it is the vertical spacing between lines in a wrapped
     hbox, and the horizontal spacing between columns in a wrapped vbox.)
 
+.. style-property:: box_align float or None
+
+    This determines the alignment of rows or columns in a box. If 0.0,
+    the default, rows are left-aligned and columns are top-aligned. If 0.5,
+    it will center wrapped rows.
+
+    When this is not None, addional space will not be offered to the child when
+    :propref:`xfill` or :propref:`yfill` is set, ignoring the child's position
+    in the box's primary direction.
+
 .. style-property:: order_reverse boolean
 
     If False, the default, the items in the box will be drawn first-to-last,
     with the first item in the box being below the second, and so on. If True,
     this order will be reversed, and the first item in the box will be above
     all other items in the box.
+
+.. style-property:: box_justify boolean or "first" or "all"
+
+    If not False, the contents of the box will be justified - that is, the items
+    inside the box will have the spacing between them adjusted so they evenly
+    span the size of the box. True will cause all lines but the final line to be
+    justified. "first" will cause only the first line to be justified. "all"
+    will cause all lines to be justified, including the final line. Justified
+    lines do not obey box_align, except when there is only one item in a line.
+
+    When this is not false, addional space will not be offered to the child when
+    :propref:`xfill` or :propref:`yfill` is set, ignoring the child's position
+    in the box's primary direction.
 
 
 .. _grid-style-properties:
@@ -1044,6 +1246,8 @@ These are used with the fixed layout.
     (the fixed will fill the screen vertically). Similarly, "height" only changes
     the height.
 
+    The position of the child is ignored for the purpose of fit\_first.
+
 .. style-property:: xfit boolean
 
     If True, the size of the fixed layout is shrunk horizontally to match the
@@ -1053,6 +1257,11 @@ These are used with the fixed layout.
 
     If True, the size of the fixed layout is shrunk vertically to match the
     bottom side of the bottommost child of the fixed.
+
+When these properties are supplied, the children of the fixed are first
+offered the full area given to the fixed by its parent. Once the size
+and placement of the children are known, these properties are then used
+to select the size of the fixed.
 
 
 .. _margin-style-properties:

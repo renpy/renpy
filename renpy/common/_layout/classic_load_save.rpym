@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -237,14 +237,14 @@ init python:
 
                 # Figure out which game is the newest and so on.
                 newest = None
-                newest_mtime = None
+                newest_mtime = 0
                 save_info = { }
 
                 for fn, extra_info, screenshot, mtime in saved_games:
                     screenshot = _file_picker_process_screenshot(screenshot)
                     save_info[fn] = (extra_info, screenshot, mtime)
 
-                    if not fn.startswith("auto-") and mtime > newest_mtime:
+                    if not fn.startswith("auto-") and (newest_mtime is None or mtime > newest_mtime):
                         newest = fn
                         newest_mtime = mtime
 

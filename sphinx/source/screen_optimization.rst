@@ -1,5 +1,3 @@
-.. _screen-optimization:
-
 ============================
 Screen Language Optimization
 ============================
@@ -11,7 +9,7 @@ achieve maximal performance.
 
 This guide is applicable to the second implementation of screen language,
 which was added to Ren'Py 6.18. If your game was created in Ren'Py 6.17
-or earlier, it may be necessary to chose the "Force Recompile" option
+or earlier, it may be necessary to choose the "Force Recompile" option
 in the launcher to ensure its screens are upgraded to the latest version.
 
 This guide isn't a substitute for good programming practice. If a screen
@@ -75,7 +73,7 @@ displayable, Ren'Py will reuse the existing displayable.
 
 Displayable reuse has a number of performance implications. It saves the cost
 of creating a new displayable, which may be significant for displayables that
-contain a lot of internal state. More importantly, reusing a displayable means
+contain a lot of internal states. More importantly, reusing a displayable means
 that in many cases, Ren'Py will not need to re-render the displayable before
 showing it to the user, which can lead to another significant speedup.
 
@@ -221,8 +219,8 @@ a string, the entire expression is const::
 
     text _("Your score is: [score]")
 
-If a variable containing the text contain substitution it's necessary to use
-``!i`` conversion flag::
+If a variable containing the text contains substitution, it's necessary to use
+the ``!i`` conversion flag::
 
     $ who = "Jane"
     $ t = "Hello, [who]!"
@@ -260,4 +258,3 @@ Pure Names
 The following names are both pure and const by default.
 
 .. include:: inc/pure_vars
-

@@ -11,7 +11,7 @@ displayable is allowed to take arbitrary pygame events. It can
 also render other displayables, and place them at arbitrary locations
 on the screen. This makes it suitable for creating 2D mini-games that
 cannot be expressed with the tools Ren'Py gives you. (But see also the
-section :ref:`sprites <sprites>`, which describes a higher-level way
+section :doc:`sprites <sprites>`, which describes a higher-level way
 of accomplishing many of the same things.)
 
 Creator-defined displayables are programmed entirely in Python, and we
@@ -176,7 +176,7 @@ class, we'll present them with the `self` parameter.
         of the interaction. If the event method returns None, the event
         is passed on to other displayables.
 
-        To ignore the event without returning None, raise :class:`renpy.IgnoreEvent`.
+        To ignore the event without returning None, raise :exc:`renpy.IgnoreEvent`.
 
         The event method exists on other displayables, allowing the
         creator-defined displayable to pass on the event.
@@ -210,6 +210,25 @@ class, we'll present them with the `self` parameter.
         ensures that the per_interact methods of those displayables
         are called, and also allows images used by those displayables
         to be predicted.
+
+    .. method:: place(self, dest, x, y, width, height, surf, main=True)
+
+        This places a render (which must be of this displayable)
+        within a bounding area. Returns an (x, y) tuple giving the location
+        the displayable was placed at.
+
+        `dest`
+            If not None, the `surf` will be blitted to `dest` at the
+            computed coordinates.
+
+        `x`, `y`, `width`, `height`
+            The bounding area.
+
+        `surf`
+            The render to place.
+
+        `main`
+            This is passed to Render.blit().
 
 renpy.Render
 ============
@@ -248,8 +267,11 @@ the implicit `self` parameter.
 
     .. method:: place(d, x=0, y=0, width=None, height=None, st=None, at=None, render=None, main=True)
 
-        Renders `d` and places it into the rectangle defined by the `x`, `y`,
+        Renders `d`, a displayable, and places it into the rectangle defined by the `x`, `y`,
         `width`, and `height`, using Ren'Py's standard placement algorithm.
+        Returns an (x, y) tuple giving the location
+        the displayable was placed at. Location is computed
+        by calling Displayable.place() method.
 
         `x`, `y`, `width`, `height`
             The rectangle to place in. If `width` or `height`, when None,
@@ -272,6 +294,8 @@ the implicit `self` parameter.
        `pygame.draw <http://www.pygame.org/docs/ref/draw.html>`_
        functions, with the first parameter (the surface) omitted.
 
+       In Ren'Py, the arc and ellipse functions aren't implemented.
+
        Canvas objects also have a get_surface() method that returns the
        pygame Surface underlying the canvas.
 
@@ -291,7 +315,7 @@ the implicit `self` parameter.
     .. method:: zoom(xzoom, yzoom)
 
         Sets the zoom level of the children of this displayable in the
-        horitzontal and vertical axes. Only the children of the displayable
+        horizontal and vertical axes. Only the children of the displayable
         are zoomed – the width, height, and blit coordinates are not zoomed.
 
     The following attributes and methods are only used when model-based rendering
@@ -304,7 +328,7 @@ the implicit `self` parameter.
         If set to True:
 
         * All of the children of this displayable are rendered to textures.
-        * A mesh the size of the first child is assocated with this displayable.
+        * A mesh the size of the first child is associated with this displayable.
         * A model is created with the mesh, shaders, uniforms, and properties
           associated with this Render.
 
@@ -335,13 +359,14 @@ Utility Functions and Classes
 
 .. function:: renpy.redraw(d, when)
 
-    Causes the displayable `d` to be redrawn after `when` seconds have
-    elapsed.
+    Causes the displayable `d` to be redrawn (the render method called)
+    when `when` seconds have elapsed. The displayable may be redrawn before
+    that time (for example, when a child is redrawn), in which case a pending
+    redraw is forgotten.
 
-.. class:: renpy.IgnoreEvent
+.. exception:: renpy.IgnoreEvent
 
     This is an exception that, if raised, causes Ren'Py to ignore the
     event. To raise this inside the event method, write::
 
         raise renpy.IgnoreEvent()
-

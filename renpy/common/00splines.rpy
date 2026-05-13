@@ -24,8 +24,6 @@ init -1500 python:
             self.points = []
 
             for p in points:
-                length = len(p)
-
                 if isinstance(p[-1], float):
                     length = len(p) - 1
                     point = [ p[-1] ]
@@ -62,11 +60,7 @@ init -1500 python:
             self.initialized = None
 
         def init_values(self, sizes):
-            def to_abs_(value, size):
-                if isinstance(value, float):
-                    return value * size
-                else:
-                    return value
+            to_abs_ = absolute.compute_raw
 
             def coord_(c):
 

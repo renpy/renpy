@@ -66,11 +66,11 @@
 
     # game/ios.rpy:257
     old "Create Xcode Project"
-    new "Crear Proyecto de Xcode"
+    new "Criar Projeto Xcode"
 
     # game/ios.rpy:261
     old "Update Xcode Project"
-    new "Criar Projeto Xcode"
+    new "Atualizar Projeto Xcode"
 
     # game/ios.rpy:266
     old "Launch Xcode"
@@ -95,4 +95,3 @@
     # game/ios.rpy:348
     old "Ren'Py has set the Xcode Projects Directory to:"
     new "Ren'Py definiu o Diretório de Projetos Xcode para: "
-

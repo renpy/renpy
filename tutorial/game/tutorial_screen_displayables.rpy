@@ -1,4 +1,4 @@
-label screen_displayables:
+﻿label screen_displayables:
 
     e "There are quite a few screen displayables. Here, I'll tell you about some of the most important ones."
 
@@ -11,31 +11,31 @@ label screen_displayables_menu:
         e "What would you like to know about?"
 
         "Common properties all displayables share.":
-            call screen_displayable_properties
+            call screen_displayable_properties from _call_screen_displayable_properties
 
         "Adding images and other displayables.":
-            call add_displayable
+            call add_displayable from _call_add_displayable
 
         "Text.":
-            call text_displayable
+            call text_displayable from _call_text_displayable
 
         "Boxes and other layouts.":
-            call layout_displayables
+            call layout_displayables from _call_layout_displayables
 
         "Windows and frames.":
-            call window_displayables
+            call window_displayables from _call_window_displayables
 
         "Buttons.":
-            call button_displayables
+            call button_displayables from _call_button_displayables
 
         "Bars.":
-            call bar_displayables
+            call bar_displayables from _call_bar_displayables
 
         "Viewports.":
-            call viewport_displayables
+            call viewport_displayables from _call_viewport_displayables
 
         "Imagemaps.":
-            call imagemap_displayables
+            call imagemap_displayables from _call_imagemap_displayables
 
         "That's all for now.":
             return
@@ -173,7 +173,7 @@ label add_displayable:
                 xalign 0.5 ypos 50
                 add "images/logo base.png"
 
-    e "An image can also be referred to by it's filename, relative to the game directory."
+    e "An image can also be referred to by its filename, relative to the game directory." id add_displayable_8ba81c26
 
     example large:
 
@@ -233,7 +233,7 @@ label text_displayable:
 
     e "The text displayable can also interpolate values enclosed in square brackets."
 
-    e "When text is displayed in a screen using the text statement variables defined in the screen take precedence over those defined outside it."
+    e "When text is displayed in a screen using the text statement, variables defined in the screen take precedence over those defined outside it." id text_displayable_32d76ccb
 
     e "Those variables may be parameters given to the screen, defined with the default or python statements, or set using the SetScreenVariable action."
 
@@ -470,7 +470,7 @@ label button_displayables:
                         text _("Heal") style "button_text" yalign 0.5
                         bar value AnimatedValue(health, 100, 1.0) yalign 0.5 xsize 200
 
-    e "A button takes another displayable as children. Since that child can be a layout, it can takes as many children as you want."
+    e "A button takes another displayable as a child. Since that child can be a layout, it can take as many children as you want." id button_displayables_47af4bb9
 
     example large:
         screen textbutton_example():
@@ -555,7 +555,7 @@ label button_displayables:
             idle_color "#c0c0c0"
             hover_color "#ffffff"
 
-    e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
+    e "Of course, it's pretty rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
 
     hide example
     return
@@ -601,7 +601,7 @@ label bar_displayables:
 
     e "The top style is the 'bar' style. It's used to display values that the player can't adjust, like a life or progress bar."
 
-    e "The middle stye is the 'slider' value. It's used for values the player is expected to adjust, like a volume preference."
+    e "The middle style is the 'slider' value. It's used for values the player is expected to adjust, like a volume preference." id bar_displayables_c2aa4725
 
     e "Finally, the bottom style is the 'scrollbar' style, which is used for horizontal scrollbars. When used as a scrollbar, the thumb in the center changes size to reflect the visible area of a viewport."
 
@@ -862,52 +862,6 @@ label viewport_displayables:
     with dissolve
 
     e "The xinitial and yinitial properties set the initial amount of scrolling, as a fraction of the amount that can be scrolled."
-
-    example large:
-        screen nochild_size_viewport_screen():
-
-            viewport:
-                xalign 0.5 ypos 50 xysize (700, 300)
-
-                scrollbars "horizontal"
-                spacing 5
-
-                draggable True
-                mousewheel True
-                arrowkeys True
-
-                add "#000c"
-                text _("This text is wider than the viewport.") size 40
-
-
-    with dissolve
-
-    e "Finally, there's the child_size property. To explain what it does, I first have to show you what happens when we don't have it."
-
-    e "As you can see, the text wraps. That's because Ren'Py is offering it space that isn't big enough."
-
-    example large:
-        screen child_size_viewport_screen():
-
-            viewport:
-                xalign 0.5 ypos 50 xysize (700, 300)
-
-                child_size (1000, None)
-
-                scrollbars "horizontal"
-                spacing 5
-
-                draggable True
-                mousewheel True
-                arrowkeys True
-
-                add "#000c"
-                text _("This text is wider than the viewport.") size 40
-
-    with dissolve
-
-    e "When we give the screen a child_size, it offers more space to its children, allowing scrolling. It takes a horizontal and vertical size. If one component is None, it takes the size of the viewport."
-
 
     example large:
         screen vpgrid_screen():

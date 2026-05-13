@@ -28,6 +28,9 @@ init offset = -1101
 default persistent._director_bottom = False
 
 init python in director:
+    # Do not participate in saves.
+    _constant = True
+
     from store import Action, config
     import store
 
@@ -78,9 +81,6 @@ init python in director:
 
     # The maximum height of viewports containing scrolling information.
     viewport_height = 280
-
-    # Is the director enabled? Used by the tutorial to protect itself.
-    enable = True
 
     state = renpy.session.get("director", None)
 
@@ -283,6 +283,10 @@ init python in director:
 
         return show_director
 
+    def after_load():
+        state.mode = "lines"
+
+    config.after_load_callbacks.append(after_load)
 
     def interact():
         """
@@ -704,7 +708,7 @@ init python in director:
                 if not config.developer:
                     return None
 
-                if not enable:
+                if not getattr(store, "_director_enable", True):
                     renpy.notify(_("The interactive director is not enabled here."))
                     return None
 
@@ -1065,6 +1069,9 @@ init python in director:
                 state.attributes.remove(self.attribute)
             else:
 
+                if "-" + self.attribute in state.attributes:
+                    state.attributes.remove("-" + self.attribute)
+
                 state.attributes.append(self.attribute)
 
                 compatible = set()
@@ -1072,12 +1079,35 @@ init python in director:
                 for i in renpy.get_ordered_image_attributes(state.tag, [ self.attribute ]):
                     compatible.add(i)
 
-                state.attributes = [ i for i in state.attributes if i in compatible ]
+                state.attributes = [ i for i in state.attributes if i in compatible or i.startswith("-")]
 
             update_ast()
 
         def get_selected(self):
             return self.attribute in state.attributes
+
+    class ToggleNegativeAttribute(Action):
+        """
+        This action toggles on and off a negative attribute.
+        Then the AST is updated.
+        """
+
+        def __init__(self, attribute):
+
+            self.attribute = attribute
+            self.negative = "-" + attribute
+
+        def __call__(self):
+            if self.negative in state.attributes:
+                state.attributes.remove(self.negative)
+            else:
+
+                if self.attribute in state.attributes:
+                    state.attributes.remove(self.attribute)
+
+                state.attributes.append(self.negative)
+
+            update_ast()
 
 
     class SetList(Action):
@@ -1346,11 +1376,11 @@ init python in director:
                 continue
 
             if i & 1:
-                v = int(v)
+                v = "%08d" % int(v)
 
             rv.append(v)
 
-        return tuple(rv)
+        return "".join(rv)
 
 init 2202 python hide in director:
 
@@ -1463,6 +1493,7 @@ style director_icon_action_button is director_action_button:
 
 style director_icon_action_button_text is director_action_button_text:
     font "DejaVuSans.ttf"
+    emoji_font None
 
 style director_statement_text is director_text:
     size 20
@@ -1523,8 +1554,8 @@ screen director_lines(state):
 
                     text "[line_pos]":
                         xpos (gui._scale(300) - 10)
-                        xalign 1.0
-                        text_align 1.0
+                        xanchor 1.0
+                        textalign 1.0
                         style "director_text"
 
                     if change_action:
@@ -1713,8 +1744,13 @@ screen director_attributes(state):
             for t in director.get_attributes():
                 textbutton "[t]":
                     action director.ToggleAttribute(t)
+                    alternate director.ToggleNegativeAttribute(t)
                     style "director_button"
                     ypadding 0
+
+        null height 14
+
+        text _("Click to toggle attribute, right click to toggle negative attribute.")
 
         use director_footer(state)
 
@@ -1735,6 +1771,11 @@ screen director_transform(state):
                     style "director_button"
                     ypadding 0
 
+        null height 14
+
+        text _("Click to set transform, right click to add to transform list.")
+        text _("Customize director.transforms to add more transforms.")
+
         use director_footer(state)
 
 
@@ -1754,6 +1795,10 @@ screen director_behind(state):
                     style "director_button"
                     ypadding 0
 
+        null height 14
+
+        text _("Click to set, right click to add to behind list.")
+
         use director_footer(state)
 
 
@@ -1772,6 +1817,11 @@ screen director_with(state):
                     style "director_button"
                     ypadding 0
 
+        null height 14
+
+        text _("Click to set.")
+        text _("Customize director.transitions to add more transitions.")
+
         use director_footer(state)
 
 
@@ -1789,6 +1839,11 @@ screen director_channel(state):
                     action director.SetChannel(c)
                     style "director_button"
                     ypadding 0
+
+        null height 14
+
+        text _("Click to set.")
+        text _("Customize director.audio_channels to add more channels.")
 
         use director_footer(state)
 
@@ -1815,6 +1870,7 @@ screen director_audio(state):
 
 
 screen director():
+    layer config.interface_layer
     zorder 1400
 
     $ state = director.state

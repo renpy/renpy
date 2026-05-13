@@ -185,7 +185,7 @@
     new "## 게임 메뉴의 기본 틀입니다. 매개변수 title로 스크린 제목을 정하고, 배경, 제목, 그리고 navigation 스크린을 출력합니다."
 
     # screens.rpy:413
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
     new "## scroll 매개변수는, None, \"viewport\" 혹은 \"vpgrid\" 중 하나여야 합니다. transclude 명령어를 통해 다른 스크린을 이 스크린 내부에 불러옵니다."
 
     # screens.rpy:473
@@ -517,8 +517,8 @@
     new "우클릭"
 
     # screens.rpy:1065
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "휠 위로\n롤백 클릭"
+    old "Mouse Wheel Up"
+    new "휠 위로"
 
     # screens.rpy:1069
     old "Mouse Wheel Down"
@@ -651,3 +651,64 @@
     # screens.rpy:1433
     old "Menu"
     new "메뉴"
+
+translate korean strings:
+
+    # gui/game/screens.rpy:241
+    old "## Ensure this appears on top of other screens."
+    # Automatic translation.
+    new "## 다른 화면 위에 표시되는지 확인합니다."
+
+    # gui/game/screens.rpy:329
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
+    # Automatic translation.
+    new "## iOS에서는 종료 버튼이 금지되어 있으며 Android 및 웹에서는 불필요합니다."
+
+    # gui/game/screens.rpy:352
+    old "## This ensures that any other menu screen is replaced."
+    # Automatic translation.
+    new "## 이렇게 하면 다른 메뉴 화면이 모두 교체됩니다."
+
+    # gui/game/screens.rpy:357
+    old "## This empty frame darkens the main menu."
+    # Automatic translation.
+    new "## 이 빈 프레임은 기본 메뉴를 어둡게 만듭니다."
+
+    # gui/game/screens.rpy:429
+    old "## Reserve space for the navigation section."
+    # Automatic translation.
+    new "## 탐색 섹션을 위한 공간 예약."
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    # Automatic translation.
+    new "동기화 업로드"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    # Automatic translation.
+    new "동기화 다운로드"
+
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    # Automatic translation.
+    new "접근성 메뉴를 엽니다."
+
+    # gui/game/screens.rpy:1082
+    old "Left Trigger\nLeft Shoulder"
+    # Automatic translation.
+    new "왼쪽 트리거\n왼쪽 어깨"
+
+    # gui/game/screens.rpy:1320
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    # Automatic translation.
+    new "## 주어진 경우 메뉴를 표시합니다. config.narrator_menu가 True로 설정된 경우 메뉴가 잘못 표시될 수 있습니다."
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## 말풍선 화면은 말풍선을 사용할 때 플레이어에게 대화를 표시하는 데 사용됩니다. 말풍선 화면은 말풍선 화면과 동일한 매개변수를 사용하며, \"what\" 아이디로 표시 가능 항목을 생성해야 하며, \"namebox\", \"who\", \"window\" 아이디로 표시 가능 항목을 생성할 수 있습니다."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"

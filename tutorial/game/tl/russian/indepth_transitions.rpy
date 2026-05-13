@@ -21,7 +21,7 @@ translate russian demo_simple_transitions_2b4fbae3:
 translate russian demo_simple_transitions_4b235ac2:
 
     # e "But don't let that get you down, since they're the transitions you'll probably use the most in a game."
-    e "Но не бойтесь. В играх чаще всего использоют именно их."
+    e "Но не бойтесь. В играх чаще всего используют именно их."
 
 # game/indepth_transitions.rpy:103
 translate russian demo_simple_transitions_af0431ac:

@@ -1,5 +1,3 @@
-.. _matrixcolor:
-
 Matrixcolor
 ===========
 
@@ -23,19 +21,20 @@ an opaque white pixel will have the value (1.0, 1.0, 1.0, 1.0), a 50% transparen
 red pixel will have the value (0.5, 0.0, 0.0, 0.5), and a transparent pixel
 will have the value (0.0, 0.0, 0.0, 0.0).
 
-Premultiplied alph allows Ren'Py to scale images
+Premultiplied alpha allows Ren'Py to scale images
 up and down without causing dark artifacts that come from representing
 colors more directly. Scaling images is similar to averaging two pixels
 together. Without premultiplied alpha, we might have a solid white pixel
 and a transparent pixel - (1.0, 1.0, 1.0, 1.0) and (0.0, 0.0, 0.0, 0.0),
-respectively. Average those together gets (0.5, 0.5, 0.5, 0.5).
-But that's not right - averaging solid white and transparent black should
-get 50% opaque white, not 50% opaque gray.
+respectively. Average those together gets (0.5, 0.5, 0.5, 0.5), representing
+50% opaque gray in the straight alpha system. 
 
-In the premultiplied alpha system, the starting value is the same, and so is the
-result - except now, (0.5, 0.5, 0.5, 0.5) has been pre-defined to be 50% opaque
-white. By storing colors in this way, Ren'Py can draw them to the screen
-correctly, and not get weird artifacts when scaling.
+However, since a fully transparent pixel doesn't really have
+any color, it shouldn't affect the resulting color, either - only the resulting
+transparency. In the premultiplied alpha system, the starting values are the same,
+and so is the result - except now, (0.5, 0.5, 0.5, 0.5) has been pre-defined to
+be 50% opaque white. By storing colors in this way, Ren'Py can draw them to the
+screen correctly, and not get weird artifacts when scaling.
 
 Using a Matrix to Change Colors
 -------------------------------
@@ -54,7 +53,9 @@ directly or computed.
 
 These values are applied to the red (R), green (G), blue (B), and alpha (A)
 channels of the original color to make a new color, (R', G', B', A'). The
-formulas to do this are::
+formulas to do this are:
+
+.. code-block:: none
 
     R' = R * a + G * b + B * c + A * d
     G' = R * e + G * f + B * g + A * h
@@ -151,6 +152,27 @@ TintMatrix class. ::
                             0, 0, b, 0,
                             0, 0, 0, a ])
 
+
+Structural Similarity
+^^^^^^^^^^^^^^^^^^^^^^
+
+In ATL, interpolating a the :tpref:`matrixcolor` property requires the
+use of ColorMatrixes that have structural similarity. That means the same
+types of ColorMatrix, multiplied together in the same order.
+
+As an example, the following will interpolate from normal to a desaturated
+blue tint, and then return to normal. ::
+
+    show eileen happy at center:
+        matrixcolor TintMatrix("#ffffff") * SaturationMatrix(1.0)
+        linear 2.0 matrixcolor TintMatrix("#ccccff") * SaturationMatrix(0.0)
+        linear 2.0 matrixcolor TintMatrix("#ffffff") * SaturationMatrix(1.0)
+
+While the first setting of matrixcolor may seem unnecessary, it is required
+to provide a base for the first linear interpolation. If it wasn't present, that
+interpolation would be skipped.
+
+
 Built-In ColorMatrix Subclasses
 -------------------------------
 
@@ -158,6 +180,3 @@ The following is the list of ColorMatrix subclasses that are built into
 Ren'Py.
 
 .. include:: inc/colormatrix
-
-
-

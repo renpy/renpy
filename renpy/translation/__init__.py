@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,11 +20,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from typing import Callable
 
 import renpy
-renpy.update_path()
 
 import hashlib
 import re
@@ -39,23 +38,46 @@ import codecs
 ################################################################################
 
 
+class TranslateInfo(object):
+    """
+    This is the object that returns information about the a translation.
+    """
+
+    def __init__(self, node):
+        self.language = node.language
+        self.identifier = node.identifier
+        self.filename = node.filename
+        self.linenumber = node.linenumber
+
+        if isinstance(node, renpy.ast.TranslateSay):
+            block = [node]
+        else:
+            block = node.block
+
+        self.source = []
+
+        for i in block:
+            try:
+                self.source.append(i.get_code())
+            except Exception as e:
+                pass
+
+
 class ScriptTranslator(object):
-
     def __init__(self):
-
         # All languages we know about.
         self.languages = set()
 
         # A map from the translate identifier to the translate object used when the
         # language is None.
-        self.default_translates = { }
+        self.default_translates = {}
 
         # A map from (identifier, language) to the translate object used for that
         # language.
-        self.language_translates = { }
+        self.language_translates = {}
 
         # A list of (identifier, language) tuples that we need to chain together.
-        self.chain_worklist = [ ]
+        self.chain_worklist = []
 
         # A map from filename to a list of (label, translate) pairs found in
         # that file.
@@ -80,6 +102,14 @@ class ScriptTranslator(object):
         # in that file.
         self.additional_strings = collections.defaultdict(list)
 
+        # Scan for languages.
+
+        for i in renpy.exports.list_files():
+            parts = i.split("/")
+            if parts[0] == "tl":
+                if len(parts) >= 3 and parts[1] != "None":
+                    self.languages.add(parts[1])
+
     def count_translates(self):
         """
         Return the number of dialogue blocks in the game.
@@ -87,82 +117,62 @@ class ScriptTranslator(object):
 
         return len(self.default_translates)
 
-    def take_translates(self, nodes):
+    def take_translates(self, nodes: list[renpy.ast.Node]):
         """
         Takes the translates out of the flattened list of statements, and stores
         them into the dicts above.
         """
 
-        label = None
-
         if not nodes:
             return
 
-        TranslatePython = renpy.ast.TranslatePython
-        TranslateBlock = renpy.ast.TranslateBlock
-        TranslateEarlyBlock = renpy.ast.TranslateEarlyBlock
-        Menu = renpy.ast.Menu
-        UserStatement = renpy.ast.UserStatement
-        Translate = renpy.ast.Translate
+        from renpy.ast import (
+            TranslatePython,
+            TranslateBlock,
+            TranslateEarlyBlock,
+            Translate,
+            TranslateSay,
+        )
 
-        filename = renpy.exports.unelide_filename(nodes[0].filename)
+        filename = renpy.lexer.unelide_filename(nodes[0].filename)
         filename = os.path.normpath(os.path.abspath(filename))
 
-        for n in nodes:
+        label = None
 
+        for n in nodes:
             if not n.translation_relevant:
                 continue
 
-            if n.name.__class__ is not tuple:
-                if isinstance(n.name, basestring):
-                    label = n.name
+            if isinstance(n.name, str):
+                label = n.name
 
-            type_n = n.__class__
-
-            if type_n is TranslatePython:
+            if isinstance(n, TranslatePython):
                 if n.language is not None:
                     self.languages.add(n.language)
                 self.python[n.language].append(n)
 
-            elif type_n is TranslateEarlyBlock:
+            elif isinstance(n, TranslateEarlyBlock):
                 if n.language is not None:
                     self.languages.add(n.language)
                 self.early_block[n.language].append(n)
 
-            elif type_n is TranslateBlock:
+            elif isinstance(n, TranslateBlock):
                 if n.language is not None:
                     self.languages.add(n.language)
                 self.block[n.language].append(n)
 
-            elif type_n is Menu:
-
-                for i in n.items:
-                    s = i[0]
-
-                    if s is None:
-                        continue
-
-                    self.additional_strings[filename].append((n.linenumber, s))
-
-            elif type_n is UserStatement:
-
-                strings = n.call("translation_strings")
-
-                if strings is None:
-                    continue
-
-                for s in strings:
-                    self.additional_strings[filename].append((n.linenumber, s))
-
-            elif type_n is Translate:
-
+            elif isinstance(n, (Translate, TranslateSay)):
                 if n.language is None:
                     if n.identifier in self.default_translates:
                         old_node = self.default_translates[n.identifier]
-                        raise Exception("Line with id %s appeared twice, at %s:%d and %s:%d." %
-                                          (n.identifier,
-                                           old_node.filename, old_node.linenumber,
-                                           n.filename, n.linenumber))
+
+                        err = renpy.lexer.ParseError(
+                            f"Line with id {n.identifier} appears twice. "
+                            f"The other line is {old_node.filename}:{old_node.linenumber}",
+                            n.filename,
+                            n.linenumber,
+                        )
+                        err.defer("duplicate_id")
 
                     self.default_translates[n.identifier] = n
                     self.file_translates[filename].append((label, n))
@@ -171,15 +181,18 @@ class ScriptTranslator(object):
                     self.language_translates[n.identifier, n.language] = n
                     self.chain_worklist.append((n.identifier, n.language))
 
+            else:
+                for line in n.get_translation_strings():
+                    self.additional_strings[filename].append(line)
+
     def chain_translates(self):
         """
         Chains nodes in non-default translates together.
         """
 
-        unchained = [ ]
+        unchained = []
 
         for identifier, language in self.chain_worklist:
-
             if identifier not in self.default_translates:
                 unchained.append((identifier, language))
                 continue
@@ -187,28 +200,78 @@ class ScriptTranslator(object):
             translate = self.language_translates[identifier, language]
             next_node = self.default_translates[identifier].after
 
-            renpy.ast.chain_block(translate.block, next_node)
+            if isinstance(translate, renpy.ast.TranslateSay):
+                translate.chain(next_node)
+            else:
+                renpy.ast.chain_block(translate.block, next_node)
 
         self.chain_worklist = unchained
 
-    def lookup_translate(self, identifier, alternate=None):
-
-        identifier = identifier.replace('.', '_')
+    def lookup_translate(self, identifier, alternate=None) -> tuple[renpy.ast.Node, bool]:
+        identifier = identifier.replace(".", "_")
         language = renpy.game.preferences.language
 
         if language is not None:
             tl = self.language_translates.get((identifier, language), None)
 
             if (tl is None) and alternate:
-                tl = self.language_translates.get((identifier, language), None)
+                tl = self.language_translates.get((identifier, alternate), None)
 
         else:
             tl = None
 
         if tl is None:
             tl = self.default_translates[identifier]
+            translated = False
+        else:
+            translated = True
 
-        return tl.block[0]
+        if isinstance(tl, renpy.ast.TranslateSay):
+            return tl, translated
+        else:
+            return tl.block[0], translated
+
+    def get_all_translates(self, identifier: str):
+        """
+        Return a dict of all existing translates for the given identifier.
+
+        The dict keys are language names, or None for the default language.
+        """
+
+        identifier = identifier.replace(".", "_")
+        language = renpy.game.preferences.language
+
+        rv: dict[str | None, renpy.ast.Translate | renpy.ast.TranslateSay] = {}
+
+        for language in self.languages:
+            try:
+                rv[language] = self.language_translates[(identifier, language)]
+            except KeyError:
+                pass
+
+        rv[None] = self.default_translates[identifier]
+        return rv
+
+    def get_translate_info(self, identifier, language):
+        identifier = identifier.replace(".", "_")
+
+        if language is not None:
+            tl = self.language_translates.get((identifier, language), None)
+        else:
+            tl = self.default_translates.get(identifier, None)
+
+        if tl is None:
+            return None
+
+        return TranslateInfo(tl)
+
+    def requires_init(self, language):
+        return bool(
+            self.python[language]
+            or self.block[language]
+            or self.early_block[language]
+            or renpy.config.language_callbacks[language]
+        )
 
 
 def encode_say_string(s):
@@ -218,32 +281,40 @@ def encode_say_string(s):
 
     s = s.replace("\\", "\\\\")
     s = s.replace("\n", "\\n")
-    s = s.replace("\"", "\\\"")
-    s = re.sub(r'(?<= ) ', '\\ ', s)
+    s = s.replace('"', '\\"')
+    s = re.sub(r"(?<= ) ", "\\ ", s)
 
-    return "\"" + s + "\""
+    return '"' + s + '"'
 
 
 class Restructurer(object):
-
     def __init__(self, children):
         self.label = None
         self.alternate = None
 
+        self.preexisting_identifiers = set()
         self.identifiers = set()
+
+        # Search for identifiers that have been set to the user, and add them
+        # to self.preexisting_identifiers.
+        for i in renpy.script.collapse_stmts(children):
+            if isinstance(i, renpy.ast.Say):
+                identifier = getattr(i, "identifier", None)
+                if identifier is not None:
+                    self.preexisting_identifiers.add(identifier)
+
         self.callback(children)
 
     def id_exists(self, identifier):
         if identifier in self.identifiers:
             return True
 
-        if identifier in renpy.game.script.translator.default_translates: # @UndefinedVariable
+        if identifier in renpy.game.script.translator.default_translates:
             return True
 
         return False
 
     def unique_identifier(self, label, digest):
-
         if label is None:
             base = digest
         else:
@@ -253,10 +324,9 @@ class Restructurer(object):
         suffix = ""
 
         while True:
-
             identifier = base + suffix
 
-            if not self.id_exists(identifier):
+            if not self.id_exists(identifier) and not (identifier in self.preexisting_identifiers):
                 break
 
             i += 1
@@ -272,9 +342,16 @@ class Restructurer(object):
 
         md5 = hashlib.md5()
 
-        for i in block:
-            code = i.get_code()
-            md5.update((code + "\r\n").encode("utf-8"))
+        digest_block = block
+
+        if renpy.config.tlid_only_considers_say:
+            if any(isinstance(i, renpy.ast.Say) for i in block):
+                digest_block = [i for i in block if isinstance(i, renpy.ast.Say)]
+
+        for i in digest_block:
+            if isinstance(i, renpy.ast.Say):
+                code = i.get_code()
+                md5.update((code + "\r\n").encode("utf-8"))
 
         digest = md5.hexdigest()[:8]
 
@@ -296,7 +373,6 @@ class Restructurer(object):
 
         else:
             alternate = None
-            identifier = identifier
 
         self.identifiers.add(identifier)
         if alternate is not None:
@@ -310,7 +386,43 @@ class Restructurer(object):
         ed = renpy.ast.EndTranslate(loc)
         ed.name = block[0].name + ("end_translate",)
 
-        return [ tl, ed ]
+        return [tl, ed]
+
+    def combine_translate(self, node):
+        """
+        If we have a Translate containing a Say statement and an EndTranslate,
+        combine them into a TranslateSay statement.
+        """
+
+        if not isinstance(node, renpy.ast.Translate):
+            return node
+
+        if not len(node.block) == 1:
+            return node
+
+        if not isinstance(node.block[0], renpy.ast.Say):
+            return node
+
+        say = node.block[0]
+
+        rv = renpy.ast.TranslateSay(
+            (say.filename, say.linenumber),
+            say.who,
+            say.what,
+            say.with_,
+            interact=say.interact,
+            attributes=say.attributes,
+            arguments=say.arguments,
+            temporary_attributes=say.temporary_attributes,
+            identifier=node.identifier,
+            language=node.language,
+            alternate=node.alternate,
+        )
+
+        rv.name = say.name
+        rv.explicit_identifier = say.explicit_identifier
+
+        return rv
 
     def callback(self, children):
         """
@@ -318,14 +430,13 @@ class Restructurer(object):
         in the list so that translatable statements are contained within translation blocks.
         """
 
-        new_children = [ ]
-        group = [ ]
+        new_children = []
+        group = []
 
         for i in children:
-
             if isinstance(i, renpy.ast.Label):
                 if not i.hide:
-
+                    assert isinstance(i.name, str)
                     if i.name.startswith("_"):
                         self.alternate = i.name
                     else:
@@ -339,7 +450,7 @@ class Restructurer(object):
                 group.append(i)
                 tl = self.create_translate(group)
                 new_children.extend(tl)
-                group = [ ]
+                group = []
 
             elif i.translatable:
                 group.append(i)
@@ -348,32 +459,51 @@ class Restructurer(object):
                 if group:
                     tl = self.create_translate(group)
                     new_children.extend(tl)
-                    group = [ ]
+                    group = []
 
                 new_children.append(i)
 
         if group:
             nodes = self.create_translate(group)
             new_children.extend(nodes)
-            group = [ ]
+            group = []
 
-        children[:] = new_children
+        # Combine translate and say into TranslateSay.
+        new_children = [self.combine_translate(node) for node in new_children]
+
+        # Remove EndTranslater when not required.
+
+        new_new_children = []
+
+        old_node = None
+
+        for node in new_children:
+            if isinstance(old_node, renpy.ast.TranslateSay) and isinstance(node, renpy.ast.EndTranslate):
+                old_node.next = node.next
+                old_node = None
+                continue
+
+            new_new_children.append(node)
+            old_node = node
+
+        children[:] = new_new_children
 
 
 def restructure(children):
     Restructurer(children)
+
 
 ################################################################################
 # String Translation
 ################################################################################
 
 
-update_translations = ("RENPY_UPDATE_STRINGS" in os.environ)
+update_translations = "RENPY_UPDATE_STRINGS" in os.environ
 
 
 def quote_unicode(s):
     s = s.replace("\\", "\\\\")
-    s = s.replace("\"", "\\\"")
+    s = s.replace('"', '\\"')
     s = s.replace("\a", "\\a")
     s = s.replace("\b", "\\b")
     s = s.replace("\f", "\\f")
@@ -393,26 +523,22 @@ class StringTranslator(object):
     """
 
     def __init__(self):
-
         # A map from translation to translated string.
-        self.translations = { }
+        self.translations = {}
 
         # A map from translation to the location of the translated string.
-        self.translation_loc = { }
+        self.translation_loc = {}
 
         # A list of unknown translations.
-        self.unknown = [ ]
+        self.unknown = []
 
     def add(self, old, new, newloc):
         if old in self.translations:
-
             if old in self.translation_loc:
                 fn, line = self.translation_loc[old]
-                raise Exception("A translation for \"{}\" already exists at {}:{}.".format(
-                    quote_unicode(old), fn, line))
+                raise Exception('A translation for "{}" already exists at {}:{}.'.format(quote_unicode(old), fn, line))
             else:
-                raise Exception("A translation for \"{}\" already exists.".format(
-                    quote_unicode(old)))
+                raise Exception('A translation for "{}" already exists.'.format(quote_unicode(old)))
 
         self.translations[old] = new
 
@@ -420,7 +546,6 @@ class StringTranslator(object):
             self.translation_loc[old] = newloc
 
     def translate(self, old):
-
         new = self.translations.get(old, None)
 
         if new is not None:
@@ -441,7 +566,6 @@ class StringTranslator(object):
         return old
 
     def write_updated_strings(self, language):
-
         if not self.unknown:
             return
 
@@ -451,20 +575,18 @@ class StringTranslator(object):
             fn = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, "strings.rpy")
 
         with renpy.translation.generation.open_tl_file(fn) as f:
-            f.write(u"translate {} strings:\n".format(language))
-            f.write(u"\n")
+            f.write("translate {} strings:\n".format(language))
+            f.write("\n")
 
             for i in self.unknown:
-
                 i = quote_unicode(i)
 
-                f.write(u"    old \"{}\"\n".format(i))
-                f.write(u"    new \"{}\"\n".format(i))
-                f.write(u"\n")
+                f.write('    old "{}"\n'.format(i))
+                f.write('    new "{}"\n'.format(i))
+                f.write("\n")
 
 
 def add_string_translation(language, old, new, newloc):
-
     tl = renpy.game.script.translator
     stl = tl.strings[language]
     tl.languages.add(language)
@@ -474,7 +596,7 @@ def add_string_translation(language, old, new, newloc):
 Default = renpy.object.Sentinel("default")
 
 
-def translate_string(s, language=Default):
+def translate_string(s, language=Default):  # type (str, str|renpy.object.Sentinel|None) -> str
     """
     :doc: translate_string
     :name: renpy.translate_string
@@ -490,13 +612,14 @@ def translate_string(s, language=Default):
     if language is Default:
         language = renpy.game.preferences.language
 
-    stl = renpy.game.script.translator.strings[language] # @UndefinedVariable
+    stl = renpy.game.script.translator.strings[language]
     return stl.translate(s)
 
 
 def write_updated_strings():
-    stl = renpy.game.script.translator.strings[renpy.game.preferences.language] # @UndefinedVariable
+    stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
     stl.write_updated_strings(renpy.game.preferences.language)
+
 
 ################################################################################
 # RPT Support
@@ -527,12 +650,12 @@ def load_rpt(fn):
             if not l:
                 continue
 
-            if l[0] == '#':
+            if l[0] == "#":
                 continue
 
             s = unquote(l[2:])
 
-            if l[0] == '<':
+            if l[0] == "<":
                 if old:
                     raise Exception("{0} string {1!r} does not have a translation.".format(language, old))
 
@@ -558,6 +681,7 @@ def load_all_rpts():
         if fn.endswith(".rpt"):
             load_rpt(fn)
 
+
 ################################################################################
 # Changing language
 ################################################################################
@@ -572,24 +696,22 @@ def init_translation():
     """
 
     global style_backup
-    style_backup = renpy.style.backup() # @UndefinedVariable
+    style_backup = renpy.style.backup()
 
     load_all_rpts()
-
-    renpy.store._init_language() # type: ignore
 
 
 old_language = "language never set"
 
 # A list of styles that have beend deferred to right before translate
 # styles are run.
-deferred_styles = [ ]
+deferred_styles = []
 
 
-def old_change_language(tl, language):
-
-    for i in deferred_styles:
-        i.apply()
+def old_change_language(tl, language, changed):
+    if changed:
+        for i in deferred_styles:
+            i.apply()
 
     def run_blocks():
         for i in tl.early_block[language]:
@@ -607,8 +729,7 @@ def old_change_language(tl, language):
         i()
 
 
-def new_change_language(tl, language):
-
+def new_change_language(tl, language, changed):
     for i in tl.python[language]:
         renpy.python.py_exec_bytecode(i.code.bytecode)
 
@@ -621,8 +742,9 @@ def new_change_language(tl, language):
     for i in renpy.config.language_callbacks[language]:
         i()
 
-    for i in deferred_styles:
-        i.apply()
+    if changed:
+        for i in deferred_styles:
+            i.apply()
 
     def run_blocks():
         for i in tl.block[language]:
@@ -630,60 +752,113 @@ def new_change_language(tl, language):
 
     renpy.game.invoke_in_new_context(run_blocks)
 
-    renpy.config.init_system_styles()
+    if changed:
+        renpy.config.init_system_styles()
 
 
-def change_language(language, force=False):
+def clean_data():
+    """
+    This cleans out data that's dependent on the language.
+    """
+
+    if renpy.config.clear_history_on_language_change:
+        renpy.store._history_list = renpy.store.list()  # type: ignore
+
+    renpy.store.nvl_list = renpy.store.list()  # type: ignore
+    renpy.game.log.forward = []
+
+
+def change_language(language, force: bool = False, rebuild: bool = False):
     """
     :doc: translation_functions
 
     Changes the current language to `language`, which can be a string or
     None to use the default language.
+
+    `force`
+        If true, ensure the Python code is re-executed even if the language
+        hasn't changed.
+
+    `rebuild`
+        This forces the styles to be rebuilt even if the language hasn't changed.
     """
+
+    def run_blocks():
+        """
+        This is common code that runs translate blocks and deferred styles.
+        """
+
+        gui_defaults = renpy.store.gui._defaults
+        defaulted_variables = { name: getattr(renpy.store.gui, name) for name in gui_defaults }
+
+        for i in renpy.config.translate_clean_stores:
+            renpy.python.clean_store(i)
+
+        for name, value in defaulted_variables.items():
+            setattr(renpy.store.gui, name, value)
+
+        renpy.store.gui._apply_rebuild()
+
+        if renpy.config.new_translate_order:
+            new_change_language(tl, language, changed)
+        else:
+            old_change_language(tl, language, changed)
+
+        for i in renpy.config.translate_clean_stores:
+            renpy.python.reset_store_changes(i)
 
     global old_language
 
-    if old_language != language:
-        renpy.store._history_list = renpy.store.list() # type: ignore
-        renpy.store.nvl_list = renpy.store.list() # type: ignore
+    renpy.exports.load_language(language)
 
     renpy.game.preferences.language = language
-    if old_language == language and not force:
+    changed = language != old_language
+
+    if rebuild:
+        changed = True
+
+    if not changed and not force:
         return
 
     tl = renpy.game.script.translator
 
-    renpy.style.restore(style_backup) # @UndefinedVariable
-    renpy.style.rebuild() # @UndefinedVariable
+    # This path runs when the language does not change,
 
-    for i in renpy.config.translate_clean_stores:
-        renpy.python.clean_store(i)
+    # If change_language is called with no changes but force=True, it means the game
+    # restarted. Re-run Python if the language requires it, but avoid rebuilding styles.
+    if not changed:
+        if not tl.requires_init(language):
+            return
 
-    if renpy.config.new_translate_order:
-        new_change_language(tl, language)
-    else:
-        old_change_language(tl, language)
+        # Prevent memory leak by ignoring any style changes from translate
+        # blocks when language hasn't changed.
+        current_styles = renpy.style.backup()
 
-    for i in renpy.config.change_language_callbacks:
-        i()
+        run_blocks()
+
+        renpy.style.restore(current_styles)
+
+        # Restart the interaction.
+        renpy.exports.restart_interaction()
+        return
+
+    renpy.style.restore(style_backup)
+    renpy.style.rebuild(False)
+
+    run_blocks()
 
     # Reset various parts of the system. Most notably, this clears the image
     # cache, letting us load translated images.
     renpy.exports.free_memory()
 
-    # Rebuild the styles.
-    renpy.style.rebuild() # @UndefinedVariable
+    renpy.style.rebuild()
 
-    for i in renpy.config.translate_clean_stores:
-        renpy.python.reset_store_changes(i)
-
-    # Restart the interaction.
-    renpy.exports.restart_interaction()
+    renpy.display.tts.init()
 
     if language != old_language:
         renpy.exports.block_rollback()
 
-        old_language = language
+    old_language = language
 
 
 def check_language():
@@ -697,15 +872,79 @@ def check_language():
 
     # Deal with a changed language.
     if ctx.translate_language != preferences.language:
+        clean_data()
+
         ctx.translate_language = preferences.language
 
-        tid = ctx.translate_identifier
+        tid = ctx.translate_identifier or ctx.deferred_translate_identifier
 
         if tid is not None:
-            node = renpy.game.script.translator.lookup_translate(tid) # @UndefinedVariable
+            node, _ = renpy.game.script.translator.lookup_translate(tid)
 
             if node is not None:
+                # This is necessary for the menu-with-say case. ADVCharacter needs
+                # identifier to set deferred_translate_identifier again, but EndTranslation
+                # has already set translate_identifier to None.
+                ctx.translate_identifier = tid
+
+                clean_data()
+
                 raise renpy.game.JumpException(node.name)
+
+
+def get_translation_identifier():
+    """
+    :doc: translation_functions
+
+    Returns the translation identifier for the current statement.
+    """
+
+    ctx = renpy.game.contexts[-1]
+    return ctx.translate_identifier or ctx.deferred_translate_identifier
+
+
+def get_translation_info(identifier=None, language=None):
+    """
+    :doc: translation_functions
+
+    Returns information about the translation with the given identifier, or about the default
+    text if `language` is None.
+
+    `identifier`
+        The translation identifier, or None to get information about currently displayed
+        text.
+
+    `language`
+        Either a language name, or None to get information about the default text.
+
+    If no information is available, returns None. Else returns an object with the following
+    attributes:
+
+    .. attribute:: language
+        The language of the translation.
+
+    .. attribute:: identifier
+        The identifier of the translation.
+
+    .. attribute:: filename
+        The filename the translation is found in.
+
+    .. attribute:: linenumber
+        The line number the translation is found on.
+
+    .. attribute:: source
+        A list of strings that make up the translation. Only some statements can be included here,
+        including the say statements that make up most translations.
+    """
+
+    if identifier is None:
+        identifier = get_translation_identifier()
+
+    if identifier is None:
+        return None
+
+    tl = renpy.game.script.translator
+    return tl.get_translate_info(identifier, language)
 
 
 def known_languages():
@@ -716,7 +955,8 @@ def known_languages():
     language, None.
     """
 
-    return { i for i in renpy.game.script.translator.languages if i is not None } # @UndefinedVariable
+    return {i for i in renpy.game.script.translator.languages if i is not None}
+
 
 ################################################################################
 # Detect language
@@ -900,25 +1140,147 @@ locales = {
     "chs": "simplified_chinese",
     "cht": "traditional_chinese",
     "zh": "traditional_chinese",
+    "zh-hant": "traditional_chinese",
+    "zh-hans": "simplified_chinese",
+    "zh_tw": "traditional_chinese",
+    "zh_cn": "simplified_chinese",
+    "zh_hk": "traditional_chinese",
+    "zh_sg": "simplified_chinese",
+    "zh_mo": "traditional_chinese",
 }
+
+def parse_bcp47_to_locale(tag: str) -> str:
+    """
+    Parse a BCP 47 language tag (as returned by NSLocale.preferredLanguages())
+    into a 'language_REGION' string, with script appended via dash for languages
+    where script matters.
+
+    Examples:
+        "en"            -> "en_US"
+        "en-US"         -> "en_US"
+        "en-GB"         -> "en_GB"
+        "fr-CA"         -> "fr_CA"
+        "zh"            -> "zh-hans_CN"
+        "zh-CN"         -> "zh-hans_CN"
+        "zh-TW"         -> "zh-hant_TW"
+        "zh-Hans"       -> "zh-hans_CN"
+        "zh-Hant"       -> "zh-hant_TW"
+        "zh-Hans-CN"    -> "zh-hans_CN"
+        "zh-Hant-HK"    -> "zh-hant_HK"
+        "en-US-POSIX"   -> "en_US"
+        "en-US-u-ca-gregory" -> "en_US"
+        "es-419"        -> "es_419"
+    """
+    # Regions where Traditional Chinese is the convention; everything else defaults to Simplified.
+    # This only applies when we have to *infer* a script from the region because none was given.
+    zh_traditional_regions: frozenset[str] = frozenset({"TW", "HK", "MO"})
+
+    # Default regions per language, used when a tag has no region subtag.
+    # Apple's preferredLanguages() often returns bare language codes ("en", "fr"),
+    # and downstream "lang_REGION" consumers usually want a region filled in.
+    default_regions: dict[str, str] = {
+        "en": "US",
+        "es": "ES",
+        "pt": "PT",
+        "zh": "CN",
+        "fr": "FR",
+        "de": "DE",
+        "it": "IT",
+        "ja": "JP",
+        "ko": "KR",
+        "ru": "RU",
+        "ar": "SA",
+        "nl": "NL",
+        "sv": "SE",
+        "pl": "PL",
+        "tr": "TR",
+        "th": "TH",
+        "vi": "VN",
+        "he": "IL",
+        "hi": "IN",
+    }
+
+    if not tag or not isinstance(tag, str):
+        raise ValueError(f"Invalid BCP 47 tag: {tag!r}")
+
+    # Step 1: strip BCP 47 extensions. Everything from "-u-", "-t-", or "-x-"
+    # onward follows different (non-positional) rules and must be removed before
+    # we treat the remaining subtags as positional.
+    core: str = tag.strip()
+    lower: str = core.lower()
+    for marker in ("-u-", "-t-", "-x-"):
+        idx: int = lower.find(marker)
+        if idx != -1:
+            core = core[:idx]
+            lower = lower[:idx]
+
+    parts: list[str] = [p for p in core.split("-") if p]
+    if not parts:
+        raise ValueError(f"Empty BCP 47 tag: {tag!r}")
+
+    # Step 2: language subtag must be 2 or 3 alphabetic characters (ISO 639-1/2/3).
+    language: str = parts[0].lower()
+    if not (2 <= len(language) <= 3 and language.isalpha()):
+        raise ValueError(f"Invalid language subtag in {tag!r}: {parts[0]!r}")
+
+    # Step 3: walk remaining subtags. Identify by shape, not position, so we're
+    # robust against minor ordering oddities. First valid match per slot wins,
+    # which matches canonical ordering when input is well-formed.
+    script: str | None = None       # 4 letters, e.g. "Hans"
+    region: str | None = None       # 2 letters or 3 digits
+
+    for sub in parts[1:]:
+        if not sub:
+            continue
+        if script is None and len(sub) == 4 and sub.isalpha():
+            script = sub.lower()    # normalize: caller wants lowercase script
+        elif region is None and len(sub) == 2 and sub.isalpha():
+            region = sub.upper()
+        elif region is None and len(sub) == 3 and sub.isdigit():
+            region = sub            # UN M.49 numeric region, e.g. "419"
+        # Anything else (variants like "POSIX", longer variant subtags) is ignored.
+
+    # Step 4: infer region if missing.
+    if region is None:
+        region = default_regions.get(language, language.upper())
+
+    # Step 5: handle script. Only Chinese commonly carries a script in practice,
+    # and the user wants the script preserved in the output for that language.
+    # For other languages, we drop the script — it's rarely meaningful in a
+    # 'lang_REGION' string and keeping it would surprise consumers.
+    if language == "zh":
+        if script is None:
+            # Infer from region: TW/HK/MO -> Traditional, else Simplified.
+            script = "hant" if region in zh_traditional_regions else "hans"
+        return f"{language}-{script}_{region}"
+
+    return f"{language}_{region}"
 
 
 def detect_user_locale():
     import locale
+
     if renpy.windows:
         import ctypes
-        windll = ctypes.windll.kernel32 # type: ignore
+
+        windll = ctypes.windll.kernel32  # type: ignore
         locale_name = locale.windows_locale.get(windll.GetUserDefaultUILanguage())
     elif renpy.android:
-        from jnius import autoclass # type: ignore
-        Locale = autoclass('java.util.Locale')
+        from jnius import autoclass  # type: ignore
+
+        Locale = autoclass("java.util.Locale")
         locale_name = str(Locale.getDefault().getLanguage())
-    elif renpy.ios:
-        import pyobjus # type: ignore
+    elif renpy.ios or renpy.macintosh:
+        import pyobjus  # type: ignore
+
         NSLocale = pyobjus.autoclass("NSLocale")
         languages = NSLocale.preferredLanguages()
-        locale_name = languages.objectAtIndex_(0).UTF8String().decode("utf-8")
-        locale_name.replace("-", "_")
+
+        locale_name = languages.objectAtIndex_(0).UTF8String()
+        if isinstance(locale_name, bytes):
+            locale_name = locale_name.decode("utf-8")
+
+        locale_name = parse_bcp47_to_locale(locale_name)
     else:
         locale_name = locale.getdefaultlocale()
         if locale_name is not None:
@@ -932,16 +1294,18 @@ def detect_user_locale():
         language = region = locale_name
     else:
         locale_name = normalize
-        if '.' in locale_name:
-            locale_name, _ = locale_name.split('.', 1)
+        if "." in locale_name:
+            locale_name, _ = locale_name.split(".", 1)
         language, region = locale_name.lower().split("_")
+
     return language, region
 
-
 # Generated by scripts/relative_imports.py, do not edit below this line.
-if 1 == 0:
-    from . import dialogue; dialogue
-    from . import extract; extract
-    from . import generation; generation
-    from . import merge; merge
-    from . import scanstrings; scanstrings
+import typing
+
+if typing.TYPE_CHECKING:
+    from . import dialogue as dialogue
+    from . import extract as extract
+    from . import generation as generation
+    from . import merge as merge
+    from . import scanstrings as scanstrings

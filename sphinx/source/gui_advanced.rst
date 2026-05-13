@@ -14,6 +14,10 @@ There are some Python functions that support the GUI.
 
 .. include:: inc/gui
 
+.. function:: gui.button_text_properties(kind=None, accent=False):
+
+    An obsolete alias for :func:`gui.text_properties`.
+
 More on gui.rebuild
 --------------------
 
@@ -36,6 +40,9 @@ and::
         gui.text_size = persistent.text_size
 
 are different.
+
+
+.. _gui-default:
 
 The default statement, the gui namespace, and gui.rebuild
 ---------------------------------------------------------
@@ -62,6 +69,17 @@ However, if as part of the game script, we have::
 Ren'Py will only re-run the define, so it will set the hover color to
 the accent color, and then update the styles. This makes it possible
 to have parts of the GUI that change as the game progresses.
+
+When setting gui variables at runtime, it may be necessary to call gui.rebuild in the
+``after_load`` label::
+
+    label after_load:
+        $ gui.rebuild()
+        return
+
+This only applies to variables set with ``default``. All variables in the gui namespace should be set
+with ``default`` or ``define``.
+
 
 .. _gui-preferences:
 
@@ -99,7 +117,3 @@ that can be added to the preferences screen. ::
         textbutton _("Small") action gui.SetPreference("size", 20)
         textbutton _("Medium") action gui.SetPreference("size", 22)
         textbutton _("Big") action gui.SetPreference("size", 24)
-
-
-
-

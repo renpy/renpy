@@ -433,3 +433,11 @@ translate polish strings:
     old "## NVL-mode."
     new "## Opcja NVL-mode."
 
+
+translate polish strings:
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    # Automatic translation.
+    new "## Włącz sprawdzanie niepoprawnych lub niestabilnych właściwości w ekranach lub transformacjach"
+

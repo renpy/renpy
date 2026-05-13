@@ -9,25 +9,26 @@ import sys
 
 
 def process(fn):
-    with open(fn, "r") as f:
+    with open(fn, "rb") as f:
         data = f.read()
 
     data = data.decode("utf-8")
     data = data.replace("\r", "")
-    data = data.replace(u"\ufeff", "")
-    data = u"\ufeff" + data
+    data = data.replace("\ufeff", "")
+    data = "\ufeff" + data
     data = data.encode("utf-8")
 
-    with open(fn, "w") as f:
+    with open(fn, "wb") as f:
         f.write(data)
 
 
-for directory, dirs, files in os.walk(sys.argv[1]):
-    for fn in files:
-        fn = os.path.join(directory, fn)
+for dn in sys.argv[1:]:
+    for directory, dirs, files in os.walk(dn):
+        for fn in files:
+            fn = os.path.join(directory, fn)
 
-        if not fn.endswith(".rpy"):
-            continue
+            if not fn.endswith(".rpy") or fn.endswith(".rpym") or fn.endswith(".py"):
+                continue
 
-        print(fn)
-        process(fn)
+            print(fn)
+            process(fn)

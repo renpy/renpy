@@ -4,6 +4,7 @@
 GUI Customization Guide
 =======================
 
+
 .. ifconfig:: not renpy_figures
 
     .. note::
@@ -17,12 +18,12 @@ can be customized somewhat, and can be replaced entirely if necessary. This
 page explains how to do simple and intermediate levels of GUI customization.
 
 For more advanced customization, please take a look at the documentation for
-:ref:`styles <styles>` (including the list of :ref:`style properties <style-properties>`)
-and :ref:`screens <screens>` (including :ref:`screen actions <screen-actions>`
-and :ref:`special screens <screen-special>`).
+:doc:`styles <style>` (including the list of :doc:`style properties <style_properties>`)
+and :doc:`screens <screens>` (including :doc:`screen actions <screen_actions>`
+and :doc:`special screens <screen_special>`).
 
-This assumes that you're using a new-style Ren'Py GUI (contained in the gui.rpy
-file). Older GUIs (that use the screens.rpy file) should be treated as advanced
+This assumes that you're using a new-style Ren'Py GUI (contained in the :file:`gui.rpy`
+file). Older GUIs (that use the :file:`screens.rpy` file) should be treated as advanced
 GUI customization for the purposes of this guide.
 
 
@@ -31,7 +32,7 @@ Simple GUI Customization
 
 There are a few simple pieces of GUI customization that make sense for
 all but the simplest visual novels. What these customizations have in
-common is that they do not require editing gui.rpy. These customizations
+common is that they do not require editing :file:`gui.rpy`. These customizations
 change the GUI somewhat, but do not drastically change the look of the
 GUI.
 
@@ -45,8 +46,8 @@ you first create a project, but choosing "Change/Update GUI" in the
 launcher will let you change your choice.
 
 When changing the GUI through the launcher, Ren'Py will prompt if you
-want to simply change the launcher, or update gui.rpy. Both choices
-will overwrite most image files, and overwriting gui.rpy will get rid
+want to simply change the launcher, or update :file:`gui.rpy`. Both choices
+will overwrite most image files, and overwriting :file:`gui.rpy` will get rid
 of changes to that file.
 
 As a result, you probably want to do this before any other customization.
@@ -59,7 +60,7 @@ the GUI to match your choices.
 Options.rpy
 -----------
 
-There are a couple of variables in options.rpy that are used by the
+There are a couple of variables in :file:`options.rpy` that are used by the
 GUI.
 
 :var:`config.name`
@@ -74,7 +75,8 @@ GUI.
 
 :var:`config.version`
     A string giving the version of the game. This is presented to the
-    user in various places.
+    user in various places in the default GUI. It has other uses apart
+    from that, such as error messages or tracebacks.
 
 :var:`gui.about`
     Additional text that is added to the about screen. If you want multiple
@@ -119,13 +121,13 @@ gui/game_menu.png
     .. figure:: gui/easy_main_menu.jpg
         :width: 100%
 
-        The main menu, with only gui/main_menu.png replaced.
+        The main menu, with only :file:`gui/main_menu.png` replaced.
 
     .. figure:: gui/easy_game_menu.jpg
         :width: 100%
 
-        The about screen can be part of the game menu (using gui/game_menu.png
-        as the background) or the main menu (using gui/main_menu.png as the
+        The about screen can be part of the game menu (using :file:`gui/game_menu.png`
+        as the background) or the main menu (using :file:`gui/main_menu.png` as the
         background). Both can be set to the same image.
 
 
@@ -135,7 +137,7 @@ Window Icon
 The window icon is the icon that is displayed (in places like the Windows
 task bar and Macintosh dock) by a running application.
 
-The window icon can be changed by replacing gui/window_icon.png.
+The window icon can be changed by replacing :file:`gui/window_icon.png`.
 
 Note that this only changes the icon used by the running game. To change
 the icon used by Windows .exe files and Macintosh applications, see the
@@ -153,7 +155,7 @@ keeps the screens mostly the same, with buttons and bars in the same
 places, although modifying the screens to add new functionality
 is certainly possible.
 
-Many of these changes involve editing variables in gui.rpy. For example,
+Many of these changes involve editing variables in :file:`gui.rpy`. For example,
 to increase the dialogue font size, find the line that reads::
 
     define gui.text_size = 22
@@ -165,8 +167,8 @@ and increase or decrease it, for example, to::
 Note that the default values are often different than what's found in
 this documentation. The default values can changed based on size and
 colors selected for the game, and the values in this file are an example
-of extensive GUI customization. It's best to search gui.rpy for define and
-the variable in question – for example, "define gui.text_size".
+of extensive GUI customization. It's best to search :file:`gui.rpy` for define and
+the variable in question – for example, ``define gui.text_size``.
 
 Some of the adjustments below either partially or completely effect image
 files. As a result, the changes only take effect when the image files
@@ -175,8 +177,8 @@ the launcher, and telling it to regenerate image files. (But note that
 doing so will overwrite any image files you have already modified.)
 
 You may want to consider waiting until your game is nearly complete before
-customizing gui.rpy in this way. While old gui.rpys will work in newer
-Ren'Py versions, newer gui.rpys may have features and fixes that older
+customizing :file:`gui.rpy` in this way. While old :file:`gui.rpy` files will work in newer
+Ren'Py versions, newer :file:`gui.rpy` files may have features and fixes that older
 versions lack. Customizing the GUI early may make it harder to take
 advantage of such improvements.
 
@@ -215,11 +217,6 @@ dialogue.
 .. var:: gui.name_text_size = 45
 
     Sets the size of character names.
-
-.. var:: gui.textbox_height = 278
-
-    The height of the textbox. This should be the same height as the height
-    of gui/textbox.png.
 
 By default, the character name label uses the accent color. The color can
 be easily changed when defining a character::
@@ -262,7 +259,7 @@ buttons.
 
     The color used for the text of unfocused choice buttons.
 
-.. var:: gui.choice_text_hover_color = '#0066cc'
+.. var:: gui.choice_button_text_hover_color = '#0066cc'
 
     The color used for the text of focused choice buttons.
 
@@ -275,12 +272,12 @@ section on buttons, below.
     .. figure:: oshs/game/gui/button/choice_idle_background.png
         :width: 100%
 
-        An example gui/button/idle_background.png image.
+        An example :file:`gui/button/idle_background.png` image.
 
     .. figure:: oshs/game/gui/button/choice_hover_background.png
         :width: 100%
 
-        An example gui/button/choice_hover_background.png image.
+        An example :file:`gui/button/choice_hover_background.png` image.
 
     .. figure:: gui/easy_choice_screen.jpg
         :width: 100%
@@ -314,12 +311,12 @@ gui/overlay/confirm.png
     .. figure:: oshs/game/gui/overlay/main_menu.png
         :width: 100%
 
-        An example gui/overlay/main_menu.png image.
+        An example :file:`gui/overlay/main_menu.png` image.
 
     .. figure:: oshs/game/gui/overlay/game_menu.png
         :width: 100%
 
-        An example gui/overlay/game_menu.png image.
+        An example :file:`gui/overlay/game_menu.png` image.
 
     .. figure:: gui/overlay_main_menu.jpg
         :width: 100%
@@ -401,6 +398,12 @@ fonts used for text. These fonts should also be placed in the game directory.
 
     The font used for text for user interface elements, like the main and
     game menus, buttons, and so on.
+
+.. var:: gui.system_font = "DejaVuSans.ttf"
+
+    The font used for system text, like exception messages and the shift+A
+    accessibility menu. This should be able to handle both ASCII and the
+    game's translated language.
 
 .. var:: gui.glyph_font = "DejaVuSans.ttf"
 
@@ -509,7 +512,7 @@ And the second is by customizing variables.
     .. figure:: oshs/game/gui/frame.png
         :width: 100%
 
-        An example gui/frame.png image.
+        An example :file:`gui/frame.png` image.
 
     .. figure:: gui/frame_confirm.jpg
         :width: 100%
@@ -578,15 +581,15 @@ gui/button/hover_background.png
 gui/button/selected_idle_background.png
     The background image used by buttons that are selected but not
     focused. This is optional, and is used in preference to
-    idle_background.png if it exists.
+    :file:`idle_background.png` if it exists.
 
 gui/button/selected_hover_background.png
     The background image used by buttons that are selected but not
     focused. This is optional, and is used in preference to
-    hover_background.png if it exists.
+    :file:`hover_background.png` if it exists.
 
 More specific backgrounds can be given for each kind of button, by
-prefixing it with the kind. For example, gui/button/check_idle_background.png
+prefixing it with the kind. For example, :file:`gui/button/check_idle_background.png`
 is used as the background of check buttons that are not focused.
 
 Four image files are used as foreground decorations on radio and check
@@ -664,21 +667,21 @@ For example, we customize these variables in our sample game.
 
     .. figure:: oshs/game/gui/button/idle_background.png
 
-        An example gui/button/idle_background.png image.
+        An example :file:`gui/button/idle_background.png` image.
 
     .. figure:: oshs/game/gui/button/hover_background.png
 
-        An example gui/button/hover_background.png image.
+        An example :file:`gui/button/hover_background.png` image.
 
     .. figure:: oshs/game/gui/button/check_foreground.png
 
-        An image that can be used as gui/button/check_foreground.png and
-        gui/button/radio_foreground.png.
+        An image that can be used as :file:`gui/button/check_foreground.png` and
+        :file:`gui/button/radio_foreground.png`.
 
     .. figure:: oshs/game/gui/button/check_selected_foreground.png
 
-        An image that can be used as gui/button/check_selected_foreground.png and
-        gui/button/radio_selected_foreground.png.
+        An image that can be used as :file:`gui/button/check_selected_foreground.png` and
+        :file:`gui/button/radio_selected_foreground.png`.
 
     .. figure:: gui/button_preferences.jpg
         :width: 100%
@@ -703,12 +706,10 @@ the save slots.
 
     The borders applied to each save slot.
 
-.. var:: config.thumbnail_width = 384
-.. var:: config.thumbnail_height = 216
-
-    The width and height of the save thumbnails. Note that these live in
-    the config namespace, not the gui namespace. These do not take effect
-    until the file is saved and loaded.
+:var:`config.thumbnail_width` = 384 and :var:`config.thumbnail_height` = 216
+set the width and height of the save thumbnails. Note that these live in
+the config namespace, not the gui namespace. These do not take effect
+until the file is saved and loaded.
 
 .. var:: gui.file_slot_cols = 3
 .. var:: gui.file_slot_rows = 2
@@ -729,11 +730,11 @@ gui/button/slot_hover_background.png
 
     .. figure:: oshs/game/gui/button/slot_idle_background.png
 
-        An example gui/button/slot_idle_background.png image.
+        An example :file:`gui/button/slot_idle_background.png` image.
 
     .. figure:: oshs/game/gui/button/slot_hover_background.png
 
-        An example gui/button/slot/slot_hover_background.png image.
+        An example :file:`gui/button/slot/slot_hover_background.png` image.
 
     .. figure:: gui/slot_save.jpg
 
@@ -779,19 +780,19 @@ The following variables are also used:
 
     .. figure:: oshs/game/gui/slider/horizontal_idle_bar.png
 
-        An example gui/slider/horizontal_idle_bar.png image.
+        An example :file:`gui/slider/horizontal_idle_bar.png` image.
 
     .. figure:: oshs/game/gui/slider/horizontal_hover_bar.png
 
-        An example gui/slider/horizontal_hover_bar.png image.
+        An example :file:`gui/slider/horizontal_hover_bar.png` image.
 
     .. figure:: oshs/game/gui/slider/horizontal_idle_thumb.png
 
-        An example gui/slider/horizontal_idle_thumb.png image.
+        An example :file:`gui/slider/horizontal_idle_thumb.png` image.
 
     .. figure:: oshs/game/gui/slider/horizontal_hover_thumb.png
 
-        An example gui/slider/horizontal_hover_thumb.png image.
+        An example :file:`gui/slider/horizontal_hover_thumb.png` image.
 
     .. figure:: gui/slider_preferences.jpg
         :width: 100%
@@ -808,7 +809,7 @@ Scrollbars are bars that are used to scroll viewports. In the GUI,
 the most obvious place a scrollbar is used is the history screen,
 but vertical scrollbars can be used on other screens as well.
 
-Sliders are customized with the following images:
+Scrollbars are customized with the following images:
 
 gui/scrollbar/horizontal_idle_bar.png, gui/scrollbar/horizontal_hover_bar.png, gui/scrollbar/vertical_idle_bar.png, gui/scrollbar/vertical_hover_bar.png
     Images used for vertical and idle bar backgrounds in idle and
@@ -845,22 +846,22 @@ The following variables are also used:
     .. figure:: oshs/game/gui/scrollbar/vertical_idle_bar.png
         :height: 150
 
-        An example gui/scrollbar/vertical_idle_bar.png image.
+        An example :file:`gui/scrollbar/vertical_idle_bar.png` image.
 
     .. figure:: oshs/game/gui/scrollbar/vertical_hover_bar.png
         :height: 150
 
-        An example gui/scrollbar/vertical_hover_bar.png image.
+        An example :file:`gui/scrollbar/vertical_hover_bar.png` image.
 
     .. figure:: oshs/game/gui/scrollbar/vertical_idle_thumb.png
         :height: 150
 
-        An example gui/scrollbar/vertical_idle_thumb.png image.
+        An example :file:`gui/scrollbar/vertical_idle_thumb.png` image.
 
     .. figure:: oshs/game/gui/scrollbar/vertical_hover_thumb.png
         :height: 150
 
-        An example gui/scrollbar/vertical_hover_thumb.png image.
+        An example :file:`gui/scrollbar/vertical_hover_thumb.png` image.
 
     .. figure:: gui/scrollbar_history.jpg
         :width: 100%
@@ -879,7 +880,7 @@ A bar can customized by editing the following images:
 gui/bar/left.png, gui/bar/bottom.png
     Images that are used for the filled section of horizontal and vertical bars.
 
-gui/bar/right.pbg, gui/bar/top.png
+gui/bar/right.png, gui/bar/top.png
     Images that are used for the filled section of horizontal and vertical bars.
 
 There are also the usual variables that control bars:
@@ -906,12 +907,12 @@ There are also the usual variables that control bars:
     .. figure:: oshs/game/gui/bar/left.png
         :width: 100%
 
-        An example gui/bar/left.png image.
+        An example :file:`gui/bar/left.png` image.
 
     .. figure:: oshs/game/gui/bar/right.png
         :width: 100%
 
-        An example gui/bar/right.png image.
+        An example :file:`gui/bar/right.png` image.
 
     .. figure:: gui/bar.jpg
         :width: 100%
@@ -959,12 +960,12 @@ The variables that control these are:
     .. figure:: oshs/game/gui/skip.png
         :width: 100%
 
-        An example gui/skip.png image.
+        An example :file:`gui/skip.png` image.
 
     .. figure:: oshs/game/gui/notify.png
         :width: 100%
 
-        An example gui/notify.png image.
+        An example :file:`gui/notify.png` image.
 
     .. figure:: gui/skip_notify.jpg
 
@@ -983,12 +984,12 @@ The textbox (or window) is the window the dialogue is displayed in. In addition
 to changing gui/textbox.png, the following variables control how the textbox
 is displayed.
 
-.. var: gui.textbox_height = 278
+.. var:: gui.textbox_height = 278
 
     The height of the textbox window, which should also be the height of gui/
     textbox.png.
 
-.. var: gui.textbox_yalign = 1.0
+.. var:: gui.textbox_yalign = 1.0
 
     The placement of the textbox vertically on the screen. 0.0 is the top,
     0.5 is center, and 1.0 is the bottom.
@@ -1069,7 +1070,7 @@ Our example game uses these statements to customize the centered namebox::
 
     .. figure:: oshs/game/gui/namebox.png
 
-        An example gui/namebox.png image.
+        An example :file:`gui/namebox.png` image.
 
     .. figure:: gui/intermediate_dialogue.jpg
         :width: 100%
@@ -1083,9 +1084,8 @@ History
 There are a few variables that control the way the history screen
 is displayed.
 
-.. var:: config.history_length = 250
-
-    The number of blocks of dialogue Ren'Py will keep at history.
+The :var:`config.history_length` variable, which defaults to 250,
+sets the number of blocks of dialogue Ren'Py will keep at history.
 
 .. var:: gui.history_height = 210
 
@@ -1093,6 +1093,10 @@ is displayed.
     the height of a history entry to vary at the cost of performance –
     config.history_length may need to be lowered significantly when this
     is None.
+
+.. var:: gui.history_spacing = 0
+
+    The amount of space to leave between history entries, in pixels.
 
 .. var:: gui.history_name_xpos = 0.5
 .. var:: gui.history_text_xpos = 0.5
@@ -1196,7 +1200,7 @@ NVL-mode text is displayed.
     The position and alignment of NVL-mode menu buttons.
 
 Ren'Py does not use NVL-mode by default. It must be invoked using NVL-mode
-characters, and by defining a few variables in script.rpy. ::
+characters, and by defining a few variables in :file:`script.rpy`. ::
 
     define e = Character("Eileen", kind=nvl)
     define narrator = nvl_narrator
@@ -1209,7 +1213,7 @@ characters, and by defining a few variables in script.rpy. ::
 
     .. figure:: oshs/game/gui/nvl.png
 
-        An example gui/nvl.png image.
+        An example :file:`gui/nvl.png` image.
 
     .. figure:: gui/nvl.jpg
         :width: 100%
@@ -1289,8 +1293,8 @@ and size. ::
         gui.text_size = 24
 
 There is one issue that translators need to be aware of, and that is that
-in some places in gui.rpy, one variable is assigned the value of another.
-For example, the default gui.rpy has::
+in some places in :file:`gui.rpy`, one variable is assigned the value of another.
+For example, the default :file:`gui.rpy` has::
 
     define gui.interface_text_font = "DejaVuSans.ttf"
 
@@ -1308,18 +1312,19 @@ variables need to be changed. ::
 
 If the second statement was missing, DejaVuSans would still be used.
 
+.. _more_advanced_gui:
 
 Advanced Customization
 ======================
 
-More advanced customization is possible by customizing screens.rpy,
+More advanced customization is possible by customizing :file:`screens.rpy`,
 up to and including deleting the entire contents of the file and replacing
 it with something of your own. Here are a few places to get started.
 
 Styles
 ------
 
-:ref:`Styles <styles>` and :ref:`style properties <style-properties>` control how displayables
+:doc:`Styles <style>` and :doc:`style properties <style_properties>` control how displayables
 are displayed. To find out what style a displayable is using, put the mouse
 over it and type Shift+I. This invokes the style inspector, which shows
 style names. Once the style name is known, a style statement can be used
@@ -1328,7 +1333,7 @@ to customize it.
 For example, say we've lost our minds writing GUI documentation, and want to
 add a bright red outline to the dialogue text. We can hover the text and press
 Shift+I to find out the style used is named say_dialogue. We can then
-add (to the end of screens.rpy, or somewhere in options.rpy) the style statement::
+add (to the end of :file:`screens.rpy`, or somewhere in :file:`options.rpy`) the style statement::
 
     style say_dialogue:
         outlines [ (1, "#f00", 0, 0 ) ]
@@ -1340,8 +1345,8 @@ Screens - Navigation
 --------------------
 
 The next level of customization is to modify the screens. The most
-important documentation about screens is located in the :ref:`screens`
-and  :ref:`screen-actions` sections.
+important documentation about screens is located in the :doc:`screens`
+and :doc:`screen_actions` sections.
 
 
 One of the most important screens is the navigation screen, which serves
@@ -1422,8 +1427,7 @@ custom game menu screen is::
 
 Clearly, a functional codex would need to be more elaborate than this.
 
-Note
-the "tag menu" line. This line is important, as it hides other menu screens
+Note the "tag menu" line. This line is important, as it hides other menu screens
 when the codex is shown. Without it, it would be hard to switch to and
 from the other menu screens.
 
@@ -1434,7 +1438,7 @@ A screen we expect to be commonly added is the click to continue screen. This
 is a screen that is shown when text finishes displaying. Here's a simple
 example::
 
-    screen ctc():
+    screen ctc(arg=None):
 
         frame:
             at ctc_appear
@@ -1457,18 +1461,18 @@ time to predict and load images.
 Total GUI Replacement
 ---------------------
 
-Advanced creators can replace some or all of screens.rpy in its entirely.
-When doing so, some or all of the contents of gui.rpy may become redundant.
+Advanced creators can replace some or all of :file:`screens.rpy` in its entirely.
+When doing so, some or all of the contents of :file:`gui.rpy` may become redundant.
 It's probably a good idea to call :func:`gui.init` to reset styles – but after
 that, a creator can do whatever they want. It usually makes sense to include
-some or all of the :ref:`special screens <screen-special>`, to make sure
+some or all of the :doc:`special screens <screen_special>`, to make sure
 players can have access to all the functionality Ren'Py provides.
 
 
 See Also
 ========
 
-For more information about the GUI, see the :ref:`Advanced GUI <gui-advanced>`
+For more information about the GUI, see the :doc:`Advanced GUI <gui_advanced>`
 section.
 
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import os
@@ -31,12 +31,13 @@ import renpy
 ################################################################################
 
 STRING_RE = r"""(?x)
-\b_[_p]?\s*\(\s*[uU]?(
+\b(?:_|__|___|_p)
+\s*(\((?:[\s\\\n]*[uU]?(?:
 \"\"\"(?:\\.|\\\n|\"{1,2}|[^\\"])*?\"\"\"
 |'''(?:\\.|\\\n|\'{1,2}|[^\\'])*?'''
 |"(?:\\.|\\\n|[^\\"])*"
 |'(?:\\.|\\\n|[^\\'])*'
-)\s*\)
+))+\s*\))
 """
 
 REGULAR_PRIORITIES = [
@@ -51,14 +52,11 @@ COMMON_PRIORITIES = [
     ("_compat/", 420, "obsolete.rpy"),
     ("_layout/", 410, "obsolete.rpy"),
     ("00layout.rpy", 400, "obsolete.rpy"),
-
     ("00console.rpy", 320, "developer.rpy"),
     ("_developer/", 310, "developer.rpy"),
-
     ("_errorhandling.rpym", 220, "error.rpy"),
     ("00gamepad.rpy", 210, "error.rpy"),
     ("00gltest.rpy", 200, "error.rpy"),
-
     ("00gallery.rpy", 180, "common.rpy"),
     ("00compat.rpy", 180, "common.rpy"),
     ("00updater.rpy", 170, "common.rpy"),
@@ -74,7 +72,6 @@ class String(object):
     """
 
     def __init__(self, filename, line, text, comment):
-
         # The full path to the file the strings came from.
         self.filename = filename
 
@@ -95,8 +92,9 @@ class String(object):
         else:
             pl = REGULAR_PRIORITIES
 
+        normalized_elided = self.elided.replace("\\", "/")
         for prefix, priority, launcher_file in pl:
-            if self.elided.startswith(prefix):
+            if normalized_elided.startswith(prefix):
                 break
         else:
             priority = 500
@@ -120,21 +118,18 @@ def scan_strings(filename):
     Returns a list of TranslationString objects.
     """
 
-    rv = [ ]
+    rv = []
 
-    for line, s in renpy.game.script.translator.additional_strings[filename]: # @UndefinedVariable
+    for line, s in renpy.game.script.translator.additional_strings[filename]:
         rv.append(String(filename, line, s, False))
 
-    for _filename, lineno, text in renpy.parser.list_logical_lines(filename):
-
+    for _filename, lineno, text in renpy.lexer.list_logical_lines(filename):
         for m in re.finditer(STRING_RE, text):
-
             s = m.group(1)
-            s = s.replace('\\\n', "")
+            s = s.replace("\\\n", "")
 
             if s is not None:
                 s = s.strip()
-                s = "u" + s
                 s = eval(s)
 
                 if m.group(0).startswith("_p"):
@@ -147,24 +142,22 @@ def scan_strings(filename):
 
 
 def scan_comments(filename):
-
-    rv = [ ]
+    rv = []
 
     if filename not in renpy.config.translate_comments:
         return rv
 
-    comment = [ ]
+    comment = []
     start = 0
 
     with open(filename, "r", encoding="utf-8") as f:
-        lines = [ i.rstrip() for i in f.read().replace(u"\ufeff", "").split('\n') ]
+        lines = [i.rstrip() for i in f.read().replace("\ufeff", "").split("\n")]
 
     for i, l in enumerate(lines):
-
         if not comment:
             start = i + 1
 
-        m = re.match(r'\s*## (.*)', l)
+        m = re.match(r"\s*## (.*)", l)
 
         if m:
             c = m.group(1)
@@ -180,9 +173,19 @@ def scan_comments(filename):
             if s.endswith("#"):
                 s = s.rstrip("# ")
 
-            comment = [ ]
+            comment = []
 
             rv.append(String(filename, start, s, True))
+
+    return rv
+
+
+def scan_additional_strings():
+    rv = []
+
+    for cb in renpy.config.translate_additional_strings_callbacks:
+        for filename, lineno, text in cb():
+            rv.append(String(filename, lineno, text, False))
 
     return rv
 
@@ -195,7 +198,7 @@ def scan(min_priority=0, max_priority=299, common_only=False):
 
     filenames = renpy.translation.generation.translate_list_files()
 
-    strings = [ ]
+    strings = []
 
     for filename in filenames:
         filename = os.path.normpath(filename)
@@ -206,13 +209,14 @@ def scan(min_priority=0, max_priority=299, common_only=False):
         strings.extend(scan_strings(filename))
         strings.extend(scan_comments(filename))
 
-    strings.sort(key=lambda s : s.sort_key)
+    strings.extend(scan_additional_strings())
 
-    rv = [  ]
+    strings.sort(key=lambda s: s.sort_key)
+
+    rv = []
     seen = set()
 
     for s in strings:
-
         if s.priority < min_priority:
             continue
 

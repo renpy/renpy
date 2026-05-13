@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,8 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import os
@@ -69,7 +68,7 @@ class Editor(object):
         Ends an editor transaction.
         """
 
-    def open(self, filename, line=None, **kwargs):  # @ReservedAssignment
+    def open(self, filename, line=None, **kwargs):
         """
         Ensures `filename` is open in the editor. This may be called multiple
         times per transaction.
@@ -92,18 +91,16 @@ class Editor(object):
 
 
 class SystemEditor(Editor):
-
-    def open(self, filename, line=None, **kwargs):  # @ReservedAssignment
-
+    def open(self, filename, line=None, **kwargs):
         filename = renpy.exports.fsencode(filename)
 
         try:
             if renpy.windows:
-                os.startfile(filename) # type: ignore
+                os.startfile(filename)  # type: ignore
             elif renpy.macintosh:
-                subprocess.call([ "open", filename ])
+                subprocess.call(["open", filename])
             elif renpy.linux:
-                subprocess.call([ "xdg-open", filename ])
+                subprocess.call(["xdg-open", filename])
         except Exception:
             traceback.print_exc()
 
@@ -132,11 +129,11 @@ def init():
 
     code = compile(source, path, "exec")
 
-    scope = { "__file__" : path }
+    scope = {"__file__": path}
     exec(code, scope, scope)
 
     if "Editor" in scope:
-        editor = scope["Editor"]() # type: ignore
+        editor = scope["Editor"]()  # type: ignore
         return
 
     raise Exception("{0} did not define an Editor class.".format(path))
@@ -157,7 +154,8 @@ def launch_editor(filenames, line=1, transient=False):
     if editor is None:
         return False
 
-    filenames = [ renpy.parser.unelide_filename(i) for i in filenames ]
+    filenames = [renpy.lexer.unelide_filename(i) for i in filenames]
+    filenames = [os.path.realpath(i) for i in filenames]
 
     try:
         editor.begin(new_window=transient)

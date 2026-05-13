@@ -1,3 +1,5 @@
+.. _conditional-statements:
+
 Conditional Statements
 ======================
 

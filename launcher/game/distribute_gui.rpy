@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -192,6 +192,7 @@ screen build_distributions:
 
                             textbutton _("Edit options.rpy") action editor.Edit("game/options.rpy", check=True)
                             textbutton _("Add from clauses to calls, once") action Jump("add_from")
+                            textbutton _("Update old-game") action Jump("start_update_old_game")
                             textbutton _("Refresh") action Jump("build_distributions")
 
                             add HALF_SPACER
@@ -221,7 +222,13 @@ screen build_distributions:
                         for pkg in packages:
                             if not pkg["hidden"]:
                                 $ description = pkg["description"]
-                                textbutton "[description!q]" action PackageToggle(pkg["name"]) style "l_checkbox"
+                                button:
+                                    action PackageToggle(pkg["name"]) style "l_checkbox"
+                                    hbox:
+                                        spacing 3
+                                        text "[description!q]"
+                                        if pkg["dlc"]:
+                                            text _("(DLC)")
 
                     add SPACER
                     add HALF_SPACER
@@ -256,8 +263,27 @@ label add_from:
     call add_from_common
     jump build_distributions
 
+label start_update_old_game:
+    call update_old_game
+    jump build_distributions
+
+label add_update_pem:
+
+    python hide:
+        interface.info("You're trying to build an update, but an update.pem file doesn't exist.\n\nThis file is used to sign updates, and will be automatically created in your projects's base directory.\n\nYou'll need to back up update.pem and keep it safe.", cancel=Jump("build_distributions"))
+
+        import renpy.ecsign
+        key = renpy.ecsign.der_to_pem(renpy.ecsign.generate_private_key(), "PRIVATE")
+
+        with open(os.path.join(project.current.path, "update.pem"), "wb") as f:
+            f.write(key)
+
+    return
 
 label start_distribute:
+    if project.current.dump["build"]["include_update"] and not os.path.exists(os.path.join(project.current.path, "update.pem")):
+        call add_update_pem
+
     if project.current.data["add_from"]:
         call add_from_common
 

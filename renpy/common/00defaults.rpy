@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -39,19 +39,19 @@ init -1500 python:
     config.default_language = None
 
     # If not None, the default value of wait_voice
-    config.default_wait_for_voice = True
+    config.default_wait_for_voice = None
 
     # If not None, the default value of voice_sustain
-    config.default_voice_sustain = False
+    config.default_voice_sustain = None
 
     # If not None, the default value of mouse_move.
-    config.default_mouse_move = True
+    config.default_mouse_move = None
 
     # If not None, the default value of show_empty_window.
-    config.default_show_empty_window = True
+    config.default_show_empty_window = None
 
     # If not None, the default value of emphasize_audio.
-    config.default_emphasize_audio = False
+    config.default_emphasize_audio = None
 
     # If not None, the default value of set_volume (music)
     config.default_music_volume = 1.0
@@ -62,59 +62,80 @@ init -1500 python:
     # If not None, the default value of set_volume (voice)
     config.default_voice_volume = 1.0
 
+    def _vol(n):
+        if n == 0.0:
+            return 0.0
+
+        if config.quadratic_volumes:
+            return n ** 2
+        else:
+            n = n * config.volume_db_range - config.volume_db_range
+            return 10 ** (n / 20)
+
+    def _apply_default_preferences():
+
+        if not persistent._set_preferences:
+            persistent._set_preferences = True
+
+            if config.default_fullscreen is not None:
+                _preferences.fullscreen = config.default_fullscreen
+
+            if config.default_text_cps is not None:
+                _preferences.text_cps = config.default_text_cps
+
+            if config.default_afm_time is not None:
+                _preferences.afm_time = config.default_afm_time
+
+            if config.enable_language_autodetect:
+                locale, region = renpy.translation.detect_user_locale()
+                if locale is not None:
+                    lang_name = config.locale_to_language_function(locale, region)
+                    if lang_name is not None:
+                        config.default_language = lang_name
+
+            if config.default_language is not None:
+                _preferences.language = config.default_language
+
+            if config.default_wait_for_voice is not None:
+                _preferences.wait_voice = config.default_wait_for_voice
+
+            if config.default_voice_sustain is not None:
+                _preferences.voice_sustain = config.default_voice_sustain
+
+            if config.default_mouse_move is not None:
+                _preferences.mouse_move = config.default_mouse_move
+
+            if config.default_afm_enable is not None:
+                _preferences.afm_enable = config.default_afm_enable or _preferences.afm_enable
+
+            if config.default_show_empty_window is not None:
+                _preferences.show_empty_window = config.default_show_empty_window
+
+            if config.default_emphasize_audio is not None:
+                _preferences.emphasize_audio = config.default_emphasize_audio
+
+            if config.default_music_volume is not None:
+                _preferences.set_volume('music', _vol(config.default_music_volume))
+
+            if config.default_sfx_volume is not None:
+                _preferences.set_volume('sfx', _vol(config.default_sfx_volume))
+
+            if config.default_voice_volume is not None:
+                _preferences.set_volume('voice', _vol(config.default_voice_volume))
+
+        # Use default_afm_enable to decide if we use the afm_enable
+        # preference.
+        if config.default_afm_enable is not None:
+            _preferences.using_afm_enable = True
+        else:
+            _preferences.afm_enable = True
+            _preferences.using_afm_enable = False
+
 init 1500 python hide:
 
-    if not persistent._set_preferences:
-        persistent._set_preferences = True
+    config.emphasize_audio_volume = _vol(config.emphasize_audio_volume)
 
-        if config.default_fullscreen is not None:
-            _preferences.fullscreen = config.default_fullscreen
-
-        if config.default_text_cps is not None:
-            _preferences.text_cps = config.default_text_cps
-
-        if config.default_afm_time is not None:
-            _preferences.afm_time = config.default_afm_time
-
-        if config.enable_language_autodetect:
-            locale, region = renpy.translation.detect_user_locale()
-            if locale is not None:
-                lang_name = config.locale_to_language_function(locale, region)
-                if lang_name is not None:
-                    config.default_language = lang_name
-
-        if config.default_language is not None:
-            _preferences.language = config.default_language
-
-        if config.default_wait_for_voice is not None:
-            _preferences.wait_voice = config.default_wait_for_voice
-
-        if config.default_voice_sustain is not None:
-            _preferences.voice_sustain = config.default_voice_sustain
-
-        if config.default_mouse_move is not None:
-            _preferences.mouse_move = config.default_mouse_move
-
-        if config.default_afm_enable is not None:
-            _preferences.afm_enable = config.default_afm_enable
-
-        if config.default_show_empty_window is not None:
-            _preferences.show_empty_window = config.default_show_empty_window
-
-        if config.default_emphasize_audio is not None:
-            _preferences.emphasize_audio = config.default_emphasize_audio
-
-        _preferences.set_volume('music', config.default_music_volume)
-        _preferences.set_volume('sfx', config.default_sfx_volume)
-        _preferences.set_volume('voice', config.default_voice_volume)
-
-    # Use default_afm_enable to decide if we use the afm_enable
-    # preference.
-    if config.default_afm_enable is not None:
-        _preferences.using_afm_enable = True
-    else:
-        _preferences.afm_enable = True
-        _preferences.using_afm_enable = False
+    _apply_default_preferences()
 
     error = _preferences.check()
 
@@ -124,13 +145,21 @@ init 1500 python hide:
 
 init -1500 python:
     def _locale_to_language_function(locale, region):
-        lang_name = renpy.translation.locales.get(region)
+        locale_map = config.locale_to_language_map
+
+        lang_name = locale_map.get(locale + "_" + region)
         if lang_name is not None and lang_name in renpy.known_languages():
             return lang_name
 
-        lang_name = renpy.translation.locales.get(locale)
+        lang_name = locale_map.get(locale)
         if lang_name is not None and lang_name in renpy.known_languages():
             return lang_name
+
+        lang_name = locale_map.get(region)
+        if lang_name is not None and lang_name in renpy.known_languages():
+            return lang_name
+
+        return None
 
     config.locale_to_language_function = _locale_to_language_function
 
@@ -140,7 +169,7 @@ init -1500 python:
 
         if renpy.image_exists(rv):
             return rv
-        elif renpy.loadable(rv):
+        elif renpy.loadable(rv, directory="images"):
             return rv
         elif renpy.easy.lookup_displayable_prefix(rv):
             return rv
@@ -196,11 +225,7 @@ init -1500 python:
         if protocol in config.hyperlink_handlers:
             return config.hyperlink_handlers[protocol](value)
         else:
-            try:
-                import webbrowser
-                webbrowser.open(target)
-            except Exception:
-                pass
+            renpy.open_url(target)
 
     def hyperlink_sensitive(target):
 

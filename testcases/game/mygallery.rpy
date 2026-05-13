@@ -1,4 +1,4 @@
-image b0 red = "#f00"
+﻿image b0 red = "#f00"
 image b0 green = "#0f0"
 image b0 blue = "#00f"
 image b1 red = "#f00"
@@ -33,6 +33,7 @@ screen gallery:
         textbutton "b0" action g.Action("b0")
         textbutton "b1" action g.Action("b1")
         textbutton "b2" action g.Action("b2")
+        textbutton "Done" action Return()
 
 label gallery:
     show b0 green

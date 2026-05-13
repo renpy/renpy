@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,85 +21,99 @@
 
 init -1600 python:
 
+    class _keymap_list(_list):
+
+        def remove(self, a):
+            try:
+                _list.remove(self, a)
+            except ValueError:
+                if config.developer:
+                    raise
+                pass
+
+
     config.keymap = dict(
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        rollback = [ 'K_PAGEUP', 'repeat_K_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
-        screenshot = [ 's', 'alt_K_s', 'alt_shift_K_s', 'noshift_K_s' ],
+        rollback = [ 'anyrepeat_K_PAGEUP', 'anyrepeat_KP_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
+        screenshot = [ 'alt_K_s', 'alt_shift_K_s', 'noshift_K_s' ],
         toggle_afm = [ ],
-        toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11', 'noshift_K_f' ],
+        toggle_fullscreen = [ 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11', 'noshift_K_f' ],
         game_menu = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
-        hide_windows = [ 'mouseup_2', 'h', 'noshift_K_h' ],
-        launch_editor = [ 'E', 'shift_K_e' ],
+        hide_windows = [ 'mouseup_2', 'noshift_K_h' ],
+        launch_editor = [ 'shift_K_e' ],
         dump_styles = [ ],
-        reload_game = [ 'R', 'alt_shift_K_r', 'shift_K_r' ],
-        inspector = [ 'I', 'shift_K_i' ],
+        reload_game = [ 'alt_K_r', 'shift_K_r' ],
+        inspector = [ 'alt_noshift_K_i', 'shift_K_i' ],
         full_inspector = [ 'alt_shift_K_i' ],
-        developer = [ 'shift_K_d', 'alt_shift_K_d' ],
+        developer = [ 'alt_K_d', 'shift_K_d', ],
         quit = [ ],
         iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
-        choose_renderer = [ 'G', 'alt_shift_K_g', 'shift_K_g' ],
+        choose_renderer = ['alt_K_g', 'shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
-        accessibility = [ "K_a" ],
+        bubble_editor = [ 'alt_K_b', 'shift_K_b' ],
 
         # Accessibility.
-        self_voicing = [ 'v', 'V', 'alt_K_v', 'K_v' ],
-        clipboard_voicing = [ 'C', 'alt_shift_K_c', 'shift_K_c' ],
+        accessibility = [ 'shift_K_a' ],
+        self_voicing = [ 'alt_K_v', 'K_v' ],
+        clipboard_voicing = [ 'alt_shift_K_c', 'shift_K_c' ],
         debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
+        extra_voicing = [ '?' ],
 
         # Say.
-        rollforward = [ 'mousedown_5', 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
-        dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT' ],
+        rollforward = [ 'anyrepeat_K_PAGEDOWN', 'anyrepeat_KP_PAGEDOWN', 'mousedown_5', ],
+        dismiss = [ 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT', 'mouseup_1' ],
         dismiss_unfocused = [ ],
 
         # Pause.
         dismiss_hard_pause = [ ],
 
         # Focus.
-        focus_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
-        focus_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
-        focus_up = [ 'K_UP', 'repeat_K_UP' ],
-        focus_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        focus_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        focus_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        focus_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        focus_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
-        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
+        button_select = [ 'K_RETURN', 'K_KP_ENTER', 'K_SELECT', 'mouseup_1',  ],
         button_alternate = [ 'mouseup_3' ],
         button_alternate_ignore = [ 'mousedown_3' ],
 
         # Input.
-        input_backspace = [ 'K_BACKSPACE', 'repeat_K_BACKSPACE' ],
+        input_backspace = [ 'anyrepeat_K_BACKSPACE' ],
         input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
-        input_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
-        input_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
-        input_up = [ 'K_UP', 'repeat_K_UP' ],
-        input_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
-        input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
-        input_home = [ 'K_HOME', 'meta_K_LEFT' ],
-        input_end = [ 'K_END', 'meta_K_RIGHT' ],
-        input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c' ],
-        input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v' ],
-        input_jump_word_left = [ 'osctrl_K_LEFT' ],
-        input_jump_word_right = [ 'osctrl_K_RIGHT' ],
+        input_next_line = [ 'shift_K_RETURN', 'shift_K_KP_ENTER' ],
+        input_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        input_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        input_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        input_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
+        input_delete = [ 'anyrepeat_K_DELETE', 'anyrepeat_KP_DELETE' ],
+        input_home = [ 'K_HOME', 'KP_HOME', 'meta_K_LEFT' ],
+        input_end = [ 'K_END', 'KP_END', 'meta_K_RIGHT' ],
+        input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c', 'meta_noshift_K_c' ],
+        input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v', 'meta_noshift_K_v' ],
+        input_jump_word_left = [ 'osctrl_K_LEFT', 'osctrl_KP_LEFT' ],
+        input_jump_word_right = [ 'osctrl_K_RIGHT', 'osctrl_KP_RIGHT' ],
         input_delete_word = [ 'osctrl_K_BACKSPACE' ],
         input_delete_full = [ 'meta_K_BACKSPACE' ],
 
         # Viewport.
-        viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],
-        viewport_rightarrow = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
-        viewport_uparrow = [ 'K_UP', 'repeat_K_UP' ],
-        viewport_downarrow = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        viewport_leftarrow = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        viewport_rightarrow = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        viewport_uparrow = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        viewport_downarrow = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
         viewport_wheelup = [ 'mousedown_4' ],
         viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
-        viewport_pageup = [ 'K_PAGEUP', 'repeat_K_PAGEUP' ],
-        viewport_pagedown = [ 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
+        viewport_pageup = [ 'anyrepeat_K_PAGEUP', 'anyrepeat_KP_PAGEUP'],
+        viewport_pagedown = [ 'anyrepeat_K_PAGEDOWN', 'anyrepeat_KP_PAGEDOWN' ],
 
         # These keys control skipping.
-        skip = [ 'K_LCTRL', 'K_RCTRL' ],
+        skip = [ 'anymod_K_LCTRL', 'anymod_K_RCTRL' ],
         stop_skipping = [ ],
         toggle_skip = [ 'K_TAB' ],
         fast_skip = [ '>', 'shift_K_PERIOD' ],
@@ -107,13 +121,17 @@ init -1600 python:
         # Bar.
         bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
         bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
-        bar_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
-        bar_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
-        bar_up = [ 'K_UP', 'repeat_K_UP' ],
-        bar_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        bar_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        bar_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        bar_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        bar_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Delete a save.
-        save_delete = [ 'K_DELETE' ],
+        save_delete = [ 'K_DELETE', 'KP_DELETE' ],
+
+        # Save/load screen pagination.
+        save_page_prev = ['mousedown_4'],
+        save_page_next = ['mousedown_5'],
 
         # Draggable.
         drag_activate = [ 'mousedown_1' ],
@@ -121,26 +139,27 @@ init -1600 python:
 
         # Debug console.
         console = [ 'shift_K_o', 'alt_shift_K_o' ],
-        console_older = [ 'K_UP', 'repeat_K_UP' ],
-        console_newer = [ 'K_DOWN', 'repeat_K_DOWN'],
+        console_exit = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
+        console_older = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        console_newer = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Director
         director = [ 'noshift_K_d' ],
 
         # Ignored (kept for backwards compatibility).
-        toggle_music = [ 'm' ],
-        viewport_up = [ 'mousedown_4' ],
-        viewport_down = [ 'mousedown_5' ],
+        toggle_music = [ ],
+        viewport_up = [ ],
+        viewport_down = [ ],
 
         # Profile commands.
         performance = [ 'K_F3' ],
         image_load_log = [ 'K_F4' ],
         profile_once = [ 'K_F8' ],
         memory_profile = [ 'K_F7' ],
-
     )
 
-    config.default_keymap = { k : list(v) for k, v in config.keymap.items() }
+    config.default_keymap = { k : _list(v) for k, v in config.keymap.items() }
+    config.keymap = { k : _keymap_list(v) for k, v in config.keymap.items() }
 
     config.pad_bindings = {
         "pad_leftshoulder_press" : [ "rollback", ],
@@ -155,13 +174,14 @@ init -1600 python:
         "pad_start_press" : [ "game_menu", ],
 
         "pad_y_press" : [ "hide_windows", ],
+        "pad_x_press" : [ "button_alternate" ],
 
         "pad_rightshoulder_press" : [ "rollforward", ],
         "repeat_pad_rightshoulder_press" : [ "rollforward", ],
 
         "pad_righttrigger_pos" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate" ],
         "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
-        "pad_b_press" : [ "button_alternate" ],
+        "pad_b_press" : [ "game_menu" ],
 
         "pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
         "pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
@@ -255,34 +275,32 @@ init -1600 python:
             renpy.call_in_new_context(help)
             return
 
-        _preferences.fullscreen = False
-
         try:
-            import webbrowser
             import os
+
+            if help.startswith('http://') or help.startswith('https://'):
+                renpy.open_url(help)
+                return
 
             file_path = os.path.join(config.basedir, help)
             if not os.path.isfile(file_path):
                 return
 
-            webbrowser.open_new("file:///" + file_path)
+            renpy.open_url("file:///" + file_path)
         except Exception:
             pass
 
-    import os
     config.screenshot_pattern = os.environ.get("RENPY_SCREENSHOT_PATTERN", "screenshot%04d.png")
-    del os
 
     # Called to make a screenshot happen.
-    def _screenshot():
+    def _screenshot_core():
         import os.path
         import os
-        import __main__
 
         dest = config.renpy_base
 
         if renpy.macapp:
-            dest = os.path.expanduser(b"~/Desktop")
+            dest = os.path.expanduser("~/Desktop")
 
         pattern = renpy.store._screenshot_pattern or config.screenshot_pattern
 
@@ -301,6 +319,7 @@ init -1600 python:
         except Exception:
             pass
 
+
         try:
             if not renpy.screenshot(fn):
                 renpy.notify(__("Failed to save screenshot as %s.") % fn)
@@ -314,10 +333,20 @@ init -1600 python:
         if config.screenshot_callback is not None:
             config.screenshot_callback(fn)
 
+    config.pre_screenshot_actions = [ ]
+
+
+    def _screenshot():
+        renpy.run(config.pre_screenshot_actions)
+        renpy.invoke_in_main_thread(_screenshot_core)
+        renpy.restart_interaction()
+
+
     def _screenshot_callback(fn):
         renpy.notify(__("Saved screenshot as %s.") % fn)
 
     config.screenshot_callback = _screenshot_callback
+
 
     def _fast_skip():
         if not config.fast_skipping and not config.developer:
@@ -383,6 +412,8 @@ init -1600 python:
         renpy.restart_interaction()
 
 screen _progress:
+    layer config.interface_layer
+
     $ new = renpy.count_newly_seen_dialogue_blocks()
     $ seen = renpy.count_seen_dialogue_blocks()
     $ total = renpy.count_dialogue_blocks()
@@ -394,15 +425,14 @@ screen _progress:
         ypos 0
 
         text "[new] [seen]/[total]":
-            size 14
+            size gui._scale(18)
             color "#fff"
             outlines [ (1, "#000", 0, 0) ]
             alt ""
 
 init -1100 python:
 
-    # The default keymap. We might also want to put some of this into
-    # the launcher.
+    # The default keymap.
     _default_keymap = renpy.Keymap(
         rollback = renpy.rollback,
         screenshot = _screenshot,
@@ -425,13 +455,18 @@ init -1100 python:
         self_voicing = Preference("self voicing", "toggle"),
         clipboard_voicing = Preference("clipboard voicing", "toggle"),
         debug_voicing = Preference("debug voicing", "toggle"),
+        extra_voicing = renpy.exports.speak_extra_alt,
         progress_screen = _progress_screen,
         director = director.Start(),
         performance = ToggleScreen("_performance"),
         accessibility = ToggleScreen("_accessibility"),
+        bubble_editor = bubble.ToggleShown(),
         )
 
     config.underlay = [ _default_keymap ]
+
+    config.pre_screenshot_actions = [ Hide("notify", immediately=True) ]
+
 
 init 1100 python hide:
 
@@ -470,13 +505,21 @@ label _save_reload_game:
 
         renpy.music.stop()
 
-        if renpy.can_load("_reload-1"):
+        if renpy.session.get("_reload_slot", None) and renpy.can_load(renpy.session["_reload_slot"]):
             renpy.utter_restart()
+
+        if (renpy.game.log is None) or (renpy.game.log.current is None):
+            renpy.utter_restart()
+
+        renpy.session["_reload_slot"] = "_reload-1"
 
         import time
         renpy.session["_reload_time"] = time.time()
 
         renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
+
+        for i in config.bottom_layers + config.layers + config.top_layers:
+            renpy.scene(layer=i)
 
         ui.add(Solid((0, 0, 0, 255)))
         ui.text("Saving game...",
@@ -498,19 +541,32 @@ label _save_reload_game:
 
 label _load_reload_game:
 
-    if not renpy.can_load("_reload-1"):
+    if not renpy.session.get("_reload_slot", None):
+        return
+
+    if not renpy.can_load(renpy.session["_reload_slot"]):
+        $ del renpy.session["_reload_slot"]
         return
 
     python hide:
-        renpy.rename_save("_reload-1", "_reload-2")
 
-        ui.add(Solid((0, 0, 0, 255)))
-        ui.text("Reloading game...",
-                size=32, xalign=0.5, yalign=0.5, color="#fff", style="_text")
+        try:
 
-        ui.pausebehavior(0)
-        ui.interact(suppress_underlay=True, suppress_overlay=True)
+            for i in config.bottom_layers + config.layers + config.top_layers:
+                renpy.scene(layer=i)
 
-        renpy.load("_reload-2")
+            ui.add(Solid((0, 0, 0, 255)))
+            ui.text("Reloading game...",
+                    size=32, xalign=0.5, yalign=0.5, color="#fff", style="_text")
+
+            ui.pausebehavior(0)
+            ui.interact(suppress_underlay=True, suppress_overlay=True)
+
+            renpy.load(renpy.session["_reload_slot"])
+
+        finally:
+
+            renpy.rename_save(renpy.session["_reload_slot"], "_reload-2")
+            del renpy.session["_reload_slot"]
 
     return

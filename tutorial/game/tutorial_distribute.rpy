@@ -1,4 +1,4 @@
-label distribute:
+﻿label distribute:
 
     e "One thing Ren'Py makes easy is building distributions of your visual novel so you can give it to players."
 

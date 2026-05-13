@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,7 @@
 from __future__ import print_function
 
 import time
-from renpy.text.textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE, RUBY_TOP, RUBY_ALT
+from renpy.text.textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE, SPLIT_IGNORE, RUBY_TOP, RUBY_ALT
 from libc.stdlib cimport calloc, malloc, free
 
 import collections
@@ -91,7 +91,7 @@ cdef class WordWrapper(object):
 
             # Note that we start iteration at start+1, so we don't unmark the
             # first character.
-            for i from start < i < end:
+            for i in range(start + 1, end):
                 (<Glyph> words[i].glyph).split = SPLIT_NONE
 
             end = start
@@ -119,7 +119,7 @@ cdef class WordWrapper(object):
         scores[0] = 0.0
         splits[0] = 0
 
-        for 1 <= j <= self.len_words:
+        for j in range(1, self.len_words + 1):
 
             j_x = words[j-1].end_x
 
@@ -180,6 +180,7 @@ cdef class WordWrapper(object):
         cdef int len_glyphs = len(glyphs)
         cdef int len_words = 0
 
+        cdef double ignored = 0
 
         words = <Word *> calloc(len_glyphs, sizeof(Word))
         word = words
@@ -187,7 +188,7 @@ cdef class WordWrapper(object):
         start_glyph = glyphs[0]
         x = start_glyph.advance
 
-        for i from 1 <= i < len_glyphs:
+        for i in range(1, len_glyphs):
 
             g = <Glyph> <object> glyphs[i]
 
@@ -196,6 +197,13 @@ cdef class WordWrapper(object):
 
             if g.ruby == RUBY_ALT:
                 continue
+
+            if g.split == SPLIT_IGNORE:
+                ignored += g.advance
+                continue
+            else:
+                x += ignored
+                ignored = 0
 
             if g.split == SPLIT_INSTEAD:
                 word.glyph = <void *> start_glyph
@@ -218,6 +226,8 @@ cdef class WordWrapper(object):
                 start_glyph = g
 
             x += g.advance
+
+        x += ignored
 
         word.glyph = <void *> start_glyph
         word.start_x = start_x

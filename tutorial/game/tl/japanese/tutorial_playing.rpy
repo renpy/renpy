@@ -3,7 +3,7 @@
 translate japanese tutorial_playing_2985ab86:
 
     # e "As someone who has played more than a few visual novels, there are many features that I expect all games to have."
-    e "いくつかのビジュアルノベルをやってきた者として、ここにはすべてのゲームに期待するたくさんの機能があります。"
+    e "いくつかのビジュアルノベルをやってきた者として、ここにはすべてのゲームにあって欲しいたくさんの機能があります。"
 
 # game/tutorial_playing.rpy:13
 translate japanese tutorial_playing_ca4769bb:
@@ -15,13 +15,13 @@ translate japanese tutorial_playing_ca4769bb:
 translate japanese tutorial_playing_f30f1979:
 
     # e "One of the nice things about Ren'Py is that the engine provides many of these features for you. You can spend your time creating your game, and let us provide these things."
-    e "Ren'Pyの素晴らしいことの一つは、エンジンがこれらたくさんの機能を提供することです。これらの機能の提供は私たちに任せ、あなたはゲームの作成に時間を費やすことができます。"
+    e "Ren'Pyの素晴さの一つは、これらたくさんの機能をエンジンが提供することです。これらの機能の提供は私たちに任せて、あなたはゲームの作成に時間を使えます。"
 
 # game/tutorial_playing.rpy:17
 translate japanese tutorial_playing_afa743e7:
 
     # e "While you're in the game, you can access the game menu by right clicking or hitting the escape key."
-    e "ゲーム中は、右クリックかエスケープキーを押すことでゲームメニューにアクセスできます。"
+    e "ゲーム中は、右クリックかエスケープキーを押してゲームメニューにアクセスできます。"
 
 # game/tutorial_playing.rpy:19
 translate japanese tutorial_playing_1a6c8296:
@@ -39,7 +39,7 @@ translate japanese tutorial_playing_8360224a:
 translate japanese tutorial_playing_edea14ff:
 
     # e "Unlike other engines, Ren'Py doesn't limit the number of save slots that you can use. You can keep hitting next until you reach the page you want."
-    e "他のエンジンと異なることは、Ren'Pyは使えるセーブスロット数に上限を設定していないことです。"
+    e "他のエンジンとは異なり、Ren'Pyでは使えるセーブスロット数に上限を設定していません。"
 
 # game/tutorial_playing.rpy:29
 translate japanese tutorial_playing_900ce396:
@@ -57,7 +57,7 @@ translate japanese tutorial_playing_fea05c6b:
 translate japanese tutorial_playing_8e7e83a8:
 
     # e "It also lets you load one of the auto-saves that Ren'Py makes for you."
-    e "また、Ren'Pyではあなたのためになる自動保存データもロードできます。"
+    e "また、Ren'Pyではあなたのために自動保存したデータもロードできます。"
 
 # game/tutorial_playing.rpy:38
 translate japanese tutorial_playing_4b21f071:
@@ -75,7 +75,7 @@ translate japanese tutorial_playing_eaac8ba9:
 translate japanese tutorial_playing_b1562a34:
 
     # e "The game menu also lets you end the game and return to the main menu, or quit Ren'Py entirely."
-    e "このゲームメニューでは他にも、ゲームを終了してメインメニューに戻ったり、Ren'Pyから完全に抜けたりできます。"
+    e "このゲームメニューでは他にも、ゲームを終了してメインメニューに戻ったり、Ren'Pyを完全に終了したりできます。"
 
 # game/tutorial_playing.rpy:47
 translate japanese tutorial_playing_790f9dc7:
@@ -93,7 +93,7 @@ translate japanese tutorial_playing_bc29822e:
 translate japanese tutorial_playing_dc0f9cf7:
 
     # e "When I'm liking a visual novel, I want to see all the endings. Ren'Py's skip function lets me easily do this, by skipping text that I've already seen."
-    e "私がビジュアルノベルが好きだったときは、すべてのエンディングを見たかったです。Ren'Pyのスキップ機能は既に見たテキストをスキップすることでこれを簡単に行えます。"
+    e "私がビジュアルノベルが好きだったときは、すべてのエンディングを見たかったです。Ren'Pyのスキップ機能は既に見たテキストをスキップしてこれを簡単に行えるようにします。"
 
 # game/tutorial_playing.rpy:57
 translate japanese tutorial_playing_93f7b8f9:

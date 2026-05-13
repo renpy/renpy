@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,34 +20,62 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1900 python:
-    config.images_directory = 'images'
+
+    config.image_directories = [ "images" ]
+
+    # Compat for < 8.5
+    config.images_directory = None
+
     config.late_images_scan = False
+
+    config.image_extensions =  [ ".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg" ]
 
     def _scan_images_directory():
 
         import os
 
-        if not config.images_directory:
-            return
+        directories = config.image_directories
 
-        prefix = config.images_directory.rstrip('/') + '/'
+        if config.images_directory and config.images_directory not in directories:
+            directories = directories + [ config.images_directory ]
 
-        for fn in renpy.list_files():
-            if not fn.startswith(prefix):
-                continue
+        for prefix in directories:
 
-            basename = os.path.basename(fn)
-            base, ext = os.path.splitext(basename)
+            prefix = prefix.strip('/') + '/'
 
-            if not ext.lower() in [ ".jpg", ".jpeg", ".png", ".webp" ]:
-                continue
+            non_oversampled_images = [ ]
 
-            base = base.lower()
+            oversampled_images = [ ]
 
-            if renpy.has_image(base, exact=True):
-                continue
+            for fn in renpy.list_files():
+                if not fn.startswith(prefix):
+                    continue
 
-            renpy.image(base, fn)
+                basename = os.path.basename(fn)
+                base, ext = os.path.splitext(basename)
+
+                if not ext.lower() in config.image_extensions:
+                    continue
+
+                base = base.lower()
+                base, _, oversampled = base.partition("@")
+
+                if oversampled:
+                    oversampled_images.append((base, fn))
+                else:
+                    non_oversampled_images.append((base, fn))
+
+            for base, fn in non_oversampled_images:
+                if renpy.has_image(base, exact=True):
+                    continue
+
+                renpy.image(base, fn)
+
+            for base, fn in oversampled_images:
+                if renpy.has_image(base, exact=True):
+                    continue
+
+                renpy.image(base, fn)
 
 init python:
 

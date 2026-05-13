@@ -4,6 +4,23 @@ Developer Tools
 Ren'Py includes a number of features to make a developer's life easier. Many of
 them need the variable :var:`config.developer` to be set to True to operate.
 
+.. _lint:
+
+Lint
+----
+
+The Lint tool (available from the launcher) checks the game for potential errors
+or misoptimizations, and advises the developing team about how to best improve it.
+Since some of these errors will only affect users on other platforms, it’s
+recommended to understand and fix all errors, even if the problem can't be
+triggered locally.
+
+Lint also includes useful infos and stats about the game.
+
+Note that using Lint is not a substitute for thorough testing.
+
+.. _console:
+
 Shift+O Console
 ---------------
 
@@ -19,14 +36,14 @@ The console can be used to:
 * Evaluate a Python expression or statement to see the result.
 * Trace Python expressions as the game progresses.
 
+.. include:: inc/console_commands
+
 Shift+E Editor Support
 ----------------------
 
-The :var:`config.editor` variable allows a developer to specify an editor
-command that is run when the launch_editor keypress (by default, Shift+E)
-occurs.
-
-Please see :ref:`Text Editor Integration <text-editor-integration>`.
+Shift+E opens the default text editor, as set in the launcher and customizable
+using :doc:`editor`, to open the script file in and line number at which the
+current statement is written.
 
 Shift+D Developer Menu
 ----------------------
@@ -41,6 +58,10 @@ When :var:`config.developer` is True, hitting Shift+R will save the current
 game, reload the game script, and reload the game. This will often place you at
 the last unchanged statement encountered before Shift+R was pressed.
 
+After the first reload, the game will be in autoreload mode, and any changes
+to files accessed since the last reload will cause the game to be reloaded
+again.
+
 This allows the developer to make script changes with an external editor, and
 not have to exit and restart Ren'Py to see the effect of the changes.
 
@@ -49,22 +70,32 @@ preserved across the reload. This means that if one of those statements is
 changed, it is necessary to rollback and re-execute the statement to see its
 new effect.
 
+Shift+R reloading does not work in a replay.
+
+The following functions implement the same behavior in pure python. Note that
+they are only meant to be used in developer mode.
+
+.. include:: inc/reload
+
+.. _style-inspector:
+
 Shift+I Style Inspecting
 ------------------------
 
 When :var:`config.developer` is true, pressing Shift+I will cause style
 inspection to occur. This will display a list of displayables underneath the
-mouse. For each displayable, it will display the type, the style used, and the
-size it is being rendered at.
+mouse, in the order they are drawn to the screen (that is, the last displayable
+is the one on top of the others). For each displayable, it will display the
+type, the style used, and the size it is being rendered at.
 
-Clicking on the style name will display where the style properties used by the
-displayable are taken from.
+Clicking on the style name will display the styles the displayable inherits
+from, and the properties each style contributes to the final displayable.
 
 > Fast Skipping
 ---------------
 
 When :var:`config.developer` or :var:`config.fast_skipping` is True, pressing
-the `fast_skip` key (by default, ">") causes the the game to immediately skip to
+the `fast_skip` key (by default, ">") causes the game to immediately skip to
 the next important interaction.  For this purpose, an important interaction is
 one that is not caused by a say statement, transition, or pause command.
 Usually, this means skipping to the next menu, but it will also stop when
@@ -118,3 +149,36 @@ Debug Functions
 ---------------
 
 .. include:: inc/debug
+
+
+.. _launcher-customization:
+
+Launcher Customization
+----------------------
+
+It's possible to customize the Ren'Py launcher to select the files and directories
+that are available to click on. To do this, create project.json with the lines below::
+
+    {
+        "renpy_launcher":
+        {
+            "open_directory":
+            {
+                "game": "game",
+                "base": ".",
+                "images": "game/images",
+                "audio": "game/audio",
+                "gui": "game/gui"
+            },
+            "edit_file":
+            {
+                "script.rpy": "game/script.rpy",
+                "options.rpy": "game/options.rpy",
+                "gui.rpy": "game/gui.rpy",
+                "screens.rpy": "game/screens.rpy"
+            }
+        }
+    }
+
+If the file already exists, you'll want to edit in the renpy_launcher key and the lines below it.
+You can then edit the dictionaries to change the available files and directories.

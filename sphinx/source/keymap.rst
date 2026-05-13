@@ -34,127 +34,143 @@ the K\_ constants taken from pygame.constants. This type of keysym looks like
 "K\_BACKSPACE", "K\_RETURN", and "K\_TAB"; a full list of this kind of keysyms may
 be found `here <http://www.pygame.org/docs/ref/key.html>`_.
 
-Keyboard keysyms may be preceded by the following prefixes, separated by
-underscores:
+Keyboard and Mouse keysyms may be preceded by the following prefixes,
+separated by underscores:
 
 alt
     Matches if the Alt key is pressed. Keysyms without this prefix match
     when the Alt key is not pressed.
 meta
-    Matches if the meta, Command, or Windows key is pressed. Keysyms without
+    Matches if the Meta, Command, or Windows key is pressed. Keysyms without
     this prefix match when the meta key is not pressed.
 ctrl
     Matches if the Ctrl key is pressed. Keysyms without this prefix match
     when the Ctrl key is not pressed. (Ctrl is not very useful, as it
     usually triggers skipping.)
 osctrl
-    This is Command on the Macintosh, and ctrl elsewhere.
+    This is Alt on the Macintosh, and Ctrl elsewhere.
+anymod
+    Matches regardless of the state of the Alt, Meta, or Ctrl keys.
 shift
     Matches when the Shift key is pressed.
 noshift
     Matches when the Shift key is not pressed.
+caps
+    Matches when the Caps Lock key is on.
+nocaps
+    Matches when the Caps Lock key is off.
+num
+    Matches when the Num Lock key is on.
+nonum
+    Matches when the Num Lock key is off.
 repeat
     Matches when the key is a repeat due to the key being held down. Keysyms
-    without this prefix do not match repeats.
+    without the repeat or any prefixes do not match repeats. (This does not
+    work with mouse buttons.)
+anyrepeat
+    Matches both initial keypresses and repeats.
 keydown
     Matches when the key is being pressed down (the default).
 keyup
     Matches when the key is being released.
 
 For example, the keysym "shift_alt_K_F5" will match the F5 key being pressed
-while Shift and Alt are held down.
-
+while Shift and Alt are held down. The keysym "shift_mouse_1" will match
+the left mouse button being pressed while Shift is held down.
 
 To change a binding, update the appropriate list in :var:`config.keymap`. The
 following adds the 't' key to the list of keys that dismiss a say
 statement, and removes the space key from that list. ::
 
-    init:
-        $ config.keymap['dismiss'].append('t')
-        $ config.keymap['dismiss'].remove('K_SPACE')
+    init python:
+        config.keymap['dismiss'].append('K_t')
+        config.keymap['dismiss'].remove('K_SPACE')
 
 The default keymap is contained inside renpy/common/00keymap.rpy, and
-as of version 7.4.7 is as follows::
+as of version 8.4.0 is as follows::
 
     config.keymap = dict(
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        rollback = [ 'K_PAGEUP', 'repeat_K_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
-        screenshot = [ 's', 'alt_K_s', 'alt_shift_K_s', 'noshift_K_s' ],
+        rollback = [ 'anyrepeat_K_PAGEUP', 'anyrepeat_KP_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
+        screenshot = [ 'alt_K_s', 'alt_shift_K_s', 'noshift_K_s' ],
         toggle_afm = [ ],
-        toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11', 'noshift_K_f' ],
+        toggle_fullscreen = [ 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11', 'noshift_K_f' ],
         game_menu = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
-        hide_windows = [ 'mouseup_2', 'h', 'noshift_K_h' ],
-        launch_editor = [ 'E', 'shift_K_e' ],
+        hide_windows = [ 'mouseup_2', 'noshift_K_h' ],
+        launch_editor = [ 'shift_K_e' ],
         dump_styles = [ ],
-        reload_game = [ 'R', 'alt_shift_K_r', 'shift_K_r' ],
-        inspector = [ 'I', 'shift_K_i' ],
+        reload_game = [ 'alt_K_r', 'shift_K_r' ],
+        inspector = [ 'alt_noshift_K_i', 'shift_K_i' ],
         full_inspector = [ 'alt_shift_K_i' ],
-        developer = [ 'shift_K_d', 'alt_shift_K_d' ],
+        developer = [ 'alt_K_d', 'shift_K_d', ],
         quit = [ ],
         iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
-        choose_renderer = [ 'G', 'alt_shift_K_g', 'shift_K_g' ],
+        choose_renderer = ['alt_K_g', 'shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
-        accessibility = [ "K_a" ],
+        bubble_editor = [ 'alt_K_b', 'shift_K_b' ],
 
         # Accessibility.
-        self_voicing = [ 'v', 'V', 'alt_K_v', 'K_v' ],
-        clipboard_voicing = [ 'C', 'alt_shift_K_c', 'shift_K_c' ],
+        accessibility = [ 'shift_K_a' ],
+        self_voicing = [ 'alt_K_v', 'K_v' ],
+        clipboard_voicing = [ 'alt_shift_K_c', 'shift_K_c' ],
         debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
+        extra_voicing = [ '?' ],
 
         # Say.
-        rollforward = [ 'mousedown_5', 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
-        dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT' ],
+        rollforward = [ 'anyrepeat_K_PAGEDOWN', 'anyrepeat_KP_PAGEDOWN', 'mousedown_5', ],
+        dismiss = [ 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT', 'mouseup_1' ],
         dismiss_unfocused = [ ],
 
         # Pause.
         dismiss_hard_pause = [ ],
 
         # Focus.
-        focus_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
-        focus_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
-        focus_up = [ 'K_UP', 'repeat_K_UP' ],
-        focus_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        focus_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        focus_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        focus_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        focus_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
-        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
+        button_select = [ 'K_RETURN', 'K_KP_ENTER', 'K_SELECT', 'mouseup_1',  ],
         button_alternate = [ 'mouseup_3' ],
         button_alternate_ignore = [ 'mousedown_3' ],
 
         # Input.
-        input_backspace = [ 'K_BACKSPACE', 'repeat_K_BACKSPACE' ],
+        input_backspace = [ 'anyrepeat_K_BACKSPACE' ],
         input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
-        input_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
-        input_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
-        input_up = [ 'K_UP', 'repeat_K_UP' ],
-        input_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
-        input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
-        input_home = [ 'K_HOME', 'meta_K_LEFT' ],
-        input_end = [ 'K_END', 'meta_K_RIGHT' ],
-        input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c' ],
-        input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v' ],
-        input_jump_word_left = [ 'osctrl_K_LEFT' ],
-        input_jump_word_right = [ 'osctrl_K_RIGHT' ],
+        input_next_line = [ 'shift_K_RETURN', 'shift_K_KP_ENTER' ],
+        input_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        input_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        input_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        input_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
+        input_delete = [ 'anyrepeat_K_DELETE', 'anyrepeat_KP_DELETE' ],
+        input_home = [ 'K_HOME', 'KP_HOME', 'meta_K_LEFT' ],
+        input_end = [ 'K_END', 'KP_END', 'meta_K_RIGHT' ],
+        input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c', 'meta_noshift_K_c' ],
+        input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v', 'meta_noshift_K_v' ],
+        input_jump_word_left = [ 'osctrl_K_LEFT', 'osctrl_KP_LEFT' ],
+        input_jump_word_right = [ 'osctrl_K_RIGHT', 'osctrl_KP_RIGHT' ],
         input_delete_word = [ 'osctrl_K_BACKSPACE' ],
         input_delete_full = [ 'meta_K_BACKSPACE' ],
 
         # Viewport.
-        viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],
-        viewport_rightarrow = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
-        viewport_uparrow = [ 'K_UP', 'repeat_K_UP' ],
-        viewport_downarrow = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        viewport_leftarrow = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        viewport_rightarrow = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        viewport_uparrow = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        viewport_downarrow = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
         viewport_wheelup = [ 'mousedown_4' ],
         viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
-        viewport_pageup = [ 'K_PAGEUP', 'repeat_K_PAGEUP' ],
-        viewport_pagedown = [ 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
+        viewport_pageup = [ 'anyrepeat_K_PAGEUP', 'anyrepeat_KP_PAGEUP'],
+        viewport_pagedown = [ 'anyrepeat_K_PAGEDOWN', 'anyrepeat_KP_PAGEDOWN' ],
 
         # These keys control skipping.
-        skip = [ 'K_LCTRL', 'K_RCTRL' ],
+        skip = [ 'anymod_K_LCTRL', 'anymod_K_RCTRL' ],
         stop_skipping = [ ],
         toggle_skip = [ 'K_TAB' ],
         fast_skip = [ '>', 'shift_K_PERIOD' ],
@@ -162,13 +178,17 @@ as of version 7.4.7 is as follows::
         # Bar.
         bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
         bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
-        bar_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
-        bar_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
-        bar_up = [ 'K_UP', 'repeat_K_UP' ],
-        bar_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        bar_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        bar_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        bar_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        bar_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Delete a save.
-        save_delete = [ 'K_DELETE' ],
+        save_delete = [ 'K_DELETE', 'KP_DELETE' ],
+
+        # Save/load screen pagination.
+        save_page_prev = ['mousedown_4'],
+        save_page_next = ['mousedown_5'],
 
         # Draggable.
         drag_activate = [ 'mousedown_1' ],
@@ -176,23 +196,23 @@ as of version 7.4.7 is as follows::
 
         # Debug console.
         console = [ 'shift_K_o', 'alt_shift_K_o' ],
-        console_older = [ 'K_UP', 'repeat_K_UP' ],
-        console_newer = [ 'K_DOWN', 'repeat_K_DOWN'],
+        console_exit = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
+        console_older = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        console_newer = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Director
         director = [ 'noshift_K_d' ],
 
         # Ignored (kept for backwards compatibility).
-        toggle_music = [ 'm' ],
-        viewport_up = [ 'mousedown_4' ],
-        viewport_down = [ 'mousedown_5' ],
+        toggle_music = [ ],
+        viewport_up = [ ],
+        viewport_down = [ ],
 
         # Profile commands.
         performance = [ 'K_F3' ],
         image_load_log = [ 'K_F4' ],
         profile_once = [ 'K_F8' ],
         memory_profile = [ 'K_F7' ],
-
     )
 
 Gamepad bindings work a little differently. Gamepad bindings work by mapping
@@ -212,13 +232,14 @@ gamepad bindings is given below::
         "pad_start_press" : [ "game_menu", ],
 
         "pad_y_press" : [ "hide_windows", ],
+        "pad_x_press" : [ "button_alternate" ],
 
         "pad_rightshoulder_press" : [ "rollforward", ],
         "repeat_pad_rightshoulder_press" : [ "rollforward", ],
 
         "pad_righttrigger_pos" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate" ],
         "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
-        "pad_b_press" : [ "button_alternate" ],
+        "pad_b_press" : [ "game_menu" ],
 
         "pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
         "pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
@@ -253,14 +274,14 @@ gamepad bindings is given below::
         "repeat_pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
     }
 
-
 Gamepad buttons have an event name of the form "pad_*button*_press" or
 "pad_*button*_release". Analog axis events have the form "pad_*axis*_pos",
 "pad_*axis*_neg", or "pad_*axis*_zero". If held down, a second gamepad binding
-is generated, withe the "repeat\_" prefix.
+is generated, with the "repeat\_" prefix.
 
 Gamepads that do not work without special initialization are disabled by
 default. This includes the Nintendo Switch Pro Controller, which requires
 special initialization to work on a PC. This blocklisting is controlled by
 :var:`config.controller_blocklist`.
 
+.. include:: inc/keymap

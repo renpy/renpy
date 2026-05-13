@@ -1,5 +1,7 @@
-﻿
-translate russian strings:
+﻿translate russian strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=fonts/Roboto-Light.ttf}Русский{/font}"
 
     # about.rpy:39
     old "[version!q]"
@@ -38,8 +40,8 @@ translate russian strings:
     new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разархивируйте его, и поместите в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
 
     # android.rpy:31
-    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Чтобы построить Android-пакеты на Windows требуется 64-битный инструментарий разработки Java 8. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}загрузите и установите JDK{/a}, и перезапустите лаунчер Ren'Py."
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Чтобы построить Android-пакеты на Windows требуется 64-битный инструментарий разработки Java 8. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}загрузите и установите JDK{/a}, и перезапустите лаунчер Ren'Py."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -622,7 +624,7 @@ translate russian strings:
     new "Старый, проверенный бета-редактор. Editra на данный момент не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов. На Linux, Editra требует wxPython."
 
     # editor.rpy:195
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Это могло случиться из-за того, что wxPython не установлен на этой системе."
 
     # editor.rpy:197
@@ -638,7 +640,7 @@ translate russian strings:
     new "Требуется скачать 1.8 МБ."
 
     # editor.rpy:210
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Это могло случиться из-за того, что Java не установлена в данной системе."
 
     # editor.rpy:219
@@ -662,7 +664,7 @@ translate russian strings:
     new "Редактировать [text]"
 
     # editor.rpy:387
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Возникла ошибка при запуске текстового редактора:\n[exception!q]"
 
     # editor.rpy:519
@@ -1019,7 +1021,8 @@ translate russian strings:
 
     # ios.rpy:312
     old "Open Xcode Projects Directory"
-    new "Open Xcode Projects Directory"
+    # Automatic translation.
+    new "Открыть каталог проектов Xcode"
 
     # ios.rpy:345
     old "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
@@ -1343,7 +1346,7 @@ translate russian strings:
 
     # translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "Команда извлечения позволяет вам извлечь переводимые строки из существующего проекта во временный файл.\n\nКоманда объединения объединяет извлечённые переводы в другой перевод."
+    new "{size=-1}Команда извлечения позволяет вам извлечь переводимые строки из существующего проекта во временный файл.\n\nКоманда объединения объединяет извлечённые переводы в другой перевод.{/size}"
 
     # translations.rpy:252
     old "Ren'Py is generating translations...."
@@ -1454,7 +1457,7 @@ translate russian strings:
     new "%d %B %Y года"
 
     # updater.rpy:140
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Возникла ошибка:"
 
     # updater.rpy:142
@@ -1522,7 +1525,7 @@ translate russian strings:
     new "(Бета)"
 
     # interface.rpy:394
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "В процессе выполнения \"[what!qt]\" произошла ошибка:"
 
     # interface.rpy:394
@@ -1815,7 +1818,7 @@ translate russian strings:
 
     # game/gui7.rpy:311
     old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
-    new "{size=-4}\n\пЭто не перезапишет gui/main_menu.png, gui/game_menu.png, и gui/window_icon.png, но создаст несуществующие файлы.{/size}"
+    new "{size=-4}\n\nЭто не перезапишет gui/main_menu.png, gui/game_menu.png, и gui/window_icon.png, но создаст несуществующие файлы.{/size}"
 
     # game/ios.rpy:339
     old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
@@ -1856,3 +1859,371 @@ translate russian strings:
     # game/updater.rpy:111
     old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Посмотреть журнал изменений{/a}"
+
+    # game/android.rpy:60
+    old "Removes Android temporary files."
+    new "Очистить временные файлы Android"
+
+    # game/android.rpy:472
+    old "Clean"
+    new "Очистить"
+
+    # game/android.rpy:628
+    old "Cleaning up Android project."
+    new "Очистка временных файлов Android"
+
+    # game/androidstrings.rpy:43
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    new "Не удалось использовать javac для компиляции тестового файла. Если вы еще не установили Java Development Kit, загрузите его с:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nJDK отличается от JRE, поэтому возможно, что у вас есть Java без JDK. Пожалуйста, убедитесь, что вы установили 'переменные окружения JavaSoft (Oracle)'.\n\nБез работающего JDK я не могу продолжать."
+
+    # game/androidstrings.rpy:64
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    new "Открыт каталог, содержащий android.keystore и bundle.keystore. Пожалуйста, сделайте их резервную копию и храните в безопасном месте."
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    new "Выбрать папку с проектами"
+
+    # game/distribute.rpy:1674
+    old "Copying files..."
+    new "Копирование файлов..."
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    new "Обновить old-game"
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    new "Современный текстовый редактор с множеством расширений, включая расширенную интеграцию Ren'Py."
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    new "Современный текстовый редактор с множеством расширений, включая расширенную интеграцию Ren'Py.\n{a=jump:reinstall_vscode}Обновить Visual Studio Code до последней версии.{/a}"
+
+    # game/editor.rpy:162
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:162
+    old "Up to 110 MB download required."
+    new "Требуется скачать 110 МБ."
+
+    # game/editor.rpy:175
+    old "A modern and approachable text editor."
+    new "Современный и удобный текстовый редактор."
+
+    # game/editor.rpy:187
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:200
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:209
+    old "Visual Studio Code (System)"
+    new "Visual Studio Code (установленный)"
+
+    # game/editor.rpy:209
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    new "Используется версия Visual Studio Code, установленная вне Ren'Py. Рекомендуется установить расширение language-renpy, чтобы добавить поддержку файлов Ren'Py."
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    new "Загрузка [extension.download_file]."
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    new "Не удалось загрузить [extension.download_file] из [extension.download_url]:\n{b}[extension.download_error]"
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    new "Загруженный файл [extension.download_file] из [extension.download_url] некорректен."
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/preferences.rpy:153
+    old "Clean temporary files"
+    new "Очистить временные файлы"
+
+    # game/preferences.rpy:255
+    old "Cleaning temporary files..."
+    new "Очистка временных файлов..."
+
+    # game/project.rpy:280
+    old "This may be because the project is not writeable."
+    new "Это может быть связано с тем, что папка проекта недоступна для записи."
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    new "Язык (или None для языка по умолчанию):"
+
+    # game/web.rpy:344
+    old "This feature is not supported in Ren'Py 8."
+    new "Этот функционал недоступен в Ren'Py 8."
+
+    # game/web.rpy:344
+    old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
+    new "Мы восстановим поддержку в будущем релизе Ren'Py 8. Пока что, пожалуйста используйте Ren'Py 7 для веб-сборки."
+
+    # game/preferences.rpy:104
+    old "General"
+    new "Общие"
+
+    # game/preferences.rpy:105
+    old "Options"
+    new "Опции"
+
+    # game/preferences.rpy:244
+    old "Launcher Theme:"
+    new "Тема лаунчера:"
+
+    # game/preferences.rpy:254
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "Информацию о создании пользовательских тем можно найти {a=[skins_url]}в документации Ren'Py{/a}."
+
+    # game/preferences.rpy:271
+    old "Install Libraries:"
+    new "Установить библиотеки:"
+
+    # game/preferences.rpy:338
+    old "{#in language font}Welcome! Please choose a language"
+    new "Добро пожаловать!\nВыберите язык"
+
+    # game/preferences.rpy:373
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    new "Начать использовать Ren'Py на русском"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    new "Релиз (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    new "Релиз (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new "Пререлиз (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new "Пререлиз (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    new "Ночной (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    new "Ночной (Ren'Py 7, Python 2)"
+
+translate russian strings:
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    # Automatic translation.
+    new "RAPT был установлен, но ключ не был настроен. Пожалуйста, сгенерируйте новые ключи или скопируйте android.keystore и bundle.keystore в базовый каталог."
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    # Automatic translation.
+    new "Попытка эмуляции телевизионной консоли Android.\n\nВвод контроллера отображается на клавиши со стрелками, Enter отображается на кнопку выбора, Escape отображается на кнопку меню, а PageUp отображается на кнопку назад."
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    # Automatic translation.
+    new "Загружает и устанавливает Android SDK и вспомогательные пакеты."
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    # Automatic translation.
+    new "Генерирует ключи, необходимые для подписания пакета."
+
+    # game/android.rpy:383
+    old "Install SDK"
+    # Automatic translation.
+    new "Установите SDK"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    # Automatic translation.
+    new "Генерировать ключи"
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    # Automatic translation.
+    new "Сколько оперативной памяти (в ГБ) вы хотите выделить для Gradle?\nЭто должно быть целое положительное число."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    # Automatic translation.
+    new "Размер оперативной памяти должен содержать только числа и быть положительным."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Я нашел файл android.keystore в каталоге rapt. Вы хотите использовать этот файл?"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    # Automatic translation.
+    new "\n\nОтвет \"Нет\" не позволит создать ключ."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Я нашел файл bundle.keystore в каталоге rapt. Вы хотите использовать этот файл?"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    # Automatic translation.
+    new "Lint проверяет вашу игру на наличие потенциальных ошибок и выдает статистику."
+
+    # game/web.rpy:485
+    old "Creating package..."
+    # Automatic translation.
+    new "Создание пакета..."
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Ночная сборка исправлений к релизной версии Ren'Py."
+
+    # game/androidstrings.rpy:46
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please install JDK [JDK_REQUIREMENT], and add it to your PATH.\n\nWithout a working JDK, I can't continue."
+    new "Я не смог скомпилировать тестовый файл с помощью javac. Если вы еще не установили Java Development Kit, загрузите его с сайта:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nJDK отличается от JRE, поэтому возможно, что у вас есть Java без JDK. Пожалуйста, установите JDK [JDK_REQUIREMENT] и добавьте его в PATH.\n\nБез работающего JDK я не могу продолжить."
+
+    # game/androidstrings.rpy:47
+    old "The version of Java on your computer does not appear to be JDK [JDK_REQUIREMENT], which is required to build Android apps. If you need to install a newer JDK, you can download it from:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, and add it to your PATH.\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new "Похоже, что версия Java на вашем компьютере не соответствует JDK [JDK_REQUIREMENT], который требуется для создания приложений для Android. Если вам нужно установить более новый JDK, вы можете загрузить его с:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a} и добавить в PATH.\n\nВы также можете изменить переменную окружения JAVA_HOME, чтобы использовать другую версию Java."
+
+    # game/choose_directory.rpy:72
+    old "No directory was selected, but one is required."
+    new "Не выбрана ни одна папка."
+
+    # game/choose_directory.rpy:80
+    old "The selected directory does not exist."
+    new "Выбранная папка не существует."
+
+    # game/choose_directory.rpy:82
+    old "The selected directory is not writable."
+    new "Выбранная папка недоступна для записи."
+
+    # game/distribute.rpy:535
+    old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
+    new "Сборка дистрибутивов не удалась:\n\nПроект является туториалом Ren'Py, который не может быть собран за пределами Ren'Py. Используйте The Question в качестве тестового проекта."
+
+    # game/distribute.rpy:562
+    old "This may be derived from build.name and config.version or build.version."
+    new "Это может быть связано с build.name и config.version или build.version."
+
+    # game/distribute.rpy:1620
+    old "Finishing the [variant] [format] package."
+    new "Завершение работы над пакетом [variant] [format]."
+
+    # game/editor.rpy:185
+    old "Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended."
+    new "Atom устарел, и его баги известны тем, что повреждают игры, поэтому рекомендуется использовать другой редактор."
+
+    # game/editor.rpy:214
+    old "JEdit is deprecated, using another editor is recommended."
+    new "JEdit устарел, рекомендуется использовать другой редактор."
+
+    # game/editor.rpy:607
+    old "The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."
+    new "Текстовый редактор Atom больше не поддерживается его разработчиками. Мы рекомендуем перейти на Visual Studio Code или другой редактор."
+
+    # game/editor.rpy:607
+    old "Select editor now."
+    new "Выберите редактор."
+
+    # game/editor.rpy:607
+    old "Ignore until next launch."
+    new "Игнорировать до следующего запуска."
+
+    # game/editor.rpy:607
+    old "Do not ask again."
+    new "Больше не спрашивать."
+
+    # game/new_project.rpy:38
+    old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
+    new "Предупреждение: вы используете Ren'Py 7. Рекомендуется начинать новые проекты, используя Ren'Py 8."
+
+    # game/new_project.rpy:49
+    old "Please select a template project to use."
+    new "Пожалуйста, выберите проект используемый как шаблон."
+
+    # game/new_project.rpy:49
+    old "Do not use a template project."
+    new "Не использовать шаблон проекта."
+
+    # game/preferences.rpy:94
+    old "Lint"
+    new "Проверка скрипта (lint)"
+
+    # game/preferences.rpy:233
+    old "Game Options:"
+    new "Опции игры:"
+
+    # game/preferences.rpy:240
+    old "Skip splashscreen"
+    new "Пропустить заставку"
+
+    # game/preferences.rpy:258
+    old "Restore window position"
+    new "Восстановить положение окна"
+
+    # game/preferences.rpy:262
+    old "Prefer RPU updates"
+    new "Предпочитать обновления RPU"
+
+    # game/preferences.rpy:332
+    old "Open projects.txt"
+    new "Открыть файл projects.txt"
+
+    # game/preferences.rpy:356
+    old "Lint toggles:"
+    new "Опции проверки скрипта:"
+
+    # game/preferences.rpy:360
+    old "Check for orphan/obsolete translations"
+    new "Проверка на наличие ненужных/устаревших переводов"
+
+    # game/preferences.rpy:363
+    old "Check parameters shadowing reserved names"
+    new "Проверка параметров, переписывающие зарезервированные имена"
+
+    # game/preferences.rpy:366
+    old "Print block, word, and character counts by speaking character."
+    new "Печать количества блоков, слов и символов используемых каждым персонажем."
+
+    # game/preferences.rpy:369
+    old "Unclosed text tags"
+    new "Незакрытые текстовые теги"
+
+    # game/preferences.rpy:372
+    old "Show all unreachable blocks and orphaned translations."
+    new "Показать все недостижимые блоки и неиспользуемые переводы."
+
+    # game/project.rpy:776
+    old "Splashscreen skipped in launcher preferences."
+    new "Заставка пропущена в настройках лаунчера."
+
+    # game/updater.rpy:76
+    old "Nightly Fix"
+    new "Ежедневные исправления"
+
+    # game/updater.rpy:77
+    old "Nightly Fix (Ren'Py 8, Python 3)"
+    new "Ежедневные исправления (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly Fix (Ren'Py 7, Python 2)"
+    new "Ежедневные исправления (Ren'Py 7, Python 2)"

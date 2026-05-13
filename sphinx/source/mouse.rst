@@ -19,7 +19,7 @@ And the limitation:
 Using Ren'Py to draw a displayable as a cursor inverts these restrictions.
 While the cursors can be anything Ren'Py can draw, Ren'Py needs to do
 the drawing. When triple buffering is enabled on a computer, a lag can
-be present that isn't for the harware cursor.
+be present that isn't for the hardware cursor.
 
 
 Hardware Mouse Cursor
@@ -49,6 +49,62 @@ When an animation consists of multiple frames, the frames are played back
 at 20fps. Ren'Py will only change the cursor when the image or offsets
 change.
 
+The following table lists the various states that the cursor can be in 
+and the corresponding usage:
+
+.. list-table::
+ :header-rows: 1
+
+ * - State
+   - Usage
+
+ * - ``default``
+   - Used at all times unless another state is specified. It should always be present, as it is used when a more specific key is absent
+
+ * - ``say``
+   - Used when the player is on the "Say" screen.
+
+ * - ``with``
+   - Used during transitions.
+
+ * - ``menu``
+   - Used when the player is in a menu (for example, choice).
+
+ * - ``prompt``
+   - Used when the player is prompted for input.
+
+ * - ``imagemap``
+   - Used on an imagemap.
+
+ * - ``button``
+   - Used when the player is hovering over a button/imagebutton.
+
+ * - ``pause``
+   - Used during pause, renpy.pause()
+
+ * - ``mainmenu``
+   - Used in the main menu.
+
+ * - ``gamemenu``
+   - Used in the game menu.
+
+Every key can have an optional ``pressed_`` prefix, which indicates the
+cursor to use when the mouse is pressed. For instance, ``pressed_button``
+is used when the user clicks on a button. To define a default pressed 
+cursor style, use ``pressed_default`` key. It is used when no other 
+pressed cursor is defined.
+
+For example::
+
+    define config.mouse = { }
+    define config.mouse['default'] = [ ( "gui/arrow.png", 0, 0) ]
+    define config.mouse['pressed_default'] = [ ( "gui/arrow_pressed.png", 0, 0) ]
+    define config.mouse['button'] = [ ( "gui/arrow_button.png", 0, 0) ]
+    define config.mouse['pressed_button'] = [ ( "gui/arrow_button_pressed.png", 0, 0) ]
+    define config.mouse['menu'] = [ ( "gui/arrow_menu.png", 0, 0) ] # This cursor will be used when the player is in a menu
+    # Since there is no "pressed_menu" cursor, "pressed_default" cursor will be used instead
+
+
 Displayable Mouse Cursor
 ------------------------
 
@@ -56,7 +112,7 @@ A displayable cursor uses the :var:`config.mouse_displayable` variable,
 and the MouseDisplayable displayable. As an example::
 
 
-    image "mouse spin":
+    image mouse spin:
         "gui/spin0.png"
         rotate 0.0
         linear 1.0 rotate 360.0
@@ -67,7 +123,7 @@ and the MouseDisplayable displayable. As an example::
         repeat
 
     define config.mouse_displayable = MouseDisplayable(
-        "gui/arrow.png", 0, 0).add("spin", "spin mouse", 9.9, 9.9)
+        "gui/arrow.png", 0, 0).add("spin", "mouse spin", 9.9, 9.9)
 
 .. include:: inc/mouse_displayable
 
@@ -86,5 +142,3 @@ It's also possible to use :var:`default_mouse` to set the mouse cursor
 globally::
 
     $ default_mouse = "spin"
-
-

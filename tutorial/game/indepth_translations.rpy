@@ -1,8 +1,8 @@
-example translate_font:
+﻿example translate_font:
     translate japanese python:
-        gui.text_font = "MTLc3m.ttf"
-        gui.name_text_font = "MTLc3m.ttf"
-        gui.interface_text_font = "MTLc3m.ttf"
+        gui.text_font = "SourceHanSansLite.ttf"
+        gui.name_text_font = "SourceHanSansLite.ttf"
+        gui.interface_text_font = "SourceHanSansLite.ttf"
 
     translate japanese style default:
         language "japanese-strict"

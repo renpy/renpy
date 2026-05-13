@@ -761,7 +761,7 @@
     new "업데이터"
 
     # 00updater.rpy:1446
-    old "An error has occured:"
+    old "An error has occurred:"
     new "에러가 발생했습니다:"
 
     # 00updater.rpy:1448

@@ -1,4 +1,4 @@
-
+﻿
 transform examplepos:
     xalign 0.5
     ypos 50
@@ -68,25 +68,25 @@ label styles_menu:
         e "What would you like to know about styles?"
 
         "Style basics.":
-            call style_basics
+            call style_basics from _call_style_basics
 
         "General style properties.":
-            call style_general
+            call style_general from _call_style_general
 
         "Text style properties.":
-            call style_text
+            call style_text from _call_style_text
 
         "Window and Button style properties.":
-            call style_button
+            call style_button from _call_style_button
 
         "Bar style properties.":
-            call style_bar
+            call style_bar from _call_style_bar
 
         "Box, Grid, and Fixed style properties.":
-            call style_box
+            call style_box from _call_style_box
 
         "The Displayable Inspector.":
-            call style_inspector
+            call style_inspector from _call_style_inspector
 
         "That's all I want to know.":
             return
@@ -171,7 +171,7 @@ label style_basics:
 
     show style3 at examplepos
 
-    e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style." id style_basics_ac6a8414
 
     hide style3
     hide example
@@ -179,7 +179,7 @@ label style_basics:
 
     e "A style property can inherit from a parent. If a style property is not given in a style, it comes from the parent of that style."
 
-    e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used." id style_basics_49c5fbfe
 
     e "For example, blue_text inherits from text, which in turn inherits from default. The default style defines all properties, so it doesn't inherit from anything."
 
@@ -193,7 +193,7 @@ label style_basics:
 
     e "Each displayable has a default style name. By default, it's usually the lower-case displayable name, like 'text' for Text, or 'button' for buttons."
 
-    e "In a screen, a displayable can be given the style_prefix property to give a prefix for that displayable and it's children."
+    e "In a screen, a displayable can be given the style_prefix property to give a prefix for that displayable and its children." id style_basics_35db9a05
 
     e "For example, a text displayable with a style_prefix of 'help' will be given the style 'help_text'."
 
@@ -436,23 +436,23 @@ label style_text:
 
     example:
         style center_text:
-            text_align 0.5
+            textalign 0.5
 
     show screen text("center_text")
 
-    e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+    e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered." id style_text_430c1959
 
-    e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
+    e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value." id style_text_19aa0833
 
 
     example:
         style right_text:
-            text_align 1.0
+            textalign 1.0
             yalign 1.0
 
     show screen text("right_text")
 
-    e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
+    e "When both textalign and xalign are set to 1.0, the text is properly right-justified." id style_text_efc3c392
 
 
     example:
@@ -509,7 +509,7 @@ label style_text:
         style layout_subtitle_text:
             layout "subtitle"
             xalign 0.5
-            text_align 0.5
+            textalign 0.5
 
     show screen text("layout_subtitle_text")
 
@@ -590,9 +590,9 @@ label style_button:
     show screen button('example_button')
     with dissolve
 
-    e "I'll start off with this style, which everything will inherit from. To make our lives easier, it inherits from the default style, rather than the customizes buttons in this game's GUI."
+    e "I'll start off with this style, which everything will inherit from. To make our lives easier, it inherits from the default style, rather than the customized buttons in this game's GUI." id style_button_9b53ce93
 
-    e "The first style property is the background property. It adds a background to the a button or window. Since this is a button, idle and hover variants choose different backgrounds when focused."
+    e "The first style property is the background property. It adds a background to a button or window. Since this is a button, idle and hover variants choose different backgrounds when focused." id style_button_aece4a8c
 
     e "We also center the two buttons, using the xalign position property."
 
@@ -726,7 +726,7 @@ screen vbar(style):
 
         text "[measure:.0f]/100":
             xalign 0.5
-            text_align 0.5
+            textalign 0.5
             min_width 100
 
 
@@ -814,7 +814,7 @@ label style_bar:
 
     show screen bar('thumb_bar')
 
-    e "The thumb style property gives a thumb image, that's placed based on the bars value. In the case of a scrollbar, it's resized if possible."
+    e "The thumb style property gives a thumb image, that's placed based on the bar's value. In the case of a scrollbar, it's resized if possible." id style_bar_7d361bac
 
     e "Here, we use it with the base_bar style property, which sets both bar images to the same displayable."
 
@@ -1092,5 +1092,3 @@ label style_inspector:
     e "You can try the inspector right now, by hovering this text and hitting shift+I."
 
     return
-
-

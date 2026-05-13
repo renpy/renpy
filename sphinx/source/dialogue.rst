@@ -61,8 +61,12 @@ the ``[`` character begins a substitution. To use them in dialogue,
 double them. It may also be necessary to precede a quote with a
 backslash to prevent it from closing the string. For example::
 
-       "I walked past a sign saying, \"Let's give it 100%!\""
+       "I walked past a sign saying, \"Let's give it 100%%!\""
 
+It's also possible to use a proxy function instead of a character
+object. More details about this in :ref:`this section <say-proxy>`.
+
+.. _defining-character-objects:
 
 Defining Character Objects
 --------------------------
@@ -72,9 +76,7 @@ can customize the look (and to some extent, the behavior) of
 dialogue. Characters are created by using the ``define`` statement to
 assign a Character to a variable. For example::
 
-    define e = Character("Eileen",
-                         who_color="#c8ffc8")
-
+    define e = Character("Eileen", who_color="#c8ffc8")
 
 Once this is done, the character can be used in a say statement::
 
@@ -83,10 +85,6 @@ Once this is done, the character can be used in a say statement::
 Character is a Python function that takes a large number of keyword
 arguments. These keyword arguments control the behavior of the
 character.
-
-The ``define`` statement causes its expression to be evaluated, and assigned to the
-supplied name. If not inside an ``init`` block, the ``define`` statement will
-automatically be run with init priority 0.
 
 .. include:: inc/character
 
@@ -108,59 +106,66 @@ For example::
 
     label start:
 
-        show eileen mad
+        show eileen concerned
         e "I'm a little upset at you."
 
         e happy "But it's just a passing thing."
 
 is equivalent to::
 
-    define e = Character("Eileen")
+    define e = Character("Eileen", image="eileen")
 
     label start:
 
-        show eileen mad
+        show eileen concerned
         e "I'm a little upset at you."
 
         show eileen happy
         e "But it's just a passing thing."
 
-
-When the image attribute begins with an @, the change is temporary, and
-reverts to the previously displaying image at the end of the line of dialogue.
+In the above example, the ``concerned`` and ``happy`` replace one another.
+But it is possible to revert to a ``happy``\ -less eileen without specifying
+the ``concerned`` attribute. An attribute name prepended with the minus sign ( - )
+has that effect, just as it does with the :ref:`show statement <show-statement>`.
 
 For example::
-
-    define e = Character("Eileen", image="eileen")
-
-    label start:
-
-        show eileen mad
-        e "I'm a little upset at you."
-
-        e @ happy "That's funny."
-
-        e "But don't think it gets you out of hot water."
-
-is equivalent to::
 
     define e = Character("Eileen")
 
     label start:
 
-        show eileen mad
+        show eileen
+        e concerned "I'm a little upset at you."
+
+        e happy "That's funny."
+
+        e -happy "I'm not sure what to think now."
+
+When an @ is included in the list of attributes, any element placed after it
+has an only temporary effect, and is reverted at the end of the line of dialogue.
+
+For example, the following code is equivalent to the previous example::
+
+    define e = Character("Eileen", image="eileen")
+
+    label start:
+
+        show eileen concerned
         e "I'm a little upset at you."
 
-        show eileen happy
-        e "That's funny."
+        e @ happy "That's funny."
 
-        show eileen mad
-        e "But don't think it gets you out of hot water."
+        e "I'm not sure what to think now."
 
-The two syntaxes can be combined, with the permanent changes coming before
-the @ and the temporary ones coming after. ::
+A single line can combine permanent changes coming before
+the @, and temporary ones coming after. ::
 
     e happy @ vhappy "Really! That changes everything."
+
+The minus sign can also be used after the @ sign::
+
+    e @ right -concerned "My anger is temporarily suspended..."
+    e "HOWEVER !"
 
 To cause a transition to occur whenever the images are changed in this way, set
 :var:`config.say_attribute_transition` to a transition. For more control,
@@ -193,7 +198,7 @@ them can be a problem.
 
 ``nvl``
     A kind of Character that causes dialogue to be displayed in
-    :ref:`NVL-mode`, with multiple lines of text on the screen
+    :doc:`nvl_mode`, with multiple lines of text on the screen
     at once.
 
 ``narrator``
@@ -201,7 +206,7 @@ them can be a problem.
     without a character name.
 
 ``name_only``
-    A character that is used to display dialogue in which the
+    A character that is used for dialogue in which the
     character name is given as a string. This character is copied to a
     new character with the given name, and then that new character is
     used to display the dialogue.
@@ -215,13 +220,17 @@ them can be a problem.
     in vertically oriented text, in the middle of the screen,
     outside of any window.
 
+.. _extend:
+
 ``extend``
      A character that causes the last character to speak to say a line
      of dialogue consisting of the last line of dialogue spoken, "{fast}",
      and the dialogue given to extend. This can be used to have the screen
      change over the course of dialogue.
 
-     Extend is aware of NVL-mode and treats it correctly.
+     Extend is aware of NVL-mode and treats it correctly. Extend does not work
+     properly if the language preference changes between the initial say and
+     the extend.
 
 For example::
 
@@ -264,19 +273,18 @@ non-dialogue interactions.
     the transition is omitted, :var:`config.window_hide_transition` is
     used.
 
-``window auto``
+``window auto True``
     This enables automatic management of the window. The window is shown
     before statements listed in :var:`config.window_auto_show` – by default,
     say statements. The window is hidden before statements listed in
     :var:`config.window_auto_hide` – by default, ``scene`` and ``call screen``
     statements, and ``menu`` statements without a caption.
-    (Only statements are considered, not statement equivalent
-    functions.)
 
-``window auto hide``, ``window auto show``
-    These statements show or hide the window, with an optional transition,
-    like ``window show`` or ``window hide`` do. However, unlike those
-    statements, this keeps automatic management enabled.
+    Only statements are considered, not statement equivalent functions.
+
+``window auto False``
+    This disables automatic management of the window. The window is not
+    shown or hidden automatically.
 
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,
@@ -295,7 +303,7 @@ For example::
     pause                # the window is hidden during this pause.
 
 
-    window auto
+    window auto True
 
     "The window is automatically shown before this line of dialogue."
     pause                # the window is shown during this pause.
@@ -303,17 +311,18 @@ For example::
     scene bg washington  # the window is hidden before the scene change.
     with dissolve
 
-    window auto show     # Shows the window before it normally would be shown.
+    window show     # Shows the window before it normally would be shown.
 
     show eileen
     with dissolve
 
-    "Without window auto show, the window would have been shown here."
+    "Without window show, the window would have been shown here."
 
 Dialogue window management is subject to the "show empty window"
 :func:`Preference`. If the preference is disabled, the statements above
 have no effect.
 
+.. _say-with-arguments:
 
 Say with Arguments
 ------------------
@@ -327,8 +336,24 @@ Arguments to the say statement are first processed by :var:`config.say_arguments
 if it is not None. If any remain, they are then passed to the character,
 which treats them as if they were present when the character was defined.
 So, the example above displays the dialogue in green.
-Special keywords `_mode` and `_with_node` will override the ones set in
-the character only for this interaction.
+The keyword `_with_none` will override the `with_none` attribute of the character.
+
+The `interact` parameter is a special case : when it was passed as False
+when defining the Character, passing ``interact=True`` will not override
+that, meaning no interaction will happen in that case.
+
+Note that :var:`config.say_arguments_callback` will be called every time
+a say statement executes, and not only when arguments are passed. It can be
+useful to implement conditional overrides over characters' customizations.
+For example::
+
+    init python:
+        def say_arguments_callback(char, *args, **kwargs):
+            if colorblind_mode:
+                kwargs["what_color"] = "#000"
+            return args, kwargs
+
+    define config.say_arguments_callback = say_arguments_callback
 
 .. _monologue-mode:
 
@@ -369,23 +394,14 @@ If you'd like to omit the spaces between the blocks, write
 ``rpy monologue single`` at the top level of the file, before the first
 monologue line.
 
+If you'd like to disable this instead, and have all the lines you write between
+triple quotes be displayed as a single message, conserving line breaks, you can
+do it with ``rpy monologue none``.
 
-Python Equivalents
-------------------
+The ``character`` Store
+-----------------------
 
-.. note::
-
-   This may only make sense if you've read the :ref:`python` section.
-
-When the first parameter to a say statement is present and an expression,
-the say statement is equivalent to calling that expressing with the dialogue
-and an ``interact`` argument of True. For example::
-
-    e "Hello, world."
-
-is equivalent to::
-
-    $ e("Hello, world.", interact=True)
+*Main article:* :ref:`named-stores`
 
 The say statement will search the ``character`` named store before the default
 store. If you want to have a character with the same name as a variable in
@@ -395,33 +411,42 @@ the default store, it can be defined using::
 
 This character can then be used alongside a variable in the default store::
 
+    default e = 0
+
     label start:
 
-        # This is a terrible variable name.
+        # This is still a terrible variable name.
         $ e = 100
 
-        e "Our starting energy is [e] units."
+        e "Our current energy is [e] units."
 
-A say with arguments sees the arguments passed to the function. For example::
+This is especially useful in order to manage variable information about a
+character in a namespace without conflicting with the say statement::
 
-    e "Hello, world." (what_size=32)
+    define character.naomi = Character("Naomi Nagata", who_color="#8c8")
+    default naomi = PersonClass(engineering=5, max_g_force=.7) # can be an object...
+    define character.fred = Character("Fred Johnson", who_color="#72f")
+    default fred.money = 1000 # ...or a dedicated named store
+    default fred.rank = "Colonel"
 
-is equivalent to::
+    label traded:
+        fred "Here you go."
+        $ fred.money -= 50
+        $ naomi.money += 50
+        naomi "Thanks ! I knew you would value my class-[naomi.engineering] engineering skills."
 
-    $ e("Hello, world.", interact=True, what_size=32)
+Alternative Presentations
+-------------------------
 
-When e is a Character, this is further equivalent to::
+:doc:`nvl_mode` : a mode that displays dialogue over the entire screen.
 
-    $ Character(kind=e, what_size=32)("Hello, world.", interact=True)
+:doc:`bubble` : a mode that displays dialogue in speech bubbles that can be
+positioned interactively.
 
-But it's possible to use :var:`config.say_arguments_callback` or
-have ``e`` wrap a character to do things differently.
+See Also
+--------
 
+:doc:`statement_equivalents` : how to use most of the features described here in
+a python context, although with some drawbacks and limitations.
 
-
-
-
-Window management is performed by setting the :var:`_window` and
-:var:`_window_auto` variables, and by using the following two functions:
-
-.. include:: inc/window
+:func:`renpy.last_say` : provides information about the last say statement.

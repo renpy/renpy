@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,8 +32,96 @@ init python:
     import time
     import pygame_sdl2
     import zipfile
+    import re
+    import hashlib
 
     WEB_PATH = None
+
+    class ProgressiveFilter(object):
+        def __init__(self, project, destination):
+            self.project = project
+            self.destination = destination
+            self.remote_files = {}
+            self.images = []
+            self.path_filters = []
+            load_filters(project, self.path_filters)
+
+        def filter(self, file, variant, format):
+            """
+            Detect and copy the files to be downloaded progressively,
+            and prevent them to be put in the ZIP archive.
+            Returns True if the file must be included in the ZIP archive.
+            """
+            if variant != 'web' or format != 'zip':  # useless?
+                return True
+
+            base, ext = os.path.splitext(file.name)
+
+            copy_file = False
+            # Images
+            if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp', '.avif', '.svg')
+                    and filters_match(self.path_filters, file.name, 'image')):
+                # Add image to list and generate placeholder later
+                self.images.append((file.path, file.name))
+                copy_file = True
+
+            # Musics (but not SFX - no placeholders for short, non-looping sounds)
+            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
+                    and filters_match(self.path_filters, file.name, 'music')):
+                self.remote_files[file.name[len('game/'):]] = 'music -'
+                copy_file = True
+
+            # Voices
+            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
+                    and filters_match(self.path_filters, file.name, 'voice')):
+                self.remote_files[file.name[len('game/'):]] = 'voice -'
+                copy_file = True
+
+            # Videos are never included.
+            elif (ext.lower() in ('.ogv', '.webm', '.mp4', '.mkv', '.avi')):
+                self.remote_files[file.name[len('game/'):]] = 'video -'
+                copy_file = True
+
+            if not copy_file:
+                return True
+
+            # Copy the file to the destination folder, keeping metadata
+            dst_path = os.path.join(self.destination, file.name)
+            dst_dir = os.path.dirname(dst_path)
+            if not os.path.isdir(dst_dir):
+                os.makedirs(dst_dir, 0o755)
+            shutil.copy2(file.path, dst_path)
+
+            return False
+
+        def finalize(self):
+            """
+            Append some generated files to the ZIP archive.
+            """
+            zout = zipfile.ZipFile(os.path.join(self.destination, 'game.zip'), 'a')
+            tmpdir = tempfile.mkdtemp()
+
+            # Generate and append placeholder image files to archive
+            for (src, dst) in self.images:
+                surface = pygame_sdl2.image.load(src)
+                (w, h) = (surface.get_width(), surface.get_height())
+                self.remote_files[dst[len('game/'):]] = 'image {},{}'.format(w,h)
+                tmpfile = generate_image_placeholder(surface, tmpdir)
+                placeholder_relpath = os.path.join('_placeholders', dst[len('game/'):])
+                zout.write(tmpfile, placeholder_relpath)
+
+            # Prepare a list of remote files for renpy.loader
+            remote_files_str = ''
+            for f in sorted(self.remote_files):
+                remote_files_str += f + "\n"
+                remote_files_str += self.remote_files[f] + "\n"
+            zout.writestr('game/renpyweb_remote_files.txt',
+                          remote_files_str,
+                          zipfile.ZIP_DEFLATED)
+
+            # Clean-up
+            shutil.rmtree(tmpdir)
+            zout.close()
 
     def find_web():
 
@@ -140,83 +228,175 @@ init python:
                 return f_rule
         return False
 
-    def repack_for_progressive_download(p):
+    def generate_web_icons(p, destination):
         """
-        Filter out downloadable resources and generate placeholders
+        Checks if the web-icon.png file exists in the game folder and generates
+        required icons for PWA in subdirectory icons/ in the destination folder.
+        If no web-icon.png is found, the default Ren'Py icon is used instead in
+        the web folder, if exists.
+        """
+        # Check if there's a custom icon in the game directory
+        icon_path = os.path.join(p.path, 'web-icon.png')
+        # Generate a default icon if there isn't
+        if not os.path.exists(icon_path):
+            icon_path = os.path.join(WEB_PATH, 'web-icon.png')
+
+        # Check if path is a valid image
+        if not os.path.exists(icon_path):
+            # Skip pwa support if no icon is found
+            return
+        # Create icons directory
+        icons_dir = os.path.join(destination, 'icons')
+        if not os.path.isdir(icons_dir):
+            os.makedirs(icons_dir, 0o777)
+        # Check the height and width of the icon
+        icon = pygame_sdl2.image.load(icon_path)
+        icon_width = icon.get_width()
+        icon_height = icon.get_height()
+        if icon_width != icon_height:
+            raise RuntimeError("The icon must be square")
+        if icon_width < 512:
+            raise RuntimeError("The icon must be at least 512x512 pixels")
+
+        scale = renpy.display.scale.smoothscale
+
+        best_compression = 9
+        # Generate 512x512 icon, if needed
+        if icon_width != 512:
+            icon512 = scale(icon, (512, 512))
+            pygame_sdl2.image.save(icon512, os.path.join(icons_dir, 'icon-512x512.png'), best_compression)
+        else:
+            pygame_sdl2.image.save(icon, os.path.join(icons_dir, 'icon-512x512.png'), best_compression)
+
+        # Generate 384x384 icon
+        icon384 = scale(icon, (384, 384))
+        pygame_sdl2.image.save(icon384, os.path.join(icons_dir, 'icon-384x384.png'), best_compression)
+
+        # Generate 192x192 icon
+        icon192 = scale(icon, (192, 192))
+        pygame_sdl2.image.save(icon192, os.path.join(icons_dir, 'icon-192x192.png'), best_compression)
+
+        # Generate 152x152 icon
+        icon152 = scale(icon, (152, 152))
+        pygame_sdl2.image.save(icon152, os.path.join(icons_dir, 'icon-152x152.png'), best_compression)
+
+        # Generate 144x144 icon
+        icon144 = scale(icon, (144, 144))
+        pygame_sdl2.image.save(icon144, os.path.join(icons_dir, 'icon-144x144.png'), best_compression)
+
+        # Generate 128x128 icon
+        icon128 = scale(icon, (128, 128))
+        pygame_sdl2.image.save(icon128, os.path.join(icons_dir, 'icon-128x128.png'), best_compression)
+
+        # Generate 96x96 icon
+        icon96 = scale(icon, (96, 96))
+        pygame_sdl2.image.save(icon96, os.path.join(icons_dir, 'icon-96x96.png'), best_compression)
+
+        # Generate 72x72 icon
+        icon72 = scale(icon, (72, 72))
+        pygame_sdl2.image.save(icon72, os.path.join(icons_dir, 'icon-72x72.png'), best_compression)
+
+        # Add 128 pixels to the 384x384 icon to generate 512x512 icon maskable
+        icon512_maskable = pygame_sdl2.Surface((512, 512), pygame_sdl2.SRCALPHA)
+        icon512_maskable.blit(icon384, (64, 64))
+        pygame_sdl2.image.save(icon512_maskable, os.path.join(icons_dir, 'icon-512x512-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 384x384 to generate 384x384 icon maskable
+        icon384_maskable = scale(icon512_maskable, (384, 384))
+        pygame_sdl2.image.save(icon384_maskable, os.path.join(icons_dir, 'icon-384x384-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 192x192 to generate 192x192 icon maskable
+        icon192_maskable = scale(icon512_maskable, (192, 192))
+        pygame_sdl2.image.save(icon192_maskable, os.path.join(icons_dir, 'icon-192x192-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 152x152 to generate 152x152 icon maskable
+        icon152_maskable = scale(icon512_maskable, (152, 152))
+        pygame_sdl2.image.save(icon152_maskable, os.path.join(icons_dir, 'icon-152x152-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 144x144 to generate 144x144 icon maskable
+        icon144_maskable = scale(icon512_maskable, (144, 144))
+        pygame_sdl2.image.save(icon144_maskable, os.path.join(icons_dir, 'icon-144x144-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 128x128 to generate 128x128 icon maskable
+        icon128_maskable = scale(icon512_maskable, (128, 128))
+        pygame_sdl2.image.save(icon128_maskable, os.path.join(icons_dir, 'icon-128x128-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 96x96 to generate 96x96 icon maskable
+        icon96_maskable = scale(icon512_maskable, (96, 96))
+        pygame_sdl2.image.save(icon96_maskable, os.path.join(icons_dir, 'icon-96x96-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 72x72 to generate 72x72 icon maskable
+        icon72_maskable = scale(icon512_maskable, (72, 72))
+        pygame_sdl2.image.save(icon72_maskable, os.path.join(icons_dir, 'icon-72x72-maskable.png'), best_compression)
+
+    def generate_files_catalog(destination):
+        """
+        Generates a JSON file with information about the game files.
+        This file is used by the service worker to cache the game files.
+
+        :param destination: string, The destination path where the files will be copied to and where
+        game folder is located.
+        :param version: string, the version of the game. Should be the same as the version in the
+        manifest.json file.
+
+        :return: None
+        """
+        catalog = {
+            "files": [ ],
+            "version": int(time.time())
+        }
+        # Walk through the game folder
+        for root, dirs, files in os.walk(destination):
+            for file in files:
+                # Get the absolute path of the file
+                file_path = os.path.join(root, file)
+                # Convert it to relative path of the file
+                file_name = os.path.relpath(file_path, destination)
+                # Replace backslashes with forward slashes
+                file_name = file_name.replace("\\", "/")
+                # Add the file to the catalog
+                catalog["files"].append(file_name)
+
+        with io.open(os.path.join(destination, "pwa_catalog.json"), 'w', encoding='utf-8') as f:
+            f.write(json.dumps(catalog))
+
+    def prepare_pwa_files(p, destination):
+        """
+        Replaces in service-worker.js the cache name with the game name and current timestamp.
+        Replace in manifest.json the project name with the ones in the game.
         """
 
-        destination = get_web_destination(p)
+        # Open the service-worker.js file
+        with io.open(os.path.join(destination, "service-worker.js"), encoding='utf-8') as f:
+            service_worker = f.read()
 
-        path_filters = []
-        load_filters(p, path_filters)
+        # Use re to slugify the game name, avoiding use of 3rd party libraries
+        slugified_name = re.sub(r'\W+', '-', p.dump['build']['display_name']).lower()
+        service_worker = service_worker.replace('renpy-web-game', slugified_name)
 
-        shutil.move(
-            os.path.join(destination, 'game.zip'),
-            os.path.join(destination, 'game-old.zip'))
-        zin  = zipfile.ZipFile(os.path.join(destination, 'game-old.zip'))
-        zout = zipfile.ZipFile(os.path.join(destination, 'game.zip'), 'w')
-        remote_files = {}
-        tmpdir = tempfile.mkdtemp()
+        # Write the file
+        with io.open(os.path.join(destination, "service-worker.js"), 'w', encoding='utf-8') as f:
+            f.write(service_worker)
 
-        for m in zin.infolist():
+        # Open the manifest.json file
+        with io.open(os.path.join(destination, "manifest.json"), encoding='utf-8') as f:
+            manifest = json.load(f)
 
-            base, ext = os.path.splitext(m.filename)
+        # Replace the project name with the ones in the game
+        manifest["name"] = p.dump['build']['display_name']
 
-            # Images
-            if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
-                and filters_match(path_filters, m.filename, 'image')):
+        screen_size = p.dump.get("size")
+        # If width are smaller than height, set the orientation to portrait. If not, leave it as is.
+        if screen_size[0] < screen_size[1]:
+            manifest["orientation"] = "portrait-primary"
 
-                zin.extract(m, path=destination)
-                surface = pygame_sdl2.image.load(os.path.join(destination,m.filename))
-                (w,h) = (surface.get_width(),surface.get_height())
+        # Write the file
+        with io.open(os.path.join(destination, "manifest.json"), 'w', encoding='utf-8') as f:
+            f.write(json.dumps(manifest))
 
-                remote_files[m.filename[len('game/'):]] = 'image {},{}'.format(w,h)
+        generate_files_catalog(destination)
 
-                tmpfile = generate_image_placeholder(surface, tmpdir)
-                placeholder_relpath = os.path.join('_placeholders', m.filename[len('game/'):])
-                zout.write(tmpfile, placeholder_relpath)
-
-            # Musics (but not SFX - no placeholders for short, non-looping sounds)
-            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
-                and filters_match(path_filters, m.filename, 'music')):
-                zin.extract(m, path=destination)
-                remote_files[m.filename[len('game/'):]] = 'music -'
-
-            # Voices
-            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
-                and filters_match(path_filters, m.filename, 'voice')):
-                zin.extract(m, path=destination)
-                remote_files[m.filename[len('game/'):]] = 'voice -'
-
-            # Videos are currently not supported, strip them if not already
-            elif (ext.lower() in ('.ogv', '.webm', '.mp4', '.mkv', '.avi')):
-                pass
-
-            # Default: keep (extract & recompress to new .zip)
-            else:
-                # Not using zout.writestr(m, zin.read(m)) to avoid MemoryError
-                tmpfile = zin.extract(m, tmpdir)
-                date_time = time.mktime(m.date_time+(0,0,0))
-                os.utime(tmpfile, (date_time,date_time))
-                zout.write(tmpfile, m.filename, m.compress_type)
-
-        # Prepare a list of remote files for renpy.loader
-        remote_files_str = ''
-        for f in sorted(remote_files):
-            remote_files_str += f + "\n"
-            remote_files_str += remote_files[f] + "\n"
-        zout.writestr('game/renpyweb_remote_files.txt',
-                      remote_files_str,
-                      zipfile.ZIP_DEFLATED)
-
-        # Clean-up
-        shutil.rmtree(tmpdir)
-        zout.close()
-        zin.close()
-        os.unlink(os.path.join(destination, 'game-old.zip'))
-
-
-    def build_web(p, gui=True):
+    def build_web(p, gui=True, destination=None, launch=True):
 
         # Figure out the reporter to use.
         if gui:
@@ -227,7 +407,9 @@ init python:
         # Determine details.
         p.update_dump(True, gui=gui)
 
-        destination = get_web_destination(p)
+        if destination is None:
+            destination = get_web_destination(p)
+
         display_name = p.dump['build']['display_name']
 
         # Clean the folder, then remake it.
@@ -236,29 +418,72 @@ init python:
 
         os.makedirs(destination, 0o777)
 
+        files_filter = ProgressiveFilter(p, destination)
+
         # Use the distributor to make game.zip.
-        distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"), reporter=reporter, noarchive=True, scan=False)
+        distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"),
+                reporter=reporter, noarchive=True, scan=False, files_filter=files_filter, web_transform_renpy=True,)
 
         reporter.info(_("Preparing progressive download"))
-        repack_for_progressive_download(p)
+        files_filter.finalize()
 
         # Copy the files from WEB_PATH to destination.
         for fn in os.listdir(WEB_PATH):
-            if fn in { "game.zip", "hash.txt", "index.html" }:
+            if fn in { "game.zip", "hash.txt", "index.html", "web-icon.png" }:
                 continue
 
             shutil.copy(os.path.join(WEB_PATH, fn), os.path.join(destination, fn))
+
+        # Find the presplash and copy it over.
+        presplash = None
+
+        for fn in [ "web-presplash.png", "web-presplash.jpg", "web-presplash.webp" ]:
+            fullfn = os.path.join(p.path, fn)
+
+            if os.path.exists(fullfn):
+                presplash = fn
+                break
+
+        if presplash:
+            os.unlink(os.path.join(destination, "web-presplash.jpg"))
+            shutil.copy(os.path.join(p.path, presplash), os.path.join(destination, presplash))
 
         # Copy over index.html.
         with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
             html = f.read()
 
-        html = html.replace("%%TITLE%%", display_name)
+        html = html.replace("Ren'Py Web Game", display_name)
+
+        if presplash:
+            html = html.replace("web-presplash.jpg", presplash)
 
         with io.open(os.path.join(destination, "index.html"), "w", encoding='utf-8') as f:
             f.write(html)
 
-        webserver.start(destination)
+        generate_web_icons(p, destination)
+        prepare_pwa_files(p, destination)
+
+        # Zip up the game.
+
+        zip_targets = [ ]
+
+        for dn, dirs, files in os.walk(destination):
+            for directory in dirs:
+                zip_targets.append(os.path.join(dn, directory))
+            for file in files:
+                zip_targets.append(os.path.join(dn, file))
+
+        with zipfile.ZipFile(destination + ".zip", 'w') as zf:
+            for i, target in enumerate(zip_targets):
+                zf.write(target, os.path.relpath(target, destination))
+                reporter.progress(_("Creating package..."), i, len(zip_targets))
+
+        reporter.progress_done()
+
+        # Start the web server.
+
+        if launch:
+            webserver.start(destination)
 
 
     def launch_web():
@@ -309,7 +534,9 @@ screen web():
                             textbutton _("Open in Browser") action Jump("web_start")
                             textbutton _("Open build directory") action Jump("open_build_directory")
 
-                        add SPACER
+                            add SPACER
+
+                            textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
 
                 # Right side.
@@ -329,17 +556,8 @@ screen web():
 
                         text _("Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior.")
 
-                        add SPACER
-
-                        text _("Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported.")
-
-                        add SPACER
-
-                        text _("There are known issues with Safari and other Webkit-based browsers that may prevent games from running.")
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
-
-
 
 label web:
 
@@ -364,7 +582,7 @@ label web_launch:
 
 label open_build_directory():
     $ project.current.update_dump(True, gui=True)
-    $ OpenDirectory(get_web_destination(project.current))()
+    $ renpy.run(OpenDirectory(get_web_destination(project.current), absolute=True))
     jump web
 
 label web_start:
@@ -372,3 +590,25 @@ label web_start:
     $ webserver.start(get_web_destination(project.current))
     $ launch_web()
     jump web
+
+
+init python:
+
+    def web_build_command():
+        ap = renpy.arguments.ArgumentParser()
+        ap.add_argument("web_project", help="The path to the project directory.")
+        ap.add_argument("--launch", action="store_true", help="Starts a webserver and launches the game after build.")
+        ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
+
+        args = ap.parse_args()
+
+        if not WEB_PATH:
+            raise SystemExit("Web support is not available. Please download web support through the launcher or from the website, and try again.")
+
+        p = project.Project(args.web_project)
+
+        build_web(p=p, gui=False, launch=args.launch, destination=args.destination)
+
+        return False
+
+    renpy.arguments.register_command("web_build", web_build_command)

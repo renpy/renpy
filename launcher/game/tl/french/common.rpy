@@ -332,8 +332,6 @@
     old "return"
     new "retour"
 
-translate french strings:
-
     # renpy/common/00accessibility.rpy:76
     old "Font Override"
     new "Forcer la police"
@@ -392,7 +390,7 @@ translate french strings:
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
-    new "viewport"
+    new "fenêtre déroulante"
 
     # renpy/common/00accessibility.rpy:35
     old "horizontal scroll"
@@ -428,11 +426,11 @@ translate french strings:
 
     # renpy/common/00action_file.rpy:353
     old "Save slot %s: [text]"
-    new "Sauvegarder %s: [text]"
+    new "Sauvegarder %s : [text]"
 
     # renpy/common/00action_file.rpy:434
     old "Load slot %s: [text]"
-    new "Charger %s: [text]"
+    new "Charger %s : [text]"
 
     # renpy/common/00action_file.rpy:487
     old "Delete slot [text]"
@@ -488,7 +486,7 @@ translate french strings:
 
     # renpy/common/00director.rpy:1561
     old "(statement)"
-    new "(statement)"
+    new "(instruction)"
 
     # renpy/common/00director.rpy:1562
     old "(tag)"
@@ -508,7 +506,8 @@ translate french strings:
 
     # renpy/common/00director.rpy:1601
     old "(channel)"
-    new "(channel)"
+    # Automatic translation.
+    new "(canal)"
 
     # renpy/common/00director.rpy:1602
     old "(filename)"
@@ -528,7 +527,7 @@ translate french strings:
 
     # renpy/common/00director.rpy:1674
     old "Statement:"
-    new "Statement :"
+    new "Instruction :"
 
     # renpy/common/00director.rpy:1695
     old "Tag:"
@@ -544,7 +543,7 @@ translate french strings:
 
     # renpy/common/00director.rpy:1748
     old "Behind:"
-    new "Sous :"
+    new "Derrière :"
 
     # renpy/common/00director.rpy:1767
     old "Transition:"
@@ -552,7 +551,7 @@ translate french strings:
 
     # renpy/common/00director.rpy:1785
     old "Channel:"
-    new "Channel :"
+    new "Piste :"
 
     # renpy/common/00director.rpy:1803
     old "Audio Filename:"
@@ -732,7 +731,7 @@ translate french strings:
 
     # renpy/common/_developer/developer.rpym:57
     old "Show Image Load Log (F4)"
-    new "Montrer le log ne chargement des images (F4)"
+    new "Afficher le log de chargement des images (F4)"
 
     # renpy/common/_developer/developer.rpym:60
     old "Hide Image Load Log (F4)"
@@ -760,7 +759,7 @@ translate french strings:
 
     # renpy/common/_developer/developer.rpym:506
     old "Type to filter: "
-    new "Type à filtrer : "
+    new "Écrire pour filtrer : "
 
     # renpy/common/_developer/developer.rpym:631
     old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
@@ -785,3 +784,127 @@ translate french strings:
     # renpy/common/00preferences.rpy:493
     old "high contrast text"
     new "texte en contraste élevé"
+
+    # renpy/common/00preferences.rpy:511
+    old "audio when minimized"
+    new "audio quand minimisé"
+
+    # renpy/common/00preferences.rpy:531
+    old "main volume"
+    new "volume principal"
+
+    # renpy/common/00preferences.rpy:535
+    old "mute main"
+    new "sourdine générale"
+
+    # renpy/common/00speechbubble.rpy:299
+    old "Speech Bubble Editor"
+    new "Éditeur de bulles de dialogue"
+
+    # renpy/common/00speechbubble.rpy:304
+    old "(hide)"
+    new "(masquer)"
+
+    # renpy/common/00director.rpy:1748
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    new "Clic pour (dés)activer des attributs, clic droit pour (dés)activer les suppressions d'attributs."
+
+    # renpy/common/00director.rpy:1771
+    old "Click to set transform, right click to add to transform list."
+    new "Clic pour assigner le transform, clic droit pour ajouter à la liste des transforms."
+
+    # renpy/common/00director.rpy:1789
+    old "Click to set, right click to add to behind list."
+    new "Clic pour assigner, clic droit pour ajouter à la liste du \"behind\"."
+
+    # renpy/common/00preferences.rpy:528
+    old "audio when unfocused"
+    new "audio lors de la perte de focus"
+
+    # renpy/common/00preferences.rpy:537
+    old "web cache preload"
+    new "préchargement du cache web cache"
+
+    # renpy/common/00preferences.rpy:552
+    old "voice after game menu"
+    new "voix dans le menu de jeu"
+
+    # renpy/common/00sync.rpy:58
+    old "Sync downloaded."
+    new "Sync téléchargé."
+
+    # renpy/common/00sync.rpy:178
+    old "Could not connect to the Ren'Py Sync server."
+    new "Échec de la connexion au serveur Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:180
+    old "The Ren'Py Sync server timed out."
+    new "Le serveur Ren'Py Sync a mis trop de temps à répondre."
+
+    # renpy/common/00sync.rpy:182
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    new "Une erreur inconnue est arrivée lors de la connexion au serveur Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:255
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    new "Le serveur Ren'Py Sync ne reconnaît pas ce code sync. l'ID est peut-être invalide, ou il peut avoir expiré."
+
+    # renpy/common/00sync.rpy:397
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    new "Entrez l'ID sync que vous avez généré.\nN'entrez jamais un ID sync que vous n'avez pas généré vous-même."
+
+    # renpy/common/00sync.rpy:416
+    old "The sync ID is not in the correct format."
+    new "L'ID sync n'est pas dans un format correct."
+
+    # renpy/common/00sync.rpy:436
+    old "The sync could not be decrypted."
+    new "Le sync n'a pas pu être déchiffré."
+
+    # renpy/common/00sync.rpy:459
+    old "The sync belongs to a different game."
+    new "Le sync correspond à un autre jeu."
+
+    # renpy/common/00sync.rpy:464
+    old "The sync contains a file with an invalid name."
+    new "Le sync contient un fichier ayant un nom invalide."
+
+    # renpy/common/00sync.rpy:517
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    new "Vos sauvegardes vont être téléchargées sur le {a=https://sync.renpy.org}serveur Ren'Py Sync{/a}.\nVoulez-vous continuer ?"
+
+    # renpy/common/00sync.rpy:546
+    old "Enter Sync ID"
+    new "Entrez l'ID Sync"
+
+    # renpy/common/00sync.rpy:557
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    new "Ceci va contacter le {a=https://sync.renpy.org}serveur Ren'Py Sync{/a}."
+
+    # renpy/common/00sync.rpy:584
+    old "Sync Success"
+    new "Sync réussi"
+
+    # renpy/common/00sync.rpy:587
+    old "The Sync ID is:"
+    new "L'ID Sync est :"
+
+    # renpy/common/00sync.rpy:593
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    new "Vous pouvez utiliser cet ID pour transférer votre sauvegarde sur un autre appareil.\nCe sync expirera dans une heure.\nRen'Py Sync is soutenu par les {a=https://www.renpy.org/sponsors.html}Sponsors de Ren'Py's{/a}."
+
+    # renpy/common/00sync.rpy:619
+    old "Sync Error"
+    new "Erreur de Sync"
+
+    # renpy/common/00webvideo.rpy:5
+    old "Touch to play the video."
+    new "Touchez pour jouer la vidéo."
+
+    # renpy/common/00gui.rpy:456
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    new "Cette sauvegarde a été créée sur un autre appareil. Des faux fichiers de sauvegarde peuvent être utilisés pour endommager votre ordinateur. Faites-vous confiance au créateur de cette sauvegarde et à tous ceux qui auraient pu modifier le fichier ?"
+
+    # renpy/common/00gui.rpy:457
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    new "Faites-vous confiance à l'appareil sur lequel cette sauvegarde a été créée ? Vous ne devriez dire oui que si vous en êtes l'unique utilisateur ."

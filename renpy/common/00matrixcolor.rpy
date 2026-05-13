@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -38,6 +38,9 @@ init -1500 python:
 
         def __call__(self, other, done):
 
+            if isinstance(other, SplineMatrix):
+                other = other.matrix
+
             if type(other) is not type(self):
                 return self.get(self.value)
 
@@ -47,14 +50,58 @@ init -1500 python:
         def __mul__(self, other):
             return _MultiplyMatrix(self, other)
 
-        def __eq__(self, other):
-            if type(self) != type(other):
-                return False
 
-            return self.__dict__ == other.__dict__
+    class SplineMatrix(_BaseMatrix):
+        """
+        :doc: colormatrix
 
-        def __ne__(self, other):
-            return not (self == other)
+        A Matrix wrapper that uses a spline to interpolate between two
+        matrices. The spline is used to control how much of each of the
+        two matrices are used.
+
+        `matrix`
+            The matrix that will be interpolated to.
+
+        `spline`
+            The spline that is used for the interpolation. This must
+            be a list containing 3 or more floating point numbers. The
+            The first number is the starting amount (usually 0.0), the
+            last number is the ending amount (usually 1.0), and the values
+            in between are the knots:
+
+            * For a single knot (3-number list), a quadratic curve is used.
+            * For two knots (4-number list), a Bezier spline is used.
+            * For three or more knots, Catmull-Rom splines are used. For
+              Catmull-Rom splines, the first and last knots (second and
+              second-last numbers) are control nodes, and the other knots
+              are the amounts that the spline goes through.
+
+        For example, the following will use a quadratic curve to interpolate
+        from the start, towards the end, before returning back to the start. ::
+
+            show eileen happy:
+                center
+                matrixcolor BrightnessMatrix(0.0)
+                linear 2.0 matrixcolor SplineMatrix(BrightnessMatrix(1.0), [ 0.0, 1.0, 0.0 ])
+                repeat
+        """
+
+        def __init__(self, matrix, spline):
+            self.matrix = matrix
+            self.spline = spline
+
+        def __call__(self, other, done):
+
+            if type(other) is SplineMatrix:
+                other = other.matrix
+
+            if type(other) is not type(self.matrix):
+                return self.matrix(None, 1.0)
+
+            done = min(max(done, 0.0), 1.0)
+            done = renpy.atl.interpolate_spline(done, self.spline, float)
+            return self.matrix(other, done)
+
 
     class ColorMatrix(_BaseMatrix):
         """
@@ -66,7 +113,7 @@ init -1500 python:
 
         pass
 
-    class _MultiplyMatrix(ColorMatrix):
+    class _MultiplyMatrix(ColorMatrix, DictEquality):
         """
         :undocumented:
 
@@ -85,16 +132,13 @@ init -1500 python:
             return self.left(other.left, done) * self.right(other.right, done)
 
 
-    class IdentityMatrix(ColorMatrix):
+    class IdentityMatrix(ColorMatrix, DictEquality):
         """
         :doc: colormatrix
         :args: ()
 
         A ColorMatrix that can be used with :tpref:`matrixcolor` that does not
         change the color or alpha of what is supplied to it.
-
-        `value`
-            Is ignored.
         """
 
         def get(self, value):
@@ -104,7 +148,7 @@ init -1500 python:
                             0.0, 0.0, 0.0, 1.0, ])
 
 
-    class SaturationMatrix(ColorMatrix):
+    class SaturationMatrix(ColorMatrix, DictEquality):
         """
         :doc: colormatrix
 
@@ -123,7 +167,7 @@ init -1500 python:
             is based on the constants used for the luminance channel
             of an NTSC television signal. Since the human eye is
             mostly sensitive to green, more of the green channel is
-            kept then the other two channels.
+            kept than the other two channels.
         """
 
         def __init__(self, value, desat=(0.2126, 0.7152, 0.0722)):
@@ -141,7 +185,7 @@ init -1500 python:
                             I(r, 0), I(g, 0), I(b, 1), 0,
                             0, 0, 0, 1 ])
 
-    class TintMatrix(ColorMatrix):
+    class TintMatrix(ColorMatrix, DictEquality):
         """
         :doc: colormatrix
 
@@ -159,6 +203,9 @@ init -1500 python:
             self.color = Color(color)
 
         def __call__(self, other, done):
+
+            if type(other) is SplineMatrix:
+                other = other.matrix
 
             if type(other) is not type(self):
 
@@ -178,19 +225,18 @@ init -1500 python:
                 b = oldb + (b - oldb) * done
                 a = olda + (a - olda) * done
 
-            # To properly handle premultiplied alpha, the color channels
-            # have to be multiplied by the alpha channel.
-            r *= a
-            g *= a
-            b *= a
+            # Update the tint with opacity from the alpha channel.
+            r = 1 - (1 - r) * a
+            g = 1 - (1 - g) * a
+            b = 1 - (1 - b) * a
 
             # Return a Matrix.
             return Matrix([ r, 0, 0, 0,
                             0, g, 0, 0,
                             0, 0, b, 0,
-                            0, 0, 0, a ])
+                            0, 0, 0, 1 ])
 
-    class BrightnessMatrix(ColorMatrix):
+    class BrightnessMatrix(ColorMatrix, DictEquality):
         """
         :doc: colormatrix
 
@@ -211,7 +257,7 @@ init -1500 python:
                             0, 0, 1, value,
                             0, 0, 0, 1 ])
 
-    class OpacityMatrix(ColorMatrix):
+    class OpacityMatrix(ColorMatrix, DictEquality):
         """
         :doc: colormatrix
 
@@ -232,12 +278,12 @@ init -1500 python:
 
 
 
-    class ContrastMatrix(ColorMatrix):
+    class ContrastMatrix(ColorMatrix, DictEquality):
         """
         :doc: colormatrix
 
         A ColorMatrix that can be used with :tpref:`matrixcolor` to change
-        the brightness of an image, while leaving the Alpha channel
+        the contrast of an image, while leaving the Alpha channel
         alone.
 
         `value`
@@ -255,7 +301,7 @@ init -1500 python:
                             0, 0, 0, 1, ])
 
 
-    class ColorizeMatrix(ColorMatrix):
+    class ColorizeMatrix(ColorMatrix, DictEquality):
         """
         :doc: colormatrix
 
@@ -266,7 +312,7 @@ init -1500 python:
 
         The alpha channel is not touched.
 
-        This is inteded for use with a black and white image (or one that
+        This is intended for use with a black and white image (or one that
         has been desaturated with :func:`SaturationMatrix`), and will yield
         strange results when used with images that are not black and white.
 
@@ -305,7 +351,7 @@ init -1500 python:
                             0, 0, 0, 1, ])
 
 
-    class HueMatrix(ColorMatrix):
+    class HueMatrix(ColorMatrix, DictEquality):
         """
         :doc: colormatrix
 
@@ -334,7 +380,7 @@ init -1500 python:
                 0, 0, 0, 1.0 ])
 
 
-    class InvertMatrix(ColorMatrix):
+    class InvertMatrix(ColorMatrix, DictEquality):
         """
         :doc: colormatrix
 

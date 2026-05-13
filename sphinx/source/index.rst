@@ -15,25 +15,24 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
 
     简体中文的文档请参考这里：
 
-        https://renpy.cn/doc/
+        https://doc.renpy.cn/zh-CN/
 
     繁體中文的文件請參考這裡：
 
-        https://renpy.cn/doc-tw/
+        https://doc.renpy.cn/zh-TW/
 
-Getting Started
----------------
+
 .. toctree::
     :maxdepth: 3
+    :caption: Getting Started
 
     quickstart
     gui
 
-The Ren'Py Language
--------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: The Ren'Py Language
 
    language_basics
    label
@@ -43,31 +42,30 @@ The Ren'Py Language
    python
    conditional
    audio
+   audio_filters
    movie
    voice
 
-Text, Displayables, Transforms, and Transitions
------------------------------------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Text, Displayables, Transforms, and Transitions
 
    text
    translation
    displayables
    transforms
+   transform_properties
    transitions
-   atl
    matrixcolor
    layeredimage
    3dstage
    live2d
 
-Customizing Ren'Py
-------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Customizing Ren'Py
 
    style
    style_properties
@@ -79,23 +77,25 @@ Customizing Ren'Py
    preferences
    store_variables
    mouse
+   textshaders
 
-Tools
------
-
-.. toctree::
-    :maxdepth: 1
-
-    developer_tools
-    director
-
-Other Functionality
--------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Tools
+
+   launcher
+   developer_tools
+   director
+   testcases
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Other Functionality
 
    nvl_mode
+   bubble
    input
    side_image
    rooms
@@ -106,20 +106,18 @@ Other Functionality
    history
    multiple
    splashscreen_presplash
+   lifecycle
 
-Python and Ren'Py
------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Python and Ren'Py
 
    statement_equivalents
    save_load_rollback
    persistent
-   trans_trans_python
    gui_advanced
    screen_python
-   modes
    cdd
    cds
    custom_text_tags
@@ -129,52 +127,61 @@ Python and Ren'Py
    matrix
    model
    other
+   ren_py
+   fetch
+   screenshot
 
-Building, Updating, and Other Platforms
----------------------------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Building, Updating, and Other Platforms
 
    build
-   updater
    android
-   chromeos
    ios
-   iap
-   gesture
+   web
+   chromeos
    raspi
+   iap
+   updater
+   downloader
+   gesture
 
-End-User Documentation
-----------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: End-User Documentation
 
+   security
    problems
    environment_variables
    self_voicing
 
-Engine Developer Documentation
-------------------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Library and Tool Developer Documentation
+
+   template_projects
+   cli
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Engine Developer Documentation
 
    editor
    skins
    translating_renpy
 
-Changes, License, and Credits
------------------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Changes, License, and Credits
 
    changelog
    changelog6
    incompatible
-   distributor
    license
    credits
    sponsors
@@ -187,14 +194,11 @@ Indices
 * `Variable and Definition Index <std-var-index.html>`_
 * `Function and Class Index <py-function-class-index.html>`_
 * `Reserved Names Index <reserved.html>`_
+* `Shader Part Index <shader_parts.html>`_
 * `General Index <genindex.html>`_
 
 Example Scripts
 ---------------
 
-.. toctree::
-   :maxdepth: 1
-
-   thequestion
-   thequestion_nvl
-
+* :doc:`thequestion`
+* :doc:`thequestion_nvl`

@@ -25,11 +25,17 @@ class RenPyLexer(PythonLexer):
             if token == Token.Error and value == "$":
                 yield index, Token.Keyword, value
 
+            elif token == Token.Error and value == "!":
+                yield index, Token.Keyword, value
+
             elif token in [ Name, Operator.Word ] and value in KEYWORDS:
                 yield index, Token.Keyword, value
 
-            elif token in Name and value in PROPERTIES:
+            elif token in [ Name, Operator.Word ] and value in PROPERTIES:
                 yield index, Name.Attribute, value
+
+            elif token == Token.String.Interpol:
+                yield index, Token.String, value
 
             else:
                 yield index, token, value
@@ -56,7 +62,6 @@ def parse_var_node(env, sig, signode):
 
 style_seen_ids = set()
 
-
 def parse_style_node(env, sig, signode):
     m = re.match(r'(\S+)(.*)', sig)
 
@@ -70,10 +75,27 @@ def parse_style_node(env, sig, signode):
     ref = m.group(1)
 
     while ref in style_seen_ids:
-        print("duplicate id:", ref)
         ref = ref + "_alt"
 
     style_seen_ids.add(ref)
+
+    return ref
+
+
+scpref_seen_ids = set()
+
+def parse_scpref_node(env, sig, signode):
+    m = re.match(r'(\S+)(.*)', sig)
+
+    signode += sphinx.addnodes.desc_name(m.group(1), m.group(1))
+    signode += docutils.nodes.Text(m.group(2), m.group(2))
+
+    ref = m.group(1)
+
+    while ref in scpref_seen_ids:
+        ref = ref + "_alt"
+
+    scpref_seen_ids.add(ref)
 
     return ref
 
@@ -85,6 +107,7 @@ class PythonIndex(sphinx.domains.Index):
 
     def generate(self, docnames=None):
 
+
         if not isinstance(self.domain, sphinx.domains.python.PythonDomain):
             return [ ], False
 
@@ -92,11 +115,13 @@ class PythonIndex(sphinx.domains.Index):
 
         for name, oe in self.domain.data['objects'].items():
 
-            docname = oe[0]
-            kind = oe[1]
+            docname = oe.docname
+            kind = oe.objtype
 
             if kind == "function" or kind == "class":
                 entries.append((name, 0, docname, name, None, None, ''))
+
+        print(len(entries), "entries")
 
         content = { }
 
@@ -176,10 +201,13 @@ def setup(app):
         app.add_lexer("renpy", RenPyLexer())
     else:
         app.add_lexer('renpy', RenPyLexer)
+
     app.add_object_type("var", "var", "single: %s (variable)", parse_node=parse_var_node)
     app.add_object_type("style-property", "propref", "single: %s (style property)", parse_node=parse_style_node)
     app.add_object_type("transform-property", "tpref", "single: %s (transform property)")
+    app.add_object_type("screen-property", "scpref", "single: %s (screen property)", parse_node=parse_scpref_node)
     app.add_object_type("text-tag", "tt", "single: %s (text tag)")
+    app.add_object_type("textshader", "textshader" "single: %s (text shader)")
 
     add_index(app, "std", "style-property", "Style Property Index")
     add_index(app, "std", "transform-property", "Transform Property Index")

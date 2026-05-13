@@ -9,7 +9,7 @@ translate japanese start_0e6a5bb4:
 translate japanese start_d3abb53c:
 
     # e "In this tutorial, we'll teach you the basics of Ren'Py, so you can make games of your own. We'll also demonstrate many features, so you can see what Ren'Py is capable of."
-    e "このチュートリアルでRen'Pyの基本的な部分について教えるので、あなた自身のゲームを作ることが可能です。私たちはたくさんのデモも見せるので、Ren'Pyでできることを見ていって下さい。"
+    e "このチュートリアルでRen'Pyの基本的な部分について教えて、あなたが自身のゲームを作れるようにします。私たちはたくさんのデモを見せるので、Ren'Pyでできることを見ていって下さい。"
 
 # game/script.rpy:205
 translate japanese end_b2482727:
@@ -21,7 +21,7 @@ translate japanese end_b2482727:
 translate japanese end_38362e36:
 
     # e "If you'd like to see a full Ren'Py game, select \"The Question\" in the launcher."
-    e "Ren'Pyの完全なゲームを見たい場合は、ランチャーで、\"The Question\" を選んでください。"
+    e "Ren'Pyの完成したゲームを見たい場合は、ランチャーで、\"The Question\" を選んでください。"
 
 # game/script.rpy:209
 translate japanese end_02527d05:
@@ -45,7 +45,7 @@ translate japanese end_762dc07a:
 translate japanese end_a634d396:
 
     # e "We look forward to seeing what you create with Ren'Py. Have fun!"
-    e "Ren'Pyで制作したものを楽しみにしています。'"
+    e "Ren'Pyでの制作物を楽しみにしています。'"
 
 translate japanese strings:
 

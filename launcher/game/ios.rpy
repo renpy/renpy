@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -59,6 +59,7 @@ init python:
     if RENIOS_PATH:
         import renios.create
         import renios.image
+        import renios.interface
 
     def IOSState():
         if not RENIOS_PATH:
@@ -123,17 +124,19 @@ init python:
         return os.path.join(persistent.xcode_projects_directory, xcode_name(p.name))
 
     def ios_create(p=None, gui=True, target=None):
-        project.current.update_dump(force=True, gui=gui)
+        if p is None:
+            p = project.current
+        p.update_dump(force=True, gui=gui)
 
-        name = project.current.dump.get("name", None)
-        version = project.current.dump.get("version", None)
+        name = p.dump.get("name", None) or project.name
+        version = p.dump.get("version", None) or "0.0"
 
         dest = xcode_project(p, target)
 
         if gui:
             iface = MobileInterface("ios")
         else:
-            iface = rapt.interface.Interface()
+            iface = renios.interface.Interface()
 
         if os.path.exists(dest):
             if not iface.yesno(_("The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?")):
@@ -151,6 +154,30 @@ init python:
         renios.create.create_project(iface, dest, name, version)
 
         ios_populate(p, gui=gui, target=target)
+
+
+    def eliminate_pycache(directory):
+        """
+        Eliminates the __pycache__ directory, and moves the files in it up a level,
+        renaming them to remove the cache tag.
+        """
+
+        print("Eliminating __pycache__...")
+
+        import pathlib
+        import sys
+
+        paths = list(pathlib.Path(directory).glob("**/__pycache__/*.pyc"))
+
+        for p in paths:
+            name = p.stem.partition(".")[0]
+            p.rename(p.parent.parent / (name + ".pyc"))
+
+        paths = list(pathlib.Path(directory).glob("**/__pycache__"))
+
+        for p in paths:
+            p.rmdir()
+
 
     def ios_populate(p=None, gui=True, target=None):
         """
@@ -180,6 +207,8 @@ init python:
             packagedest=dist,
             report_success=False,
             )
+
+        eliminate_pycache(dist)
 
         main_fn = os.path.join(dist, "main.py")
 
@@ -212,10 +241,17 @@ init python:
 
     def launch_xcode():
         dist = xcode_project(None)
-        name = project.current.dump.get("name", None)
-        xcodeproj = "{}/{}.xcodeproj".format(dist, name)
 
-        subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
+        if not os.path.exists(dist):
+            return
+
+        for fn in os.listdir(dist):
+            if fn.endswith(".xcodeproj"):
+                xcodeproj = os.path.join(dist, fn)
+                subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
+
+                break
+
 
 screen ios:
 
@@ -299,6 +335,10 @@ screen ios:
                                 textbutton _("Launch Xcode"):
                                     action IOSIfState(state, IOS_OK, launch_xcode)
                                     hovered tt.Action(IOS_XCODE_TEXT)
+
+                            add SPACER
+
+                            textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
                     add SPACER
                     add SEPARATOR2
@@ -388,9 +428,12 @@ init python:
     def ios_create_command():
         ap = renpy.arguments.ArgumentParser()
         ap.add_argument("project", help="The path to the Ren'Py project.")
-        ap.add_argument("destination", help="The path the iOS project that will be created.")
+        ap.add_argument("destination", help="The path to the iOS project that will be created.")
 
         args = ap.parse_args()
+
+        if not RENIOS_PATH:
+            raise SystemExit("iOS support (renios) is not available. Please download renios through the launcher or from the website, and try again.")
 
         p = project.Project(args.project)
 
@@ -404,9 +447,12 @@ init python:
     def ios_populate_command():
         ap = renpy.arguments.ArgumentParser()
         ap.add_argument("project", help="The path to the Ren'Py project.")
-        ap.add_argument("destination", help="The path the iOS project that will be created.")
+        ap.add_argument("destination", help="The path to the iOS project that will be created.")
 
         args = ap.parse_args()
+
+        if not RENIOS_PATH:
+            raise SystemExit("iOS support (renios) is not available. Please download renios through the launcher or from the website, and try again.")
 
         p = project.Project(args.project)
 
@@ -415,4 +461,3 @@ init python:
         return False
 
     renpy.arguments.register_command("ios_populate", ios_populate_command)
-

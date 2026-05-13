@@ -30,13 +30,12 @@ After changing the settings, reboot the Raspberry Pi.
 Configuring Ren'Py
 ------------------
 
-As Rasberry Pi support doesn't ship with Ren'Py itself, it's necessary to
-download two files. The first is the Linux version of the SDK, and the
-second is the Raspberry Pi support files.
+Running on a Raspberry Pi requires the Arm Linux SDK. This version of
+Ren'Py includes support for all other platforms, and can be downloaded
+from the downloads pages for Ren'Py 7.5 and later.
 
-Untar the Linux version of the SDK, change into it, then untar the Raspberry
-Pi support files. When done correctly, the SDK will have a lib/linux-armv7l
-directory alongside lib/linux-i686 and lib/linux-x86_64.
+Once you have the ARM-Linux SDK, untar it, and change in to the newly-created
+directory.
 
 Running a Game
 --------------
@@ -47,3 +46,5 @@ the project, using a command like::
 
     ./renpy.sh /path/to/project
 
+This same approach can be used to play Ren'Py games that do not directly
+support the Raspberry Pi.

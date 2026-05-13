@@ -431,3 +431,15 @@
     # gui.rpy:457
     old "## NVL-mode."
     new "## Modo-NVL"
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    new "## Habilitar comprobaciones de propiedades no válidas o inestables en pantallas o transformaciones."
+
+    # gui/game/gui.rpy:347
+    old "## Additional space to add between history screen entries."
+    new "## Espacio adicional para añadir entre las entradas de la pantalla de historial."
+
+    # gui/game/gui.rpy:331
+    old "## What to do with unscrollable scrollbars in the game menu. \"hide\" hides them, while None shows them."
+    new "## Qué hacer con las barras de desplazamiento no desplegables en el menú del juego. \"hide\" las oculta, mientras que None las muestra."

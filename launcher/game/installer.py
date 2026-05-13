@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,8 +28,14 @@ import tarfile
 import shutil
 import subprocess
 import renpy
+import stat
 
-from store import _, config, interface # type: ignore
+VERSION = 1
+
+# True if the installer should run in quiet mode.
+quiet = False
+
+from store import _, config, interface, project, Jump # type: ignore
 
 temp_exists = False
 
@@ -45,14 +51,16 @@ def _ensure_temp():
 
     backups = os.path.join(config.renpy_base, "tmp", "installer", "backups")
 
-    if not os.path.exists(backups):
-        os.makedirs(os.path.dirname(backups))
+    try:
+        if not os.path.exists(backups):
+            os.makedirs(os.path.dirname(backups))
+    except Exception:
+        pass
 
     temp_exists = True
 
 # The target directory that the extensions API operates on.
 target = None
-
 
 def set_target(directory):
     """
@@ -63,6 +71,8 @@ def set_target(directory):
 
     global target
     target = directory
+
+    _clean("temp:", 3)
 
 
 def _path(filename):
@@ -87,10 +97,40 @@ def _path(filename):
         base = os.path.basename(rest.rpartition(":")[2])
         return os.path.join(backups, base + "." + str(time.time()))
 
+    if prefix == "renpy":
+        return os.path.join(config.renpy_base, rest)
+
     if target is None:
         raise Exception("The target directory has not been set.")
 
     return os.path.join(target, filename)
+
+
+def _clean(directory, age=3):
+    """
+    Removes files from `directory` that are older than `age` days.
+    """
+
+    directory = _path(directory)
+
+    for root, dirs, files in os.walk(directory, topdown=False):
+        for f in files:
+            filename = os.path.join(root, f)
+            mtime = os.stat(filename).st_mtime
+            if time.time() - mtime > age * 86400:
+                try:
+                    os.unlink(filename)
+                except Exception:
+                    pass
+
+
+        if root != directory:
+
+            try:
+                os.rmdir(root)
+            except Exception:
+                pass
+
 
 def _friendly(filename):
     """
@@ -123,14 +163,13 @@ def _check_hash(filename, hashj):
     except Exception:
         return False
 
-
 # The name and url of the file that is currently being downloaded. This is meant to
 # to be used by the interface screens to show the user what files are being
 # downloaded.
 download_file = ""
 download_url = ""
 
-def download(url, filename, hash=None):
+def download(url, filename, hash=None, headers=None, requests_kwargs={}):
     """
     Downloads `url` to `filename`, a tempfile.
     """
@@ -149,9 +188,13 @@ def download(url, filename, hash=None):
 
     progress_time = time.time()
 
+    all_headers = {"User-Agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36 renpy/8'}
+    if headers:
+        all_headers.update(headers)
+
     try:
 
-        response = requests.get(url, stream=True)
+        response = requests.get(url, stream=True, proxies=renpy.exports.proxies, timeout=15, headers=all_headers, **requests_kwargs)
         response.raise_for_status()
 
         total_size = int(response.headers.get('content-length', 1))
@@ -167,40 +210,84 @@ def download(url, filename, hash=None):
 
                 if time.time() - progress_time > 0.1:
                     progress_time = time.time()
-                    interface.processing(
-                        _("Downloading [installer.download_file]..."),
-                        complete=downloaded, total=total_size)
+                    if not quiet:
+                        interface.processing(
+                            _("Downloading [installer.download_file]..."),
+                            complete=downloaded, total=total_size)
 
     except requests.HTTPError as e:
+        if not quiet:
+            raise
+
         interface.error(_("Could not download [installer.download_file] from [installer.download_url]:\n{b}[installer.download_error]"))
 
     if hash is not None:
+        if not quiet:
+            raise Exception("Hash check failed.")
         if not _check_hash(filename, hash):
             interface.error(_("The downloaded file [installer.download_file] from [installer.download_url] is not correct."))
 
 class _FixedZipFile(zipfile.ZipFile):
     """
-    Patches zipfile.zipfile so it sets the executable bit when necessary.
+    A patched version of zipfile.ZipFile that adds support for:
+
+    * Unix permissions bits.
+    * Unix symbolic links.
     """
 
-    def extract(self, member, path=None, pwd=None):
+    def _extract_member(self, member, targetpath, pwd):
 
         if not isinstance(member, zipfile.ZipInfo):
             member = self.getinfo(member)
 
-        if path is None:
-            path = os.getcwd()
+        # build the destination pathname, replacing
+        # forward slashes to platform specific separators.
+        arcname = member.filename.replace('/', os.path.sep)
 
-        ret_val = self._extract_member(member, path, pwd) # type: ignore
+        if os.path.altsep:
+            arcname = arcname.replace(os.path.altsep, os.path.sep)
+        # interpret absolute pathname as relative, remove drive letter or
+        # UNC path, redundant separators, "." and ".." components.
+        arcname = os.path.splitdrive(arcname)[1]
+        invalid_path_parts = ('', os.path.curdir, os.path.pardir)
+        arcname = os.path.sep.join(x for x in arcname.split(os.path.sep) if x not in invalid_path_parts)
+
+        targetpath = os.path.join(targetpath, arcname)
+        targetpath = os.path.normpath(targetpath)
+
+        # Create all upper directories if necessary.
+        upperdirs = os.path.dirname(targetpath)
+        if upperdirs and not os.path.exists(upperdirs):
+            os.makedirs(upperdirs)
+
+        if member.filename.endswith("/"):
+            if not os.path.isdir(targetpath):
+                os.mkdir(targetpath)
+            return targetpath
+
         attr = member.external_attr >> 16
 
-        if attr:
-            os.chmod(ret_val, attr)
+        if stat.S_ISLNK(attr):
 
-        return ret_val
+            with self.open(member, pwd=pwd) as source:
+                linkto = source.read()
+
+            os.symlink(linkto, targetpath)
+
+        else:
+
+            with self.open(member, pwd=pwd) as source, open(targetpath, "wb") as target:
+                shutil.copyfileobj(source, target)
+
+            if attr:
+                os.chmod(targetpath, attr)
+
+        return targetpath
+
 
 # The name of the archive being unpacked.
 unpack_archive = ""
+
 
 def unpack(archive, destination):
     """
@@ -212,7 +299,8 @@ def unpack(archive, destination):
     global unpack_archive
     unpack_archive = _friendly(archive)
 
-    interface.processing(_("Unpacking [installer.unpack_archive]..."))
+    if not quiet:
+        interface.processing(_("Unpacking [installer.unpack_archive]..."))
 
     archive = _path(archive)
     destination = _path(destination)
@@ -242,21 +330,50 @@ def unpack(archive, destination):
     finally:
         os.chdir(old_cwd)
 
+
+def exists(filename):
+    """
+    Returns true if `filename` exists.
+    """
+
+    return os.path.exists(_path(filename))
+
+
 def remove(filename):
     """
     Removes a file or directory from the target directory, backing it up
     the temporary directory.
     """
 
-    shutil.move(_path(filename), _path("backup:" + filename))
+    if not exists(filename):
+        return
+
+    backup = _path("backup:" + filename)
+    shutil.move(_path(filename), backup)
+
+    # Now, touch everything so _cleanup doesn't get it too quickly.
+
+    if os.path.isdir(backup):
+        for root, dirs, files in os.walk(backup):
+            for f in files:
+                try:
+                    os.utime(os.path.join(root, f), None)
+                except Exception:
+                    pass
+    else:
+        try:
+            os.utime(backup, None)
+        except Exception:
+            pass
 
 def move(old_filename, new_filename):
     """
     Moves a filename from `old_filename` to `new_filename`.
     """
 
-    remove(old_filename)
+    remove(new_filename)
     shutil.move(_path(old_filename), _path(new_filename))
+
 
 def mkdir(dirname):
     """
@@ -266,6 +383,7 @@ def mkdir(dirname):
     if not os.path.exists(_path(dirname)):
         os.makedirs(_path(dirname))
 
+
 def info(message, **kwargs):
     """
     Displays `message` to the user, asking them to click through or
@@ -274,6 +392,7 @@ def info(message, **kwargs):
 
     interface.info(message, cancel=Jump("front_page"), **kwargs)
 
+
 def processing(message, **kwargs):
     """
     Displays `message` to the user, without waiting.
@@ -281,13 +400,27 @@ def processing(message, **kwargs):
 
     interface.processing(message, **kwargs)
 
+
+def error(message, **kwargs):
+    """
+    Displays `message` to the user, as an error.
+    """
+
+    interface.error(message)
+
+
 install_args = [ ]
 install_error = ""
 
-def run(*args):
+def run(*args, **kwargs):
     """
     Runs a program with the given arguments, in the target directory.
     """
+
+    environ = { renpy.exports.fsencode(k) : renpy.exports.fsencode(v) for k, v in os.environ.items() }
+
+    for k, v in kwargs.pop("environ", {}).items():
+        environ[renpy.exports.fsencode(k)] = renpy.exports.fsencode(v)
 
     global install_args
     global install_error
@@ -295,7 +428,7 @@ def run(*args):
     args = [ renpy.exports.fsencode(i) for i in args ]
 
     try:
-        subprocess.check_call(args, cwd=target)
+        subprocess.check_call(args, cwd=target, env=environ) # type: ignore
     except Exception as e:
         install_args = args
         install_error = str(e)
@@ -303,12 +436,68 @@ def run(*args):
         interface.error(_("Could not run [installer.install_args!r]:\n[installer.install_error]"))
 
 
+_renpy = renpy
 
-def main():
-    set_target("/tmp")
-    download("https://code.visualstudio.com/sha/download?build=stable&os=linux-x64", "temp:vscode.tar.gz")
-    remove("VSCode-linux-x64")
-    unpack("temp:vscode.tar.gz", ".")
-    mkdir("VSCode-linux-x64/data")
-    processing(_("Installing the Ren'Py extension."))
-    run("VSCode-linux-x64/bin/code", "--install-extension", "LuqueDaniel.languague-renpy")
+def manifest(url, renpy=False, insecure=False):
+    """
+    Executes the manifest at `url`.
+
+    `renpy`
+        If true, the manifest applies to Ren'Py. If False, the manifest applies
+        to the current project.
+
+    `insecure`
+        If true, verificaiton is disabled.
+    """
+
+    import renpy.ecsign
+
+    download(url, "temp:manifest.py")
+
+    with open(_path("temp:manifest.py"), "rb") as f:
+        manifest = f.read()
+
+    if not insecure:
+        download(url + ".sig", "temp:manifest.py.sig")
+
+        with open(_path("temp:manifest.py.sig"), "rb") as f:
+            sig = f.read()
+
+        key = renpy.ecsign.pem_to_der(_renpy.exports.open_file("renpy_ecdsa_public.pem").read())
+
+        if not renpy.ecsign.verify_data(manifest, key, sig):
+            error(_("The manifest signature is not valid."))
+            return
+
+    if renpy:
+        set_target(config.renpy_base)
+    else:
+        if project.current is None:
+            error(_("No project has been selected."))
+            return
+
+        set_target(project.current.path)
+
+    exec(manifest.decode("utf-8"), {}, {})
+
+
+def local_manifest(filename, renpy=False):
+    """
+    Executes the manifest in `filename`.
+
+    `renpy`
+        If true, the manifest applies to Ren'Py. If False, the manifest applies
+        to the current project.
+    """
+
+    if renpy:
+        set_target(config.renpy_base)
+    else:
+        if project.current is None:
+            error(_("No project has been selected."))
+            return
+
+        set_target(project.current.path)
+
+    with open(filename, "r") as f:
+        exec(f.read(), {}, {})

@@ -9,12 +9,23 @@ import sys
 
 
 def check_notarization():
-    p = subprocess.Popen([
-        "xcrun", "altool",
-        "--notarization-history", "0",
-        "--asc-provider", "XHTE5H7Z79",
-        "-u", "tom@rothamel.us", "-p", "@keychain:altool",
-        "--output-format", "xml" ], stdout=subprocess.PIPE)
+    p = subprocess.Popen(
+        [
+            "xcrun",
+            "altool",
+            "--notarization-history",
+            "0",
+            "--asc-provider",
+            "XHTE5H7Z79",
+            "-u",
+            "tom@rothamel.us",
+            "-p",
+            "@keychain:altool",
+            "--output-format",
+            "xml",
+        ],
+        stdout=subprocess.PIPE,
+    )
 
     plist = p.communicate()[0]
 
@@ -24,12 +35,11 @@ def check_notarization():
 
 
 def main():
-
     start = time.time()
     next_check = start + 60
+    failures = 0
 
     while True:
-
         now = time.time()
 
         while next_check < now:
@@ -37,9 +47,18 @@ def main():
 
         time.sleep(next_check - now)
 
-        status = check_notarization()
+        try:
+            status = check_notarization()
 
-        now = time.time()
+        except Exception as e:
+            print("Faile to check notarization status: %r" % e)
+            failures += 1
+
+            if failures >= 4:
+                raise e
+            else:
+                failures = 0
+                continue
 
         print(round(time.time() - start), "notarization", status, file=sys.stderr)
 

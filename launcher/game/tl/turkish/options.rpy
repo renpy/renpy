@@ -201,3 +201,16 @@ translate turkish strings:
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## itch.io projesine bağlı, eğik çizgi ile ayrılmış kullanıcı adı ve proje adı."
 
+
+translate turkish strings:
+
+    # gui/game/options.rpy:47
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    # Automatic translation.
+    new "## Bu üç değişken, diğer şeylerin yanı sıra, hangi mikserlerin varsayılan olarak oynatıcıya gösterileceğini kontrol eder. Bunlardan birini False olarak ayarlamak ilgili mikseri gizleyecektir."
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    # Automatic translation.
+    new "## Uygulama içi satın alımları gerçekleştirmek için bir Google Play lisans anahtarı gereklidir. Google Play geliştirici konsolunda, \"Para Kazan\" > \"Para Kazanma Kurulumu\" > \"Lisanslama\" altında bulunabilir."
+

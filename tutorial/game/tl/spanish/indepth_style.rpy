@@ -110,7 +110,7 @@ translate spanish style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate spanish style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "Finalmente, está la sentencia 'style', que crea o cambia un estilo nombrado. Al darle a 'Text' el argumento de estilo, le decimos que use el estilo 'blue_text'."
 
 # game/indepth_style.rpy:180
@@ -122,7 +122,7 @@ translate spanish style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate spanish style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "Por defecto, el padre del estilo tiene el mismo nombre, con el prefijo hasta el primer guión bajo eliminado. Si el estilo no tiene un guión bajo en su nombre, se usa 'default'."
 
 # game/indepth_style.rpy:184
@@ -332,20 +332,20 @@ translate spanish style_text_5a0c2c02:
 # game/indepth_style.rpy:443
 translate spanish style_text_430c1959:
 
-    # e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
-    e "La propiedad 'text_align' controla el posicionamiento de múltiples líneas de texto dentro del visualizable 'text'. Por ejemplo, 0.5 significa centrado."
+    # e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+    e "La propiedad 'textalign' controla el posicionamiento de múltiples líneas de texto dentro del visualizable 'text'. Por ejemplo, 0.5 significa centrado."
 
 # game/indepth_style.rpy:445
 translate spanish style_text_19aa0833:
 
-    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
-    e "No cambia la posición del visualizable 'text'. Para eso, a menudo querrás establecer el 'text_align' y el 'xalign' en el mismo valor."
+    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value."
+    e "No cambia la posición del visualizable 'text'. Para eso, a menudo querrás establecer el 'textalign' y el 'xalign' en el mismo valor."
 
 # game/indepth_style.rpy:455
 translate spanish style_text_efc3c392:
 
-    # e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
-    e "Cuando tanto 'text_align' como 'xalign' se configuran en 1.0, el texto está correctamente justificado."
+    # e "When both textalign and xalign are set to 1.0, the text is properly right-justified."
+    e "Cuando tanto 'textalign' como 'xalign' se configuran en 1.0, el texto está correctamente justificado."
 
 # game/indepth_style.rpy:464
 translate spanish style_text_43be63b9:

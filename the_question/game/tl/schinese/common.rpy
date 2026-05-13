@@ -846,7 +846,7 @@ translate schinese strings:
     new "更新程序"
 
     # 00updater.rpy:1437
-    old "An error has occured:"
+    old "An error has occurred:"
     new "发生错误："
 
     # 00updater.rpy:1439

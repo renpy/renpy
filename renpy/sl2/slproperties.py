@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 from renpy.sl2.slparser import Keyword, Style, PrefixStyle
@@ -48,22 +48,28 @@ position_property_names = [
     "clipping",
     "xfill",
     "yfill",
-    # no center, since it can conflict with the center transform.
     "xcenter",
     "ycenter",
+    "xycenter",
+    # not center, since it can conflict with the center transform.
     "xsize",
     "ysize",
     "xysize",
+    # not size, which is a text style property
     "alt",
     "debug",
-    ]
+]
 
-position_properties = [ Style(i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
-text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ] # type: ignore
-side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
-viewport_position_properties = [ PrefixStyle("viewport_", i) for i in position_property_names ] # type: ignore
-scrollbar_position_properties = [ PrefixStyle("scrollbar_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
-vscrollbar_position_properties = [ PrefixStyle("vscrollbar_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
+position_properties = [Style(i) for i in position_property_names] + [
+    Keyword("tooltip"),
+    Keyword("group_alt"),
+    Keyword("extra_alt"),
+]  # type: ignore
+text_position_properties = [PrefixStyle("text_", i) for i in position_property_names]  # type: ignore
+side_position_properties = [PrefixStyle("side_", i) for i in position_property_names] + [Keyword("tooltip")]  # type: ignore
+viewport_position_properties = [PrefixStyle("viewport_", i) for i in position_property_names]  # type: ignore
+scrollbar_position_properties = [PrefixStyle("scrollbar_", i) for i in position_property_names] + [Keyword("tooltip")]  # type: ignore
+vscrollbar_position_properties = [PrefixStyle("vscrollbar_", i) for i in position_property_names] + [Keyword("tooltip")]  # type: ignore
 
 text_property_names = [
     "antialias",
@@ -73,8 +79,10 @@ text_property_names = [
     "color",
     "drop_shadow",
     "drop_shadow_color",
+    "emoji_font",
     "first_indent",
     "font",
+    "font_features",
     "size",
     "hyperlink_functions",
     "italic",
@@ -83,74 +91,102 @@ text_property_names = [
     "language",
     "layout",
     "line_leading",
+    "line_overlap_split",
     "line_spacing",
     "minwidth",
     "min_width",
     "newline_indent",
     "outlines",
     "outline_scaling",
+    "prefer_emoji",
     "rest_indent",
     "ruby_style",
+    "shaper",
     "slow_cps",
     "slow_cps_multiplier",
     "slow_abortable",
     "strikethrough",
+    "textalign",
+    "textshader",
     "text_align",
     "text_y_fudge",
     "underline",
     "hinting",
     "adjust_spacing",
     "mipmap",
+    "axis",
+    "instance",
+]
+
+text_keyword_property_names = [
+    "safe"
+]
+
+text_properties = [Style(i) for i in text_property_names] + [ Keyword(i) for i in text_keyword_property_names ]
+text_text_properties = [PrefixStyle("text_", i) for i in text_property_names] + [ Keyword("text_" + i) for i in text_keyword_property_names ]
+
+margin_properties = [
+    Style(i)
+    for i in [
+        "left_margin",
+        "right_margin",
+        "bottom_margin",
+        "top_margin",
+        "xmargin",
+        "ymargin",
+        "margin",
     ]
+]
 
-text_properties = [ Style(i) for i in text_property_names ]
-text_text_properties = [ PrefixStyle("text_", i) for i in text_property_names ]
+padding_properties = [
+    Style(i)
+    for i in [
+        "left_padding",
+        "right_padding",
+        "top_padding",
+        "bottom_padding",
+        "xpadding",
+        "ypadding",
+        "padding",
+    ]
+]
 
-margin_properties = [ Style(i) for i in [
-    "left_margin",
-    "right_margin",
-    "bottom_margin",
-    "top_margin",
-    "xmargin",
-    "ymargin",
-    "margin",
-    ] ]
+window_properties = (
+    [
+        Style(i)
+        for i in [
+            "background",
+            "foreground",
+            "size_group",
+            "modal",
+        ]
+    ]
+    + margin_properties
+    + padding_properties
+)
 
-padding_properties = [ Style(i) for i in [
-    "left_padding",
-    "right_padding",
-    "top_padding",
-    "bottom_padding",
-    "xpadding",
-    "ypadding",
-    "padding",
-    ] ]
-
-window_properties = [ Style(i) for i in [
-    "background",
-    "foreground",
-    "size_group",
-    "modal",
-    ] ] + margin_properties + padding_properties
-
-button_properties = [ Style(i) for i in [
-    "sound",
-    "mouse",
-    "focus_mask",
-    "child",
-    "keyboard_focus",
-    "key_events",
-    ] ] + [
-        Keyword("action"),
-        Keyword("clicked"),
-        Keyword("hovered"),
-        Keyword("unhovered"),
-        Keyword("alternate"),
-        Keyword("selected"),
-        Keyword("sensitive"),
-        Keyword("keysym"),
-        Keyword("alternate_keysym"),
-    ] # type: ignore
+button_properties = [
+    Style(i)
+    for i in [
+        "sound",
+        "mouse",
+        "focus_mask",
+        "child",
+        "keyboard_focus",
+        "keyboard_focus_insets",
+        "key_events",
+    ]
+] + [
+    Keyword("action"),
+    Keyword("clicked"),
+    Keyword("hovered"),
+    Keyword("unhovered"),
+    Keyword("alternate"),
+    Keyword("selected"),
+    Keyword("sensitive"),
+    Keyword("keysym"),
+    Keyword("alternate_keysym"),
+]  # type: ignore
 
 bar_property_names = [
     "bar_vertical",
@@ -166,22 +202,26 @@ bar_property_names = [
     "bottom_bar",
     "base_bar",
     "thumb",
+    "thumb_align",
     "thumb_shadow",
     "thumb_offset",
     "mouse",
     "unscrollable",
     "keyboard_focus",
-    ]
+]
 
-bar_properties = [ Style(i) for i in bar_property_names ]
-scrollbar_bar_properties = [ PrefixStyle("scrollbar_", i) for i in bar_property_names ]
-vscrollbar_bar_properties = [ PrefixStyle("vscrollbar_", i) for i in bar_property_names ]
+bar_properties = [Style(i) for i in bar_property_names]
+scrollbar_bar_properties = [PrefixStyle("scrollbar_", i) for i in bar_property_names]
+vscrollbar_bar_properties = [PrefixStyle("vscrollbar_", i) for i in bar_property_names]
 
 box_property_names = [
+    "box_align",
+    "box_justify",
     "box_layout",
     "box_wrap",
     "box_wrap_spacing",
     "box_reverse",
+    "justify",
     "order_reverse",
     "spacing",
     "first_spacing",
@@ -190,13 +230,16 @@ box_property_names = [
     "yfit",
 ]
 
-box_properties = [ Style(i) for i in box_property_names ]
+box_properties = [Style(i) for i in box_property_names]
 
-grid_properties = [ Style(i) for i in [
-    "spacing",
-    "xspacing",
-    "yspacing",
-    ] ] + margin_properties
+grid_properties = [
+    Style(i)
+    for i in [
+        "spacing",
+        "xspacing",
+        "yspacing",
+    ]
+] + margin_properties
 
 ui_properties = [
     Keyword("at"),
@@ -208,15 +251,15 @@ ui_properties = [
     Keyword("focus"),
     Keyword("default"),
     Keyword("default_focus"),
-    ]
+]
 
 property_groups = {
-    "bar" : bar_properties,
-    "box" : box_properties,
-    "button" : button_properties,
-    "position" : position_properties,
-    "text" : text_properties,
-    "window" : window_properties,
-    "ui" : ui_properties,
-    "grid" : grid_properties,
-    }
+    "bar": bar_properties,
+    "box": box_properties,
+    "button": button_properties,
+    "position": position_properties,
+    "text": text_properties,
+    "window": window_properties,
+    "ui": ui_properties,
+    "grid": grid_properties,
+}

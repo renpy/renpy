@@ -1,25 +1,26 @@
 {
     "files.watcherExclude": {
-        "**/renpy/0old/**" : true,
-        "**/renpy/atom/**" : true,
-        "**/renpy/cubism/**" : true,
-        "**/renpy/dists/**" : true,
-        "**/renpy/dl/**" : true,
-        "**/renpy/doc/**" : true,
-        "**/renpy/doc-web/**" : true,
-        "**/renpy/jedit/**" : true,
-        "**/renpy/renpy*.app/**" : true,
-        "**/renpy/tmp/**" : true,
-        "**/renpy/web/**" : true,
+        "**/renpy/0old/**": true,
+        "**/renpy/atom/**": true,
+        "**/renpy/cubism/**": true,
+        "**/renpy/dists/**": true,
+        "**/renpy/dl/**": true,
+        "**/renpy/doc/**": true,
+        "**/renpy/doc-web/**": true,
+        "**/renpy/jedit/**": true,
+        "**/renpy/renpy*.app/**": true,
+        "**/renpy/tmp/**": true,
+        "**/renpy/web/**": true
     },
     "files.exclude": {
-        "0old" : true,
+        "0old": true,
         "**-dists": true,
         "**/*.pyc": true,
         "**/*.pyo": true,
-        "renpy/**/*.pyi": true,
         "**/*.rpmc": true,
         "**/*.rpyc": true,
+        "**/*.so": true,
+        "**/*.pyd": true,
         "**/__pycache__": true,
         "**/screenshot-*": true,
         "7z.sfx": true,
@@ -29,24 +30,300 @@
         "doc": true,
         "doc-web": true,
         "jedit": true,
-        "lib*": true,
         "live2d": true,
         "rapt*": true,
         "renios*": true,
         "renpy*.app": true,
         "renpy*.exe": true,
         "tmp": true,
+        "vscode": true,
         "web": true,
+        "web2": true,
+        "web3": true,
+        "**/*.rpa": true,
+        "**/*.rpymc": true,
+        "**/cache/": true,
+        "renpy/audio/filter.pyi": true,
+        "renpy/audio/renpysound.pyi": true,
+        "renpy/display/accelerator.pyi": true,
+        "renpy/display/matrix.pyi": true,
+        "renpy/display/quaternion.pyi": true,
+        "renpy/display/render.pyi": true,
+        "renpy/encryption.pyi": true,
+        "renpy/gl2/assimp.pyi": true,
+        "renpy/gl2/gl2draw.pyi": true,
+        "renpy/gl2/gl2mesh.pyi": true,
+        "renpy/gl2/gl2mesh2.pyi": true,
+        "renpy/gl2/gl2mesh3.pyi": true,
+        "renpy/gl2/gl2model.pyi": true,
+        "renpy/gl2/gl2polygon.pyi": true,
+        "renpy/gl2/gl2shader.pyi": true,
+        "renpy/gl2/gl2texture.pyi": true,
+        "renpy/gl2/gl2uniform.pyi": true,
+        "renpy/gl2/live2dmodel.pyi": true,
+        "renpy/pydict.pyi": true,
+        "renpy/pygame/color.pyi": true,
+        "renpy/pygame/controller.pyi": true,
+        "renpy/pygame/display.pyi": true,
+        "renpy/pygame/draw.pyi": true,
+        "renpy/pygame/error.pyi": true,
+        "renpy/pygame/event.pyi": true,
+        "renpy/pygame/gfxdraw.pyi": true,
+        "renpy/pygame/image.pyi": true,
+        "renpy/pygame/joystick.pyi": true,
+        "renpy/pygame/key.pyi": true,
+        "renpy/pygame/locals.pyi": true,
+        "renpy/pygame/mouse.pyi": true,
+        "renpy/pygame/power.pyi": true,
+        "renpy/pygame/pygame_time.pyi": true,
+        "renpy/pygame/rect.pyi": true,
+        "renpy/pygame/rwobject.pyi": true,
+        "renpy/pygame/scrap.pyi": true,
+        "renpy/pygame/surface.pyi": true,
+        "renpy/pygame/transform.pyi": true,
+        "renpy/style.pyi": true,
+        "renpy/styledata/style_activate_functions.pyi": true,
+        "renpy/styledata/style_functions.pyi": true,
+        "renpy/styledata/style_hover_functions.pyi": true,
+        "renpy/styledata/style_idle_functions.pyi": true,
+        "renpy/styledata/style_insensitive_functions.pyi": true,
+        "renpy/styledata/style_selected_activate_functions.pyi": true,
+        "renpy/styledata/style_selected_functions.pyi": true,
+        "renpy/styledata/style_selected_hover_functions.pyi": true,
+        "renpy/styledata/style_selected_idle_functions.pyi": true,
+        "renpy/styledata/style_selected_insensitive_functions.pyi": true,
+        "renpy/styledata/styleclass.pyi": true,
+        "renpy/styledata/stylesets.pyi": true,
+        "renpy/text/bidi.pyi": true,
+        "renpy/text/ftfont.pyi": true,
+        "renpy/text/hbfont.pyi": true,
+        "renpy/text/textsupport.pyi": true,
+        "renpy/text/texwrap.pyi": true,
+        "renpy/tfd.pyi": true,
+        "renpy/uguu/gl.pyi": true,
+        "renpy/uguu/uguu.pyi": true
     },
-
     "python.languageServer": "Pylance",
-    "python.analysis.typeCheckingMode": "basic",
-    "python.analysis.extraPaths": [
-        ""
-    ],
     "python.analysis.diagnosticMode": "workspace",
     "python.linting.pylintEnabled": false,
-    "python.analysis.diagnosticSeverityOverrides": {
-        "reportMissingModuleSource": "none"
+    "esbonio.server.enabled": true,
+    "esbonio.sphinx.confDir": "",
+    "renpy.excludeCompiledFilesFromWorkspace": true,
+    "renpy.watchFoldersForChanges": false,
+    "renpy.warnOnInvalidVariableNames": "Disabled",
+    "renpy.warnOnInvalidFilenameIssues": "Disabled",
+    "renpy.warnOnIndentationAndSpacingIssues": "Disabled",
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "renpy.meta.plain",
+                "settings": {
+                    "fontStyle": ""
+                }
+            },
+            {
+                "scope": "renpy.meta.i",
+                "settings": {
+                    "fontStyle": "italic"
+                }
+            },
+            {
+                "scope": "renpy.meta.b",
+                "settings": {
+                    "fontStyle": "bold"
+                }
+            },
+            {
+                "scope": [
+                    "renpy.meta.u",
+                    "renpy.meta.a"
+                ],
+                "settings": {
+                    "fontStyle": "underline"
+                }
+            },
+            {
+                "scope": "renpy.meta.s",
+                "settings": {
+                    "fontStyle": "strikethrough"
+                }
+            },
+            {
+                "scope": "renpy.meta.i renpy.meta.b",
+                "settings": {
+                    "fontStyle": "italic bold"
+                }
+            },
+            {
+                "scope": "renpy.meta.i renpy.meta.u",
+                "settings": {
+                    "fontStyle": "italic underline"
+                }
+            },
+            {
+                "scope": "renpy.meta.i renpy.meta.s",
+                "settings": {
+                    "fontStyle": "italic strikethrough"
+                }
+            },
+            {
+                "scope": "renpy.meta.b renpy.meta.u",
+                "settings": {
+                    "fontStyle": "bold underline"
+                }
+            },
+            {
+                "scope": "renpy.meta.b renpy.meta.s",
+                "settings": {
+                    "fontStyle": "bold strikethrough"
+                }
+            },
+            {
+                "scope": "renpy.meta.u renpy.meta.s",
+                "settings": {
+                    "fontStyle": "underline strikethrough"
+                }
+            },
+            {
+                "scope": "renpy.meta.i renpy.meta.b renpy.meta.u",
+                "settings": {
+                    "fontStyle": "italic bold underline"
+                }
+            },
+            {
+                "scope": "renpy.meta.i renpy.meta.b renpy.meta.s",
+                "settings": {
+                    "fontStyle": "italic bold strikethrough"
+                }
+            },
+            {
+                "scope": "renpy.meta.i renpy.meta.u renpy.meta.s",
+                "settings": {
+                    "fontStyle": "italic underline strikethrough"
+                }
+            },
+            {
+                "scope": "renpy.meta.b renpy.meta.u renpy.meta.s",
+                "settings": {
+                    "fontStyle": "bold underline strikethrough"
+                }
+            },
+            {
+                "scope": "renpy.meta.i renpy.meta.b renpy.meta.u  renpy.meta.s",
+                "settings": {
+                    "fontStyle": "italic bold underline strikethrough"
+                }
+            },
+            {
+                "scope": "renpy.meta.color.text",
+                "settings": {
+                    "foreground": "#ffffff"
+                }
+            },
+            {
+                "scope": "renpy.meta.color.#f00",
+                "settings": {
+                    "foreground": "#f00"
+                }
+            },
+            {
+                "scope": "text.notes.info",
+                "settings": {
+                    "foreground": "#17a2b8",
+                    "fontStyle": "bold"
+                }
+            },
+            {
+                "scope": "text.notes.success",
+                "settings": {
+                    "foreground": "#28a745",
+                    "fontStyle": "bold"
+                }
+            },
+            {
+                "scope": "text.notes.warning",
+                "settings": {
+                    "foreground": "#ffc107",
+                    "fontStyle": "bold"
+                }
+            },
+            {
+                "scope": "text.notes.danger",
+                "settings": {
+                    "foreground": "#dc3545",
+                    "fontStyle": "bold"
+                }
+            },
+            {
+                "scope": "renpy.meta.color.#fff",
+                "settings": {
+                    "foreground": "#fff"
+                }
+            },
+            {
+                "scope": "renpy.meta.color.#fcc",
+                "settings": {
+                    "foreground": "#fcc"
+                }
+            },
+            {
+                "scope": "renpy.meta.color.#cfc",
+                "settings": {
+                    "foreground": "#cfc"
+                }
+            },
+            {
+                "scope": "renpy.meta.color.#c00",
+                "settings": {
+                    "foreground": "#c00"
+                }
+            },
+            {
+                "scope": "renpy.meta.color.#a00",
+                "settings": {
+                    "foreground": "#a00"
+                }
+            },
+            {
+                "scope": "renpy.meta.color.#c8ffc8",
+                "settings": {
+                    "foreground": "#c8ffc8"
+                }
+            },
+            {
+                "scope": "renpy.meta.color.#0080c0",
+                "settings": {
+                    "foreground": "#0080c0"
+                }
+            }
+        ],
+        "[*Light*]": {
+            "textMateRules": [
+                {
+                    "scope": "ref.matchtext",
+                    "settings": {
+                        "foreground": "#000"
+                    }
+                }
+            ]
+        },
+        "[*Dark*]": {
+            "textMateRules": [
+                {
+                    "scope": "ref.matchtext",
+                    "settings": {
+                        "foreground": "#fff"
+                    }
+                }
+            ]
+        }
     },
+    "C_Cpp.default.defines": [
+        "__EMSCRIPTEN__"
+    ],
+    "cython.includePaths": [
+        "src",
+        "src/pygame/include"
+    ],
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }

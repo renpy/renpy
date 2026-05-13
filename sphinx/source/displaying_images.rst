@@ -21,9 +21,14 @@ As abrupt changes of image can be disconcerting to the user, Ren'Py
 has the ``with`` statement, which allows effects to be applied
 when the scene is changed.
 
+Most (if not all) of the statements listed in this page are checked by
+:ref:`lint`, which is not the case for their python equivalents.
+
 
 Concepts
 ========
+
+.. _concept-image:
 
 Image
 -----
@@ -45,8 +50,8 @@ and ``happy``.
 A displayable is something that can be shown on the screen. The most
 common thing to show is a static image, which can be specified by
 giving the filename of the image, as a string. In the example above,
-we might use "mary_beach_night_happy.png" as the filename.
-However, an image may refer to :ref:`any displayable Ren'Py supports
+we might use :file:`mary_beach_night_happy.png` as the filename.
+However, an image may refer to :doc:`any displayable Ren'Py supports
 <displayables>`, not just static images. Thus, the same statements
 that are used to display images can also be used for animations, solid
 colors, and the other types of displayables.
@@ -64,26 +69,28 @@ statements are called, and the properties given to those statements.
 The following layers are defined as part of Ren'Py:
 
 master
-     This is the default layer that is used by the scene, show, and
-     hide statements. It's generally used for backgrounds and
-     character sprites.
+    This is the default layer that is used by the scene, show, and
+    hide statements. It's generally used for backgrounds and
+    character sprites.
 
 transient
-     The default layer used by ui functions. This layer is cleared at
-     the end of each interaction.
+    The default layer used by ui functions. This layer is cleared at
+    the end of each interaction.
 
 screens
-     This layer is used by the screen system.
+    This layer is used by the screen system.
 
 overlay
-     The default layer used when a ui function is called from within
-     an overlay function. This layer is cleared when an interaction is
-     restarted.
+    The default layer used when a ui function is called from within
+    an overlay function. This layer is cleared when an interaction is
+    restarted.
 
-Additional layers can be defined by updating :var:`config.layers`, and
-the various other layer-related config variables. Using
-:func:`renpy.show_layer_at`, one or more transforms can be applied to
-a layer.
+Additional layers can be defined by calling :func:`renpy.add_layer`, and
+using the various layer-related :doc:`configuration variables <config>`.
+Using the :ref:`camera statement <camera>`, one or more transforms can be
+applied to a layer.
+
+.. _defining-images:
 
 Defining Images
 ===============
@@ -98,12 +105,13 @@ Images defined using the image statement take precedence over those defined
 by the image directory.
 
 .. _image-directory:
+.. _images-directory:
 
 Images Directory
 ----------------
 
 The image directory is named "images", and is placed under the game directory.
-When a file with the .jpg or .png extension is placed underneath this directory,
+When a file with a .jpg, .jpeg, .png, .webp, .avif, or .svg extension is placed underneath this directory,
 the extension is stripped, the rest of the filename is forced to lowercase,
 and the resulting filename is used as the image name if an image with that
 name has not been previously defined.
@@ -114,6 +122,48 @@ example, all of these files will define the image ``eileen happy``::
     game/images/eileen happy.png
     game/images/Eileen Happy.jpg
     game/images/eileen/eileen happy.png
+
+When an image filename is given, and the image is not found, the images directory
+is searched.
+
+The images directory can be customized with :var:`config.image_directories` and
+:var:`config.image_extensions`.
+
+.. _oversampling:
+
+Oversampling
+------------
+
+By default, the pixel size of an image defines the size it will take up
+when displayed. For example, if an image is 1920x1080 pixels, and the
+game is configured, using :func:`gui.init`, to run at 1920x1080, the
+image will fill the entire screen.
+
+When oversampling is enabled, the size that the image is displayed at is
+smaller than the image size would imply. For example, if an image is 3480x2160,
+and has an oversample of 2, then each axis will be halved, and the image would
+fill the same 1920x1080 window.
+
+This is useful when the image might be zoomed in on, and the extra detail is
+required. Oversampling is also useful in conjunction with :var:`config.physical_width`
+and :var:`config.physical_height` to allow a game to be remade with higher
+resolution graphics.
+
+Oversampling is automatically enabled if the image ends with an '@' followed
+by a number, before the extension. For example, :file:`eileen happy@2.png` is
+2x oversampled, and :file:`eileen happy@3.png` will be 3x oversampled. Oversampling
+can also be enabled by giving the `oversample` keyword argument to :func:`Image`.
+
+A directory can also specify how much to oversample images inside it. For example,
+:file:`images/@2/eileen happy.png` will be oversampled 2x.
+
+.. _automatic-oversampling:
+
+If no oversampling is applied to an image, Ren'Py will attempt to automatically find
+oversampled images to use. For example, if the game is scaled by more than 1x and less than or exactly 2x,
+Ren'Py loading :file:`eileen happy.png` will look for :file:`eileen happy@2.png`, and use that if it exists. If the scaling
+is greater than 2x, Ren'Py will look for :file:`eileen happy @4.png`, :file:`eileen happy@3.png`, and :file:`eileen happy@2.png`,
+and use the first one that it finds, or :file:`eileen happy.png` if none of them exist.
 
 .. _image-statement:
 
@@ -134,9 +184,9 @@ displayable. For example::
         "eileen_happy.png",
         )
 
-When an image is not directly in the game directory, you'll need to
-give the directories underneath it. For example, if the image is in
-game/eileen/happy.png, then you can write::
+When an image file is not directly in the game directory, you'll need to
+give the directories underneath it. For example, if the image is at
+:file:`game/eileen/happy.png`, then you can write::
 
     image eileen happy = "eileen/happy.png"
 
@@ -214,7 +264,10 @@ The show statement takes the following properties:
     Takes an integer. The integer specifies the relative ordering of
     images within a layer, with larger numbers being closer to the
     user. This isn't generally used by Ren'Py games, but can be useful
-    when porting visual novels from other engines.
+    when porting visual novels from other engines. This can also be
+    useful for displaying an image that will be above any zorder-less
+    image displayed afterwards, without the burden of placing it on
+    another layer.
 
 Assuming we have the following images defined::
 
@@ -244,7 +297,27 @@ Some example show statements are::
     # Show an image on a user-defined layer.
     show moon onlayer user_layer
 
-**Show Expression.**
+Attributes management
+---------------------
+
+As shown above, attributes can be set, added and replaced.
+
+They can also be removed using the minus sign::
+
+    # show susan being neutral
+    show susan
+
+    # show susan being happy
+    show susan happy
+
+    # show susan being neutral again
+    show susan -happy
+
+.. _show-expression-statement:
+
+Show expression
+---------------
+
 A variant of the show statement replaces the image name with the
 keyword ``expression``, followed by a simple expression. The
 expression must evaluate to a displayable, and the displayable
@@ -255,12 +328,11 @@ For example::
 
     show expression "moon.png" as moon
 
-** Show Layer.**
-The ``show layer`` statement is discussed alongside the camera statement,
+Show Layer
+----------
+
+The ``show layer`` statement is discussed alongside the :ref:`camera statement <camera>`,
 below.
-
-
-
 
 .. _scene-statement:
 
@@ -345,7 +417,7 @@ this interaction is controlled by the user, and the user can cause it
 to terminate early.
 
 For a full list of transitions that can be used, see the chapter on
-:ref:`transitions <transitions>`.
+:doc:`transitions <transitions>`.
 
 An example of the with statement is::
 
@@ -421,11 +493,23 @@ is equivalent to::
     show lucy mad at right
     with dissolve
 
+Note that even though this applies to the :ref:`show-screen-statement`
+and :ref:`hide-screen-statement` statements too,
+:ref:`call-screen-statement` differently.
+
+.. _camera:
+
 Camera and Show Layer Statements
 ================================
 
 The ``camera`` statement allows one to apply a transform or ATL transform to an
 entire layer (such as "master"), using syntax like::
+
+    # The flip transform needs to be defined once, at the start of the game.
+    transform flip:
+        xzoom -1 yzoom -1
+
+::
 
     camera at flip
 
@@ -446,11 +530,12 @@ The camera statement takes an optional layer name, between ``camera`` and
 The ``show layer`` statement is an older version of ``camera``, with some
 differences, that is still useful. ::
 
-
     show layer master:
         blur 10
 
 The differences are:
+
+* Camera propagates transform state, while show layer resets transform state.
 
 * The transforms applied with ``show layer`` are cleared at the
   next ``scene`` statement, while ``camera`` transforms last until
@@ -476,22 +561,30 @@ it from occurring.
 The window itself is displayed by calling :var:`config.empty_window`. It defaults to
 having the narrator say an empty string. ::
 
-        show bg washington
-        show eileen happy
-        with dissolve
+    show bg washington
+    show eileen happy
+    with dissolve
 
-        window show dissolve
+    window show dissolve
 
-        "I can say stuff..."
+    "I can say stuff..."
 
-        show eileen happy at right
-        with move
+    show eileen happy at right
+    with move
 
-        "... and move, while keeping the window shown."
+    "... and move, while keeping the window shown."
 
-        window hide dissolve
+    window hide dissolve
 
 Image Functions
 ===============
 
 .. include:: inc/image_func
+
+See also
+========
+
+:doc:`statement_equivalents` : how to use most of the features described here in a
+python context.
+
+:doc:`displayables` : other objects to display, more diverse than basic images.

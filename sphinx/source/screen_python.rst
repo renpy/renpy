@@ -2,127 +2,12 @@
 Screens and Python
 ==================
 
-Ren'Py supports defining screens in Python, as well as in the Ren'Py
-screen language. A Python screen is created by supplying a screen
-function to the :func:`renpy.define_screen` function. It can then
-be used like it was any other screen.
-
-The screen function should have parameters corresponding to the scope
-variables it expects, and it should ignore extra keyword
-arguments. (That is, it should have `**kwargs` at the end of its
-parameter list.) It is then expected to call the UI functions to add
-displayables to the screen.The screen function is called whenever an
-interaction starts or restarts.
-
-To ensure that this restarting is seamless to the user (and
-not causing things to reset), it's important that every call to a UI
-function supply the `id` argument. As a screen is re-created, Ren'Py
-will update each displayable with the contents of the old displayable
-with the same id. Ids are generated automatically by the screen
-language, but when doing things by hand, they must be manually
-specified.
-
-.. warning::
-
-    UI Functions are deprecated and not recommended.
-
-Here's an example Python screen::
-
-    init python:
-        def say_screen(who, what, **kwargs):
-            ui.window(id="window")
-            ui.vbox(id="say_vbox")
-
-            ui.text(who, id="who")
-            ui.text(what, id="what")
-
-            ui.close()
-
-        renpy.define_screen("say", say_screen)
-
-
-
 Screen Functions
 ================
 
-The following functions support the definition, display, and hiding of
-screens.
+The following functions support various operations related to screens.
 
 .. include:: inc/screens
-
-UI Functions
-============
-
-.. note::
-
-    The implementation of Ren'Py has changed, and UI functions that
-    create displayables can now be far slower than their screen language
-    equivalents.
-
-The UI functions are Python equivalents of the screen language
-statements. For each screen language statement, there is a ui function
-with the same name. For example, ui.text corresponds to the text
-statement, and ui.add corresponds to the add statement.
-
-There is a simple mapping between screen language parameters and
-arguments and Python arguments. Screen language parameters
-become positional arguments, while properties become keyword
-arguments. For example, the screen language statement: ::
-
-   text "Hello, World" size 40 xalign 0.5
-
-becomes: ::
-
-   ui.text("Hello, World", size=40, xalign=0.5)
-
-(It really should have an `id` parameter added.)
-
-There are three groups of UI functions, corresponding to the number
-of children they take.
-
-.. When updating this list, be sure to update the documentation for
-   the layout statement in screens.rst as well.
-
-The following UI functions do not take any children.
-
-* ui.add
-* ui.bar
-* ui.imagebutton
-* ui.input
-* ui.key
-* ui.label
-* ui.null
-* ui.text
-* ui.textbutton
-* ui.timer
-* ui.vbar
-* ui.hotspot
-* ui.hotbar
-* ui.spritemanager
-
-The following UI functions take a single child. They must be given
-that child – use :func:`ui.null` if the child is missing.
-
-* ui.button
-* ui.frame
-* ui.transform
-* ui.window
-* ui.drag
-
-The following UI functions take multiple children. They continue
-taking children until :func:`ui.close` is called.
-
-* ui.fixed
-* ui.grid
-* ui.hbox
-* ui.side
-* ui.vbox
-* ui.imagemap
-* ui.draggroup
-
-There are a few UI functions that do not correspond to screen language
-statements, as they correspond to concepts that are not present in the
-screen language.
 
 .. include:: inc/ui
 
@@ -143,65 +28,72 @@ sensitive, and when it is selected.
 
 .. class:: Action
 
-   To define a new action, inherit from this class. Override the
-   methods in this class to change the behavior of the action.
+    To define a new action, inherit from this class. Override the
+    methods in this class to change the behavior of the action.
 
-   .. method:: __call__(self)
+    .. method:: __call__(self)
 
-       This is the method that is called when the action is
-       activated. In many cases, returning a non-None value from the
-       action will cause the current interaction to end.
+        This is the method that is called when the action is
+        activated. In many cases, returning a non-None value from the
+        action will cause the current interaction to end.
 
-       This method must be overridden, as the default method will
-       raise NotImplemented (and hence cause Ren'Py to report an
-       error).
+        This method must be overridden, as the default method will
+        raise a NotImplementedError (and hence cause Ren'Py to
+        report an error).
 
-   .. method:: get_sensitive(self)
+    .. method:: get_sensitive(self)
 
-       This is called to determine if the button with this action
-       should be sensitive. It should return true if the button is
-       sensitive.
+        This is called to determine if the button with this action
+        should be sensitive. It should return true if the button is
+        sensitive.
 
-       Note that __call__ can be called, even if this returns False.
+        Note that __call__ can be called, even if this returns False.
 
-       The default implementation returns True.
+        The default implementation returns True.
 
-   .. method:: get_selected(self)
+    .. method:: get_selected(self)
 
-       This should return true if the button should be rendered as a
-       selected button, and false otherwise.
+        This should return true if the button should be rendered as a
+        selected button, and false otherwise.
 
-       The default implemention returns False.
+        The default implementation returns False.
 
-   .. method:: get_tooltip(self)
+    .. method:: get_tooltip(self)
 
-       This gets a default tooltip for this button, if a specific
-       tooltip is not assigned. It should return the tooltip value,
-       or None if a tooltip is not known.
+        This gets a default tooltip for this button, if a specific
+        tooltip is not assigned. It should return the tooltip value,
+        or None if a tooltip is not known.
 
-       This defaults to returning None.
+        This defaults to returning None.
 
-   .. method:: periodic(self, st)
+    .. method:: periodic(self, st)
 
-       This method is called once at the start of each interaction,
-       and then is called periodically thereafter. If it returns a
-       number, it will be called before that many seconds elapse, but
-       it might be called sooner.
+        This method is called once at the start of each interaction,
+        and then is called periodically thereafter. If it returns a
+        number, it will be called before that many seconds elapse, but
+        it might be called sooner.
 
-       The main use of this is to call
-       :func:`renpy.restart_interaction` if the value of
-       get_selected or get_sensitive should change.
+        The main use of this is to call
+        :func:`renpy.restart_interaction` if the value of
+        get_selected or get_sensitive should change.
 
-       It takes one argument:
+        It takes one argument:
 
-       `st`
-           The number of seconds since the screen or displayable this
-           action is associated with was first shown.
+        `st`
+            The number of seconds since the screen or displayable this
+            action is associated with was first shown.
 
-   .. method:: unhovered(self)
+    .. method:: unhovered(self)
 
-       When the action is used as the `hovered` parameter to a button (or
-       similar object), this method is called when the object loses focus.
+        When the action is used as the `hovered` parameter to a button (or
+        similar object), this method is called when the object loses focus.
+
+    .. attribute:: alt
+
+        The text-to-speech text used for buttons that use this Action, if
+        the button does not have the :propref:`alt` property set. This can
+        set to a string in the class, or in the constructor, or it can be
+        a Python property that returns a string.
 
 To run an action from Python, use :func:`renpy.run`.
 
@@ -228,7 +120,7 @@ the adjustment and styles.
         way.
 
         This method must be overridden, as the default method will
-        raise NotImplemented (and hence cause Ren'Py to report an
+        raise NotImplementedError (and hence cause Ren'Py to report an
         error).
 
     .. method:: get_style(self)
@@ -242,11 +134,11 @@ the adjustment and styles.
 
     .. method:: get_tooltip(self)
 
-       This gets a default tooltip for this button, if a specific
-       tooltip is not assigned. It should return the tooltip value,
-       or None if a tooltip is not known.
+        This gets a default tooltip for this button, if a specific
+        tooltip is not assigned. It should return the tooltip value,
+        or None if a tooltip is not known.
 
-       This defaults to returning None.
+        This defaults to returning None.
 
     .. method:: replaces(self, other)
 
@@ -258,15 +150,23 @@ the adjustment and styles.
 
     .. method:: periodic(self, st)
 
-       This method is called once at the start of each interaction. If
-       it returns a number of seconds, it will be called before that
-       many seconds elapse, but it might be called sooner. It is
-       called after get_adjustment.
+        This method is called once at the start of each interaction. If
+        it returns a number of seconds, it will be called before that
+        many seconds elapse, but it might be called sooner. It is
+        called after get_adjustment.
 
-       It can be used to update the value of the bar over time, like
-       :func:`AnimatedValue` does. To do this, get_adjustment should
-       store the adjustment, and periodic should call the
-       adjustment's changed method.
+        It can be used to update the value of the bar over time, like
+        :func:`AnimatedValue` does. To do this, get_adjustment should
+        store the adjustment, and periodic should call the
+        adjustment's changed method.
+
+    .. attribute:: alt
+
+        The text-to-speech text used for bars that use this BarValue, if
+        the bar does not have the :propref:`alt` property set. This can
+        set to a string in the class, or in the constructor, or it can be
+        a Python property that returns a string.
+
 
 InputValue
 ==========
@@ -282,9 +182,9 @@ the enter key being pressed.
     some or all of the methods, and set the value of the default
     field.
 
-    .. attribute: editable
+    .. attribute:: editable
 
-        If true, this field is editable at all.
+        If not true, disables the input field from being editable at all.
 
     .. attribute:: default
 
@@ -303,8 +203,8 @@ the enter key being pressed.
     .. method:: enter(self)
 
         Called when the user presses enter. If this returns a non-None
-        value, that value is returned from the interacton. This may also
-        raise renpy.IgnoreEvent() to ignore the press. Otherwise, the
+        value, that value is returned from the interaction. This may also
+        raise :exc:`renpy.IgnoreEvent` to ignore the press. Otherwise, the
         enter-press is propagated to other displayables.
 
     The following actions are available as methods on InputValue:
@@ -345,8 +245,8 @@ becomes::
 
 Creator-defined screen language statements must be registered in a ``python early`` block.
 What's more, the filename containing the creator-defined statement must be be loaded earlier
-than any file that uses it. Since Ren'Py loads files in Unicode sort order, it
-generally makes sense to prefix the name of any file registering a user-defined
+than any file that uses it. Since Ren'Py loads files in the Unicode sort order of their paths,
+it generally makes sense to prefix the name of any file registering a user-defined
 statement with 01, or some other small number.
 
 Creator-defined screen language statements are registered with the renpy.register_sl_statement
@@ -408,3 +308,6 @@ the \*\*properties syntax with a properties keyword in some place. For example::
             null height 15
 
             transclude
+
+Custom defined screen language statements support the ``as`` clause, which takes the name of the variable. If present,
+this variable will be assigned the value of `main` in the scope of the screen.

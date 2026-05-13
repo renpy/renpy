@@ -131,7 +131,7 @@ translate russian strings:
 
     # options.rpy:144
     old "## Linux: $HOME/.renpy/<config.save_directory>"
-    new "## Linux: $HOME/.renpy/<config.save_directory>"
+    new "## Linux: $HOME/.renpy/<config.save_directory>."
 
     # options.rpy:146
     old "## This generally should not be changed, and if it is, should always be a literal string, not an expression."
@@ -204,3 +204,11 @@ translate russian strings:
     # gui/game/options.rpy:47
     old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
     new "## Эти три переменные управляют, среди прочего, тем, какие микшеры показываются игроку по умолчанию. Установка одной из них в False скроет соответствующий микшер."
+
+translate russian strings:
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    # Automatic translation.
+    new "## Для совершения покупок в приложении требуется лицензионный ключ Google Play. Его можно найти в консоли разработчика Google Play в разделе \"Монетизация\" > \"Настройка монетизации\" > \"Лицензирование\"."
+

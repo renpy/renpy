@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,7 +22,7 @@
 # The public API for music in games.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -31,10 +31,19 @@ from renpy.audio.audio import get_channel, get_serial
 
 # Part of the public api:
 from renpy.audio.audio import register_channel, alias_channel
-register_channel; alias_channel
 
 
-def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=False, fadein=0, tight=None, if_changed=False, relative_volume=1.0):
+def play(
+    filenames,
+    channel="music",
+    loop=None,
+    fadeout=None,
+    synchro_start=None,
+    fadein=0,
+    tight=None,
+    if_changed=False,
+    relative_volume=1.0,
+):
     """
     :doc: audio
 
@@ -53,13 +62,16 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
-        fadeout time is taken from config.fade_music.
+        fadeout time is taken from config.fadeout_audio. This is ignored if
+        the channel is paused when the music is played.
 
     `synchro_start`
-        Ren'Py will ensure that all channels of with synchro_start set to true
-        will start playing at exactly the same time. Synchro_start should be
-        true when playing two audio files that are meant to be synchronized
-        with each other.
+        When True, all channels that have synchro_start set to true will start
+        playing at exactly the same time. This may lead to a pause before the
+        channels start playing. This is useful when playing two audio files that
+        are meant to be synchronized with each other.
+
+        If None, this takes its value from the channel.
 
     `fadein`
         This is the number of seconds to fade the music in for, on the
@@ -90,11 +102,13 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
     if filenames is None:
         return
 
-    if isinstance(filenames, basestring):
-        filenames = [ filenames ]
+    if isinstance(filenames, str):
+        filenames = [filenames]
+
+    if get_pause(channel=channel):
+        fadeout = 0
 
     with renpy.audio.audio.lock:
-
         try:
             c = get_channel(channel)
             ctx = c.copy_context()
@@ -105,17 +119,18 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
             if (tight is None) and renpy.config.tight_loop_default:
                 tight = loop
 
-            loop_is_filenames = (c.loop == filenames)
-
-            c.dequeue()
+            loop_is_filenames = c.loop == filenames
 
             if fadeout is None:
-                fadeout = renpy.config.fade_music
+                fadeout = renpy.config.fadeout_audio
 
             if if_changed and c.get_playing() in filenames:
                 fadein = 0
                 loop_only = loop_is_filenames
+                if not loop_is_filenames:
+                    c.dequeue()
             else:
+                c.dequeue()
                 c.fadeout(fadeout)
                 loop_only = False
 
@@ -125,7 +140,15 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
                 enqueue = True
 
             if enqueue:
-                c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight, loop_only=loop_only, relative_volume=relative_volume)
+                c.enqueue(
+                    filenames,
+                    loop=loop,
+                    synchro_start=synchro_start,
+                    fadein=fadein,
+                    tight=tight,
+                    loop_only=loop_only,
+                    relative_volume=relative_volume,
+                )
 
             t = get_serial()
             ctx.last_changed = t
@@ -134,9 +157,11 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
             if loop:
                 ctx.last_filenames = filenames
                 ctx.last_tight = tight
+                ctx.last_relative_volume = relative_volume
             else:
-                ctx.last_filenames = [ ]
+                ctx.last_filenames = []
                 ctx.last_tight = False
+                ctx.last_relative_volume = 1.0
 
             ctx.pause = False
 
@@ -188,11 +213,11 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         raise Exception("Can't play music during init phase.")
 
     if filenames is None:
-        filenames = [ ]
+        filenames = []
         loop = False
 
-    if isinstance(filenames, basestring):
-        filenames = [ filenames ]
+    if isinstance(filenames, str):
+        filenames = [filenames]
 
     if renpy.config.skipping == "fast":
         stop(channel)
@@ -200,9 +225,7 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
     set_pause(False, channel=channel)
 
     with renpy.audio.audio.lock:
-
         try:
-
             c = get_channel(channel)
             ctx = c.copy_context()
 
@@ -230,9 +253,11 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
             if loop:
                 ctx.last_filenames = filenames
                 ctx.last_tight = tight
+                ctx.last_relative_volume = relative_volume
             else:
-                ctx.last_filenames = [ ]
+                ctx.last_filenames = []
                 ctx.last_tight = False
+                ctx.last_relative_volume = 1.0
 
             ctx.pause = False
 
@@ -250,9 +275,9 @@ def playable(filename, channel="music"):
 
     c = get_channel(channel)
 
-    filename, _, _ = c.split_filename(filename, False)
+    filename, _, _, _ = c.split_filename(filename, False)
 
-    return renpy.loader.loadable(filename)
+    return renpy.loader.loadable(filename, directory="audio")
 
 
 def stop(channel="music", fadeout=None):
@@ -261,7 +286,7 @@ def stop(channel="music", fadeout=None):
 
     This stops the music that is currently playing, and dequeues all
     queued music. If fadeout is None, the music is faded out for the
-    time given in config.fade_music, otherwise it is faded for fadeout
+    time given in config.fadeout_audio, otherwise it is faded for fadeout
     seconds.
 
     This sets the last queued file to None.
@@ -271,7 +296,8 @@ def stop(channel="music", fadeout=None):
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
-        fadeout time is taken from config.fade_music.
+        fadeout time is taken from config.fadeout_audio. This is ignored if
+        the channel is paused.
 
 
     """
@@ -283,20 +309,19 @@ def stop(channel="music", fadeout=None):
         fadeout = 0.0
 
     with renpy.audio.audio.lock:
-
         try:
             c = get_channel(channel)
             ctx = c.copy_context()
 
             if fadeout is None:
-                fadeout = renpy.config.fade_music
+                fadeout = renpy.config.fadeout_audio
 
             c.fadeout(fadeout)
 
             t = get_serial()
             ctx.last_changed = t
             c.last_changed = t
-            ctx.last_filenames = [ ]
+            ctx.last_filenames = []
             ctx.last_tight = False
 
         except Exception:
@@ -429,7 +454,7 @@ def is_playing(channel="music"):
     it is not, or if the sound system isn't working.
     """
 
-    return (get_playing(channel=channel) is not None)
+    return get_playing(channel=channel) is not None
 
 
 def get_loop(channel="music"):
@@ -492,8 +517,7 @@ def set_pan(pan, delay, channel="music"):
         The amount of time it takes for the panning to occur.
 
     `channel`
-        The channel the panning takes place on. This can be a sound or a music
-        channel. Often, this is channel 7, the default music channel.
+        The channel the panning takes place on, defaulting to the music channel.
     """
 
     try:
@@ -550,12 +574,35 @@ def get_pause(channel="music"):
         c = renpy.audio.audio.get_channel(channel)
         return c.context.pause
     except Exception:
-
         return False
+
+
+def pump():
+    """
+    :doc: audio
+
+    This 'pumps' the audio system. Normally, the effects of the ``play``,
+    ``queue``, and ``stop`` statements and the function equivalents take
+    place at the start of the next interaction. In some cases, the effects
+    of multiple statements can cancel each other out - for example, a
+    play followed by a stop causes the track to never be played.
+
+    If this function is called between the play and stop, the track will
+    begin playing before this function returns, which then allows the track
+    to be faded out. ::
+
+        play music "mytrack.opus"
+        $ renpy.music.pump()
+        stop music fadeout 4
+    """
+
+    renpy.audio.audio.pump()
 
 
 def set_mixer(channel, mixer, default=False):
     """
+    :doc: audio
+
     This sets the name of the mixer associated with a given
     channel. By default, there are two mixers, 'sfx' and
     'music'. 'sfx' is on channels 0 to 3, and 'music'
@@ -579,6 +626,8 @@ def set_mixer(channel, mixer, default=False):
 
 def get_all_mixers():
     """
+    :doc: audio
+
     This gets all mixers in use.
     """
 
@@ -587,11 +636,16 @@ def get_all_mixers():
     for i in renpy.audio.audio.all_channels:
         rv.add(i.mixer)
 
+    for i in renpy.config.auto_channels.values():
+        rv.add(i[0])
+
     return list(rv)
 
 
 def channel_defined(channel):
     """
+    :doc: audio
+
     Returns True if the channel exists, or False otherwise.
     """
 
@@ -600,6 +654,45 @@ def channel_defined(channel):
         return True
     except Exception:
         return False
+
+
+def set_audio_filter(channel, audio_filter, replace=False, duration=0.016):
+    """
+    :doc: audio
+
+    Sets the audio filter for sounds about to be queued to `audio_filter`.
+
+    `audio_filter`
+        Must be a an :doc:`audio filter <audio_filters>` or list of
+        audio filters, or None to remove the audio filter.
+
+    `replace`
+        If True, the audio filter replaces the current audio filter immediately,
+        changing currently playing and queued sounds. If False, the audio
+        filter will be used the next time a sound is played or queued.
+
+    `duration`
+        The duration to change from the current to the new filter, in seconds.
+        This prevents a popping sound when changing filters.
+    """
+
+    replace = replace or renpy.game.after_rollback
+
+    if audio_filter is not None:
+        audio_filter = renpy.audio.filter.to_audio_filter(audio_filter)
+
+    try:
+        c = renpy.audio.audio.get_channel(channel)
+        ctx = c.copy_context()
+
+        t = get_serial()
+        ctx.last_changed = t
+
+        c.set_audio_filter(audio_filter, replace=replace, duration=duration)
+    except Exception:
+        if renpy.config.debug_sound:
+            raise
+
 
 # Music change logic:
 
