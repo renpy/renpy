@@ -36,6 +36,7 @@ the omission in future versions.
 * Arsym
 * Asfdfdfd
 * Auro-Cyanide
+* A-Voski
 * Avonder
 * Awakening
 * Ayowel
@@ -53,6 +54,7 @@ the omission in future versions.
 * Caryoscelus
 * CensoredUsername (C)
 * Charles Surett
+* Chris Bier
 * Chengtian He
 * Cherie Davidson
 * Chrisclone
@@ -151,6 +153,7 @@ the omission in future versions.
 * Jan Masek
 * Javimat
 * Jaybe Games
+* Jed
 * Jeremy Rand
 * Jesusaves
 * Joaquin Garmendia Cabrera
@@ -160,6 +163,7 @@ the omission in future versions.
 * Julian Uy
 * Julvenzor
 * juperMonkey
+* Juhani Krekelä
 * Jürg Billeter
 * KagariSoft-Dev
 * Kalawore
@@ -266,6 +270,7 @@ the omission in future versions.
 * River
 * rivvil
 * Robert Penner
+* Ronchonbon
 * Roope Herpiö
 * Rose20
 * Ruben Jesus Garcia-Hernandez
