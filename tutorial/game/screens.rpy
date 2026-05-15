@@ -774,6 +774,7 @@ screen preferences():
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
                     textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
                     textbutton "Italiano" text_font "DejaVuSans.ttf" action Language("italian")
+                    textbutton "Português " text_font "DejaVuSans.ttf" action Language("portuguese")
                     textbutton "Українська" text_font "DejaVuSans.ttf" action Language("ukrainian")
 
                 vbox:
