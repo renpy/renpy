@@ -109,6 +109,11 @@ easily identify and fix problems with their creator-defined statements.
 Fixes and Changes
 -----------------
 
+:func:`renpy.pause` now always pauses for at least one frame. Previously, it could avoid pausing after rollback.
+
+There have been several improvements to dragging viewports that cure situations where the viewport could be dragged
+without the mouse button being held down.
+
 Automatic detection of language on macOS should work in more situations.
 
 The new :var:`config.mesh_oversample` variable can be configured to control how much a mesh texture can be oversampled
