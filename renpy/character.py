@@ -225,9 +225,9 @@ class CTCPauseHolder(renpy.display.displayable.Displayable):
         rv = renpy.display.render.Render(0, cr.height)
 
         if self.rtl:
-            rv.blit(cr, (-cr.width, 0))
+            rv.place(self.ctc, x=-cr.width, y=0, render=cr)
         else:
-            rv.blit(cr, (0, 0))
+            rv.place(self.ctc, x=0, y=0, render=cr)
 
         return rv
 
