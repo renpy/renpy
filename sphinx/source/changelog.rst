@@ -152,6 +152,8 @@ rendered text. (This is similar to how {w}, {p}, and extend were already handled
 Translations
 ------------
 
+A Portuguese translation of the Ren'Py tutorial has been added.
+
 An Italian translation of the Ren'Py tutorial has been added.
 
 The Persian translation of the Ren'Py tutorial has been updated.

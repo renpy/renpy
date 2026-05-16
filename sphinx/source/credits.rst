@@ -270,6 +270,7 @@ the omission in future versions.
 * River
 * rivvil
 * Robert Penner
+* Rodrigo Oliveira
 * Ronchonbon
 * Roope Herpiö
 * Rose20
