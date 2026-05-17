@@ -17,8 +17,8 @@ The following branches are the most interesting.
     merged into master on a regular basis.
 
     Pull requests that contain fixes or documentation improvements should be
-    made to the fix branch. When a release is made, the master branch is
-    copied to the fix branch.
+    made to the fix branch. When a feature release is made (for example, going from 8.6.x to 8.7.0),
+    the master branch is copied to the fix branch. Fix releases are made from this branch.
 
 ``master``
     The master branch is where the main focus of development is. This branch
@@ -27,6 +27,8 @@ The following branches are the most interesting.
     Pull requests that contain new features, that require incompatible changes,
     or major changes to Ren'Py's internals should be targeted at the master
     branch.
+
+    Feature releases are made from this branch.
 
 
 Getting Started
