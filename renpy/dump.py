@@ -127,6 +127,9 @@ def dump(error):
         filename = n.filename
         line = n.linenumber
 
+        if isinstance(name, renpy.ast.Node):
+            name = name.name
+
         if not isinstance(name, str):
             continue
 
