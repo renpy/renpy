@@ -145,11 +145,6 @@ class Script(object):
 
         self.record_pycode = True
 
-        # Bytecode caches.
-        self.bytecode_oldcache = {}
-        self.bytecode_newcache = {}
-        self.bytecode_dirty = False
-
         self.translator = renpy.translation.ScriptTranslator()
 
         self.scan_script_files()

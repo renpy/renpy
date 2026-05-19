@@ -880,7 +880,7 @@ class CompileCache:
             with renpy.loader.load(CompileCache.BYTECODE_FILE) as f:
                 version, cache = loads(zlib.decompress(f.read()))
                 if version == CompileCache.BYTECODE_VERSION:
-                    self.old_compile_cache = {k: v for k, v in cache.items() if k[0] != "warnings"}
+                    self.old_bytecode_cache = {k: v for k, v in cache.items() if k[0] != "warnings"}
                     self.warnings = {k: v for k, v in cache.items() if k[0] == "warnings"}
         except Exception:
             pass

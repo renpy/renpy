@@ -19,18 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-from typing import Tuple, List, Dict, Set, Optional, Iterable, Any
-
+import gc
+import json
+import linecache
 import os
 import sys
 import time
 import zipfile
-import gc
-import linecache
-import json
 
 import renpy
 import renpy.game as game
@@ -166,11 +161,12 @@ def choose_variants():
         renpy.config.variants.insert(0, "mobile")  # type: ignore
         renpy.config.variants.insert(0, "android")  # type: ignore
 
-        import android  # type: ignore
         import math
-        import renpy.pygame as pygame
 
+        import android  # type: ignore
         from jnius import autoclass  # type: ignore
+
+        import renpy.pygame as pygame
 
         # Manufacturer/Model-specific variants.
         try:
@@ -245,7 +241,6 @@ def choose_variants():
 
     elif renpy.emscripten:
         import emscripten  # type: ignore
-        import re
 
         # web
         renpy.config.variants.insert(0, "web")  # type: ignore
@@ -389,6 +384,9 @@ def main():
 
     renpy.execution.not_infinite_loop(60)
 
+    # Load bytecode from file.
+    renpy.python.compile_cache.load()
+
     # Load the script.
     renpy.game.exception_info = "While loading the script."
     renpy.game.script = renpy.script.Script()
@@ -406,7 +404,6 @@ def main():
     renpy.style.build_styles()
 
     log_clock("Loading error handling")
-
 
     # Load all .rpy files.
     renpy.game.script.load_script()  # sets renpy.game.script.
