@@ -1045,12 +1045,7 @@ def check_python_warnings():
     Reports Python warnings.
     """
 
-    warnings = []
-
-    for k, v in renpy.game.script.bytecode_newcache.items():
-        if isinstance(k, tuple) and k[0] == "warnings":
-            warnings.extend(v)
-
+    warnings = [w for value in renpy.python.compile_cache.warnings.values() for w in value]
     if not warnings:
         return
 
