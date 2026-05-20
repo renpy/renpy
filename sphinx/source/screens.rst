@@ -1281,7 +1281,7 @@ Side
 ----
 
 This positions displayables in the corners or center of a grid. It
-takes a single parameter, string containing a space-separated list of
+takes a single parameter, a string containing a space-separated list of
 places to place its children. Each component of this list should be
 one of:
 
@@ -1295,24 +1295,31 @@ A side takes the following properties:
 
     The spacing between the rows and columns of the grid.
 
-
 A side takes the following property groups:
 
 * :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`
 
-When being rendered, this first sizes the corners, then the sides,
-then the center. The corners and sides are rendered with an available
-area of 0, so it may be necessary to supply them a minimum size (using
-:propref:`xminimum` or :propref:`yminimum`) to ensure they render at
-all.
-The order of placing children is controlled from top to bottom when
-adding them (i.e. also in the order of substrings in the argument),
-the latter will be the highest. This is may be disabled by
-:var:`config.keep_side_render_order`.
+Rendering a side starts with a three-step process to figure out the minimum size of the center, sides, and corner.
 
-Children correspond to entries in the places list, so this must have
-the same number of children as there are entries in the places list.
+* First, the minimum size of the center is found by offering it (0, 0)
+  space to render in.
+* Next, the minimum sizes of the sides are determined, by offering them
+  the minimum size of the adjacent edge of the center, and 0 in the other direction.
+  That is, 't' and 'b' are offered (center_min_width, 0), and 'l' and 'r' are offered (0, center_min_height).
+* Finally, the corners have their minimum s ize determined by offering each the minimum size of the adjacent
+  sides. For example, 'tl' would be offered (left_min_width, top_min_height), and so on.
+
+Any displayable can grow larger than the offered size. It may be necessary to supply corners or sides a minimum size
+(using :propref:`xminimum` or :propref:`yminimum`) to ensure each has an appropriate size.
+
+After the sizing pass, a grid is created, such that each row and column is large enough to fit the largest child in
+that row and column. If :propref:`xfill` or :propref:`yfill` is given, the center is given extra space to ensure the
+Side fills the available area.
+
+The children are then rendered in the order they are given, and placed into the appropriate cell using the normal
+placement algorithm. Children correspond to entries in the places list, so this must have the same number of children
+as there are entries in the places list.
 
 ::
 
