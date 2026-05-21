@@ -61,9 +61,19 @@ The ability to apply zsync-based updates has been removed. This was an older upd
 The ability to create these updates will be removed in Ren'Py 8.7.0.
 
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
+.. _renpy-8.5.4:
+
+8.5.4
+=====
+
+
+The interpretation of Bezier curves in Live2D has been changed to match the Cardano interpretation,
+which is consistent with the Live2D SDK. This behavior can be changed with the `old_beziers` parameter to the :func:`Live2D`
+displayable, or with the :var:`config.live2d_old_beziers` variable,
 
 
 .. _renpy-8.5.3:
+
 
 8.5.3
 =====

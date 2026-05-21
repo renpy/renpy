@@ -1652,6 +1652,12 @@ safe_text: bool = False
 If True, invalid text is displayed. If False, it's ignored.
 """
 
+live2d_old_beziers: bool = False
+"""
+If True, live2d will use the old Bezier curve behavior, which usees easing. If False, the Cardano interpretation
+of beziers is used.
+"""
+
 special_directory_map: dict[str, list[str]] = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ] }
 """
 This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
@@ -1667,7 +1673,6 @@ scene_uses_tag_layer: bool = True
 """
 If True, the scene statement will use the tag layer if a tag is known.
 """
-
 
 del os
 del collections

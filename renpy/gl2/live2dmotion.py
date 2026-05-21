@@ -84,9 +84,9 @@ class InvStep(object):
 
 
 class Bezier(object):
-    easing = True
+    old_beziers = True
 
-    def __init__(self, x0, y0, x1, y1, x2, y2, x3, y3, easing=False):
+    def __init__(self, x0, y0, x1, y1, x2, y2, x3, y3, old_beziers=False):
         self.duration = x3 - x0
 
         self.x0 = 0
@@ -99,7 +99,7 @@ class Bezier(object):
         self.y2 = y2
         self.y3 = y3
 
-        self.easing = easing
+        self.old_beziers = old_beziers
 
     def easing_get(self, t):
         done = t / self.duration
@@ -200,7 +200,7 @@ class Bezier(object):
         return lerp(p012, p123, u)
 
     def get(self, t):
-        if self.easing:
+        if self.old_beziers:
             return self.easing_get(t)
         else:
             return self.cardano_get(t)
@@ -210,7 +210,7 @@ class Bezier(object):
 
 
 class Motion(object):
-    def __init__(self, filename, fadein, fadeout):
+    def __init__(self, filename, fadein, fadeout, old_beziers=False):
         self.filename = filename
 
         with renpy.loader.load(filename, directory="images") as f:
@@ -251,7 +251,7 @@ class Motion(object):
                     x = s.pop(0)
                     y = s.pop(0)
 
-                    segments.append(Bezier(x0, y0, x1, y1, x2, y2, x, y))
+                    segments.append(Bezier(x0, y0, x1, y1, x2, y2, x, y, old_beziers=old_beziers))
 
                 elif kind == 2:
                     x = s.pop(0)
