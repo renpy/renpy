@@ -12,6 +12,15 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+.. _incompatible-8.5.3:
+
+8.5.4
+-----
+
+Ren'Py now uses the Cardano interpretation of Bezier curves in Live2D, which is consistent with the Live2D SDK.
+This may cause some motions to change their behavior. To revert to the old behavior, add to your game::
+
+    define config.live2d_old_beziers = True
 
 .. _incompatible-8.5.3:
 

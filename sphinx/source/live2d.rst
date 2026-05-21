@@ -50,7 +50,7 @@ Defining Animations
 
 Live2D animations are defined using the Live2D displayable and the image statement:
 
-.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, update_function=None, **properties)
+.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, update_function=None, old_beziers=None, **properties)
 
     This displayable displays a Live2D animation.
 
@@ -139,6 +139,11 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         interaction. The function is also called whenever the displayable is
         re-rendered.
 
+    `old_beziers`
+        If True, this uses the old Bezier curve behavior, which uses easing. If False, the Cardano interpretation
+        of beziers is used. If none, the value of :var:`config.live2d_old_beziers` is used.
+
+
     The difference between `attribute_function` and `attribute_filter` is
     that the former is generally used to compute replacement - the presence
     of two attributes means one should be replaced by a third. The latter
@@ -187,6 +192,10 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         `weight`
             A float between 0.0 and 1.0, the weight by which the new value will change the current value.
 
+.. var:: config.live2d_old_beziers = False
+
+    If True, live2d will by default use the old Bezier curve behavior, which usees easing. If False, the Cardano interpretation
+    of beziers is used.
 
 There is a config variable that can help in debugging what motions and
 expressions were loaded from .model3.json files:

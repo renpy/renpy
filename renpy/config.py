@@ -1643,6 +1643,12 @@ safe_text: bool = False
 If True, invalid text is displayed. If False, it's ignored.
 """
 
+live2d_old_beziers: bool = False
+"""
+If True, live2d will use the old Bezier curve behavior, which usees easing. If False, the Cardano interpretation
+of beziers is used.
+"""
+
 
 del os
 del collections
