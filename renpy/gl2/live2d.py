@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -79,8 +79,12 @@ def onetime_init():
 
     dll = dll.encode("utf-8")
 
-    if not renpy.gl2.live2dmodel.load(dll):  # type: ignore
-        raise Exception("Could not load Live2D. {} was not found.".format(dll))
+    try:
+        if not renpy.gl2.live2dmodel.load(dll):  # type: ignore
+            raise Exception("Could not load Live2D. {} was not found.".format(dll))
+    except Exception as e:
+        e.add_note("Live2D Cubism 5.3 or later is required.")
+
 
     did_onetime_init = True
 

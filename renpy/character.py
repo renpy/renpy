@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -108,6 +108,9 @@ class DialogueTextTags(object):
         # The index in the produced string where each pause starts.
         self.pause_start = [0]
 
+        # The index in the produced string where the afm text starts.
+        self.afm_start = [0]
+
         # The index in the produced string where each pause ends.
         self.pause_end = []
 
@@ -144,6 +147,7 @@ class DialogueTextTags(object):
                 if tag == "p" or tag == "w":
                     if not less_pauses:
                         self.pause_start.append(len(self.text))
+                        self.afm_start.append(len(self.text))
                         self.pause_end.append(len(self.text))
                         self.pause_delay.append(value)
 
@@ -152,11 +156,16 @@ class DialogueTextTags(object):
 
                     if value is not None and not less_pauses:
                         self.pause_start.append(len(self.text))
+                        self.afm_start.append(len(self.text))
                         self.pause_end.append(len(self.text))
                         self.pause_delay.append(value)
 
                 elif tag == "fast":
                     self.pause_start = [len(self.text)]
+                    if self.no_wait:
+                        self.afm_start = [self.afm_start[-1]]
+                    else:
+                        self.afm_start = [len(self.text)]
                     self.pause_end = []
                     self.pause_delay = []
                     self.no_wait = False
@@ -204,11 +213,21 @@ class CTCPauseHolder(renpy.display.displayable.Displayable):
 
         self.ctc = ctc
         self._duplicatable = ctc._duplicatable
+        self.rtl = False
+
+    def set_rtl(self, rtl):
+        if rtl != self.rtl:
+            self.rtl = rtl
+            renpy.display.render.invalidate(self)
 
     def render(self, width, height, st, at):
         cr = renpy.display.render.render(self.ctc, width, height, st, at)
-        rv = renpy.display.render.Render(0, cr.width)
-        rv.blit(cr, (0, 0))
+        rv = renpy.display.render.Render(0, cr.height)
+
+        if self.rtl:
+            rv.place(self.ctc, x=-cr.width, y=0, render=cr)
+        else:
+            rv.place(self.ctc, x=0, y=0, render=cr)
 
         return rv
 
@@ -657,10 +676,12 @@ def display_say(
         dtt = DialogueTextTags(what)
 
     if all_at_once:
+        afm_starts = [ dtt.afm_start[0] ]
         pause_start = [dtt.pause_start[0]]
         pause_end = [dtt.pause_end[-1]]
         pause_delay = [dtt.pause_delay[-1]]
     else:
+        afm_starts = dtt.afm_start
         pause_start = dtt.pause_start
         pause_end = dtt.pause_end
         pause_delay = dtt.pause_delay
@@ -687,7 +708,7 @@ def display_say(
             i()
 
     try:
-        for i, (start, end, delay) in enumerate(zip(pause_start, pause_end, pause_delay)):
+        for i, (afm_start, start, end, delay) in enumerate(zip(afm_starts, pause_start, pause_end, pause_delay)):
             # True if the is the last pause in a line of dialogue.
             last_pause = i == len(pause_start) - 1
 
@@ -834,9 +855,8 @@ def display_say(
                     raise Exception("The say screen (or show_function) must return a Text object.")
 
                 if what_ctc:
-                    if extend_text or not last_pause:
-                        if ctc_position == "nestled" or ctc_position == "nestled-close":
-                            what_ctc = CTCPauseHolder(what_ctc)
+                    if ctc_position == "nestled" or ctc_position == "nestled-close":
+                        what_ctc = CTCPauseHolder(what_ctc)
 
                     if ctc_position == "nestled":
                         what_text.set_ctc(what_ctc)
@@ -846,20 +866,12 @@ def display_say(
                             what_ctc,
                         ])
 
-                if (extend_text or not last_pause) and ctc:
-                    if ctc_position == "nestled":
-                        what_text.set_last_ctc(ctc)
-                    elif ctc_position == "nestled-close":
-                        what_text.set_last_ctc([
-                            "\ufeff",
-                            ctc,
-                        ])
-
                 if what_text.text[0] == what_string:
                     if extend_text:
                         what_text.text[0] += extend_text
 
                     # Update the properties of the what_text widget.
+                    what_text.afm_start = afm_start
                     what_text.start = start
                     what_text.end = end
                     what_text.slow = slow

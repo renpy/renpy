@@ -10,6 +10,10 @@ import datetime
 
 year = datetime.date.today().year
 
+IGNORE = [
+    "scripts/update_copyright.py"
+]
+
 ENDINGS = [
     ".rpy",
     ".rpym",
@@ -43,6 +47,10 @@ full_copyright = """\
 
 
 def process_file(fn):
+
+    if fn in IGNORE:
+        return
+
     for i in ENDINGS:
         if fn.endswith(i):
             break
@@ -65,8 +73,6 @@ def process_file(fn):
                     continue
 
                 has_copyright = True
-
-            l = l.replace("# See LICENSE.txt for license details.", full_copyright)
 
             if first:
                 if fn.endswith(".rpy") or fn.endswith(".rpym"):
@@ -91,4 +97,6 @@ def process(root):
 process_file("renpy.py")
 process("renpy")
 process("module")
+process("src")
+process("scripts")
 process("launcher/game")

@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -341,6 +341,8 @@ class Viewport(renpy.display.layout.Container):
         elif draggable:
             if grab is None and renpy.display.behavior.map_event(ev, "viewport_drag_end"):
                 self.drag_position = None
+            elif (grab is not self) and ev.type == pygame.MOUSEMOTION and not any(ev.buttons):
+                self.drag_position = None
         else:
             self.drag_position = None
 
@@ -381,6 +383,10 @@ class Viewport(renpy.display.layout.Container):
                 new_yspeed = old_yspeed + done * (new_yspeed - old_yspeed)
 
                 self.drag_speed = (new_xspeed, new_yspeed)
+
+            if ev.type == pygame.MOUSEMOTION and not any(ev.buttons):
+                self.drag_position = None
+                self.drag_position_time = None
 
             if renpy.display.behavior.map_event(ev, "viewport_drag_end"):
                 renpy.display.focus.set_grab(None)

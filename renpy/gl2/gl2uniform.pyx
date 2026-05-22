@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -354,6 +354,10 @@ cdef class Sampler2DSetter(Setter):
 
             if "texture_scaling" in context.properties:
                 mag_filter, min_filter = TEXTURE_SCALING[context.properties["texture_scaling"]]
+
+        # Force anisotropy to 1.0 if the min filter is a nearest filter, as anisotropy doesn't make sense in that case.
+        if min_filter == GL_NEAREST:
+            anisotropy = 1.0
 
         if wrap_s != texture.wrap_s:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)

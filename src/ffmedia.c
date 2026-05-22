@@ -881,8 +881,15 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 			return NULL;
 		}
 
+		int colorspace = ms->video_decode_frame->colorspace;
+		if (colorspace == AVCOL_SPC_UNSPECIFIED) {
+			colorspace = SWS_CS_DEFAULT;
+		}
+
+		int src_range = (ms->video_decode_frame->color_range == AVCOL_RANGE_JPEG) ? 1 : 0;
+
 		sws_setColorspaceDetails(ms->sws,
-			sws_getCoefficients(SWS_CS_DEFAULT), 0,
+			sws_getCoefficients(colorspace), src_range,
 			sws_getCoefficients(SWS_CS_DEFAULT), 0,
 			0, 1 << 16, 1 << 16);
 	}

@@ -629,7 +629,7 @@ written code:
 
     layeredimage francis:
         attribute base default
-        group face auto
+        group face auto:
             attribute neutral default
         attribute supersad image:
             "#00c3"

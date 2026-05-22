@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -722,7 +722,7 @@ class SayBehavior(renpy.display.layout.Null):
 
         for text in args:
             try:
-                afm_text = text.text[0][text.start : text.end]
+                afm_text = text.text[0][text.afm_start : text.end]
                 afm_text = renpy.text.extras.filter_text_tags(afm_text, allow=[])
                 self.afm_length += max(len(afm_text), 1)
             except Exception:
@@ -762,6 +762,10 @@ class SayBehavior(renpy.display.layout.Null):
 
         for dismiss_event, check_focus in dismiss:
             if map_event(ev, dismiss_event):
+
+                if renpy.display.focus.get_grab() is not None:
+                    continue
+
                 if check_focus and not self.is_focused():
                     continue
 
@@ -1723,17 +1727,17 @@ class Input(renpy.text.text.Text):
             if above is not None:
                 self.caret_pos = above
                 self.update_text(self.content, self.editable)
-            
+
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
-    
+
         elif map_event(ev, "input_down") and self.arrowkeys:
             below = self.get_caret_above_below_pos()[1]
 
             if below is not None:
                 self.caret_pos = below
                 self.update_text(self.content, self.editable)
-            
+
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
@@ -2240,6 +2244,8 @@ class Bar(renpy.display.displayable.Displayable):
     """
 
     _store_transform_event = True
+    extra_changed = None
+    action = None
 
     @property
     def _draggable(self):
@@ -2275,6 +2281,7 @@ class Bar(renpy.display.displayable.Displayable):
         hovered=None,
         unhovered=None,
         released=None,
+        action=None,
         **properties,
     ):
         self.value = None
@@ -2286,6 +2293,7 @@ class Bar(renpy.display.displayable.Displayable):
 
                 self.value = value
                 adjustment = value.get_adjustment()
+                self.extra_changed = changed
 
                 if renpy.game.interface is not None:
                     renpy.game.interface.timeout(0)
@@ -2330,6 +2338,7 @@ class Bar(renpy.display.displayable.Displayable):
         self.unhovered = unhovered
 
         self.released = released
+        self.action = action
 
     def per_interact(self):
         if self.value is not None:
@@ -2630,6 +2639,16 @@ class Bar(renpy.display.displayable.Displayable):
             rv = self.adjustment.change(value)
             if rv is not None:
                 return rv
+
+            if self.extra_changed is not None:
+                rv = run(self.extra_changed, value)
+                if rv is not None:
+                    return rv
+
+            if self.action is not None:
+                rv = run(self.action)
+                if rv is not None:
+                    return rv
 
         if ignore_event:
             raise renpy.display.core.IgnoreEvent()

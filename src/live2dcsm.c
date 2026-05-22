@@ -178,8 +178,8 @@ static EM_JS(void*, live2dGetDrawableDrawOrders, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableDrawOrders', 'number', ['number'], [model]);
 });
 
-static EM_JS(void*, live2dGetDrawableRenderOrders, (void* model), {
-    return window.live2d_csm.ccall('csmGetDrawableRenderOrders', 'number', ['number'], [model]);
+static EM_JS(void*, live2dGetRenderOrders, (void* model), {
+    return window.live2d_csm.ccall('csmGetRenderOrders', 'number', ['number'], [model]);
 });
 
 static EM_JS(void*, live2dGetDrawableOpacities, (void* model), {
@@ -319,7 +319,7 @@ typedef struct ModelProxy {
     csmFlags *renpy_drawable_dynamic_flags;
     const int *renpy_drawable_texture_indices;
     const int *renpy_drawable_draw_orders;
-    const int *renpy_drawable_render_orders;
+    const int *renpy_render_orders;
     const float *renpy_drawable_opacities;
     const int *renpy_drawable_mask_counts;
     const int **renpy_drawable_masks;
@@ -482,7 +482,7 @@ static csmModel* csmInitializeModelInPlace(const csmMoc* moc, void* address, con
     proxy->renpy_drawable_dynamic_flags = (const csmFlags *) pointerFromLive2d(proxy, proxy->live2d_drawable_dynamic_flags);
     proxy->renpy_drawable_texture_indices = (const int *) pointerFromLive2d(proxy, live2dGetDrawableTextureIndices(proxy->live2d_model));
     proxy->renpy_drawable_draw_orders = (const int *) pointerFromLive2d(proxy, live2dGetDrawableDrawOrders(proxy->live2d_model));
-    proxy->renpy_drawable_render_orders = (const int *) pointerFromLive2d(proxy, live2dGetDrawableRenderOrders(proxy->live2d_model));
+    proxy->renpy_render_orders = (const int *) pointerFromLive2d(proxy, live2dGetRenderOrders(proxy->live2d_model));
     proxy->renpy_drawable_opacities = (const float *) pointerFromLive2d(proxy, live2dGetDrawableOpacities(proxy->live2d_model));
     proxy->renpy_drawable_mask_counts = (const int *) pointerFromLive2d(proxy, live2dGetDrawableMaskCounts(proxy->live2d_model));
     proxy->renpy_drawable_masks = (const int **) pointerListFromLive2d(proxy, live2dGetDrawableMasks(proxy->live2d_model), proxy->drawable_count);
@@ -609,8 +609,8 @@ static const int* csmGetDrawableDrawOrders(csmModel* model) {
     return toModelProxy(model)->renpy_drawable_draw_orders;
 }
 
-static const int* csmGetDrawableRenderOrders(csmModel* model) {
-    return toModelProxy(model)->renpy_drawable_render_orders;
+static const int* csmGetRenderOrders(csmModel* model) {
+    return toModelProxy(model)->renpy_render_orders;
 }
 
 static const float* csmGetDrawableOpacities(csmModel* model) {
@@ -700,7 +700,7 @@ static struct NameToPointer nameToPointer[] = {
     {"csmGetDrawableDynamicFlags", (void*) csmGetDrawableDynamicFlags},
     {"csmGetDrawableTextureIndices", (void*) csmGetDrawableTextureIndices},
     {"csmGetDrawableDrawOrders", (void*) csmGetDrawableDrawOrders},
-    {"csmGetDrawableRenderOrders", (void*) csmGetDrawableRenderOrders},
+    {"csmGetRenderOrders", (void*) csmGetRenderOrders},
     {"csmGetDrawableOpacities", (void*) csmGetDrawableOpacities},
     {"csmGetDrawableMaskCounts", (void*) csmGetDrawableMaskCounts},
     {"csmGetDrawableMasks", (void*) csmGetDrawableMasks},

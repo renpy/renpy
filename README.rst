@@ -17,8 +17,8 @@ The following branches are the most interesting.
     merged into master on a regular basis.
 
     Pull requests that contain fixes or documentation improvements should be
-    made to the fix branch. When a release is made, the master branch is
-    copied to the fix branch.
+    made to the fix branch. When a feature release is made (for example, going from 8.6.x to 8.7.0),
+    the master branch is copied to the fix branch. Fix releases are made from this branch.
 
 ``master``
     The master branch is where the main focus of development is. This branch
@@ -27,6 +27,8 @@ The following branches are the most interesting.
     Pull requests that contain new features, that require incompatible changes,
     or major changes to Ren'Py's internals should be targeted at the master
     branch.
+
+    Feature releases are made from this branch.
 
 
 Getting Started
@@ -118,7 +120,7 @@ link in a nightly build, or compile the modules as described above. You'll
 also need the `Sphinx <https://www.sphinx-doc.org>`_ documentation generator.
 If you have pip working, install Sphinx using::
 
-    pip install -U sphinx sphinx_rtd_theme sphinx_rtd_dark_mode
+    pip install -U sphinx sphinx_rtd_theme sphinx_rtd_dark_mode sphinx-tabs
 
 Once Sphinx is installed, change into the ``sphinx`` directory inside the
 Ren'Py checkout and run::
@@ -130,7 +132,8 @@ Format
 
 Ren'Py's documentation consists of reStructuredText files found in sphinx/source, and
 generated documentation found in function docstrings scattered throughout the code. Do
-not edit the files in sphinx/source/inc directly, as they will be overwritten.
+not edit the files in the ``sphinx/source/inc`` folder directly, as they will be
+overwritten.
 
 Docstrings may include tags on the first few lines:
 

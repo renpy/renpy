@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -711,9 +711,12 @@ class Transform(Container):
     children = []
     arguments = DEFAULT_ARGUMENTS
 
+
     # Default before we set this.
     child_size = (0, 0)
 
+    raw_child = None
+    child_in_current_store: renpy.display.displayable.Displayable|None = None
     original_child = None
 
     def __init__(
@@ -744,7 +747,10 @@ class Transform(Container):
         if child is not None:
             self.add(child)
 
-        self.original_child: renpy.display.displayable.Displayable = child
+        self.raw_child: renpy.display.displayable.Displayable|None = child
+        "The child, before it was duplicated."
+
+        self.original_child: renpy.display.displayable.Displayable|None = child
         "The child that was passed to the constructor."
 
         self.state = TransformState()  # type: Any
@@ -1012,11 +1018,21 @@ class Transform(Container):
     def set_child(self, child, duplicate=True):
         child = renpy.easy.displayable(child)
 
-        if duplicate and child._duplicatable:
+        raw_child = child
+
+        if child is self.raw_child and self.child_in_current_store is not None:
+            child = self.child_in_current_store
+        elif duplicate and child._duplicatable:
             child = child._duplicate(self._args)
 
             if not self._duplicatable:
                 child._unique()
+
+        # Stop using the _in_current_store child if it changes.
+        if child is not self.child_in_current_store:
+            self.child_in_current_store = None
+
+        self.raw_child = raw_child
 
         self.child = child
         self.children = [child]
@@ -1204,6 +1220,10 @@ class Transform(Container):
         return rv
 
     def _in_current_store(self):
+
+        if not self.active:
+            self.update_state()
+
         if self.child is None:
             return self
 
@@ -1217,10 +1237,13 @@ class Transform(Container):
         rv = self(child=child)
         if isinstance(self, ATLTransform):
             assert isinstance(rv, ATLTransform)
-            rv.block = self.block
+            rv.block = self.block.in_current_store()
 
         rv.take_execution_state(self)
         rv._unique()
+
+        rv.raw_child = self.raw_child
+        rv.child_in_current_store = child
 
         return rv
 

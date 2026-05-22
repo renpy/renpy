@@ -115,12 +115,6 @@ cdef int python_close(SDL_RWops *context) noexcept with gil:
         if context.hidden.unknown.data1 != NULL:
             f = <object> context.hidden.unknown.data1
 
-            try:
-                f.close()
-            except Exception as e:
-                set_error(e)
-                return -1
-
             Py_DECREF(f)
 
             context.hidden.unknown.data1 = NULL

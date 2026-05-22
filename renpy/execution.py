@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -39,8 +39,11 @@ import ast as pyast
 # check.
 il_statements = 0
 
-# The deadline for reporting we're not in an infinite loop.
-il_time = 0
+# The first deadline for reporting we're not in an infinite loop.
+il_first_deadline: float = 0
+
+# The second deadline for reporting we're not in an infinite loop.
+il_second_deadline: float = 0.0
 
 
 def check_infinite_loop():
@@ -48,21 +51,31 @@ def check_infinite_loop():
 
     il_statements += 1
 
-    if il_statements <= 1000:
+    if il_statements <= 100:
         return
 
     il_statements = 0
 
-    global il_time
+    global il_first_deadline
+    global il_second_deadline
 
     now = time.time()
 
-    if now > il_time:
-        il_time = now + 60
+    if now < il_first_deadline:
+        il_second_deadline = 0
+        return
+
+    if il_second_deadline == 0:
+        il_second_deadline = now + 1
+
+    if now < il_second_deadline:
+        il_second_deadline = 0
+        il_first_deadline = now + 60
         raise Exception("Possible infinite loop.")
 
-    if renpy.config.developer and (il_time > now + 60):
-        il_time = now + 60
+    if renpy.config.developer and (il_first_deadline > now + 60):
+        il_first_deadline = now + 60
+        il_second_deadline = 0
 
     return
 
@@ -79,8 +92,8 @@ def not_infinite_loop(delay):
     if not renpy.config.developer:
         delay *= 5
 
-    global il_time
-    il_time = time.time() + delay
+    global il_first_deadline
+    il_first_deadline = time.time() + delay
 
 
 class Delete(object):
@@ -1007,11 +1020,20 @@ class Context(renpy.object.Object):
             self.call_location_stack.append("unknown location")
             self.dynamic_stack.append({})
 
+class RestartContext(BaseException):
+    """
+    Restarts the current context.
+    """
+
+class RestartTopContext(BaseException):
+    """
+    Restarts the current context.
+    """
 
 def run_context(top):
     """
     Runs the current context until it can't be run anymore, while handling
-    the RestartContext and RestartTopContext exceptions.
+    various exceptions.
     """
 
     if renpy.config.context_callback is not None:
@@ -1024,23 +1046,33 @@ def run_context(top):
         context = renpy.game.context()
 
         try:
-            context.run()
+            try:
+                context.run()
 
-            rv = renpy.store._return
+                rv = renpy.store._return
 
-            context.pop_all_dynamic()
+                context.pop_all_dynamic()
 
-            return rv
+                return rv
 
-        except renpy.game.RestartContext:
+            except renpy.rollback.RollbackException as e:
+                e.perform_rollback()
+
+            except renpy.rollback.UnfreezeException as e:
+                if top:
+                    e.perform_unfreeze()
+                else:
+                    context.pop_all_dynamic()
+                    raise
+
+        except RestartContext:
             continue
 
-        except renpy.game.RestartTopContext:
+        except RestartTopContext:
             if top:
                 continue
-
             else:
-                raise
+                context.pop_all_dynamic()
 
         except Exception:
             context.pop_all_dynamic()
@@ -1084,4 +1116,4 @@ def reset_all_contexts():
     c.goto_label(old.next_node.name)
 
     renpy.game.contexts.append(c)
-    raise renpy.game.RestartTopContext()
+    raise RestartTopContext()

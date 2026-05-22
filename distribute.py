@@ -68,7 +68,7 @@ def copy_tutorial_file(src, dest):
 def link_directory(dirname):
     dn = os.path.join(ROOT, dirname)
 
-    if os.path.exists(dn):
+    if os.path.lexists(dn):
         os.unlink(dn)
 
     if PY2:

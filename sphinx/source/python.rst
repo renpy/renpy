@@ -9,7 +9,9 @@ support can be used for many things, from setting a flag to creating
 new displayables. This chapter covers ways in which Ren'Py scripts can
 directly invoke Python, through the various Python statements.
 
-Ren'Py 7 supports Python 2.7. Ren'Py 8 supports Python 3.9.
+Since version 8.4, Ren'Py has supported Python 3.12. The Python version
+used by Ren'Py may be updated in future releases. Ren'Py scripts should
+be compatible with Python 3.12 and later.
 
 .. note::
     If you know Python, you'll be able to take advantage of that. However,
@@ -230,7 +232,7 @@ related to the ``default`` statement.
 
     It is highly recommended to ``default`` every variable in your game that is
     susceptible to change. If you use ``init python`` or ``define`` to declare a
-    variable, when a player play a game and changes that variable, then goes
+    variable, when a player plays a game and changes that variable, then goes
     back to the main menu and starts a new game, the variable will not have the
     value set in ``init python`` and so the former game will "leak" in the newly
     started one. If you create these variables in the start label instead, they
@@ -313,6 +315,21 @@ For example::
         python in character_stats.chloe_substore:
             friends.add("Jeremy")
 
+Note that, as in Python, imports rebind names, rather than creating aliases. Updating a variable imported from a named
+store will not update the variable in the store. For example::
+
+    init python in mystore:
+
+        value = 0
+
+    init python:
+        from store.mystore import value
+
+    label start:
+
+        $ value = 1
+
+        "[value] equals 1, but [mystore.value] remains 0."
 
 From a ``python in`` block, the default "outer" store can be
 accessed using either ``renpy.store``, or ``import store``.

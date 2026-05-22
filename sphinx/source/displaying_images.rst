@@ -505,6 +505,12 @@ Camera and Show Layer Statements
 The ``camera`` statement allows one to apply a transform or ATL transform to an
 entire layer (such as "master"), using syntax like::
 
+    # The flip transform needs to be defined once, at the start of the game.
+    transform flip:
+        xzoom -1 yzoom -1
+
+::
+
     camera at flip
 
 or::
@@ -524,11 +530,12 @@ The camera statement takes an optional layer name, between ``camera`` and
 The ``show layer`` statement is an older version of ``camera``, with some
 differences, that is still useful. ::
 
-
     show layer master:
         blur 10
 
 The differences are:
+
+* Camera propagates transform state, while show layer resets transform state.
 
 * The transforms applied with ``show layer`` are cleared at the
   next ``scene`` statement, while ``camera`` transforms last until

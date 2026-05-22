@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -372,8 +372,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         #  will use mouse coordinates to select droppable
         self.mouse_drop = mouse_drop
 
-        # We're focusable if we can be dragged.
-        self.focusable = draggable
+        # We're focusable if we can be interacted with in some way.
+        self.focusable = draggable or clicked or hovered or unhovered or activated or alternate
 
         self.child = None
 

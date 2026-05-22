@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -618,13 +618,20 @@ class SceneLists(renpy.object.Object):
             self.layer_at_list[layer] = (None, [])
 
     def set_layer_at_list(self, layer, at_list, reset=True, camera=False):
+
+        if not at_list:
+            reset = True
+
         if camera:
             self.camera_list[layer] = (None, list(at_list))
         else:
             self.layer_at_list[layer] = (None, list(at_list))
 
         if reset:
-            self.layer_transform[layer] = None
+            if camera:
+                self.camera_transform[layer] = None
+            else:
+                self.layer_transform[layer] = None
 
     def set_times(self, time):
         """

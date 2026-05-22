@@ -529,11 +529,11 @@ translate piglatin strings:
     old "changing the theme"
     new "angingchay hetay hemetay"
 
-    # game/consolecommand.rpy:91
+    # game/consolecommand.rpy:131
     old "INFORMATION"
     new "Nformationiay"
 
-    # game/consolecommand.rpy:91
+    # game/consolecommand.rpy:131
     old "The command is being run in a new operating system console window."
     new "Hetay ommandcay isay eingbay unray inay aay ewnay operatingay ystemsay onsolecay indowway."
 
@@ -738,62 +738,70 @@ translate piglatin strings:
     new "Isualvay Tudiosay Odecay (Ystemsay)"
 
     # game/editor.rpy:236
-    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
-    new "Sesuay aay opycay ofay Isualvay Tudiosay Odecay hattay ouyay avehay installeday outsideay ofay Enray'Ypay. Tiay'say ecommendedray ouyay installay hetay anguagelay-enpyray extensionay otay adday upportsay orfay Enray'Ypay ilesfay."
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the renpy.language-renpy extension to add support for Ren'Py files."
+    new "Sesuay aay opycay ofay Isualvay Tudiosay Odecay hattay ouyay avehay installeday outsideay ofay Enray'Ypay. Tiay'say ecommendedray ouyay installay hetay enpyray.anguagelay-enpyray extensionay otay adday upportsay orfay Enray'Ypay ilesfay."
 
     # game/editor.rpy:242
+    old "VSCodium (System)"
+    new "Scodiumvay (Ystemsay)"
+
+    # game/editor.rpy:242
+    old "Uses a copy of VSCodium that you have installed outside of Ren'Py. It's recommended you install the renpy.language-renpy extension to add support for Ren'Py files."
+    new "Sesuay aay opycay ofay Scodiumvay hattay ouyay avehay installeday outsideay ofay Enray'Ypay. Tiay'say ecommendedray ouyay installay hetay enpyray.anguagelay-enpyray extensionay otay adday upportsay orfay Enray'Ypay ilesfay."
+
+    # game/editor.rpy:248
     old "System Editor"
     new "Ystemsay Ditoreay"
 
-    # game/editor.rpy:242
+    # game/editor.rpy:248
     old "Invokes the editor your operating system has associated with .rpy files."
     new "Nvokesiay hetay editoray ouryay operatingay ystemsay ashay associateday ithway .pyray ilesfay."
 
-    # game/editor.rpy:258
+    # game/editor.rpy:264
     old "None"
     new "Onenay"
 
-    # game/editor.rpy:258
+    # game/editor.rpy:264
     old "Prevents Ren'Py from opening a text editor."
     new "Reventspay Enray'Ypay omfray openingay aay exttay editoray."
 
-    # game/editor.rpy:365
+    # game/editor.rpy:371
     old "Edit [text]."
     new "Diteay [text]."
 
-    # game/editor.rpy:414
+    # game/editor.rpy:420
     old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Naay exceptionay occurreday hileway aunchinglay hetay exttay editoray:\n[exception!q]"
 
-    # game/editor.rpy:567
+    # game/editor.rpy:573
     old "Select Editor"
     new "Electsay Ditoreay"
 
-    # game/editor.rpy:582
+    # game/editor.rpy:588
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
     new "Aay exttay editoray isay hetay rogrampay ouyay'llay useay otay editay Enray'Ypay criptsay ilesfay. Erehay, ouyay ancay electsay hetay editoray Enray'Ypay illway useay. Fiay otnay alreadyay resentpay, hetay editoray illway ebay automaticallyay ownloadedday anday installeday."
 
-    # game/editor.rpy:640
+    # game/editor.rpy:646
     old "The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."
     new "Hetay Tomaay exttay editoray isay onay ongerlay upportedsay ybay itsay evelopersday. Eway uggestsay witchingsay otay Isualvay Tudiosay Odecay oray anotheray editoray."
 
-    # game/editor.rpy:640
+    # game/editor.rpy:646
     old "Select editor now."
     new "Electsay editoray ownay."
 
-    # game/editor.rpy:640
+    # game/editor.rpy:646
     old "Ignore until next launch."
     new "Gnoreiay untilay extnay aunchlay."
 
-    # game/editor.rpy:640
+    # game/editor.rpy:646
     old "Do not ask again."
     new "Oday otnay askay againay."
 
-    # game/editor.rpy:667
+    # game/editor.rpy:673
     old "You are using an old version of the Ren'Py Language support for Visual Studio Code. Would you like to upgrade?"
     new "Ouyay areay usingay anay olday ersionvay ofay hetay Enray'Ypay Anguagelay upportsay orfay Isualvay Tudiosay Odecay. Ouldway ouyay ikelay otay upgradeay?"
 
-    # game/editor.rpy:667
+    # game/editor.rpy:673
     old "Upgrade."
     new "Pgradeuay."
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -450,7 +450,7 @@ def manifest(url, renpy=False, insecure=False):
         If true, verificaiton is disabled.
     """
 
-    import ecdsa
+    import renpy.ecsign
 
     download(url, "temp:manifest.py")
 
@@ -463,9 +463,9 @@ def manifest(url, renpy=False, insecure=False):
         with open(_path("temp:manifest.py.sig"), "rb") as f:
             sig = f.read()
 
-        key = ecdsa.VerifyingKey.from_pem(_renpy.exports.open_file("renpy_ecdsa_public.pem").read())
+        key = renpy.ecsign.pem_to_der(_renpy.exports.open_file("renpy_ecdsa_public.pem").read())
 
-        if not key.verify(sig, manifest):
+        if not renpy.ecsign.verify_data(manifest, key, sig):
             error(_("The manifest signature is not valid."))
             return
 

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -509,9 +509,9 @@ init python:
             )
 
         def _escape_limit(self, s: str):
-            s = s.replace("{", "{{")
             if len(s) > 400:
                 s = s[:200] + " ... " + s[-200:]
+            s = s.replace("{", "{{")
 
             return s
 
@@ -525,6 +525,9 @@ init python:
                 f'{{/a}}, in {name}')
 
         def source_carets(self, line, carets):
+            if line and line[0] == " ":
+                line = line.replace(" ", "\u00a0") #NBSP
+
             if carets is None:
                 self._print(self._escape_limit(line))
                 return
@@ -589,6 +592,9 @@ init python:
             error_rv = []
             error_len = 0
             for i, line in enumerate(lines):
+                if line and line[0] == " ":
+                    line = line.replace(" ", "\u00a0") #NBSP
+
                 # In case we have single insanely lengthy single error.
                 error_len += len(line)
                 if error_len > 65536:
@@ -803,20 +809,20 @@ screen _exception:
 
         viewport:
             id "viewport"
-            child_size (4000, None)
+            child_size (None, None)
             mousewheel True
             draggable True
             scrollbars "both"
 
             has vbox
 
-            text "[renpy.game.exception_info]" size gui._scale(22)
+            text "[renpy.game.exception_info!q]" size gui._scale(22)
             frame style '_trace':
-                text fmt_short substitute False
+                text fmt_short substitute False safe True
 
             text "Full traceback:" size gui._scale(22)
             frame style '_trace':
-                text fmt_full substitute False
+                text fmt_full substitute False safe True
 
         hbox:
             vbox:
@@ -887,7 +893,7 @@ screen _parse_errors(errors, error_fn, reload_action):
 
         viewport:
             id "viewport"
-            child_size (4000, None)
+            child_size (None, None)
             mousewheel True
             draggable True
             scrollbars "both"
@@ -896,7 +902,7 @@ screen _parse_errors(errors, error_fn, reload_action):
 
             has vbox
 
-            text fmt_errors substitute False
+            text fmt_errors substitute False safe True
 
         vbox:
 

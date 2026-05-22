@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -447,7 +447,7 @@ class Cache:
 
         to_flush = []
 
-        for ce in self.cache.values():
+        for ce in list(self.cache.values()):
             if fn in ce.what.predict_files():
                 to_flush.append(ce)
 
@@ -692,7 +692,10 @@ class ImageBase(renpy.display.displayable.Displayable):
         self.identity = (type(self).__name__,) + args + flat_properties
 
         if self.obsolete and renpy.game.context().init_phase:
-            frame = sys._getframe(2)
+            frame = sys._getframe()
+            current_filename = frame.f_code.co_filename
+            while frame.f_code.co_filename == current_filename and frame.f_back:
+                frame = frame.f_back
             filename = frame.f_code.co_filename
             line = frame.f_lineno
             classname = type(self).__name__
@@ -1277,7 +1280,7 @@ class Composite(ImageBase):
         self.images = [image(i) for i in args[1::2]]
 
         # Only supports all the images having the same oversample factor
-        self.oversample = self.images[0].get_oversample()
+        self.oversample = self.images[0].get_oversample() if self.images else 1
 
         self.const_size = all(i.const_size for i in self.images)
 

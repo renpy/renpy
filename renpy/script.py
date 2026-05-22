@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,14 +26,12 @@ from typing import Any
 
 import __future__
 import collections
-import pickletools
 import hashlib
 import os
 import difflib
 import time
 import struct
 import zlib
-import sys
 import shutil
 
 import renpy
@@ -44,25 +42,14 @@ from renpy.compat.pickle import loads, dumps
 # The version of the dumped script.
 script_version = renpy.script_version
 
-# The version of the bytecode cache.
-BYTECODE_VERSION = 1
-
-from importlib.util import MAGIC_NUMBER as PYC_MAGIC
-
-# Change this to force a recompile of Python when required.
-PYC_MAGIC += b"_2025-06-16"
-
 # Change this to force a recompile of RPYC files when required, if the .rpy file exists.
 RPYC_MAGIC = b"_2025-07-06"
 
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
 
-
-# The name of the obsolete and new bytecode cache files.
-OLD_BYTECODE_FILE = "cache/bytecode.rpyb"
-BYTECODE_FILE = "cache/bytecode-{}{}.rpyb".format(sys.version_info.major, sys.version_info.minor)
-
+# Kept for backwards compatibility.
+BYTECODE_FILE = renpy.python.CompileCache.BYTECODE_FILE
 
 class ScriptError(Exception):
     """
@@ -158,13 +145,7 @@ class Script(object):
 
         self.record_pycode = True
 
-        # Bytecode caches.
-        self.bytecode_oldcache = {}
-        self.bytecode_newcache = {}
-        self.bytecode_dirty = False
-
         self.translator = renpy.translation.ScriptTranslator()
-        self.init_bytecode()
 
         self.scan_script_files()
 
@@ -422,11 +403,18 @@ class Script(object):
                 else:
                     sort_key = parts[1]
 
+            priority *= 2
+            if fn >= "A":
+                priority += 1
+
             return (priority, sort_key, fn, dn)
 
         self.script_files.sort(key=game_key)
 
-        return self.common_script_files + self.script_files
+        rv = [ (0,) + item for item in self.common_script_files ]
+        rv.extend((game_key(item)[0],) + item for item in self.script_files)
+
+        return rv
 
     def load_script(self):
         script_files = self.sort_script_files()
@@ -436,7 +424,15 @@ class Script(object):
         count = 0
         skipped = 0
 
-        for fn, dir in script_files:
+        last_priority = 0
+
+        for priority, fn, dir in script_files:
+
+            if priority != last_priority:
+                if renpy.parser.has_parse_errors():
+                    skipped += len(script_files) - count
+                    break
+
             count += 1
             renpy.display.presplash.progress("Loading script...", count, len(script_files))
 
@@ -874,14 +870,16 @@ class Script(object):
 
                 self.assign_names(stmts, renpy.lexer.elide_filename(fullfn))
 
-                pickle_data_before_static_transforms = pickletools.optimize(
-                    dumps((data, stmts), bad_reduction_name=f"<{fn} rpyc data>")
+                pickle_data_before_static_transforms = dumps(
+                    (data, stmts),
+                    bad_reduction_name=f"<{fn} rpyc data>",
                 )
 
                 self.static_transforms(stmts)
 
-                pickle_data_after_static_transforms = pickletools.optimize(
-                    dumps((data, stmts), bad_reduction_name=f"<{fn} transformed rpyc data>")
+                pickle_data_after_static_transforms = dumps(
+                    (data, stmts),
+                    bad_reduction_name=f"<{fn} transformed rpyc data>",
                 )
 
                 if not renpy.macapp:
@@ -1083,24 +1081,6 @@ class Script(object):
 
         self.digest.update(digest)  # type: ignore
 
-    def init_bytecode(self):
-        """
-        Init/Loads the bytecode cache.
-        """
-
-        if renpy.game.args.compile_python:
-            return
-
-        # Load the oldcache.
-        try:
-            with renpy.loader.load(BYTECODE_FILE) as f:
-                version, cache = loads(zlib.decompress(f.read()))
-                if version == BYTECODE_VERSION:
-                    self.bytecode_oldcache = cache
-
-        except Exception:
-            pass
-
     def update_bytecode(self):
         """
         Compiles the PyCode objects in self.all_pycode, updating the
@@ -1158,26 +1138,6 @@ class Script(object):
                 renpy.game.exception_info = old_ei
 
         self.all_pycode = []
-
-    def save_bytecode(self):
-        if renpy.macapp:
-            return
-
-        if self.bytecode_dirty:
-            try:
-                fn = renpy.loader.get_path(BYTECODE_FILE)
-
-                with open(fn, "wb") as f:
-                    data = (BYTECODE_VERSION, self.bytecode_newcache)
-                    f.write(zlib.compress(dumps(data), 3))
-            except Exception:
-                pass
-
-            fn = renpy.loader.get_path(OLD_BYTECODE_FILE)
-            try:
-                os.unlink(fn)
-            except Exception:
-                pass
 
     def lookup(self, label):
         """

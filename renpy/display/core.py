@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1553,7 +1553,7 @@ class Interface:
             return None
 
         start = self.transition_time.get(layer, self.frame_time) or self.frame_time
-        delay = getattr(transition, "delay", 0)
+        delay = getattr(transition, "delay", 0) or 0
 
         if (self.frame_time - start) < delay:
             return rv
@@ -1705,12 +1705,17 @@ class Interface:
 
             # Make the screen more suitable for interactions.
             renpy.exports.movie_stop(only_fullscreen=True)
-            renpy.store.mouse_visible = True
+
+            old_mouse_visible = renpy.store.mouse_visible
+
+            if not renpy.store.mouse_visible:
+                renpy.store.mouse_visible = True
 
             try:
                 self.in_quit_event = True
                 renpy.display.behavior.run(renpy.config.quit_action)
             finally:
+                renpy.store.mouse_visible = old_mouse_visible
                 self.in_quit_event = False
 
         else:
@@ -1758,6 +1763,9 @@ class Interface:
 
         visible = visible and self.show_mouse and not (renpy.display.video.fullscreen)
 
+        if renpy.store.mouse_visible == "always":
+             visible = True
+
         return visible
 
     def get_mouse_names(self):
@@ -1775,6 +1783,8 @@ class Interface:
             rv.append(self.mouse)
 
         rv.append(getattr(renpy.store, "default_mouse", "default"))
+
+        rv = [ i for i in rv if i is not None ]
 
         if pygame.mouse.get_pressed()[0]:
             new_rv = [ ]
@@ -2054,7 +2064,7 @@ class Interface:
         if self.text_rect is not None:
             not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown()
             if self.touch_keyboard:
-                not_shown = renpy.exports.get_screen("_touch_keyboard", layer="screens") is None
+                not_shown = renpy.exports.get_screen("_touch_keyboard") is None
 
             if self.old_text_rect != self.text_rect:
                 x, y, w, h = self.text_rect
@@ -2071,7 +2081,6 @@ class Interface:
                     renpy.exports.restart_interaction()  # required in mobile mode
                     renpy.exports.show_screen(
                         "_touch_keyboard",
-                        _layer="screens",  # not 'transient' so as to be above other screens
                         # not 'overlay' as it conflicts with console
                         _transient=True,
                     )
@@ -2082,7 +2091,7 @@ class Interface:
                 pygame.key.set_text_input_rect(None)
 
                 if self.touch_keyboard:
-                    renpy.exports.hide_screen("_touch_keyboard", layer="screens")
+                    renpy.exports.hide_screen("_touch_keyboard")
 
         self.old_text_rect = self.text_rect
 
@@ -2940,12 +2949,14 @@ class Interface:
                 if self.maximum_framerate_time > get_time():
                     can_block = False
 
-                if (redraw_time is not None) and (not needs_redraw) and can_block:
-                    if redraw_time != old_redraw_time:
-                        time_left = redraw_time - get_time()
-                        time_left = min(time_left, 3600)
-                        _redraw_in = time_left
 
+                # Compute the redraw time and set the redraw timer.
+                if redraw_time is not None:
+                    time_left = redraw_time - get_time()
+                    time_left = min(time_left, 1.0)
+                    _redraw_in = time_left
+
+                    if redraw_time != old_redraw_time:
                         if time_left <= 0:
                             try:
                                 pygame.event.post(self.redraw_event)
@@ -2953,12 +2964,16 @@ class Interface:
                                 pass
                             pygame.time.set_timer(REDRAW, 0)
                         else:
-                            pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
+                            pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1), once=True)
 
-                        old_redraw_time = redraw_time
-                else:
-                    _redraw_in = 3600
-                    pygame.time.set_timer(REDRAW, 0)
+                elif redraw_time is None:
+
+                    if old_redraw_time is not None:
+                        pygame.time.set_timer(REDRAW, 0)
+                    _redraw_in = 1.0
+
+                old_redraw_time = redraw_time
+
 
                 # Handle the timeout timer.
                 if not self.timeout_time:

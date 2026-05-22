@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -60,7 +60,11 @@ def extract_strings():
         help="If given, the current contents of the file are preserved, and new contents are merged into the file.",
         action="store_true",
     )
-    ap.add_argument("--force", help="If given, noting happens if the language does not exist.", action="store_true")
+    ap.add_argument(
+        "--force",
+        help="If given, no exceptions are thrown if the language does not exist.",
+        action="store_true"
+    )
 
     args = ap.parse_args()
 

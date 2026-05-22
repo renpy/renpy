@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -705,7 +705,9 @@ def load(name, directory=None, tl=True):
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
-    name = re.sub(r"/+", "/", name).lstrip("/")
+    while "//" in name:
+        name = name.replace("//", "/")
+    name = name.lstrip("/")
 
     for p in get_prefixes(directory=directory, tl=tl):
         rv = load_core(p + name)

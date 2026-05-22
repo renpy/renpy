@@ -133,9 +133,8 @@ def resolve_at(at: RawBlock | Transform | Iterable[Transform]) -> tuple[Transfor
     Turns an ATL RawBlock, or a Transform, or an iterable of Transforms,
     into a tuple of transforms.
     """
-    if isinstance(at, RawBlock):
-        return (ATLTransform(at),)
-    return renpy.easy.to_tuple(at)
+    rv = renpy.easy.to_tuple(at)
+    return tuple(ATLTransform(i) if isinstance(i, RawBlock) else i for i in rv)
 
 
 class When(python_object):
@@ -833,7 +832,7 @@ def parse_property(
         l.revert(check)
         return 0
 
-    if (name in final_properties) or (name in expr_properties):
+    if ((name in final_properties) or (name in expr_properties)) and (name != "at"):
         l.error(f"Duplicate property: {name}")
 
     if name in ("auto", "default", "multiple"):
@@ -849,12 +848,18 @@ def parse_property(
             expr_properties[name] = l.require(l.simple_expression)
     elif name == "at":
         if l.keyword("transform"):
+            if "at" in final_properties:
+                l.error("Duplicate property: at transform")
+
             l.require(":")
             l.expect_eol()
             l.expect_block("ATL")
             final_properties[name] = parse_atl(l.subblock_lexer())
             return 2
         else:
+            if "at" in expr_properties:
+                l.error("Duplicate property: at")
+
             expr_properties[name] = l.require(l.comma_expression)
     else:
         expr_properties[name] = l.require(l.simple_expression)
@@ -979,6 +984,19 @@ def parse_attribute(l):
     return ra
 
 
+def merge_properties(final_properties: dict, expr_properties: dict) -> dict:
+
+    eval_properties = { k: eval(v) for k, v in expr_properties.items() }
+    rv =  final_properties | eval_properties
+
+    if "at" in final_properties and "at" in expr_properties:
+        expr_at = eval_properties["at"]
+        final_at = final_properties["at"]
+
+        rv["at"] = renpy.easy.to_tuple(expr_at) + (final_at,)
+
+    return rv
+
 class RawAttributeGroup(renpy.object.Object):
     __version__ = 1
 
@@ -997,7 +1015,7 @@ class RawAttributeGroup(renpy.object.Object):
         self.expr_properties = {}
 
     def execute(self):
-        properties = self.final_properties | {k: eval(v) for k, v in self.expr_properties.items()}
+        properties = merge_properties(self.final_properties, self.expr_properties)
 
         auto = properties.pop("auto", False)
         variant = properties.get("variant", None)
@@ -1125,7 +1143,7 @@ class RawCondition(renpy.object.Object):
         self.expr_properties = {}
 
     def execute(self):
-        properties = self.final_properties | {k: eval(v) for k, v in self.expr_properties.items()}
+        properties = merge_properties(self.final_properties, self.expr_properties)
         return [Condition(self.condition, resolve_image(self.image), **properties)]
 
 
@@ -1235,7 +1253,7 @@ class RawAlways(renpy.object.Object):
 
     def execute(self):
         image = resolve_image(self.image)
-        properties = self.final_properties | {k: eval(v) for k, v in self.expr_properties.items()}
+        properties = merge_properties(self.final_properties, self.expr_properties)
         return [Always(image, **properties)]
 
 
@@ -1323,7 +1341,7 @@ class RawLayeredImage(renpy.object.Object):
         self.expr_properties = {}
 
     def execute(self):
-        properties = self.final_properties | {k: eval(v) for k, v in self.expr_properties.items()}
+        properties = merge_properties(self.final_properties, self.expr_properties)
 
         l = []
         for i in self.children:

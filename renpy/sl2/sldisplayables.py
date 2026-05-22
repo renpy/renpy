@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -273,6 +273,7 @@ Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
 Keyword("released")
+Keyword("action")
 add(bar_properties)
 
 
@@ -307,6 +308,7 @@ Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
 Keyword("released")
+Keyword("action")
 add(bar_properties)
 
 # Omit autobar. (behavior)

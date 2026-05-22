@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -118,8 +118,12 @@ text_property_names = [
     "instance",
 ]
 
-text_properties = [Style(i) for i in text_property_names]
-text_text_properties = [PrefixStyle("text_", i) for i in text_property_names]
+text_keyword_property_names = [
+    "safe"
+]
+
+text_properties = [Style(i) for i in text_property_names] + [ Keyword(i) for i in text_keyword_property_names ]
+text_text_properties = [PrefixStyle("text_", i) for i in text_property_names] + [ Keyword("text_" + i) for i in text_keyword_property_names ]
 
 margin_properties = [
     Style(i)

@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -110,6 +110,11 @@ cdef class Render:
 
     # A flag that tells us if uniforms has a render in it.
     cdef public bint uniforms_has_render
+
+    # This is the width and height of this Render if .subsurface was not allowed to
+    # expand the size of the displayable.
+    cdef public float cropped_width, cropped_height
+
 
     # operations ###############################################################
 

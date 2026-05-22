@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -279,6 +279,9 @@ class TextSegment(object):
             self.features = source.features
 
         else:
+            self.antialias = True
+            self.vertical = False
+            self.font = None
             self.hyperlink = 0
             self.cps = 0
             self.ruby_top = False
@@ -286,6 +289,9 @@ class TextSegment(object):
             self.ignore = False
             self.default_font = True
             self.shader = None
+            self.axis = None
+            self.instance = None
+            self.features = None
 
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(
@@ -300,14 +306,13 @@ class TextSegment(object):
             Text given the context the style is taken in. Used to produce error messages.
         """
 
-        self.antialias = style.antialias
-        self.vertical = style.vertical
-        font = style.font
+        self.antialias = style.antialias if style.antialias is not None else self.antialias
+        font = style.font if style.font is not None else self.font
         self.font = renpy.config.font_name_map.get(font, font)
-        self.size = style.size
-        self.bold = style.bold
-        self.italic = style.italic
-        self.hinting = style.hinting
+        self.size = style.size if style.size is not None else self.size
+        self.bold = style.bold if style.bold is not None else self.bold
+        self.italic = style.italic if style.italic is not None else self.italic
+        self.hinting = style.hinting if style.hinting is not None else self.hinting
 
         underline = style.underline
 
@@ -319,8 +324,8 @@ class TextSegment(object):
             self.underline = 0
 
         self.strikethrough = layout.scale_int(style.strikethrough)
-        self.color = style.color or self.color
-        self.black_color = style.black_color or self.black_color
+        self.color = style.color if style.color is not None else self.color
+        self.black_color = style.black_color if style.black_color is not None else self.black_color
         self.hyperlink = None
         self.kerning = layout.scale(style.kerning)
         self.outline_color = None
@@ -332,9 +337,9 @@ class TextSegment(object):
 
         self.shaper = style.shaper
 
-        self.axis = style.axis
-        self.instance = style.instance
-        self.features = style.font_features
+        self.axis = style.axis if style.axis is not None else self.axis
+        self.instance = style.instance if style.instance is not None else self.instance
+        self.features = style.font_features if style.font_features is not None else self.features
 
         if context and style.textshader and not self.shader:
             raise Exception(
@@ -342,7 +347,16 @@ class TextSegment(object):
                 % (context,)
             )
 
-        self.shader = renpy.text.shader.get_textshader(style.textshader)
+        new_shader = renpy.text.shader.get_textshader(style.textshader)
+
+        if context and self.shader and not new_shader:
+
+            raise Exception(
+                "%s removes a textshader, but the Text displayable already has a textshader. Textshaders cannot be removed once applied. Consider using config.default_textshader."
+                % (context,)
+            )
+
+        self.shader = new_shader
 
     # From here down is the public glyph API.
 
@@ -738,6 +752,9 @@ class Layout(object):
         # The virtual width and height offered to this Layout.
         self.width = width
         self.height = height
+
+        # Should we be in safe text mode?
+        self.safe: bool = text.safe
 
         # The default characters-per-second for this displayable.
         self.cps = style.slow_cps
@@ -1324,17 +1341,22 @@ class Layout(object):
                 tag, _, value = text.partition("=")
 
                 if tag and tag[0] == "/":
+
+                    if len(tss) < 2:
+                        if renpy.config.safe_text or self.safe:
+                            line.extend(self.create_text_segments(text, tss[-1], style))
+                            continue
+                        else:
+                            tag = tag[1:]
+
+                            if not renpy.text.extras.text_tags.get(tag, True):
+                                raise Exception(
+                                    "{/%s} isn't valid, since the %s text tag doesn't take a close tag." % (tag, tag)
+                                )
+
+                            raise Exception("%r closes a text tag that isn't open." % text)
+
                     tss.pop()
-
-                    if not tss:
-                        tag = tag[1:]
-
-                        if not renpy.text.extras.text_tags.get(tag, True):
-                            raise Exception(
-                                "{/%s} isn't valid, since the %s text tag doesn't take a close tag." % (tag, tag)
-                            )
-
-                        raise Exception("%r closes a text tag that isn't open." % text)
 
                 elif tag == "_start":
                     fs = FlagSegment()
@@ -1601,7 +1623,10 @@ class Layout(object):
                     pass
 
                 else:
-                    raise Exception("Unknown text tag %r" % text)
+                    if renpy.config.safe_text or self.safe:
+                        line.extend(self.create_text_segments(text, tss[-1], style))
+                    else:
+                        raise Exception("Unknown text tag %r" % text)
 
             except Exception:
                 if done:
@@ -1622,9 +1647,8 @@ class Layout(object):
     def thaic90_paragraph(self, p):
         """
         Given a paragraph (a list of (segment, text) tuples), converts the
-        text into c90-encoded thai text. This is an encoding that combines
-        multiple characters (base character, upper vowel, lower vowel, and
-        tone mark) into a single character in a unicode reserved space.
+        text to Thai C90 Encoding by mapping Thai base characters and combining marks
+        to PUA code points for correct glyph positioning in C90-compatible fonts.
         """
 
         rv = []
@@ -1649,6 +1673,9 @@ class Layout(object):
 
         for ts, s in p:
             if not isinstance(ts, TextSegment):
+                if isinstance(ts, DisplayableSegment) and isinstance(ts.d, renpy.character.CTCPauseHolder):
+                    ts.d.set_rtl(direction in (RTL, WRTL))
+
                 rv.append((ts, ts.glyphs(s, self)))
 
             elif ts.shaper == "harfbuzz":
@@ -2136,6 +2163,7 @@ class Text(renpy.display.displayable.Displayable):
     last_ctc = None
     tokenized = False
     slow_done_time = None
+    safe = False
 
     def after_upgrade(self, version):
         if version < 3:
@@ -2161,6 +2189,7 @@ class Text(renpy.display.displayable.Displayable):
         replaces=None,
         mask=None,
         tokenized=False,
+        safe=False,
         **properties,
     ):
         super(Text, self).__init__(**properties)
@@ -2214,14 +2243,22 @@ class Text(renpy.display.displayable.Displayable):
 
         # The index of the start and end strings in the first segment of text.
         # (None to show the whole text.)
-        self.start = None  # type: int|None
-        self.end = None  # type: int|None
+        self.afm_start: int|None = None
+        self.start: int|None = None
+        self.end: int|None = None
+
+        # If true, a safe mode is engaged that will render text with text tag errors.
+        self.safe = safe
+
+        # If true, a safe mode is engaged that will render text with text tag errors.
+        self.safe = safe
 
         if isinstance(replaces, Text):
             self.slow = replaces.slow
             self.slow_done = replaces.slow_done
             self.slow_done_time = replaces.slow_done_time
             self.ctc = replaces.ctc
+            self.afm_start = replaces.afm_start
             self.start = replaces.start
             self.end = replaces.end
 
@@ -2919,6 +2956,7 @@ class Text(renpy.display.displayable.Displayable):
         if self.slow and layout.cps:
             slow_time = min(slow_time, st)
 
+        render.add_uniform("u_text_time", st)
         render.add_uniform("u_text_slow_time", slow_time)
 
         if layout.cps:
@@ -2944,14 +2982,18 @@ class Text(renpy.display.displayable.Displayable):
         tokens = []
 
         for i in text:
-            if isinstance(i, str):
-                tokens.extend(textsupport.tokenize(i))
+            try:
+                if isinstance(i, str):
+                    tokens.extend(textsupport.tokenize(i))
 
-            elif isinstance(i, renpy.display.displayable.Displayable):
-                tokens.append((DISPLAYABLE, i))
+                elif isinstance(i, renpy.display.displayable.Displayable):
+                    tokens.append((DISPLAYABLE, i))
 
-            else:
-                raise Exception("Can't display {0!r} as Text.".format(i))
+                else:
+                    raise Exception("Can't display {0!r} as Text.".format(i))
+            except Exception as e:
+                if renpy.config.safe_text or self.safe:
+                    tokens.append((TEXT, i))
 
         return tokens
 

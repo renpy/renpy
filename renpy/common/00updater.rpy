@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -817,8 +817,8 @@ init -1500 python in updater:
 
                 try:
 
-                    import ecdsa
-                    verifying_key = ecdsa.VerifyingKey.from_pem(open(key, "rb").read())
+                    import renpy.ecsign
+                    verifying_key = renpy.ecsign.pem_to_der(open(key, "rb").read())
 
                     url = urlparse.urljoin(self.url, "updates.ecdsa")
                     f = urlopen(url)
@@ -828,7 +828,7 @@ init -1500 python in updater:
                         if not signature:
                             break
 
-                        if verifying_key.verify(signature, updates_json):
+                        if renpy.ecsign.verify_data(updates_json, verifying_key, signature):
                             verified = True
 
                     self.log.write("Verified with ECDSA.\n")

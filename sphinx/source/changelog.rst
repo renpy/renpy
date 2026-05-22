@@ -8,11 +8,33 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-8.6.0:
 
 8.6.0
------
-
+=====
 
 Features
 --------
+
+The new :func:`FetchProgressValue` bar value allows the progress of fetch requests to be displayed. The same
+information is also available through the :func:`renpy.get_fetch_progress` function.
+
+Ren'Py sync now displays a progress bar while uploading and downloading data, using the :func:`FetchProgressValue` bar value.
+
+The new :var:`config.font_size_adjust` variable is a dictionary mapping font names to
+either a multiplier or a function that adjusts the size of the font. This allows you to
+adjust the size of fonts without needing to change the font files themselves, which can be
+to adjust fonts to the same relative size.
+
+Text shaders now support the ``u_text_time`` uniform, which is the time in seconds since the start of the text effect.
+
+Text interpolation now supports the ``!f`` flag, which passes interpolated text through :var:`config.say_menu_text_filter`.
+
+The new :func:`renpy.get_statement_name` function returns the name of the current statement.
+
+The `changed` property of bars can now be supplied in addition to a bar value.
+
+Bars now take an `action` property, which is an action that is run when the bar value changes. Unlike `change`, `action`
+is not supplied the bar value, and so can be used with the same actions as buttons.
+
+Layered images now support ``at`` and ``at transform`` clauses at the same time.
 
 The new :var:`config.special_directory_map` variable maps special directory names
 ('images', 'audio', 'fonts') to a list of directories that will be searched for that kind of file. This isn't
@@ -24,6 +46,10 @@ and used to populate the :ref:`audio-namespace <audio-namespace>`.
 
 Other Changes
 -------------
+
+The :var:`config.mesh_oversample` variable now defaults to 8.0, which allows meshes to be scaled up before becoming blurry.
+
+The ``scene`` statenment now respects :var:`config.tag_layer` when deciding which later to clear.
 
 It is now possible to consume in-app purchases on Android, as well as on iOS.
 
@@ -37,13 +63,158 @@ The ability to create these updates will be removed in Ren'Py 8.7.0.
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
 
 
-.. _renpy-8.5.0:
+.. _renpy-8.5.3:
 
-8.5.1
------
+8.5.3
+=====
+
+Dependency Updates
+------------------
+
+Ren'Py now supports and requires Live2D 5.3. You may need to update Live2D to continue to use it in Ren'Py 8.5.3 or later.
+
+
+Ren'Py Stores as Python Packages
+--------------------------------
+
+Ren'Py now treats Ren'Py stores as Python packages, as was documented but not implemented. This means imports can
+work from other stores. For example::
+
+  init python in store.substore1:
+      A = 42
+
+  init python in store.substore2:
+      B = 37
+
+  init python:
+      from store.substore1 import A
+      from store.substore2 import B
+
+Note that such imports assign names, but do not create aliases. Updating A in the main store will not change its
+value in substore1, and vice versa.
+
+
+Parse Error Improvements
+------------------------
+
+Parse errors are now reported at the end of each priority level (libs, then the game, then mods). Within a priority level,
+parse errors in filenames that begin with a number (like 01statement.rpy or 01lib/statement.rpy) are reported before parse
+errors in files that begin with letters.
+
+This change is meant to allow parse errors in files defining creator-defined statements to be reported before parse
+errors in the game script caused by the use of a statement that is not properly defined. This allows creators to more
+easily identify and fix problems with their creator-defined statements.
+
+
+Fixes and Changes
+-----------------
+
+:func:`renpy.pause` now always pauses for at least one frame. Previously, it could avoid pausing after rollback.
+
+There have been several improvements to dragging viewports that cure situations where the viewport could be dragged
+without the mouse button being held down.
+
+Automatic detection of language on macOS should work in more situations.
+
+The new :var:`config.mesh_oversample` variable can be configured to control how much a mesh texture can be oversampled
+by, preventing additional blurriness when scaled up. This defaults to 1.0 (disabled) in this version, but this will
+change in Ren'Py 8.6.
+
+The new :var:`config.say_menu_text_filters` list of functions supplements the existing :var:`config.say_menu_text_filter` function.
+
+An issue that could cause Ren'Py to corrupt data in a very specific case has been fixed. The issue would occur when
+a Python ``finally`` or ``except`` block would run as the stack was unwound after a load, and it would restore old data
+inappropriately. This is an unlikely error, but could happen in Python-heavy games.
+
+Several low-probability crashes and memory leaks have been fixed.
+
+Anisotropy is now disabled when nearest_neighbor sampling is used, preventing blurriness.
+
+The default value of the `synchro_start` parameter to :func:`renpy.audio.register_channel`, which controls if music
+waits for queued music on other channels to be played, is now the default loop value of the channel, in all
+cases.
+
+The value of :var:`mouse_visible` is now properly restored when exiting the game menu.
+
+The say behavior (used by dialogue) no longer lets you dismiss dialogue if the screen is grabbed by another
+displayable, such as a viewport being dragged.
+
+The :ref:`camera <camera>` statement is now documented to propagate transform state. (This was always true,
+but was not documented.)
+
+The nestled and nestled-close click-to-continue indicators now detect and respect RTL languages.
+
+Nestled and nestled-close click-to-continue indicators are now rendered at 0 width in all circumstances. This prevents
+a class of issues that could occur with NVL-mode, retained bubbles, and other configurations. This is equivalent to
+rendering the text without a click-to-continue indicator, and then placing the CTC indicator next to the end of the
+rendered text. (This is similar to how {w}, {p}, and extend were already handled.)
+
+Translations
+------------
+
+A Portuguese translation of the Ren'Py tutorial has been added.
+
+An Italian translation of the Ren'Py tutorial has been added.
+
+The Persian translation of the Ren'Py tutorial has been updated.
+
+Features
+--------
+
+When defining styles used by :ref:`ruby text <ruby-text>` or :ref:`style text tags <style-text-tags>`, more
+style properties can be set to None to use the value from the parent text. As of this version, the following
+properties may be set to None: :propref:`antialias`, :propref:`axis`, :propref:`black_color`, :propref:`bold`,
+:propref:`color`, :propref:`font` , :propref:`font_features`, :propref:`hinting`, :propref:`instance`,
+:propref:`italic`, :propref:`size`, and :propref:`textshader`.
+
+Due to that change, When using ruby text, you may now set font None, and the font will be inherited. For example::
+
+    style ruby_style is default:
+        size 12
+        yoffset -20
+        color None # Use the same color as the parent text.
+        font None # Use the same font as the parent text.
+
+The :var:`mouse_visible` variable now has a new "always" value, which makes the mouse always visible. This is useful for
+games that need to force the mouse to be shown for minigame purposes.
+
+Support has been added for a system-installed copy of the VSCodium text editor. This is a libre build of the
+same source code that makes Visual Studio Code.
+
+The Transform.unique() method has been added, which marks a transform as unique. This prevents the transform from being
+copied when added to a displayable, which allows the transform to maintain state across multiple uses, or be
+referenced from outside its function argument.
+
+
+.. _renpy-8.5.2:
+
+8.5.2
+=====
 
 Fixes
 -----
+
+Fixes an issue where each time Ren'Py checked to see if rollback is possible, one level of rollback would
+be consumed.
+
+
+.. _renpy-8.5.1:
+
+8.5.1
+=====
+
+Fixes
+-----
+
+Ren'Py will now properly compute the auto-forward time for text ending with the no-wait ({nw}) text tag,
+followed by extend, as in::
+
+    e "This is {nw}"
+    extend "more text."
+
+Ren'Py now unwinds the call stack before performing a rollback or load. This prevents issues with caused
+``except`` and ``finally`` blocks being executed after a rollback, which could lead to the rolled-back data
+being changed.
 
 Ren'Py now skips files and directories beginning with a dot (e.g. .hidden.rpy) when scanning the
 filesystem. These files often have special meaning on unix and mac platforms.
@@ -64,6 +235,9 @@ making the game more responsive when faced with mice that produce many events pe
 
 Other Changes
 -------------
+
+There is now a text safe mode that will display text with text-tag errors, when the :var:`config.safe_text`
+is set. This variable defaults to True in released games, and False in developer mode.
 
 Ren'Py now includes a cut-down version of the brotli python module. This version supports the
 decompress method and Decompressor object, but leaves out the Compressor object. It's intended
@@ -1905,6 +2079,10 @@ projects from the command line.
 
 Other Changes
 -------------
+
+The :ref:`nearrect <sl-nearrect>` displayable now takes a `preferred_side` parameter,
+which lets it use left and right in addition to top and bottom. The new `invert_offsets`
+parameter inverts the offsets if the other side is used, due to no room.
 
 Hide and replace transform events that are applied to screens are now always
 allowed to run to completion, even if the same screen is shown again. This
@@ -6008,6 +6186,9 @@ being displayed.
 
 Changes
 -------
+
+It is now possible to customize the ``touch_keyboard`` screen to put
+it on any layer.
 
 The old tutorial and old templates are no longer included with Ren'Py.
 They can still be used with new version of Ren'Py if copied into

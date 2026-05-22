@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -698,9 +698,13 @@ class TextSelector(Selector):
     `raw`
         If True, the raw text is used for matching before translation and
         substitution. If False, the processed text is used.
+
+    `expression`
+        If True, the pattern is treated as a Python expression that is
+        evaluated to get the actual pattern string.
     """
 
-    __slots__ = ("pattern", "raw")
+    __slots__ = ("pattern", "raw", "expression")
 
     def __init__(
         self,
@@ -708,16 +712,22 @@ class TextSelector(Selector):
         wait_for_focus: bool = False,
         pattern: str = "",
         raw: bool = False,
+        expression: bool = False,
     ):
         super(TextSelector, self).__init__(loc, wait_for_focus)
         self.pattern = pattern
         self.raw = raw
+        self.expression = expression
 
     def get_repr_params(self) -> str:
         return f"pattern={self.pattern!r}, raw={self.raw}"
 
     def get_element(self) -> Focus | None:
-        rv = renpy.test.testfocus.find_focus(self.pattern, self.raw)
+        pattern = self.pattern
+        if getattr(self, "expression", False):
+            pattern = scoped_eval(self.pattern)
+
+        rv = renpy.test.testfocus.find_focus(pattern, self.raw)
         return rv
 
     def element_not_found_during_perform(self) -> None:
@@ -972,10 +982,26 @@ class Action(Node):
         action = scoped_eval(self.expr)
         return renpy.display.behavior.is_sensitive(action)
 
+    def start(self):
+        return {"executed_already": False}
+
     def execute(self, state, t):
+        # execute() may be re-run when an action like Replay creates a new context,
+        # and the test executor keeps ticking inside that context.
+        # We advance to the next node inside the replay context so the test continues,
+        # and we skip the redundant next_node() call when run() eventually returns.
+
+        if t > 0:
+            state["executed_already"] = True
+            next_node(self.next)
+            return None
+
         action = scoped_eval(self.expr)
         renpy.display.behavior.run(action)
-        next_node(self.next)
+
+        if not state["executed_already"]:
+            next_node(self.next)
+
         return None
 
 
@@ -1354,6 +1380,27 @@ class If(Node):
         return None
 
 
+class While(Node):
+
+    def __init__(self, loc: NodeLocation, condition: Condition,block):
+        Node.__init__(self,loc)
+        
+        self.condition = condition
+        self.block = block
+
+    def chain(self,next):
+        self.next = next
+    
+    def execute(self, state, t):
+        if self.condition.ready():
+            self.block.chain(self)
+            next_node(self.block.block[0])
+            return None
+        
+        next_node(self.next)
+        return None
+
+
 class Python(Node):
     __slots__ = ("source", "hide")
 
@@ -1362,10 +1409,25 @@ class Python(Node):
         self.source = source
         self.hide = hide
 
+    def start(self):
+        return {"executed_already": False}
+
     def execute(self, state, t):
+        # execute() may be re-run when an action like Replay creates a new context,
+        # and the test executor keeps ticking inside that context.
+        # We advance to the next node inside the replay context so the test continues,
+        # and we skip the redundant next_node() call when run() eventually returns.
+
+        if t > 0:
+            state["executed_already"] = True
+            next_node(self.next)
+            return None
+
         scoped_exec(self.source, self.hide)
 
-        next_node(self.next)
+        if not state["executed_already"]:
+            next_node(self.next)
+
         return None
 
 

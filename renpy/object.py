@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -93,6 +93,8 @@ class Object:
 
         if cls.__version__ and cls.after_upgrade is Object.after_upgrade:
             raise TypeError(f"class {cls.__name__} does not override 'after_upgrade' method")
+
+        super().__init_subclass__()
 
 
 sentinels = {}

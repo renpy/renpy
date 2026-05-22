@@ -755,6 +755,8 @@ cdef class Multiply(AudioFilter):
 
 def Gain(db):
     """
+    :doc: audio_filter
+
     An audio filter that adjusts the gain of the input by `db` decibels.
     """
 

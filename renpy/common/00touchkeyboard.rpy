@@ -64,7 +64,7 @@ init -1500 python:
         def __call__(self):
 
             # avoid loop when K_RETURN activates our button
-            renpy.exports.hide_screen('_touch_keyboard', layer='screens')
+            renpy.exports.hide_screen('_touch_keyboard')
             renpy.restart_interaction()
 
             renpy.pygame.event.post(renpy.pygame.event.Event(

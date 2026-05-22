@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -653,7 +653,8 @@ def reload_all():
         renpy.display.draw.quit()  # type: ignore
         renpy.display.draw = None
 
-    py_compile_cache = renpy.python.py_compile_cache
+    renpy.python.compile_cache.reload()
+
     reload_modules = renpy.config.reload_modules
 
     # Delete the store modules.
@@ -671,8 +672,6 @@ def reload_all():
 
     # Restore the state of all modules from backup.
     backup.restore()
-
-    renpy.python.old_py_compile_cache = py_compile_cache
 
     renpy.display.im.reset_module()
 

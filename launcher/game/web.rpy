@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -597,10 +597,13 @@ init python:
     def web_build_command():
         ap = renpy.arguments.ArgumentParser()
         ap.add_argument("web_project", help="The path to the project directory.")
-        ap.add_argument("--launch", action="store_true", help="Launches the app after build and install complete. Implies --install.")
+        ap.add_argument("--launch", action="store_true", help="Starts a webserver and launches the game after build.")
         ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
 
         args = ap.parse_args()
+
+        if not WEB_PATH:
+            raise SystemExit("Web support is not available. Please download web support through the launcher or from the website, and try again.")
 
         p = project.Project(args.web_project)
 

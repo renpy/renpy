@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -498,14 +498,14 @@ init -1500 python hide:
             if not config.skipping:
                 renpy.stop_tts()
                 renpy.music.get_channel("voice").set_volume(volume)
-                renpy.sound.play(_voice.play, channel="voice")
+                renpy.sound.play(_voice.play, channel="voice", synchro_start=False)
                 _invoke_voice_callbacks("stop")
                 _voice.playing_info = vi
                 _invoke_voice_callbacks("play")
 
             store._last_voice_play = _voice.play
 
-        elif not _voice.sustain:
+        elif not _voice.sustain and not (getattr(renpy.context(), "_menu", False) and _preferences.voice_after_game_menu):
             renpy.sound.stop(channel="voice")
             _invoke_voice_callbacks("stop")
             _voice.playing_info = None

@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -177,7 +177,7 @@ cdef class Live2DModel:
     cdef const csmFlags *drawable_dynamic_flags
     cdef const int *drawable_texture_indices
     cdef const int *drawable_draw_orders
-    cdef const int *drawable_render_orders
+    cdef const int *render_orders
     cdef const float *drawable_opacities
     cdef const int *drawable_mask_counts
     cdef const int **drawable_masks
@@ -273,7 +273,7 @@ cdef class Live2DModel:
         self.drawable_dynamic_flags = csmGetDrawableDynamicFlags(self.model)
         self.drawable_texture_indices = csmGetDrawableTextureIndices(self.model)
         self.drawable_draw_orders = csmGetDrawableDrawOrders(self.model)
-        self.drawable_render_orders = csmGetDrawableRenderOrders(self.model)
+        self.render_orders = csmGetRenderOrders(self.model)
         self.drawable_opacities = csmGetDrawableOpacities(self.model)
         self.drawable_mask_counts = csmGetDrawableMaskCounts(self.model)
         self.drawable_masks = csmGetDrawableMasks(self.model)
@@ -566,7 +566,7 @@ cdef class Live2DModel:
                     r.add_uniform("u_renpy_alpha", alpha)
                     r.add_uniform("u_renpy_over", 1.0)
 
-                renders.append((self.drawable_render_orders[i], r))
+                renders.append((self.render_orders[i], r))
 
             else:
                 raw_renders.append(None)

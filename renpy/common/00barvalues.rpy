@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -625,5 +625,32 @@ init -1500 python:
             pos, duration = self.get_pos_duration()
             self.adjustment.set_range(duration)
             self.adjustment.change(pos)
+
+            return self.update_interval
+
+
+    @renpy.pure
+    class FetchProgressValue(BarValue, DictEquality):
+        """
+        :doc: value
+
+        A value that shows the progress of active fetch requests. This shows a full bar if no
+        fetch requests are active.
+
+        `update_interval`
+            How often the value updates, in seconds.
+        """
+
+        def __init__(self, update_interval=0.1):
+            self.update_interval = update_interval
+            self.adjustment = None
+
+        def get_adjustment(self):
+            self.adjustment = ui.adjustment(value=0.0, range=1.0, adjustable=False)
+            return self.adjustment
+
+        def periodic(self, st):
+            progress = renpy.get_fetch_progress()
+            self.adjustment.change(progress)
 
             return self.update_interval

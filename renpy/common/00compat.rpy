@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -46,6 +46,9 @@ init -1100 python:
         if version <= (8, 5, 99):
             config.audio_directory = "audio"
             config.audio_directories = [ ]
+            config.late_audio_scan = False
+            config.scene_uses_tag_layer = False
+            config.mesh_oversample = 1.0
 
         if version <= (8, 4, 99):
             config.images_directory = "images"
@@ -363,6 +366,7 @@ python early hide:
 
         config.early_script_version = script_version
         config.early_developer = not script_version
+        config.safe_text = not config.early_developer
 
         if script_version >= (8, 0, 0) and script_version < (8, 2, 0):
             config.future_annotations = True
@@ -373,6 +377,7 @@ python early hide:
     except Exception:
         config.early_script_version = None
         config.early_developer = True
+        config.safe_text = False
         pass
 
 

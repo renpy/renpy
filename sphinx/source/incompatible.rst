@@ -22,12 +22,25 @@ The ability to create zsync updates will be removed when Ren'Py 8.7 is released.
 8.6.0
 -----
 
+**Late Audio Scan** Ren'Py now defines automatic audio files at a late init level, rather than at init 0.
+To revert to the prior behavior, add to your game::
+
+    define -1 config.late_audio_scan = False
+
 **Voice Statement and Translation Identifiers** By default, the ``voice`` statement no longer contributes to
 translation identifiers. This means that adding or removing voice statements will not change the translation ID.
 If your game both had voice statements and translations, translation identifiers may have changed. To change them
 back, add::
 
     define config.tlid_only_considers_say = False
+
+
+.. _incompatible-8.5.3:
+
+8.5.3
+-----
+
+**Live2D** Ren'Py now supports and requires Live2D 5.3. You may need to update Live2D to continue to use it in Ren'Py 5.3.
 
 
 .. _incompatible-8.5.0:

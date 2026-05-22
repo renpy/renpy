@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -160,14 +160,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         roll_forward = None
 
     if (delay is not None) and renpy.game.after_rollback and not renpy.config.pause_after_rollback:
-        rv = roll_forward
-        if rv is None:
-            rv = False
-
-        if checkpoint:
-            renpy.exports.checkpoint(rv, keep_rollback=True, hard=False)
-
-        return rv
+        delay = 0
 
     renpy.exports.mode("pause")
 
@@ -376,3 +369,14 @@ def execute_default_statement(start=False):
 
     for i in renpy.config.after_default_callbacks:
         i()
+
+
+def get_statement_name():
+    """
+    :doc: other
+
+    Returns the name of the current statement being executed. This returns the last
+    value provided to :var:`config.statement_callbacks`.
+    """
+
+    return renpy.ast.current_statement_name

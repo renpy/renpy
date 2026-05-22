@@ -1,6 +1,6 @@
 ﻿
 # game/tutorial_nvlmode.rpy:19
-translate piglatin tutorial_nvlmode_76b2fe88:
+translate piglatin tutorial_nvlmode_d41d8cd9:
 
     # nvl clear
     nvl clear
@@ -24,7 +24,7 @@ translate piglatin tutorial_nvlmode_c9a35125:
     nvle "Hentay ustjay useay hattay aracterchay inay aay aysay atementstay."
 
 # game/tutorial_nvlmode.rpy:32
-translate piglatin tutorial_nvlmode_130610c2:
+translate piglatin tutorial_nvlmode_ad2b8b67:
 
     # nvl clear
     # nvle "You use 'nvl clear' to clear the screen when that becomes necessary."
@@ -44,7 +44,7 @@ translate piglatin tutorial_nvlmode_05956e33:
     nvle "Vlnay-odemay alsoay upportssay owingshay enusmay otay hetay ayerplay, rovidingpay itay'say hetay astlay hingtay onay hetay creensay. Nderstanduay?" nointeract
 
 # game/tutorial_nvlmode.rpy:56
-translate piglatin tutorial_nvlmode_0f2b7d59:
+translate piglatin tutorial_nvlmode_1c8e74cd:
 
     # nvl clear
     # nvle "Good!"
@@ -52,7 +52,7 @@ translate piglatin tutorial_nvlmode_0f2b7d59:
     nvle "Oodgay!"
 
 # game/tutorial_nvlmode.rpy:62
-translate piglatin tutorial_nvlmode_f3a79c09:
+translate piglatin tutorial_nvlmode_79d430a9:
 
     # nvl clear
     # nvle "Well, hopefully the code below makes it a little more clear."

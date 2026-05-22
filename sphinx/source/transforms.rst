@@ -1650,6 +1650,15 @@ One equivalent to to the simplest ATL transforms is the Transform class.
         of the function passed as the `function` argument, to ensure that the
         change takes effect.
 
+    .. method:: unique():
+
+        This should be called on a newly created transform to mark it as unique. Usually, transforms are
+        copied when when added to a displayable, resetting transform state. Calling this prevents thart
+        behavior, and is useful when you want to create a transform that maintains state across multiple
+        uses, or that needs to be accessed from outside its `function` argument.
+
+        This function returns the Transform.
+
 Applying transforms to displayables in Python
 =============================================
 

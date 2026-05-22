@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -633,6 +633,28 @@ tuple[tuple[str, ...], str | None, str | None, list[str], str | None, str | None
 tuple[tuple[str, ...], list[str], str | None]
 """
 
+def get_imspec_tag(imspec: ImspecType) -> str | None:
+    """
+    Returns the tag of the given imspec, or None if it doesn't have one.
+    """
+
+    if len(imspec) == 7:
+        name, expression, tag, at_expr_list, layer, _zorder, _behind = imspec
+
+    elif len(imspec) == 6:
+        name, expression, tag, at_expr_list, layer, _zorder = imspec
+
+    else:
+        name, at_expr_list, layer = imspec
+        tag = None
+        expression = None
+
+    rv = tag or name
+    if isinstance(rv, tuple):
+        return rv[0]
+    else:
+        return rv
+
 
 def predict_imspec(imspec: ImspecType, scene=False, atl: "renpy.atl.RawBlock | None" = None):
     """
@@ -971,6 +993,9 @@ class Say(Node):
             if renpy.config.say_menu_text_filter:
                 what = renpy.config.say_menu_text_filter(what)
 
+            for f in renpy.config.say_menu_text_filters:
+                what = f(what)
+
             renpy.store._last_raw_what = what
 
             if self.arguments is not None:
@@ -1016,6 +1041,9 @@ class Say(Node):
             what = self.what
             if renpy.config.say_menu_text_filter:
                 what = renpy.config.say_menu_text_filter(what)
+
+            for f in renpy.config.say_menu_text_filters:
+                what = f(what)
 
             renpy.exports.predict_say(who, what)
 
@@ -1316,7 +1344,8 @@ class Transform(Node):
 
         trans = renpy.display.motion.ATLTransform(self.atl, parameters=parameters)
         renpy.dump.transforms.append((self.varname, self.filename, self.linenumber))
-        renpy.exports.pure(self.varname)
+
+        renpy.exports.pure(f"{self.store}.{self.varname}")
 
         ns, _special = get_namespace(self.store)
         ns.set(self.varname, trans)
@@ -1432,7 +1461,7 @@ class Camera(Node):
             atl = renpy.display.motion.ATLTransform(self.atl)
             at_list.append(atl)
 
-        renpy.exports.layer_at_list(at_list, layer=self.layer, camera=True)
+        renpy.exports.layer_at_list(at_list, layer=self.layer, camera=True, reset=False)
 
     def predict(self):
         return [self.next]
@@ -1474,7 +1503,12 @@ class Scene(Node):
         next_node(self.next)
         statement_name("scene")
 
-        renpy.config.scene(self.layer)
+        if self.imspec:
+            tag = get_imspec_tag(self.imspec)
+        else:
+            tag = None
+
+        renpy.config.scene(self.layer, tag=tag)
 
         if self.imspec:
             show_imspec(self.imspec, atl=getattr(self, "atl", None))
@@ -1785,6 +1819,9 @@ class Menu(Node):
         for i, (label, condition, block) in enumerate(self.items):
             if renpy.config.say_menu_text_filter:
                 label = renpy.config.say_menu_text_filter(label)
+
+            for f in renpy.config.say_menu_text_filters:
+                label = f(label)
 
             has_item = False
 
@@ -2900,9 +2937,11 @@ class TranslateSay(Say):
     def execute(self):
         next_node(self.next)
 
-        renpy.game.context().translate_identifier = self.identifier
-        renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
-        renpy.game.context().translated = False
+        ctx = renpy.game.context()
+
+        ctx.translate_identifier = self.identifier
+        ctx.alternate_translate_identifier = getattr(self, "alternate", None)
+        ctx.translated = False
 
         if self.language is None:
             # Potentially, jump to a translation.
@@ -2937,8 +2976,8 @@ class TranslateSay(Say):
                 renpy.game.new_translates_count += 1
 
             # Perform the equivalent of an endtranslate block.
-            renpy.game.context().translate_identifier = None
-            renpy.game.context().alternate_translate_identifier = None
+            ctx.translate_identifier = None
+            ctx.alternate_translate_identifier = None
 
     def predict(self) -> list[Node | None]:
         renpy.display.predict.tlids = [self.identifier, getattr(self, "alternate", None)]

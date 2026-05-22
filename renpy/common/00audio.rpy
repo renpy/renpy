@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,8 +21,9 @@
 
 init -1900 python:
     config.audio_directory = None
-
     config.audio_directories = [ "audio" ]
+
+    config.late_audio_scan = True
 
     def _scan_audio_directory():
 
@@ -51,4 +52,9 @@ init -1900 python:
                 audio.__dict__.setdefault(base, fn)
 
 init python:
-    _scan_audio_directory()
+    if not config.late_audio_scan:
+        _scan_audio_directory()
+
+init 1900 python:
+    if config.late_audio_scan:
+        _scan_audio_directory()

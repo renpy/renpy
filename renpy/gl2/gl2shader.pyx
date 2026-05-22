@@ -1,4 +1,4 @@
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -195,6 +195,9 @@ cdef class Program:
         # A list of gl2uniform.Setter objects that can be called to set
         # the uniforms.
         self.uniform_setters = [ ]
+
+    def __dealloc__(self):
+        glDeleteProgram(self.program)
 
     def find_variables(self, source, seen_uniforms: set, samplers: int):
 
