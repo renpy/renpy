@@ -381,9 +381,6 @@ def dialogue_command():
         if isinstance(n, renpy.ast.Menu):
             menu_statements[n.filename].append(n)
 
-    print (menu_statements)
-
-
     for dirname, filename in renpy.loader.listdirfiles():
         if dirname is None:
             continue
