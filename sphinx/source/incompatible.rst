@@ -34,6 +34,23 @@ back, add::
 
     define config.tlid_only_considers_say = False
 
+.. _incompatible-8.5.3:
+
+8.5.4
+-----
+
+Ren'Py now uses the Cardano interpretation of Bezier curves in Live2D, which is consistent with the Live2D SDK.
+This may cause some motions to change their behavior. To revert to the old behavior, add to your game::
+
+    define config.live2d_old_beziers = True
+
+.. _incompatible-8.5.3:
+
+8.5.3
+-----
+
+**Live2D** Ren'Py now supports and requires Live2D 5.3. You may need to update Live2D to continue to use it in Ren'Py 5.3.
+
 
 .. _incompatible-8.5.0:
 

@@ -26,7 +26,6 @@ the omission in future versions.
 * Aliengeo
 * Alisha Taylor
 * Altskop
-* Andrej
 * Andrí Wilford
 * Andy_kl
 * Apricotorange
@@ -37,6 +36,7 @@ the omission in future versions.
 * Arsym
 * Asfdfdfd
 * Auro-Cyanide
+* A-Voski
 * Avonder
 * Awakening
 * Ayowel
@@ -54,6 +54,7 @@ the omission in future versions.
 * Caryoscelus
 * CensoredUsername (C)
 * Charles Surett
+* Chris Bier
 * Chengtian He
 * Cherie Davidson
 * Chrisclone
@@ -77,6 +78,7 @@ the omission in future versions.
 * Denys
 * Denzil
 * Derik
+* Devon Lewis
 * Diapolo10
 * DinakiS
 * Dipesh Aggarwal
@@ -151,6 +153,7 @@ the omission in future versions.
 * Jan Masek
 * Javimat
 * Jaybe Games
+* Jed
 * Jeremy Rand
 * Jesusaves
 * Joaquin Garmendia Cabrera
@@ -159,6 +162,8 @@ the omission in future versions.
 * Joshua Stone
 * Julian Uy
 * Julvenzor
+* juperMonkey
+* Juhani Krekelä
 * Jürg Billeter
 * KagariSoft-Dev
 * Kalawore
@@ -187,6 +192,7 @@ the omission in future versions.
 * Loliconazter
 * Liu Wenyuan
 * Lore
+* loviuz
 * Lucas Ramage
 * Luejerry
 * M-From-Space
@@ -261,12 +267,17 @@ the omission in future versions.
 * Ria-kon
 * Ricardo Pérez
 * Rikxz
+* River
 * rivvil
 * Robert Penner
+* Rodrigo Oliveira
+* Ronchonbon
 * Roope Herpiö
-* Saamkhaih Kyakya
+* Rose20
+* Ruben Jesus Garcia-Hernandez
 * SahabandhSthabara
 * Saltome
+* Sammkhaik Kyakya
 * Sandra "Maxi" Molina
 * Sapphi
 * Scout
@@ -292,6 +303,7 @@ the omission in future versions.
 * Tlm-2501
 * Tmrwiz
 * Totally a booplicate
+* Ulysses Zhan
 * Vadim Karpenko
 * Valery Iwanofu
 * Veydzh3r

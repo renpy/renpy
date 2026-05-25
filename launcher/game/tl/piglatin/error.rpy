@@ -117,75 +117,75 @@ translate piglatin strings:
     old "Back (B)"
     new "Ackbay (Bay)"
 
-    # renpy/common/_errorhandling.rpym:757
+    # renpy/common/_errorhandling.rpym:764
     old "Open"
     new "Penoay"
 
-    # renpy/common/_errorhandling.rpym:759
+    # renpy/common/_errorhandling.rpym:766
     old "Opens the traceback.txt file in a text editor."
     new "Pensoay hetay acebacktray.xttay ilefay inay aay exttay editoray."
 
-    # renpy/common/_errorhandling.rpym:761
+    # renpy/common/_errorhandling.rpym:768
     old "Copy BBCode"
     new "Opycay Bcodebay"
 
-    # renpy/common/_errorhandling.rpym:763
+    # renpy/common/_errorhandling.rpym:770
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
     new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay asay Bcodebay orfay orumsfay ikelay ttpshay://emmasoftlay.enairay.usay/."
 
-    # renpy/common/_errorhandling.rpym:765
+    # renpy/common/_errorhandling.rpym:772
     old "Copy Markdown"
     new "Opycay Arkdownmay"
 
-    # renpy/common/_errorhandling.rpym:767
+    # renpy/common/_errorhandling.rpym:774
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
     new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay asay Arkdownmay orfay Iscordday."
 
-    # renpy/common/_errorhandling.rpym:799
+    # renpy/common/_errorhandling.rpym:806
     old "An exception has occurred."
     new "Naay exceptionay ashay occurreday."
 
-    # renpy/common/_errorhandling.rpym:828
+    # renpy/common/_errorhandling.rpym:835
     old "Rollback"
     new "Ollbackray"
 
-    # renpy/common/_errorhandling.rpym:830
+    # renpy/common/_errorhandling.rpym:837
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Ttemptsaay aay ollray ackbay otay aay riorpay imetay, allowingay ouyay otay avesay oray oosechay aay ifferentday oicechay."
 
-    # renpy/common/_errorhandling.rpym:833
+    # renpy/common/_errorhandling.rpym:840
     old "Ignore"
     new "Gnoreiay"
 
-    # renpy/common/_errorhandling.rpym:837
+    # renpy/common/_errorhandling.rpym:844
     old "Ignores the exception, allowing you to continue."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay."
 
-    # renpy/common/_errorhandling.rpym:839
+    # renpy/common/_errorhandling.rpym:846
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay. Histay oftenay eadslay otay additionalay errorsay."
 
-    # renpy/common/_errorhandling.rpym:843
+    # renpy/common/_errorhandling.rpym:850
     old "Reload"
     new "Eloadray"
 
-    # renpy/common/_errorhandling.rpym:845
+    # renpy/common/_errorhandling.rpym:852
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Eloadsray hetay amegay omfray iskday, avingsay anday estoringray amegay atestay ifay ossiblepay."
 
-    # renpy/common/_errorhandling.rpym:848
+    # renpy/common/_errorhandling.rpym:855
     old "Console"
     new "Onsolecay"
 
-    # renpy/common/_errorhandling.rpym:850
+    # renpy/common/_errorhandling.rpym:857
     old "Opens a console to allow debugging the problem."
     new "Pensoay aay onsolecay otay alloway ebuggingday hetay roblempay."
 
-    # renpy/common/_errorhandling.rpym:863
+    # renpy/common/_errorhandling.rpym:870
     old "Quits the game."
     new "Uitsqay hetay amegay."
 
-    # renpy/common/_errorhandling.rpym:885
+    # renpy/common/_errorhandling.rpym:892
     old "Parsing the script failed."
     new "Arsingpay hetay criptsay ailedfay."
 

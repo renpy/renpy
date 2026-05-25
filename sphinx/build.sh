@@ -11,6 +11,9 @@ export PATH="../.venv/bin:$PATH"
 # Make the inc folder.
 mkdir -p source/inc
 
+# Get the dependencies.
+(cd ..; uv sync)
+
 # Run a Ren'Py game that generates documentation.
 ../run.sh . || ../renpy3.sh .
 

@@ -53,7 +53,7 @@ init -1500 python:
 
     class SplineMatrix(_BaseMatrix):
         """
-         :doc: colormatrix
+        :doc: colormatrix
 
         A Matrix wrapper that uses a spline to interpolate between two
         matrices. The spline is used to control how much of each of the

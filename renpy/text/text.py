@@ -279,6 +279,9 @@ class TextSegment(object):
             self.features = source.features
 
         else:
+            self.antialias = True
+            self.vertical = False
+            self.font = None
             self.hyperlink = 0
             self.cps = 0
             self.ruby_top = False
@@ -286,6 +289,9 @@ class TextSegment(object):
             self.ignore = False
             self.default_font = True
             self.shader = None
+            self.axis = None
+            self.instance = None
+            self.features = None
 
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(
@@ -300,14 +306,13 @@ class TextSegment(object):
             Text given the context the style is taken in. Used to produce error messages.
         """
 
-        self.antialias = style.antialias
-        self.vertical = style.vertical
-        font = style.font
+        self.antialias = style.antialias if style.antialias is not None else self.antialias
+        font = style.font if style.font is not None else self.font
         self.font = renpy.config.font_name_map.get(font, font)
-        self.size = style.size
-        self.bold = style.bold
-        self.italic = style.italic
-        self.hinting = style.hinting
+        self.size = style.size if style.size is not None else self.size
+        self.bold = style.bold if style.bold is not None else self.bold
+        self.italic = style.italic if style.italic is not None else self.italic
+        self.hinting = style.hinting if style.hinting is not None else self.hinting
 
         underline = style.underline
 
@@ -319,8 +324,8 @@ class TextSegment(object):
             self.underline = 0
 
         self.strikethrough = layout.scale_int(style.strikethrough)
-        self.color = style.color or self.color
-        self.black_color = style.black_color or self.black_color
+        self.color = style.color if style.color is not None else self.color
+        self.black_color = style.black_color if style.black_color is not None else self.black_color
         self.hyperlink = None
         self.kerning = layout.scale(style.kerning)
         self.outline_color = None
@@ -332,9 +337,9 @@ class TextSegment(object):
 
         self.shaper = style.shaper
 
-        self.axis = style.axis
-        self.instance = style.instance
-        self.features = style.font_features
+        self.axis = style.axis if style.axis is not None else self.axis
+        self.instance = style.instance if style.instance is not None else self.instance
+        self.features = style.font_features if style.font_features is not None else self.features
 
         if context and style.textshader and not self.shader:
             raise Exception(
@@ -1668,6 +1673,9 @@ class Layout(object):
 
         for ts, s in p:
             if not isinstance(ts, TextSegment):
+                if isinstance(ts, DisplayableSegment) and isinstance(ts.d, renpy.character.CTCPauseHolder):
+                    ts.d.set_rtl(direction in (RTL, WRTL))
+
                 rv.append((ts, ts.glyphs(s, self)))
 
             elif ts.shaper == "harfbuzz":

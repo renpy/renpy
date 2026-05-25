@@ -248,3 +248,21 @@ html[data-theme='dark'] .execution-entry3 {
 .highlighted {
     color: #000000;
 }
+
+
+/* Tabs */
+
+html[data-theme='dark'] .sphinx-tabs-tab {
+    background-color: transparent !important;
+    color: #55a5d9 !important;
+}
+
+html[data-theme='dark'] .sphinx-tabs-tab[aria-selected="true"] {
+    background-color: #141414 !important;
+    border-bottom: 1px solid #141414;
+    color: #55a5d9 !important;
+}
+
+html[data-theme='dark'] .sphinx-tabs-panel {
+    background: #141414 !important;
+}

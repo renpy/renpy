@@ -498,7 +498,7 @@ init -1500 python hide:
             if not config.skipping:
                 renpy.stop_tts()
                 renpy.music.get_channel("voice").set_volume(volume)
-                renpy.sound.play(_voice.play, channel="voice")
+                renpy.sound.play(_voice.play, channel="voice", synchro_start=False)
                 _invoke_voice_callbacks("stop")
                 _voice.playing_info = vi
                 _invoke_voice_callbacks("play")

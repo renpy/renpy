@@ -365,6 +365,7 @@ missing_image_callback = None
 
 # Called to filter text in the say and menu statements.
 say_menu_text_filter = None
+say_menu_text_filters = []
 
 # Used to replace one label with another.
 label_overrides = {}
@@ -713,7 +714,7 @@ always_shown_screens = []
 # A map from tag to the default layer that tag should be displayed on.
 tag_layer = {}
 
-# The default layer for tags not in in tag_layer.
+# The default layer for tags not in tag_layer.
 default_tag_layer = "master"
 
 # A map from tag to the default transform that's used for that tag.
@@ -1588,6 +1589,11 @@ mesh_pad_compat: bool = False
 Should mesh pad work the way it did before 8.4? (That is, it shifts things to the right/down by pad_left/pad_top.)
 """
 
+mesh_oversample: float = 8.0
+"""
+Determines how much mesh textures can be oversampled by. This, in turn, controls the maximum amount a mesh can be scaled up by before it introduces additional blurriness.
+"""
+
 emscripten_preload_timeout: float|None = 5.0
 """
 After this many second without being able to preload, the emscripten port will cause a preload even if doing
@@ -1646,12 +1652,27 @@ safe_text: bool = False
 If True, invalid text is displayed. If False, it's ignored.
 """
 
+live2d_old_beziers: bool = False
+"""
+If True, live2d will use the old Bezier curve behavior, which usees easing. If False, the Cardano interpretation
+of beziers is used.
+"""
+
 special_directory_map: dict[str, list[str]] = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ] }
 """
 This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
 be searched for that kind of file.
 """
 
+font_size_adjust: dict[str, float|Callable[[str, float], float]] = {}
+"""
+A map from font name to a multiplier or function that's used to adjust the size of a font.
+"""
+
+scene_uses_tag_layer: bool = True
+"""
+If True, the scene statement will use the tag layer if a tag is known.
+"""
 
 del os
 del collections

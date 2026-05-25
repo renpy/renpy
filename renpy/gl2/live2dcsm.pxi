@@ -53,8 +53,8 @@ ctypedef const int* (__stdcall * csmGetDrawableTextureIndicesType)(const csmMode
 cdef csmGetDrawableTextureIndicesType csmGetDrawableTextureIndices
 ctypedef const int* (__stdcall * csmGetDrawableDrawOrdersType)(const csmModel*)
 cdef csmGetDrawableDrawOrdersType csmGetDrawableDrawOrders
-ctypedef const int* (__stdcall * csmGetDrawableRenderOrdersType)(const csmModel*)
-cdef csmGetDrawableRenderOrdersType csmGetDrawableRenderOrders
+ctypedef const int* (__stdcall * csmGetRenderOrdersType)(const csmModel*)
+cdef csmGetRenderOrdersType csmGetRenderOrders
 ctypedef const float* (__stdcall * csmGetDrawableOpacitiesType)(const csmModel*)
 cdef csmGetDrawableOpacitiesType csmGetDrawableOpacities
 ctypedef const int* (__stdcall * csmGetDrawableMaskCountsType)(const csmModel*)
@@ -201,10 +201,10 @@ def load(dll):
     csmGetDrawableDrawOrders = <csmGetDrawableDrawOrdersType> load_live2d_function(object, "csmGetDrawableDrawOrders")
     if not csmGetDrawableDrawOrders:
         raise Exception("csmGetDrawableDrawOrders not found in Live2D dll " + dll.decode() + ". (The dll could be an old version.)")
-    global csmGetDrawableRenderOrders
-    csmGetDrawableRenderOrders = <csmGetDrawableRenderOrdersType> load_live2d_function(object, "csmGetDrawableRenderOrders")
-    if not csmGetDrawableRenderOrders:
-        raise Exception("csmGetDrawableRenderOrders not found in Live2D dll " + dll.decode() + ". (The dll could be an old version.)")
+    global csmGetRenderOrders
+    csmGetRenderOrders = <csmGetRenderOrdersType> load_live2d_function(object, "csmGetRenderOrders")
+    if not csmGetRenderOrders:
+        raise Exception("csmGetRenderOrders not found in Live2D dll " + dll.decode() + ". (The dll could be an old version.)")
     global csmGetDrawableOpacities
     csmGetDrawableOpacities = <csmGetDrawableOpacitiesType> load_live2d_function(object, "csmGetDrawableOpacities")
     if not csmGetDrawableOpacities:

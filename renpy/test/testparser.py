@@ -107,6 +107,19 @@ def pass_statement(l: Lexer, loc: NodeLocation) -> testast.Pass:
     return testast.Pass(loc)
 
 
+@test_statement("while")
+def while_statement(l: Lexer, loc: NodeLocation) -> testast.While:
+
+    condition = parse_condition(l, loc)
+    l.require(":")
+    l.expect_eol()
+    l.expect_block("while statement")
+    block, _ = parse_block(l.subblock_lexer(False), loc)
+
+    l.advance()
+    return testast.While(loc, condition, block)
+
+
 ##############################################################################
 # Statement functions: Actions
 
@@ -741,6 +754,7 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
     layer = None
     focused = False
     raw = False
+    expression = False
 
     while True:
         if l.keyword("screen"):
@@ -754,6 +768,14 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
 
         elif l.keyword("focused"):
             focused = True
+
+        elif l.keyword("expression"):
+            expression = True
+            if pattern is not None:
+                l.error("Only one text pattern may be specified in a selector.")
+
+            pattern = l.require(l.simple_expression, operator=False)
+
 
         elif l.keyword("raw"):
             raw = True
@@ -774,7 +796,7 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
         l.error("A text pattern may not be specified with a screen or id.")
 
     if pattern is not None:
-        return testast.TextSelector(loc, focused, pattern, raw)
+        return testast.TextSelector(loc, focused, pattern, raw, expression)
 
     return testast.DisplayableSelector(loc, screen, id, layer, focused)
 

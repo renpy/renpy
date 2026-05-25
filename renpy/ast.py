@@ -633,6 +633,28 @@ tuple[tuple[str, ...], str | None, str | None, list[str], str | None, str | None
 tuple[tuple[str, ...], list[str], str | None]
 """
 
+def get_imspec_tag(imspec: ImspecType) -> str | None:
+    """
+    Returns the tag of the given imspec, or None if it doesn't have one.
+    """
+
+    if len(imspec) == 7:
+        name, expression, tag, at_expr_list, layer, _zorder, _behind = imspec
+
+    elif len(imspec) == 6:
+        name, expression, tag, at_expr_list, layer, _zorder = imspec
+
+    else:
+        name, at_expr_list, layer = imspec
+        tag = None
+        expression = None
+
+    rv = tag or name
+    if isinstance(rv, tuple):
+        return rv[0]
+    else:
+        return rv
+
 
 def predict_imspec(imspec: ImspecType, scene=False, atl: "renpy.atl.RawBlock | None" = None):
     """
@@ -971,6 +993,9 @@ class Say(Node):
             if renpy.config.say_menu_text_filter:
                 what = renpy.config.say_menu_text_filter(what)
 
+            for f in renpy.config.say_menu_text_filters:
+                what = f(what)
+
             renpy.store._last_raw_what = what
 
             if self.arguments is not None:
@@ -1016,6 +1041,9 @@ class Say(Node):
             what = self.what
             if renpy.config.say_menu_text_filter:
                 what = renpy.config.say_menu_text_filter(what)
+
+            for f in renpy.config.say_menu_text_filters:
+                what = f(what)
 
             renpy.exports.predict_say(who, what)
 
@@ -1433,7 +1461,7 @@ class Camera(Node):
             atl = renpy.display.motion.ATLTransform(self.atl)
             at_list.append(atl)
 
-        renpy.exports.layer_at_list(at_list, layer=self.layer, camera=True)
+        renpy.exports.layer_at_list(at_list, layer=self.layer, camera=True, reset=False)
 
     def predict(self):
         return [self.next]
@@ -1475,7 +1503,12 @@ class Scene(Node):
         next_node(self.next)
         statement_name("scene")
 
-        renpy.config.scene(self.layer)
+        if self.imspec:
+            tag = get_imspec_tag(self.imspec)
+        else:
+            tag = None
+
+        renpy.config.scene(self.layer, tag=tag)
 
         if self.imspec:
             show_imspec(self.imspec, atl=getattr(self, "atl", None))
@@ -1786,6 +1819,9 @@ class Menu(Node):
         for i, (label, condition, block) in enumerate(self.items):
             if renpy.config.say_menu_text_filter:
                 label = renpy.config.say_menu_text_filter(label)
+
+            for f in renpy.config.say_menu_text_filters:
+                label = f(label)
 
             has_item = False
 

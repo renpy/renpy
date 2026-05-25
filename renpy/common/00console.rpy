@@ -131,6 +131,7 @@ init -1500 python in _console:
     import re
     import sys
     import store
+    import itertools
     try:
         import pydoc
     except ImportError:
@@ -138,17 +139,129 @@ init -1500 python in _console:
         pass
 
     from reprlib import Repr
-    class PrettyRepr(Repr):
-        _ellipsis = str("...")
 
-        def _repr_bytes(self, x, level):
+    class PrettyRepr(Repr):
+        _lookup = Repr._lookup | {
+            "RevertableList": "renpy.revertable",
+            "RevertableSet": "renpy.revertable",
+            "RevertableDict": "renpy.revertable",
+            "OrderedDict": "collections",
+            "defaultdict": "collections",
+            "dict_keys": "builtins",
+            "dict_values": "builtins",
+            "dict_items": "builtins",
+            "Matrix": "renpy.display.matrix",
+        }
+
+        def _join(self, pieces, level):
+            if not pieces:
+                return ''
+
+            len_pieces = sum(self.maxother if '\n' in e else len(e) for e in pieces)
+            if self.indent is None or len_pieces < self.maxother:
+                return ', '.join(pieces)
+
+            indent = self.indent
+            if isinstance(indent, int):
+                if indent < 0:
+                    raise ValueError(
+                        f'Repr.indent cannot be negative int (was {indent!r})'
+                    )
+                indent = ' ' * indent
+
+            try:
+                sep = ',\n' + (self.maxlevel - level + 1) * indent
+            except TypeError as error:
+                raise TypeError(
+                    f'Repr.indent must be a str, int or None, not {type(indent)}'
+                ) from error
+
+            return sep.join(('', *pieces, ''))[1:-len(indent) or None]
+
+        def _repr_mapping(self, x, level, left, right, maxiter):
+            if not (hasattr(x, 'keys') and hasattr(x, '__getitem__')):
+                raise TypeError(f"Mappings must have keys and __getitem__")
+
+            n = len(x)
+            if level <= 0 and n:
+                return f"{left}{self.fillvalue}{right}"
+
+            ellipsis = object()
+
+            if n > maxiter:
+                split_index = max(0, maxiter // 2)
+
+                keys_iter = itertools.chain(
+                    itertools.islice(x.keys(), None, split_index),
+                    (ellipsis, ),
+                    itertools.islice(x.keys(), n - split_index, None),
+                )
+            else:
+                keys_iter = x.keys()
+
+            newlevel = level - 1
+            repr1 = self.repr1
+            pieces = []
+            for key in keys_iter:
+                if key is ellipsis:
+                    pieces.append(self.fillvalue)
+                    continue
+
+                key_repr = repr1(key, newlevel)
+
+                val = x[key]
+                if val is x:
+                    val = f"{left}{self.fillvalue}{right}"
+                else:
+                    val_repr = repr1(val, newlevel)
+
+                pieces.append(f"{key_repr}: {val_repr}")
+
+            s = self._join(pieces, level)
+            return f"{left}{s}{right}"
+
+        def _repr_iterable(self, x, level, left, right, maxiter, trail=''):
+            n = len(x)
+            if level <= 0 and n:
+                return f"{left}{self.fillvalue}{right}"
+
+            ellipsis = object()
+
+            if n > maxiter:
+                split_index = max(0, maxiter // 2)
+
+                pieces_iter = itertools.chain(
+                    itertools.islice(x, None, split_index),
+                    (ellipsis, ),
+                    itertools.islice(x, n - split_index, None),
+                )
+            else:
+                pieces_iter = x
+
+            newlevel = level - 1
+            repr1 = self.repr1
+            pieces = []
+            for elem in pieces_iter:
+                if elem is ellipsis:
+                    pieces.append(self.fillvalue)
+                    continue
+
+                pieces.append(repr1(elem, newlevel))
+
+            s = self._join(pieces, level)
+            if n == 1 and trail and self.indent is None:
+                right = trail + right
+
+            return f"{left}{s}{right}"
+
+        def repr_bytes(self, x, level):
             s = repr(x)
             if len(s) > self.maxstring:
                 i = max(0, (self.maxstring - 3) // 2)
-                s = s[:i] + self._ellipsis + s[len(s) - i:]
+                s = s[:i] + self.fillvalue + s[len(s) - i:]
             return s
 
-        def _repr_string(self, x, level):
+        def repr_str(self, x, level):
             s = repr(x)
 
             if persistent._console_unicode_escaping:
@@ -156,214 +269,39 @@ init -1500 python in _console:
 
             if len(s) > self.maxstring:
                 i = max(0, (self.maxstring - 3) // 2)
-                s = s[:i] + self._ellipsis + s[len(s) - i:]
+                s = s[:i] + self.fillvalue + s[len(s) - i:]
             return s
 
-        repr_bytes = _repr_bytes
-        repr_str = _repr_string
+        repr_RevertableList = Repr.repr_list
 
-        def repr_tuple(self, x, level):
-            if not x: return "()"
-
-            if level <= 0: return "(...)"
-
-            if len(x) == 1:
-                item_r = self.repr1(x[0], level - 1)
-                if item_r.endswith("\n"):
-                    item_r = item_r[:-1] + ",\n"
-                else:
-                    item_r = item_r + ","
-                return "(%s)" % item_r
-
-            iter_x = self._to_shorted_list(x, self.maxtuple)
-            return self._repr_iterable(iter_x, level, '(', ')')
-
-        def repr_list(self, x, level):
-            if not x: return "[]"
-
-            if level <= 0: return "[...]"
-
-            iter_x = self._to_shorted_list(x, self.maxlist)
-            return self._repr_iterable(iter_x, level, '[', ']')
-
-        repr_RevertableList = repr_list
-
-        def repr_set(self, x, level):
-            if not x: return "set()"
-
-            if level <= 0: return "set({...})"
-
-            iter_x = self._to_shorted_list(x, self.maxset, sort=True)
-            return self._repr_iterable(iter_x, level, '{', '}')
-
-        repr_RevertableSet = repr_set
-
-        def repr_frozenset(self, x, level):
-            if not x: return "frozenset()"
-
-            if level <= 0: return "frozenset({...})"
-
-            iter_x = self._to_shorted_list(x, self.maxfrozenset, sort=True)
-            return self._repr_iterable(iter_x, level, 'frozenset({', '})')
+        repr_RevertableSet = Repr.repr_set
 
         def repr_dict(self, x, level):
-            if not x: return "{}"
-
-            if level <= 0: return "{...}"
-
-            iter_keys = self._to_shorted_list(x, self.maxdict, sort=False)
-            iter_x = self._make_pretty_items(x, iter_keys, '{', '}')
-            return self._repr_iterable(iter_x, level, '{', '}')
+            return self._repr_mapping(x, level, '{', '}', self.maxdict)
 
         repr_RevertableDict = repr_dict
+
+        def repr_OrderedDict(self, x, level):
+            return self._repr_mapping(x, level, 'OrderedDict({', '})', self.maxdict)
 
         def repr_defaultdict(self, x, level):
             def_factory = x.default_factory
             def_factory = self.repr1(def_factory, level)
-            left = "defaultdict(%s, {" % def_factory
-
-            if not x: return left + "})"
-
-            if level <= 0: return left + "...})"
-
-            iter_keys = self._to_shorted_list(x, self.maxdict, sort=False)
-            iter_x = self._make_pretty_items(x, iter_keys, left, '})')
-            return self._repr_iterable(iter_x, level, left, '})')
-
-        def repr_OrderedDict(self, x, level):
-            if not x: return "OrderedDict()"
-
-            if level <= 0: return "OrderedDict({...})"
-
-            iter_keys = self._to_shorted_list(x, self.maxdict)
-            iter_x = self._make_pretty_items(x, iter_keys, 'OrderedDict({', '})')
-            return self._repr_iterable(iter_x, level, 'OrderedDict({', '})')
+            return self._repr_mapping(x, level, f'defaultdict({def_factory}, {{', '})', self.maxdict)
 
         def repr_dict_keys(self, x, level):
-            if not x: return "dict_keys([])"
-
-            if level <= 0: return "dict_keys([...])"
-
-            iter_x = self._to_shorted_list(x, self.maxdict)
-            return self._repr_iterable(iter_x, level, 'dict_keys([', '])')
+            return self._repr_iterable(x, level, 'dict_keys([', '])', self.maxdict)
 
         def repr_dict_values(self, x, level):
-            if not x: return "dict_values([])"
-
-            if level <= 0: return "dict_values([...])"
-
-            iter_x = self._to_shorted_list(x, self.maxdict)
-            return self._repr_iterable(iter_x, level, 'dict_values([', '])')
+            return self._repr_iterable(x, level, 'dict_values([', '])', self.maxdict)
 
         def repr_dict_items(self, x, level):
-            if not x: return "dict_items([])"
-
-            if level <= 0: return "dict_items([...])"
-
-            iter_x = self._to_shorted_list(x, self.maxdict)
-            return self._repr_iterable(iter_x, level, 'dict_items([', '])')
-
-
-        class _PrettyDictItem(object):
-            """
-            This class to store dictionary like key-value pairs
-            to make pretty repr of this.
-            """
-            def __init__(self, key, value):
-                self.key = key
-                self.value = value
-
-        def repr__PrettyDictItem(self, x, level):
-            newlevel = level - 1
-            key = self.repr1(x.key, newlevel)
-            if x.value is self._ellipsis:
-                value = x.value
-            else:
-                value = self.repr1(x.value, newlevel)
-            return "%s: %s" % (key, value)
-
-        def _make_pretty_items(self, x, iter_keys, left, right):
-            ellipsis = self._ellipsis
-            DictItem = self._PrettyDictItem
-            iter_x = []
-            for key in iter_keys:
-                if key is ellipsis:
-                    di = ellipsis
-                elif x[key] is x:
-                    di = DictItem(key, '%s%s%s' % (left, ellipsis, right))
-                else:
-                    di = DictItem(key, x[key])
-                iter_x.append(di)
-            return iter_x
-
-        def _repr_iterable(self, iter_x, level, left, right):
-            ellipsis = self._ellipsis
-            newlevel = level - 1
-            repr1 = self.repr1
-            need_indent = False
-            repr_len = 0
-            rv = []
-            for elem in iter_x:
-                if elem is ellipsis:
-                    rv.append(ellipsis)
-                    continue
-
-                e_repr = repr1(elem, newlevel)
-                if "\n" in e_repr:
-                    need_indent = True
-                elif len(e_repr) > self.maxstring:
-                    need_indent = True
-                repr_len += len(e_repr)
-                rv.append(e_repr)
-
-            if repr_len > self.maxother:
-                need_indent = True
-
-            if not need_indent:
-                return '%s%s%s' % (left, ", ".join(rv), right)
-
-            indent = "    "
-            sep = ",\n"
-            result = ""
-            for e_repr in rv:
-                if '\n' in e_repr:
-                    e_repr = e_repr.replace("\n", "\n    ")
-                result += indent + e_repr + sep
-            return '%s\n%s%s' % (left, result, right)
-
-        def _to_shorted_list(self, x, maxlen, sort=False):
-            """
-            This function returns the list representation of `x`, where references
-            to itself are replaced by an ellipsis, and also if the length of `x`
-            is longer than `maxlen`, the values in the middle are replaced by
-            an ellipsis. If `sort` is True, it also tries to sort the values.
-            """
-            # Since not all sequences of items can be sorted and comparison
-            # functions may raise arbitrary exceptions, make an unsorted
-            # sequence in that case.
-            ellipsis = self._ellipsis
-            iter_x = x
-            if sort:
-                try:
-                    iter_x = sorted(iter_x)
-                except Exception:
-                    pass
-
-            if not isinstance(x, (tuple, _list)):
-                iter_x = list(iter_x)
-
-            n = len(x)
-            if n > maxlen:
-                i = max(0, maxlen // 2)
-                ellipsis_add = type(iter_x)([ellipsis])
-                iter_x = iter_x[:i] + ellipsis_add + iter_x[n - i:]
-
-            return [ellipsis if v is x else v for v in iter_x]
+            return self._repr_iterable(x, level, 'dict_items([', '])', self.maxdict)
 
         def repr_Matrix(self, x, level):
             if level <= 0: return "Matrix([...])"
 
-            rv = "Matrix(["
+            rv = [f"Matrix(["]
 
             for line in (
                 [x.xdx, x.xdy, x.xdz, x.xdw],
@@ -371,33 +309,44 @@ init -1500 python in _console:
                 [x.zdx, x.zdy, x.zdz, x.zdw],
                 [x.wdx, x.wdy, x.wdz, x.wdw],
             ):
-                rv += "\n    "
+                rv.append(f"\n{'    ' * (self.maxlevel - level + 1)}")
+                rv.append(", ".join(f"{point:.7f}" for point in line))
 
-                for point in line:
-                    rv += "{:10.7f}, ".format(point)
-
-            return rv + "\n])"
+            rv.append(f"\n{'    ' * (self.maxlevel - level)}])")
+            return "".join(rv)
 
 
-    aRepr = PrettyRepr()
-    aRepr.maxtuple = 20
-    aRepr.maxlist = 20
-    aRepr.maxarray = 20
-    aRepr.maxdict = 10
-    aRepr.maxset = 20
-    aRepr.maxfrozenset = 20
-    aRepr.maxstring = 60
-    aRepr.maxother = 200
+    aRepr = PrettyRepr(
+        maxlevel=6,
+        maxtuple=20,
+        maxlist=20,
+        maxarray=20,
+        maxdict=10,
+        maxset=20,
+        maxfrozenset=20,
+        maxstring=60,
+        maxother=200,
+        fillvalue='...',
+        indent=4,
+    )
 
-    traced_aRepr = PrettyRepr()
-    traced_aRepr.maxtuple = 20
-    traced_aRepr.maxlist = 20
-    traced_aRepr.maxarray = 20
-    traced_aRepr.maxdict = 10
-    traced_aRepr.maxset = 20
-    traced_aRepr.maxfrozenset = 20
-    traced_aRepr.maxstring = 30
-    traced_aRepr.maxother = 100
+    # Repr that is used for traced expressions.
+    # To make it render things in reasonable size, it is more limited than
+    # the default repr.
+    traced_aRepr = PrettyRepr(
+        maxlevel=3,
+        maxtuple=20,
+        maxlist=20,
+        maxarray=20,
+        maxdict=10,
+        maxset=20,
+        maxfrozenset=20,
+        maxstring=30,
+        maxother=100,
+        fillvalue='...',
+        indent=4,
+    )
+
 
     # The list of traced expressions.
     class TracedExpressionsList(NoRollback, list):

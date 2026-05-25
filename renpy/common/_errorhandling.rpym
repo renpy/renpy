@@ -525,6 +525,9 @@ init python:
                 f'{{/a}}, in {name}')
 
         def source_carets(self, line, carets):
+            if line and line[0] == " ":
+                line = line.replace(" ", "\u00a0") #NBSP
+
             if carets is None:
                 self._print(self._escape_limit(line))
                 return
@@ -589,6 +592,9 @@ init python:
             error_rv = []
             error_len = 0
             for i, line in enumerate(lines):
+                if line and line[0] == " ":
+                    line = line.replace(" ", "\u00a0") #NBSP
+
                 # In case we have single insanely lengthy single error.
                 error_len += len(line)
                 if error_len > 65536:
@@ -803,7 +809,7 @@ screen _exception:
 
         viewport:
             id "viewport"
-            child_size (4000, None)
+            child_size (None, None)
             mousewheel True
             draggable True
             scrollbars "both"
@@ -887,7 +893,7 @@ screen _parse_errors(errors, error_fn, reload_action):
 
         viewport:
             id "viewport"
-            child_size (4000, None)
+            child_size (None, None)
             mousewheel True
             draggable True
             scrollbars "both"

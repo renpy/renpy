@@ -182,7 +182,7 @@ screen input(prompt):
     window:
 
         vbox:
-            xalign gui.dialogue_text_xalign
+            xanchor gui.dialogue_text_xalign
             xpos gui.dialogue_xpos
             xsize gui.dialogue_width
             ypos gui.dialogue_ypos
@@ -638,6 +638,7 @@ screen file_slots(title):
                     $ slot = i + 1
 
                     button:
+                        id f"save_slot_{slot}"
                         action FileAction(slot)
 
                         has vbox
@@ -772,6 +773,8 @@ screen preferences():
                     textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
                     textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
+                    textbutton "Italiano" text_font "DejaVuSans.ttf" action Language("italian")
+                    textbutton "Português " text_font "DejaVuSans.ttf" action Language("portuguese")
                     textbutton "Українська" text_font "DejaVuSans.ttf" action Language("ukrainian")
 
                 vbox:
@@ -1199,8 +1202,8 @@ screen confirm(message, yes_action, no_action):
                 xalign 0.5
                 spacing 100
 
-                textbutton _("Yes") action yes_action
-                textbutton _("No") action no_action
+                textbutton _("Yes") id "confirm_yes_button" action yes_action
+                textbutton _("No") id "confirm_no_button" action no_action
 
     ## Right-click and escape answer "no".
     key "game_menu" action no_action

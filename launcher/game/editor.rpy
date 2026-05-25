@@ -236,7 +236,13 @@ init 1 python in editor:
         fei.append(FancyEditorInfo(
             3,
             _("Visual Studio Code (System)"),
-            _("Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."),
+            _("Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the renpy.language-renpy extension to add support for Ren'Py files."),
+            ))
+
+        fei.append(FancyEditorInfo(
+            3,
+            _("VSCodium (System)"),
+            _("Uses a copy of VSCodium that you have installed outside of Ren'Py. It's recommended you install the renpy.language-renpy extension to add support for Ren'Py files."),
             ))
 
         fei.append(FancyEditorInfo(
@@ -246,7 +252,7 @@ init 1 python in editor:
             None))
 
         for k in editors:
-            if k in [ "Visual Studio Code", "Visual Studio Code (System)", "Atom", "jEdit", "System Editor", "None" ]:
+            if k in [ "Visual Studio Code", "Visual Studio Code (System)", "VSCodium (System)", "Atom", "jEdit", "System Editor", "None" ]:
                 continue
 
             fei.append(FancyEditorInfo(

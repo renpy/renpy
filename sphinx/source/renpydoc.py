@@ -31,8 +31,11 @@ class RenPyLexer(PythonLexer):
             elif token in [ Name, Operator.Word ] and value in KEYWORDS:
                 yield index, Token.Keyword, value
 
-            elif token in Name and value in PROPERTIES:
+            elif token in [ Name, Operator.Word ] and value in PROPERTIES:
                 yield index, Name.Attribute, value
+
+            elif token == Token.String.Interpol:
+                yield index, Token.String, value
 
             else:
                 yield index, token, value

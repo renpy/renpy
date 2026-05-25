@@ -196,6 +196,9 @@ cdef class Program:
         # the uniforms.
         self.uniform_setters = [ ]
 
+    def __dealloc__(self):
+        glDeleteProgram(self.program)
+
     def find_variables(self, source, seen_uniforms: set, samplers: int):
 
         shader_name = "+".join(self.name)

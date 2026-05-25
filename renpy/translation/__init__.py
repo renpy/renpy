@@ -1140,12 +1140,121 @@ locales = {
     "chs": "simplified_chinese",
     "cht": "traditional_chinese",
     "zh": "traditional_chinese",
+    "zh-hant": "traditional_chinese",
+    "zh-hans": "simplified_chinese",
     "zh_tw": "traditional_chinese",
     "zh_cn": "simplified_chinese",
     "zh_hk": "traditional_chinese",
     "zh_sg": "simplified_chinese",
     "zh_mo": "traditional_chinese",
 }
+
+def parse_bcp47_to_locale(tag: str) -> str:
+    """
+    Parse a BCP 47 language tag (as returned by NSLocale.preferredLanguages())
+    into a 'language_REGION' string, with script appended via dash for languages
+    where script matters.
+
+    Examples:
+        "en"            -> "en_US"
+        "en-US"         -> "en_US"
+        "en-GB"         -> "en_GB"
+        "fr-CA"         -> "fr_CA"
+        "zh"            -> "zh-hans_CN"
+        "zh-CN"         -> "zh-hans_CN"
+        "zh-TW"         -> "zh-hant_TW"
+        "zh-Hans"       -> "zh-hans_CN"
+        "zh-Hant"       -> "zh-hant_TW"
+        "zh-Hans-CN"    -> "zh-hans_CN"
+        "zh-Hant-HK"    -> "zh-hant_HK"
+        "en-US-POSIX"   -> "en_US"
+        "en-US-u-ca-gregory" -> "en_US"
+        "es-419"        -> "es_419"
+    """
+    # Regions where Traditional Chinese is the convention; everything else defaults to Simplified.
+    # This only applies when we have to *infer* a script from the region because none was given.
+    zh_traditional_regions: frozenset[str] = frozenset({"TW", "HK", "MO"})
+
+    # Default regions per language, used when a tag has no region subtag.
+    # Apple's preferredLanguages() often returns bare language codes ("en", "fr"),
+    # and downstream "lang_REGION" consumers usually want a region filled in.
+    default_regions: dict[str, str] = {
+        "en": "US",
+        "es": "ES",
+        "pt": "PT",
+        "zh": "CN",
+        "fr": "FR",
+        "de": "DE",
+        "it": "IT",
+        "ja": "JP",
+        "ko": "KR",
+        "ru": "RU",
+        "ar": "SA",
+        "nl": "NL",
+        "sv": "SE",
+        "pl": "PL",
+        "tr": "TR",
+        "th": "TH",
+        "vi": "VN",
+        "he": "IL",
+        "hi": "IN",
+    }
+
+    if not tag or not isinstance(tag, str):
+        raise ValueError(f"Invalid BCP 47 tag: {tag!r}")
+
+    # Step 1: strip BCP 47 extensions. Everything from "-u-", "-t-", or "-x-"
+    # onward follows different (non-positional) rules and must be removed before
+    # we treat the remaining subtags as positional.
+    core: str = tag.strip()
+    lower: str = core.lower()
+    for marker in ("-u-", "-t-", "-x-"):
+        idx: int = lower.find(marker)
+        if idx != -1:
+            core = core[:idx]
+            lower = lower[:idx]
+
+    parts: list[str] = [p for p in core.split("-") if p]
+    if not parts:
+        raise ValueError(f"Empty BCP 47 tag: {tag!r}")
+
+    # Step 2: language subtag must be 2 or 3 alphabetic characters (ISO 639-1/2/3).
+    language: str = parts[0].lower()
+    if not (2 <= len(language) <= 3 and language.isalpha()):
+        raise ValueError(f"Invalid language subtag in {tag!r}: {parts[0]!r}")
+
+    # Step 3: walk remaining subtags. Identify by shape, not position, so we're
+    # robust against minor ordering oddities. First valid match per slot wins,
+    # which matches canonical ordering when input is well-formed.
+    script: str | None = None       # 4 letters, e.g. "Hans"
+    region: str | None = None       # 2 letters or 3 digits
+
+    for sub in parts[1:]:
+        if not sub:
+            continue
+        if script is None and len(sub) == 4 and sub.isalpha():
+            script = sub.lower()    # normalize: caller wants lowercase script
+        elif region is None and len(sub) == 2 and sub.isalpha():
+            region = sub.upper()
+        elif region is None and len(sub) == 3 and sub.isdigit():
+            region = sub            # UN M.49 numeric region, e.g. "419"
+        # Anything else (variants like "POSIX", longer variant subtags) is ignored.
+
+    # Step 4: infer region if missing.
+    if region is None:
+        region = default_regions.get(language, language.upper())
+
+    # Step 5: handle script. Only Chinese commonly carries a script in practice,
+    # and the user wants the script preserved in the output for that language.
+    # For other languages, we drop the script — it's rarely meaningful in a
+    # 'lang_REGION' string and keeping it would surprise consumers.
+    if language == "zh":
+        if script is None:
+            # Infer from region: TW/HK/MO -> Traditional, else Simplified.
+            script = "hant" if region in zh_traditional_regions else "hans"
+        return f"{language}-{script}_{region}"
+
+    return f"{language}_{region}"
 
 
 def detect_user_locale():
@@ -1161,7 +1270,7 @@ def detect_user_locale():
 
         Locale = autoclass("java.util.Locale")
         locale_name = str(Locale.getDefault().getLanguage())
-    elif renpy.ios:
+    elif renpy.ios or renpy.macintosh:
         import pyobjus  # type: ignore
 
         NSLocale = pyobjus.autoclass("NSLocale")
@@ -1171,7 +1280,7 @@ def detect_user_locale():
         if isinstance(locale_name, bytes):
             locale_name = locale_name.decode("utf-8")
 
-        locale_name = locale_name.replace("-", "_")
+        locale_name = parse_bcp47_to_locale(locale_name)
     else:
         locale_name = locale.getdefaultlocale()
         if locale_name is not None:

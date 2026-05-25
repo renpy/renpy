@@ -101,7 +101,7 @@ that feature.
 
     A list of functions that are called (with no arguments) whenever
     default statements are processed. The default statements are
-    run after the init phase, but before the game starts; when a save 
+    run after the init phase, but before the game starts; when a save
     is loaded; after rollback; before lint; and potentially at
     other times.
 
@@ -132,7 +132,7 @@ that feature.
 
 .. var:: config.python_callbacks = [ ... ]
 
-    A list of functions that are called, without arguments, whenever a 
+    A list of functions that are called, without arguments, whenever a
     Python block is run outside of the init phase.
 
     One possible use of this would be to have a function limit a variable
@@ -381,6 +381,12 @@ Display
     The name of the image that is used when running the OpenGL
     performance test. This image will be shown for 5 frames or .25
     seconds, on startup. It will then be automatically hidden.
+
+.. var:: config.mesh_oversample = 1.0
+
+    Determines how much mesh textures can be oversampled by. This, in turn, controls the maximum
+    amount a mesh can be scaled up by before it introduces additional blurriness, at the risk of
+    creating excessive large textures when a mesh is scaled up greatly.
 
 .. var:: config.minimum_presplash_time = 0.0
 
@@ -717,6 +723,8 @@ Media (Music, Sound, and Video)
 
     This is intended for use when an a games has audio file formats changed,
     but it's not desired to update the game script.
+
+    As video files are played using the audio subsystem, this is also called for video files.
 
 .. var:: config.auto_channels = { "audio" : ( "sfx", "", ""  ), ... }
 
@@ -1765,6 +1773,16 @@ Text and Fonts
     will get a bold italic version of vera, rather than a bold version
     of the italic vera.
 
+.. var:: config.font_size_adjust = { }
+
+    This is a dictionary mapping font names to size adjustments. The name is a string.
+    The size adjustment may be a float, in which case it is multiplied with the original
+    size. The size adjustment may also be a function that takes the filename (a string) and
+    the original size (a float) as arguments, and returns the adjusted size.
+
+    This can be used to adjust multiple font families to be the same visual size.
+    This only works with scalable fonts.
+
 .. var:: config.hyperlink_handlers = { ... }
 
     A dictionary mapping a hyperlink protocol to the handler for that
@@ -1821,7 +1839,7 @@ Text and Fonts
             return s
         config.replace_text = replace_text
 
-    .. seealso:: :var:`config.say_menu_text_filter`
+    .. seealso:: :var:`config.say_menu_text_filters`
 
 .. var:: config.safe_text = ...
 
@@ -1829,14 +1847,14 @@ Text and Fonts
     If False, Ren'Py will raise an error when such text is encountered. This defaults to True in released games, and
     False in developer mode.
 
-.. var:: config.say_menu_text_filter = None
+.. var:: config.say_menu_text_filters = [ ]
 
-    If not None, then this is a function that is given the text found
+    A list of functions that are given the text found
     in strings in the :ref:`say <say-statement>` and :doc:`menu
-    <menus>` statements. It is expected to return new
+    <menus>` statements. Each is expected to return new
     (or the same) strings to replace them.
 
-    This runs very early in the say and menu statement processing, before
+    These run very early in the say and menu statement processing, before
     translation and substitutions are applied. For a filter that runs later,
     see :var:`config.replace_text`.
 
@@ -2254,7 +2272,7 @@ Development
 
 .. var:: config.console = False
 
-    This enables the console in the case :var:`config.developer` is not 
+    This enables the console in the case :var:`config.developer` is not
     set to True.
 
 .. var:: config.developer = "auto"

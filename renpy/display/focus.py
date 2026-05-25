@@ -303,6 +303,7 @@ def take_focuses():
     renpy.display.render.take_focuses(focus_list)
 
     global global_focus
+    old_global_focus = global_focus
     global_focus = None
 
     global grab
@@ -319,7 +320,15 @@ def take_focuses():
     if not grab_found:
         grab = None
 
-    if (global_focus is not None) and (get_focused() is None):
+    currently_focused_displayable = get_focused()
+
+    # There was an old global focus, that is no longer the global focus.
+    if (old_global_focus is not None) and (currently_focused_displayable is old_global_focus.widget):
+        if (global_focus is None) or (global_focus.widget is not old_global_focus.widget):
+            currently_focused_displayable = None
+
+    # Nothing has focus.
+    if (global_focus is not None) and (currently_focused_displayable is None):
         change_focus(global_focus, True)
 
 

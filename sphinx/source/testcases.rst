@@ -12,21 +12,188 @@ The two main components of the testing system are the ``testcase`` and
 The :func:`renpy.is_in_test` function is helpful to know whether a test is currently
 executing or not.
 
+
+Quick Start
+===========
+
+This section shows a minimal example using statements that are common in
+real testcases:
+
+- ``run Jump("...")`` to start from a known label.
+- ``advance until screen "choice"`` to get to a menu.
+- ``click "Choice Text"`` to pick a menu option.
+- ``click id "..." until not screen "..."`` to keep clicking until a screen disappears.
+
+First, add the following Ren'Py code to your game script. This is the code that we want to test:
+
+.. code-block:: renpy
+
+    screen quickstart_popup():
+        modal True
+
+        frame:
+            xalign 0.5
+            yalign 0.5
+
+            vbox:
+                spacing 12
+                text "Quick Start Popup"
+
+                textbutton "Close":
+                    id "quickstart_close"
+                    action Hide("quickstart_popup")
+
+
+    label quickstart_demo:
+        "Welcome to the testcase quick start demo."
+
+        show screen quickstart_popup
+        "Close the popup to continue."
+
+        menu:
+            "Take the map":
+                "You picked the map."
+            "Leave it":
+                "You left the map behind."
+
+        "End of demo."
+        return
+
+Next, add testcases to execute the code above and verify that it works as expected.
+
+You can put these testcases in the same file as the script above, or in a different file.
+For example, you could add the following to a file named ``testcases.rpy``:
+
+.. code-block:: renpy
+
+    testsuite quick_start:
+        before testcase:
+            run Jump("quickstart_demo")
+            advance until screen "quickstart_popup"
+
+        testcase choose_map:
+            pause 0.5
+            click id "quickstart_close" until not screen "quickstart_popup"
+            pause 0.5
+            advance until screen "choice"
+            click "Take the map"
+            advance until "You picked the map."
+            pause 0.5
+
+        testcase leave_map:
+            pause 0.5
+            click id "quickstart_close" until not screen "quickstart_popup"
+            pause 0.5
+            advance until screen "choice"
+            click "Leave it"
+            advance until "You left the map behind."
+            pause 0.5
+
+.. note ::
+
+    The pauses in this demo are not necessary, they are just there to make the test
+    execute a slower so you can see what's happening.
+    In a real test, you can remove them to make the test run faster.
+
+Save the file, then see :ref:`running-testcases` for how to launch them
+from the launcher or command line. If you're running the testcase from the command line,
+the command should look something like this:
+
+.. tabs::
+
+    .. tab:: Linux / macOS
+
+        .. code-block:: bash
+
+            ./renpy.sh /path/to/game test quick_start
+
+    .. tab:: Windows
+
+        .. code-block:: bat
+
+            .\lib\py3-windows-x86_64\python.exe renpy.py C:\path\to\game test quick_start
+
+
 .. _running-testcases:
 
 Running Testcases
 =================
 
-Testcases can be run in two ways. The first is from the laucher, by selecting the
-"Run Testcases" button. The second is from the command line, using the
-:ref:`test command <cli-test>`. In both cases, the testcase or test suite named
-``global`` is run by default.
+Launcher
+--------
 
-The "Run Testcases" button is only present in the launcher if at least one testcase
-exists in global test suite. Testcauses and test suites found at the top level of a Ren'Py
-script file are automatically added to the global test suite. When adding the first testcase
-to a project, launch the game normally, then hit 'refresh' in the launcher to have the
-"Run Testcases" button appear.
+To run tests from the launcher, select the project and press the "Run Testcases" button.
+If the button is not visible, do the following:
+
+1. Ensure that you have at least one testcase defined in your game.
+2. Launch the game normally by clicking the "Launch Project" button.
+3. Click the "Refresh" button in the launcher.
+
+This will run the "global" test suite by default.
+
+Command Line
+------------
+
+To run tests from the command line, open a terminal in the Ren'Py SDK directory and
+use the :ref:`test command <cli-test>`:
+
+.. tabs::
+
+    .. tab:: Linux / macOS
+
+        .. code-block:: bash
+
+            cd /path/to/renpy
+            ./renpy.sh <basedir> test [<testcase>] [options...]
+
+    .. tab:: Windows
+
+        .. code-block:: bat
+
+            cd C:\path\to\renpy
+            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> test [<testcase>] [options...]
+
+.. option:: <basedir>
+
+    Specifies the path to the project.
+
+.. option:: <testcase>
+
+    Specifies the name of the testcase or test suite to run. If not given, the "global"
+    test suite will be run.
+
+.. option:: --enable_all
+
+    Executes all test cases and test suites, regardless of their ``enabled`` property.
+
+.. option:: --overwrite_screenshots
+
+    Overwrite existing screenshots when a
+    :ref:`screenshot statement <test-screenshot-statement>` is executed.
+
+.. option:: --hide-header
+
+    Disables the header at the start of the test run.
+
+.. option:: --hide-execution {no|hooks|testcases|all}
+
+    Hides information about test execution. ``--hide-execution hooks`` hides hooks,
+    ``--hide-execution testcases`` hides test cases and hooks, and ``--hide-execution all``
+    hides everything.
+
+.. option:: --hide-summary
+
+    Disables the summary at the end of the test run.
+
+.. option:: --report-detailed
+
+    Shows detailed information about each test during the run.
+
+.. option:: --report-skipped
+
+    Shows information about skipped tests. This option should be used together
+    with ``--report-detailed``.
+
 
 .. _testcase-statement:
 
@@ -110,17 +277,17 @@ The ``testsuite`` statement can contain the following hooks:
 
 .. describe:: setup
 
-    A block of test statements that is executed once, before running any tests
-    contained within the current suite.
+    A block of test statements that is executed at the beginning of the testsuite,
+    before running any tests contained within the current suite.
 
 .. describe:: before testsuite
 
-    A block of test statements that is executed repeatedly, running before each test suite
+    A block of test statements that is executed before each test suite
     within the current suite.
 
 .. describe:: before testcase
 
-    A block of test statements that is executed repeatedly, running before each test case
+    A block of test statements that is executed before each test case
     within the current suite.
 
 .. describe:: after testcase
@@ -137,7 +304,7 @@ The ``testsuite`` statement can contain the following hooks:
 
 .. describe:: teardown
 
-    A block of test statements that is executed once, after running all tests
+    A block of test statements that is executed after running all tests
     contained within the current suite. This is run even if a test
     fails or raises an exception.
 
@@ -168,55 +335,73 @@ executed, and how the hooks are called. The following example illustrates this:
 
    "::
 
+        label test_demo:
+            ""This is a demo for testcases.""
+            ""It has a few messages and a menu.""
+            menu:
+                ""First Choice"":
+                    ""Selected first choice.""
+                ""Second Choice"":
+                    ""Selected second choice.""
+                ""Third Choice"":
+                    ""Selected third choice.""
+            return
+
         testsuite global:
-            # Hooks
             setup:
-                skip until main_menu
+                $ print(""global :: setup"")
+                skip until screen ""main_menu""
 
             before testsuite:
+                $ print(""global :: before testsuite"")
                 if not screen ""main_menu"":
                     run MainMenu(confirm=False)
                 click ""Start""
 
             before testcase:
-                $ print(""Starting a testcase."")
+                $ print(""global :: before testcase"")
 
             after testcase:
-                $ print(""Finished a testcase."")
+                $ print(""global :: after testcase"")
 
             after testsuite:
-                $ print(""Finished a testsuite."")
+                $ print(""global :: after testsuite"")
 
             teardown:
+                $ print(""global :: teardown"")
                 exit
 
-            # Subtests
             testsuite basic:
                 testcase first_testcase:
+                    $ print(""basic :: first_testcase"")
                     advance
 
             testsuite test_choices:
-                # Hooks
                 setup:
-                    run Jump(""chapter1"")
+                    $ print(""test_choices :: setup"")
 
                 before testcase:
-                    advance until menu choice
+                    $ print(""test_choices :: before testcase"")
+                    run Jump(""test_demo"")
+                    advance until screen ""choice""
 
                 after testcase:
-                    $ print(""Finished a choice test."")
+                    $ print(""test_choices :: after testcase"")
 
                 teardown:
-                    $ print(""Finished all choice tests."")
+                    $ print(""test_choices :: teardown"")
 
-                # Subtests
                 testcase choice1:
+                    $ print(""test_choices :: choice1"")
                     click ""First Choice""
 
-                testcase choice2(enabled=False):
+                testcase choice2:
+                    enabled False
+                    $ print(""test_choices :: choice2 (disabled)"")
                     click ""Second Choice""
 
                 testcase choice3:
+                    $ print(""test_choices :: choice3"")
                     click ""Third Choice""
 
 
@@ -240,7 +425,7 @@ executed, and how the hooks are called. The following example illustrates this:
 
                     .. container :: execution-entry3
 
-                        **simple** :: first_testcase
+                        **basic** :: first_testcase
 
                     .. container :: execution-entry2
 
@@ -347,7 +532,7 @@ integer (for a specific depth).
     awaiting user input.
 
     To close the game after a testsuite, you can use the ``exit`` test
-    statement in the ``after`` hook of the testsuite. For example::
+    statement in the ``after`` hook of the testsuite::
 
         testsuite global:
             teardown:
@@ -357,6 +542,7 @@ integer (for a specific depth).
 
 Skipping Testcases
 ------------------
+
 If a testcase is skipped, it will not be executed. In addition, the
 ``before testcase`` and ``after testcase`` hooks of the testsuite will not be executed
 for that testcase.
@@ -369,22 +555,21 @@ the parent testsuite(s).
 .. _parameterized-tests:
 
 Parameterized Tests
---------------------
+-------------------
 
 A test case can run multiple times with different values by using the ``parameter`` property.
 
 To do this, give a variable name and a list of values. The test will run once
 for each value in the list. For example::
 
-    testcase example:
-        parameter x = [1, 2, 3]
-        assert eval (x > 0)
+    testcase click_buttons:
+        parameter button_name = ["Load", "Save"]
+        click expression button_name
 
-This will run the test three times: once with ``x = 1``, once with ``x = 2``,
-and once with ``x = 3``.
+This runs twice: first clicking "Load", then clicking "Save".
 
-Each run will execute the ``before testcase`` and ``after testcase`` hooks,
-and each test is reported separately in the test report.
+Parameters should be thought of as defining multiple testsuites or testcases, with
+the hooks (including ``setup`` and ``teardown``) being run for each value.
 
 Grouped Parameters
 ^^^^^^^^^^^^^^^^^^
@@ -394,11 +579,10 @@ in parentheses and giving a list of value groups. For example::
 
     testcase addition:
         parameter (x, y, z) = [ (1, 2, 3), (2, 3, 5), (3, 5, 8) ]
-
         assert eval (x + y == z)
 
-This will run three times, each time using one set of values:
-``(1, 2, 3)``, ``(2, 3, 5)``, and ``(3, 5, 8)``.
+This will run three times, using the following values:
+``(x=1, y=2, z=3)``, ``(x=2, y=3, z=5)``, and ``(x=3, y=5, z=8)``.
 
 Parameter Combinations
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -451,10 +635,17 @@ depending on the value of ``choice_text``::
     testcase show_menu:
         parameter screen_name = ["preferences", "load"]
 
-        $ print(f"Showing screen '{screen_name}'")
         run ShowMenu(screen_name)
         pause until screen screen_name
         run Return()
+
+Parameters can be used, preceded by ``expression``, to select a button by
+parameter name.
+
+    testcase click_buttons:
+        parameter button_name = ["Load", "Save"]
+
+        click expression button_name
 
 Parameters can also be used inside Python code blocks.
 For example, this test prints the current values of ``x`` and ``y``,
@@ -466,9 +657,9 @@ and then clicks at that position::
         $ print(f"Clicking at position ({x}, {y})")
         click pos (x, y)
 
+Parameterized Test Suites
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Test Suites
-^^^^^^^^^^^
 Parameters can also be provided to the whole test suite. In this case, all hooks and test cases
 inside the suite will run once for each parameter set.
 
@@ -495,7 +686,7 @@ Parameters may be nested, and all combinations will be tested. For example::
         parameter choice_text = ["first", "second"]
 
         testcase param_test2:
-            parameter (x, y) = [(0.0, 0.0), (0.5,0.5)]
+            parameter (x, y) = [(0.0, 0.0), (0.5, 0.5)]
 
             advance until screen "choice"
             click choice_text
@@ -508,9 +699,8 @@ This will run four times, once for each combination of ``(choice_text, (x, y))``
 
 .. warning::
 
-    Test parameters are passed directly to tests, without any copying. If you change
-    a parameter that is mutable (eg. a list or dictionary) inside a test, that change
-    will affect other tests using the same object.
+    Parameters are passed by reference. If you change a mutable parameter (e.g. a list or dict),
+    that value will be affected in all other tests that share the same object.
 
 Exceptions And Failures
 -----------------------
@@ -1037,6 +1227,7 @@ Text Selector
     Type: :dfn:`Condition, Selector`
 
     .. describe:: "<text>" [raw]
+    .. describe:: expression <expression> [raw]
 
 The ``text`` selector takes a string which resolves to a target
 found on the screen. The search is performed by going through all focusable
@@ -1052,6 +1243,8 @@ If ``raw`` is given, the search is performed on the text as given in the
 script, before translation and :ref:`interpolation <text-interpolation>`.
 If not given, the search is performed on the text as it appears on screen,
 after translation and interpolation.
+
+If ``expression`` is given, the string to search for is determined by evaluating the provided expression.
 
 ::
 
@@ -1229,6 +1422,21 @@ This timeout temporarily overrides the global ``_test.timeout`` setting.
 
     skip until screen "inventory" timeout 20.0
 
+While
+^^^^^^^^^
+
+    Type: :dfn:`Control`
+
+    .. describe:: while <condition>
+
+This statement executes a block of test statements while the provided
+condition remains met.
+
+Example::
+
+    while eval shouldAdvance:
+        advance
+        $ shouldAdvance = some_evaluation_function()
 
 Python Blocks And Dollar-Lines
 ------------------------------

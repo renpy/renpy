@@ -25,24 +25,16 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy.pygame as pygame
 
-try:
-    import xml.etree.ElementTree as etree
-except Exception:
-    pass
+import xml.etree.ElementTree as etree
 
 import renpy
 import os
 
 import renpy.text.ftfont as ftfont
-
 ftfont.init()
 
-try:
-    import renpy.text.hbfont as hbfont
-
-    hbfont.init()
-except ImportError:
-    hbfont = None
+import renpy.text.hbfont as hbfont
+hbfont.init()
 
 import renpy.text.textsupport as textsupport
 
@@ -724,6 +716,13 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
                 scaled_image_fonts[key] = rv
 
         return rv
+
+    font_size_adjust = renpy.config.font_size_adjust.get(fn, None)
+    if font_size_adjust is not None:
+        if callable(font_size_adjust):
+            size = font_size_adjust(fn, size)
+        else:
+            size = size * font_size_adjust
 
     features = None if features is None else tuple(sorted(features.items()))
 

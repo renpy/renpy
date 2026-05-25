@@ -556,7 +556,7 @@ def hide(name, layer=None):
         renpy.config.missing_hide(name, layer)
 
 
-def scene(layer="master"):
+def scene(layer=None, tag=None):
     """
     :doc: se_images
 
@@ -572,7 +572,14 @@ def scene(layer="master"):
 
         $ renpy.scene()
         $ renpy.show("bg beach")
+
+    `tag`
+        If not None and `layer` is None, the default later for the tag is used.
+        Otherwise, `layer` defaults to "master".
     """
+
+    if tag is not None and renpy.config.scene_uses_tag_layer:
+        layer = default_layer(layer, tag)
 
     if layer is None:
         layer = "master"
@@ -797,7 +804,7 @@ def get_at_list(name, layer=None):
     return list(transforms)
 
 
-def show_layer_at(at_list, layer="master", reset=True, camera=False):
+def show_layer_at(at_list, layer="master", reset=None, camera=False):
     """
     :doc: se_images
     :name: renpy.show_layer_at
@@ -809,7 +816,11 @@ def show_layer_at(at_list, layer="master", reset=True, camera=False):
         If true, the transform state is reset to the start when it is shown.
         If false, the transform state is persisted, allowing the new transform
         to update that state.
+        If None, true for show layer and false for camera.
     """
+
+    if reset is None:
+        reset = not camera
 
     at_list = renpy.easy.to_list(at_list)
 

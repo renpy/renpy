@@ -415,7 +415,7 @@ screen _image_location_picker_image(image_name):
     text ilpd.get_text():
         align (0.0, 1.0)
         style "_text"
-        size 14
+        size gui._scale(14)
         color "#fff"
         outlines [ (1, "#000", 0, 0) ]
 
@@ -554,15 +554,15 @@ screen _image_load_log():
             has vbox
 
             text _("Textures: [tex_count] ([tex_size_mb:.1f] MB)"):
-                size 14
+                size gui._scale(14)
                 color "#fff"
 
             text _("Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"):
-                size 14
+                size gui._scale(14)
                 color "#fff"
 
             if load_log:
-                text "\n" size 14
+                text "\n" size gui._scale(14)
 
             for when, filename, preload in load_log:
                 if preload:
@@ -572,11 +572,11 @@ screen _image_load_log():
                     $ color="#ffcccc"
                     $ prefix=__("✘ ")
 
-                text "[prefix][filename!q]" color color size 14 emoji_font None
+                text "[prefix][filename!q]" color color size gui._scale(14) emoji_font None
 
             if show_help:
                 text _("\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"):
-                    size 14 emoji_font None
+                    size gui._scale(14) emoji_font None
 
     timer 10.0 action SetScreenVariable("show_help", False)
 
@@ -618,7 +618,7 @@ screen _filename_and_line():
                 padding (0, 0)
                 text_color "#fff"
                 text_hover_color "#bdf"
-                text_size 14
+                text_size gui._scale(14)
 
                 action EditFile(filename, line)
 
@@ -626,7 +626,7 @@ screen _filename_and_line():
                 null height 10
 
                 text _("Click to open in editor."):
-                    size 14
+                    size gui._scale(14)
                     color "#fff"
 
 

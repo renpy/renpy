@@ -47,6 +47,11 @@ init -1100 python:
             config.audio_directory = "audio"
             config.audio_directories = [ ]
             config.late_audio_scan = False
+            config.scene_uses_tag_layer = False
+            config.mesh_oversample = 1.0
+
+        if version <= (8, 5, 3):
+            config.live2d_old_beziers = True
 
         if version <= (8, 4, 99):
             config.images_directory = "images"

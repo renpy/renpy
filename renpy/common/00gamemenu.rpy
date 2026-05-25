@@ -102,6 +102,9 @@ init -1700 python:
         renpy.context_dynamic("_side_image_attributes")
         renpy.context_dynamic("_side_image_attributes_reset")
 
+        renpy.context_dynamic("mouse_visible")
+        renpy.context_dynamic("suppress_overlay")
+
         store._window_subtitle = config.menu_window_subtitle
         store._window = False
         store._history = False
@@ -109,7 +112,9 @@ init -1700 python:
         store._side_image_attributes = None
         store._side_image_attributes_reset = False
 
-        store.mouse_visible = True
+        if not store.mouse_visible:
+            store.mouse_visible = True
+
         store.suppress_overlay = True
 
         ui.clear()

@@ -112,6 +112,9 @@ class CodeGenerator(object):
 
         self.p = parameters
 
+    def target_exists(self, filename):
+        return os.path.exists(os.path.join(self.p.prefix, filename))
+
     def load_template(self, filename):
 
         target = os.path.join(self.p.prefix, filename)
@@ -375,10 +378,8 @@ class CodeGenerator(object):
 
             shutil.copy(src, dst)
 
-    def copy_script(self, name):
-        dst = os.path.join(self.p.prefix, name)
-
-        if os.path.exists(dst):
+    def copy_script(self, fn):
+        if self.target_exists(fn):
             return
 
         language = renpy.store._preferences.language # @UndefinedVariable
@@ -386,16 +387,16 @@ class CodeGenerator(object):
         if language is None:
             language = "None"
 
-        src = os.path.join(renpy.config.gamedir, "tl", language, name + "m")
+        src = os.path.join(renpy.config.gamedir, "tl", language, fn + "m")
 
         if not os.path.exists(src):
-            src = os.path.join(self.p.template, name)
+            src = os.path.join(self.p.template, fn)
 
         if not self.load_template(src):
             return
 
         self.remove_scale()
-        self.write_target(dst)
+        self.write_target(fn)
 
     def add_code(self, fn):
 
@@ -425,9 +426,7 @@ class CodeGenerator(object):
 
     def generate_code(self, fn):
 
-        target = os.path.join(self.p.prefix, fn)
-
-        if os.path.exists(target):
+        if self.target_exists(fn):
             return
 
         if not self.load_template(fn):

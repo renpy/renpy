@@ -213,11 +213,21 @@ class CTCPauseHolder(renpy.display.displayable.Displayable):
 
         self.ctc = ctc
         self._duplicatable = ctc._duplicatable
+        self.rtl = False
+
+    def set_rtl(self, rtl):
+        if rtl != self.rtl:
+            self.rtl = rtl
+            renpy.display.render.invalidate(self)
 
     def render(self, width, height, st, at):
         cr = renpy.display.render.render(self.ctc, width, height, st, at)
-        rv = renpy.display.render.Render(0, cr.width)
-        rv.blit(cr, (0, 0))
+        rv = renpy.display.render.Render(0, cr.height)
+
+        if self.rtl:
+            rv.place(self.ctc, x=-cr.width, y=0, render=cr)
+        else:
+            rv.place(self.ctc, x=0, y=0, render=cr)
 
         return rv
 
@@ -845,9 +855,8 @@ def display_say(
                     raise Exception("The say screen (or show_function) must return a Text object.")
 
                 if what_ctc:
-                    if extend_text or not last_pause:
-                        if ctc_position == "nestled" or ctc_position == "nestled-close":
-                            what_ctc = CTCPauseHolder(what_ctc)
+                    if ctc_position == "nestled" or ctc_position == "nestled-close":
+                        what_ctc = CTCPauseHolder(what_ctc)
 
                     if ctc_position == "nestled":
                         what_text.set_ctc(what_ctc)
@@ -855,15 +864,6 @@ def display_say(
                         what_text.set_ctc([
                             "\ufeff",
                             what_ctc,
-                        ])
-
-                if (extend_text or not last_pause) and ctc:
-                    if ctc_position == "nestled":
-                        what_text.set_last_ctc(ctc)
-                    elif ctc_position == "nestled-close":
-                        what_text.set_last_ctc([
-                            "\ufeff",
-                            ctc,
                         ])
 
                 if what_text.text[0] == what_string:

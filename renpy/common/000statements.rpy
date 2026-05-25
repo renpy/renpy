@@ -165,6 +165,9 @@ python early hide:
         for fn in file:
             if isinstance(fn, str):
                 try:
+                    if isinstance(renpy.config.audio_filename_callback, Callable):
+                        fn = config.audio_filename_callback(fn)
+
                     if not renpy.music.playable(fn, channel):
                         renpy.error("%r is not loadable" % fn)
                 except Exception:

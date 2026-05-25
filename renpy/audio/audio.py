@@ -27,6 +27,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
+from typing import Literal
+
 import time
 import os
 import re
@@ -282,7 +284,7 @@ class Channel(object):
         self.synchro_start = False
 
         # Does this participate in synchro start by default.
-        self.default_synchro_start = synchro_start
+        self.default_synchro_start: bool|renpy.object.Sentinel = synchro_start
 
         # The time the music in this channel was last changed.
         self.last_changed = 0
@@ -315,6 +317,9 @@ class Channel(object):
 
         # Are we paused?
         self.paused = None
+
+        self.default_loop: bool
+        self.default_loop_set: bool
 
         if default_loop is NotSet:
             # By default, should we loop the music?
@@ -382,8 +387,9 @@ class Channel(object):
         context.music = mcd
 
         ctx = self.get_context().copy()
-
         mcd[self.name] = ctx
+
+        context.movie = dict(context.movie)
         return ctx
 
     def split_filename(self, filename: str | AudioData, looped: bool) -> tuple[str | AudioData, float, float, float]:
@@ -716,6 +722,22 @@ class Channel(object):
             else:
                 renpysound.fadeout(self.number, secs)
 
+            # Mark the movie as having ended.
+
+            context_movie = renpy.game.context().movie
+
+            if self.name in context_movie:
+                context_movie = dict(context_movie)
+                del context_movie[self.name]
+                renpy.game.context().movie = context_movie
+
+            last_channel_movie = renpy.display.video.last_channel_movie
+
+            if self.name in last_channel_movie:
+                last_channel_movie = dict(last_channel_movie)
+                del last_channel_movie[self.name]
+                renpy.display.video.last_channel_movie = last_channel_movie
+
     def reload(self):
         """
         Causes this channel to be stopped in a way that looped audio will be
@@ -760,6 +782,11 @@ class Channel(object):
     ):
         if synchro_start is None:
             synchro_start = self.default_synchro_start
+
+            # This case triggers when the default loop not being set causes the default synchro start to be
+            # NotSet.
+            if synchro_start is NotSet:
+                synchro_start = self.default_loop
 
         with lock:
             for filename in filenames:

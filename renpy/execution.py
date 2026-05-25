@@ -39,8 +39,11 @@ import ast as pyast
 # check.
 il_statements = 0
 
-# The deadline for reporting we're not in an infinite loop.
-il_time = 0
+# The first deadline for reporting we're not in an infinite loop.
+il_first_deadline: float = 0
+
+# The second deadline for reporting we're not in an infinite loop.
+il_second_deadline: float = 0.0
 
 
 def check_infinite_loop():
@@ -48,21 +51,31 @@ def check_infinite_loop():
 
     il_statements += 1
 
-    if il_statements <= 1000:
+    if il_statements <= 100:
         return
 
     il_statements = 0
 
-    global il_time
+    global il_first_deadline
+    global il_second_deadline
 
     now = time.time()
 
-    if now > il_time:
-        il_time = now + 60
+    if now < il_first_deadline:
+        il_second_deadline = 0
+        return
+
+    if il_second_deadline == 0:
+        il_second_deadline = now + 1
+
+    if now < il_second_deadline:
+        il_second_deadline = 0
+        il_first_deadline = now + 60
         raise Exception("Possible infinite loop.")
 
-    if renpy.config.developer and (il_time > now + 60):
-        il_time = now + 60
+    if renpy.config.developer and (il_first_deadline > now + 60):
+        il_first_deadline = now + 60
+        il_second_deadline = 0
 
     return
 
@@ -79,8 +92,8 @@ def not_infinite_loop(delay):
     if not renpy.config.developer:
         delay *= 5
 
-    global il_time
-    il_time = time.time() + delay
+    global il_first_deadline
+    il_first_deadline = time.time() + delay
 
 
 class Delete(object):

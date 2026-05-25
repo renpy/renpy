@@ -1220,6 +1220,10 @@ class Transform(Container):
         return rv
 
     def _in_current_store(self):
+
+        if not self.active:
+            self.update_state()
+
         if self.child is None:
             return self
 
@@ -1233,7 +1237,7 @@ class Transform(Container):
         rv = self(child=child)
         if isinstance(self, ATLTransform):
             assert isinstance(rv, ATLTransform)
-            rv.block = self.block
+            rv.block = self.block.in_current_store()
 
         rv.take_execution_state(self)
         rv._unique()

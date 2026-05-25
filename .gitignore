@@ -129,6 +129,9 @@ CubismSdkForWeb-*.zip
 /screenshot*
 .android.json
 
+# Test results.
+testcases/tests/
+
 # Old files.
 /0old
 

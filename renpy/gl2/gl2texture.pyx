@@ -206,13 +206,13 @@ cdef class TextureLoader:
 
         return rv
 
-    def render_to_texture(self, what, properties):
+    def render_to_texture(self, what, properties, oversample=1.0):
         """
         Renders `what` to a texture.
         """
 
         rv = Texture(what.get_size(), self)
-        rv.from_render(what, properties)
+        rv.from_render(what, properties, oversample)
         return rv
 
 
@@ -349,7 +349,7 @@ cdef class GLTexture(GL2Model):
 
         self.loader.texture_load_queue.add(self)
 
-    def from_render(GLTexture self, what, properties):
+    def from_render(GLTexture self, what, properties, oversample=1.0):
         """
         This renders `what` to this texture.
         """
@@ -370,15 +370,15 @@ cdef class GLTexture(GL2Model):
 
         if drawable:
 
-            tw, th = draw.virt_to_draw.transform(cw, ch)
+            tw, th = draw.virt_to_draw.transform(cw * oversample, ch * oversample)
 
             tw = round(tw)
             th = round(th)
 
         else:
 
-            tw = cw = round(cw)
-            th = ch = round(ch)
+            tw = cw = round(cw * oversample)
+            th = ch = round(ch * oversample)
 
         tw = min(tw, loader.max_texture_width)
         th = min(th, loader.max_texture_height)

@@ -101,7 +101,7 @@ class JSONDB(_object):
     """
     :doc: jsondb
 
-    A JSONDB is a two-level database that uses JSON to store its data
+    A JSONDB is a two-level database that uses JSON to store its data.
     It's intended to be used by game developers to store data in a
     database that can be version-controlled as part of the game script.
     For example, this can store information associated with each
@@ -135,7 +135,9 @@ class JSONDB(_object):
 
     This creates a JSONDB that is stored in the file, balloon.json, and has
 	the default value of `enabled` set to False. The second level values can be used
-	as normal dictionaries::
+	as normal dictionaries
+
+    ::
 
         screen say(who, what):
 

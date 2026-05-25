@@ -79,8 +79,12 @@ def onetime_init():
 
     dll = dll.encode("utf-8")
 
-    if not renpy.gl2.live2dmodel.load(dll):  # type: ignore
-        raise Exception("Could not load Live2D. {} was not found.".format(dll))
+    try:
+        if not renpy.gl2.live2dmodel.load(dll):  # type: ignore
+            raise Exception("Could not load Live2D. {} was not found.".format(dll))
+    except Exception as e:
+        e.add_note("Live2D Cubism 5.3 or later is required.")
+
 
     did_onetime_init = True
 
@@ -253,7 +257,7 @@ class Live2DCommon(object):
     but is loaded at init time.
     """
 
-    def __init__(self, filename, default_fade):
+    def __init__(self, filename, default_fade, old_beziers):
         init()
 
         # If a directory is given rather than a json file, expand it.
@@ -351,7 +355,8 @@ class Live2DCommon(object):
                     renpy.display.log.write(" - motion %s -> %s", name, i["File"])
 
                 self.motions[name] = renpy.gl2.live2dmotion.Motion(
-                    self.base + i["File"], i.get("FadeInTime", default_fade), i.get("FadeOutTime", default_fade)
+                    self.base + i["File"], i.get("FadeInTime", default_fade), i.get("FadeOutTime", default_fade),
+                    old_beziers
                 )
 
                 self.attributes.add(name)
@@ -624,11 +629,11 @@ class Live2D(renpy.display.displayable.Displayable):
     default_fade = 1.0
 
     def create_common(self):
-        key = (self.filename, self.default_fade)
+        key = (self.filename, self.default_fade, self.old_beziers)
         rv = common_cache.get(key, None)
 
         if rv is None:
-            rv = Live2DCommon(self.filename, self.default_fade)
+            rv = Live2DCommon(self.filename, self.default_fade, self.old_beziers)
             common_cache[key] = rv
 
         self.common_cache = rv
@@ -663,6 +668,7 @@ class Live2D(renpy.display.displayable.Displayable):
         attribute_filter=None,
         update_function=None,
         default_fade=1.0,
+        old_beziers=None,
         **properties,
     ):
         super(Live2D, self).__init__(**properties)
@@ -686,6 +692,14 @@ class Live2D(renpy.display.displayable.Displayable):
         self.default_fade = default_fade
 
         self.properties = properties
+
+
+        self.filename = filename
+
+        if old_beziers is None:
+            self.old_beziers = renpy.config.live2d_old_beziers
+        else:
+            self.old_beziers = old_beziers
 
         # Load the common data. Needed!
         common = self.common

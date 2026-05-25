@@ -225,6 +225,11 @@ init -1500 python in build:
 
     late_base_patterns = pattern_list([
         (".*", None),
+        ("**/desktop.ini", None),
+        ("**/Thumbs.db", None),
+        ("**/ehthumbs.db", None),
+        ("**/ehthumbs_vista.db", None),
+        ("**/$RECYCLE.BIN", None),
         ("**", "all")
         ])
 

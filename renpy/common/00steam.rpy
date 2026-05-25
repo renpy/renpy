@@ -972,8 +972,11 @@ init -1499 python in achievement:
         steam_appid_fn = os.path.join(os.path.dirname(sys.executable), "steam_appid.txt")
 
         if config.steam_appid is not None:
-            with open(steam_appid_fn, "w") as f:
-                f.write(str(config.steam_appid) + "\n")
+            try:
+                with open(steam_appid_fn, "w") as f:
+                    f.write(str(config.steam_appid) + "\n")
+            except Exception as e:
+                renpy.write_log("Failed to write steam_appid.txt: %r", e)
         else:
             try:
                 os.unlink(steam_appid_fn)

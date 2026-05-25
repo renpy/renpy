@@ -99,6 +99,32 @@ init -1500 python:
             renpy.call(self.label, *self.args, **self.kwargs)
 
     @renpy.pure
+    class CallInNewContext(Action, DictEquality):
+        """
+        :doc: control_action
+
+        Calls `label`, given as a string, in a new context. This is useful
+        when calling a label from a screen which is itself being
+        called via `call screen`. Note that, while in a new context,
+        the player will be unable to save the game, and
+        the scene and audio state will be reset upon returning
+        to the outer context. See :ref:`Contexts <context>` for more info.
+        Arguments and keyword arguments are passed to
+        :func:`renpy.call_in_new_context`.
+        """
+
+        args = tuple()
+        kwargs = dict()
+
+        def __init__(self, label, *args, **kwargs):
+            self.label = label
+            self.args = args
+            self.kwargs = kwargs
+
+        def __call__(self):
+            renpy.call_in_new_context(self.label, *self.args, **self.kwargs)
+
+    @renpy.pure
     class Show(Action, DictEquality):
         """
         :doc: control_action
