@@ -825,20 +825,27 @@ def display_say(
 
             # What text is (screen, id, layer) tuple if we're using a screen.
             if isinstance(what_text, tuple):
+                screen_tag, widget_id, screen_layer = what_text
+
                 # If this is not the first pause, set the transform event to "replace".
                 if i != 0 and renpy.config.say_replace_event:
-                    screen_displayable = renpy.display.screen.get_screen(what_text[0], what_text[2])
+                    screen_displayable = renpy.display.screen.get_screen(screen_tag, screen_layer)
                     if screen_displayable is not None:
                         screen_displayable.set_transform_event("replace")
 
                         if not retain and not last_pause:
                             sls = renpy.game.context().scene_lists
-                            sls.set_transient_prefix(what_text[2], what_text[0], "replaced")
+                            sls.set_transient_prefix(screen_layer, screen_tag, "replaced")
 
-                slow_done.screen_tag = what_text[0]
-                slow_done.screen_layer = what_text[2]
+                slow_done.screen_tag = screen_tag
+                slow_done.screen_layer = screen_layer
 
-                what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
+                what_text = renpy.display.screen.get_widget(screen_tag, widget_id, screen_layer)
+
+                if what_text is None:
+                    exc = Exception(f"Could not find the widget with id {widget_id!r} on screen {screen_tag!r}.")
+                    exc.add_note(f'Did you forget to add id "{widget_id}" or put it under condition?')
+                    raise exc
 
             if not multiple:
                 afm_text_queue = [what_text]
