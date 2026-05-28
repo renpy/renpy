@@ -84,6 +84,7 @@ def onetime_init():
             raise Exception("Could not load Live2D. {} was not found.".format(dll))
     except Exception as e:
         e.add_note("Live2D Cubism 5.3 or later is required.")
+        raise
 
 
     did_onetime_init = True
