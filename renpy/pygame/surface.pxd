@@ -53,6 +53,7 @@ cdef class Surface:
     cdef object get_window_flags
 
     cdef void take_surface(self, SDL_Surface *)
+    cdef void _blend(self, Surface source, int function)
 
     cdef bint has_alpha
 

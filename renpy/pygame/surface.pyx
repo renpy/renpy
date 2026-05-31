@@ -42,6 +42,37 @@ cdef void move_pixels(Uint8 *src, Uint8 *dst, int h, int span, int srcpitch, int
         src += srcpitch
         dst += dstpitch
 
+
+# Blend mode constants compatible with pygame.
+cdef enum:
+    C_BLEND_ADD = 0x1
+    C_BLEND_SUB = 0x2
+    C_BLEND_MULT = 0x3
+    C_BLEND_MIN = 0x4
+    C_BLEND_MAX = 0x5
+    C_BLEND_RGBA_ADD = 0x6
+    C_BLEND_RGBA_SUB = 0x7
+    C_BLEND_RGBA_MULT = 0x8
+    C_BLEND_RGBA_MIN = 0x9
+    C_BLEND_RGBA_MAX = 0x10
+    C_BLEND_PREMULTIPLIED = 0x11
+    C_BLEND_ALPHA_SDL2 = 0x12
+
+BLEND_ADD = BLEND_RGB_ADD = C_BLEND_ADD
+BLEND_SUB = BLEND_RGB_SUB = C_BLEND_SUB
+BLEND_MULT = BLEND_RGB_MULT = C_BLEND_MULT
+BLEND_MIN = BLEND_RGB_MIN = C_BLEND_MIN
+BLEND_MAX = BLEND_RGB_MAX = C_BLEND_MAX
+
+BLEND_RGBA_ADD = C_BLEND_RGBA_ADD
+BLEND_RGBA_SUB = C_BLEND_RGBA_SUB
+BLEND_RGBA_MULT = C_BLEND_RGBA_MULT
+BLEND_RGBA_MIN = C_BLEND_RGBA_MIN
+BLEND_RGBA_MAX = C_BLEND_RGBA_MAX
+
+BLEND_PREMULTIPLIED = C_BLEND_PREMULTIPLIED
+BLEND_ALPHA_SDL2 = C_BLEND_ALPHA_SDL2
+
 # The total size of all allocated surfaces
 total_size = 0
 
@@ -129,19 +160,103 @@ cdef class Surface:
         cdef SDL_Rect dest_rect
         cdef SDL_Rect area_rect
         cdef SDL_Rect *area_ptr = NULL
+        cdef SDL_Rect clip_rect
 
-        cdef Surface temp
+        cdef Surface source_view
+        cdef Surface dest_view
 
         cdef int success
-        cdef Uint32 key
-        cdef Uint8 alpha
-        cdef bint colorkey
+        cdef int src_x
+        cdef int src_y
+        cdef int src_w
+        cdef int src_h
+        cdef int dst_x
+        cdef int dst_y
+        cdef int left
+        cdef int top
+        cdef int right
+        cdef int bottom
+        cdef int out_w
+        cdef int out_h
 
-        to_sdl_rect(dest, &dest_rect, "dest")
+        try:
+            if isinstance(dest, Rect):
+                dst_x = dest.x
+                dst_y = dest.y
+            elif len(dest) == 2:
+                dst_x, dst_y = dest
+            elif len(dest) == 4:
+                dst_x, dst_y = dest[0], dest[1]
+            else:
+                raise TypeError()
+        except:
+            raise TypeError("Argument dest must be a rect style object.")
+
+        dest_rect.x = dst_x
+        dest_rect.y = dst_y
+        dest_rect.w = source.surface.w
+        dest_rect.h = source.surface.h
 
         if area is not None:
             to_sdl_rect(area, &area_rect, "area")
             area_ptr = &area_rect
+            src_x = area_rect.x
+            src_y = area_rect.y
+            src_w = area_rect.w
+            src_h = area_rect.h
+        else:
+            src_x = 0
+            src_y = 0
+            src_w = source.surface.w
+            src_h = source.surface.h
+
+        if special_flags:
+
+            # Clip to the source bounds first.
+            if src_x < 0:
+                dst_x -= src_x
+                src_w += src_x
+                src_x = 0
+
+            if src_y < 0:
+                dst_y -= src_y
+                src_h += src_y
+                src_y = 0
+
+            if src_x + src_w > source.surface.w:
+                src_w = source.surface.w - src_x
+
+            if src_y + src_h > source.surface.h:
+                src_h = source.surface.h - src_y
+
+            if src_w <= 0 or src_h <= 0:
+                return Rect(0, 0, 0, 0)
+
+            SDL_GetSurfaceClipRect(self.surface, &clip_rect)
+
+            left = max(dst_x, 0, clip_rect.x)
+            top = max(dst_y, 0, clip_rect.y)
+            right = min(dst_x + src_w, self.surface.w, clip_rect.x + clip_rect.w)
+            bottom = min(dst_y + src_h, self.surface.h, clip_rect.y + clip_rect.h)
+
+            if right <= left or bottom <= top:
+                return Rect(0, 0, 0, 0)
+
+            src_x += left - dst_x
+            src_y += top - dst_y
+            out_w = right - left
+            out_h = bottom - top
+
+            source_view = source.subsurface((src_x, src_y, out_w, out_h))
+            dest_view = self.subsurface((left, top, out_w, out_h))
+
+            # Prevent overlap hazards when source and destination alias.
+            if source_view.get_abs_parent() is dest_view.get_abs_parent():
+                source_view = source_view.copy()
+
+            dest_view._blend(source_view, special_flags)
+
+            return Rect(left, top, out_w, out_h)
 
         with nogil:
             SDL_SetSurfaceBlendMode(source.surface, SDL_BLENDMODE_BLEND)
@@ -152,6 +267,286 @@ cdef class Surface:
 
         dirty = Rect(dest[0], dest[1], source.surface.w, source.surface.h)
         return dirty.clip(self.get_rect())
+
+    cdef void _blend(self, Surface source, int function):
+
+        cdef int success
+        cdef int x
+        cdef int y
+        cdef int tmp
+        cdef int w = self.surface.w
+        cdef int h = self.surface.h
+
+        cdef Uint8 *src_pixels
+        cdef Uint8 *dst_pixels
+        cdef Uint8 *src_row
+        cdef Uint8 *dst_row
+        cdef Uint8 *sp
+        cdef Uint8 *dp
+
+        cdef Uint8 sR
+        cdef Uint8 sG
+        cdef Uint8 sB
+        cdef Uint8 sA
+        cdef Uint8 dA
+
+        if source.surface.w != w or source.surface.h != h:
+            raise error("source and destination surfaces must be the same size.")
+
+        if function == C_BLEND_ALPHA_SDL2:
+            with nogil:
+                SDL_SetSurfaceBlendMode(source.surface, SDL_BLENDMODE_BLEND)
+                success = SDL_BlitSurface(source.surface, NULL, self.surface, NULL)
+
+            if not success:
+                raise error()
+
+            return
+
+        if function != C_BLEND_ADD and function != C_BLEND_SUB and function != C_BLEND_MULT and function != C_BLEND_MIN and function != C_BLEND_MAX and function != C_BLEND_RGBA_ADD and function != C_BLEND_RGBA_SUB and function != C_BLEND_RGBA_MULT and function != C_BLEND_RGBA_MIN and function != C_BLEND_RGBA_MAX and function != C_BLEND_PREMULTIPLIED:
+            raise error("unsupported blend mode.")
+
+        # These paths assume little-endian 32-bit RGBA surfaces.
+        src_pixels = <Uint8 *> source.surface.pixels
+        dst_pixels = <Uint8 *> self.surface.pixels
+
+        with nogil:
+
+            if function == C_BLEND_ADD:
+
+                for y in range(h):
+                    src_row = src_pixels + y * source.surface.pitch
+                    dst_row = dst_pixels + y * self.surface.pitch
+
+                    for x in range(w):
+                        sp = src_row + x * 4
+                        dp = dst_row + x * 4
+
+                        tmp = dp[0] + sp[0]
+                        dp[0] = <Uint8> (tmp if tmp <= 255 else 255)
+
+                        tmp = dp[1] + sp[1]
+                        dp[1] = <Uint8> (tmp if tmp <= 255 else 255)
+
+                        tmp = dp[2] + sp[2]
+                        dp[2] = <Uint8> (tmp if tmp <= 255 else 255)
+
+            elif function == C_BLEND_SUB:
+
+                for y in range(h):
+                    src_row = src_pixels + y * source.surface.pitch
+                    dst_row = dst_pixels + y * self.surface.pitch
+
+                    for x in range(w):
+                        sp = src_row + x * 4
+                        dp = dst_row + x * 4
+
+                        tmp = dp[0] - sp[0]
+                        dp[0] = <Uint8> (tmp if tmp >= 0 else 0)
+
+                        tmp = dp[1] - sp[1]
+                        dp[1] = <Uint8> (tmp if tmp >= 0 else 0)
+
+                        tmp = dp[2] - sp[2]
+                        dp[2] = <Uint8> (tmp if tmp >= 0 else 0)
+
+            elif function == C_BLEND_MULT:
+
+                for y in range(h):
+                    src_row = src_pixels + y * source.surface.pitch
+                    dst_row = dst_pixels + y * self.surface.pitch
+
+                    for x in range(w):
+                        sp = src_row + x * 4
+                        dp = dst_row + x * 4
+
+                        if dp[0] and sp[0]:
+                            dp[0] = <Uint8> ((dp[0] * sp[0]) >> 8)
+                        else:
+                            dp[0] = 0
+
+                        if dp[1] and sp[1]:
+                            dp[1] = <Uint8> ((dp[1] * sp[1]) >> 8)
+                        else:
+                            dp[1] = 0
+
+                        if dp[2] and sp[2]:
+                            dp[2] = <Uint8> ((dp[2] * sp[2]) >> 8)
+                        else:
+                            dp[2] = 0
+
+            elif function == C_BLEND_MIN:
+
+                for y in range(h):
+                    src_row = src_pixels + y * source.surface.pitch
+                    dst_row = dst_pixels + y * self.surface.pitch
+
+                    for x in range(w):
+                        sp = src_row + x * 4
+                        dp = dst_row + x * 4
+
+                        if sp[0] < dp[0]:
+                            dp[0] = sp[0]
+                        if sp[1] < dp[1]:
+                            dp[1] = sp[1]
+                        if sp[2] < dp[2]:
+                            dp[2] = sp[2]
+
+            elif function == C_BLEND_MAX:
+
+                for y in range(h):
+                    src_row = src_pixels + y * source.surface.pitch
+                    dst_row = dst_pixels + y * self.surface.pitch
+
+                    for x in range(w):
+                        sp = src_row + x * 4
+                        dp = dst_row + x * 4
+
+                        if sp[0] > dp[0]:
+                            dp[0] = sp[0]
+                        if sp[1] > dp[1]:
+                            dp[1] = sp[1]
+                        if sp[2] > dp[2]:
+                            dp[2] = sp[2]
+
+            elif function == C_BLEND_RGBA_ADD:
+
+                for y in range(h):
+                    src_row = src_pixels + y * source.surface.pitch
+                    dst_row = dst_pixels + y * self.surface.pitch
+
+                    for x in range(w):
+                        sp = src_row + x * 4
+                        dp = dst_row + x * 4
+
+                        tmp = dp[0] + sp[0]
+                        dp[0] = <Uint8> (tmp if tmp <= 255 else 255)
+
+                        tmp = dp[1] + sp[1]
+                        dp[1] = <Uint8> (tmp if tmp <= 255 else 255)
+
+                        tmp = dp[2] + sp[2]
+                        dp[2] = <Uint8> (tmp if tmp <= 255 else 255)
+
+                        tmp = dp[3] + sp[3]
+                        dp[3] = <Uint8> (tmp if tmp <= 255 else 255)
+
+            elif function == C_BLEND_RGBA_SUB:
+
+                for y in range(h):
+                    src_row = src_pixels + y * source.surface.pitch
+                    dst_row = dst_pixels + y * self.surface.pitch
+
+                    for x in range(w):
+                        sp = src_row + x * 4
+                        dp = dst_row + x * 4
+
+                        tmp = dp[0] - sp[0]
+                        dp[0] = <Uint8> (tmp if tmp >= 0 else 0)
+
+                        tmp = dp[1] - sp[1]
+                        dp[1] = <Uint8> (tmp if tmp >= 0 else 0)
+
+                        tmp = dp[2] - sp[2]
+                        dp[2] = <Uint8> (tmp if tmp >= 0 else 0)
+
+                        tmp = dp[3] - sp[3]
+                        dp[3] = <Uint8> (tmp if tmp >= 0 else 0)
+
+            elif function == C_BLEND_RGBA_MULT:
+
+                for y in range(h):
+                    src_row = src_pixels + y * source.surface.pitch
+                    dst_row = dst_pixels + y * self.surface.pitch
+
+                    for x in range(w):
+                        sp = src_row + x * 4
+                        dp = dst_row + x * 4
+
+                        if dp[0] and sp[0]:
+                            dp[0] = <Uint8> ((dp[0] * sp[0]) >> 8)
+                        else:
+                            dp[0] = 0
+
+                        if dp[1] and sp[1]:
+                            dp[1] = <Uint8> ((dp[1] * sp[1]) >> 8)
+                        else:
+                            dp[1] = 0
+
+                        if dp[2] and sp[2]:
+                            dp[2] = <Uint8> ((dp[2] * sp[2]) >> 8)
+                        else:
+                            dp[2] = 0
+
+                        if dp[3] and sp[3]:
+                            dp[3] = <Uint8> ((dp[3] * sp[3]) >> 8)
+                        else:
+                            dp[3] = 0
+
+            elif function == C_BLEND_RGBA_MIN:
+
+                for y in range(h):
+                    src_row = src_pixels + y * source.surface.pitch
+                    dst_row = dst_pixels + y * self.surface.pitch
+
+                    for x in range(w):
+                        sp = src_row + x * 4
+                        dp = dst_row + x * 4
+
+                        if sp[0] < dp[0]:
+                            dp[0] = sp[0]
+                        if sp[1] < dp[1]:
+                            dp[1] = sp[1]
+                        if sp[2] < dp[2]:
+                            dp[2] = sp[2]
+                        if sp[3] < dp[3]:
+                            dp[3] = sp[3]
+
+            elif function == C_BLEND_RGBA_MAX:
+
+                for y in range(h):
+                    src_row = src_pixels + y * source.surface.pitch
+                    dst_row = dst_pixels + y * self.surface.pitch
+
+                    for x in range(w):
+                        sp = src_row + x * 4
+                        dp = dst_row + x * 4
+
+                        if sp[0] > dp[0]:
+                            dp[0] = sp[0]
+                        if sp[1] > dp[1]:
+                            dp[1] = sp[1]
+                        if sp[2] > dp[2]:
+                            dp[2] = sp[2]
+                        if sp[3] > dp[3]:
+                            dp[3] = sp[3]
+
+            else:  # BLEND_PREMULTIPLIED
+
+                for y in range(h):
+                    src_row = src_pixels + y * source.surface.pitch
+                    dst_row = dst_pixels + y * self.surface.pitch
+
+                    for x in range(w):
+                        sp = src_row + x * 4
+                        dp = dst_row + x * 4
+
+                        sR = sp[0]
+                        sG = sp[1]
+                        sB = sp[2]
+                        sA = sp[3]
+
+                        tmp = sR + dp[0] - ((dp[0] * sA) >> 8)
+                        dp[0] = <Uint8> (tmp if tmp <= 255 else 255)
+
+                        tmp = sG + dp[1] - ((dp[1] * sA) >> 8)
+                        dp[1] = <Uint8> (tmp if tmp <= 255 else 255)
+
+                        tmp = sB + dp[2] - ((dp[2] * sA) >> 8)
+                        dp[2] = <Uint8> (tmp if tmp <= 255 else 255)
+
+                        dA = dp[3]
+                        dp[3] = <Uint8> (sA + dA - ((sA * dA) / 255))
 
     def convert(self, surface=None):
 
