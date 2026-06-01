@@ -293,6 +293,10 @@ cdef class Surface:
         if source.surface.w != w or source.surface.h != h:
             raise error("source and destination surfaces must be the same size.")
 
+        # These paths assume little-endian 32-bit RGBA surfaces.
+        src_pixels = <Uint8 *> source.surface.pixels
+        dst_pixels = <Uint8 *> self.surface.pixels
+
         if function == C_BLEND_ALPHA_SDL2:
             with nogil:
                 SDL_SetSurfaceBlendMode(source.surface, SDL_BLENDMODE_BLEND)
@@ -301,19 +305,8 @@ cdef class Surface:
             if not success:
                 raise error()
 
-            return
-
-        if function != C_BLEND_ADD and function != C_BLEND_SUB and function != C_BLEND_MULT and function != C_BLEND_MIN and function != C_BLEND_MAX and function != C_BLEND_RGBA_ADD and function != C_BLEND_RGBA_SUB and function != C_BLEND_RGBA_MULT and function != C_BLEND_RGBA_MIN and function != C_BLEND_RGBA_MAX and function != C_BLEND_PREMULTIPLIED:
-            raise error("unsupported blend mode.")
-
-        # These paths assume little-endian 32-bit RGBA surfaces.
-        src_pixels = <Uint8 *> source.surface.pixels
-        dst_pixels = <Uint8 *> self.surface.pixels
-
-        with nogil:
-
-            if function == C_BLEND_ADD:
-
+        elif function == C_BLEND_ADD:
+            with nogil:
                 for y in range(h):
                     src_row = src_pixels + y * source.surface.pitch
                     dst_row = dst_pixels + y * self.surface.pitch
@@ -331,8 +324,8 @@ cdef class Surface:
                         tmp = dp[2] + sp[2]
                         dp[2] = <Uint8> (tmp if tmp <= 255 else 255)
 
-            elif function == C_BLEND_SUB:
-
+        elif function == C_BLEND_SUB:
+            with nogil:
                 for y in range(h):
                     src_row = src_pixels + y * source.surface.pitch
                     dst_row = dst_pixels + y * self.surface.pitch
@@ -350,8 +343,8 @@ cdef class Surface:
                         tmp = dp[2] - sp[2]
                         dp[2] = <Uint8> (tmp if tmp >= 0 else 0)
 
-            elif function == C_BLEND_MULT:
-
+        elif function == C_BLEND_MULT:
+            with nogil:
                 for y in range(h):
                     src_row = src_pixels + y * source.surface.pitch
                     dst_row = dst_pixels + y * self.surface.pitch
@@ -375,8 +368,8 @@ cdef class Surface:
                         else:
                             dp[2] = 0
 
-            elif function == C_BLEND_MIN:
-
+        elif function == C_BLEND_MIN:
+            with nogil:
                 for y in range(h):
                     src_row = src_pixels + y * source.surface.pitch
                     dst_row = dst_pixels + y * self.surface.pitch
@@ -392,8 +385,8 @@ cdef class Surface:
                         if sp[2] < dp[2]:
                             dp[2] = sp[2]
 
-            elif function == C_BLEND_MAX:
-
+        elif function == C_BLEND_MAX:
+            with nogil:
                 for y in range(h):
                     src_row = src_pixels + y * source.surface.pitch
                     dst_row = dst_pixels + y * self.surface.pitch
@@ -409,8 +402,8 @@ cdef class Surface:
                         if sp[2] > dp[2]:
                             dp[2] = sp[2]
 
-            elif function == C_BLEND_RGBA_ADD:
-
+        elif function == C_BLEND_RGBA_ADD:
+            with nogil:
                 for y in range(h):
                     src_row = src_pixels + y * source.surface.pitch
                     dst_row = dst_pixels + y * self.surface.pitch
@@ -431,8 +424,8 @@ cdef class Surface:
                         tmp = dp[3] + sp[3]
                         dp[3] = <Uint8> (tmp if tmp <= 255 else 255)
 
-            elif function == C_BLEND_RGBA_SUB:
-
+        elif function == C_BLEND_RGBA_SUB:
+            with nogil:
                 for y in range(h):
                     src_row = src_pixels + y * source.surface.pitch
                     dst_row = dst_pixels + y * self.surface.pitch
@@ -453,8 +446,8 @@ cdef class Surface:
                         tmp = dp[3] - sp[3]
                         dp[3] = <Uint8> (tmp if tmp >= 0 else 0)
 
-            elif function == C_BLEND_RGBA_MULT:
-
+        elif function == C_BLEND_RGBA_MULT:
+            with nogil:
                 for y in range(h):
                     src_row = src_pixels + y * source.surface.pitch
                     dst_row = dst_pixels + y * self.surface.pitch
@@ -483,8 +476,8 @@ cdef class Surface:
                         else:
                             dp[3] = 0
 
-            elif function == C_BLEND_RGBA_MIN:
-
+        elif function == C_BLEND_RGBA_MIN:
+            with nogil:
                 for y in range(h):
                     src_row = src_pixels + y * source.surface.pitch
                     dst_row = dst_pixels + y * self.surface.pitch
@@ -502,8 +495,8 @@ cdef class Surface:
                         if sp[3] < dp[3]:
                             dp[3] = sp[3]
 
-            elif function == C_BLEND_RGBA_MAX:
-
+        elif function == C_BLEND_RGBA_MAX:
+            with nogil:
                 for y in range(h):
                     src_row = src_pixels + y * source.surface.pitch
                     dst_row = dst_pixels + y * self.surface.pitch
@@ -521,8 +514,8 @@ cdef class Surface:
                         if sp[3] > dp[3]:
                             dp[3] = sp[3]
 
-            else:  # BLEND_PREMULTIPLIED
-
+        elif function == C_BLEND_PREMULTIPLIED:
+            with nogil:
                 for y in range(h):
                     src_row = src_pixels + y * source.surface.pitch
                     dst_row = dst_pixels + y * self.surface.pitch
@@ -547,6 +540,9 @@ cdef class Surface:
 
                         dA = dp[3]
                         dp[3] = <Uint8> (sA + dA - ((sA * dA) / 255))
+
+        else:
+            raise error("unsupported blend mode.")
 
     def convert(self, surface=None):
 
