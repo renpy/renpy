@@ -71,6 +71,8 @@ The interpretation of Bezier curves in Live2D has been changed to match the Card
 which is consistent with the Live2D SDK. This behavior can be changed with the `old_beziers` parameter to the :func:`Live2D`
 displayable, or with the :var:`config.live2d_old_beziers` variable,
 
+It is now possible to use `for` and `while` loops in automated tests.
+
 
 .. _renpy-8.5.3:
 
@@ -282,7 +284,7 @@ the Cubism SDK for Web, and support in Ren'Py for loading Live2D models in the w
 Automated Testing
 -----------------
 
-Ren'Py now includes a testing framework that makes it possible to define and run automate tests of games and of
+Ren'Py now includes a :doc:`testing framework <testcases>` that makes it possible to define and run automate tests of games and of
 Ren'Py itself. The testing framework is designed to perform automated functional testing -
 for example, clicking through a predefined sequence of dialogue and choice, and making sure the game
 reaches the end without crashing, even when the game or engine is changed.
