@@ -1288,6 +1288,7 @@ class Layout(object):
         ts = TextSegment(None)
         ts.cps = self.cps
         ts.take_style(style, self)
+        ts.vertical = style.vertical
 
         # The text segement stack.
         tss = [ts]
