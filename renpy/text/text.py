@@ -2104,7 +2104,7 @@ def text_tick():
     layout_cache_new = {}
 
     global virtual_layout_cache_old, virtual_layout_cache_new
-    virtual_layout_cache_old = layout_cache_new
+    virtual_layout_cache_old = virtual_layout_cache_new
     virtual_layout_cache_new = {}
 
     global slow_text
