@@ -27,6 +27,8 @@ Text shaders now support the ``u_text_time`` uniform, which is the time in secon
 
 Text interpolation now supports the ``!f`` flag, which passes interpolated text through :var:`config.say_menu_text_filter`.
 
+Menu text filtering can now be disabled with :var:`config.use_menu_text_filter`, which defaults to True.
+
 The new :func:`renpy.get_statement_name` function returns the name of the current statement.
 
 The `changed` property of bars can now be supplied in addition to a bar value.
