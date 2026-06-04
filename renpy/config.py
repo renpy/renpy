@@ -367,6 +367,9 @@ missing_image_callback = None
 say_menu_text_filter = None
 say_menu_text_filters = []
 
+# Should menu text be filtered by say_menu_text_filter and say_menu_text_filters?
+use_menu_text_filter = True
+
 # Used to replace one label with another.
 label_overrides = {}
 

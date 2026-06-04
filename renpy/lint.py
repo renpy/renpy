@@ -468,12 +468,13 @@ def quote_text(s):
     return '"' + s + '"'
 
 
-def text_checks(s):
-    if renpy.config.say_menu_text_filter is not None:
-        s = renpy.config.say_menu_text_filter(s)
+def text_checks(s, menu_text=False):
+    if (not menu_text) or renpy.config.use_menu_text_filter:
+        if renpy.config.say_menu_text_filter is not None:
+            s = renpy.config.say_menu_text_filter(s)
 
-    for f in renpy.config.say_menu_text_filters:
-        s = f(s)
+        for f in renpy.config.say_menu_text_filters:
+            s = f(s)
 
     msg = renpy.text.extras.check_text_tags(s, check_unclosed=args.check_unclosed_tags)
     if msg:
@@ -584,7 +585,7 @@ def check_menu(node):
         if c:
             try_compile("in the if clause of a menuitem", c)
 
-        text_checks(l)
+        text_checks(l, menu_text=True)
 
 
 def check_jump(node):
