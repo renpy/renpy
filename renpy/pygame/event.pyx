@@ -573,6 +573,30 @@ def event_name(t):
     except KeyError:
         return "UNKNOWN"
 
+
+cdef inline bint is_sdl_lifecycle_event(Uint32 event_type) noexcept nogil:
+    return (
+        event_type == SDL_EVENT_TERMINATING or
+        event_type == SDL_EVENT_LOW_MEMORY or
+        event_type == SDL_EVENT_WILL_ENTER_BACKGROUND or
+        event_type == SDL_EVENT_DID_ENTER_BACKGROUND or
+        event_type == SDL_EVENT_WILL_ENTER_FOREGROUND or
+        event_type == SDL_EVENT_DID_ENTER_FOREGROUND)
+
+
+cdef void queue_sdl_lifecycle_event(SDL_Event *event) noexcept nogil:
+    cdef SDL_Event queued_event
+
+    memcpy(&queued_event, event, sizeof(SDL_Event))
+    SDL_PeepEvents(&queued_event, 1, SDL_ADDEVENT, 0, 0)
+
+
+cdef cbool lifecycle_event_watch(void *userdata, SDL_Event *event) noexcept nogil:
+    if is_sdl_lifecycle_event(event.type):
+        queue_sdl_lifecycle_event(event)
+
+    return True
+
 def set_blocked(t=None):
     if t == None:
         for et in event_names.keys():
@@ -676,3 +700,5 @@ def init():
 
         if SDL_InitSubSystem(SDL_INIT_EVENTS):
             raise error()
+
+    SDL_AddEventWatch(lifecycle_event_watch, NULL)
