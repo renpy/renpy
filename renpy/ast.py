@@ -991,10 +991,16 @@ class Say(Node):
 
             what = self.what
             if renpy.config.say_menu_text_filter:
-                what = renpy.config.say_menu_text_filter(what)
+                ww = [what]
+                if renpy.config.say_menu_text_filter_extended:
+                    ww.append(who)
+                what = renpy.config.say_menu_text_filter(*ww)
 
             for f in renpy.config.say_menu_text_filters:
-                what = f(what)
+                ww = [what]
+                if renpy.config.say_menu_text_filter_extended:
+                    ww.append(who)
+                what = f(*ww)
 
             renpy.store._last_raw_what = what
 
@@ -1040,10 +1046,16 @@ class Say(Node):
 
             what = self.what
             if renpy.config.say_menu_text_filter:
-                what = renpy.config.say_menu_text_filter(what)
+                ww = [what]
+                if renpy.config.say_menu_text_filter_extended:
+                    ww.append(who)
+                what = renpy.config.say_menu_text_filter(*ww)
 
             for f in renpy.config.say_menu_text_filters:
-                what = f(what)
+                ww = [what]
+                if renpy.config.say_menu_text_filter_extended:
+                    ww.append(who)
+                what = f(*ww)
 
             renpy.exports.predict_say(who, what)
 
@@ -1819,10 +1831,16 @@ class Menu(Node):
         for i, (label, condition, block) in enumerate(self.items):
             if renpy.config.use_menu_text_filter:
                 if renpy.config.say_menu_text_filter:
-                    label = renpy.config.say_menu_text_filter(label)
+                    ww = [label]
+                    if renpy.config.say_menu_text_filter_extended:
+                        ww.append(None)
+                    label = renpy.config.say_menu_text_filter(*ww)
 
                 for f in renpy.config.say_menu_text_filters:
-                    label = f(label)
+                    ww = [label]
+                    if renpy.config.say_menu_text_filter_extended:
+                        ww.append(None)
+                    label = f(*ww)
 
             has_item = False
 
