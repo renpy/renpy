@@ -31,6 +31,9 @@ Menu text filtering can now be disabled with :var:`config.use_menu_text_filter`,
 
 The new :func:`renpy.get_statement_name` function returns the name of the current statement.
 
+The :class:`Confirm` action and :func:`renpy.confirm` function now take a `screen` argument, allowing
+a custom screen to be used instead of the default confirm screen.
+
 The `changed` property of bars can now be supplied in addition to a bar value.
 
 Bars now take an `action` property, which is an action that is run when the bar value changes. Unlike `change`, `action`
