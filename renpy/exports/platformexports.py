@@ -307,3 +307,45 @@ def open_url(url):
         webbrowser.open_new(url)
     except Exception:
         pass
+
+
+def get_user_age():
+    """
+    :doc: age
+
+    Returns a range of ages for the user, if such can be determined. It returns a tuple of two integers, giving
+    the minimum and maximum age of the user. If the age cannot be determined, it returns (-1, 150).
+
+    This is limited by platform (currently only Android) and the information may only be available in regions of
+    the world where such information is required. It's intended to help you comply with age-related legal requirements,
+    but like the rest of Ren'Py, this feature comes with NO WARRANTY.
+
+    On Android, this uses the Play Age Signals API. By using it, you need to agree to the terms at `https://developer.android.com/google/play/age-signals/overview`_,
+    which include limits on how you can process age data.
+
+    Here's one possible approach to using this::
+
+    """
+
+    if renpy.android:
+
+        try:
+            import jnius
+            import time
+
+            Age = jnius.autoclass("org.renpy.android.Age")
+
+            if not Age.valid and not Age.inProgress:
+                Age.update(jnius.autoclass("org.renpy.android.PythonSDLActivity").mActivity)
+
+            start = time.time()
+            while Age.inProgress and time.time() - start < 1.0:
+                renpy.exports.pause(0)
+
+            if Age.valid:
+                return Age.ageLower, Age.ageUpper
+
+        except Exception:
+            pass
+
+    return -1, 150

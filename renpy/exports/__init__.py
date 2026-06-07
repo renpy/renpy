@@ -506,6 +506,7 @@ from renpy.exports.platformexports import (
     get_on_battery as get_on_battery,
     get_sdl_dll as get_sdl_dll,
     get_sdl_window_pointer as get_sdl_window_pointer,
+    get_user_age as get_user_age,
     invoke_in_main_thread as invoke_in_main_thread,
     invoke_in_thread as invoke_in_thread,
     request_permission as request_permission,

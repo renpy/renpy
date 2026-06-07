@@ -52,6 +52,8 @@ and used to populate the :ref:`audio-namespace <audio-namespace>`.
 Other Changes
 -------------
 
+The new :func:`renpy.get_user_age` function returns an age range for the user on supported platforms (currently Android).
+
 The :var:`config.mesh_oversample` variable now defaults to 8.0, which allows meshes to be scaled up before becoming blurry.
 
 The ``scene`` statenment now respects :var:`config.tag_layer` when deciding which later to clear.
