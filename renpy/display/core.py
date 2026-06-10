@@ -3174,6 +3174,10 @@ class Interface:
                     if renpy.windows:
                         self.mouse_focused = True
 
+                if ev.type == pygame.MOUSEMOTION:
+                    if getattr(ev, "buttons", None) is None:
+                        ev.buttons = pygame.mouse.get_pressed()
+
                 # Handle mouse event time, and ignoring touch.
                 if (
                     ev.type == pygame.MOUSEMOTION
