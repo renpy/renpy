@@ -70,6 +70,9 @@ testsuite parameter_field:
 
 
 testsuite screenshot:
+    setup:
+        run Preference("display", 1.0)
+
     testcase main_menu:
         screenshot "main_menu.png" #crop (0, 0, 400, 300)
 
@@ -156,7 +159,7 @@ testsuite boolean_conditions:
 
 testsuite message_if:
     setup:
-        run Jump("three_messages")
+        run Start("three_messages")
         pause until screen "say"
 
     testcase test_if:
@@ -180,9 +183,6 @@ testsuite message_if:
             pass
         else:
             assert False
-
-testcase message_if.dotted_testcase:
-    assert "Message 1"
 
 testsuite selectors:
     testcase teleporting_button_test:

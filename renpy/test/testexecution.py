@@ -19,7 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import argparse
 from textwrap import dedent
 from typing import Callable, Any
 
@@ -28,12 +27,12 @@ import renpy.pygame as pygame
 
 from renpy.error import FrameSummary
 from renpy.test.testast import Node, BaseTestBlock, TestSuite, TestCase, TestHook, Exit, ControlFrame
+from renpy.test.testfilter import ExecutionFilter
 from renpy.test.types import NodeState, NodeLocation, RenpyTestTimeoutError, HookType
 import renpy.test.testreporter as testreporter
-from renpy.test.testsettings import _test
+from renpy.test.testsettings import _test, global_testsuite_name
 
 initialized: bool = False
-global_testsuite_name = "global"
 
 reached_labels: set[str] = set()
 suite_stack: list[TestSuite] = []
@@ -43,6 +42,10 @@ control_frame_stack: list[ControlFrame] = []
 testcases: dict[str, TestCase] = {}
 node_executor: "NodeExecutor"
 phase_controller: "TestPhaseController"
+
+global_test_suite: TestSuite | None = None
+"Caches the global test suite, once it's been set up."
+execution_filter: ExecutionFilter
 
 ################################################################################
 ## Public Methods
@@ -91,7 +94,7 @@ def execute() -> None:
     reached_labels.clear()
 
 
-def initialize(specified_test: str) -> None:
+def initialize(test_filter: ExecutionFilter) -> None:
     """
     Initializes the test execution system. This is called when the game starts, and
     sets up the testcases and the context stack.
@@ -100,22 +103,25 @@ def initialize(specified_test: str) -> None:
     global initialized
     global node_executor
     global phase_controller
+    global execution_filter
 
     if initialized:
         return
 
-    root = setup_global_test_suite()
+    execution_filter = test_filter
 
-    test_node = get_testcase_by_id(specified_test)
-    select_testcase(test_node)
+    root = setup_global_test_suite()
     process_only_flag()
-    update_suite_enabled_flag(root)
+    update_enable_flag()
     root.chain(None)
 
     testreporter.reporter.initialize_test_outcomes(root)
 
     node_executor = NodeExecutor(None)
     phase_controller = TestPhaseController(root)
+    # Disable vsync, to speed up testing.
+    renpy.config.gl_vsync = False
+
     initialized = True
 
 def has_default_testcase() -> bool:
@@ -250,55 +256,44 @@ def scoped_exec(source: str, hide: bool = False, store: str = "store") -> None:
 ################################################################################
 ## Setup methods
 
+def update_enable_flag() -> None:
+    """
+    Updates the enabled flag for all testcases based on the `only` flag
+    and the `enable_all` setting.
 
-def link_top_level_testcase_to_parent(node: TestCase) -> None:
+    If any testcase has the `only` flag set, all other testcases that do not have
+    the `only` flag will be marked as skipped.
     """
-    Links a top-level testcase (with a name that contains a dot) to its parent TestSuite.
-    """
-    if "." not in node.full_path:
+
+    if _test.enable_all:
+        for tc in testcases.values():
+            tc.enabled = True
         return
 
-    parent_name = node.full_path.rsplit(".", 1)[0]
-    parent_node = get_testcase_by_id(parent_name)
-    if not isinstance(parent_node, TestSuite):
-        raise TypeError(f'Parent node "{parent_name}" is not a TestSuite.')
-    parent_node.add(node)
-
-
-def add_child_testcases(parent: TestCase) -> None:
-    if not isinstance(parent, TestSuite):
-        return
-
-    for child in parent.subtests:
-        register_testcase(child, parent)
-
-
-def register_testcase(node: TestCase, parent: TestSuite | None = None) -> None:
+def register_testcase(node: TestCase) -> None:
     """
     Adds a testcase to the `testcases` dictionary. The name is a tuple of strings,
     and the node is the root node of the testcase.
     """
-
     ## NOTE: This is run every time the script is reloaded.
 
     if node.full_path in testcases:
         if testcases[node.full_path] != node:
+            found_testcase = testcases[node.full_path]
             raise KeyError(
-                f"The testcase {node.full_path!r} is defined twice, "
-                f"at File {testcases[node.full_path].filename}:{testcases[node.full_path].linenumber} "
+                f"The test {node.full_path!r} is defined twice, "
+                f"at File {found_testcase.filename}:{found_testcase.linenumber} "
                 f"and File {node.filename}:{node.linenumber}."
             )
         return
 
     testcases[node.full_path] = node
 
-    add_child_testcases(node)
-    if parent is None:
-        link_top_level_testcase_to_parent(node)
+    if not isinstance(node, TestSuite):
+        return
 
-
-global_test_suite: TestSuite | None = None
-"Caches the global test suite, once it's been set up."
+    for child in node.subtests:
+        register_testcase(child)
 
 
 def setup_global_test_suite() -> TestSuite:
@@ -320,7 +315,9 @@ def setup_global_test_suite() -> TestSuite:
     try:
         root = get_testcase_by_id(global_testsuite_name)
         if not isinstance(root, TestSuite):
-            raise ValueError(f"Root node for {global_testsuite_name!r} must be a TestSuite, got {type(root)}")
+            raise ValueError(
+                f"Root node for {global_testsuite_name!r} must be a TestSuite, got {type(root)}"
+            )
 
         for child in root_children:
             root.add(child)
@@ -384,35 +381,7 @@ def process_only_flag() -> None:
         enable_relatives(tc)
 
     for tc in testcases.values():
-        tc.enabled = tc in processed
-
-
-def select_testcase(node: TestCase) -> None:
-    id = node.full_path
-
-    if id == global_testsuite_name:
-        return
-
-    for tc in testcases.values():
-        if tc.full_path == id:
-            tc.only = True
-        else:
-            tc.only = False
-
-
-def update_suite_enabled_flag(node: TestSuite) -> None:
-    """
-    Updates the enabled flag for a TestSuite and its children based on the enable_all setting.
-    """
-    for child in node.subtests:
-        if isinstance(child, TestSuite):
-            update_suite_enabled_flag(child)
-        else:
-            child.enabled = _test.enable_all or child.enabled
-
-    is_child_enabled = any(child.enabled for child in node.subtests)
-    node.enabled = _test.enable_all or (node.enabled and is_child_enabled)
-
+        tc.enabled = tc.enabled and (tc in processed)
 
 ################################################################################
 ## NODE EXECUTOR
@@ -784,13 +753,15 @@ class NextTestTransitionPhase(BaseExecutionPhase):
         if current_test is None:
             raise RuntimeError("No current test to run.")
 
-        if not current_test.enabled:
+        current_test.advance_to_next_parameter_set()
+        if current_test.has_all_parameters_been_processed:
+            suite_stack[-1].advance_to_next_subtest()
+            current_test.restart()
+            return None
+
+        if not current_test.enabled or not execution_filter.matches(current_test):
             testreporter.reporter.test_case_skipped(current_test)
-            current_test.advance_to_next_parameter_set()
-            if current_test.has_all_parameters_been_processed:
-                suite_stack[-1].advance_to_next_subtest()
-                current_test.restart()
-            return None  # NextTestTransitionPhase()
+            return None
 
         if isinstance(current_test, TestSuite):
             return BeforeTestSuitePhase()
@@ -871,23 +842,8 @@ class TestCasePhase(BaseExecutionPhase):
 class AfterTestCasePhase(HookLoopPhase):
     def __init__(self):
         self.hook_type = HookType.AFTER_TESTCASE
-        self.next_phase = TestCaseParameterCyclePhase
+        self.next_phase = NextTestTransitionPhase
         self.reverse = True
-
-
-class TestCaseParameterCyclePhase(BaseExecutionPhase):
-    def update(self) -> BaseExecutionPhase | None:
-        current_test = suite_stack[-1].current_test
-        if not isinstance(current_test, TestCase):
-            raise RuntimeError(f"Expecting TestCase, got {type(current_test)}.")
-
-        current_test.advance_to_next_parameter_set()
-
-        if current_test.has_all_parameters_been_processed:
-            suite_stack[-1].advance_to_next_subtest()
-            current_test.restart()
-            return NextTestTransitionPhase()
-        return BeforeTestCasePhase()
 
 
 class SuiteTeardownPhase(HookPhase):
@@ -923,23 +879,8 @@ class RemoveSubSuitePhase(BaseExecutionPhase):
 class AfterTestSuitePhase(HookLoopPhase):
     def __init__(self):
         self.hook_type = HookType.AFTER_TESTSUITE
-        self.next_phase = TestSuiteParameterCyclePhase
+        self.next_phase = NextTestTransitionPhase
         self.reverse = True
-
-
-class TestSuiteParameterCyclePhase(BaseExecutionPhase):
-    def update(self) -> BaseExecutionPhase | None:
-        current_test = suite_stack[-1].current_test
-        if not isinstance(current_test, TestSuite):
-            raise RuntimeError(f"Expecting TestSuite, got {type(current_test)}.")
-
-        current_test.advance_to_next_parameter_set()
-
-        if current_test.has_all_parameters_been_processed:
-            suite_stack[-1].advance_to_next_subtest()
-            current_test.restart()
-            return NextTestTransitionPhase()
-        return BeforeTestSuitePhase()
 
 
 class GlobalParameterCyclePhase(BaseExecutionPhase):
@@ -953,106 +894,3 @@ class GlobalParameterCyclePhase(BaseExecutionPhase):
 
         return StartPhase(root)
 
-
-def test_command() -> bool:
-    """
-    The dialogue command. This updates dialogue.txt, a file giving all the dialogue
-    in the game.
-    """
-
-    ## NOTE: This command gets called after the game finishes and returns to the main menu
-    if initialized:
-        return True
-
-    ap = renpy.arguments.ArgumentParser(description="Run a Ren'Py test case or suite.")
-
-    ap.add_argument(
-        "testcase",
-        help=f"Name of the test case or suite to run (default: {global_testsuite_name}).",
-        nargs="?",
-        type=str,
-        default=global_testsuite_name,
-    )
-
-    group = ap.add_argument_group(title="Test Execution")
-    group.add_argument(
-        "--enable-all",
-        dest="_test.enable_all",
-        action="store_true",
-        default=False,
-        help="Run all test cases and test suites, even if they are disabled. "
-        "Does not work if a specific test case or suite is specified.",
-    )
-    group.add_argument(
-        "--overwrite-screenshots",
-        dest="_test.overwrite_screenshots",
-        action="store_true",
-        default=False,
-        help="Replace existing screenshots when a screenshot is taken during tests.",
-    )
-
-    group = ap.add_argument_group(title="Console Reporting")
-    group.add_argument(
-        "--hide-header",
-        dest="_test.report.hide_header",
-        action="store_true",
-        default=False,
-        help="Disable header at start of run",
-    )
-    group.add_argument(
-        "--hide-execution",
-        dest="_test.report.hide_execution",
-        action="store",
-        choices=["no", "hooks", "testcases", "all"],
-        default="hooks",
-        help="Hide test execution output. 'hooks' hides hooks, 'testcases' hides test cases and hooks, and 'all' hides everything including test suites.",
-    )
-    group.add_argument(
-        "--hide-summary",
-        dest="_test.report.hide_summary",
-        action="store_true",
-        default=False,
-        help="Disable summary",
-    )
-    group.add_argument(
-        "--report-detailed",
-        dest="_test.report.report_detailed",
-        action="store_true",
-        default=False,
-        help="Show detailed information about each test during the run.",
-    )
-    group.add_argument(
-        "--report-skipped",
-        dest="_test.report.report_skipped",
-        action="store_true",
-        default=False,
-        help="Show information about skipped tests (use with --report-detailed).",
-    )
-
-    args = ap.parse_args()
-
-    for key, value in vars(args).items():
-        key_parts = key.split(".")
-
-        if key_parts[0] != "_test":
-            continue
-        obj = _test
-
-        for part in key_parts[1:-1]:
-            obj = getattr(obj, part)
-
-        if hasattr(obj, key_parts[-1]):
-            setattr(obj, key_parts[-1], value)
-        else:
-            raise AttributeError(f"Unknown test setting: {key}")
-
-    testreporter.reporter.add_reporter(testreporter.ConsoleReporter())
-    initialize(args.testcase)
-
-    # Disable vsync, to speed up testing.
-    renpy.config.gl_vsync = False
-
-    return True
-
-
-renpy.arguments.register_command("test", test_command, uses_display=True)

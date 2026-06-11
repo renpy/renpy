@@ -481,62 +481,21 @@ Run Testcases
 
 This runs :doc:`automated tests <testcases>` on the game.
 
-Examples:
- * `<https://github.com/renpy/renpy/blob/master/tutorial/game/testcases.rpy>`_
- * `<https://github.com/renpy/renpy/blob/master/gui/game/testcases.rpy>`_
- * `<https://github.com/renpy/renpy/blob/master/launcher/game/testcases.rpy>`_
-
 .. tabs::
 
     .. tab:: Linux / macOS
 
         .. code-block:: bash
 
-            ./renpy.sh <basedir> test [<testcase>] [options...]
+            ./renpy.sh <basedir> test [<filters>] [options...]
 
     .. tab:: Windows
 
         .. code-block:: bat
 
-            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> test [<testcase>] [options...]
+            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> test [<filters>] [options...]
 
-.. option:: <testcase>
-
-    Specifies the name of the testcase or test suite to run. If not given, the "global"
-    test suite will be run.
-
-.. option:: --enable_all
-
-    Executes all test cases and test suites, regardless of their ``enabled`` property.
-
-.. option:: --overwrite_screenshots
-
-    Overwrite existing screenshots when a
-    :ref:`screenshot statement <test-screenshot-statement>` is executed.
-
-.. option:: --hide-header
-
-    Disables the header at the start of the test run.
-
-.. option:: --hide-execution {no|hooks|testcases|all}
-
-    Hides information about test execution. ``--hide-execution hooks`` hides hooks,
-    ``--hide-execution testcases`` hides test cases and hooks, and ``--hide-execution all``
-    hides everything.
-
-.. option:: --hide-summary
-
-    Disables the summary at the end of the test run.
-
-.. option:: --report-detailed
-
-    Shows detailed information about each test during the run.
-
-.. option:: --report-skipped
-
-    Shows information about skipped tests. This option should be used together
-    with ``--report-detailed``.
-
+See :ref:`Automated Testing <test-command-line>` for more information.
 
 Build and Distribution
 ======================

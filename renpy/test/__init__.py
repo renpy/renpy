@@ -31,7 +31,9 @@ import typing
 
 if typing.TYPE_CHECKING:
     from . import testast as testast
+    from . import testcli as testcli
     from . import testexecution as testexecution
+    from . import testfilter as testfilter
     from . import testfocus as testfocus
     from . import testkey as testkey
     from . import testmouse as testmouse
