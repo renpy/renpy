@@ -98,6 +98,13 @@ init -1 python:
 
     # An image used as a separator pattern.
     PATTERN = "images/pattern.png"
+    TESTING_TRIANGLE = "images/testing_gui/triangle.png"
+    TESTING_PASS = "images/testing_gui/pass.png"
+    TESTING_FAIL = "images/testing_gui/fail.png"
+    TESTING_PENDING = "images/testing_gui/pending.png"
+    TESTING_SKIP = "images/testing_gui/skip.png"
+    TESTING_NOTRUN = "images/testing_gui/notrun.png"
+    TESTING_RUNNING = "images/testing_gui/running.png"
 
     # A displayable used for the background of everything.
     BACKGROUND = Fixed(Solid(REVERSE_TEXT), xsize=800, ysize=600)

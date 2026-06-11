@@ -209,7 +209,7 @@ screen front_page_project:
                 textbutton _("Navigate Script") action Jump("navigation")
                 textbutton _("Check Script (Lint)") action Call("lint")
 
-                if p.dump.get("test", {}).get("has_default_testcase", False):
+                if p.dump.get("test", {}).get("items", []):
                     textbutton _("Run Testcases") action Jump("run_testcases")
 
                 if p.exists("game/gui.rpy"):
@@ -303,13 +303,5 @@ label force_recompile:
     python hide:
         interface.processing(_("Recompiling all rpy files into rpyc files..."))
         project.current.launch([ 'compile' ], wait=True)
-
-    jump front_page
-
-label run_testcases:
-
-    python hide:
-        interface.processing(_("Running testcases..."))
-        project.current.launch_console_command([ 'test' ])
 
     jump front_page

@@ -31,8 +31,10 @@ import inspect
 import json
 import sys
 import os
+from typing import Callable
 
 import renpy
+from renpy.test import testexecution, testast
 
 # A list of (name, filename, linenumber) tuples, for various types of
 # name. These are added to as the definitions occur.
@@ -242,9 +244,7 @@ def dump(error):
     except Exception:
         pass
 
-    result["test"] = {
-        "has_default_testcase" : renpy.test.testexecution.has_default_testcase(),
-    }
+    result["test"] = get_test_hierarchy_metadata(name_filter)
 
     filename = renpy.exports.fsdecode(args.json_dump)  # type: ignore
 
@@ -260,3 +260,62 @@ def dump(error):
         os.rename(new, filename)
     else:
         json.dump(result, sys.stdout, indent=2)
+
+
+def get_test_hierarchy_metadata(name_filter: Callable[[str, str], bool]) -> dict:
+    """
+    Returns metadata for testsuite/testcase declarations and parameterized display names.
+    """
+
+    rv = {
+        "items": [],
+    }
+
+    try:
+        root = testexecution.setup_global_test_suite()
+    except Exception:
+        return rv
+
+    def get_kind(block: testast.TestCase) -> str:
+        if isinstance(block, testast.TestSuite):
+            return "testsuite"
+        return "testcase"
+
+    def get_parameterized(block: testast.TestCase) -> list[dict]:
+        items = []
+
+        count = len(block.parameters)
+        for i in range(count):
+            items.append({
+                "index": i,
+                "display_name": block.get_parameterized_name(i),
+            })
+
+        return items
+
+    def append_block(block: testast.TestCase):
+        filename = block.filename
+        if not name_filter(block.name, filename):
+            return
+
+        parent_full_path = None
+        if block.parent is not None:
+            parent_full_path = block.parent.full_path
+
+        rv["items"].append({
+            "full_path": block.full_path,
+            "name": block.name,
+            "kind": get_kind(block),
+            "file": filename,
+            "line": block.linenumber,
+            "parent_full_path": parent_full_path,
+            "parameterized": get_parameterized(block),
+            "description": block.description,
+        })
+
+        if isinstance(block, testast.TestSuite):
+            for subtest in block.subtests:
+                append_block(subtest)
+
+    append_block(root)
+    return rv

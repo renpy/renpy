@@ -24,8 +24,11 @@ import contextlib
 from dataclasses import dataclass, field
 from enum import Enum
 import io
+import json
 import os
 import platform
+import time
+import xml.etree.ElementTree as ET
 
 import renpy
 from renpy.error import ANSIColors
@@ -76,13 +79,15 @@ class BaseOutcome:
     duration: float = 0.0
     status: OutcomeStatus = OutcomeStatus.NOT_RUN
     exception: str = ""
+    traceback: str = ""
 
-    def begin(self) -> None:
+    def __post_init__(self):
         if self.name == "<unnamed>":
             self.name = self.test_block.current_parameterized_name
         if self.full_path == "<unnamed_path>":
-            self.full_path = self.test_block.full_path
+            self.full_path = self.test_block.current_full_parameterized_path
 
+    def begin(self) -> None:
         self.start_time = renpy.display.core.get_time()
         self.end_time = 0.0
         self.status = OutcomeStatus.PENDING
@@ -166,6 +171,8 @@ class TestSuiteOutcome(TestCaseOutcome):
         if isinstance(test_block, TestHook):
             # Create TestHookOutcome dynamically
             outcome = TestHookOutcome(test_block)
+            outcome.parent = self
+            outcome.full_path = f"{self.full_path}::{outcome.name}"
             self.children.append(outcome)
             return outcome
 
@@ -311,7 +318,14 @@ class OutcomeManager(TestSuiteOutcome):
         ## NOTE: TestHookOutcomes are created dynamically during execution, not here.
         rv: list[BaseOutcome] = []
         for parent_idx in range(len(suite.parameters) or 1):
-            suite_param_outcome = TestSuiteOutcome(suite, suite.get_parameterized_name(parent_idx))
+            suite_name = suite.get_parameterized_name(parent_idx)
+
+            if parent_outcome.test_block is suite:
+                suite_full_path = suite_name
+            else:
+                suite_full_path = f"{parent_outcome.full_path}.{suite_name}"
+
+            suite_param_outcome = TestSuiteOutcome(suite, suite_name, full_path=suite_full_path)
             suite_param_outcome.parent = parent_outcome
             rv.append(suite_param_outcome)
 
@@ -321,12 +335,14 @@ class OutcomeManager(TestSuiteOutcome):
 
                 elif isinstance(subtest, TestCase):
                     for idx in range(len(subtest.parameters) or 1):
-                        outcome = TestCaseOutcome(subtest, subtest.get_parameterized_name(idx))
+                        testcase_name = subtest.get_parameterized_name(idx)
+                        testcase_full_path = f"{suite_param_outcome.full_path}.{testcase_name}"
+                        outcome = TestCaseOutcome(subtest, testcase_name, full_path=testcase_full_path)
                         outcome.parent = suite_param_outcome
                         suite_param_outcome.children.append(outcome)
 
                 else:
-                    raise ValueError(f"Unsupported: {type(suite)}")
+                    raise ValueError(f"Unsupported: {type(subtest)}")
 
         return rv
 
@@ -478,6 +494,226 @@ class Reporter(abc.ABC):
         """Called when the game is reloaded."""
         pass
 
+    def heartbeat(self, outcomes: OutcomeManager) -> None:
+        """Called periodically while a test run is active."""
+        pass
+
+
+class JsonlStreamReporter(Reporter):
+    """
+    Reporter that writes append-only JSONL events for IDE consumers.
+    """
+
+    def __init__(
+        self,
+        output_path: str,
+        run_id: str | None = None,
+        batch_size: int = 50,
+        flush_interval_ms: int = 1000,
+        heartbeat_interval_ms: int = 1000,
+        emit_info_on_run_start: bool = True,
+    ):
+        super().__init__()
+
+        if not output_path:
+            raise ValueError("output_path must be a non-empty string.")
+        if batch_size <= 0:
+            raise ValueError("batch_size must be > 0.")
+        if flush_interval_ms <= 0:
+            raise ValueError("flush_interval_ms must be > 0.")
+        if heartbeat_interval_ms <= 0:
+            raise ValueError("heartbeat_interval_ms must be > 0.")
+
+        self.output_path = output_path
+        self.run_id = run_id
+        self.batch_size = batch_size
+        self.flush_interval_seconds = flush_interval_ms / 1000.0
+        self.heartbeat_interval_seconds = heartbeat_interval_ms / 1000.0
+        self.emit_info_on_run_start = emit_info_on_run_start
+
+        self.sequence = 0
+        self.lines: list[str] = []
+        self.last_flush = time.monotonic()
+        self.last_heartbeat = self.last_flush
+
+        directory = os.path.dirname(output_path)
+        if directory and not os.path.exists(directory):
+            os.makedirs(directory)
+
+        self.file = open(output_path, "w", encoding="utf-8", newline="")
+
+    def _timestamp(self) -> float:
+        return round(time.time(), 6)
+
+    def _next_sequence(self) -> int:
+        self.sequence += 1
+        return self.sequence
+
+    def _should_flush(self) -> bool:
+        if len(self.lines) >= self.batch_size:
+            return True
+        return (time.monotonic() - self.last_flush) >= self.flush_interval_seconds
+
+    def _flush(self, force: bool = False) -> None:
+        if not self.lines:
+            return
+        if (not force) and (not self._should_flush()):
+            return
+
+        self.file.write("\n".join(self.lines))
+        self.file.write("\n")
+        self.file.flush()
+        self.lines = []
+        self.last_flush = time.monotonic()
+
+    def _emit(self, event: str, payload: dict | None = None, force_flush: bool = False) -> None:
+        data = {}
+        if self.run_id:
+            data["run_id"] = self.run_id
+
+        data.update({
+            "sequence": self._next_sequence(),
+            "timestamp": self._timestamp(),
+            "event": event,
+        })
+        if payload:
+            data.update(payload)
+
+        self.lines.append(json.dumps(data))
+        self._flush(force=force_flush)
+
+    def _kind_for_outcome(self, outcome: BaseOutcome) -> str:
+        if isinstance(outcome, TestHookOutcome):
+            return "hook"
+        if isinstance(outcome, TestSuiteOutcome):
+            return "testsuite"
+        return "testcase"
+
+    def _outcome_payload(self, outcome: BaseOutcome) -> dict:
+        payload: dict = {
+            "test_id": outcome.full_path,
+        }
+
+        if outcome.status not in [OutcomeStatus.PENDING, OutcomeStatus.NOT_RUN]:
+            payload["status"] = outcome.status.value
+            payload["duration_seconds"] = round(outcome.duration, 6)
+
+        if outcome.exception:
+            payload["error"] = outcome.exception
+            payload["traceback"] = outcome.traceback
+
+        return payload
+
+    def _emit_info(self, outcome: BaseOutcome) -> None:
+        self._emit("on_test_info", {
+            "test_id": outcome.full_path,
+            "name": outcome.name,
+            "kind": self._kind_for_outcome(outcome),
+            "file": outcome.test_block.filename,
+            "line": outcome.test_block.linenumber,
+            "parent_test_id": outcome.parent.full_path if outcome.parent is not None else None,
+        })
+
+        if isinstance(outcome, TestSuiteOutcome):
+            for child in outcome.children:
+                self._emit_info(child)
+
+    ##################################
+    ## Reporter Interface Methods
+    ##################################
+
+    def test_run_start(self, outcomes: OutcomeManager) -> None:
+        self._emit("on_run_start")
+
+        if self.emit_info_on_run_start:
+            for child in outcomes.children:
+                self._emit_info(child)
+
+    def test_run_end(self, outcomes: OutcomeManager) -> None:
+        self._emit("on_run_end", {
+            "final_status": outcomes.status.value,
+            "summary": {
+                "testsuites": {
+                    "total": outcomes.num_testsuites,
+                    "passed": outcomes.num_testsuites_passed,
+                    "xfailed": outcomes.num_testsuites_xfailed,
+                    "failed": outcomes.num_testsuites_failed,
+                    "xpassed": outcomes.num_testsuites_xpassed,
+                    "skipped": outcomes.num_testsuites_skipped,
+                    "not_run": outcomes.num_testsuites_not_run,
+                },
+                "testcases": {
+                    "total": outcomes.num_testcases,
+                    "passed": outcomes.num_testcases_passed,
+                    "xfailed": outcomes.num_testcases_xfailed,
+                    "failed": outcomes.num_testcases_failed,
+                    "xpassed": outcomes.num_testcases_xpassed,
+                    "skipped": outcomes.num_testcases_skipped,
+                    "not_run": outcomes.num_testcases_not_run,
+                },
+                "hooks": {
+                    "total": outcomes.num_hooks,
+                    "passed": outcomes.num_hooks_passed,
+                    "xfailed": outcomes.num_hooks_xfailed,
+                    "failed": outcomes.num_hooks_failed,
+                    "xpassed": outcomes.num_hooks_xpassed,
+                    "skipped": outcomes.num_hooks_skipped,
+                    "not_run": outcomes.num_hooks_not_run,
+                },
+                "assertions": {
+                    "total": outcomes.num_asserts,
+                    "passed": outcomes.num_asserts_passed,
+                    "xfailed": outcomes.num_asserts_xfailed,
+                    "failed": outcomes.num_asserts_failed,
+                    "xpassed": outcomes.num_asserts_xpassed,
+                },
+            },
+        }, force_flush=True)
+
+        self.file.close()
+
+    def test_suite_start(self, outcome: TestSuiteOutcome, depth: int = 0) -> None:
+        self._emit("on_test_start", self._outcome_payload(outcome))
+
+    def test_suite_end(self, outcome: TestSuiteOutcome, depth: int = 0) -> None:
+        self._emit("on_test_end", self._outcome_payload(outcome))
+
+    def test_case_start(self, outcome: TestCaseOutcome, depth: int = 0) -> None:
+        self._emit("on_test_start", self._outcome_payload(outcome))
+
+    def test_case_end(self, outcome: TestCaseOutcome, depth: int = 0) -> None:
+        self._emit("on_test_end", self._outcome_payload(outcome))
+
+    def test_hook_start(self, outcome: TestHookOutcome, depth: int = 0) -> None:
+        if _test.report.hide_execution in ("all", "testcases", "hooks"):
+            return
+
+        self._emit("on_test_start", self._outcome_payload(outcome))
+
+    def test_hook_end(self, outcome: TestHookOutcome, depth: int = 0) -> None:
+        if _test.report.hide_execution in ("all", "testcases", "hooks"):
+            return
+
+        self._emit("on_test_end", self._outcome_payload(outcome))
+
+    def test_case_skipped(self, outcome: TestCaseOutcome, depth: int = 0) -> None:
+        self._emit("on_test_end", self._outcome_payload(outcome))
+
+    # def log_exception(self, exception: Exception, run_stack: list[renpy.error.FrameSummary], xfailed: bool) -> None:
+    #     pass
+
+    def on_reload(self) -> None:
+        self._flush(force=False)
+
+    def heartbeat(self, outcomes: OutcomeManager) -> None:
+        now = time.monotonic()
+        if (now - self.last_heartbeat) < self.heartbeat_interval_seconds:
+            self._flush(force=False)
+            return
+
+        self.last_heartbeat = now
+        self._emit("on_heartbeat")
+
 
 class ConsoleReporter(Reporter):
     """
@@ -552,6 +788,9 @@ class ConsoleReporter(Reporter):
             self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Test outcomes (Detailed)")
 
         if outcome.status == OutcomeStatus.SKIPPED and not _test.report.report_skipped:
+            return
+
+        if outcome.status == OutcomeStatus.NOT_RUN and not _test.report.report_notrun:
             return
 
         test_name = outcome.name
@@ -775,6 +1014,9 @@ class ReporterManager:
     def add_reporter(self, reporter: Reporter) -> None:
         self.reporters.append(reporter)
 
+    def clear_reporters(self) -> None:
+        self.reporters = []
+
     def test_run_start(self) -> None:
         if self.outcome_manager is None:
             raise RuntimeError("Called before initializing test outcomes.")
@@ -913,7 +1155,8 @@ class ReporterManager:
         epc = renpy.error.NonColoredExceptionPrintContext(file)
         outcome = self._get_current_outcomes()
         msg = get_exception_string(epc, exception, run_stack)
-        outcome.exception = msg
+        outcome.exception = f"{exception.__class__.__name__}: {exception}"
+        outcome.traceback = msg
 
         for reporter in self.reporters:
             reporter.log_exception(exception, run_stack, xfailed)
@@ -925,6 +1168,15 @@ class ReporterManager:
     def on_reload(self) -> None:
         for reporter in self.reporters:
             reporter.on_reload()
+
+        self.heartbeat()
+
+    def heartbeat(self) -> None:
+        if self.outcome_manager is None:
+            return
+
+        for rep in self.reporters:
+            rep.heartbeat(self.outcome_manager)
 
     def _current_test_block(self) -> BaseTestBlock:
         if self.hook is not None:

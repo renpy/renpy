@@ -87,6 +87,7 @@ def execute() -> None:
 
     try:
         phase_controller.update()
+        testreporter.reporter.heartbeat()
     except renpy.game.QuitException as e:
         status = quit_handler()
         raise renpy.game.QuitException(status=status)
@@ -123,14 +124,6 @@ def initialize(test_filter: ExecutionFilter) -> None:
     renpy.config.gl_vsync = False
 
     initialized = True
-
-def has_default_testcase() -> bool:
-    """
-    Returns True if at least one testcase exists.
-    """
-
-    root = setup_global_test_suite()
-    return root.has_testcase()
 
 
 def on_reload() -> None:
@@ -430,6 +423,7 @@ class NodeExecutor:
         self.old_loc = None
         self.last_state_change = renpy.display.core.get_time()
         control_frame_stack.clear()
+        self.end_callbacks = None
 
     def set_next_node(self, next: Node | None) -> None:
         self.next_node = next
@@ -759,8 +753,11 @@ class NextTestTransitionPhase(BaseExecutionPhase):
             current_test.restart()
             return None
 
-        if not current_test.enabled or not execution_filter.matches(current_test):
+        if not current_test.enabled:
             testreporter.reporter.test_case_skipped(current_test)
+            return None
+
+        if not execution_filter.matches(current_test):
             return None
 
         if isinstance(current_test, TestSuite):

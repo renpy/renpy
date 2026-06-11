@@ -46,6 +46,10 @@ def log_clock(s):
     # our process as unresponsive by OS
     renpy.display.presplash.pump_window()
 
+    # Send a heartbeat to the test reporter to indicate the process is still alive
+    if renpy.test.testreporter.reporter is not None:
+        renpy.test.testreporter.reporter.heartbeat()
+
     last_clock = now
 
 

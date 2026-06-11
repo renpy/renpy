@@ -6,25 +6,71 @@ Ren'Py allows creators to put automated tests in their games to make sure that
 alterations to the game don't break existing functionality. This is especially
 useful for large games, or for games that are frequently updated.
 
-The two main components of the testing system are the ``testcase`` and
-``testsuite`` statements.
-
 The :func:`renpy.is_in_test` function is helpful to know whether a test is currently
 executing or not.
+
+
+Glossary
+========
+
+- **testcase** - One test
+- **testsuite** - A group of test cases
+- **hook** - A block of test statements that runs before/after a test case or suite
 
 
 Quick Start
 ===========
 
-This section shows a minimal example using statements that are common in
-real testcases:
+Before You Begin
+----------------
+Before you can run tests on your project, you must make sure of the following:
 
-- ``run Jump("...")`` to start from a known label.
-- ``advance until screen "choice"`` to get to a menu.
-- ``click "Choice Text"`` to pick a menu option.
-- ``click id "..." until not screen "..."`` to keep clicking until a screen disappears.
+1. You can launch the game normally.
+2. At least one testcase exists in the game.
 
-Add the following Ren'Py code to your game script:
+The tutorial project is an example project that includes testcases,
+so you can use it to follow along with this quick start guide.
+
+.. _running-tests-launcher:
+
+Running tests from the launcher
+-------------------------------
+
+Open the launcher, select the project and press the "Run Testcases" button.
+
+If the button is not visible, do the following:
+
+1. Ensure that you have at least one testcase defined in your game.
+2. Launch the game normally by clicking the "Launch Project" button, or click the "Force Recompile" button.
+3. Click the "Refresh" button in the launcher.
+4. Click the "Run Testcases" button.
+
+You should see the following
+screen after clicking "Run Testcases":
+
+.. image:: quickstart/test_explorer.png
+    :alt: Running the tutorial tests
+    :class: screenshot
+
+You can collapse and expand the test suites by clicking the arrow next to their name,
+and you can run individual test cases by clicking the "Run" button next to their name.
+
+When you run the tests, the game window will appear and execute actions automatically.
+
+If you add or remove a test from your game, click the "Refresh" button to update the screen.
+
+
+Creating your first test
+------------------------
+
+This section shows you how to write a minimal example using statements that are common in
+real testcases.
+
+In this example, we'll create a screen with a simple popup menu and a choice.
+In our test, we'll close the popup and select one of the choices.
+
+Create a new file called ``quickstart_tests.rpy`` in your game's ``game/`` directory,
+and add the following content to it:
 
 .. code-block:: renpy
 
@@ -60,268 +106,54 @@ Add the following Ren'Py code to your game script:
         return
 
     # ==== Test cases ====
-    # These can go in the same file, or in a separate file (e.g. testcases.rpy).
+    # These can go in the same file, or in a separate file.
 
-    testsuite quick_start:
+    testsuite quickstart:
         before testcase:
             # Make sure each test has the same starting point
-            run Jump("quickstart_demo")
-            advance until screen "quickstart_popup"
+            if not screen "main_menu":
+                run MainMenu(confirm=False)
+            pause 1.0
+
+            run Start("quickstart_demo")
+            pause 1.0
 
         testcase choose_map:
-            pause 0.5
+            advance until screen "quickstart_popup"
+            pause 1.0
             click id "quickstart_close" until not screen "quickstart_popup"
             pause 0.5
             advance until screen "choice"
+            pause 0.5
             click "Take the map"
             advance until "You picked the map."
             pause 0.5
+            advance until screen "main_menu"
 
         testcase leave_map:
-            pause 0.5
+            advance until screen "quickstart_popup"
+            pause 1.0
             click id "quickstart_close" until not screen "quickstart_popup"
             pause 0.5
             advance until screen "choice"
+            pause 0.5
             click "Leave it"
             advance until "You left the map behind."
             pause 0.5
+            advance until screen "main_menu"
 
-After saving the file, run the test using the launcher or the command line.
-See :ref:`running-testcases` for additional details.
 
-Launcher
---------
-You can run the test from the launcher by selecting "Run Testcases" from the Ren'Py launcher.
-If the button does not appear, try launching the game first (or recompiling), then
-click the "Refresh" button in the launcher.
+After saving the file, run the game, open the launcher, then press "Run Testcases".
+If you're facing issues, refer to :ref:`running-tests-launcher`.
 
-Command Line
-------------
-
-If you're running the test from the command line, the command should look something like this:
-
-.. tabs::
-
-    .. tab:: Linux / macOS
-
-        .. code-block:: bash
-
-            ./renpy.sh /path/to/game test quick_start
-
-    .. tab:: Windows
-
-        .. code-block:: bat
-
-            .\lib\py3-windows-x86_64\python.exe renpy.py C:\path\to\game test quick_start
+Once it opens, you should see the "quickstart" test suite with two test cases:
+"choose_map" and "leave_map". Run them to confirm they work successfully.
 
 .. note ::
 
     The pauses in this demo are not necessary, they are just there to make the test
-    execute a slower so you can see what's happening.
-    In a real test, you can remove them to make the test run faster.
-
-.. _running-testcases:
-
-Running Testcases
-=================
-
-Launcher
---------
-
-To run tests from the launcher, select the project and press the "Run Testcases" button.
-If the button is not visible, do the following:
-
-1. Ensure that you have at least one testcase defined in your game.
-2. Launch the game normally by clicking the "Launch Project" button.
-3. Click the "Refresh" button in the launcher.
-
-This will run the "global" test suite by default.
-
-.. _test-command-line:
-
-Command Line
-------------
-
-To run tests from the :doc:`command line <cli>`, open a terminal in the Ren'Py SDK directory and
-use the test command:
-
-.. tabs::
-
-    .. tab:: Linux / macOS
-
-        .. code-block:: bash
-
-            cd /path/to/renpy
-            ./renpy.sh <basedir> test [<filters>] [options...]
-
-    .. tab:: Windows
-
-        .. code-block:: bat
-
-            cd C:\path\to\renpy
-            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> test [<filters>] [options...]
-
-.. option:: <basedir>
-
-    Specifies the path to the project.
-
-.. option:: <filters>
-
-    Specifies the test cases or suites to run. If not given, the "global"
-    test suite will be run. Filters are case-sensitive.
-
-    Multiple filters can be provided, separated by a space.
-    These are combined, so that a test will be run if it
-    matches any of the filters.
-
-    See :ref:`test-filter-examples` for examples.
-
-.. option:: --enable-all
-
-    Executes all test cases and test suites, regardless of their ``enabled`` property.
-    Does not work if a specific test case or suite is specified.
-
-.. option:: --overwrite-screenshots
-
-    Overwrite existing screenshots when a
-    :ref:`screenshot statement <test-screenshot-statement>` is executed.
-
-.. option:: --hide-header
-
-    Disables the header at the start of the test run.
-
-.. option:: --hide-execution {no|hooks|testcases|all}
-
-    Hides information about test execution. ``--hide-execution hooks`` hides hooks,
-    ``--hide-execution testcases`` hides test cases and hooks, and ``--hide-execution all``
-    hides everything.
-
-.. option:: --hide-summary
-
-    Disables the summary at the end of the test run.
-
-.. option:: --report-detailed
-
-    Shows detailed information about each test during the run.
-
-.. option:: --report-skipped
-
-    Shows information about skipped tests. This option should be used together
-    with ``--report-detailed``.
-
-.. _test-filter-examples:
-
-Filter Examples
-^^^^^^^^^^^^^^^
-
-Consider a game with the following test structure::
-
-    testsuite math:
-        testcase addition: ...
-            parameter (a, b) = [(2, 1), (3, 1), (3, 2)]
-        testcase subtraction: ...
-            parameter (a, b) = [(2, 1), (3, 1), (3, 2)]
-        testcase shapes: ...
-
-        testsuite graphs:
-            testcase dot: ...
-            testcase save: ...
-
-    testsuite audio:
-        testcase save: ...
-        testcase load: ...
-
-    testsuite sprites:
-        testcase save: ...
-        testcase load: ...
-
-    testcase reload: ...
-
-All tests live inside the implicit root suite called ``global``.
-
-**Running all tests**
-
-Omitting filters, or using ``global``, runs everything:
-
-======================  ==============
-Command                 Selected Tests
-======================  ==============
-``test``                All test
-``test global``         All test
-======================  ==============
-
-**Selecting a suite or test case**
-
-Use ``.`` to separate suite names:
-
-========================  ==============
-Command                   Selected Tests
-========================  ==============
-``test reload``           ``reload``
-``test audio``            ``audio.save``, ``audio.load``
-``test audio.save``       ``audio.save``
-``test math``             ``math.addition``, ``math.subtraction``, ``math.shapes``,
-                          ``math.graphs.dot``, ``math.graphs.save``
-``test math.graphs``      ``math.graphs.dot``, ``math.graphs.save``
-``test math.graphs.dot``  ``math.graphs.dot``
-========================  ==============
-
-You may optionally add ``global.`` to the start of the filter, but it is not required.
-For example, ``test math`` and ``test global.math`` will both select the same tests.
-
-**Wildcards**
-
-``*`` matches any sequence of characters within a single name segment.
-One ``*`` cannot cross a ``.`` boundary.
-
-================  ==============
-Command           Selected Tests
-================  ==============
-``test re*``      ``reload``
-``test math.s*``  ``math.subtraction``, ``math.shapes``
-``test *.save``   ``sprites.save``, ``sounds.save``
-================  ==============
-
-
-**Parameters**
-
-When a test case uses the ``parameter`` keyword, each value combination is a separate run.
-
-See :ref:`parameterized-tests` for more information.
-
-==================================  ==============
-Command                             Selected Tests
-==================================  ==============
-``test "math.addition(a=2, b=1)"``  ``math.addition(a=2, b=1)``
-``test "math.addition(a=3)"``       ``addition(a=3, b=1)``, ``addition(a=3, b=2)``
-``test "math.*(a=3, b=2)"``         ``addition(a=3, b=2)``, ``subtraction(a=3, b=2)``
-==================================  ==============
-
-.. note::
-
-    Quote filters that contain parentheses to prevent the shell from interpreting them.
-
-**Multiple filters**
-
-Separate filters with spaces. A test is selected if it matches *any* filter:
-
-=============================   ==============
-Command                         Selected Tests
-=============================   ==============
-``test audio sprites``          ``audio.save``, ``audio.load``, ``sprites.save``,
-                                ``sprites.load``
-``test *.save math``            ``sprites.save``, ``sounds.save``, plus all of ``math``
-=============================   ==============
-
-**Quick Reference**
-
-======  =========================  =======
-Symbol  Meaning                    Example
-======  =========================  =======
-``.``   Test suite separator       ``math.graphs``
-``*``   Wildcard (one level only)  ``*.save``, ``math.s*``
-``()``  Parameter values           ``addition(a=2, b=1)``
-======  =========================  =======
+    execute slower so you can see what's happening.
+    In a real test, you should remove them to make the test run faster.
 
 .. _testcase-statement:
 
@@ -852,21 +684,189 @@ If an error occurs during a hook (eg. ``before testcase``):
 3. If no parent suite exists, the game will end the test run.
 
 
-Test Reporting
-===================
+.. _running-tests-cli:
 
-After a test run, a report is printed to the console, listing all test cases
-and their results. If the ``--print_details`` option is provided, the report
-will include additional information about each test.
+Running tests from the command line
+===================================
 
-Below is an example of a test report after successfully testing "The Question":
+To run tests from the :doc:`command line <cli>`, open a terminal in the Ren'Py SDK directory and
+use the test command:
 
-.. image :: testcases_the_question.png
-    :alt: Test report example
-    :class: screenshot
+.. tabs::
 
-Test results
-------------
+    .. tab:: Linux / macOS
+
+        .. code-block:: bash
+
+            cd /path/to/renpy
+            ./renpy.sh <basedir> test [<filters>] [options...]
+
+    .. tab:: Windows
+
+        .. code-block:: bat
+
+            cd C:\path\to\renpy
+            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> test [<filters>] [options...]
+
+.. option:: <basedir>
+
+    Specifies the path to the project.
+
+.. option:: <filters>
+
+    Specifies the test cases or suites to run. If not given, the "global"
+    test suite will be run. Filters are case-sensitive.
+
+    Multiple filters can be provided, separated by a space.
+    These are combined, so that a test will be run if it
+    matches any of the filters.
+
+    See :ref:`test-filter-examples` for examples.
+
+.. option:: --enable-all
+
+    Executes all test cases and test suites, regardless of their ``enabled`` property.
+    Does not work if a specific test case or suite is specified.
+
+.. option:: --overwrite-screenshots
+
+    Overwrite existing screenshots when a
+    :ref:`screenshot statement <test-screenshot-statement>` is executed.
+
+.. option:: --hide-execution {no|hooks|testcases|all}
+
+    Hides information about test execution. ``--hide-execution hooks`` hides hooks,
+    ``--hide-execution testcases`` hides test cases and hooks, and ``--hide-execution all``
+    hides everything including test suites. Defaults to ``hooks``.
+
+.. option:: --reporter <reporters>
+
+    Comma-separated list of reporters to enable. Supported values: ``console``,
+    ``jsonl``. Defaults to ``console``.
+
+    See :ref:`test reporters <test-reporters>` for more information about the available reporters.
+
+.. _test-filter-examples:
+
+Filters
+-------
+
+Consider a game with the following test structure::
+
+    testsuite math:
+        testcase addition: ...
+            parameter (a, b) = [(2, 1), (3, 1), (3, 2)]
+        testcase subtraction: ...
+            parameter (a, b) = [(2, 1), (3, 1), (3, 2)]
+        testcase shapes: ...
+
+        testsuite graphs:
+            testcase dot: ...
+            testcase save: ...
+
+    testsuite audio:
+        testcase save: ...
+        testcase load: ...
+
+    testsuite sprites:
+        testcase save: ...
+        testcase load: ...
+
+    testcase reload: ...
+
+All tests live inside the implicit root suite called ``global``.
+
+**Running all tests**
+
+Omitting filters, or using ``global``, runs everything:
+
+======================  ==============
+Command                 Selected Tests
+======================  ==============
+``test``                All test
+``test global``         All test
+======================  ==============
+
+**Selecting a suite or test case**
+
+Use ``.`` to separate suite names:
+
+========================  ==============
+Command                   Selected Tests
+========================  ==============
+``test reload``           ``reload``
+``test audio``            ``audio.save``, ``audio.load``
+``test audio.save``       ``audio.save``
+``test math``             ``math.addition``, ``math.subtraction``, ``math.shapes``,
+                          ``math.graphs.dot``, ``math.graphs.save``
+``test math.graphs``      ``math.graphs.dot``, ``math.graphs.save``
+``test math.graphs.dot``  ``math.graphs.dot``
+========================  ==============
+
+You may optionally add ``global.`` to the start of the filter, but it is not required.
+For example, ``test math`` and ``test global.math`` will both select the same tests.
+
+**Wildcards**
+
+``*`` matches any sequence of characters within a single name segment.
+One ``*`` cannot cross a ``.`` boundary.
+
+================  ==============
+Command           Selected Tests
+================  ==============
+``test re*``      ``reload``
+``test math.s*``  ``math.subtraction``, ``math.shapes``
+``test *.save``   ``sprites.save``, ``audio.save``
+================  ==============
+
+
+**Parameters**
+
+When a test case uses the ``parameter`` keyword, each value combination is a separate run.
+
+See :ref:`parameterized-tests` for more information.
+
+==================================  ==============
+Command                             Selected Tests
+==================================  ==============
+``test "math.addition(a=2, b=1)"``  ``math.addition(a=2, b=1)``
+``test "math.addition(a=3)"``       ``addition(a=3, b=1)``, ``addition(a=3, b=2)``
+``test "math.*(a=3, b=2)"``         ``addition(a=3, b=2)``, ``subtraction(a=3, b=2)``
+==================================  ==============
+
+.. note::
+
+    Quote filters that contain parentheses to prevent the shell from interpreting them.
+
+**Multiple filters**
+
+Separate filters with spaces. A test is selected if it matches *any* filter:
+
+=============================   ==============
+Command                         Selected Tests
+=============================   ==============
+``test audio sprites``          ``audio.save``, ``audio.load``, ``sprites.save``,
+                                ``sprites.load``
+``test *.save math``            ``sprites.save``, ``audio.save``, plus all of ``math``
+=============================   ==============
+
+**Quick Reference**
+
+======  =========================  =======
+Symbol  Meaning                    Example
+======  =========================  =======
+``.``   Test suite separator       ``math.graphs``
+``*``   Wildcard (one level only)  ``*.save``, ``math.s*``
+``()``  Parameter values           ``addition(a=2, b=1)``
+======  =========================  =======
+
+.. _test-reporters:
+
+Reporters
+---------
+
+Results
+^^^^^^^
 
 A test can have one of the following results:
 
@@ -883,8 +883,84 @@ A test can have one of the following results:
 In general, a test is considered successful if it passed or xfailed,
 and unsuccessful if it failed or xpassed.
 
+Console
+^^^^^^
+
+The console reporter prints the test report to the console. This is the default reporter.
+
+After a test run, a report is printed to the console, listing all test cases
+and their results. If the ``--print-details`` option is provided, the report
+will include additional information about each test.
+
+Below is an example of a test report after successfully testing "The Question":
+
+.. image:: testcases_the_question.png
+    :alt: Test report example
+    :class: screenshot
+
+The reporter accepts the following options:
+
+.. option:: --hide-header
+
+    Disables the header at the start of the test run.
+
+.. option:: --hide-summary
+
+    Disables the summary at the end of the test run.
+
+.. option:: --report-detailed
+
+    Shows detailed information about each test during the run.
+
+.. option:: --report-skipped
+
+    Shows information about skipped tests. This option should be used together
+    with ``--report-detailed``.
+
+.. option:: --report-notrun
+
+    Shows information about tests that were not run. This option should be used together
+    with ``--report-detailed``.
+
+JSONL
+^^^^^
+
+The JSONL reporter writes the test report to a file in JSON Lines format,
+with one line per event. This data is written incrementally during the test run,
+so it can be used to monitor test progress in real time.
+
+The Test Explorer uses this reporter to run testcases in the launcher,
+and this reporter may also be used to develop extensions that integrate with IDEs.
+
+The reporter accepts the following :ref:`command line options <running-tests-cli>`:
+
+.. option:: --jsonl-output <path>
+
+    Output path for the JSONL reporter. Defaults to ``renpy-sdk/tmp/<project>/test-results.jsonl``.
+
+.. option:: --jsonl-initial-test-info
+
+    Emit detailed information about each test at the start of the run.
+
+.. option:: --jsonl-batch-size <n>
+
+    Number of events to buffer before flushing. Defaults to ``50``.
+
+.. option:: --jsonl-flush-interval-ms <ms>
+
+    Maximum interval between flushes in milliseconds. Defaults to ``1000``.
+
+.. option:: --jsonl-heartbeat-interval-ms <ms>
+
+    Heartbeat interval in milliseconds. Defaults to ``1000``.
+
+.. option:: --jsonl-run-id <id>
+
+    Run ID included in JSONL events. If not provided, no run ID is included in the events.
+
+
 Test Settings
-=================
+=============
 
 The following variables can be set to change the behavior of tests:
 
@@ -1559,7 +1635,7 @@ file. If the files differ by more than ``max_pixel_difference`` pixels, a
 RenpyTestScreenshotError is raised.
 
 To overwrite an existing screenshot, either delete the file or run the test with
-the ``--overwrite_screenshots`` command-line option.
+the ``--overwrite-screenshots`` command-line option.
 
 ::
 
