@@ -44,6 +44,12 @@ class TestReportSettings:
     Requires 'report_detailed' to be True to have any effect.
     """
 
+    report_notrun: bool = False
+    """
+    Whether to include test cases that were not run in the summary.
+    Requires 'report_detailed' to be True to have any effect.
+    """
+
 
 @dataclass
 class TestSettings:
