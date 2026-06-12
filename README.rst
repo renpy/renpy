@@ -179,9 +179,34 @@ https://lemmasoft.renai.us/forums/viewtopic.php?p=321603#p321603
 Contributing
 ============
 
-For bug fixes, documentation improvements, and simple changes, just
-make a pull request. For more complex changes, it might make sense
-to file an issue first so we can discuss the design.
+For bug fixes, documentation improvements, and simple changes, just make a pull request. For nontrivial changes,
+please file an issue first so we can discuss the planned change.
+
+
+Efficiency Tools (including Language Models)
+============================================
+
+
+
+The goal of Ren'Py is to provide tools that enable human creativity in the form of visual novels and similar styles
+of games. In service of this goal, developers may use tools that increase their efficiency, including tools that use
+language models.
+
+Every change to Ren'Py must be created by a human that understands both the change, the
+portions of Ren'Py affected by this change, and the copyright implications of the change. Examples of uses of
+efficiency tools that we consider appropriate include completion where the human only accepts suggestions that
+they understand and that are correct, and prompts that cause changes that can be immediately
+reviewed by a human for correctness. Larger changes may be created by prompting for smaller changes with reviews
+at each step.
+
+We do not accept changes where a human does not fully understand the change and how it affects Ren'Py. Large changes
+made with minimal human review ("vibe coding") are not acceptable. If you'd like to make such a change, it's better to
+just bring the idea to us on GitHub and let us make the change. Changes made by agents without human review are not
+acceptable.
+
+As a special case, we allow machine translation when there is no human translator for the language. When a human
+translator becomes available, their work takes precedence.
+
 
 License
 =======
@@ -189,3 +214,7 @@ License
 For the complete licensing terms, please read:
 
 https://www.renpy.org/doc/html/license.html
+
+By contributing to Ren'Py, you agree to license your contributions under the MIT license. The default is for you
+to assign copyright to Tom Rothamel <pytom@bishoujo.us>. If your contribution merits copyright, you may also choose
+to put the year, your name, your email, in the copyright notice for a file.
