@@ -215,6 +215,10 @@ For the complete licensing terms, please read:
 
 https://www.renpy.org/doc/html/license.html
 
-By contributing to Ren'Py, you agree to license your contributions under the MIT license. The default is for you
-to assign copyright to Tom Rothamel <pytom@bishoujo.us>. If your contribution merits copyright, you may also choose
-to put the year, your name, your email, in the copyright notice for a file.
+By contributing to Ren'Py, you agree to license your contributions under the MIT license. When contributing, you may
+choose to:
+
+* Retain copyright in your contribution. If you chose this, please "Copyright (year) Your Name <your email>" in the
+  copyright notice for any file you change.
+* Assign copyright in your contribution to Tom Rothamel <pytom@bishoujou.us>. This is assumed to be the default if
+  you don't specify otherwise.
