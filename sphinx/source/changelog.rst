@@ -10,6 +10,16 @@ Changelog (Ren'Py 7.x-)
 8.6.0
 =====
 
+Age Verification
+----------------
+
+The new :func:`renpy.get_user_age` function returns an age range for the user on supported platforms
+(currently Android and iOS 26+). This is intended to help developers comply with age-related legal
+requirements.
+
+On Android, this uses the Play Age Signals API. On iOS, it uses the Declared Age Range API,
+which requires explicitly adding the "Declared Age Range" capability/entitlement in Xcode.
+
 Features
 --------
 
@@ -51,8 +61,6 @@ and used to populate the :ref:`audio-namespace <audio-namespace>`.
 
 Other Changes
 -------------
-
-The new :func:`renpy.get_user_age` function returns an age range for the user on supported platforms (currently Android).
 
 The :var:`config.mesh_oversample` variable now defaults to 8.0, which allows meshes to be scaled up before becoming blurry.
 
