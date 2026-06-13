@@ -1586,7 +1586,7 @@ class Hide(Node):
 
 
 class With(Node):
-    expr: str
+    expr: str | None = None
     paired: str | None = None
 
     def __init__(self, loc, expr, paired=None):
@@ -1605,7 +1605,10 @@ class With(Node):
         next_node(self.next)
         statement_name("with")
 
-        trans = renpy.python.py_eval(self.expr)
+        if self.expr is not None:
+            trans = renpy.python.py_eval(self.expr)
+        else:
+            trans = None
 
         if self.paired is not None:
             paired = renpy.python.py_eval(self.paired)
@@ -1616,7 +1619,11 @@ class With(Node):
 
     def predict(self):
         try:
-            trans = renpy.python.py_eval(self.expr)
+
+            if self.expr is not None:
+                trans = renpy.python.py_eval(self.expr)
+            else:
+                trans = None
 
             if trans:
                 renpy.display.predict.displayable(trans(old_widget=None, new_widget=None))
