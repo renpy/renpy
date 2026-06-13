@@ -186,8 +186,6 @@ please file an issue first so we can discuss the planned change.
 Efficiency Tools (including Language Models)
 ============================================
 
-
-
 The goal of Ren'Py is to provide tools that enable human creativity in the form of visual novels and similar styles
 of games. In service of this goal, developers may use tools that increase their efficiency, including tools that use
 language models.
@@ -204,9 +202,13 @@ made with minimal human review ("vibe coding") are not acceptable. If you'd like
 just bring the idea to us on GitHub and let us make the change. Changes made by agents without human review are not
 acceptable.
 
-As a special case, we allow machine translation when there is no human translator for the language. When a human
-translator becomes available, their work takes precedence.
+Our use of AI is intended to not require disclosure in the
+`Steam Content Survey <https://partner.steamgames.com/doc/gettingstarted/contentsurvey#5>`_. Specifically, we
+don't use diffusion models or other techniques to generate game content consumed by players.
 
+As a special case, we allow machine translation of system messages when there is no human translator for the language.
+When a human translator becomes available, their work takes precedence. This exception allows system messages to be
+translated to improve accessibility.
 
 License
 =======
@@ -218,7 +220,7 @@ https://www.renpy.org/doc/html/license.html
 By contributing to Ren'Py, you agree to license your contributions under the MIT license. When contributing, you may
 choose to:
 
-* Retain copyright in your contribution. If you chose this, please "Copyright (year) Your Name <your email>" in the
+* Retain copyright in your contribution. If you choose this, please "Copyright (year) Your Name <your email>" in the
   copyright notice for any file you change.
-* Assign copyright in your contribution to Tom Rothamel <pytom@bishoujou.us>. This is assumed to be the default if
+* Assign copyright in your contribution to Tom Rothamel <pytom@bishoujo.us>. This is assumed to be the default if
   you don't specify otherwise.
