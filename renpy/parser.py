@@ -202,7 +202,7 @@ def parse_with(l, node):
 
     expr = l.require(l.simple_expression)
 
-    return [ast.With(loc, "None", expr), node, ast.With(loc, expr)]
+    return [ast.With(loc, None, expr), node, ast.With(loc, expr)]
 
 
 def parse_menu(stmtl, loc, arguments):
@@ -886,6 +886,16 @@ def hide_statement(l, loc):
 @statement("with")
 def with_statement(l, loc):
     expr = l.require(l.simple_expression)
+
+    if l.match(":"):
+        l.expect_eol()
+        l.expect_block("with statement")
+        block = parse_block(l.subblock_lexer())
+        l.advance()
+
+        return [ast.With(loc, None, expr), *block, ast.With(loc, expr)]
+
+
     l.expect_eol()
     l.expect_noblock("with statement")
     l.advance()

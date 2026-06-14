@@ -440,6 +440,9 @@ def check_hide(node):
 
 
 def check_with(node):
+    if node.expr is None:
+        return
+
     try_eval("a with statement or clause", node.expr, "Perhaps you forgot to declare, or misspelled, a transition?")
 
 
