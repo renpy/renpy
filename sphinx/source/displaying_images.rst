@@ -467,30 +467,6 @@ For example, in::
 Only a single transition occurs, from the washington background to the
 scene consisting of all three images.
 
-With Blocks
------------
-
-A ``with`` statement can also take a block of statements. If it does, the
-transition is used at the end of the block, after being preceded by a
-``with None``. It's equivalent to preceding the block with ``with None`` and a
-following it with a standard ``with`` statement.
-
-For example::
-
-    with dissolve:
-        show eileen happy at left
-        show lucy mad at right
-
-is equivalent to::
-
-    with None
-    show eileen happy at left
-    show lucy mad at right
-    with dissolve
-
-Unlike the ``with`` clause, this allows multiple statements to be combined into
-a single transition.
-
 With Clause of Scene, Show, and Hide Statements
 -----------------------------------------------
 

@@ -20,29 +20,6 @@ requirements.
 On Android, this uses the Play Age Signals API. On iOS, it uses the Declared Age Range API,
 which requires explicitly adding the "Declared Age Range" capability/entitlement in Xcode.
 
-With Statement Blocks
----------------------
-
-The ``with`` statement can now take a block of statements. When a block is
-provided, it is equivalent to preceding the block with ``with None``, and
-following the block with a ``with`` statement using the given transition.
-
-For example::
-
-    with dissolve:
-        show eileen happy at left
-        show lucy happy at right
-
-This is equivalent to::
-
-    with None
-    show eileen happy at left
-    show lucy happy at right
-    with dissolve
-
-This allows multiple ``show`` and ``hide`` statements to be combined into a
-single transition.
-
 Features
 --------
 
