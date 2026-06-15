@@ -45,18 +45,20 @@ def delay(milliseconds):
     # SDL_Delay() should be accurate enough.
     return wait(milliseconds)
 
-cdef Uint32 timer_callback(Uint32 interval, void *param) nogil:
+from libc.stdint cimport uintptr_t
+
+cdef Uint32 timer_callback(void *param, SDL_TimerID timerID, Uint32 interval) nogil:
     cdef SDL_Event e
-    e.type = <unsigned short> <unsigned long long> param
+    e.type = <unsigned short> <uintptr_t> param
     e.user.code = <unsigned char> 0
     e.user.data1 = NULL
     e.user.data2 = NULL
     SDL_PushEvent(&e)
     return interval
 
-cdef Uint32 timer_once_callback(Uint32 interval, void *param) nogil:
+cdef Uint32 timer_once_callback(void *param, SDL_TimerID timerID, Uint32 interval) nogil:
     cdef SDL_Event e
-    e.type = <int>param
+    e.type = <unsigned short> <uintptr_t> param
     e.user.code = 0
     e.user.data1 = NULL
     e.user.data2 = NULL
@@ -67,19 +69,21 @@ cdef Uint32 timer_once_callback(Uint32 interval, void *param) nogil:
 # A map from eventid to SDL_Timer_ID.
 cdef dict timer_by_event = { }
 
-def set_timer(eventid, milliseconds, once=False):
+def set_timer(unsigned short eventid, milliseconds, once=False):
 
-    cdef int timer_id = timer_by_event.get(eventid, 0)
+    cdef SDL_TimerID timer_id = timer_by_event.get(eventid, 0)
 
     if timer_id != 0:
         SDL_RemoveTimer(timer_id)
         timer_id = 0
 
     if milliseconds > 0:
+
         if once:
-            timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_once_callback, <void*><unsigned long long>eventid)
+            timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_once_callback, <void*> <uintptr_t> eventid)
         else:
-            timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_callback, <void*><unsigned long long>eventid)
+            timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_callback, <void*> <uintptr_t> eventid)
+
         if timer_id == 0:
             raise error()
 
