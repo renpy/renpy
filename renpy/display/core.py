@@ -2085,7 +2085,7 @@ class Interface:
         if renpy.store._text_rect is not None:
             self.text_rect = renpy.store._text_rect
 
-        if self.text_rect is not None:
+        if self.keyboard_focused and self.text_rect is not None:
             not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown()
             if self.touch_keyboard:
                 not_shown = renpy.exports.get_screen("_touch_keyboard") is None
