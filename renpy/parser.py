@@ -202,7 +202,7 @@ def parse_with(l, node):
 
     expr = l.require(l.simple_expression)
 
-    return [ast.With(loc, "None", expr), node, ast.With(loc, expr)]
+    return [ast.With(loc, None, expr), node, ast.With(loc, expr)]
 
 
 def parse_menu(stmtl, loc, arguments):
@@ -889,6 +889,10 @@ def with_statement(l, loc):
     l.expect_eol()
     l.expect_noblock("with statement")
     l.advance()
+
+    # Special case to reduce memory.
+    if expr == "None":
+        expr = None
 
     return ast.With(loc, expr)
 
