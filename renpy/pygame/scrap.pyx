@@ -46,8 +46,44 @@ def get(type):
     else:
         raise error("Not implemented.")
 
+def get_data(mime_type):
+    """
+    Returns the clipboard data for the given MIME type as bytes.
+    """
+    cdef size_t size = 0
+    cdef void *data = SDL_GetClipboardData(mime_type.encode("utf-8"), &size)
+
+    if data == NULL:
+        raise error()
+
+    rv = bytes((<char *>data)[:size])
+    SDL_free(data)
+
+    return rv
+
 def get_types():
     return [SCRAP_TEXT]
+
+def get_mime_types():
+    """
+    Returns the list of MIME types currently available in the clipboard.
+    """
+    cdef size_t num_mime_types = 0
+    cdef char **mime_types = SDL_GetClipboardMimeTypes(&num_mime_types)
+
+    if mime_types == NULL:
+        return []
+
+    rv = []
+
+    cdef size_t i
+    for i in range(num_mime_types):
+        if mime_types[i] != NULL:
+            rv.append(bytes(mime_types[i]).decode("utf-8"))
+
+    SDL_free(mime_types)
+
+    return rv
 
 def put(type, data):
     if type != SCRAP_TEXT:
