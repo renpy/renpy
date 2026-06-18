@@ -165,7 +165,7 @@ def put(type, data):
 
     data = bytes(data)
 
-    if SDL_SetClipboardText(data) != 0:
+    if SDL_SetClipboardText(data) == 0:
         raise error()
 
     SDL_SetPrimarySelectionText(data)
