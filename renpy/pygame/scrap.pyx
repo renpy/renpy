@@ -66,6 +66,8 @@ def put(type, data):
     if SDL_SetClipboardText(data) != 0:
         raise error()
 
+    SDL_SetPrimarySelectionText(data)
+
 def contains(type):
     if type != SCRAP_TEXT:
         return False
