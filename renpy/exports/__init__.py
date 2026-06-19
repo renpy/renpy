@@ -313,6 +313,15 @@ from renpy.exports.actionexports import (
     notify as notify,
 )
 
+from renpy.exports.clipboardexports import (
+    get_clipboard_data as get_clipboard_data,
+    get_clipboard_mime_types as get_clipboard_mime_types,
+    get_clipboard_text as get_clipboard_text,
+    put_clipboard_data as put_clipboard_data,
+    put_clipboard_image_file as put_clipboard_image_file,
+    put_clipboard_text as put_clipboard_text,
+)
+
 from renpy.exports.contextexports import (
     add_to_all_stores as add_to_all_stores,
     call_in_new_context as call_in_new_context,
