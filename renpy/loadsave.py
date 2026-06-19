@@ -193,7 +193,10 @@ def save(slotname, extra_info="", mutate_flag=False, include_screenshot=True, ex
             pass
 
         if renpy.config.failed_save_dump and not renpy.config.save_dump:
-            dump_paths("save_dump.txt", **{"renpy.game.log": renpy.game.log}, **roots)
+            try:
+                dump_paths("save_dump.txt", **{"renpy.game.log": renpy.game.log}, **roots)
+            except Exception:
+                pass
 
         raise
 
