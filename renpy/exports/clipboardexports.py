@@ -119,7 +119,7 @@ def put_clipboard_image_file(filename: str, absolute_path: bool = False) -> None
         with open(filename, "rb") as f:
             original_data = f.read()
     else:
-        with renpy.loader.open_file(filename, "rb") as f:
+        with renpy.loader.load(filename, "images") as f:
             original_data = f.read()
 
     # Determine the MIME type from the file extension.
@@ -155,3 +155,29 @@ def put_clipboard_image_file(filename: str, absolute_path: bool = False) -> None
     data_dict["text/plain"] = filename
 
     put_clipboard_data(data_dict)
+
+
+def put_clipboard_text_file(filename: str, absolute_path: bool = False) -> None:
+    """
+    :doc: clipboard
+
+    Copies a text file to the system clipboard as a text/plain attachment.
+
+    `filename`
+        The name of the text file to copy to the clipboard.
+
+    `absolute_path`
+        If True, `filename` is treated as an absolute filesystem path.
+        If False (the default), the file is opened using Ren'Py's
+        file loading mechanism.
+    """
+
+    # Read the text file.
+    if absolute_path:
+        with open(filename, "r", encoding="utf-8") as f:
+            text = f.read()
+    else:
+        with renpy.exports.open_file(filename, "utf-8") as f:
+            text = f.read()
+
+    put_clipboard_text(text)

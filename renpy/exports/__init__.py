@@ -320,6 +320,7 @@ from renpy.exports.clipboardexports import (
     put_clipboard_data as put_clipboard_data,
     put_clipboard_image_file as put_clipboard_image_file,
     put_clipboard_text as put_clipboard_text,
+    put_clipboard_text_file as put_clipboard_text_file,
 )
 
 from renpy.exports.contextexports import (
