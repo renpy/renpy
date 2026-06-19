@@ -10,6 +10,21 @@ Changelog (Ren'Py 7.x-)
 8.6.0
 =====
 
+Clipboard
+---------
+
+Ren'Py has new :file:`clipboard` functions that work with the system clipboard.
+
+The :func:`renpy.get_clipboard_text` and * :func:`renpy.put_clipboard_text` functions work with the text keyboard that
+is present on all systems.
+
+The :func:`renpy.get_clipboard_data`, :func:`renpy.get_clipboard_mime_types`, and :func:`renpy.put_clipboard_data`
+functions work with the data clipboard that is more limited.
+
+The :func:`renpy.put_clipboard_image_file` function puts the contents of an image file
+into the clipboard, which can be pasted into other applications that support pasting images.
+:func:`renpy.put_clipboard_text_file` does the same for text files.
+
 Age Verification
 ----------------
 

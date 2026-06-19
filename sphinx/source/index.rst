@@ -130,6 +130,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    ren_py
    fetch
    screenshot
+   clipboard
 
 
 .. toctree::
