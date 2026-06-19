@@ -196,7 +196,8 @@ def save(slotname, extra_info="", mutate_flag=False, include_screenshot=True, ex
             try:
                 dump_paths("save_dump.txt", **{"renpy.game.log": renpy.game.log}, **roots)
             except Exception:
-                pass
+                renpy.display.log.write("While writing save_dump.txt:")
+                renpy.display.log.exception()
 
         raise
 
