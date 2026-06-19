@@ -524,6 +524,9 @@ python_callbacks = []
 # If true, we dump information about a save upon save.
 save_dump = False
 
+# Same as save_dump, but only triggers when the save fails.
+failed_save_dump = False
+
 # Can we resize a gl window?
 gl_resize = True
 
