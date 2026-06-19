@@ -99,8 +99,7 @@ def put_clipboard_image_file(filename: str, absolute_path: bool = False) -> None
 
     Copies an image file to the system clipboard. The image is placed
     on the clipboard in its original format, and also as a PNG if the
-    original is not already a PNG. The filename is also placed on the
-    clipboard as a text/plain string.
+    original is not already a PNG.
 
     Using this function tends to improve compatibility with other applications, as some applications are only
     able to handle image/png image data.
@@ -150,9 +149,6 @@ def put_clipboard_image_file(filename: str, absolute_path: bool = False) -> None
         with io.BytesIO() as png_buffer:
             renpy.display.module.save_png(surf, png_buffer, 0)
             data_dict["image/png"] = png_buffer.getvalue()
-
-    # Add the filename as text/plain.
-    data_dict["text/plain"] = filename
 
     put_clipboard_data(data_dict)
 
