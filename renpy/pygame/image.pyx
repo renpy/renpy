@@ -126,7 +126,7 @@ def save(Surface surface not None, filename, compression=-1):
     ext = os.path.splitext(filename)[1]
     ext = ext.upper()
     ext = ext.encode("utf-8")
-    err = 0
+    cdef int err = 0
 
     utf8_filename = filename.encode("utf-8")
 
@@ -138,7 +138,7 @@ def save(Surface surface not None, filename, compression=-1):
             err = Pygame_SDL2_SavePNG(fn, surface.surface, compression_level)
     elif ext == b'.BMP':
         with nogil:
-            err = SDL_SaveBMP(surface.surface, fn)
+            err = not SDL_SaveBMP(surface.surface, fn)
     elif ext == b".JPG" or ext == b".JPEG":
         with nogil:
             err = Pygame_SDL2_SaveJPEG(surface.surface, fn, compression_level)

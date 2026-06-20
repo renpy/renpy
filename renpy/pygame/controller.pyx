@@ -67,7 +67,7 @@ def add_mapping(mapping):
     Adds a game controller mapping from the string in `mapping`.
     """
 
-    if not SDL_AddGamepadMapping(mapping):
+    if SDL_AddGamepadMapping(mapping) == -1:
         raise error()
 
 def add_mappings(mapping_file):
@@ -84,7 +84,7 @@ def add_mappings(mapping_file):
 
     cdef SDL_IOStream *iostream = to_sdl_iostream(mapping_file)
 
-    if not SDL_AddGamepadMappingsFromIO(iostream, 1):
+    if SDL_AddGamepadMappingsFromIO(iostream, 1) == -1:
         raise error()
 
 def get_axis_from_string(name):

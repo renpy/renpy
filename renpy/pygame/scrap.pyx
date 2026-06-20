@@ -165,7 +165,7 @@ def put(type, data):
 
     data = bytes(data)
 
-    if SDL_SetClipboardText(data) == 0:
+    if not SDL_SetClipboardText(data):
         raise error()
 
     SDL_SetPrimarySelectionText(data)
@@ -248,7 +248,7 @@ def put_data(data_dict):
 
         i += 1
 
-    if SDL_SetClipboardData(_clipboard_data_callback, _clipboard_cleanup, <void *> cd, <const char **> mime_types_array, count) == 0:
+    if not SDL_SetClipboardData(_clipboard_data_callback, _clipboard_cleanup, <void *> cd, <const char **> mime_types_array, count):
         SDL_free(mime_types_array)
         _clipboard_cleanup(<void *> cd)
         raise error()

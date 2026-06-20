@@ -139,7 +139,7 @@ cdef class Joystick:
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        if SDL_GetJoystickBall(self.joystick, ball_number, &dx, &dy) == 0:
+        if SDL_GetJoystickBall(self.joystick, ball_number, &dx, &dy):
             return (dx, dy)
         else:
             raise error()
