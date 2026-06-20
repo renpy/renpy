@@ -49,71 +49,48 @@ init python:
         varying vec2 v_tex_coord;
         uniform float u_renpy_blur_log2;
         uniform vec2 res0;
+    """, fragment_functions="""
+        vec4 cubic(float v) {
+            vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
+            vec4 s = n * n * n;
+            float x = s.x;
+            float y = s.y - 4.0 * s.x;
+            float z = s.z - 4.0 * s.y + 6.0 * s.x;
+            float w = 6.0 - x - y - z;
+            return vec4(x, y, z, w) * (1.0 / 6.0);
+        }
+        vec4 texture2DLodBicubic(sampler2D tex, vec2 uv, vec2 res, float blur, bool is_ceil) {
+            float lod = 0.0;
+            if (is_ceil) {
+                lod = ceil(blur);
+            } else {
+                lod = floor(blur);
+            }
+            vec2 texSize = max(vec2(1.0), floor(res / exp2(lod)));
+            vec2 invTexSize = 1.0 / texSize;
+            vec2 texCoords = uv * texSize - 0.5;
+            vec2 fxy = fract(texCoords);
+            texCoords -= fxy;
+            vec4 xcubic = cubic(fxy.x);
+            vec4 ycubic = cubic(fxy.y);
+            vec4 c = texCoords.xxyy + vec2(-0.5, +1.5).xyxy;
+            vec4 s = vec4(xcubic.xz + xcubic.yw, ycubic.xz + ycubic.yw);
+            vec4 offset = c + vec4(xcubic.yw, ycubic.yw) / s;
+            offset *= invTexSize.xxyy;
+            vec4 sample0 = texture2DLod(tex, offset.xz, lod);
+            vec4 sample1 = texture2DLod(tex, offset.yz, lod);
+            vec4 sample2 = texture2DLod(tex, offset.xw, lod);
+            vec4 sample3 = texture2DLod(tex, offset.yw, lod);
+            float sx = s.x / (s.x + s.y);
+            float sy = s.z / (s.z + s.w);
+            return mix(mix(sample3, sample2, sx), mix(sample1, sample0, sx), sy);
+        }
     """, vertex_200="""
         v_tex_coord = a_tex_coord;
     """, fragment_200="""
-        vec3 magic = vec3(0.06711056, 0.00583715, 52.9829189);
-        float dithering_noise = (fract(magic.z * fract(dot(gl_FragCoord.xy, magic.xy))) - 0.5) / 255;
-        vec2 texSize = max(vec2(1.0), floor(res0 / exp2(floor(u_renpy_blur_log2))));
-        vec2 invTexSize = 1.0 / texSize;
-        vec2 texCoords = v_tex_coord * texSize - 0.5;
-        vec2 fxy = fract(texCoords);
-        texCoords -= fxy;
-        vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - fxy.x;
-        vec4 s = n * n * n;
-        float x = s.x;
-        float y = s.y - 4.0 * s.x;
-        float z = s.z - 4.0 * s.y + 6.0 * s.x;
-        float w = 6.0 - x - y - z;
-        vec4 xcubic = vec4(x, y, z, w) * (1.0/6.0);
-        n = vec4(1.0, 2.0, 3.0, 4.0) - fxy.y;
-        s = n * n * n;
-        x = s.x;
-        y = s.y - 4.0 * s.x;
-        z = s.z - 4.0 * s.y + 6.0 * s.x;
-        w = 6.0 - x - y - z;
-        vec4 ycubic = vec4(x, y, z, w) * (1.0/6.0);
-        vec4 c = texCoords.xxyy + vec2(-0.5, +1.5).xyxy;
-        s = vec4(xcubic.xz + xcubic.yw, ycubic.xz + ycubic.yw);
-        vec4 offset = c + vec4(xcubic.yw, ycubic.yw) / s;
-        offset *= invTexSize.xxyy;
-        vec4 sample0 = texture2DLod(tex0, offset.xz, floor(u_renpy_blur_log2));
-        vec4 sample1 = texture2DLod(tex0, offset.yz, floor(u_renpy_blur_log2));
-        vec4 sample2 = texture2DLod(tex0, offset.xw, floor(u_renpy_blur_log2));
-        vec4 sample3 = texture2DLod(tex0, offset.yw, floor(u_renpy_blur_log2));
-        float sx = s.x / (s.x + s.y);
-        float sy = s.z / (s.z + s.w);
-        vec4 mip_floor = mix(mix(sample3, sample2, sx), mix(sample1, sample0, sx), sy);
-        texSize = max(vec2(1.0), floor(res0 / exp2(ceil(u_renpy_blur_log2))));
-        invTexSize = 1.0 / texSize;
-        texCoords = v_tex_coord * texSize - 0.5;
-        fxy = fract(texCoords);
-        texCoords -= fxy;
-        n = vec4(1.0, 2.0, 3.0, 4.0) - fxy.x;
-        s = n * n * n;
-        x = s.x;
-        y = s.y - 4.0 * s.x;
-        z = s.z - 4.0 * s.y + 6.0 * s.x;
-        w = 6.0 - x - y - z;
-        xcubic = vec4(x, y, z, w) * (1.0/6.0);
-        n = vec4(1.0, 2.0, 3.0, 4.0) - fxy.y;
-        s = n * n * n;
-        x = s.x;
-        y = s.y - 4.0 * s.x;
-        z = s.z - 4.0 * s.y + 6.0 * s.x;
-        w = 6.0 - x - y - z;
-        ycubic = vec4(x, y, z, w) * (1.0/6.0);
-        c = texCoords.xxyy + vec2(-0.5, +1.5).xyxy;
-        s = vec4(xcubic.xz + xcubic.yw, ycubic.xz + ycubic.yw);
-        offset = c + vec4(xcubic.yw, ycubic.yw) / s;
-        offset *= invTexSize.xxyy;
-        sample0 = texture2DLod(tex0, offset.xz, ceil(u_renpy_blur_log2));
-        sample1 = texture2DLod(tex0, offset.yz, ceil(u_renpy_blur_log2));
-        sample2 = texture2DLod(tex0, offset.xw, ceil(u_renpy_blur_log2));
-        sample3 = texture2DLod(tex0, offset.yw, ceil(u_renpy_blur_log2));
-        sx = s.x / (s.x + s.y);
-        sy = s.z / (s.z + s.w);
-        vec4 mip_ceil = gl_FragColor = mix(mix(sample3, sample2, sx), mix(sample1, sample0, sx), sy);
+        float dithering_noise = (fract(52.9829189 * fract(dot(gl_FragCoord.xy, 0.06711056, 0.00583715))) - 0.5) / 255;
+        vec4 mip_floor = texture2DLodBicubic(tex0, v_tex_coord, res0, u_renpy_blur_log2, false);
+        vec4 mip_ceil = texture2DLodBicubic(tex0, v_tex_coord, res0, u_renpy_blur_log2, true);
         gl_FragColor = mix(mip_floor, mip_ceil, fract(u_renpy_blur_log2)) + vec4(dithering_noise,dithering_noise,dithering_noise,dithering_noise);
    """)
 
