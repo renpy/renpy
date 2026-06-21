@@ -18,7 +18,8 @@
         "ms-python.vscode-pylance",
         "renpy.language-renpy",
         "ktnrg45.vscode-cython",
-        "vincaslt.highlight-matching-tag"
+        "vincaslt.highlight-matching-tag",
+        "tamasfe.even-better-toml"
       ]
     }
   },
