@@ -92,7 +92,7 @@ init python:
         vec4 mip_floor = texture2DLodBicubic(tex0, v_tex_coord, res0, u_renpy_blur_log2, false);
         vec4 mip_ceil = texture2DLodBicubic(tex0, v_tex_coord, res0, u_renpy_blur_log2, true);
         gl_FragColor = mix(mip_floor, mip_ceil, fract(u_renpy_blur_log2)) + vec4(dithering_noise,dithering_noise,dithering_noise,dithering_noise);
-        gl_FragColor = vec4(gl_FragColor.rgb, smoothstep(0.004, 0.996, gl_FragColor.a));
+        gl_FragColor = vec4(gl_FragColor.rgb, clamp((gl_FragColor.a - 0.004) * 1.008065, 0.0, 1.0));
    """)
 
     renpy.register_shader("renpy.solid", variables="""
