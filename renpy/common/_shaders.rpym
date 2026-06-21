@@ -88,10 +88,11 @@ init python:
     """, vertex_200="""
         v_tex_coord = a_tex_coord;
     """, fragment_200="""
-        float dithering_noise = (fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715)))) - 0.5) / 255;
+        float dithering_noise = ((fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715)))) - 0.5) / 255) * 2;
         vec4 mip_floor = texture2DLodBicubic(tex0, v_tex_coord, res0, u_renpy_blur_log2, false);
         vec4 mip_ceil = texture2DLodBicubic(tex0, v_tex_coord, res0, u_renpy_blur_log2, true);
         gl_FragColor = mix(mip_floor, mip_ceil, fract(u_renpy_blur_log2)) + vec4(dithering_noise,dithering_noise,dithering_noise,dithering_noise);
+        gl_FragColor = vec4(gl_FragColor.rgb, smoothstep(0.004, 0.996, gl_FragColor.a));
    """)
 
     renpy.register_shader("renpy.solid", variables="""
