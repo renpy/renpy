@@ -1292,6 +1292,10 @@ Saving and Loading
     to the object, information about if the object is an alias, and a
     representation of the object.
 
+.. var:: config.failed_save_dump = True
+
+    Similar to :var:`config.save_dump`, but only triggers when the save fails.
+
 .. var:: config.save_json_callbacks = [ ... ]
 
     A list of callback functions that are used to create the json object
