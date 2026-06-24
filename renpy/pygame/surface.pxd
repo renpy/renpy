@@ -57,4 +57,4 @@ cdef class Surface:
 
     cdef bint has_alpha
 
-cdef SDL_Surface *PySurface_AsSurface(object surface)
+cdef api SDL_Surface *PySurface_AsSurface(object surface)

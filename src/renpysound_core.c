@@ -1446,7 +1446,7 @@ void RPS_periodic() {
 		if (d->stream) {
         	media_close(d->stream);
 		}
-		
+
         struct Dying *next_d = d->next;
 
         if (d->audio_filter) {
