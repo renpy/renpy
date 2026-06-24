@@ -1,6 +1,10 @@
-name: Python Package using Conda
+name: Test
 
-on: [push]
+on:
+  push:
+    branches: [master, fix]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   build-linux:
@@ -27,3 +31,4 @@ jobs:
       uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
     - run: uv sync
     - run: ./run.sh --build
+    - run: ./run.sh ./testcases/game test
