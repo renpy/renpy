@@ -131,6 +131,7 @@ CubismSdkForWeb-*.zip
 
 # Test results.
 testcases/tests/
+testcases/game/tests/screenshots/
 
 # Old files.
 /0old
