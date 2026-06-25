@@ -15,8 +15,6 @@ jobs:
       RENPY_CC: "sccache gcc"
       RENPY_LD: "sccache gcc"
       SCCACHE_GHA_ENABLED: "true"
-      SDL_AUDIODRIVER: dummy
-      SDL_VIDEODRIVER: dummy
     steps:
     - uses: actions/checkout@v7
     - name: Run sccache-cache
