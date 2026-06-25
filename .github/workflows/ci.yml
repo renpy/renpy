@@ -15,6 +15,8 @@ jobs:
       RENPY_CC: "sccache gcc"
       RENPY_LD: "sccache gcc"
       SCCACHE_GHA_ENABLED: "true"
+      RENPY_LOG_TO_STDOUT: "1"
+      RENPY_LOG_EVENTS: "1"
     steps:
     - uses: actions/checkout@v7
     - name: Run sccache-cache
