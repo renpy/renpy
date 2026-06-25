@@ -32,3 +32,20 @@ jobs:
     - run: uv sync
     - run: ./run.sh --build
     - run: ./run.sh ./testcases/game test
+
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.12'
+    - name: Run sccache-cache
+      uses: mozilla-actions/sccache-action@v0.0.10
+    - name: Install the latest version of uv
+      uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+    - run: pip install -U sphinx sphinx_rtd_theme sphinx_rtd_dark_mode sphinx-tabs
+    - run: |
+        cd sphinx
+        ./build.sh
