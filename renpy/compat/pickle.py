@@ -248,12 +248,6 @@ def find_bad_reduction(**roots: object) -> str | None:
             return None
 
         try:
-            if isinstance(o, (tuple, list)):
-                return visit_seq(o, path)
-
-            if isinstance(o, dict):
-                return visit_map(o.items(), path)
-
             if isinstance(o, types.MethodType):
                 return visit(o.__self__, f"{path}.__self__")
 
@@ -310,7 +304,14 @@ def find_bad_reduction(**roots: object) -> str | None:
             # An object that raises while being examined almost certainly
             # can't be pickled - report it rather than crashing the
             # diagnostic.
-            return f"{path} = {repr(o)[:160]}"
+            try:
+                repr_o = repr(o)
+            except Exception:
+                repr_o = "BAD REPR"
+            if len(repr_o) > 80:
+                repr_o = f"{repr_o[:40]}...{repr_o[-40:]}"
+
+            return f"{path} = {repr_o}"
 
         return None
 
