@@ -17,6 +17,7 @@ jobs:
       SCCACHE_GHA_ENABLED: "true"
       RENPY_LOG_TO_STDOUT: "1"
       RENPY_LOG_EVENTS: "1"
+      SDL_AUDIODRIVER: dummy
     steps:
     - uses: actions/checkout@v7
     - name: Run sccache-cache
