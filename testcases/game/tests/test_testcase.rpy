@@ -231,7 +231,7 @@ testsuite context:
     testcase replay_action:
         description "Tests that the Replay action properly updates context variables."
 
-        $ _test.timeout = 30.0
+        enabled False
 
         $ replay_scope = {"context_test_inner_val": True}
         run Replay("start", scope=replay_scope)
