@@ -1288,6 +1288,7 @@ class Layout(object):
         ts = TextSegment(None)
         ts.cps = self.cps
         ts.take_style(style, self)
+        ts.vertical = style.vertical
 
         # The text segement stack.
         tss = [ts]
@@ -2103,7 +2104,7 @@ def text_tick():
     layout_cache_new = {}
 
     global virtual_layout_cache_old, virtual_layout_cache_new
-    virtual_layout_cache_old = layout_cache_new
+    virtual_layout_cache_old = virtual_layout_cache_new
     virtual_layout_cache_new = {}
 
     global slow_text

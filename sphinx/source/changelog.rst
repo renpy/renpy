@@ -10,6 +10,31 @@ Changelog (Ren'Py 7.x-)
 8.6.0
 =====
 
+Clipboard
+---------
+
+Ren'Py has new :file:`clipboard` functions that work with the system clipboard.
+
+The :func:`renpy.get_clipboard_text` and * :func:`renpy.put_clipboard_text` functions work with the text keyboard that
+is present on all systems.
+
+The :func:`renpy.get_clipboard_data`, :func:`renpy.get_clipboard_mime_types`, and :func:`renpy.put_clipboard_data`
+functions work with the data clipboard that is more limited.
+
+The :func:`renpy.put_clipboard_image_file` function puts the contents of an image file
+into the clipboard, which can be pasted into other applications that support pasting images.
+:func:`renpy.put_clipboard_text_file` does the same for text files.
+
+Age Verification
+----------------
+
+The new :func:`renpy.get_user_age` function returns an age range for the user on supported platforms
+(currently Android and iOS 26+). This is intended to help developers comply with age-related legal
+requirements.
+
+On Android, this uses the Play Age Signals API. On iOS, it uses the Declared Age Range API,
+which requires explicitly adding the "Declared Age Range" capability/entitlement in Xcode.
+
 Features
 --------
 
@@ -27,7 +52,12 @@ Text shaders now support the ``u_text_time`` uniform, which is the time in secon
 
 Text interpolation now supports the ``!f`` flag, which passes interpolated text through :var:`config.say_menu_text_filter`.
 
+Menu text filtering can now be disabled with :var:`config.use_menu_text_filter`, which defaults to True.
+
 The new :func:`renpy.get_statement_name` function returns the name of the current statement.
+
+The :class:`Confirm` action and :func:`renpy.confirm` function now take a `screen` argument, allowing
+a custom screen to be used instead of the default confirm screen.
 
 The `changed` property of bars can now be supplied in addition to a bar value.
 
@@ -61,9 +91,21 @@ The ability to apply zsync-based updates has been removed. This was an older upd
 The ability to create these updates will be removed in Ren'Py 8.7.0.
 
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
+.. _renpy-8.5.4:
+
+8.5.4
+=====
+
+
+The interpretation of Bezier curves in Live2D has been changed to match the Cardano interpretation,
+which is consistent with the Live2D SDK. This behavior can be changed with the `old_beziers` parameter to the :func:`Live2D`
+displayable, or with the :var:`config.live2d_old_beziers` variable,
+
+It is now possible to use `for` and `while` loops in automated tests.
 
 
 .. _renpy-8.5.3:
+
 
 8.5.3
 =====
@@ -272,7 +314,7 @@ the Cubism SDK for Web, and support in Ren'Py for loading Live2D models in the w
 Automated Testing
 -----------------
 
-Ren'Py now includes a testing framework that makes it possible to define and run automate tests of games and of
+Ren'Py now includes a :doc:`testing framework <testcases>` that makes it possible to define and run automate tests of games and of
 Ren'Py itself. The testing framework is designed to perform automated functional testing -
 for example, clicking through a predefined sequence of dialogue and choice, and making sure the game
 reaches the end without crashing, even when the game or engine is changed.

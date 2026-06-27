@@ -51,6 +51,7 @@ static int Verify(EVP_PKEY *pub_key, const void *data, size_t data_len, const vo
 
 int ECSign(const unsigned char *priv_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len)
 {
+    char *sign = NULL;
     EVP_PKEY *pkey = NULL;
     int ret = 0;
 
@@ -63,7 +64,6 @@ int ECSign(const unsigned char *priv_key_der, size_t key_len, const char *data, 
     // Get private key from DER
     pkey = GetKeyFromDer(0, priv_key_der, key_len);
 
-    char *sign;
     size_t sign_len;
     ret = Sign(pkey, data, data_len, (void **)&sign, &sign_len);
 
@@ -83,7 +83,9 @@ int ECSign(const unsigned char *priv_key_der, size_t key_len, const char *data, 
     }
 
 cleanup:
-    free(sign);
+    if (sign) {
+        free(sign);
+    }
     EVP_PKEY_free(pkey);
     return ret;
 }

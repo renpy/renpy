@@ -1011,7 +1011,9 @@ class RollbackLog(renpy.object.Object):
 
         if retained is not None:
             retained.rollback_control()
+            retained.context = retained.context.rollback_copy()
             self.log.append(retained)
+            self.current = retained
 
         # Preserve come_from.
         if (label is not None) and (come_from is None):

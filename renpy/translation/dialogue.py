@@ -170,7 +170,7 @@ def what_filter(s):
 
 class DialogueFile(object):
     def __init__(
-        self, filename, output, tdf=True, strings=False, notags=True, escape=True, language=None
+        self, filename, output, tdf=True, strings=False, notags=True, escape=True, language=None, menu_statements=tuple()
     ):
         """
         `filename`
@@ -202,6 +202,7 @@ class DialogueFile(object):
         self.escape = escape
         self.strings = strings
         self.language = language
+        self.menu_statements = menu_statements
 
         self.f = open(output, "a", encoding="utf-8")
 
@@ -268,6 +269,14 @@ class DialogueFile(object):
 
                     else:
                         lines.append([what])
+
+        for m in self.menu_statements:
+            for label, _condition, block in m.items:
+
+                if block is not None:
+                    continue
+
+                lines.append(["<menu caption>", "", label, m.filename, str(m.linenumber), what_filter(label)])
 
         if self.strings:
             lines.extend(self.get_strings())
@@ -366,6 +375,12 @@ def dialogue_command():
 
             f.write("\t".join(line) + "\n")
 
+    import collections
+    menu_statements = collections.defaultdict(list)
+    for n in renpy.game.script.namemap.values():
+        if isinstance(n, renpy.ast.Menu):
+            menu_statements[n.filename].append(n)
+
     for dirname, filename in renpy.loader.listdirfiles():
         if dirname is None:
             continue
@@ -379,8 +394,12 @@ def dialogue_command():
         language = args.language
         if language in ("None", ""):
             language = None
+
+
+        elided_filename = renpy.lexer.elide_filename(filename)
+
         DialogueFile(
-            filename, output, tdf=tdf, strings=args.strings, notags=args.notags, escape=args.escape, language=language
+            filename, output, tdf=tdf, strings=args.strings, notags=args.notags, escape=args.escape, language=language, menu_statements=menu_statements[elided_filename]
         )
 
     return False

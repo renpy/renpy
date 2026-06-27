@@ -26,7 +26,7 @@ from __future__ import print_function
 DEF ANGLE = False
 
 
-from sdl2 cimport *
+from renpy.pygame.sdl cimport *
 
 from renpy.pygame.surface cimport PySurface_AsSurface
 

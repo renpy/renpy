@@ -27,7 +27,7 @@ import renpy
 import renpy.pygame as pygame
 
 from renpy.error import FrameSummary
-from renpy.test.testast import Node, BaseTestBlock, TestSuite, TestCase, TestHook, Exit
+from renpy.test.testast import Node, BaseTestBlock, TestSuite, TestCase, TestHook, Exit, ControlFrame
 from renpy.test.types import NodeState, NodeLocation, RenpyTestTimeoutError, HookType
 import renpy.test.testreporter as testreporter
 from renpy.test.testsettings import _test
@@ -38,6 +38,7 @@ global_testsuite_name = "global"
 reached_labels: set[str] = set()
 suite_stack: list[TestSuite] = []
 scope_stack: list[dict[str, Any]] = [{}]
+control_frame_stack: list[ControlFrame] = []
 
 testcases: dict[str, TestCase] = {}
 node_executor: "NodeExecutor"
@@ -156,6 +157,25 @@ def push_scope_stack(new_scope: dict[str, Any]) -> None:
     scope_stack.append(updated_scope)
 
 
+def pop_control_frame(control_frame: ControlFrame | None = None) -> ControlFrame:
+    if not control_frame_stack:
+        raise RuntimeError("No control frames are currently active.")
+
+    if control_frame is None:
+        control_frame = control_frame_stack[-1]
+
+    if control_frame_stack[-1] is not control_frame:
+        raise RuntimeError("Attempted to pop a non-top control frame.")
+
+    rv = control_frame_stack.pop()
+    rv.on_end_execution()
+    return rv
+
+
+def push_control_frame(control_frame: ControlFrame) -> None:
+    control_frame_stack.append(control_frame)
+
+
 def quit_handler() -> int:
     """
     Handles the quit command and QuitException thrown by the test.
@@ -210,6 +230,7 @@ def scoped_exec(source: str, hide: bool = False, store: str = "store") -> None:
     """
 
     scope = renpy.test.testexecution.get_current_scope()
+    old_scope = dict(scope)
     old_keys = set(scope.keys())
     globals = renpy.python.store_dicts[store]
 
@@ -217,6 +238,7 @@ def scoped_exec(source: str, hide: bool = False, store: str = "store") -> None:
     renpy.python.py_exec_bytecode(dedent(source), hide, globals=globals, locals=scope)
 
     if hide:
+        scope_stack[-1] = old_scope
         return
 
     new_keys = set(scope.keys()) - old_keys
@@ -438,6 +460,7 @@ class NodeExecutor:
         self.old_state = None
         self.old_loc = None
         self.last_state_change = renpy.display.core.get_time()
+        control_frame_stack.clear()
 
     def set_next_node(self, next: Node | None) -> None:
         self.next_node = next
@@ -481,10 +504,23 @@ class NodeExecutor:
             self.next_node = self.node.next
             self.move_to_next_node_if_possible()
             raise
+        except Exception as exc:
+            if self.dispatch_exception_to_control_frame(exc):
+                self.node_state = None
+                self.move_to_next_node_if_possible()
+                return
+            raise
 
         self.move_to_next_node_if_possible()
 
         self.check_for_timeout(now)
+
+    def dispatch_exception_to_control_frame(self, exc: Exception) -> bool:
+        for control_frame in reversed(control_frame_stack):
+            if control_frame.on_exception(exc):
+                return True
+
+        return False
 
     def move_to_next_node_if_possible(self) -> None:
         if self.node_state is not None:

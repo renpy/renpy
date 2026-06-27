@@ -1292,6 +1292,10 @@ Saving and Loading
     to the object, information about if the object is an alias, and a
     representation of the object.
 
+.. var:: config.failed_save_dump = True
+
+    Similar to :var:`config.save_dump`, but only triggers when the save fails.
+
 .. var:: config.save_json_callbacks = [ ... ]
 
     A list of callback functions that are used to create the json object
@@ -1854,9 +1858,10 @@ Text and Fonts
     <menus>` statements. Each is expected to return new
     (or the same) strings to replace them.
 
-    These run very early in the say and menu statement processing, before
-    translation and substitutions are applied. For a filter that runs later,
-    see :var:`config.replace_text`.
+    These run very early in the say statement processing, and in menu
+    statement processing when :var:`config.use_menu_text_filter` is True,
+    before translation and substitutions are applied. For a filter that runs
+    later, see :var:`config.replace_text`.
 
 .. var:: config.textshader_callbacks = { }
 
@@ -1864,6 +1869,12 @@ Text and Fonts
     with the string are used, the function is called to return a string
     giving another textshader. This can be used to make a textshader that
     changes based on a persistent variable, for example.
+
+.. var:: config.use_menu_text_filter = True
+
+    If True, text in :doc:`menu <menus>` statements is passed through
+    :var:`config.say_menu_text_filter` and :var:`config.say_menu_text_filters`.
+    If False, menu text is left unchanged by those filters.
 
 
 Transitions

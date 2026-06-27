@@ -1,6 +1,6 @@
 #include "renpy.h"
 #include "IMG_savepng.h"
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <renpy.pygame.surface_api.h>
 #include <stdio.h>
 #include <math.h>
@@ -15,7 +15,7 @@ void core_init() {
     import_renpy__pygame__surface();
 }
 
-void save_png_core(PyObject *pysurf, SDL_RWops *rw, int compress) {
+void save_png_core(PyObject *pysurf, SDL_IOStream *rw, int compress) {
     SDL_Surface *surf;
 
     surf = PySurface_AsSurface(pysurf);

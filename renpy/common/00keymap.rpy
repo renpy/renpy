@@ -333,6 +333,8 @@ init -1600 python:
         if config.screenshot_callback is not None:
             config.screenshot_callback(fn)
 
+        renpy.put_clipboard_image_file(fn, absolute_path=True)
+
     config.pre_screenshot_actions = [ ]
 
 
@@ -343,7 +345,7 @@ init -1600 python:
 
 
     def _screenshot_callback(fn):
-        renpy.notify(__("Saved screenshot as %s.") % fn)
+        renpy.notify((__("Saved screenshot as %s.") % fn) +  __(" Copied screenshot to clipboard."))
 
     config.screenshot_callback = _screenshot_callback
 

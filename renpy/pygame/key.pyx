@@ -1,3 +1,4 @@
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 # Copyright 2014 Patrick Dawson <pat@dw.is>
 #
 # This software is provided 'as-is', without any express or implied
@@ -16,13 +17,15 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from sdl2 cimport *
+from libcpp cimport bool
+
+from .sdl cimport *
 from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy
-from renpy.pygame.display cimport Window, main_window
-from renpy.pygame.rect cimport to_sdl_rect
+from .display cimport Window, main_window
+from .rect cimport to_sdl_rect
 
-from renpy.pygame.error import error
+from .error import error
 
 
 cdef class KeyboardState:
@@ -40,7 +43,7 @@ cdef class KeyboardState:
             free(self.data)
 
     def __init__(self):
-        cdef uint8_t *state = SDL_GetKeyboardState(&self.numkeys)
+        cdef const bool *state = SDL_GetKeyboardState(&self.numkeys)
         if state == NULL:
             raise error()
 
@@ -49,10 +52,10 @@ cdef class KeyboardState:
         memcpy(self.data, state, self.numkeys)
 
     def __getitem__(self, int key):
-        if SDLK_DELETE < key < SDLK_CAPSLOCK:
+        if <int> SDLK_DELETE < key < <int> SDLK_CAPSLOCK:
             raise IndexError("Out of range.")
 
-        cdef int sc = <int>SDL_GetScancodeFromKey(key)
+        cdef int sc = <int>SDL_GetScancodeFromKey(key, NULL)
         if sc > self.numkeys:
             raise IndexError("Out of range.")
 
@@ -91,24 +94,22 @@ def start_text_input():
     global text_input
     text_input = True
 
-    if SDL_HasScreenKeyboardSupport():
-        SDL_StartTextInput()
+    SDL_StartTextInput(main_window.window)
 
 def stop_text_input():
     global text_input
     text_input = False
 
-    if SDL_HasScreenKeyboardSupport():
-        SDL_StopTextInput()
+    SDL_StopTextInput(main_window.window)
 
 def set_text_input_rect(rect):
-    cdef SDL_Rect sdl_rect;
+    cdef SDL_Rect sdl_rect
 
     if rect is not None:
         to_sdl_rect(rect, &sdl_rect)
-        SDL_SetTextInputRect(&sdl_rect)
+        SDL_SetTextInputArea(main_window.window, &sdl_rect, 0)
     else:
-        SDL_SetTextInputRect(NULL)
+        SDL_SetTextInputArea(main_window.window, NULL, 0)
 
 def has_screen_keyboard_support():
     return SDL_HasScreenKeyboardSupport()
@@ -117,4 +118,4 @@ def is_screen_keyboard_shown(Window window=None):
     if window is None:
         window = main_window
 
-    return SDL_IsScreenKeyboardShown(window.window)
+    return SDL_ScreenKeyboardShown(window.window)

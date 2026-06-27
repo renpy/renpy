@@ -1,5 +1,5 @@
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 # Copyright 2014 Patrick Dawson <pat@dw.is>
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages
@@ -21,44 +21,150 @@ from cpython.ref cimport Py_INCREF, Py_DECREF
 
 from libc.string cimport memcpy
 
-from sdl2 cimport *
-from renpy.pygame.display cimport Window, main_window
+from .sdl cimport *
+from .display cimport Window, main_window
+from .error import error
+from . import key
 import threading
-import renpy.pygame
 import sys
 
-if sys.version_info[0] >= 3:
-    unichr = chr
 
-include "event_names.pxi"
-
-# Add events to emulate SDL 1.2. These also need to be added in locals.
-ACTIVEEVENT = SDL_LASTEVENT - 1
-VIDEORESIZE = SDL_LASTEVENT - 2
-VIDEOEXPOSE = SDL_LASTEVENT - 3
-WINDOWMOVED = SDL_LASTEVENT - 4
-# (Do not add events here.)
-
-event_names[ACTIVEEVENT] = "ACTIVEEVENT"
-event_names[VIDEORESIZE] = "VIDEORESIZE"
-event_names[VIDEOEXPOSE] = "VIDEOEXPOSE"
-event_names[WINDOWMOVED] = "WINDOWMOVED"
+event_names = {
+    SDL_EVENT_FIRST: "FIRST",
+    SDL_EVENT_QUIT: "QUIT",
+    SDL_EVENT_TERMINATING: "TERMINATING",
+    SDL_EVENT_LOW_MEMORY: "LOWMEMORY",
+    SDL_EVENT_WILL_ENTER_BACKGROUND: "WILLENTERBACKGROUND",
+    SDL_EVENT_DID_ENTER_BACKGROUND: "DIDENTERBACKGROUND",
+    SDL_EVENT_WILL_ENTER_FOREGROUND: "WILLENTERFOREGROUND",
+    SDL_EVENT_DID_ENTER_FOREGROUND: "DIDENTERFOREGROUND",
+    SDL_EVENT_LOCALE_CHANGED: "LOCALECHANGED",
+    SDL_EVENT_SYSTEM_THEME_CHANGED: "SYSTEMTHEMECHANGED",
+    SDL_EVENT_DISPLAY_ORIENTATION: "DISPLAYORIENTATION",
+    SDL_EVENT_DISPLAY_ADDED: "DISPLAYADDED",
+    SDL_EVENT_DISPLAY_REMOVED: "DISPLAYREMOVED",
+    SDL_EVENT_DISPLAY_MOVED: "DISPLAYMOVED",
+    SDL_EVENT_DISPLAY_DESKTOP_MODE_CHANGED: "DISPLAYDESKTOPMODECHANGED",
+    SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED: "DISPLAYCURRENTMODECHANGED",
+    SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED: "DISPLAYCONTENTSCALECHANGED",
+    SDL_EVENT_DISPLAY_FIRST: "DISPLAYFIRST",
+    SDL_EVENT_DISPLAY_LAST: "DISPLAYLAST",
+    SDL_EVENT_WINDOW_SHOWN: "WINDOWSHOWN",
+    SDL_EVENT_WINDOW_HIDDEN: "WINDOWHIDDEN",
+    SDL_EVENT_WINDOW_EXPOSED: "WINDOWEXPOSED",
+    SDL_EVENT_WINDOW_MOVED: "WINDOWMOVED",
+    SDL_EVENT_WINDOW_RESIZED: "WINDOWRESIZED",
+    SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED: "WINDOWPIXELSIZECHANGED",
+    SDL_EVENT_WINDOW_METAL_VIEW_RESIZED: "WINDOWMETALVIEWRESIZED",
+    SDL_EVENT_WINDOW_MINIMIZED: "WINDOWMINIMIZED",
+    SDL_EVENT_WINDOW_MAXIMIZED: "WINDOWMAXIMIZED",
+    SDL_EVENT_WINDOW_RESTORED: "WINDOWRESTORED",
+    SDL_EVENT_WINDOW_MOUSE_ENTER: "WINDOWMOUSEENTER",
+    SDL_EVENT_WINDOW_MOUSE_LEAVE: "WINDOWMOUSELEAVE",
+    SDL_EVENT_WINDOW_FOCUS_GAINED: "WINDOWFOCUSGAINED",
+    SDL_EVENT_WINDOW_FOCUS_LOST: "WINDOWFOCUSLOST",
+    SDL_EVENT_WINDOW_CLOSE_REQUESTED: "WINDOWCLOSEREQUESTED",
+    SDL_EVENT_WINDOW_HIT_TEST: "WINDOWHITTEST",
+    SDL_EVENT_WINDOW_ICCPROF_CHANGED: "WINDOWICCPROFCHANGED",
+    SDL_EVENT_WINDOW_DISPLAY_CHANGED: "WINDOWDISPLAYCHANGED",
+    SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED: "WINDOWDISPLAYSCALECHANGED",
+    SDL_EVENT_WINDOW_SAFE_AREA_CHANGED: "WINDOWSAFEAREACHANGED",
+    SDL_EVENT_WINDOW_OCCLUDED: "WINDOWOCCLUDED",
+    SDL_EVENT_WINDOW_ENTER_FULLSCREEN: "WINDOWENTERFULLSCREEN",
+    SDL_EVENT_WINDOW_LEAVE_FULLSCREEN: "WINDOWLEAVEFULLSCREEN",
+    SDL_EVENT_WINDOW_DESTROYED: "WINDOWDESTROYED",
+    SDL_EVENT_WINDOW_HDR_STATE_CHANGED: "WINDOWHDRSTATECHANGED",
+    SDL_EVENT_WINDOW_FIRST: "WINDOWFIRST",
+    SDL_EVENT_WINDOW_LAST: "WINDOWLAST",
+    SDL_EVENT_KEY_DOWN: "KEYDOWN",
+    SDL_EVENT_KEY_UP: "KEYUP",
+    SDL_EVENT_TEXT_EDITING: "TEXTEDITING",
+    SDL_EVENT_TEXT_INPUT: "TEXTINPUT",
+    SDL_EVENT_KEYMAP_CHANGED: "KEYMAPCHANGED",
+    SDL_EVENT_KEYBOARD_ADDED: "KEYBOARDADDED",
+    SDL_EVENT_KEYBOARD_REMOVED: "KEYBOARDREMOVED",
+    SDL_EVENT_TEXT_EDITING_CANDIDATES: "TEXTEDITINGCANDIDATES",
+    SDL_EVENT_MOUSE_MOTION: "MOUSEMOTION",
+    SDL_EVENT_MOUSE_BUTTON_DOWN: "MOUSEBUTTONDOWN",
+    SDL_EVENT_MOUSE_BUTTON_UP: "MOUSEBUTTONUP",
+    SDL_EVENT_MOUSE_WHEEL: "MOUSEWHEEL",
+    SDL_EVENT_MOUSE_ADDED: "MOUSEADDED",
+    SDL_EVENT_MOUSE_REMOVED: "MOUSEREMOVED",
+    SDL_EVENT_JOYSTICK_AXIS_MOTION: "JOYSTICKAXISMOTION",
+    SDL_EVENT_JOYSTICK_BALL_MOTION: "JOYSTICKBALLMOTION",
+    SDL_EVENT_JOYSTICK_HAT_MOTION: "JOYSTICKHATMOTION",
+    SDL_EVENT_JOYSTICK_BUTTON_DOWN: "JOYSTICKBUTTONDOWN",
+    SDL_EVENT_JOYSTICK_BUTTON_UP: "JOYSTICKBUTTONUP",
+    SDL_EVENT_JOYSTICK_ADDED: "JOYSTICKADDED",
+    SDL_EVENT_JOYSTICK_REMOVED: "JOYSTICKREMOVED",
+    SDL_EVENT_JOYSTICK_BATTERY_UPDATED: "JOYSTICKBATTERYUPDATED",
+    SDL_EVENT_JOYSTICK_UPDATE_COMPLETE: "JOYSTICKUPDATECOMPLETE",
+    SDL_EVENT_GAMEPAD_AXIS_MOTION: "GAMEPADAXISMOTION",
+    SDL_EVENT_GAMEPAD_BUTTON_DOWN: "GAMEPADBUTTONDOWN",
+    SDL_EVENT_GAMEPAD_BUTTON_UP: "GAMEPADBUTTONUP",
+    SDL_EVENT_GAMEPAD_ADDED: "GAMEPADADDED",
+    SDL_EVENT_GAMEPAD_REMOVED: "GAMEPADREMOVED",
+    SDL_EVENT_GAMEPAD_REMAPPED: "GAMEPADREMAPPED",
+    SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN: "GAMEPADTOUCHPADDOWN",
+    SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION: "GAMEPADTOUCHPADMOTION",
+    SDL_EVENT_GAMEPAD_TOUCHPAD_UP: "GAMEPADTOUCHPADUP",
+    SDL_EVENT_GAMEPAD_SENSOR_UPDATE: "GAMEPADSENSORUPDATE",
+    SDL_EVENT_GAMEPAD_UPDATE_COMPLETE: "GAMEPADUPDATECOMPLETE",
+    SDL_EVENT_GAMEPAD_STEAM_HANDLE_UPDATED: "GAMEPADSTEAMHANDLEUPDATED",
+    SDL_EVENT_FINGER_DOWN: "FINGERDOWN",
+    SDL_EVENT_FINGER_UP: "FINGERUP",
+    SDL_EVENT_FINGER_MOTION: "FINGERMOTION",
+    SDL_EVENT_FINGER_CANCELED: "FINGERCANCELED",
+    SDL_EVENT_CLIPBOARD_UPDATE: "CLIPBOARDUPDATE",
+    SDL_EVENT_DROP_FILE: "DROPFILE",
+    SDL_EVENT_DROP_TEXT: "DROPTEXT",
+    SDL_EVENT_DROP_BEGIN: "DROPBEGIN",
+    SDL_EVENT_DROP_COMPLETE: "DROPCOMPLETE",
+    SDL_EVENT_DROP_POSITION: "DROPPOSITION",
+    SDL_EVENT_AUDIO_DEVICE_ADDED: "AUDIODEVICEADDED",
+    SDL_EVENT_AUDIO_DEVICE_REMOVED: "AUDIODEVICEREMOVED",
+    SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED: "AUDIODEVICEFORMATCHANGED",
+    SDL_EVENT_SENSOR_UPDATE: "SENSORUPDATE",
+    SDL_EVENT_PEN_PROXIMITY_IN: "PENPROXIMITYIN",
+    SDL_EVENT_PEN_PROXIMITY_OUT: "PENPROXIMITYOUT",
+    SDL_EVENT_PEN_DOWN: "PENDOWN",
+    SDL_EVENT_PEN_UP: "PENUP",
+    SDL_EVENT_PEN_BUTTON_DOWN: "PENBUTTONDOWN",
+    SDL_EVENT_PEN_BUTTON_UP: "PENBUTTONUP",
+    SDL_EVENT_PEN_MOTION: "PENMOTION",
+    SDL_EVENT_PEN_AXIS: "PENAXIS",
+    SDL_EVENT_CAMERA_DEVICE_ADDED: "CAMERADEVICEADDED",
+    SDL_EVENT_CAMERA_DEVICE_REMOVED: "CAMERADEVICEREMOVED",
+    SDL_EVENT_CAMERA_DEVICE_APPROVED: "CAMERADEVICEAPPROVED",
+    SDL_EVENT_CAMERA_DEVICE_DENIED: "CAMERADEVICEDENIED",
+    SDL_EVENT_RENDER_TARGETS_RESET: "RENDERTARGETSRESET",
+    SDL_EVENT_RENDER_DEVICE_RESET: "RENDERDEVICERESET",
+    SDL_EVENT_RENDER_DEVICE_LOST: "RENDERDEVICELOST",
+    SDL_EVENT_PRIVATE0: "PRIVATE0",
+    SDL_EVENT_PRIVATE1: "PRIVATE1",
+    SDL_EVENT_PRIVATE2: "PRIVATE2",
+    SDL_EVENT_PRIVATE3: "PRIVATE3",
+    SDL_EVENT_POLL_SENTINEL: "POLLSENTINEL",
+    SDL_EVENT_USER: "USER",
+    SDL_EVENT_LAST: "LAST",
+    SDL_EVENT_ENUM_PADDING: "ENUMPADDING",
+}
 
 # This is used for events posted to the event queue. This won't be returned
 # to the user - it's just used internally, with the event object itself
 # giving the type.
 cdef unsigned int POSTEDEVENT
-POSTEDEVENT = SDL_LASTEVENT - 5
+POSTEDEVENT = SDL_EVENT_LAST - 1
 
 # The maximum number of a user-defined event.
-USEREVENT_MAX = SDL_LASTEVENT - 6
+USEREVENT_MAX = SDL_EVENT_LAST - 2
 
 # If true, the mousewheel is mapped to buttons 4 and 5. Otherwise, a
 # MOUSEWHEEL event is created.
 cdef bint mousewheel_buttons = 1
 
 cdef unsigned int SDL_TOUCH_MOUSEID
-SDL_TOUCH_MOUSEID = <unsigned int> -1
+SDL_TOUCH_MOUSEID = <unsigned int> -1 # type: ignore
 
 class EventType(object):
 
@@ -71,8 +177,8 @@ class EventType(object):
         self.__dict__.update(kwargs)
 
     def __repr__(self):
-        if SDL_USEREVENT <= self.type < WINDOWMOVED:
-            ename = "UserEvent%d" % (self.type - SDL_USEREVENT)
+        if SDL_EVENT_USER <= self.type <= USEREVENT_MAX:
+            ename = "UserEvent%d" % (self.type - SDL_EVENT_USER)
         else:
             try:
                 ename = event_names[self.type]
@@ -113,31 +219,31 @@ cdef get_textinput():
 
     SDL_PumpEvents()
 
-    if SDL_PeepEvents(&evt, 1, SDL_GETEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT) > 0:
+    if SDL_PeepEvents(&evt, 1, SDL_GETEVENT, SDL_EVENT_TEXT_INPUT, SDL_EVENT_TEXT_INPUT) > 0:
         return evt.text.text.decode('utf-8')
     return u''
 
 cdef make_keyboard_event(SDL_KeyboardEvent *e):
-    dargs = { 'scancode' : e.keysym.scancode,
-              'key' : e.keysym.sym,
-              'mod' : e.keysym.mod,
+    dargs = { 'scancode' : e.scancode,
+              'key' : e.key,
+              'mod' : e.mod,
               'unicode' : '',
               'repeat' : e.repeat,
                }
 
-    if not renpy.pygame.key.text_input:
+    if key.text_input:
 
-        if e.type == SDL_KEYDOWN:
+        if e.type == SDL_EVENT_KEY_DOWN:
             # Be careful to only check for a TEXTINPUT event when you know that
             # there will be one associated with this KEYDOWN event.
-            if e.keysym.sym < 0x20:
-                dargs['unicode'] = unichr(e.keysym.sym)
-            elif e.keysym.sym <= 0xFFFF:
+            if e.key < 0x20:
+                dargs['unicode'] = chr(e.key)
+            elif e.key <= 0xFFFF:
                 dargs['unicode'] = get_textinput()
 
     else:
-        if e.type == SDL_KEYDOWN and not(e.keysym.mod & KMOD_NUM):
-            if SDLK_KP_1 <= e.keysym.sym <= SDLK_KP_0:
+        if e.type == SDL_EVENT_KEY_DOWN and not(e.key & SDL_KMOD_NUM):
+            if SDLK_KP_1 <= e.key <= SDLK_KP_0:
                 get_textinput()
                 dargs['unicode'] = ''
 
@@ -160,7 +266,7 @@ cdef make_mousebtn_event(SDL_MouseButtonEvent *e):
 
 cdef make_mousewheel_event(SDL_MouseWheelEvent *e):
 
-    cdef int x, y
+    cdef float mx, my
 
     # SDL2-style, if the user has opted-in.
     if not mousewheel_buttons:
@@ -168,11 +274,10 @@ cdef make_mousewheel_event(SDL_MouseWheelEvent *e):
 
     # Otherwise, follow the SDL1 approach.
 
-    y = e.y
+    cdef float y = e.y
 
-# TODO: Implement when 2.0.4 becomes widespread.
-#     if e.direction == SDL_MOUSEWHEEL_FLIPPED:
-#         y = -y
+    if e.direction == SDL_MOUSEWHEEL_FLIPPED:
+        y = -y
 
     if y > 0:
         btn = 4
@@ -182,12 +287,11 @@ cdef make_mousewheel_event(SDL_MouseWheelEvent *e):
         return EventType(0) # x axis scrolling produces no event in pygame
 
     # This is not the mouse position at the time of the event
-    SDL_GetMouseState(&x, &y)
+    SDL_GetMouseState(&mx, &my)
 
     # MOUSEBUTTONUP event should follow immediately after
-    event_queue.insert(0, EventType(SDL_MOUSEBUTTONUP, which=e.which, button=btn, pos=(x,y), touch=(SDL_TOUCH_MOUSEID == e.which)))
-    return EventType(SDL_MOUSEBUTTONDOWN, which=e.which, button=btn, pos=(x,y), touch=(SDL_TOUCH_MOUSEID == e.which))
-
+    event_queue.insert(0, EventType(SDL_EVENT_MOUSE_BUTTON_UP, which=e.which, button=btn, pos=(mx, my), touch=(SDL_TOUCH_MOUSEID == e.which)))
+    return EventType(SDL_EVENT_MOUSE_BUTTON_DOWN, which=e.which, button=btn, pos=(mx, my), touch=(SDL_TOUCH_MOUSEID == e.which))
 
 cdef make_joyaxis_event(SDL_JoyAxisEvent *e):
     return EventType(e.type, joy=e.which, instance_id=e.which, axis=e.axis, value=e.value/32768.0)
@@ -214,89 +318,59 @@ cdef make_textediting_event(SDL_TextEditingEvent *e):
         return EventType(e.type, text='', start=e.start, length=e.length)
 
 cdef make_drop_event(SDL_DropEvent *e):
-    if e.file:
-        file = e.file.decode("utf-8")
-        SDL_free(e.file)
+    if e.data:
+        file = e.data.decode("utf-8")
     else:
         file = None
 
     return EventType(e.type, file=file, window_id=e.windowID)
 
 cdef make_window_event(SDL_WindowEvent *e):
-    # SDL_APPMOUSEFOCUS
-    if e.event == SDL_WINDOWEVENT_ENTER:
-        return EventType(ACTIVEEVENT, state=1, gain=1)
-    elif e.event == SDL_WINDOWEVENT_LEAVE:
-        return EventType(ACTIVEEVENT, state=1, gain=0)
-
-    # SDL_APPINPUTFOCUS
-    elif e.event == SDL_WINDOWEVENT_FOCUS_GAINED:
-        return EventType(ACTIVEEVENT, state=2, gain=1)
-    elif e.event == SDL_WINDOWEVENT_FOCUS_LOST:
-        return EventType(ACTIVEEVENT, state=2, gain=0)
-
-    # SDL_APPACTIVE
-    elif e.event == SDL_WINDOWEVENT_RESTORED:
-        return EventType(ACTIVEEVENT, state=4, gain=1)
-    elif e.event == SDL_WINDOWEVENT_MINIMIZED:
-        return EventType(ACTIVEEVENT, state=4, gain=0)
-
-    elif e.event == SDL_WINDOWEVENT_RESIZED:
-        return EventType(VIDEORESIZE, size=(e.data1, e.data2), w=e.data1, h=e.data2)
-
-    elif e.event == SDL_WINDOWEVENT_EXPOSED:
-        return EventType(VIDEOEXPOSE)
-
-    elif e.event == SDL_WINDOWEVENT_MOVED:
-        return EventType(WINDOWMOVED, pos=(e.data1, e.data2), x=e.data1, y=e.data2)
-
-    return EventType(SDL_WINDOWEVENT, event=e.event, data1=e.data1, data2=e.data2)
+    return EventType(e.type, data1=e.data1, data2=e.data2)
 
 cdef make_event(SDL_Event *e):
     cdef object o
 
-    if e.type == SDL_MOUSEMOTION:
+    if e.type == SDL_EVENT_MOUSE_MOTION:
         return make_mousemotion_event(<SDL_MouseMotionEvent*>e)
-    elif e.type in (SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP):
+    elif e.type in (SDL_EVENT_MOUSE_BUTTON_DOWN, SDL_EVENT_MOUSE_BUTTON_UP):
         return make_mousebtn_event(<SDL_MouseButtonEvent*>e)
 
-    elif e.type == SDL_MOUSEWHEEL:
+    elif e.type == SDL_EVENT_MOUSE_WHEEL:
         return make_mousewheel_event(<SDL_MouseWheelEvent*>e)
-    elif e.type in (SDL_KEYDOWN, SDL_KEYUP):
+    elif e.type in (SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP):
         return make_keyboard_event(<SDL_KeyboardEvent*>e)
-    elif e.type == SDL_JOYAXISMOTION:
+    elif e.type == SDL_EVENT_JOYSTICK_AXIS_MOTION:
         return make_joyaxis_event(<SDL_JoyAxisEvent*>e)
-    elif e.type == SDL_JOYBALLMOTION:
+    elif e.type == SDL_EVENT_JOYSTICK_BALL_MOTION:
         return make_joyball_event(<SDL_JoyBallEvent*>e)
-    elif e.type == SDL_JOYHATMOTION:
+    elif e.type == SDL_EVENT_JOYSTICK_HAT_MOTION:
         return make_joyhat_event(<SDL_JoyHatEvent*>e)
-    elif e.type in (SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP):
+    elif e.type in (SDL_EVENT_JOYSTICK_BUTTON_DOWN, SDL_EVENT_JOYSTICK_BUTTON_UP):
         return make_joybtn_event(<SDL_JoyButtonEvent*>e)
-    elif e.type in (SDL_JOYDEVICEADDED, SDL_JOYDEVICEREMOVED):
+    elif e.type in (SDL_EVENT_JOYSTICK_ADDED, SDL_EVENT_JOYSTICK_REMOVED):
         return EventType(e.type, which=e.jdevice.which)
-    elif e.type == SDL_WINDOWEVENT:
+    elif SDL_EVENT_WINDOW_FIRST <= e.type <= SDL_EVENT_WINDOW_LAST:
         return make_window_event(<SDL_WindowEvent*>e)
-    elif e.type == SDL_TEXTINPUT:
+    elif e.type == SDL_EVENT_TEXT_INPUT:
         return make_textinput_event(<SDL_TextInputEvent *> e)
-    elif e.type == SDL_TEXTEDITING:
+    elif e.type == SDL_EVENT_TEXT_EDITING:
         return make_textediting_event(<SDL_TextEditingEvent *> e)
-    elif e.type == SDL_CONTROLLERAXISMOTION:
-        return EventType(e.type, which=e.caxis.which, axis=e.caxis.axis, value=e.caxis.value)
-    elif e.type in (SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLERBUTTONUP):
-        return EventType(e.type, which=e.cbutton.which, button=e.cbutton.button, state=e.cbutton.state)
-    elif e.type in (SDL_CONTROLLERDEVICEADDED, SDL_CONTROLLERDEVICEREMOVED, SDL_CONTROLLERDEVICEREMAPPED):
-        return EventType(e.type, which=e.cdevice.which)
-    elif e.type in (SDL_FINGERMOTION, SDL_FINGERDOWN, SDL_FINGERUP):
+    elif e.type == SDL_EVENT_GAMEPAD_AXIS_MOTION:
+        return EventType(e.type, which=e.gaxis.which, axis=e.gaxis.axis, value=e.gaxis.value)
+    elif e.type in (SDL_EVENT_GAMEPAD_BUTTON_DOWN, SDL_EVENT_GAMEPAD_BUTTON_UP):
+        return EventType(e.type, which=e.gbutton.which, button=e.gbutton.button, state=e.gbutton.down)
+    elif e.type in (SDL_EVENT_GAMEPAD_ADDED, SDL_EVENT_GAMEPAD_REMOVED, SDL_EVENT_GAMEPAD_REMAPPED):
+        return EventType(e.type, which=e.gdevice.which)
+    elif e.type in (SDL_EVENT_FINGER_MOTION, SDL_EVENT_FINGER_DOWN, SDL_EVENT_FINGER_UP):
         return EventType(e.type, touchId=e.tfinger.touchId, fingerId=e.tfinger.fingerId, touch_id=e.tfinger.touchId, finger_id=e.tfinger.fingerId, x=e.tfinger.x, y=e.tfinger.y, dx=e.tfinger.dx, dy=e.tfinger.dy, pressure=e.tfinger.pressure)
-    elif e.type == SDL_MULTIGESTURE:
-        return EventType(e.type, touchId=e.mgesture.touchId, dTheta=e.mgesture.dTheta, dDist=e.mgesture.dDist, x=e.mgesture.x, y=e.mgesture.y, numFingers=e.mgesture.numFingers, touch_id=e.mgesture.touchId, rotated=e.mgesture.dTheta, pinched=e.mgesture.dDist, num_fingers=e.mgesture.numFingers)
-    elif e.type in (SDL_DROPFILE, SDL_DROPTEXT, SDL_DROPBEGIN, SDL_DROPCOMPLETE):
+    elif e.type in (SDL_EVENT_DROP_FILE, SDL_EVENT_DROP_TEXT, SDL_EVENT_DROP_BEGIN, SDL_EVENT_DROP_COMPLETE):
         return make_drop_event(<SDL_DropEvent*> e)
     elif e.type == POSTEDEVENT:
         o = <object> e.user.data1
         Py_DECREF(o)
         return o
-    elif e.type >= SDL_USEREVENT:
+    elif e.type >= SDL_EVENT_USER:
         # Can't do anything useful with data1 and data2 here.
         return EventType(e.type, code=e.user.code)
 
@@ -371,7 +445,7 @@ cdef int poll_sdl() except 1:
 
     with lock:
         while SDL_PollEvent(&evt):
-            if evt.type == SDL_MOUSEMOTION:
+            if evt.type == SDL_EVENT_MOUSE_MOTION:
 
                 # We can merge the event.
                 if last_mousemotion and mm_evt.state == old_mm_evt.state and mm_evt.which == old_mm_evt.which:
@@ -491,7 +565,7 @@ def get_standard_events():
     Returns a list of standard events that renpy.pygame knows about.
     """
 
-    return [ i for i in event_names.keys() if (i < SDL_USEREVENT) or (i > USEREVENT_MAX) ]
+    return [ i for i in event_names.keys() if (i < SDL_EVENT_USER) or (i > USEREVENT_MAX) ]
 
 def event_name(t):
     try:
@@ -499,37 +573,61 @@ def event_name(t):
     except KeyError:
         return "UNKNOWN"
 
+
+cdef inline bint is_sdl_lifecycle_event(Uint32 event_type) noexcept nogil:
+    return (
+        event_type == SDL_EVENT_TERMINATING or
+        event_type == SDL_EVENT_LOW_MEMORY or
+        event_type == SDL_EVENT_WILL_ENTER_BACKGROUND or
+        event_type == SDL_EVENT_DID_ENTER_BACKGROUND or
+        event_type == SDL_EVENT_WILL_ENTER_FOREGROUND or
+        event_type == SDL_EVENT_DID_ENTER_FOREGROUND)
+
+
+cdef void queue_sdl_lifecycle_event(SDL_Event *event) noexcept nogil:
+    cdef SDL_Event queued_event
+
+    memcpy(&queued_event, event, sizeof(SDL_Event))
+    SDL_PeepEvents(&queued_event, 1, SDL_ADDEVENT, 0, 0)
+
+
+cdef cbool lifecycle_event_watch(void *userdata, SDL_Event *event) noexcept nogil:
+    if is_sdl_lifecycle_event(event.type):
+        queue_sdl_lifecycle_event(event)
+
+    return True
+
 def set_blocked(t=None):
     if t == None:
         for et in event_names.keys():
-            SDL_EventState(et, SDL_ENABLE)
+            SDL_SetEventEnabled(et, False)
     elif isinstance(t, int):
-        SDL_EventState(t, SDL_IGNORE)
+        SDL_SetEventEnabled(t, False)
     else:
         for et in t:
-            SDL_EventState(et, SDL_IGNORE)
+            SDL_SetEventEnabled(et, False)
 
 def set_allowed(t=None):
     if t == None:
         for et in event_names.keys():
-            SDL_EventState(et, SDL_IGNORE)
+            SDL_SetEventEnabled(et, True)
     elif isinstance(t, int):
-        SDL_EventState(t, SDL_ENABLE)
+        SDL_SetEventEnabled(t, True)
     else:
         for et in t:
-            SDL_EventState(et, SDL_ENABLE)
+            SDL_SetEventEnabled(et, True)
 
 def get_blocked(t):
-    return SDL_EventState(t, SDL_QUERY) == SDL_IGNORE
+    return not SDL_EventEnabled(t)
 
 def set_grab(on):
-    SDL_SetWindowGrab(main_window.window, on)
+    SDL_SetWindowMouseGrab(main_window.window, on)
 
-    if SDL_ShowCursor(SDL_QUERY) == SDL_DISABLE:
-        SDL_SetRelativeMouseMode(on)
+    if not SDL_CursorVisible():
+        SDL_SetWindowRelativeMouseMode(main_window.window, on)
 
 def get_grab():
-    return SDL_GetWindowGrab(main_window.window)
+    return SDL_GetWindowMouseGrab(main_window.window)
 
 def set_mousewheel_buttons(flag):
     """
@@ -558,7 +656,7 @@ def post(e):
     cdef SDL_Event event;
 
     if not isinstance(e, EventType):
-        raise renpy.pygame.error("event.post must be called with an Event.")
+        raise error("event.post must be called with an Event.")
 
     if get_blocked(e.type):
         return
@@ -596,7 +694,11 @@ def copy_event_queue():
 def init():
     if not SDL_WasInit(SDL_INIT_EVENTS):
 
-        renpy.pygame.display.sdl_main_init()
+        from . import display
+
+        display.sdl_main_init()
 
         if SDL_InitSubSystem(SDL_INIT_EVENTS):
-            raise renpy.pygame.error.error()
+            raise error()
+
+    SDL_AddEventWatch(lifecycle_event_watch, NULL)

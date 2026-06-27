@@ -30,7 +30,7 @@ from renpy.display.render cimport Render, Matrix2D, render, MATRIX_VIEW, MATRIX_
 from renpy.display.displayable import Displayable
 from renpy.display.core import absolute
 
-from sdl2 cimport *
+from renpy.pygame.sdl cimport *
 
 from renpy.pygame.surface cimport PySurface_AsSurface
 
@@ -52,8 +52,7 @@ def nogil_copy(src, dest):
 
     with nogil:
         SDL_SetSurfaceBlendMode(src_surf, SDL_BLENDMODE_NONE)
-        SDL_UpperBlit(src_surf, NULL, dest_surf, NULL)
-
+        SDL_BlitSurface(src_surf, NULL, dest_surf, NULL)
 
 
 def get_poi(state):

@@ -1,4 +1,4 @@
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages
@@ -16,7 +16,7 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from sdl2 cimport SDL_RWops
+from .sdl cimport SDL_IOStream
 
-cdef SDL_RWops *to_rwops(filelike, mode=*, base=*, length=*) except NULL
-cdef SDL_RWops *RWopsFromPython(filelike) except NULL
+cdef SDL_IOStream *to_sdl_iostream(filelike, mode=*, base=*, length=*) except NULL
+cdef SDL_IOStream *SDLIOStreamFromPython(filelike) except NULL

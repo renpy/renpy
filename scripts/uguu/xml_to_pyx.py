@@ -6,8 +6,9 @@ import collections
 import itertools
 import os
 import sys
+import pathlib
 
-os.chdir(os.path.dirname(sys.argv[0]))
+os.chdir(pathlib.Path(__file__).parent.resolve())
 
 # Bad/weird types we don't need or want to generate.
 BAD_TYPES = {
@@ -322,7 +323,6 @@ class XMLToPYX:
 
             if (i in FRAMEBUFFER_EXT_FUNCTIONS) and ((i + "EXT") not in names):
                 names.append(i + "EXT")
-                print(names)
 
             names = [i.encode("utf-8") for i in names]
 

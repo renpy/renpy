@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
+FROM mcr.microsoft.com/devcontainers/base:ubuntu26.04
 
 # Fix yarn GPG key issue by removing its repository
 RUN rm -f /etc/apt/sources.list.d/yarn.list
@@ -19,11 +19,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         libharfbuzz-dev \
         libfreetype6-dev \
         libfribidi-dev \
-        libsdl2-dev \
-        libsdl2-image-dev \
-        libsdl2-gfx-dev \
-        libsdl2-mixer-dev \
-        libsdl2-ttf-dev \
+        libsdl3-dev \
+        libsdl3-image-dev \
         libjpeg-dev \
         pkg-config \
         libdecor-0-0 \

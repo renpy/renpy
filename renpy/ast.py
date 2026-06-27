@@ -1586,7 +1586,7 @@ class Hide(Node):
 
 
 class With(Node):
-    expr: str
+    expr: str | None = None
     paired: str | None = None
 
     def __init__(self, loc, expr, paired=None):
@@ -1605,7 +1605,10 @@ class With(Node):
         next_node(self.next)
         statement_name("with")
 
-        trans = renpy.python.py_eval(self.expr)
+        if self.expr is not None:
+            trans = renpy.python.py_eval(self.expr)
+        else:
+            trans = None
 
         if self.paired is not None:
             paired = renpy.python.py_eval(self.paired)
@@ -1616,7 +1619,11 @@ class With(Node):
 
     def predict(self):
         try:
-            trans = renpy.python.py_eval(self.expr)
+
+            if self.expr is not None:
+                trans = renpy.python.py_eval(self.expr)
+            else:
+                trans = None
 
             if trans:
                 renpy.display.predict.displayable(trans(old_widget=None, new_widget=None))
@@ -1817,11 +1824,12 @@ class Menu(Node):
         item_arguments = []
 
         for i, (label, condition, block) in enumerate(self.items):
-            if renpy.config.say_menu_text_filter:
-                label = renpy.config.say_menu_text_filter(label)
+            if renpy.config.use_menu_text_filter:
+                if renpy.config.say_menu_text_filter:
+                    label = renpy.config.say_menu_text_filter(label)
 
-            for f in renpy.config.say_menu_text_filters:
-                label = f(label)
+                for f in renpy.config.say_menu_text_filters:
+                    label = f(label)
 
             has_item = False
 

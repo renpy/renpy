@@ -143,9 +143,6 @@ testcases/tests/
 /.vscode/launch.json
 /.vscode/tasks.json
 
-# Temporarily ignore sdl3 work.
-/scripts/sdl3
-
 # Informational Files
 AGENTS.md
 

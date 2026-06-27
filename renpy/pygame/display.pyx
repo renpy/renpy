@@ -1,5 +1,5 @@
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 # Copyright 2014 Patrick Dawson <pat@dw.is>
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages
@@ -17,18 +17,23 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from sdl2 cimport *
-from renpy.pygame.surface cimport *
-from renpy.pygame.rect cimport to_sdl_rect
+from .sdl cimport *
+from .sdl3_gfx cimport *
+from .surface cimport *
+from .rect cimport to_sdl_rect
 
 from libc.stdlib cimport calloc, free
-from renpy.pygame import register_init, register_quit
-from renpy.pygame.locals import SRCALPHA, GL_SWAP_CONTROL
-from renpy.pygame.error import error
-import renpy.pygame
+from .error import error
+
+cdef extern from "SDL3/SDL_main.h":
+    pass
 
 import warnings
 import os
+
+# Pick a value for GL_SWAP_CONTROL that is unlikely to conflict with
+# future SDL values.
+GL_SWAP_CONTROL = -1
 
 # True if we are on ios.
 ios = ("PYGAME_IOS" in os.environ)
@@ -74,7 +79,7 @@ def sdl_main_init():
 
     SDL_SetMainReady()
 
-    if SDL_Init(0):
+    if not SDL_Init(0):
         raise error()
 
     main_done = True
@@ -82,7 +87,6 @@ def sdl_main_init():
 # True if init has been called without quit being called.
 init_done = False
 
-@register_init
 def init():
 
     if init_done:
@@ -90,17 +94,17 @@ def init():
 
     sdl_main_init()
 
-    if SDL_InitSubSystem(SDL_INIT_VIDEO):
+    if not SDL_InitSubSystem(SDL_INIT_VIDEO):
         raise error()
 
-    renpy.pygame.event.init()
+    from . import event
+    event.init()
 
     global init_done
     init_done = True
 
 
 
-@register_quit
 def quit(): # @ReservedAssignment
 
     global init_done
@@ -130,7 +134,6 @@ except ImportError:
 
 cdef class Window:
     def __init__(self, title, resolution=(0, 0), flags=0, depth=0, pos=(SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED), Surface shape=None):
-        cdef SDL_WindowShapeMode shape_mode
 
         if not isinstance(title, bytes):
             title = title.encode("utf-8")
@@ -164,28 +167,18 @@ cdef class Window:
             flags |= SDL_WINDOW_HIDDEN
 
             if shape is not None:
+                flags |= SDL_WINDOW_TRANSPARENT
 
-                shape_mode.mode = ShapeModeDefault
+            self.window = SDL_CreateWindow(
+                title,
+                resolution[0], resolution[1], flags | gl_flag)
 
-                self.window = SDL_CreateShapedWindow(
-                    title,
-                    pos[0], pos[1],
-                    resolution[0], resolution[1], flags | gl_flag)
+            if not self.window:
+                raise error()
 
-                if not self.window:
-                    raise error()
+            if shape is not None:
+                SDL_SetWindowShape(self.window, shape.surface)
 
-                SDL_SetWindowShape(self.window, shape.surface, &shape_mode)
-
-            else:
-
-                self.window = SDL_CreateWindow(
-                    title,
-                    pos[0], pos[1],
-                    resolution[0], resolution[1], flags | gl_flag)
-
-                if not self.window:
-                    raise error()
 
             if pos != (SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED):
                 SDL_SetWindowPosition(self.window, pos[0], pos[1])
@@ -213,7 +206,7 @@ cdef class Window:
                     # Try setting the swap interval - first positive, then negated
                     # to deal with the case where the negative interval isn't
                     # supported. Then give up and carry on.
-                    if SDL_GL_SetSwapInterval(default_swap_control):
+                    if not SDL_GL_SetSwapInterval(default_swap_control):
                         if default_swap_control < 0:
                             SDL_GL_SetSwapInterval(-default_swap_control)
 
@@ -236,7 +229,7 @@ cdef class Window:
             # For now, make this the size of the window so get_size() works.
             # TODO: Make this a bit less wasteful of memory, even if it means
             # we lie about the actual size of the pixel array.
-            self.surface = Surface((w, h), SRCALPHA, 32)
+            self.surface = Surface((w, h), 0, 32)
 
         else:
 
@@ -244,7 +237,7 @@ cdef class Window:
 
             # If the surface is 32-bit, we can use it directly. Otherwise,
             # we need to create a 32-bit proxy surface.
-            if self.window_surface.format.BitsPerPixel == 32:
+            if self.window_surface.format == SDL_PIXELFORMAT_RGBA32:
 
                 self.surface = Surface(())
                 self.surface.surface = self.window_surface
@@ -263,7 +256,7 @@ cdef class Window:
         """
 
         if self.gl_context != NULL:
-            SDL_GL_DeleteContext(self.gl_context)
+            SDL_GL_DestroyContext(self.gl_context)
 
         if self.surface:
 
@@ -286,7 +279,7 @@ cdef class Window:
         flags = SDL_GetWindowFlags(self.window)
 
         if fullscreen is None:
-            fullscreen = flags & SDL_WINDOW_FULLSCREEN_DESKTOP
+            fullscreen = flags & SDL_WINDOW_FULLSCREEN
 
         if maximized is None:
             maximized = flags & SDL_WINDOW_MAXIMIZED
@@ -298,7 +291,7 @@ cdef class Window:
         self.surface.get_window_flags = None
 
         if self.gl_context and not opengl:
-            SDL_GL_DeleteContext(self.gl_context)
+            SDL_GL_DestroyContext(self.gl_context)
             self.gl_context = NULL
 
         cdef int cur_width = 0
@@ -309,7 +302,7 @@ cdef class Window:
 
         if fullscreen:
 
-            if SDL_SetWindowFullscreen(self.window, SDL_WINDOW_FULLSCREEN_DESKTOP):
+            if not SDL_SetWindowFullscreen(self.window, 1):
                 fullscreen = False
 
         if not fullscreen:
@@ -358,14 +351,14 @@ cdef class Window:
         rv = SDL_GetWindowFlags(self.window)
 
         if self.gl_context:
-            rv |= SDL_WINDOW_OPENGL
+            rv = rv & SDL_WINDOW_OPENGL
         else:
-            rv &= ~SDL_WINDOW_OPENGL
+            rv = rv & ~SDL_WINDOW_OPENGL
 
         return rv
 
     def proxy_window_surface(self):
-        SDL_UpperBlit(self.surface.surface, NULL, self.window_surface, NULL)
+        SDL_BlitSurface(self.surface.surface, NULL, self.window_surface, NULL)
 
     def flip(self):
         cdef const char *err
@@ -439,47 +432,12 @@ cdef class Window:
         return True
 
     def toggle_fullscreen(self):
-        if SDL_GetWindowFlags(self.window) & (SDL_WINDOW_FULLSCREEN_DESKTOP):
-            if SDL_SetWindowFullscreen(self.window, 0):
+        if SDL_GetWindowFlags(self.window) & (SDL_WINDOW_FULLSCREEN):
+            if not SDL_SetWindowFullscreen(self.window, 0):
                 raise error()
         else:
-            if SDL_SetWindowFullscreen(self.window, SDL_WINDOW_FULLSCREEN_DESKTOP):
+            if not SDL_SetWindowFullscreen(self.window, SDL_WINDOW_FULLSCREEN):
                 raise error()
-
-        return True
-
-    def set_gamma(self, red, green=None, blue=None):
-        if green is None:
-            green = red
-        if blue is None:
-            blue = red
-
-        cdef Uint16 red_gamma[256]
-        cdef Uint16 green_gamma[256]
-        cdef Uint16 blue_gamma[256]
-
-        SDL_CalculateGammaRamp(red, red_gamma)
-        SDL_CalculateGammaRamp(green, green_gamma)
-        SDL_CalculateGammaRamp(blue, blue_gamma)
-
-        if SDL_SetWindowGammaRamp(self.window, red_gamma, green_gamma, blue_gamma):
-            return False
-
-        return True
-
-    def set_gamma_ramp(self, red, green, blue):
-
-        cdef Uint16 red_gamma[256]
-        cdef Uint16 green_gamma[256]
-        cdef Uint16 blue_gamma[256]
-
-        for i in range(256):
-            red_gamma[i] = red[i]
-            green_gamma[i] = green[i]
-            blue_gamma[i] = blue[i]
-
-        if SDL_SetWindowGammaRamp(self.window, red_gamma, green_gamma, blue_gamma):
-            return False
 
         return True
 
@@ -496,7 +454,7 @@ cdef class Window:
     def get_drawable_size(self):
         cdef int w, h
 
-        SDL_GL_GetDrawableSize(self.window, &w, &h)
+        SDL_GetWindowSizeInPixels(self.window, &w, &h)
         return w, h
 
 
@@ -538,7 +496,7 @@ cdef class Window:
 default_icon = None
 
 # The title that's used for new windows.
-default_title = "pygame window"
+default_title = "renpy.pygame window"
 
 # The default gl_swap_control
 default_swap_control = 1
@@ -546,12 +504,12 @@ default_swap_control = 1
 def set_mode(resolution=(0, 0), flags=0, depth=0, pos=(SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED)):
     global main_window
 
-    RESIZE_FLAGS = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP
+    RESIZE_FLAGS = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN
 
     if main_window:
 
         if (flags & ~RESIZE_FLAGS) == (main_window.create_flags & ~RESIZE_FLAGS):
-            main_window.resize(resolution, flags & SDL_WINDOW_OPENGL, flags & SDL_WINDOW_FULLSCREEN_DESKTOP)
+            main_window.resize(resolution, flags & SDL_WINDOW_OPENGL, flags & SDL_WINDOW_FULLSCREEN)
             return main_window.surface
 
         else:
@@ -604,18 +562,22 @@ def get_driver():
 class Info(object):
 
     def __init__(self):
-        cdef SDL_DisplayMode dm
-        cdef SDL_PixelFormat *format
+        cdef const SDL_DisplayMode *dm
+        cdef const SDL_PixelFormatDetails *format
+        cdef const SDL_DisplayID *display_ids
 
-        if SDL_GetCurrentDisplayMode(0, &dm):
+        display_ids = SDL_GetDisplays(NULL)
+
+        dm = SDL_GetCurrentDisplayMode(display_ids[0])
+        if dm == NULL:
             raise error()
 
-        format = SDL_AllocFormat(dm.format)
+        format = SDL_GetPixelFormatDetails(dm.format)
         if format == NULL:
             raise error()
 
-        self.bitsize = format.BitsPerPixel
-        self.bytesize = format.BytesPerPixel
+        self.bitsize = format.bits_per_pixel
+        self.bytesize = format.bytes_per_pixel
 
         self.masks = (
             format.Rmask,
@@ -632,13 +594,11 @@ class Info(object):
             )
 
         self.losses = (
-            format.Rloss,
-            format.Gloss,
-            format.Bloss,
-            format.Aloss,
+            8 - format.Rbits,
+            8 - format.Gbits,
+            8 - format.Bbits,
+            8 - format.Abits,
             )
-
-        SDL_FreeFormat(format)
 
         if main_window:
             self.current_w, self.current_h = main_window.surface.get_size()
@@ -672,51 +632,61 @@ def get_wm_info():
 
     return {}
 
+def get_display_bounds():
+    """
+    For each active display, returns a tuple (x, y, w, h) the position and size
+    of the display.
+    """
+
+    cdef int num_displays, i
+    cdef SDL_Rect rect
+    cdef SDL_DisplayID *display_ids = SDL_GetDisplays(&num_displays)
+
+    if display_ids == NULL:
+        raise error()
+
+    rv = [ ]
+
+    for i in range(num_displays):
+        if SDL_GetDisplayBounds(display_ids[i], &rect):
+            rv.append( (rect.x, rect.y, rect.w, rect.h) )
+        else:
+            raise error()
+
+    return tuple(rv)
+
+def get_usable_display_bounds():
+    """
+    For each active display, returns a tuple (x, y, w, h) the position and size
+    of the usable display area (i.e., minus task bars, etc).
+    """
+
+    cdef int num_displays, i
+    cdef SDL_Rect rect
+    cdef SDL_DisplayID *display_ids = SDL_GetDisplays(&num_displays)
+
+    if display_ids == NULL:
+        raise error()
+
+    rv = [ ]
+
+    for i in range(num_displays):
+        if SDL_GetDisplayUsableBounds(display_ids[i], &rect):
+            rv.append( (rect.x, rect.y, rect.w, rect.h) )
+        else:
+            raise error()
+
 
 def get_num_video_displays():
     """
     Returns the number of video displays connected to the system.
     """
 
-    rv = SDL_GetNumVideoDisplays()
+    cdef int num_displays = 1
+    SDL_GetDisplays(&num_displays)
 
-    if rv < 0:
-        raise error()
+    return num_displays
 
-    return rv
-
-
-def list_modes(depth=0, flags=0, display=0):
-    """
-    Returns a list of possible display modes for the display `display`.
-
-    `depth` and `flags` are ignored.
-    """
-
-    cdef int num_modes, i
-    cdef SDL_DisplayMode mode
-
-    rv = [ ]
-
-    num_modes = SDL_GetNumDisplayModes(display)
-    if num_modes < 0:
-        raise error()
-
-    for 0 <= i < num_modes:
-        if SDL_GetDisplayMode(display, i, &mode) == 0:
-            t = (mode.w, mode.h)
-            if t not in rv:
-                rv.append(t)
-
-    return rv
-
-
-def mode_ok(size, flags=0, depth=0):
-    """
-    Returns true if size is in the result of list_modes().
-    """
-
-    return tuple(size) in list_modes()
 
 def gl_reset_attributes():
     SDL_GL_ResetAttributes()
@@ -732,32 +702,34 @@ def gl_set_attribute(flag, value):
         # Try setting the swap interval - first positive, then negated
         # to deal with the case where the negative interval isn't
         # supported. Then give up and carry on.
-        if SDL_GL_SetSwapInterval(value):
+        if not SDL_GL_SetSwapInterval(value):
             SDL_GL_SetSwapInterval(-value)
 
         default_swap_control = value
         return
 
-    if SDL_GL_SetAttribute(flag, value):
+    if not SDL_GL_SetAttribute(flag, value):
         raise error()
 
 def gl_get_attribute(flag):
     cdef int rv
 
     if flag == GL_SWAP_CONTROL:
-        return SDL_GL_GetSwapInterval()
+        if not SDL_GL_GetSwapInterval(&rv):
+            return rv
+        raise error()
 
-    if SDL_GL_GetAttribute(flag, &rv):
+    if not SDL_GL_GetAttribute(flag, &rv):
         raise error()
 
     return rv
 
 def gl_load_library(path):
     if path is None:
-        if SDL_GL_LoadLibrary(NULL):
+        if not SDL_GL_LoadLibrary(NULL):
             raise error()
     else:
-        if SDL_GL_LoadLibrary(path):
+        if not SDL_GL_LoadLibrary(path):
             raise error()
 
 def gl_unload_library():
@@ -830,19 +802,6 @@ def set_position(pos):
     return False
 
 
-def get_num_video_displays():
-    rv = SDL_GetNumVideoDisplays()
-    if rv < 0:
-        raise error()
-
-    return rv
-
-def get_display_bounds(index):
-    cdef SDL_Rect rect
-    rv = SDL_GetDisplayBounds(index, &rect)
-
-    return (rect.x, rect.y, rect.w, rect.h)
-
 def set_screensaver(state):
     """
     Sets the screenslaver to `state`.
@@ -853,8 +812,10 @@ def set_screensaver(state):
     else:
         SDL_DisableScreenSaver()
 
+
 def get_platform():
     return SDL_GetPlatform().decode("utf-8")
+
 
 cdef api SDL_Window *PyWindow_AsWindow(window):
     """

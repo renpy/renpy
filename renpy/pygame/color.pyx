@@ -1,4 +1,4 @@
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 # Copyright 2014 Patrick Dawson <pat@dw.is>
 #
 # This software is provided 'as-is', without any express or implied
@@ -17,11 +17,11 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from sdl2 cimport *
+from .sdl cimport *
 import binascii
 import struct
 
-include "color_dict.pxi"
+include "./color_dict.pxi"
 
 cdef Uint32 map_color(SDL_Surface *surface, color) except? 0xaabbccdd:
     """
@@ -40,7 +40,7 @@ cdef Uint32 map_color(SDL_Surface *surface, color) except? 0xaabbccdd:
     else:
         raise TypeError("Expected a color.")
 
-    return SDL_MapRGBA(surface.format, r, g, b, a)
+    return SDL_MapRGBA(SDL_GetPixelFormatDetails(surface.format), NULL, r, g, b, a)
 
 cdef object get_color(Uint32 pixel, SDL_Surface *surface):
     cdef Uint8 r
@@ -48,7 +48,7 @@ cdef object get_color(Uint32 pixel, SDL_Surface *surface):
     cdef Uint8 b
     cdef Uint8 a
 
-    SDL_GetRGBA(pixel, surface.format, &r, &g, &b, &a)
+    SDL_GetRGBA(pixel, SDL_GetPixelFormatDetails(surface.format), NULL, &r, &g, &b, &a)
 
     return Color(r, g, b, a)
 
@@ -194,7 +194,7 @@ cdef class Color:
             raise IndexError(key)
 
     def __len__(self):
-        return self.length
+        return <int> self.length
 
     def __mul__(self not None, Color rhs not None):
         # Multiplying this way doesn't make much sense,

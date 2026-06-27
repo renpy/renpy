@@ -1,3 +1,4 @@
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 # Copyright 2014 Patrick Dawson <pat@dw.is>
 #
 # This software is provided 'as-is', without any express or implied
@@ -16,42 +17,26 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from sdl2 cimport *
-from sdl2_image cimport *
-from renpy.pygame.surface cimport *
-from renpy.pygame.rwobject cimport to_rwops
+from .sdl cimport *
+from .sdl_image cimport *
+from .surface cimport *
+from .iostream cimport to_sdl_iostream
 
-from renpy.pygame.error import error
+from .error import error
 
 import sys
 import os
-import renpy.pygame
 
 
 cdef int image_formats = 0
 
 def init():
-    # Attempt to initialize everything. Only fail loudly if all formats fail
-    global image_formats
-    image_formats = IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP | IMG_INIT_JXL | IMG_INIT_AVIF)
-    if image_formats == 0:
-        raise error()
+    pass
 
 init()
 
-# Make it possible for python to check individual formats
-INIT_JPG = IMG_INIT_JPG
-INIT_PNG = IMG_INIT_PNG
-INIT_TIF = IMG_INIT_TIF
-INIT_WEBP = IMG_INIT_WEBP
-INIT_JXL = IMG_INIT_JXL
-INIT_AVIF = IMG_INIT_AVIF
-
-def has_init(int flags):
-    return (flags & image_formats) == flags
-
 def quit(): # @ReservedAssignment
-    IMG_Quit()
+    pass
 
 cdef process_namehint(namehint):
     # Accepts "foo.png", ".png", or "png"
@@ -78,8 +63,9 @@ def load(fi, namehint="", size=None):
     """
 
     cdef SDL_Surface *img
+    cdef SDL_Surface *new_surface
 
-    cdef SDL_RWops *rwops
+    cdef SDL_IOStream *iostream
     cdef char *ftype
 
     cdef int width
@@ -90,11 +76,11 @@ def load(fi, namehint="", size=None):
         if fi.lower().endswith('.tga'):
             namehint = "TGA"
 
-    rwops = to_rwops(fi)
+    iostream = to_sdl_iostream(fi)
 
     if namehint == "":
         with nogil:
-            img = IMG_Load_RW(rwops, 1)
+            img = IMG_Load_IO(iostream, 0)
 
     else:
         namehint = process_namehint(namehint)
@@ -104,46 +90,27 @@ def load(fi, namehint="", size=None):
             width, height = size
 
             with nogil:
-                img = IMG_LoadSizedSVG_RW(rwops, width, height)
-
-            SDL_RWclose(rwops)
+                img = IMG_LoadSizedSVG_IO(iostream, width, height)
 
         else:
 
             with nogil:
-                img = IMG_LoadTyped_RW(rwops, 1, ftype)
+                img = IMG_LoadTyped_IO(iostream, 0, ftype)
+
+    SDL_CloseIO(iostream)
 
     if img == NULL:
         raise error()
 
+    if img.format != SDL_PIXELFORMAT_RGBA32:
+        new_surface = SDL_ConvertSurface(img, SDL_PIXELFORMAT_RGBA32)
+        SDL_DestroySurface(img)
+        img = new_surface
+
     cdef Surface surf = Surface(())
     surf.take_surface(img)
 
-    if img.format.BitsPerPixel == 32:
-        return surf
-
-    cdef int n = 0
-    has_alpha = False
-
-    if img.format.Amask:
-        has_alpha = True
-    elif (img.format.format >> 24) & SDL_PIXELTYPE_INDEX1:
-        has_alpha = True
-    elif img.format.palette != NULL:
-        # Check for non-opaque palette colors.
-        while n < img.format.palette.ncolors:
-            if img.format.palette.colors[n].a != 255:
-                has_alpha = True
-                break
-            n += 1
-
-    try:
-        if has_alpha:
-            return surf.convert_alpha()
-        else:
-            return surf.convert()
-    except error:
-        return surf
+    return surf
 
 cdef extern from "pygame/write_jpeg.h":
     int Pygame_SDL2_SaveJPEG(SDL_Surface *, char *, int) nogil
@@ -159,21 +126,19 @@ def save(Surface surface not None, filename, compression=-1):
     ext = os.path.splitext(filename)[1]
     ext = ext.upper()
     ext = ext.encode("utf-8")
-    err = 0
+    cdef int err = 0
 
     utf8_filename = filename.encode("utf-8")
 
     cdef char *fn = utf8_filename
-    cdef SDL_RWops *rwops
     cdef int compression_level = compression
 
     if ext == b'.PNG':
         with nogil:
             err = Pygame_SDL2_SavePNG(fn, surface.surface, compression_level)
     elif ext == b'.BMP':
-        rwops = to_rwops(filename, "wb")
         with nogil:
-            err = SDL_SaveBMP_RW(surface.surface, rwops, 1)
+            err = not SDL_SaveBMP(surface.surface, fn)
     elif ext == b".JPG" or ext == b".JPEG":
         with nogil:
             err = Pygame_SDL2_SaveJPEG(surface.surface, fn, compression_level)

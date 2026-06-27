@@ -114,7 +114,7 @@ def start(basedir, gamedir):
 
     global window
 
-    bounds = pygame.display.get_display_bounds(0)
+    bounds = pygame.display.get_display_bounds()[0]
 
     sw, sh = presplash.get_size()
     x = bounds[0] + bounds[2] // 2 - sw // 2
