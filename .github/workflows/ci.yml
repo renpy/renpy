@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       max-parallel: 5
     env:
@@ -28,8 +28,8 @@ jobs:
         python-version: '3.12'
     - run: |
         sudo apt install python3-dev libassimp-dev libavcodec-dev libavformat-dev \
-        libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
-        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config
+        libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev \
+        libsdl3-dev libsdl3-image-dev libjpeg-dev pkg-config
     - name: Install the latest version of uv
       uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
     - run: uv sync
