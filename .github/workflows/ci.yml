@@ -18,6 +18,7 @@ jobs:
       # RENPY_LOG_TO_STDOUT: "1"
       # RENPY_LOG_EVENTS: "1"
       SDL_AUDIODRIVER: dummy
+      SDL_VIDEODRIVER: dummy
     steps:
     - uses: actions/checkout@v7
     - name: Run sccache-cache
