@@ -18,7 +18,6 @@ jobs:
       # RENPY_LOG_TO_STDOUT: "1"
       # RENPY_LOG_EVENTS: "1"
       SDL_AUDIODRIVER: dummy
-      SDL_VIDEODRIVER: dummy
     steps:
     - uses: actions/checkout@v7
     - name: Run sccache-cache
@@ -30,12 +29,12 @@ jobs:
     - run: |
         sudo apt install python3-dev libassimp-dev libavcodec-dev libavformat-dev \
         libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev \
-        libsdl3-dev libsdl3-image-dev libjpeg-dev pkg-config
+        libsdl3-dev libsdl3-image-dev libjpeg-dev pkg-config xvfb
     - name: Install the latest version of uv
       uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
     - run: uv sync
     - run: ./run.sh --build
-    - run: ./run.sh ./testcases/game test
+    - run: xvfb-run ./run.sh ./testcases/game test
     - run: |
         cd sphinx
-        ./build.sh
+        xvfb-run ./build.sh
