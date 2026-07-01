@@ -64,7 +64,7 @@ def report(msg, *args):
     else:
         out = ""
 
-    out += msg % args
+    out += (msg % args) if args else msg
     print("")
     print(out)
 
