@@ -131,6 +131,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    fetch
    screenshot
    clipboard
+   age
 
 
 .. toctree::
