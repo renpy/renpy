@@ -319,7 +319,7 @@ $synth.Speak('{text}')
 
         self.process = subprocess.Popen([
             "powershell", "-NoProfile", "-Command", script,
-        ])
+        ], creationflags=subprocess.CREATE_NO_WINDOW)
         process = self.process
 
     def stop(self):
@@ -347,8 +347,9 @@ foreach ($v in $synth.GetInstalledVoices()) {
 
         try:
             output = subprocess.check_output(
-                ["powershell", "-NoProfile", "-Command", script],
+                ["powershell", "-NoProfile",  "-Command", script],
                 universal_newlines=True,
+                creationflags=subprocess.CREATE_NO_WINDOW,
             )
         except Exception:
             return []
