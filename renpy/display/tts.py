@@ -173,11 +173,31 @@ class AndroidTTS(object):
         PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
         self.TextToSpeech = autoclass("android.speech.tts.TextToSpeech")
         self.tts = self.TextToSpeech(PythonSDLActivity.mActivity, None)
+        self._voices = None
+
+    @property
+    def voices(self):
+        if self._voices is not None:
+            return self._voices
+
+        self._voices = {}
+
+        for voice in self.tts.getVoices():
+            self.voices[voice.getName()] = voice
+
+        return self._voices
 
     def is_speaking(self):
         return self.tts.isSpeaking()
 
     def speak(self, s):
+        voice = get_voice()
+
+        if voice in self.voices:
+            self.tts.setVoice(self.voices[voice])
+        else:
+            self.tts.setVoice(self.tts.getDefaultVoice())
+
         self.tts.speak(s, self.TextToSpeech.QUEUE_FLUSH, None)
 
     def stop(self):
@@ -188,12 +208,7 @@ class AndroidTTS(object):
         Returns a list of available TTS voices on Android.
         """
 
-        voices = []
-
-        for voice in self.tts.getVoices():
-            voices.append(voice.getName())
-
-        return voices
+        return list(sorted(self.voices.keys()))
 
 
 class AppleTTS(object):
