@@ -159,10 +159,7 @@ class LinuxTTS(object):
 
             name = parts[3].strip()
 
-            language = parts[4].strip()
-            language = language.lstrip("(").rstrip(")").replace("  ", " ").strip()
-
-            voices.append({"name": name, "language": language})
+            voices.append(name)
 
         return voices
 
@@ -192,11 +189,7 @@ class AndroidTTS(object):
         voices = []
 
         for voice in self.tts.getVoices():
-            name = voice.getName()
-            locale = voice.getLocale()
-            language = locale.getDisplayName()
-
-            voices.append({"name": name, "language": language})
+            voices.append(voice.getName())
 
         return voices
 
@@ -246,10 +239,7 @@ class AppleTTS(object):
         voices = []
 
         for voice in self.AVSpeechSynthesisVoice.speechVoices():
-            name = voice.name()
-            language = voice.language()
-
-            voices.append({"name": name, "language": language})
+            voices.append(voice.name())
 
         return voices
 
@@ -333,8 +323,7 @@ $synth.Speak('{text}')
 Add-Type -AssemblyName System.Speech
 $synth = New-Object System.Speech.Synthesis.SpeechSynthesizer
 foreach ($v in $synth.GetInstalledVoices()) {
-    $info = $v.VoiceInfo
-    Write-Output ($info.Name + "|" + $info.Culture.DisplayName)
+    Write-Output $v.VoiceInfo.Name
 }
 """
 
@@ -346,21 +335,7 @@ foreach ($v in $synth.GetInstalledVoices()) {
         except Exception:
             return []
 
-        voices = []
-
-        for line in output.splitlines():
-            line = line.strip()
-
-            if not line:
-                continue
-
-            if "|" in line:
-                name, language = line.split("|", 1)
-                voices.append({"name": name.strip(), "language": language.strip()})
-            else:
-                voices.append({"name": line, "language": line})
-
-        return voices
+        return [line.strip() for line in output.splitlines() if line.strip()]
 
 
 platform_tts = None  # The platform-specific TTS object.
@@ -476,12 +451,10 @@ def get_tts_voices():
     """
     :doc: self_voicing
 
-    Returns a list of available text-to-speech voices that can be used for
-    self-voicing. Each voice is a dict with ``"name"`` and ``"language"``
-    keys. The ``"name"`` can be assigned to :var:`config.tts_voice`.
-
-    Returns an empty list if no voices are available, or if the platform
-    does not support voice enumeration.
+    Returns a list of available text-to-speech voice names that can be
+    assigned to :var:`config.tts_voice`. Returns an empty list if no
+    voices are available, or if the platform does not support voice
+    enumeration.
     """
 
     global _tts_voices_cache
