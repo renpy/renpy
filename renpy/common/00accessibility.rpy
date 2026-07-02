@@ -176,7 +176,6 @@ screen _accessibility_audio():
                     action Preference("self voicing volume drop", 0.5)
 
         vbox:
-
             label _("Mono Audio")
 
             textbutton _("Enable"):
@@ -186,6 +185,18 @@ screen _accessibility_audio():
             textbutton _("Disable"):
                 action Preference("mono audio", "disable")
                 style_suffix "radio_button"
+
+            label _("Self-Voicing Voice")
+
+            textbutton _("Default"):
+                action Preference("tts voice", None)
+                style_suffix "radio_button"
+
+            for voice in renpy.get_tts_voices():
+                textbutton "[voice!q]":
+                    action Preference("tts voice", voice)
+                    style_suffix "radio_button"
+
 
 screen _accessibility_text():
 
@@ -271,36 +282,37 @@ screen _accessibility():
             spacing gui._scale(10)
             xfill True
 
-        viewport:
-            scrollbars "vertical"
-            mousewheel True
-            viewport_yfill False
-
-
-            vbox:
+        vbox:
+            hbox:
+                xfill True
 
                 hbox:
-                    xfill True
+                    spacing gui._scale(25)
 
-                    hbox:
-                        spacing gui._scale(25)
-
-                        textbutton _("Self-Voicing and Audio"):
-                            style_suffix "big_radio_button"
-                            action SetScreenVariable("page", "audio")
-
-                        textbutton _("Text"):
-                            style_suffix "big_radio_button"
-                            action SetScreenVariable("page", "text")
-
-                    textbutton _("Return"):
-                        action Hide("_accessibility")
+                    textbutton _("Self-Voicing and Audio"):
                         style_suffix "big_radio_button"
-                        xalign 1.0
+                        action SetScreenVariable("page", "audio")
 
-                if page == "audio":
-                    use _accessibility_audio()
-                elif page == "text":
-                    use _accessibility_text()
+                    textbutton _("Text"):
+                        style_suffix "big_radio_button"
+                        action SetScreenVariable("page", "text")
+
+                textbutton _("Return"):
+                    action Hide("_accessibility")
+                    style_suffix "big_radio_button"
+                    xalign 1.0
+
+            viewport:
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                viewport_yfill False
+
+                vbox:
+
+                    if page == "audio":
+                        use _accessibility_audio()
+                    elif page == "text":
+                        use _accessibility_text()
 
         text _("The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was.")

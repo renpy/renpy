@@ -257,6 +257,8 @@ init -1500 python:
         * Preference("mono audio", "disable") - Disables forcing audio to be downmixed to mono.
         * Preference("mono audio", "toggles") - Toggles mono audio.
 
+        * Preference("tts voice", "<voice>") - Sets the voice to use for text-to-speech. The voice must be one of the voices found in renpy.get_tts_voices, or it will not be used.
+
         Values that can be used with bars are:
 
         * Preference("text speed")
@@ -615,6 +617,8 @@ init -1500 python:
 
                 return [ SetField(_preferences, "font_kerning", value), _DisplayReset() ]
 
+            elif name == _("tts voice"):
+                return SetField(_preferences, "tts_voice", value)
 
             elif name == _("reset"):
                 return __ResetPreferences()

@@ -231,6 +231,9 @@ Preference("mono_audio", False)
 # Should font kerning be adjustedt?
 Preference("font_kerning", 0.0)
 
+# The voice to use for tts.
+Preference("tts_voice", None, (str, type(None)))
+
 
 class Preferences(renpy.object.Object):
     """
@@ -288,6 +291,7 @@ class Preferences(renpy.object.Object):
         restore_window_position = True
         mono_audio = False
         font_kerning = 0.0
+        tts_voice = None
 
     def init(self):
         """

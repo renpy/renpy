@@ -66,7 +66,8 @@ def periodic():
     if process is not None:
         if process.poll() is not None:
             if process.returncode:
-                if renpy.config.tts_voice is not None:
+                if get_voice() is not None:
+                    renpy.game.preferences.tts_voice = None
                     renpy.config.tts_voice = None
                     renpy.config.tts_function(last_spoken)
 
@@ -116,8 +117,9 @@ class LinuxTTS(object):
 
         cmd = ["espeak", "-a", fsencode(str(amplitude_100))]
 
-        if renpy.config.tts_voice is not None:
-            cmd.extend(["-v", fsencode(renpy.config.tts_voice)])
+        voice = get_voice()
+        if voice is not None:
+            cmd.extend(["-v", fsencode(voice)])
 
         cmd.append(fsencode(s))
 
@@ -217,14 +219,15 @@ class AppleTTS(object):
         amplitude = renpy.game.preferences.get_mixer("voice")
         utterance.setVolume_(float(amplitude))
 
-        if renpy.config.tts_voice is not None:
-            voice = self.AVSpeechSynthesisVoice.voiceWithIdentifier_(renpy.config.tts_voice)
+        voice = get_voice()
+        if voice is not None:
+            av_voice = self.AVSpeechSynthesisVoice.voiceWithIdentifier_(voice)
 
-            if voice is None:
-                voice = self.AVSpeechSynthesisVoice.voiceWithLanguage_(renpy.config.tts_voice)
+            if av_voice is None:
+                av_voice = self.AVSpeechSynthesisVoice.voiceWithLanguage_(voice)
 
-            if voice is not None:
-                utterance.setVoice_(voice)
+            if av_voice is not None:
+                utterance.setVoice_(av_voice)
 
         self.synth.speakUtterance_(utterance)
 
@@ -277,7 +280,7 @@ class WindowsTTS(object):
         amplitude = renpy.game.preferences.get_mixer("voice")
         amplitude_100 = int(amplitude * 100)
 
-        voice = renpy.config.tts_voice
+        voice = get_voice()
 
         # Escape single quotes in the text for PowerShell.
         s = s.replace("'", "''")
@@ -475,6 +478,27 @@ def get_tts_voices():
 
     _tts_voices_cache = voices
     return voices
+
+
+def get_voice():
+    """
+    :undocumented:
+
+    Returns the TTS voice to use. If :var:`preferences.tts_voice` is set,
+    it is used. Otherwise, :var:`config.tts_voice` is used as a fallback.
+    If the selected voice is not in the list of available voices, returns None.
+    """
+
+    voice = renpy.game.preferences.tts_voice
+
+    if voice is None:
+        voice = renpy.config.tts_voice
+
+    if voice is not None:
+        if voice not in get_tts_voices():
+            return None
+
+    return voice
 
 
 def apply_substitutions(s):
