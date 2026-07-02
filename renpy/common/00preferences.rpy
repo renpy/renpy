@@ -289,7 +289,7 @@ init -1500 python:
 
         name = name.lower()
 
-        if isinstance(value, str):
+        if isinstance(value, str) and name != "tts voice":
             value = value.lower()
 
         def get():

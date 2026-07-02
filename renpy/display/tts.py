@@ -210,6 +210,24 @@ class AppleTTS(object):
 
         self.synth = AVSpeechSynthesizer.alloc().init()
 
+        self.voices: dict[str, str] = { }
+
+        speech_voices = self.AVSpeechSynthesisVoice.speechVoices()
+        count = speech_voices.count
+
+        for i in range(count):
+            voice = speech_voices.objectAtIndex_(i)
+
+            name = voice.name.UTF8String()
+            if isinstance(name, bytes):
+                name = name.decode("utf-8")
+
+            identifier = voice.identifier.UTF8String()
+            if isinstance(identifier, bytes):
+                identifier = identifier.decode("utf-8")
+
+            self.voices[name] = identifier
+
     def is_speaking(self):
         return self.synth.isSpeaking()
 
@@ -220,8 +238,11 @@ class AppleTTS(object):
         utterance.setVolume_(float(amplitude))
 
         voice = get_voice()
+
         if voice is not None:
-            av_voice = self.AVSpeechSynthesisVoice.voiceWithIdentifier_(voice)
+
+            identifier = self.voices.get(voice, voice)
+            av_voice = self.AVSpeechSynthesisVoice.voiceWithIdentifier_(identifier)
 
             if av_voice is None:
                 av_voice = self.AVSpeechSynthesisVoice.voiceWithLanguage_(voice)
@@ -239,13 +260,7 @@ class AppleTTS(object):
         Returns a list of available TTS voices on iOS/macOS via AVFoundation.
         """
 
-        voices = []
-
-        for voice in self.AVSpeechSynthesisVoice.speechVoices():
-            voices.append(voice.name())
-
-        return voices
-
+        return list(self.voices.keys())
 
 class WindowsTTS(object):
     """
@@ -444,7 +459,6 @@ def init():
     except Exception as e:
         renpy.display.log.write("Failed to initialize TTS.")
         renpy.display.log.exception()
-
 
 # Cache for get_tts_voices.
 _tts_voices_cache = None
