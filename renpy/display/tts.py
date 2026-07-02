@@ -74,7 +74,97 @@ def periodic():
 
 
 def is_active():
+    if platform_tts is not None:
+        return platform_tts.is_speaking()
+
     return process is not None
+
+
+class LinuxTTS(object):
+    """
+    TTS backend for Linux using espeak via subprocess.
+    """
+
+    def __init__(self):
+        self.process = None
+
+    def is_speaking(self):
+        return self.process is not None
+
+    def speak(self, s):
+        global process
+
+        # Stop any existing speech.
+        if self.process is not None:
+            try:
+                self.process.terminate()
+                self.process.wait()
+            except Exception:
+                pass
+
+        self.process = None
+        process = None
+
+        s = s.strip()
+
+        if not s:
+            return
+
+        fsencode = renpy.exports.fsencode
+        amplitude = renpy.game.preferences.get_mixer("voice")
+        amplitude_100 = int(amplitude * 100)
+
+        cmd = ["espeak", "-a", fsencode(str(amplitude_100))]
+
+        if renpy.config.tts_voice is not None:
+            cmd.extend(["-v", fsencode(renpy.config.tts_voice)])
+
+        cmd.append(fsencode(s))
+
+        self.process = subprocess.Popen(cmd)
+        process = self.process
+
+    def stop(self):
+        if self.process is not None:
+            try:
+                self.process.terminate()
+                self.process.wait()
+            except Exception:
+                pass
+
+            self.process = None
+
+    def get_tts_voices(self):
+        """
+        Returns a list of available TTS voices via espeak.
+        """
+
+        try:
+            output = subprocess.check_output(["espeak", "--voices"], universal_newlines=True)
+        except Exception:
+            return []
+
+        voices = []
+
+        for line in output.splitlines():
+            line = line.strip()
+
+            if not line or line.startswith("Pty") or line.startswith("---"):
+                continue
+
+            parts = line.split(None, 4)
+
+            if len(parts) < 5:
+                continue
+
+            name = parts[3].strip()
+
+            language = parts[4].strip()
+            language = language.lstrip("(").rstrip(")").replace("  ", " ").strip()
+
+            voices.append({"name": name, "language": language})
+
+        return voices
 
 
 class AndroidTTS(object):
@@ -85,11 +175,30 @@ class AndroidTTS(object):
         self.TextToSpeech = autoclass("android.speech.tts.TextToSpeech")
         self.tts = self.TextToSpeech(PythonSDLActivity.mActivity, None)
 
+    def is_speaking(self):
+        return self.tts.isSpeaking()
+
     def speak(self, s):
         self.tts.speak(s, self.TextToSpeech.QUEUE_FLUSH, None)
 
     def stop(self):
         self.tts.stop()
+
+    def get_tts_voices(self):
+        """
+        Returns a list of available TTS voices on Android.
+        """
+
+        voices = []
+
+        for voice in self.tts.getVoices():
+            name = voice.getName()
+            locale = voice.getLocale()
+            language = locale.getDisplayName()
+
+            voices.append({"name": name, "language": language})
+
+        return voices
 
 
 class AppleTTS(object):
@@ -101,37 +210,159 @@ class AppleTTS(object):
 
         load_framework("/System/Library/Frameworks/AVFoundation.framework")
         self.AVSpeechUtterance = autoclass("AVSpeechUtterance")
+        self.AVSpeechSynthesisVoice = autoclass("AVSpeechSynthesisVoice")
         AVSpeechSynthesizer = autoclass("AVSpeechSynthesizer")
 
         self.synth = AVSpeechSynthesizer.alloc().init()
 
+    def is_speaking(self):
+        return self.synth.isSpeaking()
+
     def speak(self, s):
         utterance = self.AVSpeechUtterance.alloc().initWithString_(self.objc_str(s))
+
+        amplitude = renpy.game.preferences.get_mixer("voice")
+        utterance.setVolume_(float(amplitude))
+
+        if renpy.config.tts_voice is not None:
+            voice = self.AVSpeechSynthesisVoice.voiceWithIdentifier_(renpy.config.tts_voice)
+
+            if voice is None:
+                voice = self.AVSpeechSynthesisVoice.voiceWithLanguage_(renpy.config.tts_voice)
+
+            if voice is not None:
+                utterance.setVoice_(voice)
+
         self.synth.speakUtterance_(utterance)
 
     def stop(self):
         self.synth.stopSpeakingAtBoundary_(0)  # AVSpeechBoundaryImmediate
 
+    def get_tts_voices(self):
+        """
+        Returns a list of available TTS voices on iOS/macOS via AVFoundation.
+        """
 
-platform_tts = None  # The platform-specific TTS object, used on Android or iOS.
+        voices = []
+
+        for voice in self.AVSpeechSynthesisVoice.speechVoices():
+            name = voice.name()
+            language = voice.language()
+
+            voices.append({"name": name, "language": language})
+
+        return voices
+
+
+class WindowsTTS(object):
+    """
+    TTS backend for Windows using SAPI via wscript.
+    """
+
+    def __init__(self):
+        self.process = None
+        self.say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
+
+    def is_speaking(self):
+        return self.process is not None
+
+    def speak(self, s):
+        global process
+
+        # Stop any existing speech.
+        if self.process is not None:
+            try:
+                self.process.terminate()
+                self.process.wait()
+            except Exception:
+                pass
+
+        self.process = None
+        process = None
+
+        s = s.strip()
+
+        if not s:
+            return
+
+        fsencode = renpy.exports.fsencode
+        amplitude = renpy.game.preferences.get_mixer("voice")
+        amplitude_100 = int(amplitude * 100)
+
+        if renpy.config.tts_voice is None:
+            voice = "default voice"
+        else:
+            voice = renpy.config.tts_voice
+
+        s = s.replace('"', "")
+        self.process = subprocess.Popen([
+            "wscript",
+            fsencode(self.say_vbs),
+            fsencode(s),
+            fsencode(voice),
+            fsencode(str(amplitude_100)),
+        ])
+        process = self.process
+
+    def stop(self):
+        if self.process is not None:
+            try:
+                self.process.terminate()
+                self.process.wait()
+            except Exception:
+                pass
+
+            self.process = None
+
+    def get_tts_voices(self):
+        """
+        Returns a list of SAPI TTS voices available on Windows.
+        """
+
+        script = """
+Add-Type -AssemblyName System.Speech
+$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer
+foreach ($v in $synth.GetInstalledVoices()) {
+    $info = $v.VoiceInfo
+    Write-Output ($info.Name + "|" + $info.Culture.DisplayName)
+}
+"""
+
+        try:
+            output = subprocess.check_output(
+                ["powershell", "-NoProfile", "-Command", script],
+                universal_newlines=True,
+            )
+        except Exception:
+            return []
+
+        voices = []
+
+        for line in output.splitlines():
+            line = line.strip()
+
+            if not line:
+                continue
+
+            if "|" in line:
+                name, language = line.split("|", 1)
+                voices.append({"name": name.strip(), "language": language.strip()})
+            else:
+                voices.append({"name": line, "language": line})
+
+        return voices
+
+
+platform_tts = None  # The platform-specific TTS object.
 
 
 def default_tts_function(s):
     """
-    Default function which speaks messages using an os-specific method.
+    Default function which speaks messages using the platform-specific TTS object.
     """
 
-    global process
-
-    # Stop the existing process.
-    if process is not None:
-        try:
-            process.terminate()
-            process.wait()
-        except Exception:
-            pass
-
-    process = None
+    if platform_tts is not None:
+        platform_tts.stop()
 
     s = s.strip()
 
@@ -150,54 +381,13 @@ def default_tts_function(s):
         renpy.exports.restart_interaction()
         return
 
-    fsencode = renpy.exports.fsencode
-
-    amplitude = renpy.game.preferences.get_mixer("voice")
-    amplitude_100 = int(amplitude * 100)
-
     if "RENPY_TTS_COMMAND" in os.environ:
+        global process
+        fsencode = renpy.exports.fsencode
         process = subprocess.Popen([os.environ["RENPY_TTS_COMMAND"], fsencode(s)])
+        return
 
-    elif renpy.linux:
-        cmd = ["espeak", "-a", fsencode(str(amplitude_100))]
-
-        if renpy.config.tts_voice is not None:
-            cmd.extend(["-v", fsencode(renpy.config.tts_voice)])
-
-        cmd.append(fsencode(s))
-
-        process = subprocess.Popen(cmd)
-
-    elif renpy.macintosh:
-        s = "[[volm {:.02f}]]".format(amplitude) + s
-
-        if renpy.config.tts_voice is None:
-            process = subprocess.Popen(["say", fsencode(s)])
-        else:
-            process = subprocess.Popen(["say", "-v", fsencode(renpy.config.tts_voice), fsencode(s)])
-
-    elif renpy.windows:
-        if renpy.config.tts_voice is None:
-            voice = "default voice"  # something that is unlikely to match.
-        else:
-            voice = renpy.config.tts_voice
-
-        say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
-        s = s.replace('"', "")
-        process = subprocess.Popen([
-            "wscript",
-            fsencode(say_vbs),
-            fsencode(s),
-            fsencode(voice),
-            fsencode(str(amplitude_100)),
-        ])
-
-    elif renpy.emscripten and renpy.config.webaudio:
-        from renpy.audio.webaudio import call
-
-        call("tts", s, amplitude)
-
-    elif platform_tts is not None:
+    if platform_tts is not None:
         platform_tts.speak(s)
 
 
@@ -251,12 +441,57 @@ def init():
         if renpy.android:
             platform_tts = AndroidTTS()
 
-        if renpy.ios:
+        elif renpy.ios:
             platform_tts = AppleTTS()
+
+        elif renpy.macintosh:
+            platform_tts = AppleTTS()
+
+        elif renpy.linux:
+            platform_tts = LinuxTTS()
+
+        elif renpy.windows:
+            platform_tts = WindowsTTS()
 
     except Exception as e:
         renpy.display.log.write("Failed to initialize TTS.")
         renpy.display.log.exception()
+
+
+# Cache for get_tts_voices.
+_tts_voices_cache = None
+
+
+def get_tts_voices():
+    """
+    :doc: self_voicing
+
+    Returns a list of available text-to-speech voices that can be used for
+    self-voicing. Each voice is a dict with ``"name"`` and ``"language"``
+    keys. The ``"name"`` can be assigned to :var:`config.tts_voice`.
+
+    Returns an empty list if no voices are available, or if the platform
+    does not support voice enumeration.
+    """
+
+    global _tts_voices_cache
+
+    if _tts_voices_cache is not None:
+        return _tts_voices_cache
+
+    try:
+
+        if platform_tts is not None:
+            voices = platform_tts.get_tts_voices()
+
+        else:
+            voices = []
+
+    except Exception:
+        voices = []
+
+    _tts_voices_cache = voices
+    return voices
 
 
 def apply_substitutions(s):

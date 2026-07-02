@@ -139,6 +139,7 @@ from renpy.display.tts import (
     speak as alt,
     speak_extra_alt as speak_extra_alt,
     stop_tts as stop_tts,
+    get_tts_voices as get_tts_voices,
 )
 
 from renpy.display.video import (
