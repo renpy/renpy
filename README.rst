@@ -206,7 +206,8 @@ acceptable.
 
 Our use of AI is intended to not require disclosure in the
 `Steam Content Survey <https://partner.steamgames.com/doc/gettingstarted/contentsurvey#5>`_. Specifically, we
-don't use diffusion models or other techniques to generate game content consumed by players.
+don't use diffusion models or other techniques to generate game content consumed by players, and we do not require
+creators to use any AI tools, or provide any such tools for creators to use.
 
 As a special case, we allow machine translation of system messages when there is no human translator for the language.
 When a human translator becomes available, their work takes precedence. This exception allows system messages to be
