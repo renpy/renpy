@@ -48,11 +48,11 @@ def nogil_copy(src, dest):
     cdef SDL_Surface *dst_surf
 
     src_surf = PySurface_AsSurface(src)
-    dest_surf = PySurface_AsSurface(dest)
+    dst_surf = PySurface_AsSurface(dest)
 
     with nogil:
         SDL_SetSurfaceBlendMode(src_surf, SDL_BLENDMODE_NONE)
-        SDL_BlitSurface(src_surf, NULL, dest_surf, NULL)
+        SDL_BlitSurface(src_surf, NULL, dst_surf, NULL)
 
 
 def get_poi(state):
