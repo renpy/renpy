@@ -256,12 +256,11 @@ class AppleTTS(object):
 
 class WindowsTTS(object):
     """
-    TTS backend for Windows using SAPI via wscript.
+    TTS backend for Windows using SAPI via PowerShell.
     """
 
     def __init__(self):
         self.process = None
-        self.say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
 
     def is_speaking(self):
         return self.process is not None
@@ -285,22 +284,33 @@ class WindowsTTS(object):
         if not s:
             return
 
-        fsencode = renpy.exports.fsencode
         amplitude = renpy.game.preferences.get_mixer("voice")
         amplitude_100 = int(amplitude * 100)
 
-        if renpy.config.tts_voice is None:
-            voice = "default voice"
-        else:
-            voice = renpy.config.tts_voice
+        voice = renpy.config.tts_voice
 
-        s = s.replace('"', "")
+        # Escape single quotes in the text for PowerShell.
+        s = s.replace("'", "''")
+
+        if voice is not None:
+            voice = voice.replace("'", "''")
+            script = """
+Add-Type -AssemblyName System.Speech
+$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer
+$synth.Volume = {volume}
+try {{ $synth.SelectVoice('{voice}') }} catch {{ }}
+$synth.Speak('{text}')
+""".format(volume=amplitude_100, voice=voice, text=s)
+        else:
+            script = """
+Add-Type -AssemblyName System.Speech
+$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer
+$synth.Volume = {volume}
+$synth.Speak('{text}')
+""".format(volume=amplitude_100, text=s)
+
         self.process = subprocess.Popen([
-            "wscript",
-            fsencode(self.say_vbs),
-            fsencode(s),
-            fsencode(voice),
-            fsencode(str(amplitude_100)),
+            "powershell", "-NoProfile", "-Command", script,
         ])
         process = self.process
 
