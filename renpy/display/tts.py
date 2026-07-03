@@ -69,7 +69,6 @@ def periodic():
             if process.returncode:
                 if get_voice() is not None:
                     renpy.game.preferences.tts_voice = None
-                    renpy.config.tts_voice = None
                     renpy.config.tts_function(last_spoken)
 
             process = None
