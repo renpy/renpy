@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+import json
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
@@ -277,6 +278,7 @@ class AppleTTS(object):
 
         return list(self.voices.keys())
 
+
 class WindowsTTS(object):
     """
     TTS backend for Windows using SAPI via PowerShell.
@@ -372,6 +374,34 @@ foreach ($v in $synth.GetInstalledVoices()) {
         return [line.strip() for line in output.splitlines() if line.strip()]
 
 
+class WebTTS(object):
+    """
+    TTS backend for Web using the Web Audio API.
+    """
+
+    def is_speaking(self):
+        return False
+
+    def speak(self, s):
+        from renpy.audio.webaudio import call
+        amplitude = renpy.game.preferences.get_mixer("voice")
+
+        call("tts", s, amplitude, get_voice())
+
+    def stop(self):
+        from renpy.audio.webaudio import call
+        amplitude = renpy.game.preferences.get_mixer("voice")
+
+        call("tts", "", 1.0, get_voice())
+
+    def get_tts_voices(self):
+        from renpy.audio.webaudio import call_str
+
+        voices = call_str("get_tts_voices")
+        return json.loads(voices) if voices else []
+
+
+
 platform_tts = None  # The platform-specific TTS object.
 
 
@@ -417,16 +447,6 @@ def stop_tts():
     Stops any currently playing TTS.
     """
 
-    if renpy.emscripten and renpy.config.webaudio:
-        from renpy.audio.webaudio import call
-
-        call("tts", "", 1.0)
-        return
-
-    if platform_tts is not None:
-        platform_tts.stop()
-        return
-
     global process
     if process is not None:
         try:
@@ -436,6 +456,11 @@ def stop_tts():
             pass
 
         process = None
+
+    if platform_tts is not None:
+        platform_tts.stop()
+        return
+
 
 # A List of (regex, string) pairs.
 tts_substitutions = []
@@ -472,6 +497,9 @@ def init():
         elif renpy.windows:
             platform_tts = WindowsTTS()
 
+        elif renpy.emscripten and renpy.config.webaudio:
+            platform_tts = WebTTS()
+
     except Exception as e:
         renpy.display.log.write("Failed to initialize TTS.")
         renpy.display.log.exception()
@@ -505,6 +533,8 @@ def get_tts_voices():
 
     except Exception:
         voices = []
+
+    voices.sort(key=lambda v: v.lower())
 
     _tts_voices_cache = voices
     return voices

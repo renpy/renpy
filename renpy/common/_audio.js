@@ -774,15 +774,43 @@ renpyAudio.periodic = () => {
     }
 };
 
+/* A map from voice name to voice object. */
+let tts_voices = { };
 
-renpyAudio.tts = (s, v) => {
+renpyAudio.tts = (s, v, voice) => {
     v = v || 1.0;
 
     let u = new SpeechSynthesisUtterance(s);
     u.volume = v;
+
+    let speechVoice = tts_voices[voice];
+    if (speechVoice) {
+        u.voice = speechVoice;
+    }
+
     speechSynthesis.cancel();
     speechSynthesis.speak(u);
 };
+
+
+renpyAudio.update_tts_voices = () => {
+    tts_voices = {};
+    for (let v of speechSynthesis.getVoices()) {
+        let key = v.lang + ": " + v.name;
+        tts_voices[key] = v;
+    }
+}
+
+if (speechSynthesis) {
+    speechSynthesis.onvoiceschanged = renpyAudio.update_tts_voices;
+    renpyAudio.update_tts_voices();
+}
+
+
+renpyAudio.get_tts_voices = () => {
+    return JSON.stringify(Object.keys(tts_voices));
+}
+
 
 renpyAudio.can_play_types = (l) => {
     let a = document.createElement("audio");
@@ -798,6 +826,8 @@ renpyAudio.can_play_types = (l) => {
 
     return 1;
 }
+
+
 
 renpyAudio.set_video = (channel, video, loop, web_video_prompt) => {
     const c = get_channel(channel);
