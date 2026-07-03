@@ -1680,6 +1680,19 @@ scene_uses_tag_layer: bool = True
 If True, the scene statement will use the tag layer if a tag is known.
 """
 
+renamed_files: dict[str, str] = {
+    "dejavusans.ttf": "dejavusans.woff2",
+    "dejavusans-bold.ttf": "dejavusans-bold.woff2",
+    "twemojicolrv0.ttf": "twemojicolrv0.woff2",
+    "_opendyslexic3-regular.ttf": "_opendyslexic3-regular.woff2",
+}
+"""
+A map from file names to new file names. This is used to handle files that have been renamed. The keys must be
+lower-case.
+"""
+
+
+
 del os
 del collections
 

@@ -462,7 +462,6 @@ File I/O
     This gets its default value from the RENPY_OPEN_FILE_ENCODING
     environment variable.
 
-
 .. var:: config.special_directory_map = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ], ... }
 
     This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
@@ -470,6 +469,17 @@ File I/O
     of images and audiom see :var:`config.image_directories` and :var:`config.audio_directories`. New special
     directory names may be added in future versions of Ren'Py.
 
+.. var:: config.renamed_files = { ... }
+
+    A map from file names to new file names. When Ren'Py looks for a file by
+    one of the keys in this dictionary, it will instead look for the
+    corresponding value. This is useful for handling files that have been
+    renamed - for example, when font filenames change between versions of a
+    bundled font. The keys must be lower-case and use forward slashes as
+    path separators.
+
+    Ren'Py uses this to handle some renamed files internally, so creators should add to this dictionary rather than
+    replacing it entirely.
 
 History
 -------

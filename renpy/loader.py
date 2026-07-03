@@ -531,6 +531,9 @@ def load_core(name):
 
     name = lower_map.get(unicodedata.normalize("NFC", name.lower()), name)
 
+    if renamed := renpy.config.renamed_files.get(name.lower()):
+        return load_core(renamed)
+
     for i in file_open_callbacks:
         rv = i(name)
         if rv is not None:
@@ -726,6 +729,9 @@ def loadable_core(name):
 
     if name in loadable_cache:
         return loadable_cache[name]
+
+    if renamed := renpy.config.renamed_files.get(name.lower()):
+        return load_core(renamed)
 
     try:
         transfn(name)

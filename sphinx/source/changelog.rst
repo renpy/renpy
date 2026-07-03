@@ -218,6 +218,9 @@ The Persian translation of the Ren'Py tutorial has been updated.
 Features
 --------
 
+The new :var:`config.renamed_files` variable is a dictionary mapping file names to new file names, that can be
+used to allow files to be renamed on disk without requiring the old names to be changed.
+
 When defining styles used by :ref:`ruby text <ruby-text>` or :ref:`style text tags <style-text-tags>`, more
 style properties can be set to None to use the value from the parent text. As of this version, the following
 properties may be set to None: :propref:`antialias`, :propref:`axis`, :propref:`black_color`, :propref:`bold`,
