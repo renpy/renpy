@@ -24,11 +24,11 @@ text that comprises the game.
 Speech Synthesis
 ----------------
 
-Ren'Py generally uses speech synthesizers provided by the operating system and web browse.
+Ren'Py generally uses speech synthesizers provided by the operating system and web browser.
 Linux is the exception - the ``espeak-ng`` command must be installed for self-voicing
 to work on Linux.
 
-The voice may be selected through the accessibility menu, which uses the :func:`renpy.get_tts_voices` function tol
+The voice may be selected through the accessibility menu, which uses the :func:`renpy.get_tts_voices` function to
 list available voices and :func:`Preference` to set the voice. The precise list of available voices is platform
 and computer dependent.
 
@@ -141,8 +141,8 @@ Descriptive Text
 
 The :var:`config.tts_substitutions` variable can be used to substitute
 words in the text being spoken, to better control pronunciation. The
-:var:`config.tts_voice` variable can be used to select the voice used
-to speak text from the voices on a platform.
+voice can be selected through the accessibility menu (Shift+A). The voice is stored
+in :var:`preferences.tts_voice`.
 
 A self-voicing debug mode can be enabled by typing Shift+Alt+V. This will
 display the text that would be voiced on the screen for development
