@@ -551,9 +551,8 @@ def get_tts_voices():
     """
     :doc: self_voicing
 
-    Returns a list of available text-to-speech voice names that can be
-    assigned to :var:`config.tts_voice`. Returns an empty list if no
-    voices are available, or if the platform does not support voice
+    Returns a list of available text-to-speech voice names. Returns an
+    empty list if no voices are available, or if the platform does not support voice
     enumeration.
     """
 
@@ -584,14 +583,10 @@ def get_voice():
     :undocumented:
 
     Returns the TTS voice to use. If :var:`preferences.tts_voice` is set,
-    it is used. Otherwise, :var:`config.tts_voice` is used as a fallback.
-    If the selected voice is not in the list of available voices, returns None.
+    it is used. If the selected voice is not in the list of available voices, returns None.
     """
 
     voice = renpy.game.preferences.tts_voice
-
-    if voice is None:
-        voice = renpy.config.tts_voice
 
     if voice is not None:
         if voice not in get_tts_voices():

@@ -191,6 +191,12 @@ can then change it again.)
     If True, Ren'Py will mix stereo audio to mono before playing it. If False,
     stereo audio will be played normally.
 
+.. var:: preferences.tts_voice = None
+
+    The name of the TTS voice to use. If None, the default voice is used. The equivalent of the "tts voice"
+    preference. The precise set of voices available varies by platform, and computer within the platform.
+    For any given computer, :func:`renpy.get_tts_voices` returns possible values this can be set to.
+
 
 .. _mixer-defaults:
 

@@ -1536,13 +1536,6 @@ Self-Voicing / Text to Speech
     Will cause the string "Ren'Py is pronounced ren'py." to be voiced as if
     it were "Ren Pie is pronounced ren pie."
 
-.. var:: config.tts_voice = None
-
-    If not None, a string giving a non-default voice that is used to
-    play back text-to-speech for self voicing. The possible choices are
-    platform specific, and so this should be set in a platform-specific
-    manner. (It may make sense to change this in translations, as well.)
-
 
 Showing Images
 --------------
