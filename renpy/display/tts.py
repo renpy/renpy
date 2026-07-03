@@ -120,6 +120,9 @@ class LinuxTTS(object):
 
         voice = get_voice()
         if voice is not None:
+            # Voice format is "lang: name", extract the language for espeak.
+            if ": " in voice:
+                voice = voice.split(": ", 1)[0]
             cmd.extend(["-v", fsencode(voice)])
 
         cmd.append(fsencode(s))
@@ -160,9 +163,10 @@ class LinuxTTS(object):
             if len(parts) < 5:
                 continue
 
+            language = parts[1].strip()
             name = parts[3].strip()
 
-            voices.append(name)
+            voices.append("{}: {}".format(language, name))
 
         return voices
 
@@ -184,7 +188,11 @@ class AndroidTTS(object):
         self._voices = {}
 
         for voice in self.tts.getVoices():
-            self.voices[voice.getName()] = voice
+            locale = voice.getLocale()
+            language = locale.toString().replace("_", "-")
+            name = voice.getName()
+            key = "{}: {}".format(language, name)
+            self._voices[key] = voice
 
         return self._voices
 
@@ -194,8 +202,17 @@ class AndroidTTS(object):
     def speak(self, s):
         voice = get_voice()
 
-        if voice in self.voices:
-            self.tts.setVoice(self.voices[voice])
+        if voice is not None:
+            if voice in self.voices:
+                self.tts.setVoice(self.voices[voice])
+            else:
+                # Voice format is "lang-CC: name", try extracting just the name.
+                if ": " in voice:
+                    voice = voice.split(": ", 1)[1]
+                if voice in self.voices:
+                    self.tts.setVoice(self.voices[voice])
+                else:
+                    self.tts.setVoice(self.tts.getDefaultVoice())
         else:
             self.tts.setVoice(self.tts.getDefaultVoice())
 
@@ -209,7 +226,7 @@ class AndroidTTS(object):
         Returns a list of available TTS voices on Android.
         """
 
-        return list(sorted(self.voices.keys()))
+        return list(sorted(k for k in self.voices.keys() if ": " in k))
 
 
 class AppleTTS(object):
@@ -238,11 +255,16 @@ class AppleTTS(object):
             if isinstance(name, bytes):
                 name = name.decode("utf-8")
 
+            language = voice.language.UTF8String()
+            if isinstance(language, bytes):
+                language = language.decode("utf-8")
+
             identifier = voice.identifier.UTF8String()
             if isinstance(identifier, bytes):
                 identifier = identifier.decode("utf-8")
 
-            self.voices[name] = identifier
+            key = "{}: {}".format(language, name)
+            self.voices[key] = identifier
 
     def is_speaking(self):
         return self.synth.isSpeaking()
@@ -261,6 +283,9 @@ class AppleTTS(object):
             av_voice = self.AVSpeechSynthesisVoice.voiceWithIdentifier_(identifier)
 
             if av_voice is None:
+                # Voice format is "lang: name", extract the language.
+                if ": " in voice:
+                    voice = voice.split(": ", 1)[0]
                 av_voice = self.AVSpeechSynthesisVoice.voiceWithLanguage_(voice)
 
             if av_voice is not None:
@@ -318,6 +343,9 @@ class WindowsTTS(object):
         s = s.replace("'", "''")
 
         if voice is not None:
+            # Voice format is "lang: name", extract the name for SAPI.
+            if ": " in voice:
+                voice = voice.split(": ", 1)[1]
             voice = voice.replace("'", "''")
             script = """
 Add-Type -AssemblyName System.Speech
@@ -358,7 +386,7 @@ $synth.Speak('{text}')
 Add-Type -AssemblyName System.Speech
 $synth = New-Object System.Speech.Synthesis.SpeechSynthesizer
 foreach ($v in $synth.GetInstalledVoices()) {
-    Write-Output $v.VoiceInfo.Name
+    Write-Output ($v.VoiceInfo.Culture.Name + "|" + $v.VoiceInfo.Name)
 }
 """
 
@@ -371,7 +399,18 @@ foreach ($v in $synth.GetInstalledVoices()) {
         except Exception:
             return []
 
-        return [line.strip() for line in output.splitlines() if line.strip()]
+        voices = []
+        for line in output.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if "|" in line:
+                language, name = line.split("|", 1)
+                voices.append("{}: {}".format(language, name))
+            else:
+                voices.append(line)
+
+        return voices
 
 
 class WebTTS(object):
