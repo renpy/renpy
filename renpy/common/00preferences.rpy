@@ -618,7 +618,17 @@ init -1500 python:
                 return [ SetField(_preferences, "font_kerning", value), _DisplayReset() ]
 
             elif name == _("tts voice"):
-                return SetField(_preferences, "tts_voice", value)
+                if value is None:
+                    alt = _("voice [text]")
+                else:
+                    language, p, voice = value.rpartition(":")
+                    alt = __("voice ")
+                    for lp in language.split("-"):
+                        alt += " ".join(lp.upper()) + ", "
+                    alt += voice
+                    alt = f"{{voice={value}}}" + alt
+
+                return (SetField(_preferences, "tts_voice", value), alt)
 
             elif name == _("reset"):
                 return __ResetPreferences()

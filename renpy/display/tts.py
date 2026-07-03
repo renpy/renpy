@@ -67,7 +67,7 @@ def periodic():
     if process is not None:
         if process.poll() is not None:
             if process.returncode:
-                if get_voice() is not None:
+                if get_voice(last_spoken)[0] is not None:
                     renpy.game.preferences.tts_voice = None
                     renpy.config.tts_function(last_spoken)
 
@@ -95,6 +95,8 @@ class LinuxTTS(object):
     def speak(self, s):
         global process
 
+        voice, s = get_voice(s)
+
         # Stop any existing speech.
         if self.process is not None:
             try:
@@ -117,7 +119,6 @@ class LinuxTTS(object):
 
         cmd = ["espeak", "-a", fsencode(str(amplitude_100))]
 
-        voice = get_voice()
         if voice is not None:
             # Voice format is "lang: name", extract the language for espeak.
             if ": " in voice:
@@ -199,7 +200,7 @@ class AndroidTTS(object):
         return self.tts.isSpeaking()
 
     def speak(self, s):
-        voice = get_voice()
+        voice, s = get_voice(s)
 
         if voice is not None:
             if voice in self.voices:
@@ -269,12 +270,12 @@ class AppleTTS(object):
         return self.synth.isSpeaking()
 
     def speak(self, s):
+        voice, s = get_voice(s)
+
         utterance = self.AVSpeechUtterance.alloc().initWithString_(self.objc_str(s))
 
         amplitude = renpy.game.preferences.get_mixer("voice")
         utterance.setVolume_(float(amplitude))
-
-        voice = get_voice()
 
         if voice is not None:
 
@@ -317,6 +318,8 @@ class WindowsTTS(object):
     def speak(self, s):
         global process
 
+        voice, s = get_voice(s)
+
         # Stop any existing speech.
         if self.process is not None:
             try:
@@ -335,8 +338,6 @@ class WindowsTTS(object):
 
         amplitude = renpy.game.preferences.get_mixer("voice")
         amplitude_100 = int(amplitude * 100)
-
-        voice = get_voice()
 
         # Escape single quotes in the text for PowerShell.
         s = s.replace("'", "''")
@@ -421,16 +422,19 @@ class WebTTS(object):
         return False
 
     def speak(self, s):
+        voice, s = get_voice(s)
+
         from renpy.audio.webaudio import call
         amplitude = renpy.game.preferences.get_mixer("voice")
 
-        call("tts", s, amplitude, get_voice())
+        # This calls renpyAudio.tts, which is defined in renpy/common/_audio.js.
+        call("tts", s, amplitude, voice)
 
     def stop(self):
         from renpy.audio.webaudio import call
         amplitude = renpy.game.preferences.get_mixer("voice")
 
-        call("tts", "", 1.0, get_voice())
+        call("tts", "", 1.0, None)
 
     def get_tts_voices(self):
         from renpy.audio.webaudio import call_str
@@ -577,7 +581,9 @@ def get_tts_voices():
     return voices
 
 
-def get_voice():
+VOICE_RE = re.compile(r'{voice=([^}]+)}')
+
+def get_voice(text:str = ""):
     """
     :undocumented:
 
@@ -585,13 +591,19 @@ def get_voice():
     it is used. If the selected voice is not in the list of available voices, returns None.
     """
 
+    if m := VOICE_RE.search(text):
+        voice = m.group(1)
+        text = VOICE_RE.sub("", text)
+
+        if voice in get_tts_voices():
+            return voice, text
+
     voice = renpy.game.preferences.tts_voice
 
-    if voice is not None:
-        if voice not in get_tts_voices():
-            return None
+    if voice is not None and voice in get_tts_voices():
+            return voice, text
 
-    return voice
+    return None, text
 
 
 def apply_substitutions(s):
