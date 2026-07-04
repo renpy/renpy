@@ -193,7 +193,7 @@ can then change it again.)
 
 .. var:: preferences.tts_voice = None
 
-    The name of the TTS voice to use. If None, the default voice is used. The equivalent of the "tts voice"
+    The name of the self-voicing voice to use. If None, the default voice is used. The equivalent of the "self-voicing voice"
     preference. The precise set of voices available varies by platform, and computer within the platform.
     For any given computer, :func:`renpy.get_tts_voices` returns possible values this can be set to.
 

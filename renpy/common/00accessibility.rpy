@@ -189,12 +189,12 @@ screen _accessibility_audio():
             label _("Self-Voicing Voice")
 
             textbutton _("Default"):
-                action Preference("tts voice", None)
+                action Preference("self-voicing voice", None)
                 style_suffix "radio_button"
 
             for voice in renpy.get_tts_voices():
                 textbutton "[voice!q]":
-                    action Preference("tts voice", voice)
+                    action Preference("self-voicing voice", voice)
                     style_suffix "radio_button"
 
 

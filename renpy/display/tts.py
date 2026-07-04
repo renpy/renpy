@@ -142,7 +142,7 @@ class LinuxTTS(object):
 
     def get_tts_voices(self):
         """
-        Returns a list of available TTS voices via espeak.
+        Returns a list of available self-voicing voices via espeak.
         """
 
         try:
@@ -223,7 +223,7 @@ class AndroidTTS(object):
 
     def get_tts_voices(self):
         """
-        Returns a list of available TTS voices on Android.
+        Returns a list of available self-voicing voices on Android.
         """
 
         return list(sorted(k for k in self.voices.keys() if ": " in k))
@@ -298,7 +298,7 @@ class AppleTTS(object):
 
     def get_tts_voices(self):
         """
-        Returns a list of available TTS voices on iOS/macOS via AVFoundation.
+        Returns a list of available self-voicing voices on iOS/macOS via AVFoundation.
         """
 
         return list(self.voices.keys())
@@ -379,7 +379,7 @@ $synth.Speak('{text}')
 
     def get_tts_voices(self):
         """
-        Returns a list of SAPI TTS voices available on Windows.
+        Returns a list of SAPI self-voicing voices available on Windows.
         """
 
         script = """
@@ -587,7 +587,7 @@ def get_voice(text:str = ""):
     """
     :undocumented:
 
-    Returns the TTS voice to use. If :var:`preferences.tts_voice` is set,
+    Returns the self-voicing voice to use. If :var:`preferences.tts_voice` is set,
     it is used. If the selected voice is not in the list of available voices, returns None.
     """
 
