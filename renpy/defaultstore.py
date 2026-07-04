@@ -369,7 +369,7 @@ Color = renpy.color.Color
 color = renpy.color.Color
 
 # The RenpyPath class.
-RenpyPath = renpy.loader.RenpyPath
+RenpyPath = renpy.renpypath.RenpyPath
 
 # The default menu functions.
 menu = renpy.exports.display_menu

@@ -46,7 +46,7 @@ if PREFER_LOADER:
 class TraversableRenpyPath(importlib.resources.abc.Traversable, RenpyPath):
 
     def open(self, *args, **kwargs) -> "TraversableRenpyPath":
-        return self.open(*args, _tl=True, **kwargs)
+        return super().open(*args, _tl=True, **kwargs)
 
 
 class RenpyResourceReader(importlib.resources.abc.TraversableResources):

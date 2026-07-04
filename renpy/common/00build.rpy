@@ -27,6 +27,7 @@ init -1500 python in build:
     _constant = True
 
     from store import config, store
+    from renpypath import RenpyPath
 
     import sys, os
 
@@ -235,9 +236,21 @@ init -1500 python in build:
         Classifies files that match `pattern` into `file_list`, which can
         also be an archive name.
 
+        If the `pattern` is a :renpy_path:`RenpyPath`, either
+        the file it represents is added to the list or
+        the directory it represents and all its contents are added to the
+        file list
+
         If the name given as `file_list` doesn't exist as an archive or file
         list name, it is created and added to the set of valid file lists.
         """
+
+        if isinstance(pattern, RenpyPath):
+            path = pattern
+            pattern = str(path).replace('*', '[*]')
+            if path.is_dir():
+                pattern += '/**'
+
 
         base_patterns.append((pattern, make_file_lists(file_list)))
 

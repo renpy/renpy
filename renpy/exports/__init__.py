@@ -509,6 +509,12 @@ from renpy.exports.platformexports import (
     open_url,
 )
 
+from renpy.exports.renpypathexports import (
+    RenpyPath,
+    rpy_path,
+    rpyc_path,
+)
+
 from renpy.exports.predictexports import (
     cache_pin,
     cache_unpin,
@@ -653,6 +659,7 @@ if typing.TYPE_CHECKING:
     from . import persistentexports as persistentexports
     from . import platformexports as platformexports
     from . import predictexports as predictexports
+    from . import renpypathexports as renpypathexports
     from . import restartexports as restartexports
     from . import rollbackexports as rollbackexports
     from . import sayexports as sayexports
