@@ -258,7 +258,7 @@ init -1500 python:
         * Preference("mono audio", "toggles") - Toggles mono audio.
 
         * Preference("self voicing voice", "<voice>") - Sets the voice to use for text-to-speech. The voice must be one of the voices found in renpy.get_tts_voices, or it will not be used.
-        * Preference("self voicing speed", 2.0) - Sets the speed of the text-to-speech voice. This should be between 1.0 and 5.0, with 1.0 representing normal speed and 5.0 fastest (5x where supported).
+        * Preference("self voicing speed", 2.0) - Sets the speed of the text-to-speech voice. This should be between 1.0 and 3.0, and roughly represents how fast the speaking is.
 
         Values that can be used with bars are:
 
@@ -635,7 +635,7 @@ init -1500 python:
             elif name == _("self voicing speed"):
 
                 if value is None:
-                    return FieldValue(_preferences, "tts_speed", min=1.0, max=5.0, style="slider")
+                    return FieldValue(_preferences, "tts_speed", min=1.0, max=3.0, step=.125, style="slider", action=Function(renpy.display.tts.speak, _("self-voicing speed")))
 
                 return SetField(_preferences, "tts_speed", value)
 

@@ -284,7 +284,7 @@ class AppleTTS(object):
         utterance.setVolume_(float(amplitude))
 
         speed = renpy.game.preferences.tts_speed
-        utterance.setRate_(max(0.0, min(1.0, 0.5 + (speed - 1.0) / 8.0)))
+        utterance.setRate_(min(1.0, 0.5 + (speed - 1.0) / 4.0))
 
         if voice is not None:
 
@@ -349,7 +349,7 @@ class WindowsTTS(object):
         amplitude_100 = int(amplitude * 100)
 
         speed = renpy.game.preferences.tts_speed
-        rate = max(-10, min(10, int(2.5 * (speed - 1))))
+        rate = max(-10, min(10, int(5 * (speed - 1))))
 
         if voice is not None:
             # Voice format is "lang: name", extract the name for SAPI.
@@ -438,6 +438,9 @@ class WebTTS(object):
         from renpy.audio.webaudio import call
         amplitude = renpy.game.preferences.get_mixer("voice")
         speed = renpy.game.preferences.tts_speed
+
+        # Chrome has problems with speed > 2.0, so limit it.
+        speed = min(speed, 1.99)
 
         # This calls renpyAudio.tts, which is defined in renpy/common/_audio.js.
         call("tts", s, amplitude, speed, voice)
