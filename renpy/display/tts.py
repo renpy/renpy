@@ -117,7 +117,10 @@ class LinuxTTS(object):
         amplitude = renpy.game.preferences.get_mixer("voice")
         amplitude_100 = int(amplitude * 100)
 
-        cmd = ["espeak", "-a", fsencode(str(amplitude_100))]
+        speed = renpy.game.preferences.tts_speed
+        speed_wpm = int(175 * speed)
+
+        cmd = ["espeak", "-a", fsencode(str(amplitude_100)), "-s", fsencode(str(speed_wpm))]
 
         if voice is not None:
             # Voice format is "lang: name", extract the language for espeak.
@@ -216,6 +219,9 @@ class AndroidTTS(object):
         else:
             self.tts.setVoice(self.tts.getDefaultVoice())
 
+        speed = renpy.game.preferences.tts_speed
+        self.tts.setSpeechRate(speed)
+
         self.tts.speak(s, self.TextToSpeech.QUEUE_FLUSH, None)
 
     def stop(self):
@@ -276,6 +282,9 @@ class AppleTTS(object):
 
         amplitude = renpy.game.preferences.get_mixer("voice")
         utterance.setVolume_(float(amplitude))
+
+        speed = renpy.game.preferences.tts_speed
+        utterance.setRate_(max(0.0, min(1.0, 0.5 + (speed - 1.0) / 8.0)))
 
         if voice is not None:
 
@@ -339,8 +348,8 @@ class WindowsTTS(object):
         amplitude = renpy.game.preferences.get_mixer("voice")
         amplitude_100 = int(amplitude * 100)
 
-        # Escape single quotes in the text for PowerShell.
-        s = s.replace("'", "''")
+        speed = renpy.game.preferences.tts_speed
+        rate = max(-10, min(10, int(2.5 * (speed - 1))))
 
         if voice is not None:
             # Voice format is "lang: name", extract the name for SAPI.
@@ -351,16 +360,18 @@ class WindowsTTS(object):
 Add-Type -AssemblyName System.Speech
 $synth = New-Object System.Speech.Synthesis.SpeechSynthesizer
 $synth.Volume = {volume}
+$synth.Rate = {rate}
 try {{ $synth.SelectVoice('{voice}') }} catch {{ }}
 $synth.Speak('{text}')
-""".format(volume=amplitude_100, voice=voice, text=s)
+""".format(volume=amplitude_100, rate=rate, voice=voice, text=s)
         else:
             script = """
 Add-Type -AssemblyName System.Speech
 $synth = New-Object System.Speech.Synthesis.SpeechSynthesizer
 $synth.Volume = {volume}
+$synth.Rate = {rate}
 $synth.Speak('{text}')
-""".format(volume=amplitude_100, text=s)
+""".format(volume=amplitude_100, rate=rate, text=s)
 
         self.process = subprocess.Popen([
             "powershell", "-NoProfile", "-Command", script,
@@ -426,15 +437,16 @@ class WebTTS(object):
 
         from renpy.audio.webaudio import call
         amplitude = renpy.game.preferences.get_mixer("voice")
+        speed = renpy.game.preferences.tts_speed
 
         # This calls renpyAudio.tts, which is defined in renpy/common/_audio.js.
-        call("tts", s, amplitude, voice)
+        call("tts", s, amplitude, speed, voice)
 
     def stop(self):
         from renpy.audio.webaudio import call
         amplitude = renpy.game.preferences.get_mixer("voice")
 
-        call("tts", "", 1.0, None)
+        call("tts", "", 1.0, 1.0, None)
 
     def get_tts_voices(self):
         from renpy.audio.webaudio import call_str

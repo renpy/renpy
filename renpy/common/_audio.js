@@ -777,11 +777,13 @@ renpyAudio.periodic = () => {
 /* A map from voice name to voice object. */
 let tts_voices = { };
 
-renpyAudio.tts = (s, v, voice) => {
+renpyAudio.tts = (s, v, rate, voice) => {
     v = v || 1.0;
+    rate = rate || 1.0;
 
     let u = new SpeechSynthesisUtterance(s);
     u.volume = v;
+    u.rate = rate;
 
     let speechVoice = tts_voices[voice];
     if (speechVoice) {

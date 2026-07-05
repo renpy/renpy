@@ -257,7 +257,8 @@ init -1500 python:
         * Preference("mono audio", "disable") - Disables forcing audio to be downmixed to mono.
         * Preference("mono audio", "toggles") - Toggles mono audio.
 
-        * Preference("self-voicing voice", "<voice>") - Sets the voice to use for text-to-speech. The voice must be one of the voices found in renpy.get_tts_voices, or it will not be used.
+        * Preference("self voicing voice", "<voice>") - Sets the voice to use for text-to-speech. The voice must be one of the voices found in renpy.get_tts_voices, or it will not be used.
+        * Preference("self voicing speed", 2.0) - Sets the speed of the text-to-speech voice. This should be between 1.0 and 5.0, with 1.0 representing normal speed and 5.0 fastest (5x where supported).
 
         Values that can be used with bars are:
 
@@ -272,6 +273,7 @@ init -1500 python:
         * Preference("font size")
         * Preference("font line spacing")
         * Preference("font kerning")
+        * Preference("self voicing speed")
 
         The `range` parameter can be given to give the range of certain bars.
         For "text speed", it defaults to 200 cps. For "auto-forward time", it
@@ -289,7 +291,7 @@ init -1500 python:
 
         name = name.lower()
 
-        if isinstance(value, str) and name != "self-voicing voice":
+        if isinstance(value, str) and name != "self voicing voice":
             value = value.lower()
 
         def get():
@@ -617,7 +619,7 @@ init -1500 python:
 
                 return [ SetField(_preferences, "font_kerning", value), _DisplayReset() ]
 
-            elif name == _("self-voicing voice"):
+            elif name == _("self voicing voice"):
                 if value is None:
                     alt = _("voice [text]")
                 else:
@@ -629,6 +631,13 @@ init -1500 python:
                     alt = f"{{voice={value}}}" + alt
 
                 return (SetField(_preferences, "tts_voice", value), alt)
+
+            elif name == _("self voicing speed"):
+
+                if value is None:
+                    return FieldValue(_preferences, "tts_speed", min=1.0, max=5.0, style="slider")
+
+                return SetField(_preferences, "tts_speed", value)
 
             elif name == _("reset"):
                 return __ResetPreferences()

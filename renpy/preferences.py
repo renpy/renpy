@@ -234,6 +234,8 @@ Preference("font_kerning", 0.0)
 # The voice to use for tts.
 Preference("tts_voice", None, (str, type(None)))
 
+# The speed to use for tts.
+Preference("tts_speed", 1.0)
 
 class Preferences(renpy.object.Object):
     """
@@ -290,6 +292,7 @@ class Preferences(renpy.object.Object):
     mono_audio: bool
     font_kerning: float
     tts_voice: str | None
+    tts_speed: float
 
     def init(self):
         """
