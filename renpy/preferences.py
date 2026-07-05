@@ -242,56 +242,54 @@ class Preferences(renpy.object.Object):
 
     __version__ = len(all_preferences) + 3
 
-    # Default values, for typing purposes.
-    if 1 == 0:
-        fullscreen = False
-        skip_unseen = False
-        text_cps = 0
-        afm_time = 0
-        afm_enable = True
-        using_afm_enable = False
-        voice_sustain = False
-        mouse_move = False
-        show_empty_window = True
-        wait_voice = True
-        afm_after_click = False
-        transitions = 2
-        video_image_fallback = False
-        skip_after_choices = False
-        volumes = {}
-        mute = {}
-        joymap = {}
-        physical_size = None
-        virtual_size = None
-        renderer = "auto"
-        performance_test = True
-        language = None
-        self_voicing = False
-        self_voicing_volume_drop = 0.5
-        emphasize_audio = False
-        pad_enabled = True
-        mobile_rollback_side = "disable"
-        desktop_rollback_side = "disable"
-        gl_npot = True
-        gl_powersave = True
-        gl_framerate = None
-        gl_tearing = False
-        font_transform = None
-        font_size = 1.0
-        font_line_spacing = 1.0
-        system_cursor = False
-        high_contrast = False
-        audio_when_minimized = True
-        audio_when_unfocused = True
-        web_cache_preload = False
-        voice_after_game_menu = False
-        maximized = False
-        window_position = (0, 0)
-        window_position_layout = ((0, 0, 1920, 1080),)
-        restore_window_position = True
-        mono_audio = False
-        font_kerning = 0.0
-        tts_voice = None
+    fullscreen: bool
+    skip_unseen: bool
+    text_cps: int | float
+    afm_time: int | float
+    afm_enable: bool
+    using_afm_enable: bool
+    voice_sustain: bool
+    mouse_move: bool
+    show_empty_window: bool
+    wait_voice: bool
+    afm_after_click: bool
+    transitions: int
+    video_image_fallback: bool
+    skip_after_choices: bool
+    volumes: dict
+    mute: dict
+    joymap: dict
+    physical_size: tuple | None
+    virtual_size: tuple | None
+    renderer: str
+    performance_test: bool
+    language: str | None
+    self_voicing: bool | str | None
+    self_voicing_volume_drop: float
+    emphasize_audio: bool
+    pad_enabled: bool | str
+    mobile_rollback_side: str
+    desktop_rollback_side: str
+    gl_npot: bool
+    gl_powersave: bool
+    gl_framerate: int | None
+    gl_tearing: bool
+    font_transform: None | str
+    font_size: float
+    font_line_spacing: float
+    system_cursor: bool
+    high_contrast: bool
+    audio_when_minimized: bool
+    audio_when_unfocused: bool
+    web_cache_preload: bool
+    voice_after_game_menu: bool
+    maximized: bool
+    window_position: tuple | None
+    window_position_layout: tuple | None
+    restore_window_position: bool
+    mono_audio: bool
+    font_kerning: float
+    tts_voice: str | None
 
     def init(self):
         """
