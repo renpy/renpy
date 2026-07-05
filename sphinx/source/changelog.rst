@@ -42,8 +42,16 @@ Ren'Py now supports selecting the voice used by self-voicing. This is done throu
 which now presents a list of voices available on the user's system for the user to pick from.
 
 The list of available voices can be obtained through the :func:`renpy.get_tts_voices` function, and
-the voice can be set through the :class:`Preference` class, using the "self-voicing voice" setting. The voice is
+the voice can be set through the :class:`Preference` class, using the "self voicing voice" setting. The voice is
 stored in :var:`preferences.tts_voice`.
+
+The speed of self-voicing can be adjusted through the "self voicing speed" setting, which is stored in :var:`preferences.tts_speed`,
+and can be set through the :class:`Preference` class, using the "self voicing speed" setting, which may be used as a bar value or
+to set the speed directly to a number between 1.0 and 5.0.
+
+On the shift+A accessibility menu, pressing the "R" key resets the self-voicing settings to the default values, then
+enables self-voicing. This can be used to reset the self-voicing settings if the user has changed them to a state that
+makes self-voicing unusable.
 
 On macOS and Windows, more modern techniques are used to play back the speech.
 

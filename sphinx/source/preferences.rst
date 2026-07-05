@@ -193,9 +193,14 @@ can then change it again.)
 
 .. var:: preferences.tts_voice = None
 
-    The name of the self-voicing voice to use. If None, the default voice is used. The equivalent of the "self-voicing voice"
+    The name of the self-voicing voice to use. If None, the default voice is used. The equivalent of the "self voicing voice"
     preference. The precise set of voices available varies by platform, and computer within the platform.
     For any given computer, :func:`renpy.get_tts_voices` returns possible values this can be set to.
+
+.. var:: preferences.tts_speed = 1.0
+
+    The speed of self-voicing. This is a number between 1.0 and 5.0, with 1.0 being the slowest and 5.0 being the fastest.
+    The equivalent of the "self voicing speed" preference.
 
 
 .. _mixer-defaults:

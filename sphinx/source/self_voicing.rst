@@ -12,6 +12,10 @@ The Self-voicing mode can be toggled by pressing the ``v`` key. Self-voicing
 modes can be selected through the accessibility menu, which can be accessed
 by pressing ``Shift+A``.
 
+When in the ``Shift+A`` accessibility menu, the ``R`` key resets the self-voicing settings
+to the default values, then enables self-voicing. This can be used to reset the self-voicing
+settings if the user has changed them to a state that makes self-voicing unusable.
+
 When in self-voicing mode, keyboard navigation is changed so that the
 up and down arrow keys with iterate through all focusable displayables
 on the screen.
@@ -141,8 +145,8 @@ Descriptive Text
 
 The :var:`config.tts_substitutions` variable can be used to substitute
 words in the text being spoken, to better control pronunciation. The
-voice can be selected through the accessibility menu (Shift+A). The voice is stored
-in :var:`preferences.tts_voice`.
+voice can be selected through the accessibility menu (Shift+A), as can its speed. The voice is stored
+in :var:`preferences.tts_voice`. Te speed of self-voicing is stored in :var:`preferences.tts_speed`.
 
 A self-voicing debug mode can be enabled by typing Shift+Alt+V. This will
 display the text that would be voiced on the screen for development
