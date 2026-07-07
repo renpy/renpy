@@ -19,9 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
 import re
-import io
 import os
 
 import renpy
@@ -408,7 +406,7 @@ class ShaderCache(object):
 
             tmp = fn + ".tmp"
 
-            with io.open(tmp, "w", encoding="utf-8") as f:
+            with open(tmp, "w", encoding="utf-8") as f:
                 shaders = set(self.cache.keys()) | self.missing
 
                 for i in sorted(shaders):
