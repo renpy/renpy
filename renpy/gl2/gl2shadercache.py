@@ -19,9 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
 import re
-import io
 import os
 
 import renpy
@@ -274,7 +272,7 @@ class ShaderCache(object):
     loading the shaders back into the cache.
     """
 
-    def __init__(self, filename, gles):
+    def __init__(self, filename: str, gles: bool):
         # The filename that we'll load the list of shaders from, and
         # persist it to.
         self.filename = filename
@@ -284,11 +282,13 @@ class ShaderCache(object):
 
         # A map from tuples of partnames to the shaders that have been
         # created.
-        self.cache = {}
+        from renpy.gl2.gl2shader import Program
+
+        self.cache: dict[tuple[str, ...], "Program"] = {}
 
         # A set of tuples of partnames corresponding to shaders that existed
         # in the past, but do not exist now.
-        self.missing = set()
+        self.missing: set[tuple[str, ...]] = set()
 
         # True if this is dirty, and should be saved to the cache.
         self.dirty = False
@@ -408,11 +408,11 @@ class ShaderCache(object):
 
             tmp = fn + ".tmp"
 
-            with io.open(tmp, "w", encoding="utf-8") as f:
+            with open(tmp, "w", encoding="utf-8") as f:
                 shaders = set(self.cache.keys()) | self.missing
 
-                for i in shaders:
-                    f.write(" ".join(i) + "\r\n")
+                for parts in sorted(shaders):
+                    print(*parts, file=f)
 
             try:
                 os.unlink(fn)
@@ -424,7 +424,7 @@ class ShaderCache(object):
             self.dirty = False
 
         except Exception:
-            renpy.display.log.write("Saving shaders to {!r}:".format(fn))
+            renpy.display.log.write(f"Saving shaders to {fn!r}:")
             renpy.display.log.exception()
 
     def load(self):
