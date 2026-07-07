@@ -31,7 +31,9 @@ import renpy.audio
 # channel set to "sound".
 
 
-def play(filename, channel="sound", fadeout=0, fadein=0, tight=False, loop=False, relative_volume=1.0, synchro_start=None):
+def play(
+    filename, channel="sound", fadeout=0, fadein=0, tight=False, loop=False, relative_volume=1.0, synchro_start=None
+):
     renpy.audio.music.play(
         filename,
         channel=channel,

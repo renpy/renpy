@@ -711,12 +711,11 @@ class Transform(Container):
     children = []
     arguments = DEFAULT_ARGUMENTS
 
-
     # Default before we set this.
     child_size = (0, 0)
 
     raw_child = None
-    child_in_current_store: renpy.display.displayable.Displayable|None = None
+    child_in_current_store: renpy.display.displayable.Displayable | None = None
     original_child = None
 
     def __init__(
@@ -747,10 +746,10 @@ class Transform(Container):
         if child is not None:
             self.add(child)
 
-        self.raw_child: renpy.display.displayable.Displayable|None = child
+        self.raw_child: renpy.display.displayable.Displayable | None = child
         "The child, before it was duplicated."
 
-        self.original_child: renpy.display.displayable.Displayable|None = child
+        self.original_child: renpy.display.displayable.Displayable | None = child
         "The child that was passed to the constructor."
 
         self.state = TransformState()  # type: Any

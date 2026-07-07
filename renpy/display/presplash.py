@@ -128,9 +128,7 @@ def start(basedir, gamedir):
     if isinstance(shape, ProgressBar):
         shape = shape.background
 
-    window = pygame.display.Window(
-        sys.argv[0], (sw, sh), flags=pygame.WINDOW_BORDERLESS, pos=(x, y), shape=shape
-    )
+    window = pygame.display.Window(sys.argv[0], (sw, sh), flags=pygame.WINDOW_BORDERLESS, pos=(x, y), shape=shape)
 
     if foreground_fn and background_fn:
         presplash.convert_alpha(window.get_surface())

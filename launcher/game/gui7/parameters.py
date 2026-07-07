@@ -34,7 +34,21 @@ class GuiParameters(object):
     parameters.
     """
 
-    def __init__(self, prefix, template, width, height, accent, boring, light, language, replace_images, replace_code, update_code, name=None):
+    def __init__(
+        self,
+        prefix,
+        template,
+        width,
+        height,
+        accent,
+        boring,
+        light,
+        language,
+        replace_images,
+        replace_code,
+        update_code,
+        name=None,
+    ):
 
         self.prefix = prefix
         self.template = template
@@ -54,22 +68,21 @@ class GuiParameters(object):
 
         if light:
             self.hover_color = self.accent_color  # .tint(.95)
-            self.muted_color = self.accent_color.tint(.6)
-            self.hover_muted_color = self.accent_color.tint(.4)
+            self.muted_color = self.accent_color.tint(0.6)
+            self.hover_muted_color = self.accent_color.tint(0.4)
         else:
-            self.hover_color = self.accent_color.tint(.6)
-            self.muted_color = self.accent_color.shade(.4)
-            self.hover_muted_color = self.accent_color.shade(.6)
+            self.hover_color = self.accent_color.tint(0.6)
+            self.muted_color = self.accent_color.shade(0.4)
+            self.hover_muted_color = self.accent_color.shade(0.6)
 
         if light:
-            self.menu_color = self.accent_color.replace_hsv_saturation(.25).replace_value(.75)
+            self.menu_color = self.accent_color.replace_hsv_saturation(0.25).replace_value(0.75)
         else:
-            self.menu_color = self.accent_color.replace_hsv_saturation(.25).replace_value(.25)
+            self.menu_color = self.accent_color.replace_hsv_saturation(0.25).replace_value(0.25)
 
-        self.title_color = self.accent_color.replace_hsv_saturation(.5).replace_value(1.0)
+        self.title_color = self.accent_color.replace_hsv_saturation(0.5).replace_value(1.0)
 
         if light:
-
             self.selected_color = Color("#555555")
             self.idle_color = Color("#707070")
             self.idle_small_color = Color("#606060")
@@ -77,14 +90,13 @@ class GuiParameters(object):
             self.choice_color = Color("#cccccc")
 
         else:
-
             self.selected_color = Color("#ffffff")
             self.idle_color = Color("#888888")
             self.idle_small_color = Color("#aaaaaa")
             self.text_color = Color("#ffffff")
             self.choice_color = Color("#cccccc")
 
-        self.insensitive_color = self.idle_color.replace_opacity(.5)
+        self.insensitive_color = self.idle_color.replace_opacity(0.5)
 
         self.language = language
 
@@ -97,7 +109,7 @@ class GuiParameters(object):
 
         self.skip_backup = False
 
-        name = name or ''
+        name = name or ""
 
         self.name = name
 

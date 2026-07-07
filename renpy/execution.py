@@ -1020,15 +1020,18 @@ class Context(renpy.object.Object):
             self.call_location_stack.append("unknown location")
             self.dynamic_stack.append({})
 
+
 class RestartContext(BaseException):
     """
     Restarts the current context.
     """
 
+
 class RestartTopContext(BaseException):
     """
     Restarts the current context.
     """
+
 
 def run_context(top):
     """

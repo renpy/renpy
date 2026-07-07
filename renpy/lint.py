@@ -1015,7 +1015,6 @@ def check_unreachables(all_nodes):
                 if node in unreachable:
                     to_check.append(node)
 
-
         elif isinstance(node, Testcase):
             weakly_reachable.add(node)
 

@@ -1017,7 +1017,6 @@ class Interface:
         if renpy.config.mouse_focus_clickthrough:
             pygame.display.hint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1")
 
-
         self.set_window_caption(force=True)
         self.set_icon()
 
@@ -1785,7 +1784,7 @@ class Interface:
         visible = visible and self.show_mouse and not (renpy.display.video.fullscreen)
 
         if renpy.store.mouse_visible == "always":
-             visible = True
+            visible = True
 
         return visible
 
@@ -1794,7 +1793,7 @@ class Interface:
         Return a list of possible mice that can be displayed, in priority order.
         """
 
-        rv = [ ]
+        rv = []
 
         mouse_kind = renpy.display.focus.get_mouse()
         if mouse_kind:
@@ -1805,12 +1804,12 @@ class Interface:
 
         rv.append(getattr(renpy.store, "default_mouse", "default"))
 
-        rv = [ i for i in rv if i is not None ]
+        rv = [i for i in rv if i is not None]
 
         if pygame.mouse.get_pressed()[0]:
-            new_rv = [ ]
+            new_rv = []
             for i in rv:
-                new_rv.extend([ "pressed_" + i, i ])
+                new_rv.extend(["pressed_" + i, i])
 
             rv = new_rv
 
@@ -1851,12 +1850,10 @@ class Interface:
 
         return mouse_kind
 
-
     def update_mouse(self, mouse_displayable):
         visible = self.is_mouse_visible()
 
         if mouse_displayable is not None:
-
             x, y = renpy.exports.get_mouse_pos()
 
             cursor_function = getattr(mouse_displayable, "_has_mouse_cursor", None)
@@ -2369,7 +2366,7 @@ class Interface:
         trans_pause=False,
         suppress_overlay=False,
         suppress_underlay=False,
-        mouse: str|None = None,
+        mouse: str | None = None,
         preloads=[],
         roll_forward=None,
         pause=None,
@@ -2973,7 +2970,6 @@ class Interface:
                 if self.maximum_framerate_time > get_time():
                     can_block = False
 
-
                 # Compute the redraw time and set the redraw timer.
                 if redraw_time is not None:
                     time_left = redraw_time - get_time()
@@ -2991,13 +2987,11 @@ class Interface:
                             pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1), once=True)
 
                 elif redraw_time is None:
-
                     if old_redraw_time is not None:
                         pygame.time.set_timer(REDRAW, 0)
                     _redraw_in = 1.0
 
                 old_redraw_time = redraw_time
-
 
                 # Handle the timeout timer.
                 if not self.timeout_time:
@@ -3226,14 +3220,12 @@ class Interface:
                         renpy.display.render.redraw(mouse_displayable, 0)
 
                 elif ev.type == pygame.WINDOWMOUSEENTER:
-
                     self.mouse_focused = True
 
                     if mouse_displayable:
                         renpy.display.render.redraw(mouse_displayable, 0)
 
                 elif ev.type == pygame.WINDOWFOCUSGAINED:
-
                     self.keyboard_focused = True
 
                     if not renpy.game.preferences.audio_when_unfocused and not renpy.emscripten:
@@ -3242,7 +3234,6 @@ class Interface:
                     pygame.key.set_mods(pygame.key.get_mods() & (pygame.KMOD_NUM | pygame.KMOD_CAPS))
 
                 elif ev.type == pygame.WINDOWFOCUSLOST:
-
                     self.keyboard_focused = False
 
                     if not renpy.game.preferences.audio_when_unfocused and not renpy.emscripten:
@@ -3254,11 +3245,10 @@ class Interface:
                         self.audio_paused = True
 
                 elif ev.type == pygame.WINDOWRESTORED or ev.type == pygame.WINDOWMAXIMIZED:
-
-                        # unpause the audio
-                        if pygame.display.get_active() and self.audio_paused:
-                            renpy.audio.audio.unpause_all()
-                            self.audio_paused = False
+                    # unpause the audio
+                    if pygame.display.get_active() and self.audio_paused:
+                        renpy.audio.audio.unpause_all()
+                        self.audio_paused = False
 
                 elif ev.type == pygame.RENDERDEVICERESET:
                     self.display_reset = True

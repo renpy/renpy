@@ -633,6 +633,7 @@ tuple[tuple[str, ...], str | None, str | None, list[str], str | None, str | None
 tuple[tuple[str, ...], list[str], str | None]
 """
 
+
 def get_imspec_tag(imspec: ImspecType) -> str | None:
     """
     Returns the tag of the given imspec, or None if it doesn't have one.
@@ -1619,7 +1620,6 @@ class With(Node):
 
     def predict(self):
         try:
-
             if self.expr is not None:
                 trans = renpy.python.py_eval(self.expr)
             else:

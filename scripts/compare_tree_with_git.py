@@ -92,7 +92,9 @@ def list_working_tree(repo: Path) -> tuple[list[str], list[str]]:
 
 def list_git_tree(repo: Path, ref: str) -> tuple[list[str], list[str]]:
     git_dirs = [p for p in git_lines(repo, "ls-tree", "-rd", "--name-only", ref) if not ignored_path(p)]
-    git_files = [p for p in git_lines(repo, "ls-tree", "-r", "--name-only", ref) if not ignored_path(p) and not ignored_file(p)]
+    git_files = [
+        p for p in git_lines(repo, "ls-tree", "-r", "--name-only", ref) if not ignored_path(p) and not ignored_file(p)
+    ]
     return sorted(set(git_dirs)), sorted(set(git_files))
 
 
@@ -125,11 +127,7 @@ def main() -> int:
 
     files_only_work = set_diff(work_files, git_files)
     git_dir_set = set(git_dirs)
-    files_only_work = [
-        p
-        for p in files_only_work
-        if "/" not in p or p.rsplit("/", 1)[0] in git_dir_set
-    ]
+    files_only_work = [p for p in files_only_work if "/" not in p or p.rsplit("/", 1)[0] in git_dir_set]
     files_only_git = set_diff(git_files, work_files)
 
     print("Comparing working tree with git tree")

@@ -90,6 +90,10 @@ reportMissingModuleSource = false
 
 [tool.ruff]
 line-length = 120
+extend-exclude = [
+    "keywords.py",
+    "renpy/text/emoji_trie.py",
+]
 
 [tool.ruff.format]
 preview = true

@@ -809,7 +809,6 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
 
             pattern = l.require(l.simple_expression, operator=False)
 
-
         elif l.keyword("raw"):
             raw = True
 
