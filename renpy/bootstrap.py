@@ -22,62 +22,9 @@
 import os
 import sys
 import subprocess
-import io
 import textwrap
 
-
-# Encoding and sys.stderr/stdout handling ######################################
-
-FSENCODING = sys.getfilesystemencoding() or "utf-8"
-
-# Sets the default encoding to utf-8.
-old_stdout = sys.stdout
-old_stderr = sys.stderr
-
-
-def _setdefaultencoding(name):
-    """
-    This is install in sys to prevent games from trying to change the default
-    encoding.
-    """
-
-
-sys.setdefaultencoding = _setdefaultencoding  # type: ignore
-
-
-sys.stdout = old_stdout
-sys.stderr = old_stderr
-
 import renpy.error
-
-
-class NullFile(io.IOBase):
-    """
-    This file raises an error on input, and IOError on read.
-    """
-
-    def write(self, s):
-        return
-
-    def read(self, length=None):
-        raise IOError("Not implemented.")
-
-    def flush(self):
-        return
-
-
-def null_files():
-    try:
-        if (sys.stderr is None) or sys.stderr.fileno() < 0:
-            sys.stderr = NullFile()
-
-        if (sys.stdout is None) or sys.stdout.fileno() < 0:
-            sys.stdout = NullFile()
-    except Exception:
-        pass
-
-
-null_files()
 
 # Tracing ######################################################################
 
@@ -218,7 +165,7 @@ def relaunch():
 
 
 
-def bootstrap(renpy_base):
+def bootstrap(renpy_base: str):
     global renpy
 
     import renpy.config
@@ -228,8 +175,9 @@ def bootstrap(renpy_base):
     if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
         del os.environ["SDL_VIDEODRIVER"]
 
-    if not isinstance(renpy_base, str):
-        renpy_base = str(renpy_base, FSENCODING)
+    # In case of invocation with system python, check that it's run with -X utf8
+    if not sys.flags.utf8_mode:
+        raise Exception("Ren'Py requires Python to be run with -X utf8.")
 
     renpy.config.renpy_base = renpy_base
 
@@ -281,8 +229,6 @@ def bootstrap(renpy_base):
 
     if args.basedir:
         basedir = os.path.abspath(args.basedir)
-        if not isinstance(basedir, str):
-            basedir = basedir.decode(FSENCODING)
     else:
         basedir = renpy_base
 
