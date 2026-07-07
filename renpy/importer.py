@@ -41,6 +41,7 @@ if PREFER_LOADER:
 
 # Package Resources
 
+
 class RenpyPath(importlib.resources.abc.Traversable):
     """
     A class that represents a traversable resource in a Ren'Py package.
@@ -52,7 +53,7 @@ class RenpyPath(importlib.resources.abc.Traversable):
     tree: TreeEntry | None
     "The tree structure of the resource, or None if it is a file."
 
-    def __init__(self, path: str, tree: TreeEntry|None):
+    def __init__(self, path: str, tree: TreeEntry | None):
         self.path = path
         self.tree = tree
 
@@ -116,7 +117,6 @@ class RenpyPath(importlib.resources.abc.Traversable):
 
 
 class RenpyResourceReader(importlib.resources.abc.TraversableResources):
-
     def __init__(self, path: str):
         self.path = path
 
@@ -217,7 +217,9 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
             renpy.loader.scandirfiles()
 
         self._finder_cache = dict(
-            self._visit_dir(files=(fn for _, fn in renpy.loader.game_files if fn.endswith(".py") if not fn.endswith("_ren.py")))
+            self._visit_dir(
+                files=(fn for _, fn in renpy.loader.game_files if fn.endswith(".py") if not fn.endswith("_ren.py"))
+            )
         )
         return self._finder_cache
 
@@ -281,7 +283,6 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
                 # For non-namespace modules, we return a reader for the package directory.
                 package_dir = filename.rpartition("/")[0]
                 return RenpyResourceReader(package_dir)
-
 
     # InspectLoader interface
     def is_package(self, fullname: str) -> bool:

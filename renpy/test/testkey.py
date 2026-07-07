@@ -328,18 +328,14 @@ def down(node: Node, keysym: str) -> None:
 
     if pygame.key.text_input:
         pygame.event.post(
-            pygame.event.Event(
-                pygame.KEYDOWN, unicode="", key=code, scancode=code, mod=mods, repeat=False, test=True
-            )
+            pygame.event.Event(pygame.KEYDOWN, unicode="", key=code, scancode=code, mod=mods, repeat=False, test=True)
         )
 
         pygame.event.post(pygame.event.Event(pygame.TEXTINPUT, text=u, test=True))
 
     else:
         pygame.event.post(
-            pygame.event.Event(
-                pygame.KEYDOWN, unicode=u, key=code, scancode=code, mod=mods, repeat=False, test=True
-            )
+            pygame.event.Event(pygame.KEYDOWN, unicode=u, key=code, scancode=code, mod=mods, repeat=False, test=True)
         )
 
 
@@ -349,9 +345,7 @@ def up(node: Node, keysym: str) -> None:
     """
     code, _, mods = get_keycode(node, keysym)
 
-    pygame.event.post(
-        pygame.event.Event(pygame.KEYUP, key=code, scancode=code, mod=mods, repeat=False, test=True)
-    )
+    pygame.event.post(pygame.event.Event(pygame.KEYUP, key=code, scancode=code, mod=mods, repeat=False, test=True))
 
 
 def queue_keysym(node: Node, name: str) -> None:
@@ -376,6 +370,7 @@ def queue_keysym(node: Node, name: str) -> None:
 
     down(node, name)
     up(node, name)
+
 
 #         keysym = config.keymap[keysym][0]
 #     return keysym

@@ -79,9 +79,7 @@ class Generator:
             if destination_pxd.stem != "sdl":
                 print("from .sdl cimport *", file=f)
 
-
             print(f'cdef extern from "{main_header}" nogil:', file=f)
-
 
             for header, decl in self.declarations:
                 if header != old_header:
@@ -180,23 +178,22 @@ class Generator:
 
         joined = " ".join(parts)
 
-        joined = re.sub(r"SDL_ALLOC_SIZE2?\s*\(.*?\)\s*" , "", joined)
-        joined = re.sub(r"SDL_OUT_BYTECAP\s*\(.*?\)\s*" , "", joined)
-        joined = re.sub(r"SDL_IN_BYTECAP\s*\(.*?\)\s*" , "", joined)
-        joined = re.sub(r"SDL_OUT_Z_CAP\s*\(.*?\)\s*" , "", joined)
-        joined = re.sub(r"SDL_IN_Z_CAP\s*\(.*?\)\s*" , "", joined)
-        joined = re.sub(r"SDL_INOUT_Z_CAP\s*\(.*?\)\s*" , "", joined)
-        joined = re.sub(r"SDL_SCANF_VARARG_FUNC\s*\(.*?\)\s*" , "", joined)
-        joined = re.sub(r"SDL_SCANF_VARARG_FUNCV\s*\(.*?\)\s*" , "", joined)
-        joined = re.sub(r"SDL_PRINTF_VARARG_FUNC\s*\(.*?\)\s*" , "", joined)
-        joined = re.sub(r"SDL_PRINTF_VARARG_FUNCV\s*\(.*?\)\s*" , "", joined)
+        joined = re.sub(r"SDL_ALLOC_SIZE2?\s*\(.*?\)\s*", "", joined)
+        joined = re.sub(r"SDL_OUT_BYTECAP\s*\(.*?\)\s*", "", joined)
+        joined = re.sub(r"SDL_IN_BYTECAP\s*\(.*?\)\s*", "", joined)
+        joined = re.sub(r"SDL_OUT_Z_CAP\s*\(.*?\)\s*", "", joined)
+        joined = re.sub(r"SDL_IN_Z_CAP\s*\(.*?\)\s*", "", joined)
+        joined = re.sub(r"SDL_INOUT_Z_CAP\s*\(.*?\)\s*", "", joined)
+        joined = re.sub(r"SDL_SCANF_VARARG_FUNC\s*\(.*?\)\s*", "", joined)
+        joined = re.sub(r"SDL_SCANF_VARARG_FUNCV\s*\(.*?\)\s*", "", joined)
+        joined = re.sub(r"SDL_PRINTF_VARARG_FUNC\s*\(.*?\)\s*", "", joined)
+        joined = re.sub(r"SDL_PRINTF_VARARG_FUNCV\s*\(.*?\)\s*", "", joined)
         joined = re.sub(r"\( ", "(", joined)
         joined = re.sub(r" \)", ")", joined)
         joined = re.sub(r"\) \(", ")(", joined)
         joined = re.sub(r" ,", ",", joined)
         joined = re.sub(r"\* ", "*", joined)
         joined = re.sub(r"\(void\)", "()", joined)
-
 
         joined = joined.replace("[ SDL_MESSAGEBOX_COLOR_COUNT ]", "[]")
 
@@ -239,14 +236,12 @@ class Generator:
         if not self.check_new_name(node.spelling):
             return
 
-
         first_field = True
         has_fields = False
 
         if not node.spelling == "SDL_IOStreamInterface":
             for child in node.get_children():
                 if child.kind == CursorKind.FIELD_DECL:
-
                     if first_field:
                         self.declare(node, f"    cdef struct {node.spelling}:")
                         first_field = False
@@ -321,11 +316,10 @@ class Generator:
         except Exception:
             if node.spelling not in Generator.extra_macros:
                 return
-            value = -1 # Just to pass the test below.
+            value = -1  # Just to pass the test below.
 
         if isinstance(value, int):
             self.macros.append(node.spelling)
-
 
     def typedef(self, node: cindex.Cursor):
         if not self.is_relevant(node):
@@ -390,7 +384,9 @@ class Generator:
 def main():
     ap = argparse.ArgumentParser(description="SDL3 Binding Generator")
 
-    ap.add_argument("--early", nargs="*", help="Paths to any early header files to ignore definitions from.", type=pathlib.Path)
+    ap.add_argument(
+        "--early", nargs="*", help="Paths to any early header files to ignore definitions from.", type=pathlib.Path
+    )
     ap.add_argument("header", nargs="*", help="Path to the header file.", type=pathlib.Path)
     ap.add_argument(
         "--destination",
@@ -405,9 +401,9 @@ def main():
     "A list of early header files to ignore definitions from."
 
     if args.early:
-        early_headers = [ i.absolute() for i in args.early ]
+        early_headers = [i.absolute() for i in args.early]
 
-    headers: list[pathlib.Path] = [ i.absolute() for i in args.header ]
+    headers: list[pathlib.Path] = [i.absolute() for i in args.header]
     "The path to the SDL3/SDL.h header file, made absolute."
 
     sdl3_path: pathlib.Path = headers[0].parent
@@ -421,7 +417,6 @@ def main():
     index = cindex.Index.create()
     options = cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD
     index_args = [f"-I{include_dir}", "-DSDL_MAIN_HANDLED"]
-
 
     for i in early_headers:
         tu = index.parse(str(i), args=index_args, options=options)

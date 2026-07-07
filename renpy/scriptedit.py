@@ -99,7 +99,7 @@ def load_lines(filename, elided_filename):
     # Are we looking at a triple-quoted string?
 
     # Skip the BOM, if any.
-    if len(data) and data[0] == u'\ufeff':
+    if len(data) and data[0] == "\ufeff":
         pos += 1
 
     len_data = len(data)
@@ -111,7 +111,6 @@ def load_lines(filename, elided_filename):
 
     # Looping over the lines in the file.
     while pos < len_data:
-
         # The line number of the start of this logical line.
         start_number = number
 
@@ -124,61 +123,59 @@ def load_lines(filename, elided_filename):
         endpos = None
 
         while pos < len_data:
-
             startpos = pos
             c = data[pos]
 
-            if c == u'\n' and not parendepth:
-
+            if c == "\n" and not parendepth:
                 if endpos is None:
                     endpos = pos
 
                 lines[loc].end_delim = endpos + 1
 
-                while data[endpos - 1] in u' \r':
+                while data[endpos - 1] in " \r":
                     endpos -= 1
 
                 lines[loc].end = endpos
-                lines[loc].text = data[lines[loc].start:lines[loc].end]
-                lines[loc].full_text = data[lines[loc].start:lines[loc].end_delim]
+                lines[loc].text = data[lines[loc].start : lines[loc].end]
+                lines[loc].full_text = data[lines[loc].start : lines[loc].end_delim]
 
                 pos += 1
                 number += 1
                 endpos = None
                 break
 
-            if c == u'\n':
+            if c == "\n":
                 number += 1
                 endpos = None
 
-            if c == u"\r":
+            if c == "\r":
                 pos += 1
                 continue
 
             # Backslash/newline.
-            if c == u"\\" and data[pos + 1] == u"\n":
+            if c == "\\" and data[pos + 1] == "\n":
                 pos += 2
                 number += 1
                 continue
 
             # Parenthesis.
-            if c in u'([{':
+            if c in "([{":
                 parendepth += 1
 
-            if (c in u'}])') and parendepth:
+            if (c in "}])") and parendepth:
                 parendepth -= 1
 
             # Comments.
-            if c == u'#':
+            if c == "#":
                 endpos = pos
 
-                while data[pos] != u'\n':
+                while data[pos] != "\n":
                     pos += 1
 
                 continue
 
             # Strings.
-            if c in u'"\'`':
+            if c in "\"'`":
                 delim = c
                 pos += 1
 
@@ -190,13 +187,12 @@ def load_lines(filename, elided_filename):
                     triplequote = True
 
                 while pos < len_data:
-
                     c = data[pos]
 
-                    if c == u'\n':
+                    if c == "\n":
                         number += 1
 
-                    if c == u'\r':
+                    if c == "\r":
                         pos += 1
                         continue
 
@@ -206,7 +202,6 @@ def load_lines(filename, elided_filename):
                         continue
 
                     if c == delim:
-
                         if not triplequote:
                             pos += 1
                             break
@@ -215,7 +210,7 @@ def load_lines(filename, elided_filename):
                             pos += 3
                             break
 
-                    if c == u'\\':
+                    if c == "\\":
                         escape = True
 
                     pos += 1
@@ -233,6 +228,7 @@ def load_lines(filename, elided_filename):
                 continue
 
             pos += 1
+
 
 def ensure_loaded(filename):
     """

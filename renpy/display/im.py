@@ -551,9 +551,9 @@ class Cache:
         pool = self.get_decode_pool()
 
         if pool is None:
-            self._preload_thread_pass_serial() # Serial decoding
+            self._preload_thread_pass_serial()  # Serial decoding
         else:
-            self._preload_thread_pass_parallel(pool) # Parallel decoding
+            self._preload_thread_pass_parallel(pool)  # Parallel decoding
 
     def _preload_thread_pass_serial(self):
         """Serial preloading - processes images one at a time."""

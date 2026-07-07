@@ -71,6 +71,7 @@ apks = []
 game_apks = []
 split_apks = []
 
+
 def find_apks() -> None:
     """
     Finds APKs to load data from, and adds them to apks, game_apks, and
@@ -688,9 +689,7 @@ def get_prefixes(tl=True, directory=None):
         rv.append(prefix)
 
     if directory is not None:
-
-        for mapped_directory in renpy.config.special_directory_map.get(directory, [ directory ]):
-
+        for mapped_directory in renpy.config.special_directory_map.get(directory, [directory]):
             if language is not None:
                 rv.append(renpy.config.tl_directory + "/" + language + "/" + mapped_directory + "/")
 
@@ -774,7 +773,7 @@ def loadable(name, tl=True, directory=None):
     return False
 
 
-def transpath(path: str) -> str|None:
+def transpath(path: str) -> str | None:
     """
     Translates `path` to a name that exists in one of the searched directories,
     or to None if it does not exist.
@@ -790,7 +789,7 @@ def transpath(path: str) -> str|None:
             return fn
 
 
-def transfn(name: bytes|str) -> str:
+def transfn(name: bytes | str) -> str:
     """
     Tries to translate the name to a file that exists in one of the
     searched directories.
@@ -843,7 +842,6 @@ def get_hash(name):  # type: (str) -> int
     hash_cache[name] = rv
 
     return rv
-
 
 
 # Auto-Reload

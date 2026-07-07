@@ -243,7 +243,7 @@ def dump(error):
         pass
 
     result["test"] = {
-        "has_default_testcase" : renpy.test.testexecution.has_default_testcase(),
+        "has_default_testcase": renpy.test.testexecution.has_default_testcase(),
     }
 
     filename = args.json_dump

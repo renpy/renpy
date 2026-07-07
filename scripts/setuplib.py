@@ -72,11 +72,12 @@ cython_command = os.environ.get("RENPY_CYTHON", "cython")
 include_dirs = ["src", gen]
 
 # Cache for pkgconfig results.
-pkgconfig_cache: dict[str, dict[str, list]] = { }
+pkgconfig_cache: dict[str, dict[str, list]] = {}
 
 # Extra arguments to supply to all extensions.
 extra_compile_args = []
 extra_link_args = []
+
 
 def package_flags(*packages: str) -> dict[str, Any]:
     """
@@ -110,7 +111,6 @@ def package_flags(*packages: str) -> dict[str, Any]:
                 if i not in rv[k]:
                     rv[k].append(i)
     return rv
-
 
 
 # The libraries that we link against.
@@ -209,7 +209,6 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
 
         return mod_name.replace(".", "/") + ".pxd"
 
-
     with open(fn) as f:
         for line in f:
             m = re.search(r"from\s*([\w.]+)\s*cimport", line)
@@ -228,7 +227,11 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
                 continue
 
     # Filter out cython stdlib dependencies.
-    deps = [i for i in deps if (not i.startswith("cpython/")) and (not i.startswith("libc/")) and (not i.startswith("libcpp"))]
+    deps = [
+        i
+        for i in deps
+        if (not i.startswith("cpython/")) and (not i.startswith("libc/")) and (not i.startswith("libcpp"))
+    ]
 
     # Determine if any of the dependencies are newer than the c file.
 
@@ -276,7 +279,14 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
     if mod_coverage:
         define_macros = define_macros + [("CYTHON_TRACE", "1")]
 
-    cmodule(name, [c_fn] + source, compile_args=compile_args, define_macros=define_macros, language=language, packages=packages)
+    cmodule(
+        name,
+        [c_fn] + source,
+        compile_args=compile_args,
+        define_macros=define_macros,
+        language=language,
+        packages=packages,
+    )
 
 
 lock = threading.Condition()

@@ -35,9 +35,10 @@ VERSION = 1
 # True if the installer should run in quiet mode.
 quiet = False
 
-from store import _, config, interface, project, Jump # type: ignore
+from store import _, config, interface, project, Jump  # type: ignore
 
 temp_exists = False
+
 
 def _ensure_temp():
     """
@@ -59,8 +60,10 @@ def _ensure_temp():
 
     temp_exists = True
 
+
 # The target directory that the extensions API operates on.
 target = None
+
 
 def set_target(directory):
     """
@@ -123,9 +126,7 @@ def _clean(directory, age=3):
                 except Exception:
                     pass
 
-
         if root != directory:
-
             try:
                 os.rmdir(root)
             except Exception:
@@ -147,7 +148,6 @@ def _check_hash(filename, hashj):
     """
 
     try:
-
         sha = hashlib.sha256()
 
         with open(filename, "rb") as f:
@@ -163,11 +163,13 @@ def _check_hash(filename, hashj):
     except Exception:
         return False
 
+
 # The name and url of the file that is currently being downloaded. This is meant to
 # to be used by the interface screens to show the user what files are being
 # downloaded.
 download_file = ""
 download_url = ""
+
 
 def download(url, filename, hash=None, headers=None, requests_kwargs={}):
     """
@@ -188,23 +190,24 @@ def download(url, filename, hash=None, headers=None, requests_kwargs={}):
 
     progress_time = time.time()
 
-    all_headers = {"User-Agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36 renpy/8'}
+    all_headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36 renpy/8"
+    }
     if headers:
         all_headers.update(headers)
 
     try:
-
-        response = requests.get(url, stream=True, proxies=renpy.exports.proxies, timeout=15, headers=all_headers, **requests_kwargs)
+        response = requests.get(
+            url, stream=True, proxies=renpy.exports.proxies, timeout=15, headers=all_headers, **requests_kwargs
+        )
         response.raise_for_status()
 
-        total_size = int(response.headers.get('content-length', 1))
+        total_size = int(response.headers.get("content-length", 1))
 
         downloaded = 0
 
         with open(filename, "wb") as f:
-
             for i in response.iter_content(65536):
-
                 f.write(i)
                 downloaded += len(i)
 
@@ -212,20 +215,27 @@ def download(url, filename, hash=None, headers=None, requests_kwargs={}):
                     progress_time = time.time()
                     if not quiet:
                         interface.processing(
-                            _("Downloading [installer.download_file]..."),
-                            complete=downloaded, total=total_size)
+                            _("Downloading [installer.download_file]..."), complete=downloaded, total=total_size
+                        )
 
     except requests.HTTPError as e:
         if not quiet:
             raise
 
-        interface.error(_("Could not download [installer.download_file] from [installer.download_url]:\n{b}[installer.download_error]"))
+        interface.error(
+            _(
+                "Could not download [installer.download_file] from [installer.download_url]:\n{b}[installer.download_error]"
+            )
+        )
 
     if hash is not None:
         if not quiet:
             raise Exception("Hash check failed.")
         if not _check_hash(filename, hash):
-            interface.error(_("The downloaded file [installer.download_file] from [installer.download_url] is not correct."))
+            interface.error(
+                _("The downloaded file [installer.download_file] from [installer.download_url] is not correct.")
+            )
+
 
 class _FixedZipFile(zipfile.ZipFile):
     """
@@ -242,14 +252,14 @@ class _FixedZipFile(zipfile.ZipFile):
 
         # build the destination pathname, replacing
         # forward slashes to platform specific separators.
-        arcname = member.filename.replace('/', os.path.sep)
+        arcname = member.filename.replace("/", os.path.sep)
 
         if os.path.altsep:
             arcname = arcname.replace(os.path.altsep, os.path.sep)
         # interpret absolute pathname as relative, remove drive letter or
         # UNC path, redundant separators, "." and ".." components.
         arcname = os.path.splitdrive(arcname)[1]
-        invalid_path_parts = ('', os.path.curdir, os.path.pardir)
+        invalid_path_parts = ("", os.path.curdir, os.path.pardir)
         arcname = os.path.sep.join(x for x in arcname.split(os.path.sep) if x not in invalid_path_parts)
 
         targetpath = os.path.join(targetpath, arcname)
@@ -268,14 +278,12 @@ class _FixedZipFile(zipfile.ZipFile):
         attr = member.external_attr >> 16
 
         if stat.S_ISLNK(attr):
-
             with self.open(member, pwd=pwd) as source:
                 linkto = source.read()
 
             os.symlink(linkto, targetpath)
 
         else:
-
             with self.open(member, pwd=pwd) as source, open(targetpath, "wb") as target:
                 shutil.copyfileobj(source, target)
 
@@ -311,7 +319,6 @@ def unpack(archive, destination):
     old_cwd = os.getcwd()
 
     try:
-
         os.chdir(destination)
 
         if tarfile.is_tarfile(archive):
@@ -366,6 +373,7 @@ def remove(filename):
         except Exception:
             pass
 
+
 def move(old_filename, new_filename):
     """
     Moves a filename from `old_filename` to `new_filename`.
@@ -409,8 +417,9 @@ def error(message, **kwargs):
     interface.error(message)
 
 
-install_args = [ ]
+install_args = []
 install_error = ""
+
 
 def run(*args, **kwargs):
     """
@@ -423,7 +432,7 @@ def run(*args, **kwargs):
     global install_error
 
     try:
-        subprocess.check_call(args, cwd=target, env=environ) # type: ignore
+        subprocess.check_call(args, cwd=target, env=environ)  # type: ignore
     except Exception as e:
         install_args = args
         install_error = str(e)
@@ -432,6 +441,7 @@ def run(*args, **kwargs):
 
 
 _renpy = renpy
+
 
 def manifest(url, renpy=False, insecure=False):
     """

@@ -118,6 +118,7 @@ def initialize(specified_test: str) -> None:
     phase_controller = TestPhaseController(root)
     initialized = True
 
+
 def has_default_testcase() -> bool:
     """
     Returns True if at least one testcase exists.

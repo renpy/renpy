@@ -72,7 +72,6 @@ def fetch_pause():
         return
 
     if renpy.game.context().interacting:
-
         renpy.pygame.event.pump()
         renpy.audio.audio.periodic()
 
@@ -106,10 +105,10 @@ class FetchProgress(object):
 
     def read(self, size=-1):
         if size == -1:
-            chunk = self.data[self.offset:]
+            chunk = self.data[self.offset :]
             self.offset = self.upload_expected
         else:
-            chunk = self.data[self.offset:self.offset+size]
+            chunk = self.data[self.offset : self.offset + size]
             self.offset += len(chunk)
 
         self.upload_current += len(chunk)
@@ -129,6 +128,7 @@ class FetchProgress(object):
 
 active_fetch_requests: set[FetchProgress] = set()
 """The set of active fetch requests."""
+
 
 def get_fetch_requests_progress() -> float:
     """
@@ -169,12 +169,13 @@ def fetch_requests(url, method, data, content_type, timeout, headers):
     def make_request():
         try:
             r = requests.request(
-                method, url,
+                method,
+                url,
                 data=progress if data is not None else None,
                 timeout=timeout,
                 headers=headers,
                 proxies=proxies,
-                stream=True
+                stream=True,
             )
             r.raise_for_status()
 
@@ -246,7 +247,6 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
     start = time.time()
 
     while True:
-
         fetch_pause()
 
         result = emscripten.run_script_string("""fetchFileResult({})""".format(fetch_id))
@@ -269,6 +269,7 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
 
     finally:
         os.unlink(fn)
+
 
 def get_fetch_emscripten_progress() -> float:
     """

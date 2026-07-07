@@ -676,7 +676,7 @@ def display_say(
         dtt = DialogueTextTags(what)
 
     if all_at_once:
-        afm_starts = [ dtt.afm_start[0] ]
+        afm_starts = [dtt.afm_start[0]]
         pause_start = [dtt.pause_start[0]]
         pause_end = [dtt.pause_end[-1]]
         pause_delay = [dtt.pause_delay[-1]]
@@ -911,7 +911,6 @@ def display_say(
                     had_exception = True
                     raise
                 finally:
-
                     pause_callback("interact_done", exception=had_exception)
 
                     if retain and what_ctc:
@@ -942,8 +941,6 @@ def display_say(
                 if not last_pause:
                     for i in renpy.config.say_sustain_callbacks:
                         i()
-
-
 
     except (renpy.game.JumpException, renpy.game.CallException) as e:
         exception = e

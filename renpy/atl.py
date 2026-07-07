@@ -319,6 +319,7 @@ class Context(object):
     def __repr__(self):
         return "Context({})".format(repr(self.context))
 
+
 class ATLTransformBase(renpy.object.Object):
     """
     This is intended to be subclassed by ATLTransform. It takes care of
@@ -558,7 +559,6 @@ class ATLTransformBase(renpy.object.Object):
         #         scope[kwargs_param_name].update(var_kwargs)
         #     else:
         #         scope[kwargs_param_name] = var_kwargs
-
 
         scope.update(new_scope)
 

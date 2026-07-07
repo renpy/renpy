@@ -1428,7 +1428,7 @@ def get_mouse_names():
     """
 
     if not renpy.display.interface:
-        return [ "default" ]
+        return ["default"]
 
     return renpy.display.interface.get_mouse_names()
 

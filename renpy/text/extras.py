@@ -334,77 +334,64 @@ def thaic90(s):
     # ==============================================
 
     # Precompute lookup tables
-    TOP_LEFT = str.maketrans(
-        '\u0E48\u0E49\u0E4A\u0E4B\u0E4C',
-        '\uF713\uF714\uF715\uF716\uF717'
-    )
-    TOP_LOWLEFT = str.maketrans(
-        '\u0E48\u0E49\u0E4A\u0E4B\u0E4C',
-        '\uF705\uF706\uF707\uF708\uF709'
-    )
-    TOP_LOW = str.maketrans(
-        '\u0E48\u0E49\u0E4A\u0E4B\u0E4C',
-        '\uF70A\uF70B\uF70C\uF70D\uF70E'
-    )
+    TOP_LEFT = str.maketrans("\u0e48\u0e49\u0e4a\u0e4b\u0e4c", "\uf713\uf714\uf715\uf716\uf717")
+    TOP_LOWLEFT = str.maketrans("\u0e48\u0e49\u0e4a\u0e4b\u0e4c", "\uf705\uf706\uf707\uf708\uf709")
+    TOP_LOW = str.maketrans("\u0e48\u0e49\u0e4a\u0e4b\u0e4c", "\uf70a\uf70b\uf70c\uf70d\uf70e")
     UPPER_LEFT = str.maketrans(
-        '\u0E31\u0E34\u0E35\u0E36\u0E37\u0E4D\u0E47',
-        '\uF710\uF701\uF702\uF703\uF704\uF711\uF712'
+        "\u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47", "\uf710\uf701\uf702\uf703\uf704\uf711\uf712"
     )
-    LOWER_DESC = str.maketrans(
-        '\u0E38\u0E39\u0E3A',
-        '\uF718\uF719\uF71A'
-    )
-    UPPER      = frozenset('\u0E31\u0E34\u0E35\u0E36\u0E37\u0E47\u0E4D')
-    BASE_ASC   = frozenset('\u0E1B\u0E1D\u0E1F\u0E2C')
-    BASE_DESC  = frozenset('\u0E0E\u0E0F')
+    LOWER_DESC = str.maketrans("\u0e38\u0e39\u0e3a", "\uf718\uf719\uf71a")
+    UPPER = frozenset("\u0e31\u0e34\u0e35\u0e36\u0e37\u0e47\u0e4d")
+    BASE_ASC = frozenset("\u0e1b\u0e1d\u0e1f\u0e2c")
+    BASE_DESC = frozenset("\u0e0e\u0e0f")
     result: list[str] = []
     length = len(s)
     z = 0
     while z < length:
         c = s[z]
-        if c == '\u0E33':
-            base = ''
-            if z >= 2 and '\u0E38' <= s[z-1] <= '\u0E3A':
+        if c == "\u0e33":
+            base = ""
+            if z >= 2 and "\u0e38" <= s[z - 1] <= "\u0e3a":
                 base = s[z - 2]
             elif z >= 1:
                 base = s[z - 1]
 
             if base in BASE_ASC:
-                result.append('\uF711')
+                result.append("\uf711")
             else:
-                result.append('\u0E4D')
-            result.append('\u0E32')
+                result.append("\u0e4d")
+            result.append("\u0e32")
             z += 1
             continue
-        if '\u0E48' <= c <= '\u0E4C' and z > 0:
+        if "\u0e48" <= c <= "\u0e4c" and z > 0:
             prev = s[z - 1]
-            prev2 = s[z - 2] if z > 1 else ''
-            base = s[z-2] if z >= 2 and '\u0E38' <= prev <= '\u0E3A' else prev
+            prev2 = s[z - 2] if z > 1 else ""
+            base = s[z - 2] if z >= 2 and "\u0e38" <= prev <= "\u0e3a" else prev
             if z + 1 < length:
-                next_c = s[z+1]
-                if next_c == '\u0E4D':
+                next_c = s[z + 1]
+                if next_c == "\u0e4d":
                     if base in BASE_ASC:
-                        result.append('\uF711')
+                        result.append("\uf711")
                         result.append(c.translate(TOP_LEFT))
                     else:
-                        result.append('\u0E4D')
+                        result.append("\u0e4d")
                         result.append(c)
                     z += 2
                     continue
-                if next_c == '\u0E33':
+                if next_c == "\u0e33":
                     if base in BASE_ASC:
-                        result.append('\uF711')
+                        result.append("\uf711")
                         result.append(c.translate(TOP_LEFT))
                     else:
-                        result.append('\u0E4D')
+                        result.append("\u0e4d")
                         result.append(c)
-                    result.append('\u0E32')
+                    result.append("\u0e32")
                     z += 2
                     continue
             if prev in UPPER:
                 if prev2 in BASE_ASC:
                     result.append(c.translate(TOP_LEFT))
-                else :
+                else:
                     result.append(c)
             elif base in BASE_ASC:
                 result.append(c.translate(TOP_LOWLEFT))
@@ -416,18 +403,18 @@ def thaic90(s):
             result.append(c.translate(UPPER_LEFT))
             z += 1
             continue
-        elif '\u0E38' <= c <= '\u0E3A' and z > 0 and s[z - 1] in BASE_DESC:
+        elif "\u0e38" <= c <= "\u0e3a" and z > 0 and s[z - 1] in BASE_DESC:
             result.append(c.translate(LOWER_DESC))
             z += 1
             continue
-        elif c == '\u0E0D' and z < length - 1 and '\u0E38' <= s[z + 1] <= '\u0E3A':
-            result.append('\uF70F')
+        elif c == "\u0e0d" and z < length - 1 and "\u0e38" <= s[z + 1] <= "\u0e3a":
+            result.append("\uf70f")
             z += 1
             continue
-        elif c == '\u0E10' and z < length - 1 and '\u0E38' <= s[z + 1] <= '\u0E3A':
-            result.append('\uF700')
+        elif c == "\u0e10" and z < length - 1 and "\u0e38" <= s[z + 1] <= "\u0e3a":
+            result.append("\uf700")
             z += 1
             continue
         result.append(c)
         z += 1
-    return ''.join(result)
+    return "".join(result)

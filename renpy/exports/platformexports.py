@@ -334,7 +334,6 @@ def get_user_age():
     """
 
     if renpy.android:
-
         try:
             import jnius
             import time
@@ -355,7 +354,6 @@ def get_user_age():
             pass
 
     elif renpy.ios:
-
         try:
             from pyobjus import autoclass
             import time

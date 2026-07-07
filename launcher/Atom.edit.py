@@ -15,7 +15,6 @@ import renpy
 
 
 class Editor(renpy.editor.Editor):
-
     has_projects = True
 
     def get_atom(self):
@@ -48,7 +47,7 @@ class Editor(renpy.editor.Editor):
         return atom
 
     def begin(self, new_window=False, **kwargs):
-        self.args = [ ]
+        self.args = []
 
     def open(self, filename, line=None, **kwargs):
 
