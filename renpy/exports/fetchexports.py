@@ -87,7 +87,7 @@ class FetchProgress(object):
     def __init__(self, data):
         if data is None:
             self.data = b""
-        elif isinstance(data, basestring):
+        elif isinstance(data, str):
             self.data = data.encode("utf-8")
         else:
             self.data = data
