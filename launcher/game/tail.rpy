@@ -38,13 +38,8 @@ init python:
                 return True
 
             try:
-                with open(self.filename) as f:
+                with open(self.filename, encoding="utf-8") as f:
                     text = f.read()
-
-                    try:
-                        text = renpy.fsdecode(text)
-                    except Exception:
-                        text = text.decode("latin-1")
 
                     text = text.strip()
                     text = text.split("\n")

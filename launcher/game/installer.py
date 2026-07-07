@@ -417,15 +417,10 @@ def run(*args, **kwargs):
     Runs a program with the given arguments, in the target directory.
     """
 
-    environ = { renpy.exports.fsencode(k) : renpy.exports.fsencode(v) for k, v in os.environ.items() }
-
-    for k, v in kwargs.pop("environ", {}).items():
-        environ[renpy.exports.fsencode(k)] = renpy.exports.fsencode(v)
+    environ = dict(os.environ) | kwargs.pop("environ", {})
 
     global install_args
     global install_error
-
-    args = [ renpy.exports.fsencode(i) for i in args ]
 
     try:
         subprocess.check_call(args, cwd=target, env=environ) # type: ignore

@@ -248,7 +248,7 @@ init python:
         for fn in os.listdir(dist):
             if fn.endswith(".xcodeproj"):
                 xcodeproj = os.path.join(dist, fn)
-                subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
+                subprocess.call([ 'open', xcodeproj ])
 
                 break
 

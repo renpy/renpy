@@ -586,13 +586,12 @@ def MultiPersistent(name, save_on_quit=False):
     if not renpy.game.context().init_phase:
         raise Exception("MultiPersistent objects must be created during the init phase.")
 
-    name = renpy.exports.fsdecode(name)
     rv = get_MP(name)
     if rv is not None:
         return rv
 
     if "RENPY_MULTIPERSISTENT" in os.environ:
-        files = [renpy.exports.fsdecode(os.environ["RENPY_MULTIPERSISTENT"])]
+        files = [os.environ["RENPY_MULTIPERSISTENT"]]
 
     elif renpy.android or renpy.ios:
         # Due to the security policy of mobile devices, we store MultiPersistent
@@ -604,7 +603,7 @@ def MultiPersistent(name, save_on_quit=False):
         files = [os.path.expanduser("~/RenPy/Persistent")]
 
         if "APPDATA" in os.environ:
-            files.append(os.path.join(renpy.exports.fsdecode(os.environ["APPDATA"]), "RenPy", "persistent"))
+            files.append(os.path.join(os.environ["APPDATA"], "RenPy", "persistent"))
 
     elif renpy.macintosh:
         files = [os.path.expanduser("~/.renpy/persistent"), os.path.expanduser("~/Library/RenPy/persistent")]

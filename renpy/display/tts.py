@@ -113,22 +113,21 @@ class LinuxTTS(object):
         if not s:
             return
 
-        fsencode = renpy.exports.fsencode
         amplitude = renpy.game.preferences.get_mixer("voice")
         amplitude_100 = int(amplitude * 100)
 
         speed = renpy.game.preferences.tts_speed
         speed_wpm = int(175 * speed)
 
-        cmd = ["espeak", "-a", fsencode(str(amplitude_100)), "-s", fsencode(str(speed_wpm))]
+        cmd = ["espeak", "-a", str(amplitude_100), "-s", str(speed_wpm)]
 
         if voice is not None:
             # Voice format is "lang: name", extract the language for espeak.
             if ": " in voice:
                 voice = voice.split(": ", 1)[0]
-            cmd.extend(["-v", fsencode(voice)])
+            cmd.extend(["-v", voice])
 
-        cmd.append(fsencode(s))
+        cmd.append(s)
 
         self.process = subprocess.Popen(cmd)
         process = self.process
@@ -489,8 +488,7 @@ def default_tts_function(s):
 
     if "RENPY_TTS_COMMAND" in os.environ:
         global process
-        fsencode = renpy.exports.fsencode
-        process = subprocess.Popen([os.environ["RENPY_TTS_COMMAND"], fsencode(s)])
+        process = subprocess.Popen([os.environ["RENPY_TTS_COMMAND"], s])
         return
 
     if platform_tts is not None:

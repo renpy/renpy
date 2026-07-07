@@ -527,7 +527,7 @@ init -1499 python in _renpysteam:
         if not steamapi.SteamUGC().GetItemInstallInfo(item_id, byref(size), byref(path), 4096, byref(timestamp)):
             return None
 
-        return renpy.exports.fsdecode(path.value)
+        return path.value.decode("utf-8", "surrogateescape")
 
     ################################################################### Timeline.
 

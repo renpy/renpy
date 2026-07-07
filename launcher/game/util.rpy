@@ -29,8 +29,6 @@ init -1 python in util:
         """
 
         try:
-            d = renpy.fsdecode(d)
-
             if not os.path.isdir(d):
                 return [ ]
 
@@ -46,12 +44,8 @@ init -1 python in util:
         `base`, which defaults to `directory` if None.
         """
 
-        directory = renpy.fsdecode(directory)
-
         if base is None:
             base = directory
-        else:
-            base = renpy.fsdecode(base)
 
         for subdir, directories, files in os.walk(directory):
             for fn in directories:
