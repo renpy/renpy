@@ -20,11 +20,41 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
+import io
 import sys
 import subprocess
 import textwrap
 
 import renpy.error
+
+
+class NullFile(io.IOBase):
+    """
+    This file raises an error on input, and IOError on read.
+    """
+
+    def write(self, s):
+        return
+
+    def read(self, length=None):
+        raise IOError("Not implemented.")
+
+    def flush(self):
+        return
+
+
+def null_files():
+    try:
+        if (sys.stderr is None) or sys.stderr.fileno() < 0:
+            sys.stderr = NullFile()
+
+        if (sys.stdout is None) or sys.stdout.fileno() < 0:
+            sys.stdout = NullFile()
+    except Exception:
+        pass
+
+
+null_files()
 
 # Tracing ######################################################################
 
