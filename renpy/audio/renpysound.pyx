@@ -109,7 +109,7 @@ def check_error():
 
     e = RPS_get_error();
     if len(e):
-        raise Exception(unicode(e, "utf-8", "replace"))
+        raise Exception(str(e, "utf-8", "replace"))
 
 
 def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):

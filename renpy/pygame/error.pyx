@@ -36,7 +36,7 @@ def get_error():
         return ''
 
 def set_error(message):
-    if isinstance(message, unicode):
+    if isinstance(message, str):
         message = message.encode("utf-8")
 
     SDL_SetError("%s", <char *> message)
