@@ -411,8 +411,8 @@ class ShaderCache(object):
             with io.open(tmp, "w", encoding="utf-8") as f:
                 shaders = set(self.cache.keys()) | self.missing
 
-                for i in shaders:
-                    f.write(" ".join(i) + "\r\n")
+                for i in sorted(shaders):
+                    f.write(" ".join(i) + "\n")
 
             try:
                 os.unlink(fn)
