@@ -201,13 +201,16 @@ def bootstrap(renpy_base: str):
     import renpy.config
     import renpy.log
 
-    # Remove a legacy environment setting.
-    if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
-        del os.environ["SDL_VIDEODRIVER"]
-
     # In case of invocation with system python, check that it's run with -X utf8
     if not sys.flags.utf8_mode:
         raise Exception("Ren'Py requires Python to be run with -X utf8.")
+
+    if not isinstance(renpy_base, str):
+        raise TypeError("renpy_base must be a string.")
+
+    # Remove a legacy environment setting.
+    if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
+        del os.environ["SDL_VIDEODRIVER"]
 
     renpy.config.renpy_base = renpy_base
 
