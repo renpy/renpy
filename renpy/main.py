@@ -602,6 +602,9 @@ def main():
                 restart = e.reason
 
             finally:
+
+                renpy.display.tts.stop_tts()
+
                 renpy.persistent.update(True)
                 renpy.persistent.save_on_quit_MP()
 
