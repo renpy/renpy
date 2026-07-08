@@ -33,7 +33,6 @@ import renpy
 
 
 class Define(object):
-
     def __init__(self, name, value, comment):
         self.name = name
         self.value = value
@@ -97,7 +96,7 @@ def translate_code(language, filename, code):
     into `file` when a game is generated in `language`.
     """
 
-    language_code[language, filename].extend([''] + code.split("\n"))
+    language_code[language, filename].extend([""] + code.split("\n"))
 
 
 class CodeGenerator(object):
@@ -128,7 +127,7 @@ class CodeGenerator(object):
             return False
         else:
             with codecs.open(template, "r", "utf-8") as f:
-                self.lines = [ i.rstrip().replace(u"\ufeff", "") for i in f ]
+                self.lines = [i.rstrip().replace("\ufeff", "") for i in f]
 
             return True
 
@@ -139,10 +138,10 @@ class CodeGenerator(object):
             scaled = int(math.ceil(original * self.p.scale))
             return str(scaled)
 
-        lines = [ ]
+        lines = []
 
         for l in self.lines:
-            l = re.sub(r'gui.scale\((.*?)\)', scale, l)
+            l = re.sub(r"gui.scale\((.*?)\)", scale, l)
             lines.append(l)
 
         self.lines = lines
@@ -151,10 +150,10 @@ class CodeGenerator(object):
 
         gui_init = "gui.init({}, {})".format(self.p.width, self.p.height)
 
-        lines = [ ]
+        lines = []
 
         for l in self.lines:
-            l = re.sub(r'gui.init\(.*?\)', gui_init, l)
+            l = re.sub(r"gui.init\(.*?\)", gui_init, l)
             lines.append(l)
 
         self.lines = lines
@@ -171,11 +170,10 @@ class CodeGenerator(object):
 
         seen = set()
 
-        lines = [ ]
+        lines = []
 
         for l in self.lines:
-
-            m = re.match(r'^(\s*)define (.*?) =', l)
+            m = re.match(r"^(\s*)define (.*?) =", l)
 
             if m:
                 indent = m.group(1)
@@ -189,7 +187,6 @@ class CodeGenerator(object):
             lines.append(l)
 
         for d in additions:
-
             if d.name in seen:
                 continue
 
@@ -211,20 +208,20 @@ class CodeGenerator(object):
         """
 
         replacements = {
-            'gui.accent_color' : repr(self.p.accent_color.hexcode),
-            'gui.selected_color' : repr(self.p.selected_color.hexcode),
-            'gui.hover_color' : repr(self.p.hover_color.hexcode),
-            'gui.muted_color' : repr(self.p.muted_color.hexcode),
-            'gui.hover_muted_color' : repr(self.p.hover_muted_color.hexcode),
-            'gui.title_color' : repr(self.p.title_color.hexcode),
-            'gui.idle_color' : repr(self.p.idle_color.hexcode),
-            'gui.idle_small_color' : repr(self.p.idle_small_color.hexcode),
-            'gui.insensitive_color' : repr(self.p.insensitive_color.hexcode),
-            'gui.text_color' : repr(self.p.text_color.hexcode),
-            'gui.interface_text_color' : repr(self.p.text_color.hexcode),
-            'gui.choice_button_text_idle_color' : repr(self.p.idle_color.hexcode),
-            'gui.choice_button_text_insensitive_color' : repr(self.p.insensitive_color.hexcode),
-            }
+            "gui.accent_color": repr(self.p.accent_color.hexcode),
+            "gui.selected_color": repr(self.p.selected_color.hexcode),
+            "gui.hover_color": repr(self.p.hover_color.hexcode),
+            "gui.muted_color": repr(self.p.muted_color.hexcode),
+            "gui.hover_muted_color": repr(self.p.hover_muted_color.hexcode),
+            "gui.title_color": repr(self.p.title_color.hexcode),
+            "gui.idle_color": repr(self.p.idle_color.hexcode),
+            "gui.idle_small_color": repr(self.p.idle_small_color.hexcode),
+            "gui.insensitive_color": repr(self.p.insensitive_color.hexcode),
+            "gui.text_color": repr(self.p.text_color.hexcode),
+            "gui.interface_text_color": repr(self.p.text_color.hexcode),
+            "gui.choice_button_text_idle_color": repr(self.p.idle_color.hexcode),
+            "gui.choice_button_text_insensitive_color": repr(self.p.insensitive_color.hexcode),
+        }
 
         self.update_defines(replacements, language_defines[self.p.language])
 
@@ -235,14 +232,14 @@ class CodeGenerator(object):
 
         def quote(s):
             s = s.replace("\\", "\\\\")
-            s = s.replace("\"", "\\\"")
+            s = s.replace('"', '\\"')
             return '"' + s + '"'
 
         replacements = {
-            'config.name' : "_({})".format(quote(self.p.name)),
-            'build.name' : quote(self.p.simple_name),
-            'config.save_directory' : quote(self.p.savedir),
-            }
+            "config.name": "_({})".format(quote(self.p.name)),
+            "build.name": quote(self.p.simple_name),
+            "config.save_directory": quote(self.p.savedir),
+        }
 
         self.update_defines(replacements)
 
@@ -251,11 +248,9 @@ class CodeGenerator(object):
         target = os.path.join(self.p.prefix, filename)
 
         if os.path.exists(target):
-
             backup = 1
 
             while True:
-
                 bfn = "{}.{}.bak".format(target, backup)
 
                 if not os.path.exists(bfn):
@@ -267,7 +262,7 @@ class CodeGenerator(object):
                 os.rename(target, bfn)
 
         with codecs.open(target, "w", "utf-8") as f:
-            f.write(u"\ufeff")
+            f.write("\ufeff")
 
             for l in self.lines:
                 f.write(l + "\r\n")
@@ -281,16 +276,15 @@ class CodeGenerator(object):
 
             quote = m.group(1)[0]
 
-            s = u"_({}{}{})".format(quote, s, quote)
+            s = "_({}{}{})".format(quote, s, quote)
 
             return s
 
-        lines = [ ]
+        lines = []
 
         for l in self.lines:
-
-            l = re.sub(r'_\((\".*?\")\)', replace, l)
-            l = re.sub(r'_\((\'.*?\')\)', replace, l)
+            l = re.sub(r"_\((\".*?\")\)", replace, l)
+            l = re.sub(r"_\((\'.*?\')\)", replace, l)
 
             lines.append(l)
 
@@ -298,17 +292,15 @@ class CodeGenerator(object):
 
     def translate_comments(self):
 
-        lines = [ ]
+        lines = []
 
-        comment = [ ]
+        comment = []
         indent = ""
 
         for l in self.lines:
-
-            m = re.match(r'^(\s*## )(.*)', l.rstrip())
+            m = re.match(r"^(\s*## )(.*)", l.rstrip())
 
             if m:
-
                 indent = m.group(1)
                 c = m.group(2)
 
@@ -318,25 +310,24 @@ class CodeGenerator(object):
                 comment.append(c)
 
             else:
-
                 if comment:
-                    s = "## " + ' '.join(comment)
+                    s = "## " + " ".join(comment)
 
                     if s.endswith("#"):
                         hashpad = True
-                        s = s.rstrip('# ')
+                        s = s.rstrip("# ")
                     else:
                         hashpad = False
 
                     s = renpy.translation.translate_string(s, language=self.p.language)
 
-                    m = re.match(r'## ?([ *]*)(.*)', s)
+                    m = re.match(r"## ?([ *]*)(.*)", s)
 
                     if m is None:
                         raise Exception("Comment translation doesn't start with '## ': {}".format(s))
 
                     prefix = m.group(1)
-                    empty = ' ' * len(prefix)
+                    empty = " " * len(prefix)
                     rest = m.group(2)
 
                     len_prefix = len(indent) + len(prefix)
@@ -345,18 +336,17 @@ class CodeGenerator(object):
                     import store.gui
 
                     for i, s in enumerate(renpy.text.extras.textwrap(rest, len_wrap, store.gui.asian)):
-
                         if i == 0:
                             s = indent + prefix + s
                         else:
                             s = indent + empty + s
 
                         if hashpad and len(s) < 79:
-                            s = s + ' ' + "#" * (79 - len(s))
+                            s = s + " " + "#" * (79 - len(s))
 
                         lines.append(s)
 
-                    comment = [ ]
+                    comment = []
 
                 lines.append(l)
 
@@ -382,7 +372,7 @@ class CodeGenerator(object):
         if self.target_exists(fn):
             return
 
-        language = renpy.store._preferences.language # @UndefinedVariable
+        language = renpy.store._preferences.language  # @UndefinedVariable
 
         if language is None:
             language = "None"

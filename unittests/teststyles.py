@@ -1,13 +1,13 @@
-#@PydevCodeAnalysisIgnore
+# @PydevCodeAnalysisIgnore
 import unittest
 
 import renpy
+
 renpy.import_all()
 from renpy.styleaccel import Style, StyleManager, build_styles
 
 
 class TestStyles(unittest.TestCase):
-
     def test_set_prefix(self):
         s = Style(None)
 
@@ -47,12 +47,12 @@ class TestStyles(unittest.TestCase):
         assert sm.prefs_default.parent == ("default",)
 
         assert sm.default["foo"] is sm.default["foo"]
-        assert sm.default["foo"].name == ("default","foo")
+        assert sm.default["foo"].name == ("default", "foo")
         assert sm.default["foo"].parent is None
 
         assert sm.prefs_default["foo"] is sm.prefs_default["foo"]
-        assert sm.prefs_default["foo"].name == ("prefs_default","foo")
-        assert sm.prefs_default["foo"].parent == ("default","foo")
+        assert sm.prefs_default["foo"].name == ("prefs_default", "foo")
+        assert sm.prefs_default["foo"].parent == ("default", "foo")
 
         sm.default.size = "default"
         sm.default.italic = "default"
@@ -70,9 +70,3 @@ class TestStyles(unittest.TestCase):
         assert s.bold == "default_foo"
         assert s.italic == "prefs_default"
         assert s.size == "default"
-
-
-
-
-
-

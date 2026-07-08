@@ -62,7 +62,7 @@ init label _errorhandling:
     style _default:
 
         # Text properties
-        font "DejaVuSans.ttf"
+        font "_WenQuanYiMicroHei.woff2"
         language "unicode"
         antialias True
         size gui._scale(16)

@@ -3,6 +3,7 @@ from __future__ import print_function
 import os
 import re
 
+
 def check_include():
 
     used = set()
@@ -31,6 +32,7 @@ def check_include():
         fn = "inc/" + i
         if fn not in used:
             print("WARNING: source/{} is not used.".format(fn))
+
 
 if __name__ == "__main__":
     check_include()

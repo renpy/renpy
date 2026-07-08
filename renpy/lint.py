@@ -64,7 +64,7 @@ def report(msg, *args):
     else:
         out = ""
 
-    out += msg % args
+    out += (msg % args) if args else msg
     print("")
     print(out)
 
@@ -1014,7 +1014,6 @@ def check_unreachables(all_nodes):
 
                 if node in unreachable:
                     to_check.append(node)
-
 
         elif isinstance(node, Testcase):
             weakly_reachable.add(node)

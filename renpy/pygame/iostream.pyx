@@ -545,7 +545,7 @@ cdef class IOStreamImpl:
 
         if name is not None:
             self.name = name
-        elif isinstance(filelike, basestring):
+        elif isinstance(filelike, str):
             self.name = filelike
         else:
             self.name = getattr(filelike, "name", name)

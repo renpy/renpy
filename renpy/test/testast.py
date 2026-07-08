@@ -46,11 +46,13 @@ class SelectorException(RenpyTestException):
 
 class LoopBreakException(Exception):
     """Exception raised to break out of a loop."""
+
     pass
 
 
 class LoopContinueException(Exception):
     """Exception raised to continue to the next iteration of a loop."""
+
     pass
 
 
@@ -1504,7 +1506,7 @@ class For(ControlFrame):
 
 class While(ControlFrame):
     def __init__(self, loc: NodeLocation, condition: Condition, block: Block):
-        Node.__init__(self,loc)
+        Node.__init__(self, loc)
 
         self.condition = condition
         self.block = block
@@ -1513,7 +1515,7 @@ class While(ControlFrame):
         renpy.test.testexecution.push_control_frame(self)
         return 0
 
-    def chain(self,next):
+    def chain(self, next):
         self.next = next
         self.block.chain(self)
 

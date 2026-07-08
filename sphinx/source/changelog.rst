@@ -15,7 +15,7 @@ Clipboard
 
 Ren'Py has new :file:`clipboard` functions that work with the system clipboard.
 
-The :func:`renpy.get_clipboard_text` and * :func:`renpy.put_clipboard_text` functions work with the text keyboard that
+The :func:`renpy.get_clipboard_text` and :func:`renpy.put_clipboard_text` functions work with the text clipboard that
 is present on all systems.
 
 The :func:`renpy.get_clipboard_data`, :func:`renpy.get_clipboard_mime_types`, and :func:`renpy.put_clipboard_data`
@@ -34,6 +34,28 @@ requirements.
 
 On Android, this uses the Play Age Signals API. On iOS, it uses the Declared Age Range API,
 which requires explicitly adding the "Declared Age Range" capability/entitlement in Xcode.
+
+Self-Voicing
+------------
+
+Ren'Py now supports selecting the voice used by self-voicing. This is done through the shift+A accessibility menu,
+which now presents a list of voices available on the user's system for the user to pick from.
+
+The list of available voices can be obtained through the :func:`renpy.get_tts_voices` function, and
+the voice can be set through the :class:`Preference` class, using the "self voicing voice" setting. The voice is
+stored in :var:`preferences.tts_voice`.
+
+The speed of self-voicing can be adjusted through the "self voicing speed" setting, which is stored in :var:`preferences.tts_speed`,
+and can be set through the :class:`Preference` class, using the "self voicing speed" setting, which may be used as a bar value or
+to set the speed directly to a number between 1.0 and 5.0.
+
+On the shift+A accessibility menu, pressing the "R" key resets the self-voicing settings to the default values, then
+enables self-voicing. This can be used to reset the self-voicing settings if the user has changed them to a state that
+makes self-voicing unusable.
+
+On macOS and Windows, more modern techniques are used to play back the speech.
+
+The :var:`config.tts_voice` variable is no longer used.
 
 Features
 --------
@@ -79,18 +101,19 @@ Other Changes
 
 The :var:`config.mesh_oversample` variable now defaults to 8.0, which allows meshes to be scaled up before becoming blurry.
 
-The ``scene`` statenment now respects :var:`config.tag_layer` when deciding which later to clear.
+The ``scene`` statement now respects :var:`config.tag_layer` when deciding which layer to clear.
 
 It is now possible to consume in-app purchases on Android, as well as on iOS.
 
 The :var:`config.tlid_only_considers_say` variable has been set to True by default. This prevents non-say statements,
-such as the ``voice`` statement, from contributing to translation identifiers. This can change trasnslation identifiers.
-See the inconpatible changes for more information.
+such as the ``voice`` statement, from contributing to translation identifiers. This can change translation identifiers.
+See the incompatible changes for more information.
 
 The ability to apply zsync-based updates has been removed. This was an older update format that has been replaced.
 The ability to create these updates will be removed in Ren'Py 8.7.0.
 
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
+
 .. _renpy-8.5.4:
 
 8.5.4
@@ -202,6 +225,9 @@ The Persian translation of the Ren'Py tutorial has been updated.
 
 Features
 --------
+
+The new :var:`config.renamed_files` variable is a dictionary mapping file names to new file names, that can be
+used to allow files to be renamed on disk without requiring the old names to be changed.
 
 When defining styles used by :ref:`ruby text <ruby-text>` or :ref:`style text tags <style-text-tags>`, more
 style properties can be set to None to use the value from the parent text. As of this version, the following

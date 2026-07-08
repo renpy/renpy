@@ -28,13 +28,14 @@ import os
 BASE = os.path.abspath(os.path.dirname(sys.argv[0]))
 os.chdir(BASE)
 
-SCRIPTS = os.path.join(BASE, 'scripts')
+SCRIPTS = os.path.join(BASE, "scripts")
 sys.path.insert(0, SCRIPTS)
 
 import setuplib
 from setuplib import windows, cython, find_unnecessary_gen, generate_all_cython, env
 
 import generate_styles
+
 
 def main():
 
@@ -44,26 +45,30 @@ def main():
     generate_styles.generate()
 
     # These control the level of optimization versus debugging.
-    setuplib.extra_compile_args = [ "-Wno-unused-function" ]
-    setuplib.extra_link_args = [ ]
+    setuplib.extra_compile_args = ["-Wno-unused-function"]
+    setuplib.extra_link_args = []
 
     cubism = os.environ.get("CUBISM", None)
     if cubism:
         setuplib.include_dirs.append("{}/Core/include".format(cubism))
 
     # src/ directory.
-    cython("_renpy", [ "src/IMG_savepng.c", "src/core.c" ], packages="sdl3 libpng")
+    cython("_renpy", ["src/IMG_savepng.c", "src/core.c"], packages="sdl3 libpng")
 
     # renpy.pygame
     cython("renpy.pygame.iostream", packages="sdl3")
     cython("renpy.pygame.locals", packages="sdl3")
-    cython("renpy.pygame.image", source=[ "src/pygame/write_png.c", "src/pygame/write_jpeg.c" ], packages="sdl3-image libjpeg libpng sdl3")
+    cython(
+        "renpy.pygame.image",
+        source=["src/pygame/write_png.c", "src/pygame/write_jpeg.c"],
+        packages="sdl3-image libjpeg libpng sdl3",
+    )
     cython("renpy.pygame.sdl_image", packages="sdl3")
     cython("renpy.pygame.controller", packages="sdl3")
     cython("renpy.pygame.joystick", packages="sdl3")
     cython("renpy.pygame.pygame_time", packages="sdl3")
     cython("renpy.pygame.power", packages="sdl3")
-    cython("renpy.pygame.transform", source=[ "src/pygame/SDL3_rotozoom.c" ], packages="sdl3")
+    cython("renpy.pygame.transform", source=["src/pygame/SDL3_rotozoom.c"], packages="sdl3")
     cython("renpy.pygame.scrap", packages="sdl3")
     cython("renpy.pygame.key", packages="sdl3")
     cython("renpy.pygame.mouse", packages="sdl3")
@@ -75,7 +80,11 @@ def main():
     cython("renpy.pygame.error", packages="sdl3")
     cython("renpy.pygame.surface", packages="sdl3")
     cython("renpy.pygame.draw", packages="sdl3")
-    cython("renpy.pygame.gfxdraw", source=[ "src/pygame/SDL3_gfxPrimitives.c",  "src/pygame/SDL3_rotozoom.c" ], packages="sdl3")
+    cython(
+        "renpy.pygame.gfxdraw",
+        source=["src/pygame/SDL3_gfxPrimitives.c", "src/pygame/SDL3_rotozoom.c"],
+        packages="sdl3",
+    )
 
     # renpy
     cython("renpy.astsupport")
@@ -84,15 +93,18 @@ def main():
     cython("renpy.pydict")
     cython("renpy.style")
     cython("renpy.encryption")
-    cython("renpy.tfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
-    cython("renpy.ecsign", [ "src/ec_sign_core.c" ], packages="openssl")
+    cython("renpy.tfd", ["src/tinyfiledialogs/tinyfiledialogs.c"])
+    cython("renpy.ecsign", ["src/ec_sign_core.c"], packages="openssl")
 
     # renpy.audio
     cython(
         "renpy.audio.renpysound",
-        [ "src/renpysound_core.c", "src/ffmedia.c" ],
-        compile_args=[ "-Wno-deprecated-declarations" ] if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ) else [ ],
-        packages="libavformat libavcodec libavutil libswresample libswscale sdl3")
+        ["src/renpysound_core.c", "src/ffmedia.c"],
+        compile_args=["-Wno-deprecated-declarations"]
+        if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ)
+        else [],
+        packages="libavformat libavcodec libavutil libswresample libswscale sdl3",
+    )
 
     cython("renpy.audio.filter")
 
@@ -109,11 +121,9 @@ def main():
     cython("renpy.display.accelerator", packages="sdl3")
     cython("renpy.display.quaternion")
 
-
     # renpy.uguu
     cython("renpy.uguu.gl", packages="sdl3")
     cython("renpy.uguu.uguu", packages="sdl3")
-
 
     # renpy.gl2
     cython("renpy.gl2.gl2mesh")
@@ -127,20 +137,18 @@ def main():
     cython("renpy.gl2.gl2shader")
 
     if cubism:
-        cython("renpy.gl2.live2dmodel", [ "src/live2dcsm.c" ], packages="sdl2")
+        cython("renpy.gl2.live2dmodel", ["src/live2dcsm.c"], packages="sdl3")
 
     cython("renpy.gl2.live2dphysics")
 
-    cython("renpy.gl2.assimp", [ "src/assimpio.cc" ], language="c++", packages="assimp sdl3")
-
+    cython("renpy.gl2.assimp", ["src/assimpio.cc"], language="c++", packages="assimp sdl3")
 
     # renpy.text
     cython("renpy.text.textsupport")
     cython("renpy.text.texwrap")
-    cython("renpy.text.ftfont", [ "src/ftsupport.c", "src/ttgsubtable.c" ], packages="freetype2 harfbuzz sdl3")
-    cython("renpy.text.hbfont", [ "src/ftsupport.c" ], packages="freetype2 harfbuzz sdl3")
-    cython("renpy.text.bidi", [ "src/renpybidicore.c" ], packages="fribidi")
-
+    cython("renpy.text.ftfont", ["src/ftsupport.c", "src/ttgsubtable.c"], packages="freetype2 harfbuzz sdl3")
+    cython("renpy.text.hbfont", ["src/ftsupport.c"], packages="freetype2 harfbuzz sdl3")
+    cython("renpy.text.bidi", ["src/renpybidicore.c"], packages="fribidi")
 
     generate_all_cython()
     find_unnecessary_gen()

@@ -261,8 +261,6 @@ def resize_movie(r, width, height):
     dimensions.
     """
 
-
-
     if r is None:
         return None
 
@@ -368,6 +366,7 @@ allocated_channels: set[str] = set()
 The set of channels that have been dynamically allocated. This only includes the main channel, and not the
 mask channel.
 """
+
 
 class Movie(renpy.display.displayable.Displayable):
     """
@@ -847,7 +846,6 @@ def update_playing():
 
     renpy.game.context().movie = last_channel_movie = dict(channel_movie)
     reset_channels.clear()
-
 
 
 def frequent():

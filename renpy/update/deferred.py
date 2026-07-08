@@ -65,7 +65,6 @@ def delete(fn: str):
     try:
         os.unlink(fn)
     except Exception:
-
         if first_deferred_delete:
             attempts = 5
             delay = 1
@@ -75,7 +74,6 @@ def delete(fn: str):
             delay = 0
 
         for i in range(attempts):
-
             try:
                 if not os.path.exists(DELETED_DIRECTORY):
                     os.makedirs(DELETED_DIRECTORY, exist_ok=True)
@@ -131,7 +129,6 @@ def process_deferred():
     global first_deferred_delete
     first_deferred_delete = True
 
-
     DEFERRED_UPDATE_LOG = os.path.join(renpy.config.renpy_base, "update", "log.txt")
 
     if not os.path.exists(DEFERRED_UPDATE_FILE):
@@ -180,7 +177,6 @@ def process_deleted():
     """
     Delete files in the update/deleted directory.
     """
-
 
     if not os.path.exists(DELETED_DIRECTORY):
         return

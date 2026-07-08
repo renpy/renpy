@@ -12,6 +12,10 @@ The Self-voicing mode can be toggled by pressing the ``v`` key. Self-voicing
 modes can be selected through the accessibility menu, which can be accessed
 by pressing ``Shift+A``.
 
+When in the ``Shift+A`` accessibility menu, the ``R`` key resets the self-voicing settings
+to the default values, then enables self-voicing. This can be used to reset the self-voicing
+settings if the user has changed them to a state that makes self-voicing unusable.
+
 When in self-voicing mode, keyboard navigation is changed so that the
 up and down arrow keys with iterate through all focusable displayables
 on the screen.
@@ -24,45 +28,17 @@ text that comprises the game.
 Speech Synthesis
 ----------------
 
-Ren'Py relies on the operating system to provide speech synthesis
+Ren'Py generally uses speech synthesizers provided by the operating system and web browser.
+Linux is the exception - the ``espeak-ng`` command must be installed for self-voicing
+to work on Linux.
+
+The voice may be selected through the accessibility menu, which uses the :func:`renpy.get_tts_voices` function to
+list available voices and :func:`Preference` to set the voice. The precise list of available voices is platform
+and computer dependent.
+
+On most platforms, Ren'Py relies on the operating system to provide speech synthesis
 services. To adjust the speed of speech synthesis and the voice used,
 adjust your platform's speech settings.
-
-Windows
-    On Windows, Ren'Py uses the Microsoft Speech API. Speech synthesis
-    settings can be changed on the "Text to Speech" tab of the "Speech
-    Recognition" control panel.
-
-Mac OS X
-    On Mac OS X, Ren'Py uses the ``say`` command. Speech synthesis settings
-    can be changed on the "Text to Speech" tab of the "Dictation & Speech"
-    control panel.
-
-Linux
-    On Linux, Ren'Py uses the ``espeak`` command. Espeak may need to be
-    installed using your package manager before self-voicing mode will
-    work.
-
-Android, iOS, Chrome OS
-    These use the platform's built-in text-to-speech services.
-
-Web
-    This uses the Web Speech API, which is supported by modern browsers.
-
-
-The default voice can be selected on a per-platform basis, using the
-:var:`config.tts_voice` variable. For example::
-
-    init python:
-
-        if renpy.windows:
-            config.tts_voice = "Mark"
-        elif renpy.macintosh:
-            config.tts_voice = "Alex"
-        elif renpy.linux:
-            config.tts_voice = "english_rp"
-
-The available voice vary based on the platform.
 
 Other Modes
 -----------
@@ -169,8 +145,8 @@ Descriptive Text
 
 The :var:`config.tts_substitutions` variable can be used to substitute
 words in the text being spoken, to better control pronunciation. The
-:var:`config.tts_voice` variable can be used to select the voice used
-to speak text from the voices on a platform.
+voice can be selected through the accessibility menu (Shift+A), as can its speed. The voice is stored
+in :var:`preferences.tts_voice`. Te speed of self-voicing is stored in :var:`preferences.tts_speed`.
 
 A self-voicing debug mode can be enabled by typing Shift+Alt+V. This will
 display the text that would be voiced on the screen for development

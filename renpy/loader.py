@@ -71,6 +71,7 @@ apks = []
 game_apks = []
 split_apks = []
 
+
 def find_apks() -> None:
     """
     Finds APKs to load data from, and adds them to apks, game_apks, and
@@ -531,6 +532,9 @@ def load_core(name):
 
     name = lower_map.get(unicodedata.normalize("NFC", name.lower()), name)
 
+    if renamed := renpy.config.renamed_files.get(name.lower()):
+        return load_core(renamed)
+
     for i in file_open_callbacks:
         rv = i(name)
         if rv is not None:
@@ -685,9 +689,7 @@ def get_prefixes(tl=True, directory=None):
         rv.append(prefix)
 
     if directory is not None:
-
-        for mapped_directory in renpy.config.special_directory_map.get(directory, [ directory ]):
-
+        for mapped_directory in renpy.config.special_directory_map.get(directory, [directory]):
             if language is not None:
                 rv.append(renpy.config.tl_directory + "/" + language + "/" + mapped_directory + "/")
 
@@ -726,6 +728,9 @@ def loadable_core(name):
 
     if name in loadable_cache:
         return loadable_cache[name]
+
+    if renamed := renpy.config.renamed_files.get(name.lower()):
+        return load_core(renamed)
 
     try:
         transfn(name)
@@ -768,7 +773,7 @@ def loadable(name, tl=True, directory=None):
     return False
 
 
-def transpath(path: str) -> str|None:
+def transpath(path: str) -> str | None:
     """
     Translates `path` to a name that exists in one of the searched directories,
     or to None if it does not exist.
@@ -784,7 +789,7 @@ def transpath(path: str) -> str|None:
             return fn
 
 
-def transfn(name: bytes|str) -> str:
+def transfn(name: bytes | str) -> str:
     """
     Tries to translate the name to a file that exists in one of the
     searched directories.
@@ -837,7 +842,6 @@ def get_hash(name):  # type: (str) -> int
     hash_cache[name] = rv
 
     return rv
-
 
 
 # Auto-Reload

@@ -175,8 +175,19 @@ screen _accessibility_audio():
                     alt "reset self voicing volume drop"
                     action Preference("self voicing volume drop", 0.5)
 
-        vbox:
 
+            label _("Self-Voicing Speed")
+
+            side "c r":
+                spacing gui._scale(10)
+
+                bar value Preference("self voicing speed") yalign 0.5
+
+                textbutton _("Reset"):
+                    alt "reset self voicing speed"
+                    action Preference("self voicing speed", 1.0)
+
+        vbox:
             label _("Mono Audio")
 
             textbutton _("Enable"):
@@ -186,6 +197,17 @@ screen _accessibility_audio():
             textbutton _("Disable"):
                 action Preference("mono audio", "disable")
                 style_suffix "radio_button"
+
+            label _("Self-Voicing Voice")
+
+            textbutton _("Default"):
+                action Preference("self voicing voice", None)
+                style_suffix "radio_button"
+
+            for voice in renpy.get_tts_voices():
+                textbutton "[voice!q]":
+                    action Preference("self voicing voice", voice)
+                    style_suffix "radio_button"
 
 screen _accessibility_text():
 
@@ -264,43 +286,60 @@ screen _accessibility():
 
     frame:
         style_group ""
-        alt _("Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars.")
+        alt _("Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars. Press R to reset self-voicing settings to their default values and enable self-voicing.")
         yfill False
 
         has side "c b":
             spacing gui._scale(10)
             xfill True
 
-        viewport:
-            scrollbars "vertical"
-            mousewheel True
-            viewport_yfill False
-
-
-            vbox:
+        vbox:
+            hbox:
+                xfill True
 
                 hbox:
-                    xfill True
+                    spacing gui._scale(25)
 
-                    hbox:
-                        spacing gui._scale(25)
-
-                        textbutton _("Self-Voicing and Audio"):
-                            style_suffix "big_radio_button"
-                            action SetScreenVariable("page", "audio")
-
-                        textbutton _("Text"):
-                            style_suffix "big_radio_button"
-                            action SetScreenVariable("page", "text")
-
-                    textbutton _("Return"):
-                        action Hide("_accessibility")
+                    textbutton _("Self-Voicing and Audio"):
                         style_suffix "big_radio_button"
-                        xalign 1.0
+                        action SetScreenVariable("page", "audio")
 
-                if page == "audio":
-                    use _accessibility_audio()
-                elif page == "text":
-                    use _accessibility_text()
+                    textbutton _("Text"):
+                        style_suffix "big_radio_button"
+                        action SetScreenVariable("page", "text")
 
-        text _("The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was.")
+                textbutton _("Return"):
+                    action Hide("_accessibility")
+                    style_suffix "big_radio_button"
+                    xalign 1.0
+
+            viewport:
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                viewport_yfill False
+
+                vbox:
+
+                    if page == "audio":
+                        use _accessibility_audio()
+                    elif page == "text":
+                        use _accessibility_text()
+
+
+        if page == "audio":
+            text _("Press R to reset all self-voicing settings to their default values, and enable self-voicing.")
+        elif page == "text":
+            text _("The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was.")
+        else:
+            null
+
+
+    key "K_r" action [
+        Preference("voice volume", 1.0),
+        Preference("self voicing volume drop", 0.5),
+        Preference("self voicing speed", 1.0),
+        Preference("self voicing voice", None),
+        Preference("self voicing", "enable"),
+        Function(renpy.display.tts.speak, _("Self-voicing settings reset."))
+    ]
