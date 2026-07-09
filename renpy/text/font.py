@@ -31,9 +31,11 @@ import renpy
 import os
 
 import renpy.text.ftfont as ftfont
+
 ftfont.init()
 
 import renpy.text.hbfont as hbfont
+
 hbfont.init()
 
 import renpy.text.textsupport as textsupport
@@ -761,9 +763,7 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
             face, int(size * scale), bold, italics, outline, antialias, vertical, hinting, instance, axis, features
         )
     else:
-        rv = ftfont.FTFont(
-            face, int(size * scale), bold, italics, outline, antialias, vertical, hinting
-        )
+        rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting)
 
     font_cache[key] = rv
 

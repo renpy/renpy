@@ -278,7 +278,7 @@ init python in project:
             self.make_tmp()
 
             # Find the python executable to run.
-            executable_path = os.path.dirname(renpy.fsdecode(sys.executable))
+            executable_path = os.path.dirname(sys.executable)
 
             if renpy.renpy.windows:
                 extension = ".exe"
@@ -329,21 +329,11 @@ init python in project:
             if hasattr(sys, "renpy_executable"):
                 environ = { k : v for k, v in environ.items() if not k.startswith("PYTHON") }
 
-            encoded_environ = { }
-
-            for k, v in environ.items():
-                if v is None:
-                    continue
-
-                encoded_environ[renpy.fsencode(k)] = renpy.fsencode(v)
-
             # Launch the project.
-            cmd = [ renpy.fsencode(i) for i in cmd ]
-
             if persistent.use_console and renpy.macintosh:
                 cmd = self.generate_mac_launch_string(cmd)
 
-            p = subprocess.Popen(cmd, env=encoded_environ)
+            p = subprocess.Popen(cmd, env=environ)
 
             if wait:
                 if p.wait():
@@ -372,7 +362,7 @@ init python in project:
             self.make_tmp()
 
             # Find the python executable to run.
-            executable_path = os.path.dirname(renpy.fsdecode(sys.executable))
+            executable_path = os.path.dirname(sys.executable)
 
             if renpy.renpy.windows:
                 extension = ".exe"
@@ -1052,9 +1042,6 @@ init python in project:
 
     manager.scan()
 
-    if isinstance(persistent.projects_directory, str):
-        persistent.projects_directory = renpy.fsdecode(persistent.projects_directory)
-
 init 10 python:
     if persistent.projects_directory is not None:
         if not directory_is_writable(persistent.projects_directory):
@@ -1096,7 +1083,7 @@ init python:
 
         args = ap.parse_args()
 
-        persistent.projects_directory = renpy.fsdecode(args.projects)
+        persistent.projects_directory = args.projects
         project.multipersistent.projects_directory = persistent.projects_directory
         project.multipersistent.save()
         renpy.save_persistent()
@@ -1125,7 +1112,7 @@ init python:
         projects = os.path.dirname(os.path.abspath(args.project))
         name = os.path.basename(args.project)
 
-        persistent.projects_directory = renpy.fsdecode(projects)
+        persistent.projects_directory = projects
         project.multipersistent.projects_directory = persistent.projects_directory
 
         persistent.active_project = name

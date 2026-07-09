@@ -24,11 +24,11 @@ import cython
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef inline Py_UCS4 _get_c_unbounded(unicode data, Py_ssize_t pos) noexcept:
+cdef inline Py_UCS4 _get_c_unbounded(str data, Py_ssize_t pos) noexcept:
     return data[pos]
 
 
-def match_whitespace(unicode data not None, Py_ssize_t pos, /):
+def match_whitespace(str data not None, Py_ssize_t pos, /):
     """
     Return position after the run of whitespace characters, or None
     if current position is not at the start of whitespace.
@@ -46,7 +46,7 @@ def match_whitespace(unicode data not None, Py_ssize_t pos, /):
     return None if i == pos else i
 
 
-def match_logical_word(unicode data not None, Py_ssize_t pos, /):
+def match_logical_word(str data not None, Py_ssize_t pos, /):
     """
     Return position after the run of letters that are valid part
     of a logical word, or None if current position is not at the
@@ -74,7 +74,7 @@ def match_logical_word(unicode data not None, Py_ssize_t pos, /):
     return None if i == pos else i
 
 
-def match_operator(unicode data not None, Py_ssize_t pos, /):
+def match_operator(str data not None, Py_ssize_t pos, /):
     """
     Return position after the operator, or None if current position
     is not at the start of an operator.
@@ -122,7 +122,7 @@ def match_operator(unicode data not None, Py_ssize_t pos, /):
     return None
 
 
-def match_string(unicode data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
+def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
     """
     Given positions before and after the prefix, return one of the following:
       - `-1` if the string is unterminated.
@@ -146,7 +146,7 @@ def match_string(unicode data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /
     # # Valid prefixes are case-insensitive: r, u, b, br, rb, f, fr, rf
     cdef Py_ssize_t prefix_len = pos - prefix_pos
     cdef Py_UCS4 c1, c2
-    cdef unicode prefix_lower
+    cdef str prefix_lower
     cdef bint f_string = False
     if prefix_len == 1:
         c1 = _get_c_unbounded(data, prefix_pos)

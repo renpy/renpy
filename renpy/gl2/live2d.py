@@ -60,7 +60,9 @@ def onetime_init():
             raise Exception("This version of Live2D Cubism for Web is not compatible with this version of Ren'Py.")
 
         if not did_web_init:
-            raise Exception("Live2D Cubism for Web was not found. Install it in the Ren'Py launcher and rebuild the game.")
+            raise Exception(
+                "Live2D Cubism for Web was not found. Install it in the Ren'Py launcher and rebuild the game."
+            )
 
         dll = "builtin"
     elif renpy.windows:
@@ -86,7 +88,6 @@ def onetime_init():
         e.add_note("Live2D Cubism 5.3 or later is required.")
         raise
 
-
     did_onetime_init = True
 
 
@@ -110,6 +111,7 @@ def web_init():
         return
 
     import emscripten
+
     emscripten.run_script(m.group(0) + "window.live2d_csm = _em;")
 
     # Wait for the wasm to be ready.
@@ -356,8 +358,10 @@ class Live2DCommon(object):
                     renpy.display.log.write(" - motion %s -> %s", name, i["File"])
 
                 self.motions[name] = renpy.gl2.live2dmotion.Motion(
-                    self.base + i["File"], i.get("FadeInTime", default_fade), i.get("FadeOutTime", default_fade),
-                    old_beziers
+                    self.base + i["File"],
+                    i.get("FadeInTime", default_fade),
+                    i.get("FadeOutTime", default_fade),
+                    old_beziers,
                 )
 
                 self.attributes.add(name)
@@ -693,7 +697,6 @@ class Live2D(renpy.display.displayable.Displayable):
         self.default_fade = default_fade
 
         self.properties = properties
-
 
         self.filename = filename
 

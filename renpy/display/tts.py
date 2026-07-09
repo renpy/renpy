@@ -113,22 +113,21 @@ class LinuxTTS(object):
         if not s:
             return
 
-        fsencode = renpy.exports.fsencode
         amplitude = renpy.game.preferences.get_mixer("voice")
         amplitude_100 = int(amplitude * 100)
 
         speed = renpy.game.preferences.tts_speed
         speed_wpm = int(175 * speed)
 
-        cmd = ["espeak", "-a", fsencode(str(amplitude_100)), "-s", fsencode(str(speed_wpm))]
+        cmd = ["espeak", "-a", str(amplitude_100), "-s", str(speed_wpm)]
 
         if voice is not None:
             # Voice format is "lang: name", extract the language for espeak.
             if ": " in voice:
                 voice = voice.split(": ", 1)[0]
-            cmd.extend(["-v", fsencode(voice)])
+            cmd.extend(["-v", voice])
 
-        cmd.append(fsencode(s))
+        cmd.append(s)
 
         self.process = subprocess.Popen(cmd)
         process = self.process
@@ -249,7 +248,7 @@ class AppleTTS(object):
 
         self.synth = AVSpeechSynthesizer.alloc().init()
 
-        self.voices: dict[str, str] = { }
+        self.voices: dict[str, str] = {}
 
         speech_voices = self.AVSpeechSynthesisVoice.speechVoices()
         count = speech_voices.count
@@ -287,7 +286,6 @@ class AppleTTS(object):
         utterance.setRate_(min(1.0, 0.5 + (speed - 1.0) / 4.0))
 
         if voice is not None:
-
             identifier = self.voices.get(voice, voice)
             av_voice = self.AVSpeechSynthesisVoice.voiceWithIdentifier_(identifier)
 
@@ -373,9 +371,15 @@ $synth.Rate = {rate}
 $synth.Speak('{text}')
 """.format(volume=amplitude_100, rate=rate, text=s)
 
-        self.process = subprocess.Popen([
-            "powershell", "-NoProfile", "-Command", script,
-        ], creationflags=subprocess.CREATE_NO_WINDOW)
+        self.process = subprocess.Popen(
+            [
+                "powershell",
+                "-NoProfile",
+                "-Command",
+                script,
+            ],
+            creationflags=subprocess.CREATE_NO_WINDOW,
+        )
         process = self.process
 
     def stop(self):
@@ -403,7 +407,7 @@ foreach ($v in $synth.GetInstalledVoices()) {
 
         try:
             output = subprocess.check_output(
-                ["powershell", "-NoProfile",  "-Command", script],
+                ["powershell", "-NoProfile", "-Command", script],
                 universal_newlines=True,
                 creationflags=subprocess.CREATE_NO_WINDOW,
             )
@@ -436,6 +440,7 @@ class WebTTS(object):
         voice, s = get_voice(s)
 
         from renpy.audio.webaudio import call
+
         amplitude = renpy.game.preferences.get_mixer("voice")
         speed = renpy.game.preferences.tts_speed
 
@@ -447,6 +452,7 @@ class WebTTS(object):
 
     def stop(self):
         from renpy.audio.webaudio import call
+
         amplitude = renpy.game.preferences.get_mixer("voice")
 
         call("tts", "", 1.0, 1.0, None)
@@ -456,7 +462,6 @@ class WebTTS(object):
 
         voices = call_str("get_tts_voices")
         return json.loads(voices) if voices else []
-
 
 
 platform_tts = None  # The platform-specific TTS object.
@@ -489,8 +494,7 @@ def default_tts_function(s):
 
     if "RENPY_TTS_COMMAND" in os.environ:
         global process
-        fsencode = renpy.exports.fsencode
-        process = subprocess.Popen([os.environ["RENPY_TTS_COMMAND"], fsencode(s)])
+        process = subprocess.Popen([os.environ["RENPY_TTS_COMMAND"], s])
         return
 
     if platform_tts is not None:
@@ -561,6 +565,7 @@ def init():
         renpy.display.log.write("Failed to initialize TTS.")
         renpy.display.log.exception()
 
+
 # Cache for get_tts_voices.
 _tts_voices_cache = None
 
@@ -580,7 +585,6 @@ def get_tts_voices():
         return _tts_voices_cache
 
     try:
-
         if platform_tts is not None:
             voices = platform_tts.get_tts_voices()
 
@@ -596,9 +600,10 @@ def get_tts_voices():
     return voices
 
 
-VOICE_RE = re.compile(r'{voice=([^}]+)}')
+VOICE_RE = re.compile(r"{voice=([^}]+)}")
 
-def get_voice(text:str = ""):
+
+def get_voice(text: str = ""):
     """
     :undocumented:
 
@@ -616,7 +621,7 @@ def get_voice(text:str = ""):
     voice = renpy.game.preferences.tts_voice
 
     if voice is not None and voice in get_tts_voices():
-            return voice, text
+        return voice, text
 
     return None, text
 

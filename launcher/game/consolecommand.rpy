@@ -80,7 +80,7 @@ init python:
             self.f = open(self.fn, "wb")
             self.nl = nl
 
-            self.f.write(renpy.fsencode(prefix, force=True) + nl)
+            self.f.write(prefix.encode("utf-8") + nl)
 
         def add(self, *args):
             """
@@ -94,15 +94,14 @@ init python:
                 import shlex
                 quoted = shlex.join(args)
 
-
-            self.f.write(renpy.fsencode(quoted, force=True) + self.nl)
+            self.f.write(quoted.encode("utf-8") + self.nl)
 
         def write(self, *args):
             """
             Adds a command to be run.
             """
 
-            args = [ renpy.fsencode(i, force=True) for i in args]
+            args = [ i.encode("utf-8") for i in args]
             self.f.write(b" ".join(args) + self.nl)
 
         def run(self):
@@ -120,12 +119,11 @@ init python:
             os.chmod(self.fn, 0o755)
 
             if renpy.linux:
-                command = renpy.fsencode('"{}"'.format(self.fn.replace("\"", "\\\"")))
+                command = f'"{self.fn.replace("\"", "\\\"")}"'
                 terminal, args = find_linux_terminal_emulator()
                 if terminal and args:
                     subprocess.Popen([terminal] + args + [command])
             else:
-                command = renpy.fsencode(self.fn)
-                os.startfile(command)
+                os.startfile(self.fn)
 
             interface.interaction(_("INFORMATION"), _("The command is being run in a new operating system console window."), pause=2.5)

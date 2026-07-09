@@ -112,7 +112,7 @@ TAG=2
 PARAGRAPH=3
 DISPLAYABLE=4
 
-def tokenize(unicode s):
+def tokenize(str s):
     """
     This tokenizes a unicode string into text tags and tokens. It returns a list
     of pairs, where each pair begins with TEXT, TAG or PARAGRAPH, and then has
@@ -125,7 +125,7 @@ def tokenize(unicode s):
     cdef int state = TEXT_STATE
 
     cdef Py_UCS4 c
-    cdef unicode buf = u''
+    cdef str buf = u''
 
     cdef list rv = [ ]
 
@@ -216,7 +216,7 @@ def lenticular_bracket_ruby(s):
     cdef int state = TEXT_STATE
 
     cdef Py_UCS4 c
-    cdef unicode buf = u''
+    cdef str buf = u''
 
     cdef list rv = [ ]
 

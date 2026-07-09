@@ -60,6 +60,10 @@ The :var:`config.tts_voice` variable is no longer used.
 Features
 --------
 
+:class:`Movie` now accepts a movie file as it's `loop` parameter. When given, the movie passed to `play` is played
+to completion, and then `loop` will be played looping. This is intended to be seamless as long as the `play` movie
+is long enough to allow the `loop` movie to load.
+
 The new :func:`FetchProgressValue` bar value allows the progress of fetch requests to be displayed. The same
 information is also available through the :func:`renpy.get_fetch_progress` function.
 

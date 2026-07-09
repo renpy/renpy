@@ -21,58 +21,58 @@
 
 def generate_private_key() -> bytes | None:
     """
-        Generates a EC private key and return key in DER format
+    Generates a EC private key and return key in DER format
     """
 
-def sign_data(data : bytes, private_key : bytes) -> bytes:
+def sign_data(data: bytes, private_key: bytes) -> bytes:
     """
-        returns ecdsa signature for data using sha1 hash
+    returns ecdsa signature for data using sha1 hash
 
-        `data`
-            The data to sign
+    `data`
+        The data to sign
 
-        `private_key`
-            The private key to use in DER format
-    """
-
-def verify_data(data : bytes, public_key : bytes, sign : bytes) -> bool:
-    """
-        verifies ecdsa signature for data using sha1 hash and returns result
-
-        `data`
-            The data to sign
-
-        `public_key`
-            The public key to use in DER format
-
-        `sign`
-            The signature to verify
+    `private_key`
+        The private key to use in DER format
     """
 
-def get_public_key_from_private(private_key : bytes) -> bytes | None:
+def verify_data(data: bytes, public_key: bytes, sign: bytes) -> bool:
     """
-        returns public key in DER format from the private key
+    verifies ecdsa signature for data using sha1 hash and returns result
 
-        `private_key`
-            The private key to use in DER format
-    """
+    `data`
+        The data to sign
 
-def validate_private_key(private_key : bytes) -> bool:
-    """
-        Validates if given key is a private key
-    """
+    `public_key`
+        The public key to use in DER format
 
-def validate_public_key(public_key : bytes) -> bool:
-    """
-        Validates if given key is a public key
+    `sign`
+        The signature to verify
     """
 
-def pem_to_der(pem : bytes | str) -> bytes:
+def get_public_key_from_private(private_key: bytes) -> bytes | None:
     """
-        unpacks DER from a PEM file
+    returns public key in DER format from the private key
+
+    `private_key`
+        The private key to use in DER format
     """
 
-def der_to_pem(der : bytes, name : str) -> bytes:
+def validate_private_key(private_key: bytes) -> bool:
     """
-        packs a DER into a PEM file
+    Validates if given key is a private key
+    """
+
+def validate_public_key(public_key: bytes) -> bool:
+    """
+    Validates if given key is a public key
+    """
+
+def pem_to_der(pem: bytes | str) -> bytes:
+    """
+    unpacks DER from a PEM file
+    """
+
+def der_to_pem(der: bytes, name: str) -> bytes:
+    """
+    packs a DER into a PEM file
     """

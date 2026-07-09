@@ -1416,9 +1416,7 @@ def style_statement(l, loc):
         propname = l.name()
 
         if propname is not None:
-            if (propname != "properties") and (
-                propname not in renpy.style.prefixed_all_properties
-            ):
+            if (propname != "properties") and (propname not in renpy.style.prefixed_all_properties):
                 l.error("style property %s is not known." % propname)
 
             if propname in rv.properties:  # type: ignore

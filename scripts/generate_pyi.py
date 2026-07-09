@@ -328,7 +328,7 @@ def should_generate(name: str, m: object):
     if prefix == "renpy":
         return is_extension(m)
 
-    return name in ["_renpy" ]
+    return name in ["_renpy"]
 
 
 def manage_gitignore(generated_files: list[str]):

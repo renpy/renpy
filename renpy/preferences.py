@@ -237,6 +237,7 @@ Preference("tts_voice", None, (str, type(None)))
 # The speed to use for tts.
 Preference("tts_speed", 1.0)
 
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.

@@ -261,8 +261,6 @@ def resize_movie(r, width, height):
     dimensions.
     """
 
-
-
     if r is None:
         return None
 
@@ -361,6 +359,8 @@ def default_play_callback(old, new):
         renpy.audio.music.play(find_oversampled(new, new.mask), channel=new.mask_channel, loop=new.loop)
 
     renpy.audio.music.play(find_oversampled(new, new._play), channel=new.channel, loop=new.loop)
+    if new._queue:
+        renpy.audio.music.queue(find_oversampled(new, new._queue), channel=new.channel, loop=True)
 
 
 allocated_channels: set[str] = set()
@@ -368,6 +368,7 @@ allocated_channels: set[str] = set()
 The set of channels that have been dynamically allocated. This only includes the main channel, and not the
 mask channel.
 """
+
 
 class Movie(renpy.display.displayable.Displayable):
     """
@@ -407,8 +408,7 @@ class Movie(renpy.display.displayable.Displayable):
 
     `mask`
         If given, this should be the path to a movie file, or a list of paths
-        to movie files, that are used as
-        the alpha channel of this displayable. The movie file will be
+        to movie files, that are used as the alpha channel of this displayable. The movie file will be
         automatically played on `movie_channel` when the Movie is shown,
         and automatically stopped when the movie is hidden.
 
@@ -440,25 +440,32 @@ class Movie(renpy.display.displayable.Displayable):
         `new`
             The new Movie object.
 
-        A movie object has the `play` parameter available as ``_play``,
+        A movie object has the `play` parameter available as ``_play`
         while the ``channel``, ``loop``, ``mask``, and ``mask_channel`` fields
-        correspond to the given parameters.
+        correspond to the given parameters. If the `loop` field is a movie file,
+        that movie is available as ``_queue``.
 
         Generally, this will want to use :func:`renpy.music.play` to start
-        the movie playing on the given channel, with synchro_start=True.
+        the movie playing on the given channel.
         A minimal implementation is::
 
             def play_callback(old, new):
 
-                renpy.music.play(new._play, channel=new.channel, loop=new.loop, synchro_start=True)
-
                 if new.mask:
-                    renpy.music.play(new.mask, channel=new.mask_channel, loop=new.loop, synchro_start=True)
+                    renpy.music.play(new.mask, channel=new.mask_channel, loop=new.loop)
+
+                renpy.music.play(new._play, channel=new.channel, loop=new.loop)
+
+                if new._queue:
+                    renpy.audio.music.queue(new._queue, channel=new.channel, loop=True)
+
 
     `loop`
-        If False, the movie will not loop. If `image` is defined, the image
-        will be displayed when the movie ends. Otherwise, the displayable will
-        become transparent.
+        If False, the movie will not loop. If True, the movie will loop. If
+        a string, this is a second movie file that will be looped after the file given to `play` finishes.
+
+        When `loop` is False, if `image` is defined, the image will be displayed when the movie ends. Otherwise,
+        the displayable will become transparent.
 
     `group`
         If not None, this should be a string. If given, and if the movie has not
@@ -493,6 +500,8 @@ class Movie(renpy.display.displayable.Displayable):
     channel = "movie"
     _play = None
     _original_play = None
+    _queue = None
+    _original_queue = None
 
     mask = None
     mask_channel = None
@@ -541,6 +550,13 @@ class Movie(renpy.display.displayable.Displayable):
         else:
             self._play = None
             self._original_play = play
+
+        queue = self._original_queue or self._queue
+        if (queue is not None) and self.any_loadable(queue):
+            self._original_queue = self._queue = queue
+        else:
+            self._queue = None
+            self._original_queue = queue
 
         global movie_channel_serial
 
@@ -626,11 +642,20 @@ class Movie(renpy.display.displayable.Displayable):
 
         self.size = size
         self.channel = channel
-        self.loop = loop
 
         self._original_play = play
         if (play is not None) and self.any_loadable(play):
             self._play = play
+
+        if not isinstance(loop, bool):
+
+            if self.any_loadable(loop):
+                self._queue = loop
+
+            loop = bool(loop)
+
+
+        self.loop = loop
 
         if side_mask:
             mask = None
@@ -847,7 +872,6 @@ def update_playing():
 
     renpy.game.context().movie = last_channel_movie = dict(channel_movie)
     reset_channels.clear()
-
 
 
 def frequent():

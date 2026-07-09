@@ -32,6 +32,7 @@ import warnings
 
 # Functions to be customized by distributors. ################################
 
+
 def path_to_gamedir(basedir, name):
     """
     Returns the absolute path to the directory containing the game
@@ -44,7 +45,7 @@ def path_to_gamedir(basedir, name):
     """
 
     # A list of candidate game directory names.
-    candidates = [ name ]
+    candidates = [name]
 
     # Add candidate names that are based on the name of the executable,
     # split at spaces and underscores.
@@ -54,15 +55,14 @@ def path_to_gamedir(basedir, name):
         prefix = game_name[0]
         game_name = game_name[1:]
 
-        if prefix == ' ' or prefix == '_':
+        if prefix == " " or prefix == "_":
             candidates.append(game_name)
 
     # Add default candidates.
-    candidates.extend([ 'game', 'data', 'launcher/game' ])
+    candidates.extend(["game", "data", "launcher/game"])
 
     # Take the first candidate that exists.
     for i in candidates:
-
         if i == "renpy":
             continue
 
@@ -92,7 +92,7 @@ def path_to_common(renpy_base):
     return None
 
 
-def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
+def path_to_saves(gamedir, save_directory=None):  # type: (str, str|None) -> str
     """
     Given the path to a Ren'Py game directory, and the value of config.
     save_directory, returns absolute path to the directory where save files
@@ -105,11 +105,10 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
         The value of config.save_directory.
     """
 
-    import renpy # @UnresolvedImport
+    import renpy  # @UnresolvedImport
 
     if save_directory is None:
         save_directory = renpy.config.save_directory
-        save_directory = renpy.exports.fsencode(save_directory) # type: ignore
 
     # Makes sure the permissions are right on the save directory.
     def test_writable(d):
@@ -128,7 +127,7 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
             os.path.join(os.environ["ANDROID_OLD_PUBLIC"], "game/saves"),
             os.path.join(os.environ["ANDROID_PRIVATE"], "saves"),
             os.path.join(os.environ["ANDROID_PUBLIC"], "saves"),
-            ]
+        ]
 
         for rv in paths:
             if os.path.isdir(rv) and test_writable(rv):
@@ -140,25 +139,24 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
         return rv
 
     if renpy.ios:
-        from pyobjus import autoclass # type: ignore
-        from pyobjus.objc_py_types import enum # type: ignore
+        from pyobjus import autoclass  # type: ignore
+        from pyobjus.objc_py_types import enum  # type: ignore
 
         NSSearchPathDirectory = enum("NSSearchPathDirectory", NSDocumentDirectory=9)
         NSSearchPathDomainMask = enum("NSSearchPathDomainMask", NSUserDomainMask=1)
 
-        NSFileManager = autoclass('NSFileManager')
+        NSFileManager = autoclass("NSFileManager")
         manager = NSFileManager.defaultManager()
         url = manager.URLsForDirectory_inDomains_(
             NSSearchPathDirectory.NSDocumentDirectory,
             NSSearchPathDomainMask.NSUserDomainMask,
-            ).lastObject()
+        ).lastObject()
 
         # url.path seems to change type based on iOS version, for some reason.
         try:
             rv = url.path().UTF8String()
         except Exception:
             rv = url.path.UTF8String()
-
 
         if isinstance(rv, bytes):
             rv = rv.decode("utf-8")
@@ -192,10 +190,10 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
         return os.path.expanduser(rv)
 
     elif renpy.windows:
-        if 'APPDATA' in os.environ:
-            return os.environ['APPDATA'] + "/RenPy/" + save_directory
+        if "APPDATA" in os.environ:
+            return os.environ["APPDATA"] + "/RenPy/" + save_directory
         else:
-            rv = "~/RenPy/" + renpy.config.save_directory # type: ignore
+            rv = "~/RenPy/" + renpy.config.save_directory  # type: ignore
             return os.path.expanduser(rv)
 
     else:
@@ -215,6 +213,7 @@ def path_to_renpy_base():
 
     return renpy_base
 
+
 def path_to_logdir(basedir):
     """
     Returns the absolute path to the log directory.
@@ -222,18 +221,19 @@ def path_to_logdir(basedir):
         The base directory (config.basedir)
     """
 
-    import renpy # @UnresolvedImport
+    import renpy  # @UnresolvedImport
 
     if renpy.android:
-        return os.environ['ANDROID_PUBLIC']
+        return os.environ["ANDROID_PUBLIC"]
 
     return basedir
 
+
 def predefined_searchpath(commondir):
-    import renpy # @UnresolvedImport
+    import renpy  # @UnresolvedImport
 
     # The default gamedir, in private.
-    searchpath = [ renpy.config.gamedir ]
+    searchpath = [renpy.config.gamedir]
 
     if renpy.android:
         # The public android directory.
@@ -245,8 +245,10 @@ def predefined_searchpath(commondir):
 
         # Asset packs.
         packs = [
-            "ANDROID_PACK_FF1", "ANDROID_PACK_FF2",
-            "ANDROID_PACK_FF3", "ANDROID_PACK_FF4",
+            "ANDROID_PACK_FF1",
+            "ANDROID_PACK_FF2",
+            "ANDROID_PACK_FF3",
+            "ANDROID_PACK_FF4",
         ]
 
         for i in packs:
@@ -255,7 +257,7 @@ def predefined_searchpath(commondir):
 
             assets = os.environ[i]
 
-            for i in [ "renpy/common", "game" ]:
+            for i in ["renpy/common", "game"]:
                 dn = os.path.join(assets, i)
                 if os.path.isdir(dn):
                     searchpath.append(dn)
@@ -268,14 +270,16 @@ def predefined_searchpath(commondir):
         searchpath.append(commondir)
 
     if renpy.android or renpy.ios:
-        print("Mobile search paths:" , " ".join(searchpath))
+        print("Mobile search paths:", " ".join(searchpath))
 
     return searchpath
+
 
 ##############################################################################
 
 
-android = ("ANDROID_PRIVATE" in os.environ)
+android = "ANDROID_PRIVATE" in os.environ
+
 
 def main():
 
@@ -295,7 +299,7 @@ def main():
         raise
 
     # Set renpy.__main__ to this module.
-    renpy.__main__ = sys.modules[__name__] # type: ignore
+    renpy.__main__ = sys.modules[__name__]  # type: ignore
 
     renpy.bootstrap.bootstrap(renpy_base)
 

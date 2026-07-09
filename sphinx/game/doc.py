@@ -75,7 +75,7 @@ always
 
 def script_keywords():
 
-    tries = [ renpy.parser.statements ]
+    tries = [renpy.parser.statements]
 
     rv = set()
 
@@ -108,10 +108,10 @@ def sl2_keywords():
 
 def sl2_regexps():
 
-    rv = [ ]
+    rv = []
 
     groups = collections.defaultdict(set)
-    has_style = { }
+    has_style = {}
 
     for k, v in renpy.sl2.slparser.properties.items():
         prefix, style = k
@@ -128,7 +128,7 @@ def sl2_regexps():
     style_part2 = "(?:" + "|".join(sorted(renpy.sl2.slparser.STYLE_PREFIXES)) + ")"
 
     items = list(groups.items())
-    items.sort(key=lambda a : (tuple(sorted(a[1])), a[0][1]))
+    items.sort(key=lambda a: (tuple(sorted(a[1])), a[0][1]))
 
     for k, prefixes in items:
         names, style = k
@@ -164,7 +164,7 @@ def expanded_sl2_properties():
         if style:
             style_prefixes = renpy.sl2.slparser.STYLE_PREFIXES
         else:
-            style_prefixes = [ '' ]
+            style_prefixes = [""]
 
         for i in style_prefixes:
             for j in v:
@@ -184,8 +184,9 @@ def style_property_regex():
 def atl_property_regex():
     return "(?:" + "|".join(sorted(renpy.atl.PROPERTIES)) + ")"
 
-def write_keywords(srcdir='source'):
-    outf = os.path.join(srcdir, 'keywords.py')
+
+def write_keywords(srcdir="source"):
+    outf = os.path.join(srcdir, "keywords.py")
 
     kwlist = set(keyword.kwlist)
     kwlist |= script_keywords()
@@ -200,20 +201,18 @@ def write_keywords(srcdir='source'):
     kwlist.sort()
 
     with open(outf, "w") as f:
-
-        keyword_regex = [ re.escape(i) for i in kwlist ]
+        keyword_regex = [re.escape(i) for i in kwlist]
 
         f.write("keywords = %s\n" % pprint.pformat(kwlist))
         f.write("keyword_regex = %s\n" % pprint.pformat(keyword_regex))
         f.write("keyword_regex = '|'.join(keyword_regex)\n")
 
-        properties = [ i for i in expanded_sl2_properties() if i not in kwlist ]
+        properties = [i for i in expanded_sl2_properties() if i not in kwlist]
 
         f.write("properties = %s\n" % pprint.pformat(properties))
         f.write("property_regexes = %s\n" % pprint.pformat(sl2_regexps()))
         f.write("style_property_regex = %s\n" % pprint.pformat(style_property_regex()))
         f.write("atl_property_regex = %s\n" % pprint.pformat(atl_property_regex()))
-
 
     shutil.copy(outf, os.path.join(srcdir, "../../tutorial/game/keywords.py"))
 
@@ -226,7 +225,8 @@ line_buffer = collections.defaultdict(list)
 documented = collections.defaultdict(list)
 
 # This keeps all objectsd we see alive, to prevent duplicates in documented.
-documented_list = [ ]
+documented_list = []
+
 
 def getdoc(o):
     """
@@ -243,6 +243,7 @@ def getdoc(o):
 
     return inspect.cleandoc(doc)
 
+
 # The docstring for object.__init__ - which we don't want to pass for one of our classes's
 objinidoc = getdoc(object.__init__)
 
@@ -252,8 +253,7 @@ def scan(name, o, prefix="", inclass=False):
     if inspect.isclass(o):
         if issubclass(o, renpy.store.Action):
             doc_type = "action"
-        elif issubclass(o, (renpy.store.BarValue,
-                            renpy.store.InputValue)):
+        elif issubclass(o, (renpy.store.BarValue, renpy.store.InputValue)):
             doc_type = "function"
         else:
             doc_type = "class"
@@ -274,11 +274,11 @@ def scan(name, o, prefix="", inclass=False):
     if not doc:
         return
 
-    if doc[0] == ' ':
+    if doc[0] == " ":
         print("Bad docstring for ", name, repr(doc))
 
     # Cython-generated docstrings start with the function and arguments.
-    if re.match(r'[\w\.]+\(', doc):
+    if re.match(r"[\w\.]+\(", doc):
         orig = doc
 
         sig, _, doc = doc.partition("\n\n")
@@ -287,13 +287,11 @@ def scan(name, o, prefix="", inclass=False):
         if "(" in sig:
             args = "(" + sig.partition("(")[2]
 
-
     # Break up the doc string, scan it for specials.
-    lines = [ ]
+    lines = []
 
     for l in doc.split("\n"):
-
-        m = re.match(r':doc: *(\w+) *(\w+)?', l)
+        m = re.match(r":doc: *(\w+) *(\w+)?", l)
         if m:
             section = m.group(1)
 
@@ -302,12 +300,12 @@ def scan(name, o, prefix="", inclass=False):
 
             continue
 
-        m = re.match(r':args: *(.*)', l)
+        m = re.match(r":args: *(.*)", l)
         if m:
             args = m.group(1)
             continue
 
-        m = re.match(r':name: *(\S+)', l)
+        m = re.match(r":name: *(\S+)", l)
         if m:
             if name != m.group(1):
                 return
@@ -319,7 +317,6 @@ def scan(name, o, prefix="", inclass=False):
         return
 
     if args is None:
-
         # Get the arguments.
         if inspect.isclass(o):
             init = getattr(o, "__init__", None)
@@ -328,8 +325,7 @@ def scan(name, o, prefix="", inclass=False):
 
             init_doc = getdoc(init)
 
-
-            if init_doc and re.match(r'[\w\.]+\(', init_doc):
+            if init_doc and re.match(r"[\w\.]+\(", init_doc):
                 sig, _, init_doc = doc.partition("\n\n")
                 init_doc = textwrap.dedent(init_doc)
 
@@ -340,9 +336,7 @@ def scan(name, o, prefix="", inclass=False):
                 lines.append("")
                 lines.extend(init_doc.split("\n"))
 
-
-
-            if init != object.__init__: # we don't want that signature either
+            if init != object.__init__:  # we don't want that signature either
                 try:
                     args = inspect.signature(init)
                 except Exception:
@@ -382,7 +376,7 @@ def scan(name, o, prefix="", inclass=False):
     lb.append(prefix + "")
 
     if inspect.isclass(o):
-        if (name not in [ "Matrix", "OffsetMatrix", "RotateMatrix", "ScaleMatrix" ]):
+        if name not in ["Matrix", "OffsetMatrix", "RotateMatrix", "ScaleMatrix"]:
             for i in dir(o):
                 scan(i, getattr(o, i), prefix + "    ", inclass=True)
 
@@ -402,14 +396,13 @@ def scan_section(name, o):
         scan(name + n, getattr(o, n))
 
 
-def write_line_buffer(incdir='source/inc'):
+def write_line_buffer(incdir="source/inc"):
 
     for k, v in line_buffer.items():
-
         f = io.StringIO()
 
-        print(u".. Automatically generated file - do not modify.", file=f)
-        print(u"", file=f)
+        print(".. Automatically generated file - do not modify.", file=f)
+        print("", file=f)
 
         for l in v:
             print(l, file=f)
@@ -432,7 +425,7 @@ def write_line_buffer(incdir='source/inc'):
 name_kind = collections.defaultdict(str)
 
 
-def scan_docs(srcdir='source', incdir='source/inc'):
+def scan_docs(srcdir="source", incdir="source/inc"):
     """
     Scans the documentation for functions, classes, and variables.
     """
@@ -458,11 +451,11 @@ def scan_docs(srcdir='source', incdir='source/inc'):
 
 def format_name(name):
 
-    if name_kind[name] == 'function':
+    if name_kind[name] == "function":
         name = ":func:`{}`".format(name)
-    elif name_kind[name] == 'class':
+    elif name_kind[name] == "class":
         name = ":class:`{}`".format(name)
-    elif name_kind[name] == 'var':
+    elif name_kind[name] == "var":
         name = ":var:`{}`".format(name)
 
     return name
@@ -471,9 +464,7 @@ def format_name(name):
 def write_reserved(module, dest, ignore_builtins):
 
     with open(dest, "w") as f:
-
         for i in sorted(dir(module)):
-
             if i == "doc":
                 continue
 
@@ -486,7 +477,7 @@ def write_reserved(module, dest, ignore_builtins):
             f.write("* " + format_name(i) + "\n")
 
 
-def write_pure_const(incdir='source/inc'):
+def write_pure_const(incdir="source/inc"):
 
     def write_set(f, s):
         l = list(s)
@@ -495,8 +486,8 @@ def write_pure_const(incdir='source/inc'):
         for i in l:
             f.write("* " + format_name(i) + "\n")
 
-    pure = renpy.pyanalysis.pure_functions # @UndefinedVariable
-    constants = renpy.pyanalysis.constants - pure # @UndefinedVariable
+    pure = renpy.pyanalysis.pure_functions  # @UndefinedVariable
+    constants = renpy.pyanalysis.constants - pure  # @UndefinedVariable
 
     with open(os.path.join(incdir, "pure_vars"), "w") as f:
         write_set(f, pure)
@@ -505,12 +496,12 @@ def write_pure_const(incdir='source/inc'):
         write_set(f, constants)
 
 
-def write_easings(ns, incdir='source/inc'):
+def write_easings(ns, incdir="source/inc"):
 
     with open(os.path.join(incdir, "easings"), "w") as f:
         f.write(".. csv-table::\n")
         f.write('    :header: "Ren\'Py Name", "easings.net Name"\n')
-        f.write('\n')
+        f.write("\n")
 
         for name in sorted(dir(ns)):
             if not name.startswith("ease"):
@@ -522,15 +513,15 @@ def write_easings(ns, incdir='source/inc'):
             f.write('    "{}", "{}"\n'.format(name, stdname))
 
 
-def tq_script(name, srcdir='source'):
+def tq_script(name, srcdir="source"):
 
     with open(os.path.join(srcdir, "../../the_question/game", name), "r") as f:
         lines = f.readlines()
-        lines = [ ("    " + i).rstrip() for i in lines ]
+        lines = [("    " + i).rstrip() for i in lines]
         return "\n".join(lines)
 
 
-def write_tq(srcdir='source'):
+def write_tq(srcdir="source"):
     script = tq_script("script.rpy", srcdir=srcdir)
     options = tq_script("options.rpy", srcdir=srcdir)
 

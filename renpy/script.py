@@ -51,6 +51,7 @@ RPYC2_HEADER = b"RENPY RPC2"
 # Kept for backwards compatibility.
 BYTECODE_FILE = renpy.python.CompileCache.BYTECODE_FILE
 
+
 class ScriptError(Exception):
     """
     Exception that is raised if the script is somehow inconsistent,
@@ -153,7 +154,6 @@ class Script(object):
         # Otherwise, will fail in case orphan .rpyc have same
         # labels as in other scripts (usually happens on script rename).
         if (renpy.game.args.command == "compile") and not (renpy.game.args.keep_orphan_rpyc):
-
             self.clean_script_files()
 
             # Reindex files so that .rpyc's are cleared out.
@@ -197,7 +197,7 @@ class Script(object):
             return
 
         basename = os.path.basename(renpy.config.basedir)
-        backupdir = renpy.os.path.join(renpy.exports.fsencode(backups), renpy.exports.fsencode(basename))
+        backupdir = renpy.os.path.join(backups, basename)
 
         renpy.exports.write_log("Backing up script files to %r:", backupdir)
 
@@ -227,7 +227,7 @@ class Script(object):
             if not os.path.exists(fn):
                 continue
 
-            short_fn = renpy.exports.fsencode(fn[len(renpy.config.gamedir) + 1 :])
+            short_fn = fn[len(renpy.config.gamedir) + 1 :]
 
             base, ext = os.path.splitext(short_fn)
 
@@ -257,7 +257,6 @@ class Script(object):
         """
 
         for dir, fn in dirlist:
-
             if fn.rpartition("/")[2].startswith("."):
                 continue
 
@@ -319,7 +318,6 @@ class Script(object):
         self.classify_script_files(
             renpy.loader.listdirfiles(common=False, game=True), self.script_files, self.module_files
         )
-
 
     def clean_script_files(self):
         """
@@ -411,7 +409,7 @@ class Script(object):
 
         self.script_files.sort(key=game_key)
 
-        rv = [ (0,) + item for item in self.common_script_files ]
+        rv = [(0,) + item for item in self.common_script_files]
         rv.extend((game_key(item)[0],) + item for item in self.script_files)
 
         return rv
@@ -427,7 +425,6 @@ class Script(object):
         last_priority = 0
 
         for priority, fn, dir in script_files:
-
             if priority != last_priority:
                 if renpy.parser.has_parse_errors():
                     skipped += len(script_files) - count

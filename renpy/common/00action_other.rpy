@@ -807,7 +807,7 @@ init -1500 python:
             import subprocess
 
             try:
-                directory = renpy.fsencode(self.directory)
+                directory = self.directory
 
                 if renpy.windows:
                     os.startfile(directory)
