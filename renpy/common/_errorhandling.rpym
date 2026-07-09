@@ -647,7 +647,7 @@ init python:
                     try:
                         import jnius
                         activity = jnius.autoclass("org.renpy.android.PythonSDLActivity")
-                        activity.mActivity.openEditor(renpy.exports.fsencode(self.filename))
+                        activity.mActivity.openEditor(self.filename)
                     except Exception:
                         traceback.print_exc()
                 else:
