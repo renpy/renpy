@@ -2279,7 +2279,9 @@ class Interface:
 
             # Step 2: Push textures to GPU.
             elif step == 2:
-                renpy.display.draw.ready_one_texture()
+                while renpy.display.draw.ready_one_texture():
+                    if not expensive and get_time() > (start + 0.0005):
+                        break
                 step += 1
 
             # Step 3: Predict more images.
