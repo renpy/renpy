@@ -20,33 +20,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
+import io
 import sys
 import subprocess
-import io
 import textwrap
-
-
-# Encoding and sys.stderr/stdout handling ######################################
-
-FSENCODING = sys.getfilesystemencoding() or "utf-8"
-
-# Sets the default encoding to utf-8.
-old_stdout = sys.stdout
-old_stderr = sys.stderr
-
-
-def _setdefaultencoding(name):
-    """
-    This is install in sys to prevent games from trying to change the default
-    encoding.
-    """
-
-
-sys.setdefaultencoding = _setdefaultencoding  # type: ignore
-
-
-sys.stdout = old_stdout
-sys.stderr = old_stderr
 
 import renpy.error
 
@@ -217,18 +194,22 @@ def relaunch():
         subprocess.Popen([sys.executable] + sys.argv)
 
 
-def bootstrap(renpy_base):
+def bootstrap(renpy_base: str):
     global renpy
 
     import renpy.config
     import renpy.log
 
+    # In case of invocation with system python, check that it's run with -X utf8
+    if not sys.flags.utf8_mode:
+        raise Exception("Ren'Py requires Python to be run with -X utf8.")
+
+    if not isinstance(renpy_base, str):
+        raise TypeError("renpy_base must be a string.")
+
     # Remove a legacy environment setting.
     if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
         del os.environ["SDL_VIDEODRIVER"]
-
-    if not isinstance(renpy_base, str):
-        renpy_base = str(renpy_base, FSENCODING)
 
     renpy.config.renpy_base = renpy_base
 
@@ -281,8 +262,6 @@ def bootstrap(renpy_base):
 
     if args.basedir:
         basedir = os.path.abspath(args.basedir)
-        if not isinstance(basedir, str):
-            basedir = basedir.decode(FSENCODING)
     else:
         basedir = renpy_base
 

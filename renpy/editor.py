@@ -92,8 +92,6 @@ class Editor(object):
 
 class SystemEditor(Editor):
     def open(self, filename, line=None, **kwargs):
-        filename = renpy.exports.fsencode(filename)
-
         try:
             if renpy.windows:
                 os.startfile(filename)  # type: ignore
