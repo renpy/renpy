@@ -170,10 +170,7 @@ def main():
 
     print("Version {} ({})".format(args.version, full_version))
 
-    if sys.version_info[0] >= 3:
-        renpy_sh = "./renpy3.sh"
-    else:
-        renpy_sh = "./renpy2.sh"
+    renpy_sh = "./renpy.sh"
 
     force_even_timestamps()
 

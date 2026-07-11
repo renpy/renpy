@@ -173,7 +173,7 @@ init python in distribute:
         else:
             suffix = ""
 
-        rv = os.path.join(os.path.dirname(executable), command + suffix)
+        rv = os.path.join(os.path.dirname(sys.executable), command + suffix)
 
         if os.path.exists(rv):
             return rv
