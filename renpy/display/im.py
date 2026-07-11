@@ -532,7 +532,7 @@ class Cache:
         if num_threads <= 1:
             return None
 
-        self.decode_pool = ThreadPoolExecutor(max_workers=num_threads, thread_name_prefix="decode")
+        self.decode_pool = ThreadPoolExecutor(max_workers=num_threads, thread_name_prefix="preload_decode")
         self.decode_pool_workers = num_threads
 
         return self.decode_pool
@@ -624,7 +624,9 @@ class Cache:
         if not renpy.config.developer:
             return
 
-        preload = (threading.current_thread() is self.preload_thread) or (self.in_preload_pass)
+        current_thread = threading.current_thread()
+
+        preload = (current_thread.name.startswith("preload_decode")) or (current_thread is self.preload_thread) or (self.in_preload_pass)
 
         self.load_log.insert(0, (time.time(), filename, preload))
 
