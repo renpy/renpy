@@ -60,6 +60,7 @@ from renpy.gl2.gl2polygon cimport Polygon
 from renpy.gl2.gl2model cimport GL2Model
 
 from renpy.gl2.gl2texture import Texture, TextureLoader
+from renpy.gl2.gl2shader cimport Program
 from renpy.gl2.gl2shadercache import ShaderCache
 
 try:
@@ -1486,7 +1487,7 @@ cdef class GL2DrawingContext:
         rv.pop("pixel_perfect", None)
         return rv
 
-    def merge_uniforms(self, dict uniforms):
+    cpdef void merge_uniforms(self, dict uniforms):
         """
         Merges the child uniforms into the current uniforms.
         """
@@ -1495,11 +1496,19 @@ cdef class GL2DrawingContext:
             self.uniforms = uniforms
             return
 
+        cdef dict config_merge = renpy.config.merge_uniforms
+
         self.uniforms = dict(self.uniforms)
 
+        # When config.merge_uniforms is empty (the default), a plain update avoids the per-key membership tests.
+        if not config_merge:
+            self.uniforms.update(uniforms)
+            
+            return
+
         for k, v in uniforms.items():
-            if (k in self.uniforms) and (k in renpy.config.merge_uniforms):
-                self.uniforms[k] = renpy.config.merge_uniforms[k](self.uniforms[k], v)
+            if (k in self.uniforms) and (k in config_merge):
+                self.uniforms[k] = config_merge[k](self.uniforms[k], v)
             else:
                 self.uniforms[k] = v
 
@@ -1517,14 +1526,13 @@ cdef class GL2DrawingContext:
         halfwidth = self.width / 2.0
         halfheight = self.height / 2.0
 
-        sx = 0
-        sy = 0
-        sz = 0
-        sw = 1
+        sx = self.model_matrix.xdw
+        sy = self.model_matrix.ydw
+        sz = self.model_matrix.zdw
+        sw = self.model_matrix.wdw
 
-        self.model_matrix.transform4(&sx, &sy, &sz, &sw, sx, sy, sz, sw)
-        self.view_matrix.transform4(&sx, &sy, &sz, &sw, sx, sy, sz, sw)
-        self.projection_matrix.transform4(&sx, &sy, &sz, &sw, sx, sy, sz, sw)
+        # Apply the view and projection matrices in one step using the premultiplied projectionview matrix.
+        self.projectionview_matrix.transform4(&sx, &sy, &sz, &sw, sx, sy, sz, sw)
 
         sx = roundf(sx * 10000) / 10000
         sy = roundf(sy * 10000) / 10000
@@ -1566,7 +1574,10 @@ cdef class GL2DrawingContext:
             self.model_matrix.inplace_multiply(model.reverse)
 
         if model.shaders:
-            self.shaders = self.shaders + model.shaders
+            if self.shaders:
+                self.shaders = self.shaders + model.shaders
+            else:
+                self.shaders = model.shaders
 
         if model.uniforms:
             self.merge_uniforms(model.uniforms)
@@ -1575,7 +1586,7 @@ cdef class GL2DrawingContext:
             import renpy.gl2.gl2debug as gl2debug
             gl2debug.geometry(mesh, self.view_matrix * self.model_matrix, 1, 1)
 
-        program = gl2draw.shader_cache.get(self.shaders)
+        cdef Program program = gl2draw.shader_cache.get(self.shaders)
 
         program.draw(self, model, mesh)
 
@@ -1700,30 +1711,17 @@ cdef class GL2DrawingContext:
             self.pixel_perfect = False
 
         if r.shaders is not None:
-            self.shaders = self.shaders + r.shaders
-
-        children = r.children
+            if self.shaders:
+                self.shaders = self.shaders + r.shaders
+            else:
+                self.shaders = r.shaders
 
         if r.cached_model is not None:
-            children = [ (r.cached_model, 0, 0, False, False) ]
-        else:
-            if r.uniforms:
-                self.merge_uniforms(r.uniforms)
+            if not has_reverse: # fast path: with no reverse transform, the model can be drawn directly
+                self.draw_model(r.cached_model)
+            else:
+                ctx = self.child_context()
 
-        for child, cx, cy, focus, main in children:
-
-            ctx = self.child_context()
-
-            if (cx or cy):
-                if type(cx) is not int:
-                    ctx.pixel_perfect = False
-
-                ctx.model_matrix.inplace_offset(cx, cy)
-
-                if ctx.clip_polygon is not None:
-                    ctx.clip_polygon = ctx.clip_polygon.offset(-cx, -cy)
-
-            if has_reverse:
                 ctx.model_matrix.inplace_multiply(r.reverse)
 
                 if r.matrix_kind == MATRIX_PROJECTION:
@@ -1745,7 +1743,49 @@ cdef class GL2DrawingContext:
                 if ctx.clip_polygon is not None:
                     ctx.clip_polygon = ctx.clip_polygon.multiply_matrix(r.forward)
 
-            ctx.draw_one(child)
+                ctx.draw_model(r.cached_model)
+
+        else:
+            if r.uniforms:
+                self.merge_uniforms(r.uniforms)
+
+            children = r.children
+
+            for child, cx, cy, focus, main in children:
+                ctx = self.child_context()
+
+                if (cx or cy):
+                    if type(cx) is not int:
+                        ctx.pixel_perfect = False
+
+                    ctx.model_matrix.inplace_offset(cx, cy)
+
+                    if ctx.clip_polygon is not None:
+                        ctx.clip_polygon = ctx.clip_polygon.offset(-cx, -cy)
+
+                if has_reverse:
+                    ctx.model_matrix.inplace_multiply(r.reverse)
+
+                    if r.matrix_kind == MATRIX_PROJECTION:
+                        ctx.projection_matrix.inplace_multiply(ctx.view_matrix)
+                        ctx.projection_matrix.inplace_multiply(ctx.model_matrix)
+
+                        ctx.view_matrix.ctake(IDENTITY)
+                        ctx.model_matrix.ctake(IDENTITY)
+
+                        ctx.projectionview_matrix.ctake(ctx.projection_matrix)
+
+                    elif r.matrix_kind == MATRIX_VIEW:
+                        ctx.view_matrix.inplace_multiply(ctx.model_matrix)
+                        ctx.model_matrix.ctake(IDENTITY)
+
+                        ctx.projectionview_matrix.ctake(ctx.projection_matrix)
+                        ctx.projectionview_matrix.inplace_multiply(ctx.view_matrix)
+
+                    if ctx.clip_polygon is not None:
+                        ctx.clip_polygon = ctx.clip_polygon.multiply_matrix(r.forward)
+
+                ctx.draw_one(child)
 
         if has_depth:
             glDisable(GL_DEPTH_TEST)
