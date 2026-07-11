@@ -135,6 +135,7 @@ def main():
     cython("renpy.gl2.gl2texture", packages="sdl3")
     cython("renpy.gl2.gl2uniform")
     cython("renpy.gl2.gl2shader")
+    cython("renpy.gl2.gl2statecache")
 
     if cubism:
         cython("renpy.gl2.live2dmodel", ["src/live2dcsm.c"], packages="sdl3")

@@ -61,6 +61,8 @@ from renpy.gl2.gl2model cimport GL2Model
 
 from renpy.gl2.gl2texture import Texture, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
+from renpy.gl2.gl2statecache cimport GLStateCache
+from renpy.gl2.gl2statecache import state_cache as _state_cache
 
 try:
     import emscripten
@@ -1046,7 +1048,6 @@ cdef class GL2Draw:
 
         # Set up the default modes.
         glEnable(GL_BLEND)
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
         # Use the context to draw the render tree.
         draw_render(surf, w, h, transform)
@@ -1218,7 +1219,6 @@ cdef class GL2Draw:
 
         # Set up the default modes.
         glEnable(GL_BLEND)
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
         # Use the context to draw the surface tree.
         draw_render(what, 1, 1, transform)
@@ -1785,6 +1785,11 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
     current_invert_front_face = invert_front_face
     set_cull_face(None)
 
+    # Reset the GL state cache at the start of each render pass.
+    cdef GLStateCache sc = _state_cache
+
+    sc.reset()
+
     cdef GL2DrawingContext ctx = root_context
 
     ctx.width = drawable_width
@@ -1807,6 +1812,13 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
         ctx.properties["texture_scaling"] = "nearest"
 
     ctx.draw_one(what)
+
+    # Restore the GL state to Ren'Py's defaults after the render pass.
+    sc.set_blend(GL_FUNC_ADD, GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+    sc.set_color_mask(True, True, True, True)
+
+    # Disable all vertex attrib arrays.
+    sc.sync_attrib_arrays(0)
 
     while ctx is not None:
         ctx.uniforms = None

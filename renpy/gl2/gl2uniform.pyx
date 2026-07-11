@@ -23,12 +23,14 @@
 from renpy.display.matrix cimport Matrix
 from renpy.gl2.gl2texture cimport GLTexture
 from renpy.display.render cimport Render
+from renpy.gl2.gl2statecache cimport GLStateCache
 
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
 
 import random
 
 import renpy
+from renpy.gl2.gl2statecache import state_cache as _state_cache
 
 cdef GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
 
@@ -316,8 +318,13 @@ cdef class Sampler2DSetter(Setter):
 
     cdef object set(self, GL2DrawingContext context, value):
 
-        glActiveTexture(GL_TEXTURE0 + self.sampler)
-        glUniform1i(self.location, self.sampler)
+        cdef GLStateCache cache = _state_cache
+
+        cache.activate_texture(GL_TEXTURE0 + self.sampler)
+
+        # Only set the sampler-to-unit binding if it changed for this program.
+        if cache.check_sampler_binding(cache.current_program, self.location, self.sampler):
+            glUniform1i(self.location, self.sampler)
 
         # None case.
         if value is None:
@@ -326,7 +333,7 @@ cdef class Sampler2DSetter(Setter):
 
         # Int case.
         if type(value) is int:
-            glBindTexture(GL_TEXTURE_2D, value)
+            cache.bind_texture(GL_TEXTURE0 + self.sampler, value)
             return
 
         if type(value) is Render:
@@ -335,7 +342,7 @@ cdef class Sampler2DSetter(Setter):
         # GLTexture case.
         cdef GLTexture texture = value
 
-        glBindTexture(GL_TEXTURE_2D, texture.number)
+        cache.bind_texture(GL_TEXTURE0 + self.sampler, texture.number)
 
         cdef GLint wrap_s = GL_CLAMP_TO_EDGE
         cdef GLint wrap_t = GL_CLAMP_TO_EDGE
