@@ -1211,6 +1211,10 @@ cdef class Render:
         self.cached_texture = None
         self.cached_model = None
 
+        # drop uniforms that hold Renders so killed renders release their textures
+        if self.uniforms_has_render:
+            self.uniforms = None
+
     NO_MOUSE_FOCUS = renpy.object.Sentinel("NO_MOUSE_FOCUS")
 
     def add_focus(self, d, arg=None, x=0, y=0, w=None, h=None, mx=None, my=None, mask=None):
