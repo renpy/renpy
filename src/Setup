@@ -15,12 +15,12 @@ renpy.gl2.gl2mesh ../tmp/gen/renpy.gl2.gl2mesh.c
 renpy.gl2.gl2mesh2 ../tmp/gen/renpy.gl2.gl2mesh2.c
 renpy.gl2.gl2mesh3 ../tmp/gen/renpy.gl2.gl2mesh3.c
 renpy.gl2.gl2model ../tmp/gen/renpy.gl2.gl2model.c
+renpy.gl2.gl2physics ../tmp/gen/renpy.gl2.gl2physics.c
 renpy.gl2.gl2polygon ../tmp/gen/renpy.gl2.gl2polygon.c
 renpy.gl2.gl2shader ../tmp/gen/renpy.gl2.gl2shader.c
 renpy.gl2.gl2texture ../tmp/gen/renpy.gl2.gl2texture.c
 renpy.gl2.gl2uniform ../tmp/gen/renpy.gl2.gl2uniform.c
 renpy.gl2.live2dmodel ../tmp/gen/renpy.gl2.live2dmodel.c live2dcsm.c
-renpy.gl2.live2dphysics ../tmp/gen/renpy.gl2.live2dphysics.c
 renpy.lexersupport ../tmp/gen/renpy.lexersupport.c
 renpy.pydict ../tmp/gen/renpy.pydict.c
 renpy.pygame.color ../tmp/gen/renpy.pygame.color.c

@@ -26,7 +26,7 @@ from libc.stdio cimport printf
 
 from renpy.gl2.gl2mesh import TEXTURE_LAYOUT
 from renpy.gl2.gl2mesh2 cimport Mesh2
-from renpy.gl2.live2dphysics cimport Live2DPhysics
+from renpy.gl2.gl2physics cimport PendulumPhysics
 
 from renpy.display.matrix cimport Matrix
 from renpy.display.render cimport Render
@@ -36,6 +36,8 @@ from renpy.uguu.gl cimport GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD,
 import json
 
 import renpy
+
+from renpy.gl2.live2dphysics import from_physics3
 
 cdef extern from "live2dcsm.h" nogil:
     void* load_live2d_object(const char* sofile)
@@ -200,7 +202,7 @@ cdef class Live2DModel:
 
     cdef object filename
 
-    cdef Live2DPhysics physics
+    cdef PendulumPhysics physics
 
     _types = """
         parameters : dict[str, Parameter]
@@ -315,9 +317,9 @@ cdef class Live2DModel:
 
         if physics_path:
             with renpy.loader.load(base + physics_path, directory = "images") as f:
-                physics_json = json.load(f)
+                physics_rig = from_physics3(json.load(f))
 
-            self.physics = Live2DPhysics()
+            self.physics = PendulumPhysics()
 
             self.physics.initialize(
                 self.parameter_count,
@@ -326,7 +328,7 @@ cdef class Live2DModel:
                 self.parameter_maximum_values,
                 self.parameter_default_values,
                 self.parameter_indices,
-                physics_json,
+                physics_rig,
             )
 
         csmUpdateModel(self.model)

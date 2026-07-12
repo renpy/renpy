@@ -1,8 +1,8 @@
 from libc.stdlib cimport malloc, free
-from libc.string cimport memcmp, memcpy
-from libc.math cimport pi, sqrt, cos, sin, atan2, fmin, fmax
+from libc.string cimport memcpy
+from libc.math cimport pi, sqrtf, cosf, sinf, atan2f, fminf, fmaxf, isfinite
 
-from renpy.gl2.live2dphysics cimport Vec2, Normalization, SubRigData, Options, Particle, InputData, OutputData, Live2DPhysics
+from renpy.gl2.gl2physics cimport Vec2, Normalization, SubRigData, Options, Particle, InputData, OutputData, PendulumPhysics
 
 DEF TYPE_X = 0
 DEF TYPE_Y = 1
@@ -13,12 +13,14 @@ cdef float maximum_weight = 100.0
 cdef float movement_threshold = 0.001
 cdef float max_delta_time = 5.0
 
-cdef class Live2DPhysics:
+cdef class PendulumPhysics:
     """
-    Physics simulation engine for Live2D models.
+    Pendulum-chain physics for parameter-driven 2D models.
+
+    This implements the Live2D Cubism physics algorithm but consumes a neutral rig format and has no dependency on the Cubism SDK.
     """
 
-    def __init__(Live2DPhysics self):
+    def __init__(PendulumPhysics self):
         self.parameter_count = 0
         self.parameter_values = NULL
         self.parameter_minimum_values = NULL
@@ -35,8 +37,6 @@ cdef class Live2DPhysics:
         self.particles = NULL
         self.fps = 0.0
 
-        vec2_zero(&self.rig_gravity)
-        vec2_zero(&self.rig_wind)
         vec2_set(&self.options.gravity, 0.0, -1.0)
         vec2_zero(&self.options.wind)
 
@@ -46,14 +46,13 @@ cdef class Live2DPhysics:
         self.previous_rig_outputs = NULL
         self.parameter_caches = NULL
         self.parameter_input_caches = NULL
-        self.parameter_caches_initialized = False
 
-        self.input_source_ids = []
-        self.output_destination_ids = []
+        self.involved_indices = NULL
+        self.involved_count = 0
 
         self.last_update = 0.0
 
-    def __dealloc__(Live2DPhysics self):
+    def __dealloc__(PendulumPhysics self):
         if self.settings != NULL:
             free(self.settings)
 
@@ -78,7 +77,10 @@ cdef class Live2DPhysics:
         if self.parameter_input_caches != NULL:
             free(self.parameter_input_caches)
 
-    cdef void initialize(Live2DPhysics self, int parameter_count, float *parameter_values, const float *parameter_minimum_values, const float *parameter_maximum_values, const float *parameter_default_values, dict parameter_indices, object physics_json):
+        if self.involved_indices != NULL:
+            free(self.involved_indices)
+
+    cdef void initialize(PendulumPhysics self, int parameter_count, float *parameter_values, const float *parameter_minimum_values, const float *parameter_maximum_values, const float *parameter_default_values, dict parameter_indices, dict rig):
         self.parameter_count = parameter_count
         self.parameter_values = parameter_values
         self.parameter_minimum_values = parameter_minimum_values
@@ -86,15 +88,13 @@ cdef class Live2DPhysics:
         self.parameter_default_values = parameter_default_values
         self.parameter_indices = parameter_indices
 
-        self.parse_physics(physics_json)
-
-        self.rig_gravity.y = 0.0
+        self.parse_physics(rig)
 
         self.initialize_physics()
 
         self.evaluate(max_delta_time)
 
-    cdef void initialize_physics(Live2DPhysics self) noexcept nogil:
+    cdef void initialize_physics(PendulumPhysics self) noexcept nogil:
         cdef int i
         cdef int setting_index
         cdef int base_index
@@ -123,163 +123,239 @@ cdef class Live2DPhysics:
                 vec2_zero(&particle.velocity)
                 vec2_zero(&particle.force)
 
-    cdef void reset_physics(Live2DPhysics self):
+    cdef void reset_physics(PendulumPhysics self):
         vec2_set(&self.options.gravity, 0.0, -1.0)
         vec2_zero(&self.options.wind)
-        vec2_zero(&self.rig_gravity)
-        vec2_zero(&self.rig_wind)
 
         with nogil:
             self.initialize_physics()
 
-    cdef void parse_physics(Live2DPhysics self, physics_json):
+    cdef void parse_physics(PendulumPhysics self, dict rig):
+        """
+        Fill the flat C rig arrays from a rig dict.
+
+        Counts are implied by the strand lists; parameter names are resolved to indices here so evaluate_c never touches Python objects.
+        """
+
         cdef int i, j
         cdef int input_index, output_index, particle_index
-        cdef dict meta = physics_json["Meta"]
-        cdef list physics_settings = physics_json["PhysicsSettings"]
-        cdef dict setting, normalization, inp, out, vertex
-        cdef str input_type, output_type
+        cdef list strands = rig["strands"]
+        cdef dict strand
+        cdef str type_
+        cdef set involved = set()
+        cdef list involved_list
 
-        self.rig_gravity.x = meta["EffectiveForces"]["Gravity"]["X"]
-        self.rig_gravity.y = meta["EffectiveForces"]["Gravity"]["Y"]
-        self.rig_wind.x = meta["EffectiveForces"]["Wind"]["X"]
-        self.rig_wind.y = meta["EffectiveForces"]["Wind"]["Y"]
+        self.sub_rig_count = len(strands)
 
-        self.sub_rig_count = meta["PhysicsSettingCount"]
+        self.fps = rig["fps"]
 
-        self.fps = meta["Fps"]
+        self.input_count = 0
+        self.output_count = 0
+        self.particle_count = 0
+
+        for strand in strands:
+            self.input_count += len(strand["inputs"])
+            self.output_count += len(strand["outputs"])
+            self.particle_count += len(strand["vertices"])
 
         if self.settings != NULL:
             free(self.settings)
+            self.settings = NULL
 
         if self.inputs != NULL:
             free(self.inputs)
+            self.inputs = NULL
 
         if self.outputs != NULL:
             free(self.outputs)
+            self.outputs = NULL
 
         if self.particles != NULL:
             free(self.particles)
+            self.particles = NULL
 
         if self.current_rig_outputs != NULL:
             free(self.current_rig_outputs)
+            self.current_rig_outputs = NULL
 
         if self.previous_rig_outputs != NULL:
             free(self.previous_rig_outputs)
+            self.previous_rig_outputs = NULL
+
+        if self.parameter_caches != NULL:
+            free(self.parameter_caches)
+            self.parameter_caches = NULL
+
+        if self.parameter_input_caches != NULL:
+            free(self.parameter_input_caches)
+            self.parameter_input_caches = NULL
+
+        if self.involved_indices != NULL:
+            free(self.involved_indices)
+            self.involved_indices = NULL
+            self.involved_count = 0
 
         self.settings = <SubRigData *> malloc(sizeof(SubRigData) * self.sub_rig_count)
 
-        self.input_count = meta["TotalInputCount"]
-        self.inputs = <InputData *> malloc(sizeof(InputData) * self.input_count)
-        self.input_source_ids = [None] * self.input_count
+        if self.settings == NULL:
+            raise MemoryError()
 
-        self.output_count = meta["TotalOutputCount"]
+        self.inputs = <InputData *> malloc(sizeof(InputData) * self.input_count)
+
+        if self.inputs == NULL:
+            raise MemoryError()
+
         self.outputs = <OutputData *> malloc(sizeof(OutputData) * self.output_count)
-        self.output_destination_ids = [None] * self.output_count
+
+        if self.outputs == NULL:
+            raise MemoryError()
 
         # allocate flat C arrays for rig outputs
         self.current_rig_outputs = <float *> malloc(sizeof(float) * self.output_count)
+
+        if self.current_rig_outputs == NULL:
+            raise MemoryError()
+
         self.previous_rig_outputs = <float *> malloc(sizeof(float) * self.output_count)
+
+        if self.previous_rig_outputs == NULL:
+            raise MemoryError()
 
         # initialize output arrays
         for i in range(self.output_count):
             self.current_rig_outputs[i] = 1.0
             self.previous_rig_outputs[i] = 1.0
 
-        self.particle_count = meta["VertexCount"]
+        # parameter caches (parameter_count and parameter_values are set by initialize before parsing)
+        self.parameter_caches = <float *> malloc(sizeof(float) * self.parameter_count)
+
+        if self.parameter_caches == NULL:
+            raise MemoryError()
+
+        self.parameter_input_caches = <float *> malloc(sizeof(float) * self.parameter_count)
+
+        if self.parameter_input_caches == NULL:
+            raise MemoryError()
+
+        for i in range(self.parameter_count):
+            self.parameter_caches[i] = 0.0
+            self.parameter_input_caches[i] = self.parameter_values[i]
+
         self.particles = <Particle *> malloc(sizeof(Particle) * self.particle_count)
+
+        if self.particles == NULL:
+            raise MemoryError()
 
         input_index = 0
         output_index = 0
         particle_index = 0
 
         for i in range(self.sub_rig_count):
-            setting = physics_settings[i]
-            normalization = setting["Normalization"]
+            strand = strands[i]
 
-            self.settings[i].normalization_position.minimum = normalization["Position"]["Minimum"]
-            self.settings[i].normalization_position.maximum = normalization["Position"]["Maximum"]
-            self.settings[i].normalization_position.default = normalization["Position"]["Default"]
+            normalization_position = strand["normalization_position"]
+            normalization_angle = strand["normalization_angle"]
 
-            self.settings[i].normalization_angle.minimum = normalization["Angle"]["Minimum"]
-            self.settings[i].normalization_angle.maximum = normalization["Angle"]["Maximum"]
-            self.settings[i].normalization_angle.default = normalization["Angle"]["Default"]
+            self.settings[i].normalization_position.minimum = normalization_position[0]
+            self.settings[i].normalization_position.maximum = normalization_position[1]
+            self.settings[i].normalization_position.default = normalization_position[2]
+
+            self.settings[i].normalization_angle.minimum = normalization_angle[0]
+            self.settings[i].normalization_angle.maximum = normalization_angle[1]
+            self.settings[i].normalization_angle.default = normalization_angle[2]
 
             # input
-            self.settings[i].input_count = len(setting["Input"])
+            inputs = strand["inputs"]
+
+            self.settings[i].input_count = len(inputs)
             self.settings[i].base_input_index = input_index
 
             for j in range(self.settings[i].input_count):
-                inp = setting["Input"][j]
+                source, weight, type_, reflect = inputs[j]
 
-                self.inputs[input_index + j].source_parameter_index = -1
-                self.inputs[input_index + j].weight = inp["Weight"]
-                self.inputs[input_index + j].reflect = inp["Reflect"]
+                # resolve the source name now so evaluate_c never touches Python objects
+                self.inputs[input_index + j].source_parameter_index = self.parameter_indices[source]
+                involved.add(self.inputs[input_index + j].source_parameter_index)
 
-                input_type = inp["Type"]
+                self.inputs[input_index + j].weight = weight / maximum_weight
+                self.inputs[input_index + j].reflect = reflect
 
-                if input_type == "X":
+                if type_ == "x":
                     self.inputs[input_index + j].type = TYPE_X
-                elif input_type == "Y":
+                elif type_ == "y":
                     self.inputs[input_index + j].type = TYPE_Y
-                elif input_type == "Angle":
+                elif type_ == "angle":
                     self.inputs[input_index + j].type = TYPE_ANGLE
-
-                self.input_source_ids[input_index + j] = inp["Source"]["Id"]
+                else:
+                    raise Exception(f"Unknown physics input type {type_!r}")
 
             input_index += self.settings[i].input_count
 
             # output
-            self.settings[i].output_count = len(setting["Output"])
+            outputs = strand["outputs"]
+
+            self.settings[i].output_count = len(outputs)
             self.settings[i].base_output_index = output_index
 
             for j in range(self.settings[i].output_count):
-                out = setting["Output"][j]
+                destination, vertex_index, scale, weight, type_, reflect = outputs[j]
 
-                self.outputs[output_index + j].destination_parameter_index = -1
-                self.outputs[output_index + j].vertex_index = out["VertexIndex"]
-                self.outputs[output_index + j].angle_scale = out["Scale"]
-                self.outputs[output_index + j].weight = out["Weight"]
-                self.outputs[output_index + j].translation_scale.x = 1.0
-                self.outputs[output_index + j].translation_scale.y = 1.0
-                self.outputs[output_index + j].value_below_minimum = 0.0
-                self.outputs[output_index + j].value_exceeded_maximum = 0.0
+                # resolve the destination name now so evaluate_c never touches Python objects
+                self.outputs[output_index + j].destination_parameter_index = self.parameter_indices[destination]
+                involved.add(self.outputs[output_index + j].destination_parameter_index)
 
-                self.output_destination_ids[output_index + j] = out["Destination"]["Id"]
+                self.outputs[output_index + j].vertex_index = vertex_index
+                self.outputs[output_index + j].scale = scale
+                self.outputs[output_index + j].weight = weight / maximum_weight
 
-                output_type = out["Type"]
-
-                if output_type == "X":
+                if type_ == "x":
                     self.outputs[output_index + j].type = TYPE_X
-                elif output_type == "Y":
+                elif type_ == "y":
                     self.outputs[output_index + j].type = TYPE_Y
-                elif output_type == "Angle":
+                elif type_ == "angle":
                     self.outputs[output_index + j].type = TYPE_ANGLE
+                else:
+                    raise Exception(f"Unknown physics output type {type_!r}")
 
-                self.outputs[output_index + j].reflect = out["Reflect"]
+                self.outputs[output_index + j].reflect = reflect
 
             output_index += self.settings[i].output_count
 
             # particle
-            self.settings[i].particle_count = len(setting["Vertices"])
+            vertices = strand["vertices"]
+
+            self.settings[i].particle_count = len(vertices)
             self.settings[i].base_particle_index = particle_index
 
             for j in range(self.settings[i].particle_count):
-                vertex = setting["Vertices"][j]
+                mobility, delay, acceleration, radius, x, y = vertices[j]
 
-                self.particles[particle_index + j].mobility = vertex["Mobility"]
-                self.particles[particle_index + j].delay = vertex["Delay"]
-                self.particles[particle_index + j].acceleration = vertex["Acceleration"]
-                self.particles[particle_index + j].radius = vertex["Radius"]
-                self.particles[particle_index + j].position.x = vertex["Position"]["X"]
-                self.particles[particle_index + j].position.y = vertex["Position"]["Y"]
+                self.particles[particle_index + j].mobility = mobility
+                self.particles[particle_index + j].delay = delay
+                self.particles[particle_index + j].acceleration = acceleration
+                self.particles[particle_index + j].radius = radius
+                self.particles[particle_index + j].position.x = x
+                self.particles[particle_index + j].position.y = y
 
             particle_index += self.settings[i].particle_count
+
+        # sorted union of the parameter indices physics reads or writes - evaluate_c interpolates only these
+        involved_list = sorted(involved)
+        self.involved_count = len(involved_list)
+
+        if self.involved_count > 0:
+            self.involved_indices = <int *> malloc(sizeof(int) * self.involved_count)
+
+            if self.involved_indices == NULL:
+                raise MemoryError()
+
+            for i in range(self.involved_count):
+                self.involved_indices[i] = involved_list[i]
 
         with nogil:
             self.initialize_physics()
 
-    cpdef void evaluate(Live2DPhysics self, float delta):
+    cpdef void evaluate(PendulumPhysics self, float delta) noexcept:
         """
         Evaluate one step of the physics simulation.
 
@@ -289,14 +365,24 @@ cdef class Live2DPhysics:
             delta: Time delta in seconds since last evaluation.
         """
 
-        cdef int i
+        if 0.0 >= delta:
+            return
+
+        with nogil:
+            self.evaluate_c(delta)
+
+    cdef void evaluate_c(PendulumPhysics self, float delta) noexcept nogil:
+        """
+        Run the substep loop and write interpolated outputs.
+        """
+
+        cdef int i, k
         cdef int setting_index, particle_index, base_index
 
         cdef float physics_delta_time
         cdef float input_weight
         cdef float total_angle, rad_angle
         cdef float original_x
-        cdef float weight
         cdef float output_value
         cdef float total_translation_x, total_translation_y
         cdef float translation_x, translation_y
@@ -307,30 +393,10 @@ cdef class Live2DPhysics:
 
         cdef OutputData *physics_output
 
-        if 0.0 >= delta:
-            return
-
         self.current_remain_time += delta
 
         if self.current_remain_time > max_delta_time:
             self.current_remain_time = 0.0
-
-        # initialize parameter caches on first call (after parameter_count is known)
-        if not self.parameter_caches_initialized:
-            if self.parameter_caches != NULL:
-                free(self.parameter_caches)
-
-            if self.parameter_input_caches != NULL:
-                free(self.parameter_input_caches)
-
-            self.parameter_caches = <float *> malloc(sizeof(float) * self.parameter_count)
-            self.parameter_input_caches = <float *> malloc(sizeof(float) * self.parameter_count)
-
-            for i in range(self.parameter_count):
-                self.parameter_caches[i] = 0.0
-                self.parameter_input_caches[i] = self.parameter_values[i]
-
-            self.parameter_caches_initialized = True
 
         if self.fps > 0.0:
             physics_delta_time = 1.0 / self.fps
@@ -342,9 +408,11 @@ cdef class Live2DPhysics:
 
             # calculate the input at the timing to UpdateParticles by linear interpolation with the parameter_input_caches and parameter_values
             # parameter_caches needs to be separated from parameter_input_caches because of its role in propagating values between groups
+            # only the parameters physics reads or writes are interpolated - the other cache entries are never read
             input_weight = physics_delta_time / self.current_remain_time
 
-            for i in range(self.parameter_count):
+            for k in range(self.involved_count):
+                i = self.involved_indices[k]
                 self.parameter_caches[i] = self.parameter_input_caches[i] * (1.0 - input_weight) + self.parameter_values[i] * input_weight
                 self.parameter_input_caches[i] = self.parameter_caches[i]
 
@@ -357,10 +425,6 @@ cdef class Live2DPhysics:
                 # load input parameters
                 for i in range(setting.base_input_index, setting.base_input_index + setting.input_count):
                     physics_input = &self.inputs[i]
-                    weight = physics_input.weight / maximum_weight
-
-                    if physics_input.source_parameter_index == -1:
-                        physics_input.source_parameter_index = self.parameter_indices[self.input_source_ids[i]]
 
                     total_angle = input_get_normalized_parameter_value(
                         physics_input,
@@ -373,28 +437,26 @@ cdef class Live2DPhysics:
                         self.parameter_default_values[physics_input.source_parameter_index],
                         &setting.normalization_position,
                         &setting.normalization_angle,
-                        weight,
+                        physics_input.weight,
                     )
 
                 rad_angle = degrees_to_radian(-total_angle)
 
                 original_x = total_translation_x
-                total_translation_x = (original_x * cos(rad_angle) - total_translation_y * sin(rad_angle))
-                total_translation_y = (original_x * sin(rad_angle) + total_translation_y * cos(rad_angle))
+                total_translation_x = (original_x * cosf(rad_angle) - total_translation_y * sinf(rad_angle))
+                total_translation_y = (original_x * sinf(rad_angle) + total_translation_y * cosf(rad_angle))
 
                 # calculate particles position
-                with nogil:
-                    self.update_particles(
-                        setting_index,
-                        setting.particle_count,
-                        total_translation_x,
-                        total_translation_y,
-                        total_angle,
-                        self.options.wind.x,
-                        self.options.wind.y,
-                        movement_threshold * setting.normalization_position.maximum,
-                        physics_delta_time,
-                    )
+                self.update_particles(
+                    setting_index,
+                    total_translation_x,
+                    total_translation_y,
+                    total_angle,
+                    self.options.wind.x,
+                    self.options.wind.y,
+                    movement_threshold * setting.normalization_position.maximum,
+                    physics_delta_time,
+                )
 
                 # update output parameters
                 base_index = setting.base_particle_index
@@ -402,9 +464,6 @@ cdef class Live2DPhysics:
                 for i in range(setting.base_output_index, setting.base_output_index + setting.output_count):
                     physics_output = &self.outputs[i]
                     particle_index = physics_output.vertex_index
-
-                    if physics_output.destination_parameter_index == -1:
-                        physics_output.destination_parameter_index = self.parameter_indices[self.output_destination_ids[i]]
 
                     if particle_index < 1 or particle_index >= setting.particle_count:
                         continue
@@ -436,12 +495,9 @@ cdef class Live2DPhysics:
 
             self.current_remain_time -= physics_delta_time
 
-        with nogil:
-            self.interpolate_physics(self.current_remain_time / physics_delta_time)
+        self.interpolate_physics(self.current_remain_time / physics_delta_time)
 
-        return
-
-    cdef void update_particles(Live2DPhysics self, int setting_index, int strand_count, float total_translation_x, float total_translation_y, float total_angle, float wind_x, float wind_y, float threshold_value, float st) noexcept nogil:
+    cdef void update_particles(PendulumPhysics self, int setting_index, float total_translation_x, float total_translation_y, float total_angle, float wind_x, float wind_y, float threshold_value, float st) noexcept nogil:
         """
         Update particle positions for a single physics strand.
 
@@ -453,13 +509,13 @@ cdef class Live2DPhysics:
         cdef int particle_count_for_setting
 
         cdef float total_radian, radian, cos_radian, sin_radian
-        cdef float delay
+        cdef float delay, delay_factor
         cdef float original_dir_x
         cdef float delay_squared
 
         cdef Vec2 direction, new_direction
         cdef Vec2 velocity, force
-        cdef Vec2 current_gravity, last_gravity_copy
+        cdef Vec2 current_gravity
 
         cdef Particle *particle
         cdef Particle *prev_particle
@@ -471,9 +527,11 @@ cdef class Live2DPhysics:
         self.particles[base_index].position.y = total_translation_y
 
         total_radian = degrees_to_radian(total_angle)
-        current_gravity.x = sin(total_radian)
-        current_gravity.y = cos(total_radian)
+        current_gravity.x = sinf(total_radian)
+        current_gravity.y = cosf(total_radian)
         vec2_normalize(&current_gravity)
+
+        delay_factor = st * 30.0
 
         for i in range(base_index + 1, base_index + particle_count_for_setting):
             particle = &self.particles[i]
@@ -485,17 +543,15 @@ cdef class Live2DPhysics:
             particle.last_position.x = particle.position.x
             particle.last_position.y = particle.position.y
 
-            delay = particle.delay * st * 30.0
+            delay = particle.delay * delay_factor
 
             direction.x = particle.position.x - prev_particle.position.x
             direction.y = particle.position.y - prev_particle.position.y
 
-            last_gravity_copy.x = particle.last_gravity.x
-            last_gravity_copy.y = particle.last_gravity.y
-            radian = direction_to_radian(last_gravity_copy.x, last_gravity_copy.y, current_gravity.x, current_gravity.y) / air_resistance
+            radian = direction_to_radian(particle.last_gravity.x, particle.last_gravity.y, current_gravity.x, current_gravity.y) / air_resistance
 
-            cos_radian = cos(radian)
-            sin_radian = sin(radian)
+            cos_radian = cosf(radian)
+            sin_radian = sinf(radian)
             original_dir_x = direction.x
             direction.x = (cos_radian * original_dir_x) - (direction.y * sin_radian)
             direction.y = (sin_radian * original_dir_x) + (direction.y * cos_radian)
@@ -536,7 +592,7 @@ cdef class Live2DPhysics:
             particle.last_gravity.x = current_gravity.x
             particle.last_gravity.y = current_gravity.y
 
-    cdef void interpolate_physics(Live2DPhysics self, float weight) noexcept nogil:
+    cdef void interpolate_physics(PendulumPhysics self, float weight) noexcept nogil:
         """
         Interpolate physics output parameters between previous and current values.
 
@@ -547,6 +603,7 @@ cdef class Live2DPhysics:
         cdef int setting_index, dest_index
 
         cdef float interpolated_value
+        cdef float new_value
 
         cdef SubRigData *setting
 
@@ -559,15 +616,12 @@ cdef class Live2DPhysics:
             for i in range(setting.base_output_index, setting.base_output_index + setting.output_count):
                 physics_output = &self.outputs[i]
 
-                if physics_output.destination_parameter_index == -1:
-                    continue
-
                 dest_index = physics_output.destination_parameter_index
 
                 # use flat array indexing
                 interpolated_value = self.previous_rig_outputs[i] * (1.0 - weight) + self.current_rig_outputs[i] * weight
 
-                self.parameter_values[dest_index] = update_output_parameter_value_struct(
+                new_value = update_output_parameter_value_struct(
                     self.parameter_values[dest_index],
                     self.parameter_minimum_values[dest_index],
                     self.parameter_maximum_values[dest_index],
@@ -575,8 +629,12 @@ cdef class Live2DPhysics:
                     physics_output,
                 )
 
+                # a NaN should never escape
+                if isfinite(new_value):
+                    self.parameter_values[dest_index] = new_value
+
 cdef inline void vec2_normalize(Vec2 *v) noexcept nogil:
-    cdef float length = sqrt(v.x * v.x + v.y * v.y)
+    cdef float length = sqrtf(v.x * v.x + v.y * v.y)
 
     if length > 0.0:
         v.x /= length
@@ -641,20 +699,6 @@ cdef inline float output_get_value(OutputData *out, float translation_x, float t
 
     return output
 
-cdef inline float output_get_scale(OutputData *out) noexcept nogil:
-    """
-    Get the scale factor for an output based on its type.
-    """
-
-    if out.type == TYPE_X:
-        return out.translation_scale.x
-    elif out.type == TYPE_Y:
-        return out.translation_scale.y
-    elif out.type == TYPE_ANGLE:
-        return out.angle_scale
-
-    return 0.0
-
 cdef inline float update_output_parameter_value_struct(float parameter_value, float parameter_value_minimum, float parameter_value_maximum, float translation, OutputData *output) noexcept nogil:
     """
     Update an output parameter value with clamping and weight blending.
@@ -662,49 +706,27 @@ cdef inline float update_output_parameter_value_struct(float parameter_value, fl
     Applies the output scale to the translation, clamps to parameter bounds, and blends with the current value based on output weight.
     """
 
-    cdef float output_scale = output_get_scale(output)
-    cdef float value = translation * output_scale
-    cdef float weight
+    cdef float value = translation * output.scale
 
     if value < parameter_value_minimum:
-        if value < output.value_below_minimum:
-            output.value_below_minimum = value
-
         value = parameter_value_minimum
     elif value > parameter_value_maximum:
-        if value > output.value_exceeded_maximum:
-            output.value_exceeded_maximum = value
-
         value = parameter_value_maximum
 
-    weight = output.weight / maximum_weight
-
-    if weight >= 1.0:
+    if output.weight >= 1.0:
         return value
 
-    return parameter_value * (1.0 - weight) + value * weight
+    return parameter_value * (1.0 - output.weight) + value * output.weight
 
 cdef inline float degrees_to_radian(float degrees) noexcept nogil:
     return pi * degrees / 180.0
 
-cdef inline float normalize_angle(float ret) noexcept nogil:
-    while ret < -pi:
-        ret += 2.0 * pi
-
-    while ret > pi:
-        ret -= 2.0 * pi
-
-    return ret
-
 cdef inline float direction_to_radian(float from_x, float from_y, float to_x, float to_y) noexcept nogil:
     """
-    Calculate the angle between two direction vectors.
+    Calculate the signed angle from one direction vector to another.
     """
 
-    cdef float q1 = atan2(to_y, to_x)
-    cdef float q2 = atan2(from_y, from_x)
-
-    return normalize_angle(q1 - q2)
+    return atan2f(from_x * to_y - from_y * to_x, from_x * to_x + from_y * to_y)
 
 cdef inline float normalize_parameter_value(float value, float parameter_minimum, float parameter_maximum, float parameter_default, float normalized_minimum, float normalized_maximum, float normalized_default, bint is_inverted) noexcept nogil:
     """
@@ -712,9 +734,9 @@ cdef inline float normalize_parameter_value(float value, float parameter_minimum
 
     Maps a value from its parameter range to the physics normalization range, handling asymmetric ranges around the default value.
     """
-    
+
     cdef float result = 0.0
-    cdef float max_value = fmax(parameter_minimum, parameter_maximum)
+    cdef float max_value = fmaxf(parameter_minimum, parameter_maximum)
     cdef float min_value
     cdef float min_norm_value, max_norm_value, middle_norm_value
     cdef float middle_value, param_value
@@ -723,17 +745,16 @@ cdef inline float normalize_parameter_value(float value, float parameter_minimum
     if max_value < value:
         value = max_value
 
-    min_value = fmin(parameter_minimum, parameter_maximum)
+    min_value = fminf(parameter_minimum, parameter_maximum)
 
     if min_value > value:
         value = min_value
 
-    min_norm_value = fmin(normalized_minimum, normalized_maximum)
-    max_norm_value = fmax(normalized_minimum, normalized_maximum)
+    min_norm_value = fminf(normalized_minimum, normalized_maximum)
+    max_norm_value = fmaxf(normalized_minimum, normalized_maximum)
     middle_norm_value = normalized_default
 
-    middle_value = 0.5 * (fmin(min_value, max_value) + fmax(min_value, max_value))
-
+    middle_value = 0.5 * (fminf(min_value, max_value) + fmaxf(min_value, max_value))
     param_value = value - middle_value
 
     if param_value > 0:
