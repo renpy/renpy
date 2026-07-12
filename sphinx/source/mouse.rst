@@ -79,6 +79,9 @@ and the corresponding usage:
  * - ``button``
    - Used when the player is hovering over a button/imagebutton.
 
+ * - ``drag``
+   - Used when the player is hovering over a Drag object.
+
  * - ``pause``
    - Used during pause, renpy.pause()
 
@@ -97,12 +100,21 @@ pressed cursor is defined.
 For example::
 
     define config.mouse = { }
+    # Default mouse cursor and its pressed state
     define config.mouse['default'] = [ ( "gui/arrow.png", 0, 0) ]
     define config.mouse['pressed_default'] = [ ( "gui/arrow_pressed.png", 0, 0) ]
+
+    # The cursor displayed when hovering over a button and its pressed state
     define config.mouse['button'] = [ ( "gui/arrow_button.png", 0, 0) ]
     define config.mouse['pressed_button'] = [ ( "gui/arrow_button_pressed.png", 0, 0) ]
-    define config.mouse['menu'] = [ ( "gui/arrow_menu.png", 0, 0) ] # This cursor will be used when the player is in a menu
-    # Since there is no "pressed_menu" cursor, "pressed_default" cursor will be used instead
+
+    # The cursor displayed when hovering over a Drag object and its pressed state
+    define config.mouse['drag'] = [ ( "gui/arrow_drag.png", 0, 0) ]
+    define config.mouse['pressed_drag'] = [ ( "gui/arrow_drag_pressed.png", 0, 0) ]
+
+    # This cursor will be used when the player is in a menu
+    define config.mouse['menu'] = [ ( "gui/arrow_menu.png", 0, 0) ] 
+    # If we do not add a "pressed_menu" cursor, "pressed_default" cursor will be used instead
 
 
 Displayable Mouse Cursor

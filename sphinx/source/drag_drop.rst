@@ -62,6 +62,7 @@ of the window by dragging it around the screen.::
             drag_name "say"
             yalign 1.0
             drag_handle (0, 0, 1.0, 30)
+            mouse "drag"
 
             xalign 0.5
 
