@@ -59,51 +59,51 @@ translate russian strings:
 
     # 00action_file.rpy:47
     old "{#month}January"
-    new "{#month}Января"
+    new "{#month}января"
 
     # 00action_file.rpy:47
     old "{#month}February"
-    new "{#month}Февраля"
+    new "{#month}февраля"
 
     # 00action_file.rpy:47
     old "{#month}March"
-    new "{#month}Марта"
+    new "{#month}марта"
 
     # 00action_file.rpy:47
     old "{#month}April"
-    new "{#month}Апреля"
+    new "{#month}апреля"
 
     # 00action_file.rpy:47
     old "{#month}May"
-    new "{#month}Мая"
+    new "{#month}мая"
 
     # 00action_file.rpy:47
     old "{#month}June"
-    new "{#month}Июня"
+    new "{#month}июня"
 
     # 00action_file.rpy:47
     old "{#month}July"
-    new "{#month}Июля"
+    new "{#month}июля"
 
     # 00action_file.rpy:47
     old "{#month}August"
-    new "{#month}Августа"
+    new "{#month}августа"
 
     # 00action_file.rpy:47
     old "{#month}September"
-    new "{#month}Сентября"
+    new "{#month}сентября"
 
     # 00action_file.rpy:47
     old "{#month}October"
-    new "{#month}Октября"
+    new "{#month}октября"
 
     # 00action_file.rpy:47
     old "{#month}November"
-    new "{#month}Ноября"
+    new "{#month}ноября"
 
     # 00action_file.rpy:47
     old "{#month}December"
-    new "{#month}Декабря"
+    new "{#month}декабря"
 
     # 00action_file.rpy:63
     old "{#month_short}Jan"
@@ -223,7 +223,7 @@ translate russian strings:
 
     # 00director.rpy:1561
     old "(statement)"
-    new "(функция)"
+    new "(оператор)"
 
     # 00director.rpy:1562
     old "(tag)"
@@ -231,7 +231,7 @@ translate russian strings:
 
     # 00director.rpy:1563
     old "(attributes)"
-    new "(аттрибут)"
+    new "(аттрибуты)"
 
     # 00director.rpy:1564
     old "(transform)"
@@ -263,11 +263,11 @@ translate russian strings:
 
     # 00director.rpy:1639
     old "Remove"
-    new "Убрать"
+    new "Удалить"
 
     # 00director.rpy:1674
     old "Statement:"
-    new "Функции:"
+    new "Операторы:"
 
     # 00director.rpy:1695
     old "Tag:"
@@ -275,7 +275,7 @@ translate russian strings:
 
     # 00director.rpy:1711
     old "Attributes:"
-    new "Аттрибут:"
+    new "Аттрибуты:"
 
     # 00director.rpy:1729
     old "Transforms:"
@@ -339,7 +339,7 @@ translate russian strings:
 
     # 00keymap.rpy:258
     old "Failed to save screenshot as %s."
-    new "Провалена попытка сохранить скриншот как %s."
+    new "Не удалось сохранить скриншот как %s."
 
     # 00keymap.rpy:270
     old "Saved screenshot as %s."
@@ -395,7 +395,7 @@ translate russian strings:
 
     # 00library.rpy:193
     old "Skip Mode"
-    new "Режим Пропуска"
+    new "Режим пропуска"
 
     # 00library.rpy:279
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
@@ -475,7 +475,7 @@ translate russian strings:
 
     # 00preferences.rpy:319
     old "automatic move"
-    new "автоматически передвигать мышь к кнопке" ###
+    new "автоматически передвигать мышь к кнопке"
 
     # 00preferences.rpy:328
     old "wait for voice"
@@ -579,7 +579,7 @@ translate russian strings:
 
     # _developer\developer.rpym:43
     old "Interactive Director (D)"
-    new "Интерактивный Директор (D)"
+    new "Интерактивный директор (D)"
 
     # _developer\developer.rpym:45
     old "Reload Game (Shift+R)"
@@ -595,7 +595,7 @@ translate russian strings:
 
     # _developer\developer.rpym:51
     old "Image Location Picker"
-    new "Инструмент позиционирования на изображениях"
+    new "Выбрать позицию изображения"
 
     # _developer\developer.rpym:53
     old "Filename List"
@@ -615,7 +615,6 @@ translate russian strings:
 
     # _developer\developer.rpym:90
     old "[name] [attributes] (hidden)"
-    # Automatic translation.
     new "[name] [attributes] (скрыто)"
 
     # _developer\developer.rpym:94
@@ -656,7 +655,7 @@ translate russian strings:
 
     # _developer\developer.rpym:617
     old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
-    new "Текстур: [tex_count] ([tex_size_mb:.1f] МБ)"
+    new "Текстуры: [tex_count] ([tex_size_mb:.1f] МБ)"
 
     # _developer\developer.rpym:621
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
@@ -676,7 +675,7 @@ translate russian strings:
 
     # _developer\inspector.rpym:38
     old "Displayable Inspector"
-    new "Диспетчер объектов"
+    new "Инспектор элементов"
 
     # _developer\inspector.rpym:61
     old "Size"
@@ -688,7 +687,7 @@ translate russian strings:
 
     # _developer\inspector.rpym:71
     old "Location"
-    new "Местоположение"
+    new "Положение"
 
     # _developer\inspector.rpym:122
     old "Inspecting Styles of [displayable_name!q]"
@@ -696,11 +695,11 @@ translate russian strings:
 
     # _developer\inspector.rpym:139
     old "displayable:"
-    new "объект:"
+    new "элемент:"
 
     # _developer\inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        (на объект не влияют никакие параметры)"
+    new "        (на элемент не влияют никакие параметры)"
 
     # _developer\inspector.rpym:147
     old "        (default properties omitted)"
@@ -720,7 +719,7 @@ translate russian strings:
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
-    new "Связываюсь с App Store\nПожалуйста, ждите..."
+    new "Связываюсь с App Store\nПожалуйста, подождите..."
 
     # 00updater.rpy:375
     old "The Ren'Py Updater is not supported on mobile devices."
@@ -868,7 +867,7 @@ translate russian strings:
 
     # 00preferences.rpy:430
     old "font transform"
-    new "преобразование шрифта"
+    new "замена шрифта"
 
     # 00preferences.rpy:433
     old "font size"
@@ -894,9 +893,33 @@ translate russian strings:
     old "system cursor"
     new "системный курсор"
 
+    # renpy/common/00accessibility.rpy:120
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
+    new "Меню специальных возможностей. Для навигации используйте стрелки вверх и вниз, а для активации кнопок и панелей - клавишу Enter."
+
+    # renpy/common/00accessibility.rpy:137
+    old "Self-voicing support is limited when using a touch screen."
+    new "Поддержка синтезатора речи ограничена при использовании сенсорного экрана."
+
     # renpy/common/00accessibility.rpy:180
     old "High Contrast Text"
     new "Высококонтрастный текст"
+
+    # renpy/common/00accessibility.rpy:180
+    old "Mono Audio"
+    new "Моно аудио"
+
+    # renpy/common/00accessibility.rpy:246
+    old "Kerning"
+    new "Кёрнинг"
+
+    # renpy/common/00accessibility.rpy:288
+    old "Self-Voicing and Audio"
+    new "Синтезатор речи и звук"
+
+    # renpy/common/00accessibility.rpy:292
+    old "Text"
+    new "Текст"
 
     # renpy/common/00preferences.rpy:487
     old "renderer menu"
@@ -922,146 +945,113 @@ translate russian strings:
     old "mute main"
     new "режим без звука"
 
-translate russian strings:
-
     # renpy/common/00director.rpy:1745
     old "Click to toggle attribute, right click to toggle negative attribute."
-    # Automatic translation.
-    new "Щелкните, чтобы переключить атрибут, щелкните правой кнопкой мыши, чтобы переключить отрицательный атрибут."
+    new "Щёлкните, чтобы переключить атрибут. Щёлкните правой кнопкой, чтобы переключить отрицательный атрибут."
 
     # renpy/common/00director.rpy:1768
     old "Click to set transform, right click to add to transform list."
-    # Automatic translation.
-    new "Щелкните, чтобы установить преобразование, щелкните правой кнопкой мыши, чтобы добавить в список преобразований."
+    new "Щёлкните, чтобы установить трансформацию. Щёлкните правой кнопкой, чтобы добавить в список трансформаций."
 
     # renpy/common/00director.rpy:1789
     old "Click to set, right click to add to behind list."
-    # Automatic translation.
-    new "Щелкните, чтобы установить, щелкните правой кнопкой мыши, чтобы добавить в список позади."
+    new "Щёлкните, чтобы установить. Щёлкните правой кнопкой, чтобы добавить в список позади."
 
     # renpy/common/00gui.rpy:456
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
-    # Automatic translation.
     new "Это сохранение было создано на другом устройстве. Злонамеренно созданные файлы сохранения могут нанести вред вашему компьютеру. Доверяете ли вы создателю этого сохранения и всем тем, кто мог изменить файл?"
 
     # renpy/common/00gui.rpy:457
     old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
-    # Automatic translation.
     new "Доверяете ли вы устройству, на котором было создано сохранение? Вы должны выбрать \"Да\", только если вы являетесь единственным пользователем устройства."
 
     # renpy/common/00preferences.rpy:528
     old "audio when unfocused"
-    # Automatic translation.
-    new "звук при расфокусировке"
+    new "звук при потере фокуса"
 
     # renpy/common/00preferences.rpy:537
     old "web cache preload"
-    # Automatic translation.
     new "предварительная загрузка веб-кэша"
 
     # renpy/common/00preferences.rpy:552
     old "voice after game menu"
-    # Automatic translation.
     new "голос после меню игры"
 
     # renpy/common/00speechbubble.rpy:344
     old "Speech Bubble Editor"
-    # Automatic translation.
-    new "Редактор речевых пузырьков"
+    new "Редактор пузырьков речи"
 
     # renpy/common/00speechbubble.rpy:349
     old "(hide)"
-    # Automatic translation.
     new "(скрыть)"
 
     # renpy/common/00sync.rpy:70
     old "Sync downloaded."
-    # Automatic translation.
     new "Синхронизация загружена."
 
     # renpy/common/00sync.rpy:190
     old "Could not connect to the Ren'Py Sync server."
-    # Automatic translation.
     new "Не удалось подключиться к серверу Ren'Py Sync."
 
     # renpy/common/00sync.rpy:192
     old "The Ren'Py Sync server timed out."
-    # Automatic translation.
-    new "Сервер Ren'Py Sync завершил работу по таймеру."
+    new "Сервер Ren'Py Sync не ответил вовремя."
 
     # renpy/common/00sync.rpy:194
     old "An unknown error occurred while connecting to the Ren'Py Sync server."
-    # Automatic translation.
     new "При подключении к серверу Ren'Py Sync произошла неизвестная ошибка."
 
     # renpy/common/00sync.rpy:267
     old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
-    # Automatic translation.
-    new "Сервер Ren'Py Sync не имеет копии этой синхронизации. Идентификатор синхронизации может быть недействительным, или она могла завершиться."
+    new "Сервер Ren'Py Sync не имеет копии этой синхронизации. Возможно, Sync ID недействителен или с истёкшим временем действия."
 
     # renpy/common/00sync.rpy:409
     old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
-    # Automatic translation.
-    new "Введите созданный вами идентификатор синхронизации.\nНикогда не вводите идентификатор синхронизации, который вы не создавали сами."
+    new "Введите созданный вами Sync ID.\nНикогда не вводите Sync ID, который вы не создавали сами."
 
     # renpy/common/00sync.rpy:428
     old "The sync ID is not in the correct format."
-    # Automatic translation.
-    new "Идентификатор синхронизации имеет неправильный формат."
+    new "Sync ID имеет неправильный формат."
 
     # renpy/common/00sync.rpy:448
     old "The sync could not be decrypted."
-    # Automatic translation.
-    new "Синхронизация не может быть расшифрована."
+    new "Невозможно расшифровать синхронизацию."
 
     # renpy/common/00sync.rpy:471
     old "The sync belongs to a different game."
-    # Automatic translation.
     new "Синхронизация относится к другой игре."
 
     # renpy/common/00sync.rpy:476
     old "The sync contains a file with an invalid name."
-    # Automatic translation.
     new "Синхронизация содержит файл с недопустимым именем."
 
     # renpy/common/00sync.rpy:529
     old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
-    # Automatic translation.
-    new "Это загрузит ваши сохранения на сервер {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nВы хотите продолжить?"
+    new "Это загрузит ваши сохранения на сервер {a=https://sync.renpy.org}Ren'Py Sync{/a}.\nВы хотите продолжить?"
 
     # renpy/common/00sync.rpy:558
     old "Enter Sync ID"
-    # Automatic translation.
-    new "Введите идентификатор синхронизации"
+    new "Введите Sync ID"
 
     # renpy/common/00sync.rpy:569
     old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
-    # Automatic translation.
-    new "Это позволит связаться с сервером {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    new "Это позволит связаться с сервером {a=https://sync.renpy.org}Ren'Py Sync{/a}."
 
     # renpy/common/00sync.rpy:596
     old "Sync Success"
-    # Automatic translation.
-    new "Успех синхронизации"
+    new "Синхронизация успешна"
 
     # renpy/common/00sync.rpy:599
     old "The Sync ID is:"
-    # Automatic translation.
-    new "Идентификатор синхронизации:"
+    new "Sync ID:"
 
     # renpy/common/00sync.rpy:605
     old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
-    # Automatic translation.
-    new "Вы можете использовать этот идентификатор для загрузки сохранения на другое устройство.\nСрок действия этой синхронизации истечет через час.\nRen'Py Sync поддерживается спонсорами {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    new "Вы можете использовать этот ID для загрузки сохранения на другое устройство.\nСрок действия этой синхронизации истечёт через час.\nRen'Py Sync поддерживается {a=https://www.renpy.org/sponsors.html}спонсорами Ren'Py{/a}."
 
     # renpy/common/00sync.rpy:631
     old "Sync Error"
-    # Automatic translation.
-    new "Ошибка синхронизации"
-
-    # renpy/common/00accessibility.rpy:120
-    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
-    new "Меню специальных возможностей. Для навигации используйте стрелки вверх и вниз, а для активации кнопок и полос - клавишу Enter."
+    new "Синхронизация не удалась"
 
     # renpy/common/00director.rpy:1776
     old "Customize director.transforms to add more transforms."
@@ -1115,6 +1105,14 @@ translate russian strings:
     old "reset"
     new "сбросить"
 
+    # renpy/common/00preferences.rpy:602
+    old "mono audio"
+    new "моно аудио"
+
+    # renpy/common/00preferences.rpy:611
+    old "font kerning"
+    new "кёрнинг шрифта"
+
     # renpy/common/00speechbubble.rpy:408
     old "(clear retained bubbles)"
     new "(очистить сохранившиеся пузыри)"
@@ -1154,3 +1152,16 @@ translate russian strings:
     # renpy/common/00updater.rpy:2089
     old "Retry"
     new "Повторить попытку"
+
+    # renpy/common/000statements.rpy:28
+    old "Click to play the video."
+    new "Кликните, чтобы воспроизвести видео."
+
+    # renpy/common/00translation.rpy:63
+    old "Translation identifier: [identifier]"
+    new "Идентификатор перевода: [identifier]"
+
+    # renpy/common/00translation.rpy:84
+    old " translates [tl.filename]:[tl.linenumber]"
+    new " переводит [tl.filename]:[tl.linenumber]"
+

@@ -7,19 +7,19 @@ translate russian strings:
 
     # 00gltest.rpy:74
     old "Automatically Choose"
-    new "Выбирать Автоматически"
+    new "Выбрать автоматически"
 
     # 00gltest.rpy:79
     old "Force Angle/DirectX Renderer"
-    new "Принудительный Angle/DirectX"
+    new "Принудительно Angle/DirectX"
 
     # 00gltest.rpy:83
     old "Force OpenGL Renderer"
-    new "Принудительный OpenGL"
+    new "Принудительно OpenGL"
 
     # 00gltest.rpy:87
     old "Force Software Renderer"
-    new "Принудительный Программный"
+    new "Принудительно программный"
 
     # 00gltest.rpy:93
     old "NPOT"
@@ -27,7 +27,7 @@ translate russian strings:
 
     # 00gltest.rpy:97
     old "Enable"
-    new "Активировано"
+    new "Включено"
 
     # 00gltest.rpy:131
     old "Powersave"
@@ -39,7 +39,7 @@ translate russian strings:
 
     # 00gltest.rpy:149
     old "Screen"
-    new "Экранная"
+    new "От монитора"
 
     # 00gltest.rpy:153
     old "60"
@@ -51,7 +51,7 @@ translate russian strings:
 
     # 00gltest.rpy:163
     old "Tearing"
-    new "Разрывание кадров"
+    new "Разрыв кадров"
 
     # 00gltest.rpy:179
     old "Changes will take effect the next time this program is run."
@@ -59,7 +59,7 @@ translate russian strings:
 
     # 00gltest.rpy:213
     old "Performance Warning"
-    new "Предупреждение Производительности"
+    new "Предупреждение о производительности"
 
     # 00gltest.rpy:218
     old "This computer is using software rendering."
@@ -91,11 +91,11 @@ translate russian strings:
 
     # 00gltest.rpy:242
     old "Continue, Show this warning again"
-    new "Продолжить, Показать это предупреждение снова"
+    new "Продолжить, показывать это предупреждение снова"
 
     # 00gltest.rpy:246
     old "Continue, Don't show warning again"
-    new "Продолжить, Не показывать это предупреждение снова."
+    new "Продолжить, не показывать это предупреждение снова"
 
     # 00gltest.rpy:264
     old "Updating DirectX."
@@ -119,15 +119,15 @@ translate russian strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Выберите Геймпад для Калибровки"
+    new "Выберите геймпад для калибровки"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "Геймпады Не Обнаружены"
+    new "Геймпады не обнаружены"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
-    new "Калибрую [name] ([i]/[total])"
+    new "Калибровка [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
     old "Press or move the [control!s] [kind]."
@@ -135,13 +135,11 @@ translate russian strings:
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    # Automatic translation.
     new "Пропуск (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    # Automatic translation.
-    new "Спина (B)"
+    new "Назад (B)"
 
     # _errorhandling.rpym:529
     old "Open"
@@ -149,7 +147,7 @@ translate russian strings:
 
     # _errorhandling.rpym:531
     old "Opens the traceback.txt file in a text editor."
-    new "Открывает файл traceback.txt в текстовом редакторе."
+    new "Открыть файл traceback.txt в текстовом редакторе."
 
     # _errorhandling.rpym:533
     old "Copy"
@@ -157,7 +155,7 @@ translate russian strings:
 
     # _errorhandling.rpym:535
     old "Copies the traceback.txt file to the clipboard."
-    new "Копирует файл traceback.txt в буфер обмена."
+    new "Копировать файл traceback.txt в буфер обмена."
 
     # _errorhandling.rpym:562
     old "An exception has occurred."
@@ -169,7 +167,7 @@ translate russian strings:
 
     # _errorhandling.rpym:584
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Пытается вернуться назад, позволяя вам сохраниться или принять другой выбор."
+    new "Попытаться вернуться назад, позволяя вам сохраниться или принять другой выбор."
 
     # _errorhandling.rpym:587
     old "Ignore"
@@ -177,11 +175,11 @@ translate russian strings:
 
     # _errorhandling.rpym:591
     old "Ignores the exception, allowing you to continue."
-    new "Игнорирует это исключение, позволяя вам продолжить."
+    new "Игнорировать это исключение, позволяя вам продолжить."
 
     # _errorhandling.rpym:593
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "Игнорирует это исключение, позволяя вам продолжить. Зачастую это ведёт к дополнительным ошибкам."
+    new "Игнорировать это исключение, позволяя вам продолжить. Зачастую это ведёт к дополнительным ошибкам."
 
     # _errorhandling.rpym:597
     old "Reload"
@@ -189,7 +187,7 @@ translate russian strings:
 
     # _errorhandling.rpym:599
     old "Reloads the game from disk, saving and restoring game state if possible."
-    new "Перезагружает игру с диска, сохраняя и восстанавливая её состояние, если это возможно."
+    new "Перезагрузить игру с диска, сохраняя и восстанавливая её состояние, если это возможно."
 
     # _errorhandling.rpym:602
     old "Console"
@@ -197,11 +195,11 @@ translate russian strings:
 
     # _errorhandling.rpym:604
     old "Opens a console to allow debugging the problem."
-    new "Открывает консоль, позволяющую отладить проблему."
+    new "Открыть консоль, позволяющую отладить проблему."
 
     # _errorhandling.rpym:614
     old "Quits the game."
-    new "Выходит из игры."
+    new "Выйти из игры."
 
     # _errorhandling.rpym:638
     old "Parsing the script failed."
@@ -209,11 +207,11 @@ translate russian strings:
 
     # _errorhandling.rpym:664
     old "Opens the errors.txt file in a text editor."
-    new "Открывает файл errors.txt в текстовом редакторе."
+    new "Открыть файл errors.txt в текстовом редакторе."
 
     # _errorhandling.rpym:668
     old "Copies the errors.txt file to the clipboard."
-    new "Копирует файл errors.txt в буфер обмена."
+    new "Копировать файл errors.txt в буфер обмена."
 
     # _errorhandling.rpym:542
     old "Copy BBCode"
@@ -221,7 +219,7 @@ translate russian strings:
 
     # _errorhandling.rpym:544
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Копирует файл traceback.txt в буфер обмена как BBCode для форумов типа https://lemmasoft.renai.us/."
+    new "Копировать файл traceback.txt в буфер обмена как BBCode для форумов типа https://lemmasoft.renai.us/."
 
     # _errorhandling.rpym:546
     old "Copy Markdown"
@@ -229,39 +227,39 @@ translate russian strings:
 
     # _errorhandling.rpym:548
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
-    new "Копирует файл traceback.txt в буфер обмена как Markdown для Дискорда."
+    new "Копировать файл traceback.txt в буфер обмена как Markdown для Discord."
 
     # _errorhandling.rpym:683
     old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Копирует файл errors.txt в буфер обмена как BBCode для форумов типа https://lemmasoft.renai.us/."
+    new "Копировать файл errors.txt в буфер обмена как BBCode для форумов типа https://lemmasoft.renai.us/."
 
     # _errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
-    new "Копирует файл errors.txt в буфер обмена как Markdown для Дискорда."
+    new "Копировать файл errors.txt в буфер обмена как Markdown для Discord."
 
     # renpy/common/00gltest.rpy:100
     old "Force GL Renderer"
-    new "Принудительный GL рендеринг"
+    new "Принудительный GL рендер"
 
     # renpy/common/00gltest.rpy:105
     old "Force ANGLE Renderer"
-    new "Принудительный ANGLE рендеринг"
+    new "Принудительный ANGLE рендер"
 
     # renpy/common/00gltest.rpy:110
     old "Force GLES Renderer"
-    new "Принудительный GLES рендеринг"
+    new "Принудительный GLES рендер"
 
     # renpy/common/00gltest.rpy:116
     old "Force GL2 Renderer"
-    new "Принудительный GL2 рендеринг"
+    new "Принудительный GL2 рендер"
 
     # renpy/common/00gltest.rpy:121
     old "Force ANGLE2 Renderer"
-    new "Принудительный ANGLE2 рендеринг"
+    new "Принудительный ANGLE2 рендер"
 
     # renpy/common/00gltest.rpy:126
     old "Force GLES2 Renderer"
-    new "Принудительный GLES2 рендеринг"
+    new "Принудительный GLES2 рендер"
 
     # renpy/common/00gltest.rpy:245
     old "This game requires use of GL2 that can't be initialised."
@@ -273,7 +271,7 @@ translate russian strings:
 
     # renpy/common/00gltest.rpy:273
     old "Change render options"
-    new "Изменить настройки рендеринга"
+    new "Изменить настройки рендера"
 
     # renpy/common/00gamepad.rpy:58
     old "Press or move the '[control!s]' [kind]."
