@@ -1013,6 +1013,7 @@ class Interface:
         pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
         pygame.display.hint("SDL_IME_SHOW_UI", "1")
         pygame.display.hint("SDL_ANDROID_BLOCK_ON_PAUSE", "0")
+        pygame.display.hint("SDL_MOUSE_DPI_SCALE_CURSORS", "1")
 
         if renpy.config.mouse_focus_clickthrough:
             pygame.display.hint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1")
