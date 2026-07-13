@@ -80,7 +80,7 @@ and the corresponding usage:
    - Used when the player is hovering over a button/imagebutton.
 
  * - ``drag``
-   - Used when the player is hovering over a Drag object.
+   - Used when the player is hovering over a Drag object. If this is not defined, ``button`` style is used instead.
 
  * - ``pause``
    - Used during pause, renpy.pause()
