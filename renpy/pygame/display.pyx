@@ -351,7 +351,7 @@ cdef class Window:
         rv = SDL_GetWindowFlags(self.window)
 
         if self.gl_context:
-            rv = rv & SDL_WINDOW_OPENGL
+            rv = rv | SDL_WINDOW_OPENGL
         else:
             rv = rv & ~SDL_WINDOW_OPENGL
 
