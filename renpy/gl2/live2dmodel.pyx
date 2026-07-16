@@ -591,8 +591,8 @@ cdef class Live2DModel:
             r.add_uniform("u_live2d_ppu", ppu)
             r.add_uniform("u_live2d_offset", (offset_x, offset_y))
 
-            # don't oversample masks
-            r.add_property("mesh_oversample", 1.0)
+            # correct the mesh oversample estimate for ppu-space
+            r.add_property("mesh_oversample_scale", 1.0 / ppu)
 
             r.blit(m, (0, 0))
 

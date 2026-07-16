@@ -1130,12 +1130,10 @@ cdef class GL2Draw:
             tx, ty = reverse.transform(1, 1)
             oversample = math.hypot(tx, ty) / math.hypot(1, 1)
 
-            cap = renpy.config.mesh_oversample
-            
             if r.properties is not None:
-                cap = r.properties.get("mesh_oversample", cap)
+                oversample *= r.properties.get("mesh_oversample_scale", 1.0)
 
-            oversample = max(1.0, min(oversample, cap))
+            oversample = max(1.0, min(oversample, renpy.config.mesh_oversample))
 
             for i, c in enumerate(r.children):
                 model.set_texture(i, self.render_to_texture(c[0], properties=r.properties, oversample=oversample))
