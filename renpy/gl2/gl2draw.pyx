@@ -1130,6 +1130,9 @@ cdef class GL2Draw:
             tx, ty = reverse.transform(1, 1)
             oversample = math.hypot(tx, ty) / math.hypot(1, 1)
 
+            if r.properties is not None:
+                oversample *= r.properties.get("mesh_oversample_scale", 1.0)
+
             oversample = max(1.0, min(oversample, renpy.config.mesh_oversample))
 
             for i, c in enumerate(r.children):
