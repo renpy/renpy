@@ -28,7 +28,7 @@ import renpy
 from renpy.display.focus import Focus
 from renpy.display.displayable import Displayable
 from renpy.test.testmouse import click_mouse, move_mouse, scroll_mouse
-from renpy.test.testsettings import _test
+from renpy.test.testsettings import _test, global_testsuite_name
 from renpy.test.types import (
     HookType,
     NodeLocation,
@@ -219,6 +219,19 @@ class BaseTestBlock(Block):
         """
         raise NotImplementedError
 
+    def get_parent_chain(self) -> list["TestSuite"]:
+        """
+        Returns a list of parent TestSuites, starting with the root (global)
+        and ending with the immediate parent.
+        """
+        chain: list[TestSuite] = []
+        current = self.parent
+        while current is not None:
+            chain.append(current)
+            current = current.parent
+        chain.reverse()
+        return chain
+
     @property
     def xfail(self) -> bool:
         return bool(scoped_eval(self.xfail_expr))
@@ -230,10 +243,10 @@ class BaseTestBlock(Block):
 
     @property
     def full_path(self) -> str:
-        """The full hierarchical path using `.` to separate testsuites and `::` to separate testcases."""
+        """The full hierarchical path using `.` to separate testcases and `::` to separate hook."""
         if self.parent:
-            return f"{self.parent.full_path}::{self.name}"
-        return self.name
+            return f"{self.parent.full_path}.{self.name}"
+        return f"{global_testsuite_name}.{self.name}"
 
     @property
     def current_parameterized_name(self) -> str:
@@ -244,7 +257,7 @@ class BaseTestBlock(Block):
     def current_full_parameterized_path(self) -> str:
         """The full hierarchical path with current parameters shown."""
         if self.parent:
-            return f"{self.parent.current_full_parameterized_path}::{self.current_parameterized_name}"
+            return f"{self.parent.current_full_parameterized_path}.{self.current_parameterized_name}"
         return self.current_parameterized_name
 
 
@@ -270,10 +283,24 @@ class TestHook(BaseTestBlock):
     def __hash__(self):
         return hash(self.current_full_parameterized_path)
 
+    @property
+    def full_path(self) -> str:
+        """The full hierarchical path using `.` to separate testcases and `::` to separate hook."""
+        if self.parent:
+            return f"{self.parent.full_path}::{self.name}"
+        return f"{global_testsuite_name}::{self.name}"
+
     def get_parameterized_name(self, index=None):
         if index is None:
             index = self.call_count
         return f"{self.name}({index})"
+
+    @property
+    def current_full_parameterized_path(self) -> str:
+        """The full hierarchical path with current parameters shown."""
+        if self.parent:
+            return f"{self.parent.current_full_parameterized_path}::{self.current_parameterized_name}"
+        return f"{global_testsuite_name}::{self.name}"
 
 
 class TestCase(BaseTestBlock):
@@ -295,14 +322,14 @@ class TestCase(BaseTestBlock):
         self.enabled = enabled
         self.only = only
         self.parameters = self.generate_parameter_combinations(parameters)
-        self.parameter_index = 0
+        self.parameter_index = -1
         super().__init__(loc, block, name, parent, xfail_expr)
 
         if not self.enabled and self.only:
             raise ValueError(f"Test case '{self.name}' must be enabled before setting 'only' to True.")
 
     def restart(self) -> None:
-        self.parameter_index = 0
+        self.parameter_index = -1
         return super().restart()
 
     def generate_parameter_combinations(self, parameters: list[list[dict[str, Any]]] | None) -> list[dict[str, Any]]:
@@ -338,8 +365,8 @@ class TestCase(BaseTestBlock):
         if index is None:
             index = self.parameter_index
 
-        # if index >= len(self.parameters):
-        #     return f"{self.name}(<no more parameters>)"
+        if index < 0 or index >= len(self.parameters):
+            return f"{self.name}"
 
         params = self.parameters[index]
         param_str = ", ".join(f"{k}={v!r}" for k, v in params.items())
@@ -353,7 +380,7 @@ class TestCase(BaseTestBlock):
 
     @property
     def has_all_parameters_been_processed(self) -> bool:
-        return self.parameter_index >= len(self.parameters)
+        return self.parameter_index >= max(1, len(self.parameters))
 
     def has_testcase(self) -> bool:
         """
@@ -427,7 +454,7 @@ class TestSuite(TestCase):
         self.subtests.append(child)
 
     def restart(self) -> None:
-        self.parameter_index = 0
+        self.parameter_index = -1
         self.subtest_index = 0
         for subtest in self.subtests:
             subtest.restart()
@@ -446,7 +473,7 @@ class TestSuite(TestCase):
         if test.enabled:
             test.advance_to_next_parameter_set()
             if test.has_all_parameters_been_processed:
-                test.parameter_index = 0
+                test.parameter_index = -1
                 self.subtest_index += 1
         else:
             self.subtest_index += 1
@@ -510,13 +537,9 @@ class TestSuite(TestCase):
     def full_path(self) -> str:
         if self.parent:
             return f"{self.parent.full_path}.{self.name}"
+        if self.name != global_testsuite_name:
+            return f"{global_testsuite_name}.{self.name}"
         return self.name
-
-    @property
-    def current_full_parameterized_path(self) -> str:
-        if self.parent:
-            return f"{self.parent.current_full_parameterized_path}.{self.current_parameterized_name}"
-        return self.current_parameterized_name
 
     def has_testcase(self) -> bool:
         """
@@ -1801,3 +1824,13 @@ def scoped_eval(expr: str) -> Any:
 
 def scoped_exec(source: str, hide: bool = False) -> None:
     renpy.test.testexecution.scoped_exec(source, hide)
+
+def format_parameterized_name(name: str, parameters: dict[str, Any]) -> str:
+    """
+    Formats a name and parameters into a string like "name(key=value, ...)".
+    """
+    if not parameters:
+        return name
+
+    param_str = ", ".join(f"{k}={v!r}" for k, v in parameters.items())
+    return f"{name}({param_str})"
