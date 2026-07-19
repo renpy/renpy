@@ -52,7 +52,8 @@ coverage = "RENPY_COVERAGE" in os.environ
 # Are we generating without building?
 generate = (len(sys.argv) >= 2) and (sys.argv[1] == "generate")
 
-gen = "tmp/gen"
+GEN_DIR = "tmp/gen"
+gen = GEN_DIR
 PY2 = False
 
 if coverage:
@@ -190,7 +191,10 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
     if cython_command:
         generate_cython_queue.append((name, language, mod_coverage, split_name, fn, c_fn))
     elif not os.path.exists(c_fn):
-        raise SystemExit(f"Could not find generated source '{c_fn}', and RENPY_CYTHON is not set.")
+        raise SystemExit(
+            f"Could not find generated source '{c_fn}'. Set RENPY_CYTHON to regenerate it, "
+            "or ensure pre-generated sources are available."
+        )
 
     # Build the module normally once we have the c file.
 
