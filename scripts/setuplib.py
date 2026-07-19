@@ -186,7 +186,11 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
     else:
         c_fn = os.path.join(gen, name + ".c")
         necessary_gen.append(name + ".c")
-    generate_cython_queue.append((name, language, mod_coverage, split_name, fn, c_fn))
+
+    if cython_command:
+        generate_cython_queue.append((name, language, mod_coverage, split_name, fn, c_fn))
+    elif not os.path.exists(c_fn):
+        raise SystemExit(f"Could not find generated source '{c_fn}', and RENPY_CYTHON is not set.")
 
     # Build the module normally once we have the c file.
 
