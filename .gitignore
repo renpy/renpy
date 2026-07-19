@@ -92,8 +92,6 @@ cache/
 /renpy/vc_version.py
 /module/gen/
 /module/gen3/
-/module/gen-static/
-/module/gen3-static/
 /tutorial/game/tutorial_director.rpy
 
 # Module build.

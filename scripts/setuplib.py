@@ -50,9 +50,6 @@ linux = not windows and not macintosh
 # Is coverage enabled?
 coverage = "RENPY_COVERAGE" in os.environ
 
-# Are we doing a static build?
-static = "RENPY_STATIC" in os.environ
-
 # Are we generating without building?
 generate = (len(sys.argv) >= 2) and (sys.argv[1] == "generate")
 
@@ -61,9 +58,6 @@ PY2 = False
 
 if coverage:
     gen += "-coverage"
-
-if static:
-    gen += "-static"
 
 # The cython command.
 cython_command = os.environ.get("RENPY_CYTHON", "cython")

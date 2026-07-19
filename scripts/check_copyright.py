@@ -32,8 +32,6 @@ module/build/
 module/include/
 module/gen/
 module/gen3/
-module/gen-static/
-module/gen3-static/
 launcher/game/EasyDialogsResources.py
 launcher/game/EasyDialogsWin.py
 launcher/game/pefile.py
