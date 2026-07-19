@@ -339,37 +339,6 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
         cython_failure = True
         return
 
-    # Fix-up source for static loading
-    if static:
-        parent_module = ".".join(split_name[:-1])
-        parent_module_identifier = parent_module.replace(".", "_")
-
-        with open(c_fn, "r") as f:
-            ccode = f.read()
-
-        with open(c_fn + ".dynamic", "w") as f:
-            f.write(ccode)
-
-        if len(split_name) > 1:
-            ccode = re.sub(r'Py_InitModule4\("([^"]+)"', 'Py_InitModule4("' + parent_module + '.\\1"', ccode)  # Py2
-            ccode = re.sub(
-                r'(__pyx_moduledef.*?"){}"'.format(re.escape(split_name[-1])),
-                "\\1" + ".".join(split_name) + '"',
-                ccode,
-                count=1,
-                flags=re.DOTALL,
-            )  # Py3
-            ccode = re.sub(
-                r"^__Pyx_PyMODINIT_FUNC PyInit_",
-                "__Pyx_PyMODINIT_FUNC PyInit_" + parent_module_identifier + "_",
-                ccode,
-                count=0,
-                flags=re.MULTILINE,
-            )  # Py3 Cython 0.28+
-
-        with open(c_fn, "w") as f:
-            f.write(ccode)
-
 
 def generate_all_cython():
     """
