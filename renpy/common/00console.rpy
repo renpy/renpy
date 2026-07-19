@@ -141,7 +141,7 @@ init -1500 python in _console:
     from reprlib import Repr
 
     class PrettyRepr(Repr):
-        _lookup = Repr._lookup | {
+        _lookup = getattr(Repr, "_lookup", {}) | {
             "RevertableList": "renpy.revertable",
             "RevertableSet": "renpy.revertable",
             "RevertableDict": "renpy.revertable",
