@@ -26,7 +26,6 @@ from __future__ import print_function
 
 import os
 import sys
-import re
 import threading
 import warnings
 import pathlib
@@ -53,7 +52,7 @@ coverage = "RENPY_COVERAGE" in os.environ
 # Are we generating without building?
 generate = (len(sys.argv) >= 2) and (sys.argv[1] == "generate")
 
-gen = "tmp/gen3"
+gen = "tmp/gen"
 PY2 = False
 
 if coverage:
@@ -181,92 +180,13 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
     else:
         raise SystemExit("Could not find {0}.".format(fn))
 
-    module_dir = os.path.dirname(fn)
-
-    # Figure out what it depends on.
-    deps = [fn]
-
-    def dep(m):
-        """
-        From a module name, return the corresponding .pxd file, resolving
-        relative imports.
-        """
-
-        mod_name = m.group(1)
-        if mod_name.startswith("."):
-            level = len(mod_name) - len(mod_name.lstrip("."))
-            base = split_name[:-level]
-            rel_mod = mod_name.lstrip(".")
-            if rel_mod:
-                base.append(rel_mod)
-            mod_name = ".".join(base)
-
-        return mod_name.replace(".", "/") + ".pxd"
-
-    with open(fn) as f:
-        for line in f:
-            m = re.search(r"from\s*([\w.]+)\s*cimport", line)
-            if m:
-                deps.append(dep(m))
-                continue
-
-            m = re.search(r"cimport\s*([\w.]+)", line)
-            if m:
-                deps.append(dep(m))
-                continue
-
-            m = re.search(r'include\s*"(.*?)"', line)
-            if m:
-                deps.append(m.group(1))
-                continue
-
-    # Filter out cython stdlib dependencies.
-    deps = [
-        i
-        for i in deps
-        if (not i.startswith("cpython/")) and (not i.startswith("libc/")) and (not i.startswith("libcpp"))
-    ]
-
-    # Determine if any of the dependencies are newer than the c file.
-
     if language == "c++":
         c_fn = os.path.join(gen, name + ".cc")
         necessary_gen.append(name + ".cc")
     else:
         c_fn = os.path.join(gen, name + ".c")
         necessary_gen.append(name + ".c")
-
-    if os.path.exists(c_fn):
-        c_mtime = os.path.getmtime(c_fn)
-    else:
-        c_mtime = 0
-
-    out_of_date = "RENPY_REGENERATE_CYTHON" in os.environ
-
-    # print c_fn, "depends on", deps
-
-    for dep_fn in deps:
-        for d in [module_dir, ".", "src", "src/pygame/include", gen]:
-            prepended = os.path.join(d, dep_fn)
-            if os.path.exists(prepended):
-                dep_fn = prepended
-                break
-        else:
-            print("{0} depends on {1}, which can't be found.".format(fn, dep_fn))
-            sys.exit(-1)
-
-        if os.path.getmtime(dep_fn) > c_mtime:
-            out_of_date = True
-
-    if out_of_date and not cython_command:
-        print("WARNING:", name, "is out of date, but RENPY_CYTHON isn't set.")
-        out_of_date = False
-
-    # If the file is out of date, regenerate it.
-    if out_of_date:
-        print(name, "is out of date.")
-
-        generate_cython_queue.append((name, language, mod_coverage, split_name, fn, c_fn))
+    generate_cython_queue.append((name, language, mod_coverage, split_name, fn, c_fn))
 
     # Build the module normally once we have the c file.
 
