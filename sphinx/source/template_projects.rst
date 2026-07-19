@@ -1,7 +1,7 @@
 Template Projects
 =================
 
-It's possible to to create a template project that can be used to create
+It's possible to create a template project that can be used to create
 new projects. This can be used to make it easy for creators to begin
 making a game with, for example, a gui you develop, rather than the
 default gui that comes with Ren'Py.

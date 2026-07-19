@@ -5,7 +5,7 @@ Model-Based Rendering
 
 While Ren'Py is primarily used with two dimensional rectangular images that
 are common in visual novels, underneath the hood it has a model-based renderer
-intended to to take advantage of features found in modern GPUs. This allows
+intended to take advantage of features found in modern GPUs. This allows
 for a number of visual effects that would not otherwise be possible.
 
 As a warning, this is one of the most advanced features available in Ren'Py.

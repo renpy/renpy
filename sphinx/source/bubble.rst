@@ -23,7 +23,7 @@ in it.
 
 Pressing the area button will launch the speech bubble editor. This editor
 lets you drag to select the area where the speech bubble will be placed,
-on a grid. When you complete the drag, the speech bubble will will change
+on a grid. When you complete the drag, the speech bubble will change
 locations.
 
 Pressing the properties buttons will select between sets of properties
