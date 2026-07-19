@@ -415,7 +415,7 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
         elif c < 0xE0000:
             new_type = BC_ID
             tailor_type = BC_XX
-        elif new_type < 0xF0000:
+        elif c < 0xF0000:
             new_type = BC_CM
             tailor_type = BC_XX
         else:
