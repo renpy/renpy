@@ -769,6 +769,8 @@ init python in project:
                         if path.startswith("#"):
                             continue
 
+                        path = path.replace("\\", "/")
+
                         if len(path) > 0:
                             self.scan_directory_direct(path)
 
