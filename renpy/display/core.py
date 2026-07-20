@@ -610,9 +610,11 @@ class Interface:
         self.time_event = pygame.event.Event(TIMEEVENT, {"modal": False})
         self.redraw_event = pygame.event.Event(REDRAW)
 
-        # Are we focused?
         self.mouse_focused = True
+        "True if mouse events belong to this window."
+
         self.keyboard_focused = True
+        "True if keyboard events belong to this window."
 
         # Properties for each layer.
         self.layer_properties = {}
@@ -730,11 +732,11 @@ class Interface:
         # If in text editing mode, the current text editing event.
         self.text_editing = None
 
-        # The text rectangle after the current draw.
-        self.text_rect = None
+        self.old_text_rect: tuple[float, float, float, float] | None = None
+        "The text rectangle after the previous draw."
 
-        # The text rectangle after the previous draw.
-        self.old_text_rect = None
+        self.text_rect: tuple[float, float, float, float] | None = None
+        "The text rectangle after the current draw."
 
         # Are we a touchscreen?
         self.touch = renpy.exports.variant("touch")
@@ -2083,10 +2085,16 @@ class Interface:
         if renpy.store._text_rect is not None:
             self.text_rect = renpy.store._text_rect
 
+        # There is an active text input.
         if self.keyboard_focused and self.text_rect is not None:
-            not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown()
-            if self.touch_keyboard:
-                not_shown = renpy.exports.get_screen("_touch_keyboard") is None
+            need_restart = not pygame.key.text_input_active()
+
+            # System IME could be closed by user while keeping text input active.
+            if pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown():
+                need_restart = True
+
+            if need_restart:
+                pygame.key.start_text_input()
 
             if self.old_text_rect != self.text_rect:
                 x, y, w, h = self.text_rect
@@ -2095,27 +2103,26 @@ class Interface:
                 rect = (x0, y0, x1 - x0, y1 - y0)
 
                 pygame.key.set_text_input_rect(rect)
+                self.old_text_rect = self.text_rect
 
-            if not self.old_text_rect or not_shown:
-                pygame.key.start_text_input()
+            # Show the virtual touch keyboard if necessary.
+            if self.touch_keyboard and renpy.exports.get_screen("_touch_keyboard") is None:
+                renpy.exports.restart_interaction()  # required in mobile mode
+                renpy.exports.show_screen(
+                    "_touch_keyboard",
+                    # not 'overlay' as it conflicts with console
+                    _transient=True,
+                )
 
-                if self.touch_keyboard:
-                    renpy.exports.restart_interaction()  # required in mobile mode
-                    renpy.exports.show_screen(
-                        "_touch_keyboard",
-                        # not 'overlay' as it conflicts with console
-                        _transient=True,
-                    )
+        # Text input is no longer active.
+        elif self.old_text_rect:
+            pygame.key.stop_text_input()
+            pygame.key.set_text_input_rect(None)
 
-        else:
-            if self.old_text_rect:
-                pygame.key.stop_text_input()
-                pygame.key.set_text_input_rect(None)
+            if self.touch_keyboard:
+                renpy.exports.hide_screen("_touch_keyboard")
 
-                if self.touch_keyboard:
-                    renpy.exports.hide_screen("_touch_keyboard")
-
-        self.old_text_rect = self.text_rect
+            self.old_text_rect = None
 
     def maximum_framerate(self, t):
         """
@@ -2856,6 +2863,7 @@ class Interface:
                         # Clean out the redraws, if we have to.
                         # renpy.display.render.kill_redraws()
 
+                        # Let draw set this to actual value.
                         self.text_rect = None
 
                         # Draw the screen.
