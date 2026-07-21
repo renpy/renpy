@@ -608,6 +608,11 @@ Layered Images
     of layeredimages. See :ref:`the related section <layeredimage-statement>`
     for more information.
 
+.. var:: config.layeredimage_auto_optimization = False
+
+    If True, layeredimage groups will use binary search when looking
+    for images based on a pattern.
+
 
 Layers
 ------

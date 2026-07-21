@@ -1,6 +1,7 @@
 import renpy
 
 python_object = object
+python_list = list
 
 """renpy
 init offset = -100
@@ -16,6 +17,7 @@ from collections import defaultdict
 from renpy.atl import RawBlock, parse_atl
 from renpy.display.transform import ATLTransform
 from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
+import bisect
 
 type Imageable = RawBlock | str | None
 
@@ -1045,11 +1047,16 @@ class RawAttributeGroup(renpy.object.Object):
                 image_format=None,
             )
 
-            for i in renpy.list_images():
-                if i.startswith(pattern):
-                    attr, *rest = i.removeprefix(pattern).split()
-                    if (not rest) and (attr not in seen):
-                        rv.append(Attribute(group_name_for_attributes, attr, renpy.displayable(i), **properties))
+            if config.layeredimage_auto_optimization:
+                _sorted_image_list.update()
+                images = _sorted_image_list.search(pattern)
+            else:
+                images = (image for image in renpy.list_images() if image.startswith(pattern))
+
+            for i in images:
+                attr, *rest = i.removeprefix(pattern).split()
+                if (not rest) and (attr not in seen):
+                    rv.append(Attribute(group_name_for_attributes, attr, renpy.displayable(i), **properties))
 
         return rv
 
@@ -1527,6 +1534,36 @@ class LayeredImageProxy(object):
 
     def _list_attributes(self, tag, attributes):
         return self.filter_attributes(self.image._list_attributes(tag, attributes))
+
+
+class _SortedImageList(object):
+    def __init__(self) -> None:
+        self.sorted: list[str] = python_list()
+        self.last_len = 0
+    
+    def update(self):
+        images = renpy.list_images()
+        sorted_images = self.sorted
+        if sorted_images:
+            insort = bisect.insort
+            for i in range(self.last_len, len(images)):
+                insort(sorted_images, images[i])
+        else:
+            sorted_images[:] = images
+            sorted_images.sort()
+        self.last_len = len(images)
+
+    def search(self, prefix: str):
+        sorted_images = self.sorted
+        start_index = bisect.bisect_left(sorted_images, prefix)
+
+        for i in range(start_index, len(sorted_images)):
+            if sorted_images[i].startswith(prefix):
+                yield sorted_images[i]
+            else:
+                break
+
+_sorted_image_list = _SortedImageList()
 
 
 renpy.store.Attribute = Attribute
