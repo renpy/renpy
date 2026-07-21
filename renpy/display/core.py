@@ -849,6 +849,9 @@ class Interface:
         if not renpy.windows:
             return 1.0
 
+        if renpy.config.windows_high_pixel_density:
+            return 1.0
+
         try:
             import ctypes
             from ctypes import c_void_p, c_int
