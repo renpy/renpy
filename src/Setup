@@ -15,6 +15,7 @@ renpy.gl2.gl2mesh ../tmp/gen/renpy.gl2.gl2mesh.c
 renpy.gl2.gl2mesh2 ../tmp/gen/renpy.gl2.gl2mesh2.c
 renpy.gl2.gl2mesh3 ../tmp/gen/renpy.gl2.gl2mesh3.c
 renpy.gl2.gl2model ../tmp/gen/renpy.gl2.gl2model.c
+renpy.gl2.gl2physics ../tmp/gen/renpy.gl2.gl2physics.c
 renpy.gl2.gl2polygon ../tmp/gen/renpy.gl2.gl2polygon.c
 renpy.gl2.gl2shader ../tmp/gen/renpy.gl2.gl2shader.c
 renpy.gl2.gl2texture ../tmp/gen/renpy.gl2.gl2texture.c
