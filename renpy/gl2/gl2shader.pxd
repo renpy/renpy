@@ -21,6 +21,10 @@
 
 from renpy.uguu.gl cimport *
 
+from renpy.gl2.gl2draw cimport GL2DrawingContext
+from renpy.gl2.gl2model cimport GL2Model
+from renpy.gl2.gl2mesh cimport Mesh
+
 cdef class Program:
 
     # The name of this program.
@@ -38,3 +42,5 @@ cdef class Program:
     cdef public list uniform_setters
 
     cdef GLuint load_shader(self, GLenum shader_type, source) except 0
+
+    cpdef void draw(self, GL2DrawingContext context, GL2Model model, Mesh mesh)

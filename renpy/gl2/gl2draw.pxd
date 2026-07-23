@@ -155,6 +155,8 @@ cdef class GL2DrawingContext:
 
     cdef dict merge_properties(self, dict old, dict child)
 
+    cpdef void merge_uniforms(self, dict uniforms)
+
     cdef void correct_pixel_perfect(self)
 
     cdef object draw_model(self, model)

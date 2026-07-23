@@ -324,7 +324,7 @@ cdef class Program:
         samplers = self.find_variables(self.vertex, seen_uniforms, samplers)
         self.find_variables(self.fragment, seen_uniforms, samplers)
 
-    def draw(self, GL2DrawingContext context, GL2Model model, Mesh mesh):
+    cpdef void draw(self, GL2DrawingContext context, GL2Model model, Mesh mesh):
 
         cdef Attribute a
         cdef int i
