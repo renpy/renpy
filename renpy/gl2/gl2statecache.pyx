@@ -167,5 +167,3 @@ cdef class GLStateCache:
         self.sampler_bindings[key] = sampler
 
         return True
-
-state_cache = GLStateCache()

@@ -62,7 +62,6 @@ from renpy.gl2.gl2model cimport GL2Model
 from renpy.gl2.gl2texture import Texture, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
 from renpy.gl2.gl2statecache cimport GLStateCache
-from renpy.gl2.gl2statecache import state_cache as _state_cache
 
 try:
     import emscripten
@@ -130,6 +129,8 @@ cdef class GL2Draw:
 
         # The shader cache,
         self.shader_cache = None
+
+        self.state_cache = GLStateCache()
 
         # Has the position of this window ever been set?
         self.ever_set_position = False
@@ -1050,7 +1051,7 @@ cdef class GL2Draw:
         glEnable(GL_BLEND)
 
         # Use the context to draw the render tree.
-        draw_render(surf, w, h, transform)
+        draw_render(surf, w, h, transform, self.state_cache)
 
         if flip:
             self.flip()
@@ -1221,7 +1222,7 @@ cdef class GL2Draw:
         glEnable(GL_BLEND)
 
         # Use the context to draw the surface tree.
-        draw_render(what, 1, 1, transform)
+        draw_render(what, 1, 1, transform, self.state_cache)
 
         cdef unsigned char pixel[4]
         glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
@@ -1451,6 +1452,7 @@ cdef class GL2DrawingContext:
         rv.width = self.width
         rv.height = self.height
         rv.debug = self.debug
+        rv.state_cache = self.state_cache
 
         rv.projection_matrix.ctake(self.projection_matrix)
         rv.view_matrix.ctake(self.view_matrix)
@@ -1757,7 +1759,7 @@ cdef class GL2DrawingContext:
 root_context = GL2DrawingContext()
 
 
-def draw_render(what, int drawable_width, int drawable_height, Matrix projection, invert_front_face: bool = False):
+def draw_render(what, int drawable_width, int drawable_height, Matrix projection, GLStateCache state_cache, invert_front_face: bool = False):
     """
     Renders `what` to the current OpenGL context.
 
@@ -1775,6 +1777,10 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
         The projection matrix to use to transform from view space
         to the viewport.
 
+    `state_cache`
+        The GL2Draw's GLStateCache, used to avoid redundant GL state
+        changes during this render pass.
+
     `invert_front_face`
         If True, the front face is inverted, so that if "cw" is requested, "ccw" is used,
         and vice versa. Used when rendering to a texture.
@@ -1786,15 +1792,14 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
     set_cull_face(None)
 
     # Reset the GL state cache at the start of each render pass.
-    cdef GLStateCache sc = _state_cache
-
-    sc.reset()
+    state_cache.reset()
 
     cdef GL2DrawingContext ctx = root_context
 
     ctx.width = drawable_width
     ctx.height = drawable_height
     ctx.debug = False
+    ctx.state_cache = state_cache
 
     ctx.projection_matrix.ctake(projection)
     ctx.view_matrix.ctake(IDENTITY)
@@ -1814,11 +1819,11 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
     ctx.draw_one(what)
 
     # Restore the GL state to Ren'Py's defaults after the render pass.
-    sc.set_blend(GL_FUNC_ADD, GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
-    sc.set_color_mask(True, True, True, True)
+    state_cache.set_blend(GL_FUNC_ADD, GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+    state_cache.set_color_mask(True, True, True, True)
 
     # Disable all vertex attrib arrays.
-    sc.sync_attrib_arrays(0)
+    state_cache.sync_attrib_arrays(0)
 
     while ctx is not None:
         ctx.uniforms = None

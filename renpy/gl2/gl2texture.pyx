@@ -49,7 +49,6 @@ from renpy.gl2.gl2model cimport GL2Model
 
 from renpy.display.matrix cimport Matrix
 from renpy.gl2.gl2statecache cimport GLStateCache
-from renpy.gl2.gl2statecache import state_cache as _state_cache
 
 # This has different names in GL and GLES, but the same value.
 cdef GLenum RGBA8 = 0x8058
@@ -419,7 +418,7 @@ cdef class GLTexture(GL2Model):
         # Set up the default modes.
         glEnable(GL_BLEND)
 
-        renpy.gl2.gl2draw.draw_render(what, tw, th, transform, invert_front_face=True)
+        renpy.gl2.gl2draw.draw_render(what, tw, th, transform, draw.state_cache, invert_front_face=True)
 
         glBindTexture(GL_TEXTURE_2D, premultiplied)
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, tw, th, 0)
@@ -501,12 +500,12 @@ cdef class GLTexture(GL2Model):
 
         # Set up the blend mode for premultiplication.
         glEnable(GL_BLEND)
-        cdef GLStateCache sc = _state_cache
+        cdef GLStateCache sc = draw.state_cache
         sc.set_blend(GL_FUNC_ADD, GL_FUNC_ADD, GL_SRC_ALPHA, GL_ZERO, GL_ONE, GL_ZERO)
 
         # Draw.
         program = self.loader.ftl_program
-        program.draw_ftl(tex, mesh)
+        program.draw_ftl(sc, tex, mesh)
 
         # Create premultiplied.
         self.allocate_texture(premultiplied, self.width, self.height, self.properties)

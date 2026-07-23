@@ -26,13 +26,12 @@ from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2texture cimport GLTexture
 from renpy.gl2.gl2draw cimport GL2DrawingContext
 from renpy.gl2.gl2model cimport GL2Model
-from renpy.gl2.gl2uniform cimport Setter
+from renpy.gl2.gl2uniform cimport Setter, Sampler2DSetter
 from renpy.gl2.gl2statecache cimport GLStateCache
 
 from renpy.display.matrix cimport Matrix
 
 from renpy.gl2.gl2uniform import generate_uniform_setter
-from renpy.gl2.gl2statecache import state_cache as _state_cache
 
 import renpy
 import random
@@ -332,7 +331,7 @@ cdef class Program:
         cdef int i
         cdef dict properties
         cdef dict attribute_offsets
-        cdef GLStateCache cache = _state_cache
+        cdef GLStateCache cache = context.state_cache
         cdef unsigned int required_mask = 0
 
         cache.use_program(self.program)
@@ -392,13 +391,15 @@ cdef class Program:
             if "color_mask" in properties:
                 cache.set_color_mask(True, True, True, True)
 
-    def draw_ftl(self, GLuint texture, Mesh mesh):
+    def draw_ftl(self, GLStateCache cache, GLuint texture, Mesh mesh):
         """
         Draws the given texture using mesh, for the ftl alpha premultiply shader.
+
+        `cache`
+            The GL2Draw's GLStateCache, used to skip redundant GL calls.
         """
 
         cdef Attribute a
-        cdef GLStateCache cache = _state_cache
         cdef unsigned int required_mask = 0
 
         cache.use_program(self.program)
@@ -419,9 +420,9 @@ cdef class Program:
         cache.sync_attrib_arrays(required_mask)
 
         # There's only one setter, and it's for tex0.
-        cdef Setter setter = self.uniform_setters[0]
+        cdef Sampler2DSetter setter
 
         for setter in self.uniform_setters:
-            setter.set(None, texture)
+            setter.set_texture(cache, texture)
 
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, mesh.triangle)
