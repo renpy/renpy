@@ -23,6 +23,7 @@
 from renpy.display.matrix cimport Matrix
 from renpy.gl2.gl2texture cimport GLTexture
 from renpy.display.render cimport Render
+from renpy.gl2.gl2statecache cimport GLStateCache
 
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
 
@@ -303,21 +304,29 @@ TEXTURE_SCALING = {
 
 cdef class Sampler2DSetter(Setter):
 
-    cdef int sampler
-    "The sampler number to use."
-
-    cdef str texture_wrap_key
-    "The key to use to look up the texture wrap mode."
-
     def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int sampler):
         Setter.__init__(self, uniform_name, uniform_type, location, getter)
         self.sampler = sampler
         self.texture_wrap_key = "texture_wrap_" + uniform_name
 
+    cdef void set_texture(self, GLStateCache cache, GLuint texture):
+        """
+        Binds `texture` to this sampler's texture unit and points the
+        sampler uniform at that unit, using `cache` to skip redundant
+        GL calls.
+        """
+
+        cache.activate_texture(GL_TEXTURE0 + self.sampler)
+
+        # Only set the sampler-to-unit binding if it changed for this program.
+        if cache.check_sampler_binding(cache.current_program, self.location, self.sampler):
+            glUniform1i(self.location, self.sampler)
+
+        cache.bind_texture(GL_TEXTURE0 + self.sampler, texture)
+
     cdef object set(self, GL2DrawingContext context, value):
 
-        glActiveTexture(GL_TEXTURE0 + self.sampler)
-        glUniform1i(self.location, self.sampler)
+        cdef GLStateCache cache = context.state_cache
 
         # None case.
         if value is None:
@@ -326,7 +335,7 @@ cdef class Sampler2DSetter(Setter):
 
         # Int case.
         if type(value) is int:
-            glBindTexture(GL_TEXTURE_2D, value)
+            self.set_texture(cache, value)
             return
 
         if type(value) is Render:
@@ -335,7 +344,7 @@ cdef class Sampler2DSetter(Setter):
         # GLTexture case.
         cdef GLTexture texture = value
 
-        glBindTexture(GL_TEXTURE_2D, texture.number)
+        self.set_texture(cache, texture.number)
 
         cdef GLint wrap_s = GL_CLAMP_TO_EDGE
         cdef GLint wrap_t = GL_CLAMP_TO_EDGE

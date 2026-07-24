@@ -26,7 +26,8 @@ from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2texture cimport GLTexture
 from renpy.gl2.gl2draw cimport GL2DrawingContext
 from renpy.gl2.gl2model cimport GL2Model
-from renpy.gl2.gl2uniform cimport Setter
+from renpy.gl2.gl2uniform cimport Setter, Sampler2DSetter
+from renpy.gl2.gl2statecache cimport GLStateCache
 
 from renpy.display.matrix cimport Matrix
 
@@ -330,25 +331,30 @@ cdef class Program:
         cdef int i
         cdef dict properties
         cdef dict attribute_offsets
+        cdef GLStateCache cache = context.state_cache
+        cdef unsigned int required_mask = 0
 
-        glUseProgram(self.program)
+        cache.use_program(self.program)
 
         properties = context.properties
         attribute_offsets = mesh.layout.offset
 
-        # Set up the attributes.
+        # Set up the attributes and build the mask of required attribute arrays.
         for a in self.attributes:
             if a.name == "a_position":
                 glVertexAttribPointer(a.location, mesh.point_size, GL_FLOAT, GL_FALSE, mesh.point_size * sizeof(float), mesh.point_data)
+                required_mask |= (<unsigned int> 1 << a.location)
             else:
                 try:
                     offset = attribute_offsets[a.name]
                     glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.layout.stride * sizeof(float), mesh.attribute + <int> offset)
+                    required_mask |= (<unsigned int> 1 << a.location)
                 except KeyError:
                     shader_name = "+".join(self.name)
                     raise ShaderError(f"Shader {shader_name} requires attribute {a.name}, but it is not in the mesh.")
 
-            glEnableVertexAttribArray(a.location)
+        # Enable and disable only the vertex attrib arrays that changed.
+        cache.sync_attrib_arrays(required_mask)
 
         cdef Setter setter
 
@@ -369,56 +375,54 @@ cdef class Program:
 
             if "color_mask" in properties:
                 mask_r, mask_g, mask_b, mask_a = properties["color_mask"]
-                glColorMask(mask_r, mask_g, mask_b, mask_a)
+                cache.set_color_mask(mask_r, mask_g, mask_b, mask_a)
 
             if "blend_func" in properties:
                 rgb_eq, src_rgb, dst_rgb, alpha_eq, src_alpha, dst_alpha = properties["blend_func"]
-                glBlendEquationSeparate(rgb_eq, alpha_eq)
-                glBlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha)
+                cache.set_blend(rgb_eq, alpha_eq, src_rgb, dst_rgb, src_alpha, dst_alpha)
 
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, mesh.triangle)
 
         if properties:
 
-            if "color_mask" in properties:
-                glColorMask(True, True, True, True)
-
             if "blend_func" in properties:
-                glBlendEquation(GL_FUNC_ADD)
-                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+                cache.set_blend(GL_FUNC_ADD, GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-        for a in self.attributes:
-            glDisableVertexAttribArray(a.location)
+            if "color_mask" in properties:
+                cache.set_color_mask(True, True, True, True)
 
-    def draw_ftl(self, GLuint texture, Mesh mesh):
+    def draw_ftl(self, GLStateCache cache, GLuint texture, Mesh mesh):
         """
         Draws the given texture using mesh, for the ftl alpha premultiply shader.
+
+        `cache`
+            The GL2Draw's GLStateCache, used to skip redundant GL calls.
         """
 
         cdef Attribute a
+        cdef unsigned int required_mask = 0
 
-        glUseProgram(self.program)
+        cache.use_program(self.program)
 
         # Set up the attributes.
         for a in self.attributes:
             if a.name == "a_position":
                 glVertexAttribPointer(a.location, mesh.point_size, GL_FLOAT, GL_FALSE, mesh.point_size * sizeof(float), mesh.point_data)
+                required_mask |= (<unsigned int> 1 << a.location)
             else:
                 offset = mesh.layout.offset.get(a.name, None)
                 if offset is None:
                     self.missing("mesh attribute", a.name)
 
                 glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.layout.stride * sizeof(float), mesh.attribute + <int> offset)
+                required_mask |= (<unsigned int> 1 << a.location)
 
-            glEnableVertexAttribArray(a.location)
+        cache.sync_attrib_arrays(required_mask)
 
         # There's only one setter, and it's for tex0.
-        cdef Setter setter = self.uniform_setters[0]
+        cdef Sampler2DSetter setter
 
         for setter in self.uniform_setters:
-            setter.set(None, texture)
+            setter.set_texture(cache, texture)
 
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, mesh.triangle)
-
-        for a in self.attributes:
-            glDisableVertexAttribArray(a.location)
