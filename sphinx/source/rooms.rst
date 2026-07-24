@@ -7,7 +7,7 @@ Image Gallery, Music Room, and Replay Actions
 Image Gallery
 -------------
 
-A image gallery is a screen that allows the player to unlock images,
+An image gallery is a screen that allows the player to unlock images,
 and then view those images. The screen has one or more buttons associated
 with it, and each button has one or more associated images. Buttons and
 images also have conditions that determine if they have unlocked.

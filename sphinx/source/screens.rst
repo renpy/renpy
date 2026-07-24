@@ -343,7 +343,7 @@ All user interface statements take the following common properties:
     with a given identifier is created.
 
     When a displayable is created with an id, the id is stored as a
-    string ion a attribute named id on the Displayable object.
+    string in an attribute named id on the Displayable object.
 
 .. screen-property:: prefer_screen_to_id
 
@@ -440,7 +440,7 @@ data. It takes the following properties:
 .. screen-property:: range
 
     The maximum value of the bar. This is required if `value` is a
-    number.
+    number. It is ignored if `value` is a bar value object.
 
 .. screen-property:: adjustment
 
@@ -463,6 +463,10 @@ data. It takes the following properties:
 
     An action to run when the bar button is released. This will be invoked
     even if the bar has not changed its value.
+
+.. screen-property:: action
+
+    An action to run when the bar value is changed.
 
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
@@ -943,7 +947,7 @@ The input statement takes no parameters, and the following properties:
     input is active. This overrides the default action of returning
     the input value.
 
-    Generally, this is is used with a `value` that stores the input into
+    Generally, this is used with a `value` that stores the input into
     a variable, so the action can access it.
 
 .. screen-property:: arrowkeys
@@ -2740,7 +2744,7 @@ and choosing the entries that apply to the current platform.
 ``"phone"``
     Defined on touchscreen-based devices where the diagonal size of
     the screen is less than 6 inches. On such a small device, it's
-    important to make buttons large enough a user can easily choose
+    important to make buttons large enough that a user can easily choose
     them. (In general, ``"small"`` should be used instead of ``"phone"``.)
 
 ``"touch"``

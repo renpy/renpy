@@ -119,7 +119,7 @@ storing instances of user-defined types in the object.
     and it returns a new ``MultiPersistent`` with the given name.
 
     `name`
-        The name used to to access the multipersistent data. Games using the
+        The name used to access the multipersistent data. Games using the
         same name will access the same multipersistent data.
 
     `save_on_quit`

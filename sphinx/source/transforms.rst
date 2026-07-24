@@ -1582,7 +1582,7 @@ When the displayable is shown without a tag, ``st`` and ``at`` are the same.
 Transform Class
 ===============
 
-One equivalent to to the simplest ATL transforms is the Transform class.
+One equivalent to the simplest ATL transforms is the Transform class.
 
 .. class:: Transform(child=None, *, function=None, reset=False, **properties)
 
