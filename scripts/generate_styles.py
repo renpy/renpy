@@ -402,7 +402,7 @@ synthetic_properties: dict[str, list[tuple[str, Any]]] = {
     ],
 }
 
-all_properties: dict[str, list[tuple[str, str | int | float | bool | None]]] = {}
+all_properties: dict[str, list[tuple[str, Any]]] = {}
 
 for k in style_properties:
     all_properties[k] = [(k, None)]
@@ -460,7 +460,7 @@ class CodeGen:
         text = TEMPLATE + self.f.getvalue()
 
         if self.filename.exists():
-            with self.filename.open("r") as f:
+            with self.filename.open(encoding="utf-8") as f:
                 old = f.read()
 
             if old == text:
@@ -468,7 +468,7 @@ class CodeGen:
 
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
-        with self.filename.open("w") as f:
+        with self.filename.open("w", encoding="utf-8") as f:
             f.write(text)
 
     def write(self, s: str) -> None:
