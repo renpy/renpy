@@ -19,12 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy
-
 from renpy.style cimport register_property_function, assign, assign_prefixed
 from cpython.ref cimport PyObject
-
-from renpy.styledata.styleutil import none_is_null, none_is_0, expand_focus_mask, expand_outlines, expand_anchor
 
 cdef inline object index_0(object v):
     return v[0]

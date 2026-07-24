@@ -571,6 +571,13 @@ def generate_property_functions() -> None:
         g = CodeGen(GENERATED_STYLEDATA / f"style_{prefix.name}functions.pyx")
 
         g.write("from renpy.styledata.style_common cimport *")
+        g.write(
+            "from renpy.styledata.styleutil import "
+            + "none_is_null, none_is_0, expand_focus_mask, expand_outlines, expand_anchor"
+        )
+        g.write("")
+        g.write("import renpy")
+
         g.write("")
 
         for propname, proplist in all_properties.items():
