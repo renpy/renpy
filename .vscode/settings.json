@@ -93,7 +93,6 @@
         "renpy/styledata/style_selected_idle_functions.pyi": true,
         "renpy/styledata/style_selected_insensitive_functions.pyi": true,
         "renpy/styledata/styleclass.pyi": true,
-        "renpy/styledata/stylesets.pyi": true,
         "renpy/text/bidi.pyi": true,
         "renpy/text/ftfont.pyi": true,
         "renpy/text/hbfont.pyi": true,
