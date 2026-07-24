@@ -27,7 +27,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <SDL3/SDL_thread.h>
 #include <stdio.h>
 #include <string.h>
-#include <renpy.pygame.surface_api.h>
+#include <renpy/pygame/surface_api.h>
 
 apply_audio_filter_type RPS_apply_audio_filter = NULL;
 

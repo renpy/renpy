@@ -21,26 +21,23 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import sys
 import os
+import sys
+from pathlib import Path
+
+import scripts.generate_styles as generate_styles
+import scripts.setuplib as setuplib
+from scripts.setuplib import cython, env, generate_all_cython, generate_setup_files
 
 # Change to the directory containing this file.
-BASE = os.path.abspath(os.path.dirname(sys.argv[0]))
-os.chdir(BASE)
-
-SCRIPTS = os.path.join(BASE, "scripts")
-sys.path.insert(0, SCRIPTS)
-
-import setuplib
-from setuplib import windows, cython, find_unnecessary_gen, generate_all_cython, env
-
-import generate_styles
+BASE = Path(__file__).resolve().parent
 
 
 def main():
+    os.chdir(BASE)
 
     setuplib.init()
-    setuplib.check_imports(SCRIPTS, "setuplib.py", "generate_styles.py")
+    setuplib.check_imports(BASE / "scripts", "setuplib.py", "generate_styles.py")
 
     generate_styles.generate()
 
@@ -50,7 +47,7 @@ def main():
 
     cubism = os.environ.get("CUBISM", None)
     if cubism:
-        setuplib.include_dirs.append("{}/Core/include".format(cubism))
+        setuplib.include_dirs.append(f"{cubism}/Core/include")
 
     # src/ directory.
     cython("_renpy", ["src/IMG_savepng.c", "src/core.c"], packages="sdl3 libpng")
@@ -60,7 +57,7 @@ def main():
     cython("renpy.pygame.locals", packages="sdl3")
     cython(
         "renpy.pygame.image",
-        source=["src/pygame/write_png.c", "src/pygame/write_jpeg.c"],
+        ["src/pygame/write_png.c", "src/pygame/write_jpeg.c"],
         packages="sdl3-image libjpeg libpng sdl3",
     )
     cython("renpy.pygame.sdl_image", packages="sdl3")
@@ -93,8 +90,8 @@ def main():
     cython("renpy.pydict")
     cython("renpy.style")
     cython("renpy.encryption")
-    cython("renpy.tfd", ["src/tinyfiledialogs/tinyfiledialogs.c"])
-    cython("renpy.ecsign", ["src/ec_sign_core.c"], packages="openssl")
+    cython("renpy.tfd", ["src/tinyfiledialogs/tinyfiledialogs.c"], setup_filename="Setup.tfd")
+    cython("renpy.ecsign", ["src/ec_sign_core.c", "src/ec_sign_core_web.c"], packages="openssl")
 
     # renpy.audio
     cython(
@@ -148,7 +145,10 @@ def main():
     cython("renpy.text.bidi", ["src/renpybidicore.c"], packages="fribidi")
 
     generate_all_cython()
-    find_unnecessary_gen()
+    generate_setup_files()
+
+    if len(sys.argv) >= 2 and sys.argv[1] == "generate":
+        return
 
     env("CC")
     env("LD")

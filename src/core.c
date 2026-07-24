@@ -1,7 +1,7 @@
 #include "renpy.h"
 #include "IMG_savepng.h"
 #include <SDL3/SDL.h>
-#include <renpy.pygame.surface_api.h>
+#include <renpy/pygame/surface_api.h>
 #include <stdio.h>
 #include <math.h>
 
