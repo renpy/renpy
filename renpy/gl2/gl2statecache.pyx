@@ -1,13 +1,34 @@
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 from renpy.uguu.gl cimport *
 
 cdef class GLStateCache:
 
-    def __init__(self):
-        self.sampler_bindings = {}
-
-        # set the cache to a safe initial state without making GL calls
+    def __init__(GLStateCache self):
         cdef int i
 
+        self.sampler_bindings = {}
+
+        # Set the cache to a safe initial state, without making GL calls.
         self.current_program = 0
         self.current_active_texture = 0
 
@@ -39,12 +60,14 @@ cdef class GLStateCache:
         cdef unsigned int bit
 
         self.current_program = 0
-        self.current_active_texture = 0 # 0 != GL_TEXTURE0, forces the first activate call.
+
+        # 0 is not GL_TEXTURE0, so this forces the first activate call.
+        self.current_active_texture = 0
 
         for i in range(8):
             self.current_texture[i] = 0
 
-        # force the GL blend state to Ren'Py's premultiplied alpha defaults
+        # Force the GL blend state to Ren'Py's premultiplied alpha defaults.
         glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD)
         glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -55,7 +78,7 @@ cdef class GLStateCache:
         self.blend_src_alpha = GL_ONE
         self.blend_dst_alpha = GL_ONE_MINUS_SRC_ALPHA
 
-        # force the color mask to all-enabled
+        # Force the color mask to all-enabled.
         glColorMask(True, True, True, True)
 
         self.color_mask_r = True
@@ -63,7 +86,7 @@ cdef class GLStateCache:
         self.color_mask_b = True
         self.color_mask_a = True
 
-        # disable all previously enabled vertex attrib arrays
+        # Disable all previously enabled vertex attribute arrays.
         if self.enabled_attrib_mask:
             for i in range(32):
                 bit = <unsigned int> 1 << i
@@ -73,7 +96,7 @@ cdef class GLStateCache:
 
         self.enabled_attrib_mask = 0
 
-        # clear the sampler bindings cache, as it's program-specific
+        # Clear the sampler binding cache, as it's program-specific.
         self.sampler_bindings.clear()
 
     cdef void use_program(GLStateCache self, GLuint program):
@@ -97,17 +120,32 @@ cdef class GLStateCache:
             glBindTexture(GL_TEXTURE_2D, texture)
 
             self.current_texture[index] = texture
-        elif index >= 8: # for units beyond the cache range, always bind
+
+        # For units beyond the cached range, always bind.
+        elif index >= 8:
             glBindTexture(GL_TEXTURE_2D, texture)
 
-    cdef void set_blend(GLStateCache self, GLenum eq_rgb, GLenum eq_alpha, GLenum src_rgb, GLenum dst_rgb, GLenum src_alpha, GLenum dst_alpha):
-        if (eq_rgb != self.blend_eq_rgb or eq_alpha != self.blend_eq_alpha):
+    cdef void set_blend(
+        GLStateCache self,
+        GLenum eq_rgb,
+        GLenum eq_alpha,
+        GLenum src_rgb,
+        GLenum dst_rgb,
+        GLenum src_alpha,
+        GLenum dst_alpha,
+    ):
+        if eq_rgb != self.blend_eq_rgb or eq_alpha != self.blend_eq_alpha:
             glBlendEquationSeparate(eq_rgb, eq_alpha)
 
             self.blend_eq_rgb = eq_rgb
             self.blend_eq_alpha = eq_alpha
 
-        if (src_rgb != self.blend_src_rgb or dst_rgb != self.blend_dst_rgb or src_alpha != self.blend_src_alpha or dst_alpha != self.blend_dst_alpha):
+        if (
+            src_rgb != self.blend_src_rgb
+            or dst_rgb != self.blend_dst_rgb
+            or src_alpha != self.blend_src_alpha
+            or dst_alpha != self.blend_dst_alpha
+        ):
             glBlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha)
 
             self.blend_src_rgb = src_rgb
@@ -116,7 +154,7 @@ cdef class GLStateCache:
             self.blend_dst_alpha = dst_alpha
 
     cdef void set_color_mask(GLStateCache self, bint r, bint g, bint b, bint a):
-        if (r != self.color_mask_r or g != self.color_mask_g or b != self.color_mask_b or a != self.color_mask_a):
+        if r != self.color_mask_r or g != self.color_mask_g or b != self.color_mask_b or a != self.color_mask_a:
             glColorMask(r, g, b, a)
 
             self.color_mask_r = r
@@ -126,7 +164,8 @@ cdef class GLStateCache:
 
     cdef void sync_attrib_arrays(GLStateCache self, unsigned int required_mask):
         """
-        Enables exactly the vertex attribute arrays in `required_mask` and disables any that were previously enabled but are no longer needed.
+        Enables exactly the vertex attribute arrays in `required_mask`, and
+        disables any that were previously enabled but are no longer needed.
 
         Only issues GL calls for the difference.
         """
@@ -155,7 +194,8 @@ cdef class GLStateCache:
 
     cdef bint check_sampler_binding(GLStateCache self, GLuint program, GLint location, int sampler):
         """
-        Returns True if the sampler-to-unit binding needs to be set, updating the cache if so.
+        Returns True if the sampler-to-unit binding needs to be set, updating
+        the cache if so.
         """
 
         cdef tuple key = (program, location)
