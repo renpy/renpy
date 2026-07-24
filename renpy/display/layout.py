@@ -1575,6 +1575,9 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
     last_st = 0
     last_at = 0
 
+    # When true, per_interact only invalidates if the picked child changed.
+    redraw_on_change_only = False
+
     def after_setstate(self):
         self.child = None
         self.raw_child = None
@@ -1589,6 +1592,7 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
             function = dynamic_displayable_compat
 
         self.predict_function = kwargs.pop("_predict_function", None)
+        self.redraw_on_change_only = kwargs.pop("_redraw_on_change_only", False)
         self.function = function
         self.args = args
         self.kwargs = kwargs
@@ -1638,7 +1642,18 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
             renpy.display.render.redraw(self, redraw)
 
     def per_interact(self):
-        renpy.display.render.redraw(self, 0)
+        if not self.redraw_on_change_only:
+            renpy.display.render.redraw(self, 0)
+
+            return
+
+        # Re-evaluate now and only invalidate when changed.
+        old_child = self.child
+
+        self.update(self.last_st, self.last_at)
+
+        if self.child is not old_child:
+            renpy.display.render.redraw(self, 0)
 
     def render(self, w, h, st, at):
         self.update(st, at)
@@ -1770,7 +1785,13 @@ def ConditionSwitch(*args, **kwargs):
         d = renpy.easy.displayable(d)
         switch.append((cond, d))
 
-    rv = DynamicDisplayable(condition_switch_show, switch, predict_all, _predict_function=condition_switch_predict)
+    rv = DynamicDisplayable(
+        condition_switch_show,
+        switch,
+        predict_all,
+        _predict_function=condition_switch_predict,
+        _redraw_on_change_only=True,
+    )
 
     return Position(rv, **kwargs)
 
