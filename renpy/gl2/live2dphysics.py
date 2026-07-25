@@ -1,3 +1,25 @@
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
 def from_physics3(physics_json):
     """
     Convert a parsed physics3.json dict into a rig.
@@ -20,10 +42,7 @@ def from_physics3(physics_json):
                 normalization["Angle"]["Maximum"],
                 normalization["Angle"]["Default"],
             ),
-            "inputs": [
-                (i["Source"]["Id"], i["Weight"], i["Type"].lower(), i["Reflect"])
-                for i in setting["Input"]
-            ],
+            "inputs": [(i["Source"]["Id"], i["Weight"], i["Type"].lower(), i["Reflect"]) for i in setting["Input"]],
             "outputs": [
                 (o["Destination"]["Id"], o["VertexIndex"], o["Scale"], o["Weight"], o["Type"].lower(), o["Reflect"])
                 for o in setting["Output"]

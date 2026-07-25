@@ -637,5 +637,3 @@ cdef class Live2DModel:
             self.physics.evaluate(st - self.physics.last_update)
 
             self.physics.last_update = st
-
-        return

@@ -1,8 +1,30 @@
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy
 from libc.math cimport pi, sqrtf, cosf, sinf, atan2f, fminf, fmaxf, isfinite
 
-from renpy.gl2.gl2physics cimport Vec2, Normalization, SubRigData, Options, Particle, InputData, OutputData, PendulumPhysics
+from renpy.gl2.gl2physics cimport (
+    Vec2, Normalization, SubRigData, Options, Particle, InputData, OutputData, PendulumPhysics)
 
 DEF TYPE_X = 0
 DEF TYPE_Y = 1
@@ -17,7 +39,8 @@ cdef class PendulumPhysics:
     """
     Pendulum-chain physics for parameter-driven 2D models.
 
-    This implements the Live2D Cubism physics algorithm but consumes a neutral rig format and has no dependency on the Cubism SDK.
+    This implements the Live2D Cubism physics algorithm, but consumes a
+    neutral rig format and has no dependency on the Cubism SDK.
     """
 
     def __init__(PendulumPhysics self):
@@ -80,7 +103,16 @@ cdef class PendulumPhysics:
         if self.involved_indices != NULL:
             free(self.involved_indices)
 
-    cdef void initialize(PendulumPhysics self, int parameter_count, float *parameter_values, const float *parameter_minimum_values, const float *parameter_maximum_values, const float *parameter_default_values, dict parameter_indices, dict rig):
+    cdef void initialize(
+        PendulumPhysics self,
+        int parameter_count,
+        float *parameter_values,
+        const float *parameter_minimum_values,
+        const float *parameter_maximum_values,
+        const float *parameter_default_values,
+        dict parameter_indices,
+        dict rig):
+
         self.parameter_count = parameter_count
         self.parameter_values = parameter_values
         self.parameter_minimum_values = parameter_minimum_values
@@ -116,7 +148,12 @@ cdef class PendulumPhysics:
                 particle = &self.particles[base_index + i]
                 prev_particle = &self.particles[base_index + i - 1]
 
-                vec2_set(&particle.initial_position, prev_particle.initial_position.x, prev_particle.initial_position.y + particle.radius)
+                vec2_set(
+                    &particle.initial_position,
+                    prev_particle.initial_position.x,
+                    prev_particle.initial_position.y + particle.radius,
+                    )
+
                 particle.position = particle.initial_position
                 particle.last_position = particle.initial_position
                 vec2_set(&particle.last_gravity, 0.0, 1.0)
@@ -134,7 +171,8 @@ cdef class PendulumPhysics:
         """
         Fill the flat C rig arrays from a rig dict.
 
-        Counts are implied by the strand lists; parameter names are resolved to indices here so evaluate_c never touches Python objects.
+        Counts are implied by the strand lists. Parameter names are resolved
+        to indexes here, so that evaluate_c never touches Python objects.
         """
 
         cdef int i, j
@@ -210,7 +248,7 @@ cdef class PendulumPhysics:
         if self.outputs == NULL:
             raise MemoryError()
 
-        # allocate flat C arrays for rig outputs
+        # Allocate the flat C arrays for the rig outputs.
         self.current_rig_outputs = <float *> malloc(sizeof(float) * self.output_count)
 
         if self.current_rig_outputs == NULL:
@@ -221,12 +259,13 @@ cdef class PendulumPhysics:
         if self.previous_rig_outputs == NULL:
             raise MemoryError()
 
-        # initialize output arrays
+        # Initialize the output arrays.
         for i in range(self.output_count):
             self.current_rig_outputs[i] = 1.0
             self.previous_rig_outputs[i] = 1.0
 
-        # parameter caches (parameter_count and parameter_values are set by initialize before parsing)
+        # The parameter caches. parameter_count and parameter_values are set by
+        # initialize before parsing.
         self.parameter_caches = <float *> malloc(sizeof(float) * self.parameter_count)
 
         if self.parameter_caches == NULL:
@@ -264,7 +303,7 @@ cdef class PendulumPhysics:
             self.settings[i].normalization_angle.maximum = normalization_angle[1]
             self.settings[i].normalization_angle.default = normalization_angle[2]
 
-            # input
+            # The inputs.
             inputs = strand["inputs"]
 
             self.settings[i].input_count = len(inputs)
@@ -273,7 +312,8 @@ cdef class PendulumPhysics:
             for j in range(self.settings[i].input_count):
                 source, weight, type_, reflect = inputs[j]
 
-                # resolve the source name now so evaluate_c never touches Python objects
+                # Resolve the source name now, so that evaluate_c never touches
+                # Python objects.
                 self.inputs[input_index + j].source_parameter_index = self.parameter_indices[source]
                 involved.add(self.inputs[input_index + j].source_parameter_index)
 
@@ -291,7 +331,7 @@ cdef class PendulumPhysics:
 
             input_index += self.settings[i].input_count
 
-            # output
+            # The outputs.
             outputs = strand["outputs"]
 
             self.settings[i].output_count = len(outputs)
@@ -300,7 +340,8 @@ cdef class PendulumPhysics:
             for j in range(self.settings[i].output_count):
                 destination, vertex_index, scale, weight, type_, reflect = outputs[j]
 
-                # resolve the destination name now so evaluate_c never touches Python objects
+                # Resolve the destination name now, so that evaluate_c never
+                # touches Python objects.
                 self.outputs[output_index + j].destination_parameter_index = self.parameter_indices[destination]
                 involved.add(self.outputs[output_index + j].destination_parameter_index)
 
@@ -321,7 +362,7 @@ cdef class PendulumPhysics:
 
             output_index += self.settings[i].output_count
 
-            # particle
+            # The particles.
             vertices = strand["vertices"]
 
             self.settings[i].particle_count = len(vertices)
@@ -339,7 +380,8 @@ cdef class PendulumPhysics:
 
             particle_index += self.settings[i].particle_count
 
-        # sorted union of the parameter indices physics reads or writes - evaluate_c interpolates only these
+        # The sorted union of the parameter indexes the physics reads or writes.
+        # evaluate_c interpolates only these.
         involved_list = sorted(involved)
         self.involved_count = len(involved_list)
 
@@ -359,10 +401,11 @@ cdef class PendulumPhysics:
         """
         Evaluate one step of the physics simulation.
 
-        Updates particle positions based on input parameters, gravity, and wind, then writes results to output parameters.
+        Updates the particle positions based on the input parameters, gravity,
+        and wind, then writes the results to the output parameters.
 
-        Args:
-            delta: Time delta in seconds since last evaluation.
+        `delta`
+            The time delta, in seconds, since the last evaluation.
         """
 
         if 0.0 >= delta:
@@ -373,7 +416,7 @@ cdef class PendulumPhysics:
 
     cdef void evaluate_c(PendulumPhysics self, float delta) noexcept nogil:
         """
-        Run the substep loop and write interpolated outputs.
+        Runs the substep loop and writes the interpolated outputs.
         """
 
         cdef int i, k
@@ -404,16 +447,26 @@ cdef class PendulumPhysics:
             physics_delta_time = delta
 
         while self.current_remain_time >= physics_delta_time:
-            memcpy(self.previous_rig_outputs, self.current_rig_outputs, sizeof(float) * self.output_count) # copy current_rig_outputs to previous_rig_outputs (flat array)
 
-            # calculate the input at the timing to UpdateParticles by linear interpolation with the parameter_input_caches and parameter_values
-            # parameter_caches needs to be separated from parameter_input_caches because of its role in propagating values between groups
-            # only the parameters physics reads or writes are interpolated - the other cache entries are never read
+            # Copy current_rig_outputs to previous_rig_outputs.
+            memcpy(self.previous_rig_outputs, self.current_rig_outputs, sizeof(float) * self.output_count)
+
+            # Calculate the input at the timing of update_particles, by linearly
+            # interpolating between parameter_input_caches and parameter_values.
+            # parameter_caches needs to be separate from parameter_input_caches
+            # because of its role in propagating values between groups. Only the
+            # parameters the physics reads or writes are interpolated - the other
+            # cache entries are never read.
             input_weight = physics_delta_time / self.current_remain_time
 
             for k in range(self.involved_count):
                 i = self.involved_indices[k]
-                self.parameter_caches[i] = self.parameter_input_caches[i] * (1.0 - input_weight) + self.parameter_values[i] * input_weight
+
+                self.parameter_caches[i] = (
+                    self.parameter_input_caches[i] * (1.0 - input_weight)
+                    + self.parameter_values[i] * input_weight
+                    )
+
                 self.parameter_input_caches[i] = self.parameter_caches[i]
 
             for setting_index in range(self.sub_rig_count):
@@ -422,7 +475,7 @@ cdef class PendulumPhysics:
                 total_translation_x = 0.0
                 total_translation_y = 0.0
 
-                # load input parameters
+                # Load the input parameters.
                 for i in range(setting.base_input_index, setting.base_input_index + setting.input_count):
                     physics_input = &self.inputs[i]
 
@@ -438,7 +491,7 @@ cdef class PendulumPhysics:
                         &setting.normalization_position,
                         &setting.normalization_angle,
                         physics_input.weight,
-                    )
+                        )
 
                 rad_angle = degrees_to_radian(-total_angle)
 
@@ -446,7 +499,7 @@ cdef class PendulumPhysics:
                 total_translation_x = (original_x * cosf(rad_angle) - total_translation_y * sinf(rad_angle))
                 total_translation_y = (original_x * sinf(rad_angle) + total_translation_y * cosf(rad_angle))
 
-                # calculate particles position
+                # Calculate the particle positions.
                 self.update_particles(
                     setting_index,
                     total_translation_x,
@@ -456,9 +509,9 @@ cdef class PendulumPhysics:
                     self.options.wind.y,
                     movement_threshold * setting.normalization_position.maximum,
                     physics_delta_time,
-                )
+                    )
 
-                # update output parameters
+                # Update the output parameters.
                 base_index = setting.base_particle_index
 
                 for i in range(setting.base_output_index, setting.base_output_index + setting.output_count):
@@ -468,8 +521,15 @@ cdef class PendulumPhysics:
                     if particle_index < 1 or particle_index >= setting.particle_count:
                         continue
 
-                    translation_x = self.particles[base_index + particle_index].position.x - self.particles[base_index + particle_index - 1].position.x
-                    translation_y = self.particles[base_index + particle_index].position.y - self.particles[base_index + particle_index - 1].position.y
+                    translation_x = (
+                        self.particles[base_index + particle_index].position.x
+                        - self.particles[base_index + particle_index - 1].position.x
+                        )
+
+                    translation_y = (
+                        self.particles[base_index + particle_index].position.y
+                        - self.particles[base_index + particle_index - 1].position.y
+                        )
 
                     output_value = output_get_value(
                         physics_output,
@@ -480,28 +540,41 @@ cdef class PendulumPhysics:
                         particle_index,
                         self.options.gravity.x,
                         self.options.gravity.y,
-                    )
+                        )
 
-                    # use flat array index
+                    # Use the flat array index.
                     self.current_rig_outputs[i] = output_value
 
-                    self.parameter_caches[physics_output.destination_parameter_index] = update_output_parameter_value_struct(
-                        self.parameter_caches[physics_output.destination_parameter_index],
-                        self.parameter_minimum_values[physics_output.destination_parameter_index],
-                        self.parameter_maximum_values[physics_output.destination_parameter_index],
-                        output_value,
-                        physics_output,
-                    )
+                    self.parameter_caches[physics_output.destination_parameter_index] = (
+                        update_output_parameter_value_struct(
+                            self.parameter_caches[physics_output.destination_parameter_index],
+                            self.parameter_minimum_values[physics_output.destination_parameter_index],
+                            self.parameter_maximum_values[physics_output.destination_parameter_index],
+                            output_value,
+                            physics_output,
+                            )
+                        )
 
             self.current_remain_time -= physics_delta_time
 
         self.interpolate_physics(self.current_remain_time / physics_delta_time)
 
-    cdef void update_particles(PendulumPhysics self, int setting_index, float total_translation_x, float total_translation_y, float total_angle, float wind_x, float wind_y, float threshold_value, float st) noexcept nogil:
-        """
-        Update particle positions for a single physics strand.
+    cdef void update_particles(
+        PendulumPhysics self,
+        int setting_index,
+        float total_translation_x,
+        float total_translation_y,
+        float total_angle,
+        float wind_x,
+        float wind_y,
+        float threshold_value,
+        float st) noexcept nogil:
 
-        Simulates pendulum physics by applying gravity, wind, and constraints to each particle in the strand chain.
+        """
+        Update the particle positions for a single physics strand.
+
+        Simulates pendulum physics by applying gravity, wind, and constraints
+        to each particle in the strand chain.
         """
 
         cdef int i
@@ -548,7 +621,12 @@ cdef class PendulumPhysics:
             direction.x = particle.position.x - prev_particle.position.x
             direction.y = particle.position.y - prev_particle.position.y
 
-            radian = direction_to_radian(particle.last_gravity.x, particle.last_gravity.y, current_gravity.x, current_gravity.y) / air_resistance
+            radian = direction_to_radian(
+                particle.last_gravity.x,
+                particle.last_gravity.y,
+                current_gravity.x,
+                current_gravity.y,
+                ) / air_resistance
 
             cos_radian = cosf(radian)
             sin_radian = sinf(radian)
@@ -594,9 +672,11 @@ cdef class PendulumPhysics:
 
     cdef void interpolate_physics(PendulumPhysics self, float weight) noexcept nogil:
         """
-        Interpolate physics output parameters between previous and current values.
+        Interpolate the physics output parameters between the previous and
+        current values.
 
-        Called after the physics loop to smooth parameter values based on the remaining time fraction.
+        Called after the physics loop, to smooth the parameter values based on
+        the remaining time fraction.
         """
 
         cdef int i
@@ -609,7 +689,7 @@ cdef class PendulumPhysics:
 
         cdef OutputData *physics_output
 
-        # interpolate output parameters
+        # Interpolate the output parameters.
         for setting_index in range(self.sub_rig_count):
             setting = &self.settings[setting_index]
 
@@ -618,8 +698,11 @@ cdef class PendulumPhysics:
 
                 dest_index = physics_output.destination_parameter_index
 
-                # use flat array indexing
-                interpolated_value = self.previous_rig_outputs[i] * (1.0 - weight) + self.current_rig_outputs[i] * weight
+                # Use flat array indexing.
+                interpolated_value = (
+                    self.previous_rig_outputs[i] * (1.0 - weight)
+                    + self.current_rig_outputs[i] * weight
+                    )
 
                 new_value = update_output_parameter_value_struct(
                     self.parameter_values[dest_index],
@@ -627,9 +710,9 @@ cdef class PendulumPhysics:
                     self.parameter_maximum_values[dest_index],
                     interpolated_value,
                     physics_output,
-                )
+                    )
 
-                # a NaN should never escape
+                # A NaN should never escape.
                 if isfinite(new_value):
                     self.parameter_values[dest_index] = new_value
 
@@ -648,32 +731,75 @@ cdef inline void vec2_set(Vec2 *v, float x, float y) noexcept nogil:
     v.x = x
     v.y = y
 
-cdef inline float input_get_normalized_parameter_value(InputData *inp, float *translation_x, float *translation_y, float target_angle, float value, float parameter_minimum, float parameter_maximum, float parameter_default, Normalization *normalization_position, Normalization *normalization_angle, float weight) noexcept nogil:
+cdef inline float input_get_normalized_parameter_value(
+    InputData *inp,
+    float *translation_x,
+    float *translation_y,
+    float target_angle,
+    float value,
+    float parameter_minimum,
+    float parameter_maximum,
+    float parameter_default,
+    Normalization *normalization_position,
+    Normalization *normalization_angle,
+    float weight) noexcept nogil:
+
     """
-    Calculate normalized parameter value and update translation/angle based on input type.
+    Calculate the normalized parameter value, and update the translation or
+    angle based on the input type.
     """
 
     if inp.type == TYPE_X:
         translation_x[0] += weight * normalize_parameter_value(
-            value, parameter_minimum, parameter_maximum, parameter_default,
-            normalization_position.minimum, normalization_position.maximum,
-            normalization_position.default, inp.reflect)
+            value,
+            parameter_minimum,
+            parameter_maximum,
+            parameter_default,
+            normalization_position.minimum,
+            normalization_position.maximum,
+            normalization_position.default,
+            inp.reflect,
+            )
+
     elif inp.type == TYPE_Y:
         translation_y[0] += weight * normalize_parameter_value(
-            value, parameter_minimum, parameter_maximum, parameter_default,
-            normalization_position.minimum, normalization_position.maximum,
-            normalization_position.default, inp.reflect)
+            value,
+            parameter_minimum,
+            parameter_maximum,
+            parameter_default,
+            normalization_position.minimum,
+            normalization_position.maximum,
+            normalization_position.default,
+            inp.reflect,
+            )
+
     elif inp.type == TYPE_ANGLE:
         target_angle += weight * normalize_parameter_value(
-            value, parameter_minimum, parameter_maximum, parameter_default,
-            normalization_angle.minimum, normalization_angle.maximum,
-            normalization_angle.default, inp.reflect)
+            value,
+            parameter_minimum,
+            parameter_maximum,
+            parameter_default,
+            normalization_angle.minimum,
+            normalization_angle.maximum,
+            normalization_angle.default,
+            inp.reflect,
+            )
 
     return target_angle
 
-cdef inline float output_get_value(OutputData *out, float translation_x, float translation_y, Particle *particles, int particle_base_index, int particle_index, float parent_gravity_x, float parent_gravity_y) noexcept nogil:
+cdef inline float output_get_value(
+    OutputData *out,
+    float translation_x,
+    float translation_y,
+    Particle *particles,
+    int particle_base_index,
+    int particle_index,
+    float parent_gravity_x,
+    float parent_gravity_y) noexcept nogil:
+
     """
-    Calculate the output value based on particle positions and output type.
+    Calculate the output value based on the particle positions and the output
+    type.
     """
 
     cdef float output = 0.0
@@ -699,11 +825,19 @@ cdef inline float output_get_value(OutputData *out, float translation_x, float t
 
     return output
 
-cdef inline float update_output_parameter_value_struct(float parameter_value, float parameter_value_minimum, float parameter_value_maximum, float translation, OutputData *output) noexcept nogil:
-    """
-    Update an output parameter value with clamping and weight blending.
+cdef inline float update_output_parameter_value_struct(
+    float parameter_value,
+    float parameter_value_minimum,
+    float parameter_value_maximum,
+    float translation,
+    OutputData *output) noexcept nogil:
 
-    Applies the output scale to the translation, clamps to parameter bounds, and blends with the current value based on output weight.
+    """
+    Update an output parameter value, with clamping and weight blending.
+
+    Applies the output scale to the translation, clamps the result to the
+    parameter bounds, and blends it with the current value based on the output
+    weight.
     """
 
     cdef float value = translation * output.scale
@@ -728,11 +862,22 @@ cdef inline float direction_to_radian(float from_x, float from_y, float to_x, fl
 
     return atan2f(from_x * to_y - from_y * to_x, from_x * to_x + from_y * to_y)
 
-cdef inline float normalize_parameter_value(float value, float parameter_minimum, float parameter_maximum, float parameter_default, float normalized_minimum, float normalized_maximum, float normalized_default, bint is_inverted) noexcept nogil:
-    """
-    Normalize a parameter value from source range to target normalized range.
+cdef inline float normalize_parameter_value(
+    float value,
+    float parameter_minimum,
+    float parameter_maximum,
+    float parameter_default,
+    float normalized_minimum,
+    float normalized_maximum,
+    float normalized_default,
+    bint is_inverted) noexcept nogil:
 
-    Maps a value from its parameter range to the physics normalization range, handling asymmetric ranges around the default value.
+    """
+    Normalize a parameter value from its source range to the target normalized
+    range.
+
+    Maps a value from its parameter range to the physics normalization range,
+    handling asymmetric ranges around the default value.
     """
 
     cdef float result = 0.0
