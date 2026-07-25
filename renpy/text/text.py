@@ -40,6 +40,7 @@ from renpy.text.emoji_trie import emoji, UNQUALIFIED
 from renpy.gl2.gl2polygon import Polygon
 
 from renpy.text.bidi import LTR, ON, RTL, WLTR, WRTL, get_embedding_levels, log2vis
+from renpy.display.position import absolute
 
 
 BASELINE = -65536
@@ -2720,7 +2721,7 @@ class Text(renpy.display.displayable.Displayable):
 
         layout = Layout(self, width, height, renders, size_only=True, drawable_res=True)
 
-        return layout.unscale_pair(*layout.size)
+        return tuple( absolute(i) for i in  layout.unscale_pair(*layout.size) )
 
     def get_time(self):
         """

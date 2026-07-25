@@ -88,19 +88,14 @@ def get_repeat():
 def name(key):
     return SDL_GetKeyName(key)
 
-text_input = False
-
 def start_text_input():
-    global text_input
-    text_input = True
-
     SDL_StartTextInput(main_window.window)
 
 def stop_text_input():
-    global text_input
-    text_input = False
-
     SDL_StopTextInput(main_window.window)
+
+def text_input_active():
+    return SDL_TextInputActive(main_window.window)
 
 def set_text_input_rect(rect):
     cdef SDL_Rect sdl_rect
