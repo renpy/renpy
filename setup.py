@@ -110,10 +110,9 @@ def main():
 
     # renpy.styledata
     cython("renpy.styledata.styleclass")
-    cython("renpy.styledata.stylesets")
 
     for p in generate_styles.prefixes:
-        cython("renpy.styledata.style_{}functions".format(p), pyx=setuplib.gen + "/style_{}functions.pyx".format(p))
+        cython(f"renpy.styledata.style_{p}functions")
 
     # renpy.display
     cython("renpy.display.matrix")

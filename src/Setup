@@ -55,7 +55,6 @@ renpy.styledata.style_selected_hover_functions ../tmp/gen/renpy.styledata.style_
 renpy.styledata.style_selected_idle_functions ../tmp/gen/renpy.styledata.style_selected_idle_functions.c
 renpy.styledata.style_selected_insensitive_functions ../tmp/gen/renpy.styledata.style_selected_insensitive_functions.c
 renpy.styledata.styleclass ../tmp/gen/renpy.styledata.styleclass.c
-renpy.styledata.stylesets ../tmp/gen/renpy.styledata.stylesets.c
 renpy.text.bidi ../tmp/gen/renpy.text.bidi.c renpybidicore.c
 renpy.text.ftfont ../tmp/gen/renpy.text.ftfont.c ftsupport.c ttgsubtable.c
 renpy.text.hbfont ../tmp/gen/renpy.text.hbfont.c
