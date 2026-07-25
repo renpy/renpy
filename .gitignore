@@ -95,6 +95,8 @@ cache/
 /module/gen-static/
 /module/gen3-static/
 /tutorial/game/tutorial_director.rpy
+/src/Setup
+/src/Setup.tfd
 
 # Module build.
 /module/build
