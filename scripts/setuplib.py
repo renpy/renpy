@@ -165,6 +165,11 @@ def generate_all_cython():
     # Empty string disables caching.
     cache_dir = os.environ.get("RENPY_CYTHON_CACHE_DIR", "tmp/cython_cache")
 
+    # Make sure cache is not used if we are regenerating cython, or if we are
+    # generating cython for coverage.
+    if force or coverage:
+        cache_dir = ""
+
     if "RENPY_CYTHON_SINGLETHREAD" in os.environ:
         nthreads = 0
     else:
