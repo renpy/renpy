@@ -1691,6 +1691,11 @@ A map from file names to new file names. This is used to handle files that have 
 lower-case.
 """
 
+windows_high_pixel_density: bool = bool(int(os.environ.get("RENPY_WINDOWS_HIGH_PIXEL_DENSITY", "1")))
+"""
+If true, Ren'Py will attempt to enable SDL3 high pixel densitiy on Windows. If false, it will not.
+"""
+
 
 del os
 del collections

@@ -326,7 +326,7 @@ def down(node: Node, keysym: str) -> None:
     """
     code, u, mods = get_keycode(node, keysym)
 
-    if pygame.key.text_input:
+    if pygame.key.text_input_active():
         pygame.event.post(
             pygame.event.Event(pygame.KEYDOWN, unicode="", key=code, scancode=code, mod=mods, repeat=False, test=True)
         )

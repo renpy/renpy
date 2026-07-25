@@ -95,6 +95,8 @@ cache/
 /module/gen-static/
 /module/gen3-static/
 /tutorial/game/tutorial_director.rpy
+/src/Setup
+/src/Setup.tfd
 
 # Module build.
 /module/build
@@ -198,7 +200,6 @@ renpy/styledata/style_selected_hover_functions.pyi
 renpy/styledata/style_selected_idle_functions.pyi
 renpy/styledata/style_selected_insensitive_functions.pyi
 renpy/styledata/styleclass.pyi
-renpy/styledata/stylesets.pyi
 renpy/text/bidi.pyi
 renpy/text/ftfont.pyi
 renpy/text/hbfont.pyi

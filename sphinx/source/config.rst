@@ -980,11 +980,18 @@ Paths
     :file:`data.rpa`, :file:`patch01.rpa`, and :file:`patch02.rpa`,
     this variable will be populated with ``['patch02', 'patch01', 'data']``.
 
+.. var:: config.basedir = ...
+
+    The full path leading to the game's base directory. This is a read-only
+    variable. This is usually the directory above the :file:`game/` directory. It contains logs like :doc:`log.txt`
+    and on PC plaforms contains the executable used to launch the game. There is no guarantee any file will be there,
+    as on Android files are stored inside the package.
+
 .. var:: config.gamedir = ...
 
     The full path leading to the game's :file:`game/` directory. This is a
-    read-only variable. There is no guarantee that any file will be there,
-    typically on platforms such as android.
+    read-only variable. There is no guarantee that any file will be there, as on
+    Android files are stored inside the package.
 
 .. var:: config.savedir = ...
 

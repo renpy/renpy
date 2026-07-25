@@ -24,7 +24,6 @@ from libc.string cimport memcpy
 from .sdl cimport *
 from .display cimport Window, main_window
 from .error import error
-from . import key
 import threading
 import sys
 
@@ -231,7 +230,7 @@ cdef make_keyboard_event(SDL_KeyboardEvent *e):
               'repeat' : e.repeat,
                }
 
-    if key.text_input:
+    if SDL_TextInputActive(main_window.window):
 
         if e.type == SDL_EVENT_KEY_DOWN:
             # Be careful to only check for a TEXTINPUT event when you know that

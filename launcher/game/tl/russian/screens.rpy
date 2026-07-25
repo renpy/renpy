@@ -19,7 +19,7 @@ translate russian strings:
 
     # screens.rpy:92
     old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
-    new "## Этот экран должен создать текст с id \"what\", чтобы Ren'Py могла показать текст. Здесь также можно создать наложения с id \"who\" и id \"window\", чтобы применить к ним настройки стиля."
+    new "## Этот экран должен создать displayable-элемент text с id \"what\", чтобы Ren'Py использовал его для отображения текста. Также здесь можно создать displayable-элементы с id \"who\" и id \"window\", чтобы применить к ним свойства стилей."
 
     # screens.rpy:96
     old "## https://www.renpy.org/doc/html/screen_special.html#say"
@@ -27,7 +27,7 @@ translate russian strings:
 
     # screens.rpy:114
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
-    new "## Если есть боковое изображение (\"голова\"), показывает её поверх текста. По стандарту не показывается на варианте для мобильных устройств — мало места."
+    new "## Если есть боковое изображение, показывает его поверх текста. Не показывается на варианте для мобильных устройств — мало места."
 
     # screens.rpy:120
     old "## Make the namebox available for styling through the Character object."
@@ -39,11 +39,11 @@ translate russian strings:
 
     # screens.rpy:166
     old "## This screen is used to display renpy.input. The prompt parameter is used to pass a text prompt in."
-    new "## Этот экран используется, чтобы показывать renpy.input. Это параметр запроса, используемый для того, чтобы дать игроку ввести в него текст."
+    new "## Экран ввода используется, чтобы показывать renpy.input. Параметр prompt используется как заголовок окна."
 
     # screens.rpy:169
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
-    new "## Этот экран должен создать наложение ввода с id \"input\", чтобы принять различные вводимые параметры."
+    new "## Этот экран должен создать displayable-элемент input с id \"input\", чтобы принимать различные параметры ввода."
 
     # screens.rpy:172
     old "## https://www.renpy.org/doc/html/screen_special.html#input"
@@ -55,7 +55,7 @@ translate russian strings:
 
     # screens.rpy:201
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
-    new "## Этот экран используется, чтобы показывать внутриигровые выборы, представленные оператором menu. Один параметр, вложения, список объектов, каждый с заголовком и полями действия."
+    new "## Экран выбора используется, чтобы показывать внутриигровые выборы, создаваемые оператором menu. Единственный параметр items это список объектов, каждый с полями заголовка (caption) и действия (action)."
 
     # screens.rpy:205
     old "## https://www.renpy.org/doc/html/screen_special.html#choice"
@@ -115,7 +115,7 @@ translate russian strings:
 
     # screens.rpy:284
     old "## Main and Game Menu Screens"
-    new "## Экраны Главного и Игрового меню"
+    new "## Экраны главного и игрового меню"
 
     # screens.rpy:287
     old "## Navigation screen"
@@ -151,7 +151,7 @@ translate russian strings:
 
     # screens.rpy:328
     old "## Help isn't necessary or relevant to mobile devices."
-    new "## Помощь не необходима и не относится к мобильным устройствам."
+    new "## Для мобильных устройств экран помощи не нужен."
 
     # screens.rpy:329
     old "Help"
@@ -179,7 +179,7 @@ translate russian strings:
 
     # screens.rpy:354
     old "## This ensures that any other menu screen is replaced."
-    new "## Этот тег гарантирует, что любой другой экран с тем же тегом будет заменять этот."
+    new "## Этот тег гарантирует, что любой другой экран меню будет заменён."
 
     # screens.rpy:361
     old "## This empty frame darkens the main menu."
@@ -187,7 +187,7 @@ translate russian strings:
 
     # screens.rpy:365
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
-    new "## Оператор use включает отображение другого экрана в данном. Актуальное содержание главного меню находится на экране навигации."
+    new "## Оператор use вставляет другой экран внутри данного. Реальное содержимое главного меню находится на экране навигации."
 
     # screens.rpy:408
     old "## Game Menu screen"
@@ -219,11 +219,11 @@ translate russian strings:
 
     # screens.rpy:541
     old "## There's nothing special about this screen, and hence it also serves as an example of how to make a custom screen."
-    new "## В этом экране нет ничего особенного, и он служит только примером того, каким можно сделать свой экран."
+    new "## В этом экране нет ничего особенного, он также служит примером того, каким можно сделать свой экран."
 
     # screens.rpy:548
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
-    new "## Этот оператор включает игровое меню внутрь этого экрана. Дочерний vbox включён в порт просмотра внутри экрана игрового меню."
+    new "## Этот оператор use вставляет игровое меню внутрь этого экрана. Затем вложенный vbox вставляется во viewport внутри экрана game_menu."
 
     # screens.rpy:558
     old "Version [config.version!t]\n"
@@ -231,15 +231,15 @@ translate russian strings:
 
     # screens.rpy:560
     old "## gui.about is usually set in options.rpy."
-    new "## gui.about обычно установлено в options.rpy."
+    new "## gui.about обычно определено в options.rpy."
 
     # screens.rpy:564
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
-    new "Сделано с помощью {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
+    new "Создано с помощью {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
 
     # screens.rpy:567
     old "## This is redefined in options.rpy to add text to the about screen."
-    new "## Это переустанавливается в options.rpy для добавления текста на экран Об игре."
+    new "## Это переопределяется в options.rpy для добавления текста на экран Об игре."
 
     # screens.rpy:579
     old "## Load and Save screens"
@@ -251,7 +251,7 @@ translate russian strings:
 
     # screens.rpy:585
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
-    new "## https://www.renpy.org/doc/html/screen_special.html#save \n https://www.renpy.org/doc/html/screen_special.html#load"
+    new "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
 
     # screens.rpy:604
     old "Page {}"
@@ -267,11 +267,11 @@ translate russian strings:
 
     # screens.rpy:610
     old "## This ensures the input will get the enter event before any of the buttons do."
-    new "## Это гарантирует, что ввод будет принимать enter перед остальными кнопками."
+    new "## Это гарантирует, что ввод будет принимать нажатие Enter перед остальными кнопками."
 
     # screens.rpy:614
     old "## The page name, which can be edited by clicking on a button."
-    new "## Номер страницы, который может быть изменён посредством клика на кнопку."
+    new "## Название страницы, которое можно изменить, кликнув на кнопку."
 
     # screens.rpy:626
     old "## The grid of file slots."
@@ -351,7 +351,7 @@ translate russian strings:
 
     # screens.rpy:746
     old "Unseen Text"
-    new "Всего текста"
+    new "Непрочитанного"
 
     # screens.rpy:747
     old "After Choices"
@@ -391,7 +391,7 @@ translate russian strings:
 
     # screens.rpy:800
     old "Mute All"
-    new "Без звука"
+    new "Заглушить всё"
 
     # screens.rpy:876
     old "## History screen"
@@ -451,7 +451,7 @@ translate russian strings:
 
     # screens.rpy:1005
     old "Advances dialogue and activates the interface."
-    new "Прохождение диалогов, активация интерфейса."
+    new "Продвижение диалога, активация интерфейса."
 
     # screens.rpy:1008
     old "Space"
@@ -459,7 +459,7 @@ translate russian strings:
 
     # screens.rpy:1009
     old "Advances dialogue without selecting choices."
-    new "Прохождение диалогов без возможности делать выбор."
+    new "Продвижение диалога, без выбора ответов."
 
     # screens.rpy:1012
     old "Arrow Keys"
@@ -475,7 +475,7 @@ translate russian strings:
 
     # screens.rpy:1017
     old "Accesses the game menu."
-    new "Вход в игровое меню."
+    new "Переход в игровое меню."
 
     # screens.rpy:1020
     old "Ctrl"
@@ -483,7 +483,7 @@ translate russian strings:
 
     # screens.rpy:1021
     old "Skips dialogue while held down."
-    new "Пропускает диалоги, пока зажат."
+    new "Пропуск диалога при зажатии."
 
     # screens.rpy:1024
     old "Tab"
@@ -491,7 +491,7 @@ translate russian strings:
 
     # screens.rpy:1025
     old "Toggles dialogue skipping."
-    new "Включает режим пропуска."
+    new "Вкл/выкл пропуск диалога."
 
     # screens.rpy:1028
     old "Page Up"
@@ -499,7 +499,7 @@ translate russian strings:
 
     # screens.rpy:1029
     old "Rolls back to earlier dialogue."
-    new "Откат назад по сюжету игры."
+    new "Вернуться назад по диалогу."
 
     # screens.rpy:1032
     old "Page Down"
@@ -507,19 +507,19 @@ translate russian strings:
 
     # screens.rpy:1033
     old "Rolls forward to later dialogue."
-    new "Откатывает предыдущее действие вперёд."
+    new "Вернуться вперёд по диалогу."
 
     # screens.rpy:1037
     old "Hides the user interface."
-    new "Скрывает интерфейс пользователя."
+    new "Скрыть пользовательский интерфейс."
 
     # screens.rpy:1041
     old "Takes a screenshot."
-    new "Делает снимок экрана."
+    new "Сделать снимок экрана."
 
     # screens.rpy:1045
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "Включает поддерживаемый {a=https://www.renpy.org/l/voicing}синтезатор речи{/a}."
+    new "Вкл/выкл {a=https://www.renpy.org/l/voicing}синтезатор речи{/a}."
 
     # screens.rpy:1051
     old "Left Click"
@@ -547,7 +547,7 @@ translate russian strings:
 
     # screens.rpy:1078
     old "Left Trigger\nLeft Shoulder"
-    new "Левый Триггер\nЛевый Бампер"
+    new "Левый триггер\nЛевый бампер"
 
     # screens.rpy:1082
     old "Right Shoulder"
@@ -555,12 +555,11 @@ translate russian strings:
 
     # screens.rpy:1087
     old "D-Pad, Sticks"
-    new "Крестовина, Стики"
+    new "Крестовина, стики"
 
     # screens.rpy:1091
     old "Start, Guide"
-    # Automatic translation.
-    new "Начало, Руководство"
+    new "Start, Guide"
 
     # screens.rpy:1095
     old "Y/Top Button"
@@ -600,7 +599,7 @@ translate russian strings:
 
     # screens.rpy:1166
     old "## Right-click and escape answer \"no\"."
-    new "## Правый клик и esc, как ответ \"Нет\"."
+    new "## Правый клик и Esc, как ответ \"Нет\"."
 
     # screens.rpy:1193
     old "## Skip indicator screen"
@@ -616,7 +615,7 @@ translate russian strings:
 
     # screens.rpy:1210
     old "Skipping"
-    new "Пропускаю"
+    new "Пропускаем"
 
     # screens.rpy:1217
     old "## This transform is used to blink the arrows one after another."
@@ -624,7 +623,7 @@ translate russian strings:
 
     # screens.rpy:1244
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
-    new "## Нам надо использовать шрифт, имеющий в себе символ U+25B8 (стрелку выше)."
+    new "## Нам надо использовать шрифт, имеющий символ U+25B8 (BLACK RIGHT-POINTING SMALL TRIANGLE)."
 
     # screens.rpy:1249
     old "## Notify screen"
@@ -644,7 +643,7 @@ translate russian strings:
 
     # screens.rpy:1290
     old "## This screen is used for NVL-mode dialogue and menus."
-    new "## Этот экран используется в диалогах и меню режима NVL."
+    new "## Этот экран используется в режиме NVL для диалогов и меню."
 
     # screens.rpy:1292
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
@@ -652,7 +651,7 @@ translate russian strings:
 
     # screens.rpy:1303
     old "## Displays dialogue in either a vpgrid or the vbox."
-    new "## Показывает диалог или в vpgrid, или в vbox."
+    new "## Показывает диалог в vpgrid или vbox."
 
     # screens.rpy:1316
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
@@ -660,7 +659,7 @@ translate russian strings:
 
     # screens.rpy:1346
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
-    new "## Это контролирует максимальное число строк NVL, могущих показываться за раз."
+    new "## Это контролирует максимальное число сообщений NVL, показывающихся за раз."
 
     # screens.rpy:1408
     old "## Mobile Variants"
@@ -668,7 +667,7 @@ translate russian strings:
 
     # screens.rpy:1415
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
-    new "## Раз мышь может не использоваться, мы заменили быстрое меню версией, использующей меньше кнопок, но больших по размеру, чтобы их было легче касаться."
+    new "## Раз мышь может быть недоступна, мы заменили быстрое меню на версию с меньшим количеством кнопок, но большого размера, чтобы их было легче касаться."
 
     # screens.rpy:1431
     old "Menu"
@@ -676,25 +675,23 @@ translate russian strings:
 
     # gui/game/screens.rpy:1049
     old "Opens the accessibility menu."
-    new "Открывает меню специальных возможностей."
+    new "Открыть меню специальных возможностей."
 
     # gui/game/screens.rpy:676
     old "Upload Sync"
-    new "Загрузить Sync"
+    new "Загрузить в Sync"
 
     # gui/game/screens.rpy:680
     old "Download Sync"
-    new "Скачать Sync"
+    new "Скачать из Sync"
 
     # gui/game/screens.rpy:1410
     old "## Bubble screen"
-    # Automatic translation.
-    new "## Пузырьковый экран"
+    new "## Экран пузырьков речи"
 
     # gui/game/screens.rpy:1412
     old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
-    # Automatic translation.
-    new "## Экран пузырьков используется для отображения диалога игроку при использовании речевых пузырьков. Экран пузырьков принимает те же параметры, что и экран say, должен создать отображаемый объект с id \"what\", и может создавать отображаемые объекты с id \"namebox\", \"who\" и \"window\"."
+    new "## Экран пузырьков используется для отображения диалога игроку при использовании пузырьков речи. Экран пузырьков принимает те же параметры, что и экран разговора, должен иметь displayable-элемент с id \"what\", и может содержать displayable-элементы с id \"namebox\", \"who\" и \"window\"."
 
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
@@ -702,9 +699,8 @@ translate russian strings:
 
     # gui/game/screens.rpy:411
     old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    # Automatic translation.
-    new "## Параметр scroll может быть None или один из \"viewport\" или \"vpgrid\". Этот экран предназначен для использования с одним или несколькими дочерними элементами, которые трансклюдируются (помещаются) внутрь него."
+    new "## Параметр scroll может быть None или \"viewport\" или \"vpgrid\". Этот экран предназначен для использования с одним или несколькими дочерними элементами, которые помещаются внутрь него."
 
     # gui/game/screens.rpy:1098
     old "Start, Guide, B/Right Button"
-    new "Старт, Гид, B/Правая кнопка"
+    new "Start, Guide, B/Правая кнопка"

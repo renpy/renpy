@@ -62,5 +62,5 @@ if  [ "$1" = "--build" ] ; then
     echo "Ren'Py build complete."
     exit 0
 else
-    exec $RENPY_GDB python $ROOT/renpy.py "$@"
+    exec $RENPY_GDB python -X utf8 $ROOT/renpy.py "$@"
 fi
