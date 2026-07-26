@@ -1696,6 +1696,12 @@ windows_high_pixel_density: bool = bool(int(os.environ.get("RENPY_WINDOWS_HIGH_P
 If true, Ren'Py will attempt to enable SDL3 high pixel densitiy on Windows. If false, it will not.
 """
 
+after_init_callbacks: list[Callable[[], None]] = []
+"""
+A list of callbacks that are called at the very end of the init phase, before the game starts normal execution for the
+first time. These are run just after defaults are set up, but only once, and before script statements are run.
+"""
+
 
 del os
 del collections

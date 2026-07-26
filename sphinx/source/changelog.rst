@@ -60,6 +60,10 @@ The :var:`config.tts_voice` variable is no longer used.
 Features
 --------
 
+The new :var:`config.after_init_callbacks` variable is a list of callbacks that are called at the very end of the init phase,
+before the game starts normal execution for the first time. These are run once per Ren'Py start, after the default
+statements have been executed, and so this is the place to set up callbacks that need access to default data.
+
 :class:`Movie` now accepts a movie file as it's `loop` parameter. When given, the movie passed to `play` is played
 to completion, and then `loop` will be played looping. This is intended to be seamless as long as the `play` movie
 is long enough to allow the `loop` movie to load.

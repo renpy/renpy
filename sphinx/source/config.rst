@@ -108,6 +108,20 @@ that feature.
     Similar to the default statement, these callbacks are a good place
     to add data to the game that does not exist, but needs to.
 
+    This callbacks is also run between the init phase and the start of the game, and so can be used to initialize
+    callbacks that need to be run when th
+
+.. var:: config.after_init_callbacks = [ ... ]
+
+    A list of functions that are called (with no arguments) at the very end of the init phase, before the game starts
+    normal execution for the first time. These are run after :var:`config.after_default_callbacks`, and so this is t
+    he place to set up callbacks that need access to default data. (The difference is that this is only run once,
+    while :var:`config.after_default_callbacks` is run after rollback and loading a save.)
+
+    The suggested use for this is setting up other callbacks that require access to default data. Other operations
+    may not work - this runs after most config variables shouldn't be changed, so changing them here may not have
+    the desired effect, but before actual game execution begins.
+
 .. var:: config.context_callbacks = [ ]
 
     These are callbacks that are called with no arguments when Ren'Py enters
