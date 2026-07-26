@@ -97,6 +97,17 @@ These take functions that are called when certain events occur. These are not th
 callbacks - ones corresponding to more specific features are listed in the section on
 that feature.
 
+Callbacks can be registered with the :func:`renpy.callback` function, a Python decorator that
+automatically registers a function with the appropriate callback list based on the functon name,
+which automatically gets pluralized.  For example::
+
+    @renpy.callback
+    def start_callback():
+        import time
+        global actual_start_time
+        acual_start_time = time.time()
+
+
 .. var:: config.after_default_callbacks = [ ... ]
 
     A list of functions that are called (with no arguments) whenever
