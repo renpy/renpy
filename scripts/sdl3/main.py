@@ -59,6 +59,10 @@ class Generator:
         if cursor.location.file is None:
             return
 
+        decl = decl.rstrip()
+        if not decl.strip():
+            return
+
         header = Path(cursor.location.file.name).relative_to(self.include_path)
         self.declarations.append((header, decl))
 
@@ -89,7 +93,8 @@ class Generator:
 
             for header, decl in self.declarations:
                 if header != old_header:
-                    print(file=f)
+                    if old_header is not None:
+                        print(file=f)
                     print(f"    # Definitions from {header.as_posix()}", file=f)
 
                     old_header = header

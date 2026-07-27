@@ -6,7 +6,6 @@ from libcpp cimport bool as cbool
 ctypedef struct va_list
 
 cdef extern from "SDL3/SDL.h" nogil:
-
     # Definitions from SDL3/SDL_stdinc.h
     ctypedef int8_t Sint8
     ctypedef uint8_t Uint8
@@ -125,14 +124,14 @@ cdef extern from "SDL3/SDL.h" nogil:
     Uint32 SDL_StepUTF8 (const char **pstr, size_t *pslen)
     Uint32 SDL_StepBackUTF8 (const char *start, const char **pstr)
     char *SDL_UCS4ToUTF8 (Uint32 codepoint, char *dst)
-    int SDL_sscanf (const char *text, const char *fmt, ...) 
-    int SDL_vsscanf (const char *text, const char *fmt, va_list ap) 
-    int SDL_snprintf (char *text, size_t maxlen, const char *fmt, ...) 
+    int SDL_sscanf (const char *text, const char *fmt, ...)
+    int SDL_vsscanf (const char *text, const char *fmt, va_list ap)
+    int SDL_snprintf (char *text, size_t maxlen, const char *fmt, ...)
     int SDL_swprintf (wchar_t *text, size_t maxlen, const wchar_t *fmt, ...)
-    int SDL_vsnprintf (char *text, size_t maxlen, const char *fmt, va_list ap) 
+    int SDL_vsnprintf (char *text, size_t maxlen, const char *fmt, va_list ap)
     int SDL_vswprintf (wchar_t *text, size_t maxlen, const wchar_t *fmt, va_list ap)
-    int SDL_asprintf (char **strp, const char *fmt, ...) 
-    int SDL_vasprintf (char **strp, const char *fmt, va_list ap) 
+    int SDL_asprintf (char **strp, const char *fmt, ...)
+    int SDL_vasprintf (char **strp, const char *fmt, va_list ap)
     void SDL_srand (Uint64 seed)
     Sint32 SDL_rand (Sint32 n)
     float SDL_randf ()
@@ -194,8 +193,6 @@ cdef extern from "SDL3/SDL.h" nogil:
     int SDL_iconv_close (SDL_iconv_t cd)
     size_t SDL_iconv (SDL_iconv_t cd, const char **inbuf, size_t *inbytesleft, char **outbuf, size_t *outbytesleft)
     char *SDL_iconv_string (const char *tocode, const char *fromcode, const char *inbuf, size_t inbytesleft)
-    
-    
     ctypedef void (*SDL_FunctionPointer)()
 
     # Definitions from SDL3/SDL_assert.h
@@ -276,12 +273,9 @@ cdef extern from "SDL3/SDL.h" nogil:
     void *SDL_SetAtomicPointer (void **a, void *v)
     void *SDL_GetAtomicPointer (void **a)
 
-    # Definitions from SDL3/SDL_endian.h
-    
-
     # Definitions from SDL3/SDL_error.h
-    cbool SDL_SetError (const char *fmt, ...) 
-    cbool SDL_SetErrorV (const char *fmt, va_list ap) 
+    cbool SDL_SetError (const char *fmt, ...)
+    cbool SDL_SetErrorV (const char *fmt, va_list ap)
     cbool SDL_OutOfMemory ()
     const char *SDL_GetError ()
     cbool SDL_ClearError ()
@@ -418,8 +412,8 @@ cdef extern from "SDL3/SDL.h" nogil:
     Sint64 SDL_TellIO (SDL_IOStream *context)
     size_t SDL_ReadIO (SDL_IOStream *context, void *ptr, size_t size)
     size_t SDL_WriteIO (SDL_IOStream *context, const void *ptr, size_t size)
-    size_t SDL_IOprintf (SDL_IOStream *context, const char *fmt, ...) 
-    size_t SDL_IOvprintf (SDL_IOStream *context, const char *fmt, va_list ap) 
+    size_t SDL_IOprintf (SDL_IOStream *context, const char *fmt, ...)
+    size_t SDL_IOvprintf (SDL_IOStream *context, const char *fmt, va_list ap)
     cbool SDL_FlushIO (SDL_IOStream *context)
     void *SDL_LoadFile_IO (SDL_IOStream *src, size_t *datasize, cbool closeio)
     void *SDL_LoadFile (const char *file, size_t *datasize)
@@ -535,10 +529,6 @@ cdef extern from "SDL3/SDL.h" nogil:
     cbool SDL_ConvertAudioSamples (const SDL_AudioSpec *src_spec, const Uint8 *src_data, int src_len, const SDL_AudioSpec *dst_spec, Uint8 **dst_data, int *dst_len)
     const char *SDL_GetAudioFormatName (SDL_AudioFormat format)
     int SDL_GetSilenceValueForFormat (SDL_AudioFormat format)
-
-    # Definitions from SDL3/SDL_bits.h
-    
-    
 
     # Definitions from SDL3/SDL_blendmode.h
     ctypedef Uint32 SDL_BlendMode
@@ -821,19 +811,11 @@ cdef extern from "SDL3/SDL.h" nogil:
         float y
         float w
         float h
-    
-    
-    
-    
     cbool SDL_HasRectIntersection (const SDL_Rect *A, const SDL_Rect *B)
     cbool SDL_GetRectIntersection (const SDL_Rect *A, const SDL_Rect *B, SDL_Rect *result)
     cbool SDL_GetRectUnion (const SDL_Rect *A, const SDL_Rect *B, SDL_Rect *result)
     cbool SDL_GetRectEnclosingPoints (const SDL_Point *points, int count, const SDL_Rect *clip, SDL_Rect *result)
     cbool SDL_GetRectAndLineIntersection (const SDL_Rect *rect, int *X1, int *Y1, int *X2, int *Y2)
-    
-    
-    
-    
     cbool SDL_HasRectIntersectionFloat (const SDL_FRect *A, const SDL_FRect *B)
     cbool SDL_GetRectIntersectionFloat (const SDL_FRect *A, const SDL_FRect *B, SDL_FRect *result)
     cbool SDL_GetRectUnionFloat (const SDL_FRect *A, const SDL_FRect *B, SDL_FRect *result)
@@ -3354,16 +3336,16 @@ cdef extern from "SDL3/SDL.h" nogil:
     SDL_LogPriority SDL_GetLogPriority (int category)
     void SDL_ResetLogPriorities ()
     cbool SDL_SetLogPriorityPrefix (SDL_LogPriority priority, const char *prefix)
-    void SDL_Log (const char *fmt, ...) 
-    void SDL_LogTrace (int category, const char *fmt, ...) 
-    void SDL_LogVerbose (int category, const char *fmt, ...) 
-    void SDL_LogDebug (int category, const char *fmt, ...) 
-    void SDL_LogInfo (int category, const char *fmt, ...) 
-    void SDL_LogWarn (int category, const char *fmt, ...) 
-    void SDL_LogError (int category, const char *fmt, ...) 
-    void SDL_LogCritical (int category, const char *fmt, ...) 
-    void SDL_LogMessage (int category, SDL_LogPriority priority, const char *fmt, ...) 
-    void SDL_LogMessageV (int category, SDL_LogPriority priority, const char *fmt, va_list ap) 
+    void SDL_Log (const char *fmt, ...)
+    void SDL_LogTrace (int category, const char *fmt, ...)
+    void SDL_LogVerbose (int category, const char *fmt, ...)
+    void SDL_LogDebug (int category, const char *fmt, ...)
+    void SDL_LogInfo (int category, const char *fmt, ...)
+    void SDL_LogWarn (int category, const char *fmt, ...)
+    void SDL_LogError (int category, const char *fmt, ...)
+    void SDL_LogCritical (int category, const char *fmt, ...)
+    void SDL_LogMessage (int category, SDL_LogPriority priority, const char *fmt, ...)
+    void SDL_LogMessageV (int category, SDL_LogPriority priority, const char *fmt, va_list ap)
     ctypedef void (*SDL_LogOutputFunction)(void *userdata, int category, SDL_LogPriority priority, const char *message)
     SDL_LogOutputFunction SDL_GetDefaultLogOutputFunction ()
     void SDL_GetLogOutputFunction (SDL_LogOutputFunction *callback, void **userdata)
@@ -3550,7 +3532,7 @@ cdef extern from "SDL3/SDL.h" nogil:
     cbool SDL_SetRenderVSync (SDL_Renderer *renderer, int vsync)
     cbool SDL_GetRenderVSync (SDL_Renderer *renderer, int *vsync)
     cbool SDL_RenderDebugText (SDL_Renderer *renderer, float x, float y, const char *str)
-    cbool SDL_RenderDebugTextFormat (SDL_Renderer *renderer, float x, float y, const char *fmt, ...) 
+    cbool SDL_RenderDebugTextFormat (SDL_Renderer *renderer, float x, float y, const char *fmt, ...)
     cbool SDL_SetDefaultTextureScaleMode (SDL_Renderer *renderer, SDL_ScaleMode scale_mode)
     cbool SDL_GetDefaultTextureScaleMode (SDL_Renderer *renderer, SDL_ScaleMode *scale_mode)
     cdef struct SDL_GPURenderStateCreateInfo:
@@ -3571,16 +3553,6 @@ cdef extern from "SDL3/SDL.h" nogil:
     # Definitions from SDL3/SDL_storage.h
     cdef struct SDL_StorageInterface:
         Uint32 version
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         Uint64 (*space_remaining)(void *userdata)
     cdef struct SDL_Storage
     SDL_Storage *SDL_OpenTitleStorage (const char *override, SDL_PropertiesID props)
