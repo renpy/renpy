@@ -303,6 +303,25 @@ init -1500 python:
 
     @renpy.pure
     class NVLCharacter(ADVCharacter):
+        """
+        :doc: nvl
+        :name: NVLCharacter
+
+        This is used to implement NVL. You should not call it directly, you should write::
+
+            define nvl = Character(kind=nvl)
+
+        There are three parameters that are specific to NVLCharacter:
+
+        `clear`
+            If true, then the NVL screen is cleared before this line is shown.
+
+        `page_ctc`
+            The CTC indicator to use when at the end of an NVL page. If None, then the value of :var:`config.nvl_page_ctc` is used.
+
+        `page_ctc_position`
+            The position of the CTC indicator used at the end of an NVL page. If None, then the value of :var:`config.nvl_page_ctc_position` is used.
+        """
 
         # These store a specific page CTC indicator.
         page_ctc = None
@@ -316,9 +335,9 @@ init -1500 python:
             if kind is None:
                 kind = store.nvl
 
-            self.clear = properties.pop("clear", kind.clear)
-            self.page_ctc = properties.pop("page_ctc", kind.page_ctc)
-            self.page_ctc_position = properties.pop("page_ctc_position", kind.page_ctc_position)
+            self.clear = properties.pop("clear", getattr(kind, "clear", False))
+            self.page_ctc = properties.pop("page_ctc", getattr(kind, "page_ctc", None))
+            self.page_ctc_position = properties.pop("page_ctc_position", getattr(kind, "page_ctc_position", None))
 
 
             properties.setdefault("statement_name", "say-nvl")
