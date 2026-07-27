@@ -652,7 +652,7 @@ def post(e):
     Posts event object `e` to the event queue.
     """
 
-    cdef SDL_Event event;
+    cdef SDL_Event event
 
     if not isinstance(e, EventType):
         raise error("event.post must be called with an Event.")
