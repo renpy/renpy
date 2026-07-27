@@ -19,14 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
 from functools import partial
 from typing import Callable
 
 import renpy
-from renpy.pyanalysis import const, pure, not_const
+from renpy.pyanalysis import pure
 
 
 def renpy_pure(fn):
@@ -44,8 +41,7 @@ def renpy_pure(fn):
     return fn
 
 
-
-def callback(f:str|None|Callable=None, name:str|None=None, late=False):
+def callback(f: str | Callable | None = None, name: str | None = None, *, late: bool = False) -> Callable:
     """
     :doc: other
 
@@ -89,35 +85,28 @@ def callback(f:str|None|Callable=None, name:str|None=None, late=False):
         else:
             return partial(callback, name=f, late=late)
 
-    print(f, name, None)
-
     if name is None:
+        name = f.__name__.removesuffix("_callback").removesuffix("_callbacks")
 
-        prefix, _, suffix = f.__name__.rpartition("_")
-        if suffix in { "callback", "callbacks" }:
-            name = prefix
-        else:
-            name = f.__name__
-
-    print("AAA", name)
-
-    for i in (name + "_callbacks", name + "_callback"):
+    for i in (f"{name}_callbacks", f"{name}_callback"):
         if hasattr(renpy.config, i):
             if late:
+
                 def late_callback():
                     callback(f, name=name, late=False)
 
                 renpy.config.after_init_callbacks.append(late_callback)
-            else:
-                target = getattr(renpy.config, i)
-                if isinstance(target, list) and f not in target:
-                    target.append(f)
-                else:
-                    if target is None:
-                        setattr(renpy.config, i, f)
-                    else:
-                        raise Exception(f"renpy.callback: config.{i} is not a list or None - has it already been set to a callback?")
+                return f
 
+            target = getattr(renpy.config, i)
+            if isinstance(target, list) and f not in target:
+                target.append(f)
+            elif target is None:
+                setattr(renpy.config, i, f)
+            else:
+                raise Exception(
+                    f"renpy.callback: config.{i} is not a list or None - has it already been set to a callback?"
+                )
             return f
     else:
         raise Exception(f"renpy.callback: Neither config.{name}_callbacks nor config.{name}_callback exists.")
