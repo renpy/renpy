@@ -21,58 +21,58 @@
 
 def generate_private_key() -> bytes | None:
     """
-    Generates a EC private key and return key in DER format
+    Generates a EC private key and return key in DER format.
     """
 
 def sign_data(data: bytes, private_key: bytes) -> bytes:
     """
-    returns ecdsa signature for data using sha1 hash
+    Returns ecdsa signature for data using sha1 hash.
 
     `data`
-        The data to sign
+        The data to sign.
 
     `private_key`
-        The private key to use in DER format
+        The private key to use in DER format.
     """
 
 def verify_data(data: bytes, public_key: bytes, sign: bytes) -> bool:
     """
-    verifies ecdsa signature for data using sha1 hash and returns result
+    Verifies ecdsa signature for data using sha1 hash and returns result.
 
     `data`
-        The data to sign
+        The data to sign.
 
     `public_key`
-        The public key to use in DER format
+        The public key to use in DER format.
 
     `sign`
-        The signature to verify
+        The signature to verify.
     """
 
 def get_public_key_from_private(private_key: bytes) -> bytes | None:
     """
-    returns public key in DER format from the private key
+    returns public key in DER format from the private key.
 
     `private_key`
-        The private key to use in DER format
+        The private key to use in DER format.
     """
 
 def validate_private_key(private_key: bytes) -> bool:
     """
-    Validates if given key is a private key
+    Validates if given key is a private key.
     """
 
 def validate_public_key(public_key: bytes) -> bool:
     """
-    Validates if given key is a public key
+    Validates if given key is a public key.
     """
 
 def pem_to_der(pem: bytes | str) -> bytes:
     """
-    unpacks DER from a PEM file
+    Unpacks DER from a PEM file.
     """
 
 def der_to_pem(der: bytes, name: str) -> bytes:
     """
-    packs a DER into a PEM file
+    Packs a DER into a PEM file.
     """
