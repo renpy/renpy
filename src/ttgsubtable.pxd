@@ -86,13 +86,6 @@ cdef extern from "ttgsubtable.h":
         TFeatureList FeatureList
         TLookupList LookupList
 
-    ctypedef struct TTGSUBTable:
-        int loaded
-        tt_gsub_header header
-        TScriptList ScriptList
-        TFeatureList FeatureList
-        TLookupList LookupList
-
     void LoadGSUBTable(TTGSUBTable *table, FT_Face face)
     int GetVerticalGlyph(TTGSUBTable *table, uint32_t glyphnum, uint32_t *vglyphnum)
     void init_gsubtable(TTGSUBTable *table)
