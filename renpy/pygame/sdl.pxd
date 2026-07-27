@@ -813,9 +813,9 @@ cdef extern from "SDL3/SDL.h" nogil:
         float y
     cdef struct SDL_Rect:
         int x
-        int x, y
+        int y
         int w
-        int w, h
+        int h
     cdef struct SDL_FRect:
         float x
         float y
@@ -3378,8 +3378,8 @@ cdef extern from "SDL3/SDL.h" nogil:
         const char *text
     cdef struct SDL_MessageBoxColor:
         Uint8 r
-        Uint8 r, g
-        Uint8 r, g, b
+        Uint8 g
+        Uint8 b
     cdef enum SDL_MessageBoxColorType:
         SDL_MESSAGEBOX_COLOR_BACKGROUND
         SDL_MESSAGEBOX_COLOR_TEXT

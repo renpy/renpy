@@ -200,12 +200,6 @@ class Generator:
 
         return joined
 
-    def type_spelling(self, t: cindex.Type) -> str:
-        spelling = t.spelling
-
-        spelling = re.sub(r"\b(struct|union|enum)\b\s*", "", spelling)
-        return spelling.strip()
-
     def function(self, node: cindex.Cursor):
         if not self.is_relevant(node):
             return
@@ -216,17 +210,6 @@ class Generator:
             return
 
         sig = self.elide_tokens(node)
-
-        # ret_type = node.result_type.spelling
-        # params = []
-        # for arg in node.get_arguments():
-
-        #     params.append(self.elide_tokens(arg))
-
-        # if ret_type.endswith("*"):
-        #     sig = f"{ret_type}{name}({', '.join(params)})"
-        # else:
-        #     sig = f"{ret_type} {name}({', '.join(params)})"
 
         self.declare(node, f"    {sig}")
 
@@ -246,6 +229,7 @@ class Generator:
                     if first_field:
                         self.declare(node, f"    cdef struct {node.spelling}:")
                         first_field = False
+
                     self.declare(child, f"        {self.elide_tokens(child)}")
                     has_fields = True
 
@@ -352,7 +336,24 @@ class Generator:
 
             # We don't support anonymous structs/unions.
             case "SDL_GetGamepadBindings":
-                self.declare(node, """    ctypedef struct SDL_GamepadBinding""")
+                self.declare(node, "    ctypedef struct SDL_GamepadBinding")
+
+            # libclang emit duplicate tokens for grouped declarations in these structs, which triggers Cython warning:
+            # warning: renpy\pygame\sdl.pxd: 'x' redeclared
+            case "SDL_Rect":
+                self.declared_names.add(name)
+                self.declare(node, "    cdef struct SDL_Rect:")
+                self.declare(node, "        int x")
+                self.declare(node, "        int y")
+                self.declare(node, "        int w")
+                self.declare(node, "        int h")
+
+            case "SDL_MessageBoxColor":
+                self.declared_names.add(name)
+                self.declare(node, "    cdef struct SDL_MessageBoxColor:")
+                self.declare(node, "        Uint8 r")
+                self.declare(node, "        Uint8 g")
+                self.declare(node, "        Uint8 b")
 
     def traverse(self, node: cindex.Cursor, depth: int):
         self.before(node, node.spelling)
