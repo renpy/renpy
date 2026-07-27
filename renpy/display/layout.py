@@ -1638,6 +1638,9 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
 
             self.child = child
 
+            if self.redraw_on_change_only:
+                renpy.display.render.redraw(self, 0)
+
         if redraw is not None:
             renpy.display.render.redraw(self, redraw)
 
@@ -1647,13 +1650,8 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
 
             return
 
-        # Re-evaluate now and only invalidate when changed.
-        old_child = self.child
-
+        # Re-evaluate the pick; update() invalidates if it changed.
         self.update(self.last_st, self.last_at)
-
-        if self.child is not old_child:
-            renpy.display.render.redraw(self, 0)
 
     def render(self, w, h, st, at):
         self.update(st, at)
