@@ -304,6 +304,10 @@ init -1500 python:
     @renpy.pure
     class NVLCharacter(ADVCharacter):
 
+        # These store a specific page CTC indicator.
+        page_ctc = None
+        page_ctc_position = None
+
         def __init__(self,
                      who=renpy.character.NotSet,
                      kind=None,
@@ -312,10 +316,10 @@ init -1500 python:
             if kind is None:
                 kind = store.nvl
 
-            if "clear" in properties:
-                self.clear = properties.pop("clear")
-            else:
-                self.clear = kind.clear
+            self.clear = properties.pop("clear", kind.clear)
+            self.page_ctc = properties.pop("page_ctc", kind.page_ctc)
+            self.page_ctc_position = properties.pop("page_ctc_position", kind.page_ctc_position)
+
 
             properties.setdefault("statement_name", "say-nvl")
 
@@ -369,9 +373,12 @@ init -1500 python:
 
             page = self.clear or nvl_clear_next()
 
-            if config.nvl_page_ctc and page:
-                display_args["ctc"] = renpy.easy.displayable_or_none(config.nvl_page_ctc)
-                display_args["ctc_position"] = config.nvl_page_ctc_position
+            page_ctc = self.page_ctc if (self.page_ctc is not None) else config.nvl_page_ctc
+            page_ctc_position = self.page_ctc_position if (self.page_ctc_position is not None) else config.nvl_page_ctc_position
+
+            if page_ctc and page:
+                display_args["ctc"] = renpy.easy.displayable_or_none(page_ctc)
+                display_args["ctc_position"] = page_ctc_position
 
             if config.nvl_paged_rollback:
                 if page:
