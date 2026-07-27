@@ -3605,7 +3605,6 @@ cdef extern from "SDL3/SDL.h" nogil:
     cdef union _XEvent:
         pass
     ctypedef _XEvent XEvent
-    # Skipping empty typedef SDL_X11EventHook
     ctypedef void (*SDL_X11EventHook)(void *userdata, XEvent *event)
     void SDL_SetX11EventHook (SDL_X11EventHook callback, void *userdata)
     cbool SDL_SetLinuxThreadPriority (Sint64 threadID, int priority)
