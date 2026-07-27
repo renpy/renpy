@@ -949,9 +949,9 @@ cdef class Surface:
         cdef Uint8 *pixels = <Uint8 *> self.surface.pixels
         return pixels[self.surface.h * self.surface.pitch]
 
-    property _pixels_address:
-        def __get__(self):
-            return <Uint64> self.surface.pixels
+    @property
+    def _pixels_address(self):
+        return <Uint64> self.surface.pixels
 
     def from_data(self, data):
         cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
