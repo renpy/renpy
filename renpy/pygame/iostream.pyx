@@ -489,7 +489,7 @@ cdef SDL_IOStream *to_sdl_iostream(filelike, mode="rb", base=None, length=None) 
 
             rw = rv
 
-            SDL_SeekIO(rw, base, SDL_IO_SEEK_SET);
+            SDL_SeekIO(rw, base, SDL_IO_SEEK_SET)
 
             sf = <SubFile *> calloc(sizeof(SubFile), 1)
             sf.rw = rw

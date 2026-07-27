@@ -631,7 +631,7 @@ cdef class GLTexture(GL2Model):
 
         while True:
 
-            glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+            glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL)
 
             if tw == 1 and th == 1:
                 break

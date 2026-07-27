@@ -39,13 +39,13 @@ from libc.stdlib cimport free
 import base64
 
 cdef extern from "ec_sign_core.h":
-    int ECSign(const unsigned char *priv_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len);
-    int ECVerify(const unsigned char *public_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len);
+    int ECSign(const unsigned char *priv_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len)
+    int ECVerify(const unsigned char *public_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len)
 
-    void ECGeneratePrivateKey(unsigned char **priv_key_der, size_t *priv_len);
-    void ECGetPublicKeyFromPrivate(const unsigned char *priv_key_der, size_t priv_len, unsigned char **public_key_der, size_t *pub_len);
+    void ECGeneratePrivateKey(unsigned char **priv_key_der, size_t *priv_len)
+    void ECGetPublicKeyFromPrivate(const unsigned char *priv_key_der, size_t priv_len, unsigned char **public_key_der, size_t *pub_len)
 
-    int ECValidateKey(int public, const unsigned char *key_der, size_t key_len);
+    int ECValidateKey(int public, const unsigned char *key_der, size_t key_len)
 
 def generate_private_key() -> bytes | None:
     cdef unsigned char* privkey = NULL
@@ -57,7 +57,7 @@ def generate_private_key() -> bytes | None:
     if privlen > 0 and privkey != NULL:
         rv = bytes(privkey[:privlen])
 
-    free(privkey);
+    free(privkey)
 
     return rv
 
@@ -65,7 +65,7 @@ def sign_data(data : bytes, private_key : bytes) -> bytes:
     sign = bytes(64)
 
     if not ECSign(private_key, len(private_key), data, len(data), sign, len(sign)):
-        raise Exception("Failed to sign data");
+        raise Exception("Failed to sign data")
 
     # print(" ".join("{:02x}".format(x) for x in sign))
     return sign

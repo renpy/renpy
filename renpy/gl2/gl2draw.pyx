@@ -291,13 +291,13 @@ cdef class GL2Draw:
 
         if gles:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "1")
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3);
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0)
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
         else:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2)
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0)
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY)
 
         if renpy.config.gl_set_attributes is not None:
@@ -753,12 +753,12 @@ cdef class GL2Draw:
         cdef GLint max_texture_size
 
         # Store the default FBO.
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &self.default_fbo);
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &self.default_fbo)
         self.current_fbo = self.default_fbo
 
         # Store the default RBO
         cdef GLuint default_renderbuffer
-        glGetIntegerv(GL_RENDERBUFFER_BINDING, <GLint *> &default_renderbuffer);
+        glGetIntegerv(GL_RENDERBUFFER_BINDING, <GLint *> &default_renderbuffer)
 
         # Generate the framebuffer.
         glGenFramebuffers(1, &self.fbo)
