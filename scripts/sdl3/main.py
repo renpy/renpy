@@ -326,12 +326,15 @@ class Generator:
             return
 
         match name:
-            # Cindex gets wrong.
+            # Cindex gets definition of SDL_EventFilter wrong.
             case "SDL_SetEventFilter":
-                self.declare(node, "    ctypedef cbool (*SDL_EventFilter)(void *userdata, SDL_Event *event)")
+                if "SDL_EventFilter" not in self.declared_names:
+                    self.declared_names.add("SDL_EventFilter")
+                    self.declare(node, "    ctypedef cbool (*SDL_EventFilter)(void *userdata, SDL_Event *event)")
 
-            # Cindex gets wrong.
-            case "SDL_SetX11EventHook":
+            # Cindex gets definition of SDL_X11EventHook wrong.
+            case "SDL_X11EventHook":
+                self.declared_names.add(name)
                 self.declare(node, "    ctypedef void (*SDL_X11EventHook)(void *userdata, XEvent *event)")
 
             # We don't support anonymous structs/unions.
