@@ -339,7 +339,9 @@ class Generator:
 
             # We don't support anonymous structs/unions.
             case "SDL_GetGamepadBindings":
-                self.declare(node, "    ctypedef struct SDL_GamepadBinding")
+                if "SDL_GamepadBinding" not in self.declared_names:
+                    self.declared_names.add("SDL_GamepadBinding")
+                    self.declare(node, "    ctypedef struct SDL_GamepadBinding")
 
             # libclang emit duplicate tokens for grouped declarations in these structs, which triggers Cython warning:
             # warning: renpy\pygame\sdl.pxd: 'x' redeclared

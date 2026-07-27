@@ -8,9 +8,6 @@ ctypedef struct va_list
 from .sdl cimport *
 cdef extern from "SDL3_image/SDL_image.h" nogil:
 
-    # Definitions from SDL3/SDL_gamepad.h
-    ctypedef struct SDL_GamepadBinding
-
     # Definitions from SDL3_image/SDL_image.h
     int IMG_Version ()
     SDL_Surface *IMG_Load (const char *file)
