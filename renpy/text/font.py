@@ -646,28 +646,7 @@ def load_face(fn, shaper):
 
     font_file = None
 
-    try:
-        font_file = renpy.loader.load(fn, directory="fonts")
-    except IOError:
-        if (not renpy.config.developer) or renpy.config.allow_sysfonts:
-            # Let's try to find the font on our own.
-            fonts = [i.strip().lower() for i in fn.split(",")]
-
-            pygame.sysfont.initsysfonts()
-
-            for v in pygame.sysfont.Sysfonts.values():  # type: ignore
-                if v is not None:
-                    for _flags, ffn in v.items():
-                        for i in fonts:
-                            if ffn.lower().endswith(i):
-                                font_file = open(ffn, "rb")
-                                break
-
-                        if font_file:
-                            break
-
-                if font_file:
-                    break
+    font_file = renpy.loader.load(fn, directory="fonts")
 
     if font_file is None:
         raise Exception("Could not find font {0!r}".format(orig_fn))
