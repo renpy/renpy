@@ -261,6 +261,9 @@ class Live2DCommon(object):
     def __init__(self, filename, default_fade, old_beziers):
         init()
 
+        if old_beziers is None:
+            old_beziers = renpy.config.live2d_old_beziers
+
         # If a directory is given rather than a json file, expand it.
         if not filename.endswith(".json"):
             suffix = filename.rpartition("/")[2]
@@ -628,6 +631,7 @@ class Live2D(renpy.display.displayable.Displayable):
     properties = {}
 
     default_fade = 1.0
+    old_beziers = None
 
     def create_common(self):
         key = (self.filename, self.default_fade, self.old_beziers)
@@ -697,10 +701,7 @@ class Live2D(renpy.display.displayable.Displayable):
 
         self.filename = filename
 
-        if old_beziers is None:
-            self.old_beziers = renpy.config.live2d_old_beziers
-        else:
-            self.old_beziers = old_beziers
+        self.old_beziers = old_beziers
 
         # Load the common data. Needed!
         common = self.common
@@ -805,6 +806,7 @@ class Live2D(renpy.display.displayable.Displayable):
             used_nonexclusive=used_nonexclusive,
             sustain=sustain,
             default_fade=self.default_fade,
+            old_beziers=self.old_beziers,
             **self.properties,
         )
 
