@@ -50,7 +50,7 @@ Defining Animations
 
 Live2D animations are defined using the Live2D displayable and the image statement:
 
-.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, update_function=None, old_beziers=None, **properties)
+.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, aliases=None, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, update_function=None, default_fade=1.0, old_beziers=None, deduplication_key=None, **properties)
 
     This displayable displays a Live2D animation.
 
@@ -83,9 +83,8 @@ Live2D animations are defined using the Live2D displayable and the image stateme
     `loop`
         True if the final motion should be looped, False otherwise.
 
-    `alias`
-        A dictionary mapping aliases to the motions or expressions they
-        alias.
+    `aliases`
+        A dictionary mapping aliases to the motions or expressions they alias.
 
     `fade`
         True if motion fading should be enabled, False if motion fading
@@ -143,6 +142,8 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         If True, this uses the old Bezier curve behavior, which uses easing. If False, the Cardano interpretation
         of beziers is used. If none, the value of :var:`config.live2d_old_beziers` is used.
 
+    `deduplication_key`
+        If not None, this is a key used to deduplicate Live2D displayables that reference the same `filename` but have different `aliases`, `nonexclusive`, `seamless`, `default_fade`, `attribute_function`, `attribute_filter` and/or `update_function`.
 
     The difference between `attribute_function` and `attribute_filter` is
     that the former is generally used to compute replacement - the presence
@@ -216,7 +217,7 @@ defining different zooms and scaling factors. ::
     image hiyori far = Live2D("Resources/Hiyori", base=.9)
 
 Keep in mind that the user's hardware may be unable to init Live2D, and in that
-case a single call to Live2D() will keep the entire project from loading. 
+case a single call to Live2D() will keep the entire project from loading.
 If your game should be able to work even without Live2D, you could use a wrapper
 or workaround, for example::
 
