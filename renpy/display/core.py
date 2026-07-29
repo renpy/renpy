@@ -2288,7 +2288,9 @@ class Interface:
 
             # Step 1: Run gc.
             if step == 1:
-                self.consider_gc()
+                if expensive or not self.event_peek(False):
+                    self.consider_gc()
+
                 step += 1
 
             # Step 2: Push textures to GPU.
@@ -2335,7 +2337,7 @@ class Interface:
                     if allow_preload:
                         try:
                             renpy.display.im.cache.in_preload_pass = True
-                            renpy.display.im.cache.preload_thread_pass()
+                            renpy.display.im.cache.preload_thread_pass(None if expensive else deadline)
                         finally:
                             renpy.display.im.cache.in_preload_pass = False
 
@@ -2343,7 +2345,7 @@ class Interface:
 
             # Step 5: Autosave.
             elif step == 5:
-                if not self.did_autosave:
+                if not self.did_autosave and (expensive or not self.event_peek(False)):
                     renpy.loadsave.autosave()
                     self.did_autosave = True
 
@@ -2351,7 +2353,7 @@ class Interface:
 
             # Step 6: Persistent data.
             elif step == 6:
-                if not self.did_persistent:
+                if not self.did_persistent and (expensive or not self.event_peek(False)):
                     if renpy.emscripten:
                         renpy.persistent.update()
                     else:
