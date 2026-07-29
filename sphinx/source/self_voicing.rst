@@ -167,6 +167,12 @@ Descriptive Text
         If not None, this should be a character object that is used to
         display the descriptive text, instead of the narrator.
 
+Text Tags
+    There are two text tags that are useful for self-voicing. The :tt:`alt` tag is to provide alternative text that is heard
+    but not seen, and the :tt:`noalt` tag lets you provide text that is seen but not heard. For example::
+
+        p "My name is {noalt}Cholmondeley{/noalt}{alt}Chumley{/alt}."
+
 The :var:`config.tts_substitutions` variable can be used to substitute
 words in the text being spoken, to better control pronunciation. The
 :var:`config.tts_voice` variable can be used to select the voice used
