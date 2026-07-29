@@ -2273,15 +2273,18 @@ class Interface:
         # frames where we GC.
         start = get_time()
 
+        # Gate inexpensive passes by configured budget rather than by pending 
+        # events so that frequent redraws don't starve idle tasks entirely.
+        deadline = start + renpy.config.idle_frame_budget
+
         step = 1
 
         while True:
-            if self.event_peek(False) and not self.force_prediction:
-                break
-
-            if not expensive:
-                if get_time() > (start + 0.0005):
+            if expensive:
+                if self.event_peek(False) and not self.force_prediction:
                     break
+            elif get_time() > deadline:
+                break
 
             # Step 1: Run gc.
             if step == 1:
@@ -2291,7 +2294,7 @@ class Interface:
             # Step 2: Push textures to GPU.
             elif step == 2:
                 while renpy.display.draw.ready_one_texture():
-                    if not expensive and get_time() > (start + 0.0005):
+                    if not expensive and get_time() > deadline:
                         break
                 step += 1
 
