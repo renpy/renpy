@@ -109,6 +109,9 @@ and used to populate the :ref:`audio-namespace <audio-namespace>`.
 Other Changes
 -------------
 
+Ren'Py now considered Android devices under 6.95 inches to be phones, and devices 6.95 inches and larger to be
+tablets, for the purpose of selecting a variant. The previous breakpoint was 6.0 inches.
+
 The :var:`config.mesh_oversample` variable now defaults to 8.0, which allows meshes to be scaled up before becoming blurry.
 
 The ``scene`` statement now respects :var:`config.tag_layer` when deciding which layer to clear.
