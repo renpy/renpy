@@ -558,12 +558,12 @@ class Cache:
     def _preload_thread_pass_serial(self, deadline: float | None = None):
         """
         Serial preloading - processes images one at a time. If `deadline` is
-        given, stops once renpy.display.core.get_time() passes it, leaving the
-        rest of the queue for a later pass.
+        given, stops once time.perf_counter() passes it, leaving the rest of 
+        the queue for a later pass.
         """
 
         while self.preloads and self.keep_preloading:
-            if deadline is not None and renpy.display.core.get_time() > deadline:
+            if deadline is not None and time.perf_counter() > deadline:
                 break
             if not self.cleanout():
                 if renpy.config.debug_image_cache:
