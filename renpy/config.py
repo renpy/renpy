@@ -947,8 +947,8 @@ gc_print_unreachable = "RENPY_GC_PRINT_UNREACHABLE" in os.environ
 # prediction.
 idle_frame = 4
 
-# The time budget, in seconds, for one inexpensive idle pass.
-idle_frame_budget = 0.0005
+# The time budget, in milliseconds, for one inexpensive idle pass.
+idle_frame_budget = 0.5
 
 # Does taking the transform state go through image reference targets?
 take_state_from_target = False

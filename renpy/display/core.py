@@ -2275,7 +2275,7 @@ class Interface:
 
         # Gate inexpensive passes by configured budget rather than by pending 
         # events so that frequent redraws don't starve idle tasks entirely.
-        deadline = start + renpy.config.idle_frame_budget
+        deadline = start + renpy.config.idle_frame_budget / 1000.0
 
         step = 1
 
