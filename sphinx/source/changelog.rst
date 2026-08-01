@@ -109,6 +109,9 @@ and used to populate the :ref:`audio-namespace <audio-namespace>`.
 Other Changes
 -------------
 
+The ``--compile`` command line argument now deletes orphaned rpyc files by default.
+This can be disabled with the ``--keep-orphan-rpyc`` command line argument.
+
 Ren'Py now considered Android devices under 6.95 inches to be phones, and devices 6.95 inches and larger to be
 tablets, for the purpose of selecting a variant. The previous breakpoint was 6.0 inches.
 
