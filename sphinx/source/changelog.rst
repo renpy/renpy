@@ -60,6 +60,12 @@ The :var:`config.tts_voice` variable is no longer used.
 Features
 --------
 
+The :func:`renpy.callback` decorator registers callbacks with Ren'Py in more concise way.
+
+The new :var:`config.after_init_callbacks` variable is a list of callbacks that are called at the very end of the init phase,
+before the game starts normal execution for the first time. These are run once per Ren'Py start, after the default
+statements have been executed, and so this is the place to set up callbacks that need access to default data.
+
 :class:`Movie` now accepts a movie file as it's `loop` parameter. When given, the movie passed to `play` is played
 to completion, and then `loop` will be played looping. This is intended to be seamless as long as the `play` movie
 is long enough to allow the `loop` movie to load.
@@ -102,6 +108,12 @@ and used to populate the :ref:`audio-namespace <audio-namespace>`.
 
 Other Changes
 -------------
+
+The ``--compile`` command line argument now deletes orphaned rpyc files by default.
+This can be disabled with the ``--keep-orphan-rpyc`` command line argument.
+
+Ren'Py now considered Android devices under 6.95 inches to be phones, and devices 6.95 inches and larger to be
+tablets, for the purpose of selecting a variant. The previous breakpoint was 6.0 inches.
 
 The :var:`config.mesh_oversample` variable now defaults to 8.0, which allows meshes to be scaled up before becoming blurry.
 

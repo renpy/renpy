@@ -164,6 +164,7 @@ from renpy.execution import (
 )
 
 from renpy.exports.commonexports import (
+    callback as callback,
     renpy_pure as renpy_pure,
 )
 

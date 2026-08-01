@@ -365,7 +365,7 @@ cdef class Window:
 
         if self.gl_context != NULL:
             with nogil:
-                SDL_ClearError();
+                SDL_ClearError()
 
                 SDL_GL_SwapWindow(self.window)
 

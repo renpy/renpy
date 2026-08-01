@@ -153,7 +153,7 @@ class Script(object):
         # If recompiling everything, remove orphan .rpyc files.
         # Otherwise, will fail in case orphan .rpyc have same
         # labels as in other scripts (usually happens on script rename).
-        if (renpy.game.args.command == "compile") and not (renpy.game.args.keep_orphan_rpyc):
+        if (renpy.game.args.command == "compile" or renpy.game.args.compile) and not (renpy.game.args.keep_orphan_rpyc):
             self.clean_script_files()
 
             # Reindex files so that .rpyc's are cleared out.

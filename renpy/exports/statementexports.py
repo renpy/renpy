@@ -353,6 +353,12 @@ def call_screen(_screen_name, *args, **kwargs):
     return rv
 
 
+_ran_after_init_callbacks: bool = False
+"""
+Ensures config.after_init_callbacks are only run once.
+"""
+
+
 def execute_default_statement(start=False):
     """
     :undocumented:
@@ -369,6 +375,14 @@ def execute_default_statement(start=False):
 
     for i in renpy.config.after_default_callbacks:
         i()
+
+    global _ran_after_init_callbacks
+
+    if not _ran_after_init_callbacks:
+        for i in renpy.config.after_init_callbacks:
+            i()
+
+    _ran_after_init_callbacks = True
 
 
 def get_statement_name():

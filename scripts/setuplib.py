@@ -295,8 +295,10 @@ def setup(name, version):
         define_macros += data["define_macros"]
 
         link_args: list[str] = []
-        link_args += package_kwargs["library_dirs"]
+        link_args += package_kwargs["extra_link_args"]
         link_args += extra_link_args
+
+
 
         ext_modules.append(
             setuptools.Extension(
@@ -307,6 +309,8 @@ def setup(name, version):
                 extra_compile_args=compile_args,
                 define_macros=define_macros,
                 extra_link_args=link_args,
+                library_dirs = package_kwargs["library_dirs"],
+                runtime_library_dirs = package_kwargs["library_dirs"],
                 libraries=package_kwargs["libraries"],
                 depends=data["depends"],
             )

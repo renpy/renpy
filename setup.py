@@ -126,11 +126,11 @@ def main():
     cython("renpy.gl2.gl2mesh2")
     cython("renpy.gl2.gl2mesh3")
     cython("renpy.gl2.gl2polygon")
-    cython("renpy.gl2.gl2model")
+    cython("renpy.gl2.gl2model", packages="sdl3")
     cython("renpy.gl2.gl2draw", packages="sdl3")
     cython("renpy.gl2.gl2texture", packages="sdl3")
-    cython("renpy.gl2.gl2uniform")
-    cython("renpy.gl2.gl2shader")
+    cython("renpy.gl2.gl2uniform", packages="sdl3")
+    cython("renpy.gl2.gl2shader", packages="sdl3")
     cython("renpy.gl2.gl2statecache")
 
     if cubism:
