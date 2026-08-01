@@ -1224,6 +1224,7 @@ class Interface:
 
         # Force an interaction restart.
         self.restart_interaction = True
+        self.interaction_counter = 0
 
         # True if we're doing a one-time profile.
         self.profile_once = False
