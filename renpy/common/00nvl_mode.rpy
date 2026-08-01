@@ -303,6 +303,29 @@ init -1500 python:
 
     @renpy.pure
     class NVLCharacter(ADVCharacter):
+        """
+        :doc: nvl
+        :name: NVLCharacter
+
+        This is used to implement NVL. You should not call it directly, you should write::
+
+            define nvl = Character(kind=nvl)
+
+        There are three parameters that are specific to NVLCharacter:
+
+        `clear`
+            If true, then the NVL screen is cleared before this line is shown.
+
+        `page_ctc`
+            The CTC indicator to use when at the end of an NVL page. If None, then the value of :var:`config.nvl_page_ctc` is used.
+
+        `page_ctc_position`
+            The position of the CTC indicator used at the end of an NVL page. If None, then the value of :var:`config.nvl_page_ctc_position` is used.
+        """
+
+        # These store a specific page CTC indicator.
+        page_ctc = None
+        page_ctc_position = None
 
         def __init__(self,
                      who=renpy.character.NotSet,
@@ -312,10 +335,10 @@ init -1500 python:
             if kind is None:
                 kind = store.nvl
 
-            if "clear" in properties:
-                self.clear = properties.pop("clear")
-            else:
-                self.clear = kind.clear
+            self.clear = properties.pop("clear", getattr(kind, "clear", False))
+            self.page_ctc = properties.pop("page_ctc", getattr(kind, "page_ctc", None))
+            self.page_ctc_position = properties.pop("page_ctc_position", getattr(kind, "page_ctc_position", None))
+
 
             properties.setdefault("statement_name", "say-nvl")
 
@@ -369,9 +392,12 @@ init -1500 python:
 
             page = self.clear or nvl_clear_next()
 
-            if config.nvl_page_ctc and page:
-                display_args["ctc"] = renpy.easy.displayable_or_none(config.nvl_page_ctc)
-                display_args["ctc_position"] = config.nvl_page_ctc_position
+            page_ctc = self.page_ctc if (self.page_ctc is not None) else config.nvl_page_ctc
+            page_ctc_position = self.page_ctc_position if (self.page_ctc_position is not None) else config.nvl_page_ctc_position
+
+            if page_ctc and page:
+                display_args["ctc"] = renpy.easy.displayable_or_none(page_ctc)
+                display_args["ctc_position"] = page_ctc_position
 
             if config.nvl_paged_rollback:
                 if page:

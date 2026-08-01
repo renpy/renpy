@@ -312,7 +312,7 @@ cdef class FTFont:
         LoadGSUBTable(&self.gsubtable, self.face)
 
         if outline == 0:
-            self.stroker = NULL;
+            self.stroker = NULL
             self.expand = 0
 
         else:

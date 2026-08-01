@@ -107,7 +107,7 @@ def check_error():
     it raises.)
     """
 
-    e = RPS_get_error();
+    e = RPS_get_error()
     if len(e):
         raise Exception(str(e, "utf-8", "replace"))
 

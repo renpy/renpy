@@ -19,9 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
 from typing import Any
 
 
@@ -263,10 +260,8 @@ class Live2DCommon(object):
     def __init__(self, filename, default_fade, old_beziers):
         init()
 
-        # If a directory is given rather than a json file, expand it.
-        if not filename.endswith(".json"):
-            suffix = filename.rpartition("/")[2]
-            filename = filename + "/" + suffix + ".model3.json"
+        if old_beziers is None:
+            old_beziers = renpy.config.live2d_old_beziers
 
         if renpy.config.log_live2d_loading:
             renpy.display.log.write("Loading Live2D from %r.", filename)
@@ -422,6 +417,9 @@ class Live2DCommon(object):
 
         # If not None, a function that can blend parameters itself after applying expressions.
         self.update_function = None  # type: Any
+
+    def __reduce__(self):
+        raise Exception("Live2DCommon objects cannot be pickled.")
 
     def apply_aliases(self, aliases):
         for k, v in aliases.items():
@@ -616,8 +614,6 @@ def update_states():
 
 
 class Live2D(renpy.display.displayable.Displayable):
-    filename: str
-
     name: tuple[str, str, str, int] | None = None
     """
     A structural name for this displayable, consisting of the layer, tag, and a count. This is used to
@@ -626,42 +622,66 @@ class Live2D(renpy.display.displayable.Displayable):
 
     nosave = ["common_cache"]
 
-    common_cache = None
+    common_cache: Live2DCommon | None = None
+
     _duplicatable = True
     used_nonexclusive = None
     properties = {}
 
-    default_fade = 1.0
+    filename: str
+    "Path to the .model3.json file that describes this Live2D model."
 
-    def create_common(self):
-        key = (self.filename, self.default_fade, self.old_beziers)
-        rv = common_cache.get(key, None)
+    default_fade: float = 1.0
+    "Fade time to use for motions that don't specify a fade time."
 
-        if rv is None:
-            rv = Live2DCommon(self.filename, self.default_fade, self.old_beziers)
-            common_cache[key] = rv
+    old_beziers: bool | None = None
+    """
+    If True, this uses the old Bezier curve behavior, which uses easing.
+    If False, the Cardano interpretation of beziers is used.
+    If none, the value of config.live2d_old_beziers is used.
+    """
 
-        self.common_cache = rv
-
-        return rv
+    deduplication_key: str | None = None
+    """
+    A key used to deduplicate Live2D displayables together with filename
+    and default_fade. This can be used to have same Live2D displayables
+    with different set of aliases, and other properties.
+    """
 
     @property
-    def common(self):
+    def common(self) -> Live2DCommon:
         if self.common_cache is not None:
             return self.common_cache
 
-        return self.create_common()
+        key = (
+            self.filename,
+            self.default_fade,
+            self.old_beziers,
+            self.deduplication_key,
+        )
+
+        # Look in global cache.
+        if (rv := common_cache.get(key)) is None:
+            rv = common_cache[key] = Live2DCommon(
+                self.filename,
+                self.default_fade,
+                self.old_beziers,
+            )
+
+        # Cache on instance.
+        self.common_cache = rv
+        return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
     def __init__(
         self,
-        filename,
+        filename: str,
         zoom=None,
         top=0.0,
         base=1.0,
         height=1.0,
         loop=False,
-        aliases={},
+        aliases=None,
         fade=None,
         motions=None,
         expression=None,
@@ -672,13 +692,13 @@ class Live2D(renpy.display.displayable.Displayable):
         attribute_function=None,
         attribute_filter=None,
         update_function=None,
-        default_fade=1.0,
-        old_beziers=None,
+        default_fade: float = 1.0,
+        old_beziers: bool | None = None,
+        deduplication_key: str | None = None,
         **properties,
     ):
-        super(Live2D, self).__init__(**properties)
+        super().__init__(**properties)
 
-        self.filename = filename
         self.motions = motions
         self.expression = expression
         self.used_nonexclusive = used_nonexclusive  # type: list[str]|None
@@ -694,16 +714,18 @@ class Live2D(renpy.display.displayable.Displayable):
         # The name of this displayable.
         self.name = None
 
-        self.default_fade = default_fade
-
         self.properties = properties
 
-        self.filename = filename
+        # If a directory is given rather than a json file, expand it.
+        if not filename.endswith(".json"):
+            suffix = filename.rpartition("/")[2]
+            filename = f"{filename}/{suffix}.model3.json"
 
-        if old_beziers is None:
-            self.old_beziers = renpy.config.live2d_old_beziers
-        else:
-            self.old_beziers = old_beziers
+        # Should be set before call to self.common.
+        self.filename = filename
+        self.default_fade = default_fade
+        self.old_beziers = old_beziers
+        self.deduplication_key = deduplication_key
 
         # Load the common data. Needed!
         common = self.common
@@ -808,6 +830,8 @@ class Live2D(renpy.display.displayable.Displayable):
             used_nonexclusive=used_nonexclusive,
             sustain=sustain,
             default_fade=self.default_fade,
+            old_beziers=self.old_beziers,
+            deduplication_key=self.deduplication_key,
             **self.properties,
         )
 

@@ -19,13 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import cython
-
-
-@cython.boundscheck(False)
-@cython.wraparound(False)
-cdef inline Py_UCS4 _get_c_unbounded(str data, Py_ssize_t pos) noexcept:
-    return data[pos]
+from cpython.unicode cimport PyUnicode_GET_LENGTH, PyUnicode_DATA, PyUnicode_KIND, PyUnicode_READ
 
 
 def match_whitespace(str data not None, Py_ssize_t pos, /):
@@ -34,11 +28,13 @@ def match_whitespace(str data not None, Py_ssize_t pos, /):
     if current position is not at the start of whitespace.
     """
 
+    cdef int kind = PyUnicode_KIND(data)
+    cdef const void *buf = PyUnicode_DATA(data)
+    cdef Py_ssize_t length = PyUnicode_GET_LENGTH(data)
     cdef Py_ssize_t i = pos
-    cdef Py_ssize_t length = len(data)
 
-    for i in range(pos, len(data)):
-        if _get_c_unbounded(data, i) != ' ':
+    for i in range(pos, length):
+        if PyUnicode_READ(kind, buf, i) != ' ':
             break
     else:
         i = length
@@ -53,12 +49,14 @@ def match_logical_word(str data not None, Py_ssize_t pos, /):
     start of a logical word.
     """
 
+    cdef int kind = PyUnicode_KIND(data)
+    cdef const void *buf = PyUnicode_DATA(data)
+    cdef Py_ssize_t length = PyUnicode_GET_LENGTH(data)
     cdef Py_ssize_t i = pos
-    cdef Py_ssize_t length = len(data)
     cdef Py_UCS4 c
 
     for i in range(pos, length):
-        c = _get_c_unbounded(data, i)
+        c = PyUnicode_READ(kind, buf, i)
         # Condition is the same as `is_potential_identifier_char` in CPython.
         if not (
             'a' <= c <= 'z' or
@@ -80,19 +78,21 @@ def match_operator(str data not None, Py_ssize_t pos, /):
     is not at the start of an operator.
     """
 
-    cdef Py_ssize_t length = len(data)
+    cdef int kind = PyUnicode_KIND(data)
+    cdef const void *buf = PyUnicode_DATA(data)
+    cdef Py_ssize_t length = PyUnicode_GET_LENGTH(data)
 
     cdef Py_UCS4 c1 = 0
     if pos + 0 < length:
-        c1 = _get_c_unbounded(data, pos)
+        c1 = PyUnicode_READ(kind, buf, pos + 0)
 
     cdef Py_UCS4 c2 = 0
     if pos + 1 < length:
-        c2 = _get_c_unbounded(data, pos + 1)
+        c2 = PyUnicode_READ(kind, buf, pos + 1)
 
     cdef Py_UCS4 c3 = 0
     if pos + 2 < length:
-        c3 = _get_c_unbounded(data, pos + 2)
+        c3 = PyUnicode_READ(kind, buf, pos + 2)
 
     # 3-character operators
     if c3 == '.' and c2 == '.' and c1 == '.' or c3 == '=' and (
@@ -134,30 +134,33 @@ def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
     string need to be compiled again if it is used in Python expression.
     """
 
-    cdef Py_ssize_t length = len(data)
+    cdef int kind = PyUnicode_KIND(data)
+    cdef const void *buf = PyUnicode_DATA(data)
+    cdef Py_ssize_t length = PyUnicode_GET_LENGTH(data)
+
     if pos >= length:
         return None
 
-    cdef Py_UCS4 c = _get_c_unbounded(data, pos)
+    cdef Py_UCS4 c = PyUnicode_READ(kind, buf, pos)
     if c not in '"\'`':
         return None
 
     # Check if we have a valid prefix. Otherwise we have (word, string) sequence.
-    # # Valid prefixes are case-insensitive: r, u, b, br, rb, f, fr, rf
+    # Valid prefixes are case-insensitive: r, u, b, br, rb, f, fr, rf
     cdef Py_ssize_t prefix_len = pos - prefix_pos
     cdef Py_UCS4 c1, c2
     cdef str prefix_lower
     cdef bint f_string = False
     if prefix_len == 1:
-        c1 = _get_c_unbounded(data, prefix_pos)
+        c1 = PyUnicode_READ(kind, buf, prefix_pos)
         if c1 in 'fF':
             f_string = True
         elif c1 not in 'rRuUbB':
             return None
 
     elif prefix_len == 2:
-        c1 = _get_c_unbounded(data, prefix_pos)
-        c2 = _get_c_unbounded(data, prefix_pos + 1)
+        c1 = PyUnicode_READ(kind, buf, prefix_pos + 0)
+        c2 = PyUnicode_READ(kind, buf, prefix_pos + 1)
         prefix_lower = f"{c1}{c2}".lower()
         if prefix_lower in ('rf', 'fr'):
             f_string = True
@@ -172,10 +175,10 @@ def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
     cdef int quote_size = 1
 
     # Compute quote size
-    if pos < length and _get_c_unbounded(data, pos) == quote:
+    if pos < length and PyUnicode_READ(kind, buf, pos) == quote:
         pos += 1
 
-        if pos < length and _get_c_unbounded(data, pos) == quote:
+        if pos < length and PyUnicode_READ(kind, buf, pos) == quote:
             quote_size = 3
             pos += 1
 
@@ -184,9 +187,9 @@ def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
             return pos, False, 0, None
 
     cdef:
-        int newlines = 0
-        int brace_depth = 0
-        int line_startpos = -1
+        Py_ssize_t newlines = 0
+        Py_ssize_t brace_depth = 0
+        Py_ssize_t line_startpos = -1
         int end_quote_size = 0
         bint need_munge = False
         Py_UCS4 last_c = 0
@@ -197,15 +200,19 @@ def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
             return -1
 
         last_c = c
-        c = _get_c_unbounded(data, pos)
+        c = PyUnicode_READ(kind, buf, pos)
 
         pos += 1
 
         # Skip escaped char.
         if c == '\\':
+            # Unterminated string literal (trailing backslash).
+            if pos >= length:
+                return -1
+
             # But line continuation should add to newlines.
-            if _get_c_unbounded(data, pos) == '\n':
-                line_startpos = pos
+            if PyUnicode_READ(kind, buf, pos) == '\n':
+                line_startpos = pos + 1
                 newlines += 1
 
             end_quote_size = 0
@@ -215,7 +222,7 @@ def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
         # In f-string, it is valid to have _anything_ inside {}, even comments
         # and strings with the same quotes. So here we look for closing brace
         # disregarding anything else.
-        if f_string and c == '{' and pos < length and _get_c_unbounded(data, pos) != '{':
+        if f_string and c == '{' and pos < length and PyUnicode_READ(kind, buf, pos) != '{':
             end_quote_size = 0
             brace_depth = 1
             while brace_depth:
@@ -224,15 +231,18 @@ def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
                     return -1
 
                 last_c = c
-                c = _get_c_unbounded(data, pos)
+                c = PyUnicode_READ(kind, buf, pos)
 
                 # Do not catch braces inside comments.
                 if c == '#':
-                    for i in range(pos, length):
-                        if _get_c_unbounded(data, i) != '\n':
-                            break
-                    else:
-                        # Unterminated string literal.
+                    while (
+                        pos < length and
+                        PyUnicode_READ(kind, buf, pos) != '\n'
+                    ):
+                        pos += 1
+
+                    # Unterminated string literal.
+                    if pos >= length:
                         return -1
 
                     c = '\n'
@@ -249,7 +259,7 @@ def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
 
             continue
 
-        if c == "\n":
+        if c == '\n':
             end_quote_size = 0
             line_startpos = pos
             newlines += 1
@@ -259,7 +269,7 @@ def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
         else:
             end_quote_size = 0
 
-        if last_c == "_" and c == "_":
+        if last_c == '_' and c == '_':
             need_munge = True
 
     return pos, need_munge, newlines, line_startpos if newlines else None

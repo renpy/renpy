@@ -19,13 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import TypedDict
-
+import collections
+import pathlib
 import site
 import socket
-import pathlib
 import subprocess
-import collections
+import sys
+from typing import TypedDict
 
 
 class Version:
@@ -146,7 +146,11 @@ def get_git_version(nightly: bool = False) -> VersionDict:
     """
 
     def get_output(args: list[str]) -> str:
-        return subprocess.check_output(args, encoding="utf-8").strip()
+        creationflags = 0
+        if sys.platform == "win32":
+            creationflags = subprocess.CREATE_NO_WINDOW
+
+        return subprocess.check_output(args, encoding="utf-8", creationflags=creationflags).strip()
 
     try:
         git_root = get_output(["git", "rev-parse", "--show-toplevel"])
