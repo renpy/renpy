@@ -103,9 +103,6 @@ def initialize(specified_test: str) -> None:
     if initialized:
         return
 
-    if RenpyTestTimeoutError not in renpy.game.CONTROL_EXCEPTIONS:
-        renpy.game.CONTROL_EXCEPTIONS += (RenpyTestTimeoutError,)
-
     root = setup_global_test_suite()
 
     test_node = get_testcase_by_id(specified_test)
