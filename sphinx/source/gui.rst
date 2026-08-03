@@ -1340,6 +1340,24 @@ add (to the end of :file:`screens.rpy`, or somewhere in :file:`options.rpy`) the
 
 A huge number of customizations are possible using style statements.
 
+Not every button inherits from the ``button`` style. In projects created from
+the default template, the quick menu uses the ``quick_button`` style, which
+inherits from ``default``. Imagebuttons use the ``image_button`` style. To give
+these buttons the same sound and mouse cursor as other buttons, style them
+separately::
+
+    style button:
+        activate_sound "click.ogg"
+        mouse "hand_cursor"
+
+    style quick_button:
+        activate_sound "click.ogg"
+        mouse "hand_cursor"
+
+    style image_button:
+        activate_sound "click.ogg"
+        mouse "hand_cursor"
+
 
 Screens - Navigation
 --------------------

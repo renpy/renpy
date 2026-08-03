@@ -176,6 +176,24 @@ accomplishing it is to add the following line::
 
 to the main menu screen.
 
+By default, :meth:`Gallery.make_button` uses the ``empty`` style. A style can
+be created and passed to each gallery button to give them shared properties::
+
+    style gallery_thumbnail is empty:
+        activate_sound "click.ogg"
+        mouse "hand_cursor"
+
+    screen gallery:
+
+        grid 3 3:
+
+            add g.make_button("dark", "gal-dark.png", style="gallery_thumbnail")
+            add g.make_button("dawn", "gal-dawn.png", style="gallery_thumbnail")
+
+Style properties can also be supplied directly to individual gallery buttons::
+
+    add g.make_button("dark", "gal-dark.png", mouse="hand_cursor", activate_sound="click.ogg")
+
 .. include:: inc/gallery
 
 
