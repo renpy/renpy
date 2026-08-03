@@ -11,6 +11,16 @@ label hard_pause:
     $ renpy.pause(0.5, hard=True)
     "End"
 
+label rollback_identifier_menu:
+    menu:
+        "Done":
+            return
+
+init python:
+    def capture_menu_rollback_identifier(statement):
+        if statement == "menu":
+            store.menu_rollback_identifier = renpy.get_rollback_identifier()
+
 screen teleporting_button(x=0, y=0, remaining=20):
     textbutton "Teleporting Button":
         id "teleporting_button"
@@ -237,6 +247,21 @@ testsuite context:
         assert eval ("context_test_inner_val" in globals())
         $ renpy.end_replay()
         assert eval ("replay_scope" in globals())
+
+testsuite rollback_identifier:
+    setup:
+        $ config.statement_callbacks.append(capture_menu_rollback_identifier)
+
+    teardown:
+        $ config.statement_callbacks.remove(capture_menu_rollback_identifier)
+
+    testcase current_statement:
+        $ menu_rollback_identifier = None
+        run Start("rollback_identifier_menu")
+        pause until screen "choice"
+        assert eval menu_rollback_identifier is not None
+        assert eval renpy.get_identifier_checkpoints(menu_rollback_identifier) is not None
+        click "Done"
 
     testcase replay_python:
         description "Tests that `renpy.call_replay` properly updates context variables."

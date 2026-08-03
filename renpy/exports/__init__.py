@@ -553,6 +553,7 @@ from renpy.exports.rollbackexports import (
     checkpoint as checkpoint,
     fix_rollback as fix_rollback,
     get_identifier_checkpoints as get_identifier_checkpoints,
+    get_rollback_identifier as get_rollback_identifier,
     get_roll_forward as get_roll_forward,
     in_fixed_rollback as in_fixed_rollback,
     in_rollback as in_rollback,

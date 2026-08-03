@@ -211,7 +211,9 @@ which automatically gets pluralized.  For example::
 
     A list of functions that are called when a statement is executed.
     These functions are generally called with the name of the statement
-    in question. However, there are some special statement names.
+    in question. The callback can use :func:`renpy.get_rollback_identifier`
+    to obtain the rollback identifier for that statement. However, there are
+    some special statement names.
 
     "say"
         Normal say statements.

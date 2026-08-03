@@ -250,3 +250,25 @@ def get_identifier_checkpoints(identifier):
     """
 
     return renpy.game.log.get_identifier_checkpoints(identifier)
+
+
+def get_rollback_identifier():
+    """
+    :doc: rollback
+
+    Returns the rollback identifier for the currently executing statement. This
+    can be passed to :func:`RollbackToIdentifier` or
+    :func:`renpy.get_identifier_checkpoints`.
+
+    This returns None when the current context does not support rollback or a
+    rollback entry is not available.
+    """
+
+    if not renpy.game.context().rollback:
+        return None
+
+    current = renpy.game.log.current
+    if current is None:
+        return None
+
+    return current.identifier
