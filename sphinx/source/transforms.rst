@@ -1298,6 +1298,25 @@ The ``event`` statement causes an event with the given name to be produced.
     to the event handler. Otherwise, the event propagates to any containing event
     handler.
 
+    The event is only handled by an enclosing ``on`` statement. It does not search
+    forward for a later ``on`` statement or propagate to a separate transform.
+
+**Example**
+
+    In this example, the ``start`` handler fades the image in and then produces
+    the ``pulse`` event. This transfers control to the ``pulse`` handler in the
+    same ``on`` statement::
+
+        transform fade_then_pulse:
+            on start:
+                alpha 0.0
+                linear 0.5 alpha 1.0
+                event pulse
+            on pulse:
+                linear 0.25 zoom 1.25
+                linear 0.25 zoom 1.0
+                event pulse
+
 
 .. _external-atl-events:
 
