@@ -202,7 +202,9 @@ def bootstrap(renpy_base: str):
 
     # In case of invocation with system python, check that it's run with -X utf8
     if not sys.flags.utf8_mode:
-        raise Exception("Ren'Py requires Python to be run with -X utf8.")
+        import locale
+        if locale.getpreferredencoding(False).lower() != "utf-8":
+            raise Exception("Ren'Py requires Python to be run with -X utf8.")
 
     if not isinstance(renpy_base, str):
         raise TypeError("renpy_base must be a string.")
