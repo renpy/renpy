@@ -56,6 +56,8 @@ the ``else`` clause is executed, if the ``else`` clause is present.
 While Statement
 ---------------
 
+.. index:: ! while
+
 The ``while`` statement executes a block of statements while an expression
 evaluates True. For example::
 
