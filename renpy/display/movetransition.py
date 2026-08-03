@@ -379,6 +379,34 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
         self.delay = delay  # type: int|float
         self.st = 0
 
+    def _completion(self):
+        if self.st > self.delay:
+            done = 1.0
+        else:
+            done = self.st / self.delay
+
+        if self.time_warp is not None:
+            done = self.time_warp(done)
+
+        return done
+
+    def _child_zpos(self, child):
+        """Returns the combined zpos of transforms wrapping a child."""
+
+        rv = 0.0
+        seen = set()
+
+        while child is not None and id(child) not in seen:
+            seen.add(id(child))
+            child = child._target()
+
+            if isinstance(child, renpy.display.transform.Transform):
+                rv += child.state.zpos
+
+            child = getattr(child, "child", None)
+
+        return rv
+
     def render(self, width, height, st, at):
         self.screen_width = width
         self.screen_height = height
@@ -397,7 +425,23 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
         if self.st < self.delay:
             renpy.display.render.redraw(self, 0)
 
-        return cr
+        old_zpos = self._child_zpos(self.old)
+        new_zpos = self._child_zpos(self.new)
+        done = self._completion()
+
+        zpos = old_zpos + done * (new_zpos - old_zpos)
+        child_zpos = old_zpos if self.use_old else new_zpos
+        zoffset = zpos - child_zpos
+
+        if not zoffset:
+            return cr
+
+        rv = renpy.display.render.Render(cr.width, cr.height)
+        rv.blit(cr, (0, 0))
+        rv.reverse = renpy.display.matrix.Matrix.offset(0, 0, zoffset)
+        rv.forward = rv.reverse.inverse()
+
+        return rv
 
     def child_placement(self, child):
         """
@@ -423,13 +467,7 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
         return xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel
 
     def get_placement(self):
-        if self.st > self.delay:
-            done = 1.0
-        else:
-            done = self.st / self.delay
-
-        if self.time_warp is not None:
-            done = self.time_warp(done)
+        done = self._completion()
 
         absolute = renpy.display.core.absolute
 
@@ -473,7 +511,8 @@ def MoveTransition(
 
     With these transitions, images changing position between the old and new
     scenes will be interpolated, which means their movement will be smooth
-    instead of instantaneous.
+    instead of instantaneous. The :tpref:`zpos` transform property is
+    interpolated along with the two-dimensional position.
 
     As only layers have tags, MoveTransitions can only be applied to a single
     layer or all layers at once, using the :ref:`with statement <with-statement>`.

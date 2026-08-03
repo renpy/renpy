@@ -1,5 +1,24 @@
 ## This file tests the testcase system itself
 
+init python:
+    def move_interpolate_zpos(st, use_old, warped=False):
+        old = Transform(Solid("#fff", xsize=1, ysize=1), zpos=-100)
+        new = Transform(Solid("#fff", xsize=1, ysize=1), zpos=100)
+        old = renpy.display.layout.AdjustTimes(old, None, None)
+        new = renpy.display.layout.AdjustTimes(new, None, None)
+        time_warp = (lambda done: done * done) if warped else None
+        move = renpy.display.movetransition.MoveInterpolate(2.0, old, new, use_old, time_warp)
+        render = renpy.render(move, 100, 100, st, st)
+
+        zpos = 0.0
+        while hasattr(render, "children"):
+            if render.reverse is not None:
+                zpos += render.reverse.zdw
+
+            render = next((child[0] for child in render.children if hasattr(child[0], "children")), None)
+
+        return zpos
+
 label three_messages:
     "Message 1"
     "Message 2"
@@ -32,6 +51,16 @@ testsuite flow:
     #         renpy.watch("waitch")
     #         renpy.watch("whether")
     #         waitch = 5
+
+testsuite move_interpolate:
+    testcase zpos:
+        assert eval move_interpolate_zpos(0.0, False) == -100.0
+        assert eval move_interpolate_zpos(1.0, False) == 0.0
+        assert eval move_interpolate_zpos(2.0, False) == 100.0
+        assert eval move_interpolate_zpos(0.0, True) == -100.0
+        assert eval move_interpolate_zpos(1.0, True) == 0.0
+        assert eval move_interpolate_zpos(2.0, True) == 100.0
+        assert eval move_interpolate_zpos(1.0, False, True) == -50.0
 
 testsuite parameter_field:
 
