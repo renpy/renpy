@@ -98,7 +98,12 @@ def _make_version_string(
     if not official and branch not in {"main", "master"}:
         suffixes.append(branch)
 
-    return f"{major}.{minor}.{patch}.{commit:08d}+{'.'.join(suffixes)}"
+    version = f"{major}.{minor}.{patch}.{commit:08d}"
+
+    if suffixes:
+        version += "+" + ".".join(suffixes)
+
+    return version
 
 
 def get_vc_version() -> VersionDict | None:

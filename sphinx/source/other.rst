@@ -11,18 +11,39 @@ Ren'Py Version
 
 .. include:: inc/renpy_version
 
+Ren'Py version numbers have the form ``major.minor.patch.YYMMDDCC``. The first
+three components identify the release series. In the final component, ``YY``,
+``MM``, and ``DD`` give the date of the latest commit, and ``CC`` gives the
+number of commits made on that date.
+
+The version may be followed by a `PEP 440 local version identifier
+<https://peps.python.org/pep-0440/#local-version-identifiers>`__. Its components
+have the following meanings and are included in this order when applicable:
+
+* ``unofficial`` indicates a build that was not made by the Ren'Py release
+  process. Otherwise, ``nightly`` indicates an official nightly build.
+* ``dirty`` indicates that the build was made from a working tree with
+  uncommitted changes.
+* The branch name is included for unofficial builds not made from the main
+  branch.
+
+For example, ``8.6.0.26080401+unofficial.dirty.topic`` is an unofficial build
+from the ``topic`` branch whose working tree contained uncommitted changes.
+
 .. var:: renpy.version_string
 
-    The version number of Ren'Py, as a string of the form "Ren'Py 1.2.3.456".
+    The version number of Ren'Py, as a string of the form
+    ``"Ren'Py 8.6.0.26080401"``. This includes any local version identifier.
 
 .. var:: renpy.version_only
 
     The version number of Ren'Py, without the Ren'Py prefix. A string of
-    the form "1.2.3.456".
+    the form ``"8.6.0.26080401"``. This includes any local version identifier.
 
 .. var:: renpy.version_tuple
 
-    The version number of Ren'Py, as a tuple of the form (1, 2, 3, 456).
+    The version number of Ren'Py, as a tuple of the form
+    ``(8, 6, 0, 26080401)``. This does not include the local version identifier.
 
     This is a namedtuple with four fields: ``major``, ``minor``, ``patch``,
     and ``commit``.
