@@ -2454,20 +2454,28 @@ class Bar(renpy.display.displayable.Displayable):
         fore_size += fore_gutter
         aft_size += aft_gutter
 
+        fore_bar_size = fore_size
+        aft_bar_size = aft_size
+
+        if self.style.bar_unbroken:
+            fore_extension = thumb_dim // 2
+            fore_bar_size += fore_extension
+            aft_bar_size += thumb_dim - fore_extension
+
         thumb_align = self.style.thumb_align
 
         rv = renpy.display.render.Render(width, height)
 
         if bar_vertical:
             if self.style.bar_resizing:
-                foresurf = render(self.style.fore_bar, width, fore_size, st, at)
-                aftsurf = render(self.style.aft_bar, width, aft_size, st, at)
+                foresurf = render(self.style.fore_bar, width, fore_bar_size, st, at)
+                aftsurf = render(self.style.aft_bar, width, aft_bar_size, st, at)
                 fore_leftover = (thumb_dim2 - foresurf.width) * thumb_align
                 aft_leftover = (thumb_dim2 - aftsurf.width) * thumb_align
 
                 rv.blit(thumb_shadow, (0, fore_size - fore_thumb_offset))
                 rv.blit(foresurf, (fore_leftover, 0), main=False)
-                rv.blit(aftsurf, (aft_leftover, height - aft_size), main=False)
+                rv.blit(aftsurf, (aft_leftover, height - aft_bar_size), main=False)
                 rv.blit(thumb, (0, fore_size - fore_thumb_offset))
 
             else:
@@ -2477,24 +2485,24 @@ class Bar(renpy.display.displayable.Displayable):
                 aft_leftover = (thumb_dim2 - aftsurf.width) * thumb_align
 
                 rv.blit(thumb_shadow, (0, fore_size - fore_thumb_offset))
-                rv.blit(foresurf.subsurface((0, 0, width, fore_size)), (fore_leftover, 0), main=False)
+                rv.blit(foresurf.subsurface((0, 0, width, fore_bar_size)), (fore_leftover, 0), main=False)
                 rv.blit(
-                    aftsurf.subsurface((0, height - aft_size, width, aft_size)),
-                    (aft_leftover, height - aft_size),
+                    aftsurf.subsurface((0, height - aft_bar_size, width, aft_bar_size)),
+                    (aft_leftover, height - aft_bar_size),
                     main=False,
                 )
                 rv.blit(thumb, (0, fore_size - fore_thumb_offset))
 
         else:
             if self.style.bar_resizing:
-                foresurf = render(self.style.fore_bar, fore_size, height, st, at)
-                aftsurf = render(self.style.aft_bar, aft_size, height, st, at)
+                foresurf = render(self.style.fore_bar, fore_bar_size, height, st, at)
+                aftsurf = render(self.style.aft_bar, aft_bar_size, height, st, at)
                 fore_leftover = (thumb_dim2 - foresurf.height) * thumb_align
                 aft_leftover = (thumb_dim2 - aftsurf.height) * thumb_align
 
                 rv.blit(thumb_shadow, (fore_size - fore_thumb_offset, 0))
                 rv.blit(foresurf, (0, fore_leftover), main=False)
-                rv.blit(aftsurf, (width - aft_size, aft_leftover), main=False)
+                rv.blit(aftsurf, (width - aft_bar_size, aft_leftover), main=False)
                 rv.blit(thumb, (fore_size - fore_thumb_offset, 0))
 
             else:
@@ -2504,10 +2512,10 @@ class Bar(renpy.display.displayable.Displayable):
                 aft_leftover = (thumb_dim2 - aftsurf.height) * thumb_align
 
                 rv.blit(thumb_shadow, (fore_size - fore_thumb_offset, 0))
-                rv.blit(foresurf.subsurface((0, 0, fore_size, height)), (0, fore_leftover), main=False)
+                rv.blit(foresurf.subsurface((0, 0, fore_bar_size, height)), (0, fore_leftover), main=False)
                 rv.blit(
-                    aftsurf.subsurface((width - aft_size, 0, aft_size, height)),
-                    (width - aft_size, aft_leftover),
+                    aftsurf.subsurface((width - aft_bar_size, 0, aft_bar_size, height)),
+                    (width - aft_bar_size, aft_leftover),
                     main=False,
                 )
                 rv.blit(thumb, (fore_size - fore_thumb_offset, 0))

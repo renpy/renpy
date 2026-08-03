@@ -96,6 +96,8 @@ The `changed` property of bars can now be supplied in addition to a bar value.
 Bars now take an `action` property, which is an action that is run when the bar value changes. Unlike `change`, `action`
 is not supplied the bar value, and so can be used with the same actions as buttons.
 
+The new :propref:`bar_unbroken` style property allows a bar to be drawn continuously underneath its thumb.
+
 Layered images now support ``at`` and ``at transform`` clauses at the same time.
 
 The new :var:`config.special_directory_map` variable maps special directory names

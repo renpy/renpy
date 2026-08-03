@@ -238,6 +238,7 @@ init -1800:
         unscrollable None
         bar_invert False
         bar_resizing False
+        bar_unbroken False
         bar_vertical False
 
         # Viewport properties

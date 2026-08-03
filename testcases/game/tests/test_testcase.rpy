@@ -21,6 +21,19 @@ screen teleporting_button(x=0, y=0, remaining=20):
         else:
             action Hide("teleporting_button")
 
+init python:
+    class BarSizeRecorder(renpy.Displayable):
+        def __init__(self, calls=None, xsize=None, ysize=None):
+            super().__init__()
+            self.calls = calls
+            self.xsize = xsize
+            self.ysize = ysize
+
+        def render(self, width, height, st, at):
+            if self.calls is not None:
+                self.calls.append((width, height))
+            return renpy.Render(self.xsize or width, self.ysize or height)
+
 testsuite flow:
     testcase skip:
         enabled False
@@ -211,6 +224,26 @@ testsuite selectors:
         scroll id "scroll_vp" amount 50
         click id "close_screen_button"
         assert not screen "scroll_screen"
+
+testsuite bar:
+    testcase unbroken_horizontal:
+        $ bar_render_sizes = []
+        $ bar = renpy.display.behavior.Bar(100, 50, page=25, bar_resizing=True, bar_unbroken=True, thumb_offset=0, fore_bar=BarSizeRecorder(bar_render_sizes), aft_bar=BarSizeRecorder(bar_render_sizes), thumb=BarSizeRecorder(xsize=20))
+        $ bar.render(100, 10, 0, 0)
+        assert eval bar.style.bar_unbroken
+        assert eval bar_render_sizes == [(50, 10), (50, 10)]
+
+        $ bar_render_sizes = []
+        $ bar = renpy.display.behavior.Bar(100, 50, page=25, bar_resizing=True, thumb_offset=0, fore_bar=BarSizeRecorder(bar_render_sizes), aft_bar=BarSizeRecorder(bar_render_sizes), thumb=BarSizeRecorder(xsize=20))
+        $ bar.render(100, 10, 0, 0)
+        assert eval bar_render_sizes == [(40, 10), (40, 10)]
+
+    testcase unbroken_vertical:
+        $ bar_render_sizes = []
+        $ bar = renpy.display.behavior.Bar(100, 50, page=25, vertical=True, bar_resizing=True, bar_unbroken=True, thumb_offset=0, fore_bar=BarSizeRecorder(bar_render_sizes), aft_bar=BarSizeRecorder(bar_render_sizes), thumb=BarSizeRecorder(ysize=20))
+        $ bar.render(10, 100, 0, 0)
+        assert eval bar.style.bar_unbroken
+        assert eval bar_render_sizes == [(10, 50), (10, 50)]
 
 testsuite timeout:
     setup:

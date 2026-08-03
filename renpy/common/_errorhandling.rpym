@@ -158,6 +158,7 @@ init label _errorhandling:
         thumb_offset 0
         unscrollable None
         bar_invert False
+        bar_unbroken False
         bar_vertical False
 
         # Viewport properties

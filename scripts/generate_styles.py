@@ -127,6 +127,7 @@ style_properties: dict[str, None | str] = {
     "background": "renpy.easy.displayable_or_none",
     "bar_invert": None,
     "bar_resizing": None,
+    "bar_unbroken": None,
     "bar_vertical": None,
     "black_color": "renpy.easy.color",
     "bold": None,

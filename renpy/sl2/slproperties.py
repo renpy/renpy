@@ -192,6 +192,7 @@ bar_property_names = [
     "bar_vertical",
     "bar_invert",
     "bar_resizing",
+    "bar_unbroken",
     "left_gutter",
     "right_gutter",
     "top_gutter",

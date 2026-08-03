@@ -1051,6 +1051,11 @@ left and right sides are used.
     If True, we resize the sides of the bar. If False, we render the
     sides of the bar at full size, and then crop them.
 
+.. style-property:: bar_unbroken boolean
+
+    If True, the sides of the bar meet underneath the thumb, drawing the bar
+    continuously behind it. If False, the sides end at the edges of the thumb.
+
 .. style-property:: left_gutter int
 
     The size of the gutter on the left side of the bar, in pixels.
