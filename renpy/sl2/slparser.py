@@ -1075,12 +1075,16 @@ class CustomParser(Parser):
     `screen`
         The screen to use. If not given, defaults to `name`.
 
+    `style`
+        The base name of the style passed to the screen. If the style property
+        is not given, this will have the current style prefix added to it.
+
     Returns an object that can have positional arguments and properties
     added to it. This object has the same .add_ methods as the objects
     returned by :class:`renpy.register_sl_displayable`.
     """
 
-    def __init__(self, name, children="many", screen=None):
+    def __init__(self, name, children="many", screen=None, style=None):
         Parser.__init__(self, name)
 
         if children == "many":
@@ -1114,6 +1118,8 @@ class CustomParser(Parser):
         else:
             self.screen = name
 
+        self.style = style
+
         self.variable = True
 
     def parse(self, loc, l, parent, keyword):
@@ -1144,7 +1150,7 @@ class CustomParser(Parser):
         variable = block.variable
         block.variable = None
 
-        return slast.SLCustomUse(loc, self.screen, arguments, block, variable)
+        return slast.SLCustomUse(loc, self.screen, arguments, block, variable, self.style)
 
 
 class ScreenParser(Parser):

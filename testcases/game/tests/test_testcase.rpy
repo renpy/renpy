@@ -1,5 +1,26 @@
 ## This file tests the testcase system itself
 
+screen _test_custom_style(marker, style):
+    text marker:
+        id marker
+        style style
+
+style test_custom_sl is text
+style prefixed_test_custom_sl is test_custom_sl
+style prefixed_test_custom_alternate is text
+style test_custom_direct is text
+
+screen test_custom_sl_styles():
+    style_prefix "prefixed"
+
+    test_custom_style "registered"
+
+    test_custom_style "suffix":
+        style_suffix "test_custom_alternate"
+
+    test_custom_style "explicit":
+        style "test_custom_direct"
+
 label three_messages:
     "Message 1"
     "Message 2"
@@ -32,6 +53,15 @@ testsuite flow:
     #         renpy.watch("waitch")
     #         renpy.watch("whether")
     #         waitch = 5
+
+testsuite custom_sl_style:
+    testcase base_style:
+        run Show("test_custom_sl_styles")
+        pause until screen "test_custom_sl_styles"
+        assert eval renpy.get_widget("test_custom_sl_styles", "registered").style.parent == ("prefixed_test_custom_sl",)
+        assert eval renpy.get_widget("test_custom_sl_styles", "suffix").style.parent == ("prefixed_test_custom_alternate",)
+        assert eval renpy.get_widget("test_custom_sl_styles", "explicit").style.parent == ("test_custom_direct",)
+        run Hide("test_custom_sl_styles")
 
 testsuite parameter_field:
 

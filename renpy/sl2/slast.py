@@ -2248,7 +2248,7 @@ class SLCustomUse(SLNode):
 
     variable = None
 
-    def __init__(self, loc, target, positional, block, variable):
+    def __init__(self, loc, target, positional, block, variable, style):
         SLNode.__init__(self, loc)
 
         # The name of the screen we're accessing.
@@ -2266,6 +2266,9 @@ class SLCustomUse(SLNode):
         # The variable the main displayable is assigned to.
         self.variable = variable
 
+        # The default style suffix passed to the screen.
+        self.style = style
+
     def copy(self, transclude):
         rv = self.instantiate(transclude)
 
@@ -2274,6 +2277,7 @@ class SLCustomUse(SLNode):
 
         rv.positional = self.positional
         rv.block = self.block.copy(transclude)
+        rv.style = self.style
 
         return rv
 
@@ -2346,7 +2350,7 @@ class SLCustomUse(SLNode):
                 kwargs.update(properties)
 
             # If we don't know the style, figure it out.
-            style_suffix = kwargs.pop("style_suffix", None)
+            style_suffix = kwargs.pop("style_suffix", None) or self.style
             if ("style" not in kwargs) and style_suffix:
                 if ctx.style_prefix is None:
                     kwargs["style"] = style_suffix

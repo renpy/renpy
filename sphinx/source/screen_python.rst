@@ -262,16 +262,23 @@ call looks like::
 
 
     python early:
-        renpy.register_sl_statement("titledwindow", children=1).add_positional("title").add_property("icon").add_property("pos")
+        renpy.register_sl_statement("titledwindow", children=1, style="titledwindow").add_positional("title").add_property("icon").add_property("pos")
+
+The optional ``style`` argument gives the custom statement a base style. When
+the statement is used inside a style prefix, the prefix and base style are
+combined and passed to the implementing screen as its ``style`` argument. An
+explicit ``style_suffix`` property, when registered, replaces the base style,
+while an explicit ``style`` property takes precedence over both.
 
 Then, we define a screen that implements the custom statement. This screen can be defined in
 any file. One such screen is::
 
-    screen titledwindow(title, icon=None, pos=(0, 0)):
+    screen titledwindow(title, icon=None, pos=(0, 0), style=None):
         drag:
             pos pos
 
             frame:
+                style style
                 background "#00000080"
 
                 has vbox
@@ -290,8 +297,9 @@ any file. One such screen is::
 When are used large property groups like a `add_property_group`, it makes sense to use
 the \*\*properties syntax with a properties keyword in some place. For example::
 
-    screen titledwindow(title, icon=None, **properties):
+    screen titledwindow(title, icon=None, style=None, **properties):
         frame:
+            style style
             # When background not in properties it will use it as default value.
             background "#00000080"
 
