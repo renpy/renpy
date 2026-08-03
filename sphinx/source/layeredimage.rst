@@ -569,6 +569,31 @@ the images are being predicted properly, it generally won't improve
 performance or image size much to crop the images yourself.
 
 
+**Flatten layers when scaling reveals seams.**
+
+When adjacent parts of a layered image are rendered separately, scaling the
+image can reveal transparent lines at their edges. Applying alpha to the whole
+layered image can also expose parts of overlapping layers that were intended to
+be hidden.
+
+The layered image can be flattened into a single texture before it is scaled or
+given alpha by enabling model-based rendering. Rendering the texture at the
+layered image's virtual resolution keeps the result independent of the window
+resolution::
+
+    layeredimage eileen:
+        mesh True
+        gl_drawable_resolution False
+
+        always "eileen_base"
+        group outfit auto
+        group expression auto
+
+Flattening has a rendering cost, so it is not the default and should generally
+be enabled only for layered images that exhibit these artifacts. See
+:tpref:`mesh` and :ref:`GL properties <gl-properties>` for more information.
+
+
 **Layered images shouldn't use data that changes at runtime.**
 
 Note that with the exception of the conditions in the ``if`` statement, all
