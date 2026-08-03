@@ -975,6 +975,11 @@ Button Style Properties
         The button itself is used as the displayable (so
         non-transparent areas of the button cause the button to be
         focused).
+    "idle"
+        For an imagebutton, the idle image is used as the mask, even while the
+        button is hovered. For a selected imagebutton, the selected idle image
+        is used. This avoids changes in the hover image changing whether the
+        imagebutton is focused.
     callable
         If a non-displayable callable (like a function, method, or object
         with a ``__call__`` method) is given, the function is called with two

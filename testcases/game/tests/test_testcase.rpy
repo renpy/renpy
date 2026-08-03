@@ -21,6 +21,36 @@ screen teleporting_button(x=0, y=0, remaining=20):
         else:
             action Hide("teleporting_button")
 
+image focus_mask_idle:
+    Solid("#fff", xysize=(100, 100))
+
+image focus_mask_hover:
+    Composite((100, 100), (0, 50), Solid("#fff", xysize=(100, 50)))
+
+screen imagebutton_idle_focus_mask:
+    imagebutton:
+        id "idle_focus_mask_button"
+        idle "focus_mask_idle"
+        hover "focus_mask_hover"
+        focus_mask "idle"
+        action NullAction()
+
+        xpos 100
+        ypos 100
+
+    imagebutton:
+        id "selected_idle_focus_mask_button"
+        idle "focus_mask_idle"
+        hover "focus_mask_hover"
+        selected_idle "focus_mask_idle"
+        selected_hover "focus_mask_hover"
+        selected True
+        focus_mask "idle"
+        action NullAction()
+
+        xpos 250
+        ypos 100
+
 testsuite flow:
     testcase skip:
         enabled False
@@ -189,6 +219,18 @@ testsuite selectors:
         run Show("teleporting_button")
         pause until screen "teleporting_button"
         click id "teleporting_button" until not screen "teleporting_button"
+
+    testcase imagebutton_idle_focus_mask:
+        run Show("imagebutton_idle_focus_mask")
+        pause until screen "imagebutton_idle_focus_mask"
+        move id "idle_focus_mask_button" pos (0.5, 0.25)
+        pause 0.1
+        assert eval renpy.display.focus.get_focused().style.prefix == "hover_"
+
+        move id "selected_idle_focus_mask_button" pos (0.5, 0.25)
+        pause 0.1
+        assert eval renpy.display.focus.get_focused().style.prefix == "selected_hover_"
+        run Hide("imagebutton_idle_focus_mask")
 
     testcase drag_and_drop:
         run Show("drag_and_drop")

@@ -47,6 +47,8 @@ def expand_focus_mask(v):
         return v
     elif v is True:
         return v
+    elif isinstance(v, str) and v == "idle":
+        return v
     elif callable(v):
         return v
     else:

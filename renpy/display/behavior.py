@@ -998,7 +998,7 @@ class Button(renpy.display.layout.Window):
                 fw = rv.width - self.style.right_margin
                 fh = rv.height - self.style.bottom_margin
 
-            mask = self.style.focus_mask
+            mask = self.get_focus_mask()
 
             if mask is True:
                 mask = rv
@@ -1021,6 +1021,9 @@ class Button(renpy.display.layout.Window):
             rv.add_focus(self, None, fx, fy, fw, fh, fmx, fmy, mask)
 
         return rv
+
+    def get_focus_mask(self):
+        return self.style.focus_mask
 
     def focus(self, default=False):
         super(Button, self).focus(default)
@@ -1285,6 +1288,17 @@ class ImageButton(Button):
             self.imagebutton_child.per_interact()
 
         return self.imagebutton_child
+
+    def get_focus_mask(self):
+        mask = self.style.focus_mask
+
+        if isinstance(mask, str) and mask == "idle":
+            if self.style.prefix.startswith("selected_"):
+                return self.state_children["selected_idle_"]
+            else:
+                return self.state_children["idle_"]
+
+        return mask
 
 
 # This is used for an input that takes its focus from a button.
