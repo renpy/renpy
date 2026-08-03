@@ -88,6 +88,9 @@ Menu text filtering can now be disabled with :var:`config.use_menu_text_filter`,
 
 The new :func:`renpy.get_statement_name` function returns the name of the current statement.
 
+The new :func:`renpy.get_statement_info` function returns the filename, line number, and translation identifier
+of the statement that is currently executing or being predicted.
+
 The :class:`Confirm` action and :func:`renpy.confirm` function now take a `screen` argument, allowing
 a custom screen to be used instead of the default confirm screen.
 
