@@ -2187,13 +2187,13 @@ Voice
 
     If the "emphasize audio" preference is enabled, when one of the audio
     channels listed starts playing a sound, all channels that are not
-    listed in this variable have their secondary audio volume reduced
-    to :var:`config.emphasize_audio_volume` over :var:`config.emphasize_audio_time`
+    listed in this variable have their secondary audio volume multiplied
+    by :var:`config.emphasize_audio_volume` over :var:`config.emphasize_audio_time`
     seconds.
 
     When no channels listed in this variable are playing audio, all channels
-    that are not listed have their secondary audio volume raised to 1.0 over
-    :var:`config.emphasize_audio_time` seconds.
+    that are not listed have their previous secondary audio volume restored
+    over :var:`config.emphasize_audio_time` seconds.
 
     For example, setting this to ``[ 'voice' ]`` will lower the volume of all
     non-voice channels when a voice is played.

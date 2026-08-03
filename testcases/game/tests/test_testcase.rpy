@@ -212,6 +212,27 @@ testsuite selectors:
         click id "close_screen_button"
         assert not screen "scroll_screen"
 
+testsuite audio:
+    setup:
+        $ original_pcm_ok = renpy.audio.audio.pcm_ok
+        $ renpy.audio.audio.pcm_ok = False
+        $ emphasis_channel = renpy.audio.audio.Channel("test_emphasis_volume", False, True, False, "", "", True, False, True, False)
+
+    teardown:
+        $ renpy.audio.audio.pcm_ok = original_pcm_ok
+        $ renpy.game.context().music.pop("test_emphasis_volume", None)
+
+    testcase emphasize_volume:
+        $ emphasis_channel.set_secondary_volume(0.2, 0)
+        $ emphasis_channel.set_emphasis_volume(0.5, 0.5)
+        assert eval emphasis_channel.context.secondary_volume == 0.2
+        assert eval emphasis_channel._get_secondary_volume() == 0.1
+        $ emphasis_channel.set_secondary_volume(0.4, 0)
+        assert eval emphasis_channel._get_secondary_volume() == 0.2
+        $ emphasis_channel.set_emphasis_volume(1.0, 0.5)
+        assert eval emphasis_channel.context.secondary_volume == 0.4
+        assert eval emphasis_channel._get_secondary_volume() == 0.4
+
 testsuite timeout:
     setup:
         run Jump("hard_pause")

@@ -298,6 +298,9 @@ class Channel(object):
         # The time the secondary volume of this channel was last set.
         self.secondary_volume_time = None
 
+        # The volume adjustment applied while other channels are emphasized.
+        self.emphasis_volume = 1.0
+
         # Should we stop playing on mute?
         self.stop_on_mute = stop_on_mute
 
@@ -696,7 +699,7 @@ class Channel(object):
 
             if self.secondary_volume_time != self.context.secondary_volume_time:
                 self.secondary_volume_time = self.context.secondary_volume_time
-                renpysound.set_secondary_volume(self.number, self.context.secondary_volume, 0)
+                renpysound.set_secondary_volume(self.number, self._get_secondary_volume(), 0)
 
         if not self.queue and self.callback:
             self.callback()  # E1102
@@ -875,7 +878,17 @@ class Channel(object):
 
             if pcm_ok:
                 self.secondary_volume_time = self.context.secondary_volume_time
-                renpysound.set_secondary_volume(self.number, self.context.secondary_volume, delay)
+                renpysound.set_secondary_volume(self.number, self._get_secondary_volume(), delay)
+
+    def _get_secondary_volume(self):
+        return self.context.secondary_volume * self.emphasis_volume
+
+    def set_emphasis_volume(self, volume, delay):
+        with lock:
+            self.emphasis_volume = volume
+
+            if pcm_ok:
+                renpysound.set_secondary_volume(self.number, self._get_secondary_volume(), delay)
 
     def pause(self):
         with lock:
@@ -1261,7 +1274,7 @@ def periodic_pass():
                 if c in emphasize_channels:
                     continue
 
-                c.set_secondary_volume(vol, renpy.config.emphasize_audio_time)
+                c.set_emphasis_volume(vol, renpy.config.emphasize_audio_time)
 
         for c in all_channels:
             c.periodic()
