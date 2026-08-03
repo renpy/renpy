@@ -308,3 +308,37 @@ screen scroll_screen:
                 text "This is line [i]."
 
             textbutton "Close" action Hide("scroll_screen") id "close_screen_button"
+
+
+default scrollbar_drag_value = 50
+default scrollbar_vertical_drag_value = 50
+
+style scrollbar_drag_bar:
+    xsize 200
+    ysize 20
+    left_bar Solid("#444")
+    right_bar Solid("#222")
+    thumb Solid("#fff", xsize=40)
+    thumb_offset 0
+
+style scrollbar_vertical_drag_bar:
+    xsize 20
+    ysize 200
+    top_bar Solid("#444")
+    bottom_bar Solid("#222")
+    thumb Solid("#fff", ysize=40)
+    thumb_offset 0
+    bar_vertical True
+    bar_invert False
+
+screen scrollbar_drag_test:
+    bar:
+        id "scrollbar_drag"
+        value VariableValue("scrollbar_drag_value", range=100)
+        style "scrollbar_drag_bar"
+
+    vbar:
+        id "scrollbar_vertical_drag"
+        xpos 220
+        value VariableValue("scrollbar_vertical_drag_value", range=100)
+        style "scrollbar_vertical_drag_bar"

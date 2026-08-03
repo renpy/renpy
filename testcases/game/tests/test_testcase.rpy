@@ -212,6 +212,23 @@ testsuite selectors:
         click id "close_screen_button"
         assert not screen "scroll_screen"
 
+    testcase scrollbar_thumb_drag:
+        $ scrollbar_drag_value = 50
+        $ scrollbar_vertical_drag_value = 50
+        run Show("scrollbar_drag_test")
+        pause until screen "scrollbar_drag_test"
+        click id "scrollbar_drag" pos (0.45, 0.5)
+        assert eval scrollbar_drag_value == 50
+        drag id "scrollbar_drag" pos (0.45, 0.5) to id "scrollbar_drag" pos (0.55, 0.5)
+        assert eval scrollbar_drag_value == 63
+        click id "scrollbar_drag" pos (0.9, 0.5)
+        assert eval scrollbar_drag_value == 100
+        click id "scrollbar_vertical_drag" pos (0.5, 0.45)
+        assert eval scrollbar_vertical_drag_value == 50
+        drag id "scrollbar_vertical_drag" pos (0.5, 0.45) to id "scrollbar_vertical_drag" pos (0.5, 0.55)
+        assert eval scrollbar_vertical_drag_value == 37
+        run Hide("scrollbar_drag_test")
+
 testsuite timeout:
     setup:
         run Jump("hard_pause")

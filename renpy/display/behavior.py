@@ -2258,7 +2258,7 @@ class Bar(renpy.display.displayable.Displayable):
     def _draggable(self):
         return self.focusable
 
-    __version__ = 2
+    __version__ = 3
 
     def after_upgrade(self, version):
         if version < 1:
@@ -2270,6 +2270,12 @@ class Bar(renpy.display.displayable.Displayable):
 
         if version < 2:
             self.value = None
+
+        if version < 3:
+            self.thumb_start = 0
+            self.thumb_end = 0
+            self.thumb_center = 0
+            self.thumb_grab_offset = 0
 
     def __init__(
         self,
@@ -2337,9 +2343,16 @@ class Bar(renpy.display.displayable.Displayable):
 
         # These are set when we are first rendered.
         self.thumb_dim = 0
+        self.thumb_start = 0
+        self.thumb_end = 0
+        self.thumb_center = 0
+        self.thumb_grab_offset = 0
         self.height = 0
         self.width = 0
         self.hidden = False
+
+        if isinstance(replaces, Bar):
+            self.thumb_grab_offset = replaces.thumb_grab_offset
 
         self.hovered = hovered
         self.unhovered = unhovered
@@ -2454,6 +2467,10 @@ class Bar(renpy.display.displayable.Displayable):
         fore_size += fore_gutter
         aft_size += aft_gutter
 
+        self.thumb_start = fore_size - fore_thumb_offset
+        self.thumb_end = fore_size + thumb_dim + aft_thumb_offset
+        self.thumb_center = fore_size + thumb_dim / 2
+
         thumb_align = self.style.thumb_align
 
         rv = renpy.display.render.Render(width, height)
@@ -2555,6 +2572,7 @@ class Bar(renpy.display.displayable.Displayable):
 
         grabbed = renpy.display.focus.get_grab() is self
         just_grabbed = False
+        preserve_thumb_position = False
 
         ignore_event = False
 
@@ -2566,6 +2584,13 @@ class Bar(renpy.display.displayable.Displayable):
             grabbed = True
             ignore_event = True
             renpy.exports.play(self.style.activate_sound)
+
+            self.thumb_grab_offset = 0
+            if ev.type == pygame.MOUSEBUTTONDOWN:
+                position = y if vertical else x
+                if self.thumb_start <= position <= self.thumb_end:
+                    self.thumb_grab_offset = position - self.thumb_center
+                    preserve_thumb_position = True
 
         if grabbed:
             if vertical:
@@ -2586,12 +2611,16 @@ class Bar(renpy.display.displayable.Displayable):
                 ignore_event = True
 
             if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
-                if vertical:
+                if just_grabbed and preserve_thumb_position:
+                    pass
+                elif vertical:
                     tgutter = self.style.fore_gutter
                     bgutter = self.style.aft_gutter
                     zone_height = self.height - tgutter - bgutter - self.thumb_dim
                     if zone_height:
-                        value = (y - tgutter - self.thumb_dim / 2) * range / zone_height
+                        value = (
+                            y - tgutter - self.thumb_dim / 2 - self.thumb_grab_offset
+                        ) * range / zone_height
                     else:
                         value = 0
 
@@ -2600,7 +2629,9 @@ class Bar(renpy.display.displayable.Displayable):
                     rgutter = self.style.aft_gutter
                     zone_width = self.width - lgutter - rgutter - self.thumb_dim
                     if zone_width:
-                        value = (x - lgutter - self.thumb_dim / 2) * range / zone_width
+                        value = (
+                            x - lgutter - self.thumb_dim / 2 - self.thumb_grab_offset
+                        ) * range / zone_width
                     else:
                         value = 0
 
@@ -2627,6 +2658,7 @@ class Bar(renpy.display.displayable.Displayable):
             renpy.display.tts.speak(renpy.minstore.__("deactivate"))
             renpy.display.focus.set_grab(None)
             self.set_style_prefix("hover_", True)
+            self.thumb_grab_offset = 0
 
             # Invoke rounding adjustment on bar release
             value = self.adjustment.round_value(value, release=True)
