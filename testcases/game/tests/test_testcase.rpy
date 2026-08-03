@@ -212,6 +212,24 @@ testsuite selectors:
         click id "close_screen_button"
         assert not screen "scroll_screen"
 
+    testsuite musicroom:
+        setup:
+            $ original_get_playing = renpy.music.get_playing
+            $ original_play = renpy.music.play
+            $ musicroom_played = []
+            $ renpy.music.get_playing = lambda channel="music": "<from 10>sound/2.ogg"
+            $ renpy.music.play = lambda filenames, **kwargs: musicroom_played.extend(filenames)
+
+        teardown:
+            $ renpy.music.get_playing = original_get_playing
+            $ renpy.music.play = original_play
+
+        testcase partial_playback:
+            assert eval mr._get_playing() == "sound/2.ogg"
+            assert eval mr.Play("sound/2.ogg").get_selected()
+            run mr.Next()
+            assert eval musicroom_played[0] == "sound/3.ogg"
+
 testsuite timeout:
     setup:
         run Jump("hard_pause")

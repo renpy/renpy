@@ -44,7 +44,7 @@ init -1500 python:
 
             renpy.restart_interaction()
 
-            if renpy.music.get_playing(self.mr.channel) == self.filename:
+            if self.mr._get_playing() == self.filename:
                 if renpy.music.get_pause(self.mr.channel):
                     renpy.music.set_pause(False, self.mr.channel)
                     return
@@ -55,7 +55,7 @@ init -1500 python:
             return self.mr.is_unlocked(self.filename)
 
         def get_selected(self):
-            return renpy.music.get_playing(self.mr.channel) == self.filename
+            return self.mr._get_playing() == self.filename
 
         def periodic(self, st):
             if self.selected != self.get_selected():
@@ -276,7 +276,7 @@ init -1500 python:
 
             self.st = st
 
-            current_playing = renpy.music.get_playing(self.channel)
+            current_playing = self._get_playing()
             if current_playing is None:
                 current_playing = ""
 
@@ -285,6 +285,20 @@ init -1500 python:
                 renpy.run_action(action)
 
                 self.last_playing = current_playing
+
+        def _get_playing(self):
+            filename = renpy.music.get_playing(self.channel)
+
+            if filename in self.filenames:
+                return filename
+
+            if isinstance(filename, str) and filename.startswith("<"):
+                _spec, separator, plain_filename = filename.rpartition(">")
+
+                if separator and plain_filename in self.filenames:
+                    return plain_filename
+
+            return filename
 
         def add(self, filename, always_unlocked=False, action=None):
             """
@@ -376,7 +390,7 @@ init -1500 python:
                 return
 
             if filename is None:
-                filename = renpy.music.get_playing(channel=self.channel)
+                filename = self._get_playing()
 
             try:
                 idx = playlist.index(filename)
@@ -405,7 +419,7 @@ init -1500 python:
             queued up.
             """
 
-            filename = renpy.music.get_playing(channel=self.channel)
+            filename = self._get_playing()
             if filename is None:
                 return
 
@@ -427,7 +441,7 @@ init -1500 python:
             Plays the next file in the playlist.
             """
 
-            filename = renpy.music.get_playing(channel=self.channel)
+            filename = self._get_playing()
             if filename is None:
                 return self.play(None, 0)
             else:
