@@ -357,6 +357,49 @@ All user interface statements take the following common properties:
     A string giving the name of the style applied to this displayable. The
     style gives default values for style properties.
 
+    When this property is omitted, most user interface statements select a
+    default style based on the statement name:
+
+    .. list-table::
+        :header-rows: 1
+
+        * - Statement
+          - Default style
+        * - ``areapicker``, ``dismiss``, ``key``, ``mousearea``, ``nearrect``, ``null``, ``on``, ``timer``
+          - ``default``
+        * - ``bar``
+          - ``bar`` [#bar-value-style]_
+        * - ``button``, ``textbutton``
+          - ``button``
+        * - ``drag``
+          - ``drag``
+        * - ``draggroup``
+          - ``fixed``
+        * - ``fixed``, ``frame``, ``grid``, ``hbox``, ``side``, ``vbox``, ``window``
+          - The style with the same name as the statement.
+        * - ``hotbar``, ``hotspot``, ``imagebutton``, ``imagemap``
+          - ``hotbar``, ``hotspot``, ``image_button``, and ``imagemap``, respectively.
+        * - ``input``, ``label``, ``text``
+          - The style with the same name as the statement.
+        * - ``transform``
+          - ``transform``
+        * - ``vbar``
+          - ``vbar`` [#bar-value-style]_
+        * - ``viewport``, ``vpgrid``
+          - ``viewport`` and ``vpgrid``, respectively.
+
+    Text created by ``textbutton`` and ``label`` uses the ``button_text`` and
+    ``label_text`` styles, respectively. The `text_style` property can override
+    these child styles.
+
+    The ``add`` and ``image`` statements retain the style of the displayable
+    they add rather than selecting a style based on the statement name.
+
+    .. [#bar-value-style] When a bar is given a :ref:`bar value <bar-values>`,
+       that value can select another style. For example, preference values use
+       ``slider`` and ``vslider``, while viewport scroll values use
+       ``scrollbar`` and ``vscrollbar``.
+
 .. screen-property:: style_prefix
 
     .. _style-prefix:
