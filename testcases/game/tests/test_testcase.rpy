@@ -212,6 +212,25 @@ testsuite selectors:
         click id "close_screen_button"
         assert not screen "scroll_screen"
 
+    testsuite movie:
+        setup:
+            $ original_movie_any_loadable = renpy.display.video.Movie.any_loadable
+            $ movie_source_loadable = False
+            $ renpy.display.video.Movie.any_loadable = staticmethod(lambda name: movie_source_loadable)
+
+        teardown:
+            $ renpy.display.video.Movie.any_loadable = staticmethod(original_movie_any_loadable)
+
+        testcase late_search_prefix:
+            $ movie_started = []
+            $ movie = renpy.display.video.Movie(play="late.webm", loop="late-loop.webm", channel="movie", play_callback=lambda old, new: movie_started.append((new._play, new._queue)))
+            assert eval movie._play is None and movie._queue is None
+            $ movie_source_loadable = True
+            $ movie.per_interact()
+            assert eval movie._play == "late.webm" and movie._queue == "late-loop.webm"
+            $ movie.play(None)
+            assert eval movie_started == [("late.webm", "late-loop.webm")]
+
 testsuite timeout:
     setup:
         run Jump("hard_pause")

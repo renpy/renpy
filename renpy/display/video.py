@@ -565,6 +565,13 @@ class Movie(renpy.display.displayable.Displayable):
             if self.mask_channel is not None:
                 self.mask_channel = "movie_mask"
 
+    def _refresh_loadable(self):
+        if (self._play is None) and (self._original_play is not None) and self.any_loadable(self._original_play):
+            self._play = self._original_play
+
+        if (self._queue is None) and (self._original_queue is not None) and self.any_loadable(self._original_queue):
+            self._queue = self._original_queue
+
     def ensure_channel(self, name):
         if name is None:
             return
@@ -648,6 +655,7 @@ class Movie(renpy.display.displayable.Displayable):
             self._play = play
 
         if not isinstance(loop, bool):
+            self._original_queue = loop
 
             if self.any_loadable(loop):
                 self._queue = loop
@@ -806,6 +814,7 @@ class Movie(renpy.display.displayable.Displayable):
                     renpy.audio.music.stop(channel=self.mask_channel, fadeout=0)  # type: ignore
 
     def per_interact(self):
+        self._refresh_loadable()
         self.ensure_channels()
 
         displayable_channels[(self.channel, self.mask_channel)].append(self)
