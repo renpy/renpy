@@ -798,6 +798,7 @@ class Interface:
 
         # The number of interactions that have happened without processing an event.
         self.interaction_counter = 0
+        renpy.display.focus.clear_focus_changes_since_event()
 
         # This caches the mod field of the last event that has one, allowing keyboard
         # modifiers to be used with mouse and other events.
@@ -1251,6 +1252,7 @@ class Interface:
         # Force an interaction restart.
         self.restart_interaction = True
         self.interaction_counter = 0
+        renpy.display.focus.clear_focus_changes_since_event()
 
         # True if we're doing a one-time profile.
         self.profile_once = False
@@ -2181,6 +2183,7 @@ class Interface:
                 i()
 
             self.interaction_counter = 0
+            renpy.display.focus.clear_focus_changes_since_event()
 
             repeat = True
             rv = None
@@ -2191,7 +2194,10 @@ class Interface:
                 self.interaction_counter += 1
 
                 if self.interaction_counter == 100 and renpy.config.developer:
-                    raise Exception("renpy.restart_interaction() was called 100 times without processing any input.")
+                    raise Exception(
+                        "renpy.restart_interaction() was called 100 times without processing any input.\n"
+                        + renpy.display.focus.summarize_focus_changes_since_event()
+                    )
 
                 repeat, rv = self.interact_core(
                     preloads=preloads,
@@ -3053,6 +3059,7 @@ class Interface:
                     renpy.plog(1, "post wait {!r}", ev)
 
                 self.interaction_counter = 0
+                renpy.display.focus.clear_focus_changes_since_event()
 
                 if ev.type == pygame.NOEVENT:
                     if can_block and (not needs_redraw) and (not self.prediction_coroutine) and (not self.mouse_move):
