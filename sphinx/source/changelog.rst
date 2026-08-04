@@ -112,6 +112,9 @@ and used to populate the :ref:`audio-namespace <audio-namespace>`.
 Other Changes
 -------------
 
+The :var:`config.enter_replay_transition` and :var:`config.after_load_transition` transitions now take priority over
+other transitions queued for the same layer.
+
 The ``--compile`` command line argument now deletes orphaned rpyc files by default.
 This can be disabled with the ``--keep-orphan-rpyc`` command line argument.
 
