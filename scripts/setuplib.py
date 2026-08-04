@@ -85,6 +85,7 @@ class ExtensionData(TypedDict):
     sources: list[str]
     language: Literal["c", "c++"]
     extra_compile_args: list[str]
+    extra_link_args: list[str]
     define_macros: list[tuple[str, str | None]]
     packages: list[str]
     depends: list[str]
@@ -107,6 +108,7 @@ def cython(
     define_macros: list[tuple[str, str | None]] | None = None,
     packages: str = "",
     setup_filename: str = "Setup",
+    link_args: list[str] | None = None,
 ):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
@@ -139,6 +141,7 @@ def cython(
         sources=[c_fn] + (source or []),
         language=language,
         extra_compile_args=list(compile_args or []),
+        extra_link_args=list(link_args or []),
         define_macros=list(define_macros or []),
         packages=packages.split(),
         depends=[],
@@ -296,6 +299,7 @@ def setup(name, version):
 
         link_args: list[str] = []
         link_args += package_kwargs["extra_link_args"]
+        link_args += data["extra_link_args"]
         link_args += extra_link_args
 
 

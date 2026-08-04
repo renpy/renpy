@@ -45,8 +45,9 @@ def main():
     setuplib.extra_compile_args = ["-Wno-unused-function"]
     setuplib.extra_link_args = []
 
+    macos_video_link_args = []
     if sys.platform == "darwin":
-        setuplib.extra_link_args += [
+        macos_video_link_args = [
             "-framework", "CoreVideo",
             "-framework", "IOSurface",
             "-framework", "OpenGL",
@@ -104,6 +105,7 @@ def main():
     cython(
         "renpy.audio.renpysound",
         ["src/renpysound_core.c", "src/ffmedia.c", "src/renpy_macos_video.c"],
+        link_args=macos_video_link_args,
         compile_args=["-Wno-deprecated-declarations"]
         if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ)
         else [],
