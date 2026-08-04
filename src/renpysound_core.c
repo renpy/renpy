@@ -58,9 +58,6 @@ SDL_Mutex *name_mutex;
 #endif
 
 /* Declarations of ffdecode functions. */
-struct MediaState;
-typedef struct MediaState MediaState;
-
 void media_init(int rate, int status, int equal_mono);
 
 void media_advance_time(void);
@@ -1294,6 +1291,124 @@ PyObject *RPS_read_video(int channel) {
         return Py_None;
     }
 
+}
+
+
+static void RPS_video_frame_capsule_destructor(PyObject *capsule) {
+	void *frame = PyCapsule_GetPointer(capsule, "renpy.videoframe");
+	if (frame) {
+		media_video_frame_free(frame);
+	}
+}
+
+
+PyObject *RPS_read_video_hardware(int channel) {
+	struct Channel *c;
+	void *frame = NULL;
+	PyObject *capsule;
+
+	if (check_channel(channel)) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	c = &channels[channel];
+	if (c->playing) {
+		Py_BEGIN_ALLOW_THREADS
+		frame = media_read_video_hardware(c->playing);
+		Py_END_ALLOW_THREADS
+	}
+
+	if (!frame) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	capsule = PyCapsule_New(frame, "renpy.videoframe", RPS_video_frame_capsule_destructor);
+	if (!capsule) {
+		media_video_frame_free(frame);
+	}
+
+	error(SUCCESS);
+	return capsule;
+}
+
+
+PyObject *RPS_video_stats(int channel) {
+    struct Channel *c;
+    RPSVideoStats stats;
+    PyObject *rv = PyDict_New();
+
+    if (!rv) {
+        return NULL;
+    }
+
+    if (check_channel(channel)) {
+        PyObject *state = PyUnicode_FromString("invalid-channel");
+        if (state) {
+            PyDict_SetItemString(rv, "state", state);
+            Py_DECREF(state);
+        }
+        return rv;
+    }
+
+    c = &channels[channel];
+
+    if (c->playing) {
+        media_video_stats(c->playing, &stats);
+    } else {
+        memset(&stats, 0, sizeof(stats));
+        stats.state = "stopped";
+        stats.decoder_backend = "unknown";
+        stats.decoder_name = "unknown";
+        stats.codec_name = "unknown";
+        stats.input_pixel_format = "unknown";
+        stats.surface_backend = "unknown";
+        stats.output_pixel_format = "unknown";
+        stats.transfer_pixel_format = "unknown";
+        stats.hardware_status = "disabled";
+    }
+
+#define VIDEO_STAT_STRING(name) do { PyObject *value = PyUnicode_FromString(stats.name ? stats.name : "unknown"); PyDict_SetItemString(rv, #name, value); Py_DECREF(value); } while (0)
+#define VIDEO_STAT_INT(name) do { PyObject *value = PyLong_FromLong((long) stats.name); PyDict_SetItemString(rv, #name, value); Py_DECREF(value); } while (0)
+#define VIDEO_STAT_UINT(name) do { PyObject *value = PyLong_FromUnsignedLongLong((unsigned long long) stats.name); PyDict_SetItemString(rv, #name, value); Py_DECREF(value); } while (0)
+
+    VIDEO_STAT_STRING(state);
+    VIDEO_STAT_STRING(decoder_backend);
+    VIDEO_STAT_STRING(decoder_name);
+    VIDEO_STAT_STRING(codec_name);
+    VIDEO_STAT_STRING(input_pixel_format);
+    VIDEO_STAT_STRING(surface_backend);
+    VIDEO_STAT_STRING(output_pixel_format);
+    VIDEO_STAT_STRING(transfer_pixel_format);
+    VIDEO_STAT_STRING(hardware_status);
+    VIDEO_STAT_INT(hardware_decode);
+    VIDEO_STAT_INT(hardware_surface);
+    VIDEO_STAT_INT(hardware_attempted);
+    VIDEO_STAT_INT(hardware_available);
+    VIDEO_STAT_INT(width);
+    VIDEO_STAT_INT(height);
+    VIDEO_STAT_INT(queue_depth);
+    VIDEO_STAT_UINT(decoded_frames);
+    VIDEO_STAT_UINT(converted_frames);
+    VIDEO_STAT_UINT(submitted_frames);
+    VIDEO_STAT_UINT(dropped_frames);
+    VIDEO_STAT_UINT(decode_time_ns);
+    VIDEO_STAT_UINT(hardware_transfer_frames);
+    VIDEO_STAT_UINT(hardware_transfer_time_ns);
+    VIDEO_STAT_UINT(hardware_transfer_failures);
+    VIDEO_STAT_UINT(color_convert_time_ns);
+    VIDEO_STAT_UINT(present_lateness_ns);
+    VIDEO_STAT_UINT(present_lateness_max_ns);
+    PyObject *last_pts = PyFloat_FromDouble(stats.last_pts);
+    PyDict_SetItemString(rv, "last_pts", last_pts);
+    Py_DECREF(last_pts);
+
+#undef VIDEO_STAT_STRING
+#undef VIDEO_STAT_INT
+#undef VIDEO_STAT_UINT
+
+    return rv;
 }
 
 int RPS_video_ready(int channel) {

@@ -57,6 +57,10 @@ cdef class GLTexture(GL2Model):
     # The number of the texture in OpenGL.
     cdef public unsigned int number
 
+    # The texture target, normally GL_TEXTURE_2D. macOS IOSurface imports use
+    # GL_TEXTURE_RECTANGLE_ARB.
+    cdef public GLenum target
+
     # Has this texture been loaded yet?
     cdef public bint loaded
 

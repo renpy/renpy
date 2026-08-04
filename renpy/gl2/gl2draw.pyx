@@ -967,6 +967,7 @@ cdef class GL2Draw:
         """
 
         start = time.time()
+        present_start = time.perf_counter_ns()
 
         renpy.plog(1, "flip")
 
@@ -975,6 +976,8 @@ cdef class GL2Draw:
         except pygame.error as e:
             renpy.display.log.write("Flip failed %r", e)
             renpy.game.interface.display_reset = True
+
+        renpy.display.video.record_movie_present(time.perf_counter_ns() - present_start)
 
         end = time.time()
 

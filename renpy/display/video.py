@@ -25,6 +25,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import math
 import collections
 import re
+import time
 
 import renpy
 
@@ -116,6 +117,112 @@ reset_channels = set()
 # These store the textures for movies in the same group.
 group_texture = {}
 
+# Main-thread stages are measured here because the media backend cannot see
+# deferred GL texture uploads or the window present call.
+movie_upload_stats = {}
+movie_gpu_import_stats = {}
+movie_present_stats = {}
+movie_present_pending = set()
+movie_debug_log_time = 0.0
+
+
+def _movie_stat_bucket(stats, channel):
+    return stats.setdefault(channel, {"frames": 0, "time_ns": 0})
+
+
+def _resolve_movie_channel(channel):
+    if channel != "movie" or renpy.audio.music.get_playing(channel):
+        return channel
+
+    for candidate in channel_movie:
+        if renpy.audio.music.get_playing(candidate):
+            return candidate
+
+    return channel
+
+
+def record_movie_upload(channel, elapsed_ns):
+    stats = _movie_stat_bucket(movie_upload_stats, channel)
+    stats["frames"] += 1
+    stats["time_ns"] += elapsed_ns
+
+
+def record_movie_gpu_import(channel, elapsed_ns, failed=False):
+    stats = movie_gpu_import_stats.setdefault(channel, {"frames": 0, "time_ns": 0, "failures": 0})
+    if failed:
+        stats["failures"] += 1
+    else:
+        stats["frames"] += 1
+        stats["time_ns"] += elapsed_ns
+
+
+def record_movie_present(elapsed_ns):
+    for channel in movie_present_pending:
+        stats = _movie_stat_bucket(movie_present_stats, channel)
+        stats["frames"] += 1
+        stats["time_ns"] += elapsed_ns
+
+    movie_present_pending.clear()
+
+
+def get_movie_stats(channel="movie"):
+    """Returns a snapshot of decoder and display costs for a movie channel."""
+
+    channel = _resolve_movie_channel(channel)
+    rv = dict(renpy.audio.music.get_channel(channel).video_stats())
+
+    upload = _movie_stat_bucket(movie_upload_stats, channel)
+    gpu_import = movie_gpu_import_stats.setdefault(channel, {"frames": 0, "time_ns": 0, "failures": 0})
+    present = _movie_stat_bucket(movie_present_stats, channel)
+
+    gpu_frames = gpu_import["frames"]
+    upload_frames = upload["frames"]
+    if gpu_frames and upload_frames:
+        upload_backend = "mixed"
+        gpu_yuv_backend = "mixed"
+    elif gpu_frames:
+        upload_backend = "iosurface-import"
+        gpu_yuv_backend = "iosurface-rectangle+glsl"
+    elif upload_frames:
+        upload_backend = "deferred-texture-loader"
+        gpu_yuv_backend = "disabled"
+    else:
+        upload_backend = "none"
+        gpu_yuv_backend = "disabled"
+
+    rv.update(
+        {
+            "channel": channel,
+            "channel_playing": bool(renpy.audio.music.get_playing(channel)),
+            "upload_frames": upload["frames"],
+            "upload_time_ns": upload["time_ns"],
+            "present_frames": present["frames"],
+            "present_time_ns": present["time_ns"],
+            "upload_backend": upload_backend,
+            "gpu_import_frames": gpu_frames,
+            "gpu_import_time_ns": gpu_import["time_ns"],
+            "gpu_import_failures": gpu_import["failures"],
+            "gpu_yuv_backend": gpu_yuv_backend,
+        }
+    )
+
+    return rv
+
+
+def _debug_movie_stats():
+    global movie_debug_log_time
+
+    if not renpy.config.debug_video:
+        return
+
+    now = time.monotonic()
+    if now < movie_debug_log_time:
+        return
+
+    movie_debug_log_time = now + 1.0
+    stats = get_movie_stats("movie")
+    renpy.display.log.write("movie stats: %r", stats)
+
 
 def early_interact():
     """
@@ -165,6 +272,40 @@ def get_movie_texture(channel, mask_channel=None, side_mask=False, mipmap=None):
         return get_movie_texture_web(channel, mask_channel, side_mask, mipmap)
 
     c = renpy.audio.music.get_channel(channel)
+    hardware_frame = None
+    hardware_tex = None
+
+    if renpy.macintosh and not side_mask and not mask_channel and hasattr(c, "read_video_hardware"):
+        try:
+            hardware_frame = c.read_video_hardware()
+        except Exception:
+            renpy.display.log.write("VideoToolbox surface read failed; using CPU movie path.")
+            renpy.display.log.exception()
+
+        if hardware_frame is not None:
+            from renpy.gl2 import gl2texture
+
+            gpu_import_start = time.perf_counter_ns()
+            try:
+                hardware_tex = gl2texture.load_videotoolbox_frame(
+                    hardware_frame,
+                    {"mipmap": mipmap, "movie_channel": channel},
+                )
+            except Exception:
+                record_movie_gpu_import(channel, 0, failed=True)
+                renpy.display.log.write("VideoToolbox IOSurface import failed; using CPU movie path.")
+                renpy.display.log.exception()
+            else:
+                if hardware_tex is not None:
+                    record_movie_gpu_import(channel, time.perf_counter_ns() - gpu_import_start)
+                else:
+                    record_movie_gpu_import(channel, 0, failed=True)
+
+    if hardware_tex is not None:
+        movie_present_pending.add(channel)
+        texture[channel] = hardware_tex
+        return hardware_tex, True
+
     surf = c.read_video()
 
     if side_mask:
@@ -193,7 +334,8 @@ def get_movie_texture(channel, mask_channel=None, side_mask=False, mipmap=None):
 
     if surf is not None:
         renpy.display.render.mutated_surface(surf)
-        tex = renpy.display.draw.load_texture(surf, True, {"mipmap": mipmap})
+        movie_present_pending.add(channel)
+        tex = renpy.display.draw.load_texture(surf, True, {"mipmap": mipmap, "movie_channel": channel})
         texture[channel] = tex
         new = True
     else:
@@ -355,6 +497,14 @@ def find_oversampled(new, filename):
 
 
 def default_play_callback(old, new):
+    movie_upload_stats.pop(new.channel, None)
+    movie_gpu_import_stats.pop(new.channel, None)
+    movie_present_stats.pop(new.channel, None)
+    movie_present_pending.discard(new.channel)
+
+    if renpy.config.debug_video:
+        renpy.display.log.write("movie play: channel=%r file=%r loop=%r", new.channel, new._play, new.loop)
+
     if new.mask:
         renpy.audio.music.play(find_oversampled(new, new.mask), channel=new.mask_channel, loop=new.loop)
 
@@ -881,6 +1031,8 @@ def frequent():
     """
 
     update_playing()
+
+    _debug_movie_stats()
 
     renpy.audio.audio.advance_time()
 

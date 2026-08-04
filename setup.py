@@ -45,6 +45,13 @@ def main():
     setuplib.extra_compile_args = ["-Wno-unused-function"]
     setuplib.extra_link_args = []
 
+    if sys.platform == "darwin":
+        setuplib.extra_link_args += [
+            "-framework", "CoreVideo",
+            "-framework", "IOSurface",
+            "-framework", "OpenGL",
+        ]
+
     cubism = os.environ.get("CUBISM", None)
     if cubism:
         setuplib.include_dirs.append(f"{cubism}/Core/include")
@@ -96,7 +103,7 @@ def main():
     # renpy.audio
     cython(
         "renpy.audio.renpysound",
-        ["src/renpysound_core.c", "src/ffmedia.c"],
+        ["src/renpysound_core.c", "src/ffmedia.c", "src/renpy_macos_video.c"],
         compile_args=["-Wno-deprecated-declarations"]
         if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ)
         else [],

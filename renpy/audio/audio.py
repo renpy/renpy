@@ -894,11 +894,23 @@ class Channel(object):
 
         return renpysound.read_video(self.number)
 
+    def read_video_hardware(self):
+        if not pcm_ok:
+            return None
+
+        return renpysound.read_video_hardware(self.number)
+
     def video_ready(self):
         if not pcm_ok:
             return 1
 
         return renpysound.video_ready(self.number)
+
+    def video_stats(self):
+        if not pcm_ok:
+            return {"state": "audio-disabled"}
+
+        return renpysound.video_stats(self.number)
 
 
 # A list of channels we know about.

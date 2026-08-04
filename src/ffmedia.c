@@ -3,12 +3,17 @@
 #include <libswresample/swresample.h>
 #include <libavutil/time.h>
 #include <libavutil/pixfmt.h>
+#include <libavutil/pixdesc.h>
+#include <libavutil/hwcontext.h>
 #include <libswscale/swscale.h>
+
+#include "ffmedia.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_thread.h>
 
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef _WIN32
 #define USE_POSIX_MEMALIGN
@@ -144,6 +149,9 @@ typedef struct FrameQueue {
 typedef struct SurfaceQueueEntry {
 	struct SurfaceQueueEntry *next;
 
+	/* A VideoToolbox frame that can be imported by the renderer. */
+	AVFrame *hw_frame;
+
 	SDL_Surface *surf;
 
 	/* The pts, converted to seconds. */
@@ -160,7 +168,7 @@ typedef struct SurfaceQueueEntry {
 
 } SurfaceQueueEntry;
 
-typedef struct MediaState {
+struct MediaState {
 
     /* The next entry in a list of MediaStates */
     struct MediaState *next;
@@ -249,6 +257,14 @@ typedef struct MediaState {
 
 	/* A frame that video is decoded into. */
 	AVFrame *video_decode_frame;
+	AVBufferRef *video_hw_device_ctx;
+	int video_hardware_decode;
+	int video_hardware_surface;
+	int video_hardware_attempted;
+	int video_hardware_available;
+	int video_software_fallback_requested; // Lock.
+	const char *video_hardware_status;
+	enum AVPixelFormat video_transfer_format; // Lock.
 
 	/* Video Stuff ***********************************************************/
 
@@ -268,17 +284,52 @@ typedef struct MediaState {
 	/* Are frame drops allowed? */
 	int frame_drops;
 
+	/* Video diagnostics. These counters are protected by lock when read. */
+	uint64_t video_decoded_frames;
+	uint64_t video_converted_frames;
+	uint64_t video_submitted_frames;
+	uint64_t video_dropped_frames;
+	uint64_t video_decode_time_ns;
+	uint64_t video_hardware_transfer_frames;
+	uint64_t video_hardware_transfer_time_ns;
+	uint64_t video_hardware_transfer_failures;
+	uint64_t video_color_convert_time_ns;
+	uint64_t video_present_lateness_ns;
+	uint64_t video_present_lateness_max_ns;
+	double video_last_pts;
+
 	/* The time the pause happened, or 0 if we're not paused. */
 	double pause_time;
 
 	/* The offset between now and the time of the current frame, at least for video. */
 	double time_offset;
 
-} MediaState;
+};
 
 static AVFrame *dequeue_frame(FrameQueue *fq);
 static void free_packet_queue(PacketQueue *pq);
 static SurfaceQueueEntry *dequeue_surface(SurfaceQueueEntry **queue);
+
+
+static void free_surface_entry(SurfaceQueueEntry *sqe) {
+	if (!sqe) {
+		return;
+	}
+
+	if (sqe->hw_frame) {
+		av_frame_free(&sqe->hw_frame);
+	}
+
+	if (sqe->pixels) {
+#ifndef USE_POSIX_MEMALIGN
+		SDL_free(sqe->pixels);
+#else
+		free(sqe->pixels);
+#endif
+	}
+
+	av_free(sqe);
+}
 
 
 /* A queue of MediaState objects that are awaiting deallocation.*/
@@ -297,14 +348,7 @@ static void deallocate(MediaState *ms) {
 			break;
 		}
 
-		if (sqe->pixels) {
-#ifndef USE_POSIX_MEMALIGN
-			SDL_free(sqe->pixels);
-#else
-			free(sqe->pixels);
-#endif
-		}
-		av_free(sqe);
+		free_surface_entry(sqe);
 	}
 
 	if (ms->sws) {
@@ -344,6 +388,9 @@ static void deallocate(MediaState *ms) {
 
 	if (ms->video_context) {
 		avcodec_free_context(&ms->video_context);
+	}
+	if (ms->video_hw_device_ctx) {
+		av_buffer_unref(&ms->video_hw_device_ctx);
 	}
 	if (ms->audio_context) {
 		avcodec_free_context(&ms->audio_context);
@@ -559,6 +606,18 @@ static SurfaceQueueEntry *dequeue_surface(SurfaceQueueEntry **queue) {
 }
 
 
+static void clear_surface_queue(MediaState *ms) {
+	SurfaceQueueEntry *sqe;
+
+	while ((sqe = dequeue_surface(&ms->surface_queue)) != NULL) {
+		free_surface_entry(sqe);
+		ms->surface_queue_size -= 1;
+	}
+
+	ms->surface_queue_size = 0;
+}
+
+
 #if 0
 static void check_surface_queue(MediaState *ms) {
 
@@ -581,7 +640,53 @@ static void check_surface_queue(MediaState *ms) {
 /* Find decoder context ******************************************************/
 
 
-static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
+static int codec_supports_videotoolbox(const AVCodec *codec) {
+#if defined(__APPLE__)
+	for (int i = 0;; i++) {
+		const AVCodecHWConfig *config = avcodec_get_hw_config(codec, i);
+		if (config == NULL) {
+			break;
+		}
+
+		if ((config->methods & AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX) &&
+			config->device_type == AV_HWDEVICE_TYPE_VIDEOTOOLBOX &&
+			config->pix_fmt == AV_PIX_FMT_VIDEOTOOLBOX) {
+			return 1;
+		}
+	}
+#endif
+
+	return 0;
+}
+
+
+static enum AVPixelFormat get_video_format(AVCodecContext *codec_ctx, const enum AVPixelFormat *formats) {
+	MediaState *ms = (MediaState *) codec_ctx->opaque;
+
+	for (const enum AVPixelFormat *format = formats; *format != AV_PIX_FMT_NONE; format++) {
+		if (*format == AV_PIX_FMT_VIDEOTOOLBOX) {
+			if (ms) {
+				ms->video_hardware_decode = 1;
+				ms->video_hardware_surface = 1;
+				ms->video_hardware_status = "active";
+			}
+			return *format;
+		}
+	}
+
+	if (ms) {
+		ms->video_hardware_decode = 0;
+		ms->video_hardware_surface = 0;
+		if (ms->video_hardware_attempted) {
+			ms->video_hardware_status = "software-fallback";
+		}
+	}
+
+	return formats[0];
+}
+
+
+static AVCodecContext *find_context(MediaState *ms, AVFormatContext *ctx, int index, int is_video, int force_software) {
 
     AVDictionary *opts = NULL;
 
@@ -589,43 +694,68 @@ static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
 		return NULL;
 	}
 
-	const AVCodec *codec = NULL;
+	const AVCodec *codec = avcodec_find_decoder(ctx->streams[index]->codecpar->codec_id);
 	AVCodecContext *codec_ctx = NULL;
-
-	codec_ctx = avcodec_alloc_context3(NULL);
-
-	if (codec_ctx == NULL) {
+	if (codec == NULL) {
 		return NULL;
 	}
 
-	if (avcodec_parameters_to_context(codec_ctx, ctx->streams[index]->codecpar) < 0) {
-		goto fail;
+	for (int attempt = 0; attempt < 2; attempt++) {
+		int use_videotoolbox = is_video && !force_software && attempt == 0 && codec_supports_videotoolbox(codec);
+		int opened_with_hardware = 0;
+
+		codec_ctx = avcodec_alloc_context3(NULL);
+		if (codec_ctx == NULL) {
+			return NULL;
+		}
+
+		if (avcodec_parameters_to_context(codec_ctx, ctx->streams[index]->codecpar) < 0) {
+			avcodec_free_context(&codec_ctx);
+			return NULL;
+		}
+
+		codec_ctx->pkt_timebase = ctx->streams[index]->time_base;
+
+		if (use_videotoolbox) {
+			ms->video_hardware_attempted = 1;
+			if (!ms->video_hardware_status) {
+				ms->video_hardware_status = "initializing";
+			}
+
+			if (av_hwdevice_ctx_create(&ms->video_hw_device_ctx,
+				AV_HWDEVICE_TYPE_VIDEOTOOLBOX, NULL, NULL, 0) >= 0) {
+				ms->video_hardware_available = 1;
+				codec_ctx->hw_device_ctx = av_buffer_ref(ms->video_hw_device_ctx);
+				codec_ctx->opaque = ms;
+				codec_ctx->get_format = get_video_format;
+				opened_with_hardware = codec_ctx->hw_device_ctx != NULL;
+			} else {
+				ms->video_hardware_status = "unavailable";
+			}
+		}
+
+		codec_ctx->codec_id = codec->id;
+		av_dict_set(&opts, "threads", "auto", 0);
+		av_dict_set(&opts, "refcounted_frames", "0", 0);
+
+		if (avcodec_open2(codec_ctx, codec, &opts) == 0) {
+			av_dict_free(&opts);
+			return codec_ctx;
+		}
+
+		av_dict_free(&opts);
+		avcodec_free_context(&codec_ctx);
+
+		if (!opened_with_hardware) {
+			break;
+		}
+
+		ms->video_hardware_decode = 0;
+		ms->video_hardware_surface = 0;
+		ms->video_hardware_status = "software-fallback";
+		force_software = 1;
 	}
 
-	codec_ctx->pkt_timebase = ctx->streams[index]->time_base;
-
-    codec = avcodec_find_decoder(codec_ctx->codec_id);
-
-    if (codec == NULL) {
-        goto fail;
-    }
-
-    codec_ctx->codec_id = codec->id;
-
-    av_dict_set(&opts, "threads", "auto", 0);
-    av_dict_set(&opts, "refcounted_frames", "0", 0);
-
-	if (avcodec_open2(codec_ctx, codec, &opts)) {
-		goto fail;
-	}
-
-	return codec_ctx;
-
-fail:
-
-    av_dict_free(&opts);
-
-	avcodec_free_context(&codec_ctx);
 	return NULL;
 }
 
@@ -803,10 +933,181 @@ static enum AVPixelFormat get_pixel_format(SDL_Surface *surf) {
 }
 
 
+static void video_record_decode(MediaState *ms, Uint64 elapsed_ns) {
+#ifndef __EMSCRIPTEN__
+	SDL_LockMutex(ms->lock);
+#endif
+	ms->video_decoded_frames += 1;
+	ms->video_decode_time_ns += elapsed_ns;
+#ifndef __EMSCRIPTEN__
+	SDL_UnlockMutex(ms->lock);
+#endif
+}
+
+
+static void video_record_drop(MediaState *ms) {
+#ifndef __EMSCRIPTEN__
+	SDL_LockMutex(ms->lock);
+#endif
+	ms->video_dropped_frames += 1;
+#ifndef __EMSCRIPTEN__
+	SDL_UnlockMutex(ms->lock);
+#endif
+}
+
+
+static void video_record_conversion(MediaState *ms, Uint64 elapsed_ns, double pts) {
+#ifndef __EMSCRIPTEN__
+	SDL_LockMutex(ms->lock);
+#endif
+	ms->video_converted_frames += 1;
+	ms->video_color_convert_time_ns += elapsed_ns;
+	ms->video_last_pts = pts;
+#ifndef __EMSCRIPTEN__
+	SDL_UnlockMutex(ms->lock);
+#endif
+}
+
+
+static void video_record_hardware_transfer(MediaState *ms, Uint64 elapsed_ns, int failed) {
+#ifndef __EMSCRIPTEN__
+	SDL_LockMutex(ms->lock);
+#endif
+	ms->video_hardware_transfer_time_ns += elapsed_ns;
+	if (failed) {
+		ms->video_hardware_transfer_failures += 1;
+	} else {
+		ms->video_hardware_transfer_frames += 1;
+	}
+#ifndef __EMSCRIPTEN__
+	SDL_UnlockMutex(ms->lock);
+#endif
+}
+
+
+static int video_fallback_to_software(MediaState *ms) {
+	AVCodecContext *software_context = find_context(ms, ms->ctx, ms->video_stream, 1, 1);
+	if (!software_context) {
+		return -1;
+	}
+
+	avcodec_free_context(&ms->video_context);
+	ms->video_context = software_context;
+	ms->video_hardware_decode = 0;
+	ms->video_hardware_surface = 0;
+	ms->video_hardware_status = "software-fallback";
+
+	if (ms->sws) {
+		sws_freeContext(ms->sws);
+		ms->sws = NULL;
+	}
+
+	if (ms->video_decode_frame) {
+		av_frame_unref(ms->video_decode_frame);
+	}
+
+	return 0;
+}
+
+
+static SurfaceQueueEntry *convert_video_frame(MediaState *ms, AVFrame *source_frame, double pts) {
+	SDL_Surface *sample = rgba_surface;
+
+	if (ms->sws == NULL) {
+		ms->sws = sws_getContext(
+			source_frame->width,
+			source_frame->height,
+			source_frame->format,
+
+			source_frame->width,
+			source_frame->height,
+			get_pixel_format(sample),
+
+			SWS_POINT | SWS_FULL_CHR_H_INP | SWS_FULL_CHR_H_INT,
+
+			NULL,
+			NULL,
+			NULL
+			);
+
+
+		if (!ms->sws) {
+			ms->video_finished = 1;
+			return NULL;
+		}
+
+		int colorspace = source_frame->colorspace;
+		if (colorspace == AVCOL_SPC_UNSPECIFIED) {
+			colorspace = SWS_CS_DEFAULT;
+		}
+
+		int src_range = (source_frame->color_range == AVCOL_RANGE_JPEG) ? 1 : 0;
+
+		sws_setColorspaceDetails(ms->sws,
+			sws_getCoefficients(colorspace), src_range,
+			sws_getCoefficients(SWS_CS_DEFAULT), 0,
+			0, 1 << 16, 1 << 16);
+	}
+
+	SurfaceQueueEntry *rv = av_malloc(sizeof(SurfaceQueueEntry));
+	if (rv == NULL) {
+		ms->video_finished = 1;
+		return NULL;
+	}
+
+	memset(rv, 0, sizeof(*rv));
+	rv->w = source_frame->width + FRAME_PADDING * 2;
+	rv->h = source_frame->height + FRAME_PADDING * 2;
+
+	const SDL_PixelFormatDetails *sample_fmt = SDL_GetPixelFormatDetails(sample->format);
+
+	rv->pitch = rv->w * sample_fmt->bytes_per_pixel;
+
+	if (rv->pitch % ROW_ALIGNMENT) {
+		rv->pitch += ROW_ALIGNMENT - (rv->pitch % ROW_ALIGNMENT);
+	}
+
+#ifndef USE_POSIX_MEMALIGN
+	rv->pixels = SDL_calloc(rv->pitch * rv->h, 1);
+#else
+	if (posix_memalign(&rv->pixels, ROW_ALIGNMENT, rv->pitch * rv->h)) {
+		av_free(rv);
+		return NULL;
+	}
+	memset(rv->pixels, 0, rv->pitch * rv->h);
+#endif
+
+	rv->format = sample->format;
+	rv->next = NULL;
+	rv->pts = pts;
+
+	uint8_t *surf_pixels = (uint8_t *) rv->pixels;
+	uint8_t *surf_data[] = { &surf_pixels[FRAME_PADDING * rv->pitch + FRAME_PADDING * sample_fmt->bytes_per_pixel] };
+	int surf_linesize[] = { rv->pitch };
+
+	Uint64 color_convert_start = SDL_GetTicksNS();
+
+	sws_scale(
+		ms->sws,
+		(const uint8_t * const *) source_frame->data,
+		source_frame->linesize,
+		0,
+		source_frame->height,
+		surf_data,
+		surf_linesize
+		);
+
+	video_record_conversion(ms, SDL_GetTicksNS() - color_convert_start, pts);
+
+	return rv;
+}
+
+
 static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	int ret;
 
 	while (1) {
+		Uint64 decode_start = SDL_GetTicksNS();
 
 		AVPacket *pkt = read_packet(ms, &ms->video_packet_queue);
 		ret = avcodec_send_packet(ms->video_context, pkt);
@@ -833,12 +1134,16 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 			return NULL;
 		}
 
+		video_record_decode(ms, SDL_GetTicksNS() - decode_start);
+
 		break;
 	}
 
+	AVFrame *source_frame = ms->video_decode_frame;
 	double pts = ms->video_decode_frame->best_effort_timestamp * av_q2d(ms->ctx->streams[ms->video_stream]->time_base);
 
 	if (pts < ms->skip) {
+		video_record_drop(ms);
 		return NULL;
 	}
 
@@ -852,100 +1157,39 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		}
 
 		if (ms->frame_drops) {
+			video_record_drop(ms);
 		    return NULL;
 		}
 	}
 
-	SDL_Surface *sample = rgba_surface;
-
-	if (ms->sws == NULL) {
-		ms->sws = sws_getContext(
-			ms->video_decode_frame->width,
-			ms->video_decode_frame->height,
-			ms->video_decode_frame->format,
-
-			ms->video_decode_frame->width,
-			ms->video_decode_frame->height,
-			get_pixel_format(sample),
-
-			SWS_POINT | SWS_FULL_CHR_H_INP | SWS_FULL_CHR_H_INT,
-
-			NULL,
-			NULL,
-			NULL
-			);
-
-
-		if (!ms->sws) {
+	if (source_frame->format == AV_PIX_FMT_VIDEOTOOLBOX) {
+		SurfaceQueueEntry *rv = av_mallocz(sizeof(SurfaceQueueEntry));
+		if (!rv) {
 			ms->video_finished = 1;
 			return NULL;
 		}
 
-		int colorspace = ms->video_decode_frame->colorspace;
-		if (colorspace == AVCOL_SPC_UNSPECIFIED) {
-			colorspace = SWS_CS_DEFAULT;
+		rv->hw_frame = av_frame_alloc();
+		if (!rv->hw_frame || av_frame_ref(rv->hw_frame, source_frame) < 0) {
+			free_surface_entry(rv);
+			ms->video_finished = 1;
+			return NULL;
 		}
 
-		int src_range = (ms->video_decode_frame->color_range == AVCOL_RANGE_JPEG) ? 1 : 0;
-
-		sws_setColorspaceDetails(ms->sws,
-			sws_getCoefficients(colorspace), src_range,
-			sws_getCoefficients(SWS_CS_DEFAULT), 0,
-			0, 1 << 16, 1 << 16);
+		rv->pts = pts;
+		rv->w = source_frame->width;
+		rv->h = source_frame->height;
+		return rv;
 	}
 
-	SurfaceQueueEntry *rv = av_malloc(sizeof(SurfaceQueueEntry));
-	if (rv == NULL) {
-		ms->video_finished = 1;
-		return NULL;
-	}
-	rv->w = ms->video_decode_frame->width + FRAME_PADDING * 2;
-	rv->h = ms->video_decode_frame->height + FRAME_PADDING * 2;
-
-	const SDL_PixelFormatDetails *sample_fmt = SDL_GetPixelFormatDetails(sample->format);
-
-	rv->pitch = rv->w * sample_fmt->bytes_per_pixel;
-
-	if (rv->pitch % ROW_ALIGNMENT) {
-	    rv->pitch += ROW_ALIGNMENT - (rv->pitch % ROW_ALIGNMENT);
-	}
-
-#ifndef USE_POSIX_MEMALIGN
-    rv->pixels = SDL_calloc(rv->pitch * rv->h, 1);
-#else
-	if (posix_memalign(&rv->pixels, ROW_ALIGNMENT, rv->pitch * rv->h)) {
-		av_free(rv);
-		return NULL;
-	}
-    memset(rv->pixels, 0, rv->pitch * rv->h);
-#endif
-
-	rv->format = sample->format;
-	rv->next = NULL;
-	rv->pts = pts;
-
-	uint8_t *surf_pixels = (uint8_t *) rv->pixels;
-	uint8_t *surf_data[] = { &surf_pixels[FRAME_PADDING * rv->pitch + FRAME_PADDING * sample_fmt->bytes_per_pixel] };
-	int surf_linesize[] = { rv->pitch };
-
-	sws_scale(
-		ms->sws,
-
-		(const uint8_t * const *) ms->video_decode_frame->data,
-		ms->video_decode_frame->linesize,
-
-		0,
-		ms->video_decode_frame->height,
-
-		surf_data,
-		surf_linesize
-		);
-
-	return rv;
+	return convert_video_frame(ms, source_frame, pts);
 }
 
 
 static void decode_video(MediaState *ms) {
+	int fallback_requested;
+	int fallback_result;
+
 	if (!ms->video_context) {
 		ms->video_finished = 1;
 		return;
@@ -961,7 +1205,29 @@ static void decode_video(MediaState *ms) {
 	}
 
 	SDL_LockMutex(ms->lock);
+	fallback_requested = ms->video_software_fallback_requested;
+	ms->video_software_fallback_requested = 0;
+	SDL_UnlockMutex(ms->lock);
 
+	if (fallback_requested) {
+		fallback_result = video_fallback_to_software(ms);
+
+		SDL_LockMutex(ms->lock);
+		if (fallback_result < 0) {
+			ms->video_hardware_status = "software-fallback-failed";
+			ms->video_finished = 1;
+			SDL_UnlockMutex(ms->lock);
+			return;
+		}
+
+		/* Hardware frames queued before the transfer failure cannot be
+		 * consumed by the software decoder path. */
+		clear_surface_queue(ms);
+		SDL_UnlockMutex(ms->lock);
+		return;
+	}
+
+	SDL_LockMutex(ms->lock);
 	if (!ms->video_finished && (ms->surface_queue_size < FRAMES)) {
 
 		SDL_UnlockMutex(ms->lock);
@@ -1024,18 +1290,12 @@ int media_video_ready(struct MediaState *ms) {
 				break;
 			}
 
-			/* Otherwise, drop it without display. */
-			SurfaceQueueEntry *sqe = dequeue_surface(&ms->surface_queue);
-			ms->surface_queue_size -= 1;
+				/* Otherwise, drop it without display. */
+				SurfaceQueueEntry *sqe = dequeue_surface(&ms->surface_queue);
+				ms->surface_queue_size -= 1;
+				ms->video_dropped_frames += 1;
 
-			if (sqe->pixels) {
-#ifndef USE_POSIX_MEMALIGN
-				SDL_free(sqe->pixels);
-#else
-				free(sqe->pixels);
-#endif
-			}
-			av_free(sqe);
+			free_surface_entry(sqe);
 
 			consumed = 1;
 		}
@@ -1070,9 +1330,7 @@ done:
 }
 
 
-SDL_Surface *media_read_video(MediaState *ms) {
-
-	SDL_Surface *rv = NULL;
+static SurfaceQueueEntry *media_read_video_entry(MediaState *ms, int hardware_only) {
 	SurfaceQueueEntry *sqe = NULL;
 
 	if (ms->video_stream == -1) {
@@ -1089,11 +1347,7 @@ SDL_Surface *media_read_video(MediaState *ms) {
 	}
 #endif
 
-	if (ms->pause_time > 0) {
-	    goto done;
-	}
-
-	if (!ms->surface_queue_size) {
+	if (ms->pause_time > 0 || !ms->surface_queue_size) {
 		goto done;
 	}
 
@@ -1101,38 +1355,190 @@ SDL_Surface *media_read_video(MediaState *ms) {
 		ms->video_pts_offset = offset_time - ms->surface_queue->pts;
 	}
 
-	if (ms->surface_queue->pts + ms->video_pts_offset <= offset_time + frame_early_delivery) {
+	if (ms->surface_queue->pts + ms->video_pts_offset <= offset_time + frame_early_delivery &&
+		(!hardware_only || ms->surface_queue->hw_frame)) {
 		sqe = dequeue_surface(&ms->surface_queue);
 		ms->surface_queue_size -= 1;
-
 	}
 
 done:
-
-    /* Only signal if we've consumed something. */
 	if (sqe) {
 		ms->needs_decode = 1;
 		ms->video_read_time = offset_time;
+		ms->video_submitted_frames += 1;
+
+		double lateness = offset_time - (sqe->pts + ms->video_pts_offset);
+		if (lateness > 0.0) {
+			uint64_t lateness_ns = (uint64_t) (lateness * 1000000000.0);
+			ms->video_present_lateness_ns += lateness_ns;
+			if (lateness_ns > ms->video_present_lateness_max_ns) {
+				ms->video_present_lateness_max_ns = lateness_ns;
+			}
+		}
+
 		SDL_BroadcastCondition(ms->cond);
 	}
 
 	SDL_UnlockMutex(ms->lock);
+	return sqe;
+}
 
-	if (sqe) {
-		rv = SDL_CreateSurfaceFrom(
-			sqe->w,
-			sqe->h,
-			sqe->format,
-			sqe->pixels,
-			sqe->pitch
-		);
 
-		/* Force SDL to take over management of pixels. */
-		rv->flags &= ~SDL_SURFACE_PREALLOCATED;
-		av_free(sqe);
+void *media_read_video_hardware(MediaState *ms) {
+	SurfaceQueueEntry *sqe = media_read_video_entry(ms, 1);
+	AVFrame *frame;
+
+	if (!sqe) {
+		return NULL;
 	}
 
+	frame = sqe->hw_frame;
+	sqe->hw_frame = NULL;
+	free_surface_entry(sqe);
+	return frame;
+}
+
+
+void media_video_frame_free(void *frame) {
+	AVFrame *av_frame = (AVFrame *) frame;
+	if (av_frame) {
+		av_frame_free(&av_frame);
+	}
+}
+
+
+SDL_Surface *media_read_video(MediaState *ms) {
+	SurfaceQueueEntry *sqe = media_read_video_entry(ms, 0);
+	SurfaceQueueEntry *converted = NULL;
+
+	if (!sqe) {
+		return NULL;
+	}
+
+	if (sqe->hw_frame) {
+		AVFrame *transfer_frame = av_frame_alloc();
+		Uint64 transfer_start = SDL_GetTicksNS();
+		int ret = transfer_frame ? av_hwframe_transfer_data(transfer_frame, sqe->hw_frame, 0) : AVERROR(ENOMEM);
+		Uint64 transfer_time = SDL_GetTicksNS() - transfer_start;
+
+		if (ret < 0) {
+			video_record_hardware_transfer(ms, transfer_time, 1);
+			SDL_LockMutex(ms->lock);
+			ms->video_software_fallback_requested = 1;
+			ms->needs_decode = 1;
+			SDL_BroadcastCondition(ms->cond);
+			SDL_UnlockMutex(ms->lock);
+			av_frame_free(&transfer_frame);
+			free_surface_entry(sqe);
+			return NULL;
+		}
+
+		video_record_hardware_transfer(ms, transfer_time, 0);
+		SDL_LockMutex(ms->lock);
+		ms->video_transfer_format = transfer_frame->format;
+		SDL_UnlockMutex(ms->lock);
+		converted = convert_video_frame(ms, transfer_frame, sqe->pts);
+		av_frame_free(&transfer_frame);
+		free_surface_entry(sqe);
+		sqe = converted;
+	}
+
+	if (!sqe || !sqe->pixels) {
+		free_surface_entry(sqe);
+		return NULL;
+	}
+
+	SDL_Surface *rv = SDL_CreateSurfaceFrom(
+		sqe->w,
+		sqe->h,
+		sqe->format,
+		sqe->pixels,
+		sqe->pitch
+		);
+
+	if (!rv) {
+		free_surface_entry(sqe);
+		return NULL;
+	}
+
+	/* Force SDL to take over management of pixels. */
+	rv->flags &= ~SDL_SURFACE_PREALLOCATED;
+	av_free(sqe);
 	return rv;
+}
+
+
+void media_video_stats(MediaState *ms, RPSVideoStats *stats) {
+	memset(stats, 0, sizeof(*stats));
+	stats->state = "stopped";
+	stats->decoder_backend = "unknown";
+	stats->decoder_name = "unknown";
+	stats->codec_name = "unknown";
+	stats->input_pixel_format = "unknown";
+	stats->surface_backend = "unknown";
+	stats->output_pixel_format = "unknown";
+	stats->transfer_pixel_format = "unknown";
+	stats->hardware_status = "disabled";
+
+	if (!ms) {
+		return;
+	}
+
+	#ifndef __EMSCRIPTEN__
+	SDL_LockMutex(ms->lock);
+	#endif
+
+	stats->state = ms->ready ? "ready" : "initializing";
+	stats->decoder_backend = ms->video_hardware_decode ? "ffmpeg-videotoolbox" : "ffmpeg-software";
+	stats->surface_backend = ms->video_hardware_decode ? "videotoolbox-surface" : "cpu-surface";
+	stats->hardware_status = ms->video_hardware_status ? ms->video_hardware_status : "software-only";
+	stats->hardware_decode = ms->video_hardware_decode;
+	stats->hardware_surface = ms->video_hardware_surface;
+	stats->hardware_attempted = ms->video_hardware_attempted;
+	stats->hardware_available = ms->video_hardware_available;
+	stats->queue_depth = ms->surface_queue_size;
+	stats->decoded_frames = ms->video_decoded_frames;
+	stats->converted_frames = ms->video_converted_frames;
+	stats->submitted_frames = ms->video_submitted_frames;
+	stats->dropped_frames = ms->video_dropped_frames;
+	stats->decode_time_ns = ms->video_decode_time_ns;
+	stats->hardware_transfer_frames = ms->video_hardware_transfer_frames;
+	stats->hardware_transfer_time_ns = ms->video_hardware_transfer_time_ns;
+	stats->hardware_transfer_failures = ms->video_hardware_transfer_failures;
+	stats->color_convert_time_ns = ms->video_color_convert_time_ns;
+	stats->present_lateness_ns = ms->video_present_lateness_ns;
+	stats->present_lateness_max_ns = ms->video_present_lateness_max_ns;
+	stats->last_pts = ms->video_last_pts;
+
+	if (ms->video_context) {
+		stats->decoder_name = avcodec_get_name(ms->video_context->codec_id);
+		stats->codec_name = avcodec_get_name(ms->video_context->codec_id);
+		stats->width = ms->video_context->width;
+		stats->height = ms->video_context->height;
+		stats->input_pixel_format = av_get_pix_fmt_name(ms->video_context->pix_fmt);
+	}
+
+	if (ms->video_decode_frame) {
+		const char *pixel_format = av_get_pix_fmt_name(ms->video_decode_frame->format);
+		if (pixel_format) {
+			stats->input_pixel_format = pixel_format;
+		}
+	}
+
+	if (ms->video_transfer_format != AV_PIX_FMT_NONE) {
+		const char *pixel_format = av_get_pix_fmt_name(ms->video_transfer_format);
+		if (pixel_format) {
+			stats->transfer_pixel_format = pixel_format;
+		}
+	}
+
+	if (rgba_surface) {
+		stats->output_pixel_format = ms->video_hardware_surface ? "gpu-nv12" : SDL_GetPixelFormatName(rgba_surface->format);
+	}
+
+	#ifndef __EMSCRIPTEN__
+	SDL_UnlockMutex(ms->lock);
+	#endif
 }
 
 
@@ -1183,8 +1589,8 @@ static int decode_thread(void *arg) {
 		}
 	}
 
-	ms->video_context = find_context(ctx, ms->video_stream);
-	ms->audio_context = find_context(ctx, ms->audio_stream);
+	ms->video_context = find_context(ms, ctx, ms->video_stream, 1, 0);
+	ms->audio_context = find_context(ms, ctx, ms->audio_stream, 0, 1);
 
 	ms->swr = swr_alloc();
 	if (ms->swr == NULL) {
@@ -1347,8 +1753,8 @@ static int decode_sync_start(void *arg) {
 		}
 	}
 
-	ms->video_context = find_context(ctx, ms->video_stream);
-	ms->audio_context = find_context(ctx, ms->audio_stream);
+	ms->video_context = find_context(ms, ctx, ms->video_stream, 1, 0);
+	ms->audio_context = find_context(ms, ctx, ms->audio_stream, 0, 1);
 
 	ms->swr = swr_alloc();
 	if (ms->swr == NULL) {
@@ -1567,6 +1973,7 @@ MediaState *media_open(SDL_IOStream *rwops, const char *filename) {
 
 	ms->audio_duration = -1;
 	ms->frame_drops = 1;
+	ms->video_transfer_format = AV_PIX_FMT_NONE;
 
 	return ms;
 }

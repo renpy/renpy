@@ -32,6 +32,7 @@ from renpy.pygame.surface cimport PySurface_AsSurface
 
 from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy
+from cpython.pycapsule cimport PyCapsule_GetPointer, PyCapsule_IsValid
 
 import sys
 import time
@@ -51,6 +52,11 @@ from renpy.display.matrix cimport Matrix
 
 # This has different names in GL and GLES, but the same value.
 cdef GLenum RGBA8 = 0x8058
+cdef GLenum GL_TEXTURE_RECTANGLE_ARB = 0x84F5
+
+cdef extern from "renpy_macos_video.h":
+    int renpy_macos_video_frame_info(void *frame, void **iosurface, int *width, int *height, int *full_range, int *bt709)
+    int renpy_macos_video_import_texture(void *context, GLuint texture, int width, int height, void *iosurface, int plane)
 
 # An extension here,
 cdef GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
@@ -276,6 +282,8 @@ cdef class GLTexture(GL2Model):
         # represents.
         self.number = 0
 
+        self.target = GL_TEXTURE_2D
+
         # True if the texture has been loaded into OpenGL, False otherwise.
         self.loaded = False
 
@@ -348,6 +356,54 @@ cdef class GLTexture(GL2Model):
             )
 
         self.loader.texture_load_queue.add(self)
+
+    def from_videotoolbox(GLTexture self, frame, int plane):
+        """Imports one NV12 plane from a retained macOS VideoToolbox frame."""
+
+        cdef void *frame_ptr
+        cdef void *iosurface
+        cdef void *context
+        cdef int width
+        cdef int height
+        cdef int full_range
+        cdef int bt709
+        cdef GLuint number
+
+        if not PyCapsule_IsValid(frame, b"renpy.videoframe"):
+            return False
+
+        frame_ptr = PyCapsule_GetPointer(frame, b"renpy.videoframe")
+        if renpy_macos_video_frame_info(frame_ptr, &iosurface, &width, &height, &full_range, &bt709) != 0:
+            return False
+
+        if plane:
+            width = (width + 1) // 2
+            height = (height + 1) // 2
+
+        context = SDL_GL_GetCurrentContext()
+        if not context:
+            return False
+
+        glGenTextures(1, &number)
+        self.target = GL_TEXTURE_RECTANGLE_ARB
+        self.number = number
+
+        if renpy_macos_video_import_texture(context, number, width, height, iosurface, plane) != 0:
+            glDeleteTextures(1, &number)
+            self.number = 0
+            self.target = GL_TEXTURE_2D
+            return False
+
+        self.width = width
+        self.height = height
+        self.texture_width = width
+        self.texture_height = height
+        self.properties = {"mipmap": False, "movie_hardware": True}
+        self.surface = frame
+        self.mesh = Mesh2.texture_rectangle(0.0, 0.0, width, height, 0.0, 0.0, width, height)
+        self.loader.allocated.add(number)
+        self.loaded = True
+        return True
 
     def from_render(GLTexture self, what, properties, oversample=1.0):
         """
@@ -449,6 +505,9 @@ cdef class GLTexture(GL2Model):
         if self.loaded:
             return
 
+        movie_channel = self.properties.get("movie_channel")
+        movie_upload_start = time.perf_counter_ns() if movie_channel is not None else 0
+
         draw = self.loader.draw
 
         s = PySurface_AsSurface(self.surface)
@@ -523,6 +582,9 @@ cdef class GLTexture(GL2Model):
         self.loaded = True
         self.surface = None
 
+        if movie_channel is not None:
+            renpy.display.video.record_movie_upload(movie_channel, time.perf_counter_ns() - movie_upload_start)
+
     def load_gltexture_premultiplied(GLTexture self):
         """
         Loads this texture. When it's loaded, generation and number are set,
@@ -536,6 +598,9 @@ cdef class GLTexture(GL2Model):
 
         if self.loaded:
             return
+
+        movie_channel = self.properties.get("movie_channel")
+        movie_upload_start = time.perf_counter_ns() if movie_channel is not None else 0
 
         draw = self.loader.draw
 
@@ -580,6 +645,9 @@ cdef class GLTexture(GL2Model):
 
         self.loaded = True
         self.surface = None
+
+        if movie_channel is not None:
+            renpy.display.video.record_movie_upload(movie_channel, time.perf_counter_ns() - movie_upload_start)
 
     def allocate_texture(GLTexture self, GLuint tex, int tw, int th, properties={}):
         """
@@ -724,3 +792,51 @@ class Texture(GLTexture):
     """
 
     pass
+
+
+def load_videotoolbox_frame(frame, properties=None):
+    """Builds a GPU YUV model from a retained VideoToolbox frame capsule."""
+
+    if properties is None:
+        properties = {}
+
+    if not PyCapsule_IsValid(frame, b"renpy.videoframe"):
+        return None
+
+    cdef void *frame_ptr = PyCapsule_GetPointer(frame, b"renpy.videoframe")
+    cdef void *iosurface
+    cdef int width
+    cdef int height
+    cdef int full_range
+    cdef int bt709
+
+    if renpy_macos_video_frame_info(frame_ptr, &iosurface, &width, &height, &full_range, &bt709) != 0:
+        return None
+
+    draw = renpy.display.draw
+    loader = getattr(draw, "texture_loader", None)
+    if loader is None:
+        return None
+
+    y_texture = Texture((width, height), loader)
+    uv_texture = Texture(((width + 1) // 2, (height + 1) // 2), loader)
+
+    if not y_texture.from_videotoolbox(frame, 0):
+        return None
+
+    if not uv_texture.from_videotoolbox(frame, 1):
+        return None
+
+    mesh = Mesh2.texture_rectangle(0.0, 0.0, width, height, 0.0, 0.0, width, height)
+    model = GL2Model(
+        (width, height),
+        mesh,
+        ("renpy.movie_yuv",),
+        {
+            "u_movie_yuv_full_range": 1.0 if full_range else 0.0,
+            "u_movie_yuv_bt709": 1.0 if bt709 else 0.0,
+        },
+    )
+    model.set_texture(0, y_texture)
+    model.set_texture(1, uv_texture)
+    return model

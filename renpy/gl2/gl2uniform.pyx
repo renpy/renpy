@@ -335,7 +335,7 @@ cdef class Sampler2DSetter(Setter):
         # GLTexture case.
         cdef GLTexture texture = value
 
-        glBindTexture(GL_TEXTURE_2D, texture.number)
+        glBindTexture(texture.target, texture.number)
 
         cdef GLint wrap_s = GL_CLAMP_TO_EDGE
         cdef GLint wrap_t = GL_CLAMP_TO_EDGE
@@ -360,23 +360,23 @@ cdef class Sampler2DSetter(Setter):
             anisotropy = 1.0
 
         if wrap_s != texture.wrap_s:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
+            glTexParameteri(texture.target, GL_TEXTURE_WRAP_S, wrap_s)
             texture.wrap_s = wrap_s
 
         if wrap_t != texture.wrap_t:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
+            glTexParameteri(texture.target, GL_TEXTURE_WRAP_T, wrap_t)
             texture.wrap_t = wrap_t
 
         if anisotropy != texture.anisotropy and texture.loader.max_anisotropy > 1.0:
-            glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, anisotropy)
+            glTexParameterf(texture.target, TEXTURE_MAX_ANISOTROPY_EXT, anisotropy)
             texture.anisotropy = anisotropy
 
         if mag_filter != texture.mag_filter:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter)
+            glTexParameteri(texture.target, GL_TEXTURE_MAG_FILTER, mag_filter)
             texture.mag_filter = mag_filter
 
         if min_filter != texture.min_filter:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter)
+            glTexParameteri(texture.target, GL_TEXTURE_MIN_FILTER, min_filter)
             texture.min_filter = min_filter
 
 
@@ -689,7 +689,10 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
         getter = ContextGetter(uniform_name)
         require_type = None
 
-    if require_type is not None and uniform_type != require_type:
+    if require_type is not None and uniform_type != require_type and not (
+        base_name in ("tex0", "tex1", "tex2", "tex3") and
+        uniform_type in ("sampler2D", "sampler2DRect")
+    ):
         raise TypeError(
             f"Uniform {uniform_name} in shader {shader_name} has type {uniform_type}, "
             f"but requires type {require_type}."
@@ -718,7 +721,7 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
             f"{operation}."
         )
 
-    if uniform_type == "sampler2D":
+    if uniform_type in ("sampler2D", "sampler2DRect"):
         setter = Sampler2DSetter(uniform_name, uniform_type, location, getter, sampler)
         sampler += 1
     elif (array is None) and (setter_class := NON_ARRAY_SETTERS.get(uniform_type, None)):

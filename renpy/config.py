@@ -59,6 +59,9 @@ debug = False
 # Ditto, but for sound operations
 debug_sound = os.environ.get("RENPY_DEBUG_SOUND", False)
 
+# Logs periodic decoder, conversion, texture upload, and presentation metrics.
+debug_video = os.environ.get("RENPY_DEBUG_VIDEO", False)
+
 # Is rollback enabled? (This only controls if the user-invoked
 # rollback command does anything)
 rollback_enabled = True

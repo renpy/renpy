@@ -73,6 +73,7 @@ UNIFORM_TYPES = {
     "mat3",
     "mat4",
     "sampler2D",
+    "sampler2DRect",
 }
 
 VARYING_TYPES = set(ATTRIBUTE_TYPES)| set(UNIFORM_TYPES)
