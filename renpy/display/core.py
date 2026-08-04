@@ -574,6 +574,7 @@ class Interface:
 
         self.old_scene = {}
         self.transition = {}
+        self.transition_priority: dict[str | None, int] = {}
         self.suppress_transition = False
         self.quick_quit = False
         self.force_redraw = False
@@ -1589,7 +1590,7 @@ class Interface:
 
         return None
 
-    def set_transition(self, transition, layer=None, force=False):
+    def set_transition(self, transition, layer=None, force=False, priority=0):
         """
         Sets the transition that will be performed as part of the next
         interaction.
@@ -1598,10 +1599,16 @@ class Interface:
         if self.suppress_transition and not force:
             return
 
+        old_priority = self.transition_priority.get(layer, None)
+        if (old_priority is not None) and (priority < old_priority):
+            return
+
         if transition is None:
             self.transition.pop(layer, None)
+            self.transition_priority.pop(layer, None)
         else:
             self.transition[layer] = transition
+            self.transition_priority[layer] = priority
 
     def event_peek(self, sleep=True):
         """
@@ -2458,6 +2465,7 @@ class Interface:
                 self.transition_time[k] = None
 
         self.transition.clear()
+        self.transition_priority.clear()
 
         # Safety condition, prevents deadlocks.
         if trans_pause:
@@ -2960,6 +2968,7 @@ class Interface:
                     and not self.get_ongoing_transition(None)
                 ):
                     self.transition.pop(None, None)
+                    self.transition_priority.pop(None, None)
                     self.ongoing_transition.pop(None, None)
                     self.transition_time.pop(None, None)
                     self.transition_from.pop(None, None)
@@ -3352,6 +3361,7 @@ class Interface:
 
                         if renpy.display.behavior.map_event(ev, dismiss):
                             self.transition.pop(None, None)
+                            self.transition_priority.pop(None, None)
                             self.ongoing_transition.pop(None, None)
                             self.transition_time.pop(None, None)
                             self.transition_from.pop(None, None)

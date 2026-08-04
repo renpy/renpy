@@ -60,6 +60,9 @@ The :var:`config.tts_voice` variable is no longer used.
 Features
 --------
 
+The :func:`renpy.transition` function now takes a `priority` argument. A lower-priority transition will not replace
+a higher-priority transition for the same layer.
+
 The :func:`renpy.callback` decorator registers callbacks with Ren'Py in more concise way.
 
 The new :var:`config.after_init_callbacks` variable is a list of callbacks that are called at the very end of the init phase,
