@@ -319,6 +319,15 @@ class Node(Object):
     can't see.
     """
 
+    predict_trust_store_after: ClassVar[bool] = False
+    """
+    True if, when this node is the statement prediction starts from, the
+    statements after it may keep evaluating against the current values of
+    store variables. This requires that executing the node can't change a
+    store variable, and defaults to False as most statements can run
+    creator-supplied code.
+    """
+
     @property
     def name(self) -> NodeName:
         """
@@ -882,6 +891,8 @@ def get_reachable_nodes(
 
 
 class Say(Node):
+    predict_trust_store_after = True
+
     who: str | None
     who_fast: bool
     what: str
@@ -1252,7 +1263,7 @@ class Python(Node):
                 else:
                     context.predict_forget()
             else:
-                new_state = renpy.pyanalysis.apply_assignments(effects, state)
+                new_state = renpy.pyanalysis.apply_assignments(effects, state, context.predict_trust_store)
 
                 if new_state is None:
                     context.predict_forget()
@@ -1798,6 +1809,10 @@ class Return(Node):
 class Menu(Node):
     translation_relevant = True
 
+    @property
+    def predict_trust_store_after(self):  # type: ignore
+        return self.set is None
+
     items: list[tuple[str, str, list[Node] | None]]
     statement_start: Node  # type: ignore
     set: str | None = None
@@ -2180,8 +2195,10 @@ class If(Node):
         state = context.predict_var_state
 
         if state is not None:
+            trust_store = context.predict_trust_store
+
             for i, (condition, block) in enumerate(self.entries):
-                truth = renpy.pyanalysis.eval_predicted_condition(condition, state)
+                truth = renpy.pyanalysis.eval_predicted_condition(condition, state, trust_store)
 
                 # This condition needs values prediction doesn't know, so
                 # every branch from here on may be taken.

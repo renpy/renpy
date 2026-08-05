@@ -126,6 +126,12 @@ class NewPredictInfo:
     var_state: dict[str, Any]
     "A map from variable name to the literal value prediction has worked out it has when this node is reached."
 
+    trust_store: bool
+    "True if the current values of variables in the store can still be used when this node is reached."
+
+    root: bool
+    "True if this is a statement prediction starts from, rather than one it has walked to."
+
     predicted: bool
     "True once this node has been predicted."
 
@@ -195,6 +201,8 @@ class Context(renpy.object.Object):
     predict_return_stack = None  # type: list|None
 
     predict_var_state = None  # type: dict|None
+
+    predict_trust_store = False
 
     exception_handler: Callable[[renpy.error.TracebackException], bool] | None
 
@@ -897,6 +905,9 @@ class Context(renpy.object.Object):
         Called during prediction to record that the variables in `bindings`
         are known to have the given literal values, while the values of the
         variables in `invalidated` can no longer be predicted.
+
+        Invalidated variables are remembered, rather than dropped, so that
+        the value one of them has in the store isn't used in its place.
         """
 
         state = self.predict_var_state
@@ -907,7 +918,7 @@ class Context(renpy.object.Object):
         state = dict(state)
 
         for name in invalidated:
-            state.pop(name, None)
+            state[name] = renpy.pyanalysis.UNKNOWN
 
         state.update(bindings)
 
@@ -915,12 +926,14 @@ class Context(renpy.object.Object):
 
     def predict_forget(self):
         """
-        Called during prediction to indicate that the values of variables
-        can no longer be predicted.
+        Called during prediction when code it can't analyze may run, so that
+        neither the values worked out so far nor the current contents of the
+        store are used from here on.
         """
 
         if self.predict_var_state is not None:
             self.predict_var_state = {}
+            self.predict_trust_store = False
 
     def predict(self):
         """
@@ -960,6 +973,8 @@ class Context(renpy.object.Object):
             npi.predict_return_stack = self.return_stack
             npi.tlids = [self.translate_identifier, self.alternate_translate_identifier]
             npi.var_state = {}
+            npi.trust_store = True
+            npi.root = True
             npi.predicted = False
 
             nodes.append(npi)
@@ -987,8 +1002,13 @@ class Context(renpy.object.Object):
             # explicitly opt-in.
             if node.predict_preserves_variables:
                 self.predict_var_state = npi.var_state
+                self.predict_trust_store = npi.trust_store
+            elif npi.root:
+                self.predict_var_state = npi.var_state
+                self.predict_trust_store = npi.trust_store and node.predict_trust_store_after
             else:
                 self.predict_var_state = {}
+                self.predict_trust_store = False
 
             try:
                 for n in node.predict():
@@ -1004,19 +1024,26 @@ class Context(renpy.object.Object):
                         next_npi.predict_return_stack = self.predict_return_stack
                         next_npi.tlids = renpy.display.predict.tlids
                         next_npi.var_state = self.predict_var_state
+                        next_npi.trust_store = self.predict_trust_store
+                        next_npi.root = False
                         next_npi.predicted = False
 
                         nodes.append(next_npi)
                         node_info[n] = next_npi
+
                     elif n.predict_preserves_variables:
                         # Another path reached this node, so keep only what
-                        # both paths agree on.
+                        # both paths agree on. If that loses information the
+                        # node was already predicted with, predict it again,
+                        # in case that information had ruled out a branch.
                         merged = renpy.pyanalysis.merge_predicted_states(
                             next_npi.var_state, self.predict_var_state
                         )
+                        trust = next_npi.trust_store and self.predict_trust_store
 
-                        if len(merged) != len(next_npi.var_state):
+                        if (merged != next_npi.var_state) or (trust != next_npi.trust_store):
                             next_npi.var_state = merged
+                            next_npi.trust_store = trust
 
                             if next_npi.predicted:
                                 next_npi.predicted = False
@@ -1033,6 +1060,7 @@ class Context(renpy.object.Object):
             self.images = old_images
             self.predict_return_stack = None
             self.predict_var_state = None
+            self.predict_trust_store = False
 
             yield True
 

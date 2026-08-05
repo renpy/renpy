@@ -32,6 +32,7 @@ from renpy.python import py_compile
 import ast
 
 import operator
+import types
 import zlib
 
 from renpy.compat.pickle import loads, dumps
@@ -972,6 +973,10 @@ def save_cache():
         pass
 
 
+# A sentinel used in prediction variable state to mark a variable whose value
+# has changed in a way prediction can't follow.
+UNKNOWN = renpy.object.Sentinel("PREDICT_UNKNOWN")
+
 # A cache mapping python source to the result of analyze_assignments for that
 # source.
 assignment_cache: "dict[str, list | None]" = {}
@@ -1043,8 +1048,52 @@ _predict_compare_ops = {
 }
 
 
+# A bound on the number of values is_readable_value examines.
+PREDICT_READ_LIMIT = 256
+
+
+def is_readable_value(value, _budget=None):
+    """
+    Returns true if `value` is safe for prediction to evaluate over - every
+    operation reading it has builtin semantics. Immutable literals are
+    readable, and so are builtin and Ren'Py revertable containers whose
+    contents are, as long as they hold no more than PREDICT_READ_LIMIT
+    values in total.
+    """
+
+    if _budget is None:
+        _budget = [PREDICT_READ_LIMIT]
+
+    if is_immutable_literal(value):
+        return True
+
+    revertable = renpy.revertable
+    kind = type(value)
+
+    if kind is dict or kind is revertable.RevertableDict:
+        items = []
+
+        for k, v in value.items():
+            items.append(k)
+            items.append(v)
+    elif kind is list or kind is tuple or kind is revertable.RevertableList:
+        items = value
+    elif kind is set or kind is frozenset or kind is revertable.RevertableSet:
+        items = list(value)
+    else:
+        return False
+
+    _budget[0] -= len(items)
+
+    if _budget[0] < 0:
+        return False
+
+    return all(is_readable_value(i, _budget) for i in items)
+
+
 # A bound on the size, in bits or items, of values prediction is willing to
-# compute.
+# compute, so evaluating a branch that runtime may never take can't eat a
+# noticeable amount of time or memory.
 PREDICT_SIZE_LIMIT = 65536
 
 
@@ -1072,47 +1121,175 @@ def predict_binop_allowed(op_type, left, right):
     return True
 
 
-def resolve_predicted_name(name, state):
+def predicted_store_value(name):
+    """
+    Returns the value `name` has in the default store, if prediction can
+    safely evaluate over it, and raises PredictRefused otherwise.
+    """
+
+    try:
+        value = renpy.python.store_dicts["store"][name]
+    except Exception:
+        raise PredictRefused(name)
+
+    if not is_readable_value(value):
+        raise PredictRefused(name)
+
+    return value
+
+
+def resolve_predicted_name(name, state, trust_store):
     """
     Returns the value prediction knows `name` to have, raising PredictRefused
     if it doesn't know one.
+
+    Invalidated names are remembered in `state`, rather than dropped, so that
+    the value one has in the store isn't used in its place.
     """
 
     if name in state:
-        return state[name]
+        value = state[name]
+
+        if value is UNKNOWN:
+            raise PredictRefused(name)
+
+        return value
+
+    if trust_store:
+        return predicted_store_value(name)
 
     raise PredictRefused(name)
 
 
-def eval_predicted_expression(node, state):
+def predicted_namespace(name, state, trust_store):
     """
-    Evaluates the expression `node` using only values prediction has proven,
-    raising PredictRefused otherwise.
+    Returns the object `name` refers to in the default store, if reading an
+    attribute of it is known not to run creator-supplied code, and raises
+    PredictRefused otherwise.
+    """
+
+    if not trust_store or name in state:
+        raise PredictRefused(name)
+
+    try:
+        value = renpy.python.store_dicts["store"][name]
+    except Exception:
+        raise PredictRefused(name)
+
+    if isinstance(value, (renpy.python.StoreModule, renpy.persistent.Persistent)):
+        return value
+
+    if isinstance(value, types.ModuleType) and "__getattr__" not in vars(value):
+        return value
+
+    raise PredictRefused(name)
+
+
+def eval_predicted_call(node, state, trust_store):
+    """
+    Evaluates a call to a function registered pure. Purity means the call
+    can't have side effects, so the only risk in making it is an inaccurate
+    result, which costs prediction accuracy rather than correctness.
+    """
+
+    if not isinstance(node.func, ast.Name):
+        raise PredictRefused(node)
+
+    name = node.func.id
+
+    if name not in pure_functions:
+        raise PredictRefused(node)
+
+    # Without the store, there is no way to know the name still refers to
+    # the registered function - even a builtin can be shadowed by a store
+    # variable. A name assigned along this path may have been rebound too.
+    if not trust_store or name in state:
+        raise PredictRefused(node)
+
+    builtin_func = getattr(builtins, name, None)
+
+    try:
+        func = renpy.python.store_dicts["store"][name]
+    except Exception:
+        func = builtin_func
+
+    if func is None or not callable(func):
+        raise PredictRefused(node)
+
+    # A builtin name that no longer refers to its builtin has been shadowed,
+    # and there's no way to know what replaced it is still pure.
+    if (builtin_func is not None) and (func is not builtin_func):
+        raise PredictRefused(node)
+
+    args = []
+
+    for a in node.args:
+        if isinstance(a, ast.Starred):
+            raise PredictRefused(node)
+
+        args.append(eval_predicted_expression(a, state, trust_store))
+
+    kwargs = {}
+
+    for k in node.keywords:
+        if k.arg is None:
+            raise PredictRefused(node)
+
+        kwargs[k.arg] = eval_predicted_expression(k.value, state, trust_store)
+
+    value = func(*args, **kwargs)
+
+    if not is_readable_value(value):
+        raise PredictRefused(node)
+
+    return value
+
+
+def eval_predicted_expression(node, state, trust_store):
+    """
+    Evaluates the expression `node` using the values prediction has proven
+    in `state`, and where `trust_store` is true, the current values of
+    variables in the default store. Raises PredictRefused when evaluation
+    might run creator-supplied code, or needs a value prediction doesn't
+    know.
     """
 
     if isinstance(node, ast.Constant):
         return node.value
 
     if isinstance(node, ast.Name):
-        return resolve_predicted_name(node.id, state)
+        return resolve_predicted_name(node.id, state, trust_store)
 
-    # An attribute of `store` is the same variable a bare name is.
-    if (
-        isinstance(node, ast.Attribute)
-        and isinstance(node.value, ast.Name)
-        and node.value.id == "store"
-        and "store" not in state
-    ):
-        return resolve_predicted_name(node.attr, state)
+    if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name):
+        # An attribute of `store` is the same variable a bare name is.
+        if node.value.id == "store" and "store" not in state:
+            return resolve_predicted_name(node.attr, state, trust_store)
+
+        # Dunder and private attributes could reach machinery rather than
+        # data.
+        if node.attr.startswith("_"):
+            raise PredictRefused(node)
+
+        namespace = predicted_namespace(node.value.id, state, trust_store)
+
+        value = getattr(namespace, node.attr, UNKNOWN)
+
+        if value is UNKNOWN or not is_readable_value(value):
+            raise PredictRefused(node)
+
+        return value
+
+    if isinstance(node, ast.Call):
+        return eval_predicted_call(node, state, trust_store)
 
     if isinstance(node, ast.Tuple):
-        return tuple(eval_predicted_expression(i, state) for i in node.elts)
+        return tuple(eval_predicted_expression(i, state, trust_store) for i in node.elts)
 
     if isinstance(node, ast.List):
-        return [eval_predicted_expression(i, state) for i in node.elts]
+        return [eval_predicted_expression(i, state, trust_store) for i in node.elts]
 
     if isinstance(node, ast.Set):
-        return {eval_predicted_expression(i, state) for i in node.elts}
+        return {eval_predicted_expression(i, state, trust_store) for i in node.elts}
 
     if isinstance(node, ast.Dict):
         rv = {}
@@ -1121,7 +1298,7 @@ def eval_predicted_expression(node, state):
             if k is None: # A None key is a ** unpacking.
                 raise PredictRefused(node)
 
-            rv[eval_predicted_expression(k, state)] = eval_predicted_expression(v, state)
+            rv[eval_predicted_expression(k, state, trust_store)] = eval_predicted_expression(v, state, trust_store)
 
         return rv
 
@@ -1131,7 +1308,7 @@ def eval_predicted_expression(node, state):
         if op is None:
             raise PredictRefused(node)
 
-        return op(eval_predicted_expression(node.operand, state))
+        return op(eval_predicted_expression(node.operand, state, trust_store))
 
     if isinstance(node, ast.BinOp):
         op_type = type(node.op)
@@ -1140,8 +1317,8 @@ def eval_predicted_expression(node, state):
         if op is None:
             raise PredictRefused(node)
 
-        left = eval_predicted_expression(node.left, state)
-        right = eval_predicted_expression(node.right, state)
+        left = eval_predicted_expression(node.left, state, trust_store)
+        right = eval_predicted_expression(node.right, state, trust_store)
 
         if not predict_binop_allowed(op_type, left, right):
             raise PredictRefused(node)
@@ -1152,7 +1329,7 @@ def eval_predicted_expression(node, state):
         value = None
 
         for i in node.values:
-            value = eval_predicted_expression(i, state)
+            value = eval_predicted_expression(i, state, trust_store)
 
             if isinstance(node.op, ast.And):
                 if not value:
@@ -1164,7 +1341,7 @@ def eval_predicted_expression(node, state):
         return value
 
     if isinstance(node, ast.Compare):
-        left = eval_predicted_expression(node.left, state)
+        left = eval_predicted_expression(node.left, state, trust_store)
 
         for op_node, comparator in zip(node.ops, node.comparators):
             op_type = type(op_node)
@@ -1173,7 +1350,7 @@ def eval_predicted_expression(node, state):
             if op is None:
                 raise PredictRefused(node)
 
-            right = eval_predicted_expression(comparator, state)
+            right = eval_predicted_expression(comparator, state, trust_store)
 
             # Identity of anything but the singletons None, True, and False
             # isn't preserved between prediction and runtime.
@@ -1189,30 +1366,32 @@ def eval_predicted_expression(node, state):
         return True
 
     if isinstance(node, ast.IfExp):
-        if eval_predicted_expression(node.test, state):
-            return eval_predicted_expression(node.body, state)
+        if eval_predicted_expression(node.test, state, trust_store):
+            return eval_predicted_expression(node.body, state, trust_store)
 
-        return eval_predicted_expression(node.orelse, state)
+        return eval_predicted_expression(node.orelse, state, trust_store)
 
     if isinstance(node, ast.Subscript):
-        value = eval_predicted_expression(node.value, state)
+        value = eval_predicted_expression(node.value, state, trust_store)
 
         if isinstance(node.slice, ast.Slice):
             def bound(b):
-                return None if b is None else eval_predicted_expression(b, state)
+                return None if b is None else eval_predicted_expression(b, state, trust_store)
 
             index = slice(bound(node.slice.lower), bound(node.slice.upper), bound(node.slice.step))
         else:
-            index = eval_predicted_expression(node.slice, state)
+            index = eval_predicted_expression(node.slice, state, trust_store)
 
         return value[index]
 
     raise PredictRefused(node)
 
 
-def eval_predicted_condition(condition, state):
+def eval_predicted_condition(condition, state, trust_store):
     """
-    Tries to evaluate `condition` using only the variable values in `state`.
+    Tries to evaluate `condition` using the variable values in `state`, and
+    where `trust_store` is true, the current values of variables in the
+    default store.
 
     Returns True or False if the condition could be evaluated or None if it
     could not be.
@@ -1232,7 +1411,7 @@ def eval_predicted_condition(condition, state):
         return None
 
     try:
-        return bool(eval_predicted_expression(tree, state))
+        return bool(eval_predicted_expression(tree, state, trust_store))
     except PredictRefused:
         return None
     except Exception:
@@ -1405,11 +1584,14 @@ def analyze_assignments_core(source):
     return ops
 
 
-def apply_assignments(ops, state):
+def apply_assignments(ops, state, trust_store):
     """
     Applies the effects returned by analyze_assignments to `state`, returning
     the new state, or None if variables may have changed in ways prediction
     can't follow.
+
+    Invalidated names are marked UNKNOWN, rather than dropped, so that the
+    value one has in the store isn't used in its place.
     """
 
     state = dict(state)
@@ -1417,12 +1599,12 @@ def apply_assignments(ops, state):
     for names, expr, bind in ops:
         if expr is None:
             for name in names:
-                state.pop(name, None)
+                state[name] = UNKNOWN
 
             continue
 
         try:
-            value = eval_predicted_expression(expr, state)
+            value = eval_predicted_expression(expr, state, trust_store)
         except PredictRefused:
             # The expression couldn't be evaluated. If evaluating it at
             # runtime can't touch other variables either, only the assigned
@@ -1431,7 +1613,7 @@ def apply_assignments(ops, state):
                 return None
 
             for name in names:
-                state.pop(name, None)
+                state[name] = UNKNOWN
 
             continue
         except Exception:
@@ -1442,7 +1624,7 @@ def apply_assignments(ops, state):
                 state[name] = value
         else:
             for name in names:
-                state.pop(name, None)
+                state[name] = UNKNOWN
 
     return state
 
@@ -1473,17 +1655,21 @@ def assigned_names(ops):
 
 def merge_predicted_states(a, b):
     """
-    Returns the variable state holding what the states `a` and `b` agree on,
-    for when two prediction paths reach the same node.
+    Returns the variable state prediction is entitled to at a node reached
+    along two paths with states `a` and `b`.
     """
 
     rv = {}
 
-    for name, value in a.items():
-        if name in b:
+    for name in a.keys() | b.keys():
+        if (name in a) and (name in b):
+            value = a[name]
             other = b[name]
 
             if (value is other) or (type(value) is type(other) and value == other):
                 rv[name] = value
+                continue
+
+        rv[name] = UNKNOWN
 
     return rv
