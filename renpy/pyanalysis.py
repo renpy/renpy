@@ -31,6 +31,7 @@ from renpy.python import py_compile
 # Import the Python AST module, instead of the Ren'Py ast module.
 import ast
 
+import operator
 import zlib
 
 from renpy.compat.pickle import loads, dumps
@@ -969,3 +970,520 @@ def save_cache():
             f.write(data)
     except Exception:
         pass
+
+
+# A cache mapping python source to the result of analyze_assignments for that
+# source.
+assignment_cache: "dict[str, list | None]" = {}
+
+# A cache mapping a condition string to its parsed expression or None if it
+# could not be parsed.
+predict_expression_cache: "dict[str, ast.expr | None]" = {}
+
+
+def is_immutable_literal(value):
+    """
+    Returns true if `value` is immutable data, so prediction can bind it into
+    per-path variable state and share it safely.
+    """
+
+    if value is None or value is True or value is False:
+        return True
+
+    if isinstance(value, (int, float, complex, str, bytes)):
+        return True
+
+    if isinstance(value, (tuple, frozenset)):
+        return all(is_immutable_literal(i) for i in value)
+
+    return False
+
+
+class PredictRefused(Exception):
+    """
+    Raised during prediction expression evaluation when evaluating further
+    might run creator-supplied code or needs a value prediction doesn't
+    know.
+    """
+
+
+_predict_binary_ops = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+    ast.FloorDiv: operator.floordiv,
+    ast.Mod: operator.mod,
+    ast.Pow: operator.pow,
+    ast.LShift: operator.lshift,
+    ast.RShift: operator.rshift,
+    ast.BitOr: operator.or_,
+    ast.BitXor: operator.xor,
+    ast.BitAnd: operator.and_,
+}
+
+_predict_unary_ops = {
+    ast.Not: operator.not_,
+    ast.USub: operator.neg,
+    ast.UAdd: operator.pos,
+    ast.Invert: operator.invert,
+}
+
+_predict_compare_ops = {
+    ast.Eq: operator.eq,
+    ast.NotEq: operator.ne,
+    ast.Lt: operator.lt,
+    ast.LtE: operator.le,
+    ast.Gt: operator.gt,
+    ast.GtE: operator.ge,
+    ast.Is: operator.is_,
+    ast.IsNot: operator.is_not,
+    ast.In: lambda a, b: a in b,
+    ast.NotIn: lambda a, b: a not in b,
+}
+
+
+# A bound on the size, in bits or items, of values prediction is willing to
+# compute.
+PREDICT_SIZE_LIMIT = 65536
+
+
+def predict_binop_allowed(op_type, left, right):
+    """
+    Returns false when applying the binary operator `op_type` to `left` and
+    `right` could produce a value so large that computing it during
+    prediction would be noticed.
+    """
+
+    if op_type is ast.Pow:
+        if isinstance(left, int) and isinstance(right, int) and abs(left) > 1:
+            return abs(right) * abs(left).bit_length() <= PREDICT_SIZE_LIMIT
+    elif op_type is ast.LShift:
+        if isinstance(left, int) and isinstance(right, int) and left != 0:
+            return right <= PREDICT_SIZE_LIMIT
+    elif op_type is ast.Mult:
+        if isinstance(left, int) and isinstance(right, int):
+            return abs(left).bit_length() + abs(right).bit_length() <= PREDICT_SIZE_LIMIT
+
+        for count, seq in ((left, right), (right, left)):
+            if isinstance(count, int) and isinstance(seq, (str, bytes, tuple, list)):
+                return count * len(seq) <= PREDICT_SIZE_LIMIT
+
+    return True
+
+
+def resolve_predicted_name(name, state):
+    """
+    Returns the value prediction knows `name` to have, raising PredictRefused
+    if it doesn't know one.
+    """
+
+    if name in state:
+        return state[name]
+
+    raise PredictRefused(name)
+
+
+def eval_predicted_expression(node, state):
+    """
+    Evaluates the expression `node` using only values prediction has proven,
+    raising PredictRefused otherwise.
+    """
+
+    if isinstance(node, ast.Constant):
+        return node.value
+
+    if isinstance(node, ast.Name):
+        return resolve_predicted_name(node.id, state)
+
+    # An attribute of `store` is the same variable a bare name is.
+    if (
+        isinstance(node, ast.Attribute)
+        and isinstance(node.value, ast.Name)
+        and node.value.id == "store"
+        and "store" not in state
+    ):
+        return resolve_predicted_name(node.attr, state)
+
+    if isinstance(node, ast.Tuple):
+        return tuple(eval_predicted_expression(i, state) for i in node.elts)
+
+    if isinstance(node, ast.List):
+        return [eval_predicted_expression(i, state) for i in node.elts]
+
+    if isinstance(node, ast.Set):
+        return {eval_predicted_expression(i, state) for i in node.elts}
+
+    if isinstance(node, ast.Dict):
+        rv = {}
+
+        for k, v in zip(node.keys, node.values):
+            if k is None: # A None key is a ** unpacking.
+                raise PredictRefused(node)
+
+            rv[eval_predicted_expression(k, state)] = eval_predicted_expression(v, state)
+
+        return rv
+
+    if isinstance(node, ast.UnaryOp):
+        op = _predict_unary_ops.get(type(node.op))
+
+        if op is None:
+            raise PredictRefused(node)
+
+        return op(eval_predicted_expression(node.operand, state))
+
+    if isinstance(node, ast.BinOp):
+        op_type = type(node.op)
+        op = _predict_binary_ops.get(op_type)
+
+        if op is None:
+            raise PredictRefused(node)
+
+        left = eval_predicted_expression(node.left, state)
+        right = eval_predicted_expression(node.right, state)
+
+        if not predict_binop_allowed(op_type, left, right):
+            raise PredictRefused(node)
+
+        return op(left, right)
+
+    if isinstance(node, ast.BoolOp):
+        value = None
+
+        for i in node.values:
+            value = eval_predicted_expression(i, state)
+
+            if isinstance(node.op, ast.And):
+                if not value:
+                    return value
+            else:
+                if value:
+                    return value
+
+        return value
+
+    if isinstance(node, ast.Compare):
+        left = eval_predicted_expression(node.left, state)
+
+        for op_node, comparator in zip(node.ops, node.comparators):
+            op_type = type(op_node)
+            op = _predict_compare_ops.get(op_type)
+
+            if op is None:
+                raise PredictRefused(node)
+
+            right = eval_predicted_expression(comparator, state)
+
+            # Identity of anything but the singletons None, True, and False
+            # isn't preserved between prediction and runtime.
+            if op_type in (ast.Is, ast.IsNot):
+                if not any(i is None or i is True or i is False for i in (left, right)):
+                    raise PredictRefused(node)
+
+            if not op(left, right):
+                return False
+
+            left = right
+
+        return True
+
+    if isinstance(node, ast.IfExp):
+        if eval_predicted_expression(node.test, state):
+            return eval_predicted_expression(node.body, state)
+
+        return eval_predicted_expression(node.orelse, state)
+
+    if isinstance(node, ast.Subscript):
+        value = eval_predicted_expression(node.value, state)
+
+        if isinstance(node.slice, ast.Slice):
+            def bound(b):
+                return None if b is None else eval_predicted_expression(b, state)
+
+            index = slice(bound(node.slice.lower), bound(node.slice.upper), bound(node.slice.step))
+        else:
+            index = eval_predicted_expression(node.slice, state)
+
+        return value[index]
+
+    raise PredictRefused(node)
+
+
+def eval_predicted_condition(condition, state):
+    """
+    Tries to evaluate `condition` using only the variable values in `state`.
+
+    Returns True or False if the condition could be evaluated or None if it
+    could not be.
+    """
+
+    tree = predict_expression_cache.get(condition, False)
+
+    if tree is False:
+        try:
+            tree = ast.parse(condition, mode="eval").body
+        except Exception:
+            tree = None
+
+        predict_expression_cache[condition] = tree
+
+    if tree is None:
+        return None
+
+    try:
+        return bool(eval_predicted_expression(tree, state))
+    except PredictRefused:
+        return None
+    except Exception:
+        return None
+
+
+def assignment_target_names(target):
+    """
+    Returns (names, simple) for an assignment target, where `names` are the
+    variables the target stores to, and `simple` is true if the assigned
+    value binds to a single name. Returns None if the target can't be
+    analyzed or if storing to it could run creator-supplied code.
+    """
+
+    if isinstance(target, ast.Name):
+        # Rebinding store would change the meaning of store.x elsewhere.
+        if target.id == "store":
+            return None
+
+        return [target.id], True
+
+    # StoreModule.__setattr__ only writes to the store's dict.
+    if isinstance(target, ast.Attribute) and isinstance(target.value, ast.Name) and target.value.id == "store":
+        return [target.attr], True
+
+    if isinstance(target, (ast.Tuple, ast.List)):
+        names = []
+
+        for i in target.elts:
+            sub = assignment_target_names(i)
+
+            if sub is None:
+                return None
+
+            names.extend(sub[0])
+
+        return names, False
+
+    if isinstance(target, ast.Starred):
+        sub = assignment_target_names(target.value)
+
+        if sub is None:
+            return None
+
+        return sub[0], False
+
+    # Attribute and subscript targets run __setattr__ or __setitem__.
+    return None
+
+
+def expression_is_inert(node):
+    """
+    Returns true if evaluating `node` at runtime can't run creator-supplied
+    code no matter what its names hold - it only reads names and builds
+    containers, with no operators, calls, or subscripts.
+    """
+
+    if isinstance(node, (ast.Constant, ast.Name)):
+        return True
+
+    if isinstance(node, (ast.Tuple, ast.List)):
+        return all(expression_is_inert(i) for i in node.elts)
+
+    if isinstance(node, ast.Starred):
+        return expression_is_inert(node.value)
+
+    return False
+
+
+def analyze_assignments(code):
+    """
+    Analyzes a PyCode object into a list of assignment effects that
+    apply_assignments can replay against prediction variable state. Returns
+    None if executing the code may change variables in a way that can't be
+    followed.
+    """
+
+    rv = assignment_cache.get(code.source, False)
+
+    if rv is False:
+        rv = analyze_assignments_core(code.source)
+        assignment_cache[code.source] = rv
+
+    return rv
+
+
+def analyze_assignments_core(source):
+    """
+    Implements analyze_assignments without caching.
+    """
+
+    try:
+        tree = ast.parse(source)
+    except Exception:
+        return None
+
+    ops = []
+
+    for stmt in tree.body:
+        if isinstance(stmt, ast.Pass):
+            continue
+
+        if isinstance(stmt, ast.Expr):
+            # A docstring or other constant does nothing.
+            if isinstance(stmt.value, ast.Constant):
+                continue
+
+            # Anything else is checked when the effects are applied.
+            ops.append(((), stmt.value, False))
+
+            continue
+
+        if isinstance(stmt, ast.Delete):
+            names = []
+
+            for i in stmt.targets:
+                sub = assignment_target_names(i)
+
+                if sub is None or not sub[1]:
+                    return None
+
+                names.extend(sub[0])
+
+            ops.append((tuple(names), None, False))
+
+            continue
+
+        if isinstance(stmt, ast.Assign):
+            targets = stmt.targets
+        elif isinstance(stmt, ast.AnnAssign):
+            if stmt.value is None:
+                continue
+
+            targets = [stmt.target]
+        elif isinstance(stmt, ast.AugAssign):
+            sub = assignment_target_names(stmt.target)
+
+            if sub is None or not sub[1]:
+                return None
+
+            name = sub[0][0]
+
+            # x += y has the effect of x = x + y when x is an immutable
+            # literal, which is the only case a result is bound in.
+            expr = ast.BinOp(left=ast.Name(id=name, ctx=ast.Load()), op=stmt.op, right=stmt.value)
+
+            ops.append(((name,), expr, True))
+
+            continue
+        else:
+            return None
+
+        names = []
+        bind = True
+
+        for target in targets:
+            sub = assignment_target_names(target)
+
+            if sub is None:
+                return None
+
+            names.extend(sub[0])
+
+            # When a target unpacks, which name takes what isn't tracked.
+            if not sub[1]:
+                bind = False
+
+        ops.append((tuple(names), stmt.value, bind))
+
+    return ops
+
+
+def apply_assignments(ops, state):
+    """
+    Applies the effects returned by analyze_assignments to `state`, returning
+    the new state, or None if variables may have changed in ways prediction
+    can't follow.
+    """
+
+    state = dict(state)
+
+    for names, expr, bind in ops:
+        if expr is None:
+            for name in names:
+                state.pop(name, None)
+
+            continue
+
+        try:
+            value = eval_predicted_expression(expr, state)
+        except PredictRefused:
+            # The expression couldn't be evaluated. If evaluating it at
+            # runtime can't touch other variables either, only the assigned
+            # names are lost.
+            if not expression_is_inert(expr):
+                return None
+
+            for name in names:
+                state.pop(name, None)
+
+            continue
+        except Exception:
+            return None
+
+        if bind and is_immutable_literal(value):
+            for name in names:
+                state[name] = value
+        else:
+            for name in names:
+                state.pop(name, None)
+
+    return state
+
+
+def assignments_are_inert(ops):
+    """
+    Returns true if replaying the effects returned by analyze_assignments at
+    runtime can't run creator-supplied code, no matter what values the names
+    involved hold.
+    """
+
+    return all((expr is None or expression_is_inert(expr)) for _names, expr, _bind in ops)
+
+
+def assigned_names(ops):
+    """
+    Returns the set of every name the effects returned by analyze_assignments
+    may store to.
+    """
+
+    rv = set()
+
+    for names, _expr, _bind in ops:
+        rv.update(names)
+
+    return rv
+
+
+def merge_predicted_states(a, b):
+    """
+    Returns the variable state holding what the states `a` and `b` agree on,
+    for when two prediction paths reach the same node.
+    """
+
+    rv = {}
+
+    for name, value in a.items():
+        if name in b:
+            other = b[name]
+
+            if (value is other) or (type(value) is type(other) and value == other):
+                rv[name] = value
+
+    return rv
