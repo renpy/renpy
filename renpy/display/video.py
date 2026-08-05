@@ -165,6 +165,19 @@ def get_movie_texture(channel, mask_channel=None, side_mask=False, mipmap=None):
         return get_movie_texture_web(channel, mask_channel, side_mask, mipmap)
 
     c = renpy.audio.music.get_channel(channel)
+
+    # Keep the surface path for masks; ordinary desktop movies use YUV planes
+    # when the decoder provides the supported 4:2:0 format.
+    if not side_mask and not mask_channel:
+        from renpy.gl2 import gl2texture
+
+        yuv = c.read_video_yuv()
+        if yuv is not None:
+            tex = gl2texture.load_yuv420_frame(yuv, mipmap)
+            if tex is not None:
+                texture[channel] = tex
+                return tex, True
+
     surf = c.read_video()
 
     if side_mask:
