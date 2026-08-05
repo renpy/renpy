@@ -204,7 +204,7 @@ character, and to change the color of the character's name.
         m "Sure!"
 
 
-The first and and second lines define characters. The first line
+The first and second lines define characters. The first line
 defines a character with the short name of "s", the long name
 "Sylvie", with a name that is shown in a greenish color. (The colors
 are red-green-blue hex triples, as used in web pages.)
@@ -758,7 +758,7 @@ before releasing it:
     * The `Completed Games section of the Lemma Soft Forums <https://lemmasoft.renai.us/forums/viewforum.php?f=11>`_ is a
       good place to tell fellow creators about your game.
 
-More advanced vays of customizing the building of the distribution of your game
+More advanced ways of customizing the building of the distribution of your game
 can be found in the :doc:`build` section.
 
 Script of The Question

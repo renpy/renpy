@@ -3,7 +3,7 @@ Interactive Director
 
 The Interactive Director is a tool that allows you to edit the script of
 your game from inside Ren'Py itself, with a live preview of the results
-of your editing. The director is not not meant as a complete
+of your editing. The director is not meant as a complete
 replacement for the use of  a text editor, which is still required for
 writing the dialogue, choices, and logic of the visual novel.
 
