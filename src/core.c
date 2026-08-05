@@ -1691,10 +1691,10 @@ void premultiply_alpha_core(PyObject *pysrc, PyObject *pydst) {
             b = *s++;
             a = *s++;
 
-            *d++ = (unsigned char) a;
-            *d++ = (unsigned char) ((b * a) / 255);
-            *d++ = (unsigned char) ((g * a) / 255);
             *d++ = (unsigned char) ((r * a) / 255);
+            *d++ = (unsigned char) ((g * a) / 255);
+            *d++ = (unsigned char) ((b * a) / 255);
+            *d++ = (unsigned char) a;
         }
     }
 
