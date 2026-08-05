@@ -65,20 +65,6 @@ def copy_tutorial_file(src, dest):
                 if copy:
                     df.write(l)
 
-def link_directory(dirname):
-    dn = os.path.join(ROOT, dirname)
-
-    if os.path.lexists(dn):
-        os.unlink(dn)
-
-    if PY2:
-        source = dn + "2"
-    else:
-        source = dn + "3"
-
-    if os.path.exists(source):
-        os.symlink(source, dn)
-
 def force_even_timestamps():
     """
     Forces the timestamps of all .py files in the renpy directory to be even.
@@ -115,10 +101,6 @@ def main():
     ap.add_argument("--print-version", action="store_true")
 
     args = ap.parse_args()
-
-    link_directory("rapt")
-    link_directory("renios")
-    link_directory("web")
 
     import renpy.versions
     renpy.versions.generate_vc_version(nightly=args.nightly)
