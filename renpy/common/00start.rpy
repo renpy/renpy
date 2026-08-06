@@ -59,6 +59,10 @@ init -1600 python hide:
     # Callback to run before load.
     config.before_load_callbacks = [ ]
 
+    # Callbacks to run after a save slot has been written. Each callback
+    # is called with the slotname that was just saved.
+    config.save_callbacks = [ ]
+
     # Should we suppress overlay during the splashscreen?
     config.splashscreen_suppress_overlay = True
 
