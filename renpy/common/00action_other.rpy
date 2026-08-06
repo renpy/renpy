@@ -701,16 +701,20 @@ init -1500 python:
 
         `delay`
             If non-zero, the scroll will be animated for this many seconds.
+
+        `time_warp`
+            The easing function used for the scroll action. For example,
+            the `ease` warper would be represented as `_warper.ease`
         """
 
         delay = 0.0
 
-        def __init__(self, id, direction, amount="step", delay=0.0):
+        def __init__(self, id, direction, amount="step", delay=0.0, time_warp=_warper.ease):
             self.id = id
             self.direction = direction
             self.amount = amount
             self.delay = delay
-
+            self.time_warp = time_warp
 
         def get_adjustment_and_delta(self):
 
@@ -774,7 +778,7 @@ init -1500 python:
             if self.delay == 0.0:
                 adjustment.change(adjustment.value + amount)
             else:
-                adjustment.animate(amount, self.delay, _warper.ease)
+                adjustment.animate(amount, self.delay, self.time_warp)
 
 
     @renpy.pure
