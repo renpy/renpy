@@ -79,6 +79,7 @@ cdef extern from "renpysound_core.h":
     void RPS_advance_time()
     int RPS_video_ready(int channel)
     object RPS_read_video(int channel)
+    object RPS_read_video_yuv(int channel)
     void RPS_set_video(int channel, int video)
 
     void RPS_sample_surfaces(object, object)
@@ -402,6 +403,12 @@ def read_video(channel):
     # This has to be set to the same number it is in ffmedia.c
     FRAME_PADDING = 4
     return rv.subsurface((FRAME_PADDING, FRAME_PADDING, w - FRAME_PADDING * 2, h - FRAME_PADDING * 2))
+
+
+def read_video_yuv(channel):
+    """Returns a capsule containing a packed YUV420 frame, or None."""
+
+    return RPS_read_video_yuv(channel)
 
 
 # No video will be played from this channel.

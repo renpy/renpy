@@ -32,6 +32,7 @@ from renpy.pygame.surface cimport PySurface_AsSurface
 
 from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy
+from cpython.pycapsule cimport PyCapsule_GetPointer, PyCapsule_IsValid
 
 import sys
 import time
@@ -48,6 +49,15 @@ from renpy.gl2.gl2mesh2 cimport Mesh2
 from renpy.gl2.gl2model cimport GL2Model
 
 from renpy.display.matrix cimport Matrix
+
+cdef extern from "ffmedia.h":
+    ctypedef struct MediaVideoYUV:
+        int width
+        int height
+        unsigned char *y
+        unsigned char *uv
+        int full_range
+        int bt709
 
 # This has different names in GL and GLES, but the same value.
 cdef GLenum RGBA8 = 0x8058
@@ -348,6 +358,49 @@ cdef class GLTexture(GL2Model):
             )
 
         self.loader.texture_load_queue.add(self)
+
+    cdef bint from_yuv_plane_pointer(GLTexture self, const unsigned char *data, int width, int height, GLenum format, bint mipmap):
+        """Uploads one tightly packed 8-bit video plane as a 2D texture."""
+
+        cdef GLuint texture
+
+        glGenTextures(1, &texture)
+        glBindTexture(GL_TEXTURE_2D, texture)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0)
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data)
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4)
+
+        self.number = texture
+        self.width = width
+        self.height = height
+        self.texture_width = width
+        self.texture_height = height
+        self.properties = {
+            "mipmap": mipmap,
+            "movie_yuv": True,
+            "movie_yuv_components": 2 if format == GL_LUMINANCE_ALPHA else 1,
+        }
+        self.mesh = Mesh2.texture_rectangle(0.0, 0.0, width, height, 0.0, 0.0, 1.0, 1.0)
+        self.loader.allocated.add(texture)
+        texture_size = width * height * self.properties["movie_yuv_components"]
+        if mipmap:
+            texture_size = int(texture_size * 1.34)
+        self.loader.total_texture_size += texture_size
+
+        self.mipmap_texture(texture, width, height, self.properties)
+        if mipmap:
+            self.min_filter = GL_LINEAR_MIPMAP_NEAREST
+            self.default_min_filter = self.min_filter
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, self.min_filter)
+
+        self.loaded = True
+        self.surface = None
+        return True
 
     def from_render(GLTexture self, what, properties, oversample=1.0):
         """
@@ -688,7 +741,12 @@ cdef class GLTexture(GL2Model):
             if self.loaded:
                 self.loader.free_list.append(self.number)
 
-                if self.has_mipmaps():
+                if self.properties.get("movie_yuv", False):
+                    texture_size = self.width * self.height * self.properties["movie_yuv_components"]
+                    if self.has_mipmaps():
+                        texture_size = int(texture_size * 1.34)
+                    self.loader.total_texture_size -= texture_size
+                elif self.has_mipmaps():
                     self.loader.total_texture_size -= int(self.width * self.height * 4 * 1.34)
                 else:
                     self.loader.total_texture_size -= int(self.width * self.height * 4)
@@ -724,3 +782,51 @@ class Texture(GLTexture):
     """
 
     pass
+
+
+def load_yuv420_frame(frame, mipmap=False):
+    """Creates a two-plane model whose fragment shader performs YUV conversion."""
+
+    cdef MediaVideoYUV *video_frame
+    cdef int width
+    cdef int height
+    cdef int chroma_width
+    cdef int chroma_height
+    cdef GLTexture y_texture
+    cdef GLTexture uv_texture
+
+    if not PyCapsule_IsValid(frame, b"renpy.videoyuv"):
+        return None
+
+    video_frame = <MediaVideoYUV *> PyCapsule_GetPointer(frame, b"renpy.videoyuv")
+    if video_frame == NULL:
+        return None
+
+    width = video_frame.width
+    height = video_frame.height
+    chroma_width = (width + 1) // 2
+    chroma_height = (height + 1) // 2
+
+    loader = renpy.display.draw.texture_loader
+    y_texture = Texture((width, height), loader)
+    uv_texture = Texture((chroma_width, chroma_height), loader)
+
+    if not y_texture.from_yuv_plane_pointer(video_frame.y, width, height, GL_LUMINANCE, mipmap):
+        return None
+
+    if not uv_texture.from_yuv_plane_pointer(video_frame.uv, chroma_width, chroma_height, GL_LUMINANCE_ALPHA, mipmap):
+        return None
+
+    mesh = Mesh2.texture_rectangle(0.0, 0.0, width, height, 0.0, 0.0, 1.0, 1.0)
+    model = GL2Model(
+        (width, height),
+        mesh,
+        ("renpy.movie_yuv",),
+        {
+            "u_movie_yuv_full_range": float(video_frame.full_range),
+            "u_movie_yuv_bt709": float(video_frame.bt709),
+        },
+    )
+    model.set_texture(0, y_texture)
+    model.set_texture(1, uv_texture)
+    return model

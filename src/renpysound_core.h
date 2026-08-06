@@ -47,6 +47,7 @@ void RPS_replace_audio_filter(int channel, PyObject *audio_filter, int primary);
 
 int RPS_video_ready(int channel);
 PyObject *RPS_read_video(int channel);
+PyObject *RPS_read_video_yuv(int channel);
 void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba);
 void RPS_set_video(int channel, int video);
 

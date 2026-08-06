@@ -894,6 +894,12 @@ class Channel(object):
 
         return renpysound.read_video(self.number)
 
+    def read_video_yuv(self):
+        if not pcm_ok:
+            return None
+
+        return renpysound.read_video_yuv(self.number)
+
     def video_ready(self):
         if not pcm_ok:
             return 1
