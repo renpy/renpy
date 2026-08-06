@@ -8,10 +8,7 @@ import doc
 
 SPHINX = renpy.config.renpy_base + "/sphinx"
 
-DEPRECATED = [
-    "ui."
-    "im."
-]
+DEPRECATED = ["ui.im."]
 
 NOT_DEPRECATED = [
     "ui.interact",
@@ -19,10 +16,10 @@ NOT_DEPRECATED = [
     "im.Data",
 ]
 
-class LineIterator:
 
+class LineIterator:
     def __init__(self, filename):
-        self.lines = [ ]
+        self.lines = []
 
         self.add_lines(0, filename)
 
@@ -38,19 +35,18 @@ class LineIterator:
 
         last_indent = 0
 
-        with open(filename, 'r') as f:
-
+        with open(filename, "r") as f:
             for l in f:
                 l = l.rstrip()
-                line = l.lstrip(' ')
+                line = l.lstrip(" ")
 
                 if not line:
-                    self.lines.append((last_indent, ''))
+                    self.lines.append((last_indent, ""))
                     continue
 
                 new_indent = indent + len(l) - len(line)
 
-                if line.startswith('.. include::'):
+                if line.startswith(".. include::"):
                     self.add_lines(new_indent, line.split(None, 2)[2])
                     continue
 
@@ -102,16 +98,16 @@ def rst_to_markdown(s):
     """
 
     # Replaces :kind:`code` with `code`.
-    s = re.sub(r':\w+:`(.*?)\s*(<.*?>)?`', r'\1', s)
+    s = re.sub(r":\w+:`(.*?)\s*(<.*?>)?`", r"\1", s)
 
     return s
 
-class Documentation:
 
+class Documentation:
     def __init__(self):
-        self.renpy = { }
-        self.config = { }
-        self.internal = { }
+        self.renpy = {}
+        self.config = {}
+        self.internal = {}
 
         for i in os.listdir(SPHINX + "/source"):
             if i.endswith(".rst"):
@@ -119,7 +115,7 @@ class Documentation:
                 li = LineIterator(i)
                 self.parse_file(basename, li)
 
-        self.output("renpy", "image", "black", " = Solid(\"#000\")", "A solid black color.")
+        self.output("renpy", "image", "black", ' = Solid("#000")', "A solid black color.")
 
     def parse_file(self, basename, li):
         """
@@ -134,13 +130,10 @@ class Documentation:
         """
 
         while li.next():
+            m = re.match(r"..\s*(\w+)::\s*([\.\w]+)(.*)", li.line)
 
-
-            m = re.match(r'..\s*(\w+)::\s*([\.\w]+)(.*)', li.line)
-
-            if m and m.group(1) in { "function", "class", "var" }:
+            if m and m.group(1) in {"function", "class", "var"}:
                 self.parse_name(basename, m.group(1), m.group(2), m.group(3), li)
-
 
     def parse_name(self, basename, kind, name, rest, li):
         """
@@ -164,7 +157,6 @@ class Documentation:
         body = ""
 
         while li.next():
-
             if indent is None:
                 if not li.line:
                     continue
@@ -190,7 +182,6 @@ class Documentation:
 
             # Handle the code block.
             if code:
-
                 body += "\n"
                 body += "```\n"
 
@@ -249,16 +240,9 @@ class Documentation:
         if name in doc.actions:
             accessKind = "Action"
 
-        entry = [
-            origin,
-            kind,
-            rest.strip(),
-            "",
-            accessKind,
-            body
-        ]
+        entry = [origin, kind, rest.strip(), "", accessKind, body]
 
-        if basename == 'config':
+        if basename == "config":
             self.config[name] = entry
         elif name.startswith("renpy."):
             self.renpy[name] = entry
@@ -279,20 +263,20 @@ class Documentation:
             namespace = name.rpartition(".")[0]
             namespaces.add(namespace)
 
-
         for i in sorted(namespaces):
-            if i in { "_preferences", "emscripten", "renpy.audio" }:
+            if i in {"_preferences", "emscripten", "renpy.audio"}:
                 continue
 
             if i not in self.renpy and i not in self.config and i not in self.internal:
                 print("Namespace", i, "is not documented.")
+
 
 def main():
 
     d = Documentation()
 
     def sort(d):
-        return { k: d[k] for k in sorted(d) }
+        return {k: d[k] for k in sorted(d)}
 
     renpy_json = {
         "config": sort(d.config),
@@ -305,5 +289,6 @@ def main():
 
     d.check_namespaces()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

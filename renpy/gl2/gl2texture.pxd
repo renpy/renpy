@@ -91,6 +91,8 @@ cdef class GLTexture(GL2Model):
 
     cdef bint has_mipmaps(self)
 
+    cdef bint from_yuv_plane_pointer(self, const unsigned char *data, int width, int height, GLenum format, bint mipmap)
+
     cpdef subsurface(GLTexture self, t)
 
     cpdef GL2Model get_texture(self, int i)

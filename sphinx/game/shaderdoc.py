@@ -6,6 +6,7 @@ import textwrap
 
 import re
 
+
 def shaders(incdir="source/inc"):
 
     def p(s):
@@ -19,11 +20,10 @@ def shaders(incdir="source/inc"):
     parts = list(renpy.gl2.gl2shadercache.shader_part.values())
     parts.sort(key=lambda x: x.name)
 
-    vertex_priorities = [ ]
-    fragment_priorities = [ ]
+    vertex_priorities = []
+    fragment_priorities = []
 
     for sp in parts:
-
         if sp.name == "renpy.ftl":
             continue
 
@@ -37,20 +37,16 @@ def shaders(incdir="source/inc"):
     vertex_priorities.sort()
 
     with open(os.path.join(incdir, "shadervertexpriorities"), "w") as outf:
-
         for prio, name in vertex_priorities:
             p("| %d. :ref:`%s <shader-%s>`" % (prio, name, name))
 
     with open(os.path.join(incdir, "shaderfragmentpriorities"), "w") as outf:
-
         for prio, name in fragment_priorities:
             p("| %d. :ref:`%s <shader-%s>`" % (prio, name, name))
 
     with open(os.path.join(incdir, "shadersource"), "w") as outf:
-
         # Shaders.
         for sp in parts:
-
             if sp.name == "renpy.ftl":
                 continue
 
@@ -86,15 +82,13 @@ def shaders(incdir="source/inc"):
 def textshaders(incdir="source/inc"):
 
     with open(incdir + "/builtintextshaders", "w") as outf:
-
         for name, shader in sorted(renpy.config.textshaders.items()):
-
             if not shader.doc:
                 continue
 
             doc = textwrap.dedent(shader.doc)
 
-            uniforms = { }
+            uniforms = {}
 
             for u, v in shader.uniforms:
                 uniforms[u] = v

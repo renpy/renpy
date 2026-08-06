@@ -7,13 +7,13 @@ can manipulate the text and text tags defined within, including adding
 and removing text and other text tags.
 
 Custom text tags are created by assigning a text tag function to an
-entry in one of the following dictionaries.
+entry in one of the following dictionaries. A tag must be in one or
+the other dictionary, not both.
 
 .. var:: config.custom_text_tags = { }
 
     Maps text tag names to text tag functions, when the text tag can
     wrap other text.
-
 
 .. var:: config.self_closing_custom_text_tags = { }
 

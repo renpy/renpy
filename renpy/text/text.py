@@ -40,6 +40,7 @@ from renpy.text.emoji_trie import emoji, UNQUALIFIED
 from renpy.gl2.gl2polygon import Polygon
 
 from renpy.text.bidi import LTR, ON, RTL, WLTR, WRTL, get_embedding_levels, log2vis
+from renpy.display.position import absolute
 
 
 BASELINE = -65536
@@ -350,7 +351,6 @@ class TextSegment(object):
         new_shader = renpy.text.shader.get_textshader(style.textshader)
 
         if context and self.shader and not new_shader:
-
             raise Exception(
                 "%s removes a textshader, but the Text displayable already has a textshader. Textshaders cannot be removed once applied. Consider using config.default_textshader."
                 % (context,)
@@ -968,9 +968,7 @@ class Layout(object):
             elif adjust_spacing == "vertical":
                 target_x_delta = 0.0
 
-            textsupport.adjust_glyph_spacing(
-                all_glyphs, lines, target_x_delta, target_y_delta, maxx, y
-            )
+            textsupport.adjust_glyph_spacing(all_glyphs, lines, target_x_delta, target_y_delta, maxx, y)
 
             maxx = target_x
             y = target_y
@@ -1288,6 +1286,7 @@ class Layout(object):
         ts = TextSegment(None)
         ts.cps = self.cps
         ts.take_style(style, self)
+        ts.vertical = style.vertical
 
         # The text segement stack.
         tss = [ts]
@@ -1341,7 +1340,6 @@ class Layout(object):
                 tag, _, value = text.partition("=")
 
                 if tag and tag[0] == "/":
-
                     if len(tss) < 2:
                         if renpy.config.safe_text or self.safe:
                             line.extend(self.create_text_segments(text, tss[-1], style))
@@ -2103,7 +2101,7 @@ def text_tick():
     layout_cache_new = {}
 
     global virtual_layout_cache_old, virtual_layout_cache_new
-    virtual_layout_cache_old = layout_cache_new
+    virtual_layout_cache_old = virtual_layout_cache_new
     virtual_layout_cache_new = {}
 
     global slow_text
@@ -2243,9 +2241,9 @@ class Text(renpy.display.displayable.Displayable):
 
         # The index of the start and end strings in the first segment of text.
         # (None to show the whole text.)
-        self.afm_start: int|None = None
-        self.start: int|None = None
-        self.end: int|None = None
+        self.afm_start: int | None = None
+        self.start: int | None = None
+        self.end: int | None = None
 
         # If true, a safe mode is engaged that will render text with text tag errors.
         self.safe = safe
@@ -2723,7 +2721,7 @@ class Text(renpy.display.displayable.Displayable):
 
         layout = Layout(self, width, height, renders, size_only=True, drawable_res=True)
 
-        return layout.unscale_pair(*layout.size)
+        return tuple( absolute(i) for i in  layout.unscale_pair(*layout.size) )
 
     def get_time(self):
         """

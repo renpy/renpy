@@ -1,4 +1,4 @@
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages
@@ -16,7 +16,7 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from sdl2 cimport *
+from .sdl cimport *
 
 class error(RuntimeError):
 
@@ -24,7 +24,7 @@ class error(RuntimeError):
         if message is None:
             message = bytes(SDL_GetError())
             message = message.decode("utf-8")
-            
+
         RuntimeError.__init__(self, message)
 
 def get_error():
@@ -36,7 +36,7 @@ def get_error():
         return ''
 
 def set_error(message):
-    if isinstance(message, unicode):
+    if isinstance(message, str):
         message = message.encode("utf-8")
 
     SDL_SetError("%s", <char *> message)

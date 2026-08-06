@@ -139,6 +139,7 @@ from renpy.display.tts import (
     speak as alt,
     speak_extra_alt as speak_extra_alt,
     stop_tts as stop_tts,
+    get_tts_voices as get_tts_voices,
 )
 
 from renpy.display.video import (
@@ -163,6 +164,7 @@ from renpy.execution import (
 )
 
 from renpy.exports.commonexports import (
+    callback as callback,
     renpy_pure as renpy_pure,
 )
 
@@ -311,6 +313,16 @@ from renpy.exports.actionexports import (
     confirm as confirm,
     display_notify as display_notify,
     notify as notify,
+)
+
+from renpy.exports.clipboardexports import (
+    get_clipboard_data as get_clipboard_data,
+    get_clipboard_mime_types as get_clipboard_mime_types,
+    get_clipboard_text as get_clipboard_text,
+    put_clipboard_data as put_clipboard_data,
+    put_clipboard_image_file as put_clipboard_image_file,
+    put_clipboard_text as put_clipboard_text,
+    put_clipboard_text_file as put_clipboard_text_file,
 )
 
 from renpy.exports.contextexports import (
@@ -506,6 +518,7 @@ from renpy.exports.platformexports import (
     get_on_battery as get_on_battery,
     get_sdl_dll as get_sdl_dll,
     get_sdl_window_pointer as get_sdl_window_pointer,
+    get_user_age as get_user_age,
     invoke_in_main_thread as invoke_in_main_thread,
     invoke_in_thread as invoke_in_thread,
     request_permission as request_permission,

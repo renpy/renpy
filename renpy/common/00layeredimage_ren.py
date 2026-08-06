@@ -986,8 +986,8 @@ def parse_attribute(l):
 
 def merge_properties(final_properties: dict, expr_properties: dict) -> dict:
 
-    eval_properties = { k: eval(v) for k, v in expr_properties.items() }
-    rv =  final_properties | eval_properties
+    eval_properties = {k: eval(v) for k, v in expr_properties.items()}
+    rv = final_properties | eval_properties
 
     if "at" in final_properties and "at" in expr_properties:
         expr_at = eval_properties["at"]
@@ -996,6 +996,7 @@ def merge_properties(final_properties: dict, expr_properties: dict) -> dict:
         rv["at"] = renpy.easy.to_tuple(expr_at) + (final_at,)
 
     return rv
+
 
 class RawAttributeGroup(renpy.object.Object):
     __version__ = 1

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,13 +34,13 @@ import pefile
 # This class performs various operations on memory-loaded binary files,
 # including modifications.
 
-class BinFile(object):
 
+class BinFile(object):
     def set_u32(self, addr, value):
-        self.a[addr + 0] = (value >> 0) & 0xff
-        self.a[addr + 1] = (value >> 8) & 0xff
-        self.a[addr + 2] = (value >> 16) & 0xff
-        self.a[addr + 3] = (value >> 24) & 0xff
+        self.a[addr + 0] = (value >> 0) & 0xFF
+        self.a[addr + 1] = (value >> 8) & 0xFF
+        self.a[addr + 2] = (value >> 16) & 0xFF
+        self.a[addr + 3] = (value >> 24) & 0xFF
 
     def u32(self):
         addr = self.addr
@@ -66,7 +66,7 @@ class BinFile(object):
     def name(self):
         c = self.u16()
 
-        rv = u""
+        rv = ""
         for _i in range(c):
             rv += chr(self.u16())
 
@@ -78,12 +78,13 @@ class BinFile(object):
     def tostring(self):
         return self.a.tobytes()
 
-    def substring(self, start, len): # @ReservedAssignment
-        return self.a[start:start + len].tobytes()
+    def substring(self, start, len):  # @ReservedAssignment
+        return self.a[start : start + len].tobytes()
 
     def __init__(self, data):
-        self.a = array.array('B')
+        self.a = array.array("B")
         self.a.frombytes(data)
+
 
 ##############################################################################
 # These functions parse data out of the file. In these functions, offset is
@@ -103,7 +104,7 @@ def parse_data(bf, offset):
     code_page = bf.u32()
     bf.u32()
 
-    l = [ ]
+    l = []
 
     bf.seek(data_offset - resource_virtual)
     for _i in range(data_len):
@@ -111,34 +112,34 @@ def parse_data(bf, offset):
 
     return (code_page, b"".join(l))
 
+
 # This parses a resource directory.
 
 
 def parse_directory(bf, offset):
 
     bf.seek(offset)
-    char = bf.u32() # @UnusedVariable
-    timedate = bf.u32() # @UnusedVariable
-    major = bf.u16() # @UnusedVariable
-    minor = bf.u16() # @UnusedVariable
+    char = bf.u32()  # @UnusedVariable
+    timedate = bf.u32()  # @UnusedVariable
+    major = bf.u16()  # @UnusedVariable
+    minor = bf.u16()  # @UnusedVariable
     n_named = bf.u16()
     n_id = bf.u16()
 
-    entries = [ ]
+    entries = []
 
     for _i in range(n_named + n_id):
         entries.append((bf.u32(), bf.u32()))
 
-    rv = { }
+    rv = {}
 
     for name, value in entries:
-
         if name & 0x80000000:
-            bf.seek((name & 0x7fffffff))
+            bf.seek((name & 0x7FFFFFFF))
             name = bf.name()
 
         if value & 0x80000000:
-            value = parse_directory(bf, value & 0x7fffffff)
+            value = parse_directory(bf, value & 0x7FFFFFFF)
         else:
             value = parse_data(bf, value)
 
@@ -159,13 +160,13 @@ def show_resources(d, prefix):
         print(prefix, k)
         show_resources(d[k], prefix + "  ")
 
+
 ##############################################################################
 # These functions repack the resources into a new resource segment. Here,
 # the offset is relative to the start of the resource segment.
 
 
 class Packer(object):
-
     def pack(self, d):
         self.data = b""
         self.data_offset = 0
@@ -220,7 +221,7 @@ class Packer(object):
 
         rest = b""
 
-        for (name, value) in name_entries + id_entries:
+        for name, value in name_entries + id_entries:
             if isinstance(name, str):
                 name = 0x80000000 | self.pack_name(name)
 
@@ -236,6 +237,7 @@ class Packer(object):
 
         return rv + rest
 
+
 ##############################################################################
 # This loads in an icon file, and returns a dictionary that is suitable for
 # use in the resources of an exe file.
@@ -249,8 +251,8 @@ def load_icon(fn):
     f.u16()
     count = f.u16()
 
-    rv = { }
-    rv[3] = { }
+    rv = {}
+    rv[3] = {}
 
     group = struct.pack("HHH", 0, 1, count)
 
@@ -269,17 +271,16 @@ def load_icon(fn):
         if not f.u32():
             f.set_u32(offset + 20, 0)
 
-        #rv[3][i + 1] = { 0 : (1252, f.substring(offset, size)) }
-        #I do not have justification for the 0x0409 entry ID, other than copying what other files do. Same for codepage of 0
-        rv[3][i + 1] = { 1033 : (0, f.substring(offset, size)) }
+        # rv[3][i + 1] = { 0 : (1252, f.substring(offset, size)) }
+        # I do not have justification for the 0x0409 entry ID, other than copying what other files do. Same for codepage of 0
+        rv[3][i + 1] = {1033: (0, f.substring(offset, size))}
 
-        group += struct.pack("BBBBHHIH", width, height, colors, reserved,
-                             planes, bpp, size, i + 1)
+        group += struct.pack("BBBBHHIH", width, height, colors, reserved, planes, bpp, size, i + 1)
 
         f.seek(addr)
 
-    #rv[14] = { 1 : { 0 : (1252, group) } }
-    rv[14] = { 1 : { 1033 : (0, group) } }
+    # rv[14] = { 1 : { 0 : (1252, group) } }
+    rv[14] = {1: {1033: (0, group)}}
 
     return rv
 
@@ -309,17 +310,16 @@ def change_icons(oldexe, icofn):
     basedata = f.read(base)
     data = f.read(physize)
 
-    #Symbol table, I could not understand so well
+    # Symbol table, I could not understand so well
     #  Some analysis and the little I could find on how the symbol tables were layed out show that the PE table is in two sections. One is
     # a list of NumberOfSymbols*(18 bytes) symbol entries, followed immediately by a string table who's length is specified in the 4 bytes following the symbol structure list
-    #Again, the information *seems* to indicate that this will always follow the entire block of all sections (so be at the end of the file)
-
+    # Again, the information *seems* to indicate that this will always follow the entire block of all sections (so be at the end of the file)
 
     ######
     # As a related note, apparently this flag has been deprecated, but appears to be set (I think ..) in the renpy.exe that is used to build from..
     # no idea of a consequence, just an observation
     # https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#characteristics , see "IMAGE_FILE_LINE_NUMS_STRIPPED" :
-    #	COFF line numbers have been removed. This flag is deprecated and should be zero.
+    # COFF line numbers have been removed. This flag is deprecated and should be zero.
     # In renpy.exe, this 2-byte  flag is @ 0x096 and 0x097  in little-endian
     ######
 
@@ -336,12 +336,16 @@ def change_icons(oldexe, icofn):
 
     newExactSize = len(rsrc)
 
-    #From note about flags above regarding image flags. These two should be 0
-    pe.FILE_HEADER.Characteristics = pe.FILE_HEADER.Characteristics & (~pefile.IMAGE_CHARACTERISTICS["IMAGE_FILE_LINE_NUMS_STRIPPED"])
-    pe.FILE_HEADER.Characteristics = pe.FILE_HEADER.Characteristics & (~pefile.IMAGE_CHARACTERISTICS["IMAGE_FILE_LOCAL_SYMS_STRIPPED"])
+    # From note about flags above regarding image flags. These two should be 0
+    pe.FILE_HEADER.Characteristics = pe.FILE_HEADER.Characteristics & (
+        ~pefile.IMAGE_CHARACTERISTICS["IMAGE_FILE_LINE_NUMS_STRIPPED"]
+    )
+    pe.FILE_HEADER.Characteristics = pe.FILE_HEADER.Characteristics & (
+        ~pefile.IMAGE_CHARACTERISTICS["IMAGE_FILE_LOCAL_SYMS_STRIPPED"]
+    )
 
-    #Per docs, symbol table can just be removed
-    #https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#coff-file-header-object-and-image  see "PointerToSymbolTable"  and  "NumberOfSymbols "
+    # Per docs, symbol table can just be removed
+    # https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#coff-file-header-object-and-image  see "PointerToSymbolTable"  and  "NumberOfSymbols "
 
     pe.FILE_HEADER.PointerToSymbolTable = 0
     pe.FILE_HEADER.NumberOfSymbols = 0
@@ -371,12 +375,11 @@ def change_icons(oldexe, icofn):
     rsrc_section.Misc_PhysicalAddress = newExactSize
     rsrc_section.Misc = newExactSize
 
-    #Size of resource section (and pointer, but we're not changing anything 'above' resource) is the same as virtual address in the section table
+    # Size of resource section (and pointer, but we're not changing anything 'above' resource) is the same as virtual address in the section table
     # https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#optional-header-data-directories-image-only
     pe.OPTIONAL_HEADER.DATA_DIRECTORY[2].Size = rsrc_section.Misc_VirtualSize
 
-
-    #Alignment for raw data
+    # Alignment for raw data
     if len(rsrc) % filealignment:
         pad = filealignment - (len(rsrc) % filealignment)
         padding = b"\0" * (pad)
@@ -384,26 +387,24 @@ def change_icons(oldexe, icofn):
         rsrc += padding
     rsrc_section.SizeOfRawData = len(rsrc)
 
-
-    #Image size is the memory size of all sections + all headers, padded to memory alignment.
-    #There's already a header size, and this isn't changing headers, so just add.
-    #imageSize = pe.OPTIONAL_HEADER.ImageBase + pe.OPTIONAL_HEADER.SizeOfHeaders
+    # Image size is the memory size of all sections + all headers, padded to memory alignment.
+    # There's already a header size, and this isn't changing headers, so just add.
+    # imageSize = pe.OPTIONAL_HEADER.ImageBase + pe.OPTIONAL_HEADER.SizeOfHeaders
     imageSize = pe.OPTIONAL_HEADER.SizeOfHeaders
     for s in pe.sections:
         sectionSize = s.Misc_VirtualSize
-        #Align every section, so add padding to size
+        # Align every section, so add padding to size
         pad = 0
         if sectionSize % memoryalignment:
             pad = memoryalignment - (sectionSize % memoryalignment)
-        imageSize += (sectionSize + pad)
+        imageSize += sectionSize + pad
     pad = 0
     if imageSize % memoryalignment:
         pad = memoryalignment - (imageSize % memoryalignment)
     pe.OPTIONAL_HEADER.SizeOfImage = imageSize + pad
 
-
-    #The symbol table is simply left off. Its size DOES factor into ImageSize, but we didn't calculate it above, so fine
-    #Correctly checksum the file. The entire file is involved in the calculation, so a new PE object must be generated for the calculation to work against
+    # The symbol table is simply left off. Its size DOES factor into ImageSize, but we didn't calculate it above, so fine
+    # Correctly checksum the file. The entire file is involved in the calculation, so a new PE object must be generated for the calculation to work against
     newFile = pe.write()[:base] + rsrc
     newpe = pefile.PE(data=bytes(newFile))
     newpe.OPTIONAL_HEADER.CheckSum = newpe.generate_checksum()
@@ -412,7 +413,6 @@ def change_icons(oldexe, icofn):
 
 
 if __name__ == "__main__":
-
     f = open(sys.argv[3], "wb")
     f.write(change_icons(sys.argv[1], sys.argv[2]))
     f.close()

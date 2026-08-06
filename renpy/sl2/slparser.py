@@ -619,11 +619,11 @@ def register_sl_displayable(*args, **kwargs):
         also be "ui", in which case it adds the :ref:`common ui properties <common-properties>`.
 
     .. method:: copy_positionals(name)
-    
+
         Adds positional arguments that can be passed to the `name` screen statement.
-        
+
     .. method:: copy_keywords(name)
-    
+
         Adds all styles and keyword arguments that can be passed to the `name` screen statement.
 
     .. method:: copy_properties(name)

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,7 +27,6 @@ import renpy.display
 
 
 class ImageGenerator(object):
-
     def __init__(self, parameters):
 
         pygame_sdl2.image.init()
@@ -70,7 +69,7 @@ class ImageGenerator(object):
 
     def rescale_template(self, t):
 
-        rv = [ ]
+        rv = []
 
         for pos, opacity in t:
             rv.append((pos * self.scale, opacity))
@@ -81,12 +80,11 @@ class ImageGenerator(object):
 
         size = int(max(i[0] for i in template))
 
-        rv = [ ]
+        rv = []
 
         right_pos, right_value = template[0]
 
         for i in range(size):
-
             if i == right_pos:
                 rv.append(right_value)
                 continue
@@ -112,7 +110,7 @@ class ImageGenerator(object):
 
         start = (len(line) - size) // 2
 
-        return line[start:start + size ]
+        return line[start : start + size]
 
     def save(self, s, filename, overwrite=True):
 
@@ -125,7 +123,6 @@ class ImageGenerator(object):
             pass
 
         if os.path.exists(fn):
-
             if not overwrite:
                 return
 
@@ -135,7 +132,7 @@ class ImageGenerator(object):
             index = 1
 
             while True:
-                bfn = u"{}.{}.bak".format(fn, index)
+                bfn = "{}.{}.bak".format(fn, index)
 
                 if not os.path.exists(bfn):
                     break
@@ -185,28 +182,28 @@ class ImageGenerator(object):
             (XINSIDE, 1.0),
             (XSIZE - XINSIDE, 1.0),
             (XSIZE, 0.0),
-            ]
+        ]
 
         Y = [
             (0, 0.0),
             (YBORDER, 1.0),
             (YSIZE, 1.0),
-            ]
+        ]
 
-        self.generate_image("textbox", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("textbox", X, Y, self.boring_color.opacity(0.8))
 
         YSIZE = 240
         YBORDER = 5
 
-        X = [ (0, 1.0), (self.full_width, 1.0) ]
+        X = [(0, 1.0), (self.full_width, 1.0)]
 
         Y = [
             (0, 0.0),
             (YBORDER, 1.0),
             (YSIZE, 1.0),
-            ]
+        ]
 
-        self.generate_image("phone/textbox", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("phone/textbox", X, Y, self.boring_color.opacity(0.8))
 
         width = self.scale_int(300)
         height = self.scale_int(36)
@@ -225,26 +222,26 @@ class ImageGenerator(object):
             (XINSIDE, 1.0),
             (XSIZE - XINSIDE, 1.0),
             (XSIZE, 0.0),
-            ]
+        ]
 
         Y = [
             (0, 1.0),
             (YSIZE, 1.0),
-            ]
+        ]
 
-        self.generate_image("nvl", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("nvl", X, Y, self.boring_color.opacity(0.8))
 
         X = [
             (0, 1.0),
             (XSIZE, 1.0),
-            ]
+        ]
 
         Y = [
             (0, 1.0),
             (YSIZE, 1.0),
-            ]
+        ]
 
-        self.generate_image("phone/nvl", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("phone/nvl", X, Y, self.boring_color.opacity(0.8))
 
     def generate_choice_button(self):
         XSIZE = 790
@@ -258,19 +255,19 @@ class ImageGenerator(object):
             (XINSIDE, 1.0),
             (XSIZE - XINSIDE, 1.0),
             (XSIZE, 0.0),
-            ]
+        ]
 
         Y = [
             (0, 0.0),
             (YBORDER, 1.0),
             (YSIZE - YBORDER, 1.0),
             (YSIZE, 0.0),
-            ]
+        ]
 
-        self.generate_image("button/choice_idle_background", X, Y, self.boring_color.opacity(.8))
-        self.generate_image("button/choice_hover_background", X, Y, self.accent_color.opacity(.95))
-        self.generate_image("phone/button/choice_idle_background", X, Y, self.boring_color.opacity(.8))
-        self.generate_image("phone/button/choice_hover_background", X, Y, self.accent_color.opacity(.95))
+        self.generate_image("button/choice_idle_background", X, Y, self.boring_color.opacity(0.8))
+        self.generate_image("button/choice_hover_background", X, Y, self.accent_color.opacity(0.95))
+        self.generate_image("phone/button/choice_idle_background", X, Y, self.boring_color.opacity(0.8))
+        self.generate_image("phone/button/choice_hover_background", X, Y, self.accent_color.opacity(0.95))
 
     def generate_overlay(self):
 
@@ -311,7 +308,7 @@ class ImageGenerator(object):
 
         # Confirm.
         gm = self.make_surface(self.width, self.height)
-        gm.fill(self.boring_color.opacity(.6))
+        gm.fill(self.boring_color.opacity(0.6))
         self.save(gm, "overlay/confirm")
 
     def generate_frame(self):
@@ -343,14 +340,14 @@ class ImageGenerator(object):
             (0, 1.0),
             (XSIZE - XRIGHT, 1.0),
             (XSIZE, 0.0),
-            ]
+        ]
 
         Y = [
             (0, 1.0),
             (YSIZE, 1.0),
-            ]
+        ]
 
-        self.generate_image("skip", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("skip", X, Y, self.boring_color.opacity(0.8))
 
     def generate_notify(self):
         XSIZE = 922
@@ -362,14 +359,14 @@ class ImageGenerator(object):
             (0, 1.0),
             (XSIZE - XRIGHT, 1.0),
             (XSIZE, 0.0),
-            ]
+        ]
 
         Y = [
             (0, 1.0),
             (YSIZE, 1.0),
-            ]
+        ]
 
-        self.generate_image("notify", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("notify", X, Y, self.boring_color.opacity(0.8))
 
     def generate_icon(self):
 
@@ -377,7 +374,7 @@ class ImageGenerator(object):
         icon = pygame_sdl2.image.load(icon_fn)
 
         width, height = icon.get_size()
-        surf =  pygame_sdl2.Surface((width, height), pygame_sdl2.SRCALPHA)
+        surf = pygame_sdl2.Surface((width, height), pygame_sdl2.SRCALPHA)
 
         ro, go, bo, _ao = tuple(self.accent_color)
 
@@ -408,8 +405,7 @@ class ImageGenerator(object):
 
         import shutil
 
-        for fn in [ "bubble.png", "thoughtbubble.png" ]:
-
+        for fn in ["bubble.png", "thoughtbubble.png"]:
             source = os.path.join(config.renpy_base, "gui", "game", "gui", fn)
             dest = os.path.join(self.prefix, fn)
 
@@ -417,7 +413,6 @@ class ImageGenerator(object):
                 return
 
             shutil.copyfile(source, dest)
-
 
     def generate_all(self):
         self.generate_textbox()

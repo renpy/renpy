@@ -27,6 +27,7 @@ import renpy
 
 type Placement = tuple[float | None, float | None, float | None, float | None, float | None, float | None, bool]
 
+
 def place(width: float, height: float, sw: float, sh: float, placement: Placement) -> tuple[float, float]:
     """
     Performs the Ren'Py placement algorithm.

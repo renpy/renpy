@@ -5,10 +5,13 @@
 #include <libavutil/pixfmt.h>
 #include <libswscale/swscale.h>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_thread.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_thread.h>
 
 #include <stdlib.h>
+#include <string.h>
+
+#include "ffmedia.h"
 
 #ifndef _WIN32
 #define USE_POSIX_MEMALIGN
@@ -55,13 +58,13 @@ static SDL_Surface *rgba_surface = NULL;
 // http://dranger.com/ffmpeg/
 
 /*******************************************************************************
- * SDL_RWops <-> AVIOContext
+ * SDL_IOStream <-> AVIOContext
  */
 
 static int rwops_read(void *opaque, uint8_t *buf, int buf_size) {
-    SDL_RWops *rw = (SDL_RWops *) opaque;
+    SDL_IOStream *rw = (SDL_IOStream *) opaque;
 
-    int rv = rw->read(rw, buf, 1, buf_size);
+    size_t rv = SDL_ReadIO(rw, buf, buf_size);
 
 	if (rv == 0) {
 		return AVERROR_EOF;
@@ -81,23 +84,23 @@ static int rwops_write(void *opaque, const uint8_t *buf, int buf_size) {
 }
 
 static int64_t rwops_seek(void *opaque, int64_t offset, int whence) {
-    SDL_RWops *rw = (SDL_RWops *) opaque;
+    SDL_IOStream *rw = (SDL_IOStream *) opaque;
 
     if (whence == AVSEEK_SIZE) {
-    	return rw->size(rw);
+    	return SDL_GetIOSize(rw);
     }
 
     // Ignore flags like AVSEEK_FORCE.
     whence &= (SEEK_SET | SEEK_CUR | SEEK_END);
 
-    int64_t rv = rw->seek(rw, (int) offset, whence);
+    int64_t rv = SDL_SeekIO(rw, offset, whence);
     return rv;
 }
 
 #define RWOPS_BUFFER 65536
 
 
-static AVIOContext *rwops_open(SDL_RWops *rw) {
+static AVIOContext *rwops_open(SDL_IOStream *rw) {
 
     unsigned char *buffer = av_malloc(RWOPS_BUFFER);
 	if (buffer == NULL) {
@@ -119,8 +122,8 @@ static AVIOContext *rwops_open(SDL_RWops *rw) {
     return rv;
 }
 
-static void rwops_close(SDL_RWops *rw) {
-	rw->close(rw);
+static void rwops_close(SDL_IOStream *rw) {
+	SDL_CloseIO(rw);
 }
 
 static double current_time = 0;
@@ -146,13 +149,22 @@ typedef struct SurfaceQueueEntry {
 
 	SDL_Surface *surf;
 
+	/* Packed YUV420 data for GPU conversion. */
+	int yuv;
+	int yuv_width, yuv_height;
+	int yuv_y_pitch, yuv_uv_pitch;
+	uint8_t *yuv_y;
+	uint8_t *yuv_uv;
+	int yuv_full_range;
+	int yuv_bt709;
+
 	/* The pts, converted to seconds. */
 	double pts;
 
 	/* The format. This is not refcounted, but it's kept alive by being
 	 * the format of one of the sampel surfaces.
 	 */
-	SDL_PixelFormat *format;
+	SDL_PixelFormat format;
 
 	/* As with SDL_Surface. */
 	int w, h, pitch;
@@ -169,10 +181,10 @@ typedef struct MediaState {
     SDL_Thread *thread;
 
 	/* The condition and lock. */
-	SDL_cond* cond;
-	SDL_mutex* lock;
+	SDL_Condition* cond;
+	SDL_Mutex* lock;
 
-	SDL_RWops *rwops;
+	SDL_IOStream *rwops;
 	char *filename;
 
 	/*
@@ -255,6 +267,9 @@ typedef struct MediaState {
 	/* Software rescaling context. */
 	struct SwsContext *sws;
 
+	/* Software rescaling context for surface consumers of YUV frames. */
+	struct SwsContext *yuv_sws;
+
 	/* A queue of decoded video frames. */
 	SurfaceQueueEntry *surface_queue; // Lock
 	int surface_queue_size; // Lock
@@ -280,12 +295,30 @@ static AVFrame *dequeue_frame(FrameQueue *fq);
 static void free_packet_queue(PacketQueue *pq);
 static SurfaceQueueEntry *dequeue_surface(SurfaceQueueEntry **queue);
 
+static void free_surface_entry(SurfaceQueueEntry *sqe) {
+	if (!sqe) {
+		return;
+	}
+
+	if (sqe->pixels) {
+#ifndef USE_POSIX_MEMALIGN
+		SDL_free(sqe->pixels);
+#else
+		free(sqe->pixels);
+#endif
+	}
+
+	av_free(sqe->yuv_y);
+	av_free(sqe->yuv_uv);
+	av_free(sqe);
+}
+
 
 /* A queue of MediaState objects that are awaiting deallocation.*/
 static MediaState *deallocate_queue = NULL;
 
 /* A mutex that discards deallocate_queue. */
-SDL_mutex *deallocate_mutex = NULL;
+SDL_Mutex *deallocate_mutex = NULL;
 
 /* Deallocates a single MediaState. */
 static void deallocate(MediaState *ms) {
@@ -297,18 +330,15 @@ static void deallocate(MediaState *ms) {
 			break;
 		}
 
-		if (sqe->pixels) {
-#ifndef USE_POSIX_MEMALIGN
-			SDL_free(sqe->pixels);
-#else
-			free(sqe->pixels);
-#endif
-		}
-		av_free(sqe);
+		free_surface_entry(sqe);
 	}
 
 	if (ms->sws) {
 		sws_freeContext(ms->sws);
+	}
+
+	if (ms->yuv_sws) {
+		sws_freeContext(ms->yuv_sws);
 	}
 
 	if (ms->video_decode_frame) {
@@ -364,7 +394,7 @@ static void deallocate(MediaState *ms) {
 
 	/* Destroy alloc stuff. */
 	if (ms->cond) {
-		SDL_DestroyCond(ms->cond);
+		SDL_DestroyCondition(ms->cond);
 	}
 	if (ms->lock) {
 		SDL_DestroyMutex(ms->lock);
@@ -785,7 +815,7 @@ static enum AVPixelFormat get_pixel_format(SDL_Surface *surf) {
     uint32_t pixel;
     uint8_t *bytes = (uint8_t *) &pixel;
 
-	pixel = SDL_MapRGBA(surf->format, 1, 2, 3, 4);
+	pixel = SDL_MapRGBA(SDL_GetPixelFormatDetails(surf->format), NULL, 1, 2, 3, 4);
 
 	enum AVPixelFormat fmt;
 
@@ -856,6 +886,60 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		}
 	}
 
+	if (ms->video_decode_frame->format == AV_PIX_FMT_YUV420P ||
+		ms->video_decode_frame->format == AV_PIX_FMT_YUVJ420P) {
+		int width = ms->video_decode_frame->width;
+		int height = ms->video_decode_frame->height;
+		int chroma_width = (width + 1) / 2;
+		int chroma_height = (height + 1) / 2;
+		SurfaceQueueEntry *rv = av_mallocz(sizeof(SurfaceQueueEntry));
+
+		if (!rv) {
+			ms->video_finished = 1;
+			return NULL;
+		}
+
+		rv->yuv_y_pitch = width;
+		rv->yuv_uv_pitch = chroma_width * 2;
+		rv->yuv_y = av_malloc((size_t) width * height);
+		rv->yuv_uv = av_malloc((size_t) rv->yuv_uv_pitch * chroma_height);
+
+		if (!rv->yuv_y || !rv->yuv_uv) {
+			free_surface_entry(rv);
+			ms->video_finished = 1;
+			return NULL;
+		}
+
+		for (int y = 0; y < height; y++) {
+			const uint8_t *src = ms->video_decode_frame->data[0];
+			int stride = ms->video_decode_frame->linesize[0];
+			memcpy(rv->yuv_y + (size_t) y * rv->yuv_y_pitch,
+				src + y * stride, width);
+		}
+
+		for (int y = 0; y < chroma_height; y++) {
+			const uint8_t *src_u = ms->video_decode_frame->data[1];
+			const uint8_t *src_v = ms->video_decode_frame->data[2];
+			int stride_u = ms->video_decode_frame->linesize[1];
+			int stride_v = ms->video_decode_frame->linesize[2];
+
+			for (int x = 0; x < chroma_width; x++) {
+				rv->yuv_uv[y * rv->yuv_uv_pitch + x * 2] = src_u[y * stride_u + x];
+				rv->yuv_uv[y * rv->yuv_uv_pitch + x * 2 + 1] = src_v[y * stride_v + x];
+			}
+		}
+
+		rv->yuv = 1;
+		rv->yuv_width = width;
+		rv->yuv_height = height;
+		rv->yuv_full_range =
+			ms->video_decode_frame->color_range == AVCOL_RANGE_JPEG ||
+			ms->video_decode_frame->format == AV_PIX_FMT_YUVJ420P;
+		rv->yuv_bt709 = ms->video_decode_frame->colorspace == AVCOL_SPC_BT709;
+		rv->pts = pts;
+		return rv;
+	}
+
 	SDL_Surface *sample = rgba_surface;
 
 	if (ms->sws == NULL) {
@@ -899,10 +983,13 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		ms->video_finished = 1;
 		return NULL;
 	}
+	memset(rv, 0, sizeof(*rv));
 	rv->w = ms->video_decode_frame->width + FRAME_PADDING * 2;
 	rv->h = ms->video_decode_frame->height + FRAME_PADDING * 2;
 
-	rv->pitch = rv->w * sample->format->BytesPerPixel;
+	const SDL_PixelFormatDetails *sample_fmt = SDL_GetPixelFormatDetails(sample->format);
+
+	rv->pitch = rv->w * sample_fmt->bytes_per_pixel;
 
 	if (rv->pitch % ROW_ALIGNMENT) {
 	    rv->pitch += ROW_ALIGNMENT - (rv->pitch % ROW_ALIGNMENT);
@@ -923,7 +1010,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	rv->pts = pts;
 
 	uint8_t *surf_pixels = (uint8_t *) rv->pixels;
-	uint8_t *surf_data[] = { &surf_pixels[FRAME_PADDING * rv->pitch + FRAME_PADDING * sample->format->BytesPerPixel] };
+	uint8_t *surf_data[] = { &surf_pixels[FRAME_PADDING * rv->pitch + FRAME_PADDING * sample_fmt->bytes_per_pixel] };
 	int surf_linesize[] = { rv->pitch };
 
 	sws_scale(
@@ -1026,14 +1113,7 @@ int media_video_ready(struct MediaState *ms) {
 			SurfaceQueueEntry *sqe = dequeue_surface(&ms->surface_queue);
 			ms->surface_queue_size -= 1;
 
-			if (sqe->pixels) {
-#ifndef USE_POSIX_MEMALIGN
-				SDL_free(sqe->pixels);
-#else
-				free(sqe->pixels);
-#endif
-			}
-			av_free(sqe);
+			free_surface_entry(sqe);
 
 			consumed = 1;
 		}
@@ -1059,7 +1139,7 @@ done:
 	/* Only signal if we've consumed something. */
 	if (consumed) {
 		ms->needs_decode = 1;
-		SDL_CondBroadcast(ms->cond);
+		SDL_BroadcastCondition(ms->cond);
 	}
 
 	SDL_UnlockMutex(ms->lock);
@@ -1067,6 +1147,161 @@ done:
 	return rv;
 }
 
+
+int media_read_video_yuv(MediaState *ms, MediaVideoYUV *rv) {
+	SurfaceQueueEntry *sqe = NULL;
+	double offset_time = current_time - ms->time_offset;
+
+	memset(rv, 0, sizeof(*rv));
+
+	if (ms->video_stream == -1) {
+		return 0;
+	}
+
+	SDL_LockMutex(ms->lock);
+
+#ifndef __EMSCRIPTEN__
+	while (!ms->ready) {
+		SDL_WaitCondition(ms->cond, ms->lock);
+	}
+#endif
+
+	if (ms->pause_time > 0 || !ms->surface_queue_size || !ms->surface_queue->yuv) {
+		goto done;
+	}
+
+	if (ms->video_pts_offset == 0.0) {
+		ms->video_pts_offset = offset_time - ms->surface_queue->pts;
+	}
+
+	if (ms->surface_queue->pts + ms->video_pts_offset <= offset_time + frame_early_delivery) {
+		sqe = dequeue_surface(&ms->surface_queue);
+		ms->surface_queue_size -= 1;
+	}
+
+done:
+	if (sqe) {
+		ms->needs_decode = 1;
+		ms->video_read_time = offset_time;
+		SDL_BroadcastCondition(ms->cond);
+	}
+
+	SDL_UnlockMutex(ms->lock);
+
+	if (!sqe) {
+		return 0;
+	}
+
+	rv->width = sqe->yuv_width;
+	rv->height = sqe->yuv_height;
+	rv->y = sqe->yuv_y;
+	rv->uv = sqe->yuv_uv;
+	rv->full_range = sqe->yuv_full_range;
+	rv->bt709 = sqe->yuv_bt709;
+
+	sqe->yuv_y = NULL;
+	sqe->yuv_uv = NULL;
+	free_surface_entry(sqe);
+	return 1;
+}
+
+
+void media_free_video_yuv(MediaVideoYUV *frame) {
+	if (!frame) {
+		return;
+	}
+
+	av_free(frame->y);
+	av_free(frame->uv);
+	memset(frame, 0, sizeof(*frame));
+}
+
+static SDL_Surface *convert_yuv_surface(MediaState *ms, SurfaceQueueEntry *sqe) {
+	SDL_Surface *sample = rgba_surface;
+	const SDL_PixelFormatDetails *sample_fmt = SDL_GetPixelFormatDetails(sample->format);
+
+	ms->yuv_sws = sws_getCachedContext(
+		ms->yuv_sws,
+		sqe->yuv_width,
+		sqe->yuv_height,
+		AV_PIX_FMT_NV12,
+		sqe->yuv_width,
+		sqe->yuv_height,
+		get_pixel_format(sample),
+		SWS_POINT | SWS_FULL_CHR_H_INP | SWS_FULL_CHR_H_INT,
+		NULL,
+		NULL,
+		NULL
+	);
+
+	if (!ms->yuv_sws) {
+		return NULL;
+	}
+
+	int colorspace = sqe->yuv_bt709 ? SWS_CS_ITU709 : SWS_CS_DEFAULT;
+	int src_range = sqe->yuv_full_range ? 1 : 0;
+
+	sws_setColorspaceDetails(
+		ms->yuv_sws,
+		sws_getCoefficients(colorspace),
+		src_range,
+		sws_getCoefficients(SWS_CS_DEFAULT),
+		0,
+		0,
+		1 << 16,
+		1 << 16
+	);
+
+	int w = sqe->yuv_width + FRAME_PADDING * 2;
+	int h = sqe->yuv_height + FRAME_PADDING * 2;
+	int pitch = w * sample_fmt->bytes_per_pixel;
+
+	if (pitch % ROW_ALIGNMENT) {
+		pitch += ROW_ALIGNMENT - (pitch % ROW_ALIGNMENT);
+	}
+
+	void *pixels;
+#ifndef USE_POSIX_MEMALIGN
+	pixels = SDL_calloc(pitch * h, 1);
+#else
+	if (posix_memalign(&pixels, ROW_ALIGNMENT, pitch * h)) {
+		return NULL;
+	}
+	memset(pixels, 0, pitch * h);
+#endif
+
+	uint8_t *surf_pixels = (uint8_t *) pixels;
+	uint8_t *surf_data[] = {
+		&surf_pixels[FRAME_PADDING * pitch + FRAME_PADDING * sample_fmt->bytes_per_pixel]
+	};
+	int surf_linesize[] = { pitch };
+	const uint8_t *yuv_data[] = { sqe->yuv_y, sqe->yuv_uv };
+	int yuv_linesize[] = { sqe->yuv_y_pitch, sqe->yuv_uv_pitch };
+
+	sws_scale(
+		ms->yuv_sws,
+		yuv_data,
+		yuv_linesize,
+		0,
+		sqe->yuv_height,
+		surf_data,
+		surf_linesize
+	);
+
+	SDL_Surface *rv = SDL_CreateSurfaceFrom(w, h, sample->format, pixels, pitch);
+	if (!rv) {
+#ifndef USE_POSIX_MEMALIGN
+		SDL_free(pixels);
+#else
+		free(pixels);
+#endif
+		return NULL;
+	}
+
+	/* Force SDL to take over management of pixels. */
+	rv->flags &= ~SDL_SURFACE_PREALLOCATED;
+	return rv;
+}
 
 SDL_Surface *media_read_video(MediaState *ms) {
 
@@ -1083,7 +1318,7 @@ SDL_Surface *media_read_video(MediaState *ms) {
 
 #ifndef __EMSCRIPTEN__
 	while (!ms->ready) {
-	    SDL_CondWait(ms->cond, ms->lock);
+	    SDL_WaitCondition(ms->cond, ms->lock);
 	}
 #endif
 
@@ -1111,26 +1346,28 @@ done:
 	if (sqe) {
 		ms->needs_decode = 1;
 		ms->video_read_time = offset_time;
-		SDL_CondBroadcast(ms->cond);
+		SDL_BroadcastCondition(ms->cond);
 	}
 
 	SDL_UnlockMutex(ms->lock);
 
+	if (sqe && sqe->yuv) {
+		rv = convert_yuv_surface(ms, sqe);
+		free_surface_entry(sqe);
+		return rv;
+	}
+
 	if (sqe) {
-		rv = SDL_CreateRGBSurfaceFrom(
-			sqe->pixels,
+		rv = SDL_CreateSurfaceFrom(
 			sqe->w,
 			sqe->h,
-			sqe->format->BitsPerPixel,
-			sqe->pitch,
-			sqe->format->Rmask,
-			sqe->format->Gmask,
-			sqe->format->Bmask,
-			sqe->format->Amask
+			sqe->format,
+			sqe->pixels,
+			sqe->pitch
 		);
 
 		/* Force SDL to take over management of pixels. */
-		rv->flags &= ~SDL_PREALLOC;
+		rv->flags &= ~SDL_SURFACE_PREALLOCATED;
 		av_free(sqe);
 	}
 
@@ -1238,11 +1475,11 @@ static int decode_thread(void *arg) {
 
 		if (!ms->ready) {
 			ms->ready = 1;
-			SDL_CondBroadcast(ms->cond);
+			SDL_BroadcastCondition(ms->cond);
 		}
 
 		if (!(ms->needs_decode || ms->quit)) {
-			SDL_CondWait(ms->cond, ms->lock);
+			SDL_WaitCondition(ms->cond, ms->lock);
 		}
 
 		ms->needs_decode = 0;
@@ -1261,11 +1498,11 @@ finish:
 	/* Ensures that every stream becomes ready. */
 	if (!ms->ready) {
 		ms->ready = 1;
-		SDL_CondBroadcast(ms->cond);
+		SDL_BroadcastCondition(ms->cond);
 	}
 
 	while (!ms->quit) {
-		SDL_CondWait(ms->cond, ms->lock);
+		SDL_WaitCondition(ms->cond, ms->lock);
 	}
 
 	SDL_UnlockMutex(ms->lock);
@@ -1288,11 +1525,11 @@ void media_read_sync_finish(struct MediaState *ms) {
 	/* Ensures that every stream becomes ready. */
 	if (!ms->ready) {
 		ms->ready = 1;
-		SDL_CondBroadcast(ms->cond);
+		SDL_BroadcastCondition(ms->cond);
 	}
 
 	while (!ms->quit) {
-		/* SDL_CondWait(ms->cond, ms->lock); */
+		/* SDL_WaitCondition(ms->cond, ms->lock); */
 	}
 
 	SDL_UnlockMutex(ms->lock);
@@ -1413,11 +1650,11 @@ void media_read_sync(struct MediaState *ms) {
 
 		if (!ms->ready) {
 			ms->ready = 1;
-			SDL_CondBroadcast(ms->cond);
+			SDL_BroadcastCondition(ms->cond);
 		}
 
 		if (!(ms->needs_decode || ms->quit)) {
-			/* SDL_CondWait(ms->cond, ms->lock); */
+			/* SDL_WaitCondition(ms->cond, ms->lock); */
 		}
 
 		ms->needs_decode = 0;
@@ -1496,7 +1733,7 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 	/* Only signal if we've consumed something. */
 	if (rv) {
 		ms->needs_decode = 1;
-		SDL_CondBroadcast(ms->cond);
+		SDL_BroadcastCondition(ms->cond);
 	}
 
 	SDL_UnlockMutex(ms->lock);
@@ -1538,7 +1775,7 @@ void media_start(MediaState *ms) {
 }
 
 
-MediaState *media_open(SDL_RWops *rwops, const char *filename) {
+MediaState *media_open(SDL_IOStream *rwops, const char *filename) {
 
     deallocate_deferred();
 
@@ -1555,7 +1792,7 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 	ms->rwops = rwops;
 
 #ifndef __EMSCRIPTEN__
-	ms->cond = SDL_CreateCond();
+	ms->cond = SDL_CreateCondition();
 	if (ms->cond == NULL) {
 		deallocate(ms);
 		return NULL;
@@ -1627,7 +1864,7 @@ void media_close(MediaState *ms) {
 	media_read_sync_finish(ms);
 #endif
 
-	SDL_CondBroadcast(ms->cond);
+	SDL_BroadcastCondition(ms->cond);
 	SDL_UnlockMutex(ms->lock);
 
 }

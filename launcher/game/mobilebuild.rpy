@@ -26,7 +26,7 @@ init -1 python:
 
     def check_hash_txt(module):
         fn1 = module + "_hash.txt"
-        fn2 = renpy.fsencode(os.path.join(config.renpy_base, module, "hash.txt"))
+        fn2 = os.path.join(config.renpy_base, module, "hash.txt")
 
         # No hash file? We're in dev mode - ignore.
         if not renpy.loadable(fn1):
@@ -169,8 +169,6 @@ init -1 python:
 
             renpy.not_infinite_loop(30)
 
-            cmd = [ renpy.fsencode(i) for i in cmd ]
-
             self.cmd = cmd
 
             f = open(self.filename, "a")
@@ -195,7 +193,7 @@ init -1 python:
                 kwargs = { }
 
                 try:
-                    self.process = subprocess.Popen(cmd, cwd=renpy.fsencode(RAPT_PATH), stdout=f, stderr=f, stdin=subprocess.PIPE, startupinfo=startupinfo, **kwargs)
+                    self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f, stdin=subprocess.PIPE, startupinfo=startupinfo, **kwargs)
                     # avoid SIGTTIN caused by e.g. gradle doing empty read on terminal stdin
                     if not yes:
                         self.process.stdin.close()

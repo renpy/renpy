@@ -64,14 +64,37 @@ ALL_EVENTS.add(EVENTNAME)
 
 enabled_events: set[int] = {
     pygame.QUIT,
-    pygame.APP_TERMINATING,
-    pygame.APP_LOWMEMORY,
-    pygame.APP_WILLENTERBACKGROUND,
-    pygame.APP_DIDENTERBACKGROUND,
-    pygame.APP_WILLENTERFOREGROUND,
-    pygame.APP_DIDENTERFOREGROUND,
-    pygame.WINDOWEVENT,
-    pygame.SYSWMEVENT,
+    pygame.TERMINATING,
+    pygame.LOWMEMORY,
+    pygame.WILLENTERBACKGROUND,
+    pygame.DIDENTERBACKGROUND,
+    pygame.WILLENTERFOREGROUND,
+    pygame.DIDENTERFOREGROUND,
+    pygame.WINDOWSHOWN,
+    pygame.WINDOWHIDDEN,
+    pygame.WINDOWEXPOSED,
+    pygame.WINDOWMOVED,
+    pygame.WINDOWRESIZED,
+    pygame.WINDOWPIXELSIZECHANGED,
+    pygame.WINDOWMETALVIEWRESIZED,
+    pygame.WINDOWMINIMIZED,
+    pygame.WINDOWMAXIMIZED,
+    pygame.WINDOWRESTORED,
+    pygame.WINDOWMOUSEENTER,
+    pygame.WINDOWMOUSELEAVE,
+    pygame.WINDOWFOCUSGAINED,
+    pygame.WINDOWFOCUSLOST,
+    pygame.WINDOWCLOSEREQUESTED,
+    pygame.WINDOWHITTEST,
+    pygame.WINDOWICCPROFCHANGED,
+    pygame.WINDOWDISPLAYCHANGED,
+    pygame.WINDOWDISPLAYSCALECHANGED,
+    pygame.WINDOWSAFEAREACHANGED,
+    pygame.WINDOWOCCLUDED,
+    pygame.WINDOWENTERFULLSCREEN,
+    pygame.WINDOWLEAVEFULLSCREEN,
+    pygame.WINDOWDESTROYED,
+    pygame.WINDOWHDRSTATECHANGED,
     pygame.KEYDOWN,
     pygame.KEYUP,
     pygame.TEXTEDITING,
@@ -93,7 +116,8 @@ enabled_events: set[int] = {
     pygame.CONTROLLERBUTTONUP,
     pygame.CONTROLLERDEVICEADDED,
     pygame.CONTROLLERDEVICEREMOVED,
-    pygame.RENDER_TARGETS_RESET,
+    pygame.RENDERTARGETSRESET,
+    pygame.RENDERDEVICERESET,
     TIMEEVENT,
     PERIODIC,
     REDRAW,
@@ -550,6 +574,7 @@ class Interface:
 
         self.old_scene = {}
         self.transition = {}
+        self.transition_priority: dict[str | None, int] = {}
         self.suppress_transition = False
         self.quick_quit = False
         self.force_redraw = False
@@ -586,9 +611,11 @@ class Interface:
         self.time_event = pygame.event.Event(TIMEEVENT, {"modal": False})
         self.redraw_event = pygame.event.Event(REDRAW)
 
-        # Are we focused?
         self.mouse_focused = True
+        "True if mouse events belong to this window."
+
         self.keyboard_focused = True
+        "True if keyboard events belong to this window."
 
         # Properties for each layer.
         self.layer_properties = {}
@@ -706,11 +733,11 @@ class Interface:
         # If in text editing mode, the current text editing event.
         self.text_editing = None
 
-        # The text rectangle after the current draw.
-        self.text_rect = None
+        self.old_text_rect: tuple[float, float, float, float] | None = None
+        "The text rectangle after the previous draw."
 
-        # The text rectangle after the previous draw.
-        self.old_text_rect = None
+        self.text_rect: tuple[float, float, float, float] | None = None
+        "The text rectangle after the current draw."
 
         # Are we a touchscreen?
         self.touch = renpy.exports.variant("touch")
@@ -772,6 +799,7 @@ class Interface:
 
         # The number of interactions that have happened without processing an event.
         self.interaction_counter = 0
+        renpy.display.focus.clear_focus_changes_since_event()
 
         # This caches the mod field of the last event that has one, allowing keyboard
         # modifiers to be used with mouse and other events.
@@ -823,6 +851,9 @@ class Interface:
         if not renpy.windows:
             return 1.0
 
+        if renpy.config.windows_high_pixel_density:
+            return 1.0
+
         try:
             import ctypes
             from ctypes import c_void_p, c_int
@@ -862,13 +893,9 @@ class Interface:
         Get the display layout. A list of rectangles that have monitors in them.
         """
 
-        rv = []
-        for i in range(pygame.display.get_num_video_displays()):
-            rv.append(pygame.display.get_display_bounds(i))
+        return tuple(pygame.display.get_display_bounds())
 
-        return tuple(rv)
-
-    def on_move(self, pos):
+    def on_move(self):
         """
         Called when the player moves the window.
         """
@@ -878,6 +905,8 @@ class Interface:
 
         if renpy.game.preferences.fullscreen or renpy.game.preferences.maximized:
             return
+
+        pos = pygame.display.get_position()
 
         renpy.game.preferences.window_position = pos
         renpy.game.preferences.window_position_layout = self.get_display_layout()
@@ -903,6 +932,7 @@ class Interface:
         renpy.display.presplash.end()
 
         # Initialize audio.
+        pygame.display.hint("SDL_APP_ID", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
         pygame.display.hint("SDL_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
         pygame.display.hint("SDL_AUDIO_DEVICE_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
 
@@ -989,13 +1019,11 @@ class Interface:
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
         pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
         pygame.display.hint("SDL_IME_SHOW_UI", "1")
+        pygame.display.hint("SDL_ANDROID_BLOCK_ON_PAUSE", "0")
+        pygame.display.hint("SDL_MOUSE_DPI_SCALE_CURSORS", "1")
 
         if renpy.config.mouse_focus_clickthrough:
             pygame.display.hint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1")
-
-        # Needed for Ubuntu Unity.
-        wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
-        os.environ["SDL_VIDEO_X11_WMCLASS"] = wmclass
 
         self.set_window_caption(force=True)
         self.set_icon()
@@ -1224,6 +1252,8 @@ class Interface:
 
         # Force an interaction restart.
         self.restart_interaction = True
+        self.interaction_counter = 0
+        renpy.display.focus.clear_focus_changes_since_event()
 
         # True if we're doing a one-time profile.
         self.profile_once = False
@@ -1560,7 +1590,7 @@ class Interface:
 
         return None
 
-    def set_transition(self, transition, layer=None, force=False):
+    def set_transition(self, transition, layer=None, force=False, priority=0):
         """
         Sets the transition that will be performed as part of the next
         interaction.
@@ -1569,10 +1599,16 @@ class Interface:
         if self.suppress_transition and not force:
             return
 
+        old_priority = self.transition_priority.get(layer, None)
+        if (old_priority is not None) and (priority < old_priority):
+            return
+
         if transition is None:
             self.transition.pop(layer, None)
+            self.transition_priority.pop(layer, None)
         else:
             self.transition[layer] = transition
+            self.transition_priority[layer] = priority
 
     def event_peek(self, sleep=True):
         """
@@ -1764,7 +1800,7 @@ class Interface:
         visible = visible and self.show_mouse and not (renpy.display.video.fullscreen)
 
         if renpy.store.mouse_visible == "always":
-             visible = True
+            visible = True
 
         return visible
 
@@ -1773,7 +1809,7 @@ class Interface:
         Return a list of possible mice that can be displayed, in priority order.
         """
 
-        rv = [ ]
+        rv = []
 
         mouse_kind = renpy.display.focus.get_mouse()
         if mouse_kind:
@@ -1784,12 +1820,12 @@ class Interface:
 
         rv.append(getattr(renpy.store, "default_mouse", "default"))
 
-        rv = [ i for i in rv if i is not None ]
+        rv = [i for i in rv if i is not None]
 
         if pygame.mouse.get_pressed()[0]:
-            new_rv = [ ]
+            new_rv = []
             for i in rv:
-                new_rv.extend([ "pressed_" + i, i ])
+                new_rv.extend(["pressed_" + i, i])
 
             rv = new_rv
 
@@ -1830,12 +1866,10 @@ class Interface:
 
         return mouse_kind
 
-
     def update_mouse(self, mouse_displayable):
         visible = self.is_mouse_visible()
 
         if mouse_displayable is not None:
-
             x, y = renpy.exports.get_mouse_pos()
 
             cursor_function = getattr(mouse_displayable, "_has_mouse_cursor", None)
@@ -1936,7 +1970,10 @@ class Interface:
         Handles the SDL2 suspend process.
         """
 
-        if ev.type != pygame.APP_WILLENTERBACKGROUND:
+        if ev.type != pygame.WILLENTERBACKGROUND:
+            return False
+
+        if not renpy.mobile:
             return False
 
         print("Pausing audio.")
@@ -1989,10 +2026,10 @@ class Interface:
         while True:
             ev = pygame.event.wait()
 
-            if ev.type == pygame.APP_TERMINATING:
+            if ev.type == pygame.TERMINATING:
                 sys.exit(0)
 
-            if ev.type == pygame.APP_DIDENTERFOREGROUND:
+            if ev.type == pygame.DIDENTERFOREGROUND:
                 break
 
         print("Entering foreground. -------------------------------------------")
@@ -2061,10 +2098,16 @@ class Interface:
         if renpy.store._text_rect is not None:
             self.text_rect = renpy.store._text_rect
 
-        if self.text_rect is not None:
-            not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown()
-            if self.touch_keyboard:
-                not_shown = renpy.exports.get_screen("_touch_keyboard") is None
+        # There is an active text input.
+        if self.keyboard_focused and self.text_rect is not None:
+            need_restart = not pygame.key.text_input_active()
+
+            # System IME could be closed by user while keeping text input active.
+            if pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown():
+                need_restart = True
+
+            if need_restart:
+                pygame.key.start_text_input()
 
             if self.old_text_rect != self.text_rect:
                 x, y, w, h = self.text_rect
@@ -2073,27 +2116,26 @@ class Interface:
                 rect = (x0, y0, x1 - x0, y1 - y0)
 
                 pygame.key.set_text_input_rect(rect)
+                self.old_text_rect = self.text_rect
 
-            if not self.old_text_rect or not_shown:
-                pygame.key.start_text_input()
+            # Show the virtual touch keyboard if necessary.
+            if self.touch_keyboard and renpy.exports.get_screen("_touch_keyboard") is None:
+                renpy.exports.restart_interaction()  # required in mobile mode
+                renpy.exports.show_screen(
+                    "_touch_keyboard",
+                    # not 'overlay' as it conflicts with console
+                    _transient=True,
+                )
 
-                if self.touch_keyboard:
-                    renpy.exports.restart_interaction()  # required in mobile mode
-                    renpy.exports.show_screen(
-                        "_touch_keyboard",
-                        # not 'overlay' as it conflicts with console
-                        _transient=True,
-                    )
+        # Text input is no longer active.
+        elif self.old_text_rect:
+            pygame.key.stop_text_input()
+            pygame.key.set_text_input_rect(None)
 
-        else:
-            if self.old_text_rect:
-                pygame.key.stop_text_input()
-                pygame.key.set_text_input_rect(None)
+            if self.touch_keyboard:
+                renpy.exports.hide_screen("_touch_keyboard")
 
-                if self.touch_keyboard:
-                    renpy.exports.hide_screen("_touch_keyboard")
-
-        self.old_text_rect = self.text_rect
+            self.old_text_rect = None
 
     def maximum_framerate(self, t):
         """
@@ -2148,6 +2190,7 @@ class Interface:
                 i()
 
             self.interaction_counter = 0
+            renpy.display.focus.clear_focus_changes_since_event()
 
             repeat = True
             rv = None
@@ -2158,7 +2201,10 @@ class Interface:
                 self.interaction_counter += 1
 
                 if self.interaction_counter == 100 and renpy.config.developer:
-                    raise Exception("renpy.restart_interaction() was called 100 times without processing any input.")
+                    raise Exception(
+                        "renpy.restart_interaction() was called 100 times without processing any input.\n"
+                        + renpy.display.focus.summarize_focus_changes_since_event()
+                    )
 
                 repeat, rv = self.interact_core(
                     preloads=preloads,
@@ -2258,7 +2304,9 @@ class Interface:
 
             # Step 2: Push textures to GPU.
             elif step == 2:
-                renpy.display.draw.ready_one_texture()
+                while renpy.display.draw.ready_one_texture():
+                    if not expensive and get_time() > (start + 0.0005):
+                        break
                 step += 1
 
             # Step 3: Predict more images.
@@ -2345,7 +2393,7 @@ class Interface:
         trans_pause=False,
         suppress_overlay=False,
         suppress_underlay=False,
-        mouse: str|None = None,
+        mouse: str | None = None,
         preloads=[],
         roll_forward=None,
         pause=None,
@@ -2417,6 +2465,7 @@ class Interface:
                 self.transition_time[k] = None
 
         self.transition.clear()
+        self.transition_priority.clear()
 
         # Safety condition, prevents deadlocks.
         if trans_pause:
@@ -2832,6 +2881,7 @@ class Interface:
                         # Clean out the redraws, if we have to.
                         # renpy.display.render.kill_redraws()
 
+                        # Let draw set this to actual value.
                         self.text_rect = None
 
                         # Draw the screen.
@@ -2918,6 +2968,7 @@ class Interface:
                     and not self.get_ongoing_transition(None)
                 ):
                     self.transition.pop(None, None)
+                    self.transition_priority.pop(None, None)
                     self.ongoing_transition.pop(None, None)
                     self.transition_time.pop(None, None)
                     self.transition_from.pop(None, None)
@@ -2949,7 +3000,6 @@ class Interface:
                 if self.maximum_framerate_time > get_time():
                     can_block = False
 
-
                 # Compute the redraw time and set the redraw timer.
                 if redraw_time is not None:
                     time_left = redraw_time - get_time()
@@ -2967,13 +3017,11 @@ class Interface:
                             pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1), once=True)
 
                 elif redraw_time is None:
-
                     if old_redraw_time is not None:
                         pygame.time.set_timer(REDRAW, 0)
                     _redraw_in = 1.0
 
                 old_redraw_time = redraw_time
-
 
                 # Handle the timeout timer.
                 if not self.timeout_time:
@@ -3020,6 +3068,7 @@ class Interface:
                     renpy.plog(1, "post wait {!r}", ev)
 
                 self.interaction_counter = 0
+                renpy.display.focus.clear_focus_changes_since_event()
 
                 if ev.type == pygame.NOEVENT:
                     if can_block and (not needs_redraw) and (not self.prediction_coroutine) and (not self.mouse_move):
@@ -3121,7 +3170,7 @@ class Interface:
                 elif self.text_editing and ev.type in [pygame.KEYDOWN, pygame.KEYUP]:
                     continue
 
-                if ev.type == pygame.VIDEOEXPOSE:
+                if ev.type == pygame.WINDOWEXPOSED:
                     # Needed to force the display to redraw after expose in
                     # the software renderer.
 
@@ -3132,8 +3181,8 @@ class Interface:
                     continue
 
                 # Handle videoresize.
-                if ev.type == pygame.VIDEORESIZE:
-                    evs = pygame.event.get(pygame.VIDEORESIZE)
+                if ev.type == pygame.WINDOWRESIZED:
+                    evs = pygame.event.get(pygame.WINDOWRESIZED)
                     ev = evs[-1] if evs else ev
                     renpy.display.log.write("Resize event: %r", ev)
 
@@ -3146,7 +3195,7 @@ class Interface:
 
                 # Handle window moves.
                 if ev.type == pygame.WINDOWMOVED:
-                    self.on_move(ev.pos)
+                    self.on_move()
                     continue
 
                 # If we're ignoring touch events, and get a mouse up, stop
@@ -3174,6 +3223,10 @@ class Interface:
                     if renpy.windows:
                         self.mouse_focused = True
 
+                if ev.type == pygame.MOUSEMOTION:
+                    if getattr(ev, "buttons", None) is None:
+                        ev.buttons = pygame.mouse.get_pressed()
+
                 # Handle mouse event time, and ignoring touch.
                 if (
                     ev.type == pygame.MOUSEMOTION
@@ -3189,38 +3242,47 @@ class Interface:
                         renpy.display.render.redraw(mouse_displayable, 0)
 
                 # Handle focus notifications.
-                if ev.type == pygame.ACTIVEEVENT:
-                    if ev.state & 1:
-                        if not ev.gain:
-                            renpy.display.focus.clear_focus()
+                if ev.type == pygame.WINDOWMOUSELEAVE:
+                    renpy.display.focus.clear_focus()
 
-                        self.mouse_focused = ev.gain
+                    self.mouse_focused = False
 
-                        if mouse_displayable:
-                            renpy.display.render.redraw(mouse_displayable, 0)
+                    if mouse_displayable:
+                        renpy.display.render.redraw(mouse_displayable, 0)
 
-                    if ev.state & 2:
-                        self.keyboard_focused = ev.gain
+                elif ev.type == pygame.WINDOWMOUSEENTER:
+                    self.mouse_focused = True
 
-                        if not renpy.game.preferences.audio_when_unfocused and not renpy.emscripten:
-                            if not ev.gain:
-                                renpy.audio.audio.pause_all()
-                            else:
-                                renpy.audio.audio.unpause_all()
+                    if mouse_displayable:
+                        renpy.display.render.redraw(mouse_displayable, 0)
 
-                    # If the window becomes inactive as a result of this event
-                    # pause the audio according to preference
-                    if not renpy.game.preferences.audio_when_minimized and not renpy.emscripten:
-                        if not pygame.display.get_active() and not self.audio_paused:
-                            renpy.audio.audio.pause_all()
-                            self.audio_paused = True
-                        # If the window had not gone inactive or has regained activity
-                        # unpause the audio
-                        elif pygame.display.get_active() and self.audio_paused:
-                            renpy.audio.audio.unpause_all()
-                            self.audio_paused = False
+                elif ev.type == pygame.WINDOWFOCUSGAINED:
+                    self.keyboard_focused = True
+
+                    if not renpy.game.preferences.audio_when_unfocused and not renpy.emscripten:
+                        renpy.audio.audio.unpause_all()
 
                     pygame.key.set_mods(pygame.key.get_mods() & (pygame.KMOD_NUM | pygame.KMOD_CAPS))
+
+                elif ev.type == pygame.WINDOWFOCUSLOST:
+                    self.keyboard_focused = False
+
+                    if not renpy.game.preferences.audio_when_unfocused and not renpy.emscripten:
+                        renpy.audio.audio.pause_all()
+
+                elif ev.type == pygame.WINDOWMINIMIZED:
+                    if not renpy.game.preferences.audio_when_minimized and not renpy.emscripten:
+                        renpy.audio.audio.pause_all()
+                        self.audio_paused = True
+
+                elif ev.type == pygame.WINDOWRESTORED or ev.type == pygame.WINDOWMAXIMIZED:
+                    # unpause the audio
+                    if pygame.display.get_active() and self.audio_paused:
+                        renpy.audio.audio.unpause_all()
+                        self.audio_paused = False
+
+                elif ev.type == pygame.RENDERDEVICERESET:
+                    self.display_reset = True
 
                 # This returns the event location. It also updates the
                 # mouse state as necessary.
@@ -3299,6 +3361,7 @@ class Interface:
 
                         if renpy.display.behavior.map_event(ev, dismiss):
                             self.transition.pop(None, None)
+                            self.transition_priority.pop(None, None)
                             self.ongoing_transition.pop(None, None)
                             self.transition_time.pop(None, None)
                             self.transition_from.pop(None, None)

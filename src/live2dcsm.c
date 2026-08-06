@@ -1,5 +1,5 @@
 #include "live2dcsm.h"
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <stdio.h>
 #include <string.h>
 

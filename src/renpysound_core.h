@@ -25,10 +25,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define RPS_H
 
 #include <Python.h>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
-void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);
-void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);
+void RPS_play(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);
+void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);
 void RPS_stop(int channel);
 void RPS_dequeue(int channel, int even_tight);
 int RPS_queue_depth(int channel);
@@ -47,6 +47,7 @@ void RPS_replace_audio_filter(int channel, PyObject *audio_filter, int primary);
 
 int RPS_video_ready(int channel);
 PyObject *RPS_read_video(int channel);
+PyObject *RPS_read_video_yuv(int channel);
 void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba);
 void RPS_set_video(int channel, int video);
 

@@ -1,4 +1,4 @@
-# Copyright 2015 Tom Rothamel <tom@rothamel.us>
+# Copyright 2015-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages
@@ -16,37 +16,35 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from sdl2 cimport *
-import renpy.pygame
-from renpy.pygame.error import error
-from renpy.pygame.rwobject cimport to_rwops
-from renpy.pygame import register_init, register_quit
+from .sdl cimport *
+from .error import error
+from .iostream cimport to_sdl_iostream
 
-@register_init
 def init():
     """
     Initializes game controller support.
     """
 
-    renpy.pygame.display.sdl_main_init()
+    from .display import sdl_main_init
+    sdl_main_init()
 
-    if SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER):
+    if not SDL_InitSubSystem(SDL_INIT_GAMEPAD):
         raise error()
 
-@register_quit
 def quit(): # @ReservedAssignment
     """
     Shuts down game controller support.
     """
 
-    SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER)
+    SDL_QuitSubSystem(SDL_INIT_GAMEPAD)
 
 def get_init():
     """
     Returns true if game controller support has been initialized.
     """
 
-    return SDL_WasInit(SDL_INIT_GAMECONTROLLER) != 0
+    return SDL_WasInit(SDL_INIT_GAMEPAD) != 0
+
 
 def get_count():
     """
@@ -60,7 +58,8 @@ def get_count():
             ...
     """
 
-    return SDL_NumJoysticks()
+    from .joystick import get_count
+    return get_count()
 
 
 def add_mapping(mapping):
@@ -68,7 +67,7 @@ def add_mapping(mapping):
     Adds a game controller mapping from the string in `mapping`.
     """
 
-    if SDL_GameControllerAddMapping(mapping) == -1:
+    if SDL_AddGamepadMapping(mapping) == -1:
         raise error()
 
 def add_mappings(mapping_file):
@@ -83,9 +82,9 @@ def add_mappings(mapping_file):
     multiple times to add multiple database files.
     """
 
-    cdef SDL_RWops *rwops = to_rwops(mapping_file)
+    cdef SDL_IOStream *iostream = to_sdl_iostream(mapping_file)
 
-    if SDL_GameControllerAddMappingsFromRW(rwops, 1) == -1:
+    if SDL_AddGamepadMappingsFromIO(iostream, 1) == -1:
         raise error()
 
 def get_axis_from_string(name):
@@ -97,7 +96,7 @@ def get_axis_from_string(name):
     if not isinstance(name, bytes):
         name = name.encode("utf-8")
 
-    return SDL_GameControllerGetAxisFromString(name)
+    return SDL_GetGamepadAxisFromString(name)
 
 def get_button_from_string(name):
     """
@@ -108,7 +107,7 @@ def get_button_from_string(name):
     if not isinstance(name, bytes):
         name = name.encode("utf-8")
 
-    return SDL_GameControllerGetButtonFromString(name)
+    return SDL_GetGamepadButtonFromString(name)
 
 def get_string_for_axis(axis):
     """
@@ -116,7 +115,7 @@ def get_string_for_axis(axis):
     an integer. Returns None if the axis is not known.
     """
 
-    cdef const char *rv = SDL_GameControllerGetStringForAxis(axis)
+    cdef const char *rv = SDL_GetGamepadStringForAxis(axis)
 
     if rv != NULL:
         return rv.decode("utf-8")
@@ -129,7 +128,7 @@ def get_string_for_button(button):
     an integer. Returns None if the button is not known.
     """
 
-    cdef const char *rv = SDL_GameControllerGetStringForButton(button)
+    cdef const char *rv = SDL_GetGamepadStringForButton(button)
 
     if rv != NULL:
         return rv.decode("utf-8")
@@ -141,31 +140,28 @@ cdef class Controller:
     # Allow weak references.
     cdef object __weakref__
 
-    cdef SDL_GameController *controller
-    cdef int index
+    cdef SDL_Gamepad *gamepad
     cdef public int instance_id
 
     def __cinit__(self):
-        self.controller = NULL
+        self.gamepad = NULL
 
-    def __init__(self, index):
+    def __init__(self, instance_id):
         """
         Represents a game controller object corresponding to the joystick
-        with `index`.
+        with `instance_id`.
         """
 
-        self.index = index
+        self.instance_id = instance_id
 
     def init(self):
         """
         Opens the game controller, causing it to begin sending events.
         """
 
-        self.instance_id = SDL_JoystickGetDeviceInstanceID(self.index)
-
-        if self.controller == NULL:
-            self.controller = SDL_GameControllerOpen(self.index)
-            if self.controller == NULL:
+        if self.gamepad == NULL:
+            self.gamepad = SDL_OpenGamepad(self.instance_id)
+            if self.gamepad == NULL:
                 raise error()
 
     def quit(self): # @ReservedAssignment
@@ -173,16 +169,16 @@ cdef class Controller:
         Closes the game controller, preventing it from sending events.
         """
 
-        if self.controller and SDL_GameControllerGetAttached(self.controller):
-            SDL_GameControllerClose(self.controller)
-            self.controller = NULL
+        if self.gamepad and SDL_GamepadConnected(self.gamepad):
+            SDL_CloseGamepad(self.gamepad)
+            self.gamepad = NULL
 
     def get_init(self):
         """
         Returns true if the controller has been initialized, false otherwise.
         """
 
-        if self.controller:
+        if self.gamepad:
             return True
         else:
             return False
@@ -196,10 +192,10 @@ cdef class Controller:
         returned on failure.
         """
 
-        if self.controller == NULL:
+        if self.gamepad == NULL:
             raise error("controller not initialized.")
 
-        return SDL_GameControllerGetAxis(self.controller, axis)
+        return SDL_GetGamepadAxis(self.gamepad, axis)
 
 
     def get_button(self, button):
@@ -210,10 +206,10 @@ cdef class Controller:
         Returns 1 if the button is pressed, 0 if not or the button does not exist.
         """
 
-        if self.controller == NULL:
+        if self.gamepad == NULL:
             raise error("controller not initialized.")
 
-        return SDL_GameControllerGetButton(self.controller, button)
+        return SDL_GetGamepadButton(self.gamepad, button)
 
     def get_name(self):
         """
@@ -221,7 +217,7 @@ cdef class Controller:
         or None if no name could be found.
         """
 
-        cdef const char *rv = SDL_GameControllerNameForIndex(self.index)
+        cdef const char *rv = SDL_GetGamepadNameForID(self.instance_id)
 
         if rv == NULL:
             return None
@@ -234,17 +230,17 @@ cdef class Controller:
         game controller, or False otherwise.
         """
 
-        return SDL_IsGameController(self.index)
+        return SDL_IsGamepad(self.instance_id)
 
     def get_guid_string(self):
         """
         Returns the guid string corresponding to this controller.
         """
 
-        cdef SDL_JoystickGUID guid
+        cdef SDL_GUID guid
         cdef char s[33]
 
-        guid = SDL_JoystickGetDeviceGUID(self.index)
-        SDL_JoystickGetGUIDString(guid, s, 33)
+        guid = SDL_GetJoystickGUIDForID(self.instance_id)
+        SDL_GUIDToString(guid, s, 33)
 
         return s.decode("utf-8")

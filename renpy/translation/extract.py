@@ -61,9 +61,7 @@ def extract_strings():
         action="store_true",
     )
     ap.add_argument(
-        "--force",
-        help="If given, no exceptions are thrown if the language does not exist.",
-        action="store_true"
+        "--force", help="If given, no exceptions are thrown if the language does not exist.", action="store_true"
     )
 
     args = ap.parse_args()

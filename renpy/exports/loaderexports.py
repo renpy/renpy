@@ -19,9 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
 import io
 import sys
 
@@ -156,7 +153,7 @@ def list_files(common=False):
 
 
 @renpy_pure
-def fsencode(s, force=False):  # type: (str, bool) -> str
+def fsencode(s: str | bytes, force: bool = False) -> str | bytes:
     """
     :doc: file_rare
     :name: renpy.fsencode
@@ -170,12 +167,11 @@ def fsencode(s, force=False):  # type: (str, bool) -> str
     if not isinstance(s, str):
         return s
 
-    fsencoding = sys.getfilesystemencoding() or "utf-8"
-    return s.encode(fsencoding)  # type: ignore
+    return s.encode(sys.getfilesystemencoding())
 
 
 @renpy_pure
-def fsdecode(s):  # type: (bytes|str) -> str
+def fsdecode(s: str | bytes) -> str:
     """
     :doc: file_rare
     :name: renpy.fsdecode
@@ -186,8 +182,7 @@ def fsdecode(s):  # type: (bytes|str) -> str
     if isinstance(s, str):
         return s
 
-    fsencoding = sys.getfilesystemencoding() or "utf-8"
-    return s.decode(fsencoding)  # type: ignore
+    return s.decode(sys.getfilesystemencoding())
 
 
 def munge(name, filename=None):

@@ -47,6 +47,7 @@ filename_line_override_stack: list[tuple[str, int]] = []
 A stack of filename/line override pairs.
 """
 
+
 @contextlib.contextmanager
 def filename_line_override(filename: str, line: int):
     """

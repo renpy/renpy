@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -51,12 +51,11 @@ def copy_gitignore(p):
 
 def finish(p):
 
-    for dn in [ "images", "audio", "libs" ]:
+    for dn in ["images", "audio", "libs"]:
+        fulldn = os.path.join(p.prefix, dn)
 
-            fulldn = os.path.join(p.prefix, dn)
-
-            if not os.path.exists(fulldn):
-                os.mkdir(fulldn)
+        if not os.path.exists(fulldn):
+            os.mkdir(fulldn)
 
     if hasattr(renpy.store, "LIBS_TXT"):
         with open(os.path.join(p.prefix, "libs", "libs.txt"), "w") as f:
@@ -121,12 +120,25 @@ def generate_gui_command():
     ap.add_argument("--boring", default="#000000", action="store", help="The boring color used for the gui background.")
     ap.add_argument("--light", default=False, action="store_true", help="True if this is considered a light theme.")
     ap.add_argument("--template", default="gui", action="store", help="The template directory containing source code.")
-    ap.add_argument("--language", default=None, action="store", help="The language to translate strings and comments to.")
+    ap.add_argument(
+        "--language", default=None, action="store", help="The language to translate strings and comments to."
+    )
 
-    ap.add_argument("--start", default=False, action="store_true", help="Starts a new project, replacing images and code.")
-    ap.add_argument("--replace-images", default=False, action="store_true", help="True if existing images should be overwritten.")
-    ap.add_argument("--replace-code", default=False, action="store_true", help="True if an existing gui.rpy file should be overwritten.")
-    ap.add_argument("--update-code", default=False, action="store_true", help="True if an existing gui.rpy file should be updated.")
+    ap.add_argument(
+        "--start", default=False, action="store_true", help="Starts a new project, replacing images and code."
+    )
+    ap.add_argument(
+        "--replace-images", default=False, action="store_true", help="True if existing images should be overwritten."
+    )
+    ap.add_argument(
+        "--replace-code",
+        default=False,
+        action="store_true",
+        help="True if an existing gui.rpy file should be overwritten.",
+    )
+    ap.add_argument(
+        "--update-code", default=False, action="store_true", help="True if an existing gui.rpy file should be updated."
+    )
 
     ap.add_argument("--minimal", default=False, action="store_true", help="Only update option.rpy and translations.")
 
@@ -144,7 +156,6 @@ def generate_gui_command():
     prefix = os.path.join(args.target, "game")
 
     if os.path.exists(args.target):
-
         if not os.path.isdir(prefix):
             ap.error("{} does not appear to be a Ren'Py game.".format(prefix))
 
@@ -166,11 +177,12 @@ def generate_gui_command():
         args.replace_code,
         args.update_code,
         os.path.basename(args.target),
-        )
+    )
 
     if args.minimal:
         generate_minimal(p)
     else:
         generate_gui(p)
+
 
 renpy.arguments.register_command("generate_gui", generate_gui_command)

@@ -160,9 +160,9 @@ class Bezier(object):
 
             def cbrt(x):
                 if x >= 0:
-                    return x**(1.0 / 3.0)
+                    return x ** (1.0 / 3.0)
                 else:
-                    return -((-x)**(1.0 / 3.0))
+                    return -((-x) ** (1.0 / 3.0))
 
             if discriminant > 0:
                 sqrt_d = math.sqrt(discriminant)

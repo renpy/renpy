@@ -95,6 +95,8 @@ cache/
 /module/gen-static/
 /module/gen3-static/
 /tutorial/game/tutorial_director.rpy
+/src/Setup
+/src/Setup.tfd
 
 # Module build.
 /module/build
@@ -142,9 +144,6 @@ testcases/tests/
 /cg
 /.vscode/launch.json
 /.vscode/tasks.json
-
-# Temporarily ignore sdl3 work.
-/scripts/sdl3
 
 # Informational Files
 AGENTS.md
@@ -201,7 +200,6 @@ renpy/styledata/style_selected_hover_functions.pyi
 renpy/styledata/style_selected_idle_functions.pyi
 renpy/styledata/style_selected_insensitive_functions.pyi
 renpy/styledata/styleclass.pyi
-renpy/styledata/stylesets.pyi
 renpy/text/bidi.pyi
 renpy/text/ftfont.pyi
 renpy/text/hbfont.pyi

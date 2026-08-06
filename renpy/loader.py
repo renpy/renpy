@@ -33,7 +33,7 @@ import unicodedata
 import time
 import pathlib
 
-from renpy.pygame.rwobject import RWopsIO
+from renpy.pygame.iostream import IOStream
 
 from renpy.compat.pickle import loads
 from renpy.webloader import DownloadNeeded
@@ -70,6 +70,7 @@ def get_path(fn):
 apks = []
 game_apks = []
 split_apks = []
+
 
 def find_apks() -> None:
     """
@@ -494,24 +495,24 @@ def listdirfiles(common=True, game=True):
     return rv
 
 
-open_file = RWopsIO  # type: ignore
+open_file = IOStream  # type: ignore
 
 if "RENPY_TEST_RWOPS" in os.environ:
 
     def open_file(name, mode):
-        with RWopsIO(name, mode) as f:
+        with IOStream(name, mode) as f:
             data = f.read(1024)
             f.seek(0, 2)
             length = f.tell()
 
         try:
-            a = RWopsIO.from_buffer(data, name=name)
+            a = IOStream.from_buffer(data, name=name)
 
             if length <= 1024:
                 return a
 
-            b = RWopsIO(name, mode, base=1024, length=length - 1024)
-            rv = RWopsIO.from_split(a, b, name=name)
+            b = IOStream(name, mode, base=1024, length=length - 1024)
+            rv = IOStream.from_split(a, b, name=name)
             return rv
 
         except Exception:
@@ -530,6 +531,9 @@ def load_core(name):
     """
 
     name = lower_map.get(unicodedata.normalize("NFC", name.lower()), name)
+
+    if renamed := renpy.config.renamed_files.get(name.lower()):
+        return load_core(renamed)
 
     for i in file_open_callbacks:
         rv = i(name)
@@ -591,12 +595,12 @@ def load_from_archive(name):
                 offset, dlen, start = t
 
             if start == None or len(start) == 0:
-                rv = RWopsIO(afn, "rb", base=offset, length=dlen)
+                rv = IOStream(afn, "rb", base=offset, length=dlen)
                 return io.BufferedReader(rv)
             else:
-                a = RWopsIO.from_buffer(start, name=name)
-                b = RWopsIO(afn, "rb", base=offset, length=dlen)
-                rv = RWopsIO.from_split(a, b, name=name)
+                a = IOStream.from_buffer(start, name=name)
+                b = IOStream(afn, "rb", base=offset, length=dlen)
+                rv = IOStream.from_split(a, b, name=name)
                 rv = io.BufferedReader(rv)
 
         # Compatibility path.
@@ -606,7 +610,7 @@ def load_from_archive(name):
                     f.seek(offset)
                     data.append(f.read(dlen))
 
-                return io.BufferedReader(RWopsIO.from_buffer(b"".join(data), name=name))
+                return io.BufferedReader(IOStream.from_buffer(b"".join(data), name=name))
 
     return None
 
@@ -685,9 +689,7 @@ def get_prefixes(tl=True, directory=None):
         rv.append(prefix)
 
     if directory is not None:
-
-        for mapped_directory in renpy.config.special_directory_map.get(directory, [ directory ]):
-
+        for mapped_directory in renpy.config.special_directory_map.get(directory, [directory]):
             if language is not None:
                 rv.append(renpy.config.tl_directory + "/" + language + "/" + mapped_directory + "/")
 
@@ -726,6 +728,9 @@ def loadable_core(name):
 
     if name in loadable_cache:
         return loadable_cache[name]
+
+    if renamed := renpy.config.renamed_files.get(name.lower()):
+        return load_core(renamed)
 
     try:
         transfn(name)
@@ -768,7 +773,7 @@ def loadable(name, tl=True, directory=None):
     return False
 
 
-def transpath(path: str) -> str|None:
+def transpath(path: str) -> str | None:
     """
     Translates `path` to a name that exists in one of the searched directories,
     or to None if it does not exist.
@@ -784,7 +789,7 @@ def transpath(path: str) -> str|None:
             return fn
 
 
-def transfn(name: bytes|str) -> str:
+def transfn(name: bytes | str) -> str:
     """
     Tries to translate the name to a file that exists in one of the
     searched directories.
@@ -837,7 +842,6 @@ def get_hash(name):  # type: (str) -> int
     hash_cache[name] = rv
 
     return rv
-
 
 
 # Auto-Reload

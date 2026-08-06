@@ -1,4 +1,4 @@
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages
@@ -20,4 +20,4 @@
 # because the init function time.pyx is inittime, which conflicts with the
 # built-in inittime function (used by the time module) when everything is
 # statically linked, as it is on iOS.
-from renpy.pygame.pygame_time import *
+from .pygame_time import *

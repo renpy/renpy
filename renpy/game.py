@@ -290,7 +290,6 @@ def invoke_in_new_context(callable, *args, **kwargs):
         raise renpy.game.JumpException(e.args[0])
 
     finally:
-
         contexts.pop()
         contexts[-1].do_deferred_rollback()
 

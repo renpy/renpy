@@ -192,6 +192,13 @@ def save(slotname, extra_info="", mutate_flag=False, include_screenshot=True, ex
         except Exception:
             pass
 
+        if renpy.config.failed_save_dump and not renpy.config.save_dump:
+            try:
+                dump_paths("save_dump.txt", **{"renpy.game.log": renpy.game.log}, **roots)
+            except Exception:
+                renpy.display.log.write("While writing save_dump.txt:")
+                renpy.display.log.exception()
+
         raise
 
     if mutate_flag and renpy.revertable.mutate_flag:

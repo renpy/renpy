@@ -1,4 +1,4 @@
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 # Copyright 2014 Patrick Dawson <pat@dw.is>
 #
 # This software is provided 'as-is', without any express or implied
@@ -17,11 +17,11 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from sdl2 cimport *
+from .sdl cimport *
 import binascii
 import struct
 
-include "color_dict.pxi"
+include "./color_dict.pxi"
 
 cdef Uint32 map_color(SDL_Surface *surface, color) except? 0xaabbccdd:
     """
@@ -40,7 +40,7 @@ cdef Uint32 map_color(SDL_Surface *surface, color) except? 0xaabbccdd:
     else:
         raise TypeError("Expected a color.")
 
-    return SDL_MapRGBA(surface.format, r, g, b, a)
+    return SDL_MapRGBA(SDL_GetPixelFormatDetails(surface.format), NULL, r, g, b, a)
 
 cdef object get_color(Uint32 pixel, SDL_Surface *surface):
     cdef Uint8 r
@@ -48,7 +48,7 @@ cdef object get_color(Uint32 pixel, SDL_Surface *surface):
     cdef Uint8 b
     cdef Uint8 a
 
-    SDL_GetRGBA(pixel, surface.format, &r, &g, &b, &a)
+    SDL_GetRGBA(pixel, SDL_GetPixelFormatDetails(surface.format), NULL, &r, &g, &b, &a)
 
     return Color(r, g, b, a)
 
@@ -118,7 +118,7 @@ cdef class Color:
 
         if len(args) == 1:
             c = args[0]
-            if isinstance(c, basestring):
+            if isinstance(c, str):
                 if c.startswith('#'):
                     self.from_hex(c[1:])
                 elif c.startswith('0x'):
@@ -194,7 +194,7 @@ cdef class Color:
             raise IndexError(key)
 
     def __len__(self):
-        return self.length
+        return <int> self.length
 
     def __mul__(self not None, Color rhs not None):
         # Multiplying this way doesn't make much sense,
@@ -261,190 +261,194 @@ cdef class Color:
 
         return type(self)(r, g, b, a)
 
-    property cmy:
-        def __get__(self):
-            return 1 - (self.r / 255.0), 1 - (self.g / 255.0), 1 - (self.b / 255.0)
+    @property
+    def cmy(self):
+        return 1 - (self.r / 255.0), 1 - (self.g / 255.0), 1 - (self.b / 255.0)
 
-        def __set__(self, val):
-            c, m, y = val
-            self.r = (1 - c) * 255
-            self.g = (1 - m) * 255
-            self.b = (1 - y) * 255
+    @cmy.setter
+    def cmy(self, val):
+        c, m, y = val
+        self.r = (1 - c) * 255
+        self.g = (1 - m) * 255
+        self.b = (1 - y) * 255
 
-    property hsva:
-        def __get__(self):
-            cdef double r = self.r / 255.0
-            cdef double g = self.g / 255.0
-            cdef double b = self.b / 255.0
+    @property
+    def hsva(self):
+        cdef double r = self.r / 255.0
+        cdef double g = self.g / 255.0
+        cdef double b = self.b / 255.0
 
-            cdef double cmax = max(r, g, b)
-            cdef double cmin = min(r, g, b)
-            cdef double delta = cmax - cmin
+        cdef double cmax = max(r, g, b)
+        cdef double cmin = min(r, g, b)
+        cdef double delta = cmax - cmin
 
-            cdef double h, s, v, a
+        cdef double h, s, v, a
 
-            if r == g == b:
-                h = 0.0
+        if r == g == b:
+            h = 0.0
+            s = 0.0
+        else:
+            if cmax == r:
+                h = 60.0 * ((g - b) / delta % 6)
+            elif cmax == g:
+                h = 60.0 * ((b - r) / delta + 2)
+            else:
+                h = 60.0 * ((r - g) / delta + 4)
+
+            if cmax == 0.0:
                 s = 0.0
             else:
-                if cmax == r:
-                    h = 60.0 * ((g - b) / delta % 6)
-                elif cmax == g:
-                    h = 60.0 * ((b - r) / delta + 2)
-                else:
-                    h = 60.0 * ((r - g) / delta + 4)
+                s = delta / cmax * 100
 
-                if cmax == 0.0:
-                    s = 0.0
-                else:
-                    s = delta / cmax * 100
+        v = cmax * 100
+        a = self.a / 255.0 * 100
+        return h, s, v, a
 
-            v = cmax * 100
-            a = self.a / 255.0 * 100
-            return h, s, v, a
+    @hsva.setter
+    def hsva(self, val):
+        cdef double h, s, v, a
+        if len(val) == 3:
+            h, s, v = val
+            a = 0.0
+        else:
+            h, s, v, a = val
 
-        def __set__(self, val):
-            cdef double h, s, v, a
-            if len(val) == 3:
-                h, s, v = val
-                a = 0.0
-            else:
-                h, s, v, a = val
+        h = h % 360.0
 
-            h = h % 360.0
+        # These should be in a range of [0.0, 1.0]
+        s /= 100.0
+        v /= 100.0
+        a /= 100.0
 
-            # These should be in a range of [0.0, 1.0]
-            s /= 100.0
-            v /= 100.0
-            a /= 100.0
+        cdef double c = v * s
+        cdef double x = c * (1 - abs((h / 60.0) % 2 - 1))
+        cdef double m = v - c
 
-            cdef double c = v * s
-            cdef double x = c * (1 - abs((h / 60.0) % 2 - 1))
-            cdef double m = v - c
+        cdef double r, g, b
 
-            cdef double r, g, b
+        if 0 <= h < 60:
+            r, g, b = c, x, 0
+        elif 60 <= h < 120:
+            r, g, b = x, c, 0
+        elif 120 <= h < 180:
+            r, g, b = 0, c, x
+        elif 180 <= h < 240:
+            r, g, b = 0, x, c
+        elif 240 <= h < 300:
+            r, g, b = x, 0, c
+        elif 300 <= h < 360:
+            r, g, b = c, 0, x
+        else:
+            raise ValueError()
 
-            if 0 <= h < 60:
-                r, g, b = c, x, 0
-            elif 60 <= h < 120:
-                r, g, b = x, c, 0
-            elif 120 <= h < 180:
-                r, g, b = 0, c, x
-            elif 180 <= h < 240:
-                r, g, b = 0, x, c
-            elif 240 <= h < 300:
-                r, g, b = x, 0, c
-            elif 300 <= h < 360:
-                r, g, b = c, 0, x
-            else:
-                raise ValueError()
+        self.r = int(255 * (r + m))
+        self.g = int(255 * (g + m))
+        self.b = int(255 * (b + m))
+        self.a = int(255 * a)
 
-            self.r = int(255 * (r + m))
-            self.g = int(255 * (g + m))
-            self.b = int(255 * (b + m))
-            self.a = int(255 * a)
+    @property
+    def hsla(self):
+        cdef double h, s, l, a
+        cdef double r, g, b
+        cdef double cmin, cmax, delta
 
-    property hsla:
-        def __get__(self):
-            cdef double h, s, l, a
-            cdef double r, g, b
-            cdef double cmin, cmax, delta
+        h = self.hsva[0] % 360.0
 
-            h = self.hsva[0] % 360.0
+        r = self.r / 255.0
+        g = self.g / 255.0
+        b = self.b / 255.0
 
-            r = self.r / 255.0
-            g = self.g / 255.0
-            b = self.b / 255.0
+        cmin = min(r, g, b)
+        cmax = max(r, g, b)
+        delta = cmax - cmin
 
-            cmin = min(r, g, b)
-            cmax = max(r, g, b)
-            delta = cmax - cmin
+        l = (cmax + cmin) / 2.0
 
-            l = (cmax + cmin) / 2.0
+        if delta == 0:
+            s = 0.0
+        else:
+            s = delta / (1 - abs(2 * l - 1))
 
-            if delta == 0:
-                s = 0.0
-            else:
-                s = delta / (1 - abs(2 * l - 1))
+        a = self.a / 255.0 * 100
 
-            a = self.a / 255.0 * 100
+        s = min(100.0, s * 100)
+        l = min(100.0, l * 100)
 
-            s = min(100.0, s * 100)
-            l = min(100.0, l * 100)
+        return h, s, l, a
 
-            return h, s, l, a
+    @hsla.setter
+    def hsla(self, val):
+        cdef double h, s, l, a
+        if len(val) == 3:
+            h, s, l = val
+            a = 0.0
+        else:
+            h, s, l, a = val
 
-        def __set__(self, val):
-            cdef double h, s, l, a
-            if len(val) == 3:
-                h, s, l = val
-                a = 0.0
-            else:
-                h, s, l, a = val
+        s /= 100.0
+        l /= 100.0
+        a /= 100.0
 
-            s /= 100.0
-            l /= 100.0
-            a /= 100.0
+        cdef double c = (1 - abs(2*l - 1)) * s
+        cdef double x = c * (1 - abs((h / 60.0) % 2 - 1))
+        cdef double m = l - c / 2.0
 
-            cdef double c = (1 - abs(2*l - 1)) * s
-            cdef double x = c * (1 - abs((h / 60.0) % 2 - 1))
-            cdef double m = l - c / 2.0
+        cdef double r, g, b
+        if 0 <= h < 60:
+            r, g, b = c, x, 0
+        elif 60 <= h < 120:
+            r, g, b = x, c, 0
+        elif 120 <= h < 180:
+            r, g, b = 0, c, x
+        elif 180 <= h < 240:
+            r, g, b = 0, x, c
+        elif 240 <= h < 300:
+            r, g, b = x, 0, c
+        elif 300 <= h < 360:
+            r, g, b = c, 0, x
+        else:
+            raise ValueError()
 
-            cdef double r, g, b
-            if 0 <= h < 60:
-                r, g, b = c, x, 0
-            elif 60 <= h < 120:
-                r, g, b = x, c, 0
-            elif 120 <= h < 180:
-                r, g, b = 0, c, x
-            elif 180 <= h < 240:
-                r, g, b = 0, x, c
-            elif 240 <= h < 300:
-                r, g, b = x, 0, c
-            elif 300 <= h < 360:
-                r, g, b = c, 0, x
-            else:
-                raise ValueError()
+        self.r = int(255 * (r + m))
+        self.g = int(255 * (g + m))
+        self.b = int(255 * (b + m))
+        self.a = int(255 * a)
 
-            self.r = int(255 * (r + m))
-            self.g = int(255 * (g + m))
-            self.b = int(255 * (b + m))
-            self.a = int(255 * a)
+    @property
+    def i1i2i3(self):
+        # Take the dot product as described here:
+        # http://de.wikipedia.org/wiki/I1I2I3-Farbraum
 
-    property i1i2i3:
-        def __get__(self):
-            # Take the dot product as described here:
-            # http://de.wikipedia.org/wiki/I1I2I3-Farbraum
+        cdef double i1, i2, i3
+        cdef double r, g, b
 
-            cdef double i1, i2, i3
-            cdef double r, g, b
+        r = self.r / 255.0
+        g = self.g / 255.0
+        b = self.b / 255.0
 
-            r = self.r / 255.0
-            g = self.g / 255.0
-            b = self.b / 255.0
+        i1 = (r + g + b) / 3.0
+        i2 = (r - b) / 2.0
+        i3 = (2*g - r - b) / 4.0
 
-            i1 = (r + g + b) / 3.0
-            i2 = (r - b) / 2.0
-            i3 = (2*g - r - b) / 4.0
+        return i1, i2, i3
 
-            return i1, i2, i3
+    @i1i2i3.setter
+    def i1i2i3(self, val):
+        # Dot product with the inverted matrix.
 
-        def __set__(self, val):
-            # Dot product with the inverted matrix.
+        cdef double i1, i2, i3
+        cdef double r, g, b
 
-            cdef double i1, i2, i3
-            cdef double r, g, b
+        i1, i2, i3 = val
 
-            i1, i2, i3 = val
+        r = i1 + i2 - (2.0/3.0 * i3)
+        g = i1 + (4.0/3.0 * i3)
+        b = i1 - i2  - (2.0/3.0 * i3)
 
-            r = i1 + i2 - (2.0/3.0 * i3)
-            g = i1 + (4.0/3.0 * i3)
-            b = i1 - i2  - (2.0/3.0 * i3)
-
-            # Don't change alpha.
-            self.r = int(r * 255)
-            self.g = int(g * 255)
-            self.b = int(b * 255)
+        # Don't change alpha.
+        self.r = int(r * 255)
+        self.g = int(g * 255)
+        self.b = int(b * 255)
 
     def normalize(self):
         return self.r / 255.0, self.g / 255.0, self.b / 255.0, self.a / 255.0

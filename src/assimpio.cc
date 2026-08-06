@@ -6,9 +6,9 @@
 
 class RenpyIOStream : public Assimp::IOStream {
 public:
-    SDL_RWops *rw;
+    SDL_IOStream *rw;
 
-    RenpyIOStream(SDL_RWops *rw) : rw(rw) {}
+    RenpyIOStream(SDL_IOStream *rw) : rw(rw) {}
     ~RenpyIOStream();
 
     size_t Read(void *pvBuffer, size_t pSize, size_t pCount);
@@ -20,11 +20,11 @@ public:
 };
 
 RenpyIOStream::~RenpyIOStream() {
-    SDL_RWclose(rw);
+    SDL_CloseIO(rw);
 }
 
 size_t RenpyIOStream::Read(void *pvBuffer, size_t pSize, size_t pCount) {
-    return SDL_RWread(rw, pvBuffer, pSize, pCount);
+    return SDL_ReadIO(rw, pvBuffer, pSize * pCount);
 }
 
 size_t RenpyIOStream::Write(const void *pvBuffer, size_t pSize, size_t pCount) {
@@ -32,15 +32,15 @@ size_t RenpyIOStream::Write(const void *pvBuffer, size_t pSize, size_t pCount) {
 }
 
 aiReturn RenpyIOStream::Seek(size_t pOffset, aiOrigin pOrigin) {
-    return SDL_RWseek(rw, pOffset, pOrigin) == -1 ? aiReturn_FAILURE : aiReturn_SUCCESS;
+    return SDL_SeekIO(rw, pOffset, (SDL_IOWhence)pOrigin) == -1 ? aiReturn_FAILURE : aiReturn_SUCCESS;
 }
 
 size_t RenpyIOStream::Tell() const {
-    return SDL_RWtell(rw);
+    return SDL_TellIO(rw);
 }
 
 size_t RenpyIOStream::FileSize() const {
-    return SDL_RWsize(rw);
+    return (size_t)SDL_GetIOSize(rw);
 }
 
 void RenpyIOStream::Flush() {
@@ -58,7 +58,7 @@ char RenpyIOSystem::getOsSeparator() const {
 }
 
 Assimp::IOStream *RenpyIOSystem::Open(const char *pFile, const char *pMode) {
-    SDL_RWops *rw = assimp_load(pFile);
+    SDL_IOStream *rw = assimp_load(pFile);
 
     if (!rw) {
         return nullptr;

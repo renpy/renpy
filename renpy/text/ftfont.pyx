@@ -22,7 +22,7 @@
 
 from __future__ import print_function
 
-from sdl2 cimport *
+from renpy.pygame.sdl cimport *
 
 from renpy.pygame.surface cimport PySurface_AsSurface
 
@@ -312,7 +312,7 @@ cdef class FTFont:
         LoadGSUBTable(&self.gsubtable, self.face)
 
         if outline == 0:
-            self.stroker = NULL;
+            self.stroker = NULL
             self.expand = 0
 
         else:
@@ -544,7 +544,7 @@ cdef class FTFont:
         return rv
 
 
-    def glyphs(self, unicode s, int level):
+    def glyphs(self, str s, int level):
         """
         Sizes s, returning a list of Glyph objects.
         """

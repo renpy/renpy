@@ -44,18 +44,17 @@ breaking_lines = breaking.split("\n")
 
 other_classes = " PITCH AI BK CB CJ CR LF NL SA SG SP HH AK AP AS VI VF EB EM XX"
 
+
 def main():
 
     fn = pathlib.Path(__file__).parent.parent.parent / "renpy" / "text" / "linebreak.pxi"
 
     with open(fn, "w") as f:
-
         print("# This is generated code. Do not edit.", file=f)
         print(file=f)
 
         # A map from character class to the number that represents it.
         cl = {}
-
 
         for i, j in enumerate((breaking_lines[0] + other_classes).split()):
             print(("cdef char BC_{} = {}".format(j, i)), file=f)
@@ -78,11 +77,9 @@ def main():
         print(file=f)
         print(('cdef char *break_rules = "' + "".join(rules) + '"'), file=f)
 
-
         # The number of characters that this matches.
         CHAR_COUNT = 65536 * 2
         cc = ["XX"] * CHAR_COUNT
-
 
         for l in open("LineBreak.txt"):
             m = re.match(r"(\w+)\.\.(\w+)\s*;\s*(\w\w)", l)
@@ -111,7 +108,6 @@ def main():
                 cc[start] = m.group(2)
                 continue
 
-
         def generate(name, func):
             ncc = []
 
@@ -123,11 +119,19 @@ def main():
 
             print(("cdef char *break_" + name + ' = "' + "".join("\\x%02x" % cl[i] for i in ncc) + '"'), file=f)
 
-
         def common_class(cl):
-            if cl in { "AK", "AP", "AS", "VI", "VF", "EB",}:
+            if cl in {
+                "AK",
+                "AP",
+                "AS",
+                "VI",
+                "VF",
+                "EB",
+            }:
                 return "AL"
-            elif cl in { "EM", }:
+            elif cl in {
+                "EM",
+            }:
                 return "CM"
             else:
                 return cl
@@ -140,9 +144,7 @@ def main():
             elif cl == "AI":
                 return "AL"
 
-
             return cl
-
 
         hyphens = [0x2010, 0x2013, 0x301C, 0x30A0]
 
@@ -168,7 +170,6 @@ def main():
         postfixes = [0x0025, 0x00A2, 0x00B0, 0x2030, 0x2032, 0x2033, 0x2103, 0xFF05, 0xFFE0]
         prefixes = [0x0024, 0x00A3, 0x00A5, 0x20AC, 0x2116, 0xFF04, 0xFFE1, 0xFFE5]
 
-
         def cjk_strict(i, cl):
             cl = common_class(cl)
 
@@ -178,7 +179,6 @@ def main():
                 return "ID"
 
             return cl
-
 
         def cjk_normal(i, cl):
             cl = common_class(cl)
@@ -192,7 +192,6 @@ def main():
                 return "ID"
 
             return cl
-
 
         def cjk_loose(i, cl):
             cl = common_class(cl)
@@ -216,7 +215,6 @@ def main():
                 return "ID"
 
             return cl
-
 
         print("DEF BREAK_CHARACTER_COUNT = {}".format(CHAR_COUNT), file=f)
 

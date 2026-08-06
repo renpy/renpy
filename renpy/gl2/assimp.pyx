@@ -25,8 +25,8 @@ import threading
 
 from typing import Iterable, Literal
 
-from renpy.pygame.rwobject cimport RWopsFromPython
-from sdl2 cimport SDL_RWops
+from renpy.pygame.iostream cimport SDLIOStreamFromPython
+from renpy.pygame.sdl cimport SDL_IOStream
 
 from assimpapi cimport (
     Importer,
@@ -955,12 +955,12 @@ cdef public int assimp_loadable(const char *filename) nogil:
             return 0
 
 
-cdef public SDL_RWops *assimp_load(const char *filename) nogil:
+cdef public SDL_IOStream *assimp_load(const char *filename) nogil:
     """
     Loads the model from the given filename.
     """
 
-    cdef SDL_RWops *rv = NULL
+    cdef SDL_IOStream *rv = NULL
 
     with gil:
 
@@ -968,7 +968,7 @@ cdef public SDL_RWops *assimp_load(const char *filename) nogil:
 
         try:
             f = renpy.loader.load(fn)
-            rv = RWopsFromPython(f)
+            rv = SDLIOStreamFromPython(f)
         except Exception as e:
             pass
 

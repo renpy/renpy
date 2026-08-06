@@ -20,33 +20,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
+import io
 import sys
 import subprocess
-import io
 import textwrap
-
-
-# Encoding and sys.stderr/stdout handling ######################################
-
-FSENCODING = sys.getfilesystemencoding() or "utf-8"
-
-# Sets the default encoding to utf-8.
-old_stdout = sys.stdout
-old_stderr = sys.stderr
-
-
-def _setdefaultencoding(name):
-    """
-    This is install in sys to prevent games from trying to change the default
-    encoding.
-    """
-
-
-sys.setdefaultencoding = _setdefaultencoding  # type: ignore
-
-
-sys.stdout = old_stdout
-sys.stderr = old_stderr
 
 import renpy.error
 
@@ -110,6 +87,7 @@ def mac_start(fn):
     os.start compatibility for mac.
     """
     import shlex
+
     os.system("open " + shlex.quote(fn))  # type: ignore
 
 
@@ -216,26 +194,31 @@ def relaunch():
         subprocess.Popen([sys.executable] + sys.argv)
 
 
-
-
-def bootstrap(renpy_base):
+def bootstrap(renpy_base: str):
     global renpy
 
     import renpy.config
     import renpy.log
 
+    # In case of invocation with system python, check that it's run with -X utf8
+    if not sys.flags.utf8_mode:
+        import locale
+        if locale.getpreferredencoding(False).lower() != "utf-8":
+            raise Exception("Ren'Py requires Python to be run with -X utf8.")
+
+    if not isinstance(renpy_base, str):
+        raise TypeError("renpy_base must be a string.")
+
     # Remove a legacy environment setting.
     if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
         del os.environ["SDL_VIDEODRIVER"]
-
-    if not isinstance(renpy_base, str):
-        renpy_base = str(renpy_base, FSENCODING)
 
     renpy.config.renpy_base = renpy_base
 
     # Handle any file deletions or renamed that were deferred from a previous update.
 
     import renpy.update.deferred
+
     if renpy.update.deferred.init() and renpy.windows:
         relaunch()
         sys.exit(0)
@@ -281,8 +264,6 @@ def bootstrap(renpy_base):
 
     if args.basedir:
         basedir = os.path.abspath(args.basedir)
-        if not isinstance(basedir, str):
-            basedir = basedir.decode(FSENCODING)
     else:
         basedir = renpy_base
 
@@ -308,7 +289,6 @@ def bootstrap(renpy_base):
     # Set up Ren'Py specific exception handling.
     sys.excepthook = excepthook
 
-
     # Check that we have installed pygame properly. This also deals with
     # weird cases on Windows and Linux where we can't import modules. (On
     # windows ";" is a directory separator in PATH, so if it's in a parent
@@ -316,6 +296,7 @@ def bootstrap(renpy_base):
     # won't import.)
     try:
         import renpy.pygame
+
         renpy.pygame.import_as_pygame()
     except Exception as e:
         e.add_note(
@@ -363,6 +344,7 @@ def bootstrap(renpy_base):
 
     if renpy.emscripten:
         import renpy.gl2.live2d
+
         renpy.gl2.live2d.web_init()
 
     exit_status = None
@@ -429,7 +411,6 @@ def bootstrap(renpy_base):
             enable_trace(int(os.environ["RENPY_SHUTDOWN_TRACE"]))
 
         renpy.display.tts.tts(None)  # type: ignore
-
 
         if renpy.display.draw:  # type: ignore
             renpy.display.im.cache.quit()  # type: ignore

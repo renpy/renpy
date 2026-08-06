@@ -1,5 +1,5 @@
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 # Copyright 2014 Patrick Dawson <pat@dw.is>
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages
@@ -17,8 +17,8 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from sdl2 cimport *
-from renpy.pygame.surface cimport Surface
+from .sdl cimport *
+from .surface cimport Surface
 
 cdef class Window:
     # Allow weak references.
@@ -34,4 +34,4 @@ cdef class Window:
     # The flags the window was created with.
     cdef Uint32 create_flags
 
-cdef Window main_window = None
+cdef Window main_window

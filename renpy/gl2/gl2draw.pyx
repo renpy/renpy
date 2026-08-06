@@ -28,7 +28,7 @@ DEF ANGLE = False
 
 from libc.stdlib cimport malloc, free
 from libc.math cimport roundf
-from sdl2 cimport *
+from renpy.pygame.sdl cimport *
 from renpy.uguu.gl cimport *
 import renpy.gl2.gl2functions
 
@@ -192,7 +192,7 @@ cdef class GL2Draw:
         visible_h = info.current_h
 
         # Determine the visible area of the current head.
-        bounds = pygame.display.get_display_bounds(0)
+        bounds = pygame.display.get_display_bounds()[0]
 
         renpy.display.log.write("primary display bounds: %r", bounds)
 
@@ -291,13 +291,13 @@ cdef class GL2Draw:
 
         if gles:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "1")
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3);
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0)
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
         else:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2)
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0)
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY)
 
         if renpy.config.gl_set_attributes is not None:
@@ -414,14 +414,14 @@ cdef class GL2Draw:
             gles = True
 
         elif renpy.ios:
-            window_flags |= pygame.WINDOW_ALLOW_HIGHDPI | pygame.RESIZABLE
+            window_flags |= pygame.WINDOW_HIGH_PIXEL_DENSITY | pygame.RESIZABLE
             pwidth = 0
             pheight = 0
             gles = True
 
         else:
             if self.dpi_scale == 1.0:
-                window_flags |= pygame.WINDOW_ALLOW_HIGHDPI
+                window_flags |= pygame.WINDOW_HIGH_PIXEL_DENSITY
 
             if renpy.config.gl_resize:
                 window_flags |= pygame.RESIZABLE
@@ -537,7 +537,7 @@ cdef class GL2Draw:
                 self.shader_cache.clear()
 
         if full_reset:
-            if pygame.display.get_window().recreate_gl_context(always=renpy.emscripten):
+            if pygame.display.get_window().recreate_gl_context() or renpy.emscripten:
                 renpy.display.interface.kill_textures()
 
         # Are we in fullscreen mode?
@@ -753,12 +753,12 @@ cdef class GL2Draw:
         cdef GLint max_texture_size
 
         # Store the default FBO.
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &self.default_fbo);
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &self.default_fbo)
         self.current_fbo = self.default_fbo
 
         # Store the default RBO
         cdef GLuint default_renderbuffer
-        glGetIntegerv(GL_RENDERBUFFER_BINDING, <GLint *> &default_renderbuffer);
+        glGetIntegerv(GL_RENDERBUFFER_BINDING, <GLint *> &default_renderbuffer)
 
         # Generate the framebuffer.
         glGenFramebuffers(1, &self.fbo)
@@ -1129,6 +1129,9 @@ cdef class GL2Draw:
 
             tx, ty = reverse.transform(1, 1)
             oversample = math.hypot(tx, ty) / math.hypot(1, 1)
+
+            if r.properties is not None:
+                oversample *= r.properties.get("mesh_oversample_scale", 1.0)
 
             oversample = max(1.0, min(oversample, renpy.config.mesh_oversample))
 

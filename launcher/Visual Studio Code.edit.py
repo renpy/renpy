@@ -4,8 +4,8 @@ import sys
 
 import renpy
 
-class Editor(renpy.editor.Editor):
 
+class Editor(renpy.editor.Editor):
     has_projects = True
 
     codium = __file__.endswith("VSCodium (System).edit.py")
@@ -17,20 +17,20 @@ class Editor(renpy.editor.Editor):
         """
 
         if self.system:
-
             if "RENPY_VSCODE" in os.environ:
                 return os.environ["RENPY_VSCODE"]
 
             if renpy.windows:
                 return "code.cmd"
 
-            if renpy.macintosh and os.path.exists("/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"):
+            if renpy.macintosh and os.path.exists(
+                "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
+            ):
                 return "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
 
             return "code"
 
         elif self.codium:
-
             if "RENPY_VSCODE" in os.environ:
                 return os.environ["RENPY_VSCODE"]
 
@@ -43,13 +43,14 @@ class Editor(renpy.editor.Editor):
             return "codium"
 
         else:
-
             RENPY_VSCODE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "vscode"))
 
             if renpy.windows:
                 code = os.path.join(RENPY_VSCODE, "VSCode-win32-x64", "bin", "code.cmd")
             elif renpy.macintosh:
-                code = os.path.join(RENPY_VSCODE, "Visual Studio Code.app", "Contents", "Resources", "app", "bin", "code")
+                code = os.path.join(
+                    RENPY_VSCODE, "Visual Studio Code.app", "Contents", "Resources", "app", "bin", "code"
+                )
             elif renpy.linux:
                 if renpy.arch == "aarch64":
                     arch = "arm64"
@@ -73,18 +74,16 @@ class Editor(renpy.editor.Editor):
         self.args.append(directory)
 
     def begin(self, new_window=False, **kwargs):
-        self.args = [ ]
+        self.args = []
 
     def end(self, **kwargs):
         self.args.reverse()
 
         code = self.get_code()
         if self.system or not renpy.linux:
-            args = [ code, "-g" ] + self.args
+            args = [code, "-g"] + self.args
         else:
-            args = [ code, "--no-sandbox", "-g" ] + self.args
-
-        args = [ renpy.exports.fsencode(i) for i in args ]
+            args = [code, "--no-sandbox", "-g"] + self.args
 
         if renpy.windows:
             CREATE_NO_WINDOW = 0x08000000
@@ -94,15 +93,13 @@ class Editor(renpy.editor.Editor):
                 subprocess.Popen(args)
             except FileNotFoundError as missingvscode:
                 flatpak_code = [ "flatpak", "run", "com.visualstudio.code" ]
-                flatpak_args = flatpak_code + [ "-g" ] + self.args
-                flatpak_args = [ renpy.exports.fsencode(i) for i in flatpak_args ]
+                flatpak_args = flatpak_code + ["-g"] + self.args
                 try:
                     subprocess.Popen(flatpak_args)
-                except:
+                except Exception:
                     raise missingvscode
         else:
             subprocess.Popen(args)
-
 
 
 def main():
@@ -113,6 +110,7 @@ def main():
         e.open(i)
 
     e.end()
+
 
 if __name__ == "__main__":
     main()

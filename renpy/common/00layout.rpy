@@ -477,7 +477,7 @@ init -1400 python hide:
         return rv
 
     @layout
-    def yesno_screen(message, yes=None, no=None, **kwargs):
+    def yesno_screen(message, yes=None, no=None, _screen=None, **kwargs):
         """
         :undocumented:
 
@@ -485,7 +485,9 @@ init -1400 python hide:
         or the Confirm action in a screen context.
         """
 
-        if config.confirm_screen and renpy.has_screen('confirm'):
+        if _screen and renpy.has_screen(_screen):
+            screen = _screen
+        elif config.confirm_screen and renpy.has_screen('confirm'):
             screen = "confirm"
         elif renpy.has_screen("yesno_prompt"):
             screen = "yesno_prompt"

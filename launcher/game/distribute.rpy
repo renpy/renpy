@@ -170,7 +170,7 @@ fix_dlc("renios", "renios")
 
         sha = hashlib.sha256()
 
-        with open(renpy.fsencode(fn), "rb") as f:
+        with open(fn, "rb") as f:
             while True:
 
                 data = f.read(8 * 1024 * 1024)
@@ -1321,7 +1321,7 @@ fix_dlc("renios", "renios")
 
             self.reporter.info(message)
 
-            cmd = [ renpy.fsencode(i.format(**kwargs)) for i in command ]
+            cmd = [ i.format(**kwargs) for i in command ]
 
             # print("\"" + "\" \"".join(cmd) + "\"")
 
@@ -1696,7 +1696,7 @@ fix_dlc("renios", "renios")
                         "json_url" : self.base_name + "-" + variant + ".update.json",
                         })
 
-                    fn = renpy.fsencode(os.path.join(self.destination, self.base_name + "-" + variant + ".update"))
+                    fn = os.path.join(self.destination, self.base_name + "-" + variant + ".update")
 
                     if os.path.exists(fn):
                         os.unlink(fn)
@@ -1714,7 +1714,7 @@ fix_dlc("renios", "renios")
             if not isinstance(update_data, bytes):
                 update_data = update_data.encode("utf-8")
 
-            fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
+            fn = os.path.join(self.destination, "updates.json")
             with open(fn, "wb") as f:
                 f.write(update_data)
 
@@ -1722,7 +1722,7 @@ fix_dlc("renios", "renios")
             with open(self.find_update_pem(), "rb") as f:
                 signing_key = renpy.ecsign.pem_to_der(f.read())
 
-            fn = renpy.fsencode(os.path.join(self.destination, "updates.ecdsa"))
+            fn = os.path.join(self.destination, "updates.ecdsa")
             with open(fn, "wb") as f:
                 f.write(renpy.ecsign.sign_data(update_data, signing_key))
 

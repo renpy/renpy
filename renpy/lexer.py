@@ -36,6 +36,7 @@ try:
 except ImportError:
     pass
 
+
 class ParseError(SyntaxError):
     """
     Special exception type for syntax errors in Ren'Py.

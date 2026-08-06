@@ -97,6 +97,17 @@ These take functions that are called when certain events occur. These are not th
 callbacks - ones corresponding to more specific features are listed in the section on
 that feature.
 
+Callbacks can be registered with the :func:`renpy.callback` function, a Python decorator that
+automatically registers a function with the appropriate callback list based on the functon name,
+which automatically gets pluralized.  For example::
+
+    @renpy.callback
+    def start_callback():
+        import time
+        global actual_start_time
+        acual_start_time = time.time()
+
+
 .. var:: config.after_default_callbacks = [ ... ]
 
     A list of functions that are called (with no arguments) whenever
@@ -107,6 +118,20 @@ that feature.
 
     Similar to the default statement, these callbacks are a good place
     to add data to the game that does not exist, but needs to.
+
+    This callbacks is also run between the init phase and the start of the game, and so can be used to initialize
+    callbacks that need to be run when th
+
+.. var:: config.after_init_callbacks = [ ... ]
+
+    A list of functions that are called (with no arguments) at the very end of the init phase, before the game starts
+    normal execution for the first time. These are run after :var:`config.after_default_callbacks`, and so this is t
+    he place to set up callbacks that need access to default data. (The difference is that this is only run once,
+    while :var:`config.after_default_callbacks` is run after rollback and loading a save.)
+
+    The suggested use for this is setting up other callbacks that require access to default data. Other operations
+    may not work - this runs after most config variables shouldn't be changed, so changing them here may not have
+    the desired effect, but before actual game execution begins.
 
 .. var:: config.context_callbacks = [ ]
 
@@ -462,7 +487,6 @@ File I/O
     This gets its default value from the RENPY_OPEN_FILE_ENCODING
     environment variable.
 
-
 .. var:: config.special_directory_map = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ], ... }
 
     This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
@@ -470,6 +494,17 @@ File I/O
     of images and audiom see :var:`config.image_directories` and :var:`config.audio_directories`. New special
     directory names may be added in future versions of Ren'Py.
 
+.. var:: config.renamed_files = { ... }
+
+    A map from file names to new file names. When Ren'Py looks for a file by
+    one of the keys in this dictionary, it will instead look for the
+    corresponding value. This is useful for handling files that have been
+    renamed - for example, when font filenames change between versions of a
+    bundled font. The keys must be lower-case and use forward slashes as
+    path separators.
+
+    Ren'Py uses this to handle some renamed files internally, so creators should add to this dictionary rather than
+    replacing it entirely.
 
 History
 -------
@@ -970,11 +1005,18 @@ Paths
     :file:`data.rpa`, :file:`patch01.rpa`, and :file:`patch02.rpa`,
     this variable will be populated with ``['patch02', 'patch01', 'data']``.
 
+.. var:: config.basedir = ...
+
+    The full path leading to the game's base directory. This is a read-only
+    variable. This is usually the directory above the :file:`game/` directory. It contains logs like :doc:`log.txt`
+    and on PC plaforms contains the executable used to launch the game. There is no guarantee any file will be there,
+    as on Android files are stored inside the package.
+
 .. var:: config.gamedir = ...
 
     The full path leading to the game's :file:`game/` directory. This is a
-    read-only variable. There is no guarantee that any file will be there,
-    typically on platforms such as android.
+    read-only variable. There is no guarantee that any file will be there, as on
+    Android files are stored inside the package.
 
 .. var:: config.savedir = ...
 
@@ -1292,6 +1334,10 @@ Saving and Loading
     to the object, information about if the object is an alias, and a
     representation of the object.
 
+.. var:: config.failed_save_dump = True
+
+    Similar to :var:`config.save_dump`, but only triggers when the save fails.
+
 .. var:: config.save_json_callbacks = [ ... ]
 
     A list of callback functions that are used to create the json object
@@ -1531,13 +1577,6 @@ Self-Voicing / Text to Speech
 
     Will cause the string "Ren'Py is pronounced ren'py." to be voiced as if
     it were "Ren Pie is pronounced ren pie."
-
-.. var:: config.tts_voice = None
-
-    If not None, a string giving a non-default voice that is used to
-    play back text-to-speech for self voicing. The possible choices are
-    platform specific, and so this should be set in a platform-specific
-    manner. (It may make sense to change this in translations, as well.)
 
 
 Showing Images
@@ -1854,9 +1893,10 @@ Text and Fonts
     <menus>` statements. Each is expected to return new
     (or the same) strings to replace them.
 
-    These run very early in the say and menu statement processing, before
-    translation and substitutions are applied. For a filter that runs later,
-    see :var:`config.replace_text`.
+    These run very early in the say statement processing, and in menu
+    statement processing when :var:`config.use_menu_text_filter` is True,
+    before translation and substitutions are applied. For a filter that runs
+    later, see :var:`config.replace_text`.
 
 .. var:: config.textshader_callbacks = { }
 
@@ -1864,6 +1904,12 @@ Text and Fonts
     with the string are used, the function is called to return a string
     giving another textshader. This can be used to make a textshader that
     changes based on a persistent variable, for example.
+
+.. var:: config.use_menu_text_filter = True
+
+    If True, text in :doc:`menu <menus>` statements is passed through
+    :var:`config.say_menu_text_filter` and :var:`config.say_menu_text_filters`.
+    If False, menu text is left unchanged by those filters.
 
 
 Transitions

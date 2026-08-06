@@ -10,9 +10,7 @@ import datetime
 
 year = datetime.date.today().year
 
-IGNORE = [
-    "scripts/update_copyright.py"
-]
+IGNORE = ["scripts/update_copyright.py"]
 
 ENDINGS = [
     ".rpy",

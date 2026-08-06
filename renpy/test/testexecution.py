@@ -108,6 +108,7 @@ def initialize(test_filter: ExecutionFilter) -> None:
     if initialized:
         return
 
+    on_reload()  
     execution_filter = test_filter
 
     root = setup_global_test_suite()
@@ -123,6 +124,7 @@ def initialize(test_filter: ExecutionFilter) -> None:
     renpy.config.gl_vsync = False
 
     initialized = True
+
 
 def has_default_testcase() -> bool:
     """
@@ -555,6 +557,8 @@ class TestPhaseController:
 
             while node_executor.done and node_executor.next_node is None:
                 next_phase = self.active_phase.update()
+                if next_phase is None:
+                    break
                 self.transition_to_new_phase(next_phase)
 
         except renpy.game.CONTROL_EXCEPTIONS:

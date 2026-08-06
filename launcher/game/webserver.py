@@ -17,11 +17,12 @@ root = ""
 
 import renpy
 
+
 class BannedException(Exception):
     pass
 
-class WebHandler(http.server.BaseHTTPRequestHandler):
 
+class WebHandler(http.server.BaseHTTPRequestHandler):
     """Simple HTTP request handler with GET and HEAD commands.
 
     This serves files from the current directory and any of its
@@ -33,7 +34,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
 
     """
 
-    server_version = "Ren'Py/" + renpy.version_only # @UndefinedVariable
+    server_version = "Ren'Py/" + renpy.version_only  # @UndefinedVariable
 
     def do_GET(self):
         """Serve a GET request."""
@@ -71,11 +72,10 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
         f = None
         if os.path.isdir(path):
             parts = urllib.parse.urlsplit(self.path)
-            if not parts.path.endswith('/'):
+            if not parts.path.endswith("/"):
                 # redirect browser - doing basically what apache does
                 self.send_response(301)
-                new_parts = (parts[0], parts[1], parts[2] + '/',
-                             parts[3], parts[4])
+                new_parts = (parts[0], parts[1], parts[2] + "/", parts[3], parts[4])
                 new_url = urllib.parse.urlunsplit(new_parts)
                 self.send_header("Location", new_url)
                 self.end_headers()
@@ -92,13 +92,12 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             # Always read in binary mode. Opening files in text mode may cause
             # newline translations, making the actual size of the content
             # transmitted *less* than the content-length!
-            f = open(path, 'rb')
+            f = open(path, "rb")
             fs = os.fstat(f.fileno())
         except IOError:
             self.send_error(404, "File not found")
             return None
         try:
-
             last_modified = self.date_time_string(fs.st_mtime)
 
             ims = self.headers.get("If-Modified-Since", None)
@@ -167,8 +166,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             if os.path.islink(fullname):
                 displayname = name + "@"
                 # Note: a link to a directory displays with @ and links with /
-            f.write('<li><a href="%s">%s</a>\n'
-                    % (urllib.parse.quote(linkname), cgi.escape(displayname)))
+            f.write('<li><a href="%s">%s</a>\n' % (urllib.parse.quote(linkname), cgi.escape(displayname)))
         f.write("</ul>\n<hr>\n</body>\n</html>\n")
         length = f.tell()
         f.seek(0)
@@ -188,12 +186,12 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
 
         """
         # abandon query parameters
-        path = path.split('?', 1)[0]
-        path = path.split('#', 1)[0]
+        path = path.split("?", 1)[0]
+        path = path.split("#", 1)[0]
         # Don't forget explicit trailing slash when normalizing. Issue17324
-        trailing_slash = path.rstrip().endswith('/')
+        trailing_slash = path.rstrip().endswith("/")
         path = posixpath.normpath(urllib.parse.unquote(path))
-        words = path.split('/')
+        words = path.split("/")
         words = filter(None, words)
 
         # Ren'Py - use the root we were given.
@@ -208,7 +206,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
                 continue
             path = os.path.join(path, word)
         if trailing_slash:
-            path += '/'
+            path += "/"
         return path
 
     def copyfile(self, source, outputfile):
@@ -249,30 +247,30 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
         if ext in self.extensions_map:
             return self.extensions_map[ext]
         else:
-            return self.extensions_map['']
+            return self.extensions_map[""]
 
     extensions_map = {
-        '': 'application/octet-stream', # Default
-        '.gz': 'application/gzip',
-        '.htm': 'text/html',
-        '.html': 'text/html',
-        '.js': 'application/javascript',
-        '.wasm': 'application/wasm',
-        '.avi': 'video/x-msvideo',
-        '.m1v': 'video/mpeg',
-        '.m2v': 'video/mpeg',
-        '.m4v': 'video/mp4',
-        '.mkv': 'video/x-matroska',
-        '.mp4': 'video/mp4',
-        '.mpe': 'video/mpeg',
-        '.mpeg': 'video/mpeg',
-        '.mpg': 'video/mpeg',
-        '.mpg4': 'video/mp4',
-        '.mpv': 'video/x-matroska',
-        '.ogv': 'video/ogg',
-        '.webm': 'video/webm',
-        '.wmv': 'video/x-ms-wmv',
-        }
+        "": "application/octet-stream",  # Default
+        ".gz": "application/gzip",
+        ".htm": "text/html",
+        ".html": "text/html",
+        ".js": "application/javascript",
+        ".wasm": "application/wasm",
+        ".avi": "video/x-msvideo",
+        ".m1v": "video/mpeg",
+        ".m2v": "video/mpeg",
+        ".m4v": "video/mp4",
+        ".mkv": "video/x-matroska",
+        ".mp4": "video/mp4",
+        ".mpe": "video/mpeg",
+        ".mpeg": "video/mpeg",
+        ".mpg": "video/mpeg",
+        ".mpg4": "video/mp4",
+        ".mpv": "video/x-matroska",
+        ".ogv": "video/ogg",
+        ".webm": "video/webm",
+        ".wmv": "video/x-ms-wmv",
+    }
 
 
 def run():

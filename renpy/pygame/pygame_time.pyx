@@ -1,3 +1,4 @@
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 # Copyright 2014 Patrick Dawson <pat@dw.is>
 #
 # This software is provided 'as-is', without any express or implied
@@ -18,29 +19,22 @@
 
 import cython
 import math
-from sdl2 cimport *
-import renpy.pygame
-from renpy.pygame.error import error
-from renpy.pygame import register_init, register_quit
+from .sdl cimport *
+from .error import error
 
 cdef int timer_id = 0
 
-@register_init
 def init():
-    renpy.pygame.display.sdl_main_init()
+    pass
 
-    if SDL_InitSubSystem(SDL_INIT_TIMER):
-        raise error()
-
-@register_quit
 def quit(): # @ReservedAssignment
-    SDL_QuitSubSystem(SDL_INIT_TIMER)
+    pass
 
 def get_ticks():
     return SDL_GetTicks()
 
 def wait(int milliseconds):
-    cdef int start
+    cdef unsigned long long start
 
     start = SDL_GetTicks()
     with nogil:
@@ -51,18 +45,20 @@ def delay(milliseconds):
     # SDL_Delay() should be accurate enough.
     return wait(milliseconds)
 
-cdef Uint32 timer_callback(Uint32 interval, void *param) nogil:
+from libc.stdint cimport uintptr_t
+
+cdef Uint32 timer_callback(void *param, SDL_TimerID timerID, Uint32 interval) nogil:
     cdef SDL_Event e
-    e.type = <int>param
-    e.user.code = 0
+    e.type = <unsigned short> <uintptr_t> param
+    e.user.code = <unsigned char> 0
     e.user.data1 = NULL
     e.user.data2 = NULL
     SDL_PushEvent(&e)
     return interval
 
-cdef Uint32 timer_once_callback(Uint32 interval, void *param) nogil:
+cdef Uint32 timer_once_callback(void *param, SDL_TimerID timerID, Uint32 interval) nogil:
     cdef SDL_Event e
-    e.type = <int>param
+    e.type = <unsigned short> <uintptr_t> param
     e.user.code = 0
     e.user.data1 = NULL
     e.user.data2 = NULL
@@ -73,19 +69,21 @@ cdef Uint32 timer_once_callback(Uint32 interval, void *param) nogil:
 # A map from eventid to SDL_Timer_ID.
 cdef dict timer_by_event = { }
 
-def set_timer(eventid, milliseconds, once=False):
+def set_timer(unsigned short eventid, milliseconds, once=False):
 
-    cdef int timer_id = timer_by_event.get(eventid, 0)
+    cdef SDL_TimerID timer_id = timer_by_event.get(eventid, 0)
 
     if timer_id != 0:
         SDL_RemoveTimer(timer_id)
         timer_id = 0
 
     if milliseconds > 0:
+
         if once:
-            timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_once_callback, <void*><int>eventid)
+            timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_once_callback, <void*> <uintptr_t> eventid)
         else:
-            timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_callback, <void*><int>eventid)
+            timer_id = SDL_AddTimer(milliseconds, <SDL_TimerCallback>timer_callback, <void*> <uintptr_t> eventid)
+
         if timer_id == 0:
             raise error()
 
@@ -99,7 +97,7 @@ class Clock:
         self.raw_frametime = 0
 
     def tick(self, framerate=0):
-        cdef int now = SDL_GetTicks()
+        cdef unsigned long long now = SDL_GetTicks()
         self.raw_frametime = now - self.last
         while len(self.last_frames) > 9:
             self.last_frames.pop(0)
@@ -107,7 +105,7 @@ class Clock:
             self.last = now
             self.last_frames.append(self.raw_frametime)
             return self.raw_frametime
-        cdef int frame_duration = 1.0 / framerate * 1000
+        cdef int frame_duration = int(1.0 / framerate * 1000)
         if self.raw_frametime < frame_duration:
             delay(frame_duration - self.raw_frametime)
         now = SDL_GetTicks()

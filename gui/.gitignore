@@ -24,3 +24,6 @@
 /dialogue.tab
 /dialogue.txt
 /strings.json
+
+# Keystore files used for signing Android apps.
+/*.keystore

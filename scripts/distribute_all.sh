@@ -14,6 +14,6 @@ sleep 2
 )
 
 rpy pull
-rpy build --python 3
+rpy build
 
 lib/py3-linux-x86_64/python distribute.py

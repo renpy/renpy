@@ -73,9 +73,6 @@ init python:
 
             return default_path, True
 
-        # Apply more thorough checks to an explicit path.
-        path = renpy.fsdecode(path)
-
         if not os.path.isdir(path):
             interface.error(_("The selected directory does not exist."))
         elif not directory_is_writable(path):

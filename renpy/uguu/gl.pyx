@@ -1,4 +1,4 @@
-from sdl2 cimport SDL_GL_GetProcAddress, SDL_GetError
+from renpy.pygame.sdl cimport SDL_GL_GetProcAddress, SDL_GetError
 
 found_functions = set()
 
@@ -39,7 +39,6 @@ def check_missing_functions(required):
         return True
     else:
         return False
-
 
 
 cdef glActiveTexture_type glActiveTexture
