@@ -807,8 +807,7 @@ cdef class IOBuffer(IOStream):
     """
     An IOStream over any object supporting the buffer protocol. The buffer view
     is held for as long as the underlying SDL_IOStream is open, independent of
-    this Python object's lifetime. The view is released, and the source object's
-    reference dropped, only when the underlying stream is closed.
+    this Python object's lifetime.
 
     `buffer`
         An object supporting the buffer protocol that provides contiguous memory.
