@@ -94,10 +94,7 @@ cdef void set_error(object obj):
 cdef class IOStream:
     """
     Abstract base class wrapping an SDL_IOStream. Implements the io.RawIOBase
-    protocol on top of the SDL_* IO functions.
-
-    `name`
-        If given, a string with a file name this stream represents.
+    interface on top of the SDL_* IO functions.
     """
 
     def __cinit__(IOStream self not None, *args, **kwargs):
