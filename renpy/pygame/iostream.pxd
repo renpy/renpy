@@ -23,6 +23,7 @@ from .sdl cimport SDL_IOStream, Sint64
 
 cdef class IOStream:
     cdef SDL_IOStream *_stream
+    cdef bint _closed
     cdef readonly str mode
     cdef readonly str name
 
@@ -70,9 +71,8 @@ cdef inline SDL_IOStream *SDL_IOStreamFromPython(object obj, str name=None) exce
 
     It returns an SDL_IOStream object, or NULL on error.
 
-    Call to this function assumes exclusive ownership on the object is
-    transferred to the underlying stream, including responsibility on closing
-    it.
+    Calling this function transfers exclusive ownership of `obj` to the returned
+    stream, including responsibility for closing it.
     """
 
     import os
@@ -87,7 +87,7 @@ cdef inline SDL_IOStream *SDL_IOStreamFromPython(object obj, str name=None) exce
     elif PyObject_CheckBuffer(obj):
         stream = IOBuffer(obj, name=name)
     elif hasattr(obj, "read") or hasattr(obj, "write"):
-        stream = IOFileLike(obj, name=name, close=True)
+        stream = IOFileLike(obj, name=name)
     else:
         raise TypeError(f"{obj!r} is not a filename or file-like object.")
 

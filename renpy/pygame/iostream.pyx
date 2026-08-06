@@ -35,7 +35,7 @@ reacquires the GIL for every operation, so prefer the others when the data
 is reachable another way:
 
 * A path on disk                                         IOPath
-* A file as a region in other IOStream, e.g. archive     IOSubFile
+* A region inside another IOStream, e.g. an archive      IOSubFile
 * bytes, bytearray, memoryview, mmap, array              IOBuffer
 * A BytesIO you own and will not resize                  IOBuffer(b.getbuffer())
 * Anything computed: gzip, zipfile, network              IOFileLike
@@ -46,8 +46,8 @@ Thread safety
 It is unsafe to read or write the same IOStream from different threads at the
 same time.
 
-SDL_Quit must be called before interpreter shutdown, or program may hung, unable
-to deallocate Python objects owned in Stream userdata.
+SDL_Quit must be called before interpreter shutdown, or the program may hang,
+unable to deallocate Python objects owned by stream userdata.
 """
 
 from .sdl cimport *
@@ -99,27 +99,31 @@ cdef class IOStream:
 
     def __cinit__(IOStream self not None, *args, **kwargs):
         self._stream = NULL
+        self._closed = False
 
     def __init__(IOStream self not None):
         if type(self) is IOStream:
             raise TypeError("IOStream is abstract, use one of its subclasses.")
 
     def __del__(IOStream self not None, /):
-        # Let subclasses overwrite IOStream.close.
-        if self._stream != NULL:
+        # Subclasses can overwrite IOStream.close and using __del__ guards
+        # against resurrection.
+        if not self.closed:
             try:
                 self.close()
             except Exception:
                 pass
 
     def __dealloc__(IOStream self not None, /):
-        if self._stream != NULL:
-            SDL_CloseIO(self._stream)
+        # Guard against close that didn't closed SDL stream.
+        cdef SDL_IOStream *stream = self._stream
+        if stream != NULL:
             self._stream = NULL
+            SDL_CloseIO(stream)
 
     # IOBase implements them and others use it, ugly.
     def _checkClosed(IOStream self not None, /):
-        if self._stream == NULL:
+        if self.closed:
             raise ValueError("I/O operation on closed file.")
 
     def _checkReadable(IOStream self not None, /):
@@ -143,7 +147,21 @@ cdef class IOStream:
         """
 
         self._checkClosed()
+
+        # Protection against improper subclass overrides.
+        if self._stream == NULL:
+            raise RuntimeError("SDL stream was closed unexpectedly.")
+
         return self._stream
+
+    def on_take(IOStream self not None, /):
+        """
+        Called before SDL stream is detached from the object, including when
+        the stream is about to be closed.
+
+        This function should clean any references to the objects that
+        will be owned by it.
+        """
 
     cdef SDL_IOStream *take(self) except NULL:
         """
@@ -153,10 +171,16 @@ cdef class IOStream:
         This object is closed from Python's point of view after the call.
         """
 
-        cdef SDL_IOStream *rv = self.borrow()
+        self._checkClosed()
+
+        self.on_take()
+
+        # Protection against improper subclass overrides.
+        cdef SDL_IOStream *stream = self.borrow()
 
         self._stream = NULL
-        return rv
+        self._closed = True
+        return stream
 
     # io.IOBase interface.
     def __iter__(IOStream self not None, /):
@@ -184,26 +208,25 @@ cdef class IOStream:
 
     def close(IOStream self not None, /):
         # A closed file may be closed again.
-        if self._stream == NULL:
+        if self.closed:
             return
 
-        # Mimic io.IOBase behavior.
+        # Mimic io.IOBase.close behavior.
         cdef cbool rv
+        cdef SDL_IOStream *stream
         try:
             self.flush()
         finally:
-            try:
-                with nogil:
-                    rv = SDL_CloseIO(self._stream)
-            finally:
-                self._stream = NULL
+            stream = self.take()
+            with nogil:
+                rv = SDL_CloseIO(stream)
 
             if not rv:
                 raise IOError(f"Could not close: {get_error()}")
 
     @property
     def closed(IOStream self not None, /):
-        return self._stream == NULL
+        return self._closed
 
     def fileno(IOStream self not None, /):
         raise io.UnsupportedOperation("This stream is not backed by a file descriptor.")
@@ -214,8 +237,9 @@ cdef class IOStream:
         if not self.writable():
             return
 
+        cdef SDL_IOStream *stream = self.borrow()
         with nogil:
-            rv = SDL_FlushIO(self._stream)
+            rv = SDL_FlushIO(stream)
 
         if not rv:
             raise IOError(f"Could not flush: {get_error()}")
@@ -781,14 +805,17 @@ buf_interface.close = buf_close
 
 cdef class IOBuffer(IOStream):
     """
-    An IOStream over any object supporting the buffer protocol. The buffer is
-    kept mapped for the lifetime of this object, and its size is fixed.
+    An IOStream over any object supporting the buffer protocol. The buffer view
+    is held for as long as the underlying SDL_IOStream is open, independent of
+    this Python object's lifetime. The view is released, and the source object's
+    reference dropped, only when the underlying stream is closed.
 
     `buffer`
-        Object that supports buffer protocol and provide contigous memory.
+        An object supporting the buffer protocol that provides contiguous memory.
+        Set to None when this stream is closed.
 
     `writable`
-        If True, `buffer` must allow requesting `PyBUF_CONTIG`.
+        If True, `buffer` must allow requesting writable buffer.
 
     `name`
         If given, a string with a file name this stream represents.
@@ -824,6 +851,9 @@ cdef class IOBuffer(IOStream):
         class_name = f"{type(self).__module__}.{type(self).__qualname__}"
         name = "" if self.name is None else f", name={self.name!r}"
         return f"{class_name}({self.buffer!r}, writable={self.writable()}{name})"
+
+    def on_take(IOBuffer self not None, /):
+        self.buffer = None
 
     def readable(IOBuffer self not None, /):
         self._checkClosed()
@@ -1148,6 +1178,22 @@ cdef class IOFileLike(IOStream):
         return self._seekable
 
     # Reimplement some function to not drop and reacquire GIL for no reason.
+    def seek(IOFileLike self not None, Sint64 offset, int whence=io.SEEK_SET, /):
+        self._checkClosed()
+        self._checkSeekable()
+
+        return self.filelike.seek(offset, whence)
+
+    def flush(IOFileLike self not None, /):
+        self._checkClosed()
+
+        if not self.writable():
+            return
+
+        flush = getattr(self.filelike, "flush", None)
+        if flush is not None:
+            flush()
+
     def read(IOFileLike self not None, Py_ssize_t size=-1, /):
         self._checkClosed()
         self._checkReadable()
