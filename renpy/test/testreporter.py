@@ -334,16 +334,12 @@ class OutcomeManager(TestSuiteOutcome):
         """Get the outcome object corresponding to the given test block (with parameterization)."""
 
         # Build the path from the target block back to the root
-        path: list[BaseTestBlock] = []
-        current = test_block
-        while current:
-            path.append(current)
-            current = current.parent
+        path = test_block.get_parent_chain() + [test_block]
 
         # Start at the root and traverse down to the target
         current_outcome: TestSuiteOutcome = self
 
-        for i, n in enumerate(reversed(path)):
+        for i, n in enumerate(path):
             n_outcome = current_outcome.get_child_by_test_block(n)
 
             if i == len(path) - 1:

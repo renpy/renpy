@@ -554,8 +554,10 @@ def import_all():
     import renpy.test.testkey
     import renpy.test.testast
     import renpy.test.testparser
+    import renpy.test.testfilter
     import renpy.test.testreporter
     import renpy.test.testexecution
+    import renpy.test.testcli
 
     import renpy.update
     import renpy.update.deferred
