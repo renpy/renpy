@@ -20,7 +20,7 @@
 from .sdl cimport *
 from .sdl_image cimport *
 from .surface cimport *
-from .iostream cimport to_sdl_iostream
+from .iostream cimport SDL_IOStreamFromPython
 
 from .error import error
 
@@ -76,7 +76,7 @@ def load(fi, namehint="", size=None):
         if fi.lower().endswith('.tga'):
             namehint = "TGA"
 
-    iostream = to_sdl_iostream(fi)
+    iostream = SDL_IOStreamFromPython(fi)
 
     if namehint == "":
         with nogil:
