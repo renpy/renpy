@@ -18,6 +18,7 @@ ehthumbs_vista.db
 *.cpython-*.so
 *.cpython-*.pyd
 /build
+uv.lock
 
 # Editor/tool files.
 *~
