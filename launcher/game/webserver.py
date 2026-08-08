@@ -5,10 +5,9 @@ import posixpath
 import os
 import http.server
 import urllib.parse
-import cgi
+import html
 import sys
 import shutil
-import mimetypes
 import io
 import hashlib
 
@@ -106,17 +105,17 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
                 self.end_headers()
                 return None
 
-            hash = hashlib.md5()
+            hasher = hashlib.md5()
 
             while True:
                 data = f.read(1024 * 1024)
                 if not data:
                     break
-                hash.update(data)
+                hasher.update(data)
 
             f.seek(0)
 
-            etag = '"{}"'.format(hash.hexdigest())
+            etag = '"{}"'.format(hasher.hexdigest())
 
             if self.headers.get("If-None-Match", None) == etag:
                 self.send_response(304)
@@ -127,7 +126,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             self.send_header("Content-type", ctype)
 
             self.send_header("Cache-Control", "max-age=0, must-revalidate")
-            self.send_header("Content-Length", str(fs[6]))
+            self.send_header("Content-Length", str(fs.st_size))
             self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
             self.send_header("ETag", etag)
             self.end_headers()
@@ -145,18 +144,18 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
 
         """
         try:
-            list = os.listdir(path)
+            entries = os.listdir(path)
         except os.error:
             self.send_error(404, "No permission to list directory")
             return None
-        list.sort(key=lambda a: a.lower())
+        entries.sort(key=lambda entry: entry.lower())
         f = io.StringIO()
-        displaypath = cgi.escape(urllib.parse.unquote(self.path))
+        displaypath = html.escape(urllib.parse.unquote(self.path))
         f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
         f.write("<html>\n<title>Directory listing for %s</title>\n" % displaypath)
         f.write("<body>\n<h2>Directory listing for %s</h2>\n" % displaypath)
         f.write("<hr>\n<ul>\n")
-        for name in list:
+        for name in entries:
             fullname = os.path.join(path, name)
             displayname = linkname = name
             # Append / for directories or @ for symbolic links
@@ -166,7 +165,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             if os.path.islink(fullname):
                 displayname = name + "@"
                 # Note: a link to a directory displays with @ and links with /
-            f.write('<li><a href="%s">%s</a>\n' % (urllib.parse.quote(linkname), cgi.escape(displayname)))
+            f.write('<li><a href="%s">%s</a>\n' % (urllib.parse.quote(linkname), html.escape(displayname)))
         f.write("</ul>\n<hr>\n</body>\n</html>\n")
         length = f.tell()
         f.seek(0)
@@ -240,7 +239,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
 
         """
 
-        base, ext = posixpath.splitext(path)
+        _base, ext = posixpath.splitext(path)
         if ext in self.extensions_map:
             return self.extensions_map[ext]
         ext = ext.lower()
