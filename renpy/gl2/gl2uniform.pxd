@@ -23,6 +23,7 @@
 from renpy.uguu.gl cimport *
 from renpy.gl2.gl2draw cimport GL2DrawingContext
 from renpy.gl2.gl2model cimport GL2Model
+from renpy.gl2.gl2statecache cimport GLStateCache
 
 cdef class Getter:
     """
@@ -54,3 +55,14 @@ cdef class Setter:
     "The getter that's used to get the data for this uniform."
 
     cdef object set(self, GL2DrawingContext context, value)
+
+
+cdef class Sampler2DSetter(Setter):
+
+    cdef int sampler
+    "The sampler number to use."
+
+    cdef str texture_wrap_key
+    "The key to use to look up the texture wrap mode."
+
+    cdef void set_texture(self, GLStateCache cache, GLuint texture)
