@@ -39,6 +39,7 @@ from renpy.display.displayable import Displayable, DisplayableArguments as Displ
 from renpy.display.scenelists import SceneListEntry as SceneListEntry, SceneLists as SceneLists
 
 import_time = time.time()
+import_perf_time = time.perf_counter()
 
 try:
     import android
@@ -150,7 +151,8 @@ PERIODIC_INTERVAL = 50
 null: "renpy.display.layout.Null | None" = None
 
 # Time management.
-time_base = 0.0
+time_base = import_time
+perf_base = import_perf_time
 time_mult = 1.0
 
 # Mouse management.
@@ -162,15 +164,16 @@ def init_time():
     warp = os.environ.get("RENPY_TIMEWARP", "1.0")
 
     global time_base
+    global perf_base
     global time_mult
 
     time_base = time.time()
+    perf_base = time.perf_counter()
     time_mult = float(warp)
 
 
 def get_time() -> float:
-    t = time.time()
-    return time_base + (t - time_base) * time_mult
+    return time_base + (time.perf_counter() - perf_base) * time_mult
 
 
 def get_size() -> tuple[int, int]:
@@ -812,7 +815,7 @@ class Interface:
         # The previous state of the screensaver.
         self.last_screensaver = None
 
-        self.last_emscripten_preload_time: float = get_time()
+        self.last_emscripten_preload_time: float = time.perf_counter()
         """The last time an idle frame allowed an emscripten preload pass to run without stuttering."""
 
         try:
@@ -997,7 +1000,7 @@ class Interface:
             if ("default" not in self.cursor_cache) and (None in self.cursor_cache):
                 self.cursor_cache["default"] = self.cursor_cache[None]
 
-        s = "Total time until interface ready: {}s.".format(time.time() - import_time)
+        s = "Total time until interface ready: {}s.".format(time.perf_counter() - import_perf_time)
 
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)
@@ -1318,7 +1321,7 @@ class Interface:
         if renpy.emscripten:
             emscripten.sleep(0)
 
-        now = time.time()
+        now = time.perf_counter()
 
         self.frame_times.append(now)
 
@@ -1730,14 +1733,14 @@ class Interface:
         if self.screenshot is None:
             renpy.exports.take_screenshot()
 
-        if self.quit_time > (time.time() - 0.75):
+        if self.quit_time > (time.perf_counter() - 0.75):
             renpy.exports.quit(save=True)
 
         if self.in_quit_event:
             renpy.exports.quit(save=True)
 
         if renpy.config.quit_action is not None:
-            self.quit_time = time.time()
+            self.quit_time = time.perf_counter()
 
             # Make the screen more suitable for interactions.
             renpy.exports.movie_stop(only_fullscreen=True)
@@ -1791,7 +1794,7 @@ class Interface:
     def is_mouse_visible(self):
         # Figure out if the mouse visibility algorithm is hiding the mouse.
         if (renpy.config.mouse_hide_time is not None) and (
-            self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time()
+            self.mouse_event_time + renpy.config.mouse_hide_time < get_time()
         ):
             visible = False
         else:
@@ -2285,27 +2288,32 @@ class Interface:
 
         # We want this to include the GC time, so we don't predict on
         # frames where we GC.
-        start = get_time()
+        start = time.perf_counter()
+
+        # Gate inexpensive passes by configured budget rather than by pending 
+        # events so that frequent redraws don't starve idle tasks entirely.
+        deadline = start + renpy.config.idle_frame_budget / 1000.0
 
         step = 1
 
         while True:
-            if self.event_peek(False) and not self.force_prediction:
-                break
-
-            if not expensive:
-                if get_time() > (start + 0.0005):
+            if expensive:
+                if self.event_peek(False) and not self.force_prediction:
                     break
+            elif time.perf_counter() > deadline:
+                break
 
             # Step 1: Run gc.
             if step == 1:
-                self.consider_gc()
+                if expensive or not self.event_peek(False):
+                    self.consider_gc()
+
                 step += 1
 
             # Step 2: Push textures to GPU.
             elif step == 2:
                 while renpy.display.draw.ready_one_texture():
-                    if not expensive and get_time() > (start + 0.0005):
+                    if not expensive and time.perf_counter() > deadline:
                         break
                 step += 1
 
@@ -2335,10 +2343,10 @@ class Interface:
                 if renpy.emscripten:
                     if expensive:
                         allow_preload = True
-                        self.last_emscripten_preload_time = get_time()
+                        self.last_emscripten_preload_time = time.perf_counter()
                     elif renpy.config.emscripten_preload_timeout is None:
                         allow_preload = False
-                    elif get_time() - self.last_emscripten_preload_time > renpy.config.emscripten_preload_timeout:
+                    elif time.perf_counter() - self.last_emscripten_preload_time > renpy.config.emscripten_preload_timeout:
                         allow_preload = True
                     else:
                         allow_preload = False
@@ -2346,7 +2354,7 @@ class Interface:
                     if allow_preload:
                         try:
                             renpy.display.im.cache.in_preload_pass = True
-                            renpy.display.im.cache.preload_thread_pass()
+                            renpy.display.im.cache.preload_thread_pass(None if expensive else deadline)
                         finally:
                             renpy.display.im.cache.in_preload_pass = False
 
@@ -2354,7 +2362,7 @@ class Interface:
 
             # Step 5: Autosave.
             elif step == 5:
-                if not self.did_autosave:
+                if not self.did_autosave and (expensive or not self.event_peek(False)):
                     renpy.loadsave.autosave()
                     self.did_autosave = True
 
@@ -2362,7 +2370,7 @@ class Interface:
 
             # Step 6: Persistent data.
             elif step == 6:
-                if not self.did_persistent:
+                if not self.did_persistent and (expensive or not self.event_peek(False)):
                     if renpy.emscripten:
                         renpy.persistent.update()
                     else:
@@ -3233,7 +3241,7 @@ class Interface:
                     or ev.type == pygame.MOUSEBUTTONDOWN
                     or ev.type == pygame.MOUSEBUTTONUP
                 ):
-                    self.mouse_event_time = renpy.display.core.get_time()
+                    self.mouse_event_time = get_time()
 
                     if self.ignore_touch:
                         renpy.display.focus.mouse_handler(None, -1, -1, default=False)
