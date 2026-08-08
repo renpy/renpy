@@ -141,6 +141,13 @@ def find_position(f: Focus | Displayable | None, position: Position | tuple[None
             if (nf.widget == f.widget) and (nf.arg == f.arg):
                 return x, y
 
+    # If the user explicitly specified a position, return it even if it's outside the displayable.
+    # This allows mouse operations relative to the displayable outside of it.
+    if posx is not None and posy is not None:
+        x = max(0, min(relative_to_absolute(posx, f.w) + f.x, renpy.config.screen_width - 1))
+        y = max(0, min(relative_to_absolute(posy, f.h) + f.y, renpy.config.screen_height - 1))
+        return x, y
+
     if isinstance(f_original, Displayable):
         ## It's not guaranteed that the displayable is in the focus list, so we
         ## return our best guess.

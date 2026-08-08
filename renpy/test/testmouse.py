@@ -28,7 +28,7 @@ mouse_pos: tuple[int, int] | None = None
 mouse_buttons = [0, 0, 0]
 
 
-def get_mouse_pos(x: int, y: int) -> tuple[int, int]:
+def get_mouse_pos(x: int = 0, y: int = 0) -> tuple[int, int]:
     """
     Called to get the overridden mouse position.
     """
