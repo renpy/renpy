@@ -34,6 +34,7 @@ from renpy.display.matrix cimport Matrix
 from renpy.gl2.gl2uniform import generate_uniform_setter
 
 import renpy
+import copy
 import random
 import re
 
@@ -49,6 +50,19 @@ GLSL_PRECISIONS = {
     "mediump",
     "lowp",
     }
+
+# Precision qualifiers ordered from weakest to strongest.
+GLSL_PRECISION_RANK = [ None, "lowp", "mediump", "highp" ]
+
+GLSL_INTERPOLATIONS = {
+    "flat",
+    "smooth",
+    "noperspective",
+    }
+
+# As above. A conflict resolves to flat, as that's the only qualifier that
+# changes what the shader is allowed to do.
+GLSL_INTERPOLATION_RANK = [ None, "smooth", "noperspective", "flat" ]
 
 ATTRIBUTE_TYPES = {
     "float" : 1,
@@ -78,6 +92,18 @@ UNIFORM_TYPES = {
 
 VARYING_TYPES = set(ATTRIBUTE_TYPES)| set(UNIFORM_TYPES)
 
+# Varying types that GLSL ES 3.00 and GLSL 3.30 refuse to interpolate.
+FLAT_TYPES = {
+    "int",
+    "ivec2",
+    "ivec3",
+    "ivec4",
+    "bool",
+    "bvec2",
+    "bvec3",
+    "bvec4",
+}
+
 
 cdef class Attribute:
     cdef object name
@@ -95,6 +121,11 @@ class Variable:
     """
     Represents a variable parsed from a shader, as part of the parsing process.
     Returns an empty object if the line is not a variable.
+
+    Accepts two dialects for the storage class. The legacy dialect (GLSL ES 1.00)
+    spells these uniform, attribute, and varying, while the modern dialect
+    (GLSL ES 3.00) spells them uniform, in, and out. Both are normalized to the
+    legacy names, so that the two dialects can be freely mixed within a single shader.
     """
 
     storage: str|None = None
@@ -112,7 +143,16 @@ class Variable:
     line: str
     "The line of source code that the variable was parsed from, including qualifiers and the trailing semicolon."
 
-    def __init__(self, shader_name, line):
+    precision: str|None = None
+    "The precision qualifier (highp, mediump, or lowp). None if not given."
+
+    invariant: bool = False
+    "True if the variable was declared invariant."
+
+    interpolation: str|None = None
+    "The interpolation qualifier (flat, smooth, or noperspective). None if not given."
+
+    def __init__(self, shader_name, line, fragment=False):
 
         l = line.strip().rstrip("; ")
         self.line = l
@@ -135,7 +175,14 @@ class Variable:
 
         token = match_word()
 
-        if token == "invariant":
+        while True:
+            if token == "invariant":
+                self.invariant = True
+            elif token in GLSL_INTERPOLATIONS:
+                self.interpolation = token
+            else:
+                break
+
             token = match_word()
 
         if token == "uniform":
@@ -144,16 +191,24 @@ class Variable:
         elif token == "attribute":
             self.storage = "attribute"
             types = ATTRIBUTE_TYPES
-        elif token == "varying":
+        elif token == "varying" or token == "out":
             self.storage = "varying"
             types = VARYING_TYPES
+        elif token == "in":
+            if fragment:
+                self.storage = "varying"
+                types = VARYING_TYPES
+            else:
+                self.storage = "attribute"
+                types = ATTRIBUTE_TYPES
         else:
             self.storage = None
             return
 
         token = match_word()
 
-        if token in ( "highp", "mediump", "lowp"):
+        if token in GLSL_PRECISIONS:
+            self.precision = token
             token = match_word()
 
         if token not in types:
@@ -172,6 +227,84 @@ class Variable:
 
         if l.rstrip():
             raise ShaderError("Spurious tokens after the name in '{}'.".format(line))
+
+    def declaration(self, fragment, version):
+        """
+        Returns the GLSL declaration of this variable, in the dialect the
+        shader is being emitted in.
+
+        `fragment`
+            True if this is being emitted into a fragment shader.
+
+        `version`
+            The GLSL version being targeted (100, 120, 300, or 330).
+        """
+
+        modern = version >= 300
+
+        if self.storage == "uniform":
+            storage = "uniform"
+        elif not modern:
+            storage = self.storage
+        elif self.storage == "attribute":
+            storage = "in"
+        else: # A varying is written by vertex and read by fragment.
+            storage = "in" if fragment else "out"
+
+        rv = []
+
+        if self.invariant:
+            rv.append("invariant")
+
+        # Interpolation qualifiers don't exist in the legacy dialect.
+        if modern and self.storage == "varying":
+            interpolation = self.interpolation
+
+            if interpolation is None and self.type in FLAT_TYPES:
+                interpolation = "flat"
+
+            if interpolation is not None:
+                rv.append(interpolation)
+
+        rv.append(storage)
+
+        # Precision qualifiers were added to desktop GLSL in 1.30.
+        if self.precision and version != 120:
+            rv.append(self.precision)
+
+        rv.append(self.type)
+
+        name = self.name
+
+        if self.array is not None:
+            name = "{}[{}]".format(name, self.array)
+
+        rv.append(name)
+
+        return " ".join(rv)
+
+    def merge(self, other):
+        """
+        Returns a variable combining the qualifiers of this variable and
+        `other`, which must declare the same thing.
+        """
+
+        qualifiers = (self.precision, self.invariant, self.interpolation)
+
+        if qualifiers == (other.precision, other.invariant, other.interpolation):
+            return self
+
+        rv = copy.copy(self)
+
+        rv.invariant = self.invariant or other.invariant
+
+        rv.precision = max(
+            self.precision, other.precision, key=GLSL_PRECISION_RANK.index)
+
+        rv.interpolation = max(
+            self.interpolation, other.interpolation, key=GLSL_INTERPOLATION_RANK.index)
+
+        return rv
 
     def __hash__(self):
         return hash((self.storage, self.type, self.name, self.array))
@@ -200,19 +333,27 @@ cdef class Program:
     def __dealloc__(self):
         glDeleteProgram(self.program)
 
-    def find_variables(self, source, seen_uniforms: set, samplers: int):
+    def find_variables(self, source, seen_uniforms: set, samplers: int, fragment=False):
 
         shader_name = "+".join(self.name)
 
         for line in source.split("\n"):
 
             l = line.strip()
+
+            # Only top-level declarations are of interest here.
+            if not l.endswith(";"):
+                continue
+
+            if ("(" in l) or ("=" in l) or ("{" in l):
+                continue
+
             l = l.rstrip("; ")
 
             if not l:
                 continue
 
-            v = Variable(shader_name, l)
+            v = Variable(shader_name, l, fragment)
 
             if v.storage == "uniform":
                 location = glGetUniformLocation(self.program, v.name.encode("utf-8"))
@@ -221,8 +362,7 @@ cdef class Program:
                     setter, samplers = generate_uniform_setter(shader_name, location, v.name, v.type, v.array, samplers)
                     self.uniform_setters.append(setter)
 
-            elif v.storage == "attribute":
-
+            elif v.storage == "attribute" and not fragment:
                 location = glGetAttribLocation(self.program, v.name.encode("utf-8"))
 
                 if v.array is None:
@@ -322,8 +462,8 @@ cdef class Program:
 
         self.uniform_setters = [ ]
 
-        samplers = self.find_variables(self.vertex, seen_uniforms, samplers)
-        self.find_variables(self.fragment, seen_uniforms, samplers)
+        samplers = self.find_variables(self.vertex, seen_uniforms, samplers, False)
+        self.find_variables(self.fragment, seen_uniforms, samplers, True)
 
     cpdef void draw(self, GL2DrawingContext context, GL2Model model, Mesh mesh):
 

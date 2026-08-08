@@ -27,6 +27,107 @@ import renpy
 # A map from shader part name to ShaderPart
 shader_part = {}
 
+# The name of the variable a fragment shader writes its color to, when the
+# modern dialect is being emitted (for legacy support, as GLSL ES 3.00 removed
+# gl_FragColor).
+FRAGMENT_OUTPUT = "renpy_FragColor"
+
+# The GLSL dialects a shader part can be authored in.
+GLSL_DIALECTS = {100: 100, 120: 100, 300: 300, 330: 300}
+
+# The GLSL versions shaders can be emitted in.
+GLSL_VERSIONS = (100, 120, 300, 330)
+
+# The names below are only rewritten when they stand alone.
+STANDALONE = r"(?<![\w.]){}\b"
+
+# Rewrites applied to a shader part authored in the legacy dialect.
+LEGACY_TO_MODERN = [
+    (re.compile(STANDALONE.format("texture2DProjLod")), "textureProjLod"),
+    (re.compile(STANDALONE.format("texture2DLod")), "textureLod"),
+    (re.compile(STANDALONE.format("texture2DProj")), "textureProj"),
+    (re.compile(STANDALONE.format("texture2D")), "texture"),
+    (re.compile(STANDALONE.format("textureCubeLod")), "textureLod"),
+    (re.compile(STANDALONE.format("textureCube")), "texture"),
+    (re.compile(STANDALONE.format("gl_FragColor")), FRAGMENT_OUTPUT),
+]
+
+# The reverse. Note that a part that uses a feature the legacy dialect lacks
+# will fail to compile with an error and source code.
+MODERN_TO_LEGACY = [
+    (re.compile(STANDALONE.format(FRAGMENT_OUTPUT)), "gl_FragColor"),
+    (re.compile(r"(?<![\w.])texture\s*\("), "texture2D("),
+]
+
+
+def parse_glsl_version(s):
+    """
+    Parses the string returned by glGetString(GL_SHADING_LANGUAGE_VERSION).
+    """
+
+    if s is None:
+        return None
+
+    m = re.search(r"(\d+)\.(\d+)", s)
+
+    if m is None:
+        return None
+
+    return int(m.group(1)) * 100 + int(m.group(2).ljust(2, "0"))
+
+
+def emit_version(gles, glsl_version):
+    """
+    Given the GLSL version the current context reports supporting, returns
+    the version Ren'Py will actually emit shaders in.
+    """
+
+    if glsl_version is None:
+        glsl_version = 0
+
+    if gles:
+        return 300 if glsl_version >= 300 else 100
+    else:
+        return 330 if glsl_version >= 330 else 120
+
+
+def translate(text, source_version, target_version):
+    """
+    Translates a chunk of shader source between the legacy and modern
+    dialects, if it wasn't authored in the one being emitted.
+
+    `source_version`
+        The dialect the text was authored in (100, 300).
+
+    `target_version`
+        The GLSL version being emitted (100, 120, 300, or 330).
+    """
+
+    if (source_version >= 300) == (target_version >= 300):
+        return text
+
+    if source_version >= 300:
+        rules = MODERN_TO_LEGACY
+    else:
+        rules = LEGACY_TO_MODERN
+
+    for pattern, replacement in rules:
+        text = pattern.sub(replacement, text)
+
+    return text
+
+
+def merge_variables(variables):
+    merged = {}
+
+    for v in variables:
+        key = (v.storage, v.type, v.name, v.array)
+        old = merged.get(key, None)
+
+        merged[key] = v if old is None else old.merge(v)
+
+    return sorted(merged.values(), key=lambda x: (x.name, x.storage, x.type))
+
 
 def register_shader(name, **kwargs):
     """
@@ -39,10 +140,29 @@ def register_shader(name, **kwargs):
         A string giving the name of the shader part. Names starting with an
         underscore or "renpy." are reserved for Ren'Py.
 
+    `glsl`
+        The GLSL dialect this shader part is written in. This should be 300
+        for new shader parts, and defaults to 100.
+
+        Ren'Py translates between the two dialects as needed, so a ``glsl=300``
+        part still runs on a device that only provides GLSL ES 1.00 unless it
+        uses a feature not present in the older version.
+
     `variables`
         The variables used by the shader part. These should be listed one per
-        line, a storage (uniform, attribute, or varying) followed by a type,
-        name, and semicolon. For example::
+        line, a storage class followed by a type, name, and semicolon.
+
+        With ``glsl=300``, the storage class is ``uniform``, ``in`` for a
+        value that comes from the mesh, or ``out`` for a value the vertex
+        shader passes to the fragment shader::
+
+            variables='''
+            uniform sampler2D tex0;
+            in vec2 a_tex_coord;
+            out vec2 v_tex_coord;
+            '''
+
+        With ``glsl=100``, it is ``uniform``, ``attribute``, or ``varying``::
 
             variables='''
             uniform sampler2D tex0;
@@ -74,7 +194,14 @@ class ShaderPart(object):
     """
 
     def __init__(
-        self, name, variables="", vertex_functions="", fragment_functions="", private_uniforms=False, **kwargs
+        self,
+        name,
+        variables="",
+        vertex_functions="",
+        fragment_functions="",
+        private_uniforms=False,
+        glsl=100,
+        **kwargs,
     ):
         if not re.match(r"^[\w\.]+$", name):
             raise Exception(
@@ -83,8 +210,17 @@ class ShaderPart(object):
                 )
             )
 
+        if glsl not in GLSL_DIALECTS:
+            raise Exception(
+                "In shader {}: glsl={!r} is not a known GLSL dialect. Use glsl=300 (or the equivalent glsl=330) "
+                "for GLSL ES 3.00, or glsl=100 (or the equivalent glsl=120) for GLSL ES 1.00.".format(name, glsl)
+            )
+
         self.name = name
         shader_part[name] = self
+
+        # The dialect this part is authored in, normalized to 100 or 300.
+        self.glsl = GLSL_DIALECTS[glsl]
 
         self.vertex_functions = vertex_functions
         self.fragment_functions = fragment_functions
@@ -129,7 +265,7 @@ class ShaderPart(object):
             else:
                 raise Exception("Keyword arguments to ShaderPart must be of the form {vertex,fragment}_{priority}.")
 
-            parts.append((priority, name, v))
+            parts.append((priority, name, v, self.glsl))
 
             for m in re.finditer(r"\b\w+\b", v):
                 used.add(m.group(0))
@@ -146,7 +282,7 @@ class ShaderPart(object):
 
             if v.storage not in {"uniform", "attribute", "varying"}:
                 raise Exception(
-                    "In shader {}: Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(
+                    "In shader {}: Unknown shader variable line {!r}. Only the form '{{uniform,in,out}} {{type}} {{name}};' is allowed, or the equivalent '{{uniform,attribute,varying}} {{type}} {{name}};'.".format(
                         self.name, l
                     )
                 )
@@ -213,23 +349,38 @@ class ShaderPart(object):
 cache = {}
 
 
-def source(variables, parts, functions, fragment, gles):
+def source(variables, parts, functions, fragment, gles, version):
     """
     Given lists of variables and parts, converts them into textual source
     code for a shader.
 
     `fragment`
         Should be set to true to generate the code for a fragment shader.
+
+    `gles`
+        True if this is an OpenGL ES context.
+
+    `version`
+        The GLSL version to emit, one of 100, 120, 300, or 330.
     """
 
     rv = []
 
-    if gles:
-        rv.append("""\
-#version 100
-""")
+    # The es suffix is what distinguishes GLSL ES from desktop GLSL, and it's
+    # required from GLSL ES 3.00 on.
+    if gles and version >= 300:
+        rv.append("#version {} es\n".format(version))
+    else:
+        rv.append("#version {}\n".format(version))
 
-        if fragment:
+    # Fragment shaders below GLSL ES 3.00 have to declare a default precision.
+    if fragment and gles:
+        if version >= 300:
+            rv.append("""\
+precision highp float;
+precision highp int;
+""")
+        else:
             rv.append("""\
 #ifdef GL_FRAGMENT_PRECISION_HIGH
     precision highp float;
@@ -240,22 +391,22 @@ def source(variables, parts, functions, fragment, gles):
 #endif
 """)
 
-    else:
-        rv.append("""\
-#version 120
-""")
+    # gl_FragColor does not exist in the modern dialect.
+    if fragment and version >= 300:
+        rv.append("out vec4 {};\n".format(FRAGMENT_OUTPUT))
 
-    for v in sorted(variables, key=lambda x: x.name):
-        rv.append(v.line + ";\n")
+    for v in merge_variables(variables):
+        rv.append(v.declaration(fragment, version) + ";\n")
 
-    rv.extend(functions)
+    for text, glsl in functions:
+        rv.append(translate(text, glsl, version))
 
     rv.append("\nvoid main() {\n")
 
     parts.sort()
 
-    for _, _, part in parts:
-        rv.append(part)
+    for _, _, part, glsl in parts:
+        rv.append(translate(part, glsl, version))
 
     rv.append("}\n")
 
@@ -272,13 +423,39 @@ class ShaderCache(object):
     loading the shaders back into the cache.
     """
 
-    def __init__(self, filename, gles):
+    def __init__(self, filename, gles, glsl_version=None):
         # The filename that we'll load the list of shaders from, and
         # persist it to.
         self.filename = filename
 
         # Are we gles?
         self.gles = gles
+
+        # The GLSL version the context reports supporting, or None if it
+        # couldn't be determined.
+        self.glsl_version = glsl_version
+
+        # The version shaders are emitted in. This may be lowered later, if a
+        # shader turns out not to compile at the version we picked.
+        if renpy.config.gl_glsl_version is not None:
+            if renpy.config.gl_glsl_version not in GLSL_VERSIONS:
+                raise Exception(
+                    "config.gl_glsl_version is {!r}, which is not one of {}.".format(
+                        renpy.config.gl_glsl_version, ", ".join(str(i) for i in GLSL_VERSIONS)
+                    )
+                )
+
+            self.version = renpy.config.gl_glsl_version
+
+            self.pinned = True
+        else:
+            self.version = emit_version(gles, glsl_version)
+
+            self.pinned = False
+
+        # Part names that have been reported as being downgraded out of the
+        # modern dialect, so that it's only reported once per part.
+        self.downgraded = set()
 
         # A map from tuples of partnames to the shaders that have been
         # created.
@@ -336,11 +513,11 @@ class ShaderCache(object):
         # If the cache missed entirely, we have to generate the source code for the
         # shaders.
 
-        vertex_variables = set()
+        vertex_variables = []
         vertex_parts = []
         vertex_functions = []
 
-        fragment_variables = set()
+        fragment_variables = []
         fragment_parts = []
         fragment_functions = []
 
@@ -350,24 +527,67 @@ class ShaderCache(object):
             if p is None:
                 raise Exception("{!r} is not a known shader part.".format(i))
 
-            vertex_variables |= p.vertex_variables
+            if p.glsl >= 300 and self.version < 300 and i not in self.downgraded:
+                self.downgraded.add(i)
+
+                renpy.display.log.write(
+                    "Shader part %r is written in GLSL ES 3.00, but shaders are being emitted as GLSL %s "
+                    "(this system reports GLSL %s). It will be translated, but may not compile.",
+                    i,
+                    self.version,
+                    self.glsl_version,
+                )
+
+            vertex_variables.extend(p.vertex_variables)
             vertex_parts.extend(p.vertex_parts)
-            vertex_functions.append(p.vertex_functions)
+            vertex_functions.append((p.vertex_functions, p.glsl))
 
-            fragment_variables |= p.fragment_variables
+            fragment_variables.extend(p.fragment_variables)
             fragment_parts.extend(p.fragment_parts)
-            fragment_functions.append(p.fragment_functions)
+            fragment_functions.append((p.fragment_functions, p.glsl))
 
-        vertex = source(vertex_variables, vertex_parts, vertex_functions, False, self.gles)
-        fragment = source(fragment_variables, fragment_parts, fragment_functions, True, self.gles)
+        from renpy.gl2.gl2shader import Program, ShaderError
 
-        self.log_shader("vertex", sortedpartnames, vertex)
-        self.log_shader("fragment", sortedpartnames, fragment)
+        def build(version):
+            vertex = source(vertex_variables, vertex_parts, vertex_functions, False, self.gles, version)
+            fragment = source(fragment_variables, fragment_parts, fragment_functions, True, self.gles, version)
 
-        from renpy.gl2.gl2shader import Program
+            self.log_shader("vertex", sortedpartnames, vertex)
+            self.log_shader("fragment", sortedpartnames, fragment)
 
-        rv = Program(sortedpartnames, vertex, fragment)
-        rv.load()
+            rv = Program(sortedpartnames, vertex, fragment)
+            rv.load()
+
+            return rv
+
+        try:
+            rv = build(self.version)
+
+        except ShaderError as e:
+            # The context claimed to support the modern dialect, but this
+            # shader didn't survive being emitted in it. Drop back to the
+            # legacy dialect for the rest of the session.
+
+            legacy = emit_version(self.gles, 0)
+
+            modern = any(shader_part[i].glsl >= 300 for i in sortedpartnames)
+
+            if self.pinned or modern or (self.version == legacy):
+                raise
+
+            renpy.display.log.write(
+                "Shader %r did not compile as GLSL %s, so shaders will be emitted as GLSL %s "
+                "for the rest of this session. This system reports supporting GLSL %s. The error was: %s",
+                sortedpartnames,
+                self.version,
+                legacy,
+                self.glsl_version,
+                e,
+            )
+
+            self.version = legacy
+
+            rv = build(legacy)
 
         self.cache[partnames] = rv
         self.cache[sortedpartnames] = rv
