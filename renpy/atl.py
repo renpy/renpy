@@ -176,8 +176,32 @@ def interpolate(t, a, b, typ):
     # If something is callable, call it and return the result.
     elif callable(b):
         a_origin = getattr(a, "origin", None)
-        rv = b(a_origin, t)
+
+        b_is_BaseMatrix = hasattr(b, "value")
+
+        # Pass a Matrix directly when `a` is a Matrix (from a previous interpolation)
+        # and `b` is a _BaseMatrix (class in store namespace, interpolates via `.value`).
+        # This allows _BaseMatrix.__call__ to use `a.origin_value` so that
+        # interpolation after an interruption (e.g. replaced by a new transform)
+        # continues from where the old one was interrupted.
+        # Other callables (SplineMatrix, user functions) keep the old behaviour.
+        if isinstance(a, renpy.display.matrix.Matrix) and b_is_BaseMatrix:
+            rv = b(a, t)
+        else:
+            rv = b(a_origin, t)
+
         rv.origin = b
+
+        # Record the effective value on the result Matrix, so a future
+        # interpolation can continue from here.
+        if b_is_BaseMatrix:
+            if isinstance(a, renpy.display.matrix.Matrix) and a.origin_value is not None:
+                rv.origin_value = a.origin_value + (b.value - a.origin_value) * t
+            elif a_origin is not None and hasattr(a_origin, "value"):
+                rv.origin_value = a_origin.value + (b.value - a_origin.value) * t
+            else:
+                rv.origin_value = b.value
+
         return rv
 
     # Interpolate everything else.
