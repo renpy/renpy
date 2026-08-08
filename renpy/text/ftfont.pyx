@@ -726,7 +726,7 @@ cdef class FTFont:
 
         return x, y, w, h
 
-    def draw(self, pysurf, float xo, int yo, color, list glyphs, int underline, bint strikethrough, black_color):
+    def draw(self, Surface pysurf, float xo, int yo, color, list glyphs, int underline, bint strikethrough, black_color):
         """
         Draws a list of glyphs to surf, with the baseline starting at x, y.
         """
@@ -762,7 +762,7 @@ cdef class FTFont:
 
         self.setup()
 
-        surf = (<Surface> pysurf).sdl_surface
+        surf = pysurf.sdl_surface
         pixels = <unsigned char *> surf.pixels
         pitch = surf.pitch
 

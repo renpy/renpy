@@ -503,7 +503,7 @@ cdef class GLTexture(GL2Model):
 
         draw = self.loader.draw
 
-        s = (<Surface> self.surface).sdl_surface
+        s = self.surface.sdl_surface
 
         # Generate the old textures.
         glGenTextures(1, &tex)
@@ -592,7 +592,7 @@ cdef class GLTexture(GL2Model):
 
         draw = self.loader.draw
 
-        s = (<Surface> self.surface).sdl_surface
+        s = self.surface.sdl_surface
 
         glGenTextures(1, &premultiplied)
 
