@@ -32,11 +32,10 @@ from renpy.pygame.sdl cimport *
 from renpy.uguu.gl cimport *
 import renpy.gl2.gl2functions
 
-from renpy.pygame.surface cimport PySurface_AsSurface
+from renpy.pygame.surface cimport Surface
 
 import renpy
 import renpy.pygame as pygame
-from renpy.pygame import Surface
 
 import os
 import os.path
@@ -1071,7 +1070,7 @@ cdef class GL2Draw:
 
         """
 
-        if isinstance(what, Surface):
+        if isinstance(what, pygame.Surface):
             what = self.load_texture(what)
             self.load_all_textures(what, reverse)
             return
@@ -1173,7 +1172,7 @@ cdef class GL2Draw:
         else:
             need_mipmap = properties.get("mipmap", False)
 
-        if isinstance(what, Surface):
+        if isinstance(what, pygame.Surface):
             what = self.load_texture(what)
 
             texture_transform = MatrixStack([1, 0, 0, 1])
@@ -1306,7 +1305,7 @@ cdef class GL2Draw:
             sw, sh = self.drawable_size
 
         full = renpy.display.pgrender.surface_unscaled((sw, sh), True)
-        surf = PySurface_AsSurface(full)
+        surf = (<Surface> full).surface
 
         # Create an array that can hold densely-packed pixels.
         raw_pixels = <unsigned char *> malloc(surf.w * surf.h * 4)
@@ -1508,7 +1507,7 @@ cdef class GL2DrawingContext:
         # When config.merge_uniforms is empty (the default), a plain update avoids the per-key membership tests.
         if not config_merge:
             self.uniforms.update(uniforms)
-            
+
             return
 
         for k, v in uniforms.items():
@@ -1664,7 +1663,7 @@ cdef class GL2DrawingContext:
                 ctx.draw_model(what)
                 return
 
-            if isinstance(what, Surface):
+            if isinstance(what, pygame.Surface):
                 what = (<GL2Draw> renpy.display.draw).load_texture(what)
 
         cdef Render r = what

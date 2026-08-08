@@ -31,15 +31,14 @@ from renpy.display.displayable import Displayable
 from renpy.display.core import absolute
 
 from renpy.pygame.sdl cimport *
-
-from renpy.pygame.surface cimport PySurface_AsSurface
+from renpy.pygame.surface cimport Surface
 
 ################################################################################
 # Surface copying
 ################################################################################
 
 
-def nogil_copy(src, dest):
+def nogil_copy(Surface src, Surface dest):
     """
     Does a gil-less blit of src to dest, with minimal locking.
     """
@@ -47,8 +46,8 @@ def nogil_copy(src, dest):
     cdef SDL_Surface *src_surf
     cdef SDL_Surface *dst_surf
 
-    src_surf = PySurface_AsSurface(src)
-    dst_surf = PySurface_AsSurface(dest)
+    src_surf = src.surface
+    dst_surf = dest.surface
 
     with nogil:
         SDL_SetSurfaceBlendMode(src_surf, SDL_BLENDMODE_NONE)

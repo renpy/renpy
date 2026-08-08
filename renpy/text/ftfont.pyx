@@ -23,8 +23,7 @@
 from __future__ import print_function
 
 from renpy.pygame.sdl cimport *
-
-from renpy.pygame.surface cimport PySurface_AsSurface
+from renpy.pygame.surface cimport Surface
 
 from freetype cimport *
 from ttgsubtable cimport *
@@ -763,7 +762,7 @@ cdef class FTFont:
 
         self.setup()
 
-        surf = PySurface_AsSurface(pysurf)
+        surf = (<Surface> pysurf).surface
         pixels = <unsigned char *> surf.pixels
         pitch = surf.pitch
 

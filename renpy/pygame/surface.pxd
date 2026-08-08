@@ -56,5 +56,3 @@ cdef class Surface:
     cdef void _blend(self, Surface source, int function)
 
     cdef bint has_alpha
-
-cdef api SDL_Surface *PySurface_AsSurface(object surface)

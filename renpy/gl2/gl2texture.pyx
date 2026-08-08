@@ -27,8 +27,7 @@ DEF ANGLE = False
 
 
 from renpy.pygame.sdl cimport *
-
-from renpy.pygame.surface cimport PySurface_AsSurface
+from renpy.pygame.surface cimport Surface
 
 from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy
@@ -504,7 +503,7 @@ cdef class GLTexture(GL2Model):
 
         draw = self.loader.draw
 
-        s = PySurface_AsSurface(self.surface)
+        s = (<Surface> self.surface).surface
 
         # Generate the old textures.
         glGenTextures(1, &tex)
@@ -593,7 +592,7 @@ cdef class GLTexture(GL2Model):
 
         draw = self.loader.draw
 
-        s = PySurface_AsSurface(self.surface)
+        s = (<Surface> self.surface).surface
 
         glGenTextures(1, &premultiplied)
 
