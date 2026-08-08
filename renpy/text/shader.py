@@ -447,16 +447,17 @@ def register_textshader(
     should begin with ``u__``, using :ref:`shader local variables <shader-local-variables>`
     to prevent conflicts with other shaders.
 
-    A keyword argument named `variables` and all keyword arguments that begin
-    with `fragment_` or `vertex_` are passed to :func:`renpy.register_shader`,
-    which registers the shader part.
+    Keyword arguments named `variables` and `glsl`, and all keyword arguments
+    that begin with `fragment_` or `vertex_`, are passed to
+    :func:`renpy.register_shader`, which registers the shader part. New text
+    shaders should pass ``glsl=300`` and be written in GLSL ES 3.00.
     """
 
     textshader_kwargs = {}
     part_kwargs = {}
 
     for k, v in kwargs.items():
-        if k == "variables":
+        if k in ("variables", "glsl"):
             part_kwargs[k] = v
         elif k.startswith("fragment_"):
             part_kwargs[k] = v

@@ -1183,6 +1183,10 @@ log_gl_extensions = False
 # Should GL shaders be logged to log.txt
 log_gl_shaders = False
 
+# Forces the GLSL version shaders are emitted in, one of 100, 120, 300, or
+# 330. When None, this is chosen from the version the GL context reports.
+gl_glsl_version = None
+
 # OpenGL Blend Funcs
 gl_blend_func = {}
 
