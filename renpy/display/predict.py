@@ -45,6 +45,9 @@ screens = []
 # A list of translation ids for the statement being predicted.
 tlids = list[str | None]
 
+# The statement currently being predicted, or None outside statement prediction.
+statement = None
+
 
 def displayable(d):
     """
