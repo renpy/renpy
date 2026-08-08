@@ -135,13 +135,13 @@ def save(Surface surface not None, filename, compression=-1):
 
     if ext == b'.PNG':
         with nogil:
-            err = Pygame_SDL2_SavePNG(fn, surface.surface, compression_level)
+            err = Pygame_SDL2_SavePNG(fn, surface.sdl_surface, compression_level)
     elif ext == b'.BMP':
         with nogil:
-            err = not SDL_SaveBMP(surface.surface, fn)
+            err = not SDL_SaveBMP(surface.sdl_surface, fn)
     elif ext == b".JPG" or ext == b".JPEG":
         with nogil:
-            err = Pygame_SDL2_SaveJPEG(surface.surface, fn, compression_level)
+            err = Pygame_SDL2_SaveJPEG(surface.sdl_surface, fn, compression_level)
     else:
         raise ValueError("Unsupported format: %s" % ext)
 

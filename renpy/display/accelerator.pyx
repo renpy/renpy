@@ -46,8 +46,8 @@ def nogil_copy(Surface src, Surface dest):
     cdef SDL_Surface *src_surf
     cdef SDL_Surface *dst_surf
 
-    src_surf = src.surface
-    dst_surf = dest.surface
+    src_surf = src.sdl_surface
+    dst_surf = dest.sdl_surface
 
     with nogil:
         SDL_SetSurfaceBlendMode(src_surf, SDL_BLENDMODE_NONE)

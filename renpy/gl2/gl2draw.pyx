@@ -1305,7 +1305,7 @@ cdef class GL2Draw:
             sw, sh = self.drawable_size
 
         full = renpy.display.pgrender.surface_unscaled((sw, sh), True)
-        surf = (<Surface> full).surface
+        surf = (<Surface> full).sdl_surface
 
         # Create an array that can hold densely-packed pixels.
         raw_pixels = <unsigned char *> malloc(surf.w * surf.h * 4)

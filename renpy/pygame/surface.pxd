@@ -25,7 +25,7 @@ cdef class Surface:
     cdef object __weakref__
 
     # The SDL surface that corresponds to this surface.
-    cdef SDL_Surface* surface
+    cdef SDL_Surface* sdl_surface
 
     # True if we own our surface. False if some other Surface owns our
     # surface.

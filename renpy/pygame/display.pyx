@@ -177,7 +177,7 @@ cdef class Window:
                 raise error()
 
             if shape is not None:
-                SDL_SetWindowShape(self.window, shape.surface)
+                SDL_SetWindowShape(self.window, shape.sdl_surface)
 
 
             if pos != (SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED):
@@ -240,7 +240,7 @@ cdef class Window:
             if self.window_surface.format == SDL_PIXELFORMAT_RGBA32:
 
                 self.surface = Surface(())
-                self.surface.surface = self.window_surface
+                self.surface.sdl_surface = self.window_surface
                 self.surface.owns_surface = False
                 self.surface.window_surface = True
 
@@ -358,7 +358,7 @@ cdef class Window:
         return rv
 
     def proxy_window_surface(self):
-        SDL_BlitSurface(self.surface.surface, NULL, self.window_surface, NULL)
+        SDL_BlitSurface(self.surface.sdl_surface, NULL, self.window_surface, NULL)
 
     def flip(self):
         cdef const char *err
@@ -376,7 +376,7 @@ cdef class Window:
 
         else:
 
-            if self.surface.surface != self.window_surface:
+            if self.surface.sdl_surface != self.window_surface:
                 self.proxy_window_surface()
 
             with nogil:
@@ -394,7 +394,7 @@ cdef class Window:
             self.flip()
             return
 
-        if self.surface.surface != self.window_surface:
+        if self.surface.sdl_surface != self.window_surface:
             self.proxy_window_surface()
 
         if not isinstance(rectangles, list):
@@ -442,7 +442,7 @@ cdef class Window:
         return True
 
     def set_icon(self, Surface surface):
-        SDL_SetWindowIcon(self.window, surface.surface)
+        SDL_SetWindowIcon(self.window, surface.sdl_surface)
 
     def set_caption(self, title):
 

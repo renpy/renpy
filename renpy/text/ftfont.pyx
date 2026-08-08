@@ -762,7 +762,7 @@ cdef class FTFont:
 
         self.setup()
 
-        surf = (<Surface> pysurf).surface
+        surf = (<Surface> pysurf).sdl_surface
         pixels = <unsigned char *> surf.pixels
         pitch = surf.pitch
 

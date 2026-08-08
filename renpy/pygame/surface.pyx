@@ -79,7 +79,7 @@ total_size = 0
 cdef class Surface:
 
     def __cinit__(self):
-        self.surface = NULL
+        self.sdl_surface = NULL
         self.owns_surface = False
         self.window_surface = False
         self.has_alpha = False
@@ -87,23 +87,23 @@ cdef class Surface:
     def __dealloc__(self):
         global total_size
 
-        if self.surface and self.owns_surface:
+        if self.sdl_surface and self.owns_surface:
             if total_size:
-                total_size -= self.surface.pitch * self.surface.h
+                total_size -= self.sdl_surface.pitch * self.sdl_surface.h
 
-            SDL_DestroySurface(self.surface)
+            SDL_DestroySurface(self.sdl_surface)
             return
         elif self.window_surface:
             return
         elif self.parent:
-            SDL_DestroySurface(self.surface)
+            SDL_DestroySurface(self.sdl_surface)
             return
 
         warnings.warn("Memory leak via Surface in renpy.pygame.")
 
     def __sizeof__(self):
-        if self.surface and self.owns_surface:
-            return self.surface.pitch * self.surface.h
+        if self.sdl_surface and self.owns_surface:
+            return self.sdl_surface.pitch * self.sdl_surface.h
         else:
             return 0
 
@@ -145,16 +145,16 @@ cdef class Surface:
         if not surface:
             raise error("A null pointer was passed in.")
 
-        self.surface = surface
+        self.sdl_surface = surface
         self.owns_surface = True
 
         global total_size
 
-        total_size += self.surface.pitch * self.surface.h
+        total_size += self.sdl_surface.pitch * self.sdl_surface.h
 
     def __repr__(self):
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
-        return "<Surface({}x{}x{})>".format(self.surface.w, self.surface.h, format.bits_per_pixel)
+        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.sdl_surface.format)
+        return "<Surface({}x{}x{})>".format(self.sdl_surface.w, self.sdl_surface.h, format.bits_per_pixel)
 
     def blit(self, Surface source, dest, area=None, int special_flags=0):
         cdef SDL_Rect dest_rect
@@ -194,8 +194,8 @@ cdef class Surface:
 
         dest_rect.x = dst_x
         dest_rect.y = dst_y
-        dest_rect.w = source.surface.w
-        dest_rect.h = source.surface.h
+        dest_rect.w = source.sdl_surface.w
+        dest_rect.h = source.sdl_surface.h
 
         if area is not None:
             to_sdl_rect(area, &area_rect, "area")
@@ -207,8 +207,8 @@ cdef class Surface:
         else:
             src_x = 0
             src_y = 0
-            src_w = source.surface.w
-            src_h = source.surface.h
+            src_w = source.sdl_surface.w
+            src_h = source.sdl_surface.h
 
         if special_flags:
 
@@ -223,21 +223,21 @@ cdef class Surface:
                 src_h += src_y
                 src_y = 0
 
-            if src_x + src_w > source.surface.w:
-                src_w = source.surface.w - src_x
+            if src_x + src_w > source.sdl_surface.w:
+                src_w = source.sdl_surface.w - src_x
 
-            if src_y + src_h > source.surface.h:
-                src_h = source.surface.h - src_y
+            if src_y + src_h > source.sdl_surface.h:
+                src_h = source.sdl_surface.h - src_y
 
             if src_w <= 0 or src_h <= 0:
                 return Rect(0, 0, 0, 0)
 
-            SDL_GetSurfaceClipRect(self.surface, &clip_rect)
+            SDL_GetSurfaceClipRect(self.sdl_surface, &clip_rect)
 
             left = max(dst_x, 0, clip_rect.x)
             top = max(dst_y, 0, clip_rect.y)
-            right = min(dst_x + src_w, self.surface.w, clip_rect.x + clip_rect.w)
-            bottom = min(dst_y + src_h, self.surface.h, clip_rect.y + clip_rect.h)
+            right = min(dst_x + src_w, self.sdl_surface.w, clip_rect.x + clip_rect.w)
+            bottom = min(dst_y + src_h, self.sdl_surface.h, clip_rect.y + clip_rect.h)
 
             if right <= left or bottom <= top:
                 return Rect(0, 0, 0, 0)
@@ -259,13 +259,13 @@ cdef class Surface:
             return Rect(left, top, out_w, out_h)
 
         with nogil:
-            SDL_SetSurfaceBlendMode(source.surface, SDL_BLENDMODE_BLEND)
-            success = SDL_BlitSurface(source.surface, area_ptr, self.surface, &dest_rect)
+            SDL_SetSurfaceBlendMode(source.sdl_surface, SDL_BLENDMODE_BLEND)
+            success = SDL_BlitSurface(source.sdl_surface, area_ptr, self.sdl_surface, &dest_rect)
 
         if not success:
             raise error()
 
-        dirty = Rect(dest[0], dest[1], source.surface.w, source.surface.h)
+        dirty = Rect(dest[0], dest[1], source.sdl_surface.w, source.sdl_surface.h)
         return dirty.clip(self.get_rect())
 
     cdef void _blend(self, Surface source, int function):
@@ -274,8 +274,8 @@ cdef class Surface:
         cdef int x
         cdef int y
         cdef int tmp
-        cdef int w = self.surface.w
-        cdef int h = self.surface.h
+        cdef int w = self.sdl_surface.w
+        cdef int h = self.sdl_surface.h
 
         cdef Uint8 *src_pixels
         cdef Uint8 *dst_pixels
@@ -290,17 +290,17 @@ cdef class Surface:
         cdef Uint8 sA
         cdef Uint8 dA
 
-        if source.surface.w != w or source.surface.h != h:
+        if source.sdl_surface.w != w or source.sdl_surface.h != h:
             raise error("source and destination surfaces must be the same size.")
 
         # These paths assume little-endian 32-bit RGBA surfaces.
-        src_pixels = <Uint8 *> source.surface.pixels
-        dst_pixels = <Uint8 *> self.surface.pixels
+        src_pixels = <Uint8 *> source.sdl_surface.pixels
+        dst_pixels = <Uint8 *> self.sdl_surface.pixels
 
         if function == C_BLEND_ALPHA_SDL2:
             with nogil:
-                SDL_SetSurfaceBlendMode(source.surface, SDL_BLENDMODE_BLEND)
-                success = SDL_BlitSurface(source.surface, NULL, self.surface, NULL)
+                SDL_SetSurfaceBlendMode(source.sdl_surface, SDL_BLENDMODE_BLEND)
+                success = SDL_BlitSurface(source.sdl_surface, NULL, self.sdl_surface, NULL)
 
             if not success:
                 raise error()
@@ -308,8 +308,8 @@ cdef class Surface:
         elif function == C_BLEND_ADD:
             with nogil:
                 for y in range(h):
-                    src_row = src_pixels + y * source.surface.pitch
-                    dst_row = dst_pixels + y * self.surface.pitch
+                    src_row = src_pixels + y * source.sdl_surface.pitch
+                    dst_row = dst_pixels + y * self.sdl_surface.pitch
 
                     for x in range(w):
                         sp = src_row + x * 4
@@ -327,8 +327,8 @@ cdef class Surface:
         elif function == C_BLEND_SUB:
             with nogil:
                 for y in range(h):
-                    src_row = src_pixels + y * source.surface.pitch
-                    dst_row = dst_pixels + y * self.surface.pitch
+                    src_row = src_pixels + y * source.sdl_surface.pitch
+                    dst_row = dst_pixels + y * self.sdl_surface.pitch
 
                     for x in range(w):
                         sp = src_row + x * 4
@@ -346,8 +346,8 @@ cdef class Surface:
         elif function == C_BLEND_MULT:
             with nogil:
                 for y in range(h):
-                    src_row = src_pixels + y * source.surface.pitch
-                    dst_row = dst_pixels + y * self.surface.pitch
+                    src_row = src_pixels + y * source.sdl_surface.pitch
+                    dst_row = dst_pixels + y * self.sdl_surface.pitch
 
                     for x in range(w):
                         sp = src_row + x * 4
@@ -371,8 +371,8 @@ cdef class Surface:
         elif function == C_BLEND_MIN:
             with nogil:
                 for y in range(h):
-                    src_row = src_pixels + y * source.surface.pitch
-                    dst_row = dst_pixels + y * self.surface.pitch
+                    src_row = src_pixels + y * source.sdl_surface.pitch
+                    dst_row = dst_pixels + y * self.sdl_surface.pitch
 
                     for x in range(w):
                         sp = src_row + x * 4
@@ -388,8 +388,8 @@ cdef class Surface:
         elif function == C_BLEND_MAX:
             with nogil:
                 for y in range(h):
-                    src_row = src_pixels + y * source.surface.pitch
-                    dst_row = dst_pixels + y * self.surface.pitch
+                    src_row = src_pixels + y * source.sdl_surface.pitch
+                    dst_row = dst_pixels + y * self.sdl_surface.pitch
 
                     for x in range(w):
                         sp = src_row + x * 4
@@ -405,8 +405,8 @@ cdef class Surface:
         elif function == C_BLEND_RGBA_ADD:
             with nogil:
                 for y in range(h):
-                    src_row = src_pixels + y * source.surface.pitch
-                    dst_row = dst_pixels + y * self.surface.pitch
+                    src_row = src_pixels + y * source.sdl_surface.pitch
+                    dst_row = dst_pixels + y * self.sdl_surface.pitch
 
                     for x in range(w):
                         sp = src_row + x * 4
@@ -427,8 +427,8 @@ cdef class Surface:
         elif function == C_BLEND_RGBA_SUB:
             with nogil:
                 for y in range(h):
-                    src_row = src_pixels + y * source.surface.pitch
-                    dst_row = dst_pixels + y * self.surface.pitch
+                    src_row = src_pixels + y * source.sdl_surface.pitch
+                    dst_row = dst_pixels + y * self.sdl_surface.pitch
 
                     for x in range(w):
                         sp = src_row + x * 4
@@ -449,8 +449,8 @@ cdef class Surface:
         elif function == C_BLEND_RGBA_MULT:
             with nogil:
                 for y in range(h):
-                    src_row = src_pixels + y * source.surface.pitch
-                    dst_row = dst_pixels + y * self.surface.pitch
+                    src_row = src_pixels + y * source.sdl_surface.pitch
+                    dst_row = dst_pixels + y * self.sdl_surface.pitch
 
                     for x in range(w):
                         sp = src_row + x * 4
@@ -479,8 +479,8 @@ cdef class Surface:
         elif function == C_BLEND_RGBA_MIN:
             with nogil:
                 for y in range(h):
-                    src_row = src_pixels + y * source.surface.pitch
-                    dst_row = dst_pixels + y * self.surface.pitch
+                    src_row = src_pixels + y * source.sdl_surface.pitch
+                    dst_row = dst_pixels + y * self.sdl_surface.pitch
 
                     for x in range(w):
                         sp = src_row + x * 4
@@ -498,8 +498,8 @@ cdef class Surface:
         elif function == C_BLEND_RGBA_MAX:
             with nogil:
                 for y in range(h):
-                    src_row = src_pixels + y * source.surface.pitch
-                    dst_row = dst_pixels + y * self.surface.pitch
+                    src_row = src_pixels + y * source.sdl_surface.pitch
+                    dst_row = dst_pixels + y * self.sdl_surface.pitch
 
                     for x in range(w):
                         sp = src_row + x * 4
@@ -517,8 +517,8 @@ cdef class Surface:
         elif function == C_BLEND_PREMULTIPLIED:
             with nogil:
                 for y in range(h):
-                    src_row = src_pixels + y * source.surface.pitch
-                    dst_row = dst_pixels + y * self.surface.pitch
+                    src_row = src_pixels + y * source.sdl_surface.pitch
+                    dst_row = dst_pixels + y * self.sdl_surface.pitch
 
                     for x in range(w):
                         sp = src_row + x * 4
@@ -547,7 +547,7 @@ cdef class Surface:
     def convert(self, surface=None):
 
         with nogil:
-            new_surface = SDL_ConvertSurface(self.surface, SDL_PIXELFORMAT_RGBA32)
+            new_surface = SDL_ConvertSurface(self.sdl_surface, SDL_PIXELFORMAT_RGBA32)
 
         if not new_surface:
             raise error()
@@ -560,7 +560,7 @@ cdef class Surface:
     def convert_alpha(self, Surface surface=None):
 
         with nogil:
-            new_surface = SDL_ConvertSurface(self.surface, SDL_PIXELFORMAT_RGBA32)
+            new_surface = SDL_ConvertSurface(self.sdl_surface, SDL_PIXELFORMAT_RGBA32)
 
         if not new_surface:
             raise error()
@@ -576,7 +576,7 @@ cdef class Surface:
     def fill(self, color, rect=None, special_flags=0):
 
         cdef SDL_Rect sdl_rect
-        cdef Uint32 pixel = map_color(self.surface, color)
+        cdef Uint32 pixel = map_color(self.sdl_surface, color)
         cdef int success
 
         if rect is not None:
@@ -594,7 +594,7 @@ cdef class Surface:
                 return Rect(0, 0, 0, 0)
 
             with nogil:
-                success = SDL_FillSurfaceRect(self.surface, &sdl_rect, pixel)
+                success = SDL_FillSurfaceRect(self.sdl_surface, &sdl_rect, pixel)
 
             if not success:
                 raise error()
@@ -603,22 +603,22 @@ cdef class Surface:
 
         else:
             with nogil:
-                success = SDL_FillSurfaceRect(self.surface, NULL, pixel)
+                success = SDL_FillSurfaceRect(self.sdl_surface, NULL, pixel)
 
             if not success:
                 raise error()
 
-            return Rect(0, 0, self.surface.w, self.surface.h)
+            return Rect(0, 0, self.sdl_surface.w, self.sdl_surface.h)
 
 
     def scroll(self, int dx=0, int dy=0):
         cdef int srcx, destx, move_width
         cdef int srcy, desty, move_height
 
-        cdef int width = self.surface.w
-        cdef int height = self.surface.h
+        cdef int width = self.sdl_surface.w
+        cdef int height = self.sdl_surface.h
 
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
+        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.sdl_surface.format)
         cdef int per_pixel = format.bytes_per_pixel
 
         if dx >= 0:
@@ -639,11 +639,11 @@ cdef class Surface:
             desty = 0
             move_height = height + dy
 
-        cdef Uint8 *srcptr = <Uint8 *> self.surface.pixels
-        cdef Uint8 *destptr = <Uint8 *> self.surface.pixels
+        cdef Uint8 *srcptr = <Uint8 *> self.sdl_surface.pixels
+        cdef Uint8 *destptr = <Uint8 *> self.sdl_surface.pixels
 
-        srcptr += srcy * self.surface.pitch + srcx * per_pixel
-        destptr += desty * self.surface.pitch + destx * per_pixel
+        srcptr += srcy * self.sdl_surface.pitch + srcx * per_pixel
+        destptr += desty * self.sdl_surface.pitch + destx * per_pixel
 
         with nogil:
             move_pixels(
@@ -651,8 +651,8 @@ cdef class Surface:
                 destptr,
                 move_height,
                 move_width * per_pixel,
-                self.surface.pitch,
-                self.surface.pitch)
+                self.sdl_surface.pitch,
+                self.sdl_surface.pitch)
 
     def lock(self, lock=None):
         pass
@@ -675,16 +675,16 @@ cdef class Surface:
 
         x, y = pos
 
-        if not (0 <= x < self.surface.w) or not (0 <= y < self.surface.h):
+        if not (0 <= x < self.sdl_surface.w) or not (0 <= y < self.sdl_surface.h):
             raise IndexError("Position outside surface.")
 
-        p = <Uint8 *> self.surface.pixels
-        p += y * self.surface.pitch
+        p = <Uint8 *> self.sdl_surface.pixels
+        p += y * self.sdl_surface.pitch
         p += x * 4
 
         cdef Uint32 pixel = (<Uint32 *> p)[0]
 
-        return get_color(pixel, self.surface)
+        return get_color(pixel, self.sdl_surface)
 
     def set_at(self, pos, color):
         cdef int x, y
@@ -693,13 +693,13 @@ cdef class Surface:
 
         x, y = pos
 
-        if not (0 <= x < self.surface.w) or not (0 <= y < self.surface.h):
+        if not (0 <= x < self.sdl_surface.w) or not (0 <= y < self.sdl_surface.h):
             raise ValueError("Position outside surface.")
 
-        pixel = map_color(self.surface, color)
+        pixel = map_color(self.sdl_surface, color)
 
-        p = <Uint8 *> self.surface.pixels
-        p += y * self.surface.pitch
+        p = <Uint8 *> self.sdl_surface.pixels
+        p += y * self.sdl_surface.pitch
         p += x * 4
 
         (<Uint32 *> p)[0] = pixel
@@ -710,11 +710,11 @@ cdef class Surface:
 
         x, y = pos
 
-        if not (0 <= x < self.surface.w) or not (0 <= y < self.surface.h):
+        if not (0 <= x < self.sdl_surface.w) or not (0 <= y < self.sdl_surface.h):
             raise ValueError("Position outside surface.")
 
-        p = <Uint8 *> self.surface.pixels
-        p += y * self.surface.pitch
+        p = <Uint8 *> self.sdl_surface.pixels
+        p += y * self.sdl_surface.pitch
         p += x * 4
 
         cdef Uint32 pixel = (<Uint32 *> p)[0]
@@ -722,24 +722,24 @@ cdef class Surface:
         return pixel
 
     def map_rgb(self, color):
-        return map_color(self.surface, color)
+        return map_color(self.sdl_surface, color)
 
     def unmap_rgb(self, pixel):
-        return get_color(pixel, self.surface)
+        return get_color(pixel, self.sdl_surface)
 
     def set_clip(self, rect):
         cdef SDL_Rect sdl_rect
 
         if rect is None:
-            SDL_SetSurfaceClipRect(self.surface, NULL)
+            SDL_SetSurfaceClipRect(self.sdl_surface, NULL)
         else:
             to_sdl_rect(rect, &sdl_rect)
-            SDL_SetSurfaceClipRect(self.surface, &sdl_rect)
+            SDL_SetSurfaceClipRect(self.sdl_surface, &sdl_rect)
 
     def get_clip(self):
         cdef SDL_Rect sdl_rect
 
-        SDL_GetSurfaceClipRect(self.surface, &sdl_rect)
+        SDL_GetSurfaceClipRect(self.sdl_surface, &sdl_rect)
 
         return (sdl_rect.x, sdl_rect.y, sdl_rect.w, sdl_rect.h)
 
@@ -756,30 +756,30 @@ cdef class Surface:
 
         if ((sdl_rect.x < 0)
             or (sdl_rect.y < 0)
-            or (sdl_rect.x + sdl_rect.w > self.surface.w)
-            or (sdl_rect.y + sdl_rect.h > self.surface.h)):
+            or (sdl_rect.x + sdl_rect.w > self.sdl_surface.w)
+            or (sdl_rect.y + sdl_rect.h > self.sdl_surface.h)):
 
             raise error("subsurface rectangle outside surface area.")
 
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
+        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.sdl_surface.format)
 
-        cdef Uint8 *pixels = <Uint8 *> self.surface.pixels
-        pixels += sdl_rect.y * self.surface.pitch
+        cdef Uint8 *pixels = <Uint8 *> self.sdl_surface.pixels
+        pixels += sdl_rect.y * self.sdl_surface.pitch
         pixels += sdl_rect.x * format.bytes_per_pixel
 
         cdef SDL_Surface *new_surface = SDL_CreateSurfaceFrom(
             sdl_rect.w,
             sdl_rect.h,
-            self.surface.format,
+            self.sdl_surface.format,
             pixels,
-            self.surface.pitch)
+            self.sdl_surface.pitch)
 
         if not new_surface:
             raise error()
 
         cdef Surface rv = Surface(())
 
-        rv.surface = new_surface
+        rv.sdl_surface = new_surface
         rv.parent = self
         rv.offset_x = sdl_rect.x
         rv.offset_y = sdl_rect.y
@@ -814,16 +814,16 @@ cdef class Surface:
         return (offset_x, offset_y)
 
     def get_size(self):
-        return self.surface.w, self.surface.h
+        return self.sdl_surface.w, self.sdl_surface.h
 
     def get_width(self):
-        return self.surface.w
+        return self.sdl_surface.w
 
     def get_height(self):
-        return self.surface.h
+        return self.sdl_surface.h
 
     def get_rect(self, **kwargs):
-        rv = Rect((0, 0, self.surface.w, self.surface.h))
+        rv = Rect((0, 0, self.sdl_surface.w, self.sdl_surface.h))
 
         for k, v in kwargs.items():
             setattr(rv, k, v)
@@ -831,12 +831,12 @@ cdef class Surface:
         return rv
 
     def get_bitsize(self):
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
+        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.sdl_surface.format)
 
         return format.bits_per_pixel
 
     def get_bytesize(self):
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
+        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.sdl_surface.format)
 
         return format.bytes_per_pixel
 
@@ -847,7 +847,7 @@ cdef class Surface:
         else:
             rv = 0
 
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
+        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.sdl_surface.format)
 
         if format.Amask != 0:
             rv = rv | 0x80000000 # TODO SRCALPHA
@@ -855,23 +855,23 @@ cdef class Surface:
         return rv
 
     def get_pitch(self):
-        return self.surface.pitch
+        return self.sdl_surface.pitch
 
     def get_masks(self):
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
+        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.sdl_surface.format)
         return (format.Rmask, format.Gmask, format.Bmask, format.Amask)
 
     def get_shifts(self):
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
+        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.sdl_surface.format)
         return (format.Rshift, format.Gshift, format.Bshift, format.Ashift)
 
     def get_losses(self):
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
+        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.sdl_surface.format)
         return (8-format.Rbits, 8-format.Gbits, 8-format.Bbits, 8-format.Abits)
 
     def get_bounding_rect(self, min_alpha=1):
 
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
+        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.sdl_surface.format)
 
         cdef Uint32 amask = format.Amask
         cdef Uint32 amin = (0x01010101 * min_alpha) & amask
@@ -881,9 +881,9 @@ cdef class Surface:
         cdef int w
         cdef int h
 
-        cdef int minx = self.surface.w - 1
+        cdef int minx = self.sdl_surface.w - 1
         cdef int maxx = 0
-        cdef int miny = self.surface.h - 1
+        cdef int miny = self.sdl_surface.h - 1
         cdef int maxy = 0
 
         cdef Uint32 *row
@@ -891,16 +891,16 @@ cdef class Surface:
         cdef Uint32 topleft
         cdef Uint32 botright
 
-        if (not amask) or (self.surface.w == 0) or (self.surface.h == 0):
-            return Rect((0, 0, self.surface.w, self.surface.h))
+        if (not amask) or (self.sdl_surface.w == 0) or (self.sdl_surface.h == 0):
+            return Rect((0, 0, self.sdl_surface.w, self.sdl_surface.h))
 
 
-        cdef Uint8 *pixels = <Uint8 *> self.surface.pixels
+        cdef Uint8 *pixels = <Uint8 *> self.sdl_surface.pixels
 
         with nogil:
 
             topleft = (<Uint32*> pixels)[0]
-            botright = (<Uint32*> (pixels + self.surface.pitch * (self.surface.h - 1)))[self.surface.w - 1]
+            botright = (<Uint32*> (pixels + self.sdl_surface.pitch * (self.sdl_surface.h - 1)))[self.sdl_surface.w - 1]
 
             if ((topleft & amask) > amin) and ((botright & amask) > amin):
 
@@ -908,17 +908,17 @@ cdef class Surface:
 
                 minx = 0
                 miny = 0
-                maxx = self.surface.w - 1
-                maxy = self.surface.h - 1
+                maxx = self.sdl_surface.w - 1
+                maxy = self.sdl_surface.h - 1
 
             else:
 
                 # Bounding box is smaller than image.
 
-                for y in range(self.surface.h):
-                    row = <Uint32*> (pixels + self.surface.pitch * y)
+                for y in range(self.sdl_surface.h):
+                    row = <Uint32*> (pixels + self.sdl_surface.pitch * y)
 
-                    for x in range(self.surface.w):
+                    for x in range(self.sdl_surface.w):
 
                         if (row[x] & amask) >= amin:
 
@@ -937,8 +937,8 @@ cdef class Surface:
 
         x = minx
         y = miny
-        w = min(maxx - minx + 1, self.surface.w - x)
-        h = min(maxy - miny + 1, self.surface.h - y)
+        w = min(maxx - minx + 1, self.sdl_surface.w - x)
+        h = min(maxy - miny + 1, self.sdl_surface.h - y)
 
         return Rect((x, y, w, h))
 
@@ -946,32 +946,32 @@ cdef class Surface:
         raise error("Surface.get_view is not supported.")
 
     def get_buffer(self):
-        cdef Uint8 *pixels = <Uint8 *> self.surface.pixels
-        return pixels[self.surface.h * self.surface.pitch]
+        cdef Uint8 *pixels = <Uint8 *> self.sdl_surface.pixels
+        return pixels[self.sdl_surface.h * self.sdl_surface.pitch]
 
     @property
     def _pixels_address(self):
-        return <Uint64> self.surface.pixels
+        return <Uint64> self.sdl_surface.pixels
 
     def from_data(self, data):
-        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.surface.format)
+        cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(self.sdl_surface.format)
 
-        if len(data) != self.surface.w * self.surface.h * format.bytes_per_pixel:
+        if len(data) != self.sdl_surface.w * self.sdl_surface.h * format.bytes_per_pixel:
             raise ValueError("The data must fill the surface.")
 
         cdef Uint8 *d = <Uint8 *> data
-        cdef Uint8 *pixels = <Uint8 *> self.surface.pixels
+        cdef Uint8 *pixels = <Uint8 *> self.sdl_surface.pixels
 
         cdef int i
 
-        for i in range(self.surface.h):
-            memmove(pixels, d, self.surface.w * format.bytes_per_pixel)
-            d += self.surface.w * format.bytes_per_pixel
-            pixels += self.surface.pitch
+        for i in range(self.sdl_surface.h):
+            memmove(pixels, d, self.sdl_surface.w * format.bytes_per_pixel)
+            d += self.sdl_surface.w * format.bytes_per_pixel
+            pixels += self.sdl_surface.pitch
 
 
 cdef api SDL_Surface *PySurface_AsSurface(surface):
-    return (<Surface> surface).surface
+    return (<Surface> surface).sdl_surface
 
 
 cdef api object PySurface_New(SDL_Surface *surf):

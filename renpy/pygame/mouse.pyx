@@ -81,7 +81,7 @@ cdef class ColorCursor(object):
     cdef SDL_Cursor *cursor
 
     def __init__(self, Surface surface, x, y):
-        self.cursor = SDL_CreateColorCursor(surface.surface, x, y)
+        self.cursor = SDL_CreateColorCursor(surface.sdl_surface, x, y)
 
     def __dealloc__(self):
         SDL_DestroyCursor(self.cursor)
