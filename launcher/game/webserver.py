@@ -6,7 +6,6 @@ import os
 import http.server
 import urllib.parse
 import html
-import sys
 import shutil
 import io
 import hashlib
@@ -93,7 +92,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             # transmitted *less* than the content-length!
             f = open(path, "rb")
             fs = os.fstat(f.fileno())
-        except IOError:
+        except OSError:
             self.send_error(404, "File not found")
             return None
         try:
@@ -101,6 +100,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
 
             ims = self.headers.get("If-Modified-Since", None)
             if (ims is not None) and (ims == last_modified):
+                f.close()
                 self.send_response(304)
                 self.end_headers()
                 return None
@@ -118,6 +118,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             etag = '"{}"'.format(hasher.hexdigest())
 
             if self.headers.get("If-None-Match", None) == etag:
+                f.close()
                 self.send_response(304)
                 self.end_headers()
                 return None
@@ -145,16 +146,16 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
         """
         try:
             entries = os.listdir(path)
-        except os.error:
+        except OSError:
             self.send_error(404, "No permission to list directory")
             return None
         entries.sort(key=lambda entry: entry.lower())
-        f = io.StringIO()
+        listing = io.StringIO()
         displaypath = html.escape(urllib.parse.unquote(self.path))
-        f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        f.write("<html>\n<title>Directory listing for %s</title>\n" % displaypath)
-        f.write("<body>\n<h2>Directory listing for %s</h2>\n" % displaypath)
-        f.write("<hr>\n<ul>\n")
+        listing.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
+        listing.write("<html>\n<title>Directory listing for %s</title>\n" % displaypath)
+        listing.write("<body>\n<h2>Directory listing for %s</h2>\n" % displaypath)
+        listing.write("<hr>\n<ul>\n")
         for name in entries:
             fullname = os.path.join(path, name)
             displayname = linkname = name
@@ -165,14 +166,13 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             if os.path.islink(fullname):
                 displayname = name + "@"
                 # Note: a link to a directory displays with @ and links with /
-            f.write('<li><a href="%s">%s</a>\n' % (urllib.parse.quote(linkname), html.escape(displayname)))
-        f.write("</ul>\n<hr>\n</body>\n</html>\n")
-        length = f.tell()
-        f.seek(0)
+            listing.write('<li><a href="%s">%s</a>\n' % (urllib.parse.quote(linkname), html.escape(displayname)))
+        listing.write("</ul>\n<hr>\n</body>\n</html>\n")
+        content = listing.getvalue().encode("utf-8", "surrogateescape")
+        f = io.BytesIO(content)
         self.send_response(200)
-        encoding = sys.getfilesystemencoding()
-        self.send_header("Content-type", "text/html; charset=%s" % encoding)
-        self.send_header("Content-Length", str(length))
+        self.send_header("Content-type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(content)))
         self.end_headers()
         return f
 
@@ -275,22 +275,22 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
 def run():
     bind_address = os.environ.get("RENPY_WEBSERVER_BIND_ADDRESS", "127.0.0.1")
 
-    server = http.server.HTTPServer((bind_address, 8042), WebHandler)
+    server = http.server.ThreadingHTTPServer((bind_address, 8042), WebHandler)
     server.serve_forever()
 
 
 def start(root_):
+    """Starts the server if needed and sets the directory it serves."""
 
     print("----")
 
     global root
 
-    started = root
+    server_started = root
     root = root_
 
-    if started:
+    if server_started:
         return
 
-    t = threading.Thread(target=run)
-    t.daemon = True
+    t = threading.Thread(target=run, daemon=True)
     t.start()
