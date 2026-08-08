@@ -311,6 +311,23 @@ class Node(Object):
     True if this statement should be run while warping, False otherwise.
     """
 
+    predict_preserves_variables: ClassVar[bool] = False
+    """
+    True if prediction may carry what it has worked out about variable values
+    across this node. This defaults to False, as most statements can run
+    creator-supplied code, and so may change a variable in a way prediction
+    can't see.
+    """
+
+    predict_trust_store_after: ClassVar[bool] = False
+    """
+    True if, when this node is the statement prediction starts from, the
+    statements after it may keep evaluating against the current values of
+    store variables. This requires that executing the node can't change a
+    store variable, and defaults to False as most statements can run
+    creator-supplied code.
+    """
+
     @property
     def name(self) -> NodeName:
         """
@@ -874,6 +891,8 @@ def get_reachable_nodes(
 
 
 class Say(Node):
+    predict_trust_store_after = True
+
     who: str | None
     who_fast: bool
     what: str
@@ -1126,6 +1145,10 @@ class Label(Node):
     parameters: ParameterInfo | None = None
     hide: bool = False
 
+    @property
+    def predict_preserves_variables(self):  # type: ignore
+        return self.parameters is None
+
     def __init__(self, loc, name, block, parameters, hide=False):
         """
         Constructs a new Label node.
@@ -1179,6 +1202,8 @@ class Label(Node):
 
 
 class Python(Node):
+    predict_preserves_variables = True
+
     code: PyCode
     store: str = "store"
     hide: bool = False
@@ -1218,6 +1243,34 @@ class Python(Node):
             if not renpy.game.context().init_phase:
                 for i in renpy.config.python_callbacks:
                     i()
+
+    def predict(self):
+        context = renpy.game.context()
+        state = context.predict_var_state
+
+        if state is not None:
+            effects = renpy.pyanalysis.analyze_assignments(self.code)
+
+            if effects is None:
+                context.predict_forget()
+            elif self.hide or self.store != "store":
+                # Plain assignments here don't reach the default store, but
+                # an assignment to store.name does, so every name this could
+                # store to is forgotten - as long as the code can't run
+                # creator-supplied code, which could change anything.
+                if renpy.pyanalysis.assignments_are_inert(effects):
+                    context.predict_assign({}, renpy.pyanalysis.assigned_names(effects))
+                else:
+                    context.predict_forget()
+            else:
+                new_state = renpy.pyanalysis.apply_assignments(effects, state, context.predict_trust_store)
+
+                if new_state is None:
+                    context.predict_forget()
+                else:
+                    context.predict_var_state = new_state
+
+        return super().predict()
 
     def scry(self):
         rv = super().scry()
@@ -1756,6 +1809,10 @@ class Return(Node):
 class Menu(Node):
     translation_relevant = True
 
+    @property
+    def predict_trust_store_after(self):  # type: ignore
+        return self.set is None
+
     items: list[tuple[str, str, list[Node] | None]]
     statement_start: Node  # type: ignore
     set: str | None = None
@@ -1946,6 +2003,10 @@ class Jump(Node):
     expression: bool = False
     global_label: str = ""
 
+    @property
+    def predict_preserves_variables(self):  # type: ignore
+        return not self.expression
+
     def __init__(self, loc, target, expression, global_label=""):
         super(Jump, self).__init__(loc)
 
@@ -2019,6 +2080,8 @@ class Jump(Node):
 
 # GNDN
 class Pass(Node):
+    predict_preserves_variables = True
+
     def diff_info(self):
         return (Pass,)
 
@@ -2082,6 +2145,8 @@ class While(Node):
 
 
 class If(Node):
+    predict_preserves_variables = True
+
     entries: list[tuple[str, list[Node]]]
 
     def __init__(self, loc, entries):
@@ -2126,6 +2191,27 @@ class If(Node):
                 return
 
     def predict(self):
+        context = renpy.game.context()
+        state = context.predict_var_state
+
+        if state is not None:
+            trust_store = context.predict_trust_store
+
+            for i, (condition, block) in enumerate(self.entries):
+                truth = renpy.pyanalysis.eval_predicted_condition(condition, state, trust_store)
+
+                # This condition needs values prediction doesn't know, so
+                # every branch from here on may be taken.
+                if truth is None:
+                    context.predict_forget()
+
+                    return [block[0] for _condition, block in self.entries[i:]] + [self.next]
+
+                if truth:
+                    return [block[0]]
+
+            return [self.next]
+
         return [block[0] for _condition, block in self.entries] + [self.next]
 
     def scry(self):

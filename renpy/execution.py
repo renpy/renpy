@@ -123,6 +123,18 @@ class NewPredictInfo:
     tlids: list[str | None]
     "A list of strings giving translation identifiers that are in effect at the time of prediction."
 
+    var_state: dict[str, Any]
+    "A map from variable name to the literal value prediction has worked out it has when this node is reached."
+
+    trust_store: bool
+    "True if the current values of variables in the store can still be used when this node is reached."
+
+    root: bool
+    "True if this is a statement prediction starts from, rather than one it has walked to."
+
+    predicted: bool
+    "True once this node has been predicted."
+
 
 class LineLogEntry(object):
     def __init__(self, filename, line, node, abnormal):
@@ -187,6 +199,10 @@ class Context(renpy.object.Object):
     deferred_translate_identifier = None
 
     predict_return_stack = None  # type: list|None
+
+    predict_var_state = None  # type: dict|None
+
+    predict_trust_store = False
 
     exception_handler: Callable[[renpy.error.TracebackException], bool] | None
 
@@ -884,6 +900,41 @@ class Context(renpy.object.Object):
 
         return renpy.game.script.lookup(label)
 
+    def predict_assign(self, bindings, invalidated):
+        """
+        Called during prediction to record that the variables in `bindings`
+        are known to have the given literal values, while the values of the
+        variables in `invalidated` can no longer be predicted.
+
+        Invalidated variables are remembered, rather than dropped, so that
+        the value one of them has in the store isn't used in its place.
+        """
+
+        state = self.predict_var_state
+
+        if state is None:
+            return
+
+        state = dict(state)
+
+        for name in invalidated:
+            state[name] = renpy.pyanalysis.UNKNOWN
+
+        state.update(bindings)
+
+        self.predict_var_state = state
+
+    def predict_forget(self):
+        """
+        Called during prediction when code it can't analyze may run, so that
+        neither the values worked out so far nor the current contents of the
+        store are used from here on.
+        """
+
+        if self.predict_var_state is not None:
+            self.predict_var_state = {}
+            self.predict_trust_store = False
+
     def predict(self):
         """
         Performs image prediction, calling the given callback with each
@@ -899,11 +950,12 @@ class Context(renpy.object.Object):
 
         old_images = self.images
 
-        # A worklist of (node, images, return_stack) tuples.
+        # A worklist of NewPredictInfo objects.
         nodes = []
 
-        # The set of nodes we've seen. (We only consider each node once.)
-        seen = set()
+        # A map from each node we've seen to its NewPredictInfo. (We only
+        # consider each node once, unless a merge loses variable information.)
+        node_info = {}
 
         # Find the roots.
         for label in renpy.config.predict_statements_callback(self.current):
@@ -912,7 +964,7 @@ class Context(renpy.object.Object):
 
             node = renpy.game.script.lookup(label)
 
-            if node in seen:
+            if node in node_info:
                 continue
 
             npi = NewPredictInfo()
@@ -920,9 +972,13 @@ class Context(renpy.object.Object):
             npi.images = self.images
             npi.predict_return_stack = self.return_stack
             npi.tlids = [self.translate_identifier, self.alternate_translate_identifier]
+            npi.var_state = {}
+            npi.trust_store = True
+            npi.root = True
+            npi.predicted = False
 
             nodes.append(npi)
-            seen.add(node)
+            node_info[node] = npi
 
         # Predict statements.
         for i in range(0, renpy.config.predict_statements):
@@ -930,6 +986,8 @@ class Context(renpy.object.Object):
                 break
 
             npi = nodes[i]
+            npi.predicted = True
+
             node = npi.node
             images = npi.images
             return_stack = npi.predict_return_stack
@@ -939,20 +997,57 @@ class Context(renpy.object.Object):
             self.images = renpy.display.image.ShownImageInfo(images)
             self.predict_return_stack = return_stack
 
+            # Most statements can run creator-supplied code, which may change
+            # a variable without prediction seeing it. Only trust those that
+            # explicitly opt-in.
+            if node.predict_preserves_variables:
+                self.predict_var_state = npi.var_state
+                self.predict_trust_store = npi.trust_store
+            elif npi.root:
+                self.predict_var_state = npi.var_state
+                self.predict_trust_store = npi.trust_store and node.predict_trust_store_after
+            else:
+                self.predict_var_state = {}
+                self.predict_trust_store = False
+
             try:
                 for n in node.predict():
                     if n is None:
                         continue
 
-                    if n not in seen:
-                        npi = NewPredictInfo()
-                        npi.node = n
-                        npi.images = self.images
-                        npi.predict_return_stack = self.predict_return_stack
-                        npi.tlids = renpy.display.predict.tlids
+                    next_npi = node_info.get(n)
 
-                        nodes.append(npi)
-                        seen.add(n)
+                    if next_npi is None:
+                        next_npi = NewPredictInfo()
+                        next_npi.node = n
+                        next_npi.images = self.images
+                        next_npi.predict_return_stack = self.predict_return_stack
+                        next_npi.tlids = renpy.display.predict.tlids
+                        next_npi.var_state = self.predict_var_state
+                        next_npi.trust_store = self.predict_trust_store
+                        next_npi.root = False
+                        next_npi.predicted = False
+
+                        nodes.append(next_npi)
+                        node_info[n] = next_npi
+
+                    elif n.predict_preserves_variables:
+                        # Another path reached this node, so keep only what
+                        # both paths agree on. If that loses information the
+                        # node was already predicted with, predict it again,
+                        # in case that information had ruled out a branch.
+                        merged = renpy.pyanalysis.merge_predicted_states(
+                            next_npi.var_state, self.predict_var_state
+                        )
+                        trust = next_npi.trust_store and self.predict_trust_store
+
+                        if (merged != next_npi.var_state) or (trust != next_npi.trust_store):
+                            next_npi.var_state = merged
+                            next_npi.trust_store = trust
+
+                            if next_npi.predicted:
+                                next_npi.predicted = False
+                                nodes.append(next_npi)
 
             except Exception:
                 if renpy.config.debug_prediction:
@@ -964,6 +1059,8 @@ class Context(renpy.object.Object):
 
             self.images = old_images
             self.predict_return_stack = None
+            self.predict_var_state = None
+            self.predict_trust_store = False
 
             yield True
 
