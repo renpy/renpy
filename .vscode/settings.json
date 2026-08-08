@@ -102,11 +102,6 @@
         "renpy/uguu/gl.pyi": true,
         "renpy/uguu/uguu.pyi": true
     },
-    "python.languageServer": "Pylance",
-    "python.analysis.diagnosticMode": "workspace",
-    "python.linting.pylintEnabled": false,
-    "esbonio.server.enabled": true,
-    "esbonio.sphinx.confDir": "",
     "renpy.excludeCompiledFilesFromWorkspace": true,
     "renpy.watchFoldersForChanges": false,
     "renpy.warnOnInvalidVariableNames": "Disabled",
@@ -317,11 +312,7 @@
             ]
         }
     },
-    "C_Cpp.default.defines": [
-        "__EMSCRIPTEN__"
-    ],
     "cython.includePaths": [
         "src",
     ],
-    "python-envs.defaultEnvManager": "ms-python.python:system"
 }
