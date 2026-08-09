@@ -60,6 +60,9 @@ The :var:`config.tts_voice` variable is no longer used.
 Features
 --------
 
+A new :ref:`renpy.red_to_alpha <shader-renpy.red_to_alpha>` shader part has been added, which creates a new image that is white with the alpha taken from
+the red channel of the original data being drawn. This is intended for use to replace: :class:`im.AlphaMask` with :class:`AlphaMask`.
+
 The :func:`renpy.transition` function now takes a `priority` argument. A lower-priority transition will not replace
 a higher-priority transition for the same layer.
 

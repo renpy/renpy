@@ -34,6 +34,7 @@ How Ren'Py uses fragment part priorities:
 * Priority 350 applies text shaders that adjust alpha.
 * Priority 375 can undo part of the effect of these text shaders.
 * Priority 400 adjusts the color, applying Transform and displayable-based changes.
+* Priority 450 converts color to alpha.
 * Priority 500 adjusts the alpha channel, applying Transform and displayable-based changes.
 
 In order:

@@ -2330,10 +2330,14 @@ class AlphaMask(ImageBase):
     for alpha. In some cases, two jpegs can be smaller than a
     single png file.
 
-    Note that this takes different arguments from :func:`AlphaMask`,
-    which uses the mask's alpha channel.
-
     The two images need to have the same size, and the same oversampling factor.
+
+    Note that this takes different arguments from :func:`AlphaMask`,
+    which uses the mask's alpha channel. You can convert using the
+    "renpy.red_to_alpha" shader. The following is a faster equivalent
+    of this image manipulator::
+
+        AlphaMask(base, Transform(mask, shader="renpy.red_to_alpha"))
     """
 
     def __init__(self, base, mask, **properties):
