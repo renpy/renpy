@@ -60,6 +60,23 @@ MODERN_TO_LEGACY = [
 ]
 
 
+def config_dialect():
+    """
+    The dialect selected by config.glsl_version, used by shader parts that
+    don't declare one of their own.
+    """
+
+    version = renpy.config.glsl_version
+
+    if version not in GLSL_DIALECTS:
+        raise Exception(
+            "config.glsl_version is {!r}, which is not a known GLSL dialect. Use 300 for GLSL ES 3.00, "
+            "or 100 for GLSL ES 1.00.".format(version)
+        )
+
+    return GLSL_DIALECTS[version]
+
+
 def parse_glsl_version(s):
     """
     Parses the string returned by glGetString(GL_SHADING_LANGUAGE_VERSION).
@@ -141,12 +158,22 @@ def register_shader(name, **kwargs):
         underscore or "renpy." are reserved for Ren'Py.
 
     `glsl`
-        The GLSL dialect this shader part is written in. This should be 300
-        for new shader parts, and defaults to 100.
+        The GLSL dialect this shader part is written in: 300 for GLSL ES 3.00
+        or 100 for GLSL ES 1.00.
+
+        This defaults to None, meaning the part follows
+        :var:`config.glsl_version`: 300 for new games and 100 for games that
+        declare compatibility with Ren'Py 8.5 or earlier.
 
         Ren'Py translates between the two dialects as needed, so a ``glsl=300``
         part still runs on a device that only provides GLSL ES 1.00 unless it
         uses a feature not present in the older version.
+
+        A part that doesn't declare a dialect, and would be treated as GLSL ES
+        3.00, is checked for constructs that only exist in GLSL ES 1.00 - such
+        as ``gl_FragColor``, ``texture2D``, ``attribute``, and ``varying``.
+        Finding one is an error, since it means the part was written for the
+        older dialect but did not declare as much.
 
     `variables`
         The variables used by the shader part. These should be listed one per
@@ -200,7 +227,7 @@ class ShaderPart(object):
         vertex_functions="",
         fragment_functions="",
         private_uniforms=False,
-        glsl=100,
+        glsl=None,
         **kwargs,
     ):
         if not re.match(r"^[\w\.]+$", name):
@@ -210,7 +237,7 @@ class ShaderPart(object):
                 )
             )
 
-        if glsl not in GLSL_DIALECTS:
+        if (glsl is not None) and (glsl not in GLSL_DIALECTS):
             raise Exception(
                 "In shader {}: glsl={!r} is not a known GLSL dialect. Use glsl=300 (or the equivalent glsl=330) "
                 "for GLSL ES 3.00, or glsl=100 (or the equivalent glsl=120) for GLSL ES 1.00.".format(name, glsl)
@@ -219,8 +246,9 @@ class ShaderPart(object):
         self.name = name
         shader_part[name] = self
 
-        # The dialect this part is authored in, normalized to 100 or 300.
-        self.glsl = GLSL_DIALECTS[glsl]
+        # The dialect this part declared, normalized to 100 or 300, or None if
+        # it didn't declare one and should follow config.glsl_version.
+        self.declared_glsl = GLSL_DIALECTS[glsl] if (glsl is not None) else None
 
         self.vertex_functions = vertex_functions
         self.fragment_functions = fragment_functions
@@ -265,7 +293,7 @@ class ShaderPart(object):
             else:
                 raise Exception("Keyword arguments to ShaderPart must be of the form {vertex,fragment}_{priority}.")
 
-            parts.append((priority, name, v, self.glsl))
+            parts.append((priority, name, v))
 
             for m in re.finditer(r"\b\w+\b", v):
                 used.add(m.group(0))
@@ -306,6 +334,21 @@ class ShaderPart(object):
 
         self.raw_variables = variables
 
+    @property
+    def glsl(self):
+        """
+        The dialect this part is written in: 100 or 300.
+
+        A part that didn't declare one follows config.glsl_version.
+        """
+
+        if self.declared_glsl is not None:
+            return self.declared_glsl
+
+        rv = config_dialect()
+
+
+        return rv
     def expand_name(self, s):
         """
         Expands names starting with u__, a__, and v__ to include the shader part name.
@@ -437,15 +480,17 @@ class ShaderCache(object):
 
         # The version shaders are emitted in. This may be lowered later, if a
         # shader turns out not to compile at the version we picked.
-        if renpy.config.gl_glsl_version is not None:
-            if renpy.config.gl_glsl_version not in GLSL_VERSIONS:
+        forced = os.environ.get("RENPY_GLSL_VERSION", None)
+
+        if forced is not None:
+            if forced.strip() not in [str(i) for i in GLSL_VERSIONS]:
                 raise Exception(
-                    "config.gl_glsl_version is {!r}, which is not one of {}.".format(
-                        renpy.config.gl_glsl_version, ", ".join(str(i) for i in GLSL_VERSIONS)
+                    "RENPY_GLSL_VERSION is {!r}, which is not one of {}.".format(
+                        forced, ", ".join(str(i) for i in GLSL_VERSIONS)
                     )
                 )
 
-            self.version = renpy.config.gl_glsl_version
+            self.version = int(forced)
 
             self.pinned = True
         else:
@@ -527,7 +572,9 @@ class ShaderCache(object):
             if p is None:
                 raise Exception("{!r} is not a known shader part.".format(i))
 
-            if p.glsl >= 300 and self.version < 300 and i not in self.downgraded:
+            glsl = p.glsl
+
+            if glsl >= 300 and self.version < 300 and i not in self.downgraded:
                 self.downgraded.add(i)
 
                 renpy.display.log.write(
@@ -539,12 +586,12 @@ class ShaderCache(object):
                 )
 
             vertex_variables.extend(p.vertex_variables)
-            vertex_parts.extend(p.vertex_parts)
-            vertex_functions.append((p.vertex_functions, p.glsl))
+            vertex_parts.extend((prio, nm, text, glsl) for prio, nm, text in p.vertex_parts)
+            vertex_functions.append((p.vertex_functions, glsl))
 
             fragment_variables.extend(p.fragment_variables)
-            fragment_parts.extend(p.fragment_parts)
-            fragment_functions.append((p.fragment_functions, p.glsl))
+            fragment_parts.extend((prio, nm, text, glsl) for prio, nm, text in p.fragment_parts)
+            fragment_functions.append((p.fragment_functions, glsl))
 
         from renpy.gl2.gl2shader import Program, ShaderError
 

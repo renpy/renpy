@@ -40,6 +40,7 @@ def adjust_duration(ts, u__duration, **kwargs):
 
 renpy.register_textshader(
     "typewriter",
+    glsl=100,
     include_default=False,
     variables="""
     uniform float u_text_slow_time;
@@ -62,6 +63,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "dissolve",
+    glsl=100,
     include_default=False,
     adjust_function=adjust_duration,
     variables="""
@@ -97,6 +99,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "slowalpha",
+    glsl=100,
     variables="""
     uniform float u__alpha
     """,
@@ -120,6 +123,7 @@ vec4 l__color = gl_FragColor;
 
 renpy.register_textshader(
     "flip",
+    glsl=100,
     include_default=False,
     adjust_function=adjust_duration,
     variables="""
@@ -154,6 +158,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "zoom",
+    glsl=100,
     include_default=False,
     adjust_function=adjust_duration,
     variables="""
@@ -190,6 +195,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "jitter",
+    glsl=100,
     variables="""
     uniform vec2 u__jitter;
     uniform vec4 u_random;
@@ -214,6 +220,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "offset",
+    glsl=100,
     variables="""
     uniform vec2 u__offset;
     uniform float u_text_to_drawable;
@@ -233,6 +240,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "wave",
+    glsl=100,
     variables="""
     uniform float u__amplitude;
     uniform float u__frequency
@@ -265,6 +273,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "texture",
+    glsl=100,
     variables="""
     uniform sampler2D u__texture;
     uniform vec2 u__texture_res;
@@ -294,6 +303,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "linetexture",
+    glsl=100,
     variables="""
     uniform sampler2D u__texture;
     uniform vec2 u__scale;

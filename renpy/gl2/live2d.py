@@ -146,6 +146,7 @@ def init():
 
     register_shader(
         "live2d.mask",
+        glsl=100,
         variables="""
         uniform sampler2D tex0;
         uniform sampler2D tex1;
@@ -171,6 +172,7 @@ def init():
 
     register_shader(
         "live2d.inverted_mask",
+        glsl=100,
         variables="""
         uniform sampler2D tex0;
         uniform sampler2D tex1;
@@ -196,6 +198,7 @@ def init():
 
     register_shader(
         "live2d.colors",
+        glsl=100,
         variables="""
         uniform vec4 u_multiply;
         uniform vec4 u_screen;
@@ -208,6 +211,7 @@ def init():
 
     register_shader(
         "live2d.flip_texture",
+        glsl=100,
         variables="""
         varying vec2 v_tex_coord;
     """,

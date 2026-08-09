@@ -1183,9 +1183,10 @@ log_gl_extensions = False
 # Should GL shaders be logged to log.txt
 log_gl_shaders = False
 
-# Forces the GLSL version shaders are emitted in, one of 100, 120, 300, or
-# 330. When None, this is chosen from the version the GL context reports.
-gl_glsl_version = None
+# The GLSL dialect shader parts are written in when they don't pass glsl to
+# renpy.register_shader. 300 selects GLSL ES 3.00 and 100 selects GLSL ES
+# 1.00. Games declaring compatibility with 8.5 or earlier get 100.
+glsl_version = 300
 
 # OpenGL Blend Funcs
 gl_blend_func = {}
