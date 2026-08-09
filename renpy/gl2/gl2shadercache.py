@@ -60,6 +60,29 @@ MODERN_TO_LEGACY = [
 ]
 
 
+# Strip comments so they can't cause errors in parsing.
+GLSL_COMMENTS = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
+
+# Builtins that only exist in the legacy dialect, used to check for version
+# errors.
+LEGACY_MARKERS = [
+    (re.compile(STANDALONE.format("gl_FragColor")), "gl_FragColor", FRAGMENT_OUTPUT),
+    (re.compile(STANDALONE.format("gl_FragData")), "gl_FragData", FRAGMENT_OUTPUT),
+    (re.compile(STANDALONE.format("texture2DProjLod")), "texture2DProjLod", "textureProjLod"),
+    (re.compile(STANDALONE.format("texture2DLod")), "texture2DLod", "textureLod"),
+    (re.compile(STANDALONE.format("texture2DProj")), "texture2DProj", "textureProj"),
+    (re.compile(STANDALONE.format("texture2D")), "texture2D", "texture"),
+    (re.compile(STANDALONE.format("textureCubeLod")), "textureCubeLod", "textureLod"),
+    (re.compile(STANDALONE.format("textureCube")), "textureCube", "texture"),
+]
+
+# The modern spelling of each legacy storage qualifier.
+LEGACY_STORAGE = {
+    "attribute": "in",
+    "varying": "out",
+}
+
+
 def config_dialect():
     """
     The dialect selected by config.glsl_version, used by shader parts that
@@ -250,6 +273,13 @@ class ShaderPart(object):
         # it didn't declare one and should follow config.glsl_version.
         self.declared_glsl = GLSL_DIALECTS[glsl] if (glsl is not None) else None
 
+        # True once this part has been checked for legacy constructs.
+        self.checked_glsl = False
+
+        # The legacy storage qualifier this part declared a variable with, if
+        # any.
+        self.legacy_storage = None
+
         self.vertex_functions = vertex_functions
         self.fragment_functions = fragment_functions
 
@@ -306,6 +336,12 @@ class ShaderPart(object):
             if not l:
                 continue
 
+            if self.legacy_storage is None:
+                m = re.search(r"\b(attribute|varying)\b", l)
+
+                if m is not None:
+                    self.legacy_storage = m.group(1)
+
             v = renpy.gl2.gl2shader.Variable(self.name, l)
 
             if v.storage not in {"uniform", "attribute", "varying"}:
@@ -347,8 +383,42 @@ class ShaderPart(object):
 
         rv = config_dialect()
 
+        # A part that says nothing and gets treated as modern errors
+        # if legacy dialect is detected.
+        if (rv >= 300) and not self.checked_glsl:
+            self.checked_glsl = True
+            self.check_legacy_syntax()
 
         return rv
+
+    def check_legacy_syntax(self):
+        """
+        Raises if this part uses a construct that only exists in the legacy
+        dialect that would error following config.glsl_version.
+        """
+
+        found = None
+
+        if self.legacy_storage is not None:
+            found = (self.legacy_storage, LEGACY_STORAGE[self.legacy_storage])
+        else:
+            sources = [self.vertex_functions, self.fragment_functions]
+            sources.extend(i[2] for i in self.vertex_parts)
+            sources.extend(i[2] for i in self.fragment_parts)
+
+            text = GLSL_COMMENTS.sub(" ", "\n".join(i for i in sources if i))
+
+            for pattern, legacy, modern in LEGACY_MARKERS:
+                if pattern.search(text):
+                    found = (legacy, modern)
+
+                    break
+
+        if found is not None:
+            legacy, modern = found
+
+            raise Exception(f"Shader part {self.name} uses {legacy}, which only exists in GLSL ES 1.00.")
+
     def expand_name(self, s):
         """
         Expands names starting with u__, a__, and v__ to include the shader part name.
