@@ -39,10 +39,20 @@ dependencies = [
 include = [
     "*.py",
     "renpy/",
+    "runtime/",
+    "scripts/",
     "src/"
 ]
 
+extraPaths = [
+    "runtime"
+]
+
 exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*",
+    ".venv",
     "module/build/",
 ]
 
@@ -66,10 +76,19 @@ reportTypeCommentUsage = "information"
 include = [
     "*.py",
     "renpy/",
+    "runtime/",
     "src/"
 ]
 
+extraPaths = [
+    "runtime"
+]
+
 exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*",
+    ".venv",
     "module/build/",
 ]
 

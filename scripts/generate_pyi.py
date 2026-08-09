@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import re
 import ast
 import sys
@@ -395,12 +393,6 @@ def main():
 
     manage_gitignore(generated_files)
     manage_vscode(generated_files)
-
-    for fn in (ROOT / "scripts" / "pyi").glob("**/*.pyi"):
-        dfn = ROOT / "typings" / fn.relative_to(ROOT / "scripts" / "pyi")
-        text = fn.read_text()
-        dfn.parent.mkdir(parents=True, exist_ok=True)
-        dfn.write_text(text)
 
 
 if __name__ == "__main__":
