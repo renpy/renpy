@@ -1,9 +1,9 @@
+import io
 import os
 import struct
 import zipfile
-import io
 
-from renpy.pygame.iostream import IOStream
+from renpy.pygame.iostream import IOBuffer, IOSubFile
 
 
 class APK:
@@ -76,6 +76,8 @@ class APK:
         info = self.info[fn]
 
         if info.compress_type == zipfile.ZIP_STORED:
-            return io.BufferedReader(IOStream(self.apk, "rb", name=fn, base=self.offset[fn], length=info.file_size))
+            rv = IOSubFile(self.apk, self.offset[fn], info.file_size)
+        else:
+            rv = IOBuffer(self.zf.read(info))
 
-        return io.BytesIO(self.zf.read(info))
+        return io.BufferedReader(rv)
