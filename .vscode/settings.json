@@ -58,6 +58,7 @@
         "renpy/gl2/gl2model.pyi": true,
         "renpy/gl2/gl2polygon.pyi": true,
         "renpy/gl2/gl2shader.pyi": true,
+        "renpy/gl2/gl2statecache.pyi": true,
         "renpy/gl2/gl2texture.pyi": true,
         "renpy/gl2/gl2uniform.pyi": true,
         "renpy/gl2/live2dmodel.pyi": true,
@@ -70,6 +71,7 @@
         "renpy/pygame/event.pyi": true,
         "renpy/pygame/gfxdraw.pyi": true,
         "renpy/pygame/image.pyi": true,
+        "renpy/pygame/iostream.pyi": true,
         "renpy/pygame/joystick.pyi": true,
         "renpy/pygame/key.pyi": true,
         "renpy/pygame/locals.pyi": true,
@@ -77,7 +79,6 @@
         "renpy/pygame/power.pyi": true,
         "renpy/pygame/pygame_time.pyi": true,
         "renpy/pygame/rect.pyi": true,
-        "renpy/pygame/rwobject.pyi": true,
         "renpy/pygame/scrap.pyi": true,
         "renpy/pygame/surface.pyi": true,
         "renpy/pygame/transform.pyi": true,
@@ -311,8 +312,5 @@
                 }
             ]
         }
-    },
-    "cython.includePaths": [
-        "src",
-    ],
+    }
 }
