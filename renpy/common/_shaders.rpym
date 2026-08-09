@@ -173,6 +173,11 @@ init python:
         gl_FragColor = u_renpy_matrixcolor * gl_FragColor;
     """)
 
+    renpy.register_shader("renpy.red_to_alpha",
+        fragment_450="""
+        gl_FragColor = vec4(gl_FragColor.r);
+    """)
+
     renpy.register_shader("renpy.alpha", variables="""
         uniform float u_renpy_alpha;
         uniform float u_renpy_over;
