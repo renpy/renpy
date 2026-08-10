@@ -82,6 +82,15 @@ LEGACY_STORAGE = {
     "varying": "out",
 }
 
+# Constructs that need GLSL ES 3.00.
+MODERN_MARKERS = [
+    (re.compile(STANDALONE.format(FRAGMENT_OUTPUT)), FRAGMENT_OUTPUT),
+    (re.compile(STANDALONE.format("textureSize")), "textureSize"),
+    (re.compile(STANDALONE.format("texelFetch")), "texelFetch"),
+    (re.compile(STANDALONE.format("textureGrad")), "textureGrad"),
+    (re.compile(r"(?<![\w.])texture\s*\("), "texture"),
+]
+
 
 def config_dialect():
     """
@@ -396,13 +405,43 @@ class ShaderPart(object):
 
         rv = config_dialect()
 
-        # A part that says nothing and gets treated as modern errors
-        # if legacy dialect is detected.
-        if (rv >= 300) and not self.checked_glsl:
+        # A part that says nothing is checked against the dialect it's been
+        # given, in whichever direction that is.
+        if not self.checked_glsl:
             self.checked_glsl = True
-            self.check_legacy_syntax()
+
+            if rv >= 300:
+                self.check_legacy_syntax()
+            else:
+                self.check_modern_syntax()
 
         return rv
+
+    def part_source(self):
+        """
+        Every chunk of GLSL this part supplies, with comments stripped.
+        """
+
+        sources = [self.vertex_functions, self.fragment_functions]
+        sources.extend(i[2] for i in self.vertex_parts)
+        sources.extend(i[2] for i in self.fragment_parts)
+
+        return GLSL_COMMENTS.sub(" ", "\n".join(i for i in sources if i))
+
+    def check_modern_syntax(self):
+        """
+        Raises if this part uses a construct that requires GLSL ES 3.00 but
+        would default to a legacy dialect.
+        """
+
+        text = self.part_source()
+
+        for pattern, modern in MODERN_MARKERS:
+            if pattern.search(text):
+                raise Exception(
+                    f"Shader part {self.name} uses {modern} but doesn't declare a dialect. Pass "
+                    "glsl=300 to renpy.register_shader or rewrite it for GLSL ES 1.00."
+                )
 
     def check_legacy_syntax(self):
         """
@@ -415,11 +454,7 @@ class ShaderPart(object):
         if self.legacy_storage is not None:
             found = (self.legacy_storage, LEGACY_STORAGE[self.legacy_storage])
         else:
-            sources = [self.vertex_functions, self.fragment_functions]
-            sources.extend(i[2] for i in self.vertex_parts)
-            sources.extend(i[2] for i in self.fragment_parts)
-
-            text = GLSL_COMMENTS.sub(" ", "\n".join(i for i in sources if i))
+            text = self.part_source()
 
             for pattern, legacy, modern in LEGACY_MARKERS:
                 if pattern.search(text):
