@@ -22,6 +22,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include "renpysound_core.h"
+#include "ffmedia.h"
 #include <Python.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_thread.h>
@@ -1296,6 +1297,61 @@ PyObject *RPS_read_video(int channel) {
 
 }
 
+
+static void RPS_video_yuv_capsule_destructor(PyObject *capsule) {
+	MediaVideoYUV *frame = PyCapsule_GetPointer(capsule, "renpy.videoyuv");
+
+	if (frame) {
+		media_free_video_yuv(frame);
+		PyMem_Free(frame);
+	}
+}
+
+
+PyObject *RPS_read_video_yuv(int channel) {
+	struct Channel *c;
+	MediaVideoYUV *frame;
+	int got_frame;
+	PyObject *capsule;
+
+	if (check_channel(channel)) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	c = &channels[channel];
+	if (!c->playing) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	frame = PyMem_Calloc(1, sizeof(*frame));
+	if (!frame) {
+		return PyErr_NoMemory();
+	}
+
+	Py_BEGIN_ALLOW_THREADS
+	got_frame = media_read_video_yuv(c->playing, frame);
+	Py_END_ALLOW_THREADS
+
+	if (!got_frame) {
+		PyMem_Free(frame);
+		error(SUCCESS);
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	capsule = PyCapsule_New(frame, "renpy.videoyuv", RPS_video_yuv_capsule_destructor);
+	if (!capsule) {
+		media_free_video_yuv(frame);
+		PyMem_Free(frame);
+		return NULL;
+	}
+
+	error(SUCCESS);
+	return capsule;
+}
+
 int RPS_video_ready(int channel) {
     struct Channel *c;
     int rv;
@@ -1331,7 +1387,6 @@ void RPS_set_video(int channel, int video) {
 
     c->video = video;
 }
-
 
 /*
  * Initializes the sound to the given frequencies, channels, and

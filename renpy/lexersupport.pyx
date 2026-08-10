@@ -42,6 +42,17 @@ def match_whitespace(str data not None, Py_ssize_t pos, /):
     return None if i == pos else i
 
 
+cdef inline bint is_ident_char(Py_UCS4 c) noexcept:
+    # Condition is the same as `is_potential_identifier_char` in CPython.
+    return (
+        'a' <= c <= 'z' or
+        'A' <= c <= 'Z' or
+        '0' <= c <= '9' or
+        c == '_' or
+        c >= 128
+    )
+
+
 def match_logical_word(str data not None, Py_ssize_t pos, /):
     """
     Return position after the run of letters that are valid part
@@ -53,18 +64,9 @@ def match_logical_word(str data not None, Py_ssize_t pos, /):
     cdef const void *buf = PyUnicode_DATA(data)
     cdef Py_ssize_t length = PyUnicode_GET_LENGTH(data)
     cdef Py_ssize_t i = pos
-    cdef Py_UCS4 c
 
     for i in range(pos, length):
-        c = PyUnicode_READ(kind, buf, i)
-        # Condition is the same as `is_potential_identifier_char` in CPython.
-        if not (
-            'a' <= c <= 'z' or
-            'A' <= c <= 'Z' or
-            '0' <= c <= '9' or
-            c == '_' or
-            c >= 128
-        ):
+        if not is_ident_char(PyUnicode_READ(kind, buf, i)):
             break
     else:
         i = length
@@ -189,7 +191,10 @@ def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
     cdef:
         Py_ssize_t newlines = 0
         Py_ssize_t brace_depth = 0
+        Py_ssize_t bracket_depth = 0
+        Py_ssize_t spec_depth = -1
         Py_ssize_t line_startpos = -1
+        Py_ssize_t nested_prefix = 0
         int end_quote_size = 0
         bint need_munge = False
         Py_UCS4 last_c = 0
@@ -219,10 +224,19 @@ def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
             pos += 1
             continue
 
+        # `{{` and `}}` are escapes - consume both characters, so the second
+        # one can not be mistaken for the start of a replacement field, i.e.
+        # `f"{{"` is valid string.
+        if f_string and c in '{}' and pos < length and PyUnicode_READ(kind, buf, pos) == c:
+            end_quote_size = 0
+            last_c = c
+            pos += 1
+            continue
+
         # In f-string, it is valid to have _anything_ inside {}, even comments
         # and strings with the same quotes. So here we look for closing brace
         # disregarding anything else.
-        if f_string and c == '{' and pos < length and PyUnicode_READ(kind, buf, pos) != '{':
+        if f_string and c == '{':
             end_quote_size = 0
             brace_depth = 1
             while brace_depth:
@@ -233,30 +247,97 @@ def match_string(str data not None, Py_ssize_t prefix_pos, Py_ssize_t pos, /):
                 last_c = c
                 c = PyUnicode_READ(kind, buf, pos)
 
-                # Do not catch braces inside comments.
-                if c == '#':
+                # Inside a format spec everything is literal text, apart
+                # from nested replacement fields, i.e.
+                # `f"{x:#x}"` and `f"{x:'>10}"` are valid strings.
+                if spec_depth != brace_depth:
+                    # Try to parse a string here. '#' in the string should not
+                    # be read as a comment.
+                    # A quote here may be preceded by a string prefix, which
+                    # has already been consumed by this loop as ordinary
+                    # characters. Track back over at most two of them, so a
+                    # nested f-string is recognized as an f-string.
+                    nested_prefix = pos
+
                     while (
-                        pos < length and
-                        PyUnicode_READ(kind, buf, pos) != '\n'
+                        nested_prefix > 0 and
+                        pos - nested_prefix < 2 and
+                        PyUnicode_READ(kind, buf, nested_prefix - 1) in 'rRuUbBfF'
                     ):
-                        pos += 1
+                        nested_prefix -= 1
 
-                    # Unterminated string literal.
-                    if pos >= length:
+                    # The run is only a prefix if it starts a word, otherwise
+                    # it is the tail of an identifier, like `format'x'`.
+                    if nested_prefix > 0 and is_ident_char(
+                        PyUnicode_READ(kind, buf, nested_prefix - 1)
+                    ):
+                        nested_prefix = pos
+
+                    string_match = match_string(data, nested_prefix, pos)
+                    if string_match == -1:
                         return -1
+                    elif string_match is not None:
+                        (
+                            match_string_endpos,
+                            match_need_munge,
+                            match_newlines,
+                            match_new_line_startpos,
+                        ) = string_match
+                        pos = match_string_endpos
+                        need_munge = match_need_munge or need_munge
+                        newlines += match_newlines
+                        if match_new_line_startpos is not None:
+                            line_startpos = match_new_line_startpos
 
-                    c = '\n'
+                        last_c = 0
+                        c = 0
+                        continue
 
-                pos += 1
+                    # Other parenthesis could contain valid `:`
+                    if c == '(' or c == '[':
+                        bracket_depth += 1
+                    elif c == ')' or c == ']':
+                        if bracket_depth:
+                            bracket_depth -= 1
+                    # Otherwise we could enter format specifier.
+                    elif (
+                        c == ':' and
+                        bracket_depth == 0 and
+                        spec_depth < 0 and
+                        # Check for ':=' operator.
+                        not (
+                            pos + 1 < length and
+                            PyUnicode_READ(kind, buf, pos + 1) == '='
+                        )
+                    ):
+                        spec_depth = brace_depth
+
+                    # Do not catch braces inside comments.
+                    elif c == '#':
+                        while (
+                            pos < length and
+                            PyUnicode_READ(kind, buf, pos) != '\n'
+                        ):
+                            pos += 1
+
+                        # Unterminated string literal.
+                        if pos >= length:
+                            return -1
+
+                        c = '\n'
 
                 if c == '{':
                     brace_depth += 1
                 elif c == '}':
                     brace_depth -= 1
+                    # We no longer in format specifier when brace closes.
+                    if spec_depth > brace_depth:
+                        spec_depth = -1
                 elif c == '\n':
                     line_startpos = pos
                     newlines += 1
 
+                pos += 1
             continue
 
         if c == '\n':

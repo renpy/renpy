@@ -18,7 +18,8 @@
 
 from .sdl cimport *
 from .error import error
-from .iostream cimport to_sdl_iostream
+from .iostream cimport SDL_IOStreamFromPython
+
 
 def init():
     """
@@ -82,7 +83,7 @@ def add_mappings(mapping_file):
     multiple times to add multiple database files.
     """
 
-    cdef SDL_IOStream *iostream = to_sdl_iostream(mapping_file)
+    cdef SDL_IOStream *iostream = SDL_IOStreamFromPython(mapping_file)
 
     if SDL_AddGamepadMappingsFromIO(iostream, 1) == -1:
         raise error()

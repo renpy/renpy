@@ -574,6 +574,7 @@ class Interface:
 
         self.old_scene = {}
         self.transition = {}
+        self.transition_priority: dict[str | None, int] = {}
         self.suppress_transition = False
         self.quick_quit = False
         self.force_redraw = False
@@ -798,6 +799,7 @@ class Interface:
 
         # The number of interactions that have happened without processing an event.
         self.interaction_counter = 0
+        renpy.display.focus.clear_focus_changes_since_event()
 
         # This caches the mod field of the last event that has one, allowing keyboard
         # modifiers to be used with mouse and other events.
@@ -1251,6 +1253,7 @@ class Interface:
         # Force an interaction restart.
         self.restart_interaction = True
         self.interaction_counter = 0
+        renpy.display.focus.clear_focus_changes_since_event()
 
         # True if we're doing a one-time profile.
         self.profile_once = False
@@ -1587,7 +1590,7 @@ class Interface:
 
         return None
 
-    def set_transition(self, transition, layer=None, force=False):
+    def set_transition(self, transition, layer=None, force=False, priority=0):
         """
         Sets the transition that will be performed as part of the next
         interaction.
@@ -1596,10 +1599,16 @@ class Interface:
         if self.suppress_transition and not force:
             return
 
+        old_priority = self.transition_priority.get(layer, None)
+        if (old_priority is not None) and (priority < old_priority):
+            return
+
         if transition is None:
             self.transition.pop(layer, None)
+            self.transition_priority.pop(layer, None)
         else:
             self.transition[layer] = transition
+            self.transition_priority[layer] = priority
 
     def event_peek(self, sleep=True):
         """
@@ -2181,6 +2190,7 @@ class Interface:
                 i()
 
             self.interaction_counter = 0
+            renpy.display.focus.clear_focus_changes_since_event()
 
             repeat = True
             rv = None
@@ -2191,7 +2201,10 @@ class Interface:
                 self.interaction_counter += 1
 
                 if self.interaction_counter == 100 and renpy.config.developer:
-                    raise Exception("renpy.restart_interaction() was called 100 times without processing any input.")
+                    raise Exception(
+                        "renpy.restart_interaction() was called 100 times without processing any input.\n"
+                        + renpy.display.focus.summarize_focus_changes_since_event()
+                    )
 
                 repeat, rv = self.interact_core(
                     preloads=preloads,
@@ -2452,6 +2465,7 @@ class Interface:
                 self.transition_time[k] = None
 
         self.transition.clear()
+        self.transition_priority.clear()
 
         # Safety condition, prevents deadlocks.
         if trans_pause:
@@ -2954,6 +2968,7 @@ class Interface:
                     and not self.get_ongoing_transition(None)
                 ):
                     self.transition.pop(None, None)
+                    self.transition_priority.pop(None, None)
                     self.ongoing_transition.pop(None, None)
                     self.transition_time.pop(None, None)
                     self.transition_from.pop(None, None)
@@ -3053,6 +3068,7 @@ class Interface:
                     renpy.plog(1, "post wait {!r}", ev)
 
                 self.interaction_counter = 0
+                renpy.display.focus.clear_focus_changes_since_event()
 
                 if ev.type == pygame.NOEVENT:
                     if can_block and (not needs_redraw) and (not self.prediction_coroutine) and (not self.mouse_move):
@@ -3345,6 +3361,7 @@ class Interface:
 
                         if renpy.display.behavior.map_event(ev, dismiss):
                             self.transition.pop(None, None)
+                            self.transition_priority.pop(None, None)
                             self.ongoing_transition.pop(None, None)
                             self.transition_time.pop(None, None)
                             self.transition_from.pop(None, None)

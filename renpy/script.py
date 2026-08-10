@@ -43,7 +43,7 @@ from renpy.compat.pickle import loads, dumps
 script_version = renpy.script_version
 
 # Change this to force a recompile of RPYC files when required, if the .rpy file exists.
-RPYC_MAGIC = b"_2025-07-06"
+RPYC_MAGIC = b"_2026-08-05"
 
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
@@ -153,7 +153,7 @@ class Script(object):
         # If recompiling everything, remove orphan .rpyc files.
         # Otherwise, will fail in case orphan .rpyc have same
         # labels as in other scripts (usually happens on script rename).
-        if (renpy.game.args.command == "compile" or renpy.game.args.compile) and not (renpy.game.args.keep_orphan_rpyc):
+        if renpy.game.args.compile and not renpy.game.args.keep_orphan_rpyc:
             self.clean_script_files()
 
             # Reindex files so that .rpyc's are cleared out.

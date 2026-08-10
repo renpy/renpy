@@ -60,6 +60,12 @@ The :var:`config.tts_voice` variable is no longer used.
 Features
 --------
 
+A new :ref:`renpy.red_to_alpha <shader-renpy.red_to_alpha>` shader part has been added, which creates a new image that is white with the alpha taken from
+the red channel of the original data being drawn. This is intended for use to replace: :class:`im.AlphaMask` with :class:`AlphaMask`.
+
+The :func:`renpy.transition` function now takes a `priority` argument. A lower-priority transition will not replace
+a higher-priority transition for the same layer.
+
 The :func:`renpy.callback` decorator registers callbacks with Ren'Py in more concise way.
 
 The new :var:`config.after_init_callbacks` variable is a list of callbacks that are called at the very end of the init phase,
@@ -88,6 +94,9 @@ Menu text filtering can now be disabled with :var:`config.use_menu_text_filter`,
 
 The new :func:`renpy.get_statement_name` function returns the name of the current statement.
 
+The new :func:`renpy.get_statement_info` function returns the filename, line number, and translation identifier
+of the statement that is currently executing or being predicted.
+
 The :class:`Confirm` action and :func:`renpy.confirm` function now take a `screen` argument, allowing
 a custom screen to be used instead of the default confirm screen.
 
@@ -108,6 +117,9 @@ and used to populate the :ref:`audio-namespace <audio-namespace>`.
 
 Other Changes
 -------------
+
+The :var:`config.enter_replay_transition` and :var:`config.after_load_transition` transitions now take priority over
+other transitions queued for the same layer.
 
 The ``--compile`` command line argument now deletes orphaned rpyc files by default.
 This can be disabled with the ``--keep-orphan-rpyc`` command line argument.

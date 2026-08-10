@@ -97,9 +97,7 @@ def main():
     cython(
         "renpy.audio.renpysound",
         ["src/renpysound_core.c", "src/ffmedia.c"],
-        compile_args=["-Wno-deprecated-declarations"]
-        if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ)
-        else [],
+        compile_args=[] if "RENPY_FFMPEG_DEPRECATED_DECLARATIONS" in os.environ else ["-Wno-deprecated-declarations"],
         packages="libavformat libavcodec libavutil libswresample libswscale sdl3",
     )
 
@@ -130,8 +128,9 @@ def main():
     cython("renpy.gl2.gl2draw", packages="sdl3")
     cython("renpy.gl2.gl2texture", packages="sdl3")
     cython("renpy.gl2.gl2uniform", packages="sdl3")
-    cython("renpy.gl2.gl2shader", packages="sdl3")
     cython("renpy.gl2.gl2physics")
+    cython("renpy.gl2.gl2shader", packages="sdl3")
+    cython("renpy.gl2.gl2statecache", packages="sdl3")
 
     if cubism:
         cython("renpy.gl2.live2dmodel", ["src/live2dcsm.c"], packages="sdl3")

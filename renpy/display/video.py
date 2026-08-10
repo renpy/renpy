@@ -22,6 +22,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
+from typing import Callable
+
 import math
 import collections
 import re
@@ -165,6 +167,19 @@ def get_movie_texture(channel, mask_channel=None, side_mask=False, mipmap=None):
         return get_movie_texture_web(channel, mask_channel, side_mask, mipmap)
 
     c = renpy.audio.music.get_channel(channel)
+
+    # Keep the surface path for masks; ordinary desktop movies use YUV planes
+    # when the decoder provides the supported 4:2:0 format.
+    if not side_mask and not mask_channel:
+        from renpy.gl2 import gl2texture
+
+        yuv = c.read_video_yuv()
+        if yuv is not None:
+            tex = gl2texture.load_yuv420_frame(yuv, mipmap)
+            if tex is not None:
+                texture[channel] = tex
+                return tex, True
+
     surf = c.read_video()
 
     if side_mask:
@@ -373,7 +388,7 @@ mask channel.
 class Movie(renpy.display.displayable.Displayable):
     """
     :doc: movie
-    :args: (*, size=None, channel="movie", play=None, side_mask=False, mask=None, mask_channel=None, start_image=None, image=None, play_callback=None, loop=True, group=None, **properties)
+    :args: (*, size=None, channel="movie", play=None, side_mask=False, start_image=None, image=None, play_callback=None, loop=True, group=None, keep_last_frame=False, oversample=None, mask=None, mask_channel=None, **properties)
 
     This is a displayable that shows the current movie.
 
@@ -403,19 +418,7 @@ class Movie(renpy.display.displayable.Displayable):
         for alpha information. The width of the displayable is half the
         width of the movie file.
 
-        Where possible, `side_mask` should be used over `mask` as it has
-        no chance of frames going out of sync.
-
-    `mask`
-        If given, this should be the path to a movie file, or a list of paths
-        to movie files, that are used as the alpha channel of this displayable. The movie file will be
-        automatically played on `movie_channel` when the Movie is shown,
-        and automatically stopped when the movie is hidden.
-
-    `mask_channel`
-        The channel the alpha mask video is played on. If not given,
-        defaults to `channel`\\_mask. (For example, if `channel` is "sprite",
-        `mask_channel` defaults to "sprite_mask".)
+        Use this instead of the deprecated `mask` and `mask_channel` parameters.
 
     `start_image`
         An image that is displayed when playback has started, but the
@@ -494,26 +497,69 @@ class Movie(renpy.display.displayable.Displayable):
         if the movie is scaled up more than 2x.
 
         Automatic oversampling of movies only happens when the movie begins playing.
+
+    `mask`
+        Deprecated. Use `side_mask` instead.
+
+        This is the path to a movie file, or a list of paths to movie files, used as the alpha channel of
+        this displayable. The mask movie is played on `mask_channel` when the Movie is shown and stopped when
+        it is hidden.
+
+        Separate mask movies may become unsynchronized with the color movie. They do not support static masks
+        or a movie file passed to `loop`, and may not work with newer Movie features.
+
+    `mask_channel`
+        Deprecated. The audio channel on which `mask` is played. If not given, it defaults to
+        `channel`\\_mask. (For example, if `channel` is "sprite", `mask_channel` defaults to "sprite_mask".)
     """
 
-    fullscreen = False
-    channel = "movie"
-    _play = None
-    _original_play = None
-    _queue = None
-    _original_queue = None
+    fullscreen: bool = False
+    """Whether this Movie is displayed fullscreen."""
 
-    mask = None
-    mask_channel = None
-    side_mask = False
+    size: tuple[int, int] | None = None
+    """The explicit logical size of the Movie, or None to use its video dimensions."""
 
-    image = None
-    start_image = None
+    channel: str = "movie"
+    """The audio channel used to play the Movie."""
 
-    play_callback = None
+    _play: str | list[str] | None = None
+    """The loadable play filenames selected from `_original_play`."""
 
-    loop = True
-    group = None
+    _original_play: str | list[str] | None = None
+    """The play filenames supplied to `Movie.__init__`."""
+
+    _queue: str | list[str] | None = None
+    """The loadable queued-loop filenames selected from `_original_queue`."""
+
+    _original_queue: str | list[str] | None = None
+    """The queued-loop filenames supplied through the `loop` parameter."""
+
+    _play_and_queue_selected: bool = False
+    """Whether `_play` and `_queue` have been selected from their original filenames."""
+
+    mask: str | list[str] | None = None
+    """The movie filenames used as this Movie's alpha mask."""
+
+    mask_channel: str | None = None
+    """The audio channel used to play `mask`."""
+
+    side_mask: bool = False
+    """Whether the right half of the movie supplies its alpha mask."""
+
+    image: renpy.display.displayable.Displayable | None = None
+    """The displayable shown when the movie is unavailable or has ended."""
+
+    start_image: renpy.display.displayable.Displayable | None = None
+    """The displayable shown while the movie's first frame is decoding."""
+
+    play_callback: Callable[["Movie | None", "Movie"], None] | None = None
+    """The function that starts this Movie's selected files playing."""
+
+    loop: bool = True
+    """Whether the selected play filenames loop."""
+
+    group: str | None = None
+    """The group used to retain a prior Movie's last frame between transitions."""
 
     oversample: float | None = None
     """The oversampling factor of the movie given in Movie.__init__"""
@@ -544,19 +590,12 @@ class Movie(renpy.display.displayable.Displayable):
             return any(renpy.loader.loadable(i, directory="audio") for i in name)
 
     def after_setstate(self):
-        play = self._original_play or self._play
-        if (play is not None) and self.any_loadable(play):
-            self._original_play = self._play = play
-        else:
-            self._play = None
-            self._original_play = play
+        if self._original_queue is None:
+            self._original_queue = self._queue
 
-        queue = self._original_queue or self._queue
-        if (queue is not None) and self.any_loadable(queue):
-            self._original_queue = self._queue = queue
-        else:
-            self._queue = None
-            self._original_queue = queue
+        self._play = None
+        self._queue = None
+        self._play_and_queue_selected = False
 
         global movie_channel_serial
 
@@ -611,7 +650,8 @@ class Movie(renpy.display.displayable.Displayable):
             if self.mask_channel:
                 self.mask_channel = "movie_mask"
 
-    keep_last_frame_serial = 0
+    keep_last_frame_serial: int = 0
+    """The serial number used to create unique groups for `keep_last_frame` Movies."""
 
     def __init__(
         self,
@@ -644,14 +684,9 @@ class Movie(renpy.display.displayable.Displayable):
         self.channel = channel
 
         self._original_play = play
-        if (play is not None) and self.any_loadable(play):
-            self._play = play
 
         if not isinstance(loop, bool):
-
-            if self.any_loadable(loop):
-                self._queue = loop
-
+            self._original_queue = loop
             loop = bool(loop)
 
 
@@ -711,6 +746,15 @@ class Movie(renpy.display.displayable.Displayable):
 
     def render(self, width, height, st, at):
         self.ensure_channels()
+
+        if not self._play_and_queue_selected:
+            if (self._original_play is not None) and self.any_loadable(self._original_play):
+                self._play = self._original_play
+
+            if (self._original_queue is not None) and self.any_loadable(self._original_queue):
+                self._queue = self._original_queue
+
+            self._play_and_queue_selected = True
 
         if self._play and not (renpy.game.preferences.video_image_fallback is True):
             if channel_movie.get(self.channel, None) is not self:

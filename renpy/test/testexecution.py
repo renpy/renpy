@@ -104,6 +104,8 @@ def initialize(specified_test: str) -> None:
     if initialized:
         return
 
+    on_reload()
+
     root = setup_global_test_suite()
 
     test_node = get_testcase_by_id(specified_test)
@@ -587,6 +589,8 @@ class TestPhaseController:
 
             while node_executor.done and node_executor.next_node is None:
                 next_phase = self.active_phase.update()
+                if next_phase is None:
+                    break
                 self.transition_to_new_phase(next_phase)
 
         except renpy.game.CONTROL_EXCEPTIONS:

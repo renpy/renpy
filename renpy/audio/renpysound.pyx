@@ -52,7 +52,7 @@ from __future__ import print_function
 
 from libc.stdint cimport uintptr_t
 
-from renpy.pygame.iostream cimport SDLIOStreamFromPython
+from renpy.pygame.iostream cimport SDL_IOStreamFromPython
 from renpy.pygame.sdl cimport SDL_IOStream
 
 cdef extern from "renpysound_core.h":
@@ -79,6 +79,7 @@ cdef extern from "renpysound_core.h":
     void RPS_advance_time()
     int RPS_video_ready(int channel)
     object RPS_read_video(int channel)
+    object RPS_read_video_yuv(int channel)
     void RPS_set_video(int channel, int video)
 
     void RPS_sample_surfaces(object, object)
@@ -148,7 +149,7 @@ def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    rw = SDLIOStreamFromPython(file)
+    rw = SDL_IOStreamFromPython(file)
 
     if rw == NULL:
         raise Exception("Could not create IOStream.")
@@ -176,7 +177,7 @@ def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    rw = SDLIOStreamFromPython(file)
+    rw = SDL_IOStreamFromPython(file)
 
     if rw == NULL:
         raise Exception("Could not create IOStream.")
@@ -402,6 +403,12 @@ def read_video(channel):
     # This has to be set to the same number it is in ffmedia.c
     FRAME_PADDING = 4
     return rv.subsurface((FRAME_PADDING, FRAME_PADDING, w - FRAME_PADDING * 2, h - FRAME_PADDING * 2))
+
+
+def read_video_yuv(channel):
+    """Returns a capsule containing a packed YUV420 frame, or None."""
+
+    return RPS_read_video_yuv(channel)
 
 
 # No video will be played from this channel.
