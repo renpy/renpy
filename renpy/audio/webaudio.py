@@ -213,7 +213,7 @@ def queue(
 
     try:
         if not isinstance(file, str):
-            file = file.raw.name
+            file = file.name
     except Exception:
         if renpy.config.debug_sound:
             raise
