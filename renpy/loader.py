@@ -162,15 +162,18 @@ class RPAv3ArchiveHandler(object):
             if len(index[k][0]) == 2:
                 index[k] = [(offset ^ key, dlen ^ key) for offset, dlen in index[k]]
             else:
-                index[k] = index_list = []
+                index_list = []
+
                 for offset, dlen, start in index[k]:
                     if start:
                         if not isinstance(start, bytes):
                             start = start.encode("latin-1")
 
-                        index_list.append(start)
+                        index_list.append((start,))
 
                     index_list.append((offset ^ key, dlen ^ key))
+
+                index[k] = index_list
 
         return index
 
@@ -557,7 +560,7 @@ def load_from_archive(name):
         if len(index[name]) == 1 and len(index[name][0]) == 2:
             offset, dlen = index[name][0]
 
-            stream = IOSubFile(afn, base=offset, length=dlen, name=name)
+            stream = IOSubFile(afn, base=offset, length=dlen)
             return io.BufferedReader(stream)
 
         # Compatibility path.
@@ -571,7 +574,7 @@ def load_from_archive(name):
                     f.seek(offset)
                     parts.append(f.read(dlen))
 
-            return io.BufferedReader(IOBuffer(b"".join(parts), name=name))
+            return io.BufferedReader(IOBuffer(b"".join(parts)))
 
     return None
 
