@@ -560,7 +560,8 @@ def load_from_archive(name):
         if len(index[name]) == 1 and len(index[name][0]) == 2:
             offset, dlen = index[name][0]
 
-            return IOSubFile(afn, base=offset, length=dlen, name=name)
+            stream = IOSubFile(afn, base=offset, length=dlen, name=name)
+            return io.BufferedReader(stream)
 
         # Compatibility path.
         parts: list[bytes] = []
@@ -573,7 +574,7 @@ def load_from_archive(name):
                     f.seek(offset)
                     parts.append(f.read(dlen))
 
-            return IOBuffer(b"".join(parts), name=name)
+            return io.BufferedReader(IOBuffer(b"".join(parts), name=name))
 
     return None
 

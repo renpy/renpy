@@ -76,6 +76,9 @@ cdef inline SDL_IOStream *SDL_IOStreamFromPython(object obj, str name=None) exce
     """
 
     import os
+    
+    while hasattr(obj, "raw"):
+        obj = obj.raw
 
     cdef IOStream stream
     if isinstance(obj, IOStream):
