@@ -175,6 +175,23 @@ class Variable:
 
         token = match_word()
 
+        if token == "layout":
+            if m := re.match(r'\s*\([^)]*\)', l):
+                l = l[m.end():]
+
+            if match_word() == "out":
+                raise ShaderError(
+                    f"In {shader_name}, '{line.strip()}' declares an additional fragment output. This "
+                    "syntax is reserved for multiple render targets. Location 0 is Ren'Py's "
+                    f"{renpy.gl2.gl2shadercache.FRAGMENT_OUTPUT}; outputs declared by a shader part will "
+                    "start at 1."
+                )
+
+            raise ShaderError(
+                f"In {shader_name}, layout qualifiers are not supported, in '{line.strip()}'. "
+                f"Declare the variable without one."
+            )
+
         while True:
             if token == "invariant":
                 self.invariant = True

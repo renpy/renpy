@@ -205,6 +205,12 @@ def register_shader(name, **kwargs):
         Finding one is an error, since it means the part was written for the
         older dialect but did not declare as much.
 
+        Layout qualifiers are reserved for declaring additional fragment outputs
+        once multiple render targets are supported: location 0 is Ren'Py's
+        ``renpy_FragColor``, and outputs declared by a shader part will start at 1.
+        A plain ``out`` will continue to mean a value passed from the vertex shader
+        to the fragment shader.
+
     `variables`
         The variables used by the shader part. These should be listed one per
         line, a storage class followed by a type, name, and semicolon.
