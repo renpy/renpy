@@ -175,7 +175,7 @@ def play(
 
     try:
         if not isinstance(file, str):
-            file = file.raw.name
+            file = getattr(file, "raw", file).name
     except Exception:
         if renpy.config.debug_sound:
             raise
@@ -212,7 +212,7 @@ def queue(
 
     try:
         if not isinstance(file, str):
-            file = file.raw.name
+            file = getattr(file, "raw", file).name
     except Exception:
         if renpy.config.debug_sound:
             raise
