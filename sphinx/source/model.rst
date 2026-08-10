@@ -191,8 +191,9 @@ variables with v\_. Names starting with u_renpy\_, a_renpy, and v_renpy
 are reserved, as are the standard variables given below.
 
 As a general sketch for priority levels, priority 100 sets up geometry,
-priority 200 determines the initial fragment color (gl_FragColor), and
-higher-numbered priorities can apply effects to alter that color.
+priority 200 determines the initial fragment color (``renpy_FragColor``, or
+``gl_FragColor`` when ``glsl=100`` is in use), and higher-numbered priorities
+can apply effects to alter that color.
 
 Here's an example of a custom shader part that applies a gradient across
 each model it is used to render::
@@ -203,13 +204,13 @@ each model it is used to render::
             uniform vec4 u_gradient_left;
             uniform vec4 u_gradient_right;
             uniform vec2 u_model_size;
-            varying float v_gradient_done;
-            attribute vec4 a_position;
+            out float v_gradient_done;
+            in vec4 a_position;
         """, vertex_300="""
             v_gradient_done = a_position.x / u_model_size.x;
         """, fragment_300="""
             float gradient_done = v_gradient_done;
-            gl_FragColor *= mix(u_gradient_left, u_gradient_right, gradient_done);
+            renpy_FragColor *= mix(u_gradient_left, u_gradient_right, gradient_done);
         """)
 
 The custom shader can then be applied using a transform::
@@ -226,13 +227,44 @@ will be accessible by any and all other shaders applied from the same list. This
 can be useful when having optional parts in a given shader system, but it can also
 lead to name collisions when using two independent shaders.
 
+.. _glsl-version:
+
 **GLSL Version.**
-The version of GLSL supported depends on platform, but the most restrictive
-are mobile and web platforms, which use GLSL ES 1.00. Ren'Py declares variables
-to have highp precision, which supports floating point numbers in the range
-2\ :sup:`-62` to 2\ :sup:`62`. Non-zero floating point numbers should have a
-magnitude betwee 2\ :sup:`-62` and 2\ :sup:`62`, and integers should be in the range
-range -2\ :sup:`16` to 2\ :sup:`16`.  Actual hardware often supports a larger range,
+Shader parts are written in one of two versions: GLSL ES 3.00 is described
+throughout this page.
+
+In GLSL ES 3.00, variables are declared with ``uniform``, ``in`` for a value
+that comes from the mesh, and ``out`` for a value the vertex shader passes to
+the fragment shader. Textures are sampled with ``texture``, and a fragment
+shader writes its color to ``renpy_FragColor``.
+
+.. var:: config.glsl_version = 300
+
+    The version used by shader parts that don't pass `glsl` to
+    :func:`renpy.register_shader`. This defaults to 300 in new games and to
+    100 in games that declare compatibility with Ren'Py 8.5 or earlier.
+
+A single part can override this by passing `glsl` to
+:func:`renpy.register_shader`.
+
+Ren'Py translates between the two versions, so parts written in either can be
+combined in the same shader, and a variable declared by two parts in different
+versions is treated as the same variable. GLSL ES 3.00 is preferred and recommended,
+as it allows loops whose bounds aren't constant, integer and bitwise operations,
+``switch``, ``texelFetch``, and ``textureSize``.
+
+Ren'Py emits shaders as GLSL ES 3.00 on mobile and web and GLSL 3.30
+on the desktop, but only where the system provides them; otherwise, it falls
+back to GLSL ES 1.00 or GLSL 1.20 and translates the parts down. That
+translation only adjusts spelling, so a part using a feature the older version
+lacks will fail to compile there. This is most relevant to macOS, which
+does not offer the kind of OpenGL context GLSL 3.30 needs.
+
+Ren'Py declares variables to have highp precision, which supports floating
+point numbers in the range 2\ :sup:`-62` to 2\ :sup:`62`. Non-zero floating
+point numbers should have a magnitude between 2\ :sup:`-62` and
+2\ :sup:`62`. In GLSL ES 1.00, integers should be in the range
+-2\ :sup:`16` to 2\ :sup:`16`. Actual hardware often supports a larger range,
 but this isn't guaranteed.
 
 There is a variable that can help in debugging custom shaders:

@@ -10,6 +10,26 @@ Changelog (Ren'Py 7.x-)
 8.6.0
 =====
 
+Shaders
+-------
+
+Shader parts can now be written in GLSL ES 3.00, which is the version new
+games use by default.
+
+GLSL ES 3.00 allows loops whose bounds aren't constant, integer and bitwise
+operations, ``switch``, ``texelFetch``, and ``textureSize``. Variables are
+declared with ``in`` and ``out`` rather than ``attribute`` and ``varying``,
+textures are sampled with ``texture`` rather than ``texture2D``, and a fragment
+shader writes its color to ``renpy_FragColor`` rather than ``gl_FragColor``.
+
+GLSL version is selected by the new :var:`config.glsl_version` variable, which
+defaults to 300 in new games and to 100 in games that declare compatibility with
+Ren'Py 8.5 or earlier. A single part can override it by passing `glsl` to
+:func:`renpy.register_shader` or :func:`renpy.register_textshader`.
+
+Existing shader parts do not require changes. Ren'Py translates between the two
+versions, so parts written in either can be combined in the same shader.
+
 Clipboard
 ---------
 
