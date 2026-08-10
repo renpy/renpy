@@ -85,11 +85,24 @@ let interpolate = (a, b, done) => {
 }
 
 /**
+ * Coerces `value` to a finite number, falling back to `dflt`.
+ */
+let finite = (value, dflt) => {
+    value = Number(value);
+    return Number.isFinite(value) ? value : dflt;
+}
+
+/**
  * Given an audio parameter, linearly ramps it from start to end over
  * duration seconds.
  */
 let linearRampToValue = (param, start, end, duration) => {
     param.cancelScheduledValues(context.currentTime);
+
+    // Guard against non-finite inputs.
+    start = finite(start, param.value);
+    end = finite(end, param.value);
+    duration = Math.max(0, finite(duration, 0));
 
     let points = 30;
 
@@ -103,8 +116,21 @@ let linearRampToValue = (param, start, end, duration) => {
  * Given an audio parameter, sets it to the given value.
  */
 let setValue = (param, value) => {
+    value = finite(value, param.value);
     param.cancelScheduledValues(context.currentTime);
     param.setValueAtTime(value, context.currentTime);
+}
+
+/**
+ * Creates a buffer source for the play object `p` on channel `c`, wiring
+ * up an `onended` handler that knows which source it belongs to.
+ */
+let create_source = (c, buffer) => {
+    let source = context.createBufferSource();
+    source.buffer = buffer;
+    source.started = false;
+    source.onended = () => { on_end(c, source); };
+    return source;
 }
 
 /**
@@ -123,6 +149,10 @@ let start_playing = (c) => {
     }
 
     if (p.source === null) {
+        return;
+    }
+
+    if (p.source.started) {
         return;
     }
 
@@ -146,7 +176,9 @@ let start_playing = (c) => {
         }
     }
 
-    if (p.end >= 0) {
+    p.source.started = true;
+
+    if (p.end > 0 && p.end > p.start) {
         p.source.start(0, p.start, p.end - p.start);
     } else {
         p.source.start(0, p.start);
@@ -161,7 +193,7 @@ let start_playing = (c) => {
 
     }
 
-    setValue(c.relative_volume.gain, p.relative_volume);
+    setValue(c.relative_volume.gain, finite(p.relative_volume, 1.0));
 
     p.started = context.currentTime;
 };
@@ -194,10 +226,7 @@ let pause_playing = (c) => {
     } catch (e) {
     }
 
-    let source = context.createBufferSource();
-    source.buffer = p.buffer;
-    source.onended = () => { on_end(c); };
-    p.source = source;
+    p.source = create_source(c, p.buffer);
 
     p.start += (context.currentTime - p.started);
     p.started = null;
@@ -228,8 +257,9 @@ let stop_playing = (c) => {
 /**
  * Called when a channel ends naturally, to move things along.
  */
-let on_end = (c) => {
-    if (c.playing !== null && c.playing.started !== null) {
+let on_end = (c, source) => {
+    if (c.playing !== null && c.playing.started !== null &&
+        (source === undefined || c.playing.source === source)) {
         stop_playing(c);
     }
 
@@ -303,13 +333,20 @@ let video_start = (c) => {
 
     }
 
-    setValue(c.relative_volume.gain, p.relative_volume);
+    setValue(c.relative_volume.gain, finite(p.relative_volume, 1.0));
 
     p.started = c.video_el.currentTime;  // XXX Probably not ready yet
 };
 
 let video_pause = (c) => {
     const p = c.playing;
+
+    if (p === null) {
+        c.paused = true;
+        c.video_el?.pause();
+        return;
+    }
+
     if (p.started === null) {
         return;
     }
@@ -387,6 +424,11 @@ renpyAudio.set_channel_count = (count) => {
 renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid) => {
 
     const c = get_channel(channel);
+
+    start = Math.max(0, finite(start, 0));
+    end = finite(end, -1);
+    fadein = Math.max(0, finite(fadein, 0));
+    relative_volume = finite(relative_volume, 1.0);
 
     if (file.startsWith('url:')) {
         const url = new URL(file.slice(4), window.location);
@@ -491,9 +533,7 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
     function reuseBuffer(c) {
         // We can re-use the audio buffer, but not the buffer source
         c.queued.buffer = c.playing.buffer;
-        c.queued.source = context.createBufferSource();
-        c.queued.source.buffer = c.playing.buffer;
-        c.queued.source.onended = () => { on_end(c); };
+        c.queued.source = create_source(c, c.playing.buffer);
 
         start_playing(c);
     }
@@ -518,11 +558,7 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
     const array = FS.readFile(file);
     context.decodeAudioData(array.buffer, (buffer) => {
 
-        const source = context.createBufferSource();
-        source.buffer = buffer;
-        source.onended = () => { on_end(c); };
-
-        q.source = source;
+        q.source = create_source(c, buffer);
         q.buffer = buffer;
 
         start_playing(c);
@@ -563,6 +599,9 @@ renpyAudio.dequeue = (channel, even_tight) => {
 renpyAudio.fadeout = (channel, delay) => {
 
     let c = get_channel(channel);
+
+    delay = Math.max(0, finite(delay, 0));
+
     if (c.playing == null || c.playing.started == null) {
         c.playing = c.queued;
         c.queued = null;
@@ -714,7 +753,7 @@ renpyAudio.set_secondary_volume = (channel, volume, delay) => {
 
 renpyAudio.get_volume = (channel) => {
     const c = get_channel(channel);
-    return c.primary_volume.gain * 1000;
+    return c.primary_volume.gain.value * 1000;
 };
 
 
@@ -749,7 +788,7 @@ renpyAudio.periodic = () => {
 
         if (c.playing) {
             if (c.playing.synchro_start) {
-                if (c.buffer === null) {
+                if (c.playing.buffer === null) {
                     ready = false;
                 }
 
