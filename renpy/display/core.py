@@ -1099,6 +1099,11 @@ class Interface:
             except renpy.webloader.DownloadNeeded:
                 pass
 
+            except Exception:
+                renpy.config.window_icon = None
+                renpy.display.log.write("Couldn't load window icon:")
+                renpy.display.log.exception()
+
     def set_window_caption(self, force=False):
         window_title = renpy.config.window_title
 
