@@ -116,6 +116,13 @@ def parse_glsl_version(s):
     return int(m.group(1)) * 100 + int(m.group(2).ljust(2, "0"))
 
 
+def dialect_version(gles, dialect):
+    if gles:
+        return dialect
+
+    return 330 if dialect >= 300 else 120
+
+
 def emit_version(gles, glsl_version):
     """
     Given the GLSL version the current context reports supporting, returns
@@ -417,7 +424,11 @@ class ShaderPart(object):
         if found is not None:
             legacy, modern = found
 
-            raise Exception(f"Shader part {self.name} uses {legacy}, which only exists in GLSL ES 1.00.")
+            raise Exception(
+                f"Shader part {self.name} uses {legacy}, which only exists in GLSL ES 1.00, and doesn't "
+                f"declare a dialect. Pass glsl=100 to renpy.register_shader or rewrite it for GLSL ES 3.00 "
+                f"({legacy} becomes {modern}) and pass glsl=300."
+            )
 
     def expand_name(self, s):
         """
@@ -560,7 +571,7 @@ class ShaderCache(object):
                     )
                 )
 
-            self.version = int(forced)
+            self.version = dialect_version(gles, GLSL_DIALECTS[int(forced)])
 
             self.pinned = True
         else:
@@ -685,7 +696,7 @@ class ShaderCache(object):
             # shader didn't survive being emitted in it. Drop back to the
             # legacy dialect for the rest of the session.
 
-            legacy = emit_version(self.gles, 0)
+            legacy = dialect_version(self.gles, 100)
 
             modern = any(shader_part[i].glsl >= 300 for i in sortedpartnames)
 
