@@ -162,15 +162,18 @@ class RPAv3ArchiveHandler(object):
             if len(index[k][0]) == 2:
                 index[k] = [(offset ^ key, dlen ^ key) for offset, dlen in index[k]]
             else:
-                index[k] = index_list = []
+                index_list = []
+
                 for offset, dlen, start in index[k]:
                     if start:
                         if not isinstance(start, bytes):
                             start = start.encode("latin-1")
 
-                        index_list.append(start)
+                        index_list.append((start,))
 
                     index_list.append((offset ^ key, dlen ^ key))
+
+                index[k] = index_list
 
         return index
 
