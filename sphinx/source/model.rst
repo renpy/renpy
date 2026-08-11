@@ -191,7 +191,7 @@ variables with v\_. Names starting with u_renpy\_, a_renpy, and v_renpy
 are reserved, as are the standard variables given below.
 
 As a general sketch for priority levels, priority 100 sets up geometry,
-priority 200 determines the initial fragment color (``renpy_FragColor``, or
+priority 200 determines the initial fragment color (``fragment_color``, or
 ``gl_FragColor`` when ``glsl=100`` is in use), and higher-numbered priorities
 can apply effects to alter that color.
 
@@ -210,7 +210,7 @@ each model it is used to render::
             v_gradient_done = a_position.x / u_model_size.x;
         """, fragment_300="""
             float gradient_done = v_gradient_done;
-            renpy_FragColor *= mix(u_gradient_left, u_gradient_right, gradient_done);
+            fragment_color *= mix(u_gradient_left, u_gradient_right, gradient_done);
         """)
 
 The custom shader can then be applied using a transform::
@@ -236,7 +236,7 @@ throughout this page.
 In GLSL ES 3.00, variables are declared with ``uniform``, ``in`` for a value
 that comes from the mesh, and ``out`` for a value the vertex shader passes to
 the fragment shader. Textures are sampled with ``texture``, and a fragment
-shader writes its color to ``renpy_FragColor``.
+shader writes its color to ``fragment_color``.
 
 .. var:: config.glsl_version = 300
 

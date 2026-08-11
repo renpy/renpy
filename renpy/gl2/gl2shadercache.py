@@ -30,7 +30,7 @@ shader_part = {}
 # The name of the variable a fragment shader writes its color to, when the
 # modern dialect is being emitted (for legacy support, as GLSL ES 3.00 removed
 # gl_FragColor).
-FRAGMENT_OUTPUT = "renpy_FragColor"
+FRAGMENT_OUTPUT = "fragment_color"
 
 # The GLSL dialects a shader part can be authored in.
 GLSL_DIALECTS = {100: 100, 120: 100, 300: 300, 330: 300}
@@ -216,7 +216,7 @@ def register_shader(name, **kwargs):
 
         Layout qualifiers are reserved for declaring additional fragment outputs
         once multiple render targets are supported: location 0 is Ren'Py's
-        ``renpy_FragColor``, and outputs declared by a shader part will start at 1.
+        ``fragment_color``, and outputs declared by a shader part will start at 1.
         A plain ``out`` will continue to mean a value passed from the vertex shader
         to the fragment shader.
 

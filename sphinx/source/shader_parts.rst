@@ -29,7 +29,7 @@ Fragment Part Priorities
 How Ren'Py uses fragment part priorities:
 
 * Priority 200 determines an original color and stores it in the fragment
-  output (``renpy_FragColor`` in GLSL ES 3.00 or ``gl_FragColor`` in
+  output (``fragment_color`` in GLSL ES 3.00 or ``gl_FragColor`` in
   GLSL ES 1.00).
 * Priority 300 multiplies that color with a second texture.
 * Priority 325 stores alpha before the text shaders adjust it.

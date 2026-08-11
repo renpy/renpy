@@ -30,7 +30,7 @@ init python:
     renpy.register_shader(
         "test_shaders.modern", glsl=300,
         variables="uniform float u__amount;",
-        fragment_600="renpy_FragColor.rgb *= u__amount;\n",
+        fragment_600="fragment_color.rgb *= u__amount;\n",
     )
 
     renpy.register_shader(
@@ -48,9 +48,9 @@ init python:
             ivec2 l__size = textureSize(tex0, 0);
             vec4 l__acc = vec4(0.0);
             for (int l__i = 0; l__i < u__taps; l__i += 1) {
-                l__acc += renpy_FragColor;
+                l__acc += fragment_color;
             }
-            renpy_FragColor = l__acc / float(max(u__taps * l__size.x, 1));
+            fragment_color = l__acc / float(max(u__taps * l__size.x, 1));
         """,
     )
 

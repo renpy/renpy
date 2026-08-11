@@ -20,7 +20,7 @@ GLSL ES 3.00 allows loops whose bounds aren't constant, integer and bitwise
 operations, ``switch``, ``texelFetch``, and ``textureSize``. Variables are
 declared with ``in`` and ``out`` rather than ``attribute`` and ``varying``,
 textures are sampled with ``texture`` rather than ``texture2D``, and a fragment
-shader writes its color to ``renpy_FragColor`` rather than ``gl_FragColor``.
+shader writes its color to ``fragment_color`` rather than ``gl_FragColor``.
 
 GLSL version is selected by the new :var:`config.glsl_version` variable, which
 defaults to 300 in new games and to 100 in games that declare compatibility with
