@@ -59,6 +59,8 @@ def play(
     `loop`
         If this is True, the tracks will loop while they are the last thing
         in the queue.
+        If this is False, the tracks will play only once.
+        If None, the default of the channel is used.
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
@@ -185,6 +187,8 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
     `loop`
         If this is True, the tracks will loop while they are the last thing
         in the queue.
+        If this is False, the tracks will play only once.
+        If None, the default of the channel is used.
 
     `clear_queue`
         If True, then the queue is cleared, making these files the files that
