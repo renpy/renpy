@@ -280,6 +280,10 @@ class Variable:
             if interpolation is None and self.type in FLAT_TYPES:
                 interpolation = "flat"
 
+            # GLSL ES 3.00 only has smooth and flat
+            if interpolation == "noperspective" and version == 300:
+                interpolation = None
+
             if interpolation is not None:
                 rv.append(interpolation)
 
