@@ -32,11 +32,21 @@ shader_part = {}
 # gl_FragColor).
 FRAGMENT_OUTPUT = "fragment_color"
 
-# The GLSL dialects a shader part can be authored in.
-GLSL_DIALECTS = {100: 100, 120: 100, 300: 300, 330: 300}
+# The GLSL versions each dialect is emitted as.
+DIALECT_VERSIONS = {
+    100: (100, 120),
+    300: (300, 330),
+}
+
+# The GLSL dialects a shader part can be authored in, from oldest to newest.
+DIALECTS = tuple(sorted(DIALECT_VERSIONS))
+
+# A map from a GLSL version to the dialect it belongs to. A part can declare
+# either spelling.
+GLSL_DIALECTS = {version: dialect for dialect, versions in DIALECT_VERSIONS.items() for version in versions}
 
 # The GLSL versions shaders can be emitted in.
-GLSL_VERSIONS = (100, 120, 300, 330)
+GLSL_VERSIONS = tuple(sorted(GLSL_DIALECTS))
 
 # The names below are only rewritten when they stand alone.
 STANDALONE = r"(?<![\w.]){}\b"
@@ -56,6 +66,7 @@ LEGACY_TO_MODERN = [
 # will fail to compile with an error and source code.
 MODERN_TO_LEGACY = [
     (re.compile(STANDALONE.format(FRAGMENT_OUTPUT)), "gl_FragColor"),
+    (re.compile(r"(?<![\w.])textureProj\s*\("), "texture2DProj("),
     (re.compile(r"(?<![\w.])texture\s*\("), "texture2D("),
 ]
 
@@ -82,14 +93,48 @@ LEGACY_STORAGE = {
     "varying": "out",
 }
 
-# Constructs that need GLSL ES 3.00.
-MODERN_MARKERS = [
-    (re.compile(STANDALONE.format(FRAGMENT_OUTPUT)), FRAGMENT_OUTPUT),
-    (re.compile(STANDALONE.format("textureSize")), "textureSize"),
-    (re.compile(STANDALONE.format("texelFetch")), "texelFetch"),
-    (re.compile(STANDALONE.format("textureGrad")), "textureGrad"),
-    (re.compile(r"(?<![\w.])texture\s*\("), "texture"),
-]
+# The constructs each dialect introduced that are only spelled differently in an
+# older one.
+TRANSLATED_MARKERS = {
+    300: [
+        (re.compile(STANDALONE.format(FRAGMENT_OUTPUT)), FRAGMENT_OUTPUT),
+        (re.compile(r"(?<![\w.])texture\s*\("), "texture"),
+    ],
+}
+
+# The constructs each dialect introduced that an older one has no equivalent
+# for, which hold a part to the dialect that introduced them.
+UNTRANSLATED_MARKERS = {
+    300: [
+        (re.compile(STANDALONE.format("textureSize")), "textureSize"),
+        (re.compile(STANDALONE.format("texelFetch")), "texelFetch"),
+        (re.compile(STANDALONE.format("textureGrad")), "textureGrad"),
+        (re.compile(STANDALONE.format("textureLod")), "textureLod"),
+        (re.compile(STANDALONE.format("textureProjLod")), "textureProjLod"),
+        (re.compile(STANDALONE.format("switch")), "switch"),
+        (re.compile(r"%"), "the % operator"),
+        (re.compile(r"<<|>>"), "a bitwise shift"),
+        (re.compile(r"(?<!&)&(?!&)|(?<!\|)\|(?!\|)|(?<!\^)\^(?!\^)"), "a bitwise operator"),
+    ],
+}
+
+# The variable types each dialect introduced.
+UNTRANSLATED_TYPES = {
+    300: {"int", "ivec2", "ivec3", "ivec4", "bool", "bvec2", "bvec3", "bvec4"},
+}
+
+
+def dialect_name(dialect):
+    return "GLSL ES {}.{:02d}".format(dialect // 100, dialect % 100)
+
+
+def newer_markers(dialect):
+    for d in DIALECTS:
+        if d <= dialect:
+            continue
+
+        for pattern, name in TRANSLATED_MARKERS.get(d, []) + UNTRANSLATED_MARKERS.get(d, []):
+            yield d, pattern, name
 
 
 def config_dialect():
@@ -102,8 +147,9 @@ def config_dialect():
 
     if version not in GLSL_DIALECTS:
         raise Exception(
-            "config.glsl_version is {!r}, which is not a known GLSL dialect. Use 300 for GLSL ES 3.00, "
-            "or 100 for GLSL ES 1.00.".format(version)
+            "config.glsl_version is {!r}, which is not a known GLSL dialect. Use {}.".format(
+                version, ", or ".join("{} for {}".format(d, dialect_name(d)) for d in DIALECTS)
+            )
         )
 
     return GLSL_DIALECTS[version]
@@ -126,10 +172,9 @@ def parse_glsl_version(s):
 
 
 def dialect_version(gles, dialect):
-    if gles:
-        return dialect
+    gles_version, desktop_version = DIALECT_VERSIONS[dialect]
 
-    return 330 if dialect >= 300 else 120
+    return gles_version if gles else desktop_version
 
 
 def emit_version(gles, glsl_version):
@@ -141,28 +186,35 @@ def emit_version(gles, glsl_version):
     if glsl_version is None:
         glsl_version = 0
 
-    if gles:
-        return 300 if glsl_version >= 300 else 100
-    else:
-        return 330 if glsl_version >= 330 else 120
+    rv = dialect_version(gles, DIALECTS[0])
+
+    for dialect in DIALECTS:
+        version = dialect_version(gles, dialect)
+
+        if glsl_version >= version:
+            rv = version
+
+    return rv
 
 
 def translate(text, source_version, target_version):
     """
-    Translates a chunk of shader source between the legacy and modern
-    dialects, if it wasn't authored in the one being emitted.
+    Translates a chunk of shader source between dialects, if it wasn't authored
+    in the one being emitted.
 
     `source_version`
-        The dialect the text was authored in (100, 300).
+        The dialect the text was authored in, one of DIALECTS.
 
     `target_version`
-        The GLSL version being emitted (100, 120, 300, or 330).
+        The GLSL version being emitted, one of GLSL_VERSIONS.
     """
 
-    if (source_version >= 300) == (target_version >= 300):
+    target_dialect = GLSL_DIALECTS[target_version]
+
+    if source_version == target_dialect:
         return text
 
-    if source_version >= 300:
+    if source_version > target_dialect:
         rules = MODERN_TO_LEGACY
     else:
         rules = LEGACY_TO_MODERN
@@ -283,20 +335,25 @@ class ShaderPart(object):
             )
 
         if (glsl is not None) and (glsl not in GLSL_DIALECTS):
-            raise Exception(
-                "In shader {}: glsl={!r} is not a known GLSL dialect. Use glsl=300 (or the equivalent glsl=330) "
-                "for GLSL ES 3.00, or glsl=100 (or the equivalent glsl=120) for GLSL ES 1.00.".format(name, glsl)
+            options = ", or ".join(
+                "glsl={} (or the equivalent glsl={}) for {}".format(gles, desktop, dialect_name(d))
+                for d, (gles, desktop) in sorted(DIALECT_VERSIONS.items())
             )
+
+            raise Exception("In shader {}: glsl={!r} is not a known GLSL dialect. Use {}.".format(name, glsl, options))
 
         self.name = name
         shader_part[name] = self
 
-        # The dialect this part declared, normalized to 100 or 300, or None if
-        # it didn't declare one and should follow config.glsl_version.
         self.declared_glsl = GLSL_DIALECTS[glsl] if (glsl is not None) else None
 
         # True once this part has been checked for legacy constructs.
         self.checked_glsl = False
+
+        # The oldest dialect this part can be emitted in and the construct that
+        # requires it.
+        self.found_dialect = None
+        self.found_feature = None
 
         # The legacy storage qualifier this part declared a variable with, if
         # any.
@@ -395,7 +452,7 @@ class ShaderPart(object):
     @property
     def glsl(self):
         """
-        The dialect this part is written in: 100 or 300.
+        The dialect this part is written in, one of DIALECTS.
 
         A part that didn't declare one follows config.glsl_version.
         """
@@ -408,14 +465,59 @@ class ShaderPart(object):
         # A part that says nothing is checked against the dialect it's been
         # given, in whichever direction that is.
         if not self.checked_glsl:
-            if rv >= 300:
-                self.check_legacy_syntax()
+            if rv > DIALECTS[0]:
+                self.check_legacy_syntax(rv)
             else:
-                self.check_modern_syntax()
+                self.check_modern_syntax(rv)
 
             self.checked_glsl = True
 
         return rv
+
+    @property
+    def minimum_dialect(self):
+        if self.found_dialect is None:
+            self.find_minimum_dialect()
+
+        return self.found_dialect
+
+    @property
+    def minimum_feature(self):
+        if self.found_dialect is None:
+            self.find_minimum_dialect()
+
+        return self.found_feature
+
+    def find_minimum_dialect(self):
+        text = self.part_source()
+
+        found = DIALECTS[0]
+        feature = None
+
+        for dialect in DIALECTS:
+            if dialect <= found:
+                continue
+
+            name = next((n for pattern, n in UNTRANSLATED_MARKERS.get(dialect, []) if pattern.search(text)), None)
+
+            if name is None:
+                name = self.untranslated_type(dialect)
+
+            if name is not None:
+                found = dialect
+                feature = name
+
+        self.found_dialect = found
+        self.found_feature = feature
+
+    def untranslated_type(self, dialect):
+        types = UNTRANSLATED_TYPES.get(dialect, ())
+
+        for v in self.vertex_variables | self.fragment_variables:
+            if (v.storage != "uniform") and (v.type in types):
+                return "{} {}".format(v.type, v.name)
+
+        return None
 
     def part_source(self):
         """
@@ -428,10 +530,10 @@ class ShaderPart(object):
 
         return GLSL_COMMENTS.sub(" ", "\n".join(i for i in sources if i))
 
-    def check_modern_syntax(self):
+    def check_modern_syntax(self, dialect):
         """
-        Raises if this part uses a construct that requires GLSL ES 3.00 but
-        would default to a legacy dialect.
+        Raises if this part uses a construct from a dialect newer than
+        `dialect`, the one it's being treated as being written in.
         """
 
         # A part that also uses the legacy dialect is legacy
@@ -444,17 +546,18 @@ class ShaderPart(object):
             if pattern.search(text):
                 return
 
-        for pattern, modern in MODERN_MARKERS:
+        for newer, pattern, name in newer_markers(dialect):
             if pattern.search(text):
                 raise Exception(
-                    f"Shader part {self.name} uses {modern} but doesn't declare a dialect. Pass "
-                    "glsl=300 to renpy.register_shader or rewrite it for GLSL ES 1.00."
+                    f"Shader part {self.name} uses {name}, which needs {dialect_name(newer)}, but doesn't "
+                    f"declare a dialect. Pass glsl={newer} to renpy.register_shader or rewrite it for "
+                    f"{dialect_name(dialect)}."
                 )
 
-    def check_legacy_syntax(self):
+    def check_legacy_syntax(self, dialect):
         """
-        Raises if this part uses a construct that only exists in the legacy
-        dialect that would error following config.glsl_version.
+        Raises if this part uses a construct that only exists in the oldest
+        dialect, but is being treated as being written in `dialect`.
         """
 
         found = None
@@ -472,11 +575,12 @@ class ShaderPart(object):
 
         if found is not None:
             legacy, modern = found
+            oldest = DIALECTS[0]
 
             raise Exception(
-                f"Shader part {self.name} uses {legacy}, which only exists in GLSL ES 1.00, and doesn't "
-                f"declare a dialect. Pass glsl=100 to renpy.register_shader or rewrite it for GLSL ES 3.00 "
-                f"({legacy} becomes {modern}) and pass glsl=300."
+                f"Shader part {self.name} uses {legacy}, which only exists in {dialect_name(oldest)}, and "
+                f"doesn't declare a dialect. Pass glsl={oldest} to renpy.register_shader or rewrite it for "
+                f"{dialect_name(dialect)} ({legacy} becomes {modern}) and pass glsl={dialect}."
             )
 
     def expand_name(self, s):
@@ -704,13 +808,15 @@ class ShaderCache(object):
 
             glsl = p.glsl
 
-            if glsl >= 300 and self.version < 300 and i not in self.downgraded:
+            if p.minimum_dialect > GLSL_DIALECTS[self.version] and i not in self.downgraded:
                 self.downgraded.add(i)
 
                 renpy.display.log.write(
-                    "Shader part %r is written in GLSL ES 3.00, but shaders are being emitted as GLSL %s "
+                    "Shader part %r uses %s, which needs %s, but shaders are being emitted as GLSL %s "
                     "(this system reports GLSL %s). It will be translated, but may not compile.",
                     i,
+                    p.minimum_feature,
+                    dialect_name(p.minimum_dialect),
                     self.version,
                     self.glsl_version,
                 )
@@ -741,15 +847,16 @@ class ShaderCache(object):
             rv = build(self.version)
 
         except ShaderError as e:
-            # The context claimed to support the modern dialect, but this
-            # shader didn't survive being emitted in it. Drop back to the
-            # legacy dialect for the rest of the session.
+            # The context claimed to support the version we picked, but this
+            # shader didn't survive being emitted in it. Drop back to the oldest
+            # dialect every part in it can be emitted in, for the rest of the
+            # session.
 
-            legacy = dialect_version(self.gles, 100)
+            dialect = max(shader_part[i].minimum_dialect for i in sortedpartnames)
 
-            modern = any(shader_part[i].glsl >= 300 for i in sortedpartnames)
+            fallback = dialect_version(self.gles, dialect)
 
-            if self.pinned or modern or (self.version == legacy):
+            if self.pinned or (fallback >= self.version):
                 raise
 
             renpy.display.log.write(
@@ -757,14 +864,14 @@ class ShaderCache(object):
                 "for the rest of this session. This system reports supporting GLSL %s. The error was: %s",
                 sortedpartnames,
                 self.version,
-                legacy,
+                fallback,
                 self.glsl_version,
                 e,
             )
 
-            self.version = legacy
+            self.version = fallback
 
-            rv = build(legacy)
+            rv = build(fallback)
 
         self.cache[partnames] = rv
         self.cache[sortedpartnames] = rv
