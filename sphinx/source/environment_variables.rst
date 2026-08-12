@@ -35,9 +35,10 @@ The following environment variables control the behavior of Ren'Py:
 
 .. envvar:: RENPY_GLSL_VERSION
 
-    Forces the GLSL version Ren'Py emits shaders in (one of 100, 120, 300, or
-    330). When not set, Ren'Py will choose the version from what the OpenGL
-    context reports supporting.
+    Forces the GLSL dialect Ren'Py emits shaders in. 300 and 330 select the
+    modern dialect and 100 and 120 the legacy one, emitted as the version the
+    platform uses. When not set, Ren'Py will choose the dialect from what the
+    OpenGL context reports supporting.
 
 .. envvar:: RENPY_GL_ENVIRON
 

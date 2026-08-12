@@ -434,7 +434,15 @@ class ShaderPart(object):
         would default to a legacy dialect.
         """
 
+        # A part that also uses the legacy dialect is legacy
+        if self.legacy_storage is not None:
+            return
+
         text = self.part_source()
+
+        for pattern, _legacy, _modern in LEGACY_MARKERS:
+            if pattern.search(text):
+                return
 
         for pattern, modern in MODERN_MARKERS:
             if pattern.search(text):
