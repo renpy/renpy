@@ -15,6 +15,10 @@ The interpretation of Bezier curves in Live2D has been changed to match the Card
 which is consistent with the Live2D SDK. This behavior can be changed with the `old_beziers` parameter to the :func:`Live2D`
 displayable, or with the :var:`config.live2d_old_beziers` variable,
 
+Fixes
+-----
+
+Textshaders now respect the :tt:`cps` text tag when the player's text speed is set to instant.
 
 .. _renpy-8.5.3:
 
