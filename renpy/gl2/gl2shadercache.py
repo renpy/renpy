@@ -408,12 +408,12 @@ class ShaderPart(object):
         # A part that says nothing is checked against the dialect it's been
         # given, in whichever direction that is.
         if not self.checked_glsl:
-            self.checked_glsl = True
-
             if rv >= 300:
                 self.check_legacy_syntax()
             else:
                 self.check_modern_syntax()
+
+            self.checked_glsl = True
 
         return rv
 
