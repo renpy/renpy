@@ -249,23 +249,19 @@ A single part can override this by passing `glsl` to
 
 Ren'Py translates between the two versions, so parts written in either can be
 combined in the same shader, and a variable declared by two parts in different
-versions is treated as the same variable. GLSL ES 3.00 is preferred and recommended,
-as it allows loops whose bounds aren't constant, integer and bitwise operations,
-``switch``, ``texelFetch``, and ``textureSize``.
+versions is treated as the same variable. GLSL ES 3.00 is preferred and
+recommended for new shader parts.
 
-Ren'Py emits shaders as GLSL ES 3.00 on mobile and web and GLSL 3.30
-on the desktop, but only where the system provides them; otherwise, it falls
-back to GLSL ES 1.00 or GLSL 1.20 and translates the parts down. That
-translation only adjusts spelling, so a part using a feature the older version
-lacks will fail to compile there. This is most relevant to macOS, which
-does not offer the kind of OpenGL context GLSL 3.30 needs.
+Ren'Py emits shaders as GLSL ES 3.00 on mobile and the web, where an OpenGL ES
+3.0 context is required. On the desktop, it emits GLSL 3.30 where it can get an
+OpenGL 3.3 context and GLSL 1.20 where it can't (e.g. macOS).
 
 Ren'Py declares variables to have highp precision, which supports floating
 point numbers in the range 2\ :sup:`-62` to 2\ :sup:`62`. Non-zero floating
 point numbers should have a magnitude between 2\ :sup:`-62` and
-2\ :sup:`62`. In GLSL ES 1.00, integers should be in the range
--2\ :sup:`16` to 2\ :sup:`16`. Actual hardware often supports a larger range,
-but this isn't guaranteed.
+2\ :sup:`62`. Integers are 32 bits wide in GLSL ES 3.00, while GLSL 1.20 only
+promises 16 bits of integer precision. Actual hardware often supports a larger
+range, but this isn't guaranteed.
 
 There is a variable that can help in debugging custom shaders:
 

@@ -1291,6 +1291,14 @@ class Interface:
         else:
             # Ensure we don't get stuck in fullscreen.
             renpy.game.preferences.fullscreen = False
+
+            # These platforms have only the one renderer, so the most likely
+            # reason it failed is that the device can't provide the context.
+            if renpy.android or renpy.ios or renpy.emscripten:
+                raise Exception(
+                    "Could not set video mode. Ren'Py requires OpenGL ES 3.0, which this device may not support."
+                )
+
             raise Exception("Could not set video mode.")
 
         renpy.session["renderer"] = draw.info["renderer"]

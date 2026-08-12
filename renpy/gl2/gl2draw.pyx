@@ -510,6 +510,10 @@ cdef class GL2Draw:
                 break
 
         if self.window is None:
+            if gles:
+                renpy.display.log.write(
+                    "Could not create an OpenGL ES 3.0 context, which Ren'Py requires.")
+
             return False
 
         # Initialize OpenGL.
