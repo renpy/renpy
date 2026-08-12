@@ -99,6 +99,46 @@ testsuite shaders:
                     error = test_shaders__compile("renpy.texture", name)
                     assert error is None, f"{name} did not compile: {error}"
 
+    testcase builtin_dialect:
+        description "Ren'Py's own shader parts translate down to the oldest dialect"
+
+        python:
+            import renpy.gl2.gl2shadercache as shadercache
+
+            newest = shadercache.DIALECTS[-1]
+            oldest = shadercache.DIALECTS[0]
+            oldest_name = shadercache.dialect_name(oldest)
+            version = shadercache.dialect_version(True, oldest)
+
+            for name, part in sorted(shadercache.shader_part.items()):
+                if not name.startswith(("renpy.", "live2d.", "textshader.")):
+                    continue
+
+                assert part.glsl == newest, \
+                    f"{name} is not written in {shadercache.dialect_name(newest)}."
+                assert part.minimum_dialect == oldest, \
+                    f"{name} uses {part.minimum_feature}, so it can't run on a {oldest_name} system."
+
+                for fragment in (False, True):
+                    if fragment:
+                        variables = part.fragment_variables
+                        parts = part.fragment_parts
+                        functions = part.fragment_functions
+                    else:
+                        variables = part.vertex_variables
+                        parts = part.vertex_parts
+                        functions = part.vertex_functions
+
+                    text = shadercache.source(
+                        variables,
+                        [ (prio, nm, t, part.glsl) for prio, nm, t in parts ],
+                        [ (functions, part.glsl) ],
+                        fragment, True, version)
+
+                    for _newer, pattern, marker in shadercache.newer_markers(oldest):
+                        assert not pattern.search(text), \
+                            f"{name} still uses {marker} when emitted as {oldest_name}."
+
     testcase mixed_dialects:
         description "Parts in both dialects combine into one shader"
 

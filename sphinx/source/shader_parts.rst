@@ -17,7 +17,8 @@ How Ren'Py uses vertex part priorities:
 * Priorities 20-80 adjust gl_Position in virtual or drawable coordinates.
 * Priority 90 is used to capture gl_Position in virtual or drawable coordinates after adjustment.
 * Priority 100 transforms gl_Position to viewport coordinates.
-* Priority 200 stores more information in varying variables, without touching gl_Position.
+* Priority 200 stores more information in the variables passed to the fragment
+  shader, without touching gl_Position.
 
 In order:
 

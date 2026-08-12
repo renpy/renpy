@@ -651,11 +651,11 @@ Here is one possible shader that can be used with GLTFModel::
             uniform vec4 u_color_specular;
             uniform sampler2D u_tex_diffuse;
 
-            varying vec3 v_normal;
-            varying vec2 v_tex_coord;
+            out vec3 v_normal;
+            out vec2 v_tex_coord;
 
-            attribute vec3 a_normal;
-            attribute vec2 a_tex_coord;
+            in vec3 a_normal;
+            in vec2 a_tex_coord;
     """, vertex_201="""
             v_normal = (u_model__inverse_transpose * vec4(a_normal, 1.0)).xyz;
             v_tex_coord = a_tex_coord;
@@ -667,7 +667,7 @@ Here is one possible shader that can be used with GLTFModel::
             vec3 normal = normalize(v_normal);
 
             float lambertian = max(dot(normal, lightDir), 0.0);
-            vec4 diffuse_color = texture2D(u_tex_diffuse, v_tex_coord.xy);
+            vec4 diffuse_color = texture(u_tex_diffuse, v_tex_coord);
             diffuse_color *= vec4(lambertian * u_color_diffuse.rgb * u_color_diffuse.a, u_color_diffuse.a);
 
             vec3 viewDir = normalize(vec3(0.0, 0.0, -1.0));
@@ -676,9 +676,9 @@ Here is one possible shader that can be used with GLTFModel::
 
             vec4 specular_color = vec4(u_color_specular.rgb * u_color_specular.a * specular, u_color_specular.a * specular);
 
-            gl_FragColor = diffuse_color + specular_color;
+            fragment_color = diffuse_color + specular_color;
 
-            if (gl_FragColor.a < 0.9) {
+            if (fragment_color.a < 0.9) {
                 discard;
             }
     """)
