@@ -383,6 +383,22 @@ def get_delay(time, channel="music"):
         return None
 
 
+def seek(position, channel="music"):
+    """
+    :doc: audio
+
+    Seeks the media currently playing on `channel` to `position` seconds.
+    This preserves the active decoder and queued tracks, unlike restarting
+    playback with an audio ``<from ...>`` specifier.
+    """
+
+    try:
+        get_channel(channel).seek(position)
+    except Exception:
+        if renpy.config.debug_sound:
+            raise
+
+
 def get_pos(channel="music"):
     """
     :doc: audio

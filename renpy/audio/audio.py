@@ -857,6 +857,14 @@ class Channel(object):
 
         return renpysound.get_duration(self.number)
 
+    def seek(self, position):
+        """Seeks this channel without reopening its media stream."""
+
+        if not pcm_ok or self._number is None:
+            return
+
+        renpysound.seek(self.number, position)
+
     def set_pan(self, pan, delay):
         with lock:
             now = get_serial()

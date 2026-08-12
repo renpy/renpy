@@ -714,6 +714,50 @@ renpyAudio.get_pos = (channel) => {
 };
 
 
+renpyAudio.seek = (channel, position) => {
+    let c = get_channel(channel);
+    let p = c.playing;
+
+    if (p === null) {
+        return;
+    }
+
+    position = Math.max(0, position);
+    if (p.end > 0) {
+        position = Math.min(position, p.end);
+    }
+
+    if (c.video && c.video_el) {
+        c.video_el.currentTime = position;
+        p.start = position;
+        p.started = c.paused ? null : c.video_el.currentTime;
+        return;
+    }
+
+    if (!p.buffer) {
+        return;
+    }
+
+    position = Math.min(position, p.buffer.duration);
+
+    if (p.source !== null && p.started !== null) {
+        renpyAudio.disconnectFilter(p.filter, p.source, c.destination);
+        try {
+            p.source.stop();
+        } catch (e) {
+        }
+    }
+
+    p.source = create_source(c, p.buffer);
+    p.start = position;
+    p.started = null;
+
+    if (!c.paused) {
+        start_playing(c);
+    }
+};
+
+
 renpyAudio.get_duration = (channel) => {
     let c = get_channel(channel);
     let p = c.playing;
