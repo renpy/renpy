@@ -27,7 +27,6 @@ init python:
 
     import shutil
     import webserver
-    import io
     import tempfile
     import time
     import pygame_sdl2
@@ -184,21 +183,22 @@ init python:
 
         rules_path = os.path.join(p.path,'progressive_download.txt')
         if not os.path.exists(rules_path):
-            open(rules_path, 'w').write(
-                "# RenPyWeb progressive download rules - first match applies\n"
-                + "# '+' = progressive download, '-' = keep in game.zip (default)\n"
-                + "# See https://www.renpy.org/doc/html/build.html#classifying-and-ignoring-files for matching\n"
-                + "#\n"
-                + "# +/- type path\n"
-                + '- image game/gui/**\n'
-                + '+ image game/**\n'
-                + '+ music game/audio/**\n'
-                + '+ voice game/voice/**\n'
-            )
+            with open(rules_path, 'w', encoding='utf-8') as f:
+                f.write(
+                    "# RenPyWeb progressive download rules - first match applies\n"
+                    + "# '+' = progressive download, '-' = keep in game.zip (default)\n"
+                    + "# See https://www.renpy.org/doc/html/build.html#classifying-and-ignoring-files for matching\n"
+                    + "#\n"
+                    + "# +/- type path\n"
+                    + '- image game/gui/**\n'
+                    + '+ image game/**\n'
+                    + '+ music game/audio/**\n'
+                    + '+ voice game/voice/**\n'
+                )
 
         # Parse rules
         line_no = 0
-        for line in open(rules_path, 'r').readlines():
+        for line in open(rules_path, encoding='utf-8').readlines():
             line_no += 1
 
             if line.startswith('#') or line.strip() == '':
@@ -357,8 +357,8 @@ init python:
                 # Add the file to the catalog
                 catalog["files"].append(file_name)
 
-        with io.open(os.path.join(destination, "pwa_catalog.json"), 'w', encoding='utf-8') as f:
-            f.write(json.dumps(catalog))
+        with open(os.path.join(destination, "pwa_catalog.json"), 'w', encoding='utf-8') as f:
+            json.dump(catalog, f)
 
     def prepare_pwa_files(p, destination):
         """
@@ -367,7 +367,7 @@ init python:
         """
 
         # Open the service-worker.js file
-        with io.open(os.path.join(destination, "service-worker.js"), encoding='utf-8') as f:
+        with open(os.path.join(destination, "service-worker.js"), encoding='utf-8') as f:
             service_worker = f.read()
 
         # Use re to slugify the game name, avoiding use of 3rd party libraries
@@ -375,11 +375,11 @@ init python:
         service_worker = service_worker.replace('renpy-web-game', slugified_name)
 
         # Write the file
-        with io.open(os.path.join(destination, "service-worker.js"), 'w', encoding='utf-8') as f:
+        with open(os.path.join(destination, "service-worker.js"), 'w', encoding='utf-8') as f:
             f.write(service_worker)
 
         # Open the manifest.json file
-        with io.open(os.path.join(destination, "manifest.json"), encoding='utf-8') as f:
+        with open(os.path.join(destination, "manifest.json"), encoding='utf-8') as f:
             manifest = json.load(f)
 
         # Replace the project name with the ones in the game
@@ -391,8 +391,8 @@ init python:
             manifest["orientation"] = "portrait-primary"
 
         # Write the file
-        with io.open(os.path.join(destination, "manifest.json"), 'w', encoding='utf-8') as f:
-            f.write(json.dumps(manifest))
+        with open(os.path.join(destination, "manifest.json"), 'w', encoding='utf-8') as f:
+            json.dump(manifest, f)
 
         generate_files_catalog(destination)
 
@@ -449,7 +449,7 @@ init python:
             shutil.copy(os.path.join(p.path, presplash), os.path.join(destination, presplash))
 
         # Copy over index.html.
-        with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
+        with open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
             html = f.read()
 
         html = html.replace("Ren'Py Web Game", display_name)
@@ -457,7 +457,7 @@ init python:
         if presplash:
             html = html.replace("web-presplash.jpg", presplash)
 
-        with io.open(os.path.join(destination, "index.html"), "w", encoding='utf-8') as f:
+        with open(os.path.join(destination, "index.html"), "w", encoding='utf-8') as f:
             f.write(html)
 
         generate_web_icons(p, destination)

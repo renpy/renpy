@@ -119,7 +119,7 @@ label _after_load:
         _init_language()
 
         if config.after_load_transition:
-            renpy.transition(config.after_load_transition, force=True)
+            renpy.transition(config.after_load_transition, force=True, priority=1)
 
         if "_reload_time" in renpy.session:
             start = renpy.session.pop("_reload_time")

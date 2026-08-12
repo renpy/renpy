@@ -21,9 +21,8 @@
 
 from __future__ import print_function
 
-from sdl2 cimport *
-
-from renpy.pygame.surface cimport PySurface_AsSurface
+from renpy.pygame.sdl cimport *
+from renpy.pygame.surface cimport Surface
 
 from freetype cimport *
 from ttgsubtable cimport *
@@ -64,8 +63,8 @@ cdef extern from "harfbuzz/hb.h":
 
     # hb-buffer
     struct hb_glyph_info_t:
-        hb_codepoint_t codepoint;
-        uint32_t       cluster;
+        hb_codepoint_t codepoint
+        uint32_t       cluster
 
     struct hb_glyph_position_t:
         hb_position_t  x_advance
@@ -97,8 +96,8 @@ cdef extern from "harfbuzz/hb.h":
     void hb_buffer_set_direction (hb_buffer_t *buffer, hb_direction_t direction)
     void hb_buffer_guess_segment_properties(hb_buffer_t *buffer)
 
-    hb_glyph_info_t *hb_buffer_get_glyph_infos (hb_buffer_t *buffer, unsigned int *length);
-    hb_glyph_position_t *hb_buffer_get_glyph_positions (hb_buffer_t *buffer, unsigned int *length);
+    hb_glyph_info_t *hb_buffer_get_glyph_infos (hb_buffer_t *buffer, unsigned int *length)
+    hb_glyph_position_t *hb_buffer_get_glyph_positions (hb_buffer_t *buffer, unsigned int *length)
 
     enum hb_buffer_cluster_level_t:
         HB_BUFFER_CLUSTER_LEVEL_MONOTONE_GRAPHEMES
@@ -136,7 +135,7 @@ cdef extern from "harfbuzz/hb.h":
         hb_font_t *font,
         hb_buffer_t *buffer,
         const hb_feature_t *features,
-        unsigned int num_features);
+        unsigned int num_features)
 
 
 cdef extern from "harfbuzz/hb-ft.h":
@@ -611,7 +610,7 @@ cdef class HBFont:
         self.vertical = vertical
 
         if outline == 0:
-            self.stroker = NULL;
+            self.stroker = NULL
             self.expand = 0
 
         else:
@@ -901,7 +900,7 @@ cdef class HBFont:
 
         return rv
 
-    def glyphs(self, unicode s, int level):
+    def glyphs(self, str s, int level):
         """
         Sizes s, returning a list of Glyph objects.
         """
@@ -938,7 +937,7 @@ cdef class HBFont:
         hb = hb_buffer_create()
         utf32_s = s.encode("utf-32")
 
-        hb_buffer_add_utf32(hb, <const uint32_t *> ((<const char *> utf32_s) + 4), len(s), 0, len(s));
+        hb_buffer_add_utf32(hb, <const uint32_t *> ((<const char *> utf32_s) + 4), len(s), 0, len(s))
 
         if self.vertical:
             if level & 0x1:
@@ -959,8 +958,8 @@ cdef class HBFont:
         else:
             hb_shape(self.hb_font, hb, NULL, 0)
 
-        glyph_info = hb_buffer_get_glyph_infos(hb, &glyph_count);
-        glyph_pos = hb_buffer_get_glyph_positions(hb, &glyph_count);
+        glyph_info = hb_buffer_get_glyph_infos(hb, &glyph_count)
+        glyph_pos = hb_buffer_get_glyph_positions(hb, &glyph_count)
 
         face = self.face
         g = face.glyph
@@ -1057,7 +1056,7 @@ cdef class HBFont:
 
         return x, y, w, h
 
-    def draw(self, pysurf, float xo, int yo, color, list glyphs, int underline, bint strikethrough, black_color):
+    def draw(self, Surface pysurf, float xo, int yo, color, list glyphs, int underline, bint strikethrough, black_color):
         """
         Draws a list of glyphs to surf, with the baseline starting at x, y.
         """
@@ -1093,7 +1092,7 @@ cdef class HBFont:
 
         self.setup()
 
-        surf = PySurface_AsSurface(pysurf)
+        surf = pysurf.sdl_surface
         pixels = <unsigned char *> surf.pixels
         pitch = surf.pitch
 

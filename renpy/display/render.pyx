@@ -797,6 +797,9 @@ cdef class Render:
             self.depends_on_list.append(source)
             source.parents.add(self)
 
+            if source.text_input:
+                self.text_input = True
+
         return 0
 
     cpdef int subpixel_blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
@@ -831,6 +834,9 @@ cdef class Render:
             self.depends_on_list.append(source)
             source.parents.add(self)
 
+            if source.text_input:
+                self.text_input = True
+
         return 0
 
     cpdef int absolute_blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
@@ -864,6 +870,9 @@ cdef class Render:
         if isinstance(source, Render):
             self.depends_on_list.append(source)
             source.parents.add(self)
+
+            if source.text_input:
+                self.text_input = True
 
         return 0
 
@@ -1210,6 +1219,10 @@ cdef class Render:
 
         self.cached_texture = None
         self.cached_model = None
+
+        # drop uniforms that hold Renders so killed renders release their textures
+        if self.uniforms_has_render:
+            self.uniforms = None
 
     NO_MOUSE_FOCUS = renpy.object.Sentinel("NO_MOUSE_FOCUS")
 

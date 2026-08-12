@@ -1,4 +1,4 @@
-# Copyright 2017 Tom Rothamel <tom@rothamel.us>
+# Copyright 2017-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages
@@ -16,20 +16,24 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from renpy.pygame.locals import POWERSTATE_UNKNOWN, POWERSTATE_ON_BATTERY, POWERSTATE_NO_BATTERY, POWERSTATE_CHARGING, POWERSTATE_CHARGED
 
-from sdl2 cimport *
+from .sdl cimport *
 
 powerstate_to_name = {
-    POWERSTATE_UNKNOWN : "POWERSTATE_UNKNOWN",
-    POWERSTATE_ON_BATTERY : "POWERSTATE_ON_BATTERY",
-    POWERSTATE_NO_BATTERY : "POWERSTATE_NO_BATTERY",
-    POWERSTATE_CHARGING : "POWERSTATE_CHARGING",
-    POWERSTATE_CHARGED : "POWERSTATE_CHARGED",
+    SDL_POWERSTATE_UNKNOWN : "POWERSTATE_UNKNOWN",
+    SDL_POWERSTATE_ON_BATTERY : "POWERSTATE_ON_BATTERY",
+    SDL_POWERSTATE_NO_BATTERY : "POWERSTATE_NO_BATTERY",
+    SDL_POWERSTATE_CHARGING : "POWERSTATE_CHARGING",
+    SDL_POWERSTATE_CHARGED : "POWERSTATE_CHARGED",
 }
 
 
 class PowerInfo(object):
+    def __init__(self):
+        self.state = SDL_POWERSTATE_UNKNOWN
+        self.seconds = -1
+        self.percent = -1
+
     def __repr__(self):
         return "<PowerInfo state={} seconds={} percent={}>".format(
             powerstate_to_name.get(self.state, "INVALID"),

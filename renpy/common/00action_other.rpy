@@ -465,7 +465,7 @@ init -1500 python:
                 return
 
             if config.enter_replay_transition:
-                renpy.transition(config.enter_replay_transition)
+                renpy.transition(config.enter_replay_transition, priority=1)
 
             renpy.call_replay(self.label, self.scope)
 
@@ -807,7 +807,7 @@ init -1500 python:
             import subprocess
 
             try:
-                directory = renpy.fsencode(self.directory)
+                directory = self.directory
 
                 if renpy.windows:
                     os.startfile(directory)

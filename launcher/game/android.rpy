@@ -266,7 +266,7 @@ init python:
                 try:
 
                     for i in files:
-                        shutil.copy(i, renpy.fsencode(destination_dir))
+                        shutil.copy(i, destination_dir)
 
                     dir_to_open = destination_dir
 
@@ -297,12 +297,6 @@ init python:
         return cmd + project.current.data["android_build"]
 
 
-
-# The android support can stick unicode into os.environ. Fix that.
-init 100 python:
-    for k, v in list(os.environ.items()):
-        if not isinstance(v, str):
-            os.environ[k] = renpy.fsencode(v)
 
 screen android_process(interface):
 

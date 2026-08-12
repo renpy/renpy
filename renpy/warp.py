@@ -91,7 +91,7 @@ def warp():
         n = None
         n = n or prefer(lambda a, b: (a.filename == next.filename) and (b.filename != next.filename))
         n = n or prefer(lambda a, b: (a.linenumber <= next.linenumber) and (b.linenumber > next.linenumber))
-        n = n or prefer(lambda a, b: (a.linenumber >= b.linenumber))
+        n = n or prefer(lambda a, b: a.linenumber >= b.linenumber)
         n = n or node
 
         prev[next] = n

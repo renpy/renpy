@@ -18,6 +18,7 @@ ehthumbs_vista.db
 *.cpython-*.so
 *.cpython-*.pyd
 /build
+uv.lock
 
 # Editor/tool files.
 *~
@@ -95,6 +96,8 @@ cache/
 /module/gen-static/
 /module/gen3-static/
 /tutorial/game/tutorial_director.rpy
+/src/Setup
+/src/Setup.tfd
 
 # Module build.
 /module/build
@@ -143,9 +146,6 @@ testcases/tests/
 /.vscode/launch.json
 /.vscode/tasks.json
 
-# Temporarily ignore sdl3 work.
-/scripts/sdl3
-
 # Informational Files
 AGENTS.md
 
@@ -165,6 +165,7 @@ renpy/gl2/gl2mesh3.pyi
 renpy/gl2/gl2model.pyi
 renpy/gl2/gl2polygon.pyi
 renpy/gl2/gl2shader.pyi
+renpy/gl2/gl2statecache.pyi
 renpy/gl2/gl2texture.pyi
 renpy/gl2/gl2uniform.pyi
 renpy/gl2/live2dmodel.pyi
@@ -177,6 +178,7 @@ renpy/pygame/error.pyi
 renpy/pygame/event.pyi
 renpy/pygame/gfxdraw.pyi
 renpy/pygame/image.pyi
+renpy/pygame/iostream.pyi
 renpy/pygame/joystick.pyi
 renpy/pygame/key.pyi
 renpy/pygame/locals.pyi
@@ -184,7 +186,6 @@ renpy/pygame/mouse.pyi
 renpy/pygame/power.pyi
 renpy/pygame/pygame_time.pyi
 renpy/pygame/rect.pyi
-renpy/pygame/rwobject.pyi
 renpy/pygame/scrap.pyi
 renpy/pygame/surface.pyi
 renpy/pygame/transform.pyi
@@ -201,7 +202,6 @@ renpy/styledata/style_selected_hover_functions.pyi
 renpy/styledata/style_selected_idle_functions.pyi
 renpy/styledata/style_selected_insensitive_functions.pyi
 renpy/styledata/styleclass.pyi
-renpy/styledata/stylesets.pyi
 renpy/text/bidi.pyi
 renpy/text/ftfont.pyi
 renpy/text/hbfont.pyi

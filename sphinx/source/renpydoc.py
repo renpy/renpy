@@ -1,4 +1,4 @@
-#@PydevCodeAnalysisIgnore
+# @PydevCodeAnalysisIgnore
 from __future__ import print_function
 from pygments.lexers.agile import PythonLexer
 from pygments.token import Token, Name, Operator
@@ -13,12 +13,11 @@ PROPERTIES = set(keywords.properties)
 
 class RenPyLexer(PythonLexer):
     name = "Ren'Py"
-    aliases = [ "renpy", "rpy" ]
-    filenames = [ "*.rpy", "*.rpym" ]
+    aliases = ["renpy", "rpy"]
+    filenames = ["*.rpy", "*.rpym"]
 
     def get_tokens_unprocessed(self, text):
         for index, token, value in PythonLexer.get_tokens_unprocessed(self, text):
-
             if value.startswith("###"):
                 continue
 
@@ -28,10 +27,10 @@ class RenPyLexer(PythonLexer):
             elif token == Token.Error and value == "!":
                 yield index, Token.Keyword, value
 
-            elif token in [ Name, Operator.Word ] and value in KEYWORDS:
+            elif token in [Name, Operator.Word] and value in KEYWORDS:
                 yield index, Token.Keyword, value
 
-            elif token in [ Name, Operator.Word ] and value in PROPERTIES:
+            elif token in [Name, Operator.Word] and value in PROPERTIES:
                 yield index, Name.Attribute, value
 
             elif token == Token.String.Interpol:
@@ -48,10 +47,10 @@ import sphinx.domains
 
 
 def parse_var_node(env, sig, signode):
-    m = re.match(r'(\S+)(.*)', sig)
+    m = re.match(r"(\S+)(.*)", sig)
 
-    if m.group(1).split('.')[0] in [ "config", "gui" ]:
-        signode += docutils.nodes.Text("define ", "define" )
+    if m.group(1).split(".")[0] in ["config", "gui"]:
+        signode += docutils.nodes.Text("define ", "define")
 
     signode += sphinx.addnodes.desc_name(m.group(1), m.group(1))
     signode += docutils.nodes.Text(m.group(2), m.group(2))
@@ -62,8 +61,9 @@ def parse_var_node(env, sig, signode):
 
 style_seen_ids = set()
 
+
 def parse_style_node(env, sig, signode):
-    m = re.match(r'(\S+)(.*)', sig)
+    m = re.match(r"(\S+)(.*)", sig)
 
     name = m.group(1)
     desc = m.group(2)
@@ -84,8 +84,9 @@ def parse_style_node(env, sig, signode):
 
 scpref_seen_ids = set()
 
+
 def parse_scpref_node(env, sig, signode):
-    m = re.match(r'(\S+)(.*)', sig)
+    m = re.match(r"(\S+)(.*)", sig)
 
     signode += sphinx.addnodes.desc_name(m.group(1), m.group(1))
     signode += docutils.nodes.Text(m.group(2), m.group(2))
@@ -107,29 +108,27 @@ class PythonIndex(sphinx.domains.Index):
 
     def generate(self, docnames=None):
 
-
         if not isinstance(self.domain, sphinx.domains.python.PythonDomain):
-            return [ ], False
+            return [], False
 
-        entries = [ ]
+        entries = []
 
-        for name, oe in self.domain.data['objects'].items():
-
+        for name, oe in self.domain.data["objects"].items():
             docname = oe.docname
             kind = oe.objtype
 
             if kind == "function" or kind == "class":
-                entries.append((name, 0, docname, name, None, None, ''))
+                entries.append((name, 0, docname, name, None, None, ""))
 
         print(len(entries), "entries")
 
-        content = { }
+        content = {}
 
         for name, subtype, docname, anchor, extra, qualifier, descr in entries:
             c = name[0].upper()
 
             if c not in content:
-                content[c] = [ ]
+                content[c] = []
 
             content[c].append((name, subtype, docname, anchor, extra, qualifier, descr))
 
@@ -142,7 +141,6 @@ class PythonIndex(sphinx.domains.Index):
 
 
 class CustomIndex(sphinx.domains.Index):
-
     name = ""
     localname = ""
     shortname = ""
@@ -151,34 +149,33 @@ class CustomIndex(sphinx.domains.Index):
     def generate(self, docnames=None):
 
         if not isinstance(self.domain, sphinx.domains.std.StandardDomain):
-            return [ ], False
+            return [], False
 
-        entries = [ ]
+        entries = []
 
         for (kind, name), (docname, anchor) in self.domain.data["objects"].items():
-
             if self.kind != kind:
                 continue
 
             if docnames is not None and docname not in docnames:
                 continue
 
-            entries.append((name, 0, docname, anchor, None, None, ''))
+            entries.append((name, 0, docname, anchor, None, None, ""))
 
-        content = { }
+        content = {}
 
         for name, subtype, docname, anchor, extra, qualifier, descr in entries:
             c = name[0].upper()
 
             if c not in content:
-                content[c] = [ ]
+                content[c] = []
 
             content[c].append((name, subtype, docname, anchor, extra, qualifier, descr))
 
         for i in content.values():
             i.sort()
 
-        self.domain.data['labels'][self.kind + "-index"] = ("std-" + self.kind + "-index", '', self.localname)
+        self.domain.data["labels"][self.kind + "-index"] = ("std-" + self.kind + "-index", "", self.localname)
 
         return sorted(content.items()), False
 
@@ -200,20 +197,20 @@ def setup(app):
     if sys.version_info[0] == 2:
         app.add_lexer("renpy", RenPyLexer())
     else:
-        app.add_lexer('renpy', RenPyLexer)
+        app.add_lexer("renpy", RenPyLexer)
 
     app.add_object_type("var", "var", "single: %s (variable)", parse_node=parse_var_node)
     app.add_object_type("style-property", "propref", "single: %s (style property)", parse_node=parse_style_node)
     app.add_object_type("transform-property", "tpref", "single: %s (transform property)")
     app.add_object_type("screen-property", "scpref", "single: %s (screen property)", parse_node=parse_scpref_node)
     app.add_object_type("text-tag", "tt", "single: %s (text tag)")
-    app.add_object_type("textshader", "textshader" "single: %s (text shader)")
+    app.add_object_type("textshader", "textshadersingle: %s (text shader)")
 
     add_index(app, "std", "style-property", "Style Property Index")
     add_index(app, "std", "transform-property", "Transform Property Index")
     add_index(app, "std", "var", "Variable Index")
 
-    app.add_index_to_domain('py', PythonIndex)
+    app.add_index_to_domain("py", PythonIndex)
 
     # app.domains['py'].indices.append(PythonIndex)
     # app.domains['std'].data['labels']['py-function-class-index'] = ('py-function-class-index', '', 'Function and Class Index')

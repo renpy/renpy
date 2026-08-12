@@ -19,10 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Any, BinaryIO
+from typing import Any, BinaryIO, Callable, Iterable
 
 import types
 import pickle
+import copyreg
 import io
 import functools
 import datetime
@@ -32,6 +33,36 @@ import renpy
 PROTOCOL = pickle.HIGHEST_PROTOCOL
 
 
+def _reduce_object(obj: object) -> str | tuple[Callable, tuple, Any, Any, Any, Any]:
+    """
+    Reduce an object the way pickle would, and return either a string or
+    a tuple padded to exactly 6 elements. Raises an exception if the
+    reduction is malformed.
+    """
+
+    if (reduce_func := copyreg.dispatch_table.get(type(obj))) is not None:
+        rv = reduce_func(obj)
+    else:
+        rv = obj.__reduce_ex__(PROTOCOL)
+
+    if isinstance(rv, str):
+        return rv
+
+    # Shallow validation of the reduction, mirroring pickle's own checks.
+    if not isinstance(rv, tuple) or not (2 <= len(rv) <= 6):
+        raise pickle.PicklingError(
+            f"__reduce__ must return a string or a tuple of 2 to 6 elements, got {repr(rv)[:160]}"
+        )
+
+    if not callable(rv[0]):
+        raise pickle.PicklingError(f"first item of the __reduce__ tuple must be callable, got {repr(rv[0])[:160]}")
+
+    if not isinstance(rv[1], tuple):
+        raise pickle.PicklingError(f"second item of the __reduce__ tuple must be a tuple, got {repr(rv[1])[:160]}")
+
+    return (*rv, *[None] * (6 - len(rv)))  # type: ignore
+
+
 def dump_paths(filename: str, **roots: object):
     """
     Dumps information about the `roots` to `filename`. We dump the size
@@ -39,9 +70,12 @@ def dump_paths(filename: str, **roots: object):
     and the type or repr of the object.
     """
 
-    o_repr_cache = {}
+    # Maps id(o) -> o. Keeping a reference to each visited object ensures
+    # it stays alive, so CPython can't recycle its id for a new object.
+    seen: dict[int, object] = {}
+    o_repr_cache: dict[int, str] = {}
 
-    def visit_seq(o: tuple | list, path: str) -> int:
+    def visit_seq(o: Iterable[Any], path: str) -> int:
         size = 1
         for i, oo in enumerate(o):
             size += 1
@@ -49,26 +83,27 @@ def dump_paths(filename: str, **roots: object):
 
         return size
 
-    def visit_map(o: dict, path: str) -> int:
+    def visit_map(o: Iterable[tuple[Any, Any]], path: str) -> int:
         size = 2
-        for k, v in o.items():
+        for k, v in o:
             size += 2
             if isinstance(k, str):
                 size += len(k) // 40 + 1
             else:
-                size += visit(v, f"key {k!r} of {path}")
+                size += visit(k, f"key {k!r} of {path}")
             size += visit(v, f"{path}[{k!r}]")
 
         return size
 
     def visit(o: object, path: str) -> int:
         try:
-
             ido = id(o)
 
-            if ido in o_repr_cache:
+            if ido in seen:
                 f.write(f"{0: 7d} {path} = alias {o_repr_cache[ido]}\n")
                 return 0
+
+            seen[ido] = o
 
             if isinstance(o, (int, float, complex, types.NoneType, types.ModuleType, type)):
                 o_repr = repr(o)
@@ -93,14 +128,10 @@ def dump_paths(filename: str, **roots: object):
 
             elif isinstance(o, types.FunctionType):
                 name = o.__qualname__ or o.__name__
-
                 o_repr = f"{o.__module__}.{name}"
 
-            elif isinstance(o, object):
-                o_repr = f"<{type(o).__name__}>"
-
             else:
-                o_repr = f"BAD TYPE <{type(o).__name__}>"
+                o_repr = f"<{type(o).__name__}>"
 
             o_repr_cache[ido] = o_repr
 
@@ -114,7 +145,7 @@ def dump_paths(filename: str, **roots: object):
                 size = visit_seq(o, path)
 
             elif isinstance(o, dict):
-                size = visit_map(o, path)
+                size = visit_map(o.items(), path)
 
             elif isinstance(o, types.MethodType):
                 size = 1 + visit(o.__self__, f"{path}.__self__")
@@ -124,50 +155,53 @@ def dump_paths(filename: str, **roots: object):
 
             else:
                 try:
-                    reduction = o.__reduce_ex__(PROTOCOL)
+                    reduction = _reduce_object(o)
                 except Exception:
-                    reduction = ()
+                    reduction = None
                     o_repr_cache[ido] = "BAD REDUCTION " + o_repr
 
-                if isinstance(reduction, str):
-                    o_repr_cache[ido] = f"{o.__module__}.{reduction}"
-                    size = 1
+                # An estimate of the size of the object, in arbitrary
+                # units. (These units are about 20-25 bytes on my
+                # computer.)
+                size = 1
+
+                if reduction is None:
+                    pass
+
+                elif isinstance(reduction, str):
+                    module = getattr(o, "__module__", "<unknown>")
+                    o_repr_cache[ido] = f"{module}.{reduction}"
 
                 else:
-                    reduction = [*reduction] + [None] * (5 - len(reduction))
-                    _, _, state, seq, map, *_ = reduction
+                    (
+                        func,
+                        args,
+                        state,
+                        listitems,
+                        dictitems,
+                        state_setter,
+                    ) = reduction
 
-                    # An estimate of the size of the object, in arbitrary units.
-                    # (These units are about 20-25 bytes on my computer.)
-                    size = 1
-
-                    if isinstance(state, tuple):
-                        try:
-                            state, slots = state
-                            for k, v in slots.items():
-                                size += 1
-                                size += visit(v, f"{path}.{k}")
-                        except Exception:
-                            pass
+                    size += visit(func, f"{path}.__reduce__()[0]")
+                    size += visit_seq(args, f"{path}.__reduce__()[1]")
 
                     if state is not None:
-                        size += visit(state, f"{path}.__getstate__()")
+                        size += visit(state, f"{path}.__reduce__()[2]")
 
-                    if seq is not None:
-                            visit(seq, path)
+                    if listitems is not None:
+                        size += visit_seq(listitems, path)
 
-
-                    if map is not None:
-                        visit(map, path)
+                    if dictitems is not None:
+                        size += visit_map(dictitems, path)
 
             f.write(f"{size: 7d} {path} = {o_repr_cache[ido]}\n")
 
             return size
 
         except Exception as e:
-            f.write(f"{size: 7d} {path} = dump failed: {e!s}\n")
+            f.write(f"{0: 7d} {path} = dump failed: {e!s}\n")
 
-
+            return 0
 
     f, _ = renpy.error.open_error_file(filename, "w")
 
@@ -181,20 +215,26 @@ def find_bad_reduction(**roots: object) -> str | None:
     Finds objects that can't be reduced properly.
     """
 
-    seen = set()
+    # Maps id(o) -> o. Keeping a reference to each visited object ensures
+    # it stays alive, so CPython can't recycle its id for a new object.
+    seen: dict[int, object] = {}
 
-    def visit_seq(o: tuple | list, path: str):
+    def visit_seq(o: Iterable[Any], path: str) -> str | None:
         for i, oo in enumerate(o):
             if rv := visit(oo, f"{path}[{i!r}]"):
                 return rv
 
-    def visit_map(o: dict, path: str):
-        for k, v in o.items():
+        return None
+
+    def visit_map(o: Iterable[tuple[Any, Any]], path: str) -> str | None:
+        for k, v in o:
             if rv := visit(k, f"key {k!r} of {path}"):
                 return rv
 
             if rv := visit(v, f"{path}[{k!r}]"):
                 return rv
+
+        return None
 
     def visit(o: object, path: str) -> str | None:
         ido = id(o)
@@ -202,57 +242,85 @@ def find_bad_reduction(**roots: object) -> str | None:
         if ido in seen:
             return None
 
-        seen.add(ido)
+        seen[ido] = o
 
         if isinstance(o, (int, float, complex, str, bytes, types.NoneType, types.ModuleType, type)):
             return None
 
-        if isinstance(o, (tuple, list)):
-            if rv := visit_seq(o, path):
-                return rv
+        try:
+            if isinstance(o, types.MethodType):
+                return visit(o.__self__, f"{path}.__self__")
 
-        elif isinstance(o, dict):
-            if rv := visit_map(o, path):
-                return rv
+            if isinstance(o, types.FunctionType):
+                # Lambdas and functions defined inside other functions can't be pickled.
+                name = o.__qualname__ or o.__name__
 
-        elif isinstance(o, types.MethodType):
-            return visit(o.__self__, f"{path}.__self__")
+                if "<lambda>" in name or "<locals>" in name:
+                    return f"{path} = {repr(o)[:160]}"
 
-        else:
-            try:
-                reduction = o.__reduce_ex__(PROTOCOL)
-            except Exception:
-                return f"{path} = {repr(o)[:160]}"
+                return None
+
+            reduction = _reduce_object(o)
 
             if isinstance(reduction, str):
                 return None
 
-            reduction = [*reduction] + [None] * (5 - len(reduction))
-            _, _, state, seq, map, *_ = reduction
+            (
+                func,
+                args,
+                state,
+                listitems,
+                dictitems,
+                state_setter,
+            ) = reduction
 
-            if isinstance(state, tuple):
-                state, slots = state
-                for k, v in slots.items():
-                    if rv := visit(v, f"{path}.{k}"):
-                        return rv
+            if rv := visit(func, f"{path}.__reduce__()[0]"):
+                return rv
 
+            if rv := visit_seq(args, f"{path}.__reduce__()[1]"):
+                return rv
+
+            # Could be anything, but most likely it is a mapping.
             if state is not None:
-                if rv := visit(state, f"{path}.__getstate__()"):
+                if rv := visit(state, f"{path}.__reduce__()[2]"):
                     return rv
 
-            if seq is not None:
-                if rv := visit(seq, path):
+            if listitems is not None:
+                if rv := visit_seq(listitems, path):
                     return rv
 
-            if map is not None:
-                if rv := visit(map, path):
+            if dictitems is not None:
+                if rv := visit_map(dictitems, path):
                     return rv
+
+            if state_setter is not None:
+                if rv := visit(state_setter, f"{path}.__reduce__()[5]"):
+                    return rv
+
+        except RecursionError:
+            raise
+
+        except Exception:
+            # An object that raises while being examined almost certainly
+            # can't be pickled - report it rather than crashing the
+            # diagnostic.
+            try:
+                repr_o = repr(o)
+            except Exception:
+                repr_o = "BAD REPR"
+            if len(repr_o) > 80:
+                repr_o = f"{repr_o[:40]}...{repr_o[-40:]}"
+
+            return f"{path} = {repr_o}"
 
         return None
 
     for k, v in roots.items():
-        if rv := visit(v, k):
-            return rv
+        try:
+            if rv := visit(v, k):
+                return rv
+        except RecursionError:
+            return None
 
     return None
 

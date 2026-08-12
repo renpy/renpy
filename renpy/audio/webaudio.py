@@ -138,7 +138,7 @@ def play(
     fadein=0,
     tight=False,
     start=0,
-    end=0,
+    end=-1,
     relative_volume=1.0,
     audio_filter=None,
 ):
@@ -174,8 +174,9 @@ def play(
     """
 
     try:
+        # Assume it is some file-like with name attribute meaning the filename.
         if not isinstance(file, str):
-            file = file.raw.name
+            file = file.name
     except Exception:
         if renpy.config.debug_sound:
             raise
@@ -199,7 +200,7 @@ def queue(
     fadein=0,
     tight=False,
     start=0,
-    end=0,
+    end=-1,
     relative_volume=1.0,
     audio_filter=None,
 ):
@@ -212,7 +213,7 @@ def queue(
 
     try:
         if not isinstance(file, str):
-            file = file.raw.name
+            file = file.name
     except Exception:
         if renpy.config.debug_sound:
             raise

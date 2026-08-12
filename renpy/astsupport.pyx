@@ -36,10 +36,10 @@ cpdef unsigned int hash32(s):
     cdef unsigned int rv = 0x811c9dc5
     cdef Py_UCS4 u
 
-    if type(s) is not unicode:
-        s = unicode(s)
+    if type(s) is not str:
+        s = str(s)
 
-    cdef unicode us = <unicode> s
+    cdef str us = <str> s
 
     for u in us:
         rv ^= <unsigned int> u
@@ -53,10 +53,10 @@ cpdef unsigned long long hash64(s):
     cdef unsigned long long rv = 0xcbf29ce484222325
     cdef Py_UCS4 u
 
-    if type(s) is not unicode:
-        s = unicode(s)
+    if type(s) is not str:
+        s = str(s)
 
-    cdef unicode us = <unicode> s
+    cdef str us = <str> s
 
     for u in us:
         rv ^= <unsigned int> u

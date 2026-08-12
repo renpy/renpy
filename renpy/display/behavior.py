@@ -762,7 +762,6 @@ class SayBehavior(renpy.display.layout.Null):
 
         for dismiss_event, check_focus in dismiss:
             if map_event(ev, dismiss_event):
-
                 if renpy.display.focus.get_grab() is not None:
                     continue
 
@@ -1204,7 +1203,7 @@ class Button(renpy.display.layout.Window):
         rv = self._tts_common(alt(self.action), raw=raw)
 
         if self.style.prefix.startswith("selected_") and (self.style.alt == self.style._hover_alt()):
-            rv += " selected" if raw else " " + renpy.minstore.__("selected")
+            rv = ("selected" if raw else renpy.minstore.__("selected")) + " " + rv
 
         return rv
 
@@ -1858,7 +1857,7 @@ class Input(renpy.text.text.Text):
             raise renpy.display.core.IgnoreEvent()
 
     def get_caret_above_below_pos(self):
-        line_positions = [ (0, 0) ]
+        line_positions = [(0, 0)]
 
         line_index = -1
 
@@ -1880,8 +1879,16 @@ class Input(renpy.text.text.Text):
         else:
             offset = self.caret_pos - line_positions[line_index][0]
 
-            caret_above = 0 if (line_index - 1 == 0) else min(line_positions[line_index - 1][0] + offset, line_positions[line_index - 1][1] - 1)
-            caret_below = len(self.content) if ((line_index + 1) == len(line_positions) - 1) else min(line_positions[line_index + 1][0] + offset, line_positions[line_index + 1][1] - 1)
+            caret_above = (
+                0
+                if (line_index - 1 == 0)
+                else min(line_positions[line_index - 1][0] + offset, line_positions[line_index - 1][1] - 1)
+            )
+            caret_below = (
+                len(self.content)
+                if ((line_index + 1) == len(line_positions) - 1)
+                else min(line_positions[line_index + 1][0] + offset, line_positions[line_index + 1][1] - 1)
+            )
 
         return caret_above, caret_below
 

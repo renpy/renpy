@@ -210,7 +210,7 @@ def choose_variants():
         diag = math.hypot(info.current_w, info.current_h) / android.get_dpi()  # type: ignore
         print("Screen diagonal is", diag, "inches.")
 
-        if diag >= 6:
+        if diag >= 6.95:
             renpy.config.variants.insert(0, "tablet")  # type: ignore
             renpy.config.variants.insert(0, "medium")  # type: ignore
         else:
@@ -602,6 +602,9 @@ def main():
                 restart = e.reason
 
             finally:
+
+                renpy.display.tts.stop_tts()
+
                 renpy.persistent.update(True)
                 renpy.persistent.save_on_quit_MP()
 

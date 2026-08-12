@@ -6,7 +6,7 @@ import os
 import subprocess
 import sys
 
-from renpy import version_tuple # @UnresolvedImport
+from renpy import version_tuple  # @UnresolvedImport
 
 branch = os.popen("git branch --show-current").read().strip()
 
@@ -14,7 +14,7 @@ SOURCE = [
     "/home/tom/ab/renpy",
     "/home/tom/ab/renpy-build-" + branch,
     "/home/tom/ab/pygame_sdl2",
-    ]
+]
 
 
 from renpy.versions import generate_vc_version
@@ -49,13 +49,21 @@ if not args.real:
     sys.exit(1)
 
 if args.github:
-    subprocess.call([ "git", "push", "--tags" ])
-    subprocess.call([ "gh", "release", "create", version, "--notes", "See https://www.renpy.org/release/" + short_version, "-t", "Ren'Py {}".format(short_version) ])
+    subprocess.call(["git", "push", "--tags"])
+    subprocess.call([
+        "gh",
+        "release",
+        "create",
+        version,
+        "--notes",
+        "See https://www.renpy.org/release/" + short_version,
+        "-t",
+        "Ren'Py {}".format(short_version),
+    ])
 
     dn = "/home/tom/ab/renpy/dl/" + short_version
 
     for fn in os.listdir(dn):
-
         if fn == ".build_cache":
             continue
 
@@ -74,19 +82,16 @@ if args.github:
         if fn.endswith(".sums"):
             continue
 
-        subprocess.call([ "gh", "release", "upload", version, os.path.join(dn, fn) ])
-
+        subprocess.call(["gh", "release", "upload", version, os.path.join(dn, fn)])
 
     sys.exit(0)
 
 
-
 if args.release:
-    subprocess.check_call([ "/home/tom/ab/renpy/scripts/checksums.py", "/home/tom/ab/renpy/dl/" + short_version ])
+    subprocess.check_call(["/home/tom/ab/renpy/scripts/checksums.py", "/home/tom/ab/renpy/dl/" + short_version])
 
 if args.delete_tag:
     for i in SOURCE:
-
         os.chdir(i)
 
         if i == SOURCE[0]:
@@ -94,7 +99,12 @@ if args.delete_tag:
         else:
             tag = "renpy-" + args.delete_tag
 
-        subprocess.call([ "git", "tag", "-d", tag, ])
+        subprocess.call([
+            "git",
+            "tag",
+            "-d",
+            tag,
+        ])
 
     sys.exit(0)
 
@@ -102,7 +112,7 @@ if args.push_tags:
     for i in SOURCE:
         os.chdir(i)
 
-        if subprocess.call([ "git", "push", "--tags" ]):
+        if subprocess.call(["git", "push", "--tags"]):
             print("Tags not pushed: {}".format(os.getcwd()))
             sys.exit(1)
 
@@ -110,33 +120,32 @@ if args.push_tags:
     sys.exit(0)
 
 if args.release:
-    links = [ "release", "prerelease", "experimental" ]
+    links = ["release", "prerelease", "experimental"]
     tag = True
 elif args.prerelease:
-    links = [ "prerelease", "experimental" ]
+    links = ["prerelease", "experimental"]
     tag = True
 elif args.experimental:
-    links = [ "experimental" ]
+    links = ["experimental"]
     tag = False
 else:
-    links = [ ]
+    links = []
     tag = False
 
 if args.no_tag:
     tag = False
 
-links = [ i + "-" + major for i in links ]
+links = [i + "-" + major for i in links]
 
 if tag:
     for i in SOURCE:
         os.chdir(i)
 
-        if subprocess.call([ "git", "diff", "--quiet", "HEAD" ]):
+        if subprocess.call(["git", "diff", "--quiet", "HEAD"]):
             print("Directory not checked in: {}".format(os.getcwd()))
             sys.exit(1)
 
     for i in SOURCE:
-
         os.chdir(i)
 
         if i == SOURCE[0]:
@@ -144,7 +153,7 @@ if tag:
         else:
             tag = "renpy-" + version
 
-        subprocess.check_call([ "git", "tag", "-a", tag, "-m", "Tagging Ren'Py + " + version + " release." ])
+        subprocess.check_call(["git", "tag", "-a", tag, "-m", "Tagging Ren'Py + " + version + " release."])
 
 os.chdir("/home/tom/ab/renpy/dl")
 

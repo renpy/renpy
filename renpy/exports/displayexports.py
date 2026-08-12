@@ -667,10 +667,10 @@ def screenshot_to_bytes(size):
     return renpy.game.interface.screenshot_to_bytes(size)
 
 
-def transition(trans, layer=None, always=False, force=False):
+def transition(trans, layer=None, always=False, force=False, priority=0):
     """
     :doc: other
-    :args: (trans, layer=None, always=False)
+    :args: (trans, layer=None, always=False, priority=0)
 
     Sets the transition that will be used during the next interaction.
 
@@ -681,11 +681,15 @@ def transition(trans, layer=None, always=False, force=False):
     `always`
         If false, this respects the transition preference. If true, the
         transition is always run.
+
+    `priority`
+        The priority of this transition.  Lower-priority transitions will not replace higher-priority transitions
+        for the same layer.
     """
 
     if isinstance(trans, dict):
         for ly, t in trans.items():
-            transition(t, layer=ly, always=always, force=force)
+            transition(t, layer=ly, always=always, force=force, priority=priority)
         return
 
     if (not always) and not renpy.game.preferences.transitions:  # type: ignore
@@ -694,7 +698,7 @@ def transition(trans, layer=None, always=False, force=False):
     if renpy.config.skipping:
         trans = None
 
-    renpy.game.interface.set_transition(trans, layer, force=force)
+    renpy.game.interface.set_transition(trans, layer, force=force, priority=priority)
 
 
 def get_transition(layer=None):
@@ -1428,7 +1432,7 @@ def get_mouse_names():
     """
 
     if not renpy.display.interface:
-        return [ "default" ]
+        return ["default"]
 
     return renpy.display.interface.get_mouse_names()
 

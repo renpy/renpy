@@ -62,7 +62,7 @@ init label _errorhandling:
     style _default:
 
         # Text properties
-        font "DejaVuSans.ttf"
+        font "_WenQuanYiMicroHei.woff2"
         language "unicode"
         antialias True
         size gui._scale(16)
@@ -647,7 +647,7 @@ init python:
                     try:
                         import jnius
                         activity = jnius.autoclass("org.renpy.android.PythonSDLActivity")
-                        activity.mActivity.openEditor(renpy.exports.fsencode(self.filename))
+                        activity.mActivity.openEditor(self.filename)
                     except Exception:
                         traceback.print_exc()
                 else:

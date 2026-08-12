@@ -417,7 +417,7 @@ class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback
 
     nosave = ["particles"]
 
-    properties = { }
+    properties = {}
 
     def after_upgrade(self, version):
         if version < 1:

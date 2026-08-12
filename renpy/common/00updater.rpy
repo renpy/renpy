@@ -59,8 +59,6 @@ init -1500 python in updater:
     except Exception:
         rsa = None
 
-    from renpy.exports import fsencode
-
     # A map from update URL to the last version found at that URL.
     if persistent._update_version is None:
         persistent._update_version = { }

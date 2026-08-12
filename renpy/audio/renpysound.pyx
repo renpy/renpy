@@ -52,13 +52,13 @@ from __future__ import print_function
 
 from libc.stdint cimport uintptr_t
 
-from renpy.pygame.rwobject cimport RWopsFromPython
-from sdl2 cimport SDL_RWops
+from renpy.pygame.iostream cimport SDL_IOStreamFromPython
+from renpy.pygame.sdl cimport SDL_IOStream
 
 cdef extern from "renpysound_core.h":
 
-    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
-    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
+    void RPS_play(int channel, SDL_IOStream *rw, char *ext, char* name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
+    void RPS_queue(int channel, SDL_IOStream *rw, char *ext, char *name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
@@ -79,6 +79,7 @@ cdef extern from "renpysound_core.h":
     void RPS_advance_time()
     int RPS_video_ready(int channel)
     object RPS_read_video(int channel)
+    object RPS_read_video_yuv(int channel)
     void RPS_set_video(int channel, int video)
 
     void RPS_sample_surfaces(object, object)
@@ -107,9 +108,9 @@ def check_error():
     it raises.)
     """
 
-    e = RPS_get_error();
+    e = RPS_get_error()
     if len(e):
-        raise Exception(unicode(e, "utf-8", "replace"))
+        raise Exception(str(e, "utf-8", "replace"))
 
 
 def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
@@ -143,15 +144,15 @@ def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=
         The audio filter to apply when the file is being played.
     """
 
-    cdef SDL_RWops *rw
+    cdef SDL_IOStream *rw
 
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    rw = RWopsFromPython(file)
+    rw = SDL_IOStreamFromPython(file)
 
     if rw == NULL:
-        raise Exception("Could not create RWops.")
+        raise Exception("Could not create IOStream.")
 
     if tight:
         tight = 1
@@ -171,15 +172,15 @@ def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start
     The other arguments are as for play.
     """
 
-    cdef SDL_RWops *rw
+    cdef SDL_IOStream *rw
 
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    rw = RWopsFromPython(file)
+    rw = SDL_IOStreamFromPython(file)
 
     if rw == NULL:
-        raise Exception("Could not create RWops.")
+        raise Exception("Could not create IOStream.")
 
     if tight:
         tight = 1
@@ -402,6 +403,12 @@ def read_video(channel):
     # This has to be set to the same number it is in ffmedia.c
     FRAME_PADDING = 4
     return rv.subsurface((FRAME_PADDING, FRAME_PADDING, w - FRAME_PADDING * 2, h - FRAME_PADDING * 2))
+
+
+def read_video_yuv(channel):
+    """Returns a capsule containing a packed YUV420 frame, or None."""
+
+    return RPS_read_video_yuv(channel)
 
 
 # No video will be played from this channel.

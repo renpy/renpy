@@ -10,8 +10,71 @@ Changelog (Ren'Py 7.x-)
 8.6.0
 =====
 
+Clipboard
+---------
+
+Ren'Py has new :file:`clipboard` functions that work with the system clipboard.
+
+The :func:`renpy.get_clipboard_text` and :func:`renpy.put_clipboard_text` functions work with the text clipboard that
+is present on all systems.
+
+The :func:`renpy.get_clipboard_data`, :func:`renpy.get_clipboard_mime_types`, and :func:`renpy.put_clipboard_data`
+functions work with the data clipboard that is more limited.
+
+The :func:`renpy.put_clipboard_image_file` function puts the contents of an image file
+into the clipboard, which can be pasted into other applications that support pasting images.
+:func:`renpy.put_clipboard_text_file` does the same for text files.
+
+Age Verification
+----------------
+
+The new :func:`renpy.get_user_age` function returns an age range for the user on supported platforms
+(currently Android and iOS 26+). This is intended to help developers comply with age-related legal
+requirements.
+
+On Android, this uses the Play Age Signals API. On iOS, it uses the Declared Age Range API,
+which requires explicitly adding the "Declared Age Range" capability/entitlement in Xcode.
+
+Self-Voicing
+------------
+
+Ren'Py now supports selecting the voice used by self-voicing. This is done through the shift+A accessibility menu,
+which now presents a list of voices available on the user's system for the user to pick from.
+
+The list of available voices can be obtained through the :func:`renpy.get_tts_voices` function, and
+the voice can be set through the :class:`Preference` class, using the "self voicing voice" setting. The voice is
+stored in :var:`preferences.tts_voice`.
+
+The speed of self-voicing can be adjusted through the "self voicing speed" setting, which is stored in :var:`preferences.tts_speed`,
+and can be set through the :class:`Preference` class, using the "self voicing speed" setting, which may be used as a bar value or
+to set the speed directly to a number between 1.0 and 5.0.
+
+On the shift+A accessibility menu, pressing the "R" key resets the self-voicing settings to the default values, then
+enables self-voicing. This can be used to reset the self-voicing settings if the user has changed them to a state that
+makes self-voicing unusable.
+
+On macOS and Windows, more modern techniques are used to play back the speech.
+
+The :var:`config.tts_voice` variable is no longer used.
+
 Features
 --------
+
+A new :ref:`renpy.red_to_alpha <shader-renpy.red_to_alpha>` shader part has been added, which creates a new image that is white with the alpha taken from
+the red channel of the original data being drawn. This is intended for use to replace: :class:`im.AlphaMask` with :class:`AlphaMask`.
+
+The :func:`renpy.transition` function now takes a `priority` argument. A lower-priority transition will not replace
+a higher-priority transition for the same layer.
+
+The :func:`renpy.callback` decorator registers callbacks with Ren'Py in more concise way.
+
+The new :var:`config.after_init_callbacks` variable is a list of callbacks that are called at the very end of the init phase,
+before the game starts normal execution for the first time. These are run once per Ren'Py start, after the default
+statements have been executed, and so this is the place to set up callbacks that need access to default data.
+
+:class:`Movie` now accepts a movie file as it's `loop` parameter. When given, the movie passed to `play` is played
+to completion, and then `loop` will be played looping. This is intended to be seamless as long as the `play` movie
+is long enough to allow the `loop` movie to load.
 
 The new :func:`FetchProgressValue` bar value allows the progress of fetch requests to be displayed. The same
 information is also available through the :func:`renpy.get_fetch_progress` function.
@@ -31,6 +94,12 @@ Menu text filtering can now be disabled with :var:`config.use_menu_text_filter`,
 
 The new :func:`renpy.get_statement_name` function returns the name of the current statement.
 
+The new :func:`renpy.get_statement_info` function returns the filename, line number, and translation identifier
+of the statement that is currently executing or being predicted.
+
+The :class:`Confirm` action and :func:`renpy.confirm` function now take a `screen` argument, allowing
+a custom screen to be used instead of the default confirm screen.
+
 The `changed` property of bars can now be supplied in addition to a bar value.
 
 Bars now take an `action` property, which is an action that is run when the bar value changes. Unlike `change`, `action`
@@ -49,20 +118,30 @@ and used to populate the :ref:`audio-namespace <audio-namespace>`.
 Other Changes
 -------------
 
+The :var:`config.enter_replay_transition` and :var:`config.after_load_transition` transitions now take priority over
+other transitions queued for the same layer.
+
+The ``--compile`` command line argument now deletes orphaned rpyc files by default.
+This can be disabled with the ``--keep-orphan-rpyc`` command line argument.
+
+Ren'Py now considered Android devices under 6.95 inches to be phones, and devices 6.95 inches and larger to be
+tablets, for the purpose of selecting a variant. The previous breakpoint was 6.0 inches.
+
 The :var:`config.mesh_oversample` variable now defaults to 8.0, which allows meshes to be scaled up before becoming blurry.
 
-The ``scene`` statenment now respects :var:`config.tag_layer` when deciding which later to clear.
+The ``scene`` statement now respects :var:`config.tag_layer` when deciding which layer to clear.
 
 It is now possible to consume in-app purchases on Android, as well as on iOS.
 
 The :var:`config.tlid_only_considers_say` variable has been set to True by default. This prevents non-say statements,
-such as the ``voice`` statement, from contributing to translation identifiers. This can change trasnslation identifiers.
-See the inconpatible changes for more information.
+such as the ``voice`` statement, from contributing to translation identifiers. This can change translation identifiers.
+See the incompatible changes for more information.
 
 The ability to apply zsync-based updates has been removed. This was an older update format that has been replaced.
 The ability to create these updates will be removed in Ren'Py 8.7.0.
 
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
+
 .. _renpy-8.5.4:
 
 8.5.4
@@ -174,6 +253,9 @@ The Persian translation of the Ren'Py tutorial has been updated.
 
 Features
 --------
+
+The new :var:`config.renamed_files` variable is a dictionary mapping file names to new file names, that can be
+used to allow files to be renamed on disk without requiring the old names to be changed.
 
 When defining styles used by :ref:`ruby text <ruby-text>` or :ref:`style text tags <style-text-tags>`, more
 style properties can be set to None to use the value from the parent text. As of this version, the following

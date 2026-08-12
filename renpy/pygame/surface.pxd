@@ -1,5 +1,5 @@
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 # Copyright 2014 Patrick Dawson
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages
@@ -18,14 +18,14 @@
 # 3. This notice may not be removed or altered from any source distribution.
 
 
-from sdl2 cimport SDL_Surface
+from .sdl cimport SDL_Surface
 
 cdef class Surface:
     # Allow weak references.
     cdef object __weakref__
 
     # The SDL surface that corresponds to this surface.
-    cdef SDL_Surface* surface
+    cdef SDL_Surface* sdl_surface
 
     # True if we own our surface. False if some other Surface owns our
     # surface.
@@ -53,7 +53,6 @@ cdef class Surface:
     cdef object get_window_flags
 
     cdef void take_surface(self, SDL_Surface *)
+    cdef void _blend(self, Surface source, int function)
 
     cdef bint has_alpha
-
-cdef SDL_Surface *PySurface_AsSurface(object surface)

@@ -353,6 +353,12 @@ def call_screen(_screen_name, *args, **kwargs):
     return rv
 
 
+_ran_after_init_callbacks: bool = False
+"""
+Ensures config.after_init_callbacks are only run once.
+"""
+
+
 def execute_default_statement(start=False):
     """
     :undocumented:
@@ -370,6 +376,14 @@ def execute_default_statement(start=False):
     for i in renpy.config.after_default_callbacks:
         i()
 
+    global _ran_after_init_callbacks
+
+    if not _ran_after_init_callbacks:
+        for i in renpy.config.after_init_callbacks:
+            i()
+
+    _ran_after_init_callbacks = True
+
 
 def get_statement_name():
     """
@@ -380,3 +394,60 @@ def get_statement_name():
     """
 
     return renpy.ast.current_statement_name
+
+
+class StatementInfo(object):
+    """
+    :doc: other class
+    :args: ()
+
+    Information about a statement that is executing or being predicted.
+
+    This is returned by :func:`renpy.get_statement_info`.
+
+    .. attribute:: filename
+
+        The filename containing the statement.
+
+    .. attribute:: linenumber
+
+        The line number of the statement.
+
+    .. attribute:: tlid
+
+        The translation identifier associated with the statement, or None if
+        there is no translation identifier.
+    """
+
+    def __init__(self, node, tlid):
+        self.filename = node.filename
+        self.linenumber = node.linenumber
+        self.tlid = tlid
+
+
+def get_statement_info():
+    """
+    :doc: other
+
+    Returns a :class:`StatementInfo` object describing the statement that is
+    currently executing or being predicted. This can be called from the
+    predict function of a creator-defined statement.
+
+    Returns None if there is no current statement.
+    """
+
+    node = renpy.display.predict.statement
+
+    if node is not None:
+        tlids = renpy.display.predict.tlids
+        tlid = tlids[0] if tlids else None
+
+    else:
+        ctx = renpy.game.context()
+        node = renpy.game.script.namemap.get(ctx.current, None)
+        tlid = ctx.translate_identifier or ctx.deferred_translate_identifier
+
+    if node is None:
+        return None
+
+    return StatementInfo(node, tlid)

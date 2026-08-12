@@ -143,16 +143,16 @@ image_load_lock = threading.RLock()
 
 formats = {
     # PNG
-    "png": pygame.image.INIT_PNG,  # type:ignore
+    "png": 0,  # type:ignore
     # JPEG
-    "jpg": pygame.image.INIT_JPG,  # type:ignore
-    "jpeg": pygame.image.INIT_JPG,  # type:ignore
+    "jpg": 0,  # type:ignore
+    "jpeg": 0,  # type:ignore
     # WebP
-    "webp": pygame.image.INIT_WEBP,  # type:ignore
+    "webp": 0,  # type:ignore
     # JPEG-XL
     # "jxl": pygame.image.INIT_JXL, # type:ignore
     # AVIF
-    "avif": pygame.image.INIT_AVIF,  # type:ignore
+    "avif": 0,
     ## There is no real way of checking the below,
     ## but they are built into SDL2_image by default
     "tga": 0,
@@ -178,12 +178,12 @@ def load_image(f, filename, size=None):
 
     try:
         if ext.lower() in safe_formats:
-            surf = pygame.image.load(f, renpy.exports.fsencode(filename), size=size)
+            surf = pygame.image.load(f, filename, size=size)
         else:
             # Non-whitelisted formats may not be able to load in a reentrant
             # fashion.
             with image_load_lock:
-                surf = pygame.image.load(f, renpy.exports.fsencode(filename), size=size)
+                surf = pygame.image.load(f, filename, size=size)
 
     except Exception as e:
         extra = ""

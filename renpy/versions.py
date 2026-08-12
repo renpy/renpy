@@ -19,13 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import TypedDict
-
+import collections
+import pathlib
 import site
 import socket
-import pathlib
 import subprocess
-import collections
+import sys
+from typing import TypedDict
 
 
 class Version:
@@ -95,7 +95,7 @@ def _make_version_string(
     if dirty:
         suffixes.append("dirty")
 
-    if not official and branch not in { "main", "master" }:
+    if not official and branch not in {"main", "master"}:
         suffixes.append(branch)
 
     return f"{major}.{minor}.{patch}.{commit:08d}+{'.'.join(suffixes)}"
@@ -146,7 +146,11 @@ def get_git_version(nightly: bool = False) -> VersionDict:
     """
 
     def get_output(args: list[str]) -> str:
-        return subprocess.check_output(args, encoding="utf-8").strip()
+        creationflags = 0
+        if sys.platform == "win32":
+            creationflags = subprocess.CREATE_NO_WINDOW
+
+        return subprocess.check_output(args, encoding="utf-8", creationflags=creationflags).strip()
 
     try:
         git_root = get_output(["git", "rev-parse", "--show-toplevel"])
@@ -220,10 +224,9 @@ def get_release_version():
     version_tuple = tuple(map(int, version["version"].split(".")[:3]))
 
     if version["nightly"] and version["branch"] == "fix" and version_tuple[2] > 0:
-            return "{}.{}.{}".format(version_tuple[0], version_tuple[1] - 1, version_tuple[2])
+        return "{}.{}.{}".format(version_tuple[0], version_tuple[1] - 1, version_tuple[2])
     else:
         return "{}.{}.{}".format(*version_tuple)
-
 
 
 def generate_vc_version(nightly: bool = False) -> VersionDict:

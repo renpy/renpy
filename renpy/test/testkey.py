@@ -246,10 +246,6 @@ code_to_unicode = {
     pygame.K_AUDIOPLAY: "",
     pygame.K_AUDIOMUTE: "",
     pygame.K_MEDIASELECT: "",
-    pygame.K_WWW: "",
-    pygame.K_MAIL: "",
-    pygame.K_CALCULATOR: "",
-    pygame.K_COMPUTER: "",
     pygame.K_AC_SEARCH: "",
     pygame.K_AC_HOME: "",
     pygame.K_AC_BACK: "",
@@ -257,12 +253,6 @@ code_to_unicode = {
     pygame.K_AC_STOP: "",
     pygame.K_AC_REFRESH: "",
     pygame.K_AC_BOOKMARKS: "",
-    pygame.K_BRIGHTNESSDOWN: "",
-    pygame.K_BRIGHTNESSUP: "",
-    pygame.K_DISPLAYSWITCH: "",
-    pygame.K_KBDILLUMTOGGLE: "",
-    pygame.K_KBDILLUMDOWN: "",
-    pygame.K_KBDILLUMUP: "",
     pygame.K_EJECT: "",
     pygame.K_SLEEP: "",
 }
@@ -336,21 +326,12 @@ def down(node: Node, keysym: str) -> None:
     """
     code, u, mods = get_keycode(node, keysym)
 
-    if pygame.key.text_input:
-        pygame.event.post(
-            pygame.event.Event(
-                pygame.KEYDOWN, unicode="", key=code, scancode=code, mod=mods, repeat=False, test=True
-            )
-        )
+    pygame.event.post(
+        pygame.event.Event(pygame.KEYDOWN, unicode="", key=code, scancode=code, mod=mods, repeat=False, test=True)
+    )
 
+    if pygame.key.text_input_active() and (u is not None):
         pygame.event.post(pygame.event.Event(pygame.TEXTINPUT, text=u, test=True))
-
-    else:
-        pygame.event.post(
-            pygame.event.Event(
-                pygame.KEYDOWN, unicode=u, key=code, scancode=code, mod=mods, repeat=False, test=True
-            )
-        )
 
 
 def up(node: Node, keysym: str) -> None:
@@ -359,9 +340,7 @@ def up(node: Node, keysym: str) -> None:
     """
     code, _, mods = get_keycode(node, keysym)
 
-    pygame.event.post(
-        pygame.event.Event(pygame.KEYUP, key=code, scancode=code, mod=mods, repeat=False, test=True)
-    )
+    pygame.event.post(pygame.event.Event(pygame.KEYUP, key=code, scancode=code, mod=mods, repeat=False, test=True))
 
 
 def queue_keysym(node: Node, name: str) -> None:
@@ -386,6 +365,7 @@ def queue_keysym(node: Node, name: str) -> None:
 
     down(node, name)
     up(node, name)
+
 
 #         keysym = config.keymap[keysym][0]
 #     return keysym

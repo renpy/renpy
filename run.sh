@@ -53,16 +53,14 @@ setup () {
 if [ -e "$ROOT/cubism" ]; then
     export CUBISM="$ROOT/cubism"
     export CUBISM_PLATFORM=${CUBISM_PLATFORM:-linux/x86_64}
-    export LD_LIBRARY_PATH="$CUBISM/Core/dll/$CUBISM_PLATFORM"
+    export LD_LIBRARY_PATH="$CUBISM/Core/dll/$CUBISM_PLATFORM:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 fi
 
 setup "$ROOT/"
-
-python "$ROOT/distribute.py" --link-directories
 
 if  [ "$1" = "--build" ] ; then
     echo "Ren'Py build complete."
     exit 0
 else
-    exec $RENPY_GDB python $ROOT/renpy.py "$@"
+    exec $RENPY_GDB python -X utf8 $ROOT/renpy.py "$@"
 fi

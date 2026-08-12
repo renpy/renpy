@@ -36,7 +36,10 @@ class absolute(float):
         return f"absolute({float.__repr__(self)})"
 
     # Special case, should return floats.
-    def __divmod__(self, value: float,):
+    def __divmod__(
+        self,
+        value: float,
+    ):
         return self // value, self % value
 
     def __rdivmod__(self, value: float):
@@ -284,8 +287,7 @@ class position:
 
     def __eq__(self, other):
         if isinstance(other, position):
-            return self.absolute == other.absolute and \
-                   self.relative == other.relative
+            return self.absolute == other.absolute and self.relative == other.relative
 
         simple = self.simplify()
 

@@ -5,10 +5,8 @@ import posixpath
 import os
 import http.server
 import urllib.parse
-import cgi
-import sys
+import html
 import shutil
-import mimetypes
 import io
 import hashlib
 
@@ -17,11 +15,12 @@ root = ""
 
 import renpy
 
+
 class BannedException(Exception):
     pass
 
-class WebHandler(http.server.BaseHTTPRequestHandler):
 
+class WebHandler(http.server.BaseHTTPRequestHandler):
     """Simple HTTP request handler with GET and HEAD commands.
 
     This serves files from the current directory and any of its
@@ -33,7 +32,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
 
     """
 
-    server_version = "Ren'Py/" + renpy.version_only # @UndefinedVariable
+    server_version = "Ren'Py/" + renpy.version_only  # @UndefinedVariable
 
     def do_GET(self):
         """Serve a GET request."""
@@ -71,11 +70,10 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
         f = None
         if os.path.isdir(path):
             parts = urllib.parse.urlsplit(self.path)
-            if not parts.path.endswith('/'):
+            if not parts.path.endswith("/"):
                 # redirect browser - doing basically what apache does
                 self.send_response(301)
-                new_parts = (parts[0], parts[1], parts[2] + '/',
-                             parts[3], parts[4])
+                new_parts = (parts[0], parts[1], parts[2] + "/", parts[3], parts[4])
                 new_url = urllib.parse.urlunsplit(new_parts)
                 self.send_header("Location", new_url)
                 self.end_headers()
@@ -92,34 +90,35 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             # Always read in binary mode. Opening files in text mode may cause
             # newline translations, making the actual size of the content
             # transmitted *less* than the content-length!
-            f = open(path, 'rb')
+            f = open(path, "rb")
             fs = os.fstat(f.fileno())
-        except IOError:
+        except OSError:
             self.send_error(404, "File not found")
             return None
         try:
-
             last_modified = self.date_time_string(fs.st_mtime)
 
             ims = self.headers.get("If-Modified-Since", None)
             if (ims is not None) and (ims == last_modified):
+                f.close()
                 self.send_response(304)
                 self.end_headers()
                 return None
 
-            hash = hashlib.md5()
+            hasher = hashlib.md5()
 
             while True:
                 data = f.read(1024 * 1024)
                 if not data:
                     break
-                hash.update(data)
+                hasher.update(data)
 
             f.seek(0)
 
-            etag = '"{}"'.format(hash.hexdigest())
+            etag = '"{}"'.format(hasher.hexdigest())
 
             if self.headers.get("If-None-Match", None) == etag:
+                f.close()
                 self.send_response(304)
                 self.end_headers()
                 return None
@@ -128,7 +127,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             self.send_header("Content-type", ctype)
 
             self.send_header("Cache-Control", "max-age=0, must-revalidate")
-            self.send_header("Content-Length", str(fs[6]))
+            self.send_header("Content-Length", str(fs.st_size))
             self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
             self.send_header("ETag", etag)
             self.end_headers()
@@ -146,18 +145,18 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
 
         """
         try:
-            list = os.listdir(path)
-        except os.error:
+            entries = os.listdir(path)
+        except OSError:
             self.send_error(404, "No permission to list directory")
             return None
-        list.sort(key=lambda a: a.lower())
-        f = io.StringIO()
-        displaypath = cgi.escape(urllib.parse.unquote(self.path))
-        f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        f.write("<html>\n<title>Directory listing for %s</title>\n" % displaypath)
-        f.write("<body>\n<h2>Directory listing for %s</h2>\n" % displaypath)
-        f.write("<hr>\n<ul>\n")
-        for name in list:
+        entries.sort(key=lambda entry: entry.lower())
+        listing = io.StringIO()
+        displaypath = html.escape(urllib.parse.unquote(self.path))
+        listing.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
+        listing.write("<html>\n<title>Directory listing for %s</title>\n" % displaypath)
+        listing.write("<body>\n<h2>Directory listing for %s</h2>\n" % displaypath)
+        listing.write("<hr>\n<ul>\n")
+        for name in entries:
             fullname = os.path.join(path, name)
             displayname = linkname = name
             # Append / for directories or @ for symbolic links
@@ -167,15 +166,13 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             if os.path.islink(fullname):
                 displayname = name + "@"
                 # Note: a link to a directory displays with @ and links with /
-            f.write('<li><a href="%s">%s</a>\n'
-                    % (urllib.parse.quote(linkname), cgi.escape(displayname)))
-        f.write("</ul>\n<hr>\n</body>\n</html>\n")
-        length = f.tell()
-        f.seek(0)
+            listing.write('<li><a href="%s">%s</a>\n' % (urllib.parse.quote(linkname), html.escape(displayname)))
+        listing.write("</ul>\n<hr>\n</body>\n</html>\n")
+        content = listing.getvalue().encode("utf-8", "surrogateescape")
+        f = io.BytesIO(content)
         self.send_response(200)
-        encoding = sys.getfilesystemencoding()
-        self.send_header("Content-type", "text/html; charset=%s" % encoding)
-        self.send_header("Content-Length", str(length))
+        self.send_header("Content-type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(content)))
         self.end_headers()
         return f
 
@@ -188,12 +185,12 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
 
         """
         # abandon query parameters
-        path = path.split('?', 1)[0]
-        path = path.split('#', 1)[0]
+        path = path.split("?", 1)[0]
+        path = path.split("#", 1)[0]
         # Don't forget explicit trailing slash when normalizing. Issue17324
-        trailing_slash = path.rstrip().endswith('/')
+        trailing_slash = path.rstrip().endswith("/")
         path = posixpath.normpath(urllib.parse.unquote(path))
-        words = path.split('/')
+        words = path.split("/")
         words = filter(None, words)
 
         # Ren'Py - use the root we were given.
@@ -208,7 +205,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
                 continue
             path = os.path.join(path, word)
         if trailing_slash:
-            path += '/'
+            path += "/"
         return path
 
     def copyfile(self, source, outputfile):
@@ -242,58 +239,58 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
 
         """
 
-        base, ext = posixpath.splitext(path)
+        _base, ext = posixpath.splitext(path)
         if ext in self.extensions_map:
             return self.extensions_map[ext]
         ext = ext.lower()
         if ext in self.extensions_map:
             return self.extensions_map[ext]
         else:
-            return self.extensions_map['']
+            return self.extensions_map[""]
 
     extensions_map = {
-        '': 'application/octet-stream', # Default
-        '.gz': 'application/gzip',
-        '.htm': 'text/html',
-        '.html': 'text/html',
-        '.js': 'application/javascript',
-        '.wasm': 'application/wasm',
-        '.avi': 'video/x-msvideo',
-        '.m1v': 'video/mpeg',
-        '.m2v': 'video/mpeg',
-        '.m4v': 'video/mp4',
-        '.mkv': 'video/x-matroska',
-        '.mp4': 'video/mp4',
-        '.mpe': 'video/mpeg',
-        '.mpeg': 'video/mpeg',
-        '.mpg': 'video/mpeg',
-        '.mpg4': 'video/mp4',
-        '.mpv': 'video/x-matroska',
-        '.ogv': 'video/ogg',
-        '.webm': 'video/webm',
-        '.wmv': 'video/x-ms-wmv',
-        }
+        "": "application/octet-stream",  # Default
+        ".gz": "application/gzip",
+        ".htm": "text/html",
+        ".html": "text/html",
+        ".js": "application/javascript",
+        ".wasm": "application/wasm",
+        ".avi": "video/x-msvideo",
+        ".m1v": "video/mpeg",
+        ".m2v": "video/mpeg",
+        ".m4v": "video/mp4",
+        ".mkv": "video/x-matroska",
+        ".mp4": "video/mp4",
+        ".mpe": "video/mpeg",
+        ".mpeg": "video/mpeg",
+        ".mpg": "video/mpeg",
+        ".mpg4": "video/mp4",
+        ".mpv": "video/x-matroska",
+        ".ogv": "video/ogg",
+        ".webm": "video/webm",
+        ".wmv": "video/x-ms-wmv",
+    }
 
 
 def run():
     bind_address = os.environ.get("RENPY_WEBSERVER_BIND_ADDRESS", "127.0.0.1")
 
-    server = http.server.HTTPServer((bind_address, 8042), WebHandler)
+    server = http.server.ThreadingHTTPServer((bind_address, 8042), WebHandler)
     server.serve_forever()
 
 
 def start(root_):
+    """Starts the server if needed and sets the directory it serves."""
 
     print("----")
 
     global root
 
-    started = root
+    server_started = root
     root = root_
 
-    if started:
+    if server_started:
         return
 
-    t = threading.Thread(target=run)
-    t.daemon = True
+    t = threading.Thread(target=run, daemon=True)
     t.start()

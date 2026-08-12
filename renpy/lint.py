@@ -64,7 +64,7 @@ def report(msg, *args):
     else:
         out = ""
 
-    out += msg % args
+    out += (msg % args) if args else msg
     print("")
     print(out)
 
@@ -440,6 +440,9 @@ def check_hide(node):
 
 
 def check_with(node):
+    if node.expr is None:
+        return
+
     try_eval("a with statement or clause", node.expr, "Perhaps you forgot to declare, or misspelled, a transition?")
 
 
@@ -1017,7 +1020,6 @@ def check_unreachables(all_nodes):
 
                 if node in unreachable:
                     to_check.append(node)
-
 
         elif isinstance(node, Testcase):
             weakly_reachable.add(node)

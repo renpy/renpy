@@ -202,7 +202,7 @@ def parse_with(l, node):
 
     expr = l.require(l.simple_expression)
 
-    return [ast.With(loc, "None", expr), node, ast.With(loc, expr)]
+    return [ast.With(loc, None, expr), node, ast.With(loc, expr)]
 
 
 def parse_menu(stmtl, loc, arguments):
@@ -890,6 +890,10 @@ def with_statement(l, loc):
     l.expect_noblock("with statement")
     l.advance()
 
+    # Special case to reduce memory.
+    if expr == "None":
+        expr = None
+
     return ast.With(loc, expr)
 
 
@@ -1412,9 +1416,7 @@ def style_statement(l, loc):
         propname = l.name()
 
         if propname is not None:
-            if (propname != "properties") and (
-                propname not in renpy.style.prefixed_all_properties
-            ):
+            if (propname != "properties") and (propname not in renpy.style.prefixed_all_properties):
                 l.error("style property %s is not known." % propname)
 
             if propname in rv.properties:  # type: ignore

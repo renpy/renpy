@@ -23,6 +23,7 @@ from renpy.uguu.gl cimport *
 from renpy.gl2.gl2shader cimport Program
 from renpy.gl2.gl2model cimport GL2Model
 from renpy.gl2.gl2draw cimport GL2Draw
+from renpy.pygame.surface cimport Surface
 
 cdef class TextureLoader:
 
@@ -62,7 +63,7 @@ cdef class GLTexture(GL2Model):
 
     # If we are doing in-place loading, this is the data that's used for
     # that.
-    cdef object surface
+    cdef Surface surface
 
     # The texture loader associated with this texture.
     cdef TextureLoader loader
@@ -90,6 +91,8 @@ cdef class GLTexture(GL2Model):
     cdef public GLint default_min_filter
 
     cdef bint has_mipmaps(self)
+
+    cdef bint from_yuv_plane_pointer(self, const unsigned char *data, int width, int height, GLenum format, bint mipmap)
 
     cpdef subsurface(GLTexture self, t)
 

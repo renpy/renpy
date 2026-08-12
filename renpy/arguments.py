@@ -26,10 +26,6 @@
 # the end of the init phase, before the game begins running, and can
 # decide if the game runs or some other action occurs.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-
 import argparse
 import os
 import sys
@@ -317,6 +313,8 @@ def bootstrap():
 
     if args.command == "lint":
         args.lint = True
+    elif args.command == "compile":
+        args.compile = True
 
     return args
 

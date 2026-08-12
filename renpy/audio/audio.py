@@ -284,7 +284,7 @@ class Channel(object):
         self.synchro_start = False
 
         # Does this participate in synchro start by default.
-        self.default_synchro_start: bool|renpy.object.Sentinel = synchro_start
+        self.default_synchro_start: bool | renpy.object.Sentinel = synchro_start
 
         # The time the music in this channel was last changed.
         self.last_changed = 0
@@ -893,6 +893,12 @@ class Channel(object):
             return None
 
         return renpysound.read_video(self.number)
+
+    def read_video_yuv(self):
+        if not pcm_ok:
+            return None
+
+        return renpysound.read_video_yuv(self.number)
 
     def video_ready(self):
         if not pcm_ok:

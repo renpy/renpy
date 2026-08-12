@@ -1,5 +1,4 @@
-# Copyright 2014 Patrick Dawson <pat@dw.is>
-#                Tom Rothamel <tom@rothamel.us>
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty.  In no event will the authors be held liable for any damages
@@ -17,11 +16,11 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from sdl2 cimport *
-from sdl2_gfx cimport *
-from renpy.pygame.color cimport map_color
-from renpy.pygame.surface cimport *
-from renpy.pygame.error import error
+from .sdl cimport *
+from .sdl3_gfx cimport *
+from .color cimport map_color
+from .surface cimport *
+from .error import error
 
 
 def _diff(Surface dest, Surface a, Surface b, same_color, different_color):
@@ -41,9 +40,9 @@ def _diff(Surface dest, Surface a, Surface b, same_color, different_color):
     if dest.get_size() != a.get_size() or dest.get_size() != b.get_size():
         raise error("Surface sizes do not match.")
 
-    cdef SDL_Surface *dest_surf = dest.surface
-    cdef SDL_Surface *a_surf = a.surface
-    cdef SDL_Surface *b_surf = b.surface
+    cdef SDL_Surface *dest_surf = dest.sdl_surface
+    cdef SDL_Surface *a_surf = a.sdl_surface
+    cdef SDL_Surface *b_surf = b.sdl_surface
 
     cdef Uint32 same_c = map_color(dest_surf, same_color)
     cdef Uint32 diff_c = map_color(dest_surf, different_color)
@@ -83,8 +82,8 @@ def _diff(Surface dest, Surface a, Surface b, same_color, different_color):
 def flip(Surface surface, bint xbool, bint ybool):
 
     cdef Surface rv = Surface(surface.get_size(), surface.get_flags(), surface)
-    cdef SDL_Surface *src = surface.surface
-    cdef SDL_Surface *dest = rv.surface
+    cdef SDL_Surface *src = surface.sdl_surface
+    cdef SDL_Surface *dest = rv.sdl_surface
 
     cdef Uint32 *src_pixel
     cdef Uint32 *src_end
@@ -121,7 +120,7 @@ def flip(Surface surface, bint xbool, bint ybool):
 
 def scale(Surface surface, size, Surface DestSurface=None):
     cdef Surface surf_out
-    cdef int err = -1
+    cdef bint success
 
     if DestSurface == None:
         surf_out = Surface(size, 0, surface)
@@ -129,10 +128,10 @@ def scale(Surface surface, size, Surface DestSurface=None):
         surf_out = DestSurface
 
     with nogil:
-        SDL_SetSurfaceBlendMode(surface.surface, SDL_BLENDMODE_NONE)
-        err = SDL_UpperBlitScaled(surface.surface, NULL, surf_out.surface, NULL)
+        SDL_SetSurfaceBlendMode(surface.sdl_surface, SDL_BLENDMODE_NONE)
+        success = SDL_BlitSurfaceScaled(surface.sdl_surface, NULL, surf_out.sdl_surface, NULL, SDL_SCALEMODE_NEAREST)
 
-    if err != 0:
+    if not success:
         raise error()
 
     return surf_out
@@ -141,7 +140,7 @@ def rotate(Surface surface, angle):
     # rotateSurface90Degrees always returns NULL without setting an error??
     # cdef SDL_Surface *rsurf
     # if angle % 90 == 0:
-    #     rsurf = rotateSurface90Degrees(surface.surface, angle / 90)
+    #     rsurf = rotateSurface90Degrees(surface.sdl_surface, angle / 90)
     #     if rsurf == NULL:
     #        raise error()
     return rotozoom(surface, angle, 1.0, SMOOTHING_OFF)
@@ -151,7 +150,7 @@ def rotozoom(Surface surface, double angle, double scale, int smooth=1):
     cdef Surface rv
 
     with nogil:
-        rsurf = rotozoomSurface(surface.surface, angle, scale, smooth)
+        rsurf = rotozoomSurface(surface.sdl_surface, angle, scale, smooth)
 
     if rsurf == NULL:
         raise error()
@@ -182,69 +181,16 @@ cdef void set_at(SDL_Surface *surf, int x, int y, uint32_t color) noexcept nogil
     p += x
     p[0] = color
 
-def scale2x(Surface surface, Surface DestSurface=None):
-    cdef int x, y
-
-    cdef uint32_t a, b, c, d, e, f, g, h, i
-    cdef uint32_t e0, e1, e2, e3
-
-    if surface.get_bytesize() != 4:
-        raise error("Surface has unsupported bytesize.")
-
-    cdef Surface surf_out = DestSurface
-    if surf_out == None:
-        surf_out = Surface((surface.get_width()*2, surface.get_height()*2), 0, surface)
-
-    surface.lock()
-    surf_out.lock()
-
-    cdef int width, height
-    width, height = surface.get_size()
-
-    with nogil:
-        for x in range(width):
-            for y in range(height):
-                # Get the surrounding 9 pixels.
-                a = get_at(surface.surface, x - 1, y - 1)
-                b = get_at(surface.surface, x, y - 1)
-                c = get_at(surface.surface, x + 1, y - 1)
-
-                d = get_at(surface.surface, x - 1, y)
-                e = get_at(surface.surface, x, y)
-                f = get_at(surface.surface, x + 1, y)
-
-                g = get_at(surface.surface, x - 1, y + 1)
-                h = get_at(surface.surface, x, y + 1)
-                i = get_at(surface.surface, x + 1, y + 1)
-
-                # Expand the center pixel.
-                if b != h and d != f:
-                    e0 = d if d == b else e
-                    e1 = f if b == f else e
-                    e2 = d if d == h else e
-                    e3 = f if h == f else e
-                else:
-                    e0 = e1 = e2 = e3 = e
-
-                set_at(surf_out.surface, x*2, y*2, e0)
-                set_at(surf_out.surface, (x*2)+1, y*2, e1)
-                set_at(surf_out.surface, x*2, (y*2)+1, e2)
-                set_at(surf_out.surface, (x*2)+1, (y*2)+1, e3)
-
-    surf_out.unlock()
-    surface.unlock()
-
-    return surf_out
 
 def smoothscale(Surface surface, size, Surface DestSurface=None):
-    cdef double scale_x = size[0] / <double>surface.surface.w
-    cdef double scale_y = size[1] / <double>surface.surface.h
+    cdef double scale_x = size[0] / <double>surface.sdl_surface.w
+    cdef double scale_y = size[1] / <double>surface.sdl_surface.h
 
     cdef SDL_Surface *rsurf = NULL
     cdef Surface rv
 
     with nogil:
-        rsurf = rotozoomSurfaceXY(surface.surface, 0.0, scale_x, scale_y, SMOOTHING_ON)
+        rsurf = rotozoomSurfaceXY(surface.sdl_surface, 0.0, scale_x, scale_y, SMOOTHING_ON)
 
     if rsurf == NULL:
         raise error()
@@ -255,7 +201,7 @@ def smoothscale(Surface surface, size, Surface DestSurface=None):
     # This is inefficient.
     if DestSurface:
         with nogil:
-            SDL_SetSurfaceBlendMode(rv.surface, SDL_BLENDMODE_NONE)
-            SDL_UpperBlit(rv.surface, NULL, DestSurface.surface, NULL)
+            SDL_SetSurfaceBlendMode(rv.sdl_surface, SDL_BLENDMODE_NONE)
+            SDL_BlitSurface(rv.sdl_surface, NULL, DestSurface.sdl_surface, NULL)
 
     return rv

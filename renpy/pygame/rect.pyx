@@ -1,4 +1,4 @@
-# Copyright 2014 Tom Rothamel <tom@rothamel.us>
+# Copyright 2014-2026 Tom Rothamel <pytom@bishoujo.us>
 # Copyright 2014 Patrick Dawson <pat@dw.is>
 #
 # This software is provided 'as-is', without any express or implied
@@ -98,113 +98,149 @@ cdef class Rect:
         else:
             raise IndexError(key)
 
-    property left:
-        def __get__(self):
-            return self.x
-        def __set__(self, val):
-            self.x = val
+    @property
+    def left(self):
+        return self.x
 
-    property top:
-        def __get__(self):
-            return self.y
-        def __set__(self, val):
-            self.y = val
+    @left.setter
+    def left(self, val):
+        self.x = val
 
-    property width:
-        def __get__(self):
-            return self.w
-        def __set__(self, val):
-            self.w = val
+    @property
+    def top(self):
+        return self.y
 
-    property height:
-        def __get__(self):
-            return self.h
-        def __set__(self, val):
-            self.h = val
+    @top.setter
+    def top(self, val):
+        self.y = val
 
-    property right:
-        def __get__(self):
-            return self.x + self.width
-        def __set__(self, val):
-            self.x += val - self.right
+    @property
+    def width(self):
+        return self.w
 
-    property bottom:
-        def __get__(self):
-            return self.y + self.height
-        def __set__(self, val):
-            self.y += val - self.bottom
+    @width.setter
+    def width(self, val):
+        self.w = val
 
-    property size:
-        def __get__(self):
-            return (self.w, self.h)
-        def __set__(self, val):
-            self.w, self.h = val
+    @property
+    def height(self):
+        return self.h
 
-    property topleft:
-        def __get__(self):
-            return (self.left, self.top)
-        def __set__(self, val):
-            self.left, self.top = val
+    @height.setter
+    def height(self, val):
+        self.h = val
 
-    property topright:
-        def __get__(self):
-            return (self.right, self.top)
-        def __set__(self, val):
-            self.right, self.top = val
+    @property
+    def right(self):
+        return self.x + self.width
 
-    property bottomright:
-        def __get__(self):
-            return (self.right, self.bottom)
-        def __set__(self, val):
-            self.right, self.bottom = val
+    @right.setter
+    def right(self, val):
+        self.x += val - self.right
 
-    property bottomleft:
-        def __get__(self):
-            return (self.left, self.bottom)
-        def __set__(self, val):
-            self.left, self.bottom = val
+    @property
+    def bottom(self):
+        return self.y + self.height
 
-    property centerx:
-        def __get__(self):
-            return self.x + (self.w / 2)
-        def __set__(self, val):
-            self.x += val - self.centerx
+    @bottom.setter
+    def bottom(self, val):
+        self.y += val - self.bottom
 
-    property centery:
-        def __get__(self):
-            return self.y + (self.h / 2)
-        def __set__(self, val):
-            self.y += val - self.centery
+    @property
+    def size(self):
+        return (self.w, self.h)
 
-    property center:
-        def __get__(self):
-            return (self.centerx, self.centery)
-        def __set__(self, val):
-            self.centerx, self.centery = val
+    @size.setter
+    def size(self, val):
+        self.w, self.h = val
 
-    property midtop:
-        def __get__(self):
-            return (self.centerx, self.top)
-        def __set__(self, val):
-            self.centerx, self.top = val
+    @property
+    def topleft(self):
+        return (self.left, self.top)
 
-    property midleft:
-        def __get__(self):
-            return (self.left, self.centery)
-        def __set__(self, val):
-            self.left, self.centery = val
+    @topleft.setter
+    def topleft(self, val):
+        self.left, self.top = val
 
-    property midbottom:
-        def __get__(self):
-            return (self.centerx, self.bottom)
-        def __set__(self, val):
-            self.centerx, self.bottom = val
+    @property
+    def topright(self):
+        return (self.right, self.top)
 
-    property midright:
-        def __get__(self):
-            return (self.right, self.centery)
-        def __set__(self, val):
-            self.right, self.centery = val
+    @topright.setter
+    def topright(self, val):
+        self.right, self.top = val
+
+    @property
+    def bottomright(self):
+        return (self.right, self.bottom)
+
+    @bottomright.setter
+    def bottomright(self, val):
+        self.right, self.bottom = val
+
+    @property
+    def bottomleft(self):
+        return (self.left, self.bottom)
+
+    @bottomleft.setter
+    def bottomleft(self, val):
+        self.left, self.bottom = val
+
+    @property
+    def centerx(self):
+        return self.x + (self.w / 2)
+
+    @centerx.setter
+    def centerx(self, val):
+        self.x += val - self.centerx
+
+    @property
+    def centery(self):
+        return self.y + (self.h / 2)
+
+    @centery.setter
+    def centery(self, val):
+        self.y += val - self.centery
+
+    @property
+    def center(self):
+        return (self.centerx, self.centery)
+
+    @center.setter
+    def center(self, val):
+        self.centerx, self.centery = val
+
+    @property
+    def midtop(self):
+        return (self.centerx, self.top)
+
+    @midtop.setter
+    def midtop(self, val):
+        self.centerx, self.top = val
+
+    @property
+    def midleft(self):
+        return (self.left, self.centery)
+
+    @midleft.setter
+    def midleft(self, val):
+        self.left, self.centery = val
+
+    @property
+    def midbottom(self):
+        return (self.centerx, self.bottom)
+
+    @midbottom.setter
+    def midbottom(self, val):
+        self.centerx, self.bottom = val
+
+    @property
+    def midright(self):
+        return (self.right, self.centery)
+
+    @midright.setter
+    def midright(self, val):
+        self.right, self.centery = val
 
     def copy(self):
         return Rect(self)

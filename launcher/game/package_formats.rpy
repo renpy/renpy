@@ -173,9 +173,7 @@ init python in distribute:
         else:
             suffix = ""
 
-        executable = renpy.fsdecode(sys.executable)
-
-        rv = os.path.join(os.path.dirname(executable), command + suffix)
+        rv = os.path.join(os.path.dirname(sys.executable), command + suffix)
 
         if os.path.exists(rv):
             return rv
@@ -204,13 +202,13 @@ init python in distribute:
                 os.path.abspath(self.path),
                 ]
 
-            subprocess.check_call([ renpy.fsencode(i) for i in cmd ])
+            subprocess.check_call(cmd)
 
             # Build the sums file. This is a file with an adler32 hash of each 64k block
             # of the zsync file. It's used to help us determine how much of the file is
             # downloaded.
             with open(self.path, "rb") as src:
-                with open(renpy.fsencode(os.path.join(self.destination, self.basename + ".sums")), "wb") as sums:
+                with open(os.path.join(self.destination, self.basename + ".sums"), "wb") as sums:
                     while True:
                         data = src.read(65536)
 

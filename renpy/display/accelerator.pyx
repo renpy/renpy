@@ -30,16 +30,15 @@ from renpy.display.render cimport Render, Matrix2D, render, MATRIX_VIEW, MATRIX_
 from renpy.display.displayable import Displayable
 from renpy.display.core import absolute
 
-from sdl2 cimport *
-
-from renpy.pygame.surface cimport PySurface_AsSurface
+from renpy.pygame.sdl cimport *
+from renpy.pygame.surface cimport Surface
 
 ################################################################################
 # Surface copying
 ################################################################################
 
 
-def nogil_copy(src, dest):
+def nogil_copy(Surface src, Surface dest):
     """
     Does a gil-less blit of src to dest, with minimal locking.
     """
@@ -47,13 +46,12 @@ def nogil_copy(src, dest):
     cdef SDL_Surface *src_surf
     cdef SDL_Surface *dst_surf
 
-    src_surf = PySurface_AsSurface(src)
-    dest_surf = PySurface_AsSurface(dest)
+    src_surf = src.sdl_surface
+    dst_surf = dest.sdl_surface
 
     with nogil:
         SDL_SetSurfaceBlendMode(src_surf, SDL_BLENDMODE_NONE)
-        SDL_UpperBlit(src_surf, NULL, dest_surf, NULL)
-
+        SDL_BlitSurface(src_surf, NULL, dst_surf, NULL)
 
 
 def get_poi(state):

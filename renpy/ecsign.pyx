@@ -39,13 +39,13 @@ from libc.stdlib cimport free
 import base64
 
 cdef extern from "ec_sign_core.h":
-    int ECSign(const unsigned char *priv_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len);
-    int ECVerify(const unsigned char *public_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len);
+    int ECSign(const unsigned char *priv_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len)
+    int ECVerify(const unsigned char *public_key_der, size_t key_len, const char *data, size_t data_len, char *signature, size_t signature_len)
 
-    void ECGeneratePrivateKey(unsigned char **priv_key_der, size_t *priv_len);
-    void ECGetPublicKeyFromPrivate(const unsigned char *priv_key_der, size_t priv_len, unsigned char **public_key_der, size_t *pub_len);
+    void ECGeneratePrivateKey(unsigned char **priv_key_der, size_t *priv_len)
+    void ECGetPublicKeyFromPrivate(const unsigned char *priv_key_der, size_t priv_len, unsigned char **public_key_der, size_t *pub_len)
 
-    int ECValidateKey(int public, const unsigned char *key_der, size_t key_len);
+    int ECValidateKey(int public, const unsigned char *key_der, size_t key_len)
 
 def generate_private_key() -> bytes | None:
     cdef unsigned char* privkey = NULL
@@ -57,28 +57,34 @@ def generate_private_key() -> bytes | None:
     if privlen > 0 and privkey != NULL:
         rv = bytes(privkey[:privlen])
 
-    free(privkey);
+    free(privkey)
 
     return rv
 
-def sign_data(data : bytes, private_key : bytes) -> bytes:
+def sign_data(data: bytes, private_key: bytes) -> bytes:
+    private_key_len = len(private_key)
+    data_len = len(data)
     sign = bytes(64)
+    sign_len = 64
 
-    if not ECSign(private_key, len(private_key), data, len(data), sign, len(sign)):
-        raise Exception("Failed to sign data");
+    if not ECSign(private_key, private_key_len, data, data_len, sign, sign_len):
+        raise Exception("Failed to sign data")
 
-    # print(" ".join("{:02x}".format(x) for x in sign))
     return sign
 
-def verify_data(data : bytes, public_key : bytes, sign : bytes) -> bool:
-    # print(" ".join("{:02x}".format(x) for x in sign))
-    return ECVerify(public_key, len(public_key), data, len(data), sign, len(sign))
+def verify_data(data: bytes, public_key: bytes, sign: bytes) -> bool:
+    public_key_len = len(public_key)
+    data_len = len(data)
+    sign_len = len(sign)
 
-def get_public_key_from_private(private_key : bytes) -> bytes | None:
+    return ECVerify(public_key, public_key_len, data, data_len, sign, sign_len)
+
+def get_public_key_from_private(private_key: bytes) -> bytes | None:
     cdef unsigned char* pubkey = NULL
     cdef size_t publen = 0
+    private_key_len = len(private_key)
 
-    ECGetPublicKeyFromPrivate(private_key, len(private_key), &pubkey, &publen)
+    ECGetPublicKeyFromPrivate(private_key, private_key_len, &pubkey, &publen)
 
     rv = None
     if publen > 0 and pubkey != NULL:
@@ -88,24 +94,30 @@ def get_public_key_from_private(private_key : bytes) -> bytes | None:
 
     return rv
 
-def validate_private_key(private_key : bytes) -> bool:
+def validate_private_key(private_key: bytes) -> bool:
     return ECValidateKey(0, private_key, len(private_key))
 
-def validate_public_key(public_key : bytes) -> bool:
+def validate_public_key(public_key: bytes) -> bool:
     return ECValidateKey(1, public_key, len(public_key))
 
-def _pem_lines(contents: bytes) -> typing.Iterator[bytes]:
+def pem_to_der(pem: object) -> bytes:
+    if isinstance(pem, str):
+        pem = pem.encode()
+    elif not isinstance(pem, bytes):
+        raise TypeError("pem must be str or bytes")
+
     in_pem_part = False
     seen_pem_start = False
+    fields = []
 
-    for line in contents.splitlines():
+    for line in pem.splitlines():
         line = line.strip()
 
-        # Skip empty lines
+        # Skip empty lines.
         if not line:
             continue
 
-        # Handle start marker
+        # Handle start marker.
         if line.startswith(b'-----BEGIN'):
             if in_pem_part:
                 raise ValueError('Seen start marker twice')
@@ -114,37 +126,32 @@ def _pem_lines(contents: bytes) -> typing.Iterator[bytes]:
             seen_pem_start = True
             continue
 
-        # Skip stuff before first marker
+        # Skip stuff before first marker.
         if not in_pem_part:
             continue
 
-        # Handle end marker
-        if in_pem_part and line.startswith(b'-----END'):
+        # Handle end marker.
+        if line.startswith(b'-----END'):
             in_pem_part = False
             break
 
-        # Load fields
+        # Ignore PEM header fields.
         if b":" in line:
             continue
 
-        yield line
+        fields.append(line)
 
-    # Do some sanity checks
+    # Sanity checks for malformed PEM blocks.
     if not seen_pem_start:
         raise ValueError('No PEM start marker found')
 
     if in_pem_part:
         raise ValueError('No PEM end marker found')
 
-def pem_to_der(pem : bytes | str) -> bytes:
-    if isinstance(pem, str):  # pragma: no branch
-        pem = pem.encode()
-
-    d = b"".join(_pem_lines(pem))
+    d = b"".join(fields)
     return base64.b64decode(d)
 
-
-def der_to_pem(der : bytes, name : str) -> bytes:
+def der_to_pem(der: bytes, name: str) -> bytes:
     b64 = base64.b64encode(der)
     lines = [("-----BEGIN %s KEY-----\n" % name).encode()]
     lines.extend(

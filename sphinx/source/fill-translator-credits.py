@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#@PydevCodeAnalysisIgnore
+# @PydevCodeAnalysisIgnore
 
 # This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.
@@ -43,7 +43,7 @@ tc_lines = []
 for line in tc.split("\n"):
     line_s = line.lstrip()
     tc_lines.append(" " * (len(line) - len(line_s)) + "* " + line_s)
-    
+
 tc = "\n\n".join(tc_lines)
 
 creditsfile = open("source/credits.rst", "r")
