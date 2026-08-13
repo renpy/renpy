@@ -24,7 +24,7 @@ real testcases:
 - ``click "Choice Text"`` to pick a menu option.
 - ``click id "..." until not screen "..."`` to keep clicking until a screen disappears.
 
-First, add the following Ren'Py code to your game script. This is the code that we want to test:
+Add the following Ren'Py code to your game script:
 
 .. code-block:: renpy
 
@@ -59,15 +59,12 @@ First, add the following Ren'Py code to your game script. This is the code that 
         "End of demo."
         return
 
-Next, add testcases to execute the code above and verify that it works as expected.
-
-You can put these testcases in the same file as the script above, or in a different file.
-For example, you could add the following to a file named ``testcases.rpy``:
-
-.. code-block:: renpy
+    # ==== Test cases ====
+    # These can go in the same file, or in a separate file (e.g. testcases.rpy).
 
     testsuite quick_start:
         before testcase:
+            # Make sure each test has the same starting point
             run Jump("quickstart_demo")
             advance until screen "quickstart_popup"
 
@@ -89,15 +86,19 @@ For example, you could add the following to a file named ``testcases.rpy``:
             advance until "You left the map behind."
             pause 0.5
 
-.. note ::
+After saving the file, run the test using the launcher or the command line.
+See :ref:`running-testcases` for additional details.
 
-    The pauses in this demo are not necessary, they are just there to make the test
-    execute a slower so you can see what's happening.
-    In a real test, you can remove them to make the test run faster.
+Launcher
+--------
+You can run the test from the launcher by selecting "Run Testcases" from the Ren'Py launcher.
+If the button does not appear, try launching the game first (or recompiling), then
+click the "Refresh" button in the launcher.
 
-Save the file, then see :ref:`running-testcases` for how to launch them
-from the launcher or command line. If you're running the testcase from the command line,
-the command should look something like this:
+Command Line
+------------
+
+If you're running the test from the command line, the command should look something like this:
 
 .. tabs::
 
@@ -113,6 +114,11 @@ the command should look something like this:
 
             .\lib\py3-windows-x86_64\python.exe renpy.py C:\path\to\game test quick_start
 
+.. note ::
+
+    The pauses in this demo are not necessary, they are just there to make the test
+    execute a slower so you can see what's happening.
+    In a real test, you can remove them to make the test run faster.
 
 .. _running-testcases:
 
@@ -131,11 +137,13 @@ If the button is not visible, do the following:
 
 This will run the "global" test suite by default.
 
+.. _test-command-line:
+
 Command Line
 ------------
 
-To run tests from the command line, open a terminal in the Ren'Py SDK directory and
-use the :ref:`test command <cli-test>`:
+To run tests from the :doc:`command line <cli>`, open a terminal in the Ren'Py SDK directory and
+use the test command:
 
 .. tabs::
 
@@ -144,29 +152,36 @@ use the :ref:`test command <cli-test>`:
         .. code-block:: bash
 
             cd /path/to/renpy
-            ./renpy.sh <basedir> test [<testcase>] [options...]
+            ./renpy.sh <basedir> test [<filters>] [options...]
 
     .. tab:: Windows
 
         .. code-block:: bat
 
             cd C:\path\to\renpy
-            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> test [<testcase>] [options...]
+            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> test [<filters>] [options...]
 
 .. option:: <basedir>
 
     Specifies the path to the project.
 
-.. option:: <testcase>
+.. option:: <filters>
 
-    Specifies the name of the testcase or test suite to run. If not given, the "global"
-    test suite will be run.
+    Specifies the test cases or suites to run. If not given, the "global"
+    test suite will be run. Filters are case-sensitive.
 
-.. option:: --enable_all
+    Multiple filters can be provided, separated by a space.
+    These are combined, so that a test will be run if it
+    matches any of the filters.
+
+    See :ref:`test-filter-examples` for examples.
+
+.. option:: --enable-all
 
     Executes all test cases and test suites, regardless of their ``enabled`` property.
+    Does not work if a specific test case or suite is specified.
 
-.. option:: --overwrite_screenshots
+.. option:: --overwrite-screenshots
 
     Overwrite existing screenshots when a
     :ref:`screenshot statement <test-screenshot-statement>` is executed.
@@ -194,6 +209,119 @@ use the :ref:`test command <cli-test>`:
     Shows information about skipped tests. This option should be used together
     with ``--report-detailed``.
 
+.. _test-filter-examples:
+
+Filter Examples
+^^^^^^^^^^^^^^^
+
+Consider a game with the following test structure::
+
+    testsuite math:
+        testcase addition: ...
+            parameter (a, b) = [(2, 1), (3, 1), (3, 2)]
+        testcase subtraction: ...
+            parameter (a, b) = [(2, 1), (3, 1), (3, 2)]
+        testcase shapes: ...
+
+        testsuite graphs:
+            testcase dot: ...
+            testcase save: ...
+
+    testsuite audio:
+        testcase save: ...
+        testcase load: ...
+
+    testsuite sprites:
+        testcase save: ...
+        testcase load: ...
+
+    testcase reload: ...
+
+All tests live inside the implicit root suite called ``global``.
+
+**Running all tests**
+
+Omitting filters, or using ``global``, runs everything:
+
+======================  ==============
+Command                 Selected Tests
+======================  ==============
+``test``                All test
+``test global``         All test
+======================  ==============
+
+**Selecting a suite or test case**
+
+Use ``.`` to separate suite names:
+
+========================  ==============
+Command                   Selected Tests
+========================  ==============
+``test reload``           ``reload``
+``test audio``            ``audio.save``, ``audio.load``
+``test audio.save``       ``audio.save``
+``test math``             ``math.addition``, ``math.subtraction``, ``math.shapes``,
+                          ``math.graphs.dot``, ``math.graphs.save``
+``test math.graphs``      ``math.graphs.dot``, ``math.graphs.save``
+``test math.graphs.dot``  ``math.graphs.dot``
+========================  ==============
+
+You may optionally add ``global.`` to the start of the filter, but it is not required.
+For example, ``test math`` and ``test global.math`` will both select the same tests.
+
+**Wildcards**
+
+``*`` matches any sequence of characters within a single name segment.
+One ``*`` cannot cross a ``.`` boundary.
+
+================  ==============
+Command           Selected Tests
+================  ==============
+``test re*``      ``reload``
+``test math.s*``  ``math.subtraction``, ``math.shapes``
+``test *.save``   ``sprites.save``, ``sounds.save``
+================  ==============
+
+
+**Parameters**
+
+When a test case uses the ``parameter`` keyword, each value combination is a separate run.
+
+See :ref:`parameterized-tests` for more information.
+
+==================================  ==============
+Command                             Selected Tests
+==================================  ==============
+``test "math.addition(a=2, b=1)"``  ``math.addition(a=2, b=1)``
+``test "math.addition(a=3)"``       ``addition(a=3, b=1)``, ``addition(a=3, b=2)``
+``test "math.*(a=3, b=2)"``         ``addition(a=3, b=2)``, ``subtraction(a=3, b=2)``
+==================================  ==============
+
+.. note::
+
+    Quote filters that contain parentheses to prevent the shell from interpreting them.
+
+**Multiple filters**
+
+Separate filters with spaces. A test is selected if it matches *any* filter:
+
+=============================   ==============
+Command                         Selected Tests
+=============================   ==============
+``test audio sprites``          ``audio.save``, ``audio.load``, ``sprites.save``,
+                                ``sprites.load``
+``test *.save math``            ``sprites.save``, ``sounds.save``, plus all of ``math``
+=============================   ==============
+
+**Quick Reference**
+
+======  =========================  =======
+Symbol  Meaning                    Example
+======  =========================  =======
+``.``   Test suite separator       ``math.graphs``
+``*``   Wildcard (one level only)  ``*.save``, ``math.s*``
+``()``  Parameter values           ``addition(a=2, b=1)``
+======  =========================  =======
 
 .. _testcase-statement:
 
@@ -312,12 +440,16 @@ The ``before *`` and ``after *`` hooks take the following properties:
 
 .. var:: depth
 
-    An integer specifying how deep the hook should apply.
+    Controls how many levels of nested tests the hook applies to.
 
-    For testcases, defaults to ``-1``, meaning it applies to all nested test suites and test cases.
+    - ``-1``: Run hook for all nested tests, at any depth
+    - ``0``: Run hook for only direct children of this suite (no nesting)
+    - Positive number: Run hook for tests up to that many levels deep
 
-    For testsuites, defaults to ``0``, meaning it applies only to test suites directly
-    contained within the current suite.
+    **Defaults:**
+
+    - ``-1`` for ``before testcase`` and ``after testcase`` (runs for all nested testcases)
+    - ``0`` for ``before testsuite`` and ``after testsuite`` (runs for direct child testsuites only)
 
     For more information, see :ref:`lifecycle-of-a-test-run`.
 
@@ -373,7 +505,7 @@ executed, and how the hooks are called. The following example illustrates this:
 
             testsuite basic:
                 testcase first_testcase:
-                    $ print(""basic :: first_testcase"")
+                    $ print(""basic.first_testcase"")
                     advance
 
             testsuite test_choices:
@@ -392,16 +524,16 @@ executed, and how the hooks are called. The following example illustrates this:
                     $ print(""test_choices :: teardown"")
 
                 testcase choice1:
-                    $ print(""test_choices :: choice1"")
+                    $ print(""test_choices.choice1"")
                     click ""First Choice""
 
                 testcase choice2:
                     enabled False
-                    $ print(""test_choices :: choice2 (disabled)"")
+                    $ print(""test_choices.choice2 (disabled)"")
                     click ""Second Choice""
 
                 testcase choice3:
-                    $ print(""test_choices :: choice3"")
+                    $ print(""test_choices.choice3"")
                     click ""Third Choice""
 
 
@@ -425,7 +557,7 @@ executed, and how the hooks are called. The following example illustrates this:
 
                     .. container :: execution-entry3
 
-                        **basic** :: first_testcase
+                        **basic**.first_testcase
 
                     .. container :: execution-entry2
 
@@ -457,7 +589,7 @@ executed, and how the hooks are called. The following example illustrates this:
 
                     .. container :: execution-entry3
 
-                        **test_choices** :: choice1
+                        **test_choices**.choice1
 
                     .. container :: execution-entry2
 
@@ -479,7 +611,7 @@ executed, and how the hooks are called. The following example illustrates this:
 
                     .. container :: execution-entry3
 
-                        **test_choices** :: choice3
+                        **test_choices**.choice3
 
                     .. container :: execution-entry2
 
@@ -541,7 +673,7 @@ integer (for a specific depth).
 .. _skipping-testcases:
 
 Skipping Testcases
-------------------
+==================
 
 If a testcase is skipped, it will not be executed. In addition, the
 ``before testcase`` and ``after testcase`` hooks of the testsuite will not be executed
@@ -555,7 +687,7 @@ the parent testsuite(s).
 .. _parameterized-tests:
 
 Parameterized Tests
--------------------
+===================
 
 A test case can run multiple times with different values by using the ``parameter`` property.
 
@@ -572,7 +704,7 @@ Parameters should be thought of as defining multiple testsuites or testcases, wi
 the hooks (including ``setup`` and ``teardown``) being run for each value.
 
 Grouped Parameters
-^^^^^^^^^^^^^^^^^^
+------------------
 
 It is possible to specify several variables at once by grouping them
 in parentheses and giving a list of value groups. For example::
@@ -585,7 +717,7 @@ This will run three times, using the following values:
 ``(x=1, y=2, z=3)``, ``(x=2, y=3, z=5)``, and ``(x=3, y=5, z=8)``.
 
 Parameter Combinations
-^^^^^^^^^^^^^^^^^^^^^^
+----------------------
 
 If multiple ``parameter`` properties are provided, the test case will run
 for every possible combination of the values. For example::
@@ -615,7 +747,7 @@ This will run four times, using these combinations for ``(a, (b, c))``:
 
 
 Using Parameters in Expressions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------
 
 You can use parameters in any test property that takes an expression.
 
@@ -658,7 +790,7 @@ and then clicks at that position::
         click pos (x, y)
 
 Parameterized Test Suites
-^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------
 
 Parameters can also be provided to the whole test suite. In this case, all hooks and test cases
 inside the suite will run once for each parameter set.
@@ -703,7 +835,7 @@ This will run four times, once for each combination of ``(choice_text, (x, y))``
     that value will be affected in all other tests that share the same object.
 
 Exceptions And Failures
------------------------
+=======================
 If an error occurs during a test case:
 
 1. The test case will stop executing immediately
@@ -1513,3 +1645,12 @@ dollar-lines. For example::
 
     testcase default:
         $ print(test.afunction()) # ends up in the console
+
+See Also
+========
+
+You can find real tests in the Ren'Py source code:
+
+* `<https://github.com/renpy/renpy/blob/master/tutorial/game/testcases.rpy>`_
+* `<https://github.com/renpy/renpy/blob/master/gui/game/testcases.rpy>`_
+* `<https://github.com/renpy/renpy/blob/master/launcher/game/testcases.rpy>`_

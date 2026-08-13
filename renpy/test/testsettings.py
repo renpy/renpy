@@ -20,9 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from dataclasses import dataclass
-import subprocess
 import os
 
+global_testsuite_name = "global"
 
 @dataclass
 class TestReportSettings:
