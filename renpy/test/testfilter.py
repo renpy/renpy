@@ -31,7 +31,7 @@ from renpy.test.testast import TestCase
 from renpy.test.testsettings import global_testsuite_name
 
 
-class PathFilterSegment:
+class TestFilterSegment:
     raw_text: str
     name: str
     parameters: dict[str, Any]
@@ -79,7 +79,7 @@ class PathFilterSegment:
 
         return name, parsed_parameters
 
-    def matches(self, other: PathFilterSegment) -> bool:
+    def matches(self, other: TestFilterSegment) -> bool:
         if self.pattern is None:
             self.pattern = re.compile("^" + re.escape(self.name).replace(r"\*", r"[^\.:]*") + "$")
 
@@ -93,17 +93,17 @@ class PathFilterSegment:
 
         return True
 
-class PathFilter:
-    raw_path: str
+class TestFilter:
+    raw: str
 
-    segments: list[PathFilterSegment]
+    segments: list[TestFilterSegment]
     "The testcase or testsuite nodes that this filter resolves to."
 
-    def __init__(self, raw_path: str):
-        self.raw_path = raw_path
+    def __init__(self, raw: str):
+        self.raw = raw
         self.segments = self.parse_filter_text()
 
-    def matches(self, other: PathFilter, exact: bool = False, is_parent: bool = False) -> bool:
+    def matches(self, other: TestFilter, exact: bool = False, is_parent: bool = False) -> bool:
         """
         Determines if this filter matches `other`.
 
@@ -147,17 +147,17 @@ class PathFilter:
         return True
 
     def __eq__(self, other):
-        if not isinstance(other, PathFilter):
+        if not isinstance(other, TestFilter):
             return False
 
         return self.segments == other.segments
 
-    def parse_filter_text(self) -> list[PathFilterSegment]:
+    def parse_filter_text(self) -> list[TestFilterSegment]:
         """
         Parses the raw filter text into a list of segments, each with an optional
         parameter filter.
         """
-        text = self.raw_path.strip()
+        text = self.raw.strip()
         if not text:
             raise KeyError("Filter is empty.")
 
@@ -171,27 +171,29 @@ class PathFilter:
             elif ch == ")":
                 depth -= 1
                 if depth < 0:
-                    raise KeyError(f"Unmatched parentheses in filter: {self.raw_path!r}.")
+                    raise KeyError(f"Unmatched parentheses in filter: {self.raw!r}.")
             elif ch == "." and depth == 0:
                 part = text[start:i].strip()
                 if not part:
-                    raise KeyError(f"Empty segment in filter: {self.raw_path!r}.")
+                    raise KeyError(f"Empty segment in filter: {self.raw!r}.")
                 parts.append(part)
                 start = i + 1
+            elif ch == ":" and depth == 0:
+                raise DeprecationWarning("Replace `::` with `.` in filter")
 
         if depth != 0:
-            raise KeyError(f"Unmatched parentheses in filter: {self.raw_path!r}.")
+            raise KeyError(f"Unmatched parentheses in filter: {self.raw!r}.")
 
         tail = text[start:].strip()
         if not tail:
-            raise KeyError(f"Empty segment in filter: {self.raw_path!r}.")
+            raise KeyError(f"Empty segment in filter: {self.raw!r}.")
         parts.append(tail)
 
-        segments: list[PathFilterSegment] = []
+        segments: list[TestFilterSegment] = []
         for part in parts:
-            segment = get_path_filter_segment(part)
+            segment = get_test_filter_segment(part)
             if not segments and segment.name != global_testsuite_name:
-                segments.append(get_path_filter_segment(global_testsuite_name))
+                segments.append(get_test_filter_segment(global_testsuite_name))
             segments.append(segment)
 
         return segments
@@ -201,13 +203,13 @@ class ExecutionFilter:
     A filter that can be applied to test cases or test suites to determine
     if they should be included in a test run.
     """
-    include_filters: list[PathFilter]
+    include_filters: list[TestFilter]
     matched_nodes: set[TestCase]
     exact_matched_nodes: set[TestCase]
     parent_nodes: set[TestCase]
 
     def __init__(self, include_filters: list[str]) -> None:
-        self.include_filters = [get_path_filter(raw_filter) for raw_filter in include_filters]
+        self.include_filters = [get_test_filter(raw_filter) for raw_filter in include_filters]
         if not self.include_filters:
             return
 
@@ -241,7 +243,7 @@ class ExecutionFilter:
 
         is_parent = (testcase not in self.matched_nodes) and (testcase in self.parent_nodes)
 
-        node_filter = get_path_filter(testcase.current_full_parameterized_path)
+        node_filter = get_test_filter(testcase.current_full_parameterized_path)
         for include_filter in self.include_filters:
             if include_filter.matches(node_filter, exact, is_parent):
                 # Make sure that the specific parameter keywords actually exist in the node
@@ -263,9 +265,9 @@ class ExecutionFilter:
         return False
 
 @functools.cache
-def get_path_filter_segment(raw_text: str) -> PathFilterSegment:
-    return PathFilterSegment(raw_text)
+def get_test_filter_segment(raw_text: str) -> TestFilterSegment:
+    return TestFilterSegment(raw_text)
 
 @functools.cache
-def get_path_filter(raw_text: str) -> PathFilter:
-    return PathFilter(raw_text)
+def get_test_filter(raw_text: str) -> TestFilter:
+    return TestFilter(raw_text)

@@ -115,6 +115,18 @@ see :var:`config.image_directories` and :var:`config.audio_directories`.
 The new :var:`config.audio_directories` variable is a list of directories that are searched for audio Files
 and used to populate the :ref:`audio-namespace <audio-namespace>`.
 
+Tests
+-----
+
+Tests can now be filtered using the ``*`` wildcard (e.g. ``suite.sub*``),
+by parameter (e.g. ``math.addition(a=1, b=2)``), and any combination of the two.
+
+Multiple filters can be provided, which will run tests that match at least one filter.
+
+The testcase separator has been changed from ``::`` to ``.`` for test selection.
+
+A testcase and testsuite can no longer have the same name at the same level in the hierarchy.
+
 Other Changes
 -------------
 
