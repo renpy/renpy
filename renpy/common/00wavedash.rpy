@@ -482,49 +482,6 @@ init -1499 python in wavedash:
             renpy.display.log.exception()
 
 
-    # --- Fullscreen ---
-
-    # Wavedash's host page owns the real fullscreen target; the game
-    # iframe can't usefully request fullscreen on its own. Ren'Py's
-    # built-in fullscreen toggle (Preference("display", ...)) talks to
-    # the iframe and is therefore a no-op on Wavedash web - call these
-    # helpers from your preferences screen instead.
-
-    def is_fullscreen():
-        """
-        :doc: wavedash_fullscreen
-
-        Returns True if the host page is currently fullscreen.
-        """
-
-        return bool(_call_int("isFullscreen"))
-
-
-    def request_fullscreen(fullscreen):
-        """
-        :doc: wavedash_fullscreen
-
-        Asks the host page to enter (`fullscreen=True`) or exit
-        (`fullscreen=False`) fullscreen. Entering must be triggered from
-        a user gesture (click / keydown handler) - browsers refuse the
-        request otherwise.
-        """
-
-        _call("requestFullscreen", bool(fullscreen))
-
-
-    def toggle_fullscreen():
-        """
-        :doc: wavedash_fullscreen
-
-        Toggles fullscreen. Like `request_fullscreen(True)`, entering
-        must be triggered from a user gesture for the browser to permit
-        it.
-        """
-
-        _call("toggleFullscreen")
-
-
     # --- Overlay ---
 
     def toggle_overlay():
