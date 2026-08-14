@@ -191,7 +191,7 @@ The ``return`` statement pops the top statement off of the call stack, and trans
 control to it. If the call stack is empty, the return statement restarts
 Ren'Py, returning control to the main menu.
 
-If the optional expression is given to return, it is evaluated, and it's result
+If the optional expression is given to return, it is evaluated, and its result
 is stored in the ``_return`` variable. This variable is dynamically scoped to each
 context.
 
@@ -211,7 +211,7 @@ The following labels are used by Ren'Py:
 
 ``after_load``
     If it exists, this label is called when a game is loaded. It can be
-    use to fix data when the game is updated. If data is changed by this
+    used to fix data when the game is updated. If data is changed by this
     label, :func:`renpy.block_rollback` should be called to prevent those
     changes from being reverted if the player rolls back past the load
     point.
@@ -245,7 +245,7 @@ The following labels are used by Ren'Py:
             return
 
 ``after_warp``
-    If it is existed, this label is called after a warp but before the warped-to
+    If it exists, this label is called after a warp but before the warped-to
     statement executes. Please see :ref:`Warping to a line <warping_to_a_line>`.
 
 ``hide_windows``
