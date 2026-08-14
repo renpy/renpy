@@ -1008,7 +1008,7 @@ Paths
 .. var:: config.basedir = ...
 
     The full path leading to the game's base directory. This is a read-only
-    variable. This is usually the directory above the :file:`game/` directory. It contains logs like :doc:`log.txt`
+    variable. This is usually the directory above the :file:`game/` directory. It contains logs like :file:`log.txt`
     and on PC plaforms contains the executable used to launch the game. There is no guarantee any file will be there,
     as on Android files are stored inside the package.
 
