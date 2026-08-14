@@ -60,6 +60,8 @@ The :var:`config.tts_voice` variable is no longer used.
 Features
 --------
 
+The new :func:`renpy.music.seek` function seeks the audio or video currently playing on a channel, while :class:`AudioPositionValue` now accepts an `adjustable` argument that allows a bar to seek when dragged.
+
 A new :ref:`renpy.red_to_alpha <shader-renpy.red_to_alpha>` shader part has been added, which creates a new image that is white with the alpha taken from
 the red channel of the original data being drawn. This is intended for use to replace: :class:`im.AlphaMask` with :class:`AlphaMask`.
 

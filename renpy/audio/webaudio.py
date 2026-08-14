@@ -237,6 +237,13 @@ def stop(channel):
 
 
 @proxy_with_channel
+def seek(channel, position):
+    """Seeks the playing media on `channel` to `position` seconds."""
+
+    call("seek", channel, position)
+
+
+@proxy_with_channel
 def dequeue(channel, even_tight=False):
     """
     Dequeues the queued sound file.

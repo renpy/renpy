@@ -601,13 +601,20 @@ init -1500 python:
 
         `update_interval`
             How often the value updates, in seconds.
+
+        `adjustable`
+            If true, the player can seek by dragging the bar.
         """
 
-        def __init__(self, channel='music', update_interval=0.1):
+        def __init__(self, channel='music', update_interval=0.1, adjustable=False):
             self.channel = channel
             self.update_interval = update_interval
+            self.adjustable = adjustable
 
             self.adjustment = None
+
+        def changed(self, position):
+            renpy.music.seek(position, self.channel)
 
         def get_pos_duration(self):
             pos = renpy.music.get_pos(self.channel) or 0.0
@@ -617,7 +624,12 @@ init -1500 python:
 
         def get_adjustment(self):
             pos, duration = self.get_pos_duration()
-            self.adjustment = ui.adjustment(value=pos, range=duration, adjustable=False)
+            self.adjustment = ui.adjustment(
+                value=pos,
+                range=duration,
+                changed=self.changed if self.adjustable else None,
+                adjustable=self.adjustable,
+            )
             return self.adjustment
 
         def periodic(self, st):

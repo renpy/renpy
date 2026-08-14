@@ -70,6 +70,7 @@ MediaState *media_open(SDL_IOStream *, const char *);
 void media_want_video(MediaState *, int);
 void media_start_end(MediaState *, double, double);
 void media_start(MediaState *);
+void media_seek(MediaState *, double);
 void media_pause(MediaState *, int);
 void media_close(MediaState *);
 
@@ -1073,6 +1074,39 @@ void RPS_global_pause(int pause) {
             media_pause(channels[i].playing, pause);
         }
     }
+}
+
+/*
+ * Requests that the decoder for a channel seek to an absolute position in the
+ * source media. The actual FFmpeg calls run on the decoder thread.
+ */
+void RPS_seek(int channel, double position) {
+    struct Channel *c;
+
+    if (check_channel(channel)) {
+        return;
+    }
+
+    if (position < 0.0) {
+        position = 0.0;
+    }
+
+    c = &channels[channel];
+
+    LOCK_AUDIO();
+
+    if (c->playing) {
+        c->pos = (int) (position * audio_spec.freq) - ms_to_samples(c->playing_start_ms);
+        if (c->pos < 0) {
+            c->pos = 0;
+        }
+
+        media_seek(c->playing, position);
+    }
+
+    UNLOCK_AUDIO();
+
+    error(SUCCESS);
 }
 
 

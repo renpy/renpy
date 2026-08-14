@@ -10,6 +10,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "ffmedia.h"
 
@@ -211,6 +212,10 @@ typedef struct MediaState {
 	/* The number of seconds to skip at the start. */
 	double skip;
 
+	/* A seek requested by the audio callback thread. Protected by lock. */
+	int seek_requested;
+	double seek_target;
+
 	/* These become true when the audio and video finish. */
 	int audio_finished;
 	int video_finished;
@@ -232,6 +237,9 @@ typedef struct MediaState {
 
 	/* The total duration of the video. Only used for information purposes. */
 	double total_duration;
+
+	/* The end time requested by media_start_end(), or -1 for natural EOF. */
+	double end_time;
 
 	/* Audio Stuff ***********************************************************/
 
@@ -311,6 +319,49 @@ static void free_surface_entry(SurfaceQueueEntry *sqe) {
 	av_free(sqe->yuv_y);
 	av_free(sqe->yuv_uv);
 	av_free(sqe);
+}
+
+static void clear_decoded_data(MediaState *ms) {
+	AVFrame *frame;
+	SurfaceQueueEntry *surface;
+
+	free_packet_queue(&ms->audio_packet_queue);
+	free_packet_queue(&ms->video_packet_queue);
+
+	if (ms->audio_out_frame) {
+		av_frame_free(&ms->audio_out_frame);
+	}
+	ms->audio_out_index = 0;
+	ms->audio_queue_samples = 0;
+	ms->audio_queue_target_samples = 0;
+
+	while ((frame = dequeue_frame(&ms->audio_queue))) {
+		av_frame_free(&frame);
+	}
+
+	while ((surface = dequeue_surface(&ms->surface_queue))) {
+		free_surface_entry(surface);
+	}
+	ms->surface_queue_size = 0;
+}
+
+static void reset_after_seek(MediaState *ms, double position) {
+	clear_decoded_data(ms);
+
+	ms->skip = position;
+	ms->audio_finished = 0;
+	ms->video_finished = 0;
+	ms->audio_read_samples = 0;
+	ms->video_pts_offset = 0.0;
+	ms->video_read_time = 0.0;
+
+	if (ms->end_time >= 0.0) {
+		ms->audio_duration = (int) (fmax(0.0, ms->end_time - position) * audio_sample_rate);
+	} else if (ms->total_duration > 0.0) {
+		ms->audio_duration = (int) (fmax(0.0, ms->total_duration - position) * audio_sample_rate);
+	} else {
+		ms->audio_duration = -1;
+	}
 }
 
 
@@ -1462,6 +1513,40 @@ static int decode_thread(void *arg) {
 	}
 
 	while (!ms->quit) {
+		double seek_target = -1.0;
+
+		SDL_LockMutex(ms->lock);
+		if (ms->seek_requested) {
+			seek_target = ms->seek_target;
+			ms->seek_requested = 0;
+		}
+		SDL_UnlockMutex(ms->lock);
+
+		if (seek_target >= 0.0) {
+			double maximum = ms->end_time >= 0.0 ? ms->end_time : ms->total_duration;
+			if (maximum > 0.0 && seek_target > maximum) {
+				seek_target = maximum;
+			}
+
+			if (av_seek_frame(ctx, -1, (int64_t) (seek_target * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD) >= 0) {
+				avformat_flush(ctx);
+				if (ms->audio_context) {
+					avcodec_flush_buffers(ms->audio_context);
+				}
+				if (ms->video_context) {
+					avcodec_flush_buffers(ms->video_context);
+				}
+				if (ms->swr) {
+					swr_close(ms->swr);
+					swr_init(ms->swr);
+				}
+
+				SDL_LockMutex(ms->lock);
+				reset_after_seek(ms, seek_target);
+				ms->needs_decode = 1;
+				SDL_UnlockMutex(ms->lock);
+			}
+		}
 
 		if (! ms->audio_finished) {
 			decode_audio(ms);
@@ -1822,6 +1907,7 @@ MediaState *media_open(SDL_IOStream *rwops, const char *filename) {
  */
 void media_start_end(MediaState *ms, double start, double end) {
 	ms->skip = start;
+	ms->end_time = end;
 
 	if (end >= 0) {
 		if (end < start) {
@@ -1847,6 +1933,39 @@ void media_pause(MediaState *ms, int pause) {
         ms->time_offset += current_time - ms->pause_time;
         ms->pause_time = 0;
     }
+}
+
+void media_seek(MediaState *ms, double position) {
+#ifdef __EMSCRIPTEN__
+    if (position < 0.0 || !ms->ctx) {
+        return;
+    }
+
+    if (av_seek_frame(ms->ctx, -1, (int64_t) (position * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD) < 0) {
+        return;
+    }
+
+    avformat_flush(ms->ctx);
+    if (ms->audio_context) {
+        avcodec_flush_buffers(ms->audio_context);
+    }
+    if (ms->video_context) {
+        avcodec_flush_buffers(ms->video_context);
+    }
+    if (ms->swr) {
+        swr_close(ms->swr);
+        swr_init(ms->swr);
+    }
+
+    reset_after_seek(ms, position);
+#else
+    SDL_LockMutex(ms->lock);
+    ms->seek_target = position;
+    ms->seek_requested = 1;
+    ms->needs_decode = 1;
+    SDL_BroadcastCondition(ms->cond);
+    SDL_UnlockMutex(ms->lock);
+#endif
 }
 
 void media_close(MediaState *ms) {
