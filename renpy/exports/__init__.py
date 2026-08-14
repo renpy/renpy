@@ -281,9 +281,16 @@ from renpy.text.textsupport import (
 )
 
 from renpy.translation import (
+    GLOBAL_LANGUAGE as GLOBAL_LANGUAGE,
+    change_image_language as change_image_language,
     change_language as change_language,
+    change_text_language as change_text_language,
+    change_voice_language as change_voice_language,
+    get_image_language as get_image_language,
+    get_text_language as get_text_language,
     get_translation_identifier as get_translation_identifier,
     get_translation_info as get_translation_info,
+    get_voice_language as get_voice_language,
     known_languages as known_languages,
     translate_string as translate_string,
 )

@@ -134,7 +134,7 @@ init -1150 python in gui:
         Note: This is a very slow function.
         """
 
-        renpy.translation.change_language(_preferences.language, force=True, rebuild=True)
+        renpy.translation.change_text_language(_preferences.text_language, force=True, rebuild=True)
         renpy.exports.restart_interaction()
 
     not_set = object()

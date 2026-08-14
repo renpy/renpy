@@ -104,6 +104,12 @@ It works just the same for automatic voice, as long as the filepath of the
 translation file starting from :file:`game/tl/{<language>}/` matches the filepath of
 the original file starting from :file:`game/`\ .
 
+Voice can use a different language from dialogue by calling
+:func:`renpy.change_voice_language`. The selected language applies to future
+audio loads and does not interrupt audio that is already playing. Passing None
+selects the original voice files; passing :var:`renpy.GLOBAL_LANGUAGE` makes
+voice follow the global language again.
+
 Voice Functions
 ---------------
 

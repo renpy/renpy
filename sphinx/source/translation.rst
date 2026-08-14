@@ -373,6 +373,25 @@ If the file is in a directory under game, that directory should be
 included underneath the language. For example, the file :file:`game/gui/main_menu.png`
 can be translated by creating the file :file:`game/tl/piglatin/gui/main_menu.png`.
 
+By default, translated text, images, and audio all use the language selected by
+:func:`renpy.change_language`. A game can select these independently by calling
+:func:`renpy.change_text_language`, :func:`renpy.change_image_language`, and
+:func:`renpy.change_voice_language`. For example::
+
+    $ renpy.change_language("english")
+    $ renpy.change_text_language("schinese")
+    $ renpy.change_image_language("schinese")
+    $ renpy.change_voice_language("japanese")
+
+Passing None to a category-specific function selects the original resources
+for that category. Passing :var:`renpy.GLOBAL_LANGUAGE` makes it follow the
+global language again.
+Ren'Py determines the category from the context in which a resource is loaded,
+such as an image or audio load. It does not infer the category from the filename
+extension. Loads without an image or audio directory use the text language.
+The :var:`config.default_language` and :var:`config.language` variables set only
+the global language; each category initially follows that language.
+
 Style Translations
 ==================
 
@@ -474,7 +493,7 @@ preferences screen::
         textbutton "English" action Language(None)
         textbutton "Igpay Atinlay" action Language("piglatin")
 
-There are two translation-related functions:
+The translation-related functions are:
 
 .. include:: inc/translation_functions
 
@@ -509,15 +528,31 @@ translation:
 
 .. include:: inc/translate_string
 
-There are two language-related variables. One is
-:var:`config.default_language`, which is used to change the default language
-of the game.
+The :var:`config.default_language` variable is used to change the default
+language of the game.
 
 .. var:: _preferences.language
 
     The name of the current language, or None if the default language is
     being used. This should be treated as a read-only variable. To
     change the language, call :func:`renpy.change_language`.
+
+.. var:: _preferences.text_language
+.. var:: _preferences.image_language
+.. var:: _preferences.voice_language
+
+    Optional category-specific language overrides. Each defaults to
+    :var:`renpy.GLOBAL_LANGUAGE`, which makes that category follow
+    :var:`_preferences.language`. A string selects a translated resource and
+    None selects the original resource. These should be treated as read-only
+    variables and changed using the corresponding ``renpy.change_*_language``
+    function.
+
+.. var:: renpy.GLOBAL_LANGUAGE
+
+    A value accepted by the category-specific language functions to make a
+    category follow the global language. This differs from None, which selects
+    the original, untranslated resources.
 
 
 Unsanctioned Translations

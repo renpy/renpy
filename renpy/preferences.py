@@ -157,6 +157,16 @@ Preference("performance_test", True)
 # The language we use for translations.
 Preference("language", None, (str, type(None)))
 
+# Selects the global language for a category-specific language override.
+GLOBAL_LANGUAGE = renpy.object.Sentinel("global_language")
+
+# Optional language overrides for individual resource categories. The
+# GLOBAL_LANGUAGE marker makes a category follow `language` for backwards
+# compatibility.
+Preference("text_language", GLOBAL_LANGUAGE, (str, type(None), type(GLOBAL_LANGUAGE)))
+Preference("image_language", GLOBAL_LANGUAGE, (str, type(None), type(GLOBAL_LANGUAGE)))
+Preference("voice_language", GLOBAL_LANGUAGE, (str, type(None), type(GLOBAL_LANGUAGE)))
+
 # Should we self-voice?
 Preference("self_voicing", False, (bool, str, type(None)))
 
@@ -267,6 +277,9 @@ class Preferences(renpy.object.Object):
     renderer: str
     performance_test: bool
     language: str | None
+    text_language: str | None | renpy.object.Sentinel
+    image_language: str | None | renpy.object.Sentinel
+    voice_language: str | None | renpy.object.Sentinel
     self_voicing: bool | str | None
     self_voicing_volume_drop: float
     emphasize_audio: bool

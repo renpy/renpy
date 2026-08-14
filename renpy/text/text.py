@@ -2336,7 +2336,7 @@ class Text(renpy.display.displayable.Displayable):
         if renpy.game.context().init_phase:
             self.language = None
         else:
-            self.language = renpy.game.preferences.language
+            self.language = renpy.translation.get_text_language()
 
         if self.tokenized:
             if update and self.text != text:
@@ -2386,7 +2386,7 @@ class Text(renpy.display.displayable.Displayable):
         return True
 
     def per_interact(self):
-        if (self.language != renpy.game.preferences.language) and not self._uses_scope:
+        if (self.language != renpy.translation.get_text_language()) and not self._uses_scope:
             self.set_text(self.text_parameter, substitute=self.substitute, update=True)
 
         if self.style.slow_abortable:

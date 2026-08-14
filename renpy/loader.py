@@ -642,7 +642,7 @@ def get_prefixes(tl=True, directory=None):
     rv = []
 
     if tl:
-        language = renpy.game.preferences.language  # type: ignore
+        language = renpy.translation.get_language_for_directory(directory)
     else:
         language = None
 

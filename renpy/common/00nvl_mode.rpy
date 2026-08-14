@@ -379,9 +379,9 @@ init -1500 python:
             if store.nvl_list is None:
                 store.nvl_list = [ ]
 
-            if store._nvl_language != _preferences.language:
+            if store._nvl_language != renpy.translation.get_text_language():
                 store.nvl_list = [ ]
-                store._nvl_language = _preferences.language
+                store._nvl_language = renpy.translation.get_text_language()
 
             while config.nvl_list_length and (len(nvl_list) + 1 > config.nvl_list_length):
                 nvl_list.pop(0)

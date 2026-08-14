@@ -80,7 +80,7 @@ screen _translation_info():
 
                     action EditFile(filename, line)
 
-                if tl and preferences.language:
+                if tl and renpy.translation.get_text_language():
                     textbutton _(" translates [tl.filename]:[tl.linenumber]"):
                         padding (0, 0)
                         text_color "#fff"
@@ -89,7 +89,7 @@ screen _translation_info():
 
                         action EditFile(tl.filename, tl.linenumber)
 
-            if tl and preferences.language and tl.source:
+            if tl and renpy.translation.get_text_language() and tl.source:
                 null height gui._scale(7)
 
                 for s in tl.source:
