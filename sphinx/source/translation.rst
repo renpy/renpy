@@ -417,10 +417,6 @@ normal preferences mechanism. The cache-clearing and interaction restart ensure
 that already-created displayables are rebuilt using the new path; currently playing
 audio is not implicitly stopped by changing the mapping.
 
-The mapping is based only on the requested resource path. Ren'Py does not infer a
-resource type from a file extension. Passing ``tl=False`` to loader functions also
-skips path mappings, just as it skips the normal translated-resource search.
-
 Style Translations
 ==================
 
