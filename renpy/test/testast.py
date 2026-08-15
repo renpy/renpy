@@ -984,8 +984,8 @@ class Type(SelectorDrivenNode):
         move_mouse(x, y)
 
         key = self.text[state]
-        renpy.test.testkey.down(self, key)
-        renpy.test.testkey.up(self, key)
+        renpy.test.testkey.down(key)
+        renpy.test.testkey.up(key)
 
         return state + 1
 
@@ -999,7 +999,7 @@ class Keysym(SelectorDrivenNode):
 
     def perform(self, x, y, state, t):
         move_mouse(x, y)
-        renpy.test.testkey.queue_keysym(self, self.keysym)
+        renpy.test.testkey.queue_keysym(self.keysym)
 
 
 class Action(Node):
@@ -1140,7 +1140,7 @@ class Advance(Node):
             next_node(self.next)
             return None
 
-        renpy.test.testkey.queue_keysym(self, "dismiss")
+        renpy.test.testkey.queue_keysym("dismiss")
         return Advance.last_event
 
 
