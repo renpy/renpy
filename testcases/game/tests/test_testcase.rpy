@@ -441,7 +441,7 @@ testsuite for_loops:
         pause until screen "choice"
 
         for option in ["Increment", "Increment", "Decrement", "Increment", "Increment"]:
-            click expression option
+            click text option
 
         assert "Value: 3" timeout 2.0
         click "Done"

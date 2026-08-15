@@ -2,7 +2,7 @@
     import time
 
 testsuite global:
-    before testsuite:
+    after testsuite:
         if not screen "main_menu":
             run MainMenu(confirm=False)
 
@@ -10,7 +10,7 @@ testsuite global:
         exit
 
 
-testsuite default:
+testsuite play_game:
     description "Default project testsuite"
     parameter language = ["french", None]
 
@@ -35,15 +35,6 @@ testsuite default:
         click "That's enough for now." raw
         advance until screen "main_menu"
         # click "Quit" raw
-
-
-    testsuite blank:
-        testcase do_nothing:
-            pass
-
-    testsuite blank2:
-        testcase do_nothing2:
-            pass
 
 
     ## Run the testcases
@@ -85,29 +76,28 @@ testsuite default:
         click "No." raw
         advance until screen "tutorials"
 
-    testcase new_game:
-        scroll "Bar" until "Creating a New Game" raw
-        click "Creating a New Game" raw
-        advance until screen "tutorials"
+    testcase advance_till_end_simple:
+        parameter choice_text = [
+            "Creating a New Game", # new_game
+            "Writing Dialogue", # dialogue
+            "Adding Images", # images
+            "Transitions", # transitions
+            "Music and Sound Effects", # music
+            "Positioning Images", # positioning_images
+            "Video Playback", # video
+            "Tools and the Interactive Director", # tools
+            "Building Distributions", # building
+            "Text Tags, Escapes, and Interpolation", # text_tags
+            "Character Objects", # character_objects
+            "Simple Displayables", # simple_displayables
+            "Transforms and Animation", # transforms
+            "Transform Properties",
+            "GUI Customization", # gui_customization
+            "Translations", # translations
+        ]
 
-    testcase dialogue:
-        scroll "Bar" until "Writing Dialogue" raw
-        click "Writing Dialogue" raw
-        advance until screen "tutorials"
-
-    testcase images:
-        scroll "Bar" until "Adding Images" raw
-        click "Adding Images" raw
-        advance until screen "tutorials"
-
-    testcase transitions:
-        scroll "Bar" until "Transitions" raw
-        click "Transitions" raw
-        advance until screen "tutorials"
-
-    testcase music:
-        scroll "Bar" until "Music and Sound Effects" raw
-        click "Music and Sound Effects" raw
+        scroll "Bar" until text choice_text raw
+        click text choice_text raw
         advance until screen "tutorials"
 
     testcase choices:
@@ -131,49 +121,11 @@ testsuite default:
         keysym "K_RETURN"
         advance until screen "tutorials"
 
-    testcase positioning_images:
-        scroll "Bar" until "Positioning Images" raw
-        click "Positioning Images" raw
-        advance until screen "tutorials"
-
-    testcase video:
-        scroll "Bar" until "Video Playback" raw
-        click "Video Playback" raw
-        advance until screen "tutorials"
-
-
     testcase nvl_mode:
         scroll "Bar" until "NVL Mode" raw
         click "NVL Mode" raw
         advance until eval ("nvl_menu" in renpy.game.context().modes) # screen "nvl_choice"
         click "Yes." raw
-        advance until screen "tutorials"
-
-    testcase tools:
-        scroll "Bar" until "Tools and the Interactive Director" raw
-        click "Tools and the Interactive Director" raw
-        advance until screen "tutorials"
-
-        # Not actually testing the various tools yet.
-
-    testcase building:
-        scroll "Bar" until "Building Distributions" raw
-        click "Building Distributions" raw
-        advance until screen "tutorials"
-
-    testcase text_tags:
-        scroll "Bar" until "Text Tags, Escapes, and Interpolation" raw
-        click "Text Tags, Escapes, and Interpolation" raw
-        advance until screen "tutorials"
-
-    testcase character_objects:
-        scroll "Bar" until "Character Objects" raw
-        click "Character Objects" raw
-        advance until screen "tutorials"
-
-    testcase simple_displayables:
-        scroll "Bar" until "Simple Displayables" raw
-        click "Simple Displayables" raw
         advance until screen "tutorials"
 
     testcase transition_gallery:
@@ -211,11 +163,6 @@ testsuite default:
 
         scroll "Bar" until "Transform Properties" raw
         click "Transform Properties" raw
-        advance until screen "tutorials"
-
-    testcase gui_customization:
-        scroll "Bar" until "GUI Customization" raw
-        click "GUI Customization" raw
         advance until screen "tutorials"
 
     testcase styles:
@@ -303,62 +250,51 @@ testsuite default:
 
         advance until screen "tutorials"
 
-    testcase translations:
-        scroll "Bar" until "Translations" raw
-        click "Translations" raw
-        advance until screen "tutorials"
+testcase out_of_game:
+    run Start()
 
+    $ _preferences.self_voicing = False
+    $ _preferences.afm_time = 1
 
-    testcase out_of_game:
-        click "Back" raw
-        click "Back" raw
+    click "Auto" raw
+    scroll "Bar" until "Player Experience" raw
+    click "Player Experience" raw
+    click "Auto" raw
+    click "History" raw
 
-        click "Skip" raw
+    pause .5
 
-        click "Back" raw
+    click "Save" raw
+    pause .5
 
-        $ _preferences.self_voicing = False
-        $ _preferences.afm_time = 1
-
-        click "Auto" raw
-        scroll "Bar" until "Player Experience" raw
-        click "Player Experience" raw
-        click "Auto" raw
-        click "History" raw
-
-        pause .5
-
-        click "Save" raw
-        pause .5
-
-        click id "save_slot_1"
-        pause 0.2
-        if screen "confirm":
-            click id "confirm_yes_button" until not screen "confirm"
-
-        click "Load" raw
-        pause .5
-
-        click id "save_slot_1"
+    click id "save_slot_1"
+    pause 0.2
+    if screen "confirm":
         click id "confirm_yes_button" until not screen "confirm"
 
-        click "Prefs" raw
-        pause .5
+    click "Load" raw
+    pause .5
 
-        click "About" raw
-        pause .5
+    click id "save_slot_1"
+    click id "confirm_yes_button" until not screen "confirm"
 
-        click "Help" raw
-        pause .5
+    click "Prefs" raw
+    pause .5
 
-        click "Main Menu" raw
-        click id "confirm_yes_button" until not screen "confirm"
+    click "About" raw
+    pause .5
 
-        click "Load" raw
-        pause .5
+    click "Help" raw
+    pause .5
 
-        click id "save_slot_1"
+    click "Main Menu" raw
+    click id "confirm_yes_button" until not screen "confirm"
 
-        advance until screen "choice"
-        click "Yes." raw
-        advance until screen "tutorials"
+    click "Load" raw
+    pause .5
+
+    click id "save_slot_1"
+
+    advance until screen "choice"
+    click "Yes." raw
+    advance until screen "tutorials"

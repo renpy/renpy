@@ -791,7 +791,7 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
         elif l.keyword("focused"):
             focused = True
 
-        elif l.keyword("expression"):
+        elif l.keyword("text"):
             expression = True
             if pattern is not None:
                 l.error("Only one text pattern may be specified in a selector.")
