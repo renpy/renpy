@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy.pygame as pygame
+from renpy import pygame
 
 # The overridden positioning of the mouse.
 mouse_pos: tuple[int, int] | None = None
@@ -100,7 +100,6 @@ def scroll_mouse(amount: int, x: int, y: int) -> None:
     """
 
     move_mouse(x, y)
-    # post(pygame.MOUSEWHEEL, pos=mouse_pos, x=0, y=amount)  # type: ignore
 
     btn = 4 if amount > 0 else 5
     for i in range(abs(amount)):

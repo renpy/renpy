@@ -19,12 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Any, Collection
+from collections.abc import Collection
+from typing import Any
 
-import renpy.test.testast as testast
 import renpy
 from renpy.lexer import Lexer
-from renpy.test.types import NodeLocation, HookType
+from renpy.test import testast
+from renpy.test.types import HookType, NodeLocation
 
 # The root of the parse trie.
 test_statements = renpy.parser.ParseTrie()

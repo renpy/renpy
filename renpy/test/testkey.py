@@ -19,13 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-
-import renpy.pygame as pygame
-
 import renpy
+from renpy import pygame
 
 code_to_unicode = {
     pygame.K_UNKNOWN: "",
@@ -311,9 +306,7 @@ def get_keycode(keysym: str) -> tuple[int, str | None, int]:
 
         u = code_to_unicode.get(code, "")
 
-        if not u:
-            u = None
-        elif ord(u) < 32:
+        if not u or ord(u) < 32:
             u = None
 
     return code, u, mods

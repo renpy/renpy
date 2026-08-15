@@ -19,18 +19,18 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from collections.abc import Callable
 from textwrap import dedent
-from typing import Callable, Any
+from typing import Any
 
 import renpy
-import renpy.pygame as pygame
-
+from renpy import pygame
 from renpy.error import FrameSummary
-from renpy.test.testast import Node, BaseTestBlock, TestSuite, TestCase, TestHook, Exit, ControlFrame
+from renpy.test import testreporter
+from renpy.test.testast import BaseTestBlock, ControlFrame, Exit, Node, TestCase, TestHook, TestSuite
 from renpy.test.testfilter import ExecutionFilter
-from renpy.test.types import NodeState, NodeLocation, RenpyTestTimeoutError, HookType
-import renpy.test.testreporter as testreporter
 from renpy.test.testsettings import _test, global_testsuite_name
+from renpy.test.types import HookType, NodeLocation, NodeState, RenpyTestTimeoutError
 
 initialized: bool = False
 
@@ -108,7 +108,7 @@ def initialize(test_filter: ExecutionFilter) -> None:
     if initialized:
         return
 
-    on_reload()  
+    on_reload()
     execution_filter = test_filter
 
     root = setup_global_test_suite()
@@ -317,7 +317,7 @@ def setup_global_test_suite() -> TestSuite:
     try:
         root = get_testcase_by_id(global_testsuite_name)
         if not isinstance(root, TestSuite):
-            raise ValueError(
+            raise TypeError(
                 f"Root node for {global_testsuite_name!r} must be a TestSuite, got {type(root)}"
             )
 
@@ -643,7 +643,6 @@ class BaseExecutionPhase:
 
     def enter(self) -> None:
         """Called when entering this phase."""
-        pass
 
     def error(self, status: testreporter.OutcomeStatus) -> "BaseExecutionPhase | None":
         """
@@ -658,13 +657,12 @@ class BaseExecutionPhase:
 
         Runs only if node_executor has finished executing the provided nodes.
         """
-        pass
 
 
 class HookPhase(BaseExecutionPhase):
     def error(self, status):
         if not isinstance(self.block, TestHook):
-            raise RuntimeError("Block is not a TestHook.")
+            raise TypeError("Block is not a TestHook.")
 
         testreporter.reporter.test_hook_end(self.block, status, depth=len(suite_stack))
         self.block.increment_call_count()
@@ -833,7 +831,7 @@ class TestCasePhase(BaseExecutionPhase):
 
     def error(self, status) -> BaseExecutionPhase | None:
         if not isinstance(self.block, TestCase):
-            raise RuntimeError("Block is not a TestCase.")
+            raise TypeError("Block is not a TestCase.")
 
         testreporter.reporter.test_case_end(self.block, status, depth=len(suite_stack))
         return self.update()

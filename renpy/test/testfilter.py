@@ -23,8 +23,8 @@ from __future__ import annotations
 
 import ast
 import functools
-from typing import Any
 import re
+from typing import Any
 
 import renpy
 from renpy.test.testast import TestCase

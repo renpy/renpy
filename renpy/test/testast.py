@@ -19,14 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import itertools
-from typing import Any
 import glob
+import itertools
 import os
+from typing import Any, ClassVar
 
 import renpy
-from renpy.display.focus import Focus
 from renpy.display.displayable import Displayable
+from renpy.display.focus import Focus
 from renpy.test.testmouse import click_mouse, move_mouse, scroll_mouse
 from renpy.test.testsettings import _test, global_testsuite_name
 from renpy.test.types import (
@@ -47,21 +47,17 @@ class SelectorException(RenpyTestException):
 class LoopBreakException(Exception):
     """Exception raised to break out of a loop."""
 
-    pass
-
 
 class LoopContinueException(Exception):
     """Exception raised to continue to the next iteration of a loop."""
 
-    pass
 
-
-class Node(object):
+class Node:
     """
     An AST node for a test script.
     """
 
-    __slots__ = ("filename", "linenumber", "next", "done")
+    __slots__ = ("done", "filename", "linenumber", "next")
 
     def __init__(self, loc: NodeLocation):
         self.filename, self.linenumber = loc
@@ -77,7 +73,7 @@ class Node(object):
     def __repr__(self):
         if params := self.get_repr_params():
             params = " " + params
-        return "<{}{} ({}:{})>".format(type(self).__name__, params, self.filename, self.linenumber)
+        return f"<{type(self).__name__}{params} ({self.filename}:{self.linenumber})>"
 
     def chain(self, next: "Node | None") -> None:
         """
@@ -139,14 +135,12 @@ class Node(object):
         Called after an Until node has finished executing.
         This is used to end any function that was started by this node.
         """
-        pass
 
     def cleanup_after_error(self, state: NodeState) -> None:
         """
         Called if an exception is raised during the execution of this node.
         This can be used to clean up any state that was set by this node.
         """
-        pass
 
 
 class Block(Node):
@@ -180,10 +174,10 @@ class Block(Node):
     def execute(self, state, t):
         if not self.block:
             next_node(self.next)
-            return None
+            return
 
         next_node(self.block[0])
-        return None
+        return
 
 
 class BaseTestBlock(Block):
@@ -262,7 +256,7 @@ class BaseTestBlock(Block):
 
 
 class TestHook(BaseTestBlock):
-    __slots__ = ("depth", "call_count")
+    __slots__ = ("call_count", "depth")
 
     def __init__(
         self,
@@ -304,7 +298,7 @@ class TestHook(BaseTestBlock):
 
 
 class TestCase(BaseTestBlock):
-    __slots__ = ("description", "enabled", "only", "parameters", "parameter_index")
+    __slots__ = ("description", "enabled", "only", "parameter_index", "parameters")
 
     def __init__(
         self,
@@ -396,13 +390,13 @@ class TestSuite(TestCase):
     """
 
     __slots__ = (
-        "subtests",
-        "subtest_index",
-        "setup",
-        "before_testsuite",
-        "before_testcase",
         "after_testcase",
         "after_testsuite",
+        "before_testcase",
+        "before_testsuite",
+        "setup",
+        "subtest_index",
+        "subtests",
         "teardown",
     )
 
@@ -630,7 +624,7 @@ class DisplayableSelector(Selector):
     A selector that finds a widget by its id or screen.
     """
 
-    __slots__ = ("screen", "id", "layer")
+    __slots__ = ("id", "layer", "screen")
 
     def __init__(
         self,
@@ -640,7 +634,7 @@ class DisplayableSelector(Selector):
         layer: str | None = None,
         wait_for_focus: bool = False,
     ):
-        super(DisplayableSelector, self).__init__(loc, wait_for_focus)
+        super().__init__(loc, wait_for_focus)
         self.screen = screen
         self.id = id
         self.layer = layer
@@ -650,16 +644,15 @@ class DisplayableSelector(Selector):
 
     def ready(self) -> bool:
         ## Needs to be checked here and not in __init__ since screens are not be defined yet.
-        if self.screen is not None:
-            if not renpy.exports.has_screen(scoped_eval(self.screen)):
-                raise ValueError(f"The screen {self.screen!r} does not exist.")
+        if self.screen is not None and not renpy.exports.has_screen(scoped_eval(self.screen)):
+            raise ValueError(f"The screen {self.screen!r} does not exist.")
 
         return super().ready()
 
     def get_element(self) -> Displayable | None:
         if self.screen and self.id is None:
             layer = None if self.layer is None else scoped_eval(self.layer)
-            screen = None if self.screen is None else scoped_eval(self.screen)
+            screen = scoped_eval(self.screen)
             rv = renpy.exports.get_screen(screen, layer)
         else:
             rv = self.get_displayable()
@@ -675,9 +668,12 @@ class DisplayableSelector(Selector):
         """
         ## NOTE: Move to renpy.exports.get_displayable() eventually?
 
+        if self.id is None:
+            raise ValueError("At least one of `id` or `screen` must be set.")
+
         layer = None if self.layer is None else scoped_eval(self.layer)
         screen = None if self.screen is None else scoped_eval(self.screen)
-        id = None if self.id is None else scoped_eval(self.id)
+        id = scoped_eval(self.id)
 
         ctx: renpy.execution.Context = renpy.game.context()
         for context_layer, sles in ctx.scene_lists.layers.items():
@@ -739,7 +735,7 @@ class TextSelector(Selector):
         evaluated to get the actual pattern string.
     """
 
-    __slots__ = ("pattern", "raw", "expression")
+    __slots__ = ("expression", "pattern", "raw")
 
     def __init__(
         self,
@@ -749,7 +745,7 @@ class TextSelector(Selector):
         raw: bool = False,
         expression: bool = False,
     ):
-        super(TextSelector, self).__init__(loc, wait_for_focus)
+        super().__init__(loc, wait_for_focus)
         self.pattern = pattern
         self.raw = raw
         self.expression = expression
@@ -791,7 +787,7 @@ class SelectorDrivenNode(Node):
         regardless of whether the selector is ready.
     """
 
-    __slots__ = ("selector", "position", "always")
+    __slots__ = ("always", "position", "selector")
 
     def __init__(
         self,
@@ -800,7 +796,7 @@ class SelectorDrivenNode(Node):
         position: str | None = None,
         always: bool = False,
     ):
-        super(SelectorDrivenNode, self).__init__(loc)
+        super().__init__(loc)
         self.selector = selector
         self.position = position
         self.always = always
@@ -919,7 +915,7 @@ class Scroll(SelectorDrivenNode):
 
 
 class Drag(Node):
-    __slots__ = ("start_point", "end_point", "button", "steps")
+    __slots__ = ("button", "end_point", "start_point", "steps")
 
     def __init__(
         self,
@@ -929,7 +925,7 @@ class Drag(Node):
         button: int = 1,
         steps: int = 10,
     ):
-        super(Drag, self).__init__(loc)
+        super().__init__(loc)
         self.start_point = start_point
         self.end_point = end_point
         self.button = button
@@ -966,7 +962,7 @@ class Drag(Node):
 
 
 class Type(SelectorDrivenNode):
-    __slots__ = "text"
+    __slots__ = ("text",)
     # interval = .01 # unused
 
     def __init__(self, loc: NodeLocation, text: str, **kwargs):
@@ -991,7 +987,7 @@ class Type(SelectorDrivenNode):
 
 
 class Keysym(SelectorDrivenNode):
-    __slots__ = "keysym"
+    __slots__ = ("keysym",)
 
     def __init__(self, loc: NodeLocation, keysym: str, **kwargs):
         super().__init__(loc, **kwargs)
@@ -1007,10 +1003,10 @@ class Action(Node):
     This is for the `run` keyword
     """
 
-    __slots__ = "expr"
+    __slots__ = ("expr",)
 
     def __init__(self, loc: NodeLocation, expr: str):
-        super(Action, self).__init__(loc)
+        super().__init__(loc)
         self.expr = expr
 
     def ready(self):
@@ -1029,7 +1025,7 @@ class Action(Node):
         if t > 0:
             state["executed_already"] = True
             next_node(self.next)
-            return None
+            return
 
         action = scoped_eval(self.expr)
         renpy.display.behavior.run(action)
@@ -1037,14 +1033,14 @@ class Action(Node):
         if not state["executed_already"]:
             next_node(self.next)
 
-        return None
+        return
 
 
 class Pause(Node):
-    __slots__ = "expr"
+    __slots__ = ("expr",)
 
     def __init__(self, loc: NodeLocation, expr: str):
-        super(Pause, self).__init__(loc)
+        super().__init__(loc)
         self.expr = expr
 
     def get_repr_params(self):
@@ -1064,10 +1060,10 @@ class Pause(Node):
 
 
 class Label(Condition):
-    __slots__ = "name"
+    __slots__ = ("name",)
 
     def __init__(self, loc: NodeLocation, name: str):
-        super(Label, self).__init__(loc)
+        super().__init__(loc)
         self.name = name
 
     def ready(self):
@@ -1078,10 +1074,10 @@ class Label(Condition):
 
 
 class Eval(Condition):
-    __slots__ = "expr"
+    __slots__ = ("expr",)
 
     def __init__(self, loc: NodeLocation, expr):
-        super(Eval, self).__init__(loc)
+        super().__init__(loc)
         self.expr = expr
 
     def ready(self):
@@ -1092,7 +1088,7 @@ class RepeatCounter(Condition):
     __slots__ = ("initial_value", "value")
 
     def __init__(self, loc: NodeLocation, value: int):
-        super(RepeatCounter, self).__init__(loc)
+        super().__init__(loc)
         self.initial_value = value
         self.restart()
 
@@ -1114,9 +1110,9 @@ class Advance(Node):
     Advances the said dialogue by one line.
     """
 
-    last_event: str = ""
-    last_kwargs: dict = {}
-    began_newline: bool = False
+    last_event: ClassVar[str] = ""
+    last_kwargs: ClassVar[dict] = {}
+    began_newline: ClassVar[bool] = False
 
     @staticmethod
     def character_callback(event, **kwargs) -> None:
@@ -1152,7 +1148,7 @@ class Skip(Node):
     __slots__ = ("fast",)
 
     def __init__(self, loc: NodeLocation, fast: bool = False):
-        super(Skip, self).__init__(loc)
+        super().__init__(loc)
         self.fast = fast
 
     def start(self):
@@ -1182,7 +1178,6 @@ class Skip(Node):
                 renpy.exports.restart_interaction()
 
         next_node(self.next)
-        return None
 
     def after_until(self) -> None:
         renpy.config.skipping = None
@@ -1193,10 +1188,10 @@ class Skip(Node):
 
 
 class Not(Condition):
-    __slots__ = "condition"
+    __slots__ = ("condition",)
 
     def __init__(self, loc: NodeLocation, condition: Condition):
-        super(Not, self).__init__(loc)
+        super().__init__(loc)
         self.condition = condition
 
     def ready(self):
@@ -1204,13 +1199,14 @@ class Not(Condition):
 
 
 class Binary(Condition):
-    __slots__ = ("left", "right", "left_ready", "right_ready", "left_state", "right_state")
+    __slots__ = ("left", "left_ready", "left_state", "right", "right_ready", "right_state")
 
     def __init__(self, loc: NodeLocation, left: Condition, right: Condition):
-        super(Binary, self).__init__(loc)
+        super().__init__(loc)
         self.left = left
         self.right = right
         self.left_ready = self.right_ready = None
+        self.left_state = self.right_state = None
 
     def state(self) -> bool | None:
         """
@@ -1380,7 +1376,7 @@ class Repeat(Until):
     def __init__(self, loc: NodeLocation, left: Node, count: int, timeout: str = "None"):
         ## Multiplied by 2 to account for Until.execute() calling ready twice per iteration.
         right = RepeatCounter(loc, count * 2)
-        super(Repeat, self).__init__(loc, left, right, timeout)
+        super().__init__(loc, left, right, timeout)
 
     def ready(self):
         return self.left.ready()
@@ -1409,10 +1405,10 @@ class If(Node):
         for condition, block in self.entries:
             if condition.ready():
                 next_node(block.block[0])
-                return None
+                return
 
         next_node(self.next)
-        return None
+        return
 
 
 class ControlFrame(Node):
@@ -1428,14 +1424,13 @@ class ControlFrame(Node):
     def execute(self, state, t):
         self.on_end_execution()
         next_node(self.next)
-        return None
 
     def on_end_execution(self) -> None:
         """
         Called when execution of the control frame is ending, either by normal termination,
         loop breaking, or exception raising.
         """
-        return None
+        return
 
     def on_exception(self, exc: Exception) -> bool:
         """
@@ -1457,10 +1452,10 @@ class For(ControlFrame):
         A Block containing the statements to execute in each iteration.
     """
 
-    __slots__ = ("variable", "expression", "block", "loop_iterator")
+    __slots__ = ("block", "expression", "loop_iterator", "variable")
 
     def __init__(self, loc: NodeLocation, variable: str, expression: str, block: Block):
-        Node.__init__(self, loc)
+        super().__init__(loc)
         self.variable = variable
         self.expression = expression
         self.block = block
@@ -1529,7 +1524,7 @@ class For(ControlFrame):
 
 class While(ControlFrame):
     def __init__(self, loc: NodeLocation, condition: Condition, block: Block):
-        Node.__init__(self, loc)
+        super().__init__(loc)
 
         self.condition = condition
         self.block = block
@@ -1546,10 +1541,10 @@ class While(ControlFrame):
         if self.condition.ready():
             self.block.restart()
             next_node(self.block.block[0])
-            return None
+            return
 
         next_node(self.next)
-        return None
+        return
 
     def on_exception(self, exc: Exception) -> bool:
         if isinstance(exc, LoopContinueException):
@@ -1579,7 +1574,7 @@ class Continue(Node):
 
 
 class Python(Node):
-    __slots__ = ("source", "hide")
+    __slots__ = ("hide", "source")
 
     def __init__(self, loc: NodeLocation, source: str, hide: bool = False):
         Node.__init__(self, loc)
@@ -1598,14 +1593,14 @@ class Python(Node):
         if t > 0:
             state["executed_already"] = True
             next_node(self.next)
-            return None
+            return
 
         scoped_exec(self.source, self.hide)
 
         if not state["executed_already"]:
             next_node(self.next)
 
-        return None
+        return
 
 
 class Assert(Node):
@@ -1622,7 +1617,7 @@ class Assert(Node):
         the test will be marked as xfailed instead of failed.
     """
 
-    __slots__ = ("condition", "timeout", "xfail_expr", "is_assertion_true")
+    __slots__ = ("condition", "is_assertion_true", "timeout", "xfail_expr")
 
     def __init__(self, loc: NodeLocation, condition: Condition, timeout: str = "None", xfail_expr: str = "False"):
         Node.__init__(self, loc)
@@ -1648,9 +1643,8 @@ class Assert(Node):
         Executes the assertion. If the condition is not ready, it waits up to
         `self.timeout` seconds.
         """
-        if (not self.condition.ready()) ^ self.xfail:
-            if t < _test.timeout:
-                return state
+        if (not self.condition.ready() ^ self.xfail) and t < _test.timeout:
+            return state
 
         self.is_assertion_true = self.condition.ready()
         renpy.test.testreporter.reporter.log_assert(self)
@@ -1667,7 +1661,7 @@ class Assert(Node):
 
 
 class Screenshot(Node):
-    __slots__ = ("filename_expr", "max_pixel_difference", "crop")
+    __slots__ = ("crop", "filename_expr", "max_pixel_difference")
 
     def __init__(
         self,
@@ -1729,7 +1723,7 @@ class Screenshot(Node):
                 self.save_image(img, fname)
 
                 next_node(self.next)
-                return None
+                return
 
             old_img = renpy.pygame.image.load(ref_img_path)  # type: ignore
 
@@ -1768,7 +1762,7 @@ class Screenshot(Node):
                     os.remove(diff_fname)
 
             next_node(self.next)
-            return None
+            return
 
         finally:
             # Clear up surfaces to avoid memory leaks.
@@ -1824,6 +1818,7 @@ def scoped_eval(expr: str) -> Any:
 
 def scoped_exec(source: str, hide: bool = False) -> None:
     renpy.test.testexecution.scoped_exec(source, hide)
+
 
 def format_parameterized_name(name: str, parameters: dict[str, Any]) -> str:
     """
