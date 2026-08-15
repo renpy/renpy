@@ -437,7 +437,15 @@ init -1500 python:
         :doc: language_action
 
         Changes the translated path used for resources beneath `path`.
-        Passing None as `translation` removes the mapping.
+
+        `path`
+            A resource path prefix, including any directory supplied when the
+            resource is loaded. For example, audio loaded from
+            :func:`renpy.music.play` uses an ``audio/`` prefix.
+
+        `translation`
+            The translated path prefix to use. If None, the mapping is removed
+            and the normal global-language lookup is restored.
         """
 
         def __init__(self, path, translation):
