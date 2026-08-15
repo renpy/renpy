@@ -389,7 +389,15 @@ def seek(position, channel="music"):
 
     Seeks the media currently playing on `channel` to `position` seconds.
     This preserves the active decoder and queued tracks, unlike restarting
-    playback with an audio ``<from ...>`` specifier.
+    playback with an audio ``<from ...>`` specifier. If no media is playing,
+    this function has no effect. Negative positions are treated as zero.
+
+    `position`
+        The absolute position, in seconds, within the currently playing
+        media.
+
+    `channel`
+        The channel to seek. Defaults to ``"music"``.
     """
 
     try:
