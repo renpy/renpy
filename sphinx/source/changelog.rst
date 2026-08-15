@@ -129,6 +129,8 @@ The testcase separator has been changed from ``::`` to ``.`` for test selection.
 
 A testcase and testsuite can no longer have the same name at the same level in the hierarchy.
 
+User mouse movements are ignored during tests.
+
 Other Changes
 -------------
 

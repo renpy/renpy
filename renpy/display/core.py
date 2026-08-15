@@ -3211,6 +3211,11 @@ class Interface:
 
                 # Merge mousemotion events.
                 if ev.type == pygame.MOUSEMOTION:
+
+                    # During tests, ignore user mouse motion events
+                    if renpy.test.testexecution.is_in_test() and not getattr(ev, "test", False):
+                        continue
+
                     xr, yr = ev.rel
                     relx += xr
                     rely += yr
