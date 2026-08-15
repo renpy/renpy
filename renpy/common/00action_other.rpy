@@ -431,6 +431,32 @@ init -1500 python:
             return self.language in renpy.known_languages()
 
 
+    @renpy.pure
+    class ChangeResourcePathTranslation(Action, DictEquality):
+        """
+        :doc: language_action
+
+        Changes the translated path used for resources beneath `path`.
+        Passing None as `translation` removes the mapping.
+        """
+
+        def __init__(self, path, translation):
+            self.path = path
+            self.translation = translation
+
+        def __call__(self):
+            if self.translation is None:
+                _preferences.resource_path_translations.pop(self.path, None)
+            else:
+                _preferences.resource_path_translations[self.path] = self.translation
+
+            renpy.free_memory()
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            return _preferences.resource_path_translations.get(self.path) == self.translation
+
+
     #########################################################################
 
     # Transitions used when entering and leaving replays.

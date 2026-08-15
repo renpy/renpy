@@ -378,20 +378,21 @@ Resource Path Translations
 
 By default, translated resources are looked up beneath the active global language,
 as described above. A game can override that location for selected resource path
-prefixes with :var:`_preferences.translate_paths`. This is a dictionary whose keys
+prefixes with :var:`_preferences.resource_path_translations`. This is a dictionary whose keys
 are source path prefixes and whose values are the translated path prefixes to use::
 
     init python:
-        _preferences.translate_paths = {
-            "backgrounds": "tl/english/background",
-            "voice/eileen": "tl/chinese/voice/eileen",
-            "voice/lucy": "tl/japanese/voice/lucy",
+        _preferences.resource_path_translations = {
+            "images/backgrounds": "tl/english/background",
+            "audio/voice/eileen": "tl/chinese/voice/eileen",
+            "audio/voice/lucy": "tl/japanese/voice/lucy",
             "gui": "tl/klingon/gui",
         }
 
 When Ren'Py loads a resource beneath a mapped prefix, it first tries the mapped
-path with the unmatched suffix appended. For example, loading
-:file:`voice/eileen/greeting.ogg` first tries
+path with the unmatched suffix appended. The optional ``directory`` argument is
+prepended before matching, so an audio load of
+:file:`voice/eileen/greeting.ogg` matches ``audio/voice/eileen`` and first tries
 :file:`tl/chinese/voice/eileen/greeting.ogg`. If more than one prefix matches,
 the longest matching prefix is used. Prefixes match complete path components, so
 ``gui`` matches :file:`gui/button.png` but not :file:`guide.png`.
@@ -408,9 +409,9 @@ the language used by the rest of the game::
 
     init python:
         def set_eileen_voice_language(language):
-            _preferences.translate_paths["voice/eileen"] = "tl/{}/voice/eileen".format(language)
-            renpy.free_memory()
-            renpy.restart_interaction()
+            ChangeResourcePathTranslation(
+                "audio/voice/eileen", "tl/{}/voice/eileen".format(language)
+            )()
 
 The mapping is a preference, so changes made by the game can be saved through the
 normal preferences mechanism. The cache-clearing and interaction restart ensure
@@ -594,7 +595,7 @@ If a game doesn't include support for changing the language, it may be
 appropriate to use an ``init python`` block to set :var:`config.language`
 to the target language.
 
-.. var:: _preferences.translate_paths = {}
+.. var:: _preferences.resource_path_translations = {}
 
     A mapping from resource path prefixes to translated path prefixes. The
     mapping is applied by the loader before the normal global-language search.
