@@ -1433,8 +1433,14 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int
     }
 
     name_mutex = SDL_CreateMutex();
+    if (name_mutex == NULL) {
+        error(SDL_ERROR);
+        return;
+    }
 
     if (! SDL_Init(SDL_INIT_AUDIO)) {
+        SDL_DestroyMutex(name_mutex);
+        name_mutex = NULL;
         error(SDL_ERROR);
         return;
     }
@@ -1446,6 +1452,11 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int
 
     audio_stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audio_spec, callback, NULL);
     if (audio_stream == NULL) {
+        /* SDL_Init succeeded, so undo the subsystem before a caller retries
+         * with another driver (for example, the dummy driver). */
+        SDL_QuitSubSystem(SDL_INIT_AUDIO);
+        SDL_DestroyMutex(name_mutex);
+        name_mutex = NULL;
         error(SDL_ERROR);
         return;
     }
@@ -1478,6 +1489,11 @@ void RPS_quit() {
     }
 
     SDL_DestroyAudioStream(audio_stream);
+    audio_stream = NULL;
+    SDL_QuitSubSystem(SDL_INIT_AUDIO);
+
+    SDL_DestroyMutex(name_mutex);
+    name_mutex = NULL;
 
     num_channels = 0;
     initialized = 0;
