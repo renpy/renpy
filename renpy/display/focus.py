@@ -175,6 +175,9 @@ screen_of_last_focused_names = set()
 # The widget currently grabbing the input, if any.
 grab = None
 
+# The focus name that each mouse button was pressed on.
+mouse_button_press = {}
+
 # The default focus for the current screen.
 global_focus = None
 
@@ -639,6 +642,8 @@ def clear_focus():
     Clears the focus when the window loses mouse focus.
     """
 
+    mouse_button_press.clear()
+
     if not grab:
         change_focus(None)
 
@@ -693,7 +698,17 @@ def mouse_handler(ev, x, y, default=False):
     if new_focus is None:
         new_focus = global_focus
 
-    return change_focus(new_focus, default=default)
+    rv = change_focus(new_focus, default=default)
+
+    if ev is not None:
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+            focused = get_focused()
+            mouse_button_press[ev.button] = getattr(focused, "full_focus_name", None)
+
+        elif ev.type == pygame.MOUSEBUTTONUP:
+            ev._button_press_focus = mouse_button_press.pop(ev.button, None)
+
+    return rv
 
 
 # This focuses an extreme widget, which is one of the widgets that's

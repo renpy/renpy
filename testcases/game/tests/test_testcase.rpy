@@ -21,6 +21,19 @@ screen teleporting_button(x=0, y=0, remaining=20):
         else:
             action Hide("teleporting_button")
 
+screen button_release_origin:
+    vbox:
+        xpos 100
+        ypos 100
+
+        textbutton "First":
+            id "button_release_first"
+            action SetVariable("button_release_result", "first")
+
+        textbutton "Second":
+            id "button_release_second"
+            action SetVariable("button_release_result", "second")
+
 testsuite flow:
     testcase skip:
         enabled False
@@ -189,6 +202,21 @@ testsuite selectors:
         run Show("teleporting_button")
         pause until screen "teleporting_button"
         click id "teleporting_button" until not screen "teleporting_button"
+
+    testcase button_release_origin:
+        $ button_release_result = None
+        run Show("button_release_origin")
+        pause until screen "button_release_origin"
+
+        drag id "button_release_first" to id "button_release_second"
+        assert eval button_release_result is None
+
+        drag pos (0, 0) to id "button_release_second"
+        assert eval button_release_result is None
+
+        click id "button_release_second"
+        assert eval button_release_result == "second"
+        run Hide("button_release_origin")
 
     testcase drag_and_drop:
         run Show("drag_and_drop")
