@@ -27,6 +27,8 @@ init -1499 python in wavedash:
     import os
     import zipfile
 
+    from store import config
+
     # True iff the game is running inside a Wavedash host (set by
     # wavedash_init below). Gives devs a single boolean to branch on
     # for UI guards — all wavedash.X functions also no-op gracefully
@@ -197,33 +199,30 @@ init -1499 python in wavedash:
                 except Exception:
                     renpy.display.log.exception()
 
-
-    # --- Lifecycle ---
-
-    def init_sdk(**config):
+    @renpy.callback
+    def display_start_callback():
         """
-        :doc: wavedash_lifecycle
+        :undocumented:
 
         Signals to Wavedash that the game is loaded and interactive. This
         dismisses the Wavedash loading overlay and unblocks SDK event
         delivery. Idempotent - safe to call from `before_main_menu`, which
         Ren'Py re-runs every time the player returns to the main menu.
-
-        Any keyword arguments are forwarded as the JS-side WavedashConfig,
-        e.g. `init_sdk(debug=True)` to enable verbose SDK logging.
         """
 
         if not renpy.emscripten:
             return
+
+        wavedash_config = { "debug" : config.developer }
+
         # Gate on a JS-side flag so repeated calls (e.g. on every main-menu
         # return) are silent no-ops.
         emscripten.run_script(f"""
             if (window.Wavedash && !window._renpyWavedashInitCalled) {{
                 window._renpyWavedashInitCalled = true;
-                window.Wavedash.init({json.dumps(config)});
+                window.Wavedash.init({json.dumps(wavedash_config)});
             }}
         """)
-
 
     # --- Achievements & Stats ---
 
