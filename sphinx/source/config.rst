@@ -462,6 +462,24 @@ File I/O
     This gets its default value from the RENPY_OPEN_FILE_ENCODING
     environment variable.
 
+.. var:: config.special_directory_map = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ], ... }
+
+    This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
+    be searched for that kind of file. These are only used when loading a filename - for automatic definition
+    of images and audiom see :var:`config.image_directories` and :var:`config.audio_directories`. New special
+    directory names may be added in future versions of Ren'Py.
+
+.. var:: config.renamed_files = { ... }
+
+    A map from file names to new file names. When Ren'Py looks for a file by
+    one of the keys in this dictionary, it will instead look for the
+    corresponding value. This is useful for handling files that have been
+    renamed - for example, when font filenames change between versions of a
+    bundled font. The keys must be lower-case and use forward slashes as
+    path separators.
+
+    Ren'Py uses this to handle some renamed files internally, so creators should add to this dictionary rather than
+    replacing it entirely.
 
 History
 -------
@@ -503,7 +521,7 @@ Images
 
 .. var:: config.image_extensions =  [ ".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg" ]
 
-    A list of of file extensions that Ren'Py will use when searching for images, as described in the :ref:`images-directory` section.
+    A list of file extensions that Ren'Py will use when searching for images, as described in the :ref:`images-directory` section.
 
 
 Input, Focus, and Events
@@ -702,13 +720,18 @@ Layers
 Media (Music, Sound, and Video)
 -------------------------------
 
+.. var:: config.audio_directories = [ 'audio' ]
+
+    A list of directories that are searched for audio files and used to populate the
+    :ref:`audio-namespace`.
+
 .. var:: config.audio_filename_callback = None
 
     If not None, this is a function that is called with an audio filename,
     and is expected to return a second audio filename, the latter of which
     will be played.
 
-    This is intended for use when an a games has audio file formats changed,
+    This is intended for use when a game has audio file formats changed,
     but it's not desired to update the game script.
 
     As video files are played using the audio subsystem, this is also called for video files.
@@ -847,7 +870,7 @@ Media (Music, Sound, and Video)
 .. var:: config.web_video_base = "./game"
 
     When playing a movie in the web browser, this is a URL that
-    is appended to to the movie filename to get the full URL
+    is appended to the movie filename to get the full URL
     to play the movie from. It can include directories in it, so
     "https://share.renpy.org/movies-for-mygame" would also be fine.
 
@@ -957,11 +980,18 @@ Paths
     :file:`data.rpa`, :file:`patch01.rpa`, and :file:`patch02.rpa`,
     this variable will be populated with ``['patch02', 'patch01', 'data']``.
 
+.. var:: config.basedir = ...
+
+    The full path leading to the game's base directory. This is a read-only
+    variable. This is usually the directory above the :file:`game/` directory. It contains logs like :doc:`log.txt`
+    and on PC plaforms contains the executable used to launch the game. There is no guarantee any file will be there,
+    as on Android files are stored inside the package.
+
 .. var:: config.gamedir = ...
 
     The full path leading to the game's :file:`game/` directory. This is a
-    read-only variable. There is no guarantee that any file will be there,
-    typically on platforms such as android.
+    read-only variable. There is no guarantee that any file will be there, as on
+    Android files are stored inside the package.
 
 .. var:: config.savedir = ...
 
@@ -1279,6 +1309,10 @@ Saving and Loading
     to the object, information about if the object is an alias, and a
     representation of the object.
 
+.. var:: config.failed_save_dump = True
+
+    Similar to :var:`config.save_dump`, but only triggers when the save fails.
+
 .. var:: config.save_json_callbacks = [ ... ]
 
     A list of callback functions that are used to create the json object
@@ -1519,13 +1553,6 @@ Self-Voicing / Text to Speech
     Will cause the string "Ren'Py is pronounced ren'py." to be voiced as if
     it were "Ren Pie is pronounced ren pie."
 
-.. var:: config.tts_voice = None
-
-    If not None, a string giving a non-default voice that is used to
-    play back text-to-speech for self voicing. The possible choices are
-    platform specific, and so this should be set in a platform-specific
-    manner. (It may make sense to change this in translations, as well.)
-
 
 Showing Images
 --------------
@@ -1760,6 +1787,16 @@ Text and Fonts
     will get a bold italic version of vera, rather than a bold version
     of the italic vera.
 
+.. var:: config.font_size_adjust = { }
+
+    This is a dictionary mapping font names to size adjustments. The name is a string.
+    The size adjustment may be a float, in which case it is multiplied with the original
+    size. The size adjustment may also be a function that takes the filename (a string) and
+    the original size (a float) as arguments, and returns the adjusted size.
+
+    This can be used to adjust multiple font families to be the same visual size.
+    This only works with scalable fonts.
+
 .. var:: config.hyperlink_handlers = { ... }
 
     A dictionary mapping a hyperlink protocol to the handler for that
@@ -1831,9 +1868,10 @@ Text and Fonts
     <menus>` statements. Each is expected to return new
     (or the same) strings to replace them.
 
-    These run very early in the say and menu statement processing, before
-    translation and substitutions are applied. For a filter that runs later,
-    see :var:`config.replace_text`.
+    These run very early in the say statement processing, and in menu
+    statement processing when :var:`config.use_menu_text_filter` is True,
+    before translation and substitutions are applied. For a filter that runs
+    later, see :var:`config.replace_text`.
 
 .. var:: config.textshader_callbacks = { }
 
@@ -1841,6 +1879,12 @@ Text and Fonts
     with the string are used, the function is called to return a string
     giving another textshader. This can be used to make a textshader that
     changes based on a persistent variable, for example.
+
+.. var:: config.use_menu_text_filter = True
+
+    If True, text in :doc:`menu <menus>` statements is passed through
+    :var:`config.say_menu_text_filter` and :var:`config.say_menu_text_filters`.
+    If False, menu text is left unchanged by those filters.
 
 
 Transitions
@@ -2278,7 +2322,7 @@ Debugging
 
 .. var:: config.debug_prediction = False
 
-    If True, Ren'Py will will write information about and errors that
+    If True, Ren'Py will write information about and errors that
     occur during prediction (of execution flow, images, and screens) to
     log.txt and the console.
 

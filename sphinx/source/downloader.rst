@@ -70,7 +70,7 @@ scene, play music, etc. You will need to make it separately, and build
 it for Android or iOS using the usual techniques.
 
 At the same time, it should ask the player if they want to download, mention
-that this can cost money if they're not on WiFi, and then download the the
+that this can cost money if they're not on WiFi, and then download the
 game.
 
 For the highest security, the ``public_key.pem`` file produced by building
