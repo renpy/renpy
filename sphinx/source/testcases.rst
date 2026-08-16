@@ -117,7 +117,7 @@ If you're running the test from the command line, the command should look someth
 .. note ::
 
     The pauses in this demo are not necessary, they are just there to make the test
-    execute a slower so you can see what's happening.
+    execute more slowly so you can see what's happening.
     In a real test, you can remove them to make the test run faster.
 
 .. _running-testcases:
@@ -246,8 +246,8 @@ Omitting filters, or using ``global``, runs everything:
 ======================  ==============
 Command                 Selected Tests
 ======================  ==============
-``test``                All test
-``test global``         All test
+``test``                All tests
+``test global``         All tests
 ======================  ==============
 
 **Selecting a suite or test case**
@@ -279,7 +279,7 @@ Command           Selected Tests
 ================  ==============
 ``test re*``      ``reload``
 ``test math.s*``  ``math.subtraction``, ``math.shapes``
-``test *.save``   ``sprites.save``, ``sounds.save``
+``test *.save``   ``audio.save``, ``sprites.save``
 ================  ==============
 
 
@@ -801,7 +801,7 @@ and ``teardown`` hooks.
 For example::
 
     testsuite math_tests:
-        parameter (x, y, z) [ (1, 2, 3), (2, 3, 5), (3, 5, 8) ]
+        parameter (x, y, z) = [ (1, 2, 3), (2, 3, 5), (3, 5, 8) ]
 
         setup:
             $ print(f"Running math tests with x={x}, y={y}, z={z}")
@@ -842,7 +842,7 @@ If an error occurs during a test case:
 2. The ``after testcase`` hook of the testsuite containing the test case will run
 3. If there are more test cases, they will continue to be executed (including the
    ``before testcase`` hook)
-4. If no more test cases exist, the ``after`` hook of the testsuite will run
+4. If no more test cases exist, the ``after testsuite`` hook of the testsuite will run
 
 If an error occurs during a hook (eg. ``before testcase``):
 
@@ -856,7 +856,7 @@ Test Reporting
 ===================
 
 After a test run, a report is printed to the console, listing all test cases
-and their results. If the ``--print_details`` option is provided, the report
+and their results. If the :option:`--report-detailed` option is provided, the report
 will include additional information about each test.
 
 Below is an example of a test report after successfully testing "The Question":
@@ -927,7 +927,7 @@ The following variables can be set to change the behavior of tests:
 .. var:: _test.vc_revision
 
     The version control (often git) revision of the current source tree, if available.
-    Defaults to the RENPY_TEST_VC_REVISION :doc:`environment variable <environment_variables>`,
+    Defaults to the :envvar:`RENPY_TEST_VC_REVISION` :doc:`environment variable <environment_variables>`,
     or an empty string if not set.
 
 
@@ -939,6 +939,33 @@ Test Statements
 Test statements are the building blocks of test cases. They can be broadly
 divided into three categories: command statements, condition/selector statements, and
 control statements.
+
+Command statements may be followed by the :ref:`test-repeat-statement` and
+:ref:`test-until-statement` statements.
+
+The syntax descriptions on this page use the following notation:
+
+- ``[]`` encloses an optional group.
+- ``<name>`` is a required value supplied by the test author.
+- ``<name: type>`` is a value with a documented type.
+- Literal words outside ``<>`` must be written verbatim.
+- Parentheses and commas shown in syntax are literal punctuation.
+
+For example, ``click [pos (<x: int>, <y: int>)]``:
+
+- ``click`` is a literal string that must be typed as-is.
+- Everything between ``[]`` is optional.
+- ``pos (`` is a literal string that must be typed as-is.
+- ``<x: int>`` describes that the x-coordinate takes an integer.
+- ``<y: int>`` describes that the y-coordinate takes an integer.
+- ``)`` is a literal string that must be typed as-is.
+
+Valid statements include:
+
+- ``click``
+- ``click pos (0, 0)``
+- ``click pos (10, 50)``
+
 
 Basic Commands
 --------------
@@ -995,11 +1022,11 @@ Pause
 
     Type: :dfn:`Command`
 
-    .. describe:: pause [time (float)]
+    .. describe:: pause [<seconds: float>]
 
-Pauses test execution for a given number of seconds. Similar to the
-:ref:`pause-statement`, but requires a value, or it can be specified without
-a time if it is followed by an `until` clause. ::
+Pauses test execution for a given number of seconds.
+The duration may be omitted if used with an
+:ref:`test-until-statement` clause.  ::
 
     pause 5.0
     pause until screen "inventory"
@@ -1014,11 +1041,15 @@ Run
 Runs the provided :doc:`screen-language action <screen_actions>` (or list of
 actions).
 
-Ready if and when a button containing the provided action (or list) would be
-sensitive. ::
+The statement waits until the supplied action is available, then invokes it.
+This is equivalent to waiting for a button with this action to become sensitive,
+then clicking it.
 
-    testcase chapter_3:
-        run Jump("chapter_3")
+::
+
+    run Start("chapter_1")
+    run Jump("chapter_3")
+    run Preference("main volume", 0.5)
 
 .. _test-skip-statement:
 
@@ -1029,8 +1060,8 @@ Skip
 
     .. describe:: skip [fast]
 
-Causes the game to begin skipping. If the game is in a menu context,
-then this returns to the game. Otherwise, it just enables skipping.
+Causes the game to begin skipping. If the game is in a menu,
+then this exits the menu and returns to the game. Otherwise, it enables in-game skipping.
 
 If ``fast`` is provided, the game will skip directly to the next menu choice.
 
@@ -1044,32 +1075,56 @@ If ``fast`` is provided, the game will skip directly to the next menu choice.
 Mouse Commands
 ----------------
 
+Properties that are common to all mouse commands:
+
+.. describe:: <target>
+
+Equivalent to ``[<selector>] [pos (<x: int or float>, <y: int or float>)]``
+
+- ``<selector>``: A :ref:`Selector Statement <test-selectors>` like ``id "my_button"`` or ``"Text"``.
+- ``pos``: An (x, y) pair. If a coordinate is an integer, an absolute number of pixels is used.
+  If a coordinate is a float, it is treated as a normalized coordinate from ``0.0``
+  (the left/top edge) to ``1.0`` (the right/bottom edge), relative to the width or
+  height of the target. When no selector is given, the float is relative to the
+  screen width or height.
+
+.. note::
+
+    A float value of ``1.0`` maps to ``width - 1`` (or ``height - 1``),
+    so ``1.0`` maps to the last pixel **within** the target
+    rather than one past the edge.
+
+========  =======  =======
+Selector  ``pos``  Result
+========  =======  =======
+No        No       Current mouse position\*
+Yes       No       A random focusable point within the selector
+No        Yes      The point relative to the screen
+Yes       Yes      The point relative to the selector
+========  =======  =======
+
+\* *If the mouse was never moved before, a random screen position is used.*
+
+.. describe:: button <int>
+
+Determines which button the simulated mouse uses. Defaults to ``1``.
+
+    - ``1``: Left click
+    - ``2``: Right click
+    - ``3``: Middle click
+    - ``4`` and ``5``: Additional buttons found on some devices
+
+
 Click
 ^^^^^^^^^^
 
     Type: :dfn:`Command`
 
-    .. describe:: click [button (int)] [selector] [expression (expr)] [pos (x, y)]
+    .. describe:: click [<target>] [button <int>]
 
-Executes a simulated click on the screen. It takes the following optional
-properties:
-
-- ``button`` specifies which button of the simulated mouse is to be clicked
-    with. It takes an integer and defaults to 1. 1 is a left-click, 2 is a
-    right-click, 3 is a middle-click, 4 and 5 are additional buttons found on
-    some mouses. Normally only 1 and 2 trigger any response from Ren'Py.
-- ``expression`` specifies a test expression that identifies the click target.
-    It is evaluated according to the rules of the :ref:`pattern <test-text-selector>`\ -taking
-    clause.
-
-If ``selector`` and/or ``pos`` are given, the virtual test mouse is moved according to
-the rules of the :ref:`move statement <test-move-statement>` before the click is sent.
+Executes a simulated click on the screen.
 
 .. ``always`` is not documented because useless in the case of the click clause by itself
-
-Click behaves like a :ref:`pattern <test-text-selector>`\ -taking clause which would
-not be given a pattern: if no ``pos`` is provided, it will look for a neutral
-place where a click would not occur on a focusable element.
 
 ::
 
@@ -1079,46 +1134,36 @@ place where a click would not occur on a focusable element.
     # Click a button with specific text
     click "Start"
 
+    # Click a button using an expression.
+    $ button_name = "Load"
+    click expression button_name
+
     # Right-click on a specific target.
     click id "inventory_button" button 2
 
     # Click the center of the selected target.
     click id "inventory_button" pos (0.5, 0.5)
 
-    # Click a button using an expression.
-    $ button_name = "Load"
-    click expression button_name
-
 
 .. note::
 
-    Use the :ref:`advance <test-advance-statement>` or :ref:`skip <test-skip-statement>`
-    statements if you want to advance the game's dialogue.
-    Clicking may result in unpredictable results, depending on where the mouse
-    is positioned and what is currently on the screen.
+    Do not use ``click`` to advance dialogue. The result depends on the current mouse
+    position and may activate unrelated screen elements. Use
+    :ref:`advance <test-advance-statement>` or :ref:`skip <test-skip-statement>` instead.
 
 Drag
 ^^^^^^^^^^
 
     Type: :dfn:`Command`
 
-    .. describe:: drag <[selector] [pos (x, y)]> to <[selector] [pos (x, y)]> [button (int)] [steps (int)]
+    .. describe:: drag <target> to <target> [button <int>] [steps <int>]
 
 Simulates a drag action on the screen. It takes the following properties:
 
-- The first part (before the ``to``) specifies the starting point of the drag.
-  It takes an optional ``selector`` and/or ``pos`` property, which are
-  interpreted according to the rules of the :ref:`move statement <test-move-statement>`.
-- The second part (after the ``to``) specifies the ending point of the drag.
-  It also takes an optional ``selector`` and/or ``pos`` property, which are
-  interpreted according to the rules of the :ref:`move statement <test-move-statement>`.
-- ``button`` specifies which button of the simulated mouse is to be used
-  for the drag. It takes an integer and defaults to 1. 1 is a left-click, 2 is a
-  right-click, 3 is a middle-click, 4 and 5 are additional buttons found on
-  some mouses. Normally only 1 and 2 trigger any response from Ren'Py.
+- The first ``<target>`` specifies the starting point of the drag.
+- The second ``<target>``  specifies the ending point of the drag.
 - ``steps`` specifies how many intermediate steps the drag should take.
-  It takes an integer and defaults to `10`. More steps result in a smoother
-  drag, but also take more time.
+  Defaults to ``10``. More steps result in a smoother drag, but also take more time.
 
 ::
 
@@ -1135,20 +1180,9 @@ Move
 
     Type: :dfn:`Command`
 
-    .. describe:: move [selector] [pos (x, y)]
+    .. describe:: move <target>
 
 Moves the virtual test mouse to a given position on the screen.
-
-If a ``selector`` is given, and:
-
-- If ``pos`` is specified, the mouse is moved to that position relative to the selector.
-- If no ``pos`` is specified, the mouse attempts to find a pixel that would focus the
-  selector if clicked. This takes into account things like :propref:`focus_mask`.
-
-If no ``selector`` is given, and:
-
-- If ``pos`` is specified, the mouse is moved to that position relative to the screen.
-- If no ``pos`` is specified, an error is thrown.
 
 ::
 
@@ -1172,14 +1206,12 @@ Scroll
 
     Type: :dfn:`Command`
 
-    .. describe:: scroll [amount (int)] [selector] [pos (x, y)]
+    .. describe:: scroll [amount <int>] [<target>]
 
 Simulates a scroll event. It takes the following optional properties:
 
-- ``amount`` specifies how many "notches" to scroll. It takes an integer
-  and defaults to ``1``. Positive values scroll down, negative values scroll up.
-- If ``selector`` and/or ``pos`` are given, the virtual test mouse is moved according to
-  the rules of the :ref:`move statement <test-move-statement>` before the scroll is sent.
+- ``amount`` specifies how many "notches" to scroll. Defaults to ``1``.
+  Positive values scroll down, negative values scroll up.
 
 ::
 
@@ -1190,8 +1222,9 @@ Simulates a scroll event. It takes the following optional properties:
 
 .. note::
 
-    This only simulates the mousewheel event. You may consider using
-    the Scroll action from :doc:`screen_actions`. ::
+    This simulates a mousewheel event and may not directly change an adjustment.
+
+    Consider using the Scroll action from :doc:`screen_actions`. ::
 
         run Scroll("inventory_scroll", "increase", amount="step", delay=1.0)
 
@@ -1205,12 +1238,9 @@ Keysym
 
     Type: :dfn:`Command`
 
-    .. describe:: keysym <keysym> [selector] [pos (x, y)]
+    .. describe:: keysym <str> [<target>]
 
-Simulate a keysym event. This includes the keys of :doc:`config.keymap <keymap>`.
-
-If ``selector`` and/or ``pos`` are given, the virtual test mouse is moved according to
-the rules of the :ref:`move statement <test-move-statement>` before the keysym is sent.
+Simulates a keysym event. This includes the keys of :doc:`config.keymap <keymap>`.
 
 ::
 
@@ -1227,12 +1257,9 @@ Type
 
     Type: :dfn:`Command`
 
-    .. describe:: type <string> [selector] [pos (x, y)]
+    .. describe:: type <str> [<target>]
 
-Types the provided string as if it was typed on the keyboard.
-
-If ``selector`` and/or ``pos`` are given, the virtual test mouse is moved according to
-the rules of the :ref:`move statement <test-move-statement>` before the text is sent.
+Types the provided string as if it were typed on the keyboard.
 
 ::
 
@@ -1267,7 +1294,7 @@ Boolean Operations
     Conditions support the ``not``, ``and`` and ``or`` operators.
     That expression may or may not be enclosed in parentheses. ::
 
-        assert eval (renpy.is_in_test() and screen "main_menu")
+        assert screen "main_menu" and eval renpy.is_in_test()
         advance until "ask her right" or label "chapter_five"
         click "Next" until not screen "choice"
 
@@ -1278,12 +1305,14 @@ Eval
 
     Type: :dfn:`Condition`
 
-    .. describe:: eval <expression>
+    .. describe:: eval <python_expression>
 
-Evaluates the provided python expression. This exists only to be used inside condition-taking test
+Evaluates the provided Python expression. This exists only to be used inside condition-taking test
 statements like ``assert``, ``if`` or ``until``. ::
 
-    assert eval (renpy.is_in_test() and ("Ren'Py" in renpy.version_string))
+    assert eval some_function(args)
+    assert eval (x + y == z) # Parentheses may be used optionally
+    if eval persistent.should_advance:
 
 .. note::
 
@@ -1301,7 +1330,7 @@ Label
 
     Type: :dfn:`Condition`
 
-    .. describe:: label <labelname>
+    .. describe:: label <name: str>
 
 Checks if the provided Ren'Py label has been reached since the last time
 a test statement was executed.
@@ -1321,13 +1350,15 @@ That also means the following example will not work::
 
     run Jump("chapter_1")
     advance repeat 3
-    assert label chapter_1 # fails
+    assert label chapter_1 # fails since the label was reached and passed by the advance statements
 
 .. warning::
 
     This test statement should not be confused with the Ren'Py native
     :ref:`label <label-statement>` statement it refers to, or with the unrelated
     :ref:`label element <sl-label>` used in screens.
+
+.. _test-selectors:
 
 Selector Statements
 -------------------
@@ -1337,26 +1368,28 @@ and to use that element for further actions.
 
 Selectors are a special kind of condition.
 
+In command signatures, ``<selector>`` represents any selector form documented
+in this section, including ``screen <name: str>``, ``id <name: str>``,
+a quoted text selector, or ``expression <expression>``.
+
 Displayable Selector
 ^^^^^^^^^^^^^^^^^^^^
 
     Type: :dfn:`Condition, Selector`
 
-Check if a screen or element with given id is currently displayed.
+Selects a displayed screen or displayable by screen name or id, optionally restricted to a layer.
 
-It takes one parameter, the name of the screen. It takes the following properties:
+It takes one or more of the following properties:
 
-    .. TODO: Which ones need quotes, which ones don't?
-
-    .. describe:: screen <name>
+    .. describe:: screen <name: str>
 
         The name of the screen to check.
 
-    .. describe:: id <name>
+    .. describe:: id <name: str>
 
         The id of the element to check.
 
-    .. describe:: layer <name>
+    .. describe:: layer <name: str>
 
         The layer on which the screen is displayed. If not given, the layer is
         automatically determined by the screen name.
@@ -1388,8 +1421,8 @@ and looking through their text and :propref:`alt` text.
 
 This search is case-insensitive and looks for the shortest match.
 For example, if the string ``"log"`` is given, and the screen contains
-the texts ``"CATALOG"`` and ``"illogical"``, the target
-will be the ``"CATALOG"`` text.
+the texts ``"LOGS"`` and ``"illogical"``, the target
+will be the ``"LOGS"`` text.
 
 If ``raw`` is given, the search is performed on the text as given in the
 script, before translation and :ref:`interpolation <text-interpolation>`.
@@ -1418,6 +1451,10 @@ If ``expression`` is given, the string to search for is determined by evaluating
     assert "スタート"
     assert "Start" raw
 
+.. note ::
+
+    Prefer `id` selectors for stable UI tests.
+    Use text selectors when the visible wording itself is part of the behavior being tested.
 
 Control Statements
 ------------------
@@ -1429,15 +1466,15 @@ Assert
 
     Type: :dfn:`Control`
 
-    .. describe:: assert <condition> [timeout (float)] [xfail (bool)]
+    .. describe:: assert <condition> [timeout <seconds: float>] [xfail <bool>]
 
-This statement takes a condition and raise a
-RenpyTestAssertionError if the condition is not met at the time when
-the assert statement executes.
+Verifies that the condition is true when the assert statement is executed.
 
 If a ``timeout`` is given, the statement will wait up to that many seconds
-for the condition to be met. If the condition is not met within that time,
-the assertion fails.
+for the condition to be met. If ``timeout`` is not given, the assertion is tested
+immediately.
+
+If the condition is not met, a RenpyTestTimeoutError is raised.
 
 If ``xfail`` is set to ``True``, the assert statement is expected to fail.
 This inverts the meaning of the statement: if the condition is met, the
@@ -1445,8 +1482,16 @@ assertion fails. If the condition is not met, the assertion passes.
 
 ::
 
+    # Selector condition only.
     assert screen "main_menu"
-    assert eval some_function(args)
+
+    # Python condition only.
+    assert eval persistent.seen_intro
+
+    # Combined Python and selector conditions.
+    assert eval persistent.seen_intro and screen "main_menu"
+
+    # With timeout
     assert id "start_button" timeout 5.0
 
 .. seealso::
@@ -1461,8 +1506,9 @@ For
 
     .. describe:: for <variable> in <iterable>
 
-This statement executes a block of test statements for each item in the provided
-iterable. You can use `break` and `continue` statements to control the flow of the loop.
+Executes a block of test statements for each item in the provided
+iterable. ``<iterable>`` is evaluated as a Python expression.
+You can use `break` and `continue` statements to control the flow of the loop.
 
 Example::
 
@@ -1483,7 +1529,7 @@ Example::
         click expression stat_tab
         if eval (stat_tab == "Quests" and not persistent.quests_enabled):
             continue
-        assert text stat_tab timeout 2.0
+        assert expression stat_tab timeout 2.0
 
 If
 ^^^^^^^^^
@@ -1492,8 +1538,7 @@ If
 
     .. describe:: if <condition>
 
-This statement executes a block of test statements if and when the provided
-condition is met.
+Executes a block of test statements if the provided condition is met.
 
 Example::
 
@@ -1513,15 +1558,16 @@ additional conditions to the ``if`` statement. ::
     else:
         click "Start"
 
+.. _test-repeat-statement:
 
 Repeat
 ^^^^^^^^^
 
     Type: :dfn:`Control`
 
-    .. describe:: <command> repeat <number> [timeout (float)]
+    .. describe:: <command> repeat <count: int> [timeout <seconds: float>]
 
-Repeats a statement for a given number of times. It consists of an
+Repeats a statement for a given number of times. It consists of a
 Command statement on the left-hand side and a number of repetitions
 on the right-hand side, separated by the word ``repeat``. ::
 
@@ -1534,11 +1580,15 @@ on the right-hand side, separated by the word ``repeat``. ::
 Screenshot
 ^^^^^^^^^^
 
-    Type: :dfn:`Command`
+    Type: :dfn:`Control`
 
-    .. describe:: screenshot <path> [max_pixel_difference (int or float)] [crop (x, y, width, height)]
+    .. describe:: screenshot <path: str> [max_pixel_difference <int or float>] [crop (<x: int>, <y: int>, <width: int>, <height: int>)]
 
 Takes a screenshot of the current screen and saves it to the provided path.
+
+If the file already exists, the current screenshot is compared to the existing
+file. If the files differ by more than ``max_pixel_difference`` pixels, a
+RenpyTestScreenshotError is raised.
 
 - ``path`` specifies the path (relative to ``_test.screenshot_directory``)
   where the screenshot will be saved. It may include a file extension.
@@ -1550,16 +1600,13 @@ Takes a screenshot of the current screen and saves it to the provided path.
 - ``crop`` specifies a rectangle to crop the screenshot to, given as
   ``(x, y, width, height)``. Coordinates must be given as integers.
 
-If the project is in a git repository, the hash of the current commit is
-automatically appended to the filename as ``@{hash}.png``. This allows
-the developer to track changes to screenshots over time.
-
-If the file already exists, the current screenshot is compared to the existing
-file. If the files differ by more than ``max_pixel_difference`` pixels, a
-RenpyTestScreenshotError is raised.
+If ``_test.vc_revision`` is set, the value is automatically appended to the filename
+as ``@{_test.vc_revision}.png``. This allows the developer to track changes to
+screenshots over time. For example, :file:`screens/main_menu.png` becomes
+:file:`screens/main_menu@a1b2c3d.png`.
 
 To overwrite an existing screenshot, either delete the file or run the test with
-the ``--overwrite_screenshots`` command-line option.
+the :option:`--overwrite-screenshots` command-line option.
 
 ::
 
@@ -1575,26 +1622,20 @@ This may be used in a parameterized test to take multiple screenshots::
         run Show(screen_name)
         screenshot f"screens/{screen_name}.png"
 
+.. _test-until-statement:
+
 Until
 ^^^^^^^^^
 
     Type: :dfn:`Control`
 
-    .. describe:: <command> until <condition> [timeout (float)]
+    .. describe:: <command> until <condition> [timeout <seconds: float>]
 
-Repeats a statement until a condition is met. It consists of an
-Command statement on the left-hand side and a condition on the right-hand
-side, separated by the word ``until``.
-
-If and when the condition on the right is met, control is
-passed to the next statement. Otherwise, the left-hand statement
-is executed repeatedly until the condition is ready.
-
-If a ``timeout`` is given, the statement will wait up to that many seconds
-for the condition to be met. If the condition is not met within that time,
-a RenpyTestTimeoutError is raised.
+Repeats the command until the condition becomes true.
+If the condition does not become true before the timeout, the test fails.
 
 This timeout temporarily overrides the global ``_test.timeout`` setting.
+A RenpyTestTimeoutError is raised if the statement times out.
 
 ::
 
@@ -1611,7 +1652,7 @@ While
 
     .. describe:: while <condition>
 
-This statement executes a block of test statements while the provided
+Executes a block of test statements while the provided
 condition remains met. You can use `break` and `continue` statements
 to control the flow of the loop.
 
@@ -1625,13 +1666,14 @@ Example::
 
         $ should_advance = some_evaluation_function()
 
+
 Python Blocks And Dollar-Lines
 ------------------------------
 
 A :ref:`python block <python-statement>` or a :ref:`dollar-line` can be added
 within a testcase. Unlike in normal Ren'Py code, the python blocks don't take
-the ``in substore`` parameter, but it does take the ``hide`` keyword. They
-(both) allow execution of arbitrary python code.
+the ``in substore`` parameter, but they do take the ``hide`` keyword. Both
+allow execution of arbitrary python code.
 
 Init code gets executed before the test occurs, so functions and classes defined
 in ``init python`` blocks can be called in test python blocks and in test
