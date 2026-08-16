@@ -426,7 +426,7 @@ class Frame(renpy.display.displayable.Displayable):
             return
 
         rv = Render(dw, dh)
-        rv.add_property("pixel_perfect", False)
+        rv.add_property("pixel_perfect", getattr(image, 'is_svg', False))
 
         self.draw_pattern(draw, left, top, right, bottom)
 
