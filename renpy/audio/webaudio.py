@@ -268,6 +268,19 @@ def queue_depth(channel):
 
 
 @proxy_with_channel
+def get_state(channel):
+    """Returns the best-effort lifecycle state of a web audio channel."""
+
+    # The web backend currently exposes queue depth but not a distinct EOF
+    # state. Keep the API compatible and add the richer state when the JS
+    # backend grows an explicit state query.
+    if queue_depth(channel):
+        return "playing"
+
+    return "idle"
+
+
+@proxy_with_channel
 def playing_name(channel):
     """
     Returns the `name`  argument of the playing sound. This was passed into

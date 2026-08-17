@@ -474,6 +474,24 @@ def get_playing(channel="music"):
         return None
 
 
+def get_state(channel="music"):
+    """
+    :doc: audio
+
+    Returns the lifecycle state of the channel as one of ``idle``,
+    ``playing``, ``paused``, or ``ended``. ``ended`` means natural EOF was
+    reached while the backend may retain the decoder for an explicit seek.
+    """
+
+    try:
+        return renpy.audio.audio.get_channel(channel).get_state()
+    except Exception:
+        if renpy.config.debug_sound:
+            raise
+
+        return renpy.audio.audio.CHANNEL_STATE_IDLE
+
+
 def is_playing(channel="music"):
     """
     :doc: audio
