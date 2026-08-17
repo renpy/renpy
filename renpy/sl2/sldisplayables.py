@@ -506,6 +506,7 @@ Keyword("mouse_drop")
 Keyword("alternate")
 Style("child")
 Style("sound")
+Style("mouse")
 
 DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many, replaces=True)
 Keyword("min_overlap")
