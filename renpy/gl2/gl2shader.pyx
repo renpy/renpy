@@ -32,6 +32,7 @@ from renpy.gl2.gl2statecache cimport GLStateCache
 from renpy.display.matrix cimport Matrix
 
 from renpy.gl2.gl2uniform import generate_uniform_setter
+from renpy.gl2.gl2shadercache import FLAT_TYPES
 
 import renpy
 import copy
@@ -91,18 +92,6 @@ UNIFORM_TYPES = {
 }
 
 VARYING_TYPES = set(ATTRIBUTE_TYPES)| set(UNIFORM_TYPES)
-
-# Varying types that GLSL ES 3.00 and GLSL 3.30 refuse to interpolate.
-FLAT_TYPES = {
-    "int",
-    "ivec2",
-    "ivec3",
-    "ivec4",
-    "bool",
-    "bvec2",
-    "bvec3",
-    "bvec4",
-}
 
 
 cdef class Attribute:

@@ -123,6 +123,9 @@ UNTRANSLATED_TYPES = {
     300: {"int", "ivec2", "ivec3", "ivec4", "bool", "bvec2", "bvec3", "bvec4"},
 }
 
+# Varying types that GLSL ES 3.00 and GLSL 3.30 refuse to interpolate.
+FLAT_TYPES = UNTRANSLATED_TYPES[300]
+
 
 def dialect_name(dialect):
     return "GLSL ES {}.{:02d}".format(dialect // 100, dialect % 100)
@@ -235,6 +238,41 @@ def merge_variables(variables):
         merged[key] = v if old is None else old.merge(v)
 
     return sorted(merged.values(), key=lambda x: (x.name, x.storage, x.type))
+
+
+def link_variables(vertex_variables, fragment_variables):
+    """
+    Merges the two stages' variables, unifying the qualifiers of each varying that
+    appears in both.
+    """
+
+    vertex = merge_variables(vertex_variables)
+    fragment = merge_variables(fragment_variables)
+
+    linked = {}
+
+    for v in vertex + fragment:
+        if v.storage != "varying":
+            continue
+
+        if v.name not in linked:
+            linked[v.name] = v
+            continue
+
+        old = linked[v.name]
+
+        # None for any name the stages disagree about
+        if old is None:
+            continue
+        elif (old.type, old.array) == (v.type, v.array):
+            linked[v.name] = old.merge(v)
+        else:
+            linked[v.name] = None
+
+    def relink(variables):
+        return [ linked.get(v.name) or v if v.storage == "varying" else v for v in variables ]
+
+    return relink(vertex), relink(fragment)
 
 
 def register_shader(name, **kwargs):
@@ -828,6 +866,10 @@ class ShaderCache(object):
             fragment_variables.extend(p.fragment_variables)
             fragment_parts.extend((prio, nm, text, glsl) for prio, nm, text in p.fragment_parts)
             fragment_functions.append((p.fragment_functions, glsl))
+
+        # A varying's two halves come from different parts, so its qualifiers are only
+        # consistent once both stages have been considered together.
+        vertex_variables, fragment_variables = link_variables(vertex_variables, fragment_variables)
 
         from renpy.gl2.gl2shader import Program, ShaderError
 
