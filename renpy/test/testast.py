@@ -877,11 +877,20 @@ class SelectorDrivenNode(Node):
 
 
 class Click(SelectorDrivenNode):
-    # The number of the button to click.
-    button: int = 1
+    __slots__ = ("button_expr",)
+
+    def __init__(self, loc: NodeLocation, button_expr: str = "1", **kwargs):
+        super().__init__(loc, **kwargs)
+        self.button_expr = button_expr
+
+    def start(self):
+        button = scoped_eval(self.button_expr)
+        if not isinstance(button, int):
+            raise TypeError(f"Expected an integer for click button, got {button!r}.")
+        return button
 
     def perform(self, x, y, state, t):
-        click_mouse(self.button, x, y)
+        click_mouse(state, x, y)
 
 
 class Move(SelectorDrivenNode):
@@ -890,9 +899,21 @@ class Move(SelectorDrivenNode):
 
 
 class Scroll(SelectorDrivenNode):
-    amount: int = 1
+    __slots__ = ("amount_expr",)
+
+    def __init__(self, loc: NodeLocation, amount_expr: str = "1", **kwargs):
+        super().__init__(loc, **kwargs)
+        self.amount_expr = amount_expr
+
+    def start(self):
+        amount = scoped_eval(self.amount_expr)
+        if not isinstance(amount, int):
+            raise TypeError(f"Expected an integer for scroll amount, got {amount!r}.")
+        return amount
 
     def perform(self, x, y, state, t):
+        amount = state
+
         if self.selector is not None:
             element = self.selector.element
 
@@ -905,31 +926,31 @@ class Scroll(SelectorDrivenNode):
                 if adj.value == adj.range:
                     new = 0
                 else:
-                    new = adj.value + (adj.page * self.amount)
+                    new = adj.value + (adj.page * amount)
 
                 new = max(0, min(new, adj.range))
                 adj.change(new)
                 return
 
-        scroll_mouse(-self.amount, x, y)
+        scroll_mouse(-amount, x, y)
 
 
 class Drag(Node):
-    __slots__ = ("button", "end_point", "start_point", "steps")
+    __slots__ = ("button_expr", "end_point", "start_point", "steps_expr")
 
     def __init__(
         self,
         loc: NodeLocation,
         start_point: SelectorDrivenNode,
         end_point: SelectorDrivenNode,
-        button: int = 1,
-        steps: int = 10,
+        button_expr: str = "1",
+        steps_expr: str = "10",
     ):
         super().__init__(loc)
         self.start_point = start_point
         self.end_point = end_point
-        self.button = button
-        self.steps = steps
+        self.button_expr = button_expr
+        self.steps_expr = steps_expr
 
     def ready(self):
         return self.start_point.ready() and self.end_point.ready()
@@ -938,64 +959,83 @@ class Drag(Node):
         start_pos = self.start_point.get_position()
         end_pos = self.end_point.get_position()
 
-        return (start_pos, end_pos, 0)  # (x, y, step)
+        button = scoped_eval(self.button_expr)
+        steps = scoped_eval(self.steps_expr)
 
-    def execute(self, state, t):
+        if not isinstance(button, int):
+            raise TypeError(f"Expected an integer for drag button, got {button!r}.")
+
+        if not isinstance(steps, int):
+            raise TypeError(f"Expected an integer for drag steps, got {steps!r}.")
+
+        return (start_pos, end_pos, button, steps, 0)  # (x, y, button, steps, step)
+
+    def execute(self, state: tuple[tuple[int, int], tuple[int, int], int, int, int], t):
         if renpy.display.interface.trans_pause:
             return state
 
-        (start_pos, end_pos, step) = state
-        x = int(start_pos[0] + (end_pos[0] - start_pos[0]) * step / self.steps)
-        y = int(start_pos[1] + (end_pos[1] - start_pos[1]) * step / self.steps)
+        start_pos, end_pos, button, steps, step = state
+        x = int(start_pos[0] + (end_pos[0] - start_pos[0]) * step / steps)
+        y = int(start_pos[1] + (end_pos[1] - start_pos[1]) * step / steps)
 
         renpy.test.testmouse.move_mouse(x, y)
 
         if step == 0:
-            renpy.test.testmouse.press_mouse(self.button)
+            renpy.test.testmouse.press_mouse(button)
 
-        elif step >= self.steps:
-            renpy.test.testmouse.release_mouse(self.button)
+        elif step >= steps:
+            renpy.test.testmouse.release_mouse(button)
             next_node(self.next)
             return None
 
-        return (start_pos, end_pos, step + 1)
+        return (start_pos, end_pos, button, steps, step + 1)
 
 
 class Type(SelectorDrivenNode):
-    __slots__ = ("text",)
-    # interval = .01 # unused
+    __slots__ = ("text_expr",)
 
-    def __init__(self, loc: NodeLocation, text: str, **kwargs):
+    def __init__(self, loc: NodeLocation, text_expr: str, **kwargs):
         super().__init__(loc, **kwargs)
-        self.text = text
+        self.text_expr = text_expr
 
     def start(self):
-        return 0
+        text = scoped_eval(self.text_expr)
+        if not isinstance(text, str):
+            raise TypeError(f"Expected a string, got {text!r}.")
+        return (text, 0)
 
-    def perform(self, x, y, state, t):
-        if state >= len(self.text):
+    def perform(self, x, y, state: tuple[str, int], t):
+        text, idx = state
+        if idx >= len(text):
             next_node(self.next)
             return None
 
         move_mouse(x, y)
 
-        key = self.text[state]
+        key = text[idx]
         renpy.test.testkey.down(key)
         renpy.test.testkey.up(key)
 
-        return state + 1
+        return (text, idx + 1)
 
 
 class Keysym(SelectorDrivenNode):
-    __slots__ = ("keysym",)
+    __slots__ = ("keysym_expr",)
 
-    def __init__(self, loc: NodeLocation, keysym: str, **kwargs):
+    def __init__(self, loc: NodeLocation, keysym_expr: str, **kwargs):
         super().__init__(loc, **kwargs)
-        self.keysym = keysym
+        self.keysym_expr = keysym_expr
 
-    def perform(self, x, y, state, t):
+    def start(self):
+        keysym = scoped_eval(self.keysym_expr)
+        if not isinstance(keysym, str):
+            raise TypeError(f"Expected a string, got {keysym!r}.")
+
+        return keysym
+
+    def perform(self, x, y, state: str, t):
         move_mouse(x, y)
-        renpy.test.testkey.queue_keysym(self.keysym)
+        renpy.test.testkey.queue_keysym(state)
 
 
 class Action(Node):
@@ -1067,7 +1107,22 @@ class Label(Condition):
         self.name = name
 
     def ready(self):
-        return self.name in renpy.test.testexecution.reached_labels
+        # Match the evaluated value or the raw expression text.
+        # This lets `label chapter_1` and `label "chapter_1"` both work,
+        # while also allowing `label label_name` to use a variable.
+
+        names = [self.name]
+
+        try:
+            eval_name = scoped_eval(self.name)
+            if not isinstance(eval_name, str):
+                raise TypeError(f"Expected a string, got {eval_name!r}.")
+
+            names.append(eval_name.strip())
+        except (NameError, TypeError):
+            pass
+
+        return any(name in renpy.test.testexecution.reached_labels for name in names)
 
     def get_repr_params(self):
         return f"{self.name}"
@@ -1092,13 +1147,16 @@ class RepeatCounter(Condition):
         self.initial_value = value
         self.restart()
 
+    def get_repr_params(self) -> str:
+        return f"{self.initial_value}"
+
     def restart(self) -> None:
         self.value = self.initial_value
         return super().restart()
 
     def ready(self):
         self.value -= 1
-        return self.value == 0
+        return self.value < 0
 
 
 class Pass(Node):
@@ -1373,10 +1431,28 @@ class Repeat(Until):
     Executes `left` for `count` times.
     """
 
-    def __init__(self, loc: NodeLocation, left: Node, count: int, timeout: str = "None"):
-        ## Multiplied by 2 to account for Until.execute() calling ready twice per iteration.
-        right = RepeatCounter(loc, count * 2)
+    __slots__ = ("count_expr",)
+
+    def __init__(self, loc: NodeLocation, left: Node, count_expr: str, timeout: str = "None"):
+        self.count_expr = count_expr
+        # A placeholder counter, replaced with a real one in start() when the
+        # count expression is evaluated at runtime.
+        right = RepeatCounter(loc, 0)
         super().__init__(loc, left, right, timeout)
+
+    def start(self):
+        count = scoped_eval(self.count_expr)
+
+        if not isinstance(count, int):
+            raise TypeError(f"Expected a number for repeat count, got {count!r}.")
+
+        self.right = RepeatCounter((self.filename, self.linenumber), count)
+
+        return super().start()
+
+    def restart(self):
+        self.right = RepeatCounter((self.filename, self.linenumber), 0)
+        super().restart()
 
     def ready(self):
         return self.left.ready()
@@ -1678,7 +1754,7 @@ class Screenshot(Node):
     def start(self):
         filename = scoped_eval(self.filename_expr)
         if not isinstance(filename, str):
-            raise ValueError("Filename must be a string.")
+            raise TypeError("Filename must be a string.")
 
         filename = filename.replace("\\", "/")
         filename = filename.lstrip("/")

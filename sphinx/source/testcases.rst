@@ -696,7 +696,7 @@ for each value in the list. For example::
 
     testcase click_buttons:
         parameter button_name = ["Load", "Save"]
-        click expression button_name
+        click text button_name
 
 This runs twice: first clicking "Load", then clicking "Save".
 
@@ -770,14 +770,6 @@ depending on the value of ``choice_text``::
         run ShowMenu(screen_name)
         pause until screen screen_name
         run Return()
-
-Parameters can be used, preceded by ``expression``, to select a button by
-parameter name.
-
-    testcase click_buttons:
-        parameter button_name = ["Load", "Save"]
-
-        click expression button_name
 
 Parameters can also be used inside Python code blocks.
 For example, this test prints the current values of ``x`` and ``y``,
@@ -1134,9 +1126,9 @@ Executes a simulated click on the screen.
     # Click a button with specific text
     click "Start"
 
-    # Click a button using an expression.
+    # Click a button using a variable.
     $ button_name = "Load"
-    click expression button_name
+    click text button_name
 
     # Right-click on a specific target.
     click id "inventory_button" button 2
@@ -1370,7 +1362,7 @@ Selectors are a special kind of condition.
 
 In command signatures, ``<selector>`` represents any selector form documented
 in this section, including ``screen <name: str>``, ``id <name: str>``,
-a quoted text selector, or ``expression <expression>``.
+a quoted text selector, or ``text <expression>``.
 
 Displayable Selector
 ^^^^^^^^^^^^^^^^^^^^
@@ -1411,8 +1403,8 @@ Text Selector
 
     Type: :dfn:`Condition, Selector`
 
+    .. describe:: text <expression> [raw]
     .. describe:: "<text>" [raw]
-    .. describe:: expression <expression> [raw]
 
 The ``text`` selector takes a string which resolves to a target
 found on the screen. The search is performed by going through all focusable
@@ -1428,8 +1420,6 @@ If ``raw`` is given, the search is performed on the text as given in the
 script, before translation and :ref:`interpolation <text-interpolation>`.
 If not given, the search is performed on the text as it appears on screen,
 after translation and interpolation.
-
-If ``expression`` is given, the string to search for is determined by evaluating the provided expression.
 
 ::
 
@@ -1450,6 +1440,10 @@ If ``expression`` is given, the string to search for is determined by evaluating
     run Language("japanese")
     assert "スタート"
     assert "Start" raw
+
+    # Look for variable text
+    $ string_to_find = "Hello!"
+    assert text string_to_find
 
 .. note ::
 
@@ -1520,16 +1514,16 @@ Example::
     for choice in ["Talk", "Trade", "Leave"]:
         if eval (choice == "Trade" and not persistent.shop_unlocked):
             continue
-        click expression choice
+        click text choice
         if screen "shop":
             break
 
     # Click each of the tabs in the stats screen, skipping "Quests" if quests are not enabled
     for stat_tab in ["Stats", "Skills", "Quests"]:
-        click expression stat_tab
+        click text stat_tab
         if eval (stat_tab == "Quests" and not persistent.quests_enabled):
             continue
-        assert expression stat_tab timeout 2.0
+        assert text stat_tab timeout 2.0
 
 If
 ^^^^^^^^^

@@ -120,8 +120,8 @@ see :var:`config.image_directories` and :var:`config.audio_directories`.
 The new :var:`config.audio_directories` variable is a list of directories that are searched for audio Files
 and used to populate the :ref:`audio-namespace <audio-namespace>`.
 
-Tests
------
+Automated Testing
+-----------------
 
 Tests can now be filtered using the ``*`` wildcard (e.g. ``suite.sub*``),
 by parameter (e.g. ``math.addition(a=1, b=2)``), and any combination of the two.
@@ -133,6 +133,21 @@ The testcase separator has been changed from ``::`` to ``.`` for test selection.
 A testcase and testsuite can no longer have the same name at the same level in the hierarchy.
 
 User mouse movements are ignored during tests.
+
+The following test statements now accept expressions:
+
+- ``click button <expr>`` (e.g. ``click button 2``, ``click button button_num``)
+- ``drag ... button <expr> steps <expr>``
+- ``scroll amount <expr>``
+- ``type <expr>``
+- ``keysym <expr>``
+- ``label <expr>`` matches naked strings (e.g. ``label chapter1``) and
+  expressions (e.g. ``label "chapter1"``, ``label label_name``)
+
+Text can now be selected with ``text <expr>`` (e.g. ``assert text "Hello"``, ``assert text dialogue_text``)
+
+Fixed a counting bug with the ``repeat <num>`` statement.
+
 
 Other Changes
 -------------

@@ -181,7 +181,7 @@ def click_statement(l: Lexer, loc: NodeLocation) -> testast.Click | testast.Unti
 
     while True:
         if l.keyword("button"):
-            rv.button = int(l.require(l.integer))
+            rv.button_expr = l.require(l.simple_expression)
 
         elif l.keyword("pos"):
             rv.position = l.require(l.simple_expression)
@@ -214,10 +214,10 @@ def drag_statement(l: Lexer, loc: NodeLocation) -> testast.Drag:
 
     while True:
         if l.keyword("button"):
-            rv.button = int(l.require(l.integer))
+            rv.button_expr = l.require(l.simple_expression)
 
         elif l.keyword("steps"):
-            rv.steps = int(l.require(l.integer))
+            rv.steps_expr = l.require(l.simple_expression)
 
         elif l.keyword("pos"):
             start_point.position = l.require(l.simple_expression)
@@ -233,10 +233,10 @@ def drag_statement(l: Lexer, loc: NodeLocation) -> testast.Drag:
 
     while True:
         if l.keyword("button"):
-            rv.button = int(l.require(l.integer))
+            rv.button_expr = l.require(l.simple_expression)
 
         elif l.keyword("steps"):
-            rv.steps = int(l.require(l.integer))
+            rv.steps_expr = l.require(l.simple_expression)
 
         elif l.keyword("pos"):
             end_point.position = l.require(l.simple_expression)
@@ -257,7 +257,7 @@ def drag_statement(l: Lexer, loc: NodeLocation) -> testast.Drag:
 def keysym_statement(l: Lexer, loc: NodeLocation) -> testast.Keysym | testast.Until:
     l.expect_noblock("keysym statement")
 
-    text = l.require(l.string)
+    text = l.require(l.simple_expression)
     rv = testast.Keysym(loc, text)
 
     while True:
@@ -349,7 +349,7 @@ def scroll_statement(l: Lexer, loc: NodeLocation) -> testast.Scroll | testast.Un
 
     while True:
         if l.keyword("amount"):
-            rv.amount = int(l.require(l.integer))
+            rv.amount_expr = l.require(l.simple_expression)
 
         elif l.keyword("pos"):
             rv.position = l.require(l.simple_expression)
@@ -391,7 +391,7 @@ def skip_statement(l: Lexer, loc: NodeLocation) -> testast.Skip | testast.Until:
 def type_statement(l: Lexer, loc: NodeLocation) -> testast.Type | testast.Until:
     l.expect_noblock("type statement")
 
-    text = l.require(l.string)
+    text = l.require(l.simple_expression)
     rv = testast.Type(loc, text)
 
     while True:
@@ -791,7 +791,7 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
         elif l.keyword("focused"):
             focused = True
 
-        elif l.keyword("expression"):
+        elif l.keyword("text"):
             expression = True
             if pattern is not None:
                 l.error("Only one text pattern may be specified in a selector.")
@@ -859,7 +859,7 @@ def parse_condition(l: Lexer, loc: NodeLocation, left: testast.Condition | None 
             rv = testast.Eval(loc, source)
 
         elif l.keyword("label"):
-            name = l.require(l.label_name)
+            name = l.simple_expression(operator=False) or l.require(l.label_name)
             rv = testast.Label(loc, name)
 
         elif rv := parse_selector(l, loc):
@@ -895,15 +895,12 @@ def parse_until(l: Lexer, loc: NodeLocation, left: testast.Node) -> testast.Unti
             return testast.Until(loc, left, right)
 
     elif l.keyword("repeat"):
-        right = l.require(l.simple_expression)
-        right = renpy.python.py_eval(right)
-        if not isinstance(right, int):
-            l.error("Expected a number for repeat count.")
+        count_expr = l.require(l.simple_expression)
 
         if l.keyword("timeout"):
             timeout = l.require(l.simple_expression)
-            return testast.Repeat(loc, left, right, timeout)
+            return testast.Repeat(loc, left, count_expr, timeout)
         else:
-            return testast.Repeat(loc, left, right)
+            return testast.Repeat(loc, left, count_expr)
 
     return None

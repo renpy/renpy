@@ -21,6 +21,13 @@ screen teleporting_button(x=0, y=0, remaining=20):
         else:
             action Hide("teleporting_button")
 
+screen test_expressions__input__screen():
+    default input_value = ""
+
+    input:
+        id "test_expressions__input"
+        value ScreenVariableInputValue("input_value")
+
 testsuite flow:
     testcase skip:
         enabled False
@@ -160,7 +167,7 @@ testsuite boolean_conditions:
 testsuite message_if:
     setup:
         run Start("three_messages")
-        pause until screen "say"
+        assert screen "say"
 
     testcase test_if:
         if "Message 1":
@@ -187,12 +194,12 @@ testsuite message_if:
 testsuite selectors:
     testcase teleporting_button_test:
         run Show("teleporting_button")
-        pause until screen "teleporting_button"
+        assert screen "teleporting_button"
         click id "teleporting_button" until not screen "teleporting_button"
 
     testcase drag_and_drop:
         run Show("drag_and_drop")
-        pause until screen "drag_and_drop"
+        assert screen "drag_and_drop"
         drag id "peg" pos (0, 0) to id "hole" pos (0, 0)
         assert id "success"
         drag id "peg" pos (0.5, 0.5) to id "hole" pos (0, 0)
@@ -207,7 +214,7 @@ testsuite selectors:
 
     testcase scroll_test:
         run Show("scroll_screen")
-        pause until screen "scroll_screen"
+        assert screen "scroll_screen"
         scroll id "scroll_vp" amount 50
         click id "close_screen_button"
         assert not screen "scroll_screen"
@@ -215,7 +222,7 @@ testsuite selectors:
 testsuite timeout:
     setup:
         run Jump("hard_pause")
-        pause until screen "say"
+        assert screen "say"
 
     testcase hard_pause_fail_timeout:
         xfail True
@@ -438,10 +445,10 @@ testsuite for_loops:
         description "Clicks menu choices on loop"
 
         run Start("branching.variable_test")
-        pause until screen "choice"
+        assert screen "choice"
 
         for option in ["Increment", "Increment", "Decrement", "Increment", "Increment"]:
-            click expression option
+            click text option
 
         assert "Value: 3" timeout 2.0
         click "Done"
@@ -530,7 +537,7 @@ testsuite while_loops:
         description "Clicks menu choices on loop"
 
         run Start("branching.variable_test")
-        pause until screen "choice"
+        assert screen "choice"
 
         $ clicks = 0
         while eval (menu_var < 3):
@@ -542,3 +549,146 @@ testsuite while_loops:
         assert eval (clicks == 3)
         assert "Value: 3" timeout 2.0
         click "Done"
+
+
+testsuite test_expressions:
+    description "Tests that test statements accept Python expressions."
+
+    after testcase:
+        run Return()
+        run Hide()
+        if not screen "main_menu":
+            run MainMenu(confirm=False, save=False)
+
+    testcase keysym:
+        description "Keysym accepts a variable for the keysym name."
+
+        run Show("test_expressions__input__screen")
+        assert screen "test_expressions__input__screen"
+        click id "test_expressions__input"
+
+        $ keyval = "K_a"
+        keysym keyval
+
+        $ value = renpy.exports.get_screen("test_expressions__input__screen").scope.get("input_value", "NOT DEFINED")
+        $ assert value == "a", f"Expected 'a', got '{value}'"
+
+        run Hide("test_expressions__input__screen")
+
+    testcase type:
+        description "Type accepts a variable for the text to type."
+
+        run Show("test_expressions__input__screen")
+        assert screen "test_expressions__input__screen"
+        click id "test_expressions__input"
+
+        $ textval = "Hello"
+        type textval
+
+        $ value = renpy.exports.get_screen("test_expressions__input__screen").scope.get("input_value", "NOT DEFINED")
+        $ assert value == "Hello", f"Expected 'Hello', got '{value}'"
+
+        run Hide("test_expressions__input__screen")
+
+    testcase drag_button_steps_before_to:
+        description "Drag accepts expressions for button and steps."
+
+        run Show("drag_and_drop")
+        assert screen "drag_and_drop"
+
+        $ btn = 1
+        $ step_count = 10
+        drag id "peg" pos (0, 0) button btn steps step_count to id "hole" pos (0, 0)
+        assert id "success"
+
+        run Hide("drag_and_drop")
+
+    testcase drag_button_steps_after_to:
+        description "Drag accepts expressions for button and steps (after to)."
+
+        run Show("drag_and_drop")
+        assert screen "drag_and_drop"
+
+        $ btn = 1
+        $ step_count = 10
+        drag id "peg" pos (0, 0) to id "hole" pos (0, 0) button btn steps step_count
+        assert id "success"
+
+        run Hide("drag_and_drop")
+
+    testcase click_button:
+        description "Click button accepts a variable for the button number."
+
+        run Show("teleporting_button")
+        assert screen "teleporting_button"
+
+        $ btn = 1
+        $ element_id = "teleporting_button"
+        $ screen_name = "teleporting_button"
+        click button btn id element_id until not screen screen_name
+
+    testcase scroll_amount:
+        description "Scroll amount accepts a variable for the scroll amount."
+
+        run Show("scroll_screen")
+        assert screen "scroll_screen"
+
+        $ scroll_amount = 50
+        scroll amount scroll_amount id "scroll_vp"
+        click id "close_screen_button"
+        assert not screen "scroll_screen"
+
+    testcase repeat:
+        description "Repeat accepts an expression for the count."
+
+        run Show("test_expressions__input__screen")
+        assert screen "test_expressions__input__screen"
+        click id "test_expressions__input"
+
+        $ num = 4
+        keysym "K_a" repeat num
+
+        $ value = renpy.exports.get_screen("test_expressions__input__screen").scope.get("input_value", "NOT DEFINED")
+        $ assert value == "aaaa", f"Expected 'aaaa', got '{value}'"
+
+        run Hide("test_expressions__input__screen")
+
+    testcase skip_fast:
+        description "Skip fast works."
+
+        run Start("three_messages")
+        assert screen "say"
+
+        skip fast
+        $ assert renpy.config.skipping == "fast", f"Expected 'fast', got {renpy.config.skipping!r}"
+        $ renpy.config.skipping = None
+
+
+    testsuite label:
+        description "Tests the label selector with quoted strings, naked names, and variables."
+
+        testcase naked_name:
+            description "Label selector matches a naked label name."
+
+            run Start("three_messages")
+            assert label three_messages timeout 0.2
+
+        testcase quoted_string:
+            description "Label selector matches a quoted string literal."
+
+            run Start("three_messages")
+            assert label "three_messages" timeout 0.2
+
+        testcase variable:
+            description "Label selector matches a variable."
+
+            $ label_name = "three_messages"
+            run Start("three_messages")
+            assert label label_name timeout 0.2
+
+        testcase negative:
+            description "Label selector does not match an unreached label."
+
+            run Start("three_messages")
+            assert screen "say"
+            assert not label "hard_pause"
