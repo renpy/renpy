@@ -859,7 +859,7 @@ def parse_condition(l: Lexer, loc: NodeLocation, left: testast.Condition | None 
             rv = testast.Eval(loc, source)
 
         elif l.keyword("label"):
-            name = l.require(l.label_name)
+            name = l.simple_expression(operator=False) or l.require(l.label_name)
             rv = testast.Label(loc, name)
 
         elif rv := parse_selector(l, loc):

@@ -662,3 +662,33 @@ testsuite test_expressions:
         skip fast
         $ assert renpy.config.skipping == "fast", f"Expected 'fast', got {renpy.config.skipping!r}"
         $ renpy.config.skipping = None
+
+
+    testsuite label:
+        description "Tests the label selector with quoted strings, naked names, and variables."
+
+        testcase naked_name:
+            description "Label selector matches a naked label name."
+
+            run Start("three_messages")
+            assert label three_messages timeout 0.2
+
+        testcase quoted_string:
+            description "Label selector matches a quoted string literal."
+
+            run Start("three_messages")
+            assert label "three_messages" timeout 0.2
+
+        testcase variable:
+            description "Label selector matches a variable."
+
+            $ label_name = "three_messages"
+            run Start("three_messages")
+            assert label label_name timeout 0.2
+
+        testcase negative:
+            description "Label selector does not match an unreached label."
+
+            run Start("three_messages")
+            assert screen "say"
+            assert not label "hard_pause"

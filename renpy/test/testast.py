@@ -1107,7 +1107,22 @@ class Label(Condition):
         self.name = name
 
     def ready(self):
-        return self.name in renpy.test.testexecution.reached_labels
+        # Match the evaluated value or the raw expression text.
+        # This lets `label chapter_1` and `label "chapter_1"` both work,
+        # while also allowing `label label_name` to use a variable.
+
+        names = [self.name]
+
+        try:
+            eval_name = scoped_eval(self.name)
+            if not isinstance(eval_name, str):
+                raise TypeError(f"Expected a string, got {eval_name!r}.")
+
+            names.append(eval_name.strip())
+        except (NameError, TypeError):
+            pass
+
+        return any(name in renpy.test.testexecution.reached_labels for name in names)
 
     def get_repr_params(self):
         return f"{self.name}"
