@@ -1441,6 +1441,10 @@ after translation and interpolation.
     assert "スタート"
     assert "Start" raw
 
+    # Look for variable text
+    $ string_to_find = "Hello!"
+    assert text string_to_find
+
 .. note ::
 
     Prefer `id` selectors for stable UI tests.
