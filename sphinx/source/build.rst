@@ -452,6 +452,21 @@ The following variables provide further control of the build process:
     click "Build distributions", "Upload to itch.io" to cause an upload
     to occur.
 
+.. var:: build.wavedash_id = None
+
+    When this is set to a non-empty string, the Ren'Py launcher writes a
+    :file:`wavedash.toml` file when building a web distribution. This file
+    configures the distribution for upload to `Wavedash <https://docs.wavedash.com/engines/renpy>`_.
+
+    The value is used as the Wavedash game ID. The generated file specifies
+    the running Ren'Py major, minor, and patch version, uses :file:`game.zip`
+    as its executable, and sets its upload directory to the web distribution
+    directory.
+
+    For example::
+
+        define build.wavedash_id = "YOUR_GAME_ID_HERE"
+
 .. var:: build.itch_channels = { ... }
 
     This maps a filename pattern (such as "\*-win.zip") to a string giving

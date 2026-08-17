@@ -33,6 +33,7 @@ init python:
     import zipfile
     import re
     import hashlib
+    import json
 
     WEB_PATH = None
 
@@ -396,6 +397,39 @@ init python:
 
         generate_files_catalog(destination)
 
+    def write_wavedash_toml(p: "project.Project", destination: str) -> None:
+        """
+        Writes a Wavedash manifest for a web distribution, when configured.
+
+        The manifest is created only when build.wavedash_id is a non-empty
+        string, and an existing manifest is never overwritten.
+
+        `p`
+            The project being built.
+
+        `destination`
+            The web distribution directory.
+        """
+
+        wavedash_id = p.dump["build"].get("wavedash_id")
+
+        if not isinstance(wavedash_id, str) or not wavedash_id:
+            return
+
+        filename = os.path.join(destination, "wavedash.toml")
+
+        if os.path.exists(filename):
+            return
+
+        renpy_version = "{}.{}.{}".format(*renpy.version_tuple[:3])
+
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write("game_id = {}\n".format(json.dumps(wavedash_id)))
+            f.write('upload_dir = "."\n\n')
+            f.write("[renpy]\n")
+            f.write("version = {}\n".format(json.dumps(renpy_version)))
+            f.write('executable = "game.zip"\n')
+
     def build_web(p, gui=True, destination=None, launch=True):
 
         # Figure out the reporter to use.
@@ -462,6 +496,7 @@ init python:
 
         generate_web_icons(p, destination)
         prepare_pwa_files(p, destination)
+        write_wavedash_toml(p, destination)
 
         # Zip up the game.
 

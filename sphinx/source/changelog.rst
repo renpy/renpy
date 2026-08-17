@@ -60,6 +60,9 @@ The :var:`config.tts_voice` variable is no longer used.
 Features
 --------
 
+When :var:`build.wavedash_id` is configured, building a web distribution now
+creates a :file:`wavedash.toml` file for uploading the build to Wavedash.
+
 The new :func:`renpy.music.seek` function seeks the audio or video currently playing on a channel, while :class:`AudioPositionValue` now accepts an `adjustable` argument that allows a bar to seek when dragged.
 
 A new :ref:`renpy.red_to_alpha <shader-renpy.red_to_alpha>` shader part has been added, which creates a new image that is white with the alpha taken from
