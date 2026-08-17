@@ -131,6 +131,8 @@ A testcase and testsuite can no longer have the same name at the same level in t
 
 User mouse movements are ignored during tests.
 
+Variables and expressions may now be used in all test statements.
+
 Other Changes
 -------------
 
