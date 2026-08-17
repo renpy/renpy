@@ -1141,7 +1141,7 @@ class RepeatCounter(Condition):
 
     def ready(self):
         self.value -= 1
-        return self.value == 0
+        return self.value < 0
 
 
 class Pass(Node):
@@ -1431,8 +1431,7 @@ class Repeat(Until):
         if not isinstance(count, int):
             raise TypeError(f"Expected a number for repeat count, got {count!r}.")
 
-        ## Multiplied by 2 to account for Until.execute() calling ready twice per iteration.
-        self.right = RepeatCounter((self.filename, self.linenumber), count * 2)
+        self.right = RepeatCounter((self.filename, self.linenumber), count)
 
         return super().start()
 
