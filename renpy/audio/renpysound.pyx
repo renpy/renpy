@@ -62,6 +62,7 @@ cdef extern from "renpysound_core.h":
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
+    int RPS_get_state(int channel)
     object RPS_playing_name(int channel)
     void RPS_fadeout(int channel, int ms)
     void RPS_pause(int channel, int pause)
@@ -222,6 +223,14 @@ def queue_depth(channel):
     """
 
     return RPS_queue_depth(channel)
+
+
+def get_state(channel):
+    """Returns the backend lifecycle state for `channel` as an integer."""
+
+    rv = RPS_get_state(channel)
+    check_error()
+    return rv
 
 
 def playing_name(channel):

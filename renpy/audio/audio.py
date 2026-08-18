@@ -45,6 +45,19 @@ import renpy.audio.renpysound as renpysound
 # This is True if we were able to successfully enable the pcm audio.
 pcm_ok = None
 
+# Backend channel lifecycle states. The numeric values are part of the
+# private Cython/backend contract; callers should use these names.
+CHANNEL_STATE_IDLE = "idle"
+CHANNEL_STATE_PLAYING = "playing"
+CHANNEL_STATE_PAUSED = "paused"
+CHANNEL_STATE_ENDED = "ended"
+CHANNEL_STATES = {
+    0: CHANNEL_STATE_IDLE,
+    1: CHANNEL_STATE_PLAYING,
+    2: CHANNEL_STATE_PAUSED,
+    3: CHANNEL_STATE_ENDED,
+}
+
 unique = time.time()
 serial = 0
 
@@ -826,7 +839,8 @@ class Channel(object):
 
         with lock:
             if self._number is not None:
-                rv = renpysound.playing_name(self.number)
+                if self.get_state() != CHANNEL_STATE_ENDED:
+                    rv = renpysound.playing_name(self.number)
 
             if rv is None and self.queue:
                 rv = self.queue[0].filename
@@ -835,6 +849,13 @@ class Channel(object):
                 rv = self.loop[0]
 
         return rv
+
+    def get_state(self):
+        """Returns the backend lifecycle state of this channel."""
+        if not pcm_ok or self._number is None:
+            return CHANNEL_STATE_IDLE
+
+        return CHANNEL_STATES.get(renpysound.get_state(self.number), CHANNEL_STATE_IDLE)
 
     def set_volume(self, volume):
         self.chan_volume = volume
