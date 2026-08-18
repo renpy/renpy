@@ -2951,7 +2951,7 @@ class Text(renpy.display.displayable.Displayable):
     def render_textshader(self, render, layout, st, at):
         slow_time = layout.max_time
 
-        if self.slow and layout.cps:
+        if self.slow and layout.max_time:
             slow_time = min(slow_time, st)
 
         render.add_uniform("u_text_time", st)

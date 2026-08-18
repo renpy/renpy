@@ -965,7 +965,7 @@ Mouse
 
     If a displayable is given, the mouse cursor is hidden, and the
     displayable is shown above anything else. This displayable is
-    responsible for positioning and drawing a sythetic mouse
+    responsible for positioning and drawing a synthetic mouse
     cursor, and so should probably be a :func:`MouseDisplayable`
     or something very similar.
 
@@ -1048,7 +1048,7 @@ Quit
     A list of functions that are called without any arguments when
     Ren'Py is either terminating or reloading the script. This is
     intended to free resources, such as opened files or started threads,
-    that arte created inside init code, if such things aren't freed
+    that are created inside init code, if such things aren't freed
     automatically.
 
 .. var:: config.quit_on_mobile_background = False
@@ -1084,7 +1084,7 @@ Rollback
 
     A list of class objects that should not generate a warning that
     the object supported rollback in the past, but do not now. If you
-    have intentionally removed rollack support from a class, place
+    have intentionally removed rollback support from a class, place
     the class object in this list and the warning will be suppressed.
 
     Chances are, you don't want to use this - you want to add ``object``

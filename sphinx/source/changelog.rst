@@ -188,6 +188,10 @@ displayable, or with the :var:`config.live2d_old_beziers` variable,
 
 It is now possible to use `for` and `while` loops in automated tests.
 
+Fixes
+-----
+
+Textshaders now respect the :tt:`cps` text tag when the player's text speed is set to instant.
 
 .. _renpy-8.5.3:
 
@@ -489,7 +493,7 @@ prevents the Play Console from producing a warning.
 Multiline input displayables now support the use of the up arrow and down arrow keys to move the cursor to the
 next and previous line. As this works using the character offset, it will work best with monospaced fonts.
 
-The :propref:`thumb_align` property is now a style property rather than a keywork property, and is supported
+The :propref:`thumb_align` property is now a style property rather than a keyword property, and is supported
 in styles.
 
 When exporting dialogue, Ren'Py will detect the special :var:`extend` character and include the prior character's
@@ -533,7 +537,7 @@ when a new context is entered.
 The game.zip file produced by the web platform no longer contains .py files.
 
 Ren'Py will now prompt you to close other Ren'Py games before an upgrade. This addresses problems on Windows
-that could be caused by launcher files in use by games that are running during the upgra
+that could be caused by launcher files in use by games that are running during the upgrade.
 
 Support for RTL languages is now enabled by default, so it is no longer necessary to set config.rtl.
 
@@ -630,7 +634,7 @@ require 16 KB page support.
 Python 3.12
 -----------
 
-Ren'Py now uses Python 3.12 on all platforms. This makes avilable several years of Python improvements. To
+Ren'Py now uses Python 3.12 on all platforms. This makes available several years of Python improvements. To
 finds all of them, please see:
 
 * `What's New in Python 3.10 <https://docs.python.org/3/whatsnew/3.10.html>`_
@@ -644,7 +648,7 @@ to an error will be colored or underlined.
 Performance Improvements
 ------------------------
 
-**Script Loading** The internal respresentation of the game script has been changed to reduce the amount of
+**Script Loading** The internal representation of the game script has been changed to reduce the amount of
 memory used and to improve loading time, by only representing data that varies from the default. For a large
 game where initial startup is dominated by script loading, this improved the time it takes to load the script by
 50%.
@@ -710,7 +714,7 @@ prevents the image from becoming jagged when scaled down, but generating mipmaps
 to use more memory.
 
 Ren'Py now leaves the decision of if to create mipmaps to the developer, who knows if the game will scale down an
-image. By default, Ren'Py will create mipmaps for all images it loas. A new mode will only only create mipmaps
+image. By default, Ren'Py will create mipmaps for all images it loads. A new mode will only only create mipmaps
 when the display is scaled down to less than 75% of the virtual window size. This is suitable for games
 that do not scale down images, but for which the window size may be smaller than the virtual window size.
 
@@ -869,7 +873,7 @@ of :ref:`progressive downloading <progressive-downloading>`.
 The new :var:`config.clear_history_on_language_change` variable controls whether history is cleared when the
 language is changed.
 
-:func:`MixerValue` now suports the `step` and `force_step` parameters.
+:func:`MixerValue` now supports the `step` and `force_step` parameters.
 
 The lint report can be configured to expand character aliases to names by setting :var:`config.lint_show_names` to True.
 
@@ -915,7 +919,7 @@ used, as opposed to being given properties by other transforms that share a tag.
 The new :func:`renpy.seen_translation`, :func:`renpy.mark_translation_seen`, and :func:`renpy.mark_translation_unseen`
 functions make it possible to determine if a translation has been seen.
 
-Audio filesname can now include a volume clase, like "<volume 0.5>sunflower-slow-drag.ogg". This sets the relative
+Audio filesname can now include a volume clause, like "<volume 0.5>sunflower-slow-drag.ogg". This sets the relative
 amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue`` statements.
 
 The new :var:`config.keep_screenshot_entering_menu` variable determines if a screenshot taken with :class:`FileTakeScreenshot`
@@ -2195,7 +2199,7 @@ Launcher Changes
 ----------------
 
 The launcher now supports :doc:`template_projects`. These are
-indended for use by projects that replace the default GUI.
+intended for use by projects that replace the default GUI.
 If a template project is selected when creating a new project,
 Ren'Py will copy the template project and update the name and translations,
 but will not make other changes to script files and images.
