@@ -374,8 +374,7 @@ cdef class GL2Draw:
         else:
             physical_size = renpy.game.preferences.physical_size
 
-        if "RENPY_HIGHDPI" not in os.environ:
-            self.dpi_scale = pygame.display.get_display_content_scale()
+        self.dpi_scale = pygame.display.get_display_content_scale()
 
         pwidth, pheight = self.select_physical_size(physical_size)
 
@@ -704,34 +703,33 @@ cdef class GL2Draw:
         drawable_size = pygame.display.get_drawable_size()
 
         dpi_changed = False
-        if "RENPY_HIGHDPI" not in os.environ:
-            window_scale = pygame.display.get_window_display_scale()
-            if window_scale is None or window_scale <= 0.0:
-                window_scale = 1.0
+        window_scale = pygame.display.get_window_display_scale()
+        if window_scale is None or window_scale <= 0.0:
+            window_scale = 1.0
 
-            dpi_changed = window_scale != self.dpi_scale
+        dpi_changed = window_scale != self.dpi_scale
 
-            if dpi_changed:
-                if not fullscreen and not maximized and self.physical_size is not None:
-                    logical_width, logical_height = self.get_physical_size()
-                    target_size = (
-                        round(logical_width * window_scale),
-                        round(logical_height * window_scale),
+        if dpi_changed:
+            if not fullscreen and not maximized and self.physical_size is not None:
+                logical_width, logical_height = self.get_physical_size()
+                target_size = (
+                    round(logical_width * window_scale),
+                    round(logical_height * window_scale),
+                )
+
+                self.dpi_scale = window_scale
+
+                if target_size != size:
+                    pygame.display.get_window().resize(
+                        target_size,
+                        opengl=True,
+                        fullscreen=False,
+                        maximized=False,
                     )
-
-                    self.dpi_scale = window_scale
-
-                    if target_size != size:
-                        pygame.display.get_window().resize(
-                            target_size,
-                            opengl=True,
-                            fullscreen=False,
-                            maximized=False,
-                        )
-                        size = renpy.display.core.get_size()
-                        drawable_size = pygame.display.get_drawable_size()
-                else:
-                    self.dpi_scale = window_scale
+                    size = renpy.display.core.get_size()
+                    drawable_size = pygame.display.get_drawable_size()
+            else:
+                self.dpi_scale = window_scale
 
         if (
             (force) or

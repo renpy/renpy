@@ -761,11 +761,6 @@ class Interface:
         self.safe_mode = get_safe_mode()
         renpy.safe_mode_checked = True
 
-        # A scale factor used to compensate for the system DPI.
-        self.dpi_scale = self.setup_dpi_scaling()
-
-        renpy.display.log.write("DPI scale factor: %f", self.dpi_scale)
-
         # A time until which we should draw at maximum framerate.
         self.maximum_framerate_time = 0.0
         self.maximum_framerate(initial_maximum_framerate)
@@ -843,12 +838,6 @@ class Interface:
             renpy.display.log.write("nvdrs: Disabled thread optimizations.")
 
         atexit.register(restore_thread_optimization)
-
-    def setup_dpi_scaling(self):
-        if "RENPY_HIGHDPI" in os.environ:
-            return float(os.environ["RENPY_HIGHDPI"])
-
-        return 1.0
 
     def get_display_layout(self):
         """
