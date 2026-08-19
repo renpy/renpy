@@ -121,7 +121,7 @@ cdef class GL2Draw:
         self.display_info = None
 
         # The DPI scale factor.
-        self.dpi_scale = renpy.display.interface.dpi_scale
+        self.dpi_scale = pygame.display.get_display_content_scale()
 
         # The number of frames to draw fast if the screen needs to be
         # updated.
