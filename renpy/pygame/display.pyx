@@ -57,6 +57,15 @@ def hint(hint, value, priority=1):
 
     SDL_SetHintWithPriority(hint, value, priority)
 
+
+def set_windows_dpi_awareness(high_pixel_density):
+    if "SDL_WINDOWS_DPI_AWARENESS" in os.environ:
+        return
+
+    value = "permonitorv2" if high_pixel_density else "unaware"
+    hint("SDL_WINDOWS_DPI_AWARENESS", value, SDL_HINT_NORMAL)
+
+
 def _get_hint(hint, default):
     hint = str(hint)
 
@@ -457,6 +466,9 @@ cdef class Window:
         SDL_GetWindowSizeInPixels(self.window, &w, &h)
         return w, h
 
+    def get_window_display_scale(self):
+        return SDL_GetWindowDisplayScale(self.window)
+
 
     def get_size(self):
         cdef int w, h
@@ -784,6 +796,15 @@ def get_caption():
 def get_drawable_size():
     if main_window:
         return main_window.get_drawable_size()
+    return None
+
+def get_display_content_scale():
+    scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay())
+    return scale if scale > 0.0 else 1.0
+
+def get_window_display_scale():
+    if main_window:
+        return main_window.get_window_display_scale()
     return None
 
 def get_size():

@@ -848,45 +848,7 @@ class Interface:
         if "RENPY_HIGHDPI" in os.environ:
             return float(os.environ["RENPY_HIGHDPI"])
 
-        if not renpy.windows:
-            return 1.0
-
-        if renpy.config.windows_high_pixel_density:
-            return 1.0
-
-        try:
-            import ctypes
-            from ctypes import c_void_p, c_int
-
-            ctypes.windll.user32.SetProcessDPIAware()
-
-            GetDC = ctypes.windll.user32.GetDC
-            GetDC.restype = c_void_p
-            GetDC.argtypes = [c_void_p]
-
-            ReleaseDC = ctypes.windll.user32.ReleaseDC
-            ReleaseDC.argtypes = [c_void_p, c_void_p]
-
-            GetDeviceCaps = ctypes.windll.gdi32.GetDeviceCaps
-            GetDeviceCaps.restype = c_int
-            GetDeviceCaps.argtypes = [c_void_p, c_int]
-
-            LOGPIXELSX = 88
-
-            dc = GetDC(None)
-            rv = GetDeviceCaps(dc, LOGPIXELSX) / 96.0
-            ReleaseDC(None, dc)
-
-            if rv < renpy.config.de_minimus_dpi_scale:
-                renpy.display.log.write("De minimus DPI scale, was %r", rv)
-                rv = 1.0
-
-            return rv
-
-        except Exception:
-            renpy.display.log.write("Could not determine DPI scale factor:")
-            renpy.display.log.exception()
-            return 1.0
+        return 1.0
 
     def get_display_layout(self):
         """
@@ -940,6 +902,9 @@ class Interface:
 
         # Initialize pygame.
         try:
+            if renpy.windows:
+                pygame.display.set_windows_dpi_awareness(renpy.config.windows_high_pixel_density)
+
             pygame.display.init()
             pygame.mouse.init()
         except Exception:
