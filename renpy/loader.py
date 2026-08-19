@@ -634,6 +634,44 @@ def check_name(name):
             raise Exception("Filenames may not contain relative directories like '.' and '..': %r" % name)
 
 
+def get_translate_path(name):
+    """
+    Returns the translated path mapped from `name`, or None if `name` is not
+    covered by a translation path mapping.
+    """
+
+    paths = getattr(renpy.game.preferences, "resource_path_translations", {})
+
+    if not isinstance(paths, dict):
+        return None
+
+    match = None
+
+    for source, destination in paths.items():
+        if not isinstance(source, str) or not isinstance(destination, str):
+            continue
+
+        source = source.strip("/")
+        destination = destination.strip("/")
+
+        if not source or not destination:
+            continue
+
+        if ((name == source) or name.startswith(source + "/")) and ((match is None) or (len(source) > len(match[0]))):
+            match = (source, destination)
+
+    if match is None:
+        return None
+
+    source, destination = match
+    suffix = name[len(source) :].lstrip("/")
+
+    if suffix:
+        return destination + "/" + suffix
+    else:
+        return destination
+
+
 def get_prefixes(tl=True, directory=None):
     """
     Returns a list of prefixes to search for files.
@@ -675,8 +713,18 @@ def load(name, directory=None, tl=True):
         name = name.replace("//", "/")
     name = name.lstrip("/")
 
-    for p in get_prefixes(directory=directory, tl=tl):
-        rv = load_core(p + name)
+    paths = [p + name for p in get_prefixes(directory=directory, tl=tl)]
+
+    if tl:
+        for path in paths:
+            translated_name = get_translate_path(path)
+            if translated_name is not None:
+                rv = load_core(translated_name)
+                if rv is not None:
+                    return rv
+
+    for path in paths:
+        rv = load_core(path)
         if rv is not None:
             return rv
 
@@ -730,8 +778,16 @@ def loadable(name, tl=True, directory=None):
     if (renpy.config.loadable_callback is not None) and renpy.config.loadable_callback(name):
         return True
 
-    for p in get_prefixes(tl=tl, directory=directory):
-        if loadable_core(p + name):
+    paths = [p + name for p in get_prefixes(tl=tl, directory=directory)]
+
+    if tl:
+        for path in paths:
+            translated_name = get_translate_path(path)
+            if (translated_name is not None) and loadable_core(translated_name):
+                return True
+
+    for path in paths:
+        if loadable_core(path):
             return True
 
     return False
