@@ -177,16 +177,15 @@ cdef class GL2Draw:
         vwidth, vheight = self.virtual_size
         virtual_ar = 1.0 * vwidth / vheight
 
+        # SDL3 window sizes are logical pixels, even when the window has a
+        # high-density drawable. The drawable size is handled separately
+        # below by draw_per_phys.
         # The requested size.
         pwidth, pheight = physical_size
 
         if pwidth is None:
             pwidth = vwidth
             pheight = vheight
-
-        # If a DPI scale is present, take it into account.
-        pwidth *= self.dpi_scale
-        pheight *= self.dpi_scale
 
         # Determine the visible area of the screen.
         info = renpy.display.get_info()
@@ -664,9 +663,6 @@ cdef class GL2Draw:
             width = self.virtual_size[0]
             height = self.virtual_size[1]
 
-        width *= self.dpi_scale
-        height *= self.dpi_scale
-
         if not renpy.android or renpy.ios or renpy.emscripten:
             max_w, max_h = self.info["max_window_size"]
             width = min(width, max_w)
@@ -710,26 +706,7 @@ cdef class GL2Draw:
         dpi_changed = window_scale != self.dpi_scale
 
         if dpi_changed:
-            if not fullscreen and not maximized and self.physical_size is not None:
-                logical_width, logical_height = self.get_physical_size()
-                target_size = (
-                    round(logical_width * window_scale),
-                    round(logical_height * window_scale),
-                )
-
-                self.dpi_scale = window_scale
-
-                if target_size != size:
-                    pygame.display.get_window().resize(
-                        target_size,
-                        opengl=True,
-                        fullscreen=False,
-                        maximized=False,
-                    )
-                    size = renpy.display.core.get_size()
-                    drawable_size = pygame.display.get_drawable_size()
-            else:
-                self.dpi_scale = window_scale
+            self.dpi_scale = window_scale
 
         if (
             (force) or
@@ -1402,12 +1379,7 @@ cdef class GL2Draw:
         pass
 
     def get_physical_size(self):
-        x, y = self.physical_size
-
-        x = int(x / self.dpi_scale)
-        y = int(y / self.dpi_scale)
-
-        return (x, y)
+        return self.physical_size
 
 BIG_PIXELS = 65536 # Chosen to be bigger than any reasonable screen size, to limit
 
