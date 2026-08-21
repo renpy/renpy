@@ -260,6 +260,7 @@ class Channel(object):
         movie,
         framedrop,
         synchro_start,
+        yuv_acceptable,
     ):
         # The name assigned to this channel. This is used to look up
         # information about the channel in the MusicContext object.
@@ -352,10 +353,14 @@ class Channel(object):
             else:
                 self.movie = renpy.audio.renpysound.NODROP_VIDEO
 
+            self.yuv_acceptable: bool = yuv_acceptable
+            "Is it acceptable if the video produces YUV frames?"
+
             if renpysound.is_webaudio:
                 renpysound.set_movie_channel(self.number, True)  # type: ignore
         else:
             self.movie = renpy.audio.renpysound.NO_VIDEO
+            self.yuv_acceptable = False
 
     def get_number(self):
         """
@@ -594,9 +599,9 @@ class Channel(object):
 
                 if self.movie != renpy.audio.renpysound.NO_VIDEO:
                     # Let the browser handle the video loop if any
-                    renpysound.set_video(self.number, self.movie, loop=(len(self.loop) == 1))
+                    renpysound.set_video(self.number, self.movie, loop=(len(self.loop) == 1), yuv=self.yuv_acceptable)
                 else:
-                    renpysound.set_video(self.number, self.movie, loop=False)
+                    renpysound.set_video(self.number, self.movie, loop=False, yuv=self.yuv_acceptable)
 
                 if depth == 0:
                     renpysound.play(
@@ -956,6 +961,7 @@ def register_channel(
     framedrop=True,
     force=False,
     synchro_start=None,
+    yuv_acceptable=False
 ):
     """
     :doc: audio
@@ -1015,6 +1021,8 @@ def register_channel(
         this defaults to `loop` if `movie` is False, and False otherwise.
     """
 
+    # yuv_acceptable is used internally by Ren'Py to pass the yuv_acceptable flag.
+
     if name == "movie":
         movie = True
 
@@ -1042,6 +1050,7 @@ def register_channel(
         movie=movie,
         framedrop=framedrop,
         synchro_start=synchro_start,
+        yuv_acceptable=yuv_acceptable,
     )
 
     c.mixer = mixer

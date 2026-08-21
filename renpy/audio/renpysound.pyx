@@ -437,7 +437,10 @@ NODROP_VIDEO = 1
 # The video will be played, allowing framedrops.
 DROP_VIDEO = 2
 
-def set_video(channel, video, loop=False):
+# Is it okay to give YUV frames?
+YUV_VIDEO = 4
+
+def set_video(channel, video, loop=False, yuv=False):
     """
     Sets a flag that determines if this channel will attempt to decode video.
 
@@ -446,15 +449,22 @@ def set_video(channel, video, loop=False):
 
     `loop`
         If true, the video file will loop.
+
+    `yuv`
+        If true, the video is eligible to be decoded in YUV format.
     """
 
     if video == NODROP_VIDEO:
-        RPS_set_video(channel, NODROP_VIDEO)
+        flags = NODROP_VIDEO
     elif video:
-        RPS_set_video(channel, DROP_VIDEO)
+        flags = DROP_VIDEO
     else:
-        RPS_set_video(channel, NO_VIDEO)
+        flags = NO_VIDEO
 
+    if yuv:
+        flags |= YUV_VIDEO
+
+    RPS_set_video(channel, flags)
 
 def init(freq, stereo, samples, status=False, equal_mono=False, linear_fades=False):
     """

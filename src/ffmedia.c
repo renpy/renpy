@@ -278,6 +278,9 @@ typedef struct MediaState {
 	/* Software rescaling context for surface consumers of YUV frames. */
 	struct SwsContext *yuv_sws;
 
+	/* Is YUV video acceptable? */
+	int yuv_acceptable;
+
 	/* A queue of decoded video frames. */
 	SurfaceQueueEntry *surface_queue; // Lock
 	int surface_queue_size; // Lock
@@ -937,8 +940,9 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		}
 	}
 
-	if (ms->video_decode_frame->format == AV_PIX_FMT_YUV420P ||
-		ms->video_decode_frame->format == AV_PIX_FMT_YUVJ420P) {
+	if (ms->yuv_acceptable &&
+		(ms->video_decode_frame->format == AV_PIX_FMT_YUV420P ||
+		 ms->video_decode_frame->format == AV_PIX_FMT_YUVJ420P)) {
 		int width = ms->video_decode_frame->width;
 		int height = ms->video_decode_frame->height;
 		int chroma_width = (width + 1) / 2;
@@ -1919,11 +1923,19 @@ void media_start_end(MediaState *ms, double start, double end) {
 }
 
 /**
- * Marks the channel as having video.
+ * Marks the channel as having video, and determines if yuv video is acceptable.
  */
 void media_want_video(MediaState *ms, int video) {
+	// video & 3 = 0 - no video
+	// video & 3 = 1 - video with frame dros allowed.
+	// video & 3 = 2 - video with no frame drops allowed.
+
+	// video & 4 = 4 - yuv video acceptable.
+
+
 	ms->want_video = 1;
 	ms->frame_drops = (video != 2);
+	ms->yuv_acceptable = (video & 4) == 4;
 }
 
 void media_pause(MediaState *ms, int pause) {

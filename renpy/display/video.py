@@ -617,8 +617,7 @@ class Movie(renpy.display.displayable.Displayable):
             framedrop = False
 
         renpy.audio.music.register_channel(
-            name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop, force=True
-        )
+            name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop, force=True, yuv_acceptable= not (self.mask or self.side_mask))
 
     def ensure_channels(self):
         if self.channel == "movie" and self.dynamic_channel:

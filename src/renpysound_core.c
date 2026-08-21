@@ -683,7 +683,7 @@ struct MediaState *load_stream(SDL_IOStream *rw, const char *ext, double start, 
     }
     media_start_end(rv, start, end);
 
-    if (video) {
+    if (video & 3) {
         media_want_video(rv, video);
     }
 

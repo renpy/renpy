@@ -593,7 +593,7 @@ DROP_VIDEO = 2
 
 
 @proxy_with_channel
-def set_video(channel, video, loop=False):
+def set_video(channel, video, loop=False, yuv=False):
     """
     Sets a flag that determines if this channel will attempt to decode video.
     """
