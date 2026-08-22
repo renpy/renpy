@@ -471,13 +471,19 @@ def quote_text(s):
     return '"' + s + '"'
 
 
-def text_checks(s, menu_text=False):
+def text_checks(s, who=None, menu_text=False):
     if (not menu_text) or renpy.config.use_menu_text_filter:
         if renpy.config.say_menu_text_filter is not None:
-            s = renpy.config.say_menu_text_filter(s)
+            ww = [s]
+            if renpy.config.say_menu_text_filter_extended:
+                ww.append(who)
+            s = renpy.config.say_menu_text_filter(*ww)
 
         for f in renpy.config.say_menu_text_filters:
-            s = f(s)
+            ww = [s]
+            if renpy.config.say_menu_text_filter_extended:
+                ww.append(who)
+            s = f(*ww)
 
     msg = renpy.text.extras.check_text_tags(s, check_unclosed=args.check_unclosed_tags)
     if msg:
@@ -538,7 +544,7 @@ def check_say(node):
             "Perhaps you forgot to declare, or misspelled, a transition?",
         )
 
-    text_checks(node.what)
+    text_checks(node.what, char)
 
     if not node.who_fast:
         return
