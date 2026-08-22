@@ -20,7 +20,7 @@ Script Parsing Phase
 To read the game's code, Ren'Py reads each of the game's ``.rpy`` (and ``_ren.py``) files one by
 one. That's the "parsing" phase, or "early" phase. The order that files are read in is:
 
-1. Files inside :file:`renpy/common` are loaded using  using the full path, in unicode order. This is only for use by
+1. Files inside :file:`renpy/common` are loaded using the full path, in unicode order. This is only for use by
    Ren'Py.
 
 2. Only if :file:`game/libs/libs.txt` exists, files in :file:`game/libs` have the first directory removed, if any and
