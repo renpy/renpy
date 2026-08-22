@@ -283,6 +283,9 @@ a class of issues that could occur with NVL-mode, retained bubbles, and other co
 rendering the text without a click-to-continue indicator, and then placing the CTC indicator next to the end of the
 rendered text. (This is similar to how {w}, {p}, and extend were already handled.)
 
+If an interpolated :tpref:`matrixcolor` property is replaced by another interpolation, it now correctly
+continues from the point where it got interrupted.
+
 Translations
 ------------
 

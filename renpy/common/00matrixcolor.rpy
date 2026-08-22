@@ -42,6 +42,16 @@ init -1500 python:
                 other = other.matrix
 
             if type(other) is not type(self):
+
+                # If `other` is a Matrix produced by a previous interpolation
+                # (which records the current value in `origin_value`), continue
+                # interpolating from that current value rather than the target.
+                if isinstance(other, Matrix):
+                    origin_value = getattr(other, "origin_value", None)
+                    if origin_value is not None:
+                        value = origin_value + (self.value - origin_value) * done
+                        return self.get(value)
+
                 return self.get(self.value)
 
             value = other.value + (self.value - other.value) * done
