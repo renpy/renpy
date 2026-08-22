@@ -1067,7 +1067,15 @@ class Say(Node):
             pass
 
         if self.interact:
-            renpy.exports.scry_say(who, self.what, rv)
+            what = self.what
+
+            if renpy.config.say_menu_text_filter:
+                what = renpy.config.say_menu_text_filter(what)
+
+            for f in renpy.config.say_menu_text_filters:
+                what = f(what)
+
+            renpy.exports.scry_say(who, what, rv)
         else:
             rv.interacts = False
             rv.extend_text = DoesNotExtend

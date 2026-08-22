@@ -19,16 +19,16 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import itertools
-from typing import Any
 import glob
+import itertools
 import os
+from typing import Any, ClassVar
 
 import renpy
-from renpy.display.focus import Focus
 from renpy.display.displayable import Displayable
+from renpy.display.focus import Focus
 from renpy.test.testmouse import click_mouse, move_mouse, scroll_mouse
-from renpy.test.testsettings import _test
+from renpy.test.testsettings import _test, global_testsuite_name
 from renpy.test.types import (
     HookType,
     NodeLocation,
@@ -47,21 +47,17 @@ class SelectorException(RenpyTestException):
 class LoopBreakException(Exception):
     """Exception raised to break out of a loop."""
 
-    pass
-
 
 class LoopContinueException(Exception):
     """Exception raised to continue to the next iteration of a loop."""
 
-    pass
 
-
-class Node(object):
+class Node:
     """
     An AST node for a test script.
     """
 
-    __slots__ = ("filename", "linenumber", "next", "done")
+    __slots__ = ("done", "filename", "linenumber", "next")
 
     def __init__(self, loc: NodeLocation):
         self.filename, self.linenumber = loc
@@ -77,7 +73,7 @@ class Node(object):
     def __repr__(self):
         if params := self.get_repr_params():
             params = " " + params
-        return "<{}{} ({}:{})>".format(type(self).__name__, params, self.filename, self.linenumber)
+        return f"<{type(self).__name__}{params} ({self.filename}:{self.linenumber})>"
 
     def chain(self, next: "Node | None") -> None:
         """
@@ -139,14 +135,12 @@ class Node(object):
         Called after an Until node has finished executing.
         This is used to end any function that was started by this node.
         """
-        pass
 
     def cleanup_after_error(self, state: NodeState) -> None:
         """
         Called if an exception is raised during the execution of this node.
         This can be used to clean up any state that was set by this node.
         """
-        pass
 
 
 class Block(Node):
@@ -180,10 +174,10 @@ class Block(Node):
     def execute(self, state, t):
         if not self.block:
             next_node(self.next)
-            return None
+            return
 
         next_node(self.block[0])
-        return None
+        return
 
 
 class BaseTestBlock(Block):
@@ -219,6 +213,19 @@ class BaseTestBlock(Block):
         """
         raise NotImplementedError
 
+    def get_parent_chain(self) -> list["TestSuite"]:
+        """
+        Returns a list of parent TestSuites, starting with the root (global)
+        and ending with the immediate parent.
+        """
+        chain: list[TestSuite] = []
+        current = self.parent
+        while current is not None:
+            chain.append(current)
+            current = current.parent
+        chain.reverse()
+        return chain
+
     @property
     def xfail(self) -> bool:
         return bool(scoped_eval(self.xfail_expr))
@@ -230,10 +237,10 @@ class BaseTestBlock(Block):
 
     @property
     def full_path(self) -> str:
-        """The full hierarchical path using `.` to separate testsuites and `::` to separate testcases."""
+        """The full hierarchical path using `.` to separate testcases and `::` to separate hook."""
         if self.parent:
-            return f"{self.parent.full_path}::{self.name}"
-        return self.name
+            return f"{self.parent.full_path}.{self.name}"
+        return f"{global_testsuite_name}.{self.name}"
 
     @property
     def current_parameterized_name(self) -> str:
@@ -244,12 +251,12 @@ class BaseTestBlock(Block):
     def current_full_parameterized_path(self) -> str:
         """The full hierarchical path with current parameters shown."""
         if self.parent:
-            return f"{self.parent.current_full_parameterized_path}::{self.current_parameterized_name}"
+            return f"{self.parent.current_full_parameterized_path}.{self.current_parameterized_name}"
         return self.current_parameterized_name
 
 
 class TestHook(BaseTestBlock):
-    __slots__ = ("depth", "call_count")
+    __slots__ = ("call_count", "depth")
 
     def __init__(
         self,
@@ -270,14 +277,28 @@ class TestHook(BaseTestBlock):
     def __hash__(self):
         return hash(self.current_full_parameterized_path)
 
+    @property
+    def full_path(self) -> str:
+        """The full hierarchical path using `.` to separate testcases and `::` to separate hook."""
+        if self.parent:
+            return f"{self.parent.full_path}::{self.name}"
+        return f"{global_testsuite_name}::{self.name}"
+
     def get_parameterized_name(self, index=None):
         if index is None:
             index = self.call_count
         return f"{self.name}({index})"
 
+    @property
+    def current_full_parameterized_path(self) -> str:
+        """The full hierarchical path with current parameters shown."""
+        if self.parent:
+            return f"{self.parent.current_full_parameterized_path}::{self.current_parameterized_name}"
+        return f"{global_testsuite_name}::{self.name}"
+
 
 class TestCase(BaseTestBlock):
-    __slots__ = ("description", "enabled", "only", "parameters", "parameter_index")
+    __slots__ = ("description", "enabled", "only", "parameter_index", "parameters")
 
     def __init__(
         self,
@@ -295,14 +316,14 @@ class TestCase(BaseTestBlock):
         self.enabled = enabled
         self.only = only
         self.parameters = self.generate_parameter_combinations(parameters)
-        self.parameter_index = 0
+        self.parameter_index = -1
         super().__init__(loc, block, name, parent, xfail_expr)
 
         if not self.enabled and self.only:
             raise ValueError(f"Test case '{self.name}' must be enabled before setting 'only' to True.")
 
     def restart(self) -> None:
-        self.parameter_index = 0
+        self.parameter_index = -1
         return super().restart()
 
     def generate_parameter_combinations(self, parameters: list[list[dict[str, Any]]] | None) -> list[dict[str, Any]]:
@@ -338,8 +359,8 @@ class TestCase(BaseTestBlock):
         if index is None:
             index = self.parameter_index
 
-        # if index >= len(self.parameters):
-        #     return f"{self.name}(<no more parameters>)"
+        if index < 0 or index >= len(self.parameters):
+            return f"{self.name}"
 
         params = self.parameters[index]
         param_str = ", ".join(f"{k}={v!r}" for k, v in params.items())
@@ -353,7 +374,7 @@ class TestCase(BaseTestBlock):
 
     @property
     def has_all_parameters_been_processed(self) -> bool:
-        return self.parameter_index >= len(self.parameters)
+        return self.parameter_index >= max(1, len(self.parameters))
 
     def has_testcase(self) -> bool:
         """
@@ -369,13 +390,13 @@ class TestSuite(TestCase):
     """
 
     __slots__ = (
-        "subtests",
-        "subtest_index",
-        "setup",
-        "before_testsuite",
-        "before_testcase",
         "after_testcase",
         "after_testsuite",
+        "before_testcase",
+        "before_testsuite",
+        "setup",
+        "subtest_index",
+        "subtests",
         "teardown",
     )
 
@@ -427,7 +448,7 @@ class TestSuite(TestCase):
         self.subtests.append(child)
 
     def restart(self) -> None:
-        self.parameter_index = 0
+        self.parameter_index = -1
         self.subtest_index = 0
         for subtest in self.subtests:
             subtest.restart()
@@ -446,7 +467,7 @@ class TestSuite(TestCase):
         if test.enabled:
             test.advance_to_next_parameter_set()
             if test.has_all_parameters_been_processed:
-                test.parameter_index = 0
+                test.parameter_index = -1
                 self.subtest_index += 1
         else:
             self.subtest_index += 1
@@ -510,13 +531,9 @@ class TestSuite(TestCase):
     def full_path(self) -> str:
         if self.parent:
             return f"{self.parent.full_path}.{self.name}"
+        if self.name != global_testsuite_name:
+            return f"{global_testsuite_name}.{self.name}"
         return self.name
-
-    @property
-    def current_full_parameterized_path(self) -> str:
-        if self.parent:
-            return f"{self.parent.current_full_parameterized_path}.{self.current_parameterized_name}"
-        return self.current_parameterized_name
 
     def has_testcase(self) -> bool:
         """
@@ -607,7 +624,7 @@ class DisplayableSelector(Selector):
     A selector that finds a widget by its id or screen.
     """
 
-    __slots__ = ("screen", "id", "layer")
+    __slots__ = ("id", "layer", "screen")
 
     def __init__(
         self,
@@ -617,7 +634,7 @@ class DisplayableSelector(Selector):
         layer: str | None = None,
         wait_for_focus: bool = False,
     ):
-        super(DisplayableSelector, self).__init__(loc, wait_for_focus)
+        super().__init__(loc, wait_for_focus)
         self.screen = screen
         self.id = id
         self.layer = layer
@@ -627,16 +644,15 @@ class DisplayableSelector(Selector):
 
     def ready(self) -> bool:
         ## Needs to be checked here and not in __init__ since screens are not be defined yet.
-        if self.screen is not None:
-            if not renpy.exports.has_screen(scoped_eval(self.screen)):
-                raise ValueError(f"The screen {self.screen!r} does not exist.")
+        if self.screen is not None and not renpy.exports.has_screen(scoped_eval(self.screen)):
+            raise ValueError(f"The screen {self.screen!r} does not exist.")
 
         return super().ready()
 
     def get_element(self) -> Displayable | None:
         if self.screen and self.id is None:
             layer = None if self.layer is None else scoped_eval(self.layer)
-            screen = None if self.screen is None else scoped_eval(self.screen)
+            screen = scoped_eval(self.screen)
             rv = renpy.exports.get_screen(screen, layer)
         else:
             rv = self.get_displayable()
@@ -652,9 +668,12 @@ class DisplayableSelector(Selector):
         """
         ## NOTE: Move to renpy.exports.get_displayable() eventually?
 
+        if self.id is None:
+            raise ValueError("At least one of `id` or `screen` must be set.")
+
         layer = None if self.layer is None else scoped_eval(self.layer)
         screen = None if self.screen is None else scoped_eval(self.screen)
-        id = None if self.id is None else scoped_eval(self.id)
+        id = scoped_eval(self.id)
 
         ctx: renpy.execution.Context = renpy.game.context()
         for context_layer, sles in ctx.scene_lists.layers.items():
@@ -716,7 +735,7 @@ class TextSelector(Selector):
         evaluated to get the actual pattern string.
     """
 
-    __slots__ = ("pattern", "raw", "expression")
+    __slots__ = ("expression", "pattern", "raw")
 
     def __init__(
         self,
@@ -726,7 +745,7 @@ class TextSelector(Selector):
         raw: bool = False,
         expression: bool = False,
     ):
-        super(TextSelector, self).__init__(loc, wait_for_focus)
+        super().__init__(loc, wait_for_focus)
         self.pattern = pattern
         self.raw = raw
         self.expression = expression
@@ -768,7 +787,7 @@ class SelectorDrivenNode(Node):
         regardless of whether the selector is ready.
     """
 
-    __slots__ = ("selector", "position", "always")
+    __slots__ = ("always", "position", "selector")
 
     def __init__(
         self,
@@ -777,7 +796,7 @@ class SelectorDrivenNode(Node):
         position: str | None = None,
         always: bool = False,
     ):
-        super(SelectorDrivenNode, self).__init__(loc)
+        super().__init__(loc)
         self.selector = selector
         self.position = position
         self.always = always
@@ -858,11 +877,20 @@ class SelectorDrivenNode(Node):
 
 
 class Click(SelectorDrivenNode):
-    # The number of the button to click.
-    button: int = 1
+    __slots__ = ("button_expr",)
+
+    def __init__(self, loc: NodeLocation, button_expr: str = "1", **kwargs):
+        super().__init__(loc, **kwargs)
+        self.button_expr = button_expr
+
+    def start(self):
+        button = scoped_eval(self.button_expr)
+        if not isinstance(button, int):
+            raise TypeError(f"Expected an integer for click button, got {button!r}.")
+        return button
 
     def perform(self, x, y, state, t):
-        click_mouse(self.button, x, y)
+        click_mouse(state, x, y)
 
 
 class Move(SelectorDrivenNode):
@@ -871,9 +899,21 @@ class Move(SelectorDrivenNode):
 
 
 class Scroll(SelectorDrivenNode):
-    amount: int = 1
+    __slots__ = ("amount_expr",)
+
+    def __init__(self, loc: NodeLocation, amount_expr: str = "1", **kwargs):
+        super().__init__(loc, **kwargs)
+        self.amount_expr = amount_expr
+
+    def start(self):
+        amount = scoped_eval(self.amount_expr)
+        if not isinstance(amount, int):
+            raise TypeError(f"Expected an integer for scroll amount, got {amount!r}.")
+        return amount
 
     def perform(self, x, y, state, t):
+        amount = state
+
         if self.selector is not None:
             element = self.selector.element
 
@@ -886,31 +926,31 @@ class Scroll(SelectorDrivenNode):
                 if adj.value == adj.range:
                     new = 0
                 else:
-                    new = adj.value + (adj.page * self.amount)
+                    new = adj.value + (adj.page * amount)
 
                 new = max(0, min(new, adj.range))
                 adj.change(new)
                 return
 
-        scroll_mouse(-self.amount, x, y)
+        scroll_mouse(-amount, x, y)
 
 
 class Drag(Node):
-    __slots__ = ("start_point", "end_point", "button", "steps")
+    __slots__ = ("button_expr", "end_point", "start_point", "steps_expr")
 
     def __init__(
         self,
         loc: NodeLocation,
         start_point: SelectorDrivenNode,
         end_point: SelectorDrivenNode,
-        button: int = 1,
-        steps: int = 10,
+        button_expr: str = "1",
+        steps_expr: str = "10",
     ):
-        super(Drag, self).__init__(loc)
+        super().__init__(loc)
         self.start_point = start_point
         self.end_point = end_point
-        self.button = button
-        self.steps = steps
+        self.button_expr = button_expr
+        self.steps_expr = steps_expr
 
     def ready(self):
         return self.start_point.ready() and self.end_point.ready()
@@ -919,64 +959,83 @@ class Drag(Node):
         start_pos = self.start_point.get_position()
         end_pos = self.end_point.get_position()
 
-        return (start_pos, end_pos, 0)  # (x, y, step)
+        button = scoped_eval(self.button_expr)
+        steps = scoped_eval(self.steps_expr)
 
-    def execute(self, state, t):
+        if not isinstance(button, int):
+            raise TypeError(f"Expected an integer for drag button, got {button!r}.")
+
+        if not isinstance(steps, int):
+            raise TypeError(f"Expected an integer for drag steps, got {steps!r}.")
+
+        return (start_pos, end_pos, button, steps, 0)  # (x, y, button, steps, step)
+
+    def execute(self, state: tuple[tuple[int, int], tuple[int, int], int, int, int], t):
         if renpy.display.interface.trans_pause:
             return state
 
-        (start_pos, end_pos, step) = state
-        x = int(start_pos[0] + (end_pos[0] - start_pos[0]) * step / self.steps)
-        y = int(start_pos[1] + (end_pos[1] - start_pos[1]) * step / self.steps)
+        start_pos, end_pos, button, steps, step = state
+        x = int(start_pos[0] + (end_pos[0] - start_pos[0]) * step / steps)
+        y = int(start_pos[1] + (end_pos[1] - start_pos[1]) * step / steps)
 
         renpy.test.testmouse.move_mouse(x, y)
 
         if step == 0:
-            renpy.test.testmouse.press_mouse(self.button)
+            renpy.test.testmouse.press_mouse(button)
 
-        elif step >= self.steps:
-            renpy.test.testmouse.release_mouse(self.button)
+        elif step >= steps:
+            renpy.test.testmouse.release_mouse(button)
             next_node(self.next)
             return None
 
-        return (start_pos, end_pos, step + 1)
+        return (start_pos, end_pos, button, steps, step + 1)
 
 
 class Type(SelectorDrivenNode):
-    __slots__ = "text"
-    # interval = .01 # unused
+    __slots__ = ("text_expr",)
 
-    def __init__(self, loc: NodeLocation, text: str, **kwargs):
+    def __init__(self, loc: NodeLocation, text_expr: str, **kwargs):
         super().__init__(loc, **kwargs)
-        self.text = text
+        self.text_expr = text_expr
 
     def start(self):
-        return 0
+        text = scoped_eval(self.text_expr)
+        if not isinstance(text, str):
+            raise TypeError(f"Expected a string, got {text!r}.")
+        return (text, 0)
 
-    def perform(self, x, y, state, t):
-        if state >= len(self.text):
+    def perform(self, x, y, state: tuple[str, int], t):
+        text, idx = state
+        if idx >= len(text):
             next_node(self.next)
             return None
 
         move_mouse(x, y)
 
-        key = self.text[state]
-        renpy.test.testkey.down(self, key)
-        renpy.test.testkey.up(self, key)
+        key = text[idx]
+        renpy.test.testkey.down(key)
+        renpy.test.testkey.up(key)
 
-        return state + 1
+        return (text, idx + 1)
 
 
 class Keysym(SelectorDrivenNode):
-    __slots__ = "keysym"
+    __slots__ = ("keysym_expr",)
 
-    def __init__(self, loc: NodeLocation, keysym: str, **kwargs):
+    def __init__(self, loc: NodeLocation, keysym_expr: str, **kwargs):
         super().__init__(loc, **kwargs)
-        self.keysym = keysym
+        self.keysym_expr = keysym_expr
 
-    def perform(self, x, y, state, t):
+    def start(self):
+        keysym = scoped_eval(self.keysym_expr)
+        if not isinstance(keysym, str):
+            raise TypeError(f"Expected a string, got {keysym!r}.")
+
+        return keysym
+
+    def perform(self, x, y, state: str, t):
         move_mouse(x, y)
-        renpy.test.testkey.queue_keysym(self, self.keysym)
+        renpy.test.testkey.queue_keysym(state)
 
 
 class Action(Node):
@@ -984,10 +1043,10 @@ class Action(Node):
     This is for the `run` keyword
     """
 
-    __slots__ = "expr"
+    __slots__ = ("expr",)
 
     def __init__(self, loc: NodeLocation, expr: str):
-        super(Action, self).__init__(loc)
+        super().__init__(loc)
         self.expr = expr
 
     def ready(self):
@@ -1006,7 +1065,7 @@ class Action(Node):
         if t > 0:
             state["executed_already"] = True
             next_node(self.next)
-            return None
+            return
 
         action = scoped_eval(self.expr)
         renpy.display.behavior.run(action)
@@ -1014,14 +1073,14 @@ class Action(Node):
         if not state["executed_already"]:
             next_node(self.next)
 
-        return None
+        return
 
 
 class Pause(Node):
-    __slots__ = "expr"
+    __slots__ = ("expr",)
 
     def __init__(self, loc: NodeLocation, expr: str):
-        super(Pause, self).__init__(loc)
+        super().__init__(loc)
         self.expr = expr
 
     def get_repr_params(self):
@@ -1041,24 +1100,39 @@ class Pause(Node):
 
 
 class Label(Condition):
-    __slots__ = "name"
+    __slots__ = ("name",)
 
     def __init__(self, loc: NodeLocation, name: str):
-        super(Label, self).__init__(loc)
+        super().__init__(loc)
         self.name = name
 
     def ready(self):
-        return self.name in renpy.test.testexecution.reached_labels
+        # Match the evaluated value or the raw expression text.
+        # This lets `label chapter_1` and `label "chapter_1"` both work,
+        # while also allowing `label label_name` to use a variable.
+
+        names = [self.name]
+
+        try:
+            eval_name = scoped_eval(self.name)
+            if not isinstance(eval_name, str):
+                raise TypeError(f"Expected a string, got {eval_name!r}.")
+
+            names.append(eval_name.strip())
+        except (NameError, TypeError):
+            pass
+
+        return any(name in renpy.test.testexecution.reached_labels for name in names)
 
     def get_repr_params(self):
         return f"{self.name}"
 
 
 class Eval(Condition):
-    __slots__ = "expr"
+    __slots__ = ("expr",)
 
     def __init__(self, loc: NodeLocation, expr):
-        super(Eval, self).__init__(loc)
+        super().__init__(loc)
         self.expr = expr
 
     def ready(self):
@@ -1069,9 +1143,12 @@ class RepeatCounter(Condition):
     __slots__ = ("initial_value", "value")
 
     def __init__(self, loc: NodeLocation, value: int):
-        super(RepeatCounter, self).__init__(loc)
+        super().__init__(loc)
         self.initial_value = value
         self.restart()
+
+    def get_repr_params(self) -> str:
+        return f"{self.initial_value}"
 
     def restart(self) -> None:
         self.value = self.initial_value
@@ -1079,7 +1156,7 @@ class RepeatCounter(Condition):
 
     def ready(self):
         self.value -= 1
-        return self.value == 0
+        return self.value < 0
 
 
 class Pass(Node):
@@ -1091,9 +1168,9 @@ class Advance(Node):
     Advances the said dialogue by one line.
     """
 
-    last_event: str = ""
-    last_kwargs: dict = {}
-    began_newline: bool = False
+    last_event: ClassVar[str] = ""
+    last_kwargs: ClassVar[dict] = {}
+    began_newline: ClassVar[bool] = False
 
     @staticmethod
     def character_callback(event, **kwargs) -> None:
@@ -1117,7 +1194,7 @@ class Advance(Node):
             next_node(self.next)
             return None
 
-        renpy.test.testkey.queue_keysym(self, "dismiss")
+        renpy.test.testkey.queue_keysym("dismiss")
         return Advance.last_event
 
 
@@ -1129,7 +1206,7 @@ class Skip(Node):
     __slots__ = ("fast",)
 
     def __init__(self, loc: NodeLocation, fast: bool = False):
-        super(Skip, self).__init__(loc)
+        super().__init__(loc)
         self.fast = fast
 
     def start(self):
@@ -1159,7 +1236,6 @@ class Skip(Node):
                 renpy.exports.restart_interaction()
 
         next_node(self.next)
-        return None
 
     def after_until(self) -> None:
         renpy.config.skipping = None
@@ -1170,10 +1246,10 @@ class Skip(Node):
 
 
 class Not(Condition):
-    __slots__ = "condition"
+    __slots__ = ("condition",)
 
     def __init__(self, loc: NodeLocation, condition: Condition):
-        super(Not, self).__init__(loc)
+        super().__init__(loc)
         self.condition = condition
 
     def ready(self):
@@ -1181,13 +1257,14 @@ class Not(Condition):
 
 
 class Binary(Condition):
-    __slots__ = ("left", "right", "left_ready", "right_ready", "left_state", "right_state")
+    __slots__ = ("left", "left_ready", "left_state", "right", "right_ready", "right_state")
 
     def __init__(self, loc: NodeLocation, left: Condition, right: Condition):
-        super(Binary, self).__init__(loc)
+        super().__init__(loc)
         self.left = left
         self.right = right
         self.left_ready = self.right_ready = None
+        self.left_state = self.right_state = None
 
     def state(self) -> bool | None:
         """
@@ -1354,10 +1431,28 @@ class Repeat(Until):
     Executes `left` for `count` times.
     """
 
-    def __init__(self, loc: NodeLocation, left: Node, count: int, timeout: str = "None"):
-        ## Multiplied by 2 to account for Until.execute() calling ready twice per iteration.
-        right = RepeatCounter(loc, count * 2)
-        super(Repeat, self).__init__(loc, left, right, timeout)
+    __slots__ = ("count_expr",)
+
+    def __init__(self, loc: NodeLocation, left: Node, count_expr: str, timeout: str = "None"):
+        self.count_expr = count_expr
+        # A placeholder counter, replaced with a real one in start() when the
+        # count expression is evaluated at runtime.
+        right = RepeatCounter(loc, 0)
+        super().__init__(loc, left, right, timeout)
+
+    def start(self):
+        count = scoped_eval(self.count_expr)
+
+        if not isinstance(count, int):
+            raise TypeError(f"Expected a number for repeat count, got {count!r}.")
+
+        self.right = RepeatCounter((self.filename, self.linenumber), count)
+
+        return super().start()
+
+    def restart(self):
+        self.right = RepeatCounter((self.filename, self.linenumber), 0)
+        super().restart()
 
     def ready(self):
         return self.left.ready()
@@ -1386,10 +1481,10 @@ class If(Node):
         for condition, block in self.entries:
             if condition.ready():
                 next_node(block.block[0])
-                return None
+                return
 
         next_node(self.next)
-        return None
+        return
 
 
 class ControlFrame(Node):
@@ -1405,14 +1500,13 @@ class ControlFrame(Node):
     def execute(self, state, t):
         self.on_end_execution()
         next_node(self.next)
-        return None
 
     def on_end_execution(self) -> None:
         """
         Called when execution of the control frame is ending, either by normal termination,
         loop breaking, or exception raising.
         """
-        return None
+        return
 
     def on_exception(self, exc: Exception) -> bool:
         """
@@ -1434,10 +1528,10 @@ class For(ControlFrame):
         A Block containing the statements to execute in each iteration.
     """
 
-    __slots__ = ("variable", "expression", "block", "loop_iterator")
+    __slots__ = ("block", "expression", "loop_iterator", "variable")
 
     def __init__(self, loc: NodeLocation, variable: str, expression: str, block: Block):
-        Node.__init__(self, loc)
+        super().__init__(loc)
         self.variable = variable
         self.expression = expression
         self.block = block
@@ -1506,7 +1600,7 @@ class For(ControlFrame):
 
 class While(ControlFrame):
     def __init__(self, loc: NodeLocation, condition: Condition, block: Block):
-        Node.__init__(self, loc)
+        super().__init__(loc)
 
         self.condition = condition
         self.block = block
@@ -1523,10 +1617,10 @@ class While(ControlFrame):
         if self.condition.ready():
             self.block.restart()
             next_node(self.block.block[0])
-            return None
+            return
 
         next_node(self.next)
-        return None
+        return
 
     def on_exception(self, exc: Exception) -> bool:
         if isinstance(exc, LoopContinueException):
@@ -1556,7 +1650,7 @@ class Continue(Node):
 
 
 class Python(Node):
-    __slots__ = ("source", "hide")
+    __slots__ = ("hide", "source")
 
     def __init__(self, loc: NodeLocation, source: str, hide: bool = False):
         Node.__init__(self, loc)
@@ -1575,14 +1669,14 @@ class Python(Node):
         if t > 0:
             state["executed_already"] = True
             next_node(self.next)
-            return None
+            return
 
         scoped_exec(self.source, self.hide)
 
         if not state["executed_already"]:
             next_node(self.next)
 
-        return None
+        return
 
 
 class Assert(Node):
@@ -1599,7 +1693,7 @@ class Assert(Node):
         the test will be marked as xfailed instead of failed.
     """
 
-    __slots__ = ("condition", "timeout", "xfail_expr", "is_assertion_true")
+    __slots__ = ("condition", "is_assertion_true", "timeout", "xfail_expr")
 
     def __init__(self, loc: NodeLocation, condition: Condition, timeout: str = "None", xfail_expr: str = "False"):
         Node.__init__(self, loc)
@@ -1625,9 +1719,8 @@ class Assert(Node):
         Executes the assertion. If the condition is not ready, it waits up to
         `self.timeout` seconds.
         """
-        if (not self.condition.ready()) ^ self.xfail:
-            if t < _test.timeout:
-                return state
+        if (not self.condition.ready() ^ self.xfail) and t < _test.timeout:
+            return state
 
         self.is_assertion_true = self.condition.ready()
         renpy.test.testreporter.reporter.log_assert(self)
@@ -1644,7 +1737,7 @@ class Assert(Node):
 
 
 class Screenshot(Node):
-    __slots__ = ("filename_expr", "max_pixel_difference", "crop")
+    __slots__ = ("crop", "filename_expr", "max_pixel_difference")
 
     def __init__(
         self,
@@ -1661,7 +1754,7 @@ class Screenshot(Node):
     def start(self):
         filename = scoped_eval(self.filename_expr)
         if not isinstance(filename, str):
-            raise ValueError("Filename must be a string.")
+            raise TypeError("Filename must be a string.")
 
         filename = filename.replace("\\", "/")
         filename = filename.lstrip("/")
@@ -1706,7 +1799,7 @@ class Screenshot(Node):
                 self.save_image(img, fname)
 
                 next_node(self.next)
-                return None
+                return
 
             old_img = renpy.pygame.image.load(ref_img_path)  # type: ignore
 
@@ -1745,7 +1838,7 @@ class Screenshot(Node):
                     os.remove(diff_fname)
 
             next_node(self.next)
-            return None
+            return
 
         finally:
             # Clear up surfaces to avoid memory leaks.
@@ -1801,3 +1894,14 @@ def scoped_eval(expr: str) -> Any:
 
 def scoped_exec(source: str, hide: bool = False) -> None:
     renpy.test.testexecution.scoped_exec(source, hide)
+
+
+def format_parameterized_name(name: str, parameters: dict[str, Any]) -> str:
+    """
+    Formats a name and parameters into a string like "name(key=value, ...)".
+    """
+    if not parameters:
+        return name
+
+    param_str = ", ".join(f"{k}={v!r}" for k, v in parameters.items())
+    return f"{name}({param_str})"

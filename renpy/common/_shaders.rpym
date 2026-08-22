@@ -32,6 +32,51 @@ init python:
         gl_Position = u_transform * gl_Position;
     """)
 
+    renpy.register_shader("renpy.movie_yuv", private_uniforms=True, variables="""
+        uniform sampler2D tex0;
+        uniform sampler2D tex1;
+        uniform float u_movie_yuv_full_range;
+        uniform float u_movie_yuv_bt709;
+        attribute vec2 a_tex_coord;
+        varying vec2 v_tex_coord;
+    """, vertex_200="""
+        v_tex_coord = a_tex_coord;
+    """, fragment_200="""
+        vec4 y_sample = texture2D(tex0, v_tex_coord);
+        vec4 uv_sample = texture2D(tex1, v_tex_coord);
+        float y;
+        float u;
+        float v;
+        float r;
+        float g;
+        float b;
+
+        if (u_movie_yuv_full_range > 0.5) {
+            y = y_sample.r;
+            u = uv_sample.r - 0.5;
+            v = uv_sample.a - 0.5;
+        } else {
+            y = (y_sample.r - 16.0 / 255.0) * (255.0 / 219.0);
+            u = (uv_sample.r - 0.5) * (255.0 / 224.0);
+            v = (uv_sample.a - 0.5) * (255.0 / 224.0);
+        }
+
+        if (u_movie_yuv_bt709 > 0.5) {
+            r = y + 1.5748 * v;
+            g = y - 0.187324 * u - 0.468124 * v;
+            b = y + 1.8556 * u;
+        } else {
+            r = y + 1.402 * v;
+            g = y - 0.344136 * u - 0.714136 * v;
+            b = y + 1.772 * u;
+        }
+
+        gl_FragColor = vec4(clamp(r, 0.0, 1.0),
+                            clamp(g, 0.0, 1.0),
+                            clamp(b, 0.0, 1.0),
+                            1.0);
+    """)
+
     renpy.register_shader("renpy.texture", variables="""
         uniform float u_lod_bias;
         uniform sampler2D tex0;
@@ -126,6 +171,11 @@ init python:
         uniform mat4 u_renpy_matrixcolor;
     """, fragment_400="""
         gl_FragColor = u_renpy_matrixcolor * gl_FragColor;
+    """)
+
+    renpy.register_shader("renpy.red_to_alpha",
+        fragment_450="""
+        gl_FragColor = vec4(gl_FragColor.r);
     """)
 
     renpy.register_shader("renpy.alpha", variables="""

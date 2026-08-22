@@ -22,6 +22,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include "renpysound_core.h"
+#include "ffmedia.h"
 #include <Python.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_thread.h>
@@ -69,6 +70,7 @@ MediaState *media_open(SDL_IOStream *, const char *);
 void media_want_video(MediaState *, int);
 void media_start_end(MediaState *, double, double);
 void media_start(MediaState *);
+void media_seek(MediaState *, double);
 void media_pause(MediaState *, int);
 void media_close(MediaState *);
 
@@ -200,6 +202,15 @@ static inline float log_power(float power) {
  * and can play from.
  */
 struct Channel {
+
+    /* Lifecycle state of the active stream. ENDED retains the decoder for an
+     * explicit seek, but is not considered actively playing. */
+    enum {
+        CHANNEL_IDLE = 0,
+        CHANNEL_PLAYING = 1,
+        CHANNEL_PAUSED = 2,
+        CHANNEL_ENDED = 3,
+    } state;
 
     /* The currently playing stream, NULL if this sample isn't playing
        anything. */
@@ -337,6 +348,7 @@ static void start_stream(struct Channel* c, int reset_fade) {
     if (!c) return;
 
     c->pos = 0;
+    c->state = c->paused ? CHANNEL_PAUSED : CHANNEL_PLAYING;
     if (!c->queued) {
         c->playing_pad = audio_spec.freq * 2;
     }
@@ -444,7 +456,7 @@ static void callback(void *userdata, SDL_AudioStream *stream, int additional_amo
 
         struct Channel *c = &channels[channel];
 
-        if (! c->playing || c->paused) {
+        if (! c->playing || c->paused || c->state == CHANNEL_ENDED) {
             c->last_playing = 0;
             continue;
         }
@@ -478,6 +490,15 @@ static void callback(void *userdata, SDL_AudioStream *stream, int additional_amo
 
                     c->playing_pad -= read_length;
                     memset(stream_buffer, 0, read_length * 2 * sizeof(short));
+
+                } else if (read_length == 0 && c->stop_samples != 0 && !c->queued) {
+                    /* Natural EOF with no queued stream. Retain the media
+                     * object for explicit seek, but stop treating the
+                     * channel as actively playing. */
+                    post_event(c);
+                    c->state = CHANNEL_ENDED;
+                    c->last_playing = 0;
+                    break;
 
                 } else {
 
@@ -528,7 +549,11 @@ static void callback(void *userdata, SDL_AudioStream *stream, int additional_amo
 
                     UNLOCK_NAME()
 
-                    start_stream(c, !old_tight);
+                    if (c->playing) {
+                        start_stream(c, !old_tight);
+                    } else {
+                        c->state = CHANNEL_IDLE;
+                    }
 
                     continue;
                 }
@@ -558,7 +583,7 @@ static void callback(void *userdata, SDL_AudioStream *stream, int additional_amo
 
         }
 
-        c->last_playing = 1;
+        c->last_playing = (c->state == CHANNEL_ENDED) ? 0 : 1;
     }
 
     if (channel_count == 1) {
@@ -658,7 +683,7 @@ struct MediaState *load_stream(SDL_IOStream *rw, const char *ext, double start, 
     }
     media_start_end(rv, start, end);
 
-    if (video) {
+    if (video & 3) {
         media_want_video(rv, video);
     }
 
@@ -710,6 +735,8 @@ void RPS_play(int channel, SDL_IOStream *rw, const char *ext, const char *name, 
         }
     }
 
+    c->state = CHANNEL_IDLE;
+
     /* Allocate playing sample. */
 
     c->playing = load_stream(rw, ext, start, end, c->video);
@@ -753,7 +780,7 @@ void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name,
     c = &channels[channel];
 
     /* If we're not playing, then we should play instead of queue. */
-    if (!c->playing) {
+    if (!c->playing || c->state == CHANNEL_ENDED) {
         RPS_play(channel, rw, ext, name, synchro_start, fadein, tight, start, end, relative_volume, audio_filter);
         return;
     }
@@ -828,6 +855,8 @@ void RPS_stop(int channel) {
     if (c->playing) {
         post_event(c);
     }
+
+    c->state = CHANNEL_IDLE;
 
     /* Free playing and queued samples. */
     if (c->playing) {
@@ -926,7 +955,7 @@ int RPS_queue_depth(int channel) {
 
     LOCK_NAME();
 
-    if (c->playing) rv++;
+    if (c->playing && c->state != CHANNEL_ENDED) rv++;
     if (c->queued) rv++;
 
     UNLOCK_NAME();
@@ -934,6 +963,32 @@ int RPS_queue_depth(int channel) {
     error(SUCCESS);
 
     return rv;
+}
+
+/*
+ * Returns the lifecycle state of the active stream. ENDED means natural EOF
+ * was reached while the decoder is retained for an explicit seek.
+ */
+int RPS_get_state(int channel) {
+    int state;
+    struct Channel *c;
+
+    if (check_channel(channel)) {
+        return CHANNEL_IDLE;
+    }
+
+    if (!initialized) {
+        return CHANNEL_IDLE;
+    }
+
+    c = &channels[channel];
+
+    LOCK_AUDIO();
+    state = c->state;
+    UNLOCK_AUDIO();
+
+    error(SUCCESS);
+    return state;
 }
 
 PyObject *RPS_playing_name(int channel) {
@@ -1044,11 +1099,19 @@ void RPS_pause(int channel, int pause) {
 
     c = &channels[channel];
 
+    LOCK_AUDIO();
+
     c->paused = pause;
+
+    if (c->playing && c->state != CHANNEL_ENDED) {
+        c->state = pause ? CHANNEL_PAUSED : CHANNEL_PLAYING;
+    }
 
     if (c->playing) {
         media_pause(c->playing, pause);
     }
+
+    UNLOCK_AUDIO();
 
     error(SUCCESS);
 
@@ -1064,14 +1127,62 @@ void RPS_global_pause(int pause) {
     if (pause) {
         SDL_PauseAudioStreamDevice(audio_stream);
     } else {
-        SDL_ResumeAudioStreamDevice(audio_stream);
+        /* Keep the callback stopped while the channel states are updated. */
     }
+
+    LOCK_AUDIO();
 
     for (i = 0; i < num_channels; i++) {
         if (channels[i].playing) {
             media_pause(channels[i].playing, pause);
+            if (channels[i].state != CHANNEL_ENDED) {
+                channels[i].state = pause ? CHANNEL_PAUSED : CHANNEL_PLAYING;
+            }
         }
     }
+
+    UNLOCK_AUDIO();
+
+    if (!pause) {
+        SDL_ResumeAudioStreamDevice(audio_stream);
+    }
+}
+
+/*
+ * Requests that the decoder for a channel seek to an absolute position in the
+ * source media. The actual FFmpeg calls run on the decoder thread.
+ */
+void RPS_seek(int channel, double position) {
+    struct Channel *c;
+
+    if (check_channel(channel)) {
+        return;
+    }
+
+    if (position < 0.0) {
+        position = 0.0;
+    }
+
+    c = &channels[channel];
+
+    LOCK_AUDIO();
+
+    if (c->playing) {
+        c->pos = (int) (position * audio_spec.freq) - ms_to_samples(c->playing_start_ms);
+        if (c->pos < 0) {
+            c->pos = 0;
+        }
+
+        media_seek(c->playing, position);
+
+        if (c->state == CHANNEL_ENDED && !c->paused) {
+            c->state = CHANNEL_PLAYING;
+        }
+    }
+
+    UNLOCK_AUDIO();
+
+    error(SUCCESS);
 }
 
 
@@ -1296,6 +1407,61 @@ PyObject *RPS_read_video(int channel) {
 
 }
 
+
+static void RPS_video_yuv_capsule_destructor(PyObject *capsule) {
+	MediaVideoYUV *frame = PyCapsule_GetPointer(capsule, "renpy.videoyuv");
+
+	if (frame) {
+		media_free_video_yuv(frame);
+		PyMem_Free(frame);
+	}
+}
+
+
+PyObject *RPS_read_video_yuv(int channel) {
+	struct Channel *c;
+	MediaVideoYUV *frame;
+	int got_frame;
+	PyObject *capsule;
+
+	if (check_channel(channel)) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	c = &channels[channel];
+	if (!c->playing) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	frame = PyMem_Calloc(1, sizeof(*frame));
+	if (!frame) {
+		return PyErr_NoMemory();
+	}
+
+	Py_BEGIN_ALLOW_THREADS
+	got_frame = media_read_video_yuv(c->playing, frame);
+	Py_END_ALLOW_THREADS
+
+	if (!got_frame) {
+		PyMem_Free(frame);
+		error(SUCCESS);
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	capsule = PyCapsule_New(frame, "renpy.videoyuv", RPS_video_yuv_capsule_destructor);
+	if (!capsule) {
+		media_free_video_yuv(frame);
+		PyMem_Free(frame);
+		return NULL;
+	}
+
+	error(SUCCESS);
+	return capsule;
+}
+
 int RPS_video_ready(int channel) {
     struct Channel *c;
     int rv;
@@ -1332,7 +1498,6 @@ void RPS_set_video(int channel, int video) {
     c->video = video;
 }
 
-
 /*
  * Initializes the sound to the given frequencies, channels, and
  * sample buffer size.
@@ -1344,8 +1509,14 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int
     }
 
     name_mutex = SDL_CreateMutex();
+    if (name_mutex == NULL) {
+        error(SDL_ERROR);
+        return;
+    }
 
     if (! SDL_Init(SDL_INIT_AUDIO)) {
+        SDL_DestroyMutex(name_mutex);
+        name_mutex = NULL;
         error(SDL_ERROR);
         return;
     }
@@ -1357,6 +1528,11 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int
 
     audio_stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audio_spec, callback, NULL);
     if (audio_stream == NULL) {
+        /* SDL_Init succeeded, so undo the subsystem before a caller retries
+         * with another driver (for example, the dummy driver). */
+        SDL_QuitSubSystem(SDL_INIT_AUDIO);
+        SDL_DestroyMutex(name_mutex);
+        name_mutex = NULL;
         error(SDL_ERROR);
         return;
     }
@@ -1389,6 +1565,11 @@ void RPS_quit() {
     }
 
     SDL_DestroyAudioStream(audio_stream);
+    audio_stream = NULL;
+    SDL_QuitSubSystem(SDL_INIT_AUDIO);
+
+    SDL_DestroyMutex(name_mutex);
+    name_mutex = NULL;
 
     num_channels = 0;
     initialized = 0;

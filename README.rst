@@ -30,6 +30,16 @@ The following branches are the most interesting.
 
     Feature releases are made from this branch.
 
+``work/``
+    Work branches contain work that that is intended to be merged into master or fix - pull requests, or pull requests
+    to be. These branches should start with work/<username>/ , or work/shared/ for work shared equally between multiple
+    contributors.
+
+    A github rule enforces that new branches much start  with work/.
+
+``history/``
+    Branches beginning with history/ contain commits that for various reasons are not included in the github interface.
+
 
 Getting Started
 ===============

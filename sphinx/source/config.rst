@@ -965,7 +965,7 @@ Mouse
 
     If a displayable is given, the mouse cursor is hidden, and the
     displayable is shown above anything else. This displayable is
-    responsible for positioning and drawing a sythetic mouse
+    responsible for positioning and drawing a synthetic mouse
     cursor, and so should probably be a :func:`MouseDisplayable`
     or something very similar.
 
@@ -1008,7 +1008,7 @@ Paths
 .. var:: config.basedir = ...
 
     The full path leading to the game's base directory. This is a read-only
-    variable. This is usually the directory above the :file:`game/` directory. It contains logs like :doc:`log.txt`
+    variable. This is usually the directory above the :file:`game/` directory. It contains logs like :file:`log.txt`
     and on PC plaforms contains the executable used to launch the game. There is no guarantee any file will be there,
     as on Android files are stored inside the package.
 
@@ -1048,7 +1048,7 @@ Quit
     A list of functions that are called without any arguments when
     Ren'Py is either terminating or reloading the script. This is
     intended to free resources, such as opened files or started threads,
-    that arte created inside init code, if such things aren't freed
+    that are created inside init code, if such things aren't freed
     automatically.
 
 .. var:: config.quit_on_mobile_background = False
@@ -1084,7 +1084,7 @@ Rollback
 
     A list of class objects that should not generate a warning that
     the object supported rollback in the past, but do not now. If you
-    have intentionally removed rollack support from a class, place
+    have intentionally removed rollback support from a class, place
     the class object in this list and the warning will be suppressed.
 
     Chances are, you don't want to use this - you want to add ``object``
@@ -2153,7 +2153,7 @@ Translation
 
 .. var:: config.translate_ignore_who = [ ]
 
-    A list of strings giving characters that will not have tanslations generated. This is useful
+    A list of strings giving characters that will not have translations generated. This is useful
     for characters that are used for debugging or note purposes. This compares against string value
     of the expression in the statement. (So "e" will match ``e`` but not ``l``, even if e and l are
     the same object.)

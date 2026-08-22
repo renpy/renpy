@@ -18,6 +18,7 @@ if typing.TYPE_CHECKING:
     from . import gl2polygon as gl2polygon
     from . import gl2shader as gl2shader
     from . import gl2shadercache as gl2shadercache
+    from . import gl2statecache as gl2statecache
     from . import gl2texture as gl2texture
     from . import gl2uniform as gl2uniform
     from . import live2d as live2d

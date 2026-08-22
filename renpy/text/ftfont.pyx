@@ -23,8 +23,7 @@
 from __future__ import print_function
 
 from renpy.pygame.sdl cimport *
-
-from renpy.pygame.surface cimport PySurface_AsSurface
+from renpy.pygame.surface cimport Surface
 
 from freetype cimport *
 from ttgsubtable cimport *
@@ -727,7 +726,7 @@ cdef class FTFont:
 
         return x, y, w, h
 
-    def draw(self, pysurf, float xo, int yo, color, list glyphs, int underline, bint strikethrough, black_color):
+    def draw(self, Surface pysurf, float xo, int yo, color, list glyphs, int underline, bint strikethrough, black_color):
         """
         Draws a list of glyphs to surf, with the baseline starting at x, y.
         """
@@ -763,7 +762,7 @@ cdef class FTFont:
 
         self.setup()
 
-        surf = PySurface_AsSurface(pysurf)
+        surf = pysurf.sdl_surface
         pixels = <unsigned char *> surf.pixels
         pitch = surf.pitch
 

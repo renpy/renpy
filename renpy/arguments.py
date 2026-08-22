@@ -159,7 +159,7 @@ class ArgumentParser(argparse.ArgumentParser):
             "--warp",
             dest="warp",
             default=None,
-            help="This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number. It is only valid in conjuction with the run command.",
+            help="This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number. It is only valid in conjunction with the run command.",
         )
 
         dump = self.add_argument_group(

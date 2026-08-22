@@ -19,12 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Iterable, Literal, NamedTuple
+from typing import Callable, Literal
 
 import renpy
 import os
 import os.path
-import sys
 import threading
 import zlib
 import re
@@ -33,18 +32,13 @@ import unicodedata
 import time
 import pathlib
 
-from renpy.pygame.iostream import IOStream
+from renpy.pygame.iostream import IOPath, IOBuffer, IOSubFile
 
 from renpy.compat.pickle import loads
 from renpy.webloader import DownloadNeeded
 
-# Ensure the utf-8 codec is loaded, to prevent recursion when we use it
-# to look up filenames.
-"".encode("utf-8")
 
 # Physical Paths
-
-
 def get_path(fn):
     """
     Returns the path to `fn` relative to the gamedir. If any of the directories
@@ -163,22 +157,23 @@ class RPAv3ArchiveHandler(object):
         infile.seek(offset)
         index = loads(zlib.decompress(infile.read()))
 
-        def start_to_bytes(s):
-            if not s:
-                return b""
-
-            if not isinstance(s, bytes):
-                s = s.encode("latin-1")
-
-            return s
-
         # Deobfuscate the index.
-
         for k in index.keys():
             if len(index[k][0]) == 2:
                 index[k] = [(offset ^ key, dlen ^ key) for offset, dlen in index[k]]
             else:
-                index[k] = [(offset ^ key, dlen ^ key, start_to_bytes(start)) for offset, dlen, start in index[k]]
+                index_list = []
+
+                for offset, dlen, start in index[k]:
+                    if start:
+                        if not isinstance(start, bytes):
+                            start = start.encode("latin-1")
+
+                        index_list.append((start,))
+
+                    index_list.append((offset ^ key, dlen ^ key))
+
+                index[k] = index_list
 
         return index
 
@@ -495,30 +490,7 @@ def listdirfiles(common=True, game=True):
     return rv
 
 
-open_file = IOStream  # type: ignore
-
-if "RENPY_TEST_RWOPS" in os.environ:
-
-    def open_file(name, mode):
-        with IOStream(name, mode) as f:
-            data = f.read(1024)
-            f.seek(0, 2)
-            length = f.tell()
-
-        try:
-            a = IOStream.from_buffer(data, name=name)
-
-            if length <= 1024:
-                return a
-
-            b = IOStream(name, mode, base=1024, length=length - 1024)
-            rv = IOStream.from_split(a, b, name=name)
-            return rv
-
-        except Exception:
-            import traceback
-
-            traceback.print_exc()
+open_file: Callable[[str | os.PathLike, Literal["rb", "wb"]], io.RawIOBase] = IOPath
 
 
 # A list of callbacks to open an open python file object of the given type.
@@ -579,38 +551,30 @@ def load_from_archive(name):
     """
     Returns an open python file object of the given type from an archive file.
     """
+
     for afn, index in archives:
-        if not name in index:
+        if name not in index:
             continue
 
-        data = []
-
         # Direct path.
-        if len(index[name]) == 1:
-            t = index[name][0]
-            if len(t) == 2:
-                offset, dlen = t
-                start = b""
-            else:
-                offset, dlen, start = t
+        if len(index[name]) == 1 and len(index[name][0]) == 2:
+            offset, dlen = index[name][0]
 
-            if start == None or len(start) == 0:
-                rv = IOStream(afn, "rb", base=offset, length=dlen)
-                return io.BufferedReader(rv)
-            else:
-                a = IOStream.from_buffer(start, name=name)
-                b = IOStream(afn, "rb", base=offset, length=dlen)
-                rv = IOStream.from_split(a, b, name=name)
-                rv = io.BufferedReader(rv)
+            stream = IOSubFile(afn, base=offset, length=dlen, name=name)
+            return io.BufferedReader(stream)
 
         # Compatibility path.
-        else:
-            with open(afn, "rb") as f:
-                for offset, dlen in index[name]:
+        parts: list[bytes] = []
+        with open(afn, "rb") as f:
+            for t in index[name]:
+                if len(t) == 1:
+                    parts.append(t[0])
+                else:
+                    offset, dlen = t
                     f.seek(offset)
-                    data.append(f.read(dlen))
+                    parts.append(f.read(dlen))
 
-                return io.BufferedReader(IOStream.from_buffer(b"".join(data), name=name))
+            return io.BufferedReader(IOBuffer(b"".join(parts), name=name))
 
     return None
 
@@ -670,6 +634,44 @@ def check_name(name):
             raise Exception("Filenames may not contain relative directories like '.' and '..': %r" % name)
 
 
+def get_translate_path(name):
+    """
+    Returns the translated path mapped from `name`, or None if `name` is not
+    covered by a translation path mapping.
+    """
+
+    paths = getattr(renpy.game.preferences, "resource_path_translations", {})
+
+    if not isinstance(paths, dict):
+        return None
+
+    match = None
+
+    for source, destination in paths.items():
+        if not isinstance(source, str) or not isinstance(destination, str):
+            continue
+
+        source = source.strip("/")
+        destination = destination.strip("/")
+
+        if not source or not destination:
+            continue
+
+        if ((name == source) or name.startswith(source + "/")) and ((match is None) or (len(source) > len(match[0]))):
+            match = (source, destination)
+
+    if match is None:
+        return None
+
+    source, destination = match
+    suffix = name[len(source) :].lstrip("/")
+
+    if suffix:
+        return destination + "/" + suffix
+    else:
+        return destination
+
+
 def get_prefixes(tl=True, directory=None):
     """
     Returns a list of prefixes to search for files.
@@ -711,8 +713,18 @@ def load(name, directory=None, tl=True):
         name = name.replace("//", "/")
     name = name.lstrip("/")
 
-    for p in get_prefixes(directory=directory, tl=tl):
-        rv = load_core(p + name)
+    paths = [p + name for p in get_prefixes(directory=directory, tl=tl)]
+
+    if tl:
+        for path in paths:
+            translated_name = get_translate_path(path)
+            if translated_name is not None:
+                rv = load_core(translated_name)
+                if rv is not None:
+                    return rv
+
+    for path in paths:
+        rv = load_core(path)
         if rv is not None:
             return rv
 
@@ -766,8 +778,16 @@ def loadable(name, tl=True, directory=None):
     if (renpy.config.loadable_callback is not None) and renpy.config.loadable_callback(name):
         return True
 
-    for p in get_prefixes(tl=tl, directory=directory):
-        if loadable_core(p + name):
+    paths = [p + name for p in get_prefixes(tl=tl, directory=directory)]
+
+    if tl:
+        for path in paths:
+            translated_name = get_translate_path(path)
+            if (translated_name is not None) and loadable_core(translated_name):
+                return True
+
+    for path in paths:
+        if loadable_core(path):
             return True
 
     return False

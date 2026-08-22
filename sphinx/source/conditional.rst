@@ -53,6 +53,8 @@ the ``else`` clause is executed, if the ``else`` clause is present.
 
 .. _while-statement:
 
+.. index:: while
+
 While Statement
 ---------------
 

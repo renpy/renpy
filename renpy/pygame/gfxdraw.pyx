@@ -32,7 +32,7 @@ cdef class GFXCanvas:
 
     def __init__(self, Surface surface):
         self.surface = surface
-        self.renderer = SDL_CreateSoftwareRenderer(surface.surface)
+        self.renderer = SDL_CreateSoftwareRenderer(surface.sdl_surface)
         if self.renderer == NULL:
             raise error("Could not create software renderer for surface")
 
@@ -196,7 +196,7 @@ cdef class GFXCanvas:
         vy = <float*>malloc(num_points * sizeof(float))
         for n, pt in zip(range(num_points), points):
             vx[n], vy[n] = points[n]
-        texturedPolygon(self.renderer, vx, vy, num_points, texture.surface, tx, ty)
+        texturedPolygon(self.renderer, vx, vy, num_points, texture.sdl_surface, tx, ty)
         free(vx)
         free(vy)
 

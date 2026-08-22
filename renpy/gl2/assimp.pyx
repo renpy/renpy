@@ -25,7 +25,7 @@ import threading
 
 from typing import Iterable, Literal
 
-from renpy.pygame.iostream cimport SDLIOStreamFromPython
+from renpy.pygame.iostream cimport SDL_IOStreamFromPython
 from renpy.pygame.sdl cimport SDL_IOStream
 
 from assimpapi cimport (
@@ -968,7 +968,7 @@ cdef public SDL_IOStream *assimp_load(const char *filename) nogil:
 
         try:
             f = renpy.loader.load(fn)
-            rv = SDLIOStreamFromPython(f)
+            rv = SDL_IOStreamFromPython(f)
         except Exception as e:
             pass
 

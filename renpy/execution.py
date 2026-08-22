@@ -940,19 +940,26 @@ class Context(renpy.object.Object):
             self.predict_return_stack = return_stack
 
             try:
-                for n in node.predict():
-                    if n is None:
-                        continue
+                old_statement = renpy.display.predict.statement
+                renpy.display.predict.statement = node
 
-                    if n not in seen:
-                        npi = NewPredictInfo()
-                        npi.node = n
-                        npi.images = self.images
-                        npi.predict_return_stack = self.predict_return_stack
-                        npi.tlids = renpy.display.predict.tlids
+                try:
+                    for n in node.predict():
+                        if n is None:
+                            continue
 
-                        nodes.append(npi)
-                        seen.add(n)
+                        if n not in seen:
+                            npi = NewPredictInfo()
+                            npi.node = n
+                            npi.images = self.images
+                            npi.predict_return_stack = self.predict_return_stack
+                            npi.tlids = renpy.display.predict.tlids
+
+                            nodes.append(npi)
+                            seen.add(n)
+
+                finally:
+                    renpy.display.predict.statement = old_statement
 
             except Exception:
                 if renpy.config.debug_prediction:

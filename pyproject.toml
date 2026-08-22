@@ -19,8 +19,8 @@ dependencies = [
     "sphinx-tabs",
     "jinja2",
     "pkgconfig>=1.6.0",
-    "chardet>=7.4.3",
-    "websockets>=16.1.1",
+    "chardet>=7.6.0",
+    "websockets>=17.0.1",
     "pysocks>=1.7.1",
 ]
 
@@ -39,10 +39,20 @@ dependencies = [
 include = [
     "*.py",
     "renpy/",
+    "runtime/",
+    "scripts/",
     "src/"
 ]
 
+extraPaths = [
+    "runtime"
+]
+
 exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*",
+    ".venv",
     "module/build/",
 ]
 
@@ -66,10 +76,19 @@ reportTypeCommentUsage = "information"
 include = [
     "*.py",
     "renpy/",
+    "runtime/",
     "src/"
 ]
 
+extraPaths = [
+    "runtime"
+]
+
 exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*",
+    ".venv",
     "module/build/",
 ]
 

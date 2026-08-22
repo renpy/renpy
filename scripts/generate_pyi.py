@@ -1,14 +1,12 @@
-#!/usr/bin/env python3
-
-import re
 import ast
-import sys
-import pathlib
-import textwrap
-import inspect
-import types
 import builtins
+import inspect
 import json
+import pathlib
+import re
+import sys
+import textwrap
+import types
 from typing import TextIO
 
 ROOT = pathlib.Path(__file__).parent.parent.resolve()
@@ -79,11 +77,13 @@ def python_signature(o: object) -> str | None:
     # First, look at embedded signature.
     doc = getattr(o, "__doc__", None)
     sig_line = None
-    if isinstance(doc, str):
-        if m := re.match(rf"{o.__name__}\(.*\)(?: -> .*)?", doc):
-            sig_line = m[0]
+    if not isinstance(doc, str):
+        return None
 
-    # Now convert this function into Python function with stringyfied type
+    if m := re.match(rf"{o.__name__}\(.*\)(?: -> .*)?", doc):
+        sig_line = m[0]
+
+    # Now convert this function into Python function with stringified type
     # annotations, so forward references works.
     if sig_line is not None:
         sig_line = stringify_annotations(f"def {sig_line}: pass")
@@ -109,11 +109,15 @@ def generate_namespace(out: TextIO, prefix: str, namespace: types.ModuleType | t
     is_module = isinstance(namespace, types.ModuleType)
 
     generated = False
-    missing_types = set(i[0] for i in namespace_items)
+    missing_types = {i[0] for i in namespace_items}
 
     # Imports.
     for k, v in namespace_items:
         if not isinstance(v, types.ModuleType):
+            continue
+
+        if k == "__builtins__":
+            missing_types.discard(k)
             continue
 
         name = v.__name__
@@ -130,6 +134,10 @@ def generate_namespace(out: TextIO, prefix: str, namespace: types.ModuleType | t
 
     # Classes, methods, and functions.
     for k, v in namespace_items:
+        if is_module and k == "__loader__":
+            missing_types.discard(k)
+            continue
+
         if k in ("__new__", "__init__", "__reduce_cython__", "__setstate_cython__") or k.startswith("__pyx"):
             missing_types.discard(k)
             continue
@@ -158,9 +166,7 @@ def generate_namespace(out: TextIO, prefix: str, namespace: types.ModuleType | t
             for i in v.__bases__:
                 if i is object:
                     pass
-                elif i.__module__ == "builtins":
-                    bases.append(i.__name__)
-                elif i.__module__ == namespace.__name__:
+                elif i.__module__ == "builtins" or i.__module__ == namespace.__name__:
                     bases.append(i.__name__)
                 else:
                     bases.append(f"{i.__module__}.{i.__name__}")
@@ -291,10 +297,8 @@ def generate_module(module: types.ModuleType, package: bool):
         print(GENERATED_BY_SCRIPT, file=f)
         print(file=f)
 
-        print("from typing import Any, Callable", file=f)
-        print(file=f)
-        print("import renpy", file=f)
-        print(file=f)
+        print("from collections.abc import Callable", file=f)
+        print("from typing import Any", file=f)
         generate_namespace(f, "", module)
 
     return fn
@@ -308,10 +312,7 @@ def is_extension(m: types.ModuleType):
     if m.__file__ == "built-in":
         return True
 
-    if m.__file__.endswith((".so", ".pyd")):
-        return True
-
-    return False
+    return bool(m.__file__.endswith((".so", ".pyd")))
 
 
 def should_generate(name: str, m: object):
@@ -368,7 +369,12 @@ def manage_vscode(generated_files: list[str]):
 
 
 def main():
-    import _renpy as _renpy
+    try:
+        import _renpy  # noqa: F401
+    except ImportError as e:
+        e.add_note("You probably used system python that can't import _renpy. Use Python from lib/ folder instead.")
+        raise
+
     import renpy
 
     renpy.import_all()
@@ -395,12 +401,6 @@ def main():
 
     manage_gitignore(generated_files)
     manage_vscode(generated_files)
-
-    for fn in (ROOT / "scripts" / "pyi").glob("**/*.pyi"):
-        dfn = ROOT / "typings" / fn.relative_to(ROOT / "scripts" / "pyi")
-        text = fn.read_text()
-        dfn.parent.mkdir(parents=True, exist_ok=True)
-        dfn.write_text(text)
 
 
 if __name__ == "__main__":

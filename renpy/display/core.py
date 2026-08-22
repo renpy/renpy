@@ -761,11 +761,6 @@ class Interface:
         self.safe_mode = get_safe_mode()
         renpy.safe_mode_checked = True
 
-        # A scale factor used to compensate for the system DPI.
-        self.dpi_scale = self.setup_dpi_scaling()
-
-        renpy.display.log.write("DPI scale factor: %f", self.dpi_scale)
-
         # A time until which we should draw at maximum framerate.
         self.maximum_framerate_time = 0.0
         self.maximum_framerate(initial_maximum_framerate)
@@ -844,50 +839,6 @@ class Interface:
 
         atexit.register(restore_thread_optimization)
 
-    def setup_dpi_scaling(self):
-        if "RENPY_HIGHDPI" in os.environ:
-            return float(os.environ["RENPY_HIGHDPI"])
-
-        if not renpy.windows:
-            return 1.0
-
-        if renpy.config.windows_high_pixel_density:
-            return 1.0
-
-        try:
-            import ctypes
-            from ctypes import c_void_p, c_int
-
-            ctypes.windll.user32.SetProcessDPIAware()
-
-            GetDC = ctypes.windll.user32.GetDC
-            GetDC.restype = c_void_p
-            GetDC.argtypes = [c_void_p]
-
-            ReleaseDC = ctypes.windll.user32.ReleaseDC
-            ReleaseDC.argtypes = [c_void_p, c_void_p]
-
-            GetDeviceCaps = ctypes.windll.gdi32.GetDeviceCaps
-            GetDeviceCaps.restype = c_int
-            GetDeviceCaps.argtypes = [c_void_p, c_int]
-
-            LOGPIXELSX = 88
-
-            dc = GetDC(None)
-            rv = GetDeviceCaps(dc, LOGPIXELSX) / 96.0
-            ReleaseDC(None, dc)
-
-            if rv < renpy.config.de_minimus_dpi_scale:
-                renpy.display.log.write("De minimus DPI scale, was %r", rv)
-                rv = 1.0
-
-            return rv
-
-        except Exception:
-            renpy.display.log.write("Could not determine DPI scale factor:")
-            renpy.display.log.exception()
-            return 1.0
-
     def get_display_layout(self):
         """
         Get the display layout. A list of rectangles that have monitors in them.
@@ -940,6 +891,9 @@ class Interface:
 
         # Initialize pygame.
         try:
+            if renpy.windows:
+                pygame.display.set_windows_dpi_awareness(renpy.config.windows_high_pixel_density)
+
             pygame.display.init()
             pygame.mouse.init()
         except Exception:
@@ -1098,6 +1052,11 @@ class Interface:
                 pygame.display.set_icon(im)
             except renpy.webloader.DownloadNeeded:
                 pass
+
+            except Exception:
+                renpy.config.window_icon = None
+                renpy.display.log.write("Couldn't load window icon:")
+                renpy.display.log.exception()
 
     def set_window_caption(self, force=False):
         window_title = renpy.config.window_title
@@ -3206,6 +3165,11 @@ class Interface:
 
                 # Merge mousemotion events.
                 if ev.type == pygame.MOUSEMOTION:
+
+                    # During tests, ignore user mouse motion events
+                    if renpy.test.testexecution.is_in_test() and not getattr(ev, "test", False):
+                        continue
+
                     xr, yr = ev.rel
                     relx += xr
                     rely += yr

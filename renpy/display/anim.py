@@ -537,7 +537,7 @@ def Filmstrip(image, framesize, gridsize, delay, frames=None, loop=True, **prope
     @param delay: The delay, in seconds, between frames.
 
     @param frames: The number of frames in this animation. If None,
-    then this defaults to colums * rows frames, that is, taking
+    then this defaults to columns * rows frames, that is, taking
     every frame in the grid.
 
     @param loop: If True, loop at the end of the animation. If False,

@@ -141,6 +141,7 @@ cdef class Matrix:
             rv[fields[i]] = self.m[i]
 
         rv["origin"] = getattr(self, "origin", None)
+        rv["origin_value"] = getattr(self, "origin_value", None)
 
         return rv
 
@@ -156,6 +157,7 @@ cdef class Matrix:
                 self.m[i] = state[fields[i]]
 
         self.origin = state.get("origin", None)
+        self.origin_value = state.get("origin_value", None)
         self.inverse_cache = None
         self.transpose_cache = None
 

@@ -34,7 +34,7 @@ back, add::
 
     define config.tlid_only_considers_say = False
 
-.. _incompatible-8.5.3:
+.. _incompatible-8.5.4:
 
 8.5.4
 -----
@@ -78,7 +78,7 @@ required, it can be added back with::
 
 **Image Directories** The config.images_directory variable has been superseded by
 :var:`config.image_directories`, which is a list of directories that Ren'Py searches for images. Scripts that change
-the config.images_directory variable shoul be migrated. For example, change::
+the config.images_directory variable should be migrated. For example, change::
 
     define config.images_directory = "myimages"
 
@@ -111,8 +111,8 @@ your game::
 -----
 
 
-**Automatic Oversamping** When Ren'Py is scaled up enough, it can search the image files for
-higher resolution images, and load those instead. See :ref:`the documentation <automatic-oversampling>` for more informaiton.
+**Automatic Oversampling** When Ren'Py is scaled up enough, it can search the image files for
+higher resolution images, and load those instead. See :ref:`the documentation <automatic-oversampling>` for more information.
 This can be disabled with:
 
     define config.automatic_oversampling = None
@@ -162,7 +162,7 @@ game. For a 1280 pixel wide game, use 870. For a 3840 pixel wide game, use 2010.
 **Shader Order**
 In previous versions of Ren'Py, the order in which shader parts that shared the same
 priority were applied was undefined. Now, the parts are ordered by the name of the shader, producing
-a reliable order, but this reliable order may be diferent than what was seen on particular systems.
+a reliable order, but this reliable order may be different than what was seen on particular systems.
 
 **Python Module Paths**
 When a Python module is loaded from the game/ directory, the ``__file__`` variable is set to the relative path of the
@@ -240,7 +240,7 @@ as documented at :doc:`character_callbacks`. This should not require changes as 
 callbacks should have been written to ignore unknown keyword arguments, but if not
 the character callbacks may need to be updated.
 
-**Window Statement** The ``window show`` annd ``window hide`` statements
+**Window Statement** The ``window show`` and ``window hide`` statements
 no longer disable the ``window auto`` flag. If you'd like to do this, then
 either use the new ``window auto False`` statement, or change your game
 to include::
@@ -351,7 +351,7 @@ add::
         emoji_font None
 
 **Interpolation Changes** Interpolations in strings are now treated as Python
-expressions, this results in mostly equivelent behaviour when interpreting
+expressions, this results in mostly equivalent behaviour when interpreting
 fields except when item getters are in use. For example::
 
     # Previously
@@ -672,7 +672,7 @@ their definitions to include ``sticky=False``::
 lenticular bracket ruby text, an easier way of writing ruby text. If
 a game included a literal 【, it needs to be doubled, to "【【", to
 quote it properly. (This is only strictly necessary when the text
-is succeded by a full-width vertical bar, but works always.)
+is succeeded by a full-width vertical bar, but works always.)
 
 To disable lenticular bracket ruby text, add to your game::
 
@@ -741,7 +741,7 @@ This change can be reverted with::
 -------------
 
 A modal screen now blocks the ``pause`` statement and :func:`renpy.pause``
-function from timing out. This was the indended behavior, but didn't work
+function from timing out. This was the intended behavior, but didn't work
 in some cases. This change can be reverted with::
 
     define config.modal_blocks_pause = False
@@ -771,7 +771,7 @@ to your game::
 
 For the noalt text tag to work with history, you'll need to edit
 screens.rpy to make sure that :var:`gui.history_allow_tags` contains
-"noalt". The defaultfor this variable is::
+"noalt". The default for this variable is::
 
     define gui.history_allow_tags = { "alt", "noalt" }
 

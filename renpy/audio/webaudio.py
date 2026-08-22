@@ -138,7 +138,7 @@ def play(
     fadein=0,
     tight=False,
     start=0,
-    end=0,
+    end=-1,
     relative_volume=1.0,
     audio_filter=None,
 ):
@@ -174,8 +174,9 @@ def play(
     """
 
     try:
+        # Assume it is some file-like with name attribute meaning the filename.
         if not isinstance(file, str):
-            file = file.raw.name
+            file = file.name
     except Exception:
         if renpy.config.debug_sound:
             raise
@@ -199,7 +200,7 @@ def queue(
     fadein=0,
     tight=False,
     start=0,
-    end=0,
+    end=-1,
     relative_volume=1.0,
     audio_filter=None,
 ):
@@ -212,7 +213,7 @@ def queue(
 
     try:
         if not isinstance(file, str):
-            file = file.raw.name
+            file = file.name
     except Exception:
         if renpy.config.debug_sound:
             raise
@@ -233,6 +234,13 @@ def stop(channel):
     """
 
     call("stop", channel)
+
+
+@proxy_with_channel
+def seek(channel, position):
+    """Seeks the playing media on `channel` to `position` seconds."""
+
+    call("seek", channel, position)
 
 
 @proxy_with_channel
@@ -257,6 +265,19 @@ def queue_depth(channel):
     """
 
     return emscripten.run_script_int("renpyAudio.queue_depth({})".format(channel))
+
+
+@proxy_with_channel
+def get_state(channel):
+    """Returns the best-effort lifecycle state of a web audio channel."""
+
+    # The web backend currently exposes queue depth but not a distinct EOF
+    # state. Keep the API compatible and add the richer state when the JS
+    # backend grows an explicit state query.
+    if queue_depth(channel):
+        return "playing"
+
+    return "idle"
 
 
 @proxy_with_channel
@@ -572,7 +593,7 @@ DROP_VIDEO = 2
 
 
 @proxy_with_channel
-def set_video(channel, video, loop=False):
+def set_video(channel, video, loop=False, yuv=False):
     """
     Sets a flag that determines if this channel will attempt to decode video.
     """

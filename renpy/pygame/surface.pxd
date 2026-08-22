@@ -25,7 +25,7 @@ cdef class Surface:
     cdef object __weakref__
 
     # The SDL surface that corresponds to this surface.
-    cdef SDL_Surface* surface
+    cdef SDL_Surface* sdl_surface
 
     # True if we own our surface. False if some other Surface owns our
     # surface.
@@ -56,5 +56,3 @@ cdef class Surface:
     cdef void _blend(self, Surface source, int function)
 
     cdef bint has_alpha
-
-cdef api SDL_Surface *PySurface_AsSurface(object surface)

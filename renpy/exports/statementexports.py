@@ -394,3 +394,60 @@ def get_statement_name():
     """
 
     return renpy.ast.current_statement_name
+
+
+class StatementInfo(object):
+    """
+    :doc: other class
+    :args: ()
+
+    Information about a statement that is executing or being predicted.
+
+    This is returned by :func:`renpy.get_statement_info`.
+
+    .. attribute:: filename
+
+        The filename containing the statement.
+
+    .. attribute:: linenumber
+
+        The line number of the statement.
+
+    .. attribute:: tlid
+
+        The translation identifier associated with the statement, or None if
+        there is no translation identifier.
+    """
+
+    def __init__(self, node, tlid):
+        self.filename = node.filename
+        self.linenumber = node.linenumber
+        self.tlid = tlid
+
+
+def get_statement_info():
+    """
+    :doc: other
+
+    Returns a :class:`StatementInfo` object describing the statement that is
+    currently executing or being predicted. This can be called from the
+    predict function of a creator-defined statement.
+
+    Returns None if there is no current statement.
+    """
+
+    node = renpy.display.predict.statement
+
+    if node is not None:
+        tlids = renpy.display.predict.tlids
+        tlid = tlids[0] if tlids else None
+
+    else:
+        ctx = renpy.game.context()
+        node = renpy.game.script.namemap.get(ctx.current, None)
+        tlid = ctx.translate_identifier or ctx.deferred_translate_identifier
+
+    if node is None:
+        return None
+
+    return StatementInfo(node, tlid)
