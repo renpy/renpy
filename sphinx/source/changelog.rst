@@ -126,6 +126,12 @@ and used to populate the :ref:`audio-namespace <audio-namespace>`.
 Automated Testing
 -----------------
 
+The :func:`renpy.exports.get_mouse_pos()` function returns the test mouse position when running a test.
+
+Test statements that accept a ``pos`` argument can now handle positioning outside of a selected
+displayable. This allows for things like ``click id "element" pos (0, -20)`` or
+``drag id "peg" to id "hole" pos (1.5, 0)``.
+
 Tests can now be filtered using the ``*`` wildcard (e.g. ``suite.sub*``),
 by parameter (e.g. ``math.addition(a=1, b=2)``), and any combination of the two.
 

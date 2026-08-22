@@ -197,19 +197,92 @@ testsuite selectors:
         assert screen "teleporting_button"
         click id "teleporting_button" until not screen "teleporting_button"
 
+    testcase bounds_test:
+        # Peg bounds: (100, 100) to (200, 200), size: (100, 100)
+        # Hole bounds: (450, 140) to (600, 290), size: (150, 150)
+
+        run Show("drag_and_drop")
+        pause until screen "drag_and_drop"
+
+        # Top left corner
+        move id "peg" pos (0, 0)
+        $ mpos = renpy.exports.get_mouse_pos()
+        $ assert mpos == (100, 100), f"Peg position after move is {mpos}, expected (100, 100)"
+
+        # Absolute offset
+        move id "peg" pos (23, 45)
+        $ mpos = renpy.exports.get_mouse_pos()
+        $ assert mpos == (123, 145), f"Peg position after move is {mpos}, expected (123, 145)"
+
+        # Relative offset
+        move id "peg" pos (0.5, 1.0)
+        $ mpos = renpy.exports.get_mouse_pos()
+        $ assert 149 <= mpos[0] <= 151, f"Peg position after move is {mpos}, expected roughly (150, 200)"
+        $ assert 199 <= mpos[1] <= 201, f"Peg position after move is {mpos}, expected roughly (150, 200)"
+
+        # Position outside the bounds of the peg
+        move id "peg" pos (-50, 2.0)
+        $ mpos = renpy.exports.get_mouse_pos()
+        $ assert mpos[0] == 50, f"Peg position after move is {mpos}, expected (50, 200)"
+        $ assert 298 <= mpos[1] <= 302, f"Peg position after move is {mpos}, expected (50, 200)"
+
+        # Hole
+        move id "hole" pos (0, 0)
+        $ mpos = renpy.exports.get_mouse_pos()
+        $ assert mpos == (450, 140), f"Hole position after move is {mpos}, expected (450, 140)"
+
+        # Relative offset
+        move id "hole" pos (0.5, 0.5)
+        $ mpos = renpy.exports.get_mouse_pos()
+        $ assert 524 <= mpos[0] <= 526, f"Hole position after move is {mpos}, expected roughly (525, 215)"
+        $ assert 214 <= mpos[1] <= 216, f"Hole position after move is {mpos}, expected roughly (525, 215)"
+
+        run Hide("drag_and_drop")
+
     testcase drag_and_drop:
         run Show("drag_and_drop")
+        pause until screen "drag_and_drop"
+
         assert screen "drag_and_drop"
         drag id "peg" pos (0, 0) to id "hole" pos (0, 0)
         assert id "success"
-        drag id "peg" pos (0.5, 0.5) to id "hole" pos (0, 0)
-        assert id "success"
-        drag id "peg" pos (0.9, 0.9) to id "hole" pos (0, 0)
-        assert id "success"
-        drag id "peg" pos (0, 0) to id "hole" pos (0.5, 0.5)
-        assert id "success"
-        drag id "peg" pos (0.5, 0.5) to pos (0.2, 0.5)
+
+        # Back to the start
+        drag id "peg" pos (0, 0) to pos (100, 100)
         assert not id "success"
+
+        # Using the peg and hole ids
+        drag id "peg" pos (0, 0) to id "hole" pos (0, 0)
+        assert id "success"
+
+        # Slightly out of bounds
+        drag id "peg" pos (0, 0) to id "hole" pos (1.01, 0)
+        assert not id "success"
+
+        # Back in bounds
+        drag id "peg" pos (0, 0) to id "hole" pos (1.0, 0)
+        assert id "success"
+
+        # Slightly out of bounds
+        drag id "peg" pos (0, 0) to id "hole" pos (-101, 0)
+        assert not id "success"
+
+        # Back in bounds
+        drag id "peg" pos (0, 0) to id "hole" pos (-99, -99)
+        assert id "success"
+
+        # -150 offset (50 pixels of distance to overlap)
+        drag id "peg" pos (0, 0) to id "hole" pos (-1.0, 0)
+        assert not id "success"
+
+        # Back in bounds
+        drag id "peg" pos (0, 0) to id "hole" pos (-0.5, 0)
+        assert id "success"
+
+        # We're not actually dragging the peg, so no change
+        drag id "peg" pos (-0.1, 0) to id "hole" pos (1.01, 0)
+        assert id "success"
+
         run Hide("drag_and_drop")
 
     testcase scroll_test:

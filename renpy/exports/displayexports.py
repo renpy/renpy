@@ -1190,7 +1190,10 @@ def get_mouse_pos():
     current touch location. If the device does not support a mouse and is not
     currently being touched, x and y are numbers, but not meaningful.
     """
-    return renpy.display.draw.get_mouse_pos()
+    if renpy.test.testexecution.is_in_test():
+        return renpy.test.testmouse.get_mouse_pos()
+    else:
+        return renpy.display.draw.get_mouse_pos()
 
 
 def set_mouse_pos(x, y, duration=0):
