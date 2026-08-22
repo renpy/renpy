@@ -556,6 +556,7 @@ from renpy.exports.rollbackexports import (
     get_roll_forward as get_roll_forward,
     in_fixed_rollback as in_fixed_rollback,
     in_rollback as in_rollback,
+    reentrant_statement as reentrant_statement,
     retain_after_load as retain_after_load,
     roll_forward_core as roll_forward_core,
     roll_forward_info as roll_forward_info,
