@@ -60,7 +60,7 @@ from renpy.gl2.gl2model cimport GL2Model
 
 from renpy.gl2.gl2texture import Texture, TextureLoader
 from renpy.gl2.gl2shader cimport Program
-from renpy.gl2.gl2shadercache import ShaderCache
+from renpy.gl2.gl2shadercache import ShaderCache, parse_glsl_version
 from renpy.gl2.gl2statecache cimport GLStateCache
 
 try:
@@ -83,6 +83,19 @@ vsync = True
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
 
+
+cdef object get_gl_string(GLenum name):
+    """
+    Returns the string the GL context reports for `name` or None if it
+    doesn't provide one.
+    """
+
+    cdef const char *s = <const char *> glGetString(name)
+
+    if s == NULL:
+        return None
+
+    return s.decode("utf-8", "replace")
 
 
 cdef class GL2Draw:
@@ -268,14 +281,39 @@ cdef class GL2Draw:
 
         renpy.display.log.write("swap interval: %r frames", vsync)
 
-    def select_gl_attributes(self, gles):
+    def gl_context_versions(self, gles):
+        """
+        Returns the list of (major, minor, profile) contexts to try, in order,
+        until one of them can be created.
+
+        Desktop: GL 3.3, then GL 2.0, both with the compatibility profile.
+        Mobile: GL ES 3.0.
+        """
+
+        if gles:
+            return [ (3, 0, pygame.GL_CONTEXT_PROFILE_ES) ]
+
+        return [
+            (3, 3, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY),
+            (2, 0, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY),
+            ]
+
+    def select_gl_attributes(self, gles, version=None):
         """
         *Internal*
         Selects the GL attributes and hints to use.
+
+        `version`
+            A (major, minor, profile) tuple giving the context to request. If
+            None, the first entry from gl_context_versions is used.
         """
 
         global vsync
 
+        if version is None:
+            version = self.gl_context_versions(gles)[0]
+
+        major, minor, profile = version
 
         pygame.display.gl_reset_attributes()
 
@@ -292,16 +330,10 @@ cdef class GL2Draw:
 
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
 
-        if gles:
-            pygame.display.hint("SDL_OPENGL_ES_DRIVER", "1")
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0)
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
-        else:
-            pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2)
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0)
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY)
+        pygame.display.hint("SDL_OPENGL_ES_DRIVER", "1" if gles else "0")
+        pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, major)
+        pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, minor)
+        pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, profile)
 
         if renpy.config.gl_set_attributes is not None:
             renpy.config.gl_set_attributes()
@@ -434,9 +466,6 @@ cdef class GL2Draw:
         if renpy.config.gl2_modify_window_flags is not None:
             window_flags = renpy.config.gl2_modify_window_flags(window_flags)
 
-        # Select the GL attributes and hints.
-        self.select_gl_attributes(gles)
-
         # Opens the window.
         #
         # If we're in fullscreen, tries to get a fullscreen window. If that fails,
@@ -444,29 +473,50 @@ cdef class GL2Draw:
 
         self.window = None
 
-        if (self.window is None) and fullscreen:
-            try:
-                renpy.display.log.write("Fullscreen mode.")
-                self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | window_flags)
-            except pygame.error as e:
-                renpy.display.log.write("Opening in fullscreen failed: %r", e)
-                self.window = None
+        for version in self.gl_context_versions(gles):
+
+            renpy.display.log.write(
+                "Requesting OpenGL%s %d.%d.", " ES" if gles else "", version[0], version[1])
+
+            # Select the GL attributes and hints.
+            self.select_gl_attributes(gles, version)
+
+            if fullscreen:
+                try:
+                    renpy.display.log.write("Fullscreen mode.")
+
+                    self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | window_flags)
+                except pygame.error as e:
+                    renpy.display.log.write("Opening in fullscreen failed: %r", e)
+
+                    self.window = None
+
+            if self.window is None:
+                if renpy.game.preferences.maximized:
+                    window_flags |= pygame.WINDOW_MAXIMIZED
+                    pos = (pygame.WINDOWPOS_UNDEFINED, pygame.WINDOWPOS_UNDEFINED)
+                else:
+                    self.ever_set_position = True
+                    pos = self.get_window_position((pwidth, pheight))
+
+                try:
+                    renpy.display.log.write("Windowed mode.")
+
+                    self.window = pygame.display.set_mode((pwidth, pheight), window_flags, pos=pos)
+                except pygame.error as e:
+                    renpy.display.log.write("Could not get pygame screen: %r", e)
+
+                    self.window = None
+
+            if self.window is not None:
+                break
 
         if self.window is None:
+            if gles:
+                renpy.display.log.write(
+                    "Could not create an OpenGL ES 3.0 context, which Ren'Py requires.")
 
-            if renpy.game.preferences.maximized:
-                window_flags |= pygame.WINDOW_MAXIMIZED
-                pos = (pygame.WINDOWPOS_UNDEFINED, pygame.WINDOWPOS_UNDEFINED)
-            else:
-                self.ever_set_position = True
-                pos = self.get_window_position((pwidth, pheight))
-
-            try:
-                renpy.display.log.write("Windowed mode.")
-                self.window = pygame.display.set_mode((pwidth, pheight), window_flags, pos=pos)
-            except pygame.error as e:
-                renpy.display.log.write("Could not get pygame screen: %r", e)
-                return False
+            return False
 
         # Initialize OpenGL.
 
@@ -484,23 +534,35 @@ cdef class GL2Draw:
             return False
 
         # Log the GL version.
-        vendor_string = <char *> glGetString(GL_VENDOR)
-        vendor = self.info["gpu_vendor"] = vendor_string.decode("utf-8")
+        vendor = self.info["gpu_vendor"] = get_gl_string(GL_VENDOR)
         renpy.display.log.write(f"Vendor: {vendor!r}")
 
-        renderer_string = <char *> glGetString(GL_RENDERER)
-        renderer = self.info["gpu_name"] = renderer_string.decode("utf-8")
+        renderer = self.info["gpu_name"] = get_gl_string(GL_RENDERER)
         renpy.display.log.write(f"Renderer: {renderer!r}")
 
-        version_string = <char *> glGetString(GL_VERSION)
-        version = self.info["gpu_driver_version"] = version_string.decode("utf-8")
+        version = self.info["gpu_driver_version"] = get_gl_string(GL_VERSION)
         renpy.display.log.write(f"Version: {version!r}")
+
+        # The shading language version the context actually provides, which
+        # is what decides the dialect shaders are emitted in. This is read
+        # directly from the context.
+        glsl = get_gl_string(GL_SHADING_LANGUAGE_VERSION)
+
+        renpy.display.log.write(f"Shading language version: {glsl!r}")
+
+        glsl_version = parse_glsl_version(glsl)
+
+        self.info["glsl_version"] = glsl_version
 
         self.display_info = renpy.display.get_info()
         renpy.display.log.write(f"Display Info: {self.display_info}")
 
-        extensions_string = <char *> glGetString(GL_EXTENSIONS)
-        extensions = set(extensions_string.decode("utf-8").split(" "))
+        extensions_string = get_gl_string(GL_EXTENSIONS)
+
+        if extensions_string is None:
+            extensions = set()
+        else:
+            extensions = set(extensions_string.split(" "))
 
         if renpy.config.log_gl_extensions:
 
@@ -519,7 +581,9 @@ cdef class GL2Draw:
             # give back control to browser regularly
             self.redraw_period = 0.1
 
-        self.shader_cache = ShaderCache("cache/shaders.txt", self.gles)
+        self.shader_cache = ShaderCache("cache/shaders.txt", self.gles, glsl_version)
+
+        renpy.display.log.write("Emitting shaders as GLSL %s.", self.shader_cache.version)
 
         # Initialize the texture loader.
         self.texture_loader = TextureLoader(self)

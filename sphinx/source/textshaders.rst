@@ -143,6 +143,9 @@ Creating Text Shaders
 Text shaders are GLSL programs that are run on the GPU. These shaders are
 registered using the renpy.register_text_shader function.
 
+Like other shader parts, a text shader is written in one of two GLSL dialects.
+See :ref:`GLSL Version <glsl-version>` for the difference.
+
 .. include:: inc/textshader
 
 Variables in Text Shaders
@@ -268,8 +271,8 @@ This is an example of a text shader that spins text when shown. ::
             uniform float u__delay;
             uniform float u__offset;
             uniform float u_text_slow_time;
-            attribute vec2 a_text_center;
-            attribute float a_text_min_time;
+            in vec2 a_text_center;
+            in float a_text_min_time;
             """,
 
             vertex_50 = """
