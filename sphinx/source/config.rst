@@ -546,7 +546,7 @@ Images
 
 .. var:: config.image_extensions =  [ ".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg" ]
 
-    A list of of file extensions that Ren'Py will use when searching for images, as described in the :ref:`images-directory` section.
+    A list of file extensions that Ren'Py will use when searching for images, as described in the :ref:`images-directory` section.
 
 
 Input, Focus, and Events
@@ -895,7 +895,7 @@ Media (Music, Sound, and Video)
 .. var:: config.web_video_base = "./game"
 
     When playing a movie in the web browser, this is a URL that
-    is appended to to the movie filename to get the full URL
+    is appended to the movie filename to get the full URL
     to play the movie from. It can include directories in it, so
     "https://share.renpy.org/movies-for-mygame" would also be fine.
 
@@ -2347,7 +2347,7 @@ Debugging
 
 .. var:: config.debug_prediction = False
 
-    If True, Ren'Py will will write information about and errors that
+    If True, Ren'Py will write information about and errors that
     occur during prediction (of execution flow, images, and screens) to
     log.txt and the console.
 

@@ -69,7 +69,7 @@ ensure that their writing is not accidentally misinterpreted by the engine.
     brace in your text, double it – write ``{{``.
 
 【 (left lenticular bracket)
-    The left lenticular bracket is used to to introduce ruby/furigana
+    The left lenticular bracket is used to introduce ruby/furigana
     text. To include a left lenticular bracket in your text, double it
     – write ``【【``.
 

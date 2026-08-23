@@ -176,7 +176,7 @@ When synchro start is enabled and multiple play statements are run at the same t
 will start synchronized. Specifically, the audio will start:
 
 * When the audio files on every channel have been loaded and audio samples are available.
-* When all all channels have been faded out.
+* When all channels have been faded out.
 
 New audio will start playing when both conditions are met.
 

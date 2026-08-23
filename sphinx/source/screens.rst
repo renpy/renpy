@@ -947,7 +947,7 @@ The input statement takes no parameters, and the following properties:
     input is active. This overrides the default action of returning
     the input value.
 
-    Generally, this is is used with a `value` that stores the input into
+    Generally, this is used with a `value` that stores the input into
     a variable, so the action can access it.
 
 .. screen-property:: arrowkeys
