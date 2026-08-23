@@ -457,7 +457,7 @@ class SceneLists(renpy.object.Object):
             l.insert(add_index, sle)
 
         # By walking the tree of displayables we allow the displayables to
-        # capture the current state. In older code, we allow this to to fail.
+        # capture the current state. In older code, we allow this to fail.
         # Errors might exist in older games, which are ignored when not in
         # developer mode.
         try:
