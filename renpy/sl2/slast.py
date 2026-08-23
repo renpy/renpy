@@ -464,7 +464,7 @@ class SLBlock(SLNode):
             self.has_keyword = True
 
             # We use screen analysis object, since it
-            # have all knowlege about our constants
+            # have all knowledge about our constants
             self.atl_transform.mark_constant(analysis)
 
             # We can only be a constant if we do not rely
