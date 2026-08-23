@@ -469,6 +469,8 @@ cdef class Window:
     def get_window_display_scale(self):
         return SDL_GetWindowDisplayScale(self.window)
 
+    def get_window_pixel_density(self):
+        return SDL_GetWindowPixelDensity(self.window)
 
     def get_size(self):
         cdef int w, h
@@ -805,6 +807,11 @@ def get_display_content_scale():
 def get_window_display_scale():
     if main_window:
         return main_window.get_window_display_scale()
+    return None
+
+def get_window_pixel_density():
+    if main_window:
+        return main_window.get_window_pixel_density()
     return None
 
 def get_size():
