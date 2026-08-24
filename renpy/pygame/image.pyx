@@ -20,7 +20,7 @@
 from .sdl cimport *
 from .sdl_image cimport *
 from .surface cimport *
-from .iostream cimport SDL_IOStreamFromPython
+from .iostream cimport open_io
 
 from .error import error
 
@@ -65,7 +65,6 @@ def load(fi, namehint="", size=None):
     cdef SDL_Surface *img
     cdef SDL_Surface *new_surface
 
-    cdef SDL_IOStream *iostream
     cdef char *ftype
 
     cdef int width
@@ -76,7 +75,7 @@ def load(fi, namehint="", size=None):
         if fi.lower().endswith('.tga'):
             namehint = "TGA"
 
-    iostream = SDL_IOStreamFromPython(fi)
+    cdef SDL_IOStream *iostream = open_io(fi).take()
 
     if namehint == "":
         with nogil:

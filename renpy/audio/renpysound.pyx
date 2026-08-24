@@ -52,7 +52,7 @@ from __future__ import print_function
 
 from libc.stdint cimport uintptr_t
 
-from renpy.pygame.iostream cimport SDL_IOStreamFromPython
+from renpy.pygame.iostream cimport open_io
 from renpy.pygame.sdl cimport SDL_IOStream
 
 cdef extern from "renpysound_core.h":
@@ -146,15 +146,10 @@ def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=
         The audio filter to apply when the file is being played.
     """
 
-    cdef SDL_IOStream *rw
-
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    rw = SDL_IOStreamFromPython(file)
-
-    if rw == NULL:
-        raise Exception("Could not create IOStream.")
+    cdef SDL_IOStream *rw = open_io(file).take()
 
     if tight:
         tight = 1
@@ -174,15 +169,10 @@ def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start
     The other arguments are as for play.
     """
 
-    cdef SDL_IOStream *rw
-
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    rw = SDL_IOStreamFromPython(file)
-
-    if rw == NULL:
-        raise Exception("Could not create IOStream.")
+    cdef SDL_IOStream *rw = open_io(file).take()
 
     if tight:
         tight = 1
