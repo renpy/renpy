@@ -57,8 +57,8 @@ def main():
     cython("renpy.pygame.locals", packages="sdl3")
     cython(
         "renpy.pygame.image",
-        ["src/pygame/write_png.c", "src/pygame/write_jpeg.c"],
-        packages="sdl3-image libjpeg libpng sdl3",
+        ["src/pygame/write_png.c"],
+        packages="sdl3-image libpng sdl3",
     )
     cython("renpy.pygame.sdl_image", packages="sdl3")
     cython("renpy.pygame.controller", packages="sdl3")
