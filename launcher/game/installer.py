@@ -452,7 +452,7 @@ def manifest(url, renpy=False, insecure=False):
         to the current project.
 
     `insecure`
-        If true, verificaiton is disabled.
+        If true, verification is disabled.
     """
 
     import renpy.ecsign

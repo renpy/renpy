@@ -475,7 +475,7 @@ fix_dlc("renios", "renios")
         def split_by_prefix(self, prefix):
             """
             Returns two filelists, one that contains all the files starting with prefix,
-            and one tht contains all other files.
+            and one that contains all other files.
             """
 
             yes = FileList()

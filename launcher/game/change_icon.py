@@ -311,7 +311,7 @@ def change_icons(oldexe, icofn):
     data = f.read(physize)
 
     # Symbol table, I could not understand so well
-    #  Some analysis and the little I could find on how the symbol tables were layed out show that the PE table is in two sections. One is
+    #  Some analysis and the little I could find on how the symbol tables were laid out show that the PE table is in two sections. One is
     # a list of NumberOfSymbols*(18 bytes) symbol entries, followed immediately by a string table who's length is specified in the 4 bytes following the symbol structure list
     # Again, the information *seems* to indicate that this will always follow the entire block of all sections (so be at the end of the file)
 
@@ -357,7 +357,7 @@ def change_icons(oldexe, icofn):
     # FileAlignment = 512
     #
     #  Section, SizeOfRawData = multiple of FileAlignment   (On Disk size)
-    #  Scetion, VirtualSize   is  NOT aligned to any specific number, and rwdata may be > than this due to its alignment requirement  (In memory size)
+    #  Section, VirtualSize   is  NOT aligned to any specific number, and rwdata may be > than this due to its alignment requirement  (In memory size)
     #
     #  the resource section should be padded out to meet the alignment requirement of  SizeOfRawData = multiple of FileAlignment  (So, in the file, since on disk)
     #
