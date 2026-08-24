@@ -24,39 +24,54 @@ from .iostream cimport open_io
 
 from .error import error
 
-import sys
 import os
 
+cdef extern from "pygame/write_jpeg.h":
+    int Pygame_SDL2_SaveJPEG(SDL_Surface *, const char *, int) nogil
 
-cdef int image_formats = 0
+cdef extern from "pygame/write_png.h":
+    int Pygame_SDL2_SavePNG(const char *, SDL_Surface *, int) nogil
+
 
 def init():
     pass
 
-init()
 
-def quit(): # @ReservedAssignment
+def quit():
     pass
 
-cdef process_namehint(namehint):
-    # Accepts "foo.png", ".png", or "png"
 
-    if not isinstance(namehint, bytes):
-        namehint = namehint.encode("ascii", "replace")
+cdef bytes process_namehint(object namehint):
+    """
+    Reduces `namehint` to an upper-case extension without a leading dot,
+    the form SDL_image and `save` expect. Accepts "foo.png", ".png", or
+    "png", and returns b"PNG". Returns b"" if there is nothing usable.
+    """
 
-    if not namehint:
-        return b''
+    if namehint is None:
+        return b""
 
-    ext = os.path.splitext(namehint)[1]
-    if not ext:
-        ext = namehint
-    if ext[0] == b'.':
-        ext = ext[1:]
+    cdef bytes hint = os.fsencode(namehint)
 
-    return ext.upper()
+    hint = os.path.splitext(hint)[1] or hint
+
+    if hint and hint[0] == b".":
+        hint = hint[1:]
+
+    return hint.upper()
+
 
 def load(fi, namehint="", size=None):
     """
+    Loads an image from `fi`, and returns it as a Surface.
+
+    `fi`
+        A filename or file-like object to load the image from.
+
+    `namehint`
+        If given, should be a string, or string path-like, with or without
+        a leading dot, that hints at the format of the image.
+
     `size`
         A width, height tuple that specifies the size the image is loaded
         at. This is only supported for SVG images.
@@ -65,38 +80,38 @@ def load(fi, namehint="", size=None):
     cdef SDL_Surface *img
     cdef SDL_Surface *new_surface
 
-    cdef char *ftype
-
     cdef int width
     cdef int height
 
-    # IMG_Load_RW can't load TGA images.
-    if isinstance(fi, str):
-        if fi.lower().endswith('.tga'):
-            namehint = "TGA"
+    # SDL_image detects most formats from the data itself, but some (TGA in
+    # particular) have no magic number and can only be found by name.
+    if not namehint and isinstance(fi, str):
+        namehint = fi
+
+    cdef bytes ext = process_namehint(namehint)
+    cdef const char *ext_c = ext
+    cdef bint sized_svg = (ext == b"SVG") and (size is not None)
+
+    if sized_svg:
+        width, height = size
 
     cdef SDL_IOStream *iostream = open_io(fi).take()
 
-    if namehint == "":
-        with nogil:
-            img = IMG_Load_IO(iostream, 0)
-
-    else:
-        namehint = process_namehint(namehint)
-        ftype = namehint
-
-        if namehint == b".SVG" and size is not None:
-            width, height = size
-
+    try:
+        if sized_svg:
             with nogil:
                 img = IMG_LoadSizedSVG_IO(iostream, width, height)
 
-        else:
-
+        elif ext:
             with nogil:
-                img = IMG_LoadTyped_IO(iostream, 0, ftype)
+                img = IMG_LoadTyped_IO(iostream, False, ext_c)
 
-    SDL_CloseIO(iostream)
+        else:
+            with nogil:
+                img = IMG_Load_IO(iostream, False)
+
+    finally:
+        SDL_CloseIO(iostream)
 
     if img == NULL:
         raise error()
@@ -106,47 +121,48 @@ def load(fi, namehint="", size=None):
         SDL_DestroySurface(img)
         img = new_surface
 
+        if img == NULL:
+            raise error()
+
     cdef Surface surf = Surface(())
     surf.take_surface(img)
 
     return surf
 
-cdef extern from "pygame/write_jpeg.h":
-    int Pygame_SDL2_SaveJPEG(SDL_Surface *, char *, int) nogil
 
-cdef extern from "pygame/write_png.h":
-    int Pygame_SDL2_SavePNG(const char *, SDL_Surface *, int) nogil
+def save(Surface surface not None, object filename, int compression=-1):
+    """
+    Saves `surface` to `filename`, in the format given by the extension of
+    `filename`.
 
-def save(Surface surface not None, filename, compression=-1):
+    `compression`
+        For PNG, the zlib compression level, from 0 to 9. For JPEG, the
+        quality, from 0 to 100. If negative, a per-format default is used.
+    """
 
-    if not isinstance(filename, str):
-        filename = filename.decode(sys.getfilesystemencoding())
-
-    ext = os.path.splitext(filename)[1]
-    ext = ext.upper()
-    ext = ext.encode("utf-8")
+    # SDL takes UTF-8 filenames on every platform.
+    cdef bytes fn = os.fsencode(filename)
+    cdef const char *fn_c = fn
+    cdef str ext = process_namehint(fn).decode("utf-8", "replace")
+    cdef SDL_Surface *sdl_surface = surface.sdl_surface
     cdef int err = 0
 
-    utf8_filename = filename.encode("utf-8")
-
-    cdef char *fn = utf8_filename
-    cdef int compression_level = compression
-
-    if ext == b'.PNG':
+    if ext == "PNG":
         with nogil:
-            err = Pygame_SDL2_SavePNG(fn, surface.sdl_surface, compression_level)
-    elif ext == b'.BMP':
+            err = Pygame_SDL2_SavePNG(fn_c, sdl_surface, compression)
+    elif ext in ("JPG", "JPEG"):
         with nogil:
-            err = not SDL_SaveBMP(surface.sdl_surface, fn)
-    elif ext == b".JPG" or ext == b".JPEG":
+            err = Pygame_SDL2_SaveJPEG(sdl_surface, fn_c, compression)
+    elif ext == "BMP":
         with nogil:
-            err = Pygame_SDL2_SaveJPEG(surface.sdl_surface, fn, compression_level)
+            err = not IMG_SaveBMP(sdl_surface, fn_c)
     else:
-        raise ValueError("Unsupported format: %s" % ext)
+        raise ValueError(f"Unsupported image format: {ext}")
 
     if err != 0:
         raise error()
 
-def get_extended():
+
+def get_extended() -> bool:
     # This may be called before init.
     return True

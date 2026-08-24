@@ -22,16 +22,11 @@
 # This module wraps the pygame surface class (and associated functions). It
 # ensures that returned surfaces have a 2px border around them.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-
 import sys
 import threading
 
 import renpy
-import renpy.pygame as pygame
-
+from renpy import pygame
 
 # Sample surfaces, with and without alpha.
 sample_alpha = None
@@ -134,32 +129,26 @@ copy_surface_unscaled = copy_surface
 
 # Wrapper around image loading.
 
+# Formats Ren'Py expects to be able to load. SDL3_image can handle more than
+# this, and what actually works depends on the SDL3_image library that is
+# installed.
+formats = {
+    "png",
+    "jpg",
+    "jpeg",
+    "webp",
+    "avif",
+    "tga",
+    "bmp",
+    "ico",
+    "svg",
+}
+
 # Formats we can load reentrantly.
 safe_formats = {"png", "jpg", "jpeg", "webp"}
 
 # Lock used for loading unsafe formats.
 image_load_lock = threading.RLock()
-
-
-formats = {
-    # PNG
-    "png": 0,  # type:ignore
-    # JPEG
-    "jpg": 0,  # type:ignore
-    "jpeg": 0,  # type:ignore
-    # WebP
-    "webp": 0,  # type:ignore
-    # JPEG-XL
-    # "jxl": pygame.image.INIT_JXL, # type:ignore
-    # AVIF
-    "avif": 0,
-    ## There is no real way of checking the below,
-    ## but they are built into SDL2_image by default
-    "tga": 0,
-    "bmp": 0,
-    "ico": 0,
-    "svg": 0,
-}
 
 
 def load_image(f, filename, size=None):
@@ -174,10 +163,11 @@ def load_image(f, filename, size=None):
         SVG images.
     """
 
-    _basename, _dot, ext = filename.rpartition(".")
+    _, _, ext = filename.rpartition(".")
+    ext = ext.lower()
 
     try:
-        if ext.lower() in safe_formats:
+        if ext in safe_formats:
             surf = pygame.image.load(f, filename, size=size)
         else:
             # Non-whitelisted formats may not be able to load in a reentrant
@@ -186,15 +176,14 @@ def load_image(f, filename, size=None):
                 surf = pygame.image.load(f, filename, size=size)
 
     except Exception as e:
-        extra = ""
+        if ext not in formats:
+            note = f"Ren'Py does not support {ext} files. Maybe you misspelled the extension?"
+        else:
+            note = f"The file may be corrupt or truncated, or your SDL3_image library may not support {ext} files."
 
-        if ext.lower() not in formats:
-            extra = " ({} files are not supported by Ren'Py)".format(ext)
-
-        elif formats[ext] and (not pygame.image.has_init(formats[ext])):  # type:ignore
-            extra = " (your SDL2_image library does not support {} files)".format(ext)
-
-        raise Exception("Could not load image {!r}{}: {!r}".format(filename, extra, e))
+        ee = Exception(f"Could not load image {filename!r}")
+        ee.add_note(note)
+        raise ee from e
 
     rv = copy_surface_unscaled(surf)
     return rv
