@@ -2164,7 +2164,7 @@ def parse_atl(l):
             animation = True
 
         else:
-            # If we can't assign it it a statement more specifically,
+            # If we can't assign it to a statement more specifically,
             # we try to parse it into a RawMultipurpose. That will
             # then be turned into another statement, as appropriate.
 

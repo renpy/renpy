@@ -814,7 +814,7 @@ class Choice(object):
     :name: renpy.Choice
     :args: (value, /, *args, **kwargs)
 
-    This encapsulates a menu choice with with arguments. The first positional argument is is the value
+    This encapsulates a menu choice with arguments. The first positional argument is the value
     that will be returned, and the other arguments are the arguments that will be passed to the choice
     screen.
 

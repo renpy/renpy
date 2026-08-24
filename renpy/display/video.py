@@ -488,8 +488,8 @@ class Movie(renpy.display.displayable.Displayable):
         an movie file is 1280x720 and oversample is 2, then the image will
         be treated as a 640x360 movie for the purpose of layout.
 
-        If None, Ren'Py will automatically determine oversamping. If an @ followed
-        by a number is found in the filename, that number will be used as the the
+        If None, Ren'Py will automatically determine oversampling. If an @ followed
+        by a number is found in the filename, that number will be used as the
         oversampling factor. Otherwise, Ren'Py will search for files and use those.
 
         Specifically, if :file`launch.webm` is used, Ren'Py will search for :file:`launch@2.webm`

@@ -164,7 +164,7 @@ def error(msg):
     """
     :doc: lint
 
-    Reports `msg`, a string, as as error for the user. This is logged as a
+    Reports `msg`, a string, as an error for the user. This is logged as a
     parse or lint error when approprate, and otherwise it is raised as an
     exception.
     """

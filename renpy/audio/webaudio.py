@@ -344,7 +344,7 @@ def busy(channel):
 def get_pos(channel):
     """
     Returns the position of the audio file playing in `channel`. Returns None
-    if not file is is playing or it is not known.
+    if no file is playing or it is not known.
     """
 
     rv = call_int("get_pos", channel)
