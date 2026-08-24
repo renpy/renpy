@@ -1213,3 +1213,51 @@ cdef class IOFileLike(IOStream):
         self._checkWritable()
 
         return self.filelike.write(b)
+
+
+cpdef IOStream open_io(object obj, str mode="rb", str name=None):
+    """
+    Coerces `obj` into an IOStream open in `mode`. This accepts, in order:
+
+    * An object with a `raw` field, which is unwrapped.
+
+    * An io.FileIO which is closed and its filename is used to open IOPath.
+
+    * An IOStream object, which is returned unchanged.
+
+    * A str or path-like filename, which is opened.
+
+    * An object that supports the buffer protocol.
+
+    * A file-like object.
+    """
+
+    if mode not in ("rb", "wb"):
+        raise ValueError(f"invalid mode: {mode!r}")
+
+    # Unwrap all buffered wrappers.
+    while hasattr(obj, "raw"):
+        obj = obj.raw
+
+    if isinstance(obj, io.FileIO):
+        obj.close()
+        obj = obj.name
+
+    cdef IOStream stream
+    if isinstance(obj, IOStream):
+        stream = <IOStream> obj
+    elif isinstance(obj, (str, os.PathLike)):
+        stream = IOPath(obj, mode, name=name)
+    elif PyObject_CheckBuffer(obj):
+        stream = IOBuffer(obj, mode == "wb", name=name)
+    else:
+        # Let IOFileLike handle general file-like.
+        stream = IOFileLike(obj, name=name)
+
+    # After it successfully opened, check the mode.
+    if mode == "wb":
+        stream._checkWritable()
+    else:
+        stream._checkReadable()
+
+    return stream

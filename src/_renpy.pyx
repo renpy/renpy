@@ -27,7 +27,7 @@ def version():
 
 from renpy.pygame.sdl cimport *
 
-from renpy.pygame.iostream cimport SDL_IOStreamFromPython
+from renpy.pygame.iostream cimport open_io
 
 import renpy
 
@@ -106,7 +106,8 @@ def save_png(surf, file, compress=-1):
     if not isinstance(surf, renpy.pygame.Surface):
         raise Exception("save_png requires a pygame Surface as its first argument.")
 
-    save_png_core(surf, SDL_IOStreamFromPython(file), compress)
+    cdef SDL_IOStream *iostream = open_io(file, "wb").take()
+    save_png_core(surf, iostream, compress)
 
 
 def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
