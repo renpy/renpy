@@ -40,6 +40,7 @@
 
 static EVP_PKEY *GetKeyFromDer(int public, const unsigned char *key_der, size_t key_len);
 static int AddNumberToDER(char *der, int offset, const char *number);
+static int GetNumberFromDER(const unsigned char *der, size_t der_len, size_t *offset, char *number);
 static int Sign(EVP_PKEY *priv_key, const void *data, size_t data_len, void **sign, size_t *sign_len);
 static int Verify(EVP_PKEY *pub_key, const void *data, size_t data_len, const void *sign, size_t sign_len);
 
@@ -72,14 +73,25 @@ int ECSign(const unsigned char *priv_key_der, size_t key_len, const char *data, 
         // fprintf(stdout, "Calculated signature as DER:\n");
         // BIO_dump_indent_fp(stdout, sign, sign_len, 2);
 
-        // Copy R and S from DER sign to raw signature output
-        // Check if it has a extra leading 0 to skip (added to keep value positive in DER format)
-        int offset = sign[3] == 0x21 ? 5 : 4;
-        memcpy(signature, sign + offset, 32); // Copy R
+        // The signature is a DER SEQUENCE of two INTEGERs, R and S. DER uses
+        // the shortest possible encoding, so each of them is anywhere from 1
+        // to 33 bytes long - it gains a leading 0 when the top bit is set, and
+        // loses leading bytes when the value is small. Copy them out into the
+        // fixed-width raw signature.
 
-        // Get last 32 bytes which is S
-        offset = sign_len - 32;
-        memcpy(signature + 32, sign + offset, 32); // Copy S
+        size_t offset = 2;
+
+        if (sign_len < 2 || ((unsigned char *)sign)[0] != 0x30)
+        {
+            fprintf(stderr, "Signature is not a DER SEQUENCE.\n");
+            ret = 0;
+        }
+        else if (!GetNumberFromDER((unsigned char *)sign, sign_len, &offset, signature)      // R
+                 || !GetNumberFromDER((unsigned char *)sign, sign_len, &offset, signature + 32)) // S
+        {
+            fprintf(stderr, "Could not parse the DER signature.\n");
+            ret = 0;
+        }
     }
 
 cleanup:
@@ -180,8 +192,10 @@ void ECGeneratePrivateKey(unsigned char **priv_key_der, size_t *priv_len)
     //     fprintf(stdout, "Curve name: %s\n", out_curvename);
     // }
 
-    // Convert private key to DER
-    ectx = OSSL_ENCODER_CTX_new_for_pkey(privkey, EVP_PKEY_KEYPAIR, "DER", NULL, NULL);
+    // Convert private key to DER. The output structure has to be named
+    // explicitly - the default for EC is the type-specific SEC1 ECPrivateKey,
+    // which crypto.subtle in the web build can't import.
+    ectx = OSSL_ENCODER_CTX_new_for_pkey(privkey, EVP_PKEY_KEYPAIR, "DER", "PrivateKeyInfo", NULL);
     if (OSSL_ENCODER_to_data(ectx, priv_key_der, priv_len) <= 0)
     {
         fprintf(stderr, "Failed to get private key as DER\n");
@@ -204,8 +218,9 @@ void ECGetPublicKeyFromPrivate(const unsigned char *priv_key_der, size_t priv_le
     // Get private key from DER
     privkey = GetKeyFromDer(0, priv_key_der, priv_len);
 
-    // Create public key in DER
-    ectx = OSSL_ENCODER_CTX_new_for_pkey(privkey, EVP_PKEY_PUBLIC_KEY, "DER", NULL, NULL);
+    // Create public key in DER. This is the default for EC, but name it
+    // anyway, to match ECGeneratePrivateKey.
+    ectx = OSSL_ENCODER_CTX_new_for_pkey(privkey, EVP_PKEY_PUBLIC_KEY, "DER", "SubjectPublicKeyInfo", NULL);
     if (OSSL_ENCODER_to_data(ectx, public_key_der, pub_len) <= 0)
     {
         fprintf(stderr, "Failed to get public key\n");
@@ -260,19 +275,72 @@ static EVP_PKEY *GetKeyFromDer(int public, const unsigned char *key_der, size_t 
 
 static int AddNumberToDER(char *der, int offset, const char *number)
 {
-    der[offset++] = 0x02;
-    if (((unsigned char *)number)[0] < 128)
+    const unsigned char *n = (const unsigned char *)number;
+
+    // DER requires the shortest possible encoding, so leading zero bytes have
+    // to go. Keep the last byte, so that a zero encodes as a single 0x00 - a
+    // zero R or S is not a valid signature, but it's OpenSSL's job to say so.
+    int start = 0;
+    while (start < 31 && n[start] == 0x00)
     {
-        der[offset++] = 0x20; // length R
+        start++;
+    }
+
+    int len = 32 - start;
+
+    der[offset++] = 0x02;
+
+    if (n[start] < 128)
+    {
+        der[offset++] = len;
     }
     else
     {
-        der[offset++] = 0x21; // length R
+        // Add a leading 0 to keep the value positive.
+        der[offset++] = len + 1;
         der[offset++] = 0x00;
     }
-    // Copy R value
-    memcpy(der + offset, number, 32);
-    return offset + 32;
+
+    memcpy(der + offset, number + start, len);
+    return offset + len;
+}
+
+static int GetNumberFromDER(const unsigned char *der, size_t der_len, size_t *offset, char *number)
+{
+    size_t i = *offset;
+
+    if (i + 2 > der_len || der[i] != 0x02)
+    {
+        return 0;
+    }
+
+    // R and S are at most 33 bytes, so the length is always in short form.
+    size_t len = der[i + 1];
+    if (len > 0x7f || len > der_len - (i + 2))
+    {
+        return 0;
+    }
+
+    i += 2;
+
+    // Drop the leading zeroes DER adds to keep the value positive.
+    while (len > 0 && der[i] == 0x00)
+    {
+        i++;
+        len--;
+    }
+
+    if (len > 32)
+    {
+        return 0;
+    }
+
+    // Right-align the value in the fixed-width output.
+    memset(number, 0, 32);
+    memcpy(number + (32 - len), der + i, len);
+
+    *offset = i + len;
+    return 1;
 }
 
 static int Sign(EVP_PKEY *priv_key, const void *data, size_t data_len, void **sign, size_t *sign_len)
