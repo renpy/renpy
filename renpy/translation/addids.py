@@ -34,11 +34,11 @@ import renpy
 def in_game_directory(filename):
     """
     Returns true if the elided `filename` is in the game directory, but not
-    in the translation (tl) directory under it.
+    in the configured translation directory under it.
     """
 
     gamedir = os.path.normcase(os.path.abspath(renpy.config.gamedir))
-    tldir = os.path.join(gamedir, "tl")
+    tldir = os.path.normcase(os.path.abspath(os.path.join(gamedir, renpy.config.tl_directory)))
 
     fn = os.path.normcase(os.path.abspath(renpy.lexer.unelide_filename(filename)))
 
