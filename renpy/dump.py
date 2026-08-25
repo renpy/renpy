@@ -27,9 +27,9 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
+import ast as python_ast
 import inspect
 import json
-import re
 import sys
 import os
 
@@ -57,12 +57,13 @@ def file_exists(fn):
     return rv
 
 
-# Matches renpy.jump("label") and renpy.call("label") in Python code, so the
-# targets can be reported as static edges.
-python_flow_re = re.compile(r"""renpy\.(jump|call)\(\s*(["'])([^"'\n]+)\2""")
-
-# Matches uses of the flow functions that couldn't be resolved statically.
-python_dynamic_re = re.compile(r"renpy\.(jump|call|jump_out_of_context|call_in_new_context|invoke_in_new_context)\b")
+python_flow_functions = {
+    "jump",
+    "call",
+    "jump_out_of_context",
+    "call_in_new_context",
+    "invoke_in_new_context",
+}
 
 
 def new_flow():
@@ -83,14 +84,52 @@ def flow_python(source, into):
     Records the flow found in the Python `source` in `into`.
     """
 
-    for kind, _quote, target in python_flow_re.findall(source):
-        if kind == "jump":
-            add_target(into["jumps"], target)
-        else:
-            add_target(into["calls"], target)
-
-    if python_dynamic_re.search(python_flow_re.sub("", source)):
+    try:
+        tree = python_ast.parse(source)
+    except SyntaxError:
         into["dynamic"] = True
+        return
+
+    class FlowVisitor(python_ast.NodeVisitor):
+        def visit_Call(self, node):
+            function = node.func
+
+            if not (
+                isinstance(function, python_ast.Attribute)
+                and isinstance(function.value, python_ast.Name)
+                and function.value.id == "renpy"
+                and function.attr in python_flow_functions
+            ):
+                self.generic_visit(node)
+                return
+
+            if function.attr in ("jump", "call") and node.args:
+                target = node.args[0]
+
+                if isinstance(target, python_ast.Constant) and isinstance(target.value, str):
+                    if function.attr == "jump":
+                        add_target(into["jumps"], target.value)
+                    else:
+                        add_target(into["calls"], target.value)
+
+                    self.generic_visit(node)
+                    return
+
+            into["dynamic"] = True
+            self.generic_visit(node)
+
+        # Calls inside a function declared by this block do not transfer
+        # control when the label itself runs.
+        def visit_FunctionDef(self, node):
+            return
+
+        def visit_AsyncFunctionDef(self, node):
+            return
+
+        def visit_Lambda(self, node):
+            return
+
+    FlowVisitor().visit(tree)
 
 
 def flow_block(block, into):
