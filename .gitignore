@@ -61,6 +61,9 @@ cache/
 # Libraries.
 /lib
 
+# Nightly builds downloaded by dev_setup.py.
+/nightly
+
 # Platforms.
 /rapt
 /rapt2

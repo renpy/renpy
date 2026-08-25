@@ -56,7 +56,20 @@ like MSYS.
 Nightly Build
 -------------
 
-Nightly builds can be downloaded from:
+The quickest way to set up a checkout is to let ``dev_setup.py`` do it. From
+this repository, run::
+
+    ./dev_setup.sh        # Linux and macOS
+    dev_setup.bat         # Windows
+
+This works out which nightly matches the branch you're on, downloads and
+unpacks it into ``nightly/``, links its compiled libraries into the checkout,
+generates the style data, and checks that Ren'Py imports from the checkout.
+It only needs a Python 3 on the machine. Run ``python3 dev_setup.py --help``
+for the options, including ``--sdk`` to use a nightly you've already
+unpacked and ``--version`` to pick a different release series.
+
+To do the same by hand, download a nightly from:
 
    https://nightly.renpy.org
 
@@ -64,9 +77,14 @@ Note that the latest nightly build is at the bottom of the list. Once you've
 unpacked the nightly, change into this repository, and run::
 
     ./after_checkout.sh <path-to-nightly>
+    python3 scripts/generate_styles.py
 
-Once this script completes, you should be able to run Ren'Py using renpy.sh,
-renpy.app, or renpy.exe, as appropriate for your platform.
+Once this completes, you should be able to run Ren'Py using renpy.sh,
+renpy.app, or renpy.exe, as appropriate for your platform. Note that
+``renpy.sh`` and ``renpy.exe`` must be copies rather than symlinks, as
+``renpy.sh`` resolves symlinks to find the directory to run from, and a
+symlinked one would run the nightly's copy of Ren'Py instead of the
+checkout. ``after_checkout.sh`` takes care of this.
 
 If the current nightly build doesn't work, please wait 24 hours for a new
 build to occur. If that build still doesn't work, contact Tom (`pytom at bishoujo.us`,
