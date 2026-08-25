@@ -47,7 +47,7 @@ commands = {}
 display = {}
 
 # Commands that force compile to be set.
-compile_commands = {"compile", "add_from", "merge_strings"}
+compile_commands = {"compile", "add_from", "add_ids", "merge_strings"}
 
 
 class ArgumentParser(argparse.ArgumentParser):

@@ -37,15 +37,19 @@ def in_game_directory(filename):
     in the translation (tl) directory under it.
     """
 
-    gamedir = os.path.abspath(renpy.config.gamedir)
+    gamedir = os.path.normcase(os.path.abspath(renpy.config.gamedir))
     tldir = os.path.join(gamedir, "tl")
 
-    fn = os.path.abspath(renpy.lexer.unelide_filename(filename))
+    fn = os.path.normcase(os.path.abspath(renpy.lexer.unelide_filename(filename)))
 
-    if not fn.startswith(gamedir + os.sep):
+    try:
+        if os.path.commonpath((gamedir, fn)) != gamedir:
+            return False
+    except ValueError:
+        # On Windows, paths on different drives have no common path.
         return False
 
-    return not fn.startswith(tldir + os.sep)
+    return os.path.commonpath((tldir, fn)) != tldir
 
 
 def find_edits():
@@ -132,8 +136,8 @@ def process_file(filename, edits, dry_run):
     # How much of the input has been consumed.
     consumed = 0
 
-    # The output.
-    output = ""
+    # The output fragments.
+    output = []
 
     count = 0
     skipped = []
@@ -154,8 +158,8 @@ def process_file(filename, edits, dry_run):
         if dry_run:
             print(f"{filename}:{linenumber}: would add id {identifier}")
         else:
-            output += data[consumed:end]
-            output += " id " + identifier
+            output.append(data[consumed:end])
+            output.append(" id " + identifier)
             consumed = end
 
         count += 1
@@ -163,10 +167,10 @@ def process_file(filename, edits, dry_run):
     if dry_run or not count:
         return count, skipped
 
-    output += data[consumed:]
+    output.append(data[consumed:])
 
     with open(fullfn + ".new", "w", encoding="utf-8", newline=newline) as f:
-        f.write(output)
+        f.write("".join(output))
 
     try:
         os.unlink(fullfn + ".bak")
@@ -209,8 +213,10 @@ def add_ids_command():
 
     if args.dry_run:
         print(f"{total} id clause{'' if total == 1 else 's'} would be added.")
-    elif not total:
+    elif not total and not skipped:
         print("Every say statement already has an id clause.")
+    elif not total:
+        print("No id clauses were added.")
 
     return False
 
