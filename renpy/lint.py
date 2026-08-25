@@ -21,7 +21,9 @@
 
 import time
 import re
+import io
 import sys
+import json
 import collections
 import textwrap
 import builtins
@@ -55,21 +57,57 @@ all_default_statements = {}
 # True if at east one error was reported, false otherwise.
 error_reported = False
 
+# True if the report is being written as JSON, rather than as text. When this
+# is set, the problems, notes, and statistics that would have been printed are
+# collected in the lists and dicts below, and written out at the end of lint.
+json_output = False
+
+# A list of problem dicts, each with "file", "line", and "message" keys.
+json_problems = []
+
+# A list of notes - additional information that isn't tied to a location.
+json_notes = []
+
+# A dict of statistics about the game.
+json_statistics = {}
+
+
+def json_problem(filename, linenumber, message):
+    """
+    Records a problem for the JSON report.
+    """
+
+    if filename is not None:
+        filename = renpy.lexer.unicode_filename(filename)
+
+    json_problems.append({"file": filename, "line": linenumber, "message": message})
+
+
 # Reports a message to the user.
 
 
 def report(msg, *args):
+    global error_reported
+    error_reported = True
+
+    text = (msg % args) if args else msg
+
+    if json_output:
+        if report_node:
+            json_problem(report_node.filename, report_node.linenumber, text)
+        else:
+            json_problem(None, None, text)
+
+        return
+
     if report_node:
         out = "%s:%d " % (renpy.lexer.unicode_filename(report_node.filename), report_node.linenumber)
     else:
         out = ""
 
-    out += (msg % args) if args else msg
+    out += text
     print("")
     print(out)
-
-    global error_reported
-    error_reported = True
 
 
 added = {}
@@ -82,7 +120,11 @@ def add(msg, *args):
     if not msg in added:
         added[msg] = True
         msg = str(msg) % args
-        print(msg)
+
+        if json_output:
+            json_notes.append(msg)
+        else:
+            print(msg)
 
 
 def problem_listing(header, problems):
@@ -94,6 +136,31 @@ def problem_listing(header, problems):
         return
 
     problems.sort()
+
+    global error_reported
+    error_reported = True
+
+    if json_output:
+        kind = header.rstrip(":")
+
+        # The same problem can be recorded more than once (for example, an
+        # obsolete image manipulator used in a loop), so only report it once.
+        seen = set()
+
+        for filename, line, message in problems:
+            if (filename, line, message) in seen:
+                continue
+
+            seen.add((filename, line, message))
+
+            if message:
+                message = f"{kind}: {message}"
+            else:
+                message = kind
+
+            json_problem(filename, line, message)
+
+        return
 
     print()
     print()
@@ -118,9 +185,6 @@ def problem_listing(header, problems):
 
             if len(file_problems) > 4:
                 print("    * and {} more.".format(len(file_problems) - 4))
-
-    global error_reported
-    error_reported = True
 
 
 # Tries to evaluate an expression, announcing an error if it fails.
@@ -1052,9 +1116,22 @@ def check_python_warnings():
     if not warnings:
         return
 
-    print("\n\nPython Warnings:")
-
     warnings.sort()
+
+    if json_output:
+        for filename, line, text in warnings:
+            # The text is formatted by the warnings module as
+            # "filename:line: Category: message\n  source line\n". The file
+            # and line are reported separately, and the source line is
+            # redundant, so only the category and message are kept.
+            message = text.strip().split("\n")[0]
+            message = message.removeprefix(f"{filename}:{line}: ")
+
+            json_problem(filename, line, "Python warning: " + message)
+
+        return
+
+    print("\n\nPython Warnings:")
 
     for _filename, _line, text in warnings:
         print("\n" + text, end="")
@@ -1098,16 +1175,34 @@ def lint():
         help="If given, all problems of a kind are reported, not just the first ten.",
     )
 
+    ap.add_argument(
+        "--format",
+        choices=["text", "json"],
+        default="text",
+        help="The format of the report. 'text' is the default report, 'json' writes the same information as JSON, so it can be read by other tools.",
+    )
+
     global args
     args = ap.parse_args()
 
-    if args.filename:
+    global json_output
+    json_output = args.format == "json"
+
+    # In JSON mode, the real output stream is kept here, and anything that
+    # gets printed (for example, by lint hooks) is captured and included in
+    # the report as "output".
+    real_stdout = sys.stdout
+
+    if json_output:
+        sys.stdout = io.StringIO()
+    elif args.filename:
         f = open(args.filename, "w", encoding="utf-8")
         sys.stdout = f
 
     renpy.game.lint = True
 
-    print("\ufeff" + renpy.version + " lint report, generated at: " + time.ctime())
+    if not json_output:
+        print("\ufeff" + renpy.version + " lint report, generated at: " + time.ctime())
 
     # Populate default statement values.
     renpy.exports.execute_default_statement(True)
@@ -1263,7 +1358,7 @@ def lint():
     check_python_warnings()
 
     if not renpy.config.check_conflicting_properties:
-        print("It is advised to set config.check_conflicting_properties to True.")
+        add("It is advised to set config.check_conflicting_properties to True.")
 
     for f in renpy.config.lint_hooks:
         f()
@@ -1273,10 +1368,21 @@ def lint():
     # the strings in lists in `lines` will be separated by simple carriage-returns
     lines = []
 
+    json_statistics["languages"] = []
+
     def report_language(language):
         count = counts[language]
 
         if count.blocks <= 0:
+            return
+
+        if json_output:
+            json_statistics["languages"].append({
+                "language": language,
+                "blocks": count.blocks,
+                "words": count.words,
+                "characters": count.characters,
+            })
             return
 
         if language is None:
@@ -1296,15 +1402,20 @@ characters per block. """.format(
 
         lines.append(s)
 
-    print("")
-    print("")
-    print("Statistics:")
-    print("")
+    if not json_output:
+        print("")
+        print("")
+        print("Statistics:")
+        print("")
 
     languages = list(counts)
     languages.sort(key=lambda a: a or "")
     for i in languages:
         report_language(i)
+
+    json_statistics["menus"] = menu_count
+    json_statistics["images"] = image_count
+    json_statistics["screens"] = screen_count
 
     lines.append(
         "The game contains {0} menus, {1} images, and {2} screens.".format(
@@ -1313,41 +1424,92 @@ characters per block. """.format(
     )
 
     if args.by_character:
-        lines.extend(report_character_stats(charastats))
+        if json_output:
+            json_statistics["characters"] = [
+                {
+                    "character": char,
+                    "blocks": charastats[char].blocks,
+                    "words": charastats[char].words,
+                    "characters": charastats[char].characters,
+                }
+                for char in sorted(charastats, key=lambda char: charastats[char].tuple(), reverse=True)
+            ]
+        else:
+            lines.extend(report_character_stats(charastats))
 
     # Format the lines and lists of lines.
-    for l in lines:
-        if not isinstance(l, (tuple, list)):
-            l = (l,)
+    if not json_output:
+        for l in lines:
+            if not isinstance(l, (tuple, list)):
+                l = (l,)
 
-        for ll in l:
-            if ll.startswith(" * "):
-                prefix = " * "
-                altprefix = "   "
-                ll = ll[3:]
-            else:
-                prefix = ""
-                altprefix = ""
+            for ll in l:
+                if ll.startswith(" * "):
+                    prefix = " * "
+                    altprefix = "   "
+                    ll = ll[3:]
+                else:
+                    prefix = ""
+                    altprefix = ""
 
-            for lll in textwrap.wrap(ll, 78 - len(prefix)):
-                print(prefix + lll)
-                prefix = altprefix
+                for lll in textwrap.wrap(ll, 78 - len(prefix)):
+                    print(prefix + lll)
+                    prefix = altprefix
 
-        print("")
+            print("")
 
     for i in renpy.config.lint_stats_callbacks:
         i()
 
-    print("")
-    if renpy.config.developer and (renpy.config.original_developer != "auto"):
-        print("Remember to set config.developer to False before releasing,")
-        print('or set it to "auto".')
-        print("")
+    developer_reminder = renpy.config.developer and (renpy.config.original_developer != "auto")
 
-    print("Lint is not a substitute for thorough testing. Remember to update Ren'Py")
-    print("before releasing. New releases fix bugs and improve compatibility.")
+    if json_output:
+        if developer_reminder:
+            json_notes.append('Remember to set config.developer to False before releasing, or set it to "auto".')
+
+        write_json_report(real_stdout)
+
+    else:
+        print("")
+        if developer_reminder:
+            print("Remember to set config.developer to False before releasing,")
+            print('or set it to "auto".')
+            print("")
+
+        print("Lint is not a substitute for thorough testing. Remember to update Ren'Py")
+        print("before releasing. New releases fix bugs and improve compatibility.")
 
     if error_reported and args.error_code:
         renpy.exports.quit(status=1)
 
     return False
+
+
+def write_json_report(real_stdout):
+    """
+    Writes the JSON report to the file given on the command line, or to
+    standard output if no file was given. Anything printed while lint was
+    running (by lint hooks, for example) is included as "output".
+    """
+
+    captured = sys.stdout.getvalue()  # type: ignore
+    sys.stdout = real_stdout
+
+    result = {
+        "version": renpy.version_only,
+        "generated": time.ctime(),
+        "error": error_reported,
+        "problems": json_problems,
+        "notes": json_notes,
+        "statistics": json_statistics,
+        "output": captured,
+    }
+
+    if args.filename:
+        with open(args.filename, "w", encoding="utf-8") as f:
+            json.dump(result, f, indent=2, ensure_ascii=False)
+            f.write("\n")
+    else:
+        json.dump(result, sys.stdout, indent=2, ensure_ascii=False)
+        sys.stdout.write("\n")
+        sys.stdout.flush()

@@ -473,6 +473,46 @@ in the launcher.
 
     Reports all problems of a kind, not just the first ten issues.
 
+.. option:: --format {text,json}
+
+    The format of the report. The default, ``text``, is the report the
+    launcher shows. ``json`` writes the same information as a JSON object,
+    so that it can be read by editors, CI systems, and other tools, without
+    having to parse the text report. For example::
+
+        ./renpy.sh <basedir> lint lint.json --format json
+
+    The JSON object has the following keys:
+
+    ``version``
+        The version of Ren'Py that produced the report.
+
+    ``error``
+        True if lint found at least one problem.
+
+    ``problems``
+        A list of problems. Each problem is an object with ``file`` and
+        ``line`` keys giving where the problem was found (or ``null``, when the
+        problem isn't tied to a location), and a ``message`` key with the text
+        of the problem.
+
+    ``notes``
+        A list of strings with additional information that isn't tied to a
+        location, such as reminders about configuration variables.
+
+    ``statistics``
+        An object with a ``languages`` list (one entry per language, with
+        ``language``, ``blocks``, ``words``, and ``characters`` keys), the
+        ``menus``, ``images``, and ``screens`` counts, and, when
+        ``--by-character`` is given, a ``characters`` list.
+
+    ``output``
+        Anything that was printed while lint ran, such as the output of
+        :var:`config.lint_hooks`.
+
+    The ``--all-problems`` option is not needed in this mode, as every
+    problem is included. ``--error-code`` works the same way in both formats.
+
 
 .. _cli-test:
 
