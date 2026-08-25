@@ -1143,6 +1143,70 @@ This can only be done when the launcher is not running.
     Specifies the full path to the project to select.
 
 
+.. _cli-add-project:
+
+Add Project
+-----------
+
+Adds a project that isn't in the projects directory to the launcher, by
+listing its path in the ``projects.txt`` file in the projects directory.
+The project's files aren't touched. This is the same as the "Add a project
+from another directory" button in the launcher's preferences.
+
+This can only be done when the launcher is not running, and requires that the
+launcher's projects directory has been set.
+
+.. tabs::
+
+    .. tab:: Linux / macOS
+
+        .. code-block:: bash
+
+            ./renpy.sh launcher add_project <project>
+
+    .. tab:: Windows
+
+        .. code-block:: bat
+
+            .\lib\py3-windows-x86_64\python.exe renpy.py launcher add_project <project>
+
+.. describe:: <project>
+
+    Specifies the full path to the project's directory - the one that
+    contains the ``game`` directory.
+
+
+.. _cli-remove-project:
+
+Remove Project
+--------------
+
+Removes a project that was added with ``add_project`` (or listed in
+``projects.txt`` by hand) from the launcher. The project's files aren't
+touched.
+
+This can only be done when the launcher is not running.
+
+.. tabs::
+
+    .. tab:: Linux / macOS
+
+        .. code-block:: bash
+
+            ./renpy.sh launcher remove_project <project>
+
+    .. tab:: Windows
+
+        .. code-block:: bat
+
+            .\lib\py3-windows-x86_64\python.exe renpy.py launcher remove_project <project>
+
+.. describe:: <project>
+
+    Specifies the full path to the project's directory, as it was given to
+    ``add_project``.
+
+
 .. _cli-update-old-game:
 
 Update Old Game

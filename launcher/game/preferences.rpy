@@ -59,17 +59,7 @@ init python:
         """
 
         def __call__(self):
-            fn = os.path.join(project.manager.projects_directory, "projects.txt")
-
-            if os.path.exists(fn):
-                return
-
-            with open(fn, "w") as f:
-                f.write("""\
-# This file can be used to add projects not in the projects directory
-# by listing the full path to each project, one per line.
-
-""")
+            project.manager.ensure_projects_txt()
 
 
 default persistent.force_new_tutorial = False
@@ -166,6 +156,39 @@ screen preferences():
                                     textbutton _("Not Set"):
                                         action Jump("projects_directory_preference")
                                         alt _("Projects directory: [text]")
+
+                        add SPACER
+
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
+
+                            has vbox
+
+                            text _("Additional Projects:")
+
+                            add HALF_SPACER
+
+                            frame style "l_indent":
+
+                                has vbox
+
+                                for p in project.manager.extra_projects():
+                                    hbox:
+                                        spacing 10
+
+                                        text "[p!q]" style "l_small_text" yalign 0.5
+
+                                        textbutton _("Remove"):
+                                            style "l_small_button"
+                                            action project.RemoveExtraProject(p)
+                                            alt _("Remove this project from the launcher.")
+
+                                textbutton _("Add a project from another directory"):
+                                    style "l_nonbox"
+                                    action Jump("add_extra_project")
+                                    alt _("Add a project from another directory to the launcher.")
 
                         add SPACER
 
@@ -397,6 +420,28 @@ label clean_tmp:
 
 label projects_directory_preference:
     call choose_projects_directory
+    jump preferences
+
+label add_extra_project:
+
+    python:
+        path = None
+
+        if tfd:
+            path = tfd.selectFolderDialog(__("Select Project Directory"), project.manager.projects_directory)
+        else:
+            interface.error(_("A directory chooser isn't available on this platform. Add the project's full path to projects.txt instead."), label="preferences")
+
+        if path:
+            result = project.manager.add_extra_project(path)
+
+            if result == "not_a_project":
+                interface.error(_("[path!q] doesn't contain a Ren'Py project. Choose the directory that has the game directory in it."), path=path, label="preferences")
+            elif result == "exists":
+                interface.info(_("[path!q] is already listed."), path=path)
+            elif result == "no_projects_directory":
+                interface.error(_("Set the projects directory before adding a project from another directory."), label="preferences")
+
     jump preferences
 
 

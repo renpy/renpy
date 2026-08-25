@@ -761,7 +761,7 @@ init python in project:
 
             if os.path.exists(extra_projects_fn):
 
-                with open(extra_projects_fn, "r") as f:
+                with open(extra_projects_fn, "r", encoding="utf-8") as f:
 
                     for path in f:
                         path = path.strip()
@@ -774,6 +774,139 @@ init python in project:
                         if len(path) > 0:
                             self.scan_directory_direct(path)
 
+
+        def projects_txt(self):
+            """
+            Returns the path to the projects.txt file in the projects
+            directory, or None if there is no projects directory.
+            """
+
+            if not self.projects_directory:
+                return None
+
+            return os.path.join(self.projects_directory, "projects.txt")
+
+        def ensure_projects_txt(self):
+            """
+            Creates projects.txt, with a comment explaining it, if it
+            doesn't exist. Returns its path, or None if there is no
+            projects directory.
+            """
+
+            fn = self.projects_txt()
+
+            if fn is None or os.path.exists(fn):
+                return fn
+
+            with open(fn, "w", encoding="utf-8") as f:
+                f.write("""\
+# This file can be used to add projects not in the projects directory
+# by listing the full path to each project, one per line.
+
+""")
+
+            return fn
+
+        def extra_projects(self):
+            """
+            Returns the paths listed in projects.txt, in the order they
+            appear there.
+            """
+
+            fn = self.projects_txt()
+
+            if fn is None or not os.path.exists(fn):
+                return [ ]
+
+            rv = [ ]
+
+            with open(fn, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+
+                    if line and not line.startswith("#"):
+                        rv.append(line)
+
+            return rv
+
+        @staticmethod
+        def normalize_extra_project(path):
+            return os.path.normpath(os.path.abspath(path)).replace("\\", "/")
+
+        def add_extra_project(self, path):
+            """
+            Adds the project at `path` to projects.txt, and rescans.
+
+            Returns "added" if it was added, "exists" if it was already
+            listed, "not_a_project" if the directory doesn't contain a
+            project, or "no_projects_directory" if there's nowhere to put
+            projects.txt.
+            """
+
+            fn = self.ensure_projects_txt()
+
+            if fn is None:
+                return "no_projects_directory"
+
+            path = self.normalize_extra_project(path)
+
+            if not self.find_basedir(path):
+                return "not_a_project"
+
+            if path in [ self.normalize_extra_project(i) for i in self.extra_projects() ]:
+                return "exists"
+
+            with open(fn, "r", encoding="utf-8") as f:
+                contents = f.read()
+
+            with open(fn, "a", encoding="utf-8") as f:
+                if contents and not contents.endswith("\n"):
+                    f.write("\n")
+
+                f.write(path + "\n")
+
+            self.scan()
+
+            return "added"
+
+        def remove_extra_project(self, path):
+            """
+            Removes the project at `path` from projects.txt, keeping every
+            other line (including comments) as it is, and rescans. Returns
+            true if it was listed.
+            """
+
+            fn = self.projects_txt()
+
+            if fn is None or not os.path.exists(fn):
+                return False
+
+            path = self.normalize_extra_project(path)
+
+            with open(fn, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+
+            kept = [ ]
+            removed = False
+
+            for line in lines:
+                stripped = line.strip()
+
+                if stripped and not stripped.startswith("#") and self.normalize_extra_project(stripped) == path:
+                    removed = True
+                    continue
+
+                kept.append(line)
+
+            if not removed:
+                return False
+
+            with open(fn, "w", encoding="utf-8") as f:
+                f.writelines(kept)
+
+            self.scan()
+
+            return True
 
         def scan_directory_direct(self, ppath, name=None):
             """
@@ -925,6 +1058,19 @@ init python in project:
 
             if self.label is not None:
                 renpy.jump(self.label)
+
+    class RemoveExtraProject(Action):
+        """
+        Removes a project listed in projects.txt from the launcher. The
+        project itself is left alone.
+        """
+
+        def __init__(self, path):
+            self.path = path
+
+        def __call__(self):
+            manager.remove_extra_project(self.path)
+            renpy.restart_interaction()
 
     class SelectTutorial(Action):
         """
@@ -1125,3 +1271,44 @@ init python:
         return False
 
     renpy.arguments.register_command("set_project", set_project_command)
+
+    def add_project_command():
+        ap = renpy.arguments.ArgumentParser(
+            description="Adds a project that isn't in the projects directory to the launcher, by listing it in projects.txt.")
+        ap.add_argument("project", help="The full path to the project's directory.")
+
+        args = ap.parse_args()
+
+        result = project.manager.add_extra_project(args.project)
+
+        if result == "added":
+            print("Added {} to {}.".format(project.manager.normalize_extra_project(args.project), project.manager.projects_txt()))
+        elif result == "exists":
+            print("{} is already listed in {}.".format(project.manager.normalize_extra_project(args.project), project.manager.projects_txt()))
+        elif result == "not_a_project":
+            print("{} does not contain a Ren'Py project.".format(args.project))
+            renpy.quit(status=1)
+        else:
+            print("The launcher has no projects directory yet, so there is nowhere to put projects.txt. Run the launcher, or use set_projects_directory, first.")
+            renpy.quit(status=1)
+
+        return False
+
+    renpy.arguments.register_command("add_project", add_project_command)
+
+    def remove_project_command():
+        ap = renpy.arguments.ArgumentParser(
+            description="Removes a project that was added with add_project (or listed in projects.txt) from the launcher. The project's files are not touched.")
+        ap.add_argument("project", help="The full path to the project's directory.")
+
+        args = ap.parse_args()
+
+        if project.manager.remove_extra_project(args.project):
+            print("Removed {} from {}.".format(project.manager.normalize_extra_project(args.project), project.manager.projects_txt()))
+        else:
+            print("{} is not listed in projects.txt.".format(args.project))
+            renpy.quit(status=1)
+
+        return False
+
+    renpy.arguments.register_command("remove_project", remove_project_command)

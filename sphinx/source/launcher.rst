@@ -28,6 +28,14 @@ to contain a list of full paths, one per line. These paths are treated as if
 they were inside the projects directory, and projects they contain show
 up in the launcher.
 
+The file can be edited by hand (lines starting with ``#`` are comments), but
+it doesn't have to be. The General tab of the launcher's preferences lists
+the projects it contains under "Additional Projects", with a button to remove
+each one and a button to add a project by choosing its directory. The
+:ref:`add_project <cli-add-project>` and
+:ref:`remove_project <cli-remove-project>` commands do the same from the
+command line.
+
 
 No Launcher Links
 -----------------
