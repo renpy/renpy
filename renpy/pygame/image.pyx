@@ -30,11 +30,11 @@ cdef extern from "pygame/write_png.h":
     int Pygame_SDL3_SavePNG_IO(SDL_IOStream *, SDL_Surface *, int) nogil
 
 
-def init():
+def init() -> None:
     pass
 
 
-def quit():
+def quit() -> None:
     pass
 
 
@@ -45,7 +45,7 @@ cdef bytes process_namehint(object namehint):
     "png", and returns b"PNG". Returns b"" if there is nothing usable.
     """
 
-    if namehint is None:
+    if not namehint:
         return b""
 
     cdef bytes hint = os.fsencode(namehint)
@@ -58,7 +58,7 @@ cdef bytes process_namehint(object namehint):
     return hint.upper()
 
 
-def load(fi, namehint="", size=None):
+def load(fi: object, namehint: str = "", size: tuple[int, int] | None = None) -> Surface:
     """
     Loads an image from `fi`, and returns it as a Surface.
 
@@ -127,7 +127,7 @@ def load(fi, namehint="", size=None):
     return surf
 
 
-def save(Surface surface not None, object file, object namehint="", *, int compression=-1):
+def save(surface: Surface, file: object, namehint: str = "", *, compression: int = -1) -> None:
     """
     Saves `surface` to `file`, as a PNG, JPEG, or BMP image.
 
@@ -157,22 +157,23 @@ def save(Surface surface not None, object file, object namehint="", *, int compr
         raise ValueError(f"Unsupported image format: {os.fsdecode(namehint)!r}")
 
     cdef SDL_Surface *sdl_surface = surface.sdl_surface
-    cdef int quality = 90 if compression < 0 else compression
     cdef bint ok = False
     cdef bint closed = False
+    cdef int quality = compression
 
     cdef SDL_IOStream *iostream = open_io(file, "wb").take()
 
     try:
         if ext == b"PNG":
             with nogil:
-                ok = Pygame_SDL3_SavePNG_IO(iostream, sdl_surface, compression) == 0
+                ok = Pygame_SDL3_SavePNG_IO(iostream, sdl_surface, quality) == 0
 
         elif ext == b"BMP":
             with nogil:
                 ok = IMG_SaveBMP_IO(sdl_surface, iostream, False)
 
         else:
+            quality = 90 if quality < 0 else quality
             with nogil:
                 ok = IMG_SaveJPG_IO(sdl_surface, iostream, False, quality)
 

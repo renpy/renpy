@@ -27,7 +27,6 @@ init python:
 
     import shutil
     import webserver
-    import tempfile
     import time
     import pygame_sdl2
     import zipfile
