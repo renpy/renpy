@@ -50,7 +50,7 @@ def main():
         setuplib.include_dirs.append(f"{cubism}/Core/include")
 
     # src/ directory.
-    cython("_renpy", ["src/IMG_savepng.c", "src/core.c"], packages="sdl3 libpng")
+    cython("_renpy", ["src/core.c"], packages="sdl3 libpng")
 
     # renpy.pygame
     cython("renpy.pygame.iostream", packages="sdl3")

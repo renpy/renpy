@@ -7,8 +7,6 @@
 void core_init(void);
 void subpixel_init(void);
 
-void save_png_core(PyObject *pysurf, SDL_IOStream *file, int compress);
-
 void pixellate32_core(PyObject *pysrc,
                       PyObject *pydst,
                       int avgwidth,
