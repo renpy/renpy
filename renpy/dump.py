@@ -29,6 +29,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import inspect
 import json
+import re
 import sys
 import os
 
@@ -52,6 +53,134 @@ def file_exists(fn):
 
         rv = os.path.exists(fullfn)
         file_exists_cache[fn] = rv
+
+    return rv
+
+
+# Matches renpy.jump("label") and renpy.call("label") in Python code, so the
+# targets can be reported as static edges.
+python_flow_re = re.compile(r"""renpy\.(jump|call)\(\s*(["'])([^"'\n]+)\2""")
+
+# Matches uses of the flow functions that couldn't be resolved statically.
+python_dynamic_re = re.compile(r"renpy\.(jump|call|jump_out_of_context|call_in_new_context|invoke_in_new_context)\b")
+
+
+def new_flow():
+    """
+    Returns a new, empty, flow record.
+    """
+
+    return {"jumps": [], "calls": [], "menus": [], "dynamic": False}
+
+
+def add_target(targets, name):
+    if name not in targets:
+        targets.append(name)
+
+
+def flow_python(source, into):
+    """
+    Records the flow found in the Python `source` in `into`.
+    """
+
+    for kind, _quote, target in python_flow_re.findall(source):
+        if kind == "jump":
+            add_target(into["jumps"], target)
+        else:
+            add_target(into["calls"], target)
+
+    if python_dynamic_re.search(python_flow_re.sub("", source)):
+        into["dynamic"] = True
+
+
+def flow_block(block, into):
+    """
+    Walks `block`, a list of nodes, and records the jumps, calls, and menus
+    found in it (and in the blocks nested inside it) in `into`, a flow record
+    created by new_flow. Labels nested inside the block are skipped, as they
+    get their own records.
+    """
+
+    for n in block:
+        if isinstance(n, renpy.ast.Label):
+            continue
+
+        if isinstance(n, renpy.ast.Jump):
+            if n.expression:
+                into["dynamic"] = True
+            else:
+                add_target(into["jumps"], n.target)
+
+        elif isinstance(n, renpy.ast.Call):
+            if n.expression:
+                into["dynamic"] = True
+            else:
+                add_target(into["calls"], n.label)
+
+        elif isinstance(n, renpy.ast.Menu):
+            choices = []
+
+            for label, condition, choice_block in n.items:
+                # Captions have no block.
+                if choice_block is None:
+                    continue
+
+                choice = new_flow()
+                choice["label"] = label
+
+                if condition != "True":
+                    choice["condition"] = condition
+
+                flow_block(choice_block, choice)
+                choices.append(choice)
+
+            into["menus"].append({"line": n.linenumber, "choices": choices})
+
+        elif isinstance(n, renpy.ast.If):
+            for _condition, entry_block in n.entries:
+                flow_block(entry_block, into)
+
+        elif isinstance(n, (renpy.ast.While, renpy.ast.Translate, renpy.ast.TranslateBlock)):
+            flow_block(n.block, into)
+
+        elif isinstance(n, renpy.ast.Python):
+            flow_python(n.code.source, into)
+
+        elif isinstance(n, renpy.ast.UserStatement):
+            # Creator-defined statements can declare the labels they transfer
+            # control to. Their sub-blocks are walked like any other block.
+            try:
+                reachable = n.reachable(True)
+            except Exception:
+                reachable = set()
+
+            for i in reachable:
+                if isinstance(i, str):
+                    add_target(into["jumps"], i)
+
+            for i in n.subparses:
+                flow_block(i.block, into)
+
+
+def label_flow(label):
+    """
+    Returns the flow record for `label`, a Label node.
+    """
+
+    rv = new_flow()
+
+    flow_block(label.block, rv)
+
+    # The statement control reaches when it runs off the end of the block.
+    if label.block:
+        after = label.block[-1].next
+    else:
+        after = label.next
+
+    if isinstance(after, renpy.ast.Label) and isinstance(after.name, str):
+        rv["falls_through"] = after.name
+    else:
+        rv["falls_through"] = None
 
     return rv
 
@@ -137,6 +266,28 @@ def dump(error):
             continue
 
         label[name] = [filename, line]
+
+    # Flow - the jumps, calls, and menus in each label, and the label control
+    # falls through to at the end of it.
+    flow = result["flow"] = {}
+
+    for n in renpy.game.script.namemap.values():
+        if not isinstance(n, renpy.ast.Label):
+            continue
+
+        name = n.name
+
+        if not isinstance(name, str):
+            continue
+
+        if not name_filter(name, n.filename):
+            continue
+
+        record = label_flow(n)
+        record["file"] = n.filename
+        record["line"] = n.linenumber
+
+        flow[name] = record
 
     # Definitions.
     define = location["define"] = {}

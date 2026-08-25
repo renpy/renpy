@@ -182,6 +182,39 @@ These options let you select the file, and choose what is dumped.
 
     Includes names defined in the common directory in the dump.
 
+Among other things, the dump contains a ``location`` object giving the file
+and line of each label, define, screen, transform, and callable, and a
+``flow`` object describing how control moves between labels. ``flow`` has
+one entry per label, keyed by the label's name::
+
+    "flow": {
+      "start": {
+        "file": "game/script.rpy",
+        "line": 10,
+        "jumps": ["chapter_1"],
+        "calls": ["intro"],
+        "menus": [
+          {"line": 14, "choices": [
+            {"label": "Go left", "condition": "has_key", "jumps": ["left"], "calls": [], "menus": [], "dynamic": false}
+          ]}
+        ],
+        "falls_through": "chapter_1",
+        "dynamic": false
+      }
+    }
+
+``jumps`` and ``calls`` list the labels the label's statements jump to and
+call, including those found in ``if`` and ``while`` blocks, in
+``renpy.jump("label")`` and ``renpy.call("label")`` with a literal label,
+and those a creator-defined statement declares through its ``reachable``
+function. ``menus`` lists each menu statement, and for each choice, the
+flow found inside that choice (``condition`` is only present when the
+choice has an ``if`` clause). ``falls_through`` is the label control
+reaches when it runs off the end of this one, or null. ``dynamic`` is true
+when the label contains ``jump expression``, ``call expression``, or Python
+code that jumps or calls somewhere that can't be determined without running
+the game, so the static edges are known to be incomplete.
+
 .. note::
 
     The CLI may change between different releases. To see the latest commands
