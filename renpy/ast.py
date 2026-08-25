@@ -1172,7 +1172,13 @@ class Label(Node):
 
         renpy.game.context().mark_seen()
 
-        values = apply_arguments(self.parameters, renpy.store._args, renpy.store._kwargs)
+        try:
+            values = apply_arguments(self.parameters, renpy.store._args, renpy.store._kwargs)
+        except TypeError as e:
+            if self.reached_by_fall_through():
+                raise TypeError(self.fall_through_message(e)) from None
+
+            raise
 
         renpy.exports.dynamic(**values)
 
@@ -1181,6 +1187,64 @@ class Label(Node):
 
         renpy.easy.run_callbacks(renpy.config.label_callback, self.name, renpy.game.context().last_abnormal)
         renpy.easy.run_callbacks(renpy.config.label_callbacks, self.name, renpy.game.context().last_abnormal)
+
+    def reached_by_fall_through(self):
+        """
+        Returns true if this label was reached by control flowing into it from
+        the statement before it, rather than by a call or jump.
+        """
+
+        if renpy.store._args is not None or renpy.store._kwargs is not None:
+            return False
+
+        return not renpy.game.context().last_abnormal
+
+    def fall_through_message(self, e):
+        """
+        Given the TypeError `e` raised when applying arguments to this label,
+        returns a message that explains that this label was reached by falling
+        through from the statement before it, which is usually a missing
+        return or jump at the end of the label above this one.
+        """
+
+        msg = (
+            f"{e} - label {self.name!r} takes parameters, but was reached by falling through "
+            "from the statement before it, not by a call or jump."
+        )
+
+        previous = self.previous_label()
+
+        if previous is not None:
+            msg += f" Check that label {previous.name!r}, above it, ends with a return or jump."
+        else:
+            msg += " Check that the statements above it end with a return or jump."
+
+        return msg
+
+    def previous_label(self):
+        """
+        Returns the closest label that precedes this one in the same file, or
+        None if there isn't one.
+        """
+
+        all_stmts = renpy.game.script.all_stmts
+
+        if not all_stmts:
+            return None
+
+        rv = None
+
+        for node in all_stmts:
+            if not isinstance(node, Label):
+                continue
+
+            if node.filename != self.filename or node.linenumber >= self.linenumber:
+                continue
+
+            if rv is None or node.linenumber > rv.linenumber:
+                rv = node
+
+        return rv
 
     def restructure(self, callback):
         callback(self.block)
