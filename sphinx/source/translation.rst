@@ -228,6 +228,10 @@ statement. For example::
     label start:
         e "This used to have a typo." id start_61b861a2
 
+The :ref:`add_ids <cli-add-ids>` command line tool adds an ``id`` clause to
+every say statement that doesn't have one, using the identifier Ren'Py
+generated for it, so this can be done for a whole game at once.
+
 Adding labels can also confuse the translation process. To prevent
 this, labels that are given the ``hide`` clause are ignored when generating
 translations. ::

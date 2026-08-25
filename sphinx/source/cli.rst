@@ -539,6 +539,47 @@ Implies :option:`--compile`.
     This will modify your game's script files.
 
 
+.. _cli-add-ids:
+
+Add Translation IDs To Dialogue
+-------------------------------
+
+Adds an ``id`` clause to each say statement that doesn't have one, using the
+:ref:`translation identifier <translation>` Ren'Py currently generates for
+that statement. Once a say statement has an explicit identifier, fixing a
+typo or rewording the line no longer changes its identifier, so existing
+translations, automatic voice files, and speech bubble placements keep
+matching it.
+
+Say statements in monologue mode (using triple-quoted strings) can't take an
+``id`` clause. They are reported and left alone, as are files under
+``game/tl``.
+
+.. tabs::
+
+    .. tab:: Linux / macOS
+
+        .. code-block:: bash
+
+            ./renpy.sh <basedir> add_ids [--dry-run]
+
+    .. tab:: Windows
+
+        .. code-block:: bat
+
+            .\lib\py3-windows-x86_64\python.exe renpy.py <basedir> add_ids [--dry-run]
+
+.. option:: --dry-run
+
+    Reports the ``id`` clauses that would be added, without changing any
+    files.
+
+.. warning::
+
+    This will modify your game's script files. Commit them to version
+    control, or make a backup, before running it.
+
+
 .. _cli-distribute:
 
 Distribute

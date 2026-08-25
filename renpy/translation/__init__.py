@@ -1306,6 +1306,7 @@ def detect_user_locale():
 import typing
 
 if typing.TYPE_CHECKING:
+    from . import addids as addids
     from . import dialogue as dialogue
     from . import extract as extract
     from . import generation as generation
