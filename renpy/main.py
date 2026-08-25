@@ -578,6 +578,8 @@ def main():
         renpy.translation.init_translation()
         log_clock("Init translation")
 
+        renpy.display.textevents.init()
+
         # Start things running.
         restart = None
 

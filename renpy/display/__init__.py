@@ -103,6 +103,7 @@ if typing.TYPE_CHECKING:
     from . import swdraw as swdraw
     from . import transform as transform
     from . import transition as transition
+    from . import textevents as textevents
     from . import tts as tts
     from . import video as video
     from . import viewport as viewport

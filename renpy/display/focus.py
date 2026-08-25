@@ -261,6 +261,7 @@ def set_focused(widget, arg, screen):
     sls.focused = widget
 
     renpy.display.tts.displayable(widget)
+    renpy.display.textevents.focus_changed(widget)
 
     # Figure out the tooltip.
 

@@ -495,6 +495,7 @@ def import_all():
     import renpy.display.predict
     import renpy.display.emulator
     import renpy.display.tts
+    import renpy.display.textevents
     import renpy.display.gesture
     import renpy.display.model
     import renpy.display.quaternion

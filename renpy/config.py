@@ -1402,6 +1402,31 @@ extra_savedirs = []
 # The text-to-speech dictionary. A list of [ (RegEx|String, String) ] pairs.
 tts_substitutions = []
 
+# If not None, the port on 127.0.0.1 that the text events server listens on.
+# The RENPY_TEXT_EVENTS_PORT environment variable overrides this.
+text_events_port = None
+
+# A map from style name to the role reported for text using that style (or a
+# style descended from it) in the text event stream.
+text_events_roles = {
+    "say_label": "who",
+    "say_dialogue": "what",
+    "nvl_label": "who",
+    "nvl_dialogue": "what",
+    "nvl_thought": "what",
+    "bubble_who": "who",
+    "bubble_what": "what",
+    "choice_button": "choice",
+    "choice_button_text": "choice",
+    "quick_button": "quick_menu",
+    "quick_button_text": "quick_menu",
+    "navigation_button": "navigation",
+    "navigation_button_text": "navigation",
+    "input": "input",
+    "input_prompt": "input_prompt",
+    "notify_text": "notify",
+}
+
 # The base URL where unpacked web videos can be found.
 web_video_base = "./game"
 

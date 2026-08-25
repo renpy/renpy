@@ -165,3 +165,49 @@ Python
 The following functions are provided by the self-voicing system:
 
 .. include:: inc/self_voicing
+
+.. _text-events:
+
+Text Events
+-----------
+
+Ren'Py can stream the text it shows on the screen to other programs, so that
+a text-to-speech engine, a live translator, or a streaming overlay can react
+to what the game is showing without having to read the screen. This is
+separate from self-voicing, and works whether or not self-voicing is on.
+
+The stream is off by default. It's turned on by setting
+:var:`config.text_events_port`, or by running the game with the
+``RENPY_TEXT_EVENTS_PORT`` environment variable set to a port number. Ren'Py
+then listens on that port on 127.0.0.1, and any number of programs can
+connect to it. Ren'Py only writes to the connection; it never reads from it,
+and a program that stops reading is disconnected rather than allowed to stall
+the game.
+
+Each line Ren'Py writes is one JSON object. When the text on the screen
+changes, Ren'Py writes an ``interaction`` record, followed by one ``text``
+record for each piece of text on the screen, in the order self-voicing would
+read them (front to back). When the focus changes, it writes a ``focus``
+record for the focused displayable. ::
+
+    {"kind": "interaction", "image_tag": "eileen", "id": 12, "interaction": 4}
+    {"kind": "text", "role": "who", "style": "say_label", "text": "Eileen", "id": 13, "interaction": 4}
+    {"kind": "text", "role": "what", "style": "say_dialogue", "text": "Hi! My name is Eileen.", "id": 14, "interaction": 4}
+    {"kind": "text", "role": "quick_menu", "style": "quick_button", "text": "Back", "id": 15, "interaction": 4}
+    {"kind": "focus", "role": "choice", "style": "choice_button", "text": "To ask her right away.", "id": 16, "interaction": 4}
+
+``id`` goes up with every record. ``interaction`` goes up each time the set
+of text on the screen changes, so a tool can tell which records belong
+together. ``image_tag`` is the image tag of the speaking character, if there
+is one.
+
+``role`` comes from :var:`config.text_events_roles`, which maps style names
+to roles; the default covers the styles the default screens use, giving
+``who``, ``what``, ``choice``, ``quick_menu``, ``navigation``, ``input``,
+and ``notify``. When no style in the chain is in the map, the role is the name
+of the style itself. ``style`` is always the name of the displayable's own
+style, for tools that need more detail than the role gives.
+
+The text is given as self-voicing would speak it: text tags are removed,
+``{alt}`` text is used where it's present, and a displayable with the
+:propref:`alt` style property contributes that text instead of its children.

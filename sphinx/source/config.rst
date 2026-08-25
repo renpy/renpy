@@ -1582,6 +1582,24 @@ Self-Voicing / Text to Speech
 Showing Images
 --------------
 
+.. var:: config.text_events_port = None
+
+    If not None, Ren'Py listens on this TCP port on 127.0.0.1 and streams
+    the text it shows on screen, with the role each piece of text plays, to
+    any tool that connects. See :ref:`text-events` for the format. The
+    ``RENPY_TEXT_EVENTS_PORT`` environment variable overrides this, so a
+    player can turn the stream on for a game that doesn't set it.
+
+.. var:: config.text_events_roles = { ... }
+
+    A map from style names to roles. The role of a piece of text in the
+    :ref:`text event stream <text-events>` is found by looking up the name
+    of the style of the displayable showing it, and then the names of that
+    style's parents, in this map. If no name is found, the name of the first
+    named style is used as the role. The default maps the styles used by the
+    default screens, so that ``say_label`` becomes ``who``, ``say_dialogue``
+    becomes ``what``, ``choice_button`` becomes ``choice``, and so on.
+
 .. var:: config.adjust_attributes = { }
 
     If not None, this is a dictionary. When a statement or function that
