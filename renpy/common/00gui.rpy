@@ -519,7 +519,7 @@ init -1150 python in gui:
                     if not gui._skip_backup:
                         os.rename(fn, bfn)
 
-                pygame.image.save(s, fn, 3)
+                pygame.image.save(s, fn, compression=3)
 
             def fill(self, color=None):
                 if color is None:

@@ -3,7 +3,6 @@
 
 #include <SDL3/SDL.h>
 
-int Pygame_SDL2_SavePNG(const char *file, SDL_Surface *surf,int compression);
-int Pygame_SDL2_SavePNG_RW(SDL_IOStream *src, SDL_Surface *surf,int compression);
+int Pygame_SDL3_SavePNG_IO(SDL_IOStream *src, SDL_Surface *surf,int compression);
 
 #endif
