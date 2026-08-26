@@ -275,9 +275,6 @@ cdef make_mousewheel_event(SDL_MouseWheelEvent *e):
 
     cdef float y = e.y
 
-    if e.direction == SDL_MOUSEWHEEL_FLIPPED:
-        y = -y
-
     if y > 0:
         btn = 4
     elif y < 0:
