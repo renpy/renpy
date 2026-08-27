@@ -815,7 +815,7 @@ init -1500 python in updater:
 
                 try:
 
-                    import ecdsa
+                    import renpy.ecsign as ecdsa
                     verifying_key = ecdsa.VerifyingKey.from_pem(open(key, "rb").read())
 
                     url = urlparse.urljoin(self.url, "updates.ecdsa")

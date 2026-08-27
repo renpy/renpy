@@ -455,7 +455,7 @@ def manifest(url, renpy=False, insecure=False):
         If true, verification is disabled.
     """
 
-    import ecdsa
+    import renpy.ecsign as ecdsa
 
     download(url, "temp:manifest.py")
 

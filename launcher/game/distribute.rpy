@@ -1719,7 +1719,7 @@ fix_dlc("renios", "renios")
                 f.write(update_data)
 
             # Write the signed file.
-            import ecdsa
+            import renpy.ecsign as ecdsa
 
             with open(self.find_update_pem(), "rb") as f:
                 signing_key = ecdsa.SigningKey.from_pem(f.read())
@@ -1735,7 +1735,7 @@ fix_dlc("renios", "renios")
                 return os.path.join(self.project.path, "update.pem")
 
         def make_key_pem(self):
-            import ecdsa
+            import renpy.ecsign as ecdsa
 
             with open(self.find_update_pem(), "rb") as f:
                 signing_key = ecdsa.SigningKey.from_pem(f.read())

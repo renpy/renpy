@@ -23,21 +23,21 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import base64
-import ecdsa
 import os
 import zipfile
 
 import renpy
+import renpy.ecsign as ecdsa
 
 
 # The directory containing the save token information.
 token_dir = None  # type: str|None
 
 # A list of the keys used to sign saves, stored as DER-encoded strings.
-signing_keys = []  # type: list[str]
+signing_keys = []  # type: list[bytes]
 
 # A list of the keys used to verify saves, stored as DER-encoded strings.
-verifying_keys = []  # type: list[str]
+verifying_keys = []  # type: list[bytes]
 
 # True if the save files and persistent data should be upgraded.
 should_upgrade = False  # type: bool
@@ -105,7 +105,7 @@ def verify_data(data, signatures, check_verifying=True):
         kind, key, sig = decode_line(i)
 
         if kind == "signature":
-            if key is None:
+            if key is None or sig is None:
                 continue
 
             if check_verifying and key not in verifying_keys:
