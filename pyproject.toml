@@ -9,6 +9,7 @@ dependencies = [
     "six",
     "pefile",
     "requests",
+    "ecdsa",
     "rsa",
     "setuptools",
     "cython",

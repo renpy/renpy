@@ -91,7 +91,6 @@ def main():
     cython("renpy.style")
     cython("renpy.encryption")
     cython("renpy.tfd", ["src/tinyfiledialogs/tinyfiledialogs.c"], setup_filename="Setup.tfd")
-    cython("renpy.ecsign", ["src/ec_sign_core.c", "src/ec_sign_core_web.c"], packages="openssl")
 
     # renpy.audio
     cython(
