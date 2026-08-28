@@ -80,13 +80,28 @@ class TestECSign(unittest.TestCase):
         with self.assertRaises(ecsign.BadSignatureError):
             vk.verify(b"\x00" * 32, data)
 
-    def test_sha256_hashfunc(self):
+    def test_supported_hashfuncs(self):
         sk = ecsign.SigningKey.generate(curve=ecsign.NIST256p, hashfunc=hashlib.sha256)
         vk = sk.verifying_key
 
-        data = b"Custom hashfunc SHA-256 test"
-        signature = sk.sign(data, hashfunc=hashlib.sha256)
-        self.assertTrue(vk.verify(signature, data, hashfunc=hashlib.sha256))
+        for hashfunc in (hashlib.sha224, hashlib.sha256):
+            with self.subTest(hashfunc=hashfunc.__name__):
+                data = f"Custom hashfunc {hashfunc.__name__} test".encode("ascii")
+                signature = sk.sign(data, hashfunc=hashfunc)
+                self.assertTrue(vk.verify(signature, data, hashfunc=hashfunc))
+
+    def test_rejects_oversized_digests(self):
+        sk = ecsign.SigningKey.generate(curve=ecsign.NIST256p)
+        vk = sk.verifying_key
+        data = b"Oversized digest test"
+        valid_signature = sk.sign(data, hashfunc=hashlib.sha256)
+
+        for hashfunc in (hashlib.sha384, hashlib.sha512):
+            with self.subTest(hashfunc=hashfunc.__name__):
+                with self.assertRaises(ecsign.BadDigestError):
+                    sk.sign(data, hashfunc=hashfunc)
+                with self.assertRaises(ecsign.BadDigestError):
+                    vk.verify(valid_signature, data, hashfunc=hashfunc)
 
     def test_p256_sec1_and_pkcs8_private_key_compatibility(self):
         sec1 = ecsign.SigningKey.from_secret_exponent(1).to_der()

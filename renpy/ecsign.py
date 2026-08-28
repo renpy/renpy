@@ -77,6 +77,14 @@ class Curve(object):
 NIST256p = Curve()
 
 
+def _digest_to_int(curve: Curve, digest: bytes) -> int:
+    if len(digest) > curve.baselen:
+        raise BadDigestError(
+            f"Digest length ({len(digest)} bytes) exceeds {curve.name}'s base length ({curve.baselen} bytes)"
+        )
+    return int.from_bytes(digest, "big")
+
+
 ################################################################################
 # Point Arithmetic in Jacobian Coordinates
 ################################################################################
@@ -357,9 +365,7 @@ class VerifyingKey(object):
         self,
         signature: str | bytes,
         data: str | bytes,
-        hashfunc: Any = None,
-        sigdecode: Any = None,
-        allow_truncate: bool = True
+        hashfunc: Any = None
     ) -> bool:
         """
         Verifies that `signature` is valid for `data`.
@@ -383,7 +389,7 @@ class VerifyingKey(object):
             hashfunc = self.default_hashfunc
 
         h = hashfunc(data).digest()
-        z = int.from_bytes(h, "big")
+        z = _digest_to_int(self.curve, h)
 
         w = pow(s, -1, _N)
         u1 = (z * w) % _N
@@ -476,9 +482,7 @@ class SigningKey(object):
         data: str | bytes,
         hashfunc: Any = None,
         entropy: Callable[[int], bytes] | None = None,
-        k: int | None = None,
-        sigencode: Any = None,
-        allow_truncate: bool = True
+        k: int | None = None
     ) -> bytes:
         """
         Signs `data` with ECDSA (NIST256p). Returns a 64-byte binary signature (r || s).
@@ -490,7 +494,7 @@ class SigningKey(object):
             hashfunc = self.default_hashfunc
 
         h = hashfunc(data).digest()
-        z = int.from_bytes(h, "big")
+        z = _digest_to_int(self.curve, h)
 
         while True:
             if k is not None:
