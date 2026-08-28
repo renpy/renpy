@@ -455,7 +455,7 @@ def manifest(url, renpy=False, insecure=False):
         If true, verification is disabled.
     """
 
-    import renpy.ecsign
+    import renpy.ecsign as ecdsa
 
     download(url, "temp:manifest.py")
 
@@ -468,9 +468,9 @@ def manifest(url, renpy=False, insecure=False):
         with open(_path("temp:manifest.py.sig"), "rb") as f:
             sig = f.read()
 
-        key = renpy.ecsign.pem_to_der(_renpy.exports.open_file("renpy_ecdsa_public.pem").read())
+        key = ecdsa.VerifyingKey.from_pem(_renpy.exports.open_file("renpy_ecdsa_public.pem").read())
 
-        if not renpy.ecsign.verify_data(manifest, key, sig):
+        if not key.verify(sig, manifest):
             error(_("The manifest signature is not valid."))
             return
 
