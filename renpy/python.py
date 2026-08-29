@@ -1052,93 +1052,6 @@ class LocationFixer:
         node.end_lineno, node.end_col_offset = end
 
 
-def quote_eval(s):
-    """
-    Quotes a string for `eval`. This is necessary when it's in certain places,
-    like as part of an argument string. We need to stick a single backslash
-    at the end of lines that don't have it already, and that aren't in triple-quoted strings.
-    """
-
-    # No newlines! No problem.
-    if "\n" not in s:
-        return s
-
-    # Characters being added to the string.
-    rv = []
-
-    # Pad out the string, so we don't have to deal with quotes at the end.
-    s += "\0\0"
-
-    len_s = len(s)
-
-    # The index into the string.
-    i = 0
-
-    # Special characters, that aren't just copied into the string.
-    special = "\0\\'\"\n"
-
-    # The string currently being processed.
-    string = None
-
-    while i < len_s:
-        c = s[i]
-
-        # Non-special characters.
-        if c not in special:
-            start = i
-
-            while True:
-                i += 1
-                if s[i] in special:
-                    break
-
-            rv.append(s[start:i])
-            continue
-
-        # Null.
-        if c == "\0":
-            rv.append(c)
-            i += 1
-            continue
-
-        # Any escaped character passes.
-        if c == "\\":
-            rv.append(s[i : i + 2])
-            i += 2
-            continue
-
-        # String delimiters.
-        if c in "'\"":
-            if ((string is None) or (len(string) == 3)) and (s[i + 1] == c) and (s[i + 2] == c):
-                delim = c + c + c
-            else:
-                delim = c
-
-            if (string is not None) and (delim == string):
-                string = None
-            elif string is None:
-                string = delim
-
-            rv.append(delim)
-            i += len(delim)
-
-            continue
-
-        # Newline.
-        if c == "\n":
-            if string is None:
-                rv.append("\\")
-
-            rv.append("\n")
-            i += 1
-            continue
-
-        raise Exception("Unknown character {} (can't happen)".format(c))
-
-    # Since the last 2 characters are \0, those characters need to be stripped.
-    return "".join(rv[:-2])
-
-
 IMMUTABLE_TYPES = (int, float, str, bool, bytes, type(None), complex)
 
 
@@ -1156,7 +1069,17 @@ def is_immutable_value(v):
     return False
 
 
-def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=True, py=None, hashcode=None, column=0):
+def py_compile(
+    source: str,
+    mode: CompileMode,
+    filename: str = "<none>",
+    lineno: int = 1,
+    ast_node: bool = False,
+    cache: bool = True,
+    py: None = None,
+    hashcode: int | None = None,
+    column: int = 0,
+):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
@@ -1203,22 +1126,8 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
         first_line_column_delta = source.column
         rest_line_column_delta = 0
 
-        if py is None:
-            py = source.py
-
     elif hashcode is None:
         hashcode = hash32(source)
-
-    if py is None:
-        py = 3
-
-    # This determines if the lines are indented. If so, we adjust the
-    # ast to match.
-    indented = source and (source[0] == " ") and (mode != "eval")
-
-    if indented:
-        lineno -= 1
-        source = "if True:\n" + source
 
     flags = file_compiler_flags.get(filename, 0)
 
@@ -1226,12 +1135,23 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
         flags |= __future__.annotations.compiler_flag
 
     key = (hashcode, lineno, filename, mode, flags, column)
-    if cache:
-        if rv := compile_cache.get(key):
-            return rv
+    if cache and (rv := compile_cache.get(key)):
+        return rv
 
-    source = str(source)
-    source = source.replace("\r", "")
+    # This determines if the lines are indented. If so, we adjust the ast to match.
+    # This is needed because parsed code could keep the indentation and as is
+    # it would raise an IndentationError when compiled.
+    if indented := mode != "eval" and source.startswith(" "):
+        lineno -= 1
+        source = f"if True:\n{source}"
+
+    # In eval mode we need to add explicit line joining so things like
+    # foo(param=1 +
+    # 2)
+    # works.
+    elif mode == "eval" and "\n" in source and source.strip():
+        lineno -= 1
+        source = f"(\n{source}\n)"
 
     if mode == "eval" and not ast_node:
         # If possible, compute the value of immutable literals.
@@ -1243,8 +1163,6 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
                 return rv
         except Exception:
             pass
-
-        source = quote_eval(source)
 
     line_offset = lineno - 1
 
