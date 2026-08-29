@@ -753,26 +753,6 @@ class WrapNode(ast.NodeTransformer):
 
 wrap_node = WrapNode()
 
-
-def wrap_hide(tree):
-    """
-    Wraps code inside a python hide or python early hide block inside a
-    function, so it gets its own scope that works the way Python expects
-    it to.
-    """
-
-    hide = ast.parse("""\
-def _execute_python_hide(): pass;
-_execute_python_hide()
-""")
-
-    for i in ast.walk(hide):
-        ast.copy_location(i, hide.body[0])
-
-    hide.body[0].body = tree.body  # type: ignore
-    tree.body = hide.body
-
-
 # A list of warnings that were issued during compilation.
 compile_warnings = []
 
@@ -1195,9 +1175,6 @@ def py_compile(
             tree.body = tree.body[0].body
 
         tree = wrap_node.visit(tree)
-
-        if mode == "hide":
-            wrap_hide(tree)
 
         LocationFixer(tree, lineno - 1, first_line_column_delta, rest_line_column_delta)
 
