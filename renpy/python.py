@@ -1109,6 +1109,12 @@ def py_compile(
     elif hashcode is None:
         hashcode = hash32(source)
 
+    # Callers such as the screen language analyzer may pass a non-string
+    # value (for example None). Convert early so the checks below, which use
+    # string methods like startswith and "in", don't raise on them. This
+    # restores the behavior before quote_eval was reworked.
+    source = str(source)
+
     flags = file_compiler_flags.get(filename, 0)
 
     if renpy.config.future_annotations:
