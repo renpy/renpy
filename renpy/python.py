@@ -1070,7 +1070,7 @@ def is_immutable_value(v):
 
 
 def py_compile(
-    source: str,
+    source: "str|renpy.ast.PyExpr",
     mode: CompileMode,
     filename: str = "<none>",
     lineno: int = 1,
@@ -1114,6 +1114,9 @@ def py_compile(
 
     if ast_node:
         cache = False
+
+    if source is None:
+        raise TypeError("source must be a string, renpy.ast.PyExpr, or ast.Module")
 
     if isinstance(source, ast.Module):
         return compile(source, filename, mode)

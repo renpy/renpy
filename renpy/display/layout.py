@@ -1763,6 +1763,8 @@ def ConditionSwitch(*args, **kwargs):
     for cond, d in zip(args[0::2], args[1::2]):
         if cond is True or cond is False or cond is None:
             code = cond
+        elif not isinstance(cond, str):
+            raise TypeError(f"ConditionSwitch conditions must be strings, True, False, or None, not {cond!r}")
         elif cond not in cond_cache:
             code = renpy.python.py_compile(cond, "eval")
             cond_cache[cond] = code

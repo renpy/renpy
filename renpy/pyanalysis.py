@@ -671,6 +671,9 @@ class Analysis(object):
         self.is_constant called on that node.
         """
 
+        if expr is None:
+            return GLOBAL_CONST
+
         node, literal = ccache.ast_eval_literal(expr)
 
         if literal:
