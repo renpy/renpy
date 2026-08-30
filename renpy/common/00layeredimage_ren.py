@@ -758,10 +758,18 @@ class LayeredImage(object):
             args.args = tuple(unknown)
             args.extraneous()
 
-        if unknown and config.developer:
-            message = [" ".join(args.name), "unknown attributes:", " ".join(sorted(unknown))]
+        if unknown:          
+            args = args.copy()
+            args.args = tuple(unknown)
+        
+            args.extraneous()
+            
+            # If execution reaches here, no exception was raised.
 
-            text = Text(
+            if config.developer:
+                message = [" ".join(args.name), "unknown attributes:", " ".join(sorted(unknown))]
+
+                text = Text(
                 "\n".join(message),
                 size=16,
                 xalign=0.5,
@@ -769,9 +777,9 @@ class LayeredImage(object):
                 textalign=0.5,
                 color="#fff",
                 outlines=[(1, "#0008", 0, 0)],
-            )
-
-            rv = Fixed(rv, text, fit_first=True)
+                )
+                
+                rv = Fixed(rv, text, fit_first=True)
 
         rv = At(rv, *self.at)
 
