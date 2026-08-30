@@ -1,4 +1,4 @@
-﻿/* Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+﻿/* Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -421,7 +421,7 @@ renpyAudio.set_channel_count = (count) => {
 }
 
 
-renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid) => {
+renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid, array) => {
 
     const c = get_channel(channel);
 
@@ -525,7 +525,7 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
         fadein: fadein,
         fadeout: null,
         tight: tight,
-        file: file,
+        name: name,
         filter: renpyAudio.getFilter(afid),
         synchro_start: synchro_start,
     };
@@ -543,7 +543,7 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
         c.paused = false;
     } else {
         c.queued = q;
-        if (c.playing.file === file) {
+        if (c.playing.name === name) {
             // Same file, re-use the data to reduce memory and CPU footprint
             if (c.playing.buffer !== null) {
                 reuseBuffer(c);
@@ -555,7 +555,12 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
         }
     }
 
-    const array = FS.readFile(file);
+    if (array === null) {
+        array = FS.readFile(file);
+    } else {
+        array = new Uint8Array(array);
+    }
+
     context.decodeAudioData(array.buffer, (buffer) => {
 
         q.source = create_source(c, buffer);
@@ -563,7 +568,7 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
 
         start_playing(c);
 
-        if (c.playing === q && c.queued !== null && c.queued.file === q.file) {
+        if (c.playing === q && c.queued !== null && c.queued.name === q.name) {
             // Same file, re-use the data to reduce memory and CPU footprint
             reuseBuffer(c);
         }
@@ -911,8 +916,6 @@ renpyAudio.can_play_types = (l) => {
 
     return 1;
 }
-
-
 
 renpyAudio.set_video = (channel, video, loop, web_video_prompt) => {
     const c = get_channel(channel);
