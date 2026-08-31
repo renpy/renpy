@@ -27,8 +27,6 @@ import os
 import time
 import zlib
 
-import requests
-
 from . import download
 from . import common
 from . import deferred
@@ -634,6 +632,8 @@ class Update(object):
 
 
 def main():
+    import requests
+
     ap = argparse.ArgumentParser()
     ap.add_argument("url")
     ap.add_argument("targetdir")

@@ -24,7 +24,12 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy
 
-import requests
+# requests not available on emscripten
+try:
+    import requests
+except ImportError:
+    requests = None
+
 import re
 import os
 

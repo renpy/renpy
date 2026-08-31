@@ -561,7 +561,9 @@ def import_all():
     import renpy.test.testcli
 
     import renpy.update
+    import renpy.update.common
     import renpy.update.deferred
+    import renpy.update.update
 
     try:
         import renpy.tfd
