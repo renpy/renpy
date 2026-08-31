@@ -865,13 +865,14 @@ class ShownImageInfo(renpy.object.Object):
         Returns true if name is the prefix of an image that is showing
         on layer, or false otherwise.
         """
+        _shown = tuple(self.shown)
 
         tag = name[0]
         rest = name[1:]
 
         layer = renpy.exports.default_layer(layer, tag)
 
-        if (layer, tag) not in self.shown:
+        if (layer, tag) not in _shown:
             return None
 
         shown = self.attributes[layer, tag]
@@ -892,21 +893,24 @@ class ShownImageInfo(renpy.object.Object):
         """
         Returns the set of tags being shown on `layer`.
         """
+        _shown = tuple(self.shown)
 
-        return {t for l, t in self.shown if l == layer}
+        return {t for l, t in _shown if l == layer}
 
     def get_hidden_tags(self, layer):
         """
         Returns the set of tags on layer that have attributes,
         but aren't being shown.
         """
+        _shown = tuple(self.shown)
 
-        return {t for l, t in self.attributes if l == layer if (l, t) not in self.shown}
+        return {t for l, t in self.attributes if l == layer if (l, t) not in _shown}
 
     def predict_scene(self, layer):
         """
         Predicts the scene statement being called on layer.
         """
+        _shown = tuple(self.shown)
 
         if layer is None:
             layer = "master"
@@ -915,7 +919,7 @@ class ShownImageInfo(renpy.object.Object):
             if l == layer:
                 del self.attributes[l, t]
 
-        self.shown = set((l, t) for l, t in self.shown if l != layer)
+        self.shown = set((l, t) for l, t in _shown if l != layer)
 
     def predict_show(self, layer, name, show=True):
         """
@@ -934,7 +938,9 @@ class ShownImageInfo(renpy.object.Object):
         self.attributes[layer, tag] = rest
 
         if show:
-            self.shown.add((layer, tag))
+            _shown = self.shown.copy()
+            _shown.add((layer, tag))
+            self.shown = _shown
 
     def predict_hide(self, layer, name):
         tag = name[0]
@@ -944,7 +950,9 @@ class ShownImageInfo(renpy.object.Object):
         if (layer, tag) in self.attributes:
             del self.attributes[layer, tag]
 
-        self.shown.discard((layer, tag))
+        _shown = self.shown.copy()
+        _shown.discard((layer, tag))
+        self.shown = _shown
 
     def apply_attributes(self, layer, tag, name):
         """
