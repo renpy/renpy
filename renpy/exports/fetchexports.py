@@ -252,12 +252,12 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
         result = emscripten.run_script_string("""fetchFileResult({})""".format(fetch_id))
         status, _ignored, message = result.partition(" ")
 
-        if status != "PENDING":
-            break
-
-        if time.time() > start + timeout:
+        if status == "PENDING" and time.time() > start + timeout:
             status = "TIMEOUT"
             message = "Fetch timed out."
+
+        if status != "PENDING":
+            break
 
     try:
         if status == "OK":
