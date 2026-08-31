@@ -1070,7 +1070,7 @@ def is_immutable_value(v):
 
 
 def py_compile(
-    source: "str|renpy.ast.PyExpr",
+    source: "str | bytes | ast.Module",
     mode: CompileMode,
     filename: str = "<none>",
     lineno: int = 1,
@@ -1109,17 +1109,18 @@ def py_compile(
     """
     global compile_warnings
 
+    if isinstance(source, ast.Module):
+        return compile(source, filename, mode)
+    elif isinstance(source, bytes):
+        source = source.decode("utf-8")
+    elif not isinstance(source, str):
+        raise TypeError("source must be a string, renpy.ast.PyExpr, or ast.Module")
+
     first_line_column_delta = column
     rest_line_column_delta = column
 
     if ast_node:
         cache = False
-
-    if source is None:
-        raise TypeError("source must be a string, renpy.ast.PyExpr, or ast.Module")
-
-    if isinstance(source, ast.Module):
-        return compile(source, filename, mode)
 
     elif isinstance(source, renpy.ast.PyExpr):
         filename = source.filename
@@ -1129,7 +1130,7 @@ def py_compile(
         first_line_column_delta = source.column
         rest_line_column_delta = 0
 
-    elif hashcode is None:
+    if hashcode is None:
         hashcode = hash32(source)
 
     flags = file_compiler_flags.get(filename, 0)
@@ -1137,7 +1138,7 @@ def py_compile(
     if renpy.config.future_annotations:
         flags |= __future__.annotations.compiler_flag
 
-    key = (hashcode, lineno, filename, mode, flags, column)
+    key: CompileCache.ItemKey = (hashcode, lineno, filename, mode, flags, column)
     if cache and (rv := compile_cache.get(key)):
         return rv
 
