@@ -174,13 +174,22 @@ def get_on_battery():
 sdl_dll = False
 
 
-def get_sdl_dll():
+def get_sdl_dll(version=2):
     """
     :doc: sdl
 
     Returns a ctypes.cdll object that refers to the library that contains
-    the instance of SDL2 that Ren'Py is using. If this fails, None is returned.
+    the instance of SDL3 that Ren'Py is using. If this fails, None is returned.
+
+    `version`
+        The version of SDL to look for. Currently only version 3 is supported, and a call without
+        a version will always return None.
     """
+
+    if version != 3:
+        return None
+
+
 
     global sdl_dll
 
@@ -196,9 +205,9 @@ def get_sdl_dll():
             lib + "librenpython.dylib",
             lib + "librenpython.so",
             "librenpython.so",
-            "SDL2.dll",
-            "libSDL2.dylib",
-            "libSDL2-2.0.so.0",
+            "SDL3.dll",
+            "libSDL3.dylib",
+            "libSDL3.so.0",
         ]
 
         import ctypes

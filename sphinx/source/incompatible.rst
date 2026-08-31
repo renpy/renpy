@@ -22,6 +22,10 @@ The ability to create zsync updates will be removed when Ren'Py 8.7 is released.
 8.6.0
 -----
 
+**renpy.get_sdl_dll Version** Ren'Py now uses SDL3, and the :func:`renpy.get_sdl_dll` function now takes a `version`
+argument, which should be set to 3 to get the SDL3 library. Calls without the version argument will return None,
+representing SDL2 not being present.
+
 **Late Audio Scan** Ren'Py now defines automatic audio files at a late init level, rather than at init 0.
 To revert to the prior behavior, add to your game::
 
