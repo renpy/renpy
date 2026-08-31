@@ -885,9 +885,91 @@ renpyAudio.tts = (s, v, rate, voice) => {
 
 renpyAudio.update_tts_voices = () => {
     tts_voices = {};
-    for (let v of speechSynthesis.getVoices()) {
+
+    let voices = (speechSynthesis && speechSynthesis.getVoices) ? Array.from(speechSynthesis.getVoices()) : [];
+    if (!voices.length) {
+        return;
+    }
+
+    let navLangs = (typeof navigator !== "undefined" && navigator.languages && navigator.languages.length)
+        ? Array.from(navigator.languages)
+        : [(typeof navigator !== "undefined" && (navigator.language || navigator.userLanguage)) || "en"];
+
+    let norm = (l) => (l || "").toLowerCase().replace(/_/g, "-");
+    let base = (l) => norm(l).split("-")[0];
+
+    let normNavLangs = navLangs.map(norm);
+    let normNavBases = navLangs.map(base);
+
+    let isNormalVoice = (v) => {
+        let name = v.name || "";
+        let lang = v.lang || "";
+        return !name.includes("+") && !name.includes("@") && !lang.includes("+");
+    };
+
+    let scoreVoice = (v) => {
+        let normal = isNormalVoice(v);
+        let vLang = norm(v.lang);
+        let vBase = base(v.lang);
+
+        let langRank = -1;
+        let exact = false;
+        for (let i = 0; i < normNavLangs.length; i++) {
+            if (vLang === normNavLangs[i]) {
+                langRank = i;
+                exact = true;
+                break;
+            } else if (vBase === normNavBases[i] && langRank === -1) {
+                langRank = i;
+                exact = false;
+            }
+        }
+
+        let tier;
+        if (normal) {
+            if (langRank !== -1) {
+                tier = exact ? 0 : 1;
+            } else {
+                tier = 2;
+            }
+        } else {
+            if (langRank !== -1) {
+                tier = 3;
+            } else {
+                tier = 4;
+            }
+        }
+
+        return {
+            tier: tier,
+            isDefault: v.default ? 0 : 1,
+            langRank: langRank === -1 ? 999 : langRank,
+            lang: v.lang || "",
+            name: v.name || "",
+        };
+    };
+
+    voices.sort((a, b) => {
+        let sA = scoreVoice(a);
+        let sB = scoreVoice(b);
+
+        if (sA.tier !== sB.tier) return sA.tier - sB.tier;
+        if (sA.isDefault !== sB.isDefault) return sA.isDefault - sB.isDefault;
+        if (sA.langRank !== sB.langRank) return sA.langRank - sB.langRank;
+        if (sA.lang !== sB.lang) return sA.lang.localeCompare(sB.lang);
+        return sA.name.localeCompare(sB.name);
+    });
+
+    let count = 0;
+    for (let v of voices) {
         let key = v.lang + ": " + v.name;
-        tts_voices[key] = v;
+        if (!tts_voices[key]) {
+            tts_voices[key] = v;
+            count++;
+            if (count >= 25) {
+                break;
+            }
+        }
     }
 }
 
