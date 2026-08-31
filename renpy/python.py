@@ -829,7 +829,7 @@ class CompileCache:
     "The name of bytecode cache file used to store the bytecode cache."
 
     # Change this to force a recompile of Python when required.
-    MAGIC_NUMBER: Final = importlib.util.MAGIC_NUMBER + b"_2025-06-16"
+    MAGIC_NUMBER: Final = importlib.util.MAGIC_NUMBER + b"_2026-08-30"
     "Magic number used to invalidate the bytecode cache that is invalid for the current version of Ren'Py."
 
     type ItemKey = tuple[
