@@ -179,7 +179,7 @@ def get_sdl_dll():
     :doc: sdl
 
     Returns a ctypes.cdll object that refers to the library that contains
-    the instance of SDL2 that Ren'Py is using. If this fails, None is returned.
+    the instance of SDL that Ren'Py is using. If this fails, None is returned.
     """
 
     global sdl_dll
@@ -196,9 +196,7 @@ def get_sdl_dll():
             lib + "librenpython.dylib",
             lib + "librenpython.so",
             "librenpython.so",
-            "SDL2.dll",
-            "libSDL2.dylib",
-            "libSDL2-2.0.so.0",
+            sys.executable,
         ]
 
         import ctypes
@@ -209,7 +207,7 @@ def get_sdl_dll():
                 dll = ctypes.cdll[i]
                 # See if it has SDL_GetError..
                 dll.SDL_GetError
-            except Exception as e:
+            except Exception:
                 continue
 
             sdl_dll = dll
