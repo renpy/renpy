@@ -189,8 +189,6 @@ def get_sdl_dll(version=2):
     if version != 3:
         return None
 
-
-
     global sdl_dll
 
     if sdl_dll is not False:
@@ -201,6 +199,7 @@ def get_sdl_dll(version=2):
 
         DLLS = [
             None,
+            sys.executable,
             lib + "librenpython.dll",
             lib + "librenpython.dylib",
             lib + "librenpython.so",
@@ -297,7 +296,7 @@ def request_permission(permission):
     if not renpy.android:
         return False
 
-    return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8"))  # type: ignore
+    return get_sdl_dll(3).SDL_AndroidRequestPermission(permission.encode("utf-8"))  # type: ignore
 
 
 def open_url(url):
