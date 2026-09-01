@@ -319,8 +319,8 @@ cdef class GL2Draw:
         Returns the list of (major, minor, profile) contexts to try, in order,
         until one of them can be created.
 
-        Desktop: GL 3.3, then GL 2.0, both with the compatibility profile.
-        Mobile: GL ES 3.0.
+        Desktop: GL 3.3 compatibility, then GL 3.3 core, then GL 2.0
+        compatibility.
         """
 
         if gles:
@@ -328,6 +328,7 @@ cdef class GL2Draw:
 
         return [
             (3, 3, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY),
+            (3, 3, pygame.GL_CONTEXT_PROFILE_CORE),
             (2, 0, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY),
             ]
 
