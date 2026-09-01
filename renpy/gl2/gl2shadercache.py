@@ -723,7 +723,7 @@ precision highp int;
 
     # gl_FragColor does not exist in the modern dialect.
     if fragment and version >= 300:
-        rv.append("out vec4 {};\n".format(FRAGMENT_OUTPUT))
+        rv.append("layout(location = 0) out vec4 {};\n".format(FRAGMENT_OUTPUT))
 
     for v in merge_variables(variables):
         rv.append(v.declaration(fragment, gles, version) + ";\n")
