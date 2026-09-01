@@ -257,7 +257,7 @@ testsuite shaders:
             old_write = renpy.display.log.write
             messages = []
 
-            def write(message, *args):
+            def write(message, *args, messages=messages):
                 messages.append(message % args if args else message)
 
             renpy.display.log.write = write
@@ -333,7 +333,9 @@ testsuite shaders:
                     pass
 
                 def load(self):
-                    raise shader.ShaderError("test shader failure")
+                    from renpy.gl2.gl2shader import ShaderError
+
+                    raise ShaderError("test shader failure")
 
             shadercache.ShaderPart(name, glsl=100)
             shader.Program = FailingProgram
