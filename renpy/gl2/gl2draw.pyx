@@ -518,6 +518,10 @@ cdef class GL2Draw:
 
             return False
 
+        # Nothing is bound in the new context, and any buffers of a previous
+        # one died with it.
+        self.state_cache.new_context(False)
+
         # Initialize OpenGL.
 
         if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
@@ -606,7 +610,12 @@ cdef class GL2Draw:
                 self.shader_cache.clear()
 
         if full_reset:
-            if pygame.display.get_window().recreate_gl_context() or renpy.emscripten:
+            recreated = pygame.display.get_window().recreate_gl_context()
+
+            if recreated and not first:
+                self.state_cache.new_context(False)
+
+            if recreated or renpy.emscripten:
                 renpy.display.interface.kill_textures()
 
         # Are we in fullscreen mode?
@@ -839,6 +848,8 @@ cdef class GL2Draw:
 
         if self.shader_cache is not None:
             self.shader_cache.save()
+
+        self.state_cache.delete_scratch_buffers()
 
 
     cdef void change_fbo(self, GLuint fbo):
