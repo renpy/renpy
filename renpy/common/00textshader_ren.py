@@ -40,18 +40,18 @@ def adjust_duration(ts, u__duration, **kwargs):
 
 renpy.register_textshader(
     "typewriter",
+    glsl=300,
     include_default=False,
     variables="""
     uniform float u_text_slow_time;
-    attribute float a_text_min_time;
-    varying float v_text_min_time;
+    in float a_text_min_time;
+    out float v_text_min_time;
     """,
     vertex_200="""
     v_text_min_time = a_text_min_time;
     """,
     fragment_350="""
-    float l__done = v_text_min_time <= u_text_slow_time ? 1.0 : 0.0;
-    gl_FragColor = gl_FragColor * l__done;
+    fragment_color *= step(v_text_min_time, u_text_slow_time);
     """,
     doc="""
     The typewriter text shader handles slow text by making the text appear one character at a time, as if it were being
@@ -62,27 +62,28 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "dissolve",
+    glsl=300,
     include_default=False,
     adjust_function=adjust_duration,
     variables="""
     uniform float u__duration;
     uniform float u_text_slow_duration;
     uniform float u_text_slow_time;
-    attribute float a_text_time;
-    varying float v_text_time;
+    in float a_text_time;
+    out float v_text_time;
     """,
     vertex_200="""
     v_text_time = a_text_time;
     """,
     fragment_350="""
     float l__duration = u__duration * u_text_slow_duration;
-    float l__done;
+    float l__done = step(v_text_time, u_text_slow_time);
+
     if (l__duration > 0.0) {
         l__done = clamp((u_text_slow_time - v_text_time) / l__duration, 0.0, 1.0);
-    } else {
-        l__done = v_text_time <= u_text_slow_time ? 1.0 : 0.0;
     }
-    gl_FragColor = gl_FragColor * l__done;
+
+    fragment_color *= l__done;
     """,
     u__duration=10.0,
     doc="""
@@ -97,14 +98,15 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "slowalpha",
+    glsl=300,
     variables="""
-    uniform float u__alpha
+    uniform float u__alpha;
     """,
     fragment_325="""
-vec4 l__color = gl_FragColor;
-""",
+    vec4 l__color = fragment_color;
+    """,
     fragment_375="""
-    gl_FragColor = mix(gl_FragColor, l__color, u__alpha);
+    fragment_color = mix(fragment_color, l__color, u__alpha);
     """,
     u__alpha=0.2,
     doc="""
@@ -120,26 +122,25 @@ vec4 l__color = gl_FragColor;
 
 renpy.register_textshader(
     "flip",
+    glsl=300,
     include_default=False,
     adjust_function=adjust_duration,
     variables="""
     uniform float u__duration;
     uniform float u_text_slow_duration;
     uniform float u_text_slow_time;
-    attribute vec2 a_text_center;
-    attribute float a_text_min_time;
+    in vec2 a_text_center;
+    in float a_text_min_time;
     """,
     vertex_20="""
     float l__duration = u__duration * u_text_slow_duration;
-    float l__done;
+    float l__done = step(a_text_min_time, u_text_slow_time);
 
     if (l__duration > 0.0) {
         l__done = clamp((u_text_slow_time - a_text_min_time) / l__duration, 0.0, 1.0);
-    } else {
-        l__done = a_text_min_time <= u_text_slow_time ? 1.0 : 0.0;
     }
 
-    gl_Position.x = mix(a_text_center.x - (gl_Position.x - a_text_center.x), gl_Position.x, l__done);
+    gl_Position.x = mix(2.0 * a_text_center.x - gl_Position.x, gl_Position.x, l__done);
     """,
     u__duration=10.0,
     doc="""
@@ -154,6 +155,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "zoom",
+    glsl=300,
     include_default=False,
     adjust_function=adjust_duration,
     variables="""
@@ -161,8 +163,8 @@ renpy.register_textshader(
     uniform float u__duration;
     uniform float u_text_slow_duration;
     uniform float u_text_slow_time;
-    attribute vec2 a_text_center;
-    attribute float a_text_min_time;
+    in vec2 a_text_center;
+    in float a_text_min_time;
     """,
     vertex_25="""
     float l__duration = u__duration * u_text_slow_duration;
@@ -190,6 +192,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "jitter",
+    glsl=300,
     variables="""
     uniform vec2 u__jitter;
     uniform vec4 u_random;
@@ -214,6 +217,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "offset",
+    glsl=300,
     variables="""
     uniform vec2 u__offset;
     uniform float u_text_to_drawable;
@@ -233,17 +237,21 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "wave",
+    glsl=300,
     variables="""
     uniform float u__amplitude;
-    uniform float u__frequency
+    uniform float u__frequency;
     uniform float u__wavelength;
 
     uniform float u_time;
     uniform float u_text_to_drawable;
-    attribute float a_text_index;
+    in float a_text_index;
     """,
     vertex_40="""
-    gl_Position.y += cos(2.0 * 3.14159265359 * (a_text_index / u__wavelength + u_time * u__frequency)) * u__amplitude * u_text_to_drawable;
+    const float l__two_pi = 6.28318530718;
+
+    float l__phase = a_text_index / u__wavelength + u_time * u__frequency;
+    gl_Position.y += cos(l__two_pi * l__phase) * u__amplitude * u_text_to_drawable;
     """,
     u__amplitude=5.0,
     u__frequency=2.0,
@@ -265,20 +273,21 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "texture",
+    glsl=300,
     variables="""
     uniform sampler2D u__texture;
     uniform vec2 u__texture_res;
 
     uniform float u_text_to_virtual;
     uniform float u_text_main;
-    varying vec2 v__coord;
+    out vec2 v__coord;
     """,
     vertex_10="""
     v__coord = u_text_to_virtual * gl_Position.xy / u__texture_res;
     """,
     fragment_300="""
     if (u_text_main == 1.0) {
-        gl_FragColor = texture2D(u__texture, v__coord) * gl_FragColor;
+        fragment_color *= texture(u__texture, v__coord);
     }
     """,
     u__texture="#800080",
@@ -294,6 +303,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "linetexture",
+    glsl=300,
     variables="""
     uniform sampler2D u__texture;
     uniform vec2 u__scale;
@@ -302,17 +312,16 @@ renpy.register_textshader(
     uniform float u_text_to_virtual;
     uniform float u_text_main;
 
-    attribute vec2 a_text_center;
-    varying vec2 v__coord;
+    in vec2 a_text_center;
+    out vec2 v__coord;
     """,
     vertex_10="""
-
-    v__coord = vec2( gl_Position.x, (gl_Position.y - a_text_center.y)) / u__scale * u_text_to_virtual / u__texture_res;
+    v__coord = vec2(gl_Position.x, gl_Position.y - a_text_center.y) / u__scale * u_text_to_virtual / u__texture_res;
     v__coord.y += 0.5;
     """,
     fragment_300="""
     if (u_text_main == 1.0) {
-        gl_FragColor = texture2D(u__texture, v__coord) * gl_FragColor;
+        fragment_color *= texture(u__texture, v__coord);
     }
     """,
     u__texture="#800080",
