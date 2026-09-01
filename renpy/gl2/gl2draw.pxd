@@ -103,6 +103,8 @@ cdef class GL2Draw:
     # Was the window maximized?
     cdef public bint maximized
 
+    cdef bint context_uses_core_profile(self, object version) except *
+
     cdef void change_fbo(self, GLuint fbo)
 
 

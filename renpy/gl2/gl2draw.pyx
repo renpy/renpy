@@ -83,6 +83,16 @@ vsync = True
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
 
+cdef GLenum CONTEXT_PROFILE_MASK = 0x9126
+cdef GLint CONTEXT_CORE_PROFILE_BIT = 0x00000001
+
+CORE_PROFILE_ONLY_FUNCTIONS = {
+    "glBindVertexArray",
+    "glDeleteVertexArrays",
+    "glGenVertexArrays",
+    "glGetStringi",
+}
+
 
 cdef object get_gl_string(GLenum name):
     """
@@ -96,6 +106,28 @@ cdef object get_gl_string(GLenum name):
         return None
 
     return s.decode("utf-8", "replace")
+
+
+cdef set get_gl_extensions_list():
+    """
+    Returns the set of extensions via the indexed GL_EXTENSIONS query.
+    """
+
+    cdef GLint num = 0
+    cdef const char *s
+    cdef int i
+
+    extensions = set()
+
+    glGetIntegerv(GL_NUM_EXTENSIONS, &num)
+
+    for i in range(num):
+        s = <const char *> glGetStringi(GL_EXTENSIONS, i)
+
+        if s != NULL:
+            extensions.add(s.decode("utf-8", "replace"))
+
+    return extensions
 
 
 cdef class GL2Draw:
@@ -476,7 +508,9 @@ cdef class GL2Draw:
         for version in self.gl_context_versions(gles):
 
             renpy.display.log.write(
-                "Requesting OpenGL%s %d.%d.", " ES" if gles else "", version[0], version[1])
+                "Requesting OpenGL%s %d.%d%s.",
+                " ES" if gles else "", version[0], version[1],
+                " core" if version[2] == pygame.GL_CONTEXT_PROFILE_CORE else "")
 
             # Select the GL attributes and hints.
             self.select_gl_attributes(gles, version)
@@ -534,7 +568,7 @@ cdef class GL2Draw:
         # Load uguu, and init GL.
         renpy.uguu.gl.clear_missing_functions()
         renpy.uguu.gl.load()
-        if renpy.uguu.gl.check_missing_functions(renpy.gl2.gl2functions.required_functions):
+        if renpy.uguu.gl.check_missing_functions(("glGetIntegerv", "glGetString")):
             return False
 
         # Log the GL version.
@@ -546,6 +580,16 @@ cdef class GL2Draw:
 
         version = self.info["gpu_driver_version"] = get_gl_string(GL_VERSION)
         renpy.display.log.write(f"Version: {version!r}")
+
+        self.state_cache.new_context(self.context_uses_core_profile(version))
+
+        required_functions = renpy.gl2.gl2functions.required_functions
+
+        if not self.state_cache.core_profile:
+            required_functions = set(required_functions) - CORE_PROFILE_ONLY_FUNCTIONS
+
+        if renpy.uguu.gl.check_missing_functions(required_functions):
+            return False
 
         # The shading language version the context actually provides, which
         # is what decides the dialect shaders are emitted in. This is read
@@ -561,12 +605,11 @@ cdef class GL2Draw:
         self.display_info = renpy.display.get_info()
         renpy.display.log.write(f"Display Info: {self.display_info}")
 
-        extensions_string = get_gl_string(GL_EXTENSIONS)
-
-        if extensions_string is None:
-            extensions = set()
+        if self.state_cache.core_profile:
+            extensions = get_gl_extensions_list()
         else:
-            extensions = set(extensions_string.split(" "))
+            extensions_string = get_gl_string(GL_EXTENSIONS)
+            extensions = set(extensions_string.split(" ")) if extensions_string is not None else set()
 
         if renpy.config.log_gl_extensions:
 
@@ -596,6 +639,17 @@ cdef class GL2Draw:
 
         return True
 
+    cdef bint context_uses_core_profile(GL2Draw self, object version) except *:
+        cdef object parsed_version = parse_glsl_version(version)
+        cdef GLint profile = 0
+
+        if self.gles or parsed_version is None or parsed_version < 320:
+            return False
+
+        glGetIntegerv(CONTEXT_PROFILE_MASK, &profile)
+
+        return profile & CONTEXT_CORE_PROFILE_BIT
+
     def on_resize(self, first=False, full_reset=False):
 
         if first:
@@ -613,7 +667,7 @@ cdef class GL2Draw:
             recreated = pygame.display.get_window().recreate_gl_context()
 
             if recreated and not first:
-                self.state_cache.new_context(False)
+                self.state_cache.new_context(self.context_uses_core_profile(get_gl_string(GL_VERSION)))
 
             if recreated or renpy.emscripten:
                 renpy.display.interface.kill_textures()
