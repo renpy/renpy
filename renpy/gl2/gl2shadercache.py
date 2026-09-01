@@ -916,19 +916,19 @@ class ShaderCache(object):
             if self.pinned or (fallback >= self.version):
                 raise
 
+            failed_version = self.version
+            rv = build(fallback)
+            self.version = fallback
+
             renpy.display.log.write(
                 "Shader %r did not compile as GLSL %s, so shaders will be emitted as GLSL %s "
                 "for the rest of this session. This system reports supporting GLSL %s. The error was: %s",
                 sortedpartnames,
-                self.version,
+                failed_version,
                 fallback,
                 self.glsl_version,
                 e,
             )
-
-            self.version = fallback
-
-            rv = build(fallback)
 
         self.cache[partnames] = rv
         self.cache[sortedpartnames] = rv
