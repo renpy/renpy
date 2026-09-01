@@ -1637,6 +1637,9 @@ cdef class GL2DrawingContext:
         halfwidth = self.width / 2.0
         halfheight = self.height / 2.0
 
+        if halfwidth == 0.0 or halfheight == 0.0:
+            return
+
         sx = self.model_matrix.xdw
         sy = self.model_matrix.ydw
         sz = self.model_matrix.zdw

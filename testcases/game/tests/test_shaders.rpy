@@ -61,6 +61,24 @@ init python:
         fragment_600="gl_FragColor.rgb *= u__amount;\n",
     )
 
+    # A shader-local uniform that is only referenced inside helper functions.
+    renpy.register_shader(
+        "test_shaders.helper", glsl=300,
+        variables="uniform float u__amount;",
+        vertex_functions="""
+            vec4 test_shaders_helper_scale_vertex(vec4 position) {
+                return position * u__amount;
+            }
+        """,
+        fragment_functions="""
+            vec4 test_shaders_helper_scale(vec4 color) {
+                return color * u__amount;
+            }
+        """,
+        vertex_600="gl_Position = test_shaders_helper_scale_vertex(gl_Position);\n",
+        fragment_600="fragment_color = test_shaders_helper_scale(fragment_color);\n",
+    )
+
 
 transform test_shaders__both:
     shader [ "test_shaders.modern", "test_shaders.legacy" ]
@@ -177,6 +195,20 @@ testsuite shaders:
             else:
                 assert error is None, f"Legacy part did not compile: {error}"
 
+    testcase helper_function_variables:
+        description "A shader-local variable used by both stages' functions is declared once"
+
+        python:
+            cache = test_shaders__cache()
+            error = test_shaders__compile("renpy.texture", "test_shaders.helper")
+            assert error is None, f"Helper-function shader did not compile: {error}"
+
+            if cache is not None:
+                baseline = cache.get(("renpy.texture",))
+                helper = cache.get(("renpy.texture", "test_shaders.helper"))
+                assert len(helper.uniform_setters) == len(baseline.uniform_setters) + 1, \
+                    "A uniform shared by both stages should have one setter"
+
     testcase generated_fragment_output:
         description "Modern fragment output has an explicit location"
 
@@ -225,7 +257,7 @@ testsuite shaders:
             old_write = renpy.display.log.write
             messages = []
 
-            def write(message, *args):
+            def write(message, *args, messages=messages):
                 messages.append(message % args if args else message)
 
             renpy.display.log.write = write
@@ -301,7 +333,9 @@ testsuite shaders:
                     pass
 
                 def load(self):
-                    raise shader.ShaderError("test shader failure")
+                    from renpy.gl2.gl2shader import ShaderError
+
+                    raise ShaderError("test shader failure")
 
             shadercache.ShaderPart(name, glsl=100)
             shader.Program = FailingProgram

@@ -412,9 +412,13 @@ cdef class Program:
             v = Variable(shader_name, l, fragment)
 
             if v.storage == "uniform":
+                if v.name in seen_uniforms:
+                    continue
+
                 location = glGetUniformLocation(self.program, v.name.encode("utf-8"))
 
                 if location >= 0:
+                    seen_uniforms.add(v.name)
                     setter, samplers = generate_uniform_setter(shader_name, location, v.name, v.type, v.array, samplers)
                     self.uniform_setters.append(setter)
 
@@ -477,6 +481,7 @@ cdef class Program:
         cdef GLuint vertex
         cdef GLuint program
         cdef GLint status
+        cdef GLint max_samplers = 0
 
         cdef char[1024] error
 
@@ -519,7 +524,14 @@ cdef class Program:
         self.uniform_setters = [ ]
 
         samplers = self.find_variables(self.vertex, seen_uniforms, samplers, False)
-        self.find_variables(self.fragment, seen_uniforms, samplers, True)
+        samplers = self.find_variables(self.fragment, seen_uniforms, samplers, True)
+
+        glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_samplers)
+
+        if max_samplers > 0 and samplers > max_samplers:
+            raise ShaderError(
+                "Shader %s needs %d texture units, but this system provides %d." % (
+                    "+".join(self.name), samplers, max_samplers))
 
     cpdef void draw(self, GL2DrawingContext context, GL2Model model, Mesh mesh):
 
