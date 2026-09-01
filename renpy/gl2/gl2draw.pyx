@@ -176,6 +176,7 @@ cdef class GL2Draw:
         self.shader_cache = None
 
         self.state_cache = GLStateCache()
+        self.default_vao = 0
 
         # Has the position of this window ever been set?
         self.ever_set_position = False
@@ -554,6 +555,7 @@ cdef class GL2Draw:
 
         # Nothing is bound in the new context, and any buffers of a previous
         # one died with it.
+        self.default_vao = 0
         self.state_cache.new_context(False)
 
         # Initialize OpenGL.
@@ -590,6 +592,9 @@ cdef class GL2Draw:
 
         if renpy.uguu.gl.check_missing_functions(required_functions):
             return False
+
+        if self.state_cache.core_profile:
+            self.create_default_vao()
 
         # The shading language version the context actually provides, which
         # is what decides the dialect shaders are emitted in. This is read
@@ -650,6 +655,14 @@ cdef class GL2Draw:
 
         return profile & CONTEXT_CORE_PROFILE_BIT
 
+    cdef void create_default_vao(GL2Draw self) noexcept nogil:
+        cdef GLuint vao = 0
+
+        glGenVertexArrays(1, &vao)
+        glBindVertexArray(vao)
+
+        self.default_vao = vao
+
     def on_resize(self, first=False, full_reset=False):
 
         if first:
@@ -667,7 +680,11 @@ cdef class GL2Draw:
             recreated = pygame.display.get_window().recreate_gl_context()
 
             if recreated and not first:
+                self.default_vao = 0
                 self.state_cache.new_context(self.context_uses_core_profile(get_gl_string(GL_VERSION)))
+
+                if self.state_cache.core_profile:
+                    self.create_default_vao()
 
             if recreated or renpy.emscripten:
                 renpy.display.interface.kill_textures()
@@ -904,6 +921,10 @@ cdef class GL2Draw:
             self.shader_cache.save()
 
         self.state_cache.delete_scratch_buffers()
+
+        if self.default_vao:
+            glDeleteVertexArrays(1, &self.default_vao)
+            self.default_vao = 0
 
 
     cdef void change_fbo(self, GLuint fbo):
