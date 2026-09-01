@@ -20,7 +20,7 @@ dependencies = [
     "jinja2",
     "pkgconfig>=1.6.0",
     "chardet>=7.6.0",
-    "websockets>=17.0.1",
+    "websockets>=17.1",
     "pysocks>=1.7.1",
 ]
 
