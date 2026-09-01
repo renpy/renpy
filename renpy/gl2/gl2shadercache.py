@@ -397,8 +397,8 @@ class ShaderPart(object):
         # any.
         self.legacy_storage = None
 
-        self.vertex_functions = vertex_functions
-        self.fragment_functions = fragment_functions
+        self.vertex_functions = self.substitute_name(vertex_functions)
+        self.fragment_functions = self.substitute_name(fragment_functions)
 
         # A list of priority, text pairs for each section of the vertex and fragment shaders.
         self.vertex_parts = []
@@ -414,6 +414,12 @@ class ShaderPart(object):
         # A sets of variable names used in the vertex and fragments shader.
         vertex_used = set()
         fragment_used = set()
+
+        for m in re.finditer(r"\b\w+\b", self.vertex_functions):
+            vertex_used.add(m.group(0))
+
+        for m in re.finditer(r"\b\w+\b", self.fragment_functions):
+            fragment_used.add(m.group(0))
 
         self.uniforms = []
 
