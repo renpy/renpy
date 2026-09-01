@@ -219,6 +219,16 @@ class Variable:
             self.storage = None
             return
 
+        if self.invariant and self.storage != "varying":
+            raise ShaderError(
+                f"In {shader_name}, invariant can only qualify a varying, not '{self.storage}', in '{line}'."
+            )
+
+        if self.interpolation and self.storage != "varying":
+            raise ShaderError(
+                f"In {shader_name}, {self.interpolation} can only qualify a varying, not '{self.storage}', in '{line}'."
+            )
+
         token = match_word()
 
         if token in GLSL_PRECISIONS:
@@ -242,13 +252,16 @@ class Variable:
         if l.rstrip():
             raise ShaderError("Spurious tokens after the name in '{}'.".format(line))
 
-    def declaration(self, fragment, version):
+    def declaration(self, fragment, gles, version):
         """
         Returns the GLSL declaration of this variable, in the dialect the
         shader is being emitted in.
 
         `fragment`
             True if this is being emitted into a fragment shader.
+
+        `gles`
+            True if this is being emitted into an OpenGL ES context.
 
         `version`
             The GLSL version being targeted (100, 120, 300, or 330).
@@ -267,15 +280,18 @@ class Variable:
 
         rv = []
 
-        if self.invariant:
+        # GLSL ES 3.00 permits invariant on the vertex output, but not on the
+        # matching fragment input. Desktop GLSL requires the matching input to
+        # be invariant as well.
+        if self.invariant and not (gles and version == 300 and fragment):
             rv.append("invariant")
 
-            interpolation = self.interpolation
+        interpolation = self.interpolation
 
         if interpolation is None and self.storage == "varying" and self.type in FLAT_TYPES:
-                interpolation = "flat"
+            interpolation = "flat"
 
-            unsupported = (
+        unsupported = (
             (interpolation == "flat" and not modern)
             or (interpolation == "noperspective" and (not modern or gles))
         )
@@ -296,10 +312,10 @@ class Variable:
                 self.interpolation_warnings.add(warning)
                 renpy.display.log.write("%s", message)
 
-                interpolation = None
+            interpolation = None
 
         if modern and self.storage == "varying" and interpolation is not None:
-                rv.append(interpolation)
+            rv.append(interpolation)
 
         rv.append(storage)
 
