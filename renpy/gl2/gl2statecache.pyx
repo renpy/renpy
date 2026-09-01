@@ -28,6 +28,15 @@ cdef class GLStateCache:
 
         self.sampler_bindings = {}
 
+        self.current_element_buffer = 0
+        self.current_array_buffer = 0
+
+        self.core_profile = False
+
+        self.scratch_buffers[0] = 0
+        self.scratch_buffers[1] = 0
+        self.scratch_buffers[2] = 0
+
         # Set the cache to a safe initial state, without making GL calls.
         self.current_program = 0
         self.current_active_texture = 0
@@ -104,6 +113,52 @@ cdef class GLStateCache:
             glUseProgram(program)
 
             self.current_program = program
+
+    cpdef void new_context(GLStateCache self, bint core_profile):
+        self.core_profile = core_profile
+
+        self.current_element_buffer = 0
+        self.current_array_buffer = 0
+
+        self.scratch_buffers[0] = 0
+        self.scratch_buffers[1] = 0
+        self.scratch_buffers[2] = 0
+
+    cdef void delete_scratch_buffers(GLStateCache self) noexcept nogil:
+        if self.scratch_buffers[0] or self.scratch_buffers[1] or self.scratch_buffers[2]:
+            glDeleteBuffers(3, &self.scratch_buffers[0])
+
+            self.scratch_buffers[0] = 0
+            self.scratch_buffers[1] = 0
+            self.scratch_buffers[2] = 0
+
+            self.current_element_buffer = 0
+            self.current_array_buffer = 0
+
+    cdef void bind_element_buffer(GLStateCache self, GLuint buffer) noexcept nogil:
+        if buffer != self.current_element_buffer:
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer)
+
+            self.current_element_buffer = buffer
+
+    cdef void bind_array_buffer(GLStateCache self, GLuint buffer) noexcept nogil:
+        if buffer != self.current_array_buffer:
+            glBindBuffer(GL_ARRAY_BUFFER, buffer)
+
+            self.current_array_buffer = buffer
+
+    cdef GLuint upload_scratch(GLStateCache self, int slot, GLenum target, GLsizeiptr size, const void* data) noexcept nogil:
+        if self.scratch_buffers[slot] == 0:
+            glGenBuffers(1, &self.scratch_buffers[slot])
+
+        if target == GL_ELEMENT_ARRAY_BUFFER:
+            self.bind_element_buffer(self.scratch_buffers[slot])
+        else:
+            self.bind_array_buffer(self.scratch_buffers[slot])
+
+        glBufferData(target, size, data, GL_STREAM_DRAW)
+
+        return self.scratch_buffers[slot]
 
     cdef void activate_texture(GLStateCache self, GLenum unit):
         if unit != self.current_active_texture:

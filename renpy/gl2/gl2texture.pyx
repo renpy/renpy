@@ -66,6 +66,12 @@ cdef GLenum RGBA8 = 0x8058
 cdef GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
 cdef GLenum MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF
 
+# Texture swizzle parameters (GL 3.3 / GLES 3.0).
+cdef GLenum TEXTURE_SWIZZLE_R = 0x8E42
+cdef GLenum TEXTURE_SWIZZLE_G = 0x8E43
+cdef GLenum TEXTURE_SWIZZLE_B = 0x8E44
+cdef GLenum TEXTURE_SWIZZLE_A = 0x8E45
+
 ################################################################################
 
 cdef class TextureLoader:
@@ -363,6 +369,7 @@ cdef class GLTexture(GL2Model):
         """Uploads one tightly packed 8-bit video plane as a 2D texture."""
 
         cdef GLuint texture
+        cdef bint two_components = (format == GL_LUMINANCE_ALPHA)
 
         glGenTextures(1, &texture)
         glBindTexture(GL_TEXTURE_2D, texture)
@@ -370,6 +377,15 @@ cdef class GLTexture(GL2Model):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+
+        if self.loader.draw.state_cache.core_profile:
+            glTexParameteri(GL_TEXTURE_2D, TEXTURE_SWIZZLE_R, GL_RED)
+            glTexParameteri(GL_TEXTURE_2D, TEXTURE_SWIZZLE_G, GL_RED)
+            glTexParameteri(GL_TEXTURE_2D, TEXTURE_SWIZZLE_B, GL_RED)
+            glTexParameteri(GL_TEXTURE_2D, TEXTURE_SWIZZLE_A, GL_GREEN if two_components else GL_ONE)
+
+            format = GL_RG if two_components else GL_RED
+
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
         glPixelStorei(GL_UNPACK_ROW_LENGTH, 0)
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data)
@@ -383,7 +399,7 @@ cdef class GLTexture(GL2Model):
         self.properties = {
             "mipmap": mipmap,
             "movie_yuv": True,
-            "movie_yuv_components": 2 if format == GL_LUMINANCE_ALPHA else 1,
+            "movie_yuv_components": 2 if two_components else 1,
         }
         self.mesh = Mesh2.texture_rectangle(0.0, 0.0, width, height, 0.0, 0.0, 1.0, 1.0)
         self.loader.allocated.add(texture)
@@ -715,7 +731,9 @@ cdef class GLTexture(GL2Model):
         if tw == 0 or th == 0:
             return
 
-        glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST)
+        if not self.loader.draw.state_cache.core_profile:
+            glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST)
+
         glGenerateMipmap(GL_TEXTURE_2D)
 
     def add_mipmap(self):

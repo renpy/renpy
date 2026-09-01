@@ -94,6 +94,10 @@ cdef class GL2Draw:
 
     cdef public GLStateCache state_cache
 
+    # The vertex array object bound for the lifetime of a core-profile
+    # context, which has no default one.
+    cdef GLuint default_vao
+
     # The default FBO.
     cdef public GLuint default_fbo
 
@@ -102,6 +106,10 @@ cdef class GL2Draw:
 
     # Was the window maximized?
     cdef public bint maximized
+
+    cdef bint context_uses_core_profile(self, object version) except *
+
+    cdef void create_default_vao(self) noexcept nogil
 
     cdef void change_fbo(self, GLuint fbo)
 
