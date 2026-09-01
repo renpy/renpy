@@ -27,7 +27,7 @@ from renpy.gl2.gl2texture cimport GLTexture
 from renpy.gl2.gl2draw cimport GL2DrawingContext
 from renpy.gl2.gl2model cimport GL2Model
 from renpy.gl2.gl2uniform cimport Setter, Sampler2DSetter
-from renpy.gl2.gl2statecache cimport GLStateCache
+from renpy.gl2.gl2statecache cimport GLStateCache, SCRATCH_POSITION, SCRATCH_ATTRIBUTE, SCRATCH_INDEX
 
 from renpy.display.matrix cimport Matrix
 
@@ -364,6 +364,46 @@ class Variable:
         return (self.storage, self.type, self.name, self.array) == (other.storage, other.type, other.name, other.array)
 
 
+cdef inline void upload_mesh_scratch(GLStateCache cache, Mesh mesh, GLuint* vbo, GLuint* abo, GLuint* ibo) noexcept nogil:
+    vbo[0] = 0
+    abo[0] = 0
+    ibo[0] = 0
+
+    if not cache.core_profile:
+        return
+
+    vbo[0] = cache.upload_scratch(
+        SCRATCH_POSITION, GL_ARRAY_BUFFER,
+        mesh.points * mesh.point_size * sizeof(float), mesh.point_data)
+
+    if mesh.layout.stride:
+        abo[0] = cache.upload_scratch(
+            SCRATCH_ATTRIBUTE, GL_ARRAY_BUFFER,
+            mesh.points * mesh.layout.stride * sizeof(float), mesh.attribute)
+
+    ibo[0] = cache.upload_scratch(
+        SCRATCH_INDEX, GL_ELEMENT_ARRAY_BUFFER,
+        3 * mesh.triangles * sizeof(unsigned int), mesh.triangle)
+
+
+cdef inline void set_attribute_pointer(GLStateCache cache, GLuint buffer, GLint location, GLint size, int stride, const float* data, int offset) noexcept nogil:
+    cache.bind_array_buffer(buffer)
+
+    if buffer:
+        glVertexAttribPointer(location, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), <const void*> (<size_t> offset * sizeof(float)))
+    else:
+        glVertexAttribPointer(location, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), data + offset)
+
+
+cdef inline void draw_mesh_elements(GLStateCache cache, GLuint ibo, Mesh mesh) noexcept nogil:
+    cache.bind_element_buffer(ibo)
+
+    if ibo:
+        glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, NULL)
+    else:
+        glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, mesh.triangle)
+
+
 cdef class Program:
     """
     Represents an OpenGL program.
@@ -529,21 +569,24 @@ cdef class Program:
         cdef dict attribute_offsets
         cdef GLStateCache cache = context.state_cache
         cdef unsigned int required_mask = 0
+        cdef GLuint vbo, abo, ibo
 
         cache.use_program(self.program)
 
         properties = context.properties
         attribute_offsets = mesh.layout.offset
 
+        upload_mesh_scratch(cache, mesh, &vbo, &abo, &ibo)
+
         # Set up the attributes and build the mask of required attribute arrays.
         for a in self.attributes:
             if a.name == "a_position":
-                glVertexAttribPointer(a.location, mesh.point_size, GL_FLOAT, GL_FALSE, mesh.point_size * sizeof(float), mesh.point_data)
+                set_attribute_pointer(cache, vbo, a.location, mesh.point_size, mesh.point_size, mesh.point_data, 0)
                 required_mask |= (<unsigned int> 1 << a.location)
             else:
                 try:
                     offset = attribute_offsets[a.name]
-                    glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.layout.stride * sizeof(float), mesh.attribute + <int> offset)
+                    set_attribute_pointer(cache, abo, a.location, a.size, mesh.layout.stride, mesh.attribute, <int> offset)
                     required_mask |= (<unsigned int> 1 << a.location)
                 except KeyError:
                     shader_name = "+".join(self.name)
@@ -577,7 +620,7 @@ cdef class Program:
                 rgb_eq, src_rgb, dst_rgb, alpha_eq, src_alpha, dst_alpha = properties["blend_func"]
                 cache.set_blend(rgb_eq, alpha_eq, src_rgb, dst_rgb, src_alpha, dst_alpha)
 
-        glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, mesh.triangle)
+        draw_mesh_elements(cache, ibo, mesh)
 
         if properties:
 
@@ -597,20 +640,23 @@ cdef class Program:
 
         cdef Attribute a
         cdef unsigned int required_mask = 0
+        cdef GLuint vbo, abo, ibo
 
         cache.use_program(self.program)
+
+        upload_mesh_scratch(cache, mesh, &vbo, &abo, &ibo)
 
         # Set up the attributes.
         for a in self.attributes:
             if a.name == "a_position":
-                glVertexAttribPointer(a.location, mesh.point_size, GL_FLOAT, GL_FALSE, mesh.point_size * sizeof(float), mesh.point_data)
+                set_attribute_pointer(cache, vbo, a.location, mesh.point_size, mesh.point_size, mesh.point_data, 0)
                 required_mask |= (<unsigned int> 1 << a.location)
             else:
                 offset = mesh.layout.offset.get(a.name, None)
                 if offset is None:
                     self.missing("mesh attribute", a.name)
 
-                glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.layout.stride * sizeof(float), mesh.attribute + <int> offset)
+                set_attribute_pointer(cache, abo, a.location, a.size, mesh.layout.stride, mesh.attribute, <int> offset)
                 required_mask |= (<unsigned int> 1 << a.location)
 
         cache.sync_attrib_arrays(required_mask)
@@ -621,4 +667,4 @@ cdef class Program:
         for setter in self.uniform_setters:
             setter.set_texture(cache, texture)
 
-        glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, mesh.triangle)
+        draw_mesh_elements(cache, ibo, mesh)
