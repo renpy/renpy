@@ -177,6 +177,150 @@ testsuite shaders:
             else:
                 assert error is None, f"Legacy part did not compile: {error}"
 
+    testcase generated_fragment_output:
+        description "Modern fragment output has an explicit location"
+
+        python:
+            from renpy.gl2.gl2shader import ShaderError, Variable
+            import renpy.gl2.gl2shadercache as shadercache
+
+            for gles, version in ((True, 300), (False, 330)):
+                text = shadercache.source([], [], [], True, gles, version)
+                assert "layout(location = 0) out vec4 fragment_color;" in text
+
+            try:
+                Variable("test_shaders.output", "layout(location = 1) out vec4 user_output;")
+            except ShaderError as error:
+                assert "additional fragment output" in str(error)
+            else:
+                assert False, "shader parts may not declare their own layout qualifiers"
+
+    testcase invariant_varyings:
+        description "Invariant varyings are emitted for each profile and stage"
+
+        python:
+            from renpy.gl2.gl2shader import ShaderError, Variable
+
+            variable = Variable("test_shaders.invariant", "invariant out vec2 v_test;")
+
+            assert variable.declaration(False, True, 300) == "invariant out vec2 v_test"
+            assert variable.declaration(True, True, 300) == "in vec2 v_test"
+            assert variable.declaration(False, False, 330) == "invariant out vec2 v_test"
+            assert variable.declaration(True, False, 330) == "invariant in vec2 v_test"
+
+            try:
+                Variable("test_shaders.invariant", "invariant uniform float u_test;")
+            except ShaderError as error:
+                assert "only qualify a varying" in str(error)
+            else:
+                assert False, "invariant uniforms should produce a clear ShaderError"
+
+    testcase interpolation_qualifiers:
+        description "Interpolation is profile-aware and reports unsupported modes"
+
+        python:
+            from renpy.gl2.gl2shader import ShaderError, Variable
+
+            old_developer = renpy.config.developer
+            old_write = renpy.display.log.write
+            messages = []
+
+            def write(message, *args):
+                messages.append(message % args if args else message)
+
+            renpy.display.log.write = write
+
+            try:
+                renpy.config.developer = False
+
+                flat = Variable("test_shaders.interpolation", "flat out vec2 v_flat;")
+                assert flat.declaration(False, True, 300) == "flat out vec2 v_flat"
+                assert flat.declaration(False, True, 100) == "varying vec2 v_flat"
+                assert len(messages) == 1 and "flat interpolation" in messages[0]
+                assert flat.declaration(False, True, 100) == "varying vec2 v_flat"
+                assert len(messages) == 1, "unsupported interpolation should only log once"
+
+                noperspective = Variable("test_shaders.interpolation", "noperspective out vec2 v_noperspective;")
+                assert noperspective.declaration(False, False, 330) == "noperspective out vec2 v_noperspective"
+                assert noperspective.declaration(False, True, 300) == "out vec2 v_noperspective"
+                assert len(messages) == 2 and "noperspective interpolation" in messages[1]
+
+                renpy.config.developer = True
+
+                try:
+                    flat.declaration(False, True, 100)
+                except ShaderError as error:
+                    assert "flat interpolation" in str(error)
+                else:
+                    assert False, "unsupported flat interpolation should fail in developer mode"
+
+                try:
+                    noperspective.declaration(False, True, 300)
+                except ShaderError as error:
+                    assert "noperspective interpolation" in str(error)
+                else:
+                    assert False, "unsupported noperspective interpolation should fail in developer mode"
+            finally:
+                renpy.config.developer = old_developer
+                renpy.display.log.write = old_write
+
+    testcase interpolation_minimum_dialect:
+        description "Flat and noperspective interpolation require the modern dialect"
+
+        python:
+            import renpy.gl2.gl2shadercache as shadercache
+
+            for interpolation in ("flat", "noperspective"):
+                name = "test_shaders.minimum_" + interpolation
+                part = shadercache.ShaderPart(
+                    name,
+                    glsl=100,
+                    variables=f"{interpolation} varying vec2 v_test;",
+                    vertex_100="v_test = vec2(0.0);",
+                    fragment_100="gl_FragColor = vec4(v_test, 0.0, 1.0);",
+                )
+
+                try:
+                    assert part.minimum_dialect == 300
+                    assert part.minimum_feature == f"{interpolation} interpolation on v_test"
+                finally:
+                    del shadercache.shader_part[name]
+
+    testcase failed_fallback_preserves_version:
+        description "A failed fallback does not change the shader cache version"
+
+        python:
+            import renpy.gl2.gl2shader as shader
+            import renpy.gl2.gl2shadercache as shadercache
+
+            name = "test_shaders.fallback_failure"
+            old_program = shader.Program
+
+            class FailingProgram:
+                def __init__(self, *args):
+                    pass
+
+                def load(self):
+                    raise shader.ShaderError("test shader failure")
+
+            shadercache.ShaderPart(name, glsl=100)
+            shader.Program = FailingProgram
+
+            try:
+                cache = shadercache.ShaderCache("test-shaders-fallback.txt", True, 300)
+
+                try:
+                    cache.get((name,))
+                except shader.ShaderError:
+                    pass
+                else:
+                    assert False, "both shader builds should fail"
+
+                assert cache.version == 300
+            finally:
+                shader.Program = old_program
+                del shadercache.shader_part[name]
+
     testcase renders:
         description "Draws with parts in both dialects"
 

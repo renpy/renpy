@@ -126,6 +126,9 @@ class Variable:
     name: str|None = None
     "The name of the variable."
 
+    shader_name: str
+    "The shader part that declared this variable."
+
     array: int|None = None
     "The size of the array, or None if not an array."
 
@@ -141,10 +144,15 @@ class Variable:
     interpolation: str|None = None
     "The interpolation qualifier (flat, smooth, or noperspective). None if not given."
 
+    interpolation_warnings: set
+    "Unsupported interpolation modes already reported for this variable."
+
     def __init__(self, shader_name, line, fragment=False):
 
         l = line.strip().rstrip("; ")
         self.line = l
+        self.shader_name = shader_name
+        self.interpolation_warnings = set()
 
         def match_word():
             nonlocal l
@@ -262,18 +270,35 @@ class Variable:
         if self.invariant:
             rv.append("invariant")
 
-        # Interpolation qualifiers don't exist in the legacy dialect.
-        if modern and self.storage == "varying":
             interpolation = self.interpolation
 
-            if interpolation is None and self.type in FLAT_TYPES:
+        if interpolation is None and self.storage == "varying" and self.type in FLAT_TYPES:
                 interpolation = "flat"
 
-            # GLSL ES 3.00 only has smooth and flat
-            if interpolation == "noperspective" and version == 300:
+            unsupported = (
+            (interpolation == "flat" and not modern)
+            or (interpolation == "noperspective" and (not modern or gles))
+        )
+
+        if unsupported:
+            dialect = "GLSL ES {}".format(version) if gles else "desktop GLSL {}".format(version)
+            message = (
+                f"In shader {self.shader_name}, {interpolation} interpolation on {self.name} is not supported by "
+                f"{dialect}; it will be omitted."
+            )
+
+            if renpy.config.developer:
+                raise ShaderError(message)
+
+            warning = (interpolation, gles, version)
+
+            if warning not in self.interpolation_warnings:
+                self.interpolation_warnings.add(warning)
+                renpy.display.log.write("%s", message)
+
                 interpolation = None
 
-            if interpolation is not None:
+        if modern and self.storage == "varying" and interpolation is not None:
                 rv.append(interpolation)
 
         rv.append(storage)

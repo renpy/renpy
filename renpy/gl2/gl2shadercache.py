@@ -539,6 +539,9 @@ class ShaderPart(object):
             name = next((n for pattern, n in UNTRANSLATED_MARKERS.get(dialect, []) if pattern.search(text)), None)
 
             if name is None:
+                name = self.untranslated_interpolation(dialect)
+
+            if name is None:
                 name = self.untranslated_type(dialect)
 
             if name is not None:
@@ -554,6 +557,18 @@ class ShaderPart(object):
         for v in self.vertex_variables | self.fragment_variables:
             if (v.storage != "uniform") and (v.type in types):
                 return "{} {}".format(v.type, v.name)
+
+        return None
+
+    def untranslated_interpolation(self, dialect):
+        if dialect < 300:
+            return None
+
+        for v in self.vertex_variables | self.fragment_variables:
+            interpolation = getattr(v, "interpolation", None)
+
+            if interpolation in {"flat", "noperspective"}:
+                return f"{interpolation} interpolation on {v.name}"
 
         return None
 
@@ -711,7 +726,7 @@ precision highp int;
         rv.append("out vec4 {};\n".format(FRAGMENT_OUTPUT))
 
     for v in merge_variables(variables):
-        rv.append(v.declaration(fragment, version) + ";\n")
+        rv.append(v.declaration(fragment, gles, version) + ";\n")
 
     for text, glsl in functions:
         rv.append(translate(text, glsl, version))
