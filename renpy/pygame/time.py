@@ -20,4 +20,12 @@
 # because the init function time.pyx is inittime, which conflicts with the
 # built-in inittime function (used by the time module) when everything is
 # statically linked, as it is on iOS.
-from .pygame_time import *
+from .pygame_time import (
+    Clock as Clock,
+    delay as delay,
+    get_ticks as get_ticks,
+    init as init,
+    quit as quit,
+    set_timer as set_timer,
+    wait as wait,
+)
