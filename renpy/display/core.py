@@ -2240,29 +2240,31 @@ class Interface:
 
             renpy.plog(2, "after gc")
 
-    def idle_frame(self, expensive):
+    def run_prediction(self, expensive):
         """
         Tasks that are run during "idle" frames.
         """
 
         if expensive:
-            renpy.plog(1, "start idle_frame (expensive)")
+            renpy.plog(1, "start prediction (expensive)")
         else:
-            renpy.plog(1, "start idle_frame (inexpensive)")
+            renpy.plog(1, "start prediction (inexpensive)")
 
-        # We want this to include the GC time, so we don't predict on
-        # frames where we GC.
-        start = get_time()
+        # The time inexpensive prediction ends.
+        inexpensive_end = get_time() + renpy.config.minimum_prediction_time
 
         step = 1
 
         while True:
-            if self.event_peek(False) and not self.force_prediction:
-                break
 
-            if not expensive:
-                if get_time() > (start + 0.0005):
-                    break
+            if get_time() < inexpensive_end:
+                pass
+            elif self.force_prediction:
+                pass
+            elif not expensive:
+                break
+            elif self.event_peek(False):
+                break
 
             # Step 1: Run gc.
             if step == 1:
@@ -2271,9 +2273,8 @@ class Interface:
 
             # Step 2: Push textures to GPU.
             elif step == 2:
-                while renpy.display.draw.ready_one_texture():
-                    if not expensive and get_time() > (start + 0.0005):
-                        break
+                if renpy.display.draw.ready_one_texture():
+                    continue
                 step += 1
 
             # Step 3: Predict more images.
@@ -2833,6 +2834,9 @@ class Interface:
                     if renpy.display.draw.update(force=self.display_reset):
                         needs_redraw = True
 
+                    # This becomes true if we did a redraw this cycle.
+                    did_redraw = False
+
                     # Redraw the screen.
                     if self.force_redraw or (
                         (first_pass or not pygame.event.peek(ALL_EVENTS))
@@ -2857,6 +2861,7 @@ class Interface:
                         renpy.audio.audio.advance_time()  # Sets the time of all video frames.
 
                         self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
+                        did_redraw = True
 
                         if first_pass:
                             if not self.interact_time:
@@ -2983,7 +2988,7 @@ class Interface:
                         else:
                             pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1), once=True)
 
-                elif redraw_time is None:
+                else:
                     if old_redraw_time is not None:
                         pygame.time.set_timer(REDRAW, 0)
                     _redraw_in = 1.0
@@ -3014,25 +3019,22 @@ class Interface:
                     if rv is not None:
                         return False, rv
 
-                if can_block or (frame >= renpy.config.idle_frame) or (self.force_prediction):
+                # Decide to run prediction.
+                if did_redraw and (can_block or (frame >= renpy.config.idle_frame) or (self.force_prediction)):
                     expensive = not (
                         needs_redraw or (_redraw_in < 0.2) or (_timeout_in < 0.2) or renpy.display.video.playing()
-                    )
+                    ) or self.force_prediction
 
-                    if self.force_prediction:
-                        expensive = True
-                        can_block = True
-
-                    self.idle_frame(expensive)
+                    self.run_prediction(expensive)
 
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
-                    renpy.plog(1, "pre peek")
+                    renpy.plog(1, "pre event poll")
                     ev = self.event_poll()
-                    renpy.plog(1, "post peek {!r}", ev)
+                    renpy.plog(1, "post event poll {!r}", ev)
                 else:
                     renpy.plog(1, "pre wait")
                     ev = self.event_wait()
-                    renpy.plog(1, "post wait {!r}", ev)
+                    renpy.plog(1, "post event wait {!r}", ev)
 
                 self.interaction_counter = 0
                 renpy.display.focus.clear_focus_changes_since_event()
