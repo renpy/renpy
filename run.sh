@@ -35,8 +35,8 @@ while [ "$#" -gt 0 ]; do
 done
 
 if $CLEAN; then
-    find "$ROOT" -maxdepth 1 -type f -name '.cpython*.so' -delete
-    find "$ROOT/renpy" -type f -name '.cpython*.so' -delete
+    find "$ROOT" -maxdepth 1 -type f -name '*.cpython*.so' -delete
+    find "$ROOT/renpy" -type f -name '*.cpython*.so' -delete
 fi
 
 if [ -n "$RENPY_COVERAGE" ]; then
