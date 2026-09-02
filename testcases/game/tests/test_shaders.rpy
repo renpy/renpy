@@ -149,6 +149,34 @@ testsuite shaders:
                 assert list(cache.predicted) == expected, \
                     f"Unexpected shader prediction graph: {list(cache.predicted)}"
 
+    testcase prediction_api:
+        description "Shader prediction can be started and stopped explicitly"
+
+        python:
+            old_predict_shader = renpy.store._predict_shader
+            old_draw = renpy.display.draw
+            renpy.store._predict_shader = renpy.revertable.RevertableSet()
+            renpy.display.draw = None
+
+            try:
+                legacy = ("renpy.texture", "test_shaders.legacy")
+                modern = ("renpy.texture", "test_shaders.modern")
+
+                renpy.start_predict_shader(*legacy)
+                renpy.start_predict_shader(modern)
+                assert renpy.store._predict_shader == {legacy, modern}
+
+                renpy.stop_predict_shader(legacy)
+                assert renpy.store._predict_shader == {modern}
+
+                with test_shaders__prediction_cache() as cache:
+                    renpy.display.predict.predict_registered_shaders()
+                    expected = test_shaders__prediction_key(*modern)
+                    assert list(cache.predicted) == [expected]
+            finally:
+                renpy.store._predict_shader = old_predict_shader
+                renpy.display.draw = old_draw
+
     testcase builtin_parts:
         description "Ren'Py's own shader parts compile at the emitted version"
 

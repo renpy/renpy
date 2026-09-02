@@ -446,6 +446,9 @@ _cache_pin_set = set()
 # Used to store displayables that should be predicted.
 _predict_set = set()
 
+# Used to store shader combinations that should be predicted.
+_predict_shader = set()
+
 # A map from a screen name to an (args, kwargs) tuple. The arguments and
 # keyword arguments can be
 _predict_screen = dict()

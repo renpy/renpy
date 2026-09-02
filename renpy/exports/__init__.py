@@ -533,8 +533,10 @@ from renpy.exports.predictexports import (
     expand_predict as expand_predict,
     predicting as predicting,
     start_predict_screen as start_predict_screen,
+    start_predict_shader as start_predict_shader,
     start_predict as start_predict,
     stop_predict_screen as stop_predict_screen,
+    stop_predict_shader as stop_predict_shader,
     stop_predict as stop_predict,
 )
 

@@ -146,6 +146,48 @@ def stop_predict_screen(name):
     renpy.store._predict_screen = new_predict
 
 
+def _shader_tuple(shaders):
+    if len(shaders) == 1 and not isinstance(shaders[0], str):
+        return tuple(shaders[0])
+
+    return tuple(shaders)
+
+
+def start_predict_shader(*shaders):
+    """
+    :doc: model
+
+    Causes Ren'Py to predict the specified combination of shaders during every
+    interaction until it is removed by :func:`renpy.stop_predict_shader`.
+
+    This accepts shader part names as separate arguments, or one iterable of
+    shader part names.
+
+    Prediction will occur during normal gameplay. To wait for prediction to
+    complete, use the `predict` argument to :func:`renpy.pause`.
+    """
+
+    new_predict = renpy.revertable.RevertableSet(renpy.store._predict_shader)
+    new_predict.add(_shader_tuple(shaders))
+    renpy.store._predict_shader = new_predict
+
+
+def stop_predict_shader(*shaders):
+    """
+    :doc: model
+
+    Causes Ren'Py to stop predicting the specified combination of shaders during
+    every interaction.
+
+    Shader parts can be supplied as described in
+    :func:`renpy.start_predict_shader`.
+    """
+
+    new_predict = renpy.revertable.RevertableSet(renpy.store._predict_shader)
+    new_predict.discard(_shader_tuple(shaders))
+    renpy.store._predict_shader = new_predict
+
+
 def predicting():
     """
     :doc: other
