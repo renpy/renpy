@@ -7,6 +7,8 @@
 
 init python:
 
+    import contextlib
+
     def test_shaders__cache():
         return getattr(renpy.display.draw, "shader_cache", None)
 
@@ -26,6 +28,22 @@ init python:
             return str(e)
 
         return None
+
+    @contextlib.contextmanager
+    def test_shaders__prediction_cache():
+        import renpy.gl2.gl2shadercache as shadercache
+
+        cache = shadercache.ShaderCache("test-shader-prediction.txt", True, 300)
+        old_draw = renpy.display.draw
+        renpy.display.draw = type("PredictionDraw", (), {"shader_cache": cache})()
+
+        try:
+            yield cache
+        finally:
+            renpy.display.draw = old_draw
+
+    def test_shaders__prediction_key(*parts):
+        return tuple(sorted((renpy.config.default_shader,) + parts))
 
     renpy.register_shader(
         "test_shaders.modern", glsl=300,
@@ -100,6 +118,36 @@ testsuite shaders:
     after testcase:
         if not screen "main_menu":
             run MainMenu(confirm=False, save=False)
+
+    testcase prediction_displayables:
+        description "Displayable prediction composes shaders across render boundaries"
+
+        python:
+            with test_shaders__prediction_cache() as cache:
+                texture = renpy.display.imagelike.Solid("#fff")
+                model = renpy.display.model.Model()
+                model.texture(texture)
+                model.shader("renpy.texture")
+                model.shader("test_shaders.legacy")
+
+                mask = renpy.display.imagelike.Solid("#000")
+                masked = renpy.display.layout.AlphaMask(model, mask)
+                transform = renpy.display.transform.Transform(masked, alpha=0.5, shader="test_shaders.modern")
+                renpy.display.predict.predict_displayable_shaders(transform)
+
+                expected_mask = test_shaders__prediction_key(
+                    "renpy.alpha",
+                    "renpy.mask",
+                    "test_shaders.modern",
+                )
+                expected_texture = test_shaders__prediction_key("renpy.texture")
+                expected_model = test_shaders__prediction_key(
+                    "renpy.texture",
+                    "test_shaders.legacy",
+                )
+                expected = [expected_mask, expected_texture, expected_model]
+                assert list(cache.predicted) == expected, \
+                    f"Unexpected shader prediction graph: {list(cache.predicted)}"
 
     testcase builtin_parts:
         description "Ren'Py's own shader parts compile at the emitted version"
