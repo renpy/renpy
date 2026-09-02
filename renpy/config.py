@@ -458,6 +458,9 @@ expensive_predict_callbacks = []
 # Should screens be predicted?
 predict_screens = True
 
+# Should shaders be predicted?
+predict_shaders = True
+
 # Should we use the new choice screen format?
 choice_screen_chosen = True
 
