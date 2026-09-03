@@ -1766,5 +1766,5 @@ def post_init():
     if renpy.config.raise_image_exceptions is None:
         renpy.config.raise_image_exceptions = renpy.config.developer
 
-    if renpy.config.raise_image_load_exceptions:
+    if renpy.config.raise_image_load_exceptions is None:
         renpy.config.raise_image_load_exceptions = renpy.config.developer
