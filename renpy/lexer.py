@@ -26,13 +26,14 @@ import linecache
 import os
 import re
 import sys
-from typing import Callable, NamedTuple
+from collections.abc import Callable
+from typing import Any, NamedTuple
 
 import renpy
 
 try:
+    from renpy.astsupport import PyExpr
     from renpy.lexersupport import match_logical_word, match_operator, match_string, match_whitespace
-    from renpy.astsupport import make_pyexpr
 except ImportError:
     pass
 
@@ -121,7 +122,7 @@ class ParseError(SyntaxError):
 
 
 # Something to hold the expected line number.
-class LineNumberHolder(object):
+class LineNumberHolder:
     """
     Holds the expected line number.
     """
@@ -158,8 +159,7 @@ def munge_filename(fn):
     # The prefix that's used when __ is found in the file.
     rv = os.path.basename(fn)
 
-    if rv.endswith("_ren.py"):
-        rv = rv[:-7]
+    rv = rv.removesuffix("_ren.py")
 
     rv = os.path.splitext(rv)[0]
     rv = rv.replace(" ", "_")
@@ -642,7 +642,7 @@ word_regexp = r"[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*"
 image_word_regexp = r"[-0-9a-zA-Z_\u00a0-\ufffd][-0-9a-zA-Z_\u00a0-\ufffd]*"
 
 
-class SubParse(object):
+class SubParse:
     """
     This represents the information about a subparse that can be provided to
     a creator-defined statement.
@@ -655,10 +655,10 @@ class SubParse(object):
         if not self.block:
             return "<SubParse empty>"
         else:
-            return "<SubParse {}:{}>".format(self.block[0].filename, self.block[0].linenumber)
+            return f"<SubParse {self.block[0].filename}:{self.block[0].linenumber}>"
 
 
-class Lexer(object):
+class Lexer:
     """
     The lexer that is used to lex script files. This works on the idea
     that we want to lex each line in a block individually, and use
@@ -909,8 +909,8 @@ class Lexer(object):
             ll = self.subblock_lexer()
             ll.advance()
             ll.error(
-                "Line is indented, but the preceding {} statement does not expect a block. "
-                "Please check this line's indentation. You may have forgotten a colon (:).".format(stmt)
+                f"Line is indented, but the preceding {stmt} statement does not expect a block. "
+                "Please check this line's indentation. You may have forgotten a colon (:)."
             )
 
     def expect_block(self, stmt):
@@ -920,7 +920,7 @@ class Lexer(object):
         """
 
         if not self.subblock:
-            self.error("%s expects a non-empty block." % stmt)
+            self.error(f"{stmt} expects a non-empty block.")
 
     def has_block(self):
         """
@@ -1145,10 +1145,12 @@ class Lexer(object):
         oldpos = self.pos
         rv = self.word()
 
-        if (rv == "r") or (rv == "u") or (rv == "ur"):
-            if self.text[self.pos : self.pos + 1] in ('"', "'", "`"):
-                self.pos = oldpos
-                return None
+        if rv is None:
+            return None
+
+        if rv in ("r", "u", "ur") and self.text[self.pos : self.pos + 1] in ('"', "'", "`"):
+            self.pos = oldpos
+            return None
 
         if rv in KEYWORDS:
             self.pos = oldpos
@@ -1209,10 +1211,12 @@ class Lexer(object):
         oldpos = self.pos
         rv = self.match(image_word_regexp)
 
-        if (rv == "r") or (rv == "u"):
-            if self.text[self.pos : self.pos + 1] in ('"', "'", "`"):
-                self.pos = oldpos
-                return None
+        if rv is None:
+            return None
+
+        if rv in ("r", "u", "ur") and self.text[self.pos : self.pos + 1] in ('"', "'", "`"):
+            self.pos = oldpos
+            return None
 
         if (rv in KEYWORDS) or (rv in IMAGE_KEYWORDS):
             self.pos = oldpos
@@ -1314,7 +1318,7 @@ class Lexer(object):
 
             self.pos += 1
 
-        self.error("reached end of line when expecting '%s'." % delim)
+        self.error(f"reached end of line when expecting '{delim}'.")
 
     def python_expression(self, expr=True):
         """
@@ -1524,7 +1528,7 @@ class Lexer(object):
             else:
                 name = name or thing.__func__.__name__
 
-            self.error("expected '%s' not found." % name)
+            self.error(f"expected '{name}' not found.")
 
         return rv
 
@@ -1659,12 +1663,11 @@ def ren_py_to_rpy_offsets(lines: list[str], filename: str):
         lines[0] = lines[0][1:]
 
     for linenumber, line in enumerate(lines, start=1):
-        if state != RENPY:
-            if line.startswith('"""renpy'):
-                state = RENPY
-                open_linenumber = linenumber
-                yield None
-                continue
+        if state != RENPY and line.startswith('"""renpy'):
+            state = RENPY
+            open_linenumber = linenumber
+            yield None
+            continue
 
         if state == RENPY:
             if line.strip() == '"""':
