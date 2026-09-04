@@ -27,12 +27,12 @@ import os
 import re
 import sys
 from collections.abc import Callable
-from typing import Any, NamedTuple
+from typing import NamedTuple
 
 import renpy
 
 try:
-    from renpy.astsupport import PyExpr
+    from renpy.astsupport import make_pyexpr
     from renpy.lexersupport import match_logical_word, match_operator, match_string, match_whitespace
 except ImportError:
     pass
