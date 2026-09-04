@@ -558,16 +558,17 @@ class Script:
         list of init statements that need to be run.
         """
 
-        stmts = renpy.parser.parse(filename, filedata, linenumber=linenumber)
-
         expressions = renpy.parser.parsed_expressions
-        renpy.parser.parsed_expressions = []
 
-        if stmts is None:
-            return None, None
+        try:
+            stmts = renpy.parser.parse(filename, filedata, linenumber=linenumber)
+            if stmts is None:
+                return None, None
 
-        renpy.parser.release_deferred_errors()
-        if renpy.parser.parse_errors:
+        finally:
+            renpy.parser.parsed_expressions = []
+
+        if renpy.parser.get_parse_errors():
             return None, None
 
         self.assign_names(stmts, filename)

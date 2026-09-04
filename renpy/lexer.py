@@ -1310,7 +1310,7 @@ class Lexer:
             end = end - (len(s) - len(s.rstrip()))
 
         expr = make_pyexpr(
-            s,
+            self.text[start:end],
             self.filename,
             self.number,
             self.column,
