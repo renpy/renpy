@@ -624,7 +624,7 @@ class Script:
                     if b in __future__.all_feature_names:
                         renpy.python.file_compiler_flags[i.filename] |= getattr(__future__, b).compiler_flag
                     else:
-                        raise Exception(f"Unknown __future__ : {b!r}.")
+                        raise Exception(f"Unknown __future__: {b!r}.")
 
         # Take the translations.
         self.translator.take_translates(all_stmts)

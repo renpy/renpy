@@ -30,22 +30,21 @@ from renpy import ast
 from renpy.lexer import (
     Lexer,
     ParseError,
-    SubParse,
-    elide_filename,
     group_logical_lines,
     list_logical_lines,
-    # Kept imported for older games.
-    munge_filename,
-    unelide_filename,
 )
 from renpy.parameter import EMPTY_ARGUMENTS, Parameter
 
+# Kept imported for older games.
+if True:
+    from renpy.lexer import SubParse, elide_filename, munge_filename, unelide_filename  # noqa: F401
+
 # A list of parse error messages.
-parse_errors = []
+parse_errors: list[str] = []
 
 # A list of deferred parser error. These are potential parse errors that
 # can be released or not when parse errors are reported.
-deferred_parse_errors = collections.defaultdict(list)
+deferred_parse_errors: collections.defaultdict[str, list[str]] = collections.defaultdict(list)
 
 ################################################################################
 # Parsing of structures that are less than a full statement.
@@ -1734,7 +1733,7 @@ def release_deferred_errors():
         release("atl_pos_only")
 
     if deferred_parse_errors:
-        raise Exception(f"Unknown deferred error label(s): {tuple(deferred_parse_errors)}")
+        raise Exception(f"Unknown deferred error label(s): {', '.join(deferred_parse_errors)}")
 
 
 def has_parse_errors():
