@@ -1301,16 +1301,16 @@ class Lexer:
         context: ExpressionContext = "unknown",
     ) -> PyExpr:
 
+        s = self.text[start:end]
+
         # Only eval expressions need to strip its leading whitespace,
         # trailing whitespace is to simulate `strip`.
         if context == "eval":
-            while start < end and self.text[start].isspace():
-                start += 1
-            while end > start and self.text[end - 1].isspace():
-                end -= 1
+            start = start + (len(s) - len(s.lstrip()))
+            end = end - (len(s) - len(s.rstrip()))
 
         expr = make_pyexpr(
-            self.text[start:end],
+            s,
             self.filename,
             self.number,
             self.column,
