@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Any
+from typing import Any, final
 
 def hash32(s: Any) -> int:
     """
@@ -37,52 +37,59 @@ def hash64(s: Any) -> int:
         A unicode string. Other types will be coerced to unicode before hashing.
     """
 
+@final
 class PyExpr(str):
     """
-    Represents a string containing python expression.
+    Represents a string containing a python expression.
     """
 
     filename: str
     linenumber: int
-    py: int
-    hashcode: int
     column: int
+    hashcode: int
 
     def __new__(
-        cls, s: str, filename: str, linenumber: int, py: int = 3, hashcode: int | None = None, column: int = 0, /
-    ) -> PyExpr: ...
+        cls,
+        s: str,
+        /,
+        *,
+        filename: str,
+        linenumber: int,
+        column: int = 0,
+    ) -> PyExpr:
+        """
+        Creates a PyExpr from `s`, the code found at `filename`, `linenumber`,
+        `column`. The hash is computed automatically from `s`.
+        """
+
     @staticmethod
-    def checkpoint() -> Any:
+    def from_logical_line(
+        text: str,
+        start: int,
+        end: int,
+        filename: str,
+        linenumber: int,
+        column: int,
+        /,
+    ) -> PyExpr:
         """
-        Checkpoints the pyexpr list. Returns an opaque object that can be used
-        with PyExpr.revert to revert the list.
+        Used by the lexer to make a PyExpr, rapidly adjusting `linenumber` and
+        `column` to account for any newlines found in `text` between the start
+        of the logical line and `start`.
+
+        `text`
+            The full text of the logical line that `text[start:end]` is drawn
+            from.
+
+        `start`, `end`
+            The span within `text` that is the expression.
+
+        `filename`
+            The name of the file the expression is in.
+
+        `linenumber`
+            The line number the logical line starts at.
+
+        `column`
+            The column the logical line starts at.
         """
-
-    @staticmethod
-    def revert(opaque: Any):
-        """
-        Reverts the pyexpr list to the state it was in when checkpoint was called.
-        """
-
-def make_pyexpr(s: str, filename: str, linenumber: int, column: int, text: str, pos: int) -> PyExpr:
-    """
-    Used by lexer to make a pyexpr, rapidly adjusting line number and column.
-
-    `s`
-        The string that is the expression.
-
-    `filename`
-        The name of the file the expression is in.
-
-    `linenumber`
-        The line number the logical line starts at.
-
-    `column`
-        The column the logical line starts at.
-
-    `text`
-        The text of the line.
-
-    `pos`
-        The position in the text where the expression starts.
-    """

@@ -22,9 +22,6 @@
 
 import cython
 from cpython.object cimport PyObject, PyTypeObject, newfunc
-from typing import Any
-
-import renpy
 
 # These hash functions use the FNV-1a algorithm to provide a stable hash from strings
 # to integers. The stability allows them to be used to hash tlids and pyexprs that may
@@ -36,7 +33,7 @@ cpdef unsigned int hash32(s):
     cdef unsigned int rv = 0x811c9dc5
     cdef Py_UCS4 u
 
-    if type(s) is not str:
+    if not isinstance(s, str):
         s = str(s)
 
     cdef str us = <str> s
@@ -53,7 +50,7 @@ cpdef unsigned long long hash64(s):
     cdef unsigned long long rv = 0xcbf29ce484222325
     cdef Py_UCS4 u
 
-    if type(s) is not str:
+    if not isinstance(s, str):
         s = str(s)
 
     cdef str us = <str> s
@@ -66,140 +63,160 @@ cpdef unsigned long long hash64(s):
 
 
 @cython.no_gc
+@cython.final
 cdef class PyExpr(str):
-    """
-    Represents a string containing python expression.
-    """
+    cdef readonly str filename
+    cdef readonly unsigned int linenumber
+    cdef readonly unsigned short column
+    cdef readonly unsigned int hashcode
 
-    cdef public str filename
-    cdef public unsigned int hashcode
-    cdef public unsigned int linenumber
-    cdef public unsigned short column
-    cdef public unsigned char py
+    def __init__(
+        self: PyExpr,
+        s: str, /,
+        *args: object,
+        filename: str | None = None,
+        linenumber: int | None = None,
+        column: cython.ushort = 0,
+    ):
+        # Public signature, documented in the .pyi:
+        #     PyExpr(s, /, *, filename, linenumber, column)
+        #
+        # Legacy positional signatures, kept only so that pickles written
+        # by older Ren'Py versions keep loading. `py` is validated and
+        # then discarded.
+        #     (s, filename, linenumber)
+        #     (s, filename, linenumber, py)
+        #     (s, filename, linenumber, py, hashcode)
+        #     (s, filename, linenumber, py, hashcode, column)
 
-    def __reduce__(self):
-        return (PyExpr, (str(self), self.filename, self.linenumber, self.py, self.hashcode, self.column))
-
-    @staticmethod
-    def checkpoint() -> Any:
-        """
-        Checkpoints the pyexpr list. Returns an opaque object that can be used
-        to revert the list.
-        """
-
-        if renpy.game.script.all_pyexpr is None:
-            return None
-
-        return len(renpy.game.script.all_pyexpr)
-
-    @staticmethod
-    def revert(opaque: Any):
-
-        if renpy.game.script.all_pyexpr is None:
+        if not (args or filename is None or linenumber is None):
+            self.filename = filename
+            self.linenumber = linenumber
+            self.column = column
+            self.hashcode = hash32(s)
             return
 
-        if opaque is None:
-            return
+        if args:
+            py = 2
+            hashcode = None
+            column = 0
 
-        renpy.game.script.all_pyexpr[opaque:] = []
+            if len(args) == 2:
+                filename, linenumber = args
+            elif len(args) == 3:
+                filename, linenumber, py = args
+            elif len(args) == 4:
+                filename, linenumber, py, hashcode = args
+            elif len(args) == 5:
+                filename, linenumber, py, hashcode, column = args
+            else:
+                raise TypeError(
+                    "PyExpr() called with invalid arguments.",
+                    (s, ) + args,
+                )
+
+            if py not in (2, 3):
+                raise ValueError(
+                    "PyExpr was given an invalid value for its py argument. "
+                    "Did you put the column in the py argument?")
+
+            if hashcode is None:
+                hashcode = hash32(s)
+
+            self.filename = filename
+            self.linenumber = linenumber
+            self.column = column
+            self.hashcode = hashcode
+
+        elif filename is None and linenumber is None:
+            raise TypeError("PyExpr() missing 2 required keyword-only arguments: 'filename' and 'linenumber'")
+        elif filename is None:
+            raise TypeError("PyExpr() missing 1 required keyword-only argument: 'filename'")
+        else:
+            raise TypeError("PyExpr() missing 1 required keyword-only argument: 'linenumber'")
 
 
-# cdef classes can't have a new method, so we have to modify the type to add our own.
+    @staticmethod
+    def _from_pickle(
+        version: int,
+        s: str,
+        filename: str,
+        linenumber: cython.uint,
+        column: cython.ushort,
+        hashcode: cython.uint,
+        /,
+    ) -> PyExpr:
+        if version != 1:
+            raise ValueError("Invalid PyExpr unpickle version.")
 
-cdef PyTypeObject *PyExprType = <PyTypeObject *> PyExpr
-cdef newfunc old_pyexpr_newfunc = PyExprType.tp_new
-
-
-cdef object PyExpr_new(type cls, PyObject *args, PyObject *kwargs):
-
-    if not args:
-        raise Exception("PyExpr.__new__ called incorrectly.")
-
-    cdef tuple cargs = <tuple> args
-
-    if len(cargs) == 6:
-        s, filename, linenumber, py, hashcode, column = cargs
-    elif len(cargs) == 5:
-        s, filename, linenumber, py, hashcode = cargs
-        column = 0
-    elif len(cargs) == 4:
-        s, filename, linenumber, py = cargs
-        hashcode = None
-        column = 0
-    elif len(cargs) == 3:
-        s, filename, linenumber = cargs
-        py = 2
-        hashcode = None
-        column = 0
-    else:
-        raise Exception("PyExpr.__new__ called with invalid arguments.", str(<object> args))
-
-    new_args = (s, )
-
-    cdef PyExpr rv = old_pyexpr_newfunc(cls, <PyObject *> new_args, kwargs)
-
-    if py != 3 and py != 2:
-        raise ValueError("PyExpr was given an invalid value for its py argument. Did you put the column in the py argument?")
-
-    if <PyObject *> rv:
-
+        cdef PyExpr rv = _PyExpr_new(s)
         rv.filename = filename
         rv.linenumber = linenumber
         rv.column = column
-        rv.py = py
+        rv.hashcode = hashcode
+        return rv
 
-        if hashcode is not None:
-            rv.hashcode = hashcode
-        else:
-            rv.hashcode = hash32(s)
+    def __reduce__(self: PyExpr, /) -> tuple:
+        return (
+            PyExpr._from_pickle,
+            (
+                1,  # version
+                str(self),
+                self.filename,
+                self.linenumber,
+                self.column,
+                self.hashcode,
+            ),
+        )
 
-        all_pyexpr = renpy.game.script.all_pyexpr
+    @staticmethod
+    def from_logical_line(
+        text: str,
+        start: cython.Py_ssize_t,
+        end: cython.Py_ssize_t,
+        filename: str,
+        linenumber: cython.uint,
+        column: cython.ushort,
+        /,
+    ) -> PyExpr:
+        cdef Py_ssize_t i = 0
 
-        # Queue the string for precompilation.
-        if all_pyexpr is not None:
-            all_pyexpr.append(rv)
+        for c in text:
+            if i >= start:
+                break
 
-    return rv
+            i += 1
 
-PyExprType.tp_new = <newfunc> PyExpr_new
+            if c == "\n":
+                linenumber += 1
+                column = 0
+            else:
+                column += 1
+
+        cdef str slice = text[start:end]
+        cdef PyExpr rv = _PyExpr_new(slice)
+        rv.filename = filename
+        rv.linenumber = linenumber
+        rv.column = column
+        rv.hashcode = hash32(slice)
+        return rv
 
 
-def make_pyexpr(s, str filename, int linenumber, int column, str text, int pos):
-    """
-    Used by lexer to make a pyexpr, rapidly adjusting line number and column.
+# cdef classes can't have a new method, so we have to modify the type to add our own.
+cdef newfunc _str_new = (<PyTypeObject *> str).tp_new
 
-    `s`
-        The string that is the expression.
+cdef inline PyExpr _PyExpr_new(str s):
+    cdef tuple cargs = (s, )
+    return _str_new(PyExpr, <PyObject *> cargs, NULL)
 
-    `filename`
-        The name of the file the expression is in.
+cdef object PyExpr_new(type cls, PyObject *args, PyObject *kwargs):
+    # str.__new__ only understands (object, encoding, errors), so swallow
+    # everything else here and let __init__ deal with it.
+    cdef tuple cargs = <tuple> args
 
-    `linenumber`
-        The line number the logical line starts at.
+    if not cargs:
+        raise TypeError("PyExpr() missing required argument 's'.")
 
-    `column`
-        The column the logical line starts at.
+    return _PyExpr_new(cargs[0])
 
-    `text`
-        The text of the line.
-
-    `pos`
-        The position in the text where the expression starts.
-    """
-
-    cdef Py_UCS4 c
-    cdef int i = 0
-
-    for c in text:
-        if i >= pos:
-            break
-
-        i += 1
-
-        if c == 10: # NL
-            linenumber += 1
-            column = 0
-        else:
-            column += 1
-
-    return PyExpr(s, filename, linenumber, 3, hash32(s), column)
+(<PyTypeObject *> PyExpr).tp_new = <newfunc> PyExpr_new
