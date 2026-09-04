@@ -80,29 +80,6 @@ cdef class PyExpr(str):
     def __reduce__(self):
         return (PyExpr, (str(self), self.filename, self.linenumber, self.py, self.hashcode, self.column))
 
-    @staticmethod
-    def checkpoint() -> Any:
-        """
-        Checkpoints the pyexpr list. Returns an opaque object that can be used
-        to revert the list.
-        """
-
-        if renpy.game.script.all_pyexpr is None:
-            return None
-
-        return len(renpy.game.script.all_pyexpr)
-
-    @staticmethod
-    def revert(opaque: Any):
-
-        if renpy.game.script.all_pyexpr is None:
-            return
-
-        if opaque is None:
-            return
-
-        renpy.game.script.all_pyexpr[opaque:] = []
-
 
 # cdef classes can't have a new method, so we have to modify the type to add our own.
 
@@ -152,12 +129,6 @@ cdef object PyExpr_new(type cls, PyObject *args, PyObject *kwargs):
             rv.hashcode = hashcode
         else:
             rv.hashcode = hash32(s)
-
-        all_pyexpr = renpy.game.script.all_pyexpr
-
-        # Queue the string for precompilation.
-        if all_pyexpr is not None:
-            all_pyexpr.append(rv)
 
     return rv
 

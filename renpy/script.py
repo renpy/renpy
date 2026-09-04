@@ -134,7 +134,6 @@ class Script:
         self.namemap = {}
         self.all_stmts = []
         self.all_pycode = []
-        self.all_pyexpr = []
 
         # A list of statements that haven't been analyzed.
         self.need_analysis = []
@@ -561,6 +560,9 @@ class Script:
 
         stmts = renpy.parser.parse(filename, filedata, linenumber=linenumber)
 
+        expressions = renpy.parser.parsed_expressions
+        renpy.parser.parsed_expressions = []
+
         if stmts is None:
             return None, None
 
@@ -573,7 +575,7 @@ class Script:
 
         initcode = []
 
-        stmts = self.finish_load(stmts, initcode, False)
+        stmts = self.finish_load(stmts, initcode, False, expressions=expressions)
 
         initcode.sort(key=lambda i: i[0])
 
@@ -585,6 +587,7 @@ class Script:
         initcode: list,
         check_names=True,
         filename=None,
+        expressions: renpy.parser.ExpressionsList | None = None,
     ):
         """
         Given `stmts`, a list of AST nodes comprising the root block,
@@ -685,7 +688,7 @@ class Script:
                         )
                     )
 
-        self.update_bytecode()
+        self.update_bytecode(expressions or [])
 
         for node in all_stmts:
             if isinstance(node, renpy.ast.Testcase):
@@ -826,6 +829,7 @@ class Script:
                 data["version"] = script_version
                 data["key"] = self.key or "unlocked"
                 data["deferred_parse_errors"] = renpy.parser.deferred_parse_errors
+                data["expressions"] = renpy.parser.parsed_expressions
 
                 if stmts is None:
                     return data, []
@@ -833,9 +837,7 @@ class Script:
                 used_names = set()
 
                 for mergefn in [oldrpycfn, rpycfn]:
-                    old_all_pyexpr = self.all_pyexpr
                     self.record_pycode = False
-                    self.all_pyexpr = None
 
                     # See if we have a corresponding .rpyc file. If so, then
                     # we want to try to upgrade our .rpy file with it.
@@ -853,7 +855,6 @@ class Script:
                         pass
                     finally:
                         self.record_pycode = True
-                        self.all_pyexpr = old_all_pyexpr
 
                 self.assign_names(stmts, renpy.lexer.elide_filename(fullfn))
 
@@ -944,6 +945,7 @@ class Script:
                 old_deferred_parse_errors[k].extend(v)
 
             renpy.parser.deferred_parse_errors = old_deferred_parse_errors
+            renpy.parser.parsed_expressions = []
 
     def load_appropriate_file(self, compiled, source_extensions, dir, fn, initcode):
         data = None
@@ -1062,23 +1064,41 @@ class Script:
                 f"{fn} does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option."
             )
 
-        self.finish_load(stmts, initcode, filename=lastfn)
+        self.finish_load(stmts, initcode, filename=lastfn, expressions=data.get("expressions"))
 
         self.digest.update(digest)  # type: ignore
 
-    def update_bytecode(self):
+    def update_bytecode(self, expressions: renpy.parser.ExpressionsList):
         """
         Compiles the PyCode objects in self.all_pycode, updating the
         cache. Clears out self.all_pycode.
         """
 
-        for i in self.all_pyexpr:
-            try:
-                renpy.python.py_compile(i, "eval")
-            except Exception:
-                pass
+        for expr, context in expressions:
+            if context == "unknown":
+                mode = "eval"
+            else:
+                mode = context
 
-        self.all_pyexpr = []
+            try:
+                renpy.python.py_compile(expr, mode)
+            except SyntaxError as e:
+                if context == "unknown":
+                    continue
+
+                assert e.filename is not None
+                assert e.lineno is not None
+                pem = renpy.parser.ParseError(
+                    e.msg,
+                    e.filename,
+                    e.lineno,
+                    e.offset,
+                    e.text,
+                    e.end_lineno,
+                    e.end_offset,
+                )
+
+                renpy.parser.parse_errors.append(pem.message)
 
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.
