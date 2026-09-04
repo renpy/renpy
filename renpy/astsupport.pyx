@@ -203,11 +203,11 @@ cdef class PyExpr(str):
 
 
 # cdef classes can't have a new method, so we have to modify the type to add our own.
-cdef newfunc _str_new = (<PyTypeObject *> str).tp_new
+cdef newfunc _pyx_pyexpr_tp_new = (<PyTypeObject *> PyExpr).tp_new
 
 cdef inline PyExpr _PyExpr_new(str s):
     cdef tuple cargs = (s, )
-    return _str_new(PyExpr, <PyObject *> cargs, NULL)
+    return _pyx_pyexpr_tp_new(PyExpr, <PyObject *> cargs, NULL)
 
 cdef object PyExpr_new(type cls, PyObject *args, PyObject *kwargs):
     # str.__new__ only understands (object, encoding, errors), so swallow
