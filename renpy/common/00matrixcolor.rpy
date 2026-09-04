@@ -133,7 +133,6 @@ init -1500 python:
         def __init__(self, left, right):
             self.left = left
             self.right = right
-            self.value = 1.0
 
         def __call__(self, other, done):
             if type(other) is not type(self):
