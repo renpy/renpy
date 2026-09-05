@@ -574,596 +574,596 @@ cdef extern from "renpygl.h":
     GLenum GL_BUFFER_MAP_LENGTH
     GLenum GL_BUFFER_MAP_OFFSET
 
-ctypedef void (__stdcall *glActiveTexture_type)(GLenum  texture) nogil
+ctypedef void (__stdcall *glActiveTexture_type)(GLenum  texture) noexcept nogil
 cdef glActiveTexture_type glActiveTexture
 
-ctypedef void (__stdcall *glAttachShader_type)(GLuint  program, GLuint  shader) nogil
+ctypedef void (__stdcall *glAttachShader_type)(GLuint  program, GLuint  shader) noexcept nogil
 cdef glAttachShader_type glAttachShader
 
-ctypedef void (__stdcall *glBeginQuery_type)(GLenum  target, GLuint  id) nogil
+ctypedef void (__stdcall *glBeginQuery_type)(GLenum  target, GLuint  id) noexcept nogil
 cdef glBeginQuery_type glBeginQuery
 
-ctypedef void (__stdcall *glBeginTransformFeedback_type)(GLenum  primitiveMode) nogil
+ctypedef void (__stdcall *glBeginTransformFeedback_type)(GLenum  primitiveMode) noexcept nogil
 cdef glBeginTransformFeedback_type glBeginTransformFeedback
 
-ctypedef void (__stdcall *glBindAttribLocation_type)(GLuint  program, GLuint  index, const GLchar * name) nogil
+ctypedef void (__stdcall *glBindAttribLocation_type)(GLuint  program, GLuint  index, const GLchar * name) noexcept nogil
 cdef glBindAttribLocation_type glBindAttribLocation
 
-ctypedef void (__stdcall *glBindBuffer_type)(GLenum  target, GLuint  buffer) nogil
+ctypedef void (__stdcall *glBindBuffer_type)(GLenum  target, GLuint  buffer) noexcept nogil
 cdef glBindBuffer_type glBindBuffer
 
-ctypedef void (__stdcall *glBindBufferBase_type)(GLenum  target, GLuint  index, GLuint  buffer) nogil
+ctypedef void (__stdcall *glBindBufferBase_type)(GLenum  target, GLuint  index, GLuint  buffer) noexcept nogil
 cdef glBindBufferBase_type glBindBufferBase
 
-ctypedef void (__stdcall *glBindBufferRange_type)(GLenum  target, GLuint  index, GLuint  buffer, GLintptr  offset, GLsizeiptr  size) nogil
+ctypedef void (__stdcall *glBindBufferRange_type)(GLenum  target, GLuint  index, GLuint  buffer, GLintptr  offset, GLsizeiptr  size) noexcept nogil
 cdef glBindBufferRange_type glBindBufferRange
 
-ctypedef void (__stdcall *glBindFramebuffer_type)(GLenum  target, GLuint  framebuffer) nogil
+ctypedef void (__stdcall *glBindFramebuffer_type)(GLenum  target, GLuint  framebuffer) noexcept nogil
 cdef glBindFramebuffer_type glBindFramebuffer
 
-ctypedef void (__stdcall *glBindRenderbuffer_type)(GLenum  target, GLuint  renderbuffer) nogil
+ctypedef void (__stdcall *glBindRenderbuffer_type)(GLenum  target, GLuint  renderbuffer) noexcept nogil
 cdef glBindRenderbuffer_type glBindRenderbuffer
 
-ctypedef void (__stdcall *glBindTexture_type)(GLenum  target, GLuint  texture) nogil
+ctypedef void (__stdcall *glBindTexture_type)(GLenum  target, GLuint  texture) noexcept nogil
 cdef glBindTexture_type glBindTexture
 
-ctypedef void (__stdcall *glBindVertexArray_type)(GLuint  array) nogil
+ctypedef void (__stdcall *glBindVertexArray_type)(GLuint  array) noexcept nogil
 cdef glBindVertexArray_type glBindVertexArray
 
-ctypedef void (__stdcall *glBlendColor_type)(GLfloat  red, GLfloat  green, GLfloat  blue, GLfloat  alpha) nogil
+ctypedef void (__stdcall *glBlendColor_type)(GLfloat  red, GLfloat  green, GLfloat  blue, GLfloat  alpha) noexcept nogil
 cdef glBlendColor_type glBlendColor
 
-ctypedef void (__stdcall *glBlendEquation_type)(GLenum  mode) nogil
+ctypedef void (__stdcall *glBlendEquation_type)(GLenum  mode) noexcept nogil
 cdef glBlendEquation_type glBlendEquation
 
-ctypedef void (__stdcall *glBlendEquationSeparate_type)(GLenum  modeRGB, GLenum  modeAlpha) nogil
+ctypedef void (__stdcall *glBlendEquationSeparate_type)(GLenum  modeRGB, GLenum  modeAlpha) noexcept nogil
 cdef glBlendEquationSeparate_type glBlendEquationSeparate
 
-ctypedef void (__stdcall *glBlendFunc_type)(GLenum  sfactor, GLenum  dfactor) nogil
+ctypedef void (__stdcall *glBlendFunc_type)(GLenum  sfactor, GLenum  dfactor) noexcept nogil
 cdef glBlendFunc_type glBlendFunc
 
-ctypedef void (__stdcall *glBlendFuncSeparate_type)(GLenum  sfactorRGB, GLenum  dfactorRGB, GLenum  sfactorAlpha, GLenum  dfactorAlpha) nogil
+ctypedef void (__stdcall *glBlendFuncSeparate_type)(GLenum  sfactorRGB, GLenum  dfactorRGB, GLenum  sfactorAlpha, GLenum  dfactorAlpha) noexcept nogil
 cdef glBlendFuncSeparate_type glBlendFuncSeparate
 
-ctypedef void (__stdcall *glBlitFramebuffer_type)(GLint  srcX0, GLint  srcY0, GLint  srcX1, GLint  srcY1, GLint  dstX0, GLint  dstY0, GLint  dstX1, GLint  dstY1, GLbitfield  mask, GLenum  filter) nogil
+ctypedef void (__stdcall *glBlitFramebuffer_type)(GLint  srcX0, GLint  srcY0, GLint  srcX1, GLint  srcY1, GLint  dstX0, GLint  dstY0, GLint  dstX1, GLint  dstY1, GLbitfield  mask, GLenum  filter) noexcept nogil
 cdef glBlitFramebuffer_type glBlitFramebuffer
 
-ctypedef void (__stdcall *glBufferData_type)(GLenum  target, GLsizeiptr  size, const void * data, GLenum  usage) nogil
+ctypedef void (__stdcall *glBufferData_type)(GLenum  target, GLsizeiptr  size, const void * data, GLenum  usage) noexcept nogil
 cdef glBufferData_type glBufferData
 
-ctypedef void (__stdcall *glBufferSubData_type)(GLenum  target, GLintptr  offset, GLsizeiptr  size, const void * data) nogil
+ctypedef void (__stdcall *glBufferSubData_type)(GLenum  target, GLintptr  offset, GLsizeiptr  size, const void * data) noexcept nogil
 cdef glBufferSubData_type glBufferSubData
 
-ctypedef GLenum (__stdcall *glCheckFramebufferStatus_type)(GLenum  target) nogil
+ctypedef GLenum (__stdcall *glCheckFramebufferStatus_type)(GLenum  target) noexcept nogil
 cdef glCheckFramebufferStatus_type glCheckFramebufferStatus
 
-ctypedef void (__stdcall *glClear_type)(GLbitfield  mask) nogil
+ctypedef void (__stdcall *glClear_type)(GLbitfield  mask) noexcept nogil
 cdef glClear_type glClear
 
-ctypedef void (__stdcall *glClearBufferfi_type)(GLenum  buffer, GLint  drawbuffer, GLfloat  depth, GLint  stencil) nogil
+ctypedef void (__stdcall *glClearBufferfi_type)(GLenum  buffer, GLint  drawbuffer, GLfloat  depth, GLint  stencil) noexcept nogil
 cdef glClearBufferfi_type glClearBufferfi
 
-ctypedef void (__stdcall *glClearBufferfv_type)(GLenum  buffer, GLint  drawbuffer, const GLfloat * value) nogil
+ctypedef void (__stdcall *glClearBufferfv_type)(GLenum  buffer, GLint  drawbuffer, const GLfloat * value) noexcept nogil
 cdef glClearBufferfv_type glClearBufferfv
 
-ctypedef void (__stdcall *glClearBufferiv_type)(GLenum  buffer, GLint  drawbuffer, const GLint * value) nogil
+ctypedef void (__stdcall *glClearBufferiv_type)(GLenum  buffer, GLint  drawbuffer, const GLint * value) noexcept nogil
 cdef glClearBufferiv_type glClearBufferiv
 
-ctypedef void (__stdcall *glClearBufferuiv_type)(GLenum  buffer, GLint  drawbuffer, const GLuint * value) nogil
+ctypedef void (__stdcall *glClearBufferuiv_type)(GLenum  buffer, GLint  drawbuffer, const GLuint * value) noexcept nogil
 cdef glClearBufferuiv_type glClearBufferuiv
 
-ctypedef void (__stdcall *glClearColor_type)(GLfloat  red, GLfloat  green, GLfloat  blue, GLfloat  alpha) nogil
+ctypedef void (__stdcall *glClearColor_type)(GLfloat  red, GLfloat  green, GLfloat  blue, GLfloat  alpha) noexcept nogil
 cdef glClearColor_type glClearColor
 
-ctypedef void (__stdcall *glClearStencil_type)(GLint  s) nogil
+ctypedef void (__stdcall *glClearStencil_type)(GLint  s) noexcept nogil
 cdef glClearStencil_type glClearStencil
 
-ctypedef void (__stdcall *glColorMask_type)(GLboolean  red, GLboolean  green, GLboolean  blue, GLboolean  alpha) nogil
+ctypedef void (__stdcall *glColorMask_type)(GLboolean  red, GLboolean  green, GLboolean  blue, GLboolean  alpha) noexcept nogil
 cdef glColorMask_type glColorMask
 
-ctypedef void (__stdcall *glCompileShader_type)(GLuint  shader) nogil
+ctypedef void (__stdcall *glCompileShader_type)(GLuint  shader) noexcept nogil
 cdef glCompileShader_type glCompileShader
 
-ctypedef void (__stdcall *glCompressedTexImage2D_type)(GLenum  target, GLint  level, GLenum  internalformat, GLsizei  width, GLsizei  height, GLint  border, GLsizei  imageSize, const void * data) nogil
+ctypedef void (__stdcall *glCompressedTexImage2D_type)(GLenum  target, GLint  level, GLenum  internalformat, GLsizei  width, GLsizei  height, GLint  border, GLsizei  imageSize, const void * data) noexcept nogil
 cdef glCompressedTexImage2D_type glCompressedTexImage2D
 
-ctypedef void (__stdcall *glCompressedTexImage3D_type)(GLenum  target, GLint  level, GLenum  internalformat, GLsizei  width, GLsizei  height, GLsizei  depth, GLint  border, GLsizei  imageSize, const void * data) nogil
+ctypedef void (__stdcall *glCompressedTexImage3D_type)(GLenum  target, GLint  level, GLenum  internalformat, GLsizei  width, GLsizei  height, GLsizei  depth, GLint  border, GLsizei  imageSize, const void * data) noexcept nogil
 cdef glCompressedTexImage3D_type glCompressedTexImage3D
 
-ctypedef void (__stdcall *glCompressedTexSubImage2D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLsizei  width, GLsizei  height, GLenum  format, GLsizei  imageSize, const void * data) nogil
+ctypedef void (__stdcall *glCompressedTexSubImage2D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLsizei  width, GLsizei  height, GLenum  format, GLsizei  imageSize, const void * data) noexcept nogil
 cdef glCompressedTexSubImage2D_type glCompressedTexSubImage2D
 
-ctypedef void (__stdcall *glCompressedTexSubImage3D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLint  zoffset, GLsizei  width, GLsizei  height, GLsizei  depth, GLenum  format, GLsizei  imageSize, const void * data) nogil
+ctypedef void (__stdcall *glCompressedTexSubImage3D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLint  zoffset, GLsizei  width, GLsizei  height, GLsizei  depth, GLenum  format, GLsizei  imageSize, const void * data) noexcept nogil
 cdef glCompressedTexSubImage3D_type glCompressedTexSubImage3D
 
-ctypedef void (__stdcall *glCopyTexImage2D_type)(GLenum  target, GLint  level, GLenum  internalformat, GLint  x, GLint  y, GLsizei  width, GLsizei  height, GLint  border) nogil
+ctypedef void (__stdcall *glCopyTexImage2D_type)(GLenum  target, GLint  level, GLenum  internalformat, GLint  x, GLint  y, GLsizei  width, GLsizei  height, GLint  border) noexcept nogil
 cdef glCopyTexImage2D_type glCopyTexImage2D
 
-ctypedef void (__stdcall *glCopyTexSubImage2D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLint  x, GLint  y, GLsizei  width, GLsizei  height) nogil
+ctypedef void (__stdcall *glCopyTexSubImage2D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLint  x, GLint  y, GLsizei  width, GLsizei  height) noexcept nogil
 cdef glCopyTexSubImage2D_type glCopyTexSubImage2D
 
-ctypedef void (__stdcall *glCopyTexSubImage3D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLint  zoffset, GLint  x, GLint  y, GLsizei  width, GLsizei  height) nogil
+ctypedef void (__stdcall *glCopyTexSubImage3D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLint  zoffset, GLint  x, GLint  y, GLsizei  width, GLsizei  height) noexcept nogil
 cdef glCopyTexSubImage3D_type glCopyTexSubImage3D
 
-ctypedef GLuint (__stdcall *glCreateProgram_type)() nogil
+ctypedef GLuint (__stdcall *glCreateProgram_type)() noexcept nogil
 cdef glCreateProgram_type glCreateProgram
 
-ctypedef GLuint (__stdcall *glCreateShader_type)(GLenum  type) nogil
+ctypedef GLuint (__stdcall *glCreateShader_type)(GLenum  type) noexcept nogil
 cdef glCreateShader_type glCreateShader
 
-ctypedef void (__stdcall *glCullFace_type)(GLenum  mode) nogil
+ctypedef void (__stdcall *glCullFace_type)(GLenum  mode) noexcept nogil
 cdef glCullFace_type glCullFace
 
-ctypedef void (__stdcall *glDeleteBuffers_type)(GLsizei  n, const GLuint * buffers) nogil
+ctypedef void (__stdcall *glDeleteBuffers_type)(GLsizei  n, const GLuint * buffers) noexcept nogil
 cdef glDeleteBuffers_type glDeleteBuffers
 
-ctypedef void (__stdcall *glDeleteFramebuffers_type)(GLsizei  n, const GLuint * framebuffers) nogil
+ctypedef void (__stdcall *glDeleteFramebuffers_type)(GLsizei  n, const GLuint * framebuffers) noexcept nogil
 cdef glDeleteFramebuffers_type glDeleteFramebuffers
 
-ctypedef void (__stdcall *glDeleteProgram_type)(GLuint  program) nogil
+ctypedef void (__stdcall *glDeleteProgram_type)(GLuint  program) noexcept nogil
 cdef glDeleteProgram_type glDeleteProgram
 
-ctypedef void (__stdcall *glDeleteQueries_type)(GLsizei  n, const GLuint * ids) nogil
+ctypedef void (__stdcall *glDeleteQueries_type)(GLsizei  n, const GLuint * ids) noexcept nogil
 cdef glDeleteQueries_type glDeleteQueries
 
-ctypedef void (__stdcall *glDeleteRenderbuffers_type)(GLsizei  n, const GLuint * renderbuffers) nogil
+ctypedef void (__stdcall *glDeleteRenderbuffers_type)(GLsizei  n, const GLuint * renderbuffers) noexcept nogil
 cdef glDeleteRenderbuffers_type glDeleteRenderbuffers
 
-ctypedef void (__stdcall *glDeleteShader_type)(GLuint  shader) nogil
+ctypedef void (__stdcall *glDeleteShader_type)(GLuint  shader) noexcept nogil
 cdef glDeleteShader_type glDeleteShader
 
-ctypedef void (__stdcall *glDeleteTextures_type)(GLsizei  n, const GLuint * textures) nogil
+ctypedef void (__stdcall *glDeleteTextures_type)(GLsizei  n, const GLuint * textures) noexcept nogil
 cdef glDeleteTextures_type glDeleteTextures
 
-ctypedef void (__stdcall *glDeleteVertexArrays_type)(GLsizei  n, const GLuint * arrays) nogil
+ctypedef void (__stdcall *glDeleteVertexArrays_type)(GLsizei  n, const GLuint * arrays) noexcept nogil
 cdef glDeleteVertexArrays_type glDeleteVertexArrays
 
-ctypedef void (__stdcall *glDepthFunc_type)(GLenum  func) nogil
+ctypedef void (__stdcall *glDepthFunc_type)(GLenum  func) noexcept nogil
 cdef glDepthFunc_type glDepthFunc
 
-ctypedef void (__stdcall *glDepthMask_type)(GLboolean  flag) nogil
+ctypedef void (__stdcall *glDepthMask_type)(GLboolean  flag) noexcept nogil
 cdef glDepthMask_type glDepthMask
 
-ctypedef void (__stdcall *glDetachShader_type)(GLuint  program, GLuint  shader) nogil
+ctypedef void (__stdcall *glDetachShader_type)(GLuint  program, GLuint  shader) noexcept nogil
 cdef glDetachShader_type glDetachShader
 
-ctypedef void (__stdcall *glDisable_type)(GLenum  cap) nogil
+ctypedef void (__stdcall *glDisable_type)(GLenum  cap) noexcept nogil
 cdef glDisable_type glDisable
 
-ctypedef void (__stdcall *glDisableVertexAttribArray_type)(GLuint  index) nogil
+ctypedef void (__stdcall *glDisableVertexAttribArray_type)(GLuint  index) noexcept nogil
 cdef glDisableVertexAttribArray_type glDisableVertexAttribArray
 
-ctypedef void (__stdcall *glDrawArrays_type)(GLenum  mode, GLint  first, GLsizei  count) nogil
+ctypedef void (__stdcall *glDrawArrays_type)(GLenum  mode, GLint  first, GLsizei  count) noexcept nogil
 cdef glDrawArrays_type glDrawArrays
 
-ctypedef void (__stdcall *glDrawBuffers_type)(GLsizei  n, const GLenum * bufs) nogil
+ctypedef void (__stdcall *glDrawBuffers_type)(GLsizei  n, const GLenum * bufs) noexcept nogil
 cdef glDrawBuffers_type glDrawBuffers
 
-ctypedef void (__stdcall *glDrawElements_type)(GLenum  mode, GLsizei  count, GLenum  type, const void * indices) nogil
+ctypedef void (__stdcall *glDrawElements_type)(GLenum  mode, GLsizei  count, GLenum  type, const void * indices) noexcept nogil
 cdef glDrawElements_type glDrawElements
 
-ctypedef void (__stdcall *glDrawRangeElements_type)(GLenum  mode, GLuint  start, GLuint  end, GLsizei  count, GLenum  type, const void * indices) nogil
+ctypedef void (__stdcall *glDrawRangeElements_type)(GLenum  mode, GLuint  start, GLuint  end, GLsizei  count, GLenum  type, const void * indices) noexcept nogil
 cdef glDrawRangeElements_type glDrawRangeElements
 
-ctypedef void (__stdcall *glEnable_type)(GLenum  cap) nogil
+ctypedef void (__stdcall *glEnable_type)(GLenum  cap) noexcept nogil
 cdef glEnable_type glEnable
 
-ctypedef void (__stdcall *glEnableVertexAttribArray_type)(GLuint  index) nogil
+ctypedef void (__stdcall *glEnableVertexAttribArray_type)(GLuint  index) noexcept nogil
 cdef glEnableVertexAttribArray_type glEnableVertexAttribArray
 
-ctypedef void (__stdcall *glEndQuery_type)(GLenum  target) nogil
+ctypedef void (__stdcall *glEndQuery_type)(GLenum  target) noexcept nogil
 cdef glEndQuery_type glEndQuery
 
-ctypedef void (__stdcall *glEndTransformFeedback_type)() nogil
+ctypedef void (__stdcall *glEndTransformFeedback_type)() noexcept nogil
 cdef glEndTransformFeedback_type glEndTransformFeedback
 
-ctypedef void (__stdcall *glFinish_type)() nogil
+ctypedef void (__stdcall *glFinish_type)() noexcept nogil
 cdef glFinish_type glFinish
 
-ctypedef void (__stdcall *glFlush_type)() nogil
+ctypedef void (__stdcall *glFlush_type)() noexcept nogil
 cdef glFlush_type glFlush
 
-ctypedef void (__stdcall *glFlushMappedBufferRange_type)(GLenum  target, GLintptr  offset, GLsizeiptr  length) nogil
+ctypedef void (__stdcall *glFlushMappedBufferRange_type)(GLenum  target, GLintptr  offset, GLsizeiptr  length) noexcept nogil
 cdef glFlushMappedBufferRange_type glFlushMappedBufferRange
 
-ctypedef void (__stdcall *glFramebufferRenderbuffer_type)(GLenum  target, GLenum  attachment, GLenum  renderbuffertarget, GLuint  renderbuffer) nogil
+ctypedef void (__stdcall *glFramebufferRenderbuffer_type)(GLenum  target, GLenum  attachment, GLenum  renderbuffertarget, GLuint  renderbuffer) noexcept nogil
 cdef glFramebufferRenderbuffer_type glFramebufferRenderbuffer
 
-ctypedef void (__stdcall *glFramebufferTexture2D_type)(GLenum  target, GLenum  attachment, GLenum  textarget, GLuint  texture, GLint  level) nogil
+ctypedef void (__stdcall *glFramebufferTexture2D_type)(GLenum  target, GLenum  attachment, GLenum  textarget, GLuint  texture, GLint  level) noexcept nogil
 cdef glFramebufferTexture2D_type glFramebufferTexture2D
 
-ctypedef void (__stdcall *glFramebufferTextureLayer_type)(GLenum  target, GLenum  attachment, GLuint  texture, GLint  level, GLint  layer) nogil
+ctypedef void (__stdcall *glFramebufferTextureLayer_type)(GLenum  target, GLenum  attachment, GLuint  texture, GLint  level, GLint  layer) noexcept nogil
 cdef glFramebufferTextureLayer_type glFramebufferTextureLayer
 
-ctypedef void (__stdcall *glFrontFace_type)(GLenum  mode) nogil
+ctypedef void (__stdcall *glFrontFace_type)(GLenum  mode) noexcept nogil
 cdef glFrontFace_type glFrontFace
 
-ctypedef void (__stdcall *glGenBuffers_type)(GLsizei  n, GLuint * buffers) nogil
+ctypedef void (__stdcall *glGenBuffers_type)(GLsizei  n, GLuint * buffers) noexcept nogil
 cdef glGenBuffers_type glGenBuffers
 
-ctypedef void (__stdcall *glGenFramebuffers_type)(GLsizei  n, GLuint * framebuffers) nogil
+ctypedef void (__stdcall *glGenFramebuffers_type)(GLsizei  n, GLuint * framebuffers) noexcept nogil
 cdef glGenFramebuffers_type glGenFramebuffers
 
-ctypedef void (__stdcall *glGenQueries_type)(GLsizei  n, GLuint * ids) nogil
+ctypedef void (__stdcall *glGenQueries_type)(GLsizei  n, GLuint * ids) noexcept nogil
 cdef glGenQueries_type glGenQueries
 
-ctypedef void (__stdcall *glGenRenderbuffers_type)(GLsizei  n, GLuint * renderbuffers) nogil
+ctypedef void (__stdcall *glGenRenderbuffers_type)(GLsizei  n, GLuint * renderbuffers) noexcept nogil
 cdef glGenRenderbuffers_type glGenRenderbuffers
 
-ctypedef void (__stdcall *glGenTextures_type)(GLsizei  n, GLuint * textures) nogil
+ctypedef void (__stdcall *glGenTextures_type)(GLsizei  n, GLuint * textures) noexcept nogil
 cdef glGenTextures_type glGenTextures
 
-ctypedef void (__stdcall *glGenVertexArrays_type)(GLsizei  n, GLuint * arrays) nogil
+ctypedef void (__stdcall *glGenVertexArrays_type)(GLsizei  n, GLuint * arrays) noexcept nogil
 cdef glGenVertexArrays_type glGenVertexArrays
 
-ctypedef void (__stdcall *glGenerateMipmap_type)(GLenum  target) nogil
+ctypedef void (__stdcall *glGenerateMipmap_type)(GLenum  target) noexcept nogil
 cdef glGenerateMipmap_type glGenerateMipmap
 
-ctypedef void (__stdcall *glGetActiveAttrib_type)(GLuint  program, GLuint  index, GLsizei  bufSize, GLsizei * length, GLint * size, GLenum * type, GLchar * name) nogil
+ctypedef void (__stdcall *glGetActiveAttrib_type)(GLuint  program, GLuint  index, GLsizei  bufSize, GLsizei * length, GLint * size, GLenum * type, GLchar * name) noexcept nogil
 cdef glGetActiveAttrib_type glGetActiveAttrib
 
-ctypedef void (__stdcall *glGetActiveUniform_type)(GLuint  program, GLuint  index, GLsizei  bufSize, GLsizei * length, GLint * size, GLenum * type, GLchar * name) nogil
+ctypedef void (__stdcall *glGetActiveUniform_type)(GLuint  program, GLuint  index, GLsizei  bufSize, GLsizei * length, GLint * size, GLenum * type, GLchar * name) noexcept nogil
 cdef glGetActiveUniform_type glGetActiveUniform
 
-ctypedef void (__stdcall *glGetAttachedShaders_type)(GLuint  program, GLsizei  maxCount, GLsizei * count, GLuint * shaders) nogil
+ctypedef void (__stdcall *glGetAttachedShaders_type)(GLuint  program, GLsizei  maxCount, GLsizei * count, GLuint * shaders) noexcept nogil
 cdef glGetAttachedShaders_type glGetAttachedShaders
 
-ctypedef GLint (__stdcall *glGetAttribLocation_type)(GLuint  program, const GLchar * name) nogil
+ctypedef GLint (__stdcall *glGetAttribLocation_type)(GLuint  program, const GLchar * name) noexcept nogil
 cdef glGetAttribLocation_type glGetAttribLocation
 
-ctypedef void (__stdcall *glGetBooleanv_type)(GLenum  pname, GLboolean * data) nogil
+ctypedef void (__stdcall *glGetBooleanv_type)(GLenum  pname, GLboolean * data) noexcept nogil
 cdef glGetBooleanv_type glGetBooleanv
 
-ctypedef void (__stdcall *glGetBufferParameteriv_type)(GLenum  target, GLenum  pname, GLint * params) nogil
+ctypedef void (__stdcall *glGetBufferParameteriv_type)(GLenum  target, GLenum  pname, GLint * params) noexcept nogil
 cdef glGetBufferParameteriv_type glGetBufferParameteriv
 
-ctypedef void (__stdcall *glGetBufferPointerv_type)(GLenum  target, GLenum  pname, void ** params) nogil
+ctypedef void (__stdcall *glGetBufferPointerv_type)(GLenum  target, GLenum  pname, void ** params) noexcept nogil
 cdef glGetBufferPointerv_type glGetBufferPointerv
 
-ctypedef GLenum (__stdcall *glGetError_type)() nogil
+ctypedef GLenum (__stdcall *glGetError_type)() noexcept nogil
 cdef glGetError_type glGetError
 
-ctypedef void (__stdcall *glGetFloatv_type)(GLenum  pname, GLfloat * data) nogil
+ctypedef void (__stdcall *glGetFloatv_type)(GLenum  pname, GLfloat * data) noexcept nogil
 cdef glGetFloatv_type glGetFloatv
 
-ctypedef GLint (__stdcall *glGetFragDataLocation_type)(GLuint  program, const GLchar * name) nogil
+ctypedef GLint (__stdcall *glGetFragDataLocation_type)(GLuint  program, const GLchar * name) noexcept nogil
 cdef glGetFragDataLocation_type glGetFragDataLocation
 
-ctypedef void (__stdcall *glGetFramebufferAttachmentParameteriv_type)(GLenum  target, GLenum  attachment, GLenum  pname, GLint * params) nogil
+ctypedef void (__stdcall *glGetFramebufferAttachmentParameteriv_type)(GLenum  target, GLenum  attachment, GLenum  pname, GLint * params) noexcept nogil
 cdef glGetFramebufferAttachmentParameteriv_type glGetFramebufferAttachmentParameteriv
 
-ctypedef void (__stdcall *glGetIntegeri_v_type)(GLenum  target, GLuint  index, GLint * data) nogil
+ctypedef void (__stdcall *glGetIntegeri_v_type)(GLenum  target, GLuint  index, GLint * data) noexcept nogil
 cdef glGetIntegeri_v_type glGetIntegeri_v
 
-ctypedef void (__stdcall *glGetIntegerv_type)(GLenum  pname, GLint * data) nogil
+ctypedef void (__stdcall *glGetIntegerv_type)(GLenum  pname, GLint * data) noexcept nogil
 cdef glGetIntegerv_type glGetIntegerv
 
-ctypedef void (__stdcall *glGetProgramInfoLog_type)(GLuint  program, GLsizei  bufSize, GLsizei * length, GLchar * infoLog) nogil
+ctypedef void (__stdcall *glGetProgramInfoLog_type)(GLuint  program, GLsizei  bufSize, GLsizei * length, GLchar * infoLog) noexcept nogil
 cdef glGetProgramInfoLog_type glGetProgramInfoLog
 
-ctypedef void (__stdcall *glGetProgramiv_type)(GLuint  program, GLenum  pname, GLint * params) nogil
+ctypedef void (__stdcall *glGetProgramiv_type)(GLuint  program, GLenum  pname, GLint * params) noexcept nogil
 cdef glGetProgramiv_type glGetProgramiv
 
-ctypedef void (__stdcall *glGetQueryObjectuiv_type)(GLuint  id, GLenum  pname, GLuint * params) nogil
+ctypedef void (__stdcall *glGetQueryObjectuiv_type)(GLuint  id, GLenum  pname, GLuint * params) noexcept nogil
 cdef glGetQueryObjectuiv_type glGetQueryObjectuiv
 
-ctypedef void (__stdcall *glGetQueryiv_type)(GLenum  target, GLenum  pname, GLint * params) nogil
+ctypedef void (__stdcall *glGetQueryiv_type)(GLenum  target, GLenum  pname, GLint * params) noexcept nogil
 cdef glGetQueryiv_type glGetQueryiv
 
-ctypedef void (__stdcall *glGetRenderbufferParameteriv_type)(GLenum  target, GLenum  pname, GLint * params) nogil
+ctypedef void (__stdcall *glGetRenderbufferParameteriv_type)(GLenum  target, GLenum  pname, GLint * params) noexcept nogil
 cdef glGetRenderbufferParameteriv_type glGetRenderbufferParameteriv
 
-ctypedef void (__stdcall *glGetShaderInfoLog_type)(GLuint  shader, GLsizei  bufSize, GLsizei * length, GLchar * infoLog) nogil
+ctypedef void (__stdcall *glGetShaderInfoLog_type)(GLuint  shader, GLsizei  bufSize, GLsizei * length, GLchar * infoLog) noexcept nogil
 cdef glGetShaderInfoLog_type glGetShaderInfoLog
 
-ctypedef void (__stdcall *glGetShaderSource_type)(GLuint  shader, GLsizei  bufSize, GLsizei * length, GLchar * source) nogil
+ctypedef void (__stdcall *glGetShaderSource_type)(GLuint  shader, GLsizei  bufSize, GLsizei * length, GLchar * source) noexcept nogil
 cdef glGetShaderSource_type glGetShaderSource
 
-ctypedef void (__stdcall *glGetShaderiv_type)(GLuint  shader, GLenum  pname, GLint * params) nogil
+ctypedef void (__stdcall *glGetShaderiv_type)(GLuint  shader, GLenum  pname, GLint * params) noexcept nogil
 cdef glGetShaderiv_type glGetShaderiv
 
-ctypedef const GLubyte * (__stdcall *glGetString_type)(GLenum  name) nogil
+ctypedef const GLubyte * (__stdcall *glGetString_type)(GLenum  name) noexcept nogil
 cdef glGetString_type glGetString
 
-ctypedef const GLubyte * (__stdcall *glGetStringi_type)(GLenum  name, GLuint  index) nogil
+ctypedef const GLubyte * (__stdcall *glGetStringi_type)(GLenum  name, GLuint  index) noexcept nogil
 cdef glGetStringi_type glGetStringi
 
-ctypedef void (__stdcall *glGetTexParameterfv_type)(GLenum  target, GLenum  pname, GLfloat * params) nogil
+ctypedef void (__stdcall *glGetTexParameterfv_type)(GLenum  target, GLenum  pname, GLfloat * params) noexcept nogil
 cdef glGetTexParameterfv_type glGetTexParameterfv
 
-ctypedef void (__stdcall *glGetTexParameteriv_type)(GLenum  target, GLenum  pname, GLint * params) nogil
+ctypedef void (__stdcall *glGetTexParameteriv_type)(GLenum  target, GLenum  pname, GLint * params) noexcept nogil
 cdef glGetTexParameteriv_type glGetTexParameteriv
 
-ctypedef void (__stdcall *glGetTransformFeedbackVarying_type)(GLuint  program, GLuint  index, GLsizei  bufSize, GLsizei * length, GLsizei * size, GLenum * type, GLchar * name) nogil
+ctypedef void (__stdcall *glGetTransformFeedbackVarying_type)(GLuint  program, GLuint  index, GLsizei  bufSize, GLsizei * length, GLsizei * size, GLenum * type, GLchar * name) noexcept nogil
 cdef glGetTransformFeedbackVarying_type glGetTransformFeedbackVarying
 
-ctypedef GLint (__stdcall *glGetUniformLocation_type)(GLuint  program, const GLchar * name) nogil
+ctypedef GLint (__stdcall *glGetUniformLocation_type)(GLuint  program, const GLchar * name) noexcept nogil
 cdef glGetUniformLocation_type glGetUniformLocation
 
-ctypedef void (__stdcall *glGetUniformfv_type)(GLuint  program, GLint  location, GLfloat * params) nogil
+ctypedef void (__stdcall *glGetUniformfv_type)(GLuint  program, GLint  location, GLfloat * params) noexcept nogil
 cdef glGetUniformfv_type glGetUniformfv
 
-ctypedef void (__stdcall *glGetUniformiv_type)(GLuint  program, GLint  location, GLint * params) nogil
+ctypedef void (__stdcall *glGetUniformiv_type)(GLuint  program, GLint  location, GLint * params) noexcept nogil
 cdef glGetUniformiv_type glGetUniformiv
 
-ctypedef void (__stdcall *glGetUniformuiv_type)(GLuint  program, GLint  location, GLuint * params) nogil
+ctypedef void (__stdcall *glGetUniformuiv_type)(GLuint  program, GLint  location, GLuint * params) noexcept nogil
 cdef glGetUniformuiv_type glGetUniformuiv
 
-ctypedef void (__stdcall *glGetVertexAttribIiv_type)(GLuint  index, GLenum  pname, GLint * params) nogil
+ctypedef void (__stdcall *glGetVertexAttribIiv_type)(GLuint  index, GLenum  pname, GLint * params) noexcept nogil
 cdef glGetVertexAttribIiv_type glGetVertexAttribIiv
 
-ctypedef void (__stdcall *glGetVertexAttribIuiv_type)(GLuint  index, GLenum  pname, GLuint * params) nogil
+ctypedef void (__stdcall *glGetVertexAttribIuiv_type)(GLuint  index, GLenum  pname, GLuint * params) noexcept nogil
 cdef glGetVertexAttribIuiv_type glGetVertexAttribIuiv
 
-ctypedef void (__stdcall *glGetVertexAttribPointerv_type)(GLuint  index, GLenum  pname, void ** pointer) nogil
+ctypedef void (__stdcall *glGetVertexAttribPointerv_type)(GLuint  index, GLenum  pname, void ** pointer) noexcept nogil
 cdef glGetVertexAttribPointerv_type glGetVertexAttribPointerv
 
-ctypedef void (__stdcall *glGetVertexAttribfv_type)(GLuint  index, GLenum  pname, GLfloat * params) nogil
+ctypedef void (__stdcall *glGetVertexAttribfv_type)(GLuint  index, GLenum  pname, GLfloat * params) noexcept nogil
 cdef glGetVertexAttribfv_type glGetVertexAttribfv
 
-ctypedef void (__stdcall *glGetVertexAttribiv_type)(GLuint  index, GLenum  pname, GLint * params) nogil
+ctypedef void (__stdcall *glGetVertexAttribiv_type)(GLuint  index, GLenum  pname, GLint * params) noexcept nogil
 cdef glGetVertexAttribiv_type glGetVertexAttribiv
 
-ctypedef void (__stdcall *glHint_type)(GLenum  target, GLenum  mode) nogil
+ctypedef void (__stdcall *glHint_type)(GLenum  target, GLenum  mode) noexcept nogil
 cdef glHint_type glHint
 
-ctypedef GLboolean (__stdcall *glIsBuffer_type)(GLuint  buffer) nogil
+ctypedef GLboolean (__stdcall *glIsBuffer_type)(GLuint  buffer) noexcept nogil
 cdef glIsBuffer_type glIsBuffer
 
-ctypedef GLboolean (__stdcall *glIsEnabled_type)(GLenum  cap) nogil
+ctypedef GLboolean (__stdcall *glIsEnabled_type)(GLenum  cap) noexcept nogil
 cdef glIsEnabled_type glIsEnabled
 
-ctypedef GLboolean (__stdcall *glIsFramebuffer_type)(GLuint  framebuffer) nogil
+ctypedef GLboolean (__stdcall *glIsFramebuffer_type)(GLuint  framebuffer) noexcept nogil
 cdef glIsFramebuffer_type glIsFramebuffer
 
-ctypedef GLboolean (__stdcall *glIsProgram_type)(GLuint  program) nogil
+ctypedef GLboolean (__stdcall *glIsProgram_type)(GLuint  program) noexcept nogil
 cdef glIsProgram_type glIsProgram
 
-ctypedef GLboolean (__stdcall *glIsQuery_type)(GLuint  id) nogil
+ctypedef GLboolean (__stdcall *glIsQuery_type)(GLuint  id) noexcept nogil
 cdef glIsQuery_type glIsQuery
 
-ctypedef GLboolean (__stdcall *glIsRenderbuffer_type)(GLuint  renderbuffer) nogil
+ctypedef GLboolean (__stdcall *glIsRenderbuffer_type)(GLuint  renderbuffer) noexcept nogil
 cdef glIsRenderbuffer_type glIsRenderbuffer
 
-ctypedef GLboolean (__stdcall *glIsShader_type)(GLuint  shader) nogil
+ctypedef GLboolean (__stdcall *glIsShader_type)(GLuint  shader) noexcept nogil
 cdef glIsShader_type glIsShader
 
-ctypedef GLboolean (__stdcall *glIsTexture_type)(GLuint  texture) nogil
+ctypedef GLboolean (__stdcall *glIsTexture_type)(GLuint  texture) noexcept nogil
 cdef glIsTexture_type glIsTexture
 
-ctypedef GLboolean (__stdcall *glIsVertexArray_type)(GLuint  array) nogil
+ctypedef GLboolean (__stdcall *glIsVertexArray_type)(GLuint  array) noexcept nogil
 cdef glIsVertexArray_type glIsVertexArray
 
-ctypedef void (__stdcall *glLineWidth_type)(GLfloat  width) nogil
+ctypedef void (__stdcall *glLineWidth_type)(GLfloat  width) noexcept nogil
 cdef glLineWidth_type glLineWidth
 
-ctypedef void (__stdcall *glLinkProgram_type)(GLuint  program) nogil
+ctypedef void (__stdcall *glLinkProgram_type)(GLuint  program) noexcept nogil
 cdef glLinkProgram_type glLinkProgram
 
-ctypedef void * (__stdcall *glMapBufferRange_type)(GLenum  target, GLintptr  offset, GLsizeiptr  length, GLbitfield  access) nogil
+ctypedef void * (__stdcall *glMapBufferRange_type)(GLenum  target, GLintptr  offset, GLsizeiptr  length, GLbitfield  access) noexcept nogil
 cdef glMapBufferRange_type glMapBufferRange
 
-ctypedef void (__stdcall *glPixelStorei_type)(GLenum  pname, GLint  param) nogil
+ctypedef void (__stdcall *glPixelStorei_type)(GLenum  pname, GLint  param) noexcept nogil
 cdef glPixelStorei_type glPixelStorei
 
-ctypedef void (__stdcall *glPolygonOffset_type)(GLfloat  factor, GLfloat  units) nogil
+ctypedef void (__stdcall *glPolygonOffset_type)(GLfloat  factor, GLfloat  units) noexcept nogil
 cdef glPolygonOffset_type glPolygonOffset
 
-ctypedef void (__stdcall *glReadBuffer_type)(GLenum  src) nogil
+ctypedef void (__stdcall *glReadBuffer_type)(GLenum  src) noexcept nogil
 cdef glReadBuffer_type glReadBuffer
 
-ctypedef void (__stdcall *glReadPixels_type)(GLint  x, GLint  y, GLsizei  width, GLsizei  height, GLenum  format, GLenum  type, void * pixels) nogil
+ctypedef void (__stdcall *glReadPixels_type)(GLint  x, GLint  y, GLsizei  width, GLsizei  height, GLenum  format, GLenum  type, void * pixels) noexcept nogil
 cdef glReadPixels_type glReadPixels
 
-ctypedef void (__stdcall *glRenderbufferStorage_type)(GLenum  target, GLenum  internalformat, GLsizei  width, GLsizei  height) nogil
+ctypedef void (__stdcall *glRenderbufferStorage_type)(GLenum  target, GLenum  internalformat, GLsizei  width, GLsizei  height) noexcept nogil
 cdef glRenderbufferStorage_type glRenderbufferStorage
 
-ctypedef void (__stdcall *glRenderbufferStorageMultisample_type)(GLenum  target, GLsizei  samples, GLenum  internalformat, GLsizei  width, GLsizei  height) nogil
+ctypedef void (__stdcall *glRenderbufferStorageMultisample_type)(GLenum  target, GLsizei  samples, GLenum  internalformat, GLsizei  width, GLsizei  height) noexcept nogil
 cdef glRenderbufferStorageMultisample_type glRenderbufferStorageMultisample
 
-ctypedef void (__stdcall *glSampleCoverage_type)(GLfloat  value, GLboolean  invert) nogil
+ctypedef void (__stdcall *glSampleCoverage_type)(GLfloat  value, GLboolean  invert) noexcept nogil
 cdef glSampleCoverage_type glSampleCoverage
 
-ctypedef void (__stdcall *glScissor_type)(GLint  x, GLint  y, GLsizei  width, GLsizei  height) nogil
+ctypedef void (__stdcall *glScissor_type)(GLint  x, GLint  y, GLsizei  width, GLsizei  height) noexcept nogil
 cdef glScissor_type glScissor
 
-ctypedef void (__stdcall *glShaderSource_type)(GLuint  shader, GLsizei  count, const GLchar *const* string, const GLint * length) nogil
+ctypedef void (__stdcall *glShaderSource_type)(GLuint  shader, GLsizei  count, const GLchar *const* string, const GLint * length) noexcept nogil
 cdef glShaderSource_type glShaderSource
 
-ctypedef void (__stdcall *glStencilFunc_type)(GLenum  func, GLint  ref, GLuint  mask) nogil
+ctypedef void (__stdcall *glStencilFunc_type)(GLenum  func, GLint  ref, GLuint  mask) noexcept nogil
 cdef glStencilFunc_type glStencilFunc
 
-ctypedef void (__stdcall *glStencilFuncSeparate_type)(GLenum  face, GLenum  func, GLint  ref, GLuint  mask) nogil
+ctypedef void (__stdcall *glStencilFuncSeparate_type)(GLenum  face, GLenum  func, GLint  ref, GLuint  mask) noexcept nogil
 cdef glStencilFuncSeparate_type glStencilFuncSeparate
 
-ctypedef void (__stdcall *glStencilMask_type)(GLuint  mask) nogil
+ctypedef void (__stdcall *glStencilMask_type)(GLuint  mask) noexcept nogil
 cdef glStencilMask_type glStencilMask
 
-ctypedef void (__stdcall *glStencilMaskSeparate_type)(GLenum  face, GLuint  mask) nogil
+ctypedef void (__stdcall *glStencilMaskSeparate_type)(GLenum  face, GLuint  mask) noexcept nogil
 cdef glStencilMaskSeparate_type glStencilMaskSeparate
 
-ctypedef void (__stdcall *glStencilOp_type)(GLenum  fail, GLenum  zfail, GLenum  zpass) nogil
+ctypedef void (__stdcall *glStencilOp_type)(GLenum  fail, GLenum  zfail, GLenum  zpass) noexcept nogil
 cdef glStencilOp_type glStencilOp
 
-ctypedef void (__stdcall *glStencilOpSeparate_type)(GLenum  face, GLenum  sfail, GLenum  dpfail, GLenum  dppass) nogil
+ctypedef void (__stdcall *glStencilOpSeparate_type)(GLenum  face, GLenum  sfail, GLenum  dpfail, GLenum  dppass) noexcept nogil
 cdef glStencilOpSeparate_type glStencilOpSeparate
 
-ctypedef void (__stdcall *glTexImage2D_type)(GLenum  target, GLint  level, GLint  internalformat, GLsizei  width, GLsizei  height, GLint  border, GLenum  format, GLenum  type, const void * pixels) nogil
+ctypedef void (__stdcall *glTexImage2D_type)(GLenum  target, GLint  level, GLint  internalformat, GLsizei  width, GLsizei  height, GLint  border, GLenum  format, GLenum  type, const void * pixels) noexcept nogil
 cdef glTexImage2D_type glTexImage2D
 
-ctypedef void (__stdcall *glTexImage3D_type)(GLenum  target, GLint  level, GLint  internalformat, GLsizei  width, GLsizei  height, GLsizei  depth, GLint  border, GLenum  format, GLenum  type, const void * pixels) nogil
+ctypedef void (__stdcall *glTexImage3D_type)(GLenum  target, GLint  level, GLint  internalformat, GLsizei  width, GLsizei  height, GLsizei  depth, GLint  border, GLenum  format, GLenum  type, const void * pixels) noexcept nogil
 cdef glTexImage3D_type glTexImage3D
 
-ctypedef void (__stdcall *glTexParameterf_type)(GLenum  target, GLenum  pname, GLfloat  param) nogil
+ctypedef void (__stdcall *glTexParameterf_type)(GLenum  target, GLenum  pname, GLfloat  param) noexcept nogil
 cdef glTexParameterf_type glTexParameterf
 
-ctypedef void (__stdcall *glTexParameterfv_type)(GLenum  target, GLenum  pname, const GLfloat * params) nogil
+ctypedef void (__stdcall *glTexParameterfv_type)(GLenum  target, GLenum  pname, const GLfloat * params) noexcept nogil
 cdef glTexParameterfv_type glTexParameterfv
 
-ctypedef void (__stdcall *glTexParameteri_type)(GLenum  target, GLenum  pname, GLint  param) nogil
+ctypedef void (__stdcall *glTexParameteri_type)(GLenum  target, GLenum  pname, GLint  param) noexcept nogil
 cdef glTexParameteri_type glTexParameteri
 
-ctypedef void (__stdcall *glTexParameteriv_type)(GLenum  target, GLenum  pname, const GLint * params) nogil
+ctypedef void (__stdcall *glTexParameteriv_type)(GLenum  target, GLenum  pname, const GLint * params) noexcept nogil
 cdef glTexParameteriv_type glTexParameteriv
 
-ctypedef void (__stdcall *glTexSubImage2D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLsizei  width, GLsizei  height, GLenum  format, GLenum  type, const void * pixels) nogil
+ctypedef void (__stdcall *glTexSubImage2D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLsizei  width, GLsizei  height, GLenum  format, GLenum  type, const void * pixels) noexcept nogil
 cdef glTexSubImage2D_type glTexSubImage2D
 
-ctypedef void (__stdcall *glTexSubImage3D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLint  zoffset, GLsizei  width, GLsizei  height, GLsizei  depth, GLenum  format, GLenum  type, const void * pixels) nogil
+ctypedef void (__stdcall *glTexSubImage3D_type)(GLenum  target, GLint  level, GLint  xoffset, GLint  yoffset, GLint  zoffset, GLsizei  width, GLsizei  height, GLsizei  depth, GLenum  format, GLenum  type, const void * pixels) noexcept nogil
 cdef glTexSubImage3D_type glTexSubImage3D
 
-ctypedef void (__stdcall *glTransformFeedbackVaryings_type)(GLuint  program, GLsizei  count, const GLchar *const* varyings, GLenum  bufferMode) nogil
+ctypedef void (__stdcall *glTransformFeedbackVaryings_type)(GLuint  program, GLsizei  count, const GLchar *const* varyings, GLenum  bufferMode) noexcept nogil
 cdef glTransformFeedbackVaryings_type glTransformFeedbackVaryings
 
-ctypedef void (__stdcall *glUniform1f_type)(GLint  location, GLfloat  v0) nogil
+ctypedef void (__stdcall *glUniform1f_type)(GLint  location, GLfloat  v0) noexcept nogil
 cdef glUniform1f_type glUniform1f
 
-ctypedef void (__stdcall *glUniform1fv_type)(GLint  location, GLsizei  count, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniform1fv_type)(GLint  location, GLsizei  count, const GLfloat * value) noexcept nogil
 cdef glUniform1fv_type glUniform1fv
 
-ctypedef void (__stdcall *glUniform1i_type)(GLint  location, GLint  v0) nogil
+ctypedef void (__stdcall *glUniform1i_type)(GLint  location, GLint  v0) noexcept nogil
 cdef glUniform1i_type glUniform1i
 
-ctypedef void (__stdcall *glUniform1iv_type)(GLint  location, GLsizei  count, const GLint * value) nogil
+ctypedef void (__stdcall *glUniform1iv_type)(GLint  location, GLsizei  count, const GLint * value) noexcept nogil
 cdef glUniform1iv_type glUniform1iv
 
-ctypedef void (__stdcall *glUniform1ui_type)(GLint  location, GLuint  v0) nogil
+ctypedef void (__stdcall *glUniform1ui_type)(GLint  location, GLuint  v0) noexcept nogil
 cdef glUniform1ui_type glUniform1ui
 
-ctypedef void (__stdcall *glUniform1uiv_type)(GLint  location, GLsizei  count, const GLuint * value) nogil
+ctypedef void (__stdcall *glUniform1uiv_type)(GLint  location, GLsizei  count, const GLuint * value) noexcept nogil
 cdef glUniform1uiv_type glUniform1uiv
 
-ctypedef void (__stdcall *glUniform2f_type)(GLint  location, GLfloat  v0, GLfloat  v1) nogil
+ctypedef void (__stdcall *glUniform2f_type)(GLint  location, GLfloat  v0, GLfloat  v1) noexcept nogil
 cdef glUniform2f_type glUniform2f
 
-ctypedef void (__stdcall *glUniform2fv_type)(GLint  location, GLsizei  count, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniform2fv_type)(GLint  location, GLsizei  count, const GLfloat * value) noexcept nogil
 cdef glUniform2fv_type glUniform2fv
 
-ctypedef void (__stdcall *glUniform2i_type)(GLint  location, GLint  v0, GLint  v1) nogil
+ctypedef void (__stdcall *glUniform2i_type)(GLint  location, GLint  v0, GLint  v1) noexcept nogil
 cdef glUniform2i_type glUniform2i
 
-ctypedef void (__stdcall *glUniform2iv_type)(GLint  location, GLsizei  count, const GLint * value) nogil
+ctypedef void (__stdcall *glUniform2iv_type)(GLint  location, GLsizei  count, const GLint * value) noexcept nogil
 cdef glUniform2iv_type glUniform2iv
 
-ctypedef void (__stdcall *glUniform2ui_type)(GLint  location, GLuint  v0, GLuint  v1) nogil
+ctypedef void (__stdcall *glUniform2ui_type)(GLint  location, GLuint  v0, GLuint  v1) noexcept nogil
 cdef glUniform2ui_type glUniform2ui
 
-ctypedef void (__stdcall *glUniform2uiv_type)(GLint  location, GLsizei  count, const GLuint * value) nogil
+ctypedef void (__stdcall *glUniform2uiv_type)(GLint  location, GLsizei  count, const GLuint * value) noexcept nogil
 cdef glUniform2uiv_type glUniform2uiv
 
-ctypedef void (__stdcall *glUniform3f_type)(GLint  location, GLfloat  v0, GLfloat  v1, GLfloat  v2) nogil
+ctypedef void (__stdcall *glUniform3f_type)(GLint  location, GLfloat  v0, GLfloat  v1, GLfloat  v2) noexcept nogil
 cdef glUniform3f_type glUniform3f
 
-ctypedef void (__stdcall *glUniform3fv_type)(GLint  location, GLsizei  count, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniform3fv_type)(GLint  location, GLsizei  count, const GLfloat * value) noexcept nogil
 cdef glUniform3fv_type glUniform3fv
 
-ctypedef void (__stdcall *glUniform3i_type)(GLint  location, GLint  v0, GLint  v1, GLint  v2) nogil
+ctypedef void (__stdcall *glUniform3i_type)(GLint  location, GLint  v0, GLint  v1, GLint  v2) noexcept nogil
 cdef glUniform3i_type glUniform3i
 
-ctypedef void (__stdcall *glUniform3iv_type)(GLint  location, GLsizei  count, const GLint * value) nogil
+ctypedef void (__stdcall *glUniform3iv_type)(GLint  location, GLsizei  count, const GLint * value) noexcept nogil
 cdef glUniform3iv_type glUniform3iv
 
-ctypedef void (__stdcall *glUniform3ui_type)(GLint  location, GLuint  v0, GLuint  v1, GLuint  v2) nogil
+ctypedef void (__stdcall *glUniform3ui_type)(GLint  location, GLuint  v0, GLuint  v1, GLuint  v2) noexcept nogil
 cdef glUniform3ui_type glUniform3ui
 
-ctypedef void (__stdcall *glUniform3uiv_type)(GLint  location, GLsizei  count, const GLuint * value) nogil
+ctypedef void (__stdcall *glUniform3uiv_type)(GLint  location, GLsizei  count, const GLuint * value) noexcept nogil
 cdef glUniform3uiv_type glUniform3uiv
 
-ctypedef void (__stdcall *glUniform4f_type)(GLint  location, GLfloat  v0, GLfloat  v1, GLfloat  v2, GLfloat  v3) nogil
+ctypedef void (__stdcall *glUniform4f_type)(GLint  location, GLfloat  v0, GLfloat  v1, GLfloat  v2, GLfloat  v3) noexcept nogil
 cdef glUniform4f_type glUniform4f
 
-ctypedef void (__stdcall *glUniform4fv_type)(GLint  location, GLsizei  count, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniform4fv_type)(GLint  location, GLsizei  count, const GLfloat * value) noexcept nogil
 cdef glUniform4fv_type glUniform4fv
 
-ctypedef void (__stdcall *glUniform4i_type)(GLint  location, GLint  v0, GLint  v1, GLint  v2, GLint  v3) nogil
+ctypedef void (__stdcall *glUniform4i_type)(GLint  location, GLint  v0, GLint  v1, GLint  v2, GLint  v3) noexcept nogil
 cdef glUniform4i_type glUniform4i
 
-ctypedef void (__stdcall *glUniform4iv_type)(GLint  location, GLsizei  count, const GLint * value) nogil
+ctypedef void (__stdcall *glUniform4iv_type)(GLint  location, GLsizei  count, const GLint * value) noexcept nogil
 cdef glUniform4iv_type glUniform4iv
 
-ctypedef void (__stdcall *glUniform4ui_type)(GLint  location, GLuint  v0, GLuint  v1, GLuint  v2, GLuint  v3) nogil
+ctypedef void (__stdcall *glUniform4ui_type)(GLint  location, GLuint  v0, GLuint  v1, GLuint  v2, GLuint  v3) noexcept nogil
 cdef glUniform4ui_type glUniform4ui
 
-ctypedef void (__stdcall *glUniform4uiv_type)(GLint  location, GLsizei  count, const GLuint * value) nogil
+ctypedef void (__stdcall *glUniform4uiv_type)(GLint  location, GLsizei  count, const GLuint * value) noexcept nogil
 cdef glUniform4uiv_type glUniform4uiv
 
-ctypedef void (__stdcall *glUniformMatrix2fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniformMatrix2fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) noexcept nogil
 cdef glUniformMatrix2fv_type glUniformMatrix2fv
 
-ctypedef void (__stdcall *glUniformMatrix2x3fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniformMatrix2x3fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) noexcept nogil
 cdef glUniformMatrix2x3fv_type glUniformMatrix2x3fv
 
-ctypedef void (__stdcall *glUniformMatrix2x4fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniformMatrix2x4fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) noexcept nogil
 cdef glUniformMatrix2x4fv_type glUniformMatrix2x4fv
 
-ctypedef void (__stdcall *glUniformMatrix3fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniformMatrix3fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) noexcept nogil
 cdef glUniformMatrix3fv_type glUniformMatrix3fv
 
-ctypedef void (__stdcall *glUniformMatrix3x2fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniformMatrix3x2fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) noexcept nogil
 cdef glUniformMatrix3x2fv_type glUniformMatrix3x2fv
 
-ctypedef void (__stdcall *glUniformMatrix3x4fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniformMatrix3x4fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) noexcept nogil
 cdef glUniformMatrix3x4fv_type glUniformMatrix3x4fv
 
-ctypedef void (__stdcall *glUniformMatrix4fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniformMatrix4fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) noexcept nogil
 cdef glUniformMatrix4fv_type glUniformMatrix4fv
 
-ctypedef void (__stdcall *glUniformMatrix4x2fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniformMatrix4x2fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) noexcept nogil
 cdef glUniformMatrix4x2fv_type glUniformMatrix4x2fv
 
-ctypedef void (__stdcall *glUniformMatrix4x3fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) nogil
+ctypedef void (__stdcall *glUniformMatrix4x3fv_type)(GLint  location, GLsizei  count, GLboolean  transpose, const GLfloat * value) noexcept nogil
 cdef glUniformMatrix4x3fv_type glUniformMatrix4x3fv
 
-ctypedef GLboolean (__stdcall *glUnmapBuffer_type)(GLenum  target) nogil
+ctypedef GLboolean (__stdcall *glUnmapBuffer_type)(GLenum  target) noexcept nogil
 cdef glUnmapBuffer_type glUnmapBuffer
 
-ctypedef void (__stdcall *glUseProgram_type)(GLuint  program) nogil
+ctypedef void (__stdcall *glUseProgram_type)(GLuint  program) noexcept nogil
 cdef glUseProgram_type glUseProgram
 
-ctypedef void (__stdcall *glValidateProgram_type)(GLuint  program) nogil
+ctypedef void (__stdcall *glValidateProgram_type)(GLuint  program) noexcept nogil
 cdef glValidateProgram_type glValidateProgram
 
-ctypedef void (__stdcall *glVertexAttrib1f_type)(GLuint  index, GLfloat  x) nogil
+ctypedef void (__stdcall *glVertexAttrib1f_type)(GLuint  index, GLfloat  x) noexcept nogil
 cdef glVertexAttrib1f_type glVertexAttrib1f
 
-ctypedef void (__stdcall *glVertexAttrib1fv_type)(GLuint  index, const GLfloat * v) nogil
+ctypedef void (__stdcall *glVertexAttrib1fv_type)(GLuint  index, const GLfloat * v) noexcept nogil
 cdef glVertexAttrib1fv_type glVertexAttrib1fv
 
-ctypedef void (__stdcall *glVertexAttrib2f_type)(GLuint  index, GLfloat  x, GLfloat  y) nogil
+ctypedef void (__stdcall *glVertexAttrib2f_type)(GLuint  index, GLfloat  x, GLfloat  y) noexcept nogil
 cdef glVertexAttrib2f_type glVertexAttrib2f
 
-ctypedef void (__stdcall *glVertexAttrib2fv_type)(GLuint  index, const GLfloat * v) nogil
+ctypedef void (__stdcall *glVertexAttrib2fv_type)(GLuint  index, const GLfloat * v) noexcept nogil
 cdef glVertexAttrib2fv_type glVertexAttrib2fv
 
-ctypedef void (__stdcall *glVertexAttrib3f_type)(GLuint  index, GLfloat  x, GLfloat  y, GLfloat  z) nogil
+ctypedef void (__stdcall *glVertexAttrib3f_type)(GLuint  index, GLfloat  x, GLfloat  y, GLfloat  z) noexcept nogil
 cdef glVertexAttrib3f_type glVertexAttrib3f
 
-ctypedef void (__stdcall *glVertexAttrib3fv_type)(GLuint  index, const GLfloat * v) nogil
+ctypedef void (__stdcall *glVertexAttrib3fv_type)(GLuint  index, const GLfloat * v) noexcept nogil
 cdef glVertexAttrib3fv_type glVertexAttrib3fv
 
-ctypedef void (__stdcall *glVertexAttrib4f_type)(GLuint  index, GLfloat  x, GLfloat  y, GLfloat  z, GLfloat  w) nogil
+ctypedef void (__stdcall *glVertexAttrib4f_type)(GLuint  index, GLfloat  x, GLfloat  y, GLfloat  z, GLfloat  w) noexcept nogil
 cdef glVertexAttrib4f_type glVertexAttrib4f
 
-ctypedef void (__stdcall *glVertexAttrib4fv_type)(GLuint  index, const GLfloat * v) nogil
+ctypedef void (__stdcall *glVertexAttrib4fv_type)(GLuint  index, const GLfloat * v) noexcept nogil
 cdef glVertexAttrib4fv_type glVertexAttrib4fv
 
-ctypedef void (__stdcall *glVertexAttribI4i_type)(GLuint  index, GLint  x, GLint  y, GLint  z, GLint  w) nogil
+ctypedef void (__stdcall *glVertexAttribI4i_type)(GLuint  index, GLint  x, GLint  y, GLint  z, GLint  w) noexcept nogil
 cdef glVertexAttribI4i_type glVertexAttribI4i
 
-ctypedef void (__stdcall *glVertexAttribI4iv_type)(GLuint  index, const GLint * v) nogil
+ctypedef void (__stdcall *glVertexAttribI4iv_type)(GLuint  index, const GLint * v) noexcept nogil
 cdef glVertexAttribI4iv_type glVertexAttribI4iv
 
-ctypedef void (__stdcall *glVertexAttribI4ui_type)(GLuint  index, GLuint  x, GLuint  y, GLuint  z, GLuint  w) nogil
+ctypedef void (__stdcall *glVertexAttribI4ui_type)(GLuint  index, GLuint  x, GLuint  y, GLuint  z, GLuint  w) noexcept nogil
 cdef glVertexAttribI4ui_type glVertexAttribI4ui
 
-ctypedef void (__stdcall *glVertexAttribI4uiv_type)(GLuint  index, const GLuint * v) nogil
+ctypedef void (__stdcall *glVertexAttribI4uiv_type)(GLuint  index, const GLuint * v) noexcept nogil
 cdef glVertexAttribI4uiv_type glVertexAttribI4uiv
 
-ctypedef void (__stdcall *glVertexAttribIPointer_type)(GLuint  index, GLint  size, GLenum  type, GLsizei  stride, const void * pointer) nogil
+ctypedef void (__stdcall *glVertexAttribIPointer_type)(GLuint  index, GLint  size, GLenum  type, GLsizei  stride, const void * pointer) noexcept nogil
 cdef glVertexAttribIPointer_type glVertexAttribIPointer
 
-ctypedef void (__stdcall *glVertexAttribPointer_type)(GLuint  index, GLint  size, GLenum  type, GLboolean  normalized, GLsizei  stride, const void * pointer) nogil
+ctypedef void (__stdcall *glVertexAttribPointer_type)(GLuint  index, GLint  size, GLenum  type, GLboolean  normalized, GLsizei  stride, const void * pointer) noexcept nogil
 cdef glVertexAttribPointer_type glVertexAttribPointer
 
-ctypedef void (__stdcall *glViewport_type)(GLint  x, GLint  y, GLsizei  width, GLsizei  height) nogil
+ctypedef void (__stdcall *glViewport_type)(GLint  x, GLint  y, GLsizei  width, GLsizei  height) noexcept nogil
 cdef glViewport_type glViewport

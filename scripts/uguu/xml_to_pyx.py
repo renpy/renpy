@@ -330,9 +330,9 @@ class XMLToPYX:
                 else:
                     proxy.append(p)
 
-            typedef = f"ctypedef {command.return_type} (__stdcall *{name}_type)({', '.join(typedef_params)}) nogil"
-
             rt = command.return_type.strip()
+            typedef = f"ctypedef {rt} (__stdcall *{name}_type)({', '.join(typedef_params)}) noexcept nogil"
+
             if rt == "void *":
                 call_kind = "void *"
             elif rt == "void":
