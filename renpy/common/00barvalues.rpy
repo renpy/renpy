@@ -606,6 +606,8 @@ init -1500 python:
             If true, the player can seek by dragging the bar.
         """
 
+        _position = -1.0
+
         def __init__(self, channel='music', update_interval=0.1, adjustable=False):
             self.channel = channel
             self.update_interval = update_interval
@@ -613,8 +615,11 @@ init -1500 python:
 
             self.adjustment = None
 
+            self._position = -1.0
+
         def changed(self, position):
-            renpy.music.seek(position, self.channel)
+            if abs(position - self._position) > 5e-2:
+                renpy.music.seek(position, self.channel)
 
         def get_pos_duration(self):
             pos = renpy.music.get_pos(self.channel) or 0.0
@@ -630,12 +635,14 @@ init -1500 python:
                 changed=self.changed if self.adjustable else None,
                 adjustable=self.adjustable,
             )
+            self._position = pos
             return self.adjustment
 
         def periodic(self, st):
 
             pos, duration = self.get_pos_duration()
             self.adjustment.set_range(duration)
+            self._position = pos
             self.adjustment.change(pos)
 
             return self.update_interval
