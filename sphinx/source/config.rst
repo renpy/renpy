@@ -1683,6 +1683,11 @@ Showing Images
     When True, Ren'Py will scan images to find the bounding box of the
     non-transparent pixels, and only load those pixels into a texture.
 
+.. var:: config.predict_shaders = True
+
+    If True, shader combinations used by predicted displayables are
+    compiled during expensive idle prediction.
+
 .. var:: config.predict_statements = 32
 
     This is the number of statements, including the current one, to

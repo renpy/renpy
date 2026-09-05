@@ -151,6 +151,13 @@ used in game/cache/shaders.txt, and loads them at startup. If major changes
 in shader use occur, this file should be edited or deleted so it can be
 re-created with valid data.
 
+When :var:`config.predict_shaders` is true, shader combinations exposed by
+predicted displayables are compiled during expensive idle prediction.
+
+Dynamic systems that know the shader combination they will use can register it
+with :func:`renpy.start_predict_shader`, and remove it with
+:func:`renpy.stop_predict_shader`.
+
 
 .. _custom-shaders:
 

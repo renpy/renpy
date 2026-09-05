@@ -19,13 +19,71 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import re
+import collections
 import os
+import re
 
 import renpy
 
 # A map from shader part name to ShaderPart
 shader_part = {}
+
+def _get_shader_cache():
+    draw = renpy.display.draw
+
+    if draw is None:
+        return None
+
+    return getattr(draw, "shader_cache", None)
+
+
+def predict_shader(partnames, cache=None):
+    if not renpy.config.predict_shaders:
+        return
+
+    if isinstance(partnames, str):
+        partnames = (partnames,)
+    else:
+        partnames = tuple(partnames)
+
+    if cache is None:
+        cache = _get_shader_cache()
+
+    if cache is None:
+        return
+
+    cache.predict(partnames)
+
+
+def has_predicted_shaders(cache=None):
+    if cache is None:
+        cache = _get_shader_cache()
+
+    if cache is None:
+        return False
+
+    if not renpy.config.predict_shaders:
+        cache.predicted.clear()
+
+        return False
+
+    return bool(cache.predicted)
+
+
+def preload_predicted_shader(cache=None):
+    if cache is None:
+        cache = _get_shader_cache()
+
+    if cache is None:
+        return False
+
+    if not renpy.config.predict_shaders:
+        cache.predicted.clear()
+
+        return False
+
+    return cache.preload_predicted()
+
 
 # The name of the variable a fragment shader writes its color to, when the
 # modern dialect is being emitted (for legacy support, as GLSL ES 3.00 removed
@@ -806,27 +864,22 @@ class ShaderCache(object):
         # True if this is dirty, and should be saved to the cache.
         self.dirty = False
 
-    def get(self, partnames):
-        """
-        Gets a shader, creating it if necessary.
+        # Shader combinations waiting to be compiled in prediction order.
+        self.predicted = collections.OrderedDict()
 
-        `partnames`
-            A tuple of strings, giving the names of the shader parts to include in
-            the cache.
-        """
+    def _filter_partnames(self, partnames):
+        if renpy.config.shader_part_filter is None:
+            return partnames
 
-        if renpy.config.shader_part_filter is not None:
-            new_partnames = shader_part_filter_cache.get(partnames, None)
-            if new_partnames is None:
-                new_partnames = renpy.config.shader_part_filter(partnames)
-                shader_part_filter_cache[partnames] = new_partnames
+        new_partnames = shader_part_filter_cache.get(partnames, None)
+        
+        if new_partnames is None:
+            new_partnames = renpy.config.shader_part_filter(partnames)
+            shader_part_filter_cache[partnames] = new_partnames
 
-            partnames = new_partnames
+        return new_partnames
 
-        rv = self.cache.get(partnames, None)
-        if rv is not None:
-            return rv
-
+    def _normalize_partnames(self, partnames):
         partnameset = set()
         partnamenotset = set()
 
@@ -841,7 +894,58 @@ class ShaderCache(object):
         if "renpy.ftl" not in partnameset:
             partnameset.add(renpy.config.default_shader)
 
-        sortedpartnames = tuple(sorted(partnameset))
+        return tuple(sorted(partnameset))
+
+    def predict(self, partnames):
+        partnames = self._filter_partnames(partnames)
+
+        if partnames in self.cache:
+            return
+
+        normalized = self._normalize_partnames(partnames)
+
+        if normalized in self.cache:
+            return
+
+        self.predicted.setdefault(normalized, partnames)
+
+    def preload_predicted(self):
+        while self.predicted:
+            normalized, partnames = self.predicted.popitem(last=False)
+
+            if normalized in self.cache:
+                continue
+
+            try:
+                self._get_filtered(partnames)
+            except Exception:
+                if renpy.config.debug_prediction:
+                    raise
+
+            return True
+
+        return False
+
+    def get(self, partnames):
+        """
+        Gets a shader, creating it if necessary.
+
+        `partnames`
+            A tuple of strings, giving the names of the shader parts to include in
+            the cache.
+        """
+
+        partnames = self._filter_partnames(partnames)
+
+        return self._get_filtered(partnames)
+
+    def _get_filtered(self, partnames):
+        rv = self.cache.get(partnames, None)
+        
+        if rv is not None:
+            return rv
+
+        sortedpartnames = self._normalize_partnames(partnames)
 
         rv = self.cache.get(sortedpartnames, None)
         if rv is not None:
@@ -1028,6 +1132,7 @@ class ShaderCache(object):
 
         self.cache.clear()
         self.missing.clear()
+        self.predicted.clear()
 
     def log_shader(self, kind, partnames, text):
         """

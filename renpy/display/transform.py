@@ -652,6 +652,56 @@ class Proxy(object):
         return setattr(instance.state, self.name, value)
 
 
+def _predict_transform_shaders(transform, state, shaders):
+    local_shaders = []
+
+    if state.matrixcolor:
+        local_shaders.append("renpy.matrixcolor")
+
+    alpha = state.alpha
+
+    if alpha < 0.0:
+        alpha = 0.0
+    elif alpha > 1.0:
+        alpha = 1.0
+
+    if alpha != 1.0 or state.additive != 0.0:
+        local_shaders.append("renpy.alpha")
+
+    if state.shader is not None:
+        if isinstance(state.shader, str):
+            local_shaders.append(state.shader)
+        else:
+            local_shaders.extend(state.shader)
+
+    shaders = shaders + tuple(local_shaders)
+    mesh = state.mesh or (True if state.blur else None)
+
+    if mesh:
+        if state.blur is not None and state.blur > 0:
+            shaders += ("renpy.blur",)
+        else:
+            shaders += ("renpy.texture",)
+
+        renpy.gl2.gl2shadercache.predict_shader(shaders)
+
+    elif transform.child is None:
+        renpy.gl2.gl2shadercache.predict_shader(shaders + ("renpy.texture",))
+
+    children = []
+
+    if transform.child is not None:
+        children.append((transform.child, () if mesh else shaders))
+
+    for name in sorted(state.texture_uniforms or ()):
+        value = getattr(state, name, None)
+
+        if isinstance(value, Displayable):
+            children.append((value, ()))
+
+    return children
+
+
 class Transform(Container):
     """
     Documented in sphinx, because we can't scan this object.
@@ -822,6 +872,9 @@ class Transform(Container):
             return []
         else:
             return [self.child]
+
+    def predict_shaders(self, shaders):
+        return _predict_transform_shaders(self, self.state, shaders)
 
     # The default function chooses entries from self.arguments that match
     # the style prefix, and applies them to the state.
@@ -1279,6 +1332,21 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
             if self.state.events and renpy.game.interface is not None:
                 renpy.game.interface.timeout(0)
             self.state.last_events = self.state.events
+
+    def predict_shaders(self, shaders):
+        if self.get_block() is None:
+            self.compile()
+
+        if self.properties is None:
+            return Transform.predict_shaders(self, shaders)
+
+        state = TransformState()
+        state.take_state(self.state)
+
+        for name, value in self.properties:
+            setattr(state, name, value)
+
+        return _predict_transform_shaders(self, state, shaders)
 
     def _repr_info(self):
         return repr((self.child, self.atl.loc))

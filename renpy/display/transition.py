@@ -72,6 +72,12 @@ def null_render(d, width, height, st, at):
     return rv
 
 
+def _predict_mesh_shaders(displayable, shaders, shader):
+    renpy.gl2.gl2shadercache.predict_shader(shaders + (shader,))
+
+    return [(child, ()) for child in displayable.visit() if child is not None]
+
+
 class NoTransition(Transition):
     """
     :doc: transition function
@@ -281,6 +287,9 @@ class Pixellate(Transition):
 
         self.quantum = time / (2 * steps)
 
+    def predict_shaders(self, shaders):
+        return _predict_mesh_shaders(self, shaders, "renpy.texture")
+
     def render(self, width, height, st, at):
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
@@ -357,6 +366,9 @@ class Dissolve(Transition):
         self.events = False
         self.alpha = alpha
         self.time_warp = time_warp
+
+    def predict_shaders(self, shaders):
+        return _predict_mesh_shaders(self, shaders, "renpy.dissolve")
 
     def render(self, width, height, st, at):
         if renpy.game.less_updates:
@@ -551,6 +563,9 @@ class ImageDissolve(Transition):
     def visit(self):
         return super(ImageDissolve, self).visit() + [self.image]
 
+    def predict_shaders(self, shaders):
+        return _predict_mesh_shaders(self, shaders, "renpy.imagedissolve")
+
     def render(self, width, height, st, at):
         if renpy.game.less_updates or renpy.display.less_imagedissolve:
             return null_render(self, width, height, st, at)
@@ -673,6 +688,9 @@ class AlphaDissolve(Transition):
 
     def visit(self):
         return super(AlphaDissolve, self).visit() + [self.control]
+
+    def predict_shaders(self, shaders):
+        return _predict_mesh_shaders(self, shaders, "renpy.imagedissolve")
 
     def render(self, width, height, st, at):
         if renpy.game.less_updates or renpy.display.less_imagedissolve:
