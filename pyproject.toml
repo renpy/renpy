@@ -113,6 +113,11 @@ extend-exclude = [
     "keywords.py",
     "renpy/text/emoji_trie.py",
 ]
+ignore = [
+    "TRY002",
+    "S110",
+    "BLE001",
+]
 
 [tool.ruff.format]
 preview = true
