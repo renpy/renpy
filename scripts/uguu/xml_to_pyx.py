@@ -125,6 +125,8 @@ class Command:
 
         for i in node.findall("param"):
             t, n = type_and_name(i)
+            t = t.strip()
+            n = n.strip()
             if n in self.parameters_to_type:
                 malformed_xml(f"Duplicate parameter name: {n}")
 
