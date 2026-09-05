@@ -3,12 +3,12 @@ from renpy.uguu.gl cimport GLboolean
 from renpy.uguu.gl cimport GLbitfield
 from renpy.uguu.gl cimport GLvoid
 from renpy.uguu.gl cimport GLbyte
-from renpy.uguu.gl cimport GLshort
-from renpy.uguu.gl cimport GLint
-from renpy.uguu.gl cimport GLclampx
 from renpy.uguu.gl cimport GLubyte
+from renpy.uguu.gl cimport GLshort
 from renpy.uguu.gl cimport GLushort
+from renpy.uguu.gl cimport GLint
 from renpy.uguu.gl cimport GLuint
+from renpy.uguu.gl cimport GLclampx
 from renpy.uguu.gl cimport GLsizei
 from renpy.uguu.gl cimport GLfloat
 from renpy.uguu.gl cimport GLclampf
@@ -18,16 +18,16 @@ from renpy.uguu.gl cimport GLeglClientBufferEXT
 from renpy.uguu.gl cimport GLeglImageOES
 from renpy.uguu.gl cimport GLchar
 from renpy.uguu.gl cimport GLcharARB
-from renpy.uguu.gl cimport GLhalfARB
 from renpy.uguu.gl cimport GLhalf
+from renpy.uguu.gl cimport GLhalfARB
 from renpy.uguu.gl cimport GLfixed
 from renpy.uguu.gl cimport GLintptr
-from renpy.uguu.gl cimport GLsizeiptr
-from renpy.uguu.gl cimport GLint64
-from renpy.uguu.gl cimport GLuint64
 from renpy.uguu.gl cimport GLintptrARB
+from renpy.uguu.gl cimport GLsizeiptr
 from renpy.uguu.gl cimport GLsizeiptrARB
+from renpy.uguu.gl cimport GLint64
 from renpy.uguu.gl cimport GLint64EXT
+from renpy.uguu.gl cimport GLuint64
 from renpy.uguu.gl cimport GLuint64EXT
 
 from libc.stddef cimport ptrdiff_t
@@ -201,12 +201,12 @@ from renpy.uguu.gl cimport GLboolean
 from renpy.uguu.gl cimport GLbitfield
 from renpy.uguu.gl cimport GLvoid
 from renpy.uguu.gl cimport GLbyte
-from renpy.uguu.gl cimport GLshort
-from renpy.uguu.gl cimport GLint
-from renpy.uguu.gl cimport GLclampx
 from renpy.uguu.gl cimport GLubyte
+from renpy.uguu.gl cimport GLshort
 from renpy.uguu.gl cimport GLushort
+from renpy.uguu.gl cimport GLint
 from renpy.uguu.gl cimport GLuint
+from renpy.uguu.gl cimport GLclampx
 from renpy.uguu.gl cimport GLsizei
 from renpy.uguu.gl cimport GLfloat
 from renpy.uguu.gl cimport GLclampf
@@ -216,16 +216,16 @@ from renpy.uguu.gl cimport GLeglClientBufferEXT
 from renpy.uguu.gl cimport GLeglImageOES
 from renpy.uguu.gl cimport GLchar
 from renpy.uguu.gl cimport GLcharARB
-from renpy.uguu.gl cimport GLhalfARB
 from renpy.uguu.gl cimport GLhalf
+from renpy.uguu.gl cimport GLhalfARB
 from renpy.uguu.gl cimport GLfixed
 from renpy.uguu.gl cimport GLintptr
-from renpy.uguu.gl cimport GLsizeiptr
-from renpy.uguu.gl cimport GLint64
-from renpy.uguu.gl cimport GLuint64
 from renpy.uguu.gl cimport GLintptrARB
+from renpy.uguu.gl cimport GLsizeiptr
 from renpy.uguu.gl cimport GLsizeiptrARB
+from renpy.uguu.gl cimport GLint64
 from renpy.uguu.gl cimport GLint64EXT
+from renpy.uguu.gl cimport GLuint64
 from renpy.uguu.gl cimport GLuint64EXT
 
 def glActiveTexture(texture):

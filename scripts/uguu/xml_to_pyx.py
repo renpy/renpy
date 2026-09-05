@@ -1,14 +1,41 @@
-#!/usr/bin/env python3
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
-from xml.etree.ElementTree import parse, tostring
-import collections
 import itertools
-import os
-import sys
-import pathlib
+from pathlib import Path
+from xml.etree.ElementTree import parse
 
-os.chdir(pathlib.Path(__file__).parent.resolve())
+import requests
+
+UGUU_ROOT = Path(__file__).parent.resolve()
+
+RENPY_UGUU_ROOT = UGUU_ROOT.parent.parent / "renpy" / "uguu"
+
+XML_COMMIT_SHA = "1cdd228e34966dd6b95bd203e9f84faba0f371a1"
+"""
+The commit SHA of the gl.xml file used by this script.
+Reference repository: https://github.com/KhronosGroup/OpenGL-Registry
+"""
+
+XML_URL = f"https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/{XML_COMMIT_SHA}/xml/gl.xml"
 
 # Bad/weird types we don't need or want to generate.
 BAD_TYPES = {
@@ -31,14 +58,9 @@ BAD_COMMANDS = {
 }
 
 
-def snarf(fn):
-    with open(os.path.join(os.path.dirname(__file__), fn)) as f:
-        return f.read() + "\n"
-
-
-UGUUGL_PXD_HEADER = snarf("uguugl_pxd_header.pxd")
-UGUUGL_PYX_HEADER = snarf("uguugl_pyx_header.pyx")
-UGUU_PYX_HEADER = snarf("uguu_pyx_header.pyx")
+UGUUGL_PXD_HEADER = (UGUU_ROOT / "uguugl_pxd_header.pxd").read_text() + "\n"
+UGUUGL_PYX_HEADER = (UGUU_ROOT / "uguugl_pyx_header.pyx").read_text() + "\n"
+UGUU_PYX_HEADER = (UGUU_ROOT / "uguu_pyx_header.pyx").read_text() + "\n"
 
 FRAMEBUFFER_EXT_FUNCTIONS = {
     "glBindFramebuffer",
@@ -78,17 +100,6 @@ def type_and_name(node):
     return type_, name
 
 
-def python_type(t):
-    """
-    Converts the OpenGL type t into a Python type.
-    """
-
-    if not "*" in t:
-        return t
-
-    print("Weird type", t)
-
-
 class Command:
     def __init__(self, node):
         self.return_type = type_and_name(node.find("proto"))[0].strip()
@@ -115,7 +126,7 @@ class Command:
         return "(" + ", ".join(self.parameters) + ")"
 
     def typedef(self, name):
-        return "ctypedef {} (__stdcall *{}){} nogil".format(self.return_type, name, self.format_param_list())
+        return f"ctypedef {self.return_type} (__stdcall *{name}){self.format_param_list()} nogil"
 
 
 class Feature:
@@ -145,10 +156,10 @@ class Feature:
 
 class XMLToPYX:
     def __init__(self):
-        self.root = parse("gl.xml").getroot()
+        self.root = parse(UGUU_ROOT / "gl.xml").getroot()
 
-        self.types = []
-        self.type_names = []
+        self.types: list[str] = []
+        self.type_names: list[str] = []
 
         self.convert_types()
 
@@ -158,7 +169,7 @@ class XMLToPYX:
         self.find_commands()
 
         # A map from enum name to value.
-        self.enums = collections.OrderedDict()
+        self.enums = {}
 
         self.find_enums()
 
@@ -166,22 +177,24 @@ class XMLToPYX:
         self.features = {}
 
         # The features, merged together.
-        self.merged = None  # type:Feature|None
+        self.merged: Feature | None = None
 
         self.find_features()
         self.select_features()
 
-        with open("../../renpy/uguu/gl.pxd", "w") as f:
+        with (RENPY_UGUU_ROOT / "gl.pxd").open("w", encoding="utf-8") as f:
             self.generate_uguugl_pxd(f)
 
-        with open("../../renpy/uguu/gl.pyx", "w") as f:
+        with (RENPY_UGUU_ROOT / "gl.pyx").open("w", encoding="utf-8") as f:
             self.generate_uguugl_pyx(f)
 
-        with open("../../renpy/uguu/uguu.pyx", "w") as f:
+        with (RENPY_UGUU_ROOT / "uguu.pyx").open("w", encoding="utf-8") as f:
             self.generate_uguu_pyx(f)
 
     def convert_types(self):
         types = self.root.find("types")
+        if types is None:
+            raise Exception("No types found in XML")
 
         for t in types:
             if t.get("api", ""):
@@ -246,7 +259,7 @@ class XMLToPYX:
                     self.enums[alias] = value
 
     def find_features(self):
-        for i in itertools.chain(self.root.findall("feature"), self.root.findall("extensions/extension")):
+        for i in itertools.chain(self.root.iterfind("feature"), self.root.iterfind("extensions/extension")):
             name = i.attrib["name"]
 
             f = Feature()
@@ -273,7 +286,7 @@ class XMLToPYX:
     def generate_uguugl_pxd(self, f):
         f.write(UGUUGL_PXD_HEADER)
 
-        def w(s):
+        def w(s=""):
             f.write(s + "\n")
 
         w('cdef extern from "renpygl.h":')
@@ -285,7 +298,7 @@ class XMLToPYX:
         enums = list(self.merged.enums)
         enums.sort(key=lambda n: (int(self.enums[n], 0), n))
 
-        w(f"")
+        w()
 
         for i in enums:
             w(f"    GLenum {i}")
@@ -301,18 +314,18 @@ class XMLToPYX:
     def generate_uguugl_pyx(self, f):
         f.write(UGUUGL_PYX_HEADER)
 
-        def w(s):
+        def w(s=""):
             f.write(s + "\n")
 
         for i in sorted(self.merged.commands):
-            c = self.commands[i]
+            self.commands[i]
 
-            w("")
+            w()
             w(f"cdef {i}_type {i}")
 
-            w("")
+            w()
 
-        w("")
+        w()
         w("def load():")
 
         for i in sorted(self.merged.commands):
@@ -326,18 +339,18 @@ class XMLToPYX:
 
             names = [i.encode("utf-8") for i in names]
 
-            w(f"")
+            w()
             w(f"    global {i}")
             w(f"    {i} = <{i}_type> find_gl_command({names!r})")
 
     def generate_uguu_pyx(self, f):
-        def w(s):
+        def w(s=""):
             f.write(s + "\n")
 
         for l in self.type_names:
             w(f"from renpy.uguu.gl cimport {l}")
 
-        w(f"")
+        w()
         f.write(UGUU_PYX_HEADER)
 
         for l in self.type_names:
@@ -352,7 +365,7 @@ class XMLToPYX:
             params = list(zip(c.parameters, c.parameter_types))
             param_list = ", ".join(c.parameters)
 
-            w(f"")
+            w()
             w(f"def {i}({param_list}):")
 
             for param, type_ in params:
@@ -383,11 +396,27 @@ class XMLToPYX:
         enums = list(self.merged.enums)
         enums.sort(key=lambda n: (int(self.enums[n], 0), n))
 
-        w(f"")
+        w()
 
         for i in enums:
             w(f"{i} = renpy.uguu.gl.{i}")
 
 
+def ensure_gl_xml():
+    commit_file = UGUU_ROOT / "gl.xml.commit"
+    xml_file = UGUU_ROOT / "gl.xml"
+    if commit_file.exists() and xml_file.exists():
+        current_commit = commit_file.read_text().strip()
+    else:
+        current_commit = None
+
+    if current_commit != XML_COMMIT_SHA:
+        with requests.get(XML_URL) as r:
+            xml_file.write_text(r.text)
+
+        commit_file.write_text(XML_COMMIT_SHA)
+
+
 if __name__ == "__main__":
+    ensure_gl_xml()
     XMLToPYX()

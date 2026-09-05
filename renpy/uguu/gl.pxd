@@ -8,33 +8,33 @@ cdef extern from "renpygl.h":
     ctypedef unsigned char GLboolean
     ctypedef unsigned int GLbitfield
     ctypedef void GLvoid
-    ctypedef signed char GLbyte
-    ctypedef short GLshort
+    ctypedef khronos_int8_t GLbyte
+    ctypedef khronos_uint8_t GLubyte
+    ctypedef khronos_int16_t GLshort
+    ctypedef khronos_uint16_t GLushort
     ctypedef int GLint
-    ctypedef int GLclampx
-    ctypedef unsigned char GLubyte
-    ctypedef unsigned short GLushort
     ctypedef unsigned int GLuint
+    ctypedef khronos_int32_t GLclampx
     ctypedef int GLsizei
-    ctypedef float GLfloat
-    ctypedef float GLclampf
+    ctypedef khronos_float_t GLfloat
+    ctypedef khronos_float_t GLclampf
     ctypedef double GLdouble
     ctypedef double GLclampd
     ctypedef void *GLeglClientBufferEXT
     ctypedef void *GLeglImageOES
     ctypedef char GLchar
     ctypedef char GLcharARB
-    ctypedef unsigned short GLhalfARB
-    ctypedef unsigned short GLhalf
-    ctypedef GLint GLfixed
-    ctypedef ptrdiff_t GLintptr
-    ctypedef ptrdiff_t GLsizeiptr
-    ctypedef int64_t GLint64
-    ctypedef uint64_t GLuint64
-    ctypedef ptrdiff_t GLintptrARB
-    ctypedef ptrdiff_t GLsizeiptrARB
-    ctypedef int64_t GLint64EXT
-    ctypedef uint64_t GLuint64EXT
+    ctypedef khronos_uint16_t GLhalf
+    ctypedef khronos_uint16_t GLhalfARB
+    ctypedef khronos_int32_t GLfixed
+    ctypedef khronos_intptr_t GLintptr
+    ctypedef khronos_intptr_t GLintptrARB
+    ctypedef khronos_ssize_t GLsizeiptr
+    ctypedef khronos_ssize_t GLsizeiptrARB
+    ctypedef khronos_int64_t GLint64
+    ctypedef khronos_int64_t GLint64EXT
+    ctypedef khronos_uint64_t GLuint64
+    ctypedef khronos_uint64_t GLuint64EXT
 
     GLenum GL_FALSE
     GLenum GL_NONE
