@@ -31,6 +31,11 @@ Ren'Py 8.5 or earlier. A single part can override it by passing `glsl` to
 Existing shader parts do not require changes. Ren'Py translates between the two
 versions, so parts written in either can be combined in the same shader.
 
+Shader combinations used by predicted displayables are now compiled during
+idle prediction, reducing stalls when they are first shown. The new
+:func:`renpy.start_predict_shader` and
+:func:`renpy.stop_predict_shader` functions support explicit prediction.
+
 Graphics
 --------
 
