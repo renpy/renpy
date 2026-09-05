@@ -20,10 +20,15 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import itertools
+from dataclasses import dataclass
 from pathlib import Path
-from xml.etree.ElementTree import parse
+from typing import Any, Literal, Never
+from xml.etree.ElementTree import Element, parse
 
 import requests
+from Cython.Tempita import sub
+
+type StrElement = "Element[str]"
 
 UGUU_ROOT = Path(__file__).parent.resolve()
 
@@ -57,11 +62,6 @@ BAD_COMMANDS = {
     "glDetachObjectARB",
 }
 
-
-UGUUGL_PXD_HEADER = (UGUU_ROOT / "uguugl_pxd_header.pxd").read_text() + "\n"
-UGUUGL_PYX_HEADER = (UGUU_ROOT / "uguugl_pyx_header.pyx").read_text() + "\n"
-UGUU_PYX_HEADER = (UGUU_ROOT / "uguu_pyx_header.pyx").read_text() + "\n"
-
 FRAMEBUFFER_EXT_FUNCTIONS = {
     "glBindFramebuffer",
     "glBindRenderbuffer",
@@ -92,8 +92,15 @@ GLES_FEATURES = [
 ]
 
 
-def type_and_name(node):
+def malformed_xml(message: str) -> Never:
+    raise Exception(f"Malformed XML: {message}")
+
+
+def type_and_name(node: StrElement):
     name = node.findtext("name")
+    if name is None:
+        malformed_xml("Type with no name found")
+
     text = "".join(node.itertext()).strip()
     type_ = text[: -len(name)]
 
@@ -101,53 +108,71 @@ def type_and_name(node):
 
 
 class Command:
-    def __init__(self, node):
-        self.return_type = type_and_name(node.find("proto"))[0].strip()
+    """
+    Holds the XML-derived facts about a GL command. This is pure parse
+    output - it knows nothing about how it will be rendered, and is
+    shared between every alias name that maps to it (see `aliases`).
+    """
 
-        self.parameters = []
-        self.parameter_types = []
+    def __init__(self, node: StrElement):
+        proto = node.find("proto")
+        if proto is None:
+            malformed_xml("Command with no prototype found")
+
+        self.return_type = type_and_name(proto)[0].strip()
+
+        self.parameters_to_type: dict[str, str] = {}
 
         for i in node.findall("param"):
             t, n = type_and_name(i)
-            self.parameters.append(n)
-            self.parameter_types.append(t)
+            if n in self.parameters_to_type:
+                malformed_xml(f"Duplicate parameter name: {n}")
 
-        self.aliases = set()
+            self.parameters_to_type[n] = t
 
-    def format_param_list(self):
-        l = []
+        self.aliases: set[str] = set()
 
-        for name, type_ in zip(self.parameters, self.parameter_types):
-            l.append(f"{type_} {name}")
 
-        return "(" + ", ".join(l) + ")"
+@dataclass
+class CommandView:
+    """
+    The render-facing model for a single required command name.
 
-    def format_proxy_call(self):
-        return "(" + ", ".join(self.parameters) + ")"
+    A `Command` object is shared across every alias that resolves to the
+    same underlying GL function; a `CommandView` is per required *name*
+    (the value that shows up in `Feature.commands` and therefore in the
+    generated pxd/pyx). All decisions that require branching on parameter
+    types or return types are made here, in Python - the templates only
+    interpolate the results, they don't re-derive them.
+    """
 
-    def typedef(self, name):
-        return f"ctypedef {self.return_type} (__stdcall *{name}){self.format_param_list()} nogil"
-
+    name: str
+    typedef: str
+    load_names: list[bytes]
+    param_list: str
+    pointer_params: list[str]
+    proxy_call: str
+    call_kind: Literal["void *", "void", "string", "value"]
 
 class Feature:
     def __init__(self):
-        self.commands = set()
-        self.enums = set()
+        self.commands: set[str] = set()
+        self.enums: set[str] = set()
 
-    def from_node(self, node):
+    def from_node(self, node: StrElement):
         for i in node.findall("require/enum"):
             self.enums.add(i.attrib["name"])
 
         for i in node.findall("require/command"):
             self.commands.add(i.attrib["name"])
 
-    def __or__(self, other):
+    def __or__(self, other: "Feature") -> "Feature":
         rv = Feature()
         rv.commands = self.commands | other.commands
         rv.enums = self.enums | other.enums
         return rv
 
-    def __and__(self, other):
+    def __and__(self, other: "Feature") -> "Feature":
         rv = Feature()
         rv.commands = self.commands & other.commands
         rv.enums = self.enums & other.enums
@@ -155,46 +180,37 @@ class Feature:
 
 
 class XMLToPYX:
-    def __init__(self):
-        self.root = parse(UGUU_ROOT / "gl.xml").getroot()
+    def __init__(self, root: StrElement):
+        self.root = root
 
-        self.types: list[str] = []
-        self.type_names: list[str] = []
+        # A map from type name to its definition.
+        self.types: dict[str, str] = {}
 
         self.convert_types()
 
         # A map from command name to command.
-        self.commands = {}
+        self.commands: dict[str, Command] = {}
 
         self.find_commands()
 
         # A map from enum name to value.
-        self.enums = {}
+        self.enums: dict[str, str] = {}
 
         self.find_enums()
 
         # A map from feature name to value.
-        self.features = {}
+        self.features: dict[str, Feature] = {}
 
         # The features, merged together.
-        self.merged: Feature | None = None
+        self.merged: Feature = Feature()
 
         self.find_features()
         self.select_features()
 
-        with (RENPY_UGUU_ROOT / "gl.pxd").open("w", encoding="utf-8") as f:
-            self.generate_uguugl_pxd(f)
-
-        with (RENPY_UGUU_ROOT / "gl.pyx").open("w", encoding="utf-8") as f:
-            self.generate_uguugl_pyx(f)
-
-        with (RENPY_UGUU_ROOT / "uguu.pyx").open("w", encoding="utf-8") as f:
-            self.generate_uguu_pyx(f)
-
     def convert_types(self):
         types = self.root.find("types")
         if types is None:
-            raise Exception("No types found in XML")
+            malformed_xml("No types found in XML")
 
         for t in types:
             if t.get("api", ""):
@@ -205,21 +221,25 @@ class XMLToPYX:
                 continue
 
             name = name.text
+            if name is None:
+                malformed_xml("Type with no name found")
+
             if name in BAD_TYPES:
                 continue
-
-            self.type_names.append(name)
 
             text = "".join(t.itertext())
 
             text = text.replace(";", "")
             text = text.replace("typedef", "ctypedef")
 
-            self.types.append(text)
+            self.types[name] = text
 
-    def add_command(self, node):
-        name = type_and_name(node.find("proto"))[1]
+    def add_command(self, node: StrElement):
+        proto = node.find("proto")
+        if proto is None:
+            malformed_xml("Command with no prototype found")
 
+        name = type_and_name(proto)[1]
         if name in BAD_COMMANDS:
             return
 
@@ -241,6 +261,8 @@ class XMLToPYX:
 
     def find_commands(self):
         commands = self.root.find("commands")
+        if commands is None:
+            malformed_xml("No commands found in XML")
 
         for c in commands.findall("command"):
             self.add_command(c)
@@ -266,8 +288,6 @@ class XMLToPYX:
             f.from_node(i)
             self.features[name] = f
 
-            # print(name)
-
     def select_features(self):
         gl = Feature()
 
@@ -279,130 +299,68 @@ class XMLToPYX:
         for i in GLES_FEATURES:
             gles = gles | self.features[i]
 
-        f = gl & gles
+        self.merged = gl & gles
 
-        self.merged = f
+    def get_template_data(self) -> dict[str, Any]:
+        enums: list[str] = sorted(self.merged.enums, key=lambda n: (int(self.enums[n], 0), n))
+        commands: list[CommandView] = []
 
-    def generate_uguugl_pxd(self, f):
-        f.write(UGUUGL_PXD_HEADER)
+        for name in sorted(self.merged.commands):
+            command = self.commands[name]
 
-        def w(s=""):
-            f.write(s + "\n")
-
-        w('cdef extern from "renpygl.h":')
-        w("")
-
-        for l in self.types:
-            w(f"    {l}")
-
-        enums = list(self.merged.enums)
-        enums.sort(key=lambda n: (int(self.enums[n], 0), n))
-
-        w()
-
-        for i in enums:
-            w(f"    GLenum {i}")
-
-        for i in sorted(self.merged.commands):
-            typename = i + "_type"
-            c = self.commands[i]
-
-            w("")
-            w(c.typedef(typename))
-            w(f"cdef {typename} {i}")
-
-    def generate_uguugl_pyx(self, f):
-        f.write(UGUUGL_PYX_HEADER)
-
-        def w(s=""):
-            f.write(s + "\n")
-
-        for i in sorted(self.merged.commands):
-            self.commands[i]
-
-            w()
-            w(f"cdef {i}_type {i}")
-
-            w()
-
-        w()
-        w("def load():")
-
-        for i in sorted(self.merged.commands):
-            names = list(self.commands[i].aliases)
-            names.remove(i)
+            names: list[str] = list(command.aliases)
+            names.remove(name)
             names.sort()
-            names.insert(0, i)
+            names.insert(0, name)
 
-            if (i in FRAMEBUFFER_EXT_FUNCTIONS) and ((i + "EXT") not in names):
-                names.append(i + "EXT")
+            if (name in FRAMEBUFFER_EXT_FUNCTIONS) and ((name + "EXT") not in names):
+                names.append(name + "EXT")
 
-            names = [i.encode("utf-8") for i in names]
+            load_names = [n.encode("utf-8") for n in names]
 
-            w()
-            w(f"    global {i}")
-            w(f"    {i} = <{i}_type> find_gl_command({names!r})")
+            proxy: list[str] = []
+            pointer_params: list[str] = []
+            typedef_params: list[str] = []
 
-    def generate_uguu_pyx(self, f):
-        def w(s=""):
-            f.write(s + "\n")
-
-        for l in self.type_names:
-            w(f"from renpy.uguu.gl cimport {l}")
-
-        w()
-        f.write(UGUU_PYX_HEADER)
-
-        for l in self.type_names:
-            w(f"from renpy.uguu.gl cimport {l}")
-
-        for i in sorted(self.merged.commands):
-            c = self.commands[i]
-
-            if c.return_type.strip() == "void *":
-                continue
-
-            params = list(zip(c.parameters, c.parameter_types))
-            param_list = ", ".join(c.parameters)
-
-            w()
-            w(f"def {i}({param_list}):")
-
-            for param, type_ in params:
-                if "*" in type_:
-                    w(f"    cdef ptr {param}_ptr = get_ptr({param})")
-
-            proxy = []
-
-            for param, type_ in params:
-                if "*" in type_:
-                    proxy.append(f"<{type_}> {param}_ptr.ptr")
+            for p, t in command.parameters_to_type.items():
+                typedef_params.append(f"{t} {p}")
+                if "*" in t:
+                    proxy.append(f"<{t}> {p}_ptr.ptr")
+                    pointer_params.append(p)
                 else:
-                    proxy.append(param)
+                    proxy.append(p)
 
-            proxy = ", ".join(proxy)
+            typedef = f"ctypedef {command.return_type} (__stdcall *{name}_type)({', '.join(typedef_params)}) nogil"
 
-            rt = c.return_type.strip()
-
-            if rt == "void":
-                w(f"    renpy.uguu.gl.{i}({proxy})")
+            rt = command.return_type.strip()
+            if rt == "void *":
+                call_kind = "void *"
+            elif rt == "void":
+                call_kind = "void"
             elif rt == "const GLubyte *":
-                w(f"    return proxy_return_string(renpy.uguu.gl.{i}({proxy}))")
+                call_kind = "string"
             else:
-                w(f"    return renpy.uguu.gl.{i}({proxy})")
+                call_kind = "value"
 
-        # Expose the enums to python.
+            view = CommandView(
+                name=name,
+                typedef=typedef,
+                load_names=load_names,
+                call_kind=call_kind,
+                param_list=", ".join(command.parameters_to_type),
+                pointer_params=pointer_params,
+                proxy_call=", ".join(proxy),
+            )
+            commands.append(view)
 
-        enums = list(self.merged.enums)
-        enums.sort(key=lambda n: (int(self.enums[n], 0), n))
-
-        w()
-
-        for i in enums:
-            w(f"{i} = renpy.uguu.gl.{i}")
+        return {
+            "types": self.types,
+            "enums": enums,
+            "commands": commands,
+        }
 
 
-def ensure_gl_xml():
+def get_gl_xml() -> StrElement:
     commit_file = UGUU_ROOT / "gl.xml.commit"
     xml_file = UGUU_ROOT / "gl.xml"
     if commit_file.exists() and xml_file.exists():
@@ -416,7 +374,32 @@ def ensure_gl_xml():
 
         commit_file.write_text(XML_COMMIT_SHA)
 
+    return parse(xml_file).getroot()
+
+
+def generate_uguu_gl_pxd(data: dict[str, Any]):
+    template = (UGUU_ROOT / "gl.pxd.in").read_text(encoding="utf-8")
+    output = sub(template, **data)
+    (RENPY_UGUU_ROOT / "gl.pxd").write_text(output, encoding="utf-8")
+
+
+def generate_uguu_gl_pyx(data: dict[str, Any]):
+    template = (UGUU_ROOT / "gl.pyx.in").read_text(encoding="utf-8")
+    output = sub(template, **data)
+    (RENPY_UGUU_ROOT / "gl.pyx").write_text(output, encoding="utf-8")
+
+
+def generate_uguu_uguu_pyx(data: dict[str, Any]):
+    template = (UGUU_ROOT / "uguu.pyx.in").read_text(encoding="utf-8")
+    output = sub(template, **data)
+    (RENPY_UGUU_ROOT / "uguu.pyx").write_text(output, encoding="utf-8")
+
 
 if __name__ == "__main__":
-    ensure_gl_xml()
-    XMLToPYX()
+    root = get_gl_xml()
+
+    data = XMLToPYX(root).get_template_data()
+
+    generate_uguu_gl_pxd(data)
+    generate_uguu_gl_pyx(data)
+    generate_uguu_uguu_pyx(data)
