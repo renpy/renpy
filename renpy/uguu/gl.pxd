@@ -24,6 +24,19 @@
 from libc.stdint cimport int64_t, uint64_t
 from libc.stddef cimport ptrdiff_t
 
+# Typedefs for khrplatform.h
+ctypedef signed char khronos_int8_t
+ctypedef unsigned char khronos_uint8_t
+ctypedef short khronos_int16_t
+ctypedef unsigned short khronos_uint16_t
+ctypedef int khronos_int32_t
+ctypedef unsigned int khronos_uint32_t
+ctypedef long long khronos_int64_t
+ctypedef unsigned long long khronos_uint64_t
+ctypedef ptrdiff_t khronos_intptr_t
+ctypedef ptrdiff_t khronos_ssize_t
+ctypedef float khronos_float_t
+
 cdef extern from "renpygl.h":
     ctypedef unsigned int GLenum
     ctypedef unsigned char GLboolean
