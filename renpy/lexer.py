@@ -27,15 +27,18 @@ import os
 import re
 import sys
 from collections.abc import Callable
-from typing import NamedTuple
+from typing import Any, Literal, NamedTuple
 
 import renpy
 
 try:
-    from renpy.astsupport import make_pyexpr
+    from renpy.astsupport import PyExpr, make_pyexpr
     from renpy.lexersupport import match_logical_word, match_operator, match_string, match_whitespace
 except ImportError:
     pass
+
+
+type ExpressionContext = Literal["eval", "exec", "hide", "unknown"]
 
 
 class ParseError(SyntaxError):
@@ -1278,21 +1281,48 @@ class Lexer:
 
         return rv
 
-    def expr(self, s, expr):
+    def expr(self, s: str, expr: bool) -> str:
 
         if not expr:
             return s
 
-        pos = self.pos - len(s)
+        rv = PyExpr(s, self.filename, self.number)
 
-        return make_pyexpr(
-            s,
+        # Empty expression can't be compiled.
+        if rv:
+            renpy.parser.parsed_expressions.append((rv, "unknown"))
+
+        return rv
+
+    def _expr_from_range(
+        self,
+        start: int,
+        end: int,
+        context: ExpressionContext = "unknown",
+    ) -> PyExpr:
+
+        s = self.text[start:end]
+
+        # Only eval expressions need to strip its leading whitespace,
+        # trailing whitespace is to simulate `strip`.
+        if context == "eval":
+            start = start + (len(s) - len(s.lstrip()))
+            end = end - (len(s) - len(s.rstrip()))
+
+        expr = make_pyexpr(
+            self.text[start:end],
             self.filename,
             self.number,
             self.column,
             self.text,
-            pos,
+            start,
         )
+
+        # Empty expression can't be compiled.
+        if expr:
+            renpy.parser.parsed_expressions.append((expr, context))
+
+        return expr
 
     def delimited_python(self, delim, expr=True):
         """
@@ -1308,7 +1338,10 @@ class Lexer:
             c = self.text[self.pos]
 
             if c in delim:
-                return self.expr(self.text[start : self.pos], expr)
+                if not expr:
+                    return self.text[start : self.pos]
+
+                return self._expr_from_range(start, self.pos, "eval")
 
             if self.python_string():
                 continue
@@ -1326,14 +1359,16 @@ class Lexer:
         extending to a colon.
         """
 
+        start = self.pos
         pe = self.delimited_python(":", False)
 
         if not pe:
             self.error("expected python_expression")
 
-        rv = self.expr(pe.strip(), expr)
+        if not expr:
+            return pe
 
-        return rv
+        return self._expr_from_range(start, self.pos, "eval")
 
     def parenthesised_python(self):
         """
@@ -1364,7 +1399,7 @@ class Lexer:
 
         return False
 
-    def simple_expression(self, comma=False, operator=True, image=False):
+    def simple_expression(self, comma=False, operator=True, image=False) -> PyExpr | None:
         """
         Tries to parse a simple_expression. Returns the text if it can, or
         None if it cannot.
@@ -1437,12 +1472,12 @@ class Lexer:
 
             break
 
-        text = self.text[start : self.pos].strip()
+        expr = self._expr_from_range(start, self.pos, "eval")
 
-        if not text:
+        if not expr:
             return None
 
-        return self.expr(text, True)
+        return expr
 
     def comma_expression(self):
         """
@@ -1458,7 +1493,10 @@ class Lexer:
         """
         return self.simple_expression(operator=False)
 
-    def checkpoint(self):
+    type LexerCheckpoint = Any
+    "Opaque representation of the lexer state."
+
+    def checkpoint(self) -> LexerCheckpoint:
         """
         Returns an opaque representation of the lexer state. This can be
         passed to revert to back the lexer up.
@@ -1472,10 +1510,10 @@ class Lexer:
             self.subblock,
             self.pos,
             self.column,
-            renpy.ast.PyExpr.checkpoint(),
+            len(renpy.parser.parsed_expressions),
         )
 
-    def revert(self, state):
+    def revert(self, state: LexerCheckpoint):
         """
         Reverts the lexer to the given state. State must have been returned
         by a previous checkpoint operation on this lexer.
@@ -1492,7 +1530,7 @@ class Lexer:
             pyexpr_checkpoint,
         ) = state
 
-        renpy.ast.PyExpr.revert(pyexpr_checkpoint)
+        renpy.parser.parsed_expressions[pyexpr_checkpoint:] = []
 
         self.word_cache_pos = -1
         if self.line < len(self.block):
@@ -1543,7 +1581,7 @@ class Lexer:
 
         pos = self.pos
         self.pos = len(self.text)
-        return self.expr(self.text[pos:].strip(), True)
+        return self._expr_from_range(pos, self.pos, "exec")
 
     rest_statement = rest
 

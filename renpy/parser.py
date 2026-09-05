@@ -27,7 +27,9 @@ import time
 
 import renpy
 from renpy import ast
+from renpy.astsupport import PyExpr
 from renpy.lexer import (
+    ExpressionContext,
     Lexer,
     ParseError,
     group_logical_lines,
@@ -45,6 +47,13 @@ parse_errors: list[str] = []
 # A list of deferred parser error. These are potential parse errors that
 # can be released or not when parse errors are reported.
 deferred_parse_errors: collections.defaultdict[str, list[str]] = collections.defaultdict(list)
+
+type ExpressionsList = list[tuple[PyExpr, ExpressionContext]]
+parsed_expressions: ExpressionsList = []
+"""
+A list of tuples containing a PyExpr object and the context in which it appears.
+The context is one of "eval", "exec", "hide", or "unknown".
+"""
 
 ################################################################################
 # Parsing of structures that are less than a full statement.
