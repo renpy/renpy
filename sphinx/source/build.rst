@@ -467,6 +467,11 @@ The following variables provide further control of the build process:
 
         define build.wavedash_id = "YOUR_GAME_ID_HERE"
 
+    Once this is set and the web distribution has been built, click
+    "Build Distributions", "Upload to wavedash.com" to upload the web build.
+    This requires the `Wavedash CLI <https://docs.wavedash.com/cli/installation>`_
+    to be installed and authenticated.
+
 .. var:: build.itch_channels = { ... }
 
     This maps a filename pattern (such as "\*-win.zip") to a string giving
