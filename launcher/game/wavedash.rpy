@@ -77,13 +77,13 @@ init python:
 
         interface.processing(_("Downloading the Wavedash CLI."))
 
-        os.makedirs(directory, exist_ok=True)
-
         archive_name = f"wavedash-{platform}.{archive_format}"
         archive = os.path.join(directory, archive_name)
         url = "https://github.com/wvdsh/cli/releases/latest/download/" + archive_name
 
         with interface.error_handling(_("Downloading the Wavedash CLI."), label="build_distributions"):
+            os.makedirs(directory, exist_ok=True)
+
             response = requests.get(
                 url,
                 headers={ "User-Agent" : "Renpy" },
