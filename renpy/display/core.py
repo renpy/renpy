@@ -2243,119 +2243,107 @@ class Interface:
 
             renpy.plog(2, "after gc")
 
-    def run_prediction(self, expensive):
+    async def run_prediction_async(self, deadline: "renpy.display.predict.Deadline", root_widget: Displayable):
         """
         Tasks that are run during "idle" frames.
         """
+
+        # Step 1. Garbage collection.
+        await deadline
+        self.consider_gc()
+
+        # Step 2. Push loaded textures to the GPU.
+        while renpy.display.draw.ready_one_texture():
+            await deadline
+
+        # Step 3. Predict more images.
+        await renpy.display.predict.prediction_coroutine(deadline, root_widget)
+
+        # Step 4: Preload images (on emscripten)
+
+        # TODO: Need to make this async.
+
+        # if renpy.emscripten:
+        #     if expensive:
+        #         allow_preload = True
+        #         self.last_emscripten_preload_time = time.perf_counter()
+        #     elif renpy.config.emscripten_preload_timeout is None:
+        #         allow_preload = False
+        #     elif time.perf_counter() - self.last_emscripten_preload_time > renpy.config.emscripten_preload_timeout:
+        #         allow_preload = True
+        #     else:
+        #         allow_preload = False
+
+        #     if allow_preload:
+        #         try:
+        #             renpy.display.im.cache.in_preload_pass = True
+        #             renpy.display.im.cache.preload_thread_pass(None if expensive else inexpensive_end)
+        #         finally:
+        #             renpy.display.im.cache.in_preload_pass = False
+
+
+
+        # Step 5: Autosave.
+        if not self.did_autosave:
+            renpy.loadsave.autosave()
+            self.did_autosave = True
+
+            await deadline
+
+        # Step 6: Persistent data.
+        if not self.did_persistent:
+            if renpy.emscripten:
+                renpy.persistent.update()
+            else:
+                renpy.persistent.check_update()
+
+            self.did_persistent = True
+
+            await deadline
+
+        # Step 7. Check to see if the image cache is done.
+        if renpy.display.im.cache.done():
+            self.force_prediction = False
+
+
+
+    def run_prediction(self, expensive):
+        """
+        Runs the prediction coroutine.
+        """
+
+        if self.prediction_coroutine is None:
+            return
 
         if expensive:
             renpy.plog(1, "start prediction (expensive)")
         else:
             renpy.plog(1, "start prediction (inexpensive)")
 
-        # The time inexpensive prediction ends.
-        inexpensive_end = time.perf_counter() + renpy.config.minimum_prediction_time
-
-        step = 1
+        minimum_prediction_time_ns = renpy.config.minimum_prediction_time_ns
 
         while True:
-
-            if time.perf_counter() < inexpensive_end:
-                pass
-            elif self.force_prediction:
-                pass
-            elif not expensive:
+            try:
+                self.prediction_coroutine.send(time.perf_counter_ns() + minimum_prediction_time_ns)
+            except StopIteration:
+                self.prediction_coroutine = None
                 break
-            elif self.event_peek(False):
+            except:
+                self.prediction_coroutine = None
+                if renpy.config.debug_prediction:
+                    raise
+
+            if not expensive and not self.force_prediction:
                 break
 
-            # Step 1: Run gc.
-            if step == 1:
-                if expensive or not self.event_peek(False):
-                    self.consider_gc()
-
-                step += 1
-
-            # Step 2: Push textures to GPU.
-            elif step == 2:
-                if renpy.display.draw.ready_one_texture():
-                    continue
-                step += 1
-
-            # Step 3: Predict more images.
-            elif step == 3:
-                if not self.prediction_coroutine:
-                    step += 1
-                    continue
-
-                try:
-                    result = self.prediction_coroutine.send(expensive)
-                except ValueError:
-                    # Saw this happen once during a quit, giving a
-                    # ValueError: generator already executing
-                    result = None
-
-                if result is None:
-                    self.prediction_coroutine = None
-                    step += 1
-
-                elif result is False:
-                    if not expensive:
-                        step += 1
-
-            # Step 4: Preload images (on emscripten)
-            elif step == 4:
-                if renpy.emscripten:
-                    if expensive:
-                        allow_preload = True
-                        self.last_emscripten_preload_time = time.perf_counter()
-                    elif renpy.config.emscripten_preload_timeout is None:
-                        allow_preload = False
-                    elif time.perf_counter() - self.last_emscripten_preload_time > renpy.config.emscripten_preload_timeout:
-                        allow_preload = True
-                    else:
-                        allow_preload = False
-
-                    if allow_preload:
-                        try:
-                            renpy.display.im.cache.in_preload_pass = True
-                            renpy.display.im.cache.preload_thread_pass(None if expensive else inexpensive_end)
-                        finally:
-                            renpy.display.im.cache.in_preload_pass = False
-
-                step += 1
-
-            # Step 5: Autosave.
-            elif step == 5:
-                if not self.did_autosave and (expensive or not self.event_peek(False)):
-                    renpy.loadsave.autosave()
-                    self.did_autosave = True
-
-                step += 1
-
-            # Step 6: Persistent data.
-            elif step == 6:
-                if not self.did_persistent and (expensive or not self.event_peek(False)):
-                    if renpy.emscripten:
-                        renpy.persistent.update()
-                    else:
-                        renpy.persistent.check_update()
-
-                    self.did_persistent = True
-
-                step += 1
-
-            else:
-                # Check to see if preloading has finished
-                if renpy.display.im.cache.done():
-                    self.force_prediction = False
-
+            if self.event_peek(False):
                 break
 
         if expensive:
             renpy.plog(1, "end idle_frame (expensive)")
         else:
             renpy.plog(1, "end idle_frame (inexpensive)")
+
 
     # This gets assigned below.
     take_layer_displayable = None
@@ -2696,7 +2684,8 @@ class Interface:
                 if mouse_displayable is not None:
                     root_widget.add(mouse_displayable, 0, 0)
 
-        self.prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
+        self.prediction_deadline = renpy.display.predict.Deadline()
+        self.prediction_coroutine = self.run_prediction_async(self.prediction_deadline, root_widget)
         self.prediction_coroutine.send(None)
 
         # Clean out the registered adjustments.

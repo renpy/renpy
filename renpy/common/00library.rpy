@@ -288,30 +288,6 @@ init -1700 python:
     config.predict_statements_callback = _predict_statements
 
 
-    # Prediction of screens.
-    def _predict_screens():
-
-        for i in config.overlay_screens:
-            renpy.predict_screen(i)
-
-        s = _game_menu_screen
-
-        if s is None:
-            return
-
-        if renpy.has_screen(s):
-            renpy.predict_screen(s)
-            return
-
-        if s.endswith("_screen"):
-            s = s[:-7]
-            if renpy.has_screen(s):
-                renpy.predict_screen(s)
-                return
-
-    config.expensive_predict_callbacks.append(_predict_screens)
-
-
     ##########################################################################
     # Name-only say statements.
 
