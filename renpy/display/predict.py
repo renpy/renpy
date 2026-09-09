@@ -22,6 +22,7 @@
 # This file contains the routines that manage image prediction.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+import time
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
@@ -100,7 +101,27 @@ def reset():
     del screens[:]
 
 
-def prediction_coroutine(root_widget):
+class Deadline():
+    """
+    Represents a deadline at which the prediction thread should stop predicting.
+    """
+
+    def __init__(self):
+        self.deadline: int = 0
+        "When we should return control to the function that runs the coroutine."
+
+    def __await__(self):
+        global predicting
+
+        if time.perf_counter_ns() > self.deadline:
+            predicting = False
+            self.deadline = yield True
+            predicting = True
+
+        return
+
+
+async def prediction_coroutine(deadline: Deadline, root_widget: renpy.display.displayable.Displayable):
     """
     The image prediction co-routine. This predicts the images that can
     be loaded in the near future, and passes them to the image cache's
@@ -120,7 +141,7 @@ def prediction_coroutine(root_widget):
     renpy.display.im.cache.start_prediction()
 
     # Wait to be told to start.
-    yield True
+    await deadline
 
     # Set up the image prediction method.
     global image
@@ -136,21 +157,19 @@ def prediction_coroutine(root_widget):
             if renpy.config.debug_prediction:
                 raise
 
-        predicting = False
-        yield True
-        predicting = True
+        await deadline
 
     # Predict images that are going to be reached in the next few
     # clicks.
 
     for _i in renpy.game.context().predict():
-        predicting = False
-        yield True
-        predicting = True
+        await deadline
 
     # If there's a parent context, predict we'll be returning to it
     # shortly. Otherwise, call the functions in
     # config.predict_callbacks.
+
+    predicted_screens = []
 
     if len(renpy.game.contexts) >= 2:
         sls = renpy.game.contexts[-2].scene_lists
@@ -162,28 +181,37 @@ def prediction_coroutine(root_widget):
                 except Exception:
                     pass
 
+                await deadline
+
     else:
         for i in renpy.config.predict_callbacks:
             i()
+            await deadline
 
-    predicting = False
+        # Predict the game menu screen.
 
-    while not (yield False):
-        continue
+        s = getattr(renpy.store, "_game_menu_screen", None)
 
-    predicting = True
+        if s is not None:
 
-    for i in renpy.config.expensive_predict_callbacks:
-        done = False
-        while not done:
-            if not i():
-                done = True
+            if renpy.display.screen.has_screen(s):
+                renpy.display.screen.predict_screen(s)
+                predicted_screens.append((s, (), {}))
 
-            predicting = False
-            yield False
-            predicting = True
 
-    predicted_screens = []
+            elif s.endswith("_screen"):
+                s = s[:-7]
+                if renpy.display.screen.has_screen(s):
+                    renpy.display.screen.predict_screen(s)
+                    predicted_screens.append((s, (), {}))
+
+            await deadline
+
+    # Predict that overlay screens will be shown.
+    for i in renpy.config.overlay_screens:
+        renpy.display.screen.predict_screen(i)
+        predicted_screens.append((i, (), {}))
+        await deadline
 
     # Predict screens given with renpy.start_predict_screen.
     for name, value in list(renpy.store._predict_screen.items()):
@@ -192,10 +220,8 @@ def prediction_coroutine(root_widget):
         predicted_screens.append((name, args, kwargs))
 
         renpy.display.screen.predict_screen(name, *args, **kwargs)
+        await deadline
 
-        predicting = False
-        yield False
-        predicting = True
 
     # Predict things (especially screens) that are reachable through
     # an action.
@@ -211,13 +237,9 @@ def prediction_coroutine(root_widget):
             traceback.print_exc()
             print()
 
-    predicting = False
 
-    # Predict the screens themselves.
+    # Predict screens reachable through actions
     for t in screens:
-        while not (yield False):
-            continue
-
         if t in predicted_screens:
             continue
 
@@ -228,25 +250,17 @@ def prediction_coroutine(root_widget):
         if name.startswith("_"):
             continue
 
-        predicting = True
+        await deadline
 
         renpy.display.screen.predict_screen(name, *args, **kwargs)
 
-        predicting = False
-
     predict_registered_shaders()
+    await deadline
 
     # Pre-build shader combinations exposed by prediction.
     while renpy.gl2.gl2shadercache.has_predicted_shaders():
-        while not (yield False):
-            continue
-
-        predicting = True
-
         renpy.gl2.gl2shadercache.preload_predicted_shader()
+        await deadline
 
-        predicting = False
 
     renpy.gl2.assimp.finish_predict()
-
-    yield None
