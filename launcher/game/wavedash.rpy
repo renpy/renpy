@@ -21,6 +21,16 @@
 
 init python:
 
+    WAVEDASH_CLI_OVERRIDES = (
+        "WAVEDASH_ENTRYPOINT",
+        "WAVEDASH_GAME_ID",
+        "WAVEDASH_GODOT_VERSION",
+        "WAVEDASH_UNITY_VERSION",
+        "WAVEDASH_UPDATE_REPO_NAME",
+        "WAVEDASH_UPDATE_REPO_OWNER",
+        "WAVEDASH_UPLOAD_DIR",
+        )
+
     def find_wavedash():
         """Returns the path to the Wavedash CLI, downloading it if necessary."""
 
@@ -119,10 +129,15 @@ init python:
         return executable
 
 
-    def wavedash_is_authenticated(wavedash):
-        """Returns true if the Wavedash CLI has credentials available."""
+    def wavedash_status(wavedash):
+        """Returns whether the CLI is authenticated and has an update."""
 
         import subprocess
+
+        creationflags = 0
+
+        if renpy.windows:
+            creationflags = subprocess.CREATE_NO_WINDOW
 
         try:
             completed = subprocess.run(
@@ -132,15 +147,30 @@ init python:
                 text=True,
                 encoding="utf-8",
                 errors="replace",
+                timeout=10,
+                creationflags=creationflags,
                 )
-        except OSError:
-            return False
+        except (OSError, subprocess.TimeoutExpired):
+            return False, False
 
         if completed.returncode != 0:
-            return False
+            return False, False
 
         # The CLI exits successfully even when no credentials are available.
-        return "Not authenticated." not in completed.stdout
+        authenticated = "Not authenticated." not in completed.stdout
+        update_available = "Update available:" in completed.stdout
+
+        return authenticated, update_available
+
+
+    def clear_wavedash_cli_overrides(cc):
+        """Makes the generated manifest authoritative for an upload."""
+
+        if renpy.windows:
+            for variable in WAVEDASH_CLI_OVERRIDES:
+                cc.write("set", '"{}="'.format(variable))
+        else:
+            cc.write("unset", *WAVEDASH_CLI_OVERRIDES)
 
 
     def read_generated_wavedash_game_id(filename):
@@ -247,9 +277,18 @@ label wavedash:
                 label="build_distributions"
                 )
 
+        authenticated, update_available = wavedash_status(wavedash)
         cc = ConsoleCommand()
 
-        if not wavedash_is_authenticated(wavedash):
+        # The generated config is authoritative for launcher uploads. Keep the
+        # authentication token, but prevent CLI environment overrides from
+        # selecting a different game, directory, entrypoint, or update source.
+        clear_wavedash_cli_overrides(cc)
+
+        if update_available:
+            cc.add(wavedash, "update")
+
+        if not authenticated:
             cc.add(wavedash, "auth", "login")
 
             # Only upload when browser authentication succeeds.
