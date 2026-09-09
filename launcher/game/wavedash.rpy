@@ -22,35 +22,149 @@
 init python:
 
     def find_wavedash():
-        """Returns the path to the Wavedash CLI, or None if it is not installed."""
+        """Returns the path to the Wavedash CLI, downloading it if necessary."""
 
+        import hashlib
+        import hmac
         import shutil
+        import tarfile
+        import zipfile
 
-        rv = shutil.which("wavedash")
+        import requests
 
-        if rv is not None:
-            return rv
+        if renpy.windows:
+            platform = "x86_64-pc-windows-msvc"
+            archive_format = "zip"
+            executable = "wavedash.exe"
+        elif renpy.macintosh:
+            if renpy.arch == "aarch64":
+                platform = "aarch64-apple-darwin"
+            elif renpy.arch == "x86_64":
+                platform = "x86_64-apple-darwin"
+            else:
+                return None
 
-        executable = "wavedash.exe" if renpy.windows else "wavedash"
+            archive_format = "tar.gz"
+            executable = "wavedash"
+        elif renpy.linux:
+            if renpy.arch == "aarch64":
+                platform = "aarch64-unknown-linux-gnu"
+            elif renpy.arch == "x86_64":
+                platform = "x86_64-unknown-linux-gnu"
+            else:
+                return None
 
-        candidates = [
-            os.path.join(os.path.expanduser("~"), ".cargo", "bin", executable),
-        ]
+            archive_format = "tar.gz"
+            executable = "wavedash"
+        else:
+            return None
 
-        if renpy.macintosh:
-            candidates.extend([
-                "/opt/homebrew/bin/wavedash",
-                "/usr/local/bin/wavedash",
-            ])
+        directory = os.path.join(config.renpy_base, "tmp", "wavedash-" + platform)
+        executable = os.path.join(directory, executable)
 
-        for filename in candidates:
-            if os.path.isfile(filename) and os.access(filename, os.X_OK):
-                return filename
+        if os.path.isfile(executable) and os.access(executable, os.X_OK):
+            return executable
 
-        return None
+        interface.processing(_("Downloading the Wavedash CLI."))
+
+        os.makedirs(directory, exist_ok=True)
+
+        archive_name = f"wavedash-{platform}.{archive_format}"
+        archive = os.path.join(directory, archive_name)
+        url = "https://github.com/wvdsh/cli/releases/latest/download/" + archive_name
+
+        with interface.error_handling(_("Downloading the Wavedash CLI."), label="build_distributions"):
+            response = requests.get(
+                url,
+                headers={ "User-Agent" : "Renpy" },
+                proxies=renpy.proxies,
+                timeout=60,
+                )
+            response.raise_for_status()
+
+            checksum_response = requests.get(
+                url + ".sha256",
+                headers={ "User-Agent" : "Renpy" },
+                proxies=renpy.proxies,
+                timeout=60,
+                )
+            checksum_response.raise_for_status()
+
+            expected_checksum = checksum_response.text.split()[0].lower()
+            actual_checksum = hashlib.sha256(response.content).hexdigest()
+
+            if not hmac.compare_digest(actual_checksum, expected_checksum):
+                raise Exception("The Wavedash CLI download failed checksum verification.")
+
+            with open(archive, "wb") as f:
+                f.write(response.content)
+
+            if archive_format == "zip":
+                with zipfile.ZipFile(archive) as zf:
+                    zf.extractall(directory)
+            else:
+                with tarfile.open(archive, "r:gz") as tf:
+                    tf.extractall(directory, filter="data")
+
+            extracted_executable = os.path.join(directory, "wavedash-" + platform, os.path.basename(executable))
+
+            if os.path.isfile(extracted_executable):
+                shutil.move(extracted_executable, executable)
+
+            if not os.path.isfile(executable):
+                raise Exception("The Wavedash CLI executable was not found in the downloaded archive.")
+
+            os.chmod(executable, 0o755)
+
+        return executable
 
 
-label wavedash_upload:
+    def wavedash_is_authenticated(wavedash):
+        """Returns true if the Wavedash CLI has credentials available."""
+
+        import subprocess
+
+        try:
+            completed = subprocess.run(
+                [ wavedash, "auth", "status" ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                )
+        except OSError:
+            return False
+
+        if completed.returncode != 0:
+            return False
+
+        # The CLI exits successfully even when no credentials are available.
+        return "Not authenticated." not in completed.stdout
+
+
+    def read_generated_wavedash_game_id(filename):
+        """Returns the game ID from a wavedash.toml generated by Ren'Py."""
+
+        import json
+
+        with open(filename, encoding="utf-8") as f:
+            line = f.readline()
+
+        prefix = "game_id = "
+
+        if not line.startswith(prefix):
+            raise ValueError("The first line of wavedash.toml does not contain game_id.")
+
+        game_id = json.loads(line[len(prefix):])
+
+        if not isinstance(game_id, str):
+            raise ValueError("The game_id in wavedash.toml is not a string.")
+
+        return game_id
+
+
+label wavedash:
 
     call build_update_dump
 
@@ -68,10 +182,60 @@ label wavedash_upload:
 
         destination = get_web_destination(project.current)
         config_file = os.path.join(destination, "wavedash.toml")
+        built_wavedash_id = None
+        needs_web_build = False
 
         if not os.path.isfile(config_file):
+            if not interface.yesno(_("The web distribution could not be found. Would you like to build it now and upload it to Wavedash?")):
+                renpy.jump("build_distributions")
+
+            needs_web_build = True
+        else:
+            try:
+                built_wavedash_id = read_generated_wavedash_game_id(config_file)
+            except Exception:
+                interface.error(
+                    _("The Wavedash configuration in the web distribution could not be read."),
+                    _("Please choose 'Web', 'Build Web Application' and try again."),
+                    label="build_distributions"
+                    )
+
+            if built_wavedash_id != wavedash_id:
+                if not interface.yesno(_("The Wavedash game ID changed after the web distribution was built. Would you like to rebuild it now and upload it to Wavedash?")):
+                    renpy.jump("build_distributions")
+
+                needs_web_build = True
+
+        if needs_web_build:
+            if WEB_PATH is None:
+                if not interface.yesno(_("Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?")):
+                    renpy.jump("build_distributions")
+
+                # Web support only contains build files, so it can be used
+                # immediately after refreshing WEB_PATH.
+                add_dlc("web", restart=False)
+                find_web()
+
+                if WEB_PATH is None:
+                    interface.error(
+                        _("RenPyWeb could not be installed."),
+                        label="build_distributions"
+                        )
+
+            build_web(project.current, gui=True, launch=False)
+
+            try:
+                built_wavedash_id = read_generated_wavedash_game_id(config_file)
+            except Exception:
+                interface.error(
+                    _("The Wavedash configuration in the web distribution could not be read."),
+                    _("Please choose 'Web', 'Build Web Application' and try again."),
+                    label="build_distributions"
+                    )
+
+        if built_wavedash_id != wavedash_id:
             interface.error(
-                _("The web distribution could not be found. Please choose 'Web', 'Build Web Application' and try again."),
+                _("The web distribution was built for a different Wavedash game."),
                 label="build_distributions"
                 )
 
@@ -79,13 +243,30 @@ label wavedash_upload:
 
         if wavedash is None:
             interface.error(
-                _("The Wavedash CLI was not found."),
-                _("Please {a=https://docs.wavedash.com/cli/installation}install the Wavedash CLI{/a} and try again."),
+                _("The Wavedash CLI is not available for this platform."),
                 label="build_distributions"
                 )
 
         cc = ConsoleCommand()
-        cc.add(wavedash, "build", "push", "--config", config_file)
+
+        if not wavedash_is_authenticated(wavedash):
+            cc.add(wavedash, "auth", "login")
+
+            # Only upload when browser authentication succeeds.
+            if renpy.windows:
+                cc.write("if", "not", "errorlevel", "1", "(")
+            else:
+                cc.write("if", "[", "$?", "-eq", "0", "];", "then")
+
+            cc.add(wavedash, "build", "push", "--config", config_file)
+
+            if renpy.windows:
+                cc.write(")")
+            else:
+                cc.write("fi")
+        else:
+            cc.add(wavedash, "build", "push", "--config", config_file)
+
         cc.run()
 
     jump build_distributions

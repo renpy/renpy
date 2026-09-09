@@ -469,8 +469,12 @@ The following variables provide further control of the build process:
 
     Once this is set and the web distribution has been built, click
     "Build Distributions", "Upload to wavedash.com" to upload the web build.
-    This requires the `Wavedash CLI <https://docs.wavedash.com/cli/installation>`_
-    to be installed and authenticated.
+    If a web distribution has not been built, the launcher offers to build it
+    before uploading.
+    The launcher downloads the Wavedash CLI automatically. If you are not
+    authenticated, it opens the browser login before uploading. If the game ID
+    has changed since the web distribution was built, rebuild it before
+    uploading.
 
 .. var:: build.itch_channels = { ... }
 
