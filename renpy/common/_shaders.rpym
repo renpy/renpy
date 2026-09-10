@@ -88,9 +88,9 @@ init python:
         in vec2 a_tex_coord;
         out vec2 v_tex_coord;
 
-        flat out vec2 v__lod_blend;
-        flat out vec4 v__floor_size;
-        flat out vec4 v__ceil_size;
+        out vec2 v__lod_blend;
+        out vec4 v__floor_size;
+        out vec4 v__ceil_size;
     """, fragment_functions = """
         vec4 l__cubic(float value) {
             vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - value;
