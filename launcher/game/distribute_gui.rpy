@@ -198,7 +198,6 @@ screen build_distributions:
                             add HALF_SPACER
 
                             textbutton _("Upload to itch.io") action Jump("itch")
-                            textbutton _("Upload to wavedash.com") action Jump("wavedash")
 
                 # Right side.
                 frame:

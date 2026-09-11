@@ -567,6 +567,7 @@ screen web():
                             textbutton _("Build and Open in Browser") action Jump("web_launch")
                             textbutton _("Open in Browser") action Jump("web_start")
                             textbutton _("Open build directory") action Jump("open_build_directory")
+                            textbutton _("Upload to wavedash.com") action Jump("wavedash")
 
                             add SPACER
 

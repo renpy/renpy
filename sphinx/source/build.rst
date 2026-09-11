@@ -467,7 +467,7 @@ The following variables provide further control of the build process:
 
         define build.wavedash_id = "YOUR_GAME_ID_HERE"
 
-    Once this is set, click "Build Distributions", "Upload to wavedash.com" to
+    Once this is set, click "Web", "Upload to wavedash.com" to
     upload the web build. If a web distribution has not been built, or if the
     game ID has changed since it was built, the launcher offers to build or
     rebuild it before uploading.

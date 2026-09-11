@@ -81,7 +81,7 @@ init python:
         archive = os.path.join(directory, archive_name)
         url = "https://github.com/wvdsh/cli/releases/latest/download/" + archive_name
 
-        with interface.error_handling(_("Downloading the Wavedash CLI."), label="build_distributions"):
+        with interface.error_handling(_("Downloading the Wavedash CLI."), label="web"):
             os.makedirs(directory, exist_ok=True)
 
             response = requests.get(
@@ -207,7 +207,7 @@ label wavedash:
             interface.error(
                 _("The Wavedash game ID has not been set."),
                 _("Create a game at {a=https://wavedash.com/dev-portal}wavedash.com/dev-portal{/a}, then add a line like \n{vspace=5}define build.wavedash_id = \"YOUR_GAME_ID_HERE\"\n{vspace=5} to options.rpy."),
-                label="build_distributions"
+                label="web"
                 )
 
         destination = get_web_destination(project.current)
@@ -217,7 +217,7 @@ label wavedash:
 
         if not os.path.isfile(config_file):
             if not interface.yesno(_("The web distribution could not be found. Would you like to build it now and upload it to Wavedash?")):
-                renpy.jump("build_distributions")
+                renpy.jump("web")
 
             needs_web_build = True
         else:
@@ -227,19 +227,19 @@ label wavedash:
                 interface.error(
                     _("The Wavedash configuration in the web distribution could not be read."),
                     _("Please choose 'Web', 'Build Web Application' and try again."),
-                    label="build_distributions"
+                    label="web"
                     )
 
             if built_wavedash_id != wavedash_id:
                 if not interface.yesno(_("The Wavedash game ID changed after the web distribution was built. Would you like to rebuild it now and upload it to Wavedash?")):
-                    renpy.jump("build_distributions")
+                    renpy.jump("web")
 
                 needs_web_build = True
 
         if needs_web_build:
             if WEB_PATH is None:
                 if not interface.yesno(_("Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?")):
-                    renpy.jump("build_distributions")
+                    renpy.jump("web")
 
                 # Web support only contains build files, so it can be used
                 # immediately after refreshing WEB_PATH.
@@ -249,7 +249,7 @@ label wavedash:
                 if WEB_PATH is None:
                     interface.error(
                         _("RenPyWeb could not be installed."),
-                        label="build_distributions"
+                        label="web"
                         )
 
             build_web(project.current, gui=True, launch=False)
@@ -260,13 +260,13 @@ label wavedash:
                 interface.error(
                     _("The Wavedash configuration in the web distribution could not be read."),
                     _("Please choose 'Web', 'Build Web Application' and try again."),
-                    label="build_distributions"
+                    label="web"
                     )
 
         if built_wavedash_id != wavedash_id:
             interface.error(
                 _("The web distribution was built for a different Wavedash game."),
-                label="build_distributions"
+                label="web"
                 )
 
         wavedash = find_wavedash()
@@ -274,7 +274,7 @@ label wavedash:
         if wavedash is None:
             interface.error(
                 _("The Wavedash CLI is not available for this platform."),
-                label="build_distributions"
+                label="web"
                 )
 
         authenticated, update_available = wavedash_status(wavedash)
@@ -308,4 +308,4 @@ label wavedash:
 
         cc.run()
 
-    jump build_distributions
+    jump web
