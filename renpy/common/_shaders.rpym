@@ -93,15 +93,12 @@ init python:
         out vec4 v__ceil_size;
     """, fragment_functions = """
         vec4 l__cubic(float value) {
-            vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - value;
-            vec4 s = n * n * n;
+            vec2 n = vec2(1.0 - value, value);
+            vec2 s = n * n;
+            vec2 outer = s * n * (1.0 / 6.0);
+            vec2 inner = vec2(2.0 / 3.0) - s * (2.0 - n) * 0.5;
 
-            float x = s.x;
-            float y = s.y - 4.0 * s.x;
-            float z = s.z - 4.0 * s.y + 6.0 * s.x;
-            float w = 6.0 - x - y - z;
-
-            return vec4(x, y, z, w) * (1.0 / 6.0);
+            return vec4(outer.x, inner.y, inner.x, outer.y);
         }
 
         vec4 l__sample_bicubic(sampler2D tex, vec2 uv, vec4 size, float lod) {
