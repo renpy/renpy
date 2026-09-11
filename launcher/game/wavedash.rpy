@@ -36,31 +36,34 @@ init python:
 
         import hashlib
         import hmac
+        import platform
         import shutil
         import tarfile
         import zipfile
 
         import requests
 
+        machine = platform.machine().lower()
+
         if renpy.windows:
-            platform = "x86_64-pc-windows-msvc"
+            target = "x86_64-pc-windows-msvc"
             archive_format = "zip"
             executable = "wavedash.exe"
         elif renpy.macintosh:
-            if renpy.arch == "aarch64":
-                platform = "aarch64-apple-darwin"
-            elif renpy.arch == "x86_64":
-                platform = "x86_64-apple-darwin"
+            if machine in ("aarch64", "arm64"):
+                target = "aarch64-apple-darwin"
+            elif machine in ("amd64", "x86_64"):
+                target = "x86_64-apple-darwin"
             else:
                 return None
 
             archive_format = "tar.gz"
             executable = "wavedash"
         elif renpy.linux:
-            if renpy.arch == "aarch64":
-                platform = "aarch64-unknown-linux-gnu"
-            elif renpy.arch == "x86_64":
-                platform = "x86_64-unknown-linux-gnu"
+            if machine in ("aarch64", "arm64"):
+                target = "aarch64-unknown-linux-gnu"
+            elif machine in ("amd64", "x86_64"):
+                target = "x86_64-unknown-linux-gnu"
             else:
                 return None
 
@@ -69,7 +72,7 @@ init python:
         else:
             return None
 
-        directory = os.path.join(config.renpy_base, "tmp", "wavedash-" + platform)
+        directory = os.path.join(config.renpy_base, "tmp", "wavedash-" + target)
         executable = os.path.join(directory, executable)
 
         if os.path.isfile(executable) and os.access(executable, os.X_OK):
@@ -77,7 +80,7 @@ init python:
 
         interface.processing(_("Downloading the Wavedash CLI."))
 
-        archive_name = f"wavedash-{platform}.{archive_format}"
+        archive_name = f"wavedash-{target}.{archive_format}"
         archive = os.path.join(directory, archive_name)
         url = "https://github.com/wvdsh/cli/releases/latest/download/" + archive_name
 
@@ -116,7 +119,7 @@ init python:
                 with tarfile.open(archive, "r:gz") as tf:
                     tf.extractall(directory, filter="data")
 
-            extracted_executable = os.path.join(directory, "wavedash-" + platform, os.path.basename(executable))
+            extracted_executable = os.path.join(directory, "wavedash-" + target, os.path.basename(executable))
 
             if os.path.isfile(extracted_executable):
                 shutil.move(extracted_executable, executable)
