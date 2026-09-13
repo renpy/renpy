@@ -182,6 +182,8 @@ cdef class GL2Draw:
         # The shader cache,
         self.shader_cache = None
 
+        self.gl_extensions = set()
+
         self.state_cache = GLStateCache()
         self.default_vao = 0
 
@@ -623,6 +625,8 @@ cdef class GL2Draw:
         else:
             extensions_string = get_gl_string(GL_EXTENSIONS)
             extensions = set(extensions_string.split(" ")) if extensions_string is not None else set()
+
+        self.gl_extensions = extensions
 
         if renpy.config.log_gl_extensions:
 
