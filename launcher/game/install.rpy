@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+﻿﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -108,6 +108,26 @@ label install_live2d_web:
 
     jump front_page
 
+
+label install_spine:
+    python hide:
+        _prefix = r"lib/py3-"
+
+        patterns = [
+            (r".*/lib/linux/x86_64/(libspine-c.so)", _prefix + r"linux-x86_64/\1"),
+            (r".*/lib/windows/(spine-c.dll)", _prefix + r"windows-x86_64/\1"),
+            (r".*/lib/macos/(libspine-c.dylib)", _prefix + r"mac-universal/\1"),
+            (r".*/lib/linux/armv7l/(libspine-c.so)", _prefix + r"linux-armv7l/\1"),
+
+            (r".*/lib/android/(armeabi-v7a/libspine-c.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
+            (r".*/lib/android/(arm64-v8a/libspine-c.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
+            (r".*/lib/android/(x86_64/libspine-c.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
+        ]
+
+        install_from_zip("Spine2D Runtime Library", "spine-renpy-*.zip", patterns)
+
+    jump front_page
+
 screen install_preferences():
 
     frame:
@@ -152,6 +172,11 @@ screen install_preferences():
 
     textbutton _("Install Live2D Cubism SDK for Web"):
         action Jump("prompt_live2d_web")
+
+    add SPACER
+
+    textbutton _("Install Spine-C Runtime Library"):
+        action Jump("prompt_spine")
 
 screen install_live2d(web=False):
 
@@ -215,6 +240,61 @@ label prompt_live2d:
 
 label prompt_live2d_web:
     call screen install_live2d(web=True)
+    jump preferences
+
+screen install_spine():
+
+    frame:
+        style_group "l"
+        style "l_root"
+
+        window:
+
+            has vbox
+
+            label _("Install Libraries")
+
+            add HALF_SPACER
+
+            hbox:
+                frame:
+                    style "l_indent"
+                    xfill True
+
+                    viewport:
+                        scrollbars "vertical"
+                        mousewheel True
+
+                        has vbox
+
+                        add SPACER
+
+                        textbutton _("Install Spine2D Runtime Library"):
+                            action Jump("install_spine")
+
+                        add HALF_SPACER
+
+                        frame:
+                            style "l_indent"
+                            has vbox
+
+                            text _("The {a=http://esotericsoftware.com/}Spine2D Runtime Library{/a} adds support for displaying Spine skeletal animations. Place spine-renpy-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Spine requires you to accept a license from Esoteric Software.")
+
+                            add SPACER
+
+                            text _("Spine2D must be compiled for each platform. The zip file should contain platform-specific shared libraries (.dll, .dylib, .so) in the appropriate lib/ subdirectories.")
+
+                            add SPACER
+
+                            text _("Spine2D work on the Windows, Mac, Linux, and Android platforms. You must reinstall Spine2D after upgrading Ren'Py or installing Android support.")
+
+    textbutton _("Cancel") action Return(False) style "l_left_button"
+    textbutton _("Open Ren'Py SDK Directory") action OpenDirectory(config.renpy_base, absolute=True) style "l_right_button"
+
+    timer 2.0 action renpy.restart_interaction repeat True
+
+label prompt_spine:
+    call screen install_spine()
     jump preferences
 
 label install_steam:
