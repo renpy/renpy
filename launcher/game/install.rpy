@@ -175,7 +175,7 @@ screen install_preferences():
 
     add SPACER
 
-    textbutton _("Install Spine-C Runtime Library"):
+    textbutton _("Install Spine2D Runtime Library"):
         action Jump("prompt_spine")
 
 screen install_live2d(web=False):
