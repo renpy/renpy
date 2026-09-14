@@ -95,6 +95,11 @@ Features
 
 When :var:`build.wavedash_id` is configured, building a web distribution now
 creates a :file:`wavedash.toml` file for uploading the build to Wavedash.
+The launcher can upload that web distribution directly to Wavedash, downloading
+the Wavedash CLI when necessary and prompting for browser authentication when
+needed. When the web distribution is missing, the launcher can build it before
+uploading. It can also rebuild the distribution when the Wavedash game ID has
+changed.
 
 Resource path translations can now be overridden independently of the global language with
 :var:`_preferences.resource_path_translations` and :class:`ChangeResourcePathTranslation`.
