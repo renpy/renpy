@@ -1413,6 +1413,9 @@ def add_uniform(name, uniform_type):
 
     if uniform_type == "sampler2D":
         setattr(TransformState, name, TextureUniform(name))
+        add_gl_property("gl_texture_wrap_" + name[2:])
+        add_gl_property("gl_texture_scaling_" + name[2:])
+
 
     uniforms.add(name)
     non_uniform_properties.discard(name)
@@ -1499,6 +1502,11 @@ add_gl_property("gl_texture_wrap_tex0")
 add_gl_property("gl_texture_wrap_tex1")
 add_gl_property("gl_texture_wrap_tex2")
 add_gl_property("gl_texture_wrap_tex3")
+add_gl_property("gl_texture_scaling")
+add_gl_property("gl_texture_scaling_tex0")
+add_gl_property("gl_texture_scaling_tex1")
+add_gl_property("gl_texture_scaling_tex2")
+add_gl_property("gl_texture_scaling_tex3")
 
 ALIASES = {
     "alignaround": (float, float),
