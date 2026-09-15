@@ -26,7 +26,8 @@ cdef class GLStateCache:
     def __init__(GLStateCache self):
         cdef int i
 
-        self.sampler_bindings = {}
+        # A fresh setter's zero-initialized serial must not match.
+        self.reset_serial = 1
 
         self.current_element_buffer = 0
         self.current_array_buffer = 0
@@ -105,8 +106,8 @@ cdef class GLStateCache:
 
         self.enabled_attrib_mask = 0
 
-        # Clear the sampler binding cache, as it's program-specific.
-        self.sampler_bindings.clear()
+        # Invalidate sampler-to-unit assignments after external GL state changes.
+        self.reset_serial += 1
 
     cdef void use_program(GLStateCache self, GLuint program):
         if program != self.current_program:
@@ -246,19 +247,3 @@ cdef class GLStateCache:
                     glDisableVertexAttribArray(i)
 
         self.enabled_attrib_mask = required_mask
-
-    cdef bint check_sampler_binding(GLStateCache self, GLuint program, GLint location, int sampler):
-        """
-        Returns True if the sampler-to-unit binding needs to be set, updating
-        the cache if so.
-        """
-
-        cdef tuple key = (program, location)
-        cdef object cached = self.sampler_bindings.get(key)
-
-        if cached is not None and cached == sampler:
-            return False
-
-        self.sampler_bindings[key] = sampler
-
-        return True
