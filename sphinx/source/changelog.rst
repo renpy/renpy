@@ -36,6 +36,10 @@ idle prediction, reducing stalls when they are first shown. The new
 :func:`renpy.start_predict_shader` and
 :func:`renpy.stop_predict_shader` functions support explicit prediction.
 
+It's now possible to control the wrap and texture scaling modes of sampler2D uniforms.
+If your uniform is u_myuniform, you can control it with gl_texture_wrap_myuniform and
+gl_texture_scaling_myuniform, as destribed at :ref:`gl-properties`.
+
 Graphics
 --------
 
