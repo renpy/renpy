@@ -62,6 +62,9 @@ cdef class Sampler2DSetter(Setter):
     cdef int sampler
     "The sampler number to use."
 
+    cdef unsigned long long bound_serial
+    "The state-cache reset serial when this program's sampler unit was last set."
+
     cdef str texture_wrap_key
     "The key to use to look up the texture wrap mode."
 

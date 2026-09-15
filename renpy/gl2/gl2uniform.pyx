@@ -318,9 +318,10 @@ cdef class Sampler2DSetter(Setter):
 
         cache.activate_texture(GL_TEXTURE0 + self.sampler)
 
-        # Only set the sampler-to-unit binding if it changed for this program.
-        if cache.check_sampler_binding(cache.current_program, self.location, self.sampler):
+        # Reapply the fixed sampler unit after each state cache reset.
+        if self.bound_serial != cache.reset_serial:
             glUniform1i(self.location, self.sampler)
+            self.bound_serial = cache.reset_serial
 
         cache.bind_texture(GL_TEXTURE0 + self.sampler, texture)
 
