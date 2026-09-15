@@ -752,6 +752,20 @@ precision highp int;
 shader_part_filter_cache = {}
 
 
+def program_variable_specs(vertex_variables, fragment_variables):
+    rv = []
+
+    for fragment, variables in ((False, vertex_variables), (True, fragment_variables)):
+        for variable in variables:
+            if variable.storage != "uniform" and (fragment or variable.storage != "attribute"):
+                continue
+
+            rv.append((variable.storage, variable.type, variable.name, variable.array, fragment))
+
+    return tuple(rv)
+
+
+
 class ShaderCache(object):
     """
     This class caches shaders that were compiled. It's also responsible for
@@ -893,6 +907,7 @@ class ShaderCache(object):
         vertex_variables, fragment_variables = link_variables(vertex_variables, fragment_variables)
 
         from renpy.gl2.gl2shader import Program, ShaderError
+        variable_specs = program_variable_specs(vertex_variables, fragment_variables)
 
         def build(version):
             vertex = source(vertex_variables, vertex_parts, vertex_functions, False, self.gles, version)
@@ -901,7 +916,7 @@ class ShaderCache(object):
             self.log_shader("vertex", sortedpartnames, vertex)
             self.log_shader("fragment", sortedpartnames, fragment)
 
-            rv = Program(sortedpartnames, vertex, fragment)
+            rv = Program(sortedpartnames, vertex, fragment, variable_specs)
             rv.load()
 
             return rv

@@ -409,10 +409,11 @@ cdef class Program:
     Represents an OpenGL program.
     """
 
-    def __init__(self, name, vertex, fragment):
+    def __init__(self, name, vertex, fragment, variable_specs=None):
         self.name = name
         self.vertex = vertex
         self.fragment = fragment
+        self.variable_specs = variable_specs
 
         # A list of Attribute objects
         self.attributes = [ ]
@@ -424,9 +425,10 @@ cdef class Program:
     def __dealloc__(self):
         glDeleteProgram(self.program)
 
-    def find_variables(self, source, seen_uniforms: set, samplers: int, fragment=False):
+    def find_variables(self, source, fragment=False):
 
         shader_name = "+".join(self.name)
+        specs = []
 
         for line in source.split("\n"):
 
@@ -451,29 +453,52 @@ cdef class Program:
 
             v = Variable(shader_name, l, fragment)
 
-            if v.storage == "uniform":
-                if v.name in seen_uniforms:
+            if v.storage == "uniform" or (v.storage == "attribute" and not fragment):
+                specs.append((v.storage, v.type, v.name, v.array, fragment))
+
+        return specs
+
+    def find_program_variables(self):
+        cdef GLint max_samplers = 0
+
+        seen_uniforms = set()
+        samplers = 0
+
+        self.attributes = [ ]
+        self.uniform_setters = [ ]
+
+        if self.variable_specs is None:
+            self.variable_specs = self.find_variables(self.vertex) + self.find_variables(self.fragment, True)
+
+        shader_name = "+".join(self.name)
+
+        for storage, variable_type, name, array, fragment in self.variable_specs:
+            if storage == "uniform":
+                if name in seen_uniforms:
                     continue
 
-                location = glGetUniformLocation(self.program, v.name.encode("utf-8"))
+                location = glGetUniformLocation(self.program, name.encode("utf-8"))
 
                 if location >= 0:
-                    seen_uniforms.add(v.name)
-                    setter, samplers = generate_uniform_setter(shader_name, location, v.name, v.type, v.array, samplers)
+                    seen_uniforms.add(name)
+                    setter, samplers = generate_uniform_setter(shader_name, location, name, variable_type, array, samplers)
                     self.uniform_setters.append(setter)
 
-            elif v.storage == "attribute" and not fragment:
-                location = glGetAttribLocation(self.program, v.name.encode("utf-8"))
+            elif storage == "attribute" and not fragment:
+                location = glGetAttribLocation(self.program, name.encode("utf-8"))
 
-                if v.array is None:
+                if array is None:
                     array = 1
-                else:
-                    array = v.array
 
                 if location >= 0:
-                    self.attributes.append(Attribute(v.name, location, ATTRIBUTE_TYPES[v.type] * array))
+                    self.attributes.append(Attribute(name, location, ATTRIBUTE_TYPES[variable_type] * array))
 
-        return samplers
+        glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_samplers)
+
+        if max_samplers > 0 and samplers > max_samplers:
+            raise ShaderError(
+                "Shader %s needs %d texture units, but this system provides %d." % (
+                    "+".join(self.name), samplers, max_samplers))
 
     cdef GLuint load_shader(self, GLenum shader_type, source) except 0:
         """
@@ -556,22 +581,7 @@ cdef class Program:
         glDeleteShader(fragment)
 
         self.program = program
-
-        # Create self.uniform_setters
-        seen_uniforms = set()
-        samplers = 0
-
-        self.uniform_setters = [ ]
-
-        samplers = self.find_variables(self.vertex, seen_uniforms, samplers, False)
-        samplers = self.find_variables(self.fragment, seen_uniforms, samplers, True)
-
-        glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_samplers)
-
-        if max_samplers > 0 and samplers > max_samplers:
-            raise ShaderError(
-                "Shader %s needs %d texture units, but this system provides %d." % (
-                    "+".join(self.name), samplers, max_samplers))
+        self.find_program_variables()
 
     cpdef void draw(self, GL2DrawingContext context, GL2Model model, Mesh mesh):
 
