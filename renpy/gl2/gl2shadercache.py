@@ -19,8 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import re
+import hashlib
+import json
 import os
+import re
+import struct
+import sys
+import tempfile
 
 import renpy
 
@@ -493,6 +498,20 @@ class ShaderPart(object):
 
         self.raw_variables = variables
 
+        cache_data = (
+            self.name,
+            self.declared_glsl,
+            self.raw_variables,
+            self.vertex_functions,
+            self.fragment_functions,
+            self.vertex_parts,
+            self.fragment_parts,
+        )
+
+        self.cache_digest = hashlib.sha256(
+            json.dumps(cache_data, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        ).digest()
+
     @property
     def glsl(self):
         """
@@ -751,7 +770,42 @@ precision highp int;
 
 shader_part_filter_cache = {}
 
+# File version changes when the record layout changes. Recipe version changes
+# whenever shader source generation changes in a way that can make an
+# old program binary incompatible with the current engine.
+PROGRAM_CACHE_MAGIC = b"renpy shader programs\x00\x02"
+PROGRAM_CACHE_RECIPE = b"renpy shader recipe\x00\x01"
+PROGRAM_CACHE_RECORD = "<32s32sIIIII"
+PROGRAM_CACHE_RECORD_SIZE = struct.calcsize(PROGRAM_CACHE_RECORD)
 MAX_PROGRAM_BINARY_SIZE = 16 * 1024 * 1024
+MAX_PROGRAM_SOURCE_SIZE = 4 * 1024 * 1024
+MAX_PROGRAM_VARIABLES_SIZE = 1024 * 1024
+MAX_PROGRAM_CACHE_SIZE = 256 * 1024 * 1024
+
+
+def shader_program_key(partnames, version):
+    rv = hashlib.sha256(struct.pack("<I", version))
+    rv.update("\x00".join(partnames).encode("utf-8"))
+    return rv.digest()
+
+
+def shader_recipe_digest(partnames, gles, version):
+    rv = hashlib.sha256(PROGRAM_CACHE_RECIPE)
+    rv.update(struct.pack("<BII", bool(gles), version, config_dialect()))
+
+    for name in partnames:
+        part = shader_part.get(name, None)
+
+        if part is None:
+            raise Exception("{!r} is not a known shader part.".format(name))
+
+        name_bytes = name.encode("utf-8")
+        rv.update(struct.pack("<I", len(name_bytes)))
+        rv.update(name_bytes)
+        rv.update(part.cache_digest)
+
+    return rv.digest()
+
 
 def program_variable_specs(vertex_variables, fragment_variables):
     rv = []
@@ -766,6 +820,40 @@ def program_variable_specs(vertex_variables, fragment_variables):
     return tuple(rv)
 
 
+def program_cache_entry_size(key, entry):
+    return sys.getsizeof(key) + sys.getsizeof(entry) + sum(sys.getsizeof(value) for value in entry)
+
+
+def decode_program_variable_specs(data):
+    specs = json.loads(data.decode("utf-8"))
+
+    if not isinstance(specs, list):
+        raise ValueError("Shader variable metadata is not a list.")
+
+    rv = []
+
+    for spec in specs:
+        if not isinstance(spec, list) or len(spec) != 5:
+            raise ValueError("Shader variable metadata has an invalid entry.")
+
+        storage, variable_type, name, array, fragment = spec
+
+        if storage not in ("uniform", "attribute"):
+            raise ValueError("Shader variable metadata has an invalid storage class.")
+
+        if not isinstance(variable_type, str) or not isinstance(name, str):
+            raise ValueError("Shader variable metadata has an invalid type or name.")
+
+        if array is not None and (not isinstance(array, int) or isinstance(array, bool) or array < 1):
+            raise ValueError("Shader variable metadata has an invalid array size.")
+
+        if not isinstance(fragment, bool):
+            raise ValueError("Shader variable metadata has an invalid stage.")
+
+        rv.append((storage, variable_type, name, array, fragment))
+
+    return tuple(rv)
+
 
 class ShaderCache(object):
     """
@@ -774,7 +862,7 @@ class ShaderCache(object):
     loading the shaders back into the cache.
     """
 
-    def __init__(self, filename, gles, glsl_version=None):
+    def __init__(self, filename, gles, glsl_version=None, driver=None, binary_supported=False):
         # The filename that we'll load the list of shaders from, and
         # persist it to.
         self.filename = filename
@@ -821,6 +909,213 @@ class ShaderCache(object):
         # True if this is dirty, and should be saved to the cache.
         self.dirty = False
 
+        self.program_cache_filename = None
+        self.program_cache = {}
+        self.program_cache_loaded = False
+        self.program_cache_dirty = False
+        self.program_binary_supported = binary_supported and renpy.config.gl_program_cache
+        self.program_cache_size = 0
+
+        if self.program_binary_supported and driver is not None and renpy.config.savedir is not None:
+            identity = [str(int(gles))]
+            identity.extend(str(i) for i in driver)
+            driver_digest = hashlib.sha256("\x00".join(identity).encode("utf-8")).hexdigest()
+            cache_directory = os.environ.get("RENPY_GL_PROGRAM_CACHE_DIR", renpy.config.savedir.rstrip("/\\") + "-cache")
+            self.program_cache_filename = os.path.join(cache_directory, "shaders-{}.rpyb".format(driver_digest))
+
+        if self.program_cache_filename is None or os.environ.get("RENPY_GL_PROGRAM_CACHE") == "0":
+            self.program_binary_supported = False
+
+    def load_program_cache(self):
+        if self.program_cache_loaded:
+            return
+
+        self.program_cache_loaded = True
+
+        if not self.program_binary_supported:
+            return
+
+        try:
+            program_cache = {}
+            memory_size = 0
+
+            with open(self.program_cache_filename, "rb") as f:
+                if os.fstat(f.fileno()).st_size > MAX_PROGRAM_CACHE_SIZE:
+                    return
+
+                if f.read(len(PROGRAM_CACHE_MAGIC)) != PROGRAM_CACHE_MAGIC:
+                    return
+
+                file_size = len(PROGRAM_CACHE_MAGIC)
+
+                while True:
+                    header = f.read(PROGRAM_CACHE_RECORD_SIZE)
+
+                    if not header:
+                        break
+
+                    key, recipe_digest, binary_format, binary_length, vertex_length, fragment_length, variables_length = struct.unpack(PROGRAM_CACHE_RECORD, header)
+
+                    if not 0 < binary_length <= MAX_PROGRAM_BINARY_SIZE:
+                        return
+
+                    if vertex_length > MAX_PROGRAM_SOURCE_SIZE or fragment_length > MAX_PROGRAM_SOURCE_SIZE:
+                        return
+
+                    if variables_length > MAX_PROGRAM_VARIABLES_SIZE:
+                        return
+
+                    lengths = (binary_length, vertex_length, fragment_length, variables_length)
+                    file_size += PROGRAM_CACHE_RECORD_SIZE + sum(lengths)
+
+                    if file_size > MAX_PROGRAM_CACHE_SIZE:
+                        return
+
+                    payloads = tuple(f.read(length) for length in lengths)
+
+                    if any(len(data) != length for data, length in zip(payloads, lengths)):
+                        return
+
+                    if key in program_cache:
+                        return
+
+                    entry = (recipe_digest, binary_format) + payloads
+                    entry_size = program_cache_entry_size(key, entry)
+                    program_cache[key] = entry
+
+                    if memory_size + entry_size + sys.getsizeof(program_cache) > MAX_PROGRAM_CACHE_SIZE:
+                        del program_cache[key]
+                    else:
+                        memory_size += entry_size
+
+            self.program_cache = program_cache
+            self.program_cache_size = memory_size
+        except (OSError, ValueError, struct.error):
+            return
+
+    def discard_program_binary(self, key):
+        entry = self.program_cache.pop(key, None)
+
+        if entry is not None:
+            self.program_cache_size -= program_cache_entry_size(key, entry)
+            self.program_cache_dirty = True
+
+            if not self.program_cache:
+                self.program_cache = {}
+
+    def get_program_binary(self, partnames, version, recipe_digest):
+        self.load_program_cache()
+
+        key = shader_program_key(partnames, version)
+        entry = self.program_cache.get(key, None)
+
+        if entry is None:
+            return None
+
+        cached_digest, binary_format, binary, vertex, fragment, variables = entry
+
+        if cached_digest != recipe_digest:
+            self.discard_program_binary(key)
+
+            return None
+
+        try:
+            return (binary_format, binary), vertex.decode("utf-8"), fragment.decode("utf-8"), decode_program_variable_specs(variables)
+        except (UnicodeError, ValueError, RecursionError):
+            self.discard_program_binary(key)
+
+            return None
+
+    def store_program_binary(self, partnames, version, recipe_digest, program):
+        if not self.program_binary_supported:
+            return
+
+        try:
+            binary = program.get_binary()
+
+            if binary is None:
+                return
+
+            binary_format, binary_data = binary
+            vertex = program.vertex.encode("utf-8")
+            fragment = program.fragment.encode("utf-8")
+            variables = json.dumps(program.variable_specs, separators=(",", ":")).encode("utf-8")
+
+            if not 0 < len(binary_data) <= MAX_PROGRAM_BINARY_SIZE:
+                return
+
+            if len(vertex) > MAX_PROGRAM_SOURCE_SIZE or len(fragment) > MAX_PROGRAM_SOURCE_SIZE:
+                return
+
+            if len(variables) > MAX_PROGRAM_VARIABLES_SIZE:
+                return
+
+            key = shader_program_key(partnames, version)
+            entry = (recipe_digest, binary_format, binary_data, vertex, fragment, variables)
+            entry_size = program_cache_entry_size(key, entry)
+
+            if entry_size + sys.getsizeof({key: entry}) > MAX_PROGRAM_CACHE_SIZE:
+                return
+
+            self.discard_program_binary(key)
+            self.program_cache[key] = entry
+            self.program_cache_size += entry_size
+
+            while self.program_cache_size + sys.getsizeof(self.program_cache) > MAX_PROGRAM_CACHE_SIZE:
+                self.discard_program_binary(next(iter(self.program_cache)))
+
+            self.program_cache_dirty = True
+        except Exception:
+            renpy.display.log.write("Could not cache shader program %r.", partnames)
+            renpy.display.log.exception()
+
+    def save_program_cache(self):
+        if not self.program_cache_dirty or not self.program_binary_supported:
+            return
+
+        tmp = None
+
+        try:
+            directory = os.path.dirname(self.program_cache_filename)
+            os.makedirs(directory, exist_ok=True)
+
+            with tempfile.NamedTemporaryFile(mode="wb", dir=directory, prefix="shaders-", suffix=".tmp", delete=False) as f:
+                tmp = f.name
+                f.write(PROGRAM_CACHE_MAGIC)
+
+                for key, entry in self.program_cache.items():
+                    recipe_digest, binary_format, binary, vertex, fragment, variables = entry
+
+                    f.write(struct.pack(
+                        PROGRAM_CACHE_RECORD,
+                        key,
+                        recipe_digest,
+                        binary_format,
+                        len(binary),
+                        len(vertex),
+                        len(fragment),
+                        len(variables),
+                    ))
+
+                    f.write(binary)
+                    f.write(vertex)
+                    f.write(fragment)
+                    f.write(variables)
+
+            os.replace(tmp, self.program_cache_filename)
+            tmp = None
+
+            self.program_cache_dirty = False
+        except Exception:
+            renpy.display.log.write("Saving shader program cache to {!r}:".format(self.program_cache_filename))
+            renpy.display.log.exception()
+        finally:
+            if tmp is not None:
+                try:
+                    os.unlink(tmp)
+                except OSError:
+                    pass
+
     def get(self, partnames):
         """
         Gets a shader, creating it if necessary.
@@ -861,6 +1156,50 @@ class ShaderCache(object):
         rv = self.cache.get(sortedpartnames, None)
         if rv is not None:
             self.cache[partnames] = rv
+            return rv
+
+        from renpy.gl2.gl2shader import Program, ShaderError
+
+        def recipe(version):
+            if self.program_binary_supported:
+                return shader_recipe_digest(sortedpartnames, self.gles, version)
+
+            return None
+
+        def cached_program(version, recipe_digest):
+            if not self.program_binary_supported:
+                return None
+
+            key = shader_program_key(sortedpartnames, version)
+
+            try:
+                entry = self.get_program_binary(sortedpartnames, version, recipe_digest)
+
+                if entry is None:
+                    return None
+
+                binary, vertex, fragment, variable_specs = entry
+                rv = Program(sortedpartnames, vertex, fragment, variable_specs)
+
+                if rv.load_binary(binary):
+                    return rv
+            except Exception:
+                renpy.display.log.write("Could not load cached shader program %r.", sortedpartnames)
+                renpy.display.log.exception()
+
+            self.discard_program_binary(key)
+
+            return None
+
+        current_recipe = recipe(self.version)
+        rv = cached_program(self.version, current_recipe)
+
+        if rv is not None:
+            self.cache[partnames] = rv
+            self.cache[sortedpartnames] = rv
+
+            self.dirty = True
+
             return rv
 
         # If the cache missed entirely, we have to generate the source code for the
@@ -907,10 +1246,15 @@ class ShaderCache(object):
         # consistent once both stages have been considered together.
         vertex_variables, fragment_variables = link_variables(vertex_variables, fragment_variables)
 
-        from renpy.gl2.gl2shader import Program, ShaderError
         variable_specs = program_variable_specs(vertex_variables, fragment_variables)
 
-        def build(version):
+        def build(version, recipe_digest, check_cache):
+            if check_cache:
+                cached = cached_program(version, recipe_digest)
+
+                if cached is not None:
+                    return cached
+
             vertex = source(vertex_variables, vertex_parts, vertex_functions, False, self.gles, version)
             fragment = source(fragment_variables, fragment_parts, fragment_functions, True, self.gles, version)
 
@@ -918,12 +1262,17 @@ class ShaderCache(object):
             self.log_shader("fragment", sortedpartnames, fragment)
 
             rv = Program(sortedpartnames, vertex, fragment, variable_specs)
+
+            if self.program_binary_supported:
+                rv.make_binary_retrievable()
+
             rv.load()
+            self.store_program_binary(sortedpartnames, version, recipe_digest, rv)
 
             return rv
 
         try:
-            rv = build(self.version)
+            rv = build(self.version, current_recipe, False)
 
         except ShaderError as e:
             # The context claimed to support the version we picked, but this
@@ -939,7 +1288,8 @@ class ShaderCache(object):
                 raise
 
             failed_version = self.version
-            rv = build(fallback)
+            fallback_recipe = recipe(fallback)
+            rv = build(fallback, fallback_recipe, True)
             self.version = fallback
 
             renpy.display.log.write(
@@ -975,6 +1325,8 @@ class ShaderCache(object):
         """
         Saves the list of shaders to the file.
         """
+
+        self.save_program_cache()
 
         if not self.dirty:
             return
