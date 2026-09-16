@@ -65,13 +65,18 @@ def shaders(incdir="source/inc"):
 
                 indented(sp.raw_variables)
 
-            if sp.vertex_functions or sp.fragment_functions:
-                raise Exception("Can't doc functions yet.")
+            if sp.vertex_functions:
+                p("Vertex functions::")
+                indented(sp.vertex_functions)
 
             for prio, _, s in sorted(sp.vertex_parts):
                 p("Vertex shader (priority %d)::" % prio)
 
                 indented(s)
+
+            if sp.fragment_functions:
+                p("Fragment functions::")
+                indented(sp.fragment_functions)
 
             for prio, _, s in sorted(sp.fragment_parts):
                 p("Fragment shader (priority %d)::" % prio)

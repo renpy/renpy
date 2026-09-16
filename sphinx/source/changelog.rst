@@ -36,6 +36,10 @@ idle prediction, reducing stalls when they are first shown. The new
 :func:`renpy.start_predict_shader` and
 :func:`renpy.stop_predict_shader` functions support explicit prediction.
 
+It's now possible to control the wrap and texture scaling modes of sampler2D uniforms.
+If your uniform is u_myuniform, you can control it with gl_texture_wrap_myuniform and
+gl_texture_scaling_myuniform, as destribed at :ref:`gl-properties`.
+
 Graphics
 --------
 
@@ -95,6 +99,11 @@ Features
 
 When :var:`build.wavedash_id` is configured, building a web distribution now
 creates a :file:`wavedash.toml` file for uploading the build to Wavedash.
+The launcher can upload that web distribution directly to Wavedash, downloading
+the Wavedash CLI when necessary and prompting for browser authentication when
+needed. When the web distribution is missing, the launcher can build it before
+uploading. It can also rebuild the distribution when the Wavedash game ID has
+changed.
 
 Resource path translations can now be overridden independently of the global language with
 :var:`_preferences.resource_path_translations` and :class:`ChangeResourcePathTranslation`.

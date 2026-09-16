@@ -965,8 +965,10 @@ cdef class RenderTransform:
                 for name in state.shader:
                     rv.add_shader(name)
 
-        for name in renpy.display.transform.uniforms:
-            value = getattr(state, name, None)
+        state_dict = state.__dict__
+
+        for name in state_dict.keys() & renpy.display.transform.uniforms:
+            value = state_dict[name]
 
             if isinstance(value, Displayable):
                 value = value.render(rv.width, rv.height, st, at)

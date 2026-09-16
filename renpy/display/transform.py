@@ -149,9 +149,18 @@ class TransformState(renpy.object.Object):
 
     def take_state(self, ts):
         d = self.__dict__
+        src = ts.__dict__
 
-        for k in all_properties:
+        for k in non_uniform_properties:
             d[k] = getattr(ts, k)
+
+        # Uniforms only live in __dict__ when explicitly set.
+        for k in d.keys() & uniforms:
+            if k not in src:
+                del d[k]
+
+        for k in src.keys() & uniforms:
+            d[k] = src[k]
 
         self.last_angle = ts.last_angle
         self.radius_sign = ts.radius_sign
@@ -1365,6 +1374,9 @@ diff4_properties = set()
 uniforms = set()
 gl_properties = set()
 
+# Properties copied unconditionally by TransformState.take_state.
+non_uniform_properties = set()
+
 
 def add_property(name, atl=any_object, default=None, diff=2):  # type: (str, Any, Any, int|None) -> None
     """
@@ -1375,6 +1387,7 @@ def add_property(name, atl=any_object, default=None, diff=2):  # type: (str, Any
         return
 
     all_properties.add(name)
+    non_uniform_properties.add(name)
     setattr(TransformState, name, default)
     setattr(Transform, name, Proxy(name))
     renpy.atl.PROPERTIES[name] = atl
@@ -1400,8 +1413,12 @@ def add_uniform(name, uniform_type):
 
     if uniform_type == "sampler2D":
         setattr(TransformState, name, TextureUniform(name))
+        add_gl_property("gl_texture_wrap_" + name[2:])
+        add_gl_property("gl_texture_scaling_" + name[2:])
+
 
     uniforms.add(name)
+    non_uniform_properties.discard(name)
 
 
 def add_gl_property(name):
@@ -1485,6 +1502,11 @@ add_gl_property("gl_texture_wrap_tex0")
 add_gl_property("gl_texture_wrap_tex1")
 add_gl_property("gl_texture_wrap_tex2")
 add_gl_property("gl_texture_wrap_tex3")
+add_gl_property("gl_texture_scaling")
+add_gl_property("gl_texture_scaling_tex0")
+add_gl_property("gl_texture_scaling_tex1")
+add_gl_property("gl_texture_scaling_tex2")
+add_gl_property("gl_texture_scaling_tex3")
 
 ALIASES = {
     "alignaround": (float, float),

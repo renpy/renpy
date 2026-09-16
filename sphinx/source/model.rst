@@ -588,15 +588,6 @@ function.
     a pixel on the screen. This is mostly used in conjunction with text,
     to ensure that the text remains sharp.
 
-The following properties only take effect when a texture is being created,
-by a Transform with :tpref:`mesh` set, or by :func:`Model`, where these
-can be supplied the property method.
-
-``gl_drawable_resolution``
-    If True or not set, the texture is rendered at the same resolution
-    as the window displaying the game. If False, it's rendered at the
-    virtual resolution of the displayable.
-
 ``gl_anisotropic``
     If supplied, this determines if the textures applied to a mesh are
     created with anisotropy. Anisotropy is a feature that causes multiple
@@ -606,9 +597,21 @@ can be supplied the property method.
     This defaults to True. Ren'Py sets this to False for certain effects,
     like the Pixellate transition.
 
-``gl_mipmap``
-    If supplied, this determines if the textures supplied to a mesh are
-    created with mipmaps. This defaults to True.
+``gl_texture_scaling``
+    When supplied, this determines how the textures applied to a mesh
+    are scaled. This expects one of the following string values:
+
+    - "nearest"
+    - "linear"
+    - "nearest_mipmap_nearest"
+    - "linear_mipmap_nearest"
+    - "nearest_mipmap_linear"
+    - "linear_mipmap_linear"
+
+    This can also be customized for specific textures. `gl_texture_scaling_tex0` controls
+    the first texture, `gl_texture_scaling_tex1` the second, `gl_texture_scaling_tex2`, the third,
+    and `gl_texture_scaling_tex3` the fourth. While only these four are avalable through Transforms,
+    it's possible to supply "texture_scaling_tex4" or "texture_scaling_myuniform" to Render.add_property.
 
 ``gl_texture_wrap``
     When supplied, this determines how the textures applied to a mesh
@@ -625,7 +628,22 @@ can be supplied the property method.
     This can also be customized for specific textures. `gl_texture_wrap_tex0` controls
     the first texture, `gl_texture_wrap_tex1` the second, `gl_texture_wrap_tex2`, the third,
     and `gl_texture_wrap_tex3` the fourth. While only these four are avalable through Transforms,
-    it's possibe to supply "texture_wrap_tex4" or "texture_wrap_myuniform" to Render.add_property.
+    it's possible to supply "texture_wrap_tex4" or "texture_wrap_myuniform" to Render.add_property.
+
+
+The following properties only take effect when a texture is being created,
+by a Transform with :tpref:`mesh` set, or by :func:`Model`, where these
+can be supplied the property method.
+
+``gl_drawable_resolution``
+    If True or not set, the texture is rendered at the same resolution
+    as the window displaying the game. If False, it's rendered at the
+    virtual resolution of the displayable.
+
+
+``gl_mipmap``
+    If supplied, this determines if the textures supplied to a mesh are
+    created with mipmaps. This defaults to True.
 
 GLTFModel Displayable
 -----------------------

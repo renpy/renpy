@@ -61,6 +61,7 @@ required_functions = [
     "glPixelStorei",
     "glReadPixels",
     "glRenderbufferStorage",
+    "glScissor",
     "glShaderSource",
     "glTexImage2D",
     "glTexParameterf",

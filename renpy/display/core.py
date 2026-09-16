@@ -60,6 +60,7 @@ EVENTNAME = pygame.event.register("EVENTNAME")
 
 # All events except for TIMEEVENT and REDRAW
 ALL_EVENTS: set[int] = set(pygame.event.get_standard_events())
+ALL_EVENTS.discard(pygame.MOUSEMOTION)
 ALL_EVENTS.add(PERIODIC)
 ALL_EVENTS.add(EVENTNAME)
 

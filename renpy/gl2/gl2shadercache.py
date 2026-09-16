@@ -111,6 +111,8 @@ STANDALONE = r"(?<![\w.]){}\b"
 
 # Rewrites applied to a shader part authored in the legacy dialect.
 LEGACY_TO_MODERN = [
+    (re.compile(STANDALONE.format("texture2DProjLodEXT")), "textureProjLod"),
+    (re.compile(STANDALONE.format("texture2DLodEXT")), "textureLod"),
     (re.compile(STANDALONE.format("texture2DProjLod")), "textureProjLod"),
     (re.compile(STANDALONE.format("texture2DLod")), "textureLod"),
     (re.compile(STANDALONE.format("texture2DProj")), "textureProj"),
@@ -124,9 +126,19 @@ LEGACY_TO_MODERN = [
 # will fail to compile with an error and source code.
 MODERN_TO_LEGACY = [
     (re.compile(STANDALONE.format(FRAGMENT_OUTPUT)), "gl_FragColor"),
+    (re.compile(r"(?<![\w.])textureProjLod\s*\("), "texture2DProjLod("),
+    (re.compile(r"(?<![\w.])textureLod\s*\("), "texture2DLod("),
     (re.compile(r"(?<![\w.])textureProj\s*\("), "texture2DProj("),
     (re.compile(r"(?<![\w.])texture\s*\("), "texture2D("),
 ]
+
+# Legacy fragment shaders can only get LOD sampling through an extension.
+LOD_EXTENSION = {
+    True: ("GL_EXT_shader_texture_lod", "EXT"),
+    False: ("GL_ARB_shader_texture_lod", ""),
+}
+
+LOD_FUNCTIONS = re.compile(r"(?<![\w.])(texture2DProjLod|texture2DLod)(?:EXT)?\s*\(")
 
 
 # Strip comments so they can't cause errors in parsing.
@@ -137,6 +149,8 @@ GLSL_COMMENTS = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
 LEGACY_MARKERS = [
     (re.compile(STANDALONE.format("gl_FragColor")), "gl_FragColor", FRAGMENT_OUTPUT),
     (re.compile(STANDALONE.format("gl_FragData")), "gl_FragData", FRAGMENT_OUTPUT),
+    (re.compile(STANDALONE.format("texture2DProjLodEXT")), "texture2DProjLodEXT", "textureProjLod"),
+    (re.compile(STANDALONE.format("texture2DLodEXT")), "texture2DLodEXT", "textureLod"),
     (re.compile(STANDALONE.format("texture2DProjLod")), "texture2DProjLod", "textureProjLod"),
     (re.compile(STANDALONE.format("texture2DLod")), "texture2DLod", "textureLod"),
     (re.compile(STANDALONE.format("texture2DProj")), "texture2DProj", "textureProj"),
@@ -156,6 +170,8 @@ LEGACY_STORAGE = {
 TRANSLATED_MARKERS = {
     300: [
         (re.compile(STANDALONE.format(FRAGMENT_OUTPUT)), FRAGMENT_OUTPUT),
+        (re.compile(STANDALONE.format("textureLod")), "textureLod"),
+        (re.compile(STANDALONE.format("textureProjLod")), "textureProjLod"),
         (re.compile(r"(?<![\w.])texture\s*\("), "texture"),
     ],
 }
@@ -167,8 +183,6 @@ UNTRANSLATED_MARKERS = {
         (re.compile(STANDALONE.format("textureSize")), "textureSize"),
         (re.compile(STANDALONE.format("texelFetch")), "texelFetch"),
         (re.compile(STANDALONE.format("textureGrad")), "textureGrad"),
-        (re.compile(STANDALONE.format("textureLod")), "textureLod"),
-        (re.compile(STANDALONE.format("textureProjLod")), "textureProjLod"),
         (re.compile(STANDALONE.format("switch")), "switch"),
         (re.compile(r"%"), "the % operator"),
         (re.compile(r"<<|>>"), "a bitwise shift"),
@@ -792,17 +806,30 @@ precision highp int;
     for v in merge_variables(variables):
         rv.append(v.declaration(fragment, gles, version) + ";\n")
 
-    for text, glsl in functions:
-        rv.append(translate(text, glsl, version))
+    body = []
 
-    rv.append("\nvoid main() {\n")
+    for text, glsl in functions:
+        body.append(translate(text, glsl, version))
+
+    body.append("\nvoid main() {\n")
 
     parts.sort()
 
     for _, _, part, glsl in parts:
-        rv.append(translate(part, glsl, version))
+        body.append(translate(part, glsl, version))
 
-    rv.append("}\n")
+    body.append("}\n")
+
+    body = "".join(body)
+
+    if fragment and version < 300:
+        extension, suffix = LOD_EXTENSION[gles]
+        body, count = LOD_FUNCTIONS.subn(r"\g<1>{}(".format(suffix), body)
+
+        if count:
+            rv.insert(1, "#extension {} : require\n".format(extension))
+
+    rv.append(body)
 
     return "".join(rv)
 

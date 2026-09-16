@@ -307,7 +307,8 @@ cdef class Sampler2DSetter(Setter):
     def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int sampler):
         Setter.__init__(self, uniform_name, uniform_type, location, getter)
         self.sampler = sampler
-        self.texture_wrap_key = "texture_wrap_" + uniform_name
+        self.texture_wrap_key = "texture_wrap_" + uniform_name[2:]
+        self.texture_scaling_key = "texture_scaling_" + uniform_name[2:]
 
     cdef void set_texture(self, GLStateCache cache, GLuint texture):
         """
@@ -361,7 +362,9 @@ cdef class Sampler2DSetter(Setter):
             if not context.properties.get("anisotropic", True):
                 anisotropy = 1.0
 
-            if "texture_scaling" in context.properties:
+            if self.texture_scaling_key in context.properties:
+                mag_filter, min_filter = TEXTURE_SCALING[context.properties[self.texture_scaling_key]]
+            elif "texture_scaling" in context.properties:
                 mag_filter, min_filter = TEXTURE_SCALING[context.properties["texture_scaling"]]
 
         # Force anisotropy to 1.0 if the min filter is a nearest filter, as anisotropy doesn't make sense in that case.

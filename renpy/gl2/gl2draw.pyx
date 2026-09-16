@@ -130,6 +130,13 @@ cdef set get_gl_extensions_list():
     return extensions
 
 
+cdef void clear_color_buffer(int x, int y, int width, int height) noexcept nogil:
+    glEnable(GL_SCISSOR_TEST)
+    glScissor(x, y, width, height)
+    glClear(GL_COLOR_BUFFER_BIT)
+    glDisable(GL_SCISSOR_TEST)
+
+
 cdef class GL2Draw:
 
     def __init__(self, name):
@@ -174,6 +181,8 @@ cdef class GL2Draw:
 
         # The shader cache,
         self.shader_cache = None
+
+        self.gl_extensions = set()
 
         self.state_cache = GLStateCache()
         self.default_vao = 0
@@ -410,7 +419,7 @@ cdef class GL2Draw:
 
             if physical_size is not None:
                 pwidth, pheight = physical_size
-                if pos[0] + pwidth > rect[2] and pos[1] + pheight > rect[3]:
+                if pos[0] + pwidth > rect[0] + rect[2] or pos[1] + pheight > rect[1] + rect[3]:
                     continue
 
             return pos
@@ -616,6 +625,8 @@ cdef class GL2Draw:
         else:
             extensions_string = get_gl_string(GL_EXTENSIONS)
             extensions = set(extensions_string.split(" ")) if extensions_string is not None else set()
+
+        self.gl_extensions = extensions
 
         if renpy.config.log_gl_extensions:
 
@@ -1232,7 +1243,10 @@ cdef class GL2Draw:
         # Clear the screen.
         clear_r, clear_g, clear_b = renpy.color.Color(renpy.config.gl_clear_color).rgb
         glClearColor(clear_r, clear_g, clear_b, 0.0 if screenshot else 1.0)
-        glClear(GL_COLOR_BUFFER_BIT)
+        if screenshot:
+            clear_color_buffer(0, 0, <int> w, <int> h)
+        else:
+            glClear(GL_COLOR_BUFFER_BIT)
 
         # Project the child from virtual space to the screen space.
         cdef Matrix transform

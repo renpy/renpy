@@ -28,6 +28,8 @@ from renpy.display.render cimport Render
 
 from renpy.uguu.gl cimport *
 
+cdef void clear_color_buffer(int x, int y, int width, int height) noexcept nogil
+
 cdef class GL2Draw:
 
 
@@ -51,6 +53,7 @@ cdef class GL2Draw:
     cdef public tuple default_clip
     cdef public float dpi_scale
     cdef public object shader_cache
+    cdef public set gl_extensions
     cdef public bint ever_set_position
 
     cdef public tuple clip_rtt_box

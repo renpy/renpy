@@ -285,6 +285,27 @@ testsuite shaders:
                 assert len(helper.uniform_setters) == len(baseline.uniform_setters) + 1, \
                     "A uniform shared by both stages should have one setter"
 
+    testcase sparse_transform_uniforms:
+        description "Transform state copies only uniforms explicitly set on the source"
+
+        python:
+            from renpy.display.transform import TransformState
+
+            uniform_name = "u_test_shaders_modern_amount"
+            source = TransformState()
+            copied = TransformState()
+
+            assert uniform_name not in source.__dict__
+
+            setattr(source, uniform_name, 0.5)
+            copied.take_state(source)
+
+            assert copied.__dict__[uniform_name] == 0.5
+
+            copied.take_state(TransformState())
+
+            assert uniform_name not in copied.__dict__
+
     testcase generated_fragment_output:
         description "Modern fragment output has an explicit location"
 

@@ -412,7 +412,10 @@ class NodeExecutor:
     "The previous state of the current node."
 
     old_loc: NodeLocation | None = None
-    "The previous location in the game script of the current node."
+    "The location of the previous game statement."
+
+    old_test_node_loc: int | None = None
+    "The location of the previous test node."
 
     last_state_change: float = 0.0
     "The last time the state changed."
@@ -519,13 +522,19 @@ class NodeExecutor:
             self.node.cleanup_after_error(self.node_state)
 
     def update_last_state_change(self, now):
-        loc = renpy.exports.get_filename_line()
+        game_stmt_loc = renpy.exports.get_filename_line()
+        test_node_loc = (self.node.filename, self.node.linenumber) if self.node else None
 
-        if (self.old_state != self.node_state) or (self.old_loc != loc):
+        if (
+            self.old_loc != game_stmt_loc
+            or self.old_test_node_loc != test_node_loc
+            or self.old_state != self.node_state
+        ):
             self.last_state_change = now
 
         self.old_state = self.node_state
-        self.old_loc = loc
+        self.old_test_node_loc = test_node_loc
+        self.old_loc = game_stmt_loc
 
     @property
     def done(self) -> bool:

@@ -6,7 +6,7 @@
         {
             "label": "run.sh --build",
             "type": "shell",
-            "command": "/home/tom/ab/renpy/run.sh --build",
+            "command": "${workspaceFolder}/run.sh --build",
         }
     ]
 }

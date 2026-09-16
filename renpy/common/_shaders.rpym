@@ -80,43 +80,72 @@ init python:
         fragment_color = texture(tex0, v_tex_coord, u_lod_bias);
     """)
 
-    renpy.register_shader("renpy.blur", glsl=300, variables="""
+    renpy.register_shader("renpy.blur", glsl = 300, variables = """
         uniform sampler2D tex0;
+        uniform vec2 res0;
+        uniform float u_renpy_blur_log2;
+
         in vec2 a_tex_coord;
         out vec2 v_tex_coord;
-        uniform float u_renpy_blur_log2;
-    """, vertex_200="""
+
+        out vec2 v__lod_blend;
+        out vec4 v__floor_size;
+        out vec4 v__ceil_size;
+    """, fragment_functions = """
+        vec4 l__cubic(float value) {
+            vec2 n = vec2(1.0 - value, value);
+            vec2 s = n * n;
+            vec2 outer = s * n * (1.0 / 6.0);
+            vec2 inner = vec2(2.0 / 3.0) - s * (2.0 - n) * 0.5;
+
+            return vec4(outer.x, inner.y, inner.x, outer.y);
+        }
+
+        vec4 l__sample_bicubic(sampler2D tex, vec2 uv, vec4 size, float lod) {
+            vec2 tex_coords = uv * size.xy - 0.5;
+            vec2 fraction = fract(tex_coords);
+            tex_coords -= fraction;
+
+            vec4 xcubic = l__cubic(fraction.x);
+            vec4 ycubic = l__cubic(fraction.y);
+
+            vec4 c = tex_coords.xxyy + vec2(-0.5, 1.5).xyxy;
+            vec4 s = vec4(xcubic.xz + xcubic.yw, ycubic.xz + ycubic.yw);
+            vec4 offset = c + vec4(xcubic.yw, ycubic.yw) / s;
+
+            offset *= size.zzww;
+
+            vec4 sample0 = textureLod(tex, offset.xz, lod);
+            vec4 sample1 = textureLod(tex, offset.yz, lod);
+            vec4 sample2 = textureLod(tex, offset.xw, lod);
+            vec4 sample3 = textureLod(tex, offset.yw, lod);
+
+            return mix(mix(sample3, sample2, s.x), mix(sample1, sample0, s.x), s.z);
+        }
+    """, vertex_200 = """
         v_tex_coord = a_tex_coord;
-    """, fragment_200="""
-        float l__norm = 0.0;
 
-        for (int l__i = -5; l__i <= 0; l__i++) {
-            float l__distance = u_renpy_blur_log2 - float(l__i);
-            l__norm += exp(-0.5 * l__distance * l__distance);
+        float l__lod = floor(u_renpy_blur_log2);
+
+        v__lod_blend = vec2(l__lod, u_renpy_blur_log2 - l__lod);
+
+        vec2 l__floor_size = max(vec2(1.0), floor(res0 / exp2(l__lod)));
+        vec2 l__ceil_size = max(vec2(1.0), floor(l__floor_size * 0.5));
+
+        v__floor_size = vec4(l__floor_size, 1.0 / l__floor_size);
+        v__ceil_size = vec4(l__ceil_size, 1.0 / l__ceil_size);
+    """, fragment_200 = """
+        fragment_color = l__sample_bicubic(tex0, v_tex_coord, v__floor_size, v__lod_blend.x);
+
+        if (v__lod_blend.y > 0.0) {
+            vec4 l__next_mip = l__sample_bicubic(tex0, v_tex_coord, v__ceil_size, v__lod_blend.x + 1.0);
+            fragment_color = mix(fragment_color, l__next_mip, v__lod_blend.y);
         }
 
-        vec4 l__acc = l__norm * texture(tex0, v_tex_coord, 0.0);
+        float l__noise = (fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715)))) - 0.5) * (2.0 / 255.0);
 
-        for (int l__i = 1; l__i < 14; l__i++) {
-            float l__level = float(l__i);
-
-            if (l__level >= u_renpy_blur_log2 + 5.0) {
-                break;
-            }
-
-            float l__distance = u_renpy_blur_log2 - l__level;
-            float l__weight = exp(-0.5 * l__distance * l__distance);
-
-            l__acc += l__weight * texture(tex0, v_tex_coord, l__level);
-            l__norm += l__weight;
-        }
-
-        if (l__norm > 0.0) {
-            fragment_color = l__acc / l__norm;
-        } else {
-            fragment_color = texture(tex0, v_tex_coord, 0.0);
-        }
-   """)
+        fragment_color.rgb = clamp(fragment_color.rgb + vec3(l__noise * fragment_color.a), vec3(0.0), vec3(fragment_color.a));
+    """)
 
     renpy.register_shader("renpy.solid", glsl=300, variables="""
         uniform vec4 u_renpy_solid_color;
