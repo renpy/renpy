@@ -1012,8 +1012,9 @@ class Lexer:
         runs of whitespace with multiple newlines are turned into a single
         newline.
 
-        Except in the case of a raw string where this returns a simple string,
-        this returns a list of strings.
+        This returns a list of (offset, string) pairs where offset is the 
+        paragraph's relative line number to the start of the triple_string.
+        In the case of a raw string, this returns a simple string instead.
         """
 
         s = self.match(r'r?"""([^\\"]|\\.|"(?!""))*"""')
@@ -1066,22 +1067,27 @@ class Lexer:
                 sl = [s]
 
             rv = []
+            pos = 0
 
-            for s in sl:
-                s = s.strip()
+            for part in sl:
+                leading_ws = len(part) - len(part.lstrip())
+                line_offset = s.count("\n", 0, pos) + part.count("\n", 0, leading_ws)
+                pos += len(part) + len(mondel)
 
-                if not s:
+                part = part.strip()
+
+                if not part:
                     continue
 
                 # Collapse runs of whitespace into single spaces.
                 if mondel:
-                    s = re.sub(r"[ \n]+", " ", s)
+                    part = re.sub(r"[ \n]+", " ", part)
                 else:
-                    s = re.sub(r" +", " ", s)
+                    part = re.sub(r" +", " ", part)
 
-                s = re.sub(r"\\(u([0-9a-fA-F]{1,4})|.)", dequote, s)  # type: ignore
+                part = re.sub(r"\\(u([0-9a-fA-F]{1,4})|.)", dequote, part)  # type: ignore
 
-                rv.append(s)
+                rv.append((line_offset, part))
 
             return rv
 
