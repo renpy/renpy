@@ -32,7 +32,7 @@ from renpy.gl2.gl2statecache cimport GLStateCache, SCRATCH_POSITION, SCRATCH_ATT
 from renpy.display.matrix cimport Matrix
 
 from renpy.gl2.gl2uniform import generate_uniform_setter
-from renpy.gl2.gl2shadercache import FLAT_TYPES, FRAGMENT_OUTPUT
+from renpy.gl2.gl2shadercache import FLAT_TYPES, FRAGMENT_OUTPUT, MAX_PROGRAM_BINARY_SIZE, parse_glsl_version
 
 import renpy
 import copy
@@ -44,6 +44,28 @@ cdef GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
 
 class ShaderError(Exception):
     pass
+
+
+def supports_program_binaries(gles, version, extensions):
+    cdef GLint formats = 0
+
+    if renpy.emscripten:
+        return False
+
+    version = parse_glsl_version(version)
+
+    if gles:
+        if version is None or version < 300:
+            return False
+    elif (version is None or version < 410) and "GL_ARB_get_program_binary" not in extensions:
+        return False
+
+    if glGetProgramBinary == NULL or glProgramBinary == NULL or glProgramParameteri == NULL:
+        return False
+
+    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats)
+
+    return formats > 0
 
 
 GLSL_PRECISIONS = {
@@ -414,6 +436,7 @@ cdef class Program:
         self.vertex = vertex
         self.fragment = fragment
         self.variable_specs = variable_specs
+        self.binary_retrievable = False
 
         # A list of Attribute objects
         self.attributes = [ ]
@@ -421,6 +444,9 @@ cdef class Program:
         # A list of gl2uniform.Setter objects that can be called to set
         # the uniforms.
         self.uniform_setters = [ ]
+
+    def make_binary_retrievable(self):
+        self.binary_retrievable = True
 
     def __dealloc__(self):
         glDeleteProgram(self.program)
@@ -457,6 +483,65 @@ cdef class Program:
                 specs.append((v.storage, v.type, v.name, v.array, fragment))
 
         return specs
+
+    def load_binary(self, binary):
+        cdef GLenum binary_format
+        cdef GLint status
+        cdef GLuint program
+        cdef bytes binary_data
+        cdef const char *binary_ptr
+
+        if glProgramBinary == NULL:
+            return False
+
+        binary_format, binary_data = binary
+
+        if not binary_data or len(binary_data) > MAX_PROGRAM_BINARY_SIZE:
+            return False
+
+        binary_ptr = binary_data
+        program = glCreateProgram()
+
+        glProgramBinary(program, binary_format, binary_ptr, len(binary_data))
+        glGetProgramiv(program, GL_LINK_STATUS, &status)
+
+        if status == GL_FALSE:
+            glDeleteProgram(program)
+            return False
+
+        self.program = program
+        self.find_program_variables()
+
+        return True
+
+    def get_binary(self):
+        cdef char *binary = NULL
+        cdef GLenum binary_format
+        cdef GLint binary_length
+        cdef GLsizei written = 0
+
+        if glGetProgramBinary == NULL:
+            return None
+
+        glGetProgramiv(self.program, GL_PROGRAM_BINARY_LENGTH, &binary_length)
+
+        if binary_length <= 0 or binary_length > MAX_PROGRAM_BINARY_SIZE:
+            return None
+
+        binary = <char *> malloc(binary_length)
+
+        if binary == NULL:
+            raise MemoryError()
+
+        try:
+            glGetProgramBinary(self.program, binary_length, &written, &binary_format, binary)
+
+            if written <= 0 or written > binary_length:
+                return None
+
+            return binary_format, binary[:written]
+        finally:
+            free(binary)
 
     def find_program_variables(self):
         cdef GLint max_samplers = 0
@@ -546,8 +631,6 @@ cdef class Program:
         cdef GLuint vertex
         cdef GLuint program
         cdef GLint status
-        cdef GLint max_samplers = 0
-
         cdef char[1024] error
 
         vertex = self.load_shader(GL_VERTEX_SHADER, self.vertex)
@@ -556,6 +639,10 @@ cdef class Program:
         program = glCreateProgram()
         glAttachShader(program, vertex)
         glAttachShader(program, fragment)
+
+        if self.binary_retrievable and glProgramParameteri != NULL:
+            glProgramParameteri(program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE)
+
         glLinkProgram(program)
 
         glGetProgramiv(program, GL_LINK_STATUS, &status)

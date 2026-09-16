@@ -256,6 +256,7 @@ cdef extern from "renpygl.h":
     GLenum GL_RG16UI
     GLenum GL_RG32I
     GLenum GL_RG32UI
+    GLenum GL_PROGRAM_BINARY_RETRIEVABLE_HINT
     GLenum GL_UNSIGNED_SHORT_5_6_5
     GLenum GL_UNSIGNED_INT_2_10_10_10_REV
     GLenum GL_MIRRORED_REPEAT
@@ -318,8 +319,11 @@ cdef extern from "renpygl.h":
     GLenum GL_VERTEX_ATTRIB_ARRAY_POINTER
     GLenum GL_NUM_COMPRESSED_TEXTURE_FORMATS
     GLenum GL_COMPRESSED_TEXTURE_FORMATS
+    GLenum GL_PROGRAM_BINARY_LENGTH
     GLenum GL_BUFFER_SIZE
     GLenum GL_BUFFER_USAGE
+    GLenum GL_NUM_PROGRAM_BINARY_FORMATS
+    GLenum GL_PROGRAM_BINARY_FORMATS
     GLenum GL_STENCIL_BACK_FUNC
     GLenum GL_STENCIL_BACK_FAIL
     GLenum GL_STENCIL_BACK_PASS_DEPTH_FAIL
@@ -817,6 +821,9 @@ cdef glGetIntegeri_v_type glGetIntegeri_v
 ctypedef void (__stdcall *glGetIntegerv_type)(GLenum  pname, GLint * data) nogil
 cdef glGetIntegerv_type glGetIntegerv
 
+ctypedef void (__stdcall *glGetProgramBinary_type)(GLuint  program, GLsizei  bufSize, GLsizei * length, GLenum * binaryFormat, void * binary) nogil
+cdef glGetProgramBinary_type glGetProgramBinary
+
 ctypedef void (__stdcall *glGetProgramInfoLog_type)(GLuint  program, GLsizei  bufSize, GLsizei * length, GLchar * infoLog) nogil
 cdef glGetProgramInfoLog_type glGetProgramInfoLog
 
@@ -927,6 +934,12 @@ cdef glPixelStorei_type glPixelStorei
 
 ctypedef void (__stdcall *glPolygonOffset_type)(GLfloat  factor, GLfloat  units) nogil
 cdef glPolygonOffset_type glPolygonOffset
+
+ctypedef void (__stdcall *glProgramBinary_type)(GLuint  program, GLenum  binaryFormat, const void * binary, GLsizei  length) nogil
+cdef glProgramBinary_type glProgramBinary
+
+ctypedef void (__stdcall *glProgramParameteri_type)(GLuint  program, GLenum  pname, GLint  value) nogil
+cdef glProgramParameteri_type glProgramParameteri
 
 ctypedef void (__stdcall *glReadBuffer_type)(GLenum  src) nogil
 cdef glReadBuffer_type glReadBuffer

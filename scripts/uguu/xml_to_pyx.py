@@ -62,6 +62,7 @@ GL_FEATURES = [
     "GL_VERSION_2_0",
     "GL_VERSION_2_1",
     "GL_VERSION_3_0",
+    "GL_ARB_get_program_binary",
 ]
 
 GLES_FEATURES = [

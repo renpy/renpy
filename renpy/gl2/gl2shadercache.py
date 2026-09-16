@@ -751,6 +751,7 @@ precision highp int;
 
 shader_part_filter_cache = {}
 
+MAX_PROGRAM_BINARY_SIZE = 16 * 1024 * 1024
 
 def program_variable_specs(vertex_variables, fragment_variables):
     rv = []
