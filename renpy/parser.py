@@ -1510,13 +1510,15 @@ def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None, in
 
         rv = []
 
-        for i in what:
+        for line_offset, i in what:
+            paragraph_loc = (loc[0], loc[1] + line_offset)
+
             if i == "{clear}":
-                rv.append(ast.UserStatement(loc, "nvl clear", [], (("nvl", "clear"), {})))
+                rv.append(ast.UserStatement(paragraph_loc, "nvl clear", [], (("nvl", "clear"), {})))
             else:
                 rv.append(
                     ast.Say(
-                        loc,
+                        paragraph_loc,
                         who,
                         i,
                         with_,
