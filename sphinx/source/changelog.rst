@@ -38,6 +38,10 @@ On mobile and the web, Ren'Py now requires an OpenGL ES 3.0 context, which
 devices with a GPU from 2013 or later provide. On desktop, Ren'Py asks for
 an OpenGL 3.3 context and falls back to OpenGL 2.0.
 
+When supported by the graphics driver, linked shader programs can now be cached
+across launches. This reduces first-use shader compilation and linking hitches
+after a program has been encountered once.
+
 Clipboard
 ---------
 

@@ -151,6 +151,12 @@ used in game/cache/shaders.txt, and loads them at startup. If major changes
 in shader use occur, this file should be edited or deleted so it can be
 re-created with valid data.
 
+On systems that support OpenGL program binaries, Ren'Py can also cache the linked
+program for each combination. This cache is specific to the graphics driver; if 
+shader parts or GLSL version change or if the driver rejects a cached program,
+Ren'Py re-compiles the shader from source and replaces the cached program
+automatically.
+
 
 .. _custom-shaders:
 

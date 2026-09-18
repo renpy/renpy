@@ -397,6 +397,12 @@ Display
     The default value of the :ref:`u_lod_bias <u-lod-bias>` uniform,
     which controls the mipmap level Ren'Py uses.
 
+.. var:: config.gl_program_cache = False
+
+    If True, Ren'Py caches compiled OpenGL programs on disk for reuse on
+    subsequent launches. This can reduce shader loading time on supported
+    native renderers. Unsupported renderers compile shaders normally.
+
 .. var:: config.gl_resize = True
 
     Determines if the user is allowed to resize an OpenGL-drawn window.
