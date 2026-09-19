@@ -23,8 +23,9 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 import time
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+import asyncio
 
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import renpy
 
@@ -101,38 +102,11 @@ def reset():
     del screens[:]
 
 
-class Deadline():
+async def prediction_coroutine(root_widget: renpy.display.displayable.Displayable):
     """
-    Represents a deadline at which the prediction thread should stop predicting.
-    """
-
-    def __init__(self):
-        self.deadline: int = 0
-        "When we should return control to the function that runs the coroutine."
-
-    def __await__(self):
-        global predicting
-
-        if time.perf_counter_ns() > self.deadline:
-            predicting = False
-            self.deadline = yield True
-            predicting = True
-
-        return
-
-
-async def prediction_coroutine(deadline: Deadline, root_widget: renpy.display.displayable.Displayable):
-    """
-    The image prediction co-routine. This predicts the images that can
+    The image predictiont coroutine. This predicts the images that can
     be loaded in the near future, and passes them to the image cache's
     preload_image method to be queued up for loading.
-
-    The .send should be called with True to do a expensive prediction,
-    and with False to either do an inexpensive prediction or no
-    prediction at all.
-
-    Returns True if there's more predicting to be done, or False
-    if there's no more predicting worth doing.
     """
 
     global predicting
@@ -141,7 +115,7 @@ async def prediction_coroutine(deadline: Deadline, root_widget: renpy.display.di
     renpy.display.im.cache.start_prediction()
 
     # Wait to be told to start.
-    await deadline
+    await asyncio.sleep(0)
 
     # Set up the image prediction method.
     global image
@@ -157,13 +131,13 @@ async def prediction_coroutine(deadline: Deadline, root_widget: renpy.display.di
             if renpy.config.debug_prediction:
                 raise
 
-        await deadline
+        await asyncio.sleep(0)
 
     # Predict images that are going to be reached in the next few
     # clicks.
 
     for _i in renpy.game.context().predict():
-        await deadline
+        await asyncio.sleep(0)
 
     # If there's a parent context, predict we'll be returning to it
     # shortly. Otherwise, call the functions in
@@ -181,12 +155,12 @@ async def prediction_coroutine(deadline: Deadline, root_widget: renpy.display.di
                 except Exception:
                     pass
 
-                await deadline
+                await asyncio.sleep(0)
 
     else:
         for i in renpy.config.predict_callbacks:
             i()
-            await deadline
+            await asyncio.sleep(0)
 
         # Predict the game menu screen.
 
@@ -205,13 +179,13 @@ async def prediction_coroutine(deadline: Deadline, root_widget: renpy.display.di
                     renpy.display.screen.predict_screen(s)
                     predicted_screens.append((s, (), {}))
 
-            await deadline
+            await asyncio.sleep(0)
 
     # Predict that overlay screens will be shown.
     for i in renpy.config.overlay_screens:
         renpy.display.screen.predict_screen(i)
         predicted_screens.append((i, (), {}))
-        await deadline
+        await asyncio.sleep(0)
 
     # Predict screens given with renpy.start_predict_screen.
     for name, value in list(renpy.store._predict_screen.items()):
@@ -220,7 +194,7 @@ async def prediction_coroutine(deadline: Deadline, root_widget: renpy.display.di
         predicted_screens.append((name, args, kwargs))
 
         renpy.display.screen.predict_screen(name, *args, **kwargs)
-        await deadline
+        await asyncio.sleep(0)
 
 
     # Predict things (especially screens) that are reachable through
@@ -250,17 +224,16 @@ async def prediction_coroutine(deadline: Deadline, root_widget: renpy.display.di
         if name.startswith("_"):
             continue
 
-        await deadline
+        await asyncio.sleep(0)
 
         renpy.display.screen.predict_screen(name, *args, **kwargs)
 
     predict_registered_shaders()
-    await deadline
+    await asyncio.sleep(0)
 
     # Pre-build shader combinations exposed by prediction.
     while renpy.gl2.gl2shadercache.has_predicted_shaders():
         renpy.gl2.gl2shadercache.preload_predicted_shader()
-        await deadline
-
+        await asyncio.sleep(0)
 
     renpy.gl2.assimp.finish_predict()

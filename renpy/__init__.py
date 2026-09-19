@@ -238,6 +238,7 @@ name_blacklist = {
     "renpy.gl2.assimp.loader",
     "renpy.gl2.assimp.loader_lock",
     "renpy.gl2.gl2draw.default_position",
+    "renpy.asyncio.default_runner",
 }
 
 
@@ -400,6 +401,7 @@ def import_all():
     sys.modules["renpy.py3analysis"] = renpy.pyanalysis
 
     import renpy.astsupport
+    import renpy.asyncio
 
     import renpy.parameter
     import renpy.ast
@@ -645,6 +647,9 @@ def reload_all():
     # Free memory.
     renpy.exports.free_memory()
 
+    # Reset asyncio tasks.
+    renpy.asyncio.reset()
+
     # GC renders.
     renpy.display.render.screen_render = None
     renpy.display.render.mark_sweep()
@@ -701,6 +706,7 @@ if typing.TYPE_CHECKING:
     from . import arguments as arguments
     from . import ast as ast
     from . import astsupport as astsupport
+    from . import asyncio as asyncio
     from . import atl as atl
     from . import audio as audio
     from . import bootstrap as bootstrap
