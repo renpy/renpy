@@ -109,27 +109,53 @@ class Runner:
         """
         Cancels all pending tasks and closes the event loop.
         """
-        for t in list(self.tasks):
-            t.cancel()
-        self.tasks.clear()
+        self.reset()
         if not self.loop.is_closed():
             self.loop.close()
 
     def reset(self) -> None:
         """
-        Resets the runner with a fresh event loop.
+        Cancels and cleans up ongoing tasks without ending the event loop.
         """
-        self.close()
-        self.loop = asyncio.new_event_loop()
-        self.tasks = set()
+        to_cancel = {t for t in self.tasks if not t.done()}
+        if not self.loop.is_closed():
+            to_cancel.update(t for t in asyncio.all_tasks(self.loop) if not t.done())
 
-        def _task_factory(loop: asyncio.AbstractEventLoop, coro: Any, **kwargs: Any) -> asyncio.Task[Any]:
-            task: asyncio.Task[Any] = asyncio.Task(coro, loop=loop, **kwargs)
-            self.tasks.add(task)
-            return task
+        for t in to_cancel:
+            t.cancel()
 
-        self.loop.set_task_factory(_task_factory)
-        self.loop._stopping = True  # type: ignore
+        if not self.loop.is_closed() and (to_cancel or getattr(self.loop, "_ready", None)):
+            try:
+                prev_loop = asyncio.get_running_loop()
+            except RuntimeError:
+                prev_loop = None
+
+            asyncio._set_running_loop(self.loop)
+            try:
+                self.loop._stopping = True  # type: ignore
+                steps = 0
+                while (to_cancel and any(not t.done() for t in to_cancel)) or getattr(self.loop, "_ready", None):
+                    if not getattr(self.loop, "_ready", None):
+                        break
+                    self.loop._run_once()  # type: ignore
+                    for t in self.tasks:
+                        if not t.done() and t not in to_cancel:
+                            t.cancel()
+                            to_cancel.add(t)
+                    steps += 1
+                    if steps >= 1000:
+                        break
+            finally:
+                asyncio._set_running_loop(prev_loop)
+
+            for t in to_cancel:
+                if t.done() and not t.cancelled():
+                    t.exception()
+
+        for t in list(self.tasks):
+            if t.done() and not t.cancelled():
+                t.exception()
+        self.tasks.clear()
 
 
 default_runner = Runner()
@@ -151,7 +177,7 @@ def run_for_ns(ns: int) -> bool:
 
 def reset() -> None:
     """
-    Resets the default runner.
+    Resets the default runner by cancelling and cleaning up ongoing tasks without ending the event loop.
     """
     default_runner.reset()
 
@@ -161,3 +187,35 @@ def has_tasks() -> bool:
     Returns True if the default runner has pending tasks.
     """
     return bool(default_runner.tasks)
+
+
+sync_loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
+
+
+def run_sync[T](coro: Coroutine[Any, Any, T]) -> T:
+    """
+    Runs a coroutine task to completion on a dedicated event loop shared
+    between all calls to run_sync.
+    """
+    global sync_loop
+
+    if sync_loop.is_closed():
+        sync_loop = asyncio.new_event_loop()
+
+    try:
+        prev_loop = asyncio.get_running_loop()
+    except RuntimeError:
+        prev_loop = None
+
+    if prev_loop is sync_loop:
+        if hasattr(coro, "close"):
+            coro.close()
+        raise RuntimeError("run_sync cannot be called from within a coroutine running on the sync loop")
+
+    if prev_loop is not None:
+        asyncio._set_running_loop(None)
+    try:
+        return sync_loop.run_until_complete(coro)
+    finally:
+        if prev_loop is not None:
+            asyncio._set_running_loop(prev_loop)
