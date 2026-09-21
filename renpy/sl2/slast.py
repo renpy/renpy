@@ -26,6 +26,7 @@
 # field is copied in the copy() method.
 
 import ast
+import asyncio
 import collections
 import hashlib
 import linecache
@@ -84,7 +85,7 @@ def compile_expr(loc, node):
 
 class SLContext(renpy.ui.Addable):
     """
-    A context object that can be passed to the execute methods, and can also
+    A context object that can be passed to the execute_async methods, and can also
     be placed in renpy.ui.stack.
     """
 
@@ -253,7 +254,7 @@ class SLNode:
 
     def prepare(self, analysis: Analysis):
         """
-        This should be called before the execute code is called, and again
+        This should be called before the execute_async code is called, and again
         after init-level code (like the code in a .rpym module or an init
         python block) is called.
 
@@ -263,12 +264,12 @@ class SLNode:
 
         # By default, does nothing.
 
-    def execute(self, context):
+    async def execute_async(self, context):
         """
         Execute this node, updating context as appropriate.
         """
 
-        raise Exception(f"execute not implemented by {type(self).__name__}")
+        raise Exception(f"execute_async not implemented by {type(self).__name__}")
 
     def keywords(self, context):
         """
@@ -489,13 +490,13 @@ class SLBlock(SLNode):
                 if not renpy.config.developer:
                     break
 
-    def execute(self, context):
-        # Note: SLBlock.execute() is inlined in various locations for performance
+    async def execute_async(self, context):
+        # Note: SLBlock.execute_async() is inlined in various locations for performance
         # reasons.
 
         for i in self.children:
             try:
-                i.execute(context)
+                await i.execute_async(context)
             except Exception:
                 if not context.predicting:
                     raise
@@ -862,7 +863,7 @@ class SLDisplayable(SLBlock):
         # We do not want to pass keywords to our parents, so just return.
         return
 
-    def execute(self, context):
+    async def execute_async(self, context):
         debug = context.debug
 
         screen = renpy.ui.screen
@@ -1098,10 +1099,10 @@ class SLDisplayable(SLBlock):
         stack.append(ctx)
 
         try:
-            # Evaluate children. (Inlined SLBlock.execute)
+            # Evaluate children. (Inlined SLBlock.execute_async)
             for i in self.children:
                 try:
-                    i.execute(ctx)
+                    await i.execute_async(ctx)
                 except Exception:
                     if not context.predicting:
                         raise
@@ -1429,18 +1430,18 @@ class SLIf(SLNode):
             self.has_keyword |= block.has_keyword
             self.last_keyword |= block.last_keyword
 
-    def execute(self, context):
+    async def execute_async(self, context):
         if context.predicting:
-            self.execute_predicting(context)
+            await self.execute_predicting(context)
             return
 
         for cond, block, _cond_const in self.prepared_entries:
             if cond is None or eval(cond, context.globals, context.scope):
                 for i in block.children:
-                    i.execute(context)
+                    await i.execute_async(context)
                 return
 
-    def execute_predicting(self, context):
+    async def execute_predicting(self, context):
         # A variant of the this code that runs while predicting, executing
         # all paths of the if.
 
@@ -1463,7 +1464,7 @@ class SLIf(SLNode):
 
                 for i in block.children:
                     try:
-                        i.execute(context)
+                        await i.execute_async(context)
                     except Exception:
                         pass
 
@@ -1477,7 +1478,7 @@ class SLIf(SLNode):
 
                 for i in block.children:
                     try:
-                        i.execute(ctx)
+                        await i.execute_async(ctx)
                     except Exception:
                         pass
 
@@ -1571,7 +1572,7 @@ class SLShowIf(SLNode):
 
         self.last_keyword = True
 
-    def execute(self, context):
+    async def execute_async(self, context):
         # This is true when the block should be executed - when no outer
         # showif is False, and when no prior block in this showif has
         # executed.
@@ -1590,7 +1591,7 @@ class SLShowIf(SLNode):
                     ctx.showif = False
 
             for i in block.children:
-                i.execute(ctx)
+                await i.execute_async(ctx)
 
             if ctx.fail:
                 context.fail = True
@@ -1692,7 +1693,7 @@ class SLFor(SLBlock):
 
         self.last_keyword = True
 
-    def execute(self, context):
+    async def execute_async(self, context):
         variable = self.variable
         expr = self.expression_expr
 
@@ -1733,7 +1734,7 @@ class SLFor(SLBlock):
                 sl_python = next(children_i)
                 # It can only fail if the unpacking fails, but it can still
                 try:
-                    sl_python.execute(ctx)
+                    await sl_python.execute_async(ctx)
                 except Exception:
                     if not context.predicting:
                         raise
@@ -1753,12 +1754,12 @@ class SLFor(SLBlock):
 
             newcaches[index] = ctx.new_cache = {}
 
-            # Inline of SLBlock.execute.
+            # Inline of SLBlock.execute_async.
 
             try:
                 for i in children_i:
                     try:
-                        i.execute(ctx)
+                        await i.execute_async(ctx)
                     except SLForException:
                         raise
                     except Exception:
@@ -1813,7 +1814,7 @@ class SLBreak(SLNode):
     def analyze(self, analysis):
         analysis.exit_loop()
 
-    def execute(self, context):
+    async def execute_async(self, context):
         raise SLBreakException()
 
     def copy(self, transclude):
@@ -1829,7 +1830,7 @@ class SLContinue(SLNode):
     def analyze(self, analysis):
         analysis.exit_loop()
 
-    def execute(self, context):
+    async def execute_async(self, context):
         raise SLContinueException()
 
     def copy(self, transclude):
@@ -1858,7 +1859,7 @@ class SLPython(SLNode):
     def analyze(self, analysis):
         analysis.python(self.code.source)
 
-    def execute(self, context):
+    async def execute_async(self, context):
         exec(self.code.bytecode, context.globals, context.scope)
 
     def prepare(self, analysis):
@@ -1873,7 +1874,7 @@ class SLPython(SLNode):
 
 
 class SLPass(SLNode):
-    def execute(self, context):
+    async def execute_async(self, context):
         return
 
     def copy(self, transclude):
@@ -1908,7 +1909,7 @@ class SLDefault(SLNode):
         self.constant = NOT_CONST
         self.last_keyword = True
 
-    def execute(self, context):
+    async def execute_async(self, context):
         scope = context.scope
         variable = self.variable
 
@@ -2035,7 +2036,7 @@ class SLUse(SLNode):
 
         renpy.display.screen.use_screen(self.target, *args, _name=name, _scope=context.scope, **kwargs)
 
-    def execute(self, context):
+    async def execute_async(self, context):
         if isinstance(self.target, renpy.ast.PyExpr):
             target_name = eval(self.target, context.globals, context.scope)
             target = renpy.display.screen.get_screen_variant(target_name)
@@ -2121,7 +2122,7 @@ class SLUse(SLNode):
         ctx.transclude = self.block
 
         try:
-            ast.execute(ctx)
+            await ast.execute_async(ctx)
         finally:
             del scope["_scope"]
 
@@ -2179,7 +2180,7 @@ class SLTransclude(SLNode):
         rv.constant = transclude
         return rv
 
-    def execute(self, context):
+    async def execute_async(self, context):
         if not context.transclude:
             return
 
@@ -2206,7 +2207,7 @@ class SLTransclude(SLNode):
         try:
             renpy.ui.stack.append(ctx)
             context.transclude.keywords(ctx)
-            context.transclude.execute(ctx)
+            await context.transclude.execute_async(ctx)
         finally:
             renpy.ui.stack.pop()
 
@@ -2310,7 +2311,7 @@ class SLCustomUse(SLNode):
 
         self.constant = min(self.constant, self.ast.constant)
 
-    def execute(self, context):
+    async def execute_async(self, context):
         # Figure out the cache to use.
         ctx = SLContext(context)
         ctx.new_cache = context.new_cache[self.serial] = {}
@@ -2398,7 +2399,7 @@ class SLCustomUse(SLNode):
             ctx.transclude = None
 
         try:
-            ast.execute(ctx)
+            await ast.execute_async(ctx)
         finally:
             del scope["_scope"]
 
@@ -2616,15 +2617,15 @@ class SLScreen(SLBlock):
 
             profile_log.write("")
 
-    def execute(self, context):
+    async def execute_async(self, context):
         self.const_ast.keywords(context)
-        SLBlock.execute(self.const_ast, context)
+        await SLBlock.execute_async(self.const_ast, context)
 
     def report_traceback(self, name, last):
         if last:
             return None
 
-        if name == "__call__":
+        if name in ("__call__", "call_async"):
             return []
 
         return super().report_traceback(name, last)
@@ -2632,7 +2633,7 @@ class SLScreen(SLBlock):
     def copy_on_change(self, cache):
         SLBlock.copy_on_change(self.const_ast, cache)
 
-    def __call__(self, *args, **kwargs):
+    async def call_async(self, *args, **kwargs):
         scope = kwargs["_scope"]
         debug = kwargs.get("_debug", False)
 
@@ -2682,13 +2683,16 @@ class SLScreen(SLBlock):
         context.new_use_cache = {}
 
         # This really executes self.const_ast.
-        self.execute(context)
+        await self.execute_async(context)
 
         for i in context.children:
             renpy.ui.implicit_add(i)
 
         current_screen.cache[name] = context.new_cache
         current_screen.use_cache = context.new_use_cache
+
+    def __call__(self, *args, **kwargs):
+        return renpy.asyncio.run_sync(self.call_async(*args, **kwargs))
 
 
 class ScreenCache:
