@@ -758,7 +758,7 @@ before releasing it:
     * The `Completed Games section of the Lemma Soft Forums <https://lemmasoft.renai.us/forums/viewforum.php?f=11>`_ is a
       good place to tell fellow creators about your game.
 
-More advanced vays of customizing the building of the distribution of your game
+More advanced ways of customizing the building of the distribution of your game
 can be found in the :doc:`build` section.
 
 Script of The Question

@@ -36,8 +36,6 @@ Some limitations are:
   that sockets and the requests library will return errors when run inside
   the web browser.
 
-* Live2D is not supported.
-
 In addition, there are some limitations that can be caused by where you host
 your game. Some hosting providers limit the size of a game and the number
 of files that can be included as part of a project. As an example,
