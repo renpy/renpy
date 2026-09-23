@@ -26,7 +26,6 @@
 # field is copied in the copy() method.
 
 import ast
-import asyncio
 import collections
 import hashlib
 import linecache
@@ -38,7 +37,7 @@ from typing import Any, Self
 import renpy
 from renpy.compat.pickle import dumps, loads
 from renpy.display.layout import Fixed
-from renpy.display.predict import displayable as predict_displayable
+from renpy.display.predict import displayable as predict_displayable, predict_sleep
 from renpy.display.transform import ATLTransform, Transform
 from renpy.pyanalysis import GLOBAL_CONST, LOCAL_CONST, NOT_CONST, Analysis, ccache
 from renpy.python import py_eval as eval
@@ -2633,7 +2632,7 @@ class SLScreen(SLBlock):
     def copy_on_change(self, cache):
         SLBlock.copy_on_change(self.const_ast, cache)
 
-    async def call_async(self, *args, **kwargs):
+    async def call_async(self, *args, **kwargs) -> list[renpy.display.displayable.Displayable]:
         scope = kwargs["_scope"]
         debug = kwargs.get("_debug", False)
 
@@ -2685,14 +2684,17 @@ class SLScreen(SLBlock):
         # This really executes self.const_ast.
         await self.execute_async(context)
 
-        for i in context.children:
-            renpy.ui.implicit_add(i)
-
         current_screen.cache[name] = context.new_cache
         current_screen.use_cache = context.new_use_cache
 
+        return context.children
+
     def __call__(self, *args, **kwargs):
-        return renpy.asyncio.run_sync(self.call_async(*args, **kwargs))
+
+        children: list[renpy.display.displayable.Displayable] = renpy.asyncio.run_sync(self.call_async(*args, **kwargs))
+
+        for i in children:
+            renpy.ui.implicit_add(i)
 
 
 class ScreenCache:

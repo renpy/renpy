@@ -641,7 +641,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         return rv
 
-    def update(self):
+    async def update_async(self):
         if self in updated_screens:
             return
 
@@ -704,17 +704,23 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         # Evaluate the screen.
         try:
-            renpy.ui.detached()
-            self.child = renpy.ui.default_fixed(focus="_screen_" + "_".join(self.screen_name))
-            self.children = [self.child]
-
             self.scope["_scope"] = self.scope
             self.scope["_name"] = NAME
             self.scope["_debug"] = debug
 
-            self.screen.function(**self.scope)
+            if self.screen.ast:
+                self.child = renpy.display.layout.MultiBox(layout="fixed", focus="_screen_" + "_".join(self.screen_name))
+                self.children = [self.child]
 
-            renpy.ui.close()
+                for i in await self.screen.ast.call_async(**self.scope):
+                    self.child.add(i)
+            else:
+                self.child = renpy.ui.default_fixed(focus="_screen_" + "_".join(self.screen_name))
+                self.children = [self.child]
+
+                renpy.ui.detached()
+                self.screen.function(**self.scope)
+                renpy.ui.close()
 
         finally:
             # Safe removal as to not reraise another exception and lose the last one
@@ -758,6 +764,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
             self.phase = UPDATE
 
         return self.widgets
+
+    def update(self):
+        renpy.asyncio.run_sync(self.update_async())
+
 
     def render(self, w, h, st, at):
         if not self.child:
@@ -1390,7 +1400,7 @@ def show_screen(_screen_name, *_args, **kwargs):
         sls.shown.predict_show(_layer, name, True)
 
 
-def predict_screen(_screen_name, *_args, **kwargs):
+async def predict_screen_async(_screen_name, *_args, **kwargs):
     """
     Predicts the displayables that make up the given screen.
 
@@ -1442,7 +1452,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
     try:
         d = ScreenDisplayable(screen, None, None, _widget_properties, scope)
         d.cache = cache_get(screen, _args, kwargs)
-        d.update()
+        await d.update_async()
         cache_put(screen, _args, kwargs, d.cache)
 
         renpy.display.predict.displayable(d)
@@ -1459,6 +1469,24 @@ def predict_screen(_screen_name, *_args, **kwargs):
         scope.pop("_scope", None)
 
     renpy.ui.reset()
+
+def predict_screen(_screen_name, *_args, **kwargs):
+    """
+    Predicts the displayables that make up the given screen.
+
+    `_screen_name`
+        The name of the  screen to show.
+    `_widget_properties`
+        A map from the id of a widget to a property name -> property
+        value map. When a widget with that id is shown by the screen,
+        the specified properties are added to it.
+
+    Keyword arguments not beginning with underscore (_) are used to
+    initialize the screen's scope.
+    """
+
+    renpy.asyncio.run_sync(predict_screen_async(_screen_name, *_args, **kwargs))
+
 
 
 def hide_screen(tag, layer=None, immediately=False):

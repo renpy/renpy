@@ -239,7 +239,7 @@ name_blacklist = {
     "renpy.gl2.assimp.loader_lock",
     "renpy.gl2.gl2draw.default_position",
     "renpy.asyncio.default_runner",
-    "renpy.asyncio.sync_loop",
+    "renpy.asyncio._sync_loop_state",
 }
 
 

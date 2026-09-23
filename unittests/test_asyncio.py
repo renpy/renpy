@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import asyncio
+import threading
 import time
 import unittest
 
@@ -305,7 +306,7 @@ class TestAsyncioRunner(unittest.TestCase):
         self.assertEqual(rasynco.run_sync(work()), 42)
 
     def test_run_sync_shared_loop(self):
-        # Multiple calls to run_sync should share the same event loop, distinct from default_runner.loop.
+        # Multiple calls to run_sync in one thread should share the same event loop.
         loops = []
 
         async def capture_loop():
@@ -317,8 +318,21 @@ class TestAsyncioRunner(unittest.TestCase):
 
         self.assertEqual(len(loops), 2)
         self.assertIs(loops[0], loops[1])
-        self.assertIs(loops[0], rasynco.sync_loop)
         self.assertIsNot(loops[0], rasynco.default_runner.loop)
+
+    def test_run_sync_uses_thread_local_loops(self):
+        loops = []
+
+        async def capture_loop():
+            loops.append(asyncio.get_running_loop())
+
+        thread = threading.Thread(target=lambda: rasynco.run_sync(capture_loop()))
+        thread.start()
+        thread.join()
+        rasynco.run_sync(capture_loop())
+
+        self.assertEqual(len(loops), 2)
+        self.assertIsNot(loops[0], loops[1])
 
     def test_run_sync_with_sleep(self):
         # run_sync correctly advances time/timers to run async operations.
@@ -363,7 +377,7 @@ class TestAsyncioRunner(unittest.TestCase):
             asyncio._set_running_loop(None)
 
     def test_run_sync_nested_call_raises(self):
-        # Calling run_sync from inside a coroutine running on sync_loop raises RuntimeError.
+        # Calling run_sync from inside a coroutine running on the thread's sync loop raises RuntimeError.
         async def inner():
             return 1
 
