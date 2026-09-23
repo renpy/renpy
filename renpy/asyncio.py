@@ -22,6 +22,7 @@
 from __future__ import annotations
 
 import asyncio
+import threading
 import time
 from collections.abc import Coroutine
 from typing import Any
@@ -189,18 +190,18 @@ def has_tasks() -> bool:
     return bool(default_runner.tasks)
 
 
-sync_loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
+_sync_loop_state = threading.local()
 
 
 def run_sync[T](coro: Coroutine[Any, Any, T]) -> T:
     """
-    Runs a coroutine task to completion on a dedicated event loop shared
-    between all calls to run_sync.
+    Runs a coroutine task to completion on an event loop dedicated to the
+    current thread and shared between calls to run_sync on that thread.
     """
-    global sync_loop
-
-    if sync_loop.is_closed():
+    sync_loop = getattr(_sync_loop_state, "loop", None)
+    if sync_loop is None or sync_loop.is_closed():
         sync_loop = asyncio.new_event_loop()
+        _sync_loop_state.loop = sync_loop
 
     try:
         prev_loop = asyncio.get_running_loop()
