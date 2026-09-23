@@ -103,10 +103,30 @@ def reset():
 
 
 async def predict_sleep():
+    """
+    Await this to allow prediction coroutines to yield control back to the event loop. (This may also be called
+    from a non-predicting context.)
+    """
+
     global predicting
+    old_predicting = predicting
     predicting = False
+
+    old_ui_screen = renpy.ui.screen
+    renpy.ui.screen = None
+
+    old_current_screen_stack = renpy.display.screen.current_screen_stack
+    renpy.display.screen.current_screen_stack = []
+    old_current_screen = renpy.display.screen._current_screen
+    renpy.display.screen._current_screen = None
+
     await asyncio.sleep(0)
-    predicting = True
+
+    renpy.display.screen.current_screen_stack = old_current_screen_stack
+    renpy.display.screen._current_screen = old_current_screen
+    renpy.ui.screen = old_ui_screen
+    predicting = old_predicting
+
 
 async def prediction_coroutine(root_widget: renpy.display.displayable.Displayable):
     """

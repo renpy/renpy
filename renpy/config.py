@@ -1263,7 +1263,7 @@ tts_queue = True
 log_live2d_loading = False
 
 # Should Ren'Py debug prediction?
-debug_prediction = True
+debug_prediction = "RENPY_DEBUG_PREDICTION" in os.environ
 
 # Should mouse events that cause a window to gain focus be passed through.
 mouse_focus_clickthrough = False
