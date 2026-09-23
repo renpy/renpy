@@ -268,6 +268,8 @@ class SLNode:
         Execute this node, updating context as appropriate.
         """
 
+        await predict_sleep()
+
         raise Exception(f"execute_async not implemented by {type(self).__name__}")
 
     def keywords(self, context):
@@ -490,6 +492,8 @@ class SLBlock(SLNode):
                     break
 
     async def execute_async(self, context):
+        await predict_sleep()
+
         # Note: SLBlock.execute_async() is inlined in various locations for performance
         # reasons.
 
@@ -863,6 +867,8 @@ class SLDisplayable(SLBlock):
         return
 
     async def execute_async(self, context):
+        await predict_sleep()
+
         debug = context.debug
 
         screen = renpy.ui.screen
@@ -1430,6 +1436,8 @@ class SLIf(SLNode):
             self.last_keyword |= block.last_keyword
 
     async def execute_async(self, context):
+        await predict_sleep()
+
         if context.predicting:
             await self.execute_predicting(context)
             return
@@ -1572,6 +1580,8 @@ class SLShowIf(SLNode):
         self.last_keyword = True
 
     async def execute_async(self, context):
+        await predict_sleep()
+
         # This is true when the block should be executed - when no outer
         # showif is False, and when no prior block in this showif has
         # executed.
@@ -1693,6 +1703,8 @@ class SLFor(SLBlock):
         self.last_keyword = True
 
     async def execute_async(self, context):
+        await predict_sleep()
+
         variable = self.variable
         expr = self.expression_expr
 
@@ -1814,6 +1826,7 @@ class SLBreak(SLNode):
         analysis.exit_loop()
 
     async def execute_async(self, context):
+        await predict_sleep()
         raise SLBreakException()
 
     def copy(self, transclude):
@@ -1830,6 +1843,7 @@ class SLContinue(SLNode):
         analysis.exit_loop()
 
     async def execute_async(self, context):
+        await predict_sleep()
         raise SLContinueException()
 
     def copy(self, transclude):
@@ -1859,6 +1873,7 @@ class SLPython(SLNode):
         analysis.python(self.code.source)
 
     async def execute_async(self, context):
+        await predict_sleep()
         exec(self.code.bytecode, context.globals, context.scope)
 
     def prepare(self, analysis):
@@ -1874,6 +1889,7 @@ class SLPython(SLNode):
 
 class SLPass(SLNode):
     async def execute_async(self, context):
+        await predict_sleep()
         return
 
     def copy(self, transclude):
@@ -1909,6 +1925,8 @@ class SLDefault(SLNode):
         self.last_keyword = True
 
     async def execute_async(self, context):
+        await predict_sleep()
+
         scope = context.scope
         variable = self.variable
 
@@ -2036,6 +2054,8 @@ class SLUse(SLNode):
         renpy.display.screen.use_screen(self.target, *args, _name=name, _scope=context.scope, **kwargs)
 
     async def execute_async(self, context):
+        await predict_sleep()
+
         if isinstance(self.target, renpy.ast.PyExpr):
             target_name = eval(self.target, context.globals, context.scope)
             target = renpy.display.screen.get_screen_variant(target_name)
@@ -2180,6 +2200,8 @@ class SLTransclude(SLNode):
         return rv
 
     async def execute_async(self, context):
+        await predict_sleep()
+
         if not context.transclude:
             return
 
@@ -2311,6 +2333,8 @@ class SLCustomUse(SLNode):
         self.constant = min(self.constant, self.ast.constant)
 
     async def execute_async(self, context):
+        await predict_sleep()
+
         # Figure out the cache to use.
         ctx = SLContext(context)
         ctx.new_cache = context.new_cache[self.serial] = {}
@@ -2617,6 +2641,7 @@ class SLScreen(SLBlock):
             profile_log.write("")
 
     async def execute_async(self, context):
+        await predict_sleep()
         self.const_ast.keywords(context)
         await SLBlock.execute_async(self.const_ast, context)
 

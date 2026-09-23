@@ -102,13 +102,29 @@ def reset():
     del screens[:]
 
 
+# The last time we paused prediction. We do so every .1ms.
+next_predict_pause_ns: int = 0
+
+
 async def predict_sleep():
     """
     Await this to allow prediction coroutines to yield control back to the event loop. (This may also be called
     from a non-predicting context.)
     """
-
     global predicting
+    global next_predict_pause_ns
+
+    # If we're not predicting, we do not pause execution.
+    if not predicting:
+        return
+
+    now_ns = time.perf_counter_ns()
+
+    if now_ns < next_predict_pause_ns:
+        return
+
+    next_predict_pause_ns = now_ns + 100_000
+
     old_predicting = predicting
     predicting = False
 
