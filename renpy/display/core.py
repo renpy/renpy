@@ -2283,25 +2283,8 @@ class Interface:
 
             await renpy.display.predict.prediction_coroutine(root_widget)
 
-            # TODO: Need to make this async.
-
-            # if renpy.emscripten:
-            #     if expensive:
-            #         allow_preload = True
-            #         self.last_emscripten_preload_time = time.perf_counter()
-            #     elif renpy.config.emscripten_preload_timeout is None:
-            #         allow_preload = False
-            #     elif time.perf_counter() - self.last_emscripten_preload_time > renpy.config.emscripten_preload_timeout:
-            #         allow_preload = True
-            #     else:
-            #         allow_preload = False
-
-            #     if allow_preload:
-            #         try:
-            #             renpy.display.im.cache.in_preload_pass = True
-            #             renpy.display.im.cache.preload_thread_pass(None if expensive else inexpensive_end)
-            #         finally:
-            #             renpy.display.im.cache.in_preload_pass = False
+            if renpy.emscripten:
+                await renpy.display.im.cache.preload_thread_pass()
 
             if renpy.display.im.cache.done():
                 self.force_prediction = False
