@@ -65,7 +65,7 @@ def displayable(d):
         predict_displayable_shaders(d)
 
 
-def predict_displayable_shaders(d):
+async def predict_displayable_shaders(d):
     stack = [(d, ())]
     seen = set()
 
@@ -80,10 +80,15 @@ def predict_displayable_shaders(d):
         children = d.predict_shaders(shaders)
         stack.extend(reversed(children))
 
+        await renpy.display.predict.predict_sleep()
 
-def predict_registered_shaders():
+
+
+async def predict_registered_shaders():
     for shaders in renpy.store._predict_shader:
         renpy.gl2.gl2shadercache.predict_shader(shaders)
+
+        await renpy.display.predict.predict_sleep()
 
 
 def screen(_screen_name, *args, **kwargs):
@@ -235,14 +240,13 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
 
         predicted_screens.append((name, args, kwargs))
 
-        renpy.display.screen.predict_screen(name, *args, **kwargs)
-        await predict_sleep()
+        await renpy.display.screen.predict_screen_async(name, *args, **kwargs)
 
     # Predict things (especially screens) that are reachable through
     # an action.
 
     try:
-        root_widget.visit_all(lambda i: i.predict_one_action())
+        await root_widget.visit_all_async(lambda i: i.predict_one_action())
     except Exception:
         if renpy.config.debug_prediction:
             import traceback
@@ -268,8 +272,7 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
 
         renpy.display.screen.predict_screen(name, *args, **kwargs)
 
-    predict_registered_shaders()
-    await predict_sleep()
+    await predict_registered_shaders()
 
     # Pre-build shader combinations exposed by prediction.
     while renpy.gl2.gl2shadercache.has_predicted_shaders():
