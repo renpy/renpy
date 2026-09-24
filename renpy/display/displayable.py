@@ -462,6 +462,31 @@ class Displayable(renpy.object.Object):
 
         callback(self)
 
+    async def visit_all_async(self, callback: Callable[["Displayable"], None], seen: set[int] | None = None):
+        """
+        Calls the callback on this displayable, and then on all children
+        of this displayable, asynchronously.
+        """
+
+        if seen is None:
+            seen = set()
+
+        for d in self.visit():
+            if d is None:
+                continue
+
+            id_d = id(d)
+            if id_d in seen:
+                continue
+
+            seen.add(id_d)
+            await d.visit_all_async(callback, seen)
+
+
+        callback(self)
+        await renpy.display.predict.predict_sleep()
+
+
     def visit(self) -> list["Displayable | None"]:
         """
         Called to ask the displayable to return a list of its children
