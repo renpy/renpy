@@ -257,6 +257,9 @@ class Frame(renpy.display.displayable.Displayable):
             (" tile ({})".format(self.tile_ratio) if self.tile == "integer" else " tile" if self.tile else ""),
         )
 
+    def __hash__(self):
+        return hash((self.image, self.left, self.top, self.right, self.bottom, self.tile, self.tile_ratio))
+
     def __eq__(self, o):
         if not self._equals(o):
             return False

@@ -856,7 +856,10 @@ def push_current_screen(screen):
 
 def pop_current_screen():
     global _current_screen
-    _current_screen = current_screen_stack.pop()
+    if current_screen_stack:
+        _current_screen = current_screen_stack.pop()
+    else:
+        _current_screen = None
 
 
 # A map from (screen_name, variant) tuples to screen.
