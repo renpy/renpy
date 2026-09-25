@@ -675,6 +675,9 @@ class DisplayableSelector(Selector):
         screen = None if self.screen is None else scoped_eval(self.screen)
         id = scoped_eval(self.id)
 
+        if isinstance(screen, str):
+            screen = tuple(screen.split())
+
         ctx: renpy.execution.Context = renpy.game.context()
         for context_layer, sles in ctx.scene_lists.layers.items():
             context_layer: str

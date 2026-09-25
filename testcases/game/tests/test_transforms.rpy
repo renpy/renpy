@@ -33,6 +33,16 @@ label transforms__matrixcolor_shared__label:
     "Overlay restarted"
     return
 
+label transforms__matrixcolor_product__label:
+    scene bg room
+    show eileen happy:
+        matrixcolor BrightnessMatrix(0.0) * TintMatrix("#fff")
+    "Start"
+    show eileen happy:
+        linear 0.4 matrixcolor BrightnessMatrix(1.0) * TintMatrix("#fff")
+    "Animating"
+    return
+
 # ==============
 # === Tests ====
 # ==============
@@ -140,3 +150,32 @@ testsuite transforms:
                 assert abs(m_b - 0.6) < 0.05, f"Expected master brightness ~0.6, got {m_b}"
                 # Overlay just restarted, should be near 20%, NOT corrupted by master's value.
                 assert abs(o_b - 0.1) < 0.05, f"Shared callable corrupted: overlay brightness {o_b} (should be ~0.1 fresh restart)"
+
+
+        testcase product_matrixcolor_interpolates:
+            description "A multiplied matrixcolor animates over time instead of snapping to its target"
+            # A product such as BrightnessMatrix * TintMatrix is a _MultiplyMatrix.
+            # It must interpolate over the duration of the ATL statement, not jump
+            # straight to the end value.
+
+            run Start("transforms__matrixcolor_product__label")
+            advance  # start the 0->1 product animation
+            pause 0.4 * 0.25  # 25% through the animation
+
+            python:
+                d = renpy.game.context().scene_lists.get_displayable_by_tag("master", "eileen")
+                mc = d.state.matrixcolor
+                brightness = mc.ydw
+                # Before the fix this snapped to the target value (1.0) on every frame.
+                assert brightness < 0.6, \
+                    f"Product matrixcolor snapped to target: brightness {brightness:.2f}"
+                assert brightness > 0.05, \
+                    f"Product matrixcolor did not animate: brightness {brightness:.2f}"
+
+            pause 0.4  # let the animation complete
+            python:
+                d = renpy.game.context().scene_lists.get_displayable_by_tag("master", "eileen")
+                mc = d.state.matrixcolor
+                brightness = mc.ydw
+                assert abs(brightness - 1.0) < 0.05, \
+                    f"Expected brightness near 1.0, got {brightness:.2f}"

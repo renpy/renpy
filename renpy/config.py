@@ -458,6 +458,9 @@ expensive_predict_callbacks = []
 # Should screens be predicted?
 predict_screens = True
 
+# Should shaders be predicted?
+predict_shaders = True
+
 # Should we use the new choice screen format?
 choice_screen_chosen = True
 
@@ -1710,6 +1713,12 @@ A list of callbacks that are called at the very end of the init phase, before th
 first time. These are run just after defaults are set up, but only once, and before script statements are run.
 """
 
+minimum_prediction_time: float = 0.001
+"""
+The minimum amount of time Ren'Py will spend on predicting images even if there is a
+frame to be drawn.
+"""
+
 
 del os
 del collections
@@ -1763,5 +1772,5 @@ def post_init():
     if renpy.config.raise_image_exceptions is None:
         renpy.config.raise_image_exceptions = renpy.config.developer
 
-    if renpy.config.raise_image_load_exceptions:
+    if renpy.config.raise_image_load_exceptions is None:
         renpy.config.raise_image_load_exceptions = renpy.config.developer

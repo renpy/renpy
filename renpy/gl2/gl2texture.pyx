@@ -41,7 +41,7 @@ import math
 
 import renpy
 from renpy.uguu.gl cimport *
-from renpy.gl2.gl2draw cimport GL2Draw
+from renpy.gl2.gl2draw cimport GL2Draw, clear_color_buffer
 
 from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2mesh2 cimport Mesh2
@@ -481,7 +481,7 @@ cdef class GLTexture(GL2Model):
 
         # Clear the screen.
         glClearColor(0.0, 0.0, 0.0, 0.0)
-        glClear(GL_COLOR_BUFFER_BIT)
+        clear_color_buffer(0, 0, tw, th)
 
         # Set up the default modes.
         glEnable(GL_BLEND)

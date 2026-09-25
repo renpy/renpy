@@ -31,6 +31,11 @@ Ren'Py 8.5 or earlier. A single part can override it by passing `glsl` to
 Existing shader parts do not require changes. Ren'Py translates between the two
 versions, so parts written in either can be combined in the same shader.
 
+Shader combinations used by predicted displayables are now compiled during
+idle prediction, reducing stalls when they are first shown. The new
+:func:`renpy.start_predict_shader` and
+:func:`renpy.stop_predict_shader` functions support explicit prediction.
+
 Graphics
 --------
 
@@ -94,6 +99,11 @@ Features
 
 When :var:`build.wavedash_id` is configured, building a web distribution now
 creates a :file:`wavedash.toml` file for uploading the build to Wavedash.
+The launcher can upload that web distribution directly to Wavedash, downloading
+the Wavedash CLI when necessary and prompting for browser authentication when
+needed. When the web distribution is missing, the launcher can build it before
+uploading. It can also rebuild the distribution when the Wavedash game ID has
+changed.
 
 Resource path translations can now be overridden independently of the global language with
 :var:`_preferences.resource_path_translations` and :class:`ChangeResourcePathTranslation`.

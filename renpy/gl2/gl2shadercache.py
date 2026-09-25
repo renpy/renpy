@@ -19,6 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import collections
 import hashlib
 import json
 import os
@@ -31,6 +32,63 @@ import renpy
 
 # A map from shader part name to ShaderPart
 shader_part = {}
+
+def _get_shader_cache():
+    draw = renpy.display.draw
+
+    if draw is None:
+        return None
+
+    return getattr(draw, "shader_cache", None)
+
+
+def predict_shader(partnames, cache=None):
+    if not renpy.config.predict_shaders:
+        return
+
+    if isinstance(partnames, str):
+        partnames = (partnames,)
+    else:
+        partnames = tuple(partnames)
+
+    if cache is None:
+        cache = _get_shader_cache()
+
+    if cache is None:
+        return
+
+    cache.predict(partnames)
+
+
+def has_predicted_shaders(cache=None):
+    if cache is None:
+        cache = _get_shader_cache()
+
+    if cache is None:
+        return False
+
+    if not renpy.config.predict_shaders:
+        cache.predicted.clear()
+
+        return False
+
+    return bool(cache.predicted)
+
+
+def preload_predicted_shader(cache=None):
+    if cache is None:
+        cache = _get_shader_cache()
+
+    if cache is None:
+        return False
+
+    if not renpy.config.predict_shaders:
+        cache.predicted.clear()
+
+        return False
+
+    return cache.preload_predicted()
+
 
 # The name of the variable a fragment shader writes its color to, when the
 # modern dialect is being emitted (for legacy support, as GLSL ES 3.00 removed
@@ -58,6 +116,8 @@ STANDALONE = r"(?<![\w.]){}\b"
 
 # Rewrites applied to a shader part authored in the legacy dialect.
 LEGACY_TO_MODERN = [
+    (re.compile(STANDALONE.format("texture2DProjLodEXT")), "textureProjLod"),
+    (re.compile(STANDALONE.format("texture2DLodEXT")), "textureLod"),
     (re.compile(STANDALONE.format("texture2DProjLod")), "textureProjLod"),
     (re.compile(STANDALONE.format("texture2DLod")), "textureLod"),
     (re.compile(STANDALONE.format("texture2DProj")), "textureProj"),
@@ -71,9 +131,19 @@ LEGACY_TO_MODERN = [
 # will fail to compile with an error and source code.
 MODERN_TO_LEGACY = [
     (re.compile(STANDALONE.format(FRAGMENT_OUTPUT)), "gl_FragColor"),
+    (re.compile(r"(?<![\w.])textureProjLod\s*\("), "texture2DProjLod("),
+    (re.compile(r"(?<![\w.])textureLod\s*\("), "texture2DLod("),
     (re.compile(r"(?<![\w.])textureProj\s*\("), "texture2DProj("),
     (re.compile(r"(?<![\w.])texture\s*\("), "texture2D("),
 ]
+
+# Legacy fragment shaders can only get LOD sampling through an extension.
+LOD_EXTENSION = {
+    True: ("GL_EXT_shader_texture_lod", "EXT"),
+    False: ("GL_ARB_shader_texture_lod", ""),
+}
+
+LOD_FUNCTIONS = re.compile(r"(?<![\w.])(texture2DProjLod|texture2DLod)(?:EXT)?\s*\(")
 
 
 # Strip comments so they can't cause errors in parsing.
@@ -84,6 +154,8 @@ GLSL_COMMENTS = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
 LEGACY_MARKERS = [
     (re.compile(STANDALONE.format("gl_FragColor")), "gl_FragColor", FRAGMENT_OUTPUT),
     (re.compile(STANDALONE.format("gl_FragData")), "gl_FragData", FRAGMENT_OUTPUT),
+    (re.compile(STANDALONE.format("texture2DProjLodEXT")), "texture2DProjLodEXT", "textureProjLod"),
+    (re.compile(STANDALONE.format("texture2DLodEXT")), "texture2DLodEXT", "textureLod"),
     (re.compile(STANDALONE.format("texture2DProjLod")), "texture2DProjLod", "textureProjLod"),
     (re.compile(STANDALONE.format("texture2DLod")), "texture2DLod", "textureLod"),
     (re.compile(STANDALONE.format("texture2DProj")), "texture2DProj", "textureProj"),
@@ -103,6 +175,8 @@ LEGACY_STORAGE = {
 TRANSLATED_MARKERS = {
     300: [
         (re.compile(STANDALONE.format(FRAGMENT_OUTPUT)), FRAGMENT_OUTPUT),
+        (re.compile(STANDALONE.format("textureLod")), "textureLod"),
+        (re.compile(STANDALONE.format("textureProjLod")), "textureProjLod"),
         (re.compile(r"(?<![\w.])texture\s*\("), "texture"),
     ],
 }
@@ -114,8 +188,6 @@ UNTRANSLATED_MARKERS = {
         (re.compile(STANDALONE.format("textureSize")), "textureSize"),
         (re.compile(STANDALONE.format("texelFetch")), "texelFetch"),
         (re.compile(STANDALONE.format("textureGrad")), "textureGrad"),
-        (re.compile(STANDALONE.format("textureLod")), "textureLod"),
-        (re.compile(STANDALONE.format("textureProjLod")), "textureProjLod"),
         (re.compile(STANDALONE.format("switch")), "switch"),
         (re.compile(r"%"), "the % operator"),
         (re.compile(r"<<|>>"), "a bitwise shift"),
@@ -753,17 +825,30 @@ precision highp int;
     for v in merge_variables(variables):
         rv.append(v.declaration(fragment, gles, version) + ";\n")
 
-    for text, glsl in functions:
-        rv.append(translate(text, glsl, version))
+    body = []
 
-    rv.append("\nvoid main() {\n")
+    for text, glsl in functions:
+        body.append(translate(text, glsl, version))
+
+    body.append("\nvoid main() {\n")
 
     parts.sort()
 
     for _, _, part, glsl in parts:
-        rv.append(translate(part, glsl, version))
+        body.append(translate(part, glsl, version))
 
-    rv.append("}\n")
+    body.append("}\n")
+
+    body = "".join(body)
+
+    if fragment and version < 300:
+        extension, suffix = LOD_EXTENSION[gles]
+        body, count = LOD_FUNCTIONS.subn(r"\g<1>{}(".format(suffix), body)
+
+        if count:
+            rv.insert(1, "#extension {} : require\n".format(extension))
+
+    rv.append(body)
 
     return "".join(rv)
 
@@ -774,7 +859,7 @@ shader_part_filter_cache = {}
 # whenever shader source generation changes in a way that can make an
 # old program binary incompatible with the current engine.
 PROGRAM_CACHE_MAGIC = b"renpy shader programs\x00\x02"
-PROGRAM_CACHE_RECIPE = b"renpy shader recipe\x00\x01"
+PROGRAM_CACHE_RECIPE = b"renpy shader recipe\x00\x02"
 PROGRAM_CACHE_RECORD = "<32s32sIIIII"
 PROGRAM_CACHE_RECORD_SIZE = struct.calcsize(PROGRAM_CACHE_RECORD)
 MAX_PROGRAM_BINARY_SIZE = 16 * 1024 * 1024
@@ -925,6 +1010,9 @@ class ShaderCache(object):
 
         if self.program_cache_filename is None or os.environ.get("RENPY_GL_PROGRAM_CACHE") == "0":
             self.program_binary_supported = False
+
+        # Shader combinations waiting to be compiled in prediction order.
+        self.predicted = collections.OrderedDict()
 
     def load_program_cache(self):
         if self.program_cache_loaded:
@@ -1116,27 +1204,19 @@ class ShaderCache(object):
                 except OSError:
                     pass
 
-    def get(self, partnames):
-        """
-        Gets a shader, creating it if necessary.
+    def _filter_partnames(self, partnames):
+        if renpy.config.shader_part_filter is None:
+            return partnames
 
-        `partnames`
-            A tuple of strings, giving the names of the shader parts to include in
-            the cache.
-        """
+        new_partnames = shader_part_filter_cache.get(partnames, None)
 
-        if renpy.config.shader_part_filter is not None:
-            new_partnames = shader_part_filter_cache.get(partnames, None)
-            if new_partnames is None:
-                new_partnames = renpy.config.shader_part_filter(partnames)
-                shader_part_filter_cache[partnames] = new_partnames
+        if new_partnames is None:
+            new_partnames = renpy.config.shader_part_filter(partnames)
+            shader_part_filter_cache[partnames] = new_partnames
 
-            partnames = new_partnames
+        return new_partnames
 
-        rv = self.cache.get(partnames, None)
-        if rv is not None:
-            return rv
-
+    def _normalize_partnames(self, partnames):
         partnameset = set()
         partnamenotset = set()
 
@@ -1151,7 +1231,58 @@ class ShaderCache(object):
         if "renpy.ftl" not in partnameset:
             partnameset.add(renpy.config.default_shader)
 
-        sortedpartnames = tuple(sorted(partnameset))
+        return tuple(sorted(partnameset))
+
+    def predict(self, partnames):
+        partnames = self._filter_partnames(partnames)
+
+        if partnames in self.cache:
+            return
+
+        normalized = self._normalize_partnames(partnames)
+
+        if normalized in self.cache:
+            return
+
+        self.predicted.setdefault(normalized, partnames)
+
+    def preload_predicted(self):
+        while self.predicted:
+            normalized, partnames = self.predicted.popitem(last=False)
+
+            if normalized in self.cache:
+                continue
+
+            try:
+                self._get_filtered(partnames)
+            except Exception:
+                if renpy.config.debug_prediction:
+                    raise
+
+            return True
+
+        return False
+
+    def get(self, partnames):
+        """
+        Gets a shader, creating it if necessary.
+
+        `partnames`
+            A tuple of strings, giving the names of the shader parts to include in
+            the cache.
+        """
+
+        partnames = self._filter_partnames(partnames)
+
+        return self._get_filtered(partnames)
+
+    def _get_filtered(self, partnames):
+        rv = self.cache.get(partnames, None)
+
+        if rv is not None:
+            return rv
+
+        sortedpartnames = self._normalize_partnames(partnames)
 
         rv = self.cache.get(sortedpartnames, None)
         if rv is not None:
@@ -1396,6 +1527,7 @@ class ShaderCache(object):
 
         self.cache.clear()
         self.missing.clear()
+        self.predicted.clear()
 
     def log_shader(self, kind, partnames, text):
         """

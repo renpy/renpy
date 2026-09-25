@@ -7,6 +7,8 @@
 
 init python:
 
+    import contextlib
+
     def test_shaders__cache():
         return getattr(renpy.display.draw, "shader_cache", None)
 
@@ -26,6 +28,22 @@ init python:
             return str(e)
 
         return None
+
+    @contextlib.contextmanager
+    def test_shaders__prediction_cache():
+        import renpy.gl2.gl2shadercache as shadercache
+
+        cache = shadercache.ShaderCache("test-shader-prediction.txt", True, 300)
+        old_draw = renpy.display.draw
+        renpy.display.draw = type("PredictionDraw", (), {"shader_cache": cache})()
+
+        try:
+            yield cache
+        finally:
+            renpy.display.draw = old_draw
+
+    def test_shaders__prediction_key(*parts):
+        return tuple(sorted((renpy.config.default_shader,) + parts))
 
     renpy.register_shader(
         "test_shaders.modern", glsl=300,
@@ -100,6 +118,64 @@ testsuite shaders:
     after testcase:
         if not screen "main_menu":
             run MainMenu(confirm=False, save=False)
+
+    testcase prediction_displayables:
+        description "Displayable prediction composes shaders across render boundaries"
+
+        python:
+            with test_shaders__prediction_cache() as cache:
+                texture = renpy.display.imagelike.Solid("#fff")
+                model = renpy.display.model.Model()
+                model.texture(texture)
+                model.shader("renpy.texture")
+                model.shader("test_shaders.legacy")
+
+                mask = renpy.display.imagelike.Solid("#000")
+                masked = renpy.display.layout.AlphaMask(model, mask)
+                transform = renpy.display.transform.Transform(masked, alpha=0.5, shader="test_shaders.modern")
+                renpy.display.predict.predict_displayable_shaders(transform)
+
+                expected_mask = test_shaders__prediction_key(
+                    "renpy.alpha",
+                    "renpy.mask",
+                    "test_shaders.modern",
+                )
+                expected_texture = test_shaders__prediction_key("renpy.texture")
+                expected_model = test_shaders__prediction_key(
+                    "renpy.texture",
+                    "test_shaders.legacy",
+                )
+                expected = [expected_mask, expected_texture, expected_model]
+                assert list(cache.predicted) == expected, \
+                    f"Unexpected shader prediction graph: {list(cache.predicted)}"
+
+    testcase prediction_api:
+        description "Shader prediction can be started and stopped explicitly"
+
+        python:
+            old_predict_shader = renpy.store._predict_shader
+            old_draw = renpy.display.draw
+            renpy.store._predict_shader = renpy.revertable.RevertableSet()
+            renpy.display.draw = None
+
+            try:
+                legacy = ("renpy.texture", "test_shaders.legacy")
+                modern = ("renpy.texture", "test_shaders.modern")
+
+                renpy.start_predict_shader(*legacy)
+                renpy.start_predict_shader(modern)
+                assert renpy.store._predict_shader == {legacy, modern}
+
+                renpy.stop_predict_shader(legacy)
+                assert renpy.store._predict_shader == {modern}
+
+                with test_shaders__prediction_cache() as cache:
+                    renpy.display.predict.predict_registered_shaders()
+                    expected = test_shaders__prediction_key(*modern)
+                    assert list(cache.predicted) == [expected]
+            finally:
+                renpy.store._predict_shader = old_predict_shader
+                renpy.display.draw = old_draw
 
     testcase builtin_parts:
         description "Ren'Py's own shader parts compile at the emitted version"
@@ -208,6 +284,27 @@ testsuite shaders:
                 helper = cache.get(("renpy.texture", "test_shaders.helper"))
                 assert len(helper.uniform_setters) == len(baseline.uniform_setters) + 1, \
                     "A uniform shared by both stages should have one setter"
+
+    testcase sparse_transform_uniforms:
+        description "Transform state copies only uniforms explicitly set on the source"
+
+        python:
+            from renpy.display.transform import TransformState
+
+            uniform_name = "u_test_shaders_modern_amount"
+            source = TransformState()
+            copied = TransformState()
+
+            assert uniform_name not in source.__dict__
+
+            setattr(source, uniform_name, 0.5)
+            copied.take_state(source)
+
+            assert copied.__dict__[uniform_name] == 0.5
+
+            copied.take_state(TransformState())
+
+            assert uniform_name not in copied.__dict__
 
     testcase generated_fragment_output:
         description "Modern fragment output has an explicit location"

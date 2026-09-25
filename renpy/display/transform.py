@@ -149,9 +149,18 @@ class TransformState(renpy.object.Object):
 
     def take_state(self, ts):
         d = self.__dict__
+        src = ts.__dict__
 
-        for k in all_properties:
+        for k in non_uniform_properties:
             d[k] = getattr(ts, k)
+
+        # Uniforms only live in __dict__ when explicitly set.
+        for k in d.keys() & uniforms:
+            if k not in src:
+                del d[k]
+
+        for k in src.keys() & uniforms:
+            d[k] = src[k]
 
         self.last_angle = ts.last_angle
         self.radius_sign = ts.radius_sign
@@ -652,6 +661,56 @@ class Proxy(object):
         return setattr(instance.state, self.name, value)
 
 
+def _predict_transform_shaders(transform, state, shaders):
+    local_shaders = []
+
+    if state.matrixcolor:
+        local_shaders.append("renpy.matrixcolor")
+
+    alpha = state.alpha
+
+    if alpha < 0.0:
+        alpha = 0.0
+    elif alpha > 1.0:
+        alpha = 1.0
+
+    if alpha != 1.0 or state.additive != 0.0:
+        local_shaders.append("renpy.alpha")
+
+    if state.shader is not None:
+        if isinstance(state.shader, str):
+            local_shaders.append(state.shader)
+        else:
+            local_shaders.extend(state.shader)
+
+    shaders = shaders + tuple(local_shaders)
+    mesh = state.mesh or (True if state.blur else None)
+
+    if mesh:
+        if state.blur is not None and state.blur > 0:
+            shaders += ("renpy.blur",)
+        else:
+            shaders += ("renpy.texture",)
+
+        renpy.gl2.gl2shadercache.predict_shader(shaders)
+
+    elif transform.child is None:
+        renpy.gl2.gl2shadercache.predict_shader(shaders + ("renpy.texture",))
+
+    children = []
+
+    if transform.child is not None:
+        children.append((transform.child, () if mesh else shaders))
+
+    for name in sorted(state.texture_uniforms or ()):
+        value = getattr(state, name, None)
+
+        if isinstance(value, Displayable):
+            children.append((value, ()))
+
+    return children
+
+
 class Transform(Container):
     """
     Documented in sphinx, because we can't scan this object.
@@ -822,6 +881,9 @@ class Transform(Container):
             return []
         else:
             return [self.child]
+
+    def predict_shaders(self, shaders):
+        return _predict_transform_shaders(self, self.state, shaders)
 
     # The default function chooses entries from self.arguments that match
     # the style prefix, and applies them to the state.
@@ -1280,6 +1342,21 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
                 renpy.game.interface.timeout(0)
             self.state.last_events = self.state.events
 
+    def predict_shaders(self, shaders):
+        if self.get_block() is None:
+            self.compile()
+
+        if self.properties is None:
+            return Transform.predict_shaders(self, shaders)
+
+        state = TransformState()
+        state.take_state(self.state)
+
+        for name, value in self.properties:
+            setattr(state, name, value)
+
+        return _predict_transform_shaders(self, state, shaders)
+
     def _repr_info(self):
         return repr((self.child, self.atl.loc))
 
@@ -1297,6 +1374,9 @@ diff4_properties = set()
 uniforms = set()
 gl_properties = set()
 
+# Properties copied unconditionally by TransformState.take_state.
+non_uniform_properties = set()
+
 
 def add_property(name, atl=any_object, default=None, diff=2):  # type: (str, Any, Any, int|None) -> None
     """
@@ -1307,6 +1387,7 @@ def add_property(name, atl=any_object, default=None, diff=2):  # type: (str, Any
         return
 
     all_properties.add(name)
+    non_uniform_properties.add(name)
     setattr(TransformState, name, default)
     setattr(Transform, name, Proxy(name))
     renpy.atl.PROPERTIES[name] = atl
@@ -1334,6 +1415,7 @@ def add_uniform(name, uniform_type):
         setattr(TransformState, name, TextureUniform(name))
 
     uniforms.add(name)
+    non_uniform_properties.discard(name)
 
 
 def add_gl_property(name):

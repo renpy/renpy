@@ -545,20 +545,26 @@ class Cache:
 
             self.preload_thread_pass()
 
-    def preload_thread_pass(self):
+    def preload_thread_pass(self, deadline: float | None = None):
         renpy.gl2.assimp.preload()
 
         pool = self.get_decode_pool()
 
         if pool is None:
-            self._preload_thread_pass_serial()  # Serial decoding
+            self._preload_thread_pass_serial(deadline)  # Serial decoding
         else:
             self._preload_thread_pass_parallel(pool)  # Parallel decoding
 
-    def _preload_thread_pass_serial(self):
-        """Serial preloading - processes images one at a time."""
+    def _preload_thread_pass_serial(self, deadline: float | None = None):
+        """
+        Serial preloading - processes images one at a time. If `deadline` is
+        given, stops once time.perf_counter() passes it, leaving the rest of
+        the queue for a later pass.
+        """
 
         while self.preloads and self.keep_preloading:
+            if deadline is not None and time.perf_counter() > deadline:
+                break
             if not self.cleanout():
                 if renpy.config.debug_image_cache:
                     for i in self.preloads:

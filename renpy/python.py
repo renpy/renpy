@@ -773,17 +773,13 @@ _execute_python_hide()
     tree.body = hide.body
 
 
-# A list of warnings that were issued during compilation.
-compile_warnings = []
-
-
 @contextlib.contextmanager
 def save_warnings():
     """
     A context manager that captures warnings issued during compilation.
     """
 
-    pending_warnings = []
+    pending_warnings: list[tuple[str, int, str]] = []
 
     def showwarning(message, category, filename, lineno, file=None, line=None):
         pending_warnings.append((filename, lineno, warnings.formatwarning(message, category, filename, lineno, line)))
@@ -793,9 +789,7 @@ def save_warnings():
     try:
         warnings.showwarning = showwarning
 
-        yield
-
-        compile_warnings.extend(pending_warnings)
+        yield pending_warnings
 
     finally:
         warnings.showwarning = old
@@ -1107,7 +1101,6 @@ def py_compile(
     `column`
         A column offset to add to the column numbers of the source.
     """
-    global compile_warnings
 
     if isinstance(source, ast.Module):
         return compile(source, filename, mode)
@@ -1160,11 +1153,12 @@ def py_compile(
     if mode == "eval" and not ast_node:
         # If possible, compute the value of immutable literals.
         try:
-            rv = ast.literal_eval(source)
-            if is_immutable_value(rv):
-                rv = ("literal", rv)
-                compile_cache.put(key, rv, [])
-                return rv
+            with save_warnings() as warnings:
+                rv = ast.literal_eval(source)
+                if is_immutable_value(rv):
+                    rv = ("literal", rv)
+                    compile_cache.put(key, rv, warnings)
+                    return rv
         except Exception:
             pass
 
@@ -1178,7 +1172,7 @@ def py_compile(
 
         tree: Any = None
 
-        with save_warnings():
+        with save_warnings() as warnings:
             try:
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True)
 
@@ -1194,24 +1188,28 @@ def py_compile(
                 if not handled:
                     raise
 
-        # If the body is indented, it's wrapped in an "if True:" statement, which needs to be eliminated.
-        if indented:
-            tree.body = tree.body[0].body
+            # If the body is indented, it's wrapped in an "if True:" statement, which needs to be eliminated.
+            if indented:
+                tree.body = tree.body[0].body
 
-        tree = wrap_node.visit(tree)
+            tree = wrap_node.visit(tree)
 
-        if mode == "hide":
-            wrap_hide(tree)
+            if mode == "hide":
+                wrap_hide(tree)
 
-        LocationFixer(tree, lineno - 1, first_line_column_delta, rest_line_column_delta)
+            LocationFixer(
+                tree,
+                lineno - 1,
+                first_line_column_delta,
+                rest_line_column_delta,
+            )
 
-        line_offset = 0
+            line_offset = 0
 
-        if ast_node:
-            return tree.body
+            if ast_node:
+                return tree.body
 
-        rv: Any = None
-        with save_warnings():
+            rv: Any = None
             try:
                 rv = compile(tree, filename, py_mode, flags, True)
             except SyntaxError:
@@ -1228,14 +1226,12 @@ def py_compile(
                     raise
 
         if cache:
-            compile_cache.put(key, rv, compile_warnings)
-            compile_warnings = []
+            compile_cache.put(key, rv, warnings)
 
         return rv
 
     except SyntaxError as e:
         try:
-            # e.text = # renpy.lexer.get_line_text(e.filename, e.lineno)
             e.text = source.splitlines()[e.lineno - 1]
         except Exception:
             pass
@@ -1243,7 +1239,7 @@ def py_compile(
         if e.lineno is not None:
             e.lineno += line_offset
 
-        raise e
+        raise
 
 
 def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"):

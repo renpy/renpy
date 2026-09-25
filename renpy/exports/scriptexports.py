@@ -201,7 +201,7 @@ def load_language(language):
         if not renpy.game.context().init_phase:
             renpy.game.script.analyze()
 
-        renpy.game.script.update_bytecode()
+        renpy.game.script.update_bytecode([])
 
     finally:
         renpy.game.exception_info = old_exception_info
