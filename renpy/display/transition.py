@@ -75,7 +75,7 @@ def null_render(d, width, height, st, at):
 def _predict_mesh_shaders(displayable, shaders, shader):
     renpy.gl2.gl2shadercache.predict_shader(shaders + (shader,))
 
-    return [(child, ()) for child in displayable.visit() if child is not None]
+    return ()
 
 
 class NoTransition(Transition):

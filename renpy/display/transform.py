@@ -697,18 +697,13 @@ def _predict_transform_shaders(transform, state, shaders):
     elif transform.child is None:
         renpy.gl2.gl2shadercache.predict_shader(shaders + ("renpy.texture",))
 
-    children = []
-
-    if transform.child is not None:
-        children.append((transform.child, () if mesh else shaders))
-
     for name in sorted(state.texture_uniforms or ()):
         value = getattr(state, name, None)
 
         if isinstance(value, Displayable):
-            children.append((value, ()))
+            renpy.display.predict.displayable(value)
 
-    return children
+    return () if mesh else shaders
 
 
 class Transform(Container):
