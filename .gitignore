@@ -36,6 +36,7 @@ log.txt
 errors.txt
 traceback.txt
 lint.txt
+image_cache.txt
 
 # Created directories.
 saves/
