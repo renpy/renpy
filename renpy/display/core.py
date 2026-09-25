@@ -2279,8 +2279,6 @@ class Interface:
         """
 
         try:
-
-
             await renpy.display.predict.prediction_coroutine(root_widget)
 
             if renpy.emscripten:
@@ -2292,6 +2290,8 @@ class Interface:
         except Exception as e:
             if renpy.config.debug_prediction:
                 raise
+        finally:
+            renpy.display.predict.predicting = False
 
     async def run_filesystem_async(self):
         """
