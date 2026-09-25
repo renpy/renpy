@@ -463,7 +463,7 @@ class Blink(renpy.display.displayable.Displayable):
         return [self.image]
 
     def predict_shaders(self, shaders):
-        return [(self.image, shaders + ("renpy.alpha",))]
+        return shaders + ("renpy.alpha",)
 
     def render(self, height, width, st, at):
         delay = 0

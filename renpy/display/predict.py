@@ -26,6 +26,7 @@ import time
 import asyncio
 
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.display.displayable import Displayable
 
 import renpy
 
@@ -51,6 +52,11 @@ tlids = list[str | None]
 statement = None
 
 
+# A list of (displayable, shader) tuples that are pending to be predicted. This is a worklist used
+# in predict_pending.
+pending: list[tuple[Displayable, tuple]] = []
+
+
 def displayable(d):
     """
     Called to predict that the displayable `d` will be shown.
@@ -61,27 +67,42 @@ def displayable(d):
 
     if d not in predicted:
         predicted.add(d)
-        d.visit_all(lambda i: i.predict_one())
-        predict_displayable_shaders(d)
+        pending.append((d, ()))
 
 
-async def predict_displayable_shaders(d):
-    stack = [(d, ())]
-    seen = set()
+async def predict_pending(limited=False):
+    """
+    Predicts displayable loading and shaders for all of the pending displayables.
 
-    while stack:
-        d, shaders = stack.pop()
-        key = (id(d), shaders)
+    `limited`
+        Avoid predicting actions.
+    """
 
-        if key in seen:
-            continue
+    while pending:
+        d, shaders = pending.pop()
+        d.predict_one()
+        shaders = d.predict_shaders(shaders)
 
-        seen.add(key)
-        children = d.predict_shaders(shaders)
-        stack.extend(reversed(children))
+        if not limited:
+            try:
+                d.predict_one_action()
+            except Exception:
+                if renpy.config.debug_prediction:
+                    import traceback
 
-        await renpy.display.predict.predict_sleep()
+                    print("While predicting actions.")
+                    traceback.print_exc()
+                    print()
 
+        for i in reversed(d.visit()):
+            if i is None:
+                continue
+
+            if i not in predicted:
+                predicted.add(i)
+                pending.append((i, shaders))
+
+        await predict_sleep()
 
 
 async def predict_registered_shaders():
@@ -104,6 +125,7 @@ def reset():
     global image
     image = renpy.display.im.cache.get_texture
     predicted.clear()
+    del pending[:]
     del screens[:]
 
 
@@ -170,6 +192,13 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
 
     predicting = True
 
+    if root_widget is not None:
+        try:
+            displayable(root_widget)
+        except Exception:
+            if renpy.config.debug_prediction:
+                raise
+
     # Predict displayables given to renpy.start_predict.
     for d in renpy.store._predict_set:
         try:
@@ -185,6 +214,8 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
 
     for _i in renpy.game.context().predict():
         await predict_sleep()
+
+    await predict_pending()
 
     # If there's a parent context, predict we'll be returning to it
     # shortly. Otherwise, call the functions in
@@ -204,6 +235,7 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
 
                 await predict_sleep()
 
+                await predict_pending()
     else:
         for i in renpy.config.predict_callbacks:
             i()
@@ -216,23 +248,25 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
         if s is not None:
 
             if renpy.display.screen.has_screen(s):
-                renpy.display.screen.predict_screen(s)
+                await renpy.display.screen.predict_screen_async(s)
                 predicted_screens.append((s, (), {}))
 
 
             elif s.endswith("_screen"):
                 s = s[:-7]
                 if renpy.display.screen.has_screen(s):
-                    renpy.display.screen.predict_screen(s)
+                    await renpy.display.screen.predict_screen_async(s)
                     predicted_screens.append((s, (), {}))
 
             await predict_sleep()
+            await predict_pending()
 
     # Predict that overlay screens will be shown.
     for i in renpy.config.overlay_screens:
-        renpy.display.screen.predict_screen(i)
+        await renpy.display.screen.predict_screen_async(i)
         predicted_screens.append((i, (), {}))
         await predict_sleep()
+        await predict_pending()
 
     # Predict screens given with renpy.start_predict_screen.
     for name, value in list(renpy.store._predict_screen.items()):
@@ -241,20 +275,7 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
         predicted_screens.append((name, args, kwargs))
 
         await renpy.display.screen.predict_screen_async(name, *args, **kwargs)
-
-    # Predict things (especially screens) that are reachable through
-    # an action.
-
-    try:
-        await root_widget.visit_all_async(lambda i: i.predict_one_action())
-    except Exception:
-        if renpy.config.debug_prediction:
-            import traceback
-
-            print("While predicting actions.")
-            traceback.print_exc()
-            print()
-
+        await predict_pending()
 
     # Predict screens reachable through actions
     for t in screens:
@@ -270,7 +291,8 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
 
         await predict_sleep()
 
-        renpy.display.screen.predict_screen(name, *args, **kwargs)
+        await renpy.display.screen.predict_screen_async(name, *args, **kwargs)
+        await predict_pending(limited=True)
 
     await predict_registered_shaders()
 
