@@ -138,9 +138,9 @@ NON_ARRAY_SETTERS = {
     "mat4" : Mat4Setter,
 }
 
-cdef GLfloat *to_float_array(l, int length) except NULL:
+cdef int _fill_float_array(l, GLfloat *rv, int length) except -1:
     """
-    Converts a list of floats or tuples containing floats to an array of GLFloats.
+    Fills `rv` from a list of floats or tuples containing floats.
 
     `length`
         The number of floats required.
@@ -148,29 +148,28 @@ cdef GLfloat *to_float_array(l, int length) except NULL:
 
     cdef int index = 0
 
-    cdef GLfloat *rv = <GLfloat *> PyMem_Malloc(length * sizeof(GLfloat))
-
     for i in l:
         if type(i) is tuple:
             for j in i:
                 if index < length:
                     rv[index] = <GLfloat> <float> j
+
                 index += 1
         else:
             if index < length:
                 rv[index] = <GLfloat> <float> i
+
             index += 1
 
     if index != length:
-        PyMem_Free(rv)
         raise Exception(f"Expected {length} floats, got {index}.")
 
-    return rv
+    return 0
 
 
-cdef GLint *to_int_array(l, int length) except NULL:
+cdef int _fill_int_array(l, GLint *rv, int length) except -1:
     """
-    Converts a list of ints or tuples containing ints to an array of GLints.
+    Fills `rv` from a list of ints or tuples containing ints.
 
     `length`
         The number of ints required.
@@ -178,24 +177,23 @@ cdef GLint *to_int_array(l, int length) except NULL:
 
     cdef int index = 0
 
-    cdef GLint *rv = <GLint *> PyMem_Malloc(length * sizeof(GLint))
-
     for i in l:
         if type(i) is tuple:
             for j in i:
                 if index < length:
                     rv[index] = <GLint> <int> j
+
                 index += 1
         else:
             if index < length:
                 rv[index] = <GLint> <int> i
+
             index += 1
 
     if index != length:
-        PyMem_Free(rv)
         raise Exception(f"Expected {length} ints, got {index}.")
 
-    return rv
+    return 0
 
 
 cdef class ArraySetter(Setter):
@@ -203,74 +201,99 @@ cdef class ArraySetter(Setter):
     cdef int length
     "The number of elements in the array."
 
+    cdef GLfloat *fscratch
+    cdef GLint *iscratch
+
     def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int length):
 
         Setter.__init__(self, uniform_name, uniform_type, location, getter)
         self.length = length
 
+    def __dealloc__(self):
+        PyMem_Free(self.fscratch)
+        PyMem_Free(self.iscratch)
+
+    cdef GLfloat *float_scratch(self, int n) except NULL:
+        if self.fscratch == NULL:
+            self.fscratch = <GLfloat *> PyMem_Malloc(n * sizeof(GLfloat))
+
+            if self.fscratch == NULL:
+                raise MemoryError()
+
+        return self.fscratch
+
+    cdef GLint *int_scratch(self, int n) except NULL:
+        if self.iscratch == NULL:
+            self.iscratch = <GLint *> PyMem_Malloc(n * sizeof(GLint))
+
+            if self.iscratch == NULL:
+                raise MemoryError()
+
+        return self.iscratch
+
 
 cdef class FloatArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = to_float_array(value, self.length)
+        cdef GLfloat *values = self.float_scratch(self.length)
+        _fill_float_array(value, values, self.length)
         glUniform1fv(self.location, self.length, values)
-        PyMem_Free(values)
 
 
 cdef class Vec2ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = to_float_array(value, self.length * 2)
+        cdef GLfloat *values = self.float_scratch(self.length * 2)
+        _fill_float_array(value, values, self.length * 2)
         glUniform2fv(self.location, self.length, values)
-        PyMem_Free(values)
 
 
 cdef class Vec3ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = to_float_array(value, self.length * 3)
+        cdef GLfloat *values = self.float_scratch(self.length * 3)
+        _fill_float_array(value, values, self.length * 3)
         glUniform3fv(self.location, self.length, values)
-        PyMem_Free(values)
 
 
 cdef class Vec4ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = to_float_array(value, self.length * 4)
+        cdef GLfloat *values = self.float_scratch(self.length * 4)
+        _fill_float_array(value, values, self.length * 4)
         glUniform4fv(self.location, self.length, values)
-        PyMem_Free(values)
 
 
 cdef class IntArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLint *values = to_int_array(value, self.length)
+        cdef GLint *values = self.int_scratch(self.length)
+        _fill_int_array(value, values, self.length)
         glUniform1iv(self.location, self.length, values)
-        PyMem_Free(values)
 
 
 cdef class IVec2ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLint *values = to_int_array(value, self.length * 2)
+        cdef GLint *values = self.int_scratch(self.length * 2)
+        _fill_int_array(value, values, self.length * 2)
         glUniform2iv(self.location, self.length, values)
-        PyMem_Free(values)
 
 
 cdef class IVec3ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLint *values = to_int_array(value, self.length * 3)
+        cdef GLint *values = self.int_scratch(self.length * 3)
+        _fill_int_array(value, values, self.length * 3)
         glUniform3iv(self.location, self.length, values)
-        PyMem_Free(values)
 
 
 cdef class IVec4ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLint *values = to_int_array(value, self.length * 4)
+        cdef GLint *values = self.int_scratch(self.length * 4)
+        _fill_int_array(value, values, self.length * 4)
         glUniform4iv(self.location, self.length, values)
-        PyMem_Free(values)
 
 ARRAY_SETTERS = {
     "float" : FloatArraySetter,
