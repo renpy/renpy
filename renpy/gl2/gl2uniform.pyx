@@ -138,12 +138,17 @@ NON_ARRAY_SETTERS = {
     "mat4" : Mat4Setter,
 }
 
-cdef int _fill_float_array(l, GLfloat *rv, int length) except -1:
+ctypedef fused GLNumber:
+    GLfloat
+    GLint
+
+
+cdef int _fill_array(l, GLNumber *values, int length) except -1:
     """
-    Fills `rv` from a list of floats or tuples containing floats.
+    Fills `values` from a list of numbers or tuples containing numbers.
 
     `length`
-        The number of floats required.
+        The number of values required.
     """
 
     cdef int index = 0
@@ -152,46 +157,28 @@ cdef int _fill_float_array(l, GLfloat *rv, int length) except -1:
         if type(i) is tuple:
             for j in i:
                 if index < length:
-                    rv[index] = <GLfloat> <float> j
+                    if GLNumber is GLfloat:
+                        values[index] = <float> j
+                    else:
+                        values[index] = <int> j
 
                 index += 1
         else:
             if index < length:
-                rv[index] = <GLfloat> <float> i
+                if GLNumber is GLfloat:
+                    values[index] = <float> i
+                else:
+                    values[index] = <int> i
 
             index += 1
 
     if index != length:
-        raise Exception(f"Expected {length} floats, got {index}.")
-
-    return 0
-
-
-cdef int _fill_int_array(l, GLint *rv, int length) except -1:
-    """
-    Fills `rv` from a list of ints or tuples containing ints.
-
-    `length`
-        The number of ints required.
-    """
-
-    cdef int index = 0
-
-    for i in l:
-        if type(i) is tuple:
-            for j in i:
-                if index < length:
-                    rv[index] = <GLint> <int> j
-
-                index += 1
+        if GLNumber is GLfloat:
+            kind = "floats"
         else:
-            if index < length:
-                rv[index] = <GLint> <int> i
+            kind = "ints"
 
-            index += 1
-
-    if index != length:
-        raise Exception(f"Expected {length} ints, got {index}.")
+        raise Exception(f"Expected {length} {kind}, got {index}.")
 
     return 0
 
@@ -244,7 +231,7 @@ cdef class FloatArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
         cdef GLfloat *values = <GLfloat *> self.scratch
-        _fill_float_array(value, values, self.length)
+        _fill_array(value, values, self.length)
         glUniform1fv(self.location, self.length, values)
 
 
@@ -252,7 +239,7 @@ cdef class Vec2ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
         cdef GLfloat *values = <GLfloat *> self.scratch
-        _fill_float_array(value, values, self.length * 2)
+        _fill_array(value, values, self.length * 2)
         glUniform2fv(self.location, self.length, values)
 
 
@@ -260,7 +247,7 @@ cdef class Vec3ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
         cdef GLfloat *values = <GLfloat *> self.scratch
-        _fill_float_array(value, values, self.length * 3)
+        _fill_array(value, values, self.length * 3)
         glUniform3fv(self.location, self.length, values)
 
 
@@ -268,7 +255,7 @@ cdef class Vec4ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
         cdef GLfloat *values = <GLfloat *> self.scratch
-        _fill_float_array(value, values, self.length * 4)
+        _fill_array(value, values, self.length * 4)
         glUniform4fv(self.location, self.length, values)
 
 
@@ -276,7 +263,7 @@ cdef class IntArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
         cdef GLint *values = <GLint *> self.scratch
-        _fill_int_array(value, values, self.length)
+        _fill_array(value, values, self.length)
         glUniform1iv(self.location, self.length, values)
 
 
@@ -284,7 +271,7 @@ cdef class IVec2ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
         cdef GLint *values = <GLint *> self.scratch
-        _fill_int_array(value, values, self.length * 2)
+        _fill_array(value, values, self.length * 2)
         glUniform2iv(self.location, self.length, values)
 
 
@@ -292,7 +279,7 @@ cdef class IVec3ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
         cdef GLint *values = <GLint *> self.scratch
-        _fill_int_array(value, values, self.length * 3)
+        _fill_array(value, values, self.length * 3)
         glUniform3iv(self.location, self.length, values)
 
 
@@ -300,7 +287,7 @@ cdef class IVec4ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
         cdef GLint *values = <GLint *> self.scratch
-        _fill_int_array(value, values, self.length * 4)
+        _fill_array(value, values, self.length * 4)
         glUniform4iv(self.location, self.length, values)
 
 ARRAY_SETTERS = {
