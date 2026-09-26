@@ -2242,7 +2242,17 @@ def parse_atl(l):
 
                 prop = ll.name()
 
-                if (prop in PROPERTIES) or (prop and prop.startswith("u_")):
+                good_prop = (prop in PROPERTIES)
+                if not prop:
+                    good_prop = False
+                elif prop.startswith("u_"):
+                    good_prop = True
+                elif prop.startswith("gl_texture_wrap_"):
+                    good_prop = True
+                elif prop.startswith("gl_texture_scaling_"):
+                    good_prop = True
+
+                if good_prop:
                     expr = ll.require(ll.simple_expression)
 
                     # We either have a property or a spline. It's the

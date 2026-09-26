@@ -70,5 +70,8 @@ cdef class SamplerSetter(Setter):
 
     cdef GLenum target_type
     "The GLenum target to be used for this sampler"
+    
+    cdef str texture_scaling_key
+    "The key to use to look up the texture scaling mode."
 
     cdef void set_texture(self, GLStateCache cache, GLuint texture)

@@ -24,6 +24,7 @@ from typing import Any
 
 import renpy
 import renpy.gl2.live2dmotion
+import renpy.gl2.live2dphysics
 from renpy.gl2.gl2shadercache import register_shader
 from renpy.display.core import absolute
 
@@ -283,7 +284,13 @@ class Live2DCommon(object):
             self.model_json = json.load(f)
 
         # The model created from the moc3 file.
-        self.model = renpy.gl2.live2dmodel.Live2DModel(self.base + self.model_json["FileReferences"]["Moc"])  # type: ignore
+        self.model = renpy.gl2.live2dmodel.Live2DModel(  # type: ignore
+            self.base + self.model_json["FileReferences"]["Moc"]
+        )
+        
+        self.physics = renpy.gl2.live2dphysics.load_physics(
+            self.model, self.base, self.model_json["FileReferences"].get("Physics")
+        )
 
         # The texture images.
         self.textures = []
@@ -1139,8 +1146,13 @@ class Live2D(renpy.display.displayable.Displayable):
         else:
             user_redraw = common.update_function(self, st)
 
+        physics_redraw = None
+
+        if common.physics is not None:
+            physics_redraw = common.physics.evaluate(renpy.display.interface.frame_time)
+
         # Determine when to redraw.
-        redraws = [new_redraw, old_redraw, expression_redraw, user_redraw]
+        redraws = [new_redraw, old_redraw, expression_redraw, user_redraw, physics_redraw]
         redraws = [i for i in redraws if i is not None]
 
         if redraws:
