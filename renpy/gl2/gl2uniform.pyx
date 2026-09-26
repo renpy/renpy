@@ -196,46 +196,54 @@ cdef int _fill_int_array(l, GLint *rv, int length) except -1:
     return 0
 
 
+ARRAY_ELEMENT_SIZES = {
+    "float": sizeof(GLfloat),
+    "vec2": 2 * sizeof(GLfloat),
+    "vec3": 3 * sizeof(GLfloat),
+    "vec4": 4 * sizeof(GLfloat),
+
+    "int": sizeof(GLint),
+    "ivec2": 2 * sizeof(GLint),
+    "ivec3": 3 * sizeof(GLint),
+    "ivec4": 4 * sizeof(GLint),
+
+    "bool": sizeof(GLint),
+    "bvec2": 2 * sizeof(GLint),
+    "bvec3": 3 * sizeof(GLint),
+    "bvec4": 4 * sizeof(GLint),
+}
+
+
 cdef class ArraySetter(Setter):
 
     cdef int length
     "The number of elements in the array."
 
-    cdef GLfloat *fscratch
-    cdef GLint *iscratch
+    cdef void *scratch
 
-    def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int length):
+    def __cinit__(self, uniform_name, uniform_type, GLint location, Getter getter, int length):
+        if length < 0:
+            raise ValueError("Uniform array length must not be negative.")
 
-        Setter.__init__(self, uniform_name, uniform_type, location, getter)
+        cdef size_t size = max(length, 1) * ARRAY_ELEMENT_SIZES[uniform_type]
+        self.scratch = PyMem_Malloc(size)
+
+        if self.scratch == NULL:
+            raise MemoryError()
+
         self.length = length
 
+    def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int length):
+        Setter.__init__(self, uniform_name, uniform_type, location, getter)
+
     def __dealloc__(self):
-        PyMem_Free(self.fscratch)
-        PyMem_Free(self.iscratch)
-
-    cdef GLfloat *float_scratch(self, int n) except NULL:
-        if self.fscratch == NULL:
-            self.fscratch = <GLfloat *> PyMem_Malloc(n * sizeof(GLfloat))
-
-            if self.fscratch == NULL:
-                raise MemoryError()
-
-        return self.fscratch
-
-    cdef GLint *int_scratch(self, int n) except NULL:
-        if self.iscratch == NULL:
-            self.iscratch = <GLint *> PyMem_Malloc(n * sizeof(GLint))
-
-            if self.iscratch == NULL:
-                raise MemoryError()
-
-        return self.iscratch
+        PyMem_Free(self.scratch)
 
 
 cdef class FloatArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = self.float_scratch(self.length)
+        cdef GLfloat *values = <GLfloat *> self.scratch
         _fill_float_array(value, values, self.length)
         glUniform1fv(self.location, self.length, values)
 
@@ -243,7 +251,7 @@ cdef class FloatArraySetter(ArraySetter):
 cdef class Vec2ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = self.float_scratch(self.length * 2)
+        cdef GLfloat *values = <GLfloat *> self.scratch
         _fill_float_array(value, values, self.length * 2)
         glUniform2fv(self.location, self.length, values)
 
@@ -251,7 +259,7 @@ cdef class Vec2ArraySetter(ArraySetter):
 cdef class Vec3ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = self.float_scratch(self.length * 3)
+        cdef GLfloat *values = <GLfloat *> self.scratch
         _fill_float_array(value, values, self.length * 3)
         glUniform3fv(self.location, self.length, values)
 
@@ -259,7 +267,7 @@ cdef class Vec3ArraySetter(ArraySetter):
 cdef class Vec4ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = self.float_scratch(self.length * 4)
+        cdef GLfloat *values = <GLfloat *> self.scratch
         _fill_float_array(value, values, self.length * 4)
         glUniform4fv(self.location, self.length, values)
 
@@ -267,7 +275,7 @@ cdef class Vec4ArraySetter(ArraySetter):
 cdef class IntArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLint *values = self.int_scratch(self.length)
+        cdef GLint *values = <GLint *> self.scratch
         _fill_int_array(value, values, self.length)
         glUniform1iv(self.location, self.length, values)
 
@@ -275,7 +283,7 @@ cdef class IntArraySetter(ArraySetter):
 cdef class IVec2ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLint *values = self.int_scratch(self.length * 2)
+        cdef GLint *values = <GLint *> self.scratch
         _fill_int_array(value, values, self.length * 2)
         glUniform2iv(self.location, self.length, values)
 
@@ -283,7 +291,7 @@ cdef class IVec2ArraySetter(ArraySetter):
 cdef class IVec3ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLint *values = self.int_scratch(self.length * 3)
+        cdef GLint *values = <GLint *> self.scratch
         _fill_int_array(value, values, self.length * 3)
         glUniform3iv(self.location, self.length, values)
 
@@ -291,7 +299,7 @@ cdef class IVec3ArraySetter(ArraySetter):
 cdef class IVec4ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLint *values = self.int_scratch(self.length * 4)
+        cdef GLint *values = <GLint *> self.scratch
         _fill_int_array(value, values, self.length * 4)
         glUniform4iv(self.location, self.length, values)
 
