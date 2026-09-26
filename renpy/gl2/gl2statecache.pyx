@@ -167,19 +167,19 @@ cdef class GLStateCache:
 
             self.current_active_texture = unit
 
-    cdef void bind_texture(GLStateCache self, GLenum unit, GLuint texture):
+    cdef void bind_texture(GLStateCache self, GLenum unit, GLuint texture, GLenum texture_type):
         cdef int index = unit - GL_TEXTURE0
 
         self.activate_texture(unit)
 
         if index < 8 and self.current_texture[index] != texture:
-            glBindTexture(GL_TEXTURE_2D, texture)
+            glBindTexture(texture_type, texture)
 
             self.current_texture[index] = texture
 
         # For units beyond the cached range, always bind.
         elif index >= 8:
-            glBindTexture(GL_TEXTURE_2D, texture)
+            glBindTexture(texture_type, texture)
 
     cdef void set_blend(
         GLStateCache self,

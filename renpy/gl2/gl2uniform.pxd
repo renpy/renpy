@@ -57,7 +57,7 @@ cdef class Setter:
     cdef object set(self, GL2DrawingContext context, value)
 
 
-cdef class Sampler2DSetter(Setter):
+cdef class SamplerSetter(Setter):
 
     cdef int sampler
     "The sampler number to use."
@@ -67,5 +67,8 @@ cdef class Sampler2DSetter(Setter):
 
     cdef str texture_wrap_key
     "The key to use to look up the texture wrap mode."
+
+    cdef GLenum target_type
+    "The GLenum target to be used for this sampler"
 
     cdef void set_texture(self, GLStateCache cache, GLuint texture)

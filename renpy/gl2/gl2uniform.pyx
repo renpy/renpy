@@ -289,9 +289,6 @@ ARRAY_SETTERS = {
     "bvec4": IVec4ArraySetter,
 }
 
-
-
-
 TEXTURE_SCALING = {
     "nearest" : (GL_NEAREST, GL_NEAREST),
     "linear" : (GL_LINEAR, GL_LINEAR),
@@ -301,13 +298,25 @@ TEXTURE_SCALING = {
     "linear_mipmap_linear" : (GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR),
 }
 
+cdef dict _SAMPLER_TARGETS = {
+    "sampler2D": GL_TEXTURE_2D,
+    "sampler3D": GL_TEXTURE_3D,
+    "samplerCube": GL_TEXTURE_CUBE_MAP,
+    "sampler2DArray": GL_TEXTURE_2D_ARRAY,
+}
 
-cdef class Sampler2DSetter(Setter):
+cdef inline GLenum get_sampler_target(target_type) except 0:
+    try:
+        return _SAMPLER_TARGETS[target_type]
+    except KeyError:
+        raise ValueError(f"Unknown sampler type {target_type}.")
 
+cdef class SamplerSetter(Setter):
     def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int sampler):
         Setter.__init__(self, uniform_name, uniform_type, location, getter)
         self.sampler = sampler
         self.texture_wrap_key = "texture_wrap_" + uniform_name
+        self.target_type = get_sampler_target(uniform_type)
 
     cdef void set_texture(self, GLStateCache cache, GLuint texture):
         """
@@ -323,7 +332,7 @@ cdef class Sampler2DSetter(Setter):
             glUniform1i(self.location, self.sampler)
             self.bound_serial = cache.reset_serial
 
-        cache.bind_texture(GL_TEXTURE0 + self.sampler, texture)
+        cache.bind_texture(GL_TEXTURE0 + self.sampler, texture, self.target_type)
 
     cdef object set(self, GL2DrawingContext context, value):
 
@@ -349,15 +358,22 @@ cdef class Sampler2DSetter(Setter):
 
         cdef GLint wrap_s = GL_CLAMP_TO_EDGE
         cdef GLint wrap_t = GL_CLAMP_TO_EDGE
+        cdef GLint wrap_r = GL_CLAMP_TO_EDGE
         cdef GLfloat anisotropy = texture.loader.max_anisotropy
         cdef GLint mag_filter = texture.default_mag_filter
         cdef GLint min_filter = texture.default_min_filter
 
         if context.properties:
             if self.texture_wrap_key in context.properties:
-                wrap_s, wrap_t = context.properties[self.texture_wrap_key]
+                if len(context.properties[self.texture_wrap_key]) == 2:
+                    wrap_s, wrap_t = context.properties[self.texture_wrap_key]
+                else:
+                    wrap_s, wrap_t, wrap_r = context.properties[self.texture_wrap_key]
             elif "texture_wrap" in context.properties:
-                wrap_s, wrap_t = context.properties["texture_wrap"]
+                if len(context.properties["texture_wrap"]) == 2:
+                    wrap_s, wrap_t = context.properties["texture_wrap"]
+                else:
+                    wrap_s, wrap_t, wrap_r = context.properties["texture_wrap"]
 
             if not context.properties.get("anisotropic", True):
                 anisotropy = 1.0
@@ -370,25 +386,35 @@ cdef class Sampler2DSetter(Setter):
             anisotropy = 1.0
 
         if wrap_s != texture.wrap_s:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
+            glTexParameteri(self.target_type, GL_TEXTURE_WRAP_S, wrap_s)
             texture.wrap_s = wrap_s
 
         if wrap_t != texture.wrap_t:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
+            glTexParameteri(self.target_type, GL_TEXTURE_WRAP_T, wrap_t)
             texture.wrap_t = wrap_t
 
         if anisotropy != texture.anisotropy and texture.loader.max_anisotropy > 1.0:
-            glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, anisotropy)
+            glTexParameterf(self.target_type, TEXTURE_MAX_ANISOTROPY_EXT, anisotropy)
             texture.anisotropy = anisotropy
 
         if mag_filter != texture.mag_filter:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter)
+            glTexParameteri(self.target_type, GL_TEXTURE_MAG_FILTER, mag_filter)
             texture.mag_filter = mag_filter
 
         if min_filter != texture.min_filter:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter)
+            glTexParameteri(self.target_type, GL_TEXTURE_MIN_FILTER, min_filter)
             texture.min_filter = min_filter
 
+        if wrap_r != texture.wrap_r:
+            glTexParameteri(self.target_type, GL_TEXTURE_WRAP_R, wrap_r)
+            texture.wrap_r = wrap_r
+
+SAMPLER_SETTERS = {
+    "sampler2D": SamplerSetter,
+    "sampler3D": SamplerSetter,
+    "samplerCube": SamplerSetter,
+    "sampler2DArray": SamplerSetter,
+}
 
 cdef class Getter:
     """
@@ -728,8 +754,8 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
             f"{operation}."
         )
 
-    if uniform_type == "sampler2D":
-        setter = Sampler2DSetter(uniform_name, uniform_type, location, getter, sampler)
+    if (array is None) and (setter_class := SAMPLER_SETTERS.get(uniform_type, None)):
+        setter = setter_class(uniform_name, uniform_type, location, getter, sampler)
         sampler += 1
     elif (array is None) and (setter_class := NON_ARRAY_SETTERS.get(uniform_type, None)):
         setter = setter_class(uniform_name, uniform_type, location, getter)

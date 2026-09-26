@@ -79,7 +79,7 @@ cdef class GLStateCache:
 
     cdef void activate_texture(GLStateCache self, GLenum unit)
 
-    cdef void bind_texture(GLStateCache self, GLenum unit, GLuint texture)
+    cdef void bind_texture(GLStateCache self, GLenum unit, GLuint texture, GLenum texture_type)
 
     cdef void set_blend(
         GLStateCache self,

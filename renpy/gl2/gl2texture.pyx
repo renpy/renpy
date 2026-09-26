@@ -309,6 +309,7 @@ cdef class GLTexture(GL2Model):
 
         # States used by gl2unfiorm.
         self.wrap_s = GL_CLAMP_TO_EDGE
+        self.wrap_r = GL_CLAMP_TO_EDGE
         self.wrap_t = GL_CLAMP_TO_EDGE
         self.anisotropy = loader.max_anisotropy
         self.mag_filter = GL_LINEAR
