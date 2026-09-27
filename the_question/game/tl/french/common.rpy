@@ -170,23 +170,23 @@
 
     # 00action_file.rpy:539
     old "File page auto"
-    new "File page auto"
+    new "Page auto"
 
     # 00action_file.rpy:541
     old "File page quick"
-    new "File page quick"
+    new "Page rapide"
 
     # 00action_file.rpy:543
     old "File page [text]"
-    new "File page [text]"
+    new "Page [text]"
 
     # 00action_file.rpy:733
     old "Next file page."
-    new "Next file page."
+    new "Page suivante."
 
     # 00action_file.rpy:797
     old "Previous file page."
-    new "Previous file page."
+    new "Page précédente."
 
     # 00action_file.rpy:858
     old "Quick save complete."
@@ -1054,7 +1054,7 @@ translate french strings:
 
     # renpy/common/00accessibility.rpy:100
     old "Reset"
-    new "Réinitaliser"
+    new "Réinitialiser"
 
     # renpy/common/00accessibility.rpy:105
     old "Line Spacing Scaling"

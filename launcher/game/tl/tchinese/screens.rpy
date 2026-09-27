@@ -127,7 +127,7 @@ translate tchinese strings:
 
     # screens.rpy:333
     old "Help"
-    new "説明"
+    new "說明"
 
     # screens.rpy:335
     old "## The quit button is banned on iOS and unnecessary on Android."

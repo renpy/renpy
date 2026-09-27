@@ -738,7 +738,7 @@
 
     # _errorhandling.rpym:584
     old "Rollback"
-    new "Rollback"
+    new "Riavvolgi"
 
     # _errorhandling.rpym:586
     old "Attempts to roll back to a prior time, allowing you to save or choose a different choice."

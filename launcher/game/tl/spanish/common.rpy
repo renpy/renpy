@@ -652,7 +652,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:76
     old "Font Override"
-    new "Sobreescribir fuente"
+    new "Sobrescribir fuente"
 
     # 00accessibility.rpy:80
     old "Default"
@@ -936,11 +936,11 @@ translate spanish strings:
 
     # renpy/common/00updater.rpy:2074
     old "Downloading the game data."
-    new ""
+    new "Descargando los datos del juego."
 
     # renpy/common/00updater.rpy:2076
     old "The game data has been downloaded."
-    new "Descarga de los datos del juego."
+    new "Se han descargado los datos del juego."
 
     # renpy/common/00updater.rpy:2078
     old "An error occured when trying to download game data:"

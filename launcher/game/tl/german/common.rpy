@@ -342,7 +342,7 @@ translate german strings:
 
     # renpy/common/00accessibility.rpy:32
     old "bar"
-    new "bar"
+    new "Balken"
 
     # renpy/common/00accessibility.rpy:33
     old "selected"
