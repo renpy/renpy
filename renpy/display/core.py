@@ -796,6 +796,7 @@ class Interface:
         # be prioritized, and is set to False when it's done, when preloading
         # is done, or at the end of the interaction.
         self.force_prediction = False
+        self.texture_task: asyncio.Task | None = None
 
         # The number of interactions that have happened without processing an event.
         self.interaction_counter = 0
@@ -2260,18 +2261,8 @@ class Interface:
 
         assert renpy.display.draw is not None
 
-        while True:
-
-
-            if renpy.display.draw.ready_one_texture():
-                await asyncio.sleep(0)
-            else:
-                await asyncio.sleep(0.005)
-
-
         while renpy.display.draw.ready_one_texture():
-            await deadline
-
+            await asyncio.sleep(0)
 
     async def run_prediction_async(self, root_widget: Displayable):
         """
@@ -2328,7 +2319,8 @@ class Interface:
         Runs the asynchronous tasks.
         """
 
-        renpy.asyncio.create_task(self.run_texture_async())
+        if self.texture_task is None or self.texture_task.done():
+            self.texture_task = renpy.asyncio.create_task(self.run_texture_async())
 
         if expensive:
             renpy.plog(1, "start async (expensive)")
@@ -2477,6 +2469,7 @@ class Interface:
         # Tick time forward.
         renpy.display.im.cache.tick()
         renpy.text.text.text_tick()
+        renpy.asyncio.reset()
         renpy.display.predict.reset()
         renpy.gl2.gl2shadercache.shader_part_filter_cache.clear()
 
