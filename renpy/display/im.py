@@ -548,7 +548,8 @@ class Cache:
 
     async def preload_thread_pass(self):
         renpy.gl2.assimp.preload()
-        await renpy.display.predict.predict_sleep()
+        if renpy.emscripten:
+            await renpy.display.predict.predict_sleep()
 
         pool = self.get_decode_pool()
 
@@ -559,10 +560,12 @@ class Cache:
             else:
                 self._preload_thread_pass_parallel(pool)  # Parallel decoding
 
-            await renpy.display.predict.predict_sleep()
+            if renpy.emscripten:
+                await renpy.display.predict.predict_sleep()
 
         self.cleanout()
-        await renpy.display.predict.predict_sleep()
+        if renpy.emscripten:
+            await renpy.display.predict.predict_sleep()
 
     def _preload_thread_pass_serial(self):
         """

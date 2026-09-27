@@ -2071,7 +2071,11 @@ class SLUse(SLNode):
             args = []
             kwargs = {}
 
-        renpy.display.screen.use_screen(self.target, *args, _name=name, _scope=context.scope, **kwargs)
+        renpy.ui.stack.append(context)
+        try:
+            renpy.display.screen.use_screen(self.target, *args, _name=name, _scope=context.scope, **kwargs)
+        finally:
+            renpy.ui.stack.pop()
 
     def execute_generator(self, context):
         yield from predict_pause(context)
