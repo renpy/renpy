@@ -37,7 +37,7 @@ from typing import Any, Self
 import renpy
 from renpy.compat.pickle import dumps, loads
 from renpy.display.layout import Fixed
-from renpy.display.predict import displayable as predict_displayable, predict_sleep
+from renpy.display.predict import displayable as predict_displayable
 from renpy.display.transform import ATLTransform, Transform
 from renpy.pyanalysis import GLOBAL_CONST, LOCAL_CONST, NOT_CONST, Analysis, ccache
 from renpy.python import py_eval as eval
@@ -82,9 +82,25 @@ def compile_expr(loc, node):
     return compile(expr, filename, "eval", flags, True)
 
 
+def predict_pause(context):
+    """
+    Yields if we're in a prediction mode where yielding is required and sufficient
+    time has elapsed since the last pause.
+    """
+    if not context.yield_prediction:
+        return
+
+    now_ns = time.perf_counter_ns()
+    if now_ns < renpy.display.predict.next_predict_pause_ns:
+        return
+
+    renpy.display.predict.next_predict_pause_ns = now_ns + 100_000
+    yield None
+
+
 class SLContext(renpy.ui.Addable):
     """
-    A context object that can be passed to the execute_async methods, and can also
+    A context object that can be passed to the execute_generator methods, and can also
     be placed in renpy.ui.stack.
     """
 
@@ -142,6 +158,9 @@ class SLContext(renpy.ui.Addable):
 
         # True if we're predicting the screen.
         self.predicting: bool = False
+
+        # True if we're in a prediction mode where yielding is required.
+        self.yield_prediction: bool = False
 
         # True if we're updating the screen.
         self.updating: bool = False
@@ -253,7 +272,7 @@ class SLNode:
 
     def prepare(self, analysis: Analysis):
         """
-        This should be called before the execute_async code is called, and again
+        This should be called before the execute_generator code is called, and again
         after init-level code (like the code in a .rpym module or an init
         python block) is called.
 
@@ -263,14 +282,14 @@ class SLNode:
 
         # By default, does nothing.
 
-    async def execute_async(self, context):
+    def execute_generator(self, context):
         """
         Execute this node, updating context as appropriate.
         """
 
-        await predict_sleep()
+        yield from predict_pause(context)
 
-        raise Exception(f"execute_async not implemented by {type(self).__name__}")
+        raise Exception(f"execute_generator not implemented by {type(self).__name__}")
 
     def keywords(self, context):
         """
@@ -491,15 +510,15 @@ class SLBlock(SLNode):
                 if not renpy.config.developer:
                     break
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
+        yield from predict_pause(context)
 
-        # Note: SLBlock.execute_async() is inlined in various locations for performance
+        # Note: SLBlock.execute_generator() is inlined in various locations for performance
         # reasons.
 
         for i in self.children:
             try:
-                await i.execute_async(context)
+                yield from i.execute_generator(context)
             except Exception:
                 if not context.predicting:
                     raise
@@ -866,8 +885,8 @@ class SLDisplayable(SLBlock):
         # We do not want to pass keywords to our parents, so just return.
         return
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
+        yield from predict_pause(context)
 
         debug = context.debug
 
@@ -1104,10 +1123,10 @@ class SLDisplayable(SLBlock):
         stack.append(ctx)
 
         try:
-            # Evaluate children. (Inlined SLBlock.execute_async)
+            # Evaluate children. (Inlined SLBlock.execute_generator)
             for i in self.children:
                 try:
-                    await i.execute_async(ctx)
+                    yield from i.execute_generator(ctx)
                 except Exception:
                     if not context.predicting:
                         raise
@@ -1435,20 +1454,20 @@ class SLIf(SLNode):
             self.has_keyword |= block.has_keyword
             self.last_keyword |= block.last_keyword
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
+        yield from predict_pause(context)
 
         if context.predicting:
-            await self.execute_predicting(context)
+            yield from self.execute_predicting(context)
             return
 
         for cond, block, _cond_const in self.prepared_entries:
             if cond is None or eval(cond, context.globals, context.scope):
                 for i in block.children:
-                    await i.execute_async(context)
+                    yield from i.execute_generator(context)
                 return
 
-    async def execute_predicting(self, context):
+    def execute_predicting(self, context):
         # A variant of the this code that runs while predicting, executing
         # all paths of the if.
 
@@ -1471,7 +1490,7 @@ class SLIf(SLNode):
 
                 for i in block.children:
                     try:
-                        await i.execute_async(context)
+                        yield from i.execute_generator(context)
                     except Exception:
                         pass
 
@@ -1485,7 +1504,7 @@ class SLIf(SLNode):
 
                 for i in block.children:
                     try:
-                        await i.execute_async(ctx)
+                        yield from i.execute_generator(ctx)
                     except Exception:
                         pass
 
@@ -1579,8 +1598,8 @@ class SLShowIf(SLNode):
 
         self.last_keyword = True
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
+        yield from predict_pause(context)
 
         # This is true when the block should be executed - when no outer
         # showif is False, and when no prior block in this showif has
@@ -1600,7 +1619,7 @@ class SLShowIf(SLNode):
                     ctx.showif = False
 
             for i in block.children:
-                await i.execute_async(ctx)
+                yield from i.execute_generator(ctx)
 
             if ctx.fail:
                 context.fail = True
@@ -1702,8 +1721,8 @@ class SLFor(SLBlock):
 
         self.last_keyword = True
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
+        yield from predict_pause(context)
 
         variable = self.variable
         expr = self.expression_expr
@@ -1745,7 +1764,7 @@ class SLFor(SLBlock):
                 sl_python = next(children_i)
                 # It can only fail if the unpacking fails, but it can still
                 try:
-                    await sl_python.execute_async(ctx)
+                    yield from sl_python.execute_generator(ctx)
                 except Exception:
                     if not context.predicting:
                         raise
@@ -1765,12 +1784,12 @@ class SLFor(SLBlock):
 
             newcaches[index] = ctx.new_cache = {}
 
-            # Inline of SLBlock.execute_async.
+            # Inline of SLBlock.execute_generator.
 
             try:
                 for i in children_i:
                     try:
-                        await i.execute_async(ctx)
+                        yield from i.execute_generator(ctx)
                     except SLForException:
                         raise
                     except Exception:
@@ -1825,9 +1844,9 @@ class SLBreak(SLNode):
     def analyze(self, analysis):
         analysis.exit_loop()
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
         raise SLBreakException()
+        yield
 
     def copy(self, transclude):
         rv = self.instantiate(transclude)
@@ -1842,9 +1861,9 @@ class SLContinue(SLNode):
     def analyze(self, analysis):
         analysis.exit_loop()
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
         raise SLContinueException()
+        yield
 
     def copy(self, transclude):
         rv = self.instantiate(transclude)
@@ -1872,8 +1891,8 @@ class SLPython(SLNode):
     def analyze(self, analysis):
         analysis.python(self.code.source)
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
+        yield from predict_pause(context)
         exec(self.code.bytecode, context.globals, context.scope)
 
     def prepare(self, analysis):
@@ -1888,9 +1907,9 @@ class SLPython(SLNode):
 
 
 class SLPass(SLNode):
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
         return
+        yield
 
     def copy(self, transclude):
         rv = self.instantiate(transclude)
@@ -1924,16 +1943,17 @@ class SLDefault(SLNode):
         self.constant = NOT_CONST
         self.last_keyword = True
 
-    async def execute_async(self, context):
-        await predict_sleep()
-
+    def execute_generator(self, context):
         scope = context.scope
         variable = self.variable
 
         if variable in scope:
             return
+            yield
 
         scope[variable] = eval(self.expr, context.globals, scope)
+        return
+        yield
 
     def has_python(self):
         return True
@@ -2053,8 +2073,8 @@ class SLUse(SLNode):
 
         renpy.display.screen.use_screen(self.target, *args, _name=name, _scope=context.scope, **kwargs)
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
+        yield from predict_pause(context)
 
         if isinstance(self.target, renpy.ast.PyExpr):
             target_name = eval(self.target, context.globals, context.scope)
@@ -2075,6 +2095,7 @@ class SLUse(SLNode):
         if ast is None:
             self.execute_use_screen(context)
             return
+            yield
 
         # Otherwise, run the use statement directly.
 
@@ -2141,7 +2162,7 @@ class SLUse(SLNode):
         ctx.transclude = self.block
 
         try:
-            await ast.execute_async(ctx)
+            yield from ast.execute_generator(ctx)
         finally:
             del scope["_scope"]
 
@@ -2199,11 +2220,12 @@ class SLTransclude(SLNode):
         rv.constant = transclude
         return rv
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
+        yield from predict_pause(context)
 
         if not context.transclude:
             return
+            yield
 
         parent = context.parent
         if parent is not None:
@@ -2228,7 +2250,7 @@ class SLTransclude(SLNode):
         try:
             renpy.ui.stack.append(ctx)
             context.transclude.keywords(ctx)
-            await context.transclude.execute_async(ctx)
+            yield from context.transclude.execute_generator(ctx)
         finally:
             renpy.ui.stack.pop()
 
@@ -2332,8 +2354,8 @@ class SLCustomUse(SLNode):
 
         self.constant = min(self.constant, self.ast.constant)
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
+        yield from predict_pause(context)
 
         # Figure out the cache to use.
         ctx = SLContext(context)
@@ -2422,7 +2444,7 @@ class SLCustomUse(SLNode):
             ctx.transclude = None
 
         try:
-            await ast.execute_async(ctx)
+            yield from ast.execute_generator(ctx)
         finally:
             del scope["_scope"]
 
@@ -2640,16 +2662,16 @@ class SLScreen(SLBlock):
 
             profile_log.write("")
 
-    async def execute_async(self, context):
-        await predict_sleep()
+    def execute_generator(self, context):
+        yield from predict_pause(context)
         self.const_ast.keywords(context)
-        await SLBlock.execute_async(self.const_ast, context)
+        yield from SLBlock.execute_generator(self.const_ast, context)
 
     def report_traceback(self, name, last):
         if last:
             return None
 
-        if name in ("__call__", "call_async"):
+        if name in ("__call__", "call_generator"):
             return []
 
         return super().report_traceback(name, last)
@@ -2657,9 +2679,10 @@ class SLScreen(SLBlock):
     def copy_on_change(self, cache):
         SLBlock.copy_on_change(self.const_ast, cache)
 
-    async def call_async(self, *args, **kwargs) -> list[renpy.display.displayable.Displayable]:
+    def call_generator(self, *args, **kwargs) -> list[renpy.display.displayable.Displayable]:
         scope = kwargs["_scope"]
         debug = kwargs.get("_debug", False)
+        yield_prediction = kwargs.get("_yield_prediction", False)
 
         if self.parameters:
             args = scope.get("_args", ())
@@ -2685,6 +2708,7 @@ class SLScreen(SLBlock):
         context.globals = renpy.python.store_dicts["store"]
         context.debug = debug
         context.predicting = renpy.display.predict.predicting
+        context.yield_prediction = yield_prediction
         context.updating = current_screen.phase == renpy.display.screen.UPDATE
 
         name = scope["_name"]
@@ -2707,7 +2731,7 @@ class SLScreen(SLBlock):
         context.new_use_cache = {}
 
         # This really executes self.const_ast.
-        await self.execute_async(context)
+        yield from self.execute_generator(context)
 
         current_screen.cache[name] = context.new_cache
         current_screen.use_cache = context.new_use_cache
@@ -2716,7 +2740,12 @@ class SLScreen(SLBlock):
 
     def __call__(self, *args, **kwargs):
 
-        children: list[renpy.display.displayable.Displayable] = renpy.asyncio.run_sync(self.call_async(*args, **kwargs))
+        gen = self.call_generator(*args, **kwargs)
+        try:
+            while True:
+                next(gen)
+        except StopIteration as e:
+            children = e.value
 
         for i in children:
             renpy.ui.implicit_add(i)

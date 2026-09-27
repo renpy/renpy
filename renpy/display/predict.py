@@ -197,17 +197,18 @@ async def predict_sleep():
 
     renpy.ui.reset()
 
-    await asyncio.sleep(0)
+    try:
+        await asyncio.sleep(0)
+    finally:
+        renpy.ui.stack = old_ui_stack
+        renpy.ui.at_stack = old_ui_at_stack
+        renpy.ui.imagemap_stack = old_ui_imagemap_stack
+        renpy.ui.add_tag = old_ui_add_tag
 
-    renpy.ui.stack = old_ui_stack
-    renpy.ui.at_stack = old_ui_at_stack
-    renpy.ui.imagemap_stack = old_ui_imagemap_stack
-    renpy.ui.add_tag = old_ui_add_tag
-
-    renpy.display.screen.current_screen_stack = old_current_screen_stack
-    renpy.display.screen._current_screen = old_current_screen
-    renpy.ui.screen = old_ui_screen
-    predicting = old_predicting
+        renpy.display.screen.current_screen_stack = old_current_screen_stack
+        renpy.display.screen._current_screen = old_current_screen
+        renpy.ui.screen = old_ui_screen
+        predicting = old_predicting
 
 
 async def prediction_coroutine(root_widget: renpy.display.displayable.Displayable):

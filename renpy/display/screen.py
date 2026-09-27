@@ -641,9 +641,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         return rv
 
-    async def update_async(self):
+    def update_generator(self, yield_prediction=False):
         if self in updated_screens:
-            return
+            return self.widgets
 
         updated_screens.add(self)
 
@@ -712,7 +712,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 self.child = renpy.display.layout.MultiBox(layout="fixed", focus="_screen_" + "_".join(self.screen_name))
                 self.children = [self.child]
 
-                for i in await self.screen.ast.call_async(**self.scope):
+                children = yield from self.screen.ast.call_generator(_yield_prediction=yield_prediction, **self.scope)
+                for i in children:
                     self.child.add(i)
             else:
                 self.child = renpy.ui.default_fixed(focus="_screen_" + "_".join(self.screen_name))
@@ -766,7 +767,16 @@ class ScreenDisplayable(renpy.display.layout.Container):
         return self.widgets
 
     def update(self):
-        renpy.asyncio.run_sync(self.update_async())
+        for _ in self.update_generator(yield_prediction=False):
+            pass
+
+        return self.widgets
+
+    async def update_async(self):
+        for _ in self.update_generator(yield_prediction=True):
+            await renpy.display.predict.predict_sleep()
+
+        return self.widgets
 
 
     def render(self, w, h, st, at):
