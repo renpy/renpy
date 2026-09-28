@@ -118,6 +118,7 @@ from renpy.uguu.gl cimport (
     glGetFramebufferAttachmentParameteriv as _glGetFramebufferAttachmentParameteriv,
     glGetIntegeri_v as _glGetIntegeri_v,
     glGetIntegerv as _glGetIntegerv,
+    glGetProgramBinary as _glGetProgramBinary,
     glGetProgramInfoLog as _glGetProgramInfoLog,
     glGetProgramiv as _glGetProgramiv,
     glGetQueryObjectuiv as _glGetQueryObjectuiv,
@@ -154,6 +155,8 @@ from renpy.uguu.gl cimport (
     glLinkProgram as _glLinkProgram,
     glPixelStorei as _glPixelStorei,
     glPolygonOffset as _glPolygonOffset,
+    glProgramBinary as _glProgramBinary,
+    glProgramParameteri as _glProgramParameteri,
     glReadBuffer as _glReadBuffer,
     glReadPixels as _glReadPixels,
     glRenderbufferStorage as _glRenderbufferStorage,
@@ -727,7 +730,7 @@ def glGetProgramBinary(program, bufSize, length, binaryFormat, binary):
     cdef ptr length_ptr = get_ptr(length)
     cdef ptr binaryFormat_ptr = get_ptr(binaryFormat)
     cdef ptr binary_ptr = get_ptr(binary)
-    renpy.uguu.gl.glGetProgramBinary(program, bufSize, <GLsizei *> length_ptr.ptr, <GLenum *> binaryFormat_ptr.ptr, <void *> binary_ptr.ptr)
+    _glGetProgramBinary(program, bufSize, <GLsizei *> length_ptr.ptr, <GLenum *> binaryFormat_ptr.ptr, <void *> binary_ptr.ptr)
 
 def glGetProgramInfoLog(program, bufSize, length, infoLog):
     cdef ptr length_ptr = get_ptr(length)
@@ -865,10 +868,10 @@ def glPolygonOffset(factor, units):
 
 def glProgramBinary(program, binaryFormat, binary, length):
     cdef ptr binary_ptr = get_ptr(binary)
-    renpy.uguu.gl.glProgramBinary(program, binaryFormat, <const void *> binary_ptr.ptr, length)
+    _glProgramBinary(program, binaryFormat, <const void *> binary_ptr.ptr, length)
 
 def glProgramParameteri(program, pname, value):
-    renpy.uguu.gl.glProgramParameteri(program, pname, value)
+    _glProgramParameteri(program, pname, value)
 
 def glReadBuffer(src):
     _glReadBuffer(src)
