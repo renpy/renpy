@@ -6,6 +6,12 @@ These environment variables may disappear or change between Ren'Py releases.
 
 The following environment variables control the behavior of Ren'Py:
 
+.. envvar:: RENPY_DEBUG_SLOW_ASYNC
+
+    If set to a threshold in fractional milliseconds (such as ``1.5`` or ``0.5``),
+    Ren'Py will report async tasks that take more than this amount of time before
+    or between suspending to standard output.
+
 .. envvar:: RENPY_DEBUG_SOUND
 
     If set, Ren'Py will generate exceptions when audio errors occur.
