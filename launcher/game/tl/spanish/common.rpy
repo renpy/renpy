@@ -482,7 +482,7 @@
 
     # 00preferences.rpy:346
     old "self voicing"
-    new "voz automaitica"
+    new "voz automática"
 
     # 00preferences.rpy:355
     old "clipboard voicing"

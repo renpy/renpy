@@ -502,7 +502,7 @@
 
     # 00preferences.rpy:382
     old "rollback side"
-    new "lato rollback"
+    new "lato riavvolgimento"
 
     # 00preferences.rpy:392
     old "gl powersave"

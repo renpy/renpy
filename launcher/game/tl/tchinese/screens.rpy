@@ -423,7 +423,7 @@ translate tchinese strings:
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."
-    new "保持對話跳過。"
+    new "切換對話跳過。"
 
     # screens.rpy:1027
     old "Page Up"
@@ -451,7 +451,7 @@ translate tchinese strings:
 
     # screens.rpy:1044
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "切換輔助 {a=https://www.renpy.org/l/voicing} Self-Vocing {/a}."
+    new "切換輔助{a=https://www.renpy.org/l/voicing}自動朗讀{/a}。"
 
     # screens.rpy:1050
     old "Left Click"

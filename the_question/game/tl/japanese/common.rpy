@@ -651,7 +651,7 @@ translate japanese strings:
 
     # renpy/common/_developer/developer.rpym:47
     old "Console (Shift+O)"
-    new "コンソール (Shift+D)"
+    new "コンソール (Shift+O)"
 
     # renpy/common/_developer/developer.rpym:49
     old "Variable Viewer"

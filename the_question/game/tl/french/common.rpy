@@ -166,7 +166,7 @@
 
     # 00action_file.rpy:459
     old "Delete slot [text]"
-    new "Supprimer l’emplacement %s: [text]"
+    new "Supprimer l’emplacement [text]"
 
     # 00action_file.rpy:539
     old "File page auto"
@@ -202,7 +202,7 @@
 
     # 00action_other.rpy:344
     old "Language [text]"
-    new "Langage [text]"
+    new "Langue [text]"
 
     # 00director.rpy:709
     old "The interactive director is not enabled here."
@@ -534,7 +534,7 @@
 
     # 00preferences.rpy:415
     old "voice volume"
-    new "sound volume"
+    new "volume des voix"
 
     # 00preferences.rpy:416
     old "mute music"

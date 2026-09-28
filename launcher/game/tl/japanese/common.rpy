@@ -950,7 +950,7 @@ translate japanese strings:
 
     # renpy/common/00updater.rpy:551
     old "Could not download file list: "
-    new "ファイルリストがダウンロードできません : "
+    new "ファイルリストがダウンロードできません: "
 
     # renpy/common/00updater.rpy:554
     old "File list digest does not match."

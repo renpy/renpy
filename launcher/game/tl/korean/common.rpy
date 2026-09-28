@@ -526,7 +526,7 @@
 
     # 00preferences.rpy:416
     old "mute music"
-    new "배경음악 크기"
+    new "배경음악 끄기"
 
     # 00preferences.rpy:417
     old "mute sound"
@@ -763,7 +763,7 @@
 
     # 00accessibility.rpy:193
     old "Self-Voicing Volume Drop"
-    new "대사 읽기 음소거"
+    new "대사 읽기 시 음량 낮추기"
 
 
     # 00accessibility.rpy:202
@@ -772,7 +772,7 @@
 
     # 00preferences.rpy:388
     old "self voicing volume drop"
-    new "대사 읽기 음소거"
+    new "대사 읽기 시 음량 낮추기"
 
     # 00preferences.rpy:430
     old "font transform"

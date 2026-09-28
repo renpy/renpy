@@ -359,7 +359,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:32
     old "bar"
-    new "條"
+    new "長條"
 
     # renpy/common/00accessibility.rpy:33
     old "selected"
@@ -367,15 +367,15 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
-    new "視角"
+    new "檢視區"
 
     # renpy/common/00accessibility.rpy:35
     old "horizontal scroll"
-    new "水平滾動"
+    new "水平捲動"
 
     # renpy/common/00accessibility.rpy:36
     old "vertical scroll"
-    new "垂直滾動"
+    new "垂直捲動"
 
     # renpy/common/00accessibility.rpy:37
     old "activate"
@@ -431,7 +431,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:194
     old "Self-Voicing"
-    new "Self-voicing "
+    new "自動朗讀"
 
     # renpy/common/00accessibility.rpy:198
     old "Off"
@@ -451,7 +451,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:224
     old "Self-Voicing Volume Drop"
-    new "Self-voicing 音量下降"
+    new "自動朗讀音量下降"
 
     # renpy/common/00accessibility.rpy:235
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
@@ -559,7 +559,7 @@ translate tchinese strings:
 
     # renpy/common/00director.rpy:1704
     old "Statement:"
-    new "通告："
+    new "語句："
 
     # renpy/common/00director.rpy:1725
     old "Tag:"

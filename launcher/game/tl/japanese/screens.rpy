@@ -510,7 +510,7 @@ translate japanese strings:
 
     # screens.rpy:1044
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "{a=https://ja.renpy.org/l/voicing}セルフボイシング{/a}を有効化する。"
+    new "{a=https://www.renpy.org/l/voicing}セルフボイシング{/a}を有効化する。"
 
     # screens.rpy:1050
     old "Left Click"

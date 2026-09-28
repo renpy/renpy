@@ -226,7 +226,7 @@
 
     # _errorhandling.rpym:548
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
-    new "Copia el archivo traceback.txt al portapapeles como Markdown paara Discord."
+    new "Copia el archivo traceback.txt al portapapeles como Markdown para Discord."
 
     # _errorhandling.rpym:683
     old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
