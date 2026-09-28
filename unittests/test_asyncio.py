@@ -20,6 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import asyncio
+import io
+import os
+import sys
 import threading
 import time
 import unittest
@@ -29,9 +32,15 @@ import renpy.asyncio as rasynco
 
 class TestAsyncioRunner(unittest.TestCase):
     def setUp(self):
+        if "RENPY_DEBUG_SLOW_ASYNC" in os.environ:
+            del os.environ["RENPY_DEBUG_SLOW_ASYNC"]
+        rasynco.default_runner._check_debug_slow_async()
         rasynco.reset()
 
     def tearDown(self):
+        if "RENPY_DEBUG_SLOW_ASYNC" in os.environ:
+            del os.environ["RENPY_DEBUG_SLOW_ASYNC"]
+        rasynco.default_runner._check_debug_slow_async()
         rasynco.reset()
 
     def test_empty_runner(self):
@@ -386,6 +395,124 @@ class TestAsyncioRunner(unittest.TestCase):
 
         with self.assertRaises(RuntimeError):
             rasynco.run_sync(outer())
+
+    def test_slow_async_debug_disabled_zero_overhead(self):
+        # When RENPY_DEBUG_SLOW_ASYNC is unset, debug threshold is None,
+        # _call_soon is untouched (native method), and nothing is printed.
+        self.assertNotIn("RENPY_DEBUG_SLOW_ASYNC", os.environ)
+        rasynco.default_runner._check_debug_slow_async()
+        self.assertIsNone(rasynco.default_runner._debug_threshold_ns)
+        self.assertNotIn("_call_soon", rasynco.default_runner.loop.__dict__)
+
+        captured = io.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = captured
+        try:
+            async def work():
+                time.sleep(0.005)  # noqa: ASYNC251
+                return "done"
+
+            rasynco.create_task(work(), name="uninstrumented_task")
+            while rasynco.run_for_ns(50_000_000):
+                pass
+        finally:
+            sys.stdout = old_stdout
+
+        self.assertEqual(captured.getvalue(), "")
+        self.assertIsNone(rasynco.default_runner._debug_threshold_ns)
+        self.assertNotIn("_call_soon", rasynco.default_runner.loop.__dict__)
+
+    def test_slow_async_debug_reports_before_suspending(self):
+        # When RENPY_DEBUG_SLOW_ASYNC is set, a task taking longer than threshold
+        # on its initial step (before suspending) reports to stdout.
+        os.environ["RENPY_DEBUG_SLOW_ASYNC"] = "2.5"
+
+        captured = io.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = captured
+        try:
+            async def slow_initial():
+                time.sleep(0.01)  # noqa: ASYNC251  # 10ms > 2.5ms threshold
+                await asyncio.sleep(0.001)
+                return "finished"
+
+            task = rasynco.create_task(slow_initial(), name="slow_start_task")
+            while rasynco.run_for_ns(50_000_000):
+                pass
+            self.assertTrue(task.done())
+        finally:
+            sys.stdout = old_stdout
+
+        output = captured.getvalue()
+        self.assertIn("Slow async task 'slow_start_task'", output)
+        self.assertIn("slow_initial", output)
+        self.assertIn("threshold: 2.50 ms", output)
+
+    def test_slow_async_debug_reports_between_suspending(self):
+        # A task that is fast initially but slow between suspensions reports to stdout.
+        os.environ["RENPY_DEBUG_SLOW_ASYNC"] = "2.5"
+
+        captured = io.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = captured
+        try:
+            async def slow_resume():
+                # Fast first step
+                await asyncio.sleep(0.001)
+                # Slow second step (between suspending and finishing)
+                time.sleep(0.01)  # noqa: ASYNC251  # 10ms > 2.5ms
+                return "finished"
+
+            task = rasynco.create_task(slow_resume(), name="slow_resume_task")
+            while rasynco.run_for_ns(50_000_000):
+                pass
+            self.assertTrue(task.done())
+        finally:
+            sys.stdout = old_stdout
+
+        output = captured.getvalue()
+        self.assertIn("Slow async task 'slow_resume_task'", output)
+        self.assertIn("slow_resume", output)
+        self.assertIn("threshold: 2.50 ms", output)
+
+    def test_slow_async_debug_fast_task_silent(self):
+        # Tasks taking less than the threshold do not report to stdout.
+        os.environ["RENPY_DEBUG_SLOW_ASYNC"] = "50.0"  # 50ms threshold
+
+        captured = io.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = captured
+        try:
+            async def fast_work():
+                await asyncio.sleep(0.001)
+                return 42
+
+            task = rasynco.create_task(fast_work(), name="fast_task")
+            while rasynco.run_for_ns(50_000_000):
+                pass
+            self.assertTrue(task.done())
+        finally:
+            sys.stdout = old_stdout
+
+        self.assertEqual(captured.getvalue(), "")
+
+    def test_slow_async_debug_restores_clean_state_on_unset(self):
+        # Unsetting RENPY_DEBUG_SLOW_ASYNC restores the original unwrapped dispatcher.
+        os.environ["RENPY_DEBUG_SLOW_ASYNC"] = "1.0"
+        rasynco.default_runner._check_debug_slow_async()
+        self.assertIsNotNone(rasynco.default_runner._debug_threshold_ns)
+        self.assertIn("_call_soon", rasynco.default_runner.loop.__dict__)
+
+        del os.environ["RENPY_DEBUG_SLOW_ASYNC"]
+        rasynco.run_for_ns(100_000)
+        self.assertIsNone(rasynco.default_runner._debug_threshold_ns)
+        self.assertNotIn("_call_soon", rasynco.default_runner.loop.__dict__)
+
+    def test_slow_async_debug_fractional_ms(self):
+        # RENPY_DEBUG_SLOW_ASYNC properly parses fractional milliseconds.
+        os.environ["RENPY_DEBUG_SLOW_ASYNC"] = "0.25"
+        rasynco.run_for_ns(100_000)
+        self.assertEqual(rasynco.default_runner._debug_threshold_ns, 250_000)
 
 
 if __name__ == "__main__":
