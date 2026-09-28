@@ -39,6 +39,10 @@ formatter = string.Formatter()
 
 SIMPLE_NAME = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
 
+PARSE_CACHE_SIZE = 512
+PARSE_CACHE_MAX_LENGTH = 4096
+parse_cache = collections.OrderedDict()
+
 
 def interpolate(s, scope):
     """
@@ -49,7 +53,7 @@ def interpolate(s, scope):
 
     rv = ""
 
-    for lit, expr, conv, fmt in parse(s):
+    for lit, expr, conv, fmt in _cached_parse(s):
         if lit:
             rv += lit
 
@@ -100,6 +104,35 @@ def interpolate(s, scope):
         rv += format(value, fmt)
 
     return rv
+
+
+def _cached_parse(s):
+    if len(s) > PARSE_CACHE_MAX_LENGTH:
+        return parse(s)
+
+    parts = parse_cache.get(s)
+
+    if parts is not None:
+        parse_cache.move_to_end(s)
+
+        return iter(parts)
+
+    return _parse_and_cache(s)
+
+
+def _parse_and_cache(s):
+    parts = []
+
+    # Parse lazily so expression evaluation still precedes later syntax errors.
+    for part in parse(s):
+        parts.append(part)
+
+        yield part
+
+    parse_cache[s] = tuple(parts)
+
+    if len(parse_cache) > PARSE_CACHE_SIZE:
+        parse_cache.popitem(last=False)
 
 
 def parse(s):
