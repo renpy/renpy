@@ -132,6 +132,9 @@ cdef class Mesh2(Mesh):
         rv.triangle[4] = 2
         rv.triangle[5] = 3
 
+        rv.point_version = 1
+        rv.triangle_version = 1
+
         return rv
 
     @staticmethod
@@ -177,6 +180,10 @@ cdef class Mesh2(Mesh):
         rv.triangle[3] = 0
         rv.triangle[4] = 2
         rv.triangle[5] = 3
+
+        rv.point_version = 1
+        rv.triangle_version = 1
+        rv.attribute_version = 1
 
         return rv
 
@@ -230,6 +237,10 @@ cdef class Mesh2(Mesh):
                 rv.triangle[i + 3] = p0
                 rv.triangle[i + 4] = p2
                 rv.triangle[i + 5] = p3
+
+        rv.point_version = 1
+        rv.triangle_version = 1
+        rv.attribute_version = 1
 
         return rv
 
@@ -382,13 +393,23 @@ cdef class Mesh2(Mesh):
 
         self.points += 4
         self.triangles += 2
+        self.point_version += 1
+        self.attribute_version += 1
+        self.triangle_version += 1
 
     cpdef Mesh2 crop(Mesh2 self, Polygon p):
         """
         Crops this mesh against Polygon `p`, and returns a new Mesh2.
         """
 
-        return crop_mesh(self, p)
+        cdef Mesh2 rv = crop_mesh(self, p)
+
+        if rv is not self:
+            rv.point_version = 1
+            rv.triangle_version = 1
+            rv.attribute_version = 1
+
+        return rv
 
     def remap_texture(
         self,
@@ -405,6 +426,8 @@ cdef class Mesh2(Mesh):
 
         if new_w == 0 or new_h == 0:
             return
+
+        self.attribute_version += 1
 
         for i in range(self.points):
             x = self.attribute[i * self.layout.stride + 0] * old_w + old_x

@@ -71,6 +71,9 @@ cdef class GLStateCache:
     # Streaming stand-ins for client-side arrays under a core profile.
     cdef GLuint scratch_buffers[3]
 
+    cdef unsigned long long buffer_generation
+    cdef unsigned long long buffer_frame
+
     cpdef void reset(GLStateCache self)
 
     cpdef void new_context(GLStateCache self, bint core_profile)

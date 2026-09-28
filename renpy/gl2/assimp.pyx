@@ -694,6 +694,10 @@ cdef class Loader:
 
             triangle += 3
 
+        m.point_version = 1
+        m.attribute_version = 1
+        m.triangle_version = 1
+
         info = MeshInfo(
             self,
             m,

@@ -802,6 +802,48 @@ class Texture(GLTexture):
     pass
 
 
+yuv_rgb_uniform_cache = {}
+
+def yuv_rgb_uniforms(bint full_range, bint bt709):
+    """
+    Returns (matrix, offset) mapping a raw (y, u, v) sample, chroma biased
+    by +0.5, directly to rgb.
+    """
+
+    rv = yuv_rgb_uniform_cache.get((full_range, bt709))
+
+    if rv is not None:
+        return rv
+
+    if bt709: # Rec. 709 used for high definition.
+        rows = ((1.0, 0.0, 1.5748), (1.0, -0.187324, -0.468124), (1.0, 1.8556, 0.0))
+    else: # Rec. 601 used for standard definition.
+        rows = ((1.0, 0.0, 1.402), (1.0, -0.344136, -0.714136), (1.0, 1.772, 0.0))
+
+    if full_range:
+        luma_scale = 1.0
+        chroma_scale = 1.0
+        luma_offset = 0.0
+    else: # Studio swing puts luma in 16-235 and chroma in 16-240, of 0-255.
+        luma_scale = 255.0 / 219.0
+        chroma_scale = 255.0 / 224.0
+        luma_offset = -16.0 / 255.0 * luma_scale
+
+    chroma_offset = -0.5 * chroma_scale
+
+    elements = [ ]
+    offset = [ ]
+
+    for r in rows:
+        elements.extend((r[0] * luma_scale, r[1] * chroma_scale, r[2] * chroma_scale))
+        offset.append(r[0] * luma_offset + (r[1] + r[2]) * chroma_offset)
+
+    rv = (Matrix(elements), tuple(offset))
+    yuv_rgb_uniform_cache[(full_range, bt709)] = rv
+
+    return rv
+
+
 def load_yuv420_frame(frame, mipmap=False):
     """Creates a two-plane model whose fragment shader performs YUV conversion."""
 
@@ -835,14 +877,16 @@ def load_yuv420_frame(frame, mipmap=False):
     if not uv_texture.from_yuv_plane_pointer(video_frame.uv, chroma_width, chroma_height, GL_LUMINANCE_ALPHA, mipmap):
         return None
 
+    matrix, offset = yuv_rgb_uniforms(video_frame.full_range, video_frame.bt709)
+
     mesh = Mesh2.texture_rectangle(0.0, 0.0, width, height, 0.0, 0.0, 1.0, 1.0)
     model = GL2Model(
         (width, height),
         mesh,
         ("renpy.movie_yuv",),
         {
-            "u_movie_yuv_full_range": float(video_frame.full_range),
-            "u_movie_yuv_bt709": float(video_frame.bt709),
+            "u_movie_yuv_matrix": matrix,
+            "u_movie_yuv_offset": offset,
         },
     )
     model.set_texture(0, y_texture)

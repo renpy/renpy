@@ -35,36 +35,18 @@ init python:
     renpy.register_shader("renpy.movie_yuv", glsl=300, private_uniforms=True, variables="""
         uniform sampler2D tex0;
         uniform sampler2D tex1;
-        uniform float u_movie_yuv_full_range;
-        uniform float u_movie_yuv_bt709;
+        uniform mat3 u_movie_yuv_matrix;
+        uniform vec3 u_movie_yuv_offset;
         in vec2 a_tex_coord;
         out vec2 v_tex_coord;
     """, vertex_200="""
         v_tex_coord = a_tex_coord;
     """, fragment_200="""
-        // Rec. 601 used for standard definition.
-        const mat3 l__bt601 = mat3(
-            1.0,    1.0,       1.0,
-            0.0,   -0.344136,  1.772,
-            1.402, -0.714136,  0.0);
-
-        // Rec. 709 used for high definition.
-        const mat3 l__bt709 = mat3(
-            1.0,    1.0,       1.0,
-            0.0,   -0.187324,  1.8556,
-            1.5748, -0.468124,  0.0);
-
         float l__luma = texture(tex0, v_tex_coord).r;
-        vec2 l__chroma = texture(tex1, v_tex_coord).ra - 0.5;
-
-        if (u_movie_yuv_full_range < 0.5) {
-            // Studio swing puts luma in 16-235 and chroma in 16-240, of 0-255.
-            l__luma = (l__luma - 16.0 / 255.0) * (255.0 / 219.0);
-            l__chroma *= 255.0 / 224.0;
-        }
+        vec2 l__chroma = texture(tex1, v_tex_coord).ra;
 
         vec3 l__yuv = vec3(l__luma, l__chroma);
-        vec3 l__rgb = (u_movie_yuv_bt709 > 0.5) ? l__bt709 * l__yuv : l__bt601 * l__yuv;
+        vec3 l__rgb = u_movie_yuv_matrix * l__yuv + u_movie_yuv_offset;
 
         fragment_color = vec4(clamp(l__rgb, 0.0, 1.0), 1.0);
     """)

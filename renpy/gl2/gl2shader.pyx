@@ -685,7 +685,7 @@ cdef class Program:
         properties = context.properties
         attribute_offsets = mesh.layout.offset
 
-        upload_mesh_scratch(cache, mesh, &vbo, &abo, &ibo)
+        mesh.upload_buffers(cache, &vbo, &abo, &ibo)
 
         # Set up the attributes and build the mask of required attribute arrays.
         for a in self.attributes:

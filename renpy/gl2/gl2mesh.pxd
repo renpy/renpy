@@ -20,6 +20,14 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from renpy.gl2.gl2polygon cimport Polygon
+from renpy.gl2.gl2statecache cimport GLStateCache
+from renpy.uguu.gl cimport GLuint, GLsizeiptr
+
+cdef struct MeshBuffer:
+    GLuint name
+    unsigned long long generation
+    unsigned int version
+    GLsizeiptr size
 
 cdef class AttributeLayout:
     """
@@ -67,3 +75,21 @@ cdef class Mesh:
     # The triangle data, where each triangle consists of the index of three
     # points. This is 3 * allocated_triangles in size.
     cdef unsigned int *triangle
+
+    # Versions to be tracked and incremented before enabling crop and buffer reuse.
+    # Zero indicates the field is not tracked.
+    cdef public unsigned int point_version
+    cdef public unsigned int attribute_version
+    cdef public unsigned int triangle_version
+
+    # The key used to cache crops.
+    cdef tuple _crop_key
+    cdef Mesh _cropped_mesh
+
+    cdef Mesh get_cropped_mesh(self, Polygon p)
+
+    cdef MeshBuffer buffers[3]
+    cdef bint draw_seen
+    cdef unsigned long long draw_frame
+
+    cdef void upload_buffers(self, GLStateCache cache, GLuint* vbo, GLuint* abo, GLuint* ibo) noexcept nogil

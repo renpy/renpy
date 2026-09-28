@@ -21,6 +21,9 @@
 
 from renpy.uguu.gl cimport *
 
+# Shared across renderer instances so surviving meshes cannot reuse old names.
+cdef unsigned long long buffer_generation = 0
+
 cdef class GLStateCache:
 
     def __init__(GLStateCache self):
@@ -69,6 +72,11 @@ cdef class GLStateCache:
         cdef int i
         cdef unsigned int bit
 
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
+        self.current_array_buffer = 0
+        self.current_element_buffer = 0
+
         self.current_program = 0
 
         # 0 is not GL_TEXTURE0, so this forces the first activate call.
@@ -116,6 +124,11 @@ cdef class GLStateCache:
             self.current_program = program
 
     cpdef void new_context(GLStateCache self, bint core_profile):
+        global buffer_generation
+
+        buffer_generation += 1
+        self.buffer_generation = buffer_generation
+
         self.core_profile = core_profile
 
         self.current_element_buffer = 0
