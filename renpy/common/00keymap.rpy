@@ -57,7 +57,7 @@ init -1600 python:
 
         # Accessibility.
         accessibility = [ 'shift_K_a' ],
-        self_voicing = [ 'alt_K_v', 'K_v' ],
+        self_voicing = [ 'alt_K_v', 'noshift_K_v' ],
         clipboard_voicing = [ 'alt_shift_K_c', 'shift_K_c' ],
         screenreader_voicing = [ 'shift_K_v' ],
         debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
