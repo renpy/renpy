@@ -213,7 +213,7 @@ async def predict_sleep():
 
 async def prediction_coroutine(root_widget: renpy.display.displayable.Displayable):
     """
-    The image predictiont coroutine. This predicts the images that can
+    The image prediction coroutine. This predicts the images that can
     be loaded in the near future, and passes them to the image cache's
     preload_image method to be queued up for loading.
     """

@@ -87,14 +87,14 @@ def predict_pause(context):
     Yields if we're in a prediction mode where yielding is required and sufficient
     time has elapsed since the last pause.
     """
-    if not context.yield_prediction:
+    if not context.yield_prediction or not renpy.display.predict.predicting:
         return
 
     now_ns = time.perf_counter_ns()
     if now_ns < renpy.display.predict.next_predict_pause_ns:
         return
 
-    renpy.display.predict.next_predict_pause_ns = now_ns + 100_000
+    # The awaiting caller advances the deadline when it actually suspends.
     yield None
 
 
