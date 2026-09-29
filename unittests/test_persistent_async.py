@@ -1,5 +1,6 @@
 import asyncio
 import unittest
+from concurrent.futures import Future
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
@@ -15,6 +16,7 @@ class Location:
     def __init__(self):
         self.data = []
         self.saved = []
+        self.background_modes = []
 
     def load_persistent(self, *, consume=False):
         rv = list(self.data)
@@ -22,8 +24,9 @@ class Location:
             self.data.clear()
         return rv
 
-    def save_persistent(self, data):
+    def save_persistent(self, data, background=False):
         self.saved.append(data)
+        self.background_modes.append(background)
 
 
 class TestPersistentAsync(unittest.TestCase):
@@ -57,7 +60,7 @@ class TestPersistentAsync(unittest.TestCase):
             patch.object(persistent, "dumps", side_effect=lambda *a, **kw: events.append("dump") or b"data"),
             patch.object(persistent.zlib, "compress", side_effect=lambda *a: events.append("compress") or b"zip"),
             patch.object(renpy.savetoken, "sign_data", side_effect=lambda *a: events.append("sign") or "sig"),
-            patch.object(self.location, "save_persistent", side_effect=lambda data: events.append(("write", data))),
+            patch.object(self.location, "save_persistent", side_effect=lambda data, **kwargs: events.append(("write", data))),
         ):
             asyncio.run(persistent.save_async())
 
@@ -84,6 +87,50 @@ class TestPersistentAsync(unittest.TestCase):
             self.assertIsNone(persistent.save())
 
         self.assertEqual(self.location.saved, [b"zipsig"] * 3)
+        self.assertEqual(self.location.background_modes, [False] * 3)
+
+    def test_async_save_queues_without_waiting_for_disk(self):
+        future = Future()
+        with (
+            patch.object(persistent, "dumps", return_value=b"data"),
+            patch.object(persistent.zlib, "compress", return_value=b"zip"),
+            patch.object(renpy.savetoken, "sign_data", return_value="sig"),
+            patch.object(self.location, "save_persistent", return_value=future) as save,
+        ):
+            asyncio.run(persistent.save_async())
+
+        save.assert_called_once_with(b"zipsig", background=True)
+        self.assertFalse(future.done())
+        self.assertFalse(persistent.pending_save)
+        self.assertEqual(persistent.persistent_mtime, 0)
+
+        future.set_result(9)
+        self.assertEqual(persistent.persistent_mtime, 9)
+
+    def test_late_background_failure_does_not_retry(self):
+        future = Future()
+        with (
+            patch.object(persistent, "dumps", return_value=b"data"),
+            patch.object(persistent.zlib, "compress", return_value=b"zip"),
+            patch.object(renpy.savetoken, "sign_data", return_value="sig"),
+            patch.object(self.location, "save_persistent", return_value=future),
+        ):
+            asyncio.run(persistent.save_async())
+
+        future.set_exception(OSError("disk error"))
+        self.assertFalse(persistent.pending_save)
+        self.assertEqual(persistent.persistent_mtime, 0)
+
+    def test_completed_background_write_mtime_is_not_overwritten_by_update(self):
+        persistent.backup["value"] = 1
+        self.location.data = [(5, object())]
+        write = Future()
+        write.add_done_callback(persistent._background_save_completed)
+
+        with patch.object(persistent, "merge", side_effect=lambda other: write.set_result(10)):
+            asyncio.run(persistent.update_async())
+
+        self.assertEqual(persistent.persistent_mtime, 10)
 
     def test_unchanged_update_does_not_save(self):
         persistent.backup["value"] = 1

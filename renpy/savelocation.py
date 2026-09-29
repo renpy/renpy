@@ -30,6 +30,8 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import os
 import zipfile
 import json
+from collections import deque
+from concurrent.futures import Future
 
 import renpy
 import threading
@@ -408,12 +410,21 @@ class FileLocation(object):
 
         return rv
 
-    def save_persistent(self, data):
+    def save_persistent(self, data, background=False):
         """
         Saves `data` as the persistent data. Data is a binary string giving
         the persistent data in python format.
+
+        When `background` is true and the scan thread is running, queues the
+        write and returns a Future. Otherwise, completes the write before
+        returning.
         """
 
+        result = submit_persistent_write(lambda: self._save_persistent(data), background)
+        if background and isinstance(result, Future):
+            return result
+
+    def _save_persistent(self, data):
         with disk_lock:
             if not self.active:
                 return
@@ -423,19 +434,20 @@ class FileLocation(object):
             fn_new = fn + ".new"
 
             pause_syncfs()
+            try:
+                with open(fn_tmp, "wb") as f:
+                    f.write(data)
 
-            with open(fn_tmp, "wb") as f:
-                f.write(data)
+                safe_rename(fn_tmp, fn_new)
+                safe_rename(fn_new, fn)
 
-            safe_rename(fn_tmp, fn_new)
-            safe_rename(fn_new, fn)
+                # Prevent persistent from unpickle just after save
+                self.persistent_mtime = os.path.getmtime(fn)
 
-            # Prevent persistent from unpickle just after save
-            self.persistent_mtime = os.path.getmtime(fn)
-
-            renpy.util.expose_file(fn)
-
-            resume_syncfs()
+                renpy.util.expose_file(fn)
+                return self.persistent_mtime
+            finally:
+                resume_syncfs()
 
     def unlink_persistent(self):
         if not self.active:
@@ -613,10 +625,27 @@ class MultiLocation(object):
 
         return rv
 
-    def save_persistent(self, data):
+    def save_persistent(self, data, background=False):
+        """
+        Saves persistent data in each active location. Background writes are
+        queued as one operation, preserving the location order and syncfs batch.
+        """
+
+        result = submit_persistent_write(lambda: self._save_persistent(data), background)
+        if background and isinstance(result, Future):
+            return result
+
+    def _save_persistent(self, data):
+        mtime = None
         with SyncfsLock():
             for l in reversed(self.active_locations()):
-                l.save_persistent(data)
+                saved_mtime = l.save_persistent(data)
+                if saved_mtime is None:
+                    saved_mtime = getattr(l, "persistent_mtime", None)
+                if saved_mtime is not None:
+                    mtime = saved_mtime if mtime is None else max(mtime, saved_mtime)
+
+        return mtime
 
     def unlink_persistent(self):
         with SyncfsLock():
@@ -649,24 +678,76 @@ quit_scan_thread = False
 # The condition we wait on.
 scan_thread_condition = threading.Condition()
 
+# Ordered writes processed by the scan thread.
+persistent_writes = deque()
+
+
+def submit_persistent_write(write, background):
+    """
+    Runs a persistent write in submission order, using the scan thread when
+    one is available.
+    """
+
+    if renpy.emscripten or threading.current_thread() is scan_thread:
+        return write()
+
+    with scan_thread_condition:
+        worker = scan_thread
+        if worker is not None and worker.is_alive() and not quit_scan_thread:
+            future = Future()
+            persistent_writes.append((write, future, background))
+            scan_thread_condition.notify()
+        else:
+            future = None
+
+    if future is None:
+        if worker is not None and worker.is_alive():
+            worker.join()
+        return write()
+
+    if background:
+        return future
+
+    return future.result()
+
 
 def run_scan_thread():
-    global quit_scan_thread
+    next_scan = time.monotonic()
 
-    quit_scan_thread = False
-
-    while not quit_scan_thread:
-        try:
-            renpy.loadsave.location.scan()
-        except Exception:
-            pass
-
+    while True:
         with scan_thread_condition:
-            scan_thread_condition.wait(5.0)
+            while not persistent_writes and not quit_scan_thread and time.monotonic() < next_scan:
+                scan_thread_condition.wait(max(0, next_scan - time.monotonic()))
+
+            if persistent_writes:
+                write, future, background = persistent_writes.popleft()
+            elif quit_scan_thread:
+                break
+            else:
+                write = None
+
+        if write is None:
+            try:
+                renpy.loadsave.location.scan()
+            except Exception:
+                pass
+            next_scan = time.monotonic() + 5.0
+            continue
+
+        try:
+            result = write()
+        except Exception as e:
+            future.set_exception(e)
+            if background:
+                renpy.display.log.write("Writing persistent.")
+                renpy.display.log.exception()
+        else:
+            future.set_result(result)
 
 
 def quit():
     global quit_scan_thread
+    global scan_thread
 
     with scan_thread_condition:
         quit_scan_thread = True
@@ -674,6 +755,7 @@ def quit():
 
     if scan_thread is not None:
         scan_thread.join()
+        scan_thread = None
 
 
 def init():

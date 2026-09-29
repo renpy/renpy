@@ -222,6 +222,7 @@ name_blacklist = {
     "renpy.text.text.VERT_REVERSE",
     "renpy.savelocation.scan_thread_condition",
     "renpy.savelocation.disk_lock",
+    "renpy.savelocation.persistent_writes",
     "renpy.character.TAG_RE",
     "renpy.display.im.cache",
     "renpy.display.render.main_thread",
@@ -650,6 +651,9 @@ def reload_all():
 
     # Reset asyncio tasks.
     renpy.asyncio.reset()
+
+    # Complete queued persistent writes before restoring module state.
+    renpy.savelocation.quit()
 
     # GC renders.
     renpy.display.render.screen_render = None

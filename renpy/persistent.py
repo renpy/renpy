@@ -22,6 +22,7 @@
 from typing import Any
 
 import asyncio
+from concurrent.futures import Future
 import os
 import copy
 import time
@@ -417,10 +418,10 @@ def check_update():
     restarts the interaction.
     """
 
-    return renpy.asyncio.run_sync(check_update_async())
+    return renpy.asyncio.run_sync(check_update_async(background=False))
 
 
-async def check_update_async():
+async def check_update_async(*, background=True):
     """
     Asynchronously checks for new persistent data and restarts the interaction
     after merging it.
@@ -431,10 +432,10 @@ async def check_update_async():
             break
     else:
         if pending_save:
-            await update_async()
+            await update_async(background=background)
         return
 
-    await update_async()
+    await update_async(background=background)
     renpy.exports.restart_interaction()
 
 
@@ -444,10 +445,10 @@ def update(force_save=False):
     persistent_mtime, and merges it into the persistent object.
     """
 
-    return renpy.asyncio.run_sync(update_async(force_save))
+    return renpy.asyncio.run_sync(update_async(force_save, background=False))
 
 
-async def update_async(force_save=False):
+async def update_async(force_save=False, *, background=True):
     """
     Asynchronously updates the persistent data, yielding between costly steps.
     """
@@ -477,16 +478,17 @@ async def update_async(force_save=False):
 
         merge(other)
 
-    persistent_mtime = mtime
+    with renpy.savelocation.disk_lock:
+        persistent_mtime = max(persistent_mtime, mtime)
 
     if need_save:
         await asyncio.sleep(0)
-        await save_async()
+        await save_async(background=background)
 
 
 should_save_persistent = True
 
-# Retains an unfinished write across interaction task cancellation.
+# Retains a write not yet submitted across interaction task cancellation.
 pending_save = False
 
 
@@ -495,12 +497,23 @@ def save():
     Saves the persistent data to disk.
     """
 
-    return renpy.asyncio.run_sync(save_async())
+    return renpy.asyncio.run_sync(save_async(background=False))
 
 
-async def save_async():
+def _background_save_completed(write):
+    global persistent_mtime
+
+    if write.exception() is None:
+        mtime = write.result()
+        if mtime is not None:
+            with renpy.savelocation.disk_lock:
+                persistent_mtime = max(persistent_mtime, mtime)
+
+
+async def save_async(*, background=True):
     """
     Asynchronously saves the persistent data, yielding between costly steps.
+    With background enabled, returns after submitting the filesystem write.
     """
 
     global persistent_mtime, pending_save
@@ -522,7 +535,14 @@ async def save_async():
         await asyncio.sleep(0)
         compressed += renpy.savetoken.sign_data(data).encode("utf-8")
         await asyncio.sleep(0)
-        renpy.loadsave.location.save_persistent(compressed)
+        if background:
+            write = renpy.loadsave.location.save_persistent(compressed, background=True)
+            if isinstance(write, Future):
+                write.add_done_callback(_background_save_completed)
+                pending_save = False
+                return
+        else:
+            renpy.loadsave.location.save_persistent(compressed)
     except Exception:
         if renpy.config.developer:
             raise
@@ -533,7 +553,8 @@ async def save_async():
 
     # Prevent updates just after save
     for mtime, _data in renpy.loadsave.location.load_persistent():
-        persistent_mtime = max(persistent_mtime, mtime)
+        with renpy.savelocation.disk_lock:
+            persistent_mtime = max(persistent_mtime, mtime)
 
     pending_save = False
 
