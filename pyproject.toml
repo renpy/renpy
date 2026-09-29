@@ -22,6 +22,7 @@ dependencies = [
     "chardet>=7.6.0",
     "websockets>=17.1",
     "pysocks>=1.7.1",
+    "prismatoid>=0.18.0",
 ]
 
 

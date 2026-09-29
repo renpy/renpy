@@ -140,6 +140,10 @@ screen _accessibility_audio():
                 action Preference("self voicing", "disable")
                 style_suffix "radio_button"
 
+            textbutton _("Screen Reader"):
+                action Preference("screenreader voicing", "enable")
+                style_suffix "radio_button"
+
             textbutton _("Text-to-speech"):
                 action Preference("self voicing", "enable")
                 style_suffix "radio_button"

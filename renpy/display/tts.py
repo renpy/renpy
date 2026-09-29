@@ -30,7 +30,19 @@ import re
 import subprocess
 
 import renpy
-import renpy.pygame as pygame
+try:
+    import renpy.pygame as pygame
+except Exception:
+    try:
+        import pygame  # type: ignore
+    except Exception:
+        pygame = None  # type: ignore
+
+prism = None
+try:
+    import prism
+except Exception:
+    prism = None
 
 
 class TTSDone(str):
@@ -464,6 +476,193 @@ class WebTTS(object):
         return json.loads(voices) if voices else []
 
 
+SCREEN_READER_BACKENDS = {
+    "nvda",
+    "jaws",
+    "voiceover",
+    "orca",
+    "zoomtext",
+    "systemaccess",
+    "windoweyes",
+    "pctalker",
+    "zdsr",
+    "boypcreader",
+    "sensereader",
+    "supernova",
+    "hal",
+    "cobra",
+    "dolphin",
+    "narrator",
+}
+
+
+class PrismTTS(object):
+    """
+    Unified cross-platform TTS and Screen Reader backend using Prism.
+    """
+
+    def __init__(self):
+        if prism is None:
+            raise RuntimeError("Prism module is not available")
+
+        self.context = prism.Context()
+        self.sr_backend = None
+        self.tts_backend = None
+        self._init_backends()
+
+    def _init_backends(self):
+        # 1. Screen reader backend: look for an active screen reader
+        self.sr_backend = None
+        for i in range(self.context.backends_count):
+            bid = self.context.id_of(i)
+            name = self.context.name_of(bid)
+            if name.lower() in SCREEN_READER_BACKENDS:
+                try:
+                    self.sr_backend = self.context.acquire(bid)
+                    break
+                except Exception:
+                    continue
+
+        if self.sr_backend is None:
+            # Fallback for screen reader mode if none is currently active:
+            try:
+                self.sr_backend = self.context.acquire_best()
+            except Exception:
+                self.sr_backend = None
+
+        # 2. TTS backend: look for OS synthesizers, explicitly excluding screen readers
+        self.tts_backend = None
+        preferred_tts = ["onecore", "avspeech", "avfoundation", "speech-dispatcher", "sapi", "espeak"]
+        for pref in preferred_tts:
+            for i in range(self.context.backends_count):
+                bid = self.context.id_of(i)
+                name = self.context.name_of(bid)
+                if pref in name.lower() and name.lower() not in SCREEN_READER_BACKENDS:
+                    try:
+                        self.tts_backend = self.context.acquire(bid)
+                        break
+                    except Exception:
+                        continue
+            if self.tts_backend is not None:
+                break
+
+        if self.tts_backend is None:
+            for i in range(self.context.backends_count):
+                bid = self.context.id_of(i)
+                name = self.context.name_of(bid)
+                if name.lower() not in SCREEN_READER_BACKENDS:
+                    try:
+                        self.tts_backend = self.context.acquire(bid)
+                        break
+                    except Exception:
+                        continue
+
+        if self.tts_backend is None:
+            self.tts_backend = self.sr_backend
+
+    def get_backend(self, mode=None):
+        if mode == "screenreader":
+            # Dynamic re-check: Did user start NVDA or JAWS while game was running?
+            for i in range(self.context.backends_count):
+                bid = self.context.id_of(i)
+                name = self.context.name_of(bid)
+                if name.lower() in SCREEN_READER_BACKENDS:
+                    try:
+                        self.sr_backend = self.context.acquire(bid)
+                        return self.sr_backend
+                    except Exception:
+                        continue
+            if self.sr_backend is None:
+                self._init_backends()
+            return self.sr_backend
+        else:
+            if self.tts_backend is None:
+                self._init_backends()
+            return self.tts_backend
+
+    def is_speaking(self):
+        b = self.tts_backend or self.sr_backend
+        if b is not None:
+            try:
+                return b.speaking
+            except Exception:
+                return False
+        return False
+
+    def speak(self, s, mode=None):
+        s = s.strip()
+        if not s:
+            return
+
+        b = self.get_backend(mode)
+        if b is None:
+            return
+
+        voice, s = get_voice(s)
+
+        try:
+            if b.features.supports_set_volume:
+                amplitude = renpy.game.preferences.get_mixer("voice")
+                b.volume = float(amplitude)
+        except Exception:
+            pass
+
+        try:
+            if b.features.supports_set_rate:
+                speed = renpy.game.preferences.tts_speed
+                # Map 1.0..3.0 to 0.5..1.0 (0.5 is normal speed in Prism)
+                rate = min(1.0, max(0.0, 0.5 + (speed - 1.0) * 0.25))
+                b.rate = float(rate)
+        except Exception:
+            pass
+
+        if voice is not None:
+            try:
+                for i in range(b.voices_count):
+                    vname = b.get_voice_name(i)
+                    vlang = b.get_voice_language(i)
+                    full_name = "{}: {}".format(vlang, vname)
+                    if voice in (full_name, vname):
+                        b.voice = i
+                        break
+            except Exception:
+                pass
+
+        try:
+            b.output(s, interrupt=True)
+        except Exception:
+            try:
+                b.speak(s, interrupt=True)
+            except Exception:
+                pass
+
+    def stop(self):
+        if self.sr_backend is not None:
+            try:
+                self.sr_backend.stop()
+            except Exception:
+                pass
+        if self.tts_backend is not None and self.tts_backend is not self.sr_backend:
+            try:
+                self.tts_backend.stop()
+            except Exception:
+                pass
+
+    def get_tts_voices(self):
+        b = self.tts_backend or self.get_backend("tts")
+        if b is None:
+            return []
+        voices = []
+        try:
+            for i in range(b.voices_count):
+                vname = b.get_voice_name(i)
+                vlang = b.get_voice_language(i)
+                voices.append("{}: {}".format(vlang, vname))
+        except Exception:
+            pass
+        return voices
+
+
 platform_tts = None  # The platform-specific TTS object.
 
 
@@ -498,7 +697,16 @@ def default_tts_function(s):
         return
 
     if platform_tts is not None:
-        platform_tts.speak(s)
+        if renpy.game.preferences.self_voicing == "screenreader":
+            if isinstance(platform_tts, PrismTTS):
+                platform_tts.speak(s, mode="screenreader")
+            else:
+                platform_tts.speak(s)
+        else:
+            if isinstance(platform_tts, PrismTTS):
+                platform_tts.speak(s, mode="tts")
+            else:
+                platform_tts.speak(s)
 
 
 def stop_tts():
@@ -534,7 +742,8 @@ def init():
 
     global platform_tts
 
-    for pattern, replacement in renpy.config.tts_substitutions:
+    subs = getattr(getattr(renpy, "config", None), "tts_substitutions", [])
+    for pattern, replacement in subs:
         if isinstance(pattern, str):
             pattern = r"\b" + re.escape(pattern) + r"\b"
             pattern = re.compile(pattern, re.IGNORECASE)
@@ -542,28 +751,34 @@ def init():
 
         tts_substitutions.append((pattern, replacement))
 
-    try:
-        if renpy.android:
-            platform_tts = AndroidTTS()
+    if prism is not None:
+        try:
+            platform_tts = PrismTTS()
+        except Exception:
+            renpy.display.log.write("Failed to initialize Prism TTS, falling back to platform TTS.")
+            renpy.display.log.exception()
+            platform_tts = None
 
-        elif renpy.ios:
-            platform_tts = AppleTTS()
+    if platform_tts is None:
+        try:
+            if getattr(renpy, "android", False):
+                platform_tts = AndroidTTS()
 
-        elif renpy.macintosh:
-            platform_tts = AppleTTS()
+            elif getattr(renpy, "ios", False) or getattr(renpy, "macintosh", False):
+                platform_tts = AppleTTS()
 
-        elif renpy.linux:
-            platform_tts = LinuxTTS()
+            elif getattr(renpy, "linux", False):
+                platform_tts = LinuxTTS()
 
-        elif renpy.windows:
-            platform_tts = WindowsTTS()
+            elif getattr(renpy, "windows", False) or sys.platform.startswith("win"):
+                platform_tts = WindowsTTS()
 
-        elif renpy.emscripten and renpy.config.webaudio:
-            platform_tts = WebTTS()
+            elif getattr(renpy, "emscripten", False):
+                platform_tts = WebTTS()
 
-    except Exception as e:
-        renpy.display.log.write("Failed to initialize TTS.")
-        renpy.display.log.exception()
+        except Exception as e:
+            renpy.display.log.write("Failed to initialize TTS.")
+            renpy.display.log.exception()
 
 
 # Cache for get_tts_voices.
@@ -615,10 +830,8 @@ def get_voice(text: str = ""):
         voice = m.group(1)
         text = VOICE_RE.sub("", text)
 
-        if voice in get_tts_voices():
-            return voice, text
-
-    voice = renpy.game.preferences.tts_voice
+    prefs = getattr(getattr(renpy, "game", None), "preferences", None)
+    voice = prefs.tts_voice if prefs is not None else None
 
     if voice is not None and voice in get_tts_voices():
         return voice, text
@@ -764,8 +977,14 @@ def displayable(d):
 
     if not self_voicing:
         if old_self_voicing:
+            mode_was = old_self_voicing
             old_self_voicing = self_voicing
-            speak(renpy.translation.translate_string("Self-voicing disabled."), force=True)
+            if mode_was == "screenreader":
+                speak(renpy.translation.translate_string("Screen reader voicing disabled."), force=True)
+            elif mode_was == "clipboard":
+                speak(renpy.translation.translate_string("Clipboard voicing disabled."), force=True)
+            else:
+                speak(renpy.translation.translate_string("Self-voicing disabled."), force=True)
 
         last = ""
 
@@ -773,11 +992,13 @@ def displayable(d):
 
     prefix = ""
 
-    if not old_self_voicing:
+    if old_self_voicing != self_voicing:
         old_self_voicing = self_voicing
 
         if self_voicing == "clipboard":
             prefix = renpy.translation.translate_string("Clipboard voicing enabled. ")
+        elif self_voicing == "screenreader":
+            prefix = renpy.translation.translate_string("Screen reader voicing enabled. ")
         else:
             prefix = renpy.translation.translate_string("Self-voicing enabled. ")
 

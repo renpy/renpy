@@ -59,6 +59,7 @@ init -1600 python:
         accessibility = [ 'shift_K_a' ],
         self_voicing = [ 'alt_K_v', 'K_v' ],
         clipboard_voicing = [ 'alt_shift_K_c', 'shift_K_c' ],
+        screenreader_voicing = [ 'shift_K_v' ],
         debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
         extra_voicing = [ '?' ],
 
@@ -456,6 +457,7 @@ init -1100 python:
         memory_profile = _memory_profile,
         self_voicing = Preference("self voicing", "toggle"),
         clipboard_voicing = Preference("clipboard voicing", "toggle"),
+        screenreader_voicing = Preference("screenreader voicing", "toggle"),
         debug_voicing = Preference("debug voicing", "toggle"),
         extra_voicing = renpy.exports.speak_extra_alt,
         progress_screen = _progress_screen,
