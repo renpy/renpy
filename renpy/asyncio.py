@@ -22,12 +22,56 @@
 from __future__ import annotations
 
 import asyncio
+import inspect
 import os
 import sys
 import threading
 import time
 from collections.abc import Coroutine
 from typing import Any
+
+
+def _is_internal_asyncio_frame(filename: str) -> bool:
+    return ("asyncio/tasks.py" in filename or "asyncio\\tasks.py" in filename or
+            "asyncio/base_events.py" in filename or "asyncio\\base_events.py" in filename)
+
+
+def _get_suspension_info(task: asyncio.Task[Any], coro: Any) -> str:
+    if coro is None:
+        return "completed" if task.done() else ""
+
+    frames: list[tuple[str, int, str]] = []
+    cur = coro
+    while cur is not None and inspect.iscoroutine(cur):
+        frame = getattr(cur, "cr_frame", None)
+        if frame is not None:
+            code = frame.f_code
+            if not _is_internal_asyncio_frame(code.co_filename):
+                frames.append((code.co_filename, frame.f_lineno, code.co_name))
+        cur = getattr(cur, "cr_await", None)
+
+    if frames:
+        if len(frames) == 1:
+            fn, line, _ = frames[0]
+            return f"suspended at {fn}:{line}"
+        else:
+            return "suspended at " + " -> ".join(
+                f"{fn}:{line} in {name}" if i > 0 else f"{fn}:{line}"
+                for i, (fn, line, name) in enumerate(frames)
+            )
+
+    if task.done():
+        if task.cancelled():
+            return "cancelled"
+        try:
+            exc = task.exception()
+        except asyncio.CancelledError:
+            return "cancelled"
+        if exc is not None:
+            return f"raised {type(exc).__name__}"
+        return "completed"
+
+    return ""
 
 
 def _report_slow_task(task: asyncio.Task[Any], dt_ns: int, threshold_ns: int) -> None:
@@ -41,17 +85,23 @@ def _report_slow_task(task: asyncio.Task[Any], dt_ns: int, threshold_ns: int) ->
         coro_name = getattr(coro, "__qualname__", getattr(coro, "__name__", str(coro)))
         code = getattr(coro, "cr_code", None)
         if code is not None:
-            location = f" at {code.co_filename}:{code.co_firstlineno}"
+            def_loc = f" at {code.co_filename}:{code.co_firstlineno}"
         else:
-            location = ""
+            def_loc = ""
     else:
         coro_name = "coroutine"
-        location = ""
+        def_loc = ""
+
+    susp_info = _get_suspension_info(task, coro)
+    if susp_info:
+        status_part = f", {susp_info}"
+    else:
+        status_part = ""
 
     dt_ms = dt_ns / 1_000_000.0
     threshold_ms = threshold_ns / 1_000_000.0
     sys.stdout.write(
-        f"Slow async task {task_name!r} ({coro_name}{location}) took {dt_ms:.2f} ms "
+        f"Slow async task {task_name!r} ({coro_name}{def_loc}{status_part}) took {dt_ms:.2f} ms "
         f"(threshold: {threshold_ms:.2f} ms)\n"
     )
     sys.stdout.flush()
