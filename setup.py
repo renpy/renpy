@@ -37,6 +37,11 @@ def main():
     os.chdir(BASE)
 
     setuplib.init()
+    with setuplib._build_lock(Path("tmp/.cython.lock")):
+        _build()
+
+
+def _build():
     setuplib.check_imports(BASE / "scripts", "setuplib.py", "generate_styles.py")
 
     generate_styles.generate()
