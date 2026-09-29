@@ -446,6 +446,7 @@ class TestAsyncioRunner(unittest.TestCase):
         output = captured.getvalue()
         self.assertIn("Slow async task 'slow_start_task'", output)
         self.assertIn("slow_initial", output)
+        self.assertIn("suspended at", output)
         self.assertIn("threshold: 2.50 ms", output)
 
     def test_slow_async_debug_reports_between_suspending(self):
@@ -473,7 +474,39 @@ class TestAsyncioRunner(unittest.TestCase):
         output = captured.getvalue()
         self.assertIn("Slow async task 'slow_resume_task'", output)
         self.assertIn("slow_resume", output)
+        self.assertIn("completed", output)
         self.assertIn("threshold: 2.50 ms", output)
+
+    def test_slow_async_debug_shows_suspension_location_and_nested_chain(self):
+        # Verify that suspension location is reported, including through nested await chains.
+        os.environ["RENPY_DEBUG_SLOW_ASYNC"] = "2.0"
+
+        captured = io.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = captured
+        try:
+            async def leaf():
+                time.sleep(0.01)  # noqa: ASYNC251
+                await asyncio.sleep(0.001)
+
+            async def branch():
+                await leaf()
+
+            async def root():
+                await branch()
+
+            task = rasynco.create_task(root(), name="chain_task")
+            while rasynco.run_for_ns(50_000_000):
+                pass
+            self.assertTrue(task.done())
+        finally:
+            sys.stdout = old_stdout
+
+        output = captured.getvalue()
+        self.assertIn("Slow async task 'chain_task'", output)
+        self.assertIn("suspended at", output)
+        self.assertIn("in leaf", output)
+        self.assertIn("in branch", output)
 
     def test_slow_async_debug_fast_task_silent(self):
         # Tasks taking less than the threshold do not report to stdout.
