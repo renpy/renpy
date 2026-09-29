@@ -2297,9 +2297,9 @@ class Interface:
 
         if not self.did_persistent:
             if renpy.emscripten:
-                renpy.persistent.update()
+                await renpy.persistent.update_async()
             else:
-                renpy.persistent.check_update()
+                await renpy.persistent.check_update_async()
 
             self.did_persistent = True
 
