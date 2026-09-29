@@ -21,6 +21,7 @@
 
 from typing import Any
 
+import asyncio
 import os
 import copy
 import time
@@ -416,13 +417,24 @@ def check_update():
     restarts the interaction.
     """
 
+    return renpy.asyncio.run_sync(check_update_async())
+
+
+async def check_update_async():
+    """
+    Asynchronously checks for new persistent data and restarts the interaction
+    after merging it.
+    """
+
     for mtime, _data in renpy.loadsave.location.load_persistent():
         if mtime > persistent_mtime:
             break
     else:
+        if pending_save:
+            await update_async()
         return
 
-    update()
+    await update_async()
     renpy.exports.restart_interaction()
 
 
@@ -432,10 +444,20 @@ def update(force_save=False):
     persistent_mtime, and merges it into the persistent object.
     """
 
-    need_save = find_changes()
-    need_save = need_save or force_save
+    return renpy.asyncio.run_sync(update_async(force_save))
 
-    global persistent_mtime
+
+async def update_async(force_save=False):
+    """
+    Asynchronously updates the persistent data, yielding between costly steps.
+    """
+
+    global persistent_mtime, pending_save
+
+    need_save = find_changes() or force_save or pending_save
+    pending_save = need_save
+
+    await asyncio.sleep(0)
 
     # A list of (mtime, other) pairs, where other is a persistent file
     # we might want to merge in.
@@ -458,10 +480,14 @@ def update(force_save=False):
     persistent_mtime = mtime
 
     if need_save:
-        save()
+        await asyncio.sleep(0)
+        await save_async()
 
 
 should_save_persistent = True
+
+# Retains an unfinished write across interaction task cancellation.
+pending_save = False
 
 
 def save():
@@ -469,18 +495,33 @@ def save():
     Saves the persistent data to disk.
     """
 
-    global old_persistent_data
+    return renpy.asyncio.run_sync(save_async())
+
+
+async def save_async():
+    """
+    Asynchronously saves the persistent data, yielding between costly steps.
+    """
+
+    global persistent_mtime, pending_save
 
     if not renpy.config.save_persistent:
+        pending_save = False
         return
 
     if not should_save_persistent:
+        pending_save = False
         return
+
+    pending_save = True
 
     try:
         data = dumps(renpy.game.persistent, bad_reduction_name="persistent")
+        await asyncio.sleep(0)
         compressed = zlib.compress(data, 3)
+        await asyncio.sleep(0)
         compressed += renpy.savetoken.sign_data(data).encode("utf-8")
+        await asyncio.sleep(0)
         renpy.loadsave.location.save_persistent(compressed)
     except Exception:
         if renpy.config.developer:
@@ -490,11 +531,11 @@ def save():
         renpy.display.log.exception()
         return
 
-    global persistent_mtime
-
     # Prevent updates just after save
     for mtime, _data in renpy.loadsave.location.load_persistent():
         persistent_mtime = max(persistent_mtime, mtime)
+
+    pending_save = False
 
 
 ################################################################################
