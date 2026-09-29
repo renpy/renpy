@@ -23,7 +23,10 @@ import json
 import math
 
 import renpy
-from renpy.gl2.gl2physics import PendulumPhysics
+try:
+    from renpy.gl2.gl2physics import PendulumPhysics
+except ImportError:
+    PendulumPhysics = None
 
 class Live2DPhysics:
     """
