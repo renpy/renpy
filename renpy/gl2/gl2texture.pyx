@@ -551,7 +551,7 @@ cdef class GLTexture(GL2Model):
 
             glGenBuffers(1, &pixel_buffer)
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pixel_buffer)
-            glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STATIC_DRAW)
+            glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STREAM_DRAW)
             glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, <void *> 0)
             glDeleteBuffers(1, &pixel_buffer)
@@ -631,7 +631,7 @@ cdef class GLTexture(GL2Model):
 
             glGenBuffers(1, &pixel_buffer)
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pixel_buffer)
-            glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STATIC_DRAW)
+            glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STREAM_DRAW)
             glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, <void *> 0)
             glDeleteBuffers(1, &pixel_buffer)
