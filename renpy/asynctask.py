@@ -103,9 +103,8 @@ def _suspension_info(generator: Generator[Any, None, Any], done: bool) -> str:
         current = current.gi_yieldfrom
 
     if frames:
-        first, *rest = frames
         return "suspended at " + " -> ".join(
-            [f"{first[0]}:{first[1]}"] + [f"{fn}:{line} in {name}" for fn, line, name in rest]
+            f"{fn}:{line} in {name}" for fn, line, name in frames
         )
     return "completed" if done else ""
 

@@ -341,10 +341,27 @@ class TestAsyncTask(unittest.TestCase):
         text = output.getvalue()
         self.assertTrue(task.done())
         self.assertIn("Slow generator task 'slow_name'", text)
+        self.assertIn("in root", text)
         self.assertIn("in leaf", text)
         self.assertIn("suspended at", text)
         self.assertIn("completed", text)
         self.assertIn("threshold: 0.50 ms", text)
+
+    def test_slow_step_logs_single_frame_location(self):
+        def work():
+            time.sleep(0.003)
+            yield
+
+        with patch.dict(os.environ, {"RENPY_DEBUG_SLOW_ASYNC": "0.5"}):
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                task = self.runner.create_task(work(), name="single_task")
+                self.runner.run_for_ns(0)
+        text = output.getvalue()
+        self.assertFalse(task.done())
+        self.assertIn("Slow generator task 'single_task'", text)
+        self.assertIn("suspended at", text)
+        self.assertIn("in work", text)
 
     def test_slow_step_disabled_and_invalid_setting(self):
         def work():
