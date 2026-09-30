@@ -858,8 +858,8 @@ shader_part_filter_cache = {}
 # File version changes when the record layout changes. Recipe version changes
 # whenever shader source generation changes in a way that can make an
 # old program binary incompatible with the current engine.
-PROGRAM_CACHE_MAGIC = b"renpy shader programs\x00\x02"
-PROGRAM_CACHE_RECIPE = b"renpy shader recipe\x00\x02"
+PROGRAM_CACHE_MAGIC = b"renpy shader programs\x00\x00"
+PROGRAM_CACHE_RECIPE = b"renpy shader recipe\x00\x00"
 PROGRAM_CACHE_RECORD = "<32s32sIIIII"
 PROGRAM_CACHE_RECORD_SIZE = struct.calcsize(PROGRAM_CACHE_RECORD)
 MAX_PROGRAM_BINARY_SIZE = 16 * 1024 * 1024
@@ -890,19 +890,6 @@ def shader_recipe_digest(partnames, gles, version):
         rv.update(part.cache_digest)
 
     return rv.digest()
-
-
-def program_variable_specs(vertex_variables, fragment_variables):
-    rv = []
-
-    for fragment, variables in ((False, vertex_variables), (True, fragment_variables)):
-        for variable in variables:
-            if variable.storage != "uniform" and (fragment or variable.storage != "attribute"):
-                continue
-
-            rv.append((variable.storage, variable.type, variable.name, variable.array, fragment))
-
-    return tuple(rv)
 
 
 def program_cache_entry_size(key, entry):
@@ -1272,7 +1259,13 @@ class ShaderCache(object):
             the cache.
         """
 
-        partnames = self._filter_partnames(partnames)
+        if renpy.config.shader_part_filter is not None:
+            partnames = self._filter_partnames(partnames)
+
+        rv = self.cache.get(partnames, None)
+
+        if rv is not None:
+            return rv
 
         return self._get_filtered(partnames)
 
@@ -1377,8 +1370,6 @@ class ShaderCache(object):
         # consistent once both stages have been considered together.
         vertex_variables, fragment_variables = link_variables(vertex_variables, fragment_variables)
 
-        variable_specs = program_variable_specs(vertex_variables, fragment_variables)
-
         def build(version, recipe_digest, check_cache):
             if check_cache:
                 cached = cached_program(version, recipe_digest)
@@ -1392,7 +1383,7 @@ class ShaderCache(object):
             self.log_shader("vertex", sortedpartnames, vertex)
             self.log_shader("fragment", sortedpartnames, fragment)
 
-            rv = Program(sortedpartnames, vertex, fragment, variable_specs)
+            rv = Program(sortedpartnames, vertex, fragment)
 
             if self.program_binary_supported:
                 rv.make_binary_retrievable()
