@@ -23,7 +23,9 @@ from __future__ import print_function
 
 from libc.stdlib cimport malloc, free
 from libc.math cimport hypot
+from libc.string cimport memcpy, strcmp
 
+from cpython.buffer cimport PyObject_CheckBuffer, PyObject_GetBuffer, PyBuffer_Release, PyBUF_FORMAT, PyBUF_C_CONTIGUOUS
 from cpython.bytes cimport PyBytes_FromStringAndSize
 
 from renpy.gl2.gl2polygon cimport Polygon, Point2
@@ -81,6 +83,27 @@ cdef GLuint upload_stream(GLStateCache cache, MeshBuffer* buffer, bint persisten
         return cache.upload_scratch(slot, target, size, data)
 
     return 0
+
+
+cdef bint acquire_buffer(object source, Py_buffer* view, const char* format, Py_ssize_t itemsize, Py_ssize_t count) except -1:
+    """
+    Acquires a compatible contiguous buffer, which the caller must release.
+    Other sequences use the element loop.
+    """
+
+    if not count or not PyObject_CheckBuffer(source):
+        return False
+
+    try:
+        PyObject_GetBuffer(source, view, PyBUF_FORMAT | PyBUF_C_CONTIGUOUS)
+    except (BufferError, TypeError, ValueError):
+        return False
+
+    if view.ndim != 1 or view.format == NULL or strcmp(view.format, format) != 0 or view.itemsize != itemsize or view.len != count * itemsize:
+        PyBuffer_Release(view)
+        return False
+
+    return True
 
 
 cdef class AttributeLayout:
@@ -210,28 +233,34 @@ cdef class Mesh:
         points in the geometry.
         """
 
-        points = len(geometry) // self.point_size
+        cdef Py_ssize_t i
+        cdef Py_ssize_t len_geometry = len(geometry)
+        cdef Py_buffer view
 
-        if points > self.allocated_points:
+        if len_geometry > <Py_ssize_t> self.allocated_points * self.point_size:
             raise Exception("Geometry contains too much data.")
+
+        points = len_geometry // self.point_size
 
         if points != self.points and self.attribute_version:
             self.attribute_version += 1
 
         self.points = points
         self.point_version += 1
-        cdef int i
-        cdef int len_geometry = len(geometry)
 
-        for i in range(len_geometry):
-            self.point_data[i] = geometry[i]
+        if acquire_buffer(geometry, &view, "f", sizeof(float), len_geometry):
+            memcpy(self.point_data, view.buf, view.len)
+            PyBuffer_Release(&view)
+        else:
+            for i in range(len_geometry):
+                self.point_data[i] = geometry[i]
 
     def set_attribute_data(self, attributes):
         """
         Sets the attribute data corresponding to this mesh.
 
         `attributes`
-            This should be a list of floats, with the first
+            This should be a sequence of floats, with the first
             layout.stride floats corresponding to the first point, the
             next layout.stride floats corresponding to the second point,
             and so on. The length of the sequence must be a multiple of
@@ -239,23 +268,28 @@ cdef class Mesh:
             the number of allocated points.
         """
 
-        cdef int i
-        cdef int len_attributes = len(attributes)
+        cdef Py_ssize_t i
+        cdef Py_ssize_t len_attributes = len(attributes)
+        cdef Py_buffer view
 
-        if len_attributes > self.allocated_points * self.layout.stride:
+        if len_attributes > <Py_ssize_t> self.allocated_points * self.layout.stride:
             raise Exception("Attributes contains too much data.")
 
         self.attribute_version += 1
 
-        for i in range(len_attributes):
-            self.attribute[i] = attributes[i]
+        if acquire_buffer(attributes, &view, "f", sizeof(float), len_attributes):
+            memcpy(self.attribute, view.buf, view.len)
+            PyBuffer_Release(&view)
+        else:
+            for i in range(len_attributes):
+                self.attribute[i] = attributes[i]
 
     def set_triangle_data(self, triangles):
         """
         Sets the triangle data corresponding to this mesh.
 
         `triangles`
-            This should be a list of integers, with each triple
+            This should be a sequence of integers, with each triple
             corresponding to a triangle. The length of the sequence
             must be a multiple of 3, and must be less than or equal to
             the number of allocated triangles.
@@ -264,17 +298,22 @@ cdef class Mesh:
         of triangles given here.
         """
 
-        cdef int i
-        cdef int len_triangles = len(triangles)
+        cdef Py_ssize_t i
+        cdef Py_ssize_t len_triangles = len(triangles)
+        cdef Py_buffer view
 
-        if len_triangles > self.allocated_triangles * 3:
+        if len_triangles > <Py_ssize_t> self.allocated_triangles * 3:
             raise Exception("Triangles contains too much data.")
 
         self.triangles = len_triangles // 3
         self.triangle_version += 1
 
-        for i in range(len_triangles):
-            self.triangle[i] = triangles[i]
+        if acquire_buffer(triangles, &view, "I", sizeof(unsigned int), len_triangles):
+            memcpy(self.triangle, view.buf, view.len)
+            PyBuffer_Release(&view)
+        else:
+            for i in range(len_triangles):
+                self.triangle[i] = triangles[i]
 
     def get_triangles(self):
         """

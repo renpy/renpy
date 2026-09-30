@@ -22,8 +22,10 @@
 # This file contains the routines that manage image prediction.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+import time
 
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from renpy.display.displayable import Displayable
 
 import renpy
 
@@ -32,8 +34,11 @@ import renpy
 # and winds up bound to either im.cache.get or im.cache.preload_image
 image = None
 
-# The set of displayables we've predicted since reset was last called.
-predicted = set()
+# The set of displayable ids we've predicted since reset was last called.
+predicted: set[int] = set()
+
+# A list of displayables we've predicted, to keep them alive and prevent id reuse.
+predicted_displayables: list[Displayable] = []
 
 # A flag that indicates if we're currently predicting.
 predicting = False
@@ -49,6 +54,11 @@ tlids = list[str | None]
 statement = None
 
 
+# A list of (displayable, shader) tuples that are pending to be predicted. This is a worklist used
+# in predict_pending.
+pending: list[tuple[Displayable, tuple]] = []
+
+
 def displayable(d):
     """
     Called to predict that the displayable `d` will be shown.
@@ -57,31 +67,72 @@ def displayable(d):
     if d is None:
         return
 
-    if d not in predicted:
-        predicted.add(d)
-        d.visit_all(lambda i: i.predict_one())
-        predict_displayable_shaders(d)
+    id_d = id(d)
+
+    if id_d not in predicted:
+        predicted.add(id_d)
+        predicted_displayables.append(d)
+        pending.append((d, ()))
 
 
-def predict_displayable_shaders(d):
-    stack = [(d, ())]
-    seen = set()
+def predict_pending(limited=False):
+    """
+    Predicts displayable loading and shaders for all of the pending displayables.
 
-    while stack:
-        d, shaders = stack.pop()
-        key = (id(d), shaders)
+    `limited`
+        Avoid predicting actions.
+    """
 
-        if key in seen:
+    while pending:
+        d, shaders = pending.pop()
+
+        try:
+            d.predict_one()
+            shaders = d.predict_shaders(shaders)
+        except Exception:
+            if renpy.config.debug_prediction:
+                import traceback
+
+                print(f"While predicting {d!r}:")
+                traceback.print_exc()
+                print()
             continue
 
-        seen.add(key)
-        children = d.predict_shaders(shaders)
-        stack.extend(reversed(children))
+        if not limited:
+            try:
+                d.predict_one_action()
+            except Exception:
+                if renpy.config.debug_prediction:
+                    import traceback
+
+                    print("While predicting actions.")
+                    traceback.print_exc()
+                    print()
+
+        try:
+            children = d.visit()
+        except Exception:
+            children = []
+
+        for i in reversed(children):
+            if i is None:
+                continue
+
+            id_i = id(i)
+
+            if id_i not in predicted:
+                predicted.add(id_i)
+                predicted_displayables.append(i)
+                pending.append((i, shaders))
+
+        yield from predict_sleep()
 
 
 def predict_registered_shaders():
     for shaders in renpy.store._predict_shader:
         renpy.gl2.gl2shadercache.predict_shader(shaders)
+
+        yield from renpy.display.predict.predict_sleep()
 
 
 def screen(_screen_name, *args, **kwargs):
@@ -94,24 +145,76 @@ def screen(_screen_name, *args, **kwargs):
 
 
 def reset():
+    global predicting
+    predicting = False
     global image
     image = renpy.display.im.cache.get_texture
     predicted.clear()
+    del predicted_displayables[:]
+    del pending[:]
     del screens[:]
 
 
-def prediction_coroutine(root_widget):
+# The last time we paused prediction. We do so every .1ms.
+next_predict_pause_ns: int = 0
+
+
+def predict_sleep():
     """
-    The image prediction co-routine. This predicts the images that can
+    Yield from this to let prediction tasks release control to the scheduler.
+    This may also be called from a non-predicting context.
+    """
+    global predicting
+    global next_predict_pause_ns
+
+    # If we're not predicting, we do not pause execution.
+    if not predicting:
+        return
+
+    now_ns = time.perf_counter_ns()
+
+    if now_ns < next_predict_pause_ns:
+        return
+
+    next_predict_pause_ns = now_ns + 100_000
+
+    old_predicting = predicting
+    predicting = False
+
+    old_ui_screen = renpy.ui.screen
+    renpy.ui.screen = None
+
+    old_current_screen_stack = renpy.display.screen.current_screen_stack
+    renpy.display.screen.current_screen_stack = []
+    old_current_screen = renpy.display.screen._current_screen
+    renpy.display.screen._current_screen = None
+
+    old_ui_stack = renpy.ui.stack
+    old_ui_at_stack = renpy.ui.at_stack
+    old_ui_imagemap_stack = renpy.ui.imagemap_stack
+    old_ui_add_tag = renpy.ui.add_tag
+
+    renpy.ui.reset()
+
+    try:
+        yield
+    finally:
+        renpy.ui.stack = old_ui_stack
+        renpy.ui.at_stack = old_ui_at_stack
+        renpy.ui.imagemap_stack = old_ui_imagemap_stack
+        renpy.ui.add_tag = old_ui_add_tag
+
+        renpy.display.screen.current_screen_stack = old_current_screen_stack
+        renpy.display.screen._current_screen = old_current_screen
+        renpy.ui.screen = old_ui_screen
+        predicting = old_predicting
+
+
+def prediction_task(root_widget: renpy.display.displayable.Displayable):
+    """
+    The image prediction task. This predicts the images that can
     be loaded in the near future, and passes them to the image cache's
     preload_image method to be queued up for loading.
-
-    The .send should be called with True to do a expensive prediction,
-    and with False to either do an inexpensive prediction or no
-    prediction at all.
-
-    Returns True if there's more predicting to be done, or False
-    if there's no more predicting worth doing.
     """
 
     global predicting
@@ -120,7 +223,7 @@ def prediction_coroutine(root_widget):
     renpy.display.im.cache.start_prediction()
 
     # Wait to be told to start.
-    yield True
+    yield from predict_sleep()
 
     # Set up the image prediction method.
     global image
@@ -128,125 +231,122 @@ def prediction_coroutine(root_widget):
 
     predicting = True
 
-    # Predict displayables given to renpy.start_predict.
-    for d in renpy.store._predict_set:
-        try:
-            displayable(d)
-        except Exception:
-            if renpy.config.debug_prediction:
-                raise
-
-        predicting = False
-        yield True
-        predicting = True
-
-    # Predict images that are going to be reached in the next few
-    # clicks.
-
-    for _i in renpy.game.context().predict():
-        predicting = False
-        yield True
-        predicting = True
-
-    # If there's a parent context, predict we'll be returning to it
-    # shortly. Otherwise, call the functions in
-    # config.predict_callbacks.
-
-    if len(renpy.game.contexts) >= 2:
-        sls = renpy.game.contexts[-2].scene_lists
-
-        for l in sls.layers.values():
-            for sle in l:
-                try:
-                    displayable(sle.displayable)
-                except Exception:
-                    pass
-
-    else:
-        for i in renpy.config.predict_callbacks:
-            i()
-
-    predicting = False
-
-    while not (yield False):
-        continue
-
-    predicting = True
-
-    for i in renpy.config.expensive_predict_callbacks:
-        done = False
-        while not done:
-            if not i():
-                done = True
-
-            predicting = False
-            yield False
-            predicting = True
-
-    predicted_screens = []
-
-    # Predict screens given with renpy.start_predict_screen.
-    for name, value in list(renpy.store._predict_screen.items()):
-        args, kwargs = value
-
-        predicted_screens.append((name, args, kwargs))
-
-        renpy.display.screen.predict_screen(name, *args, **kwargs)
-
-        predicting = False
-        yield False
-        predicting = True
-
-    # Predict things (especially screens) that are reachable through
-    # an action.
-    predicting = True
-
     try:
-        root_widget.visit_all(lambda i: i.predict_one_action())
-    except Exception:
-        if renpy.config.debug_prediction:
-            import traceback
+        if root_widget is not None:
+            try:
+                displayable(root_widget)
+            except Exception:
+                if renpy.config.debug_prediction:
+                    raise
 
-            print("While predicting actions.")
-            traceback.print_exc()
-            print()
+        # Predict displayables given to renpy.start_predict.
+        for d in renpy.store._predict_set:
+            try:
+                displayable(d)
+            except Exception:
+                if renpy.config.debug_prediction:
+                    raise
 
-    predicting = False
+            yield from predict_sleep()
 
-    # Predict the screens themselves.
-    for t in screens:
-        while not (yield False):
-            continue
+        # Predict images that are going to be reached in the next few
+        # clicks.
 
-        if t in predicted_screens:
-            continue
+        for _i in renpy.game.context().predict():
+            yield from predict_sleep()
 
-        predicted_screens.append(t)
+        yield from predict_pending()
 
-        name, args, kwargs = t
+        # If there's a parent context, predict we'll be returning to it
+        # shortly. Otherwise, call the functions in
+        # config.predict_callbacks.
 
-        if name.startswith("_"):
-            continue
+        predicted_screens = []
 
-        predicting = True
+        if len(renpy.game.contexts) >= 2:
+            sls = renpy.game.contexts[-2].scene_lists
 
-        renpy.display.screen.predict_screen(name, *args, **kwargs)
+            for l in sls.layers.values():
+                for sle in l:
+                    try:
+                        displayable(sle.displayable)
+                    except Exception:
+                        pass
 
+                    yield from predict_sleep()
+
+                    yield from predict_pending()
+        else:
+            for i in renpy.config.predict_callbacks:
+                try:
+                    i()
+                except Exception:
+                    if renpy.config.debug_prediction:
+                        raise
+
+                yield from predict_sleep()
+
+            # Predict the game menu screen.
+
+            s = getattr(renpy.store, "_game_menu_screen", None)
+
+            if s is not None:
+
+                if renpy.display.screen.has_screen(s):
+                    yield from renpy.display.screen.predict_screen_task(s)
+                    predicted_screens.append((s, (), {}))
+
+
+                elif s.endswith("_screen"):
+                    s = s[:-7]
+                    if renpy.display.screen.has_screen(s):
+                        yield from renpy.display.screen.predict_screen_task(s)
+                        predicted_screens.append((s, (), {}))
+
+                yield from predict_sleep()
+                yield from predict_pending()
+
+        # Predict that overlay screens will be shown.
+        for i in renpy.config.overlay_screens:
+            yield from renpy.display.screen.predict_screen_task(i)
+            predicted_screens.append((i, (), {}))
+            yield from predict_sleep()
+            yield from predict_pending()
+
+        # Predict screens given with renpy.start_predict_screen.
+        for name, value in list(renpy.store._predict_screen.items()):
+            args, kwargs = value
+
+            predicted_screens.append((name, args, kwargs))
+
+            yield from renpy.display.screen.predict_screen_task(name, *args, **kwargs)
+            yield from predict_pending()
+
+        # Predict screens reachable through actions
+        for t in screens:
+            if t in predicted_screens:
+                continue
+
+            predicted_screens.append(t)
+
+            name, args, kwargs = t
+
+            if name.startswith("_"):
+                continue
+
+            yield from predict_sleep()
+
+            yield from renpy.display.screen.predict_screen_task(name, *args, **kwargs)
+            yield from predict_pending(limited=True)
+
+        yield from predict_registered_shaders()
+
+        # Pre-build shader combinations exposed by prediction.
+        while renpy.gl2.gl2shadercache.has_predicted_shaders():
+            renpy.gl2.gl2shadercache.preload_predicted_shader()
+            yield from predict_sleep()
+
+        renpy.gl2.assimp.finish_predict()
+
+    finally:
         predicting = False
-
-    predict_registered_shaders()
-
-    # Pre-build shader combinations exposed by prediction.
-    while renpy.gl2.gl2shadercache.has_predicted_shaders():
-        while not (yield False):
-            continue
-
-        predicting = True
-
-        renpy.gl2.gl2shadercache.preload_predicted_shader()
-
-        predicting = False
-
-    renpy.gl2.assimp.finish_predict()
-
-    yield None

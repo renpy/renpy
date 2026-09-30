@@ -543,88 +543,91 @@ class Cache:
             self.preload_lock.wait()
             self.preload_lock.release()
 
-            self.preload_thread_pass()
+            renpy.asynctask.run_sync(self.preload_thread_pass())
 
-    def preload_thread_pass(self, deadline: float | None = None):
+    def preload_thread_pass(self):
         renpy.gl2.assimp.preload()
+        if renpy.emscripten:
+            yield from renpy.display.predict.predict_sleep()
 
         pool = self.get_decode_pool()
 
-        if pool is None:
-            self._preload_thread_pass_serial(deadline)  # Serial decoding
-        else:
-            self._preload_thread_pass_parallel(pool)  # Parallel decoding
+        while self.preloads and self.keep_preloading:
 
-    def _preload_thread_pass_serial(self, deadline: float | None = None):
+            if pool is None:
+                self._preload_thread_pass_serial()  # Serial decoding
+            else:
+                self._preload_thread_pass_parallel(pool)  # Parallel decoding
+
+            if renpy.emscripten:
+                yield from renpy.display.predict.predict_sleep()
+
+        self.cleanout()
+        if renpy.emscripten:
+            yield from renpy.display.predict.predict_sleep()
+
+    def _preload_thread_pass_serial(self):
         """
         Serial preloading - processes images one at a time. If `deadline` is
         given, stops once time.perf_counter() passes it, leaving the rest of
         the queue for a later pass.
         """
 
-        while self.preloads and self.keep_preloading:
-            if deadline is not None and time.perf_counter() > deadline:
-                break
-            if not self.cleanout():
-                if renpy.config.debug_image_cache:
-                    for i in self.preloads:
-                        renpy.display.ic_log.write(f"Overfull {i!r}")
+        if not self.cleanout():
+            if renpy.config.debug_image_cache:
+                for i in self.preloads:
+                    renpy.display.ic_log.write(f"Overfull {i!r}")
 
-                self.preloads.clear()
+            self.preloads.clear()
 
-                return
+            return
 
-            try:
-                image = self.preloads.pop(0)
+        try:
+            image = self.preloads.pop(0)
 
-                if image not in self.preload_blacklist:
-                    try:
-                        self.preload_texture(image)
-                    except Exception:
-                        self.preload_blacklist.add(image)
-            except Exception:
-                pass
-
-        self.cleanout()
+            if image not in self.preload_blacklist:
+                try:
+                    self.preload_texture(image)
+                except Exception:
+                    self.preload_blacklist.add(image)
+        except Exception:
+            pass
 
     def _preload_thread_pass_parallel(self, pool: ThreadPoolExecutor):
         """Parallel preloading - decodes multiple images concurrently."""
 
-        while self.preloads and self.keep_preloading:
-            if not self.cleanout():
-                if renpy.config.debug_image_cache:
-                    for i in self.preloads:
-                        renpy.display.ic_log.write(f"Overfull {i!r}")
+        if not self.cleanout():
+            if renpy.config.debug_image_cache:
+                for i in self.preloads:
+                    renpy.display.ic_log.write(f"Overfull {i!r}")
 
-                self.preloads.clear()
+            self.preloads.clear()
 
-                return
+            return
 
-            # Extract batch using slice
-            batch_size = min(len(self.preloads), self.decode_pool_workers * 2)
-            candidates = self.preloads[:batch_size]
+        # Extract batch using slice
+        batch_size = min(len(self.preloads), self.decode_pool_workers * 2)
+        candidates = self.preloads[:batch_size]
 
-            del self.preloads[:batch_size]
+        del self.preloads[:batch_size]
 
-            batch = [img for img in candidates if img not in self.preload_blacklist]
+        batch = [img for img in candidates if img not in self.preload_blacklist]
 
-            if not batch:
-                continue
+        if not batch:
+            return
 
-            futures = {pool.submit(self.preload_texture, image): image for image in batch}
+        futures = {pool.submit(self.preload_texture, image): image for image in batch}
 
-            for future in as_completed(futures):
-                image = futures[future]
+        for future in as_completed(futures):
+            image = futures[future]
 
-                try:
-                    future.result()
-                except Exception:
-                    self.preload_blacklist.add(image)
+            try:
+                future.result()
+            except Exception:
+                self.preload_blacklist.add(image)
 
-                if not self.keep_preloading:
-                    break
-
-        self.cleanout()
+            if not self.keep_preloading:
+                break
 
     def add_load_log(self, filename: str):
         if not renpy.config.developer:

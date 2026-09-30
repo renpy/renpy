@@ -791,10 +791,11 @@ class Interface:
         # Is this the first frame?
         self.first_frame = True
 
-        # Should prediction be forced? This causes the prediction coroutine to
+        # Should prediction be forced? This causes the prediction task to
         # be prioritized, and is set to False when it's done, when preloading
         # is done, or at the end of the interaction.
         self.force_prediction = False
+        self.texture_task: renpy.asynctask.Task | None = None
 
         # The number of interactions that have happened without processing an event.
         self.interaction_counter = 0
@@ -2244,119 +2245,103 @@ class Interface:
 
             renpy.plog(2, "after gc")
 
-    def run_prediction(self, expensive):
+
+    def run_gc_task(self):
         """
-        Tasks that are run during "idle" frames.
+        Runs garbage collection as a cooperative task.
         """
 
-        if expensive:
-            renpy.plog(1, "start prediction (expensive)")
-        else:
-            renpy.plog(1, "start prediction (inexpensive)")
+        yield from ()
+        self.consider_gc()
 
-        # The time inexpensive prediction ends.
-        inexpensive_end = time.perf_counter() + renpy.config.minimum_prediction_time
+    def run_texture_task(self):
+        """
+        Tasks that are run to manage textures.
+        """
 
-        step = 1
+        assert renpy.display.draw is not None
 
-        while True:
+        while renpy.display.draw.ready_one_texture():
+            yield
 
-            if time.perf_counter() < inexpensive_end:
-                pass
-            elif self.force_prediction:
-                pass
-            elif not expensive:
-                break
-            elif self.event_peek(False):
-                break
+    def run_prediction_task(self, root_widget: Displayable):
+        """
+        Tasks that are run to predict images.
+        """
 
-            # Step 1: Run gc.
-            if step == 1:
-                if expensive or not self.event_peek(False):
-                    self.consider_gc()
+        try:
+            yield from renpy.display.predict.prediction_task(root_widget)
 
-                step += 1
+            if renpy.emscripten:
+                yield from renpy.display.im.cache.preload_thread_pass()
 
-            # Step 2: Push textures to GPU.
-            elif step == 2:
-                if renpy.display.draw.ready_one_texture():
-                    continue
-                step += 1
+            if renpy.display.im.cache.done():
+                self.force_prediction = False
 
-            # Step 3: Predict more images.
-            elif step == 3:
-                if not self.prediction_coroutine:
-                    step += 1
-                    continue
+        except Exception as e:
+            if renpy.config.debug_prediction:
+                raise
+        finally:
+            renpy.display.predict.predicting = False
 
-                try:
-                    result = self.prediction_coroutine.send(expensive)
-                except ValueError:
-                    # Saw this happen once during a quit, giving a
-                    # ValueError: generator already executing
-                    result = None
+    def run_filesystem_task(self):
+        """
+        Cooperative tasks that touch the filesystem.
+        """
 
-                if result is None:
-                    self.prediction_coroutine = None
-                    step += 1
+        if not self.did_autosave:
+            renpy.loadsave.autosave()
+            self.did_autosave = True
 
-                elif result is False:
-                    if not expensive:
-                        step += 1
+            yield
 
-            # Step 4: Preload images (on emscripten)
-            elif step == 4:
-                if renpy.emscripten:
-                    if expensive:
-                        allow_preload = True
-                        self.last_emscripten_preload_time = time.perf_counter()
-                    elif renpy.config.emscripten_preload_timeout is None:
-                        allow_preload = False
-                    elif time.perf_counter() - self.last_emscripten_preload_time > renpy.config.emscripten_preload_timeout:
-                        allow_preload = True
-                    else:
-                        allow_preload = False
-
-                    if allow_preload:
-                        try:
-                            renpy.display.im.cache.in_preload_pass = True
-                            renpy.display.im.cache.preload_thread_pass(None if expensive else inexpensive_end)
-                        finally:
-                            renpy.display.im.cache.in_preload_pass = False
-
-                step += 1
-
-            # Step 5: Autosave.
-            elif step == 5:
-                if not self.did_autosave and (expensive or not self.event_peek(False)):
-                    renpy.loadsave.autosave()
-                    self.did_autosave = True
-
-                step += 1
-
-            # Step 6: Persistent data.
-            elif step == 6:
-                if not self.did_persistent and (expensive or not self.event_peek(False)):
-                    if renpy.emscripten:
-                        renpy.persistent.update()
-                    else:
-                        renpy.persistent.check_update()
-
-                    self.did_persistent = True
-
-                step += 1
-
+        if not self.did_persistent:
+            if renpy.emscripten:
+                yield from renpy.persistent.update_task()
             else:
-                # Check to see if preloading has finished
-                if renpy.display.im.cache.done():
-                    self.force_prediction = False
+                yield from renpy.persistent.check_update_task()
 
+            self.did_persistent = True
+
+            yield
+
+    def start_tasks(self, root_widget: Displayable):
+        """
+        Starts the cooperative tasks.
+        """
+
+        renpy.asynctask.create_task(self.run_gc_task())
+        renpy.asynctask.create_task(self.run_prediction_task(root_widget))
+        renpy.asynctask.create_task(self.run_filesystem_task())
+
+    def run_tasks(self, expensive):
+        """
+        Runs cooperative tasks.
+        """
+
+        if self.texture_task is None or self.texture_task.done():
+            self.texture_task = renpy.asynctask.create_task(self.run_texture_task())
+
+        if expensive:
+            renpy.plog(1, "start tasks (expensive)")
+        else:
+            renpy.plog(1, "start tasks (inexpensive)")
+
+        minimum_prediction_time_ns = renpy.config.minimum_prediction_time_ns
+
+        while renpy.asynctask.run_for_ns(minimum_prediction_time_ns):
+
+            if not expensive and not self.force_prediction:
+                break
+
+            if self.event_peek(False):
                 break
 
         if expensive:
-            renpy.plog(1, "end idle_frame (expensive)")
+            renpy.plog(1, "end tasks (expensive)")
         else:
-            renpy.plog(1, "end idle_frame (inexpensive)")
+            renpy.plog(1, "end tasks (inexpensive)")
+
 
     # This gets assigned below.
     take_layer_displayable = None
@@ -2484,6 +2469,7 @@ class Interface:
         # Tick time forward.
         renpy.display.im.cache.tick()
         renpy.text.text.text_tick()
+        renpy.asynctask.reset()
         renpy.display.predict.reset()
         renpy.gl2.gl2shadercache.shader_part_filter_cache.clear()
 
@@ -2697,8 +2683,8 @@ class Interface:
                 if mouse_displayable is not None:
                     root_widget.add(mouse_displayable, 0, 0)
 
-        self.prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
-        self.prediction_coroutine.send(None)
+        # Ready the cooperative tasks that run once per interaction restart.
+        self.start_tasks(root_widget)
 
         # Clean out the registered adjustments.
         renpy.display.behavior.adj_registered.clear()
@@ -3031,7 +3017,7 @@ class Interface:
                         needs_redraw or (_redraw_in < 0.2) or (_timeout_in < 0.2) or renpy.display.video.playing()
                     ) or self.force_prediction
 
-                    self.run_prediction(expensive)
+                    self.run_tasks(expensive)
 
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
                     renpy.plog(1, "pre event poll")
@@ -3046,7 +3032,7 @@ class Interface:
                 renpy.display.focus.clear_focus_changes_since_event()
 
                 if ev.type == pygame.NOEVENT:
-                    if can_block and (not needs_redraw) and (not self.prediction_coroutine) and (not self.mouse_move):
+                    if can_block and (not needs_redraw) and (not renpy.asynctask.has_tasks()) and (not self.mouse_move):
                         pygame.time.wait(1)
 
                     continue

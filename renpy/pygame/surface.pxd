@@ -20,12 +20,17 @@
 
 from .sdl cimport SDL_Surface
 
+cdef extern from "pygame/surface_deallocation.h":
+    ctypedef struct RenpySurfaceDeallocation:
+        pass
+
 cdef class Surface:
     # Allow weak references.
     cdef object __weakref__
 
     # The SDL surface that corresponds to this surface.
     cdef SDL_Surface* sdl_surface
+    cdef RenpySurfaceDeallocation *deallocation
 
     # True if we own our surface. False if some other Surface owns our
     # surface.

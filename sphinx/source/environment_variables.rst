@@ -6,6 +6,7 @@ These environment variables may disappear or change between Ren'Py releases.
 
 The following environment variables control the behavior of Ren'Py:
 
+
 .. envvar:: RENPY_DEBUG_SOUND
 
     If set, Ren'Py will generate exceptions when audio errors occur.

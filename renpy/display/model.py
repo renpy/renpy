@@ -162,7 +162,7 @@ class Model(renpy.display.displayable.Displayable):
     def predict_shaders(self, shaders):
         renpy.gl2.gl2shadercache.predict_shader(shaders + tuple(self.shaders))
 
-        return [(texture.displayable, ()) for texture in self.textures]
+        return ()
 
     def uniform(self, name, value):
         """

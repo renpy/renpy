@@ -222,6 +222,7 @@ name_blacklist = {
     "renpy.text.text.VERT_REVERSE",
     "renpy.savelocation.scan_thread_condition",
     "renpy.savelocation.disk_lock",
+    "renpy.savelocation.persistent_writes",
     "renpy.character.TAG_RE",
     "renpy.display.im.cache",
     "renpy.display.render.main_thread",
@@ -238,6 +239,8 @@ name_blacklist = {
     "renpy.gl2.assimp.loader",
     "renpy.gl2.assimp.loader_lock",
     "renpy.gl2.gl2draw.default_position",
+    "renpy.asynctask.default_runner",
+    "renpy.asynctask._sync_state",
 }
 
 
@@ -400,6 +403,7 @@ def import_all():
     sys.modules["renpy.py3analysis"] = renpy.pyanalysis
 
     import renpy.astsupport
+    import renpy.asynctask
 
     import renpy.parameter
     import renpy.ast
@@ -645,6 +649,12 @@ def reload_all():
     # Free memory.
     renpy.exports.free_memory()
 
+    # Reset cooperative tasks.
+    renpy.asynctask.reset()
+
+    # Complete queued persistent writes before restoring module state.
+    renpy.savelocation.quit()
+
     # GC renders.
     renpy.display.render.screen_render = None
     renpy.display.render.mark_sweep()
@@ -701,6 +711,7 @@ if typing.TYPE_CHECKING:
     from . import arguments as arguments
     from . import ast as ast
     from . import astsupport as astsupport
+    from . import asyncio as asyncio
     from . import atl as atl
     from . import audio as audio
     from . import bootstrap as bootstrap

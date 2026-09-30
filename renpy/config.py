@@ -451,8 +451,7 @@ imagemap_cache = True
 # Callbacks that are called in order to predict images.
 predict_callbacks = []
 
-# Callbacks that are called on expensive idle_frame one per tick
-# to predict screens or other hard stuff.
+# No longer used.
 expensive_predict_callbacks = []
 
 # Should screens be predicted?
@@ -1267,7 +1266,7 @@ tts_queue = True
 log_live2d_loading = False
 
 # Should Ren'Py debug prediction?
-debug_prediction = False
+debug_prediction = "RENPY_DEBUG_PREDICTION" in os.environ
 
 # Should mouse events that cause a window to gain focus be passed through.
 mouse_focus_clickthrough = False
@@ -1713,10 +1712,10 @@ A list of callbacks that are called at the very end of the init phase, before th
 first time. These are run just after defaults are set up, but only once, and before script statements are run.
 """
 
-minimum_prediction_time: float = 0.001
+minimum_prediction_time_ns: int = 1000000
 """
 The minimum amount of time Ren'Py will spend on predicting images even if there is a
-frame to be drawn.
+frame to be drawn, in nanoseconds.
 """
 
 

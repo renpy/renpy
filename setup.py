@@ -37,6 +37,11 @@ def main():
     os.chdir(BASE)
 
     setuplib.init()
+    with setuplib._build_lock(Path("tmp/.cython.lock")):
+        _build()
+
+
+def _build():
     setuplib.check_imports(BASE / "scripts", "setuplib.py", "generate_styles.py")
 
     generate_styles.generate()
@@ -75,7 +80,7 @@ def main():
     cython("renpy.pygame.color", packages="sdl3")
     cython("renpy.pygame.rect", packages="sdl3")
     cython("renpy.pygame.error", packages="sdl3")
-    cython("renpy.pygame.surface", packages="sdl3")
+    cython("renpy.pygame.surface", ["src/pygame/surface_deallocation.c"], packages="sdl3")
     cython("renpy.pygame.draw", packages="sdl3")
     cython(
         "renpy.pygame.gfxdraw",
