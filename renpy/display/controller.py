@@ -71,8 +71,8 @@ def init():
 
     if not renpy.display.interface.safe_mode:
         try:
-            for i in range(pygame.controller.get_count()):
-                start(i)
+            for instance_id in pygame.joystick.get_joystick_ids():
+                start(instance_id)
         except Exception:
             renpy.display.log.exception()
 
