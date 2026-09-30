@@ -1,8 +1,7 @@
-import asyncio
 import unittest
 from concurrent.futures import Future
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, patch
+from unittest.mock import patch
 
 import renpy
 
@@ -29,7 +28,7 @@ class Location:
         self.background_modes.append(background)
 
 
-class TestPersistentAsync(unittest.TestCase):
+class TestPersistentTasks(unittest.TestCase):
     def setUp(self):
         self.location = Location()
         self.game_persistent = SimpleNamespace(_changed={}, value=1)
@@ -46,23 +45,26 @@ class TestPersistentAsync(unittest.TestCase):
             p.start()
             self.addCleanup(p.stop)
 
-        renpy.asyncio.reset()
-        self.addCleanup(renpy.asyncio.reset)
+        renpy.asynctask.reset()
+        self.addCleanup(renpy.asynctask.reset)
 
     def test_save_yields_between_major_operations(self):
         events = []
 
-        async def pause(_delay):
-            events.append("yield")
-
         with (
-            patch.object(persistent.asyncio, "sleep", side_effect=pause),
             patch.object(persistent, "dumps", side_effect=lambda *a, **kw: events.append("dump") or b"data"),
             patch.object(persistent.zlib, "compress", side_effect=lambda *a: events.append("compress") or b"zip"),
             patch.object(renpy.savetoken, "sign_data", side_effect=lambda *a: events.append("sign") or "sig"),
-            patch.object(self.location, "save_persistent", side_effect=lambda data, **kwargs: events.append(("write", data))),
+            patch.object(
+                self.location, "save_persistent", side_effect=lambda data, **kwargs: events.append(("write", data))
+            ),
         ):
-            asyncio.run(persistent.save_async())
+            task = persistent.save_task()
+            for _ in range(3):
+                self.assertIsNone(next(task))
+                events.append("yield")
+            with self.assertRaises(StopIteration):
+                next(task)
 
         self.assertEqual(events, ["dump", "yield", "compress", "yield", "sign", "yield", ("write", b"zipsig")])
         self.assertFalse(persistent.pending_save)
@@ -89,7 +91,7 @@ class TestPersistentAsync(unittest.TestCase):
         self.assertEqual(self.location.saved, [b"zipsig"] * 3)
         self.assertEqual(self.location.background_modes, [False] * 3)
 
-    def test_async_save_queues_without_waiting_for_disk(self):
+    def test_task_save_queues_without_waiting_for_disk(self):
         future = Future()
         with (
             patch.object(persistent, "dumps", return_value=b"data"),
@@ -97,7 +99,7 @@ class TestPersistentAsync(unittest.TestCase):
             patch.object(renpy.savetoken, "sign_data", return_value="sig"),
             patch.object(self.location, "save_persistent", return_value=future) as save,
         ):
-            asyncio.run(persistent.save_async())
+            renpy.asynctask.run_sync(persistent.save_task())
 
         save.assert_called_once_with(b"zipsig", background=True)
         self.assertFalse(future.done())
@@ -115,7 +117,7 @@ class TestPersistentAsync(unittest.TestCase):
             patch.object(renpy.savetoken, "sign_data", return_value="sig"),
             patch.object(self.location, "save_persistent", return_value=future),
         ):
-            asyncio.run(persistent.save_async())
+            renpy.asynctask.run_sync(persistent.save_task())
 
         future.set_exception(OSError("disk error"))
         self.assertFalse(persistent.pending_save)
@@ -128,7 +130,7 @@ class TestPersistentAsync(unittest.TestCase):
         write.add_done_callback(persistent._background_save_completed)
 
         with patch.object(persistent, "merge", side_effect=lambda other: write.set_result(10)):
-            asyncio.run(persistent.update_async())
+            renpy.asynctask.run_sync(persistent.update_task())
 
         self.assertEqual(persistent.persistent_mtime, 10)
 
@@ -148,13 +150,13 @@ class TestPersistentAsync(unittest.TestCase):
             patch.object(persistent.zlib, "compress", return_value=b"zip"),
             patch.object(renpy.savetoken, "sign_data", return_value="sig"),
         ):
-            task = renpy.asyncio.create_task(persistent.update_async())
-            renpy.asyncio.run_for_ns(1)
+            task = renpy.asynctask.create_task(persistent.update_task())
+            renpy.asynctask.run_for_ns(1)
 
             self.assertFalse(task.done())
             self.assertTrue(persistent.pending_save)
             self.assertEqual(persistent.backup["value"], 1)
-            renpy.asyncio.reset()
+            renpy.asynctask.reset()
 
             self.assertIsNone(persistent.check_update())
             self.assertEqual(self.location.saved, [b"zipsig"])
@@ -170,15 +172,15 @@ class TestPersistentAsync(unittest.TestCase):
             patch.object(persistent.zlib, "compress", return_value=b"zip"),
             patch.object(renpy.savetoken, "sign_data", return_value="sig"),
         ):
-            task = renpy.asyncio.create_task(persistent.update_async())
-            renpy.asyncio.run_for_ns(1)
-            renpy.asyncio.run_for_ns(1)
+            task = renpy.asynctask.create_task(persistent.update_task())
+            renpy.asynctask.run_for_ns(1)
+            renpy.asynctask.run_for_ns(1)
 
             self.assertFalse(task.done())
             merge.assert_called_once_with(other)
             self.assertEqual(self.location.data, [])
             self.assertEqual(persistent.persistent_mtime, 5)
-            renpy.asyncio.reset()
+            renpy.asynctask.reset()
 
             self.assertIsNone(persistent.check_update())
             self.assertEqual(self.location.saved, [b"zipsig"])
@@ -190,41 +192,53 @@ class TestPersistentAsync(unittest.TestCase):
             patch.object(persistent.zlib, "compress", return_value=b"zip"),
             patch.object(renpy.savetoken, "sign_data", return_value="sig"),
         ):
-            task = renpy.asyncio.create_task(persistent.save_async())
-            renpy.asyncio.run_for_ns(1)
+            task = renpy.asynctask.create_task(persistent.save_task())
+            renpy.asynctask.run_for_ns(1)
 
             self.assertFalse(task.done())
             self.assertTrue(persistent.pending_save)
-            renpy.asyncio.reset()
+            renpy.asynctask.reset()
 
             self.assertIsNone(persistent.check_update())
             self.assertEqual(self.location.saved, [b"zipsig"])
             self.assertFalse(persistent.pending_save)
 
-    def test_interface_awaits_platform_persistent_maintenance(self):
+    def test_interface_runs_platform_persistent_maintenance(self):
         for emscripten in (False, True):
             with self.subTest(emscripten=emscripten):
                 interface = SimpleNamespace(did_autosave=True, did_persistent=False)
 
+                def maintenance():
+                    yield
+
                 with (
                     patch.object(renpy, "emscripten", emscripten),
-                    patch.object(persistent, "check_update_async", new_callable=AsyncMock) as check,
-                    patch.object(persistent, "update_async", new_callable=AsyncMock) as update,
+                    patch.object(persistent, "check_update_task", side_effect=maintenance) as check,
+                    patch.object(persistent, "update_task", side_effect=maintenance) as update,
                 ):
-                    asyncio.run(Interface.run_filesystem_async(interface))
+                    renpy.asynctask.run_sync(Interface.run_filesystem_task(interface))
 
-                self.assertEqual(check.await_count, not emscripten)
-                self.assertEqual(update.await_count, emscripten)
+                self.assertEqual(check.call_count, not emscripten)
+                self.assertEqual(update.call_count, emscripten)
                 self.assertTrue(interface.did_persistent)
 
     def test_interface_retries_after_cancellation(self):
         interface = SimpleNamespace(did_autosave=True, did_persistent=False)
+        cleaned = []
+
+        def maintenance():
+            try:
+                yield
+            finally:
+                cleaned.append(True)
 
         with (
             patch.object(renpy, "emscripten", False),
-            patch.object(persistent, "check_update_async", new_callable=AsyncMock, side_effect=asyncio.CancelledError),
-            self.assertRaises(asyncio.CancelledError),
+            patch.object(persistent, "check_update_task", side_effect=maintenance),
         ):
-            asyncio.run(Interface.run_filesystem_async(interface))
+            task = Interface.run_filesystem_task(interface)
+            self.assertIsNone(next(task))
+            task.close()
 
         self.assertFalse(interface.did_persistent)
+        self.assertEqual(cleaned, [True])
