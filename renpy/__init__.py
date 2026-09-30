@@ -239,8 +239,8 @@ name_blacklist = {
     "renpy.gl2.assimp.loader",
     "renpy.gl2.assimp.loader_lock",
     "renpy.gl2.gl2draw.default_position",
-    "renpy.asyncio.default_runner",
-    "renpy.asyncio._sync_loop_state",
+    "renpy.asynctask.default_runner",
+    "renpy.asynctask._sync_state",
 }
 
 
@@ -403,7 +403,7 @@ def import_all():
     sys.modules["renpy.py3analysis"] = renpy.pyanalysis
 
     import renpy.astsupport
-    import renpy.asyncio
+    import renpy.asynctask
 
     import renpy.parameter
     import renpy.ast
@@ -649,8 +649,8 @@ def reload_all():
     # Free memory.
     renpy.exports.free_memory()
 
-    # Reset asyncio tasks.
-    renpy.asyncio.reset()
+    # Reset cooperative tasks.
+    renpy.asynctask.reset()
 
     # Complete queued persistent writes before restoring module state.
     renpy.savelocation.quit()

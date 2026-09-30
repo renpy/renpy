@@ -19,7 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import asyncio
 from typing import NotRequired, TypedDict, Any
 
 import sys
@@ -792,11 +791,11 @@ class Interface:
         # Is this the first frame?
         self.first_frame = True
 
-        # Should prediction be forced? This causes the prediction coroutine to
+        # Should prediction be forced? This causes the prediction task to
         # be prioritized, and is set to False when it's done, when preloading
         # is done, or at the end of the interaction.
         self.force_prediction = False
-        self.texture_task: asyncio.Task | None = None
+        self.texture_task: renpy.asynctask.Task | None = None
 
         # The number of interactions that have happened without processing an event.
         self.interaction_counter = 0
@@ -2247,14 +2246,15 @@ class Interface:
             renpy.plog(2, "after gc")
 
 
-    async def run_gc_async(self):
+    def run_gc_task(self):
         """
-        Runs garbage collection asynchronously.
+        Runs garbage collection as a cooperative task.
         """
 
+        yield from ()
         self.consider_gc()
 
-    async def run_texture_async(self):
+    def run_texture_task(self):
         """
         Tasks that are run to manage textures.
         """
@@ -2262,18 +2262,18 @@ class Interface:
         assert renpy.display.draw is not None
 
         while renpy.display.draw.ready_one_texture():
-            await asyncio.sleep(0)
+            yield
 
-    async def run_prediction_async(self, root_widget: Displayable):
+    def run_prediction_task(self, root_widget: Displayable):
         """
         Tasks that are run to predict images.
         """
 
         try:
-            await renpy.display.predict.prediction_coroutine(root_widget)
+            yield from renpy.display.predict.prediction_task(root_widget)
 
             if renpy.emscripten:
-                await renpy.display.im.cache.preload_thread_pass()
+                yield from renpy.display.im.cache.preload_thread_pass()
 
             if renpy.display.im.cache.done():
                 self.force_prediction = False
@@ -2284,52 +2284,52 @@ class Interface:
         finally:
             renpy.display.predict.predicting = False
 
-    async def run_filesystem_async(self):
+    def run_filesystem_task(self):
         """
-        Async tasks that touch the filesystem.
+        Cooperative tasks that touch the filesystem.
         """
 
         if not self.did_autosave:
             renpy.loadsave.autosave()
             self.did_autosave = True
 
-            await asyncio.sleep(0)
+            yield
 
         if not self.did_persistent:
             if renpy.emscripten:
-                await renpy.persistent.update_async()
+                yield from renpy.persistent.update_task()
             else:
-                await renpy.persistent.check_update_async()
+                yield from renpy.persistent.check_update_task()
 
             self.did_persistent = True
 
-            await asyncio.sleep(0)
+            yield
 
-    def start_async_tasks(self, root_widget: Displayable):
+    def start_tasks(self, root_widget: Displayable):
         """
-        Starts the tassks that run asynchronously.
+        Starts the cooperative tasks.
         """
 
-        renpy.asyncio.create_task(self.run_gc_async())
-        renpy.asyncio.create_task(self.run_prediction_async(root_widget))
-        renpy.asyncio.create_task(self.run_filesystem_async())
+        renpy.asynctask.create_task(self.run_gc_task())
+        renpy.asynctask.create_task(self.run_prediction_task(root_widget))
+        renpy.asynctask.create_task(self.run_filesystem_task())
 
-    def run_async(self, expensive):
+    def run_tasks(self, expensive):
         """
-        Runs the asynchronous tasks.
+        Runs cooperative tasks.
         """
 
         if self.texture_task is None or self.texture_task.done():
-            self.texture_task = renpy.asyncio.create_task(self.run_texture_async())
+            self.texture_task = renpy.asynctask.create_task(self.run_texture_task())
 
         if expensive:
-            renpy.plog(1, "start async (expensive)")
+            renpy.plog(1, "start tasks (expensive)")
         else:
-            renpy.plog(1, "start async (inexpensive)")
+            renpy.plog(1, "start tasks (inexpensive)")
 
         minimum_prediction_time_ns = renpy.config.minimum_prediction_time_ns
 
-        while renpy.asyncio.run_for_ns(minimum_prediction_time_ns):
+        while renpy.asynctask.run_for_ns(minimum_prediction_time_ns):
 
             if not expensive and not self.force_prediction:
                 break
@@ -2338,9 +2338,9 @@ class Interface:
                 break
 
         if expensive:
-            renpy.plog(1, "end async (expensive)")
+            renpy.plog(1, "end tasks (expensive)")
         else:
-            renpy.plog(1, "end async (inexpensive)")
+            renpy.plog(1, "end tasks (inexpensive)")
 
 
     # This gets assigned below.
@@ -2469,7 +2469,7 @@ class Interface:
         # Tick time forward.
         renpy.display.im.cache.tick()
         renpy.text.text.text_tick()
-        renpy.asyncio.reset()
+        renpy.asynctask.reset()
         renpy.display.predict.reset()
         renpy.gl2.gl2shadercache.shader_part_filter_cache.clear()
 
@@ -2683,8 +2683,8 @@ class Interface:
                 if mouse_displayable is not None:
                     root_widget.add(mouse_displayable, 0, 0)
 
-        # Ready the async tasks that run once per interaction restart.
-        self.start_async_tasks(root_widget)
+        # Ready the cooperative tasks that run once per interaction restart.
+        self.start_tasks(root_widget)
 
         # Clean out the registered adjustments.
         renpy.display.behavior.adj_registered.clear()
@@ -3017,7 +3017,7 @@ class Interface:
                         needs_redraw or (_redraw_in < 0.2) or (_timeout_in < 0.2) or renpy.display.video.playing()
                     ) or self.force_prediction
 
-                    self.run_async(expensive)
+                    self.run_tasks(expensive)
 
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
                     renpy.plog(1, "pre event poll")
@@ -3032,7 +3032,7 @@ class Interface:
                 renpy.display.focus.clear_focus_changes_since_event()
 
                 if ev.type == pygame.NOEVENT:
-                    if can_block and (not needs_redraw) and (not renpy.asyncio.has_tasks()) and (not self.mouse_move):
+                    if can_block and (not needs_redraw) and (not renpy.asynctask.has_tasks()) and (not self.mouse_move):
                         pygame.time.wait(1)
 
                     continue

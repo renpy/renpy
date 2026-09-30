@@ -772,9 +772,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         return self.widgets
 
-    async def update_async(self):
+    def update_task(self):
         for _ in self.update_generator(yield_prediction=True):
-            await renpy.display.predict.predict_sleep()
+            yield from renpy.display.predict.predict_sleep()
 
         return self.widgets
 
@@ -1413,7 +1413,7 @@ def show_screen(_screen_name, *_args, **kwargs):
         sls.shown.predict_show(_layer, name, True)
 
 
-async def predict_screen_async(_screen_name, *_args, **kwargs):
+def predict_screen_task(_screen_name, *_args, **kwargs):
     """
     Predicts the displayables that make up the given screen.
 
@@ -1465,7 +1465,7 @@ async def predict_screen_async(_screen_name, *_args, **kwargs):
     try:
         d = ScreenDisplayable(screen, None, None, _widget_properties, scope)
         d.cache = cache_get(screen, _args, kwargs)
-        await d.update_async()
+        yield from d.update_task()
         cache_put(screen, _args, kwargs, d.cache)
 
         renpy.display.predict.displayable(d)
@@ -1498,7 +1498,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
     initialize the screen's scope.
     """
 
-    renpy.asyncio.run_sync(predict_screen_async(_screen_name, *_args, **kwargs))
+    renpy.asynctask.run_sync(predict_screen_task(_screen_name, *_args, **kwargs))
 
 
 

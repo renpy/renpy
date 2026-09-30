@@ -21,7 +21,6 @@
 
 from typing import Any
 
-import asyncio
 from concurrent.futures import Future
 import os
 import copy
@@ -418,12 +417,12 @@ def check_update():
     restarts the interaction.
     """
 
-    return renpy.asyncio.run_sync(check_update_async(background=False))
+    return renpy.asynctask.run_sync(check_update_task(background=False))
 
 
-async def check_update_async(*, background=True):
+def check_update_task(*, background=True):
     """
-    Asynchronously checks for new persistent data and restarts the interaction
+    Cooperatively checks for new persistent data and restarts the interaction
     after merging it.
     """
 
@@ -432,10 +431,10 @@ async def check_update_async(*, background=True):
             break
     else:
         if pending_save:
-            await update_async(background=background)
+            yield from update_task(background=background)
         return
 
-    await update_async(background=background)
+    yield from update_task(background=background)
     renpy.exports.restart_interaction()
 
 
@@ -445,12 +444,12 @@ def update(force_save=False):
     persistent_mtime, and merges it into the persistent object.
     """
 
-    return renpy.asyncio.run_sync(update_async(force_save, background=False))
+    return renpy.asynctask.run_sync(update_task(force_save, background=False))
 
 
-async def update_async(force_save=False, *, background=True):
+def update_task(force_save=False, *, background=True):
     """
-    Asynchronously updates the persistent data, yielding between costly steps.
+    Cooperatively updates the persistent data, yielding between costly steps.
     """
 
     global persistent_mtime, pending_save
@@ -458,7 +457,7 @@ async def update_async(force_save=False, *, background=True):
     need_save = find_changes() or force_save or pending_save
     pending_save = need_save
 
-    await asyncio.sleep(0)
+    yield
 
     # A list of (mtime, other) pairs, where other is a persistent file
     # we might want to merge in.
@@ -482,8 +481,8 @@ async def update_async(force_save=False, *, background=True):
         persistent_mtime = max(persistent_mtime, mtime)
 
     if need_save:
-        await asyncio.sleep(0)
-        await save_async(background=background)
+        yield
+        yield from save_task(background=background)
 
 
 should_save_persistent = True
@@ -497,7 +496,7 @@ def save():
     Saves the persistent data to disk.
     """
 
-    return renpy.asyncio.run_sync(save_async(background=False))
+    return renpy.asynctask.run_sync(save_task(background=False))
 
 
 def _background_save_completed(write):
@@ -510,9 +509,9 @@ def _background_save_completed(write):
                 persistent_mtime = max(persistent_mtime, mtime)
 
 
-async def save_async(*, background=True):
+def save_task(*, background=True):
     """
-    Asynchronously saves the persistent data, yielding between costly steps.
+    Cooperatively saves the persistent data, yielding between costly steps.
     With background enabled, returns after submitting the filesystem write.
     """
 
@@ -530,11 +529,11 @@ async def save_async(*, background=True):
 
     try:
         data = dumps(renpy.game.persistent, bad_reduction_name="persistent")
-        await asyncio.sleep(0)
+        yield
         compressed = zlib.compress(data, 3)
-        await asyncio.sleep(0)
+        yield
         compressed += renpy.savetoken.sign_data(data).encode("utf-8")
-        await asyncio.sleep(0)
+        yield
         if background:
             write = renpy.loadsave.location.save_persistent(compressed, background=True)
             if isinstance(write, Future):

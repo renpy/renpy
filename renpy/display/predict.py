@@ -23,7 +23,6 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 import time
-import asyncio
 
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 from renpy.display.displayable import Displayable
@@ -76,7 +75,7 @@ def displayable(d):
         pending.append((d, ()))
 
 
-async def predict_pending(limited=False):
+def predict_pending(limited=False):
     """
     Predicts displayable loading and shaders for all of the pending displayables.
 
@@ -126,14 +125,14 @@ async def predict_pending(limited=False):
                 predicted_displayables.append(i)
                 pending.append((i, shaders))
 
-        await predict_sleep()
+        yield from predict_sleep()
 
 
-async def predict_registered_shaders():
+def predict_registered_shaders():
     for shaders in renpy.store._predict_shader:
         renpy.gl2.gl2shadercache.predict_shader(shaders)
 
-        await renpy.display.predict.predict_sleep()
+        yield from renpy.display.predict.predict_sleep()
 
 
 def screen(_screen_name, *args, **kwargs):
@@ -160,10 +159,10 @@ def reset():
 next_predict_pause_ns: int = 0
 
 
-async def predict_sleep():
+def predict_sleep():
     """
-    Await this to allow prediction coroutines to yield control back to the event loop. (This may also be called
-    from a non-predicting context.)
+    Yield from this to let prediction tasks release control to the scheduler.
+    This may also be called from a non-predicting context.
     """
     global predicting
     global next_predict_pause_ns
@@ -198,7 +197,7 @@ async def predict_sleep():
     renpy.ui.reset()
 
     try:
-        await asyncio.sleep(0)
+        yield
     finally:
         renpy.ui.stack = old_ui_stack
         renpy.ui.at_stack = old_ui_at_stack
@@ -211,9 +210,9 @@ async def predict_sleep():
         predicting = old_predicting
 
 
-async def prediction_coroutine(root_widget: renpy.display.displayable.Displayable):
+def prediction_task(root_widget: renpy.display.displayable.Displayable):
     """
-    The image prediction coroutine. This predicts the images that can
+    The image prediction task. This predicts the images that can
     be loaded in the near future, and passes them to the image cache's
     preload_image method to be queued up for loading.
     """
@@ -224,7 +223,7 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
     renpy.display.im.cache.start_prediction()
 
     # Wait to be told to start.
-    await predict_sleep()
+    yield from predict_sleep()
 
     # Set up the image prediction method.
     global image
@@ -248,15 +247,15 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
                 if renpy.config.debug_prediction:
                     raise
 
-            await predict_sleep()
+            yield from predict_sleep()
 
         # Predict images that are going to be reached in the next few
         # clicks.
 
         for _i in renpy.game.context().predict():
-            await predict_sleep()
+            yield from predict_sleep()
 
-        await predict_pending()
+        yield from predict_pending()
 
         # If there's a parent context, predict we'll be returning to it
         # shortly. Otherwise, call the functions in
@@ -274,9 +273,9 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
                     except Exception:
                         pass
 
-                    await predict_sleep()
+                    yield from predict_sleep()
 
-                    await predict_pending()
+                    yield from predict_pending()
         else:
             for i in renpy.config.predict_callbacks:
                 try:
@@ -285,7 +284,7 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
                     if renpy.config.debug_prediction:
                         raise
 
-                await predict_sleep()
+                yield from predict_sleep()
 
             # Predict the game menu screen.
 
@@ -294,25 +293,25 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
             if s is not None:
 
                 if renpy.display.screen.has_screen(s):
-                    await renpy.display.screen.predict_screen_async(s)
+                    yield from renpy.display.screen.predict_screen_task(s)
                     predicted_screens.append((s, (), {}))
 
 
                 elif s.endswith("_screen"):
                     s = s[:-7]
                     if renpy.display.screen.has_screen(s):
-                        await renpy.display.screen.predict_screen_async(s)
+                        yield from renpy.display.screen.predict_screen_task(s)
                         predicted_screens.append((s, (), {}))
 
-                await predict_sleep()
-                await predict_pending()
+                yield from predict_sleep()
+                yield from predict_pending()
 
         # Predict that overlay screens will be shown.
         for i in renpy.config.overlay_screens:
-            await renpy.display.screen.predict_screen_async(i)
+            yield from renpy.display.screen.predict_screen_task(i)
             predicted_screens.append((i, (), {}))
-            await predict_sleep()
-            await predict_pending()
+            yield from predict_sleep()
+            yield from predict_pending()
 
         # Predict screens given with renpy.start_predict_screen.
         for name, value in list(renpy.store._predict_screen.items()):
@@ -320,8 +319,8 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
 
             predicted_screens.append((name, args, kwargs))
 
-            await renpy.display.screen.predict_screen_async(name, *args, **kwargs)
-            await predict_pending()
+            yield from renpy.display.screen.predict_screen_task(name, *args, **kwargs)
+            yield from predict_pending()
 
         # Predict screens reachable through actions
         for t in screens:
@@ -335,17 +334,17 @@ async def prediction_coroutine(root_widget: renpy.display.displayable.Displayabl
             if name.startswith("_"):
                 continue
 
-            await predict_sleep()
+            yield from predict_sleep()
 
-            await renpy.display.screen.predict_screen_async(name, *args, **kwargs)
-            await predict_pending(limited=True)
+            yield from renpy.display.screen.predict_screen_task(name, *args, **kwargs)
+            yield from predict_pending(limited=True)
 
-        await predict_registered_shaders()
+        yield from predict_registered_shaders()
 
         # Pre-build shader combinations exposed by prediction.
         while renpy.gl2.gl2shadercache.has_predicted_shaders():
             renpy.gl2.gl2shadercache.preload_predicted_shader()
-            await predict_sleep()
+            yield from predict_sleep()
 
         renpy.gl2.assimp.finish_predict()
 

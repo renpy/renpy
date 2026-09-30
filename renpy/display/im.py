@@ -24,7 +24,6 @@
 # cropping and scaling).
 
 
-import asyncio
 from typing import Any, Literal
 
 import math
@@ -544,12 +543,12 @@ class Cache:
             self.preload_lock.wait()
             self.preload_lock.release()
 
-            renpy.asyncio.run_sync(self.preload_thread_pass())
+            renpy.asynctask.run_sync(self.preload_thread_pass())
 
-    async def preload_thread_pass(self):
+    def preload_thread_pass(self):
         renpy.gl2.assimp.preload()
         if renpy.emscripten:
-            await renpy.display.predict.predict_sleep()
+            yield from renpy.display.predict.predict_sleep()
 
         pool = self.get_decode_pool()
 
@@ -561,11 +560,11 @@ class Cache:
                 self._preload_thread_pass_parallel(pool)  # Parallel decoding
 
             if renpy.emscripten:
-                await renpy.display.predict.predict_sleep()
+                yield from renpy.display.predict.predict_sleep()
 
         self.cleanout()
         if renpy.emscripten:
-            await renpy.display.predict.predict_sleep()
+            yield from renpy.display.predict.predict_sleep()
 
     def _preload_thread_pass_serial(self):
         """
