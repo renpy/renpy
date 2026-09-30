@@ -27,7 +27,32 @@ from .rect import Rect
 from .error import error
 # from pygame.locals import SRCALPHA
 
+import atexit
 import warnings
+
+cdef extern from "pygame/surface_deallocation.h":
+    enum:
+        RENPY_SURFACE_DEALLOCATION_THREADED
+
+    bint renpy_surface_deallocation_init()
+    void renpy_surface_deallocation_quit()
+    RenpySurfaceDeallocation *renpy_surface_deallocation_new()
+    void renpy_surface_deallocation_discard(RenpySurfaceDeallocation *entry)
+    void renpy_surface_deallocation_enqueue(RenpySurfaceDeallocation *entry, SDL_Surface *surface)
+
+
+def _init_surface_deallocation():
+    if not renpy_surface_deallocation_init():
+        raise error()
+
+
+def _quit_surface_deallocation():
+    renpy_surface_deallocation_quit()
+
+
+_init_surface_deallocation()
+atexit.register(_quit_surface_deallocation)
+
 
 cdef void move_pixels(Uint8 *src, Uint8 *dst, int h, int span, int srcpitch, int dstpitch) noexcept nogil:
     if src < dst:
@@ -83,6 +108,12 @@ cdef class Surface:
         self.owns_surface = False
         self.window_surface = False
         self.has_alpha = False
+        self.deallocation = NULL
+
+        if RENPY_SURFACE_DEALLOCATION_THREADED:
+            self.deallocation = renpy_surface_deallocation_new()
+            if self.deallocation == NULL:
+                raise MemoryError()
 
     def __dealloc__(self):
         global total_size
@@ -91,12 +122,17 @@ cdef class Surface:
             if total_size:
                 total_size -= self.sdl_surface.pitch * self.sdl_surface.h
 
-            SDL_DestroySurface(self.sdl_surface)
+            renpy_surface_deallocation_enqueue(self.deallocation, self.sdl_surface)
             return
         elif self.window_surface:
+            renpy_surface_deallocation_discard(self.deallocation)
             return
         elif self.parent:
-            SDL_DestroySurface(self.sdl_surface)
+            renpy_surface_deallocation_enqueue(self.deallocation, self.sdl_surface)
+            return
+
+        renpy_surface_deallocation_discard(self.deallocation)
+        if self.sdl_surface == NULL:
             return
 
         warnings.warn("Memory leak via Surface in renpy.pygame.")
@@ -545,6 +581,7 @@ cdef class Surface:
             raise error("unsupported blend mode.")
 
     def convert(self, surface=None):
+        cdef Surface rv = Surface(())
 
         with nogil:
             new_surface = SDL_ConvertSurface(self.sdl_surface, SDL_PIXELFORMAT_RGBA32)
@@ -552,12 +589,12 @@ cdef class Surface:
         if not new_surface:
             raise error()
 
-        cdef Surface rv = Surface(())
         rv.take_surface(new_surface)
 
         return rv
 
     def convert_alpha(self, Surface surface=None):
+        cdef Surface rv = Surface(())
 
         with nogil:
             new_surface = SDL_ConvertSurface(self.sdl_surface, SDL_PIXELFORMAT_RGBA32)
@@ -565,7 +602,6 @@ cdef class Surface:
         if not new_surface:
             raise error()
 
-        cdef Surface rv = Surface(())
         rv.take_surface(new_surface)
 
         return rv
@@ -767,6 +803,7 @@ cdef class Surface:
         pixels += sdl_rect.y * self.sdl_surface.pitch
         pixels += sdl_rect.x * format.bytes_per_pixel
 
+        cdef Surface rv = Surface(())
         cdef SDL_Surface *new_surface = SDL_CreateSurfaceFrom(
             sdl_rect.w,
             sdl_rect.h,
@@ -776,8 +813,6 @@ cdef class Surface:
 
         if not new_surface:
             raise error()
-
-        cdef Surface rv = Surface(())
 
         rv.sdl_surface = new_surface
         rv.parent = self
@@ -975,6 +1010,11 @@ cdef api SDL_Surface *PySurface_AsSurface(surface):
 
 
 cdef api object PySurface_New(SDL_Surface *surf):
-    cdef Surface rv = Surface(())
+    cdef Surface rv
+    try:
+        rv = Surface(())
+    except MemoryError:
+        SDL_DestroySurface(surf)
+        raise
     rv.take_surface(surf)
     return rv

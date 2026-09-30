@@ -80,7 +80,7 @@ def _build():
     cython("renpy.pygame.color", packages="sdl3")
     cython("renpy.pygame.rect", packages="sdl3")
     cython("renpy.pygame.error", packages="sdl3")
-    cython("renpy.pygame.surface", packages="sdl3")
+    cython("renpy.pygame.surface", ["src/pygame/surface_deallocation.c"], packages="sdl3")
     cython("renpy.pygame.draw", packages="sdl3")
     cython(
         "renpy.pygame.gfxdraw",

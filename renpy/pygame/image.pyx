@@ -92,6 +92,7 @@ def load(fi: object, namehint: str = "", size: tuple[int, int] | None = None) ->
     if sized_svg:
         width, height = size
 
+    cdef Surface surf = Surface(())
     cdef SDL_IOStream *iostream = open_io(fi).take()
 
     try:
@@ -121,7 +122,6 @@ def load(fi: object, namehint: str = "", size: tuple[int, int] | None = None) ->
         if img == NULL:
             raise error()
 
-    cdef Surface surf = Surface(())
     surf.take_surface(img)
 
     return surf

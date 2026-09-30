@@ -742,6 +742,7 @@ from .locals import LIL_ENDIAN, SDL_VERSION_TUPLE
 # Add init functions.
 
 init_functions = [
+    surface._init_surface_deallocation,
     display.init,
     event.init,
     time.init,
@@ -757,6 +758,7 @@ quit_functions = [
     mouse.quit,
     joystick.quit,
     controller.quit,
+    surface._quit_surface_deallocation,
     display.quit,
 ]
 
