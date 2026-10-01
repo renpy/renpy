@@ -759,20 +759,20 @@ class TestFStrings(TokenizerTestCase):
 
 class TestBrackets(TokenizerTestCase):
     def test_max_depth(self):
-        # Exceeding MAX_DEPTH (300) emits one ERRORTOKEN for the offending
+        # Exceeding MAX_DEPTH (255) emits one ERRORTOKEN for the offending
         # bracket, then sticks to ENDMARKER.
-        tk = Tokenizer("(" * 302)
+        tk = Tokenizer("(" * 257)
         tokens = list(tk.iter_tokens())
 
-        self.assertEqual(len(tokens), 302)
-        self.assertTrue(all(t.kind is OP for t in tokens[:300]))
+        self.assertEqual(len(tokens), 257)
+        self.assertTrue(all(t.kind is OP for t in tokens[:255]))
 
-        error = tokens[300]
+        error = tokens[255]
         self.assertEqual(error.kind, ERRORTOKEN)
-        self.assertEqual(error.string, "more than 300 nested brackets and strings")
-        self.assertEqual(error.span, (300, 301))
+        self.assertEqual(error.string, "more than 255 nested brackets and strings")
+        self.assertEqual(error.span, (255, 256))
 
-        self.assertEqual(tokens[301].kind, ENDMARKER)
+        self.assertEqual(tokens[256].kind, ENDMARKER)
         self.assertEqual(tk.next_token().kind, ENDMARKER)
 
     def test_nested_brackets(self):
@@ -1055,36 +1055,29 @@ class TestRenpySubstitutionString(TokenizerTestCase):
         )
 
     def test_nested_field_in_format_spec(self):
-        # Nested substitutions are not allowed in a format spec; the spec
-        # is literal text, so the first ']' closes the field.
+        # Nested substitutions are not tokenized in a format spec; the
+        # spec is literal text, so the first ']' closes the field.
         self.assertRenpyTokens(
             "[x:[y]]",
             [
                 (OP, "["),
                 (WORD, "x"),
                 (OP, ":"),
-                (ERRORTOKEN, "nested substitution is not allowed in a format spec"),
                 (STRING_MIDDLE, "[y"),
                 (OP, "]"),
                 (STRING_MIDDLE, "]"),
             ],
         )
 
-    def test_nested_field_error_is_zero_width(self):
-        # The literal text is not consumed by the error token.
-        tokens = list(Tokenizer.renpy_substitution_string("[x:[y]]").iter_tokens())
-        error = tokens[3]
-        self.assertEqual(error.kind, ERRORTOKEN)
-        self.assertEqual(error.span, (3, 3))
-
-    def test_nested_field_error_reported_once(self):
+    def test_bracket_runs_in_format_spec(self):
+        # After a spec with brackets closes its field, a '[' outside any
+        # spec opens a substitution again.
         self.assertRenpyTokens(
             "[x:[a][b]]",
             [
                 (OP, "["),
                 (WORD, "x"),
                 (OP, ":"),
-                (ERRORTOKEN, "nested substitution is not allowed in a format spec"),
                 (STRING_MIDDLE, "[a"),
                 (OP, "]"),
                 (OP, "["),
