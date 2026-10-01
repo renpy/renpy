@@ -149,42 +149,46 @@ cdef enum:
 cdef enum Context:
     # A '(', '[' or '{' in code.
     BRACKET = 1
-    # A string literal; its content is literal text.
-    STRING = 2
-    # A replacement field inside a string; its content is code.
-    FIELD = 3
-    # A replacement field after ':'; its content is literal text.
-    FIELD_SPEC = 4
+    # Ren'Py string literal passed to renpy_substitution_string
+    RENPY_STRING = 2
+    # A non-f-string literal.
+    STRING = 3
+    # A f-string literal.
+    F_STRING = 4
+    # A replacement field inside a string.
+    FIELD = 5
+    # A replacement field after ':'.
+    FIELD_SPEC = 6
 
 cdef struct OpenToken:
-    # One entry per construct the user opened.
     Context ctx
-    # BRACKET: the bracket char. STRING/FIELD/FIELD_SPEC: the quote char
-    # of the (enclosing) string.
+    # BRACKET: the bracket char.
+    # STRING/F_STRING/FIELD/FIELD_SPEC: the quote char of the enclosing string.
+    # RENPY_STRING: EOF_CHAR.
     Py_UCS4 opener
-    # STRING/FIELD/FIELD_SPEC: the (enclosing) string is triple-quoted.
+    # STRING/F_STRING/FIELD/FIELD_SPEC: the enclosing string is triple-quoted.
     bint is_triple
-    # STRING: the string may contain replacement fields - an f-string,
-    # or any string when split_char is '['. FIELD/FIELD_SPEC: always True.
-    bint allow_field
+    # The char that opens a replacement field in this context, or 0 if
+    # fields are not allowed. STRING: 0. F_STRING: '{'. RENPY_STRING: '['.
+    # FIELD/FIELD_SPEC: the char that opened this field; '[' in a FIELD_SPEC
+    # marks a Ren'Py format spec, where nested substitutions are disallowed.
+    Py_UCS4 field_open
+    # The char that closes a replacement field: this field for
+    # FIELD/FIELD_SPEC, a field opened by field_open otherwise.
+    Py_UCS4 field_close
     # The span of the opening token.
     Pos start
     Pos end
-
 
 cdef class Tokenizer:
     cdef readonly str data
     cdef readonly Py_ssize_t pos
     cdef readonly Py_ssize_t lineno
     cdef readonly Py_ssize_t line_start
-    cdef readonly str split_char
 
     cdef Py_ssize_t length
     cdef int kind
     cdef const void *buf
-
-    cdef Py_UCS4 open_char
-    cdef Py_UCS4 close_char
 
     cdef OpenToken[MAX_DEPTH] open_tokens
 
@@ -192,13 +196,7 @@ cdef class Tokenizer:
     # was emitted, and tokenization sticks to ENDMARKER.
     cdef Py_ssize_t open_tokens_size
 
-    def __init__(
-        self,
-        str data not None,
-        Py_ssize_t pos=0,
-        Py_ssize_t lineno=1,
-        str split_char not None="{",
-    ):
+    def __init__(self, str data not None, Py_ssize_t pos=0, Py_ssize_t lineno=1):
         self.data = data
         self.length = PyUnicode_GET_LENGTH(data)
         self.kind = PyUnicode_KIND(data)
@@ -211,23 +209,28 @@ cdef class Tokenizer:
         self.lineno = lineno
         self.line_start = pos
 
-        if split_char == "{":
-            self.split_char = '{'
-            self.open_char = '{'
-            self.close_char = '}'
-        elif split_char == "[":
-            self.split_char = '['
-            self.open_char = '['
-            self.close_char = ']'
-        else:
-            raise ValueError(f"split_char must be '{{' or '[', not {split_char!r}.")
+    @classmethod
+    def renpy_substitution_string(cls, str data not None):
+        cdef Tokenizer self = cls(data)
+        cdef OpenToken *entry = &self.open_tokens[0]
+
+        entry.ctx = RENPY_STRING
+        entry.opener = EOF_CHAR
+        entry.is_triple = False
+        entry.field_open = '['
+        entry.field_close = ']'
+        entry.start = self.here()
+        entry.end = self.here()
+
+        self.open_tokens_size = 1
+
+        return self
 
     @property
     def depth(self):
         return self.open_tokens_size
 
     # Low-level helpers.
-
     cdef inline Py_UCS4 peek(self, Py_ssize_t pos) noexcept:
         if pos < 0 or pos >= self.length:
             return EOF_CHAR
@@ -248,7 +251,6 @@ cdef class Tokenizer:
         return &self.open_tokens[self.open_tokens_size - 1]
 
     # Matchers. Each returns the end of the match, or 0 if there is none.
-
     cdef Py_ssize_t whitespace(self, Py_ssize_t pos) noexcept:
         cdef:
             Py_ssize_t start_pos = pos
@@ -349,14 +351,15 @@ cdef class Tokenizer:
         return pos
 
     cdef Py_ssize_t string_middle(self, Py_ssize_t pos) noexcept:
-        # Precondition: the top entry is STRING or FIELD_SPEC.
         cdef:
+            Py_ssize_t start_pos = pos
             OpenToken *top = self._top()
             Py_UCS4 quote = top.opener
             bint triple = top.is_triple
             bint in_spec = top.ctx == FIELD_SPEC
-            bint allow_field = top.allow_field
-            Py_ssize_t start_pos = pos
+            bint allow_field = top.field_open != 0
+            Py_UCS4 field_open = top.field_open
+            Py_UCS4 field_close = top.field_close
             Py_UCS4 c
 
         while (c := self.peek(pos)) != EOF_CHAR:
@@ -389,19 +392,17 @@ cdef class Tokenizer:
                 if self.peek(pos + 1) == quote and self.peek(pos + 2) == quote:
                     break
 
-            elif in_spec and c == self.close_char:
-                break
-
-            elif allow_field and c == self.open_char:
-                if in_spec or self.peek(pos + 1) != self.open_char:
+            elif in_spec:
+                # In a format spec a single close char ends the spec, and
+                # an open char is a nested field (or an error in a Ren'Py spec).
+                if c == field_close or (allow_field and c == field_open):
                     break
 
-                pos += 1
+            elif allow_field and c == field_open:
+                # A lone open char starts a field, a doubled one is an escaped literal.
+                if self.peek(pos + 1) != field_open:
+                    break
 
-            elif (
-                allow_field and not in_spec and
-                c == self.close_char and self.peek(pos + 1) == self.close_char
-            ):
                 pos += 1
 
             pos += 1
@@ -409,7 +410,6 @@ cdef class Tokenizer:
         return 0 if pos == start_pos else pos
 
     cdef Py_ssize_t string_end(self, Py_ssize_t pos) noexcept:
-        # Precondition: the top entry is STRING or FIELD_SPEC.
         cdef:
             OpenToken *top = self._top()
             Py_UCS4 quote = top.opener
@@ -427,7 +427,6 @@ cdef class Tokenizer:
         return 0
 
     # Token construction.
-
     cdef inline TokenInfo _token(self, TokenKind kind, Pos start, Py_ssize_t end_pos):
         self.pos = end_pos
         return make_token(kind, self.data[start.pos:end_pos], start, self.here())
@@ -458,14 +457,14 @@ cdef class Tokenizer:
         raise SystemError(f"Got printable character {c!r} on line {self.lineno}.")
 
     # Stack management.
-
     cdef TokenInfo _push(
         self,
         TokenInfo token,
         Context ctx,
         Py_UCS4 opener,
         bint is_triple,
-        bint allow_field,
+        Py_UCS4 field_open,
+        Py_UCS4 field_close,
     ):
         # Returns the token, or an ERRORTOKEN if the stack is full. In that
         # case, tokenization sticks to ENDMARKER, as recovery would be too
@@ -482,15 +481,15 @@ cdef class Tokenizer:
         entry.ctx = ctx
         entry.opener = opener
         entry.is_triple = is_triple
-        entry.allow_field = allow_field
+        entry.field_open = field_open
+        entry.field_close = field_close
         entry.start = token._start
         entry.end = token._end
         self.open_tokens_size += 1
         return token
 
     cdef TokenInfo _push_string(self, TokenInfo token):
-        # Derive the quote style from the STRING_START text. A prefix
-        # character is never a quote, so the triple check is unambiguous.
+        # Derive the quote style from the STRING_START token.
         cdef:
             Py_ssize_t start = token._start.pos
             Py_ssize_t end = token._end.pos
@@ -500,14 +499,16 @@ cdef class Tokenizer:
                 self.peek(end - 2) == quote and
                 self.peek(end - 3) == quote
             )
-            Py_ssize_t prefix_two_c = end - start - (3 if triple else 1)
-            bint allow_field = (
-                self.open_char == '[' or
+            bint is_fstring = (
                 self.peek(start) in 'fF' or
-                (prefix_two_c and self.peek(start + 1) in 'fF')
+                # Prefix is 2-char.
+                ((end - start - (3 if triple else 1)) and self.peek(start + 1) in 'fF')
             )
 
-        return self._push(token, STRING, quote, triple, allow_field)
+        if is_fstring:
+            return self._push(token, F_STRING, quote, triple, '{', '}')
+
+        return self._push(token, STRING, quote, triple, 0, 0)
 
     cdef TokenInfo _close_bracket(self, TokenInfo token, Py_UCS4 c):
         cdef Py_UCS4 opener = '(' if c == ')' else '[' if c == ']' else '{'
@@ -549,25 +550,31 @@ cdef class Tokenizer:
 
     cdef TokenInfo _end_of_input(self, Pos start, OpenToken *top):
         # Report one unclosed construct per call, then the ENDMARKER.
-        cdef str message
+        cdef:
+            str message
+            Py_UCS4 c
 
-        if top == NULL:
+        if top == NULL or top.ctx == RENPY_STRING:
             return make_token(ENDMARKER, "", start, start)
 
-        if top.ctx == STRING:
+        if top.ctx == STRING or top.ctx == F_STRING:
             message = "unterminated string literal"
         elif top.ctx == BRACKET:
             message = f"'{top.opener}' was never closed"
         else:
-            message = f"'{self.open_char}' was never closed"
+            # FIELD/FIELD_SPEC. The open char is derived from the close
+            # char, as field_open may have been zeroed after a nested
+            # substitution error.
+            c = '[' if top.field_close == ']' else '{'
+            message = f"'{c}' was never closed"
 
         self.open_tokens_size -= 1
         return make_token(ERRORTOKEN, message, top.start, top.end)
 
     # The tokenizer.
-
     cdef TokenInfo _literal_token(self, OpenToken *top, Pos start):
-        # Inside a STRING or FIELD_SPEC: literal text and its terminators.
+        # Inside a STRING, F_STRING, RENPY_STRING or FIELD_SPEC: literal
+        # text and its terminators.
         cdef:
             Py_ssize_t end_pos
             Py_UCS4 c = self.peek(start.pos)
@@ -582,23 +589,31 @@ cdef class Tokenizer:
                 # Report it, assume it was closed, and leave the quote to
                 # be matched as STRING_END by the next call.
                 self.open_tokens_size -= 1
-                if self.open_char == '{':
-                    return make_token(ERRORTOKEN, "f-string: expecting '}'", start, start)
-
-                return make_token(ERRORTOKEN, "expecting ']'", start, start)
+                return make_token(ERRORTOKEN, f"expecting '{top.field_close}'", start, start)
 
             self.open_tokens_size -= 1
             return self._token(STRING_END, start, end_pos)
 
         # The end of a format spec, which closes its field.
-        if c == self.close_char and top.ctx == FIELD_SPEC:
+        if top.ctx == FIELD_SPEC and c == top.field_close:
             self.open_tokens_size -= 1
             return self._token(OP, start, start.pos + 1)
 
         # A replacement field.
-        if c == self.open_char and top.allow_field:
+        if top.field_open and c == top.field_open:
+            if top.ctx == FIELD_SPEC and top.field_open == '[':
+                # Nested substitutions are not allowed in a Ren'Py format
+                # spec. Report the first '[' and treat the rest of the
+                # spec as literal text.
+                top.field_open = 0
+                return make_token(
+                    ERRORTOKEN,
+                    "nested substitution is not allowed in a format spec",
+                    start, start,
+                )
+
             token = self._token(OP, start, start.pos + 1)
-            return self._push(token, FIELD, top.opener, top.is_triple, True)
+            return self._push(token, FIELD, top.opener, top.is_triple, top.field_open, top.field_close)
 
         return self._invalid_char(c, start)
 
@@ -611,12 +626,14 @@ cdef class Tokenizer:
 
         if top != NULL and top.ctx == FIELD:
             # The end of the replacement field.
-            if c == self.close_char:
+            if c == top.field_close:
                 self.open_tokens_size -= 1
                 return self._token(OP, start, start.pos + 1)
 
             # The format spec. Must come before operators, so that
-            # f"{x:=5}" is a spec, not ':='.
+            # f"{x:=5}" is a spec, not ':='. The field chars carry over:
+            # '{', '}' for f-strings, '[', ']' for Ren'Py strings, where
+            # a nested field in the spec is an error.
             if c == ':':
                 top.ctx = FIELD_SPEC
                 return self._token(OP, start, start.pos + 1)
@@ -635,7 +652,7 @@ cdef class Tokenizer:
             token = self._token(OP, start, end_pos)
 
             if c == '(' or c == '[' or c == '{':
-                return self._push(token, BRACKET, c, False, False)
+                return self._push(token, BRACKET, c, False, 0, 0)
 
             if c == ')' or c == ']' or c == '}':
                 return self._close_bracket(token, c)
@@ -667,7 +684,7 @@ cdef class Tokenizer:
             return make_token(ENDMARKER, "", start, start)
 
         top = self._top()
-        literal = top != NULL and (top.ctx == STRING or top.ctx == FIELD_SPEC)
+        literal = top != NULL and top.ctx != BRACKET and top.ctx != FIELD
 
         # Skip whitespace and continuations, except inside literal text.
         if not literal:

@@ -101,28 +101,15 @@ class Tokenizer:
         """Position of the start of the current physical line."""
 
     @property
-    def split_char(self) -> Literal["{", "["]:
-        """
-        The bracket that opens a substitution. With "{", replacement
-        fields follow Python f-string rules (only f-strings split).
-        With "[", every string may contain Ren'Py-style "[...]"
-        substitutions, and "{...}" is literal text.
-        """
-
-    @property
     def depth(self) -> int:
         """Number of currently open brackets and strings."""
 
-    def __init__(
-        self,
-        data: str,
-        pos: int = 0,
-        lineno: int = 1,
-        split_char: Literal["{", "["] = "{",
-    ) -> None:
+    def __init__(self, data: str, pos: int = 0, lineno: int = 1) -> None: ...
+    @classmethod
+    def renpy_substitution_string(cls, data: str) -> Tokenizer:
         """
-        Raises `ValueError` if `pos` is out of range or `split_char`
-        is not '{' or '['.
+        Tokenizes `data` as the content of a Ren'Py string: literal text
+        with [substitutions] terminated by the end of the data.
         """
 
     def next_token(self) -> TokenInfo:

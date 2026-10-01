@@ -476,6 +476,16 @@ class TestFStrings(TokenizerTestCase):
             ],
         )
 
+    def test_lone_close_brace_is_text(self):
+        self.assertTokens(
+            'f"a}b"',
+            [
+                (STRING_START, 'f"'),
+                (STRING_MIDDLE, "a}b"),
+                (STRING_END, '"'),
+            ],
+        )
+
     def test_field_with_expression(self):
         self.assertTokens(
             'f"{a + b}"',
@@ -939,7 +949,6 @@ class TestConstructor(TokenizerTestCase):
         self.assertEqual(tk.pos, 0)
         self.assertEqual(tk.lineno, 1)
         self.assertEqual(tk.line_start, 0)
-        self.assertEqual(tk.split_char, "{")
         self.assertEqual(tk.depth, 0)
 
     def test_pos(self):
@@ -969,129 +978,138 @@ class TestConstructor(TokenizerTestCase):
             with self.subTest(pos=pos), self.assertRaises(ValueError):
                 Tokenizer("ab", pos=pos)
 
-    def test_invalid_split_char(self):
-        for split_char in ("(", "", "xx"):
-            with self.subTest(split_char=split_char), self.assertRaises(ValueError):
-                Tokenizer("ab", split_char=split_char)  # type: ignore
-
     def test_properties_are_readonly(self):
         tk = Tokenizer("ab")
-        for prop in ("data", "filename", "pos", "lineno", "line_start", "split_char"):
+        for prop in ("data", "pos", "lineno", "line_start"):
             with self.subTest(prop=prop), self.assertRaises(AttributeError):
                 setattr(tk, prop, None)
 
 
-class TestSplitChar(TokenizerTestCase):
-    def test_split_char_bracket(self):
-        tk = Tokenizer("ab", split_char="[")
-        self.assertEqual(tk.split_char, "[")
+class TestRenpySubstitutionString(TokenizerTestCase):
+    """Tests for Tokenizer.renpy_substitution_string, which tokenizes the
+    content of a Ren'Py string: literal text with [substitutions], no
+    escapes, terminated only by the end of the data."""
+
+    def assertRenpyTokens(self, data, expected):
+        """Assert `data` tokenizes to `expected` (kind, string) pairs,
+        followed by an empty ENDMARKER."""
+        tokens = [(t.kind, t.string) for t in Tokenizer.renpy_substitution_string(data).iter_tokens()]
+        self.assertEqual(tokens, list(expected) + [(ENDMARKER, "")])
+
+    def test_starts_inside_string(self):
+        # The synthetic Ren'Py string context is on the stack.
+        tk = Tokenizer.renpy_substitution_string("ab")
+        self.assertEqual(tk.depth, 1)
+
+    def test_empty(self):
+        self.assertRenpyTokens("", [])
+
+    def test_plain_text(self):
+        self.assertRenpyTokens("Hello, world!", [(STRING_MIDDLE, "Hello, world!")])
 
     def test_substitution(self):
-        # Any string allows [...] substitutions, without an f prefix.
-        self.assertTokens(
-            '"Hello [name]!"',
+        self.assertRenpyTokens(
+            "Hello [name]!",
             [
-                (STRING_START, '"'),
                 (STRING_MIDDLE, "Hello "),
                 (OP, "["),
                 (WORD, "name"),
                 (OP, "]"),
                 (STRING_MIDDLE, "!"),
-                (STRING_END, '"'),
             ],
-            split_char="[",
         )
 
     def test_escaped_bracket(self):
-        self.assertTokens(
-            '"a[[b"',
-            [(STRING_START, '"'), (STRING_MIDDLE, "a[[b"), (STRING_END, '"')],
-            split_char="[",
-        )
+        self.assertRenpyTokens("a[[b", [(STRING_MIDDLE, "a[[b")])
 
     def test_lone_close_bracket_is_text(self):
-        self.assertTokens(
-            '"a]b"',
-            [(STRING_START, '"'), (STRING_MIDDLE, "a]b"), (STRING_END, '"')],
-            split_char="[",
-        )
+        self.assertRenpyTokens("a]b", [(STRING_MIDDLE, "a]b")])
 
     def test_braces_are_text(self):
-        # Text tags are not replacement fields in "[" mode.
-        self.assertTokens(
-            '"{b}bold{/b}"',
-            [(STRING_START, '"'), (STRING_MIDDLE, "{b}bold{/b}"), (STRING_END, '"')],
-            split_char="[",
-        )
+        # Text tags are not replacement fields.
+        self.assertRenpyTokens("{b}bold{/b}", [(STRING_MIDDLE, "{b}bold{/b}")])
 
     def test_nested_brackets(self):
-        self.assertTokens(
-            '"[a[0]]"',
+        self.assertRenpyTokens(
+            "[a[0]]",
             [
-                (STRING_START, '"'),
                 (OP, "["),
                 (WORD, "a"),
                 (OP, "["),
                 (WORD, "0"),
                 (OP, "]"),
                 (OP, "]"),
-                (STRING_END, '"'),
             ],
-            split_char="[",
         )
 
     def test_format_spec(self):
-        self.assertTokens(
-            '"[x:.2f]"',
+        self.assertRenpyTokens(
+            "[x:.2f]",
             [
-                (STRING_START, '"'),
                 (OP, "["),
                 (WORD, "x"),
                 (OP, ":"),
                 (STRING_MIDDLE, ".2f"),
                 (OP, "]"),
-                (STRING_END, '"'),
             ],
-            split_char="[",
         )
 
     def test_nested_field_in_format_spec(self):
-        self.assertTokens(
-            '"[x:[y]]"',
+        # Nested substitutions are not allowed in a format spec; the spec
+        # is literal text, so the first ']' closes the field.
+        self.assertRenpyTokens(
+            "[x:[y]]",
             [
-                (STRING_START, '"'),
                 (OP, "["),
                 (WORD, "x"),
                 (OP, ":"),
-                (OP, "["),
-                (WORD, "y"),
+                (ERRORTOKEN, "nested substitution is not allowed in a format spec"),
+                (STRING_MIDDLE, "[y"),
                 (OP, "]"),
-                (OP, "]"),
-                (STRING_END, '"'),
+                (STRING_MIDDLE, "]"),
             ],
-            split_char="[",
+        )
+
+    def test_nested_field_error_is_zero_width(self):
+        # The literal text is not consumed by the error token.
+        tokens = list(Tokenizer.renpy_substitution_string("[x:[y]]").iter_tokens())
+        error = tokens[3]
+        self.assertEqual(error.kind, ERRORTOKEN)
+        self.assertEqual(error.span, (3, 3))
+
+    def test_nested_field_error_reported_once(self):
+        self.assertRenpyTokens(
+            "[x:[a][b]]",
+            [
+                (OP, "["),
+                (WORD, "x"),
+                (OP, ":"),
+                (ERRORTOKEN, "nested substitution is not allowed in a format spec"),
+                (STRING_MIDDLE, "[a"),
+                (OP, "]"),
+                (OP, "["),
+                (WORD, "b"),
+                (OP, "]"),
+                (STRING_MIDDLE, "]"),
+            ],
         )
 
     def test_conversion(self):
-        self.assertTokens(
-            '"[x!r]"',
+        self.assertRenpyTokens(
+            "[x!r]",
             [
-                (STRING_START, '"'),
                 (OP, "["),
                 (WORD, "x"),
                 (OP, "!"),
                 (WORD, "r"),
                 (OP, "]"),
-                (STRING_END, '"'),
             ],
-            split_char="[",
         )
 
     def test_dict_braces_in_field(self):
-        self.assertTokens(
-            '"[{1: 2}[0]]"',
+        self.assertRenpyTokens(
+            "[{1: 2}[0]]",
             [
-                (STRING_START, '"'),
                 (OP, "["),
                 (OP, "{"),
                 (WORD, "1"),
@@ -1102,44 +1120,30 @@ class TestSplitChar(TokenizerTestCase):
                 (WORD, "0"),
                 (OP, "]"),
                 (OP, "]"),
-                (STRING_END, '"'),
             ],
-            split_char="[",
         )
 
     def test_unterminated_field(self):
-        self.assertTokens(
-            '"[x',
+        # The Ren'Py string itself ends cleanly at the end of the data.
+        self.assertRenpyTokens(
+            "[x",
             [
-                (STRING_START, '"'),
                 (OP, "["),
                 (WORD, "x"),
                 (ERRORTOKEN, "'[' was never closed"),
-                (ERRORTOKEN, "unterminated string literal"),
             ],
-            split_char="[",
         )
 
-    def test_string_end_in_format_spec(self):
-        self.assertTokens(
-            '"[x:>5"',
+    def test_unterminated_format_spec(self):
+        self.assertRenpyTokens(
+            "[x:>5",
             [
-                (STRING_START, '"'),
                 (OP, "["),
                 (WORD, "x"),
                 (OP, ":"),
                 (STRING_MIDDLE, ">5"),
-                (ERRORTOKEN, "expecting ']'"),
-                (STRING_END, '"'),
+                (ERRORTOKEN, "'[' was never closed"),
             ],
-            split_char="[",
-        )
-
-    def test_brackets_still_brackets_in_code(self):
-        self.assertTokens(
-            "a[0]",
-            [(WORD, "a"), (OP, "["), (WORD, "0"), (OP, "]")],
-            split_char="[",
         )
 
 
