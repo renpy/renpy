@@ -19,6 +19,46 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
+
+# Tokenizer for Ren'Py scripts. tokenizer.pyi documents the token stream and
+# the public API. This comment only covers how the code is built.
+#
+# - Each call to next_token() reads one token and doesn't keep any token
+#   history. All the state it needs is the position, the line number and
+#   a stack of open constructs.
+#
+# - The OpenToken stack has one entry per open bracket, string, field or
+#   format spec. Entry 0 is the top level and is never popped. The ctx of
+#   the top entry chooses the mode: if it's below STRING, the input is read
+#   as code; otherwise it's read as literal text. Each entry also stores
+#   the string's quote, whether it's triple-quoted, and the characters that
+#   open and close a field. A field copies its string's entry when pushed,
+#   so the string-middle scanner only ever looks at the top entry.
+#
+# - Stack storage: the first 16 entries are inline in the object. If
+#   nesting goes deeper, the whole stack moves to one heap block sized for
+#   MAX_DEPTH, and it never grows again. Once the depth limit is hit, one
+#   ERRORTOKEN is emitted and every later call returns ENDMARKER.
+#
+# - Buffer access: next_token() checks the string's PyUnicode kind once.
+#   Everything else is a fused-type specialization (ucs_t) that indexes the
+#   raw buffer directly. peek() returns EOF_CHAR (0x110000) when reading
+#   past the end, so none of the scanners need a separate end-of-input
+#   check.
+#
+# - Character tests use the 256-entry CHARS table. The low 4 bits hold the
+#   character's class when it starts a token, and the high bits hold flags
+#   (F_IDENT, F_STRING_SPECIAL). Code points of 256 and above are always
+#   identifier characters, and are handled outside the table.
+#
+# - Token text comes from slicing data on the fly. Error tokens put their
+#   message in string instead.
+#
+# - When a bracket doesn't match, the code searches down the stack, but
+#   stops at the nearest string. If it finds the matching opener, it
+#   removes that entry so the brackets around it stay paired.
+
 # cython: boundscheck=False, wraparound=False
 
 cimport cython

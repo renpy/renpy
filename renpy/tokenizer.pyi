@@ -19,9 +19,49 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+"""
+A fast, incremental tokenizer for Ren'Py scripts and the Python embedded
+in them.
+
+Tokens are coarser than Python's `tokenize`:
+
+- `WORD` covers both names and numbers. `1.5` comes out as `WORD`, `OP`,
+  `WORD`, and `1e-3` as `WORD`, `OP`, `WORD`. The parser puts them back
+  together.
+- `OP` covers Python operators plus `$` and `?`. Brackets are tracked, and
+  a closing bracket that doesn't match is reported as an error.
+- Indentation isn't tokenized. Spaces and backslash-newline continuations
+  between tokens are skipped, and every newline in code becomes a
+  `NEWLINE` token, even inside brackets. Line structure is left to the
+  parser.
+- A string literal is split the way PEP 701 splits f-strings:
+  `STRING_START`, then any number of `STRING_MIDDLE` and replacement
+  fields, then `STRING_END`. Plain strings use the same tokens. Quotes can
+  be `'`, `"` or `` ` ``, single or tripled. The prefix is any of r, u, b,
+  f, rb, br, rf or fr, in any case. Escapes are kept as written, not
+  decoded. A newline inside a string is part of `STRING_MIDDLE`, even if
+  the string isn't triple-quoted.
+- In f-strings, `{` opens a replacement field and `{{` is literal text.
+  The field's contents are tokenized as code until the matching `}`. A `:`
+  at the field's top level starts a format spec, which is literal text
+  that can contain nested `{...}` fields. There's no special handling for
+  `!r`-style conversions or for `=`. They're just operators.
+- `Tokenizer.renpy_substitution_string` tokenizes the inside of a Ren'Py
+  string. There are no quotes, the text ends with the data, and fields
+  are `[...]`. A Ren'Py format spec is plain text up to `]`, so `[` and
+  `{` don't nest there.
+
+Errors don't raise. Each one becomes an `ERRORTOKEN`: its `string` is the
+message and its span covers the bad input. The tokenizer then moves on.
+Errors include tabs, control characters, a stray backslash, unmatched or
+mismatched brackets, and nesting deeper than 255. At the end of the data,
+each construct that's still open produces one error, innermost first,
+followed by `ENDMARKER`.
+"""
+
 from collections.abc import Iterator
 from enum import IntEnum
-from typing import Literal, final
+from typing import final
 
 class TokenKind(IntEnum):
     """Enumeration of token kinds."""
