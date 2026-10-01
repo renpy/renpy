@@ -54,6 +54,17 @@ class TokenInfo:
     string: str
     """The string representation of the token."""
 
+    def __init__(
+        self,
+        kind: TokenKind,
+        string: str,
+        start_pos: int,
+        end_pos: int,
+        start_lineno: int,
+        start_column: int,
+        end_lineno: int,
+        end_column: int,
+    ) -> None: ...
     @property
     def span(self) -> tuple[int, int]:
         """The (start, end) positions of the token in the source."""

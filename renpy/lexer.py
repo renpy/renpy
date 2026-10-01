@@ -314,6 +314,9 @@ def generate_logical_lines(
     ERRORTOKEN = TokenKind.ERRORTOKEN
     need_munge_pattern = NEED_MUNGE_PATTERN
 
+    # If the file contains no double underscore at all, no token in it can need munging.
+    maybe_munge = "__" in data
+
     # Position at which last append to current line happened.
     # This is used to speed up join later as there would be less parts to join.
     last_append_pos = pos
@@ -365,29 +368,30 @@ def generate_logical_lines(
 
             line.clear()
             in_line = False
-            last_append_pos = token.span[1]
             continue
 
         # Comments should not appear in final line so user don't have to
         # worry about them using regexes.
         if kind is COMMENT:
-            line.append(data[last_append_pos : token.span[0]])
-            last_append_pos = token.span[1]
+            start_pos, end_pos = token.span
+            line.append(data[last_append_pos:start_pos])
+            last_append_pos = end_pos
             continue
 
-        # Munge words starting with double underscores.
-        if kind is WORD and (m := need_munge_pattern.match(token.string)):
-            line.append(data[last_append_pos : token.span[0]])
-            line.append(f"{prefix}{m[1]}")
-            last_append_pos = token.span[1]
-            continue
+        if maybe_munge:
+            # Munge words starting with double underscores.
+            if kind is WORD and token.string[:2] == "__" and (m := need_munge_pattern.match(token.string)):
+                line.append(data[last_append_pos : token.span[0]])
+                line.append(f"{prefix}{m[1]}")
+                last_append_pos = token.span[1]
+                continue
 
-        # Munge strings literal text.
-        if kind is STRING_MIDDLE and "__" in token.string:
-            line.append(data[last_append_pos : token.span[0]])
-            line.append(munge_string(token.string))
-            last_append_pos = token.span[1]
-            continue
+            # Munge strings literal text.
+            if kind is STRING_MIDDLE and "__" in token.string:
+                line.append(data[last_append_pos : token.span[0]])
+                line.append(munge_string(token.string))
+                last_append_pos = token.span[1]
+                continue
 
         # Otherwise the token is added to the line as-is.
 
