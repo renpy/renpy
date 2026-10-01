@@ -54,17 +54,6 @@ class TokenInfo:
     string: str
     """The string representation of the token."""
 
-    def __init__(
-        self,
-        kind: TokenKind,
-        string: str,
-        start_pos: int,
-        end_pos: int,
-        start_lineno: int,
-        start_column: int,
-        end_lineno: int,
-        end_column: int,
-    ) -> None: ...
     @property
     def span(self) -> tuple[int, int]:
         """The (start, end) positions of the token in the source."""
@@ -77,6 +66,18 @@ class TokenInfo:
     def end(self) -> tuple[int, int]:
         """The ending (line number, 1-based column) of the token."""
 
+    def __init__(
+        self,
+        kind: TokenKind,
+        string: str,
+        start_pos: int,
+        end_pos: int,
+        start_lineno: int,
+        start_column: int,
+        end_lineno: int,
+        end_column: int,
+    ) -> None: ...
+
 class Tokenizer:
     """
     Incremental tokenizer for Ren'Py/Python source, with support for
@@ -86,10 +87,6 @@ class Tokenizer:
     @property
     def data(self) -> str:
         """The source being tokenized."""
-
-    @property
-    def filename(self) -> str:
-        """The filename used in error messages."""
 
     @property
     def pos(self) -> int:
@@ -119,7 +116,6 @@ class Tokenizer:
     def __init__(
         self,
         data: str,
-        filename: str = "<lexer>",
         pos: int = 0,
         lineno: int = 1,
         split_char: Literal["{", "["] = "{",

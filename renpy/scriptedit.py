@@ -115,7 +115,7 @@ def load_lines(filename, elided_filename):
     loc = (filename, start_number)
     lines[loc] = renpy.scriptedit.Line(original_filename, start_number, pos)
 
-    tokenizer = Tokenizer(data, filename, pos=pos, lineno=1)
+    tokenizer = Tokenizer(data, pos=pos, lineno=1)
 
     for token in tokenizer.iter_tokens():
         kind = token.kind

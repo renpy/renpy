@@ -936,16 +936,11 @@ class TestConstructor(TokenizerTestCase):
     def test_defaults(self):
         tk = Tokenizer("ab")
         self.assertEqual(tk.data, "ab")
-        self.assertEqual(tk.filename, "<lexer>")
         self.assertEqual(tk.pos, 0)
         self.assertEqual(tk.lineno, 1)
         self.assertEqual(tk.line_start, 0)
         self.assertEqual(tk.split_char, "{")
         self.assertEqual(tk.depth, 0)
-
-    def test_custom_filename(self):
-        tk = Tokenizer("ab", filename="script.rpy")
-        self.assertEqual(tk.filename, "script.rpy")
 
     def test_pos(self):
         tk = Tokenizer("hello world", pos=6)

@@ -321,7 +321,7 @@ def generate_logical_lines(
     # This is used to speed up join later as there would be less parts to join.
     last_append_pos = pos
 
-    tokenizer = Tokenizer(data, filename, pos=pos, lineno=linenumber)
+    tokenizer = Tokenizer(data, pos=pos, lineno=linenumber)
 
     for token in tokenizer.iter_tokens():
         kind = token.kind
@@ -1071,7 +1071,7 @@ class Lexer:
 
         self.skip_whitespace()
 
-        token = Tokenizer(self.text, self.filename, self.pos, self.number).next_token()
+        token = Tokenizer(self.text, self.pos, self.number).next_token()
         if token.kind is TokenKind.WORD:
             rv = token.string
             if rv.isidentifier():
@@ -1188,7 +1188,7 @@ class Lexer:
 
         start_pos = self.pos
 
-        tokenizer = Tokenizer(self.text, self.filename, self.pos, self.number)
+        tokenizer = Tokenizer(self.text, self.pos, self.number)
         token = tokenizer.next_token()
         if token.kind is not TokenKind.STRING_START:
             return None

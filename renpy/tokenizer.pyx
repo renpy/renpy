@@ -174,7 +174,6 @@ cdef struct OpenToken:
 
 cdef class Tokenizer:
     cdef readonly str data
-    cdef readonly str filename
     cdef readonly Py_ssize_t pos
     cdef readonly Py_ssize_t lineno
     cdef readonly Py_ssize_t line_start
@@ -196,13 +195,11 @@ cdef class Tokenizer:
     def __init__(
         self,
         str data not None,
-        str filename="<lexer>",
         Py_ssize_t pos=0,
         Py_ssize_t lineno=1,
         str split_char not None="{",
     ):
         self.data = data
-        self.filename = filename
         self.length = PyUnicode_GET_LENGTH(data)
         self.kind = PyUnicode_KIND(data)
         self.buf = PyUnicode_DATA(data)
@@ -458,7 +455,7 @@ cdef class Tokenizer:
             )
 
         # Should be unreachable.
-        raise SystemError(f"Got printable character {c!r} in {self.filename}:{self.lineno}.")
+        raise SystemError(f"Got printable character {c!r} on line {self.lineno}.")
 
     # Stack management.
 
