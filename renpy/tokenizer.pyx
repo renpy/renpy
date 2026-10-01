@@ -52,9 +52,6 @@
 #   (F_IDENT, F_STRING_SPECIAL). Code points of 256 and above are always
 #   identifier characters, and are handled outside the table.
 #
-# - Token text comes from slicing data on the fly. Error tokens put their
-#   message in string instead.
-#
 # - When a bracket doesn't match, the code searches down the stack, but
 #   stops at the nearest string. If it finds the matching opener, it
 #   removes that entry so the brackets around it stay paired.
@@ -115,10 +112,7 @@ cdef struct Pos:
 @cython.freelist(64)
 cdef class TokenInfo:
     cdef readonly TokenKind kind
-    # The token text. When None, it is sliced out of _data on first access.
     cdef readonly str string
-    # The source the token was cut from, or None if _string is set eagerly.
-    cdef str _data
     cdef Pos _start
     cdef Pos _end
 
@@ -682,11 +676,10 @@ cdef class Tokenizer:
         cdef OpenToken *top
         cdef OpenToken *next
         cdef Py_ssize_t length = self.length
-        cdef Py_ssize_t end_pos, prefix_end, i
+        cdef Py_ssize_t end_pos
         cdef Pos start, end
-        cdef Py_UCS4 quote, c
+        cdef Py_UCS4 c
         cdef CharClass cls
-        cdef TokenInfo token
         cdef str message
 
         # The stack overflowed; stick to ENDMARKER.
@@ -798,9 +791,9 @@ cdef class Tokenizer:
                 return self._make_token(WORD, start, self._pos_at(self._word(buf, end_pos)))
 
             if cls == CC_NEWLINE:
-                token = self._make_token(NEWLINE, start, self._pos_at(start.pos + 1))
-                self._newline(start.pos + 1)
-                return token
+                end = self._pos_at(start.pos + 1)
+                self._newline(end.pos)
+                return self._make_token(NEWLINE, start, end)
 
             if cls == CC_COMMENT:
                 return self._make_token(COMMENT, start, self._pos_at(self._comment(buf, start.pos)))
@@ -810,6 +803,9 @@ cdef class Tokenizer:
                 next.ctx = BRACKET
                 next.open_char = c
                 next.opener = c
+                next.is_triple = False
+                next.field_open = 0
+                next.field_close = 0
                 next.pos = start
                 return self._make_token(OP, start, self._pos_at(start.pos + 1))
 
