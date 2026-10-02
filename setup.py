@@ -124,15 +124,15 @@ def _build():
     cython("renpy.uguu.uguu", packages="sdl3")
 
     # renpy.gl2
-    cython("renpy.gl2.gl2mesh")
-    cython("renpy.gl2.gl2mesh2")
-    cython("renpy.gl2.gl2mesh3")
-    cython("renpy.gl2.gl2polygon")
+    cython("renpy.gl2.gl2mesh", packages="sdl3")
+    cython("renpy.gl2.gl2mesh2", packages="sdl3")
+    cython("renpy.gl2.gl2mesh3", packages="sdl3")
+    cython("renpy.gl2.gl2polygon", packages="sdl3")
     cython("renpy.gl2.gl2model", packages="sdl3")
     cython("renpy.gl2.gl2draw", packages="sdl3")
     cython("renpy.gl2.gl2texture", packages="sdl3")
     cython("renpy.gl2.gl2uniform", packages="sdl3")
-    cython("renpy.gl2.gl2physics")
+    cython("renpy.gl2.gl2physics", packages="sdl3")
     cython("renpy.gl2.gl2shader", packages="sdl3")
     cython("renpy.gl2.gl2statecache", packages="sdl3")
 
