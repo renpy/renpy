@@ -561,20 +561,15 @@ class ImageReference(renpy.display.displayable.Displayable):
         return [self.target]
 
     def _tts(self, raw: bool) -> str:
-        try:
-            s = super(ImageReference, self)._tts(raw=raw)
-            if s:
-                return s
-        except Exception:
-            pass
+        default_alt = None
 
         if getattr(renpy.config, "auto_image_alt", False):
             if isinstance(self.name, tuple):
-                return " ".join(str(i) for i in self.name)
+                default_alt = " ".join(str(i) for i in self.name)
             elif isinstance(self.name, str):
-                return self.name
+                default_alt = self.name
 
-        return ""
+        return self._tts_common(default_alt=default_alt, raw=raw)
 
 
 class DynamicImage(renpy.display.displayable.Displayable):

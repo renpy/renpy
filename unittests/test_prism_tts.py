@@ -28,6 +28,7 @@ class TestPrismTTS(unittest.TestCase):
     def setUp(self):
         try:
             import prism
+
             self.has_prism = True
         except ImportError:
             self.has_prism = False
@@ -35,6 +36,7 @@ class TestPrismTTS(unittest.TestCase):
     def test_screen_reader_backends_defined(self):
         """Test that known screen readers are classified in SCREEN_READER_BACKENDS."""
         from renpy.display.tts import SCREEN_READER_BACKENDS
+
         self.assertIn("nvda", SCREEN_READER_BACKENDS)
         self.assertIn("jaws", SCREEN_READER_BACKENDS)
         self.assertIn("orca", SCREEN_READER_BACKENDS)
@@ -48,6 +50,7 @@ class TestPrismTTS(unittest.TestCase):
             self.skipTest("prismatoid is not installed")
 
         from renpy.display.tts import PrismTTS
+
         tts = PrismTTS()
         self.assertIsNotNone(tts.context)
         # Should have acquired a backend (or fallback)
@@ -61,6 +64,7 @@ class TestPrismTTS(unittest.TestCase):
             self.skipTest("prismatoid is not installed")
 
         from renpy.display.tts import SCREEN_READER_BACKENDS, PrismTTS
+
         tts = PrismTTS()
         tts_backend = tts.get_backend("tts")
         if tts_backend is not None:
@@ -75,6 +79,7 @@ class TestPrismTTS(unittest.TestCase):
             self.skipTest("prismatoid is not installed")
 
         from renpy.display.tts import PrismTTS
+
         tts = PrismTTS()
         voices = tts.get_tts_voices()
         self.assertIsInstance(voices, list)
@@ -87,6 +92,7 @@ class TestPrismTTS(unittest.TestCase):
             self.skipTest("prismatoid is not installed")
 
         from renpy.display.tts import PrismTTS
+
         tts = PrismTTS()
         tts.speak("Test line for accessibility.", mode="tts")
         tts.stop()
@@ -131,6 +137,7 @@ class TestPrismTTS(unittest.TestCase):
             self.skipTest("prismatoid is not installed")
 
         import renpy.display.tts as tts_module
+
         old_platform_tts = tts_module.platform_tts
         try:
             tts_module.platform_tts = None
@@ -142,6 +149,7 @@ class TestPrismTTS(unittest.TestCase):
     def test_init_falls_back_when_prism_missing(self):
         """Test that init() falls back to legacy platform TTS when prism is None."""
         import renpy.display.tts as tts_module
+
         old_prism = tts_module.prism
         old_platform_tts = tts_module.platform_tts
         try:
@@ -160,20 +168,25 @@ class TestPrismTTS(unittest.TestCase):
         import types
 
         import renpy
+
         if not hasattr(renpy, "error"):
             import renpy.error
+
             renpy.error = renpy.error
         if not hasattr(renpy, "config"):
             import renpy.config
+
             renpy.config = renpy.config
         if not hasattr(renpy, "object"):
             import renpy.object
+
             renpy.object = renpy.object
         if not hasattr(renpy, "pygame"):
             renpy.pygame = MagicMock()
             sys.modules["renpy.pygame"] = renpy.pygame
 
         import renpy.display
+
         if not hasattr(renpy.display, "core"):
             renpy.display.core = MagicMock()
         if not hasattr(renpy.display, "im"):
@@ -208,11 +221,14 @@ class TestPrismTTS(unittest.TestCase):
             renpy.substitutions = subst_mod
 
         import renpy.display.tts
+
         renpy.display.tts = renpy.display.tts
         import renpy.display.displayable
+
         renpy.display.displayable = renpy.display.displayable
 
         import renpy.display.image as image_module
+
         return image_module
 
     def test_image_reference_explicit_alt(self):
@@ -228,6 +244,7 @@ class TestPrismTTS(unittest.TestCase):
         """Test that ImageReference returns tag/attribute names when auto_image_alt is True."""
         image_module = self._ensure_image_environment()
         import renpy.config as config_module
+
         im_ref = image_module.ImageReference(("eileen", "happy"))
         im_ref.target = MagicMock(_tts=lambda raw: "")
         im_ref.style = MagicMock()

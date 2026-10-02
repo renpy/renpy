@@ -23,10 +23,12 @@ import json
 import math
 
 import renpy
+
 try:
     from renpy.gl2.gl2physics import PendulumPhysics
 except ImportError:
     PendulumPhysics = None
+
 
 class Live2DPhysics:
     """
@@ -54,6 +56,7 @@ class Live2DPhysics:
 
         return 0.0 if self.physics.is_active() else None
 
+
 def load_physics(model, base, filename):
     """
     Load a physics3 file and bind its simulation to the model's parameters.
@@ -66,6 +69,7 @@ def load_physics(model, base, filename):
         rig = _from_physics3(json.load(f))
 
     return Live2DPhysics(model, rig)
+
 
 def _from_physics3(physics_json):
     """

@@ -31,6 +31,7 @@ import types
 import subprocess
 
 import renpy
+
 try:
     import renpy.pygame as pygame
 except Exception:
@@ -199,8 +200,16 @@ if prism is None:
                 self.dll.prism_backend_get_rate.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_float)]
                 self.dll.prism_backend_set_rate.argtypes = [ctypes.c_void_p, ctypes.c_float]
                 self.dll.prism_backend_count_voices.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_size_t)]
-                self.dll.prism_backend_get_voice_name.argtypes = [ctypes.c_void_p, ctypes.c_size_t, ctypes.POINTER(ctypes.c_char_p)]
-                self.dll.prism_backend_get_voice_language.argtypes = [ctypes.c_void_p, ctypes.c_size_t, ctypes.POINTER(ctypes.c_char_p)]
+                self.dll.prism_backend_get_voice_name.argtypes = [
+                    ctypes.c_void_p,
+                    ctypes.c_size_t,
+                    ctypes.POINTER(ctypes.c_char_p),
+                ]
+                self.dll.prism_backend_get_voice_language.argtypes = [
+                    ctypes.c_void_p,
+                    ctypes.c_size_t,
+                    ctypes.POINTER(ctypes.c_char_p),
+                ]
                 self.dll.prism_backend_get_voice.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_size_t)]
                 self.dll.prism_backend_set_voice.argtypes = [ctypes.c_void_p, ctypes.c_size_t]
 
@@ -711,7 +720,6 @@ class PrismTTS(object):
     def __reduce__(self):
         return (PrismTTS, ())
 
-
     def _init_backends(self):
         # 1. Screen reader backend: look for an active screen reader
         self.sr_backend = None
@@ -899,16 +907,11 @@ def default_tts_function(s):
         return
 
     if platform_tts is not None:
-        if renpy.game.preferences.self_voicing == "screenreader":
-            if isinstance(platform_tts, PrismTTS):
-                platform_tts.speak(s, mode="screenreader")
-            else:
-                platform_tts.speak(s)
+        if isinstance(platform_tts, PrismTTS):
+            mode = "screenreader" if renpy.game.preferences.self_voicing == "screenreader" else "tts"
+            platform_tts.speak(s, mode=mode)
         else:
-            if isinstance(platform_tts, PrismTTS):
-                platform_tts.speak(s, mode="tts")
-            else:
-                platform_tts.speak(s)
+            platform_tts.speak(s)
 
 
 def stop_tts():
