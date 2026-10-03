@@ -322,21 +322,28 @@ def insert_line_before(code, filename, linenumber):
     else:
         indent = ""
 
-    raw_code = indent + code
-    code = indent + code + "\n"
+    code_lines = []
+    full_code = ''
+    lines_acc = 0
+    for l, content in enumerate(code.split('\n')):
+        raw_code = indent + content
+        code = raw_code + '\n'
+        full_code += code
 
-    new_line = Line(old_line.filename, old_line.number, old_line.start)
-    new_line.text = raw_code
-    new_line.full_text = code
-    new_line.end = new_line.start + len(raw_code)
-    new_line.end_delim = new_line.start + len(code)
+        new_line = Line(old_line.filename, old_line.number+l, old_line.start+lines_acc)
+        new_line.text = raw_code
+        new_line.full_text = code
+        new_line.end = new_line.start + len(raw_code)
+        new_line.end_delim = new_line.start + len(code)
+        code_lines.append(new_line)
+        lines_acc += len(code)
 
     with open(old_line.filename, "r", encoding="utf-8") as f:
         data = f.read()
 
-    data = data[: old_line.start] + code + data[old_line.start :]
+    data = data[: old_line.start] + full_code + data[old_line.start :]
 
-    adjust_line_locations(filename, linenumber, len(code), code.count("\n"))
+    adjust_line_locations(filename, linenumber, len(full_code), full_code.count("\n"))
 
     with renpy.loader.auto_lock:
         with open(old_line.filename, "w", encoding="utf-8") as f:
@@ -344,7 +351,8 @@ def insert_line_before(code, filename, linenumber):
 
         renpy.loader.add_auto(old_line.filename, force=True)
 
-    lines[filename, linenumber] = new_line
+    for i, new_line in enumerate(code_lines):
+        lines[filename, linenumber + i] = new_line
 
 
 def remove_line(filename, linenumber):
@@ -492,7 +500,7 @@ def add_to_ast_before(code, filename, linenumber):
     nodes = nodes_on_line_at_or_after(filename, linenumber)
     old, _ = first_and_last_nodes(nodes)
 
-    adjust_ast_linenumbers(old.filename, linenumber, 1)
+    adjust_ast_linenumbers(old.filename, linenumber, 1 + code.count("\n"))
 
     block, _init = renpy.game.script.load_string(old.filename, code, linenumber=linenumber)
 
@@ -564,6 +572,68 @@ def remove_from_ast(filename, linenumber):
             namemap[k] = last.next
 
     adjust_ast_linenumbers(filename, linenumber, -1)
+
+
+def replace_ast(code, filename, linenumber):
+    """
+    Replace `code`, which must be a textual line of Ren'Py code,
+    at the given filename and line number.
+    """
+    # Delete first on replace in case the new code contains an ID, which would
+    # break parsing if present more that once. this also means that we then need
+    # to reconcile the AST tree.
+
+    # Old nodes
+    old_nodes = nodes_on_line(filename, linenumber)
+    first, last = first_and_last_nodes(old_nodes)
+    new_stmts = []
+    renpy.game.script.all_stmts = [stmt for stmt in renpy.game.script.all_stmts if stmt not in old_nodes]
+    namemap = renpy.game.script.namemap
+    for k in list(namemap):
+        if namemap[k] in old_nodes:
+            namemap[k] = last.next
+
+    # Reloaded nodes
+    first_following = last.next
+
+    if code.count("\n") > 0:
+        # NOTE: this assumes that the previously-deleted entry is 1-line long
+        adjust_ast_linenumbers(filename, linenumber + 1, code.count("\n"))
+
+    new_nodes, _init = renpy.game.script.load_string(filename, code, linenumber=linenumber)
+    if new_nodes is None:
+        # When updating Translate entries, the parser may fail if their ID is already present.
+        # In such cases, try to drop the ID of incoming entries first.
+        renpy.parser.parse_errors.clear()
+        for n in old_nodes:
+            if isinstance(n, (renpy.ast.Translate, renpy.ast.TranslateSay)) and n.language is None:
+                if n.identifier in renpy.game.script.translator.default_translates:
+                    renpy.game.script.translator.default_translates.pop(n.identifier)
+        new_nodes, _init = renpy.game.script.load_string(filename, code, linenumber=linenumber)
+    new_first, _ = first_and_last_nodes(new_nodes)
+
+    # Remove the return statement at the end of the block.
+    ret_stmt = new_nodes.pop()
+    renpy.game.script.all_stmts.remove(ret_stmt)
+
+    if not new_nodes:
+        return
+
+    for i in old_nodes:
+        for old in old_nodes:
+            i.replace_next(old, new_first)
+
+    for i in renpy.game.script.all_stmts:
+        for old in old_nodes:
+            i.replace_next(old, new_first)
+
+    renpy.ast.chain_block(new_nodes, first_following)
+
+    for i in renpy.game.contexts:
+        for old in old_nodes:
+            i.replace_node(old, new_first)
+
+    renpy.game.log.replace_node(old, new_first)
 
 
 serial = 1
