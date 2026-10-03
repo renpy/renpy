@@ -26,14 +26,14 @@ import linecache
 import os
 import re
 import sys
-from collections.abc import Callable
+from collections.abc import Callable, Iterable, Iterator
 from typing import Any, Literal, NamedTuple
 
 import renpy
 
 try:
     from renpy.astsupport import PyExpr, make_pyexpr
-    from renpy.lexersupport import match_logical_word, match_operator, match_string, match_whitespace
+    from renpy.tokenizer import Tokenizer, TokenKind
 except ImportError:
     pass
 
@@ -246,22 +246,21 @@ def get_string_munger(prefix: str) -> Callable[[str], str]:
 # The filename that the start and end positions are relative to.
 original_filename = ""
 
-# Matches any amount of blank lines, comment-only lines, and backslash-newlines.
-IGNORE_PATTERN = re.compile(r"(?:\ *+(?:#[^\n]*+)?(?:\\)?\n)*+")
-
 # Matches a word that should be munged.
 NEED_MUNGE_PATTERN = re.compile(r"\b__([a-zA-Z0-9\u0080-\U0010FFFF]+(?:_[a-zA-Z0-9\u0080-\U0010FFFF]+)*_?)\b")
 
 
-def list_logical_lines(
+def generate_logical_lines(
     filename: str,
     filedata: str | None = None,
     linenumber: int = 1,
-) -> list[tuple[str, int, str]]:
+) -> Iterator[tuple[int, int, str]]:
     """
     Reads `filename`, and divides it into logical lines.
 
-    Returns a list of (filename, line number, line text) triples.
+    Yields (line number, indent, line text) triples, where `indent` is the
+    number of spaces the line is indented by, and line text does not include
+    the leading indentation.
 
     If `filedata` is given, it should be a unicode string giving the file
     contents. In that case, `filename` need not exist.
@@ -278,18 +277,14 @@ def list_logical_lines(
 
     # Convert windows and mac newlines to \n, so we don't have to worry about it.
     if filedata is not None:
-        data_io = io.StringIO(filedata, None)
+        with io.StringIO(filedata, None) as data_io:
+            data = data_io.read()
     else:
-        data_io = open(original_filename, "r", encoding="utf-8")
-
-    with data_io:
-        data = data_io.read()
+        with open(original_filename, "r", encoding="utf-8") as data_io:
+            data = data_io.read()
 
     if filename.endswith("_ren.py"):
         data = ren_py_to_rpy(data, filename)
-
-    # Add couple empty lines, so we can safely check for pos + 2 for triple-string.
-    data += "\n\n"
 
     # The current position we're looking at in the buffer.
     pos = 0
@@ -298,220 +293,107 @@ def list_logical_lines(
     if data[0] == "\ufeff":
         pos += 1
 
-    # Result tuples of (filename, line number, line) for each logical line.
-    result: list[tuple[str, int, str]] = []
-
-    # The line number in the physical file.
-    number = linenumber
-
-    len_data = len(data)
-
     # The line number of the start of this logical line.
-    start_number = 0
+    start_number = linenumber
+
+    # The indentation of the start of this logical line.
+    indent = 0
+
+    # Whether we are building up a logical line.
+    in_line = False
 
     # The line that we're building up.
     line: list[str] = []
 
-    # Stack of open paren (char, line number, column) tuples.
-    open_parens: list[tuple[str, int, int]] = []
-
-    # Position at the beginning of current physical line.
-    # This is used to calculate current column offset by pos - physical_line_start.
-    physical_line_start = pos
-
     # Put some frequently used variables in locals.
-    ignore_pattern = IGNORE_PATTERN
+    NEWLINE = TokenKind.NEWLINE
+    COMMENT = TokenKind.COMMENT
+    WORD = TokenKind.WORD
+    STRING_MIDDLE = TokenKind.STRING_MIDDLE
+    ENDMARKER = TokenKind.ENDMARKER
+    ERRORTOKEN = TokenKind.ERRORTOKEN
     need_munge_pattern = NEED_MUNGE_PATTERN
+
+    # If the file contains no double underscore at all, no token in it can need munging.
+    maybe_munge = "__" in data
 
     # Position at which last append to current line happened.
     # This is used to speed up join later as there would be less parts to join.
     last_append_pos = pos
 
-    # True if we are at the start of a new logical line.
-    new_logical_line = True
+    tokenizer = Tokenizer(data, pos=pos, lineno=linenumber)
 
-    # Looping over whole file to find logical lines.
-    while pos < len_data:
-        if new_logical_line:
-            if match := ignore_pattern.match(data, pos):
-                pos = match.end()
-                number += match[0].count("\n")
+    for token in tokenizer.iter_tokens():
+        kind = token.kind
 
-            start_number = number
-            physical_line_start = pos
-            last_append_pos = pos
-            line.clear()
-            new_logical_line = False
-            continue
+        if kind is ERRORTOKEN:
+            raise ParseError(
+                token.string,
+                filename,
+                token.start[0],
+                token.start[1],
+                linecache.getline(filename, token.start[0]),
+                end_lineno=token.end[0],
+                end_offset=token.end[1],
+            )
 
-        # Looping over parts of single logical line.
-
-        # Most tokens are split by spaces, so just skip over them.
-        # That includes initial indent.
-        if spaces_pos := match_whitespace(data, pos):
-            pos = spaces_pos
-
-        # Words, i.e. number parts, identifiers or image name components are
-        # the most frequent tokens, so we want to try to match them first.
-        word_pos = match_logical_word(data, pos)
-
-        # But string prefixes are valid words, so check if we have a
-        # string literal here.
-        if string_match := match_string(data, pos, word_pos or pos):
-            if string_match == -1:
-                raise ParseError(
-                    "unterminated string literal",
-                    filename,
-                    start_number,
-                    text=linecache.getline(filename, start_number),
-                )
-
-            (
-                string_endpos,
-                need_munge,
-                newlines,
-                new_line_startpos,
-            ) = string_match
-
-            if newlines:
-                number += newlines
-
-            if new_line_startpos is not None:
-                physical_line_start = new_line_startpos
-
-            if need_munge:
-                # There is `__` in a string.
-                line.append(data[last_append_pos:pos])
-                line.append(munge_string(data[pos:string_endpos]))
-                last_append_pos = pos = string_endpos
-            else:
-                pos = string_endpos
-
-            continue
-
-        elif word_pos is not None:
-            if data[pos] == "_" and (m := need_munge_pattern.match(data, pos)):
-                line.append(data[last_append_pos:pos])
-                line.append(f"{prefix}{m[1]}")
-                last_append_pos = pos = word_pos
-
-            else:
-                pos = word_pos
-
-            continue
-
-        c = data[pos]
-
-        # Comments.
-        if c == "#":
-            # Comments should not appear in final line so user don't have to
-            # worry about them using regexes.
-            line.append(data[last_append_pos:pos])
-            pos = data.find("\n", pos)
-            if pos == -1:
-                pos = len_data
-
-            last_append_pos = pos
-            c = "\n"
-
-        # Newline.
-        if c == "\n":
-            if open_parens:
-                pos += 1
-                number += 1
-                physical_line_start = pos
+        # If this is the start of a new logical line, look for first token
+        # or indentation WHITESPACE.
+        if not in_line:
+            if kind is COMMENT or kind is NEWLINE:
                 continue
 
-            if last_append_pos != pos:
-                line.append(data[last_append_pos:pos])
+            # EOF before new logical line.
+            if kind is ENDMARKER:
+                return
 
+            start_number = token.start[0]
+            indent = token.start[1] - 1
+            last_append_pos = token.span[0]
+            in_line = True
+
+        if kind is NEWLINE and tokenizer.depth:
+            continue
+
+        # Newline or EOF at depth 0 ends the logical line.
+        # Tokenizer will raise for unterminated strings.
+        if kind is NEWLINE or kind is ENDMARKER:
+            line.append(data[last_append_pos : token.span[0]])
             rv_line = "".join(line)
 
-            assert rv_line.strip(), f"Got empty logical line in {filename}:{start_number}:{physical_line_start}."
+            if not rv_line.strip():
+                raise SystemError(f"Logical line is empty after stripping whitespace in {filename}:{start_number}.")
 
-            # Add to the results.
-            result.append((filename, start_number, rv_line))
-            new_logical_line = True
+            yield start_number, indent, rv_line
+
+            line.clear()
+            in_line = False
             continue
 
-        # Parenthesis.
-        if c in "([{":
-            open_parens.append((c, number, pos - physical_line_start))
-            pos += 1
+        # Comments should not appear in final line so user don't have to
+        # worry about them using regexes.
+        if kind is COMMENT:
+            start_pos, end_pos = token.span
+            line.append(data[last_append_pos:start_pos])
+            last_append_pos = end_pos
             continue
 
-        elif c in "}])":
-            if not open_parens:
-                raise ParseError(
-                    f"unmatched '{c}'",
-                    filename,
-                    number,
-                    pos - physical_line_start + 1,
-                    linecache.getline(filename, number),
-                )
+        if maybe_munge:
+            # Munge words starting with double underscores.
+            if kind is WORD and token.string[:2] == "__" and (m := need_munge_pattern.match(token.string)):
+                line.append(data[last_append_pos : token.span[0]])
+                line.append(f"{prefix}{m[1]}")
+                last_append_pos = token.span[1]
+                continue
 
-            open_c, _, _ = open_parens.pop()
+            # Munge strings literal text.
+            if kind is STRING_MIDDLE and "__" in token.string:
+                line.append(data[last_append_pos : token.span[0]])
+                line.append(munge_string(token.string))
+                last_append_pos = token.span[1]
+                continue
 
-            if not (c == ")" and open_c == "(" or c == "]" and open_c == "[" or c == "}" and open_c == "{"):
-                raise ParseError(
-                    f"closing parenthesis '{c}' does not match opening parenthesis '{open_c}'",
-                    filename,
-                    number,
-                    pos - physical_line_start + 1,
-                    linecache.getline(filename, number),
-                )
-
-            pos += 1
-            continue
-
-        # Operator.
-        if op_pos := match_operator(data, pos):
-            pos = op_pos
-            continue
-
-        # Backslash/newline.
-        if c == "\\":
-            if data[pos + 1] != "\n":
-                raise ParseError(
-                    "unexpected character after line continuation character.",
-                    filename,
-                    number,
-                    pos - physical_line_start + 1,
-                    text=linecache.getline(filename, number),
-                )
-
-            physical_line_start = pos
-            number += 1
-            pos += 2
-            continue
-
-        assert ord(c) < 32 or ord(c) == 127, f"Got printable character {c!r} at {pos} in {filename}."
-
-        if c == "\t":
-            name = "Tab character"
-
-        # Some kind of non alpha-numeric character in ASCII range.
-        else:
-            name = f"ASCII control character '{c}'"
-
-        raise ParseError(
-            f"{name} is not allowed in Ren'Py scripts.",
-            filename,
-            number,
-            text=linecache.getline(filename, number),
-        )
-
-    if open_parens:
-        c, lineno, column = open_parens[-1]
-        raise ParseError(
-            f"'{c}' was never closed",
-            filename,
-            lineno,
-            column + 1,
-            linecache.getline(filename, lineno),
-        )
-
-    return result
+        # Otherwise the token is added to the line as-is.
 
 
 class GroupedLine(NamedTuple):
@@ -523,34 +405,30 @@ class GroupedLine(NamedTuple):
     block: list["GroupedLine"]
 
 
-def group_logical_lines(lines: list[tuple[str, int, str]]) -> list[GroupedLine]:
+def _group_lines(lines: Iterable[tuple[int, int, str]], filename: str) -> list[GroupedLine]:
     """
-    This takes as input the list of logical line triples output from
-    list_logical_lines, and breaks the lines into blocks. Each block
-    is represented as a list of (filename, line number, starting column, line text,
-    block) tuples, where block is a block list (which may be empty if
-    no block is associated with this line.)
+    This takes as input an iterable of (line number, indent, line text)
+    triples output from generate_logical_lines, and breaks the lines into
+    blocks. Returns a list of GroupedLine tuples, where block is a block
+    list (which may be empty if no block is associated with this line.)
     """
-
-    if not lines:
-        return []
-
-    filename, number, text = lines[0]
-
-    if text.startswith(" "):
-        raise ParseError(
-            "Unexpected indentation at start of file.",
-            filename,
-            number,
-            text=text,
-        )
 
     stack: list[tuple[int, list[GroupedLine]]] = [(0, [])]
     block_indent, block = stack[-1]
 
-    for filename, number, text in lines:
-        rest = text.lstrip(" ")
-        indent = len(text) - len(rest)
+    first = True
+
+    for number, indent, text in lines:
+        if first:
+            first = False
+
+            if indent:
+                raise ParseError(
+                    "Unexpected indentation at start of file.",
+                    filename,
+                    number,
+                    text=text,
+                )
 
         # Indent.
         if indent > block_indent:
@@ -574,12 +452,76 @@ def group_logical_lines(lines: list[tuple[str, int, str]]) -> list[GroupedLine]:
                     filename,
                     number,
                     indent + 1,
-                    rest,
+                    text,
                 )
 
-        block.append(GroupedLine(filename, number, indent, rest, []))
+        block.append(GroupedLine(filename, number, indent, text, []))
 
     return stack[0][1]
+
+
+def lex_file(
+    filename: str,
+    filedata: str | None = None,
+    linenumber: int = 1,
+) -> list[GroupedLine]:
+    """
+    Reads `filename`, divides it into logical lines, and groups them into
+    blocks, returning a list of GroupedLine.
+
+    If `filedata` is given, it should be a unicode string giving the file
+    contents. In that case, `filename` need not exist.
+    """
+
+    return _group_lines(
+        generate_logical_lines(filename, filedata, linenumber),
+        elide_filename(filename),
+    )
+
+
+def list_logical_lines(
+    filename: str,
+    filedata: str | None = None,
+    linenumber: int = 1,
+) -> list[tuple[str, int, str]]:
+    """
+    Reads `filename`, and divides it into logical lines.
+
+    Returns a list of (filename, line number, line text) triples, where
+    line text includes the leading indentation.
+
+    If `filedata` is given, it should be a unicode string giving the file
+    contents. In that case, `filename` need not exist.
+    """
+
+    elided = elide_filename(filename)
+
+    return [
+        (elided, number, " " * indent + text)
+        for number, indent, text in generate_logical_lines(filename, filedata, linenumber)
+    ]
+
+
+def group_logical_lines(lines: list[tuple[str, int, str]]) -> list[GroupedLine]:
+    """
+    This takes as input the list of logical line triples output from
+    list_logical_lines, and breaks the lines into blocks. Each block
+    is represented as a list of (filename, line number, starting column, line text,
+    block) tuples, where block is a block list (which may be empty if
+    no block is associated with this line.)
+    """
+
+    if not lines:
+        return []
+
+    filename = lines[0][0]
+
+    def triples() -> Iterator[tuple[int, int, str]]:
+        for _, number, text in lines:
+            rest = text.lstrip(" ")
+            yield number, len(text) - len(rest), rest
+
+    return _group_lines(triples(), filename)
 
 
 # A list of keywords which should not be parsed as names, because
@@ -785,8 +727,8 @@ class Lexer:
 
         try:
             while pos < text_len:
-                if spaces_pos := match_whitespace(text, pos):
-                    pos = spaces_pos
+                if m := re.compile(" +").match(text, pos):
+                    pos = m.end()
 
                 elif text[pos] == "\n":
                     pos += 1
@@ -1012,7 +954,7 @@ class Lexer:
         runs of whitespace with multiple newlines are turned into a single
         newline.
 
-        This returns a list of (offset, string) pairs where offset is the 
+        This returns a list of (offset, string) pairs where offset is the
         paragraph's relative line number to the start of the triple_string.
         In the case of a raw string, this returns a simple string instead.
         """
@@ -1129,10 +1071,11 @@ class Lexer:
 
         self.skip_whitespace()
 
-        if new_pos := match_logical_word(self.text, self.pos):
-            rv = self.text[self.pos : new_pos]
+        token = Tokenizer(self.text, self.pos, self.number).next_token()
+        if token.kind is TokenKind.WORD:
+            rv = token.string
             if rv.isidentifier():
-                self.pos = new_pos
+                self.pos = token.span[1]
             else:
                 rv = None
         else:
@@ -1245,22 +1188,26 @@ class Lexer:
 
         start_pos = self.pos
 
-        delim_pos = match_logical_word(self.text, start_pos)
-
-        if (delim_pos or start_pos) >= len(self.text):
+        tokenizer = Tokenizer(self.text, self.pos, self.number)
+        token = tokenizer.next_token()
+        if token.kind is not TokenKind.STRING_START:
             return None
 
-        # match_string would match backtick string otherwise.
-        if self.text[delim_pos or start_pos] not in "\"'":
+        # Backtick is not a Python string delimiter.
+        if token.string[-1] == "`":
             return None
 
-        if m := match_string(self.text, self.pos, delim_pos or start_pos):
-            if m == -1:
-                self.error("end of line reached while parsing string.")
+        string_depth = 1
+        for token in tokenizer.iter_tokens():
+            if token.kind is TokenKind.STRING_START:
+                string_depth += 1
+            elif token.kind is TokenKind.STRING_END:
+                string_depth -= 1
+                if string_depth == 0:
+                    self.pos = token.span[1]
+                    return self.text[start_pos : self.pos]
 
-            self.pos = m[0]
-
-        return self.text[start_pos : self.pos]
+        self.error("end of line reached while parsing string.")
 
     def dotted_name(self):
         """
@@ -1817,10 +1764,7 @@ def lex_string(text: str, filename: str = "<string>", linenumber: int = 1, advan
         If true, the .advance() method will be called on the lexer.
     """
 
-    lines = list_logical_lines(filename, text, linenumber)
-    nested = group_logical_lines(lines)
-
-    rv = Lexer(nested)
+    rv = Lexer(lex_file(filename, text, linenumber))
 
     if advance:
         rv.advance()
