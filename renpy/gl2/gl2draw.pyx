@@ -61,6 +61,7 @@ from renpy.gl2.gl2model cimport GL2Model
 
 from renpy.gl2.gl2texture import Texture, TextureLoader
 from renpy.gl2.gl2shader cimport Program
+from renpy.gl2.gl2shader import supports_program_binaries
 from renpy.gl2.gl2shadercache import ShaderCache, parse_glsl_version
 from renpy.gl2.gl2statecache cimport GLStateCache
 
@@ -646,7 +647,9 @@ cdef class GL2Draw:
             # give back control to browser regularly
             self.redraw_period = 0.1
 
-        self.shader_cache = ShaderCache("cache/shaders.txt", self.gles, glsl_version)
+        driver = (vendor, renderer, version, glsl)
+        binary_supported = supports_program_binaries(self.gles, version, extensions)
+        self.shader_cache = ShaderCache("cache/shaders.txt", self.gles, glsl_version, driver, binary_supported)
 
         renpy.display.log.write("Emitting shaders as GLSL %s.", self.shader_cache.version)
 
