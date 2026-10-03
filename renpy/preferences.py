@@ -176,7 +176,8 @@ Preference("pad_enabled", True, (bool, str))
 
 # Should the gamepad use button labels (A/B/X/Y printed on the controller, e.g. for Switch)?
 # Can be True, False, "auto", or None (defaults to config.controller_use_button_labels).
-Preference("pad_use_button_labels", None, (bool, str, type(None)))
+Preference("pad_use_button_labels", "auto", (bool, str, type(None)))
+
 
 
 # The side of the screen used for rollback. ("left", "right", or "disable")

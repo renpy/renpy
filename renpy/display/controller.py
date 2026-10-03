@@ -338,15 +338,18 @@ def event(ev):
                 if lbl in ("a", "b", "x", "y"):
                     button_name = lbl
             elif use_labels == "auto":
-                if c.get_type() in (
+                nintendo_types = (
                     pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_PRO,
                     pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_LEFT,
                     pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT,
                     pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_PAIR,
-                ):
+                    pygame.GAMEPAD_TYPE_GAMECUBE,
+                )
+                if (c.get_type() in nintendo_types) or (c.get_real_type() in nintendo_types):
                     lbl = c.get_button_label_string(ev.button)
                     if lbl in ("a", "b", "x", "y"):
                         button_name = lbl
+
 
         if not button_name:
             button_name = get_string_for_button(ev.button)

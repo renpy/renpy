@@ -1159,7 +1159,8 @@ controller_blocklist = [
 # If True, Ren'Py will map gamepad buttons by their physical printed labels
 # (e.g. Switch A -> pad_a_press, Switch B -> pad_b_press) rather than physical positions (Xbox layout).
 # Can be True, False, or "auto" (automatically use button labels for Nintendo controllers).
-controller_use_button_labels = False
+controller_use_button_labels = "auto"
+
 
 
 # Should other textures be mipmapped by default?
