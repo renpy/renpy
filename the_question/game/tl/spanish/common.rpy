@@ -351,7 +351,7 @@ translate spanish strings:
 
     # 00library.rpy:147
     old "Clipboard voicing enabled. "
-    new "Portapapeles a voz' activado. "
+    new "'Portapapeles a voz' activado. "
 
     # 00library.rpy:148
     old "Self-voicing enabled. "
@@ -551,7 +551,7 @@ translate spanish strings:
 
     # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Voz automática dirà \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivar."
+    new "Voz automática dirá \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivar."
 
     # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
@@ -1129,7 +1129,7 @@ translate spanish strings:
 
     # renpy/common/_errorhandling.rpym:548
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
-    new "Copia el archivo traceback.txt en el portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
+    new "Copia el archivo traceback.txt al portapapeles como Markdown para Discord."
 
     # renpy/common/_errorhandling.rpym:683
     old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
