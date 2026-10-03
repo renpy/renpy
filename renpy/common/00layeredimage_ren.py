@@ -1507,7 +1507,12 @@ class LayeredImageProxy(object):
         return self.filter_attributes(self.image._choose_attributes(tag, attributes, optional))
 
     def _list_attributes(self, tag, attributes):
-        return self.filter_attributes(self.image._list_attributes(tag, attributes))
+        rv = self.filter_attributes(self.image._list_attributes(tag, attributes))
+
+        if rv is None:
+            return None
+
+        return list(rv)
 
 
 renpy.store.Attribute = Attribute
