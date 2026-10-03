@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -279,3 +279,15 @@ init -1200 python:
             return ui.invokesinnewcontext(_gamepad.calibrate)
         else:
             return None
+
+
+    def GamepadType(index=None):
+        """
+        :doc: gamepad
+
+        Returns the type name of the connected gamepad (e.g. 'nintendo_switch_pro',
+        'xbox360', 'ps5', etc.), or None if no gamepad is connected.
+        """
+
+        return renpy.display.controller.get_controller_type(index)
+

@@ -1152,9 +1152,15 @@ gl_set_attributes = None
 
 # The blacklist of controllers with known problems.
 controller_blocklist = [
-    "030000007e0500000920",  # Nintendo Pro Controller (needs init to work.)
+    # "030000007e0500000920",  # Nintendo Pro Controller (natively supported in SDL3)
     "030000006d0400000000",  # Razer Xbox 360 Controller (#4622)
 ]
+
+# If True, Ren'Py will map gamepad buttons by their physical printed labels
+# (e.g. Switch A -> pad_a_press, Switch B -> pad_b_press) rather than physical positions (Xbox layout).
+# Can be True, False, or "auto" (automatically use button labels for Nintendo controllers).
+controller_use_button_labels = False
+
 
 # Should other textures be mipmapped by default?
 mipmap = True

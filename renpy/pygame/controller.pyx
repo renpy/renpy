@@ -136,6 +136,55 @@ def get_string_for_button(button):
     else:
         return None
 
+def get_string_for_type(gamepad_type):
+    """
+    Returns a string describing the controller type `gamepad_type`, which must be
+    an integer. Returns None if the type is not known.
+    """
+
+    cdef const char *rv = SDL_GetGamepadStringForType(gamepad_type)
+
+    if rv != NULL:
+        return rv.decode("utf-8")
+    else:
+        return None
+
+def get_type_from_string(name):
+    """
+    Returns the gamepad type integer for `name`, or SDL_GAMEPAD_TYPE_UNKNOWN.
+    """
+
+    if not isinstance(name, bytes):
+        name = name.encode("utf-8")
+
+    return SDL_GetGamepadTypeFromString(name)
+
+def get_string_for_button_label(label):
+    """
+    Returns a string describing the button label `label`, such as "a", "b", "x", "y",
+    "cross", "circle", "square", "triangle", or None if unknown.
+    """
+
+    if label == SDL_GAMEPAD_BUTTON_LABEL_A:
+        return "a"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_B:
+        return "b"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_X:
+        return "x"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_Y:
+        return "y"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_CROSS:
+        return "cross"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_CIRCLE:
+        return "circle"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_SQUARE:
+        return "square"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_TRIANGLE:
+        return "triangle"
+    else:
+        return None
+
+
 
 cdef class Controller:
     # Allow weak references.
@@ -245,3 +294,48 @@ cdef class Controller:
         SDL_GUIDToString(guid, s, 33)
 
         return s.decode("utf-8")
+
+    def get_type(self):
+        """
+        Returns the gamepad type for this controller (e.g. GAMEPAD_TYPE_NINTENDO_SWITCH_PRO).
+        """
+
+        if self.gamepad != NULL:
+            return SDL_GetGamepadType(self.gamepad)
+        else:
+            return SDL_GetGamepadTypeForID(self.instance_id)
+
+    def get_real_type(self):
+        """
+        Returns the real gamepad type for this controller, ignoring remapping or emulation.
+        """
+
+        if self.gamepad != NULL:
+            return SDL_GetRealGamepadType(self.gamepad)
+        else:
+            return SDL_GetRealGamepadTypeForID(self.instance_id)
+
+    def get_type_name(self):
+        """
+        Returns a string representation of the controller type.
+        """
+
+        return get_string_for_type(self.get_type())
+
+    def get_button_label(self, button):
+        """
+        Returns the button label enum (e.g. GAMEPAD_BUTTON_LABEL_A) for `button` on this controller.
+        """
+
+        if self.gamepad != NULL:
+            return SDL_GetGamepadButtonLabel(self.gamepad, button)
+        else:
+            return SDL_GetGamepadButtonLabelForType(self.get_type(), button)
+
+    def get_button_label_string(self, button):
+        """
+        Returns the button label string ("a", "b", "x", "y", "cross", etc.) for `button`.
+        """
+
+        return get_string_for_button_label(self.get_button_label(button))
+

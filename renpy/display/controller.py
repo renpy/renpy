@@ -131,6 +131,43 @@ def exists():
         return False
 
 
+def get_controller(index=None):
+    """
+    Returns the Controller object at `index`, or the first connected controller if `index` is None.
+    Returns None if no controller is found.
+    """
+
+    if not controllers:
+        return None
+
+    if index is None:
+        return next(iter(controllers.values()))
+
+    c = controllers.get(index, None)
+    if c is not None:
+        return c
+
+    for v in controllers.values():
+        if v.instance_id == index:
+            return v
+
+    return None
+
+
+def get_controller_type(index=None):
+    """
+    Returns the string type of the controller (e.g. 'nintendo_switch_pro', 'xbox360'),
+    or None if no controller is connected.
+    """
+
+    c = get_controller(index)
+    if c is not None:
+        return c.get_type_name()
+
+    return None
+
+
+
 def quit(index):
     """
     Quits the controller at index.
@@ -283,7 +320,39 @@ def event(ev):
         else:
             pr = "release"
 
-        controller_event(get_string_for_button(ev.button), pr)
+        button_name = None
+        c = controllers.get(ev.which, None)
+        if c is None:
+            for v in controllers.values():
+                if v.instance_id == ev.which:
+                    c = v
+                    break
+
+        if c is not None:
+            use_labels = renpy.game.preferences.pad_use_button_labels
+            if use_labels is None:
+                use_labels = renpy.config.controller_use_button_labels
+
+            if use_labels is True:
+                lbl = c.get_button_label_string(ev.button)
+                if lbl in ("a", "b", "x", "y"):
+                    button_name = lbl
+            elif use_labels == "auto":
+                if c.get_type() in (
+                    pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_PRO,
+                    pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_LEFT,
+                    pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT,
+                    pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_PAIR,
+                ):
+                    lbl = c.get_button_label_string(ev.button)
+                    if lbl in ("a", "b", "x", "y"):
+                        button_name = lbl
+
+        if not button_name:
+            button_name = get_string_for_button(ev.button)
+
+        if button_name:
+            controller_event(button_name, pr)
         return rv
 
     elif ev.type in (
