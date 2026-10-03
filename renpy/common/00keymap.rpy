@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -182,6 +182,10 @@ init -1600 python:
         "pad_righttrigger_pos" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate" ],
         "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
         "pad_b_press" : [ "game_menu" ],
+        "pad_cross_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
+        "pad_circle_press" : [ "game_menu" ],
+        "pad_square_press" : [ "button_alternate" ],
+        "pad_triangle_press" : [ "hide_windows" ],
 
         "pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
         "pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],

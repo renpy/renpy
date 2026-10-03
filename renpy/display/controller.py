@@ -91,6 +91,14 @@ ZERO_THRESHOLD = 8192
 ignore = False
 
 
+ps_alias = {
+    "cross": "a",
+    "circle": "b",
+    "square": "x",
+    "triangle": "y",
+}
+
+
 def post_event(control, state, repeat):
     """
     Creates an EVENTNAME event for the given state and name, and post it
@@ -110,10 +118,21 @@ def post_event(control, state, repeat):
 
     names = [name]
 
+    alias_name = None
+    if control in ps_alias:
+        alias_name = "pad_{}_{}".format(ps_alias[control], state)
+        if repeat:
+            alias_name = "repeat_" + alias_name
+        names.append(alias_name)
+
     if renpy.config.map_pad_event:
         names.extend(renpy.config.map_pad_event(name))
+        if alias_name:
+            names.extend(renpy.config.map_pad_event(alias_name))
     else:
         names.extend(renpy.config.pad_bindings.get(name, ()))
+        if alias_name:
+            names.extend(renpy.config.pad_bindings.get(alias_name, ()))
 
     ev = pygame.event.Event(renpy.display.core.EVENTNAME, {"eventnames": names, "controller": name, "up": False})
 
@@ -156,13 +175,40 @@ def get_controller(index=None):
 
 def get_controller_type(index=None):
     """
-    Returns the string type of the controller (e.g. 'nintendo_switch_pro', 'xbox360'),
+    Returns the string type of the controller (e.g. 'nintendo_switch_pro', 'xbox360', 'ps5'),
     or None if no controller is connected.
     """
 
     c = get_controller(index)
     if c is not None:
         return c.get_type_name()
+
+    return None
+
+
+def get_controller_real_type(index=None):
+    """
+    Returns the real string type of the controller (e.g. 'nintendo_switch_pro', 'xbox360', 'ps5'),
+    ignoring any driver remappings, or None if no controller is connected.
+    """
+
+    c = get_controller(index)
+    if c is not None:
+        return renpy.pygame.controller.get_string_for_type(c.get_real_type())
+
+    return None
+
+
+def get_controller_button_label(button, index=None):
+    """
+    Returns the button label string ("a", "b", "x", "y", "cross", "circle", etc.)
+    for the given `button` on the controller, or None if unknown or no controller is connected.
+    `button` can be an integer button index or string ("a", "b", "x", "y", etc.).
+    """
+
+    c = get_controller(index)
+    if c is not None:
+        return c.get_button_label_string(button)
 
     return None
 
@@ -333,22 +379,10 @@ def event(ev):
             if use_labels is None:
                 use_labels = getattr(renpy.config, "controller_use_button_labels", "auto")
 
-            if use_labels is True:
+            if use_labels is True or use_labels == "auto":
                 lbl = c.get_button_label_string(ev.button)
-                if lbl in ("a", "b", "x", "y"):
+                if lbl in ("a", "b", "x", "y", "cross", "circle", "square", "triangle"):
                     button_name = lbl
-            elif use_labels == "auto":
-                nintendo_types = (
-                    pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_PRO,
-                    pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_LEFT,
-                    pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT,
-                    pygame.GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_PAIR,
-                    pygame.GAMEPAD_TYPE_GAMECUBE,
-                )
-                if (c.get_type() in nintendo_types) or (c.get_real_type() in nintendo_types):
-                    lbl = c.get_button_label_string(ev.button)
-                    if lbl in ("a", "b", "x", "y"):
-                        button_name = lbl
 
 
         if not button_name:

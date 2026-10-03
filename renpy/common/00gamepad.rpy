@@ -291,3 +291,27 @@ init -1200 python:
 
         return renpy.display.controller.get_controller_type(index)
 
+
+    def GamepadRealType(index=None):
+        """
+        :doc: gamepad
+
+        Returns the real hardware type name of the connected gamepad,
+        ignoring any emulation or remapping layers, or None if no gamepad is connected.
+        """
+
+        return renpy.display.controller.get_controller_real_type(index)
+
+
+    def GamepadButtonLabel(button, index=None):
+        """
+        :doc: gamepad
+
+        Returns the physical button label string (e.g. 'a', 'b', 'x', 'y',
+        'cross', 'circle', 'square', 'triangle') for the given `button` on
+        the connected gamepad, or None if unknown or no gamepad is connected.
+        `button` can be an integer button index or a button name ('a', 'b', 'x', 'y', etc.).
+        """
+
+        return renpy.display.controller.get_controller_button_label(button, index)
+

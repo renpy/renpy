@@ -1156,9 +1156,10 @@ controller_blocklist = [
     "030000006d0400000000",  # Razer Xbox 360 Controller (#4622)
 ]
 
-# If True, Ren'Py will map gamepad buttons by their physical printed labels
-# (e.g. Switch A -> pad_a_press, Switch B -> pad_b_press) rather than physical positions (Xbox layout).
-# Can be True, False, or "auto" (automatically use button labels for Nintendo controllers).
+# If True or "auto", Ren'Py will map gamepad buttons by their physical printed labels
+# (such as A/B/X/Y labels on Switch, Xbox, or third-party controllers, and Cross/Circle on PlayStation)
+# rather than strictly by Xbox physical positions.
+# Can be True, False, or "auto".
 controller_use_button_labels = "auto"
 
 

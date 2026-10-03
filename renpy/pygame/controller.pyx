@@ -325,12 +325,21 @@ cdef class Controller:
     def get_button_label(self, button):
         """
         Returns the button label enum (e.g. GAMEPAD_BUTTON_LABEL_A) for `button` on this controller.
+        `button` can be an integer button index or a string (e.g. "a", "b", "x", "y").
         """
 
-        if self.gamepad != NULL:
-            return SDL_GetGamepadButtonLabel(self.gamepad, button)
+        cdef int btn
+        if isinstance(button, (str, bytes)):
+            btn = get_button_from_string(button)
+            if btn == SDL_GAMEPAD_BUTTON_INVALID:
+                return SDL_GAMEPAD_BUTTON_LABEL_UNKNOWN
         else:
-            return SDL_GetGamepadButtonLabelForType(self.get_type(), button)
+            btn = button
+
+        if self.gamepad != NULL:
+            return SDL_GetGamepadButtonLabel(self.gamepad, <SDL_GamepadButton>btn)
+        else:
+            return SDL_GetGamepadButtonLabelForType(self.get_type(), <SDL_GamepadButton>btn)
 
     def get_button_label_string(self, button):
         """
