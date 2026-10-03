@@ -60,8 +60,7 @@ def vibrate(duration):
     """
     :doc: other
 
-    Causes the device to vibrate for `duration` seconds. Currently, this
-    is only supported on Android.
+    Causes the device or connected gamepads to vibrate for `duration` seconds.
     """
 
     if duration < 0.01:
@@ -71,6 +70,9 @@ def vibrate(duration):
         import android
 
         android.vibrate(duration)
+
+    if renpy.display.controller.exists():
+        renpy.display.controller.rumble(1.0, 1.0, duration)
 
 
 def invoke_in_thread(fn, *args, **kwargs):

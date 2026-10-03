@@ -136,6 +136,55 @@ def get_string_for_button(button):
     else:
         return None
 
+def get_string_for_type(gamepad_type):
+    """
+    Returns a string describing the controller type `gamepad_type`, which must be
+    an integer. Returns None if the type is not known.
+    """
+
+    cdef const char *rv = SDL_GetGamepadStringForType(gamepad_type)
+
+    if rv != NULL:
+        return rv.decode("utf-8")
+    else:
+        return None
+
+def get_type_from_string(name):
+    """
+    Returns the gamepad type integer for `name`, or SDL_GAMEPAD_TYPE_UNKNOWN.
+    """
+
+    if not isinstance(name, bytes):
+        name = name.encode("utf-8")
+
+    return SDL_GetGamepadTypeFromString(name)
+
+def get_string_for_button_label(label):
+    """
+    Returns a string describing the button label `label`, such as "a", "b", "x", "y",
+    "cross", "circle", "square", "triangle", or None if unknown.
+    """
+
+    if label == SDL_GAMEPAD_BUTTON_LABEL_A:
+        return "a"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_B:
+        return "b"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_X:
+        return "x"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_Y:
+        return "y"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_CROSS:
+        return "cross"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_CIRCLE:
+        return "circle"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_SQUARE:
+        return "square"
+    elif label == SDL_GAMEPAD_BUTTON_LABEL_TRIANGLE:
+        return "triangle"
+    else:
+        return None
+
+
 
 cdef class Controller:
     # Allow weak references.
@@ -245,3 +294,153 @@ cdef class Controller:
         SDL_GUIDToString(guid, s, 33)
 
         return s.decode("utf-8")
+
+    def get_type(self):
+        """
+        Returns the gamepad type for this controller (e.g. GAMEPAD_TYPE_NINTENDO_SWITCH_PRO).
+        """
+
+        if self.gamepad != NULL:
+            return SDL_GetGamepadType(self.gamepad)
+        else:
+            return SDL_GetGamepadTypeForID(self.instance_id)
+
+    def get_real_type(self):
+        """
+        Returns the real gamepad type for this controller, ignoring remapping or emulation.
+        """
+
+        if self.gamepad != NULL:
+            return SDL_GetRealGamepadType(self.gamepad)
+        else:
+            return SDL_GetRealGamepadTypeForID(self.instance_id)
+
+    def get_type_name(self):
+        """
+        Returns a string representation of the controller type.
+        """
+
+        return get_string_for_type(self.get_type())
+
+    def get_button_label(self, button):
+        """
+        Returns the button label enum (e.g. GAMEPAD_BUTTON_LABEL_A) for `button` on this controller.
+        `button` can be an integer button index or a string (e.g. "a", "b", "x", "y").
+        """
+
+        cdef int btn
+        if isinstance(button, (str, bytes)):
+            btn = get_button_from_string(button)
+            if btn == SDL_GAMEPAD_BUTTON_INVALID:
+                return SDL_GAMEPAD_BUTTON_LABEL_UNKNOWN
+        else:
+            btn = button
+
+        if self.gamepad != NULL:
+            return SDL_GetGamepadButtonLabel(self.gamepad, <SDL_GamepadButton>btn)
+        else:
+            return SDL_GetGamepadButtonLabelForType(self.get_type(), <SDL_GamepadButton>btn)
+
+    def get_button_label_string(self, button):
+        """
+        Returns the button label string ("a", "b", "x", "y", "cross", etc.) for `button`.
+        """
+
+        return get_string_for_button_label(self.get_button_label(button))
+
+    def rumble(self, low_frequency=1.0, high_frequency=1.0, duration=0.5):
+        """
+        Starts a rumble effect on this gamepad.
+
+        `low_frequency`
+            The intensity of the low frequency rumble motor, from 0.0 to 1.0 (or 0 to 65535).
+        `high_frequency`
+            The intensity of the high frequency rumble motor, from 0.0 to 1.0 (or 0 to 65535).
+        `duration`
+            The duration of the rumble effect, in seconds. If 0, stops rumbling.
+        """
+
+        if self.gamepad == NULL:
+            return False
+
+        cdef Uint16 low
+        cdef Uint16 high
+        cdef Uint32 duration_ms
+
+        if isinstance(low_frequency, float):
+            low = <Uint16>(min(max(low_frequency, 0.0), 1.0) * 65535)
+        else:
+            low = <Uint16>(min(max(int(low_frequency), 0), 65535))
+
+        if isinstance(high_frequency, float):
+            high = <Uint16>(min(max(high_frequency, 0.0), 1.0) * 65535)
+        else:
+            high = <Uint16>(min(max(int(high_frequency), 0), 65535))
+
+        duration_ms = <Uint32>(max(float(duration), 0.0) * 1000)
+
+        return SDL_RumbleGamepad(self.gamepad, low, high, duration_ms)
+
+    def rumble_triggers(self, left_rumble=1.0, right_rumble=1.0, duration=0.5):
+        """
+        Starts a rumble effect on the gamepad's triggers (if supported, e.g. Xbox controllers).
+
+        `left_rumble`
+            The intensity of the left trigger rumble motor, from 0.0 to 1.0 (or 0 to 65535).
+        `right_rumble`
+            The intensity of the right trigger rumble motor, from 0.0 to 1.0 (or 0 to 65535).
+        `duration`
+            The duration of the rumble effect, in seconds. If 0, stops rumbling.
+        """
+
+        if self.gamepad == NULL:
+            return False
+
+        cdef Uint16 left
+        cdef Uint16 right
+        cdef Uint32 duration_ms
+
+        if isinstance(left_rumble, float):
+            left = <Uint16>(min(max(left_rumble, 0.0), 1.0) * 65535)
+        else:
+            left = <Uint16>(min(max(int(left_rumble), 0), 65535))
+
+        if isinstance(right_rumble, float):
+            right = <Uint16>(min(max(right_rumble, 0.0), 1.0) * 65535)
+        else:
+            right = <Uint16>(min(max(int(right_rumble), 0), 65535))
+
+        duration_ms = <Uint32>(max(float(duration), 0.0) * 1000)
+
+        return SDL_RumbleGamepadTriggers(self.gamepad, left, right, duration_ms)
+
+    def set_led(self, red, green, blue):
+        """
+        Sets the LED color on the controller (if supported, e.g. DualShock 4, DualSense).
+        `red`, `green`, `blue` can be floats from 0.0 to 1.0 or integers from 0 to 255.
+        """
+
+        if self.gamepad == NULL:
+            return False
+
+        cdef Uint8 r
+        cdef Uint8 g
+        cdef Uint8 b
+
+        if isinstance(red, float):
+            r = <Uint8>(min(max(red, 0.0), 1.0) * 255)
+        else:
+            r = <Uint8>(min(max(int(red), 0), 255))
+
+        if isinstance(green, float):
+            g = <Uint8>(min(max(green, 0.0), 1.0) * 255)
+        else:
+            g = <Uint8>(min(max(int(green), 0), 255))
+
+        if isinstance(blue, float):
+            b = <Uint8>(min(max(blue, 0.0), 1.0) * 255)
+        else:
+            b = <Uint8>(min(max(int(blue), 0), 255))
+
+        return SDL_SetGamepadLED(self.gamepad, r, g, b)
+
