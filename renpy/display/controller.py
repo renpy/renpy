@@ -199,18 +199,80 @@ def get_controller_real_type(index=None):
     return None
 
 
+BUTTON_LABELS_NINTENDO = {
+    "start": "+",
+    "back": "-",
+    "guide": "home",
+    "leftshoulder": "l",
+    "rightshoulder": "r",
+    "lefttrigger": "zl",
+    "righttrigger": "zr",
+    "leftstick": "ls_click",
+    "rightstick": "rs_click",
+    "misc1": "capture",
+    "misc2": "c",
+}
+
+BUTTON_LABELS_PLAYSTATION = {
+    "start": "options",
+    "back": "share",
+    "guide": "ps",
+    "leftshoulder": "l1",
+    "rightshoulder": "r1",
+    "lefttrigger": "l2",
+    "righttrigger": "r2",
+    "leftstick": "l3",
+    "rightstick": "r3",
+    "touchpad": "touchpad",
+    "misc1": "mute",
+}
+
+BUTTON_LABELS_XBOX = {
+    "start": "menu",
+    "back": "view",
+    "guide": "xbox",
+    "leftshoulder": "lb",
+    "rightshoulder": "rb",
+    "lefttrigger": "lt",
+    "righttrigger": "rt",
+    "leftstick": "ls",
+    "rightstick": "rs",
+    "misc1": "share",
+}
+
+
 def get_controller_button_label(button, index=None):
     """
-    Returns the button label string ("a", "b", "x", "y", "cross", "circle", etc.)
-    for the given `button` on the controller, or None if unknown or no controller is connected.
-    `button` can be an integer button index or string ("a", "b", "x", "y", etc.).
+    Returns the button label string ("a", "b", "x", "y", "cross", "circle",
+    "+", "-", "l", "r", "zl", "zr", "lb", "rb", "options", etc.)
+    for the given `button` on the controller, or None if no controller is connected.
+    `button` can be an integer button index or string ("a", "start", "leftshoulder", etc.).
     """
 
     c = get_controller(index)
-    if c is not None:
-        return c.get_button_label_string(button)
+    if c is None:
+        return None
 
-    return None
+    if isinstance(button, int):
+        btn_name = renpy.pygame.controller.get_string_for_button(button)
+        if btn_name is None:
+            btn_name = str(button)
+    else:
+        btn_name = str(button).lower()
+
+    lbl = c.get_button_label_string(button)
+    if lbl is not None:
+        return lbl
+
+    type_name = c.get_type_name() or ""
+    if type_name.startswith("switch") or type_name == "gamecube":
+        return BUTTON_LABELS_NINTENDO.get(btn_name, btn_name)
+    elif type_name.startswith("ps"):
+        if type_name == "ps5" and btn_name == "back":
+            return "create"
+        return BUTTON_LABELS_PLAYSTATION.get(btn_name, btn_name)
+    else:
+        return BUTTON_LABELS_XBOX.get(btn_name, btn_name)
 
 
 
