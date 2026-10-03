@@ -329,9 +329,9 @@ def event(ev):
                     break
 
         if c is not None:
-            use_labels = renpy.game.preferences.pad_use_button_labels
+            use_labels = getattr(renpy.game.preferences, "pad_use_button_labels", None)
             if use_labels is None:
-                use_labels = renpy.config.controller_use_button_labels
+                use_labels = getattr(renpy.config, "controller_use_button_labels", "auto")
 
             if use_labels is True:
                 lbl = c.get_button_label_string(ev.button)
