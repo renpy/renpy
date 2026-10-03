@@ -91,11 +91,13 @@ ZERO_THRESHOLD = 8192
 ignore = False
 
 
-ps_alias = {
-    "cross": "a",
-    "circle": "b",
-    "square": "x",
-    "triangle": "y",
+button_aliases = {
+    "cross": ["a"],
+    "circle": ["b"],
+    "square": ["x"],
+    "triangle": ["y"],
+    "misc2": ["c"],
+    "c": ["misc2"],
 }
 
 
@@ -118,20 +120,26 @@ def post_event(control, state, repeat):
 
     names = [name]
 
-    alias_name = None
-    if control in ps_alias:
-        alias_name = "pad_{}_{}".format(ps_alias[control], state)
+    aliases = button_aliases.get(control, ())
+    for alias in aliases:
+        alias_name = "pad_{}_{}".format(alias, state)
         if repeat:
             alias_name = "repeat_" + alias_name
         names.append(alias_name)
 
     if renpy.config.map_pad_event:
         names.extend(renpy.config.map_pad_event(name))
-        if alias_name:
+        for alias in aliases:
+            alias_name = "pad_{}_{}".format(alias, state)
+            if repeat:
+                alias_name = "repeat_" + alias_name
             names.extend(renpy.config.map_pad_event(alias_name))
     else:
         names.extend(renpy.config.pad_bindings.get(name, ()))
-        if alias_name:
+        for alias in aliases:
+            alias_name = "pad_{}_{}".format(alias, state)
+            if repeat:
+                alias_name = "repeat_" + alias_name
             names.extend(renpy.config.pad_bindings.get(alias_name, ()))
 
     ev = pygame.event.Event(renpy.display.core.EVENTNAME, {"eventnames": names, "controller": name, "up": False})
@@ -211,6 +219,7 @@ BUTTON_LABELS_NINTENDO = {
     "rightstick": "rs_click",
     "misc1": "capture",
     "misc2": "c",
+    "c": "c",
 }
 
 BUTTON_LABELS_PLAYSTATION = {
