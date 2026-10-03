@@ -315,3 +315,58 @@ init -1200 python:
 
         return renpy.display.controller.get_controller_button_label(button, index)
 
+
+    def GamepadRumble(low=1.0, high=1.0, duration=0.5, index=None):
+        """
+        :doc: gamepad
+
+        Causes the connected gamepad to rumble (vibrate).
+
+        `low`
+            The intensity of the low frequency rumble motor, between 0.0 and 1.0 (defaults to 1.0).
+        `high`
+            The intensity of the high frequency rumble motor, between 0.0 and 1.0 (defaults to 1.0).
+        `duration`
+            The duration of the rumble effect, in seconds (defaults to 0.5).
+        `index`
+            The index or instance ID of the gamepad to rumble. If None, all connected
+            gamepads will rumble.
+        """
+
+        return renpy.display.controller.rumble(low=low, high=high, duration=duration, index=index)
+
+
+    def GamepadRumbleTriggers(left=1.0, right=1.0, duration=0.5, index=None):
+        """
+        :doc: gamepad
+
+        Causes the triggers of the connected gamepad to rumble (supported on Xbox controllers).
+
+        `left`
+            The intensity of the left trigger rumble motor, between 0.0 and 1.0 (defaults to 1.0).
+        `right`
+            The intensity of the right trigger rumble motor, between 0.0 and 1.0 (defaults to 1.0).
+        `duration`
+            The duration of the rumble effect, in seconds (defaults to 0.5).
+        `index`
+            The index or instance ID of the gamepad to rumble. If None, all connected
+            gamepads will rumble.
+        """
+
+        return renpy.display.controller.rumble_triggers(left=left, right=right, duration=duration, index=index)
+
+
+    def GamepadSetLED(red, green, blue, index=None):
+        """
+        :doc: gamepad
+
+        Sets the LED light color on the connected gamepad (e.g. PlayStation DualShock 4 or DualSense).
+
+        `red`, `green`, `blue`
+            The RGB color components, from 0.0 to 1.0 or integers from 0 to 255.
+        `index`
+            The index or instance ID of the gamepad. If None, all connected gamepads are updated.
+        """
+
+        return renpy.display.controller.set_led(red, green, blue, index=index)
+

@@ -284,6 +284,72 @@ def get_controller_button_label(button, index=None):
         return BUTTON_LABELS_XBOX.get(btn_name, btn_name)
 
 
+def rumble(low=1.0, high=1.0, duration=0.5, index=None):
+    """
+    Rumbles the controller at `index`, or all connected controllers if `index` is None.
+    Returns True if at least one controller rumbled successfully.
+    """
+
+    if not controllers:
+        return False
+
+    if index is not None:
+        c = get_controller(index)
+        if c is not None:
+            return c.rumble(low, high, duration)
+        return False
+
+    success = False
+    for c in list(controllers.values()):
+        if c.rumble(low, high, duration):
+            success = True
+    return success
+
+
+def rumble_triggers(left=1.0, right=1.0, duration=0.5, index=None):
+    """
+    Rumbles the triggers on the controller at `index`, or all connected controllers if `index` is None.
+    Returns True if at least one controller rumbled successfully.
+    """
+
+    if not controllers:
+        return False
+
+    if index is not None:
+        c = get_controller(index)
+        if c is not None:
+            return c.rumble_triggers(left, right, duration)
+        return False
+
+    success = False
+    for c in list(controllers.values()):
+        if c.rumble_triggers(left, right, duration):
+            success = True
+    return success
+
+
+def set_led(red, green, blue, index=None):
+    """
+    Sets the LED color on the controller at `index`, or all connected controllers if `index` is None.
+    Returns True if at least one controller updated its LED successfully.
+    """
+
+    if not controllers:
+        return False
+
+    if index is not None:
+        c = get_controller(index)
+        if c is not None:
+            return c.set_led(red, green, blue)
+        return False
+
+    success = False
+    for c in list(controllers.values()):
+        if c.set_led(red, green, blue):
+            success = True
+    return success
+
+
 
 def quit(index):
     """

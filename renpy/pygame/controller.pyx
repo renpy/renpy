@@ -348,3 +348,99 @@ cdef class Controller:
 
         return get_string_for_button_label(self.get_button_label(button))
 
+    def rumble(self, low_frequency=1.0, high_frequency=1.0, duration=0.5):
+        """
+        Starts a rumble effect on this gamepad.
+
+        `low_frequency`
+            The intensity of the low frequency rumble motor, from 0.0 to 1.0 (or 0 to 65535).
+        `high_frequency`
+            The intensity of the high frequency rumble motor, from 0.0 to 1.0 (or 0 to 65535).
+        `duration`
+            The duration of the rumble effect, in seconds. If 0, stops rumbling.
+        """
+
+        if self.gamepad == NULL:
+            return False
+
+        cdef Uint16 low
+        cdef Uint16 high
+        cdef Uint32 duration_ms
+
+        if isinstance(low_frequency, float):
+            low = <Uint16>(min(max(low_frequency, 0.0), 1.0) * 65535)
+        else:
+            low = <Uint16>(min(max(int(low_frequency), 0), 65535))
+
+        if isinstance(high_frequency, float):
+            high = <Uint16>(min(max(high_frequency, 0.0), 1.0) * 65535)
+        else:
+            high = <Uint16>(min(max(int(high_frequency), 0), 65535))
+
+        duration_ms = <Uint32>(max(float(duration), 0.0) * 1000)
+
+        return SDL_RumbleGamepad(self.gamepad, low, high, duration_ms)
+
+    def rumble_triggers(self, left_rumble=1.0, right_rumble=1.0, duration=0.5):
+        """
+        Starts a rumble effect on the gamepad's triggers (if supported, e.g. Xbox controllers).
+
+        `left_rumble`
+            The intensity of the left trigger rumble motor, from 0.0 to 1.0 (or 0 to 65535).
+        `right_rumble`
+            The intensity of the right trigger rumble motor, from 0.0 to 1.0 (or 0 to 65535).
+        `duration`
+            The duration of the rumble effect, in seconds. If 0, stops rumbling.
+        """
+
+        if self.gamepad == NULL:
+            return False
+
+        cdef Uint16 left
+        cdef Uint16 right
+        cdef Uint32 duration_ms
+
+        if isinstance(left_rumble, float):
+            left = <Uint16>(min(max(left_rumble, 0.0), 1.0) * 65535)
+        else:
+            left = <Uint16>(min(max(int(left_rumble), 0), 65535))
+
+        if isinstance(right_rumble, float):
+            right = <Uint16>(min(max(right_rumble, 0.0), 1.0) * 65535)
+        else:
+            right = <Uint16>(min(max(int(right_rumble), 0), 65535))
+
+        duration_ms = <Uint32>(max(float(duration), 0.0) * 1000)
+
+        return SDL_RumbleGamepadTriggers(self.gamepad, left, right, duration_ms)
+
+    def set_led(self, red, green, blue):
+        """
+        Sets the LED color on the controller (if supported, e.g. DualShock 4, DualSense).
+        `red`, `green`, `blue` can be floats from 0.0 to 1.0 or integers from 0 to 255.
+        """
+
+        if self.gamepad == NULL:
+            return False
+
+        cdef Uint8 r
+        cdef Uint8 g
+        cdef Uint8 b
+
+        if isinstance(red, float):
+            r = <Uint8>(min(max(red, 0.0), 1.0) * 255)
+        else:
+            r = <Uint8>(min(max(int(red), 0), 255))
+
+        if isinstance(green, float):
+            g = <Uint8>(min(max(green, 0.0), 1.0) * 255)
+        else:
+            g = <Uint8>(min(max(int(green), 0), 255))
+
+        if isinstance(blue, float):
+            b = <Uint8>(min(max(blue, 0.0), 1.0) * 255)
+        else:
+            b = <Uint8>(min(max(int(blue), 0), 255))
+
+        return SDL_SetGamepadLED(self.gamepad, r, g, b)
+
