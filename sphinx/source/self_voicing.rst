@@ -43,7 +43,15 @@ adjust your platform's speech settings.
 Other Modes
 -----------
 
-There are two other modes related to self-voicing.
+There are several other modes related to self-voicing.
+
+Screen Reader
+    Screen Reader mode can be toggled by pressing Shift+V. In screen reader
+    mode, Ren'Py communicates directly with active screen readers (such as
+    NVDA, JAWS, VoiceOver, or Orca) via the Prism library. Announcements are
+    sent simultaneously to speech and refreshable braille displays without
+    clipboard workarounds or audio collisions. If no screen reader is active,
+    it gracefully falls back to modern system speech synthesis.
 
 Clipboard
     Clipboard mode can be toggled by pressing Shift+C. In clipboard

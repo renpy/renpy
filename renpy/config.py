@@ -1259,6 +1259,9 @@ tts_front_to_back = True
 # Should tts invocations be queued (default) or cancel each other out (legacy)?
 tts_queue = True
 
+# Should images without explicit alt text be announced with their tag and attribute names?
+auto_image_alt = False
+
 # Should live2d loading be logged to log.txt
 log_live2d_loading = False
 
