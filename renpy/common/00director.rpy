@@ -1534,7 +1534,7 @@ init python in director:
             if ev.type == renpy.display.core.TIMEEVENT:
                 return None
 
-            if state.mode != "lines":
+            if state.mode not in ("lines", "translations"):
 
                 if renpy.map_event(ev, "rollback") or renpy.map_event(ev, "rollforward"):
                     raise renpy.IgnoreEvent()
@@ -1741,7 +1741,11 @@ screen director_lines(state):
         has vbox:
             xfill True
 
-        textbutton "Translations ([renpy.game.preferences.language!q])" action SetField(director.state, 'mode', 'translations')
+        hbox:
+            spacing 10
+            textbutton "Lines" action SetField(director.state, 'mode', 'lines')
+            textbutton "Translations" action SetField(director.state, 'mode', 'translations')
+            text "Current language: [renpy.game.preferences.language!q]"
 
         viewport:
             scrollbars "vertical"
@@ -1808,7 +1812,12 @@ screen director_translations(state):
         has vbox:
             xfill True
 
-        textbutton "Lines ([renpy.game.preferences.language!q])" action SetField(director.state, 'mode', 'lines')
+        hbox:
+            spacing 10
+            textbutton "Lines" action SetField(director.state, 'mode', 'lines')
+            textbutton "Translations" action SetField(director.state, 'mode', 'translations')
+            text "Current language: [renpy.game.preferences.language!q]"
+
         viewport:
             scrollbars "vertical"
             ymaximum director.viewport_height
@@ -2184,8 +2193,7 @@ screen director_translationstring(state):
 
         null height 14
 
-        text _("Click to set transform, right click to add to transform list.")
-        text _("Customize director.transforms to add more transforms.")
+        text _("Type to set new translation.")
 
         use director_translation_footer(state)
 
@@ -2427,7 +2435,7 @@ screen director():
 
         style ("director_bottom_frame" if persistent._director_bottom else "director_top_frame")
 
-        xpadding ( 0 if state.mode == "lines" else gui._scale(20) )
+        xpadding ( 0 if state.mode in ("lines", 'translations') else gui._scale(20) )
 
         at director.SemiModal
 
@@ -2465,5 +2473,5 @@ screen director():
         elif state.mode == "audio":
             use director_audio(state)
 
-    if state.mode == "lines":
+    if state.mode in ("lines", 'translations'):
         key "director" action director.Stop()
