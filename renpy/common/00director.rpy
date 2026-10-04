@@ -168,7 +168,7 @@ init python in director:
         # The list of lines we've seen recently.
         state.lines = [ ]
 
-        #
+        # The list of translations we've seen recently.
         state.recent_translations = [ ]
 
         # The mode we're in.
@@ -363,7 +363,7 @@ init python in director:
 
 
     def escape_speech_string(speech):
-        return speech.replace('\\', '\\\\').replace('"', '\\"')
+        return speech.replace("\\", "\\\\").replace('"', '\\"')
 
     def get_scene_show_hide_statement():
 
@@ -2184,7 +2184,7 @@ screen director_translationstring(state):
 
         input:
             multiline True
-            value FieldInputValue(state, 'translation')
+            value FieldInputValue(state, "translation")
             action NullAction()
 
         null height 14
@@ -2266,12 +2266,12 @@ screen director_character(state):
         use director_choices(_("Character:")):
 
             textbutton "{i}(narrator){/i}":
-                action SetField(state, 'character', None)
+                action SetField(state, "character", None)
                 style "director_button"
                 ypadding 0
             for c in director.characters:
                 textbutton "[c]":
-                    action SetField(state, 'character', c)
+                    action SetField(state, "character", c)
                     style "director_button"
                     ypadding 0
 
@@ -2293,12 +2293,12 @@ screen director_saywith(state):
         use director_choices(_("Transition:")):
 
             textbutton "{i}(none){/i}":
-                action SetField(state, 'transition', None)
+                action SetField(state, "transition", None)
                 style "director_button"
                 ypadding 0
             for t in director.transitions:
                 textbutton "[t]":
-                    action SetField(state, 'transition', t)
+                    action SetField(state, "transition", t)
                     style "director_button"
                     ypadding 0
 
@@ -2321,7 +2321,7 @@ screen director_say(state):
 
             input:
                 multiline True
-                value FieldInputValue(state, 'speech' if state.mode == "say" else _("identifier"))
+                value FieldInputValue(state, "speech" if state.mode == "say" else _("identifier"))
                 action NullAction()
 
         null height 14
@@ -2346,7 +2346,7 @@ screen director_menu(state):
 
             input:
                 multiline True
-                value FieldInputValue(state, 'speech' if state.mode == "say" else _("identifier"))
+                value FieldInputValue(state, "speech" if state.mode == "say" else _("identifier"))
                 action NullAction()
 
 
@@ -2435,7 +2435,7 @@ screen director():
 
         style ("director_bottom_frame" if persistent._director_bottom else "director_top_frame")
 
-        xpadding ( 0 if state.mode in ("lines", 'translations') else gui._scale(20) )
+        xpadding ( 0 if state.mode in ("lines", "translations") else gui._scale(20) )
 
         at director.SemiModal
 
@@ -2473,5 +2473,5 @@ screen director():
         elif state.mode == "audio":
             use director_audio(state)
 
-    if state.mode in ("lines", 'translations'):
+    if state.mode in ("lines", "translations"):
         key "director" action director.Stop()
