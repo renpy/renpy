@@ -22,295 +22,310 @@
 # This file contains support for string translation and string formatting
 # operations.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+import collections
+import string
+import sys
+from collections.abc import Iterator, Mapping
+from typing import Literal
 
 import renpy
-import string
-import os
-import re
-import sys
-import collections
+from renpy.tokenizer import Tokenizer, TokenKind
 
-
-update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
-flags = frozenset("rstiqulcf!")
+flags = frozenset({
+    "u",  # Upper
+    "t",  # Translate
+    "q",  # Quote
+    "s",  # String
+    "r",  # Raw
+    "l",  # Lower
+    "i",  # Interpolate
+    "f",  # Filter
+    "c",  # Capitalize
+    "!",  # Extra conversion flags
+})
 formatter = string.Formatter()
 
-SIMPLE_NAME = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
+
+class SubstitutionError(ValueError):
+    """
+    Raised when a Ren'Py substitution is malformed.
+    """
+
+    pos: int
+    "The position in the original string where the error occurred."
+
+    def __init__(self, message: str, pos: int):
+        super().__init__(message)
+        self.message = message
+        self.pos = pos
 
 
-def interpolate(s, scope):
+def parse(s: str) -> Iterator[tuple[Literal["literal", "expr", "conv", "fmt"], str]]:
+    """
+    Parses `s` according to Ren'Py's string formatting rules, yielding a
+    stream of (kind, value) tokens:
+
+        ("literal", text) -- literal text outside any substitution.
+        ("expr", code)    -- a substitution's expression.
+        ("conv", spec)    -- the conversion specifier for the preceding "expr".
+        ("fmt", spec)     -- the format spec for the preceding "expr".
+
+    Yields ("literal", "") if new substitution or end of the string is reached
+    after a substitution.
+
+    Malformed input raises SubstitutionError with a position to blame.
+    """
+
+    FLAGS = flags
+    seen_literal = True
+
+    tokenizer = Tokenizer.renpy_substitution_string(s)
+    tokens = tokenizer.iter_tokens()
+
+    for token in tokens:
+        kind = token.kind
+
+        if kind is TokenKind.ERRORTOKEN:
+            raise SubstitutionError(token.string, token.span[0])
+
+        if kind is TokenKind.ENDMARKER:
+            if not seen_literal:
+                yield "literal", ""
+            return
+
+        if kind is TokenKind.STRING_MIDDLE:
+            # The tokenizer keeps a doubled "[[" in literal text; it escapes
+            # a single "[" here. There is no closing-bracket escape.
+            yield "literal", token.string.replace("[[", "[")
+            seen_literal = True
+            continue
+
+        assert kind is TokenKind.OP and token.string == "[", f"unexpected token {token.kind}."
+        assert tokenizer.depth == 2, "Tokenizer depth is not 2 when entering replacement field."
+
+        if not seen_literal:
+            yield "literal", ""
+
+        # New replacement field.
+        stage = "expr"
+        opener = token
+        start = token.span[1]
+        conv_seen = False
+        seen_literal = False
+
+        for token in tokens:
+            kind = token.kind
+
+            if kind is TokenKind.ERRORTOKEN:
+                raise SubstitutionError(token.string, token.span[0])
+
+            if kind is TokenKind.ENDMARKER:
+                raise SubstitutionError(f"string {s!r} ends with an open format operation", opener.span[0])
+
+            if kind is not TokenKind.OP:
+                continue
+
+            text = token.string
+
+            if text not in ("!", ":", "]"):
+                continue
+
+            # "[foo[0:]]"
+            if tokenizer.depth > (1 if text == "]" else 2):
+                continue
+
+            a, b = token.span
+
+            if stage == "expr":
+                code = s[start:a].strip()
+                # "[]", "[!]" or "[:]"
+                if not code:
+                    raise SubstitutionError("expected expression", opener.span[0])
+
+                yield "expr", code
+                start = b
+
+                if text == "]":
+                    break
+                elif text == "!":
+                    stage = "conv"
+                elif text == ":":
+                    stage = "fmt"
+
+            elif stage == "conv":
+                # "[foo!!]", "[foo!i!]" or "[foo!i!t]"
+                # Could be more strict, but for now we just skip over '!' characters.
+                if text == "!":
+                    continue
+
+                conv = s[start:a]
+                # "[foo!]"
+                if not conv:
+                    raise SubstitutionError("conversion specifier cannot be empty", start)
+
+                # "[foo!invalid-flag]"
+                for i, c in enumerate(conv):
+                    if c not in FLAGS:
+                        raise SubstitutionError(f"invalid conversion character {c!r}", start + i)
+
+                yield "conv", conv
+                conv_seen = True
+                start = b
+
+                if text == "]":
+                    break
+
+                stage = "fmt"
+
+            else:  # fmt: raw text up to the closing ']'
+                assert text == "]", f"Unexpected token {text!r} in format stage."
+
+                spec = s[start:a]
+
+                # Undocumented Ren'Py rule: "[x:>10!i]" - if everything after
+                # the last '!' is a valid flag, it's a conversion; otherwise
+                # the '!' is literal format text. Not applicable if a
+                # conversion was already given before the ':'.
+                if not conv_seen:
+                    head, bang, tail = spec.rpartition("!")
+                    if bang and tail and set(tail).issubset(FLAGS):
+                        yield "conv", tail
+                        yield "fmt", head
+                        break
+
+                yield "fmt", spec
+                break
+
+
+def interpolate(s: str, scope: Mapping[str, object]) -> str:
     """
     Formats a string using Ren'Py's formatting rules. Ren'Py uses square
     brackets to denote interpolation, but is otherwise similar to native
     f-strings, with a few caveats and additional conversions available.
     """
 
-    rv = ""
+    rv: list[str] = []
+    expr = conv = fmt = None
 
-    for lit, expr, conv, fmt in parse(s):
-        if lit:
-            rv += lit
-
-        if expr is None:
-            continue
-
-        if conv is None:
-            conv = ""
-        elif not conv:
-            raise ValueError("conversion specifier cannot be empty")
-
-        code = expr.strip()
-
-        if not code:
-            raise ValueError("expected expression")
-
-        if code[-1] == "=":
-            rv += expr
-            code = code[:-1]
-
-            if not conv and fmt is None:
-                conv = "r"
-
-        if renpy.config.interpolate_exprs:
-            if (code in scope) and SIMPLE_NAME.match(code):
-                value = scope[code]
-            else:
-                try:
-                    value = renpy.python.py_eval(code, {}, scope)
-                except Exception as e:
-                    if renpy.config.interpolate_exprs == "fallback":
-                        try:
-                            value, _ = formatter.get_field(code, (), scope)
-                        except Exception:
-                            raise e
-                    else:
-                        raise e
-
+    for kind, value in parse(s):
+        if kind == "conv":
+            conv = value
+        elif kind == "fmt":
+            fmt = value
+        elif kind == "expr":
+            expr = value
         else:
-            value, _ = formatter.get_field(code, (), scope)
+            # "literal" or "expr": any pending substitution is complete.
+            if expr is not None:
+                rv.append(_substitute(expr, conv, fmt, scope))
+                expr = conv = fmt = None
 
-        if conv:
-            value = convert(value, conv, scope)
+            if value:
+                rv.append(value)
 
-        if fmt is None:
-            fmt = ""
+    assert expr is None, "Expression without following literal."
+    return "".join(rv)
 
-        rv += format(value, fmt)
+
+def _substitute(expr: str, conv: str | None, fmt: str | None, scope: Mapping[str, object]) -> str:
+    code = expr.strip()
+    prefix = ""
+
+    if code[-1] == "=":
+        prefix = expr
+        code = code[:-1].rstrip()
+
+        if conv is None and fmt is None:
+            conv = "r"
+
+    if renpy.config.interpolate_exprs:
+        if code in scope and code.isidentifier():
+            value = scope[code]
+        else:
+            try:
+                value = renpy.python.py_eval(code, {}, scope)
+            except Exception as e:
+                if renpy.config.interpolate_exprs != "fallback":
+                    raise
+
+                try:
+                    value, _ = formatter.get_field(code, (), scope)
+                except Exception:
+                    raise e
+
+    else:
+        value, _ = formatter.get_field(code, (), scope)
+
+    if conv is not None:
+        value = convert(value, conv, scope)
+
+    return prefix + format(value, "" if fmt is None else fmt)
+
+
+def convert(value: object, conv: str, scope: Mapping[str, object]) -> object:
+    """
+    Converts the value according to the specified conversion flags.
+    """
+
+    if not conv:
+        raise ValueError("conversion specifier cannot be empty")
+
+    conv_set = set(conv)
+
+    if conv_set - flags:
+        raise ValueError(f"invalid conversion characters: {conv_set - flags}")
+
+    if "r" in conv_set:
+        value = repr(value)
+        conv_set.discard("r")
+
+    elif "s" in conv_set:
+        value = str(value)
+        conv_set.discard("s")
+
+    if not conv_set:
+        return value
+
+    # All conversion symbols below assume we have a string.
+    rv = str(value)
+
+    if "t" in conv_set:
+        rv = renpy.translation.translate_string(rv)
+
+    if "i" in conv_set:
+        try:
+            rv = interpolate(rv, scope)
+        except RecursionError:
+            raise ValueError(f"Substitution {rv!r} refers to itself in a loop.")
+
+    if "f" in conv_set:
+        if renpy.config.say_menu_text_filter is not None:
+            rv = renpy.config.say_menu_text_filter(rv)
+
+        for f in renpy.config.say_menu_text_filters:
+            rv = f(rv)
+
+    if "q" in conv_set:
+        rv = rv.replace("{", "{{")
+
+    if "u" in conv_set:
+        rv = rv.upper()
+
+    if "l" in conv_set:
+        rv = rv.lower()
+
+    if "c" in conv_set:
+        rv = rv[:1].capitalize() + rv[1:]
 
     return rv
 
 
-def parse(s):
-    """
-    Parses s according to Ren'Py string formatting rules. Emits a series
-    of (literal, expression, conversion, format) tuples.
-    """
-
-    # States for the parse state machine.
-    LITERAL = 0
-    EXPRESSION = 1
-    CONVERSION = 2
-    FORMAT = 3
-
-    # Conversion flags that we accept.
-    FLAGS = flags
-
-    # Markers and offsets for slicing.
-    pos = -1
-    size = len(s) + pos
-    cut = 0
-    mark = 0
-
-    # The depth of brackets we've seen.
-    brackets = 0
-    parens = 0
-
-    # The parts we've seen.
-    lit = ""
-    expr = None
-    conv = None
-    fmt = None
-
-    state = LITERAL
-
-    while pos < size:
-        pos += 1
-        c = s[pos]
-
-        if state is LITERAL:
-            if c == "[":
-                lit += s[cut:pos]
-                cut = pos + 1
-
-                if c == s[pos + 1 : pos + 2]:
-                    pos += 1
-                else:
-                    state = EXPRESSION
-
-        elif state is EXPRESSION:
-            if c == "(":
-                parens += 1
-
-            elif c == ")":
-                if not parens:
-                    break
-
-                parens -= 1
-
-            elif c == '"' or c == "'":
-                chars = 1
-                found = 0
-
-                if c * 2 == s[pos + 1 : pos + 3]:
-                    chars += 2
-                    pos += 2
-
-                while pos < size:
-                    pos += 1
-                    n = s[pos]
-
-                    if n == c:
-                        found += 1
-
-                        if found == chars:
-                            break
-
-                    else:
-                        if n == "\\":
-                            pos += 1
-
-                        found = 0
-
-            elif parens:
-                pass
-
-            elif c == "[":
-                brackets += 1
-
-            elif c == "]":
-                if brackets:
-                    brackets -= 1
-                else:
-                    yield lit, s[cut:pos], None, None
-                    cut = pos + 1
-                    state = LITERAL
-                    lit = ""
-
-            elif brackets:
-                pass
-
-            elif c == "!":
-                if s[pos + 1 : pos + 2] == "=":
-                    pos += 1
-                else:
-                    state = CONVERSION
-                    expr = s[cut:pos]
-                    cut = pos + 1
-
-            elif c == ":":
-                state = FORMAT
-                expr = s[cut:pos]
-                cut = pos + 1
-
-        elif state is CONVERSION:
-            if c == "]":
-                yield lit, expr, s[cut:pos], fmt
-                cut = pos + 1
-                state = LITERAL
-                lit = ""
-                expr = None
-                fmt = None
-
-            elif c == ":":
-                state = FORMAT
-                conv = s[cut:pos]
-                cut = pos + 1
-
-            elif c not in FLAGS:
-                if fmt is None:
-                    raise ValueError("invalid conversion {!r}".format(c))
-
-                state = FORMAT
-                pos = cut
-                cut = mark
-
-        elif state is FORMAT:
-            if c == "]":
-                yield lit, expr, conv, s[cut:pos]
-                cut = pos + 1
-                state = LITERAL
-                lit = ""
-                expr = None
-                conv = None
-
-            elif conv is None and c == "!":
-                state = CONVERSION
-                fmt = s[cut:pos]
-                mark = cut
-                cut = pos + 1
-
-    if state is not LITERAL:
-        raise Exception("String {!r} ends with an open format operation.".format(s))
-
-    if cut <= size:
-        lit += s[cut:]
-
-    if lit:
-        yield lit, None, None, None
-
-
-def convert(value, conv, scope):
-    conv = set(conv)
-
-    if "r" in conv:
-        value = repr(value)
-        conv.discard("r")
-
-    elif "s" in conv:
-        value = str(value)
-        conv.discard("s")
-
-    if not conv:
-        return value
-
-    # All conversion symbols below assume we have a string.
-    if not isinstance(value, str):
-        value = str(value)
-
-    if "t" in conv:
-        value = renpy.translation.translate_string(value)
-
-    if "i" in conv:
-        try:
-            value = interpolate(value, scope)
-        except RecursionError:
-            raise ValueError(f"Substitution {value!r} refers to itself in a loop.")
-
-    if "f" in conv:
-        if renpy.config.say_menu_text_filter is not None:
-            value = renpy.config.say_menu_text_filter(value)
-
-        for f in renpy.config.say_menu_text_filters:
-            value = f(value)
-
-    if "q" in conv:
-        value = value.replace("{", "{{")
-
-    if "u" in conv:
-        value = value.upper()
-
-    if "l" in conv:
-        value = value.lower()
-
-    if "c" in conv:
-        value = value[:1].capitalize() + value[1:]
-
-    return value
-
-
-def substitute(s, scope=None, force=False, translate=True):
+def substitute(
+    s: object,
+    scope: dict[str, object] | None = None,
+    force: bool = False,
+    translate: bool = True,
+) -> tuple[str, bool]:
     """
     Performs translation and formatting on `s`, as necessary.
 
@@ -328,20 +343,19 @@ def substitute(s, scope=None, force=False, translate=True):
     occurred, or False if no substitution occurred.
     """
 
-    if not isinstance(s, str):
-        s = str(s)
+    rv = str(s)
 
     if translate:
-        s = renpy.translation.translate_string(s)
+        rv = renpy.translation.translate_string(rv)
 
     # Substitute.
     if not renpy.config.new_substitutions and not force:
-        return s, False
+        return rv, False
 
-    if "[" not in s:
-        return s, False
+    if "[" not in rv:
+        return rv, False
 
-    old_s = s
+    old_s = rv
 
     dicts = []
 
@@ -359,13 +373,13 @@ def substitute(s, scope=None, force=False, translate=True):
         variables = collections.ChainMap(*dicts)
 
     try:
-        s = interpolate(s, variables)  # type: ignore
+        rv = interpolate(rv, variables)
     except Exception:
         if renpy.display.predict.predicting:
             return " ", True
         raise
 
-    return s, (s != old_s)
+    return rv, (rv != old_s)
 
 
 def ___(s):
