@@ -126,7 +126,7 @@ fast_skipping = False
 
 # Are we currently skipping? If so, how fast?
 # May be "slow", "fast", or None.
-skipping = None
+skipping: str | None = None
 
 # The delay while we are skipping say statements.
 skip_delay = 5
@@ -1300,7 +1300,7 @@ call_screen_roll_forward = False
 
 # A function that's called with ("", interact=False) when no window is
 # displayed during a choice menu.
-choice_empty_window = None
+choice_empty_window: Callable[..., Any] | None = None
 
 # The encoding that's used by renpy.open_file by default. False
 # means to use binary mode.

@@ -1466,7 +1466,7 @@ def clear_retain(layer="screens", prefix="_retain"):
 
     for i in get_showing_tags(layer):
         if i.startswith(prefix):
-            renpy.exports.hide_screen(i)
+            renpy.exports.hide_screen(i, layer=layer)
 
 
 def can_fullscreen():
