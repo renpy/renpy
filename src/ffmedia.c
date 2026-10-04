@@ -33,6 +33,10 @@ static int audio_sample_rate = 44100;
 static int audio_sample_increase = 44100 / 5;
 static int audio_target_samples = 44100 * 2;
 
+static int audio_time_to_samples(double time) {
+	return (int) llround(time * audio_sample_rate);
+}
+
 const int CHANNELS = 2;
 const int BPC = 2; // Bytes per channel.
 const int BPS = 4; // Bytes per sample.
@@ -253,6 +257,9 @@ typedef struct MediaState {
 	/* A frame used for decoding. */
 	AVFrame *audio_decode_frame;
 
+	/* End of the converted audio, used when draining the resampler. */
+	double audio_decode_end;
+
 	/* The audio frame being read from, and the index into the audio frame. */
 	AVFrame *audio_out_frame; // Lock
 	int audio_out_index; // Lock
@@ -355,13 +362,20 @@ static void reset_after_seek(MediaState *ms, double position) {
 	ms->audio_finished = 0;
 	ms->video_finished = 0;
 	ms->audio_read_samples = 0;
+	ms->audio_decode_end = 0.0;
 	ms->video_pts_offset = 0.0;
 	ms->video_read_time = 0.0;
 
 	if (ms->end_time >= 0.0) {
-		ms->audio_duration = (int) (fmax(0.0, ms->end_time - position) * audio_sample_rate);
+		ms->audio_duration = audio_time_to_samples(ms->end_time) - audio_time_to_samples(position);
+		if (ms->audio_duration < 0) {
+			ms->audio_duration = 0;
+		}
 	} else if (ms->total_duration > 0.0) {
-		ms->audio_duration = (int) (fmax(0.0, ms->total_duration - position) * audio_sample_rate);
+		ms->audio_duration = audio_time_to_samples(ms->total_duration) - audio_time_to_samples(position);
+		if (ms->audio_duration < 0) {
+			ms->audio_duration = 0;
+		}
 	} else {
 		ms->audio_duration = -1;
 	}
@@ -716,6 +730,58 @@ fail:
 
 /* Audio decoding *************************************************************/
 
+static void queue_audio_frame(MediaState *ms, AVFrame *frame, double start) {
+	int skip = audio_time_to_samples(ms->skip) - audio_time_to_samples(start);
+
+	if (skip >= frame->nb_samples) {
+		av_frame_free(&frame);
+		return;
+	}
+
+	if (skip > 0) {
+		frame->nb_samples -= skip;
+		memmove(frame->data[0], frame->data[0] + skip * BPS, frame->nb_samples * BPS);
+	}
+
+	SDL_LockMutex(ms->lock);
+	ms->audio_queue_samples += frame->nb_samples;
+	enqueue_frame(&ms->audio_queue, frame);
+	SDL_UnlockMutex(ms->lock);
+}
+
+static void drain_audio(MediaState *ms) {
+	while (swr_is_initialized(ms->swr)) {
+		AVFrame *frame = av_frame_alloc();
+		if (!frame) {
+			av_log(ms->ctx, AV_LOG_ERROR, "Could not allocate an audio resampler frame.\n");
+			return;
+		}
+
+		frame->sample_rate = audio_sample_rate;
+#if (LIBAVUTIL_VERSION_MAJOR < 59)
+		frame->channel_layout = AV_CH_LAYOUT_STEREO;
+#else
+		frame->ch_layout = (AVChannelLayout) AV_CHANNEL_LAYOUT_STEREO;
+#endif
+		frame->format = AV_SAMPLE_FMT_S16;
+
+		if (swr_convert_frame(ms->swr, frame, NULL)) {
+			av_log(ms->ctx, AV_LOG_ERROR, "Could not drain the audio resampler.\n");
+			av_frame_free(&frame);
+			return;
+		}
+
+		if (!frame->nb_samples) {
+			av_frame_free(&frame);
+			return;
+		}
+
+		double start = ms->audio_decode_end;
+		ms->audio_decode_end += 1.0 * frame->nb_samples / audio_sample_rate;
+		queue_audio_frame(ms, frame, start);
+	}
+}
+
 static void decode_audio(MediaState *ms) {
 	int ret;
 	AVPacket *pkt;
@@ -766,6 +832,9 @@ static void decode_audio(MediaState *ms) {
 			}
 
 			if (ret < 0) {
+				if (ret == AVERROR_EOF) {
+					drain_audio(ms);
+				}
 				ms->audio_finished = 1;
 				return;
 			}
@@ -825,35 +894,18 @@ static void decode_audio(MediaState *ms) {
 			}
 #endif
 
+			double start = ms->audio_decode_frame->best_effort_timestamp * timebase;
+			if (swr_is_initialized(ms->swr)) {
+				start -= 1.0 * swr_get_delay(ms->swr, audio_sample_rate) / audio_sample_rate;
+			}
+
 			if(swr_convert_frame(ms->swr, converted_frame, ms->audio_decode_frame)) {
 				av_frame_free(&converted_frame);
 				continue;
 			}
 
-			double start = ms->audio_decode_frame->best_effort_timestamp * timebase;
-			double end = start + 1.0 * converted_frame->nb_samples / audio_sample_rate;
-
-			SDL_LockMutex(ms->lock);
-
-			if (start >= ms->skip) {
-
-				// Normal case, queue the frame.
-				ms->audio_queue_samples += converted_frame->nb_samples;
-				enqueue_frame(&ms->audio_queue, converted_frame);
-
-			} else if (end < ms->skip) {
-				// Totally before, drop the frame.
-				av_frame_free(&converted_frame);
-
-			} else {
-				// The frame straddles skip, so we queue the (necessarily single)
-				// frame and set the index into the frame.
-				ms->audio_out_frame = converted_frame;
-				ms->audio_out_index = BPS * (int) ((ms->skip - start) * audio_sample_rate);
-
-			}
-
-			SDL_UnlockMutex(ms->lock);
+			ms->audio_decode_end = start + 1.0 * converted_frame->nb_samples / audio_sample_rate;
+			queue_audio_frame(ms, converted_frame, start);
 		}
 
 	}
@@ -1493,8 +1545,8 @@ static int decode_thread(void *arg) {
 		if (ctx->duration_estimation_method != AVFMT_DURATION_FROM_BITRATE) {
 #endif
 
-			long long duration = ((long long) ctx->duration) * audio_sample_rate;
-			ms->audio_duration = (unsigned int) (duration /  AV_TIME_BASE);
+			ms->audio_duration = (int) av_rescale_rnd(
+				ctx->duration, audio_sample_rate, AV_TIME_BASE, AV_ROUND_NEAR_INF);
 
 			ms->total_duration = 1.0 * ctx->duration / AV_TIME_BASE;
 
@@ -1504,7 +1556,7 @@ static int decode_thread(void *arg) {
 				ms->audio_duration = -1;
 			}
 
-			ms->audio_duration -= (unsigned int) (ms->skip * audio_sample_rate);
+			ms->audio_duration -= audio_time_to_samples(ms->skip);
 
 
 		} else {
@@ -1691,8 +1743,8 @@ static int decode_sync_start(void *arg) {
 		if (ctx->duration_estimation_method != AVFMT_DURATION_FROM_BITRATE) {
 #endif
 
-			long long duration = ((long long) ctx->duration) * audio_sample_rate;
-			ms->audio_duration = (unsigned int) (duration /  AV_TIME_BASE);
+			ms->audio_duration = (int) av_rescale_rnd(
+				ctx->duration, audio_sample_rate, AV_TIME_BASE, AV_ROUND_NEAR_INF);
 
 			ms->total_duration = 1.0 * ctx->duration / AV_TIME_BASE;
 
@@ -1702,7 +1754,7 @@ static int decode_sync_start(void *arg) {
 				ms->audio_duration = -1;
 			}
 
-			ms->audio_duration -= (unsigned int) (ms->skip * audio_sample_rate);
+			ms->audio_duration -= audio_time_to_samples(ms->skip);
 
 
 		} else {
@@ -1788,6 +1840,12 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 		}
 
 		if (!ms->audio_out_frame) {
+			/* Container duration can include codec delay. Natural audio EOF
+			 * ends at the decoded samples, not at a silence-padded estimate.
+			 * Movies and explicit end times retain their timing padding. */
+			if (ms->audio_finished && ms->end_time < 0.0 && !ms->want_video) {
+				len = 0;
+			}
 			break;
 		}
 
@@ -1917,7 +1975,7 @@ void media_start_end(MediaState *ms, double start, double end) {
 		if (end < start) {
 			ms->audio_duration = 0;
 		} else {
-			ms->audio_duration = (int) ((end - start) * audio_sample_rate);
+			ms->audio_duration = audio_time_to_samples(end) - audio_time_to_samples(start);
 		}
 	}
 }

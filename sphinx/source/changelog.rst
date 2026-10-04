@@ -203,6 +203,9 @@ Fixed a counting bug with the ``repeat <num>`` statement.
 Other Changes
 -------------
 
+The audio synchro start feature now only applies to playing audio. Queued audio will not be affected, and will always
+be played when their turn comes in the playback queue.
+
 The :var:`config.enter_replay_transition` and :var:`config.after_load_transition` transitions now take priority over
 other transitions queued for the same layer.
 

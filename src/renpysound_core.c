@@ -817,7 +817,8 @@ void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name,
     c->queued_name = strdup(name);
     c->queued_fadein = fadein;
     c->queued_tight = tight;
-    c->queued_synchro_start = synchro_start;
+    /* Synchronize initial playback, not the handoff from a playing stream. */
+    c->queued_synchro_start = 0;
 
     c->queued_start_ms = (int) (start * 1000);
     c->queued_relative_volume = relative_volume;
