@@ -42,246 +42,258 @@ except Exception:
 
 prism = None
 try:
-    import prism
-except Exception:
-    prism = None
+    import ctypes
+    import ctypes.util
 
-if prism is None:
-    try:
-        import ctypes
+    class _PrismConfig(ctypes.Structure):
+        _fields_ = [
+            ("version", ctypes.c_uint64),
+            ("registry", ctypes.c_void_p),
+            ("availability_callback", ctypes.c_void_p),
+            ("availability_userdata", ctypes.c_void_p),
+            ("availability_poll_interval_ms", ctypes.c_uint32),
+            ("availability_debounce_samples", ctypes.c_uint32),
+            ("availability_backoff_max_ms", ctypes.c_uint32),
+            ("availability_auto_power_manage", ctypes.c_bool),
+        ]
 
-        class _PrismConfig(ctypes.Structure):
-            _fields_ = [
-                ("version", ctypes.c_uint64),
-                ("registry", ctypes.c_void_p),
-                ("availability_callback", ctypes.c_void_p),
-                ("availability_userdata", ctypes.c_void_p),
-                ("availability_poll_interval_ms", ctypes.c_uint32),
-                ("availability_debounce_samples", ctypes.c_uint32),
-                ("availability_backoff_max_ms", ctypes.c_uint32),
-                ("availability_auto_power_manage", ctypes.c_bool),
-            ]
+    class _CtypesBackendFeatures(object):
+        supports_set_volume = True
+        supports_set_rate = True
 
-        class _CtypesBackendFeatures(object):
-            supports_set_volume = True
-            supports_set_rate = True
+    class _CtypesBackend(object):
+        def __init__(self, dll, ptr):
+            self.dll = dll
+            self.ptr = ptr
+            self.name = self.dll.prism_backend_name(self.ptr).decode("utf-8")
+            self.features = _CtypesBackendFeatures()
 
-        class _CtypesBackend(object):
-            def __init__(self, dll, ptr):
-                self.dll = dll
-                self.ptr = ptr
-                self.name = self.dll.prism_backend_name(self.ptr).decode("utf-8")
-                self.features = _CtypesBackendFeatures()
+        @property
+        def speaking(self):
+            try:
+                return bool(self.dll.prism_backend_is_speaking(self.ptr))
+            except Exception:
+                return False
 
-            @property
-            def speaking(self):
+        @property
+        def volume(self):
+            v = ctypes.c_float()
+            self.dll.prism_backend_get_volume(self.ptr, ctypes.byref(v))
+            return v.value
+
+        @volume.setter
+        def volume(self, val):
+            self.dll.prism_backend_set_volume(self.ptr, ctypes.c_float(val))
+
+        @property
+        def rate(self):
+            r = ctypes.c_float()
+            self.dll.prism_backend_get_rate(self.ptr, ctypes.byref(r))
+            return r.value
+
+        @rate.setter
+        def rate(self, val):
+            self.dll.prism_backend_set_rate(self.ptr, ctypes.c_float(val))
+
+        def output(self, s, interrupt=True):
+            if isinstance(s, str):
+                s = s.encode("utf-8")
+            self.dll.prism_backend_output(self.ptr, s, bool(interrupt))
+
+        def speak(self, s, interrupt=True):
+            self.output(s, interrupt=interrupt)
+
+        def stop(self):
+            self.dll.prism_backend_stop(self.ptr)
+
+        @property
+        def voices_count(self):
+            count = ctypes.c_size_t()
+            if self.dll.prism_backend_count_voices(self.ptr, ctypes.byref(count)) == 0:
+                return count.value
+            return 0
+
+        def get_voice_name(self, idx):
+            ptr = ctypes.c_char_p()
+            if self.dll.prism_backend_get_voice_name(self.ptr, ctypes.c_size_t(idx), ctypes.byref(ptr)) == 0:
+                return ptr.value.decode("utf-8") if ptr.value else ""
+            return ""
+
+        def get_voice_language(self, idx):
+            ptr = ctypes.c_char_p()
+            if self.dll.prism_backend_get_voice_language(self.ptr, ctypes.c_size_t(idx), ctypes.byref(ptr)) == 0:
+                return ptr.value.decode("utf-8") if ptr.value else ""
+            return ""
+
+        @property
+        def voice(self):
+            idx = ctypes.c_size_t()
+            if self.dll.prism_backend_get_voice(self.ptr, ctypes.byref(idx)) == 0:
+                return idx.value
+            return 0
+
+        @voice.setter
+        def voice(self, idx):
+            self.dll.prism_backend_set_voice(self.ptr, ctypes.c_size_t(idx))
+
+        def free(self):
+            if self.ptr:
                 try:
-                    return bool(self.dll.prism_backend_is_speaking(self.ptr))
+                    self.dll.prism_backend_free(self.ptr)
                 except Exception:
-                    return False
+                    pass
+                self.ptr = None
 
-            @property
-            def volume(self):
-                v = ctypes.c_float()
-                self.dll.prism_backend_get_volume(self.ptr, ctypes.byref(v))
-                return v.value
+        def __del__(self):
+            self.free()
 
-            @volume.setter
-            def volume(self, val):
-                self.dll.prism_backend_set_volume(self.ptr, ctypes.c_float(val))
+    class _CtypesContext(object):
+        def __init__(self, mod, ptr):
+            self.mod = mod
+            self.dll = mod.dll
+            self.ptr = ptr
+            self._callback_ref = None
 
-            @property
-            def rate(self):
-                r = ctypes.c_float()
-                self.dll.prism_backend_get_rate(self.ptr, ctypes.byref(r))
-                return r.value
+        def shutdown(self):
+            if self.ptr:
+                try:
+                    self.dll.prism_shutdown(self.ptr)
+                except Exception:
+                    pass
+                self.ptr = None
 
-            @rate.setter
-            def rate(self, val):
-                self.dll.prism_backend_set_rate(self.ptr, ctypes.c_float(val))
+        @property
+        def backends_count(self):
+            return self.dll.prism_registry_count(self.ptr)
 
-            def output(self, s, interrupt=True):
-                if isinstance(s, str):
-                    s = s.encode("utf-8")
-                self.dll.prism_backend_output(self.ptr, s, bool(interrupt))
+        def id_of(self, idx):
+            return self.dll.prism_registry_id_at(self.ptr, ctypes.c_size_t(idx))
 
-            def speak(self, s, interrupt=True):
-                self.output(s, interrupt=interrupt)
+        def name_of(self, bid):
+            ptr = self.dll.prism_registry_name(self.ptr, ctypes.c_uint64(bid))
+            return ptr.decode("utf-8") if ptr else ""
 
-            def stop(self):
-                self.dll.prism_backend_stop(self.ptr)
-
-            @property
-            def voices_count(self):
-                count = ctypes.c_size_t()
-                if self.dll.prism_backend_count_voices(self.ptr, ctypes.byref(count)) == 0:
-                    return count.value
-                return 0
-
-            def get_voice_name(self, idx):
-                ptr = ctypes.c_char_p()
-                if self.dll.prism_backend_get_voice_name(self.ptr, ctypes.c_size_t(idx), ctypes.byref(ptr)) == 0:
-                    return ptr.value.decode("utf-8") if ptr.value else ""
-                return ""
-
-            def get_voice_language(self, idx):
-                ptr = ctypes.c_char_p()
-                if self.dll.prism_backend_get_voice_language(self.ptr, ctypes.c_size_t(idx), ctypes.byref(ptr)) == 0:
-                    return ptr.value.decode("utf-8") if ptr.value else ""
-                return ""
-
-            @property
-            def voice(self):
-                idx = ctypes.c_size_t()
-                if self.dll.prism_backend_get_voice(self.ptr, ctypes.byref(idx)) == 0:
-                    return idx.value
-                return 0
-
-            @voice.setter
-            def voice(self, idx):
-                self.dll.prism_backend_set_voice(self.ptr, ctypes.c_size_t(idx))
-
-        class _CtypesContext(object):
-            def __init__(self, mod, ptr):
-                self.mod = mod
-                self.dll = mod.dll
-                self.ptr = ptr
-                self._callback_ref = None
-
-            def shutdown(self):
-                if self.ptr:
-                    try:
-                        self.dll.prism_shutdown(self.ptr)
-                    except Exception:
-                        pass
-                    self.ptr = None
-
-            @property
-            def backends_count(self):
-                return self.dll.prism_registry_count(self.ptr)
-
-            def id_of(self, idx):
-                return self.dll.prism_registry_id_at(self.ptr, ctypes.c_size_t(idx))
-
-            def name_of(self, bid):
-                ptr = self.dll.prism_registry_name(self.ptr, ctypes.c_uint64(bid))
-                return ptr.decode("utf-8") if ptr else ""
-
-            def acquire(self, bid):
-                b = self.dll.prism_registry_acquire(self.ptr, ctypes.c_uint64(bid))
-                if b:
-                    res = self.dll.prism_backend_initialize(b)
-                    if res == 0:
-                        return _CtypesBackend(self.dll, b)
-                    self.dll.prism_backend_free(b)
-                return None
-
-            def acquire_best(self):
-                b = self.dll.prism_registry_acquire_best(self.ptr)
-                if b:
-                    res = self.dll.prism_backend_initialize(b)
-                    if res == 0:
-                        return _CtypesBackend(self.dll, b)
-                    self.dll.prism_backend_free(b)
-                return None
-
-        class _CtypesPrismModule(types.ModuleType):
-            def __init__(self, dll):
-                super(_CtypesPrismModule, self).__init__("prism")
-                self.dll = dll
-                self.PrismAvailabilityCallback = ctypes.CFUNCTYPE(
-                    None,
-                    ctypes.c_void_p,
-                    ctypes.c_uint64,
-                    ctypes.c_char_p,
-                    ctypes.c_bool,
-                )
-                self.dll.prism_config_init.restype = _PrismConfig
-                self.dll.prism_init.argtypes = [ctypes.POINTER(_PrismConfig)]
-                self.dll.prism_init.restype = ctypes.c_void_p
-                self.dll.prism_shutdown.argtypes = [ctypes.c_void_p]
-                self.dll.prism_shutdown.restype = None
-                self.dll.prism_registry_count.argtypes = [ctypes.c_void_p]
-                self.dll.prism_registry_count.restype = ctypes.c_size_t
-                self.dll.prism_registry_id_at.argtypes = [ctypes.c_void_p, ctypes.c_size_t]
-                self.dll.prism_registry_id_at.restype = ctypes.c_uint64
-                self.dll.prism_registry_name.argtypes = [ctypes.c_void_p, ctypes.c_uint64]
-                self.dll.prism_registry_name.restype = ctypes.c_char_p
-                self.dll.prism_registry_acquire.argtypes = [ctypes.c_void_p, ctypes.c_uint64]
-                self.dll.prism_registry_acquire.restype = ctypes.c_void_p
-                self.dll.prism_registry_acquire_best.argtypes = [ctypes.c_void_p]
-                self.dll.prism_registry_acquire_best.restype = ctypes.c_void_p
-                self.dll.prism_backend_initialize.argtypes = [ctypes.c_void_p]
-                self.dll.prism_backend_initialize.restype = ctypes.c_int
-                self.dll.prism_backend_free.argtypes = [ctypes.c_void_p]
-                self.dll.prism_backend_free.restype = None
-                self.dll.prism_backend_name.argtypes = [ctypes.c_void_p]
-                self.dll.prism_backend_name.restype = ctypes.c_char_p
-                self.dll.prism_backend_is_speaking.argtypes = [ctypes.c_void_p]
-                self.dll.prism_backend_is_speaking.restype = ctypes.c_bool
-                self.dll.prism_backend_output.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_bool]
-                self.dll.prism_backend_stop.argtypes = [ctypes.c_void_p]
-                self.dll.prism_backend_get_volume.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_float)]
-                self.dll.prism_backend_set_volume.argtypes = [ctypes.c_void_p, ctypes.c_float]
-                self.dll.prism_backend_get_rate.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_float)]
-                self.dll.prism_backend_set_rate.argtypes = [ctypes.c_void_p, ctypes.c_float]
-                self.dll.prism_backend_count_voices.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_size_t)]
-                self.dll.prism_backend_get_voice_name.argtypes = [
-                    ctypes.c_void_p,
-                    ctypes.c_size_t,
-                    ctypes.POINTER(ctypes.c_char_p),
-                ]
-                self.dll.prism_backend_get_voice_language.argtypes = [
-                    ctypes.c_void_p,
-                    ctypes.c_size_t,
-                    ctypes.POINTER(ctypes.c_char_p),
-                ]
-                self.dll.prism_backend_get_voice.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_size_t)]
-                self.dll.prism_backend_set_voice.argtypes = [ctypes.c_void_p, ctypes.c_size_t]
-
-            def Context(self, availability_callback=None, availability_userdata=None):
-                cfg = self.dll.prism_config_init()
-                if availability_callback is not None:
-                    cfg.availability_callback = ctypes.cast(availability_callback, ctypes.c_void_p).value
-                    if availability_userdata is not None:
-                        cfg.availability_userdata = ctypes.cast(availability_userdata, ctypes.c_void_p).value
-                ctx_ptr = self.dll.prism_init(ctypes.byref(cfg))
-                ctx = _CtypesContext(self, ctx_ptr)
-                ctx._callback_ref = availability_callback
-                return ctx
-
-        def _find_and_load_prism():
-            candidates = []
-            base = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            if sys.platform.startswith("win"):
-                dll_name = "prism.dll"
-                candidates.append(os.path.join(base, "lib", "py3-windows-x86_64", dll_name))
-                candidates.append(os.path.join(base, "lib", "python3.12", "prism", "_native", dll_name))
-                candidates.append(os.path.join(base, dll_name))
-            elif sys.platform.startswith("darwin"):
-                dll_name = "libprism.dylib"
-                candidates.append(os.path.join(base, "lib", "py3-mac-universal", dll_name))
-                candidates.append(os.path.join(base, dll_name))
-            else:
-                dll_name = "libprism.so"
-                candidates.append(os.path.join(base, "lib", "py3-linux-x86_64", dll_name))
-                candidates.append(os.path.join(base, dll_name))
-
-            candidates.append(dll_name)
-
-            for c in candidates:
-                if os.path.isfile(c) or c == dll_name:
-                    try:
-                        dll_obj = ctypes.CDLL(c)
-                        if hasattr(dll_obj, "prism_init"):
-                            return _CtypesPrismModule(dll_obj)
-                    except Exception:
-                        continue
+        def acquire(self, bid):
+            b = self.dll.prism_registry_acquire(self.ptr, ctypes.c_uint64(bid))
+            if b:
+                res = self.dll.prism_backend_initialize(b)
+                if res == 0:
+                    return _CtypesBackend(self.dll, b)
+                self.dll.prism_backend_free(b)
             return None
 
-        prism = _find_and_load_prism()
-    except Exception:
-        prism = None
+        def acquire_best(self):
+            b = self.dll.prism_registry_acquire_best(self.ptr)
+            if b:
+                res = self.dll.prism_backend_initialize(b)
+                if res == 0:
+                    return _CtypesBackend(self.dll, b)
+                self.dll.prism_backend_free(b)
+            return None
+
+    class _CtypesPrismModule(types.ModuleType):
+        def __init__(self, dll):
+            super(_CtypesPrismModule, self).__init__("prism")
+            self.dll = dll
+            self.PrismAvailabilityCallback = ctypes.CFUNCTYPE(
+                None,
+                ctypes.c_void_p,
+                ctypes.c_uint64,
+                ctypes.c_char_p,
+                ctypes.c_bool,
+            )
+            self.dll.prism_config_init.restype = _PrismConfig
+            self.dll.prism_init.argtypes = [ctypes.POINTER(_PrismConfig)]
+            self.dll.prism_init.restype = ctypes.c_void_p
+            self.dll.prism_shutdown.argtypes = [ctypes.c_void_p]
+            self.dll.prism_shutdown.restype = None
+            self.dll.prism_registry_count.argtypes = [ctypes.c_void_p]
+            self.dll.prism_registry_count.restype = ctypes.c_size_t
+            self.dll.prism_registry_id_at.argtypes = [ctypes.c_void_p, ctypes.c_size_t]
+            self.dll.prism_registry_id_at.restype = ctypes.c_uint64
+            self.dll.prism_registry_name.argtypes = [ctypes.c_void_p, ctypes.c_uint64]
+            self.dll.prism_registry_name.restype = ctypes.c_char_p
+            self.dll.prism_registry_acquire.argtypes = [ctypes.c_void_p, ctypes.c_uint64]
+            self.dll.prism_registry_acquire.restype = ctypes.c_void_p
+            self.dll.prism_registry_acquire_best.argtypes = [ctypes.c_void_p]
+            self.dll.prism_registry_acquire_best.restype = ctypes.c_void_p
+            self.dll.prism_backend_initialize.argtypes = [ctypes.c_void_p]
+            self.dll.prism_backend_initialize.restype = ctypes.c_int
+            self.dll.prism_backend_free.argtypes = [ctypes.c_void_p]
+            self.dll.prism_backend_free.restype = None
+            self.dll.prism_backend_name.argtypes = [ctypes.c_void_p]
+            self.dll.prism_backend_name.restype = ctypes.c_char_p
+            self.dll.prism_backend_is_speaking.argtypes = [ctypes.c_void_p]
+            self.dll.prism_backend_is_speaking.restype = ctypes.c_bool
+            self.dll.prism_backend_output.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_bool]
+            self.dll.prism_backend_stop.argtypes = [ctypes.c_void_p]
+            self.dll.prism_backend_get_volume.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_float)]
+            self.dll.prism_backend_set_volume.argtypes = [ctypes.c_void_p, ctypes.c_float]
+            self.dll.prism_backend_get_rate.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_float)]
+            self.dll.prism_backend_set_rate.argtypes = [ctypes.c_void_p, ctypes.c_float]
+            self.dll.prism_backend_count_voices.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_size_t)]
+            self.dll.prism_backend_get_voice_name.argtypes = [
+                ctypes.c_void_p,
+                ctypes.c_size_t,
+                ctypes.POINTER(ctypes.c_char_p),
+            ]
+            self.dll.prism_backend_get_voice_language.argtypes = [
+                ctypes.c_void_p,
+                ctypes.c_size_t,
+                ctypes.POINTER(ctypes.c_char_p),
+            ]
+            self.dll.prism_backend_get_voice.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_size_t)]
+            self.dll.prism_backend_set_voice.argtypes = [ctypes.c_void_p, ctypes.c_size_t]
+
+        def Context(self, availability_callback=None, availability_userdata=None):
+            cfg = self.dll.prism_config_init()
+            if availability_callback is not None:
+                cfg.availability_callback = ctypes.cast(availability_callback, ctypes.c_void_p).value
+                if availability_userdata is not None:
+                    cfg.availability_userdata = ctypes.cast(availability_userdata, ctypes.c_void_p).value
+            ctx_ptr = self.dll.prism_init(ctypes.byref(cfg))
+            ctx = _CtypesContext(self, ctx_ptr)
+            ctx._callback_ref = availability_callback
+            return ctx
+
+    def _find_and_load_prism():
+        candidates = []
+        base = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        if sys.platform.startswith("win"):
+            dll_name = "prism.dll"
+            candidates.append(os.path.join(base, "lib", "py3-windows-x86_64", dll_name))
+            candidates.append(os.path.join(base, "lib", "py3-windows-arm64", dll_name))
+            candidates.append(os.path.join(base, dll_name))
+        elif sys.platform.startswith("darwin"):
+            dll_name = "libprism.dylib"
+            candidates.append(os.path.join(base, "lib", "py3-mac-universal", dll_name))
+            candidates.append(os.path.join(base, dll_name))
+        else:
+            dll_name = "libprism.so"
+            candidates.append(os.path.join(base, "lib", "py3-linux-x86_64", dll_name))
+            candidates.append(os.path.join(base, "lib", "py3-linux-aarch64", dll_name))
+            candidates.append(os.path.join(base, "lib", "py3-linux-armv7l", dll_name))
+            candidates.append(os.path.join(base, dll_name))
+
+        found = ctypes.util.find_library("prism")
+        if found:
+            candidates.append(found)
+
+        candidates.append(dll_name)
+
+        for c in candidates:
+            if os.path.isfile(c) or c == dll_name:
+                try:
+                    dll_obj = ctypes.CDLL(c)
+                    if hasattr(dll_obj, "prism_init"):
+                        return _CtypesPrismModule(dll_obj)
+                except Exception:
+                    continue
+        return None
+
+    prism = _find_and_load_prism()
+except Exception:
+    prism = None
 
 
 class TTSDone(str):
@@ -999,6 +1011,12 @@ class PrismTTS(object):
         return voices
 
     def shutdown(self):
+        if self.sr_backend is not None and hasattr(self.sr_backend, "free"):
+            self.sr_backend.free()
+            self.sr_backend = None
+        if self.tts_backend is not None and hasattr(self.tts_backend, "free"):
+            self.tts_backend.free()
+            self.tts_backend = None
         if self.context is not None and hasattr(self.context, "shutdown"):
             try:
                 self.context.shutdown()
