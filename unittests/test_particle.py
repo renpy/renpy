@@ -2,8 +2,9 @@ import unittest
 from unittest.mock import patch
 
 import renpy
+from unittests.renpy_test_support import initialize_renpy
 
-renpy.import_all()
+initialize_renpy()
 
 from renpy.display.layout import Null
 from renpy.display.particle import SnowBlossom, SnowBlossomFactory

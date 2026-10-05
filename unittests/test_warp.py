@@ -3,9 +3,9 @@ from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 import renpy
+from unittests.renpy_test_support import initialize_renpy
 
-if not hasattr(renpy, "warp"):
-    renpy.import_all()
+initialize_renpy()
 
 from renpy import ast, character, warp
 

@@ -4,8 +4,9 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 import renpy
+from unittests.renpy_test_support import initialize_renpy
 
-renpy.import_all()
+initialize_renpy()
 
 from renpy import persistent
 from renpy.display.core import Interface
