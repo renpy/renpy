@@ -70,6 +70,19 @@ Text shaders are specified as strings like::
     "jitter:u__jitter=1.0, 3.0"
     "texture:gold.png"
 
+For example, to jitter each glyph independently for half a second, use::
+
+    "jitter:u__duration=0.5:u__individual=1"
+
+Or apply it to part of a line with a text tag::
+
+    "Hold on, {shader=jitter:u__duration=0.5:u__individual=1}what?{/shader}"
+
+By default, jitter continues indefinitely and moves all glyphs together.
+A duration of 0 or a negative value makes jitter continue indefinitely.
+A positive duration starts when the text is first shown, not when each
+glyph is revealed by slow text.
+
 The first part of the string, before the first colon, is the name of the text shader.
 The rest of the string is a series of uniforms that are passed to the shader,
 separated by colons. (Uniforms are parameters that are passed to the shader,

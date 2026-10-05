@@ -195,14 +195,32 @@ renpy.register_textshader(
     glsl=300,
     variables="""
     uniform vec2 u__jitter;
+    uniform float u__duration;
+    uniform float u__individual;
     uniform vec4 u_random;
+    uniform float u_text_time;
     uniform float u_text_to_drawable;
+    in float a_text_index;
     """,
     vertex_30="""
-    vec2 l__jitter = u__jitter * u_text_to_drawable;
-    gl_Position.xy += l__jitter * u_random.xy - l__jitter / 2.0;
+    if (u__duration <= 0.0 || u_text_time < u__duration) {
+        vec2 l__random = u_random.xy;
+
+        if (u__individual != 0.0) {
+            vec2 l__seed = vec2(a_text_index, a_text_index + 1.0) + u_random.xy;
+            l__random = fract(sin(vec2(
+                dot(l__seed, vec2(12.9898, 78.233)),
+                dot(l__seed, vec2(39.3468, 11.135))
+            )) * 43758.5453);
+        }
+
+        vec2 l__jitter = u__jitter * u_text_to_drawable;
+        gl_Position.xy += l__jitter * l__random - l__jitter / 2.0;
+    }
     """,
     u__jitter=(3.0, 3.0),
+    u__duration=0.0,
+    u__individual=0.0,
     redraw=0.0,
     doc="""
     The jitter text shader moves the text to random positions
@@ -211,6 +229,16 @@ renpy.register_textshader(
 
     `u__jitter`
         The amount of jitter to apply to the text, in pixels.
+
+    `u__duration`
+        The duration of the jitter effect, in seconds from when the text is
+        first shown. After this duration, the text returns to its normal
+        position. A value of 0 (the default) or a negative value makes the
+        effect continue indefinitely. This is independent of slow text.
+
+    `u__individual`
+        If 0 (the default), all glyphs move together. If 1, each glyph moves
+        independently.
     """,
 )
 

@@ -138,6 +138,12 @@ to adjust fonts to the same relative size.
 
 Text shaders now support the ``u_text_time`` uniform, which is the time in seconds since the start of the text effect.
 
+The ``jitter`` text shader now supports ``u__duration`` to stop shaking after a
+specified number of seconds, and ``u__individual=1`` to move each glyph
+independently. The duration starts when the text is first shown. A duration of
+0 (the default) or a negative value makes jitter continue indefinitely.
+By default, all glyphs still move together.
+
 Text interpolation now supports the ``!f`` flag, which passes interpolated text through :var:`config.say_menu_text_filter`.
 
 Menu text filtering can now be disabled with :var:`config.use_menu_text_filter`, which defaults to True.
