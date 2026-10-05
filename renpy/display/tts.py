@@ -52,6 +52,7 @@ if prism is None:
 
         class _PrismConfig(ctypes.Structure):
             _fields_ = [
+                ("version", ctypes.c_uint64),
                 ("registry", ctypes.c_void_p),
                 ("availability_callback", ctypes.c_void_p),
                 ("availability_userdata", ctypes.c_void_p),
@@ -60,6 +61,14 @@ if prism is None:
                 ("availability_backoff_max_ms", ctypes.c_uint32),
                 ("availability_auto_power_manage", ctypes.c_bool),
             ]
+
+        PrismAvailabilityCallback = ctypes.CFUNCTYPE(
+            None,
+            ctypes.c_void_p,
+            ctypes.c_uint64,
+            ctypes.c_char_p,
+            ctypes.c_bool,
+        )
 
         class _CtypesBackendFeatures(object):
             supports_set_volume = True
@@ -145,6 +154,15 @@ if prism is None:
                 self.mod = mod
                 self.dll = mod.dll
                 self.ptr = ptr
+                self._callback_ref = None
+
+            def shutdown(self):
+                if self.ptr:
+                    try:
+                        self.dll.prism_shutdown(self.ptr)
+                    except Exception:
+                        pass
+                    self.ptr = None
 
             @property
             def backends_count(self):
@@ -179,9 +197,12 @@ if prism is None:
             def __init__(self, dll):
                 super(_CtypesPrismModule, self).__init__("prism")
                 self.dll = dll
+                self.PrismAvailabilityCallback = PrismAvailabilityCallback
                 self.dll.prism_config_init.restype = _PrismConfig
                 self.dll.prism_init.argtypes = [ctypes.POINTER(_PrismConfig)]
                 self.dll.prism_init.restype = ctypes.c_void_p
+                self.dll.prism_shutdown.argtypes = [ctypes.c_void_p]
+                self.dll.prism_shutdown.restype = None
                 self.dll.prism_registry_count.argtypes = [ctypes.c_void_p]
                 self.dll.prism_registry_count.restype = ctypes.c_size_t
                 self.dll.prism_registry_id_at.argtypes = [ctypes.c_void_p, ctypes.c_size_t]
@@ -220,10 +241,16 @@ if prism is None:
                 self.dll.prism_backend_get_voice.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_size_t)]
                 self.dll.prism_backend_set_voice.argtypes = [ctypes.c_void_p, ctypes.c_size_t]
 
-            def Context(self):
+            def Context(self, availability_callback=None, availability_userdata=None):
                 cfg = self.dll.prism_config_init()
+                if availability_callback is not None:
+                    cfg.availability_callback = ctypes.cast(availability_callback, ctypes.c_void_p).value
+                    if availability_userdata is not None:
+                        cfg.availability_userdata = ctypes.cast(availability_userdata, ctypes.c_void_p).value
                 ctx_ptr = self.dll.prism_init(ctypes.byref(cfg))
-                return _CtypesContext(self, ctx_ptr)
+                ctx = _CtypesContext(self, ctx_ptr)
+                ctx._callback_ref = availability_callback
+                return ctx
 
         def _find_and_load_prism():
             candidates = []
@@ -719,10 +746,49 @@ class PrismTTS(object):
         if prism is None:
             raise RuntimeError("Prism module is not available")
 
-        self.context = prism.Context()
+        self._availability_cb = None
+        cb_type = getattr(prism, "PrismAvailabilityCallback", None)
+        if cb_type is not None:
+            try:
+                self._availability_cb = cb_type(self._on_availability_changed)
+                self.context = prism.Context(availability_callback=self._availability_cb)
+            except Exception:
+                self.context = prism.Context()
+        else:
+            self.context = prism.Context()
+
         self.sr_backend = None
         self.tts_backend = None
         self._init_backends()
+
+    def _on_availability_changed(self, userdata, bid, name_ptr, available):
+        """
+        Callback invoked by Prism when a backend's availability changes at runtime.
+        """
+        try:
+            name = name_ptr.decode("utf-8") if isinstance(name_ptr, (bytes, bytearray)) else (name_ptr or "")
+        except Exception:
+            return
+
+        name_lower = name.lower()
+        if name_lower not in SCREEN_READER_BACKENDS:
+            return
+
+        if available:
+            try:
+                b = self.context.acquire(bid)
+                if b is not None:
+                    self.sr_backend = b
+            except Exception:
+                pass
+
+            if getattr(renpy.config, "auto_screenreader_voicing", True):
+                prefs = getattr(getattr(renpy, "game", None), "preferences", None)
+                if prefs is not None and not prefs.self_voicing:
+                    prefs.self_voicing = "screenreader"
+        else:
+            if self.sr_backend is not None and getattr(self.sr_backend, "name", "").lower() == name_lower:
+                self.sr_backend = None
 
     def __reduce__(self):
         return (PrismTTS, ())
@@ -903,6 +969,14 @@ class PrismTTS(object):
         except Exception:
             pass
         return voices
+
+    def shutdown(self):
+        if self.context is not None and hasattr(self.context, "shutdown"):
+            try:
+                self.context.shutdown()
+            except Exception:
+                pass
+            self.context = None
 
 
 platform_tts = None  # The platform-specific TTS object.
