@@ -160,15 +160,19 @@ if prism is None:
             def acquire(self, bid):
                 b = self.dll.prism_registry_acquire(self.ptr, ctypes.c_uint64(bid))
                 if b:
-                    self.dll.prism_backend_initialize(b)
-                    return _CtypesBackend(self.dll, b)
+                    res = self.dll.prism_backend_initialize(b)
+                    if res == 0:
+                        return _CtypesBackend(self.dll, b)
+                    self.dll.prism_backend_free(b)
                 return None
 
             def acquire_best(self):
                 b = self.dll.prism_registry_acquire_best(self.ptr)
                 if b:
-                    self.dll.prism_backend_initialize(b)
-                    return _CtypesBackend(self.dll, b)
+                    res = self.dll.prism_backend_initialize(b)
+                    if res == 0:
+                        return _CtypesBackend(self.dll, b)
+                    self.dll.prism_backend_free(b)
                 return None
 
         class _CtypesPrismModule(types.ModuleType):
@@ -189,6 +193,9 @@ if prism is None:
                 self.dll.prism_registry_acquire_best.argtypes = [ctypes.c_void_p]
                 self.dll.prism_registry_acquire_best.restype = ctypes.c_void_p
                 self.dll.prism_backend_initialize.argtypes = [ctypes.c_void_p]
+                self.dll.prism_backend_initialize.restype = ctypes.c_int
+                self.dll.prism_backend_free.argtypes = [ctypes.c_void_p]
+                self.dll.prism_backend_free.restype = None
                 self.dll.prism_backend_name.argtypes = [ctypes.c_void_p]
                 self.dll.prism_backend_name.restype = ctypes.c_char_p
                 self.dll.prism_backend_is_speaking.argtypes = [ctypes.c_void_p]
@@ -770,6 +777,31 @@ class PrismTTS(object):
         if self.tts_backend is None:
             self.tts_backend = self.sr_backend
 
+    def has_active_screenreader(self):
+        """
+        Returns True if an active screen reader (e.g. NVDA, JAWS, VoiceOver, Orca)
+        is currently running and responding.
+        """
+        if self.context is None:
+            return False
+
+        if self.sr_backend is not None and getattr(self.sr_backend, "name", "").lower() in SCREEN_READER_BACKENDS:
+            return True
+
+        for i in range(self.context.backends_count):
+            bid = self.context.id_of(i)
+            name = self.context.name_of(bid)
+            if name.lower() in SCREEN_READER_BACKENDS:
+                try:
+                    b = self.context.acquire(bid)
+                    if b is not None:
+                        self.sr_backend = b
+                        return True
+                except Exception:
+                    continue
+
+        return False
+
     def get_backend(self, mode=None):
         if mode == "screenreader":
             # Dynamic re-check: Did user start NVDA or JAWS while game was running?
@@ -985,6 +1017,42 @@ def init():
             renpy.display.log.write("Failed to initialize TTS.")
             renpy.display.log.exception()
 
+    check_auto_screenreader()
+
+
+# Flag to ensure launch-time auto-screenreader detection runs once.
+_auto_screenreader_checked = False
+
+
+def check_auto_screenreader():
+    """
+    Checks if a screen reader is active on launch and automatically enables
+    screen reader voicing if config.auto_screenreader_voicing is True.
+    """
+    global _auto_screenreader_checked
+
+    if _auto_screenreader_checked:
+        return
+
+    if platform_tts is None:
+        return
+
+    if not getattr(renpy.config, "auto_screenreader_voicing", True):
+        return
+
+    prefs = getattr(getattr(renpy, "game", None), "preferences", None)
+    if prefs is None:
+        return
+
+    _auto_screenreader_checked = True
+
+    if (
+        not prefs.self_voicing
+        and getattr(platform_tts, "has_active_screenreader", None)
+        and platform_tts.has_active_screenreader()
+    ):
+        prefs.self_voicing = "screenreader"
+
 
 # Cache for get_tts_voices.
 _tts_voices_cache = None
@@ -1177,6 +1245,8 @@ def displayable(d):
     global last_raw
     global notify_text
     global last_group_alt
+
+    check_auto_screenreader()
 
     self_voicing = renpy.game.preferences.self_voicing
 
