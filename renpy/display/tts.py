@@ -749,9 +749,8 @@ SCREEN_READER_BACKENDS = {
 
 def _ensure_input_desktop():
     """
-    On Windows, ensure the current thread is attached to the active input
-    desktop so IPC with screen readers (e.g. NVDA RPC) can connect even if
-    launched from an IDE, terminal, or secondary desktop.
+    On Windows, ensures the current thread is attached to the active input
+    desktop so IPC with screen readers can connect.
     """
     if sys.platform.startswith("win"):
         try:
@@ -908,7 +907,7 @@ class PrismTTS(object):
                 return self.sr_backend
 
             _ensure_input_desktop()
-            # Dynamic re-check: Did user start NVDA or JAWS while game was running?
+            # Look for an active screen reader.
             for i in range(self.context.backends_count):
                 bid = self.context.id_of(i)
                 name = self.context.name_of(bid)
