@@ -803,7 +803,7 @@ class PrismTTS(object):
 
             if getattr(renpy.config, "auto_screenreader_voicing", True):
                 prefs = getattr(getattr(renpy, "game", None), "preferences", None)
-                if prefs is not None and not prefs.self_voicing:
+                if prefs is not None and prefs.self_voicing is None:
                     prefs.self_voicing = "screenreader"
         else:
             if self.sr_backend is not None and getattr(self.sr_backend, "name", "").lower() == name_lower:
@@ -1149,7 +1149,7 @@ def check_auto_screenreader():
     _auto_screenreader_checked = True
 
     if (
-        not prefs.self_voicing
+        prefs.self_voicing is None
         and getattr(platform_tts, "has_active_screenreader", None)
         and platform_tts.has_active_screenreader()
     ):

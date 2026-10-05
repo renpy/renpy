@@ -204,7 +204,7 @@ class TestPrismTTS(unittest.TestCase):
         import renpy.display.tts as tts_module
 
         class DummyPreferences:
-            self_voicing = False
+            self_voicing = None
 
         class DummyGame:
             preferences = DummyPreferences()
@@ -232,8 +232,8 @@ class TestPrismTTS(unittest.TestCase):
             elif hasattr(tts_module.renpy, "game"):
                 delattr(tts_module.renpy, "game")
 
-    def test_check_auto_screenreader_respects_config_disabled(self):
-        """Test that check_auto_screenreader() does not enable voicing if config option is False."""
+    def test_check_auto_screenreader_respects_explicit_user_disabled(self):
+        """Test that check_auto_screenreader() does not override an explicit False preference."""
         import renpy.display.tts as tts_module
 
         class DummyPreferences:
@@ -252,11 +252,44 @@ class TestPrismTTS(unittest.TestCase):
         tts_module.platform_tts = mock_platform_tts
         tts_module._auto_screenreader_checked = False
         tts_module.renpy.game = DummyGame()
-        tts_module.renpy.config.auto_screenreader_voicing = False
+        tts_module.renpy.config.auto_screenreader_voicing = True
 
         try:
             tts_module.check_auto_screenreader()
             self.assertFalse(DummyGame.preferences.self_voicing)
+        finally:
+            tts_module.platform_tts = old_platform_tts
+            tts_module._auto_screenreader_checked = old_checked
+            if old_game is not None:
+                tts_module.renpy.game = old_game
+            elif hasattr(tts_module.renpy, "game"):
+                delattr(tts_module.renpy, "game")
+
+    def test_check_auto_screenreader_respects_config_disabled(self):
+        """Test that check_auto_screenreader() does not enable voicing if config option is False."""
+        import renpy.display.tts as tts_module
+
+        class DummyPreferences:
+            self_voicing = None
+
+        class DummyGame:
+            preferences = DummyPreferences()
+
+        old_platform_tts = tts_module.platform_tts
+        old_checked = tts_module._auto_screenreader_checked
+        old_game = getattr(tts_module.renpy, "game", None)
+
+        mock_platform_tts = MagicMock(spec=tts_module.PrismTTS)
+        mock_platform_tts.has_active_screenreader.return_value = True
+
+        tts_module.platform_tts = mock_platform_tts
+        tts_module._auto_screenreader_checked = False
+        tts_module.renpy.game = DummyGame()
+        tts_module.renpy.config.auto_screenreader_voicing = False
+
+        try:
+            tts_module.check_auto_screenreader()
+            self.assertIsNone(DummyGame.preferences.self_voicing)
         finally:
             tts_module.renpy.config.auto_screenreader_voicing = True
             tts_module.platform_tts = old_platform_tts
@@ -272,7 +305,7 @@ class TestPrismTTS(unittest.TestCase):
         import renpy.display.tts as tts_module
 
         class DummyPreferences:
-            self_voicing = False
+            self_voicing = None
 
         class DummyGame:
             preferences = DummyPreferences()
