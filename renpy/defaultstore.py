@@ -182,6 +182,7 @@ SpriteManager = renpy.display.particle.SpriteManager
 Matrix = renpy.display.matrix.Matrix
 
 Live2D = renpy.gl2.live2d.Live2D
+Spine = renpy.gl2.spine.Spine
 
 Model = renpy.display.model.Model
 GLTFModel = renpy.gl2.assimp.GLTFModel
