@@ -230,6 +230,13 @@ The ability to create these updates will be removed in Ren'Py 8.7.0.
 
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
 
+Fixes
+-----
+
+:func:`SnowBlossom` with ``fast=True`` now starts with particles throughout
+the screen even when first rendered at a nonzero animation time, such as
+when returning to the main menu from another menu.
+
 .. _renpy-8.5.4:
 
 8.5.4
