@@ -735,6 +735,24 @@ SCREEN_READER_BACKENDS = {
 }
 
 
+def _ensure_input_desktop():
+    """
+    On Windows, ensure the current thread is attached to the active input
+    desktop so IPC with screen readers (e.g. NVDA RPC) can connect even if
+    launched from an IDE, terminal, or secondary desktop.
+    """
+    if sys.platform.startswith("win"):
+        try:
+            import ctypes
+
+            hInput = ctypes.windll.user32.OpenInputDesktop(0, False, 0x01FF)
+            if hInput:
+                ctypes.windll.user32.SetThreadDesktop(hInput)
+                ctypes.windll.user32.CloseDesktop(hInput)
+        except Exception:
+            pass
+
+
 class PrismTTS(object):
     """
     Unified cross-platform TTS and Screen Reader backend using Prism.
@@ -743,6 +761,8 @@ class PrismTTS(object):
     def __init__(self):
         if prism is None:
             raise RuntimeError("Prism module is not available")
+
+        _ensure_input_desktop()
 
         self._availability_cb = None
         cb_type = getattr(prism, "PrismAvailabilityCallback", None)
@@ -773,6 +793,7 @@ class PrismTTS(object):
             return
 
         if available:
+            _ensure_input_desktop()
             try:
                 b = self.context.acquire(bid)
                 if b is not None:
@@ -792,6 +813,7 @@ class PrismTTS(object):
         return (PrismTTS, ())
 
     def _init_backends(self):
+        _ensure_input_desktop()
         # 1. Screen reader backend: look for an active screen reader
         self.sr_backend = None
         for i in range(self.context.backends_count):
@@ -852,6 +874,8 @@ class PrismTTS(object):
         if self.sr_backend is not None and getattr(self.sr_backend, "name", "").lower() in SCREEN_READER_BACKENDS:
             return True
 
+        _ensure_input_desktop()
+
         for i in range(self.context.backends_count):
             bid = self.context.id_of(i)
             name = self.context.name_of(bid)
@@ -868,19 +892,25 @@ class PrismTTS(object):
 
     def get_backend(self, mode=None):
         if mode == "screenreader":
+            if self.sr_backend is not None and getattr(self.sr_backend, "name", "").lower() in SCREEN_READER_BACKENDS:
+                return self.sr_backend
+
+            _ensure_input_desktop()
             # Dynamic re-check: Did user start NVDA or JAWS while game was running?
             for i in range(self.context.backends_count):
                 bid = self.context.id_of(i)
                 name = self.context.name_of(bid)
                 if name.lower() in SCREEN_READER_BACKENDS:
                     try:
-                        self.sr_backend = self.context.acquire(bid)
-                        return self.sr_backend
+                        b = self.context.acquire(bid)
+                        if b is not None:
+                            self.sr_backend = b
+                            return self.sr_backend
                     except Exception:
                         continue
             if self.sr_backend is None:
                 self._init_backends()
-            return self.sr_backend
+            return self.sr_backend or self.tts_backend
         else:
             if self.tts_backend is None:
                 self._init_backends()
