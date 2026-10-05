@@ -722,8 +722,6 @@ cdef class HBFont:
 
             self.hb_font = hb_ft_font_create(self.face_object.face, NULL)
 
-            hb_ft_font_set_funcs(self.hb_font)
-
             hb_font_set_scale(self.hb_font, <int> (self.size * 64), <int> (self.size * 64))
 
             if self.italic:
