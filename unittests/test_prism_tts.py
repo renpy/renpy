@@ -26,6 +26,8 @@ from unittest.mock import MagicMock
 
 class TestPrismTTS(unittest.TestCase):
     def setUp(self):
+        import renpy.config
+
         try:
             import prism
 
@@ -162,6 +164,146 @@ class TestPrismTTS(unittest.TestCase):
         finally:
             tts_module.prism = old_prism
             tts_module.platform_tts = old_platform_tts
+
+    def test_has_active_screenreader_true(self):
+        """Test that has_active_screenreader() returns True when a supported screen reader is active."""
+        from renpy.display.tts import PrismTTS
+
+        tts = PrismTTS.__new__(PrismTTS)
+        mock_ctx = MagicMock()
+        mock_ctx.backends_count = 1
+        mock_ctx.id_of.return_value = 1
+        mock_ctx.name_of.return_value = "nvda"
+        mock_backend = MagicMock()
+        mock_backend.name = "nvda"
+        mock_ctx.acquire.return_value = mock_backend
+        tts.context = mock_ctx
+        tts.sr_backend = None
+        tts.tts_backend = None
+
+        self.assertTrue(tts.has_active_screenreader())
+        self.assertEqual(tts.sr_backend, mock_backend)
+
+    def test_has_active_screenreader_false(self):
+        """Test that has_active_screenreader() returns False when no screen reader is available."""
+        from renpy.display.tts import PrismTTS
+
+        tts = PrismTTS.__new__(PrismTTS)
+        mock_ctx = MagicMock()
+        mock_ctx.backends_count = 1
+        mock_ctx.id_of.return_value = 1
+        mock_ctx.name_of.return_value = "sapi"
+        tts.context = mock_ctx
+        tts.sr_backend = None
+        tts.tts_backend = None
+
+        self.assertFalse(tts.has_active_screenreader())
+
+    def test_check_auto_screenreader_enables_screenreader(self):
+        """Test that check_auto_screenreader() automatically enables screen reader voicing when active."""
+        import renpy.display.tts as tts_module
+
+        class DummyPreferences:
+            self_voicing = False
+
+        class DummyGame:
+            preferences = DummyPreferences()
+
+        old_platform_tts = tts_module.platform_tts
+        old_checked = tts_module._auto_screenreader_checked
+        old_game = getattr(tts_module.renpy, "game", None)
+
+        mock_platform_tts = MagicMock(spec=tts_module.PrismTTS)
+        mock_platform_tts.has_active_screenreader.return_value = True
+
+        tts_module.platform_tts = mock_platform_tts
+        tts_module._auto_screenreader_checked = False
+        tts_module.renpy.game = DummyGame()
+        tts_module.renpy.config.auto_screenreader_voicing = True
+
+        try:
+            tts_module.check_auto_screenreader()
+            self.assertEqual(DummyGame.preferences.self_voicing, "screenreader")
+        finally:
+            tts_module.platform_tts = old_platform_tts
+            tts_module._auto_screenreader_checked = old_checked
+            if old_game is not None:
+                tts_module.renpy.game = old_game
+            elif hasattr(tts_module.renpy, "game"):
+                delattr(tts_module.renpy, "game")
+
+    def test_check_auto_screenreader_respects_config_disabled(self):
+        """Test that check_auto_screenreader() does not enable voicing if config option is False."""
+        import renpy.display.tts as tts_module
+
+        class DummyPreferences:
+            self_voicing = False
+
+        class DummyGame:
+            preferences = DummyPreferences()
+
+        old_platform_tts = tts_module.platform_tts
+        old_checked = tts_module._auto_screenreader_checked
+        old_game = getattr(tts_module.renpy, "game", None)
+
+        mock_platform_tts = MagicMock(spec=tts_module.PrismTTS)
+        mock_platform_tts.has_active_screenreader.return_value = True
+
+        tts_module.platform_tts = mock_platform_tts
+        tts_module._auto_screenreader_checked = False
+        tts_module.renpy.game = DummyGame()
+        tts_module.renpy.config.auto_screenreader_voicing = False
+
+        try:
+            tts_module.check_auto_screenreader()
+            self.assertFalse(DummyGame.preferences.self_voicing)
+        finally:
+            tts_module.renpy.config.auto_screenreader_voicing = True
+            tts_module.platform_tts = old_platform_tts
+            tts_module._auto_screenreader_checked = old_checked
+            if old_game is not None:
+                tts_module.renpy.game = old_game
+            elif hasattr(tts_module.renpy, "game"):
+                delattr(tts_module.renpy, "game")
+
+    def test_availability_callback_runtime_start_stop(self):
+        """Test that _on_availability_changed dynamically activates and clears screen reader backend."""
+        from renpy.display.tts import PrismTTS
+        import renpy.display.tts as tts_module
+
+        class DummyPreferences:
+            self_voicing = False
+
+        class DummyGame:
+            preferences = DummyPreferences()
+
+        old_game = getattr(tts_module.renpy, "game", None)
+        tts_module.renpy.game = DummyGame()
+        tts_module.renpy.config.auto_screenreader_voicing = True
+
+        tts = PrismTTS.__new__(PrismTTS)
+        mock_ctx = MagicMock()
+        mock_backend = MagicMock()
+        mock_backend.name = "nvda"
+        mock_ctx.acquire.return_value = mock_backend
+        tts.context = mock_ctx
+        tts.sr_backend = None
+        tts.tts_backend = None
+
+        try:
+            # NVDA becomes available
+            tts._on_availability_changed(None, 1, b"nvda", True)
+            self.assertEqual(tts.sr_backend, mock_backend)
+            self.assertEqual(DummyGame.preferences.self_voicing, "screenreader")
+
+            # NVDA stops
+            tts._on_availability_changed(None, 1, b"nvda", False)
+            self.assertIsNone(tts.sr_backend)
+        finally:
+            if old_game is not None:
+                tts_module.renpy.game = old_game
+            elif hasattr(tts_module.renpy, "game"):
+                delattr(tts_module.renpy, "game")
 
     def _ensure_image_environment(self):
         """Prepare minimal module mock environment to import renpy.display.image outside full binary."""
