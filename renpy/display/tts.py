@@ -62,14 +62,6 @@ if prism is None:
                 ("availability_auto_power_manage", ctypes.c_bool),
             ]
 
-        PrismAvailabilityCallback = ctypes.CFUNCTYPE(
-            None,
-            ctypes.c_void_p,
-            ctypes.c_uint64,
-            ctypes.c_char_p,
-            ctypes.c_bool,
-        )
-
         class _CtypesBackendFeatures(object):
             supports_set_volume = True
             supports_set_rate = True
@@ -197,7 +189,13 @@ if prism is None:
             def __init__(self, dll):
                 super(_CtypesPrismModule, self).__init__("prism")
                 self.dll = dll
-                self.PrismAvailabilityCallback = PrismAvailabilityCallback
+                self.PrismAvailabilityCallback = ctypes.CFUNCTYPE(
+                    None,
+                    ctypes.c_void_p,
+                    ctypes.c_uint64,
+                    ctypes.c_char_p,
+                    ctypes.c_bool,
+                )
                 self.dll.prism_config_init.restype = _PrismConfig
                 self.dll.prism_init.argtypes = [ctypes.POINTER(_PrismConfig)]
                 self.dll.prism_init.restype = ctypes.c_void_p
