@@ -29,10 +29,10 @@ class TestPrismTTS(unittest.TestCase):
         import renpy.config
 
         try:
-            import prism
+            from renpy.display.tts import prism
 
-            self.has_prism = True
-        except ImportError:
+            self.has_prism = prism is not None
+        except Exception:
             self.has_prism = False
 
     def test_screen_reader_backends_defined(self):
@@ -49,56 +49,70 @@ class TestPrismTTS(unittest.TestCase):
     def test_prism_tts_initialization(self):
         """Test that PrismTTS can initialize when prism is installed."""
         if not self.has_prism:
-            self.skipTest("prismatoid is not installed")
+            self.skipTest("Prism dynamic library is not available")
 
         from renpy.display.tts import PrismTTS
 
         tts = PrismTTS()
-        self.assertIsNotNone(tts.context)
-        # Should have acquired a backend (or fallback)
-        backend = tts.get_backend("tts")
-        self.assertIsNotNone(backend)
-        self.assertFalse(backend.name.lower() in {"nvda", "jaws", "orca", "voiceover"})
+        try:
+            self.assertIsNotNone(tts.context)
+            # Should have acquired a backend (or fallback)
+            backend = tts.get_backend("tts")
+            self.assertIsNotNone(backend)
+            self.assertFalse(backend.name.lower() in {"nvda", "jaws", "orca", "voiceover"})
+        finally:
+            tts.shutdown()
 
     def test_prism_tts_mode_separation(self):
         """Test that mode='tts' does not return a screen reader backend."""
         if not self.has_prism:
-            self.skipTest("prismatoid is not installed")
+            self.skipTest("Prism dynamic library is not available")
 
         from renpy.display.tts import SCREEN_READER_BACKENDS, PrismTTS
 
         tts = PrismTTS()
-        tts_backend = tts.get_backend("tts")
-        if tts_backend is not None:
-            self.assertNotIn(tts_backend.name.lower(), SCREEN_READER_BACKENDS)
+        try:
+            tts_backend = tts.get_backend("tts")
+            if tts_backend is not None:
+                self.assertNotIn(tts_backend.name.lower(), SCREEN_READER_BACKENDS)
 
-        sr_backend = tts.get_backend("screenreader")
-        self.assertIsNotNone(sr_backend)
+            sr_backend = tts.get_backend("screenreader")
+            self.assertIsNotNone(sr_backend)
+        finally:
+            tts.shutdown()
 
     def test_prism_tts_voices(self):
         """Test that get_tts_voices returns a list of formatted voice strings."""
         if not self.has_prism:
-            self.skipTest("prismatoid is not installed")
+            self.skipTest("Prism dynamic library is not available")
 
         from renpy.display.tts import PrismTTS
 
         tts = PrismTTS()
-        voices = tts.get_tts_voices()
-        self.assertIsInstance(voices, list)
-        for v in voices:
-            self.assertIn(": ", v)
+        try:
+            voices = tts.get_tts_voices()
+            self.assertIsInstance(voices, list)
+            for v in voices:
+                self.assertIn(": ", v)
+        finally:
+            tts.shutdown()
 
     def test_prism_tts_speak_and_stop(self):
         """Test speak and stop methods without errors."""
         if not self.has_prism:
-            self.skipTest("prismatoid is not installed")
+            self.skipTest("Prism dynamic library is not available")
 
+        import time
         from renpy.display.tts import PrismTTS
 
         tts = PrismTTS()
-        tts.speak("Test line for accessibility.", mode="tts")
-        tts.stop()
-        self.assertFalse(tts.is_speaking())
+        try:
+            tts.speak("Test line for accessibility.", mode="tts")
+            tts.stop()
+            time.sleep(0.05)
+            self.assertFalse(tts.is_speaking())
+        finally:
+            tts.shutdown()
 
     def test_default_tts_function_modes(self):
         """Test that default_tts_function calls speak with correct mode based on self_voicing preference."""
@@ -136,7 +150,7 @@ class TestPrismTTS(unittest.TestCase):
     def test_init_prefers_prism_tts(self):
         """Test that init() instantiates PrismTTS when prism is available."""
         if not self.has_prism:
-            self.skipTest("prismatoid is not installed")
+            self.skipTest("Prism dynamic library is not available")
 
         import renpy.display.tts as tts_module
 
