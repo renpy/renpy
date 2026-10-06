@@ -1,5 +1,6 @@
 import ctypes
 import io
+import math
 import os
 import struct
 import threading
@@ -28,6 +29,41 @@ class ChannelHead(ctypes.Structure):
     ]
 
 
+class MediaHead(ctypes.Structure):
+    # Prefix of src/ffmedia.c's MediaState, inspected while holding its lock.
+    _fields_ = [
+        ("next", ctypes.c_void_p),
+        ("thread", ctypes.c_void_p),
+        ("cond", ctypes.c_void_p),
+        ("lock", ctypes.c_void_p),
+        ("rwops", ctypes.c_void_p),
+        ("filename", ctypes.c_void_p),
+        ("want_video", ctypes.c_int),
+        ("ready", ctypes.c_int),
+        ("needs_decode", ctypes.c_int),
+        ("quit", ctypes.c_int),
+        ("skip", ctypes.c_double),
+        ("seek_requested", ctypes.c_int),
+        ("seek_target", ctypes.c_double),
+        ("audio_finished", ctypes.c_int),
+        ("video_finished", ctypes.c_int),
+        ("video_stream", ctypes.c_int),
+        ("audio_stream", ctypes.c_int),
+        ("ctx", ctypes.c_void_p),
+        ("video_context", ctypes.c_void_p),
+        ("audio_context", ctypes.c_void_p),
+        ("video_packets_first", ctypes.c_void_p),
+        ("video_packets_last", ctypes.c_void_p),
+        ("audio_packets_first", ctypes.c_void_p),
+        ("audio_packets_last", ctypes.c_void_p),
+        ("total_duration", ctypes.c_double),
+        ("end_time", ctypes.c_double),
+        ("audio_frames_first", ctypes.c_void_p),
+        ("audio_frames_last", ctypes.c_void_p),
+        ("audio_queue_samples", ctypes.c_int),
+    ]
+
+
 @unittest.skipUnless(os.name == "posix", "Native audio symbol inspection requires POSIX shared-library exports.")
 class TestAudioQueue(unittest.TestCase):
     def setUp(self):
@@ -47,6 +83,8 @@ class TestAudioQueue(unittest.TestCase):
         self.bind("SDL_GetAudioStreamData", ctypes.c_int, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int)
         self.bind("SDL_GetError", ctypes.c_char_p)
         self.bind("media_is_ready", ctypes.c_int, ctypes.c_void_p)
+        self.bind("SDL_LockMutex", None, ctypes.c_void_p)
+        self.bind("SDL_UnlockMutex", None, ctypes.c_void_p)
         self.initialize()
         self.addCleanup(renpysound.quit)
 
@@ -230,6 +268,105 @@ class TestAudioQueue(unittest.TestCase):
     def opus(self):
         # Generated from a stereo 440 Hz, 0.1 s sine at 48 kHz using FFmpeg/libopus.
         return io.BytesIO((Path(__file__).parent / "audio" / "tone.opus").read_bytes())
+
+    def seek_opus(self):
+        # ffmpeg -f lavfi -i 'anoisesrc=sample_rate=48000:duration=3:seed=7407:amplitude=0.2' \
+        #   -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=3' \
+        #   -filter_complex '[1:a]volume=0.1[tone];[0:a][tone]amix=inputs=2:normalize=0' \
+        #   -c:a libopus -b:a 64000 -page_duration 20000 -fflags +bitexact -flags:a +bitexact seek.opus
+        return io.BytesIO((Path(__file__).parent / "audio" / "seek.opus").read_bytes())
+
+    def read_chunks(self, samples):
+        output = []
+        while samples:
+            count = min(samples, 960)
+            output.extend(self.read(count))
+            samples -= count
+        return output
+
+    def seek_opus_reference(self, rate=48000):
+        renpysound.play(0, self.seek_opus(), "seek.opus", synchro_start=True, end=-1)
+        self.wait_ready(self.channel.playing)
+        renpysound.periodic()
+        reference = self.read_chunks(3 * rate)
+        self.assertEqual(self.read(1), [0.0])
+        return reference
+
+    def assert_opus_matches(self, output, reference, start, rate=48000):
+        probe = output[-512:]
+        probe_start = start + len(output) - len(probe)
+        offsets = range(max(-400, -probe_start), min(400, len(reference) - probe_start - len(probe)) + 1)
+        offset = min(
+            offsets,
+            key=lambda shift: sum(
+                (a - b) ** 2 for a, b in zip(probe, reference[probe_start + shift:probe_start + shift + len(probe)])
+            ),
+        )
+        self.assertEqual(offset, 0, "Opus playback is displaced from the requested sample.")
+        for begin, end in [(0, 20), (20, 50), (50, 100)]:
+            lo, hi = round(begin * rate / 1000), min(round(end * rate / 1000), len(output))
+            if lo >= hi:
+                continue
+            expected = reference[start + lo:start + hi]
+            power = sum(sample ** 2 for sample in expected)
+            self.assertGreater(power, 0)
+            error = math.sqrt(sum((a - b) ** 2 for a, b in zip(output[lo:hi], expected)) / power)
+            self.assertLessEqual(error, 0.01, f"Opus decoder has not warmed up at {begin}-{end} ms.")
+
+    def test_opus_interior_loop_matches_continuous_decode(self):
+        reference = self.seek_opus_reference()
+        for start in [0, 27, 2400, 47999, 48000, 48312, 96000, 141600]:
+            with self.subTest(start=start):
+                renpysound.play(0, self.seek_opus(), "seek.opus", synchro_start=True, end=-1)
+                self.wait_ready(self.channel.playing)
+                renpysound.queue(0, self.seek_opus(), "loop.opus", start=start / 48000, end=-1)
+                self.wait_ready(self.channel.queued)
+                renpysound.periodic()
+                self.assertEqual(self.read_chunks(144000), reference)
+                output = self.read_chunks(144000 - start)
+                self.assert_opus_matches(output, reference, start)
+                self.assertEqual(self.read(1), [0.0])
+
+    def test_opus_resampled_interior_start_matches_continuous_decode(self):
+        renpysound.quit()
+        self.initialize(44100)
+        reference = self.seek_opus_reference(44100)
+        renpysound.play(0, self.seek_opus(), "seek.opus", synchro_start=True, start=1.0, end=1.2)
+        self.wait_ready(self.channel.playing)
+        renpysound.periodic()
+        self.assert_opus_matches(self.read_chunks(8820), reference, 44100, 44100)
+        self.assertEqual(self.read(1), [0.0])
+
+    def wait_seek(self, position):
+        media = ctypes.cast(self.channel.playing, ctypes.POINTER(MediaHead)).contents
+        deadline = time.monotonic() + 5
+        event = threading.Event()
+        while True:
+            self.native.SDL_LockMutex(media.lock)
+            try:
+                ready = not media.seek_requested and media.skip == position and media.audio_queue_samples >= 960
+            finally:
+                self.native.SDL_UnlockMutex(media.lock)
+            if ready:
+                return
+            self.assertLess(time.monotonic(), deadline, "Audio seek did not finish decoding.")
+            event.wait(0.001)
+
+    def test_opus_runtime_seeks_match_continuous_decode(self):
+        reference = self.seek_opus_reference()
+        renpysound.play(0, self.seek_opus(), "seek.opus", synchro_start=True, end=-1)
+        self.wait_ready(self.channel.playing)
+        renpysound.periodic()
+        for position in [1.0, 0.05, 2.0, 0.0, 2.9]:
+            with self.subTest(position=position):
+                renpysound.pause(0)
+                renpysound.seek(0, position)
+                self.wait_seek(position)
+                self.assertTrue(self.native.SDL_ClearAudioStream(self.stream), self.native.SDL_GetError())
+                renpysound.unpause(0)
+                start = round(position * 48000)
+                output = self.read_chunks(min(9600, 144000 - start))
+                self.assert_opus_matches(output, reference, start)
 
     def test_opus_loop_has_no_codec_delay_padding(self):
         renpysound.play(0, self.opus(), "tone.opus", synchro_start=True, end=-1)

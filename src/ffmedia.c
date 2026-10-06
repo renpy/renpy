@@ -727,6 +727,28 @@ fail:
 	return NULL;
 }
 
+static int seek_media(MediaState *ms, double position) {
+	double seek_position = position;
+
+	if (ms->audio_stream >= 0) {
+		AVCodecParameters *parameters = ms->ctx->streams[ms->audio_stream]->codecpar;
+		if (parameters->codec_id == AV_CODEC_ID_OPUS) {
+			/* The 80 ms minimum does not fully converge on noisy audio. */
+			double preroll = 0.25;
+			if (parameters->sample_rate > 0) {
+				preroll = fmax(preroll, 1.0 * parameters->seek_preroll / parameters->sample_rate);
+			}
+			seek_position = fmax(0.0, position - preroll);
+		}
+	}
+
+	int ret = av_seek_frame(ms->ctx, -1, (int64_t) (seek_position * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD);
+	if (ret < 0) {
+		av_log(ms->ctx, AV_LOG_ERROR, "Could not seek media to %.6f seconds (%d).\n", position, ret);
+	}
+	return ret;
+}
+
 
 /* Audio decoding *************************************************************/
 
@@ -1565,7 +1587,7 @@ static int decode_thread(void *arg) {
 	}
 
 	if (ms->skip != 0.0) {
-		av_seek_frame(ctx, -1, (int64_t) (ms->skip * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD);
+		seek_media(ms, ms->skip);
 	}
 
 	while (!ms->quit) {
@@ -1584,7 +1606,7 @@ static int decode_thread(void *arg) {
 				seek_target = maximum;
 			}
 
-			if (av_seek_frame(ctx, -1, (int64_t) (seek_target * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD) >= 0) {
+			if (seek_media(ms, seek_target) >= 0) {
 				avformat_flush(ctx);
 				if (ms->audio_context) {
 					avcodec_flush_buffers(ms->audio_context);
@@ -1763,7 +1785,7 @@ static int decode_sync_start(void *arg) {
 	}
 
 	if (ms->skip != 0.0) {
-		av_seek_frame(ctx, -1, (int64_t) (ms->skip * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD);
+		seek_media(ms, ms->skip);
 	}
 
 	// [snip!]
@@ -2011,7 +2033,7 @@ void media_seek(MediaState *ms, double position) {
         return;
     }
 
-    if (av_seek_frame(ms->ctx, -1, (int64_t) (position * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD) < 0) {
+    if (seek_media(ms, position) < 0) {
         return;
     }
 

@@ -244,6 +244,9 @@ Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, i
 Fixes
 -----
 
+Opus audio now decodes pre-roll before loop points and seeks, preserving
+accurate start positions and avoiding incorrect audio immediately after a jump.
+
 :func:`SnowBlossom` with ``fast=True`` now starts with particles throughout
 the screen even when first rendered at a nonzero animation time, such as
 when returning to the main menu from another menu.
