@@ -45,6 +45,8 @@ class TestPrismTTS(unittest.TestCase):
         self.assertIn("voiceover", SCREEN_READER_BACKENDS)
         self.assertNotIn("onecore", SCREEN_READER_BACKENDS)
         self.assertNotIn("sapi", SCREEN_READER_BACKENDS)
+        for backend in ("hal", "supernova", "cobra", "dolphin", "narrator"):
+            self.assertNotIn(backend, SCREEN_READER_BACKENDS)
 
     def test_prism_tts_initialization(self):
         """Test that PrismTTS can initialize when prism is installed."""

@@ -739,11 +739,6 @@ SCREEN_READER_BACKENDS = {
     "zdsr",
     "boypcreader",
     "sensereader",
-    "supernova",
-    "hal",
-    "cobra",
-    "dolphin",
-    "narrator",
 }
 
 
