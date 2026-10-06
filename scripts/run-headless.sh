@@ -57,7 +57,7 @@ trap cleanup EXIT INT TERM HUP
 if command -v weston >/dev/null 2>&1; then
     # Wayland preferred: use Weston with the headless backend.
     if [ -z "$XDG_RUNTIME_DIR" ] || [ ! -d "$XDG_RUNTIME_DIR" ] || [ ! -w "$XDG_RUNTIME_DIR" ]; then
-        TEMP_RUNTIME_DIR="$(mktemp -d /tmp/renpy-xdg-runtime-XXXXXX)"
+        TEMP_RUNTIME_DIR="$(mktemp -d "${TMPDIR:-/tmp}/renpy-xdg-runtime-XXXXXX")"
         chmod 0700 "$TEMP_RUNTIME_DIR"
         export XDG_RUNTIME_DIR="$TEMP_RUNTIME_DIR"
     fi
@@ -66,7 +66,7 @@ if command -v weston >/dev/null 2>&1; then
     SOCKET_PATH="$XDG_RUNTIME_DIR/$SOCKET_NAME"
 
     # Start Weston headless compositor
-    weston -B headless --no-config --socket="$SOCKET_NAME" >/dev/null 2>&1 &
+    weston -B headless --width=1920 --height=1080 --no-config --socket="$SOCKET_NAME" >/dev/null 2>&1 &
     SERVER_PID=$!
 
     # Wait for the Wayland socket to become available

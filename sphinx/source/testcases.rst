@@ -125,6 +125,13 @@ If you're running the test from the command line, the command should look someth
 Running Testcases
 =================
 
+On desktop platforms, test runs use a non-resizable window whose physical and
+drawable resolution matches the game's virtual resolution
+(:var:`config.screen_width` by :var:`config.screen_height`). Saved window sizes,
+fullscreen and maximized preferences, and high-DPI scaling do not change the
+test window's resolution. This makes screenshot dimensions and crop coordinates
+consistent across test runs. Test window sizes are not saved to preferences.
+
 Launcher
 --------
 

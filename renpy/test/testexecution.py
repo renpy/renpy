@@ -122,8 +122,17 @@ def initialize(test_filter: ExecutionFilter) -> None:
     phase_controller = TestPhaseController(root)
     # Disable vsync, to speed up testing.
     renpy.config.gl_vsync = False
+    renpy.config.save_physical_size = False
+    renpy.display.interface.display_reset = True
 
     initialized = True
+
+
+def get_test_window_size() -> tuple[int, int] | None:
+    if initialized and not renpy.mobile:
+        return renpy.config.screen_width, renpy.config.screen_height
+
+    return None
 
 
 def has_default_testcase() -> bool:
@@ -904,4 +913,3 @@ class GlobalParameterCyclePhase(BaseExecutionPhase):
             return EndPhase()
 
         return StartPhase(root)
-

@@ -267,6 +267,12 @@ cdef class GL2Draw:
             round(min(bound_w / virtual_ar, bound_h)),
             )
 
+        test_window_size = renpy.test.testexecution.get_test_window_size()
+        if test_window_size is not None:
+            self.dpi_scale = 1.0
+            self.info["max_window_size"] = test_window_size
+            return test_window_size
+
         if (not renpy.mobile) and (not maximized):
 
             if limit_physical_size:
@@ -453,8 +459,11 @@ cdef class GL2Draw:
         self.dpi_scale = pygame.display.get_display_content_scale()
 
         pwidth, pheight = self.select_physical_size(physical_size)
+        test_window_size = renpy.test.testexecution.get_test_window_size()
 
-        if renpy.android or renpy.ios:
+        if test_window_size is not None:
+            fullscreen = False
+        elif renpy.android or renpy.ios:
             fullscreen = True
         elif renpy.emscripten:
             fullscreen = False
@@ -510,6 +519,9 @@ cdef class GL2Draw:
         if renpy.config.gl2_modify_window_flags is not None:
             window_flags = renpy.config.gl2_modify_window_flags(window_flags)
 
+        if test_window_size is not None:
+            window_flags &= ~(pygame.WINDOW_HIGH_PIXEL_DENSITY | pygame.RESIZABLE)
+
         # Opens the window.
         #
         # If we're in fullscreen, tries to get a fullscreen window. If that fails,
@@ -538,7 +550,7 @@ cdef class GL2Draw:
                     self.window = None
 
             if self.window is None:
-                if renpy.game.preferences.maximized:
+                if renpy.game.preferences.maximized and test_window_size is None:
                     window_flags |= pygame.WINDOW_MAXIMIZED
                     pos = (pygame.WINDOWPOS_UNDEFINED, pygame.WINDOWPOS_UNDEFINED)
                 else:
@@ -837,6 +849,13 @@ cdef class GL2Draw:
         else:
             maximized = renpy.game.preferences.maximized
 
+        test_window_size = renpy.test.testexecution.get_test_window_size()
+        if test_window_size is not None:
+            self.dpi_scale = 1.0
+            width, height = test_window_size
+            fullscreen = False
+            maximized = False
+
         renpy.display.log.write("Requested resize to %dx%d, fullscreen=%d, maximized=%d", width, height, fullscreen, maximized)
         pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen, maximized=maximized)
 
@@ -873,7 +892,8 @@ cdef class GL2Draw:
 
         window_dpi_scale = window_display_scale / window_pixel_density
 
-
+        if renpy.test.testexecution.get_test_window_size() is not None:
+            window_dpi_scale = 1.0
 
         dpi_changed = window_dpi_scale != self.dpi_scale
 

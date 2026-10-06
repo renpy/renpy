@@ -205,6 +205,11 @@ Text can now be selected with ``text <expr>`` (e.g. ``assert text "Hello"``, ``a
 
 Fixed a counting bug with the ``repeat <num>`` statement.
 
+Desktop testcase runs now use a fixed window with physical and drawable
+resolution matching the game's virtual resolution, making screenshot sizes
+and crop coordinates independent of saved window preferences and DPI scaling.
+
+
 
 Other Changes
 -------------

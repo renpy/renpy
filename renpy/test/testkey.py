@@ -318,12 +318,10 @@ def down(keysym: str) -> None:
     """
     code, u, mods = get_keycode(keysym)
 
+    # Synthetic keys must carry their text even when a headless window has no active IME.
     pygame.event.post(
-        pygame.event.Event(pygame.KEYDOWN, unicode="", key=code, scancode=code, mod=mods, repeat=False, test=True)
+        pygame.event.Event(pygame.KEYDOWN, unicode=u or "", key=code, scancode=code, mod=mods, repeat=False, test=True)
     )
-
-    if pygame.key.text_input_active() and (u is not None):
-        pygame.event.post(pygame.event.Event(pygame.TEXTINPUT, text=u, test=True))
 
 
 def up(keysym: str) -> None:
