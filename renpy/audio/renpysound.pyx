@@ -52,7 +52,7 @@ from __future__ import print_function
 
 from libc.stdint cimport uintptr_t
 
-from renpy.pygame.iostream cimport SDL_IOStreamFromPython
+from renpy.pygame.iostream cimport open_io
 from renpy.pygame.sdl cimport SDL_IOStream
 
 cdef extern from "renpysound_core.h":
@@ -62,11 +62,13 @@ cdef extern from "renpysound_core.h":
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
+    int RPS_get_state(int channel)
     object RPS_playing_name(int channel)
     void RPS_fadeout(int channel, int ms)
     void RPS_pause(int channel, int pause)
     void RPS_unpause_all_at_start()
     void RPS_global_pause(int pause)
+    void RPS_seek(int channel, double position)
     int RPS_get_pos(int channel)
     double RPS_get_duration(int channel)
     void RPS_set_endevent(int channel, int event)
@@ -144,15 +146,10 @@ def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=
         The audio filter to apply when the file is being played.
     """
 
-    cdef SDL_IOStream *rw
-
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    rw = SDL_IOStreamFromPython(file)
-
-    if rw == NULL:
-        raise Exception("Could not create IOStream.")
+    cdef SDL_IOStream *rw = open_io(file).take()
 
     if tight:
         tight = 1
@@ -172,15 +169,10 @@ def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start
     The other arguments are as for play.
     """
 
-    cdef SDL_IOStream *rw
-
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    rw = SDL_IOStreamFromPython(file)
-
-    if rw == NULL:
-        raise Exception("Could not create IOStream.")
+    cdef SDL_IOStream *rw = open_io(file).take()
 
     if tight:
         tight = 1
@@ -223,6 +215,14 @@ def queue_depth(channel):
     return RPS_queue_depth(channel)
 
 
+def get_state(channel):
+    """Returns the backend lifecycle state for `channel` as an integer."""
+
+    rv = RPS_get_state(channel)
+    check_error()
+    return rv
+
+
 def playing_name(channel):
     """
     Returns the `name`  argument of the playing sound. This was passed into
@@ -261,6 +261,13 @@ def global_pause(pause):
     """
 
     RPS_global_pause(pause)
+
+
+def seek(channel, position):
+    """Seeks the playing media on `channel` to `position` seconds."""
+
+    RPS_seek(channel, position)
+    check_error()
 
 
 def fadeout(channel, delay):
@@ -420,7 +427,10 @@ NODROP_VIDEO = 1
 # The video will be played, allowing framedrops.
 DROP_VIDEO = 2
 
-def set_video(channel, video, loop=False):
+# Is it okay to give YUV frames?
+YUV_VIDEO = 4
+
+def set_video(channel, video, loop=False, yuv=False):
     """
     Sets a flag that determines if this channel will attempt to decode video.
 
@@ -429,15 +439,22 @@ def set_video(channel, video, loop=False):
 
     `loop`
         If true, the video file will loop.
+
+    `yuv`
+        If true, the video is eligible to be decoded in YUV format.
     """
 
     if video == NODROP_VIDEO:
-        RPS_set_video(channel, NODROP_VIDEO)
+        flags = NODROP_VIDEO
     elif video:
-        RPS_set_video(channel, DROP_VIDEO)
+        flags = DROP_VIDEO
     else:
-        RPS_set_video(channel, NO_VIDEO)
+        flags = NO_VIDEO
 
+    if yuv:
+        flags |= YUV_VIDEO
+
+    RPS_set_video(channel, flags)
 
 def init(freq, stereo, samples, status=False, equal_mono=False, linear_fades=False):
     """

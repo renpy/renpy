@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # The path to a copy of Atom that's been installed globally, if one exists.
-# This is overidden by RENPY_ATOM, if set. If either is given, that is used
+# This is overridden by RENPY_ATOM, if set. If either is given, that is used
 # and no special handing of the .atom directory is performed.
 ATOM = None
 

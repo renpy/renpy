@@ -27,6 +27,11 @@ cdef class Matrix:
     # When this matrix is generated, where it was generated from.
     cdef public object origin
 
+    # When a callable matrix is interpolated, the effective value that produced
+    # this matrix. Used so a subsequent (possibly interrupted) interpolation can
+    # continue from the current value rather than the previous target.
+    cdef public object origin_value
+
     # The inverse of this Matrix.
     cdef Matrix inverse_cache
 

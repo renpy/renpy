@@ -1185,9 +1185,19 @@ class Button(renpy.display.layout.Window):
 
         # If clicked,
         if (self.clicked is not None) and map_event(ev, "button_select"):
+            if (ev.type == pygame.MOUSEBUTTONUP) and (
+                getattr(ev, "_button_press_focus", None) != self.full_focus_name
+            ):
+                raise renpy.display.core.IgnoreEvent()
+
             return handle_click(self.clicked)
 
         if (self.alternate is not None) and map_event(ev, "button_alternate"):
+            if (ev.type == pygame.MOUSEBUTTONUP) and (
+                getattr(ev, "_button_press_focus", None) != self.full_focus_name
+            ):
+                raise renpy.display.core.IgnoreEvent()
+
             return handle_click(self.alternate)
 
         return None

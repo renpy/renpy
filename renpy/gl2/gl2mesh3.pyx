@@ -135,6 +135,9 @@ cdef class Mesh3(Mesh):
         rv.triangle[4] = 2
         rv.triangle[5] = 3
 
+        rv.point_version = 1
+        rv.triangle_version = 1
+
         return rv
 
     @staticmethod
@@ -185,6 +188,10 @@ cdef class Mesh3(Mesh):
         rv.triangle[4] = 2
         rv.triangle[5] = 3
 
+        rv.point_version = 1
+        rv.triangle_version = 1
+        rv.attribute_version = 1
+
         return rv
 
     cpdef Mesh3 crop(Mesh3 self, Polygon p):
@@ -192,7 +199,14 @@ cdef class Mesh3(Mesh):
         Crops this mesh against Polygon `p`, and returns a new Mesh3.
         """
 
-        return crop_mesh(self, p)
+        cdef Mesh3 rv = crop_mesh(self, p)
+
+        if rv is not self:
+            rv.point_version = 1
+            rv.triangle_version = 1
+            rv.attribute_version = 1
+
+        return rv
 
     def get_points(Mesh3 self):
         """

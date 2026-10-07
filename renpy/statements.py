@@ -188,7 +188,7 @@ def register(
         that would run after this statement.
 
         This should be called to predict the statements that can run after
-        this one. It's expected to return a list of of labels or SubParse
+        this one. It's expected to return a list of labels or SubParse
         objects. This is not called if `predict_all` is true.
 
     `execute_default`

@@ -158,11 +158,11 @@
 
     # 00action_file.rpy:344
     old "Save slot %s: [text]"
-    new "Guardar partida %s: [text]"
+    new "Ranura de guardado %s: [text]"
 
     # 00action_file.rpy:459
     old "Delete slot [text]"
-    new "Borrar partida [text]"
+    new "Borrar ranura [text]"
 
     # 00action_file.rpy:539
     old "File page auto"
@@ -174,11 +174,11 @@
 
     # 00action_file.rpy:543
     old "File page [text]"
-    new "Página de archivos [text]"
+    new "Página de guardado [text]"
 
     # 00action_file.rpy:733
     old "Next file page."
-    new "Página siguiente."
+    new "Siguiente página de guardado."
 
     # 00action_file.rpy:797
     old "Previous file page."
@@ -302,7 +302,7 @@
 
     # 00gui.rpy:372
     old "Are you sure you want to overwrite your save?"
-    new "¿Seguro que quieres sobreescribir esta partida?"
+    new "¿Seguro que quieres sobrescribir tu partida?"
 
     # 00gui.rpy:373
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
@@ -362,15 +362,15 @@
 
     # 00library.rpy:152
     old "viewport"
-    new "viewport"
+    new "'viewport'"
 
     # 00library.rpy:153
     old "horizontal scroll"
-    new "deslizamiento horizontal"
+    new "desplazamiento horizontal"
 
     # 00library.rpy:154
     old "vertical scroll"
-    new "deslizamiento vertical"
+    new "desplazamiento vertical"
 
     # 00library.rpy:155
     old "activate"
@@ -394,7 +394,7 @@
 
     # 00library.rpy:279
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "Este programa contiene {i}software{/i} libre sujeto a diversas licencias, incluidas la licencia MIT y la {i}GNU Lesser General Public License{/i} (Licencia Pública General Reducida de GNU). Puedes encontrar la lista completa de {i}software{/i}, con enlaces al código fuente completo, {a=https://www.renpy.org/l/license}aquí (en inglés){/a}."
+    new "Este programa contiene {i}software{/i} libre sujeto a diversas licencias, incluidas la licencia MIT y la {i}GNU Lesser General Public License{/i} (Licencia Pública General Reducida de GNU). Puedes encontrar la lista completa de {i}software{/i}, con enlaces al código fuente completo, {a=https://www.renpy.org/l/license}aquí{/a} (en inglés)."
 
     # 00preferences.rpy:207
     old "display"
@@ -410,7 +410,7 @@
 
     # 00preferences.rpy:230
     old "video sprites"
-    new "sprites de vídeo"
+    new "sprites de video"
 
     # 00preferences.rpy:239
     old "show empty window"
@@ -422,11 +422,11 @@
 
     # 00preferences.rpy:256
     old "joystick"
-    new "mando"
+    new "control"
 
     # 00preferences.rpy:256
     old "joystick..."
-    new "mando..."
+    new "control..."
 
     # 00preferences.rpy:263
     old "skip"
@@ -434,7 +434,7 @@
 
     # 00preferences.rpy:266
     old "skip unseen [text]"
-    new "saltar no visto [text]"
+    new "saltar [text] no visto"
 
     # 00preferences.rpy:271
     old "skip unseen text"
@@ -446,27 +446,27 @@
 
     # 00preferences.rpy:277
     old "after choices"
-    new "tras elecciones"
+    new "despues de elecciones"
 
     # 00preferences.rpy:284
     old "skip after choices"
-    new "saltar tras elecciones"
+    new "saltar despues de elecciones"
 
     # 00preferences.rpy:286
     old "auto-forward time"
-    new "tiempo de autoavance"
+    new "tiempo de avance automático"
 
     # 00preferences.rpy:300
     old "auto-forward"
-    new "autoavance"
+    new "avance automático"
 
     # 00preferences.rpy:307
     old "Auto forward"
-    new "Autoavance"
+    new "Avance automático"
 
     # 00preferences.rpy:310
     old "auto-forward after click"
-    new "autoavanzar después del clic"
+    new "avanzar automáticamente después del clic"
 
     # 00preferences.rpy:319
     old "automatic move"
@@ -482,15 +482,15 @@
 
     # 00preferences.rpy:346
     old "self voicing"
-    new "voz automaitica"
+    new "voz automática"
 
     # 00preferences.rpy:355
     old "clipboard voicing"
-    new "voz en portapapeles"
+    new "voz por portapapeles"
 
     # 00preferences.rpy:364
     old "debug voicing"
-    new "depurar voz"
+    new "depuración de voz"
 
     # 00preferences.rpy:373
     old "emphasize audio"
@@ -542,11 +542,11 @@
 
     # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "'Portapapeles a voz' activado. Pulsa 'Mayús.+C' para desactivarlo."
+    new "Voz por portapapeles activada. Presiona 'Mayús+C' para desactivarla."
 
     # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Voz automática dirá \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivarla."
+    new "La voz automática dirá \"[renpy.display.tts.last]\". Presiona 'Alt+Shift+V' para desactivarla."
 
     # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
@@ -562,11 +562,11 @@
 
     # 00updater.rpy:491
     old "An error is being simulated."
-    new "Se simula un error."
+    new "Se está simulando un error."
 
     # 00updater.rpy:672
     old "Either this project does not support updating, or the update status file was deleted."
-    new "O bien este proyecto no es compatible con la actualización o el archivo de estado de la actualización se ha eliminado."
+    new "Este proyecto no admite actualizaciones, o el archivo de estado de la actualización se eliminó."
 
     # 00updater.rpy:686
     old "This account does not have permission to perform an update."
@@ -574,23 +574,23 @@
 
     # 00updater.rpy:689
     old "This account does not have permission to write the update log."
-    new "Esta cuenta no tiene permiso para escribir en el registro de actualización."
+    new "Esta cuenta no tiene permiso para escribir el registro de actualización."
 
     # 00updater.rpy:716
     old "Could not verify update signature."
-    new "No se pudo verificar la actualización de firmas."
+    new "No se pudo verificar la firma de la actualización."
 
     # 00updater.rpy:991
     old "The update file was not downloaded."
-    new "El archivo de actualización no se ha descargado."
+    new "El archivo de actualización no se descargó."
 
     # 00updater.rpy:1009
     old "The update file does not have the correct digest - it may have been corrupted."
-    new "El archivo de actualización no tiene el 'digest' correcto - es posible que esté dañado."
+    new "El archivo de actualización no tiene el compendio correcto - es posible que esté dañado."
 
     # 00updater.rpy:1065
     old "While unpacking {}, unknown type {}."
-    new "Tipo desconocido {1} al desempaquetar {0}."
+    new "Al desempaquetar {}, tipo desconocido {}."
 
     # 00updater.rpy:1412
     old "Updater"
@@ -606,27 +606,27 @@
 
     # 00updater.rpy:1427
     old "Preparing to download the updates."
-    new "Preparando para descargar la actualización."
+    new "Preparando la descarga de las actualizaciones."
 
     # 00updater.rpy:1429
     old "Downloading the updates."
-    new "Descargando la actualización."
+    new "Descargando las actualizaciones."
 
     # 00updater.rpy:1431
     old "Unpacking the updates."
-    new "Desempaquetando la actualización."
+    new "Desempaquetando las actualizaciones."
 
     # 00updater.rpy:1435
     old "The updates have been installed. The program will restart."
-    new "La actualización ha sido instalada. El programa se reiniciará."
+    new "Se han instalado las actualizaciones. El programa se reiniciará."
 
     # 00updater.rpy:1437
     old "The updates have been installed."
-    new "La actualización ha sido instalada."
+    new "Se han instalado las actualizaciones."
 
     # 00updater.rpy:1439
     old "The updates were cancelled."
-    new "La actualización ha sido cancelada."
+    new "Se han cancelado las actualizaciones."
 
     # 00gallery.rpy:573
     old "Image [index] of [count] locked."
@@ -648,15 +648,13 @@
     old "return"
     new "volver"
 
-translate spanish strings:
-
     # 00accessibility.rpy:76
     old "Font Override"
     new "Sobreescribir fuente"
 
     # 00accessibility.rpy:80
     old "Default"
-    new "Por defecto"
+    new "Predeterminada"
 
     # 00accessibility.rpy:84
     old "DejaVu Sans"
@@ -672,11 +670,11 @@ translate spanish strings:
 
     # 00accessibility.rpy:100
     old "Reset"
-    new "Reiniciar"
+    new "Restablecer"
 
     # 00accessibility.rpy:105
     old "Line Spacing Scaling"
-    new "Escalado del espacio de línea"
+    new "Escalado del interlineado"
 
     # 00accessibility.rpy:117
     old "Self-Voicing"
@@ -684,7 +682,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:121
     old "Off"
-    new "Apagado"
+    new "Desactivada"
 
     # 00accessibility.rpy:125
     old "Text-to-speech"
@@ -696,7 +694,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:133
     old "Debug"
-    new "Depurar"
+    new "Depuración"
 
     # 00action_file.rpy:434
     old "Load slot %s: [text]"
@@ -712,7 +710,7 @@ translate spanish strings:
 
     # 00preferences.rpy:441
     old "font line spacing"
-    new "fuente de espacio de líneas"
+    new "interlineado de fuente"
 
     # _developer\developer.rpym:63
     old "Image Attributes"
@@ -720,7 +718,7 @@ translate spanish strings:
 
     # _developer\developer.rpym:90
     old "[name] [attributes] (hidden)"
-    new "[name] [attributes] (hidden)"
+    new "[name] [attributes] (oculto)"
 
     # _developer\developer.rpym:94
     old "[name] [attributes]"
@@ -740,11 +738,11 @@ translate spanish strings:
 
     # renpy/common/00accessibility.rpy:193
     old "Self-Voicing Volume Drop"
-    new "Caída de volumen de voz automática"
+    new "Reducción de volumen de voz automática"
 
     # renpy/common/00preferences.rpy:384
     old "self voicing volume drop"
-    new "Caída de volumen de voz automática"
+    new "reducción de volumen de voz automática"
 
     # renpy/common/00preferences.rpy:464
     old "system cursor"
@@ -788,11 +786,11 @@ translate spanish strings:
 
     # renpy/common/00gui.rpy:455
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
-    new "Este archivo se creó en otro dispositivo. Los archivos de guardado maliciosamente creados pueden dañar tu computadora. Confías en el creador de este archivo y en todos los que podrían haberlo modificado?"
+    new "Este archivo se creó en otro dispositivo. Los archivos de guardado maliciosamente creados pueden dañar tu computadora. ¿Confías en el creador de este archivo y en todos los que podrían haberlo modificado?"
 
     # renpy/common/00gui.rpy:456
     old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
-    new "¿Confías en el dispositivo en el que se creó el archivo de  guardado? Sólo debes elegir sí si eres el único usuario del dispositivo."
+    new "¿Confías en el dispositivo en el que se creó el archivo de guardado? Sólo debes elegir sí si eres el único usuario del dispositivo."
 
     # renpy/common/00preferences.rpy:520
     old "web cache preload"
@@ -804,15 +802,15 @@ translate spanish strings:
 
     # renpy/common/00director.rpy:1748
     old "Click to toggle attribute, right click to toggle negative attribute."
-    new "Clic para cambiar el atributo, Clic derecho para cambiar el atributo a negativo."
+    new "Haz clic para cambiar el atributo, clic derecho para cambiar el atributo negativo."
 
     # renpy/common/00director.rpy:1771
     old "Click to set transform, right click to add to transform list."
-    new "Clic para establecer la transformación, clic derecho para añadir a la lista de transformaciones."
+    new "Haz clic para establecer la transformación, clic derecho para añadir a la lista de transformaciones."
 
     # renpy/common/00director.rpy:1792
     old "Click to set, right click to add to behind list."
-    new "Clic para fijar, clic derecho para añadir a detrás de la lista."
+    new "Haz clic para fijar, clic derecho para añadir a la lista de detrás."
 
     # renpy/common/00preferences.rpy:528
     old "audio when unfocused"
@@ -824,7 +822,7 @@ translate spanish strings:
 
     # renpy/common/00sync.rpy:58
     old "Sync downloaded."
-    new "Sincronización descargada"
+    new "Sincronización descargada."
 
     # renpy/common/00sync.rpy:178
     old "Could not connect to the Ren'Py Sync server."
@@ -844,7 +842,7 @@ translate spanish strings:
 
     # renpy/common/00sync.rpy:397
     old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
-    new "Ingresa la ID de sincronización SI que generaste.\nNunca ingreses una ID de sincronización que no creaste."
+    new "Ingresa el ID de sincronización que generaste.\nNunca ingreses un ID de sincronización que no hayas creado tú."
 
     # renpy/common/00sync.rpy:416
     old "The sync ID is not in the correct format."
@@ -852,7 +850,7 @@ translate spanish strings:
 
     # renpy/common/00sync.rpy:436
     old "The sync could not be decrypted."
-    new "No se pudo descifrar la ID de sincronización."
+    new "No se pudo descifrar la sincronización."
 
     # renpy/common/00sync.rpy:459
     old "The sync belongs to a different game."
@@ -864,15 +862,15 @@ translate spanish strings:
 
     # renpy/common/00sync.rpy:517
     old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
-    new "Esto cargará tus archivos guardados en el {a=https://sync.renpy.org}Servidor Ren'Py Sync{/a}..\n¿Quieres continuar?"
+    new "Esto cargará tus partidas guardadas en el {a=https://sync.renpy.org}Servidor Ren'Py Sync{/a}.\n¿Quieres continuar?"
 
     # renpy/common/00sync.rpy:546
     old "Enter Sync ID"
-    new "Ingrese ID de Sync"
+    new "Ingresa el Sync ID"
 
     # renpy/common/00sync.rpy:557
     old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
-    new "Esto contactará con el {a=https://sync.renpy.org}Servidor Ren'Py Sync{/a}."
+    new "Esto se pondrá en contacto con el {a=https://sync.renpy.org}Servidor Ren'Py Sync{/a}."
 
     # renpy/common/00sync.rpy:584
     old "Sync Success"
@@ -880,11 +878,11 @@ translate spanish strings:
 
     # renpy/common/00sync.rpy:587
     old "The Sync ID is:"
-    new "El ID de Sync es:"
+    new "El Sync ID es:"
 
     # renpy/common/00sync.rpy:593
     old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
-    new "Puede usar esta ID para descargar su guardado en otro dispositivo.\nEsta sincronización caducará en una hora.\nRenPy Sync está para {a=https://www.renpy.org/sponsors.html}los patrocinadores de Ren'Py{/a}."
+    new "Puedes usar este ID para descargar tu partida guardada en otro dispositivo.\nEsta sincronización caducará en una hora.\nRen'Py Sync es gracias a {a=https://www.renpy.org/sponsors.html}los patrocinadores de Ren'Py{/a}."
 
     # renpy/common/00sync.rpy:619
     old "Sync Error"
@@ -920,7 +918,7 @@ translate spanish strings:
 
     # renpy/common/00updater.rpy:504
     old "No update methods found."
-    new "Métodos de actualización no encontrados."
+    new "No se encontraron métodos de actualización."
 
     # renpy/common/00updater.rpy:551
     old "Could not download file list: "
@@ -936,11 +934,11 @@ translate spanish strings:
 
     # renpy/common/00updater.rpy:2074
     old "Downloading the game data."
-    new ""
+    new "Descargando los datos del juego."
 
     # renpy/common/00updater.rpy:2076
     old "The game data has been downloaded."
-    new "Descarga de los datos del juego."
+    new "Se han descargado los datos del juego."
 
     # renpy/common/00updater.rpy:2078
     old "An error occured when trying to download game data:"
@@ -956,7 +954,7 @@ translate spanish strings:
 
     # renpy/common/00accessibility.rpy:122
     old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
-    new "Menú de accesibilidad. Utilice las flechas arriba y abajo para navegar y la tecla Entrar para activar botones y barras."
+    new "Menú de accesibilidad. Usa las flechas arriba y abajo para navegar y la tecla Intro para activar botones y barras."
 
     # renpy/common/00accessibility.rpy:199
     old "Self-voicing support is limited when using a touch screen."
@@ -968,27 +966,27 @@ translate spanish strings:
 
     # renpy/common/00preferences.rpy:440
     old "self voicing enable"
-    new "voz automática activada"
+    new "activar voz automática"
 
     # renpy/common/00preferences.rpy:442
     old "self voicing disable"
-    new "voz automática desactivada"
+    new "desactivar voz automática"
 
     # renpy/common/00preferences.rpy:457
     old "clipboard voicing enable"
-    new "portapapeles de voz activada"
+    new "activar voz por portapapeles"
 
     # renpy/common/00preferences.rpy:459
     old "clipboard voicing disable"
-    new "portapapeles de voz desactivada"
+    new "desactivar voz por portapapeles"
 
     # renpy/common/00preferences.rpy:466
     old "debug voicing enable"
-    new "depuración de voz activada"
+    new "activar depuración de voz"
 
     # renpy/common/00preferences.rpy:468
     old "debug voicing disable"
-    new "depuración de voz desactivada"
+    new "desactivar depuración de voz"
 
     # renpy/common/00translation.rpy:63
     old "Translation identifier: [identifier]"
@@ -996,5 +994,36 @@ translate spanish strings:
 
     # renpy/common/00translation.rpy:84
     old " translates [tl.filename]:[tl.linenumber]"
-    new " traducciones [tl.filename]:[tl.linenumber]"
+    new " traduce [tl.filename]:[tl.linenumber]"
 
+    # renpy/common/000statements.rpy:28
+    old "Click to play the video."
+    new "Haz clic para reproducir el video."
+
+    # renpy/common/00accessibility.rpy:180
+    old "Mono Audio"
+    new "Audio Mono"
+
+    # renpy/common/00accessibility.rpy:246
+    old "Kerning"
+    new "Interletraje"
+
+    # renpy/common/00accessibility.rpy:288
+    old "Self-Voicing and Audio"
+    new "Voz automática y audio"
+
+    # renpy/common/00accessibility.rpy:292
+    old "Text"
+    new "Texto"
+
+    # renpy/common/00preferences.rpy:602
+    old "mono audio"
+    new "audio mono"
+
+    # renpy/common/00preferences.rpy:611
+    old "font kerning"
+    new "interletraje de fuente"
+
+    # renpy/common/00updater.rpy:1992
+    old "An error occurred when trying to download game data:"
+    new "Ha ocurrido un error al intentar descargar los datos del juego:"

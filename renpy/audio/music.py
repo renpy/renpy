@@ -59,6 +59,8 @@ def play(
     `loop`
         If this is True, the tracks will loop while they are the last thing
         in the queue.
+        If this is False, the tracks will play only once.
+        If None, the default of the channel is used.
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
@@ -185,6 +187,8 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
     `loop`
         If this is True, the tracks will loop while they are the last thing
         in the queue.
+        If this is False, the tracks will play only once.
+        If None, the default of the channel is used.
 
     `clear_queue`
         If True, then the queue is cleared, making these files the files that
@@ -379,6 +383,30 @@ def get_delay(time, channel="music"):
         return None
 
 
+def seek(position, channel="music"):
+    """
+    :doc: audio
+
+    Seeks the media currently playing on `channel` to `position` seconds.
+    This preserves the active decoder and queued tracks, unlike restarting
+    playback with an audio ``<from ...>`` specifier. If no media is playing,
+    this function has no effect. Negative positions are treated as zero.
+
+    `position`
+        The absolute position, in seconds, within the currently playing
+        media.
+
+    `channel`
+        The channel to seek. Defaults to ``"music"``.
+    """
+
+    try:
+        get_channel(channel).seek(position)
+    except Exception:
+        if renpy.config.debug_sound:
+            raise
+
+
 def get_pos(channel="music"):
     """
     :doc: audio
@@ -444,6 +472,24 @@ def get_playing(channel="music"):
             raise
 
         return None
+
+
+def get_state(channel="music"):
+    """
+    :doc: audio
+
+    Returns the lifecycle state of the channel as one of ``idle``,
+    ``playing``, ``paused``, or ``ended``. ``ended`` means natural EOF was
+    reached while the backend may retain the decoder for an explicit seek.
+    """
+
+    try:
+        return renpy.audio.audio.get_channel(channel).get_state()
+    except Exception:
+        if renpy.config.debug_sound:
+            raise
+
+        return renpy.audio.audio.CHANNEL_STATE_IDLE
 
 
 def is_playing(channel="music"):

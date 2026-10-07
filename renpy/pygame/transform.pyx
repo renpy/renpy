@@ -147,7 +147,7 @@ def rotate(Surface surface, angle):
 
 def rotozoom(Surface surface, double angle, double scale, int smooth=1):
     cdef SDL_Surface *rsurf = NULL
-    cdef Surface rv
+    cdef Surface rv = Surface(())
 
     with nogil:
         rsurf = rotozoomSurface(surface.sdl_surface, angle, scale, smooth)
@@ -155,7 +155,6 @@ def rotozoom(Surface surface, double angle, double scale, int smooth=1):
     if rsurf == NULL:
         raise error()
 
-    rv = Surface(())
     rv.take_surface(rsurf)
 
     return rv
@@ -187,7 +186,7 @@ def smoothscale(Surface surface, size, Surface DestSurface=None):
     cdef double scale_y = size[1] / <double>surface.sdl_surface.h
 
     cdef SDL_Surface *rsurf = NULL
-    cdef Surface rv
+    cdef Surface rv = Surface(())
 
     with nogil:
         rsurf = rotozoomSurfaceXY(surface.sdl_surface, 0.0, scale_x, scale_y, SMOOTHING_ON)
@@ -195,7 +194,6 @@ def smoothscale(Surface surface, size, Surface DestSurface=None):
     if rsurf == NULL:
         raise error()
 
-    rv = Surface(())
     rv.take_surface(rsurf)
 
     # This is inefficient.

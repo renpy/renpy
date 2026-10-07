@@ -126,7 +126,7 @@ fast_skipping = False
 
 # Are we currently skipping? If so, how fast?
 # May be "slow", "fast", or None.
-skipping = None
+skipping: str | None = None
 
 # The delay while we are skipping say statements.
 skip_delay = 5
@@ -452,12 +452,14 @@ imagemap_cache = True
 # Callbacks that are called in order to predict images.
 predict_callbacks = []
 
-# Callbacks that are called on expensive idle_frame one per tick
-# to predict screens or other hard stuff.
+# No longer used.
 expensive_predict_callbacks = []
 
 # Should screens be predicted?
 predict_screens = True
+
+# Should shaders be predicted?
+predict_shaders = True
 
 # Should we use the new choice screen format?
 choice_screen_chosen = True
@@ -1184,6 +1186,11 @@ log_gl_extensions = False
 # Should GL shaders be logged to log.txt
 log_gl_shaders = False
 
+# The GLSL dialect shader parts are written in when they don't pass glsl to
+# renpy.register_shader. 300 selects GLSL ES 3.00 and 100 selects GLSL ES
+# 1.00. Games declaring compatibility with 8.5 or earlier get 100.
+glsl_version = 300
+
 # OpenGL Blend Funcs
 gl_blend_func = {}
 
@@ -1257,7 +1264,7 @@ tts_queue = True
 log_live2d_loading = False
 
 # Should Ren'Py debug prediction?
-debug_prediction = False
+debug_prediction = "RENPY_DEBUG_PREDICTION" in os.environ
 
 # Should mouse events that cause a window to gain focus be passed through.
 mouse_focus_clickthrough = False
@@ -1294,7 +1301,7 @@ call_screen_roll_forward = False
 
 # A function that's called with ("", interact=False) when no window is
 # displayed during a choice menu.
-choice_empty_window = None
+choice_empty_window: Callable[..., Any] | None = None
 
 # The encoding that's used by renpy.open_file by default. False
 # means to use binary mode.
@@ -1703,6 +1710,12 @@ A list of callbacks that are called at the very end of the init phase, before th
 first time. These are run just after defaults are set up, but only once, and before script statements are run.
 """
 
+minimum_prediction_time_ns: int = 1000000
+"""
+The minimum amount of time Ren'Py will spend on predicting images even if there is a
+frame to be drawn, in nanoseconds.
+"""
+
 
 del os
 del collections
@@ -1756,5 +1769,5 @@ def post_init():
     if renpy.config.raise_image_exceptions is None:
         renpy.config.raise_image_exceptions = renpy.config.developer
 
-    if renpy.config.raise_image_load_exceptions:
+    if renpy.config.raise_image_load_exceptions is None:
         renpy.config.raise_image_load_exceptions = renpy.config.developer

@@ -473,6 +473,9 @@ init -1500 python in build:
     # The itch.io project name.
     itch_project = None
 
+    # The Wavedash game id.
+    wavedash_id = None
+
     # Maps from files to itch.io channels.
     itch_channels = {
         "*-all.zip" : "win-osx-linux",
@@ -602,6 +605,9 @@ init -1500 python in build:
 
         if itch_project:
             rv["itch_project"] = itch_project
+
+        if wavedash_id:
+            rv["wavedash_id"] = wavedash_id
 
         rv["itch_channels"] = itch_channels
 

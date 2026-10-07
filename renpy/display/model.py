@@ -159,6 +159,11 @@ class Model(renpy.display.displayable.Displayable):
         self.shaders.append(shader)
         return self
 
+    def predict_shaders(self, shaders):
+        renpy.gl2.gl2shadercache.predict_shader(shaders + tuple(self.shaders))
+
+        return ()
+
     def uniform(self, name, value):
         """
         :doc: model_displayable method

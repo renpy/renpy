@@ -1004,7 +1004,7 @@ Button Style Properties
     focus.
 
     This can be useful when buttons overlap. The keyboard focus algorithm
-    doesn't work with overlapping buttons, and so this can be used to to
+    doesn't work with overlapping buttons, and so this can be used to
     shrink the size of the buttons internally, allowing focus to work.
 
 .. style-property:: key_events boolean

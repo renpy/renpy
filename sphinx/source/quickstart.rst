@@ -204,7 +204,7 @@ character, and to change the color of the character's name.
         m "Sure!"
 
 
-The first and and second lines define characters. The first line
+The first and second lines define characters. The first line
 defines a character with the short name of "s", the long name
 "Sylvie", with a name that is shown in a greenish color. (The colors
 are red-green-blue hex triples, as used in web pages.)

@@ -28,6 +28,8 @@ from renpy.display.render cimport Render
 
 from renpy.uguu.gl cimport *
 
+cdef void clear_color_buffer(int x, int y, int width, int height) noexcept nogil
+
 cdef class GL2Draw:
 
 
@@ -51,6 +53,7 @@ cdef class GL2Draw:
     cdef public tuple default_clip
     cdef public float dpi_scale
     cdef public object shader_cache
+    cdef public set gl_extensions
     cdef public bint ever_set_position
 
     cdef public tuple clip_rtt_box
@@ -94,6 +97,10 @@ cdef class GL2Draw:
 
     cdef public GLStateCache state_cache
 
+    # The vertex array object bound for the lifetime of a core-profile
+    # context, which has no default one.
+    cdef GLuint default_vao
+
     # The default FBO.
     cdef public GLuint default_fbo
 
@@ -102,6 +109,10 @@ cdef class GL2Draw:
 
     # Was the window maximized?
     cdef public bint maximized
+
+    cdef bint context_uses_core_profile(self, object version) except *
+
+    cdef void create_default_vao(self) noexcept nogil
 
     cdef void change_fbo(self, GLuint fbo)
 

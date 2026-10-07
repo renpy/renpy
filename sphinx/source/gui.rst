@@ -1016,7 +1016,7 @@ has a name (an empty name, like " ", counts).
     The horizontal alignment of the character's name. This can be 0.0 for left-
     aligned, 0.5 for centered, and 1.0 for right-aligned. (It's almost always
     0.0 or 0.5.) This is used for both the position of the namebox relative
-    to gui.name_xpos, and to select the side of of the namebox that is aligned
+    to gui.name_xpos, and to select the side of the namebox that is aligned
     with xpos.
 
 .. var:: gui.namebox_width = None

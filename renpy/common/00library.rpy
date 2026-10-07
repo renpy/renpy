@@ -219,6 +219,10 @@ init -1700 python:
 
         record_say = False
 
+        @property
+        def warp(self):
+            return renpy.exports.can_warp_say(self.get_who())
+
         def get_extend_text(self, what):
             return config.extend_interjection + what
 
@@ -288,30 +292,6 @@ init -1700 python:
     config.predict_statements_callback = _predict_statements
 
 
-    # Prediction of screens.
-    def _predict_screens():
-
-        for i in config.overlay_screens:
-            renpy.predict_screen(i)
-
-        s = _game_menu_screen
-
-        if s is None:
-            return
-
-        if renpy.has_screen(s):
-            renpy.predict_screen(s)
-            return
-
-        if s.endswith("_screen"):
-            s = s[:-7]
-            if renpy.has_screen(s):
-                renpy.predict_screen(s)
-                return
-
-    config.expensive_predict_callbacks.append(_predict_screens)
-
-
     ##########################################################################
     # Name-only say statements.
 
@@ -328,6 +308,8 @@ init -1700 python:
     def say(who, what, interact=True, *args, **kwargs):
         who = Character(who, kind=name_only)
         who(what, interact=interact, *args, **kwargs)
+
+    say.warp = True
 
 
     ##########################################################################

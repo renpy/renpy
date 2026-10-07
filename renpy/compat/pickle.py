@@ -538,7 +538,7 @@ class ModuleWrapper(ast.Module):
         self.body = state["body"]
         self.type_ignores = []
 
-        # this is the root node, so now is a good moment do do some transforms we couldn't
+        # this is the root node, so now is a good moment to do some transforms we couldn't
         # do earlier because we weren't sure of the node type to be created.
 
         transformer = AstFixupTransformer()

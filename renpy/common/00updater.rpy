@@ -815,8 +815,8 @@ init -1500 python in updater:
 
                 try:
 
-                    import renpy.ecsign
-                    verifying_key = renpy.ecsign.pem_to_der(open(key, "rb").read())
+                    import renpy.ecsign as ecdsa
+                    verifying_key = ecdsa.VerifyingKey.from_pem(open(key, "rb").read())
 
                     url = urlparse.urljoin(self.url, "updates.ecdsa")
                     f = urlopen(url)
@@ -826,7 +826,7 @@ init -1500 python in updater:
                         if not signature:
                             break
 
-                        if renpy.ecsign.verify_data(updates_json, verifying_key, signature):
+                        if verifying_key.verify(signature, updates_json):
                             verified = True
 
                     self.log.write("Verified with ECDSA.\n")

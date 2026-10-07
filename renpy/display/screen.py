@@ -641,9 +641,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         return rv
 
-    def update(self):
+    def update_generator(self, yield_prediction=False):
         if self in updated_screens:
-            return
+            return self.widgets
 
         updated_screens.add(self)
 
@@ -704,17 +704,24 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         # Evaluate the screen.
         try:
-            renpy.ui.detached()
-            self.child = renpy.ui.default_fixed(focus="_screen_" + "_".join(self.screen_name))
-            self.children = [self.child]
-
             self.scope["_scope"] = self.scope
             self.scope["_name"] = NAME
             self.scope["_debug"] = debug
 
-            self.screen.function(**self.scope)
+            if self.screen.ast:
+                self.child = renpy.display.layout.MultiBox(layout="fixed", focus="_screen_" + "_".join(self.screen_name))
+                self.children = [self.child]
 
-            renpy.ui.close()
+                children = yield from self.screen.ast.call_generator(_yield_prediction=yield_prediction, **self.scope)
+                for i in children:
+                    self.child.add(i)
+            else:
+                self.child = renpy.ui.default_fixed(focus="_screen_" + "_".join(self.screen_name))
+                self.children = [self.child]
+
+                renpy.ui.detached()
+                self.screen.function(**self.scope)
+                renpy.ui.close()
 
         finally:
             # Safe removal as to not reraise another exception and lose the last one
@@ -758,6 +765,19 @@ class ScreenDisplayable(renpy.display.layout.Container):
             self.phase = UPDATE
 
         return self.widgets
+
+    def update(self):
+        for _ in self.update_generator(yield_prediction=False):
+            pass
+
+        return self.widgets
+
+    def update_task(self):
+        for _ in self.update_generator(yield_prediction=True):
+            yield from renpy.display.predict.predict_sleep()
+
+        return self.widgets
+
 
     def render(self, w, h, st, at):
         if not self.child:
@@ -846,7 +866,10 @@ def push_current_screen(screen):
 
 def pop_current_screen():
     global _current_screen
-    _current_screen = current_screen_stack.pop()
+    if current_screen_stack:
+        _current_screen = current_screen_stack.pop()
+    else:
+        _current_screen = None
 
 
 # A map from (screen_name, variant) tuples to screen.
@@ -1390,7 +1413,7 @@ def show_screen(_screen_name, *_args, **kwargs):
         sls.shown.predict_show(_layer, name, True)
 
 
-def predict_screen(_screen_name, *_args, **kwargs):
+def predict_screen_task(_screen_name, *_args, **kwargs):
     """
     Predicts the displayables that make up the given screen.
 
@@ -1442,7 +1465,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
     try:
         d = ScreenDisplayable(screen, None, None, _widget_properties, scope)
         d.cache = cache_get(screen, _args, kwargs)
-        d.update()
+        yield from d.update_task()
         cache_put(screen, _args, kwargs, d.cache)
 
         renpy.display.predict.displayable(d)
@@ -1459,6 +1482,24 @@ def predict_screen(_screen_name, *_args, **kwargs):
         scope.pop("_scope", None)
 
     renpy.ui.reset()
+
+def predict_screen(_screen_name, *_args, **kwargs):
+    """
+    Predicts the displayables that make up the given screen.
+
+    `_screen_name`
+        The name of the  screen to show.
+    `_widget_properties`
+        A map from the id of a widget to a property name -> property
+        value map. When a widget with that id is shown by the screen,
+        the specified properties are added to it.
+
+    Keyword arguments not beginning with underscore (_) are used to
+    initialize the screen's scope.
+    """
+
+    renpy.asynctask.run_sync(predict_screen_task(_screen_name, *_args, **kwargs))
+
 
 
 def hide_screen(tag, layer=None, immediately=False):

@@ -157,6 +157,10 @@ Preference("performance_test", True)
 # The language we use for translations.
 Preference("language", None, (str, type(None)))
 
+# Paths to translated resources. Each key is a resource path prefix, and its
+# value is the corresponding translated path prefix.
+Preference("resource_path_translations", {}, dict)
+
 # Should we self-voice?
 Preference("self_voicing", False, (bool, str, type(None)))
 
@@ -267,6 +271,7 @@ class Preferences(renpy.object.Object):
     renderer: str
     performance_test: bool
     language: str | None
+    resource_path_translations: dict[str, str]
     self_voicing: bool | str | None
     self_voicing_volume_drop: float
     emphasize_audio: bool

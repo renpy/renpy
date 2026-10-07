@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -591,6 +591,43 @@ init -1500 python:
             return "scrollbar", "vscrollbar"
 
 
+    class _AudioPositionAdjustment(ui.adjustment):
+        """
+        An adjustment specialized for AudioPositionValue that decouples
+        smooth dragging from audio seeking. Seeking only occurs when released
+        or upon a single click, and periodic updates are suspended during drag.
+        """
+
+        def __init__(self, value, range, changed=None, adjustable=False):
+            super(_AudioPositionAdjustment, self).__init__(
+                range=range,
+                value=value,
+                changed=None,
+                adjustable=adjustable,
+            )
+            self.on_seek = changed
+            self.dragging = False
+
+        def round_value(self, value, release):
+            if release:
+                self.dragging = False
+                if self.on_seek is not None:
+                    self.on_seek(value)
+            return value
+
+        def change(self, value, end_animation=True):
+            grabbed = False
+            for d in renpy.display.behavior.adj_registered.get(self, []):
+                if renpy.display.focus.get_grab() is d:
+                    grabbed = True
+                    break
+
+            if grabbed:
+                self.dragging = True
+
+            return super(_AudioPositionAdjustment, self).change(value, end_animation=end_animation)
+
+
     @renpy.pure
     class AudioPositionValue(BarValue, DictEquality):
         """
@@ -601,13 +638,23 @@ init -1500 python:
 
         `update_interval`
             How often the value updates, in seconds.
+
+        `adjustable`
+            If true, the player can seek by dragging the bar. Seeking occurs
+            when the drag is released or on click.
         """
 
-        def __init__(self, channel='music', update_interval=0.1):
+        def __init__(self, channel='music', update_interval=0.1, adjustable=False):
             self.channel = channel
             self.update_interval = update_interval
+            self.adjustable = adjustable
 
             self.adjustment = None
+
+        def changed(self, position):
+            if not renpy.music.is_playing(self.channel):
+                return
+            renpy.music.seek(position, self.channel)
 
         def get_pos_duration(self):
             pos = renpy.music.get_pos(self.channel) or 0.0
@@ -617,10 +664,32 @@ init -1500 python:
 
         def get_adjustment(self):
             pos, duration = self.get_pos_duration()
-            self.adjustment = ui.adjustment(value=pos, range=duration, adjustable=False)
+            if self.adjustable:
+                self.adjustment = _AudioPositionAdjustment(
+                    value=pos,
+                    range=duration,
+                    changed=self.changed,
+                    adjustable=True,
+                )
+            else:
+                self.adjustment = ui.adjustment(
+                    value=pos,
+                    range=duration,
+                    changed=None,
+                    adjustable=False,
+                )
             return self.adjustment
 
         def periodic(self, st):
+            if self.adjustment is None:
+                return self.update_interval
+
+            if getattr(self.adjustment, "dragging", False):
+                return self.update_interval
+
+            for d in renpy.display.behavior.adj_registered.get(self.adjustment, []):
+                if renpy.display.focus.get_grab() is d:
+                    return self.update_interval
 
             pos, duration = self.get_pos_duration()
             self.adjustment.set_range(duration)

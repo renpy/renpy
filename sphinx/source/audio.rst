@@ -176,9 +176,13 @@ When synchro start is enabled and multiple play statements are run at the same t
 will start synchronized. Specifically, the audio will start:
 
 * When the audio files on every channel have been loaded and audio samples are available.
-* When all all channels have been faded out.
+* When all channels have been faded out.
 
 New audio will start playing when both conditions are met.
+
+Synchro start applies when a channel begins playback. Files queued behind a
+playing track start as soon as that track ends, without waiting to synchronize
+with other channels.
 
 
 Stop Statement
@@ -242,6 +246,7 @@ The partial playback specification should consist of alternating
 property name and value pairs, with every thing separated by spaces.
 
 The values are always interpreted as seconds from the start of the file.
+Audio positions are rounded to the nearest sample at the playback sample rate.
 The three properties are:
 
 ``from``

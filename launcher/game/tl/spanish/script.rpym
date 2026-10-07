@@ -11,7 +11,7 @@ label start:
 
     # Muestra una imagen de fondo: Aquí se usa un marcador de posición por
     # defecto. Es posible añadir un archivo en el directorio 'images' con el
-    # nombre "bg room.png" or "bg room.jpg" para que se muestre aquí.
+    # nombre "bg room.png" o "bg room.jpg" para que se muestre aquí.
 
     scene bg room
 

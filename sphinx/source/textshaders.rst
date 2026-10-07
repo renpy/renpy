@@ -70,6 +70,19 @@ Text shaders are specified as strings like::
     "jitter:u__jitter=1.0, 3.0"
     "texture:gold.png"
 
+For example, to jitter each glyph independently for half a second, use::
+
+    "jitter:u__duration=0.5:u__individual=1"
+
+Or apply it to part of a line with a text tag::
+
+    "Hold on, {shader=jitter:u__duration=0.5:u__individual=1}what?{/shader}"
+
+By default, jitter continues indefinitely and moves all glyphs together.
+A duration of 0 or a negative value makes jitter continue indefinitely.
+A positive duration starts when the text is first shown, not when each
+glyph is revealed by slow text.
+
 The first part of the string, before the first colon, is the name of the text shader.
 The rest of the string is a series of uniforms that are passed to the shader,
 separated by colons. (Uniforms are parameters that are passed to the shader,
@@ -142,6 +155,9 @@ Creating Text Shaders
 
 Text shaders are GLSL programs that are run on the GPU. These shaders are
 registered using the renpy.register_text_shader function.
+
+Like other shader parts, a text shader is written in one of two GLSL dialects.
+See :ref:`GLSL Version <glsl-version>` for the difference.
 
 .. include:: inc/textshader
 
@@ -268,8 +284,8 @@ This is an example of a text shader that spins text when shown. ::
             uniform float u__delay;
             uniform float u__offset;
             uniform float u_text_slow_time;
-            attribute vec2 a_text_center;
-            attribute float a_text_min_time;
+            in vec2 a_text_center;
+            in float a_text_min_time;
             """,
 
             vertex_50 = """

@@ -26,7 +26,7 @@ import renpy.log
 # The draw object through which all drawing is routed. This object
 # contains all of the distinction between the software and GL
 # renderers.
-draw = None  # type: renpy.display.core.Renderer | None
+draw: "renpy.display.core.Renderer | None" = None
 
 # The interface object.
 interface = None  # type: renpy.display.core.Interface | None

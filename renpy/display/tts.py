@@ -814,5 +814,5 @@ def displayable(d):
     if s != last_raw:
         last_raw = s
         s = apply_substitutions(s)
-        last = s
+        last = get_voice(s)[1]
         tts(prefix + s)

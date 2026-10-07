@@ -87,7 +87,7 @@ useful for animating color changes. It's also useful to have a way of
 taking common matrices and encapsulating them in a way that allows the
 matrix to be parameterized.
 
-The ColorMatrix is a base class that is is extended by a number of
+The ColorMatrix is a base class that is extended by a number of
 Matrix-creating classes. Instances of ColorMatrix are called by Ren'Py,
 and return Matrixes. ColorMatrix is well integrated with ATL, allowing
 for matrixcolor animations. ::

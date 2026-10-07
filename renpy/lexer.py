@@ -26,15 +26,19 @@ import linecache
 import os
 import re
 import sys
-from typing import Callable, NamedTuple
+from collections.abc import Callable
+from typing import Any, Literal, NamedTuple
 
 import renpy
 
 try:
+    from renpy.astsupport import PyExpr, make_pyexpr
     from renpy.lexersupport import match_logical_word, match_operator, match_string, match_whitespace
-    from renpy.astsupport import make_pyexpr
 except ImportError:
     pass
+
+
+type ExpressionContext = Literal["eval", "exec", "hide", "unknown"]
 
 
 class ParseError(SyntaxError):
@@ -121,7 +125,7 @@ class ParseError(SyntaxError):
 
 
 # Something to hold the expected line number.
-class LineNumberHolder(object):
+class LineNumberHolder:
     """
     Holds the expected line number.
     """
@@ -158,8 +162,7 @@ def munge_filename(fn):
     # The prefix that's used when __ is found in the file.
     rv = os.path.basename(fn)
 
-    if rv.endswith("_ren.py"):
-        rv = rv[:-7]
+    rv = rv.removesuffix("_ren.py")
 
     rv = os.path.splitext(rv)[0]
     rv = rv.replace(" ", "_")
@@ -642,7 +645,7 @@ word_regexp = r"[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*"
 image_word_regexp = r"[-0-9a-zA-Z_\u00a0-\ufffd][-0-9a-zA-Z_\u00a0-\ufffd]*"
 
 
-class SubParse(object):
+class SubParse:
     """
     This represents the information about a subparse that can be provided to
     a creator-defined statement.
@@ -655,10 +658,10 @@ class SubParse(object):
         if not self.block:
             return "<SubParse empty>"
         else:
-            return "<SubParse {}:{}>".format(self.block[0].filename, self.block[0].linenumber)
+            return f"<SubParse {self.block[0].filename}:{self.block[0].linenumber}>"
 
 
-class Lexer(object):
+class Lexer:
     """
     The lexer that is used to lex script files. This works on the idea
     that we want to lex each line in a block individually, and use
@@ -909,8 +912,8 @@ class Lexer(object):
             ll = self.subblock_lexer()
             ll.advance()
             ll.error(
-                "Line is indented, but the preceding {} statement does not expect a block. "
-                "Please check this line's indentation. You may have forgotten a colon (:).".format(stmt)
+                f"Line is indented, but the preceding {stmt} statement does not expect a block. "
+                "Please check this line's indentation. You may have forgotten a colon (:)."
             )
 
     def expect_block(self, stmt):
@@ -920,7 +923,7 @@ class Lexer(object):
         """
 
         if not self.subblock:
-            self.error("%s expects a non-empty block." % stmt)
+            self.error(f"{stmt} expects a non-empty block.")
 
     def has_block(self):
         """
@@ -1009,8 +1012,9 @@ class Lexer(object):
         runs of whitespace with multiple newlines are turned into a single
         newline.
 
-        Except in the case of a raw string where this returns a simple string,
-        this returns a list of strings.
+        This returns a list of (offset, string) pairs where offset is the 
+        paragraph's relative line number to the start of the triple_string.
+        In the case of a raw string, this returns a simple string instead.
         """
 
         s = self.match(r'r?"""([^\\"]|\\.|"(?!""))*"""')
@@ -1063,22 +1067,27 @@ class Lexer(object):
                 sl = [s]
 
             rv = []
+            pos = 0
 
-            for s in sl:
-                s = s.strip()
+            for part in sl:
+                leading_ws = len(part) - len(part.lstrip())
+                line_offset = s.count("\n", 0, pos) + part.count("\n", 0, leading_ws)
+                pos += len(part) + len(mondel)
 
-                if not s:
+                part = part.strip()
+
+                if not part:
                     continue
 
                 # Collapse runs of whitespace into single spaces.
                 if mondel:
-                    s = re.sub(r"[ \n]+", " ", s)
+                    part = re.sub(r"[ \n]+", " ", part)
                 else:
-                    s = re.sub(r" +", " ", s)
+                    part = re.sub(r" +", " ", part)
 
-                s = re.sub(r"\\(u([0-9a-fA-F]{1,4})|.)", dequote, s)  # type: ignore
+                part = re.sub(r"\\(u([0-9a-fA-F]{1,4})|.)", dequote, part)  # type: ignore
 
-                rv.append(s)
+                rv.append((line_offset, part))
 
             return rv
 
@@ -1145,10 +1154,12 @@ class Lexer(object):
         oldpos = self.pos
         rv = self.word()
 
-        if (rv == "r") or (rv == "u") or (rv == "ur"):
-            if self.text[self.pos : self.pos + 1] in ('"', "'", "`"):
-                self.pos = oldpos
-                return None
+        if rv is None:
+            return None
+
+        if rv in ("r", "u", "ur") and self.text[self.pos : self.pos + 1] in ('"', "'", "`"):
+            self.pos = oldpos
+            return None
 
         if rv in KEYWORDS:
             self.pos = oldpos
@@ -1209,10 +1220,12 @@ class Lexer(object):
         oldpos = self.pos
         rv = self.match(image_word_regexp)
 
-        if (rv == "r") or (rv == "u"):
-            if self.text[self.pos : self.pos + 1] in ('"', "'", "`"):
-                self.pos = oldpos
-                return None
+        if rv is None:
+            return None
+
+        if rv in ("r", "u", "ur") and self.text[self.pos : self.pos + 1] in ('"', "'", "`"):
+            self.pos = oldpos
+            return None
 
         if (rv in KEYWORDS) or (rv in IMAGE_KEYWORDS):
             self.pos = oldpos
@@ -1274,21 +1287,48 @@ class Lexer(object):
 
         return rv
 
-    def expr(self, s, expr):
+    def expr(self, s: str, expr: bool) -> str:
 
         if not expr:
             return s
 
-        pos = self.pos - len(s)
+        rv = PyExpr(s, self.filename, self.number)
 
-        return make_pyexpr(
-            s,
+        # Empty expression can't be compiled.
+        if rv:
+            renpy.parser.parsed_expressions.append((rv, "unknown"))
+
+        return rv
+
+    def _expr_from_range(
+        self,
+        start: int,
+        end: int,
+        context: ExpressionContext = "unknown",
+    ) -> PyExpr:
+
+        s = self.text[start:end]
+
+        # Only eval expressions need to strip its leading whitespace,
+        # trailing whitespace is to simulate `strip`.
+        if context == "eval":
+            start = start + (len(s) - len(s.lstrip()))
+            end = end - (len(s) - len(s.rstrip()))
+
+        expr = make_pyexpr(
+            self.text[start:end],
             self.filename,
             self.number,
             self.column,
             self.text,
-            pos,
+            start,
         )
+
+        # Empty expression can't be compiled.
+        if expr:
+            renpy.parser.parsed_expressions.append((expr, context))
+
+        return expr
 
     def delimited_python(self, delim, expr=True):
         """
@@ -1304,7 +1344,10 @@ class Lexer(object):
             c = self.text[self.pos]
 
             if c in delim:
-                return self.expr(self.text[start : self.pos], expr)
+                if not expr:
+                    return self.text[start : self.pos]
+
+                return self._expr_from_range(start, self.pos, "eval")
 
             if self.python_string():
                 continue
@@ -1314,7 +1357,7 @@ class Lexer(object):
 
             self.pos += 1
 
-        self.error("reached end of line when expecting '%s'." % delim)
+        self.error(f"reached end of line when expecting '{delim}'.")
 
     def python_expression(self, expr=True):
         """
@@ -1322,14 +1365,16 @@ class Lexer(object):
         extending to a colon.
         """
 
+        start = self.pos
         pe = self.delimited_python(":", False)
 
         if not pe:
             self.error("expected python_expression")
 
-        rv = self.expr(pe.strip(), expr)
+        if not expr:
+            return pe
 
-        return rv
+        return self._expr_from_range(start, self.pos, "eval")
 
     def parenthesised_python(self):
         """
@@ -1360,7 +1405,7 @@ class Lexer(object):
 
         return False
 
-    def simple_expression(self, comma=False, operator=True, image=False):
+    def simple_expression(self, comma=False, operator=True, image=False) -> PyExpr | None:
         """
         Tries to parse a simple_expression. Returns the text if it can, or
         None if it cannot.
@@ -1433,12 +1478,12 @@ class Lexer(object):
 
             break
 
-        text = self.text[start : self.pos].strip()
+        expr = self._expr_from_range(start, self.pos, "eval")
 
-        if not text:
+        if not expr:
             return None
 
-        return self.expr(text, True)
+        return expr
 
     def comma_expression(self):
         """
@@ -1454,7 +1499,10 @@ class Lexer(object):
         """
         return self.simple_expression(operator=False)
 
-    def checkpoint(self):
+    type LexerCheckpoint = Any
+    "Opaque representation of the lexer state."
+
+    def checkpoint(self) -> LexerCheckpoint:
         """
         Returns an opaque representation of the lexer state. This can be
         passed to revert to back the lexer up.
@@ -1468,10 +1516,10 @@ class Lexer(object):
             self.subblock,
             self.pos,
             self.column,
-            renpy.ast.PyExpr.checkpoint(),
+            len(renpy.parser.parsed_expressions),
         )
 
-    def revert(self, state):
+    def revert(self, state: LexerCheckpoint):
         """
         Reverts the lexer to the given state. State must have been returned
         by a previous checkpoint operation on this lexer.
@@ -1488,7 +1536,7 @@ class Lexer(object):
             pyexpr_checkpoint,
         ) = state
 
-        renpy.ast.PyExpr.revert(pyexpr_checkpoint)
+        renpy.parser.parsed_expressions[pyexpr_checkpoint:] = []
 
         self.word_cache_pos = -1
         if self.line < len(self.block):
@@ -1524,7 +1572,7 @@ class Lexer(object):
             else:
                 name = name or thing.__func__.__name__
 
-            self.error("expected '%s' not found." % name)
+            self.error(f"expected '{name}' not found.")
 
         return rv
 
@@ -1539,7 +1587,7 @@ class Lexer(object):
 
         pos = self.pos
         self.pos = len(self.text)
-        return self.expr(self.text[pos:].strip(), True)
+        return self._expr_from_range(pos, self.pos, "exec")
 
     rest_statement = rest
 
@@ -1659,12 +1707,11 @@ def ren_py_to_rpy_offsets(lines: list[str], filename: str):
         lines[0] = lines[0][1:]
 
     for linenumber, line in enumerate(lines, start=1):
-        if state != RENPY:
-            if line.startswith('"""renpy'):
-                state = RENPY
-                open_linenumber = linenumber
-                yield None
-                continue
+        if state != RENPY and line.startswith('"""renpy'):
+            state = RENPY
+            open_linenumber = linenumber
+            yield None
+            continue
 
         if state == RENPY:
             if line.strip() == '"""':

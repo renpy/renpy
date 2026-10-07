@@ -21,12 +21,25 @@
 
 from renpy.uguu.gl cimport *
 
+# Shared across renderer instances so surviving meshes cannot reuse old names.
+cdef unsigned long long buffer_generation = 0
+
 cdef class GLStateCache:
 
     def __init__(GLStateCache self):
         cdef int i
 
-        self.sampler_bindings = {}
+        # A fresh setter's zero-initialized serial must not match.
+        self.reset_serial = 1
+
+        self.current_element_buffer = 0
+        self.current_array_buffer = 0
+
+        self.core_profile = False
+
+        self.scratch_buffers[0] = 0
+        self.scratch_buffers[1] = 0
+        self.scratch_buffers[2] = 0
 
         # Set the cache to a safe initial state, without making GL calls.
         self.current_program = 0
@@ -58,6 +71,11 @@ cdef class GLStateCache:
 
         cdef int i
         cdef unsigned int bit
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
+        self.current_array_buffer = 0
+        self.current_element_buffer = 0
 
         self.current_program = 0
 
@@ -96,14 +114,65 @@ cdef class GLStateCache:
 
         self.enabled_attrib_mask = 0
 
-        # Clear the sampler binding cache, as it's program-specific.
-        self.sampler_bindings.clear()
+        # Invalidate sampler-to-unit assignments after external GL state changes.
+        self.reset_serial += 1
 
     cdef void use_program(GLStateCache self, GLuint program):
         if program != self.current_program:
             glUseProgram(program)
 
             self.current_program = program
+
+    cpdef void new_context(GLStateCache self, bint core_profile):
+        global buffer_generation
+
+        buffer_generation += 1
+        self.buffer_generation = buffer_generation
+
+        self.core_profile = core_profile
+
+        self.current_element_buffer = 0
+        self.current_array_buffer = 0
+
+        self.scratch_buffers[0] = 0
+        self.scratch_buffers[1] = 0
+        self.scratch_buffers[2] = 0
+
+    cdef void delete_scratch_buffers(GLStateCache self) noexcept nogil:
+        if self.scratch_buffers[0] or self.scratch_buffers[1] or self.scratch_buffers[2]:
+            glDeleteBuffers(3, &self.scratch_buffers[0])
+
+            self.scratch_buffers[0] = 0
+            self.scratch_buffers[1] = 0
+            self.scratch_buffers[2] = 0
+
+            self.current_element_buffer = 0
+            self.current_array_buffer = 0
+
+    cdef void bind_element_buffer(GLStateCache self, GLuint buffer) noexcept nogil:
+        if buffer != self.current_element_buffer:
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer)
+
+            self.current_element_buffer = buffer
+
+    cdef void bind_array_buffer(GLStateCache self, GLuint buffer) noexcept nogil:
+        if buffer != self.current_array_buffer:
+            glBindBuffer(GL_ARRAY_BUFFER, buffer)
+
+            self.current_array_buffer = buffer
+
+    cdef GLuint upload_scratch(GLStateCache self, int slot, GLenum target, GLsizeiptr size, const void* data) noexcept nogil:
+        if self.scratch_buffers[slot] == 0:
+            glGenBuffers(1, &self.scratch_buffers[slot])
+
+        if target == GL_ELEMENT_ARRAY_BUFFER:
+            self.bind_element_buffer(self.scratch_buffers[slot])
+        else:
+            self.bind_array_buffer(self.scratch_buffers[slot])
+
+        glBufferData(target, size, data, GL_STREAM_DRAW)
+
+        return self.scratch_buffers[slot]
 
     cdef void activate_texture(GLStateCache self, GLenum unit):
         if unit != self.current_active_texture:
@@ -191,19 +260,3 @@ cdef class GLStateCache:
                     glDisableVertexAttribArray(i)
 
         self.enabled_attrib_mask = required_mask
-
-    cdef bint check_sampler_binding(GLStateCache self, GLuint program, GLint location, int sampler):
-        """
-        Returns True if the sampler-to-unit binding needs to be set, updating
-        the cache if so.
-        """
-
-        cdef tuple key = (program, location)
-        cdef object cached = self.sampler_bindings.get(key)
-
-        if cached is not None and cached == sampler:
-            return False
-
-        self.sampler_bindings[key] = sampler
-
-        return True

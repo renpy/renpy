@@ -21,6 +21,7 @@
 
 from typing import Any
 
+from concurrent.futures import Future
 import os
 import copy
 import time
@@ -416,13 +417,24 @@ def check_update():
     restarts the interaction.
     """
 
+    return renpy.asynctask.run_sync(check_update_task(background=False))
+
+
+def check_update_task(*, background=True):
+    """
+    Cooperatively checks for new persistent data and restarts the interaction
+    after merging it.
+    """
+
     for mtime, _data in renpy.loadsave.location.load_persistent():
         if mtime > persistent_mtime:
             break
     else:
+        if pending_save:
+            yield from update_task(background=background)
         return
 
-    update()
+    yield from update_task(background=background)
     renpy.exports.restart_interaction()
 
 
@@ -432,10 +444,20 @@ def update(force_save=False):
     persistent_mtime, and merges it into the persistent object.
     """
 
-    need_save = find_changes()
-    need_save = need_save or force_save
+    return renpy.asynctask.run_sync(update_task(force_save, background=False))
 
-    global persistent_mtime
+
+def update_task(force_save=False, *, background=True):
+    """
+    Cooperatively updates the persistent data, yielding between costly steps.
+    """
+
+    global persistent_mtime, pending_save
+
+    need_save = find_changes() or force_save or pending_save
+    pending_save = need_save
+
+    yield
 
     # A list of (mtime, other) pairs, where other is a persistent file
     # we might want to merge in.
@@ -455,13 +477,18 @@ def update(force_save=False):
 
         merge(other)
 
-    persistent_mtime = mtime
+    with renpy.savelocation.disk_lock:
+        persistent_mtime = max(persistent_mtime, mtime)
 
     if need_save:
-        save()
+        yield
+        yield from save_task(background=background)
 
 
 should_save_persistent = True
+
+# Retains a write not yet submitted across interaction task cancellation.
+pending_save = False
 
 
 def save():
@@ -469,19 +496,52 @@ def save():
     Saves the persistent data to disk.
     """
 
-    global old_persistent_data
+    return renpy.asynctask.run_sync(save_task(background=False))
+
+
+def _background_save_completed(write):
+    global persistent_mtime
+
+    if write.exception() is None:
+        mtime = write.result()
+        if mtime is not None:
+            with renpy.savelocation.disk_lock:
+                persistent_mtime = max(persistent_mtime, mtime)
+
+
+def save_task(*, background=True):
+    """
+    Cooperatively saves the persistent data, yielding between costly steps.
+    With background enabled, returns after submitting the filesystem write.
+    """
+
+    global persistent_mtime, pending_save
 
     if not renpy.config.save_persistent:
+        pending_save = False
         return
 
     if not should_save_persistent:
+        pending_save = False
         return
+
+    pending_save = True
 
     try:
         data = dumps(renpy.game.persistent, bad_reduction_name="persistent")
+        yield
         compressed = zlib.compress(data, 3)
+        yield
         compressed += renpy.savetoken.sign_data(data).encode("utf-8")
-        renpy.loadsave.location.save_persistent(compressed)
+        yield
+        if background:
+            write = renpy.loadsave.location.save_persistent(compressed, background=True)
+            if isinstance(write, Future):
+                write.add_done_callback(_background_save_completed)
+                pending_save = False
+                return
+        else:
+            renpy.loadsave.location.save_persistent(compressed)
     except Exception:
         if renpy.config.developer:
             raise
@@ -490,11 +550,12 @@ def save():
         renpy.display.log.exception()
         return
 
-    global persistent_mtime
-
     # Prevent updates just after save
     for mtime, _data in renpy.loadsave.location.load_persistent():
-        persistent_mtime = max(persistent_mtime, mtime)
+        with renpy.savelocation.disk_lock:
+            persistent_mtime = max(persistent_mtime, mtime)
+
+    pending_save = False
 
 
 ################################################################################

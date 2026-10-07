@@ -18,7 +18,7 @@
 
     # 00gltest.rpy:87
     old "Force Software Renderer"
-    new "Forzar renderizado por software"
+    new "Forzar renderizador por software"
 
     # 00gltest.rpy:93
     old "NPOT"
@@ -58,31 +58,31 @@
 
     # 00gltest.rpy:213
     old "Performance Warning"
-    new "Aviso de funcionamiento"
+    new "Aviso de rendimiento"
 
     # 00gltest.rpy:218
     old "This computer is using software rendering."
-    new "Este ordenador usa 'software' de renderizado."
+    new "Esta computadora está usando renderizado por software."
 
     # 00gltest.rpy:220
     old "This computer is not using shaders."
-    new "Este ordenador no usa sombreadores."
+    new "Esta computadora no usa 'shaders'."
 
     # 00gltest.rpy:222
     old "This computer is displaying graphics slowly."
-    new "Este ordenador muestra los gráficos lentamente."
+    new "Esta computadora muestra los gráficos lentamente."
 
     # 00gltest.rpy:224
     old "This computer has a problem displaying graphics: [problem]."
-    new "Este ordenador tiene un problema al mostrar los gráficos: [problem]."
+    new "Esta computadora tiene un problema al mostrar los gráficos: [problem]."
 
     # 00gltest.rpy:229
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "Los controladores gráficos pueden estar obsoletos o no funcionar adecuadamente. Esto puede conllevar que los gráficos se muestren lenta o incorrectamente. Actualizar DirectX puede solucionar este problema."
+    new "Los controladores gráficos pueden estar desactualizados o no funcionar correctamente. Esto puede provocar que los gráficos se muestren lentamente o incorrectamente. Actualizar DirectX podría solucionar este problema."
 
     # 00gltest.rpy:231
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
-    new "Los controladores gráficos pueden estar obsoletos o no funcionar adecuadamente. Esto puede conllevar que los gráficos se muestren lenta o incorrectamente."
+    new "Los controladores gráficos pueden estar desactualizados o no funcionar correctamente. Esto puede provocar que los gráficos se muestren lentamente o incorrectamente."
 
     # 00gltest.rpy:236
     old "Update DirectX"
@@ -102,15 +102,15 @@
 
     # 00gltest.rpy:268
     old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
-    new "La instalación web de DirectX ha comenzado. Puede haber iniciado minimizada en la barra de tareas. Siga las instrucciones para instalar DirectX."
+    new "La instalación web de DirectX ha comenzado. Puede que se haya iniciado minimizada en la barra de tareas. Sigue las instrucciones para instalar DirectX."
 
     # 00gltest.rpy:272
     old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}Nota:{/b} El programa de instalación de DirectX de Microsoft instalará, por defecto, la barra Bing. Si no desea esta barra, desactive la casilla correspondiente."
+    new "{b}Nota:{/b} El programa de instalación web de DirectX de Microsoft instalará, por defecto, la barra de Bing. Si no deseas esta barra, desactiva la casilla correspondiente."
 
     # 00gltest.rpy:276
     old "When setup finishes, please click below to restart this program."
-    new "Cuando la instalación acabe, haga clic abajo para reiniciar el programa."
+    new "Cuando la instalación termine, haz clic abajo para reiniciar el programa."
 
     # 00gltest.rpy:278
     old "Restart"
@@ -118,7 +118,7 @@
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Selecciona mando para calibrar"
+    new "Selecciona el control para calibrar"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
@@ -130,7 +130,7 @@
 
     # 00gamepad.rpy:58
     old "Press or move the [control!s] [kind]."
-    new "Pulsa o mueve: [control!s] [kind]."
+    new "Presiona o mueve [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
@@ -158,7 +158,7 @@
 
     # _errorhandling.rpym:561
     old "An exception has occurred."
-    new "Ha sucedido una excepción."
+    new "Ha ocurrido una excepción."
 
     # _errorhandling.rpym:581
     old "Rollback"
@@ -178,7 +178,7 @@
 
     # _errorhandling.rpym:592
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "Ignora la excepción y permite continuar. Suele conllevar más errores."
+    new "Ignora la excepción y permite continuar. Suele provocar más errores."
 
     # _errorhandling.rpym:596
     old "Reload"
@@ -218,7 +218,7 @@
 
     # _errorhandling.rpym:544
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Copia el archivo traceback.txt en el portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
+    new "Copia el archivo traceback.txt al portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
 
     # _errorhandling.rpym:546
     old "Copy Markdown"
@@ -226,11 +226,11 @@
 
     # _errorhandling.rpym:548
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
-    new "Copia el archivo traceback.txt al portapapeles como Markdown paara Discord."
+    new "Copia el archivo traceback.txt al portapapeles como Markdown para Discord."
 
     # _errorhandling.rpym:683
     old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Copia el archivo errors.txt en el portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
+    new "Copia el archivo errors.txt al portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
 
     # _errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
@@ -262,11 +262,11 @@
 
     # renpy/common/00gltest.rpy:218
     old "This game requires use of GL2 that can't be initialised."
-    new "Este juego requiere el uso de GL2, el cual no se puede iniciar."
+    new "Este juego requiere el uso de GL2, que no se puede inicializar."
 
     # renpy/common/00gltest.rpy:229
     old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
-    new "Puedes encontrar más detalles sobre cómo solucionar este problema en la {a=[url]} documentación {/a}."
+    new "Puedes encontrar más detalles sobre cómo solucionar este problema en la {a=[url]}documentación{/a}."
 
     # renpy/common/00gltest.rpy:246
     old "Change render options"
@@ -282,5 +282,5 @@
 
     # renpy/common/00gltest.rpy:259
     old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
-    new "El archivo {a=edit:1:log.txt}log.txt{/a} puede contener información para ayudarte a encontrar el problema en tu ordenador."
+    new "El archivo {a=edit:1:log.txt}log.txt{/a} puede contener información para ayudarte a determinar qué está mal con tu computadora."
 

@@ -486,6 +486,20 @@ class Displayable(renpy.object.Object):
 
         return
 
+    def predict_shaders(self, shaders: tuple) -> tuple:
+        """
+        Called to predict shader combinations used by this displayable.
+        Takes the tuple of shaders applied to this displayable, and returns
+        the tuple of shaders to be passed to its children.
+        """
+
+        children = [d for d in self.visit() if d is not None]
+
+        if not children:
+            renpy.gl2.gl2shadercache.predict_shader(shaders + ("renpy.texture",))
+
+        return shaders
+
     def predict_one_action(self):
         """
         Called to ask this displayable to cause image prediction

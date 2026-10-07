@@ -453,13 +453,14 @@ class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback
 
         if st == 0 or particles is None:
             self.sm.destroy_all()
-            particles = []
+            # None distinguishes initialization from an empty, running effect.
+            particles = None
 
         add_parts = self.factory.create(particles, st)
 
         new_particles = []
 
-        for sprite, p in particles:
+        for sprite, p in particles or []:
             update = p.update(st)
 
             if update is None:
@@ -555,7 +556,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
             else:
                 return n
 
-        if (st == 0) and not particles and self.fast:
+        if self.fast and (particles is None or (st == 0 and not particles)):
             rv = []
 
             for _i in range(0, self.count):
@@ -703,7 +704,9 @@ def SnowBlossom(
 
     `fast`
         If true, particles start in the center of the screen, rather than
-        only at the edges.
+        only at the edges. This applies whenever the effect is initialized,
+        even when the animation timebase is already running. Replacement
+        particles still start at the edges.
 
     `horizontal`
         If true, particles appear on the left or right side of the screen,

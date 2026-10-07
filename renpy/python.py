@@ -773,17 +773,13 @@ _execute_python_hide()
     tree.body = hide.body
 
 
-# A list of warnings that were issued during compilation.
-compile_warnings = []
-
-
 @contextlib.contextmanager
 def save_warnings():
     """
     A context manager that captures warnings issued during compilation.
     """
 
-    pending_warnings = []
+    pending_warnings: list[tuple[str, int, str]] = []
 
     def showwarning(message, category, filename, lineno, file=None, line=None):
         pending_warnings.append((filename, lineno, warnings.formatwarning(message, category, filename, lineno, line)))
@@ -793,9 +789,7 @@ def save_warnings():
     try:
         warnings.showwarning = showwarning
 
-        yield
-
-        compile_warnings.extend(pending_warnings)
+        yield pending_warnings
 
     finally:
         warnings.showwarning = old
@@ -829,7 +823,7 @@ class CompileCache:
     "The name of bytecode cache file used to store the bytecode cache."
 
     # Change this to force a recompile of Python when required.
-    MAGIC_NUMBER: Final = importlib.util.MAGIC_NUMBER + b"_2025-06-16"
+    MAGIC_NUMBER: Final = importlib.util.MAGIC_NUMBER + b"_2026-08-30"
     "Magic number used to invalidate the bytecode cache that is invalid for the current version of Ren'Py."
 
     type ItemKey = tuple[
@@ -1052,93 +1046,6 @@ class LocationFixer:
         node.end_lineno, node.end_col_offset = end
 
 
-def quote_eval(s):
-    """
-    Quotes a string for `eval`. This is necessary when it's in certain places,
-    like as part of an argument string. We need to stick a single backslash
-    at the end of lines that don't have it already, and that aren't in triple-quoted strings.
-    """
-
-    # No newlines! No problem.
-    if "\n" not in s:
-        return s
-
-    # Characters being added to the string.
-    rv = []
-
-    # Pad out the string, so we don't have to deal with quotes at the end.
-    s += "\0\0"
-
-    len_s = len(s)
-
-    # The index into the string.
-    i = 0
-
-    # Special characters, that aren't just copied into the string.
-    special = "\0\\'\"\n"
-
-    # The string currently being processed.
-    string = None
-
-    while i < len_s:
-        c = s[i]
-
-        # Non-special characters.
-        if c not in special:
-            start = i
-
-            while True:
-                i += 1
-                if s[i] in special:
-                    break
-
-            rv.append(s[start:i])
-            continue
-
-        # Null.
-        if c == "\0":
-            rv.append(c)
-            i += 1
-            continue
-
-        # Any escaped character passes.
-        if c == "\\":
-            rv.append(s[i : i + 2])
-            i += 2
-            continue
-
-        # String delimiters.
-        if c in "'\"":
-            if ((string is None) or (len(string) == 3)) and (s[i + 1] == c) and (s[i + 2] == c):
-                delim = c + c + c
-            else:
-                delim = c
-
-            if (string is not None) and (delim == string):
-                string = None
-            elif string is None:
-                string = delim
-
-            rv.append(delim)
-            i += len(delim)
-
-            continue
-
-        # Newline.
-        if c == "\n":
-            if string is None:
-                rv.append("\\")
-
-            rv.append("\n")
-            i += 1
-            continue
-
-        raise Exception("Unknown character {} (can't happen)".format(c))
-
-    # Since the last 2 characters are \0, those characters need to be stripped.
-    return "".join(rv[:-2])
-
-
 IMMUTABLE_TYPES = (int, float, str, bool, bytes, type(None), complex)
 
 
@@ -1156,7 +1063,17 @@ def is_immutable_value(v):
     return False
 
 
-def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=True, py=None, hashcode=None, column=0):
+def py_compile(
+    source: "str | bytes | ast.Module",
+    mode: CompileMode,
+    filename: str = "<none>",
+    lineno: int = 1,
+    ast_node: bool = False,
+    cache: bool = True,
+    py: None = None,
+    hashcode: int | None = None,
+    column: int = 0,
+):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
@@ -1184,16 +1101,19 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
     `column`
         A column offset to add to the column numbers of the source.
     """
-    global compile_warnings
+
+    if isinstance(source, ast.Module):
+        return compile(source, filename, mode)
+    elif isinstance(source, bytes):
+        source = source.decode("utf-8")
+    elif not isinstance(source, str):
+        raise TypeError("source must be a string, renpy.ast.PyExpr, or ast.Module")
 
     first_line_column_delta = column
     rest_line_column_delta = column
 
     if ast_node:
         cache = False
-
-    if isinstance(source, ast.Module):
-        return compile(source, filename, mode)
 
     elif isinstance(source, renpy.ast.PyExpr):
         filename = source.filename
@@ -1203,48 +1123,44 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
         first_line_column_delta = source.column
         rest_line_column_delta = 0
 
-        if py is None:
-            py = source.py
-
-    elif hashcode is None:
+    if hashcode is None:
         hashcode = hash32(source)
-
-    if py is None:
-        py = 3
-
-    # This determines if the lines are indented. If so, we adjust the
-    # ast to match.
-    indented = source and (source[0] == " ") and (mode != "eval")
-
-    if indented:
-        lineno -= 1
-        source = "if True:\n" + source
 
     flags = file_compiler_flags.get(filename, 0)
 
     if renpy.config.future_annotations:
         flags |= __future__.annotations.compiler_flag
 
-    key = (hashcode, lineno, filename, mode, flags, column)
-    if cache:
-        if rv := compile_cache.get(key):
-            return rv
+    key: CompileCache.ItemKey = (hashcode, lineno, filename, mode, flags, column)
+    if cache and (rv := compile_cache.get(key)):
+        return rv
 
-    source = str(source)
-    source = source.replace("\r", "")
+    # This determines if the lines are indented. If so, we adjust the ast to match.
+    # This is needed because parsed code could keep the indentation and as is
+    # it would raise an IndentationError when compiled.
+    if indented := mode != "eval" and source.startswith(" "):
+        lineno -= 1
+        source = f"if True:\n{source}"
+
+    # In eval mode we need to add explicit line joining so things like
+    # foo(param=1 +
+    # 2)
+    # works.
+    elif mode == "eval" and "\n" in source and source.strip():
+        lineno -= 1
+        source = f"(\n{source}\n)"
 
     if mode == "eval" and not ast_node:
         # If possible, compute the value of immutable literals.
         try:
-            rv = ast.literal_eval(source)
-            if is_immutable_value(rv):
-                rv = ("literal", rv)
-                compile_cache.put(key, rv, [])
-                return rv
+            with save_warnings() as warnings:
+                rv = ast.literal_eval(source)
+                if is_immutable_value(rv):
+                    rv = ("literal", rv)
+                    compile_cache.put(key, rv, warnings)
+                    return rv
         except Exception:
             pass
-
-        source = quote_eval(source)
 
     line_offset = lineno - 1
 
@@ -1256,7 +1172,7 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
 
         tree: Any = None
 
-        with save_warnings():
+        with save_warnings() as warnings:
             try:
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True)
 
@@ -1272,24 +1188,28 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
                 if not handled:
                     raise
 
-        # If the body is indented, it's wrapped in an "if True:" statement, which needs to be eliminated.
-        if indented:
-            tree.body = tree.body[0].body
+            # If the body is indented, it's wrapped in an "if True:" statement, which needs to be eliminated.
+            if indented:
+                tree.body = tree.body[0].body
 
-        tree = wrap_node.visit(tree)
+            tree = wrap_node.visit(tree)
 
-        if mode == "hide":
-            wrap_hide(tree)
+            if mode == "hide":
+                wrap_hide(tree)
 
-        LocationFixer(tree, lineno - 1, first_line_column_delta, rest_line_column_delta)
+            LocationFixer(
+                tree,
+                lineno - 1,
+                first_line_column_delta,
+                rest_line_column_delta,
+            )
 
-        line_offset = 0
+            line_offset = 0
 
-        if ast_node:
-            return tree.body
+            if ast_node:
+                return tree.body
 
-        rv: Any = None
-        with save_warnings():
+            rv: Any = None
             try:
                 rv = compile(tree, filename, py_mode, flags, True)
             except SyntaxError:
@@ -1306,14 +1226,12 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
                     raise
 
         if cache:
-            compile_cache.put(key, rv, compile_warnings)
-            compile_warnings = []
+            compile_cache.put(key, rv, warnings)
 
         return rv
 
     except SyntaxError as e:
         try:
-            # e.text = # renpy.lexer.get_line_text(e.filename, e.lineno)
             e.text = source.splitlines()[e.lineno - 1]
         except Exception:
             pass
@@ -1321,7 +1239,7 @@ def py_compile(source, mode, filename="<none>", lineno=1, ast_node=False, cache=
         if e.lineno is not None:
             e.lineno += line_offset
 
-        raise e
+        raise
 
 
 def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"):

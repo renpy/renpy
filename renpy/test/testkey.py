@@ -19,14 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
-
-import renpy.pygame as pygame
-
 import renpy
-from renpy.test.testast import Node
+from renpy import pygame
 
 code_to_unicode = {
     pygame.K_UNKNOWN: "",
@@ -263,7 +257,7 @@ for k, v in sorted(code_to_unicode.items()):
         unicode_to_code[v] = k
 
 
-def get_keycode(node: Node, keysym: str) -> tuple[int, str | None, int]:
+def get_keycode(keysym: str) -> tuple[int, str | None, int]:
     """
     Returns the keycode, unicode character, and modifier flags for a given keysym.
     If the keysym is not recognized, an exception is raised.
@@ -308,42 +302,38 @@ def get_keycode(node: Node, keysym: str) -> tuple[int, str | None, int]:
         code = getattr(pygame, key, None)
 
         if code is None:
-            raise Exception("Could not find keysym {!r} at {}:{}.".format(keysym, node.filename, node.linenumber))
+            raise ValueError(f"Could not find keysym '{keysym}'.")
 
         u = code_to_unicode.get(code, "")
 
-        if not u:
-            u = None
-        elif ord(u) < 32:
+        if not u or ord(u) < 32:
             u = None
 
     return code, u, mods
 
 
-def down(node: Node, keysym: str) -> None:
+def down(keysym: str) -> None:
     """
     Posts a KEYDOWN event for the given keysym, which is a string like "ctrl_K_a".
     """
-    code, u, mods = get_keycode(node, keysym)
+    code, u, mods = get_keycode(keysym)
 
+    # Synthetic keys must carry their text even when a headless window has no active IME.
     pygame.event.post(
-        pygame.event.Event(pygame.KEYDOWN, unicode="", key=code, scancode=code, mod=mods, repeat=False, test=True)
+        pygame.event.Event(pygame.KEYDOWN, unicode=u or "", key=code, scancode=code, mod=mods, repeat=False, test=True)
     )
 
-    if pygame.key.text_input_active() and (u is not None):
-        pygame.event.post(pygame.event.Event(pygame.TEXTINPUT, text=u, test=True))
 
-
-def up(node: Node, keysym: str) -> None:
+def up(keysym: str) -> None:
     """
     Posts a KEYUP event for the given keysym, which is a string like "ctrl_K_a".
     """
-    code, _, mods = get_keycode(node, keysym)
+    code, _, mods = get_keycode(keysym)
 
     pygame.event.post(pygame.event.Event(pygame.KEYUP, key=code, scancode=code, mod=mods, repeat=False, test=True))
 
 
-def queue_keysym(node: Node, name: str) -> None:
+def queue_keysym(name: str) -> None:
     """
     Trigger a keysym event, which is a string like "ctrl_K_a" or "mouseup_1"
     or an event name in `config.keymap` like "skip" or "dismiss".
@@ -363,9 +353,5 @@ def queue_keysym(node: Node, name: str) -> None:
         renpy.display.controller.post_event(control, state, repeat)
         return
 
-    down(node, name)
-    up(node, name)
-
-
-#         keysym = config.keymap[keysym][0]
-#     return keysym
+    down(name)
+    up(name)

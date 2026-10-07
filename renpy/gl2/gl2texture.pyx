@@ -41,7 +41,7 @@ import math
 
 import renpy
 from renpy.uguu.gl cimport *
-from renpy.gl2.gl2draw cimport GL2Draw
+from renpy.gl2.gl2draw cimport GL2Draw, clear_color_buffer
 
 from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2mesh2 cimport Mesh2
@@ -65,6 +65,12 @@ cdef GLenum RGBA8 = 0x8058
 # An extension here,
 cdef GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
 cdef GLenum MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF
+
+# Texture swizzle parameters (GL 3.3 / GLES 3.0).
+cdef GLenum TEXTURE_SWIZZLE_R = 0x8E42
+cdef GLenum TEXTURE_SWIZZLE_G = 0x8E43
+cdef GLenum TEXTURE_SWIZZLE_B = 0x8E44
+cdef GLenum TEXTURE_SWIZZLE_A = 0x8E45
 
 ################################################################################
 
@@ -363,6 +369,7 @@ cdef class GLTexture(GL2Model):
         """Uploads one tightly packed 8-bit video plane as a 2D texture."""
 
         cdef GLuint texture
+        cdef bint two_components = (format == GL_LUMINANCE_ALPHA)
 
         glGenTextures(1, &texture)
         glBindTexture(GL_TEXTURE_2D, texture)
@@ -370,6 +377,15 @@ cdef class GLTexture(GL2Model):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+
+        if self.loader.draw.state_cache.core_profile:
+            glTexParameteri(GL_TEXTURE_2D, TEXTURE_SWIZZLE_R, GL_RED)
+            glTexParameteri(GL_TEXTURE_2D, TEXTURE_SWIZZLE_G, GL_RED)
+            glTexParameteri(GL_TEXTURE_2D, TEXTURE_SWIZZLE_B, GL_RED)
+            glTexParameteri(GL_TEXTURE_2D, TEXTURE_SWIZZLE_A, GL_GREEN if two_components else GL_ONE)
+
+            format = GL_RG if two_components else GL_RED
+
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
         glPixelStorei(GL_UNPACK_ROW_LENGTH, 0)
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data)
@@ -383,7 +399,7 @@ cdef class GLTexture(GL2Model):
         self.properties = {
             "mipmap": mipmap,
             "movie_yuv": True,
-            "movie_yuv_components": 2 if format == GL_LUMINANCE_ALPHA else 1,
+            "movie_yuv_components": 2 if two_components else 1,
         }
         self.mesh = Mesh2.texture_rectangle(0.0, 0.0, width, height, 0.0, 0.0, 1.0, 1.0)
         self.loader.allocated.add(texture)
@@ -465,7 +481,7 @@ cdef class GLTexture(GL2Model):
 
         # Clear the screen.
         glClearColor(0.0, 0.0, 0.0, 0.0)
-        glClear(GL_COLOR_BUFFER_BIT)
+        clear_color_buffer(0, 0, tw, th)
 
         # Set up the default modes.
         glEnable(GL_BLEND)
@@ -535,7 +551,7 @@ cdef class GLTexture(GL2Model):
 
             glGenBuffers(1, &pixel_buffer)
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pixel_buffer)
-            glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STATIC_DRAW)
+            glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STREAM_DRAW)
             glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, <void *> 0)
             glDeleteBuffers(1, &pixel_buffer)
@@ -615,7 +631,7 @@ cdef class GLTexture(GL2Model):
 
             glGenBuffers(1, &pixel_buffer)
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pixel_buffer)
-            glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STATIC_DRAW)
+            glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STREAM_DRAW)
             glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, <void *> 0)
             glDeleteBuffers(1, &pixel_buffer)
@@ -715,7 +731,9 @@ cdef class GLTexture(GL2Model):
         if tw == 0 or th == 0:
             return
 
-        glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST)
+        if not self.loader.draw.state_cache.core_profile:
+            glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST)
+
         glGenerateMipmap(GL_TEXTURE_2D)
 
     def add_mipmap(self):
@@ -784,6 +802,48 @@ class Texture(GLTexture):
     pass
 
 
+yuv_rgb_uniform_cache = {}
+
+def yuv_rgb_uniforms(bint full_range, bint bt709):
+    """
+    Returns (matrix, offset) mapping a raw (y, u, v) sample, chroma biased
+    by +0.5, directly to rgb.
+    """
+
+    rv = yuv_rgb_uniform_cache.get((full_range, bt709))
+
+    if rv is not None:
+        return rv
+
+    if bt709: # Rec. 709 used for high definition.
+        rows = ((1.0, 0.0, 1.5748), (1.0, -0.187324, -0.468124), (1.0, 1.8556, 0.0))
+    else: # Rec. 601 used for standard definition.
+        rows = ((1.0, 0.0, 1.402), (1.0, -0.344136, -0.714136), (1.0, 1.772, 0.0))
+
+    if full_range:
+        luma_scale = 1.0
+        chroma_scale = 1.0
+        luma_offset = 0.0
+    else: # Studio swing puts luma in 16-235 and chroma in 16-240, of 0-255.
+        luma_scale = 255.0 / 219.0
+        chroma_scale = 255.0 / 224.0
+        luma_offset = -16.0 / 255.0 * luma_scale
+
+    chroma_offset = -0.5 * chroma_scale
+
+    elements = [ ]
+    offset = [ ]
+
+    for r in rows:
+        elements.extend((r[0] * luma_scale, r[1] * chroma_scale, r[2] * chroma_scale))
+        offset.append(r[0] * luma_offset + (r[1] + r[2]) * chroma_offset)
+
+    rv = (Matrix(elements), tuple(offset))
+    yuv_rgb_uniform_cache[(full_range, bt709)] = rv
+
+    return rv
+
+
 def load_yuv420_frame(frame, mipmap=False):
     """Creates a two-plane model whose fragment shader performs YUV conversion."""
 
@@ -817,14 +877,16 @@ def load_yuv420_frame(frame, mipmap=False):
     if not uv_texture.from_yuv_plane_pointer(video_frame.uv, chroma_width, chroma_height, GL_LUMINANCE_ALPHA, mipmap):
         return None
 
+    matrix, offset = yuv_rgb_uniforms(video_frame.full_range, video_frame.bt709)
+
     mesh = Mesh2.texture_rectangle(0.0, 0.0, width, height, 0.0, 0.0, 1.0, 1.0)
     model = GL2Model(
         (width, height),
         mesh,
         ("renpy.movie_yuv",),
         {
-            "u_movie_yuv_full_range": float(video_frame.full_range),
-            "u_movie_yuv_bt709": float(video_frame.bt709),
+            "u_movie_yuv_matrix": matrix,
+            "u_movie_yuv_offset": offset,
         },
     )
     model.set_texture(0, y_texture)

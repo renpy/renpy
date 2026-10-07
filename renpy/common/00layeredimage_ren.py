@@ -413,6 +413,11 @@ class Condition(Layer):
         If not None, this should be a displayable that is displayed when
         the condition is true.
 
+    `nested`
+        If not None, this should be a :class:`ConditionGroup`, giving a
+        nested if/elif/else statement that is displayed, in place of `image`,
+        when the condition is true.
+
     `when`
         A string containing a ``when`` expression, described in the :ref:`when` section.
         The condition is only evaluated when the expression is satisfied by
@@ -429,13 +434,19 @@ class Condition(Layer):
 
     at = []
 
-    def __init__(self, condition, image, **kwargs):
+    def __init__(self, condition, image=None, *, nested=None, **kwargs):
         super().__init__(**kwargs)
 
         self.condition = condition
         self.image = image
+        self.nested = nested
 
     def apply_format(self, li: "LayeredImage"):
+        if self.nested is not None:
+            self.nested.apply_format(li)
+
+            return
+
         self.image = self.wrap(
             li.format(
                 what=f"Condition ({self.condition})",
@@ -443,13 +454,25 @@ class Condition(Layer):
             )
         )
 
+    def branch_displayable(self, attributes):
+        """
+        Returns the displayable shown when the condition is true. When the
+        branch is a nested if statement, this resolves it against the
+        current attribute pool and wraps it in this layer's transforms.
+        """
+
+        if self.nested is not None:
+            return self.wrap(self.nested.get_displayable(attributes))
+
+        return self.image
+
     def get_displayable(self, attributes):
         if not self.check(attributes):
             return None
 
         return ConditionSwitch(
             self.condition,
-            self.image,
+            self.branch_displayable(attributes),
             None,
             Null(),
             predict_all=predict_all,
@@ -484,7 +507,7 @@ class ConditionGroup(Layer):
                 continue
 
             args.append(i.condition)
-            args.append(i.image)
+            args.append(i.branch_displayable(attributes))
 
         args.append(None)
         args.append(Null())
@@ -1130,22 +1153,51 @@ def parse_group(l, li_name):
 
 
 class RawCondition(renpy.object.Object):
-    __version__ = 1
+    __version__ = 2
 
     def after_upgrade(self, version: int):
         if version < 1:
             self.expr_properties = self.properties  # type: ignore
             self.final_properties = {}
 
+        if version < 2:
+            self.nested = None
+
     def __init__(self, condition):
         self.condition = condition
         self.image: Imageable = None
+        self.nested: RawConditionGroup | None = None
         self.final_properties = {}
         self.expr_properties = {}
 
     def execute(self):
         properties = merge_properties(self.final_properties, self.expr_properties)
+
+        if self.nested is not None:
+            groups = self.nested.execute()
+
+            # A branch is a single displayable, so a nested statement that
+            # expands to several groups has nowhere to put the rest.
+            if len(groups) > 1:
+                raise Exception(
+                    f"The nested if statement under {self.condition!r} expands to more than one "
+                    "group of conditions, which can't be shown inside a single branch."
+                )
+
+            return [Condition(self.condition, nested=groups[0], **properties)]
+
         return [Condition(self.condition, resolve_image(self.image), **properties)]
+
+
+def describe_branch_content(rv: RawCondition):
+    """
+    Describes what an if/elif/else branch has been given, for error messages.
+    """
+
+    if rv.nested is not None:
+        return "a nested if statement"
+
+    return f"{rv.image}"
 
 
 def parse_condition(l, need_expr):
@@ -1173,6 +1225,17 @@ def parse_condition(l, need_expr):
         #     ll.expect_noblock("pass")
         #     continue
 
+        if ll.keyword("if"):
+            if rv.image is not None or rv.nested is not None:
+                ll.error(
+                    "An if, elif or else statement can only have one displayable, two found : "
+                    f"a nested if statement and {describe_branch_content(rv)}."
+                )
+
+            rv.nested = parse_conditions(ll)
+
+            continue
+
         got_block = False
 
         while True:
@@ -1185,9 +1248,10 @@ def parse_condition(l, need_expr):
 
             displayable = parse_displayable(ll)
             if displayable is not None:
-                if rv.image is not None:
+                if rv.image is not None or rv.nested is not None:
                     ll.error(
-                        f"An if, elif or else statement can only have one displayable, two found : {displayable} and {rv.image}."
+                        "An if, elif or else statement can only have one displayable, two found : "
+                        f"{displayable} and {describe_branch_content(rv)}."
                     )
 
                 rv.image = displayable
@@ -1203,8 +1267,8 @@ def parse_condition(l, need_expr):
             ll.expect_noblock("if/elif/else properties")
             ll.expect_eol()
 
-    if rv.image is None:
-        l.error("An if, elif or else statement must have a displayable.")
+    if rv.image is None and rv.nested is None:
+        l.error("An if, elif or else statement must have a displayable or a nested if statement.")
 
     return rv
 

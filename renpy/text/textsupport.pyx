@@ -274,7 +274,9 @@ def lenticular_bracket_ruby(s):
             else:
                 buf += c
 
-    if buf:
+    # A dangling u'【' leaves us in LEFT_STATE with an empty buf, and that
+    # u'【' still has to be emitted.
+    if buf or state == LEFT_STATE:
 
         if state == TEXT_STATE:
             rv.append((TEXT, buf))

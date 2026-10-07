@@ -553,7 +553,7 @@ init python in project:
             # Normal projects, in alphabetical order by lowercase name.
             self.projects = [ ]
 
-            # Controls wether the folder is collapsed or shown.
+            # Controls whether the folder is collapsed or shown.
             self.hidden = True
 
         # NOTE
@@ -714,7 +714,7 @@ init python in project:
                 if not pf.hidden and not pf.projects:
                     pf.hidden = True
 
-                # Return None if the project folder is emtpy.
+                # Return None if the project folder is empty.
                 if not pf.projects:
                     return None
 

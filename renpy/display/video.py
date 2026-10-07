@@ -488,8 +488,8 @@ class Movie(renpy.display.displayable.Displayable):
         an movie file is 1280x720 and oversample is 2, then the image will
         be treated as a 640x360 movie for the purpose of layout.
 
-        If None, Ren'Py will automatically determine oversamping. If an @ followed
-        by a number is found in the filename, that number will be used as the the
+        If None, Ren'Py will automatically determine oversampling. If an @ followed
+        by a number is found in the filename, that number will be used as the
         oversampling factor. Otherwise, Ren'Py will search for files and use those.
 
         Specifically, if :file`launch.webm` is used, Ren'Py will search for :file:`launch@2.webm`
@@ -617,8 +617,7 @@ class Movie(renpy.display.displayable.Displayable):
             framedrop = False
 
         renpy.audio.music.register_channel(
-            name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop, force=True
-        )
+            name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop, force=True, yuv_acceptable= not (self.mask or self.side_mask))
 
     def ensure_channels(self):
         if self.channel == "movie" and self.dynamic_channel:

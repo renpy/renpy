@@ -32,10 +32,12 @@ void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name,
 void RPS_stop(int channel);
 void RPS_dequeue(int channel, int even_tight);
 int RPS_queue_depth(int channel);
+int RPS_get_state(int channel);
 PyObject *RPS_playing_name(int channel);
 void RPS_fadeout(int channel, int ms);
 void RPS_pause(int channel, int pause);
 void RPS_global_pause(int pause);
+void RPS_seek(int channel, double position);
 void RPS_set_endevent(int channel, int event);
 int RPS_get_pos(int channel);
 double RPS_get_duration(int channel);
