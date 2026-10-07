@@ -37,6 +37,11 @@ def main():
     os.chdir(BASE)
 
     setuplib.init()
+    with setuplib._build_lock(Path("tmp/.cython.lock")):
+        _build()
+
+
+def _build():
     setuplib.check_imports(BASE / "scripts", "setuplib.py", "generate_styles.py")
 
     generate_styles.generate()
@@ -50,15 +55,15 @@ def main():
         setuplib.include_dirs.append(f"{cubism}/Core/include")
 
     # src/ directory.
-    cython("_renpy", ["src/IMG_savepng.c", "src/core.c"], packages="sdl3 libpng")
+    cython("_renpy", ["src/core.c"], packages="sdl3 libpng")
 
     # renpy.pygame
     cython("renpy.pygame.iostream", packages="sdl3")
     cython("renpy.pygame.locals", packages="sdl3")
     cython(
         "renpy.pygame.image",
-        ["src/pygame/write_png.c", "src/pygame/write_jpeg.c"],
-        packages="sdl3-image libjpeg libpng sdl3",
+        ["src/pygame/write_png.c"],
+        packages="sdl3-image libpng sdl3",
     )
     cython("renpy.pygame.sdl_image", packages="sdl3")
     cython("renpy.pygame.controller", packages="sdl3")
@@ -75,7 +80,7 @@ def main():
     cython("renpy.pygame.color", packages="sdl3")
     cython("renpy.pygame.rect", packages="sdl3")
     cython("renpy.pygame.error", packages="sdl3")
-    cython("renpy.pygame.surface", packages="sdl3")
+    cython("renpy.pygame.surface", ["src/pygame/surface_deallocation.c"], packages="sdl3")
     cython("renpy.pygame.draw", packages="sdl3")
     cython(
         "renpy.pygame.gfxdraw",
@@ -91,7 +96,6 @@ def main():
     cython("renpy.style")
     cython("renpy.encryption")
     cython("renpy.tfd", ["src/tinyfiledialogs/tinyfiledialogs.c"], setup_filename="Setup.tfd")
-    cython("renpy.ecsign", ["src/ec_sign_core.c", "src/ec_sign_core_web.c"], packages="openssl")
 
     # renpy.audio
     cython(
@@ -120,14 +124,15 @@ def main():
     cython("renpy.uguu.uguu", packages="sdl3")
 
     # renpy.gl2
-    cython("renpy.gl2.gl2mesh")
-    cython("renpy.gl2.gl2mesh2")
-    cython("renpy.gl2.gl2mesh3")
-    cython("renpy.gl2.gl2polygon")
+    cython("renpy.gl2.gl2mesh", packages="sdl3")
+    cython("renpy.gl2.gl2mesh2", packages="sdl3")
+    cython("renpy.gl2.gl2mesh3", packages="sdl3")
+    cython("renpy.gl2.gl2polygon", packages="sdl3")
     cython("renpy.gl2.gl2model", packages="sdl3")
     cython("renpy.gl2.gl2draw", packages="sdl3")
     cython("renpy.gl2.gl2texture", packages="sdl3")
     cython("renpy.gl2.gl2uniform", packages="sdl3")
+    cython("renpy.gl2.gl2physics", packages="sdl3")
     cython("renpy.gl2.gl2shader", packages="sdl3")
     cython("renpy.gl2.gl2statecache", packages="sdl3")
 

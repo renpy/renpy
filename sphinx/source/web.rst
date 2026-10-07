@@ -203,7 +203,7 @@ Playing back video is also supported. There are two variables that control
 it:
 
 :var:`config.web_video_base`
-    This is a URL that's appended to to the movie filename to get the full URL
+    This is a URL that's appended to the movie filename to get the full URL
     to play the movie from. It can include directories in it, so
     "https://share.renpy.org/movies-for-mygame/" would also be fine.
 

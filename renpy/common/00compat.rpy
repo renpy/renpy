@@ -49,6 +49,7 @@ init -1100 python:
             config.late_audio_scan = False
             config.scene_uses_tag_layer = False
             config.mesh_oversample = 1.0
+            config.glsl_version = 100
 
         if version <= (8, 5, 3):
             config.live2d_old_beziers = True

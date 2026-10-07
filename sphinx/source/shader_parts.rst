@@ -17,7 +17,8 @@ How Ren'Py uses vertex part priorities:
 * Priorities 20-80 adjust gl_Position in virtual or drawable coordinates.
 * Priority 90 is used to capture gl_Position in virtual or drawable coordinates after adjustment.
 * Priority 100 transforms gl_Position to viewport coordinates.
-* Priority 200 stores more information in varying variables, without touching gl_Position.
+* Priority 200 stores more information in the variables passed to the fragment
+  shader, without touching gl_Position.
 
 In order:
 
@@ -28,7 +29,9 @@ Fragment Part Priorities
 
 How Ren'Py uses fragment part priorities:
 
-* Priority 200 determines an original color and stores it in gl_FragColor.
+* Priority 200 determines an original color and stores it in the fragment
+  output (``fragment_color`` in GLSL ES 3.00 or ``gl_FragColor`` in
+  GLSL ES 1.00).
 * Priority 300 multiplies that color with a second texture.
 * Priority 325 stores alpha before the text shaders adjust it.
 * Priority 350 applies text shaders that adjust alpha.

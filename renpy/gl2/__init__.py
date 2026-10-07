@@ -15,6 +15,7 @@ if typing.TYPE_CHECKING:
     from . import gl2mesh2 as gl2mesh2
     from . import gl2mesh3 as gl2mesh3
     from . import gl2model as gl2model
+    from . import gl2physics as gl2physics
     from . import gl2polygon as gl2polygon
     from . import gl2shader as gl2shader
     from . import gl2shadercache as gl2shadercache

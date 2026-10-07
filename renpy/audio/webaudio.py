@@ -24,10 +24,11 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy
 import emscripten  # type: ignore
-import pygame
+from io import BufferedIOBase, BufferedReader
 from json import dumps
 
 import renpy.audio.renpysound as renpysound
+import renpy.pygame.iostream as iostream
 
 # True if the browser only supports video decoding (not audio)
 video_only = False
@@ -173,9 +174,20 @@ def play(
         The audio filter to apply when the file is being played.
     """
 
+    array = None
+
     try:
-        # Assume it is some file-like with name attribute meaning the filename.
-        if not isinstance(file, str):
+        # renpy.loader.open_file
+        if isinstance(file, iostream.IOPath):
+            file = file.path
+        # renpy.exports.loaderexports.open_file
+        elif isinstance(file, BufferedReader) and isinstance(file.raw, iostream.IOPath):
+            file = file.raw.path
+        # renpy.audio.audio.AudioData | renpy.loader.load
+        elif isinstance(file, (BufferedIOBase, iostream.IOStream)):
+            file, array = name, list(file.read())
+        # something else, but probably it unreachable
+        elif not isinstance(file, str) and hasattr(file, "name"):
             file = file.name
     except Exception:
         if renpy.config.debug_sound:
@@ -188,7 +200,7 @@ def play(
     afid = load_audio_filter(audio_filter)
 
     call("stop", channel)
-    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid)
+    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid, array)
 
 
 @proxy_with_channel
@@ -211,8 +223,20 @@ def queue(
     The other arguments are as for play.
     """
 
+    array = None
+
     try:
-        if not isinstance(file, str):
+        # renpy.loader.open_file
+        if isinstance(file, iostream.IOPath):
+            file = file.path
+        # renpy.exports.loaderexports.open_file
+        elif isinstance(file, BufferedReader) and isinstance(file.raw, iostream.IOPath):
+            file = file.raw.path
+        # renpy.audio.audio.AudioData | renpy.loader.load
+        elif isinstance(file, (BufferedIOBase, iostream.IOStream)):
+            file, array = name, list(file.read())
+        # something else, but probably it unreachable
+        elif not isinstance(file, str) and hasattr(file, "name"):
             file = file.name
     except Exception:
         if renpy.config.debug_sound:
@@ -224,7 +248,7 @@ def queue(
 
     afid = load_audio_filter(audio_filter)
 
-    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid)
+    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid, array)
 
 
 @proxy_with_channel
@@ -234,6 +258,13 @@ def stop(channel):
     """
 
     call("stop", channel)
+
+
+@proxy_with_channel
+def seek(channel, position):
+    """Seeks the playing media on `channel` to `position` seconds."""
+
+    call("seek", channel, position)
 
 
 @proxy_with_channel
@@ -258,6 +289,19 @@ def queue_depth(channel):
     """
 
     return emscripten.run_script_int("renpyAudio.queue_depth({})".format(channel))
+
+
+@proxy_with_channel
+def get_state(channel):
+    """Returns the best-effort lifecycle state of a web audio channel."""
+
+    # The web backend currently exposes queue depth but not a distinct EOF
+    # state. Keep the API compatible and add the richer state when the JS
+    # backend grows an explicit state query.
+    if queue_depth(channel):
+        return "playing"
+
+    return "idle"
 
 
 @proxy_with_channel
@@ -324,7 +368,7 @@ def busy(channel):
 def get_pos(channel):
     """
     Returns the position of the audio file playing in `channel`. Returns None
-    if not file is is playing or it is not known.
+    if no file is playing or it is not known.
     """
 
     rv = call_int("get_pos", channel)
@@ -573,7 +617,7 @@ DROP_VIDEO = 2
 
 
 @proxy_with_channel
-def set_video(channel, video, loop=False):
+def set_video(channel, video, loop=False, yuv=False):
     """
     Sets a flag that determines if this channel will attempt to decode video.
     """

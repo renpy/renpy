@@ -189,6 +189,9 @@ def try_compile(where, expr, additional=None):
         error message.
     """
 
+    if expr is None:
+        return
+
     try:
         renpy.python.py_compile(expr, "eval")
     except Exception:

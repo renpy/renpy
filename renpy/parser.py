@@ -22,35 +22,38 @@
 # This module contains the parser for the Ren'Py script language. It's
 # called when parsing is necessary, and creates an AST from the script.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
 import collections
 import time
 
 import renpy
-import renpy.ast as ast
-
+from renpy import ast
+from renpy.astsupport import PyExpr
+from renpy.lexer import (
+    ExpressionContext,
+    Lexer,
+    ParseError,
+    group_logical_lines,
+    list_logical_lines,
+)
 from renpy.parameter import EMPTY_ARGUMENTS, Parameter
 
-from renpy.lexer import (
-    list_logical_lines,
-    group_logical_lines,
-    ParseError,
-    Lexer,
-    # Kept imported for older games.
-    munge_filename,
-    elide_filename,
-    unelide_filename,
-    SubParse,
-)
+# Kept imported for older games.
+if True:
+    from renpy.lexer import SubParse, elide_filename, munge_filename, unelide_filename  # noqa: F401
 
 # A list of parse error messages.
-parse_errors = []
+parse_errors: list[str] = []
 
 # A list of deferred parser error. These are potential parse errors that
 # can be released or not when parse errors are reported.
-deferred_parse_errors = collections.defaultdict(list)
+deferred_parse_errors: collections.defaultdict[str, list[str]] = collections.defaultdict(list)
+
+type ExpressionsList = list[tuple[PyExpr, ExpressionContext]]
+parsed_expressions: ExpressionsList = []
+"""
+A list of tuples containing a PyExpr object and the context in which it appears.
+The context is one of "eval", "exec", "hide", or "unknown".
+"""
 
 ################################################################################
 # Parsing of structures that are less than a full statement.
@@ -357,7 +360,7 @@ def parse_parameters(l):
 
     def name_parsed(name):
         if name in parameters:
-            l.error("duplicate parameter name {!r}".format(name))
+            l.error(f"duplicate parameter name {name!r}")
 
     while not l.match(r"\)"):
         if l.match(r"\*\*"):
@@ -366,14 +369,14 @@ def parse_parameters(l):
             parameters[extrakw] = Parameter(extrakw, Parameter.VAR_KEYWORD)
 
             if l.match(r"="):
-                l.error("a var-keyword parameter (**{}) cannot have a default value".format(extrakw))
+                l.error(f"a var-keyword parameter (**{extrakw}) cannot have a default value")
 
             # Allow trailing comma
             l.match(r",")
 
             # extrakw is always last parameter
             if not l.match(r"\)"):
-                l.error("no parameter can follow a var-keyword parameter (**{})".format(extrakw))
+                l.error(f"no parameter can follow a var-keyword parameter (**{extrakw})")
 
             break
 
@@ -394,7 +397,7 @@ def parse_parameters(l):
                 parameters[extrapos] = Parameter(extrapos, Parameter.VAR_POSITIONAL)
 
                 if l.match(r"="):
-                    l.error("a var-positional parameter (*{}) cannot have a default value".format(extrapos))
+                    l.error(f"a var-positional parameter (*{extrapos}) cannot have a default value")
 
             else:
                 missing_kwonly = True
@@ -430,10 +433,10 @@ def parse_parameters(l):
                 now_default = True
 
                 if not default:
-                    l.error("empty default value for parameter {!r}".format(name))
+                    l.error(f"empty default value for parameter {name!r}")
 
             elif now_default and not now_kwonly:
-                l.error("non-default parameter {!r} follows a default parameter".format(name))
+                l.error(f"non-default parameter {name!r} follows a default parameter")
 
             name_parsed(name)
             parameters[name] = Parameter(name, kind=kind, default=default)
@@ -491,7 +494,7 @@ def parse_arguments(l):
 
             if name and l.match(r"=") and not l.match("="):
                 if name in names:
-                    l.error("keyword argument repeated: '%s'" % name)
+                    l.error(f"keyword argument repeated: '{name}'")
                 else:
                     names.add(name)
                 keyword_parsed = True
@@ -520,7 +523,7 @@ def parse_arguments(l):
 # The parse trie.
 
 
-class ParseTrie(object):
+class ParseTrie:
     """
     This is a trie of words, that's used to pick a parser function.
     """
@@ -1036,18 +1039,14 @@ def transform_statement(l, loc):
                 found_pos_only = True
                 l.deferred_error(
                     "atl_pos_only",
-                    "the transform statement does not take positional-only parameters ({} is not allowed)".format(p),
+                    f"the transform statement does not take positional-only parameters ({p} is not allowed)",
                 )
             elif p.kind == p.VAR_POSITIONAL:
-                l.error("the transform statement does not take *args ({} is not allowed)".format(p))
+                l.error(f"the transform statement does not take *args ({p} is not allowed)")
             elif p.kind == p.VAR_KEYWORD:
-                l.error("the transform statement does not take **kwargs ({} is not allowed)".format(p))
+                l.error(f"the transform statement does not take **kwargs ({p} is not allowed)")
             elif (p.kind == p.KEYWORD_ONLY) and (p.default is p.empty):
-                l.error(
-                    "the transform statement does not take required keyword-only parameters ({} is not allowed)".format(
-                        p
-                    )
-                )
+                l.error(f"the transform statement does not take required keyword-only parameters ({p} is not allowed)")
 
     l.require(":")
     l.expect_eol()
@@ -1373,43 +1372,43 @@ def style_statement(l, loc):
     # Parse priority and name.
     name = l.require(l.word)
 
-    rv = ast.Style(loc, name)
+    style = ast.Style(loc, name)
 
     # Function that parses a clause. This returns true if a clause has been
     # parsed, False otherwise.
     def parse_clause(l):
         if l.keyword("is"):
-            if rv.parent is not None:
+            if style.parent is not None:
                 l.error("parent clause appears twice.")
 
-            rv.parent = l.require(l.word)  # type: ignore
+            style.parent = l.require(l.word)
             return True
 
         if l.keyword("clear"):
-            rv.clear = True  # type: ignore
+            style.clear = True
             return True
 
         if l.keyword("take"):
-            if rv.take is not None:  # type: ignore
+            if style.take is not None:
                 l.error("take clause appears twice.")
 
-            rv.take = l.require(l.name)  # type: ignore
+            style.take = l.require(l.name)
             return True
 
         if l.keyword("del"):
             propname = l.require(l.name)
 
             if propname not in renpy.style.prefixed_all_properties:
-                l.error("style property %s is not known." % propname)
+                l.error(f"style property {propname} is not known.")
 
-            rv.delattr.append(propname)  # type: ignore
+            style.delattr.append(propname)
             return True
 
         if l.keyword("variant"):
-            if rv.variant is not None:  # type: ignore
+            if style.variant is not None:
                 l.error("variant clause appears twice.")
 
-            rv.variant = l.require(l.simple_expression)  # type: ignore
+            style.variant = l.require(l.simple_expression)
 
             return True
 
@@ -1417,12 +1416,12 @@ def style_statement(l, loc):
 
         if propname is not None:
             if (propname != "properties") and (propname not in renpy.style.prefixed_all_properties):
-                l.error("style property %s is not known." % propname)
+                l.error(f"style property {propname} is not known.")
 
-            if propname in rv.properties:  # type: ignore
-                l.error("style property %s appears twice." % propname)
+            if propname in style.properties:
+                l.error(f"style property {propname} appears twice.")
 
-            rv.properties[propname] = l.require(l.simple_expression)  # type: ignore
+            style.properties[propname] = l.require(l.simple_expression)
 
             return True
 
@@ -1446,8 +1445,9 @@ def style_statement(l, loc):
 
             ll.expect_eol()
 
+    rv = style
     if not l.init:
-        rv = ast.Init(loc, [rv], l.init_offset)
+        rv = ast.Init(loc, [style], l.init_offset)
 
     l.advance()
 
@@ -1510,13 +1510,15 @@ def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None, in
 
         rv = []
 
-        for i in what:
+        for line_offset, i in what:
+            paragraph_loc = (loc[0], loc[1] + line_offset)
+
             if i == "{clear}":
-                rv.append(ast.UserStatement(loc, "nvl clear", [], (("nvl", "clear"), {})))
+                rv.append(ast.UserStatement(paragraph_loc, "nvl clear", [], (("nvl", "clear"), {})))
             else:
                 rv.append(
                     ast.Say(
-                        loc,
+                        paragraph_loc,
                         who,
                         i,
                         with_,
@@ -1742,7 +1744,7 @@ def release_deferred_errors():
         release("atl_pos_only")
 
     if deferred_parse_errors:
-        raise Exception("Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors)))
+        raise Exception(f"Unknown deferred error label(s): {', '.join(deferred_parse_errors)}")
 
 
 def has_parse_errors():
@@ -1782,7 +1784,7 @@ def report_parse_errors():
 
         print("I'm sorry, but errors were detected in your script. Please correct the", file=f)
         print("errors listed below, and try again.", file=f)
-        print("", file=f)
+        print(file=f)
 
         for i in parse_errors:
             full_text += i
@@ -1791,18 +1793,18 @@ def report_parse_errors():
             if not isinstance(i, str):
                 i = str(i, "utf-8", "replace")
 
-            print("", file=f)
+            print(file=f)
             print(i, file=f)
 
             screen_parse_errors.append(i)
 
             try:
-                print("")
+                print()
                 print(i)
             except Exception:
                 pass
 
-        print("", file=f)
+        print(file=f)
         print("Ren'Py Version:", renpy.version, file=f)
         print(str(time.ctime()), file=f)
 

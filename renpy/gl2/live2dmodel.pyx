@@ -26,6 +26,8 @@ from libc.stdio cimport printf
 
 from renpy.gl2.gl2mesh import TEXTURE_LAYOUT
 from renpy.gl2.gl2mesh2 cimport Mesh2
+from renpy.gl2.gl2physics cimport FloatView
+from renpy.gl2.gl2physics import ParameterBuffer
 
 from renpy.display.matrix cimport Matrix
 from renpy.display.render cimport Render
@@ -224,7 +226,7 @@ cdef class Live2DModel:
 
         self.filename = fn
 
-        with renpy.loader.load(fn, directory="images") as f:
+        with renpy.loader.load(self.filename, directory="images") as f:
             data = f.read()
 
         # Load the MOC.
@@ -482,6 +484,10 @@ cdef class Live2DModel:
             for j in range(mesh.triangles * 3):
                 mesh.triangle[j] = self.drawable_indices[i][j]
 
+            mesh.point_version = 1
+            mesh.attribute_version = 1
+            mesh.triangle_version = 1
+
             tex = textures[self.drawable_texture_indices[i]]
 
             if is_mask:
@@ -602,3 +608,14 @@ cdef class Live2DModel:
             rv.subpixel_blit(t[1], (0, 0))
 
         return rv
+
+    def get_physics_parameters(self):
+        cdef int count = self.parameter_count
+
+        return ParameterBuffer(
+            FloatView.create(self, self.parameter_values, count, False),
+            FloatView.create(self, self.parameter_minimum_values, count, True),
+            FloatView.create(self, self.parameter_maximum_values, count, True),
+            FloatView.create(self, self.parameter_default_values, count, True),
+            {name: parameter.index for name, parameter in self.parameters.items()},
+        )

@@ -128,6 +128,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    model
    other
    ren_py
+   pygame
    fetch
    screenshot
    clipboard

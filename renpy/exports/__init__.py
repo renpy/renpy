@@ -365,6 +365,7 @@ from renpy.exports.debugexports import (
     error as error,
     filename_line_override as filename_line_override,
     get_filename_line as get_filename_line,
+    is_warping as is_warping,
     log as log,
     pop_error_handler as pop_error_handler,
     push_error_handler as push_error_handler,
@@ -533,8 +534,10 @@ from renpy.exports.predictexports import (
     expand_predict as expand_predict,
     predicting as predicting,
     start_predict_screen as start_predict_screen,
+    start_predict_shader as start_predict_shader,
     start_predict as start_predict,
     stop_predict_screen as stop_predict_screen,
+    stop_predict_shader as stop_predict_shader,
     stop_predict as stop_predict,
 )
 
@@ -564,6 +567,7 @@ from renpy.exports.rollbackexports import (
 )
 
 from renpy.exports.sayexports import (
+    can_warp_say as can_warp_say,
     count_dialogue_blocks as count_dialogue_blocks,
     count_newly_seen_dialogue_blocks as count_newly_seen_dialogue_blocks,
     count_seen_dialogue_blocks as count_seen_dialogue_blocks,

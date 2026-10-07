@@ -421,6 +421,8 @@ def bootstrap(renpy_base: str):
         for cb in renpy.config.python_exit_callbacks:
             cb()
 
+        renpy.pygame.surface._quit_surface_deallocation()
+
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
         if not renpy.emscripten:

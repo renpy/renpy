@@ -1,4 +1,4 @@
-﻿/* Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+﻿/* Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -421,7 +421,7 @@ renpyAudio.set_channel_count = (count) => {
 }
 
 
-renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid) => {
+renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid, array) => {
 
     const c = get_channel(channel);
 
@@ -525,7 +525,7 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
         fadein: fadein,
         fadeout: null,
         tight: tight,
-        file: file,
+        name: name,
         filter: renpyAudio.getFilter(afid),
         synchro_start: synchro_start,
     };
@@ -543,7 +543,7 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
         c.paused = false;
     } else {
         c.queued = q;
-        if (c.playing.file === file) {
+        if (c.playing.name === name) {
             // Same file, re-use the data to reduce memory and CPU footprint
             if (c.playing.buffer !== null) {
                 reuseBuffer(c);
@@ -555,7 +555,12 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
         }
     }
 
-    const array = FS.readFile(file);
+    if (array === null) {
+        array = FS.readFile(file);
+    } else {
+        array = new Uint8Array(array);
+    }
+
     context.decodeAudioData(array.buffer, (buffer) => {
 
         q.source = create_source(c, buffer);
@@ -563,7 +568,7 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
 
         start_playing(c);
 
-        if (c.playing === q && c.queued !== null && c.queued.file === q.file) {
+        if (c.playing === q && c.queued !== null && c.queued.name === q.name) {
             // Same file, re-use the data to reduce memory and CPU footprint
             reuseBuffer(c);
         }
@@ -714,6 +719,50 @@ renpyAudio.get_pos = (channel) => {
 };
 
 
+renpyAudio.seek = (channel, position) => {
+    let c = get_channel(channel);
+    let p = c.playing;
+
+    if (p === null) {
+        return;
+    }
+
+    position = Math.max(0, position);
+    if (p.end > 0) {
+        position = Math.min(position, p.end);
+    }
+
+    if (c.video && c.video_el) {
+        c.video_el.currentTime = position;
+        p.start = position;
+        p.started = c.paused ? null : c.video_el.currentTime;
+        return;
+    }
+
+    if (!p.buffer) {
+        return;
+    }
+
+    position = Math.min(position, p.buffer.duration);
+
+    if (p.source !== null && p.started !== null) {
+        renpyAudio.disconnectFilter(p.filter, p.source, c.destination);
+        try {
+            p.source.stop();
+        } catch (e) {
+        }
+    }
+
+    p.source = create_source(c, p.buffer);
+    p.start = position;
+    p.started = null;
+
+    if (!c.paused) {
+        start_playing(c);
+    }
+};
+
+
 renpyAudio.get_duration = (channel) => {
     let c = get_channel(channel);
     let p = c.playing;
@@ -836,9 +885,91 @@ renpyAudio.tts = (s, v, rate, voice) => {
 
 renpyAudio.update_tts_voices = () => {
     tts_voices = {};
-    for (let v of speechSynthesis.getVoices()) {
+
+    let voices = (speechSynthesis && speechSynthesis.getVoices) ? Array.from(speechSynthesis.getVoices()) : [];
+    if (!voices.length) {
+        return;
+    }
+
+    let navLangs = (typeof navigator !== "undefined" && navigator.languages && navigator.languages.length)
+        ? Array.from(navigator.languages)
+        : [(typeof navigator !== "undefined" && (navigator.language || navigator.userLanguage)) || "en"];
+
+    let norm = (l) => (l || "").toLowerCase().replace(/_/g, "-");
+    let base = (l) => norm(l).split("-")[0];
+
+    let normNavLangs = navLangs.map(norm);
+    let normNavBases = navLangs.map(base);
+
+    let isNormalVoice = (v) => {
+        let name = v.name || "";
+        let lang = v.lang || "";
+        return !name.includes("+") && !name.includes("@") && !lang.includes("+");
+    };
+
+    let scoreVoice = (v) => {
+        let normal = isNormalVoice(v);
+        let vLang = norm(v.lang);
+        let vBase = base(v.lang);
+
+        let langRank = -1;
+        let exact = false;
+        for (let i = 0; i < normNavLangs.length; i++) {
+            if (vLang === normNavLangs[i]) {
+                langRank = i;
+                exact = true;
+                break;
+            } else if (vBase === normNavBases[i] && langRank === -1) {
+                langRank = i;
+                exact = false;
+            }
+        }
+
+        let tier;
+        if (normal) {
+            if (langRank !== -1) {
+                tier = exact ? 0 : 1;
+            } else {
+                tier = 2;
+            }
+        } else {
+            if (langRank !== -1) {
+                tier = 3;
+            } else {
+                tier = 4;
+            }
+        }
+
+        return {
+            tier: tier,
+            isDefault: v.default ? 0 : 1,
+            langRank: langRank === -1 ? 999 : langRank,
+            lang: v.lang || "",
+            name: v.name || "",
+        };
+    };
+
+    voices.sort((a, b) => {
+        let sA = scoreVoice(a);
+        let sB = scoreVoice(b);
+
+        if (sA.tier !== sB.tier) return sA.tier - sB.tier;
+        if (sA.isDefault !== sB.isDefault) return sA.isDefault - sB.isDefault;
+        if (sA.langRank !== sB.langRank) return sA.langRank - sB.langRank;
+        if (sA.lang !== sB.lang) return sA.lang.localeCompare(sB.lang);
+        return sA.name.localeCompare(sB.name);
+    });
+
+    let count = 0;
+    for (let v of voices) {
         let key = v.lang + ": " + v.name;
-        tts_voices[key] = v;
+        if (!tts_voices[key]) {
+            tts_voices[key] = v;
+            count++;
+            if (count >= 25) {
+                break;
+            }
+        }
     }
 }
 
@@ -867,8 +998,6 @@ renpyAudio.can_play_types = (l) => {
 
     return 1;
 }
-
-
 
 renpyAudio.set_video = (channel, video, loop, web_video_prompt) => {
     const c = get_channel(channel);

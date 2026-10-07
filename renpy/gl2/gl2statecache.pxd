@@ -21,6 +21,11 @@
 
 from renpy.uguu.gl cimport *
 
+cdef enum:
+    SCRATCH_POSITION = 0
+    SCRATCH_ATTRIBUTE = 1
+    SCRATCH_INDEX = 2
+
 cdef class GLStateCache:
     """
     This tracks the OpenGL state that Ren'Py sets, so that redundant
@@ -53,11 +58,25 @@ cdef class GLStateCache:
     # A bitmask of the currently enabled vertex attribute arrays.
     cdef unsigned int enabled_attrib_mask
 
-    # A per-program sampler binding cache, mapping (program, location) to the
-    # sampler unit. This avoids redundant glUniform1i calls.
-    cdef dict sampler_bindings
+    # Incremented by reset() to invalidate sampler-to-unit assignments.
+    cdef unsigned long long reset_serial
+
+    # The currently bound GL_ELEMENT_ARRAY_BUFFER and GL_ARRAY_BUFFER.
+    cdef GLuint current_element_buffer
+    cdef GLuint current_array_buffer
+
+    # True when the context uses the desktop core profile.
+    cdef public bint core_profile
+
+    # Streaming stand-ins for client-side arrays under a core profile.
+    cdef GLuint scratch_buffers[3]
+
+    cdef unsigned long long buffer_generation
+    cdef unsigned long long buffer_frame
 
     cpdef void reset(GLStateCache self)
+
+    cpdef void new_context(GLStateCache self, bint core_profile)
 
     cdef void use_program(GLStateCache self, GLuint program)
 
@@ -79,4 +98,10 @@ cdef class GLStateCache:
 
     cdef void sync_attrib_arrays(GLStateCache self, unsigned int required_mask)
 
-    cdef bint check_sampler_binding(GLStateCache self, GLuint program, GLint location, int sampler)
+    cdef void delete_scratch_buffers(GLStateCache self) noexcept nogil
+
+    cdef void bind_element_buffer(GLStateCache self, GLuint buffer) noexcept nogil
+
+    cdef void bind_array_buffer(GLStateCache self, GLuint buffer) noexcept nogil
+
+    cdef GLuint upload_scratch(GLStateCache self, int slot, GLenum target, GLsizeiptr size, const void* data) noexcept nogil

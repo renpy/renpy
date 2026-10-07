@@ -16,8 +16,6 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
-from cpython.buffer cimport PyObject_CheckBuffer
-
 from .sdl cimport SDL_IOStream, Sint64
 
 
@@ -53,45 +51,4 @@ cdef class IOFileLike(IOStream):
     cdef readonly object filelike
 
 
-cdef inline SDL_IOStream *SDL_IOStreamFromPython(object obj, str name=None) except NULL:
-    """
-    This accepts, in order:
-
-    * An IOStream object, which is closed and the underlying SDL_IOStream
-      object is returned.
-
-    * A str or path-like filename, which is opened.
-
-    * An object with a name field. The name is interpreted as a filename.
-      and opened. The object will be closed.
-
-    * An object that supports the buffer protocol.
-
-    * A file-like object.
-
-    It returns an SDL_IOStream object, or NULL on error.
-
-    Calling this function transfers exclusive ownership of `obj` to the returned
-    stream, including responsibility for closing it.
-    """
-
-    import os
-    
-    while hasattr(obj, "raw"):
-        obj = obj.raw
-
-    cdef IOStream stream
-    if isinstance(obj, IOStream):
-        stream = <IOStream> obj
-    elif isinstance(obj, (str, os.PathLike)):
-        stream = IOPath(obj, name=name)
-    elif isinstance(obj_path := getattr(obj, "name", None), (str, os.PathLike)):
-        stream = IOPath(obj_path, name=name)
-    elif PyObject_CheckBuffer(obj):
-        stream = IOBuffer(obj, name=name)
-    elif hasattr(obj, "read") or hasattr(obj, "write"):
-        stream = IOFileLike(obj, name=name)
-    else:
-        raise TypeError(f"{obj!r} is not a filename or file-like object.")
-
-    return stream.take()
+cpdef IOStream open_io(object obj, str mode=*, str name=*)

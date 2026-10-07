@@ -583,6 +583,13 @@ def display_say(
 ):
     global afm_text_queue
 
+    if renpy.warp.warping:
+        if retain:
+            if dtt is None:
+                dtt = DialogueTextTags(what)
+            show_function(who, dtt.text, multiple=multiple, retain=allocate_retain_tag())
+        return
+
     # Final is true if this statement should perform an interaction.
 
     if multiple is None:
@@ -689,15 +696,8 @@ def display_say(
     exception = None
 
     retain_tag = "_retain_0"
-    retain_count = -1
-
     if retain:
-        while True:
-            retain_count += 1
-            retain_tag = "_retain_{}".format(retain_count)
-
-            if not renpy.exports.get_screen(retain_tag, renpy.store.bubble.retain_layer):
-                break
+        retain_tag = allocate_retain_tag()
 
     # Call the begin callback.
     callback.what = dtt.text
@@ -972,6 +972,16 @@ def display_say(
         raise exception
 
 
+def allocate_retain_tag():
+    count = 0
+
+    while True:
+        tag = "_retain_{}".format(count)
+        if not renpy.exports.get_screen(tag, renpy.store.bubble.retain_layer):
+            return tag
+        count += 1
+
+
 class HistoryEntry(renpy.object.Object):
     """
     Instances of this object are used to represent history entries in
@@ -1025,6 +1035,7 @@ class ADVCharacter(object):
     ]
 
     voice_tag = None
+    warp = True
     properties = {}
 
     _statement_name = None
@@ -1063,6 +1074,7 @@ class ADVCharacter(object):
 
         self.condition = v("condition")
         self.dynamic = v("dynamic")
+        self.warp = properties.pop("warp", getattr(kind, "warp", True))
         self.screen = v("screen")
         self.mode = v("mode")
 
@@ -1307,7 +1319,9 @@ class ADVCharacter(object):
         temporary_attrs = renpy.game.context().temporary_attributes
         renpy.game.context().temporary_attributes = None
 
-        if interact:
+        if renpy.warp.warping:
+            temporary_attrs = None
+        elif interact:
             if temporary_attrs:
                 temporary_attrs = list(temporary_attrs)
             else:
@@ -1344,6 +1358,9 @@ class ADVCharacter(object):
             return (attrs, images)
 
     def handle_say_transition(self, mode, before, after):
+        if renpy.warp.warping:
+            return
+
         before = set(before)
         after = set(after)
 
@@ -1470,6 +1487,9 @@ class ADVCharacter(object):
                 return sub(prefix) + sub(body) + sub(suffix)
 
     def __call__(self, what, interact=True, _call_done=True, multiple=None, **kwargs):
+        if renpy.warp.warping and not self.warp:
+            return
+
         _mode = kwargs.pop("_mode", None)
         _with_none = kwargs.pop("_with_none", None)
 
@@ -1519,11 +1539,11 @@ class ADVCharacter(object):
             if not interact:
                 renpy.store._side_image_attributes_reset = True
 
-        if renpy.config.voice_tag_callback is not None:
+        if not renpy.warp.warping and renpy.config.voice_tag_callback is not None:
             renpy.config.voice_tag_callback(self.voice_tag)
 
         try:
-            if interact:
+            if interact and not renpy.warp.warping:
                 mode = _mode or self.mode
                 renpy.exports.mode(mode)
             else:
@@ -1563,12 +1583,12 @@ class ADVCharacter(object):
 
             dtt = DialogueTextTags(what)
 
-            if renpy.config.history_current_dialogue:
+            if renpy.config.history_current_dialogue and not renpy.warp.warping:
                 self.add_history("current", who, what, multiple=multiple)
 
             self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
 
-            if renpy.config.history_current_dialogue:
+            if renpy.config.history_current_dialogue and not renpy.warp.warping:
                 self.pop_history()
 
             # Indicate that we're done.
@@ -1579,11 +1599,12 @@ class ADVCharacter(object):
                     self.do_done(who, what)
 
                 # Finally, log this line of dialogue.
-                if who and isinstance(who, str):
-                    renpy.exports.log(who)
+                if not renpy.warp.warping:
+                    if who and isinstance(who, str):
+                        renpy.exports.log(who)
 
-                renpy.exports.log(what)
-                renpy.exports.log("")
+                    renpy.exports.log(what)
+                    renpy.exports.log("")
 
         finally:
             if (multiple is None) and interact:
@@ -1670,7 +1691,7 @@ class ADVCharacter(object):
 
         h.multiple = multiple
 
-        if renpy.game.context().rollback:
+        if renpy.game.context().rollback and not renpy.warp.warping:
             h.rollback_identifier = renpy.game.log.current.identifier  # type: ignore
         else:
             h.rollback_identifier = None  # type: ignore
@@ -1785,6 +1806,13 @@ def Character(name=NotSet, kind=None, **properties):
     **Controlling Interactions.**
     These options control if the dialogue is displayed, if an
     interaction occurs, and the mode that is entered upon display.
+
+    `warp`
+        If true, the default, this character's dialogue can be replayed while
+        :ref:`warping to a line <warping_to_a_line>` to reconstruct history,
+        NVL pages, and retained bubbles. Replay does not perform an
+        interaction. Set this to False if the character's custom behavior
+        cannot safely run during warp.
 
     `condition`
         If given, this should be a string containing a Python

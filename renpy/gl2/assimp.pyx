@@ -25,7 +25,7 @@ import threading
 
 from typing import Iterable, Literal
 
-from renpy.pygame.iostream cimport SDL_IOStreamFromPython
+from renpy.pygame.iostream cimport open_io
 from renpy.pygame.sdl cimport SDL_IOStream
 
 from assimpapi cimport (
@@ -694,6 +694,10 @@ cdef class Loader:
 
             triangle += 3
 
+        m.point_version = 1
+        m.attribute_version = 1
+        m.triangle_version = 1
+
         info = MeshInfo(
             self,
             m,
@@ -960,16 +964,14 @@ cdef public SDL_IOStream *assimp_load(const char *filename) nogil:
     Loads the model from the given filename.
     """
 
-    cdef SDL_IOStream *rv = NULL
-
     with gil:
 
         fn = filename.decode()
 
         try:
             f = renpy.loader.load(fn)
-            rv = SDL_IOStreamFromPython(f)
+            return open_io(f).take()
         except Exception as e:
             pass
 
-    return rv
+    return NULL

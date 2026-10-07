@@ -46,6 +46,9 @@ label start:
         "Text":
             call text
 
+        "Text Shaders":
+            call textshader_jitter
+
         "Get Image Bounds":
             call get_image_bounds
 

@@ -188,8 +188,8 @@ screen main_menu:
         textbutton _("Music Room") action ShowMenu("music_room")
         textbutton _("Load Game") action ShowMenu("load")
         textbutton _("Preferences") action ShowMenu("preferences")
-        textbutton _("Help") action Help(help='http://renpy.org/doc/html/index.html')
-        textbutton _("Quit") action Quit(confirm=False)
+        textbutton _("Help") id "help_button" action Help(help='http://renpy.org/doc/html/index.html')
+        textbutton _("Quit") id "quit_button" action Quit(confirm=False)
 
     if autotest:
         timer .5 action Start("autostart")

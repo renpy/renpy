@@ -1575,6 +1575,9 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
     last_st = 0
     last_at = 0
 
+    # When true, per_interact only invalidates if the picked child changed.
+    redraw_on_change_only = False
+
     def after_setstate(self):
         self.child = None
         self.raw_child = None
@@ -1589,6 +1592,7 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
             function = dynamic_displayable_compat
 
         self.predict_function = kwargs.pop("_predict_function", None)
+        self.redraw_on_change_only = kwargs.pop("_redraw_on_change_only", False)
         self.function = function
         self.args = args
         self.kwargs = kwargs
@@ -1634,11 +1638,20 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
 
             self.child = child
 
+            if self.redraw_on_change_only:
+                renpy.display.render.redraw(self, 0)
+
         if redraw is not None:
             renpy.display.render.redraw(self, redraw)
 
     def per_interact(self):
-        renpy.display.render.redraw(self, 0)
+        if not self.redraw_on_change_only:
+            renpy.display.render.redraw(self, 0)
+
+            return
+
+        # Re-evaluate the pick; update() invalidates if it changed.
+        self.update(self.last_st, self.last_at)
 
     def render(self, w, h, st, at):
         self.update(st, at)
@@ -1763,6 +1776,8 @@ def ConditionSwitch(*args, **kwargs):
     for cond, d in zip(args[0::2], args[1::2]):
         if cond is True or cond is False or cond is None:
             code = cond
+        elif not isinstance(cond, str):
+            raise TypeError(f"ConditionSwitch conditions must be strings, True, False, or None, not {cond!r}")
         elif cond not in cond_cache:
             code = renpy.python.py_compile(cond, "eval")
             cond_cache[cond] = code
@@ -1770,7 +1785,13 @@ def ConditionSwitch(*args, **kwargs):
         d = renpy.easy.displayable(d)
         switch.append((cond, d))
 
-    rv = DynamicDisplayable(condition_switch_show, switch, predict_all, _predict_function=condition_switch_predict)
+    rv = DynamicDisplayable(
+        condition_switch_show,
+        switch,
+        predict_all,
+        _predict_function=condition_switch_predict,
+        _redraw_on_change_only=True,
+    )
 
     return Position(rv, **kwargs)
 
@@ -2093,6 +2114,9 @@ class Alpha(renpy.display.displayable.Displayable):
     def visit(self):
         return [self.child]
 
+    def predict_shaders(self, shaders):
+        return shaders + ("renpy.alpha",)
+
     def render(self, height, width, st, at):
         if self.anim_timebase:
             t = at
@@ -2313,6 +2337,11 @@ class Flatten(Container):
     def get_placement(self):
         return self.child.get_placement()
 
+    def predict_shaders(self, shaders):
+        renpy.gl2.gl2shadercache.predict_shader(shaders + ("renpy.texture",))
+
+        return ()
+
 
 class AlphaMask(Container):
     """
@@ -2360,6 +2389,11 @@ class AlphaMask(Container):
 
     def visit(self):
         return [self.mask, self.child]
+
+    def predict_shaders(self, shaders):
+        renpy.gl2.gl2shadercache.predict_shader(shaders + ("renpy.mask",))
+
+        return ()
 
     def render(self, width, height, st, at):
         cr = renpy.display.render.render(self.child, width, height, st, at)

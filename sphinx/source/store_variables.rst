@@ -3,7 +3,7 @@ Store Variables
 
 Ren'Py has a number of store variables that control its function. Store
 variables may be changed at any time. If a store variable is changed after
-the game has started, it will be be saved and loaded by the save system,
+the game has started, it will be saved and loaded by the save system,
 and rolled-back when rollback occurs.
 
 .. var:: adv = Character(...)

@@ -27,7 +27,7 @@ translate spanish strings:
 
     # screens.rpy:114
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
-    new "## Si hay una imagen lateral, la muestra encima del texto. No la muestra en la variante de teléfono - no hay lugar."
+    new "## Si hay una imagen lateral, se muéstra encima del texto. No la muestra en la variante de teléfono - no hay espacio."
 
     # screens.rpy:120
     old "## Make the namebox available for styling through the Character object."
@@ -55,7 +55,7 @@ translate spanish strings:
 
     # screens.rpy:201
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
-    new "## Esta pantallla presenta las opciones internas al juego de la sentencia 'menu'. El parámetro único, 'items', es una lista de objetos, cada uno los campos 'caption' y 'action'."
+    new "## Esta pantalla presenta las elecciones dentro del juego de la sentencia 'menu'. El parámetro único, 'items', es una lista de objetos, cada uno con los campos 'caption' y 'action'."
 
     # screens.rpy:205
     old "## https://www.renpy.org/doc/html/screen_special.html#choice"
@@ -63,7 +63,7 @@ translate spanish strings:
 
     # screens.rpy:215
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
-    new "## Cuando es 'True', el encabezamiento será dicho por el narrador. Si es 'False', será presentado como un botón inactivo. "
+    new "## Cuando es 'True', los textos del menú serán leídos por el narrador. Cuando es 'False', se mostrarán como botones vacíos."
 
     # screens.rpy:238
     old "## Quick Menu screen"
@@ -71,7 +71,7 @@ translate spanish strings:
 
     # screens.rpy:240
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
-    new "## El menú rápido se presenta en el juego para ofrecer fácil acceso a los menus externos al juego."
+    new "## El menú rápido se muestra en el juego para ofrecer fácil acceso a los menús externos al juego."
 
     # screens.rpy:245
     old "## Ensure this appears on top of other screens."
@@ -115,7 +115,7 @@ translate spanish strings:
 
     # screens.rpy:284
     old "## Main and Game Menu Screens"
-    new "## Principal y Pantalla de menu del juego."
+    new "## Pantallas del menú principal y del menú del juego"
 
     # screens.rpy:287
     old "## Navigation screen"
@@ -123,7 +123,7 @@ translate spanish strings:
 
     # screens.rpy:289
     old "## This screen is included in the main and game menus, and provides navigation to other menus, and to start the game."
-    new "## Esta pantalla está incluída en el menú principal y los menús del juego y ofrece navegación a los otros menús y al inicio del juego."
+    new "## Esta pantalla está incluida en el menú principal y los menús del juego y ofrece navegación a los otros menús y al inicio del juego."
 
     # screens.rpy:304
     old "Start"
@@ -179,11 +179,11 @@ translate spanish strings:
 
     # screens.rpy:354
     old "## This ensures that any other menu screen is replaced."
-    new "## Esto asegura que cualquier otra pantalla de menu es remplazada."
+    new "## Esto asegura que cualquier otra pantalla de menú sea reemplazada."
 
     # screens.rpy:361
     old "## This empty frame darkens the main menu."
-    new "## Este marco vacío oscurece el menu principal."
+    new "## Este marco vacío oscurece el menú principal."
 
     # screens.rpy:365
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
@@ -195,11 +195,11 @@ translate spanish strings:
 
     # screens.rpy:410
     old "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
-    new "## Esto distribuye la estructura de base del menú del juego. Es llamado con el título de la pantalla y presenta el fondo, el título y la navegación."
+    new "## Esto distribuye la estructura básica común de la pantalla de menú del juego. Se llama con el título de la pantalla y muestra el fondo, el título y la navegación."
 
     # screens.rpy:413
     old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## El parámetro 'scroll' puede ser 'None', \"viewport\" o \"vpgrid\". Se usa esta pantalla con uno o más elementos, que son transcluídos (situados) en su interior."
+    new "## El parámetro 'scroll' puede ser 'None', 'viewport' o 'vpgrid'. Se usa esta pantalla con uno o más elementos, que son transcluidos (situados) en su interior."
 
     # screens.rpy:431
     old "## Reserve space for the navigation section."
@@ -223,7 +223,7 @@ translate spanish strings:
 
     # screens.rpy:548
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
-    new "## Esta sentencia 'use' incluye la pantalla 'game_menu' dentro de esta. El elemento 'vbox' se incluye entonces dentro del 'viewport' al interno de la pantalla 'game_menu'."
+    new "## Esta sentencia 'use' incluye la pantalla 'game_menu' dentro de esta. El elemento 'vbox' se incluye entonces dentro del 'viewport' dentro de la pantalla 'game_menu'."
 
     # screens.rpy:558
     old "Version [config.version!t]\n"
@@ -243,11 +243,11 @@ translate spanish strings:
 
     # screens.rpy:579
     old "## Load and Save screens"
-    new "## Pantallas de carga y grabación"
+    new "## Pantallas de carga y guardado"
 
     # screens.rpy:581
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
-    new "## Estas pantallas permiten al jugador grabar el juego y cargarlo de nuevo. Como comparten casi todos los elementos, ambas están implementadas en una tercera pantalla: 'file_slots'."
+    new "## Estas pantallas permiten al jugador guardar el juego y cargarlo de nuevo. Como comparten casi todos los elementos, ambas están implementadas en una tercera pantalla: 'file_slots'."
 
     # screens.rpy:585
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
@@ -259,19 +259,19 @@ translate spanish strings:
 
     # screens.rpy:604
     old "Automatic saves"
-    new "Grabación automática"
+    new "Guardado automático"
 
     # screens.rpy:604
     old "Quick saves"
-    new "Grabación rápida"
+    new "Guardado rápido"
 
     # screens.rpy:610
     old "## This ensures the input will get the enter event before any of the buttons do."
-    new "## Esto asegura que 'input' recibe el evento 'enter' antes que otros botones."
+    new "## Esto asegura que 'input' reciba el evento 'enter' antes que cualquier botón."
 
     # screens.rpy:614
     old "## The page name, which can be edited by clicking on a button."
-    new "## El nombre de la pagina, se puede editar haciendo clic en el botón."
+    new "## El nombre de la página se puede editar haciendo clic en un botón."
 
     # screens.rpy:626
     old "## The grid of file slots."
@@ -283,7 +283,7 @@ translate spanish strings:
 
     # screens.rpy:646
     old "empty slot"
-    new "vacío"
+    new "ranura vacía"
 
     # screens.rpy:654
     old "## Buttons to access other pages."
@@ -355,7 +355,7 @@ translate spanish strings:
 
     # screens.rpy:747
     old "After Choices"
-    new "Tras elecciones"
+    new "Después de las elecciones"
 
     # screens.rpy:748
     old "Transitions"
@@ -367,11 +367,11 @@ translate spanish strings:
 
     # screens.rpy:761
     old "Text Speed"
-    new "Veloc. texto"
+    new "Velocidad de texto"
 
     # screens.rpy:765
     old "Auto-Forward Time"
-    new "Veloc. autoavance"
+    new "Tiempo de avance automático"
 
     # screens.rpy:772
     old "Music Volume"
@@ -399,7 +399,7 @@ translate spanish strings:
 
     # screens.rpy:878
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
-    new "## Esta pantalla presenta el historial de diálogo al jugador, almacenado en '_history_list'."
+    new "## Esta pantalla muestra el historial de diálogo al jugador. Aunque no tiene nada de especial, sí debe acceder al historial de diálogo almacenado en '_history_list'."
 
     # screens.rpy:882
     old "## https://www.renpy.org/doc/html/history.html"
@@ -443,7 +443,7 @@ translate spanish strings:
 
     # screens.rpy:991
     old "Gamepad"
-    new "Mando"
+    new "Control"
 
     # screens.rpy:1004
     old "Enter"
@@ -519,7 +519,7 @@ translate spanish strings:
 
     # screens.rpy:1045
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "Activa/desactiva la asistencia por {a=https://www.renpy.org/l/voicing}voz-automática{/a}."
+    new "Activa/desactiva la asistencia por {a=https://www.renpy.org/l/voicing}voz automática{/a}."
 
     # screens.rpy:1051
     old "Left Click"
@@ -559,7 +559,7 @@ translate spanish strings:
 
     # screens.rpy:1091
     old "Start, Guide"
-    new "Comenzar, Guía"
+    new "Inicio, Guía"
 
     # screens.rpy:1095
     old "Y/Top Button"
@@ -667,7 +667,7 @@ translate spanish strings:
 
     # screens.rpy:1415
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
-    new "## Ya que puede carecer de ratón, se reempleza el menú rápido con una versión con menos botones y más grandes, más fáciles de tocar."
+    new "## Como puede que no haya un mouse, reemplazamos el menú rápido con una versión que usa menos botones y más grandes, más fáciles de tocar."
 
     # screens.rpy:1431
     old "Menu"
@@ -687,7 +687,7 @@ translate spanish strings:
 
     # gui/game/screens.rpy:1399
     old "## The Bubble screen is used to display dialogue to the player when using speech bubbles. The Bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
-    new "## La pantalla globos se utiliza para mostrar el diálogo al jugador cuando se utilizan globos de dialogo. La pantalla de globos toma los mismos parámetros que la pantalla say, debe crear un displayable con el id de \"what\", y puede crear displayables con los ids de \"namebox\", \"who\", y \"window\"."
+    new "## La pantalla de globos se utiliza para mostrar el diálogo al jugador cuando se utilizan globos de diálogo. La pantalla de globos toma los mismos parámetros que la pantalla 'say', debe crear un visualizable con el id 'what', y puede crear visualizables con los ids 'namebox', 'who' y 'window'."
 
     # gui/game/screens.rpy:1404
     old "## https://www.renpy.org/doc/html/screen_special.html#bubble"
@@ -695,11 +695,11 @@ translate spanish strings:
 
     # gui/game/screens.rpy:676
     old "Upload Sync"
-    new "Subir Sync"
+    new "Subir sincronización"
 
     # gui/game/screens.rpy:680
     old "Download Sync"
-    new "Descargar Sync"
+    new "Descargar sincronización"
 
     # gui/game/screens.rpy:1412
     old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."

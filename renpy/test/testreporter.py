@@ -21,17 +21,17 @@
 
 import abc
 import contextlib
-from dataclasses import dataclass, field
-from enum import Enum
 import io
 import os
 import platform
+from dataclasses import dataclass, field
+from enum import Enum
 
 import renpy
 from renpy.error import ANSIColors
+from renpy.test.testast import Assert, BaseTestBlock, TestCase, TestHook, TestSuite
 from renpy.test.testsettings import _test
 from renpy.test.types import RenpyTestAssertionError
-from renpy.test.testast import TestCase, TestHook, TestSuite, BaseTestBlock, Assert
 
 
 def format_seconds(seconds: float) -> str:
@@ -326,7 +326,7 @@ class OutcomeManager(TestSuiteOutcome):
                         suite_param_outcome.children.append(outcome)
 
                 else:
-                    raise ValueError(f"Unsupported: {type(suite)}")
+                    raise TypeError(f"Unsupported: {type(suite)}")
 
         return rv
 
@@ -334,23 +334,19 @@ class OutcomeManager(TestSuiteOutcome):
         """Get the outcome object corresponding to the given test block (with parameterization)."""
 
         # Build the path from the target block back to the root
-        path: list[BaseTestBlock] = []
-        current = test_block
-        while current:
-            path.append(current)
-            current = current.parent
+        path = test_block.get_parent_chain() + [test_block]
 
         # Start at the root and traverse down to the target
         current_outcome: TestSuiteOutcome = self
 
-        for i, n in enumerate(reversed(path)):
+        for i, n in enumerate(path):
             n_outcome = current_outcome.get_child_by_test_block(n)
 
             if i == len(path) - 1:
                 return n_outcome
 
             if not isinstance(n_outcome, TestSuiteOutcome):
-                raise ValueError(f"Expected TestSuiteOutcome at '{n.full_path}', got {type(n_outcome).__name__}")
+                raise TypeError(f"Expected TestSuiteOutcome at '{n.full_path}', got {type(n_outcome).__name__}")
 
             current_outcome = n_outcome
 
@@ -429,58 +425,45 @@ class Reporter(abc.ABC):
 
     def test_run_start(self, outcomes: OutcomeManager) -> None:
         """Called when the entire test run starts."""
-        pass
 
     def test_run_end(self, outcomes: OutcomeManager) -> None:
         """Called when the entire test run ends."""
-        pass
 
     def test_suite_start(self, outcome: TestSuiteOutcome, depth: int = 0) -> None:
         """Called when a test suite starts."""
-        pass
 
     def test_suite_end(self, outcome: TestSuiteOutcome, depth: int = 0) -> None:
         """Called when a test suite ends."""
-        pass
 
     def test_case_start(self, outcome: TestCaseOutcome, depth: int = 0) -> None:
         """Called when a test case starts."""
-        pass
 
     def test_case_end(self, outcome: TestCaseOutcome, depth: int = 0) -> None:
         """Called when a test case ends."""
-        pass
 
     def test_hook_start(self, outcome: TestHookOutcome, depth: int = 0) -> None:
         """Called when a test hook starts."""
-        pass
 
     def test_hook_end(self, outcome: TestHookOutcome, depth: int = 0) -> None:
         """Called when a test hook ends."""
-        pass
 
     def test_case_skipped(self, outcome: TestCaseOutcome, depth: int = 0) -> None:
         """Called when a test case is skipped."""
-        pass
 
     def log_assert(self, assert_node: Assert, status: OutcomeStatus, node_name: str = "") -> None:
         """Called for each assert in the test case, even if it did not fail."""
-        pass
 
     def log_exception(self, exception: Exception, run_stack: list[renpy.error.FrameSummary], xfailed: bool) -> None:
         """
         Called when an exception is raised from the test case or the game
         raises an error.
         """
-        pass
 
     def log_message(self, message: str) -> None:
         """Called when a message should be logged."""
-        pass
 
     def on_reload(self) -> None:
         """Called when the game is reloaded."""
-        pass
 
 
 class ConsoleReporter(Reporter):
@@ -529,9 +512,7 @@ class ConsoleReporter(Reporter):
             return f"{ANSIColors.GREEN}{msg}{ANSIColors.RESET}"
         elif status == OutcomeStatus.XFAILED:
             return f"{ANSIColors.MAGENTA}{msg}{ANSIColors.RESET}"
-        elif status == OutcomeStatus.FAILED:
-            return f"{ANSIColors.RED}{msg}{ANSIColors.RESET}"
-        elif status == OutcomeStatus.XPASSED:
+        elif status == OutcomeStatus.FAILED or status == OutcomeStatus.XPASSED:
             return f"{ANSIColors.RED}{msg}{ANSIColors.RESET}"
         elif status == OutcomeStatus.PENDING:
             return f"{ANSIColors.CYAN}{msg}{ANSIColors.RESET}"
@@ -758,14 +739,18 @@ class ReporterManager:
     A manager that forwards calls to all registered reporters.
     """
 
-    reporters: list["Reporter"] = []
+    reporters: list["Reporter"]
 
     outcome_manager: OutcomeManager | None = None
     "A TestSuiteOutcome object that contains the outcomes of all testcases to be executed."
 
-    suites: list[TestSuite] = []
+    suites: list[TestSuite]
     testcase: TestCase | None = None
     hook: TestHook | None = None
+
+    def __init__(self):
+        self.reporters = []
+        self.suites = []
 
     def initialize_test_outcomes(self, suite: TestSuite) -> None:
         self.outcome_manager = OutcomeManager(suite)

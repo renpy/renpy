@@ -8,6 +8,36 @@ export RENPY_CYTHON=cython
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 QUIET=${RENPY_QUIET- --quiet}
+BUILD_ONLY=false
+CLEAN=false
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --build)
+            BUILD_ONLY=true
+            shift
+            ;;
+        --clean)
+            CLEAN=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -*)
+            break
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+if $CLEAN; then
+    find "$ROOT" -maxdepth 1 -type f -name '*.cpython*.so' -delete
+    find "$ROOT/renpy" -type f -name '*.cpython*.so' -delete
+fi
 
 if [ -n "$RENPY_COVERAGE" ]; then
     variant="renpy-coverage"
@@ -58,7 +88,7 @@ fi
 
 setup "$ROOT/"
 
-if  [ "$1" = "--build" ] ; then
+if $BUILD_ONLY; then
     echo "Ren'Py build complete."
     exit 0
 else

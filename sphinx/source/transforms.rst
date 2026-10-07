@@ -1582,7 +1582,7 @@ When the displayable is shown without a tag, ``st`` and ``at`` are the same.
 Transform Class
 ===============
 
-One equivalent to to the simplest ATL transforms is the Transform class.
+One equivalent to the simplest ATL transforms is the Transform class.
 
 .. class:: Transform(child=None, *, function=None, reset=False, **properties)
 
@@ -1653,7 +1653,7 @@ One equivalent to to the simplest ATL transforms is the Transform class.
     .. method:: unique():
 
         This should be called on a newly created transform to mark it as unique. Usually, transforms are
-        copied when when added to a displayable, resetting transform state. Calling this prevents thart
+        copied when added to a displayable, resetting transform state. Calling this prevents that
         behavior, and is useful when you want to create a transform that maintains state across multiple
         uses, or that needs to be accessed from outside its `function` argument.
 

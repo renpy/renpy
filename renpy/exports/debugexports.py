@@ -42,6 +42,18 @@ def warp_to_line(warp_spec):
     renpy.exports.full_restart()
 
 
+def is_warping():
+    """
+    :doc: debug
+
+    Returns True while Ren'Py is reconstructing the state preceding a warp
+    target. A custom say callable with a ``warp`` attribute set to True can
+    use this to update dialogue state without interacting with the player.
+    """
+
+    return renpy.warp.warping
+
+
 filename_line_override_stack: list[tuple[str, int]] = []
 """
 A stack of filename/line override pairs.
@@ -164,7 +176,7 @@ def error(msg):
     """
     :doc: lint
 
-    Reports `msg`, a string, as as error for the user. This is logged as a
+    Reports `msg`, a string, as an error for the user. This is logged as a
     parse or lint error when approprate, and otherwise it is raised as an
     exception.
     """

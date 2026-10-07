@@ -82,7 +82,7 @@ init -1500 python:
 
 
     # Call this to specify the voice file that will be played for
-    # the user. This peice only gathers the information so
+    # the user. This piece only gathers the information so
     # voice_interact can play the right file.
     def voice(filename, tag=None):
         """

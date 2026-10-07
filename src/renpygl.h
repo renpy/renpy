@@ -2,6 +2,7 @@
 #define RENPY_GL_H
 
 #include <SDL3/SDL.h>
+#include "khrplatform.h"
 
 #if defined(__IPHONEOS__)
 
@@ -15,7 +16,7 @@
 
 #include <SDL3/SDL_opengl.h>
 
-#endif
+#endif // defined(__IPHONEOS__)
 
 #undef environ
 
@@ -38,7 +39,6 @@
 #define GL_COLOR_ATTACHMENT30             0x8CFE
 #define GL_COLOR_ATTACHMENT31             0x8CFF
 
-#endif
+#endif // GL_COLOR_ATTACHMENT16
 
-
-#endif
+#endif // RENPY_GL_H

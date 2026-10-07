@@ -218,6 +218,90 @@ class Parser(object):
         else:
             return None
 
+    def get_keyword_error(self, name):
+        """
+        Returns the error to use when `name` is not a keyword or child of
+        this statement.
+        """
+
+        style_properties = collections.defaultdict(set)
+
+        for prop in set(self.keyword.values()):
+            if isinstance(prop, Style):
+                style_properties[""].add(prop.name)
+            elif isinstance(prop, PrefixStyle):
+                style_properties[prop.prefix].add(prop.name)
+
+        def suggest(value, values):
+            if value in values:
+                return value
+
+            return renpy.error.compute_closest_value(value, list(values))
+
+        # A text statement accepts text properties directly, without a
+        # text_ prefix. Other statements, such as textbutton, use text_ to
+        # distinguish the properties of their text child.
+        if name.startswith("text_") and ("text_" not in style_properties):
+            candidates = {
+                keyword
+                for keyword, prop in self.keyword.items()
+                if isinstance(prop, Style)
+            }
+
+            if candidates:
+                rv = "The %s statement does not accept 'text_' prefixed properties." % self.name
+
+                if suggestion := suggest(name[len("text_") :], candidates):
+                    rv += " Did you mean: %r?" % suggestion
+
+                return rv
+
+        property_prefix = ""
+        for prefix in sorted(style_properties, key=len, reverse=True):
+            if prefix and name.startswith(prefix):
+                property_prefix = prefix
+                break
+
+        remaining = name[len(property_prefix) :]
+        property_names = style_properties[property_prefix]
+
+        # When the property name is valid, check whether the style prefix is
+        # misspelled before looking for a misspelled property name.
+        for property_name in sorted(property_names, key=len, reverse=True):
+            if not remaining.endswith(property_name):
+                continue
+
+            style_prefix = remaining[: -len(property_name)]
+            if style_prefix in STYLE_PREFIXES:
+                continue
+
+            if suggestion := renpy.error.compute_closest_value(style_prefix, STYLE_PREFIXES):
+                return "%r is not a valid style property prefix. Did you mean: %r?" % (
+                    style_prefix.rstrip("_"),
+                    suggestion.rstrip("_"),
+                )
+
+        style_prefix = ""
+        for prefix in sorted(STYLE_PREFIXES, key=len, reverse=True):
+            if remaining.startswith(prefix):
+                style_prefix = prefix
+                break
+
+        property_name = remaining[len(style_prefix) :]
+
+        if suggestion := renpy.error.compute_closest_value(property_name, list(property_names)):
+            suggestion = property_prefix + style_prefix + suggestion
+        else:
+            candidates = list(self.keyword) + list(self.children)
+            suggestion = renpy.error.compute_closest_value(name, candidates)
+
+        rv = "%r is not a keyword argument or valid child of the %s statement." % (name, self.name)
+
+        if suggestion:
+            rv += " Did you mean: %r?" % suggestion
+
+        return rv
+
     def parse_layout(self, loc, l, parent, keyword):
         l.error("The %s statement cannot be used as a container for the has statement." % self.name)
 
@@ -303,7 +387,7 @@ class Parser(object):
                 elif name in statements:
                     l.error("The %s statement is not a valid child of the %s statement." % (name, self.name))
                 else:
-                    l.error("%r is not a keyword argument or valid child of the %s statement." % (name, self.name))
+                    l.error(self.get_keyword_error(name))
 
             if name == "at" and l.match_multiple("transform", ":"):
                 if target.atl_transform is not None:

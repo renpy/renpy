@@ -142,7 +142,7 @@ class ImageGenerator(object):
             if not self.p.skip_backup:
                 os.rename(fn, bfn)
 
-        pygame_sdl2.image.save(s, fn, 3)
+        pygame_sdl2.image.save(s, fn, compression=3)
 
     def make_surface(self, width, height):
         return pygame_sdl2.Surface((width, height), pygame_sdl2.SRCALPHA)

@@ -23,7 +23,7 @@ in it.
 
 Pressing the area button will launch the speech bubble editor. This editor
 lets you drag to select the area where the speech bubble will be placed,
-on a grid. When you complete the drag, the speech bubble will will change
+on a grid. When you complete the drag, the speech bubble will change
 locations.
 
 Pressing the properties buttons will select between sets of properties
@@ -55,6 +55,11 @@ Once that's done, the bubbles will keep popping up. Each bubble will
 need to be placed individually, so bubbles don't overlap. In the bubble editor,
 pressing the "(clear retained bubbles)" button will remove all of the
 retained bubbles from the screen, except for the most recent.
+
+When :ref:`warping to a line <warping_to_a_line>`, bubble dialogue reconstructs
+retained bubbles and dialogue history along the replayed path. Bubble layout
+properties and automatic clearing rules still apply; non-retained bubbles
+are not left on screen by replay.
 
 Tips
 ----

@@ -19,8 +19,8 @@ dependencies = [
     "sphinx-tabs",
     "jinja2",
     "pkgconfig>=1.6.0",
-    "chardet>=7.4.3",
-    "websockets>=17.0.1",
+    "chardet>=7.6.0",
+    "websockets>=17.1",
     "pysocks>=1.7.1",
 ]
 
@@ -112,6 +112,11 @@ line-length = 120
 extend-exclude = [
     "keywords.py",
     "renpy/text/emoji_trie.py",
+]
+ignore = [
+    "TRY002",
+    "S110",
+    "BLE001",
 ]
 
 [tool.ruff.format]

@@ -18,6 +18,10 @@ NVL-mode can be added to a Ren'Py script in two steps. The first is to
 declare the characters to use NVL-mode, and the second is to add ``nvl
 clear`` statements at the end of each page.
 
+When :ref:`warping to a line <warping_to_a_line>`, NVL dialogue and ``nvl clear``
+statements on the replayed path reconstruct the current page and dialogue
+history. NVL list and history length limits still apply.
+
 Characters can be declared to use NVL-mode by adding a ``kind=nvl``
 parameter to each of the Character declarations. For example, if we
 use the character declarations from the Quickstart manual::

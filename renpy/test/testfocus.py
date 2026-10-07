@@ -22,8 +22,8 @@
 import random
 
 import renpy
-from renpy.display.focus import Focus
 from renpy.display.displayable import Displayable
+from renpy.display.focus import Focus
 from renpy.test.types import Position
 
 
@@ -141,6 +141,13 @@ def find_position(f: Focus | Displayable | None, position: Position | tuple[None
             if (nf.widget == f.widget) and (nf.arg == f.arg):
                 return x, y
 
+    # If the user explicitly specified a position, return it even if it's outside the displayable.
+    # This allows mouse operations relative to the displayable outside of it.
+    if posx is not None and posy is not None:
+        x = max(0, min(relative_to_absolute(posx, f.w) + f.x, renpy.config.screen_width - 1))
+        y = max(0, min(relative_to_absolute(posy, f.h) + f.y, renpy.config.screen_height - 1))
+        return x, y
+
     if isinstance(f_original, Displayable):
         ## It's not guaranteed that the displayable is in the focus list, so we
         ## return our best guess.
@@ -163,12 +170,15 @@ def focus_from_displayable(d: Displayable) -> Focus | None:
 
     ## If we reach here, the displayable is not in the focus list.
     ## Search the render tree for it.
-    stack = [(renpy.display.render.screen_render, 0, 0, None)]  # type: ignore
+    if renpy.display.render.screen_render is None:
+        return None
+
+    stack: list[tuple[renpy.display.render.Render, float, float, renpy.display.screen.ScreenDisplayable | None]] = [
+        (renpy.display.render.screen_render, 0, 0, None)
+        ]
+
     while stack:
         r, x, y, screen = stack.pop()
-
-        if not isinstance(r, renpy.display.render.Render):  # type: ignore
-            continue
 
         if d in r.render_of:
             return Focus(widget=d, arg=None, x=x, y=y, w=r.width, h=r.height, screen=screen)
@@ -176,8 +186,10 @@ def focus_from_displayable(d: Displayable) -> Focus | None:
         if r.render_of and isinstance(r.render_of[0], renpy.display.screen.ScreenDisplayable):
             screen = r.render_of[0]
 
-        for r in r.children:
+        for rc in r.children:
             ## We care about the absolute position of the displayable, not the position relative to the parent.
-            stack.append((r[0], x + r[1], y + r[2], screen))
+            if not isinstance(rc[0], renpy.display.render.Render):
+                continue
+            stack.append((rc[0], x + rc[1], y + rc[2], screen))
 
     return None

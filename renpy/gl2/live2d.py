@@ -24,6 +24,7 @@ from typing import Any
 
 import renpy
 import renpy.gl2.live2dmotion
+import renpy.gl2.live2dphysics
 from renpy.gl2.gl2shadercache import register_shader
 from renpy.display.core import absolute
 
@@ -146,16 +147,17 @@ def init():
 
     register_shader(
         "live2d.mask",
+        glsl=300,
         variables="""
         uniform sampler2D tex0;
         uniform sampler2D tex1;
         uniform vec2 u_model_size;
         uniform float u_live2d_ppu;
         uniform vec2 u_live2d_offset;
-        attribute vec4 a_position;
-        attribute vec2 a_tex_coord;
-        varying vec2 v_tex_coord;
-        varying vec2 v_mask_coord;
+        in vec4 a_position;
+        in vec2 a_tex_coord;
+        out vec2 v_tex_coord;
+        out vec2 v_mask_coord;
     """,
         vertex_200="""
         v_tex_coord = a_tex_coord;
@@ -163,24 +165,23 @@ def init():
         v_mask_coord.y = 1.0 - v_mask_coord.y;
     """,
         fragment_200="""
-        vec4 color = texture2D(tex0, v_tex_coord);
-        vec4 mask = texture2D(tex1, v_mask_coord);
-        gl_FragColor = color * mask.a;
+        fragment_color = texture(tex0, v_tex_coord) * texture(tex1, v_mask_coord).a;
     """,
     )
 
     register_shader(
         "live2d.inverted_mask",
+        glsl=300,
         variables="""
         uniform sampler2D tex0;
         uniform sampler2D tex1;
         uniform vec2 u_model_size;
         uniform float u_live2d_ppu;
         uniform vec2 u_live2d_offset;
-        attribute vec4 a_position;
-        attribute vec2 a_tex_coord;
-        varying vec2 v_tex_coord;
-        varying vec2 v_mask_coord;
+        in vec4 a_position;
+        in vec2 a_tex_coord;
+        out vec2 v_tex_coord;
+        out vec2 v_mask_coord;
     """,
         vertex_200="""
         v_tex_coord = a_tex_coord;
@@ -188,28 +189,28 @@ def init():
         v_mask_coord.y = 1.0 - v_mask_coord.y;
     """,
         fragment_200="""
-        vec4 color = texture2D(tex0, v_tex_coord);
-        vec4 mask = texture2D(tex1, v_mask_coord);
-        gl_FragColor = color * (1.0 - mask.a);
+        fragment_color = texture(tex0, v_tex_coord) * (1.0 - texture(tex1, v_mask_coord).a);
     """,
     )
 
     register_shader(
         "live2d.colors",
+        glsl=300,
         variables="""
         uniform vec4 u_multiply;
         uniform vec4 u_screen;
     """,
         fragment_250="""
-        gl_FragColor.rgb = gl_FragColor.rgb * u_multiply.rgb;
-        gl_FragColor.rgb = (gl_FragColor.rgb + u_screen.rgb * gl_FragColor.a) - (gl_FragColor.rgb * u_screen.rgb);
+        fragment_color.rgb *= u_multiply.rgb;
+        fragment_color.rgb += u_screen.rgb * (fragment_color.a - fragment_color.rgb);
     """,
     )
 
     register_shader(
         "live2d.flip_texture",
+        glsl=300,
         variables="""
-        varying vec2 v_tex_coord;
+        out vec2 v_tex_coord;
     """,
         vertex_250="""
         v_tex_coord.y = 1.0 - v_tex_coord.y;
@@ -283,7 +284,13 @@ class Live2DCommon(object):
             self.model_json = json.load(f)
 
         # The model created from the moc3 file.
-        self.model = renpy.gl2.live2dmodel.Live2DModel(self.base + self.model_json["FileReferences"]["Moc"])  # type: ignore
+        self.model = renpy.gl2.live2dmodel.Live2DModel(  # type: ignore
+            self.base + self.model_json["FileReferences"]["Moc"]
+        )
+        
+        self.physics = renpy.gl2.live2dphysics.load_physics(
+            self.model, self.base, self.model_json["FileReferences"].get("Physics")
+        )
 
         # The texture images.
         self.textures = []
@@ -1139,8 +1146,13 @@ class Live2D(renpy.display.displayable.Displayable):
         else:
             user_redraw = common.update_function(self, st)
 
+        physics_redraw = None
+
+        if common.physics is not None:
+            physics_redraw = common.physics.evaluate(renpy.display.interface.frame_time)
+
         # Determine when to redraw.
-        redraws = [new_redraw, old_redraw, expression_redraw, user_redraw]
+        redraws = [new_redraw, old_redraw, expression_redraw, user_redraw, physics_redraw]
         redraws = [i for i in redraws if i is not None]
 
         if redraws:

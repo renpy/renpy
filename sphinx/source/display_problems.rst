@@ -18,8 +18,8 @@ model-based rendering, and were removed entirely in Ren'Py 8.4.
 
 These are model-based renderers present in Ren'Py 7.4 and later.
 
-4. gl2: OpenGL 2.0 or greater.
-5. angle2: Windows, DirectX 9 or DirectX 11.
+4. gl2: OpenGL 3.3, falling back to OpenGL 2.0.
+5. angle2: Windows, DirectX 11 at feature level 10_0 or greater.
 6. gles2: OpenGL ES 3.0.
 
 Older versions of Ren'Py supported a software renderer, but this has

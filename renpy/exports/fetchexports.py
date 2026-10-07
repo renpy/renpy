@@ -258,6 +258,7 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
         if time.time() > start + timeout:
             status = "TIMEOUT"
             message = "Fetch timed out."
+            break
 
     try:
         if status == "OK":

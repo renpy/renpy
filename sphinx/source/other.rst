@@ -131,29 +131,29 @@ with the specified value if provided.
 SDL
 ----
 
-The SDL2 dll can be accessed using :func:`renpy.get_sdl_dll`.
-This allows the use of SDL2 functions directly. However, using them often
+The SDL3 dll can be accessed using :func:`renpy.get_sdl_dll`.
+This allows the use of SDL3 functions directly. However, using them often
 requires knowledge of the Python ctypes module.
 
-There are no guarantees as to the version of SDL2 that's included
+There are no guarantees as to the version of SDL3 that's included
 with Ren'Py, including which features will or will not be compiled in. These
 functions may fail on platforms that can otherwise run Ren'Py. It's
 important to check for a None value before proceeding.
 
-In the following example, the position of the window will be taken from SDL2::
+In the following example, the position of the window will be taken from SDL3::
 
     init python:
 
         import ctypes
 
         def get_window_position():
-            """Retrieves the position of the window from SDL2.
+            """Retrieves the position of the window from SDL3.
 
             Returns the (x, y) of the upper left corner of the window, or
             (0, 0) if it's not known.
             """
 
-            sdl = renpy.get_sdl_dll()
+            sdl = renpy.get_sdl_dll(3)
 
             if sdl is None:
                 return (0, 0)
@@ -168,7 +168,11 @@ In the following example, the position of the window will be taken from SDL2::
 
             result = sdl.SDL_GetWindowPosition(win, ctypes.byref(x), ctypes.byref(y))
 
-            return result
+            if result != 0:
+                raise RuntimeError("Failed to get window position from SDL3.")
+
+            return (x.value, y.value)
+
 
 
 .. include:: inc/sdl
