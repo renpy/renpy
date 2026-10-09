@@ -890,19 +890,19 @@ class MultiBox(Container):
                 first_fit_width = False
                 first_fit_height = False
 
-            sizes = []
+            sizes = [] if xfit or yfit else None
 
             for child, cst, cat in iterator:
                 surf = render(child, width, height, cst, cat)
-                size = surf.get_size()
-                sizes.append(size)
+                if sizes is not None:
+                    sizes.append(surf.get_size())
 
                 if first_fit_width:
-                    width = rv.width = size[0]
+                    width = rv.width = surf.width
                     first_fit_width = None
 
                 if first_fit_height:
-                    height = rv.height = size[1]
+                    height = rv.height = surf.height
                     first_fit_height = None
 
                 if surf:
