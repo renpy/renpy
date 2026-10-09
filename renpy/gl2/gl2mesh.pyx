@@ -157,6 +157,9 @@ cdef class Mesh:
     def __dealloc__(self):
         cdef int i
 
+        if dead_buffers is None:
+            return
+
         for i in range(3):
             if self.buffers[i].name:
                 dead_buffers.append((self.buffers[i].name, self.buffers[i].generation))
