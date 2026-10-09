@@ -962,7 +962,13 @@ class ShaderCache(object):
             the cache.
         """
 
-        partnames = self._filter_partnames(partnames)
+        if renpy.config.shader_part_filter is not None:
+            partnames = self._filter_partnames(partnames)
+
+        rv = self.cache.get(partnames, None)
+
+        if rv is not None:
+            return rv
 
         return self._get_filtered(partnames)
 
