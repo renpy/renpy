@@ -612,6 +612,19 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "mono_audio")
 
+            elif name in (_("pad use button labels"), "pad_use_button_labels"):
+
+                if value == "enable":
+                    return SetField(_preferences, "pad_use_button_labels", True)
+                elif value == "disable":
+                    return SetField(_preferences, "pad_use_button_labels", False)
+                elif value == "auto":
+                    return SetField(_preferences, "pad_use_button_labels", "auto")
+                elif value == "toggle":
+                    return ToggleField(_preferences, "pad_use_button_labels", true_value=True, false_value=False)
+                else:
+                    return SetField(_preferences, "pad_use_button_labels", value)
+
             elif name == _("font kerning"):
 
                 if value is None:

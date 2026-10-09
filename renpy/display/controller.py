@@ -91,6 +91,16 @@ ZERO_THRESHOLD = 8192
 ignore = False
 
 
+button_aliases = {
+    "cross": ["a"],
+    "circle": ["b"],
+    "square": ["x"],
+    "triangle": ["y"],
+    "misc2": ["c"],
+    "c": ["misc2"],
+}
+
+
 def post_event(control, state, repeat):
     """
     Creates an EVENTNAME event for the given state and name, and post it
@@ -110,10 +120,27 @@ def post_event(control, state, repeat):
 
     names = [name]
 
+    aliases = button_aliases.get(control, ())
+    for alias in aliases:
+        alias_name = "pad_{}_{}".format(alias, state)
+        if repeat:
+            alias_name = "repeat_" + alias_name
+        names.append(alias_name)
+
     if renpy.config.map_pad_event:
         names.extend(renpy.config.map_pad_event(name))
+        for alias in aliases:
+            alias_name = "pad_{}_{}".format(alias, state)
+            if repeat:
+                alias_name = "repeat_" + alias_name
+            names.extend(renpy.config.map_pad_event(alias_name))
     else:
         names.extend(renpy.config.pad_bindings.get(name, ()))
+        for alias in aliases:
+            alias_name = "pad_{}_{}".format(alias, state)
+            if repeat:
+                alias_name = "repeat_" + alias_name
+            names.extend(renpy.config.pad_bindings.get(alias_name, ()))
 
     ev = pygame.event.Event(renpy.display.core.EVENTNAME, {"eventnames": names, "controller": name, "up": False})
 
@@ -129,6 +156,199 @@ def exists():
         return True
     else:
         return False
+
+
+def get_controller(index=None):
+    """
+    Returns the Controller object at `index`, or the first connected controller if `index` is None.
+    Returns None if no controller is found.
+    """
+
+    if not controllers:
+        return None
+
+    if index is None:
+        return next(iter(controllers.values()))
+
+    c = controllers.get(index, None)
+    if c is not None:
+        return c
+
+    for v in controllers.values():
+        if v.instance_id == index:
+            return v
+
+    return None
+
+
+def get_controller_type(index=None):
+    """
+    Returns the string type of the controller (e.g. 'nintendo_switch_pro', 'xbox360', 'ps5'),
+    or None if no controller is connected.
+    """
+
+    c = get_controller(index)
+    if c is not None:
+        return c.get_type_name()
+
+    return None
+
+
+def get_controller_real_type(index=None):
+    """
+    Returns the real string type of the controller (e.g. 'nintendo_switch_pro', 'xbox360', 'ps5'),
+    ignoring any driver remappings, or None if no controller is connected.
+    """
+
+    c = get_controller(index)
+    if c is not None:
+        return renpy.pygame.controller.get_string_for_type(c.get_real_type())
+
+    return None
+
+
+BUTTON_LABELS_NINTENDO = {
+    "start": "+",
+    "back": "-",
+    "guide": "home",
+    "leftshoulder": "l",
+    "rightshoulder": "r",
+    "lefttrigger": "zl",
+    "righttrigger": "zr",
+    "leftstick": "ls_click",
+    "rightstick": "rs_click",
+    "misc1": "capture",
+    "misc2": "c",
+    "c": "c",
+}
+
+BUTTON_LABELS_PLAYSTATION = {
+    "start": "options",
+    "back": "share",
+    "guide": "ps",
+    "leftshoulder": "l1",
+    "rightshoulder": "r1",
+    "lefttrigger": "l2",
+    "righttrigger": "r2",
+    "leftstick": "l3",
+    "rightstick": "r3",
+    "touchpad": "touchpad",
+    "misc1": "mute",
+}
+
+BUTTON_LABELS_XBOX = {
+    "start": "menu",
+    "back": "view",
+    "guide": "xbox",
+    "leftshoulder": "lb",
+    "rightshoulder": "rb",
+    "lefttrigger": "lt",
+    "righttrigger": "rt",
+    "leftstick": "ls",
+    "rightstick": "rs",
+    "misc1": "share",
+}
+
+
+def get_controller_button_label(button, index=None):
+    """
+    Returns the button label string ("a", "b", "x", "y", "cross", "circle",
+    "+", "-", "l", "r", "zl", "zr", "lb", "rb", "options", etc.)
+    for the given `button` on the controller, or None if no controller is connected.
+    `button` can be an integer button index or string ("a", "start", "leftshoulder", etc.).
+    """
+
+    c = get_controller(index)
+    if c is None:
+        return None
+
+    if isinstance(button, int):
+        btn_name = renpy.pygame.controller.get_string_for_button(button)
+        if btn_name is None:
+            btn_name = str(button)
+    else:
+        btn_name = str(button).lower()
+
+    lbl = c.get_button_label_string(button)
+    if lbl is not None:
+        return lbl
+
+    type_name = c.get_type_name() or ""
+    if type_name.startswith("switch") or type_name == "gamecube":
+        return BUTTON_LABELS_NINTENDO.get(btn_name, btn_name)
+    elif type_name.startswith("ps"):
+        if type_name == "ps5" and btn_name == "back":
+            return "create"
+        return BUTTON_LABELS_PLAYSTATION.get(btn_name, btn_name)
+    else:
+        return BUTTON_LABELS_XBOX.get(btn_name, btn_name)
+
+
+def rumble(low=1.0, high=1.0, duration=0.5, index=None):
+    """
+    Rumbles the controller at `index`, or all connected controllers if `index` is None.
+    Returns True if at least one controller rumbled successfully.
+    """
+
+    if not controllers:
+        return False
+
+    if index is not None:
+        c = get_controller(index)
+        if c is not None:
+            return c.rumble(low, high, duration)
+        return False
+
+    success = False
+    for c in list(controllers.values()):
+        if c.rumble(low, high, duration):
+            success = True
+    return success
+
+
+def rumble_triggers(left=1.0, right=1.0, duration=0.5, index=None):
+    """
+    Rumbles the triggers on the controller at `index`, or all connected controllers if `index` is None.
+    Returns True if at least one controller rumbled successfully.
+    """
+
+    if not controllers:
+        return False
+
+    if index is not None:
+        c = get_controller(index)
+        if c is not None:
+            return c.rumble_triggers(left, right, duration)
+        return False
+
+    success = False
+    for c in list(controllers.values()):
+        if c.rumble_triggers(left, right, duration):
+            success = True
+    return success
+
+
+def set_led(red, green, blue, index=None):
+    """
+    Sets the LED color on the controller at `index`, or all connected controllers if `index` is None.
+    Returns True if at least one controller updated its LED successfully.
+    """
+
+    if not controllers:
+        return False
+
+    if index is not None:
+        c = get_controller(index)
+        if c is not None:
+            return c.set_led(red, green, blue)
+        return False
+
+    success = False
+    for c in list(controllers.values()):
+        if c.set_led(red, green, blue):
+            success = True
+    return success
+
 
 
 def quit(index):
@@ -283,7 +503,30 @@ def event(ev):
         else:
             pr = "release"
 
-        controller_event(get_string_for_button(ev.button), pr)
+        button_name = None
+        c = controllers.get(ev.which, None)
+        if c is None:
+            for v in controllers.values():
+                if v.instance_id == ev.which:
+                    c = v
+                    break
+
+        if c is not None:
+            use_labels = getattr(renpy.game.preferences, "pad_use_button_labels", None)
+            if use_labels is None:
+                use_labels = getattr(renpy.config, "controller_use_button_labels", "auto")
+
+            if use_labels is True or use_labels == "auto":
+                lbl = c.get_button_label_string(ev.button)
+                if lbl in ("a", "b", "x", "y", "cross", "circle", "square", "triangle"):
+                    button_name = lbl
+
+
+        if not button_name:
+            button_name = get_string_for_button(ev.button)
+
+        if button_name:
+            controller_event(button_name, pr)
         return rv
 
     elif ev.type in (

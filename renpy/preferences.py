@@ -65,6 +65,10 @@ pad_bindings = {
     "pad_righttrigger_pos": ["dismiss", "button_select", "bar_activate", "bar_deactivate"],
     "pad_a_press": ["dismiss", "button_select", "bar_activate", "bar_deactivate"],
     "pad_b_press": ["game_menu"],
+    "pad_cross_press": ["dismiss", "button_select", "bar_activate", "bar_deactivate"],
+    "pad_circle_press": ["game_menu"],
+    "pad_square_press": ["button_alternate"],
+    "pad_triangle_press": ["hide_windows"],
     "pad_dpleft_press": ["focus_left", "bar_left", "viewport_leftarrow"],
     "pad_leftx_neg": ["focus_left", "bar_left", "viewport_leftarrow"],
     "pad_rightx_neg": ["focus_left", "bar_left", "viewport_leftarrow"],
@@ -174,6 +178,12 @@ Preference("emphasize_audio", False)
 # Is the gamepad enabled?
 Preference("pad_enabled", True, (bool, str))
 
+# Should the gamepad use button labels (A/B/X/Y printed on the controller, e.g. for Switch)?
+# Can be True, False, "auto", or None (defaults to config.controller_use_button_labels).
+Preference("pad_use_button_labels", "auto", (bool, str, type(None)))
+
+
+
 # The side of the screen used for rollback. ("left", "right", or "disable")
 Preference("mobile_rollback_side", "disable")
 Preference("desktop_rollback_side", "disable")
@@ -276,6 +286,7 @@ class Preferences(renpy.object.Object):
     self_voicing_volume_drop: float
     emphasize_audio: bool
     pad_enabled: bool | str
+    pad_use_button_labels: bool | str | None
     mobile_rollback_side: str
     desktop_rollback_side: str
     gl_npot: bool
