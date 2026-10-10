@@ -489,11 +489,10 @@ def add_to_ast_before(code, filename, linenumber):
     Adds `code`, which must be a textual line of Ren'Py code,
     before the given filename and line number.
     """
-
     nodes = nodes_on_line_at_or_after(filename, linenumber)
     old, _ = first_and_last_nodes(nodes)
 
-    adjust_ast_linenumbers(old.filename, linenumber, 1)
+    adjust_ast_linenumbers(old.filename, linenumber, 1 + code.count("\n"))
 
     block, _init = renpy.game.script.load_string(old.filename, code, linenumber=linenumber)
 
@@ -565,6 +564,63 @@ def remove_from_ast(filename, linenumber):
             namemap[k] = last.next
 
     adjust_ast_linenumbers(filename, linenumber, -1)
+
+
+def replace_ast(code, filename, linenumber):
+    """
+    Replace `code`, which must be a textual line of Ren'Py code,
+    at the given filename and line number.
+    """
+    # Delete first on replace in case the new code contains an ID, which would
+    # break parsing if present more that once. this also means that we then need
+    # to reconcile the AST tree.
+
+    # Old nodes
+    old_nodes = nodes_on_line(filename, linenumber)
+    first, last = first_and_last_nodes(old_nodes)
+    new_stmts = []
+    renpy.game.script.all_stmts = [stmt for stmt in renpy.game.script.all_stmts if stmt not in old_nodes]
+    namemap = renpy.game.script.namemap
+    for k in list(namemap):
+        if namemap[k] in old_nodes:
+            namemap[k] = last.next
+
+    # Clear unique identifiers that may collide with newly-parsed entries
+    for n in old_nodes:
+        if isinstance(n, (renpy.ast.Translate, renpy.ast.TranslateSay)) and n.language is None:
+            if n.identifier in renpy.game.script.translator.default_translates:
+                renpy.game.script.translator.default_translates.pop(n.identifier)
+
+    # Reloaded nodes
+    first_following = last.next
+
+    # NOTE: this assumes that the previously-deleted entry has as many lines as the new one
+    # and forgoes calling adjust_ast_linenumbers
+    new_nodes, _init = renpy.game.script.load_string(filename, code, linenumber=linenumber)
+    new_first, _ = first_and_last_nodes(new_nodes)
+
+    # Remove the return statement at the end of the block.
+    ret_stmt = new_nodes.pop()
+    renpy.game.script.all_stmts.remove(ret_stmt)
+
+    if not new_nodes:
+        return
+
+    for i in old_nodes:
+        for old in old_nodes:
+            i.replace_next(old, new_first)
+
+    for i in renpy.game.script.all_stmts:
+        for old in old_nodes:
+            i.replace_next(old, new_first)
+
+    renpy.ast.chain_block(new_nodes, first_following)
+
+    for i in renpy.game.contexts:
+        for old in old_nodes:
+            i.replace_node(old, new_first)
+
+    renpy.game.log.replace_node(old, new_first)
 
 
 serial = 1
