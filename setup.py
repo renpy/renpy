@@ -139,7 +139,11 @@ def _build():
     if cubism:
         cython("renpy.gl2.live2dmodel", ["src/live2dcsm.c"], packages="sdl3")
 
-    cython("renpy.gl2.assimp", ["src/assimpio.cc"], language="c++", packages="assimp sdl3")
+    cython(
+        "renpy.gl2.assimp",
+        ["src/assimpio.c"],
+        packages="assimp sdl3",
+    )
 
     # renpy.text
     cython("renpy.text.textsupport")

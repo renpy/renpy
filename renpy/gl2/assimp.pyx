@@ -29,8 +29,6 @@ from renpy.pygame.iostream cimport open_io
 from renpy.pygame.sdl cimport SDL_IOStream
 
 from assimpapi cimport (
-    Importer,
-
     aiProcessPreset_TargetRealtime_Quality,
     aiProcess_FlipUVs,
     aiProcess_FlipWindingOrder,
@@ -40,14 +38,14 @@ from assimpapi cimport (
     aiMatrix4x4,
     aiFace,
     aiNode,
-    IOSystem,
-
     aiPrimitiveType_TRIANGLE,
     aiPrimitiveType_LINE,
     aiPrimitiveType_POINT,
 
     aiTexture,
     aiTextureType,
+    aiGetMaterialTextureCount,
+    aiGetMaterialTexture,
     aiTextureType_NONE,
     aiTextureType_DIFFUSE,
     aiTextureType_SPECULAR,
@@ -76,18 +74,18 @@ from assimpapi cimport (
     aiPTI_Integer,
     aiPTI_Buffer,
 
+    aiReturn,
     aiString,
     aiMaterial,
     aiGetMaterialFloatArray,
     aiGetMaterialIntegerArray,
+    aiReleaseImport,
+    assimp_get_error,
 
 )
 
 cdef extern from "assimpio.h":
-    cdef cppclass RenpyIOSystem(IOSystem):
-        RenpyIOSystem()
-        pass
-
+    const aiScene *assimpio_import(const char *filename, unsigned int flags)
 
 from typing import Callable, Iterable
 
@@ -353,9 +351,6 @@ cdef class Loader:
     cdef public str dirname
     "The directory that the asset was loaded from."
 
-    cdef Importer importer
-    "The importer used to load the models."
-
     cdef const aiScene *scene
     "The scene that has been loaded."
 
@@ -381,9 +376,6 @@ cdef class Loader:
     "The name of the file being loaded."
 
 
-    def __cinit__(self):
-        self.importer.SetIOHandler(new RenpyIOSystem())
-
     def load(
         self,
         model_data: ModelData,
@@ -408,12 +400,15 @@ cdef class Loader:
 
         # Load the scene.
         filename_bytes = filename.encode()
-        self.scene = self.importer.ReadFile(
+        self.scene = assimpio_import(
             filename_bytes,
             aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs | aiProcess_FlipWindingOrder)
 
         if not self.scene:
-            raise Exception("Error loading %s: %s" % (filename, self.importer.GetErrorString()))
+            if error := assimp_get_error():
+                raise Exception("Error loading %s: %s" % (filename, error))
+            else:
+                raise Exception("Error loading %s: Unknown error" % filename)
 
         try:
 
@@ -442,7 +437,8 @@ cdef class Loader:
             self.model_data = None
             self.uniforms = set()
 
-            self.importer.FreeScene()
+            aiReleaseImport(self.scene)
+            self.scene = NULL
 
 
     def load_textures(self) -> None:
@@ -484,10 +480,20 @@ cdef class Loader:
         cdef aiString path_string
         cdef aiMaterial *material = self.scene.mMaterials[material_index]
 
-        if material.GetTextureCount(texture_type) == 0:
+        if aiGetMaterialTextureCount(material, <aiTextureType>texture_type) == 0:
             rv = None
         else:
-            material.GetTexture(texture_type, 0, &path_string)
+            aiGetMaterialTexture(
+                material,
+                <aiTextureType>texture_type,
+                0,
+                &path_string,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL)
             path = path_string.data[:path_string.length].decode()
 
             if path.startswith("*"):
@@ -945,20 +951,6 @@ def preload():
         i.load()
 
 
-cdef public int assimp_loadable(const char *filename) nogil:
-    """
-    Returns 1 if filename is loadable, 0 otherwise.
-    """
-
-    with gil:
-        fn = filename.decode()
-
-        if renpy.loader.loadable(filename):
-            return 1
-        else:
-            return 0
-
-
 cdef public SDL_IOStream *assimp_load(const char *filename) nogil:
     """
     Loads the model from the given filename.
@@ -972,6 +964,6 @@ cdef public SDL_IOStream *assimp_load(const char *filename) nogil:
             f = renpy.loader.load(fn)
             return open_io(f).take()
         except Exception as e:
-            pass
+            renpy.display.log.write("Unable to load Assimp file %r: %s", fn, e)
 
     return NULL

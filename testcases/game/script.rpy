@@ -61,6 +61,9 @@ label start:
         "Drag and Drop":
             call drag_and_drop
 
+        "GLTF Box":
+            call gltf_box
+
         "Done.":
             return
 
@@ -311,3 +314,65 @@ screen scroll_screen:
                 text "This is line [i]."
 
             textbutton "Close" action Hide("scroll_screen") id "close_screen_button"
+
+
+###############################################################################
+# GLTFModel
+###############################################################################
+
+init python:
+
+    renpy.register_shader("example.lighting", variables="""
+        uniform mat4 u_model__inverse_transpose;
+        uniform vec4 u_color_diffuse;
+        uniform vec4 u_color_specular;
+        uniform sampler2D u_tex_diffuse;
+
+        out vec3 v_normal;
+        out vec2 v_tex_coord;
+
+        in vec3 a_normal;
+        in vec2 a_tex_coord;
+""", vertex_201="""
+        v_normal = (u_model__inverse_transpose * vec4(a_normal, 1.0)).xyz;
+        v_tex_coord = a_tex_coord;
+""", fragment_201="""
+
+        // The direction of the light.
+        vec3 lightDir = normalize(vec3(0.0, -1000.0, 1000.0));
+
+        vec3 normal = normalize(v_normal);
+
+        float lambertian = max(dot(normal, lightDir), 0.0);
+        vec4 diffuse_color = texture(u_tex_diffuse, v_tex_coord);
+        diffuse_color *= vec4(lambertian * u_color_diffuse.rgb * u_color_diffuse.a, u_color_diffuse.a);
+
+        vec3 viewDir = normalize(vec3(0.0, 0.0, -1.0));
+        vec3 halfDir = normalize(lightDir + viewDir);
+        float specular = pow(max(dot(normal, halfDir), 0.0), 4.0);
+
+        vec4 specular_color = vec4(u_color_specular.rgb * u_color_specular.a * specular, u_color_specular.a * specular);
+
+        fragment_color = diffuse_color + specular_color;
+
+        if (fragment_color.a < 0.9) {
+            discard;
+        }
+""")
+
+image GLTFBox = GLTFModel("Box.glb", shader="renpy.texture", zoom=100.0, report=True)
+
+label gltf_box:
+    camera:
+        perspective True
+
+    show GLTFBox:
+        align (0.5, 0.5)
+        matrixanchor (0.5, 0.5)
+        matrixtransform RotateMatrix(0, 0, 0)
+        linear 4.0 matrixtransform RotateMatrix(90, 360, 0)
+        repeat
+
+    "You should see the GLTF Box rotating."
+    hide GLTFBox
+    return
