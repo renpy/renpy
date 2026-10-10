@@ -742,7 +742,7 @@ def loadable_core(name):
         return loadable_cache[name]
 
     if renamed := renpy.config.renamed_files.get(name.lower()):
-        return load_core(renamed)
+        return loadable_core(renamed)
 
     try:
         transfn(name)
