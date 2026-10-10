@@ -650,7 +650,7 @@
 
     # 00accessibility.rpy:76
     old "Font Override"
-    new "Sobreescribir fuente"
+    new "Sobrescribir fuente"
 
     # 00accessibility.rpy:80
     old "Default"

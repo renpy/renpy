@@ -11,7 +11,7 @@ translate japanese strings:
 
     # _developer/developer.rpym:45
     old "Console (Shift+O)"
-    new "コンソール (Shift+D)"
+    new "コンソール (Shift+O)"
 
     # _developer/developer.rpym:47
     old "Variable Viewer"

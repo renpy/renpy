@@ -166,27 +166,27 @@
 
     # 00action_file.rpy:459
     old "Delete slot [text]"
-    new "Supprimer l’emplacement %s: [text]"
+    new "Supprimer l’emplacement [text]"
 
     # 00action_file.rpy:539
     old "File page auto"
-    new "File page auto"
+    new "Page auto"
 
     # 00action_file.rpy:541
     old "File page quick"
-    new "File page quick"
+    new "Page rapide"
 
     # 00action_file.rpy:543
     old "File page [text]"
-    new "File page [text]"
+    new "Page [text]"
 
     # 00action_file.rpy:733
     old "Next file page."
-    new "Next file page."
+    new "Page suivante."
 
     # 00action_file.rpy:797
     old "Previous file page."
-    new "Previous file page."
+    new "Page précédente."
 
     # 00action_file.rpy:858
     old "Quick save complete."
@@ -202,7 +202,7 @@
 
     # 00action_other.rpy:344
     old "Language [text]"
-    new "Langage [text]"
+    new "Langue [text]"
 
     # 00director.rpy:709
     old "The interactive director is not enabled here."
@@ -534,7 +534,7 @@
 
     # 00preferences.rpy:415
     old "voice volume"
-    new "sound volume"
+    new "volume des voix"
 
     # 00preferences.rpy:416
     old "mute music"
@@ -1054,7 +1054,7 @@ translate french strings:
 
     # renpy/common/00accessibility.rpy:100
     old "Reset"
-    new "Réinitaliser"
+    new "Réinitialiser"
 
     # renpy/common/00accessibility.rpy:105
     old "Line Spacing Scaling"
