@@ -319,47 +319,6 @@ screen scroll_screen:
 ###############################################################################
 # GLTFModel
 ###############################################################################
-
-init python:
-
-    renpy.register_shader("example.lighting", variables="""
-        uniform mat4 u_model__inverse_transpose;
-        uniform vec4 u_color_diffuse;
-        uniform vec4 u_color_specular;
-        uniform sampler2D u_tex_diffuse;
-
-        out vec3 v_normal;
-        out vec2 v_tex_coord;
-
-        in vec3 a_normal;
-        in vec2 a_tex_coord;
-""", vertex_201="""
-        v_normal = (u_model__inverse_transpose * vec4(a_normal, 1.0)).xyz;
-        v_tex_coord = a_tex_coord;
-""", fragment_201="""
-
-        // The direction of the light.
-        vec3 lightDir = normalize(vec3(0.0, -1000.0, 1000.0));
-
-        vec3 normal = normalize(v_normal);
-
-        float lambertian = max(dot(normal, lightDir), 0.0);
-        vec4 diffuse_color = texture(u_tex_diffuse, v_tex_coord);
-        diffuse_color *= vec4(lambertian * u_color_diffuse.rgb * u_color_diffuse.a, u_color_diffuse.a);
-
-        vec3 viewDir = normalize(vec3(0.0, 0.0, -1.0));
-        vec3 halfDir = normalize(lightDir + viewDir);
-        float specular = pow(max(dot(normal, halfDir), 0.0), 4.0);
-
-        vec4 specular_color = vec4(u_color_specular.rgb * u_color_specular.a * specular, u_color_specular.a * specular);
-
-        fragment_color = diffuse_color + specular_color;
-
-        if (fragment_color.a < 0.9) {
-            discard;
-        }
-""")
-
 image GLTFBox = GLTFModel("Box.glb", shader="renpy.texture", zoom=100.0, report=True)
 
 label gltf_box:
