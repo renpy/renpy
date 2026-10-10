@@ -286,13 +286,9 @@ class Cache:
         if not isinstance(image, ImageBase):
             raise Exception(f"Expected an image of some sort, but got {image!r}.")
 
-        if not image.cache:
-            surf = image.load()
-            renpy.display.render.mutated_surface(surf)
-            return surf
-
         # First try to grab the image out of the cache without locking it.
-        if ce := self.cache.get(image):
+        ce = self.cache.get(image) if image.cache else None
+        if ce is not None:
             ce.time = self.time
 
             if texture and (ce.texture is not None):
@@ -331,14 +327,15 @@ class Cache:
 
             ce = CacheEntry(image, surf, bounds)
 
-            with self.lock:
-                if old_ce := self.cache.get(image):
-                    self.cache_size -= old_ce.size()
+            if image.cache:
+                with self.lock:
+                    if old_ce := self.cache.get(image):
+                        self.cache_size -= old_ce.size()
 
-                self.cache[image] = ce
-                self.cache_size += ce.size()
+                    self.cache[image] = ce
+                    self.cache_size += ce.size()
 
-            if renpy.config.debug_image_cache:
+            if image.cache and renpy.config.debug_image_cache:
                 if predict:
                     cache_filled = self.get_total_size() / self.cache_limit
                     renpy.display.ic_log.write(f"Added {ce.what!r} ({cache_filled:.2%})")
@@ -389,7 +386,7 @@ class Cache:
         if texture and render and not predict:
             return self._make_render(ce)
 
-        if (ce.surf is None) and (ce.texture is None):
+        if image.cache and (ce.surf is None) and (ce.texture is None):
             self.kill(ce)
 
         return rv
