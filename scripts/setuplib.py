@@ -42,9 +42,6 @@ gen: str = "tmp/gen"
 if coverage:
     gen += "-coverage"
 
-# The include and library dirs that we compile against.
-include_dirs: list[str] = ["src", gen]
-
 # Cache for pkgconfig results.
 pkgconfig_cache: dict[str, dict[str, list]] = {}
 
@@ -355,7 +352,6 @@ def package_flags(*packages: str) -> PackageFlags:
                 if i not in rv[k]:
                     rv[k].append(i)
 
-
     return rv
 
 
@@ -370,11 +366,6 @@ def setup(name, version):
     for ext_name, data in extensions.items():
         package_kwargs = package_flags(*data["packages"])
 
-        ext_include_dirs: list[str] = []
-        ext_include_dirs += package_kwargs["include_dirs"]
-        ext_include_dirs += data["flags"]["include_dirs"]
-        ext_include_dirs += include_dirs
-
         ext_compile_args: list[str] = []
 
         if data["language"] == "c":
@@ -384,14 +375,18 @@ def setup(name, version):
         ext_compile_args += data["flags"]["compile_args"]
         ext_compile_args += extra_compile_args
 
-        ext_define_macros: list[tuple[str, str | None]] = []
-        ext_define_macros += package_kwargs["define_macros"]
-        ext_define_macros += data["flags"]["define_macros"]
-
         ext_link_args: list[str] = []
         ext_link_args += package_kwargs["extra_link_args"]
         ext_link_args += data["flags"]["extra_link_args"]
         ext_link_args += extra_link_args
+
+        ext_include_dirs: list[str] = []
+        ext_include_dirs += package_kwargs["include_dirs"]
+        ext_include_dirs += data["flags"]["include_dirs"]
+
+        ext_define_macros: list[tuple[str, str | None]] = []
+        ext_define_macros += package_kwargs["define_macros"]
+        ext_define_macros += data["flags"]["define_macros"]
 
         ext_libraries: list[str] = []
         ext_libraries += package_kwargs["libraries"]
