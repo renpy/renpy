@@ -813,7 +813,7 @@ class CompileCache:
     swapped every utter_restart.
     """
 
-    BYTECODE_VERSION = 1
+    BYTECODE_VERSION = 2
     "The version of the bytecode cache."
 
     OLD_BYTECODE_FILE: Final = "cache/bytecode.rpyb"
@@ -833,6 +833,7 @@ class CompileCache:
         CompileMode,  # mode
         int,  # flags
         int,  # column
+        str,  # source
     ]
 
     type CacheKey = tuple[
@@ -843,6 +844,7 @@ class CompileCache:
         bytes,  # MAGIC_NUMBER
         int,  # flags
         int,  # column
+        str,  # source
     ]
 
     type WarningsKey = tuple[Literal["warnings"], CacheKey]
@@ -918,8 +920,8 @@ class CompileCache:
         self.bytecode_dirty = True
 
     def get(self, item_key: ItemKey) -> types.CodeType | LiteralValue | None:
-        hashcode, lineno, filename, mode, flags, column = item_key
-        key = (hashcode, lineno, filename, mode, CompileCache.MAGIC_NUMBER, flags, column)
+        hashcode, lineno, filename, mode, flags, column, source = item_key
+        key = (hashcode, lineno, filename, mode, CompileCache.MAGIC_NUMBER, flags, column, source)
 
         if rv := self.new_compile_cache.get(key):
             return rv
@@ -950,8 +952,8 @@ class CompileCache:
         value: types.CodeType | LiteralValue,
         warnings: list[tuple[str, int, str]],
     ):
-        hashcode, lineno, filename, mode, flags, column = item_key
-        key = (hashcode, lineno, filename, mode, CompileCache.MAGIC_NUMBER, flags, column)
+        hashcode, lineno, filename, mode, flags, column, source = item_key
+        key = (hashcode, lineno, filename, mode, CompileCache.MAGIC_NUMBER, flags, column, source)
 
         self.new_compile_cache[key] = value
         self.new_bytecode_cache[key] = marshal.dumps(value)
@@ -1131,7 +1133,7 @@ def py_compile(
     if renpy.config.future_annotations:
         flags |= __future__.annotations.compiler_flag
 
-    key: CompileCache.ItemKey = (hashcode, lineno, filename, mode, flags, column)
+    key: CompileCache.ItemKey = (hashcode, lineno, filename, mode, flags, column, str(source))
     if cache and (rv := compile_cache.get(key)):
         return rv
 
