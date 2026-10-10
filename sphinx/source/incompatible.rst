@@ -22,6 +22,16 @@ The ability to create zsync updates will be removed when Ren'Py 8.7 is released.
 8.6.0
 -----
 
+**Dialogue and Choice Screen Layers** :var:`config.say_layer`,
+:var:`config.choice_layer`, and :var:`config.nvl_choice_layer` now default to
+None, allowing the screen's ``layer`` property to take precedence. Screens
+without a declared layer still use "screens". Games declaring compatibility
+with Ren'Py 8.5 or earlier retain the old defaults. To restore them explicitly::
+
+    define config.say_layer = "screens"
+    define config.choice_layer = "screens"
+    define config.nvl_choice_layer = "screens"
+
 **renpy.get_sdl_dll Version** Ren'Py now uses SDL3, and the :func:`renpy.get_sdl_dll` function now takes a `version`
 argument, which should be set to 3 to get the SDL3 library. Calls without the version argument will return None,
 representing SDL2 not being present.

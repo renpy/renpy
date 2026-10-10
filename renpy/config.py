@@ -567,14 +567,14 @@ autoreload_blacklist = [".rpyc", ".rpymc", ".rpyb", ".pyc", ".pyo"]
 # A list of python modules that should be reloaded when appropriate.
 reload_modules = []
 
-# The layer dialogue is shown on.
-say_layer = "screens"
+# The layer dialogue is shown on, or None to use the screen's layer.
+say_layer: str | None = None
 
-# The layer the choice screen is shown on.
-choice_layer = "screens"
+# The layer the choice screen is shown on, or None to use the screen's layer.
+choice_layer: str | None = None
 
-# The layer the choice screen is shown on, when passed (nvl=True).
-nvl_choice_layer = "screens"
+# The layer the NVL choice screen is shown on, or None to use the screen's layer.
+nvl_choice_layer: str | None = None
 
 # If true, we will not use the .report_traceback method to produced
 # prettier tracebacks.

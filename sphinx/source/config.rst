@@ -644,9 +644,12 @@ Layers
     applied to all layers. If a layer name is listed here, it should
     not be listed in :var:`config.layers` or :var:`config.top_layers`.
 
-.. var:: config.choice_layer = "screens"
+.. var:: config.choice_layer = None
 
     The layer the choice screen (used by the menu statement) is shown on.
+    If None, the screen's :scpref:`layer` property is used,
+    defaulting to "screens". This defaults to "screens" for games that declare
+    compatibility with Ren'Py 8.5 or earlier.
 
 .. var:: config.clear_layers = [ ... ]
 
@@ -704,16 +707,26 @@ Layers
     The :func:`renpy.add_layer` can add layers to this variable without
     needing to know the original contents.
 
+.. var:: config.nvl_choice_layer = None
+
+    The layer the NVL choice screen is shown on. If None, the screen's
+    :scpref:`layer` property is used, defaulting to "screens".
+    This defaults to "screens" for games that declare compatibility with
+    Ren'Py 8.5 or earlier.
+
 .. var:: config.overlay_layers = [ 'overlay', ... ]
 
     This is a list of all of the overlay layers. Overlay layers are
     cleared before the overlay functions are called. "overlay" should
     always be in this list.
 
-.. var:: config.say_layer = "screens"
+.. var:: config.say_layer = None
 
-    The layer the say screen is shown on. This layer should be in
-    :var:`config.context_clear_layers`.
+    The layer the say screen is shown on. If None, the screen's
+    :scpref:`layer` property is used, defaulting to "screens".
+    The resulting layer should be in :var:`config.context_clear_layers`.
+    This defaults to "screens" for games that declare compatibility with
+    Ren'Py 8.5 or earlier.
 
 .. var:: config.sticky_layers = [ "master", ... ]
 

@@ -245,6 +245,7 @@ def display_menu(
     `_layer`
         The layer to display the menu on. If not given, defaults to :var:`config.choice_layer`
         for normal choice menus, and :var:`config.nvl_choice_layer` for NVL choice menus.
+        If the configuration variable is None, uses the screen's layer, defaulting to "screens".
 
     `_args`
         If not None, this should be a tuple containing the positional :ref:`menu arguments <menu-arguments>`
@@ -379,8 +380,11 @@ def display_menu(
             else:
                 layer = renpy.config.choice_layer
 
+        if layer is not None:
+            scope["_layer"] = layer
+
         renpy.exports.show_screen(
-            screen, items=item_actions, _widget_properties=props, _transient=True, _layer=layer, *menu_args, **scope
+            screen, items=item_actions, _widget_properties=props, _transient=True, *menu_args, **scope
         )
 
     else:

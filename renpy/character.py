@@ -446,6 +446,9 @@ def show_display_say(
         if two_window or renpy.config.old_say_args:
             kwargs["two_window"] = two_window
 
+        if layer is not None:
+            kwargs["_layer"] = layer
+
         renpy.display.screen.show_screen(
             screen,
             _widget_properties=props,
@@ -453,9 +456,11 @@ def show_display_say(
             _tag=tag,
             who=who,
             what=what,
-            _layer=layer,
             **kwargs,
         )
+
+        if layer is None:
+            layer = renpy.display.screen.get_screen_layer(screen)
 
         renpy.exports.shown_window()
 

@@ -214,6 +214,13 @@ and crop coordinates independent of saved window preferences and DPI scaling.
 Other Changes
 -------------
 
+The :var:`config.say_layer`, :var:`config.choice_layer`, and
+:var:`config.nvl_choice_layer` variables now default to None for new games.
+When None, dialogue and choice screens use the screen's ``layer`` property,
+or "screens" if no layer is declared. Explicit layer overrides still take
+precedence. Games declaring compatibility with Ren'Py 8.5 or earlier retain
+the previous "screens" defaults.
+
 The audio synchro start feature now only applies to playing audio. Queued audio will not be affected, and will always
 be played when their turn comes in the playback queue.
 
