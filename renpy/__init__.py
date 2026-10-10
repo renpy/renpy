@@ -22,25 +22,45 @@
 # This file ensures that renpy packages will be imported in the right
 # order.
 
-from typing import Any, NamedTuple
-
 import os
+import platform
 import sys
 import types
-import platform
+from typing import Any, NamedTuple
 
 
-# Set up the hook for any renpy __init__ modules to import binary modules from
-# a libexec directory if it available.
-# This is relevant only for development RenPy itself, when compiled binaries
-# are stored in the libexec directory.
-try:
-    import _renpy
+def _install_system_python_hook():
+    from pathlib import Path
 
-    if getattr(_renpy, "__file__", "built-in") != "built-in":
+    if sys.platform == "win32":
+        # On Windows, we expect _renpy to be compiled as a .pyd file at the
+        # root of the source tree.
+        import ctypes
+        import sysconfig
+
+        root = Path(__file__).parents[1]
+        if not (root / f"_renpy{sysconfig.get_config_var('EXT_SUFFIX')}").exists():
+            sys.exit("Ren'Py extension modules are not compiled. Run setup.py build first.")
+
+        dll_dir = str(root / "lib" / "py3-windows-x86_64")
+        if dll_dir not in sys.path:
+            sys.path.insert(0, dll_dir)
+
+        ctypes.windll.kernel32.SetDllDirectoryW(dll_dir)
+
+    else:
+        # Set up the hook for any renpy __init__ modules to import binary modules from
+        # a libexec directory if it available.
+        # This is relevant only for development Ren'Py itself, when compiled binaries
+        # are stored in the libexec directory.
+        try:
+            import _renpy
+        except ImportError:
+            sys.exit("Ren'Py extension modules are not compiled. Run setup.py build first.")
+
         import importlib.util
 
-        libexec: str = os.path.dirname(_renpy.__file__)
+        libexec = Path(_renpy.__file__).parent
 
         class _LibExecFinder:
             def __init__(self):
@@ -66,7 +86,8 @@ try:
                 # Is a package.
                 if spec.submodule_search_locations is not None:
                     name = fullname.split(".")
-                    spec.submodule_search_locations.append(os.path.join(libexec, *name))
+                    target = libexec.joinpath(*name)
+                    spec.submodule_search_locations.append(str(target))
 
                 return spec
 
@@ -74,13 +95,15 @@ try:
 
         # Add the libexec directory to this module.
         try:
-            __spec__.submodule_search_locations.append(os.path.join(libexec, "renpy"))
-            __path__ = list(__spec__.submodule_search_locations)
+            __spec__.submodule_search_locations.append(str(libexec / "renpy"))
+            __path__[:] = list(__spec__.submodule_search_locations)
         except Exception:
             pass
 
-except ImportError:
-    pass
+
+if "_renpy" not in sys.builtin_module_names:
+    # This is invocation of Ren'Py with a uv or system interpreter.
+    _install_system_python_hook()
 
 # All imports should go below renpy.compat.
 import renpy.compat.pickle as pickle

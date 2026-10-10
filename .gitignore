@@ -16,7 +16,7 @@ ehthumbs_vista.db
 *.pyo
 *.egg-info
 *.cpython-*.so
-*.cpython-*.pyd
+*.cp*.pyd
 /build
 uv.lock
 
