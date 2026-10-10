@@ -36,6 +36,10 @@ cdef class Program:
     # The text of the vertex and fragment shaders.
     cdef public object vertex
     cdef public object fragment
+    cdef public object variable_specs
+
+    # True if the linked program should be available as a binary.
+    cdef bint binary_retrievable
 
     # Objects used to set attributes and uniforms.
     cdef public list attributes
