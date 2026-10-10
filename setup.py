@@ -54,6 +54,10 @@ def _build():
     if cubism:
         setuplib.include_dirs.append(f"{cubism}/Core/include")
 
+    spine = os.environ.get("SPINE", None)
+    if spine:
+        setuplib.include_dirs.append(f"{spine}/include")
+
     # src/ directory.
     cython("_renpy", ["src/core.c"], packages="sdl3 libpng")
 

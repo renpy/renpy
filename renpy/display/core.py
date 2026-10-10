@@ -2719,6 +2719,7 @@ class Interface:
             renpy.display.behavior.input_post_per_interact()
 
             renpy.gl2.live2d.update_states()
+            renpy.gl2.spinemotion.update_states()
 
             self.take_layer_displayable = None
 
