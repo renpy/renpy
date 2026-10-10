@@ -306,10 +306,10 @@ def convert(value, conv, scope):
 
     if "f" in conv:
         if renpy.config.say_menu_text_filter is not None:
-            value = renpy.config.say_menu_text_filter(value)
+            value = renpy.config.say_menu_text_filter(value, None)
 
         for f in renpy.config.say_menu_text_filters:
-            value = f(value)
+            value = f(value, None)
 
     if "q" in conv:
         value = value.replace("{", "{{")
