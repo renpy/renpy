@@ -25,8 +25,7 @@ import os
 import sys
 from pathlib import Path
 
-import scripts.generate_styles as generate_styles
-import scripts.setuplib as setuplib
+from scripts import generate_styles, setuplib
 from scripts.setuplib import cython, env, generate_all_cython, generate_setup_files
 
 # Change to the directory containing this file.
@@ -50,10 +49,6 @@ def _build():
     setuplib.extra_compile_args = ["-Wno-unused-function"]
     setuplib.extra_link_args = []
 
-    cubism = os.environ.get("CUBISM", None)
-    if cubism:
-        setuplib.include_dirs.append(f"{cubism}/Core/include")
-
     # src/ directory.
     cython("_renpy", ["src/core.c"], packages="sdl3 libpng")
 
@@ -75,7 +70,7 @@ def _build():
     cython("renpy.pygame.key", packages="sdl3")
     cython("renpy.pygame.mouse", packages="sdl3")
     cython("renpy.pygame.event", packages="sdl3")
-    cython("renpy.pygame.display", packages="sdl3")
+    cython("renpy.pygame.display", packages="sdl3", define_macros=[("SDL_MAIN_HANDLED", None)])
     cython("renpy.pygame.sdl", packages="sdl3")
     cython("renpy.pygame.color", packages="sdl3")
     cython("renpy.pygame.rect", packages="sdl3")
@@ -95,7 +90,12 @@ def _build():
     cython("renpy.pydict")
     cython("renpy.style")
     cython("renpy.encryption")
-    cython("renpy.tfd", ["src/tinyfiledialogs/tinyfiledialogs.c"], setup_filename="Setup.tfd")
+    cython(
+        "renpy.tfd",
+        ["src/tinyfiledialogs/tinyfiledialogs.c"],
+        windows_libraries=["ole32", "comdlg32"],
+        setup_filename="Setup.tfd",
+    )
 
     # renpy.audio
     cython(
@@ -136,10 +136,22 @@ def _build():
     cython("renpy.gl2.gl2shader", packages="sdl3")
     cython("renpy.gl2.gl2statecache", packages="sdl3")
 
-    if cubism:
-        cython("renpy.gl2.live2dmodel", ["src/live2dcsm.c"], packages="sdl3")
+    if cubism := os.environ.get("CUBISM", None):
+        cython(
+            "renpy.gl2.live2dmodel",
+            ["src/live2dcsm.c"],
+            include_dirs=[f"{cubism}/Core/include"],
+            packages="sdl3",
+        )
 
-    cython("renpy.gl2.assimp", ["src/assimpio.cc"], language="c++", packages="assimp sdl3")
+    cython(
+        "renpy.gl2.assimp",
+        ["src/assimpio.cc"],
+        language="c++",
+        packages="assimp sdl3",
+        windows_libraries=["assimp"],
+        windows_extra_link_args=["-static-libstdc++", "-static-libgcc"],
+    )
 
     # renpy.text
     cython("renpy.text.textsupport")

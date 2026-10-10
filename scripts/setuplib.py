@@ -27,7 +27,7 @@ import os
 import sys
 import time
 from collections import defaultdict
-from collections.abc import Iterator
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Literal, TypedDict
@@ -36,9 +36,6 @@ import setuptools
 
 coverage = "RENPY_COVERAGE" in os.environ
 "True if we are building with coverage enabled."
-
-generate = False
-"True if we are generating files without building."
 
 gen: str = "tmp/gen"
 
@@ -85,14 +82,22 @@ def check_imports(directory: Path, *module_files: str):
             print(f"Module {p} is imported, but not listed in check_imports. (And probably not distributed.)")
 
 
+class PackageFlags(TypedDict):
+    libraries: list[str]
+    library_dirs: list[str]
+    include_dirs: list[str]
+    define_macros: list[tuple[str, str | None]]
+    extra_link_args: list[str]
+    compile_args: list[str]
+
+
 class ExtensionData(TypedDict):
+    setup_filename: str
     sources: list[str]
     language: Literal["c", "c++"]
-    extra_compile_args: list[str]
-    define_macros: list[tuple[str, str | None]]
     packages: list[str]
     depends: list[str]
-    setup_filename: str
+    flags: PackageFlags
 
 
 # A mapping from module name to the data needed to create setuptools.Extension
@@ -104,7 +109,7 @@ generate_cython_queue: list[tuple[str, str, str]] = []
 
 
 @contextmanager
-def _build_lock(path: Path) -> Iterator[None]:
+def _build_lock(path: Path) -> Generator[None]:
     with path.open("a+b") as lock:
         if os.name == "nt":
             import msvcrt
@@ -142,15 +147,43 @@ def cython(
     name: str,
     source: list[str] | None = None,
     language: Literal["c", "c++"] = "c",
-    compile_args: list[str] | None = None,
-    define_macros: list[tuple[str, str | None]] | None = None,
     packages: str = "",
     setup_filename: str = "Setup",
+    **kwargs: Any,
 ):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
     """
+
+    flags = PackageFlags(
+        libraries=[],
+        library_dirs=[],
+        include_dirs=[],
+        define_macros=[],
+        extra_link_args=[],
+        compile_args=[],
+    )
+
+    for key, value in kwargs.items():
+        prefix = ""
+        if key.startswith(("windows_", "linux_")):
+            prefix, _, key = key.partition("_")
+
+        if key not in (
+            "libraries",
+            "library_dirs",
+            "include_dirs",
+            "define_macros",
+            "extra_link_args",
+            "compile_args",
+        ):
+            raise ValueError(f"Unknown keyword argument: {key}")
+
+        if prefix == "windows" and os.name != "nt" or prefix == "linux" and os.name == "nt":
+            continue
+
+        flags[key] += value
 
     split_name = name.split(".")
     fn = Path(*split_name).with_suffix(".pyx")
@@ -170,18 +203,16 @@ def cython(
     else:
         c_fn = Path(gen, c_fn).with_suffix(".c").as_posix()
 
-    define_macros = define_macros or []
     if coverage:
-        define_macros += [("CYTHON_TRACE", "1")]
+        flags["define_macros"] += [("CYTHON_TRACE", "1")]
 
     extensions[name] = ExtensionData(
         sources=[c_fn] + (source or []),
         language=language,
-        extra_compile_args=list(compile_args or []),
-        define_macros=list(define_macros or []),
         packages=packages.split(),
         depends=[],
         setup_filename=setup_filename,
+        flags=flags,
     )
 
     generate_cython_queue.append((name, fn.as_posix(), language))
@@ -264,7 +295,8 @@ def generate_setup_files():
     for setup_filename, lines in setup_files.items():
         (src_dir / setup_filename).write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-def env(name):
+
+def env(name: str):
     """
     This sets an environment variable, if require. The logic is:
 
@@ -276,14 +308,34 @@ def env(name):
         os.environ[name] = os.environ[f"RENPY_{name}"]
 
 
-def package_flags(*packages: str) -> defaultdict[str, Any]:
+def package_flags(*packages: str) -> PackageFlags:
     """
     Given a list of pkgconfig packages, returns a dict keys that will be
     supplied to Extension to set up the 'libraries', the 'library_dirs', the
     'include_dirs', and the 'define_macros' arguments.
     """
 
-    rv = defaultdict(list)
+    rv = PackageFlags(
+        libraries=[],
+        library_dirs=[],
+        include_dirs=[],
+        define_macros=[],
+        extra_link_args=[],
+        compile_args=[],
+    )
+
+    # On Windows, pkg-config is not used, so just return the empty dict.
+    if os.name == "nt":
+        dev_dir = Path("lib/py3-windows-x86_64/dev")
+        if not dev_dir.exists():
+            raise Exception("Required development directory 'lib/py3-windows-x86_64/dev' does not exist.")
+
+        with (dev_dir / "include_dirs.txt").open(encoding="utf-8") as f:
+            rv["include_dirs"].extend(l.strip() for l in f)
+
+        rv["library_dirs"].append(str(dev_dir / "lib"))
+        rv["libraries"].append("renpyall")
+        return rv
 
     import pkgconfig
 
@@ -303,6 +355,7 @@ def package_flags(*packages: str) -> defaultdict[str, Any]:
                 if i not in rv[k]:
                     rv[k].append(i)
 
+
     return rv
 
 
@@ -314,43 +367,52 @@ def setup(name, version):
     """
 
     ext_modules: list[setuptools.Extension] = []
-    for name, data in extensions.items():
+    for ext_name, data in extensions.items():
         package_kwargs = package_flags(*data["packages"])
 
         ext_include_dirs: list[str] = []
         ext_include_dirs += package_kwargs["include_dirs"]
+        ext_include_dirs += data["flags"]["include_dirs"]
         ext_include_dirs += include_dirs
 
-        compile_args: list[str] = []
+        ext_compile_args: list[str] = []
 
         if data["language"] == "c":
-            compile_args.append("-std=gnu99")
+            ext_compile_args.append("-std=gnu99")
 
-        compile_args += data["extra_compile_args"]
-        compile_args += extra_compile_args
+        ext_compile_args += package_kwargs["compile_args"]
+        ext_compile_args += data["flags"]["compile_args"]
+        ext_compile_args += extra_compile_args
 
-        define_macros: list[tuple[str, str | None]] = []
-        define_macros += package_kwargs["define_macros"]
-        define_macros += data["define_macros"]
+        ext_define_macros: list[tuple[str, str | None]] = []
+        ext_define_macros += package_kwargs["define_macros"]
+        ext_define_macros += data["flags"]["define_macros"]
 
-        link_args: list[str] = []
-        link_args += package_kwargs["extra_link_args"]
-        link_args += extra_link_args
+        ext_link_args: list[str] = []
+        ext_link_args += package_kwargs["extra_link_args"]
+        ext_link_args += data["flags"]["extra_link_args"]
+        ext_link_args += extra_link_args
 
+        ext_libraries: list[str] = []
+        ext_libraries += package_kwargs["libraries"]
+        ext_libraries += data["flags"]["libraries"]
 
+        ext_library_dirs: list[str] = []
+        ext_library_dirs += package_kwargs["library_dirs"]
+        ext_library_dirs += data["flags"]["library_dirs"]
 
         ext_modules.append(
             setuptools.Extension(
-                name=name,
+                name=ext_name,
                 sources=data["sources"],
                 language=data["language"],
                 include_dirs=ext_include_dirs,
-                extra_compile_args=compile_args,
-                define_macros=define_macros,
-                extra_link_args=link_args,
-                library_dirs = package_kwargs["library_dirs"],
-                runtime_library_dirs = package_kwargs["library_dirs"],
-                libraries=package_kwargs["libraries"],
+                extra_compile_args=ext_compile_args,
+                define_macros=ext_define_macros,
+                extra_link_args=ext_link_args,
+                library_dirs=ext_library_dirs,
+                runtime_library_dirs=[] if os.name == "nt" else ext_library_dirs,
+                libraries=ext_libraries,
                 depends=data["depends"],
             )
         )
