@@ -36,6 +36,10 @@ with Ren'Py 8.5 or earlier retain the old defaults. To restore them explicitly::
 argument, which should be set to 3 to get the SDL3 library. Calls without the version argument will return None,
 representing SDL2 not being present.
 
+**Input Method Candidates** Ren'Py now draws the input method (IME) composition and candidate list itself,
+rather than using the operating system's IME windows. Games that customized text input may want to
+restyle the new ``_ime_candidates`` screen, as described in :ref:`input-methods`.
+
 **Late Audio Scan** Ren'Py now defines automatic audio files at a late init level, rather than at init 0.
 To revert to the prior behavior, add to your game::
 

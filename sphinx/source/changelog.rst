@@ -62,6 +62,14 @@ The :func:`renpy.put_clipboard_image_file` function puts the contents of an imag
 into the clipboard, which can be pasted into other applications that support pasting images.
 :func:`renpy.put_clipboard_text_file` does the same for text files.
 
+Input Methods
+-------------
+
+Ren'Py now draws the list of candidates offered by an input method editor (IME),
+rather than relying on the operating system's candidate window, which could be
+invisible when the game was fullscreen. The list is shown by the ``_ime_candidates``
+screen, and can be customized with styles. See :ref:`input-methods` for details.
+
 Age Verification
 ----------------
 

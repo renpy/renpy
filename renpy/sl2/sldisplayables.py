@@ -154,6 +154,10 @@ DisplayableParser("side", renpy.display.layout.Side, "side", many)
 Positional("positions")
 Style("spacing")
 
+# Used by the _ime_candidates screen to place the IME candidate list near
+# the active text input.
+DisplayableParser("_ime_candidates_placer", renpy.display.ime.IMECandidatesPlacer, "default", 1)
+
 
 # Omit sizer, as we can always just put an xmaximum and ymaximum on an item.
 

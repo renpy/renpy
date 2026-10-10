@@ -482,6 +482,7 @@ def import_all():
     import renpy.display.transform
     import renpy.display.motion
     import renpy.display.behavior
+    import renpy.display.ime
     import renpy.display.transition
     import renpy.display.movetransition
     import renpy.display.im

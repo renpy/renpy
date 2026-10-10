@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import NotRequired, TypedDict, Any
+from typing import TYPE_CHECKING, NotRequired, TypedDict, Any
 
 import sys
 import os
@@ -37,6 +37,9 @@ import renpy.pygame as pygame
 from renpy.display.position import absolute as absolute, position as position
 from renpy.display.displayable import Displayable, DisplayableArguments as DisplayableArguments, place as place
 from renpy.display.scenelists import SceneListEntry as SceneListEntry, SceneLists as SceneLists
+
+if TYPE_CHECKING:
+    from renpy.display.ime import IMECandidates
 
 import_time = time.time()
 import_perf_time = time.perf_counter()
@@ -100,6 +103,7 @@ enabled_events: set[int] = {
     pygame.KEYDOWN,
     pygame.KEYUP,
     pygame.TEXTEDITING,
+    pygame.TEXTEDITINGCANDIDATES,
     pygame.TEXTINPUT,
     pygame.KEYMAPCHANGED,
     pygame.MOUSEMOTION,
@@ -130,6 +134,7 @@ input_events: set[int] = {
     pygame.KEYDOWN,
     pygame.KEYUP,
     pygame.TEXTEDITING,
+    pygame.TEXTEDITINGCANDIDATES,
     pygame.TEXTINPUT,
     pygame.MOUSEMOTION,
     pygame.MOUSEBUTTONDOWN,
@@ -737,11 +742,17 @@ class Interface:
         # If in text editing mode, the current text editing event.
         self.text_editing = None
 
+        self.text_editing_candidates: IMECandidates | None = None
+        "The IME candidate list to display, or None if there is none."
+
         self.old_text_rect: tuple[float, float, float, float] | None = None
         "The text rectangle after the previous draw."
 
         self.text_rect: tuple[float, float, float, float] | None = None
         "The text rectangle after the current draw."
+
+        self.ime_text_rect: tuple[float, float, float, float] | None = None
+        "The most recent text rectangle, used to place the IME candidate list during rendering."
 
         # Are we a touchscreen?
         self.touch = renpy.exports.variant("touch")
@@ -977,7 +988,9 @@ class Interface:
         pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
         pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
-        pygame.display.hint("SDL_IME_SHOW_UI", "1")
+        # Ren'Py draws the IME composition and candidate list itself, as the
+        # native IME windows may be hidden when the game is fullscreen.
+        pygame.display.hint("SDL_IME_IMPLEMENTED_UI", "composition,candidates")
         pygame.display.hint("SDL_ANDROID_BLOCK_ON_PAUSE", "0")
         pygame.display.hint("SDL_MOUSE_DPI_SCALE_CURSORS", "1")
 
@@ -1202,6 +1215,9 @@ class Interface:
             pygame.key.set_text_input_rect(None)
             self.text_rect = None
             self.old_text_rect = None
+            self.ime_text_rect = None
+            self.text_editing = None
+            self.set_text_editing_candidates(None)
 
         self.display_reset = False
 
@@ -2060,7 +2076,39 @@ class Interface:
         if ev is None:
             return False
         else:
-            return ev.type in (pygame.TEXTINPUT, pygame.TEXTEDITING)
+            return ev.type in (pygame.TEXTINPUT, pygame.TEXTEDITING, pygame.TEXTEDITINGCANDIDATES)
+
+    def set_text_editing_candidates(self, candidates: "IMECandidates | None"):
+        """
+        Sets the IME candidate list, restarting the interaction so the
+        candidate screen is updated if it changed.
+        """
+
+        if candidates == self.text_editing_candidates:
+            return
+
+        self.text_editing_candidates = candidates
+        self.update_ime_candidates_screen()
+        renpy.exports.restart_interaction()
+
+    def update_ime_candidates_screen(self):
+        """
+        Shows or hides the screen that displays the IME candidate list, to
+        match the current candidate list.
+        """
+
+        if not renpy.display.screen.has_screen("_ime_candidates"):
+            return
+
+        shown = renpy.exports.get_screen("_ime_candidates") is not None
+
+        if self.text_editing_candidates is not None and not shown:
+            renpy.exports.show_screen("_ime_candidates", _transient=True)
+            renpy.exports.restart_interaction()
+
+        elif self.text_editing_candidates is None and shown:
+            renpy.exports.hide_screen("_ime_candidates")
+            renpy.exports.restart_interaction()
 
     def update_text_rect(self):
         """
@@ -2069,6 +2117,9 @@ class Interface:
 
         if renpy.store._text_rect is not None:
             self.text_rect = renpy.store._text_rect
+
+        if self.text_rect is not None:
+            self.ime_text_rect = self.text_rect
 
         # There is an active text input.
         if self.keyboard_focused and self.text_rect is not None:
@@ -2099,10 +2150,17 @@ class Interface:
                     _transient=True,
                 )
 
+            # Show the IME candidate list if it was hidden at the end of an interaction.
+            self.update_ime_candidates_screen()
+
         # Text input is no longer active.
         elif self.old_text_rect:
             pygame.key.stop_text_input()
             pygame.key.set_text_input_rect(None)
+
+            self.text_editing = None
+            self.ime_text_rect = None
+            self.set_text_editing_candidates(None)
 
             if self.touch_keyboard:
                 renpy.exports.hide_screen("_touch_keyboard")
@@ -3112,8 +3170,14 @@ class Interface:
                         self.text_editing = ev
                     else:
                         self.text_editing = None
+                        self.set_text_editing_candidates(None)
                 elif ev.type == pygame.TEXTINPUT:
                     self.text_editing = None
+                    self.set_text_editing_candidates(None)
+
+                elif ev.type == pygame.TEXTEDITINGCANDIDATES:
+                    self.set_text_editing_candidates(renpy.display.ime.IMECandidates.from_event(ev))
+                    continue
 
                 elif ev.type == pygame.KEYMAPCHANGED:
                     # Clear the mods when the keymap is changed, such as when
