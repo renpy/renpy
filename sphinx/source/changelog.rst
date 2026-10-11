@@ -65,10 +65,14 @@ into the clipboard, which can be pasted into other applications that support pas
 Input Methods
 -------------
 
-Ren'Py now draws the list of candidates offered by an input method editor (IME),
-rather than relying on the operating system's candidate window, which could be
-invisible when the game was fullscreen. The list is shown by the ``_ime_candidates``
-screen, and can be customized with styles. See :ref:`input-methods` for details.
+On Windows, Ren'Py now draws the list of candidates offered by an input method
+editor (IME), rather than relying on the operating system's candidate window,
+which could be invisible when the game was fullscreen. The list is shown by
+the ``_ime_candidates`` screen, and can be customized with styles.
+
+SDL currently supplies IME candidate events only on Windows. macOS, Linux,
+and other platforms continue to use their native candidate interfaces.
+See :ref:`input-methods` for details.
 
 Age Verification
 ----------------

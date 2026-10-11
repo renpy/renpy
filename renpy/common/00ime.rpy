@@ -44,6 +44,7 @@ init -1500:
         outlines [ ]
         xalign 0.0
         xmaximum None
+        font (gui.system_font or "_WenQuanYiMicroHei.woff2")
 
     style _ime_candidates_selected_text is _ime_candidates_text:
         color "#000000"

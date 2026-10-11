@@ -43,14 +43,21 @@ their preferred name.
 Input Methods
 =============
 
-When an input method editor (IME) is used to enter text, Ren'Py draws the
-text being composed inside the input displayable, and draws the list of
-candidates offered by the input method itself, rather than relying on the
-operating system to show them. This allows the candidates to be seen when
-the game is fullscreen.
+When an input method editor (IME) supplies composition text, Ren'Py draws
+it inside the input displayable. On platforms where SDL supplies candidate
+events, Ren'Py also draws the candidate list rather than relying on the
+operating system's candidate window. This allows the candidates to be seen
+when the game is fullscreen.
 
-The candidate list is displayed by the ``_ime_candidates`` screen, which
-Ren'Py shows and hides as required. The screen is placed next to the text
+Candidate events are supported on Windows. SDL's Linux IBus and Fcitx
+backends do not currently supply candidate events or suppress the native
+candidate window, so those backends continue to use the system candidate
+interface. Setting ``SDL_IME_IMPLEMENTED_UI`` does not enable candidate
+events on an unsupported backend.
+
+When candidate events are supplied, the list is displayed by the
+``_ime_candidates`` screen, which Ren'Py shows and hides as required.
+The screen is placed next to the text
 being entered, and can be customized by changing the following styles:
 
 ``_ime_candidates_frame``
