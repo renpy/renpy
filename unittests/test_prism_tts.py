@@ -26,6 +26,12 @@ from unittest.mock import MagicMock
 
 class TestPrismTTS(unittest.TestCase):
     def setUp(self):
+        import renpy
+
+        if not hasattr(renpy, "error"):
+            import renpy.error
+
+            renpy.error = renpy.error
         import renpy.config
 
         try:
@@ -105,6 +111,7 @@ class TestPrismTTS(unittest.TestCase):
             self.skipTest("Prism dynamic library is not available")
 
         import time
+
         from renpy.display.tts import PrismTTS
 
         tts = PrismTTS()
@@ -317,8 +324,8 @@ class TestPrismTTS(unittest.TestCase):
 
     def test_availability_callback_runtime_start_stop(self):
         """Test that _on_availability_changed dynamically activates and clears screen reader backend."""
-        from renpy.display.tts import PrismTTS
         import renpy.display.tts as tts_module
+        from renpy.display.tts import PrismTTS
 
         class DummyPreferences:
             self_voicing = None
@@ -451,6 +458,194 @@ class TestPrismTTS(unittest.TestCase):
             self.assertEqual(im_ref._tts(raw=False), "eileen happy")
         finally:
             config_module.auto_image_alt = False
+
+    def test_find_and_load_prism_checks_executable_dir(self):
+        """Test that _find_and_load_prism checks the directory containing sys.executable."""
+        import os
+        import tempfile
+        from unittest.mock import patch
+
+        import renpy.display.tts as tts_module
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            if sys.platform.startswith("win"):
+                dll_name = "prism.dll"
+            elif sys.platform.startswith("darwin"):
+                dll_name = "libprism.dylib"
+            else:
+                dll_name = "libprism.so"
+
+            fake_dll_path = os.path.join(tmpdir, dll_name)
+            with open(fake_dll_path, "wb") as f:
+                f.write(b"fake")
+
+            fake_exe = os.path.join(tmpdir, "renpy")
+            loaded_paths = []
+
+            class DummyCDLL:
+                def __init__(self, path):
+                    loaded_paths.append(path)
+                    if path == fake_dll_path:
+                        self.prism_init = MagicMock()
+
+            with (
+                patch.object(sys, "executable", fake_exe),
+                patch("ctypes.CDLL", side_effect=DummyCDLL),
+                patch.object(tts_module, "_CtypesPrismModule", side_effect=lambda dll: dll),
+            ):
+                res = tts_module._find_and_load_prism()
+                self.assertIsNotNone(res)
+                self.assertEqual(loaded_paths[0], fake_dll_path)
+
+
+class TestFetchPrismScript(unittest.TestCase):
+    def _load_fetch_prism_module(self):
+        import importlib.util
+        import pathlib
+
+        script_path = pathlib.Path(__file__).resolve().parent.parent / "scripts" / "fetch_prism.py"
+        spec = importlib.util.spec_from_file_location("fetch_prism", script_path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def _build_mock_sdk_zip(self, tag="v0.18.3"):
+        import io
+        import zipfile
+
+        buf = io.BytesIO()
+        payloads = {
+            f"prism-sdk-{tag}/windows/x64/dynamic/release/bin/prism.dll": b"MZ_FAKE_WINDOWS_DLL" * 50,
+            f"prism-sdk-{tag}/macos/universal/dynamic/release/lib/libprism.dylib": b"\xcf\xfa\xed\xfe_FAKE_MAC_DYLIB"
+            * 50,
+            f"prism-sdk-{tag}/linux/x64/dynamic/release/lib/libprism.so": b"\x7fELF_FAKE_LINUX_X64_SO" * 50,
+            f"prism-sdk-{tag}/linux/arm64/dynamic/release/lib/libprism.so": b"\x7fELF_FAKE_LINUX_ARM64_SO" * 50,
+            f"prism-sdk-{tag}/windows/x64/dynamic/release/bin/tolk.dll": b"SHIM_SHOULD_BE_IGNORED",
+        }
+        with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+            for name, content in payloads.items():
+                zf.writestr(name, content)
+        return buf.getvalue(), payloads
+
+    def _make_range_opener(self, zip_bytes, resolved_tag="v0.18.3"):
+        class FakeResponse:
+            def __init__(self, data, url, headers):
+                self._data = data
+                self.url = url
+                self.headers = headers
+
+            def read(self):
+                return self._data
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                pass
+
+        def opener(req):
+            url = req.full_url
+            method = getattr(req, "method", None) or "GET"
+            if url.endswith("/releases/latest"):
+                return FakeResponse(
+                    b"",
+                    f"https://github.com/ethindp/prism/releases/tag/{resolved_tag}",
+                    {},
+                )
+            if method == "HEAD":
+                return FakeResponse(
+                    b"",
+                    url,
+                    {"Content-Length": str(len(zip_bytes))},
+                )
+            range_hdr = req.headers.get("Range") or req.headers.get("range")
+            if range_hdr and range_hdr.startswith("bytes="):
+                start_s, end_s = range_hdr[len("bytes=") :].split("-")
+                start = int(start_s)
+                end = int(end_s)
+                return FakeResponse(zip_bytes[start : end + 1], url, {})
+            return FakeResponse(zip_bytes, url, {})
+
+        return opener
+
+    def test_resolve_release_tag(self):
+        """Test that resolve_release_tag normalizes explicit tags and follows redirects for 'latest'."""
+        mod = self._load_fetch_prism_module()
+        zip_bytes, _ = self._build_mock_sdk_zip("v0.18.3")
+        opener = self._make_range_opener(zip_bytes, resolved_tag="v0.18.3")
+
+        self.assertEqual(mod.resolve_release_tag("0.18.3", opener=opener), "v0.18.3")
+        self.assertEqual(mod.resolve_release_tag("v0.18.3", opener=opener), "v0.18.3")
+        self.assertEqual(mod.resolve_release_tag("latest", opener=opener), "v0.18.3")
+
+    def test_fetch_prism_libraries_extracts_only_target_binaries(self):
+        """Test that fetch_prism_libraries extracts exact platform binaries via HTTP Range requests."""
+        import pathlib
+        import tempfile
+
+        mod = self._load_fetch_prism_module()
+        zip_bytes, payloads = self._build_mock_sdk_zip("v0.18.3")
+        opener = self._make_range_opener(zip_bytes, resolved_tag="v0.18.3")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root_dir = pathlib.Path(tmpdir)
+            lib_dir = root_dir / "lib"
+            mac_app_dir = root_dir / "renpy.app" / "Contents" / "MacOS"
+            mac_app_dir.mkdir(parents=True)
+
+            tag, written = mod.fetch_prism_libraries(
+                version="latest",
+                dest_dir=lib_dir,
+                platforms="all",
+                opener=opener,
+            )
+
+            self.assertEqual(tag, "v0.18.3")
+            self.assertEqual(len(written), 4)
+
+            win_dll = lib_dir / "py3-windows-x86_64" / "prism.dll"
+            mac_dylib = lib_dir / "py3-mac-universal" / "libprism.dylib"
+            linux_x64_so = lib_dir / "py3-linux-x86_64" / "libprism.so"
+            linux_arm_so = lib_dir / "py3-linux-aarch64" / "libprism.so"
+            mac_app_dylib = mac_app_dir / "libprism.dylib"
+
+            self.assertEqual(
+                win_dll.read_bytes(),
+                payloads["prism-sdk-v0.18.3/windows/x64/dynamic/release/bin/prism.dll"],
+            )
+            self.assertEqual(
+                mac_dylib.read_bytes(),
+                payloads["prism-sdk-v0.18.3/macos/universal/dynamic/release/lib/libprism.dylib"],
+            )
+            self.assertEqual(
+                linux_x64_so.read_bytes(),
+                payloads["prism-sdk-v0.18.3/linux/x64/dynamic/release/lib/libprism.so"],
+            )
+            self.assertEqual(
+                linux_arm_so.read_bytes(),
+                payloads["prism-sdk-v0.18.3/linux/arm64/dynamic/release/lib/libprism.so"],
+            )
+            self.assertEqual(
+                mac_app_dylib.read_bytes(),
+                payloads["prism-sdk-v0.18.3/macos/universal/dynamic/release/lib/libprism.dylib"],
+            )
+            self.assertFalse((lib_dir / "py3-windows-x86_64" / "tolk.dll").exists())
+
+    def test_fetch_zip_entry_detects_crc_mismatch(self):
+        """Test that fetch_zip_entry raises RuntimeError on corrupted CRC32."""
+        mod = self._load_fetch_prism_module()
+        zip_bytes, _ = self._build_mock_sdk_zip("v0.18.3")
+        opener = self._make_range_opener(zip_bytes, resolved_tag="v0.18.3")
+
+        final_url, entries = mod.read_remote_zip_directory(
+            "https://example.com/prism-sdk-v0.18.3.zip",
+            opener=opener,
+        )
+        entry = dict(entries["prism-sdk-v0.18.3/windows/x64/dynamic/release/bin/prism.dll"])
+        entry["crc"] ^= 0xFFFFFFFF
+
+        with self.assertRaises(RuntimeError):
+            mod.fetch_zip_entry(final_url, entry, opener=opener)
 
 
 if __name__ == "__main__":
