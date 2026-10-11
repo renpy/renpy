@@ -47,7 +47,7 @@ try:
 
     class _PrismConfig(ctypes.Structure):
         _fields_ = [
-            ("version", ctypes.c_uint64),
+            ("version", ctypes.c_uint8),
             ("registry", ctypes.c_void_p),
             ("availability_callback", ctypes.c_void_p),
             ("availability_userdata", ctypes.c_void_p),
@@ -55,6 +55,7 @@ try:
             ("availability_debounce_samples", ctypes.c_uint32),
             ("availability_backoff_max_ms", ctypes.c_uint32),
             ("availability_auto_power_manage", ctypes.c_bool),
+            ("availability_baseline_callback", ctypes.c_void_p),
         ]
 
     class _CtypesBackendFeatures(object):
@@ -71,7 +72,10 @@ try:
         @property
         def speaking(self):
             try:
-                return bool(self.dll.prism_backend_is_speaking(self.ptr))
+                out = ctypes.c_bool(False)
+                if self.dll.prism_backend_is_speaking(self.ptr, ctypes.byref(out)) == 0:
+                    return bool(out.value)
+                return False
             except Exception:
                 return False
 
@@ -177,7 +181,7 @@ try:
             b = self.dll.prism_registry_acquire(self.ptr, ctypes.c_uint64(bid))
             if b:
                 res = self.dll.prism_backend_initialize(b)
-                if res == 0:
+                if res in (0, 15):
                     return _CtypesBackend(self.dll, b)
                 self.dll.prism_backend_free(b)
             return None
@@ -186,7 +190,7 @@ try:
             b = self.dll.prism_registry_acquire_best(self.ptr)
             if b:
                 res = self.dll.prism_backend_initialize(b)
-                if res == 0:
+                if res in (0, 15):
                     return _CtypesBackend(self.dll, b)
                 self.dll.prism_backend_free(b)
             return None
@@ -223,8 +227,8 @@ try:
             self.dll.prism_backend_free.restype = None
             self.dll.prism_backend_name.argtypes = [ctypes.c_void_p]
             self.dll.prism_backend_name.restype = ctypes.c_char_p
-            self.dll.prism_backend_is_speaking.argtypes = [ctypes.c_void_p]
-            self.dll.prism_backend_is_speaking.restype = ctypes.c_bool
+            self.dll.prism_backend_is_speaking.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_bool)]
+            self.dll.prism_backend_is_speaking.restype = ctypes.c_int
             self.dll.prism_backend_output.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_bool]
             self.dll.prism_backend_stop.argtypes = [ctypes.c_void_p]
             self.dll.prism_backend_get_volume.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_float)]
@@ -261,19 +265,21 @@ try:
         base = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         if sys.platform.startswith("win"):
             dll_name = "prism.dll"
-            candidates.append(os.path.join(base, "lib", "py3-windows-x86_64", dll_name))
-            candidates.append(os.path.join(base, "lib", "py3-windows-arm64", dll_name))
-            candidates.append(os.path.join(base, dll_name))
+            platform_dirs = ("py3-windows-x86_64", "py3-windows-arm64")
         elif sys.platform.startswith("darwin"):
             dll_name = "libprism.dylib"
-            candidates.append(os.path.join(base, "lib", "py3-mac-universal", dll_name))
-            candidates.append(os.path.join(base, dll_name))
+            platform_dirs = ("py3-mac-universal",)
         else:
             dll_name = "libprism.so"
-            candidates.append(os.path.join(base, "lib", "py3-linux-x86_64", dll_name))
-            candidates.append(os.path.join(base, "lib", "py3-linux-aarch64", dll_name))
-            candidates.append(os.path.join(base, "lib", "py3-linux-armv7l", dll_name))
-            candidates.append(os.path.join(base, dll_name))
+            platform_dirs = ("py3-linux-x86_64", "py3-linux-aarch64", "py3-linux-armv7l")
+
+        if getattr(sys, "executable", None):
+            candidates.append(os.path.join(os.path.dirname(sys.executable), dll_name))
+
+        for plat_dir in platform_dirs:
+            candidates.append(os.path.join(base, "lib", plat_dir, dll_name))
+
+        candidates.append(os.path.join(base, dll_name))
 
         found = ctypes.util.find_library("prism")
         if found:
@@ -827,8 +833,10 @@ class PrismTTS(object):
             name = self.context.name_of(bid)
             if name.lower() in SCREEN_READER_BACKENDS:
                 try:
-                    self.sr_backend = self.context.acquire(bid)
-                    break
+                    b = self.context.acquire(bid)
+                    if b is not None:
+                        self.sr_backend = b
+                        break
                 except Exception:
                     continue
 
@@ -848,8 +856,10 @@ class PrismTTS(object):
                 name = self.context.name_of(bid)
                 if pref in name.lower() and name.lower() not in SCREEN_READER_BACKENDS:
                     try:
-                        self.tts_backend = self.context.acquire(bid)
-                        break
+                        b = self.context.acquire(bid)
+                        if b is not None:
+                            self.tts_backend = b
+                            break
                     except Exception:
                         continue
             if self.tts_backend is not None:
@@ -861,8 +871,10 @@ class PrismTTS(object):
                 name = self.context.name_of(bid)
                 if name.lower() not in SCREEN_READER_BACKENDS:
                     try:
-                        self.tts_backend = self.context.acquire(bid)
-                        break
+                        b = self.context.acquire(bid)
+                        if b is not None:
+                            self.tts_backend = b
+                            break
                     except Exception:
                         continue
 
@@ -1005,18 +1017,18 @@ class PrismTTS(object):
         return voices
 
     def shutdown(self):
-        if self.sr_backend is not None and hasattr(self.sr_backend, "free"):
-            self.sr_backend.free()
-            self.sr_backend = None
-        if self.tts_backend is not None and hasattr(self.tts_backend, "free"):
-            self.tts_backend.free()
-            self.tts_backend = None
         if self.context is not None and hasattr(self.context, "shutdown"):
             try:
                 self.context.shutdown()
             except Exception:
                 pass
             self.context = None
+        if self.sr_backend is not None and hasattr(self.sr_backend, "free"):
+            self.sr_backend.free()
+            self.sr_backend = None
+        if self.tts_backend is not None and hasattr(self.tts_backend, "free"):
+            self.tts_backend.free()
+            self.tts_backend = None
 
 
 platform_tts = None  # The platform-specific TTS object.
