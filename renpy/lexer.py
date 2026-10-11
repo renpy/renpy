@@ -1309,14 +1309,14 @@ class Lexer:
 
         s = self.text[start:end]
 
-        # Only eval expressions need to strip its leading whitespace,
-        # trailing whitespace is to simulate `strip`.
+        # Only eval expressions need to strip leading whitespace.
         if context == "eval":
-            start = start + (len(s) - len(s.lstrip()))
-            end = end - (len(s) - len(s.rstrip()))
+            start += len(s)
+            s = s.lstrip()
+            start -= len(s)
 
         expr = make_pyexpr(
-            self.text[start:end],
+            s,
             self.filename,
             self.number,
             self.column,
