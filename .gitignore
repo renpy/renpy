@@ -185,7 +185,7 @@ renpy/pygame/key.pyi
 renpy/pygame/locals.pyi
 renpy/pygame/mouse.pyi
 renpy/pygame/power.pyi
-renpy/pygame/pygame_time.pyi
+renpy/pygame/time.pyi
 renpy/pygame/rect.pyi
 renpy/pygame/scrap.pyi
 renpy/pygame/surface.pyi
