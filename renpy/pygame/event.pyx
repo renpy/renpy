@@ -594,7 +594,7 @@ cdef cbool lifecycle_event_watch(void *userdata, SDL_Event *event) noexcept nogi
     return True
 
 def set_blocked(t=None):
-    if t == None:
+    if t is None:
         for et in event_names.keys():
             SDL_SetEventEnabled(et, False)
     elif isinstance(t, int):
@@ -604,7 +604,7 @@ def set_blocked(t=None):
             SDL_SetEventEnabled(et, False)
 
 def set_allowed(t=None):
-    if t == None:
+    if t is None:
         for et in event_names.keys():
             SDL_SetEventEnabled(et, True)
     elif isinstance(t, int):
