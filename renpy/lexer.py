@@ -1311,9 +1311,8 @@ class Lexer:
 
         # Only eval expressions need to strip leading whitespace.
         if context == "eval":
-            start += len(s)
             s = s.lstrip()
-            start -= len(s)
+            start = end - len(s)
 
         expr = make_pyexpr(
             s,
