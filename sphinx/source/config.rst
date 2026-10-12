@@ -1560,6 +1560,19 @@ Screenshots
 Self-Voicing / Text to Speech
 -----------------------------
 
+.. var:: config.auto_image_alt = False
+
+    If True, images displayed without an explicit :propref:`alt` style property
+    will be announced using their image name and attributes.
+
+
+.. var:: config.auto_screenreader_voicing = True
+
+    If True, Ren'Py will automatically enable screen reader voicing on launch
+    if an active screen reader (such as NVDA, JAWS, VoiceOver, or Orca) is
+    detected.
+
+
 .. var:: config.tts_substitutions = [ ]
 
     This is a list of (pattern, replacement) pairs that are used to perform

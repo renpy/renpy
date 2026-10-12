@@ -199,6 +199,10 @@ init -1500 python:
         * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
         * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
 
+        * Preference("screenreader voicing", "enable") - Enables screen reader voicing.
+        * Preference("screenreader voicing", "disable") - Disable screen reader voicing.
+        * Preference("screenreader voicing", "toggle") - Toggles screen reader voicing.
+
         * Preference("debug voicing", "enable") - Enables self-voicing debug
         * Preference("debug voicing", "disable") - Disable self-voicing debug.
         * Preference("debug voicing", "toggle") - Toggles self-voicing debug.
@@ -468,6 +472,15 @@ init -1500 python:
                     return SetField(_preferences, "self_voicing", False), _("clipboard voicing disable")
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing", true_value="clipboard", false_value=False)
+
+            elif name == _("screenreader voicing"):
+
+                if value == "enable":
+                    return SetField(_preferences, "self_voicing", "screenreader"), _("screenreader voicing enable")
+                elif value == "disable":
+                    return SetField(_preferences, "self_voicing", False), _("screenreader voicing disable")
+                elif value == "toggle":
+                    return ToggleField(_preferences, "self_voicing", true_value="screenreader", false_value=False)
 
             elif name == _("debug voicing"):
 
@@ -744,6 +757,8 @@ init -1500:
 
         if _preferences.self_voicing == "clipboard":
             $ message = _("Clipboard voicing enabled. Press 'shift+C' to disable.")
+        elif _preferences.self_voicing == "screenreader":
+            $ message = _("Screen reader voicing enabled. Press 'shift+V' to disable.")
         elif _preferences.self_voicing == "debug":
             $ message = _("Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable.")
         else:
