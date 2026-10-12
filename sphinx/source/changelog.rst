@@ -47,6 +47,20 @@ On mobile and the web, Ren'Py now requires an OpenGL ES 3.0 context, which
 devices with a GPU from 2013 or later provide. On desktop, Ren'Py asks for
 an OpenGL 3.3 context and falls back to OpenGL 2.0.
 
+Fixed a crash when rendering image manipulators created with ``cache=False``.
+Uncached images now use the same texture conversion and oversampling as cached
+images, without being retained in the image cache.
+
+Fixed a crash when transitions copy a Model containing a DynamicImage texture.
+The copied texture now preserves its texture wrapping settings.
+
+Fixed joined Drags restoring positions incorrectly, invoking the ``dragging``
+callback before all joined Drags had moved, and forwarding child events twice.
+
+Fixed a failure when replacing a save file from deleting the previous save.
+If replacement still fails after retrying, the error is reported and the
+temporary save file is removed.
+
 Clipboard
 ---------
 

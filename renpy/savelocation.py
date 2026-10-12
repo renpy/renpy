@@ -400,15 +400,16 @@ class FileLocation(object):
         load occurring in the scan thread.
         """
 
-        if not self.persistent_data:
-            return []
+        with disk_lock:
+            if not self.persistent_data:
+                return []
 
-        rv = [(self.persistent_mtime, self.persistent_data)]
+            rv = [(self.persistent_mtime, self.persistent_data)]
 
-        if consume:
-            self.persistent_data = None
+            if consume:
+                self.persistent_data = None
 
-        return rv
+            return rv
 
     def save_persistent(self, data, background=False):
         """

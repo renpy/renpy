@@ -996,7 +996,8 @@ cdef class Render:
             reverse.xdy != 0.0 or
             reverse.ydx != 0.0 or
             reverse.ydy != 1.0) or
-            this.mesh):
+            this.mesh or
+            (focus and self.focuses and any(callable(f[8]) for f in self.focuses))):
 
             # This doesn't actually make a subsurface, as we can't easily do
             # so for non-rectangle-aligned renders.
@@ -1444,7 +1445,7 @@ cdef class Render:
                         mask_result = mask(cx, cy)
 
                         if callable(mask_result):
-                            mask_result = mask_result(cx, cy, w - mx, w - my)
+                            mask_result = mask_result(cx, cy, w - mx, h - my)
 
                         if mask_result:
                             rv = d, arg, screen

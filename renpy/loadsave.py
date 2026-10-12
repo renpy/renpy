@@ -56,22 +56,18 @@ def safe_rename(old, new):
     Safely rename old to new.
     """
 
-    if os.path.exists(new):
-        os.unlink(new)
-
     try:
-        os.rename(old, new)
-    except Exception:
+        os.replace(old, new)
+    except OSError:
         # If the rename failed, try again.
         try:
-            os.unlink(new)
-            os.rename(old, new)
-        except Exception:
-            # If it fails a second time, give up.
+            os.replace(old, new)
+        except OSError:
             try:
                 os.unlink(old)
-            except Exception:
+            except FileNotFoundError:
                 pass
+            raise
 
 
 class SaveRecord(object):
