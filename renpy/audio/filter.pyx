@@ -811,7 +811,7 @@ cdef class DelayBuffer:
 
         for i in range(samples.length):
             for j in range(samples.subchannels):
-                self.buffer[self.write_index[j]] = samples.samples[i * samples.subchannels + j]
+                self.buffer[self.write_index[j] * samples.subchannels + j] = samples.samples[i * samples.subchannels + j]
                 self.write_index[j] = (self.write_index[j] + 1) % self.length
 
     cdef SampleBuffer * dequeue(self, int subchannels, int length) noexcept nogil:
@@ -821,7 +821,7 @@ cdef class DelayBuffer:
 
         for i in range(length):
             for j in range(subchannels):
-                result.samples[i * subchannels + j] = self.buffer[self.read_index[j]]
+                result.samples[i * subchannels + j] = self.buffer[self.read_index[j] * subchannels + j]
                 self.read_index[j] = (self.read_index[j] + 1) % self.length
 
         return result
@@ -918,7 +918,7 @@ cdef class Comb(AudioFilter):
             self.max_delay = max(delay)
 
         self.multiplier = multiplier
-        self.wet = False
+        self.wet = wet
 
         if filter is None:
             filter = Null()
