@@ -122,6 +122,27 @@ cdef extern from "assimp/material.h":
         aiTextureType_CLEARCOAT
         aiTextureType_TRANSMISSION
 
+    cdef enum aiTextureMapping:
+        aiTextureMapping_UV
+        aiTextureMapping_SPHERE
+        aiTextureMapping_CYLINDER
+        aiTextureMapping_BOX
+        aiTextureMapping_PLANE
+        aiTextureMapping_OTHER
+
+    cdef enum aiTextureOp:
+        aiTextureOp_Multiply
+        aiTextureOp_Add
+        aiTextureOp_Subtract
+        aiTextureOp_Divide
+        aiTextureOp_SmoothAdd
+        aiTextureOp_SignedAdd
+
+    cdef enum aiTextureMapMode:
+        aiTextureMapMode_Wrap
+        aiTextureMapMode_Clamp
+        aiTextureMapMode_Decal
+        aiTextureMapMode_Mirror
 
     cdef enum aiPropertyTypeInfo:
         aiPTI_Float
@@ -141,8 +162,18 @@ cdef extern from "assimp/material.h":
         aiMaterialProperty **mProperties
         unsigned int mNumProperties
 
-        unsigned int GetTextureCount(aiTextureType type)
-        aiReturn GetTexture(aiTextureType type, unsigned int index, aiString *path)
+    unsigned int aiGetMaterialTextureCount(const aiMaterial *pMat, aiTextureType type)
+    aiReturn aiGetMaterialTexture(
+        const aiMaterial *mat,
+        aiTextureType type,
+        unsigned int index,
+        aiString *path,
+        aiTextureMapping *mapping,
+        unsigned int *uvindex,
+        ai_real *blend,
+        aiTextureOp *op,
+        aiTextureMapMode *mapmode,
+        unsigned int *flags)
 
     aiReturn aiGetMaterialFloat(const aiMaterial *pMat,
         const char *pKey,
@@ -197,18 +228,14 @@ cdef extern from "assimp/scene.h":
         aiTexture **mTextures
         aiMaterial **mMaterials
 
-cdef extern from "assimp/IOSystem.hpp" namespace "Assimp":
+cdef extern from "assimp/cimport.h":
+    void aiReleaseImport(const aiScene *pScene)
+    const char *aiGetErrorString()
 
-    cdef cppclass IOSystem:
-        pass
+cdef inline object assimp_get_error():
+    cdef const char *error = aiGetErrorString()
 
-cdef extern from "assimp/Importer.hpp" namespace "Assimp":
+    if error == NULL:
+        return None
 
-    cdef cppclass Importer:
-        Importer()
-        const aiScene *ReadFile(const char* pFile, unsigned int pFlags)
-        const aiScene *GetScene()
-        void FreeScene()
-        const char *GetErrorString()
-
-        void SetIOHandler(IOSystem *ioHandler)
+    return error.decode()

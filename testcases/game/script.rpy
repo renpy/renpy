@@ -61,6 +61,9 @@ label start:
         "Drag and Drop":
             call drag_and_drop
 
+        "GLTF Box":
+            call gltf_box
+
         "Done.":
             return
 
@@ -311,3 +314,24 @@ screen scroll_screen:
                 text "This is line [i]."
 
             textbutton "Close" action Hide("scroll_screen") id "close_screen_button"
+
+
+###############################################################################
+# GLTFModel
+###############################################################################
+image GLTFBox = GLTFModel("Box.glb", shader="renpy.texture", zoom=100.0, report=True)
+
+label gltf_box:
+    camera:
+        perspective True
+
+    show GLTFBox:
+        align (0.5, 0.5)
+        matrixanchor (0.5, 0.5)
+        matrixtransform RotateMatrix(0, 0, 0)
+        linear 4.0 matrixtransform RotateMatrix(90, 360, 0)
+        repeat
+
+    "You should see the GLTF Box rotating."
+    hide GLTFBox
+    return
