@@ -42,7 +42,7 @@ import zlib
 from typing import Any, Final, Literal
 
 import renpy
-from renpy.astsupport import hash32
+from renpy.astsupport import hash64
 from renpy.compat.pickle import dumps, loads
 from renpy.pydict import DictItems, find_changes
 
@@ -1040,8 +1040,7 @@ class LocationFixer:
 
             # Not all children may have end location attributes.
             if "lineno" in c._attributes:
-                if end < (c_end := (c.end_lineno, c.end_col_offset)):  # type: ignore
-                    end = c_end
+                end = max(end, (c.end_lineno, c.end_col_offset))  # type: ignore
 
         node.end_lineno, node.end_col_offset = end
 
@@ -1124,7 +1123,10 @@ def py_compile(
         rest_line_column_delta = 0
 
     if hashcode is None:
-        hashcode = hash32(source)
+        # PyExpr uses hash32, but when filename and line number are not
+        # available, e.g. py_eval call, the probability of hash collisions
+        # is high enough to warrant using a wider hash function.
+        hashcode = hash64(source)
 
     flags = file_compiler_flags.get(filename, 0)
 
