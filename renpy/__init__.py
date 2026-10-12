@@ -712,7 +712,7 @@ if typing.TYPE_CHECKING:
     from . import arguments as arguments
     from . import ast as ast
     from . import astsupport as astsupport
-    from . import asyncio as asyncio
+    from . import asynctask as asynctask
     from . import atl as atl
     from . import audio as audio
     from . import bootstrap as bootstrap
