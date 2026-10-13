@@ -761,7 +761,6 @@ if typing.TYPE_CHECKING:
     from . import substitutions as substitutions
     from . import test as test
     from . import text as text
-    from . import tfd as tfd
     from . import translation as translation
     from . import types as types
     from . import uguu as uguu

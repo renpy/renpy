@@ -99,7 +99,6 @@
         "renpy/text/hbfont.pyi": true,
         "renpy/text/textsupport.pyi": true,
         "renpy/text/texwrap.pyi": true,
-        "renpy/tfd.pyi": true,
         "renpy/uguu/gl.pyi": true,
         "renpy/uguu/uguu.pyi": true
     },

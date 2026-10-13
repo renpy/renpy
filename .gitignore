@@ -98,7 +98,6 @@ cache/
 /module/gen3-static/
 /tutorial/game/tutorial_director.rpy
 /src/Setup
-/src/Setup.tfd
 
 # Module build.
 /module/build
@@ -208,6 +207,5 @@ renpy/text/ftfont.pyi
 renpy/text/hbfont.pyi
 renpy/text/textsupport.pyi
 renpy/text/texwrap.pyi
-renpy/tfd.pyi
 renpy/uguu/gl.pyi
 renpy/uguu/uguu.pyi
