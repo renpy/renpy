@@ -25,8 +25,7 @@ import os
 import sys
 from pathlib import Path
 
-import scripts.generate_styles as generate_styles
-import scripts.setuplib as setuplib
+from scripts import generate_styles, setuplib
 from scripts.setuplib import cython, env, generate_all_cython, generate_setup_files
 
 # Change to the directory containing this file.
@@ -93,7 +92,6 @@ def _build():
     cython("renpy.pydict")
     cython("renpy.style")
     cython("renpy.encryption")
-    cython("renpy.tfd", ["src/tinyfiledialogs/tinyfiledialogs.c"], setup_filename="Setup.tfd")
 
     # renpy.audio
     cython(
