@@ -99,7 +99,6 @@ Ren'Py binaries can include source code from the following projects:
 * SDL2_ttf (Zlib License)
 * SDL2 (Zlib License)
 * six (MIT License)
-* tinyfiledialogs (Zlib License)
 * urllib3 (MIT License)
 * urllib3 (MIT License)
 * websockets (Three Clause BSD License)

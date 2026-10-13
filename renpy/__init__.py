@@ -207,7 +207,6 @@ backup_blacklist = {
     "renpy.test.testparser",
     "renpy.test.testreporter",
     "renpy.test.testsettings",
-    "renpy.tfd",
     "renpy.gl2",
     "renpycoverage",
 }
@@ -568,13 +567,6 @@ def import_all():
     import renpy.update
     import renpy.update.deferred
 
-    try:
-        import renpy.tfd
-
-        sys.modules["_renpytfd"] = renpy.tfd
-    except ImportError:
-        pass
-
     import renpy.main
 
     global six
@@ -769,7 +761,6 @@ if typing.TYPE_CHECKING:
     from . import substitutions as substitutions
     from . import test as test
     from . import text as text
-    from . import tfd as tfd
     from . import translation as translation
     from . import types as types
     from . import uguu as uguu
