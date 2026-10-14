@@ -113,7 +113,7 @@ def notifyPopup(title, message, icon):
     message = encode(message)
     icon = encode(icon)
 
-    return tinyfd_notifyPopup(cstr_or_null(title), cstr_or_null(message), icon.encode)
+    return tinyfd_notifyPopup(cstr_or_null(title), cstr_or_null(message), icon)
 
 def messageBox(title, message, dialogtype, icon, defaultbutton):
     """
