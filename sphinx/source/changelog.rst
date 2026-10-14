@@ -235,10 +235,11 @@ Desktop testcase runs now use a fixed window with physical and drawable
 resolution matching the game's virtual resolution, making screenshot sizes
 and crop coordinates independent of saved window preferences and DPI scaling.
 
-
-
 Other Changes
 -------------
+
+Automatically generated android versions will now work past the year 2100, rather than reaching the upper limit in
+2036.
 
 The :var:`config.say_layer`, :var:`config.choice_layer`, and
 :var:`config.nvl_choice_layer` variables now default to None for new games.
