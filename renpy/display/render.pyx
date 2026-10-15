@@ -1020,6 +1020,7 @@ cdef class Render:
 
         for child, cx, cy, cfocus, cmain in self.children:
 
+            child_is_render = isinstance(child, Render)
             child_subpixel = subpixel or not isinstance(cx, int) or not isinstance(cy, int)
 
             childw, childh = child.get_size()
@@ -1035,11 +1036,11 @@ cdef class Render:
             if cx < 0 or cy < 0:
                 continue
 
-            if not isinstance(child, Render) or child.xclipping or childw:
+            if not child_is_render or child.xclipping or childw:
                 if cw <= 0 or cx >= childw:
                     continue
 
-            if not isinstance(child, Render) or child.yclipping or childh:
+            if not child_is_render or child.yclipping or childh:
                 if ch <= 0 or cy >= childh:
                     continue
 
@@ -1047,7 +1048,7 @@ cdef class Render:
             crop = None
 
             try:
-                if isinstance(child, Render):
+                if child_is_render:
 
                     if child.xclipping:
                         end = min(cw, cbx+bw)
