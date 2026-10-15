@@ -21,7 +21,7 @@
 
 import sys
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 
 class TestPrismTTS(unittest.TestCase):
@@ -436,7 +436,8 @@ class TestPrismTTS(unittest.TestCase):
         im_ref.target = MagicMock(_tts=lambda raw: "")
         im_ref.style = MagicMock()
         im_ref.style.alt = "Eileen smiling warmly"
-        self.assertEqual(im_ref._tts(raw=False), "Eileen smiling warmly")
+        with patch("renpy.substitutions.substitute", return_value=("Eileen smiling warmly", False)):
+            self.assertEqual(im_ref._tts(raw=False), "Eileen smiling warmly")
 
     def test_image_reference_auto_image_alt(self):
         """Test that ImageReference returns tag/attribute names when auto_image_alt is True."""
@@ -455,7 +456,8 @@ class TestPrismTTS(unittest.TestCase):
         # When auto_image_alt is True
         config_module.auto_image_alt = True
         try:
-            self.assertEqual(im_ref._tts(raw=False), "eileen happy")
+            with patch("renpy.substitutions.substitute", return_value=("eileen happy", False)):
+                self.assertEqual(im_ref._tts(raw=False), "eileen happy")
         finally:
             config_module.auto_image_alt = False
 

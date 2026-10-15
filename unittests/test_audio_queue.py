@@ -280,9 +280,33 @@ class TestAudioQueue(unittest.TestCase):
         output = []
         while samples:
             count = min(samples, 960)
+            self.wait_audio_buffered(count)
             output.extend(self.read(count))
             samples -= count
         return output
+
+    def wait_audio_buffered(self, samples):
+        deadline = time.monotonic() + 5
+        event = threading.Event()
+
+        while True:
+            channel = self.channel
+            buffered = 0
+
+            for address in (channel.playing, channel.queued):
+                if address:
+                    media = ctypes.cast(address, ctypes.POINTER(MediaHead)).contents
+                    self.native.SDL_LockMutex(media.lock)
+                    try:
+                        buffered += media.audio_queue_samples
+                    finally:
+                        self.native.SDL_UnlockMutex(media.lock)
+
+            if buffered >= samples:
+                return
+
+            self.assertLess(time.monotonic(), deadline, "Audio decoder did not buffer enough samples.")
+            event.wait(0.001)
 
     def seek_opus_reference(self, rate=48000):
         renpysound.play(0, self.seek_opus(), "seek.opus", synchro_start=True, end=-1)
