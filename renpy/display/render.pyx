@@ -1029,11 +1029,19 @@ cdef class Render:
             cbx = bx - xo
             cby = by - yo
 
-            if cw <= 0 or ch <= 0 or w - xo <= 0 or h - yo <= 0:
+            if w - xo <= 0 or h - yo <= 0:
                 continue
 
-            if cx < 0 or cx >= childw or cy < 0 or cy >= childh:
+            if cx < 0 or cy < 0:
                 continue
+
+            if not isinstance(child, Render) or child.xclipping or childw:
+                if cw <= 0 or cx >= childw:
+                    continue
+
+            if not isinstance(child, Render) or child.yclipping or childh:
+                if ch <= 0 or cy >= childh:
+                    continue
 
             offset = (xo, yo)
             crop = None
