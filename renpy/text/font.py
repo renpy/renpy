@@ -29,6 +29,7 @@ import xml.etree.ElementTree as etree
 
 import renpy
 import os
+import io
 
 import renpy.text.ftfont as ftfont
 
@@ -628,6 +629,10 @@ def register_bmfont(name=None, size=None, bold=False, italics=False, underline=F
 # A map from face name, shaper to ftfont.FTFace or hbfont.HBFace.
 face_cache = {}
 
+# Above this size in bytes, fonts are streamed rather than buffered
+# in memory.
+FONT_BUFFER_SIZE_LIMIT = 2 * 1024 * 1024
+
 
 def load_face(fn, shaper):
     key = (fn, shaper)
@@ -651,10 +656,24 @@ def load_face(fn, shaper):
     if font_file is None:
         raise Exception("Could not find font {0!r}".format(orig_fn))
 
-    if shaper == "harfbuzz":
-        rv = hbfont.HBFace(font_file, index, orig_fn)
-    else:
-        rv = ftfont.FTFace(font_file, index, orig_fn)
+    try:
+        font_file.seek(0, 2)
+        font_size = font_file.tell()
+        font_file.seek(0)
+
+        if font_size <= FONT_BUFFER_SIZE_LIMIT:
+            font_data = font_file.read()
+            font_file.close()
+            font_file = io.BytesIO(font_data)
+
+        if shaper == "harfbuzz":
+            rv = hbfont.HBFace(font_file, index, orig_fn)
+        else:
+            rv = ftfont.FTFace(font_file, index, orig_fn)
+    except Exception:
+        font_file.close()
+
+        raise
 
     face_cache[key] = rv
 
