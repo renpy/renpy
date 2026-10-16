@@ -527,7 +527,7 @@ translate japanese strings:
 
     # renpy/common/00preferences.rpy:345
     old "automatic move"
-    new "自動ムービー"
+    new "自動移動"
 
     # renpy/common/00preferences.rpy:354
     old "wait for voice"
@@ -651,7 +651,7 @@ translate japanese strings:
 
     # renpy/common/_developer/developer.rpym:47
     old "Console (Shift+O)"
-    new "コンソール (Shift+D)"
+    new "コンソール (Shift+O)"
 
     # renpy/common/_developer/developer.rpym:49
     old "Variable Viewer"
@@ -823,7 +823,7 @@ translate japanese strings:
 
     # renpy/common/00updater.rpy:1015
     old "The update file does not have the correct digest - it may have been corrupted."
-    new "アップデートファイルは正しい digest を持っていません - 破損の可能性がありまます。"
+    new "アップデートファイルは正しい digest を持っていません - 破損の可能性があります。"
 
     # renpy/common/00updater.rpy:1071
     old "While unpacking {}, unknown type {}."

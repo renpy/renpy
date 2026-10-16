@@ -271,7 +271,7 @@ translate japanese strings:
 
     # 00updater.rpy:993
     old "The update file does not have the correct digest - it may have been corrupted."
-    new "アップデートファイルは正しい digest を持っていません - 破損の可能性がありまます。"
+    new "アップデートファイルは正しい digest を持っていません - 破損の可能性があります。"
 
     # 00updater.rpy:1049
     old "While unpacking {}, unknown type {}."
@@ -595,7 +595,7 @@ translate japanese strings:
 
     # 00preferences.rpy:319
     old "automatic move"
-    new "自動ムービー"
+    new "自動移動"
 
     # 00preferences.rpy:328
     old "wait for voice"
@@ -950,7 +950,7 @@ translate japanese strings:
 
     # renpy/common/00updater.rpy:551
     old "Could not download file list: "
-    new "ファイルリストがダウンロードできません : "
+    new "ファイルリストがダウンロードできません: "
 
     # renpy/common/00updater.rpy:554
     old "File list digest does not match."

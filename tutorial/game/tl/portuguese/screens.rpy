@@ -315,7 +315,7 @@ translate portuguese strings:
 
     # screens.rpy:1194
     old "No"
-    new "No"
+    new "Não"
 
     # screens.rpy:1240
     old "Skipping"

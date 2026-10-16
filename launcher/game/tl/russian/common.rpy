@@ -351,19 +351,19 @@ translate russian strings:
 
     # 00library.rpy:147
     old "Clipboard voicing enabled. "
-    new "Озвучка буфера обмена включена."
+    new "Озвучка буфера обмена включена. "
 
     # 00library.rpy:148
     old "Self-voicing enabled. "
-    new "Синтезатор речи включён."
+    new "Синтезатор речи включён. "
 
     # 00library.rpy:150
     old "bar"
-    new ". Полоса настройки"
+    new "Полоса настройки"
 
     # 00library.rpy:151
     old "selected"
-    new ". На данный момент это выбрано"
+    new "На данный момент выбрано"
 
     # 00library.rpy:152
     old "viewport"
@@ -371,11 +371,11 @@ translate russian strings:
 
     # 00library.rpy:153
     old "horizontal scroll"
-    new ". горизонтальная полоса прокрутки"
+    new "горизонтальная полоса прокрутки"
 
     # 00library.rpy:154
     old "vertical scroll"
-    new ". вертикальная полоса прокрутки"
+    new "вертикальная полоса прокрутки"
 
     # 00library.rpy:155
     old "activate"
