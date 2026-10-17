@@ -26,7 +26,7 @@ from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2texture cimport GLTexture
 from renpy.gl2.gl2draw cimport GL2DrawingContext
 from renpy.gl2.gl2model cimport GL2Model
-from renpy.gl2.gl2uniform cimport Setter, Sampler2DSetter
+from renpy.gl2.gl2uniform cimport Setter, SamplerSetter
 from renpy.gl2.gl2statecache cimport GLStateCache, SCRATCH_POSITION, SCRATCH_ATTRIBUTE, SCRATCH_INDEX
 
 from renpy.display.matrix cimport Matrix
@@ -111,6 +111,9 @@ UNIFORM_TYPES = {
     "mat3",
     "mat4",
     "sampler2D",
+    "sampler3D",
+    "samplerCube",
+    "sampler2DArray",
 }
 
 VARYING_TYPES = set(ATTRIBUTE_TYPES)| set(UNIFORM_TYPES)
@@ -258,7 +261,7 @@ class Variable:
             token = match_word()
 
         if token not in types:
-            raise ShaderError(f"In {shader_name}, Unsupported type {token} in '{line}'. Only float, int, bool, vec<2-4>, ivec<2-4>, bvec<2-4>, mat<2-4>, and sampler2D are supported.")
+            raise ShaderError(f"In {shader_name}, Unsupported type {token} in '{line}'. Only float, int, bool, vec<2-4>, ivec<2-4>, bvec<2-4>, mat<2-4>, sampler2D, sampler3D, samplerCube, and sampler2DArray are supported.")
 
         self.type = token
 
@@ -771,7 +774,7 @@ cdef class Program:
         cache.sync_attrib_arrays(required_mask)
 
         # There's only one setter, and it's for tex0.
-        cdef Sampler2DSetter setter
+        cdef SamplerSetter setter
 
         for setter in self.uniform_setters:
             setter.set_texture(cache, texture)

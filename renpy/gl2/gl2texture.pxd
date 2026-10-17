@@ -83,6 +83,7 @@ cdef class GLTexture(GL2Model):
     # The last texture states set in gl2uniform.
     cdef public GLint wrap_s
     cdef public GLint wrap_t
+    cdef public GLint wrap_r
     cdef public GLfloat anisotropy
 
     cdef public GLint mag_filter
