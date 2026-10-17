@@ -416,6 +416,7 @@ init python:
 
     build.classify_renpy("lib/py3-linux-armv7l", None)
     build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
+    build.classify_renpy("lib/py3-windows-x86_64/dev/**", "windev")
     source_and_binary("lib/py3-**", "binary", "binary", so=True)
 
     libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
@@ -440,6 +441,8 @@ init python:
     build.package("rapt", "zip", "rapt", dlc=True)
     build.package("renios", "zip", "renios", dlc=True)
     build.package("web", "zip", "web", dlc=True)
+
+    build.package("windev", "zip", "windev")
 
 # The identifier for the SDK.
 define build.mac_info_plist["CFBundleIdentifier"] = "org.renpy.sdk"
