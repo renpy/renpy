@@ -323,17 +323,12 @@ cdef dict _SAMPLER_TARGETS = {
     "sampler2DArray": GL_TEXTURE_2D_ARRAY,
 }
 
-cdef inline GLenum get_sampler_target(target_type) except 0:
-    try:
-        return _SAMPLER_TARGETS[target_type]
-    except KeyError:
-        raise ValueError(f"Unknown sampler type {target_type}.")
 
 cdef class SamplerSetter(Setter):
-    def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int sampler):
+    def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int sampler, GLenum target_type):
         Setter.__init__(self, uniform_name, uniform_type, location, getter)
         self.sampler = sampler
-        self.target_type = get_sampler_target(uniform_type)
+        self.target_type = target_type
         self.texture_wrap_key = "texture_wrap_" + uniform_name[2:]
         self.texture_scaling_key = "texture_scaling_" + uniform_name[2:]
 
@@ -429,13 +424,6 @@ cdef class SamplerSetter(Setter):
         if wrap_r != texture.wrap_r:
             glTexParameteri(self.target_type, GL_TEXTURE_WRAP_R, wrap_r)
             texture.wrap_r = wrap_r
-
-SAMPLER_SETTERS = {
-    "sampler2D": SamplerSetter,
-    "sampler3D": SamplerSetter,
-    "samplerCube": SamplerSetter,
-    "sampler2DArray": SamplerSetter,
-}
 
 cdef class Getter:
     """
@@ -775,8 +763,8 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
             f"{operation}."
         )
 
-    if (array is None) and (setter_class := SAMPLER_SETTERS.get(uniform_type, None)):
-        setter = setter_class(uniform_name, uniform_type, location, getter, sampler)
+    if (array is None) and (sampler_target := _SAMPLER_TARGETS.get(uniform_type, None)):
+        setter = SamplerSetter(uniform_name, uniform_type, location, getter, sampler, sampler_target)
         sampler += 1
     elif (array is None) and (setter_class := NON_ARRAY_SETTERS.get(uniform_type, None)):
         setter = setter_class(uniform_name, uniform_type, location, getter)
