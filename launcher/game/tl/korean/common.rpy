@@ -526,7 +526,7 @@
 
     # 00preferences.rpy:416
     old "mute music"
-    new "배경음악 크기"
+    new "배경음악 끄기"
 
     # 00preferences.rpy:417
     old "mute sound"
@@ -542,7 +542,7 @@
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "이 프로그램은 MIT 라이선스와 GNU 라이선스를 포함한 여러 가지 라이선스의 적용을 받는 오픈소스 소프트웨어를 포함하고 있습니다. {a=https://www.renpy.org/l/license}이곳{/a}에서 포함된 모든 소프트웨어와 그 소스코드를 확인할 수 있습니다."
+    new "이 프로그램은 MIT 라이선스와 GNU LGPL 라이선스를 포함한 여러 가지 라이선스의 적용을 받는 오픈소스 소프트웨어를 포함하고 있습니다. {a=https://www.renpy.org/l/license}이곳{/a}에서 포함된 모든 소프트웨어와 그 소스코드를 확인할 수 있습니다."
 
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
@@ -763,7 +763,7 @@
 
     # 00accessibility.rpy:193
     old "Self-Voicing Volume Drop"
-    new "대사 읽기 음소거"
+    new "대사 읽기 시 음량 낮추기"
 
 
     # 00accessibility.rpy:202
@@ -772,7 +772,7 @@
 
     # 00preferences.rpy:388
     old "self voicing volume drop"
-    new "대사 읽기 음소거"
+    new "대사 읽기 시 음량 낮추기"
 
     # 00preferences.rpy:430
     old "font transform"

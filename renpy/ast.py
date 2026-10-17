@@ -874,6 +874,7 @@ def get_reachable_nodes(
 
 
 class Say(Node):
+    warp = True
     who: str | None
     who_fast: bool
     what: str
@@ -974,9 +975,12 @@ class Say(Node):
 
         try:
             renpy.game.context().say_attributes = self.attributes
-            renpy.game.context().temporary_attributes = self.temporary_attributes
+            renpy.game.context().temporary_attributes = None if renpy.warp.warping else self.temporary_attributes
 
             who = eval_who(self.who, self.who_fast)
+
+            if renpy.warp.warping and not renpy.exports.can_warp_say(who):
+                return
 
             stmt_name: str = "say"
             if who is not None:
@@ -1013,7 +1017,8 @@ class Say(Node):
                 renpy.store._last_say_args = args
                 renpy.store._last_say_kwargs = kwargs
 
-            say_menu_with(self.with_, renpy.game.interface.set_transition)
+            if not renpy.warp.warping:
+                say_menu_with(self.with_, renpy.game.interface.set_transition)
             renpy.exports.say(who, what, *args, **kwargs)
 
         finally:
@@ -2957,7 +2962,7 @@ class TranslateSay(Say):
 
         ctx.translate_identifier = self.identifier
         ctx.alternate_translate_identifier = getattr(self, "alternate", None)
-        ctx.translated = False
+        ctx.translated = renpy.warp.warping and self.language is not None
 
         if self.language is None:
             # Potentially, jump to a translation.
@@ -2980,7 +2985,7 @@ class TranslateSay(Say):
         finally:
             hashed_key = renpy.astsupport.hash64(self.identifier)
 
-            if (self.identifier not in renpy.game.persistent._seen_translates) and (
+            if not renpy.warp.warping and (self.identifier not in renpy.game.persistent._seen_translates) and (
                 hashed_key not in renpy.game.persistent._seen_translates
             ):
                 if renpy.config.hash_seen:
@@ -2994,6 +2999,8 @@ class TranslateSay(Say):
             # Perform the equivalent of an endtranslate block.
             ctx.translate_identifier = None
             ctx.alternate_translate_identifier = None
+            if renpy.warp.warping:
+                ctx.translated = False
 
     def predict(self) -> list[Node | None]:
         renpy.display.predict.tlids = [self.identifier, getattr(self, "alternate", None)]
@@ -3050,7 +3057,7 @@ class EndTranslate(Node):
         next_node(self.next)
 
         tlid = renpy.game.context().translate_identifier
-        if tlid is not None:
+        if tlid is not None and not renpy.warp.warping:
             hashed_key = renpy.astsupport.hash64(tlid)
 
             if (tlid not in renpy.game.persistent._seen_translates) and (

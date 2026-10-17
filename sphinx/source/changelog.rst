@@ -51,6 +51,20 @@ When supported by the graphics driver, linked shader programs can now be cached
 across launches. This reduces first-use shader compilation and linking hitches
 after a program has been encountered once.
 
+Fixed a crash when rendering image manipulators created with ``cache=False``.
+Uncached images now use the same texture conversion and oversampling as cached
+images, without being retained in the image cache.
+
+Fixed a crash when transitions copy a Model containing a DynamicImage texture.
+The copied texture now preserves its texture wrapping settings.
+
+Fixed joined Drags restoring positions incorrectly, invoking the ``dragging``
+callback before all joined Drags had moved, and forwarding child events twice.
+
+Fixed a failure when replacing a save file from deleting the previous save.
+If replacement still fails after retrying, the error is reported and the
+temporary save file is removed.
+
 Clipboard
 ---------
 
@@ -65,6 +79,18 @@ functions work with the data clipboard that is more limited.
 The :func:`renpy.put_clipboard_image_file` function puts the contents of an image file
 into the clipboard, which can be pasted into other applications that support pasting images.
 :func:`renpy.put_clipboard_text_file` does the same for text files.
+
+Input Methods
+-------------
+
+On Windows, Ren'Py now draws the list of candidates offered by an input method
+editor (IME), rather than relying on the operating system's candidate window,
+which could be invisible when the game was fullscreen. The list is shown by
+the ``_ime_candidates`` screen, and can be customized with styles.
+
+SDL currently supplies IME candidate events only on Windows. macOS, Linux,
+and other platforms continue to use their native candidate interfaces.
+See :ref:`input-methods` for details.
 
 Age Verification
 ----------------
@@ -142,6 +168,12 @@ to adjust fonts to the same relative size.
 
 Text shaders now support the ``u_text_time`` uniform, which is the time in seconds since the start of the text effect.
 
+The ``jitter`` text shader now supports ``u__duration`` to stop shaking after a
+specified number of seconds, and ``u__individual=1`` to move each glyph
+independently. The duration starts when the text is first shown. A duration of
+0 (the default) or a negative value makes jitter continue indefinitely.
+By default, all glyphs still move together.
+
 Text interpolation now supports the ``!f`` flag, which passes interpolated text through :var:`config.say_menu_text_filter`.
 
 Menu text filtering can now be disabled with :var:`config.use_menu_text_filter`, which defaults to True.
@@ -203,9 +235,25 @@ Text can now be selected with ``text <expr>`` (e.g. ``assert text "Hello"``, ``a
 
 Fixed a counting bug with the ``repeat <num>`` statement.
 
+Desktop testcase runs now use a fixed window with physical and drawable
+resolution matching the game's virtual resolution, making screenshot sizes
+and crop coordinates independent of saved window preferences and DPI scaling.
 
 Other Changes
 -------------
+
+Automatically generated android versions will now work past the year 2100, rather than reaching the upper limit in
+2036.
+
+The :var:`config.say_layer`, :var:`config.choice_layer`, and
+:var:`config.nvl_choice_layer` variables now default to None for new games.
+When None, dialogue and choice screens use the screen's ``layer`` property,
+or "screens" if no layer is declared. Explicit layer overrides still take
+precedence. Games declaring compatibility with Ren'Py 8.5 or earlier retain
+the previous "screens" defaults.
+
+The audio synchro start feature now only applies to playing audio. Queued audio will not be affected, and will always
+be played when their turn comes in the playback queue.
 
 The :var:`config.enter_replay_transition` and :var:`config.after_load_transition` transitions now take priority over
 other transitions queued for the same layer.
@@ -230,6 +278,16 @@ The ability to apply zsync-based updates has been removed. This was an older upd
 The ability to create these updates will be removed in Ren'Py 8.7.0.
 
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
+
+Fixes
+-----
+
+Opus audio now decodes pre-roll before loop points and seeks, preserving
+accurate start positions and avoiding incorrect audio immediately after a jump.
+
+:func:`SnowBlossom` with ``fast=True`` now starts with particles throughout
+the screen even when first rendered at a nonzero animation time, such as
+when returning to the main menu from another menu.
 
 .. _renpy-8.5.4:
 

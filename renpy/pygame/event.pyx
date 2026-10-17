@@ -313,6 +313,23 @@ cdef make_textediting_event(SDL_TextEditingEvent *e):
     except UnicodeDecodeError:
         return EventType(e.type, text='', start=e.start, length=e.length)
 
+cdef make_textediting_candidates_event(SDL_TextEditingCandidatesEvent *e):
+    candidates = [ ]
+
+    if e.candidates:
+        for i in range(e.num_candidates):
+            if e.candidates[i]:
+                candidates.append(e.candidates[i].decode("utf-8", "replace"))
+            else:
+                candidates.append('')
+
+    return EventType(
+        e.type,
+        candidates=candidates,
+        selected=e.selected_candidate,
+        horizontal=bool(e.horizontal),
+        window_id=e.windowID)
+
 cdef make_drop_event(SDL_DropEvent *e):
     if e.data:
         file = e.data.decode("utf-8")
@@ -352,6 +369,8 @@ cdef make_event(SDL_Event *e):
         return make_textinput_event(<SDL_TextInputEvent *> e)
     elif e.type == SDL_EVENT_TEXT_EDITING:
         return make_textediting_event(<SDL_TextEditingEvent *> e)
+    elif e.type == SDL_EVENT_TEXT_EDITING_CANDIDATES:
+        return make_textediting_candidates_event(<SDL_TextEditingCandidatesEvent *> e)
     elif e.type == SDL_EVENT_GAMEPAD_AXIS_MOTION:
         return EventType(e.type, which=e.gaxis.which, axis=e.gaxis.axis, value=e.gaxis.value)
     elif e.type in (SDL_EVENT_GAMEPAD_BUTTON_DOWN, SDL_EVENT_GAMEPAD_BUTTON_UP):
@@ -594,7 +613,7 @@ cdef cbool lifecycle_event_watch(void *userdata, SDL_Event *event) noexcept nogi
     return True
 
 def set_blocked(t=None):
-    if t == None:
+    if t is None:
         for et in event_names.keys():
             SDL_SetEventEnabled(et, False)
     elif isinstance(t, int):
@@ -604,7 +623,7 @@ def set_blocked(t=None):
             SDL_SetEventEnabled(et, False)
 
 def set_allowed(t=None):
-    if t == None:
+    if t is None:
         for et in event_names.keys():
             SDL_SetEventEnabled(et, True)
     elif isinstance(t, int):

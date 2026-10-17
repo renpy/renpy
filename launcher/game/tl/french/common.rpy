@@ -354,7 +354,7 @@
 
     # renpy/common/00accessibility.rpy:100
     old "Reset"
-    new "Réinitaliser"
+    new "Réinitialiser"
 
     # renpy/common/00accessibility.rpy:105
     old "Line Spacing Scaling"

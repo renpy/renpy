@@ -167,7 +167,7 @@ translate french strings:
 
     # 00action_file.rpy:459
     old "Delete slot [text]"
-    new "Supprimer l’emplacement %s: [text]"
+    new "Supprimer l’emplacement [text]"
 
     # 00action_file.rpy:539
     old "File page auto"
@@ -1055,7 +1055,7 @@ translate french strings:
 
     # renpy/common/00accessibility.rpy:100
     old "Reset"
-    new "Réinitaliser"
+    new "Réinitialiser"
 
     # renpy/common/00accessibility.rpy:105
     old "Line Spacing Scaling"

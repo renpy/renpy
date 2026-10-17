@@ -43,7 +43,19 @@ adjust your platform's speech settings.
 Other Modes
 -----------
 
-There are two other modes related to self-voicing.
+There are several other modes related to self-voicing.
+
+Screen Reader
+    Screen Reader mode can be toggled by pressing Shift+V. In screen reader
+    mode, Ren'Py communicates directly with active screen readers (such as
+    NVDA, JAWS, VoiceOver, or Orca) via the Prism library. Announcements are
+    sent simultaneously to speech and refreshable braille displays without
+    clipboard workarounds or audio collisions. If no screen reader is active,
+    it gracefully falls back to modern system speech synthesis.
+
+    If an active screen reader is running when Ren'Py launches, screen reader
+    mode is automatically enabled by default. This behavior can be controlled
+    using :var:`config.auto_screenreader_voicing`.
 
 Clipboard
     Clipboard mode can be toggled by pressing Shift+C. In clipboard
@@ -115,6 +127,11 @@ Alternative text
     when the '?' key is pressed while the displayable is focused. This is intended
     for more detail information about how a group of controls works.
 
+    .. var:: config.auto_image_alt = False
+
+        If True, images displayed without an explicit :propref:`alt` style
+        property will be voiced using their image name and attributes.
+
 Descriptive Text
     Descriptive text is text that is displayed (and spoken) by the narrator if
     self-voicing is enabled. The text is not displayed if self-voicing is
@@ -152,7 +169,13 @@ Text Tags
 The :var:`config.tts_substitutions` variable can be used to substitute
 words in the text being spoken, to better control pronunciation. The
 voice can be selected through the accessibility menu (Shift+A), as can its speed. The voice is stored
-in :var:`preferences.tts_voice`. Te speed of self-voicing is stored in :var:`preferences.tts_speed`.
+in :var:`preferences.tts_voice`. The speed of self-voicing is stored in :var:`preferences.tts_speed`.
+
+.. var:: config.auto_screenreader_voicing = True
+
+    If True, Ren'Py will automatically enable screen reader voicing on launch
+    if an active screen reader (such as NVDA, JAWS, VoiceOver, or Orca) is
+    detected.
 
 A self-voicing debug mode can be enabled by typing Shift+Alt+V. This will
 display the text that would be voiced on the screen for development

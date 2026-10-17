@@ -3,8 +3,9 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 import renpy
+from unittests.renpy_test_support import initialize_renpy
 
-renpy.import_all()
+initialize_renpy()
 
 from renpy.display import predict
 from renpy.sl2 import slast

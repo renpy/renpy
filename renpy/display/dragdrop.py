@@ -839,7 +839,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
                 raise renpy.display.core.IgnoreEvent()
 
-            return self.child.event(ev, x, y, st)
+            return None
 
         # Handle moves by moving things relative to the grab point.
         if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
@@ -894,20 +894,21 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
                         new_x, new_y = self.drag_offscreen(new_x, new_y)
 
                     if i.drag_group is not None and i.drag_name is not None:
-                        i.drag_group.positions[i.drag_name] = (new_x, new_y, self.old_position)
+                        i.drag_group.positions[i.drag_name] = (new_x, new_y, i.old_position)
 
                     i.x = new_x
                     i.y = new_y
                     i.target_x = new_x
                     i.target_y = new_y
                     i.target_at = self.at
-                    # Call the dragging callback.
-                    drag = joined[0]
-                    if drag.dragging is not None:
-                        rv = run(drag.dragging, joined)
-                        if rv is not None:
-                            return rv
                     redraw(i, 0)
+
+                # Call the dragging callback.
+                drag = joined[0]
+                if drag.dragging is not None:
+                    rv = run(drag.dragging, joined)
+                    if rv is not None:
+                        return rv
 
         else:
             handled = False

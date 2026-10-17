@@ -31,6 +31,169 @@ import renpy
 import operator
 
 warp_spec = None
+warping = False
+
+
+def reconstruct(nodes):
+    """
+    Reconstructs state along a warp path without executing game logic.
+    """
+
+    global warping
+
+    ctx = renpy.game.context()
+    fields = (
+        "current",
+        "next_node",
+        "say_attributes",
+        "temporary_attributes",
+        "translate_identifier",
+        "alternate_translate_identifier",
+        "translated",
+        "deferred_translate_identifier",
+    )
+    old_context = {name: getattr(ctx, name) for name in fields}
+    old_warping = warping
+    old_skipping = renpy.config.skipping
+
+    warping = True
+    renpy.config.skipping = "fast"
+
+    try:
+        remaining = set(nodes)
+        replaced = set()
+        for node in nodes:
+            remaining.discard(node)
+            if node in replaced:
+                continue
+
+            if isinstance(node, renpy.ast.Translate):
+                source = translation_nodes(node.next)
+                # Do not replay the target early when it is inside a block.
+                if set(source).issubset(remaining):
+                    replay_node(node)
+                    if ctx.next_node is not node.next:
+                        replay_translation(ctx.next_node)
+                        replaced.update(source)
+                    continue
+
+            replay_node(node)
+            if isinstance(node, renpy.ast.Translate):
+                # A partial source block has no unambiguous translated prefix.
+                ctx.translated = False
+    finally:
+        for name, value in old_context.items():
+            setattr(ctx, name, value)
+        renpy.config.skipping = old_skipping
+        warping = old_warping
+
+
+def replay_node(node):
+    ctx = renpy.game.context()
+    ctx.current = node.name
+    ctx.next_node = node.next
+
+    last_say_fields = (
+        "_last_say_who",
+        "_last_say_what",
+        "_last_say_args",
+        "_last_say_kwargs",
+        "_last_raw_what",
+        "_side_image_attributes",
+        "_side_image_attributes_reset",
+    )
+    missing = object()
+    old_say = {name: getattr(renpy.store, name, missing) for name in last_say_fields}
+    old_multiple = renpy.character.multiple_count
+    old_attributes = ctx.say_attributes, ctx.temporary_attributes
+    old_deferred = ctx.deferred_translate_identifier
+    old_translation = ctx.translate_identifier, ctx.alternate_translate_identifier, ctx.translated
+    old_retained = None
+
+    try:
+        if isinstance(node, renpy.ast.Say):
+            old_retained = set(renpy.exports.get_showing_tags(renpy.store.bubble.retain_layer))
+
+        if node.can_warp():
+            node.execute()
+
+            # TranslateSay.execute can redirect without executing the say.
+            if isinstance(node, renpy.ast.TranslateSay) and ctx.next_node is not node.next:
+                translated = ctx.next_node
+                if isinstance(translated, renpy.ast.TranslateSay):
+                    replay_node(translated)
+                else:
+                    replay_translation(translated)
+
+        elif isinstance(node, (renpy.ast.Translate, renpy.ast.EndTranslate)):
+            node.execute()
+        else:
+            clear_retain_for_node(node)
+
+    except renpy.game.CONTROL_EXCEPTIONS:
+        raise
+    except Exception:
+        ctx.translate_identifier, ctx.alternate_translate_identifier, ctx.translated = old_translation
+        for name, value in old_say.items():
+            if value is missing:
+                if hasattr(renpy.store, name):
+                    delattr(renpy.store, name)
+            else:
+                setattr(renpy.store, name, value)
+        renpy.character.multiple_count = old_multiple
+        if old_retained is not None:
+            layer = renpy.store.bubble.retain_layer
+            for tag in renpy.exports.get_showing_tags(layer):
+                if tag.startswith("_retain_") and tag not in old_retained:
+                    renpy.exports.hide_screen(tag, layer=layer, immediately=True)
+        renpy.exports.write_log(
+            "While warping, ignoring statement at %s:%s:",
+            getattr(node, "filename", "<unknown>"),
+            getattr(node, "linenumber", 0),
+        )
+        renpy.display.log.exception()
+    finally:
+        ctx.say_attributes, ctx.temporary_attributes = old_attributes
+        ctx.deferred_translate_identifier = old_deferred
+        renpy.config.skipping = "fast"
+
+
+def translation_nodes(node):
+    nodes = []
+    seen = set()
+    while node is not None and node not in seen:
+        seen.add(node)
+        nodes.append(node)
+        if isinstance(node, (renpy.ast.EndTranslate, renpy.ast.TranslateSay)):
+            break
+        node = node.next
+    return nodes
+
+
+def replay_translation(node):
+    for translated in translation_nodes(node):
+        replay_node(translated)
+
+
+def clear_retain_for_node(node):
+    # Menus and screens remain skipped, but still delimit retained dialogue.
+    bubble = renpy.store.bubble
+    if bubble.statement_callback not in renpy.config.statement_callbacks:
+        return
+
+    if isinstance(node, renpy.ast.Menu):
+        name = "menu"
+        if node.arguments is not None and node.arguments.evaluate()[1].get("nvl") is True:
+            name = "menu-nvl"
+        if node.has_caption or renpy.config.choice_empty_window:
+            name += "-with-caption"
+    elif isinstance(node, renpy.ast.UserStatement):
+        name = node.get_name()
+    else:
+        info = node.diff_info()
+        name = getattr(info[0], "__name__", "").lower()
+
+    bubble.statement_callback(name)
 
 
 def warp():
@@ -160,18 +323,7 @@ def warp():
 
     run = run[-renpy.config.warp_limit :]
 
-    renpy.config.skipping = "fast"
-
-    # Determine which statements we want to execute, and then run
-    # only them.
-
-    for n in run:
-        if n.can_warp():
-            # Execute, if possible.
-            try:
-                n.execute()
-            except Exception:
-                pass
+    reconstruct(run)
 
     # Now, return the name of the place where we will warp to. This
     # becomes the new starting point of the game.

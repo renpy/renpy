@@ -77,7 +77,7 @@
         "renpy/pygame/locals.pyi": true,
         "renpy/pygame/mouse.pyi": true,
         "renpy/pygame/power.pyi": true,
-        "renpy/pygame/pygame_time.pyi": true,
+        "renpy/pygame/time.pyi": true,
         "renpy/pygame/rect.pyi": true,
         "renpy/pygame/scrap.pyi": true,
         "renpy/pygame/surface.pyi": true,

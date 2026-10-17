@@ -1,6 +1,9 @@
 testsuite global:
     setup:
         $ _test.screenshot_directory = "tests/screenshots/testcases"
+        if eval not renpy.mobile:
+            assert eval renpy.get_physical_size() == (config.screen_width, config.screen_height)
+            assert eval renpy.pygame.display.get_drawable_size() == (config.screen_width, config.screen_height)
 
     before testsuite:
         $ _test.transition_timeout = 0.05

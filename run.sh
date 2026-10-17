@@ -37,6 +37,7 @@ done
 if $CLEAN; then
     find "$ROOT" -maxdepth 1 -type f -name '*.cpython*.so' -delete
     find "$ROOT/renpy" -type f -name '*.cpython*.so' -delete
+    rm -Rf "$ROOT/tmp/gen"
 fi
 
 if [ -n "$RENPY_COVERAGE" ]; then

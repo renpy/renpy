@@ -25,6 +25,12 @@ checksums.py
 Used by add.py. This computes the checksums of a released Ren'Py, and
 signs them using GPG.
 
+fetch_prism.py
+--------------
+
+Fetches the standalone Prism runtime shared libraries for Windows, macOS,
+and Linux from GitHub Releases into ``lib/py3-*`` using HTTP Range requests.
+
 fix_translations.py
 -------------------
 

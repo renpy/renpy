@@ -1017,7 +1017,9 @@ def register_channel(
 
     `synchro_start`
         Does this channel participate in synchro start? Synchro start determines if
-        the channel will start playing at the same time as other channels. If None,
+        the channel will start playing at the same time as other channels.
+        Files queued behind a playing track start when that track ends, without
+        waiting for other channels. If None,
         this defaults to `loop` if `movie` is False, and False otherwise.
     """
 

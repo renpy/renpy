@@ -192,8 +192,6 @@ cdef class Window:
             if pos != (SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED):
                 SDL_SetWindowPosition(self.window, pos[0], pos[1])
 
-            SDL_ShowWindow(self.window)
-
         if not self.window:
             raise error()
 
@@ -224,6 +222,8 @@ cdef class Window:
         except:
             self.destroy()
             raise
+
+        SDL_ShowWindow(self.window)
 
     def create_surface(self):
         """

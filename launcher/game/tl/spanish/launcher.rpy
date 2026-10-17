@@ -29,19 +29,19 @@
 
     # add_file.rpy:42
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
-    new "# Ren'Py carga automáticamente todos los archivos que terminan en .rpy. Para usar este\n# archivo, defina una etiqueta y salte a el desde otro archivo\n"
+    new "# Ren'Py carga automáticamente todos los archivos que terminan en .rpy.\n# Para usar este archivo, define una etiqueta y salta a ella desde otro archivo.\n"
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Para construir un paquete para Android, por favor descarga RAPT, descomprímelo y colócalo dentro de la carpeta de Ren'Py. Después reinicia el lanzador de Ren'Py."
+    new "Para construir paquetes para Android, por favor descarga RAPT, descomprímelo y colócalo dentro de la carpeta de Ren'Py. Después reinicia el lanzador de Ren'Py."
 
     # game/android.rpy:31
     old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Se requiere un kit de desarrollo Java 8 de 64 bits/x64 para construir paquetes de Android en Windows. El JDK es diferente del JRE, por lo que es posible que tengas Java sin el JDK.\n\nPor favor, {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}descarga e instala el JDK{/a}, luego reinicia el lanzador de Ren'Py."
+    new "Se requiere un kit de desarrollo Java [JDK_REQUIREMENT] de 64 bits/x64 para construir paquetes de Android en Windows. El JDK es diferente del JRE, por lo que es posible que tengas Java sin el JDK.\n\nPor favor, {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}descarga e instala el JDK{/a}, luego reinicia el lanzador de Ren'Py."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "RAPT está instalado, pero tendrás que instalar el SDK de Android para poder construir paquetes de Android. Selecciona instalar SDK para instalarlo."
+    new "RAPT está instalado, pero tendrás que instalar el SDK de Android para poder construir paquetes de Android. Selecciona Instalar SDK para instalarlo."
 
     # android.rpy:33
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
@@ -53,15 +53,15 @@
 
     # android.rpy:35
     old "Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device."
-    new "Selecciona \"Construir\" para construir el proyecto actual, o conecta un dispositivo Android y selecciona \"Construir & instalar\" para construirlo e instalarlo en el dispositivo."
+    new "Selecciona \"Construir\" para construir el proyecto actual, o conecta un dispositivo Android y selecciona \"Construir e Instalar\" para construirlo e instalarlo en el dispositivo."
 
     # android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Intenta emular un teléfono Android. \n\nLa entrada táctil se emula mediante el ratón, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
+    new "Intenta emular un teléfono Android.\n\nLa entrada táctil se emula mediante el mouse, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
 
     # android.rpy:38
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Intenta emular una tablet Android. \n\nLa entrada táctil se emula mediante el ratón, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
+    new "Intenta emular una tableta Android.\n\nLa entrada táctil se emula mediante el mouse, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
 
     # android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
@@ -69,7 +69,7 @@
 
     # android.rpy:41
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
-    new "Descarga e instala el SDK de android y los paquetes de soporte. Opcionalmente, genera la clave necesaria para firmar el paquete."
+    new "Descarga e instala el SDK de Android y los paquetes de soporte. Opcionalmente, genera las claves necesarias para firmar el paquete."
 
     # android.rpy:42
     old "Configures the package name, version, and other information about this project."
@@ -77,7 +77,7 @@
 
     # android.rpy:43
     old "Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details."
-    new "Abre el archivo que contiene las claves de Google Play en el editor. \n\nEsto sólo es necesario si la aplicación usa una expansión APK. Para más información lee la documentación."
+    new "Abre el archivo que contiene las claves de Google Play en el editor.\n\nEsto solo es necesario si la aplicación usa un APK de expansión. Para más información, lee la documentación."
 
     # android.rpy:44
     old "Builds the Android package."
@@ -85,19 +85,20 @@
 
     # android.rpy:45
     old "Builds the Android package, and installs it on an Android device connected to your computer."
-    new "Construye el paquete de Android y lo instala en un dispositivo Android conectado al ordenador."
+    new "Construye el paquete de Android y lo instala en un dispositivo Android conectado a tu computadora."
 
     # android.rpy:46
     old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
-    new "Construye un paquete para Android, lo instala en un dispositivo conectado al ordenador y luego ejecuta la aplicación en el dispositivo."
+    new "Construye un paquete para Android, lo instala en un dispositivo conectado a tu computadora y luego ejecuta la aplicación en el dispositivo."
 
     # android.rpy:48
     old "Connects to an Android device running ADB in TCP/IP mode."
-    new "Conecta a un dispositivo Android ejecutando ADB en modo TCP/IP."
+    new "Se conecta a un dispositivo Android que ejecuta ADB en modo TCP/IP."
 
     # android.rpy:49
     old "Disconnects from an Android device running ADB in TCP/IP mode."
-    new "Desconecta de un dispositivo Android ejecutando ADB en modo TCP/IP."
+    new "Se desconecta de un dispositivo Android que ejecuta ADB en modo TCP/IP."
+    
 
     # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
@@ -121,7 +122,7 @@
 
     # android.rpy:341
     old "Tablet"
-    new "Tablet"
+    new "Tableta"
 
     # android.rpy:345
     old "Television"
@@ -133,7 +134,7 @@
 
     # android.rpy:365
     old "Install SDK & Create Keys"
-    new "Instalar SDK y Crear claves"
+    new "Instalar SDK y crear claves"
 
     # android.rpy:369
     old "Configure"
@@ -201,15 +202,15 @@
 
     # choose_directory.rpy:87
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
-    new "Ren'Py fue incapaz de ejecutar python con tkinter para elegir el directorio. Por favor instala el paquete python-tk o tkinter."
+    new "Ren'Py fue incapaz de ejecutar Python con tkinter para elegir el directorio. Por favor instala el paquete python-tk o tkinter."
 
     # choose_directory.rpy:104
     old "The selected projects directory is not writable."
-    new "El directorio de proyectos seleccionado no puede ser escrito"
+    new "No se puede escribir en el directorio de proyectos seleccionado."
 
     # choose_theme.rpy:303
     old "Could not change the theme. Perhaps options.rpy was changed too much."
-    new "No se puede cambiar el tema. Quizás options.rpy ha sufrido muchos cambios."
+    new "No se pudo cambiar el tema. Quizás se modificó demasiado options.rpy."
 
     # choose_theme.rpy:370
     old "Planetarium"
@@ -269,7 +270,7 @@
 
     # distribute.rpy:1078
     old "Signing the Macintosh application...\n(This may take a long time.)"
-    new "Firmando la aplicación para Macintosh...\n(Esto puede tardar mucho tiempo)"
+    new "Firmando la aplicación para Macintosh...\n(Esto puede tardar mucho tiempo.)"
 
     # distribute.rpy:1100
     old "Creating the Macintosh DMG..."
@@ -353,7 +354,7 @@
 
     # distribute_gui.rpy:271
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
-    new "Se detectaron errores al ejecutar el proyecto. Por favor asegúrate de que el proyecto se ejecuta sin errores antes de construir distibuciones."
+    new "Se detectaron errores al ejecutar el proyecto. Por favor asegúrate de que el proyecto se ejecuta sin errores antes de construir distribuciones."
 
     # distribute_gui.rpy:288
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
@@ -361,11 +362,11 @@
 
     # dmgcheck.rpy:50
     old "Ren'Py is running from a read only folder. Some functionality will not work."
-    new "Ren'Py se ejecuta en una carpeta de solo lectura. Algunas funciones no disponibles."
+    new "Ren'Py se ejecuta en una carpeta de solo lectura. Algunas funciones no estarán disponibles."
 
     # dmgcheck.rpy:50
     old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
-    new "Esto sucede probablemente porque Ren'Py se ejecuta directamente desde una imagen de disco Macintosh. Cierra este lanzador, copia toda la carpeta %s en otro lugar del ordenador y ejecuta Ren'Py de nuevo."
+    new "Esto sucede probablemente porque Ren'Py se ejecuta directamente desde una imagen de disco Macintosh. Cierra este lanzador, copia toda la carpeta %s en otro lugar de la computadora y ejecuta Ren'Py de nuevo."
 
     # editor.rpy:152
     old "(Recommended) A modern and approachable text editor."
@@ -401,7 +402,7 @@
 
     # editor.rpy:210
     old "This may have occured because Java is not installed on this system."
-    new "Esto puede haber ocurrido porque Java no está instalado en este sistema"
+    new "Esto puede haber ocurrido porque Java no está instalado en este sistema."
 
     # editor.rpy:219
     old "System Editor"
@@ -409,7 +410,7 @@
 
     # editor.rpy:219
     old "Invokes the editor your operating system has associated with .rpy files."
-    new "Usar el editor de su sistema operativo para que se asocie con los archivos .rpy."
+    new "Abre el editor que tu sistema operativo tiene asociado con los archivos .rpy."
 
     # editor.rpy:235
     old "None"
@@ -425,7 +426,7 @@
 
     # editor.rpy:387
     old "An exception occured while launching the text editor:\n[exception!q]"
-    new "Ha ocurrido una excepción mientras se ejecutaba el editor de texto:\\[exception!q]"
+    new "Ha ocurrido una excepción al iniciar el editor de texto:\n[exception!q]"
 
     # editor.rpy:519
     old "Select Editor"
@@ -573,7 +574,7 @@
 
     # gui7.rpy:311
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}Aviso{/b}\nSi continúas se sobreescribirán las barras, botones, huecos de partida grabada, barras de desplazamiento y controles deslizantes personalizados.\n\n¿Qué deseas hacer?"
+    new "{b}Aviso{/b}\nSi continúas se sobrescribirán las barras, botones, huecos de partida grabada, barras de desplazamiento y controles deslizantes personalizados.\n\n¿Qué deseas hacer?"
 
     # gui7.rpy:311
     old "Choose new colors, then regenerate image files."
@@ -649,7 +650,7 @@
 
     # interface.rpy:120
     old "Ren'Py Website"
-    new "Web de Ren'Py"
+    new "Sitio web de Ren'Py"
 
     # interface.rpy:121
     old "Ren'Py Games List"
@@ -673,7 +674,7 @@
 
     # interface.rpy:258
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
-    new "Debido a las limitaciones del formato de paquete, no se permite el uso de nombres de archivos y carpetas que no sean ASCII"
+    new "Debido a las limitaciones del formato de paquete, no se permite el uso de nombres de archivos y carpetas que no sean ASCII."
 
     # interface.rpy:354
     old "ERROR"
@@ -689,7 +690,7 @@
 
     # interface.rpy:411
     old "File and directory names must consist of ASCII characters."
-    new "Los nombres de archivos y carpetas deben ser caracteres ASCII."
+    new "Los nombres de archivos y carpetas deben consistir en caracteres ASCII."
 
     # interface.rpy:479
     old "PROCESSING"
@@ -705,7 +706,7 @@
 
     # ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Para construir paquetes para iOS, por favor descarga renios, descomprímelo, y colócalo dentro de la carpeta de Ren'Py. Después reinicia el launcher de Ren'Py."
+    new "Para construir paquetes para iOS, por favor descarga renios, descomprímelo y colócalo dentro de la carpeta de Ren'Py. Después reinicia el lanzador de Ren'Py."
 
     # ios.rpy:29
     old "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
@@ -721,11 +722,11 @@
 
     # ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Intenta emular un iPhone.\n\nLa entrada táctil se emula a través del ratón, pero solo cuando se mantiene pulsado el botón."
+    new "Intenta emular un iPhone.\n\nLa entrada táctil se emula a través del mouse, pero solo cuando se mantiene pulsado el botón."
 
     # ios.rpy:34
     old "Attempts to emulate an iPad.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Intenta emular un iPad.\n\nLa entrada táctil se emula a través del ratón, pero solo cuando se mantiene pulsado el botón."
+    new "Intenta emular un iPad.\n\nLa entrada táctil se emula a través del mouse, pero solo cuando se mantiene pulsado el botón."
 
     # ios.rpy:36
     old "Selects the directory where Xcode projects will be placed."
@@ -905,7 +906,7 @@
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "Solo la interfaz del tema antiguo ha sido traducida a tu idioma.."
+    new "Solo la interfaz del tema antiguo ha sido traducida a tu idioma."
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
@@ -913,7 +914,7 @@
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
-    new "No se puede establecer el directorio de proyectos. Abandonando."
+    new "No se pudo establecer el directorio de proyectos. Cancelando."
 
     # new_project.rpy:71
     old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
@@ -933,7 +934,7 @@
 
     # new_project.rpy:118
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
-    new "Por favor selecciona una plantilla para usar en tu nuevo proyecto. La plantilla establece la fuente predeterminada y el idioma de la interfaz de usuario, Si tu idioma no está soportado, elige \"English\"."
+    new "Por favor selecciona una plantilla para usar en tu nuevo proyecto. La plantilla establece la fuente predeterminada y el idioma de la interfaz de usuario. Si tu idioma no es compatible, elige 'English'."
 
     # preferences.rpy:73
     old "Launcher Preferences"
@@ -965,7 +966,7 @@
 
     # preferences.rpy:142
     old "Update Channel:"
-    new "Canal de actualización"
+    new "Canal de actualización:"
 
     # preferences.rpy:162
     old "Navigation Options:"
@@ -1061,7 +1062,7 @@
 
     # project.rpy:762
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "Por favor elige la carpeta del proyecto usando el selector de proyecto. \n{b}El selector de carpetas puede haberse abierto detrás de esta ventana."
+    new "Por favor elige la carpeta del proyecto usando el selector de proyecto.\n{b}El selector de carpetas puede haberse abierto detrás de esta ventana.{/b}"
 
     # project.rpy:762
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
@@ -1117,7 +1118,7 @@
 
     # translations.rpy:263
     old "Ren'Py has finished generating [language] translations."
-    new "Ren'Py ha terminado de generar las traducciones en [language]"
+    new "Ren'Py ha terminado de generar las traducciones en [language]."
 
     # translations.rpy:276
     old "Ren'Py is extracting string translations..."
@@ -1125,7 +1126,7 @@
 
     # translations.rpy:279
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py ha terminado de extrar las cadenas traducidas en [language]."
+    new "Ren'Py ha terminado de extraer las cadenas traducidas en [language]."
 
     # translations.rpy:299
     old "Ren'Py is merging string translations..."
@@ -1189,7 +1190,7 @@
 
     # updater.rpy:97
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
-    new "{b}Recomendado.{/b} La versión the Ren'Py que se recomienda usar en todos los juegos recién liberados."
+    new "{b}Recomendado.{/b} La versión de Ren'Py que se recomienda usar en todos los juegos recién liberados."
 
     # updater.rpy:102
     old "Prerelease"
@@ -1273,19 +1274,19 @@
 
     # game/android.rpy:31
     old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Se requiere un kit de desarrollo Java 8 de 64 bits/x64 para construir paquetes de Android en Windows. El JDK es diferente del JRE, por lo que es posible que tengas Java sin el JDK.\n\nPor favor, {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}descarga e instala el JDK{/a}, luego reinicie el launcher de Ren'Py."
+    new "Se requiere un kit de desarrollo Java 8 de 64 bits/x64 para construir paquetes de Android en Windows. El JDK es diferente del JRE, por lo que es posible que tengas Java sin el JDK.\n\nPor favor, {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}descarga e instala el JDK{/a}, luego reinicia el lanzador de Ren'Py."
 
     # game/android.rpy:50
     old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
-    new "Selecciona la versión de depuración, a la que se puedes acceder a través de Android Studio. Cambiar entre las compilaciones de depuración y estable requiere una desinstalación de su dispositivo."
+    new "Selecciona la versión de depuración, a la que se puede acceder a través de Android Studio. Cambiar entre las compilaciones de depuración y estable requiere una desinstalación de tu dispositivo."
 
     # game/android.rpy:51
     old "Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device."
-    new "Selecciona la versión estable, que se puede cargar en las tiendas. Cambiar entre las compilaciones de depuración y estable requiere una desinstalación de su dispositivo."
+    new "Selecciona la versión estable, que se puede cargar en las tiendas. Cambiar entre las compilaciones de depuración y estable requiere una desinstalación de tu dispositivo."
 
     # game/androidstrings.rpy:7
     old "{} is not a directory."
-    new "{} no es un directorio"
+    new "{} no es un directorio."
 
     # game/androidstrings.rpy:8
     old "{} does not contain a Ren'Py game."
@@ -1301,7 +1302,7 @@
 
     # game/androidstrings.rpy:11
     old "Updating project."
-    new "Actualizando proyecto"
+    new "Actualizando proyecto."
 
     # game/androidstrings.rpy:12
     old "Creating assets directory."
@@ -1345,7 +1346,7 @@
 
     # game/androidstrings.rpy:22
     old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
-    new "¿Cuál es el nombre corto de tu aplicación? Este nombre se utilizará en el launcher y para los accesos directos de aplicaciones."
+    new "¿Cuál es el nombre corto de tu aplicación? Este nombre se utilizará en el lanzador y para los accesos directos de aplicaciones."
 
     # game/androidstrings.rpy:23
     old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
@@ -1393,7 +1394,7 @@
 
     # game/androidstrings.rpy:34
     old "How would you like your application to be displayed?"
-    new "¿Cómo desea que se muestre su aplicación?"
+    new "¿Cómo quieres que se muestre tu aplicación?"
 
     # game/androidstrings.rpy:35
     old "In landscape orientation."
@@ -1433,7 +1434,7 @@
 
     # game/androidstrings.rpy:44
     old "No. Size limit of 100 MB on Google Play, but can be distributed through other stores and sideloaded."
-    new "No. El límite de tamaño de 100 MB en Google Play, pero se puede distribuir a través de otras tiendas y se puede descargar de forma simultánea."
+    new "No. Tiene un límite de 100 MB en Google Play, pero se puede distribuir a través de otras tiendas y cargar de forma local."
 
     # game/androidstrings.rpy:45
     old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)"
@@ -1469,7 +1470,7 @@
 
     # game/androidstrings.rpy:55
     old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttps://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
-    new "La versión de Java en su computadora no parece ser JDK 8, que es la única versión compatible con el SDK de Android. Si necesitas instalar JDK 8, puedes descargarlo de:\n\nhttps://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot\n\nTambién puedes configurar la Variable de entorno JAVA_HOME para usar una versión diferente de Java."
+    new "La versión de Java en tu computadora no parece ser JDK 8, que es la única versión compatible con el SDK de Android. Si necesitas instalar JDK 8, puedes descargarlo de:\n\nhttps://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot\n\nTambién puedes configurar la variable de entorno JAVA_HOME para usar una versión diferente de Java."
 
     # game/androidstrings.rpy:54
     old "The JDK is present and working. Good!"
@@ -1521,11 +1522,11 @@
 
     # game/androidstrings.rpy:66
     old "I can create an application signing key for you. Signing an application with this key allows it to be placed in the Android Market and other app stores.\n\nDo you want to create a key?"
-    new "Puedo crear una clave de firma de la aplicación para ti. Firmar una aplicación con esta clave le permite ubicarla en Android Market y otras tiendas de aplicaciones.\n\n¿Desea crear una clave?"
+    new "Puedo crear una clave de firma de la aplicación para ti. Firmar una aplicación con esta clave le permite ubicarla en Android Market y otras tiendas de aplicaciones.\n\n¿Deseas crear una clave?"
 
     # game/androidstrings.rpy:67
     old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
-    new "Crearé la clave en el archivo android.keystore.\n\nTienes que hacer una copia de seguridad de este archivo. Si lo pierdes, no podrás actualizar tu aplicación.\n\nTambién debes mantener la clave segura. Si la gente malvada obtiene este archivo, podrían crear versiones falsas de su aplicación y, posiblemente, robar los datos de sus usuarios.\n\n¿Harás una copia de seguridad de android.keystore y la mantendrás en un lugar seguro?"
+    new "Crearé la clave en el archivo android.keystore.\n\nTienes que hacer una copia de seguridad de este archivo. Si lo pierdes, no podrás actualizar tu aplicación.\n\nTambién debes mantener la clave segura. Si la gente malvada obtiene este archivo, podrían crear versiones falsas de tu aplicación y, posiblemente, robar los datos de tus usuarios.\n\n¿Harás una copia de seguridad de android.keystore y la mantendrás en un lugar seguro?"
 
     # game/androidstrings.rpy:68
     old "Please enter your name or the name of your organization."
@@ -1537,7 +1538,7 @@
 
     # game/androidstrings.rpy:70
     old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
-    new "He terminado de crear android.keystore. Por favor haga una copia de seguridad y guárdelo en un lugar seguro."
+    new "He terminado de crear android.keystore. Por favor haz una copia de seguridad y guárdalo en un lugar seguro."
 
     # game/androidstrings.rpy:71
     old "It looks like you're ready to start packaging games."
@@ -1661,7 +1662,7 @@
 
     # game/choose_directory.rpy:93
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."
-    new "Ren'Py no pudo ejecutar Python con tkinter para elegir el directorio. Instale el paquete python3-tk o tkinter."
+    new "Ren'Py no pudo ejecutar Python con tkinter para elegir el directorio. Instala el paquete python3-tk o tkinter."
 
     # game/install.rpy:33
     old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
@@ -1677,7 +1678,7 @@
 
     # game/install.rpy:119
     old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
-    new "Esta pantalla le permite instalar bibliotecas que no se pueden distribuir con Ren'Py. Algunas de estas bibliotecas pueden requerir que aceptes una licencia de terceros antes de ser utilizadas o distribuidas."
+    new "Esta pantalla te permite instalar bibliotecas que no se pueden distribuir con Ren'Py. Algunas de estas bibliotecas pueden requerir que aceptes una licencia de terceros antes de ser utilizadas o distribuidas."
 
     # game/install.rpy:134
     old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
@@ -1701,7 +1702,7 @@
 
     # game/web.rpy:341
     old "Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
-    new "Las imágenes y las músicas se pueden descargar mientras juegas. Se creará un archivo 'progress_download.txt' para que puedas configurar este comportamiento."
+    new "Las imágenes y la música se pueden descargar mientras juegas. Se creará un archivo 'progressive_download.txt' para que puedas configurar este comportamiento."
 
     # game/install.rpy:144
     old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
@@ -1717,7 +1718,7 @@
 
     # game/install.rpy:160
     old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
-    new "Antes de instalar el soporte de Steam, asegúrate de ser un {a=https://partner.steamgames.com/}socio de Steam{/a}.."
+    new "Antes de instalar el soporte de Steam, asegúrate de ser un {a=https://partner.steamgames.com/}socio de Steam{/a}."
 
     # game/install.rpy:172
     old "Steam support has already been installed."
@@ -1729,7 +1730,7 @@
 
     # game/androidstrings.rpy:45
     old "Automatically installing expansion APKs {a=https://issuetracker.google.com/issues/160942333}may not work on Android 11{/a}."
-    new "Es posible que la instalación automática de APK de expansión {a=https://issuetracker.google.com/issues/160942333} no funcione en Android 11 {/a}."
+    new "Es posible que la instalación automática de APK de expansión {a=https://issuetracker.google.com/issues/160942333}no funcione en Android 11{/a}."
 
     # game/preferences.rpy:199
     old "Default theme"
@@ -1749,7 +1750,7 @@
 
     # game/android.rpy:38
     old "RAPT has been installed, but a bundle key hasn't been configured. Please create a new key, or restore bundle.keystore."
-    new "Se ha instalado RAPT, pero no se ha configurado una clave de paquete. Cree una nueva clave o restaure bundle.keystore."
+    new "Se ha instalado RAPT, pero no se ha configurado una clave de paquete. Crea una nueva clave o restaura bundle.keystore."
 
     # game/android.rpy:40
     old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
@@ -1765,7 +1766,7 @@
 
     # game/android.rpy:58
     old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
-    new "Crea un paquete de aplicaciones de Android (ABB), destinado a cargarse en Google Play. Esto puede incluir hasta 2 GB de datos."
+    new "Crea un paquete de aplicaciones de Android (AAB), destinado a cargarse en Google Play. Esto puede incluir hasta 2 GB de datos."
 
     # game/android.rpy:59
     old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
@@ -1781,11 +1782,11 @@
 
     # game/android.rpy:449
     old "Wi-Fi Debugging Pair"
-    new "Depuración de par de Wi-Fi "
+    new "Depuración de par de Wi-Fi"
 
     # game/android.rpy:453
     old "Wi-Fi Debugging Connect"
-    new "Depuración de conexión de Wi-Fi "
+    new "Depuración de conexión de Wi-Fi"
 
     # game/android.rpy:541
     old "Wi-Fi Pairing Code"
@@ -1813,7 +1814,7 @@
 
     # game/ios.rpy:339
     old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
-    new "Hay problemas conocidos con el simulador de iOS en Apple Silicon. Pruebe en dispositivos x86_64 o iOS."
+    new "Hay problemas conocidos con el simulador de iOS en Apple Silicon. Prueba en dispositivos x86_64 o iOS."
 
     # game/preferences.rpy:213
     old "Daily check for update"
@@ -1821,7 +1822,7 @@
 
     # game/web.rpy:330
     old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
-    new "Las imágenes y la música se pueden descargar mientras se reproduce. Se creará un archivo 'progress_download.txt' para que pueda configurar este comportamiento."
+    new "Las imágenes y la música se pueden descargar mientras juegas. Se creará un archivo 'progressive_download.txt' para que puedas configurar este comportamiento."
 
     # game/web.rpy:334
     old "Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported."
@@ -1889,7 +1890,7 @@
 
     # game/androidstrings.rpy:44
     old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
-    new "La versión de Java en su computadora no parece ser JDK 8, que es la única versión compatible con el SDK de Android. Si necesita instalar JDK 8, puede descargarlo desde:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nTambién puede configurar la variable de entorno JAVA_HOME para usar una versión diferente de Java."
+    new "La versión de Java en tu computadora no parece ser JDK 8, que es la única versión compatible con el SDK de Android. Si necesitas instalar JDK 8, puedes descargarlo desde:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nTambién puedes configurar la variable de entorno JAVA_HOME para usar una versión diferente de Java."
 
     # game/updater.rpy:109
     old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
@@ -1921,11 +1922,11 @@
 
     # game/android.rpy:628
     old "Cleaning up Android project."
-    new "Limpieando el proyecto de Android."
+    new "Limpiando el proyecto de Android."
 
     # game/androidstrings.rpy:43
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
-    new "No pude usar javac para compilar un archivo de prueba. Si aún no has instalado el kit de desarrollo de Java, descárgalo de:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nEl JDK es diferente del JRE, por lo que es posible que tenga Java sin tener el JDK. Asegúrese de haber instalado las 'claves de registro de JavaSoft (Oracle)'.\n\nSin un JDK que funcione, no puedo continuar."
+    new "No pude usar javac para compilar un archivo de prueba. Si aún no has instalado el kit de desarrollo de Java, descárgalo de:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nEl JDK es diferente del JRE, por lo que es posible que tengas Java sin tener el JDK. Asegúrate de haber instalado las 'claves de registro de JavaSoft (Oracle)'.\n\nSin un JDK que funcione, no puedo continuar."
 
     # game/androidstrings.rpy:64
     old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
@@ -1946,10 +1947,11 @@
     # game/editor.rpy:152
     old "A modern editor with many extensions including advanced Ren'Py integration."
     new "Un editor moderno con muchas extensiones, incluida la integración avanzada de Ren'Py."
+    
 
     # game/editor.rpy:153
     old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
-    new "Un editor moderno con muchas extensiones, incluida la integración avanzada de Ren'Py.\n{a=jump:reinstall_vscode}Actualice Visual Studio Code a la última versión.{/a}"
+    new "Un editor moderno con muchas extensiones, incluida la integración avanzada de Ren'Py.\n{a=jump:reinstall_vscode}Actualiza Visual Studio Code a la última versión.{/a}"
 
     # game/editor.rpy:162
     old "Visual Studio Code"
@@ -1977,7 +1979,7 @@
 
     # game/editor.rpy:209
     old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
-    new "Utiliza una copia de Visual Studio Code que ha instalado fuera de Ren'Py. Se recomienda que instale la extensión language-renpy para agregar soporte para archivos Ren'Py."
+    new "Utiliza una copia de Visual Studio Code que has instalado fuera de Ren'Py. Se recomienda que instales la extensión language-renpy para agregar soporte para archivos Ren'Py."
 
     # game/interface.rpy:124
     old "[interface.version]"
@@ -2005,7 +2007,7 @@
 
     # game/web.rpy:344
     old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
-    new "Restauraremos el soporte en una versión estable futura de Ren'Py 8. Hasta entonces, use Ren'Py 7 para soporte web."
+    new "Restauraremos el soporte en una versión estable futura de Ren'Py 8. Hasta entonces, usa Ren'Py 7 para soporte web."
 
     # game/preferences.rpy:104
     old "General"
@@ -2017,7 +2019,7 @@
 
     # game/preferences.rpy:244
     old "Launcher Theme:"
-    new "Tema del lanzdor"
+    new "Tema del lanzador:"
 
     # game/preferences.rpy:254
     old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
@@ -2097,11 +2099,11 @@
 
     # game/androidstrings.rpy:32
     old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
-    new "¿Cuánta RAM (en GB) quiere asignar a Gradle?\nDebe ser un número entero positivo."
+    new "¿Cuánta RAM (en GB) quieres asignar a Gradle?\nDebe ser un número entero positivo."
 
     # game/androidstrings.rpy:33
     old "The RAM size must contain only numbers and be positive."
-    new "El tamaño de la RAM debe contener sólo números y ser positivo."
+    new "El tamaño de la RAM debe contener solo números y ser positivo."
 
     # game/androidstrings.rpy:63
     old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
@@ -2121,19 +2123,19 @@
 
     # game/updater.rpy:76
     old "Nightly Fix"
-    new "Correciones nocturnas"
+    new "Correcciones nocturnas"
 
     # game/updater.rpy:77
     old "Nightly Fix (Ren'Py 8, Python 3)"
-    new "Correciones nocturnas (Ren'Py 8, Python 3)"
+    new "Correcciones nocturnas (Ren'Py 8, Python 3)"
 
     # game/updater.rpy:78
     old "Nightly Fix (Ren'Py 7, Python 2)"
-    new "Correciones nocturnas (Ren'Py 7, Python 2)"
+    new "Correcciones nocturnas (Ren'Py 7, Python 2)"
 
     # game/choose_directory.rpy:72
     old "No directory was selected, but one is required."
-    new "No se seleccionó un directorio, pero uno requerido."
+    new "No se seleccionó un directorio, pero se requiere uno."
 
     # game/choose_directory.rpy:79
     old "The selected directory does not exist."
@@ -2153,11 +2155,11 @@
 
     # game/androidstrings.rpy:46
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please install JDK [JDK_REQUIREMENT], and add it to your PATH.\n\nWithout a working JDK, I can't continue."
-    new "No he podido utilizar javac para compilar un archivo de prueba. Si aún no has instalado el Kit de Desarrollo de Java, descárgalo de:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\nEl JDK es diferente del JRE, por lo que es posible que tengas Java sin tener el JDK. Por favor, instala el JDK [JDK_REQUIREMENT], y añádelo a su PATH.\n\nSin un JDK que funcione, no puedo continuar."
+    new "No he podido utilizar javac para compilar un archivo de prueba. Si aún no has instalado el Kit de Desarrollo de Java, descárgalo de:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nEl JDK es diferente del JRE, por lo que es posible que tengas Java sin tener el JDK. Por favor, instala el JDK [JDK_REQUIREMENT], y añádelo a tu PATH.\n\nSin un JDK que funcione, no puedo continuar."
 
     # game/androidstrings.rpy:47
     old "The version of Java on your computer does not appear to be JDK [JDK_REQUIREMENT], which is required to build Android apps. If you need to install a newer JDK, you can download it from:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, and add it to your PATH.\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
-    new "La versión de Java en tu computadora no parece ser JDK [JDK_REQUIREMENT], que se requiere para construir aplicaciones de Android. Si necesita instalar un JDK más reciente, puede descargarlo de:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, y añadirlo a su PATH. También puede configurar la variable de entorno JAVA_HOME para utilizar una versión diferente de Java."
+    new "La versión de Java en tu computadora no parece ser JDK [JDK_REQUIREMENT], que se requiere para construir aplicaciones de Android. Si necesitas instalar un JDK más reciente, puedes descargarlo de:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, y añadirlo a tu PATH.\n\nTambién puedes configurar la variable de entorno JAVA_HOME para utilizar una versión diferente de Java."
 
     # game/distribute.rpy:1620
     old "Finishing the [variant] [format] package."
@@ -2177,7 +2179,7 @@
 
     # game/editor.rpy:607
     old "Select editor now."
-    new "Seleccione un editor ahora."
+    new "Selecciona un editor ahora."
 
     # game/editor.rpy:607
     old "Ignore until next launch."
@@ -2185,11 +2187,11 @@
 
     # game/editor.rpy:607
     old "Do not ask again."
-    new "No vuelver a preguntar."
+    new "No volver a preguntar."
 
     # game/new_project.rpy:38
     old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
-    new "Advertencia : estás utilizando Ren'Py 7. Se recomienda iniciar nuevos proyectos utilizando Ren'Py 8 en su lugar."
+    new "Advertencia: estás utilizando Ren'Py 7. Se recomienda iniciar nuevos proyectos utilizando Ren'Py 8 en su lugar."
 
     # game/new_project.rpy:49
     old "Please select a template project to use."
@@ -2197,7 +2199,7 @@
 
     # game/new_project.rpy:49
     old "Do not use a template project."
-    new "No utilizar una plantilla para el proyecto."
+    new "No usar una plantilla para el proyecto."
 
     # game/preferences.rpy:94
     old "Lint"
@@ -2217,7 +2219,7 @@
 
     # game/preferences.rpy:262
     old "Prefer RPU updates"
-    new "Prefiera las actualizaciones de RPU"
+    new "Preferir las actualizaciones de RPU"
 
     # game/preferences.rpy:332
     old "Open projects.txt"
@@ -2225,7 +2227,7 @@
 
     # game/preferences.rpy:356
     old "Lint toggles:"
-    new "Ajuestes de Lint:"
+    new "Ajustes de Lint:"
 
     # game/preferences.rpy:360
     old "Check for orphan/obsolete translations"
@@ -2237,7 +2239,7 @@
 
     # game/preferences.rpy:366
     old "Print block, word, and character counts by speaking character."
-    new "Imprime el recuento de bloques, palabras y contador de caracteres por carpersonaje."
+    new "Imprime el recuento de bloques, palabras y contador de caracteres por personaje."
 
     # game/preferences.rpy:369
     old "Unclosed text tags"
@@ -2253,7 +2255,7 @@
 
     # game/editor.rpy:667
     old "You are using an old version of the Ren'Py Language support for Visual Studio Code. Would you like to upgrade?"
-    new "Está utilizando una versión antigua del soporte Ren'Py Language para Visual Studio Code. ¿Desea actualizarla?"
+    new "Estás utilizando una versión antigua del soporte Ren'Py Language para Visual Studio Code. ¿Deseas actualizarla?"
 
     # game/editor.rpy:667
     old "Upgrade."
@@ -2269,4 +2271,92 @@
 
     # game/preferences.rpy:258
     old "Prefer the web documentation"
-    new "PrefiePreferir ra la documentación web"
+    new "Preferir la documentación web"
+# TODO: Translation updated at 2026-09-29 08:37
+
+translate spanish strings:
+
+    # game/android.rpy:45
+    old "Attempts to emulate a television-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    new "Intenta emular una consola Android basada en televisión.\n\nLa entrada del controlador se asigna a las teclas de flecha, Intro se asigna al botón de selección, Escape se asigna al botón de menú y Av.Pág se asigna al botón Atrás."
+
+    # game/editor.rpy:222
+    old "This may have occurred because Java is not installed on this system."
+    new "Esto puede haber ocurrido porque Java no está instalado en este sistema."
+
+    # game/editor.rpy:236
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the renpy.language-renpy extension to add support for Ren'Py files."
+    new "Utiliza una copia de Visual Studio Code que has instalado fuera de Ren'Py. Se recomienda que instales la extensión renpy.language-renpy para agregar soporte para archivos Ren'Py."
+
+    # game/editor.rpy:242
+    old "VSCodium (System)"
+    new "VSCodium (Sistema)"
+
+    # game/editor.rpy:242
+    old "Uses a copy of VSCodium that you have installed outside of Ren'Py. It's recommended you install the renpy.language-renpy extension to add support for Ren'Py files."
+    new "Utiliza una copia de VSCodium que has instalado fuera de Ren'Py. Se recomienda que instales la extensión renpy.language-renpy para agregar soporte para archivos Ren'Py."
+
+    # game/editor.rpy:420
+    old "An exception occurred while launching the text editor:\n[exception!q]"
+    new "Ha ocurrido una excepción al iniciar el editor de texto:\n[exception!q]"
+
+    # game/front_page.rpy:125
+    old "Open folder [text]."
+    new "Abrir carpeta [text]."
+
+    # game/front_page.rpy:126
+    old "Close folder [text]."
+    new "Cerrar carpeta [text]."
+
+    # game/front_page.rpy:141
+    old "Tutorials"
+    new "Tutoriales"
+
+    # game/front_page.rpy:143
+    old "Select folder [text]."
+    new "Seleccionar carpeta [text]."
+
+    # game/front_page.rpy:213
+    old "Run Testcases"
+    new "Ejecutar casos de prueba"
+
+    # game/front_page.rpy:312
+    old "Running testcases..."
+    new "Ejecutando casos de prueba..."
+
+    # game/gui7.rpy:29
+    old "The game/libs/ directory is meant for third-party libraries that ask to be\nput in game/libs.\n\nWhen this file (game/libs/libs.txt) is present, Ren'Py will load all files\nin libs before any other file in game/, and will ignore the first directory\nname under game/libs when determining the order to load files.\n"
+    new "El directorio game/libs/ está destinado a bibliotecas de terceros que piden\nser colocadas en game/libs.\n\nCuando este archivo (game/libs/libs.txt) está presente, Ren'Py cargará todos los archivos\nen libs antes que cualquier otro archivo en game/, e ignorará el primer nombre\nde directorio bajo game/libs al determinar el orden de carga de archivos.\n"
+
+    # game/install.rpy:153
+    old "Install Live2D Cubism SDK for Web"
+    new "Instalar Live2D Cubism SDK para Web"
+
+    # game/install.rpy:199
+    old "The {a=https://www.live2d.com/en/sdk/download/web/}Cubism SDK for Web{/a} adds support for displaying Live2D models. Place CubismSdkForWeb-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "El {a=https://www.live2d.com/en/sdk/download/web/}Cubism SDK for Web{/a} añade soporte para mostrar modelos Live2D. Coloca CubismSdkForWeb-{i}version{/i}.zip en el directorio del SDK de Ren'Py y luego haz clic en Instalar. Para distribuir un juego con Live2D, debes aceptar una licencia de Live2D, Inc."
+
+    # game/install.rpy:201
+    old "The {a=https://www.live2d.com/en/sdk/download/native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "El {a=https://www.live2d.com/en/sdk/download/native/}Cubism SDK for Native{/a} añade soporte para mostrar modelos Live2D. Coloca CubismSdkForNative-{i}version{/i}.zip en el directorio del SDK de Ren'Py y luego haz clic en Instalar. Para distribuir un juego con Live2D, debes aceptar una licencia de Live2D, Inc."
+
+    # game/install.rpy:205
+    old "Live2D doesn't support Android x86_64 (including emulators and Chrome OS) and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new "Live2D no es compatible con Android x86_64 (incluidos emuladores y Chrome OS) y debe agregarse a los proyectos de iOS manualmente. Live2D debe reinstalarse después de actualizar Ren'Py o instalar el soporte de Android."
+
+    # game/interface.rpy:411
+    old "While [what!qt], an error occurred:"
+    new "Mientras que [what!qt], ocurrió un error:"
+
+    # game/preferences.rpy:256
+    old "Show tutorial projects"
+    new "Mostrar proyectos de tutorial"
+
+    # game/updater.rpy:168
+    old "An error has occurred:"
+    new "Ha ocurrido un error:"
+
+    # game/updater.rpy:224
+    old "Updating while Ren'Py games are running on this computer can cause problems. Please close all Ren'Py games before proceeding."
+    new "Actualizar mientras hay juegos de Ren'Py en ejecución en esta computadora puede causar problemas. Cierra todos los juegos de Ren'Py antes de continuar."
+

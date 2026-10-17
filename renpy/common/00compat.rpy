@@ -44,6 +44,9 @@ init -1100 python:
             return
 
         if version <= (8, 5, 99):
+            config.say_layer = "screens"
+            config.choice_layer = "screens"
+            config.nvl_choice_layer = "screens"
             config.audio_directory = "audio"
             config.audio_directories = [ ]
             config.late_audio_scan = False

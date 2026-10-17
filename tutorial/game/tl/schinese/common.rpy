@@ -1075,7 +1075,7 @@ translate schinese strings:
 
     # renpy/common/_errorhandling.rpym:597
     old "Rollback"
-    new "Rollback"
+    new "回滚"
 
     # renpy/common/_errorhandling.rpym:599
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."

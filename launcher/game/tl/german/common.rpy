@@ -212,7 +212,7 @@ translate german strings:
     # 00library.rpy:143
     old "Clipboard voicing enabled. "
     # Automatic translation.
-    new "Zwischenablage-Voicing aktiviert. "
+    new "Sprachausgabe zur Zwischenablage aktiviert. "
 
     # 00library.rpy:144
     old "Self-voicing enabled. "
@@ -229,7 +229,7 @@ translate german strings:
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     # Automatic translation.
-    new "Zwischenablage-Voicing aktiviert. Drücke 'Shift+C' zum Deaktivieren."
+    new "Sprachausgabe zur Zwischenablage aktiviert. Drücke 'Shift+C' zum Deaktivieren."
 
     # 00preferences.rpy:424
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
@@ -342,7 +342,7 @@ translate german strings:
 
     # renpy/common/00accessibility.rpy:32
     old "bar"
-    new "bar"
+    new "Balken"
 
     # renpy/common/00accessibility.rpy:33
     old "selected"

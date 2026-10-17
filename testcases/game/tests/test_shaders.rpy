@@ -35,12 +35,22 @@ init python:
 
         cache = shadercache.ShaderCache("test-shader-prediction.txt", True, 300)
         old_draw = renpy.display.draw
+        prediction = renpy.display.predict
+        old_predicted = prediction.predicted
+        old_displayables = prediction.predicted_displayables
+        old_pending = prediction.pending
         renpy.display.draw = type("PredictionDraw", (), {"shader_cache": cache})()
+        prediction.predicted = set()
+        prediction.predicted_displayables = []
+        prediction.pending = []
 
         try:
             yield cache
         finally:
             renpy.display.draw = old_draw
+            prediction.predicted = old_predicted
+            prediction.predicted_displayables = old_displayables
+            prediction.pending = old_pending
 
     def test_shaders__prediction_key(*parts):
         return tuple(sorted((renpy.config.default_shader,) + parts))
@@ -133,7 +143,8 @@ testsuite shaders:
                 mask = renpy.display.imagelike.Solid("#000")
                 masked = renpy.display.layout.AlphaMask(model, mask)
                 transform = renpy.display.transform.Transform(masked, alpha=0.5, shader="test_shaders.modern")
-                renpy.display.predict.predict_displayable_shaders(transform)
+                renpy.display.predict.displayable(transform)
+                renpy.asynctask.run_sync(renpy.display.predict.predict_pending())
 
                 expected_mask = test_shaders__prediction_key(
                     "renpy.alpha",
@@ -170,7 +181,7 @@ testsuite shaders:
                 assert renpy.store._predict_shader == {modern}
 
                 with test_shaders__prediction_cache() as cache:
-                    renpy.display.predict.predict_registered_shaders()
+                    renpy.asynctask.run_sync(renpy.display.predict.predict_registered_shaders())
                     expected = test_shaders__prediction_key(*modern)
                     assert list(cache.predicted) == [expected]
             finally:

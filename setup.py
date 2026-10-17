@@ -65,10 +65,9 @@ def _build():
         ["src/pygame/write_png.c"],
         packages="sdl3-image libpng sdl3",
     )
-    cython("renpy.pygame.sdl_image", packages="sdl3")
     cython("renpy.pygame.controller", packages="sdl3")
     cython("renpy.pygame.joystick", packages="sdl3")
-    cython("renpy.pygame.pygame_time", packages="sdl3")
+    cython("renpy.pygame.time", packages="sdl3")
     cython("renpy.pygame.power", packages="sdl3")
     cython("renpy.pygame.transform", source=["src/pygame/SDL3_rotozoom.c"], packages="sdl3")
     cython("renpy.pygame.scrap", packages="sdl3")
@@ -76,7 +75,6 @@ def _build():
     cython("renpy.pygame.mouse", packages="sdl3")
     cython("renpy.pygame.event", packages="sdl3")
     cython("renpy.pygame.display", packages="sdl3")
-    cython("renpy.pygame.sdl", packages="sdl3")
     cython("renpy.pygame.color", packages="sdl3")
     cython("renpy.pygame.rect", packages="sdl3")
     cython("renpy.pygame.error", packages="sdl3")
@@ -124,22 +122,26 @@ def _build():
     cython("renpy.uguu.uguu", packages="sdl3")
 
     # renpy.gl2
-    cython("renpy.gl2.gl2mesh")
-    cython("renpy.gl2.gl2mesh2")
-    cython("renpy.gl2.gl2mesh3")
-    cython("renpy.gl2.gl2polygon")
+    cython("renpy.gl2.gl2mesh", packages="sdl3")
+    cython("renpy.gl2.gl2mesh2", packages="sdl3")
+    cython("renpy.gl2.gl2mesh3", packages="sdl3")
+    cython("renpy.gl2.gl2polygon", packages="sdl3")
     cython("renpy.gl2.gl2model", packages="sdl3")
     cython("renpy.gl2.gl2draw", packages="sdl3")
     cython("renpy.gl2.gl2texture", packages="sdl3")
     cython("renpy.gl2.gl2uniform", packages="sdl3")
-    cython("renpy.gl2.gl2physics")
+    cython("renpy.gl2.gl2physics", packages="sdl3")
     cython("renpy.gl2.gl2shader", packages="sdl3")
     cython("renpy.gl2.gl2statecache", packages="sdl3")
 
     if cubism:
         cython("renpy.gl2.live2dmodel", ["src/live2dcsm.c"], packages="sdl3")
 
-    cython("renpy.gl2.assimp", ["src/assimpio.cc"], language="c++", packages="assimp sdl3")
+    cython(
+        "renpy.gl2.assimp",
+        ["src/assimpio.c"],
+        packages="assimp sdl3",
+    )
 
     # renpy.text
     cython("renpy.text.textsupport")

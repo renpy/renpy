@@ -406,7 +406,7 @@
 
     # editor.rpy:494
     old "Cancel"
-    new "Cancella"
+    new "Annulla"
 
     # front_page.rpy:35
     old "Open [text] directory."

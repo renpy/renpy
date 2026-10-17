@@ -6,11 +6,11 @@
 
     # gui.rpy:5
     old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
-    new "## La sentencia 'init offset' da preferencia a las sentencias de inicialización de este archivo respecto a otros archivos."
+    new "## La sentencia 'init offset' hace que las sentencias de inicialización de este archivo se ejecuten antes que las sentencias init de cualquier otro archivo."
 
     # gui.rpy:9
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
-    new "## Llamando 'qui.init' se resetean los estilos a los valores por defecto y se establecen la anchura y altura del juego."
+    new "## Al llamar a 'gui.init' se restablecen los estilos a valores predeterminados razonables, y se establecen el ancho y la altura del juego."
 
     # gui.rpy:17
     old "## GUI Configuration Variables"
@@ -22,27 +22,27 @@
 
     # gui.rpy:23
     old "## The colors of text in the interface."
-    new "## Los colores del texto de la interfaz"
+    new "## Los colores del texto de la interfaz."
 
     # gui.rpy:25
     old "## An accent color used throughout the interface to label and highlight text."
-    new "## El color enfatizado usado en la interfaz para subrayar texto."
+    new "## El color de acento usado en toda la interfaz para etiquetar y resaltar el texto."
 
     # gui.rpy:29
     old "## The color used for a text button when it is neither selected nor hovered."
-    new "## El color del botón de texto cuando no está seleccionado ni enfocado."
+    new "## El color usado para un botón de texto cuando no está seleccionado ni tiene el cursor encima."
 
     # gui.rpy:32
     old "## The small color is used for small text, which needs to be brighter/darker to achieve the same effect."
-    new "## El color 'small' se usa para el texto pequeño, que necesita destacar más."
+    new "## El color 'small' se usa para texto pequeño, que necesita ser más claro/oscuro para lograr el mismo efecto."
 
     # gui.rpy:36
     old "## The color that is used for buttons and bars that are hovered."
-    new "## El color usado en botones y barras que ganan foco."
+    new "## El color usado para botones y barras cuando el cursor está encima."
 
     # gui.rpy:39
     old "## The color used for a text button when it is selected but not focused. A button is selected if it is the current screen or preference value."
-    new "## El color del botón de texto seleccionado pero no enfocado. Un botón está seleccionado si indica el valor actual de la pantalla o preferencia."
+    new "## El color usado en el botón de texto cuando está seleccionado pero no enfocado. Un botón está seleccionado si representa la pantalla actual o el valor actual de una preferencia."
 
     # gui.rpy:43
     old "## The color used for a text button when it cannot be selected."
@@ -50,27 +50,27 @@
 
     # gui.rpy:46
     old "## Colors used for the portions of bars that are not filled in. These are not used directly, but are used when re-generating bar image files."
-    new "## Colores de la parte vacía de las barras. No se usan directamente, sino en la regeneración de las imágenes de barra."
-
+    new "## Colores de la parte vacía de las barras. No se usan directamente, sino al regenerar los archivos de imagen de las barras."
+    
     # gui.rpy:51
     old "## The colors used for dialogue and menu choice text."
-    new "## Colores del texto del diálogo y menú."
+    new "## Colores usados para el texto del diálogo y de las elecciones de menú."
 
     # gui.rpy:56
     old "## Fonts and Font Sizes"
-    new "## Tipos y tamaños de letra"
+    new "## Fuentes y tamaños de fuentes"
 
     # gui.rpy:58
     old "## The font used for in-game text."
-    new "## El tipo de letra del texto del juego"
+    new "## La fuente usada para el texto del juego."
 
     # gui.rpy:61
     old "## The font used for character names."
-    new "## El tipo de letra de los nombres de personajes"
+    new "## La fuente usada para nombres de personajes."
 
     # gui.rpy:64
     old "## The font used for out-of-game text."
-    new "## El tipo de letra del texto externo al juego."
+    new "## La fuente usada para el texto externo al juego."
 
     # gui.rpy:67
     old "## The size of normal dialogue text."
@@ -78,7 +78,7 @@
 
     # gui.rpy:70
     old "## The size of character names."
-    new "## El tamaño de los nombres de los personajes"
+    new "## El tamaño de los nombres de los personajes."
 
     # gui.rpy:73
     old "## The size of text in the game's user interface."
@@ -110,7 +110,7 @@
 
     # gui.rpy:95
     old "## These variables control how dialogue is displayed on the screen one line at a time."
-    new "## Estas variables controlan cómo se muestra el diálogo en le pantalla, una línea cada vez."
+    new "## Estas variables controlan cómo se muestra el diálogo en la pantalla, una línea a la vez."
 
     # gui.rpy:98
     old "## The height of the textbox containing dialogue."
@@ -122,15 +122,15 @@
 
     # gui.rpy:106
     old "## The placement of the speaking character's name, relative to the textbox. These can be a whole number of pixels from the left or top, or 0.5 to center."
-    new "## Colocación del nombre del personaje hablante, relativa a la caja de texto. Puede ser el númerode píxels desde la esquina superior izquierda, o 0.5 para centrar."
-
+    new "## La posición del nombre del personaje que habla, relativa a la caja de texto. Puede ser un número entero de píxeles desde la izquierda o la parte superior, o 0.5 para centrar."
+    
     # gui.rpy:111
     old "## The horizontal alignment of the character's name. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
     new "## La alineación horizontal del nombre del personaje. (0.0 es izquierda, 0.5 es centro, 1.0 es derecha)."
 
     # gui.rpy:115
     old "## The width, height, and borders of the box containing the character's name, or None to automatically size it."
-    new "## La anchura, altura y bordes de la caja que contiene el nombre del personaje, o 'None' para dimensión automática."
+    new "## El ancho, la altura y los bordes de la caja que contiene el nombre del personaje, o 'None' para ajustar el tamaño automáticamente."
 
     # gui.rpy:120
     old "## The borders of the box containing the character's name, in left, top, right, bottom order."
@@ -138,15 +138,15 @@
 
     # gui.rpy:124
     old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
-    new "## Si es 'True, el fondo de la caja del nombre será en mosaico, si es 'False', el fondo, si la caja del nombre es escalada."
+    new "## Si es 'True', el fondo de la caja del nombre se mostrará en mosaico; si es 'False', se escalará."
 
     # gui.rpy:129
     old "## The placement of dialogue relative to the textbox. These can be a whole number of pixels relative to the left or top side of the textbox, or 0.5 to center."
-    new "## Colocación del diálogo relativa a la caja de texto. Puede ser el número de píxels relativos a la esquina superor izquierda o 0.5 para centrar."
+    new "## La posición del diálogo relativa a la caja de texto. Puede ser un número entero de píxeles desde la izquierda o la parte superior de la caja de texto, o 0.5 para centrar."
 
     # gui.rpy:135
     old "## The maximum width of dialogue text, in pixels."
-    new "## La anchura máxima del texto del diálogo, en píxels."
+    new "## El ancho máximo del texto del diálogo, en píxeles."
 
     # gui.rpy:138
     old "## The horizontal alignment of the dialogue text. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
@@ -158,27 +158,27 @@
 
     # gui.rpy:145
     old "## These variables, along with the image files in gui/button, control aspects of how buttons are displayed."
-    new "## Estas variables, junto con las imágenes de 'gui/button', controla el aspecto de los botones."
+    new "## Estas variables, junto con las imágenes de 'gui/button', controlan el aspecto de los botones."
 
     # gui.rpy:148
     old "## The width and height of a button, in pixels. If None, Ren'Py computes a size."
-    new "## La anchura y altura del botón, en píxels. Si es 'None', Ren'Py calcula el tamaño."
+    new "## El ancho y la altura del botón, en píxeles. Si es 'None', Ren'Py calcula el tamaño."
 
     # gui.rpy:152
     old "## The borders on each side of the button, in left, top, right, bottom order."
-    new "## Los bordes de cada lado del botón, en orden: izquerda, arriba, derecha, abajo."
+    new "## Los bordes de cada lado del botón, en orden: izquierda, arriba, derecha, abajo."
 
     # gui.rpy:155
     old "## If True, the background image will be tiled. If False, the background image will be linearly scaled."
-    new "## Si es 'True, la imagen de fondo será en mosaico. Si es 'False', la imagen de fondo será escalada linealmente."
+    new "## Si es 'True', la imagen de fondo se mostrará en mosaico. Si es 'False', la imagen de fondo se escalará linealmente."
 
     # gui.rpy:159
     old "## The font used by the button."
-    new "## Tipo de letra del botón."
+    new "## La fuente usada por el botón."
 
     # gui.rpy:162
     old "## The size of the text used by the button."
-    new "## Tamaño de letra del botón."
+    new "## El tamaño del texto usado por el botón."
 
     # gui.rpy:165
     old "## The color of button text in various states."
@@ -198,15 +198,15 @@
 
     # gui.rpy:195
     old "## You can also add your own customizations, by adding properly-named variables. For example, you can uncomment the following line to set the width of a navigation button."
-    new "## Se pueden añadir personalizaciones propias con variables con los nombres adecuados. Por ejemplo, es posible descomentar la linea siguiente para ajustar la anchura de los botones de navegación."
-
+    new "## Se pueden añadir personalizaciones propias agregando variables con los nombres adecuados. Por ejemplo, es posible descomentar la línea siguiente para ajustar el ancho de los botones de navegación."
+    
     # gui.rpy:202
     old "## Choice Buttons"
-    new "## Botones de opción"
+    new "## Botones de elección"
 
     # gui.rpy:204
     old "## Choice buttons are used in the in-game menus."
-    new "## Los botones de opción se utilizan en los menús del juego."
+    new "## Los botones de elección se utilizan en los menús del juego."
 
     # gui.rpy:217
     old "## File Slot Buttons"
@@ -214,7 +214,7 @@
 
     # gui.rpy:219
     old "## A file slot button is a special kind of button. It contains a thumbnail image, and text describing the contents of the save slot. A save slot uses image files in gui/button, like the other kinds of buttons."
-    new "## El botón de hueco de partida es un botón especial. Contiene una miniatura y texto que describe el contenido del hueco de partida. Usa imágenes de 'gui/button' como los otros botones."
+    new "## El botón de hueco de partida es un botón especial. Contiene una miniatura y texto que describe el contenido del hueco de partida. Usa imágenes en 'gui/button' como los otros botones."
 
     # gui.rpy:223
     old "## The save slot button."
@@ -222,7 +222,7 @@
 
     # gui.rpy:233
     old "## The width and height of thumbnails used by the save slots."
-    new "## La anchura y altura de las miniaturas de las partidas guardadas."
+    new "## Ancho y altura de las miniaturas de las partidas guardadas."
 
     # gui.rpy:237
     old "## The number of columns and rows in the grid of save slots."
@@ -238,7 +238,7 @@
 
     # gui.rpy:247
     old "## The position of the left side of the navigation buttons, relative to the left side of the screen."
-    new "## Posición del lado izquierdo de los botones de navegación, relativo al lado izquierdo de la pantalla."
+    new "## Posición del lado izquierdo de los botones de navegación, relativa al lado izquierdo de la pantalla."
 
     # gui.rpy:251
     old "## The vertical position of the skip indicator."
@@ -250,7 +250,7 @@
 
     # gui.rpy:257
     old "## The spacing between menu choices."
-    new "## Espacio entre opciones de menú."
+    new "## Espacio entre elecciones del menú."
 
     # gui.rpy:260
     old "## Buttons in the navigation section of the main and game menus."
@@ -282,7 +282,7 @@
 
     # gui.rpy:281
     old "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
-    new "## Estas variables controlan la apariencia de los marcos que pueden contener componentes de la interfaz cuando no está presente una ventana."
+    new "## Estas variables controlan la apariencia de los marcos que pueden contener componentes de la interfaz cuando no hay un 'overlay' o ventana."
 
     # gui.rpy:284
     old "## Generic frames."
@@ -310,19 +310,19 @@
 
     # gui.rpy:302
     old "## These control the look and size of bars, scrollbars, and sliders."
-    new "## Aquí se controla la apariencia y dimensiones de barras, barras de deslizamiento y deslizadores."
+    new "## Aquí se controla la apariencia y el tamaño de barras, barras de desplazamiento y deslizadores."
 
     # gui.rpy:304
     old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
-    new "## La GUI por defecto solo usa deslizadores y barras de deslizamiento verticales. Las otras barras solo se usan en pantallas escritas por el desarrollador."
+    new "## La GUI por defecto solo usa deslizadores y barras de desplazamiento verticales. Todas las demás barras solo se usan en pantallas escritas por el creador."
 
     # gui.rpy:307
     old "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
-    new "## Altura de las barras, barras de deslizamiento y deslizadores horizontales. Anchura de barras, barras de deslizamiento y deslizadores verticales."
+    new "## Altura de las barras, barras de desplazamiento y deslizadores horizontales. El ancho de barras, barras de desplazamiento y deslizadores verticales."
 
     # gui.rpy:313
     old "## True if bar images should be tiled. False if they should be linearly scaled."
-    new "## 'True' si la imagen de las barras debe ser en mosaico. 'False' si deben ser escaladas linealmente."
+    new "## 'True' si las imágenes de las barras deben mostrarse en mosaico. 'False' si deben escalarse linealmente."
 
     # gui.rpy:318
     old "## Horizontal borders."
@@ -334,7 +334,7 @@
 
     # gui.rpy:328
     old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
-    new "## Qué hacer con barras de deslizamiento no deslizables en la 'gui'. \"hide\" las esconde mientras que 'None' las muestra."
+    new "## Qué hacer con las barras de desplazamiento no desplazables en la GUI. 'hide' las oculta, mientras que 'None' las muestra."
 
     # gui.rpy:333
     old "## History"
@@ -350,23 +350,23 @@
 
     # gui.rpy:340
     old "## The height of a history screen entry, or None to make the height variable at the cost of performance."
-    new "## Altura de una entrada de la pantalla de historial, o 'None' para altura variable a costa de rendimiento."
+    new "## Altura de la entrada de la pantalla de historial, o 'None' para que la altura sea variable a costa del rendimiento."
 
     # gui.rpy:344
     old "## The position, width, and alignment of the label giving the name of the speaking character."
-    new "## Posición, anchura y alineación de la etiqueta con el nombre del personaje hablante."
+    new "## La posición, el ancho y la alineación de la etiqueta que muestra el nombre del personaje que habla."
 
     # gui.rpy:351
     old "## The position, width, and alignment of the dialogue text."
-    new "## Posición, anchura y alineación del texto del diálogo."
+    new "## La posición, el ancho y la alineación del texto del diálogo."
 
     # gui.rpy:358
     old "## NVL-Mode"
-    new "## Modo-NVL"
+    new "## Modo NVL"
 
     # gui.rpy:360
     old "## The NVL-mode screen displays the dialogue spoken by NVL-mode characters."
-    new "## La pantalla NVL-mode presenta el diálogo hablado por personajes en modo NVL."
+    new "## La pantalla del modo NVL muestra el diálogo hablado por los personajes en modo NVL."
 
     # gui.rpy:362
     old "## The borders of the background of the NVL-mode background window."
@@ -374,19 +374,19 @@
 
     # gui.rpy:365
     old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
-    new "## Máximo número de entradas en modo NVL que Ren'Py presentará. Al presentar más entradas, se borrarán las más antiguas."
+    new "## El número máximo de entradas en modo NVL que Ren'Py mostrará. Cuando haya más entradas que este número, se eliminará la más antigua."
 
     # gui.rpy:369
     old "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
-    new "## Altura de una entrada en modo NVL. Ajusta a 'None' para que las entradas ajusten la altura dinámicamente."
+    new "## Altura de la entrada en modo NVL. Establece esto en 'None' para que las entradas ajusten su altura dinámicamente."
 
     # gui.rpy:373
     old "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
-    new "## Espacio entre entradas en modo NVL cuando 'gui.nvl_height' es None, y entre las entradas en modo NVL y el menú en modo NVL."
+    new "## Espacio entre entradas en modo NVL cuando 'gui.nvl_height' es 'None', y entre las entradas en modo NVL y un menú en modo NVL."
 
     # gui.rpy:390
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
-    new "## Posición, anchura y alineación del texto 'nvl_thought' (texto dicho por el personaje 'nvl_narrator')."
+    new "## La posición, el ancho y la alineación del texto 'nvl_thought' (el texto dicho por el personaje 'nvl_narrator')."
 
     # gui.rpy:397
     old "## The position of nvl menu_buttons."
@@ -398,15 +398,15 @@
 
     # gui.rpy:403
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
-    new "## Esto controla donde se permite un salto de línea. El valor por defecto es adecuado para la mayoria de idiomas. Puede encontrar una lista de valores disponibles en https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new "## Esto controla dónde se permite un salto de línea. El valor por defecto es adecuado para la mayoría de los idiomas. Puede encontrar una lista de valores disponibles en https://www.renpy.org/doc/html/style_properties.html#style-property-language"
 
     # gui.rpy:411
     old "## Mobile devices"
-    new "## Dispositivos Móviles"
+    new "## Dispositivos móviles"
 
     # gui.rpy:416
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
-    new "## Esto aumenta el tamaño de los bottones rápidos para facilitar su acceso en tablets y teléfonos."
+    new "## Esto aumenta el tamaño de los botones rápidos para facilitar su acceso en tabletas y teléfonos."
 
     # gui.rpy:422
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
@@ -414,7 +414,7 @@
 
     # gui.rpy:426
     old "## Font sizes."
-    new "## Tamaños de letra."
+    new "## Tamaños de fuente."
 
     # gui.rpy:434
     old "## Adjust the location of the textbox."
@@ -430,7 +430,7 @@
 
     # gui.rpy:457
     old "## NVL-mode."
-    new "## Modo-NVL"
+    new "## Modo NVL"
 
     # gui/game/gui.rpy:14
     old "## Enable checks for invalid or unstable properties in screens or transforms"
@@ -442,4 +442,4 @@
 
     # gui/game/gui.rpy:331
     old "## What to do with unscrollable scrollbars in the game menu. \"hide\" hides them, while None shows them."
-    new "## Qué hacer con las barras de desplazamiento no desplegables en el menú del juego. \"hide\" las oculta, mientras que None las muestra."
+    new "## Qué hacer con las barras de desplazamiento no desplazables en el menú del juego. 'hide' las oculta, mientras que 'None' las muestra."

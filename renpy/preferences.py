@@ -162,7 +162,7 @@ Preference("language", None, (str, type(None)))
 Preference("resource_path_translations", {}, dict)
 
 # Should we self-voice?
-Preference("self_voicing", False, (bool, str, type(None)))
+Preference("self_voicing", None, (bool, str, type(None)))
 
 # The amount to drop the volume of non-voice mixers when self voicing is
 # enabled.

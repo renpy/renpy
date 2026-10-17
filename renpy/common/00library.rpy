@@ -219,6 +219,10 @@ init -1700 python:
 
         record_say = False
 
+        @property
+        def warp(self):
+            return renpy.exports.can_warp_say(self.get_who())
+
         def get_extend_text(self, what):
             return config.extend_interjection + what
 
@@ -304,6 +308,8 @@ init -1700 python:
     def say(who, what, interact=True, *args, **kwargs):
         who = Character(who, kind=name_only)
         who(what, interact=interact, *args, **kwargs)
+
+    say.warp = True
 
 
     ##########################################################################

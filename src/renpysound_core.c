@@ -434,10 +434,17 @@ void RPS_set_channel_count(int count) {
     channel_count = count;
 }
 
-static void callback(void *userdata, SDL_AudioStream *stream, int additional_amount, int length) {
+static void callback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount) {
 
-    // Convert the length to samples.
-    length /= (2 * sizeof(float));
+    if (additional_amount <= 0) {
+        return;
+    }
+
+    const int bytes_per_frame = 2 * sizeof(float);
+    int length = additional_amount / bytes_per_frame;
+    if (additional_amount % bytes_per_frame) {
+        length++;
+    }
 
     float mix_buffer[length * 2];
     short stream_buffer[length * 2];
@@ -623,7 +630,7 @@ static void callback(void *userdata, SDL_AudioStream *stream, int additional_amo
         mix_buffer[i * 2 + 1] = right;
     }
 
-    SDL_PutAudioStreamData(stream, mix_buffer, length * 2 * sizeof(float));
+    SDL_PutAudioStreamData(stream, mix_buffer, length * bytes_per_frame);
 }
 
 
@@ -817,7 +824,8 @@ void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name,
     c->queued_name = strdup(name);
     c->queued_fadein = fadein;
     c->queued_tight = tight;
-    c->queued_synchro_start = synchro_start;
+    /* Synchronize initial playback, not the handoff from a playing stream. */
+    c->queued_synchro_start = 0;
 
     c->queued_start_ms = (int) (start * 1000);
     c->queued_relative_volume = relative_volume;

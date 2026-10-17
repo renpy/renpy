@@ -551,7 +551,7 @@ translate spanish strings:
 
     # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Voz automática dirà \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivar."
+    new "Voz automática dirá \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivar."
 
     # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
@@ -1083,7 +1083,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:76
     old "Font Override"
-    new "Sobreescribir fuente"
+    new "Sobrescribir fuente"
 
     # 00accessibility.rpy:80
     old "Default"

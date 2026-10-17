@@ -126,7 +126,7 @@ fast_skipping = False
 
 # Are we currently skipping? If so, how fast?
 # May be "slow", "fast", or None.
-skipping = None
+skipping: str | None = None
 
 # The delay while we are skipping say statements.
 skip_delay = 5
@@ -567,14 +567,14 @@ autoreload_blacklist = [".rpyc", ".rpymc", ".rpyb", ".pyc", ".pyo"]
 # A list of python modules that should be reloaded when appropriate.
 reload_modules = []
 
-# The layer dialogue is shown on.
-say_layer = "screens"
+# The layer dialogue is shown on, or None to use the screen's layer.
+say_layer: str | None = None
 
-# The layer the choice screen is shown on.
-choice_layer = "screens"
+# The layer the choice screen is shown on, or None to use the screen's layer.
+choice_layer: str | None = None
 
-# The layer the choice screen is shown on, when passed (nvl=True).
-nvl_choice_layer = "screens"
+# The layer the NVL choice screen is shown on, or None to use the screen's layer.
+nvl_choice_layer: str | None = None
 
 # If true, we will not use the .report_traceback method to produced
 # prettier tracebacks.
@@ -1152,7 +1152,6 @@ gl_set_attributes = None
 
 # The blacklist of controllers with known problems.
 controller_blocklist = [
-    "030000007e0500000920",  # Nintendo Pro Controller (needs init to work.)
     "030000006d0400000000",  # Razer Xbox 360 Controller (#4622)
 ]
 
@@ -1262,6 +1261,12 @@ tts_front_to_back = True
 # Should tts invocations be queued (default) or cancel each other out (legacy)?
 tts_queue = True
 
+# Should images without explicit alt text be announced with their tag and attribute names?
+auto_image_alt = False
+
+# Should screen reader voicing be automatically enabled if an active screen reader is detected?
+auto_screenreader_voicing = True
+
 # Should live2d loading be logged to log.txt
 log_live2d_loading = False
 
@@ -1303,7 +1308,7 @@ call_screen_roll_forward = False
 
 # A function that's called with ("", interact=False) when no window is
 # displayed during a choice menu.
-choice_empty_window = None
+choice_empty_window: Callable[..., Any] | None = None
 
 # The encoding that's used by renpy.open_file by default. False
 # means to use binary mode.

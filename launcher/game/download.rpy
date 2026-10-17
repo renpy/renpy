@@ -42,9 +42,7 @@ init python:
             self.dest = dest
             self.tmp = dest + ".tmp"
 
-            # Open the tmpfile.
             self.safe_unlink(self.tmp)
-            self.tmpfile = open(self.tmp, "wb")
 
             # Set by the thread to indicate progress (ranges from 0.0 to 1.0).
             self.progress = 0.0
@@ -56,51 +54,53 @@ init python:
             self.success = False
             self.failure = None
 
-            try:
-                # Open the URL.
-
-                self.urlfile = requests.get(url, stream=True, proxies=renpy.proxies, timeout=15)
-
-                t = threading.Thread(target=self.thread)
-                t.daemon = True
-                t.start()
-
-            except Exception as e:
-                self.failure = str(e)
+            t = threading.Thread(target=self.thread)
+            t.daemon = True
+            t.start()
 
         def thread(self):
 
             try:
                 count = 0
 
-                if "content-length" in self.urlfile.headers:
-                    length = int(self.urlfile.headers["content-length"])
-                else:
-                    length = 0
+                with requests.get(
+                    self.url,
+                    stream=True,
+                    proxies=renpy.proxies,
+                    timeout=15,
+                ) as response:
+                    response.raise_for_status()
 
-                for data in self.urlfile.iter_content(1024 * 1024):
+                    length = int(response.headers.get("content-length", 0))
 
-                    count += len(data)
-                    self.tmpfile.write(data)
+                    with open(self.tmp, "wb") as tmpfile:
+                        for data in response.iter_content(1024 * 1024):
 
-                    if length > 0:
-                        self.progress = max(1.0 * count / length, 1.0)
+                            if self.cancelled:
+                                return
 
-                    if self.cancelled:
-                        break
+                            if not data:
+                                continue
 
-                self.tmpfile.close()
+                            count += len(data)
+                            tmpfile.write(data)
+
+                            if length > 0:
+                                self.progress = min(count / length, 1.0)
 
                 if self.cancelled:
                     return
 
-                self.safe_unlink(self.dest)
-                os.rename(self.tmp, self.dest)
-
+                os.replace(self.tmp, self.dest)
+                self.progress = 1.0
                 self.success = True
 
             except Exception as e:
                 self.failure = str(e)
+
+            finally:
+                if not self.success:
+                    self.safe_unlink(self.tmp)
 
         def safe_unlink(self, fn):
             if os.path.exists(fn):

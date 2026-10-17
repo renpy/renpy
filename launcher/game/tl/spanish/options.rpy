@@ -34,11 +34,11 @@
 
     # options.rpy:31
     old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
-    new "## Texto situado en la pantalla 'Acerca de' del juego. Sitúa el texto entre comillas triples y deja una línea en blanco entre párrafos."
+    new "## Texto situado en la pantalla 'Acerca de' del juego. Coloca el texto entre comillas triples y deja una línea en blanco entre párrafos."
 
     # options.rpy:38
     old "## A short name for the game used for executables and directories in the built distribution. This must be ASCII-only, and must not contain spaces, colons, or semicolons."
-    new "## Nombre breve del juego para ejecutables y directorios en la distribución. Debe contener solo carácteres ASCII, sin espacios, comas o puntos y coma."
+    new "## Nombre breve del juego para ejecutables y directorios en la distribución. Debe contener solo caracteres ASCII, sin espacios, dos puntos ni puntos y coma."
 
     # options.rpy:45
     old "## Sounds and music"
@@ -50,7 +50,7 @@
 
     # options.rpy:56
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
-    new "## Para permitir al usuario probar el volumen de los canales de sonido o voz, descomenta la línea más abajo y ajústala a un sonido de ejemplo."
+    new "## Para permitir al usuario reproducir un sonido de prueba en el canal de sonido o voz, descomenta una línea a continuación y úsala para establecer un sonido de ejemplo."
 
     # options.rpy:63
     old "## Uncomment the following line to set an audio file that will be played while the player is at the main menu. This file will continue playing into the game, until it is stopped or another file is played."
@@ -66,7 +66,7 @@
 
     # options.rpy:76
     old "## Entering or exiting the game menu."
-    new "## Entrar o salir del manú del juego."
+    new "## Entrar o salir del menú del juego."
 
     # options.rpy:82
     old "## Between screens of the game menu."
@@ -90,7 +90,7 @@
 
     # options.rpy:104
     old "## This controls when the dialogue window is displayed. If \"show\", it is always displayed. If \"hide\", it is only displayed when dialogue is present. If \"auto\", the window is hidden before scene statements and shown again once dialogue is displayed."
-    new "## Esto controla cuándo se muestra la ventana de diálogo. Si es \"show\", es siempre visible. Si es \"hide\", solo se muestra cuando hay diálogo presente. Si es \"auto\", la ventana se esconde antes de las sentencias 'scene' y se muestra de nuevo cuando hay diálogo que presentar."
+    new "## Esto controla cuándo se muestra la ventana de diálogo. Si es \"show\", siempre está visible. Si es \"hide\", solo se muestra cuando hay diálogo presente. Si es \"auto\", la ventana se oculta antes de las sentencias 'scene' y se muestra de nuevo cuando hay diálogo que presentar."
 
     # options.rpy:109
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
@@ -98,7 +98,7 @@
 
     # options.rpy:115
     old "## Transitions used to show and hide the dialogue window"
-    new "## Transiciones usadas para mostrar o esconder la ventana de diálogo"
+    new "## Transiciones usadas para mostrar u ocultar la ventana de diálogo"
 
     # options.rpy:121
     old "## Preference defaults"
@@ -110,7 +110,7 @@
 
     # options.rpy:129
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
-    new "## El retraso por defecto del auto-avance. Números más grandes indican esperas mayores. El rango válido es 0-30."
+    new "## El retraso predeterminado del avance automático. Números más grandes indican esperas mayores. El rango válido es 0-30."
 
     # options.rpy:135
     old "## Save directory"
@@ -150,11 +150,11 @@
 
     # options.rpy:161
     old "## This section controls how Ren'Py turns your project into distribution files."
-    new "## Esta sección contrla cómo Ren'Py convierte el proyecto en archivos para la distribución."
+    new "## Esta sección controla cómo Ren'Py convierte el proyecto en archivos para la distribución."
 
     # options.rpy:166
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
-    new "## Las funciones siguientes toman patrones de archivos. No son relevantes las mayúsculas o minúsculas. Son relativos al directorio base, con o sin una / inicial. Si corresponden más de un patrón, se usa el primero."
+    new "## Las siguientes funciones toman patrones de archivos. No distinguen entre mayúsculas y minúsculas, y se comparan con la ruta relativa al directorio base, con o sin una / inicial. Si coinciden varios patrones, se usa el primero."
 
     # options.rpy:171
     old "## In a pattern:"
@@ -166,15 +166,15 @@
 
     # options.rpy:175
     old "## * matches all characters, except the directory separator."
-    new "## * corresponde a todos los carácteres, excepto el separador de directorios."
+    new "## * coincide con todos los caracteres, excepto el separador de directorios."
 
     # options.rpy:177
     old "## ** matches all characters, including the directory separator."
-    new "## ** corresponde a todos los carácteres, incluynedo el separador de directorios."
+    new "## ** coincide con todos los caracteres, incluido el separador de directorios."
 
     # options.rpy:179
     old "## For example, \"*.txt\" matches txt files in the base directory, \"game/**.ogg\" matches ogg files in the game directory or any of its subdirectories, and \"**.psd\" matches psd files anywhere in the project."
-    new "## Por ejemplo, \"*.txt\" corresponde a los archivos .txt en el directorio de base, \"game/**.ogg\" corresponde a los archivos .ogg del directorio 'game' y sus subdirectorios y \"**.psd\" corresponde a los archivos .psd en cualquier parte del proyecto."
+    new "## Por ejemplo, \"*.txt\" coincide con los archivos .txt en el directorio base, \"game/.ogg\" coincide con los archivos .ogg en el directorio 'game' o cualquiera de sus subdirectorios, y \".psd\" coincide con los archivos .psd en cualquier parte del proyecto."
 
     # options.rpy:183
     old "## Classify files as None to exclude them from the built distributions."
@@ -186,15 +186,15 @@
 
     # options.rpy:196
     old "## Files matching documentation patterns are duplicated in a mac app build, so they appear in both the app and the zip file."
-    new "## Los archivos que corresponden a patrones de documentation se duplican en la distribución de mac; aparecerán en los archivos app y zip."
+    new "## Los archivos que coinciden con patrones de documentación se duplican en la distribución para Mac, por lo que aparecen tanto en la aplicación como en el archivo zip."
 
     # options.rpy:202
     old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
-    new "## Ajusta la cadena que contiene tu 'Apple Developer ID Application' para permitir el firmado en Mac. Asegúrate de cambiarlo a tu propia ID facilitada por Apple."
+    new "## Establece esto como una cadena que contenga tu 'Apple Developer ID Application' para habilitar la firma de código en Mac. Asegúrate de cambiarlo por tu propio ID proporcionado por Apple."
 
     # options.rpy:209
     old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
-    new "## Es necesaria una clave de licencia Google Play para descargar archivos de expansión y realizar compras en la aplicación. Se puede encontrar en la página \"Services & APIs\" de la consola de desarrollador de Google Play."
+    new "## Es necesaria una clave de licencia de Google Play para descargar archivos de expansión y realizar compras dentro de la aplicación. Se puede encontrar en la página \"Services & APIs\" de la consola de desarrolladores de Google Play."
 
     # options.rpy:216
     old "## The username and project name associated with an itch.io project, separated by a slash."
@@ -202,9 +202,9 @@
 
     # gui/game/options.rpy:47
     old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
-    new "## Estas tres variables controlan, entre otras cosas, qué mezcladores se muestran al reproductor de forma predeterminada. Establecer uno de estos en False ocultará el mezclador apropiado. "
+    new "## Estas tres variables controlan, entre otras cosas, qué mezcladores se muestran al jugador de forma predeterminada. Establecer uno de ellos en 'False' ocultará el mezclador correspondiente."
 
     # gui/game/options.rpy:203
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
-    new "## Se necesita una clave de licencia de Google Play para realizar compras dentro de la aplicación. Se puede encontrar en la consola de desarrollador de Google Play, en \"Monetizar\" > \"Configuración de la monetización\" > \"Licencias\"."
+    new "## Se necesita una clave de licencia de Google Play para realizar compras dentro de la aplicación. Se puede encontrar en la consola de desarrolladores de Google Play, en \"Monetizar\" > \"Configuración de la monetización\" > \"Licencias\"."
 

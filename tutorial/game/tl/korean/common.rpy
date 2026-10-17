@@ -530,7 +530,7 @@
 
     # 00preferences.rpy:416
     old "mute music"
-    new "배경음악 크기"
+    new "배경음악 끄기"
 
     # 00preferences.rpy:417
     old "mute sound"

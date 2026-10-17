@@ -823,7 +823,7 @@ class SelectorDrivenNode(Node):
                 return ("skipped_transition", old_less_updates, state)
             return state
 
-        if isinstance(state, tuple) and len(state) == 3 and state[0] == "skipped_transition":
+        while isinstance(state, tuple) and len(state) == 3 and state[0] == "skipped_transition":
             renpy.game.less_updates = state[1]
             state = state[-1]
 
