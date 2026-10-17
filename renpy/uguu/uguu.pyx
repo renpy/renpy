@@ -118,6 +118,7 @@ from renpy.uguu.gl cimport (
     glGetFramebufferAttachmentParameteriv as _glGetFramebufferAttachmentParameteriv,
     glGetIntegeri_v as _glGetIntegeri_v,
     glGetIntegerv as _glGetIntegerv,
+    glGetProgramBinary as _glGetProgramBinary,
     glGetProgramInfoLog as _glGetProgramInfoLog,
     glGetProgramiv as _glGetProgramiv,
     glGetQueryObjectuiv as _glGetQueryObjectuiv,
@@ -154,6 +155,8 @@ from renpy.uguu.gl cimport (
     glLinkProgram as _glLinkProgram,
     glPixelStorei as _glPixelStorei,
     glPolygonOffset as _glPolygonOffset,
+    glProgramBinary as _glProgramBinary,
+    glProgramParameteri as _glProgramParameteri,
     glReadBuffer as _glReadBuffer,
     glReadPixels as _glReadPixels,
     glRenderbufferStorage as _glRenderbufferStorage,
@@ -723,6 +726,12 @@ def glGetIntegerv(pname, data):
     cdef ptr data_ptr = get_ptr(data)
     _glGetIntegerv(pname, <GLint *> data_ptr.ptr)
 
+def glGetProgramBinary(program, bufSize, length, binaryFormat, binary):
+    cdef ptr length_ptr = get_ptr(length)
+    cdef ptr binaryFormat_ptr = get_ptr(binaryFormat)
+    cdef ptr binary_ptr = get_ptr(binary)
+    _glGetProgramBinary(program, bufSize, <GLsizei *> length_ptr.ptr, <GLenum *> binaryFormat_ptr.ptr, <void *> binary_ptr.ptr)
+
 def glGetProgramInfoLog(program, bufSize, length, infoLog):
     cdef ptr length_ptr = get_ptr(length)
     cdef ptr infoLog_ptr = get_ptr(infoLog)
@@ -856,6 +865,13 @@ def glPixelStorei(pname, param):
 
 def glPolygonOffset(factor, units):
     _glPolygonOffset(factor, units)
+
+def glProgramBinary(program, binaryFormat, binary, length):
+    cdef ptr binary_ptr = get_ptr(binary)
+    _glProgramBinary(program, binaryFormat, <const void *> binary_ptr.ptr, length)
+
+def glProgramParameteri(program, pname, value):
+    _glProgramParameteri(program, pname, value)
 
 def glReadBuffer(src):
     _glReadBuffer(src)
@@ -1335,6 +1351,7 @@ GL_RG16I = renpy.uguu.gl.GL_RG16I
 GL_RG16UI = renpy.uguu.gl.GL_RG16UI
 GL_RG32I = renpy.uguu.gl.GL_RG32I
 GL_RG32UI = renpy.uguu.gl.GL_RG32UI
+GL_PROGRAM_BINARY_RETRIEVABLE_HINT = renpy.uguu.gl.GL_PROGRAM_BINARY_RETRIEVABLE_HINT
 GL_UNSIGNED_SHORT_5_6_5 = renpy.uguu.gl.GL_UNSIGNED_SHORT_5_6_5
 GL_UNSIGNED_INT_2_10_10_10_REV = renpy.uguu.gl.GL_UNSIGNED_INT_2_10_10_10_REV
 GL_MIRRORED_REPEAT = renpy.uguu.gl.GL_MIRRORED_REPEAT
@@ -1397,8 +1414,11 @@ GL_CURRENT_VERTEX_ATTRIB = renpy.uguu.gl.GL_CURRENT_VERTEX_ATTRIB
 GL_VERTEX_ATTRIB_ARRAY_POINTER = renpy.uguu.gl.GL_VERTEX_ATTRIB_ARRAY_POINTER
 GL_NUM_COMPRESSED_TEXTURE_FORMATS = renpy.uguu.gl.GL_NUM_COMPRESSED_TEXTURE_FORMATS
 GL_COMPRESSED_TEXTURE_FORMATS = renpy.uguu.gl.GL_COMPRESSED_TEXTURE_FORMATS
+GL_PROGRAM_BINARY_LENGTH = renpy.uguu.gl.GL_PROGRAM_BINARY_LENGTH
 GL_BUFFER_SIZE = renpy.uguu.gl.GL_BUFFER_SIZE
 GL_BUFFER_USAGE = renpy.uguu.gl.GL_BUFFER_USAGE
+GL_NUM_PROGRAM_BINARY_FORMATS = renpy.uguu.gl.GL_NUM_PROGRAM_BINARY_FORMATS
+GL_PROGRAM_BINARY_FORMATS = renpy.uguu.gl.GL_PROGRAM_BINARY_FORMATS
 GL_STENCIL_BACK_FUNC = renpy.uguu.gl.GL_STENCIL_BACK_FUNC
 GL_STENCIL_BACK_FAIL = renpy.uguu.gl.GL_STENCIL_BACK_FAIL
 GL_STENCIL_BACK_PASS_DEPTH_FAIL = renpy.uguu.gl.GL_STENCIL_BACK_PASS_DEPTH_FAIL
