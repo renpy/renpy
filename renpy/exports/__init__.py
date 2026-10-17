@@ -180,6 +180,10 @@ from renpy.gl2.live2d import (
     has_live2d as has_live2d,
 )
 
+from renpy.gl2.spine import (
+    has_spine,
+)
+
 from renpy.lexer import (
     unelide_filename as unelide_filename,
     lex_string as lex_string,
