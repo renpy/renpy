@@ -89,7 +89,7 @@ def _build():
     # renpy
     cython("renpy.astsupport")
     cython("renpy.cslots")
-    cython("renpy.lexersupport")
+    cython("renpy.tokenizer")
     cython("renpy.pydict")
     cython("renpy.style")
     cython("renpy.encryption")
