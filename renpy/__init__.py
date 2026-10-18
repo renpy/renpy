@@ -46,7 +46,12 @@ def _install_system_python_hook():
         if dll_dir not in sys.path:
             sys.path.insert(0, dll_dir)
 
-        ctypes.windll.kernel32.SetDllDirectoryW(dll_dir)
+        # Set the default DLL search directories to include the application
+        # directory containing the Ren'Py DLLs.
+        # 0x1000 = LOAD_LIBRARY_SEARCH_DEFAULT_DIRS
+        ctypes.windll.kernel32.SetDefaultDllDirectories(0x1000)
+        os.add_dll_directory(dll_dir)
+        os.add_dll_directory(os.path.join(dll_dir, "dev"))
 
     else:
         # Set up the hook for any renpy __init__ modules to import binary modules from

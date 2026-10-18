@@ -330,7 +330,7 @@ def package_flags(*packages: str) -> PackageFlags:
         with (dev_dir / "include_dirs.txt").open(encoding="utf-8") as f:
             rv["include_dirs"].extend(l.strip() for l in f)
 
-        rv["library_dirs"].append(str(dev_dir / "lib"))
+        rv["library_dirs"].append(str(dev_dir))
         rv["libraries"].append("renpyall")
         return rv
 
