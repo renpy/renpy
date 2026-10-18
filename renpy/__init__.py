@@ -43,7 +43,6 @@ def _install_system_python_hook():
             sys.exit("Ren'Py extension modules are not compiled. Run setup.py build first.")
 
         dll_dir = str(root / "lib" / "py3-windows-x86_64")
-        os.add_dll_directory(dll_dir + "\\librenpyall.dll")
         if dll_dir not in sys.path:
             sys.path.insert(0, dll_dir)
 
