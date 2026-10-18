@@ -380,7 +380,7 @@ def setup(name, version):
         ext_link_args += data["flags"]["extra_link_args"]
         ext_link_args += extra_link_args
 
-        ext_include_dirs: list[str] = []
+        ext_include_dirs: list[str] = ["src", gen]
         ext_include_dirs += package_kwargs["include_dirs"]
         ext_include_dirs += data["flags"]["include_dirs"]
 
