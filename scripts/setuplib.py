@@ -32,7 +32,8 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Literal, TypedDict
 
-import setuptools
+from setuptools import Extension
+from setuptools.command.build_ext import build_ext
 
 coverage = "RENPY_COVERAGE" in os.environ
 "True if we are building with coverage enabled."
@@ -103,6 +104,17 @@ extensions: dict[str, ExtensionData] = {}
 
 # A list of cython generation commands that will be run in parallel.
 generate_cython_queue: list[tuple[str, str, str]] = []
+
+
+class RenpyBuildExt(build_ext):
+    def build_extensions(self):
+        if self.compiler.compiler_type == "mingw32":
+            for name in ("compiler_so", "compiler_so_cxx"):
+                command = getattr(self.compiler, name, None)
+                if command is not None and "-shared" in command:
+                    self.compiler.set_executable(name, [arg for arg in command if arg != "-shared"])
+
+        super().build_extensions()
 
 
 @contextmanager
@@ -243,7 +255,7 @@ def generate_all_cython():
         nthreads = os.cpu_count() or 1
 
     cython_extensions = [
-        setuptools.Extension(
+        Extension(
             name=name,
             sources=[fn],
             language=language,
@@ -251,7 +263,7 @@ def generate_all_cython():
         for name, fn, language in generate_cython_queue
     ]
 
-    ext: setuptools.Extension
+    ext: Extension
     for ext in cythonize(
         cython_extensions,
         build_dir=gen,
@@ -361,8 +373,9 @@ def setup(name, version):
     before this, so that the Cython extensions have been turned into C/C++
     extensions with real source files.
     """
+    import setuptools
 
-    ext_modules: list[setuptools.Extension] = []
+    ext_modules: list[Extension] = []
     for ext_name, data in extensions.items():
         package_kwargs = package_flags(*data["packages"])
 
@@ -397,7 +410,7 @@ def setup(name, version):
         ext_library_dirs += data["flags"]["library_dirs"]
 
         ext_modules.append(
-            setuptools.Extension(
+            Extension(
                 name=ext_name,
                 sources=data["sources"],
                 language=data["language"],
@@ -418,5 +431,6 @@ def setup(name, version):
         ext_modules=ext_modules,
         packages=[],
         py_modules=[],
+        cmdclass={"build_ext": RenpyBuildExt},
         zip_safe=False,
     )
