@@ -1027,3 +1027,77 @@
     # renpy/common/00updater.rpy:1992
     old "An error occurred when trying to download game data:"
     new "Ha ocurrido un error al intentar descargar los datos del juego:"
+    
+
+    # renpy/common/00accessibility.rpy:143
+    old "Screen Reader"
+    new "Lector de pantalla"
+
+    # renpy/common/00accessibility.rpy:183
+    old "Self-Voicing Speed"
+    new "Velocidad de voz automática"
+
+    # renpy/common/00accessibility.rpy:205
+    old "Self-Voicing Voice"
+    new "Voz de la voz automática"
+
+    # renpy/common/00accessibility.rpy:293
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars. Press R to reset self-voicing settings to their default values and enable self-voicing."
+    new "Menú de accesibilidad. Usa las flechas arriba y abajo para navegar y la tecla Intro para activar botones y barras. Presiona R para restablecer los ajustes de voz automática a sus valores predeterminados y activarla."
+
+    # renpy/common/00accessibility.rpy:335
+    old "Press R to reset all self-voicing settings to their default values, and enable self-voicing."
+    new "Presiona R para restablecer todos los ajustes de voz automática a sus valores predeterminados y activarla."
+
+    # renpy/common/00accessibility.rpy:342
+    old "Self-voicing settings reset."
+    new "Se restablecieron los ajustes de voz automática."
+
+    # renpy/common/00keymap.rpy:349
+    old " Copied screenshot to clipboard."
+    new " Captura de pantalla copiada al portapapeles."
+
+    # renpy/common/00preferences.rpy:476
+    old "screenreader voicing"
+    new "voz de lector de pantalla"
+
+    # renpy/common/00preferences.rpy:479
+    old "screenreader voicing enable"
+    new "activar voz de lector de pantalla"
+
+    # renpy/common/00preferences.rpy:481
+    old "screenreader voicing disable"
+    new "desactivar voz de lector de pantalla"
+
+    # renpy/common/00preferences.rpy:635
+    old "self voicing voice"
+    new "voz de la voz automática"
+
+    # renpy/common/00preferences.rpy:637
+    old "voice [text]"
+    new "voz [text]"
+
+    # renpy/common/00preferences.rpy:640
+    old "voice "
+    new  "voz "
+
+    # renpy/common/00preferences.rpy:648
+    old "self voicing speed"
+    new "velocidad de voz automática"
+
+    # renpy/common/00preferences.rpy:651
+    old "self-voicing speed"
+    new "velocidad de voz automática"
+
+    # renpy/common/00preferences.rpy:761
+    old "Screen reader voicing enabled. Press 'shift+V' to disable."
+    new "Voz de lector de pantalla activada. Presiona 'Mayús+V' para desactivarla."
+
+    # renpy/common/00sync.rpy:575
+    old "Sync Progress"
+    new "Progreso de sincronización"
+
+    # renpy/common/00updater.rpy:885
+    old "The update source does not support RPU updates."
+    new "La fuente de actualización no admite actualizaciones RPU."
+
