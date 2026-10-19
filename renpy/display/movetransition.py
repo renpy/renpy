@@ -502,6 +502,13 @@ def MoveTransition(
         If not None, images leaving the scene will also be moved. The transform
         will be applied to the image to get it in its ending position.
 
+    The entrance and exit transforms can change both the horizontal and vertical
+    placement of an image. For a horizontal move that preserves the image's vertical
+    placement, set only `xpos` and `xanchor`. The :var:`offscreenleft` and
+    :var:`offscreenright` transforms also align images to the bottom of the
+    screen, so using them can produce diagonal movement for images positioned
+    at other heights.
+
     The three following parameters take :ref:`time warp functions <warpers>`,
     which take a number between 0.0 and 1.0, and should return a number in the
     same range.
@@ -518,13 +525,18 @@ def MoveTransition(
 
     ::
 
-        define longer_easein = MoveTransition(3.0, enter=offscreenright, enter_time_warp=_warper.easein)
+        define longer_easein = MoveTransition(
+            3.0,
+            enter=Transform(xpos=1.0, xanchor=0.0),
+            enter_time_warp=_warper.easein)
 
     In the following code, "a" will be leaving the scene (using `leave` and
     `leave_time_warp`), "b" will be changing position (using `time_warp`), and
     "c" will be entering (using `enter` and `enter_time_warp`). Because the same
     tag is applied before and after, "d" will not be counted as entering or
     leaving, but as changing position.
+
+
 
     ::
 
