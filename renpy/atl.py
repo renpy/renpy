@@ -224,9 +224,9 @@ def interpolate(t, a, b, typ):
 # from 00splines.rpy.
 
 
-def interpolate_spline(t, spline, typ):
+def interpolate_spline(t, spline, typ, loop):
     if isinstance(spline[-1], tuple):
-        return tuple(interpolate_spline(t, i, ty) for i, ty in zip(zip(*spline), typ))
+        return tuple(interpolate_spline(t, i, ty, loop) for i, ty in zip(zip(*spline), typ))
 
     if spline[0] is None:
         return spline[-1]
@@ -263,7 +263,11 @@ def interpolate_spline(t, spline, typ):
 
     else:
         # Catmull-Rom (re-adjust the control points)
-        spline = [spline[1], spline[0]] + list(spline[2:-2]) + [spline[-1], spline[-2]]
+        if loop:
+            spline = [spline[-2], *spline, spline[1]]
+            lenspline += 2
+        else:
+            spline = [spline[1], spline[0], *spline[2:-2], spline[-1], spline[-2]]
 
         inner_spline_count = float(lenspline - 3)
 
@@ -1154,8 +1158,8 @@ class RawMultipurpose(RawStatement):
     def add_circles(self, circles):
         self.circles = circles
 
-    def add_spline(self, name, exprs):
-        self.splines.append((name, exprs))
+    def add_spline(self, name, exprs, loop):
+        self.splines.append((name, exprs, loop))
 
     def compile(self, ctx):
         compiling(self.loc)
@@ -1212,7 +1216,7 @@ class RawMultipurpose(RawStatement):
 
         splines = []
 
-        for name, exprs in self.splines:
+        for name, exprs, loop in self.splines:
             if name not in PROPERTIES:
                 raise Exception("ATL Property %s is unknown at runtime." % name)
 
@@ -1226,7 +1230,7 @@ class RawMultipurpose(RawStatement):
                 else:
                     raise Exception("%s: Spline interpolation requires position types." % name)
 
-            splines.append((name, values))
+            splines.append((name, values, loop))
 
         for expr, _with in self.expressions:
             try:
@@ -1262,7 +1266,7 @@ class RawMultipurpose(RawStatement):
         for _name, expr in self.properties:
             constant = min(constant, is_constant_expr(expr))
 
-        for _name, exprs in self.splines:
+        for _name, exprs, _loop in self.splines:
             for expr in exprs:
                 constant = min(constant, is_constant_expr(expr))
 
@@ -1590,8 +1594,8 @@ class Interpolation(Statement):
                         anchorradii = (trans.state.anchorradius, newts.anchorradius)
 
             # Figure out the splines.
-            for name, values in self.splines:
-                splines.append((name, [trans.state.get(name)] + values))
+            for name, values, loop in self.splines:
+                splines.append((name, [trans.state.get(name)] + values, loop))
 
             state = (linear, angles, radii, anchorangles, anchorradii, splines)
 
@@ -1643,8 +1647,8 @@ class Interpolation(Statement):
             trans.state.anchorradius = interpolate(complete, startradius, endradius, position_or_none)
 
         # Handle any splines we might have.
-        for name, values in splines:
-            value = interpolate_spline(complete, values, PROPERTIES[name])
+        for name, values, loop in splines:
+            value = interpolate_spline(complete, values, PROPERTIES[name], loop)
             setattr(trans.state, name, value)
 
         if (st >= self.duration) and (not force_frame):
@@ -2266,8 +2270,14 @@ def parse_atl(l):
                     if knots:
                         if prop == "orientation":
                             raise Exception("Orientation doesn't support spline.")
+
+                        if loop := ll.keyword("loop"):
+                            if len(knots) < 3:
+                                raise Exception("Spline loops require at least 3 knots.")
+
                         knots.append(expr)
-                        rm.add_spline(prop, knots)
+                        rm.add_spline(prop, knots, loop)
+
                     else:
                         addprop_rv = rm.add_property(prop, expr)
                         if addprop_rv == prop:
