@@ -1105,7 +1105,9 @@ def check_spline_types(value):
     return False
 
 
-class RawMultipurpose(RawStatement):
+class RawMultipurpose(RawStatement, renpy.object.Object):
+    __version__ = 1
+
     warp_function = None
 
     def __init__(self, loc):
@@ -1118,6 +1120,10 @@ class RawMultipurpose(RawStatement):
         self.splines = []
         self.revolution = None
         self.circles = "0"
+
+    def after_upgrade(self, version):
+        if version < 1:
+            self.splines = [(*spline, False) for spline in self.splines]
 
     def add_warper(self, name, duration, warp_function):
         self.warper = name
@@ -1396,6 +1402,8 @@ class Child(Statement):
 
 # This causes interpolation to occur.
 class Interpolation(Statement):
+    __version__ = 1
+
     def __init__(self, loc, warper, duration, properties, revolution, circles, splines):
         super(Interpolation, self).__init__(loc)
 
@@ -1409,6 +1417,10 @@ class Interpolation(Statement):
 
         # The number of complete circles we make.
         self.circles = circles
+
+    def after_upgrade(self, version):
+        if version < 1:
+            self.splines = [(*spline, False) for spline in self.splines]
 
     def execute(self, trans, st, state, events):
         executing(self.loc)
