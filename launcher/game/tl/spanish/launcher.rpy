@@ -98,7 +98,7 @@
     # android.rpy:49
     old "Disconnects from an Android device running ADB in TCP/IP mode."
     new "Se desconecta de un dispositivo Android que ejecuta ADB en modo TCP/IP."
-    
+
 
     # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
@@ -1947,7 +1947,7 @@
     # game/editor.rpy:152
     old "A modern editor with many extensions including advanced Ren'Py integration."
     new "Un editor moderno con muchas extensiones, incluida la integración avanzada de Ren'Py."
-    
+
 
     # game/editor.rpy:153
     old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
@@ -2371,7 +2371,7 @@
 
     # game/wavedash.rpy:222
     old "The web distribution could not be found. Would you like to build it now and upload it to Wavedash?"
-    new ""No se pudo encontrar la distribución web. ¿Quieres crearla ahora y subirla a Wavedash?
+    new "No se pudo encontrar la distribución web. ¿Quieres crearla ahora y subirla a Wavedash?"
 
     # game/wavedash.rpy:230
     old "The Wavedash configuration in the web distribution could not be read."
@@ -2400,4 +2400,3 @@
     # game/web.rpy:570
     old "Upload to wavedash.com"
     new "Subir a wavedash.com"
-
