@@ -69,7 +69,7 @@ translate schinese after_nvl_menu_cb560cd2:
 translate schinese after_nvl_menu_10a6e85a:
 
     # e "You can specify transitions that occur when going from NVL-mode to ADV-mode."
-    e "您可以指定从NVL模式到ADV模式时发生的转场。"
+    e "你可以指定从 NVL 模式切换到 ADV 模式时使用的转场。"
 
 # game/tutorial_nvlmode.rpy:73
 translate schinese after_nvl_menu_d43b28d1:
