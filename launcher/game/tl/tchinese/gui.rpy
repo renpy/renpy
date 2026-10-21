@@ -7,7 +7,7 @@ translate tchinese strings:
 
     # gui.rpy:5
     old "## The init offset statement causes the init code in this file to run before init code in any other file."
-    new "## init offset 語句會導致此檔案中的 init 程式碼在任何其他檔案中的 init 程式碼之前執行"
+    new "## init offset 語句讓此檔案的 init 程式碼先於其他檔案的 init 程式碼執行。"
 
     # gui.rpy:9
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
@@ -15,7 +15,7 @@ translate tchinese strings:
 
     # gui.rpy:21
     old "## Colors"
-    new "## 顔色"
+    new "## 顏色"
 
     # gui.rpy:23
     old "## The colors of text in the interface."
@@ -31,11 +31,11 @@ translate tchinese strings:
 
     # gui.rpy:32
     old "## The small color is used for small text, which needs to be brighter/darker to achieve the same effect."
-    new "## 小顏色適用於小文字，需要更亮/更暗才能達到與普通文字相同的效果"
+    new "## 小字使用的顏色，需要更亮或更暗才能達到與一般文字相同的效果。"
 
     # gui.rpy:36
     old "## The color that is used for buttons and bars that are hovered."
-    new "## 用於懸停的按鈕和欄的顏色"
+    new "## 滑鼠停留在按鈕或長條上時使用的顏色。"
 
     # gui.rpy:39
     old "## The color used for a text button when it is selected but not focused. A button is selected if it is the current screen or preference value."
@@ -55,19 +55,19 @@ translate tchinese strings:
 
     # gui.rpy:56
     old "## Fonts and Font Sizes"
-    new "## 字形和字形大小"
+    new "## 字型與字級"
 
     # gui.rpy:58
     old "## The font used for in-game text."
-    new "## 用於遊戲內文字的字形"
+    new "## 遊戲內文字使用的字型。"
 
     # gui.rpy:61
     old "## The font used for character names."
-    new "## 用於角色名稱的字形"
+    new "## 角色名稱使用的字型。"
 
     # gui.rpy:64
     old "## The font used for out-of-game text."
-    new "## 用於遊戲外文字的字形"
+    new "## 遊戲外文字使用的字型。"
 
     # gui.rpy:67
     old "## The size of normal dialogue text."
@@ -87,7 +87,7 @@ translate tchinese strings:
 
     # gui.rpy:79
     old "## The size of text on the notify screen."
-    new "## 通知螢幕上的文字大小"
+    new "## 通知畫面的文字大小。"
 
     # gui.rpy:82
     old "## The size of the game's title."
@@ -103,7 +103,7 @@ translate tchinese strings:
 
     # gui.rpy:92
     old "## Should we show the name and version of the game?"
-    new "## 我們需要顯示遊戲的名稱和版本嗎？"
+    new "## 是否顯示遊戲名稱與版本？"
 
     # gui.rpy:96
     old "## Dialogue"
@@ -123,7 +123,7 @@ translate tchinese strings:
 
     # gui.rpy:109
     old "## The placement of the speaking character's name, relative to the textbox. These can be a whole number of pixels from the left or top, or 0.5 to center."
-    new "## 對話角色的名字相對於文字框的位置。這些可以是從左側或頂端開始的整數像素，也可以是到中心的 0.5 個像素"
+    new "## 說話角色的名稱相對於文字框的位置。可使用相對於左側或頂端的整數像素值，或用 0.5 置中。"
 
     # gui.rpy:114
     old "## The horizontal alignment of the character's name. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
@@ -131,7 +131,7 @@ translate tchinese strings:
 
     # gui.rpy:118
     old "## The width, height, and borders of the box containing the character's name, or None to automatically size it."
-    new "## 包含角色名稱的框的寬度、高度和邊框，或無以自動調整其大小"
+    new "## 名稱框的寬度、高度與邊框。設為 None 可自動調整大小。"
 
     # gui.rpy:123
     old "## The borders of the box containing the character's name, in left, top, right, bottom order."
@@ -143,7 +143,7 @@ translate tchinese strings:
 
     # gui.rpy:132
     old "## The placement of dialogue relative to the textbox. These can be a whole number of pixels relative to the left or top side of the textbox, or 0.5 to center."
-    new "## 對話相對於文字框的位置。這些可以是相對於文字方塊左側或頂端的整數像素，或相對於中心的 0.5 個像素"
+    new "## 對話相對於文字框的位置。可使用相對於文字框左側或頂端的整數像素值，或用 0.5 置中。"
 
     # gui.rpy:138
     old "## The maximum width of dialogue text, in pixels."
@@ -163,11 +163,11 @@ translate tchinese strings:
 
     # gui.rpy:151
     old "## The width and height of a button, in pixels. If None, Ren'Py computes a size."
-    new "## 按鈕的寬度和高度，以像素為單位。如果沒有，Ren'Py 會計算其尺寸"
+    new "## 按鈕的寬度與高度，以像素為單位。若為 None，Ren'Py 會計算大小。"
 
     # gui.rpy:155
     old "## The borders on each side of the button, in left, top, right, bottom order."
-    new "## 按鈕兩側的邊框，依左、上、右、下順序排列"
+    new "## 按鈕各側的邊框，依左、上、右、下的順序排列。"
 
     # gui.rpy:158
     old "## If True, the background image will be tiled. If False, the background image will be linearly scaled."
@@ -199,7 +199,7 @@ translate tchinese strings:
 
     # gui.rpy:207
     old "## Choice buttons are used in the in-game menus."
-    new "## 選擇按鈕用於遊戲內選單"
+    new "## 選項按鈕用於遊戲內的選單。"
 
     # gui.rpy:220
     old "## File Slot Buttons"
@@ -207,7 +207,7 @@ translate tchinese strings:
 
     # gui.rpy:222
     old "## A file slot button is a special kind of button. It contains a thumbnail image, and text describing the contents of the save slot. A save slot uses image files in gui/button, like the other kinds of buttons."
-    new "## 存檔槽按鈕是一種特殊類型的按鈕。它包含縮圖和描述儲存槽內容的文字。與其他類型的按鈕一樣，儲存槽使用 gui/button 中的影像檔案"
+    new "## 存檔欄位按鈕是一種特殊按鈕，包含縮圖與描述存檔內容的文字。與其他按鈕一樣，存檔欄位使用 gui/button 中的影像檔案。"
 
     # gui.rpy:226
     old "## The save slot button."
@@ -219,7 +219,7 @@ translate tchinese strings:
 
     # gui.rpy:238
     old "## The number of columns and rows in the grid of save slots."
-    new "## 儲存槽網格中的列數和行數"
+    new "## 存檔欄位網格的欄數與列數。"
 
     # gui.rpy:243
     old "## Positioning and Spacing"
@@ -275,7 +275,7 @@ translate tchinese strings:
 
     # gui.rpy:282
     old "## Generic frames that are introduced by player code."
-    new "## 由玩家程式碼引入的通用框架"
+    new "## 由玩家程式碼建立的通用框架。"
 
     # gui.rpy:285
     old "## The frame that is used as part of the confirm screen."
@@ -303,7 +303,7 @@ translate tchinese strings:
 
     # gui.rpy:302
     old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written code."
-    new "## 預設 GUI 僅使用滑塊和垂直捲軸。所有其他捲軸僅在建立者編寫的程式碼中使用"
+    new "## 預設 GUI 只使用滑桿與垂直捲軸。其他長條僅用於創作者撰寫的程式碼。"
 
     # gui.rpy:305
     old "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
@@ -323,7 +323,7 @@ translate tchinese strings:
 
     # gui.rpy:326
     old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
-    new "## 如何處理 gui 中無法滾動的捲軸。 \"hide\" 隱藏它們，而 None 則顯示它們"
+    new "## 如何處理 GUI 中無法捲動的捲軸。\"hide\" 會隱藏，None 則會顯示。"
 
     # gui.rpy:331
     old "## History"
@@ -371,7 +371,7 @@ translate tchinese strings:
 
     # gui.rpy:384
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
-    new "## nvl_thought 文字的位置、寬度和對齊方式（由 nvl_narrator 字元表示的文字）"
+    new "## nvl_thought 文字的位置、寬度與對齊方式（即 nvl_narrator 角色說出的文字）。"
 
     # gui.rpy:391
     old "## The position of nvl menu_buttons."
@@ -395,7 +395,7 @@ translate tchinese strings:
 
     # gui.rpy:427
     old "## Change the size and spacing of items in the game menu."
-    new "## 更改遊戲選單中專案的大小和間距"
+    new "## 變更遊戲選單中項目的大小與間距。"
 
     # gui.rpy:436
     old "## File button layout."
@@ -411,11 +411,11 @@ translate tchinese strings:
 
     # gui/game/gui.rpy:5
     old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
-    new "## init offset 語句導致此文件中的初始化語句在任何其他文件中的 init 語句之前執行。"
+    new "## init offset 語句讓此檔案的初始化語句先於其他檔案的 init 語句執行。"
 
     # gui/game/gui.rpy:14
     old "## Enable checks for invalid or unstable properties in screens or transforms"
-    new "## 啟用螢幕或變換中無效或不穩定屬性的檢查"
+    new "## 啟用畫面與變換中無效或不穩定屬性的檢查。"
 
     # gui/game/gui.rpy:19
     old "## GUI Configuration Variables"
@@ -439,7 +439,7 @@ translate tchinese strings:
 
     # gui/game/gui.rpy:307
     old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
-    new "## 預設 GUI 僅使用滑塊和垂直捲軸。所有其他捲軸僅在建立者編寫的螢幕中使用"
+    new "## 預設 GUI 只使用滑桿與垂直捲軸。其他長條僅用於創作者撰寫的畫面。"
 
     # gui/game/gui.rpy:347
     old "## Additional space to add between history screen entries."
@@ -455,7 +455,7 @@ translate tchinese strings:
 
     # gui/game/gui.rpy:410
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
-    new "## 這控制允許換行的位置。預設值適用於大多數語言。可用值的清單可以在 https://www.renpy.org/doc/html/style_properties.html#style-property-language 中找到財產語言"
+    new "## 控制允許換行的位置。預設值適用於大多數語言。可用值請見 https://www.renpy.org/doc/html/style_properties.html#style-property-language"
 
     # gui/game/gui.rpy:418
     old "## Mobile devices"
@@ -463,5 +463,5 @@ translate tchinese strings:
 
     # gui/game/gui.rpy:449
     old "## Change the size and spacing of various things."
-    new "## 改變各種東西的大小和間距。"
+    new "## 變更各項元素的大小與間距。"
 
