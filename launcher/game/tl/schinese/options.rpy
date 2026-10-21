@@ -6,7 +6,7 @@
 
     # gui/game/options.rpy:4
     old "## Lines beginning with two '#' marks are comments, and you shouldn't uncomment them. Lines beginning with a single '#' mark are commented-out code, and you may want to uncomment them when appropriate."
-    new "## 以“##”开头的语句是注释，您不应该对其取消注释。以“#”开头的语句是注释掉的代码，在适用的时候您可能需要对其取消注释。"
+    new "## 以两个“#”开头的行是注释，不应取消注释。以一个“#”开头的行是被注释掉的代码，可在需要时取消注释。"
 
     # gui/game/options.rpy:10
     old "## Basics"
@@ -26,7 +26,7 @@
 
     # gui/game/options.rpy:20
     old "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
-    new "## 决定上面给出的标题是否显示在标题界面屏幕。设置为 False 来隐藏标题。"
+    new "## 决定上方的标题是否显示在主菜单界面。设为 False 可隐藏标题。"
 
     # gui/game/options.rpy:26
     old "## The version of the game."
@@ -34,11 +34,11 @@
 
     # gui/game/options.rpy:31
     old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
-    new "## 放置在游戏内“关于”屏幕上的文本。将文本放在三个引号之间，并在段落之间留出空行。"
+    new "## 显示在游戏“关于”界面的文字。请将文字放在三引号之间，并在段落之间留出空行。"
 
     # gui/game/options.rpy:38
     old "## A short name for the game used for executables and directories in the built distribution. This must be ASCII-only, and must not contain spaces, colons, or semicolons."
-    new "## 在构建的发布版中，可执行文件和目录所使用的短名称。此处仅限使用 ASCII 字符，并且不能包含空格、冒号或分号。"
+    new "## 用于发行版中可执行文件和目录的游戏短名称。只能使用 ASCII 字符，且不得包含空格、冒号或分号。"
 
     # gui/game/options.rpy:45
     old "## Sounds and music"
@@ -50,11 +50,11 @@
 
     # gui/game/options.rpy:56
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
-    new "## 为了让用户在音效或语音轨道上播放测试音频，请取消对下面一行的注释并设置播放的样本声音。"
+    new "## 若要允许用户在音效或语音通道播放测试音频，请取消下面某行的注释，并设置要播放的示例音频。"
 
     # gui/game/options.rpy:63
     old "## Uncomment the following line to set an audio file that will be played while the player is at the main menu. This file will continue playing into the game, until it is stopped or another file is played."
-    new "## 将以下语句取消注释就可以设置标题界面播放的背景音乐文件。此文件将在整个游戏中持续播放，直至音乐停止或其他文件开始播放。"
+    new "## 取消下面一行的注释可设置主菜单播放的音频文件。该文件会继续播放到游戏中，直到停止或播放其他文件。"
 
     # gui/game/options.rpy:70
     old "## Transitions"
@@ -82,7 +82,7 @@
 
     # gui/game/options.rpy:97
     old "## A variable to set the transition used when the game starts does not exist. Instead, use a with statement after showing the initial scene."
-    new "## 用于控制在游戏开始标签不存在时转场的变量。作为替代，在显示初始化场景后使用 with 语句。"
+    new "## 没有用于设置游戏开始时转场的变量。请在显示初始场景后使用 with 语句。"
 
     # gui/game/options.rpy:102
     old "## Window management"
@@ -90,7 +90,7 @@
 
     # gui/game/options.rpy:104
     old "## This controls when the dialogue window is displayed. If \"show\", it is always displayed. If \"hide\", it is only displayed when dialogue is present. If \"auto\", the window is hidden before scene statements and shown again once dialogue is displayed."
-    new "## 此命令控制对话框窗口何时显示。若为 show，对话框将总是显示。若为 hide，对话框仅在对话出现时显示。若为 auto，对话框会在 scene 语句前隐藏，并在有新对话时重新显示。"
+    new "## 控制对话窗口何时显示。设为 \"show\" 时始终显示；设为 \"hide\" 时仅在有对话时显示；设为 \"auto\" 时在 scene 语句前隐藏，并在显示对话后再次显示。"
 
     # gui/game/options.rpy:109
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
@@ -106,11 +106,11 @@
 
     # gui/game/options.rpy:123
     old "## Controls the default text speed. The default, 0, is infinite, while any other number is the number of characters per second to type out."
-    new "## 控制默认的文字显示速度。默认的 0 为瞬间，而其他数字则是每秒显示出的字符数。"
+    new "## 控制默认文字速度。默认值 0 表示瞬间显示，其他数值表示每秒显示的字符数。"
 
     # gui/game/options.rpy:129
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
-    new "## 默认的自动前进延迟。数字越大，等待时间越长，有效范围为 0 - 30。"
+    new "## 默认自动推进延迟。数值越大等待越久，有效范围为 0 到 30。"
 
     # gui/game/options.rpy:135
     old "## Save directory"
@@ -134,7 +134,7 @@
 
     # gui/game/options.rpy:146
     old "## This generally should not be changed, and if it is, should always be a literal string, not an expression."
-    new "## 该语句通常不应变更，若要变更，应为有效字符串而不是表达式。"
+    new "## 通常不应更改此项；如果更改，必须使用字面字符串，而不是表达式。"
 
     # gui/game/options.rpy:152
     old "## Icon"
@@ -150,7 +150,7 @@
 
     # gui/game/options.rpy:161
     old "## This section controls how Ren'Py turns your project into distribution files."
-    new "## 此部分控制 Ren'Py 如何将您的项目转变为发行版文件。"
+    new "## 此部分控制 Ren'Py 如何将项目生成发行文件。"
 
     # gui/game/options.rpy:166
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
@@ -178,11 +178,11 @@
 
     # gui/game/options.rpy:183
     old "## Classify files as None to exclude them from the built distributions."
-    new "## 将文件列为 None 来使其从构建的发行版中排除。"
+    new "## 将文件归类为 None 可将其排除在生成的发行文件之外。"
 
     # gui/game/options.rpy:191
     old "## To archive files, classify them as 'archive'."
-    new "## 若要封装文件，需将其列为“archive”。"
+    new "## 若要将文件打包进归档，请将其归类为 'archive'。"
 
     # gui/game/options.rpy:196
     old "## Files matching documentation patterns are duplicated in a mac app build, so they appear in both the app and the zip file."
