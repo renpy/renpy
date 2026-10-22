@@ -140,6 +140,54 @@ def get_vc_version() -> VersionDict | None:
     )
 
 
+DIRTY_IGNORED_FILES: frozenset[str] = frozenset(
+    {
+        "sphinx/source/keywords.py",
+        "tutorial/game/keywords.py",
+    }
+)
+"Repository-relative paths whose modification does not make the working tree dirty."
+
+
+def is_git_dirty() -> bool:
+    """
+    Return True if the git working tree has changes to files not listed in
+    `DIRTY_IGNORED_FILES`. Raises subprocess errors if git fails.
+    """
+
+    creationflags = 0
+    if sys.platform == "win32":
+        creationflags = subprocess.CREATE_NO_WINDOW
+
+    status = subprocess.check_output(
+        ["git", "status", "--porcelain", "-z", "--untracked-files=all"],
+        encoding="utf-8",
+        creationflags=creationflags,
+    )
+
+    entries = status.split("\0")
+    i = 0
+
+    while i < len(entries):
+        entry = entries[i]
+        i += 1
+
+        if not entry:
+            continue
+
+        paths = [entry[3:]]
+
+        # Renames and copies are followed by the original path.
+        if entry[0] in "RC" and i < len(entries):
+            paths.append(entries[i])
+            i += 1
+
+        if any(path not in DIRTY_IGNORED_FILES for path in paths):
+            return True
+
+    return False
+
+
 def get_git_version(nightly: bool = False) -> VersionDict:
     """
     Return `Version` read from the git repository if it exists or None otherwise.
@@ -160,7 +208,7 @@ def get_git_version(nightly: bool = False) -> VersionDict:
             raise Exception("Current git repository is not Ren'Py repository.")
 
         branch = get_output(["git", "branch", "--show-current"])
-        dirty = get_output(["git", "status", "--porcelain"]) != ""
+        dirty = is_git_dirty()
         commits = get_output(["git", "log", "-99", "--pretty=%cd", "--date=format:%y%m%d"])
 
         commits_per_day = collections.Counter[str](commits.split())
