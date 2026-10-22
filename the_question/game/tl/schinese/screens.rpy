@@ -3,15 +3,15 @@ translate schinese strings:
 
     # screens.rpy:251
     old "Back"
-    new "回退"
+    new "返回"
 
     # screens.rpy:252
     old "History"
-    new "历史"
+    new "历史记录"
 
     # screens.rpy:253
     old "Skip"
-    new "快进"
+    new "跳过"
 
     # screens.rpy:254
     old "Auto"
@@ -23,11 +23,11 @@ translate schinese strings:
 
     # screens.rpy:256
     old "Q.Save"
-    new "快存"
+    new "快速保存"
 
     # screens.rpy:257
     old "Q.Load"
-    new "快读"
+    new "快速读取"
 
     # screens.rpy:258
     old "Prefs"
@@ -51,7 +51,7 @@ translate schinese strings:
 
     # screens.rpy:317
     old "Main Menu"
-    new "标题界面"
+    new "主菜单"
 
     # screens.rpy:319
     old "About"
@@ -75,7 +75,7 @@ translate schinese strings:
 
     # screens.rpy:557
     old "Updated Character Art"
-    new "新版角色图"
+    new "更新后的角色图"
 
     # screens.rpy:558
     old "Deji"
@@ -91,7 +91,7 @@ translate schinese strings:
 
     # screens.rpy:569
     old "Updated Background Art"
-    new "新版背景图"
+    new "更新后的背景图"
 
     # screens.rpy:570
     old "Mugenjohncel"
@@ -115,7 +115,7 @@ translate schinese strings:
 
     # screens.rpy:588
     old "Update Written By"
-    new "新版剧本"
+    new "更新版剧本"
 
     # screens.rpy:589
     old "Lore"
@@ -131,7 +131,7 @@ translate schinese strings:
 
     # screens.rpy:597
     old "\nMade with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]"
-    new "\n引擎：{a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]"
+    new "\n使用 {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only] 制作"
 
     # screens.rpy:599
     old "[renpy.license!t]"
@@ -187,7 +187,7 @@ translate schinese strings:
 
     # screens.rpy:780
     old "Rollback Side"
-    new "回退操作区"
+    new "回退侧"
 
     # screens.rpy:781
     old "Disable"
@@ -195,11 +195,11 @@ translate schinese strings:
 
     # screens.rpy:782
     old "Left"
-    new "屏幕左侧"
+    new "左侧"
 
     # screens.rpy:783
     old "Right"
-    new "屏幕右侧"
+    new "右侧"
 
     # screens.rpy:788
     old "Unseen Text"
@@ -211,7 +211,7 @@ translate schinese strings:
 
     # screens.rpy:790
     old "Transitions"
-    new "忽略转场"
+    new "转场"
 
     # screens.rpy:800
     old "Language"
@@ -247,7 +247,7 @@ translate schinese strings:
 
     # screens.rpy:980
     old "The dialogue history is empty."
-    new "尚无对话历史记录。"
+    new "对话历史记录为空。"
 
     # screens.rpy:1046
     old "Keyboard"
@@ -263,7 +263,7 @@ translate schinese strings:
 
     # screens.rpy:1063
     old "Enter"
-    new "回车"
+    new "Enter"
 
     # screens.rpy:1064
     old "Advances dialogue and activates the interface."
@@ -271,11 +271,11 @@ translate schinese strings:
 
     # screens.rpy:1067
     old "Space"
-    new "空格"
+    new "Space"
 
     # screens.rpy:1068
     old "Advances dialogue without selecting choices."
-    new "推进对话但不激活选项。"
+    new "推进对话但不选择选项。"
 
     # screens.rpy:1071
     old "Arrow Keys"
@@ -287,11 +287,11 @@ translate schinese strings:
 
     # screens.rpy:1075
     old "Escape"
-    new "Esc"
+    new "Escape"
 
     # screens.rpy:1076
     old "Accesses the game menu."
-    new "访问游戏菜单。"
+    new "打开游戏菜单。"
 
     # screens.rpy:1079
     old "Ctrl"
@@ -299,7 +299,7 @@ translate schinese strings:
 
     # screens.rpy:1080
     old "Skips dialogue while held down."
-    new "按住时快进对话。"
+    new "按住时跳过对话。"
 
     # screens.rpy:1083
     old "Tab"
@@ -307,7 +307,7 @@ translate schinese strings:
 
     # screens.rpy:1084
     old "Toggles dialogue skipping."
-    new "切换对话快进。"
+    new "切换跳过对话。"
 
     # screens.rpy:1087
     old "Page Up"
@@ -315,7 +315,7 @@ translate schinese strings:
 
     # screens.rpy:1088
     old "Rolls back to earlier dialogue."
-    new "回退至先前的对话。"
+    new "回退到较早的对话。"
 
     # screens.rpy:1091
     old "Page Down"
@@ -323,7 +323,7 @@ translate schinese strings:
 
     # screens.rpy:1092
     old "Rolls forward to later dialogue."
-    new "向前至之后的对话。"
+    new "前进到较晚的对话。"
 
     # screens.rpy:1096
     old "Hides the user interface."
@@ -351,15 +351,15 @@ translate schinese strings:
 
     # screens.rpy:1122
     old "Mouse Wheel Up"
-    new "鼠标滚轮上"
+    new "鼠标滚轮向上"
 
     # screens.rpy:1126
     old "Mouse Wheel Down"
-    new "鼠标滚轮下"
+    new "鼠标滚轮向下"
 
     # screens.rpy:1133
     old "Right Trigger\nA/Bottom Button"
-    new "右扳机键\nA/底键"
+    new "右扳机键\nA/底部按钮"
 
     # screens.rpy:1137
     old "Left Trigger\nLeft Shoulder"
@@ -371,15 +371,15 @@ translate schinese strings:
 
     # screens.rpy:1145
     old "D-Pad, Sticks"
-    new "十字键，摇杆"
+    new "十字键、摇杆"
 
     # screens.rpy:1149
     old "Start, Guide"
-    new "开始，向导"
+    new "开始键、Guide"
 
     # screens.rpy:1153
     old "Y/Top Button"
-    new "Y/顶键"
+    new "Y/顶部按钮"
 
     # screens.rpy:1156
     old "Calibrate"
@@ -387,15 +387,15 @@ translate schinese strings:
 
     # screens.rpy:1221
     old "Yes"
-    new "确定"
+    new "是"
 
     # screens.rpy:1222
     old "No"
-    new "取消"
+    new "否"
 
     # screens.rpy:1268
     old "Skipping"
-    new "正在快进"
+    new "正在跳过"
 
     # screens.rpy:1489
     old "Menu"
