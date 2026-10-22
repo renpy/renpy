@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 ## Initialization
 ################################################################################
 
@@ -783,6 +783,7 @@ screen preferences():
 
                     textbutton "한국어" text_font "SourceHanSansLite.ttf" action Language("korean")
                     textbutton "日本語" text_font "SourceHanSansLite.ttf" action Language("japanese")
+                    textbutton "繁體中文" text_font "SourceHanSansLite.ttf" action Language("tchinese")
                     textbutton "简体中文" text_font "SourceHanSansLite.ttf" action Language("schinese")
 
                     # This should be last.
