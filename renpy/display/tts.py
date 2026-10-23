@@ -134,7 +134,7 @@ try:
             idx = ctypes.c_size_t()
             if self.dll.prism_backend_get_voice(self.ptr, ctypes.byref(idx)) == 0:
                 return idx.value
-            return 0
+            raise RuntimeError(f"Prism could not get the current voice for {self.name}.")
 
         @voice.setter
         def voice(self, idx):
@@ -789,6 +789,9 @@ class PrismTTS(object):
 
         self.sr_backend = None
         self.tts_backend = None
+        self._tts_backends: dict[int, _CtypesBackend] = {}
+        self._default_voices: dict[int, int | None] = {}
+        self._voice_catalog: dict[int, list[tuple[int, str, str]]] | None = None
         self._init_backends()
 
     def _on_availability_changed(self, userdata, bid, name_ptr, available):
@@ -825,15 +828,19 @@ class PrismTTS(object):
         return (PrismTTS, ())
 
     def _init_backends(self):
+        context = self.context
+        if context is None:
+            raise RuntimeError("Prism context is not available")
+
         _ensure_input_desktop()
         # 1. Screen reader backend: look for an active screen reader
         self.sr_backend = None
-        for i in range(self.context.backends_count):
-            bid = self.context.id_of(i)
-            name = self.context.name_of(bid)
+        for i in range(context.backends_count):
+            bid = context.id_of(i)
+            name = context.name_of(bid)
             if name.lower() in SCREEN_READER_BACKENDS:
                 try:
-                    b = self.context.acquire(bid)
+                    b = context.acquire(bid)
                     if b is not None:
                         self.sr_backend = b
                         break
@@ -843,40 +850,43 @@ class PrismTTS(object):
         if self.sr_backend is None:
             # Fallback for screen reader mode if none is currently active:
             try:
-                self.sr_backend = self.context.acquire_best()
+                self.sr_backend = context.acquire_best()
             except Exception:
                 self.sr_backend = None
 
-        # 2. TTS backend: look for OS synthesizers, explicitly excluding screen readers
+        # Retain all synthesizers so every listed voice can be selected.
         self.tts_backend = None
+        for i in range(context.backends_count):
+            bid = context.id_of(i)
+            name = context.name_of(bid)
+            if name.lower() in SCREEN_READER_BACKENDS or bid in self._tts_backends:
+                continue
+            try:
+                b = context.acquire(bid)
+            except Exception as e:
+                renpy.display.log.write(f"Failed to acquire Prism TTS backend {name}: {e}")
+                continue
+            if b is None:
+                continue
+            self._tts_backends[bid] = b
+            self._voice_catalog = None
+            try:
+                self._default_voices[bid] = b.voice
+            except Exception as e:
+                renpy.display.log.write(f"Failed to get Prism default voice for {name}: {e}")
+                self._default_voices[bid] = None
+
         preferred_tts = ["onecore", "avspeech", "avfoundation", "speech-dispatcher", "sapi", "espeak"]
         for pref in preferred_tts:
-            for i in range(self.context.backends_count):
-                bid = self.context.id_of(i)
-                name = self.context.name_of(bid)
-                if pref in name.lower() and name.lower() not in SCREEN_READER_BACKENDS:
-                    try:
-                        b = self.context.acquire(bid)
-                        if b is not None:
-                            self.tts_backend = b
-                            break
-                    except Exception:
-                        continue
+            for b in self._tts_backends.values():
+                if pref in b.name.lower():
+                    self.tts_backend = b
+                    break
             if self.tts_backend is not None:
                 break
 
         if self.tts_backend is None:
-            for i in range(self.context.backends_count):
-                bid = self.context.id_of(i)
-                name = self.context.name_of(bid)
-                if name.lower() not in SCREEN_READER_BACKENDS:
-                    try:
-                        b = self.context.acquire(bid)
-                        if b is not None:
-                            self.tts_backend = b
-                            break
-                    except Exception:
-                        continue
+            self.tts_backend = next(iter(self._tts_backends.values()), None)
 
         if self.tts_backend is None:
             self.tts_backend = self.sr_backend
@@ -934,13 +944,21 @@ class PrismTTS(object):
                 self._init_backends()
             return self.tts_backend
 
+    def _get_open_backends(self) -> list[_CtypesBackend]:
+        """Return retained backends once each, including a shared screen-reader fallback."""
+        backends = list(self._tts_backends.values())
+        for b in (self.sr_backend, self.tts_backend):
+            if b is not None and all(b is not existing for existing in backends):
+                backends.append(b)
+        return backends
+
     def is_speaking(self):
-        b = self.tts_backend or self.sr_backend
-        if b is not None:
+        for b in self._get_open_backends():
             try:
-                return b.speaking
-            except Exception:
-                return False
+                if b.speaking:
+                    return True
+            except Exception as e:
+                renpy.display.log.write(f"Failed to query Prism speech for {b.name}: {e}")
         return False
 
     def speak(self, s, mode=None, interrupt=True):
@@ -953,6 +971,25 @@ class PrismTTS(object):
             return
 
         voice, s = get_voice(s)
+
+        selected_voice = None
+        if mode != "screenreader" and voice is not None:
+            selected_voice = self.resolve_voice(voice)
+            if selected_voice is not None:
+                b, index = selected_voice
+                try:
+                    b.voice = index
+                except Exception as e:
+                    renpy.display.log.write(f"Failed to set Prism voice for {b.name}: {e}")
+
+        if interrupt:
+            # The voice may live on a different backend than the previous utterance.
+            for other in self._get_open_backends():
+                if other is not b:
+                    try:
+                        other.stop()
+                    except Exception:
+                        pass
 
         try:
             if b.features.supports_set_volume:
@@ -970,7 +1007,7 @@ class PrismTTS(object):
         except Exception:
             pass
 
-        if voice is not None:
+        if voice is not None and selected_voice is None:
             try:
                 for i in range(b.voices_count):
                     vname = b.get_voice_name(i)
@@ -991,44 +1028,68 @@ class PrismTTS(object):
                 pass
 
     def stop(self):
-        if self.sr_backend is not None:
+        for b in self._get_open_backends():
             try:
-                self.sr_backend.stop()
-            except Exception:
-                pass
-        if self.tts_backend is not None and self.tts_backend is not self.sr_backend:
-            try:
-                self.tts_backend.stop()
-            except Exception:
-                pass
+                b.stop()
+            except Exception as e:
+                renpy.display.log.write(f"Failed to stop Prism backend {b.name}: {e}")
 
-    def get_tts_voices(self):
-        b = self.tts_backend or self.get_backend("tts")
-        if b is None:
-            return []
-        voices = []
-        try:
-            for i in range(b.voices_count):
-                vname = b.get_voice_name(i)
-                vlang = b.get_voice_language(i)
-                voices.append("{}: {}".format(vlang, vname))
-        except Exception:
-            pass
+    def _get_voice_catalog(self) -> dict[int, list[tuple[int, str, str]]]:
+        """Cache original voice indices and metadata without changing backend selections."""
+        if self._voice_catalog is None:
+            catalog: dict[int, list[tuple[int, str, str]]] = {}
+            for bid, b in self._tts_backends.items():
+                try:
+                    catalog[bid] = [(i, b.get_voice_language(i), b.get_voice_name(i)) for i in range(b.voices_count)]
+                except Exception as e:
+                    renpy.display.log.write(f"Failed to enumerate Prism voices for {b.name}: {e}")
+            self._voice_catalog = catalog
+        return self._voice_catalog
+
+    def resolve_voice(self, voice: str) -> tuple[_CtypesBackend, int] | None:
+        """Resolve qualified or legacy names, including voices omitted from the menu."""
+        catalog = self._get_voice_catalog()
+        backends = sorted(self._tts_backends.items(), key=lambda item: item[1] is not self.tts_backend)
+        for qualified in (True, False):
+            for bid, b in backends:
+                for index, language, name in catalog.get(bid, []):
+                    label = f"{language}: {name}"
+                    if qualified:
+                        label += f" [{b.name}]"
+                    if voice == label:
+                        return b, index
+        return None
+
+    def get_tts_voices(self) -> list[str]:
+        """Reduce large catalogs per backend and exact language, retaining small backends in full."""
+        catalog = self._get_voice_catalog()
+        total = sum(len(entries) for entries in catalog.values())
+        voices: list[str] = []
+        for bid, entries in catalog.items():
+            if total > 50 and len(entries) > 10:
+                representatives: dict[str, tuple[int, str, str]] = {}
+                for entry in entries:
+                    index, language, _name = entry
+                    if language not in representatives or index == self._default_voices[bid]:
+                        representatives[language] = entry
+                entries = list(representatives.values())
+            voices.extend(f"{language}: {name}" for index, language, name in entries)
         return voices
 
     def shutdown(self):
+        for b in self._get_open_backends():
+            b.free()
+        self._tts_backends.clear()
+        self._default_voices.clear()
+        self._voice_catalog = None
+        self.sr_backend = None
+        self.tts_backend = None
         if self.context is not None and hasattr(self.context, "shutdown"):
             try:
                 self.context.shutdown()
             except Exception:
                 pass
             self.context = None
-        if self.sr_backend is not None and hasattr(self.sr_backend, "free"):
-            self.sr_backend.free()
-            self.sr_backend = None
-        if self.tts_backend is not None and hasattr(self.tts_backend, "free"):
-            self.tts_backend.free()
-            self.tts_backend = None
 
 
 platform_tts = None  # The platform-specific TTS object.
@@ -1191,6 +1252,12 @@ def get_tts_voices():
     Returns a list of available text-to-speech voice names. Returns an
     empty list if no voices are available, or if the platform does not support voice
     enumeration.
+
+    Prism names use the format ``language: voice``. If more than 50 voices are
+    available in total, backends with more than 10 voices return one
+    representative per exact language identifier. This is not a hard cap.
+    Representatives prefer the backend's initial default voice for its
+    language, falling back to the first voice for each other language.
     """
 
     global _tts_voices_cache
@@ -1222,7 +1289,9 @@ def get_voice(text: str = ""):
     :undocumented:
 
     Returns the self-voicing voice to use. If :var:`preferences.tts_voice` is set,
-    it is used. If the selected voice is not in the list of available voices, returns None.
+    it is used. If the selected voice is unavailable, returns None. Prism also
+    accepts installed voices omitted from its reduced list and legacy names
+    without a backend suffix.
     """
 
     if m := VOICE_RE.search(text):
@@ -1233,6 +1302,9 @@ def get_voice(text: str = ""):
     voice = prefs.tts_voice if prefs is not None else None
 
     if voice is not None and voice in get_tts_voices():
+        return voice, text
+
+    if voice is not None and isinstance(platform_tts, PrismTTS) and platform_tts.resolve_voice(voice) is not None:
         return voice, text
 
     return None, text

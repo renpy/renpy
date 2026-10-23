@@ -21,7 +21,228 @@
 
 import sys
 import unittest
-from unittest.mock import MagicMock, patch
+from types import SimpleNamespace
+from typing import TYPE_CHECKING
+from unittest.mock import MagicMock, PropertyMock, patch
+
+if TYPE_CHECKING:
+    from renpy.display.tts import PrismTTS
+
+
+class TestPrismVoiceCatalog(unittest.TestCase):
+    """Exercise voice enumeration and selection without native Prism or audio output."""
+
+    def create_tts(
+        self, specifications: list[tuple[str, list[tuple[str, str]], int | None]]
+    ) -> "tuple[PrismTTS, list[MagicMock]]":
+        """Create registry-backed synthesizers with explicit languages, names, and defaults."""
+        import renpy
+
+        if not hasattr(renpy, "error"):
+            import renpy.error
+
+            renpy.error = renpy.error
+
+        import renpy.display.tts as tts_module
+
+        backends: list[MagicMock] = []
+        for name, voices, default in specifications:
+            backend = MagicMock()
+            backend.name = name
+            backend.voices_count = len(voices)
+            backend.get_voice_language.side_effect = lambda index, entries=voices: entries[index][0]
+            backend.get_voice_name.side_effect = lambda index, entries=voices: entries[index][1]
+            backend.speaking = False
+            if default is None:
+                type(backend).voice = PropertyMock(side_effect=RuntimeError("No current voice"))
+            else:
+                backend.voice = default
+            backends.append(backend)
+
+        context = MagicMock()
+        context.backends_count = len(backends)
+        context.id_of.side_effect = lambda index: index
+        context.name_of.side_effect = lambda bid: backends[bid].name
+        context.acquire.side_effect = lambda bid: backends[bid]
+        context.acquire_best.return_value = next(iter(backends), None)
+        prism = SimpleNamespace(Context=MagicMock(return_value=context))
+        with patch.object(tts_module, "prism", prism), patch.object(tts_module, "_ensure_input_desktop"):
+            tts = tts_module.PrismTTS()
+        self.addCleanup(tts.shutdown)
+        return tts, backends
+
+    def create_voices(self, count: int, language: str = "en-US") -> list[tuple[str, str]]:
+        """Create distinct voices sharing a language to expose unwanted duplicate representatives."""
+        return [(language, f"Voice {index}") for index in range(count)]
+
+    def test_combined_threshold_boundary(self) -> None:
+        """Exactly 50 voices remain complete; 51 trigger reduction of both large backends."""
+        for second_count in (10, 11):
+            with self.subTest(total=40 + second_count):
+                first = self.create_voices(40)
+                second = self.create_voices(second_count)
+                tts, _ = self.create_tts([("sapi", first, 3), ("espeak", second, 2)])
+                expected = (
+                    ["en-US: Voice 3", "en-US: Voice 2"]
+                    if second_count == 11
+                    else [
+                        f"{language}: {name}"
+                        for backend, entries in (("sapi", first), ("espeak", second))
+                        for language, name in entries
+                    ]
+                )
+                self.assertEqual(tts.get_tts_voices(), expected)
+
+    def test_small_backends_remain_complete(self) -> None:
+        """Above 50 total voices, a 10-voice backend stays complete while an 11-voice backend reduces."""
+        tts, _ = self.create_tts([
+            ("sapi", self.create_voices(30), 5),
+            ("small", self.create_voices(10), 4),
+            ("espeak", self.create_voices(11), 6),
+        ])
+        self.assertEqual(
+            tts.get_tts_voices(),
+            ["en-US: Voice 5"] + [f"en-US: Voice {index}" for index in range(10)] + ["en-US: Voice 6"],
+        )
+
+    def test_exact_languages_and_initial_default(self) -> None:
+        """Regional and unknown languages stay distinct; the captured default replaces the first voice."""
+        entries = [("en-US", "First US"), ("en-GB", "First GB"), ("", "Unknown")]
+        entries += self.create_voices(47)
+        entries.append(("en-US", "Default US"))
+        tts, backends = self.create_tts([("sapi", entries, 50)])
+        expected = ["en-US: Default US", "en-GB: First GB", ": Unknown"]
+        self.assertEqual(tts.get_tts_voices(), expected)
+        self.assertEqual(backends[0].voice, 50)
+        backends[0].voice = 0
+        self.assertEqual(tts.get_tts_voices(), expected)
+
+    def test_unavailable_and_invalid_defaults_use_first_voice(self) -> None:
+        """An unavailable or out-of-range default cannot discard a language's representative."""
+        import renpy.display.tts as tts_module
+
+        for default in (None, -1, 51):
+            with self.subTest(default=default), patch.object(tts_module.renpy.display.log, "write") as log:
+                tts, _ = self.create_tts([("sapi", self.create_voices(51), default)])
+                self.assertEqual(tts.get_tts_voices(), ["en-US: Voice 0"])
+                if default is None:
+                    log.assert_called()
+
+    def test_reduction_is_not_a_hard_cap(self) -> None:
+        """All language groups remain available even when more than 50 survive."""
+        entries = [(f"language-{index}", "Voice") for index in range(51)]
+        tts, _ = self.create_tts([("sapi", entries, 0)])
+        self.assertEqual(
+            tts.get_tts_voices(),
+            [f"{language}: Voice" for language, name in entries],
+        )
+
+    def test_empty_catalogs(self) -> None:
+        """No backends and backends without voices both produce empty lists."""
+        for specifications in ([], [("sapi", [], 0)]):
+            with self.subTest(specifications=specifications):
+                tts, _ = self.create_tts(specifications)
+                self.assertEqual(tts.get_tts_voices(), [])
+                self.assertIsNone(tts.resolve_voice("missing"))
+
+    def test_secondary_voice_routes_speech_and_controls(self) -> None:
+        """A menu entry must speak through its own backend at its original, unreduced index."""
+        import renpy.display.tts as tts_module
+
+        tts, backends = self.create_tts([
+            (
+                "sapi",
+                [(language, f"SAPI Voice {index}") for index, (language, _) in enumerate(self.create_voices(40))],
+                8,
+            ),
+            ("espeak", self.create_voices(11), 7),
+        ])
+        self.assertIn("en-US: Voice 7", tts.get_tts_voices())
+        with patch.object(tts_module, "get_voice", return_value=("en-US: Voice 7", "Hello")):
+            tts.speak("Hello", mode="tts")
+        self.assertEqual(backends[1].voice, 7)
+        backends[1].output.assert_called_once_with("Hello", interrupt=True)
+        backends[0].output.assert_not_called()
+        self.assertIs(tts.tts_backend, backends[0])
+        # Interrupting speech must silence the other backend, which may still be talking.
+        backends[0].stop.assert_called_once()
+        backends[1].stop.assert_not_called()
+        for backend in backends:
+            backend.stop.reset_mock()
+        backends[1].speaking = True
+        self.assertTrue(tts.is_speaking())
+        tts.stop()
+        for backend in backends:
+            backend.stop.assert_called_once()
+        self.assertEqual(tts.context.acquire.call_count, 2)
+        context = tts.context
+        tts.shutdown()
+        tts.shutdown()
+        for backend in backends:
+            backend.free.assert_called_once()
+        context.shutdown.assert_called_once()
+
+    def test_legacy_preference_omitted_from_menu_still_speaks(self) -> None:
+        """Saved unqualified preferences remain valid even when their voice is filtered out."""
+        import renpy.display.tts as tts_module
+
+        tts, backends = self.create_tts([
+            ("sapi", self.create_voices(40), 8),
+            ("espeak", [("fr-FR", "French")] * 11, 0),
+        ])
+        preferences = SimpleNamespace(tts_voice="en-US: Voice 3")
+        with (
+            patch.object(tts_module, "platform_tts", tts),
+            patch.object(tts_module, "_tts_voices_cache", None),
+            patch.object(tts_module.renpy, "game", SimpleNamespace(preferences=preferences), create=True),
+        ):
+            self.assertNotIn("en-US: Voice 3", tts_module.get_tts_voices())
+            self.assertEqual(tts_module.get_voice("Hello"), ("en-US: Voice 3", "Hello"))
+            tts.speak("Hello")
+            self.assertEqual(backends[0].voice, 3)
+            backends[0].output.assert_called_once_with("Hello", interrupt=True)
+            self.assertEqual(preferences.tts_voice, "en-US: Voice 3")
+            self.assertIn("en-US: Voice 8", tts.get_tts_voices())
+            self.assertEqual(tts_module.get_tts_voices(), sorted(tts.get_tts_voices(), key=str.lower))
+
+    def test_enumeration_failure_is_logged_and_other_backends_remain_available(self) -> None:
+        """A backend failure must be visible without preventing selection from healthy backends."""
+        import renpy.display.tts as tts_module
+
+        tts, backends = self.create_tts([("sapi", self.create_voices(1), 0), ("espeak", self.create_voices(1), 0)])
+        backends[0].get_voice_name.side_effect = RuntimeError("Voice enumeration failed")
+        with patch.object(tts_module.renpy.display.log, "write") as log:
+            self.assertEqual(tts.get_tts_voices(), ["en-US: Voice 0"])
+            log.assert_called()
+        self.assertEqual(tts.resolve_voice("en-US: Voice 0 [espeak]"), (backends[1], 0))
+
+    def test_legacy_collision_prefers_default_backend(self) -> None:
+        """Identical legacy names prefer the normal backend, not merely the first registry entry."""
+        tts, backends = self.create_tts([("espeak", [("en-US", "Shared")], 0), ("sapi", [("en-US", "Shared")], 0)])
+        self.assertEqual(tts.resolve_voice("en-US: Shared"), (backends[1], 0))
+        self.assertEqual(tts.resolve_voice("en-US: Shared [espeak]"), (backends[0], 0))
+
+    def test_screen_reader_excluded_and_routing_unchanged(self) -> None:
+        """Screen-reader voices are never listed and a TTS preference cannot redirect screen-reader output."""
+        import renpy.display.tts as tts_module
+
+        tts, backends = self.create_tts([("nvda", [("en-US", "Reader")], 0), ("sapi", self.create_voices(1), 0)])
+        self.assertEqual(tts.get_tts_voices(), ["en-US: Voice 0"])
+        with patch.object(tts_module, "get_voice", return_value=("en-US: Voice 0", "Hello")):
+            tts.speak("Hello", mode="screenreader")
+        backends[0].output.assert_called_once_with("Hello", interrupt=True)
+        backends[1].output.assert_not_called()
+
+    def test_default_speech_uses_preferred_backend(self) -> None:
+        """Listing all backends does not change which backend handles speech without a preference."""
+        import renpy.display.tts as tts_module
+
+        tts, backends = self.create_tts([("espeak", self.create_voices(1), 0), ("onecore", self.create_voices(1), 0)])
+        tts.get_tts_voices()
+        with patch.object(tts_module, "get_voice", return_value=(None, "Hello")):
+            tts.speak("Hello")
+        backends[1].output.assert_called_once_with("Hello", interrupt=True)
+        backends[0].output.assert_not_called()
 
 
 class TestPrismTTS(unittest.TestCase):
