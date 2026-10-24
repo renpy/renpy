@@ -2,7 +2,7 @@
 
     # renpy/common/00accessibility.rpy:28
     old "Self-voicing disabled."
-    new "机器朗读已禁用。"
+    new "自动朗读已禁用。"
 
     # renpy/common/00accessibility.rpy:29
     old "Clipboard voicing enabled. "
@@ -10,7 +10,7 @@
 
     # renpy/common/00accessibility.rpy:30
     old "Self-voicing enabled. "
-    new "机器朗读已启用。"
+    new "自动朗读已启用。"
 
     # renpy/common/00accessibility.rpy:138
     old "Font Override"
@@ -30,7 +30,7 @@
 
     # renpy/common/00accessibility.rpy:156
     old "Text Size Scaling"
-    new "字号缩放"
+    new "文字大小缩放"
 
     # renpy/common/00accessibility.rpy:162
     old "Reset"
@@ -54,7 +54,7 @@
 
     # renpy/common/00accessibility.rpy:193
     old "Self-Voicing"
-    new "机器朗读"
+    new "自动朗读"
 
     # renpy/common/00accessibility.rpy:197
     old "Off"
@@ -74,11 +74,11 @@
 
     # renpy/common/00accessibility.rpy:215
     old "Self-Voicing Volume Drop"
-    new "机器朗读音量降低"
+    new "自动朗读时降低音量"
 
     # renpy/common/00accessibility.rpy:224
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    new "此菜单上的选项旨在改善无障碍文本可读性。这些选项可能不适用于所有游戏，某些选项的组合甚至会导致游戏无法游玩。这不是游戏或引擎的问题。为了在更改字体时获得最佳效果，请尽量保持文字大小与原本相同。"
+    new "此菜单中的选项用于改善可访问性。它们可能无法在所有游戏中正常工作，某些选项组合甚至可能导致游戏无法运行。这属于选项限制，并非游戏或引擎故障。更换字体时，为获得最佳效果，请尽量保持文字大小不变。"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Monday"
@@ -238,15 +238,15 @@
 
     # renpy/common/00action_file.rpy:364
     old "Save slot %s: [text]"
-    new "保存存档 %s：[text]"
+    new "存档槽 %s：[text]"
 
     # renpy/common/00action_file.rpy:445
     old "Load slot %s: [text]"
-    new "读取存档 %s：[text]"
+    new "读取存档槽 %s：[text]"
 
     # renpy/common/00action_file.rpy:498
     old "Delete slot [text]"
-    new "删除存档 [text]"
+    new "删除存档槽 [text]"
 
     # renpy/common/00action_file.rpy:577
     old "File page auto"
@@ -290,7 +290,7 @@
 
     # renpy/common/00director.rpy:708
     old "The interactive director is not enabled here."
-    new "交互式编导器未能在此处启动。"
+    new "此处未启用交互式导演。"
 
     # renpy/common/00director.rpy:1481
     old "⬆"
@@ -326,7 +326,7 @@
 
     # renpy/common/00director.rpy:1601
     old "(channel)"
-    new "（轨道）"
+    new "（声道）"
 
     # renpy/common/00director.rpy:1602
     old "(filename)"
@@ -366,7 +366,7 @@
 
     # renpy/common/00director.rpy:1748
     old "Behind:"
-    new "置后于："
+    new "置于后方："
 
     # renpy/common/00director.rpy:1767
     old "Transition:"
@@ -374,11 +374,11 @@
 
     # renpy/common/00director.rpy:1785
     old "Channel:"
-    new "轨道："
+    new "声道："
 
     # renpy/common/00director.rpy:1803
     old "Audio Filename:"
-    new "音频文件："
+    new "音频文件名："
 
     # renpy/common/00gui.rpy:426
     old "Are you sure?"
@@ -402,23 +402,23 @@
 
     # renpy/common/00gui.rpy:431
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "您确定要返回到标题界面吗？\n此操作将会使未保存的进度丢失。"
+    new "确定要返回主菜单吗？\n未保存的进度将会丢失。"
 
     # renpy/common/00gui.rpy:432
     old "Are you sure you want to end the replay?"
-    new "您确定要结束回想吗？"
+    new "确定要结束回放吗？"
 
     # renpy/common/00gui.rpy:433
     old "Are you sure you want to begin skipping?"
-    new "您确定要开始快进吗？"
+    new "确定要开始跳过吗？"
 
     # renpy/common/00gui.rpy:434
     old "Are you sure you want to skip to the next choice?"
-    new "您确定要直接快进到下个选项吗？"
+    new "确定要跳到下一个选项吗？"
 
     # renpy/common/00gui.rpy:435
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "您确定要跳过未读对话，直接快进到下个选项吗？"
+    new "确定要跳过未读对话，直接跳到下一个选项吗？"
 
     # renpy/common/00keymap.rpy:310
     old "Failed to save screenshot as %s."
@@ -430,7 +430,7 @@
 
     # renpy/common/00library.rpy:211
     old "Skip Mode"
-    new "快进"
+    new "跳过模式"
 
     # renpy/common/00library.rpy:297
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
@@ -438,19 +438,19 @@
 
     # renpy/common/00preferences.rpy:620
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "剪贴板朗读已启用。按 Shift+C 来禁用。"
+    new "剪贴板朗读已启用。按 Shift+C 可禁用。"
 
     # renpy/common/00preferences.rpy:622
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "机器朗读会朗读“[renpy.display.tts.last]”。按 Alt+Shift+V 来禁用。"
+    new "自动朗读将朗读“[renpy.display.tts.last]”。按 Alt+Shift+V 可禁用。"
 
     # renpy/common/00preferences.rpy:624
     old "Self-voicing enabled. Press 'v' to disable."
-    new "机器朗读已启用。按 V 来禁用。"
+    new "自动朗读已启用。按 V 可禁用。"
 
     # renpy/common/_compat/gamemenu.rpym:198
     old "Empty Slot."
-    new "空存档位。"
+    new "空存档槽。"
 
     # renpy/common/_compat/gamemenu.rpym:355
     old "Previous"
@@ -470,15 +470,15 @@
 
     # renpy/common/_developer/developer.rpym:43
     old "Interactive Director (D)"
-    new "交互式编导器 (D)"
+    new "交互式导演（D）"
 
     # renpy/common/_developer/developer.rpym:45
     old "Reload Game (Shift+R)"
-    new "重新加载游戏 (Shift+R)"
+    new "重新加载游戏（Shift+R）"
 
     # renpy/common/_developer/developer.rpym:47
     old "Console (Shift+O)"
-    new "控制台 (Shift+O)"
+    new "控制台（Shift+O）"
 
     # renpy/common/_developer/developer.rpym:49
     old "Variable Viewer"
@@ -486,7 +486,7 @@
 
     # renpy/common/_developer/developer.rpym:51
     old "Image Location Picker"
-    new "图像坐标选取器"
+    new "图像位置选择器"
 
     # renpy/common/_developer/developer.rpym:53
     old "Filename List"
@@ -494,11 +494,11 @@
 
     # renpy/common/_developer/developer.rpym:57
     old "Show Image Load Log (F4)"
-    new "显示图像加载日志 (F4)"
+    new "显示图像加载日志（F4）"
 
     # renpy/common/_developer/developer.rpym:60
     old "Hide Image Load Log (F4)"
-    new "隐藏图像加载日志 (F4)"
+    new "隐藏图像加载日志（F4）"
 
     # renpy/common/_developer/developer.rpym:63
     old "Image Attributes"
@@ -514,7 +514,7 @@
 
     # renpy/common/_developer/developer.rpym:143
     old "Nothing to inspect."
-    new "没有可查验的对象。"
+    new "没有可检查的内容。"
 
     # renpy/common/_developer/developer.rpym:154
     old "Hide deleted"
@@ -538,7 +538,7 @@
 
     # renpy/common/_developer/developer.rpym:453
     old "Right-click or escape to quit."
-    new "右键点击或按下 Esc 键来退出。"
+    new "右键单击或按 Esc 键退出。"
 
     # renpy/common/_developer/developer.rpym:485
     old "Rectangle copied to clipboard."
@@ -570,11 +570,11 @@
 
     # renpy/common/_developer/developer.rpym:653
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ 已预载图像（良好）{/color}\n{color=#fcc}✘ 未预载图像（糟糕）{/color}\n{color=#fff}拖曳来移动位置。{/color}"
+    new "\n{color=#cfc}✔ 已预加载图像（正常）{/color}\n{color=#fcc}✘ 未预加载图像（可能影响性能）{/color}\n{color=#fff}拖动以移动。{/color}"
 
     # renpy/common/_developer/inspector.rpym:38
     old "Displayable Inspector"
-    new "可视组件查验器"
+    new "可显示对象检查器"
 
     # renpy/common/_developer/inspector.rpym:61
     old "Size"
@@ -590,15 +590,15 @@
 
     # renpy/common/_developer/inspector.rpym:122
     old "Inspecting Styles of [displayable_name!q]"
-    new "正在查验 [displayable_name!q] 的样式"
+    new "正在检查 [displayable_name!q] 的样式"
 
     # renpy/common/_developer/inspector.rpym:139
     old "displayable:"
-    new "可视组件："
+    new "可显示对象："
 
     # renpy/common/_developer/inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        （无任何属性影响可视组件）"
+    new "        （没有属性会影响此可显示对象）"
 
     # renpy/common/_developer/inspector.rpym:147
     old "        (default properties omitted)"
@@ -618,7 +618,7 @@
 
     # renpy/common/00iap.rpy:219
     old "Contacting App Store\nPlease Wait..."
-    new "正在连接 App Store\n请稍后……"
+    new "正在连接 App Store\n请稍候……"
 
     # renpy/common/00updater.rpy:390
     old "The Ren'Py Updater is not supported on mobile devices."
@@ -626,7 +626,7 @@
 
     # renpy/common/00updater.rpy:519
     old "An error is being simulated."
-    new "正在模拟一个错误。"
+    new "正在模拟错误。"
 
     # renpy/common/00updater.rpy:703
     old "Either this project does not support updating, or the update status file was deleted."
@@ -646,7 +646,7 @@
 
     # renpy/common/00updater.rpy:1049
     old "The update file was not downloaded."
-    new "更新文件未能下载。"
+    new "更新文件未下载。"
 
     # renpy/common/00updater.rpy:1067
     old "The update file does not have the correct digest - it may have been corrupted."
@@ -654,7 +654,7 @@
 
     # renpy/common/00updater.rpy:1217
     old "While unpacking {}, unknown type {}."
-    new "解压 {} 时出现错误，文件类型 {} 无法解压。"
+    new "解压 {} 时遇到未知类型 {}。"
 
     # renpy/common/00updater.rpy:1589
     old "Updater"
@@ -694,7 +694,7 @@
 
     # renpy/common/00gallery.rpy:627
     old "Image [index] of [count] locked."
-    new "图片 [count] / [index] 尚未解锁。"
+    new "第 [index] 张图片（共 [count] 张）已锁定。"
 
     # renpy/common/00gallery.rpy:647
     old "prev"
@@ -714,15 +714,15 @@
 
     # renpy/common/00director.rpy:1745
     old "Click to toggle attribute, right click to toggle negative attribute."
-    new "点击切换属性，右键点击切换反面属性。"
+    new "单击以切换属性，右键单击以切换否定属性。"
 
     # renpy/common/00director.rpy:1768
     old "Click to set transform, right click to add to transform list."
-    new "点击设置变换，右键点击添加到变换列表。"
+    new "单击以设置变换，右键单击以添加到变换列表。"
 
     # renpy/common/00director.rpy:1789
     old "Click to set, right click to add to behind list."
-    new "点击设置，右键点击添加到置后（behind）列表。"
+    new "单击以设置，右键单击以添加到后方列表。"
 
     # renpy/common/00gui.rpy:456
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
@@ -806,7 +806,7 @@
 
     # renpy/common/00accessibility.rpy:32
     old "bar"
-    new "栏"
+    new "条"
 
     # renpy/common/00accessibility.rpy:33
     old "selected"
@@ -834,15 +834,15 @@
 
     # renpy/common/00accessibility.rpy:39
     old "increase"
-    new "增加"
+    new "增大"
 
     # renpy/common/00accessibility.rpy:40
     old "decrease"
-    new "减少"
+    new "减小"
 
     # renpy/common/00accessibility.rpy:120
     old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
-    new "辅助功能菜单。使用向上和向下箭头进行导航，并使用 Enter 激活按钮和栏"
+    new "可访问性菜单。使用上、下方向键导航，按 Enter 激活按钮和条。"
 
     # renpy/common/00director.rpy:1776
     old "Customize director.transforms to add more transforms."
@@ -902,15 +902,15 @@
 
     # renpy/common/00preferences.rpy:355
     old "skip unseen [text]"
-    new "跳过没见过的 [text]"
+    new "跳过未读 [text]"
 
     # renpy/common/00preferences.rpy:360
     old "skip unseen text"
-    new "跳过没见过的文本"
+    new "跳过未读文本"
 
     # renpy/common/00preferences.rpy:362
     old "begin skipping"
-    new "开头快进"
+    new "开始跳过"
 
     # renpy/common/00preferences.rpy:366
     old "after choices"
@@ -950,19 +950,19 @@
 
     # renpy/common/00preferences.rpy:435
     old "self voicing"
-    new "机器朗读"
+    new "自动朗读"
 
     # renpy/common/00preferences.rpy:438
     old "self voicing enable"
-    new "机器朗读已启用"
+    new "已启用自动朗读"
 
     # renpy/common/00preferences.rpy:440
     old "self voicing disable"
-    new "机器朗读已禁用"
+    new "已禁用自动朗读"
 
     # renpy/common/00preferences.rpy:444
     old "self voicing volume drop"
-    new "机器朗读音量减小"
+    new "自动朗读时降低音量"
 
     # renpy/common/00preferences.rpy:452
     old "clipboard voicing"
@@ -994,11 +994,11 @@
 
     # renpy/common/00preferences.rpy:479
     old "rollback side"
-    new "回滚侧"
+    new "回退方向"
 
     # renpy/common/00preferences.rpy:489
     old "gl powersave"
-    new "gl 省电"
+    new "GL 省电模式"
 
     # renpy/common/00preferences.rpy:495
     old "gl framerate"
@@ -1006,7 +1006,7 @@
 
     # renpy/common/00preferences.rpy:498
     old "gl tearing"
-    new "gl 撕裂"
+    new "GL 画面撕裂"
 
     # renpy/common/00preferences.rpy:501
     old "font transform"
@@ -1050,7 +1050,7 @@
 
     # renpy/common/00preferences.rpy:577
     old "voice after game menu"
-    new "游戏菜单后语音"
+    new "离开游戏菜单后播放语音"
 
     # renpy/common/00preferences.rpy:586
     old "restore window position"
@@ -1078,7 +1078,7 @@
 
     # renpy/common/00preferences.rpy:612
     old "mute main"
-    new "静音主要"
+    new "主音量静音"
 
     # renpy/common/00preferences.rpy:613
     old "mute music"
@@ -1094,19 +1094,19 @@
 
     # renpy/common/00preferences.rpy:616
     old "mute all"
-    new "静音全部"
+    new "全部静音"
 
     # renpy/common/00speechbubble.rpy:397
     old "(hide)"
-    new "(隐藏)"
+    new "（隐藏）"
 
     # renpy/common/00speechbubble.rpy:408
     old "(clear retained bubbles)"
-    new "(清除保留的气泡)"
+    new "（清除保留的气泡）"
 
     # renpy/common/00updater.rpy:505
     old "No update methods found."
-    new "未找到更新方法"
+    new "未找到更新方法。"
 
     # renpy/common/00updater.rpy:552
     old "Could not download file list: "
@@ -1118,15 +1118,15 @@
 
     # renpy/common/00updater.rpy:2072
     old "Preparing to download the game data."
-    new "准备下载游戏数据"
+    new "正在准备下载游戏数据。"
 
     # renpy/common/00updater.rpy:2074
     old "Downloading the game data."
-    new "下载游戏数据"
+    new "正在下载游戏数据。"
 
     # renpy/common/00updater.rpy:2076
     old "The game data has been downloaded."
-    new "游戏数据已下载"
+    new "游戏数据已下载。"
 
     # renpy/common/00updater.rpy:2078
     old "An error occurred when trying to download game data:"
@@ -1134,7 +1134,7 @@
 
     # renpy/common/00updater.rpy:2083
     old "This game cannot be run until the game data has been downloaded."
-    new "在游戏数据下载完毕之前，该游戏无法运行"
+    new "下载游戏数据后才能运行此游戏。"
 
     # renpy/common/00updater.rpy:2090
     old "Retry"

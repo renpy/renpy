@@ -14,7 +14,7 @@
 
     # game/add_file.rpy:28
     old "Enter the name of the script file to create."
-    new "请输入要创建的脚本文件的名称。"
+    new "请输入要创建的脚本文件名。"
 
     # game/add_file.rpy:37
     old "The file name may not be empty."
@@ -22,7 +22,7 @@
 
     # game/add_file.rpy:41
     old "The filename must have the .rpy extension."
-    new "文件必须以 .rpy 为扩展名。"
+    new "文件名必须使用 .rpy 扩展名。"
 
     # game/add_file.rpy:50
     old "The file already exists."
@@ -30,19 +30,19 @@
 
     # game/add_file.rpy:61
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
-    new "# Ren'Py 自动加载所有扩展名为 .rpy 的脚本文件。要使用此\n# 文件，请先定义一个标签并从另一个文件跳转到此。\n"
+    new "# Ren'Py 会自动加载所有以 .rpy 结尾的脚本文件。要使用此\n# 文件，请定义一个标签，并从另一个文件跳转到该标签。\n"
 
     # game/android.rpy:34
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "要构建安卓应用包，请下载 RAPT，并解压到 Ren'Py 目录中。之后重启 Ren'Py。"
+    new "要构建 Android 应用包，请下载 RAPT，解压后放入 Ren'Py 目录，然后重新启动 Ren'Py 启动器。"
 
     # game/android.rpy:35
     old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "在 Windows 中构建安卓应用包需要 64 位/x64 Java 8 开发套件（JDK）。JDK 不同于 JRE，所以您可能已安装过 Java 但尚未安装 JDK。\n\n请{a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}下载并安装 JDK{/a}，然后重启 Ren'Py。"
+    new "在 Windows 上构建 Android 应用包需要 64 位/x64 Java [JDK_REQUIREMENT] 开发工具包（JDK）。JDK 与 JRE 不同，因此可能已安装 Java 却没有安装 JDK。\n\n请{a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}下载并安装 JDK{/a}，然后重新启动 Ren'Py 启动器。"
 
     # game/android.rpy:36
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "RAPT 已安装，但您还需要安装安卓 SDK 才可以构建安卓应用包。请继续安装 SDK。"
+    new "RAPT 已安装，但构建 Android 应用包前还需要安装 Android SDK。请选择“安装 SDK”执行此操作。"
 
     # game/android.rpy:39
     old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
@@ -50,31 +50,31 @@
 
     # game/android.rpy:39
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
-    new "当前项目尚未配置过。请在构建前使用“配置”来进行配置。"
+    new "当前项目尚未配置。请在构建前选择“配置”完成配置。"
 
     # game/android.rpy:40
     old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
-    new "请选择您是否需要 Play Bundle（用于 Google Play）或是 Universal APK（用于侧载和其他应用商店）。"
+    new "请选择要构建 Play Bundle（用于 Google Play）还是 Universal APK（用于侧载和其他应用商店）。"
 
     # game/android.rpy:41
     old "Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device."
-    new "选择“构建”来构建当前项目，或者在添加安卓设备之后，选择“构建并安装”来构建并安装到设备中。"
+    new "选择“构建”来构建当前项目；或者连接 Android 设备后，选择“构建并安装”来构建并安装到设备。"
 
     # game/android.rpy:43
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "尝试模拟为安卓手机。\n\n鼠标将仅在按键按下时模拟为触屏输入。Esc 和 PageUp 键将分别重映射为手机的菜单键和返回键。"
+    new "尝试模拟 Android 手机。\n\n按住鼠标按钮时会用鼠标模拟触摸输入。Esc 映射为菜单按钮，Page Up 映射为返回按钮。"
 
     # game/android.rpy:44
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "尝试模拟为安卓平板。\n\nEsc 和 PageUp 键将分别重映射为平板的菜单键和返回键。"
+    new "尝试模拟 Android 平板电脑。\n\n按住鼠标按钮时会用鼠标模拟触摸输入。Esc 映射为菜单按钮，Page Up 映射为返回按钮。"
 
     # game/android.rpy:45
     old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "尝试模拟为基于电视的安卓游戏机。\n\n键盘方向键将重映射为手柄方向键，Enter、Esc 和 PageUp 键将分别重映射为手柄的选择键、菜单键和返回键。"
+    new "尝试模拟基于电视的 Android 游戏机。\n\n手柄输入映射到方向键，Enter 映射为选择按钮，Esc 映射为菜单按钮，Page Up 映射为返回按钮。"
 
     # game/android.rpy:47
     old "Downloads and installs the Android SDK and supporting packages."
-    new "下载并安装安卓 SDK 以及支持包。"
+    new "下载并安装 Android SDK 及其支持包。"
 
     # game/android.rpy:49
     old "Generates the keys required to sign the package."
@@ -86,7 +86,7 @@
 
     # game/android.rpy:49
     old "Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details."
-    new "在编辑器中打开包含有 Google Play 密钥的文件。\n\n仅当应用使用扩展 APK 时才需要进行此操作。更多详情请参阅说明文档。"
+    new "在编辑器中打开包含 Google Play 密钥的文件。\n\n仅当应用使用扩展 APK 时才需要此操作。详情请参阅文档。"
 
     # game/android.rpy:50
     old "Builds the Android package."
@@ -94,27 +94,27 @@
 
     # game/android.rpy:51
     old "Builds the Android package, and installs it on an Android device connected to your computer."
-    new "构建安卓应用包，并将其安装到连接至此计算机的安卓设备中。"
+    new "构建 Android 应用包，并将其安装到连接到计算机的 Android 设备。"
 
     # game/android.rpy:52
     old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
-    new "构建安卓应用包，将其安装到连接至此计算机的安卓设备中，并在您的设备上打开此应用。"
+    new "构建 Android 应用包，将其安装到连接到计算机的 Android 设备，然后在设备上启动应用。"
 
     # game/android.rpy:54
     old "Retrieves the log from the Android device and writes it to a file."
-    new "从安卓设备接收日志并将其写入至文件。"
+    new "从 Android 设备获取日志并写入文件。"
 
     # game/android.rpy:55
     old "Lists the connected devices."
-    new "列出所连接的设备。"
+    new "列出已连接的设备。"
 
     # game/android.rpy:56
     old "Pairs with a device over Wi-Fi, on Android 11+."
-    new "通过 Wi-Fi 与设备配对，适用于安卓 11+ 系统。"
+    new "在 Android 11 及更高版本上通过 Wi-Fi 与设备配对。"
 
     # game/android.rpy:57
     old "Connects to a device over Wi-Fi, on Android 11+."
-    new "通过 Wi-Fi 连接到设备，适用于安卓 11+ 系统。"
+    new "在 Android 11 及更高版本上通过 Wi-Fi 连接设备。"
 
     # game/android.rpy:58
     old "Disconnects a device connected over Wi-Fi."
@@ -126,15 +126,15 @@
 
     # game/android.rpy:62
     old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
-    new "构建 Android App Bundle (ABB)，旨在上传至 Google Play。可容纳多达 2GB 的数据。"
+    new "构建用于上传到 Google Play 的 Android App Bundle（AAB）。其中最多可包含 2GB 数据。"
 
     # game/android.rpy:63
     old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
-    new "构建 Universal APK 包，用于侧载和 Google Play 以外的商店。可容纳多达 2GB 的数据。"
+    new "构建用于侧载和 Google Play 以外商店的 Universal APK 应用包。其中最多可包含 2GB 数据。"
 
     # game/android.rpy:266
     old "Copying Android files to distributions directory."
-    new "正在复制安卓文件到发行版目录。"
+    new "正在将 Android 文件复制到发行版目录。"
 
     # game/android.rpy:335
     old "Android: [project.current.display_name!q]"
@@ -210,7 +210,7 @@
 
     # game/android.rpy:468
     old "Wi-Fi Debugging Disconnect"
-    new "Wi-Fi 调试断开"
+    new "断开 Wi-Fi 调试连接"
 
     # game/android.rpy:472
     old "Clean"
@@ -218,11 +218,11 @@
 
     # game/android.rpy:497
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
-    new "在打包安卓应用之前，您需要先下载 Ren'Py 安卓打包工具 RAPT。您希望现在下载 RAPT 吗？"
+    new "打包 Android 应用前需要下载 Ren'Py Android 打包工具 RAPT。现在下载 RAPT 吗？"
 
     # game/android.rpy:550
     old "Retrieving logcat information from device."
-    new "正在从设备检索 Logcat 信息。"
+    new "正在从设备获取 logcat 信息。"
 
     # game/android.rpy:569
     old "Wi-Fi Pairing Code"
@@ -230,7 +230,7 @@
 
     # game/android.rpy:569
     old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
-    new "如果支持，可在“开发者选项”-“无线调试”-“使用配对码配对设备”中找到。"
+    new "如果设备支持，可在“开发者选项”→“无线调试”→“使用配对码配对设备”中找到。"
 
     # game/android.rpy:576
     old "Pairing Host & Port"
@@ -242,7 +242,7 @@
 
     # game/android.rpy:592
     old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
-    new "如果支持，可在“开发者选项”-“无线调试”中找到。"
+    new "如果设备支持，可在“开发者选项”→“无线调试”中找到。"
 
     # game/android.rpy:608
     old "This can be found in 'List Devices'."
@@ -250,7 +250,7 @@
 
     # game/android.rpy:628
     old "Cleaning up Android project."
-    new "正在清理安卓项目。"
+    new "正在清理 Android 项目。"
 
     # game/androidstrings.rpy:7
     old "{} is not a directory."
@@ -262,7 +262,7 @@
 
     # game/androidstrings.rpy:10
     old "Run configure before attempting to build the app."
-    new "请在尝试构建应用之前先进行配置。"
+    new "请先运行配置，再尝试构建应用。"
 
     # game/androidstrings.rpy:11
     old "Updating project."
@@ -310,11 +310,11 @@
 
     # game/androidstrings.rpy:22
     old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
-    new "应用的简称是什么？此名称将用于启动器和应用图标。"
+    new "应用的简称是什么？该名称将用于启动器和应用快捷方式。"
 
     # game/androidstrings.rpy:23
     old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
-    new "应用的包名称是什么？\n\n此名称通常是 com.domain.program 或 com.domain.email.program 的形式。名称中只能包含 ASCII 字母和点。名称中应包含至少一个点。"
+    new "应用包名称是什么？\n\n通常格式为 com.domain.program 或 com.domain.email.program。只能包含 ASCII 字母和点号，且至少要有一个点号。"
 
     # game/androidstrings.rpy:24
     old "The package name may not be empty."
@@ -326,15 +326,15 @@
 
     # game/androidstrings.rpy:26
     old "The package name must contain at least one dot."
-    new "应用包名称应包含至少一个点。"
+    new "应用包名称必须至少包含一个点号。"
 
     # game/androidstrings.rpy:27
     old "The package name may not contain two dots in a row, or begin or end with a dot."
-    new "应用包名称不能包含连续两个点，或在开始和末尾的地方出现点。"
+    new "应用包名称不能包含连续的两个点号，也不能以点号开头或结尾。"
 
     # game/androidstrings.rpy:28
     old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
-    new "应用包名称的每一部分必须以字母开头，并且应仅含字母、数字和下划线。"
+    new "应用包名称的每一段必须以字母开头，且只能包含字母、数字和下划线。"
 
     # game/androidstrings.rpy:29
     old "{} is a Java keyword, and can't be used as part of a package name."
@@ -342,7 +342,7 @@
 
     # game/androidstrings.rpy:30
     old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
-    new "应用的版本号是什么？\n\n此版本号是您打算向用户展示的可读版本号。版本号应仅含数字和点。"
+    new "应用版本号是什么？\n\n这应是向用户显示的可读版本号，只能包含数字和点号。"
 
     # game/androidstrings.rpy:31
     old "The version number must contain only numbers and dots."
@@ -350,7 +350,7 @@
 
     # game/androidstrings.rpy:32
     old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
-    new "您希望为 Gradle 分配多少 GB 的内存？\n\n必须为正整数。"
+    new "要为 Gradle 分配多少 GB 内存？\n必须是正整数。"
 
     # game/androidstrings.rpy:33
     old "The RAM size must contain only numbers and be positive."
@@ -358,7 +358,7 @@
 
     # game/androidstrings.rpy:34
     old "How would you like your application to be displayed?"
-    new "您希望您的应用如何显示？"
+    new "希望以何种方式显示应用？"
 
     # game/androidstrings.rpy:35
     old "In landscape orientation."
@@ -370,7 +370,7 @@
 
     # game/androidstrings.rpy:37
     old "In the user's preferred orientation."
-    new "以用户希望的模式。"
+    new "使用用户偏好的方向。"
 
     # game/androidstrings.rpy:38
     old "Do you want to automatically update the Java source code?"
@@ -382,7 +382,7 @@
 
     # game/androidstrings.rpy:40
     old "No. This may require manual updates when Ren'Py or the project configuration changes."
-    new "否。当 Ren'Py 或项目配置发生变化时需要手动更新。"
+    new "否。Ren'Py 或项目配置发生变化时，可能需要手动更新。"
 
     # game/androidstrings.rpy:41
     old "Unknown configuration variable: {}"
@@ -390,7 +390,7 @@
 
     # game/androidstrings.rpy:42
     old "I'm compiling a short test program, to see if you have a working JDK on your system."
-    new "正在编译一个简短的程序，来测试您的操作系统内是否有可用的 JDK。"
+    new "正在编译一个简短的测试程序，以检查系统中的 JDK 是否正常工作。"
 
     # game/androidstrings.rpy:43
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
@@ -402,15 +402,15 @@
 
     # game/androidstrings.rpy:45
     old "The JDK is present and working. Good!"
-    new "JDK 存在且运行正常。太棒了！"
+    new "JDK 已安装且运行正常。"
 
     # game/androidstrings.rpy:46
     old "The Android SDK has already been unpacked."
-    new "Android SDK 已被解压。"
+    new "Android SDK 已经解压。"
 
     # game/androidstrings.rpy:47
     old "Do you accept the Android SDK Terms and Conditions?"
-    new "您是否接受 Android SDK 条款和条件？"
+    new "是否接受 Android SDK 条款和条件？"
 
     # game/androidstrings.rpy:48
     old "I'm downloading the Android SDK. This might take a while."
@@ -418,19 +418,19 @@
 
     # game/androidstrings.rpy:49
     old "I'm extracting the Android SDK."
-    new "正在提取 Android SDK。"
+    new "正在解压 Android SDK。"
 
     # game/androidstrings.rpy:50
     old "I've finished unpacking the Android SDK."
-    new "解压 Android SDK 已完成。"
+    new "Android SDK 解压完成。"
 
     # game/androidstrings.rpy:51
     old "I'm about to download and install the required Android packages. This might take a while."
-    new "即将下载并安装所需的安卓软件包。这可能需要一段时间。"
+    new "即将下载并安装所需的 Android 软件包。这可能需要一段时间。"
 
     # game/androidstrings.rpy:52
     old "I was unable to accept the Android licenses."
-    new "无法接受安卓许可证。"
+    new "无法接受 Android 许可证。"
 
     # game/androidstrings.rpy:54
     old "I was unable to install the required Android packages."
@@ -438,7 +438,7 @@
 
     # game/androidstrings.rpy:55
     old "I've finished installing the required Android packages."
-    new "已完成安装所需的安卓软件包。"
+    new "所需的 Android 软件包已安装完成。"
 
     # game/androidstrings.rpy:56
     old "Please enter your name or the name of your organization."
@@ -454,7 +454,7 @@
 
     # game/androidstrings.rpy:59
     old "Could not create android.keystore. Is keytool in your path?"
-    new "无法创建 android.keystore。您是否将 Keytool 放置在了指定目录？"
+    new "无法创建 android.keystore。请确认 keytool 位于 PATH 中。"
 
     # game/androidstrings.rpy:60
     old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
@@ -470,7 +470,7 @@
 
     # game/androidstrings.rpy:63
     old "Could not create bundle.keystore. Is keytool in your path?"
-    new "无法创建 bundle.keystore。您是否将 Keytool 放置在了指定目录？"
+    new "无法创建 bundle.keystore。请确认 keytool 位于 PATH 中。"
 
     # game/androidstrings.rpy:64
     old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
@@ -478,7 +478,7 @@
 
     # game/androidstrings.rpy:65
     old "It looks like you're ready to start packaging games."
-    new "看起来您已准备好开始打包游戏了。"
+    new "看起来已经可以开始打包游戏了。"
 
     # game/choose_directory.rpy:67
     old "Select Projects Directory"
@@ -486,11 +486,11 @@
 
     # game/choose_directory.rpy:79
     old "The selected projects directory is not writable."
-    new "所选的项目目录无法执行写入操作。"
+    new "无法写入所选项目目录。"
 
     # game/choose_theme.rpy:304
     old "Could not change the theme. Perhaps options.rpy was changed too much."
-    new "无法更改主题。可能 options.rpy 已被过度修改。"
+    new "无法更改主题。options.rpy 可能被修改得过多。"
 
     # game/choose_theme.rpy:426
     old "Choose Theme"
@@ -518,7 +518,7 @@
 
     # game/consolecommand.rpy:91
     old "The command is being run in a new operating system console window."
-    new "此命令正在新的操作系统控制台窗口中运行。"
+    new "命令正在新的系统控制台窗口中运行。"
 
     # game/distribute.rpy:490
     old "Scanning project files..."
@@ -526,11 +526,11 @@
 
     # game/distribute.rpy:516
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
-    new "构建分发失败：\n\n变量 build.directory_name 不能包含空格、冒号和分号。"
+    new "构建发行版失败：\n\nbuild.directory_name 变量不能包含空格、冒号或分号。"
 
     # game/distribute.rpy:562
     old "No packages are selected, so there's nothing to do."
-    new "因未选择任何打包平台，故未执行任何操作。"
+    new "未选择任何应用包，因此没有可执行的操作。"
 
     # game/distribute.rpy:574
     old "Scanning Ren'Py files..."
@@ -538,43 +538,43 @@
 
     # game/distribute.rpy:643
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
-    new "已构建所有的分发包。\n\n由于存在权限信息，因此不支持在 Windows 上解包并重新打包 Linux 和 Macintosh 发行版。"
+    new "所有应用包均已构建。\n\n由于包含权限信息，不支持在 Windows 上解包并重新打包 Linux 和 macOS 发行版。"
 
     # game/distribute.rpy:846
     old "Archiving files..."
-    new "正在封装文件……"
+    new "正在归档文件……"
 
     # game/distribute.rpy:1207
     old "Unpacking the Macintosh application for signing..."
-    new "正在解压 Macintosh 应用并签名……"
+    new "正在解包 macOS 应用以进行签名……"
 
     # game/distribute.rpy:1217
     old "Signing the Macintosh application...\n(This may take a long time.)"
-    new "正在签名 Macintosh 应用……\n（可能需要很长时间。）"
+    new "正在为 macOS 应用签名……\n（可能需要很长时间。）"
 
     # game/distribute.rpy:1240
     old "Creating the Macintosh DMG..."
-    new "正在创建 Macintosh DMG……"
+    new "正在创建 macOS DMG……"
 
     # game/distribute.rpy:1251
     old "Signing the Macintosh DMG..."
-    new "正在签名 Macintosh DMG……"
+    new "正在为 macOS DMG 签名……"
 
     # game/distribute.rpy:1472
     old "Writing the [variant] [format] package."
-    new "正在写入 [variant] 版 [format] 包。"
+    new "正在写入 [variant] [format] 应用包。"
 
     # game/distribute.rpy:1485
     old "Making the [variant] update zsync file."
-    new "正在制作 [variant] 版更新同步文件。"
+    new "正在创建 [variant] 更新 zsync 文件。"
 
     # game/distribute.rpy:1598
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
-    new "已处理 {b}[complete]{/b} / {b}[total]{/b} 个文件。"
+    new "已处理 {b}[complete]{/b}/{b}[total]{/b} 个文件。"
 
     # game/distribute.rpy:1659
     old "Recompiling all rpy files into rpyc files..."
-    new "正在将全部的 rpy 文件重新编译为 rpyc 文件……"
+    new "正在将所有 rpy 文件重新编译为 rpyc 文件……"
 
     # game/distribute.rpy:1674
     old "Copying files..."
@@ -586,11 +586,11 @@
 
     # game/distribute_gui.rpy:171
     old "Directory Name:"
-    new "目录名："
+    new "目录名称："
 
     # game/distribute_gui.rpy:175
     old "Executable Name:"
-    new "可执行程序名："
+    new "可执行文件名："
 
     # game/distribute_gui.rpy:185
     old "Actions:"
@@ -602,11 +602,11 @@
 
     # game/distribute_gui.rpy:194
     old "Add from clauses to calls, once"
-    new "向 call 语句添加 from 从句，执行一次"
+    new "向 call 语句添加 from 子句（一次性）"
 
     # game/distribute_gui.rpy:195
     old "Update old-game"
-    new "更新 old-game"
+    new "更新旧版游戏"
 
     # game/distribute_gui.rpy:196
     old "Refresh"
@@ -618,7 +618,7 @@
 
     # game/distribute_gui.rpy:216
     old "Build Packages:"
-    new "构建分发包："
+    new "构建应用包："
 
     # game/distribute_gui.rpy:235
     old "Options:"
@@ -626,11 +626,11 @@
 
     # game/distribute_gui.rpy:240
     old "Build Updates"
-    new "构建更新"
+    new "构建更新包"
 
     # game/distribute_gui.rpy:242
     old "Add from clauses to calls"
-    new "向 call 语句添加 from 从句"
+    new "向 call 语句添加 from 子句"
 
     # game/distribute_gui.rpy:247
     old "Build"
@@ -638,19 +638,19 @@
 
     # game/distribute_gui.rpy:251
     old "Adding from clauses to call statements that do not have them."
-    new "正在向 call 语句添加缺失的 from 从句。"
+    new "正在为缺少 from 子句的 call 语句添加 from 子句。"
 
     # game/distribute_gui.rpy:275
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
-    new "运行项目时检测到错误。请确保项目运行时没有错误，然后再构建分发。"
+    new "运行项目时检测到错误。请先确保项目运行无误，再构建发行版。"
 
     # game/distribute_gui.rpy:294
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
-    new "您的项目尚未包含构建信息。您希望在 options.rpy 末端添加构建信息吗？"
+    new "项目中没有构建信息。要将构建信息添加到 options.rpy 末尾吗？"
 
     # game/dmgcheck.rpy:50
     old "Ren'Py is running from a read only folder. Some functionality will not work."
-    new "Ren'Py 目前正在从只读文件夹运行。某些功能将无法工作。"
+    new "Ren'Py 正在只读文件夹中运行，部分功能将无法使用。"
 
     # game/dmgcheck.rpy:50
     old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
@@ -658,7 +658,7 @@
 
     # game/editor.rpy:152
     old "A modern editor with many extensions including advanced Ren'Py integration."
-    new "具有许多扩展功能的现代编辑器，包括高级 Ren'Py 集成。"
+    new "功能现代的编辑器，提供许多扩展以及高级 Ren'Py 集成。"
 
     # game/editor.rpy:153
     old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
@@ -670,11 +670,11 @@
 
     # game/editor.rpy:162
     old "Up to 110 MB download required."
-    new "需要下载最多 110 MB 的文件。"
+    new "最多需要下载 110 MB。"
 
     # game/editor.rpy:175
     old "A modern and approachable text editor."
-    new "现代化且人性化的文本编辑器。"
+    new "现代且易于使用的文本编辑器。"
 
     # game/editor.rpy:187
     old "Atom"
@@ -682,7 +682,7 @@
 
     # game/editor.rpy:187
     old "Up to 150 MB download required."
-    new "需要下载最多 150 MB 的文件。"
+    new "最多需要下载 150 MB。"
 
     # game/editor.rpy:200
     old "jEdit"
@@ -706,15 +706,15 @@
 
     # game/editor.rpy:209
     old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
-    new "使用您在 Ren'Py 之外安装的 Visual Studio Code 副本。建议您安装 language-renpy 扩展来增加对 Ren'Py 文件的支持。"
+    new "使用在 Ren'Py 之外安装的 Visual Studio Code。建议安装 language-renpy 扩展以支持 Ren'Py 文件。"
 
     # game/editor.rpy:215
     old "System Editor"
-    new "操作系统编辑器"
+    new "系统编辑器"
 
     # game/editor.rpy:215
     old "Invokes the editor your operating system has associated with .rpy files."
-    new "调用您操作系统与 .rpy 文件关联的编辑器。"
+    new "调用操作系统与 .rpy 文件关联的编辑器。"
 
     # game/editor.rpy:234
     old "None"
@@ -738,7 +738,7 @@
 
     # game/editor.rpy:537
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
-    new "文本编辑器是用于编辑 Ren'Py 脚本文件的程序。在这里您可以选择 Ren'Py 要使用的编辑器。若您选择的编辑器不存在，Ren'Py 将会自动下载并安装此编辑器。"
+    new "文本编辑器用于编辑 Ren'Py 脚本文件。在此选择 Ren'Py 要使用的编辑器；如果尚未安装，Ren'Py 会自动下载并安装。"
 
     # game/front_page.rpy:58
     old "PROJECTS:"
@@ -770,7 +770,7 @@
 
     # game/front_page.rpy:149
     old "Active Project"
-    new "活跃项目"
+    new "当前项目"
 
     # game/front_page.rpy:157
     old "Open Directory"
@@ -818,7 +818,7 @@
 
     # game/front_page.rpy:198
     old "Check Script (Lint)"
-    new "使用 Lint 检查脚本"
+    new "检查脚本（Lint）"
 
     # game/front_page.rpy:201
     old "Change/Update GUI"
@@ -874,11 +874,11 @@
 
     # game/gui7.rpy:257
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "请点击您希望使用的颜色方案，然后点击“继续”。这些颜色稍后也可更改及自定义。"
+    new "请单击想要使用的配色方案，然后单击“继续”。之后仍可更改和自定义这些颜色。"
 
     # game/gui7.rpy:302
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}警告{/b}\n继续将会覆盖自定义的状态条、按钮、存档位和滑条滑块图。\n\n您希望执行哪种操作？"
+    new "{b}警告{/b}\n继续将覆盖自定义的条、按钮、存档槽、滚动条和滑块图像。\n\n要执行哪项操作？"
 
     # game/gui7.rpy:302
     old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
@@ -894,7 +894,7 @@
 
     # game/gui7.rpy:333
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
-    new "项目使用哪种基准分辨率？虽然 Ren'Py 可以向上或向下缩放窗口，但此分辨率将是窗口的初始尺寸、资源绘制的基准尺寸以及资源显示最清晰的尺寸。\n\n默认的 [default_size[0]]x[default_size[1]] 是合理的折中方案。"
+    new "项目应使用什么分辨率？Ren'Py 可以缩放窗口，但此分辨率决定窗口初始大小、资源绘制尺寸，以及资源最清晰时的显示尺寸。\n\n默认的 [default_size[0]]x[default_size[1]] 是合理的折中方案。"
 
     # game/gui7.rpy:333
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
@@ -942,7 +942,7 @@
 
     # game/install.rpy:33
     old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
-    new "无法安装 [name!t]，因为在 Ren'Py SDK 目录中找不到匹配 [zipglob] 的文件。"
+    new "无法安装 [name!t]，因为 Ren'Py SDK 目录中没有找到匹配 [zipglob] 的文件。"
 
     # game/install.rpy:79
     old "Successfully installed [name!t]."
@@ -950,7 +950,7 @@
 
     # game/install.rpy:114
     old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
-    new "此界面允许您安装 Ren'Py 无法分发的库。其中一些库可能会要求您在使用或分发之前同意第三方许可。"
+    new "此界面可安装无法随 Ren'Py 分发的库。使用或分发其中一些库前，可能需要同意第三方许可证。"
 
     # game/install.rpy:120
     old "Install Steam Support"
@@ -974,7 +974,7 @@
 
     # game/install.rpy:185
     old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
-    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} 增加了对显示 Live2D 模型的支持。将 CubismSdkForNative-4-{i}version{/i}.zip 放在 Ren'Py SDK 目录中，然后点击“安装”。使用 Live2D 分发游戏需要您接受 Live2D 公司的许可。"
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} 支持显示 Live2D 模型。请将 CubismSdkForNative-4-{i}version{/i}.zip 放入 Ren'Py SDK 目录，然后单击“安装”。使用 Live2D 分发游戏需要接受 Live2D, Inc. 的许可证。"
 
     # game/install.rpy:189
     old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
@@ -998,11 +998,11 @@
 
     # game/interface.rpy:122
     old "Documentation"
-    new "说明文档"
+    new "文档"
 
     # game/interface.rpy:123
     old "Ren'Py Website"
-    new "Ren'Py 官方网站"
+    new "Ren'Py 网站"
 
     # game/interface.rpy:124
     old "[interface.version]"
@@ -1026,7 +1026,7 @@
 
     # game/interface.rpy:269
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
-    new "由于包格式限制，无法使用非 ASCII 文件名和目录名。"
+    new "由于应用包格式的限制，文件名和目录名不能包含非 ASCII 字符。"
 
     # game/interface.rpy:365
     old "ERROR"
@@ -1038,7 +1038,7 @@
 
     # game/interface.rpy:399
     old "While [what!qt], an error occurred:"
-    new "[what!qt]时出错："
+    new "[what!qt] 时发生错误："
 
     # game/interface.rpy:399
     old "[exception!q]"
@@ -1054,7 +1054,7 @@
 
     # game/interface.rpy:443
     old "File and directory names must consist of ASCII characters."
-    new "文件名或目录名必须仅由 ASCII 字符组成，不能包含中文。"
+    new "文件名和目录名只能包含 ASCII 字符。"
 
     # game/interface.rpy:511
     old "PROCESSING"
@@ -1074,15 +1074,15 @@
 
     # game/ios.rpy:29
     old "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
-    new "尚未指定 Xcode 项目所在的目录。选择“指定目录”来指定。"
+    new "尚未选择存放 Xcode 项目的目录。请选择“选择目录”。"
 
     # game/ios.rpy:30
     old "There is no Xcode project corresponding to the current Ren'Py project. Choose 'Create Xcode Project' to create one."
-    new "当前 Ren'Py 项目尚无对应的 Xcode 项目。选择“创建 Xcode 项目”来进行创建。"
+    new "当前 Ren'Py 项目没有对应的 Xcode 项目。请选择“创建 Xcode 项目”来创建。"
 
     # game/ios.rpy:31
     old "An Xcode project exists. Choose 'Update Xcode Project' to update it with the latest game files, or use Xcode to build and install it."
-    new "该 Xcode 项目已经存在。选择“更新 Xcode 项目”更新为最新的游戏文件，或使用 Xcode 来构建并安装。"
+    new "Xcode 项目已存在。请选择“更新 Xcode 项目”以使用最新游戏文件更新，或使用 Xcode 构建并安装。"
 
     # game/ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
@@ -1094,7 +1094,7 @@
 
     # game/ios.rpy:36
     old "Selects the directory where Xcode projects will be placed."
-    new "请指定 Xcode 项目所在的目录。"
+    new "选择存放 Xcode 项目的目录。"
 
     # game/ios.rpy:37
     old "Creates an Xcode project corresponding to the current Ren'Py project."
@@ -1102,7 +1102,7 @@
 
     # game/ios.rpy:38
     old "Updates the Xcode project with the latest game files. This must be done each time the Ren'Py project changes."
-    new "以最新的游戏文件更新 Xcode 项目。此操作应在每次 Ren'Py 项目出现更改时执行一次。"
+    new "使用最新游戏文件更新 Xcode 项目。每次 Ren'Py 项目发生变化后都必须执行此操作。"
 
     # game/ios.rpy:39
     old "Opens the Xcode project in Xcode."
@@ -1114,7 +1114,7 @@
 
     # game/ios.rpy:139
     old "The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"
-    new "Xcode 项目已经存在。您希望重命名旧项目并用新项目替换它吗？"
+    new "Xcode 项目已存在。要重命名旧项目并用新项目替换吗？"
 
     # game/ios.rpy:269
     old "iOS: [project.current.display_name!q]"
@@ -1150,7 +1150,7 @@
 
     # game/ios.rpy:379
     old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
-    new "Apple Silicon 上的 iOS 模拟器存在已知问题。请在 x86_64 或 iOS 设备上进行测试。"
+    new "Apple Silicon 上的 iOS 模拟器存在已知问题。请在 x86_64 模拟器或 iOS 设备上测试。"
 
     # game/ios.rpy:395
     old "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
@@ -1174,11 +1174,11 @@
 
     # game/itch.rpy:96
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "未找到已构建的发行版。请点击“构建”重试。"
+    new "找不到已构建的发行版。请选择“构建”后重试。"
 
     # game/itch.rpy:134
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "未找到可上传的文件。请点击“构建”重试。"
+    new "找不到可上传的文件。请选择“构建”后重试。"
 
     # game/itch.rpy:140
     old "The butler program was not found."
@@ -1186,7 +1186,7 @@
 
     # game/itch.rpy:140
     old "Please install the itch.io app, which includes butler, and try again."
-    new "itch.io 应用中包含 Butler 工具。请安装 itch.io 应用并重试。"
+    new "请安装包含 Butler 的 itch.io 应用，然后重试。"
 
     # game/itch.rpy:149
     old "The name of the itch project has not been set."
@@ -1194,7 +1194,7 @@
 
     # game/itch.rpy:149
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
-    new "请{a=https://itch.io/game/new}创建您的项目{/a}，并在 options.rpy 里添加类似以下代码：\n{vspace=5}define build.itch_project = \"user-name/game-name\""
+    new "请{a=https://itch.io/game/new}创建项目{/a}，然后在 options.rpy 中添加类似下面的一行：\n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5}"
 
     # game/mobilebuild.rpy:114
     old "{a=%s}%s{/a}"
@@ -1202,7 +1202,7 @@
 
     # game/navigation.rpy:168
     old "Navigate: [project.current.display_name!q]"
-    new "定位：[project.current.display_name!q]"
+    new "导航：[project.current.display_name!q]"
 
     # game/navigation.rpy:178
     old "Order: "
@@ -1210,7 +1210,7 @@
 
     # game/navigation.rpy:179
     old "alphabetical"
-    new "名称"
+    new "按字母顺序"
 
     # game/navigation.rpy:181
     old "by-file"
@@ -1218,7 +1218,7 @@
 
     # game/navigation.rpy:183
     old "natural"
-    new "出现顺序"
+    new "自然顺序"
 
     # game/navigation.rpy:195
     old "Category:"
@@ -1246,7 +1246,7 @@
 
     # game/navigation.rpy:203
     old "callables"
-    new "可调用"
+    new "可调用对象"
 
     # game/navigation.rpy:204
     old "TODOs"
@@ -1258,35 +1258,35 @@
 
     # game/navigation.rpy:251
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
-    new "未找到 TODO 注释。要创建一个，请在脚本中加入“# TODO”即可。"
+    new "未找到 TODO 注释。\n\n要创建 TODO 注释，请在脚本中加入“# TODO”。"
 
     # game/navigation.rpy:258
     old "The list of names is empty."
-    new "列表为空。"
+    new "名称列表为空。"
 
     # game/new_project.rpy:38
     old "New GUI Interface"
-    new "新 GUI 界面"
+    new "新版 GUI 界面"
 
     # game/new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new "两种界面均已翻译成您的语言。"
+    new "两种界面都已翻译成您的语言。"
 
     # game/new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new "仅有新 GUI 已翻译成您的语言。"
+    new "只有新版 GUI 已翻译成您的语言。"
 
     # game/new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "仅有传统主题界面已翻译成您的语言。"
+    new "只有旧版主题界面已翻译成您的语言。"
 
     # game/new_project.rpy:54
     old "Neither interface has been translated to your language."
-    new "两种界面均未翻译成您的语言。"
+    new "两种界面都未翻译成您的语言。"
 
     # game/new_project.rpy:63
     old "The projects directory could not be set. Giving up."
-    new "项目目录无法设置。操作取消。"
+    new "无法设置项目目录，操作已取消。"
 
     # game/new_project.rpy:70
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
@@ -1294,7 +1294,7 @@
 
     # game/new_project.rpy:70
     old "Legacy Theme Interface"
-    new "传统主题界面"
+    new "旧版主题界面"
 
     # game/new_project.rpy:77
     old "{#language name and font}"
@@ -1302,7 +1302,7 @@
 
     # game/new_project.rpy:81
     old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
-    new "即将创建[new_project_language]语言的项目。要创建其他语言的项目，请在设置中更改 Ren'Py 语言。"
+    new "即将创建 [new_project_language]{#this substitution may be localized} 语言项目。要创建其他语言的项目，请在设置中更改启动器语言。"
 
     # game/new_project.rpy:86
     old "PROJECT NAME"
@@ -1314,15 +1314,15 @@
 
     # game/new_project.rpy:96
     old "The project name may not be empty."
-    new "项目名不能为空。"
+    new "项目名称不能为空。"
 
     # game/new_project.rpy:102
     old "[project_name!q] already exists. Please choose a different project name."
-    new "[project_name!q] 已经存在。请选择一个不同的项目名称。"
+    new "[project_name!q] 已存在。请选择其他项目名称。"
 
     # game/new_project.rpy:106
     old "[project_dir!q] already exists. Please choose a different project name."
-    new "[project_dir!q] 已经存在。请选择一个不同的项目名称。"
+    new "[project_dir!q] 已存在。请选择其他项目名称。"
 
     # game/new_project.rpy:124
     old "Choose Project Template"
@@ -1330,7 +1330,7 @@
 
     # game/new_project.rpy:142
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
-    new "请为您的新项目选择一个模板。模板已预置了默认字体和用户界面语言。如果您的语言未受支持，请选择“英语”。"
+    new "请选择新项目要使用的模板。模板会设置默认字体和界面语言。如果不支持您的语言，请选择“english”。"
 
     # game/preferences.rpy:88
     old "Launcher Preferences"
@@ -1338,7 +1338,7 @@
 
     # game/preferences.rpy:106
     old "General"
-    new "一般"
+    new "常规"
 
     # game/preferences.rpy:107
     old "Options"
@@ -1358,7 +1358,7 @@
 
     # game/preferences.rpy:142
     old "Not Set"
-    new "未指定"
+    new "未设置"
 
     # game/preferences.rpy:155
     old "Text Editor:"
@@ -1374,7 +1374,7 @@
 
     # game/preferences.rpy:200
     old "Navigation Options:"
-    new "定位选项："
+    new "导航选项："
 
     # game/preferences.rpy:204
     old "Include private names"
@@ -1390,7 +1390,7 @@
 
     # game/preferences.rpy:218
     old "Show edit file section"
-    new "显示编辑文件部件"
+    new "显示文件编辑区域"
 
     # game/preferences.rpy:219
     old "Large fonts"
@@ -1426,7 +1426,7 @@
 
     # game/preferences.rpy:256
     old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
-    new "有关创建自定义主题的信息可以{a=[skins_url]}在 Ren'Py 文档中找到{/a}。"
+    new "有关创建自定义主题的信息，请参阅{a=[skins_url]}Ren'Py 文档{/a}。"
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -1518,27 +1518,27 @@
 
     # game/translations.rpy:158
     old "Generate empty strings for translations"
-    new "为翻译生成空字串"
+    new "为翻译生成空字符串"
 
     # game/translations.rpy:176
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "生成或更新翻译文件。文件将放置在 game/tl/[persistent.translate_language!q]。"
+    new "生成或更新翻译文件。文件将放在 game/tl/[persistent.translate_language!q]。"
 
     # game/translations.rpy:196
     old "Extract String Translations"
-    new "提取字串翻译"
+    new "提取字符串翻译"
 
     # game/translations.rpy:198
     old "Merge String Translations"
-    new "合并字串翻译"
+    new "合并字符串翻译"
 
     # game/translations.rpy:203
     old "Replace existing translations"
-    new "替换已存在的翻译"
+    new "替换现有翻译"
 
     # game/translations.rpy:204
     old "Reverse languages"
-    new "反转语言"
+    new "反转语言顺序"
 
     # game/translations.rpy:208
     old "Update Default Interface Translations"
@@ -1546,7 +1546,7 @@
 
     # game/translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "提取命令允许您从现有的项目中提取字串翻译至临时文件。\n\n合并命令将合并提取的翻译至其他项目。"
+    new "extract 命令可将现有项目中的字符串翻译提取到临时文件。\n\nmerge 命令可将提取出的翻译合并到另一个项目。"
 
     # game/translations.rpy:252
     old "Ren'Py is generating translations...."
@@ -1558,19 +1558,19 @@
 
     # game/translations.rpy:276
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py 正在导出字串翻译……"
+    new "Ren'Py 正在提取字符串翻译……"
 
     # game/translations.rpy:279
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py 已导出 [language] 字串翻译。"
+    new "Ren'Py 已完成 [language] 字符串翻译的提取。"
 
     # game/translations.rpy:299
     old "Ren'Py is merging string translations..."
-    new "Ren'Py 正在合并字串翻译……"
+    new "Ren'Py 正在合并字符串翻译……"
 
     # game/translations.rpy:302
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py 已合并 [language] 字串翻译。"
+    new "Ren'Py 已完成 [language] 字符串翻译的合并。"
 
     # game/translations.rpy:313
     old "Updating default interface translations..."
@@ -1594,15 +1594,15 @@
 
     # game/translations.rpy:380
     old "Strip text tags from the dialogue."
-    new "在对话中忽略文本标签。"
+    new "从对话中移除文本标签。"
 
     # game/translations.rpy:381
     old "Escape quotes and other special characters."
-    new "避开引号和其他特殊符号。"
+    new "转义引号和其他特殊字符。"
 
     # game/translations.rpy:382
     old "Extract all translatable strings, not just dialogue."
-    new "提取所有的可翻译字串，而非仅对话。"
+    new "提取所有可翻译字符串，而不只是对话。"
 
     # game/translations.rpy:391
     old "Language (or None for the default language):"
@@ -1622,15 +1622,15 @@
 
     # game/updater.rpy:64
     old "Release (Ren'Py 8, Python 3)"
-    new "发布版 (Ren'Py 8, Python 3)"
+    new "发行版（Ren'Py 8，Python 3）"
 
     # game/updater.rpy:65
     old "Release (Ren'Py 7, Python 2)"
-    new "发布版 (Ren'Py 7, Python 2)"
+    new "发行版（Ren'Py 7，Python 2）"
 
     # game/updater.rpy:66
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
-    new "{b}建议使用。{/b}在所有新发布的游戏中都应该使用的 Ren'Py 版本。"
+    new "{b}推荐。{/b}所有新发布游戏都应使用的 Ren'Py 版本。"
 
     # game/updater.rpy:68
     old "Prerelease"
@@ -1638,11 +1638,11 @@
 
     # game/updater.rpy:69
     old "Prerelease (Ren'Py 8, Python 3)"
-    new "预发布版 (Ren'Py 8, Python 3)"
+    new "预发布版（Ren'Py 8，Python 3）"
 
     # game/updater.rpy:70
     old "Prerelease (Ren'Py 7, Python 2)"
-    new "预发布版 (Ren'Py 7, Python 2)"
+    new "预发布版（Ren'Py 7，Python 2）"
 
     # game/updater.rpy:71
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -1654,43 +1654,43 @@
 
     # game/updater.rpy:74
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
-    new "Ren'Py 试验版。除非应 Ren'Py 开发者的要求，否则您不应选择此通道。"
+    new "Ren'Py 的实验版本。除非 Ren'Py 开发者要求，否则不应选择此渠道。"
 
     # game/updater.rpy:76
     old "Nightly"
-    new "每夜版"
+    new "夜间版"
 
     # game/updater.rpy:77
     old "Nightly (Ren'Py 8, Python 3)"
-    new "每夜版 (Ren'Py 8, Python 3)"
+    new "夜间版（Ren'Py 8，Python 3）"
 
     # game/updater.rpy:78
     old "Nightly (Ren'Py 7, Python 2)"
-    new "每夜版 (Ren'Py 7, Python 2)"
+    new "夜间版（Ren'Py 7，Python 2）"
 
     # game/updater.rpy:79
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new "Ren'Py 的尖端开发版。此版本也许包含了最新的功能，但也可能根本无法运行。"
+    new "Ren'Py 开发的最前沿版本，可能包含最新功能，也可能完全无法运行。"
 
     # game/updater.rpy:96
     old "Select Update Channel"
-    new "选择更新通道"
+    new "选择更新渠道"
 
     # game/updater.rpy:107
     old "The update channel controls the version of Ren'Py the updater will download."
-    new "更新通道决定了更新程序所下载的 Ren'Py 版本。"
+    new "更新渠道决定更新程序下载的 Ren'Py 版本。"
 
     # game/updater.rpy:115
     old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
-    new "• {a=https://www.renpy.org/doc/html/changelog.html}查看更新日志{/a}"
+    new "• {a=https://www.renpy.org/doc/html/changelog.html}查看变更日志{/a}"
 
     # game/updater.rpy:117
     old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
-    new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}查看更新日志{/a}"
+    new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}查看变更日志{/a}"
 
     # game/updater.rpy:123
     old "• This version is installed and up-to-date."
-    new "• 该版本已安装并且是最新的。"
+    new "• 此版本已安装，且为最新版本。"
 
     # game/updater.rpy:135
     old "%B %d, %Y"
@@ -1726,7 +1726,7 @@
 
     # game/updater.rpy:171
     old "Finishing up."
-    new "完成。"
+    new "正在完成。"
 
     # game/updater.rpy:173
     old "The update has been installed. Ren'Py will restart."
@@ -1750,11 +1750,11 @@
 
     # game/updater.rpy:214
     old "Fetching the list of update channels"
-    new "正在获取更新通道列表"
+    new "正在获取更新渠道列表"
 
     # game/updater.rpy:219 此处与 While 连用
     old "downloading the list of update channels"
-    new "下载更新通道列表"
+    new "下载更新渠道列表"
 
     # game/web.rpy:242
     old "Preparing progressive download"
@@ -1766,11 +1766,11 @@
 
     # game/web.rpy:307
     old "Build Web Application"
-    new "构建网页应用"
+    new "构建 Web 应用"
 
     # game/web.rpy:308
     old "Build and Open in Browser"
-    new "构建应用并在浏览器中打开"
+    new "构建并在浏览器中打开"
 
     # game/web.rpy:309
     old "Open in Browser"
@@ -1782,11 +1782,11 @@
 
     # game/web.rpy:332
     old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
-    new "图像和音乐可以在进行游戏时下载。引擎将创建 progressive_download.txt 文件，以便您配置此行为。"
+    new "游玩时可以下载图像和音乐。系统会创建 progressive_download.txt 文件，以便配置此行为。"
 
     # game/web.rpy:336
     old "Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported."
-    new "目前网络平台的限制意味着加载大型图像可能会导致音频或帧数故障，并降低总体性能。目前不支持视频。"
+    new "由于 Web 平台目前的限制，加载大型图像可能导致音频或帧率异常，并降低整体性能。当前不支持视频。"
 
     # game/web.rpy:344
     old "This feature is not supported in Ren'Py 8."
@@ -1794,25 +1794,23 @@
 
     # game/web.rpy:344
     old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
-    new "我们将在未来的 Ren'Py 8 版本中恢复支持这项功能。在那之前，请使用 Ren'Py 7 制作网页版。"
+    new "我们将在未来的 Ren'Py 8 版本中恢复支持。在此之前，请使用 Ren'Py 7 支持 Web 平台。"
 
     # game/web.rpy:348
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
-    new "在打包网页应用之前，您需要先下载 Ren'Py 网页支持包 RenPyWeb。您希望现在下载 RenPyWeb 吗？"
+    new "打包 Web 应用前需要下载 RenPyWeb（Ren'Py 的 Web 支持）。现在下载 RenPyWeb 吗？"
 
     # game/android.rpy:383
     old "Install SDK"
-    # Automatic translation.
     new "安装 SDK"
 
     # game/android.rpy:387
     old "Generate Keys"
-    # Automatic translation.
     new "生成密钥"
 
     # game/androidstrings.rpy:38
     old "Which app store would you like to support in-app purchasing through?"
-    new "您希望通过哪个应用商店支持应用内购买？"
+    new "要通过哪个应用商店支持应用内购买？"
 
     # game/androidstrings.rpy:40
     old "Amazon App Store."
@@ -1820,23 +1818,23 @@
 
     # game/androidstrings.rpy:41
     old "Both, in one app."
-    new "在一个应用程序中同时支持两者。"
+    new "在同一个应用中支持两者。"
 
     # game/androidstrings.rpy:42
     old "Neither."
-    new "以上都不需要。"
+    new "都不支持。"
 
     # game/androidstrings.rpy:63
     old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
-    new "我在 RAPT 目录中找到了一个 android.keystore 文件。您希望使用这个文件吗？"
+    new "在 RAPT 目录中找到 android.keystore 文件。要使用此文件吗？"
 
     # game/androidstrings.rpy:66
     old "\n\nSaying 'No' will prevent key creation."
-    new "\n\n选择“否”将阻止密钥创建。"
+    new "\n\n选择“否”将不会创建密钥。"
 
     # game/androidstrings.rpy:69
     old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
-    new "我在 RAPT 目录中找到了一个 bundle.keystore 文件。您希望使用这个文件吗？"
+    new "在 RAPT 目录中找到 bundle.keystore 文件。要使用此文件吗？"
 
     # game/distribute_gui.rpy:231
     old "(DLC)"
@@ -1844,7 +1842,7 @@
 
     # game/project.rpy:46
     old "Lint checks your game for potential mistakes, and gives you statistics."
-    new "Lint 工具会检查您的游戏中可能的错误，并为您提供统计数据。"
+    new "Lint 会检查游戏中可能存在的问题，并提供统计信息。"
 
     # game/web.rpy:485
     old "Creating package..."
@@ -1852,7 +1850,7 @@
 
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
-    new "对 Ren'Py 发布版进行修正的每夜构建。"
+    new "针对 Ren'Py 发布版修复的夜间构建。"
 
     # game/android.rpy:455
     old "Logcat"
@@ -1864,23 +1862,23 @@
 
     # game/androidstrings.rpy:46
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please install JDK [JDK_REQUIREMENT], and add it to your PATH.\n\nWithout a working JDK, I can't continue."
-    new "我无法使用 javac 编译测试文件。如果您尚未安装 Java 开发工具包，请从以下位置下载：\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nJDK 与 JRE 不同，因此您可能有 Java，但没有 JDK。请安装 JDK [JDK_REQUIREMENT] ，并将其添加到您的 PATH 中。\n\n没有可用的 JDK 的话，我无法继续"
+    new "无法使用 javac 编译测试文件。如果尚未安装 Java 开发工具包，请从以下地址下载：\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nJDK 与 JRE 不同，因此可能已安装 Java 却没有 JDK。请安装 JDK [JDK_REQUIREMENT] 并将其加入 PATH。\n\n没有可正常工作的 JDK，无法继续。"
 
     # game/androidstrings.rpy:47
     old "The version of Java on your computer does not appear to be JDK [JDK_REQUIREMENT], which is required to build Android apps. If you need to install a newer JDK, you can download it from:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, and add it to your PATH.\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
-    new "您计算机上的 Java 版本似乎不是构建 Android 应用程序所需的 JDK [JDK_REQUIREMENT] ，如果您需要安装较新的 JDK，可以从以下位置下载：\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}，并将其添加到您的 PATH。\n\n您还可以设置 JAVA_HOME 环境变量以使用不同版本的 Java。"
+    new "计算机上的 Java 版本似乎不是构建 Android 应用所需的 JDK [JDK_REQUIREMENT]。如需安装较新的 JDK，可从以下地址下载：\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}，并将其加入 PATH。\n\n也可以设置 JAVA_HOME 环境变量来使用其他 Java 版本。"
 
     # game/choose_directory.rpy:72
     old "No directory was selected, but one is required."
-    new "未选择目录，但至少需要一个。"
+    new "未选择目录，但必须选择一个目录。"
 
     # game/choose_directory.rpy:80
     old "The selected directory does not exist."
-    new "所选目录不存在"
+    new "所选目录不存在。"
 
     # game/choose_directory.rpy:82
     old "The selected directory is not writable."
-    new "所选目录不可写"
+    new "所选目录不可写入。"
 
     # game/choose_theme.rpy:371
     old "Planetarium"
@@ -1888,7 +1886,7 @@
 
     # game/distribute.rpy:543
     old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
-    new "构建发行版失败：\n\n该项目是 Ren'Py 教程，无法在 Ren'Py 之外分发。请考虑使用 The Question 作为测试项目。"
+    new "构建发行版失败：\n\n该项目是 Ren'Py 教程，不能在 Ren'Py 之外分发。请考虑使用 The Question 作为测试项目。"
 
     # game/distribute.rpy:570
     old "This may be derived from build.name and config.version or build.version."
@@ -1896,15 +1894,15 @@
 
     # game/distribute.rpy:1606
     old "Finishing the [variant] [format] package."
-    new "正在完成 [variant] [format] 包。"
+    new "正在完成 [variant] [format] 应用包。"
 
     # game/editor.rpy:185
     old "Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended."
-    new "Atom 已被弃用，其错误会破坏游戏，建议使用其他编辑器。"
+    new "Atom 已停止维护，已知错误可能损坏游戏，建议使用其他编辑器。"
 
     # game/editor.rpy:214
     old "JEdit is deprecated, using another editor is recommended."
-    new "JEdit 已弃用，建议使用其他编辑器。"
+    new "jEdit 已停止维护，建议使用其他编辑器。"
 
     # game/editor.rpy:607
     old "The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."
@@ -1912,15 +1910,15 @@
 
     # game/editor.rpy:607
     old "Select editor now."
-    new "现在选择编辑器"
+    new "立即选择编辑器。"
 
     # game/editor.rpy:607
     old "Ignore until next launch."
-    new "忽略直到下次启动"
+    new "忽略此提示，直到下次启动。"
 
     # game/editor.rpy:607
     old "Do not ask again."
-    new "别再问了"
+    new "不再询问。"
 
     # game/front_page.rpy:133
     old "The Question"
@@ -1932,15 +1930,15 @@
 
     # game/new_project.rpy:38
     old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
-    new "警告：您正在使用 Ren'Py 7。建议使用 Ren'Py 8 开始新项目。"
+    new "警告：正在使用 Ren'Py 7。建议使用 Ren'Py 8 创建新项目。"
 
     # game/new_project.rpy:49
     old "Please select a template project to use."
-    new "请选择要使用的模板项目"
+    new "请选择要使用的模板项目。"
 
     # game/new_project.rpy:49
     old "Do not use a template project."
-    new "不要使用模板项目"
+    new "不使用模板项目。"
 
     # game/preferences.rpy:95
     old "Lint"
@@ -1956,7 +1954,7 @@
 
     # game/preferences.rpy:258
     old "Prefer the web documentation"
-    new "偏好网络文档"
+    new "优先使用 Web 文档"
 
     # game/preferences.rpy:262
     old "Restore window position"
@@ -1964,7 +1962,7 @@
 
     # game/preferences.rpy:266
     old "Prefer RPU updates"
-    new "偏好 RPU 更新"
+    new "优先使用 RPU 更新"
 
     # game/preferences.rpy:338
     old "Open projects.txt"
@@ -1972,7 +1970,7 @@
 
     # game/preferences.rpy:364
     old "Lint toggles:"
-    new "Lint 功能开关："
+    new "Lint 选项："
 
     # game/preferences.rpy:368
     old "Check for orphan/obsolete translations"
@@ -1980,11 +1978,11 @@
 
     # game/preferences.rpy:371
     old "Check parameters shadowing reserved names"
-    new "检查参数隐藏保留名称"
+    new "检查遮蔽保留名称的参数"
 
     # game/preferences.rpy:374
     old "Print block, word, and character counts by speaking character."
-    new "通过对话字符来打印块、单词和字符计数。"
+    new "按说话角色显示块数、词数和字符数。"
 
     # game/preferences.rpy:377
     old "Unclosed text tags"
@@ -1992,20 +1990,20 @@
 
     # game/preferences.rpy:380
     old "Show all unreachable blocks and orphaned translations."
-    new "显示所有无法访问的块和孤立的翻译"
+    new "显示所有不可达代码块和孤立翻译。"
 
     # game/project.rpy:776
     old "Splashscreen skipped in launcher preferences."
-    new "在启动器首选项中跳过启动画面。"
+    new "已根据启动器设置跳过启动画面。"
 
     # game/updater.rpy:76
     old "Nightly Fix"
-    new "每夜修复版"
+    new "夜间修复版"
 
     # game/updater.rpy:77
     old "Nightly Fix (Ren'Py 8, Python 3)"
-    new "每夜修复版（Ren'Py 8，Python 3）"
+    new "夜间修复版（Ren'Py 8，Python 3）"
 
     # game/updater.rpy:78
     old "Nightly Fix (Ren'Py 7, Python 2)"
-    new "每夜修复版（Ren'Py 7，Python 2）"
+    new "夜间修复版（Ren'Py 7，Python 2）"

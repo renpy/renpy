@@ -34,7 +34,7 @@
 
     # gui/game/gui.rpy:32
     old "## The small color is used for small text, which needs to be brighter/darker to achieve the same effect."
-    new "## 小的颜色用于小的文本，需要更亮/更暗才能达到同样的效果。"
+    new "## small_color 用于小字号文字；为了达到相同的视觉效果，颜色需要更亮或更暗。"
 
     # gui/game/gui.rpy:36
     old "## The color that is used for buttons and bars that are hovered."
@@ -42,7 +42,7 @@
 
     # gui/game/gui.rpy:39
     old "## The color used for a text button when it is selected but not focused. A button is selected if it is the current screen or preference value."
-    new "## 当文本按钮被选中但非焦点时使用的颜色。当一个按钮为当前屏幕或设置选项值时，会处于选中状态。"
+    new "## 文本按钮已选中但未获得焦点时使用的颜色。当按钮对应当前界面或当前设置值时，按钮处于选中状态。"
 
     # gui/game/gui.rpy:43
     old "## The color used for a text button when it cannot be selected."
@@ -50,7 +50,7 @@
 
     # gui/game/gui.rpy:46
     old "## Colors used for the portions of bars that are not filled in. These are not used directly, but are used when re-generating bar image files."
-    new "## 滑条未填充的部分使用的颜色。这些颜色不直接使用，但在重新生成条形图像文件时使用。"
+    new "## 用于条未填充部分的颜色。这些颜色不会直接使用，而是在重新生成条图像文件时使用。"
 
     # gui/game/gui.rpy:51
     old "## The colors used for dialogue and menu choice text."
@@ -242,7 +242,7 @@
 
     # gui/game/gui.rpy:252
     old "## The vertical position of the skip indicator."
-    new "## 快进指示器的垂直位置。"
+    new "## 跳过指示器的垂直位置。"
 
     # gui/game/gui.rpy:255
     old "## The vertical position of the notify screen."
@@ -254,11 +254,11 @@
 
     # gui/game/gui.rpy:261
     old "## Buttons in the navigation section of the main and game menus."
-    new "## 标题菜单和游戏菜单的导航部分中的按钮。"
+    new "## 主菜单和游戏菜单导航区域中的按钮。"
 
     # gui/game/gui.rpy:264
     old "## Controls the amount of spacing between preferences."
-    new "## 控制设置项目之间的间隔量。"
+    new "## 控制各项设置之间的间距。"
 
     # gui/game/gui.rpy:267
     old "## Controls the amount of spacing between preference buttons."
@@ -266,15 +266,15 @@
 
     # gui/game/gui.rpy:270
     old "## The spacing between file page buttons."
-    new "## 存档页面按钮之间的间距。"
+    new "## 存档页按钮之间的间距。"
 
     # gui/game/gui.rpy:273
     old "## The spacing between file slots."
-    new "## 存档按钮之间的间距。"
+    new "## 存档槽之间的间距。"
 
     # gui/game/gui.rpy:276
     old "## The position of the main menu text."
-    new "## 标题菜单文本的位置。"
+    new "## 主菜单文字的位置。"
 
     # gui/game/gui.rpy:280
     old "## Frames"
@@ -282,7 +282,7 @@
 
     # gui/game/gui.rpy:282
     old "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
-    new "## 这些变量控制在不存在覆盖层或窗口时可以包含用户界面组件的框架的外观。"
+    new "## 当没有覆盖层或窗口时，这些变量控制可容纳界面组件的框体外观。"
 
     # gui/game/gui.rpy:285
     old "## Generic frames."
@@ -294,7 +294,7 @@
 
     # gui/game/gui.rpy:291
     old "## The frame that is used as part of the skip screen."
-    new "## 用作快进界面部分的框架。"
+    new "## 用于跳过界面的框体。"
 
     # gui/game/gui.rpy:294
     old "## The frame that is used as part of the notify screen."
@@ -306,23 +306,23 @@
 
     # gui/game/gui.rpy:301
     old "## Bars, Scrollbars, and Sliders"
-    new "## 条，滚动条和滑块"
+    new "## 条、滚动条和滑块"
 
     # gui/game/gui.rpy:303
     old "## These control the look and size of bars, scrollbars, and sliders."
-    new "## 这些语句控制条，滚动条和滑块的外观和大小。"
+    new "## 这些变量控制条、滚动条和滑块的外观与大小。"
 
     # gui/game/gui.rpy:305
     old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
-    new "## 默认的 GUI 仅使用滑块和垂直滚动条。所有其他栏仅在创建者编写的屏幕中使用。"
+    new "## 默认 GUI 只使用滑块和垂直滚动条。其他条仅用于开发者编写的界面。"
 
     # gui/game/gui.rpy:308
     old "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
-    new "## 水平条，滚动条和滑块的高度。垂直条，滚动条和滑块的宽度。"
+    new "## 水平条、滚动条和滑块的高度，以及垂直条、滚动条和滑块的宽度。"
 
     # gui/game/gui.rpy:314
     old "## True if bar images should be tiled. False if they should be linearly scaled."
-    new "## 若为 True，则条的底图平铺。若为 False，则条的底图线性缩放。"
+    new "## 为 True 时平铺条图像；为 False 时将条图像线性缩放。"
 
     # gui/game/gui.rpy:319
     old "## Horizontal borders."
@@ -334,7 +334,7 @@
 
     # gui/game/gui.rpy:329
     old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
-    new "## 如何处理 GUI 中不可滚动的滚动条。 hide 为隐藏， None 为显示。"
+    new "## 如何处理 GUI 中无法滚动的滚动条。\"hide\" 会隐藏它们，None 会显示它们。"
 
     # gui/game/gui.rpy:334
     old "## History"
@@ -342,23 +342,23 @@
 
     # gui/game/gui.rpy:336
     old "## The history screen displays dialogue that the player has already dismissed."
-    new "## 历史记录屏幕显示玩家已经阅读过的对话。"
+    new "## 历史记录界面显示玩家已经看过的对话。"
 
     # gui/game/gui.rpy:338
     old "## The number of blocks of dialogue history Ren'Py will keep."
-    new "## Ren'Py 将保留的对话历史块数。"
+    new "## Ren'Py 保留的对话历史块数量。"
 
     # gui/game/gui.rpy:341
     old "## The height of a history screen entry, or None to make the height variable at the cost of performance."
-    new "## 历史屏幕条目的高度，或设置为 None 以使高度变量自适应。"
+    new "## 历史记录条目的高度；设为 None 可使高度随内容变化，但会牺牲性能。"
 
     # gui/game/gui.rpy:345
     old "## The position, width, and alignment of the label giving the name of the speaking character."
-    new "## 所指定叙述角色的标签的坐标、宽度和对齐方式。"
+    new "## 显示说话角色名称的标签的位置、宽度和对齐方式。"
 
     # gui/game/gui.rpy:352
     old "## The position, width, and alignment of the dialogue text."
-    new "## 对话文本的坐标、宽度和对齐方式。"
+    new "## 对话文字的位置、宽度和对齐方式。"
 
     # gui/game/gui.rpy:359
     old "## NVL-Mode"
@@ -366,7 +366,7 @@
 
     # gui/game/gui.rpy:361
     old "## The NVL-mode screen displays the dialogue spoken by NVL-mode characters."
-    new "## NVL 模式屏幕显示 NVL 模式的角色所产生的对话。"
+    new "## NVL 模式界面显示 NVL 模式角色说出的对话。"
 
     # gui/game/gui.rpy:363
     old "## The borders of the background of the NVL-mode background window."
@@ -374,11 +374,11 @@
 
     # gui/game/gui.rpy:366
     old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
-    new "## Ren'Py 所显示的 NVL 模式条目的最大数量。当要显示的条目多于此数量时，最旧的条目将被删除。"
+    new "## Ren'Py 显示的 NVL 模式条目最大数量。超过此数量时，会移除最早的条目。"
 
     # gui/game/gui.rpy:370
     old "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
-    new "## NVL 模式条目的高度。将此设置为 None 可使条目动态调整高度。"
+    new "## NVL 模式条目的高度。设为 None 可让条目动态调整高度。"
 
     # gui/game/gui.rpy:374
     old "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
@@ -386,7 +386,7 @@
 
     # gui/game/gui.rpy:391
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
-    new "## nvl_thought 文本（由 nvl_narrator 字符表示的文本）的位置，宽度和对齐方式。"
+    new "## nvl_thought 文字（nvl_narrator 角色说出的文字）的位置、宽度和对齐方式。"
 
     # gui/game/gui.rpy:398
     old "## The position of nvl menu_buttons."
@@ -398,7 +398,7 @@
 
     # gui/game/gui.rpy:404
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
-    new "## 该变量控制允许在何时换行。默认值适用于大多数语言。可用的值请参见 https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new "## 此变量控制允许换行的位置。默认值适用于大多数语言。可用值列表请参阅 https://www.renpy.org/doc/html/style_properties.html#style-property-language。"
 
     # gui/game/gui.rpy:412
     old "## Mobile devices"
@@ -406,11 +406,11 @@
 
     # gui/game/gui.rpy:417
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
-    new "## 该变量增加快捷菜单按钮的尺寸来使它们在平板和手机上更容易被按到。"
+    new "## 增大快捷按钮，使其更容易在平板电脑和手机上点击。"
 
     # gui/game/gui.rpy:424
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
-    new "## 该变量更改各个 GUI 元素的尺寸和间距来确保它们在手机上更容易被辨识。"
+    new "## 调整各种 GUI 元素的大小和间距，确保它们在手机上清晰可见。"
 
     # gui/game/gui.rpy:429
     old "## Font sizes."
@@ -426,7 +426,7 @@
 
     # gui/game/gui.rpy:457
     old "## File button layout."
-    new "## 文件按钮布局。"
+    new "## 存档按钮布局。"
 
     # gui/game/gui.rpy:461
     old "## NVL-mode."
