@@ -2,6 +2,8 @@
 In-App Purchasing
 =================
 
+.. include:: third-party
+
 Ren'Py includes a high-level in-app purchasing framework. This framework
 currently only supports unlock-style purchases from the Apple App Store,
 Google Play, and the Amazon Appstore.

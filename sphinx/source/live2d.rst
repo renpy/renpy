@@ -3,6 +3,8 @@
 Live2D Cubism
 =============
 
+.. include:: third-party
+
 `Live2D Cubism <https://www.live2d.com/en/>`_ is a system that allows you
 to animate 2D images, such as the character sprites in a visual novel. These
 images are drawn in a series of layers - for example, a layer for pupils and
