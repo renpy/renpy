@@ -20,10 +20,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import random
+from collections.abc import Callable
+from typing import Any
 
 import renpy
 from renpy.parameter import Signature, ValuedParameter
-from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
+from renpy.pyanalysis import GLOBAL_CONST, NOT_CONST, Analysis
+from renpy.types import Position
 
 
 def late_imports():
@@ -144,68 +147,196 @@ def mesh(x):
     return bool(x)
 
 
+def orientation(x: Any) -> Any:
+    # This exists so Linear can special-case orientation interpolation.
+    return x
+
+
 # A dictionary giving property names and the corresponding type or
 # function. This is massively added to by renpy.display.transform.
 PROPERTIES = {}
 
-tuple_or_list = (tuple, list)
+
+class Interpolator[T](renpy.object.Object):
+    _function: Callable[[float], T] | None = None
+    nosave = ["_function"]
+
+    def _build(self) -> Callable[[float], T]:
+        raise NotImplementedError
+
+    def build(self) -> Callable[[float], T]:
+        """
+        Return a callable that takes a float completeness of the interpolation
+        and returns the interpolated value of this interpolator.
+        """
+
+        if self._function is None:
+            self._function = self._build()
+
+        return self._function
+
+    def __call__(self, t: float) -> T:
+        return self.build()(t)
 
 
-def interpolate(t, a, b, typ):
-    """
-    Linearly interpolate the arguments.
-    """
+class Linear[T](Interpolator[T]):
+    def __init__(
+        self,
+        a: Any,
+        b: Any,
+        typ: type[Any] | tuple[type[Any], ...] | Callable[[Any], Any],
+    ):
+        self.a = a
+        self.b = b
+        self.typ = typ
+        self.component: int | None = None
+        "If not None, the index in the tuple component of a and b that this spline represents."
 
-    # Deal with booleans, nones, etc.
-    if b is None or isinstance(b, (bool, str, Displayable, Matrix, Camera)):
-        if t >= 1.0:
-            return b
-        else:
-            return a
+    def _build(self) -> Callable[[float], T]:
+        a = self.a
+        b = self.b
+        typ = self.typ
+        component = self.component
 
-    # Recurse into tuples.
-    elif isinstance(b, tuple_or_list):
-        if not isinstance(a, tuple_or_list):
-            a = [None] * len(b)
+        if typ is orientation:
 
-        if not isinstance(typ, tuple_or_list):
-            typ = (typ,) * len(b)
+            def execute(t: float) -> Any:
+                if a is None:
+                    start = (0.0, 0.0, 0.0)
+                else:
+                    start = a
 
-        return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, typ))
+                if b is not None:
+                    return renpy.display.quaternion.euler_slerp(t, start, b)
+                elif t >= 1:
+                    return None
+                else:
+                    return start
 
-    # If something is callable, call it and return the result.
-    elif callable(b):
-        a_origin = getattr(a, "origin", None)
+            return execute
 
-        b_is_BaseMatrix = hasattr(b, "value")
+        if component is not None:
+            a = a[component]
+            b = b[component]
 
-        # Pass a Matrix directly when `a` is a Matrix (from a previous interpolation)
-        # and `b` is a _BaseMatrix (class in store namespace, interpolates via `.value`).
-        # This allows _BaseMatrix.__call__ to use `a.origin_value` so that
-        # interpolation after an interruption (e.g. replaced by a new transform)
-        # continues from where the old one was interrupted.
-        # Other callables (SplineMatrix, user functions) keep the old behaviour.
-        if isinstance(a, renpy.display.matrix.Matrix) and b_is_BaseMatrix:
-            rv = b(a, t)
-        else:
-            rv = b(a_origin, t)
+        # Values that can't be interpolated: step at the end.
+        if b is None or isinstance(b, (bool, str, Displayable, Matrix, Camera)):
 
-        rv.origin = b
+            def execute(t: float) -> Any:
+                if t >= 1.0:
+                    return b
+                else:
+                    return a
 
-        # Record the effective value on the result Matrix, so a future
-        # interpolation can continue from here.
-        if b_is_BaseMatrix:
-            if isinstance(a, renpy.display.matrix.Matrix) and a.origin_value is not None:
-                rv.origin_value = a.origin_value + (b.value - a.origin_value) * t
-            elif a_origin is not None and hasattr(a_origin, "value"):
-                rv.origin_value = a_origin.value + (b.value - a_origin.value) * t
+            return execute
+
+        # Tuples: one sub-Linear per component, built once.
+        if component is None and isinstance(b, (tuple, list)):
+            if not isinstance(a, (tuple, list)):
+                a = [None] * len(b)
+
+            subs: list[Linear[Any]] = []
+            strict = renpy.config.developer
+            if isinstance(typ, (tuple, list)):
+                for i, ty in zip(range(len(b)), typ, strict=strict):
+                    sub = Linear(a, b, ty)
+                    sub.component = i
+                    subs.append(sub)
             else:
-                rv.origin_value = b.value
+                for i in range(len(b)):
+                    sub = Linear(a, b, typ)
+                    sub.component = i
+                    subs.append(sub)
 
-        return rv
+            def execute(t: float) -> Any:
+                return tuple(s(t) for s in subs)
 
-    # Interpolate everything else.
-    else:
+            return execute
+
+        # Ren'Py's own matrix classes subclass _BaseMatrix.
+        if hasattr(b, "value"):
+            a_origin = getattr(a, "origin", None)
+
+            # SplineMatrix: the amount is driven by a Spline, then the
+            # wrapped matrix does the actual interpolation. Mirrors
+            # SplineMatrix.__call__, including that no origin_value
+            # is recorded (SplineMatrix has no .value).
+            if isinstance(b, renpy.store.SplineMatrix):
+                target_matrix = b.matrix
+
+                if type(a_origin) is renpy.store.SplineMatrix:
+                    a_origin = a_origin.matrix
+
+                if type(a_origin) is not type(target_matrix):
+
+                    def execute(t: float) -> Any:
+                        rv = target_matrix(None, 1.0)
+                        rv.origin = b
+                        return rv
+
+                    return execute
+
+                spline: Spline[float] = Spline(b.spline[0], b.spline[1:], float)
+
+                def execute(t: float) -> Any:
+                    done = min(max(t, 0.0), 1.0)
+                    done = spline(done)
+                    rv = target_matrix(a_origin, done)
+                    rv.origin = b
+                    return rv
+
+                return execute
+
+            a_is_matrix = isinstance(a, renpy.display.matrix.Matrix)
+            a_origin_value = getattr(a, "origin_value", None)
+
+            # Pass a Matrix directly when `a` is a Matrix (from a previous
+            # interpolation) and `b` is a _BaseMatrix.
+            # This allows _BaseMatrix.__call__ to use `a.origin_value` so that
+            # interpolation after an interruption (e.g. replaced by a new transform)
+            # continues from where the old one was interrupted.
+            if a_is_matrix and a_origin_value is not None:
+                ov_base = a_origin_value
+                ov_delta = b.value - a_origin_value
+            elif a_origin is not None and hasattr(a_origin, "value"):
+                ov_base = a_origin.value
+                ov_delta = b.value - ov_base
+            else:
+                ov_base = None
+                ov_delta = 0
+
+            def execute(t: float) -> Any:
+                if a_is_matrix:
+                    rv = b(a, t)
+                else:
+                    rv = b(a_origin, t)
+
+                rv.origin = b
+
+                # Record the effective value on the result Matrix, so a
+                # future interpolation can continue from here. When no
+                # prior origin_value exists, the result is b.value.
+                if ov_base is None:
+                    rv.origin_value = b.value
+                else:
+                    rv.origin_value = ov_base + t * ov_delta
+
+                return rv
+
+            return execute
+
+        # Arbitrary user callables.
+        if callable(b):
+            a_origin = getattr(a, "origin", None)
+
+            def execute(t: float) -> Any:
+                rv = b(a_origin, t)
+                rv.origin = b  # type: ignore
+                return rv
+
+            return execute
+
+        # Numbers and positions.
         if a is None:
             a = 0
 
@@ -213,89 +344,195 @@ def interpolate(t, a, b, typ):
             if renpy.config.mixed_position:
                 a = position.from_any(a)
                 b = position.from_any(b)
-                return a + t * (b - a)
+                delta = b - a
+
+                def execute(t: float) -> Any:
+                    return a + t * delta
+
+                return execute
+
+            typ = type(b)
+
+        delta = b - a
+
+        def execute(t: float) -> Any:
+            rv = a + t * delta
+            return typ(rv)  # type: ignore
+
+        return execute
+
+
+def interpolate(t, a, b, typ):
+    """
+    Linearly interpolate the arguments.
+    """
+
+    return Linear(a, b, typ)(t)
+
+
+class Spline[T](Interpolator[T]):
+    def __init__(
+        self,
+        start: Any,
+        spline: list[Any],
+        typ: type[Any] | tuple[type[Any], ...],
+        loop: bool = False,
+    ):
+        self.start = start
+        self.spline = spline
+        self.typ = typ
+        self.loop = loop
+        self.component = None
+        "If not None, the index in the tuple component that this spline represents."
+
+    def _build(self):
+        spline = self.spline
+        typ = self.typ
+        loop = self.loop
+        start = self.start
+        component = self.component
+        n = len(spline) + 1
+
+        def point(i) -> Any:
+            if i == 0:
+                value = start
             else:
-                typ = type(b)
+                value = spline[i - 1]
 
-        return typ(a + t * (b - a))
+            if component is not None:
+                value = value[component]
 
+            if renpy.config.mixed_position and typ in (position_or_none, position):
+                value = position(value)
 
-# Interpolate the value of a spline. This code is based on Aenakume's code,
-# from 00splines.rpy.
+            return value
+
+        first = point(0)
+        last = point(n - 1)
+
+        # Recurse into tuple components without constructing component knot lists.
+        if component is None and isinstance(last, tuple):
+            subs: list[Spline[Any]] = []
+            for i, ty in zip(range(len(last)), typ, strict=renpy.config.developer):  # type: ignore
+                c_spline = Spline(start, spline, ty, loop)
+                c_spline.component = i
+                subs.append(c_spline)
+
+            def execute(t: float) -> Any:
+                return tuple(s(t) for s in subs)
+
+            return execute
+
+        # Constant.
+        if first is None:
+            def execute(t: float) -> Any:
+                return last
+
+            return execute
+
+        cast = type(last)
+
+        # Linear Bezier.
+        if n == 2:
+            p0 = first
+            p1 = point(1)
+            c1 = p1 - p0
+
+            def execute(t: float) -> Any:
+                if t == 1.0:
+                    return cast(p1)
+                return cast(p0 + t * c1)
+
+            return execute
+
+        # Quadratic Bezier, in monomial form.
+        if n == 3:
+            p0 = first
+            p1 = point(1)
+            p2 = point(2)
+            c1 = 2.0 * (p1 - p0)
+            c2 = p0 - 2.0 * p1 + p2
+
+            def execute(t: float) -> Any:
+                if t == 1.0:
+                    return cast(p2)
+                return cast(t * (t * c2 + c1) + p0)
+
+            return execute
+
+        # Cubic Bezier, in monomial form.
+        if n == 4:
+            p0 = first
+            p1 = point(1)
+            p2 = point(2)
+            p3 = point(3)
+            c1 = 3.0 * (p1 - p0)
+            c2 = 3.0 * (p0 - 2.0 * p1 + p2)
+            c3 = 3.0 * p1 - p0 - 3.0 * p2 + p3
+
+            def execute(t: float) -> Any:
+                if t == 1.0:
+                    return cast(p3)
+                return cast(t * (t * (t * c3 + c2) + c1) + p0)
+
+            return execute
+
+        # Catmull-Rom: precompute per-segment monomial coefficients.
+        def adjusted(j) -> Any:
+            if j == 0:
+                return point(1)
+            if j == 1:
+                return first
+            if j == n - 2:
+                return last
+            if j == n - 1:
+                return point(n - 2)
+            return point(j)
+
+        loop = loop and n >= 5
+
+        segments = []
+
+        for i in range(n - 1 if loop else n - 3):
+            if loop:
+                p_1 = point(n - 2 if i == 0 else i - 1)
+                p0 = point(i)
+                p1 = point(i + 1)
+                p2 = point(1 if i == n - 2 else i + 2)
+            else:
+                p_1 = adjusted(i)
+                p0 = adjusted(i + 1)
+                p1 = adjusted(i + 2)
+                p2 = adjusted(i + 3)
+
+            segments.append((
+                0.5 * (3.0 * p0 - p_1 - 3.0 * p1 + p2),
+                0.5 * (2.0 * p_1 - 5.0 * p0 + 4.0 * p1 - p2),
+                0.5 * (p1 - p_1),
+                p0,
+            ))
+
+        count = float(len(segments))
+        last_sector = len(segments) - 1
+
+        def execute(t: float) -> Any:
+            if t <= 0.0:
+                return cast(first)
+            if t >= 1.0:
+                return cast(last)
+
+            scaled = t * count
+            sector = min(int(scaled), last_sector)
+            tl = scaled - sector
+
+            c3, c2, c1, c0 = segments[sector]
+            return cast(tl * (tl * (tl * c3 + c2) + c1) + c0)
+
+        return execute
 
 
 def interpolate_spline(t, spline, typ):
-    if isinstance(spline[-1], tuple):
-        return tuple(interpolate_spline(t, i, ty) for i, ty in zip(zip(*spline), typ))
-
-    if spline[0] is None:
-        return spline[-1]
-
-    if renpy.config.mixed_position and typ in (position_or_none, position):
-        spline = [position_or_none(i) for i in spline]
-
-    lenspline = len(spline)
-
-    if lenspline == 2:
-        t_p = 1.0 - t
-
-        rv = t_p * spline[0] + t * spline[-1]
-
-    elif lenspline == 3:
-        t_pp = (1.0 - t) ** 2
-        t_p = 2 * t * (1.0 - t)
-        t2 = t**2
-
-        rv = t_pp * spline[0] + t_p * spline[1] + t2 * spline[2]
-
-    elif lenspline == 4:
-        t_ppp = (1.0 - t) ** 3
-        t_pp = 3 * t * (1.0 - t) ** 2
-        t_p = 3 * t**2 * (1.0 - t)
-        t3 = t**3
-
-        rv = t_ppp * spline[0] + t_pp * spline[1] + t_p * spline[2] + t3 * spline[3]
-
-    elif t <= 0.0:
-        rv = spline[0]
-    elif t >= 1.0:
-        rv = spline[-1]
-
-    else:
-        # Catmull-Rom (re-adjust the control points)
-        spline = [spline[1], spline[0]] + list(spline[2:-2]) + [spline[-1], spline[-2]]
-
-        inner_spline_count = float(lenspline - 3)
-
-        # determine which spline values are relevant
-        sector = int(t // (1.0 / inner_spline_count) + 1)
-
-        # determine t for this sector
-        t = (t % (1.0 / inner_spline_count)) * inner_spline_count
-
-        rv = get_catmull_rom_value(t, *spline[sector - 1 : sector + 3])
-
-    if rv is None:
-        return None
-    else:
-        return type(spline[-1])(rv)
-
-
-def get_catmull_rom_value(t, p_1, p0, p1, p2):
-    """
-    Very basic Catmull-Rom calculation with no alpha or handling
-    of multi-dimensional points
-    """
-    t = float(max(0.0, min(1.0, t)))
-    return type(p0)(
-        (
-            t * ((2 - t) * t - 1) * p_1
-            + (t * t * (3 * t - 5) + 2) * p0
-            + t * ((4 - 3 * t) * t + 1) * p1
-            + (t - 1) * t * t * p2
-        )
-        / 2
-    )
+    return Spline(spline[0], spline[1:], typ)(t)
 
 
 # A list of atl transforms that may need to be compiled.
@@ -1103,15 +1340,17 @@ def check_spline_types(value):
 
 class RawMultipurpose(RawStatement):
     warp_function = None
+    loop_splines_indexes: list[int] = ()  # type: ignore
 
     def __init__(self, loc):
-        super(RawMultipurpose, self).__init__(loc)
+        super().__init__(loc)
 
         self.warper = None
         self.duration = None
         self.properties = []
         self.expressions = []
-        self.splines = []
+        self.splines: list[tuple[str, list[Any]]] = []
+        self.loop_splines_indexes = []
         self.revolution = None
         self.circles = "0"
 
@@ -1154,7 +1393,10 @@ class RawMultipurpose(RawStatement):
     def add_circles(self, circles):
         self.circles = circles
 
-    def add_spline(self, name, exprs):
+    def add_spline(self, name: str, exprs: list[Any], loop: bool) -> None:
+        if loop:
+            self.loop_splines_indexes.append(len(self.splines))
+
         self.splines.append((name, exprs))
 
     def compile(self, ctx):
@@ -1179,7 +1421,15 @@ class RawMultipurpose(RawStatement):
                 transition = None
 
             if isinstance(child, (int, float)):
-                return Interpolation(self.loc, "pause", child, [], None, 0, [])
+                return Interpolation(
+                    self.loc,
+                    "pause",
+                    child,
+                    [],
+                    None,
+                    0,
+                    [],
+                )
 
             child = renpy.easy.displayable(child)
 
@@ -1199,57 +1449,63 @@ class RawMultipurpose(RawStatement):
             warper = self.warper or "instant"
 
             if warper not in warpers:
-                raise Exception("ATL Warper %s is unknown at runtime." % warper)
+                raise Exception(f"ATL Warper {warper} is unknown at runtime.")
 
         properties = []
 
         for name, expr in self.properties:
             if name not in PROPERTIES:
-                raise Exception("ATL Property %s is unknown at runtime." % name)
+                raise Exception(f"ATL Property {name} is unknown at runtime.")
 
             value = ctx.eval(expr)
             properties.append((name, value))
 
-        splines = []
+        splines: list[tuple[str, list[Any], bool]] = []
 
-        for name, exprs in self.splines:
+        for i, (name, exprs) in enumerate(self.splines):
             if name not in PROPERTIES:
-                raise Exception("ATL Property %s is unknown at runtime." % name)
+                raise Exception(f"ATL Property {name} is unknown at runtime.")
 
             values = [ctx.eval(i) for i in exprs]
 
             if not all(check_spline_types(i) for i in values):
-                if name in {"matrixtransform", "matrixcolor"}:
-                    raise Exception(
-                        "%s: Spline interpolation requires position types. (You may want to use SplineMatrix.)" % name
-                    )
-                else:
-                    raise Exception("%s: Spline interpolation requires position types." % name)
+                err = Exception(f"Spline interpolation of property {name} requires position types.")
+                if name in ("matrixtransform", "matrixcolor"):
+                    err.add_note("You may want to use SplineMatrix.")
+                raise err
 
-            splines.append((name, values))
+            splines.append((name, values, i in self.loop_splines_indexes))
 
         for expr, _with in self.expressions:
             try:
                 value = ctx.eval(expr)
             except Exception:
-                raise Exception("Could not evaluate expression %r when compiling ATL." % expr)
+                raise Exception(f"Could not evaluate expression {expr!r} when compiling ATL.")
 
             if not isinstance(value, ATLTransformBase):
                 raise Exception(
-                    "Expression %r is not an ATL transform, and so cannot be included in an ATL interpolation." % expr
+                    f"Expression {expr!r} is not an ATL transform, and so cannot be included in an ATL interpolation."
                 )
 
             value.compile()
 
             if value.properties is None:
-                raise Exception("ATL transform %r is too complicated to be included in interpolation." % expr)
+                raise Exception(f"ATL transform {expr!r} is too complicated to be included in interpolation.")
 
             properties.extend(value.properties)
 
         duration = ctx.eval(self.duration)
         circles = ctx.eval(self.circles)
 
-        return Interpolation(self.loc, warper, duration, properties, self.revolution, circles, splines)
+        return Interpolation(
+            self.loc,
+            warper,
+            duration,
+            properties,
+            self.revolution,
+            circles,
+            splines,
+        )
 
     def mark_constant(self, analysis):
         constant = GLOBAL_CONST
@@ -1391,20 +1647,232 @@ class Child(Statement):
 
 
 # This causes interpolation to occur.
+class InterpolationState(renpy.object.Object):
+    linear: dict[str, Linear[Any]]
+    splines: dict[str, Spline[Any]]
+    interpolator_functions: list[tuple[str, Callable[[float], Any]]]
+    nosave = ["interpolator_functions"]
+
+    def __init__(
+        self,
+        interpolation: "Interpolation",
+        start_state: "renpy.display.motion.TransformState",
+        change_state: bool,
+    ):
+        self.linear = {}
+        self.splines = {}
+        self.interpolator_functions = []
+
+        new_state = renpy.display.motion.TransformState()
+        new_state.take_state(start_state)
+
+        has_angle = False
+        has_radius = False
+        has_anchorangle = False
+        has_anchorradius = False
+
+        for name, value in interpolation.properties:
+            setattr(new_state, name, value)
+            if name == "angle":
+                has_angle = True
+            elif name == "radius":
+                has_radius = True
+            elif name == "anchorangle":
+                has_anchorangle = True
+            elif name == "anchorradius":
+                has_anchorradius = True
+
+        # Now, the things we change linearly are in the difference
+        # between the new and old states.
+        changes = start_state.diff(new_state)
+        for name, (start, end) in changes.items():
+            self.linear[name] = Linear(start, end, PROPERTIES[name])
+
+        revolution = interpolation.revolution
+        circles = interpolation.circles
+
+        if (
+            revolution
+            or ((has_angle or has_radius) and renpy.config.automatic_polar_motion)
+            or has_anchorangle
+            or has_anchorradius
+        ):
+            # Remove various irrelevant motions.
+            for name in (
+                "xpos",
+                "ypos",
+                "xanchor",
+                "yanchor",
+                "xaround",
+                "yaround",
+                "xanchoraround",
+                "yanchoraround",
+            ):
+                self.linear.pop(name, None)
+
+            if revolution is not None:
+                start_angle = start_state.angle
+                end_angle = new_state.angle
+                start_anchorangle = start_state.anchorangle
+                start_anchorangle_absolute = start_anchorangle.absolute
+                start_anchorangle_relative = start_anchorangle.relative
+                end_anchorangle = new_state.anchorangle
+                end_anchorangle_absolute = end_anchorangle.absolute
+                end_anchorangle_relative = end_anchorangle.relative
+
+                # Make sure the angle is in the appropriate direction,
+                # and contains an appropriate number of circles.
+
+                if revolution == "clockwise":
+                    if end_angle < start_angle:
+                        start_angle -= 360
+                    if end_anchorangle_absolute < start_anchorangle_absolute:
+                        start_anchorangle_absolute -= 360
+                    if end_anchorangle_relative < start_anchorangle_relative:
+                        start_anchorangle_relative -= 360
+
+                    start_angle -= circles * 360
+                    start_anchorangle_absolute -= circles * 360
+                    start_anchorangle_relative -= circles * 360
+
+                elif revolution == "counterclockwise":
+                    if end_angle > start_angle:
+                        start_angle += 360
+                    if end_anchorangle_absolute > start_anchorangle_absolute:
+                        start_anchorangle_absolute += 360
+                    if end_anchorangle_relative > start_anchorangle_relative:
+                        start_anchorangle_relative += 360
+
+                    start_angle += circles * 360
+                    start_anchorangle_absolute += circles * 360
+                    start_anchorangle_relative += circles * 360
+
+                # Angle and radius need to go after the linear changes, as
+                # around or alignaround must be set first.
+                self.linear.pop("angle", None)
+                self.linear["angle"] = Linear(start_angle, end_angle, float)
+                self.linear.pop("radius", None)
+                self.linear["radius"] = Linear(start_state.radius, new_state.radius, position_or_none)
+                self.linear.pop("anchorangle", None)
+                self.linear["anchorangle"] = Linear(
+                    DualAngle(start_anchorangle_absolute, start_anchorangle_relative),
+                    DualAngle(end_anchorangle_absolute, end_anchorangle_relative),
+                    DualAngle.from_any,
+                )
+                self.linear.pop("anchorradius", None)
+                self.linear["anchorradius"] = Linear(
+                    start_state.anchorradius,
+                    new_state.anchorradius,
+                    position_or_none,
+                )
+
+            else:
+                if has_angle:
+                    start = start_state.angle
+                    end = new_state.last_angle
+                    if end - start > 180:
+                        start += 360
+                    if end - start < -180:
+                        start -= 360
+                    self.linear.pop("angle", None)
+                    self.linear["angle"] = Linear(start, end, float)
+
+                if has_radius:
+                    self.linear.pop("radius", None)
+                    self.linear["radius"] = Linear(start_state.radius, new_state.radius, position_or_none)
+
+                if has_anchorangle:
+                    start = start_state.anchorangle
+                    start_absolute = start.absolute
+                    start_relative = start.relative
+                    end_absolute = new_state.last_absolute_anchorangle
+                    end_relative = new_state.last_relative_anchorangle
+
+                    if end_absolute - start_absolute > 180:
+                        start_absolute += 360
+                    if end_absolute - start_absolute < -180:
+                        start_absolute -= 360
+                    if end_relative - start_relative > 180:
+                        start_relative += 360
+                    if end_relative - start_relative < -180:
+                        start_relative -= 360
+
+                    self.linear.pop("anchorangle", None)
+                    self.linear["anchorangle"] = Linear(
+                        DualAngle(start_absolute, start_relative),
+                        DualAngle(end_absolute, end_relative),
+                        DualAngle.from_any,
+                    )
+
+                if has_anchorradius:
+                    self.linear.pop("anchorradius", None)
+                    self.linear["anchorradius"] = Linear(
+                        start_state.anchorradius,
+                        new_state.anchorradius,
+                        position_or_none,
+                    )
+
+        for name, values, loop in interpolation.splines:
+            self.splines[name] = Spline(start_state.get(name), values, PROPERTIES[name], loop)
+
+        if change_state:
+            if revolution is not None:
+                # Ensure we rotate around the new point.
+                start_state.xaround = new_state.xaround or 0.0
+                start_state.yaround = new_state.yaround or 0.0
+                start_state.xanchoraround = new_state.xanchoraround
+                start_state.yanchoraround = new_state.yanchoraround
+
+            # Ensure that we set things, even if they don't actually
+            # change from the old state.
+            for name, value in interpolation.properties:
+                if name not in self.linear:
+                    setattr(start_state, name, value)
+
+        self._fill_executors()
+
+    def after_setstate(self):
+        self.interpolator_functions = []
+        self._fill_executors()
+
+    def _fill_executors(self):
+        for name, interpolator in self.linear.items():
+            self.interpolator_functions.append((name, interpolator.build()))
+
+        for name, interpolator in self.splines.items():
+            self.interpolator_functions.append((name, interpolator.build()))
+
+
 class Interpolation(Statement):
-    def __init__(self, loc, warper, duration, properties, revolution, circles, splines):
-        super(Interpolation, self).__init__(loc)
+    __version__ = 1
+
+    def __init__(
+        self,
+        loc,
+        warper,
+        duration,
+        properties,
+        revolution,
+        circles,
+        splines: list[tuple[str, list[Any], bool]],
+    ):
+        super().__init__(loc)
 
         self.warper = warper
         self.duration = duration
         self.properties = properties
-        self.splines = splines
+        self.splines: list[tuple[str, list[Any], bool]] = splines
 
         # The direction we revolve in: cw, ccw, or None.
         self.revolution = revolution
 
         # The number of complete circles we make.
         self.circles = circles
+
+    def after_upgrade(self, version):
+        if version < 1:
+            splines: list = self.splines
+            self.splines = [(name, values, False) for name, values in splines]
 
     def execute(self, trans, st, state, events):
         executing(self.loc)
@@ -1430,222 +1898,11 @@ class Interpolation(Statement):
 
         complete = warper(complete)
 
-        if state is None or len(state) != 6:
-            # Create a new transform state, and apply the property
-            # changes to it.
-            newts = renpy.display.motion.TransformState()
-            newts.take_state(trans.state)
+        if not isinstance(state, InterpolationState):
+            state = InterpolationState(self, trans.state, state is None)
 
-            has_angle = False
-            has_radius = False
-            has_anchorangle = False
-            has_anchorradius = False
-
-            for k, v in self.properties:
-                setattr(newts, k, v)
-
-                if k == "angle":
-                    has_angle = True
-
-                elif k == "radius":
-                    has_radius = True
-
-                elif k == "anchorangle":
-                    has_anchorangle = True
-
-                elif k == "anchorradius":
-                    has_anchorradius = True
-
-            # Now, the things we change linearly are in the difference
-            # between the new and old states.
-            linear = trans.state.diff(newts)
-
-            # Angle and radius need to go after the linear changes, as
-            # around or alignaround must be set first.
-            angles = None
-            radii = None
-            anchorangles = None
-            anchorradii = None
-
-            splines = []
-
-            revdir = self.revolution
-            circles = self.circles
-
-            if (
-                revdir
-                or ((has_angle or has_radius) and renpy.config.automatic_polar_motion)
-                or has_anchorangle
-                or has_anchorradius
-            ):
-                # Remove various irrelevant motions.
-                for i in [
-                    "xpos",
-                    "ypos",
-                    "xanchor",
-                    "yanchor",
-                    "xaround",
-                    "yaround",
-                    "xanchoraround",
-                    "yanchoraround",
-                ]:
-                    linear.pop(i, None)
-
-                if revdir is not None:
-                    # Ensure we rotate around the new point.
-                    trans.state.xaround = newts.xaround or 0.0
-                    trans.state.yaround = newts.yaround or 0.0
-                    trans.state.xanchoraround = newts.xanchoraround
-                    trans.state.yanchoraround = newts.yanchoraround
-
-                    # Get the start and end angles and radii.
-                    startangle = trans.state.angle
-                    endangle = newts.angle
-                    startradius = trans.state.radius
-                    endradius = newts.radius
-
-                    startanchorangle = trans.state.anchorangle
-                    startanchorangle_absolute = startanchorangle.absolute
-                    startanchorangle_relative = startanchorangle.relative
-                    endanchorangle = newts.anchorangle
-                    endanchorangle_absolute = endanchorangle.absolute
-                    endanchorangle_relative = endanchorangle.relative
-                    startanchorradius = trans.state.anchorradius
-                    endanchorradius = newts.anchorradius
-
-                    # Make sure the angle is in the appropriate direction,
-                    # and contains an appropriate number of circles.
-
-                    if revdir == "clockwise":
-                        if endangle < startangle:
-                            startangle -= 360
-
-                        if endanchorangle_absolute < startanchorangle_absolute:
-                            endanchorangle_absolute -= 360
-                        if endanchorangle_relative < startanchorangle_relative:
-                            endanchorangle_relative -= 360
-
-                        startangle -= circles * 360
-                        startanchorangle_absolute -= circles * 360
-                        startanchorangle_relative -= circles * 360
-
-                    elif revdir == "counterclockwise":
-                        if endangle > startangle:
-                            startangle += 360
-
-                        if endanchorangle_absolute > startanchorangle_absolute:
-                            endanchorangle_absolute += 360
-                        if endanchorangle_relative > startanchorangle_relative:
-                            endanchorangle_relative += 360
-
-                        startangle += circles * 360
-                        startanchorangle_absolute += circles * 360
-                        startanchorangle_relative += circles * 360
-
-                    radii = (startradius, endradius)
-                    angles = (startangle, endangle)
-                    anchorradii = (startanchorradius, endanchorradius)
-                    anchorangles = (
-                        DualAngle(startanchorangle_absolute, startanchorangle_relative),
-                        DualAngle(endanchorangle_absolute, endanchorangle_relative),
-                    )
-
-                else:
-                    if has_angle:
-                        start = trans.state.angle
-                        end = newts.last_angle
-
-                        if end - start > 180:
-                            start += 360
-                        if end - start < -180:
-                            start -= 360
-
-                        angles = (start, end)
-
-                    if has_radius:
-                        radii = (trans.state.radius, newts.radius)
-
-                    if has_anchorangle:
-                        start = trans.state.anchorangle
-                        start_absolute = start.absolute
-                        start_relative = start.relative
-                        end_absolute = newts.last_absolute_anchorangle
-                        end_relative = newts.last_relative_anchorangle
-
-                        if end_absolute - start_absolute > 180:
-                            start_absolute += 360
-                        if end_absolute - start_absolute < -180:
-                            start_absolute -= 360
-                        if end_relative - start_relative > 180:
-                            start_relative += 360
-                        if end_relative - start_relative < -180:
-                            start_relative -= 360
-
-                        anchorangles = (
-                            DualAngle(start_absolute, start_relative),
-                            DualAngle(end_absolute, end_relative),
-                        )
-
-                    if has_anchorradius:
-                        anchorradii = (trans.state.anchorradius, newts.anchorradius)
-
-            # Figure out the splines.
-            for name, values in self.splines:
-                splines.append((name, [trans.state.get(name)] + values))
-
-            state = (linear, angles, radii, anchorangles, anchorradii, splines)
-
-            # Ensure that we set things, even if they don't actually
-            # change from the old state.
-            for k, v in self.properties:
-                if k not in linear:
-                    setattr(trans.state, k, v)
-
-        else:
-            linear, angles, radii, anchorangles, anchorradii, splines = state
-
-        # Linearly interpolate between the things in linear.
-        for k, (old, new) in linear.items():
-            if k == "orientation":
-                if old is None:
-                    old = (0.0, 0.0, 0.0)
-                if new is not None:
-                    value = renpy.display.quaternion.euler_slerp(complete, old, new)
-                elif complete >= 1:
-                    value = None
-                else:
-                    value = old
-
-            else:
-                value = interpolate(complete, old, new, PROPERTIES[k])
-
-            setattr(trans.state, k, value)
-
-        # Handle the angle.
-        if angles is not None:
-            startangle, endangle = angles[:2]
-
-            angle = interpolate(complete, startangle, endangle, float)
-            trans.state.angle = angle
-
-        if radii is not None:
-            startradius, endradius = radii
-            trans.state.radius = interpolate(complete, startradius, endradius, position_or_none)
-
-        if anchorangles is not None:
-            startangle, endangle = anchorangles[:2]
-
-            anchorangle = interpolate(complete, startangle, endangle, DualAngle.from_any)
-            trans.state.anchorangle = anchorangle
-
-        if anchorradii is not None:
-            startradius, endradius = anchorradii
-            trans.state.anchorradius = interpolate(complete, startradius, endradius, position_or_none)
-
-        # Handle any splines we might have.
-        for name, values in splines:
-            value = interpolate_spline(complete, values, PROPERTIES[name])
-            setattr(trans.state, name, value)
+        for name, func in state.interpolator_functions:
+            setattr(trans.state, name, func(complete))
 
         if (st >= self.duration) and (not force_frame):
             return "next", st - self.duration, None
@@ -2242,7 +2499,7 @@ def parse_atl(l):
 
                 prop = ll.name()
 
-                good_prop = (prop in PROPERTIES)
+                good_prop = prop in PROPERTIES
                 if not prop:
                     good_prop = False
                 elif prop.startswith("u_"):
@@ -2266,8 +2523,11 @@ def parse_atl(l):
                     if knots:
                         if prop == "orientation":
                             raise Exception("Orientation doesn't support spline.")
+                        loop = bool(ll.keyword("loop"))
+                        if loop and len(knots) < 3:
+                            raise Exception("Spline loops require at least 3 knots.")
                         knots.append(expr)
-                        rm.add_spline(prop, knots)
+                        rm.add_spline(prop, knots, loop)
                     else:
                         addprop_rv = rm.add_property(prop, expr)
                         if addprop_rv == prop:

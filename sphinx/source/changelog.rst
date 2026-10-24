@@ -214,6 +214,10 @@ see :var:`config.image_directories` and :var:`config.audio_directories`.
 The new :var:`config.audio_directories` variable is a list of directories that are searched for audio Files
 and used to populate the :ref:`audio-namespace <audio-namespace>`.
 
+In ATL, Catmull-Rom splines (those with more than three knots) may now be
+specified as a ``loop``. Combining this with the existing ``repeat`` feature
+allows displayables to traverse a closed-looping path indefinitely.
+
 Automated Testing
 -----------------
 
