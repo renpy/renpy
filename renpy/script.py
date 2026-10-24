@@ -689,7 +689,7 @@ class Script:
                         )
                     )
 
-        self.update_bytecode(expressions or [])
+        self.update_bytecode(expressions)
 
         for node in all_stmts:
             if isinstance(node, renpy.ast.Testcase):
@@ -1069,37 +1069,38 @@ class Script:
 
         self.digest.update(digest)  # type: ignore
 
-    def update_bytecode(self, expressions: renpy.parser.ExpressionsList):
+    def update_bytecode(self, expressions: renpy.parser.ExpressionsList | None = None):
         """
         Compiles the PyCode objects in self.all_pycode, updating the
         cache. Clears out self.all_pycode.
         """
 
-        for expr, context in expressions:
-            if context == "unknown":
-                mode = "eval"
-            else:
-                mode = context
-
-            try:
-                renpy.python.py_compile(expr, mode)
-            except SyntaxError as e:
+        if expressions is not None:
+            for expr, context in expressions:
                 if context == "unknown":
-                    continue
+                    mode = "eval"
+                else:
+                    mode = context
 
-                assert e.filename is not None
-                assert e.lineno is not None
-                pem = renpy.parser.ParseError(
-                    e.msg,
-                    e.filename,
-                    e.lineno,
-                    e.offset,
-                    e.text,
-                    e.end_lineno,
-                    e.end_offset,
-                )
+                try:
+                    renpy.python.py_compile(expr, mode)
+                except SyntaxError as e:
+                    if context == "unknown":
+                        continue
 
-                renpy.parser.parse_errors.append(pem.message)
+                    assert e.filename is not None
+                    assert e.lineno is not None
+                    pem = renpy.parser.ParseError(
+                        e.msg,
+                        e.filename,
+                        e.lineno,
+                        e.offset,
+                        e.text,
+                        e.end_lineno,
+                        e.end_offset,
+                    )
+
+                    renpy.parser.parse_errors.append(pem.message)
 
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.
