@@ -14,4 +14,4 @@ translate tchinese strings:
 
     # options.rpy:32
     old "Character Art: Deji.\nOriginal Character Art: derik.\n\nBackground Art: Mugenjohncel.\nOriginal Background Art: DaFool\n\nMusic By: Alessio\n\nWritten By: mikey"
-    new "角色作畫：Deji.\n原版角色作畫：derik.\n\n背景作畫：Mugenjohncel.\n原版背景作畫：DaFool\n\n音樂：Alessio\n\n劇本：mikey"
+    new "角色美術：Deji。\n原始角色美術：derik。\n\n背景美術：Mugenjohncel。\n原始背景美術：DaFool\n\n音樂：Alessio\n\n劇本：mikey"

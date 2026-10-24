@@ -7,7 +7,7 @@ translate tchinese strings:
 
     # screens.rpy:252
     old "History"
-    new "歷史"
+    new "歷史記錄"
 
     # screens.rpy:253
     old "Skip"
@@ -23,15 +23,15 @@ translate tchinese strings:
 
     # screens.rpy:256
     old "Q.Save"
-    new "快存"
+    new "快速存檔"
 
     # screens.rpy:257
     old "Q.Load"
-    new "快讀"
+    new "快速讀檔"
 
     # screens.rpy:258
     old "Prefs"
-    new "設定"
+    new "偏好設定"
 
     # screens.rpy:299
     old "Start"
@@ -43,7 +43,7 @@ translate tchinese strings:
 
     # screens.rpy:309
     old "Preferences"
-    new "設定"
+    new "偏好設定"
 
     # screens.rpy:313
     old "End Replay"
@@ -51,7 +51,7 @@ translate tchinese strings:
 
     # screens.rpy:317
     old "Main Menu"
-    new "標題介面"
+    new "主選單"
 
     # screens.rpy:319
     old "About"
@@ -59,11 +59,11 @@ translate tchinese strings:
 
     # screens.rpy:324
     old "Help"
-    new "幫助"
+    new "說明"
 
     # screens.rpy:327
     old "Quit"
-    new "退出"
+    new "離開"
 
     # screens.rpy:467
     old "Return"
@@ -75,7 +75,7 @@ translate tchinese strings:
 
     # screens.rpy:555
     old "Updated Character Art"
-    new "新版角色圖"
+    new "更新後的角色圖"
 
     # screens.rpy:556
     old "Deji"
@@ -83,7 +83,7 @@ translate tchinese strings:
 
     # screens.rpy:560
     old "Original Character Art"
-    new "原版角色圖"
+    new "原始角色圖"
 
     # screens.rpy:561
     old "Derik"
@@ -91,7 +91,7 @@ translate tchinese strings:
 
     # screens.rpy:567
     old "Updated Background Art"
-    new "新版背景圖"
+    new "更新後的背景圖"
 
     # screens.rpy:568
     old "Mugenjohncel"
@@ -99,7 +99,7 @@ translate tchinese strings:
 
     # screens.rpy:572
     old "Original Background Art"
-    new "原版背景圖"
+    new "原始背景圖"
 
     # screens.rpy:573
     old "DaFool"
@@ -115,7 +115,7 @@ translate tchinese strings:
 
     # screens.rpy:586
     old "Update Written By"
-    new "新版劇本"
+    new "更新版劇本"
 
     # screens.rpy:587
     old "Lore"
@@ -123,7 +123,7 @@ translate tchinese strings:
 
     # screens.rpy:591
     old "Originally Written By "
-    new "原版劇本"
+    new "原作劇本"
 
     # screens.rpy:592
     old "mikey (ATP Projects)"
@@ -151,7 +151,7 @@ translate tchinese strings:
 
     # screens.rpy:685
     old "{#file_time}%A, %B %d %Y, %H:%M"
-    new "{#file_time}%Y-%m-%d %H:%M"
+    new "{#file_time}%Y/%m/%d %H:%M"
 
     # screens.rpy:685
     old "empty slot"
@@ -187,11 +187,11 @@ translate tchinese strings:
 
     # screens.rpy:782
     old "Rollback Side"
-    new "回退控制區"
+    new "回退側"
 
     # screens.rpy:783
     old "Disable"
-    new "禁用"
+    new "停用"
 
     # screens.rpy:784
     old "Left"
@@ -203,7 +203,7 @@ translate tchinese strings:
 
     # screens.rpy:790
     old "Unseen Text"
-    new "未讀文本"
+    new "未讀文字"
 
     # screens.rpy:791
     old "After Choices"
@@ -211,7 +211,7 @@ translate tchinese strings:
 
     # screens.rpy:792
     old "Transitions"
-    new "忽略轉場"
+    new "轉場"
 
     # screens.rpy:800
     old "Language"
@@ -247,7 +247,7 @@ translate tchinese strings:
 
     # screens.rpy:975
     old "The dialogue history is empty."
-    new "對話歷史記錄為空。"
+    new "對話歷史記錄是空的。"
 
     # screens.rpy:1040
     old "Keyboard"
@@ -259,23 +259,23 @@ translate tchinese strings:
 
     # screens.rpy:1044
     old "Gamepad"
-    new "手柄"
+    new "遊戲控制器"
 
     # screens.rpy:1057
     old "Enter"
-    new "回車"
+    new "Enter"
 
     # screens.rpy:1058
     old "Advances dialogue and activates the interface."
-    new "推進對話並激活界面。"
+    new "推進對話並啟用介面。"
 
     # screens.rpy:1061
     old "Space"
-    new "空格"
+    new "Space"
 
     # screens.rpy:1062
     old "Advances dialogue without selecting choices."
-    new "推進對話但不選擇選項。"
+    new "推進對話，不選取選項。"
 
     # screens.rpy:1065
     old "Arrow Keys"
@@ -283,15 +283,15 @@ translate tchinese strings:
 
     # screens.rpy:1066
     old "Navigate the interface."
-    new "導航界面。"
+    new "瀏覽介面。"
 
     # screens.rpy:1069
     old "Escape"
-    new "Esc"
+    new "Escape"
 
     # screens.rpy:1070
     old "Accesses the game menu."
-    new "訪問遊戲選單。"
+    new "開啟遊戲選單。"
 
     # screens.rpy:1073
     old "Ctrl"
@@ -307,7 +307,7 @@ translate tchinese strings:
 
     # screens.rpy:1078
     old "Toggles dialogue skipping."
-    new "切換對話跳過。"
+    new "切換跳過對話。"
 
     # screens.rpy:1081
     old "Page Up"
@@ -315,7 +315,7 @@ translate tchinese strings:
 
     # screens.rpy:1082
     old "Rolls back to earlier dialogue."
-    new "回退至先前的對話。"
+    new "回退至較早的對話。"
 
     # screens.rpy:1085
     old "Page Down"
@@ -323,15 +323,15 @@ translate tchinese strings:
 
     # screens.rpy:1086
     old "Rolls forward to later dialogue."
-    new "向前至之後的對話。"
+    new "前進至較晚的對話。"
 
     # screens.rpy:1090
     old "Hides the user interface."
-    new "隱藏用戶介面。"
+    new "隱藏使用者介面。"
 
     # screens.rpy:1094
     old "Takes a screenshot."
-    new "截圖。"
+    new "擷取螢幕畫面。"
 
     # screens.rpy:1098
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
@@ -339,31 +339,31 @@ translate tchinese strings:
 
     # screens.rpy:1104
     old "Left Click"
-    new "左鍵點擊"
+    new "按一下滑鼠左鍵"
 
     # screens.rpy:1108
     old "Middle Click"
-    new "中鍵點擊"
+    new "按一下滑鼠中鍵"
 
     # screens.rpy:1112
     old "Right Click"
-    new "右鍵點擊"
+    new "按一下滑鼠右鍵"
 
     # screens.rpy:1116
     old "Mouse Wheel Up"
-    new "滑鼠滾輪上"
+    new "滑鼠滾輪向上"
 
     # screens.rpy:1120
     old "Mouse Wheel Down"
-    new "滑鼠滾輪下"
+    new "滑鼠滾輪向下"
 
     # screens.rpy:1127
     old "Right Trigger\nA/Bottom Button"
-    new "右扳機鍵\nA/底鍵"
+    new "右扳機\nA／下方按鈕"
 
     # screens.rpy:1131
     old "Left Trigger\nLeft Shoulder"
-    new "左扳機鍵\n左肩鍵"
+    new "左扳機\n左肩鍵"
 
     # screens.rpy:1135
     old "Right Shoulder"
@@ -371,27 +371,27 @@ translate tchinese strings:
 
     # screens.rpy:1139
     old "D-Pad, Sticks"
-    new "十字鍵，搖桿"
+    new "方向鍵、類比搖桿"
 
     # screens.rpy:1143
     old "Start, Guide"
-    new "開始鍵，嚮導鍵"
+    new "開始鍵、Guide"
 
     # screens.rpy:1147
     old "Y/Top Button"
-    new "Y/頂鍵"
+    new "Y／上方按鈕"
 
     # screens.rpy:1150
     old "Calibrate"
-    new "校準"
+    new "校正"
 
     # screens.rpy:1215
     old "Yes"
-    new "確定"
+    new "是"
 
     # screens.rpy:1216
     old "No"
-    new "取消"
+    new "否"
 
     # screens.rpy:1262
     old "Skipping"
