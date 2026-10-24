@@ -22,28 +22,28 @@
 
 """Tests for screen-language execution that do not need a running game."""
 
-import unittest
+import pytest
 
 import renpy
-from unittests.renpy_test_support import initialize_renpy
-
-initialize_renpy()
-
 from renpy.display.screen import ScreenNotFound
 from renpy.sl2.slast import SLContext, SLUse
 
 
-class TestLegacyUse(unittest.TestCase):
-    def test_missing_screen_restores_ui_stack(self) -> None:
-        node = SLUse(("test_slparser.py", 1), "slparser_missing_screen", None, None, None, None)
-        old_stack = list(renpy.ui.stack)
+def test_missing_screen_restores_ui_stack():
+    """
+    Using a screen that does not exist raises ScreenNotFound without leaving a partial entry on
+    renpy.ui.stack.
 
-        with self.assertRaises(ScreenNotFound):
-            node.execute_use_screen(SLContext())
+    execute_use_screen pushes the context before calling use_screen and pops it in a finally block, so the
+    stack must be unchanged after the exception. Compares stack identity, not only length, so that a
+    push/pop pair replacing an entry is still caught.
+    """
 
-        self.assertEqual(len(renpy.ui.stack), len(old_stack))
-        self.assertTrue(all(a is b for a, b in zip(renpy.ui.stack, old_stack)))
+    node = SLUse(("test_slparser.py", 1), "slparser_missing_screen", None, None, None, None)
+    old_stack = list(renpy.ui.stack)
 
+    with pytest.raises(ScreenNotFound):
+        node.execute_use_screen(SLContext())
 
-if __name__ == "__main__":
-    unittest.main()
+    assert len(renpy.ui.stack) == len(old_stack)
+    assert all(a is b for a, b in zip(renpy.ui.stack, old_stack))

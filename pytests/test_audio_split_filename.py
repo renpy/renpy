@@ -22,37 +22,41 @@
 
 """Tests for parsing partial-playback audio specs such as ``<loop 1.0>music.ogg``."""
 
-import unittest
-
-from unittests.renpy_test_support import initialize_renpy
-
-initialize_renpy()
+import pytest
 
 from renpy.audio.audio import AudioData, Channel
 
 
-class TestSplitFilename(unittest.TestCase):
-    def setUp(self) -> None:
-        self.channel = Channel.__new__(Channel)
-        self.channel.file_prefix = ""
-        self.channel.file_suffix = ""
+@pytest.fixture
+def channel():
+    """A bare Channel with no file prefix or suffix, enough to call split_filename without audio set up."""
 
-    def test_loop_spec_on_audio_data(self) -> None:
-        data = b"audio data"
-        filename = AudioData(data, "<loop 0.0005625>first.wav")
-
-        first, start, _end, _volume = self.channel.split_filename(filename, False)
-        self.assertEqual(start, 0.0)
-
-        loop, start, end, _volume = self.channel.split_filename(filename, True)
-        self.assertEqual(start, 27 / 48000)
-        self.assertEqual(end, -1)
-
-        for split in (first, loop):
-            self.assertIsInstance(split, AudioData)
-            self.assertEqual(str(split), "first.wav")
-            self.assertEqual(split.data, data)
+    channel = Channel.__new__(Channel)
+    channel.file_prefix = ""
+    channel.file_suffix = ""
+    return channel
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_loop_spec_on_audio_data(channel):
+    """
+    A ``<loop ...>`` spec on in-memory AudioData is parsed like one on a filename, and the result is
+    still AudioData carrying the original bytes under the stripped name.
+
+    The first play starts at 0; the looped play starts at the loop point and runs to the end (-1). The
+    loop point 0.0005625 seconds is exactly 27 samples at 48 kHz, so the float comparison is exact.
+    """
+
+    data = b"audio data"
+    filename = AudioData(data, "<loop 0.0005625>first.wav")
+
+    first, start, _end, _volume = channel.split_filename(filename, False)
+    assert start == 0.0
+
+    loop, start, end, _volume = channel.split_filename(filename, True)
+    assert start == 27 / 48000
+    assert end == -1
+
+    for split in (first, loop):
+        assert isinstance(split, AudioData)
+        assert str(split) == "first.wav"
+        assert split.data == data

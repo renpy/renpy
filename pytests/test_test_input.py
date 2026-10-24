@@ -1,62 +1,88 @@
-import unittest
-from unittest.mock import patch
-
-from unittests.renpy_test_support import initialize_renpy
-
-initialize_renpy()
+import pytest
 
 from renpy import pygame
 from renpy.test import testkey
 
 
-class TestKeyboardEvents(unittest.TestCase):
-    def test_printable_key_does_not_require_native_text_input(self):
-        for active in (False, True):
-            with self.subTest(active=active):
-                with (
-                    patch.object(pygame.key, "text_input_active", return_value=active),
-                    patch.object(pygame.event, "post") as post,
-                ):
-                    testkey.down("a")
-                    testkey.up("a")
+@pytest.mark.parametrize("active", [False, True], ids=["text-input-inactive", "text-input-active"])
+def test_printable_key_does_not_require_native_text_input(mocker, active):
+    """
+    A synthetic printable key press carries its text on the KEYDOWN event whether or not native text
+    input is active.
 
-                events = [call.args[0] for call in post.call_args_list]
-                self.assertEqual([event.type for event in events], [pygame.KEYDOWN, pygame.KEYUP])
-                self.assertEqual(events[0].unicode, "a")
-                self.assertEqual(events[0].key, pygame.K_a)
-                self.assertTrue(all(event.test for event in events))
+    In a headless test window there may be no active IME, so no TEXTINPUT event would arrive; the test
+    runner must not depend on one. Both posted events are marked as test events so they can be told apart
+    from real input.
+    """
 
-    def test_uppercase_and_modifiers(self):
-        for keysym, text, mods in (
-            ("H", "H", pygame.KMOD_LSHIFT),
-            ("shift_K_a", "a", pygame.KMOD_LSHIFT),
-            ("ctrl_K_a", "a", pygame.KMOD_LCTRL),
-            ("alt_K_a", "a", pygame.KMOD_LALT),
-        ):
-            with self.subTest(keysym=keysym):
-                with patch.object(pygame.event, "post") as post:
-                    testkey.down(keysym)
+    mocker.patch.object(pygame.key, "text_input_active", return_value=active)
+    post = mocker.patch.object(pygame.event, "post")
 
-                event = post.call_args.args[0]
-                self.assertEqual(event.unicode, text)
-                self.assertEqual(event.mod, mods)
-                post.assert_called_once()
+    testkey.down("a")
+    testkey.up("a")
 
-    def test_navigation_keys_do_not_insert_text(self):
-        for keysym in ("K_LEFT", "K_BACKSPACE", "K_RETURN"):
-            with self.subTest(keysym=keysym):
-                with patch.object(pygame.event, "post") as post:
-                    testkey.queue_keysym(keysym)
+    events = [call.args[0] for call in post.call_args_list]
+    assert [event.type for event in events] == [pygame.KEYDOWN, pygame.KEYUP]
+    assert events[0].unicode == "a"
+    assert events[0].key == pygame.K_a
+    assert all(event.test for event in events)
 
-                events = [call.args[0] for call in post.call_args_list]
-                self.assertEqual([event.type for event in events], [pygame.KEYDOWN, pygame.KEYUP])
-                self.assertEqual(events[0].unicode, "")
 
-    def test_keymap_event_uses_existing_queue(self):
-        with (
-            patch.dict(testkey.renpy.config.keymap, {"dismiss": ["K_RETURN"]}),
-            patch.object(testkey.renpy.exports, "queue_event") as queue,
-        ):
-            testkey.queue_keysym("dismiss")
+@pytest.mark.parametrize(
+    ("keysym", "text", "mods"),
+    [
+        ("H", "H", pygame.KMOD_LSHIFT),
+        ("shift_K_a", "a", pygame.KMOD_LSHIFT),
+        ("ctrl_K_a", "a", pygame.KMOD_LCTRL),
+        ("alt_K_a", "a", pygame.KMOD_LALT),
+    ],
+)
+def test_uppercase_and_modifiers(mocker, keysym, text, mods):
+    """
+    Keysyms set the modifiers and text of the single KEYDOWN event they post.
 
-        queue.assert_called_once_with("dismiss")
+    An uppercase letter implies left shift and keeps its uppercase text. Explicit modifier prefixes set
+    the matching left-hand modifier. "shift_K_a" keeps the lowercase "a" because the keysym names the
+    key, not the shifted character.
+    """
+
+    post = mocker.patch.object(pygame.event, "post")
+
+    testkey.down(keysym)
+
+    event = post.call_args.args[0]
+    assert event.unicode == text
+    assert event.mod == mods
+    post.assert_called_once()
+
+
+@pytest.mark.parametrize("keysym", ["K_LEFT", "K_BACKSPACE", "K_RETURN"])
+def test_navigation_keys_do_not_insert_text(mocker, keysym):
+    """
+    Navigation and editing keys post a KEYDOWN/KEYUP pair with empty text.
+
+    Backspace and Return have control-character codes (below 32), which must not be inserted into an
+    input as text.
+    """
+
+    post = mocker.patch.object(pygame.event, "post")
+
+    testkey.queue_keysym(keysym)
+
+    events = [call.args[0] for call in post.call_args_list]
+    assert [event.type for event in events] == [pygame.KEYDOWN, pygame.KEYUP]
+    assert events[0].unicode == ""
+
+
+def test_keymap_event_uses_existing_queue(mocker):
+    """
+    A name found in config.keymap is queued as that keymap event through renpy.queue_event, rather than
+    being treated as a key name and posted as key presses.
+    """
+
+    mocker.patch.dict(testkey.renpy.config.keymap, {"dismiss": ["K_RETURN"]})
+    queue = mocker.patch.object(testkey.renpy.exports, "queue_event")
+
+    testkey.queue_keysym("dismiss")
+
+    queue.assert_called_once_with("dismiss")

@@ -123,3 +123,12 @@ ignore = [
 
 [tool.ruff.format]
 preview = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-mock>=3.17.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["pytests"]

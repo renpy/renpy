@@ -20,885 +20,867 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import importlib.util
+import io
 import sys
-import unittest
+import time
+import zipfile
 from pathlib import Path
 from types import SimpleNamespace
-from typing import TYPE_CHECKING
-from unittest.mock import MagicMock, PropertyMock, patch
 
-if TYPE_CHECKING:
-    from renpy.display.tts import PrismTTS
+import pytest
 
-
-class TestTTSImport(unittest.TestCase):
-    """Exercise platform fallback when native speech dependencies are unavailable."""
-
-    def test_web_without_ctypes(self) -> None:
-        """Importing without ctypes must still allow the web backend to initialize."""
-        import renpy
-        import renpy.error
-
-        path = Path(__file__).resolve().parent.parent / "renpy" / "display" / "tts.py"
-        spec = importlib.util.spec_from_file_location("_test_web_tts", path)
-        assert spec is not None and spec.loader is not None
-        module = importlib.util.module_from_spec(spec)
-
-        with patch.dict(sys.modules, {"ctypes": None, "ctypes.util": None}):
-            spec.loader.exec_module(module)
-
-        self.assertIsNone(module.prism)
-        with (
-            patch.multiple(renpy, android=False, ios=False, macintosh=False, linux=False, windows=False, emscripten=True),
-            patch.object(renpy, "config", SimpleNamespace(tts_substitutions=[], auto_screenreader_voicing=False), create=True),
-            patch.object(module.sys, "platform", "emscripten"),
-        ):
-            module.init()
-
-        self.assertIsInstance(module.platform_tts, module.WebTTS)
+import renpy
+import renpy.config
+import renpy.display
+import renpy.display.displayable
+import renpy.display.tts as tts_module
+import renpy.object
+from renpy.display.tts import SCREEN_READER_BACKENDS, PrismTTS
 
 
-class TestPrismVoiceCatalog(unittest.TestCase):
-    """Exercise voice enumeration and selection without native Prism or audio output."""
+def create_voices(count, language="en-US"):
+    """Create distinct voices sharing a language to expose unwanted duplicate representatives."""
+    return [(language, f"Voice {index}") for index in range(count)]
 
-    def create_tts(
-        self, specifications: list[tuple[str, list[tuple[str, str]], int | None]]
-    ) -> "tuple[PrismTTS, list[MagicMock]]":
-        """Create registry-backed synthesizers with explicit languages, names, and defaults."""
-        import renpy
 
-        if not hasattr(renpy, "error"):
-            import renpy.error
+def _ensure_image_environment(mocker):
+    """Prepare minimal module mock environment to import renpy.display.image outside full binary."""
+    import types
 
-            renpy.error = renpy.error
+    if not hasattr(renpy, "pygame"):
+        renpy.pygame = mocker.MagicMock()
+        sys.modules["renpy.pygame"] = renpy.pygame
 
-        import renpy.display.tts as tts_module
+    if not hasattr(renpy.display, "core"):
+        renpy.display.core = mocker.MagicMock()
+    if not hasattr(renpy.display, "im"):
+        renpy.display.im = mocker.MagicMock()
+    if not hasattr(renpy.display, "imagelike"):
+        renpy.display.imagelike = mocker.MagicMock()
+    if not hasattr(renpy.display, "behavior"):
+        renpy.display.behavior = mocker.MagicMock()
 
-        backends: list[MagicMock] = []
+    if "renpy.display.render" not in sys.modules:
+        render_mod = types.ModuleType("renpy.display.render")
+        render_mod.render = mocker.MagicMock()
+        render_mod.Render = mocker.MagicMock()
+        sys.modules["renpy.display.render"] = render_mod
+        renpy.display.render = render_mod
+
+    if "renpy.style" not in sys.modules or not hasattr(renpy, "style"):
+        style_mod = types.ModuleType("renpy.style")
+
+        class DummyStyle:
+            """Stand-in for renpy.style.Style that only records the alt attribute."""
+
+            def __init__(self, *args, **kwargs):
+                self.alt = None
+
+        style_mod.Style = DummyStyle
+        sys.modules["renpy.style"] = style_mod
+        renpy.style = style_mod
+
+    if "renpy.substitutions" not in sys.modules or not hasattr(renpy, "substitutions"):
+        subst_mod = types.ModuleType("renpy.substitutions")
+        subst_mod.substitute = lambda s, scope=None: (s, False)
+        sys.modules["renpy.substitutions"] = subst_mod
+        renpy.substitutions = subst_mod
+
+    import renpy.display.image as image_module
+
+    return image_module
+
+
+def _load_fetch_prism_module():
+    """Load scripts/fetch_prism.py from the repository without installing it as a package."""
+    script_path = Path(__file__).resolve().parent.parent / "scripts" / "fetch_prism.py"
+    spec = importlib.util.spec_from_file_location("fetch_prism", script_path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _build_mock_sdk_zip(tag="v0.18.3"):
+    """Build an in-memory SDK archive with fake binaries for each target platform plus one ignored shim."""
+    buf = io.BytesIO()
+    payloads = {
+        f"prism-sdk-{tag}/windows/x64/dynamic/release/bin/prism.dll": b"MZ_FAKE_WINDOWS_DLL" * 50,
+        f"prism-sdk-{tag}/macos/universal/dynamic/release/lib/libprism.dylib": b"\xcf\xfa\xed\xfe_FAKE_MAC_DYLIB" * 50,
+        f"prism-sdk-{tag}/linux/x64/dynamic/release/lib/libprism.so": b"\x7fELF_FAKE_LINUX_X64_SO" * 50,
+        f"prism-sdk-{tag}/linux/arm64/dynamic/release/lib/libprism.so": b"\x7fELF_FAKE_LINUX_ARM64_SO" * 50,
+        f"prism-sdk-{tag}/windows/x64/dynamic/release/bin/tolk.dll": b"SHIM_SHOULD_BE_IGNORED",
+    }
+    with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_STORED) as zf:
+        for name, content in payloads.items():
+            zf.writestr(name, content)
+    return buf.getvalue(), payloads
+
+
+def _make_range_opener(zip_bytes, resolved_tag="v0.18.3"):
+    """Return a urlopen replacement that serves the archive, honoring HEAD and HTTP Range requests.
+
+    The "latest" release URL redirects to resolved_tag, mimicking GitHub's release redirect.
+    """
+
+    class FakeResponse:
+        """Minimal response object supporting read() and the context-manager protocol."""
+
+        def __init__(self, data, url, headers):
+            self._data = data
+            self.url = url
+            self.headers = headers
+
+        def read(self):
+            return self._data
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+    def opener(req):
+        url = req.full_url
+        method = getattr(req, "method", None) or "GET"
+        if url.endswith("/releases/latest"):
+            return FakeResponse(
+                b"",
+                f"https://github.com/ethindp/prism/releases/tag/{resolved_tag}",
+                {},
+            )
+        if method == "HEAD":
+            return FakeResponse(
+                b"",
+                url,
+                {"Content-Length": str(len(zip_bytes))},
+            )
+        range_hdr = req.headers.get("Range") or req.headers.get("range")
+        if range_hdr and range_hdr.startswith("bytes="):
+            start_s, end_s = range_hdr[len("bytes=") :].split("-")
+            start = int(start_s)
+            end = int(end_s)
+            return FakeResponse(zip_bytes[start : end + 1], url, {})
+        return FakeResponse(zip_bytes, url, {})
+
+    return opener
+
+
+@pytest.fixture
+def has_prism():
+    """Report whether the Prism dynamic library loaded; tests that need native Prism skip when this is False."""
+    return tts_module.prism is not None
+
+
+@pytest.fixture
+def make_tts(mocker):
+    """Factory that builds a PrismTTS over mocked Prism backends and shuts each one down at teardown.
+
+    Each specification is (backend name, [(language, voice name), ...], default voice index or None). A None
+    default makes the backend's voice property raise, as when no current voice exists. The Prism context and
+    _ensure_input_desktop are patched only while PrismTTS is constructed, so the tests exercise the real methods.
+    """
+    created = []
+
+    def make(specifications):
+        """Build a PrismTTS from the given specifications and register it for shutdown at teardown."""
+        backends = []
         for name, voices, default in specifications:
-            backend = MagicMock()
+            backend = mocker.MagicMock()
             backend.name = name
             backend.voices_count = len(voices)
             backend.get_voice_language.side_effect = lambda index, entries=voices: entries[index][0]
             backend.get_voice_name.side_effect = lambda index, entries=voices: entries[index][1]
             backend.speaking = False
             if default is None:
-                type(backend).voice = PropertyMock(side_effect=RuntimeError("No current voice"))
+                type(backend).voice = mocker.PropertyMock(side_effect=RuntimeError("No current voice"))
             else:
                 backend.voice = default
             backends.append(backend)
 
-        context = MagicMock()
+        context = mocker.MagicMock()
         context.backends_count = len(backends)
         context.id_of.side_effect = lambda index: index
         context.name_of.side_effect = lambda bid: backends[bid].name
         context.acquire.side_effect = lambda bid: backends[bid]
         context.acquire_best.return_value = next(iter(backends), None)
-        prism = SimpleNamespace(Context=MagicMock(return_value=context))
-        with patch.object(tts_module, "prism", prism), patch.object(tts_module, "_ensure_input_desktop"):
-            tts = tts_module.PrismTTS()
-        self.addCleanup(tts.shutdown)
+        prism = SimpleNamespace(Context=mocker.MagicMock(return_value=context))
+        prism_patch = mocker.patch.object(tts_module, "prism", prism)
+        ensure_patch = mocker.patch.object(tts_module, "_ensure_input_desktop")
+        tts = PrismTTS()
+        mocker.stop(prism_patch)
+        mocker.stop(ensure_patch)
+        created.append(tts)
         return tts, backends
 
-    def create_voices(self, count: int, language: str = "en-US") -> list[tuple[str, str]]:
-        """Create distinct voices sharing a language to expose unwanted duplicate representatives."""
-        return [(language, f"Voice {index}") for index in range(count)]
+    yield make
 
-    def test_combined_threshold_boundary(self) -> None:
-        """Exactly 50 voices remain complete; 51 trigger reduction of both large backends."""
-        for second_count in (10, 11):
-            with self.subTest(total=40 + second_count):
-                first = self.create_voices(40)
-                second = self.create_voices(second_count)
-                tts, _ = self.create_tts([("sapi", first, 3), ("espeak", second, 2)])
-                expected = (
-                    ["en-US: Voice 3", "en-US: Voice 2"]
-                    if second_count == 11
-                    else [
-                        f"{language}: {name}"
-                        for backend, entries in (("sapi", first), ("espeak", second))
-                        for language, name in entries
-                    ]
-                )
-                self.assertEqual(tts.get_tts_voices(), expected)
+    for tts in reversed(created):
+        tts.shutdown()
 
-    def test_small_backends_remain_complete(self) -> None:
-        """Above 50 total voices, a 10-voice backend stays complete while an 11-voice backend reduces."""
-        tts, _ = self.create_tts([
-            ("sapi", self.create_voices(30), 5),
-            ("small", self.create_voices(10), 4),
-            ("espeak", self.create_voices(11), 6),
-        ])
-        self.assertEqual(
-            tts.get_tts_voices(),
-            ["en-US: Voice 5"] + [f"en-US: Voice {index}" for index in range(10)] + ["en-US: Voice 6"],
-        )
 
-    def test_exact_languages_and_initial_default(self) -> None:
-        """Regional and unknown languages stay distinct; the captured default replaces the first voice."""
-        entries = [("en-US", "First US"), ("en-GB", "First GB"), ("", "Unknown")]
-        entries += self.create_voices(47)
-        entries.append(("en-US", "Default US"))
-        tts, backends = self.create_tts([("sapi", entries, 50)])
-        expected = ["en-US: Default US", "en-GB: First GB", ": Unknown"]
-        self.assertEqual(tts.get_tts_voices(), expected)
-        self.assertEqual(backends[0].voice, 50)
-        backends[0].voice = 0
-        self.assertEqual(tts.get_tts_voices(), expected)
+def test_web_without_ctypes(mocker):
+    """Importing tts.py with ctypes unavailable must still let the web backend initialize.
 
-    def test_unavailable_and_invalid_defaults_use_first_voice(self) -> None:
-        """An unavailable or out-of-range default cannot discard a language's representative."""
-        import renpy.display.tts as tts_module
+    The module is executed under a private name with ctypes hidden from sys.modules, which simulates the browser
+    runtime. The platform flags and sys.platform are faked as emscripten only for the init() call. Those fakes are
+    not stopped early, so they remain in effect until the test ends.
+    """
+    path = Path(__file__).resolve().parent.parent / "renpy" / "display" / "tts.py"
+    spec = importlib.util.spec_from_file_location("_test_web_tts", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
 
-        for default in (None, -1, 51):
-            with self.subTest(default=default), patch.object(tts_module.renpy.display.log, "write") as log:
-                tts, _ = self.create_tts([("sapi", self.create_voices(51), default)])
-                self.assertEqual(tts.get_tts_voices(), ["en-US: Voice 0"])
-                if default is None:
-                    log.assert_called()
+    ctypes_hidden = mocker.patch.dict(sys.modules, {"ctypes": None, "ctypes.util": None})
+    spec.loader.exec_module(module)
+    mocker.stop(ctypes_hidden)
 
-    def test_reduction_is_not_a_hard_cap(self) -> None:
-        """All language groups remain available even when more than 50 survive."""
-        entries = [(f"language-{index}", "Voice") for index in range(51)]
-        tts, _ = self.create_tts([("sapi", entries, 0)])
-        self.assertEqual(
-            tts.get_tts_voices(),
-            [f"{language}: Voice" for language, name in entries],
-        )
+    assert module.prism is None
+    mocker.patch.multiple(
+        renpy,
+        android=False,
+        ios=False,
+        macintosh=False,
+        linux=False,
+        windows=False,
+        emscripten=True,
+    )
+    mocker.patch.object(
+        renpy,
+        "config",
+        SimpleNamespace(tts_substitutions=[], auto_screenreader_voicing=False),
+        create=True,
+    )
+    mocker.patch.object(module.sys, "platform", "emscripten")
+    module.init()
 
-    def test_empty_catalogs(self) -> None:
-        """No backends and backends without voices both produce empty lists."""
-        for specifications in ([], [("sapi", [], 0)]):
-            with self.subTest(specifications=specifications):
-                tts, _ = self.create_tts(specifications)
-                self.assertEqual(tts.get_tts_voices(), [])
-                self.assertIsNone(tts.resolve_voice("missing"))
+    assert isinstance(module.platform_tts, module.WebTTS)
 
-    def test_secondary_voice_routes_speech_and_controls(self) -> None:
-        """A menu entry must speak through its own backend at its original, unreduced index."""
-        import renpy.display.tts as tts_module
 
-        tts, backends = self.create_tts([
-            (
-                "sapi",
-                [(language, f"SAPI Voice {index}") for index, (language, _) in enumerate(self.create_voices(40))],
-                8,
-            ),
-            ("espeak", self.create_voices(11), 7),
-        ])
-        self.assertIn("en-US: Voice 7", tts.get_tts_voices())
-        with patch.object(tts_module, "get_voice", return_value=("en-US: Voice 7", "Hello")):
-            tts.speak("Hello", mode="tts")
-        self.assertEqual(backends[1].voice, 7)
-        backends[1].output.assert_called_once_with("Hello", interrupt=True)
-        backends[0].output.assert_not_called()
-        self.assertIs(tts.tts_backend, backends[0])
-        # Interrupting speech must silence the other backend, which may still be talking.
-        backends[0].stop.assert_called_once()
-        backends[1].stop.assert_not_called()
-        for backend in backends:
-            backend.stop.reset_mock()
-        backends[1].speaking = True
-        self.assertTrue(tts.is_speaking())
+@pytest.mark.parametrize("second_count", [10, 11], ids=["total-50", "total-51"])
+def test_combined_threshold_boundary(make_tts, second_count):
+    """Exactly 50 combined voices remain complete; 51 trigger reduction of both large backends.
+
+    second_count varies the size of the second backend, which sets the combined total to 50 or 51.
+    """
+    first = create_voices(40)
+    second = create_voices(second_count)
+    tts, _ = make_tts([("sapi", first, 3), ("espeak", second, 2)])
+    expected = (
+        ["en-US: Voice 3", "en-US: Voice 2"]
+        if second_count == 11
+        else [
+            f"{language}: {name}"
+            for backend, entries in (("sapi", first), ("espeak", second))
+            for language, name in entries
+        ]
+    )
+    assert tts.get_tts_voices() == expected
+
+
+def test_small_backends_remain_complete(make_tts):
+    """Above 50 total voices, a 10-voice backend stays complete while an 11-voice backend reduces.
+
+    The reduction rule applies per backend: only backends with more than 10 voices collapse to one representative
+    per language, so the 10-voice backend keeps all of its voices.
+    """
+    tts, _ = make_tts([
+        ("sapi", create_voices(30), 5),
+        ("small", create_voices(10), 4),
+        ("espeak", create_voices(11), 6),
+    ])
+    assert tts.get_tts_voices() == (
+        ["en-US: Voice 5"] + [f"en-US: Voice {index}" for index in range(10)] + ["en-US: Voice 6"]
+    )
+
+
+def test_exact_languages_and_initial_default(make_tts):
+    """Regional and unknown languages stay distinct; the captured default replaces the first voice.
+
+    The default is read when the backend is acquired. Changing the backend's current voice afterwards must not
+    alter the listing.
+    """
+    entries = [("en-US", "First US"), ("en-GB", "First GB"), ("", "Unknown")]
+    entries += create_voices(47)
+    entries.append(("en-US", "Default US"))
+    tts, backends = make_tts([("sapi", entries, 50)])
+    expected = ["en-US: Default US", "en-GB: First GB", ": Unknown"]
+    assert tts.get_tts_voices() == expected
+    assert backends[0].voice == 50
+    backends[0].voice = 0
+    assert tts.get_tts_voices() == expected
+
+
+@pytest.mark.parametrize("default", [None, -1, 51], ids=["unavailable", "negative", "out-of-range"])
+def test_unavailable_and_invalid_defaults_use_first_voice(make_tts, mocker, default):
+    """An unavailable or out-of-range default cannot discard a language's representative.
+
+    default varies the captured default voice: None means the voice query raised, while -1 and 51 are outside the
+    51-voice catalog. In each case the first voice of the language must be the representative. The log patch
+    records the failure message that the unavailable case should produce.
+    """
+    log = mocker.patch.object(tts_module.renpy.display.log, "write")
+    tts, _ = make_tts([("sapi", create_voices(51), default)])
+    assert tts.get_tts_voices() == ["en-US: Voice 0"]
+    if default is None:
+        log.assert_called()
+
+
+def test_reduction_is_not_a_hard_cap(make_tts):
+    """All language groups remain available even when more than 50 survive.
+
+    Fifty-one distinct languages collapse to one representative each, so the result is not truncated to 50 entries.
+    """
+    entries = [(f"language-{index}", "Voice") for index in range(51)]
+    tts, _ = make_tts([("sapi", entries, 0)])
+    assert tts.get_tts_voices() == [f"{language}: Voice" for language, name in entries]
+
+
+@pytest.mark.parametrize(
+    "specifications",
+    [[], [("sapi", [], 0)]],
+    ids=["no-backends", "backend-without-voices"],
+)
+def test_empty_catalogs(make_tts, specifications):
+    """No backends and backends without voices both produce empty lists.
+
+    specifications varies whether the registry is empty or contains a backend that reports no voices.
+    """
+    tts, _ = make_tts(specifications)
+    assert tts.get_tts_voices() == []
+    assert tts.resolve_voice("missing") is None
+
+
+def test_secondary_voice_routes_speech_and_controls(make_tts, mocker):
+    """A menu entry must speak through its own backend at its original, unreduced index.
+
+    The SAPI backend has 40 voices and is reduced in the menu, while the espeak voice at index 7 is listed. Speech
+    must go to espeak with that index, and the stop call must reach only the other backend, which may still be
+    talking.
+    """
+    tts, backends = make_tts([
+        (
+            "sapi",
+            [(language, f"SAPI Voice {index}") for index, (language, _) in enumerate(create_voices(40))],
+            8,
+        ),
+        ("espeak", create_voices(11), 7),
+    ])
+    assert "en-US: Voice 7" in tts.get_tts_voices()
+    get_voice = mocker.patch.object(tts_module, "get_voice", return_value=("en-US: Voice 7", "Hello"))
+    tts.speak("Hello", mode="tts")
+    mocker.stop(get_voice)
+
+    assert backends[1].voice == 7
+    backends[1].output.assert_called_once_with("Hello", interrupt=True)
+    backends[0].output.assert_not_called()
+    assert tts.tts_backend is backends[0]
+    # Interrupting speech must silence the other backend, which may still be talking.
+    backends[0].stop.assert_called_once()
+    backends[1].stop.assert_not_called()
+    for backend in backends:
+        backend.stop.reset_mock()
+    backends[1].speaking = True
+    assert tts.is_speaking()
+    tts.stop()
+    for backend in backends:
+        backend.stop.assert_called_once()
+    assert tts.context.acquire.call_count == 2
+    context = tts.context
+    tts.shutdown()
+    tts.shutdown()
+    for backend in backends:
+        backend.free.assert_called_once()
+    context.shutdown.assert_called_once()
+
+
+def test_legacy_preference_omitted_from_menu_still_speaks(make_tts, mocker):
+    """Saved unqualified preferences remain valid even when their voice is filtered out.
+
+    The saved preference "en-US: Voice 3" refers to a voice that is reduced away from the menu. The preference must
+    still resolve and speak, and the saved value must not be rewritten.
+    """
+    tts, backends = make_tts([
+        ("sapi", create_voices(40), 8),
+        ("espeak", [("fr-FR", "French")] * 11, 0),
+    ])
+    preferences = SimpleNamespace(tts_voice="en-US: Voice 3")
+    mocker.patch.object(tts_module, "platform_tts", tts)
+    mocker.patch.object(tts_module, "_tts_voices_cache", None)
+    mocker.patch.object(tts_module.renpy, "game", SimpleNamespace(preferences=preferences), create=True)
+
+    assert "en-US: Voice 3" not in tts_module.get_tts_voices()
+    assert tts_module.get_voice("Hello") == ("en-US: Voice 3", "Hello")
+    tts.speak("Hello")
+    assert backends[0].voice == 3
+    backends[0].output.assert_called_once_with("Hello", interrupt=True)
+    assert preferences.tts_voice == "en-US: Voice 3"
+    assert "en-US: Voice 8" in tts.get_tts_voices()
+    assert tts_module.get_tts_voices() == sorted(tts.get_tts_voices(), key=str.lower)
+
+
+def test_enumeration_failure_is_logged_and_other_backends_remain_available(make_tts, mocker):
+    """A backend failure must be visible without preventing selection from healthy backends.
+
+    The sapi backend raises while its voice names are read. The failure must be written to the log, and the espeak
+    backend must still be resolvable by its qualified name.
+    """
+    tts, backends = make_tts([("sapi", create_voices(1), 0), ("espeak", create_voices(1), 0)])
+    backends[0].get_voice_name.side_effect = RuntimeError("Voice enumeration failed")
+    log = mocker.patch.object(tts_module.renpy.display.log, "write")
+    assert tts.get_tts_voices() == ["en-US: Voice 0"]
+    log.assert_called()
+    mocker.stop(log)
+    assert tts.resolve_voice("en-US: Voice 0 [espeak]") == (backends[1], 0)
+
+
+def test_legacy_collision_prefers_default_backend(make_tts):
+    """Identical legacy names prefer the normal backend, not merely the first registry entry.
+
+    Both backends list "en-US: Shared" with no backend qualifier. The unqualified name must resolve to sapi, which
+    is the normal backend, while the explicit "[espeak]" suffix selects espeak.
+    """
+    tts, backends = make_tts([("espeak", [("en-US", "Shared")], 0), ("sapi", [("en-US", "Shared")], 0)])
+    assert tts.resolve_voice("en-US: Shared") == (backends[1], 0)
+    assert tts.resolve_voice("en-US: Shared [espeak]") == (backends[0], 0)
+
+
+def test_screen_reader_excluded_and_routing_unchanged(make_tts, mocker):
+    """Screen-reader voices are never listed and a TTS preference cannot redirect screen-reader output.
+
+    The nvda backend is a screen reader, so its "Reader" voice is hidden from the listing. Speech in screenreader mode
+    must still be routed to the nvda backend.
+    """
+    tts, backends = make_tts([("nvda", [("en-US", "Reader")], 0), ("sapi", create_voices(1), 0)])
+    assert tts.get_tts_voices() == ["en-US: Voice 0"]
+    get_voice = mocker.patch.object(tts_module, "get_voice", return_value=("en-US: Voice 0", "Hello"))
+    tts.speak("Hello", mode="screenreader")
+    mocker.stop(get_voice)
+    backends[0].output.assert_called_once_with("Hello", interrupt=True)
+    backends[1].output.assert_not_called()
+
+
+def test_default_speech_uses_preferred_backend(make_tts, mocker):
+    """Listing all backends does not change which backend handles speech without a preference.
+
+    The onecore backend is preferred over espeak for speech, so it must receive the output even though espeak was
+    registered first.
+    """
+    tts, backends = make_tts([("espeak", create_voices(1), 0), ("onecore", create_voices(1), 0)])
+    tts.get_tts_voices()
+    get_voice = mocker.patch.object(tts_module, "get_voice", return_value=(None, "Hello"))
+    tts.speak("Hello")
+    mocker.stop(get_voice)
+    backends[1].output.assert_called_once_with("Hello", interrupt=True)
+    backends[0].output.assert_not_called()
+
+
+def test_screen_reader_backends_defined():
+    """Known screen readers are classified in SCREEN_READER_BACKENDS, and speech engines are not.
+
+    The classification decides which backends are excluded from the TTS voice list, so a misclassified speech
+    engine would vanish from the menu and a screen reader would be offered as a voice.
+    """
+    assert "nvda" in SCREEN_READER_BACKENDS
+    assert "jaws" in SCREEN_READER_BACKENDS
+    assert "orca" in SCREEN_READER_BACKENDS
+    assert "voiceover" in SCREEN_READER_BACKENDS
+    assert "onecore" not in SCREEN_READER_BACKENDS
+    assert "sapi" not in SCREEN_READER_BACKENDS
+    for backend in ("hal", "supernova", "cobra", "dolphin", "narrator"):
+        assert backend not in SCREEN_READER_BACKENDS
+
+
+def test_prism_tts_initialization(has_prism):
+    """PrismTTS can initialize with the real native library and selects a non-screen-reader TTS backend.
+
+    Skipped when the Prism dynamic library is not installed.
+    """
+    if not has_prism:
+        pytest.skip("Prism dynamic library is not available")
+
+    tts = PrismTTS()
+    try:
+        assert tts.context is not None
+        # Should have acquired a backend (or fallback)
+        backend = tts.get_backend("tts")
+        assert backend is not None
+        assert backend.name.lower() not in {"nvda", "jaws", "orca", "voiceover"}
+    finally:
+        tts.shutdown()
+
+
+def test_prism_tts_mode_separation(has_prism):
+    """mode='tts' never returns a screen reader backend, while mode='screenreader' always returns one.
+
+    Skipped when the Prism dynamic library is not installed. The screenreader assertion requires a backend to exist,
+    which depends on the screen readers available on the host, so it can fail on a machine with none.
+    """
+    if not has_prism:
+        pytest.skip("Prism dynamic library is not available")
+
+    tts = PrismTTS()
+    try:
+        tts_backend = tts.get_backend("tts")
+        if tts_backend is not None:
+            assert tts_backend.name.lower() not in SCREEN_READER_BACKENDS
+
+        sr_backend = tts.get_backend("screenreader")
+        assert sr_backend is not None
+    finally:
+        tts.shutdown()
+
+
+def test_prism_tts_voices(has_prism):
+    """get_tts_voices returns a list of "language: name" strings on the real native library.
+
+    Skipped when the Prism dynamic library is not installed. An empty list is accepted, since the host may have no
+    voices installed.
+    """
+    if not has_prism:
+        pytest.skip("Prism dynamic library is not available")
+
+    tts = PrismTTS()
+    try:
+        voices = tts.get_tts_voices()
+        assert isinstance(voices, list)
+        for v in voices:
+            assert ": " in v
+    finally:
+        tts.shutdown()
+
+
+def test_prism_tts_speak_and_stop(has_prism):
+    """speak and stop run against the real backend without raising, and stop ends speech.
+
+    Skipped when the Prism dynamic library is not installed. The short sleep gives the backend time to process the
+    stop request before is_speaking() is checked, so this check is timing-dependent.
+    """
+    if not has_prism:
+        pytest.skip("Prism dynamic library is not available")
+
+    tts = PrismTTS()
+    try:
+        tts.speak("Test line for accessibility.", mode="tts")
         tts.stop()
-        for backend in backends:
-            backend.stop.assert_called_once()
-        self.assertEqual(tts.context.acquire.call_count, 2)
-        context = tts.context
+        time.sleep(0.05)
+        assert not tts.is_speaking()
+    finally:
         tts.shutdown()
-        tts.shutdown()
-        for backend in backends:
-            backend.free.assert_called_once()
-        context.shutdown.assert_called_once()
-
-    def test_legacy_preference_omitted_from_menu_still_speaks(self) -> None:
-        """Saved unqualified preferences remain valid even when their voice is filtered out."""
-        import renpy.display.tts as tts_module
-
-        tts, backends = self.create_tts([
-            ("sapi", self.create_voices(40), 8),
-            ("espeak", [("fr-FR", "French")] * 11, 0),
-        ])
-        preferences = SimpleNamespace(tts_voice="en-US: Voice 3")
-        with (
-            patch.object(tts_module, "platform_tts", tts),
-            patch.object(tts_module, "_tts_voices_cache", None),
-            patch.object(tts_module.renpy, "game", SimpleNamespace(preferences=preferences), create=True),
-        ):
-            self.assertNotIn("en-US: Voice 3", tts_module.get_tts_voices())
-            self.assertEqual(tts_module.get_voice("Hello"), ("en-US: Voice 3", "Hello"))
-            tts.speak("Hello")
-            self.assertEqual(backends[0].voice, 3)
-            backends[0].output.assert_called_once_with("Hello", interrupt=True)
-            self.assertEqual(preferences.tts_voice, "en-US: Voice 3")
-            self.assertIn("en-US: Voice 8", tts.get_tts_voices())
-            self.assertEqual(tts_module.get_tts_voices(), sorted(tts.get_tts_voices(), key=str.lower))
-
-    def test_enumeration_failure_is_logged_and_other_backends_remain_available(self) -> None:
-        """A backend failure must be visible without preventing selection from healthy backends."""
-        import renpy.display.tts as tts_module
-
-        tts, backends = self.create_tts([("sapi", self.create_voices(1), 0), ("espeak", self.create_voices(1), 0)])
-        backends[0].get_voice_name.side_effect = RuntimeError("Voice enumeration failed")
-        with patch.object(tts_module.renpy.display.log, "write") as log:
-            self.assertEqual(tts.get_tts_voices(), ["en-US: Voice 0"])
-            log.assert_called()
-        self.assertEqual(tts.resolve_voice("en-US: Voice 0 [espeak]"), (backends[1], 0))
-
-    def test_legacy_collision_prefers_default_backend(self) -> None:
-        """Identical legacy names prefer the normal backend, not merely the first registry entry."""
-        tts, backends = self.create_tts([("espeak", [("en-US", "Shared")], 0), ("sapi", [("en-US", "Shared")], 0)])
-        self.assertEqual(tts.resolve_voice("en-US: Shared"), (backends[1], 0))
-        self.assertEqual(tts.resolve_voice("en-US: Shared [espeak]"), (backends[0], 0))
-
-    def test_screen_reader_excluded_and_routing_unchanged(self) -> None:
-        """Screen-reader voices are never listed and a TTS preference cannot redirect screen-reader output."""
-        import renpy.display.tts as tts_module
-
-        tts, backends = self.create_tts([("nvda", [("en-US", "Reader")], 0), ("sapi", self.create_voices(1), 0)])
-        self.assertEqual(tts.get_tts_voices(), ["en-US: Voice 0"])
-        with patch.object(tts_module, "get_voice", return_value=("en-US: Voice 0", "Hello")):
-            tts.speak("Hello", mode="screenreader")
-        backends[0].output.assert_called_once_with("Hello", interrupt=True)
-        backends[1].output.assert_not_called()
-
-    def test_default_speech_uses_preferred_backend(self) -> None:
-        """Listing all backends does not change which backend handles speech without a preference."""
-        import renpy.display.tts as tts_module
-
-        tts, backends = self.create_tts([("espeak", self.create_voices(1), 0), ("onecore", self.create_voices(1), 0)])
-        tts.get_tts_voices()
-        with patch.object(tts_module, "get_voice", return_value=(None, "Hello")):
-            tts.speak("Hello")
-        backends[1].output.assert_called_once_with("Hello", interrupt=True)
-        backends[0].output.assert_not_called()
-
-
-class TestPrismTTS(unittest.TestCase):
-    def setUp(self):
-        import renpy
-
-        if not hasattr(renpy, "error"):
-            import renpy.error
-
-            renpy.error = renpy.error
-        import renpy.config
-
-        try:
-            from renpy.display.tts import prism
-
-            self.has_prism = prism is not None
-        except Exception:
-            self.has_prism = False
-
-    def test_screen_reader_backends_defined(self):
-        """Test that known screen readers are classified in SCREEN_READER_BACKENDS."""
-        from renpy.display.tts import SCREEN_READER_BACKENDS
-
-        self.assertIn("nvda", SCREEN_READER_BACKENDS)
-        self.assertIn("jaws", SCREEN_READER_BACKENDS)
-        self.assertIn("orca", SCREEN_READER_BACKENDS)
-        self.assertIn("voiceover", SCREEN_READER_BACKENDS)
-        self.assertNotIn("onecore", SCREEN_READER_BACKENDS)
-        self.assertNotIn("sapi", SCREEN_READER_BACKENDS)
-        for backend in ("hal", "supernova", "cobra", "dolphin", "narrator"):
-            self.assertNotIn(backend, SCREEN_READER_BACKENDS)
-
-    def test_prism_tts_initialization(self):
-        """Test that PrismTTS can initialize when prism is installed."""
-        if not self.has_prism:
-            self.skipTest("Prism dynamic library is not available")
-
-        from renpy.display.tts import PrismTTS
-
-        tts = PrismTTS()
-        try:
-            self.assertIsNotNone(tts.context)
-            # Should have acquired a backend (or fallback)
-            backend = tts.get_backend("tts")
-            self.assertIsNotNone(backend)
-            self.assertFalse(backend.name.lower() in {"nvda", "jaws", "orca", "voiceover"})
-        finally:
-            tts.shutdown()
-
-    def test_prism_tts_mode_separation(self):
-        """Test that mode='tts' does not return a screen reader backend."""
-        if not self.has_prism:
-            self.skipTest("Prism dynamic library is not available")
-
-        from renpy.display.tts import SCREEN_READER_BACKENDS, PrismTTS
-
-        tts = PrismTTS()
-        try:
-            tts_backend = tts.get_backend("tts")
-            if tts_backend is not None:
-                self.assertNotIn(tts_backend.name.lower(), SCREEN_READER_BACKENDS)
-
-            sr_backend = tts.get_backend("screenreader")
-            self.assertIsNotNone(sr_backend)
-        finally:
-            tts.shutdown()
-
-    def test_prism_tts_voices(self):
-        """Test that get_tts_voices returns a list of formatted voice strings."""
-        if not self.has_prism:
-            self.skipTest("Prism dynamic library is not available")
-
-        from renpy.display.tts import PrismTTS
-
-        tts = PrismTTS()
-        try:
-            voices = tts.get_tts_voices()
-            self.assertIsInstance(voices, list)
-            for v in voices:
-                self.assertIn(": ", v)
-        finally:
-            tts.shutdown()
-
-    def test_prism_tts_speak_and_stop(self):
-        """Test speak and stop methods without errors."""
-        if not self.has_prism:
-            self.skipTest("Prism dynamic library is not available")
-
-        import time
-
-        from renpy.display.tts import PrismTTS
-
-        tts = PrismTTS()
-        try:
-            tts.speak("Test line for accessibility.", mode="tts")
-            tts.stop()
-            time.sleep(0.05)
-            self.assertFalse(tts.is_speaking())
-        finally:
-            tts.shutdown()
-
-    def test_default_tts_function_modes(self):
-        """Test that default_tts_function calls speak with correct mode based on self_voicing preference."""
-        import renpy.display.tts as tts_module
-
-        mock_platform_tts = MagicMock(spec=tts_module.PrismTTS)
-        old_platform_tts = tts_module.platform_tts
-        tts_module.platform_tts = mock_platform_tts
-
-        class DummyPreferences:
-            self_voicing = "screenreader"
-
-        class DummyGame:
-            preferences = DummyPreferences()
-
-        old_game = getattr(tts_module.renpy, "game", None)
-        tts_module.renpy.game = DummyGame()
-
-        try:
-            # Test screenreader mode
-            tts_module.default_tts_function("Hello Screen Reader")
-            mock_platform_tts.speak.assert_called_with("Hello Screen Reader", mode="screenreader")
-
-            # Test tts mode
-            DummyPreferences.self_voicing = True
-            tts_module.default_tts_function("Hello TTS")
-            mock_platform_tts.speak.assert_called_with("Hello TTS", mode="tts")
-        finally:
-            tts_module.platform_tts = old_platform_tts
-            if old_game is not None:
-                tts_module.renpy.game = old_game
-            elif hasattr(tts_module.renpy, "game"):
-                delattr(tts_module.renpy, "game")
-
-    def test_init_prefers_prism_tts(self):
-        """Test that init() instantiates PrismTTS when prism is available."""
-        if not self.has_prism:
-            self.skipTest("Prism dynamic library is not available")
-
-        import renpy.display.tts as tts_module
-
-        old_platform_tts = tts_module.platform_tts
-        try:
-            tts_module.platform_tts = None
-            tts_module.init()
-            self.assertIsInstance(tts_module.platform_tts, tts_module.PrismTTS)
-        finally:
-            tts_module.platform_tts = old_platform_tts
-
-    def test_init_falls_back_when_prism_missing(self):
-        """Test that init() falls back to legacy platform TTS when prism is None."""
-        import renpy.display.tts as tts_module
-
-        old_prism = tts_module.prism
-        old_platform_tts = tts_module.platform_tts
-        try:
-            tts_module.prism = None
-            tts_module.platform_tts = None
-            tts_module.init()
-            # If on Windows, should be WindowsTTS, on Linux LinuxTTS, etc.
-            if sys.platform.startswith("win"):
-                self.assertIsInstance(tts_module.platform_tts, tts_module.WindowsTTS)
-        finally:
-            tts_module.prism = old_prism
-            tts_module.platform_tts = old_platform_tts
-
-    def test_has_active_screenreader_true(self):
-        """Test that has_active_screenreader() returns True when a supported screen reader is active."""
-        from renpy.display.tts import PrismTTS
-
-        tts = PrismTTS.__new__(PrismTTS)
-        mock_ctx = MagicMock()
-        mock_ctx.backends_count = 1
-        mock_ctx.id_of.return_value = 1
-        mock_ctx.name_of.return_value = "nvda"
-        mock_backend = MagicMock()
-        mock_backend.name = "nvda"
-        mock_ctx.acquire.return_value = mock_backend
-        tts.context = mock_ctx
-        tts.sr_backend = None
-        tts.tts_backend = None
-
-        self.assertTrue(tts.has_active_screenreader())
-        self.assertEqual(tts.sr_backend, mock_backend)
-
-    def test_has_active_screenreader_false(self):
-        """Test that has_active_screenreader() returns False when no screen reader is available."""
-        from renpy.display.tts import PrismTTS
-
-        tts = PrismTTS.__new__(PrismTTS)
-        mock_ctx = MagicMock()
-        mock_ctx.backends_count = 1
-        mock_ctx.id_of.return_value = 1
-        mock_ctx.name_of.return_value = "sapi"
-        tts.context = mock_ctx
-        tts.sr_backend = None
-        tts.tts_backend = None
-
-        self.assertFalse(tts.has_active_screenreader())
-
-    def test_check_auto_screenreader_enables_screenreader(self):
-        """Test that check_auto_screenreader() automatically enables screen reader voicing when active."""
-        import renpy.display.tts as tts_module
-
-        class DummyPreferences:
-            self_voicing = None
-
-        class DummyGame:
-            preferences = DummyPreferences()
-
-        old_platform_tts = tts_module.platform_tts
-        old_checked = tts_module._auto_screenreader_checked
-        old_game = getattr(tts_module.renpy, "game", None)
-
-        mock_platform_tts = MagicMock(spec=tts_module.PrismTTS)
-        mock_platform_tts.has_active_screenreader.return_value = True
-
-        tts_module.platform_tts = mock_platform_tts
-        tts_module._auto_screenreader_checked = False
-        tts_module.renpy.game = DummyGame()
-        tts_module.renpy.config.auto_screenreader_voicing = True
-
-        try:
-            tts_module.check_auto_screenreader()
-            self.assertEqual(DummyGame.preferences.self_voicing, "screenreader")
-        finally:
-            tts_module.platform_tts = old_platform_tts
-            tts_module._auto_screenreader_checked = old_checked
-            if old_game is not None:
-                tts_module.renpy.game = old_game
-            elif hasattr(tts_module.renpy, "game"):
-                delattr(tts_module.renpy, "game")
-
-    def test_check_auto_screenreader_respects_explicit_user_disabled(self):
-        """Test that check_auto_screenreader() does not override an explicit False preference."""
-        import renpy.display.tts as tts_module
-
-        class DummyPreferences:
-            self_voicing = False
-
-        class DummyGame:
-            preferences = DummyPreferences()
-
-        old_platform_tts = tts_module.platform_tts
-        old_checked = tts_module._auto_screenreader_checked
-        old_game = getattr(tts_module.renpy, "game", None)
-
-        mock_platform_tts = MagicMock(spec=tts_module.PrismTTS)
-        mock_platform_tts.has_active_screenreader.return_value = True
-
-        tts_module.platform_tts = mock_platform_tts
-        tts_module._auto_screenreader_checked = False
-        tts_module.renpy.game = DummyGame()
-        tts_module.renpy.config.auto_screenreader_voicing = True
-
-        try:
-            tts_module.check_auto_screenreader()
-            self.assertFalse(DummyGame.preferences.self_voicing)
-        finally:
-            tts_module.platform_tts = old_platform_tts
-            tts_module._auto_screenreader_checked = old_checked
-            if old_game is not None:
-                tts_module.renpy.game = old_game
-            elif hasattr(tts_module.renpy, "game"):
-                delattr(tts_module.renpy, "game")
-
-    def test_check_auto_screenreader_respects_config_disabled(self):
-        """Test that check_auto_screenreader() does not enable voicing if config option is False."""
-        import renpy.display.tts as tts_module
-
-        class DummyPreferences:
-            self_voicing = None
-
-        class DummyGame:
-            preferences = DummyPreferences()
-
-        old_platform_tts = tts_module.platform_tts
-        old_checked = tts_module._auto_screenreader_checked
-        old_game = getattr(tts_module.renpy, "game", None)
-
-        mock_platform_tts = MagicMock(spec=tts_module.PrismTTS)
-        mock_platform_tts.has_active_screenreader.return_value = True
-
-        tts_module.platform_tts = mock_platform_tts
-        tts_module._auto_screenreader_checked = False
-        tts_module.renpy.game = DummyGame()
-        tts_module.renpy.config.auto_screenreader_voicing = False
-
-        try:
-            tts_module.check_auto_screenreader()
-            self.assertIsNone(DummyGame.preferences.self_voicing)
-        finally:
-            tts_module.renpy.config.auto_screenreader_voicing = True
-            tts_module.platform_tts = old_platform_tts
-            tts_module._auto_screenreader_checked = old_checked
-            if old_game is not None:
-                tts_module.renpy.game = old_game
-            elif hasattr(tts_module.renpy, "game"):
-                delattr(tts_module.renpy, "game")
-
-    def test_availability_callback_runtime_start_stop(self):
-        """Test that _on_availability_changed dynamically activates and clears screen reader backend."""
-        import renpy.display.tts as tts_module
-        from renpy.display.tts import PrismTTS
-
-        class DummyPreferences:
-            self_voicing = None
-
-        class DummyGame:
-            preferences = DummyPreferences()
-
-        old_game = getattr(tts_module.renpy, "game", None)
-        tts_module.renpy.game = DummyGame()
-        tts_module.renpy.config.auto_screenreader_voicing = True
-
-        tts = PrismTTS.__new__(PrismTTS)
-        mock_ctx = MagicMock()
-        mock_backend = MagicMock()
-        mock_backend.name = "nvda"
-        mock_ctx.acquire.return_value = mock_backend
-        tts.context = mock_ctx
-        tts.sr_backend = None
-        tts.tts_backend = None
-
-        try:
-            # NVDA becomes available
-            tts._on_availability_changed(None, 1, b"nvda", True)
-            self.assertEqual(tts.sr_backend, mock_backend)
-            self.assertEqual(DummyGame.preferences.self_voicing, "screenreader")
-
-            # NVDA stops
-            tts._on_availability_changed(None, 1, b"nvda", False)
-            self.assertIsNone(tts.sr_backend)
-        finally:
-            if old_game is not None:
-                tts_module.renpy.game = old_game
-            elif hasattr(tts_module.renpy, "game"):
-                delattr(tts_module.renpy, "game")
-
-    def _ensure_image_environment(self):
-        """Prepare minimal module mock environment to import renpy.display.image outside full binary."""
-        import types
-
-        import renpy
-
-        if not hasattr(renpy, "error"):
-            import renpy.error
-
-            renpy.error = renpy.error
-        if not hasattr(renpy, "config"):
-            import renpy.config
-
-            renpy.config = renpy.config
-        if not hasattr(renpy, "object"):
-            import renpy.object
-
-            renpy.object = renpy.object
-        if not hasattr(renpy, "pygame"):
-            renpy.pygame = MagicMock()
-            sys.modules["renpy.pygame"] = renpy.pygame
-
-        import renpy.display
-
-        if not hasattr(renpy.display, "core"):
-            renpy.display.core = MagicMock()
-        if not hasattr(renpy.display, "im"):
-            renpy.display.im = MagicMock()
-        if not hasattr(renpy.display, "imagelike"):
-            renpy.display.imagelike = MagicMock()
-        if not hasattr(renpy.display, "behavior"):
-            renpy.display.behavior = MagicMock()
-
-        if "renpy.display.render" not in sys.modules:
-            render_mod = types.ModuleType("renpy.display.render")
-            render_mod.render = MagicMock()
-            render_mod.Render = MagicMock()
-            sys.modules["renpy.display.render"] = render_mod
-            renpy.display.render = render_mod
-
-        if "renpy.style" not in sys.modules or not hasattr(renpy, "style"):
-            style_mod = types.ModuleType("renpy.style")
-
-            class DummyStyle(object):
-                def __init__(self, *args, **kwargs):
-                    self.alt = None
-
-            style_mod.Style = DummyStyle
-            sys.modules["renpy.style"] = style_mod
-            renpy.style = style_mod
-
-        if "renpy.substitutions" not in sys.modules or not hasattr(renpy, "substitutions"):
-            subst_mod = types.ModuleType("renpy.substitutions")
-            subst_mod.substitute = lambda s, scope=None: (s, False)
-            sys.modules["renpy.substitutions"] = subst_mod
-            renpy.substitutions = subst_mod
-
-        import renpy.display.tts
-
-        renpy.display.tts = renpy.display.tts
-        import renpy.display.displayable
-
-        renpy.display.displayable = renpy.display.displayable
-
-        import renpy.display.image as image_module
-
-        return image_module
-
-    def test_image_reference_explicit_alt(self):
-        """Test that ImageReference returns explicit style.alt if set."""
-        image_module = self._ensure_image_environment()
-        im_ref = image_module.ImageReference(("eileen", "happy"))
-        im_ref.target = MagicMock(_tts=lambda raw: "")
-        im_ref.style = MagicMock()
-        im_ref.style.alt = "Eileen smiling warmly"
-        with patch("renpy.substitutions.substitute", return_value=("Eileen smiling warmly", False)):
-            self.assertEqual(im_ref._tts(raw=False), "Eileen smiling warmly")
-
-    def test_image_reference_auto_image_alt(self):
-        """Test that ImageReference returns tag/attribute names when auto_image_alt is True."""
-        image_module = self._ensure_image_environment()
-        import renpy.config as config_module
-
-        im_ref = image_module.ImageReference(("eileen", "happy"))
-        im_ref.target = MagicMock(_tts=lambda raw: "")
-        im_ref.style = MagicMock()
-        im_ref.style.alt = None
-
-        # When auto_image_alt is False
-        config_module.auto_image_alt = False
-        self.assertEqual(im_ref._tts(raw=False), "")
-
-        # When auto_image_alt is True
-        config_module.auto_image_alt = True
-        try:
-            with patch("renpy.substitutions.substitute", return_value=("eileen happy", False)):
-                self.assertEqual(im_ref._tts(raw=False), "eileen happy")
-        finally:
-            config_module.auto_image_alt = False
-
-    def test_find_and_load_prism_checks_executable_dir(self):
-        """Test that _find_and_load_prism checks the directory containing sys.executable."""
-        import os
-        import tempfile
-        from unittest.mock import patch
-
-        import renpy.display.tts as tts_module
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            if sys.platform.startswith("win"):
-                dll_name = "prism.dll"
-            elif sys.platform.startswith("darwin"):
-                dll_name = "libprism.dylib"
-            else:
-                dll_name = "libprism.so"
-
-            fake_dll_path = os.path.join(tmpdir, dll_name)
-            with open(fake_dll_path, "wb") as f:
-                f.write(b"fake")
-
-            fake_exe = os.path.join(tmpdir, "renpy")
-            loaded_paths = []
-
-            class DummyCDLL:
-                def __init__(self, path):
-                    loaded_paths.append(path)
-                    if path == fake_dll_path:
-                        self.prism_init = MagicMock()
-
-            with (
-                patch.object(sys, "executable", fake_exe),
-                patch("ctypes.CDLL", side_effect=DummyCDLL),
-                patch.object(tts_module, "_CtypesPrismModule", side_effect=lambda dll: dll),
-            ):
-                res = tts_module._find_and_load_prism()
-                self.assertIsNotNone(res)
-                self.assertEqual(loaded_paths[0], fake_dll_path)
-
-
-class TestFetchPrismScript(unittest.TestCase):
-    def _load_fetch_prism_module(self):
-        import importlib.util
-        import pathlib
-
-        script_path = pathlib.Path(__file__).resolve().parent.parent / "scripts" / "fetch_prism.py"
-        spec = importlib.util.spec_from_file_location("fetch_prism", script_path)
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
-        return mod
-
-    def _build_mock_sdk_zip(self, tag="v0.18.3"):
-        import io
-        import zipfile
-
-        buf = io.BytesIO()
-        payloads = {
-            f"prism-sdk-{tag}/windows/x64/dynamic/release/bin/prism.dll": b"MZ_FAKE_WINDOWS_DLL" * 50,
-            f"prism-sdk-{tag}/macos/universal/dynamic/release/lib/libprism.dylib": b"\xcf\xfa\xed\xfe_FAKE_MAC_DYLIB"
-            * 50,
-            f"prism-sdk-{tag}/linux/x64/dynamic/release/lib/libprism.so": b"\x7fELF_FAKE_LINUX_X64_SO" * 50,
-            f"prism-sdk-{tag}/linux/arm64/dynamic/release/lib/libprism.so": b"\x7fELF_FAKE_LINUX_ARM64_SO" * 50,
-            f"prism-sdk-{tag}/windows/x64/dynamic/release/bin/tolk.dll": b"SHIM_SHOULD_BE_IGNORED",
-        }
-        with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-            for name, content in payloads.items():
-                zf.writestr(name, content)
-        return buf.getvalue(), payloads
-
-    def _make_range_opener(self, zip_bytes, resolved_tag="v0.18.3"):
-        class FakeResponse:
-            def __init__(self, data, url, headers):
-                self._data = data
-                self.url = url
-                self.headers = headers
-
-            def read(self):
-                return self._data
-
-            def __enter__(self):
-                return self
-
-            def __exit__(self, *args):
-                pass
-
-        def opener(req):
-            url = req.full_url
-            method = getattr(req, "method", None) or "GET"
-            if url.endswith("/releases/latest"):
-                return FakeResponse(
-                    b"",
-                    f"https://github.com/ethindp/prism/releases/tag/{resolved_tag}",
-                    {},
-                )
-            if method == "HEAD":
-                return FakeResponse(
-                    b"",
-                    url,
-                    {"Content-Length": str(len(zip_bytes))},
-                )
-            range_hdr = req.headers.get("Range") or req.headers.get("range")
-            if range_hdr and range_hdr.startswith("bytes="):
-                start_s, end_s = range_hdr[len("bytes=") :].split("-")
-                start = int(start_s)
-                end = int(end_s)
-                return FakeResponse(zip_bytes[start : end + 1], url, {})
-            return FakeResponse(zip_bytes, url, {})
-
-        return opener
-
-    def test_resolve_release_tag(self):
-        """Test that resolve_release_tag normalizes explicit tags and follows redirects for 'latest'."""
-        mod = self._load_fetch_prism_module()
-        zip_bytes, _ = self._build_mock_sdk_zip("v0.18.3")
-        opener = self._make_range_opener(zip_bytes, resolved_tag="v0.18.3")
-
-        self.assertEqual(mod.resolve_release_tag("0.18.3", opener=opener), "v0.18.3")
-        self.assertEqual(mod.resolve_release_tag("v0.18.3", opener=opener), "v0.18.3")
-        self.assertEqual(mod.resolve_release_tag("latest", opener=opener), "v0.18.3")
-
-    def test_fetch_prism_libraries_extracts_only_target_binaries(self):
-        """Test that fetch_prism_libraries extracts exact platform binaries via HTTP Range requests."""
-        import pathlib
-        import tempfile
-
-        mod = self._load_fetch_prism_module()
-        zip_bytes, payloads = self._build_mock_sdk_zip("v0.18.3")
-        opener = self._make_range_opener(zip_bytes, resolved_tag="v0.18.3")
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            root_dir = pathlib.Path(tmpdir)
-            lib_dir = root_dir / "lib"
-            mac_app_dir = root_dir / "renpy.app" / "Contents" / "MacOS"
-            mac_app_dir.mkdir(parents=True)
-
-            tag, written = mod.fetch_prism_libraries(
-                version="latest",
-                dest_dir=lib_dir,
-                platforms="all",
-                opener=opener,
-            )
-
-            self.assertEqual(tag, "v0.18.3")
-            self.assertEqual(len(written), 4)
-
-            win_dll = lib_dir / "py3-windows-x86_64" / "prism.dll"
-            mac_dylib = lib_dir / "py3-mac-universal" / "libprism.dylib"
-            linux_x64_so = lib_dir / "py3-linux-x86_64" / "libprism.so"
-            linux_arm_so = lib_dir / "py3-linux-aarch64" / "libprism.so"
-            mac_app_dylib = mac_app_dir / "libprism.dylib"
-
-            self.assertEqual(
-                win_dll.read_bytes(),
-                payloads["prism-sdk-v0.18.3/windows/x64/dynamic/release/bin/prism.dll"],
-            )
-            self.assertEqual(
-                mac_dylib.read_bytes(),
-                payloads["prism-sdk-v0.18.3/macos/universal/dynamic/release/lib/libprism.dylib"],
-            )
-            self.assertEqual(
-                linux_x64_so.read_bytes(),
-                payloads["prism-sdk-v0.18.3/linux/x64/dynamic/release/lib/libprism.so"],
-            )
-            self.assertEqual(
-                linux_arm_so.read_bytes(),
-                payloads["prism-sdk-v0.18.3/linux/arm64/dynamic/release/lib/libprism.so"],
-            )
-            self.assertEqual(
-                mac_app_dylib.read_bytes(),
-                payloads["prism-sdk-v0.18.3/macos/universal/dynamic/release/lib/libprism.dylib"],
-            )
-            self.assertFalse((lib_dir / "py3-windows-x86_64" / "tolk.dll").exists())
-
-    def test_fetch_zip_entry_detects_crc_mismatch(self):
-        """Test that fetch_zip_entry raises RuntimeError on corrupted CRC32."""
-        mod = self._load_fetch_prism_module()
-        zip_bytes, _ = self._build_mock_sdk_zip("v0.18.3")
-        opener = self._make_range_opener(zip_bytes, resolved_tag="v0.18.3")
-
-        final_url, entries = mod.read_remote_zip_directory(
-            "https://example.com/prism-sdk-v0.18.3.zip",
-            opener=opener,
-        )
-        entry = dict(entries["prism-sdk-v0.18.3/windows/x64/dynamic/release/bin/prism.dll"])
-        entry["crc"] ^= 0xFFFFFFFF
-
-        with self.assertRaises(RuntimeError):
-            mod.fetch_zip_entry(final_url, entry, opener=opener)
-
-
-if __name__ == "__main__":
-    unittest.main()
+
+
+def test_default_tts_function_modes(mocker):
+    """default_tts_function passes the mode that matches the self_voicing preference to speak.
+
+    A "screenreader" preference selects screen-reader mode, and a True preference selects tts mode. The game object
+    is replaced with a stub, and the patch is removed by the fixture at teardown.
+    """
+    mock_platform_tts = mocker.MagicMock(spec=PrismTTS)
+    mocker.patch.object(tts_module, "platform_tts", mock_platform_tts)
+    preferences = SimpleNamespace(self_voicing="screenreader")
+    mocker.patch.object(tts_module.renpy, "game", SimpleNamespace(preferences=preferences), create=True)
+
+    tts_module.default_tts_function("Hello Screen Reader")
+    mock_platform_tts.speak.assert_called_with("Hello Screen Reader", mode="screenreader")
+
+    preferences.self_voicing = True
+    tts_module.default_tts_function("Hello TTS")
+    mock_platform_tts.speak.assert_called_with("Hello TTS", mode="tts")
+
+
+def test_init_prefers_prism_tts(mocker, has_prism):
+    """init() instantiates PrismTTS when the Prism library is available.
+
+    Skipped when the Prism dynamic library is not installed.
+    """
+    if not has_prism:
+        pytest.skip("Prism dynamic library is not available")
+
+    mocker.patch.object(tts_module, "platform_tts", None)
+    tts_module.init()
+    assert isinstance(tts_module.platform_tts, PrismTTS)
+
+
+def test_init_falls_back_when_prism_missing(mocker):
+    """init() falls back to the legacy platform TTS when prism is None.
+
+    The Windows assertion is the only check of the chosen backend. On other platforms the test only verifies that
+    init() completes without error.
+    """
+    mocker.patch.object(tts_module, "prism", None)
+    mocker.patch.object(tts_module, "platform_tts", None)
+    tts_module.init()
+    # If on Windows, should be WindowsTTS, on Linux LinuxTTS, etc.
+    if sys.platform.startswith("win"):
+        assert isinstance(tts_module.platform_tts, tts_module.WindowsTTS)
+
+
+def test_has_active_screenreader_true(mocker):
+    """has_active_screenreader returns True when a supported screen reader is active.
+
+    The context is a mock that reports a single "nvda" backend, and the acquired backend must be cached in sr_backend
+    as a side effect of the check.
+    """
+    tts = PrismTTS.__new__(PrismTTS)
+    mock_ctx = mocker.MagicMock()
+    mock_ctx.backends_count = 1
+    mock_ctx.id_of.return_value = 1
+    mock_ctx.name_of.return_value = "nvda"
+    mock_backend = mocker.MagicMock()
+    mock_backend.name = "nvda"
+    mock_ctx.acquire.return_value = mock_backend
+    tts.context = mock_ctx
+    tts.sr_backend = None
+    tts.tts_backend = None
+
+    assert tts.has_active_screenreader()
+    assert tts.sr_backend == mock_backend
+
+
+def test_has_active_screenreader_false(mocker):
+    """has_active_screenreader returns False when only a non-screen-reader backend is present.
+
+    The single "sapi" backend is a speech engine, not a screen reader, so no screen reader can be reported active.
+    """
+    tts = PrismTTS.__new__(PrismTTS)
+    mock_ctx = mocker.MagicMock()
+    mock_ctx.backends_count = 1
+    mock_ctx.id_of.return_value = 1
+    mock_ctx.name_of.return_value = "sapi"
+    tts.context = mock_ctx
+    tts.sr_backend = None
+    tts.tts_backend = None
+
+    assert not tts.has_active_screenreader()
+
+
+def test_check_auto_screenreader_enables_screenreader(mocker):
+    """check_auto_screenreader turns on screen reader voicing when a screen reader is active.
+
+    The self_voicing preference starts unset, so it must become "screenreader". The check runs only once per session,
+    which the _auto_screenreader_checked patch isolates for this test.
+    """
+    preferences = SimpleNamespace(self_voicing=None)
+    platform = mocker.MagicMock(spec=PrismTTS)
+    platform.has_active_screenreader.return_value = True
+
+    mocker.patch.object(tts_module, "platform_tts", platform)
+    mocker.patch.object(tts_module, "_auto_screenreader_checked", False)
+    mocker.patch.object(tts_module.renpy, "game", SimpleNamespace(preferences=preferences), create=True)
+    mocker.patch.object(tts_module.renpy.config, "auto_screenreader_voicing", True, create=True)
+
+    tts_module.check_auto_screenreader()
+    assert preferences.self_voicing == "screenreader"
+
+
+def test_check_auto_screenreader_respects_explicit_user_disabled(mocker):
+    """check_auto_screenreader does not override an explicit False self_voicing preference.
+
+    A user who turned self-voicing off must keep it off even when a screen reader is active.
+    """
+    preferences = SimpleNamespace(self_voicing=False)
+    platform = mocker.MagicMock(spec=PrismTTS)
+    platform.has_active_screenreader.return_value = True
+
+    mocker.patch.object(tts_module, "platform_tts", platform)
+    mocker.patch.object(tts_module, "_auto_screenreader_checked", False)
+    mocker.patch.object(tts_module.renpy, "game", SimpleNamespace(preferences=preferences), create=True)
+    mocker.patch.object(tts_module.renpy.config, "auto_screenreader_voicing", True, create=True)
+
+    tts_module.check_auto_screenreader()
+    assert not preferences.self_voicing
+
+
+def test_check_auto_screenreader_respects_config_disabled(mocker):
+    """check_auto_screenreader does not enable voicing when config.auto_screenreader_voicing is False.
+
+    The screen reader is active here, so the config flag is the only reason voicing stays unset.
+    """
+    preferences = SimpleNamespace(self_voicing=None)
+    platform = mocker.MagicMock(spec=PrismTTS)
+    platform.has_active_screenreader.return_value = True
+
+    mocker.patch.object(tts_module, "platform_tts", platform)
+    mocker.patch.object(tts_module, "_auto_screenreader_checked", False)
+    mocker.patch.object(tts_module.renpy, "game", SimpleNamespace(preferences=preferences), create=True)
+    mocker.patch.object(tts_module.renpy.config, "auto_screenreader_voicing", False, create=True)
+
+    tts_module.check_auto_screenreader()
+    assert preferences.self_voicing is None
+
+
+def test_availability_callback_runtime_start_stop(mocker):
+    """_on_availability_changed sets the screen reader backend when it becomes available and clears it when it stops.
+
+    The NVDA start event must set the backend and turn on screen-reader voicing. The stop event must clear the
+    backend reference.
+    """
+    preferences = SimpleNamespace(self_voicing=None)
+    mocker.patch.object(tts_module.renpy, "game", SimpleNamespace(preferences=preferences), create=True)
+    mocker.patch.object(tts_module.renpy.config, "auto_screenreader_voicing", True, create=True)
+
+    tts = PrismTTS.__new__(PrismTTS)
+    mock_ctx = mocker.MagicMock()
+    mock_backend = mocker.MagicMock()
+    mock_backend.name = "nvda"
+    mock_ctx.acquire.return_value = mock_backend
+    tts.context = mock_ctx
+    tts.sr_backend = None
+    tts.tts_backend = None
+
+    # NVDA becomes available
+    tts._on_availability_changed(None, 1, b"nvda", True)
+    assert tts.sr_backend == mock_backend
+    assert preferences.self_voicing == "screenreader"
+
+    # NVDA stops
+    tts._on_availability_changed(None, 1, b"nvda", False)
+    assert tts.sr_backend is None
+
+
+def test_image_reference_explicit_alt(mocker):
+    """ImageReference returns the explicit style.alt when one is set.
+
+    The substitution is patched to echo its input, so the result comes only from the explicit alt text.
+    """
+    image_module = _ensure_image_environment(mocker)
+    im_ref = image_module.ImageReference(("eileen", "happy"))
+    im_ref.target = mocker.MagicMock(_tts=lambda raw: "")
+    im_ref.style = mocker.MagicMock()
+    im_ref.style.alt = "Eileen smiling warmly"
+    mocker.patch("renpy.substitutions.substitute", return_value=("Eileen smiling warmly", False))
+    assert im_ref._tts(raw=False) == "Eileen smiling warmly"
+
+
+def test_image_reference_auto_image_alt(mocker):
+    """ImageReference derives alt text from the image tags only when config.auto_image_alt is True.
+
+    With the option off the reference produces no text. With it on, the substituted tag and attribute names are
+    returned. The config value is restored by the mocker at teardown.
+    """
+    image_module = _ensure_image_environment(mocker)
+    import renpy.config as config_module
+
+    im_ref = image_module.ImageReference(("eileen", "happy"))
+    im_ref.target = mocker.MagicMock(_tts=lambda raw: "")
+    im_ref.style = mocker.MagicMock()
+    im_ref.style.alt = None
+
+    # When auto_image_alt is False
+    mocker.patch.object(config_module, "auto_image_alt", False, create=True)
+    assert im_ref._tts(raw=False) == ""
+
+    # When auto_image_alt is True
+    config_module.auto_image_alt = True
+    mocker.patch("renpy.substitutions.substitute", return_value=("eileen happy", False))
+    assert im_ref._tts(raw=False) == "eileen happy"
+
+
+def test_find_and_load_prism_checks_executable_dir(mocker, tmp_path):
+    """_find_and_load_prism looks for the Prism library in the directory containing sys.executable first.
+
+    ctypes.CDLL is replaced so no real library is loaded. The fake library sits next to the fake executable, and the
+    first path attempted must be that library.
+    """
+    if sys.platform.startswith("win"):
+        dll_name = "prism.dll"
+    elif sys.platform.startswith("darwin"):
+        dll_name = "libprism.dylib"
+    else:
+        dll_name = "libprism.so"
+
+    fake_dll_path = str(tmp_path / dll_name)
+    (tmp_path / dll_name).write_bytes(b"fake")
+    fake_exe = str(tmp_path / "renpy")
+    loaded_paths = []
+
+    class DummyCDLL:
+        """Records each load path, giving the fake library a prism_init attribute."""
+
+        def __init__(self, path):
+            loaded_paths.append(path)
+            if path == fake_dll_path:
+                self.prism_init = mocker.MagicMock()
+
+    mocker.patch.object(sys, "executable", fake_exe)
+    mocker.patch("ctypes.CDLL", side_effect=DummyCDLL)
+    mocker.patch.object(tts_module, "_CtypesPrismModule", side_effect=lambda dll: dll)
+
+    res = tts_module._find_and_load_prism()
+    assert res is not None
+    assert loaded_paths[0] == fake_dll_path
+
+
+def test_resolve_release_tag():
+    """resolve_release_tag normalizes explicit tags and follows the redirect for "latest".
+
+    A bare version gains the "v" prefix, an explicit tag is returned unchanged, and "latest" is resolved through the
+    release redirect served by the fake opener.
+    """
+    mod = _load_fetch_prism_module()
+    zip_bytes, _ = _build_mock_sdk_zip("v0.18.3")
+    opener = _make_range_opener(zip_bytes, resolved_tag="v0.18.3")
+
+    assert mod.resolve_release_tag("0.18.3", opener=opener) == "v0.18.3"
+    assert mod.resolve_release_tag("v0.18.3", opener=opener) == "v0.18.3"
+    assert mod.resolve_release_tag("latest", opener=opener) == "v0.18.3"
+
+
+def test_fetch_prism_libraries_extracts_only_target_binaries(tmp_path):
+    """fetch_prism_libraries extracts exact platform binaries via HTTP Range requests and ignores other entries.
+
+    Four platform binaries are written, and the macOS dylib is also copied into the app bundle. The tolk.dll shim in
+    the archive must not be extracted.
+    """
+    mod = _load_fetch_prism_module()
+    zip_bytes, payloads = _build_mock_sdk_zip("v0.18.3")
+    opener = _make_range_opener(zip_bytes, resolved_tag="v0.18.3")
+
+    root_dir = tmp_path
+    lib_dir = root_dir / "lib"
+    mac_app_dir = root_dir / "renpy.app" / "Contents" / "MacOS"
+    mac_app_dir.mkdir(parents=True)
+
+    tag, written = mod.fetch_prism_libraries(
+        version="latest",
+        dest_dir=lib_dir,
+        platforms="all",
+        opener=opener,
+    )
+
+    assert tag == "v0.18.3"
+    assert len(written) == 4
+
+    win_dll = lib_dir / "py3-windows-x86_64" / "prism.dll"
+    mac_dylib = lib_dir / "py3-mac-universal" / "libprism.dylib"
+    linux_x64_so = lib_dir / "py3-linux-x86_64" / "libprism.so"
+    linux_arm_so = lib_dir / "py3-linux-aarch64" / "libprism.so"
+    mac_app_dylib = mac_app_dir / "libprism.dylib"
+
+    assert win_dll.read_bytes() == payloads["prism-sdk-v0.18.3/windows/x64/dynamic/release/bin/prism.dll"]
+    assert mac_dylib.read_bytes() == payloads["prism-sdk-v0.18.3/macos/universal/dynamic/release/lib/libprism.dylib"]
+    assert linux_x64_so.read_bytes() == payloads["prism-sdk-v0.18.3/linux/x64/dynamic/release/lib/libprism.so"]
+    assert linux_arm_so.read_bytes() == payloads["prism-sdk-v0.18.3/linux/arm64/dynamic/release/lib/libprism.so"]
+    assert (
+        mac_app_dylib.read_bytes() == payloads["prism-sdk-v0.18.3/macos/universal/dynamic/release/lib/libprism.dylib"]
+    )
+    assert not (lib_dir / "py3-windows-x86_64" / "tolk.dll").exists()
+
+
+def test_fetch_zip_entry_detects_crc_mismatch():
+    """fetch_zip_entry raises RuntimeError when the downloaded entry's CRC32 does not match the directory.
+
+    The expected CRC is flipped, which simulates a corrupted download. Only the RuntimeError type is asserted here.
+    """
+    mod = _load_fetch_prism_module()
+    zip_bytes, _ = _build_mock_sdk_zip("v0.18.3")
+    opener = _make_range_opener(zip_bytes, resolved_tag="v0.18.3")
+
+    final_url, entries = mod.read_remote_zip_directory(
+        "https://example.com/prism-sdk-v0.18.3.zip",
+        opener=opener,
+    )
+    entry = dict(entries["prism-sdk-v0.18.3/windows/x64/dynamic/release/bin/prism.dll"])
+    entry["crc"] ^= 0xFFFFFFFF
+
+    with pytest.raises(RuntimeError):
+        mod.fetch_zip_entry(final_url, entry, opener=opener)
