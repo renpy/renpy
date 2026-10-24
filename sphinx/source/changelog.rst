@@ -65,6 +65,16 @@ Fixed a failure when replacing a save file from deleting the previous save.
 If replacement still fails after retrying, the error is reported and the
 temporary save file is removed.
 
+Live2D
+------
+
+Ren'Py now supports the blend modes and offscreen drawing introduced in
+Live2D Cubism 5.3. This requires the Cubism Core from Cubism SDK for Native
+5-r.5 or later. With an older Core, these models are drawn without blend
+modes or offscreens, as before. Models that don't use these features look
+the same as before, and are drawn without the extra textures and shaders
+these features require.
+
 Clipboard
 ---------
 
@@ -220,6 +230,9 @@ The testcase separator has been changed from ``::`` to ``.`` for test selection.
 A testcase and testsuite can no longer have the same name at the same level in the hierarchy.
 
 User mouse movements are ignored during tests.
+
+The ``enabled`` property of a testcase or testsuite is now evaluated when the
+tests are run, rather than when the script is compiled.
 
 The following test statements now accept expressions:
 

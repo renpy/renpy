@@ -75,6 +75,30 @@ ctypedef const csmVector4* (__stdcall * csmGetDrawableMultiplyColorsType)(const 
 cdef csmGetDrawableMultiplyColorsType csmGetDrawableMultiplyColors
 ctypedef const csmVector4* (__stdcall * csmGetDrawableScreenColorsType)(const csmModel*)
 cdef csmGetDrawableScreenColorsType csmGetDrawableScreenColors
+ctypedef const int* (__stdcall * csmGetDrawableBlendModesType)(const csmModel*)
+cdef csmGetDrawableBlendModesType csmGetDrawableBlendModes
+ctypedef const int* (__stdcall * csmGetDrawableParentPartIndicesType)(const csmModel*)
+cdef csmGetDrawableParentPartIndicesType csmGetDrawableParentPartIndices
+ctypedef const int* (__stdcall * csmGetPartOffscreenIndicesType)(const csmModel*)
+cdef csmGetPartOffscreenIndicesType csmGetPartOffscreenIndices
+ctypedef int (__stdcall * csmGetOffscreenCountType)(const csmModel*)
+cdef csmGetOffscreenCountType csmGetOffscreenCount
+ctypedef const int* (__stdcall * csmGetOffscreenBlendModesType)(const csmModel*)
+cdef csmGetOffscreenBlendModesType csmGetOffscreenBlendModes
+ctypedef const float* (__stdcall * csmGetOffscreenOpacitiesType)(const csmModel*)
+cdef csmGetOffscreenOpacitiesType csmGetOffscreenOpacities
+ctypedef const int* (__stdcall * csmGetOffscreenOwnerIndicesType)(const csmModel*)
+cdef csmGetOffscreenOwnerIndicesType csmGetOffscreenOwnerIndices
+ctypedef const csmVector4* (__stdcall * csmGetOffscreenMultiplyColorsType)(const csmModel*)
+cdef csmGetOffscreenMultiplyColorsType csmGetOffscreenMultiplyColors
+ctypedef const csmVector4* (__stdcall * csmGetOffscreenScreenColorsType)(const csmModel*)
+cdef csmGetOffscreenScreenColorsType csmGetOffscreenScreenColors
+ctypedef const int* (__stdcall * csmGetOffscreenMaskCountsType)(const csmModel*)
+cdef csmGetOffscreenMaskCountsType csmGetOffscreenMaskCounts
+ctypedef const int** (__stdcall * csmGetOffscreenMasksType)(const csmModel*)
+cdef csmGetOffscreenMasksType csmGetOffscreenMasks
+ctypedef const csmFlags* (__stdcall * csmGetOffscreenConstantFlagsType)(const csmModel*)
+cdef csmGetOffscreenConstantFlagsType csmGetOffscreenConstantFlags
 ctypedef void (__stdcall * csmResetDrawableDynamicFlagsType)(csmModel*)
 cdef csmResetDrawableDynamicFlagsType csmResetDrawableDynamicFlags
 
@@ -245,6 +269,30 @@ def load(dll):
     csmGetDrawableScreenColors = <csmGetDrawableScreenColorsType> load_live2d_function(object, "csmGetDrawableScreenColors")
     if not csmGetDrawableScreenColors:
         raise Exception("csmGetDrawableScreenColors not found in Live2D dll " + dll.decode() + ". (The dll could be an old version.)")
+    global csmGetDrawableBlendModes
+    csmGetDrawableBlendModes = <csmGetDrawableBlendModesType> load_live2d_function(object, "csmGetDrawableBlendModes")
+    global csmGetDrawableParentPartIndices
+    csmGetDrawableParentPartIndices = <csmGetDrawableParentPartIndicesType> load_live2d_function(object, "csmGetDrawableParentPartIndices")
+    global csmGetPartOffscreenIndices
+    csmGetPartOffscreenIndices = <csmGetPartOffscreenIndicesType> load_live2d_function(object, "csmGetPartOffscreenIndices")
+    global csmGetOffscreenCount
+    csmGetOffscreenCount = <csmGetOffscreenCountType> load_live2d_function(object, "csmGetOffscreenCount")
+    global csmGetOffscreenBlendModes
+    csmGetOffscreenBlendModes = <csmGetOffscreenBlendModesType> load_live2d_function(object, "csmGetOffscreenBlendModes")
+    global csmGetOffscreenOpacities
+    csmGetOffscreenOpacities = <csmGetOffscreenOpacitiesType> load_live2d_function(object, "csmGetOffscreenOpacities")
+    global csmGetOffscreenOwnerIndices
+    csmGetOffscreenOwnerIndices = <csmGetOffscreenOwnerIndicesType> load_live2d_function(object, "csmGetOffscreenOwnerIndices")
+    global csmGetOffscreenMultiplyColors
+    csmGetOffscreenMultiplyColors = <csmGetOffscreenMultiplyColorsType> load_live2d_function(object, "csmGetOffscreenMultiplyColors")
+    global csmGetOffscreenScreenColors
+    csmGetOffscreenScreenColors = <csmGetOffscreenScreenColorsType> load_live2d_function(object, "csmGetOffscreenScreenColors")
+    global csmGetOffscreenMaskCounts
+    csmGetOffscreenMaskCounts = <csmGetOffscreenMaskCountsType> load_live2d_function(object, "csmGetOffscreenMaskCounts")
+    global csmGetOffscreenMasks
+    csmGetOffscreenMasks = <csmGetOffscreenMasksType> load_live2d_function(object, "csmGetOffscreenMasks")
+    global csmGetOffscreenConstantFlags
+    csmGetOffscreenConstantFlags = <csmGetOffscreenConstantFlagsType> load_live2d_function(object, "csmGetOffscreenConstantFlags")
     global csmResetDrawableDynamicFlags
     csmResetDrawableDynamicFlags = <csmResetDrawableDynamicFlagsType> load_live2d_function(object, "csmResetDrawableDynamicFlags")
     if not csmResetDrawableDynamicFlags:

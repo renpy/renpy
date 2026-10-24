@@ -24,6 +24,12 @@ Ren'Py back a list of meshes to show. Ren'Py then renders these meshes, and the 
 Ren'Py supports Live2D animations in the Cubism 3, 4 and 5 formats.
 It supports the playback of expressions and motions.
 
+Ren'Py also supports the blend modes and offscreen drawing introduced in
+Cubism 5.3. These require the Cubism Core from Cubism SDK for Native 5-r.5
+or later. With an older Core, models that use these features are drawn
+without them. Models that use blend modes or offscreens take longer to
+render, as each use requires drawing part of the model to a texture.
+
 .. warning::
 
     Installing Live2D on iOS requires copying the static libraries into your
@@ -40,7 +46,7 @@ business makes more than a certain amount of money a year.
 
 Once you've downloaded Live2D, you can install it from the Ren'Py launcher. To
 install, go to "preferences", then click "Install libraries". Place the
-:file:`CubismSdkForNative-5-r.1.zip` file in the Ren'Py SDK directory, which can
+:file:`CubismSdkForNative-5-r.5.zip` file in the Ren'Py SDK directory, which can
 be accessed using the button in the bottom right of the install libraries
 screen. Then click "Install Live2D Cubism SDK for Native". After a short
 amount of time, Live2D will be installed.

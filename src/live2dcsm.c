@@ -226,6 +226,61 @@ static EM_JS(void*, live2dGetDrawableParentPartIndices, (void* model), {
     return window.live2d_csm.ccall('csmGetDrawableParentPartIndices', 'number', ['number'], [model]);
 });
 
+static EM_JS(void*, live2dGetDrawableBlendModes, (void* model), {
+    if (!window.live2d_csm['_csmGetDrawableBlendModes']) return 0;
+    return window.live2d_csm.ccall('csmGetDrawableBlendModes', 'number', ['number'], [model]);
+});
+
+static EM_JS(void*, live2dGetPartOffscreenIndices, (void* model), {
+    if (!window.live2d_csm['_csmGetPartOffscreenIndices']) return 0;
+    return window.live2d_csm.ccall('csmGetPartOffscreenIndices', 'number', ['number'], [model]);
+});
+
+static EM_JS(int, live2dGetOffscreenCount, (void* model), {
+    if (!window.live2d_csm['_csmGetOffscreenCount']) return 0;
+    return window.live2d_csm.ccall('csmGetOffscreenCount', 'number', ['number'], [model]);
+});
+
+static EM_JS(void*, live2dGetOffscreenBlendModes, (void* model), {
+    if (!window.live2d_csm['_csmGetOffscreenBlendModes']) return 0;
+    return window.live2d_csm.ccall('csmGetOffscreenBlendModes', 'number', ['number'], [model]);
+});
+
+static EM_JS(void*, live2dGetOffscreenOpacities, (void* model), {
+    if (!window.live2d_csm['_csmGetOffscreenOpacities']) return 0;
+    return window.live2d_csm.ccall('csmGetOffscreenOpacities', 'number', ['number'], [model]);
+});
+
+static EM_JS(void*, live2dGetOffscreenOwnerIndices, (void* model), {
+    if (!window.live2d_csm['_csmGetOffscreenOwnerIndices']) return 0;
+    return window.live2d_csm.ccall('csmGetOffscreenOwnerIndices', 'number', ['number'], [model]);
+});
+
+static EM_JS(void*, live2dGetOffscreenMultiplyColors, (void* model), {
+    if (!window.live2d_csm['_csmGetOffscreenMultiplyColors']) return 0;
+    return window.live2d_csm.ccall('csmGetOffscreenMultiplyColors', 'number', ['number'], [model]);
+});
+
+static EM_JS(void*, live2dGetOffscreenScreenColors, (void* model), {
+    if (!window.live2d_csm['_csmGetOffscreenScreenColors']) return 0;
+    return window.live2d_csm.ccall('csmGetOffscreenScreenColors', 'number', ['number'], [model]);
+});
+
+static EM_JS(void*, live2dGetOffscreenMaskCounts, (void* model), {
+    if (!window.live2d_csm['_csmGetOffscreenMaskCounts']) return 0;
+    return window.live2d_csm.ccall('csmGetOffscreenMaskCounts', 'number', ['number'], [model]);
+});
+
+static EM_JS(void*, live2dGetOffscreenMasks, (void* model), {
+    if (!window.live2d_csm['_csmGetOffscreenMasks']) return 0;
+    return window.live2d_csm.ccall('csmGetOffscreenMasks', 'number', ['number'], [model]);
+});
+
+static EM_JS(void*, live2dGetOffscreenConstantFlags, (void* model), {
+    if (!window.live2d_csm['_csmGetOffscreenConstantFlags']) return 0;
+    return window.live2d_csm.ccall('csmGetOffscreenConstantFlags', 'number', ['number'], [model]);
+});
+
 static EM_JS(void, live2dResetDrawableDynamicFlags, (void* model), {
     window.live2d_csm.ccall('csmResetDrawableDynamicFlags', null, ['number'], [model]);
 });
@@ -331,6 +386,17 @@ typedef struct ModelProxy {
     const csmVector4 *renpy_drawable_multiply_colors;
     const csmVector4 *renpy_drawable_screen_colors;
     const int *renpy_drawable_parent_part_indices;
+    const int *renpy_drawable_blend_modes;
+    const int *renpy_part_offscreen_indices;
+    int offscreen_count;
+    const int *renpy_offscreen_blend_modes;
+    const float *renpy_offscreen_opacities;
+    const int *renpy_offscreen_owner_indices;
+    const csmVector4 *renpy_offscreen_multiply_colors;
+    const csmVector4 *renpy_offscreen_screen_colors;
+    const int *renpy_offscreen_mask_counts;
+    const int **renpy_offscreen_masks;
+    const csmFlags *renpy_offscreen_constant_flags;
 } ModelProxy;
 
 
@@ -494,6 +560,17 @@ static csmModel* csmInitializeModelInPlace(const csmMoc* moc, void* address, con
     proxy->renpy_drawable_multiply_colors = (const csmVector4 *) pointerFromLive2d(proxy, live2dGetDrawableMultiplyColors(proxy->live2d_model));
     proxy->renpy_drawable_screen_colors = (const csmVector4 *) pointerFromLive2d(proxy, live2dGetDrawableScreenColors(proxy->live2d_model));
     proxy->renpy_drawable_parent_part_indices = (const int *) pointerFromLive2d(proxy, live2dGetDrawableParentPartIndices(proxy->live2d_model));
+    proxy->renpy_drawable_blend_modes = (const int *) pointerFromLive2d(proxy, live2dGetDrawableBlendModes(proxy->live2d_model));
+    proxy->renpy_part_offscreen_indices = (const int *) pointerFromLive2d(proxy, live2dGetPartOffscreenIndices(proxy->live2d_model));
+    proxy->offscreen_count = live2dGetOffscreenCount(proxy->live2d_model);
+    proxy->renpy_offscreen_blend_modes = (const int *) pointerFromLive2d(proxy, live2dGetOffscreenBlendModes(proxy->live2d_model));
+    proxy->renpy_offscreen_opacities = (const float *) pointerFromLive2d(proxy, live2dGetOffscreenOpacities(proxy->live2d_model));
+    proxy->renpy_offscreen_owner_indices = (const int *) pointerFromLive2d(proxy, live2dGetOffscreenOwnerIndices(proxy->live2d_model));
+    proxy->renpy_offscreen_multiply_colors = (const csmVector4 *) pointerFromLive2d(proxy, live2dGetOffscreenMultiplyColors(proxy->live2d_model));
+    proxy->renpy_offscreen_screen_colors = (const csmVector4 *) pointerFromLive2d(proxy, live2dGetOffscreenScreenColors(proxy->live2d_model));
+    proxy->renpy_offscreen_mask_counts = (const int *) pointerFromLive2d(proxy, live2dGetOffscreenMaskCounts(proxy->live2d_model));
+    proxy->renpy_offscreen_masks = (const int **) pointerListFromLive2d(proxy, live2dGetOffscreenMasks(proxy->live2d_model), proxy->offscreen_count);
+    proxy->renpy_offscreen_constant_flags = (const csmFlags *) pointerFromLive2d(proxy, live2dGetOffscreenConstantFlags(proxy->live2d_model));
 
     return (csmModel *) proxy;
 }
@@ -657,6 +734,50 @@ static const int* csmGetDrawableParentPartIndices(csmModel* model) {
     return toModelProxy(model)->renpy_drawable_parent_part_indices;
 }
 
+static const int* csmGetDrawableBlendModes(csmModel* model) {
+    return toModelProxy(model)->renpy_drawable_blend_modes;
+}
+
+static const int* csmGetPartOffscreenIndices(csmModel* model) {
+    return toModelProxy(model)->renpy_part_offscreen_indices;
+}
+
+static int csmGetOffscreenCount(csmModel* model) {
+    return toModelProxy(model)->offscreen_count;
+}
+
+static const int* csmGetOffscreenBlendModes(csmModel* model) {
+    return toModelProxy(model)->renpy_offscreen_blend_modes;
+}
+
+static const float* csmGetOffscreenOpacities(csmModel* model) {
+    return toModelProxy(model)->renpy_offscreen_opacities;
+}
+
+static const int* csmGetOffscreenOwnerIndices(csmModel* model) {
+    return toModelProxy(model)->renpy_offscreen_owner_indices;
+}
+
+static const csmVector4* csmGetOffscreenMultiplyColors(csmModel* model) {
+    return toModelProxy(model)->renpy_offscreen_multiply_colors;
+}
+
+static const csmVector4* csmGetOffscreenScreenColors(csmModel* model) {
+    return toModelProxy(model)->renpy_offscreen_screen_colors;
+}
+
+static const int* csmGetOffscreenMaskCounts(csmModel* model) {
+    return toModelProxy(model)->renpy_offscreen_mask_counts;
+}
+
+static const int** csmGetOffscreenMasks(csmModel* model) {
+    return toModelProxy(model)->renpy_offscreen_masks;
+}
+
+static const csmFlags* csmGetOffscreenConstantFlags(csmModel* model) {
+    return toModelProxy(model)->renpy_offscreen_constant_flags;
+}
+
 static void csmResetDrawableDynamicFlags(csmModel* model) {
     ModelProxy *proxy = toModelProxy(model);
     live2dResetDrawableDynamicFlags((void *) proxy->live2d_model);
@@ -712,6 +833,17 @@ static struct NameToPointer nameToPointer[] = {
     {"csmGetDrawableMultiplyColors", (void*) csmGetDrawableMultiplyColors},
     {"csmGetDrawableScreenColors", (void*) csmGetDrawableScreenColors},
     {"csmGetDrawableParentPartIndices", (void*) csmGetDrawableParentPartIndices},
+    {"csmGetDrawableBlendModes", (void*) csmGetDrawableBlendModes},
+    {"csmGetPartOffscreenIndices", (void*) csmGetPartOffscreenIndices},
+    {"csmGetOffscreenCount", (void*) csmGetOffscreenCount},
+    {"csmGetOffscreenBlendModes", (void*) csmGetOffscreenBlendModes},
+    {"csmGetOffscreenOpacities", (void*) csmGetOffscreenOpacities},
+    {"csmGetOffscreenOwnerIndices", (void*) csmGetOffscreenOwnerIndices},
+    {"csmGetOffscreenMultiplyColors", (void*) csmGetOffscreenMultiplyColors},
+    {"csmGetOffscreenScreenColors", (void*) csmGetOffscreenScreenColors},
+    {"csmGetOffscreenMaskCounts", (void*) csmGetOffscreenMaskCounts},
+    {"csmGetOffscreenMasks", (void*) csmGetOffscreenMasks},
+    {"csmGetOffscreenConstantFlags", (void*) csmGetOffscreenConstantFlags},
     {"csmResetDrawableDynamicFlags", (void*) csmResetDrawableDynamicFlags},
     {NULL, NULL}
 };
@@ -757,6 +889,7 @@ void deallocate_live2d_model(void *model) {
     free(proxy->renpy_drawable_vertex_positions);
     free(proxy->renpy_drawable_vertex_uvs);
     free(proxy->renpy_drawable_indices);
+    free(proxy->renpy_offscreen_masks);
 }
 
 #endif

@@ -217,6 +217,184 @@ def init():
     """,
     )
 
+    # Implements the Cubism 5.3 color and alpha blend modes. This takes the
+    # premultiplied color computed by the shaders before it, and blends it with
+    # the backdrop - a texture containing what has been drawn beneath it. The
+    # result replaces what is in the framebuffer, so this must be used with a
+    # blend_func that replaces the destination. The mode uniforms use the
+    # values of csmColorBlendType and csmAlphaBlendType.
+    register_shader(
+        "live2d.blend",
+        glsl=300,
+        variables="""
+        uniform sampler2D u_live2d_backdrop;
+        uniform int u_live2d_color_blend;
+        uniform int u_live2d_alpha_blend;
+        uniform vec2 u_model_size;
+        uniform float u_live2d_ppu;
+        uniform vec2 u_live2d_offset;
+        in vec4 a_position;
+        out vec2 v_live2d_backdrop_coord;
+    """,
+        fragment_functions="""
+        vec4 live2d_straight(vec4 c) {
+            if (abs(c.a) < 1e-5) {
+                return vec4(0.0, 0.0, 0.0, c.a);
+            }
+
+            return vec4(c.rgb / c.a, c.a);
+        }
+
+        float live2d_luma(vec3 c) {
+            return dot(c, vec3(0.30, 0.59, 0.11));
+        }
+
+        vec3 live2d_clip_color(vec3 c) {
+            float l = live2d_luma(c);
+            float n = min(min(c.r, c.g), c.b);
+            float x = max(max(c.r, c.g), c.b);
+
+            if (n < 0.0) {
+                c = l + (c - l) * l / (l - n);
+            }
+
+            if (x > 1.0) {
+                c = l + (c - l) * (1.0 - l) / (x - l);
+            }
+
+            return c;
+        }
+
+        vec3 live2d_set_luma(vec3 c, float l) {
+            return live2d_clip_color(c + (l - live2d_luma(c)));
+        }
+
+        vec3 live2d_set_saturation(vec3 c, float s) {
+            float n = min(min(c.r, c.g), c.b);
+            float x = max(max(c.r, c.g), c.b);
+
+            if (x <= n) {
+                return vec3(0.0);
+            }
+
+            return (c - n) * s / (x - n);
+        }
+
+        float live2d_color_burn(float s, float d) {
+            if (abs(d - 1.0) < 1e-6) {
+                return 1.0;
+            } else if (abs(s) < 1e-6) {
+                return 0.0;
+            }
+
+            return 1.0 - min(1.0, (1.0 - d) / s);
+        }
+
+        float live2d_color_dodge(float s, float d) {
+            if (d <= 0.0) {
+                return 0.0;
+            } else if (s >= 1.0) {
+                return 1.0;
+            }
+
+            return min(1.0, d / (1.0 - s));
+        }
+
+        float live2d_hard_light(float s, float d) {
+            if (s < 0.5) {
+                return 2.0 * s * d;
+            }
+
+            return 1.0 - 2.0 * (1.0 - s) * (1.0 - d);
+        }
+
+        float live2d_soft_light(float s, float d) {
+            if (s <= 0.5) {
+                return d - (1.0 - 2.0 * s) * d * (1.0 - d);
+            } else if (d <= 0.25) {
+                return d + (2.0 * s - 1.0) * d * ((16.0 * d - 12.0) * d + 3.0);
+            }
+
+            return d + (2.0 * s - 1.0) * (sqrt(d) - d);
+        }
+
+        float live2d_linear_light(float s, float d) {
+            if (s < 0.5) {
+                return max(0.0, 2.0 * s + d - 1.0);
+            }
+
+            return min(1.0, 2.0 * (s - 0.5) + d);
+        }
+
+        vec3 live2d_color_blend(vec3 s, vec3 d, int mode) {
+            if (mode == 3) {
+                return min(s + d, 1.0);
+            } else if (mode == 4) {
+                return s + d;
+            } else if (mode == 5) {
+                return min(s, d);
+            } else if (mode == 6) {
+                return s * d;
+            } else if (mode == 7) {
+                return vec3(live2d_color_burn(s.r, d.r), live2d_color_burn(s.g, d.g), live2d_color_burn(s.b, d.b));
+            } else if (mode == 8) {
+                return max(s + d - 1.0, 0.0);
+            } else if (mode == 9) {
+                return max(s, d);
+            } else if (mode == 10) {
+                return s + d - s * d;
+            } else if (mode == 11) {
+                return vec3(live2d_color_dodge(s.r, d.r), live2d_color_dodge(s.g, d.g), live2d_color_dodge(s.b, d.b));
+            } else if (mode == 12) {
+                return vec3(live2d_hard_light(d.r, s.r), live2d_hard_light(d.g, s.g), live2d_hard_light(d.b, s.b));
+            } else if (mode == 13) {
+                return vec3(live2d_soft_light(s.r, d.r), live2d_soft_light(s.g, d.g), live2d_soft_light(s.b, d.b));
+            } else if (mode == 14) {
+                return vec3(live2d_hard_light(s.r, d.r), live2d_hard_light(s.g, d.g), live2d_hard_light(s.b, d.b));
+            } else if (mode == 15) {
+                return vec3(live2d_linear_light(s.r, d.r), live2d_linear_light(s.g, d.g), live2d_linear_light(s.b, d.b));
+            } else if (mode == 16) {
+                float sd = max(max(d.r, d.g), d.b) - min(min(d.r, d.g), d.b);
+                return live2d_set_luma(live2d_set_saturation(s, sd), live2d_luma(d));
+            } else if (mode == 17) {
+                return live2d_set_luma(s, live2d_luma(d));
+            }
+
+            return s;
+        }
+
+        vec4 live2d_alpha_blend(vec3 c, vec4 s, vec4 d, int mode) {
+            vec3 p;
+
+            if (mode == 1) {
+                p = vec3(s.a * d.a, 0.0, d.a * (1.0 - s.a));
+            } else if (mode == 2) {
+                p = vec3(0.0, 0.0, d.a * (1.0 - s.a));
+            } else if (mode == 3) {
+                p = vec3(min(s.a, d.a), max(s.a - d.a, 0.0), max(d.a - s.a, 0.0));
+            } else if (mode == 4) {
+                p = vec3(max(s.a + d.a - 1.0, 0.0), min(s.a, 1.0 - d.a), min(d.a, 1.0 - s.a));
+            } else {
+                p = vec3(s.a * d.a, s.a * (1.0 - d.a), d.a * (1.0 - s.a));
+            }
+
+            return vec4(c * p.x + s.rgb * p.y + d.rgb * p.z, p.x + p.y + p.z);
+        }
+    """,
+        vertex_300="""
+        v_live2d_backdrop_coord = vec2(
+            a_position.x * u_live2d_ppu + u_live2d_offset.x,
+            u_live2d_offset.y - a_position.y * u_live2d_ppu) / u_model_size;
+    """,
+        fragment_700="""
+        vec4 live2d_src = live2d_straight(fragment_color);
+        vec4 live2d_dst = live2d_straight(texture(u_live2d_backdrop, v_live2d_backdrop_coord));
+        fragment_color = live2d_alpha_blend(
+            live2d_color_blend(live2d_src.rgb, live2d_dst.rgb, u_live2d_color_blend),
+            live2d_src, live2d_dst, u_live2d_alpha_blend);
+    """,
+    )
+
     did_init = True
 
 
