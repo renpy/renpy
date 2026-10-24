@@ -1682,6 +1682,8 @@ class InterpolationState(renpy.object.Object):
             elif name == "anchorradius":
                 has_anchorradius = True
 
+        # Now, the things we change linearly are in the difference
+        # between the new and old states.
         changes = start_state.diff(new_state)
         for name, (start, end) in changes.items():
             self.linear[name] = Linear(start, end, PROPERTIES[name])
@@ -1695,6 +1697,7 @@ class InterpolationState(renpy.object.Object):
             or has_anchorangle
             or has_anchorradius
         ):
+            # Remove various irrelevant motions.
             for name in (
                 "xpos",
                 "ypos",
@@ -1716,6 +1719,9 @@ class InterpolationState(renpy.object.Object):
                 end_anchorangle = new_state.anchorangle
                 end_anchorangle_absolute = end_anchorangle.absolute
                 end_anchorangle_relative = end_anchorangle.relative
+
+                # Make sure the angle is in the appropriate direction,
+                # and contains an appropriate number of circles.
 
                 if revolution == "clockwise":
                     if end_angle < start_angle:
@@ -1741,13 +1747,19 @@ class InterpolationState(renpy.object.Object):
                     start_anchorangle_absolute += circles * 360
                     start_anchorangle_relative += circles * 360
 
+                # Angle and radius need to go after the linear changes, as
+                # around or alignaround must be set first.
+                self.linear.pop("angle", None)
                 self.linear["angle"] = Linear(start_angle, end_angle, float)
+                self.linear.pop("radius", None)
                 self.linear["radius"] = Linear(start_state.radius, new_state.radius, position_or_none)
+                self.linear.pop("anchorangle", None)
                 self.linear["anchorangle"] = Linear(
                     DualAngle(start_anchorangle_absolute, start_anchorangle_relative),
                     DualAngle(end_anchorangle_absolute, end_anchorangle_relative),
                     DualAngle.from_any,
                 )
+                self.linear.pop("anchorradius", None)
                 self.linear["anchorradius"] = Linear(
                     start_state.anchorradius,
                     new_state.anchorradius,
@@ -1762,9 +1774,11 @@ class InterpolationState(renpy.object.Object):
                         start += 360
                     if end - start < -180:
                         start -= 360
+                    self.linear.pop("angle", None)
                     self.linear["angle"] = Linear(start, end, float)
 
                 if has_radius:
+                    self.linear.pop("radius", None)
                     self.linear["radius"] = Linear(start_state.radius, new_state.radius, position_or_none)
 
                 if has_anchorangle:
@@ -1783,6 +1797,7 @@ class InterpolationState(renpy.object.Object):
                     if end_relative - start_relative < -180:
                         start_relative -= 360
 
+                    self.linear.pop("anchorangle", None)
                     self.linear["anchorangle"] = Linear(
                         DualAngle(start_absolute, start_relative),
                         DualAngle(end_absolute, end_relative),
@@ -1790,6 +1805,7 @@ class InterpolationState(renpy.object.Object):
                     )
 
                 if has_anchorradius:
+                    self.linear.pop("anchorradius", None)
                     self.linear["anchorradius"] = Linear(
                         start_state.anchorradius,
                         new_state.anchorradius,
@@ -1801,11 +1817,14 @@ class InterpolationState(renpy.object.Object):
 
         if change_state:
             if revolution is not None:
+                # Ensure we rotate around the new point.
                 start_state.xaround = new_state.xaround or 0.0
                 start_state.yaround = new_state.yaround or 0.0
                 start_state.xanchoraround = new_state.xanchoraround
                 start_state.yanchoraround = new_state.yanchoraround
 
+            # Ensure that we set things, even if they don't actually
+            # change from the old state.
             for name, value in interpolation.properties:
                 if name not in self.linear:
                     setattr(start_state, name, value)
