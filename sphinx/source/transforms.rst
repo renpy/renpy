@@ -552,7 +552,8 @@ With spline motion (curved path):
     are two, and Catmull-Rom is used for three or more knots. In the former two
     cases, the knot or knots are simply control nodes. For Catmull-Rom, the first
     and last knot are control nodes (often outside the displayed path) and the
-    other knots are points the path passes through.
+    other knots are points the path passes through. Catmull-Rom splines also allow
+    paths to be closed by using the ``loop`` keyword at the end of knot list.
 
     ::
 
@@ -568,6 +569,21 @@ With spline motion (curved path):
 
             # Move to the left, oscillating first. Catmull-Rom spline.
             linear 2.0 xalign 0.0 knot 1.0 knot 0.5 knot 0.0
+
+            # Move to the left, oscillating first. Catmull-Rom spline.
+            linear 2.0 xalign 0.0 knot 1.0 knot 0.5 knot 0.0 loop
+
+        transform spline_motion_loop:
+            # Start at a lower central position.
+            align (0.5, 0.75)
+
+            # Move around the outline of a gamepad shape. Closed Catmull-Rom spline.
+            linear 5.0 offset (-200.0, 0.0) knot (-300.0, 100.0) knot (-500.0, 0.0) \
+                       knot (-300.0, -400.0) knot (0.0, -400.0) knot (300.0, -400.0) \
+                       knot (500.0, 0.0) knot (300.0, 100.0) knot (200.0, 0.0) loop
+
+            # Traverse the path indefinitely.
+            repeat
 
         transform spline_motion_multi_property:
             # Start at the bottom right, zoomed out a bit.
