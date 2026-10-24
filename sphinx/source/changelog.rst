@@ -318,6 +318,12 @@ is logged and the mask is ignored, so the whole button can be focused. The same
 handling now applies to buttons, drags, and mouseareas, and mouseareas now
 support callable focus masks.
 
+The ``texture`` and ``linetexture`` text shaders now size their texture in
+virtual pixels when the game window is scaled. Previously, a texture given as
+an image name or other non-file displayable was scaled by the ratio between
+drawable and virtual pixels, which could stretch a per-line gradient across
+several lines.
+
 A sampler uniform can now be suffixed with ``__virtual_size`` to get the size
 of its texture in virtual pixels. The ``__res`` and other uniform operations
 now work on uniforms supplied by displayables and transforms.

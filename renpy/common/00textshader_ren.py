@@ -304,14 +304,14 @@ renpy.register_textshader(
     glsl=300,
     variables="""
     uniform sampler2D u__texture;
-    uniform vec2 u__texture_res;
+    uniform vec2 u__texture__virtual_size;
 
     uniform float u_text_to_virtual;
     uniform float u_text_main;
     out vec2 v__coord;
     """,
     vertex_10="""
-    v__coord = u_text_to_virtual * gl_Position.xy / u__texture_res;
+    v__coord = u_text_to_virtual * gl_Position.xy / u__texture__virtual_size;
     """,
     fragment_300="""
     if (u_text_main == 1.0) {
@@ -335,7 +335,7 @@ renpy.register_textshader(
     variables="""
     uniform sampler2D u__texture;
     uniform vec2 u__scale;
-    uniform vec2 u__texture_res;
+    uniform vec2 u__texture__virtual_size;
 
     uniform float u_text_to_virtual;
     uniform float u_text_main;
@@ -344,7 +344,7 @@ renpy.register_textshader(
     out vec2 v__coord;
     """,
     vertex_10="""
-    v__coord = vec2(gl_Position.x, gl_Position.y - a_text_center.y) / u__scale * u_text_to_virtual / u__texture_res;
+    v__coord = vec2(gl_Position.x, gl_Position.y - a_text_center.y) / u__scale * u_text_to_virtual / u__texture__virtual_size;
     v__coord.y += 0.5;
     """,
     fragment_300="""

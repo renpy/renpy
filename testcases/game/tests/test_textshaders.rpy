@@ -4,6 +4,12 @@
 # == Fixtures ==
 # ==============
 
+# Horizontal bands of increasing brightness. As this is not an image file, it's rendered to a
+# texture at the drawable resolution.
+image textshaders_bands = Fixed(
+    *[ Solid("#%02x%02xff" % (i * 20, i * 20), xysize=(400, 5), ypos=i * 5) for i in range(12) ],
+    xysize=(400, 60))
+
 label textshaders__cps__label:
     "{cps=40}This appears one letter at a time at a speed of 40 characters per second{/cps}"
 
@@ -113,6 +119,45 @@ init python:
             second = textshaders__jitter_surface(shader, 1.0, random_value=0.75)
             assert textshaders__pixels(first) != textshaders__pixels(second)
 
+    def textshaders__texture_profile(shader, draw_per_virt):
+        """
+        Renders three lines of text with `shader` while simulating a window scaled by
+        `draw_per_virt`, and returns the brightest red value of each row of the result.
+        """
+
+        draw = renpy.display.draw
+        old = (draw.draw_per_virt, draw.virt_to_draw, draw.draw_to_virt)
+
+        try:
+            draw.draw_per_virt = draw_per_virt
+            draw.virt_to_draw = renpy.display.matrix.Matrix2D(draw_per_virt, 0, 0, draw_per_virt)
+            draw.draw_to_virt = renpy.display.matrix.Matrix2D(1 / draw_per_virt, 0, 0, 1 / draw_per_virt)
+            renpy.text.text.layout_cache_clear()
+
+            text = Text("HHHH\nHHHH\nHHHH", size=30, color="#fff", outlines=[], slow=False, textshader=shader)
+            surface = renpy.render_to_surface(Fixed(Solid("#000"), text, xysize=(200, 120)), resize=True)
+
+        finally:
+            draw.draw_per_virt, draw.virt_to_draw, draw.draw_to_virt = old
+            renpy.text.text.layout_cache_clear()
+
+        rv = [ ]
+
+        for y in range(surface.get_height()):
+            row = [ surface.get_at((x, y))[:3] for x in range(surface.get_width()) ]
+            lit = [ p[0] for p in row if max(p) > 100 ]
+            rv.append(max(lit) if lit else 0)
+
+        return rv
+
+    def textshaders__test_texture_scale():
+        for shader in ("linetexture:textshaders_bands", "texture:textshaders_bands"):
+            reference = textshaders__texture_profile(shader, 1.0)
+            scaled = textshaders__texture_profile(shader, 2.0)
+
+            difference = sum(abs(a - b) for a, b in zip(reference, scaled)) / sum(1 for i in reference if i)
+            assert difference < 5, (shader, difference, reference, scaled)
+
 # ==============
 # === Tests ====
 # ==============
@@ -129,6 +174,13 @@ testsuite textshaders:
     testcase jitter_individual:
         description "Jitter preserves block movement by default and optionally moves glyphs independently"
         $ textshaders__test_jitter_individual()
+
+    testcase texture_scale:
+        description "Texture and linetexture keep their virtual size when the window is scaled"
+        # GH-7104: The texture was scaled by the drawable-to-virtual ratio when the
+        # texture displayable was rendered to a texture.
+        # https://github.com/renpy/renpy/issues/7104
+        $ textshaders__test_texture_scale()
 
     testcase jitter_examples:
         description "Interactive jitter examples are reachable from the testcases menu"
