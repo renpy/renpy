@@ -19,14 +19,43 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import importlib.util
 import sys
 import unittest
+from pathlib import Path
 from types import SimpleNamespace
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, PropertyMock, patch
 
 if TYPE_CHECKING:
     from renpy.display.tts import PrismTTS
+
+
+class TestTTSImport(unittest.TestCase):
+    """Exercise platform fallback when native speech dependencies are unavailable."""
+
+    def test_web_without_ctypes(self) -> None:
+        """Importing without ctypes must still allow the web backend to initialize."""
+        import renpy
+        import renpy.error
+
+        path = Path(__file__).resolve().parent.parent / "renpy" / "display" / "tts.py"
+        spec = importlib.util.spec_from_file_location("_test_web_tts", path)
+        assert spec is not None and spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+
+        with patch.dict(sys.modules, {"ctypes": None, "ctypes.util": None}):
+            spec.loader.exec_module(module)
+
+        self.assertIsNone(module.prism)
+        with (
+            patch.multiple(renpy, android=False, ios=False, macintosh=False, linux=False, windows=False, emscripten=True),
+            patch.object(renpy, "config", SimpleNamespace(tts_substitutions=[], auto_screenreader_voicing=False), create=True),
+            patch.object(module.sys, "platform", "emscripten"),
+        ):
+            module.init()
+
+        self.assertIsInstance(module.platform_tts, module.WebTTS)
 
 
 class TestPrismVoiceCatalog(unittest.TestCase):

@@ -944,7 +944,7 @@ class PrismTTS(object):
                 self._init_backends()
             return self.tts_backend
 
-    def _get_open_backends(self) -> list[_CtypesBackend]:
+    def _get_open_backends(self) -> "list[_CtypesBackend]":
         """Return retained backends once each, including a shared screen-reader fallback."""
         backends = list(self._tts_backends.values())
         for b in (self.sr_backend, self.tts_backend):
@@ -1046,7 +1046,7 @@ class PrismTTS(object):
             self._voice_catalog = catalog
         return self._voice_catalog
 
-    def resolve_voice(self, voice: str) -> tuple[_CtypesBackend, int] | None:
+    def resolve_voice(self, voice: str) -> "tuple[_CtypesBackend, int] | None":
         """Resolve qualified or legacy names, including voices omitted from the menu."""
         catalog = self._get_voice_catalog()
         backends = sorted(self._tts_backends.items(), key=lambda item: item[1] is not self.tts_backend)
