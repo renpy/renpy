@@ -65,6 +65,9 @@ Fixed a failure when replacing a save file from deleting the previous save.
 If replacement still fails after retrying, the error is reported and the
 temporary save file is removed.
 
+Fixed the web presplash disappearing before display initialization finished.
+It now remains visible until the first frame is drawn.
+
 Live2D
 ------
 

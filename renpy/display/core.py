@@ -1023,6 +1023,9 @@ class Interface:
         Called after the first frame has been drawn.
         """
 
+        if renpy.emscripten:
+            emscripten.run_script(r"""presplashEnd();""")
+
         if renpy.android:
             from jnius import autoclass
 

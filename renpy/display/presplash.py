@@ -197,9 +197,6 @@ def end():
 
     done = True
 
-    if renpy.emscripten:
-        emscripten.run_script(r"""presplashEnd();""")
-
     if window is None:
         return
 
