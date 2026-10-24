@@ -180,15 +180,23 @@ class Interpolator[T](renpy.object.Object):
 
 
 class Linear[T](Interpolator[T]):
-    def __init__(self, a: Any, b: Any, typ: type[Any] | tuple[type[Any], ...] | Callable[[Any], Any]):
+    def __init__(
+        self,
+        a: Any,
+        b: Any,
+        typ: type[Any] | tuple[type[Any], ...] | Callable[[Any], Any],
+    ):
         self.a = a
         self.b = b
         self.typ = typ
+        self.component: int | None = None
+        "If not None, the index in the tuple component of a and b that this spline represents."
 
     def _build(self) -> Callable[[float], T]:
         a = self.a
         b = self.b
         typ = self.typ
+        component = self.component
 
         if typ is orientation:
 
@@ -207,6 +215,10 @@ class Linear[T](Interpolator[T]):
 
             return execute
 
+        if component is not None:
+            a = a[component]
+            b = b[component]
+
         # Values that can't be interpolated: step at the end.
         if b is None or isinstance(b, (bool, str, Displayable, Matrix, Camera)):
 
@@ -219,16 +231,22 @@ class Linear[T](Interpolator[T]):
             return execute
 
         # Tuples: one sub-Linear per component, built once.
-        if isinstance(b, (tuple, list)):
+        if component is None and isinstance(b, (tuple, list)):
             if not isinstance(a, (tuple, list)):
                 a = [None] * len(b)
 
-            subs: list[Linear[Any]]
+            subs: list[Linear[Any]] = []
             strict = renpy.config.developer
             if isinstance(typ, (tuple, list)):
-                subs = [Linear(i, j, ty) for i, j, ty in zip(a, b, typ, strict=strict)]
+                for i, ty in zip(range(len(b)), typ, strict=strict):
+                    sub = Linear(a, b, ty)
+                    sub.component = i
+                    subs.append(sub)
             else:
-                subs = [Linear(i, j, typ) for i, j in zip(a, b, strict=strict)]
+                for i in range(len(b)):
+                    sub = Linear(a, b, typ)
+                    sub.component = i
+                    subs.append(sub)
 
             def execute(t: float) -> Any:
                 return tuple(s(t) for s in subs)
@@ -258,11 +276,11 @@ class Linear[T](Interpolator[T]):
 
                     return execute
 
-                spline: Spline[float] = Spline(b.spline, float)
+                spline: Spline[float] = Spline(b.spline[0], b.spline[1:], float)
 
                 def execute(t: float) -> Any:
                     done = min(max(t, 0.0), 1.0)
-                    done = spline.execute(done)
+                    done = spline(done)
                     rv = target_matrix(a_origin, done)
                     rv.origin = b
                     return rv
@@ -353,18 +371,52 @@ def interpolate(t, a, b, typ):
 
 
 class Spline[T](Interpolator[T]):
-    def __init__(self, spline: list[Any], typ: type[Any] | tuple[type[Any], ...]):
+    def __init__(
+        self,
+        start: Any,
+        spline: list[Any],
+        typ: type[Any] | tuple[type[Any], ...],
+        loop: bool = False,
+    ):
+        self.start = start
         self.spline = spline
         self.typ = typ
+        self.loop = loop
+        self.component = None
+        "If not None, the index in the tuple component that this spline represents."
 
     def _build(self):
         spline = self.spline
         typ = self.typ
+        loop = self.loop
+        start = self.start
+        component = self.component
+        n = len(spline) + 1
 
-        # Recurse into tuples.
-        if isinstance(spline[-1], tuple):
-            vals = zip(zip(*spline), typ, strict=renpy.config.developer)  # type: ignore
-            subs = [Spline(list(i), ty) for i, ty in vals]
+        def point(i) -> Any:
+            if i == 0:
+                value = start
+            else:
+                value = spline[i - 1]
+
+            if component is not None:
+                value = value[component]
+
+            if renpy.config.mixed_position and typ in (position_or_none, position):
+                value = position(value)
+
+            return value
+
+        first = point(0)
+        last = point(n - 1)
+
+        # Recurse into tuple components without constructing component knot lists.
+        if component is None and isinstance(last, tuple):
+            subs: list[Spline[Any]] = []
+            for i, ty in zip(range(len(last)), typ, strict=renpy.config.developer):  # type: ignore
+                c_spline = Spline(start, spline, ty, loop)
+                c_spline.component = i
+                subs.append(c_spline)
 
             def execute(t: float) -> Any:
                 return tuple(s(t) for s in subs)
@@ -372,24 +424,18 @@ class Spline[T](Interpolator[T]):
             return execute
 
         # Constant.
-        if spline[0] is None:
-            last = spline[-1]
-
+        if first is None:
             def execute(t: float) -> Any:
                 return last
 
             return execute
 
-        if renpy.config.mixed_position and typ in (position_or_none, position):
-            # Nones will raise here instead of during math below.
-            spline = [position(i) for i in spline]
-
-        cast = type(spline[-1])
-        n = len(spline)
+        cast = type(last)
 
         # Linear Bezier.
         if n == 2:
-            p0, p1 = spline
+            p0 = first
+            p1 = point(1)
             c1 = p1 - p0
 
             def execute(t: float) -> Any:
@@ -401,7 +447,9 @@ class Spline[T](Interpolator[T]):
 
         # Quadratic Bezier, in monomial form.
         if n == 3:
-            p0, p1, p2 = spline
+            p0 = first
+            p1 = point(1)
+            p2 = point(2)
             c1 = 2.0 * (p1 - p0)
             c2 = p0 - 2.0 * p1 + p2
 
@@ -414,7 +462,10 @@ class Spline[T](Interpolator[T]):
 
         # Cubic Bezier, in monomial form.
         if n == 4:
-            p0, p1, p2, p3 = spline
+            p0 = first
+            p1 = point(1)
+            p2 = point(2)
+            p3 = point(3)
             c1 = 3.0 * (p1 - p0)
             c2 = 3.0 * (p0 - 2.0 * p1 + p2)
             c3 = 3.0 * p1 - p0 - 3.0 * p2 + p3
@@ -427,27 +478,32 @@ class Spline[T](Interpolator[T]):
             return execute
 
         # Catmull-Rom: precompute per-segment monomial coefficients.
-        def adjusted(j):
+        def adjusted(j) -> Any:
             if j == 0:
-                return spline[1]
+                return point(1)
             if j == 1:
-                return spline[0]
+                return first
             if j == n - 2:
-                return spline[-1]
+                return last
             if j == n - 1:
-                return spline[-2]
-            return spline[j]
+                return point(n - 2)
+            return point(j)
 
-        first = spline[0]
-        last = spline[-1]
+        loop = loop and n >= 5
 
         segments = []
 
-        for i in range(n - 3):
-            p_1 = adjusted(i)
-            p0 = adjusted(i + 1)
-            p1 = adjusted(i + 2)
-            p2 = adjusted(i + 3)
+        for i in range(n - 1 if loop else n - 3):
+            if loop:
+                p_1 = point(n - 2 if i == 0 else i - 1)
+                p0 = point(i)
+                p1 = point(i + 1)
+                p2 = point(1 if i == n - 2 else i + 2)
+            else:
+                p_1 = adjusted(i)
+                p0 = adjusted(i + 1)
+                p1 = adjusted(i + 2)
+                p2 = adjusted(i + 3)
 
             segments.append((
                 0.5 * (3.0 * p0 - p_1 - 3.0 * p1 + p2),
@@ -476,7 +532,7 @@ class Spline[T](Interpolator[T]):
 
 
 def interpolate_spline(t, spline, typ):
-    return Spline(spline, typ)(t)
+    return Spline(spline[0], spline[1:], typ)(t)
 
 
 # A list of atl transforms that may need to be compiled.
@@ -1284,15 +1340,17 @@ def check_spline_types(value):
 
 class RawMultipurpose(RawStatement):
     warp_function = None
+    loop_splines_indexes: list[int] = ()  # type: ignore
 
     def __init__(self, loc):
-        super(RawMultipurpose, self).__init__(loc)
+        super().__init__(loc)
 
         self.warper = None
         self.duration = None
         self.properties = []
         self.expressions = []
-        self.splines = []
+        self.splines: list[tuple[str, list[Any]]] = []
+        self.loop_splines_indexes = []
         self.revolution = None
         self.circles = "0"
 
@@ -1335,7 +1393,10 @@ class RawMultipurpose(RawStatement):
     def add_circles(self, circles):
         self.circles = circles
 
-    def add_spline(self, name, exprs):
+    def add_spline(self, name: str, exprs: list[Any], loop: bool) -> None:
+        if loop:
+            self.loop_splines_indexes.append(len(self.splines))
+
         self.splines.append((name, exprs))
 
     def compile(self, ctx):
@@ -1360,7 +1421,15 @@ class RawMultipurpose(RawStatement):
                 transition = None
 
             if isinstance(child, (int, float)):
-                return Interpolation(self.loc, "pause", child, [], None, 0, [])
+                return Interpolation(
+                    self.loc,
+                    "pause",
+                    child,
+                    [],
+                    None,
+                    0,
+                    [],
+                )
 
             child = renpy.easy.displayable(child)
 
@@ -1380,57 +1449,63 @@ class RawMultipurpose(RawStatement):
             warper = self.warper or "instant"
 
             if warper not in warpers:
-                raise Exception("ATL Warper %s is unknown at runtime." % warper)
+                raise Exception(f"ATL Warper {warper} is unknown at runtime.")
 
         properties = []
 
         for name, expr in self.properties:
             if name not in PROPERTIES:
-                raise Exception("ATL Property %s is unknown at runtime." % name)
+                raise Exception(f"ATL Property {name} is unknown at runtime.")
 
             value = ctx.eval(expr)
             properties.append((name, value))
 
-        splines = []
+        splines: list[tuple[str, list[Any], bool]] = []
 
-        for name, exprs in self.splines:
+        for i, (name, exprs) in enumerate(self.splines):
             if name not in PROPERTIES:
-                raise Exception("ATL Property %s is unknown at runtime." % name)
+                raise Exception(f"ATL Property {name} is unknown at runtime.")
 
             values = [ctx.eval(i) for i in exprs]
 
             if not all(check_spline_types(i) for i in values):
-                if name in {"matrixtransform", "matrixcolor"}:
-                    raise Exception(
-                        "%s: Spline interpolation requires position types. (You may want to use SplineMatrix.)" % name
-                    )
-                else:
-                    raise Exception("%s: Spline interpolation requires position types." % name)
+                err = Exception(f"Spline interpolation of property {name} requires position types.")
+                if name in ("matrixtransform", "matrixcolor"):
+                    err.add_note("You may want to use SplineMatrix.")
+                raise err
 
-            splines.append((name, values))
+            splines.append((name, values, i in self.loop_splines_indexes))
 
         for expr, _with in self.expressions:
             try:
                 value = ctx.eval(expr)
             except Exception:
-                raise Exception("Could not evaluate expression %r when compiling ATL." % expr)
+                raise Exception(f"Could not evaluate expression {expr!r} when compiling ATL.")
 
             if not isinstance(value, ATLTransformBase):
                 raise Exception(
-                    "Expression %r is not an ATL transform, and so cannot be included in an ATL interpolation." % expr
+                    f"Expression {expr!r} is not an ATL transform, and so cannot be included in an ATL interpolation."
                 )
 
             value.compile()
 
             if value.properties is None:
-                raise Exception("ATL transform %r is too complicated to be included in interpolation." % expr)
+                raise Exception(f"ATL transform {expr!r} is too complicated to be included in interpolation.")
 
             properties.extend(value.properties)
 
         duration = ctx.eval(self.duration)
         circles = ctx.eval(self.circles)
 
-        return Interpolation(self.loc, warper, duration, properties, self.revolution, circles, splines)
+        return Interpolation(
+            self.loc,
+            warper,
+            duration,
+            properties,
+            self.revolution,
+            circles,
+            splines,
+        )
 
     def mark_constant(self, analysis):
         constant = GLOBAL_CONST
@@ -1721,8 +1796,8 @@ class InterpolationState(renpy.object.Object):
                         position_or_none,
                     )
 
-        for name, values in interpolation.splines:
-            self.splines[name] = Spline([start_state.get(name)] + values, PROPERTIES[name])
+        for name, values, loop in interpolation.splines:
+            self.splines[name] = Spline(start_state.get(name), values, PROPERTIES[name], loop)
 
         if change_state:
             if revolution is not None:
@@ -1750,19 +1825,35 @@ class InterpolationState(renpy.object.Object):
 
 
 class Interpolation(Statement):
-    def __init__(self, loc, warper, duration, properties, revolution, circles, splines):
+    __version__ = 1
+
+    def __init__(
+        self,
+        loc,
+        warper,
+        duration,
+        properties,
+        revolution,
+        circles,
+        splines: list[tuple[str, list[Any], bool]],
+    ):
         super().__init__(loc)
 
         self.warper = warper
         self.duration = duration
         self.properties = properties
-        self.splines = splines
+        self.splines: list[tuple[str, list[Any], bool]] = splines
 
         # The direction we revolve in: cw, ccw, or None.
         self.revolution = revolution
 
         # The number of complete circles we make.
         self.circles = circles
+
+    def after_upgrade(self, version):
+        if version < 1:
+            splines: list = self.splines
+            self.splines = [(name, values, False) for name, values in splines]
 
     def execute(self, trans, st, state, events):
         executing(self.loc)
@@ -2413,8 +2504,11 @@ def parse_atl(l):
                     if knots:
                         if prop == "orientation":
                             raise Exception("Orientation doesn't support spline.")
+                        loop = bool(ll.keyword("loop"))
+                        if loop and len(knots) < 3:
+                            raise Exception("Spline loops require at least 3 knots.")
                         knots.append(expr)
-                        rm.add_spline(prop, knots)
+                        rm.add_spline(prop, knots, loop)
                     else:
                         addprop_rv = rm.add_property(prop, expr)
                         if addprop_rv == prop:

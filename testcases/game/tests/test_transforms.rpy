@@ -81,6 +81,29 @@ label transforms__spline__open__label:
     "Open spline"
     return
 
+label transforms__spline__loop__label:
+    scene bg room
+    show eileen happy:
+        xoffset 0
+        align (0.0, 0.0)
+    "Loop path begins"
+    show eileen happy:
+        linear 1.0 xoffset 0 knot 20 knot 80 knot 120 loop \
+            align (0.0, 0.0) knot (0.2, 0.2) knot (0.5, 0.5) knot (0.8, 0.8) loop
+    "Loop spline"
+    return
+
+label transforms__spline__loop_repeat__label:
+    scene bg room
+    show eileen happy:
+        xoffset 0
+    "Repeated loop path begins"
+    show eileen happy:
+        linear 0.1 xoffset 0 knot 10 knot 20 knot 30 loop
+        repeat 20
+    "Repeated loop path ends"
+    return
+
 label transforms__spline__vector__label:
     scene bg room
     show eileen happy:
@@ -409,15 +432,50 @@ testsuite transforms:
             pause 0.5
 
             python:
-                d = renpy.game.context().scene_lists.get_displayable_by_tag("master", "eileen")
-                assert abs(d.state.xoffset - 50) < 10, \
-                    f"Expected the open spline to pass near xoffset 50, got {d.state.xoffset}"
+                v = transforms_test.state().xoffset
+                assert abs(v - 50) < 10, \
+                    f"Expected the open spline to pass near xoffset 50, got {v}"
 
             pause 0.5
             python:
-                d = renpy.game.context().scene_lists.get_displayable_by_tag("master", "eileen")
-                assert abs(d.state.xoffset - 100) < 5, \
-                    f"Expected the open spline to reach xoffset 100, got {d.state.xoffset}"
+                v = transforms_test.state().xoffset
+                assert abs(v - 100) < 5, \
+                    f"Expected the open spline to reach xoffset 100, got {v}"
+
+        testcase renders_loop_spline:
+            description "An ATL spline can be closed with the loop keyword"
+
+            run Start("transforms__spline__loop__label")
+            advance until "Loop path begins"
+            advance until "Loop spline"
+            pause 0.5
+
+            python:
+                s = transforms_test.state()
+                assert abs(s.xoffset - 80) < 12, \
+                    f"Expected the loop spline to pass through xoffset 80, got {s.xoffset}"
+                assert abs(s.xalign.relative - 0.5) < 0.1, \
+                    f"Expected the loop spline to pass through xalign 0.5, got {s.xalign}"
+                assert abs(s.yalign.relative - 0.5) < 0.1, \
+                    f"Expected the loop spline to pass through yalign 0.5, got {s.yalign}"
+
+            pause 0.5
+            python:
+                s = transforms_test.state()
+                assert s.xoffset == 0, \
+                    f"Expected the loop spline to reach xoffset 0, got {s.xoffset}"
+
+        testcase loop_spline_does_not_drift:
+            description "Repeating a loop spline does not accumulate endpoint error"
+
+            run Start("transforms__spline__loop_repeat__label")
+            advance until "Repeated loop path begins"
+            advance until "Repeated loop path ends"
+
+            python:
+                s = transforms_test.state()
+                assert s.xoffset == 0, \
+                    f"Expected the repeated loop spline to end at xoffset 0, got {s.xoffset}"
 
         testcase renders_vector_spline:
             description "An ATL spline interpolates both components of an align property"
@@ -428,11 +486,11 @@ testsuite transforms:
             pause 0.5
 
             python:
-                d = renpy.game.context().scene_lists.get_displayable_by_tag("master", "eileen")
-                assert abs(d.state.xalign.relative - 0.5) < 0.1, \
-                    f"Expected vector spline xalign near 0.5, got {d.state.xalign}"
-                assert abs(d.state.yalign.relative - 0.5) < 0.1, \
-                    f"Expected vector spline yalign near 0.5, got {d.state.yalign}"
+                s = transforms_test.state()
+                assert abs(s.xalign.relative - 0.5) < 0.1, \
+                    f"Expected vector spline xalign near 0.5, got {s.xalign}"
+                assert abs(s.yalign.relative - 0.5) < 0.1, \
+                    f"Expected vector spline yalign near 0.5, got {s.yalign}"
 
         testcase renders_spline_matrix:
             description "SplineMatrix applies its spline while rendering a matrixcolor transform"
@@ -443,8 +501,7 @@ testsuite transforms:
             pause 0.5
 
             python:
-                d = renpy.game.context().scene_lists.get_displayable_by_tag("master", "eileen")
-                brightness = d.state.matrixcolor.ydw
+                brightness = transforms_test.state().matrixcolor.ydw
                 assert abs(brightness - 0.5) < 0.1, \
                     f"Expected SplineMatrix brightness near 0.5, got {brightness}"
 
