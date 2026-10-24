@@ -298,7 +298,7 @@ class TestHook(BaseTestBlock):
 
 
 class TestCase(BaseTestBlock):
-    __slots__ = ("description", "enabled", "only", "parameter_index", "parameters")
+    __slots__ = ("description", "enabled", "enabled_expr", "only", "parameter_index", "parameters")
 
     def __init__(
         self,
@@ -311,9 +311,11 @@ class TestCase(BaseTestBlock):
         enabled: bool = True,
         only: bool = False,
         parameters: list[list[dict[str, Any]]] | None = None,
+        enabled_expr: str | None = None,
     ):
         self.description = description
         self.enabled = enabled
+        self.enabled_expr = enabled_expr
         self.only = only
         self.parameters = self.generate_parameter_combinations(parameters)
         self.parameter_index = -1
@@ -417,6 +419,7 @@ class TestSuite(TestCase):
         after_testsuite: TestHook | None = None,
         after_testcase: TestHook | None = None,
         teardown: TestHook | None = None,
+        enabled_expr: str | None = None,
     ):
         self.subtest_index = 0
 
@@ -427,7 +430,7 @@ class TestSuite(TestCase):
         self.after_testcase = after_testcase
         self.after_testsuite = after_testsuite
         self.teardown = teardown
-        super().__init__(loc, [], name, parent, xfail_expr, description, enabled, only, parameters)
+        super().__init__(loc, [], name, parent, xfail_expr, description, enabled, only, parameters, enabled_expr)
 
         if subtests is not None:
             for subtest in subtests:

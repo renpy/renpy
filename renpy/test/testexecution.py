@@ -267,6 +267,26 @@ def scoped_exec(source: str, hide: bool = False, store: str = "store") -> None:
 ################################################################################
 ## Setup methods
 
+def evaluate_enabled_expressions() -> None:
+    """
+    Sets the enabled flag of each testcase with an `enabled` property by
+    evaluating its expression. This is done after init code has run, rather
+    than when the script is compiled, so the result reflects the current
+    platform and game files.
+    """
+
+    for tc in testcases.values():
+        expr = getattr(tc, "enabled_expr", None)
+
+        if expr is None:
+            continue
+
+        tc.enabled = bool(scoped_eval(expr))
+
+        if tc.only and not tc.enabled:
+            raise ValueError(f"Test case '{tc.name}' must be enabled before setting 'only' to True.")
+
+
 def update_enable_flag() -> None:
     """
     Updates the enabled flag for all testcases based on the `only` flag

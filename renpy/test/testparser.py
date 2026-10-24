@@ -455,6 +455,12 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
                 kwargs["xfail_expr"] = expr
                 ll.expect_eol()
                 ll.advance()
+            elif keyword == "enabled":
+                # Evaluated when tests are run, so the result isn't stored in the .rpyc.
+                expr = ll.require(ll.simple_expression)
+                kwargs["enabled_expr"] = expr
+                ll.expect_eol()
+                ll.advance()
             else:
                 expr = ll.require(ll.simple_expression)
                 kwargs[keyword] = renpy.python.py_eval(expr)
@@ -658,6 +664,12 @@ def parse_block(
             elif keyword == "xfail":
                 expr = l.require(l.simple_expression)
                 kwargs["xfail_expr"] = expr
+                l.expect_eol()
+                l.advance()
+            elif keyword == "enabled":
+                # Evaluated when tests are run, so the result isn't stored in the .rpyc.
+                expr = l.require(l.simple_expression)
+                kwargs["enabled_expr"] = expr
                 l.expect_eol()
                 l.advance()
             else:

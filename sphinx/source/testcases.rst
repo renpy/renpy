@@ -354,7 +354,9 @@ It takes the following properties:
 .. var:: enabled
 
     If this expression evaluates to ``False``, this test is skipped.
-    Defaults to ``True``.
+    Defaults to ``True``. The expression is evaluated when the tests are
+    run, after init code has run, so it can check the platform, variables
+    set by init code, or whether game files are present.
 
     This can conditionally disable tests, for example on platforms
     where they are not supported. ::
@@ -365,6 +367,10 @@ It takes the following properties:
 
         testcase not_on_mobile:
             enabled not renpy.mobile
+            ...
+
+        testsuite live2d:
+            enabled renpy.has_live2d() and renpy.loadable("live2d/Ren/Ren.model3.json")
             ...
 
     See :ref:`skipping-testcases` for more information.
