@@ -2658,7 +2658,12 @@ class Text(renpy.display.displayable.Displayable):
             finally:
                 self.slow_done = None
 
-        if self.slow and renpy.display.behavior.map_event(ev, "dismiss") and self.style.slow_abortable:
+        if (
+            self.slow
+            and renpy.display.behavior.map_event(ev, "dismiss")
+            and self.style.slow_abortable
+            and renpy.display.focus.get_grab() is None
+        ):
             for i in slow_text:
                 if i.slow:
                     i.slow = False
