@@ -17,7 +17,7 @@
 
     # add_file.rpy:28
     old "Enter the name of the script file to create."
-    new "請輸入需要建立的腳本名稱。"
+    new "請輸入要建立的腳本檔案名稱。"
 
     # add_file.rpy:31
     old "The filename must have the .rpy extension."
@@ -25,87 +25,87 @@
 
     # add_file.rpy:39
     old "The file already exists."
-    new "該檔已存在。"
+    new "檔案已存在。"
 
     # add_file.rpy:42
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
-    new "# Ren'Py 將自動載入以 .rpy 結尾的腳本。若要使用\n# 檔案，從其它檔案中定義一個標籤跳轉到該檔案。\n"
+    new "# Ren'Py 會自動載入所有以 .rpy 結尾的腳本檔案。若要使用此\n# 檔案，請定義一個標籤，並從其他檔案跳轉到該標籤。\n"
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "要建立 Android 套件，請下載 RAPT，並解壓縮到 Ren'Py 目錄下。然後重新啟動 Ren'Py 啟動器。"
+    new "若要建置 Android 套件，請下載 RAPT、解壓縮並放入 Ren'Py 資料夾，然後重新啟動 Ren'Py 啟動器。"
 
     # android.rpy:31
     old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "需要一個 32 位元的 Java 開發套件（JDK）來在 Windows 中建立 Android 套件。JDK 不同於 JRE，所以您可能有 Java 但不包含 JDK。\n\n請 {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}下載並安裝 JDK{/a}，然後重新啟動 Ren'Py 啟動器。"
+    new "在 Windows 上建置 Android 套件需要 x86 Java 開發套件（JDK）。JDK 與 JRE 不同，因此即使已安裝 Java，也可能沒有 JDK。\n\n請{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}下載並安裝 JDK{/a}，然後重新啟動 Ren'Py 啟動器。"
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "RAPT 已經安裝了，但是您還需要安裝 Android SDK 才可以建立 Android 套件。選擇安裝 SDK 來實現它。"
+    new "RAPT 已安裝，但建置 Android 套件前還需要安裝 Android SDK。請選擇「安裝 SDK」。"
 
     # android.rpy:33
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
-    new "RAPT 已經安裝了，但是 KEY 尚未設定。請建立一個新的 KEY，或者恢複 android.keystore。"
+    new "RAPT 已安裝，但尚未設定金鑰。請建立新金鑰，或還原 android.keystore。"
 
     # android.rpy:34
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
-    new "目前專案尚未設定。使用「設定」，在建設之前設定它。"
+    new "目前專案尚未設定。請先選擇「設定」，再進行建置。"
 
     # android.rpy:35
     old "Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device."
-    new "選擇「建立」來建立目前專案，或者選擇「建立 & 安裝」來新增到一個 Android 裝置中建立並安裝。"
+    new "選擇「建置」來建置目前專案；或連接 Android 裝置後選擇「建置並安裝」，將其建置並安裝到裝置。"
 
     # android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "模擬一臺 Android 手機。\n\n當按鈕被按下時，觸控輸入會模擬為滑鼠。Esc 按鍵對映為手機的選單鍵，PageUp 鍵對映為手機的返回鍵。"
+    new "模擬 Android 手機。\n\n按住按鈕時，滑鼠會模擬觸控輸入；Escape 對應手機的選單鍵，Page Up 對應返回鍵。"
 
     # android.rpy:38
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "模擬一個 Android 平板。\n\n當按鈕被按下時，觸控輸入會模擬為滑鼠。Esc 按鍵對映為平板的選單鍵，PageUp 鍵對映為平板的返回鍵。"
+    new "模擬 Android 平板。\n\n按住按鈕時，滑鼠會模擬觸控輸入；Escape 對應平板的選單鍵，Page Up 對應返回鍵。"
 
     # android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "模擬一臺基於 Android 電視，像 OUYA 或者 TV。\n\n控制器的輸入按鍵會對映為方向鍵，Enter 按鍵對映為 select 按鍵，Esc 按鍵對映為選單鍵，PageUp 按鍵被對映為返回鍵。"
+    new "模擬以 Android 為基礎的電視遊戲主機，例如 OUYA 或 Fire TV。\n\n控制器輸入會對應方向鍵，Enter 對應選取按鈕，Escape 對應選單鍵，Page Up 對應返回鍵。"
 
     # android.rpy:41
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
-    new "下載和安裝 Android SDK 以及支援套件。可選擇性地設定產生的 keys 來簽署套件。"
+    new "下載並安裝 Android SDK 與支援套件；也可以選擇產生簽署套件所需的金鑰。"
 
     # android.rpy:42
     old "Configures the package name, version, and other information about this project."
-    new "設定套件名稱，版本以及其它關於專案的資訊。"
+    new "設定套件名稱、版本及其他專案資訊。"
 
     # android.rpy:43
     old "Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details."
-    new "在編輯器中開啟包含 Google Play keys 的檔案。\n\n這是在應用程式需要一個擴展的 APK 套件時才需要。閱讀文件來瞭解更多細節。"
+    new "在編輯器中開啟包含 Google Play 金鑰的檔案。\n\n只有使用擴充 APK 套件時才需要。詳情請參閱文件。"
 
     # android.rpy:44
     old "Builds the Android package."
-    new "建立 Android 套件。"
+    new "建置 Android 套件。"
 
     # android.rpy:45
     old "Builds the Android package, and installs it on an Android device connected to your computer."
-    new "建立 Android 套件，並安裝到已連線到電腦的 Android 裝置中。"
+    new "建置 Android 套件，並安裝到已連接電腦的 Android 裝置。"
 
     # android.rpy:46
     old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
-    new "建立 Android 套件，並安裝到已連線到電腦的 Android 裝置中，然後啟動您的裝置上的應用程式。"
+    new "建置 Android 套件、安裝到已連接電腦的 Android 裝置，然後在裝置上啟動應用程式。"
 
     # android.rpy:48
     old "Connects to an Android device running ADB in TCP/IP mode."
-    new "在 TCP/IP 模式下執行 ADB Android 裝置。"
+    new "連接至以 TCP/IP 模式執行 ADB 的 Android 裝置。"
 
     # android.rpy:49
     old "Disconnects from an Android device running ADB in TCP/IP mode."
-    new "在 TCP/IP 模式下執行 ADB Android 裝置，並斷開連線。"
+    new "中斷以 TCP/IP 模式執行 ADB 的 Android 裝置連線。"
 
     # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
-    new "從 Android 裝置檢索日誌並將其寫入檔案。"
+    new "從 Android 裝置取得記錄並寫入檔案。"
 
     # android.rpy:240
     old "Copying Android files to distributions directory."
-    new "將 Android 檔案複製到發布版本目錄。"
+    new "將 Android 檔案複製到發行版資料夾。"
 
     # android.rpy:304
     old "Android: [project.current.name!q]"
@@ -133,7 +133,7 @@
 
     # android.rpy:361
     old "Install SDK & Create Keys"
-    new "安裝 SDK & 建立 Keys"
+    new "安裝 SDK 並建立金鑰"
 
     # android.rpy:365
     old "Configure"
@@ -141,15 +141,15 @@
 
     # android.rpy:369
     old "Build Package"
-    new "建構套件"
+    new "建置套件"
 
     # android.rpy:373
     old "Build & Install"
-    new "建構 & 安裝"
+    new "建置並安裝"
 
     # android.rpy:377
     old "Build, Install & Launch"
-    new "建構，安裝 & 啟動"
+    new "建置、安裝並啟動"
 
     # android.rpy:388
     old "Other:"
@@ -169,7 +169,7 @@
 
     # android.rpy:437
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
-    new "在包裝 Android 應用程式前，您須下載 RAPT(Ren'Py Android Packaging Tool)，Ren'Py 的 Android 包裝程式。您要現在下載 RAPT 嗎？"
+    new "建置 Android 應用程式前，需要下載 RAPT（Ren'Py Android Packaging Tool）。要立即下載 RAPT 嗎？"
 
     # android.rpy:496
     old "Remote ADB Address"
@@ -177,7 +177,7 @@
 
     # android.rpy:496
     old "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
-    new "「192.168.1.143:5555」是連線裝置的 IP 位址和連接埠的輸入形式。請鍵入裝置的 IP 位址和連接埠來連線。注意，確保裝置支援遠端 ADB，然後鍵入位址和連接埠來使用。"
+    new "請以「192.168.1.143:5555」的格式輸入要連線的 IP 位址與連接埠。請查閱裝置文件，確認是否支援遠端 ADB，以及應使用的位址與連接埠。"
 
     # android.rpy:508
     old "Invalid remote ADB address"
@@ -185,11 +185,11 @@
 
     # android.rpy:508
     old "The address must contain one exactly one ':'."
-    new "位址必須包含一個精確的 ':'。"
+    new "位址必須恰好包含一個 ':'。"
 
     # android.rpy:512
     old "The host may not contain whitespace."
-    new "主機位址不能包含空格。"
+    new "主機名稱不得包含空白字元。"
 
     # android.rpy:518
     old "The port must be a number."
@@ -197,15 +197,15 @@
 
     # android.rpy:544
     old "Retrieving logcat information from device."
-    new "從裝置檢索 logcat 資訊。"
+    new "正在從裝置取得 logcat 資訊。"
 
     # choose_directory.rpy:73
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
-    new "Ren'Py 無法執行 python 的 tkinter 來選擇專案目錄。請安裝 python-tk 或 tkinter。"
+    new "Ren'Py 無法使用 Python 的 tkinter 選取專案資料夾。請安裝 python-tk 或 tkinter。"
 
     # choose_theme.rpy:303
     old "Could not change the theme. Perhaps options.rpy was changed too much."
-    new "無法變更介面主題。Options.rpy 也許改變了太多。"
+    new "無法變更介面主題；options.rpy 可能已被大幅修改。"
 
     # choose_theme.rpy:370
     old "Planetarium"
@@ -237,43 +237,43 @@
 
     # distribute.rpy:443
     old "Scanning project files..."
-    new "掃描專案檔案..."
+    new "正在掃描專案檔案……"
 
     # distribute.rpy:459
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
-    new "建立發布版本失敗：\n\n build.directory_name 變數可能包含空格，冒號或分號。"
+    new "建置發行版失敗：\n\nbuild.directory_name 變數不得包含空格、冒號或分號。"
 
     # distribute.rpy:504
     old "No packages are selected, so there's nothing to do."
-    new "沒有選擇套件，沒有可以處理的事情。"
+    new "未選取任何套件，因此沒有要處理的項目。"
 
     # distribute.rpy:516
     old "Scanning Ren'Py files..."
-    new "掃描 Ren'Py 檔案..."
+    new "正在掃描 Ren'Py 檔案……"
 
     # distribute.rpy:569
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
-    new "所有套件已被建立。\n\n由於含有授權資訊存在，因此在 Windows 中不支援解開和重新包裝 Linux 及 Mac 的套件。"
+    new "所有套件均已建置。\n\n由於包含權限資訊，Windows 不支援解開並重新封裝 Linux 與 Macintosh 發行版。"
 
     # distribute.rpy:752
     old "Archiving files..."
-    new "壓縮檔案..."
+    new "正在封存檔案……"
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
-    new "解包 Macintosh 應用程式中以進行簽署..."
+    new "正在解開 Macintosh 應用程式以進行簽署……"
 
     # distribute.rpy:1060
     old "Signing the Macintosh application..."
-    new "簽署 Macintosh 應用程式中..."
+    new "正在簽署 Macintosh 應用程式……"
 
     # distribute.rpy:1082
     old "Creating the Macintosh DMG..."
-    new "建立 Macintosh DMG中..."
+    new "正在建立 Macintosh DMG……"
 
     # distribute.rpy:1091
     old "Signing the Macintosh DMG..."
-    new "簽署 Macintosh DMG中..."
+    new "正在簽署 Macintosh DMG……"
 
     # distribute.rpy:1248
     old "Writing the [variant] [format] package."
@@ -281,11 +281,11 @@
 
     # distribute.rpy:1261
     old "Making the [variant] update zsync file."
-    new "新增 [variant] 更新 zsync 檔案。"
+    new "正在建立 [variant] 更新 zsync 檔案。"
 
     # distribute.rpy:1404
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
-    new "完成處理 {b}[complete]{/b} ，共 {b}[total]{/b}個檔案。"
+    new "已處理 {b}[complete]{/b}/{b}[total]{/b} 個檔案。"
 
     # distribute_gui.rpy:157
     old "Build Distributions: [project.current.name!q]"
@@ -309,7 +309,7 @@
 
     # distribute_gui.rpy:194
     old "Add from clauses to calls, once"
-    new "向 call 語句新增 from 從句, 一次"
+    new "一次性為 call 語句加入 from 子句"
 
     # distribute_gui.rpy:195
     old "Refresh"
@@ -333,7 +333,7 @@
 
     # distribute_gui.rpy:241
     old "Add from clauses to calls"
-    new "向 call 語句新增 from 從句"
+    new "為 call 語句加入 from 子句"
 
     # distribute_gui.rpy:242
     old "Force Recompile"
@@ -345,19 +345,19 @@
 
     # distribute_gui.rpy:250
     old "Adding from clauses to call statements that do not have them."
-    new "正在向 call 語句新增遺失的 from 從句"
+    new "正在為缺少 from 子句的 call 語句補上子句"
 
     # distribute_gui.rpy:271
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
-    new "當執行專案時發生了錯誤。在開始釋出前請確保專案執行無誤。"
+    new "執行專案時發生錯誤。建置發行版前，請確認專案能正常執行。"
 
     # distribute_gui.rpy:288
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
-    new "您的專案不包含建構資訊。是否加入建構資訊到 options.rpy？"
+    new "專案不含建置資訊。要將建置資訊加入 options.rpy 的末尾嗎？"
 
     # editor.rpy:150
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
-    new "{b}推薦{/b} 一個有簡單易用介面和功能的測試版編輯器能夠幫助開發，例如拼字的校對功能。Editra 目前缺乏中文、日文，韓文的輸入的 IME 支援。"
+    new "{b}推薦。{/b} 具備易用介面及拼字檢查等開發功能的編輯器。Editra 目前不支援中文、日文或韓文輸入所需的 IME。"
 
     # editor.rpy:151
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
@@ -401,7 +401,7 @@
 
     # editor.rpy:472
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
-    new "文字編輯器是您用於編輯 Ren'py 腳本的程式。在這裡您可以選擇 Ren'py 會使用到編輯器。如果選定則編輯器將會自動下載並安裝。"
+    new "文字編輯器是用來編輯 Ren'Py 腳本檔案的程式。你可以在此選擇 Ren'Py 使用的編輯器；如果尚未安裝，會自動下載並安裝。"
 
     # editor.rpy:494
     old "Cancel"
@@ -417,7 +417,7 @@
 
     # front_page.rpy:120
     old "+ Create New Project"
-    new "+ 新建專案"
+    new "+ 建立新專案"
 
     # front_page.rpy:130
     old "Launch Project"
@@ -441,7 +441,7 @@
 
     # front_page.rpy:182
     old "Active Project"
-    new "活動專案"
+    new "目前專案"
 
     # front_page.rpy:190
     old "Open Directory"
@@ -469,11 +469,11 @@
 
     # front_page.rpy:214
     old "All script files"
-    new "開啟所有檔案"
+    new "所有腳本檔案"
 
     # front_page.rpy:223
     old "Navigate Script"
-    new "定位腳本"
+    new "導覽腳本"
 
     # front_page.rpy:234
     old "Check Script (Lint)"
@@ -481,7 +481,7 @@
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "改變/升級 GUI"
+    new "變更／更新 GUI"
 
     # front_page.rpy:239
     old "Change Theme"
@@ -505,7 +505,7 @@
 
     # front_page.rpy:255
     old "Generate Translations"
-    new "產生翻譯檔"
+    new "產生翻譯"
 
     # front_page.rpy:256
     old "Extract Dialogue"
@@ -521,7 +521,7 @@
 
     # front_page.rpy:295
     old "Recompiling all rpy files into rpyc files..."
-    new "重新編譯所有 rpy 檔案為 rpyc 檔案……"
+    new "將所有 rpy 檔案重新編譯為 rpyc 檔案……"
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
@@ -801,11 +801,11 @@
 
     # navigation.rpy:199
     old "transforms"
-    new "轉換"
+    new "轉場"
 
     # navigation.rpy:200
     old "screens"
-    new "螢幕"
+    new "畫面"
 
     # navigation.rpy:201
     old "callables"
@@ -821,7 +821,7 @@
 
     # navigation.rpy:249
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
-    new "沒有待辦的事項被發現。\n\n 要建立一個包含 \"# TODO\" 到您的腳本中。"
+    new "找不到 TODO 註解。\n\n請在腳本中加入 \"# TODO\" 來建立待辦事項。"
 
     # navigation.rpy:256
     old "The list of names is empty."
@@ -833,27 +833,27 @@
 
     # new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new "兩種介面均已翻譯為您的語言。"
+    new "兩種介面都已翻譯成你的語言。"
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new "僅新的 GUI 已翻譯為您的語言。"
+    new "只有新版 GUI 已翻譯成你的語言。"
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "僅傳統主題介面已翻譯為您的語言。"
+    new "只有傳統主題介面已翻譯成你的語言。"
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
-    new "沒有介面已翻譯為您的語言。"
+    new "兩種介面都尚未翻譯成你的語言。"
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
-    new "無法設定專案目錄。已經放棄。"
+    new "無法設定專案資料夾，操作已取消。"
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "您想使用哪個介面？ 新的 GUI 具有現代外觀，支援寬螢幕和行動裝置，並且更易於自訂。 傳統主題可能需要使用較舊的範例程式碼。 \n\n[language_support!t]\n\n 如果有疑問，請選擇新的 GUI，然後點選右下角的繼續。"
+    new "要使用哪個介面？新版 GUI 外觀現代，支援寬螢幕與行動裝置，也更容易自訂。若要配合較舊的範例程式碼，可能需要使用傳統主題。\n\n[language_support!t]\n\n如果不確定，請選擇新版 GUI，再點選右下角的「繼續」。"
 
     # new_project.rpy:69
     old "Legacy Theme Interface"
@@ -861,15 +861,15 @@
 
     # new_project.rpy:90
     old "Choose Project Template"
-    new "選擇專案模版"
+    new "選擇專案範本"
 
     # new_project.rpy:108
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
-    new "請為您新建的專案選擇一個模版。該模版將設定為預設的字型和語言。如果您的所使用的語言沒有被支援，那麼請選擇 'english' 。"
+    new "請為新專案選擇範本。範本會設定預設字型與介面語言。如果不支援你的語言，請選擇 'english'。"
 
     # preferences.rpy:64
     old "Launcher Preferences"
-    new "啟動器偏好"
+    new "啟動器偏好設定"
 
     # preferences.rpy:85
     old "Projects Directory:"
@@ -881,7 +881,7 @@
 
     # preferences.rpy:94
     old "Projects directory: [text]"
-    new "專案資料夾： [text]"
+    new "專案資料夾：[text]"
 
     # preferences.rpy:96
     old "Not Set"
@@ -909,7 +909,7 @@
 
     # preferences.rpy:158
     old "Include library names"
-    new "包含資料庫名稱"
+    new "包含函式庫名稱"
 
     # preferences.rpy:168
     old "Launcher Options:"
@@ -925,7 +925,7 @@
 
     # preferences.rpy:174
     old "Show edit file section"
-    new "顯示編輯檔節"
+    new "顯示編輯檔案區段"
 
     # preferences.rpy:175
     old "Large fonts"
@@ -933,7 +933,7 @@
 
     # preferences.rpy:178
     old "Console output"
-    new "控制臺輸出"
+    new "主控台輸出"
 
     # preferences.rpy:199
     old "Open launcher project"
@@ -945,19 +945,19 @@
 
     # project.rpy:47
     old "After making changes to the script, press shift+R to reload your game."
-    new "改變腳本後，請按 shift+R 來重新載入您的遊戲。"
+    new "修改腳本後，按 Shift+R 重新載入遊戲。"
 
     # project.rpy:47
     old "Press shift+O (the letter) to access the console."
-    new "按 shift+O (the letter) 來進入控制臺。"
+    new "按 Shift+O 進入主控台。"
 
     # project.rpy:47
     old "Press shift+D to access the developer menu."
-    new "按 shift+D 來進入開發者選單。"
+    new "按 Shift+D 進入開發者選單。"
 
     # project.rpy:47
     old "Have you backed up your projects recently?"
-    new "您最近有備份您的專案嗎？"
+    new "最近有備份專案嗎？"
 
     # project.rpy:229
     old "Launching the project failed."
@@ -965,15 +965,15 @@
 
     # project.rpy:229
     old "Please ensure that your project launches normally before running this command."
-    new "請確保您的專案能正常啟動再執行本指令。"
+    new "執行此命令前，請確認專案能正常啟動。"
 
     # project.rpy:242
     old "Ren'Py is scanning the project..."
-    new "Ren'Py 正在掃描專案.."
+    new "Ren'Py 正在掃描專案……"
 
     # project.rpy:568
     old "Launching"
-    new "啟動"
+    new "啟動專案"
 
     # project.rpy:597
     old "PROJECTS DIRECTORY"
@@ -985,19 +985,19 @@
 
     # project.rpy:597
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
-    new "啟動器會掃描該目錄下的專案，新增的專案也將在該目錄下建構。專案也在該目錄下建立。"
+    new "啟動器會掃描此資料夾中的專案，也會在此建立新專案並放置建置後的專案。"
 
     # project.rpy:602
     old "Ren'Py has set the projects directory to:"
-    new "Ren'Py 已將專案目錄設定為"
+    new "Ren'Py 已將專案資料夾設為："
 
     # translations.rpy:63
     old "Translations: [project.current.name!q]"
-    new "翻譯: [project.current.name!q]"
+    new "翻譯：[project.current.name!q]"
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new "生效的語言。 它應該只包含小寫 ASCII 字元和下劃線。"
+    new "要使用的語言。只能包含小寫 ASCII 字元與底線。"
 
     # translations.rpy:130
     old "Generate empty strings for translations"
@@ -1005,7 +1005,7 @@
 
     # translations.rpy:148
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "產生或更新翻譯檔案。 這些檔案將被放置在 game/tl/[persistent.translate_language!q]."
+    new "產生或更新翻譯檔案，並放在 game/tl/[persistent.translate_language!q]。"
 
     # translations.rpy:168
     old "Extract String Translations"
@@ -1029,39 +1029,39 @@
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "extract 命令可讓您將現有專案中的字串翻譯提取到暫存檔案中。 \n\n merge 指令將提取的翻譯合併到另一個專案。"
+    new "extract 命令可將現有專案的字串翻譯提取到暫存檔。\n\nmerge 命令會將提取的翻譯合併到另一個專案。"
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
-    new "Ren'Py 正在產生翻譯..."
+    new "Ren'Py 正在產生翻譯……"
 
     # translations.rpy:235
     old "Ren'Py has finished generating [language] translations."
-    new "Ren'Py 已經完成 [language] 檔案的翻譯。"
+    new "Ren'Py 已完成 [language] 翻譯。"
 
     # translations.rpy:248
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py 正在提取字串翻譯..."
+    new "Ren'Py 正在提取字串翻譯……"
 
     # translations.rpy:251
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py 已完成提取 [language] 的字串翻譯。"
+    new "Ren'Py 已完成 [language] 字串翻譯的提取。"
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
-    new "Ren'Py 正在合併字串翻譯..."
+    new "Ren'Py 正在合併字串翻譯……"
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py 已完成合併 [language] 的字串翻譯。"
+    new "Ren'Py 已完成 [language] 字串翻譯的合併。"
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "正在更新預設介面翻譯..."
+    new "正在更新預設介面翻譯……"
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
-    new "提取對話： [project.current.name!q]"
+    new "提取對話：[project.current.name!q]"
 
     # translations.rpy:322
     old "Format:"
@@ -1069,7 +1069,7 @@
 
     # translations.rpy:330
     old "Tab-delimited Spreadsheet (dialogue.tab)"
-    new "製表符分隔的電子表格 (dialogue.tab)"
+    new "Tab 分隔試算表 (dialogue.tab)"
 
     # translations.rpy:331
     old "Dialogue Text Only (dialogue.txt)"
@@ -1077,23 +1077,23 @@
 
     # translations.rpy:344
     old "Strip text tags from the dialogue."
-    new "從對話中刪除文字標籤。"
+    new "從對話中移除文字標籤。"
 
     # translations.rpy:345
     old "Escape quotes and other special characters."
-    new "避開引號和其他特殊字元。"
+    new "跳脫引號與其他特殊字元。"
 
     # translations.rpy:346
     old "Extract all translatable strings, not just dialogue."
-    new "提取所有可翻譯的字串，而不僅僅是對話。"
+    new "提取所有可翻譯字串，而不只是對話。"
 
     # translations.rpy:374
     old "Ren'Py is extracting dialogue...."
-    new "Ren'Py 正在提取對話..."
+    new "Ren'Py 正在提取對話……"
 
     # translations.rpy:378
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py 已完成對話提取。 提取的對話可以在 base 目錄的 dialogue.[persistent.dialogue_format] 中找到。"
+    new "Ren'Py 已完成對話提取。提取的對話位於 base 資料夾的 dialogue.[persistent.dialogue_format]。"
 
     # updater.rpy:75
     old "Select Update Channel"
@@ -1101,23 +1101,23 @@
 
     # updater.rpy:86
     old "The update channel controls the version of Ren'Py the updater will download. Please select an update channel:"
-    new "更新頻道控制 Ren'Py 更新將會下載的版本。請選擇一個更新頻道。"
+    new "更新頻道決定更新程式下載的 Ren'Py 版本。請選擇更新頻道："
 
     # updater.rpy:91
     old "Release"
-    new "發布版本"
+    new "正式版"
 
     # updater.rpy:97
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
-    new "{b}推薦{/b} Ren'py 的版本應在所有新釋出的遊戲中使用。"
+    new "{b}推薦。{/b}所有新發行的遊戲都應使用此 Ren'Py 版本。"
 
     # updater.rpy:102
     old "Prerelease"
-    new "預先發布版本"
+    new "預發行版"
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
-    new "預覽 Ren'py 的下一個版本，適合用於測試和體驗新功能，但不適合遊戲的最終版本。"
+    new "下一個 Ren'Py 版本的預覽版，可用於測試與體驗新功能，但不適合遊戲正式發行。"
 
     # updater.rpy:114
     old "Experimental"
@@ -1125,19 +1125,19 @@
 
     # updater.rpy:120
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
-    new "Ren'py 的實驗版本，除非您被 Ren'py 的開發者要求，否則您不應該選擇此頻道。"
+    new "Ren'Py 的實驗版本。除非 Ren'Py 開發者要求，否則不應選擇此頻道。"
 
     # updater.rpy:126
     old "Nightly"
-    new "每夜構置版本"
+    new "每夜建置版"
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new "Ren'Py 最新的開發版本。這可能會擁有最新的功能，或可能根本無法運作。"
+    new "Ren'Py 開發中的最新版本，可能包含最新功能，也可能完全無法執行。"
 
     # updater.rpy:152
     old "An error has occurred:"
-    new "一個錯誤發生："
+    new "發生錯誤："
 
     # updater.rpy:154
     old "Checking for updates."
@@ -1149,11 +1149,11 @@
 
     # updater.rpy:158
     old "[u.version] is now available. Do you want to install it?"
-    new "[u.version] 已經可以更新。您要下載它嗎？"
+    new "[u.version] 已可用。要安裝嗎？"
 
     # updater.rpy:160
     old "Preparing to download the update."
-    new "準備下載更新"
+    new "正在準備下載更新。"
 
     # updater.rpy:162
     old "Downloading the update."
@@ -1161,7 +1161,7 @@
 
     # updater.rpy:164
     old "Unpacking the update."
-    new "正在解壓縮更新檔案。"
+    new "正在解壓縮更新。"
 
     # updater.rpy:166
     old "Finishing up."
@@ -1169,7 +1169,7 @@
 
     # updater.rpy:168
     old "The update has been installed. Ren'Py will restart."
-    new "已安裝更新。Ren'Py 將會重新啟動。"
+    new "更新已安裝。Ren'Py 將重新啟動。"
 
     # updater.rpy:170
     old "The update has been installed."
@@ -1193,55 +1193,55 @@
 
     # game/android.rpy:38
     old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
-    new "RAPT 已安裝，但尚未設定金鑰。請產生新金鑰，或將 android.keystore 和 bundle.keystore 複製到 base 目錄。"
+    new "RAPT 已安裝，但尚未設定金鑰。請產生新金鑰，或將 android.keystore 與 bundle.keystore 複製到 base 資料夾。"
 
     # game/android.rpy:40
     old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
-    new "請選擇您是否需要 Play Bundle（適用於 Google Play）或通用 APK（適用於側面載入和其他應用商店）。"
+    new "請選擇 Play Bundle（供 Google Play 使用）或通用 APK（供側載及其他應用程式商店使用）。"
 
     # game/android.rpy:45
     old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "嘗試模擬基於電視的 Android 控制台。\n\n 控制器輸入對映到箭頭鍵，Enter 對映到選擇按鈕，Escape 對映到選單按鈕，PageUp 對映到後退按鈕。"
+    new "嘗試模擬電視型 Android 遊戲主機。\n\n控制器輸入會對應方向鍵，Enter 對應選取按鈕，Escape 對應選單按鈕，Page Up 對應返回按鈕。"
 
     # game/android.rpy:47
     old "Downloads and installs the Android SDK and supporting packages."
-    new "下載並安裝 Android SDK 和支援包。"
+    new "下載並安裝 Android SDK 與支援套件。"
 
     # game/android.rpy:48
     old "Generates the keys required to sign the package."
-    new "產生簽署包所需的金鑰。"
+    new "產生簽署套件所需的金鑰。"
 
     # game/android.rpy:55
     old "Lists the connected devices."
-    new "列出已連線的裝置"
+    new "列出已連接的裝置。"
 
     # game/android.rpy:56
     old "Pairs with a device over Wi-Fi, on Android 11+."
-    new "透過 Wi-Fi 與執行 Android 11+ 的裝置配對。"
+    new "透過 Wi-Fi 與執行 Android 11 以上版本的裝置配對。"
 
     # game/android.rpy:57
     old "Connects to a device over Wi-Fi, on Android 11+."
-    new "透過 Wi-Fi 連線到 Android 11+ 裝置。"
+    new "透過 Wi-Fi 連接 Android 11 以上版本的裝置。"
 
     # game/android.rpy:58
     old "Disconnects a device connected over Wi-Fi."
-    new "斷開透過 Wi-Fi 連線的裝置。"
+    new "中斷透過 Wi-Fi 連接的裝置。"
 
     # game/android.rpy:60
     old "Removes Android temporary files."
-    new "刪除 Android 暫存檔案"
+    new "清除 Android 暫存檔案"
 
     # game/android.rpy:62
     old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
-    new "建立 Android 應用程式套件 (ABB)，以上傳到 Google Play。這最多可以包含 2GB 的資料。"
+    new "建置要上傳至 Google Play 的 Android App Bundle（AAB），最多可包含 2 GB 資料。"
 
     # game/android.rpy:63
     old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
-    new "建構通用 APK 套件，用於側面載入和 Google Play 以外的儲存。這最多可以包含 2GB 的資料。"
+    new "建置供側載及 Google Play 以外商店使用的通用 APK，最多可包含 2 GB 資料。"
 
     # game/android.rpy:334
     old "Android: [project.current.display_name!q]"
-    new "Android： [project.current.display_name!q]"
+    new "Android：[project.current.display_name!q]"
 
     # game/android.rpy:390
     old "Install SDK"
@@ -1253,7 +1253,7 @@
 
     # game/android.rpy:404
     old "Play Bundle"
-    new "遊戲包"
+    new "Play Bundle"
 
     # game/android.rpy:409
     old "Universal APK"
@@ -1273,11 +1273,11 @@
 
     # game/android.rpy:471
     old "Wi-Fi Debugging Disconnect"
-    new "Wi-Fi 除錯斷開"
+    new "中斷 Wi-Fi 偵錯連線"
 
     # game/android.rpy:475
     old "Clean"
-    new "乾淨"
+    new "清除"
 
     # game/android.rpy:580
     old "Wi-Fi Pairing Code"
@@ -1285,7 +1285,7 @@
 
     # game/android.rpy:580
     old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
-    new "如果支援，可以在 'Developer options', 'Wireless debugging', 'Pair device with pairing code' 中找到。"
+    new "如果支援，可在「Developer options」>「Wireless debugging」>「Pair device with pairing code」中找到。"
 
     # game/android.rpy:587
     old "Pairing Host & Port"
@@ -1297,15 +1297,15 @@
 
     # game/android.rpy:603
     old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
-    new "如果支援，可以在 'Developer options', 'Wireless debugging' 中找到。"
+    new "如果支援，可在「Developer options」>「Wireless debugging」中找到。"
 
     # game/android.rpy:619
     old "This can be found in 'List Devices'."
-    new "這可以在‘列出裝置’中找到。"
+    new "可在「列出裝置」中找到。"
 
     # game/android.rpy:639
     old "Cleaning up Android project."
-    new "清理 Android 專案"
+    new "正在清理 Android 專案。"
 
     # game/androidstrings.rpy:7
     old "{} is not a directory."
@@ -1317,7 +1317,7 @@
 
     # game/androidstrings.rpy:10
     old "Run configure before attempting to build the app."
-    new "在嘗試建立應用程式之前執行設定。"
+    new "建置應用程式前，請先執行設定。"
 
     # game/androidstrings.rpy:11
     old "Updating project."

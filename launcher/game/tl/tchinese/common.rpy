@@ -167,79 +167,79 @@ translate tchinese strings:
 
     # 00gui.rpy:228
     old "Are you sure you want to delete this save?"
-    new "您確定您要刪掉這份存檔嗎？"
+    new "確定要刪除這個存檔嗎？"
 
     # 00gui.rpy:229
     old "Are you sure you want to overwrite your save?"
-    new "您確定您要覆寫您的存檔？"
+    new "確定要覆寫這個存檔嗎？"
 
     # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "載入將會失去所有未儲存的進度。\n您確定您要這麼做嗎？"
+    new "載入會失去尚未儲存的進度。\n確定要繼續嗎？"
 
     # 00gui.rpy:231
     old "Are you sure you want to quit?"
-    new "您確定您要離開嗎？"
+    new "確定要離開嗎？"
 
     # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "您確定您想回到標題畫面嗎？\n這將使您失去所有未儲存的進度。"
+    new "確定要返回主選單嗎？\n這會失去尚未儲存的進度。"
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
-    new "你確認你想要結束回想嗎？"
+    new "確定要結束回放嗎？"
 
     # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
-    new "是否確定開始略過？"
+    new "確定要開始跳過嗎？"
 
     # 00gui.rpy:235
     old "Are you sure you want to skip to the next choice?"
-    new "是否確定跳到下一個選項？"
+    new "確定要跳到下一個選項嗎？"
 
     # 00gui.rpy:236
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "你確認你想要跳過沒看過的對話直接跳到下一個選項嗎？"
+    new "確定要跳過未讀對話，直接跳到下一個選項嗎？"
 
     # 00keymap.rpy:250
     old "Saved screenshot as %s."
-    new "儲存螢幕截圖為 %s。"
+    new "螢幕截圖已儲存為 %s。"
 
     # 00library.rpy:142
     old "Self-voicing disabled."
-    new "Self-voicing 已停用。"
+    new "自動朗讀已停用。"
 
     # 00library.rpy:143
     old "Clipboard voicing enabled. "
-    new "Clipboard voicing 已啟用。 "
+    new "剪貼簿朗讀已啟用。 "
 
     # 00library.rpy:144
     old "Self-voicing enabled. "
-    new "Self-voicing 已啟用。 "
+    new "自動朗讀已啟用。 "
 
     # 00library.rpy:179
     old "Skip Mode"
-    new "略過對話模式"
+    new "跳過模式"
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "該程式包含許多授權下的自由軟體，包括 MIT 授權和 GNU 寬通用公共授權。 {a=https://www.renpy.org/l/license}這裡{/a} 可以找到完整的軟體列表，包括完整原始碼的連結。 "
+    new "本程式包含依多種授權條款提供的自由軟體，包括 MIT 授權條款與 GNU 寬通用公眾授權條款。完整的軟體清單及原始碼連結請見{a=https://www.renpy.org/l/license}此處{/a}。"
 
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "Clipboard voicing 已啟用。按 'shift+C' 停用"
+    new "剪貼簿朗讀已啟用。按 Shift+C 停用。"
 
     # 00preferences.rpy:424
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Self-voicing 會開始朗讀 \"[renpy.display.tts.last]\"。 按 'alt+shift+V' 來停用。"
+    new "自動朗讀會讀出「[renpy.display.tts.last]」。按 Alt+Shift+V 停用。"
 
     # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Self-voicing 已啟用。按 'v' 停用。"
+    new "自動朗讀已啟用。按 V 停用。"
 
     # _compat/gamemenu.rpym:198
     old "Empty Slot."
-    new "空白檔位"
+    new "空白存檔欄位"
 
     # _compat/gamemenu.rpym:170
     old "a"
@@ -259,11 +259,11 @@ translate tchinese strings:
 
     # _compat/preferences.rpym:428
     old "Joystick Mapping"
-    new "遊戲桿對映"
+    new "遊戲控制器設定"
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
-    new "聯絡應用程式商店中\n請稍等……"
+    new "正在連線至 App Store\n請稍候……"
 
     # 00updater.rpy:367
     old "The Ren'Py Updater is not supported on mobile devices."
@@ -295,7 +295,7 @@ translate tchinese strings:
 
     # 00updater.rpy:993
     old "The update file does not have the correct digest - it may have been corrupted."
-    new "更新檔摘要不符 - 它可能已損毀。"
+    new "更新檔摘要不符，檔案可能已損毀。"
 
     # 00updater.rpy:1049
     old "While unpacking {}, unknown type {}."
@@ -303,15 +303,15 @@ translate tchinese strings:
 
     # 00updater.rpy:1393
     old "Updater"
-    new "更新"
+    new "更新程式"
 
     # 00updater.rpy:1404
     old "This program is up to date."
-    new "該程式已是最新版本。"
+    new "本程式已是最新版本。"
 
     # 00updater.rpy:1406
     old "[u.version] is available. Do you want to install it?"
-    new "[u.version] 已釋出。是否確認安裝？"
+    new "已有 [u.version] 可用。要安裝嗎？"
 
     # 00updater.rpy:1408
     old "Preparing to download the updates."
@@ -323,15 +323,15 @@ translate tchinese strings:
 
     # 00updater.rpy:1412
     old "Unpacking the updates."
-    new "解壓縮更新檔案。"
+    new "正在解壓縮更新檔。"
 
     # 00updater.rpy:1416
     old "The updates have been installed. The program will restart."
-    new "該更新檔案已安裝，程式將會重新啟動。"
+    new "更新已安裝。程式將重新啟動。"
 
     # 00updater.rpy:1418
     old "The updates have been installed."
-    new "已完成更新。"
+    new "更新已安裝。"
 
     # 00updater.rpy:1420
     old "The updates were cancelled."
@@ -339,7 +339,7 @@ translate tchinese strings:
 
     # 00gallery.rpy:563
     old "Image [index] of [count] locked."
-    new "[count] 個圖片中的第 [index] 個圖片被鎖定。"
+    new "[count] 張圖片中的第 [index] 張已鎖定。"
 
     # 00gallery.rpy:583
     old "prev"
@@ -351,7 +351,7 @@ translate tchinese strings:
 
     # 00gallery.rpy:585
     old "slideshow"
-    new "幻燈片"
+    new "投影片"
 
     # 00gallery.rpy:586
     old "return"
@@ -363,7 +363,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:33
     old "selected"
-    new "選定"
+    new "已選取"
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
@@ -379,7 +379,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:37
     old "activate"
-    new "啟動"
+    new "啟用"
 
     # renpy/common/00accessibility.rpy:38
     old "deactivate"
@@ -395,11 +395,11 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:120
     old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
-    new "輔助功能選單。使用向上和向下箭頭進行導覽，並使用 Enter 啟動按鈕和欄位。"
+    new "輔助功能選單。使用向上、向下鍵導覽，按 Enter 啟用按鈕與長條。"
 
     # renpy/common/00accessibility.rpy:139
     old "Font Override"
-    new "字形覆蓋"
+    new "字型覆寫"
 
     # renpy/common/00accessibility.rpy:143
     old "Default"
@@ -427,7 +427,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:181
     old "High Contrast Text"
-    new "高對比度文字"
+    new "高對比文字"
 
     # renpy/common/00accessibility.rpy:194
     old "Self-Voicing"
@@ -451,31 +451,31 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:224
     old "Self-Voicing Volume Drop"
-    new "自動朗讀音量下降"
+    new "自動朗讀音量降低"
 
     # renpy/common/00accessibility.rpy:235
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    new "此選單上的選項是為了提高可存取性。它們可能不適用於所有遊戲，並且某些選項組合可能導致遊戲無法玩。這不是遊戲或引擎的問題。為了在更改字形時獲得最佳效果，盡量保持文字大小與原來一樣。"
+    new "此選單中的選項旨在提升無障礙功能。它們可能不適用於所有遊戲，某些選項組合甚至可能讓遊戲無法遊玩；這不是遊戲或引擎的問題。變更字型時，請盡量維持原本的文字大小，以取得最佳效果。"
 
     # renpy/common/00action_file.rpy:395
     old "Save slot %s: [text]"
-    new "儲存槽 %s: [text]"
+    new "存檔欄位 %s：[text]"
 
     # renpy/common/00action_file.rpy:480
     old "Load slot %s: [text]"
-    new "載入槽 %s: [text]"
+    new "載入存檔欄位 %s：[text]"
 
     # renpy/common/00action_file.rpy:533
     old "Delete slot [text]"
-    new "刪除槽 [text]"
+    new "刪除存檔欄位 [text]"
 
     # renpy/common/00action_file.rpy:612
     old "File page auto"
-    new "存檔頁面 自動"
+    new "自動存檔頁面"
 
     # renpy/common/00action_file.rpy:614
     old "File page quick"
-    new "存檔頁面 快速"
+    new "快速存檔頁面"
 
     # renpy/common/00action_file.rpy:616
     old "File page [text]"
@@ -483,19 +483,19 @@ translate tchinese strings:
 
     # renpy/common/00action_file.rpy:815
     old "Next file page."
-    new "下一個存檔頁面"
+    new "下一個存檔頁面。"
 
     # renpy/common/00action_file.rpy:887
     old "Previous file page."
-    new "上一個存檔頁面"
+    new "上一個存檔頁面。"
 
     # renpy/common/00action_file.rpy:963
     old "Quick save."
-    new "快速存檔"
+    new "快速儲存。"
 
     # renpy/common/00action_file.rpy:982
     old "Quick load."
-    new "快速載入"
+    new "快速載入。"
 
     # renpy/common/00action_other.rpy:383
     old "Language [text]"
@@ -587,7 +587,7 @@ translate tchinese strings:
 
     # renpy/common/00director.rpy:1788
     old "Behind:"
-    new "後部："
+    new "後方："
 
     # renpy/common/00director.rpy:1799
     old "Click to set, right click to add to behind list."
@@ -607,7 +607,7 @@ translate tchinese strings:
 
     # renpy/common/00director.rpy:1834
     old "Channel:"
-    new "音訊通道："
+    new "音訊頻道："
 
     # renpy/common/00director.rpy:1845
     old "Customize director.audio_channels to add more channels."
@@ -619,15 +619,15 @@ translate tchinese strings:
 
     # renpy/common/00gui.rpy:454
     old "Are you sure you want to continue where you left off?"
-    new "您確定要從上次中斷的地方繼續嗎？"
+    new "要從上次離開的地方繼續嗎？"
 
     # renpy/common/00gui.rpy:459
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
-    new "此儲存是在不同裝置上建立的。惡意建構的儲存檔案可能會損害您的電腦。您信任此儲存的建立者以及可能變更該檔案的每個人嗎？"
+    new "這個存檔是在其他裝置上建立的。惡意製作的存檔可能會危害電腦。你信任存檔建立者，以及所有可能修改過檔案的人嗎？"
 
     # renpy/common/00gui.rpy:460
     old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
-    new "您信任建立儲存的裝置嗎？只有當您是該裝置的唯一使用者時，才應選擇「是」。"
+    new "你信任建立存檔的裝置嗎？只有在你是該裝置唯一使用者時，才應選擇「是」。"
 
     # renpy/common/00keymap.rpy:323
     old "Failed to save screenshot as %s."
@@ -667,7 +667,7 @@ translate tchinese strings:
 
     # renpy/common/00sync.rpy:412
     old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
-    new "請輸入您產生的同步 ID。 \n 切勿輸入不是您自己建立的同步 ID。"
+    new "請輸入你產生的同步 ID。\n切勿輸入不是你親自建立的同步 ID。"
 
     # renpy/common/00sync.rpy:431
     old "The sync ID is not in the correct format."
@@ -687,7 +687,7 @@ translate tchinese strings:
 
     # renpy/common/00sync.rpy:538
     old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
-    new "這會將您的儲存上傳到 {a=https://sync.renpy.org} Ren'Py 同步伺服器 {/a} 。 \n 你想要繼續嗎？"
+    new "這會將你的存檔上傳至 {a=https://sync.renpy.org}Ren'Py 同步伺服器{/a}。\n要繼續嗎？"
 
     # renpy/common/00sync.rpy:569
     old "Enter Sync ID"
@@ -707,7 +707,7 @@ translate tchinese strings:
 
     # renpy/common/00sync.rpy:618
     old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
-    new "您可以使用此ID 在另一臺裝置上下載您的儲存內容。 \n 此同步將在一小時後過期。 \n Ren'Py 同步 由{a=https://www.renpy.org/sponsors.html} Ren'Py 的贊助商 {/a} 支援。"
+    new "你可以使用這個 ID 在其他裝置下載存檔。\n這項同步會在一小時後失效。\nRen'Py Sync 由{a=https://www.renpy.org/sponsors.html}Ren'Py 贊助者{/a}支援。"
 
     # renpy/common/00sync.rpy:646
     old "Sync Error"
@@ -727,23 +727,23 @@ translate tchinese strings:
 
     # renpy/common/00updater.rpy:2072
     old "Preparing to download the game data."
-    new "準備下載遊戲資料。"
+    new "正在準備下載遊戲資料。"
 
     # renpy/common/00updater.rpy:2074
     old "Downloading the game data."
-    new "下載遊戲資料中。"
+    new "正在下載遊戲資料。"
 
     # renpy/common/00updater.rpy:2076
     old "The game data has been downloaded."
-    new "遊戲資料已下載。"
+    new "遊戲資料已下載完成。"
 
     # renpy/common/00updater.rpy:2078
     old "An error occurred when trying to download game data:"
-    new "嘗試下載遊戲資料時發生錯誤："
+    new "下載遊戲資料時發生錯誤："
 
     # renpy/common/00updater.rpy:2083
     old "This game cannot be run until the game data has been downloaded."
-    new "在遊戲資料下載完畢之前，該遊戲還無法運作。"
+    new "下載遊戲資料前，無法執行這個遊戲。"
 
     # renpy/common/00updater.rpy:2090
     old "Retry"
