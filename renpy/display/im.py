@@ -733,7 +733,7 @@ class ImageBase(renpy.display.displayable.Displayable):
             d = self.get_oversampled_image()
             return cache.get(d, render=True)
         except Exception as e:
-            if renpy.config.raise_image_load_exceptions:
+            if thread_local.raise_image_load_exceptions:
                 raise
 
             self.fail = renpy.text.text.Text(str(e), style="_image_error")
@@ -784,6 +784,28 @@ class ImageBase(renpy.display.displayable.Displayable):
 
 ignored_images: set[str] = set()
 images_to_ignore: set[str] = set()
+
+
+class ThreadLocal(threading.local):
+    """
+    Per-thread image state that engine code may change at runtime, as config
+    variables must not be changed after the init phase.
+    """
+
+    raise_image_load_exceptions: bool
+    """
+    If true, ImageBase.render raises exceptions that occur while loading an
+    image, rather than displaying them as text. This is initialized from
+    :var:`config.raise_image_load_exceptions` at the end of the init phase,
+    set to False when the player ignores an exception, and temporarily set
+    to True while rendering focus masks.
+    """
+
+    def __init__(self):
+        self.raise_image_load_exceptions = bool(renpy.config.raise_image_load_exceptions)
+
+
+thread_local = ThreadLocal()
 
 
 class Image(ImageBase):

@@ -30,7 +30,7 @@ import renpy
 import renpy.pygame as pygame
 from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
-from renpy.display.behavior import map_event, run, run_unhovered
+from renpy.display.behavior import map_event, run, run_unhovered, render_focus_mask
 
 import weakref
 
@@ -713,14 +713,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             if mask is True:
                 mask = cr.subsurface((fx, fy, fw, fh))
-            elif mask is not None:
-                try:
-                    mask = renpy.display.render.render(mask, fw, fh, st, at)
-                except Exception:
-                    if callable(mask):
-                        mask = mask
-                    else:
-                        raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
+            else:
+                mask = render_focus_mask(mask, fw, fh, st, at)
 
             if mask is not None:
                 fmx = 0

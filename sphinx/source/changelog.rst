@@ -310,6 +310,14 @@ accurate start positions and avoiding incorrect audio immediately after a jump.
 the screen even when first rendered at a nonzero animation time, such as
 when returning to the main menu from another menu.
 
+A :propref:`focus_mask` displayable that fails to render, such as an image
+whose file is missing, is no longer silently replaced with the invisible error
+text. When :var:`config.raise_image_load_exceptions` is true (the default
+during development), the original exception is reported. Otherwise, the error
+is logged and the mask is ignored, so the whole button can be focused. The same
+handling now applies to buttons, drags, and mouseareas, and mouseareas now
+support callable focus masks.
+
 .. _renpy-8.5.4:
 
 8.5.4

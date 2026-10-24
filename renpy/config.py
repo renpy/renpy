@@ -1778,3 +1778,5 @@ def post_init():
 
     if renpy.config.raise_image_load_exceptions is None:
         renpy.config.raise_image_load_exceptions = renpy.config.developer
+
+    renpy.display.im.thread_local.raise_image_load_exceptions = bool(renpy.config.raise_image_load_exceptions)

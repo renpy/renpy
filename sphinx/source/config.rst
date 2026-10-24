@@ -2505,7 +2505,12 @@ Debugging
 
     If None, this takes on the value of config.developer.
 
-    This is set to False when Ren'Py ignore an exception.
+    This also controls :propref:`focus_mask` displayables that fail to render.
+    If True, the exception is raised. If False, the error is logged and the
+    focus mask is ignored.
+
+    Ren'Py stops raising these exceptions when the player ignores an
+    exception, but does not change the value of this variable.
 
 .. var:: config.return_not_found_label = None
 

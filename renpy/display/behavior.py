@@ -896,6 +896,71 @@ class DismissBehavior(renpy.display.displayable.Displayable):
 KEY_EVENTS = (pygame.KEYDOWN, pygame.KEYUP, pygame.TEXTEDITING, pygame.TEXTINPUT)
 
 
+# The reprs of focus masks that failed to render and have already been logged,
+# so a broken mask doesn't write to the log every time it is rendered.
+focus_mask_errors_logged: set[str] = set()
+
+
+def render_focus_mask(mask, width, height, st, at, true_mask=None):
+    """
+    Converts the value of the focus_mask style property into a mask suitable
+    for :meth:`Render.add_focus`, returning None, a Render, or a callable.
+
+    `true_mask`
+        The value returned when `mask` is True.
+
+    A displayable mask is rendered at `width` x `height` with image load
+    exceptions enabled, so a missing or broken image is not silently replaced
+    with the textual error placeholder. If rendering fails and
+    renpy.display.im.thread_local.raise_image_load_exceptions (initialized from
+    :var:`config.raise_image_load_exceptions`) is true, the exception is
+    re-raised with a note. Otherwise, the error is logged once and None is
+    returned, so the focusable area is not limited by the mask.
+
+    Raises TypeError if `mask` is not None, True, a displayable, or a callable.
+    """
+
+    if mask is None:
+        return None
+
+    if mask is True:
+        return true_mask
+
+    # This check comes before callable(), as some displayables (like Transform) are callable.
+    if isinstance(mask, renpy.display.displayable.Displayable):
+        thread_local = renpy.display.im.thread_local
+        raise_image_load_exceptions = thread_local.raise_image_load_exceptions
+        thread_local.raise_image_load_exceptions = True
+
+        try:
+            return render(mask, width, height, st, at)
+
+        except renpy.game.CONTROL_EXCEPTIONS:
+            raise
+
+        except Exception as e:
+            if raise_image_load_exceptions:
+                e.add_note(f"While rendering the focus_mask {mask!r}.")
+                raise
+
+            key = repr(mask)
+
+            if key not in focus_mask_errors_logged:
+                focus_mask_errors_logged.add(key)
+                renpy.display.log.write("Could not render the focus_mask %s, ignoring it:", key)
+                renpy.display.log.exception()
+
+            return None
+
+        finally:
+            thread_local.raise_image_load_exceptions = raise_image_load_exceptions
+
+    if callable(mask):
+        return mask
+
+    raise TypeError(f"focus_mask must be None, True, a displayable, or a callable, not {mask!r}.")
+
+
 class Button(renpy.display.layout.Window):
     _store_transform_event = True
 
@@ -998,18 +1063,7 @@ class Button(renpy.display.layout.Window):
                 fw = rv.width - self.style.right_margin
                 fh = rv.height - self.style.bottom_margin
 
-            mask = self.style.focus_mask
-
-            if mask is True:
-                mask = rv
-            elif mask is not None:
-                try:
-                    mask = renpy.display.render.render(mask, rv.width, rv.height, st, at)
-                except Exception:
-                    if callable(mask):
-                        mask = mask
-                    else:
-                        raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
+            mask = render_focus_mask(self.style.focus_mask, rv.width, rv.height, st, at, rv)
 
             if mask is not None:
                 fmx = 0
@@ -2857,11 +2911,21 @@ class MouseArea(renpy.display.displayable.Displayable):
             is_hovered = False
 
         else:
-            if self.style.focus_mask is not None:
-                crend = renpy.display.render.render(
-                    self.style.focus_mask, self.width, self.height, st, self.at_st_offset + st
-                )
-                is_hovered = crend.is_pixel_opaque(x, y)
+            mask = render_focus_mask(self.style.focus_mask, self.width, self.height, st, self.at_st_offset + st)
+
+            if isinstance(mask, Render):
+                is_hovered = mask.is_pixel_opaque(x, y)
+            elif mask is not None:
+                is_hovered = False
+
+                if 0 <= x < self.width and 0 <= y < self.height:
+                    mask_result = mask(x, y)
+
+                    if callable(mask_result):
+                        mask_result = mask_result(x, y, self.width, self.height)
+
+                    is_hovered = bool(mask_result)
+
             elif 0 <= x < self.width and 0 <= y < self.height:
                 is_hovered = True
             else:

@@ -253,6 +253,7 @@ name_blacklist = {
     "renpy.savelocation.persistent_writes",
     "renpy.character.TAG_RE",
     "renpy.display.im.cache",
+    "renpy.display.im.thread_local",
     "renpy.display.render.main_thread",
     "renpy.display.render.blit_lock",
     "renpy.display.render.IDENTITY",

@@ -144,7 +144,7 @@ def report_exception(traceback_exception: renpy.error.TracebackException) -> boo
     # Don't report images that failed to load.
     renpy.display.im.ignored_images |= renpy.display.im.images_to_ignore
     renpy.config.raise_image_exceptions = False
-    renpy.config.raise_image_load_exceptions = False
+    renpy.display.im.thread_local.raise_image_load_exceptions = False
 
     # If creator overrides ignore action, run it.
     if renpy.store._ignore_action is not None:
