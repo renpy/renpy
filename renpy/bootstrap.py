@@ -194,6 +194,65 @@ def relaunch():
         subprocess.Popen([sys.executable] + sys.argv)
 
 
+def set_utf8_locale() -> None:
+    """
+    Align the native character locale and inherited subprocess environment with UTF-8.
+
+    Run only during desktop POSIX startup, before engine threads are started.
+    Other locale categories are preserved, including those overridden by LC_ALL.
+    If no usable UTF-8 locale is available, warn and retain the original settings.
+    """
+    if os.name != "posix" or renpy.android or renpy.ios or renpy.emscripten:
+        return
+
+    import locale
+
+    original = locale.setlocale(locale.LC_CTYPE)
+    configured = False
+
+    try:
+        # Python's UTF-8 mode can mask a non-UTF-8 environment inherited by native children.
+        locale.setlocale(locale.LC_CTYPE, "")
+        if locale.getencoding().lower().replace("-", "") == "utf8":
+            configured = True
+            return
+
+        for candidate in ("C.UTF-8", "C.utf8", "UTF-8"):
+            try:
+                locale.setlocale(locale.LC_CTYPE, candidate)
+            except locale.Error:
+                continue
+
+            if locale.getencoding().lower().replace("-", "") == "utf8":
+                break
+        else:
+            raise locale.Error("none of C.UTF-8, C.utf8, or UTF-8 is available with a UTF-8 encoding")
+
+        override = os.environ.get("LC_ALL")
+        if override:
+            categories = ["LC_COLLATE", "LC_MESSAGES", "LC_MONETARY", "LC_NUMERIC", "LC_TIME"]
+            if sys.platform.startswith("linux"):
+                categories.extend(
+                    ["LC_PAPER", "LC_NAME", "LC_ADDRESS", "LC_TELEPHONE", "LC_MEASUREMENT", "LC_IDENTIFICATION"]
+                )
+
+            for category in categories:
+                os.environ[category] = override
+
+            del os.environ["LC_ALL"]
+
+        os.environ["LC_CTYPE"] = candidate
+        configured = True
+    except locale.Error as e:
+        sys.stderr.write(
+            f"Warning: Could not configure a UTF-8 character locale: {e}. "
+            "Keeping the original locale; native dialogs and other external tools may not handle non-ASCII text.\n"
+        )
+    finally:
+        if not configured:
+            locale.setlocale(locale.LC_CTYPE, original)
+
+
 def bootstrap(renpy_base: str):
     global renpy
 
@@ -247,6 +306,8 @@ def bootstrap(renpy_base: str):
             for k, v in evars.items():
                 if k not in os.environ:
                     os.environ[k] = str(v)
+
+    set_utf8_locale()
 
     # Get a working name for the game.
     name = os.path.basename(sys.argv[0])

@@ -160,7 +160,23 @@ The following environment variables control the behavior of Ren'Py:
 As Ren'Py uses SDL, its behavior can also be controlled by the SDL environment
 variables.
 
+On desktop POSIX systems, including Linux, macOS, and BSD, Ren'Py ensures that
+the native character locale and the environment inherited by external programs
+use UTF-8. This allows tools such as native file dialogs to handle translated
+text. An already UTF-8 character locale is left unchanged. Otherwise, Ren'Py
+tries ``C.UTF-8``, ``C.utf8``, and the character-category-only ``UTF-8`` locale,
+using the first available locale with a UTF-8 encoding.
+
+This changes ``LC_CTYPE``, not the language selected by ``LANG`` or
+``LANGUAGE``. If ``LC_ALL`` overrides the character locale, Ren'Py removes it
+after preserving its effective settings in the other locale categories.
+Numeric, monetary, date, message, and collation settings are preserved.
+If the environment's locale is invalid or no usable UTF-8 locale is available,
+Ren'Py prints a warning and retains the original locale and environment.
+This normalization does not apply to Windows, Android, iOS, or web builds.
+
 At startup, Ren'Py will look in the Ren'Py directory (the one containing
 renpy.exe or renpy.py) for the file :file:`environment.txt`. If it exists, it will be
 evaluated as a Python file, and the values defined in that file will be used as
-the default values of environment variables.
+the default values of environment variables. Character-locale normalization
+takes place after these defaults are loaded.

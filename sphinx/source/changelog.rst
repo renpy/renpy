@@ -298,6 +298,11 @@ Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, i
 Fixes
 -----
 
+Ren'Py now normalizes the character locale to UTF-8 on desktop POSIX systems,
+including Linux, macOS, and BSD, while preserving other locale settings.
+This fixes the launcher's project-directory picker failing with non-ASCII
+translated titles under a non-UTF-8 locale on Linux.
+
 Opus audio now decodes pre-roll before loop points and seeks, preserving
 accurate start positions and avoiding incorrect audio immediately after a jump.
 
