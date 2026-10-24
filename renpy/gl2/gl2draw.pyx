@@ -1353,6 +1353,7 @@ cdef class GL2Draw:
                         self.load_all_textures(v, reverse)
                         uniforms[k] = ctex = self.render_to_texture(v, properties=r.properties)
                         uniforms.setdefault(k + "_res", (ctex.texture_width, ctex.texture_height))
+                        uniforms.setdefault(k + "_OP_virtual_size", (v.width, v.height))
                     else:
                         uniforms[k] = v
             else:

@@ -318,6 +318,10 @@ is logged and the mask is ignored, so the whole button can be focused. The same
 handling now applies to buttons, drags, and mouseareas, and mouseareas now
 support callable focus masks.
 
+A sampler uniform can now be suffixed with ``__virtual_size`` to get the size
+of its texture in virtual pixels. The ``__res`` and other uniform operations
+now work on uniforms supplied by displayables and transforms.
+
 .. _renpy-8.5.4:
 
 8.5.4

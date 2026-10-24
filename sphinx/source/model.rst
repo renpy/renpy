@@ -459,6 +459,11 @@ If a sampler uniform is available, then suffixing it with ``__res`` will give a 
 containing the underlying texture size. For example, ``u_markup__res`` will give the size of the
 ``u_markup`` texture.
 
+If a sampler uniform is available, then suffixing it with ``__virtual_size`` will give a vec2
+containing the size of the texture in virtual pixels. Unlike ``__res``, this doesn't depend on the
+resolution the texture was rendered or loaded at, so it doesn't change when the window is scaled.
+For example, ``u_markup__virtual_size`` will give the virtual size of the ``u_markup`` texture.
+
 If a vec4 uniform is available, then suffixing it with ``__premul`` will give a vec4
 containing the premultiplied color. For example, ``u_color__premul`` will give a vec4
 where the red, green, and blue channels are multiplied by the alpha channel.

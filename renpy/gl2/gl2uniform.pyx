@@ -655,6 +655,9 @@ cdef class Res3Getter(Getter):
         return (tex.texture_width, tex.texture_height)
 
 cdef class ResGetter(Getter):
+
+    cdef Getter getter
+
     def __init__(self, uniform_name, getter):
         Getter.__init__(self, uniform_name)
         self.getter = getter
@@ -665,10 +668,39 @@ cdef class ResGetter(Getter):
         if type(value) is Render:
             value = value.cached_texture
 
-        if type(value) is GLTexture:
+        if isinstance(value, GLTexture):
             return (value.texture_width, value.texture_height)
         else:
             raise TypeError("ResGetter only works with GLTexture values.")
+
+cdef class VirtualSizeOpGetter(Getter):
+    """
+    Returns the size of a texture uniform in virtual pixels. Unlike ResGetter, this doesn't depend on the
+    resolution the texture was rendered or loaded at.
+    """
+
+    cdef Getter getter
+
+    def __init__(self, uniform_name, getter):
+        Getter.__init__(self, uniform_name)
+        self.getter = getter
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        value = self.getter.get(context, model)
+
+        if type(value) is Render:
+            return (value.width, value.height)
+
+        # When a Render uniform is replaced with a texture by GL2Draw.load_all_textures, the virtual size of the
+        # Render is stored under this uniform's name.
+        rv = context.uniforms.get(self.uniform_name, None)
+        if rv is not None:
+            return rv
+
+        if isinstance(value, GL2Model):
+            return (value.width, value.height)
+
+        raise TypeError("VirtualSizeOpGetter only works with Render and GLTexture values.")
 
 # The classes that are used to get the values of uniforms.
 UNIFORM_GETTER_CLASSES = {
@@ -729,12 +761,12 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
 
     if base_name in UNIFORM_GETTER_CLASSES:
         getter_class, require_type = UNIFORM_GETTER_CLASSES[base_name]
-        getter = getter_class(uniform_name)
+        getter = getter_class(base_name)
     else:
-        getter = ContextGetter(uniform_name)
+        getter = ContextGetter(base_name)
         require_type = None
 
-    if require_type is not None and uniform_type != require_type:
+    if require_type is not None and operation is None and uniform_type != require_type:
         raise TypeError(
             f"Uniform {uniform_name} in shader {shader_name} has type {uniform_type}, "
             f"but requires type {require_type}."
@@ -756,6 +788,9 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
         uniform_type = "mat4"
     elif operation == "res":
         getter = ResGetter(uniform_name, getter)
+        uniform_type = "vec2"
+    elif operation == "virtual_size":
+        getter = VirtualSizeOpGetter(uniform_name, getter)
         uniform_type = "vec2"
     else:
         raise TypeError(
