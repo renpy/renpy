@@ -22,13 +22,11 @@
 # This file contains code to add and remove statements from the AST
 # and the textual representation of Ren'Py code.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
+import re
 
 import renpy
-import re
-import codecs
+from renpy.tokenizer import Tokenizer, TokenKind
 
 # A map from line loc (elided filename, line) to the Line object representing
 # that line.
@@ -38,7 +36,7 @@ lines: dict[tuple[str, int], "Line"] = {}
 files = set()
 
 
-class Line(object):
+class Line:
     """
     Represents a logical line in a file.
     """
@@ -68,7 +66,7 @@ class Line(object):
         self.full_text = ""
 
     def __repr__(self):
-        return "<Line {}:{} {!r}>".format(self.filename, self.number, self.text)
+        return f"<Line {self.filename}:{self.number} {self.text!r}>"
 
 
 def load_lines(filename, elided_filename):
@@ -90,13 +88,8 @@ def load_lines(filename, elided_filename):
     if not data.endswith("\n"):
         data += "\n"
 
-    # The line number in the physical file.
-    number = 1
-
     # The current position we're looking at in the buffer.
     pos = 0
-
-    # Are we looking at a triple-quoted string?
 
     # Skip the BOM, if any.
     if len(data) and data[0] == "\ufeff":
@@ -106,128 +99,88 @@ def load_lines(filename, elided_filename):
 
     files.add(filename)
 
-    line = 0
-    start_number = 0
+    # Put some frequently used variables in locals.
+    NEWLINE = TokenKind.NEWLINE
+    COMMENT = TokenKind.COMMENT
+    ENDMARKER = TokenKind.ENDMARKER
+    ERRORTOKEN = TokenKind.ERRORTOKEN
 
-    # Looping over the lines in the file.
-    while pos < len_data:
-        # The line number of the start of this logical line.
-        start_number = number
+    # The line number of the start of this logical line.
+    start_number = 1
 
-        # The number of open parenthesis there are right now.
-        parendepth = 0
+    # The position of the start of the comment on this logical line, if any.
+    # Text after the comment start is not part of Line.text.
+    endpos = None
 
-        loc = (filename, start_number)
-        lines[loc] = renpy.scriptedit.Line(original_filename, start_number, pos)
+    loc = (filename, start_number)
+    lines[loc] = renpy.scriptedit.Line(original_filename, start_number, pos)
 
-        endpos = None
+    tokenizer = Tokenizer(data, pos=pos, lineno=1)
 
-        while pos < len_data:
-            startpos = pos
-            c = data[pos]
+    for token in tokenizer.iter_tokens():
+        kind = token.kind
+        token_start, token_end = token.span
 
-            if c == "\n" and not parendepth:
-                if endpos is None:
-                    endpos = pos
-
-                lines[loc].end_delim = endpos + 1
-
-                while data[endpos - 1] in " \r":
-                    endpos -= 1
-
-                lines[loc].end = endpos
-                lines[loc].text = data[lines[loc].start : lines[loc].end]
-                lines[loc].full_text = data[lines[loc].start : lines[loc].end_delim]
-
-                pos += 1
-                number += 1
-                endpos = None
+        if kind is ERRORTOKEN:
+            # Errors are not fatal here - the error will be reported when the
+            # file is parsed. An error that runs to the end of the data (like
+            # an unterminated string) ends scanning, like the old code did
+            # when it couldn't advance. Other errors are skipped.
+            if token_end >= len_data:
                 break
 
-            if c == "\n":
-                number += 1
+            continue
+
+        if kind is COMMENT:
+            # Only the first comment on a logical line ends the text. The
+            # comment is not part of text, and only the '#' itself is
+            # included in full_text.
+            if endpos is None:
+                endpos = token_start
+                lines[loc].end_delim = token_start + 1
+
+            continue
+
+        # Newlines inside brackets or after a backslash do not end the
+        # logical line.
+        if kind is NEWLINE and tokenizer.depth:
+            continue
+
+        if kind is NEWLINE or kind is ENDMARKER:
+            # End the logical line at the newline, or at the end of the data.
+            if kind is ENDMARKER:
+                newline_pos = token_start
+            else:
+                newline_pos = data.find("\n", token_start, token_end)
+                if newline_pos == -1:
+                    # A NEWLINE inside brackets is a backslash/newline pair.
+                    newline_pos = token_end
+
+            if endpos is None:
+                endpos = newline_pos
+                lines[loc].end_delim = endpos + 1
+
+            while data[endpos - 1] in " \r":
+                endpos -= 1
+
+            lines[loc].end = endpos
+            lines[loc].text = data[lines[loc].start : lines[loc].end]
+            lines[loc].full_text = data[lines[loc].start : lines[loc].end_delim]
+
+            if kind is ENDMARKER:
+                break
+
+            # Start the next logical line. The line after the newline
+            # (token.end[0] is the line the newline is on).
+            if newline_pos + 1 < len_data:
+                start_number = token.end[0] + 1
+                loc = (filename, start_number)
+                lines[loc] = renpy.scriptedit.Line(
+                    original_filename,
+                    start_number,
+                    newline_pos + 1,
+                )
                 endpos = None
-
-            if c == "\r":
-                pos += 1
-                continue
-
-            # Backslash/newline.
-            if c == "\\" and data[pos + 1] == "\n":
-                pos += 2
-                number += 1
-                continue
-
-            # Parenthesis.
-            if c in "([{":
-                parendepth += 1
-
-            if (c in "}])") and parendepth:
-                parendepth -= 1
-
-            # Comments.
-            if c == "#":
-                endpos = pos
-
-                while data[pos] != "\n":
-                    pos += 1
-
-                continue
-
-            # Strings.
-            if c in "\"'`":
-                delim = c
-                pos += 1
-
-                escape = False
-                triplequote = False
-
-                if (pos < len_data - 1) and (data[pos] == delim) and (data[pos + 1] == delim):
-                    pos += 2
-                    triplequote = True
-
-                while pos < len_data:
-                    c = data[pos]
-
-                    if c == "\n":
-                        number += 1
-
-                    if c == "\r":
-                        pos += 1
-                        continue
-
-                    if escape:
-                        escape = False
-                        pos += 1
-                        continue
-
-                    if c == delim:
-                        if not triplequote:
-                            pos += 1
-                            break
-
-                        if (pos < len_data - 2) and (data[pos + 1] == delim) and (data[pos + 2] == delim):
-                            pos += 3
-                            break
-
-                    if c == "\\":
-                        escape = True
-
-                    pos += 1
-
-                    continue
-
-                continue
-
-            if spaces_pos := renpy.lexer.match_whitespace(data, pos):
-                pos = spaces_pos
-                continue
-
-            if word_pos := renpy.lexer.match_logical_word(data, pos):
-                pos = word_pos
-                continue
-
-            pos += 1
 
 
 def ensure_loaded(filename):
@@ -239,7 +192,7 @@ def ensure_loaded(filename):
     if filename in files:
         return
 
-    if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
+    if not (filename.endswith((".rpy", ".rpym"))):
         return
 
     files.add(filename)
@@ -281,8 +234,6 @@ def adjust_line_locations(filename, linenumber, char_offset, line_offset):
     filename = filename.replace("\\", "/")
 
     ensure_loaded(filename)
-
-    global lines
 
     new_lines = {}
 
@@ -572,7 +523,7 @@ serial = 1
 
 def test_add():
     global serial
-    s = "'Hello world %f'" % serial
+    s = f"'Hello world {serial:f}'"
     serial += 1
 
     node = renpy.game.script.lookup(renpy.game.context().current)
