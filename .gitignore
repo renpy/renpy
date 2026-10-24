@@ -165,6 +165,7 @@ renpy/gl2/gl2mesh.pyi
 renpy/gl2/gl2mesh2.pyi
 renpy/gl2/gl2mesh3.pyi
 renpy/gl2/gl2model.pyi
+renpy/gl2/gl2physics.pyi
 renpy/gl2/gl2polygon.pyi
 renpy/gl2/gl2shader.pyi
 renpy/gl2/gl2statecache.pyi
@@ -186,10 +187,10 @@ renpy/pygame/key.pyi
 renpy/pygame/locals.pyi
 renpy/pygame/mouse.pyi
 renpy/pygame/power.pyi
-renpy/pygame/time.pyi
 renpy/pygame/rect.pyi
 renpy/pygame/scrap.pyi
 renpy/pygame/surface.pyi
+renpy/pygame/time.pyi
 renpy/pygame/transform.pyi
 renpy/style.pyi
 renpy/style.pyi
