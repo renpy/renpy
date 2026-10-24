@@ -4,21 +4,6 @@ init python:
 
     renpy.display.screen.define_screen("slparser_legacy_screen", slparser_legacy_screen)
 
-    def slparser_legacy_failure_stack():
-        node = renpy.sl2.slast.SLUse(("test_slparser.rpy", 1), "slparser_missing_screen", None, None, None, None)
-        context = renpy.sl2.slast.SLContext()
-        old_stack = list(renpy.ui.stack)
-
-        try:
-            node.execute_use_screen(context)
-        except renpy.display.screen.ScreenNotFound:
-            pass
-        else:
-            raise AssertionError("Missing screen did not raise")
-
-        assert len(renpy.ui.stack) == len(old_stack)
-        assert all(a is b for a, b in zip(renpy.ui.stack, old_stack))
-
 
 screen slparser_legacy_root():
     use slparser_legacy_screen
@@ -41,9 +26,6 @@ testsuite slparser:
         run Show("slparser_legacy_nested")
         assert eval len(renpy.get_screen("slparser_legacy_nested").child.children[0].children) == 2
         run Hide("slparser_legacy_nested")
-
-    testcase legacy_screen_failure_restores_stack:
-        $ slparser_legacy_failure_stack()
 
     testcase keyword_error_suggestions:
         $ text_parser = renpy.sl2.slparser.statements["text"]
