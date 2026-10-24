@@ -3,31 +3,31 @@
 translate schinese demo_character_e7e1b1bb:
 
     # e "We've already seen how to define a Character in Ren'Py. But I want to go into a bit more detail as to what a Character is."
-    e "我们已经看过如何在Ren'Py中定义一个角色（Character）。但我想更详细地谈谈什么是Character。"
+    e "我们已经看过如何在 Ren'Py 中定义 Character。下面更详细地说明 Character 究竟是什么。"
 
 # game/indepth_character.rpy:17
 translate schinese demo_character_d7908a94:
 
     # e "Here are couple of additional characters."
-    e "这里还有一些其他的角色。"
+    e "这里再定义几个 Character。"
 
 # game/indepth_character.rpy:19
 translate schinese demo_character_275ef8b9:
 
     # e "Each statement creates a Character object, and gives it a single argument, a name. If the name is None, no name is displayed."
-    e "每个语句创建一个Character对象，并给它一个参数，名字。如果名字为None，则不显示名称。"
+    e "每条语句都会创建一个 Character 对象，并为它提供一个参数：名称。如果名称为 None，就不会显示名称。"
 
 # game/indepth_character.rpy:21
 translate schinese demo_character_a63aea0c:
 
     # e "This can be followed by named arguments that set properties of the character. A named argument is a property name, an equals sign, and a value."
-    e "后面可以是设置字符属性的命名参数。命名参数由属性名、等号和值组成。"
+    e "后面还可以跟用于设置 Character 属性的命名参数。命名参数由属性名、等号和值组成。"
 
 # game/indepth_character.rpy:23
 translate schinese demo_character_636a502e:
 
     # e "Multiple arguments should be separated with commas, like they are here. Let's see those characters in action."
-    e "多个参数应该用逗号分隔，就像它们在这里一样。让我们看看那些角色的动作。"
+    e "多个参数应当用逗号分隔，就像这里一样。现在看看这些 Character 实际运行的效果。"
 
 # game/indepth_character.rpy:27
 translate schinese demo_character_44b54e1d:
@@ -45,37 +45,37 @@ translate schinese demo_character_a9646dd8:
 translate schinese demo_character_79793208:
 
     # e "This example shows how the name Character is a bit of a misnomer. Here, we have multiple Characters in use, but you see it as me speaking."
-    e "这个例子显示Character有点用词不当。在这里，我们有多个Character在使用，但你看到只有我说话。"
+    e "这个例子说明，把它称作 Character 其实有些名不副实。这里同时使用了多个 Character，但你看到的却像是我在说话。"
 
 # game/indepth_character.rpy:33
 translate schinese demo_character_5d5d7482:
 
     # e "It's best to think of a Character as repesenting a name and style, rather than a single person."
-    e "最好把一个Character当作展示一个名字和样式，而不是一个人。"
+    e "最好把 Character 理解为一组名称和样式，而不是某个具体的人。"
 
 # game/indepth_character.rpy:37
 translate schinese demo_character_66d08d98:
 
     # e "There are a lot of properties that can be given to Characters, most of them prefixed styles."
-    e "有很多属性可以赋予Character，大多数都是前缀样式。"
+    e "Character 可以设置很多属性，其中大多数是带前缀的样式属性。"
 
 # game/indepth_character.rpy:39
 translate schinese demo_character_7e0d75aa:
 
     # e "Properties beginning with window apply to the textbox, those with what apply to the dialogue, and those with who to the name of Character speaking."
-    e "以window开头的属性应用于文本框，以what开头的属性应用于对话，以who开头的属性应用于Character的名字。"
+    e "以 window 开头的属性应用于文本框，以 what 开头的属性应用于对话，以 who 开头的属性应用于正在说话的 Character 名称。"
 
 # game/indepth_character.rpy:41
 translate schinese demo_character_56703784:
 
     # e "If you leave a prefix out, the style customizes the name of the speaker."
-    e "如果不使用前缀，则样式将定义说话者的名字。"
+    e "省略前缀时，该样式会定制说话者的名称。"
 
 # game/indepth_character.rpy:43
 translate schinese demo_character_b456f0a9:
 
     # e "There are quite a few different properties that can be set this way. Here are some of the most useful."
-    e "有很多不同的属性可以这样设置。以下是一些最有用的。"
+    e "可以用这种方式设置不少属性。下面介绍其中一些最有用的属性。"
 
 # game/indepth_character.rpy:48
 translate schinese demo_character_31ace18e:
@@ -189,7 +189,7 @@ translate schinese demo_character_a7f243e5:
 translate schinese demo_character_f9b0052f:
 
     # e "By using kind, you can copy properties from one character to another, changing only what you need to."
-    e "通过使用kind，可以将属性从一个角色复制到另一个角色，只需更改所需的内容。"
+    e "使用 kind 可以把一个 Character 的属性复制给另一个 Character，只修改需要改变的部分。"
 
 # game/indepth_character.rpy:148
 translate schinese demo_character_6dfce4b7:
@@ -201,7 +201,7 @@ translate schinese demo_character_6dfce4b7:
 translate schinese demo_character_68d9e46c:
 
     # e "The last thing you have to know is that there's a special character, narrator, that speaks narration. Got it?"
-    e "最后你要知道的是，有一个特殊的角色，旁白，负责念旁白。懂了？"
+    e "最后还要知道，有一个名为 narrator 的特殊 Character，用来朗读旁白。明白了吗？"
 
 # game/indepth_character.rpy:159
 translate schinese demo_character_0c8f314a:

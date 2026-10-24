@@ -31,7 +31,7 @@ translate schinese strings:
 
     # game/screens.rpy:268
     old "Prefs"
-    new "首选项"
+    new "设置"
 
     # game/screens.rpy:309
     old "Start"
@@ -43,7 +43,7 @@ translate schinese strings:
 
     # game/screens.rpy:319
     old "Preferences"
-    new "首选项"
+    new "设置"
 
     # game/screens.rpy:323
     old "End Replay"
@@ -259,7 +259,7 @@ translate schinese strings:
 
     # game/screens.rpy:1080
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "切换无障碍{a=https://www.renpy.org/l/voicing}自动语音{/a}。（{a=https://renpy.cn/doc/self_voicing.html}中文文档{/a}）"
+    new "切换无障碍{a=https://www.renpy.org/l/voicing}自动朗读{/a}。（{a=https://renpy.cn/doc/self_voicing.html}中文文档{/a}）"
 
     # game/screens.rpy:1086
     old "Left Click"
