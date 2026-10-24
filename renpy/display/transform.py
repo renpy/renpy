@@ -25,11 +25,20 @@
 import math
 
 import renpy
-from renpy.display.position import absolute, position
+from renpy.atl import (
+    DualAngle,
+    any_object,
+    bool_or_none,
+    float_or_none,
+    matrix,
+    mesh,
+    orientation,
+    position_or_none,
+)
+from renpy.display.accelerator import RenderTransform
 from renpy.display.displayable import Displayable
 from renpy.display.layout import Container
-from renpy.display.accelerator import RenderTransform
-from renpy.atl import DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
+from renpy.display.position import absolute, position
 
 
 class Camera(renpy.object.Object):
@@ -1450,7 +1459,7 @@ add_property("perspective", any_object, None)
 add_property("rotate", float, None)
 add_property("rotate_pad", bool, True)
 add_property("point_to", any_object, None)
-add_property("orientation", (float, float, float), None)
+add_property("orientation", orientation, None)
 add_property("xrotate", float, None)
 add_property("yrotate", float, None)
 add_property("zrotate", float, None)
