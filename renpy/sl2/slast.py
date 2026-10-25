@@ -2785,7 +2785,7 @@ def load_cache():
 
         if s.version == scache.version:
             # Compile all PyCode used by screens.
-            renpy.game.script.update_bytecode([])
+            renpy.game.script.update_bytecode()
             scache.const_analyzed.update(s.const_analyzed)
             scache.not_const_analyzed.update(s.not_const_analyzed)
 
