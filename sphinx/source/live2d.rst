@@ -84,6 +84,9 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         the image, with 0.0 being the top and 1.0 being the bottom. This
         also becomes the default value of yanchor.
 
+        Parts of the model above `top` or below `base` are cropped off by
+        transform properties like :tpref:`blur`. See :ref:`live2d-sizing`.
+
     `height`
         The height that the image is scaled to. This is a fraction of the
         virtual height of the screen.
@@ -272,6 +275,8 @@ Nonexclusive expressions persist until removed with attribute negation::
 
     show hiyori -wave
 
+.. _live2d-sizing:
+
 Scaling
 -------
 
@@ -298,6 +303,17 @@ up with the bottom of the screen. Then:
 * If the image is too big, reduce `height` until it's the right size.
 * If the image is too small, increase `top` to reduce the amount of blank
   space above the animation.
+
+When `top` or `base` cut off part of the model, the size of the displayable
+only covers the area between them, and the rest of the model is drawn outside
+of that area. Transform properties that render the displayable to a texture
+first, such as :tpref:`blur`, :tpref:`mesh`, and :tpref:`shader`, only
+include the area between `top` and `base`, so the parts of the model above
+`top` or below `base` will be cropped off. If you want to use these
+properties, use `zoom` to scale the model instead, or use :tpref:`mesh_pad`
+to add room for the parts outside the displayable. ::
+
+    image hiyori = Live2D("Resources/Hiyori", zoom=0.25)
 
 Motion Fading
 -------------
