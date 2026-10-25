@@ -295,6 +295,11 @@ The ability to create these updates will be removed in Ren'Py 8.7.0.
 
 Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
 
+On all platforms except the web, Ren'Py now verifies TLS certificates against the operating system's trust store,
+using the truststore library, rather than the certificate bundle shipped with the certifi library. This applies to
+Python's ssl module and to requests, which is used by :func:`renpy.fetch` and the updater. A certificate bundle
+explicitly passed to requests is still used. (The web platform continues to use the browser's certificate store.)
+
 Fixes
 -----
 

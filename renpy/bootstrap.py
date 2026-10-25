@@ -21,6 +21,8 @@
 
 import os
 import io
+import importlib.abc
+import importlib.util
 import sys
 import subprocess
 import textwrap
@@ -192,6 +194,93 @@ def relaunch():
         subprocess.Popen([sys.renpy_executable] + sys.argv[1:])  # type: ignore
     else:
         subprocess.Popen([sys.executable] + sys.argv)
+
+
+def disable_requests_ca_bundle(adapters) -> None:
+    """
+    Stops requests from loading its default (certifi) CA bundle when `verify` is True, so that
+    urllib3 loads the default certificates, which truststore provides from the system store. An
+    explicit CA bundle path passed as `verify` (or via REQUESTS_CA_BUNDLE) is still honored.
+
+    `adapters` is the requests.adapters module.
+    """
+
+    original_cert_verify = adapters.HTTPAdapter.cert_verify
+
+    def cert_verify(self, conn, url, verify, cert):
+        if verify is True and url.lower().startswith("https"):
+            # Clears ca_certs and ca_cert_dir, then requires verification against the defaults.
+            original_cert_verify(self, conn, url, False, cert)
+            conn.cert_reqs = "CERT_REQUIRED"
+        else:
+            original_cert_verify(self, conn, url, verify, cert)
+
+    adapters.HTTPAdapter.cert_verify = cert_verify
+
+
+class RequestsAdaptersLoader(importlib.abc.Loader):
+    """
+    Wraps the loader of requests.adapters, calling disable_requests_ca_bundle once the module
+    has been executed. Other attributes are delegated to the wrapped loader.
+    """
+
+    def __init__(self, loader):
+        self.loader = loader
+
+    def __getattr__(self, name):
+        return getattr(self.loader, name)
+
+    def create_module(self, spec):
+        return self.loader.create_module(spec)
+
+    def exec_module(self, module):
+        self.loader.exec_module(module)
+        disable_requests_ca_bundle(module)
+
+
+class RequestsAdaptersFinder(importlib.abc.MetaPathFinder):
+    """
+    A one-shot meta path finder that arranges for requests.adapters to be patched when it is
+    first imported, so requests need not be imported at startup.
+    """
+
+    def find_spec(self, fullname, path, target=None):
+        if fullname != "requests.adapters":
+            return None
+
+        if self in sys.meta_path:
+            sys.meta_path.remove(self)
+
+        spec = importlib.util.find_spec(fullname)
+
+        if spec is None or spec.loader is None:
+            return spec
+
+        spec.loader = RequestsAdaptersLoader(spec.loader)
+        return spec
+
+
+def use_system_certificates() -> None:
+    """
+    Make ssl and requests verify TLS certificates against the operating system's trust store,
+    rather than certifi's CA bundle.
+    """
+
+    import truststore
+
+    if "urllib3" in sys.modules or "requests" in sys.modules:
+        truststore.inject_into_ssl()
+    else:
+        # inject_into_ssl() imports urllib3 and requests to patch them. They have not been
+        # imported yet, so replacing ssl.SSLContext is enough for them to use truststore.
+        import ssl
+
+        ssl.SSLContext = truststore.SSLContext  # type: ignore
+
+    if "requests.adapters" in sys.modules:
+        disable_requests_ca_bundle(sys.modules["requests.adapters"])
+    else:
+        sys.meta_path.insert(0, RequestsAdaptersFinder())
 
 
 def set_utf8_locale() -> None:
@@ -400,6 +489,11 @@ def bootstrap(renpy_base: str):
     import renpy
 
     renpy.import_all()
+
+    # This must run before init_importer, as importing truststore through the Ren'Py importer
+    # would cache the game's Python files before the game directory is known.
+    if not renpy.emscripten:
+        use_system_certificates()
 
     renpy.importer.init_importer()
 
