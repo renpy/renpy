@@ -557,7 +557,14 @@ class StringTranslator(object):
 
         # Remove {#...} tags.
         if new is None:
-            notags = re.sub(r"\{\#.*?\}", "", old)
+            if type(old) is str and type(self.translations) is dict and not self.translations:
+                return old
+
+            if type(old) is str and "{#" not in old:
+                notags = old
+            else:
+                notags = re.sub(r"\{\#.*?\}", "", old)
+
             new = self.translations.get(notags, None)
 
         if new is not None:
