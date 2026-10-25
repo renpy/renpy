@@ -11,4 +11,4 @@ translate spanish strings:
 
     # options.rpy:32
     old "Character Art: Deji.\nOriginal Character Art: derik.\n\nBackground Art: Mugenjohncel.\nOriginal Background Art: DaFool\n\nMusic By: Alessio\n\nWritten By: mikey"
-    new "Arte de Personajes: Deji.\nArte de Personajes Original: derik.\n\nArte de Fondos: Mugenjohncel.\nArte de Fondos Original: DaFool\n\nMúsica: Alessic\n\nEscrito por: mikey"
+    new "Arte de personajes: Deji.\nArte de personajes original: derik.\n\nArte de fondos: Mugenjohncel.\nArte de fondos original: DaFool.\n\nMúsica: Alessio.\n\nEscrito por: mikey"

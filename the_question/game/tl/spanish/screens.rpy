@@ -67,7 +67,7 @@ translate spanish strings:
 
     # screens.rpy:467
     old "Return"
-    new "Volver"
+    new "Regresar"
 
     # screens.rpy:551
     old "[config.version!t]\n"
@@ -75,7 +75,7 @@ translate spanish strings:
 
     # screens.rpy:555
     old "Updated Character Art"
-    new "Nuevo Arte de Personajes"
+    new "Nuevo arte de personajes"
 
     # screens.rpy:556
     old "Deji"
@@ -83,7 +83,7 @@ translate spanish strings:
 
     # screens.rpy:560
     old "Original Character Art"
-    new "Arte de Personajes Original"
+    new "Arte de personajes original"
 
     # screens.rpy:561
     old "Derik"
@@ -91,7 +91,7 @@ translate spanish strings:
 
     # screens.rpy:567
     old "Updated Background Art"
-    new "Nuevo Arte de Fondos"
+    new "Nuevo arte de fondos"
 
     # screens.rpy:568
     old "Mugenjohncel"
@@ -99,7 +99,7 @@ translate spanish strings:
 
     # screens.rpy:572
     old "Original Background Art"
-    new "Arte de Fondos Original"
+    new "Arte de fondos original"
 
     # screens.rpy:573
     old "DaFool"
@@ -131,7 +131,7 @@ translate spanish strings:
 
     # screens.rpy:595
     old "\nMade with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]"
-    new "\nHecho con {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
+    new "\nHecho con {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]"
 
     # screens.rpy:597
     old "[renpy.license!t]"
@@ -143,11 +143,11 @@ translate spanish strings:
 
     # screens.rpy:643
     old "Automatic saves"
-    new "Grabación automática"
+    new "Guardado automático"
 
     # screens.rpy:643
     old "Quick saves"
-    new "Grabación rápida"
+    new "Guardado rápido"
 
     # screens.rpy:685
     old "{#file_time}%A, %B %d %Y, %H:%M"
@@ -155,7 +155,7 @@ translate spanish strings:
 
     # screens.rpy:685
     old "empty slot"
-    new "vacío"
+    new "ranura vacía"
 
     # screens.rpy:702
     old "<"
@@ -207,7 +207,7 @@ translate spanish strings:
 
     # screens.rpy:791
     old "After Choices"
-    new "Tras opciones"
+    new "Después de las elecciones"
 
     # screens.rpy:792
     old "Transitions"
@@ -223,7 +223,7 @@ translate spanish strings:
 
     # screens.rpy:824
     old "Auto-Forward Time"
-    new "Veloc. auto-avance"
+    new "Veloc. avance automático"
 
     # screens.rpy:831
     old "Music Volume"
@@ -243,7 +243,7 @@ translate spanish strings:
 
     # screens.rpy:859
     old "Mute All"
-    new "Silencia todo"
+    new "Silenciar todo"
 
     # screens.rpy:978
     old "The dialogue history is empty."
@@ -263,7 +263,7 @@ translate spanish strings:
 
     # screens.rpy:1061
     old "Enter"
-    new "Enter"
+    new "Intro"
 
     # screens.rpy:1062
     old "Advances dialogue and activates the interface."
@@ -299,7 +299,7 @@ translate spanish strings:
 
     # screens.rpy:1078
     old "Skips dialogue while held down."
-    new "Salta el diálogo mientras se presiona."
+    new "Salta el diálogo mientras se mantiene presionado."
 
     # screens.rpy:1081
     old "Tab"
@@ -335,7 +335,7 @@ translate spanish strings:
 
     # screens.rpy:1102
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "Activa/desactiva la asistencia por {a=https://www.renpy.org/l/voicing}voz-automática{/a}."
+    new "Activa/desactiva la asistencia de {a=https://www.renpy.org/l/voicing}voz automática{/a}."
 
     # screens.rpy:1108
     old "Left Click"
@@ -375,7 +375,7 @@ translate spanish strings:
 
     # screens.rpy:1147
     old "Start, Guide"
-    new "Comenzar, Guía"
+    new "Start, Guía"
 
     # screens.rpy:1151
     old "Y/Top Button"
