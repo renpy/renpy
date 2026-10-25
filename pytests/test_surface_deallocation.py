@@ -75,6 +75,34 @@ def test_repeated_shutdown_and_late_surface_release():
     assert pygame.surface.total_size == original_size
 
 
+def test_cyclic_subsurface_release():
+    """
+    Cyclic garbage collection releases a parent and its subsurface without relying on the parent
+    reference surviving until deallocation, and restores pixel-storage accounting.
+    """
+
+    class CyclicSurface(pygame.Surface):
+        """Allows a parent to hold a reference back to its subsurface."""
+
+    gc.collect()
+    original_size = pygame.surface.total_size
+    surface = CyclicSurface((32, 32))
+    child = surface.subsurface((0, 0, 16, 16))
+    surface.child = child
+    parent_reference = weakref.ref(surface)
+    child_reference = weakref.ref(child)
+    assert child.__sizeof__() == 0
+    assert pygame.surface.total_size == original_size + surface.__sizeof__()
+
+    del child, surface
+    gc.collect()
+    pygame.surface._quit_surface_deallocation()
+
+    assert parent_reference() is None
+    assert child_reference() is None
+    assert pygame.surface.total_size == original_size
+
+
 def test_subsurface_bursts_and_uninitialized_wrapper():
     """
     Creating many surfaces and subsurfaces in a burst leaves total_size unchanged, and a zero-sized
@@ -100,8 +128,8 @@ def test_invalid_construction_does_not_leak_or_warn():
     A Surface with a negative width raises AssertionError without emitting a warning or changing
     total_size.
 
-    The "memory leak" warning in Surface.__dealloc__ must not fire for a surface that never got a
-    pixel buffer, so the warnings are recorded and must stay empty.
+    Deallocation must be safe for a surface that never got a pixel buffer, so the warnings are
+    recorded and must stay empty.
     """
 
     original_size = pygame.surface.total_size

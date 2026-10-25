@@ -28,7 +28,6 @@ from .error import error
 # from pygame.locals import SRCALPHA
 
 import atexit
-import warnings
 
 cdef extern from "pygame/surface_deallocation.h":
     enum:
@@ -118,24 +117,13 @@ cdef class Surface:
     def __dealloc__(self):
         global total_size
 
-        if self.sdl_surface and self.owns_surface:
-            if total_size:
+        if self.sdl_surface and not self.window_surface:
+            if self.owns_surface and total_size:
                 total_size -= self.sdl_surface.pitch * self.sdl_surface.h
 
             renpy_surface_deallocation_enqueue(self.deallocation, self.sdl_surface)
-            return
-        elif self.window_surface:
+        else:
             renpy_surface_deallocation_discard(self.deallocation)
-            return
-        elif self.parent:
-            renpy_surface_deallocation_enqueue(self.deallocation, self.sdl_surface)
-            return
-
-        renpy_surface_deallocation_discard(self.deallocation)
-        if self.sdl_surface == NULL:
-            return
-
-        warnings.warn("Memory leak via Surface in renpy.pygame.")
 
     def __sizeof__(self):
         if self.sdl_surface and self.owns_surface:
@@ -165,7 +153,6 @@ cdef class Surface:
         assert h >= 0
 
         cdef int depth_int
-
 
         cdef SDL_Surface *surface
 
