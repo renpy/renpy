@@ -40,6 +40,9 @@ SIMPLE_NAME = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
 PARSE_CACHE_SIZE = 512
 PARSE_CACHE_MAX_LENGTH = 4096
 
+# A sentinel indicating that a simple name was not found in the scope.
+NOT_FOUND = object()
+
 
 def interpolate(s, scope):
     """
@@ -75,9 +78,16 @@ def interpolate(s, scope):
                 conv = "r"
 
         if renpy.config.interpolate_exprs:
-            if (code in scope) and SIMPLE_NAME.match(code):
-                value = scope[code]
-            else:
+            value = NOT_FOUND
+
+            # Look up simple names directly, using a single walk of the scope.
+            if SIMPLE_NAME.match(code):
+                try:
+                    value = scope[code]
+                except KeyError:
+                    pass
+
+            if value is NOT_FOUND:
                 try:
                     value = renpy.python.py_eval(code, {}, scope)
                 except Exception as e:

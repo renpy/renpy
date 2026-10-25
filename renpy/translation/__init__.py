@@ -554,10 +554,12 @@ class StringTranslator(object):
             self.translations[old] = old
             self.unknown.append(old)
 
-        # Remove {#...} tags.
-        if new is None:
-            notags = re.sub(r"\{\#.*?\}", "", old)
-            new = self.translations.get(notags, None)
+        # Remove {#...} tags, and try again. A string without tags has already been looked up.
+        if "{#" not in old:
+            return old
+
+        notags = re.sub(r"\{\#.*?\}", "", old)
+        new = self.translations.get(notags, None)
 
         if new is not None:
             return new
