@@ -20,7 +20,7 @@ dependencies = [
     "sphinx-tabs",
     "jinja2",
     "chardet>=7.6.0",
-    "websockets>=17.2",
+    "websockets>=17.3",
     "pysocks>=1.7.1",
 ]
 
