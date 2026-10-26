@@ -349,9 +349,8 @@ class Restructurer(object):
                 digest_block = [i for i in block if isinstance(i, renpy.ast.Say)]
 
         for i in digest_block:
-            if isinstance(i, renpy.ast.Say):
-                code = i.get_code()
-                md5.update((code + "\r\n").encode("utf-8"))
+            code = i.get_code()
+            md5.update((code + "\r\n").encode("utf-8"))
 
         digest = md5.hexdigest()[:8]
 
