@@ -12,9 +12,9 @@ $CLEAN = $false
 # Parse our own flags; stop at the first unknown argument.
 while ($args.Count -gt 0) {
     switch ($args[0]) {
-        "--build" { $BUILD_ONLY = $true; $args = $args[1..($args.Count - 1)] }
-        "--clean" { $CLEAN = $true; $args = $args[1..($args.Count - 1)] }
-        "--" { $args = $args[1..($args.Count - 1)]; break }
+        "--build" { $BUILD_ONLY = $true; $args = @($args | Select-Object -Skip 1) }
+        "--clean" { $CLEAN = $true; $args = @($args | Select-Object -Skip 1) }
+        "--" { $args = @($args | Select-Object -Skip 1); break }
         default { break }
     }
     if ($args[0] -notin @("--build", "--clean", "--")) { break }
