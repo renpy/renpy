@@ -807,6 +807,7 @@ class Interface:
         # is done, or at the end of the interaction.
         self.force_prediction = False
         self.texture_task: renpy.asynctask.Task | None = None
+        self.prediction_task: renpy.asynctask.Task | None = None
 
         # The number of interactions that have happened without processing an event.
         self.interaction_counter = 0
@@ -2372,7 +2373,7 @@ class Interface:
         """
 
         renpy.asynctask.create_task(self.run_gc_task())
-        renpy.asynctask.create_task(self.run_prediction_task(root_widget))
+        self.prediction_task = renpy.asynctask.create_task(self.run_prediction_task(root_widget))
         renpy.asynctask.create_task(self.run_filesystem_task())
 
     def run_tasks(self, expensive):
@@ -2397,6 +2398,15 @@ class Interface:
 
             if self.event_peek(False):
                 break
+
+        if (
+            self.force_prediction
+            and self.prediction_task is not None
+            and self.prediction_task.done()
+            and not self.prediction_task.cancelled()
+            and renpy.display.im.cache.done()
+        ):
+            self.force_prediction = False
 
         if expensive:
             renpy.plog(1, "end tasks (expensive)")
