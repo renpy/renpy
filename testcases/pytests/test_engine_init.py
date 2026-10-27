@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-"""Tests for the engine startup that pytests/conftest.py performs for the Python tests."""
+"""Tests for the engine startup that testcases/pytests/conftest.py performs for the Python tests."""
 
 import subprocess
 import sys
@@ -54,16 +54,16 @@ import importlib
 import renpy
 
 with patch.object(renpy, "import_all", wraps=renpy.import_all) as startup:
-    import pytests.conftest
+    import testcases.pytests.conftest
     snapshot = renpy.backup.objects_pickle
-    importlib.import_module("pytests.conftest")
+    importlib.import_module("testcases.pytests.conftest")
     startup.assert_called_once_with()
     assert renpy.backup.objects_pickle is snapshot
     assert renpy.exports.store is renpy.store
 """
     result = subprocess.run(
         [sys.executable, "-c", code],
-        cwd=Path(__file__).resolve().parent.parent,
+        cwd=Path(__file__).resolve().parents[2],
         capture_output=True,
         text=True,
         check=False,

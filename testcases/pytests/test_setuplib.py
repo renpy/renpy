@@ -54,7 +54,7 @@ def test_other_process_waits_for_build():
     The timeout is used as a check that the child is blocked, not as a deadline for the lock itself.
     """
 
-    root = Path(__file__).resolve().parents[1]
+    root = Path(__file__).resolve().parents[2]
     child_code = (
         "import sys\n"
         "from pathlib import Path\n"

@@ -100,7 +100,7 @@ def assert_gapless(output):
 
 def opus():
     """
-    Return the bytes of the 0.1 s stereo 440 Hz Opus tone shipped in pytests/audio/tone.opus.
+    Return the bytes of the 0.1 s stereo 440 Hz Opus tone shipped in testcases/pytests/audio/tone.opus.
 
     The file is 4800 frames long at 48 kHz, and the tests use it to check codec padding and EOF behavior.
     """
@@ -111,7 +111,7 @@ def opus():
 
 def seek_opus():
     """
-    Return the bytes of the 3 s seek fixture in pytests/audio/seek.opus.
+    Return the bytes of the 3 s seek fixture in testcases/pytests/audio/seek.opus.
 
     The fixture is noise mixed with a quiet 440 Hz tone, so any misplaced seek shows up as a waveform mismatch.
     """

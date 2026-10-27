@@ -93,7 +93,7 @@ def _ensure_image_environment(mocker):
 
 def _load_fetch_prism_module():
     """Load scripts/fetch_prism.py from the repository without installing it as a package."""
-    script_path = Path(__file__).resolve().parent.parent / "scripts" / "fetch_prism.py"
+    script_path = Path(__file__).resolve().parents[2] / "scripts" / "fetch_prism.py"
     spec = importlib.util.spec_from_file_location("fetch_prism", script_path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
@@ -225,7 +225,7 @@ def test_web_without_ctypes(mocker):
     runtime. The platform flags and sys.platform are faked as emscripten only for the init() call. Those fakes are
     not stopped early, so they remain in effect until the test ends.
     """
-    path = Path(__file__).resolve().parent.parent / "renpy" / "display" / "tts.py"
+    path = Path(__file__).resolve().parents[2] / "renpy" / "display" / "tts.py"
     spec = importlib.util.spec_from_file_location("_test_web_tts", path)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)

@@ -46,7 +46,7 @@ implementing local changes requested by the user in an interactive session).
 | Launcher | [launcher/game/](launcher/game/) |
 | New-project template | [gui/](gui/) (copied into new games; edits do not reach existing games) |
 | Bundled games | [tutorial/](tutorial/), [the_question/](the_question/) |
-| Tests | [pytests/](pytests/) (pytest), [testcases/](testcases/) (Ren'Py testcase project), runner in [renpy/test/](renpy/test/) |
+| Tests | [testcases/pytests/](testcases/pytests/) (pytest), [testcases/](testcases/) (Ren'Py testcase project), runner in [renpy/test/](renpy/test/) |
 | Docs | [sphinx/source/](sphinx/source/) |
 
 Untracked local directories such as `lib/`, `web/`, `vscode/`, `tmp/`, `scratch/`, `c/`, `cg/`, and
@@ -244,20 +244,21 @@ runtime coverage of changes in `renpy/common/`.
   performed and its result, and the remaining regression risk. If manual validation is also
   unavailable, explicitly report the unverified path; do not present the change as validated.
 
-### Python Tests ([pytests/](pytests/))
+### Python Tests ([testcases/pytests/](testcases/pytests/))
 
 The Python tests use pytest and pytest-mock, installed by `uv sync` as dev dependencies.
 
 ```sh
 uv run pytest                                   # all
-uv run pytest pytests/test_prediction.py        # one module
+uv run pytest testcases/pytests/test_prediction.py  # one module
 uv run pytest -k <expression>                   # tests matching an expression
 uv run ruff check <changed-files>
 ```
 
-[pytests/conftest.py](pytests/conftest.py) starts the engine once, before test modules are imported,
-so tests import engine names directly. Never call `renpy.import_all()` in a test: engine startup runs
-once per process and records the reload backup. Copy setup from the nearest existing test.
+[testcases/pytests/conftest.py](testcases/pytests/conftest.py) starts the engine once, before test
+modules are imported, so tests import engine names directly. Never call `renpy.import_all()` in a
+test: engine startup runs once per process and records the reload backup. Copy setup from the nearest
+existing test.
 
 - Write plain `test_*` functions with bare `assert`, `pytest.raises`, and
   `@pytest.mark.parametrize`. Do not use `unittest.TestCase`.
@@ -279,14 +280,13 @@ on Python tests.
 - **Placement.** Use a testcase only when the behavior needs the running game: the interaction
   loop, rendering, input, script or screen execution, rollback, or save/load. Logic that can be
   exercised after engine initialization (parsers, data structures, task scheduling, engine
-  internals with mocked collaborators) belongs in [pytests/](pytests/).
+  internals with mocked collaborators) belongs in [testcases/pytests/](testcases/pytests/).
 - **Write testcases in the test language.** Drive the game with test statements (`run`, `click`,
   `advance`, `pause`, `type`, ...) and check results with `assert` or `assert eval`. Keep `$` and
   `python` lines to small setup and state inspection. A testcase whose body is a single
   `$ helper()` call into Python that does the whole test is a Python test in disguise: move it to
-  `pytests/`, or, if it needs the running game, split it into test-language steps. Replace loops
-  over inputs with `parameter` properties
-  ([parameterized tests](sphinx/source/testcases.rst)).
+  `testcases/pytests/`, or, if it needs the running game, split it into test-language steps. Replace
+  loops over inputs with `parameter` properties ([parameterized tests](sphinx/source/testcases.rst)).
 
 Tests are named `<suite>.<case>`:
 
