@@ -102,6 +102,8 @@ extend-exclude = [
     "keywords.py",
     "renpy/text/emoji_trie.py",
 ]
+
+[tool.ruff.lint]
 ignore = [
     "TRY002",
     "S110",
