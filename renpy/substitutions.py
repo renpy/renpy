@@ -41,6 +41,18 @@ PARSE_CACHE_SIZE = 512
 PARSE_CACHE_MAX_LENGTH = 4096
 
 
+def _chainmap_contains(scope, key):
+    # Python 3.12's ChainMap uses a generator for membership searches.
+    for mapping in scope.maps:
+        try:
+            if key in mapping:
+                return True
+        except StopIteration as e:
+            raise RuntimeError("generator raised StopIteration") from e
+
+    return False
+
+
 def interpolate(s, scope):
     """
     Formats a string using Ren'Py's formatting rules. Ren'Py uses square
@@ -75,7 +87,12 @@ def interpolate(s, scope):
                 conv = "r"
 
         if renpy.config.interpolate_exprs:
-            if (code in scope) and SIMPLE_NAME.match(code):
+            if type(scope) is collections.ChainMap:
+                in_scope = _chainmap_contains(scope, code)
+            else:
+                in_scope = code in scope
+
+            if in_scope and SIMPLE_NAME.match(code):
                 value = scope[code]
             else:
                 try:
