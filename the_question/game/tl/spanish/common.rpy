@@ -83,11 +83,11 @@ translate spanish strings:
 
     # 00action_file.rpy:47
     old "{#month}July"
-    new "Agosto"
+    new "Julio"
 
     # 00action_file.rpy:47
     old "{#month}August"
-    new "Septiembre"
+    new "Agosto"
 
     # 00action_file.rpy:47
     old "{#month}September"
@@ -163,7 +163,7 @@ translate spanish strings:
 
     # 00action_file.rpy:434
     old "Load slot %s: [text]"
-    new "Load slot %s: [text]"
+    new "Cargar ranura %s: [text]"
 
     # 00action_file.rpy:487
     old "Delete slot [text]"
@@ -171,15 +171,15 @@ translate spanish strings:
 
     # 00action_file.rpy:569
     old "File page auto"
-    new "Página grabado automático"
+    new "Página de guardado automático"
 
     # 00action_file.rpy:571
     old "File page quick"
-    new "Página grabado rápido"
+    new "Página de guardado rápido"
 
     # 00action_file.rpy:573
     old "File page [text]"
-    new "Página grabación [text]"
+    new "Página de guardado [text]"
 
     # 00action_file.rpy:772
     old "Next file page."
@@ -191,11 +191,11 @@ translate spanish strings:
 
     # 00action_file.rpy:906
     old "Quick save complete."
-    new "Grabar rápido completo."
+    new "Guardado rápido completado."
 
     # 00action_file.rpy:924
     old "Quick save."
-    new "Grabar rápido."
+    new "Guardado rápido."
 
     # 00action_file.rpy:943
     old "Quick load."
@@ -351,7 +351,7 @@ translate spanish strings:
 
     # 00library.rpy:147
     old "Clipboard voicing enabled. "
-    new "'Portapapeles a voz' activado. "
+    new "Portapapeles a voz' activado. "
 
     # 00library.rpy:148
     old "Self-voicing enabled. "
@@ -367,7 +367,7 @@ translate spanish strings:
 
     # 00library.rpy:152
     old "viewport"
-    new "viewport"
+    new "'viewport'"
 
     # 00library.rpy:153
     old "horizontal scroll"
@@ -443,7 +443,7 @@ translate spanish strings:
 
     # 00preferences.rpy:271
     old "skip unseen text"
-    new "salva texto no visto"
+    new "saltar texto no visto"
 
     # 00preferences.rpy:273
     old "begin skipping"
@@ -487,15 +487,15 @@ translate spanish strings:
 
     # 00preferences.rpy:346
     old "self voicing"
-    new "auto voz"
+    new "voz automática"
 
     # 00preferences.rpy:355
     old "clipboard voicing"
-    new "voz en clipboard"
+    new "voz por portapapeles"
 
     # 00preferences.rpy:364
     old "debug voicing"
-    new "debug voz"
+    new "depuración de voz"
 
     # 00preferences.rpy:373
     old "emphasize audio"
@@ -511,7 +511,7 @@ translate spanish strings:
 
     # 00preferences.rpy:398
     old "gl framerate"
-    new "gl cuadros por s."
+    new "gl cuadros por segundo"
 
     # 00preferences.rpy:401
     old "gl tearing"
@@ -551,7 +551,7 @@ translate spanish strings:
 
     # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Voz automática dirá \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivar."
+    new "La voz automática dirá \"[renpy.display.tts.last]\". Presiona 'Alt+Mayús+V' para desactivarla."
 
     # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
@@ -583,7 +583,7 @@ translate spanish strings:
 
     # _developer\developer.rpym:45
     old "Reload Game (Shift+R)"
-    new "Reiniciar juego (Shift+R)"
+    new "Recargar juego (Mayús+R)"
 
     # _developer\developer.rpym:47
     old "Console (Shift+O)"
@@ -611,11 +611,11 @@ translate spanish strings:
 
     # _developer\developer.rpym:63
     old "Image Attributes"
-    new "Image Attributes"
+    new "Atributos de imagen"
 
     # _developer\developer.rpym:90
     old "[name] [attributes] (hidden)"
-    new "[name] [attributes] (hidden)"
+    new "[name] [attributes] (oculto)"
 
     # _developer\developer.rpym:94
     old "[name] [attributes]"
@@ -627,11 +627,11 @@ translate spanish strings:
 
     # _developer\developer.rpym:154
     old "Hide deleted"
-    new "Hide deleted"
+    new "Ocultar eliminados"
 
     # _developer\developer.rpym:154
     old "Show deleted"
-    new "Show deleted"
+    new "Mostrar eliminados"
 
     # _developer\developer.rpym:278
     old "Return to the developer menu"
@@ -659,7 +659,7 @@ translate spanish strings:
 
     # _developer\developer.rpym:502
     old "Type to filter: "
-    new "Tipo a filtrar: "
+    new "Escribe para filtrar: "
 
     # _developer\developer.rpym:630
     old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
@@ -751,7 +751,7 @@ translate spanish strings:
 
     # 00updater.rpy:722
     old "Could not verify update signature."
-    new "No se pudo verificar la actualización de firmas."
+    new "No se pudo verificar la firma de la actualización."
 
     # 00updater.rpy:997
     old "The update file was not downloaded."
@@ -787,15 +787,15 @@ translate spanish strings:
 
     # 00updater.rpy:1454
     old "Preparing to download the updates."
-    new "Preparando para descargar la actualización."
+    new "Preparando la descarga de las actualizaciones."
 
     # 00updater.rpy:1456
     old "Downloading the updates."
-    new "Descargando la actualización."
+    new "Descargando las actualizaciones."
 
     # 00updater.rpy:1458
     old "Unpacking the updates."
-    new "Desempaquetando la actualización."
+    new "Desempaquetando las actualizaciones."
 
     # 00updater.rpy:1460
     old "Finishing up."
@@ -803,15 +803,15 @@ translate spanish strings:
 
     # 00updater.rpy:1462
     old "The updates have been installed. The program will restart."
-    new "La actualización ha sido instalada. El programa se reiniciará."
+    new "Se han instalado las actualizaciones. El programa se reiniciará."
 
     # 00updater.rpy:1464
     old "The updates have been installed."
-    new "La actualización ha sido instalada."
+    new "Se han instalado las actualizaciones."
 
     # 00updater.rpy:1466
     old "The updates were cancelled."
-    new "La actualización ha sido cancelada."
+    new "Se han cancelado las actualizaciones."
 
     # 00updater.rpy:1481
     old "Proceed"
@@ -855,7 +855,7 @@ translate spanish strings:
 
     # 00gltest.rpy:87
     old "Force Software Renderer"
-    new "Forzar 'Software Renderer'"
+    new "Forzar renderizador por software"
 
     # 00gltest.rpy:93
     old "NPOT"
@@ -867,11 +867,11 @@ translate spanish strings:
 
     # 00gltest.rpy:131
     old "Powersave"
-    new "Desactivar"
+    new "Ahorro de energía"
 
     # 00gltest.rpy:145
     old "Framerate"
-    new "Cuadros por s."
+    new "Cuadros por segundo"
 
     # 00gltest.rpy:149
     old "Screen"
@@ -899,19 +899,19 @@ translate spanish strings:
 
     # 00gltest.rpy:218
     old "This computer is using software rendering."
-    new "Este ordenador usa 'software rendering'."
+    new "Esta computadora usa 'software rendering'."
 
     # 00gltest.rpy:220
     old "This computer is not using shaders."
-    new "Este ordenador no usa 'shaders'."
+    new "Esta computadora no usa 'shaders'."
 
     # 00gltest.rpy:222
     old "This computer is displaying graphics slowly."
-    new "ste ordenador muestra los gráficos lentamente."
+    new "Esta computadora muestra los gráficos lentamente."
 
     # 00gltest.rpy:224
     old "This computer has a problem displaying graphics: [problem]."
-    new "Este ordenador tiene un problema mostrando los gráficos: [problem]."
+    new "Esta computadora tiene un problema mostrando los gráficos: [problem]."
 
     # 00gltest.rpy:229
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
@@ -967,11 +967,11 @@ translate spanish strings:
 
     # 00gamepad.rpy:58
     old "Press or move the [control!s] [kind]."
-    new "Pulsa o mueve: [control!s] [kind]."
+    new "Presiona o mueve [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Salto (A)"
+    new "Saltar (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
@@ -1023,7 +1023,7 @@ translate spanish strings:
 
     # _errorhandling.rpym:601
     old "Reloads the game from disk, saving and restoring game state if possible."
-    new "Recarga el juego del disco, guardando y restaurando la partida si es posible."
+    new "Recarga el juego desde el disco, guardando y restaurando el estado del juego si es posible."
 
     # _errorhandling.rpym:604
     old "Console"
@@ -1057,7 +1057,7 @@ translate spanish strings:
 
     # renpy/common/00accessibility.rpy:87
     old "Default"
-    new "por Defecto"
+    new "Predeterminada"
 
     # renpy/common/00accessibility.rpy:91
     old "DejaVu Sans"
@@ -1113,7 +1113,7 @@ translate spanish strings:
 
     # renpy/common/00preferences.rpy:441
     old "font line spacing"
-    new "fuente de espacio de líneas"
+    new "interlineado de fuente"
 
     # renpy/common/_errorhandling.rpym:542
     old "Copy BBCode"
@@ -1121,7 +1121,7 @@ translate spanish strings:
 
     # renpy/common/_errorhandling.rpym:544
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new ""
+    new "Copia el archivo traceback.txt al portapapeles como BBCode para foros como https://lemmasoft.renai.us/."
 
     # renpy/common/_errorhandling.rpym:546
     old "Copy Markdown"
@@ -1133,7 +1133,7 @@ translate spanish strings:
 
     # renpy/common/_errorhandling.rpym:683
     old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Copia el archivo errors.txt en el portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
+    new "Copia el archivo errors.txt al portapapeles como BBCode para foros como https://lemmasoft.renai.us/."
 
     # renpy/common/_errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
@@ -1177,7 +1177,7 @@ translate spanish strings:
 
     # renpy/common/00gltest.rpy:105
     old "Force ANGLE Renderer"
-    new "Force renderizador ANGLE"
+    new "Forzar renderizador ANGLE"
 
     # renpy/common/00gltest.rpy:110
     old "Force GLES Renderer"
@@ -1201,15 +1201,15 @@ translate spanish strings:
 
     # renpy/common/00gltest.rpy:249
     old "This game requires use of GL2 that can't be initialised."
-    new "Este juego requiere el uso de GL2 que no se puede inicializar."
+    new "Este juego requiere el uso de GL2, que no se puede inicializar."
 
     # renpy/common/00gltest.rpy:259
     old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
-    new "El archivo {a=edit:1:log.txt}log.txt{/a} puede contener información para ayudarte a encontrar el problema en tu ordenador."
+    new "El archivo {a=edit:1:log.txt}log.txt{/a} puede contener información para ayudarte a encontrar el problema en tu computadora."
 
     # renpy/common/00gltest.rpy:264
     old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
-    new "Puede encontrar más detalles sobre cómo solucionar este problema en la {a=[url]} documentación {/a}."
+    new "Puedes encontrar más detalles sobre cómo solucionar este problema en la {a=[url]}documentación{/a}."
 
     # renpy/common/00gltest.rpy:281
     old "Change render options"
@@ -1217,5 +1217,5 @@ translate spanish strings:
 
     # renpy/common/00gamepad.rpy:58
     old "Press or move the '[control!s]' [kind]."
-    new "Presiona o mueve el '[control!s]' [kind]."
+    new "Presiona o mueve '[control!s]' [kind]."
 

@@ -3,25 +3,25 @@
 translate spanish start_915cb944:
 
     # "It's only when I hear the sounds of shuffling feet and supplies being put away that I realize that the lecture's over."
-    "Sólo cuando escucho los sonidos de los pies arrastrandose y los suministros que se guardan, me doy cuenta de que la conferencia ha terminado."
+    "Solo cuando escucho los sonidos de pies arrastrándose y útiles guardándose, me doy cuenta de que la clase terminó."
 
 # game/script.rpy:21
 translate spanish start_d48fb984:
 
     # "Professor Eileen's lectures are usually interesting, but today I just couldn't concentrate on it."
-    "Las conferencias del profesora Eileen suelen ser interesantes, pero hoy no pude concentrarme."
+    "Las clases de la profesora Eileen suelen ser interesantes, pero hoy no podía concentrarme en ellas."
 
 # game/script.rpy:23
 translate spanish start_622654e3:
 
     # "I've had a lot of other thoughts on my mind...thoughts that culminate in a question."
-    "He tenido muchos otros pensamientos en mi mente ... pensamientos que culminan en una pregunta."
+    "He tenido muchos otros pensamientos en la cabeza... pensamientos que culminan en una pregunta."
 
 # game/script.rpy:25
 translate spanish start_5aee3489:
 
     # "It's a question that I've been meaning to ask a certain someone."
-    "Es una pregunta que he querido hacer a alguien en particular."
+    "Es una pregunta que he querido hacerle a alguien en particular."
 
 # game/script.rpy:30
 translate spanish start_66c6d238:
@@ -33,25 +33,25 @@ translate spanish start_66c6d238:
 translate spanish start_1d44d9d7:
 
     # "I've known Sylvie since we were kids. She's got a big heart and she's always been a good friend to me."
-    "Conozco a Sylvie desde que éramos niños. Ella tiene un gran corazón y siempre ha sido una buena amiga para mí."
+    "Conozco a Sylvie desde que éramos niños. Tiene un gran corazón y siempre ha sido una buena amiga para mí."
 
 # game/script.rpy:37
 translate spanish start_1c8af99f:
 
     # "But recently... I've felt that I want something more."
-    "Pero recientemente ... he sentido que quiero algo más."
+    "Pero últimamente... he sentido que quiero algo más."
 
 # game/script.rpy:39
 translate spanish start_17a1771f:
 
     # "More than just talking, more than just walking home together when our classes end."
-    "Más que solo hablar, más que solo caminar juntos a casa cuando nuestras clases terminan."
+    "Más que solo hablar, más que solo caminar juntos a casa cuando terminan nuestras clases."
 
 # game/script.rpy:58
 translate spanish rightaway_cf214f74:
 
     # s "Hi there! How was class?"
-    s "¡Hola! ¿Como estuvo la clase?"
+    s "¡Hola! ¿Cómo estuvo la clase?"
 
 # game/script.rpy:60
 translate spanish rightaway_f5f51c33:
@@ -63,7 +63,7 @@ translate spanish rightaway_f5f51c33:
 translate spanish rightaway_027fd9f0:
 
     # "I can't bring myself to admit that it all went in one ear and out the other."
-    "No puedo admitir que todo entro por un oído y salio por el otro."
+    "No puedo admitir que todo entró por un oído y salió por el otro."
 
 # game/script.rpy:64
 translate spanish rightaway_1e626e6b:
@@ -81,7 +81,7 @@ translate spanish rightaway_ed1dfb9d:
 translate spanish rightaway_03faae39:
 
     # "After a short while, we reach the meadows just outside the neighborhood where we both live."
-    "Después de poco tiempo, llegamos a los prados a las afueras del vecindario donde ambos vivimos."
+    "Después de un rato, llegamos a los prados a las afueras del vecindario donde ambos vivimos."
 
 # game/script.rpy:73
 translate spanish rightaway_b3b54d3c:
@@ -93,13 +93,13 @@ translate spanish rightaway_b3b54d3c:
 translate spanish rightaway_8f173bb5:
 
     # "When we were children, we played in these meadows a lot, so they're full of memories."
-    "Cuando éramos niños, jugábamos mucho en estas praderas, así que están llenos de recuerdos."
+    "Cuando éramos niños, jugábamos mucho en estos prados, así que están llenos de recuerdos."
 
 # game/script.rpy:77
 translate spanish rightaway_aa84c954:
 
     # m "Hey... Umm..."
-    m "Hey... Umm..."
+    m "Oye... Mmm..."
 
 # game/script.rpy:82
 translate spanish rightaway_79becbf8:
@@ -117,13 +117,13 @@ translate spanish rightaway_6a5d032c:
 translate spanish rightaway_29e68260:
 
     # m "Ummm... Will you..."
-    m "Ummm ... ¿Quieres ..."
+    m "Mmm... ¿Quieres..."
 
 # game/script.rpy:88
 translate spanish rightaway_6c267868:
 
     # m "Will you be my artist for a visual novel?"
-    m "¿Serás mi artista para una novela visual?"
+    m "¿Serías mi artista para una novela visual?"
 
 # game/script.rpy:92
 translate spanish rightaway_16b8cb94:
@@ -135,7 +135,7 @@ translate spanish rightaway_16b8cb94:
 translate spanish rightaway_289664f3:
 
     # "She looks so shocked that I begin to fear the worst. But then..."
-    "Ella se ve tan sorprendida que empiezo a temer lo peor. Pero entonces..."
+    "Se ve tan sorprendida que empiezo a temer lo peor. Pero entonces..."
 
 # game/script.rpy:98
 translate spanish rightaway_8cb5deeb:
@@ -189,7 +189,7 @@ translate spanish game_eaa56bc9:
 translate spanish game_9befd1bf:
 
     # s "Well, sure! I can try. I just hope I don't disappoint you."
-    s "Bueno, claro! Puedo probar. Solo espero no decepcionarte."
+    s "Bueno, ¡claro! Puedo intentarlo. Solo espero no decepcionarte."
 
 # game/script.rpy:129
 translate spanish game_c788ae90:
@@ -201,7 +201,7 @@ translate spanish game_c788ae90:
 translate spanish book_4221b3bd:
 
     # m "It's like an interactive book that you can read on a computer or a console."
-    m "Es como un libro interactivo que puede leer en una computadora o una consola."
+    m "Es como un libro interactivo que puedes leer en una computadora o una consola."
 
 # game/script.rpy:142
 translate spanish book_4cfd8044:
@@ -213,7 +213,7 @@ translate spanish book_4cfd8044:
 translate spanish book_b9c732c8:
 
     # m "You can make choices that lead to different events and endings in the story."
-    m "Puede tomar decisiones que conduzcan a diferentes eventos y finales en la historia."
+    m "Puedes tomar decisiones que llevan a diferentes eventos y finales en la historia."
 
 # game/script.rpy:146
 translate spanish book_1c7ac61a:
@@ -231,13 +231,13 @@ translate spanish book_763f25a8:
 translate spanish book_2277f2aa:
 
     # s "I see! That certainly sounds like fun. I actually used to make webcomics way back when, so I've got lots of story ideas."
-    s "¡Veo! Eso ciertamente suena divertido. De hecho, solía hacer webcomics hace mucho tiempo, así que tengo muchas ideas para historias."
+    s "¡Ya veo! Eso suena divertido. De hecho, solía hacer webcomics hace mucho tiempo, así que tengo muchas ideas para historias."
 
 # game/script.rpy:154
 translate spanish book_ccd3e9b0:
 
     # m "That's great! So...would you be interested in working with me as an artist?"
-    m "¡Eso es genial! Entonces ... ¿te interesaría trabajar conmigo como artista?"
+    m "¡Eso es genial! Entonces... ¿te interesaría trabajar conmigo como artista?"
 
 # game/script.rpy:156
 translate spanish book_e325967b:
@@ -255,7 +255,7 @@ translate spanish marry_4509e340:
 translate spanish marry_0f82ff7f:
 
     # "Over the years, we make lots of games and have a lot of fun making them."
-    "A lo largo de los años, hacimos muchos juegos y nos divertimos mucho haciéndolos."
+    "A lo largo de los años, hicimos muchos juegos y nos divertimos mucho haciéndolos."
 
 # game/script.rpy:174
 translate spanish marry_08e24a18:
@@ -279,7 +279,7 @@ translate spanish marry_27260f18:
 translate spanish marry_bf690666:
 
     # s "Hey..."
-    s "Hey..."
+    s "Oye..."
 
 # game/script.rpy:185
 translate spanish marry_7a5c1899:
@@ -309,13 +309,13 @@ translate spanish marry_f913278c:
 translate spanish marry_4ba892a0:
 
     # m "A while..."
-    m "Durante un rato..."
+    m "Un tiempo..."
 
 # game/script.rpy:201
 translate spanish marry_39d7f0df:
 
     # s "These last few years we've been making visual novels together, spending time together, helping each other..."
-    s "Estos últimos años hemos estado haciendo novelas visuales juntos, pasando tiempo juntos, ayudándonos mutuamente ..."
+    s "En estos últimos años hemos estado haciendo novelas visuales juntos, pasando tiempo juntos, ayudándonos mutuamente..."
 
 # game/script.rpy:203
 translate spanish marry_1516df50:
@@ -345,7 +345,7 @@ translate spanish marry_373937d9:
 translate spanish marry_857958dc:
 
     # m "Of course I will! I've actually been meaning to propose, honest!"
-    m "¡Por su puesto que lo hare! En realidad he querido proponelo, ¡soy honesto!"
+    m "¡Claro que lo haré! En realidad he querido proponértelo, ¡lo juro!"
 
 # game/script.rpy:217
 translate spanish marry_81ed468b:
@@ -357,13 +357,13 @@ translate spanish marry_81ed468b:
 translate spanish marry_1c4ae954:
 
     # m "I guess... I was too worried about timing. I wanted to ask the right question at the right time."
-    m "Supongo ... estaba demasiado preocupado por el tiempo. Quería hacer la pregunta correcta en el momento adecuado."
+    m "Supongo que... estaba demasiado preocupado por el momento. Quería hacer la pregunta correcta en el momento adecuado."
 
 # game/script.rpy:223
 translate spanish marry_0db38565:
 
     # s "You worry too much. If only this were a visual novel and I could pick an option to give you more courage!"
-    s "Te preocupas demasiado. ¡Si solo fuera una novela visual y pudiera elegir una opción para darle más valor!"
+    s "Te preocupas demasiado. ¡Si tan solo esto fuera una novela visual y pudiera elegir una opción para darte más valor!"
 
 # game/script.rpy:228
 translate spanish marry_ca27786f:
@@ -375,7 +375,7 @@ translate spanish marry_ca27786f:
 translate spanish marry_621ed4fc:
 
     # "Our visual novel duo lives on even after we're married...and I try my best to be more decisive."
-    "Nuestro dúo de novelas visuales sigue vivo incluso después de que nos casemos ... y hago todo lo posible por ser más decisivo."
+    "Nuestro dúo de novelas visuales sigue vivo incluso después de que nos casamos... y hago todo lo posible por ser más decisivo."
 
 # game/script.rpy:232
 translate spanish marry_3c7f0bf0:
@@ -392,8 +392,8 @@ translate spanish marry_2ad49007:
 # game/script.rpy:240
 translate spanish later_3c679c17:
 
-    # "I can't get up the nerve to ask right now. With a gulp, I decide to ask her later."
-    "No puedo preguntar ahora por los nervios. Con un trago, decido preguntarle después."
+    # "I can't get up the nerve to ask right now. With a gulp, I decide to ask her later."  
+    "No me atrevo a preguntar ahora. Con un trago, decido preguntarle después."
 
 # game/script.rpy:245
 translate spanish later_a77741b6:
@@ -431,7 +431,7 @@ translate spanish strings:
 
     # script.rpy:41
     old "As soon as she catches my eye, I decide..."
-    new "Tan pronto como ella llama mi atención, decido ..."
+    new "Tan pronto como ella me mira, decido..."
 
     # script.rpy:41
     old "To ask her right away."
@@ -439,7 +439,7 @@ translate spanish strings:
 
     # script.rpy:41
     old "To ask her later."
-    new "Preguntarle después."
+    new "Preguntarle más tarde."
 
     # script.rpy:98
     old "It's a videogame."
