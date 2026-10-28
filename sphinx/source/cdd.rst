@@ -203,6 +203,13 @@ class, we'll present them with the `self` parameter.
         can be used to trigger a redraw, and probably should be used
         to trigger a redraw if the object participates in rollback.
 
+    .. method:: _get_mouse(self)
+
+        Returns the name of the mouse cursor to use when this displayable
+        has focus, or None to use the next available cursor. The default
+        implementation returns the displayable's :propref:`mouse` style
+        property.
+
     .. method:: visit(self)
 
         If the displayable has child displayables, this method should

@@ -199,6 +199,10 @@ of the statement that is currently executing or being predicted.
 The :class:`Confirm` action and :func:`renpy.confirm` function now take a `screen` argument, allowing
 a custom screen to be used instead of the default confirm screen.
 
+Focused displayables now determine the mouse cursor through their `_get_mouse` method.
+Buttons can inherit a cursor from their action's `get_mouse` method, and creator-defined
+displayables can override `_get_mouse`.
+
 The `changed` property of bars can now be supplied in addition to a bar value.
 
 Bars now take an `action` property, which is an action that is run when the bar value changes. Unlike `change`, `action`
