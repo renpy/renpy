@@ -350,6 +350,11 @@ transition now starts from the copy of the old child that was being shown,
 rather than restarting the old child. If a previous transition was still
 running, the new transition starts from that transition's new child.
 
+When an image is replaced while an ATL transform is kept running (see
+:var:`config.keep_running_transform`), ATL child statements that show the
+transform's child now show the new image, rather than bringing back the image
+that was replaced.
+
 .. _renpy-8.5.4:
 
 8.5.4

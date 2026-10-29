@@ -103,6 +103,28 @@ transform atl__swap(child):
     0.3
     child
 
+# atl__swap, run inside a parallel block that is executing when the child is replaced.
+transform atl__swap_parallel(child):
+    animation
+    parallel:
+        child
+        0.3
+        "atl__blue"
+        0.3
+        child
+    parallel:
+        alpha 1.0
+
+# atl__swap, run inside a choice block that is executing when the child is replaced.
+transform atl__swap_choice(child):
+    animation
+    choice:
+        child
+        0.3
+        "atl__blue"
+        0.3
+        child
+
 init python:
     def atl__names(d):
         """
@@ -198,6 +220,14 @@ label atl__child_replace__contains:
 
 label atl__child_replace__swap:
     call atl__child_replace(atl__swap)
+    return
+
+label atl__child_replace__swap_parallel:
+    call atl__child_replace(atl__swap_parallel)
+    return
+
+label atl__child_replace__swap_choice:
+    call atl__child_replace(atl__swap_choice)
     return
 
 label atl__child_reshow__start:
@@ -383,10 +413,10 @@ testsuite atl:
             advance
             assert eval (atl__shown() == ["atl__yellow"]) timeout 1.0
 
-            # Past atl__swap's final child statement. Known bug: that statement displays the
-            # displayable compiled into its block, which is still atl__red.
+            # Past atl__swap's final child statement, which must display the new child rather than
+            # the one compiled into its block.
             pause 0.7
-            assert eval (atl__shown() == ["atl__yellow"]) xfail kind == "swap"
+            assert eval (atl__shown() == ["atl__yellow"])
 
         testcase replace_keeps_properties:
             description "Replacing an image under inline ATL keeps the properties the ATL set"
@@ -402,9 +432,20 @@ testsuite atl:
             assert eval (atl__shown() == ["atl__blue"]) timeout 1.0
             advance
 
-            # Past atl__swap's final child statement. Known bug: as in replace with atl__swap.
+            # Past atl__swap's final child statement.
             pause 0.5
-            assert eval (atl__shown() == ["atl__yellow"]) xfail True
+            assert eval (atl__shown() == ["atl__yellow"])
+
+        testcase replace_in_parallel:
+            description "An image replaced while a parallel block runs is displayed by that block's child statement"
+            parameter kind = ["parallel", "choice"]
+            run Start("atl__child_replace__swap_" + kind)
+            assert eval (atl__shown() == ["atl__blue"]) timeout 1.0
+            advance
+
+            # Past the final child statement inside the running block.
+            pause 0.5
+            assert eval (atl__shown() == ["atl__yellow"])
 
         testcase reshow_same_transform:
             description "Showing a new image at the same ATL transform displays the new image"

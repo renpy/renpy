@@ -991,7 +991,25 @@ class Transform(Container):
         rv = self.copy()
 
         if self.child is not None:
-            rv.set_child(self.child._change_transform_child(child))
+            new_child = self.child._change_transform_child(child)
+            rv.set_child(new_child)
+
+            if isinstance(self, ATLTransform):
+                assert isinstance(rv, ATLTransform)
+
+                # ATL that shows the child it was given has that child compiled
+                # into its block. The child, before it was duplicated, is in the
+                # context, if ATL takes a child parameter.
+                old = [self.original_child, self.context.context.get("child", None)]
+                old = [i for i in old if i is not None]
+
+                rv.change_block_child(old, new_child)
+                rv.original_child = new_child
+
+                if "child" in rv.context.context:
+                    context = dict(rv.context.context)
+                    context["child"] = new_child
+                    rv.context = renpy.atl.Context(context)
 
         return rv
 
