@@ -100,8 +100,10 @@ class BaseOutcome:
         """
         Finalize the test case outcomes.
 
-        If status is None, it will be set to PASSED if no asserts failed,
-        otherwise it is set to FAILED.
+        If status is None, it will be set to FAILED if any assert failed. Otherwise,
+        if the block itself is expected to fail, it is XFAILED if any assert xfailed
+        and XPASSED if none did. A block that is not expected to fail is XFAILED if
+        it only has xfailed asserts, and PASSED otherwise.
         """
         if self.end_time > 0.0:
             return  # Already ended
@@ -114,6 +116,11 @@ class BaseOutcome:
         elif self.status == OutcomeStatus.PENDING:
             if self.num_asserts_failed > 0:
                 self.status = OutcomeStatus.FAILED
+            elif self.test_block.xfail:
+                if self.num_asserts_xfailed > 0:
+                    self.status = OutcomeStatus.XFAILED
+                else:
+                    self.status = OutcomeStatus.XPASSED
             elif self.num_asserts_xfailed > 0 and self.num_asserts_passed == 0:
                 self.status = OutcomeStatus.XFAILED
             else:
@@ -193,7 +200,9 @@ class TestSuiteOutcome(TestCaseOutcome):
 
             self.num_asserts += child.num_asserts
             self.num_asserts_passed += child.num_asserts_passed
+            self.num_asserts_xfailed += child.num_asserts_xfailed
             self.num_asserts_failed += child.num_asserts_failed
+            self.num_asserts_xpassed += child.num_asserts_xpassed
 
             if isinstance(child, TestSuiteOutcome):
                 self.num_testsuites += child.num_testsuites + 1
@@ -258,7 +267,12 @@ class TestSuiteOutcome(TestCaseOutcome):
             self.status = status
 
         elif self.status == OutcomeStatus.PENDING:
-            if self.num_testcases_failed > 0 or self.num_hooks_failed > 0:
+            if (
+                self.num_testcases_failed > 0
+                or self.num_testcases_xpassed > 0
+                or self.num_hooks_failed > 0
+                or self.num_hooks_xpassed > 0
+            ):
                 self.status = OutcomeStatus.FAILED
             elif self.num_testcases_skipped == self.num_testcases:
                 self.status = OutcomeStatus.SKIPPED

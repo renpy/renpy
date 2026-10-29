@@ -154,6 +154,22 @@ testsuite boolean_conditions:
         xfail True  # The test should fail
         assert False
 
+    testcase boolean_value_mixed:
+        xfail True  # A passing assert should not hide the failing one
+        assert True
+        assert False
+
+    testcase boolean_value_mixed_status:
+        description "Checks that boolean_value_mixed was reported as xfailed."
+
+        python:
+            reporter = renpy.test.testreporter.reporter
+            suite_outcome = reporter.outcome_manager.get_outcome_by_test_block(reporter.suites[-1])
+            mixed = [c for c in suite_outcome.children if c.name == "boolean_value_mixed"][0]
+
+            assert mixed.status == renpy.test.testreporter.OutcomeStatus.XFAILED, mixed.status
+            assert (mixed.num_asserts_passed, mixed.num_asserts_xfailed) == (1, 1)
+
     testcase boolean_operators:
         assert not False
         assert not not True
