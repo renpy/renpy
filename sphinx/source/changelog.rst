@@ -333,6 +333,23 @@ A sampler uniform can now be suffixed with ``__virtual_size`` to get the size
 of its texture in virtual pixels. The ``__res`` and other uniform operations
 now work on uniforms supplied by displayables and transforms.
 
+More displayables now show their own copy of a child that contains ATL or
+otherwise needs to be copied, rather than sharing one copy between every place
+the displayable is used. This means ATL inside the child starts from the
+beginning each time the displayable is shown, and image arguments and
+``[prefix_]`` substitutions are applied. This affects the children of drags
+(including those set with :meth:`Drag.set_child`), buttons created in Python,
+imagemap images, :func:`Fade` and :func:`MultipleTransition` intermediate
+images, displayables embedded in :class:`Text`, displayables shown with
+``show expression`` that are not transforms, and the deprecated
+``Zoom``, ``FactorZoom``, ``SizeZoom``, ``RotoZoom``, ``Alpha``, ``Blink``,
+``Animation``, and ``anim.SMAnimation`` displayables.
+
+When an ATL child statement with a ``with`` clause changes the child, the
+transition now starts from the copy of the old child that was being shown,
+rather than restarting the old child. If a previous transition was still
+running, the new transition starts from that transition's new child.
+
 .. _renpy-8.5.4:
 
 8.5.4

@@ -2156,6 +2156,14 @@ class Text(renpy.display.displayable.Displayable):
     _duplicatable = False
     locked = False
 
+    displayable_copies: "dict[int, tuple[renpy.display.core.Displayable, renpy.display.core.Displayable]] | None" = None
+    """
+    Maps the id of each duplicatable displayable embedded in the text to a
+    tuple of that displayable and the copy this Text shows in its place.
+    The copies are kept between updates, so retokenizing doesn't restart
+    their animations.
+    """
+
     language = None
     mask = None
     last_ctc = None
@@ -2260,10 +2268,18 @@ class Text(renpy.display.displayable.Displayable):
             self.start = replaces.start
             self.end = replaces.end
 
+            # Keep the replaced text's copies, so embedded animations continue.
+            self.displayable_copies = replaces.displayable_copies
+
         # The list of displayables we use.
         self.displayables = None
 
         self._duplicatable = self.slow
+
+        if not self.tokenized:
+            for i in self.text:  # type: ignore
+                if isinstance(i, renpy.display.displayable.Displayable) and i._duplicatable:
+                    self._duplicatable = True
 
         # The list of displayables and their offsets.
         self.displayable_offsets = []
@@ -2275,6 +2291,11 @@ class Text(renpy.display.displayable.Displayable):
         if self._duplicatable:
             rv = self._copy(args)
             rv._unique()
+
+            # Make sure the copy doesn't share copies of embedded displayables.
+            if rv.displayable_copies:
+                rv.displayable_copies = None
+                rv.dirty = True
 
             return rv
 
@@ -3089,10 +3110,35 @@ class Text(renpy.display.displayable.Displayable):
         displayables = set()
         new_tokens = []
 
+        # The click-to-continue indicators are duplicated by the Character,
+        # so they're shown as-is.
+        ctc_ids = set()
+
+        for ctc in (self.ctc, self.last_ctc):
+            if isinstance(ctc, list):
+                ctc_ids.update(id(i) for i in ctc)
+            elif ctc is not None:
+                ctc_ids.add(id(ctc))
+
+        old_copies = self.displayable_copies or {}
+        copies = {}
+
         for t in tokens:
             kind, text = t
 
             if kind == DISPLAYABLE:
+                if text._duplicatable and (id(text) not in ctc_ids):
+                    entry = old_copies.get(id(text), None)
+
+                    if (entry is None) or (entry[0] is not text):
+                        duplicate = text._duplicate(None)
+                        duplicate._unique()
+                        entry = (text, duplicate)
+
+                    copies[id(text)] = entry
+                    text = entry[1]
+                    t = (DISPLAYABLE, text)
+
                 displayables.add(text)
                 new_tokens.append(t)
                 continue
@@ -3108,6 +3154,8 @@ class Text(renpy.display.displayable.Displayable):
                     continue
 
             new_tokens.append(t)
+
+        self.displayable_copies = copies or None
 
         return new_tokens, displayables
 

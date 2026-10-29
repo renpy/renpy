@@ -479,6 +479,12 @@ def show(
         else:
             base = img = what
 
+            # Transforms are shown as-is, so changes made to them are visible.
+            # Other displayables are duplicated, so each show gets its own state.
+            if img._duplicatable and not isinstance(img, renpy.display.motion.Transform):
+                base = img = img._duplicate(None)
+                img._unique()
+
     else:
         name, what = _find_image(layer, key, name, what)
         base = img = renpy.display.image.ImageReference(what, style="image_placement")

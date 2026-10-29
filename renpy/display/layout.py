@@ -2107,12 +2107,30 @@ class Alpha(renpy.display.displayable.Displayable):
         self.end = end
         self.time = time
         self.child = renpy.easy.displayable(child)
+        self._duplicatable = self.child._duplicatable
         self.repeat = repeat
         self.anim_timebase = anim_timebase
         self.time_warp = time_warp
 
     def visit(self):
         return [self.child]
+
+    def _duplicate(self, args):
+        child = self.child._duplicate(args)
+
+        if child is self.child:
+            return self
+
+        child._unique()
+
+        rv = self._copy(args)
+        rv.child = child
+        rv._duplicatable = False
+        return rv
+
+    def _unique(self):
+        self.child._unique()
+        self._duplicatable = False
 
     def predict_shaders(self, shaders):
         return shaders + ("renpy.alpha",)
@@ -2378,8 +2396,9 @@ class AlphaMask(Container):
     def _duplicate(self, args):
         rv = super(AlphaMask, self)._duplicate(args)
 
-        if (rv is not self) and rv.mask._duplicatable:
-            rv.mask = self.mask._duplicate(args)
+        # Container._duplicate has already duplicated the mask, as the first child.
+        if rv is not self:
+            rv.mask = rv.children[0]
 
         return rv
 

@@ -1286,7 +1286,13 @@ def _imagemap(
     parts = []
 
     if ground:
-        rv.add(renpy.easy.displayable(ground))
+        ground = renpy.easy.displayable(ground)
+
+        if ground._duplicatable:
+            ground = ground._duplicate(None)
+            ground._unique()
+
+        rv.add(ground)
         parts.append(ground)
 
     box = renpy.display.layout.MultiBox(layout="fixed")

@@ -515,10 +515,17 @@ class ATLTransformBase(renpy.object.Object):
         if self.child is renpy.display.motion.null:
             if t.child and t.child._duplicatable:
                 self.child = t.child._duplicate(None)
+
+                if not self._duplicatable:
+                    self.child._unique()
             else:
                 self.child = t.child
 
+            self.children = [self.child] if self.child is not None else []
             self.raw_child = t.raw_child
+
+            if self.child is t.child:
+                self.atl_child = t.atl_child
 
     def __call__(self, *args, **kwargs):
         _args = kwargs.pop("_args", None)
@@ -1365,7 +1372,10 @@ class Child(Statement):
     def execute(self, trans, st, state, events):
         executing(self.loc)
 
-        old_child = trans.raw_child
+        # Transition from the child that's being shown. If an earlier child
+        # statement's transition is still in progress, transition from that
+        # statement's child rather than nesting the transitions.
+        old_child = trans.atl_child if trans.atl_child is not None else trans.child
 
         child = self.child
 
@@ -1373,12 +1383,15 @@ class Child(Statement):
             child = self.child._duplicate(trans._args)
             child._unique()
 
+        atl_child = child
+
         if (old_child is not None) and (old_child is not renpy.display.motion.null) and (self.transition is not None):
             child = self.transition(old_widget=old_child, new_widget=child)
             child._unique()
 
         trans.set_child(child, duplicate=False)
         trans.raw_child = self.child
+        trans.atl_child = atl_child
 
         return "next", st, None
 

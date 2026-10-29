@@ -45,8 +45,27 @@ class ImageMapCrop(renpy.display.displayable.Displayable):
         self.child = child
         self.rect = rect
 
+        self._duplicatable = child._duplicatable
+
     def visit(self):
         return [self.child]
+
+    def _duplicate(self, args):
+        child = self.child._duplicate(args)
+
+        if child is self.child:
+            return self
+
+        child._unique()
+
+        rv = self._copy(args)
+        rv.child = child
+        rv._duplicatable = False
+        return rv
+
+    def _unique(self):
+        self.child._unique()
+        self._duplicatable = False
 
     def render(self, width, height, st, at):
         cr = render(self.child, renpy.config.screen_width, renpy.config.screen_height, st, at)

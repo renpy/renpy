@@ -772,6 +772,13 @@ class Transform(Container):
     child_in_current_store: renpy.display.displayable.Displayable | None = None
     original_child = None
 
+    atl_child: renpy.display.displayable.Displayable | None = None
+    """
+    The child most recently set by an ATL child statement, after it was
+    duplicated but before any transition was applied. None if the child was
+    set some other way.
+    """
+
     def __init__(
         self,
         child=None,
@@ -1094,6 +1101,7 @@ class Transform(Container):
             self.child_in_current_store = None
 
         self.raw_child = raw_child
+        self.atl_child = None
 
         self.child = child
         self.children = [child]

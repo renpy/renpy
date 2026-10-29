@@ -141,7 +141,17 @@ class MultipleTransition(Transition):
         self.transitions = []
 
         # The screens that we use for the transition.
-        self.screens = [renpy.easy.displayable(i) for i in args[0::2]]
+        self.screens = []
+
+        for i in args[0::2]:
+            i = renpy.easy.displayable(i)
+
+            # True and False stand for the new and old widgets, and aren't displayables.
+            if isinstance(i, renpy.display.displayable.Displayable) and i._duplicatable:
+                i = i._duplicate(None)
+                i._unique()
+
+            self.screens.append(i)
 
         def oldnew(w):
             if w is False:
@@ -676,6 +686,7 @@ class AlphaDissolve(Transition):
         control = renpy.easy.displayable(control)
         if control._duplicatable:
             control = control._duplicate(self._args)
+            control._unique()
 
         self.control.add(control)
 

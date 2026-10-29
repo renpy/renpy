@@ -1001,6 +1001,14 @@ class Button(renpy.display.layout.Window):
         if isinstance(clicked, renpy.ui.Action):
             action = clicked
 
+        # Buttons are never duplicated, so the child is duplicated here instead.
+        if child is not None:
+            child = renpy.easy.displayable(child)
+
+            if child._duplicatable:
+                child = child._duplicate(None)
+                child._unique()
+
         super(Button, self).__init__(child, style=style, **properties)
 
         self.action = action
