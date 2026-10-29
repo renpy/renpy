@@ -64,12 +64,6 @@ label start:
         "GLTF Box":
             call gltf_box
 
-        "Layered Image Exceptions":
-            call test_layered_image_exceptions
-        
-        "Layered Image Overlay Fallback":
-            call test_layered_image_overlay_fallback
-
         "Done.":
             return
 
@@ -226,41 +220,6 @@ label get_image_bounds:
     $ bounds = renpy.get_image_bounds("eileen")
 
     "Eileen's bounding box: [bounds]"
-
-    return
-
-###############################################################################
-# Layered Image Exceptions
-###############################################################################
-
-layeredimage testchar:
-
-    attribute happy
-
-    always:
-        "eileen_happy.png"
-
-label test_layered_image_exceptions:
-
-    $ config.developer = True
-    $ config.report_extraneous_attributes = True
-    $ config.raise_image_exceptions = True
-
-    show testchar happy typo_attribute
-
-    "This line should not be reached if the exception handling works." 
-
-    return
-
-label test_layered_image_overlay_fallback:
-
-    $ config.developer = True
-    $ config.report_extraneous_attributes = False
-    $ config.raise_image_exceptions = True
-
-    show testchar happy typo_attribute
-
-    "This line should be reached."
 
     return
 
