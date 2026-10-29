@@ -49,9 +49,7 @@ changes to Ren'Py that only involve Python modules, you can use the modules
 found in the latest nightly build. Otherwise, you'll have to compile the
 modules yourself.
 
-The development scripts assume a POSIX-like platform. The scripts should run
-on Linux or macOS, and can be made to run on Windows using an environment
-like MSYS.
+The development scripts run on Linux, macOS, and Windows.
 
 Nightly Build
 -------------
@@ -78,18 +76,13 @@ below.
 Compiling the Modules
 ----------------------
 
-Building the modules requires you have the many dependencies installed on
-your system. On Ubuntu and Debian, these dependencies can be installed with
-the command::
+Building the modules requires you to have the dependencies installed on your
+system. On Ubuntu and Debian, these dependencies can be installed with the
+command::
 
-    sudo apt install python3-dev libassimp-dev libavcodec-dev libavformat-dev \
-        libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
-        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config
-
-Ren'Py requires SDL_image 2.6 or greater. If your distribution doesn't include
-that version, you'll need to download it from:
-
-    https://github.com/libsdl-org/SDL_image/tree/SDL2
+    sudo apt install python3-dev libassimp-dev libavcodec-dev libavformat-dev libavutil-dev \
+        libswresample-dev libswscale-dev libharfbuzz-dev libfreetype-dev libfribidi-dev \
+        libsdl3-dev libsdl3-image-dev libpng-dev pkg-config
 
 We strongly suggest using a package manager to create virtual environment and
 manage dependencies. We have tested with `uv <https://docs.astral.sh/uv/>`_ but
@@ -101,6 +94,26 @@ install dependencies, open a new terminal and run::
 After that, compile extension modules and run Ren'Py using the command::
 
     ./run.sh
+
+Windows
+-------
+
+On Windows, ``run.ps1`` does the same job as ``run.sh``. Before you use it,
+you'll need llvm-mingw. Download an ``llvm-mingw-*-ucrt`` ZIP from the
+`llvm-mingw releases <https://github.com/mstorsjo/llvm-mingw/releases>`_,
+extract it, and add its ``bin`` directory to ``PATH``.
+
+You'll also need a windev directory. If you don't have one, download
+``renpy-*-windev.zip`` from `the current-8 nightly builds
+<https://nightly.renpy.org/current-8>`_ and extract it to
+``lib\py3-windows-x86_64\dev``. When working on the ``fix`` branch, use
+`the current-8-fix nightly builds <https://nightly.renpy.org/current-8-fix/>`_
+instead. Don't mix archives from master and fix. If compilation fails,
+download the latest windev archive for your branch and extract it again.
+
+Then, from PowerShell, run::
+
+    .\run.ps1
 
 
 Other Platforms
