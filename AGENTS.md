@@ -202,9 +202,24 @@ These are the changes that break real games. Check each one that applies.
 ## Build, run, and test
 
 The project uses `uv`. `uv sync` creates `.venv`; `run.sh` uses `$RENPY_VIRTUAL_ENV`, else an active
-virtualenv, else `.venv`, and fails if none exists. Native builds need the `sdl3` and `sdl3-image`
-pkg-config packages plus the libraries in [setup.py](setup.py); the SDL2 list in README.rst is out
-of date.
+virtualenv, else `.venv`, and fails if none exists. On Linux and macOS, native builds need the
+`sdl3`, `sdl3-image`, `libpng`, `assimp`, FFmpeg, FreeType, HarfBuzz, and FriBidi development
+libraries, found through pkg-config; see [README.rst](README.rst#compiling-the-modules) for the
+Ubuntu/Debian package list.
+
+### Windows development
+
+`run.ps1` is the Windows equivalent of `run.sh`. Set up these two things first:
+
+- **llvm-mingw.** Download an `llvm-mingw-*-ucrt` ZIP from the
+  [llvm-mingw releases](https://github.com/mstorsjo/llvm-mingw/releases),
+  extract it, and add its `bin` directory to `PATH`.
+- **windev.** If `lib\py3-windows-x86_64\dev` does not exist, download
+  `renpy-*-windev.zip` and extract it there. Take it from
+  `https://nightly.renpy.org/current-8`, or from
+  `https://nightly.renpy.org/current-8-fix/` on the `fix` branch. Never mix
+  master and fix archives. If compilation fails, replace it with the latest
+  windev archive for your branch.
 
 ```sh
 ./run.sh --build                      # rebuild changed Cython/C extensions, don't launch
@@ -215,6 +230,8 @@ of date.
 ./run.sh <project-dir> compile        # compile scripts to .rpyc without running
 ./scripts/run-headless.sh <args>      # same arguments as run.sh, on a virtual display with dummy audio
 ```
+
+On Windows, use the equivalent PowerShell commands with `.\run.ps1`.
 
 `run.sh` rebuilds stale extensions before every launch; Python-only edits need no build step.
 `run-headless.sh` needs Weston, `xvfb-run`, or `Xvfb`; read the script if it fails.
