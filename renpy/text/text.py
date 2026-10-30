@@ -413,8 +413,14 @@ class TextSegment(object):
         Draws the glyphs to surf.
         """
 
-        if di.override_color:
-            color = self.outline_color or di.override_color
+        if (color := di.override_color) is not None:
+            # Let "outlinecolor" text tag override the outline color.
+            if (outline_color := self.outline_color) is not None:
+                color = outline_color
+
+            # "alpha" text tag should affect the outline color as well.
+            if (alpha := self.color.alpha) != 1.0:
+                color = color.replace_opacity(color.alpha * alpha)
             black_color = None
         else:
             color = self.color
