@@ -1690,6 +1690,12 @@ font_size_adjust: dict[str, float | Callable[[str, float], float]] = {}
 A map from font name to a multiplier or function that's used to adjust the size of a font.
 """
 
+font_memory_buffer_size: int = 2 * 1024 * 1024
+"""
+Fonts smaller than this many bytes are loaded into memory by the harfbuzz shaper. Larger fonts are read from
+disk as needed.
+"""
+
 scene_uses_tag_layer: bool = True
 """
 If True, the scene statement will use the tag layer if a tag is known.

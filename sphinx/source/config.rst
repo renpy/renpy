@@ -1812,6 +1812,14 @@ Text and Fonts
 
     If no key is found, None is looked up, and the resulting mode is used.
 
+.. var:: config.font_memory_buffer_size = 2097152
+
+    When using the harfbuzz text shaper, each font file smaller than this
+    many bytes (2 MB, by default) is loaded entirely into memory, which makes
+    accessing it faster. Font files this size or larger are read from disk or
+    the archive as needed, which saves memory for large fonts, such as those
+    that cover Chinese, Japanese, and Korean.
+
 .. var:: config.font_name_map = { }
 
     This is a map from (font name) to (font filepath/fontgroup). Font names

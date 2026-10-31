@@ -403,6 +403,10 @@ cdef class HBFace:
         # The SDL_IOStream borrowed from f, used by io_func.
         SDL_IOStream *rw
 
+        # If the font was loaded into memory, the buffer holding it. Freed after the face
+        # is done. When this is set, f is closed and rw is NULL.
+        unsigned char *memory
+
         # The offset in that file.
         unsigned long offset
 
@@ -425,11 +429,16 @@ cdef class HBFace:
 
         FT_Done_Face(self.face)
 
+        if self.memory:
+            PyMem_Free(self.memory)
+
     def __init__(self, f, index, fn):
 
         cdef int error
         cdef unsigned long size
         cdef Sint64 sdl_size
+        cdef unsigned long total
+        cdef size_t read
         cdef hb_face_t *hb_face
 
         cdef char text[256]
@@ -454,14 +463,41 @@ cdef class HBFace:
         # The offset within the stream we're currently at.
         self.offset = 0
 
-        self.open_args.flags = FT_OPEN_STREAM
-        self.open_args.stream = &self.stream
+        if size < renpy.config.font_memory_buffer_size:
 
-        self.stream.size = size
-        self.stream.pos = 0
-        self.stream.descriptor.pointer = <void *> self
-        self.stream.read = io_func
-        self.stream.close = close_func
+            # Small fonts are read into memory, so FreeType can access them directly.
+            self.memory = <unsigned char *> PyMem_Malloc(size if size else 1)
+            if not self.memory:
+                raise MemoryError()
+
+            total = 0
+
+            while total < size:
+                read = SDL_ReadIO(self.rw, self.memory + total, size - total)
+
+                if read == 0:
+                    raise IOError("Could not read {!r}: {}".format(fn, SDL_GetError().decode("utf-8", "replace")))
+
+                total += read
+
+            self.rw = NULL
+            self.f.close()
+
+            self.open_args.flags = FT_OPEN_MEMORY
+            self.open_args.memory_base = self.memory
+            self.open_args.memory_size = size
+
+        else:
+
+            # Larger fonts are read through io_func.
+            self.open_args.flags = FT_OPEN_STREAM
+            self.open_args.stream = &self.stream
+
+            self.stream.size = size
+            self.stream.pos = 0
+            self.stream.descriptor.pointer = <void *> self
+            self.stream.read = io_func
+            self.stream.close = close_func
 
         error = FT_Open_Face(library, &self.open_args, index, &self.face)
         if error:
