@@ -55,6 +55,9 @@ class Action(renpy.object.Object):
     def get_tooltip(self):
         return None
 
+    def get_mouse(self):
+        return None
+
     def periodic(self, st):
         return
 
@@ -88,6 +91,9 @@ class BarValue(renpy.object.Object):
         return "bar", "vbar"
 
     def get_tooltip(self):
+        return None
+
+    def get_mouse(self):
         return None
 
 

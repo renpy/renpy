@@ -462,6 +462,22 @@ def get_tooltip(action):
     return func()
 
 
+def get_mouse(action):
+    if isinstance(action, (list, tuple)):
+        for i in action:
+            rv = get_mouse(i)
+            if rv is not None:
+                return rv
+
+        return None
+
+    func = getattr(action, "get_mouse", None)
+    if func is None:
+        return None
+
+    return func()
+
+
 def is_selected(action):
     """
     :name: renpy.is_selected
@@ -1036,6 +1052,15 @@ class Button(renpy.display.layout.Window):
             return self._tooltip
 
         return get_tooltip(self.action)
+
+    def _get_mouse(self):
+        if (mouse := super()._get_mouse()) is not None:
+            return mouse
+
+        if (mouse := get_mouse(self.action)) is not None:
+            return mouse
+
+        return "button"
 
     def _in_current_store(self):
         rv = self._copy()
@@ -2380,6 +2405,10 @@ class Bar(renpy.display.displayable.Displayable):
                 tooltip = value.get_tooltip()
                 if tooltip is not None:
                     properties.setdefault("tooltip", tooltip)
+
+                mouse = value.get_mouse()
+                if mouse is not None:
+                    properties.setdefault("mouse", mouse)
 
             else:
                 adjustment = Adjustment(range, value, step=step, page=page, changed=changed)
