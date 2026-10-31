@@ -23,11 +23,11 @@ from __future__ import print_function
 
 from renpy.pygame.sdl cimport *
 from renpy.pygame.surface cimport Surface
+from renpy.pygame.iostream cimport IOStream, open_io
 
 from freetype cimport *
 from ttgsubtable cimport *
 from renpy.text.textsupport cimport Glyph, SPLIT_INSTEAD
-import traceback
 import sys
 
 import renpy.config
@@ -259,36 +259,32 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
     """
 
     cdef HBFace face
-    cdef char *cbuf
-    cdef unsigned long i
+    cdef unsigned long total
+    cdef size_t read
 
     face = <HBFace> stream.descriptor.pointer
-    f = face.f
 
     if face.offset != offset:
 
-        try:
-            f.seek(offset)
-            face.offset = offset
-        except Exception:
-            traceback.print_exc()
-            return -1
+        if SDL_SeekIO(face.rw, offset, SDL_IO_SEEK_SET) < 0:
+            # A failed seek-only call returns non-zero, a failed read returns 0 bytes.
+            return 1 if count == 0 else 0
 
-    if count != 0:
-        try:
-            buf = f.read(count)
-            cbuf = buf
-            count = len(buf)
+        face.offset = offset
 
-            for i in range(count):
-                buffer[i] = cbuf[i]
-        except Exception:
-            traceback.print_exc()
-            return -1
+    total = 0
 
-    face.offset += count
+    while total < count:
+        read = SDL_ReadIO(face.rw, buffer + total, count - total)
 
-    return count
+        if read == 0:
+            break
+
+        total += read
+
+    face.offset += total
+
+    return total
 
 cdef void close_func(FT_Stream stream) noexcept:
     """
@@ -401,8 +397,11 @@ cdef class HBFace:
 
         float size
 
-        # The file the font is read from.
-        object f
+        # The stream the font is read from.
+        IOStream f
+
+        # The SDL_IOStream borrowed from f, used by io_func.
+        SDL_IOStream *rw
 
         # The offset in that file.
         unsigned long offset
@@ -430,6 +429,7 @@ cdef class HBFace:
 
         cdef int error
         cdef unsigned long size
+        cdef Sint64 sdl_size
         cdef hb_face_t *hb_face
 
         cdef char text[256]
@@ -438,12 +438,18 @@ cdef class HBFace:
         # The filename.
         self.fn = fn
 
-        # The file that the font is opened from.
-        self.f = f
+        # The stream that the font is opened from.
+        self.f = open_io(f, "rb", fn)
+        self.rw = self.f.borrow()
 
-        f.seek(0, 2)
-        size = f.tell()
-        f.seek(0, 0)
+        sdl_size = SDL_GetIOSize(self.rw)
+        if sdl_size < 0:
+            raise IOError("Could not get the size of {!r}: {}".format(fn, SDL_GetError().decode("utf-8", "replace")))
+
+        size = sdl_size
+
+        if SDL_SeekIO(self.rw, 0, SDL_IO_SEEK_SET) < 0:
+            raise IOError("Could not seek in {!r}: {}".format(fn, SDL_GetError().decode("utf-8", "replace")))
 
         # The offset within the stream we're currently at.
         self.offset = 0
