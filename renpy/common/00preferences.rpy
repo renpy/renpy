@@ -264,9 +264,12 @@ init -1500 python:
         * Preference("self voicing voice", "<voice>") - Sets the voice to use for text-to-speech. The voice must be one of the voices found in renpy.get_tts_voices, or it will not be used.
         * Preference("self voicing speed", 2.0) - Sets the speed of the text-to-speech voice. This should be between 1.0 and 3.0, and roughly represents how fast the speaking is.
 
+        * Preference("voice speed", 1.5) - Sets recorded voice playback speed, preserving pitch. The speed must be between 0.5 and 3.0.
+
         Values that can be used with bars are:
 
         * Preference("text speed")
+        * Preference("voice speed")
         * Preference("auto-forward time")
         * Preference("main volume")
         * Preference("music volume")
@@ -437,6 +440,13 @@ init -1500 python:
                     return SetField(_preferences, "wait_voice", False)
                 elif value == "toggle":
                     return ToggleField(_preferences, "wait_voice")
+
+            elif name == _("voice speed"):
+
+                if value is None:
+                    return FieldValue(_preferences, "voice_speed", min=0.5, max=3.0, step=0.05, style="slider")
+
+                return SetField(_preferences, "voice_speed", renpy.preferences.validate_voice_speed(value))
 
             elif name == _("voice sustain"):
 

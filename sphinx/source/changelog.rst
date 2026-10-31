@@ -145,6 +145,12 @@ The :var:`config.tts_voice` variable is no longer used.
 Features
 --------
 
+Recorded voices can now play at 0.5 to 3.0 times their normal speed while
+preserving pitch, including on Web. Changes take effect during playback
+without returning to the beginning of the voice. The player can select the
+speed with ``Preference("voice speed")`` or :func:`renpy.set_voice_speed`.
+See :doc:`voice`.
+
 When :var:`build.wavedash_id` is configured, building a web distribution now
 creates a :file:`wavedash.toml` file for uploading the build to Wavedash.
 The launcher can upload that web distribution directly to Wavedash, downloading

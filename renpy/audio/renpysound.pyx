@@ -57,8 +57,8 @@ from renpy.pygame.sdl cimport SDL_IOStream
 
 cdef extern from "renpysound_core.h":
 
-    void RPS_play(int channel, SDL_IOStream *rw, char *ext, char* name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
-    void RPS_queue(int channel, SDL_IOStream *rw, char *ext, char *name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
+    void RPS_play(int channel, SDL_IOStream *rw, char *ext, char* name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter, double playback_speed)
+    void RPS_queue(int channel, SDL_IOStream *rw, char *ext, char *name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter, double playback_speed)
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
@@ -69,6 +69,8 @@ cdef extern from "renpysound_core.h":
     void RPS_unpause_all_at_start()
     void RPS_global_pause(int pause)
     void RPS_seek(int channel, double position)
+    void RPS_set_playback_speed(int channel, double speed)
+    double RPS_get_playback_speed(int channel)
     int RPS_get_pos(int channel)
     double RPS_get_duration(int channel)
     void RPS_set_endevent(int channel, int event)
@@ -115,7 +117,7 @@ def check_error():
         raise Exception(str(e, "utf-8", "replace"))
 
 
-def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None, playback_speed=1.0):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -144,7 +146,13 @@ def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=
 
     `audio_filter`
         The audio filter to apply when the file is being played.
+
+    `playback_speed`
+        A speed between 0.5 and 3.0, preserving pitch. Only used for voices.
     """
+
+    from renpy.preferences import validate_voice_speed
+    playback_speed = validate_voice_speed(playback_speed)
 
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
@@ -157,11 +165,11 @@ def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_play(channel, rw, name, name, synchro_start, fadein * 1000, tight, start, end, relative_volume, audio_filter)
+    RPS_play(channel, rw, name, name, synchro_start, fadein * 1000, tight, start, end, relative_volume, audio_filter, playback_speed)
     check_error()
 
 
-def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None, playback_speed=1.0):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -169,6 +177,9 @@ def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start
     The other arguments are as for play.
     """
 
+    from renpy.preferences import validate_voice_speed
+    playback_speed = validate_voice_speed(playback_speed)
+
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
@@ -180,7 +191,7 @@ def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_queue(channel, rw, name, name, synchro_start, fadein * 1000, tight, start, end, relative_volume, audio_filter)
+    RPS_queue(channel, rw, name, name, synchro_start, fadein * 1000, tight, start, end, relative_volume, audio_filter, playback_speed)
     check_error()
 
 
@@ -295,6 +306,22 @@ def get_pos(channel):
     """
 
     return RPS_get_pos(channel) / 1000.0
+
+
+def set_playback_speed(channel, speed):
+    """Changes the playing voice's rate while keeping its source position."""
+
+    from renpy.preferences import validate_voice_speed
+    RPS_set_playback_speed(channel, validate_voice_speed(speed))
+    check_error()
+
+
+def get_playback_speed(channel):
+    """Returns the playing stream's requested playback speed."""
+
+    rv = RPS_get_playback_speed(channel)
+    check_error()
+    return rv
 
 
 def get_duration(channel):

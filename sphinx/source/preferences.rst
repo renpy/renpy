@@ -140,6 +140,12 @@ can then change it again.)
     replaces it. If False, the voice line ends when the line of dialogue
     advances. The equivalent of the "voice sustain" preference.
 
+.. var:: preferences.voice_speed = 1.0
+
+    The playback speed of recorded voices, between 0.5 and 3.0, preserving
+    pitch. The equivalent of the "voice speed" preference. See :doc:`voice`
+    for request timing and platform details.
+
 .. var:: preferences.wait_voice = True
 
     If True, auto-forward mode will wait for voice files and self-voicing to

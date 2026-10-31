@@ -27,8 +27,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Python.h>
 #include <SDL3/SDL.h>
 
-void RPS_play(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);
-void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);
+void RPS_play(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter, double playback_speed);
+void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter, double playback_speed);
 void RPS_stop(int channel);
 void RPS_dequeue(int channel, int even_tight);
 int RPS_queue_depth(int channel);
@@ -38,6 +38,8 @@ void RPS_fadeout(int channel, int ms);
 void RPS_pause(int channel, int pause);
 void RPS_global_pause(int pause);
 void RPS_seek(int channel, double position);
+void RPS_set_playback_speed(int channel, double speed);
+double RPS_get_playback_speed(int channel);
 void RPS_set_endevent(int channel, int event);
 int RPS_get_pos(int channel);
 double RPS_get_duration(int channel);

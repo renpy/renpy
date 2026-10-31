@@ -5,6 +5,10 @@
 #include <libavutil/pixfmt.h>
 #include <libswscale/swscale.h>
 
+#include <libavfilter/avfilter.h>
+#include <libavfilter/buffersrc.h>
+#include <libavfilter/buffersink.h>
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_thread.h>
 
@@ -307,7 +311,30 @@ typedef struct MediaState {
 	/* The offset between now and the time of the current frame, at least for video. */
 	double time_offset;
 
+	/* Sample counters measure output frames. A live rate change rebases
+	 * them at the current position; public times remain in source seconds. */
+	double playback_speed;
+	double requested_speed;
+	int live_speed;
+
+	/* Owned by the decoder thread, and rebuilt after a seek. */
+	AVFilterGraph *tempo_graph;
+	AVFilterContext *tempo_source;
+	AVFilterContext *tempo_sink;
+	int64_t tempo_input_samples;
+
 } MediaState;
+
+static int output_samples(MediaState *ms, double source_time) {
+	return (int) llround(source_time * audio_sample_rate / ms->playback_speed);
+}
+
+static void reset_tempo(MediaState *ms) {
+	avfilter_graph_free(&ms->tempo_graph);
+	ms->tempo_source = NULL;
+	ms->tempo_sink = NULL;
+	ms->tempo_input_samples = 0;
+}
 
 static AVFrame *dequeue_frame(FrameQueue *fq);
 static void free_packet_queue(PacketQueue *pq);
@@ -367,12 +394,12 @@ static void reset_after_seek(MediaState *ms, double position) {
 	ms->video_read_time = 0.0;
 
 	if (ms->end_time >= 0.0) {
-		ms->audio_duration = audio_time_to_samples(ms->end_time) - audio_time_to_samples(position);
+		ms->audio_duration = output_samples(ms, ms->end_time) - output_samples(ms, position);
 		if (ms->audio_duration < 0) {
 			ms->audio_duration = 0;
 		}
 	} else if (ms->total_duration > 0.0) {
-		ms->audio_duration = audio_time_to_samples(ms->total_duration) - audio_time_to_samples(position);
+		ms->audio_duration = output_samples(ms, ms->total_duration) - output_samples(ms, position);
 		if (ms->audio_duration < 0) {
 			ms->audio_duration = 0;
 		}
@@ -390,6 +417,7 @@ SDL_Mutex *deallocate_mutex = NULL;
 
 /* Deallocates a single MediaState. */
 static void deallocate(MediaState *ms) {
+	reset_tempo(ms);
 
     while (1) {
 		SurfaceQueueEntry *sqe = dequeue_surface(&ms->surface_queue);
@@ -752,6 +780,151 @@ static int seek_media(MediaState *ms, double position) {
 
 /* Audio decoding *************************************************************/
 
+static void queue_audio_output(MediaState *ms, AVFrame *frame) {
+	SDL_LockMutex(ms->lock);
+	ms->audio_queue_samples += frame->nb_samples;
+	enqueue_frame(&ms->audio_queue, frame);
+	SDL_UnlockMutex(ms->lock);
+}
+
+static int init_tempo(MediaState *ms) {
+	AVFilterContext *previous, *tempo;
+	char args[128];
+	int ret;
+	double speed = ms->playback_speed;
+
+	ms->tempo_graph = avfilter_graph_alloc();
+	if (!ms->tempo_graph) {
+		return AVERROR(ENOMEM);
+	}
+	ms->tempo_graph->nb_threads = 1;
+
+	snprintf(args, sizeof(args), "time_base=1/%d:sample_rate=%d:sample_fmt=s16:channel_layout=stereo",
+		audio_sample_rate, audio_sample_rate);
+	ret = avfilter_graph_create_filter(&ms->tempo_source, avfilter_get_by_name("abuffer"),
+		"source", args, NULL, ms->tempo_graph);
+	if (ret < 0) {
+		return ret;
+	}
+	previous = ms->tempo_source;
+
+	/* Factors above two skip samples in atempo. Chain smaller factors to
+	 * retain its overlap/blending algorithm throughout the supported range. */
+	for (int i = 0; i < 2; i++) {
+		double factor = speed > 2.0 ? 2.0 : speed;
+		snprintf(args, sizeof(args), "%.17g", factor);
+		ret = avfilter_graph_create_filter(&tempo, avfilter_get_by_name("atempo"),
+			i ? "tempo2" : "tempo", args, NULL, ms->tempo_graph);
+		if (ret < 0) {
+			return ret;
+		}
+		ret = avfilter_link(previous, 0, tempo, 0);
+		if (ret < 0) {
+			return ret;
+		}
+		previous = tempo;
+		speed /= factor;
+		if (speed == 1.0) {
+			break;
+		}
+	}
+
+	ret = avfilter_graph_create_filter(&ms->tempo_sink, avfilter_get_by_name("abuffersink"),
+		"sink", NULL, NULL, ms->tempo_graph);
+	if (ret < 0) {
+		return ret;
+	}
+	ret = avfilter_link(previous, 0, ms->tempo_sink, 0);
+	if (ret < 0) {
+		return ret;
+	}
+	return avfilter_graph_config(ms->tempo_graph, NULL);
+}
+
+static void filter_tempo(MediaState *ms, AVFrame *input) {
+	int ret;
+
+	if (!ms->tempo_graph) {
+		ret = init_tempo(ms);
+		if (ret < 0) {
+			av_log(ms->ctx, AV_LOG_ERROR, "Could not initialize voice time stretching: %d.\n", ret);
+			reset_tempo(ms);
+			av_frame_free(&input);
+			ms->audio_finished = 1;
+			return;
+		}
+	}
+
+	if (input) {
+		input->pts = ms->tempo_input_samples;
+		ms->tempo_input_samples += input->nb_samples;
+	}
+	ret = av_buffersrc_add_frame(ms->tempo_source, input);
+	av_frame_free(&input);
+	if (ret < 0) {
+		av_log(ms->ctx, AV_LOG_ERROR, "Could not supply voice time stretching samples: %d.\n", ret);
+		ms->audio_finished = 1;
+		return;
+	}
+
+	while (1) {
+		AVFrame *frame = av_frame_alloc();
+		if (!frame) {
+			ms->audio_finished = 1;
+			return;
+		}
+		ret = av_buffersink_get_frame(ms->tempo_sink, frame);
+		if (ret < 0) {
+			av_frame_free(&frame);
+			if (ret != AVERROR(EAGAIN) && ret != AVERROR_EOF) {
+				av_log(ms->ctx, AV_LOG_ERROR, "Could not read voice time stretching samples: %d.\n", ret);
+				ms->audio_finished = 1;
+			}
+			return;
+		}
+		queue_audio_output(ms, frame);
+	}
+}
+
+static void finish_tempo(MediaState *ms) {
+	if (!ms->tempo_input_samples || ms->audio_finished) {
+		return;
+	}
+
+	/* atempo needs complete analysis windows, even for a voice shorter
+	 * than one window. Supply a silent tail and cap playback at the source
+	 * segment's requested duration so the padding is never heard. */
+	if (ms->end_time < 0.0 && !ms->want_video) {
+		SDL_LockMutex(ms->lock);
+		int duration = (int) llround(ms->tempo_input_samples / ms->playback_speed);
+		/* The reader may already have supplied underrun silence using the
+		 * container duration. EOF cannot retract those consumed frames. */
+		ms->audio_duration = duration < ms->audio_read_samples ? ms->audio_read_samples : duration;
+		SDL_UnlockMutex(ms->lock);
+	}
+
+	AVFrame *padding = av_frame_alloc();
+	if (padding) {
+		padding->sample_rate = audio_sample_rate;
+		padding->format = AV_SAMPLE_FMT_S16;
+#if (LIBAVUTIL_VERSION_MAJOR < 59)
+		padding->channel_layout = AV_CH_LAYOUT_STEREO;
+#else
+		padding->ch_layout = (AVChannelLayout) AV_CHANNEL_LAYOUT_STEREO;
+#endif
+		padding->nb_samples = audio_sample_rate / 10;
+		if (av_frame_get_buffer(padding, 0) >= 0) {
+			memset(padding->data[0], 0, padding->nb_samples * BPS);
+			filter_tempo(ms, padding);
+		} else {
+			av_frame_free(&padding);
+		}
+	}
+	if (!ms->audio_finished) {
+		filter_tempo(ms, NULL);
+	}
+}
+
 static void queue_audio_frame(MediaState *ms, AVFrame *frame, double start) {
 	int skip = audio_time_to_samples(ms->skip) - audio_time_to_samples(start);
 
@@ -763,12 +936,35 @@ static void queue_audio_frame(MediaState *ms, AVFrame *frame, double start) {
 	if (skip > 0) {
 		frame->nb_samples -= skip;
 		memmove(frame->data[0], frame->data[0] + skip * BPS, frame->nb_samples * BPS);
+		start += 1.0 * skip / audio_sample_rate;
 	}
 
-	SDL_LockMutex(ms->lock);
-	ms->audio_queue_samples += frame->nb_samples;
-	enqueue_frame(&ms->audio_queue, frame);
-	SDL_UnlockMutex(ms->lock);
+	if (ms->playback_speed != 1.0) {
+		int at_end = 0;
+		/* Trim before stretching, so samples past an explicit end cannot
+		 * be blended into the end of the requested source segment. */
+		if (ms->end_time >= 0.0) {
+			int remaining = audio_time_to_samples(ms->end_time) - audio_time_to_samples(start);
+			if (remaining <= 0) {
+				av_frame_free(&frame);
+				finish_tempo(ms);
+				ms->audio_finished = 1;
+				return;
+			}
+			if (frame->nb_samples >= remaining) {
+				frame->nb_samples = remaining;
+				at_end = 1;
+			}
+		}
+		filter_tempo(ms, frame);
+		if (at_end && !ms->audio_finished) {
+			finish_tempo(ms);
+			ms->audio_finished = 1;
+		}
+		return;
+	}
+
+	queue_audio_output(ms, frame);
 }
 
 static void drain_audio(MediaState *ms) {
@@ -856,6 +1052,9 @@ static void decode_audio(MediaState *ms) {
 			if (ret < 0) {
 				if (ret == AVERROR_EOF) {
 					drain_audio(ms);
+					if (ms->playback_speed != 1.0) {
+						finish_tempo(ms);
+					}
 				}
 				ms->audio_finished = 1;
 				return;
@@ -928,6 +1127,9 @@ static void decode_audio(MediaState *ms) {
 
 			ms->audio_decode_end = start + 1.0 * converted_frame->nb_samples / audio_sample_rate;
 			queue_audio_frame(ms, converted_frame, start);
+			if (ms->audio_finished) {
+				return;
+			}
 		}
 
 	}
@@ -1567,18 +1769,17 @@ static int decode_thread(void *arg) {
 		if (ctx->duration_estimation_method != AVFMT_DURATION_FROM_BITRATE) {
 #endif
 
-			ms->audio_duration = (int) av_rescale_rnd(
-				ctx->duration, audio_sample_rate, AV_TIME_BASE, AV_ROUND_NEAR_INF);
+			ms->audio_duration = output_samples(ms, 1.0 * ctx->duration / AV_TIME_BASE);
 
 			ms->total_duration = 1.0 * ctx->duration / AV_TIME_BASE;
 
 			// Check that the duration is reasonable (between 0s and 3600s). If not,
 			// reject it.
-			if (ms->audio_duration < 0 || ms->audio_duration > 3600 * audio_sample_rate) {
+			if (ms->audio_duration < 0 || ms->audio_duration > 3600 * audio_sample_rate / ms->playback_speed) {
 				ms->audio_duration = -1;
 			}
 
-			ms->audio_duration -= audio_time_to_samples(ms->skip);
+			ms->audio_duration -= output_samples(ms, ms->skip);
 
 
 		} else {
@@ -1592,10 +1793,12 @@ static int decode_thread(void *arg) {
 
 	while (!ms->quit) {
 		double seek_target = -1.0;
+		double requested_speed = ms->playback_speed;
 
 		SDL_LockMutex(ms->lock);
 		if (ms->seek_requested) {
 			seek_target = ms->seek_target;
+			requested_speed = ms->requested_speed;
 			ms->seek_requested = 0;
 		}
 		SDL_UnlockMutex(ms->lock);
@@ -1606,8 +1809,10 @@ static int decode_thread(void *arg) {
 				seek_target = maximum;
 			}
 
+			/* Flushing after av_seek_frame resets timestamp state in PCM
+			 * demuxers, making WAV frames appear to start at zero again. */
+			avformat_flush(ctx);
 			if (seek_media(ms, seek_target) >= 0) {
-				avformat_flush(ctx);
 				if (ms->audio_context) {
 					avcodec_flush_buffers(ms->audio_context);
 				}
@@ -1618,8 +1823,10 @@ static int decode_thread(void *arg) {
 					swr_close(ms->swr);
 					swr_init(ms->swr);
 				}
+				reset_tempo(ms);
 
 				SDL_LockMutex(ms->lock);
+				ms->playback_speed = requested_speed;
 				reset_after_seek(ms, seek_target);
 				ms->needs_decode = 1;
 				SDL_UnlockMutex(ms->lock);
@@ -1636,7 +1843,7 @@ static int decode_thread(void *arg) {
 
 		SDL_LockMutex(ms->lock);
 
-		if (!ms->ready) {
+		if (!ms->ready && !ms->seek_requested) {
 			ms->ready = 1;
 			SDL_BroadcastCondition(ms->cond);
 		}
@@ -1765,18 +1972,17 @@ static int decode_sync_start(void *arg) {
 		if (ctx->duration_estimation_method != AVFMT_DURATION_FROM_BITRATE) {
 #endif
 
-			ms->audio_duration = (int) av_rescale_rnd(
-				ctx->duration, audio_sample_rate, AV_TIME_BASE, AV_ROUND_NEAR_INF);
+			ms->audio_duration = output_samples(ms, 1.0 * ctx->duration / AV_TIME_BASE);
 
 			ms->total_duration = 1.0 * ctx->duration / AV_TIME_BASE;
 
 			// Check that the duration is reasonable (between 0s and 3600s). If not,
 			// reject it.
-			if (ms->audio_duration < 0 || ms->audio_duration > 3600 * audio_sample_rate) {
+			if (ms->audio_duration < 0 || ms->audio_duration > 3600 * audio_sample_rate / ms->playback_speed) {
 				ms->audio_duration = -1;
 			}
 
-			ms->audio_duration -= audio_time_to_samples(ms->skip);
+			ms->audio_duration -= output_samples(ms, ms->skip);
 
 
 		} else {
@@ -1843,9 +2049,12 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 	int rv = 0;
 
 	if (ms->audio_duration >= 0) {
-		int remaining = (ms->audio_duration - ms->audio_read_samples) * BPS;
+		int64_t remaining = ((int64_t) ms->audio_duration - ms->audio_read_samples) * BPS;
+		if (remaining < 0) {
+			remaining = 0;
+		}
 		if (len > remaining) {
-			len = remaining;
+			len = (int) remaining;
 		}
 
 		if (!remaining) {
@@ -1905,17 +2114,21 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 		SDL_BroadcastCondition(ms->cond);
 	}
 
-	SDL_UnlockMutex(ms->lock);
-
 	if (ms->audio_duration >= 0) {
-		if ((ms->audio_duration - ms->audio_read_samples) * BPS < len) {
-			len = (ms->audio_duration - ms->audio_read_samples) * BPS;
+		int64_t remaining = ((int64_t) ms->audio_duration - ms->audio_read_samples) * BPS;
+		if (remaining < 0) {
+			remaining = 0;
+		}
+		if (len > remaining) {
+			len = (int) remaining;
 		}
 
 		memset(stream, 0, len);
 		ms->audio_read_samples += len / BPS;
 		rv += len;
 	}
+
+	SDL_UnlockMutex(ms->lock);
 
 	return rv;
 }
@@ -1974,10 +2187,49 @@ MediaState *media_open(SDL_IOStream *rwops, const char *filename) {
 #endif
 
 	ms->audio_duration = -1;
+	ms->playback_speed = 1.0;
+	ms->requested_speed = 1.0;
 	ms->frame_drops = 1;
 
 	return ms;
 }
+
+/* Called before media_start; a speed is never changed on a live decoder. */
+int media_set_playback_speed(MediaState *ms, double speed) {
+	if (!isfinite(speed) || speed < 0.5 || speed > 3.0) {
+		SDL_SetError("Voice speed must be between 0.5 and 3.0.");
+		return -1;
+	}
+	if (speed != 1.0 && (!avfilter_get_by_name("atempo") ||
+		!avfilter_get_by_name("abuffer") || !avfilter_get_by_name("abuffersink"))) {
+		SDL_SetError("Voice speed requires FFmpeg's atempo, abuffer, and abuffersink filters.");
+		return -1;
+	}
+	ms->playback_speed = speed;
+	ms->requested_speed = speed;
+	return 0;
+}
+
+double media_get_playback_speed(MediaState *ms) {
+	SDL_LockMutex(ms->lock);
+	double speed = ms->requested_speed;
+	SDL_UnlockMutex(ms->lock);
+	return speed;
+}
+
+/* A live rate change rebases the output clock at the current source
+ * position. Silence while the decoder re-buffers does not move it. */
+int media_get_live_position(MediaState *ms, double *position) {
+	SDL_LockMutex(ms->lock);
+	int live = ms->live_speed;
+	if (live) {
+		*position = ms->ready ? ms->skip + ms->audio_read_samples * ms->playback_speed / audio_sample_rate
+			: ms->seek_target;
+	}
+	SDL_UnlockMutex(ms->lock);
+	return live;
+}
+
 
 /**
  * Sets the start and end of the stream. This must be called before
@@ -1997,7 +2249,7 @@ void media_start_end(MediaState *ms, double start, double end) {
 		if (end < start) {
 			ms->audio_duration = 0;
 		} else {
-			ms->audio_duration = audio_time_to_samples(end) - audio_time_to_samples(start);
+			ms->audio_duration = output_samples(ms, end) - output_samples(ms, start);
 		}
 	}
 }
@@ -2033,11 +2285,11 @@ void media_seek(MediaState *ms, double position) {
         return;
     }
 
+    avformat_flush(ms->ctx);
     if (seek_media(ms, position) < 0) {
         return;
     }
 
-    avformat_flush(ms->ctx);
     if (ms->audio_context) {
         avcodec_flush_buffers(ms->audio_context);
     }
@@ -2049,15 +2301,59 @@ void media_seek(MediaState *ms, double position) {
         swr_init(ms->swr);
     }
 
+    reset_tempo(ms);
     reset_after_seek(ms, position);
+    ms->ready = 1;
 #else
     SDL_LockMutex(ms->lock);
     ms->seek_target = position;
     ms->seek_requested = 1;
+    if (ms->live_speed) {
+        ms->ready = 0;
+    }
     ms->needs_decode = 1;
     SDL_BroadcastCondition(ms->cond);
     SDL_UnlockMutex(ms->lock);
 #endif
+}
+
+int media_update_playback_speed(MediaState *ms, double speed) {
+	if (!isfinite(speed) || speed < 0.5 || speed > 3.0) {
+		SDL_SetError("Voice speed must be between 0.5 and 3.0.");
+		return -1;
+	}
+	if (speed != 1.0 && (!avfilter_get_by_name("atempo") ||
+		!avfilter_get_by_name("abuffer") || !avfilter_get_by_name("abuffersink"))) {
+		SDL_SetError("Voice speed requires FFmpeg's atempo, abuffer, and abuffersink filters.");
+		return -1;
+	}
+
+	SDL_LockMutex(ms->lock);
+	if (speed == ms->requested_speed) {
+		SDL_UnlockMutex(ms->lock);
+		return 0;
+	}
+	double position = ms->ready ? ms->skip + ms->audio_read_samples * ms->playback_speed / audio_sample_rate
+		: (ms->live_speed ? ms->seek_target : ms->skip);
+	ms->requested_speed = speed;
+	ms->live_speed = 1;
+	ms->seek_target = position;
+	ms->seek_requested = 1;
+	ms->ready = 0;
+	ms->needs_decode = 1;
+	SDL_BroadcastCondition(ms->cond);
+	SDL_UnlockMutex(ms->lock);
+
+#ifdef __EMSCRIPTEN__
+	ms->playback_speed = speed;
+	ms->seek_requested = 0;
+	if (ms->ctx) {
+		media_seek(ms, position);
+	} else {
+		ms->audio_duration = ms->end_time >= 0.0 ? output_samples(ms, ms->end_time) - output_samples(ms, ms->skip) : -1;
+	}
+#endif
+	return 0;
 }
 
 void media_close(MediaState *ms) {

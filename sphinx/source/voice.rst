@@ -104,6 +104,47 @@ It works just the same for automatic voice, as long as the filepath of the
 translation file starting from :file:`game/tl/{<language>}/` matches the filepath of
 the original file starting from :file:`game/`\ .
 
+Voice Speed
+-----------
+
+Recorded voices can play at 0.5 to 3.0 times their normal speed while
+preserving pitch. The speed is a player preference, defaults to 1.0, and is
+not restored by rollback or loading a save. It does not affect music, sound
+effects, movies, or self-voicing.
+
+To add a slider and reset button to a preferences screen::
+
+    label _("Voice Speed")
+    bar value Preference("voice speed")
+    text "[preferences.voice_speed:.2f]×"
+    textbutton _("Normal Speed") action Preference("voice speed", 1.0)
+
+Buttons can select other speeds with ``Preference("voice speed", 1.5)``.
+Scripts can use :func:`renpy.set_voice_speed` and
+:func:`renpy.get_voice_speed`. To choose an initial preference, use
+``default preferences.voice_speed = 1.0``.
+
+Changing the preference updates the speed of a playing voice while
+preserving its current position. This also works while paused, without
+resuming playback. A new play or queue request on the standard ``voice``
+channel captures the selected speed, including voice replay and character
+voice samples. Already queued files and subsequent loops retain the speed
+of their original request.
+
+Position, duration, seek targets, and ``<from>`` / ``<to>`` offsets remain in
+seconds of the original file. Fade durations remain in real seconds.
+Auto-forward waits for playback to finish, followed by the normal voice delay.
+
+Native playback and the Web software decoder require FFmpeg's ``libavfilter``
+with the ``atempo``, ``abuffer``, and ``abuffersink`` filters enabled. The
+matching native or Web runtime must be rebuilt; replacing Python files alone
+is insufficient. The browser's Web Audio backend stretches decoded voices
+asynchronously using waveform similarity overlap-add, then uses the existing
+audio filters, volume controls, and playback queue. During a live speed
+change, the old audio keeps playing until the new buffer is prepared, then
+switches at the current source position. Normal-speed playback bypasses time
+stretching on every backend.
+
 Voice Functions
 ---------------
 
