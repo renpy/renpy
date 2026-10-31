@@ -164,6 +164,9 @@ These are the changes that break real games. Check each one that applies.
 - Python 3.12 only ([pyproject.toml](pyproject.toml)); Ruff line length 120;
   Many files still start with `from __future__ ...` and `from renpy.compat import ...` lines; keep
   them in files that have them and match the file's existing style. Do not reformat files.
+- Preserve existing line wrapping and indentation in Ren'Py documentation, including
+  `sphinx/source/*.rst` and `README.rst`. Wrap new prose to match nearby paragraphs, keep inline
+  literals and interpreted text roles together, and leave unrelated paragraphs as they are.
 - Engine modules mostly `import renpy` and call fully qualified names
   (`renpy.display.render.render(...)`). Prefer this for engine modules: it avoids import cycles, and
   module import order is fixed in `import_all` in [renpy/\_\_init\_\_.py](renpy/__init__.py). A new
