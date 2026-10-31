@@ -50,6 +50,13 @@ def call_int(function, *args):
     return emscripten.run_script_int("renpyAudio.{}.apply(null, {});".format(function, dumps(args)))
 
 
+def call_float(function, *args):
+    """Read a floating-point result without truncating it to an integer."""
+
+    script = f"String(renpyAudio.{function}.apply(null, {dumps(args)}));"
+    return float(emscripten.run_script_string(script))
+
+
 def call_str(function, *args):
     """
     Calls a method on `function`.
@@ -142,6 +149,7 @@ def play(
     end=-1,
     relative_volume=1.0,
     audio_filter=None,
+    playback_speed=1.0,
 ):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
@@ -200,7 +208,7 @@ def play(
     afid = load_audio_filter(audio_filter)
 
     call("stop", channel)
-    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid, array)
+    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid, array, playback_speed)
 
 
 @proxy_with_channel
@@ -215,6 +223,7 @@ def queue(
     end=-1,
     relative_volume=1.0,
     audio_filter=None,
+    playback_speed=1.0,
 ):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
@@ -248,7 +257,7 @@ def queue(
 
     afid = load_audio_filter(audio_filter)
 
-    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid, array)
+    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid, array, playback_speed)
 
 
 @proxy_with_channel
@@ -362,6 +371,20 @@ def busy(channel):
     """
 
     return queue_depth(channel) > 0
+
+
+@proxy_with_channel
+def set_playback_speed(channel, speed):
+    """Changes the playing voice's rate without restarting it from the beginning."""
+
+    call("set_playback_speed", channel, speed)
+
+
+@proxy_with_channel
+def get_playback_speed(channel):
+    """Returns the playing stream's requested playback speed."""
+
+    return call_float("get_playback_speed", channel)
 
 
 @proxy_with_channel

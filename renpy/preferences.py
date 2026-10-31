@@ -114,6 +114,7 @@ Preference("afm_time", 0, (int, float))
 Preference("afm_enable", False)
 Preference("using_afm_enable", False)
 Preference("voice_sustain", False)
+Preference("voice_speed", 1.0, (int, float))
 Preference("mouse_move", True)
 Preference("show_empty_window", True)
 
@@ -242,6 +243,23 @@ Preference("tts_voice", None, (str, type(None)))
 Preference("tts_speed", 1.0)
 
 
+def validate_voice_speed(speed):
+    """Returns a finite, positive voice playback speed."""
+
+    if isinstance(speed, bool) or not isinstance(speed, (int, float)):
+        raise TypeError("Voice speed must be a finite, positive number.")
+
+    try:
+        speed = float(speed)
+    except OverflowError:
+        raise ValueError("Voice speed must be a finite, positive number.") from None
+
+    if not math.isfinite(speed) or speed <= 0.0:
+        raise ValueError("Voice speed must be a finite, positive number.")
+
+    return speed
+
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
@@ -256,6 +274,7 @@ class Preferences(renpy.object.Object):
     afm_enable: bool
     using_afm_enable: bool
     voice_sustain: bool
+    voice_speed: float = 1.0
     mouse_move: bool
     show_empty_window: bool
     wait_voice: bool
@@ -336,6 +355,12 @@ class Preferences(renpy.object.Object):
             if not isinstance(v, p.types):
                 error = "Preference {} has wrong type. {!r} is not of type {!r}.".format(p.name, v, p.types)
                 setattr(self, p.name, copy.copy(p.default))
+
+        try:
+            self.voice_speed = validate_voice_speed(self.voice_speed)
+        except (TypeError, ValueError) as e:
+            error = str(e)
+            self.voice_speed = 1.0
 
         return error
 
