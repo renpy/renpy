@@ -31,6 +31,7 @@ cdef class IOStream:
 
 cdef class IOPath(IOStream):
     cdef readonly object path
+    cdef readonly Py_ssize_t buffering
 
 
 cdef class IOSubFile(IOStream):

@@ -66,6 +66,7 @@ from libc.string cimport memcpy
 
 import io
 import os
+import sys
 
 cdef extern from "SDL3/SDL.h":
     cdef struct SDL_IOStreamInterface:
@@ -465,6 +466,167 @@ cdef class IOStream:
 io.RawIOBase.register(IOStream)
 
 
+# Buffered - a read buffer in front of another SDL_IOStream.
+cdef struct BufferedData:
+    SDL_IOStream *parent
+
+    # The buffer, allocated immediately after this struct.
+    Uint8 *buf
+    size_t capacity
+
+    # The next unread byte in buf.
+    size_t pos
+
+    # The number of valid bytes in buf.
+    size_t len
+
+    # The position of parent, which is the logical position of buf[len].
+    Sint64 file_pos
+
+
+cdef Sint64 buffered_size(void *userdata) noexcept nogil:
+    return SDL_GetIOSize((<BufferedData *> userdata).parent)
+
+
+cdef Sint64 buffered_seek(void *userdata, Sint64 offset, SDL_IOWhence whence) noexcept nogil:
+    cdef BufferedData *d = <BufferedData *> userdata
+    cdef Sint64 start = d.file_pos - <Sint64> d.len
+    cdef Sint64 rv
+
+    if whence == SDL_IO_SEEK_CUR:
+        offset += start + <Sint64> d.pos
+        whence = SDL_IO_SEEK_SET
+    elif whence != SDL_IO_SEEK_SET and whence != SDL_IO_SEEK_END:
+        SDL_SetError("Unknown value for 'whence'")
+        return -1
+
+    # Seeks within the buffer, including SDL_TellIO, don't touch the parent.
+    if whence == SDL_IO_SEEK_SET and start <= offset <= d.file_pos:
+        d.pos = <size_t> (offset - start)
+        return offset
+
+    d.pos = 0
+    d.len = 0
+
+    rv = SDL_SeekIO(d.parent, offset, whence)
+
+    if rv < 0:
+        return -1
+
+    d.file_pos = rv
+    return rv
+
+
+cdef size_t buffered_read(void *userdata, void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil:
+    cdef BufferedData *d = <BufferedData *> userdata
+    cdef Uint8 *out = <Uint8 *> ptr
+    cdef size_t total = 0
+    cdef size_t n
+    cdef size_t rv
+
+    # Like fread, keep reading until size bytes are read or the parent stops.
+    while total < size:
+        n = d.len - d.pos
+
+        if n:
+            if n > size - total:
+                n = size - total
+
+            memcpy(out + total, d.buf + d.pos, n)
+            d.pos += n
+            total += n
+            continue
+
+        if size - total >= d.capacity:
+            # Large reads go straight to the caller's memory.
+            d.pos = 0
+            d.len = 0
+            rv = SDL_ReadIO(d.parent, out + total, size - total)
+            total += rv
+        else:
+            rv = SDL_ReadIO(d.parent, d.buf, d.capacity)
+            d.pos = 0
+            d.len = rv
+
+        if rv == 0:
+            if total == 0:
+                status[0] = SDL_GetIOStatus(d.parent)
+
+            break
+
+        d.file_pos += rv
+
+    return total
+
+
+cdef size_t buffered_write(void *userdata, const void *ptr, size_t size, SDL_IOStatus *status) noexcept nogil:
+    status[0] = SDL_IO_STATUS_READONLY
+    return 0
+
+
+cdef cbool buffered_flush(void *userdata, SDL_IOStatus *status) noexcept nogil:
+    return True
+
+
+cdef cbool buffered_close(void *userdata) noexcept nogil:
+    cdef BufferedData *d = <BufferedData *> userdata
+    cdef cbool rv = SDL_CloseIO(d.parent)
+
+    SDL_free(d)
+    return rv
+
+
+cdef SDL_IOStreamInterface buffered_interface
+buffered_interface.version = <Uint32> sizeof(SDL_IOStreamInterface)
+buffered_interface.size = buffered_size
+buffered_interface.seek = buffered_seek
+buffered_interface.read = buffered_read
+buffered_interface.write = buffered_write
+buffered_interface.flush = buffered_flush
+buffered_interface.close = buffered_close
+
+
+cdef SDL_IOStream *buffer_io(SDL_IOStream *parent, size_t capacity) noexcept nogil:
+    """
+    Returns a read-only stream that buffers reads from `parent` with a buffer
+    of `capacity` bytes, and takes ownership of `parent`. On failure, closes
+    `parent`, sets the SDL error, and returns NULL.
+    """
+
+    cdef BufferedData *d = <BufferedData *> SDL_malloc(sizeof(BufferedData) + capacity)
+    cdef Sint64 file_pos
+    cdef SDL_IOStream *rv
+
+    if d == NULL:
+        SDL_CloseIO(parent)
+        SDL_SetError("Could not allocate BufferedData.")
+        return NULL
+
+    file_pos = SDL_TellIO(parent)
+    if file_pos < 0:
+        file_pos = 0
+
+    d.parent = parent
+    d.buf = <Uint8 *> (d + 1)
+    d.capacity = capacity
+    d.pos = 0
+    d.len = 0
+    d.file_pos = file_pos
+
+    rv = SDL_OpenIO(&buffered_interface, d)
+    if rv == NULL:
+        SDL_CloseIO(parent)
+        SDL_free(d)
+
+    return rv
+
+
+# The buffer size IOPath uses when buffering is None. Windows gets a buffer to
+# match the stdio buffering SDL relies on elsewhere. SDL's Windows backend only
+# has a 1k read-ahead that every seek discards.
+IOPATH_DEFAULT_BUFFERING = 8192 if sys.platform == "win32" else 0
+
+
 # IOPath - a file on disk.
 cdef class IOPath(IOStream):
     """
@@ -479,9 +641,18 @@ cdef class IOPath(IOStream):
 
     `name`
         If given, a string with a file name this stream represents.
+
+    `buffering`
+        The size of a read buffer, in bytes, placed in front of the file.
+        Reads smaller than the buffer are batched, and seeks within the
+        buffer don't touch the file. The buffer is part of the SDL stream,
+        so it also applies to Cython code using borrow() or take(). If 0,
+        there's no buffer beyond what SDL provides. If None,
+        IOPATH_DEFAULT_BUFFERING is used. Writes are not buffered, so this
+        is ignored in "wb" mode.
     """
 
-    def __init__(IOPath self not None, object path, /, str mode="rb", str name=None):
+    def __init__(IOPath self not None, object path, /, str mode="rb", str name=None, object buffering=None):
         cdef bytes path_bytes = os.fsencode(path)
         cdef const char* c_path = path_bytes
         path = os.fsdecode(path)
@@ -491,9 +662,22 @@ cdef class IOPath(IOStream):
         cdef bytes mode_bytes = mode.encode("utf-8")
         cdef const char* c_mode = mode_bytes
 
+        if buffering is None:
+            buffering = IOPATH_DEFAULT_BUFFERING
+
+        cdef Py_ssize_t c_buffering = buffering
+        if c_buffering < 0:
+            raise ValueError(f"buffering must be non-negative, not {c_buffering}")
+
+        if mode == "wb":
+            c_buffering = 0
+
         cdef SDL_IOStream *s
         with nogil:
             s = SDL_IOFromFile(c_path, c_mode)
+
+            if s != NULL and c_buffering > 0:
+                s = buffer_io(s, <size_t> c_buffering)
 
         if s == NULL:
             raise IOError(f"Could not open {path!r}: {get_error()}")
@@ -502,11 +686,13 @@ cdef class IOPath(IOStream):
         self.path = path
         self.mode = mode
         self.name = path if name is None else name
+        self.buffering = c_buffering
 
     def __repr__(IOPath self not None, /):
         class_name = f"{type(self).__module__}.{type(self).__qualname__}"
         name = "" if self.name is None else f", name={self.name!r}"
-        return f"{class_name}({self.path!r}, mode={self.mode!r}{name})"
+        buffering = f", buffering={self.buffering}" if self.buffering else ""
+        return f"{class_name}({self.path!r}, mode={self.mode!r}{name}{buffering})"
 
     def readable(IOPath self not None, /):
         self._checkClosed()
@@ -619,7 +805,8 @@ cdef class IOSubFile(IOStream):
     each read is a single SDL_ReadIO with no redundant seek.
 
     `path`
-        The file to open, as a str, or os.PathLike[str]. An IOStream may
+        The file to open, as a str, or os.PathLike[str]. It's opened with
+        IOPath, so it gets IOPath's default buffering. An IOStream may
         also be given, in which case its SDL stream is taken and this
         object assumes exclusive ownership of it.
 
@@ -635,8 +822,6 @@ cdef class IOSubFile(IOStream):
 
     def __init__(IOSubFile self not None, object path, /, Sint64 base, Sint64 length, str name=None):
         cdef SDL_IOStream *p
-        cdef bytes path_bytes
-        cdef const char* c_path
 
         if base < 0:
             raise ValueError(f"base must be non-negative, not {base}")
@@ -655,14 +840,8 @@ cdef class IOSubFile(IOStream):
                 path = path.name
 
         else:
-            path_bytes = os.fsencode(path)
-            c_path = path_bytes
             path = os.fsdecode(path)
-            with nogil:
-                p = SDL_IOFromFile(c_path, b"rb")
-
-            if p == NULL:
-                raise IOError(f"Could not open {path!r}: {get_error()}")
+            p = (<IOStream> IOPath(path, "rb")).take()
 
         cdef Sint64 rv
         with nogil:
