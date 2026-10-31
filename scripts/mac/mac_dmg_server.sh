@@ -7,6 +7,9 @@ VOLNAME="$2"
 DMGDIRBASE="$3"
 DMGBASE="$4"
 
+# The tarball and the dmg are removed by the client once it has the dmg.
+trap 'rm -rf "/tmp/${DMGDIRBASE:?}"' EXIT
+
 security unlock-keychain -p "$(cat ~/.password)"
 
 pushd /tmp

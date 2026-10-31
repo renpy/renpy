@@ -57,8 +57,9 @@ def main():
             if failures >= 4:
                 raise e
             else:
-                failures = 0
                 continue
+
+        failures = 0
 
         print(round(time.time() - start), "notarization", status, file=sys.stderr)
 

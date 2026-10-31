@@ -6,6 +6,9 @@ IDENTITY="$1"
 TARBALL="$2"
 APP="$3"
 
+# The tarballs are removed by the client once it has the signed tarball.
+trap 'rm -rf "/tmp/${APP:?}" /tmp/renpy.app.zip' EXIT
+
 security unlock-keychain -p "$(cat ~/.password)"
 
 pushd /tmp
