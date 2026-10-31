@@ -777,6 +777,9 @@ class SWDraw(object):
 
         return self.window
 
+    def get_vsync(self):
+        return False
+
     def can_block(self):
         return True
 

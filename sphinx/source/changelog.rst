@@ -68,6 +68,11 @@ temporary save file is removed.
 Fixed the web presplash disappearing before display initialization finished.
 It now remains visible until the first frame is drawn.
 
+Ren'Py's framerate safeguard now limits framerate to at most 1.5 times the refresh rate of the window's display,
+or at least 90 fps, whichever is higher, when vsync is enabled. This kicks in when the framerate would otherwise
+exceed this limit. When the window is minimized or hidden, the framerate is limited to 5 fps. This only kicks in
+in situations where the video driver is not limiting the framerate properly.
+
 Live2D
 ------
 

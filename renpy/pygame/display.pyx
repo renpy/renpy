@@ -442,6 +442,25 @@ cdef class Window:
         else:
             return True
 
+    def get_refresh_rate(self):
+        """
+        Returns the refresh rate of the display the window is on, or 0.0 if
+        it is unknown.
+        """
+
+        cdef SDL_DisplayID display_id
+        cdef const SDL_DisplayMode *dm
+
+        display_id = SDL_GetDisplayForWindow(self.window)
+        if not display_id:
+            return 0.0
+
+        dm = SDL_GetCurrentDisplayMode(display_id)
+        if dm == NULL:
+            return 0.0
+
+        return dm.refresh_rate
+
     def iconify(self):
         SDL_MinimizeWindow(self.window)
         return True
@@ -762,6 +781,11 @@ def get_active():
     if main_window:
         return main_window.get_active()
     return False
+
+def get_refresh_rate():
+    if main_window:
+        return main_window.get_refresh_rate()
+    return 0.0
 
 def iconify():
     if main_window:

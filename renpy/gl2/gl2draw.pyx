@@ -82,9 +82,6 @@ IDENTITY = renpy.display.render.IDENTITY
 # Should we try to vsync?
 vsync = True
 
-# A list of frame end times, used for the same purpose.
-frame_times = [ ]
-
 cdef GLenum CONTEXT_PROFILE_MASK = 0x9126
 cdef GLint CONTEXT_CORE_PROFILE_BIT = 0x00000001
 
@@ -1113,6 +1110,13 @@ cdef class GL2Draw:
             glDeleteRenderbuffers(1, &self.depth_renderbuffer_1px)
 
 
+    def get_vsync(self):
+        """
+        Returns True if drawing is synchronized to the display's refresh.
+        """
+
+        return vsync != 0
+
     def can_block(self):
         """
         Returns True if we can block to wait for input, False if the screen
@@ -1198,8 +1202,6 @@ cdef class GL2Draw:
         Called to flip the screen after it's drawn.
         """
 
-        start = time.time()
-
         renpy.plog(1, "flip")
 
         try:
@@ -1207,24 +1209,6 @@ cdef class GL2Draw:
         except pygame.error as e:
             renpy.display.log.write("Flip failed %r", e)
             renpy.game.interface.display_reset = True
-
-        end = time.time()
-
-        if vsync:
-
-            # When the window is covered, we can get into a state where no
-            # drawing occurs and everything goes fast. Detect that and
-            # sleep.
-
-            frame_times.append(end)
-
-            if len(frame_times) > 10:
-                frame_times.pop(0)
-
-                # If we're running at over 1000 fps, vsync is broken.
-                if (frame_times[-1] - frame_times[0] < .001 * 10):
-                    time.sleep(1.0 / 120.0)
-                    renpy.plog(1, "after broken vsync sleep")
 
 
     def draw_screen(self, render_tree, flip=True, screenshot=False):

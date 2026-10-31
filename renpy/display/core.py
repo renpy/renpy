@@ -368,6 +368,12 @@ class Renderer:
         using renpy.game.preferences.fullscreen.
         """
 
+    def get_vsync(self):
+        """
+        Returns True if drawing is synchronized to the display's refresh,
+        and False otherwise.
+        """
+
     def can_block(self):
         """
         Returns True if we can block to wait for input, False if the screen
@@ -1675,6 +1681,36 @@ class Interface:
 
         return ev
 
+    def get_earliest_redraw_time(self, first_pass):
+        """
+        Vsync doesn't always limit the framerate. Some platforms stop waiting
+        for vsync when the window is minimized, hidden, or covered (notably
+        ANGLE on Direct3D 11, where DXGI reports the window as occluded), and
+        drivers can disable it. When vsync is requested, this limits drawing
+        to 5 fps when minimized or hidden, and otherwise to 1.5 times the
+        refresh rate of the window's display, but no lower than 90 fps. When
+        vsync is off, drawing is not limited.
+
+        Returns the time before which the screen should not be redrawn, or
+        None if it can be redrawn now.
+        """
+
+        if first_pass or not renpy.display.draw.get_vsync():
+            return None
+
+        if not pygame.display.get_active():
+            min_frame_duration = 1.0 / 5.0
+        else:
+            refresh_rate = pygame.display.get_refresh_rate()
+            min_frame_duration = 1.0 / max(1.5 * refresh_rate, 90.0)
+
+        rv = self.frame_time + min_frame_duration
+
+        if rv <= get_time():
+            return None
+
+        return rv
+
     def compute_overlay(self):
         if renpy.store.suppress_overlay:
             return
@@ -2900,9 +2936,13 @@ class Interface:
                     # This becomes true if we did a redraw this cycle.
                     did_redraw = False
 
+                    # Limit the framerate, in case vsync doesn't.
+                    earliest_redraw_time = self.get_earliest_redraw_time(first_pass)
+
                     # Redraw the screen.
                     if self.force_redraw or (
                         (first_pass or not pygame.event.peek(ALL_EVENTS))
+                        and earliest_redraw_time is None
                         and renpy.display.draw.should_redraw(needs_redraw, first_pass, can_block)
                     ):
                         self.force_redraw = False
@@ -3035,6 +3075,18 @@ class Interface:
                 if self.maximum_framerate_time > get_time():
                     can_block = False
 
+                # Delay the redraw until the next frame is allowed.
+                earliest_redraw_time = self.get_earliest_redraw_time(first_pass)
+
+                if earliest_redraw_time is not None and (
+                    needs_redraw
+                    or (not can_block)
+                    or self.mouse_move
+                    or renpy.display.video.playing()
+                    or redraw_time is not None
+                ):
+                    redraw_time = max(redraw_time or 0, earliest_redraw_time)
+
                 # Compute the redraw time and set the redraw timer.
                 if redraw_time is not None:
                     time_left = redraw_time - get_time()
@@ -3090,7 +3142,12 @@ class Interface:
 
                     self.run_tasks(expensive)
 
-                if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
+                if earliest_redraw_time is not None:
+                    # The REDRAW timer will wake us when it's time to draw.
+                    renpy.plog(1, "pre framerate limit wait")
+                    ev = self.event_wait()
+                    renpy.plog(1, "post framerate limit wait {!r}", ev)
+                elif needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
                     renpy.plog(1, "pre event poll")
                     ev = self.event_poll()
                     renpy.plog(1, "post event poll {!r}", ev)
