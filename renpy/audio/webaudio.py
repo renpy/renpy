@@ -50,6 +50,13 @@ def call_int(function, *args):
     return emscripten.run_script_int("renpyAudio.{}.apply(null, {});".format(function, dumps(args)))
 
 
+def call_float(function, *args):
+    """Read a floating-point result without truncating it to an integer."""
+
+    script = f"String(renpyAudio.{function}.apply(null, {dumps(args)}));"
+    return float(emscripten.run_script_string(script))
+
+
 def call_str(function, *args):
     """
     Calls a method on `function`.
@@ -377,7 +384,7 @@ def set_playback_speed(channel, speed):
 def get_playback_speed(channel):
     """Returns the playing stream's requested playback speed."""
 
-    return call_int("get_playback_speed", channel) / 1000.0
+    return call_float("get_playback_speed", channel)
 
 
 @proxy_with_channel

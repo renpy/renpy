@@ -148,7 +148,7 @@ def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=
         The audio filter to apply when the file is being played.
 
     `playback_speed`
-        A speed between 0.5 and 3.0, preserving pitch. Only used for voices.
+        A finite, positive speed, preserving pitch. Only used for voices.
     """
 
     from renpy.preferences import validate_voice_speed

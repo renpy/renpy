@@ -244,15 +244,20 @@ Preference("tts_speed", 1.0)
 
 
 def validate_voice_speed(speed):
-    """Returns a finite voice playback speed between 0.5 and 3.0."""
+    """Returns a finite, positive voice playback speed."""
 
     if isinstance(speed, bool) or not isinstance(speed, (int, float)):
-        raise TypeError("Voice speed must be a number between 0.5 and 3.0.")
+        raise TypeError("Voice speed must be a finite, positive number.")
 
-    if not 0.5 <= speed <= 3.0:
-        raise ValueError("Voice speed must be between 0.5 and 3.0.")
+    try:
+        speed = float(speed)
+    except OverflowError:
+        raise ValueError("Voice speed must be a finite, positive number.") from None
 
-    return float(speed)
+    if not math.isfinite(speed) or speed <= 0.0:
+        raise ValueError("Voice speed must be a finite, positive number.")
+
+    return speed
 
 
 class Preferences(renpy.object.Object):

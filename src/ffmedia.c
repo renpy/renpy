@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <limits.h>
 
 #include "ffmedia.h"
 
@@ -326,7 +327,14 @@ typedef struct MediaState {
 } MediaState;
 
 static int output_samples(MediaState *ms, double source_time) {
-	return (int) llround(source_time * audio_sample_rate / ms->playback_speed);
+	double samples = source_time * audio_sample_rate / ms->playback_speed;
+	if (samples >= INT_MAX) {
+		return INT_MAX;
+	}
+	if (samples <= INT_MIN) {
+		return INT_MIN;
+	}
+	return (int) llround(samples);
 }
 
 static void reset_tempo(MediaState *ms) {
@@ -788,8 +796,9 @@ static void queue_audio_output(MediaState *ms, AVFrame *frame) {
 }
 
 static int init_tempo(MediaState *ms) {
-	AVFilterContext *previous, *tempo;
+	AVFilterContext *previous, *tempo, *padding;
 	char args[128];
+	char name[32];
 	int ret;
 	double speed = ms->playback_speed;
 
@@ -808,17 +817,32 @@ static int init_tempo(MediaState *ms) {
 	}
 	previous = ms->tempo_source;
 
-	/* Factors above two skip samples in atempo. Chain smaller factors to
-	 * retain its overlap/blending algorithm throughout the supported range. */
-	for (int i = 0; i < 2; i++) {
-		double factor = speed > 2.0 ? 2.0 : speed;
-		snprintf(args, sizeof(args), "%.17g", factor);
-		ret = avfilter_graph_create_filter(&tempo, avfilter_get_by_name("atempo"),
-			i ? "tempo2" : "tempo", args, NULL, ms->tempo_graph);
+	/* Decompose the requested rate into factors supported by atempo.
+	 * Factors above two skip samples rather than blending them. */
+	for (int i = 0; ; i++) {
+		double factor = speed > 2.0 ? 2.0 : speed < 0.5 ? 0.5 : speed;
+		/* Each stage needs a complete analysis window at EOF, including
+		 * when preceding stages have shortened a clip to just a few samples.
+		 * The reader caps output at the requested duration. */
+		snprintf(name, sizeof(name), "padding%d", i);
+		snprintf(args, sizeof(args), "pad_len=%d", audio_sample_rate / 10);
+		ret = avfilter_graph_create_filter(&padding, avfilter_get_by_name("apad"),
+			name, args, NULL, ms->tempo_graph);
 		if (ret < 0) {
 			return ret;
 		}
-		ret = avfilter_link(previous, 0, tempo, 0);
+		ret = avfilter_link(previous, 0, padding, 0);
+		if (ret < 0) {
+			return ret;
+		}
+		snprintf(name, sizeof(name), "tempo%d", i);
+		snprintf(args, sizeof(args), "%.17g", factor);
+		ret = avfilter_graph_create_filter(&tempo, avfilter_get_by_name("atempo"),
+			name, args, NULL, ms->tempo_graph);
+		if (ret < 0) {
+			return ret;
+		}
+		ret = avfilter_link(padding, 0, tempo, 0);
 		if (ret < 0) {
 			return ret;
 		}
@@ -891,38 +915,18 @@ static void finish_tempo(MediaState *ms) {
 		return;
 	}
 
-	/* atempo needs complete analysis windows, even for a voice shorter
-	 * than one window. Supply a silent tail and cap playback at the source
-	 * segment's requested duration so the padding is never heard. */
+	/* The graph's padding completes each stage's analysis windows. Cap
+	 * playback at the source segment's duration so padding is never heard. */
 	if (ms->end_time < 0.0 && !ms->want_video) {
 		SDL_LockMutex(ms->lock);
-		int duration = (int) llround(ms->tempo_input_samples / ms->playback_speed);
+		int duration = output_samples(ms, (double) ms->tempo_input_samples / audio_sample_rate);
 		/* The reader may already have supplied underrun silence using the
 		 * container duration. EOF cannot retract those consumed frames. */
 		ms->audio_duration = duration < ms->audio_read_samples ? ms->audio_read_samples : duration;
 		SDL_UnlockMutex(ms->lock);
 	}
 
-	AVFrame *padding = av_frame_alloc();
-	if (padding) {
-		padding->sample_rate = audio_sample_rate;
-		padding->format = AV_SAMPLE_FMT_S16;
-#if (LIBAVUTIL_VERSION_MAJOR < 59)
-		padding->channel_layout = AV_CH_LAYOUT_STEREO;
-#else
-		padding->ch_layout = (AVChannelLayout) AV_CHANNEL_LAYOUT_STEREO;
-#endif
-		padding->nb_samples = audio_sample_rate / 10;
-		if (av_frame_get_buffer(padding, 0) >= 0) {
-			memset(padding->data[0], 0, padding->nb_samples * BPS);
-			filter_tempo(ms, padding);
-		} else {
-			av_frame_free(&padding);
-		}
-	}
-	if (!ms->audio_finished) {
-		filter_tempo(ms, NULL);
-	}
+	filter_tempo(ms, NULL);
 }
 
 static void queue_audio_frame(MediaState *ms, AVFrame *frame, double start) {
@@ -2196,13 +2200,13 @@ MediaState *media_open(SDL_IOStream *rwops, const char *filename) {
 
 /* Called before media_start; a speed is never changed on a live decoder. */
 int media_set_playback_speed(MediaState *ms, double speed) {
-	if (!isfinite(speed) || speed < 0.5 || speed > 3.0) {
-		SDL_SetError("Voice speed must be between 0.5 and 3.0.");
+	if (!isfinite(speed) || speed <= 0.0) {
+		SDL_SetError("Voice speed must be finite and greater than zero.");
 		return -1;
 	}
 	if (speed != 1.0 && (!avfilter_get_by_name("atempo") ||
-		!avfilter_get_by_name("abuffer") || !avfilter_get_by_name("abuffersink"))) {
-		SDL_SetError("Voice speed requires FFmpeg's atempo, abuffer, and abuffersink filters.");
+		!avfilter_get_by_name("abuffer") || !avfilter_get_by_name("abuffersink") || !avfilter_get_by_name("apad"))) {
+		SDL_SetError("Voice speed requires FFmpeg's atempo, abuffer, abuffersink, and apad filters.");
 		return -1;
 	}
 	ms->playback_speed = speed;
@@ -2318,13 +2322,13 @@ void media_seek(MediaState *ms, double position) {
 }
 
 int media_update_playback_speed(MediaState *ms, double speed) {
-	if (!isfinite(speed) || speed < 0.5 || speed > 3.0) {
-		SDL_SetError("Voice speed must be between 0.5 and 3.0.");
+	if (!isfinite(speed) || speed <= 0.0) {
+		SDL_SetError("Voice speed must be finite and greater than zero.");
 		return -1;
 	}
 	if (speed != 1.0 && (!avfilter_get_by_name("atempo") ||
-		!avfilter_get_by_name("abuffer") || !avfilter_get_by_name("abuffersink"))) {
-		SDL_SetError("Voice speed requires FFmpeg's atempo, abuffer, and abuffersink filters.");
+		!avfilter_get_by_name("abuffer") || !avfilter_get_by_name("abuffersink") || !avfilter_get_by_name("apad"))) {
+		SDL_SetError("Voice speed requires FFmpeg's atempo, abuffer, abuffersink, and apad filters.");
 		return -1;
 	}
 

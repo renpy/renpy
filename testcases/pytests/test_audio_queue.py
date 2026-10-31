@@ -750,9 +750,9 @@ def tone_frequency(samples):
     return (len(crossings) - 1) * 48000 / (crossings[-1] - crossings[0])
 
 
-@pytest.mark.parametrize("speed", [0.5, 1.0, 1.5, 2.0, 3.0])
+@pytest.mark.parametrize("speed", [0.125, 0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 8.0, 16.0])
 def test_voice_speed_changes_duration_without_changing_pitch(audio, speed):
-    """Native PCM must get shorter/longer while its 440 Hz pitch stays fixed, including the chained 3x case."""
+    """Native PCM must get shorter/longer while its 440 Hz pitch stays fixed, including multi-stage slow and fast rates."""
     renpysound.play(0, speed_tone(), "voice.wav", end=-1, playback_speed=speed)
     audio.wait_ready(audio.channel.playing)
     samples = read_speed_to_end(audio)
@@ -762,7 +762,7 @@ def test_voice_speed_changes_duration_without_changing_pitch(audio, speed):
     assert renpysound.get_duration(0) == pytest.approx(1.2)
 
 
-@pytest.mark.parametrize("speed", [0.5, 1.5, 3.0])
+@pytest.mark.parametrize("speed", [0.25, 0.5, 1.5, 3.0, 4.0])
 def test_voice_speed_trims_in_source_seconds(audio, speed):
     """A source slice keeps its duration and 440 Hz content, excluding neighboring 220/880 Hz material."""
     renpysound.play(0, speed_tone(segmented=True), "slice.wav", start=0.3, end=0.9, playback_speed=speed)
@@ -796,7 +796,7 @@ def test_voice_speed_pause_and_seek_keep_source_coordinates(audio):
 
 
 @pytest.mark.parametrize("duration", [0.01, 0.02, 0.05])
-@pytest.mark.parametrize("speed", [0.5, 3.0])
+@pytest.mark.parametrize("speed", [0.25, 0.5, 3.0, 4.0, 8.0])
 def test_short_voices_are_not_lost_to_analysis_windows(audio, duration, speed):
     """Voices shorter than atempo's analysis window remain audible without leaking its flushing padding."""
     renpysound.play(0, speed_tone(duration=duration), "short.wav", end=-1, playback_speed=speed)
@@ -841,7 +841,7 @@ def test_live_voice_speed_keeps_position_and_pitch(audio):
     audio.wait_ready(audio.channel.playing)
     decoder = audio.channel.playing
     read_chunks(audio, 4800)
-    for speed in [0.5, 3.0, 1.5, 1.0, 2.0]:
+    for speed in [0.25, 4.0, 0.5, 3.0, 1.5, 1.0, 2.0]:
         before = renpysound.get_pos(0)
         renpysound.set_playback_speed(0, speed)
         assert renpysound.get_pos(0) == pytest.approx(before, abs=0.002)

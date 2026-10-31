@@ -142,9 +142,10 @@ can then change it again.)
 
 .. var:: preferences.voice_speed = 1.0
 
-    The playback speed of recorded voices, between 0.5 and 3.0, preserving
-    pitch. The equivalent of the "voice speed" preference. See :doc:`voice`
-    for request timing and platform details.
+    The playback speed of recorded voices, preserving pitch. This must be
+    finite and greater than zero. The equivalent of the "voice speed"
+    preference. See :doc:`voice` for slider ranges, timing, and platform
+    details.
 
 .. var:: preferences.wait_voice = True
 

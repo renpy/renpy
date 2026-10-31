@@ -44,7 +44,7 @@ def preferences(mocker):
     return preferences
 
 
-@pytest.mark.parametrize("speed", [0.5, 1, 1.5, 2, 3])
+@pytest.mark.parametrize("speed", [0.125, 0.25, 0.49, 0.5, 1, 1.5, 2, 3, 3.01, 4, 8, 16, 1e-300, 1e300])
 def test_voice_speed_preference(preferences, speed):
     """The public getter and setter expose the selected speed on native and Web backends alike."""
     set_voice_speed(speed)
@@ -60,9 +60,9 @@ def test_voice_speed_rejects_non_numbers(preferences, speed):
     assert get_voice_speed() == 1.0
 
 
-@pytest.mark.parametrize("speed", [0, -1, 0.49, 3.01, float("nan"), float("inf"), 10**1000])
-def test_voice_speed_rejects_out_of_range(preferences, speed):
-    """Range checks also reject non-finite values and integers too large to convert to float."""
+@pytest.mark.parametrize("speed", [0, -1, float("nan"), float("inf"), -float("inf"), 10**1000])
+def test_voice_speed_rejects_non_positive_or_non_finite(preferences, speed):
+    """Zero, negative, non-finite, and unrepresentably large values cannot be playback rates."""
     with pytest.raises(ValueError):
         validate_voice_speed(speed)
     assert get_voice_speed() == 1.0

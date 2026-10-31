@@ -145,8 +145,8 @@ The :var:`config.tts_voice` variable is no longer used.
 Features
 --------
 
-Recorded voices can now play at 0.5 to 3.0 times their normal speed while
-preserving pitch, including on Web. Changes take effect during playback
+Recorded voices can now play at a developer-selected speed while preserving
+pitch, including on Web. Changes take effect during playback
 without returning to the beginning of the voice. The player can select the
 speed with ``Preference("voice speed")`` or :func:`renpy.set_voice_speed`.
 See :doc:`voice`.

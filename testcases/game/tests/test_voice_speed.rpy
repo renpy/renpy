@@ -111,6 +111,13 @@ testsuite voice_speed:
         $ _test.voice_speed_slider.change(1.5)
         assert eval renpy.get_voice_speed() == 2.0
 
+    testcase developer_slider_range:
+        $ _test.voice_speed_slider = Preference("voice speed", range=(0.125, 8.0)).get_adjustment()
+        $ _test.voice_speed_slider.change(0.0)
+        assert eval renpy.get_voice_speed() == 0.125
+        $ _test.voice_speed_slider.change(7.875)
+        assert eval renpy.get_voice_speed() == 8.0
+
     testcase save_and_rollback_keep_player_preference:
         run Preference("voice speed", 1.5)
         run Start("voice_speed__checkpoint")

@@ -40,8 +40,8 @@ def set_voice_speed(speed):
     """
     :doc: voice
 
-    Sets the player's voice playback speed to `speed`, a number between
-    0.5 and 3.0. The default is 1.0. Pitch is preserved.
+    Sets the player's voice playback speed to `speed`, a finite number
+    greater than zero. The default is 1.0. Pitch is preserved.
 
     This preference changes a playing voice's speed while preserving its
     position, and applies to new play and queue requests on the voice

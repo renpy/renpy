@@ -88,7 +88,7 @@ async function ready(channel) {
 }
 
 for (const rate of [22050, 44100, 48000]) {
-    for (const speed of [0.5, 1, 1.5, 2, 3]) {
+    for (const speed of [0.125, 0.25, 0.49, 0.5, 1, 1.5, 2, 3, 3.01, 4, 8, 16]) {
         test(`duration, pitch and opposite-phase stereo at ${rate} Hz, ${speed}x`, async () => {
             const {stretch} = backend();
             const input = tone(rate);
@@ -198,7 +198,7 @@ test('live rates preserve source position, pitch, queue rates and paused state',
     audio.set_playback_speed(0, 2);
     await rateReady(channel(0));
     assert.equal(audio.get_pos(0), 200);
-    assert.equal(audio.get_playback_speed(0), 2000);
+    assert.equal(audio.get_playback_speed(0), 2);
     assert.equal(playing.source.arguments[1], 0.1);
     assert.ok(Math.abs(frequency(playing.buffer) - 440) < 2);
     assert.equal(channel(0).queued.playback_speed, 0.5);
@@ -224,7 +224,7 @@ test('rapid slider updates apply only the latest requested rate', async () => {
     audio.context.currentTime = 0.4;
     for (const rate of [0.5, 3, 1, 2, 0.75]) audio.set_playback_speed(0, rate);
     await rateReady(channel(0));
-    assert.equal(audio.get_playback_speed(0), 750);
+    assert.equal(audio.get_playback_speed(0), 0.75);
     assert.equal(audio.get_pos(0), 400);
     assert.equal(channel(0).playing.buffer.duration, 1.6);
 });
@@ -276,3 +276,22 @@ for (const speed of [0.5, 1, 2]) {
         assert.equal(queued.fadeout_deadline, 2);
     });
 }
+
+
+test('play and live rate validation allow developer-selected ranges', async () => {
+    const {audio, channel} = backend();
+    audio.context.decoded = tone();
+    audio.queue(0, 'tone.wav', 'tone.wav', false, 0, false, 0, -1, 1, null, [1], 0.25);
+    await ready(channel(0));
+    assert.equal(audio.get_playback_speed(0), 0.25);
+    audio.context.currentTime = 0.1;
+    audio.set_playback_speed(0, 8);
+    await rateReady(channel(0));
+    assert.equal(audio.get_playback_speed(0), 8);
+    assert.equal(audio.get_pos(0), 25);
+    assert.ok(Math.abs(frequency(channel(0).playing.buffer) - 440) < 2);
+    for (const invalid of [0, -1, NaN, Infinity, -Infinity, '1', true]) {
+        assert.throws(() => audio.set_playback_speed(0, invalid), /finite and greater than zero/);
+        assert.throws(() => audio.queue(1, 'tone.wav', 'tone.wav', false, 0, false, 0, -1, 1, null, [1], invalid), /finite and greater than zero/);
+    }
+});

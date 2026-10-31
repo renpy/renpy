@@ -158,6 +158,12 @@ let stretch_buffer = (buffer, speed, end = -1) => {
     }
 
     const promise = (async () => {
+        // Compose larger rate changes from WSOLA stages within a factor of two.
+        if (speed < 0.5 || speed > 2) {
+            const factor = speed < 0.5 ? 0.5 : 2;
+            const intermediate = await stretch_buffer(buffer, factor, end);
+            return stretch_buffer(intermediate, speed / factor);
+        }
         const rate = buffer.sampleRate;
         const length = end >= 0 ? Math.min(buffer.length, Math.round(end * rate)) : buffer.length;
         const size = Math.max(1, Math.round(length / speed));
@@ -540,8 +546,8 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
     end = finite(end, -1);
     fadein = Math.max(0, finite(fadein, 0));
     relative_volume = finite(relative_volume, 1.0);
-    if (!Number.isFinite(playback_speed) || playback_speed < 0.5 || playback_speed > 3.0) {
-        throw new RangeError('Voice speed must be between 0.5 and 3.0.');
+    if (!Number.isFinite(playback_speed) || playback_speed <= 0) {
+        throw new RangeError('Voice speed must be finite and greater than zero.');
     }
 
     if (file.startsWith('url:')) {
@@ -876,8 +882,8 @@ renpyAudio.get_pos = (channel) => {
 };
 
 renpyAudio.set_playback_speed = (channel, speed) => {
-    if (!Number.isFinite(speed) || speed < 0.5 || speed > 3.0) {
-        throw new RangeError('Voice speed must be between 0.5 and 3.0.');
+    if (!Number.isFinite(speed) || speed <= 0) {
+        throw new RangeError('Voice speed must be finite and greater than zero.');
     }
     const c = get_channel(channel), p = c.playing;
     if (c.video || p === null || speed === p.requested_speed) {
@@ -891,7 +897,7 @@ renpyAudio.set_playback_speed = (channel, speed) => {
 
 renpyAudio.get_playback_speed = (channel) => {
     const p = get_channel(channel).playing;
-    return (p ? p.requested_speed : 1.0) * 1000;
+    return p ? p.requested_speed : 1.0;
 };
 
 
