@@ -129,6 +129,10 @@ testsuite screenshot:
     setup:
         run Preference("display", 1.0)
 
+        # Earlier tests leave the mouse at a random position, which could hover over a button. No
+        # screen in this suite has anything here.
+        move pos (300, 500)
+
     testcase main_menu:
         screenshot "main_menu.png" #crop (0, 0, 400, 300)
 
@@ -833,6 +837,15 @@ testsuite test_expressions:
         $ element_id = "teleporting_button"
         $ screen_name = "teleporting_button"
         click button btn id element_id until not screen screen_name
+
+    testcase click_after_pointer_leaves_window:
+        description "The user's pointer leaving the window doesn't stop simulated clicks."
+
+        run Show("teleporting_button")
+        assert screen "teleporting_button"
+
+        $ renpy.pygame.event.post(renpy.pygame.event.Event(renpy.pygame.WINDOWMOUSELEAVE))
+        click id "teleporting_button" until not screen "teleporting_button"
 
     testcase scroll_amount:
         description "Scroll amount accepts a variable for the scroll amount."

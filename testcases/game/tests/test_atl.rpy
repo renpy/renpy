@@ -98,9 +98,9 @@ transform atl__contains(child):
 transform atl__swap(child):
     animation
     child
-    0.3
+    0.1
     "atl__blue"
-    0.3
+    0.1
     child
 
 # atl__swap, run inside a parallel block that is executing when the child is replaced.
@@ -108,9 +108,9 @@ transform atl__swap_parallel(child):
     animation
     parallel:
         child
-        0.3
+        0.1
         "atl__blue"
-        0.3
+        0.1
         child
     parallel:
         alpha 1.0
@@ -120,9 +120,9 @@ transform atl__swap_choice(child):
     animation
     choice:
         child
-        0.3
+        0.1
         "atl__blue"
-        0.3
+        0.1
         child
 
 init python:
@@ -415,7 +415,7 @@ testsuite atl:
 
             # Past atl__swap's final child statement, which must display the new child rather than
             # the one compiled into its block.
-            pause 0.7
+            pause 0.3
             assert eval (atl__shown() == ["atl__yellow"])
 
         testcase replace_keeps_properties:
@@ -433,7 +433,7 @@ testsuite atl:
             advance
 
             # Past atl__swap's final child statement.
-            pause 0.5
+            pause 0.3
             assert eval (atl__shown() == ["atl__yellow"])
 
         testcase replace_in_parallel:
@@ -444,7 +444,7 @@ testsuite atl:
             advance
 
             # Past the final child statement inside the running block.
-            pause 0.5
+            pause 0.3
             assert eval (atl__shown() == ["atl__yellow"])
 
         testcase reshow_same_transform:
@@ -455,7 +455,7 @@ testsuite atl:
             assert eval (atl__shown() == ["atl__yellow"]) timeout 1.0
 
             # Past atl__swap's final child statement.
-            pause 0.7
+            pause 0.3
             assert eval (atl__shown() == ["atl__yellow"])
 
         testcase rollback_restores_child:
@@ -479,7 +479,7 @@ testsuite atl:
             assert eval (atl__shown() == ["atl__red"]) timeout 1.0
 
             # Wait for atl__swap to reach its final child statement.
-            pause 0.7
+            pause 0.3
             advance
             assert eval (atl__transition_from() == ["atl__red"]) timeout 1.0
             assert eval (atl__shown() == ["atl__yellow"]) timeout 1.0

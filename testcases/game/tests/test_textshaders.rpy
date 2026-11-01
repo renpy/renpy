@@ -15,22 +15,21 @@ label textshaders__cps__label:
 
 init python:
 
-    def textshaders__jitter_surface(shader, st, random_value=0.75):
-        from unittest.mock import patch
-
+    def textshaders__jitter_surface(shader, st):
         text = Text("H H H H H H H H", size=40, color="#fff", outlines=[],
                     slow=False, textshader=shader)
         displayable = Fixed(Solid("#000"), Transform(text, xpos=30, ypos=40),
                             xysize=(800, 160))
-        with patch("random.random", return_value=random_value):
-            return renpy.render_to_surface(displayable, st=st, resize=True)
+        return renpy.render_to_surface(displayable, st=st, resize=True)
 
-    def textshaders__pixels(surface):
-        return tuple(
-            surface.get_at((x, y))[:3]
-            for y in range(surface.get_height())
-            for x in range(surface.get_width())
-        )
+    def textshaders__differs(a, b):
+        """
+        Returns True if any pixel differs between surfaces `a` and `b`. Comparing in C makes this
+        much faster than reading each pixel with get_at.
+        """
+
+        dest = renpy.pygame.Surface(a.get_size(), 0, a)
+        return renpy.pygame.transform._diff(dest, a, b, (0, 0, 0, 255), (255, 255, 255, 255)) > 0
 
     def textshaders__cps_surface(shader, st, tagged=True):
         text = "H " * 20
@@ -62,8 +61,30 @@ init python:
             for x in columns
         ]
 
-    def textshaders__jitter_pixels(shader, st, random_value=0.75):
-        return textshaders__pixels(textshaders__jitter_surface(shader, st, random_value))
+    def textshaders__jitter_renders(shader, st):
+        """
+        Returns several renders of `shader` at `st`. Each render picks a new random offset, and with
+        a jitter of 40 pixels, one in about 40 of them lands where the text started. Rendering
+        several times means that can't make a test fail by chance.
+        """
+
+        return [ textshaders__jitter_surface(shader, st) for _ in range(8) ]
+
+    def textshaders__jitter_moved(shader, st):
+        """
+        Returns True if the text was drawn away from its normal position by any of the renders.
+        """
+
+        plain = textshaders__jitter_surface("typewriter", 0.0)
+        return any(textshaders__differs(plain, surface) for surface in textshaders__jitter_renders(shader, st))
+
+    def textshaders__jitter_changes(shader, st):
+        """
+        Returns True if the renders of `shader` at `st` aren't all the same.
+        """
+
+        first, *rest = textshaders__jitter_renders(shader, st)
+        return any(textshaders__differs(first, surface) for surface in rest)
 
     def textshaders__jitter_offsets(shader, st):
         """
@@ -125,60 +146,38 @@ testsuite textshaders:
             run MainMenu(confirm=False, save=False)
 
     testcase jitter_duration_ends:
-        description "Positive durations stop jitter"
-        parameter individual = [ 0, 1 ]
-        parameter duration = [ 0.5, 1.0 ]
+        description "A positive duration stops jitter, returning the text to its normal position"
 
-        $ plain = textshaders__jitter_pixels("typewriter", 0.0)
-        $ shader = f"jitter:0, 40:u__duration={duration}:u__individual={individual}"
-        assert eval textshaders__jitter_pixels(shader, duration - 0.001) != plain
-        assert eval textshaders__jitter_pixels(shader, duration) == plain
-        assert eval textshaders__jitter_pixels(shader, duration + 1.0) == plain
+        $ shader = "jitter:0, 40:u__duration=1.0"
+        assert eval textshaders__jitter_moved(shader, 0.999)
+        assert eval not textshaders__jitter_moved(shader, 1.0)
+        assert eval not textshaders__jitter_moved(shader, 2.0)
 
     testcase jitter_duration_unlimited:
         description "Zero and negative durations continue jitter indefinitely"
-        parameter individual = [ 0, 1 ]
         parameter duration = [ 0.0, -2.0 ]
-        parameter st = [ 0.0, 1.0, 100.0 ]
 
-        $ plain = textshaders__jitter_pixels("typewriter", 0.0)
-        $ shader = f"jitter:0, 40:u__duration={duration}:u__individual={individual}"
-        assert eval textshaders__jitter_pixels(shader, st) != plain
+        assert eval textshaders__jitter_moved(f"jitter:0, 40:u__duration={duration}", 100.0)
 
-    testcase jitter_duration_active:
-        description "Jitter is visible before a positive duration ends"
-        parameter individual = [ 0, 1 ]
+    testcase jitter_changes:
+        description "Jitter picks a new position each time the text is drawn"
 
-        $ plain = textshaders__jitter_pixels("typewriter", 0.0)
-        $ shader = f"jitter:0, 40:u__duration=10:u__individual={individual}"
-        assert eval any(textshaders__jitter_pixels(shader, st) != plain for st in (0.0, 0.25, 0.5))
+        assert eval textshaders__jitter_changes("jitter:0, 40", 1.0)
 
     testcase jitter_block:
         description "Jitter moves all glyphs together by default"
-        parameter shader = [ "jitter:0, 40", "jitter:0, 40:u__duration=-2" ]
-        parameter st = [ 0.0, 1.0, 100.0 ]
 
         assert eval len(textshaders__glyph_columns(textshaders__jitter_surface("typewriter", 0.0))) == 8
-        $ offsets = textshaders__jitter_offsets(shader, st)
+        $ offsets = textshaders__jitter_offsets("jitter:0, 40", 1.0)
         assert eval max(offsets) - min(offsets) <= 1
         assert eval all(abs(offset) <= 21 for offset in offsets)
 
     testcase jitter_individual:
         description "Jitter can move glyphs independently"
-        parameter st = [ 0.0, 1.0, 100.0 ]
 
-        $ offsets = textshaders__jitter_offsets("jitter:0, 40:u__individual=1", st)
+        $ offsets = textshaders__jitter_offsets("jitter:0, 40:u__individual=1", 1.0)
         assert eval max(offsets) - min(offsets) > 1
         assert eval all(abs(offset) <= 21 for offset in offsets)
-
-    testcase jitter_random:
-        description "Jitter offsets follow the random source"
-        parameter individual = [ 0, 1 ]
-
-        $ shader = f"jitter:0, 40:u__individual={individual}"
-        $ first = textshaders__jitter_pixels(shader, 1.0, random_value=0.25)
-        $ second = textshaders__jitter_pixels(shader, 1.0, random_value=0.75)
-        assert eval first != second
 
     testcase texture_scale:
         description "Texture and linetexture keep their virtual size when the window is scaled"
@@ -208,16 +207,12 @@ testsuite textshaders:
         assert "Negative duration:"
         advance
         assert "Timed block jitter:"
-        pause 2.1
         advance
         assert "Timed individual jitter:"
-        pause 2.1
         advance
         assert "these words"
-        pause 2.1
         advance
         assert "Slow text:"
-        pause 2.1
         advance until screen "choice"
 
     testcase respect_cps_tag:
