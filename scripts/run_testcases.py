@@ -24,13 +24,14 @@
 """
 Runs Ren'Py's functional testcases on several platforms at once, and prints one synopsis.
 
-Targets are defined in ~/.renpy/dev/testcases.toml; scripts/run_testcases.example.toml documents the format. Each
-target runs the whole suite in one process: in the repository, in a private copy of the tree (natively or under
-wine), or in a copy rsynced to another computer and run over ssh.
+Targets are defined in ~/.renpy/dev/testcases.toml; scripts/run_testcases.example.toml documents the format. A target
+is a place to run: in the repository, in a private copy of the tree (natively or under wine), or in a copy rsynced to
+another computer and run over ssh. Targets run in parallel, and each one runs the test suites of the projects in
+PROJECTS, one project at a time, with a process for each.
 
 Progress goes to stderr and the final synopsis to stdout. Logs and failure artifacts are kept in
-tmp/run-testcases/<timestamp>/<target>/, with tmp/run-testcases/latest pointing at the newest run. The exit status is
-0 if every target passed, 1 if any did not, and 2 for a configuration or usage error.
+tmp/run-testcases/<timestamp>/<target>/<project>/, with tmp/run-testcases/latest pointing at the newest run. The exit
+status is 0 if every project passed on every target, 1 if any did not, and 2 for a configuration or usage error.
 """
 
 from __future__ import annotations
@@ -59,8 +60,11 @@ DEFAULT_CONFIG: Path = Path("~/.renpy/dev/testcases.toml")
 WORK_DIR: Path = REPO / "tmp" / "run-testcases"
 
 # The saves and persistent directory of a target, relative to its tree. Without this, every run on a computer would
-# share the directory named by config.save_directory.
+# share the directory named by config.save_directory. Each project has a directory of its own inside this one.
 STAGED_SAVEDIR: str = ".test-saves"
+
+# The projects with test suites, in the order they run. These are top-level directories of the repository.
+PROJECTS: tuple[str, ...] = ("testcases", "tutorial", "the_question", "launcher")
 
 # The kinds of target, which determine where a target runs and how it starts.
 TARGET_TYPES: frozenset[str] = frozenset({"source", "local", "wine", "ssh"})
@@ -79,11 +83,43 @@ TARGET_KEYS: frozenset[str] = frozenset({
     "wineprefix",
 })
 
-# The test phase's timeout, in seconds, when the configuration does not give one.
+# The timeout of each project's tests, in seconds, when the configuration does not give one.
 DEFAULT_TIMEOUT: float = 900
 
-# What gets copied to a target. This is the part of test_mac.sh's list that's needed to run testcases.
-DEFAULT_SYNC: tuple[str, ...] = ("lib", "renpy", "renpy.py", "renpy.sh", "renpy.app", "sdk-fonts", "testcases")
+# What gets copied to a target. This is the part of test_mac.sh's list that's needed to run testcases, the projects, and
+# what the launcher's tests use: gui is the template for new projects, LICENSE.txt is put into the distributions they
+# build, and sphinx holds the license they compare it to.
+DEFAULT_SYNC: tuple[str, ...] = (
+    "lib",
+    "renpy",
+    "renpy.py",
+    "renpy.sh",
+    "renpy.app",
+    "sdk-fonts",
+    "LICENSE.txt",
+    "gui",
+    "sphinx",
+    *PROJECTS,
+)
+
+# Rsync filters for files a project generates, or that shouldn't leave this computer, like the_question's keystores.
+PROJECT_FILTERS: tuple[str, ...] = (
+    "--exclude=/screenshots/",
+    "--exclude=/tmp/",
+    "--exclude=*.rpyc",
+    "--exclude=*.rpymc",
+    "--exclude=*.rpyb",
+    "--exclude=__pycache__/",
+    "--exclude=*.pyc",
+    "--exclude=*.keystore",
+    "--exclude=/game/cache/",
+    "--exclude=/game/saves/",
+    "--exclude=log.txt",
+    "--exclude=traceback.txt",
+    "--exclude=errors.txt",
+    "--exclude=lint.txt",
+    "--exclude=image_cache.txt",
+)
 
 # Rsync filters for each item. They can't be global, as lib/ needs the .so and .pyc files excluded from renpy/. Excluded
 # files are left alone on the destination, which keeps the per-target screenshot baselines. --delete-excluded can't be
@@ -91,25 +127,21 @@ DEFAULT_SYNC: tuple[str, ...] = ("lib", "renpy", "renpy.py", "renpy.sh", "renpy.
 SYNC_FILTERS: dict[str, tuple[str, ...]] = {
     # A Linux build in the source tree must not shadow the runtime in lib/.
     "renpy": ("--exclude=*.cpython-*.so", "--exclude=__pycache__/", "--exclude=*.pyc", "--exclude=*.pyo"),
-    "testcases": (
-        "--exclude=/screenshots/",
-        "--exclude=/pytests/",
-        "--exclude=*.rpyc",
-        "--exclude=*.rpymc",
-        "--exclude=*.rpyb",
-        "--exclude=/game/cache/",
-        "--exclude=/game/saves/",
-        "--exclude=log.txt",
-        "--exclude=traceback.txt",
-        "--exclude=errors.txt",
-    ),
+    "testcases": ("--exclude=/pytests/", *PROJECT_FILTERS),
+    "tutorial": PROJECT_FILTERS,
+    "the_question": PROJECT_FILTERS,
+    "launcher": PROJECT_FILTERS,
+    "gui": PROJECT_FILTERS,
+    # The documentation is large, and the launcher's tests only need this file.
+    "sphinx": ("--include=/source/", "--include=/source/license.rst", "--exclude=*"),
 }
 
 # A shell command, run in a private tree before syncing, that removes what a previous run generated. Ren'Py would still
 # load the .rpyc of a test whose .rpy has been deleted, and these files could also keep rsync from removing a directory.
 CLEAN_GENERATED: str = (
-    r"find testcases \( -name '*.rpyc' -o -name '*.rpymc' -o -name '*.rpyb' \) -delete 2>/dev/null; "
-    "rm -rf testcases/game/cache testcases/game/saves"
+    f"find {' '.join(PROJECTS)} gui "
+    r"\( -name '*.rpyc' -o -name '*.rpymc' -o -name '*.rpyb' \) -delete 2>/dev/null; "
+    "rm -rf " + " ".join(f"{i}/game/cache {i}/game/saves" for i in (*PROJECTS, "gui"))
 )
 
 # Rsync's exit status when source files vanished during the transfer, which doesn't hurt the files that matter.
@@ -175,7 +207,7 @@ class Cancelled(Exception):
 @dataclasses.dataclass
 class Target:
     """
-    One way of running the testcases, as defined by a [target.<name>] table in the configuration.
+    One place to run the testcases, as defined by a [target.<name>] table in the configuration.
     """
 
     name: str
@@ -223,6 +255,14 @@ class Target:
 
         return STAGED_SAVEDIR
 
+    def project_savedir(self, project: str) -> str:
+        """
+        The saves and persistent directory of a project on this target, relative to its tree. The projects must not
+        share one, as the persistent data of each would overwrite the others'.
+        """
+
+        return f"{self.savedir}/{project}"
+
 
 @dataclasses.dataclass
 class Counts:
@@ -256,15 +296,19 @@ class Report:
 @dataclasses.dataclass
 class Result:
     """
-    The outcome of one target, as shown in the synopsis.
+    The outcome of one project on one target, which is a row of the synopsis.
     """
 
     name: str
+    project: str
     status: str
     report: Report | None = None
     duration: float = 0
     detail: str = ""
     log: Path | None = None
+
+    target_wide: bool = False
+    "True if the target failed before it could run this project, so that the detail applies to all of its projects."
 
 
 def strip_terminal_codes(text: str) -> str:
@@ -518,6 +562,24 @@ def select_targets(targets: list[Target], names: str | None) -> list[Target]:
     return selected
 
 
+def select_projects(names: str | None, filters: list[str]) -> list[str]:
+    """
+    Picks the projects to run: the comma-separated `names`, or else all of them. Test filters are specific to a
+    project, and a filter that matches nothing fails the run, so they can only be used with a single project.
+    """
+
+    projects = list(dict.fromkeys(names.split(","))) if names else list(PROJECTS)
+
+    for project in projects:
+        if project not in PROJECTS:
+            raise ConfigError(f"Unknown project {project!r}. Known projects: {', '.join(PROJECTS)}.")
+
+    if filters and len(projects) != 1:
+        raise ConfigError("Test filters are specific to a project, so use --project to name exactly one.")
+
+    return projects
+
+
 def build_launch(target: Target, index: int) -> str:
     """
     Returns the shell command that starts Ren'Py on a target, up to but not including Ren'Py's arguments.
@@ -562,27 +624,27 @@ def build_launch(target: Target, index: int) -> str:
     return f"env {unset}{assignments}{launch}"
 
 
-def build_test_arguments(target: Target, filters: list[str]) -> list[str]:
+def build_test_arguments(target: Target, project: str, filters: list[str]) -> list[str]:
     """
-    Returns the arguments given to Ren'Py to run the testcases.
+    Returns the arguments given to Ren'Py to run a project's testcases.
     """
 
-    return ["testcases", "--savedir", target.savedir, "test", "--report-detailed", *filters]
+    return [project, "--savedir", target.project_savedir(project), "test", "--report-detailed", *filters]
 
 
-def build_run_script(target: Target, index: int, filters: list[str]) -> str:
+def build_run_script(target: Target, project: str, index: int, filters: list[str]) -> str:
     """
     Returns the POSIX shell script that clears the last run's leftovers and runs the tests, in place of the shell.
 
     The same script runs locally and over ssh. Leftovers are removed so that all artifacts come from this run.
     """
 
-    arguments = " ".join(shlex.quote(i) for i in build_test_arguments(target, filters))
+    arguments = " ".join(shlex.quote(i) for i in build_test_arguments(target, project, filters))
 
     return "; ".join([
         f"cd {shlex.quote(target.workdir)} || exit 125",
-        f"rm -rf {shlex.quote(target.savedir)} testcases/traceback.txt testcases/errors.txt",
-        r"find testcases/screenshots \( -name '*.new.png' -o -name '*.diff.png' \) -delete 2>/dev/null",
+        f"rm -rf {shlex.quote(target.project_savedir(project))} {project}/traceback.txt {project}/errors.txt",
+        f"find {project}/screenshots \\( -name '*.new.png' -o -name '*.diff.png' \\) -delete 2>/dev/null",
         f"exec {build_launch(target, index)} {arguments}",
     ])
 
@@ -597,14 +659,14 @@ def build_prepare_tree_script(target: Target) -> str:
     return f"mkdir -p {workdir} && cd {workdir} && {{ {CLEAN_GENERATED}; true; }}"
 
 
-def build_run_argv(target: Target, index: int, filters: list[str]) -> list[str]:
+def build_run_argv(target: Target, project: str, index: int, filters: list[str]) -> list[str]:
     """
-    Returns the local command line that runs a target's tests.
+    Returns the local command line that runs a project's tests on a target.
 
     ssh gets a pty so that killing the client gives the remote process a SIGHUP, rather than leaving it running.
     """
 
-    script = build_run_script(target, index, filters)
+    script = build_run_script(target, project, index, filters)
 
     if target.type == "ssh":
         return ["ssh", "-tt", *SSH_OPTIONS, str(target.host), script]
@@ -671,9 +733,9 @@ def build_sync_argvs(target: Target) -> list[list[str]]:
     return argvs
 
 
-def build_collect_argvs(target: Target, directory: Path) -> list[list[str]]:
+def build_collect_argvs(target: Target, project: str, directory: Path) -> list[list[str]]:
     """
-    Returns the rsync commands that copy a run's logs and differing screenshots to the results directory.
+    Returns the rsync commands that copy a project's logs and differing screenshots to the results directory.
 
     These commands fail harmlessly if there's nothing to collect. Each file gets its own command as
     --ignore-missing-args is too new for the rsync on some computers.
@@ -682,7 +744,7 @@ def build_collect_argvs(target: Target, directory: Path) -> list[list[str]]:
     argvs = []
 
     for name in ("traceback.txt", "errors.txt", "log.txt"):
-        argvs.append([*rsync_base(target), remote_path(target, f"testcases/{name}"), f"{directory}/"])
+        argvs.append([*rsync_base(target), remote_path(target, f"{project}/{name}"), f"{directory}/"])
 
     argvs.append([
         *rsync_base(target),
@@ -691,7 +753,7 @@ def build_collect_argvs(target: Target, directory: Path) -> list[list[str]]:
         "--include=*.new.png",
         "--include=*.diff.png",
         "--exclude=*",
-        remote_path(target, "testcases/screenshots/"),
+        remote_path(target, f"{project}/screenshots/"),
         f"{directory}/screenshots/",
     ])
 
@@ -830,28 +892,36 @@ def sync_target(target: Target, log: Path) -> str | None:
     return None
 
 
-def collect_artifacts(target: Target, directory: Path, log: Path) -> None:
+def collect_artifacts(target: Target, project: str, directory: Path, log: Path) -> None:
     """
-    Copies logs and screenshots from a target's tree. Failing to do so doesn't change the target's result.
+    Copies a project's logs and screenshots from a target's tree. Failing to do so doesn't change the project's result.
     """
 
-    for argv in build_collect_argvs(target, directory):
+    for argv in build_collect_argvs(target, project, directory):
         try:
             run_logged(argv, log, timeout=300)
         except (CommandTimeout, Cancelled, OSError):
             return
 
 
-def run_target(target: Target, index: int, filters: list[str], directory: Path) -> Result:
+def make_target_errors(target: Target, projects: list[str], detail: str) -> list[Result]:
     """
-    Syncs, runs, collects from, and reports on a single target. This doesn't raise for anything that's the target's
-    fault, so a broken target can't affect the others.
+    Makes the results of a target that failed before running any of its projects.
+    """
+
+    return [Result(target.name, project, "ERROR", detail=detail, target_wide=True) for project in projects]
+
+
+def run_project(target: Target, project: str, index: int, filters: list[str], directory: Path, support: Path) -> Result:
+    """
+    Runs, collects from, and reports on a single project on a target that has been synced. This doesn't raise for
+    anything that's the project's fault, so a broken project can't affect the others.
     """
 
     directory.mkdir(parents=True, exist_ok=True)
 
+    label = f"{target.name}/{project}"
     output = directory / "output.txt"
-    support = directory / "support.txt"
     relative_output = output.relative_to(REPO) if output.is_relative_to(REPO) else output
 
     def error(detail: str, status: str = "ERROR", duration: float = 0) -> Result:
@@ -859,48 +929,41 @@ def run_target(target: Target, index: int, filters: list[str], directory: Path) 
         Makes the result of a run that has no test results.
         """
 
-        return Result(target.name, status, duration=duration, detail=detail, log=relative_output)
+        return Result(target.name, project, status, duration=duration, detail=detail, log=relative_output)
 
+    if cancelled.is_set():
+        return error("interrupted")
+
+    report_progress(label, "running tests")
     start = time.monotonic()
 
     try:
-        if target.type != "source":
-            report_progress(target.name, "syncing")
-
-        failure = sync_target(target, support)
-        if failure:
-            report_progress(target.name, f"ERROR: {failure}")
-            return error(f"{failure}; see {support}")
-
-        report_progress(target.name, "running tests")
-        start = time.monotonic()
-
-        returncode = run_logged(build_run_argv(target, index, filters), output, target.timeout)
+        returncode = run_logged(build_run_argv(target, project, index, filters), output, target.timeout)
 
     except CommandTimeout:
         stop_wine(target, support)
-        collect_artifacts(target, directory, support)
+        collect_artifacts(target, project, directory, support)
         duration = time.monotonic() - start
         tail = read_tail(output)
-        report_progress(target.name, "TIMEOUT")
+        report_progress(label, "TIMEOUT")
         return error(f"timed out; see {relative_output}\n{tail}".rstrip(), "TIMEOUT", duration)
 
     except Cancelled:
         stop_wine(target, support)
-        report_progress(target.name, "interrupted")
+        report_progress(label, "interrupted")
         return error("interrupted", duration=time.monotonic() - start)
 
     except OSError as e:
-        report_progress(target.name, f"ERROR: {e}")
+        report_progress(label, f"ERROR: {e}")
         return error(str(e), duration=time.monotonic() - start)
 
     duration = time.monotonic() - start
 
     if target.type == "ssh" and returncode == SSH_FAILED:
-        report_progress(target.name, "ERROR: ssh failed")
+        report_progress(label, "ERROR: ssh failed")
         return error(f"ssh failed; see {relative_output}", duration=duration)
 
-    collect_artifacts(target, directory, support)
+    collect_artifacts(target, project, directory, support)
 
     text = output.read_text(encoding="utf-8", errors="replace") if output.exists() else ""
     report = parse_output(text)
@@ -913,9 +976,41 @@ def run_target(target: Target, index: int, filters: list[str], directory: Path) 
     elif status == "FAIL":
         detail = f"exit status {returncode}; see {relative_output}"
 
-    report_progress(target.name, f"{status} in {format_duration(duration)}")
+    report_progress(label, f"{status} in {format_duration(duration)}")
 
-    return Result(target.name, status, report, duration, detail, relative_output)
+    return Result(target.name, project, status, report, duration, detail, relative_output)
+
+
+def run_target(target: Target, projects: list[str], index: int, filters: list[str], directory: Path) -> list[Result]:
+    """
+    Syncs a target and runs its projects one at a time, returning a result for each. Projects run on their own
+    because their windows would take focus from each other. This doesn't raise for anything that's the target's fault,
+    so a broken target can't affect the others.
+    """
+
+    directory.mkdir(parents=True, exist_ok=True)
+
+    support = directory / "support.txt"
+
+    try:
+        if target.type != "source":
+            report_progress(target.name, "syncing")
+
+        failure = sync_target(target, support)
+
+    except Cancelled:
+        report_progress(target.name, "interrupted")
+        return make_target_errors(target, projects, "interrupted")
+
+    except OSError as e:
+        report_progress(target.name, f"ERROR: {e}")
+        return make_target_errors(target, projects, str(e))
+
+    if failure:
+        report_progress(target.name, f"ERROR: {failure}")
+        return make_target_errors(target, projects, f"{failure}; see {support}")
+
+    return [run_project(target, i, index, filters, directory / i, support) for i in projects]
 
 
 def run_prepare_commands(targets: list[Target], directory: Path) -> dict[str, str]:
@@ -973,10 +1068,11 @@ def format_duration(seconds: float) -> str:
 
 def format_synopsis(results: list[Result]) -> str:
     """
-    Formats the final report: a table with a row per target, the problems found, and the overall result.
+    Formats the final report: a table with a row per project on each target, the problems found, and the overall
+    result. A problem that stopped a whole target is only listed once.
     """
 
-    rows = [("Target", "Status", "Passed", "Failed", "XFail", "Skip", "Time", "Platform")]
+    rows = [("Target", "Project", "Status", "Passed", "Failed", "XFail", "Skip", "Time", "Platform")]
 
     for r in results:
         if r.report:
@@ -985,29 +1081,39 @@ def format_synopsis(results: list[Result]) -> str:
         else:
             figures = ["-"] * 4
 
-        rows.append((r.name, r.status, *figures, format_duration(r.duration), r.report.platform if r.report else ""))
+        platform = r.report.platform if r.report else ""
+        rows.append((r.name, r.project, r.status, *figures, format_duration(r.duration), platform))
 
     widths = [max(len(row[i]) for row in rows) for i in range(len(rows[0]))]
     lines = []
 
     for row in rows:
         cells = [
-            cell.rjust(width) if 2 <= i <= 5 else cell.ljust(width)
+            cell.rjust(width) if 3 <= i <= 6 else cell.ljust(width)
             for i, (cell, width) in enumerate(zip(row, widths))
         ]
         lines.append("  ".join(cells).rstrip())
 
     failures = []
+    failed_targets = set()
 
     for r in results:
         if r.status == "PASS":
             continue
 
+        if r.target_wide:
+            if r.name in failed_targets:
+                continue
+
+            failed_targets.add(r.name)
+
+        label = r.name if r.target_wide else f"{r.name}/{r.project}"
+
         if r.report:
-            failures += [f"  {r.name}: {problem}" for problem in r.report.problems]
+            failures += [f"  {label}: {problem}" for problem in r.report.problems]
 
         first, *rest = (r.detail or r.status).split("\n")
-        failures.append(f"  {r.name}: {first}")
+        failures.append(f"  {label}: {first}")
         failures += [f"    {i}" for i in rest]
 
     if failures:
@@ -1015,7 +1121,7 @@ def format_synopsis(results: list[Result]) -> str:
 
     passed = sum(r.status == "PASS" for r in results)
     overall = "PASS" if passed == len(results) else "FAIL"
-    lines += ["", f"OVERALL: {overall} ({passed}/{len(results)} targets passed)"]
+    lines += ["", f"OVERALL: {overall} ({passed}/{len(results)} test runs passed)"]
 
     return "\n".join(lines)
 
@@ -1042,9 +1148,10 @@ def make_results_directory() -> Path:
     return directory
 
 
-def run_all(targets: list[Target], filters: list[str], use_prepare: bool) -> list[Result]:
+def run_all(targets: list[Target], projects: list[str], filters: list[str], use_prepare: bool) -> list[Result]:
     """
-    Prepares and then runs the given targets in parallel, returning their results in the order they were given.
+    Prepares and then runs the given targets in parallel, returning a result for each project on each target, in the
+    order they were given.
 
     If the run is cancelled, this stops every target and still returns a result for each of them.
     """
@@ -1052,7 +1159,7 @@ def run_all(targets: list[Target], filters: list[str], use_prepare: bool) -> lis
     directory = make_results_directory()
     report_progress("results", str(directory))
 
-    results: dict[str, Result] = {}
+    results: dict[str, list[Result]] = {}
     threads = []
 
     def run_one(target: Target, index: int) -> None:
@@ -1061,21 +1168,21 @@ def run_all(targets: list[Target], filters: list[str], use_prepare: bool) -> lis
         """
 
         try:
-            results[target.name] = run_target(target, index, filters, directory / target.name)
+            results[target.name] = run_target(target, projects, index, filters, directory / target.name)
         except Exception as e:
             report_progress(target.name, f"ERROR: {e!r}")
-            results[target.name] = Result(target.name, "ERROR", detail=repr(e))
+            results[target.name] = make_target_errors(target, projects, repr(e))
 
     failures = run_prepare_commands(targets, directory) if use_prepare else {}
 
     for index, target in enumerate(targets):
         if target.name in failures:
-            results[target.name] = Result(target.name, "ERROR", detail=failures[target.name])
+            results[target.name] = make_target_errors(target, projects, failures[target.name])
             report_progress(target.name, "ERROR: prepare failed")
             continue
 
         if cancelled.is_set():
-            results[target.name] = Result(target.name, "ERROR", detail="interrupted")
+            results[target.name] = make_target_errors(target, projects, "interrupted")
             continue
 
         thread = threading.Thread(target=run_one, args=(target, index), name=target.name)
@@ -1085,7 +1192,7 @@ def run_all(targets: list[Target], filters: list[str], use_prepare: bool) -> lis
     for thread in threads:
         thread.join()
 
-    return [results[t.name] for t in targets]
+    return [result for t in targets for result in results[t.name]]
 
 
 def request_cancel(signum: int, frame: object) -> None:
@@ -1108,11 +1215,16 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Run Ren'Py's functional testcases on several platforms at once.")
     ap.add_argument("--config", type=Path, default=DEFAULT_CONFIG, help=f"The config file. Default: {DEFAULT_CONFIG}")
     ap.add_argument("-t", "--target", help="A comma-separated list of targets to run, which may be disabled ones.")
+    ap.add_argument("-p", "--project", help=f"A comma-separated list of projects to run. Default: {','.join(PROJECTS)}")
     ap.add_argument("--list", action="store_true", help="List the configured targets, and exit.")
     ap.add_argument("--build", action="store_true", help="Run the targets' prepare commands before the tests.")
     ap.add_argument("--headless", action="store_true", help="Run every target on a virtual display with dummy audio.")
-    ap.add_argument("--timeout", type=float, help="Override the timeout of the test phase, in seconds.")
-    ap.add_argument("filters", nargs="*", help="Test filters. Default: all tests. Use -- before them.")
+    ap.add_argument("--timeout", type=float, help="Override the timeout of each project's tests, in seconds.")
+    ap.add_argument(
+        "filters",
+        nargs="*",
+        help="Test filters, which require --project to name one project. Default: all tests. Use -- before them.",
+    )
     args = ap.parse_args()
 
     try:
@@ -1128,6 +1240,7 @@ def main() -> int:
             raise ConfigError("--timeout must be positive.")
 
         selected = select_targets(targets, args.target)
+        projects = select_projects(args.project, args.filters)
 
     except ConfigError as e:
         print(f"Error: {e}", file=sys.stderr)
@@ -1145,7 +1258,7 @@ def main() -> int:
     signal.signal(signal.SIGINT, request_cancel)
     signal.signal(signal.SIGTERM, request_cancel)
 
-    results = run_all(selected, args.filters, args.build)
+    results = run_all(selected, projects, args.filters, args.build)
     print(format_synopsis(results), flush=True)
 
     return 0 if all(r.status == "PASS" for r in results) else 1

@@ -82,10 +82,12 @@ A tool that helps with creating and running test games.
 run_testcases.py
 ----------------
 
-Runs the functional testcases on several platforms at once, and prints a
-synopsis to stdout. Targets can run in the repository, in a private copy of
-the tree (natively or under wine), or on another computer using rsync and ssh.
-They run like normal games unless they're set to be headless.
+Runs the test suites of the testcases, tutorial, the_question, and launcher
+projects on several platforms at once, and prints a combined synopsis to stdout.
+Targets can run in the repository, in a private copy of the tree (natively or
+under wine), or on another computer using rsync and ssh. They run like normal
+games unless they're set to be headless. Use --project to run some of the
+projects, which test filters require.
 
 Targets are defined in ~/.renpy/dev/testcases.toml. To create it, copy and edit
 run_testcases.example.toml, which documents the format. Logs and artifacts are

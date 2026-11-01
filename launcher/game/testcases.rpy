@@ -44,6 +44,13 @@
 
 
 testsuite global:
+    setup:
+        # On a tree that has never run the launcher, it starts by asking for a language.
+        pause until (screen "choose_language" or id "pref_btn")
+
+        if screen "choose_language":
+            click "Start using Ren'Py"
+
     teardown:
         exit
 

@@ -1,17 +1,19 @@
 # The configuration for scripts/run_testcases.py. Copy this to ~/.renpy/dev/testcases.toml, and edit it to describe
-# your computers. Each [target.<name>] table is one way of running the tests, and they all run at the same time.
+# your computers. Each [target.<name>] table is one place to run the tests, and they all run at the same time. Each
+# target runs the tests of testcases, tutorial, the_question, and launcher, one project at a time.
 #
 # Keys every target can have:
 #
 #   type        "source", "local", "wine", or "ssh". (Required.)
 #   enabled     false leaves the target out, unless it's named with --target. Default: true.
 #   headless    Run on a virtual display with dummy audio, rather than like a normal game. Default: false.
-#   timeout     How long the tests may take, in seconds. Default: 900.
+#   timeout     How long each project's tests may take, in seconds. Default: 900.
 #   env         A table of environment variables for the test process.
 #   prepare     A shell command run in this repository before anything else starts, such as a build. This only happens
 #               when --build is given. Prepare commands run one at a time, and identical commands run once.
 #   command     A shell command that replaces the default launch. Ren'Py's arguments are added to the end of it.
-#   sync        The top-level items of the repository to copy to the target, replacing the default list.
+#   sync        The top-level items of the repository to copy to the target, replacing the default list. A project
+#               that isn't copied crashes when it runs, and the launcher's tests also need LICENSE.txt, gui, and sphinx.
 #
 # Without headless, windows open on the target's real display and can take focus from each other or from you. The
 # tests also require the window to be the size the game asks for, so a small or scaled display fails them.
@@ -44,7 +46,8 @@ wineprefix = "~/.wine-renpy-test"
 # Rsyncs a copy of the tree to another computer, and runs it over ssh. Logging in must not ask for a password.
 #
 # The destination must be a directory only used for this: anything inside the synced items that isn't in this
-# repository is deleted, except for testcases/screenshots, which holds that target's screenshot baselines.
+# repository is deleted, except for each project's screenshots directory, which holds that target's screenshot
+# baselines, and the generated files that aren't copied.
 #
 # Over ssh, a non-headless target needs a display on the other computer. A Mac needs you to be logged in. On Linux,
 # set DISPLAY or WAYLAND_DISPLAY with env, or use headless.
