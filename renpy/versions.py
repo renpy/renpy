@@ -53,7 +53,7 @@ branch_to_version: dict[str, Version] = {}
 
 Version("main", (8, 6, 0), "Real Artists Ship")
 
-Version("fix", (8, 6, 0), "Real Artists Ship")
+Version("fix", (8, 5, 4), "We Can Go to the Moon")
 
 
 class VersionDict(TypedDict):
@@ -98,7 +98,12 @@ def _make_version_string(
     if not official and branch not in {"main", "master"}:
         suffixes.append(branch)
 
-    return f"{major}.{minor}.{patch}.{commit:08d}+{'.'.join(suffixes)}"
+    version = f"{major}.{minor}.{patch}.{commit:08d}"
+
+    if suffixes:
+        version += f"+{'.'.join(suffixes)}"
+
+    return version
 
 
 def get_vc_version() -> VersionDict | None:
@@ -272,7 +277,7 @@ def get_release_version():
     version_tuple = tuple(map(int, version["version"].split(".")[:3]))
 
     if version["nightly"] and version["branch"] == "fix" and version_tuple[2] > 0:
-        return "{}.{}.{}".format(version_tuple[0], version_tuple[1] - 1, version_tuple[2])
+        return "{}.{}.{}".format(version_tuple[0], version_tuple[1], version_tuple[2] - 1)
     else:
         return "{}.{}.{}".format(*version_tuple)
 

@@ -19,6 +19,8 @@ SOURCE = [
 
 from renpy.versions import generate_vc_version
 
+from distribute import read_release_version
+
 
 ap = argparse.ArgumentParser()
 
@@ -39,7 +41,7 @@ if args.version:
 else:
     version = generate_vc_version()["version"]
 
-short_version = version.rpartition(".")[0]
+short_version = version.partition("+")[0].rpartition(".")[0]
 major = version.partition(".")[0]
 
 print("Version", version)
@@ -49,8 +51,8 @@ if not args.real:
     sys.exit(1)
 
 if args.github:
-    subprocess.call(["git", "push", "--tags"])
-    subprocess.call([
+    subprocess.check_call(["git", "push", "--tags"])
+    subprocess.check_call([
         "gh",
         "release",
         "create",
@@ -64,6 +66,9 @@ if args.github:
     dn = "/home/tom/ab/renpy/dl/" + short_version
 
     for fn in os.listdir(dn):
+        if os.path.isdir(os.path.join(dn, fn)):
+            continue
+
         if fn == ".build_cache":
             continue
 
@@ -82,10 +87,18 @@ if args.github:
         if fn.endswith(".sums"):
             continue
 
-        subprocess.call(["gh", "release", "upload", version, os.path.join(dn, fn)])
+        subprocess.check_call(["gh", "release", "upload", version, os.path.join(dn, fn)])
 
     sys.exit(0)
 
+
+# Don't publish a build of something other than the current version.
+if args.release or args.prerelease or args.experimental:
+    release_version = read_release_version("/home/tom/ab/renpy/dl/" + short_version)
+
+    if release_version != version:
+        print("dl/{} contains {}, not {}.".format(short_version, release_version, version))
+        sys.exit(1)
 
 if args.release:
     subprocess.check_call(["/home/tom/ab/renpy/scripts/checksums.py", "/home/tom/ab/renpy/dl/" + short_version])

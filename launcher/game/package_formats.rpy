@@ -280,7 +280,9 @@ init python in distribute:
             cwd=os.path.abspath(self.directory)
             )
 
-            p.wait()
+            # The directory is kept on failure, to help diagnose the problem.
+            if p.wait():
+                raise Exception("Could not create " + self.path + ".")
 
             shutil.rmtree(self.directory)
 
@@ -309,6 +311,13 @@ init python in distribute:
             if not os.path.exists(self.directory):
                 os.mkdir(self.directory)
 
+            # This is created here, rather than when the package is closed, as creating
+            # it empties the directory and closing can happen in a background thread.
+            if RPUPackage.generator is None:
+                import renpy.update.generate
+
+                RPUPackage.generator = renpy.update.generate.BlockGenerator(self.directory)
+
         def add_file(self, name, path, xbit):
             self.file_list.add_file(name, path, xbit)
 
@@ -316,11 +325,6 @@ init python in distribute:
             self.file_list.add_directory(name)
 
         def close(self, progress=None):
-            import renpy.update.generate
-
-            if RPUPackage.generator is None:
-                RPUPackage.generator = renpy.update.generate.BlockGenerator(self.directory)
-
             RPUPackage.generator.generate(self.variant, self.file_list, progress)
 
         @staticmethod
@@ -355,6 +359,9 @@ init python in distribute:
 
             self.worklist = [ ]
 
+            # The exception that stopped the thread, if any.
+            self.exception = None
+
         def add_file(self, name, path, xbit):
             self.worklist.append((False, name, path, xbit))
 
@@ -370,17 +377,28 @@ init python in distribute:
 
         def run(self):
 
-            for i in self.worklist:
-                directory, name, path, xbit = i
-                if directory:
-                    self.package.add_directory(name, path)
-                else:
-                    self.package.add_file(name, path, xbit)
+            try:
+                for i in self.worklist:
+                    directory, name, path, xbit = i
+                    if directory:
+                        self.package.add_directory(name, path)
+                    else:
+                        self.package.add_file(name, path, xbit)
 
-            self.package.close()
+                self.package.close()
+
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+
+                self.exception = e
 
 
     def wait_parallel_threads():
+        """
+        Waits for the packages being built in parallel to finish. Raises an exception
+        if any of them failed.
+        """
 
         t = 0
 
@@ -400,6 +418,12 @@ init python in distribute:
             print("\r " + str(t) + " " + " ".join(sorted([ i.what for i in alive ])))
 
             time.sleep(1)
+
+        failed = [ i for i in parallel_threads if i.exception is not None ]
+
+        if failed:
+            parallel_threads.clear()
+            raise Exception("Could not build: " + ", ".join(sorted(i.what for i in failed))) from failed[0].exception
 
         for i in parallel_threads:
             if i.done:

@@ -9,7 +9,9 @@ APP="$3"
 # The tarballs are removed by the client once it has the signed tarball.
 trap 'rm -rf "/tmp/${APP:?}" /tmp/renpy.app.zip' EXIT
 
-security unlock-keychain -p "$(cat ~/.password)"
+# Sed writes the command for security's interactive mode, so that the password is only
+# ever on stdin, and isn't in the arguments of any process.
+sed -e 's/^/unlock-keychain -p "/' -e 's/$/"/' ~/.password | security -i
 
 pushd /tmp
 rm -Rf "$APP" || true

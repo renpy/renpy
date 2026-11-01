@@ -10,7 +10,7 @@ def hash_all(f, hash_name, hash_func, directory):
     f.write("\n")
     f.write("# {}\n".format(hash_name))
 
-    extensions = [".zip", ".tar.gz", ".tar.bz2", ".exe"]
+    extensions = [".zip", ".tar.gz", ".tar.bz2", ".exe", ".dmg"]
 
     for fn in sorted(os.listdir(directory)):
         for e in extensions:

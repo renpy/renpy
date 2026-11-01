@@ -290,8 +290,6 @@ init python:
     build.classify_renpy("renios/prototype/prototype.xcodeproj/xcuserdata/", None)
     build.classify_renpy("renios/prototype/**", "renios")
     build.classify_renpy("renios/buildlib/**", "renios")
-    build.classify_renpy("renios/ios.py", "renios")
-    build.classify_renpy("renios/version.txt", "renios")
     build.classify_renpy("renios/", "renios")
 
     build.classify_renpy("web/game.zip", None)
@@ -401,6 +399,10 @@ init python:
 
     # Build System.
     build.classify_renpy("setup.py", "source_only")
+    build.classify_renpy("pyproject.toml", "source_only")
+    build.classify_renpy("run.sh", "source_only")
+    build.classify_renpy("run.ps1", "source_only")
+    build.classify_renpy("README.rst", "source_only")
     build.classify_renpy("src/**", "source_only")
     build.classify_renpy("scripts/", "source_only")
     build.classify_renpy("scripts/setuplib.py", "source_only")
@@ -422,11 +424,10 @@ init python:
     libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
     source_and_binary(libpython, "binary", "binary", py='pyc')
 
-    build.classify_renpy("lib/py3-windows-x86_64/zsync.exe", None)
     build.classify_renpy("lib/python**", None)
     build.classify_renpy("lib/py2-**", None)
 
-    build.classify_renpy("renpy3.sh", "binary")
+    build.classify_renpy("renpy.sh", "binary")
 
     build.classify_renpy("lib/", "binary")
 

@@ -42,6 +42,47 @@
 
         return True
 
+    def check_package_failures():
+        """
+        Checks that failures while packaging reach the code that started the build.
+        Returns True if so, and raises an exception otherwise.
+        """
+
+        import shutil
+        import tempfile
+
+        class FailingPackage(object):
+            def close(self, progress=None):
+                raise Exception("This failure is expected by the test.")
+
+        distribute.ParallelPackage(FailingPackage(), None, "failing").close()
+
+        try:
+            distribute.wait_parallel_threads()
+        except Exception as e:
+            if "failing" not in str(e):
+                raise
+        else:
+            raise Exception("A failure in a package thread was ignored.")
+
+        tempdir = tempfile.mkdtemp(prefix="renpy-test-")
+
+        try:
+            # Zip has nothing to do, so it fails.
+            package = distribute.ExternalZipPackage(os.path.join(tempdir, "empty.zip"))
+
+            try:
+                package.close()
+            except Exception:
+                pass
+            else:
+                raise Exception("A failure of zip was ignored.")
+
+        finally:
+            shutil.rmtree(tempdir)
+
+        return True
+
 
 testsuite global:
     setup:
@@ -194,6 +235,10 @@ testsuite default:
         click "Return"
 
         assert eval check_dists_license()
+
+
+    testcase package_failures:
+        assert eval check_package_failures()
 
 
     testcase choose_colors:

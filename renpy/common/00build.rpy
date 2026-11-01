@@ -68,9 +68,6 @@ init -1500 python in build:
         ("renpy/**__pycache__", "all"),
     ])
 
-    if os.path.exists(os.path.join(config.renpy_base, "renpy3.sh")):
-        renpy_sh = "renpy3.sh"
-
 
     # Patterns that are used to classify Ren'Py.
     renpy_patterns.extend(pattern_list([

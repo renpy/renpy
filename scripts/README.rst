@@ -6,18 +6,19 @@ the repository root with ``uv run pytest scripts/tests``. They do not require
 engine initialization or compiled Ren'Py extensions. ``uv run pytest`` runs only
 the engine Python tests by default.
 
+add_all.sh
+----------
+
+Runs add.py using the Python in lib/, giving it the ``--real`` flag. add.py tags
+and publishes a release, and refuses to do so if the updates.json file in dl/
+isn't for the current version.
+
 alter_translations.py
 ---------------------
 
 This can be used to replace one string translation with another. It's used
 when the string changes from `old` to `new`, but the translatoons are
 expected to be correct.
-
-autobuild.sh
-------------
-
-This is called from distribute.py, to build Ren'Py before distribution
-happens.
 
 check_copyright.py
 ------------------
@@ -29,6 +30,23 @@ checksums.py
 
 Used by add.py. This computes the checksums of a released Ren'Py, and
 signs them using GPG.
+
+distribute_all.sh
+-----------------
+
+Builds a release. It checks the git tree, updates and builds the Ren'Py and
+renpy-build checkouts, builds the documentation, and then runs distribute.py.
+Its arguments are given to distribute.py. The ones most likely to be useful are:
+
+``--allow-dirty``
+    Allows a full build from a git tree with uncommitted changes.
+
+``--nosign``
+    Doesn't sign the Mac app or build a dmg. The updates are still signed.
+
+distribute.py checks the files it built, and fails if one is missing or doesn't
+match the version. Its ``--fast`` flag only builds the SDK, without updates, and
+places it in ``dl/<version>-fast``.
 
 fetch_prism.py
 --------------
@@ -106,12 +124,6 @@ sign_update.py
 ---------------
 
 This signs updates used by the Ren'Py updater.
-
-update_compat_import.py
------------------------
-
-Updates the ``from renpy.compat import`` line at the start of files that
-have one.
 
 update_copyright.py
 -------------------

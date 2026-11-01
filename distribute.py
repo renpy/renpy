@@ -11,12 +11,15 @@ PY2 = future.utils.PY2
 import sys
 import os
 import compileall
+import json
+import py_compile
 import shutil
+import struct
 import subprocess
 import argparse
 import time
 import collections
-import pathlib
+import zipfile
 
 try:
     from importlib import reload
@@ -25,6 +28,184 @@ except ImportError:
 
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+
+# The files that must be in every SDK zip, relative to the directory in the zip.
+REQUIRED_SDK_FILES = [
+    "LICENSE.txt",
+    "doc/index.html",
+    "lib/py3-linux-x86_64/renpy",
+    "lib/py3-mac-universal/renpy",
+    "lib/py3-windows-x86_64/renpy.exe",
+    "renpy.app/Contents/MacOS/renpy",
+    "renpy.exe",
+    "renpy.py",
+    "renpy.sh",
+    "renpy/vc_version.py",
+]
+
+# The flags field of a .pyc file that was compiled using CHECKED_HASH.
+CHECKED_HASH_FLAGS = 0b11
+
+
+def check_tree(version_dict, fast=False, nightly=False, allow_dirty=False):
+    """
+    Raises an exception if the git tree described by `version_dict` (as returned by
+    renpy.versions.get_git_version) shouldn't be used to build a distribution.
+
+    A tree that couldn't be read by git is always refused. A dirty tree is only allowed
+    for fast and nightly builds, or if `allow_dirty` is true.
+    """
+
+    if version_dict["branch"] == "unknown" or version_dict["semver"][3] == 0:
+        raise Exception("Could not determine the version from git.")
+
+    if version_dict["dirty"] and not (fast or nightly or allow_dirty):
+        raise Exception("The git tree is dirty. Commit the changes, or give --allow-dirty.")
+
+
+def remove_orphan_pycs(directory):
+    """
+    Removes the .pyc files in __pycache__ directories under `directory` that don't have a
+    corresponding .py file. These are left behind when a module is removed, can't be
+    imported, and would otherwise be packaged.
+    """
+
+    for dn, _dirs, files in os.walk(directory):
+        if os.path.basename(dn) != "__pycache__":
+            continue
+
+        for fn in files:
+            if not fn.endswith(".pyc"):
+                continue
+
+            source = os.path.join(os.path.dirname(dn), fn.partition(".")[0] + ".py")
+
+            if not os.path.exists(source):
+                os.unlink(os.path.join(dn, fn))
+
+
+def compile_python(directory):
+    """
+    Removes orphaned .pyc files from `directory`, then compiles the python files in it,
+    raising an exception if that fails.
+
+    The .pyc files are validated by the hash of the source, as packaging and unpacking
+    can change the timestamp of a .py file. They're compiled without optimization as
+    the engine runs that way, even if distribute.py was run with -O.
+    """
+
+    remove_orphan_pycs(directory)
+
+    success = compileall.compile_dir(
+        directory,
+        ddir=directory,
+        force=True,
+        quiet=1,
+        optimize=0,
+        invalidation_mode=py_compile.PycInvalidationMode.CHECKED_HASH,
+    )
+
+    if not success:
+        raise Exception("Could not compile the python files in {}.".format(directory))
+
+
+def read_release_version(directory):
+    """
+    Returns the version of Ren'Py recorded in the updates.json file in `directory`, which
+    is the output directory of a build. Raises an exception if it can't be determined.
+    """
+
+    with open(os.path.join(directory, "updates.json")) as f:
+        return json.load(f)["sdk"]["renpy_version"]
+
+
+def verify_sdk_zip(path, root, semver):
+    """
+    Raises an exception if the SDK zip at `path` isn't correct. `root` is the name of the
+    directory in the zip, and `semver` is the version it should contain, without suffixes.
+    """
+
+    prefix = root + "/"
+
+    with zipfile.ZipFile(path) as zf:
+        names = set(zf.namelist())
+
+        for name in REQUIRED_SDK_FILES:
+            if prefix + name not in names:
+                raise Exception("{} does not contain {}.".format(path, name))
+
+        vc_version = zf.read(prefix + "renpy/vc_version.py").decode("utf-8")
+
+        if "version = {!r}".format(semver) not in vc_version:
+            raise Exception("{} is not version {}.".format(path, semver))
+
+        suffix = ".{}.pyc".format(sys.implementation.cache_tag)
+        pycs = [i for i in names if i.startswith(prefix + "renpy/") and i.endswith(suffix)]
+
+        if not pycs:
+            raise Exception("{} does not contain compiled python files.".format(path))
+
+        for name in pycs:
+            flags = struct.unpack("<I", zf.read(name)[4:8])[0]
+
+            if flags != CHECKED_HASH_FLAGS:
+                raise Exception("{} in {} is not validated by hash.".format(name, path))
+
+
+def verify_distribution(destination, version, full_version, fast=False, sign=False):
+    """
+    Raises an exception if the build in `destination` is missing something, or
+    doesn't match the version being built.
+
+    `version`
+        The version used in file names.
+
+    `full_version`
+        The full version of Ren'Py being built, including suffixes.
+
+    `fast`
+        True if this was a fast build, which only makes the SDK and no updates.
+
+    `sign`
+        True if the mac app was signed, which is required to make a dmg.
+    """
+
+    base = "renpy-" + version + "-"
+
+    expected = [base + "sdk.zip", base + "sdk.tar.bz2"]
+
+    if sign:
+        expected.append(base + "sdk.dmg")
+
+    if not fast:
+        expected.extend([
+            base + "rapt.zip",
+            base + "renios.zip",
+            base + "sdk.7z.exe",
+            base + "sdkarm.tar.bz2",
+            base + "source.tar.bz2",
+            base + "steam.zip",
+            base + "web.zip",
+            base + "windev.zip",
+            "android-native-symbols.zip",
+            "updates.ecdsa",
+            "updates.json",
+            "updates.json.sig",
+        ])
+
+    for fn in expected:
+        path = os.path.join(destination, fn)
+
+        if not os.path.exists(path) or not os.path.getsize(path):
+            raise Exception("{} was not built.".format(path))
+
+    verify_sdk_zip(os.path.join(destination, base + "sdk.zip"), base + "sdk", full_version.partition("+")[0])
+
+    if not fast:
+        release_version = read_release_version(destination)
+
+        if release_version != full_version:
+            raise Exception("updates.json is for {}, not {}.".format(release_version, full_version))
 
 
 def zip_rapt_symbols(destination):
@@ -68,21 +249,14 @@ def copy_tutorial_file(src, dest):
                     df.write(l)
 
 
-def force_even_timestamps():
+def ensure_license():
     """
-    Forces the timestamps of all .py files in the renpy directory to be even.
-
-    This ensures that the timestamps can be represented in a zip file, which
-    can only represent timestamps that are even multiples of 2 seconds.
-
-    See https://github.com/renpy/renpy-build/pull/166
+    Creates the LICENSE.txt link that's packaged with Ren'Py, if it doesn't exist. It's
+    not checked in, and would otherwise be silently left out of the distribution.
     """
 
-    for fn in pathlib.Path("renpy").rglob("*.py"):
-        if fn.is_file():
-            st = fn.stat()
-            if st.st_mtime % 2 != 0:
-                os.utime(fn, (st.st_atime, st.st_mtime + 1))
+    if not os.path.exists("LICENSE.txt"):
+        os.symlink("sphinx/source/license.rst", "LICENSE.txt")
 
 
 def main():
@@ -91,26 +265,46 @@ def main():
 
     ap = argparse.ArgumentParser()
     ap.add_argument("version", nargs="?")
-    ap.add_argument("--fast", action="store_true")
-    ap.add_argument("--pygame", action="store", default=None)
-    ap.add_argument("--no-rapt", action="store_true")
+    ap.add_argument(
+        "--fast", action="store_true", help="Quickly build the SDK into dl/<version>-fast, without updates."
+    )
     ap.add_argument("--variant", action="store")
-    ap.add_argument("--sign", action="store_true", default=True)
-    ap.add_argument("--nosign", action="store_false", dest="sign")
+    ap.add_argument(
+        "--sign",
+        action="store_true",
+        default=None,
+        help="Sign the mac app and build a dmg. This is the default unless --fast is given.",
+    )
+    ap.add_argument(
+        "--nosign",
+        action="store_false",
+        dest="sign",
+        help="Do not sign the mac app or build a dmg. The updates are still signed.",
+    )
     ap.add_argument("--notarized", action="store_true", dest="notarized")
     ap.add_argument("--vc-version-only", action="store_true")
-    ap.add_argument("--link-directories", action="store_true")
     ap.add_argument("--append-version", action="store_true")
     ap.add_argument("--nightly", action="store_true")
     ap.add_argument("--print-version", action="store_true")
+    ap.add_argument("--allow-dirty", action="store_true", help="Allow a full build from a dirty git tree.")
+    ap.add_argument("--check-tree", action="store_true", help="Check the git tree can be built from, then exit.")
 
     args = ap.parse_args()
 
+    if args.sign is None:
+        args.sign = not args.fast
+
+    os.chdir(ROOT)
+
     import renpy.versions
 
-    renpy.versions.generate_vc_version(nightly=args.nightly)
+    if args.check_tree:
+        check_tree(renpy.versions.get_git_version(args.nightly), args.fast, args.nightly, args.allow_dirty)
+        return
 
-    if args.link_directories or args.vc_version_only:
+    version_dict = renpy.versions.generate_vc_version(nightly=args.nightly)
+
+    if args.vc_version_only:
         return
 
     if not os.path.abspath(sys.executable).startswith(ROOT + "/lib"):
@@ -142,6 +336,8 @@ def main():
         print(renpy.version_only)
         return
 
+    check_tree(version_dict, args.fast, args.nightly, args.allow_dirty)
+
     if args.version is None:
         if args.nightly:
             args.version = renpy.version_only
@@ -165,6 +361,10 @@ def main():
     if args.variant:
         destination += "-" + args.variant
 
+    # Keep fast builds, which are incomplete, away from the files of a full build.
+    if args.fast:
+        destination += "-fast"
+
     if os.path.exists(os.path.join(destination, "checksums.txt")):
         raise Exception("The checksums.txt file exists.")
 
@@ -172,10 +372,10 @@ def main():
 
     renpy_sh = "./renpy.sh"
 
-    force_even_timestamps()
+    ensure_license()
 
     # Compile all the python files.
-    compileall.compile_dir("renpy/", ddir="renpy/", force=True, quiet=1)
+    compile_python("renpy/")
 
     # Compile the various games.
     if not args.fast:
@@ -197,8 +397,8 @@ def main():
 
         print("Compiling RAPT and renios.")
 
-        compileall.compile_dir("rapt/buildlib/", ddir="rapt/buildlib/", quiet=1)
-        compileall.compile_dir("renios/buildlib/", ddir="renios/buildlib/", quiet=1)
+        compile_python("rapt/buildlib/")
+        compile_python("renios/buildlib/")
 
     if not os.path.exists(destination):
         os.makedirs(destination)
@@ -294,6 +494,10 @@ def main():
 
         if os.path.exists(sdk + ".7z.exe"):
             os.unlink(sdk + ".7z.exe")
+
+    os.chdir(ROOT)
+
+    verify_distribution(destination, args.version, full_version, args.fast, args.sign)
 
     print()
 

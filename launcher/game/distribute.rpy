@@ -238,10 +238,16 @@ fix_dlc("renios", "renios")
             if self.name == "update/current.json":
                 return
 
-            if self.path in distributor.hash_cache:
-                digest = distributor.hash_cache[self.path]
-            else:
+            # Temporary files can be rewritten during a build, so the key includes
+            # the information that changes when that happens.
+            st = os.stat(self.path)
+            cache_key = (self.path, st.st_mtime_ns, st.st_size)
+
+            digest = distributor.hash_cache.get(cache_key, None)
+
+            if digest is None:
                 digest = hash_file(self.path)
+                distributor.hash_cache[cache_key] = digest
 
             hash.update(digest.encode("utf-8"))
 
@@ -563,7 +569,7 @@ fix_dlc("renios", "renios")
             # A map from a package to a unique update version hash.
             self.update_versions = { }
 
-            # A map from file to its hash.
+            # A map from a file's path, modification time, and size to its hash.
             self.hash_cache = { }
 
             # A map from a list of file lists and formats to a single integrated
@@ -608,13 +614,25 @@ fix_dlc("renios", "renios")
 
             if project.data['force_recompile']:
                 import compileall
+                import py_compile
 
-                compileall.compile_dir(
-                    os.path.join(config.renpy_base, "renpy"),
+                renpy_dir = os.path.join(config.renpy_base, "renpy")
+
+                # The .pyc files are validated by the hash of the source, as packaging and
+                # unpacking can change the timestamp of a .py file.
+                compiled = compileall.compile_dir(
+                    renpy_dir,
                     ddir="renpy/",
                     force=True,
                     quiet=True,
+                    optimize=0,
+                    invalidation_mode=py_compile.PycInvalidationMode.CHECKED_HASH,
                 )
+
+                # An SDK that's installed read-only can't be recompiled, but can use the
+                # .pyc files it came with.
+                if not compiled and os.access(renpy_dir, os.W_OK):
+                    raise Exception("Could not compile the python files in {}.".format(renpy_dir))
 
             if project.dump.get("error", False):
                 raise Exception("Could not get build data from the project. Please ensure the project runs.")
@@ -1562,7 +1580,9 @@ fix_dlc("renios", "renios")
 
             update = { variant : { "version" : self.update_versions[variant], "base_name" : self.base_name, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            update_fn = self.temp_filename(filename + ".update.json")
+            # Each format has its own file, as the threads building previous formats
+            # may still be reading theirs.
+            update_fn = self.temp_filename(filename + "." + format + ".update.json")
 
             if self.include_update and not format.startswith("app-"):
 
