@@ -275,7 +275,7 @@ init python:
                     traceback.print_exc()
                     pass
 
-            if opendir:
+            if opendir and not renpy.is_in_test():
                 dir_to_open = os.path.join(p.path, dir_to_open)
                 renpy.run(store.OpenDirectory(dir_to_open, absolute=True))
 

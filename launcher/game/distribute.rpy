@@ -771,7 +771,7 @@ fix_dlc("renios", "renios")
             if report_success:
                 self.reporter.info(_("All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."))
 
-            if open_directory:
+            if open_directory and not renpy.is_in_test():
                 renpy.run(store.OpenDirectory(self.destination, absolute=True))
 
         def list_update_formats(self):
