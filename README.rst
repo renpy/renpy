@@ -80,7 +80,7 @@ Building the modules requires you to have the dependencies installed on your
 system. On Ubuntu and Debian, these dependencies can be installed with the
 command::
 
-    sudo apt install python3-dev libassimp-dev libavcodec-dev libavformat-dev libavutil-dev \
+    sudo apt install python3-dev libassimp-dev libavcodec-dev libavformat-dev libavutil-dev libavfilter-dev \
         libswresample-dev libswscale-dev libharfbuzz-dev libfreetype-dev libfribidi-dev \
         libsdl3-dev libsdl3-image-dev libpng-dev pkg-config
 

@@ -476,10 +476,12 @@ from renpy.exports.loaderexports import (
 )
 
 from renpy.exports.mediaexports import (
+    get_voice_speed as get_voice_speed,
     movie_cutscene as movie_cutscene,
     music_start as music_start,
     music_stop as music_stop,
     play as play,
+    set_voice_speed as set_voice_speed,
     toggle_music as toggle_music,
 )
 

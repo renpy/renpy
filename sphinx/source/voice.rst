@@ -104,6 +104,46 @@ It works just the same for automatic voice, as long as the filepath of the
 translation file starting from :file:`game/tl/{<language>}/` matches the filepath of
 the original file starting from :file:`game/`\ .
 
+Voice Speed
+-----------
+
+Voice playback speed is a player preference that preserves pitch. It must
+be a finite, positive number and defaults to 1.0 for normal playback. It is
+not restored by rollback or loading a save. Music, sound effects, movies,
+and self-voicing use their own settings.
+
+To add a slider and reset button to a preferences screen::
+
+    label _("Voice Speed")
+    bar value Preference("voice speed", range=(0.25, 4.0))
+    text "[preferences.voice_speed:.2f]×"
+    textbutton _("Normal Speed") action Preference("voice speed", 1.0)
+
+The optional ``range`` tuple specifies the slider's minimum and maximum,
+and defaults to ``(0.5, 3.0)``. Buttons can select a speed with
+``Preference("voice speed", 1.5)``. Scripts can use
+:func:`renpy.set_voice_speed` and :func:`renpy.get_voice_speed`. To choose an
+initial preference, use ``default preferences.voice_speed = 1.0``.
+
+Changing the preference updates the speed of a playing voice while
+preserving its current position. This also works while paused, without
+resuming playback. A new play or queue request on the standard ``voice``
+channel captures the selected speed, including voice replay and character
+voice samples. Already queued files and subsequent loops retain the speed
+of their original request.
+
+Position, duration, seek targets, and ``<from>`` / ``<to>`` offsets remain in
+seconds of the original file. Fade durations remain in real seconds.
+Auto-forward waits for playback to finish, followed by the normal voice delay.
+
+Native playback and the Web software decoder require FFmpeg's ``libavfilter``
+with the ``atempo``, ``abuffer``, ``abuffersink``, and ``apad`` filters
+enabled. The matching native or Web runtime must be rebuilt; replacing
+Python files alone is insufficient. The browser's Web Audio backend prepares
+voices asynchronously. During a live speed change, playback continues at
+the previous rate until the new buffer is ready, then switches at the
+current source position.
+
 Voice Functions
 ---------------
 
