@@ -240,6 +240,9 @@ which automatically gets pluralized.  For example::
     There is a default callback in this list that is used to implement
     ``window auto``.
 
+    A callback can call :func:`renpy.get_rollback_identifier` to get an
+    identifier that can later be used to roll back to the statement.
+
 .. var:: config.with_callback = None
 
     If not None, this should be a function that is called when a :ref:`with statement <with-statement>`

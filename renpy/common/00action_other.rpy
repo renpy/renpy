@@ -278,7 +278,8 @@ init -1500 python:
         :doc: other_action
 
         This causes a rollback to an identifier to occur. Rollback
-        identifiers are returned as part of HistoryEntry objects.
+        identifiers are returned as part of HistoryEntry objects, and
+        by :func:`renpy.get_rollback_identifier`.
         """
 
         def __init__(self, identifier):

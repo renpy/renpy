@@ -171,6 +171,10 @@ a higher-priority transition for the same layer.
 
 The :func:`renpy.callback` decorator registers callbacks with Ren'Py in more concise way.
 
+The new :func:`renpy.get_rollback_identifier` function returns the rollback identifier of the
+current statement. When called from :var:`config.statement_callbacks`, this makes it possible to
+remember a statement, like the most recent menu, and roll back to it with :func:`RollbackToIdentifier`.
+
 The new :var:`config.after_init_callbacks` variable is a list of callbacks that are called at the very end of the init phase,
 before the game starts normal execution for the first time. These are run once per Ren'Py start, after the default
 statements have been executed, and so this is the place to set up callbacks that need access to default data.
