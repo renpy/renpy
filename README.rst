@@ -105,8 +105,8 @@ extract it, and add its ``bin`` directory to ``PATH``.
 
 You'll also need a windev directory. If you don't have one, download
 ``renpy-*-windev.zip`` from `the current-8 nightly builds
-<https://nightly.renpy.org/current-8>`_ and extract it to
-``lib\py3-windows-x86_64\dev``. When working on the ``fix`` branch, use
+<https://nightly.renpy.org/current-8>`_ and extract it into the root of your
+checkout, which creates ``lib\py3-windows-x86_64\dev``. When working on the ``fix`` branch, use
 `the current-8-fix nightly builds <https://nightly.renpy.org/current-8-fix/>`_
 instead. Don't mix archives from master and fix. If compilation fails,
 download the latest windev archive for your branch and extract it again.
