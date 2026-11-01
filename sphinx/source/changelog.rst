@@ -10,20 +10,27 @@ Changelog (Ren'Py 7.x-)
 8.6.0
 =====
 
+SDL3
+----
+
+Ren'Py has moved to SDL3. SDL is the Simple DirectMedia Layer, the cross-platform library that Ren'Py uses for
+window creation, input handling, audio output, and many ways in which Ren'Py interacts with the system. SDL3 is the
+newest major version of SDL, and is where new platform support and fixes are being developed, so this transition
+allows Ren'Py to take advantage of those improvements.
+
+The :func:`renpy.get_sdl_dll` function now takes a `version` argument; see the :ref:`incompatible changes <incompatible-8.6.0>` for more information.
+
+On Windows, Ren'Py now uses SDL3's high-DPI support, and the mouse cursor is scaled to match the system DPI.
+
+The Nintendo Switch Pro Controller is no longer blocked, as it now works with SDL3.
+
 Shaders
 -------
 
 Shader parts can now be written in GLSL ES 3.00, which is the version new
 games use by default.
 
-GLSL ES 3.00 adds ``switch``, bitwise operations, ``%``, ``texelFetch``, and
-``textureSize``, and lifts GLSL ES 1.00's requirement that a loop bound be a
-constant. Variables are declared with ``in`` and ``out`` rather than
-``attribute`` and ``varying``, textures are sampled with ``texture`` rather
-than ``texture2D``, and a fragment shader writes its color to
-``fragment_color`` rather than ``gl_FragColor``.
-
-GLSL version is selected by the new :var:`config.glsl_version` variable, which
+The GLSL version is selected by the new :var:`config.glsl_version` variable, which
 defaults to 300 in new games and to 100 in games that declare compatibility with
 Ren'Py 8.5 or earlier. A single part can override it by passing `glsl` to
 :func:`renpy.register_shader` or :func:`renpy.register_textshader`.
@@ -147,6 +154,35 @@ On macOS and Windows, more modern techniques are used to play back the speech.
 
 The :var:`config.tts_voice` variable is no longer used.
 
+There is a new :ref:`screen reader mode <self-voicing>`, toggled by pressing Shift+V. In this mode, Ren'Py uses
+the Prism library to communicate directly with active screen readers, such as NVDA, JAWS, VoiceOver, or Orca, which
+can present the text through both speech and braille displays. If no screen reader is active, system speech
+synthesis is used instead. When a screen reader is running as Ren'Py starts, screen reader mode is enabled
+automatically. This can be controlled with :var:`config.auto_screenreader_voicing`.
+
+When the new :var:`config.auto_image_alt` variable is True, images shown without an explicit :propref:`alt`
+property are voiced using their image name and attributes.
+
+Performance
+-----------
+
+This release includes a number of changes that improve performance, especially when it comes to prediction and
+rendering:
+
+* Prediction now runs asynchronously, with screens, displayables, shaders, and actions predicted in a single pass.
+  Redrawing the screen no longer starves prediction.
+* When preloading images, decoding is now spread across multiple threads.
+* Texture uploads are now limited to a time budget each frame, to avoid hitches when many textures are loaded at once.
+* A cache of OpenGL state is used to skip redundant state changes.
+* Mesh data that has not changed reuses existing GPU buffers, meshes are uploaded in bulk, and clipped meshes are
+  cached.
+* Rendering to a texture no longer clears the entire buffer, using a scissor test to limit clearing to the area being
+  drawn.
+* On desktop platforms, movies are uploaded as YUV textures, and YUV conversion, when required, takes place off the
+  main thread.
+* Persistent data is generated asynchronously, and written to disk in a background thread.
+* Parsed text substitutions are cached, making screens that redraw interpolated text faster.
+
 Features
 --------
 
@@ -231,6 +267,35 @@ see :var:`config.image_directories` and :var:`config.audio_directories`.
 
 The new :var:`config.audio_directories` variable is a list of directories that are searched for audio Files
 and used to populate the :ref:`audio-namespace <audio-namespace>`.
+
+The ``if``, ``elif``, and ``else`` clauses of a :ref:`layered image <layeredimage-statement>` can now contain a
+nested ``if`` statement, in place of a displayable.
+
+The new :func:`CallInNewContext` action calls a label in a new context, like :func:`renpy.call_in_new_context`.
+
+NVL-mode characters now take `page_ctc` and `page_ctc_position` arguments, which override
+:var:`config.nvl_page_ctc` and :var:`config.nvl_page_ctc_position` for that character.
+
+The :func:`Live2D` displayable now takes a `deduplication_key` argument, which allows Live2D displayables that use
+the same model with different settings to be kept separate.
+
+The new :var:`config.failed_save_dump` variable, which is True by default, writes the save dump (as with
+:var:`config.save_dump`) only when saving fails.
+
+:ref:`Warping to a line <warping_to_a_line>` now replays dialogue along the path to the target line, without waiting
+for input, reconstructing the dialogue history, the NVL-mode list, and retained speech bubbles. A character can opt out
+of this with ``Character(..., warp=False)``, and the new :func:`renpy.is_warping` function returns True while the warp
+is being performed.
+
+When a screenshot is taken with the screenshot key, it is now also copied to the clipboard.
+
+When a screen language statement is given an invalid property, the error message now suggests a likely correction.
+
+Creator-defined screen language statements can now use the ``copy_positionals`` and ``copy_keywords`` methods to copy
+only the positional arguments or only the keyword arguments of another statement.
+
+:class:`AudioData` can now be played on the web platform.
+
 
 Automated Testing
 -----------------
@@ -320,6 +385,29 @@ On all platforms except the web, Ren'Py now verifies TLS certificates against th
 using the truststore library, rather than the certificate bundle shipped with the certifi library. This applies to
 Python's ssl module and to requests, which is used by :func:`renpy.fetch` and the updater. A certificate bundle
 explicitly passed to requests is still used. (The web platform continues to use the browser's certificate store.)
+
+Buttons are now only activated when the mouse button is pressed and released on the same button.
+
+Audio files are now automatically defined in the audio namespace at a late init level, rather than at init 0. This
+can be reverted with ``config.late_audio_scan``; see the :ref:`incompatible changes <incompatible-8.6.0>`.
+
+Files generated when a new project is created are now dedicated to the public domain. See :doc:`license` for details.
+
+The error screen now uses the WenQuanYi Micro Hei font, so that Chinese, Japanese, and Korean text in error messages
+can be displayed.
+
+The blur shader has been improved, with dithering to reduce banding, and no longer pops in when animating to or from
+zero blur.
+
+Dialogue extraction now includes say statements used as menu captions, and more reliably keeps extracted dialogue in
+source order.
+
+The script parser now rejects ASCII control characters, and characters other than a newline after a line-continuation
+backslash. The error message for mismatched indentation has been improved.
+
+``renpy.py --version`` now prints only the version.
+
+The default :file:`.gitignore` for new projects excludes Android keystore files.
 
 Fixes
 -----
