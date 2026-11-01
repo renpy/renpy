@@ -136,9 +136,18 @@ class Model(renpy.display.displayable.Displayable):
         `premultiply`
             If False, alpha premultiplication is not applied when the texture is loaded, so the color
             channels reach the shader unchanged. This is useful for textures that contain data, like
-            normal maps. If `displayable` is a :func:`RawTexture` with the same `premultiply` setting,
-            it is used as-is.
+            normal maps. In this case, `displayable` must be a literal image filename string, without
+            interpolation. Image names and displayable objects (including :func:`RawTexture`) are not
+            accepted, and raise ValueError.
         """
+
+        if not premultiply:
+            image = renpy.easy.displayable(displayable) if isinstance(displayable, str) else None
+
+            if not isinstance(image, renpy.display.im.Image) or image.filename != displayable:
+                raise ValueError("Model.texture with premultiply=False requires a literal image filename.")
+
+            displayable = image
 
         self.textures.append(Texture(displayable, focus, main, fit, texture_wrap, premultiply))
         return self

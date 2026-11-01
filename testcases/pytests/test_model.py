@@ -2,6 +2,7 @@ import pytest
 
 import renpy
 from renpy.display import im
+from renpy.display.displayable import Displayable
 from renpy.display.image import DynamicImage
 from renpy.display.layout import Null
 from renpy.display.model import Model
@@ -60,15 +61,16 @@ def test_mixed_textures_copy_only_dynamic_texture():
 
 
 @pytest.mark.parametrize("premultiply", [True, False])
-def test_texture_wraps_image_with_premultiply(premultiply):
+def test_texture_wraps_image_with_premultiply(premultiply: bool) -> None:
     """
     Model.texture wraps an image in a RawTexture that carries the premultiply setting and the mipmap=True
     that model textures get by default, and records the setting on the texture.
     """
 
-    texture = Model().texture(im.Null(), premultiply=premultiply).textures[0]
+    texture = Model().texture("normal.png", premultiply=premultiply).textures[0]
 
     assert isinstance(texture.displayable, im.UnoptimizedTexture)
+    assert texture.displayable.image.filename == "normal.png"
     assert texture.displayable.premultiply == premultiply
     assert texture.displayable.mipmap is True
     assert texture.premultiply == premultiply
@@ -80,8 +82,8 @@ def test_texture_reuses_raw_texture_with_matching_premultiply():
     own options (here mipmap=False) are kept rather than replaced by the model defaults.
     """
 
-    raw = renpy.store.RawTexture(im.Null(), premultiply=False, mipmap=False)
-    texture = Model().texture(raw, premultiply=False).textures[0]
+    raw = renpy.store.RawTexture(im.Null(), mipmap=False)
+    texture = Model().texture(raw).textures[0]
 
     assert texture.displayable is raw
 
@@ -92,21 +94,47 @@ def test_texture_rewraps_raw_texture_with_different_premultiply():
     so the setting passed to Model.texture is the one used when the texture is loaded.
     """
 
-    raw = renpy.store.RawTexture(im.Null())
-    texture = Model().texture(raw, premultiply=False).textures[0]
+    raw = renpy.store.RawTexture(im.Null(), premultiply=False)
+    texture = Model().texture(raw).textures[0]
 
     assert texture.displayable is not raw
     assert isinstance(texture.displayable, im.UnoptimizedTexture)
-    assert texture.displayable.premultiply is False
+    assert texture.displayable.premultiply is True
 
 
-def test_dynamic_texture_copy_preserves_premultiply():
-    """Model._in_current_store keeps premultiply=False on the copied texture of a DynamicImage."""
+@pytest.mark.parametrize(
+    "displayable",
+    [
+        "[normal].png",
+        "normal",
+        "#fff",
+        ["normal.png", "fallback.png"],
+        DynamicImage("[normal].png"),
+        im.Image("normal.png"),
+        im.UnoptimizedTexture(im.Image("normal.png"), premultiply=False),
+        Null(),
+    ],
+    ids=["dynamic-filename", "image-name", "color", "filename-list", "dynamic-image", "image", "raw-texture", "null"],
+)
+def test_texture_rejects_non_filename_without_premultiplication(displayable: str | list[str] | Displayable) -> None:
+    """Only literal filename strings support premultiply=False, and rejected calls leave the model unchanged."""
 
-    model = Model().texture(DynamicImage("[image]"), premultiply=False)
+    model = Model()
+
+    with pytest.raises(ValueError, match="premultiply=False requires a literal image filename"):
+        model.texture(displayable, premultiply=False)
+
+    assert model.textures == []
+
+
+def test_mixed_texture_copy_preserves_premultiply() -> None:
+    """Copying a model for a dynamic texture preserves a separate file texture's premultiply=False setting."""
+
+    model = Model().texture("normal.png", premultiply=False).texture(DynamicImage("[image]"))
     copied = model._in_current_store()
 
-    assert copied.textures[0] is not model.textures[0]
+    assert copied is not model
+    assert copied.textures[0] is model.textures[0]
     assert copied.textures[0].premultiply is False
 
 

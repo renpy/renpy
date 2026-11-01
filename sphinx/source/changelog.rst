@@ -65,7 +65,9 @@ images, without being retained in the image cache.
 The new :func:`RawTexture` displayable loads an image as a texture without
 optimizing its bounds, and can skip alpha premultiplication. :meth:`Model.texture`
 also takes a new `premultiply` parameter. These are useful for textures that
-contain data rather than colors, like normal maps.
+contain data rather than colors, like normal maps. Passing ``premultiply=False``
+to :meth:`Model.texture` requires a literal image filename; image names,
+interpolated filenames, and displayable objects raise ValueError.
 
 Fixed a crash when transitions copy a Model containing a DynamicImage texture.
 The copied texture now preserves its texture wrapping settings.
