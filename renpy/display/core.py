@@ -3299,6 +3299,14 @@ class Interface:
                     self.ignore_touch = False
                     continue
 
+                # During tests, ignore the user's pointer entering or leaving the window. Otherwise,
+                # the test's simulated mouse events would be treated as if the mouse were elsewhere.
+                if (
+                    ev.type in (pygame.WINDOWMOUSELEAVE, pygame.WINDOWMOUSEENTER)
+                    and renpy.test.testexecution.is_in_test()
+                ):
+                    continue
+
                 # Merge mousemotion events.
                 if ev.type == pygame.MOUSEMOTION:
 
@@ -3393,7 +3401,7 @@ class Interface:
                 if ev is None:
                     continue
 
-                if not self.mouse_focused or self.ignore_touch:
+                if (not self.mouse_focused and not renpy.test.testexecution.is_in_test()) or self.ignore_touch:
                     x = -1
                     y = -1
 

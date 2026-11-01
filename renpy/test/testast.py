@@ -1115,9 +1115,10 @@ class Label(Condition):
     def ready(self):
         # Match the evaluated value or the raw expression text.
         # This lets `label chapter_1` and `label "chapter_1"` both work,
-        # while also allowing `label label_name` to use a variable.
+        # while also allowing `label label_name` to use a variable. The raw text can have whitespace
+        # after it, if another clause follows.
 
-        names = [self.name]
+        names = [self.name.strip()]
 
         try:
             eval_name = scoped_eval(self.name)
