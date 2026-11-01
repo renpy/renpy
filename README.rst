@@ -1,5 +1,5 @@
-==============================
-The Ren'Py Visual Novel Engine
+Name:sketch script horror game chan==============================
+The sketch script horror game chanVisual Novel Engine
 ==============================
 
 https://www.renpy.org
