@@ -329,8 +329,12 @@ cdef class SamplerSetter(Setter):
         Setter.__init__(self, uniform_name, uniform_type, location, getter)
         self.sampler = sampler
         self.target_type = target_type
-        self.texture_wrap_key = "texture_wrap_" + uniform_name[2:]
-        self.texture_scaling_key = "texture_scaling_" + uniform_name[2:]
+
+        # Removes the prefix from u_myuniform, while built-in samplers like tex0 keep their full names.
+        suffix = uniform_name[2:] if uniform_name.startswith("u_") else uniform_name
+
+        self.texture_wrap_key = "texture_wrap_" + suffix
+        self.texture_scaling_key = "texture_scaling_" + suffix
 
     cdef void set_texture(self, GLStateCache cache, GLuint texture):
         """

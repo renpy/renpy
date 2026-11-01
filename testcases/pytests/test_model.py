@@ -6,7 +6,8 @@ from renpy.display.displayable import Displayable
 from renpy.display.image import DynamicImage
 from renpy.display.layout import Null
 from renpy.display.model import Model
-from renpy.uguu import GL_CLAMP_TO_EDGE, GL_REPEAT
+from renpy.gl2.gl2uniform import SamplerSetter
+from renpy.uguu import GL_CLAMP_TO_EDGE, GL_REPEAT, GL_TEXTURE_2D
 
 
 @pytest.mark.parametrize("texture_wrap", [None, (GL_REPEAT, GL_CLAMP_TO_EDGE)], ids=["default-wrap", "custom-wrap"])
@@ -151,3 +152,22 @@ def test_texture_from_old_save_copies_with_default_premultiply():
     copied = model._in_current_store()
 
     assert copied.textures[0].premultiply is True
+
+
+@pytest.mark.parametrize(
+    ("uniform_name", "suffix"),
+    [("tex0", "tex0"), ("tex3", "tex3"), ("u_myuniform", "myuniform"), ("user_tex", "user_tex")],
+)
+def test_sampler_property_keys(uniform_name: str, suffix: str) -> None:
+    """
+    Per-sampler texture_wrap and texture_scaling properties are named after the sampler uniform, with the
+    u_ prefix removed only when present. Model.texture(texture_wrap=...) sets texture_wrap_tex0 and friends,
+    so the built-in tex samplers must keep their full names (#7486). A name like user_tex starts with "u"
+    but not "u_", and must also be left alone. Constructing the setter makes no GL calls, so the getter and
+    location can be placeholders.
+    """
+
+    setter = SamplerSetter(uniform_name, "sampler2D", 0, None, 0, GL_TEXTURE_2D)
+
+    assert setter.texture_wrap_key == "texture_wrap_" + suffix
+    assert setter.texture_scaling_key == "texture_scaling_" + suffix
