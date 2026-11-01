@@ -1,4 +1,49 @@
-﻿testsuite global:
+﻿init python:
+
+    def check_dists_license():
+        """
+        Checks that every archive built for the current project contains
+        renpy/LICENSE.txt, and that it matches sphinx/source/license.rst.
+        Returns True if so, and raises an exception otherwise.
+        """
+
+        import tarfile
+        import zipfile
+
+        with open(os.path.join(config.renpy_base, "sphinx", "source", "license.rst"), "rb") as f:
+            license = f.read()
+
+        p = project.current
+        destination = os.path.join(p.parent_path, p.dump["build"]["destination"])
+
+        archives = [ i for i in os.listdir(destination) if i.endswith((".zip", ".tar.bz2")) ]
+
+        if not archives:
+            raise Exception("No archives were built in {}.".format(destination))
+
+        for fn in archives:
+            path = os.path.join(destination, fn)
+
+            if fn.endswith(".zip"):
+                with zipfile.ZipFile(path) as zf:
+                    names = [ i for i in zf.namelist() if i.endswith("/renpy/LICENSE.txt") ]
+                    contents = [ zf.read(i) for i in names ]
+            else:
+                with tarfile.open(path) as tf:
+                    names = [ i for i in tf.getnames() if i.endswith("/renpy/LICENSE.txt") ]
+                    contents = [ tf.extractfile(i).read() for i in names ]
+
+            if not contents:
+                raise Exception("{} does not contain renpy/LICENSE.txt.".format(fn))
+
+            for name, data in zip(names, contents):
+                if data != license:
+                    raise Exception("{} in {} does not match license.rst.".format(name, fn))
+
+        return True
+
+
+testsuite global:
     teardown:
         exit
 
@@ -140,6 +185,8 @@ testsuite default:
         click "Build"
         pause until "Return"
         click "Return"
+
+        assert eval check_dists_license()
 
 
     testcase choose_colors:
