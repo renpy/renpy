@@ -165,3 +165,51 @@ def test_cached_prediction_is_reused_for_rendering(cache, draw):
     draw.load_texture.assert_called_once()
     assert len(cache.cache) == 1
     assert cache.get_total_size() > 0
+
+
+@pytest.mark.parametrize(
+    ("premultiply", "mipmap", "properties"),
+    [
+        (True, None, {}),
+        (False, None, {"premultiplied": True}),
+        (True, False, {"mipmap": False}),
+        (False, True, {"premultiplied": True, "mipmap": True}),
+    ],
+    ids=["default", "no-premultiply", "mipmap-false", "both"],
+)
+@pytest.mark.parametrize("raw", [False, True], ids=["image", "raw-texture"])
+def test_texture_load_properties(cache, draw, raw, premultiply, mipmap, properties):
+    """
+    Loading an image as a texture passes premultiply and mipmap to load_texture as texture properties.
+
+    premultiply=False is sent as premultiplied=True, which tells the loader the surface needs no
+    premultiplication. mipmap=False must be sent explicitly rather than dropped, since leaving it out
+    would fall back to config.mipmap. Runs on both a plain image and a RawTexture wrapping one.
+    """
+
+    if raw:
+        image = im.UnoptimizedTexture(im.Null(), premultiply=premultiply, mipmap=mipmap)
+    else:
+        image = im.Null(premultiply=premultiply, mipmap=mipmap)
+
+    cache.get(image, texture=True)
+    assert draw.load_texture.call_args.kwargs == {"properties": properties}
+
+
+def test_premultiply_setting_gets_separate_cache_entry(cache, draw):
+    """
+    RawTextures of the same image that differ only in premultiply are cached as separate entries with
+    separate texture loads, so one never reuses a texture loaded with the other's setting.
+    """
+
+    premultiplied = im.UnoptimizedTexture(im.Null())
+    raw = im.UnoptimizedTexture(im.Null(), premultiply=False)
+    assert premultiplied.identity != raw.identity
+
+    cache.get(premultiplied, texture=True)
+    cache.get(raw, texture=True)
+    assert len(cache.cache) == 2
+    assert [call.kwargs for call in draw.load_texture.call_args_list] == [
+        {"properties": {}},
+        {"properties": {"premultiplied": True}},
+    ]

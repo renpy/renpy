@@ -24,21 +24,23 @@ import renpy
 
 class Texture(object):
     texture_wrap = None
+    premultiply = True
 
-    def __init__(self, displayable, focus, main, fit, texture_wrap):
+    def __init__(self, displayable, focus, main, fit, texture_wrap, premultiply):
         displayable = renpy.easy.displayable(displayable)
 
         if displayable._duplicatable:
             displayable = displayable._duplicate(None)
             displayable._unique()
 
-        displayable = renpy.display.im.unoptimized_texture(displayable)
+        displayable = renpy.display.im.unoptimized_texture(displayable, premultiply=premultiply)
 
         self.displayable = displayable
         self.focus = focus
         self.main = main
         self.fit = fit
         self.texture_wrap = texture_wrap
+        self.premultiply = premultiply
 
     def _in_current_store(self):
         d = self.displayable._in_current_store()
@@ -46,7 +48,7 @@ class Texture(object):
         if d is self.displayable:
             return self
 
-        return Texture(d, self.focus, self.main, self.fit, self.texture_wrap)
+        return Texture(d, self.focus, self.main, self.fit, self.texture_wrap, self.premultiply)
 
 
 class Model(renpy.display.displayable.Displayable):
@@ -105,7 +107,7 @@ class Model(renpy.display.displayable.Displayable):
         self._mesh = ("grid", width, height)
         return self
 
-    def texture(self, displayable, focus=False, main=False, fit=False, texture_wrap=None):
+    def texture(self, displayable, focus=False, main=False, fit=False, texture_wrap=None, premultiply=True):
         """
         :doc: model_displayable method
 
@@ -130,9 +132,15 @@ class Model(renpy.display.displayable.Displayable):
         `texture_wrap`
             If not None, this is the :ref:`gl_texture wrap GL property <gl-properties>` that will be applied
             to this texture.
+
+        `premultiply`
+            If False, alpha premultiplication is not applied when the texture is loaded, so the color
+            channels reach the shader unchanged. This is useful for textures that contain data, like
+            normal maps. If `displayable` is a :func:`RawTexture` with the same `premultiply` setting,
+            it is used as-is.
         """
 
-        self.textures.append(Texture(displayable, focus, main, fit, texture_wrap))
+        self.textures.append(Texture(displayable, focus, main, fit, texture_wrap, premultiply))
         return self
 
     def child(self, displayable, fit=False):

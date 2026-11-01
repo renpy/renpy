@@ -55,6 +55,11 @@ Fixed a crash when rendering image manipulators created with ``cache=False``.
 Uncached images now use the same texture conversion and oversampling as cached
 images, without being retained in the image cache.
 
+The new :func:`RawTexture` displayable loads an image as a texture without
+optimizing its bounds, and can skip alpha premultiplication. :meth:`Model.texture`
+also takes a new `premultiply` parameter. These are useful for textures that
+contain data rather than colors, like normal maps.
+
 Fixed a crash when transitions copy a Model containing a DynamicImage texture.
 The copied texture now preserves its texture wrapping settings.
 

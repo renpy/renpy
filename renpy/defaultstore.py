@@ -136,6 +136,7 @@ ImageReference = renpy.display.image.ImageReference
 DynamicImage = renpy.display.image.DynamicImage
 
 Image = renpy.display.im.image
+RawTexture = renpy.display.im.UnoptimizedTexture
 
 Frame = renpy.display.imagelike.Frame
 Borders = renpy.display.imagelike.Borders

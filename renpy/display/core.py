@@ -404,7 +404,7 @@ class Renderer:
         if surf in self.texture_cache:
             del self.texture_cache[surf]
 
-    def load_texture(self, surf, transient=False):
+    def load_texture(self, surf, transient=False, properties={}):
         """
         Loads a surface into a texture.
 

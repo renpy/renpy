@@ -1,5 +1,7 @@
 import pytest
 
+import renpy
+from renpy.display import im
 from renpy.display.image import DynamicImage
 from renpy.display.layout import Null
 from renpy.display.model import Model
@@ -55,3 +57,69 @@ def test_mixed_textures_copy_only_dynamic_texture():
     assert copied.textures[1] is not model.textures[1]
     assert copied.textures[1].texture_wrap == (GL_REPEAT, GL_CLAMP_TO_EDGE)
     assert (copied.textures[1].focus, copied.textures[1].main, copied.textures[1].fit) == (False,) * 3
+
+
+@pytest.mark.parametrize("premultiply", [True, False])
+def test_texture_wraps_image_with_premultiply(premultiply):
+    """
+    Model.texture wraps an image in a RawTexture that carries the premultiply setting and the mipmap=True
+    that model textures get by default, and records the setting on the texture.
+    """
+
+    texture = Model().texture(im.Null(), premultiply=premultiply).textures[0]
+
+    assert isinstance(texture.displayable, im.UnoptimizedTexture)
+    assert texture.displayable.premultiply == premultiply
+    assert texture.displayable.mipmap is True
+    assert texture.premultiply == premultiply
+
+
+def test_texture_reuses_raw_texture_with_matching_premultiply():
+    """
+    A RawTexture whose premultiply setting matches the one passed to Model.texture is used as-is, so its
+    own options (here mipmap=False) are kept rather than replaced by the model defaults.
+    """
+
+    raw = renpy.store.RawTexture(im.Null(), premultiply=False, mipmap=False)
+    texture = Model().texture(raw, premultiply=False).textures[0]
+
+    assert texture.displayable is raw
+
+
+def test_texture_rewraps_raw_texture_with_different_premultiply():
+    """
+    A RawTexture whose premultiply setting differs from the one passed to Model.texture is wrapped again,
+    so the setting passed to Model.texture is the one used when the texture is loaded.
+    """
+
+    raw = renpy.store.RawTexture(im.Null())
+    texture = Model().texture(raw, premultiply=False).textures[0]
+
+    assert texture.displayable is not raw
+    assert isinstance(texture.displayable, im.UnoptimizedTexture)
+    assert texture.displayable.premultiply is False
+
+
+def test_dynamic_texture_copy_preserves_premultiply():
+    """Model._in_current_store keeps premultiply=False on the copied texture of a DynamicImage."""
+
+    model = Model().texture(DynamicImage("[image]"), premultiply=False)
+    copied = model._in_current_store()
+
+    assert copied.textures[0] is not model.textures[0]
+    assert copied.textures[0].premultiply is False
+
+
+def test_texture_from_old_save_copies_with_default_premultiply():
+    """
+    A texture saved before premultiply existed has no premultiply attribute in its state. Copying it in
+    _in_current_store must fall back to premultiply=True instead of raising AttributeError. The missing
+    attribute is simulated by removing it from the instance dict, as unpickling old state would leave it.
+    """
+
+    model = Model().texture(DynamicImage("[image]"))
+    del model.textures[0].__dict__["premultiply"]
+
+    copied = model._in_current_store()
+
+    assert copied.textures[0].premultiply is True
