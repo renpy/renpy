@@ -51,7 +51,7 @@
     # gui.rpy:46
     old "## Colors used for the portions of bars that are not filled in. These are not used directly, but are used when re-generating bar image files."
     new "## Colores de la parte vacía de las barras. No se usan directamente, sino al regenerar los archivos de imagen de las barras."
-    
+
     # gui.rpy:51
     old "## The colors used for dialogue and menu choice text."
     new "## Colores usados para el texto del diálogo y de las elecciones de menú."
@@ -123,7 +123,7 @@
     # gui.rpy:106
     old "## The placement of the speaking character's name, relative to the textbox. These can be a whole number of pixels from the left or top, or 0.5 to center."
     new "## La posición del nombre del personaje que habla, relativa a la caja de texto. Puede ser un número entero de píxeles desde la izquierda o la parte superior, o 0.5 para centrar."
-    
+
     # gui.rpy:111
     old "## The horizontal alignment of the character's name. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
     new "## La alineación horizontal del nombre del personaje. (0.0 es izquierda, 0.5 es centro, 1.0 es derecha)."
@@ -199,7 +199,7 @@
     # gui.rpy:195
     old "## You can also add your own customizations, by adding properly-named variables. For example, you can uncomment the following line to set the width of a navigation button."
     new "## Se pueden añadir personalizaciones propias agregando variables con los nombres adecuados. Por ejemplo, es posible descomentar la línea siguiente para ajustar el ancho de los botones de navegación."
-    
+
     # gui.rpy:202
     old "## Choice Buttons"
     new "## Botones de elección"

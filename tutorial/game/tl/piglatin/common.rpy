@@ -66,84 +66,104 @@ translate piglatin strings:
     new "Ffoay"
 
     # renpy/common/00accessibility.rpy:143
+    old "Screen Reader"
+    new "Creensay Eaderray"
+
+    # renpy/common/00accessibility.rpy:147
     old "Text-to-speech"
     new "Exttay-otay-peechsay"
 
-    # renpy/common/00accessibility.rpy:147
+    # renpy/common/00accessibility.rpy:151
     old "Clipboard"
     new "Lipboardcay"
 
-    # renpy/common/00accessibility.rpy:151
+    # renpy/common/00accessibility.rpy:155
     old "Debug"
     new "Ebugday"
 
-    # renpy/common/00accessibility.rpy:163
+    # renpy/common/00accessibility.rpy:167
     old "Reset"
     new "Esetray"
 
-    # renpy/common/00accessibility.rpy:167
+    # renpy/common/00accessibility.rpy:171
     old "Self-Voicing Volume Drop"
     new "Elfsay-Oicingvay Olumevay Ropday"
 
-    # renpy/common/00accessibility.rpy:180
+    # renpy/common/00accessibility.rpy:183
+    old "Self-Voicing Speed"
+    new "Elfsay-Oicingvay Peedsay"
+
+    # renpy/common/00accessibility.rpy:195
     old "Mono Audio"
     new "Onomay Udioaay"
 
-    # renpy/common/00accessibility.rpy:182
+    # renpy/common/00accessibility.rpy:197
     old "Enable"
     new "Nableeay"
 
-    # renpy/common/00accessibility.rpy:186
+    # renpy/common/00accessibility.rpy:201
     old "Disable"
     new "Isableday"
 
-    # renpy/common/00accessibility.rpy:198
-    old "Font Override"
-    new "Ontfay Verrideoay"
+    # renpy/common/00accessibility.rpy:205
+    old "Self-Voicing Voice"
+    new "Elfsay-Oicingvay Oicevay"
 
-    # renpy/common/00accessibility.rpy:200
+    # renpy/common/00accessibility.rpy:207
     old "Default"
     new "Efaultday"
 
-    # renpy/common/00accessibility.rpy:204
+    # renpy/common/00accessibility.rpy:224
+    old "Font Override"
+    new "Ontfay Verrideoay"
+
+    # renpy/common/00accessibility.rpy:230
     old "DejaVu Sans"
     new "Ejavuday Anssay"
 
-    # renpy/common/00accessibility.rpy:208
+    # renpy/common/00accessibility.rpy:234
     old "Opendyslexic"
     new "Pendyslexicoay"
 
-    # renpy/common/00accessibility.rpy:212
+    # renpy/common/00accessibility.rpy:238
     old "High Contrast Text"
     new "Ighhay Ontrastcay Exttay"
 
-    # renpy/common/00accessibility.rpy:224
+    # renpy/common/00accessibility.rpy:250
     old "Text Size Scaling"
     new "Exttay Izesay Calingsay"
 
-    # renpy/common/00accessibility.rpy:235
+    # renpy/common/00accessibility.rpy:261
     old "Line Spacing Scaling"
     new "Inelay Pacingsay Calingsay"
 
-    # renpy/common/00accessibility.rpy:246
+    # renpy/common/00accessibility.rpy:272
     old "Kerning"
     new "Erningkay"
 
-    # renpy/common/00accessibility.rpy:267
-    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
-    new "Ccessibilityaay Enumay. Seuay upay anday ownday arrowsay otay avigatenay, anday enteray otay activateay uttonsbay anday arsbay."
+    # renpy/common/00accessibility.rpy:293
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars. Press R to reset self-voicing settings to their default values and enable self-voicing."
+    new "Ccessibilityaay Enumay. Seuay upay anday ownday arrowsay otay avigatenay, anday enteray otay activateay uttonsbay anday arsbay. Resspay Ray otay esetray elfsay-oicingvay ettingssay otay heirtay efaultday aluesvay anday enableay elfsay-oicingvay."
 
-    # renpy/common/00accessibility.rpy:288
+    # renpy/common/00accessibility.rpy:307
     old "Self-Voicing and Audio"
     new "Elfsay-Oicingvay anday Udioaay"
 
-    # renpy/common/00accessibility.rpy:292
+    # renpy/common/00accessibility.rpy:311
     old "Text"
     new "Exttay"
 
-    # renpy/common/00accessibility.rpy:306
+    # renpy/common/00accessibility.rpy:335
+    old "Press R to reset all self-voicing settings to their default values, and enable self-voicing."
+    new "Resspay Ray otay esetray allay elfsay-oicingvay ettingssay otay heirtay efaultday aluesvay, anday enableay elfsay-oicingvay."
+
+    # renpy/common/00accessibility.rpy:337
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
     new "Hetay optionsay onay histay enumay areay intendeday otay improveay accessibilityay. Heytay aymay otnay orkway ithway allay amesgay, anday omesay ombinationscay ofay optionsay aymay enderray hetay amegay unplayableay. Histay isay otnay anay issueay ithway hetay amegay oray engineay. Orfay hetay estbay esultsray henway angingchay ontsfay, ytray otay eepkay hetay exttay izesay hetay amesay asay itay originallyay asway."
+
+    # renpy/common/00accessibility.rpy:342
+    old "Self-voicing settings reset."
+    new "Elfsay-oicingvay ettingssay esetray."
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Monday"
@@ -345,11 +365,11 @@ translate piglatin strings:
     old "Quick load."
     new "Uickqay oadlay."
 
-    # renpy/common/00action_other.rpy:416
+    # renpy/common/00action_other.rpy:420
     old "Language [text]"
     new "Anguagelay [text]"
 
-    # renpy/common/00action_other.rpy:786
+    # renpy/common/00action_other.rpy:831
     old "Open [text] directory."
     new "Penoay [text] irectoryday."
 
@@ -525,283 +545,323 @@ translate piglatin strings:
     old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
     new "Oday ouyay usttray hetay eviceday hetay avesay asway reatedcay onay? Ouyay ouldshay onlyay oosechay esyay ifay ouyay areay hetay eviceday'say olesay useray."
 
-    # renpy/common/00keymap.rpy:325
+    # renpy/common/00keymap.rpy:326
     old "Failed to save screenshot as %s."
     new "Ailedfay otay avesay creenshotsay asay %say."
 
-    # renpy/common/00keymap.rpy:346
+    # renpy/common/00keymap.rpy:349
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
-    # renpy/common/00library.rpy:257
+    # renpy/common/00keymap.rpy:349
+    old " Copied screenshot to clipboard."
+    new " Opiedcay creenshotsay otay ipboardclay."
+
+    # renpy/common/00library.rpy:261
     old "Skip Mode"
     new "Kipsay Odemay"
 
-    # renpy/common/00library.rpy:344
+    # renpy/common/00library.rpy:326
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 
-    # renpy/common/00preferences.rpy:295
+    # renpy/common/00preferences.rpy:303
     old "display"
     new "isplayday"
 
-    # renpy/common/00preferences.rpy:315
+    # renpy/common/00preferences.rpy:323
     old "transitions"
     new "ansitionstray"
 
-    # renpy/common/00preferences.rpy:324
+    # renpy/common/00preferences.rpy:332
     old "skip transitions"
     new "kipsay ansitionstray"
 
-    # renpy/common/00preferences.rpy:326
+    # renpy/common/00preferences.rpy:334
     old "video sprites"
     new "ideovay pritessay"
 
-    # renpy/common/00preferences.rpy:335
+    # renpy/common/00preferences.rpy:343
     old "show empty window"
     new "owshay emptyay indowway"
 
-    # renpy/common/00preferences.rpy:344
+    # renpy/common/00preferences.rpy:352
     old "text speed"
     new "exttay peedsay"
 
-    # renpy/common/00preferences.rpy:352
+    # renpy/common/00preferences.rpy:360
     old "joystick"
     new "oystickjay"
 
-    # renpy/common/00preferences.rpy:352
+    # renpy/common/00preferences.rpy:360
     old "joystick..."
     new "oystickjay..."
 
-    # renpy/common/00preferences.rpy:359
+    # renpy/common/00preferences.rpy:367
     old "skip"
     new "kipsay"
 
-    # renpy/common/00preferences.rpy:362
+    # renpy/common/00preferences.rpy:370
     old "skip unseen [text]"
     new "kipsay unseenay [text]"
 
-    # renpy/common/00preferences.rpy:367
+    # renpy/common/00preferences.rpy:375
     old "skip unseen text"
     new "kipsay unseenay exttay"
 
-    # renpy/common/00preferences.rpy:369
+    # renpy/common/00preferences.rpy:377
     old "begin skipping"
     new "eginbay kippingsay"
 
-    # renpy/common/00preferences.rpy:373
+    # renpy/common/00preferences.rpy:381
     old "after choices"
     new "afteray oiceschay"
 
-    # renpy/common/00preferences.rpy:380
+    # renpy/common/00preferences.rpy:388
     old "skip after choices"
     new "kipsay afteray oiceschay"
 
-    # renpy/common/00preferences.rpy:382
+    # renpy/common/00preferences.rpy:390
     old "auto-forward time"
     new "autoay-orwardfay imetay"
 
-    # renpy/common/00preferences.rpy:396
+    # renpy/common/00preferences.rpy:404
     old "auto-forward"
     new "autoay-orwardfay"
 
-    # renpy/common/00preferences.rpy:403
+    # renpy/common/00preferences.rpy:411
     old "Auto forward"
     new "Utoaay orwardfay"
 
-    # renpy/common/00preferences.rpy:406
+    # renpy/common/00preferences.rpy:414
     old "auto-forward after click"
     new "autoay-orwardfay afteray ickclay"
 
-    # renpy/common/00preferences.rpy:415
+    # renpy/common/00preferences.rpy:423
     old "automatic move"
     new "automaticay ovemay"
 
-    # renpy/common/00preferences.rpy:424
+    # renpy/common/00preferences.rpy:432
     old "wait for voice"
     new "aitway orfay oicevay"
 
-    # renpy/common/00preferences.rpy:433
+    # renpy/common/00preferences.rpy:441
     old "voice sustain"
     new "oicevay ustainsay"
 
-    # renpy/common/00preferences.rpy:442
+    # renpy/common/00preferences.rpy:450
     old "self voicing"
     new "elfsay oicingvay"
 
-    # renpy/common/00preferences.rpy:445
+    # renpy/common/00preferences.rpy:453
     old "self voicing enable"
     new "elfsay oicingvay enableay"
 
-    # renpy/common/00preferences.rpy:447
+    # renpy/common/00preferences.rpy:455
     old "self voicing disable"
     new "elfsay oicingvay isableday"
 
-    # renpy/common/00preferences.rpy:451
+    # renpy/common/00preferences.rpy:459
     old "self voicing volume drop"
     new "elfsay oicingvay olumevay ropday"
 
-    # renpy/common/00preferences.rpy:459
+    # renpy/common/00preferences.rpy:467
     old "clipboard voicing"
     new "ipboardclay oicingvay"
 
-    # renpy/common/00preferences.rpy:462
+    # renpy/common/00preferences.rpy:470
     old "clipboard voicing enable"
     new "ipboardclay oicingvay enableay"
 
-    # renpy/common/00preferences.rpy:464
+    # renpy/common/00preferences.rpy:472
     old "clipboard voicing disable"
     new "ipboardclay oicingvay isableday"
 
-    # renpy/common/00preferences.rpy:468
+    # renpy/common/00preferences.rpy:476
+    old "screenreader voicing"
+    new "creenreadersay oicingvay"
+
+    # renpy/common/00preferences.rpy:479
+    old "screenreader voicing enable"
+    new "creenreadersay oicingvay enableay"
+
+    # renpy/common/00preferences.rpy:481
+    old "screenreader voicing disable"
+    new "creenreadersay oicingvay isableday"
+
+    # renpy/common/00preferences.rpy:485
     old "debug voicing"
     new "ebugday oicingvay"
 
-    # renpy/common/00preferences.rpy:471
+    # renpy/common/00preferences.rpy:488
     old "debug voicing enable"
     new "ebugday oicingvay enableay"
 
-    # renpy/common/00preferences.rpy:473
+    # renpy/common/00preferences.rpy:490
     old "debug voicing disable"
     new "ebugday oicingvay isableday"
 
-    # renpy/common/00preferences.rpy:477
+    # renpy/common/00preferences.rpy:494
     old "emphasize audio"
     new "emphasizeay audioay"
 
-    # renpy/common/00preferences.rpy:486
+    # renpy/common/00preferences.rpy:503
     old "rollback side"
     new "ollbackray idesay"
 
-    # renpy/common/00preferences.rpy:496
+    # renpy/common/00preferences.rpy:513
     old "gl powersave"
     new "glay owersavepay"
 
-    # renpy/common/00preferences.rpy:502
+    # renpy/common/00preferences.rpy:519
     old "gl framerate"
     new "glay ameratefray"
 
-    # renpy/common/00preferences.rpy:505
+    # renpy/common/00preferences.rpy:522
     old "gl tearing"
     new "glay earingtay"
 
-    # renpy/common/00preferences.rpy:508
+    # renpy/common/00preferences.rpy:525
     old "font transform"
     new "ontfay ansformtray"
 
-    # renpy/common/00preferences.rpy:511
+    # renpy/common/00preferences.rpy:528
     old "font size"
     new "ontfay izesay"
 
-    # renpy/common/00preferences.rpy:519
+    # renpy/common/00preferences.rpy:536
     old "font line spacing"
     new "ontfay inelay pacingsay"
 
-    # renpy/common/00preferences.rpy:527
+    # renpy/common/00preferences.rpy:544
     old "system cursor"
     new "ystemsay ursorcay"
 
-    # renpy/common/00preferences.rpy:536
+    # renpy/common/00preferences.rpy:553
     old "renderer menu"
     new "endererray enumay"
 
-    # renpy/common/00preferences.rpy:539
+    # renpy/common/00preferences.rpy:556
     old "accessibility menu"
     new "accessibilityay enumay"
 
-    # renpy/common/00preferences.rpy:542
+    # renpy/common/00preferences.rpy:559
     old "high contrast text"
     new "ighhay ontrastcay exttay"
 
-    # renpy/common/00preferences.rpy:551
+    # renpy/common/00preferences.rpy:568
     old "audio when minimized"
     new "audioay henway inimizedmay"
 
-    # renpy/common/00preferences.rpy:560
+    # renpy/common/00preferences.rpy:577
     old "audio when unfocused"
     new "audioay henway unfocuseday"
 
-    # renpy/common/00preferences.rpy:569
+    # renpy/common/00preferences.rpy:586
     old "web cache preload"
     new "ebway achecay reloadpay"
 
-    # renpy/common/00preferences.rpy:584
+    # renpy/common/00preferences.rpy:601
     old "voice after game menu"
     new "oicevay afteray amegay enumay"
 
-    # renpy/common/00preferences.rpy:593
+    # renpy/common/00preferences.rpy:610
     old "restore window position"
     new "estoreray indowway ositionpay"
 
-    # renpy/common/00preferences.rpy:602
+    # renpy/common/00preferences.rpy:619
     old "mono audio"
     new "onomay audioay"
 
-    # renpy/common/00preferences.rpy:611
+    # renpy/common/00preferences.rpy:628
     old "font kerning"
     new "ontfay erningkay"
 
-    # renpy/common/00preferences.rpy:619
+    # renpy/common/00preferences.rpy:635
+    old "self voicing voice"
+    new "elfsay oicingvay oicevay"
+
+    # renpy/common/00preferences.rpy:637
+    old "voice [text]"
+    new "oicevay [text]"
+
+    # renpy/common/00preferences.rpy:640
+    old "voice "
+    new "oicevay "
+
+    # renpy/common/00preferences.rpy:648
+    old "self voicing speed"
+    new "elfsay oicingvay peedsay"
+
+    # renpy/common/00preferences.rpy:651
+    old "self-voicing speed"
+    new "elfsay-oicingvay peedsay"
+
+    # renpy/common/00preferences.rpy:655
     old "reset"
     new "esetray"
 
-    # renpy/common/00preferences.rpy:632
+    # renpy/common/00preferences.rpy:668
     old "main volume"
     new "ainmay olumevay"
 
-    # renpy/common/00preferences.rpy:633
+    # renpy/common/00preferences.rpy:669
     old "music volume"
     new "usicmay olumevay"
 
-    # renpy/common/00preferences.rpy:634
+    # renpy/common/00preferences.rpy:670
     old "sound volume"
     new "oundsay olumevay"
 
-    # renpy/common/00preferences.rpy:635
+    # renpy/common/00preferences.rpy:671
     old "voice volume"
     new "oicevay olumevay"
 
-    # renpy/common/00preferences.rpy:636
+    # renpy/common/00preferences.rpy:672
     old "mute main"
     new "utemay ainmay"
 
-    # renpy/common/00preferences.rpy:637
+    # renpy/common/00preferences.rpy:673
     old "mute music"
     new "utemay usicmay"
 
-    # renpy/common/00preferences.rpy:638
+    # renpy/common/00preferences.rpy:674
     old "mute sound"
     new "utemay oundsay"
 
-    # renpy/common/00preferences.rpy:639
+    # renpy/common/00preferences.rpy:675
     old "mute voice"
     new "utemay oicevay"
 
-    # renpy/common/00preferences.rpy:640
+    # renpy/common/00preferences.rpy:676
     old "mute all"
     new "utemay allay"
 
-    # renpy/common/00preferences.rpy:723
+    # renpy/common/00preferences.rpy:759
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Lipboardcay oicingvay enableday. Resspay 'iftshay+Cay' otay isableday."
 
-    # renpy/common/00preferences.rpy:725
+    # renpy/common/00preferences.rpy:761
+    old "Screen reader voicing enabled. Press 'shift+V' to disable."
+    new "Creensay eaderray oicingvay enableday. Resspay 'iftshay+Vay' otay isableday."
+
+    # renpy/common/00preferences.rpy:763
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Elfsay-oicingvay ouldway aysay \"[renpy.display.tts.last]\". Resspay 'altay+iftshay+Vay' otay isableday."
 
-    # renpy/common/00preferences.rpy:727
+    # renpy/common/00preferences.rpy:765
     old "Self-voicing enabled. Press 'v' to disable."
     new "Elfsay-oicingvay enableday. Resspay 'vay' otay isableday."
 
-    # renpy/common/00speechbubble.rpy:420
+    # renpy/common/00speechbubble.rpy:433
     old "Speech Bubble Editor"
     new "Peechsay Ubblebay Ditoreay"
 
-    # renpy/common/00speechbubble.rpy:425
+    # renpy/common/00speechbubble.rpy:438
     old "(hide)"
     new "(idehay)"
 
-    # renpy/common/00speechbubble.rpy:436
+    # renpy/common/00speechbubble.rpy:449
     old "(clear retained bubbles)"
     new "(earclay etainedray ubblesbay)"
 
@@ -825,57 +885,61 @@ translate piglatin strings:
     old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
     new "Hetay Enray'Ypay Yncsay erversay oesday otnay avehay aay opycay ofay histay yncsay. Hetay yncsay Diay aymay ebay invaliday, oray itay aymay avehay imedtay outay."
 
-    # renpy/common/00sync.rpy:305
+    # renpy/common/00sync.rpy:309
     old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
     new "Leasepay enteray hetay yncsay Diay ouyay eneratedgay.\nEvernay enteray aay yncsay Diay ouyay idnday'tay reatecay ourselfyay."
 
-    # renpy/common/00sync.rpy:324
+    # renpy/common/00sync.rpy:328
     old "The sync ID is not in the correct format."
     new "Hetay yncsay Diay isay otnay inay hetay orrectcay ormatfay."
 
-    # renpy/common/00sync.rpy:344
+    # renpy/common/00sync.rpy:352
     old "The sync could not be decrypted."
     new "Hetay yncsay ouldcay otnay ebay ecryptedday."
 
-    # renpy/common/00sync.rpy:367
+    # renpy/common/00sync.rpy:375
     old "The sync belongs to a different game."
     new "Hetay yncsay elongsbay otay aay ifferentday amegay."
 
-    # renpy/common/00sync.rpy:372
+    # renpy/common/00sync.rpy:380
     old "The sync contains a file with an invalid name."
     new "Hetay yncsay ontainscay aay ilefay ithway anay invaliday amenay."
 
-    # renpy/common/00sync.rpy:425
+    # renpy/common/00sync.rpy:433
     old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
     new "Histay illway uploaday ouryay avessay otay hetay {a=https://sync.renpy.org}Enray'Ypay Yncsay Erversay{/a}.\nOday ouyay antway otay ontinuecay?"
 
-    # renpy/common/00sync.rpy:457
+    # renpy/common/00sync.rpy:465
     old "Enter Sync ID"
     new "Ntereay Yncsay Diay"
 
-    # renpy/common/00sync.rpy:468
+    # renpy/common/00sync.rpy:476
     old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
     new "Histay illway ontactcay hetay {a=https://sync.renpy.org}Enray'Ypay Yncsay Erversay{/a}."
 
-    # renpy/common/00sync.rpy:498
+    # renpy/common/00sync.rpy:506
     old "Sync Success"
     new "Yncsay Uccesssay"
 
-    # renpy/common/00sync.rpy:501
+    # renpy/common/00sync.rpy:509
     old "The Sync ID is:"
     new "Hetay Yncsay Diay isay:"
 
-    # renpy/common/00sync.rpy:507
+    # renpy/common/00sync.rpy:515
     old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
     new "Ouyay ancay useay histay Diay otay ownloadday ouryay avesay onay anotheray eviceday.\nHistay yncsay illway expireay inay anay ourhay.\nEnray'Ypay Yncsay isay upportedsay ybay {a=https://www.renpy.org/sponsors.html}Enray'Ypay'say Ponsorssay{/a}."
 
-    # renpy/common/00sync.rpy:511
+    # renpy/common/00sync.rpy:519
     old "Continue"
     new "Ontinuecay"
 
-    # renpy/common/00sync.rpy:536
+    # renpy/common/00sync.rpy:544
     old "Sync Error"
     new "Yncsay Rroreay"
+
+    # renpy/common/00sync.rpy:575
+    old "Sync Progress"
+    new "Yncsay Rogresspay"
 
     # renpy/common/00translation.rpy:63
     old "Translation identifier: [identifier]"
@@ -889,127 +953,119 @@ translate piglatin strings:
     old "\n{color=#fff}Copied to clipboard.{/color}"
     new "\n{color=#fff}Opiedcay otay ipboardclay.{/color}"
 
-    # renpy/common/00iap.rpy:231
+    # renpy/common/00iap.rpy:240
     old "Contacting App Store\nPlease Wait..."
     new "Ontactingcay Ppaay Toresay\nLeasepay Aitway..."
 
-    # renpy/common/00updater.rpy:415
+    # renpy/common/00updater.rpy:374
     old "No update methods found."
     new "Onay updateay ethodsmay oundfay."
 
-    # renpy/common/00updater.rpy:462
+    # renpy/common/00updater.rpy:421
     old "Could not download file list: "
     new "Ouldcay otnay ownloadday ilefay istlay: "
 
-    # renpy/common/00updater.rpy:465
+    # renpy/common/00updater.rpy:424
     old "File list digest does not match."
     new "Ilefay istlay igestday oesday otnay atchmay."
 
-    # renpy/common/00updater.rpy:675
+    # renpy/common/00updater.rpy:574
     old "An error is being simulated."
     new "Naay erroray isay eingbay imulatedsay."
 
-    # renpy/common/00updater.rpy:863
+    # renpy/common/00updater.rpy:762
     old "Either this project does not support updating, or the update status file was deleted."
     new "Ithereay histay rojectpay oesday otnay upportsay updatingay, oray hetay updateay atusstay ilefay asway eletedday."
 
-    # renpy/common/00updater.rpy:877
+    # renpy/common/00updater.rpy:776
     old "This account does not have permission to perform an update."
     new "Histay accountay oesday otnay avehay ermissionpay otay erformpay anay updateay."
 
-    # renpy/common/00updater.rpy:880
+    # renpy/common/00updater.rpy:779
     old "This account does not have permission to write the update log."
     new "Histay accountay oesday otnay avehay ermissionpay otay riteway hetay updateay oglay."
 
-    # renpy/common/00updater.rpy:966
+    # renpy/common/00updater.rpy:865
     old "Could not verify update signature."
     new "Ouldcay otnay erifyvay updateay ignaturesay."
 
-    # renpy/common/00updater.rpy:1289
-    old "The update file was not downloaded."
-    new "Hetay updateay ilefay asway otnay ownloadedday."
+    # renpy/common/00updater.rpy:885
+    old "The update source does not support RPU updates."
+    new "Hetay updateay ourcesay oesday otnay upportsay Puray updatesay."
 
-    # renpy/common/00updater.rpy:1307
-    old "The update file does not have the correct digest - it may have been corrupted."
-    new "Hetay updateay ilefay oesday otnay avehay hetay orrectcay igestday - itay aymay avehay eenbay orruptedcay."
-
-    # renpy/common/00updater.rpy:1457
-    old "While unpacking {}, unknown type {}."
-    new "Hileway unpackingay {}, unknownay ypetay {}."
-
-    # renpy/common/00updater.rpy:1928
+    # renpy/common/00updater.rpy:1311
     old "Updater"
     new "Pdateruay"
 
-    # renpy/common/00updater.rpy:1935
+    # renpy/common/00updater.rpy:1318
     old "An error has occurred:"
     new "Naay erroray ashay occurreday:"
 
-    # renpy/common/00updater.rpy:1937
+    # renpy/common/00updater.rpy:1320
     old "Checking for updates."
     new "Heckingcay orfay updatesay."
 
-    # renpy/common/00updater.rpy:1939
+    # renpy/common/00updater.rpy:1322
     old "This program is up to date."
     new "Histay rogrampay isay upay otay ateday."
 
-    # renpy/common/00updater.rpy:1941
+    # renpy/common/00updater.rpy:1324
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] isay availableay. Oday ouyay antway otay installay itay?"
 
-    # renpy/common/00updater.rpy:1943
+    # renpy/common/00updater.rpy:1326
     old "Preparing to download the updates."
     new "Reparingpay otay ownloadday hetay updatesay."
 
-    # renpy/common/00updater.rpy:1945
+    # renpy/common/00updater.rpy:1328
     old "Downloading the updates."
     new "Ownloadingday hetay updatesay."
 
-    # renpy/common/00updater.rpy:1947
+    # renpy/common/00updater.rpy:1330
     old "Unpacking the updates."
     new "Npackinguay hetay updatesay."
 
-    # renpy/common/00updater.rpy:1949
+    # renpy/common/00updater.rpy:1332
     old "Finishing up."
     new "Inishingfay upay."
 
-    # renpy/common/00updater.rpy:1951
+    # renpy/common/00updater.rpy:1334
     old "The updates have been installed. The program will restart."
     new "Hetay updatesay avehay eenbay installeday. Hetay rogrampay illway estartray."
 
-    # renpy/common/00updater.rpy:1953
+    # renpy/common/00updater.rpy:1336
     old "The updates have been installed."
     new "Hetay updatesay avehay eenbay installeday."
 
-    # renpy/common/00updater.rpy:1955
+    # renpy/common/00updater.rpy:1338
     old "The updates were cancelled."
     new "Hetay updatesay ereway ancelledcay."
 
-    # renpy/common/00updater.rpy:1970
+    # renpy/common/00updater.rpy:1353
     old "Proceed"
     new "Roceedpay"
 
-    # renpy/common/00updater.rpy:1986
+    # renpy/common/00updater.rpy:1369
     old "Preparing to download the game data."
     new "Reparingpay otay ownloadday hetay amegay ataday."
 
-    # renpy/common/00updater.rpy:1988
+    # renpy/common/00updater.rpy:1371
     old "Downloading the game data."
     new "Ownloadingday hetay amegay ataday."
 
-    # renpy/common/00updater.rpy:1990
+    # renpy/common/00updater.rpy:1373
     old "The game data has been downloaded."
     new "Hetay amegay ataday ashay eenbay ownloadedday."
 
-    # renpy/common/00updater.rpy:1992
+    # renpy/common/00updater.rpy:1375
     old "An error occurred when trying to download game data:"
     new "Naay erroray occurreday henway yingtray otay ownloadday amegay ataday:"
 
-    # renpy/common/00updater.rpy:1997
+    # renpy/common/00updater.rpy:1380
     old "This game cannot be run until the game data has been downloaded."
     new "Histay amegay annotcay ebay unray untilay hetay amegay ataday ashay eenbay ownloadedday."
 
-    # renpy/common/00updater.rpy:2004
+    # renpy/common/00updater.rpy:1387
     old "Retry"
     new "Etryray"
 

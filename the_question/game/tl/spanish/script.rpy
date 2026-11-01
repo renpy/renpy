@@ -392,7 +392,7 @@ translate spanish marry_2ad49007:
 # game/script.rpy:240
 translate spanish later_3c679c17:
 
-    # "I can't get up the nerve to ask right now. With a gulp, I decide to ask her later."  
+    # "I can't get up the nerve to ask right now. With a gulp, I decide to ask her later."
     "No me atrevo a preguntar ahora. Con un trago, decido preguntarle después."
 
 # game/script.rpy:245

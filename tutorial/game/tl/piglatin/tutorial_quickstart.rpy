@@ -78,22 +78,22 @@ translate piglatin tutorial_dialogue_be2be31a:
     e "Utbay eforebay Iay ancay owshay ouyay owhay otay riteway ialogueday, etlay emay owshay ouyay owhay eway resentpay criptsay examplesay."
 
 # game/tutorial_quickstart.rpy:74
-translate piglatin tutorial_dialogue_7b6be28e:
+translate piglatin tutorial_dialogue_f28baac5:
 
-    # "Eileen" "Examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
-    "Eileen" "Xampleseay illway owshay upay inay aay indowway ikelay hetay oneay aboveay. Ouyay'llay eednay otay ickclay outsideay ofay hetay exampleay indowway inay orderay otay advanceay hetay utorialtay."
+    # "Eileen"  "Examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
+    "Eileen"  "Xampleseay illway owshay upay inay aay indowway ikelay hetay oneay aboveay. Ouyay'llay eednay otay ickclay outsideay ofay hetay exampleay indowway inay orderay otay advanceay hetay utorialtay."
 
 # game/tutorial_quickstart.rpy:76
-translate piglatin tutorial_dialogue_5269d005:
+translate piglatin tutorial_dialogue_bbe72f58:
 
-    # "Eileen" "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
-    "Eileen" "Henway anay exampleay isay iggerbay hantay hetay creensay, ouyay ancay crollsay arounday inay itay usingay hetay ousemay heelway oray ybay implysay raggingday hetay ousemay."
+    # "Eileen"  "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
+    "Eileen"  "Henway anay exampleay isay iggerbay hantay hetay creensay, ouyay ancay crollsay arounday inay itay usingay hetay ousemay heelway oray ybay implysay raggingday hetay ousemay."
 
 # game/tutorial_quickstart.rpy:78
-translate piglatin tutorial_dialogue_241c0c74:
+translate piglatin tutorial_dialogue_aff42732:
 
-    # "Eileen" "Script might seem scary at first, but if you look you'll see it's easy to match it up to what I'm saying."
-    "Eileen" "Criptsay ightmay eemsay carysay atay irstfay, utbay ifay ouyay ooklay ouyay'llay eesay itay'say easyay otay atchmay itay upay otay hatway Iay'may ayingsay."
+    # "Eileen"  "Script might seem scary at first, but if you look you'll see it's easy to match it up to what I'm saying."
+    "Eileen"  "Criptsay ightmay eemsay carysay atay irstfay, utbay ifay ouyay ooklay ouyay'llay eesay itay'say easyay otay atchmay itay upay otay hatway Iay'may ayingsay."
 
 # game/tutorial_quickstart.rpy:82
 translate piglatin tutorial_dialogue_f0d66410:
@@ -108,10 +108,10 @@ translate piglatin tutorial_dialogue_8989713f:
     "Owway, itay'say eallyray eallyray arkday inay erehay."
 
 # game/tutorial_quickstart.rpy:91
-translate piglatin tutorial_dialogue_5072a404:
+translate piglatin tutorial_dialogue_c49e5e17:
 
-    # "Lucy" "Better watch out. You don't want to be eaten by a Grue."
-    "Lucy" "Etterbay atchway outay. Ouyay onday'tay antway otay ebay eatenay ybay aay Ruegay."
+    # "Lucy"  "Better watch out. You don't want to be eaten by a Grue."
+    "Lucy"  "Etterbay atchway outay. Ouyay onday'tay antway otay ebay eatenay ybay aay Ruegay."
 
 # game/tutorial_quickstart.rpy:99
 translate piglatin tutorial_dialogue_d39d1b2b:
@@ -162,10 +162,10 @@ translate piglatin tutorial_dialogue_d7f0b5b7:
     e "Henway Enray'Ypay eessay aay inglesay ringstay onay aay inelay ybay itselfay, itay usesay hetay arratornay otay aysay hattay ringstay. Osay aay inglesay ringstay ancay ebay useday otay expressay aay aracterchay'say houghtstay."
 
 # game/tutorial_quickstart.rpy:131
-translate piglatin tutorial_dialogue_5072a404_1:
+translate piglatin tutorial_dialogue_c49e5e17_1:
 
-    # "Lucy" "Better watch out. You don't want to be eaten by a Grue."
-    "Lucy" "Etterbay atchway outay. Ouyay onday'tay antway otay ebay eatenay ybay aay Ruegay."
+    # "Lucy"  "Better watch out. You don't want to be eaten by a Grue."
+    "Lucy"  "Etterbay atchway outay. Ouyay onday'tay antway otay ebay eatenay ybay aay Ruegay."
 
 # game/tutorial_quickstart.rpy:139
 translate piglatin tutorial_dialogue_9dd2d543:

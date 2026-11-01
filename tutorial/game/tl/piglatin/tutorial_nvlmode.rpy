@@ -1,6 +1,6 @@
 ﻿
 # game/tutorial_nvlmode.rpy:19
-translate piglatin tutorial_nvlmode_d41d8cd9:
+translate piglatin tutorial_nvlmode_76b2fe88:
 
     # nvl clear
     nvl clear

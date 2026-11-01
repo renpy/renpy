@@ -1027,7 +1027,7 @@
     # renpy/common/00updater.rpy:1992
     old "An error occurred when trying to download game data:"
     new "Ha ocurrido un error al intentar descargar los datos del juego:"
-    
+
 
     # renpy/common/00accessibility.rpy:143
     old "Screen Reader"
