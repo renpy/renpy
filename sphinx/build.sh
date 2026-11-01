@@ -21,6 +21,9 @@ mkdir -p source/inc
 rm -Rf ../doc-web/_images || true
 rm -Rf ../doc/_images || true
 
+# Sphinx never removes old files, so clear out those left behind by previous themes.
+rm -Rf ../doc/_static || true
+
 sphinx-build -E -a source ../doc-web &
 DOC_WEB_PID=$!
 
@@ -36,6 +39,9 @@ if ! RENPY_NO_FIGURES=1 sphinx-build -E -a source ../doc 2>"$DOC_LOG"; then
 fi
 
 rm -f "$DOC_LOG"
+
+# The theme copies these fonts, but only uses the ones in _static/css/fonts.
+rm -Rf ../doc/_static/fonts
 
 # Wait for the web build to finish, and fail if it did.
 wait "$DOC_WEB_PID"

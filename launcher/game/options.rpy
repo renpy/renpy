@@ -304,6 +304,13 @@ init python:
     build.classify_renpy("**/log.txt", None)
     build.classify_renpy("**/traceback.txt", None)
     build.classify_renpy("**/errors.txt", None)
+    build.classify_renpy("**/image_cache.txt", None)
+    build.classify_renpy("**/text_overflow.txt", None)
+    build.classify_renpy("**/dialogue.txt", None)
+    build.classify_renpy("**/dialogue.tab", None)
+    build.classify_renpy("**/profile_screen.txt", None)
+    build.classify_renpy("**/files.txt", None)
+    build.classify_renpy("**/memory.txt", None)
     build.classify_renpy("**/steam_appid.txt", None)
     build.classify_renpy("**/saves/", None)
     build.classify_renpy("**/tmp/", None)
@@ -350,6 +357,7 @@ init python:
         build.classify_renpy(pattern + "/**.pyi", "source_only")
         build.classify_renpy(pattern + "/**.pyx", "source_only")
         build.classify_renpy(pattern + "/**.pxd", "source_only")
+        build.classify_renpy(pattern + "/**.pxi", "source_only")
 
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
@@ -443,7 +451,7 @@ init python:
     build.package("renios", "zip", "renios", dlc=True)
     build.package("web", "zip", "web", dlc=True)
 
-    build.package("windev", "zip", "windev")
+    build.package("windev", "zip", "windev", dlc=True, update=False)
 
 # The identifier for the SDK.
 define build.mac_info_plist["CFBundleIdentifier"] = "org.renpy.sdk"
