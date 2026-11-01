@@ -60,52 +60,210 @@ holders, under the same terms.
 
 Ren'Py binaries can include source code from the following projects:
 
+* 7-Zip SFX module (GNU LGPL)
 * ANGLE (Three clause BSD License)
 * aom (AOM BSD License, Alliance for Open Media Patent License 1.0)
 * brotli (MIT License)
 * bzip2 (Bzip2 License)
 * certifi (Mozilla Public License 2.0)
-* chardet (GNU LGPL)
-* charset-mormalizer (MIT License)
+* charset-normalizer (MIT License)
 * ecdsa (MIT License)
 * FFmpeg (GNU LGPL) (libav in some older versions, also GNU LGPL)
-* Freetype (Zlib License)
+* Freetype (FreeType License)
 * Fribidi (GNU LGPL)
 * future (MIT License)
-* GLEW (Modified BSD, MIT License)
 * harfbuzz (Old MIT License)
 * idna (BSD 3-Clause License)
+* Jinja2 (BSD 3-Clause License)
 * libavif (AOM BSD License)
 * libffi (MIT License)
 * libhydrogen (ISC License)
 * libjpeg-turbo (IJG License, Modified BSD License, Zlib License)
 * libpng (PNG License)
-* libusb (GNU LGPL)
 * libwebp (Modified BSD License, Patent License)
 * libyuv (Three clause BSD License)
+* MarkupSafe (BSD 3-Clause License)
 * MetalAngle (Three clause BSD License)
 * Open Asset Import Library (assimp) (Three Clause BSD License)
+* OpenSSL (Apache License 2.0)
 * pefile (MIT License)
-* py2exe (MIT License)
+* Prism (Mozilla Public License 2.0), which includes:
+
+  * concurrentqueue (Simplified BSD License)
+  * dr_wav (Public Domain)
+  * {fmt} (MIT License)
+  * Google Highway (Apache License 2.0)
+  * Moderncom (MIT License)
+  * NVDA Controller Client interface definitions (Mozilla Public License 2.0, formerly GNU LGPL)
+  * NVGT utility functions (Zlib License)
+  * simdutf (Apache License 2.0)
+
 * pyasn1 (Modified BSD License)
-* Pygame_SDL2 (MIT License, GNU LGPL)
+* Pygame_SDL2 (MIT License, GNU LGPL), now part of Ren'Py as renpy.pygame
 * pyjnius (MIT License)
-* pyobjc (MIT License)
+* pyobjus (MIT License)
 * pysocks (Three Clause BSD License)
 * Python (Python License)
 * requests (Apache License 2.0)
 * rsa (Apache License 2.0)
+* SDL3_image (Zlib License)
+* SDL3 (Zlib License)
+* six (MIT License)
+* tinyfiledialogs (Zlib License)
+* truststore (MIT License)
+* urllib3 (MIT License)
+* websockets (Three Clause BSD License)
+* xz Utils (Public Domain)
+* zlib (Zlib License)
+* zsync (Artistic License)
+
+Legacy Dependencies
+-------------------
+
+Older versions of Ren'Py binaries can include source code from the following projects, which are no longer
+used by current versions of Ren'Py:
+
+* chardet (GNU LGPL)
+* GLEW (Modified BSD, MIT License)
+* libusb (GNU LGPL)
+* py2exe (MIT License)
+* pyobjc (MIT License)
 * SDL2_image (Zlib License)
 * SDL2_ttf (Zlib License)
 * SDL2 (Zlib License)
-* six (MIT License)
-* tinyfiledialogs (Zlib License)
-* urllib3 (MIT License)
-* urllib3 (MIT License)
-* websockets (Three Clause BSD License)
 * xz (Three clause BSD License)
-* zlib (Zlib License)
-* zsync (Artistic License)
+
+Copyright Notices
+-----------------
+
+Some of the licenses above require that copyright notices or acknowledgements be reproduced when the software is
+distributed in binary form. Those notices are given here, and the full license texts are given in the sections
+below.
+
+::
+
+    ANGLE and MetalAngle: Copyright 2018 The ANGLE Project Authors. All rights reserved.
+
+    aom: Copyright (c) 2016, Alliance for Open Media. All rights reserved.
+
+    assimp: Copyright (c) 2006-2021, assimp team. All rights reserved.
+    Poly2Tri: Copyright (c) 2009-2010, Poly2Tri Contributors. All rights reserved.
+
+    brotli: Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+
+    charset-normalizer: Copyright (c) 2025 TAHRI Ahmed R.
+
+    concurrentqueue: Copyright (c) Cameron Desrochers. All rights reserved.
+
+    ecdsa: Copyright 2010 Brian Warner.
+
+    {fmt}: Copyright (c) 2012 - present, Victor Zverovich and {fmt} contributors.
+
+    Freetype: Portions of this software are copyright (C) 2024 The FreeType Project (www.freetype.org).
+    All rights reserved.
+
+    future: Copyright (c) 2013-2024 Python Charmers, Australia.
+
+    harfbuzz: See the Harfbuzz License section below.
+
+    idna: Copyright (c) 2013-2026, Kim Davies and contributors. All rights reserved.
+
+    Jinja2: Copyright 2007 Pallets.
+
+    libavif: Copyright 2019 Joe Drago. All rights reserved.
+    Copyright (c) 2018-2019, VideoLAN and dav1d authors. All rights reserved.
+
+    libffi: Copyright (c) 1996-2024 Anthony Green, Red Hat, Inc and others.
+
+    libhydrogen: Copyright (c) 2017-2023 Frank Denis.
+
+    libjpeg-turbo: Copyright (C) 2009-2017 D. R. Commander. All Rights Reserved.
+    This software is based in part on the work of the Independent JPEG Group.
+
+    libpng: Copyright (c) 1995-2024 The PNG Reference Library Authors.
+    Copyright (c) 2018-2024 Cosmin Truta.
+    Copyright (c) 2000-2002, 2004, 2006-2018 Glenn Randers-Pehrson.
+    Copyright (c) 1996-1997 Andreas Dilger.
+    Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+
+    libwebp: Copyright (c) 2010, Google Inc. All rights reserved.
+
+    libyuv: Copyright 2011 The LibYuv Project Authors. All rights reserved.
+
+    MarkupSafe: Copyright 2010 Pallets.
+
+    Moderncom: Originally developed by Alexander Bessonov. Copyright HHD Software Ltd.
+
+    pefile: Copyright (c) 2004-2024 Ero Carrera.
+
+    pyasn1: Copyright (c) 2005-2020, Ilya Etingof. All rights reserved.
+
+    pyjnius: Copyright (c) 2010-2023 Kivy Team and other contributors.
+
+    pyobjus: Copyright (c) 2010-2017 Kivy Team and other contributors.
+
+    pysocks: Copyright 2006 Dan-Haim. All rights reserved.
+
+    requests: Copyright 2019 Kenneth Reitz.
+
+    six: Copyright (c) 2010-2024 Benjamin Peterson.
+
+    tinyfiledialogs: Copyright (c) 2014 - 2025 Guillaume Vareille.
+
+    truststore: Copyright (c) 2022 Seth Michael Larson.
+
+    urllib3: Copyright (c) 2008-2020 Andrey Petrov and contributors.
+
+    websockets: Copyright (c) Aymeric Augustin and contributors.
+
+Font Licenses
+-------------
+
+Ren'Py includes the following fonts, which are used by Ren'Py itself, the launcher, and the SDK. The full text of
+each license is given in the sections below.
+
+* DejaVu Sans (Bitstream Vera Fonts License, Arev Fonts License, Public Domain)
+
+  Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved. Bitstream Vera is a trademark of Bitstream, Inc.
+  Copyright (c) 2006 by Tavmjong Bah. All Rights Reserved. DejaVu changes are in public domain.
+
+* OpenDyslexic 3 (SIL Open Font License 1.1)
+
+  Copyright (c) 2012 by Abelardo Gonzalez.
+
+* Quicksand (SIL Open Font License 1.1)
+
+  Copyright (c) 2011, Andrew Paglinawan (www.andrewpaglinawan.com), with Reserved Font Name "Quicksand".
+
+* Roboto (Apache License 2.0)
+
+  Font data copyright Google 2014.
+
+* Source Han Sans (SIL Open Font License 1.1)
+
+  Copyright (c) 2014-2019 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'.
+
+* Twemoji, as the Twemoji COLRv0 font (Graphics: CC-BY 4.0, Code: MIT License)
+
+  Copyright 2019-2025 Twitter, Inc and other contributors. The Twemoji graphics are licensed under the
+  Creative Commons Attribution 4.0 International License (https://creativecommons.org/licenses/by/4.0/).
+  The font was built from https://github.com/jdecked/twemoji using https://github.com/Emoji-COLRv0/Emoji-COLRv0.
+  Instructions for building the font are at https://github.com/renpy/renpy/issues/6595#issuecomment-3239195401.
+
+* Vazirmatn (SIL Open Font License 1.1)
+
+  Copyright 2015 The Vazirmatn Project Authors (https://github.com/rastikerdar/vazirmatn).
+
+* WenQuanYi Micro Hei (Apache License 2.0)
+
+  Digitized data copyright (c) 2007, Google Corporation. Copyright (c) 2008-2009 WenQuanYi Board of Trustees
+  (http://wenq.org/) and Qianqian Fang. Droid is a trademark of Google and may be registered in certain
+  jurisdictions. WenQuanYi Micro Hei is dual-licensed under the Apache License 2.0 or the GNU GPL version 3 with a
+  font embedding exception, and is used by Ren'Py under the terms of the Apache License 2.0. It includes material
+  from UmeFont, which is covered by the UmeFont License below.
+
+Source Code
+-----------
 
 For the purposes of LGPL compliance, all source code that Ren'Py depends
 on is located in one of the following repositories:
@@ -115,6 +273,13 @@ on is located in one of the following repositories:
 
 Ren'Py Build will download source code from other git repositories
 as needed.
+
+Some components are distributed with Ren'Py as binaries built by their upstream projects, rather than by Ren'Py
+Build. The source code for these components is available from:
+
+* https://github.com/ethindp/prism (Prism)
+* https://www.7-zip.org/download.html (7-Zip SFX module)
+* http://zsync.moria.org.uk/ (zsync)
 
 For some releases before Ren'Py 8.5, pygame_sdl2 and web support were
 separate from Ren'Py.
@@ -655,6 +820,295 @@ GNU Lesser General Public License
 
 Python License
 ==============
+
+This is the license of Python 3.12, which is used by current versions of Ren'Py.
+
+::
+
+    A. HISTORY OF THE SOFTWARE
+    ==========================
+
+    Python was created in the early 1990s by Guido van Rossum at Stichting
+    Mathematisch Centrum (CWI, see https://www.cwi.nl) in the Netherlands
+    as a successor of a language called ABC.  Guido remains Python's
+    principal author, although it includes many contributions from others.
+
+    In 1995, Guido continued his work on Python at the Corporation for
+    National Research Initiatives (CNRI, see https://www.cnri.reston.va.us)
+    in Reston, Virginia where he released several versions of the
+    software.
+
+    In May 2000, Guido and the Python core development team moved to
+    BeOpen.com to form the BeOpen PythonLabs team.  In October of the same
+    year, the PythonLabs team moved to Digital Creations, which became
+    Zope Corporation.  In 2001, the Python Software Foundation (PSF, see
+    https://www.python.org/psf/) was formed, a non-profit organization
+    created specifically to own Python-related Intellectual Property.
+    Zope Corporation was a sponsoring member of the PSF.
+
+    All Python releases are Open Source (see https://opensource.org for
+    the Open Source Definition).  Historically, most, but not all, Python
+    releases have also been GPL-compatible; the table below summarizes
+    the various releases.
+
+        Release         Derived     Year        Owner       GPL-
+                        from                                compatible? (1)
+
+        0.9.0 thru 1.2              1991-1995   CWI         yes
+        1.3 thru 1.5.2  1.2         1995-1999   CNRI        yes
+        1.6             1.5.2       2000        CNRI        no
+        2.0             1.6         2000        BeOpen.com  no
+        1.6.1           1.6         2001        CNRI        yes (2)
+        2.1             2.0+1.6.1   2001        PSF         no
+        2.0.1           2.0+1.6.1   2001        PSF         yes
+        2.1.1           2.1+2.0.1   2001        PSF         yes
+        2.1.2           2.1.1       2002        PSF         yes
+        2.1.3           2.1.2       2002        PSF         yes
+        2.2 and above   2.1.1       2001-now    PSF         yes
+
+    Footnotes:
+
+    (1) GPL-compatible doesn't mean that we're distributing Python under
+        the GPL.  All Python licenses, unlike the GPL, let you distribute
+        a modified version without making your changes open source.  The
+        GPL-compatible licenses make it possible to combine Python with
+        other software that is released under the GPL; the others don't.
+
+    (2) According to Richard Stallman, 1.6.1 is not GPL-compatible,
+        because its license has a choice of law clause.  According to
+        CNRI, however, Stallman's lawyer has told CNRI's lawyer that 1.6.1
+        is "not incompatible" with the GPL.
+
+    Thanks to the many outside volunteers who have worked under Guido's
+    direction to make these releases possible.
+
+
+    B. TERMS AND CONDITIONS FOR ACCESSING OR OTHERWISE USING PYTHON
+    ===============================================================
+
+    Python software and documentation are licensed under the
+    Python Software Foundation License Version 2.
+
+    Starting with Python 3.8.6, examples, recipes, and other code in
+    the documentation are dual licensed under the PSF License Version 2
+    and the Zero-Clause BSD license.
+
+    Some software incorporated into Python is under different licenses.
+    The licenses are listed with code falling under that license.
+
+
+    PYTHON SOFTWARE FOUNDATION LICENSE VERSION 2
+    --------------------------------------------
+
+    1. This LICENSE AGREEMENT is between the Python Software Foundation
+    ("PSF"), and the Individual or Organization ("Licensee") accessing and
+    otherwise using this software ("Python") in source or binary form and
+    its associated documentation.
+
+    2. Subject to the terms and conditions of this License Agreement, PSF hereby
+    grants Licensee a nonexclusive, royalty-free, world-wide license to reproduce,
+    analyze, test, perform and/or display publicly, prepare derivative works,
+    distribute, and otherwise use Python alone or in any derivative version,
+    provided, however, that PSF's License Agreement and PSF's notice of copyright,
+    i.e., "Copyright (c) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010,
+    2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Python Software Foundation;
+    All Rights Reserved" are retained in Python alone or in any derivative version
+    prepared by Licensee.
+
+    3. In the event Licensee prepares a derivative work that is based on
+    or incorporates Python or any part thereof, and wants to make
+    the derivative work available to others as provided herein, then
+    Licensee hereby agrees to include in any such work a brief summary of
+    the changes made to Python.
+
+    4. PSF is making Python available to Licensee on an "AS IS"
+    basis.  PSF MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR
+    IMPLIED.  BY WAY OF EXAMPLE, BUT NOT LIMITATION, PSF MAKES NO AND
+    DISCLAIMS ANY REPRESENTATION OR WARRANTY OF MERCHANTABILITY OR FITNESS
+    FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF PYTHON WILL NOT
+    INFRINGE ANY THIRD PARTY RIGHTS.
+
+    5. PSF SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON
+    FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS
+    A RESULT OF MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON,
+    OR ANY DERIVATIVE THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
+
+    6. This License Agreement will automatically terminate upon a material
+    breach of its terms and conditions.
+
+    7. Nothing in this License Agreement shall be deemed to create any
+    relationship of agency, partnership, or joint venture between PSF and
+    Licensee.  This License Agreement does not grant permission to use PSF
+    trademarks or trade name in a trademark sense to endorse or promote
+    products or services of Licensee, or any third party.
+
+    8. By copying, installing or otherwise using Python, Licensee
+    agrees to be bound by the terms and conditions of this License
+    Agreement.
+
+
+    BEOPEN.COM LICENSE AGREEMENT FOR PYTHON 2.0
+    -------------------------------------------
+
+    BEOPEN PYTHON OPEN SOURCE LICENSE AGREEMENT VERSION 1
+
+    1. This LICENSE AGREEMENT is between BeOpen.com ("BeOpen"), having an
+    office at 160 Saratoga Avenue, Santa Clara, CA 95051, and the
+    Individual or Organization ("Licensee") accessing and otherwise using
+    this software in source or binary form and its associated
+    documentation ("the Software").
+
+    2. Subject to the terms and conditions of this BeOpen Python License
+    Agreement, BeOpen hereby grants Licensee a non-exclusive,
+    royalty-free, world-wide license to reproduce, analyze, test, perform
+    and/or display publicly, prepare derivative works, distribute, and
+    otherwise use the Software alone or in any derivative version,
+    provided, however, that the BeOpen Python License is retained in the
+    Software, alone or in any derivative version prepared by Licensee.
+
+    3. BeOpen is making the Software available to Licensee on an "AS IS"
+    basis.  BEOPEN MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR
+    IMPLIED.  BY WAY OF EXAMPLE, BUT NOT LIMITATION, BEOPEN MAKES NO AND
+    DISCLAIMS ANY REPRESENTATION OR WARRANTY OF MERCHANTABILITY OR FITNESS
+    FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF THE SOFTWARE WILL NOT
+    INFRINGE ANY THIRD PARTY RIGHTS.
+
+    4. BEOPEN SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF THE
+    SOFTWARE FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS
+    AS A RESULT OF USING, MODIFYING OR DISTRIBUTING THE SOFTWARE, OR ANY
+    DERIVATIVE THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
+
+    5. This License Agreement will automatically terminate upon a material
+    breach of its terms and conditions.
+
+    6. This License Agreement shall be governed by and interpreted in all
+    respects by the law of the State of California, excluding conflict of
+    law provisions.  Nothing in this License Agreement shall be deemed to
+    create any relationship of agency, partnership, or joint venture
+    between BeOpen and Licensee.  This License Agreement does not grant
+    permission to use BeOpen trademarks or trade names in a trademark
+    sense to endorse or promote products or services of Licensee, or any
+    third party.  As an exception, the "BeOpen Python" logos available at
+    http://www.pythonlabs.com/logos.html may be used according to the
+    permissions granted on that web page.
+
+    7. By copying, installing or otherwise using the software, Licensee
+    agrees to be bound by the terms and conditions of this License
+    Agreement.
+
+
+    CNRI LICENSE AGREEMENT FOR PYTHON 1.6.1
+    ---------------------------------------
+
+    1. This LICENSE AGREEMENT is between the Corporation for National
+    Research Initiatives, having an office at 1895 Preston White Drive,
+    Reston, VA 20191 ("CNRI"), and the Individual or Organization
+    ("Licensee") accessing and otherwise using Python 1.6.1 software in
+    source or binary form and its associated documentation.
+
+    2. Subject to the terms and conditions of this License Agreement, CNRI
+    hereby grants Licensee a nonexclusive, royalty-free, world-wide
+    license to reproduce, analyze, test, perform and/or display publicly,
+    prepare derivative works, distribute, and otherwise use Python 1.6.1
+    alone or in any derivative version, provided, however, that CNRI's
+    License Agreement and CNRI's notice of copyright, i.e., "Copyright (c)
+    1995-2001 Corporation for National Research Initiatives; All Rights
+    Reserved" are retained in Python 1.6.1 alone or in any derivative
+    version prepared by Licensee.  Alternately, in lieu of CNRI's License
+    Agreement, Licensee may substitute the following text (omitting the
+    quotes): "Python 1.6.1 is made available subject to the terms and
+    conditions in CNRI's License Agreement.  This Agreement together with
+    Python 1.6.1 may be located on the internet using the following
+    unique, persistent identifier (known as a handle): 1895.22/1013.  This
+    Agreement may also be obtained from a proxy server on the internet
+    using the following URL: http://hdl.handle.net/1895.22/1013".
+
+    3. In the event Licensee prepares a derivative work that is based on
+    or incorporates Python 1.6.1 or any part thereof, and wants to make
+    the derivative work available to others as provided herein, then
+    Licensee hereby agrees to include in any such work a brief summary of
+    the changes made to Python 1.6.1.
+
+    4. CNRI is making Python 1.6.1 available to Licensee on an "AS IS"
+    basis.  CNRI MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR
+    IMPLIED.  BY WAY OF EXAMPLE, BUT NOT LIMITATION, CNRI MAKES NO AND
+    DISCLAIMS ANY REPRESENTATION OR WARRANTY OF MERCHANTABILITY OR FITNESS
+    FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF PYTHON 1.6.1 WILL NOT
+    INFRINGE ANY THIRD PARTY RIGHTS.
+
+    5. CNRI SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON
+    1.6.1 FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS
+    A RESULT OF MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON 1.6.1,
+    OR ANY DERIVATIVE THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
+
+    6. This License Agreement will automatically terminate upon a material
+    breach of its terms and conditions.
+
+    7. This License Agreement shall be governed by the federal
+    intellectual property law of the United States, including without
+    limitation the federal copyright law, and, to the extent such
+    U.S. federal law does not apply, by the law of the Commonwealth of
+    Virginia, excluding Virginia's conflict of law provisions.
+    Notwithstanding the foregoing, with regard to derivative works based
+    on Python 1.6.1 that incorporate non-separable material that was
+    previously distributed under the GNU General Public License (GPL), the
+    law of the Commonwealth of Virginia shall govern this License
+    Agreement only as to issues arising under or with respect to
+    Paragraphs 4, 5, and 7 of this License Agreement.  Nothing in this
+    License Agreement shall be deemed to create any relationship of
+    agency, partnership, or joint venture between CNRI and Licensee.  This
+    License Agreement does not grant permission to use CNRI trademarks or
+    trade name in a trademark sense to endorse or promote products or
+    services of Licensee, or any third party.
+
+    8. By clicking on the "ACCEPT" button where indicated, or by copying,
+    installing or otherwise using Python 1.6.1, Licensee agrees to be
+    bound by the terms and conditions of this License Agreement.
+
+            ACCEPT
+
+
+    CWI LICENSE AGREEMENT FOR PYTHON 0.9.0 THROUGH 1.2
+    --------------------------------------------------
+
+    Copyright (c) 1991 - 1995, Stichting Mathematisch Centrum Amsterdam,
+    The Netherlands.  All rights reserved.
+
+    Permission to use, copy, modify, and distribute this software and its
+    documentation for any purpose and without fee is hereby granted,
+    provided that the above copyright notice appear in all copies and that
+    both that copyright notice and this permission notice appear in
+    supporting documentation, and that the name of Stichting Mathematisch
+    Centrum or CWI not be used in advertising or publicity pertaining to
+    distribution of the software without specific, written prior
+    permission.
+
+    STICHTING MATHEMATISCH CENTRUM DISCLAIMS ALL WARRANTIES WITH REGARD TO
+    THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+    FITNESS, IN NO EVENT SHALL STICHTING MATHEMATISCH CENTRUM BE LIABLE
+    FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+    OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+    ZERO-CLAUSE BSD LICENSE FOR CODE IN THE PYTHON DOCUMENTATION
+    ----------------------------------------------------------------------
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted.
+
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+    REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+    LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+    OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+    PERFORMANCE OF THIS SOFTWARE.
+
+Legacy Python License
+=====================
+
+This is the license of older versions of Python, used by older versions of Ren'Py.
 
 ::
 
@@ -2054,8 +2508,90 @@ Libyuv License
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-XZ License
------------
+XZ Utils License
+----------------
+
+::
+
+
+    XZ Utils Licensing
+    ==================
+
+        Different licenses apply to different files in this package. Here
+        is a rough summary of which licenses apply to which parts of this
+        package (but check the individual files to be sure!):
+
+          - liblzma is in the public domain.
+
+          - xz, xzdec, and lzmadec command line tools are in the public
+            domain unless GNU getopt_long had to be compiled and linked
+            in from the lib directory. The getopt_long code is under
+            GNU LGPLv2.1+.
+
+          - The scripts to grep, diff, and view compressed files have been
+            adapted from gzip. These scripts and their documentation are
+            under GNU GPLv2+.
+
+          - All the documentation in the doc directory and most of the
+            XZ Utils specific documentation files in other directories
+            are in the public domain.
+
+            Note: The JavaScript files (under the MIT license) have
+            been removed from the Doxygen-generated HTML version of the
+            liblzma API documentation. Doxygen itself is under the GNU GPL
+            but the remaining files generated by Doxygen are not affected
+            by the licenses used in Doxygen because Doxygen licensing has
+            the following exception:
+
+                "Documents produced by doxygen are derivative works
+                derived from the input used in their production;
+                they are not affected by this license."
+
+          - Translated messages are in the public domain.
+
+          - The build system contains public domain files, and files that
+            are under GNU GPLv2+ or GNU GPLv3+. None of these files end up
+            in the binaries being built.
+
+          - Test files and test code in the tests directory, and debugging
+            utilities in the debug directory are in the public domain.
+
+          - The extra directory may contain public domain files, and files
+            that are under various free software licenses.
+
+        You can do whatever you want with the files that have been put into
+        the public domain. If you find public domain legally problematic,
+        take the previous sentence as a license grant. If you still find
+        the lack of copyright legally problematic, you have too many
+        lawyers.
+
+        As usual, this software is provided "as is", without any warranty.
+
+        If you copy significant amounts of public domain code from XZ Utils
+        into your project, acknowledging this somewhere in your software is
+        polite (especially if it is proprietary, non-free software), but
+        naturally it is not legally required. Here is an example of a good
+        notice to put into "about box" or into documentation:
+
+            This software includes code from XZ Utils <https://tukaani.org/xz/>.
+
+        The following license texts are included in the following files:
+          - COPYING.LGPLv2.1: GNU Lesser General Public License version 2.1
+          - COPYING.GPLv2: GNU General Public License version 2
+          - COPYING.GPLv3: GNU General Public License version 3
+
+        Note that the toolchain (compiler, linker etc.) may add some code
+        pieces that are copyrighted. Thus, it is possible that e.g. liblzma
+        binary wouldn't actually be in the public domain in its entirety
+        even though it contains no copyrighted code from the XZ Utils source
+        package.
+
+        If you have questions, don't hesitate to ask the author(s) for more
+        information.
+
+
+Legacy XZ License
+-----------------
 
 ::
 
@@ -2085,3 +2621,433 @@ XZ License
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+FreeType License
+----------------
+
+::
+
+                        The FreeType Project LICENSE
+                        ----------------------------
+
+                                2006-Jan-27
+
+                        Copyright 1996-2002, 2006 by
+              David Turner, Robert Wilhelm, and Werner Lemberg
+
+
+
+    Introduction
+    ============
+
+      The FreeType  Project is distributed in  several archive packages;
+      some of them may contain, in addition to the FreeType font engine,
+      various tools and  contributions which rely on, or  relate to, the
+      FreeType Project.
+
+      This  license applies  to all  files found  in such  packages, and
+      which do not  fall under their own explicit  license.  The license
+      affects  thus  the  FreeType   font  engine,  the  test  programs,
+      documentation and makefiles, at the very least.
+
+      This  license   was  inspired  by  the  BSD,   Artistic,  and  IJG
+      (Independent JPEG  Group) licenses, which  all encourage inclusion
+      and  use of  free  software in  commercial  and freeware  products
+      alike.  As a consequence, its main points are that:
+
+        o We don't promise that this software works. However, we will be
+          interested in any kind of bug reports. (`as is' distribution)
+
+        o You can  use this software for whatever you  want, in parts or
+          full form, without having to pay us. (`royalty-free' usage)
+
+        o You may not pretend that  you wrote this software.  If you use
+          it, or  only parts of it,  in a program,  you must acknowledge
+          somewhere  in  your  documentation  that  you  have  used  the
+          FreeType code. (`credits')
+
+      We  specifically  permit  and  encourage  the  inclusion  of  this
+      software, with  or without modifications,  in commercial products.
+      We  disclaim  all warranties  covering  The  FreeType Project  and
+      assume no liability related to The FreeType Project.
+
+
+      Finally,  many  people  asked  us  for  a  preferred  form  for  a
+      credit/disclaimer to use in compliance with this license.  We thus
+      encourage you to use the following text:
+
+       """
+        Portions of this software are copyright © <year> The FreeType
+        Project (www.freetype.org).  All rights reserved.
+       """
+
+      Please replace <year> with the value from the FreeType version you
+      actually use.
+
+
+    Legal Terms
+    ===========
+
+    0. Definitions
+    --------------
+
+      Throughout this license,  the terms `package', `FreeType Project',
+      and  `FreeType  archive' refer  to  the  set  of files  originally
+      distributed  by the  authors  (David Turner,  Robert Wilhelm,  and
+      Werner Lemberg) as the `FreeType Project', be they named as alpha,
+      beta or final release.
+
+      `You' refers to  the licensee, or person using  the project, where
+      `using' is a generic term including compiling the project's source
+      code as  well as linking it  to form a  `program' or `executable'.
+      This  program is  referred to  as  `a program  using the  FreeType
+      engine'.
+
+      This  license applies  to all  files distributed  in  the original
+      FreeType  Project,   including  all  source   code,  binaries  and
+      documentation,  unless  otherwise  stated   in  the  file  in  its
+      original, unmodified form as  distributed in the original archive.
+      If you are  unsure whether or not a particular  file is covered by
+      this license, you must contact us to verify this.
+
+      The FreeType  Project is copyright (C) 1996-2000  by David Turner,
+      Robert Wilhelm, and Werner Lemberg.  All rights reserved except as
+      specified below.
+
+    1. No Warranty
+    --------------
+
+      THE FREETYPE PROJECT  IS PROVIDED `AS IS' WITHOUT  WARRANTY OF ANY
+      KIND, EITHER  EXPRESS OR IMPLIED,  INCLUDING, BUT NOT  LIMITED TO,
+      WARRANTIES  OF  MERCHANTABILITY   AND  FITNESS  FOR  A  PARTICULAR
+      PURPOSE.  IN NO EVENT WILL ANY OF THE AUTHORS OR COPYRIGHT HOLDERS
+      BE LIABLE  FOR ANY DAMAGES CAUSED  BY THE USE OR  THE INABILITY TO
+      USE, OF THE FREETYPE PROJECT.
+
+    2. Redistribution
+    -----------------
+
+      This  license  grants  a  worldwide, royalty-free,  perpetual  and
+      irrevocable right  and license to use,  execute, perform, compile,
+      display,  copy,   create  derivative  works   of,  distribute  and
+      sublicense the  FreeType Project (in  both source and  object code
+      forms)  and  derivative works  thereof  for  any  purpose; and  to
+      authorize others  to exercise  some or all  of the  rights granted
+      herein, subject to the following conditions:
+
+        o Redistribution of  source code  must retain this  license file
+          (`FTL.TXT') unaltered; any  additions, deletions or changes to
+          the original  files must be clearly  indicated in accompanying
+          documentation.   The  copyright   notices  of  the  unaltered,
+          original  files must  be  preserved in  all  copies of  source
+          files.
+
+        o Redistribution in binary form must provide a  disclaimer  that
+          states  that  the software is based in part of the work of the
+          FreeType Team,  in  the  distribution  documentation.  We also
+          encourage you to put an URL to the FreeType web page  in  your
+          documentation, though this isn't mandatory.
+
+      These conditions  apply to any  software derived from or  based on
+      the FreeType Project,  not just the unmodified files.   If you use
+      our work, you  must acknowledge us.  However, no  fee need be paid
+      to us.
+
+    3. Advertising
+    --------------
+
+      Neither the  FreeType authors and  contributors nor you  shall use
+      the name of the  other for commercial, advertising, or promotional
+      purposes without specific prior written permission.
+
+      We suggest,  but do not require, that  you use one or  more of the
+      following phrases to refer  to this software in your documentation
+      or advertising  materials: `FreeType Project',  `FreeType Engine',
+      `FreeType library', or `FreeType Distribution'.
+
+      As  you have  not signed  this license,  you are  not  required to
+      accept  it.   However,  as  the FreeType  Project  is  copyrighted
+      material, only  this license, or  another one contracted  with the
+      authors, grants you  the right to use, distribute,  and modify it.
+      Therefore,  by  using,  distributing,  or modifying  the  FreeType
+      Project, you indicate that you understand and accept all the terms
+      of this license.
+
+    4. Contacts
+    -----------
+
+      There are two mailing lists related to FreeType:
+
+        o freetype@nongnu.org
+
+          Discusses general use and applications of FreeType, as well as
+          future and  wanted additions to the  library and distribution.
+          If  you are looking  for support,  start in  this list  if you
+          haven't found anything to help you in the documentation.
+
+        o freetype-devel@nongnu.org
+
+          Discusses bugs,  as well  as engine internals,  design issues,
+          specific licenses, porting, etc.
+
+      Our home page can be found at
+
+        https://www.freetype.org
+
+
+    --- end of FTL.TXT ---
+
+
+Simplified BSD License
+----------------------
+
+::
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice, this
+       list of conditions and the following disclaimer.
+
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
+       and/or other materials provided with the distribution.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+DejaVu Fonts License
+--------------------
+
+::
+
+    Fonts are (c) Bitstream (see below). DejaVu changes are in public domain. Glyphs imported from Arev fonts are (c) Tavmjung Bah (see below)
+
+    Bitstream Vera Fonts Copyright
+    ------------------------------
+
+    Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved. Bitstream Vera is
+    a trademark of Bitstream, Inc.
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of the fonts accompanying this license ("Fonts") and associated
+    documentation files (the "Font Software"), to reproduce and distribute the
+    Font Software, including without limitation the rights to use, copy, merge,
+    publish, distribute, and/or sell copies of the Font Software, and to permit
+    persons to whom the Font Software is furnished to do so, subject to the
+    following conditions:
+
+    The above copyright and trademark notices and this permission notice shall
+    be included in all copies of one or more of the Font Software typefaces.
+
+    The Font Software may be modified, altered, or added to, and in particular
+    the designs of glyphs or characters in the Fonts may be modified and
+    additional glyphs or characters may be added to the Fonts, only if the fonts
+    are renamed to names not containing either the words "Bitstream" or the word
+    "Vera".
+
+    This License becomes null and void to the extent applicable to Fonts or Font
+    Software that has been modified and is distributed under the "Bitstream
+    Vera" names.
+
+    The Font Software may be sold as part of a larger software package but no
+    copy of one or more of the Font Software typefaces may be sold by itself.
+
+    THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT,
+    TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL BITSTREAM OR THE GNOME
+    FOUNDATION BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING
+    ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+    THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE
+    FONT SOFTWARE.
+
+    Except as contained in this notice, the names of Gnome, the Gnome
+    Foundation, and Bitstream Inc., shall not be used in advertising or
+    otherwise to promote the sale, use or other dealings in this Font Software
+    without prior written authorization from the Gnome Foundation or Bitstream
+    Inc., respectively. For further information, contact: fonts at gnome dot
+    org.
+
+    Arev Fonts Copyright
+    ------------------------------
+
+    Copyright (c) 2006 by Tavmjong Bah. All Rights Reserved.
+
+    Permission is hereby granted, free of charge, to any person obtaining
+    a copy of the fonts accompanying this license ("Fonts") and
+    associated documentation files (the "Font Software"), to reproduce
+    and distribute the modifications to the Bitstream Vera Font Software,
+    including without limitation the rights to use, copy, merge, publish,
+    distribute, and/or sell copies of the Font Software, and to permit
+    persons to whom the Font Software is furnished to do so, subject to
+    the following conditions:
+
+    The above copyright and trademark notices and this permission notice
+    shall be included in all copies of one or more of the Font Software
+    typefaces.
+
+    The Font Software may be modified, altered, or added to, and in
+    particular the designs of glyphs or characters in the Fonts may be
+    modified and additional glyphs or characters may be added to the
+    Fonts, only if the fonts are renamed to names not containing either
+    the words "Tavmjong Bah" or the word "Arev".
+
+    This License becomes null and void to the extent applicable to Fonts
+    or Font Software that has been modified and is distributed under the
+    "Tavmjong Bah Arev" names.
+
+    The Font Software may be sold as part of a larger software package but
+    no copy of one or more of the Font Software typefaces may be sold by
+    itself.
+
+    THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+    OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL
+    TAVMJONG BAH BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+    INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+    DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+    OTHER DEALINGS IN THE FONT SOFTWARE.
+
+    Except as contained in this notice, the name of Tavmjong Bah shall not
+    be used in advertising or otherwise to promote the sale, use or other
+    dealings in this Font Software without prior written authorization
+    from Tavmjong Bah. For further information, contact: tavmjong @ free
+    . fr.
+
+
+SIL Open Font License 1.1
+-------------------------
+
+::
+
+    SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+    -----------------------------------------------------------
+
+    PREAMBLE
+    The goals of the Open Font License (OFL) are to stimulate worldwide
+    development of collaborative font projects, to support the font creation
+    efforts of academic and linguistic communities, and to provide a free and
+    open framework in which fonts may be shared and improved in partnership
+    with others.
+
+    The OFL allows the licensed fonts to be used, studied, modified and
+    redistributed freely as long as they are not sold by themselves. The
+    fonts, including any derivative works, can be bundled, embedded,
+    redistributed and/or sold with any software provided that any reserved
+    names are not used by derivative works. The fonts and derivatives,
+    however, cannot be released under any other type of license. The
+    requirement for fonts to remain under this license does not apply
+    to any document created using the fonts or their derivatives.
+
+    DEFINITIONS
+    "Font Software" refers to the set of files released by the Copyright
+    Holder(s) under this license and clearly marked as such. This may
+    include source files, build scripts and documentation.
+
+    "Reserved Font Name" refers to any names specified as such after the
+    copyright statement(s).
+
+    "Original Version" refers to the collection of Font Software components as
+    distributed by the Copyright Holder(s).
+
+    "Modified Version" refers to any derivative made by adding to, deleting,
+    or substituting -- in part or in whole -- any of the components of the
+    Original Version, by changing formats or by porting the Font Software to a
+    new environment.
+
+    "Author" refers to any designer, engineer, programmer, technical
+    writer or other person who contributed to the Font Software.
+
+    PERMISSION & CONDITIONS
+    Permission is hereby granted, free of charge, to any person obtaining
+    a copy of the Font Software, to use, study, copy, merge, embed, modify,
+    redistribute, and sell modified and unmodified copies of the Font
+    Software, subject to the following conditions:
+
+    1) Neither the Font Software nor any of its individual components,
+    in Original or Modified Versions, may be sold by itself.
+
+    2) Original or Modified Versions of the Font Software may be bundled,
+    redistributed and/or sold with any software, provided that each copy
+    contains the above copyright notice and this license. These can be
+    included either as stand-alone text files, human-readable headers or
+    in the appropriate machine-readable metadata fields within text or
+    binary files as long as those fields can be easily viewed by the user.
+
+    3) No Modified Version of the Font Software may use the Reserved Font
+    Name(s) unless explicit written permission is granted by the corresponding
+    Copyright Holder. This restriction only applies to the primary font name as
+    presented to the users.
+
+    4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+    Software shall not be used to promote, endorse or advertise any
+    Modified Version, except to acknowledge the contribution(s) of the
+    Copyright Holder(s) and the Author(s) or with their explicit written
+    permission.
+
+    5) The Font Software, modified or unmodified, in part or in whole,
+    must be distributed entirely under this license, and must not be
+    distributed under any other license. The requirement for fonts to
+    remain under this license does not apply to any document created
+    using the Font Software.
+
+    TERMINATION
+    This license becomes null and void if any of the above conditions are
+    not met.
+
+    DISCLAIMER
+    THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+    OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+    COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+    INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+    DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+    OTHER DEALINGS IN THE FONT SOFTWARE.
+
+
+UmeFont License
+---------------
+
+::
+
+    Copyright disclaimer for UmeFont
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+    1. Redistributions of source code must retain the above copyright notice,
+       this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
+       and/or other materials provided with the distribution.
+    3. Neither the name of the Wada Laboratory, the University of Tokyo nor
+       the names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY WADA LABORATORY, THE UNIVERSITY OF TOKYO AND
+    CONTRIBUTORS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+    NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+    PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE LABORATORY OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+    OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+    ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
