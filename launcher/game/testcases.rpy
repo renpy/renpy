@@ -42,6 +42,44 @@
 
         return True
 
+    def check_mobile_license():
+        """
+        Checks that the android and ios packages for the current project contain
+        renpy/LICENSE.txt, and that it matches sphinx/source/license.rst. These packages
+        are directories that aren't part of a normal build, so they're built to a temporary
+        directory. Returns True if so, and raises an exception otherwise.
+        """
+
+        import shutil
+        import tempfile
+
+        with open(os.path.join(config.renpy_base, "sphinx", "source", "license.rst"), "rb") as f:
+            license = f.read()
+
+        tempdir = tempfile.mkdtemp(prefix="renpy-test-")
+
+        try:
+            for package in [ "android", "ios" ]:
+                dest = os.path.join(tempdir, package)
+
+                distribute.Distributor(project.current,
+                    reporter=distribute.TextReporter(),
+                    packages=[ package ],
+                    build_update=False,
+                    noarchive=True,
+                    packagedest=dest,
+                    report_success=False,
+                    scan=False,
+                    )
+
+                with open(os.path.join(dest, "renpy", "LICENSE.txt"), "rb") as f:
+                    if f.read() != license:
+                        raise Exception("renpy/LICENSE.txt in {} does not match license.rst.".format(package))
+        finally:
+            shutil.rmtree(tempdir)
+
+        return True
+
     def check_package_failures():
         """
         Checks that failures while packaging reach the code that started the build.
@@ -235,6 +273,7 @@ testsuite default:
         click "Return"
 
         assert eval check_dists_license()
+        assert eval check_mobile_license()
 
 
     testcase package_failures:

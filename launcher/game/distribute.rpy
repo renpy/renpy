@@ -1043,7 +1043,7 @@ fix_dlc("renios", "renios")
             LICENSE_TXT = os.path.join(config.renpy_base, "LICENSE.txt")
 
             if os.path.exists(LICENSE_TXT):
-                self.add_file("renpy", "renpy/LICENSE.txt", LICENSE_TXT)
+                self.add_file("renpy android ios", "renpy/LICENSE.txt", LICENSE_TXT)
 
             if self.build["script_version"]:
 
