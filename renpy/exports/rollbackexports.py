@@ -178,6 +178,23 @@ def retain_after_load():
     renpy.game.log.retain_after_load()
 
 
+def reentrant_statement():
+    """
+    :doc: rollback
+
+    Declares that the currently executing statement is re-entrant: it may be
+    re-executed from its start, at any point, without applying its side
+    effects twice. This causes each interaction that occurs inside the
+    statement to get its own rollback record, so rollback is granular even
+    if the statement runs many interactions.
+
+    This should be called each time the statement executes, before its second
+    interaction begins. The declaration ends when the next statement begins.
+    """
+
+    renpy.game.log.statement_reentrant = True
+
+
 def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, abnormal=True, current_label=None):
     """
     :doc: rollback
