@@ -1106,6 +1106,9 @@ class RollbackLog(renpy.object.Object):
         # Fix up old screens.
         renpy.display.screen.before_restart()
 
+        # Pose selections are unsaved and must not leak from the previous game state.
+        renpy.gl2.live2d.reset_pose_states()
+
         # Set us up as the game log.
         renpy.game.log = self
 

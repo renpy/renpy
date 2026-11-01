@@ -58,7 +58,7 @@ Defining Animations
 
 Live2D animations are defined using the Live2D displayable and the image statement:
 
-.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, aliases=None, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, update_function=None, default_fade=1.0, old_beziers=None, deduplication_key=None, **properties)
+.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, aliases=None, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, update_function=None, default_fade=1.0, old_beziers=None, deduplication_key=None, pose=None, **properties)
 
     This displayable displays a Live2D animation.
 
@@ -156,6 +156,10 @@ Live2D animations are defined using the Live2D displayable and the image stateme
     `deduplication_key`
         If not None, this is a key used to deduplicate Live2D displayables that reference the same `filename` but have different `aliases`, `nonexclusive`, `seamless`, `default_fade`, `attribute_function`, `attribute_filter` and/or `update_function`.
 
+    `pose`
+        If True, the model's pose file is used. If False, the pose file is ignored. If None, the value of
+        :var:`config.live2d_pose` is used. See :ref:`live2d-poses`.
+
     The difference between `attribute_function` and `attribute_filter` is
     that the former is generally used to compute replacement - the presence
     of two attributes means one should be replaced by a third. The latter
@@ -208,6 +212,11 @@ Live2D animations are defined using the Live2D displayable and the image stateme
 
     If True, live2d will by default use the old Bezier curve behavior, which usees easing. If False, the Cardano interpretation
     of beziers is used.
+
+.. var:: config.live2d_pose = True
+
+    If True, Live2D displayables use the pose file of their model, unless the `pose` argument to :func:`Live2D` says
+    otherwise. If False, pose files are ignored by default. See :ref:`live2d-poses`.
 
 There is a config variable that can help in debugging what motions and
 expressions were loaded from .model3.json files:
@@ -336,6 +345,30 @@ motion fading is controlled by the ``_live2d_fade`` variable:
 
     If true, Live2D animations use motion fading. If False, animations
     are transitioned abruptly.
+
+.. _live2d-poses:
+
+Poses
+-----
+
+A Live2D model can have a pose file, named by the ``Pose`` entry of its .model3.json file. A pose file divides parts
+of the model into groups of alternatives, such as two versions of an arm, so that only one part of each group is
+visible at a time.
+
+Ren'Py starts with the first part of each group visible. A motion or expression can select a different part by setting
+the opacity of the parts in the group. A motion can use part opacity curves or parameter curves with the same ids as
+the parts, while an expression uses a parameter with the same id as the part. The first part in the group that has a
+non-zero value is selected, and a part that's already selected keeps its value until it's changed, so selecting a later
+part requires setting the opacity of the current part to 0.
+
+When the selected part changes, the parts crossfade over the time given by the pose file, which defaults to 0.5
+seconds. The part remains selected after the motion or expression ends, until another motion or expression changes it,
+including if the image is hidden and shown again.
+
+Which part is selected isn't saved, and isn't changed by rollback. After a game is loaded, each group begins with its
+first part visible.
+
+An `update_function` runs after the pose is applied, so its ``blend_opacity`` method can be used to change the result.
 
 Aliasing
 --------

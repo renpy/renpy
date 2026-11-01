@@ -54,6 +54,13 @@ back, add::
 
     define config.tlid_only_considers_say = False
 
+**Live2D Poses** Live2D models that have a pose file now use it, showing only one part from each group of alternative
+parts. Models with a pose file that were shown without a motion hiding those parts will look different, and motions
+that switch between alternatives will crossfade. Games declaring compatibility with Ren'Py 8.5 or earlier retain the
+old behavior. To revert to it, add to your game::
+
+    define config.live2d_pose = False
+
 .. _incompatible-8.5.4:
 
 8.5.4

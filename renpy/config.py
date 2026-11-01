@@ -1679,6 +1679,12 @@ If True, live2d will use the old Bezier curve behavior, which usees easing. If F
 of beziers is used.
 """
 
+live2d_pose: bool = True
+"""
+If True, Live2D displayables use the pose file of their model, unless the `pose` parameter says otherwise. If False,
+pose files are ignored by default.
+"""
+
 special_directory_map: dict[str, list[str]] = {"images": ["images"], "audio": ["audio"], "fonts": ["fonts"]}
 """
 This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will

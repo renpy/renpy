@@ -25,6 +25,7 @@ from typing import Any
 import renpy
 import renpy.gl2.live2dmotion
 import renpy.gl2.live2dphysics
+import renpy.gl2.live2dpose
 from renpy.gl2.gl2shadercache import register_shader
 from renpy.display.core import absolute
 
@@ -417,6 +418,18 @@ def reset_states():
     states.clear()
 
 
+def reset_pose_states() -> None:
+    """
+    Resets unsaved pose selections after loading, without changing motion or
+    expression state.
+    """
+
+    for state in states.values():
+        state.pose_sustained.clear()
+        state.pose_opacities = None
+        state.pose_time = 0.0
+
+
 class Live2DExpression(object):
     """
     The data corresponding to an expression.
@@ -469,6 +482,18 @@ class Live2DCommon(object):
         self.physics = renpy.gl2.live2dphysics.load_physics(
             self.model, self.base, self.model_json["FileReferences"].get("Physics")
         )
+
+        # The pose, which is loaded when first used by get_pose.
+        self.pose = None  # type: renpy.gl2.live2dpose.Pose|None
+        self.pose_loaded = False
+
+        # A map from part id to the value motions and expressions requested
+        # for that part during the current render.
+        self.pose_requests = {}  # type: dict[str, float]
+
+        # Pose selector parameters requested by motions, as (remaining weight,
+        # weighted value) pairs. Part opacity curves take precedence over these.
+        self.pose_parameters: dict[str, tuple[float, float]] = {}
 
         # The texture images.
         self.textures = []
@@ -606,6 +631,20 @@ class Live2DCommon(object):
     def __reduce__(self):
         raise Exception("Live2DCommon objects cannot be pickled.")
 
+    def get_pose(self):
+        """
+        Returns the model's pose, or None if it doesn't have one. The file is
+        loaded here so that it isn't used unless pose support is enabled.
+        """
+
+        if not self.pose_loaded:
+            self.pose = renpy.gl2.live2dpose.load_pose(
+                self.model, self.base, self.model_json["FileReferences"].get("Pose")
+            )
+            self.pose_loaded = True
+
+        return self.pose
+
     def apply_aliases(self, aliases):
         for k, v in aliases.items():
             target = None
@@ -679,6 +718,16 @@ class Live2DState(object):
 
         # A list of (expression_name, time_shown, time_hidden) tuples.
         self.old_expressions = []
+
+        # A map from pose group index to the id of the selected part.
+        self.pose_sustained = {}  # type: dict[int, str]
+
+        # A map from part id to the opacity given to it by the pose, or None
+        # if the pose hasn't been applied yet.
+        self.pose_opacities = None  # type: dict[str, float]|None
+
+        # The time at which the pose was last applied.
+        self.pose_time = 0.0
 
     def update_expressions(self, expressions, now):
         """
@@ -826,6 +875,12 @@ class Live2D(renpy.display.displayable.Displayable):
     If none, the value of config.live2d_old_beziers is used.
     """
 
+    pose: bool | None = None
+    """
+    If True, the model's pose file is used. If False, it's ignored. If None,
+    the value of config.live2d_pose is used.
+    """
+
     deduplication_key: str | None = None
     """
     A key used to deduplicate Live2D displayables together with filename
@@ -880,6 +935,7 @@ class Live2D(renpy.display.displayable.Displayable):
         default_fade: float = 1.0,
         old_beziers: bool | None = None,
         deduplication_key: str | None = None,
+        pose: bool | None = None,
         **properties,
     ):
         super().__init__(**properties)
@@ -911,6 +967,7 @@ class Live2D(renpy.display.displayable.Displayable):
         self.default_fade = default_fade
         self.old_beziers = old_beziers
         self.deduplication_key = deduplication_key
+        self.pose = pose
 
         # Load the common data. Needed!
         common = self.common
@@ -1017,6 +1074,7 @@ class Live2D(renpy.display.displayable.Displayable):
             default_fade=self.default_fade,
             old_beziers=self.old_beziers,
             deduplication_key=self.deduplication_key,
+            pose=self.pose,
             **self.properties,
         )
 
@@ -1179,6 +1237,7 @@ class Live2D(renpy.display.displayable.Displayable):
         # Apply the motion.
 
         motion_data = motion.get(st, st_fade, do_fade_in, do_fade_out)
+        pose = self.get_pose()
 
         for k, v in motion_data.items():
             kind, key = k
@@ -1186,8 +1245,15 @@ class Live2D(renpy.display.displayable.Displayable):
 
             if kind == "PartOpacity":
                 common.model.set_part_opacity(key, value)
+                common.pose_requests.setdefault(key, value)
             elif kind == "Parameter":
                 common.model.set_parameter(key, value, factor)
+
+                if pose is not None and key in pose.part_groups:
+                    remaining, total = common.pose_parameters.get(key, (1.0, 0.0))
+                    weight = min(factor, remaining)
+                    common.pose_parameters[key] = (remaining - weight, total + weight * value)
+
             elif kind == "Model":
                 common.model.set_parameter(key, value, factor)
 
@@ -1224,6 +1290,15 @@ class Live2D(renpy.display.displayable.Displayable):
         # Use them to update old_expressions and expressions in the frame.
         state.update_expressions(expressions, now - st)
 
+        pose = self.get_pose()
+
+        if pose is not None:
+            for part_id, (remaining, value) in common.pose_parameters.items():
+                group_index = pose.part_groups[part_id]
+                sustained = state.pose_sustained.get(group_index, pose.groups[group_index][0].part_id)
+                default = 1.0 if part_id == sustained else 0.0
+                common.pose_requests.setdefault(part_id, value + remaining * default)
+
         # Actually blend.
         redraw = None
 
@@ -1245,6 +1320,9 @@ class Live2D(renpy.display.displayable.Displayable):
             for i in e.parameters:
                 model.blend_parameter(i["Id"], i["Blend"], i["Value"], weight=weight)
 
+                if pose is not None:
+                    pose.blend_request(common.pose_requests, state.pose_sustained, i, weight)
+
         for name, shown in state.expressions:
             weight = 1.0
             e = common.all_expressions[name]
@@ -1255,6 +1333,64 @@ class Live2D(renpy.display.displayable.Displayable):
 
             for i in e.parameters:
                 model.blend_parameter(i["Id"], i["Blend"], i["Value"], weight=weight)
+
+                if pose is not None:
+                    pose.blend_request(common.pose_requests, state.pose_sustained, i, weight)
+
+        return redraw
+
+    def get_pose(self):
+        """
+        Returns the pose this displayable should apply, or None if it shouldn't
+        apply one.
+        """
+
+        enabled = self.pose if self.pose is not None else renpy.config.live2d_pose
+
+        return self.common.get_pose() if enabled else None
+
+    def update_pose(self):
+        """
+        Selects a part from each pose group, and applies the resulting opacities
+        to the model. This returns the time until the next redraw, or None if
+        no redraw is required.
+        """
+
+        pose = self.get_pose()
+
+        if pose is None:
+            return None
+
+        common = self.common
+        state = states[self.name]
+        now = renpy.display.interface.frame_time
+
+        # The first time, parts start out at their final opacity.
+        if state.pose_opacities is None:
+            state.pose_opacities = {}
+            dt = pose.fade_time
+            fade_time = 0.0
+        else:
+            dt = now - state.pose_time
+            fade_time = pose.fade_time
+
+        state.pose_time = now
+
+        redraw = None
+
+        for index, group in enumerate(pose.groups):
+            sustained = state.pose_sustained.get(index)
+            visible = renpy.gl2.live2dpose.select_part(group, common.pose_requests, sustained)
+            state.pose_sustained[index] = visible
+
+            # A new fade starts now, even if the previous render was long ago.
+            group_dt = dt if visible == sustained else 0.0
+
+            if renpy.gl2.live2dpose.fade_group(group, visible, state.pose_opacities, group_dt, fade_time):
+                redraw = 0
+
+        for part_id, opacity in state.pose_opacities.items():
+            common.model.blend_opacity(part_id, "Overwrite", opacity)
 
         return redraw
 
@@ -1300,6 +1436,8 @@ class Live2D(renpy.display.displayable.Displayable):
 
         # Reset the parameter, and update.
         model.reset_parameters()
+        common.pose_requests.clear()
+        common.pose_parameters.clear()
 
         if fade:
             t = renpy.display.interface.frame_time - state.new_base_time  # type: ignore
@@ -1318,6 +1456,9 @@ class Live2D(renpy.display.displayable.Displayable):
         # Apply the expressions.
         expression_redraw = self.update_expressions(st)
 
+        # Apply the pose. This is before the user-defined update, so that can override it.
+        pose_redraw = self.update_pose()
+
         # Apply the user-defined update.
         if common.update_function is None:
             user_redraw = None
@@ -1330,7 +1471,7 @@ class Live2D(renpy.display.displayable.Displayable):
             physics_redraw = common.physics.evaluate(renpy.display.interface.frame_time)
 
         # Determine when to redraw.
-        redraws = [new_redraw, old_redraw, expression_redraw, user_redraw, physics_redraw]
+        redraws = [new_redraw, old_redraw, expression_redraw, pose_redraw, user_redraw, physics_redraw]
         redraws = [i for i in redraws if i is not None]
 
         if redraws:
