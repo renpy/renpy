@@ -420,6 +420,7 @@ class TextSegment(object):
 
             # "alpha" text tag should affect the outline color as well.
             if (alpha := self.color.alpha) != 1.0:
+                color = renpy.color.Color(color)
                 color = color.replace_opacity(color.alpha * alpha)
             black_color = None
         else:
