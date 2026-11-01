@@ -1,6 +1,11 @@
 Scripts
 =======
 
+Tests for these tools live in ``scripts/tests`` and use pytest. Run them from
+the repository root with ``uv run pytest scripts/tests``. They do not require
+engine initialization or compiled Ren'Py extensions. ``uv run pytest`` runs only
+the engine Python tests by default.
+
 alter_translations.py
 ---------------------
 
@@ -88,6 +93,10 @@ Targets can run in the repository, in a private copy of the tree (natively or
 under wine), or on another computer using rsync and ssh. They run like normal
 games unless they're set to be headless. Use --project to run some of the
 projects, which test filters require.
+
+Failure reports include assertion messages and tracebacks, including errors in
+test hooks. Routine test output stays in the logs, and expected failures do not
+print diagnostics.
 
 Targets are defined in ~/.renpy/dev/testcases.toml. To create it, copy and edit
 run_testcases.example.toml, which documents the format. Logs and artifacts are

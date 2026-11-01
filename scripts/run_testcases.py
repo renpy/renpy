@@ -327,6 +327,37 @@ def output_lines(text: str) -> list[str]:
     return LINE_RE.split(strip_terminal_codes(text))
 
 
+def extract_failure_details(text: str) -> list[str]:
+    """
+    Extracts ConsoleReporter's assertion messages and tracebacks, including failed hook diagnostics.
+
+    The reporter suppresses expected-failure diagnostics. Only recognized diagnostic blocks are retained here,
+    since passing and expected-failure tests may still print ordinary messages to stdout.
+    """
+
+    details: list[str] = []
+    block: list[str] = []
+
+    # The final marker flushes a diagnostic even when the process exited before printing another reporter line.
+    for line in output_lines(text) + ["[rpytest]"]:
+        if not line.startswith("[rpytest]") and line != "=" * 20:
+            block.append(line)
+            continue
+
+        for index, entry in enumerate(block):
+            if entry in ("Full traceback:", "Traceback (most recent call last):") or (
+                entry.lstrip().startswith('File "')
+                and index + 1 < len(block)
+                and block[index + 1].lstrip().startswith("AssertionError:")
+            ):
+                details.append("\n".join(block[index:]).strip())
+                break
+
+        block.clear()
+
+    return details
+
+
 def parse_output(text: str) -> Report | None:
     """
     Parses the output of `test --report-detailed`, returning None if the summary is missing, or a Report.
@@ -407,13 +438,14 @@ def classify(returncode: int, report: Report | None) -> str:
     """
     Decides a finished run's status from its exit status and its parsed output.
 
-    A run only passes if it says so as well as exiting with 0, because launching the game isn't a pass.
+    A run only passes if it reports success (including expected failures) as well as exiting with 0, because
+    launching the game isn't a pass.
     """
 
     if report is None:
         return "CRASH"
 
-    if returncode != 0 or report.status.upper() != "PASSED":
+    if returncode != 0 or report.status.upper() not in ("PASSED", "XFAILED"):
         return "FAIL"
 
     if report.cases.total == 0 or report.cases.failed or report.cases.xpassed or report.hooks.failed:
@@ -837,6 +869,9 @@ def stop_wine(target: Target, log: Path) -> None:
     if target.wineprefix:
         env["WINEPREFIX"] = target.wineprefix
 
+    # Match build_launch: explicit environment values override the wineprefix setting and inherited values.
+    env.update(target.env)
+
     try:
         run_logged(["wineserver", "-k"], log, timeout=30, env=env, cancellable=False)
     except (CommandTimeout, OSError):
@@ -971,10 +1006,12 @@ def run_project(target: Target, project: str, index: int, filters: list[str], di
 
     detail = ""
     if status == "CRASH":
-        tail = read_tail(output)
-        detail = f"exit status {returncode}, no test summary; see {relative_output}\n{tail}".rstrip()
+        diagnostics = "\n\n".join(extract_failure_details(text)) or read_tail(output)
+        detail = f"exit status {returncode}, no test summary; see {relative_output}\n{diagnostics}".rstrip()
     elif status == "FAIL":
         detail = f"exit status {returncode}; see {relative_output}"
+        if failure_details := extract_failure_details(text):
+            detail += "\n" + "\n\n".join(failure_details)
 
     report_progress(label, f"{status} in {format_duration(duration)}")
 

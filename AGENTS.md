@@ -46,7 +46,7 @@ implementing local changes requested by the user in an interactive session).
 | Launcher | [launcher/game/](launcher/game/) |
 | New-project template | [gui/](gui/) (copied into new games; edits do not reach existing games) |
 | Bundled games | [tutorial/](tutorial/), [the_question/](the_question/) |
-| Tests | [testcases/pytests/](testcases/pytests/) (pytest), [testcases/](testcases/) (Ren'Py testcase project), runner in [renpy/test/](renpy/test/) |
+| Tests | [testcases/pytests/](testcases/pytests/) (engine pytest), [scripts/tests/](scripts/tests/) (tool pytest), [testcases/](testcases/) (Ren'Py testcase project), runner in [renpy/test/](renpy/test/) |
 | Docs | [sphinx/source/](sphinx/source/) |
 
 Untracked local directories such as `lib/`, `web/`, `vscode/`, `tmp/`, `scratch/`, `c/`, `cg/`, and
@@ -264,26 +264,31 @@ runtime coverage of changes in `renpy/common/`.
   performed and its result, and the remaining regression risk. If manual validation is also
   unavailable, explicitly report the unverified path; do not present the change as validated.
 
-### Python Tests ([testcases/pytests/](testcases/pytests/))
+### Python Tests
 
-The Python tests use pytest and pytest-mock, installed by `uv sync` as dev dependencies.
+The Python tests use pytest and pytest-mock, installed by `uv sync` as dev dependencies. Engine tests live in
+[testcases/pytests/](testcases/pytests/); tests for tools in `scripts/` live in
+[scripts/tests/](scripts/tests/) and run without engine initialization or compiled extensions. Default pytest
+discovery includes only engine tests; run the tool suite explicitly.
 
 ```sh
-uv run pytest                                   # all
+uv run pytest                                   # engine Python tests (default)
+uv run pytest scripts/tests                      # script tools, without engine startup
+uv run pytest testcases/pytests                   # engine Python tests
 uv run pytest testcases/pytests/test_prediction.py  # one module
 uv run pytest -k <expression>                   # tests matching an expression
 uv run ruff check <changed-files>
 ```
 
-[testcases/pytests/conftest.py](testcases/pytests/conftest.py) starts the engine once, before test
-modules are imported, so tests import engine names directly. Never call `renpy.import_all()` in a
-test: engine startup runs once per process and records the reload backup. Copy setup from the nearest
-existing test.
+For engine tests, [testcases/pytests/conftest.py](testcases/pytests/conftest.py) starts the engine once, before test
+modules are imported, so tests import engine names directly. Never call `renpy.import_all()` in a test: engine
+startup runs once per process and records the reload backup. Keep that startup confined to the engine suite; do not
+import its conftest from tool tests. Copy setup from the nearest existing test.
 
 - Write plain `test_*` functions with bare `assert`, `pytest.raises`, and
   `@pytest.mark.parametrize`. Do not use `unittest.TestCase`.
 - Patch with pytest-mock's `mocker` fixture and put setup in fixtures (teardown after `yield`), so
-  patched engine globals are restored. Keep fixtures in the test module unless several modules
+  patched globals are restored. Keep fixtures in the test module unless several modules
   share them; shared fixtures go in `conftest.py`.
 - Give every test function a docstring that explains what it tests and anything non-obvious about
   it: why something is patched, why an input or edge case matters, timing or threading assumptions,

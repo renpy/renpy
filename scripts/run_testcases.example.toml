@@ -8,7 +8,8 @@
 #   enabled     false leaves the target out, unless it's named with --target. Default: true.
 #   headless    Run on a virtual display with dummy audio, rather than like a normal game. Default: false.
 #   timeout     How long each project's tests may take, in seconds. Default: 900.
-#   env         A table of environment variables for the test process.
+#   env         A table of environment variables for the test process. For Wine, WINEPREFIX overrides wineprefix
+#               for both launching tests and timeout cleanup.
 #   prepare     A shell command run in this repository before anything else starts, such as a build. This only happens
 #               when --build is given. Prepare commands run one at a time, and identical commands run once.
 #   command     A shell command that replaces the default launch. Ren'Py's arguments are added to the end of it.

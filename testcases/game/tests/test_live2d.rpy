@@ -23,14 +23,14 @@ init python:
 
         return all(renpy.loadable(f"live2d/{name}/{name}.model3.json") for name in ("Ren", "Mao"))
 
-    def test_live2d__pose_state():
+    def test_live2d__pose_state(tag="test_live2d_mao_pose"):
         """
-        Returns the state of the pose fixture after it has been rendered.
+        Returns the pose state of the rendered image with the given tag.
         """
 
         return next(
             state for name, state in renpy.gl2.live2d.states.items()
-            if name[1] == "test_live2d_mao_pose"
+            if name[1] == tag
         )
 
     # Live2D loads the model when it's created, so the images are only
@@ -65,6 +65,12 @@ init python:
         test_live2d__pose_common.attributes.add("select_left_b")
         renpy.image("test_live2d_mao_pose", test_live2d__pose_image)
 
+        # Share the static model, but disable motion fading so the outgoing
+        # motion cannot keep requesting its part after switching to still.
+        renpy.image("test_live2d_mao_sustained", Live2D(
+            "live2d/Mao", base=0.8, loop=False, pose=True, fade=False, deduplication_key="test_live2d_pose"
+        ))
+
 default test_live2d__saved = False
 
 transform test_live2d__closeup:
@@ -90,9 +96,11 @@ label test_live2d__mao_no_pose:
 
 label test_live2d__mao_sustained:
     scene black
-    show test_live2d_mao mtn_04 at truecenter
-    pause 0.1
-    show test_live2d_mao still
+    show test_live2d_mao_sustained still at truecenter
+    pause
+    show test_live2d_mao_sustained mtn_04
+    pause
+    show test_live2d_mao_sustained still
     pause
     return
 
@@ -147,8 +155,18 @@ testsuite live2d:
     testcase mao_sustained:
         description "Keeps the part selected by a motion after that motion ends"
         run Start("test_live2d__mao_sustained")
-        pause 2.0
-        screenshot "live2d/mao_sustained.png"
+        pause 0.1
+        assert eval test_live2d__pose_state("test_live2d_mao_sustained").pose_opacities["PartArmLA"] == 1.0
+        keysym "dismiss"
+        pause 0.6
+        assert eval test_live2d__pose_state("test_live2d_mao_sustained").pose_opacities["PartArmLB"] == 1.0
+        keysym "dismiss"
+        pause 0.6
+        assert eval not test_live2d__pose_common.pose_requests
+        assert eval test_live2d__pose_state("test_live2d_mao_sustained").pose_opacities["PartArmLB"] == 1.0
+        assert eval test_live2d__pose_state("test_live2d_mao_sustained").pose_opacities["PartArmLA"] == 0.0
+        # This fixture has no physics, so its screenshot is independent of frame timing.
+        screenshot "live2d/mao_sustained_still.png"
 
     testcase mao_pose_idle_crossfade:
         description "Starts a pose crossfade after a static model's render has been cached"
