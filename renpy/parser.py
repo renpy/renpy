@@ -32,8 +32,7 @@ from renpy.lexer import (
     ExpressionContext,
     Lexer,
     ParseError,
-    group_logical_lines,
-    list_logical_lines,
+    lex_file,
 )
 from renpy.parameter import EMPTY_ARGUMENTS, Parameter
 
@@ -1681,8 +1680,7 @@ def parse(fn, filedata=None, linenumber=1):
     renpy.game.exception_info = "While parsing " + fn + "."
 
     try:
-        lines = list_logical_lines(fn, filedata, linenumber)
-        nested = group_logical_lines(lines)
+        nested = lex_file(fn, filedata, linenumber)
     except ParseError as e:
         parse_errors.append(e.message)
         return None
@@ -1695,8 +1693,13 @@ def parse(fn, filedata=None, linenumber=1):
         return None
 
     if rv:
-        linenumber = max(i[1] for i in lines) + 1
-        rv.append(ast.Return((rv[-1].filename, linenumber), None))
+        # The last logical line of the file is found by descending into the
+        # last block at each level.
+        last = nested[-1]
+        while last.block:
+            last = last.block[-1]
+
+        rv.append(ast.Return((rv[-1].filename, last.number + 1), None))
 
     return rv
 
