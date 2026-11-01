@@ -7,6 +7,7 @@ buffered stream on every platform. Each test compares the stream against an io.B
 
 import io
 import random
+from pathlib import Path
 
 import pytest
 
@@ -75,6 +76,29 @@ def test_read_seek_tell(data_file, data, buffering):
                 assert f.seek(offset, io.SEEK_END) == model.seek(offset, io.SEEK_END)
 
             assert f.tell() == model.tell()
+
+
+@pytest.mark.parametrize("buffering", BUFFERINGS)
+@pytest.mark.parametrize("whence", [io.SEEK_SET, io.SEEK_CUR, io.SEEK_END], ids=["set", "cur", "end"])
+def test_failed_seek_preserves_position_and_unread_bytes(
+    data_file: Path, data: bytes, buffering: int, whence: int
+) -> None:
+    """
+    A seek before the file start raises without moving the logical cursor or losing unread bytes.
+    Reading less than the larger buffers leaves read-ahead data that must survive the failed seek.
+    """
+
+    offset = {io.SEEK_SET: -1, io.SEEK_CUR: -4, io.SEEK_END: -len(data) - 1}[whence]
+
+    with IOPath(data_file, buffering=buffering) as f:
+        assert f.read(3) == data[:3]
+
+        with pytest.raises(OSError):
+            f.seek(offset, whence)
+
+        assert f.tell() == 3
+        assert f.read(5) == data[3:8]
+        assert f.read() == data[8:]
 
 
 def test_write_ignores_buffering(tmp_path, data):

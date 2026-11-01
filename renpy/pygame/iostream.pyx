@@ -505,14 +505,14 @@ cdef Sint64 buffered_seek(void *userdata, Sint64 offset, SDL_IOWhence whence) no
         d.pos = <size_t> (offset - start)
         return offset
 
-    d.pos = 0
-    d.len = 0
-
     rv = SDL_SeekIO(d.parent, offset, whence)
 
     if rv < 0:
         return -1
 
+    # Keep unread bytes and the logical cursor intact if the parent seek fails.
+    d.pos = 0
+    d.len = 0
     d.file_pos = rv
     return rv
 
