@@ -1590,6 +1590,18 @@ class Lexer:
 
     rest_statement = rest
 
+    def raw_rest(self) -> str:
+        """
+        Like `rest`, but returns the text as a plain string, for use when the text isn't
+        a Python expression that needs to be stored and compiled ahead of time.
+        """
+
+        self.skip_whitespace()
+
+        rv = self.text[self.pos :]
+        self.pos = len(self.text)
+        return rv
+
     def _process_python_block(self, block, rv, line_holder):
         for _fn, ln, indent, text, subblock in block:
             prefix = " " * indent

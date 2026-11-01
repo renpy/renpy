@@ -24,6 +24,7 @@
 
 import collections
 import time
+from ast import literal_eval
 
 import renpy
 from renpy import ast
@@ -1261,10 +1262,14 @@ def translate_strings(init_loc, language, l):
         s = s.strip()
 
         try:
-            bc = compile(s, "<string>", "eval", dont_inherit=True)
-            return eval(bc, renpy.store.__dict__)
+            rv = literal_eval(s)
         except Exception:
             ll.error("could not parse string")
+
+        if not isinstance(rv, str):
+            ll.error("expected a string")
+
+        return rv
 
     while ll.advance():
         if ll.keyword("old"):
@@ -1273,10 +1278,7 @@ def translate_strings(init_loc, language, l):
 
             loc = ll.get_location()
 
-            try:
-                old = parse_string(ll.rest())
-            except Exception:
-                ll.error("Could not parse string.")
+            old = parse_string(ll.raw_rest())
 
         elif ll.keyword("new"):
             if old is None:
@@ -1284,11 +1286,7 @@ def translate_strings(init_loc, language, l):
 
             newloc = ll.get_location()
 
-            try:
-                new = parse_string(ll.rest())
-            except Exception:
-                ll.error("Could not parse string.")
-                new = None
+            new = parse_string(ll.raw_rest())
 
             block.append(renpy.ast.TranslateString(loc, language, old, new, newloc))
 

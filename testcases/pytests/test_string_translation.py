@@ -154,3 +154,43 @@ def test_substitute_sees_language_changes(mocker):
 
     preferences.language = None
     assert renpy.substitutions.substitute("Item [item]", {"item": 2})[0] == "Item 2"
+
+
+def test_translate_strings_are_not_stored_as_expressions(mocker):
+    """The strings in a translate strings block are literals, so they shouldn't be stored for compilation."""
+
+    mocker.patch.object(renpy.parser, "parsed_expressions", [])
+
+    source = 'translate french strings:\n    old "Hello"\n    new "Bonjour"\n'
+    stmts = renpy.parser.parse("game/tl/french/test.rpy", source)
+
+    assert renpy.parser.parsed_expressions == []
+
+    assert [(i.old, i.new) for i in stmts[0].block] == [("Hello", "Bonjour")]
+
+
+@pytest.mark.parametrize("text", ['"a" + "b"', "config.version", 'print("a")'])
+def test_translate_strings_only_accept_literals(mocker, text):
+    """The strings in a translate strings block are never evaluated as Python expressions."""
+
+    errors = mocker.patch.object(renpy.parser, "parse_errors", [])
+    mocker.patch.object(renpy.parser, "parsed_expressions", [])
+
+    renpy.parser.parse("game/tl/french/test.rpy", f'translate french strings:\n    old {text}\n    new "b"\n')
+
+    assert len(errors) == 1
+    assert "parse string" in errors[0]
+
+
+@pytest.mark.parametrize("text", ["1", "None", "True", 'b"a"', '["a"]'])
+@pytest.mark.parametrize("template", ['old {}\n    new "b"', 'old "a"\n    new {}'])
+def test_translate_strings_reject_non_string_literals(mocker, template, text):
+    """Both sides of a string translation must be strings."""
+
+    errors = mocker.patch.object(renpy.parser, "parse_errors", [])
+    mocker.patch.object(renpy.parser, "parsed_expressions", [])
+
+    renpy.parser.parse("game/tl/french/test.rpy", f"translate french strings:\n    {template.format(text)}\n")
+
+    assert len(errors) == 1
+    assert "expected a string" in errors[0]
