@@ -1040,6 +1040,27 @@ class RestartTopContext(BaseException):
     """
 
 
+class ResetAllContexts(BaseException):
+    """
+    This exception is raised by reset_all_contexts. It unwinds any nested contexts, so
+    they can clean up after themselves, before the top context performs the reset.
+    """
+
+    def __init__(self, label: "renpy.ast.NodeName"):
+        super().__init__()
+        self.label: renpy.ast.NodeName = label
+
+    def perform_reset(self):
+        while renpy.game.contexts:
+            c = renpy.game.contexts.pop()
+            c.pop_all_dynamic()
+
+        c = Context(True)
+        c.goto_label(self.label)
+
+        renpy.game.contexts.append(c)
+
+
 def run_context(top):
     """
     Runs the current context until it can't be run anymore, while handling
@@ -1076,6 +1097,13 @@ def run_context(top):
             except renpy.rollback.UnfreezeException as e:
                 if top:
                     e.perform_unfreeze()
+                else:
+                    context.pop_all_dynamic()
+                    raise
+
+            except ResetAllContexts as e:
+                if top:
+                    e.perform_reset()
                 else:
                     context.pop_all_dynamic()
                     raise
@@ -1124,12 +1152,4 @@ def reset_all_contexts():
             "The renpy.reset_all_contexts function can only be called as the last thing in a python statement."
         )
 
-    while renpy.game.contexts:
-        c = renpy.game.contexts.pop()
-        c.pop_all_dynamic()
-
-    c = Context(True)
-    c.goto_label(old.next_node.name)
-
-    renpy.game.contexts.append(c)
-    raise RestartTopContext()
+    raise ResetAllContexts(old.next_node.name)

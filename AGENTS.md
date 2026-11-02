@@ -153,10 +153,11 @@ These are the changes that break real games. Check each one that applies.
 - **Control-flow exceptions.** Jump, call, quit, restart, and replay end are `Exception` subclasses
   listed in `renpy.game.CONTROL_EXCEPTIONS`. Any `except Exception` that can surround script,
   Python, or interaction code must re-raise them first: `except renpy.game.CONTROL_EXCEPTIONS: raise`.
-  Rollback and restart use `RollbackException`, `UnfreezeException`, `RestartContext`, and
-  `RestartTopContext` (`BaseException`), so never use bare `except:` or `except BaseException` there
-  either. `run_context` handles unfreeze and restart-top only in the top context, and rollback only in a
-  context with its own rollback log (the top context or a replay), and re-raises them elsewhere.
+  Rollback, restart, and reset use `RollbackException`, `UnfreezeException`, `RestartContext`,
+  `RestartTopContext`, and `ResetAllContexts` (`BaseException`), so never use bare `except:` or
+  `except BaseException` there either. `run_context` handles unfreeze, restart-top, and reset only in the
+  top context, and rollback only in a context with its own rollback log (the top context or a replay), and
+  re-raises them elsewhere.
 - **Engine `.rpy` files** in `renpy/common/` run in every game. Prefix new store names with `_` (or
   use a named store), give new init blocks a priority consistent with the file, and remember games
   may override screens, styles, and `config` values they define.

@@ -59,8 +59,46 @@ label nested_context_replay_inner:
     $ renpy.rollback(force=True)
     return
 
+label nested_context_reset:
+    "Before the reset."
+    $ renpy.session["nested_context_outer_runs"] += 1
+
+    if renpy.session["nested_context_reset_from"] == "nested":
+        $ renpy.call_in_new_context("nested_context_reset_inner")
+    elif renpy.session["nested_context_reset_from"] == "replay":
+        $ renpy.call_replay("nested_context_reset_inner")
+    else:
+        jump nested_context_reset_inner
+
+    "Should not be reached."
+    return
+
+label nested_context_reset_inner:
+    $ renpy.reset_all_contexts()
+    "After the reset."
+    return
+
 testsuite nested_context:
     description "Tests control exceptions that are raised from a nested context."
+
+    testcase reset_all_contexts:
+        description "reset_all_contexts continues at the next statement, in a single new top context."
+
+        parameter reset_from = ["top", "nested", "replay"]
+
+        $ renpy.session["nested_context_outer_runs"] = 0
+        $ renpy.session["nested_context_reset_from"] = reset_from
+        run Start("nested_context_reset")
+        advance until "After the reset."
+
+        assert eval (len(renpy.game.contexts) == 1)
+        assert eval (renpy.game.context().rollback)
+        assert eval (renpy.session["nested_context_outer_runs"] == 1)
+
+        # Leaving a replay also has to restore the game's store.
+        assert eval (_in_replay is None)
+
+        advance until screen "main_menu"
 
     testcase restart_top:
         description "RestartTopContext leaves the nested context and restarts the top one, rather than re-running the nested one."
