@@ -1726,10 +1726,12 @@ class Assert(Node):
         Executes the assertion. If the condition is not ready, it waits up to
         `self.timeout` seconds.
         """
-        if (not self.condition.ready() ^ self.xfail) and t < _test.timeout:
+        ready = self.condition.ready()
+
+        if (not ready ^ self.xfail) and t < _test.timeout:
             return state
 
-        self.is_assertion_true = self.condition.ready()
+        self.is_assertion_true = ready
         renpy.test.testreporter.reporter.log_assert(self)
         self.cleanup_after_error(state)
         next_node(self.next)

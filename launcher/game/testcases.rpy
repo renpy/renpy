@@ -47,11 +47,16 @@
         Checks that the android and ios packages for the current project contain
         renpy/LICENSE.txt, and that it matches sphinx/source/license.rst. These packages
         are directories that aren't part of a normal build, so they're built to a temporary
-        directory. Returns True if so, and raises an exception otherwise.
+        directory. Only the license is copied, as this blocks the event loop while it runs.
+        Returns True if so, and raises an exception otherwise.
         """
 
         import shutil
         import tempfile
+
+        class LicenseFilter(object):
+            def filter(self, file, variant, format):
+                return file.name == "renpy/LICENSE.txt"
 
         with open(os.path.join(config.renpy_base, "sphinx", "source", "license.rst"), "rb") as f:
             license = f.read()
@@ -70,6 +75,7 @@
                     packagedest=dest,
                     report_success=False,
                     scan=False,
+                    files_filter=LicenseFilter(),
                     )
 
                 with open(os.path.join(dest, "renpy", "LICENSE.txt"), "rb") as f:
