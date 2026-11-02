@@ -1066,7 +1066,12 @@ def run_context(top):
                 return rv
 
             except renpy.rollback.RollbackException as e:
-                e.perform_rollback()
+                # The top context and replays have rollback logs, other contexts leave it to them.
+                if context.rollback:
+                    e.perform_rollback()
+                else:
+                    context.pop_all_dynamic()
+                    raise
 
             except renpy.rollback.UnfreezeException as e:
                 if top:
@@ -1083,6 +1088,7 @@ def run_context(top):
                 continue
             else:
                 context.pop_all_dynamic()
+                raise
 
         except Exception:
             context.pop_all_dynamic()
