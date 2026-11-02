@@ -1309,10 +1309,17 @@ class Lexer:
 
         s = self.text[start:end]
 
-        # Only eval expressions need to strip leading whitespace.
+        # Only eval expressions need to strip whitespace.
         if context == "eval":
             s = s.lstrip()
             start = end - len(s)
+
+            # Stripping claims the newline of a line continuation, and python can't compile the backslash that
+            # would leave behind, so the backslash has to go too.
+            s = s.rstrip()
+
+            while s.endswith("\\"):
+                s = s[:-1].rstrip()
 
         expr = make_pyexpr(
             s,
