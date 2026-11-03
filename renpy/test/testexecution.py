@@ -580,6 +580,10 @@ class TestPhaseController:
     """
 
     def __init__(self, root_suite: TestSuite):
+        # Other tests are moved to their first parameter set by NextTestTransitionPhase,
+        # but the root suite is not, so it has to be done here.
+        root_suite.advance_to_next_parameter_set()
+
         self.active_phase: BaseExecutionPhase = StartPhase(root_suite)
         testreporter.reporter.test_run_start()
         self.active_phase.enter()
