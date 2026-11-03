@@ -397,7 +397,7 @@ class Script:
                     sort_key = parts[1]
 
             priority *= 2
-            if fn >= "A":
+            if sort_key >= "A":
                 priority += 1
 
             return (priority, sort_key, fn, dn)
@@ -423,6 +423,8 @@ class Script:
             if priority != last_priority and renpy.parser.has_parse_errors():
                 skipped += len(script_files) - count
                 break
+
+            last_priority = priority
 
             count += 1
             renpy.display.presplash.progress("Loading script...", count, len(script_files))
