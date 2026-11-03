@@ -588,7 +588,7 @@ init -1499 python in _renpysteam:
         if possible_clip is None:
             possible_clip = CLIP_PRIORITY_STANDARD
 
-        if duration:
+        if not duration:
 
             steamapi.SteamTimeline().AddInstantaneousTimelineEvent(
                 title.encode("utf-8"),
