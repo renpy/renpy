@@ -632,11 +632,7 @@ class _MultiPersistent(object):
             if renpy.config.developer:
                 raise e
         else:
-            try:
-                os.rename(fn + ".new", fn)
-            except Exception:
-                os.unlink(fn)
-                os.rename(fn + ".new", fn)
+            renpy.loadsave.safe_rename(fn + ".new", fn, keep_from=True)
 
 
 def MultiPersistent(name, save_on_quit=False):

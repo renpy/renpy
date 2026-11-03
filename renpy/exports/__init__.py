@@ -200,6 +200,7 @@ from renpy.loadsave import (
     load as load,
     newest_slot as newest_slot,
     rename_save as rename_save,
+    safe_rename as safe_rename,
     save as save,
     scan_saved_game as scan_saved_game,
     slot_json as slot_json,

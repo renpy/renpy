@@ -36,7 +36,7 @@ from concurrent.futures import Future
 import renpy
 import threading
 
-from renpy.loadsave import clear_slot, dot_old_re, remove_dot_old_file, safe_rename
+from renpy.loadsave import clear_slot, safe_rename
 import shutil
 
 disk_lock = threading.RLock()
@@ -160,9 +160,7 @@ class FileLocation(object):
 
     def scan(self):
         """
-        Scan for files that are added or removed. This also deletes .old files
-        left behind by loadsave.safe_rename. A file that can't be deleted,
-        perhaps because it's still open, is left for the next scan.
+        Scan for files that are added or removed.
         """
 
         if not self.active:
@@ -176,10 +174,6 @@ class FileLocation(object):
             suffix_len = len(suffix)
 
             for fn in os.listdir(self.directory):
-                if dot_old_re.search(fn):
-                    remove_dot_old_file(os.path.join(self.directory, fn))
-                    continue
-
                 if not fn.endswith(suffix):
                     continue
 

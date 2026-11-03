@@ -220,11 +220,7 @@ class JSONDB(_object):
         with open(fn + ".new", "w") as f:
             json.dump(d, f, indent=4, sort_keys=True)
 
-        try:
-            os.rename(fn + ".new", fn)
-        except Exception:
-            os.remove(fn)
-            os.rename(fn + ".new", fn)
+        renpy.safe_rename(fn + ".new", fn, keep_from=True)
 
     def __getitem__(self, key):
         if key not in self.data:
