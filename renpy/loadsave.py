@@ -27,7 +27,9 @@ import re
 import threading
 import shutil
 import os
+import stat
 import time
+import uuid
 
 import renpy
 from json import dumps as json_dumps
@@ -51,23 +53,67 @@ class SaveAbort(Exception):
     pass
 
 
-def safe_rename(old, new):
+# Matches the end of the name of a .old file made by safe_rename.
+# FileLocation.scan deletes files that match, so this requires the unique part
+# of the name, and leaves other .old files in the save directory alone.
+dot_old_re = re.compile(r"\.[0-9a-f]{32}\.old$")
+
+
+def remove_dot_old_file(dot_old):
     """
-    Safely rename old to new.
+    Deletes a .old file made by safe_rename. If this fails, perhaps because the
+    file is still open, FileLocation.scan will try again.
     """
 
     try:
-        os.replace(old, new)
-    except OSError:
-        # If the rename failed, try again.
         try:
-            os.replace(old, new)
-        except OSError:
+            os.unlink(dot_old)
+        except PermissionError:
+            # On Windows, a read-only file can't be deleted.
+            os.chmod(dot_old, stat.S_IREAD | stat.S_IWRITE)
+            os.unlink(dot_old)
+    except OSError:
+        pass
+
+
+def safe_rename(from_filename, to_filename, keep_from=False):
+    """
+    Safely rename from_filename to to_filename. If this fails, an OSError
+    propagates and from_filename is removed if possible. Callers should set
+    `keep_from` to true when from_filename isn't a temporary file, to keep it.
+
+    On Windows, a file another program has open can't be replaced, but it can
+    be renamed if that program allows deletion. So if replacing to_filename is
+    refused, it's moved to a .old file to make room, and discarded even if
+    from_filename then can't be moved into place. The name of the .old file is
+    unique, as an earlier one may still be open. FileLocation.scan deletes any
+    that can't be deleted here.
+    """
+
+    try:
+        try:
+            os.replace(from_filename, to_filename)
+        except PermissionError:
+            dot_old = f"{to_filename}.{uuid.uuid4().hex}.old"
+
+            # If to_filename doesn't exist, there's nothing to move, and moving
+            # from_filename into place will report why the rename failed.
             try:
-                os.unlink(old)
+                os.replace(to_filename, dot_old)
             except FileNotFoundError:
                 pass
-            raise
+
+            os.replace(from_filename, to_filename)
+
+            remove_dot_old_file(dot_old)
+    except OSError:
+        if not keep_from:
+            try:
+                os.unlink(from_filename)
+            except FileNotFoundError:
+                pass
+
+        raise
 
 
 class SaveRecord(object):

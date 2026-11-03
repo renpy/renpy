@@ -36,7 +36,7 @@ from concurrent.futures import Future
 import renpy
 import threading
 
-from renpy.loadsave import clear_slot, safe_rename
+from renpy.loadsave import clear_slot, dot_old_re, remove_dot_old_file, safe_rename
 import shutil
 
 disk_lock = threading.RLock()
@@ -160,7 +160,9 @@ class FileLocation(object):
 
     def scan(self):
         """
-        Scan for files that are added or removed.
+        Scan for files that are added or removed. This also deletes .old files
+        left behind by loadsave.safe_rename. A file that can't be deleted,
+        perhaps because it's still open, is left for the next scan.
         """
 
         if not self.active:
@@ -174,6 +176,10 @@ class FileLocation(object):
             suffix_len = len(suffix)
 
             for fn in os.listdir(self.directory):
+                if dot_old_re.search(fn):
+                    remove_dot_old_file(os.path.join(self.directory, fn))
+                    continue
+
                 if not fn.endswith(suffix):
                     continue
 
@@ -357,7 +363,9 @@ class FileLocation(object):
 
     def rename(self, old, new):
         """
-        If old exists, renames it to new.
+        If old exists, renames it to new. If this fails, an OSError propagates
+        and old is kept, unless moving it back also fails, which leaves it at
+        old + tmp. new may already have been discarded (see safe_rename).
         """
 
         with disk_lock:
@@ -368,8 +376,14 @@ class FileLocation(object):
                 return
 
             old_tmp = old + tmp
-            safe_rename(old, old_tmp)
-            safe_rename(old_tmp, new)
+            safe_rename(old, old_tmp, keep_from=True)
+
+            try:
+                safe_rename(old_tmp, new, keep_from=True)
+            except OSError:
+                os.replace(old_tmp, old)
+                raise
+
             renpy.util.expose_file(new)
 
             self.sync()
@@ -440,7 +454,10 @@ class FileLocation(object):
                     f.write(data)
 
                 safe_rename(fn_tmp, fn_new)
-                safe_rename(fn_new, fn)
+
+                # Keep persistent.new on failure, as it's loaded in place of
+                # fn, which may already have been discarded.
+                safe_rename(fn_new, fn, keep_from=True)
 
                 # Prevent persistent from unpickle just after save
                 self.persistent_mtime = os.path.getmtime(fn)

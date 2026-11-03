@@ -76,8 +76,14 @@ Fixed joined Drags restoring positions incorrectly, invoking the ``dragging``
 callback before all joined Drags had moved, and forwarding child events twice.
 
 Fixed a failure when replacing a save file from deleting the previous save.
-If replacement still fails after retrying, the error is reported and the
-temporary save file is removed.
+If replacement is refused, the existing save is moved out of the way and
+discarded, so on Windows a save another program has open can be replaced if
+that program allows deletion. If the new save then can't be put in place, the
+error is reported and that slot is left empty. After other failures, the
+existing save is kept and the temporary save file is removed.
+
+Fixed a failure when renaming a save from deleting that save. The save now
+keeps its original name.
 
 Fixed the web presplash disappearing before display initialization finished.
 It now remains visible until the first frame is drawn.
