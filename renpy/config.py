@@ -1691,6 +1691,24 @@ This maps the special directory names ('images', 'audio', 'fonts') to a list of 
 be searched for that kind of file.
 """
 
+audio_directories: list[str] = ["audio"]
+"""
+A list of directories used to populate the audio namespace. These are also searched when loading an audio file by
+name, after the directories in special_directory_map.
+"""
+
+image_directories: list[str] = ["images"]
+"""
+A list of directories used to define images automatically. These are also searched when loading an image file by
+name, after the directories in special_directory_map.
+"""
+
+add_to_special_directories: bool = True
+"""
+If True, audio_directories and image_directories are searched when loading a file by name. If False, only the
+directories in special_directory_map are searched.
+"""
+
 font_size_adjust: dict[str, float | Callable[[str, float], float]] = {}
 """
 A map from font name to a multiplier or function that's used to adjust the size of a font.

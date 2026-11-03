@@ -475,6 +475,14 @@ Display
 File I/O
 --------
 
+.. var:: config.add_to_special_directories = True
+
+    If True, the directories in :var:`config.audio_directories` and :var:`config.image_directories` are searched
+    when a file is loaded by name, after the directories in :var:`config.special_directory_map`. If False, only the
+    directories in :var:`config.special_directory_map` are searched.
+
+    This defaults to False for games that declare compatibility with Ren'Py 8.5 or earlier.
+
 .. var:: config.file_open_callback = None
 
     If not None, this is a function that is called with the file name
@@ -496,13 +504,6 @@ File I/O
     This gets its default value from the RENPY_OPEN_FILE_ENCODING
     environment variable.
 
-.. var:: config.special_directory_map = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ], ... }
-
-    This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
-    be searched for that kind of file. These are only used when loading a filename - for automatic definition
-    of images and audiom see :var:`config.image_directories` and :var:`config.audio_directories`. New special
-    directory names may be added in future versions of Ren'Py.
-
 .. var:: config.renamed_files = { ... }
 
     A map from file names to new file names. When Ren'Py looks for a file by
@@ -514,6 +515,13 @@ File I/O
 
     Ren'Py uses this to handle some renamed files internally, so creators should add to this dictionary rather than
     replacing it entirely.
+
+.. var:: config.special_directory_map = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ], ... }
+
+    This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
+    be searched for that kind of file. These are only used when loading a filename, and are searched before
+    :var:`config.image_directories` and :var:`config.audio_directories`, which also control the automatic definition
+    of images and audio. New special directory names may be added in future versions of Ren'Py.
 
 History
 -------
@@ -544,7 +552,9 @@ Images
 .. var:: config.image_directories = [ "images" ]
 
     A list of one or more directories that Ren'Py searches for images, as described in the :ref:`images-directory` section.
-    The directories are searched in order, and the first directory that contains the image is used.
+    The directories are searched in order, and the first directory that contains the image is used. When an image file
+    is loaded by name, these directories are searched after those in :var:`config.special_directory_map`, unless
+    :var:`config.add_to_special_directories` is False.
 
     This should be set at init priority -1 or lower to ensure that it is set before the images are defined. This
     can be done with::
@@ -770,7 +780,8 @@ Media (Music, Sound, and Video)
 .. var:: config.audio_directories = [ 'audio' ]
 
     A list of directories that are searched for audio files and used to populate the
-    :ref:`audio-namespace`.
+    :ref:`audio-namespace`. When an audio file is loaded by name, these directories are searched after
+    those in :var:`config.special_directory_map`, unless :var:`config.add_to_special_directories` is False.
 
 .. var:: config.audio_filename_callback = None
 

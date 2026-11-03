@@ -50,6 +50,7 @@ init -1100 python:
             config.audio_directory = "audio"
             config.audio_directories = [ ]
             config.late_audio_scan = False
+            config.add_to_special_directories = False
             config.scene_uses_tag_layer = False
             config.mesh_oversample = 1.0
             config.glsl_version = 100

@@ -274,6 +274,9 @@ see :var:`config.image_directories` and :var:`config.audio_directories`.
 The new :var:`config.audio_directories` variable is a list of directories that are searched for audio Files
 and used to populate the :ref:`audio-namespace <audio-namespace>`.
 
+The directories in :var:`config.audio_directories` and :var:`config.image_directories` are now also searched when
+a file is loaded by name, after the directories in :var:`config.special_directory_map`.
+
 The ``if``, ``elif``, and ``else`` clauses of a :ref:`layered image <layeredimage-statement>` can now contain a
 nested ``if`` statement, in place of a displayable.
 

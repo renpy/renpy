@@ -47,6 +47,16 @@ To revert to the prior behavior, add to your game::
 
     define -1 config.late_audio_scan = False
 
+**Audio and Image Directories** The directories in :var:`config.audio_directories` and
+:var:`config.image_directories` are now searched when a file is loaded by name, after the directories in
+:var:`config.special_directory_map`. Files that were found before are still found at the same paths, unless
+:var:`_preferences.resource_path_translations` maps one of the added directories. A game that sets these variables may
+also find a file that was previously missing, which can change the result of :func:`renpy.loadable` or of an imagemap's
+``auto`` property. Games declaring compatibility with Ren'Py 8.5 or earlier
+retain the old behavior. To revert to it, add to your game::
+
+    define config.add_to_special_directories = False
+
 **Voice Statement and Translation Identifiers** By default, the ``voice`` statement no longer contributes to
 translation identifiers. This means that adding or removing voice statements will not change the translation ID.
 If your game both had voice statements and translations, translation identifiers may have changed. To change them

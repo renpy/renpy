@@ -672,6 +672,34 @@ def get_translate_path(name):
         return destination
 
 
+def get_special_directories(directory):
+    """
+    Returns the directories to search for a file loaded with the special directory name `directory`. These are the
+    directories in config.special_directory_map, followed by those in config.audio_directories or
+    config.image_directories, if one applies and config.add_to_special_directories is True.
+    """
+
+    rv = list(renpy.config.special_directory_map.get(directory, [directory]))
+
+    if not renpy.config.add_to_special_directories:
+        return rv
+
+    if directory == "audio":
+        configured = renpy.config.audio_directories
+    elif directory == "images":
+        configured = renpy.config.image_directories
+    else:
+        return rv
+
+    for i in configured:
+        i = i.strip("/")
+
+        if i not in rv:
+            rv.append(i)
+
+    return rv
+
+
 def get_prefixes(tl=True, directory=None):
     """
     Returns a list of prefixes to search for files.
@@ -691,7 +719,7 @@ def get_prefixes(tl=True, directory=None):
         rv.append(prefix)
 
     if directory is not None:
-        for mapped_directory in renpy.config.special_directory_map.get(directory, [directory]):
+        for mapped_directory in get_special_directories(directory):
             if language is not None:
                 rv.append(renpy.config.tl_directory + "/" + language + "/" + mapped_directory + "/")
 
