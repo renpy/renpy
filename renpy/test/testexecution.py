@@ -580,6 +580,9 @@ class TestPhaseController:
     """
 
     def __init__(self, root_suite: TestSuite):
+        # The first pass uses the first parameter set, like a subtest in NextTestTransitionPhase.
+        root_suite.advance_to_next_parameter_set()
+
         self.active_phase: BaseExecutionPhase = StartPhase(root_suite)
         testreporter.reporter.test_run_start()
         self.active_phase.enter()
