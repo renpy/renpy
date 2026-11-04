@@ -408,6 +408,15 @@ class SpriteManager(renpy.display.displayable.Displayable):
         self.children = []
 
 
+class ParticleList(list):
+    """
+    The list of particles passed to the create method of a particle factory. `first` is true when the effect is
+    being initialized, which can happen at a nonzero time, such as when a screen is shown again.
+    """
+
+    first = False
+
+
 class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback):
     """
     Supports particle motion, using the old API.
@@ -453,14 +462,14 @@ class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback
 
         if st == 0 or particles is None:
             self.sm.destroy_all()
-            # None distinguishes initialization from an empty, running effect.
-            particles = None
+            particles = ParticleList()
+            particles.first = True
 
         add_parts = self.factory.create(particles, st)
 
-        new_particles = []
+        new_particles = ParticleList()
 
-        for sprite, p in particles or []:
+        for sprite, p in particles:
             update = p.update(st)
 
             if update is None:
@@ -556,7 +565,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
             else:
                 return n
 
-        if self.fast and (particles is None or (st == 0 and not particles)):
+        if self.fast and particles.first:
             rv = []
 
             for _i in range(0, self.count):
@@ -575,7 +584,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
                 )
             return rv
 
-        if particles is None or len(particles) < self.count:
+        if len(particles) < self.count:
             # Check to see if we have a particle ready to start. If not,
             # don't start it.
             if particles and st < self.starts[len(particles)]:

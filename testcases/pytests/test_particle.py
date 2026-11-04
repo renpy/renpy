@@ -2,7 +2,7 @@ import pytest
 
 import renpy
 from renpy.display.layout import Null
-from renpy.display.particle import SnowBlossom, SnowBlossomFactory
+from renpy.display.particle import ParticleList, Particles, SnowBlossom, SnowBlossomFactory
 
 
 def midpoint(a, b):
@@ -125,11 +125,51 @@ def test_nonfast_preserves_gradual_start(image, mocker):
     assert len(snow.particles) == 2
 
 
-def test_factory_preserves_zero_time_initialization(image):
+def first_particles():
+    """Returns the empty list Particles passes to a factory when the effect is initialized."""
+
+    rv = ParticleList()
+    rv.first = True
+    return rv
+
+
+@pytest.mark.parametrize("st", [0.0, 5.0])
+def test_factory_preserves_initialization(image, st):
     """
-    A SnowBlossomFactory in fast mode creates the full set of particles when asked to start at time zero
-    with no existing particles.
+    A SnowBlossomFactory in fast mode creates the full set of particles when asked to initialize, whether
+    or not the effect's time is zero.
     """
 
     factory = SnowBlossomFactory(image, 4, 0, 100, 50, 0, True, distribution=midpoint)
-    assert len(factory.create([], 0.0)) == 4
+    assert len(factory.create(first_particles(), st)) == 4
+
+
+@pytest.mark.parametrize("st", [0.0, 5.0])
+def test_custom_factory_receives_empty_list(st):
+    """
+    A custom factory that iterates over or measures the particles it is given gets an empty list when the
+    effect is initialized, as it did before SnowBlossom began detecting initialization, rather than None.
+    The factory adds no particles, as create may return None.
+    """
+
+    received = []
+    firsts = []
+
+    class Factory:
+        def create(self, particles, st):
+            received.append(particles)
+            firsts.append(particles.first)
+            assert len(list(particles)) == 0
+
+        def predict(self):
+            return []
+
+    particles = Particles(Factory())
+    particles.update_callback(st)
+
+    assert received == [[]]
+    assert isinstance(received[0], list)
+    assert firsts == [True]
+
+    particles.update_callback(st + 1)
+    assert firsts == [True, False]
