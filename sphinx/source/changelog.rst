@@ -36,7 +36,13 @@ Ren'Py 8.5 or earlier. A single part can override it by passing `glsl` to
 :func:`renpy.register_shader` or :func:`renpy.register_textshader`.
 
 Existing shader parts do not require changes. Ren'Py translates between the two
-versions, so parts written in either can be combined in the same shader.
+versions, so parts written in either can be combined in the same shader. A part
+that doesn't pass `glsl`, but uses syntax that only exists in GLSL ES 1.00 (like
+``attribute``, ``varying``, or ``gl_FragColor``), is treated as being written in
+GLSL ES 1.00 even when :var:`config.glsl_version` is 300. Ren'Py will not infer
+the version of a part that uses GLSL ES 3.00 syntax when
+:var:`config.glsl_version` is 100; see the :ref:`incompatible changes
+<incompatible-8.6.0>`.
 
 Shader combinations used by predicted displayables are now compiled during
 idle prediction, reducing stalls when they are first shown. The new

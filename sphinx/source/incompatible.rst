@@ -32,6 +32,23 @@ with Ren'Py 8.5 or earlier retain the old defaults. To restore them explicitly::
     define config.choice_layer = "screens"
     define config.nvl_choice_layer = "screens"
 
+**Shader GLSL Version** Shader parts can now be written in GLSL ES 3.00, and
+:var:`config.glsl_version` now defaults to 300. Games declaring compatibility
+with Ren'Py 8.5 or earlier retain the old default of 100. A shader part that
+doesn't pass `glsl` to :func:`renpy.register_shader` or
+:func:`renpy.register_textshader`, but uses syntax that only exists in GLSL ES
+1.00 (``attribute``, ``varying``, ``gl_FragColor``, ``gl_FragData``,
+``texture2D`` and similar functions), is treated as GLSL ES 1.00 and a note
+is written to log.txt. Parts using only syntax common to both versions, such as
+a vertex shader that only uses uniforms, are now treated as GLSL ES 3.00. If
+such a part is affected, pass ``glsl=100`` to the registration call, or restore
+the old default with::
+
+    define config.glsl_version = 100
+
+Conversely, if :var:`config.glsl_version` is set to 100, a part that doesn't
+pass `glsl` and uses GLSL ES 3.00 features raises an exception.
+
 **renpy.get_sdl_dll Version** Ren'Py now uses SDL3, and the :func:`renpy.get_sdl_dll` function now takes a `version`
 argument, which should be set to 3 to get the SDL3 library. Calls without the version argument will return None,
 representing SDL2 not being present.

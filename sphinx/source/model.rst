@@ -260,6 +260,14 @@ shader writes its color to ``fragment_color``.
 A single part can override this by passing `glsl` to
 :func:`renpy.register_shader`.
 
+When :var:`config.glsl_version` is 300, a part that doesn't pass `glsl` but
+uses a construct that only exists in GLSL ES 1.00 (``attribute``, ``varying``,
+``gl_FragColor``, ``texture2D``, and so on) is treated as being written in
+GLSL ES 1.00, and a note is written to log.txt. Passing ``glsl=100`` makes
+this explicit and silences the note. A part that doesn't pass `glsl`, and
+that uses a construct that is only available in a newer version than
+:var:`config.glsl_version` selects, raises an exception.
+
 Ren'Py translates between the two versions, so parts written in either can be
 combined in the same shader, and a variable declared by two parts in different
 versions is treated as the same variable. GLSL ES 3.00 is preferred and

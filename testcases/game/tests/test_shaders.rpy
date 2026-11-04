@@ -268,19 +268,18 @@ testsuite shaders:
                 assert error is not None, \
                     f"ES 3.00 features unexpectedly compiled at GLSL {cache.version}"
 
-    testcase undeclared_legacy_errors:
-        description "Legacy syntax without a declared dialect is an error"
+    testcase undeclared_legacy_inferred:
+        description "Legacy syntax without a declared dialect is treated as GLSL ES 1.00"
 
         python:
-            error = test_shaders__compile("renpy.texture", "test_shaders.undeclared")
+            import renpy.gl2.gl2shadercache as shadercache
 
-            if renpy.config.glsl_version in (300, 330):
-                assert error is not None, \
-                    "A part using gl_FragColor without glsl=100 should not have compiled"
-                assert "glsl=100" in error, \
-                    f"The error should suggest glsl=100, got: {error}"
-            else:
-                assert error is None, f"Legacy part did not compile: {error}"
+            part = shadercache.shader_part["test_shaders.undeclared"]
+            assert part.glsl == shadercache.DIALECTS[0], \
+                f"A part using gl_FragColor should be inferred as GLSL ES 1.00, got {part.glsl}"
+
+            error = test_shaders__compile("renpy.texture", "test_shaders.undeclared")
+            assert error is None, f"Legacy part did not compile: {error}"
 
     testcase helper_function_variables:
         description "A shader-local variable used by both stages' functions is declared once"

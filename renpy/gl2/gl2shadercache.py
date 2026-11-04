@@ -465,6 +465,10 @@ class ShaderPart(object):
         # True once this part has been checked for legacy constructs.
         self.checked_glsl = False
 
+        # The dialect inferred for a part that doesn't declare one, but uses
+        # constructs that only exist in the oldest dialect.
+        self.inferred_glsl = None
+
         # The oldest dialect this part can be emitted in and the construct that
         # requires it.
         self.found_dialect = None
@@ -589,7 +593,8 @@ class ShaderPart(object):
         """
         The dialect this part is written in, one of DIALECTS.
 
-        A part that didn't declare one follows config.glsl_version.
+        A part that didn't declare one follows config.glsl_version, unless it uses a construct that only exists
+        in the oldest dialect, in which case it's treated as being written in that dialect.
         """
 
         if self.declared_glsl is not None:
@@ -597,15 +602,38 @@ class ShaderPart(object):
 
         rv = config_dialect()
 
-        # A part that says nothing is checked against the dialect it's been
-        # given, in whichever direction that is.
         if not self.checked_glsl:
             if rv > DIALECTS[0]:
-                self.check_legacy_syntax(rv)
+                found = self.find_legacy_syntax()
+
+                if found is not None:
+                    legacy, modern = found
+                    oldest = DIALECTS[0]
+
+                    renpy.display.log.write(
+                        "Shader part %s uses %s, which only exists in %s, and doesn't declare a dialect. "
+                        "Treating it as %s. Pass glsl=%d to renpy.register_shader, or rewrite it for %s "
+                        "(%s becomes %s) and pass glsl=%d.",
+                        self.name,
+                        legacy,
+                        dialect_name(oldest),
+                        dialect_name(oldest),
+                        oldest,
+                        dialect_name(rv),
+                        legacy,
+                        modern,
+                        rv,
+                    )
+
+                    self.inferred_glsl = oldest
             else:
+                # A part that says nothing is checked against the dialect it's been given.
                 self.check_modern_syntax(rv)
 
             self.checked_glsl = True
+
+        if self.inferred_glsl is not None:
+            return self.inferred_glsl
 
         return rv
 
@@ -704,34 +732,22 @@ class ShaderPart(object):
                     f"{dialect_name(dialect)}."
                 )
 
-    def check_legacy_syntax(self, dialect):
+    def find_legacy_syntax(self):
         """
-        Raises if this part uses a construct that only exists in the oldest
-        dialect, but is being treated as being written in `dialect`.
+        Returns a (legacy, modern) pair naming a construct this part uses that only exists in the oldest dialect
+        and its modern spelling, or None if there isn't one.
         """
-
-        found = None
 
         if self.legacy_storage is not None:
-            found = (self.legacy_storage, LEGACY_STORAGE[self.legacy_storage])
-        else:
-            text = self.part_source()
+            return (self.legacy_storage, LEGACY_STORAGE[self.legacy_storage])
 
-            for pattern, legacy, modern in LEGACY_MARKERS:
-                if pattern.search(text):
-                    found = (legacy, modern)
+        text = self.part_source()
 
-                    break
+        for pattern, legacy, modern in LEGACY_MARKERS:
+            if pattern.search(text):
+                return (legacy, modern)
 
-        if found is not None:
-            legacy, modern = found
-            oldest = DIALECTS[0]
-
-            raise Exception(
-                f"Shader part {self.name} uses {legacy}, which only exists in {dialect_name(oldest)}, and "
-                f"doesn't declare a dialect. Pass glsl={oldest} to renpy.register_shader or rewrite it for "
-                f"{dialect_name(dialect)} ({legacy} becomes {modern}) and pass glsl={dialect}."
-            )
+        return None
 
     def expand_name(self, s):
         """

@@ -1189,7 +1189,10 @@ gl_program_cache = False
 
 # The GLSL dialect shader parts are written in when they don't pass glsl to
 # renpy.register_shader. 300 selects GLSL ES 3.00 and 100 selects GLSL ES
-# 1.00. Games declaring compatibility with 8.5 or earlier get 100.
+# 1.00. Games declaring compatibility with 8.5 or earlier get 100. When this
+# is 300, a part that doesn't pass glsl but uses a construct only found in
+# GLSL ES 1.00 (such as attribute, varying, or gl_FragColor) is treated as
+# being written in GLSL ES 1.00.
 glsl_version = 300
 
 # OpenGL Blend Funcs
