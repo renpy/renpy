@@ -488,6 +488,9 @@ def add_to_ast_before(code, filename, linenumber):
     """
     Adds `code`, which must be a textual line of Ren'Py code,
     before the given filename and line number.
+
+    Raises ValueError, with the parse errors as its message, if `code` can't
+    be parsed. The AST is left unchanged in that case.
     """
 
     nodes = nodes_on_line_at_or_after(filename, linenumber)
@@ -496,6 +499,12 @@ def add_to_ast_before(code, filename, linenumber):
     adjust_ast_linenumbers(old.filename, linenumber, 1)
 
     block, _init = renpy.game.script.load_string(old.filename, code, linenumber=linenumber)
+
+    if block is None:
+        # Undo the line number adjustment above, since nothing was added.
+        adjust_ast_linenumbers(old.filename, linenumber + 1, -1)
+
+        raise ValueError("\n\n".join(renpy.parser.get_parse_errors()))
 
     # Remove the return statement at the end of the block.
     ret_stmt = block.pop()

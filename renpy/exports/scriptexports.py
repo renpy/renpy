@@ -22,6 +22,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
+import contextlib
+
 import renpy
 from renpy.exports.commonexports import renpy_pure
 
@@ -67,6 +69,46 @@ def munged_filename():
 loaded_modules = set()
 
 
+@contextlib.contextmanager
+def unlocked_config():
+    """
+    Unlocks the config for the duration of the block, restoring the previous state
+    even if the block raises.
+    """
+
+    old_locked = renpy.config.locked
+    renpy.config.locked = False
+
+    try:
+        yield
+    finally:
+        renpy.config.locked = old_locked
+
+
+def run_initcode(initcode, kwargs=None):
+    """
+    Runs the (priority, node) pairs in `initcode` in a new init-phase context. If `kwargs` is given,
+    it's set in the store for the duration of the run. The context is removed even if an init
+    statement raises.
+    """
+
+    context = renpy.execution.Context(False)
+    context.init_phase = True
+    renpy.game.contexts.append(context)
+
+    try:
+        if kwargs is not None:
+            context.make_dynamic(kwargs)
+            renpy.store.__dict__.update(kwargs)
+
+        for _prio, node in initcode:
+            node.execute_init()
+
+    finally:
+        context.pop_all_dynamic()
+        renpy.game.contexts.pop()
+
+
 def load_module(name, **kwargs):
     """
     :doc: other
@@ -92,26 +134,9 @@ def load_module(name, **kwargs):
 
     loaded_modules.add(name)
 
-    old_locked = renpy.config.locked
-    renpy.config.locked = False
-
-    initcode = renpy.game.script.load_module(name)
-
-    context = renpy.execution.Context(False)
-    context.init_phase = True
-    renpy.game.contexts.append(context)
-
-    context.make_dynamic(kwargs)
-    renpy.store.__dict__.update(kwargs)
-
-    for _prio, node in initcode:
-        node.execute_init()
-
-    context.pop_all_dynamic()
-
-    renpy.game.contexts.pop()
-
-    renpy.config.locked = old_locked
+    with unlocked_config():
+        initcode = renpy.game.script.load_module(name)
+        run_initcode(initcode, kwargs)
 
 
 def load_string(s, filename="<string>"):
@@ -120,34 +145,37 @@ def load_string(s, filename="<string>"):
 
     Loads `s` as Ren'Py script that can be called.
 
-    Returns the name of the first statement in s.
+    Returns the name of the first statement in `s`, which can be passed to
+    :func:`renpy.call`, :func:`renpy.jump`, or the call and jump statements.
+    The script is added to the running game and is not saved in any .rpyc file.
 
-    `filename` is the name of the filename that statements in the string will
-    appear to be from.
+    If `s` contains parse errors, nothing is loaded and this returns None. No
+    exception is raised in this case. The errors can be retrieved with
+    :func:`renpy.get_parse_errors`.
+
+    Init-phase statements in `s`, such as ``define``, ``default``, and
+    ``init python``, are run before this function returns.
+
+    This raises ValueError if `s` contains no statements.
+
+    `filename`
+        The name of the file that statements in the string will appear to be
+        from.
     """
 
     old_exception_info = renpy.game.exception_info
 
     try:
-        old_locked = renpy.config.locked
-        renpy.config.locked = False
+        with unlocked_config():
+            stmts, initcode = renpy.game.script.load_string(filename, str(s))
 
-        stmts, initcode = renpy.game.script.load_string(filename, str(s))
+            if stmts is None:
+                return None
 
-        if stmts is None:
-            return None
+            if not stmts:
+                raise ValueError("The string passed to renpy.load_string contains no statements.")
 
-        context = renpy.execution.Context(False)
-        context.init_phase = True
-        renpy.game.contexts.append(context)
-
-        for _prio, node in initcode:
-            node.execute_init()
-
-        context.pop_all_dynamic()
-        renpy.game.contexts.pop()
-
-        renpy.config.locked = old_locked
+            run_initcode(initcode)
 
         renpy.game.script.analyze()
 
@@ -179,24 +207,11 @@ def load_language(language):
     old_exception_info = renpy.game.exception_info
 
     try:
-        old_locked = renpy.config.locked
-        renpy.config.locked = False
+        with unlocked_config():
+            renpy.game.script.load_languages.add(language)
 
-        renpy.game.script.load_languages.add(language)
-
-        initcode = renpy.game.script.load_script()
-
-        context = renpy.execution.Context(False)
-        context.init_phase = True
-        renpy.game.contexts.append(context)
-
-        for _prio, node in initcode:
-            node.execute_init()
-
-        context.pop_all_dynamic()
-        renpy.game.contexts.pop()
-
-        renpy.config.locked = old_locked
+            initcode = renpy.game.script.load_script()
+            run_initcode(initcode)
 
         if not renpy.game.context().init_phase:
             renpy.game.script.analyze()
