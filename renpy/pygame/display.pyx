@@ -606,11 +606,24 @@ class Info(object):
     def __init__(self):
         cdef const SDL_DisplayMode *dm
         cdef const SDL_PixelFormatDetails *format
-        cdef const SDL_DisplayID *display_ids
+        cdef SDL_DisplayID *display_ids
+        cdef int num_displays = 0
+        cdef SDL_DisplayID display_id = 0
 
-        display_ids = SDL_GetDisplays(NULL)
+        display_ids = SDL_GetDisplays(&num_displays)
 
-        dm = SDL_GetCurrentDisplayMode(display_ids[0])
+        if display_ids == NULL:
+            raise error()
+
+        if num_displays > 0:
+            display_id = display_ids[0]
+
+        SDL_free(display_ids)
+
+        if display_id == 0:
+            raise error("No displays are available.")
+
+        dm = SDL_GetCurrentDisplayMode(display_id)
         if dm == NULL:
             raise error()
 
@@ -689,11 +702,14 @@ def get_display_bounds():
 
     rv = [ ]
 
-    for i in range(num_displays):
-        if SDL_GetDisplayBounds(display_ids[i], &rect):
-            rv.append( (rect.x, rect.y, rect.w, rect.h) )
-        else:
-            raise error()
+    try:
+        for i in range(num_displays):
+            if SDL_GetDisplayBounds(display_ids[i], &rect):
+                rv.append( (rect.x, rect.y, rect.w, rect.h) )
+            else:
+                raise error()
+    finally:
+        SDL_free(display_ids)
 
     return tuple(rv)
 
@@ -712,11 +728,16 @@ def get_usable_display_bounds():
 
     rv = [ ]
 
-    for i in range(num_displays):
-        if SDL_GetDisplayUsableBounds(display_ids[i], &rect):
-            rv.append( (rect.x, rect.y, rect.w, rect.h) )
-        else:
-            raise error()
+    try:
+        for i in range(num_displays):
+            if SDL_GetDisplayUsableBounds(display_ids[i], &rect):
+                rv.append( (rect.x, rect.y, rect.w, rect.h) )
+            else:
+                raise error()
+    finally:
+        SDL_free(display_ids)
+
+    return tuple(rv)
 
 
 def get_num_video_displays():
@@ -725,7 +746,9 @@ def get_num_video_displays():
     """
 
     cdef int num_displays = 1
-    SDL_GetDisplays(&num_displays)
+    cdef SDL_DisplayID *display_ids = SDL_GetDisplays(&num_displays)
+
+    SDL_free(display_ids)
 
     return num_displays
 
@@ -758,8 +781,9 @@ def gl_get_attribute(flag):
 
     if flag == GL_SWAP_CONTROL:
         if not SDL_GL_GetSwapInterval(&rv):
-            return rv
-        raise error()
+            raise error()
+
+        return rv
 
     if not SDL_GL_GetAttribute(flag, &rv):
         raise error()
