@@ -27,6 +27,11 @@ testsuite slparser:
         assert eval len(renpy.get_screen("slparser_legacy_nested").child.children[0].children) == 2
         run Hide("slparser_legacy_nested")
 
+    testcase legacy_screen_show:
+        run Show("slparser_legacy_screen")
+        assert eval len(renpy.get_screen("slparser_legacy_screen").child.children) == 1
+        run Hide("slparser_legacy_screen")
+
     testcase keyword_error_suggestions:
         $ text_parser = renpy.sl2.slparser.statements["text"]
         $ screen_parser = renpy.sl2.slparser.statements["screen"]
