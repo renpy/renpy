@@ -250,7 +250,12 @@ def put_data(data_dict):
 
     if not SDL_SetClipboardData(_clipboard_data_callback, _clipboard_cleanup, <void *> cd, <const char **> mime_types_array, count):
         SDL_free(mime_types_array)
-        _clipboard_cleanup(<void *> cd)
+
+        # SDL only leaves cd with us if it failed before accepting it, which happens when video isn't initialized.
+        # Otherwise, it has freed cd or still holds it, and will free it when the clipboard data is next replaced.
+        if not SDL_WasInit(SDL_INIT_VIDEO):
+            _clipboard_cleanup(<void *> cd)
+
         raise error()
 
     SDL_free(mime_types_array)
