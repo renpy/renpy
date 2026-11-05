@@ -331,10 +331,16 @@ init -1600 python:
             renpy.notify(__("Failed to save screenshot as %s.") % fn)
             return
 
+        try:
+            if _preferences.self_voicing != "clipboard":
+                renpy.put_clipboard_image_file(fn, absolute_path=True)
+        except Exception:
+            renpy.display.log.write("Failed to copy screenshot to clipboard.")
+            renpy.display.log.exception()
+
         if config.screenshot_callback is not None:
             config.screenshot_callback(fn)
 
-        renpy.put_clipboard_image_file(fn, absolute_path=True)
 
     config.pre_screenshot_actions = [ ]
 
