@@ -713,7 +713,7 @@ def init():
 
         display.sdl_main_init()
 
-        if SDL_InitSubSystem(SDL_INIT_EVENTS):
+        if not SDL_InitSubSystem(SDL_INIT_EVENTS):
             raise error()
 
     SDL_AddEventWatch(lifecycle_event_watch, NULL)
