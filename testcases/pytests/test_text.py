@@ -9,6 +9,47 @@ from renpy.display.core import IgnoreEvent
 from renpy.text import text
 
 
+@pytest.mark.parametrize(
+    ("value", "message"),
+    [
+        (42, "Can't display 42 as Text."),
+        (None, "Can't display None as Text."),
+        ("unfinished {", "Open text tag"),
+        ("empty {}", "Empty text tag"),
+    ],
+)
+def test_tokenize_raises_without_safe_mode(mocker: MockerFixture, value: str | int | None, message: str) -> None:
+    """Invalid values and malformed tags must raise instead of silently disappearing in normal mode."""
+
+    mocker.patch.object(renpy.config, "safe_text", False)
+    displayable = SimpleNamespace(safe=False)
+
+    with pytest.raises(Exception, match=message):
+        text.Text.tokenize(displayable, [value])
+
+
+@pytest.mark.parametrize(("config_safe", "displayable_safe"), [(True, False), (False, True), (True, True)])
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [(42, "42"), (None, "None"), ("unfinished {", "unfinished {"), ("empty {}", "empty {}")],
+)
+def test_tokenize_safe_mode_uses_literal_strings(
+    mocker: MockerFixture,
+    config_safe: bool,
+    displayable_safe: bool,
+    value: str | int | None,
+    expected: str,
+) -> None:
+    """Either safe-mode setting preserves failed inputs as strings and continues with subsequent text."""
+
+    mocker.patch.object(renpy.config, "safe_text", config_safe)
+    displayable = SimpleNamespace(safe=displayable_safe)
+
+    tokens = text.Text.tokenize(displayable, ["before", value, "after"])
+
+    assert tokens == [(text.TEXT, "before"), (text.TEXT, expected), (text.TEXT, "after")]
+
+
 @pytest.fixture
 def slow_text():
     """A stand-in for a Text displayable that is still showing slow text and allows it to be aborted."""

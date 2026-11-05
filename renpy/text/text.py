@@ -3022,9 +3022,11 @@ class Text(renpy.display.displayable.Displayable):
 
                 else:
                     raise Exception("Can't display {0!r} as Text.".format(i))
-            except Exception as e:
+            except Exception:
                 if renpy.config.safe_text or self.safe:
-                    tokens.append((TEXT, i))
+                    tokens.append((TEXT, str(i)))
+                else:
+                    raise
 
         return tokens
 
