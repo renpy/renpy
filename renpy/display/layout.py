@@ -2375,6 +2375,14 @@ class AlphaMask(Container):
     size of the AlphaMask is the size of `child`. The `invert` parameter
     can be used to invert the mask's alpha channel.
 
+    The child is always drawn at the top left corner of the AlphaMask, so
+    position properties supplied to `child` (such as xpos, yanchor, or
+    xoffset) are ignored. Other transforms, such as zoom and rotate, are
+    applied. The mask is placed within the area of the child, so its position
+    properties are honored. To move the result, apply a transform to the
+    AlphaMask. To move the child relative to the mask, apply the opposite
+    offset to `mask`.
+
     Note that this takes different arguments from :func:`im.AlphaMask`,
     which uses the mask's red channel.
     """
