@@ -61,7 +61,7 @@ def set_visible(visible):
         SDL_HideCursor()
 
     if SDL_GetWindowMouseGrab(main_window.window) :
-        SDL_SetWindowRelativeMouseMode(main_window.window, visible)
+        SDL_SetWindowRelativeMouseMode(main_window.window, not visible)
 
 def get_focused():
     return SDL_GetMouseFocus() != NULL
