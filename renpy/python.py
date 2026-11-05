@@ -1114,7 +1114,7 @@ def py_compile(
     if ast_node:
         cache = False
 
-    elif isinstance(source, renpy.ast.PyExpr):
+    if isinstance(source, renpy.ast.PyExpr):
         filename = source.filename
         lineno = source.linenumber
         hashcode = source.hashcode

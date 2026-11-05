@@ -876,7 +876,7 @@ class CompilerCache(object):
         self.updated = False
 
         # The version of this object.
-        self.version = 1
+        self.version = 2
 
     def ast_eval_literal(self, expr):
         """
@@ -886,11 +886,13 @@ class CompilerCache(object):
         if isinstance(expr, renpy.ast.PyExpr):
             filename = expr.filename
             linenumber = expr.linenumber
+            column = expr.column
         else:
             filename = None
             linenumber = None
+            column = None
 
-        key = (expr, filename, linenumber)
+        key = (expr, filename, linenumber, column)
 
         rv = self.ast_eval_cache.get(key, None)
 
@@ -921,9 +923,9 @@ class CompilerCache(object):
         """
 
         if isinstance(code, renpy.ast.PyExpr):
-            key = (code, code.filename, code.linenumber)
+            key = (code, code.filename, code.linenumber, code.column)
         else:
-            key = (code, None, None)
+            key = (code, None, None, None)
 
         rv = self.ast_exec_cache.get(key, None)
 
