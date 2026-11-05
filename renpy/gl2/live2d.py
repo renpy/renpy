@@ -847,12 +847,32 @@ def update_states():
         s.mark = False
 
 
+def expand_filename(filename: str) -> str:
+    """
+    Returns the path to the .model3.json file for a Live2D `filename`, which may name either that file or a
+    directory containing <directory name>.model3.json.
+    """
+
+    if filename.endswith(".json"):
+        return filename
+
+    suffix = filename.rpartition("/")[2]
+    return f"{filename}/{suffix}.model3.json"
+
+
 class Live2D(renpy.display.displayable.Displayable):
     name: tuple[str, str, str, int] | None = None
     """
     A structural name for this displayable, consisting of the layer, tag, and a count. This is used to
     match the displayable to its state in a previous interaction.
     """
+
+    __version__ = 1
+
+    def after_upgrade(self, version):
+        # Before version 1, a directory given as the filename was kept as is, and expanded by Live2DCommon.
+        if version < 1:
+            self.filename = expand_filename(self.filename)
 
     nosave = ["common_cache"]
 
@@ -957,13 +977,8 @@ class Live2D(renpy.display.displayable.Displayable):
 
         self.properties = properties
 
-        # If a directory is given rather than a json file, expand it.
-        if not filename.endswith(".json"):
-            suffix = filename.rpartition("/")[2]
-            filename = f"{filename}/{suffix}.model3.json"
-
         # Should be set before call to self.common.
-        self.filename = filename
+        self.filename = expand_filename(filename)
         self.default_fade = default_fade
         self.old_beziers = old_beziers
         self.deduplication_key = deduplication_key
