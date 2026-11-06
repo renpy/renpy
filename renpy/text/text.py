@@ -1319,6 +1319,8 @@ class Layout(object):
         done = False
 
         for type, text in tokens:
+            tss_depth = len(tss)
+
             try:
                 if type == PARAGRAPH:
                     # Note that this code is duplicated for the p tag, and for
@@ -1633,9 +1635,24 @@ class Layout(object):
                     else:
                         raise Exception("Unknown text tag %r" % text)
 
+            except renpy.game.CONTROL_EXCEPTIONS:
+                raise
+
             except Exception:
                 if done:
                     break
+
+                if type == TAG and (renpy.config.safe_text or self.safe):
+                    # A tag that can't be processed, like size with a non-numeric value, is shown as text. Remove
+                    # any segment the tag pushed before it failed, and push a neutral one in its place if the tag
+                    # takes a close tag, so the close tag doesn't close an enclosing segment.
+                    del tss[tss_depth:]
+
+                    if renpy.text.extras.text_tags.get(text.partition("=")[0], False):
+                        push()
+
+                    line.extend(self.create_text_segments(text, tss[-1], style))
+                    continue
 
                 renpy.game.exception_info = "While processing text tag {{{!s}}} in {!r}.:".format(
                     text, text_displayable.get_all_text()
@@ -2450,16 +2467,13 @@ class Text(renpy.display.displayable.Displayable):
                 mid_string = text[0][self.start : self.end]
                 end_string = text[0][self.end :]
 
-                if start_string:
-                    start_string = start_string + "{_start}"
-
-                if end_string:
-                    end_string = "{_end}" + end_string
-
                 text_split = []
 
+                # The markers are separate strings from the text around them. If that text is malformed and falls
+                # back to literal text in safe mode, the marker still has to be tokenized as a tag.
                 if start_string:
                     text_split.append(start_string)
+                    text_split.append("{_start}")
 
                 text_split.append(mid_string)
 
@@ -2470,6 +2484,7 @@ class Text(renpy.display.displayable.Displayable):
                         text_split.append(self.ctc)
 
                 if end_string:
+                    text_split.append("{_end}")
                     text_split.append(end_string)
 
                 text_split.extend(text[1:])
