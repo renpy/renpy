@@ -1441,7 +1441,7 @@ at_transform_compare_full_context = False
 # A list of callbacks when the display starts.
 display_start_callbacks = []
 
-# If not None, the size of the sound buffer, in bytes.
+# If not None, the requested size of the audio device buffer, in sample frames.
 sound_buffer_size = None
 
 # If True, the default volumes are considered to be quadratic.

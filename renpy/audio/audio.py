@@ -1151,14 +1151,8 @@ def init():
             webaudio.set_movie_channel(c.number, c.movie != renpy.audio.renpysound.NO_VIDEO)
 
     if pcm_ok is None and renpysound:
-        bufsize = 2048
-        if renpy.emscripten:
-            # Large buffer (and latency) as compromise to avoid sound jittering
-            bufsize = 8192  # works for me
-            # bufsize = 16384  # jitter/silence right after starting a sound
-
-        if renpy.config.sound_buffer_size is not None:
-            bufsize = renpy.config.sound_buffer_size
+        # The requested buffer size, in sample frames. 0 lets SDL choose.
+        bufsize = renpy.config.sound_buffer_size or 0
 
         if "RENPY_SOUND_BUFSIZE" in os.environ:
             bufsize = int(os.environ["RENPY_SOUND_BUFSIZE"])

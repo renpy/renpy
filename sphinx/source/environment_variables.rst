@@ -131,9 +131,9 @@ The following environment variables control the behavior of Ren'Py:
 
 .. envvar:: RENPY_SOUND_BUFSIZE
 
-    This controls the sound buffer size. Values larger than the default (2048)
-    can prevent sound from skipping, at the cost of a larger delay from when a
-    sound is invoked to when it is played.
+    This controls the sound buffer size. Larger values can prevent sound from
+    skipping, at the cost of a larger delay from when a sound is invoked to
+    when it is played.
 
 .. envvar:: RENPY_TEST_VC_REVISION
 
