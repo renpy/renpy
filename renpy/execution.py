@@ -65,10 +65,14 @@ def check_infinite_loop():
         il_second_deadline = 0
         return
 
+    # The first deadline has passed. Give the game one second to show that it's still making
+    # progress (not_infinite_loop, or an interaction, will push out the first deadline and
+    # cancel this) before reporting an infinite loop.
     if il_second_deadline == 0:
         il_second_deadline = now + 1
+        return
 
-    if now < il_second_deadline:
+    if now >= il_second_deadline:
         il_second_deadline = 0
         il_first_deadline = now + 60
         raise Exception("Possible infinite loop.")
@@ -93,7 +97,9 @@ def not_infinite_loop(delay):
         delay *= 5
 
     global il_first_deadline
+    global il_second_deadline
     il_first_deadline = time.time() + delay
+    il_second_deadline = 0
 
 
 class Delete(object):
