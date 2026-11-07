@@ -26,6 +26,36 @@ import renpy
 from renpy.exports.commonexports import renpy_pure
 
 
+def get_voice_speed():
+    """
+    :doc: voice
+
+    Returns the player's voice playback speed.
+    """
+
+    return renpy.preferences.validate_voice_speed(renpy.game.preferences.voice_speed)
+
+
+def set_voice_speed(speed):
+    """
+    :doc: voice
+
+    Sets the player's voice playback speed to `speed`, a finite number
+    greater than zero. The default is 1.0. Pitch is preserved.
+
+    This preference changes a playing voice's speed while preserving its
+    position, and applies to new play and queue requests on the voice
+    channel, including voice replay and character voice samples. Already
+    queued files keep their original speed. Other channels and self-voicing
+    are unaffected.
+
+    The preference persists between sessions and is not restored by
+    rollback or loading a save.
+    """
+
+    renpy.game.preferences.voice_speed = renpy.preferences.validate_voice_speed(speed)
+
+
 def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     """
     :doc: movie_cutscene

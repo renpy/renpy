@@ -100,7 +100,7 @@ def _build():
         "renpy.audio.renpysound",
         ["src/renpysound_core.c", "src/ffmedia.c"],
         compile_args=[] if "RENPY_FFMPEG_DEPRECATED_DECLARATIONS" in os.environ else ["-Wno-deprecated-declarations"],
-        packages="libavformat libavcodec libavutil libswresample libswscale sdl3",
+        packages="libavformat libavcodec libavutil libavfilter libswresample libswscale sdl3",
     )
 
     cython("renpy.audio.filter")

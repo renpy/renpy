@@ -681,11 +681,15 @@ static int check_channel(int c) {
  * Loads the provided stream. Returns the stream on success, NULL on
  * failure.
  */
-struct MediaState *load_stream(SDL_IOStream *rw, const char *ext, double start, double end, int video) {
+struct MediaState *load_stream(SDL_IOStream *rw, const char *ext, double start, double end, int video, double playback_speed) {
     struct MediaState *rv;
     rv = media_open(rw, ext);
     if (rv == NULL)
     {
+        return NULL;
+    }
+    if (media_set_playback_speed(rv, playback_speed) < 0) {
+        media_close(rv);
         return NULL;
     }
     media_start_end(rv, start, end);
@@ -699,7 +703,7 @@ struct MediaState *load_stream(SDL_IOStream *rw, const char *ext, double start, 
 }
 
 
-void RPS_play(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
+void RPS_play(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter, double playback_speed) {
 
     struct Channel *c;
 
@@ -746,7 +750,7 @@ void RPS_play(int channel, SDL_IOStream *rw, const char *ext, const char *name, 
 
     /* Allocate playing sample. */
 
-    c->playing = load_stream(rw, ext, start, end, c->video);
+    c->playing = load_stream(rw, ext, start, end, c->video, playback_speed);
 
     if (! c->playing) {
         UNLOCK_AUDIO();
@@ -776,7 +780,7 @@ void RPS_play(int channel, SDL_IOStream *rw, const char *ext, const char *name, 
     error(SUCCESS);
 }
 
-void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
+void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter, double playback_speed) {
 
     struct Channel *c;
 
@@ -788,11 +792,11 @@ void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name,
 
     /* If we're not playing, then we should play instead of queue. */
     if (!c->playing || c->state == CHANNEL_ENDED) {
-        RPS_play(channel, rw, ext, name, synchro_start, fadein, tight, start, end, relative_volume, audio_filter);
+        RPS_play(channel, rw, ext, name, synchro_start, fadein, tight, start, end, relative_volume, audio_filter, playback_speed);
         return;
     }
 
-    MediaState *ms = load_stream(rw, ext, start, end, c->video);
+    MediaState *ms = load_stream(rw, ext, start, end, c->video, playback_speed);
 
     LOCK_AUDIO();
 
@@ -1045,12 +1049,14 @@ void RPS_fadeout(int channel, int ms) {
 
     if (c->queued) {
 
-        float position = samples_to_ms(c->pos) / 1000.0 + c->playing_start_ms;
+        double speed = media_get_playback_speed(c->playing);
+        double position = samples_to_ms(c->pos) * speed / 1000.0 + c->playing_start_ms / 1000.0;
+        media_get_live_position(c->playing, &position);
         float duration = media_duration(c->playing);
 
         // If the fadeout will fit into the current file, dequeue the next file, so
         // that the next track will begin playing immediately.
-        if ((position + ms / 1000.0 < duration) || (! c->playing_tight) || (ms <= 32)) {
+        if ((position + ms * speed / 1000.0 < duration) || (! c->playing_tight) || (ms <= 32)) {
                 free_stream(c->queued);
                 c->queued = NULL;
                 free(c->queued_name);
@@ -1176,21 +1182,50 @@ void RPS_seek(int channel, double position) {
     LOCK_AUDIO();
 
     if (c->playing) {
-        c->pos = (int) (position * audio_spec.freq) - ms_to_samples(c->playing_start_ms);
+        c->pos = (int) ((position - c->playing_start_ms / 1000.0)
+            * audio_spec.freq / media_get_playback_speed(c->playing));
         if (c->pos < 0) {
             c->pos = 0;
         }
 
         media_seek(c->playing, position);
 
-        if (c->state == CHANNEL_ENDED && !c->paused) {
-            c->state = CHANNEL_PLAYING;
+        if (c->state == CHANNEL_ENDED) {
+            c->state = c->paused ? CHANNEL_PAUSED : CHANNEL_PLAYING;
         }
     }
 
     UNLOCK_AUDIO();
 
     error(SUCCESS);
+}
+
+/* Only change the playing stream; queued requests retain their own rates. */
+void RPS_set_playback_speed(int channel, double speed) {
+    if (check_channel(channel)) {
+        return;
+    }
+    LOCK_AUDIO();
+    struct Channel *c = &channels[channel];
+    if (c->playing && c->state != CHANNEL_ENDED && media_update_playback_speed(c->playing, speed) < 0) {
+        UNLOCK_AUDIO();
+        error(SDL_ERROR);
+        return;
+    }
+    UNLOCK_AUDIO();
+    error(SUCCESS);
+}
+
+double RPS_get_playback_speed(int channel) {
+    if (check_channel(channel)) {
+        return 1.0;
+    }
+    LOCK_AUDIO();
+    struct Channel *c = &channels[channel];
+    double speed = c->playing ? media_get_playback_speed(c->playing) : 1.0;
+    UNLOCK_AUDIO();
+    error(SUCCESS);
+    return speed;
 }
 
 
@@ -1210,7 +1245,12 @@ int RPS_get_pos(int channel) {
     LOCK_NAME();
 
     if (c->playing) {
-        rv = samples_to_ms(c->pos) + c->playing_start_ms;
+        double position;
+        if (media_get_live_position(c->playing, &position)) {
+            rv = (int) (position * 1000.0);
+        } else {
+            rv = (int) (samples_to_ms(c->pos) * media_get_playback_speed(c->playing)) + c->playing_start_ms;
+        }
     } else {
         rv = -1;
     }

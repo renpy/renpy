@@ -134,6 +134,121 @@ let create_source = (c, buffer) => {
 }
 
 /**
+ * Time-stretches decoded voices without changing pitch. WSOLA aligns
+ * overlapping waveform segments; all channels use the same alignment to
+ * preserve the stereo image, including opposite-phase stereo.
+ *
+ * Work is split into short tasks so preparing a long voice does not block
+ * input or rendering. The normal-speed path does not copy or process PCM.
+ */
+const tempo_buffers = new WeakMap();
+let stretch_buffer = (buffer, speed, end = -1) => {
+    if (speed === 1.0) {
+        return Promise.resolve(buffer);
+    }
+
+    let cached = tempo_buffers.get(buffer);
+    if (!cached) {
+        cached = new Map();
+        tempo_buffers.set(buffer, cached);
+    }
+    const key = `${speed}:${end}`;
+    if (cached.has(key)) {
+        return cached.get(key);
+    }
+
+    const promise = (async () => {
+        // Compose larger rate changes from WSOLA stages within a factor of two.
+        if (speed < 0.5 || speed > 2) {
+            const factor = speed < 0.5 ? 0.5 : 2;
+            const intermediate = await stretch_buffer(buffer, factor, end);
+            return stretch_buffer(intermediate, speed / factor);
+        }
+        const rate = buffer.sampleRate;
+        const length = end >= 0 ? Math.min(buffer.length, Math.round(end * rate)) : buffer.length;
+        const size = Math.max(1, Math.round(length / speed));
+        const result = context.createBuffer(buffer.numberOfChannels, size, rate);
+        const input = [], output = [];
+        for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+            input.push(buffer.getChannelData(ch).subarray(0, length));
+            output.push(result.getChannelData(ch));
+        }
+
+        const hop = Math.max(1, Math.round(rate * 0.02));
+        const window = hop * 2;
+        const search = Math.round(rate * 0.012);
+        const stride = Math.max(1, Math.round(rate / 6000));
+        let deadline = performance.now() + 8;
+
+        for (let pos = 0; pos < size; pos += hop) {
+            const expected = Math.round(pos * speed);
+            const low = Math.max(0, expected - search);
+            const high = Math.max(low, Math.min(length - window, expected + search));
+            let best = Math.min(expected, high);
+            let bestScore = -Infinity;
+
+            if (pos > 0) {
+                // Normalized correlation avoids preferring louder fragments.
+                const score = (candidate) => {
+                    let cross = 0, energy = 0;
+                    for (let ch = 0; ch < input.length; ch++) {
+                        for (let j = 0; j < hop && pos + j < size; j += stride) {
+                            const a = output[ch][pos + j];
+                            const b = input[ch][candidate + j] || 0;
+                            cross += a * b;
+                            energy += b * b;
+                        }
+                    }
+                    return cross / Math.sqrt(energy + 1e-20);
+                };
+                // Coarse search followed by sample-accurate refinement.
+                for (let candidate = low; candidate <= high; candidate += stride) {
+                    const value = score(candidate);
+                    if (value > bestScore) {
+                        bestScore = value;
+                        best = candidate;
+                    }
+                }
+                const coarse = best;
+                for (let candidate = Math.max(low, coarse - stride); candidate <= Math.min(high, coarse + stride); candidate++) {
+                    const value = score(candidate);
+                    if (value > bestScore) {
+                        bestScore = value;
+                        best = candidate;
+                    }
+                }
+            }
+
+            for (let ch = 0; ch < input.length; ch++) {
+                for (let j = 0; j < window && pos + j < size; j++) {
+                    const sample = input[ch][best + j] || 0;
+                    if (pos > 0 && j < hop) {
+                        const weight = j / hop;
+                        output[ch][pos + j] = output[ch][pos + j] * (1 - weight) + sample * weight;
+                    } else {
+                        output[ch][pos + j] = sample;
+                    }
+                }
+            }
+
+            if (performance.now() >= deadline) {
+                await new Promise(resolve => setTimeout(resolve, 0));
+                deadline = performance.now() + 8;
+            }
+        }
+        return result;
+    })();
+
+    cached.set(key, promise);
+    // A looping file may be requested at many speeds over a session.
+    while (cached.size > 4) {
+        cached.delete(cached.keys().next().value);
+    }
+    promise.catch(() => cached.delete(key));
+    return promise;
+};
+
+/**
  * Attempts to start playing channel `c`.
  */
 let start_playing = (c) => {
@@ -179,12 +294,14 @@ let start_playing = (c) => {
     p.source.started = true;
 
     if (p.end > 0 && p.end > p.start) {
-        p.source.start(0, p.start, p.end - p.start);
+        p.source.start(0, p.start / p.playback_speed, (p.end - p.start) / p.playback_speed);
     } else {
-        p.source.start(0, p.start);
+        p.source.start(0, p.start / p.playback_speed);
     }
 
     if (p.fadeout !== null) {
+        p.fadeout_deadline ??= context.currentTime + p.fadeout;
+        p.fadeout = Math.max(0, p.fadeout_deadline - context.currentTime);
         linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, p.fadeout);
         try {
             c.playing.source.stop(context.currentTime + p.fadeout);
@@ -228,7 +345,7 @@ let pause_playing = (c) => {
 
     p.source = create_source(c, p.buffer);
 
-    p.start += (context.currentTime - p.started);
+    p.start += (context.currentTime - p.started) * p.playback_speed;
     p.started = null;
 }
 
@@ -421,7 +538,7 @@ renpyAudio.set_channel_count = (count) => {
 }
 
 
-renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid, array) => {
+renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid, array, playback_speed = 1.0) => {
 
     const c = get_channel(channel);
 
@@ -429,6 +546,9 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
     end = finite(end, -1);
     fadein = Math.max(0, finite(fadein, 0));
     relative_volume = finite(relative_volume, 1.0);
+    if (!Number.isFinite(playback_speed) || playback_speed <= 0) {
+        throw new RangeError('Voice speed must be finite and greater than zero.');
+    }
 
     if (file.startsWith('url:')) {
         const url = new URL(file.slice(4), window.location);
@@ -517,6 +637,10 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
     const q = {
         source: null,
         buffer: null,
+        original_buffer: null,
+        playback_speed: playback_speed,
+        requested_speed: playback_speed,
+        preparing: false,
         name: name,
         start: start,
         end: end,
@@ -530,13 +654,60 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
         synchro_start: synchro_start,
     };
 
-    function reuseBuffer(c) {
-        // We can re-use the audio buffer, but not the buffer source
-        c.queued.buffer = c.playing.buffer;
-        c.queued.source = create_source(c, c.playing.buffer);
-
-        start_playing(c);
+    function failedRequest(request, error) {
+        console.error(`Could not prepare audio ${request.name}:`, error);
+        if (c.playing === request) {
+            stop_playing(c);
+            start_playing(c);
+        } else if (c.queued === request) {
+            c.queued = null;
+        }
     }
+
+    function prepareBuffer(request, buffer) {
+        if (c.playing !== request && c.queued !== request) {
+            return;
+        }
+        request.original_buffer = buffer;
+        if (request.preparing) {
+            return;
+        }
+        request.preparing = true;
+        const speed = request.requested_speed;
+        stretch_buffer(buffer, speed, request.end).then(stretched => {
+            request.preparing = false;
+            // Decode/stretch completion must not resurrect stopped playback.
+            if (c.playing !== request && c.queued !== request) {
+                return;
+            }
+            // Coalesce rapid slider changes rather than starting a full PCM
+            // conversion for every pointer movement.
+            if (speed !== request.requested_speed) {
+                prepareBuffer(request, buffer);
+                return;
+            }
+            if (c.playing === request && request.source !== null) {
+                const position = renpyAudio.get_pos(channel) / 1000;
+                if (request.started !== null) {
+                    renpyAudio.disconnectFilter(request.filter, request.source, c.destination);
+                    try {
+                        request.source.stop();
+                    } catch (e) {
+                    }
+                }
+                request.start = position;
+                request.started = null;
+            }
+            request.playback_speed = speed;
+            request.buffer = stretched;
+            request.source = create_source(c, stretched);
+            start_playing(c);
+        }).catch(error => {
+            request.preparing = false;
+            failedRequest(request, error);
+        });
+    }
+    q.prepare = buffer => prepareBuffer(q, buffer);
 
     if (c.playing === null) {
         c.playing = q;
@@ -544,13 +715,11 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
     } else {
         c.queued = q;
         if (c.playing.name === name) {
-            // Same file, re-use the data to reduce memory and CPU footprint
-            if (c.playing.buffer !== null) {
-                reuseBuffer(c);
-            } else {
-                // Not ready yet, wait for decodeAudioData() to complete
-            }
-
+            // Share decoding, but prepare each request at its own rate.
+            // Each request waits independently so a queue promotion while
+            // decoding/stretching is pending cannot strand the new playback.
+            q.decode = c.playing.decode;
+            q.decode.then(buffer => prepareBuffer(q, buffer), error => failedRequest(q, error));
             return;
         }
     }
@@ -561,20 +730,10 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
         array = new Uint8Array(array);
     }
 
-    context.decodeAudioData(array.buffer, (buffer) => {
-
-        q.source = create_source(c, buffer);
-        q.buffer = buffer;
-
-        start_playing(c);
-
-        if (c.playing === q && c.queued !== null && c.queued.name === q.name) {
-            // Same file, re-use the data to reduce memory and CPU footprint
-            reuseBuffer(c);
-        }
-    }, () => {
-        console.log(`The audio data in ${file} could not be decoded. The file format may not be supported by this browser.`);
+    q.decode = new Promise((resolve, reject) => {
+        context.decodeAudioData(array.buffer, resolve, reject);
     });
+    q.decode.then(buffer => prepareBuffer(q, buffer), error => failedRequest(q, error));
 };
 
 
@@ -615,6 +774,8 @@ renpyAudio.fadeout = (channel, delay) => {
     }
 
     let p = c.playing;
+    p.fadeout_deadline = context.currentTime + delay;
+    p.fadeout = delay;
 
     linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, delay);
 
@@ -632,10 +793,12 @@ renpyAudio.fadeout = (channel, delay) => {
         return;
     }
 
-    let remaining = delay + context.currentTime - p.started - p.buffer.duration;
+    const end = p.end > 0 ? Math.min(p.end, p.original_buffer.duration) : p.original_buffer.duration;
+    let remaining = delay + context.currentTime - p.started - (end - p.start) / p.playback_speed;
 
     if (remaining > 0 && c.queued) {
         c.queued.fadeout = remaining;
+        c.queued.fadeout_deadline = p.fadeout_deadline;
     } else {
         c.queued = null;
     }
@@ -711,11 +874,30 @@ renpyAudio.get_pos = (channel) => {
         if (c.video) {
             rv += c.video_el.currentTime - p.started;
         } else {
-            rv += (context.currentTime - p.started);
+            rv += (context.currentTime - p.started) * p.playback_speed;
         }
     }
 
     return rv * 1000;
+};
+
+renpyAudio.set_playback_speed = (channel, speed) => {
+    if (!Number.isFinite(speed) || speed <= 0) {
+        throw new RangeError('Voice speed must be finite and greater than zero.');
+    }
+    const c = get_channel(channel), p = c.playing;
+    if (c.video || p === null || speed === p.requested_speed) {
+        return;
+    }
+    p.requested_speed = speed;
+    if (p.original_buffer !== null) {
+        p.prepare(p.original_buffer);
+    }
+};
+
+renpyAudio.get_playback_speed = (channel) => {
+    const p = get_channel(channel).playing;
+    return p ? p.requested_speed : 1.0;
 };
 
 
@@ -743,7 +925,7 @@ renpyAudio.seek = (channel, position) => {
         return;
     }
 
-    position = Math.min(position, p.buffer.duration);
+    position = Math.min(position, p.original_buffer.duration);
 
     if (p.source !== null && p.started !== null) {
         renpyAudio.disconnectFilter(p.filter, p.source, c.destination);
@@ -779,7 +961,7 @@ renpyAudio.get_duration = (channel) => {
             }
         }
     } else if (p.buffer) {
-        return p.buffer.duration * 1000;
+        return p.original_buffer.duration * 1000;
     }
 
     return 0;

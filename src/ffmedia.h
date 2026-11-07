@@ -39,4 +39,9 @@ typedef struct MediaVideoYUV {
 int media_read_video_yuv(struct MediaState *ms, MediaVideoYUV *rv);
 void media_free_video_yuv(MediaVideoYUV *frame);
 
+int media_set_playback_speed(struct MediaState *ms, double speed);
+double media_get_playback_speed(struct MediaState *ms);
+int media_update_playback_speed(struct MediaState *ms, double speed);
+int media_get_live_position(struct MediaState *ms, double *position);
+
 #endif

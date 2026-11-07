@@ -65,6 +65,21 @@ class MediaHead(ctypes.Structure):
     ]
 
 
+class MediaAudioHead(ctypes.Structure):
+    # Extend the field list rather than inheriting MediaHead: a C struct's
+    # following int occupies the padding at the end of that shorter prefix.
+    _fields_ = MediaHead._fields_ + [
+        ("audio_queue_target_samples", ctypes.c_int),
+        ("audio_decode_frame", ctypes.c_void_p),
+        ("audio_decode_end", ctypes.c_double),
+        ("audio_out_frame", ctypes.c_void_p),
+        ("audio_out_index", ctypes.c_int),
+        ("swr", ctypes.c_void_p),
+        ("audio_duration", ctypes.c_int),
+        ("audio_read_samples", ctypes.c_int),
+    ]
+
+
 pytestmark = pytest.mark.skipif(
     os.name != "posix", reason="Native audio symbol inspection requires POSIX shared-library exports."
 )
@@ -691,3 +706,226 @@ def test_movie_preserves_container_duration_padding(audio):
     assert output[4799] != 0.0
     assert output[4800:] == [0.0] * 312
     assert audio.read(1) == [0.0]
+
+
+def speed_tone(duration=1.2, segmented=False):
+    """Generate stereo tones; the optional 440 Hz middle has different-frequency neighbors to test trimming."""
+    data = io.BytesIO()
+    with wave.open(data, "wb") as output:
+        output.setparams((2, 2, 48000, 0, "NONE", "not compressed"))
+        frames = []
+        for i in range(round(duration * 48000)):
+            frequency = 220 if segmented and i < 14400 else 880 if segmented and i >= 43200 else 440
+            value = round(12000 * math.sin(2 * math.pi * frequency * i / 48000))
+            frames.append(struct.pack("<hh", value, value))
+        output.writeframes(b"".join(frames))
+    return io.BytesIO(data.getvalue())
+
+
+def read_speed_to_end(audio):
+    """Read until natural EOF, waiting for actual PCM or decoder EOF to avoid test-induced underruns."""
+    output = []
+    deadline = time.monotonic() + 5
+    event = threading.Event()
+    while renpysound.get_state(0) != 3:
+        media = ctypes.cast(audio.channel.playing, ctypes.POINTER(MediaHead)).contents
+        audio.native.SDL_LockMutex(media.lock)
+        try:
+            ready = media.audio_queue_samples >= 480 or media.audio_finished
+        finally:
+            audio.native.SDL_UnlockMutex(media.lock)
+        if ready:
+            output.extend(audio.read(480))
+        else:
+            event.wait(0.001)
+        assert time.monotonic() < deadline, "Voice did not reach natural EOF."
+    return output
+
+
+def tone_frequency(samples):
+    """Estimate a steady tone from positive zero crossings, excluding the stretching transients at both ends."""
+    middle = samples[len(samples) // 5 : len(samples) * 4 // 5]
+    crossings = [i for i in range(1, len(middle)) if middle[i - 1] <= 0 < middle[i]]
+    assert len(crossings) > 5
+    return (len(crossings) - 1) * 48000 / (crossings[-1] - crossings[0])
+
+
+@pytest.mark.parametrize("speed", [0.125, 0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 8.0, 16.0])
+def test_voice_speed_changes_duration_without_changing_pitch(audio, speed):
+    """Native PCM must get shorter/longer while its 440 Hz pitch stays fixed, including multi-stage slow and fast rates."""
+    renpysound.play(0, speed_tone(), "voice.wav", end=-1, playback_speed=speed)
+    audio.wait_ready(audio.channel.playing)
+    samples = read_speed_to_end(audio)
+    assert len(samples) / 48000 == pytest.approx(1.2 / speed, abs=0.04)
+    assert tone_frequency(samples) == pytest.approx(440, abs=2)
+    assert renpysound.get_pos(0) == pytest.approx(1.2, abs=0.04)
+    assert renpysound.get_duration(0) == pytest.approx(1.2)
+
+
+@pytest.mark.parametrize("speed", [0.25, 0.5, 1.5, 3.0, 4.0])
+def test_voice_speed_trims_in_source_seconds(audio, speed):
+    """A source slice keeps its duration and 440 Hz content, excluding neighboring 220/880 Hz material."""
+    renpysound.play(0, speed_tone(segmented=True), "slice.wav", start=0.3, end=0.9, playback_speed=speed)
+    audio.wait_ready(audio.channel.playing)
+    samples = read_speed_to_end(audio)
+    assert len(samples) / 48000 == pytest.approx(0.6 / speed, abs=0.04)
+    assert tone_frequency(samples) == pytest.approx(440, abs=2)
+    assert renpysound.get_pos(0) == pytest.approx(0.9, abs=0.04)
+
+
+def test_voice_speed_pause_and_seek_keep_source_coordinates(audio):
+    """Pausing freezes source position; forward, backward, and post-EOF seeks rebuild stretching history."""
+    renpysound.play(0, seek_opus(), "seek.opus", end=-1, playback_speed=2.0)
+    audio.wait_ready(audio.channel.playing)
+    read_chunks(audio, 4800)
+    assert renpysound.get_pos(0) == pytest.approx(0.2, abs=0.01)
+    renpysound.pause(0)
+    position = renpysound.get_pos(0)
+    audio.read(4800)
+    assert renpysound.get_pos(0) == position
+    for target in [1.0, 0.2, 1.4]:
+        renpysound.seek(0, target)
+        wait_seek(audio, target)
+        audio.native.SDL_ClearAudioStream(audio.stream)
+        renpysound.unpause(0)
+        samples = read_chunks(audio, 4800)
+        assert renpysound.get_pos(0) == pytest.approx(target + 0.2, abs=0.01)
+        assert max(abs(sample) for sample in samples) > 0.01
+        read_speed_to_end(audio)
+        renpysound.pause(0)
+
+
+@pytest.mark.parametrize("duration", [0.01, 0.02, 0.05])
+@pytest.mark.parametrize("speed", [0.25, 0.5, 3.0, 4.0, 8.0])
+def test_short_voices_are_not_lost_to_analysis_windows(audio, duration, speed):
+    """Voices shorter than atempo's analysis window remain audible without leaking its flushing padding."""
+    renpysound.play(0, speed_tone(duration=duration), "short.wav", end=-1, playback_speed=speed)
+    audio.wait_ready(audio.channel.playing)
+    samples = read_speed_to_end(audio)
+    assert max(abs(sample) for sample in samples) > 0.01
+    assert len(samples) / 48000 == pytest.approx(duration / speed, abs=0.011)
+
+
+def test_queue_keeps_each_voice_speed(audio):
+    """A 3x clip hands off to a separately buffered 0.5x clip with both durations and pitches intact."""
+    renpysound.play(0, speed_tone(), "fast.wav", end=-1, playback_speed=3.0)
+    audio.wait_ready(audio.channel.playing)
+    renpysound.queue(0, speed_tone(), "slow.wav", end=-1, playback_speed=0.5)
+    audio.wait_ready(audio.channel.queued)
+    samples = read_speed_to_end(audio)
+    assert len(samples) / 48000 == pytest.approx(2.8, abs=0.02)
+    assert tone_frequency(samples[:18000]) == pytest.approx(440, abs=2)
+    assert tone_frequency(samples[24000:]) == pytest.approx(440, abs=2)
+
+
+def wait_speed_ready(audio):
+    """Wait for a live-rate rebuild without reading silence from the intentionally paused dummy device."""
+    deadline = time.monotonic() + 5
+    event = threading.Event()
+    while True:
+        media = ctypes.cast(audio.channel.playing, ctypes.POINTER(MediaHead)).contents
+        audio.native.SDL_LockMutex(media.lock)
+        try:
+            ready = media.ready and not media.seek_requested and media.audio_queue_samples >= 960
+        finally:
+            audio.native.SDL_UnlockMutex(media.lock)
+        if ready:
+            return
+        assert time.monotonic() < deadline, "Live voice rate did not finish preparing."
+        event.wait(0.001)
+
+
+def test_live_voice_speed_keeps_position_and_pitch(audio):
+    """Changing a playing WAV between slow, fast and normal rates preserves its decoder and source clock."""
+    renpysound.play(0, speed_tone(duration=4), "live.wav", end=-1)
+    audio.wait_ready(audio.channel.playing)
+    decoder = audio.channel.playing
+    read_chunks(audio, 4800)
+    for speed in [0.25, 4.0, 0.5, 3.0, 1.5, 1.0, 2.0]:
+        before = renpysound.get_pos(0)
+        renpysound.set_playback_speed(0, speed)
+        assert renpysound.get_pos(0) == pytest.approx(before, abs=0.002)
+        wait_speed_ready(audio)
+        assert audio.channel.playing == decoder
+        assert renpysound.get_playback_speed(0) == speed
+        assert renpysound.get_pos(0) == pytest.approx(before, abs=0.002)
+        audio.native.SDL_ClearAudioStream(audio.stream)
+        samples = read_chunks(audio, 4800)
+        assert tone_frequency(samples) == pytest.approx(440, abs=2)
+        assert renpysound.get_pos(0) == pytest.approx(before + 0.1 * speed, abs=0.01)
+
+
+def test_live_speed_while_paused_and_rapid_changes(audio):
+    """Only the latest rapid request wins; rebuilding a paused clip must not resume it or move its position."""
+    renpysound.play(0, speed_tone(duration=4), "paused.wav", end=-1)
+    audio.wait_ready(audio.channel.playing)
+    read_chunks(audio, 4800)
+    renpysound.pause(0)
+    position = renpysound.get_pos(0)
+    for speed in [0.5, 3.0, 1.0, 2.0, 0.75]:
+        renpysound.set_playback_speed(0, speed)
+    wait_speed_ready(audio)
+    assert renpysound.get_playback_speed(0) == 0.75
+    assert renpysound.get_state(0) == 2
+    audio.read(4800)
+    assert renpysound.get_pos(0) == pytest.approx(position, abs=0.002)
+    audio.native.SDL_ClearAudioStream(audio.stream)
+    renpysound.unpause(0)
+    samples = read_chunks(audio, 4800)
+    assert tone_frequency(samples) == pytest.approx(440, abs=2)
+    assert renpysound.get_pos(0) == pytest.approx(position + 0.075, abs=0.01)
+
+
+def test_tempo_eof_after_underrun_does_not_read_past_output(audio):
+    """
+    An underrun can consume the container's codec padding before the decoder discovers EOF.
+
+    Hold SDL's recursive media mutex while reading to keep the decoder from refilling the queue, then wake it
+    until it reaches EOF. The corrected duration must not fall behind the already consumed output. A subsequent
+    read returns zero without touching its buffer, guarding the negative memcpy length that previously crashed.
+    """
+    read_audio = audio.bind("media_read_audio", ctypes.c_int, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int)
+    wake = audio.bind("SDL_BroadcastCondition", None, ctypes.c_void_p)
+    renpysound.play(0, seek_opus(), "underrun.opus", end=-1, playback_speed=2.0)
+    address = audio.channel.playing
+    audio.wait_ready(address)
+    media = ctypes.cast(address, ctypes.POINTER(MediaAudioHead)).contents
+
+    audio.native.SDL_LockMutex(media.lock)
+    try:
+        assert not media.audio_finished
+        assert media.audio_duration > 0
+        assert media.audio_queue_samples < media.audio_duration
+        output = (ctypes.c_ubyte * (media.audio_duration * 4))()
+        assert read_audio(address, output, len(output)) == len(output)
+        consumed = media.audio_read_samples
+        # The fixture has 3 seconds of PCM and additional Opus container padding.
+        assert consumed > 3 * 48000 / 2
+    finally:
+        audio.native.SDL_UnlockMutex(media.lock)
+
+    deadline = time.monotonic() + 5
+    event = threading.Event()
+    while True:
+        audio.native.SDL_LockMutex(media.lock)
+        try:
+            finished = bool(media.audio_finished)
+            if not finished:
+                media.needs_decode = 1
+                wake(media.cond)
+        finally:
+            audio.native.SDL_UnlockMutex(media.lock)
+        if finished:
+            break
+        assert time.monotonic() < deadline, "Decoder did not finish after the underrun."
+        event.wait(0.001)
+
+    audio.native.SDL_LockMutex(media.lock)
+    try:
+        assert media.audio_duration >= consumed
+        assert media.audio_read_samples == consumed
+        sentinel = (ctypes.c_ubyte * 64)(*[0xA5] * 64)
+        assert read_audio(address, sentinel, len(sentinel)) == 0
+        assert bytes(sentinel) == bytes([0xA5]) * 64
+    finally:
+        audio.native.SDL_UnlockMutex(media.lock)
