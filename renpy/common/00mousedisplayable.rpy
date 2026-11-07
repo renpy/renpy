@@ -63,7 +63,7 @@ init -1500 python:
 
             if cursor is None:
                 self.cursors[name] = None
-                return
+                return self
 
             self.cursors[name] = ( renpy.displayable(cursor), x, y )
             return self
