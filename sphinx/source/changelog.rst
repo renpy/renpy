@@ -95,6 +95,11 @@ Ren'Py now supports Live2D :ref:`pose files <live2d-poses>`, which keep alternat
 of an arm, from being shown at the same time. This can be controlled with the `pose` argument to :func:`Live2D` and
 the :var:`config.live2d_pose` variable, and is disabled in games that declare compatibility with Ren'Py 8.5 or earlier.
 
+The interpretation of Bezier curves in Live2D has been changed to match the Cardano interpretation,
+which is consistent with the Live2D SDK. This behavior can be changed with the `old_beziers` parameter to the :func:`Live2D`
+displayable, or with the :var:`config.live2d_old_beziers` variable, and the old interpretation is used in games that
+declare compatibility with Ren'Py 8.5 or earlier.
+
 Clipboard
 ---------
 
@@ -473,11 +478,6 @@ that was replaced.
 
 8.5.4
 =====
-
-
-The interpretation of Bezier curves in Live2D has been changed to match the Cardano interpretation,
-which is consistent with the Live2D SDK. This behavior can be changed with the `old_beziers` parameter to the :func:`Live2D`
-displayable, or with the :var:`config.live2d_old_beziers` variable,
 
 It is now possible to use `for` and `while` loops in automated tests.
 

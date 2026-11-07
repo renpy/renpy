@@ -88,13 +88,9 @@ old behavior. To revert to it, add to your game::
 
     define config.live2d_pose = False
 
-.. _incompatible-8.5.4:
-
-8.5.4
------
-
-Ren'Py now uses the Cardano interpretation of Bezier curves in Live2D, which is consistent with the Live2D SDK.
-This may cause some motions to change their behavior. To revert to the old behavior, add to your game::
+**Live2D Bezier Curves** Ren'Py now uses the Cardano interpretation of Bezier curves in Live2D, which is consistent
+with the Live2D SDK. This may cause some motions to change their behavior. Games declaring compatibility with Ren'Py
+8.5 or earlier retain the old behavior. To revert to it, add to your game::
 
     define config.live2d_old_beziers = True
 
