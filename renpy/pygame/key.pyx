@@ -89,16 +89,28 @@ def name(key):
     return SDL_GetKeyName(key)
 
 def start_text_input():
+    if main_window is None:
+        raise error("No window has been created.")
+
     SDL_StartTextInput(main_window.window)
 
 def stop_text_input():
+    if main_window is None:
+        raise error("No window has been created.")
+
     SDL_StopTextInput(main_window.window)
 
 def text_input_active():
+    if main_window is None:
+        raise error("No window has been created.")
+
     return SDL_TextInputActive(main_window.window)
 
 def set_text_input_rect(rect):
     cdef SDL_Rect sdl_rect
+
+    if main_window is None:
+        raise error("No window has been created.")
 
     if rect is not None:
         to_sdl_rect(rect, &sdl_rect)
@@ -112,5 +124,8 @@ def has_screen_keyboard_support():
 def is_screen_keyboard_shown(Window window=None):
     if window is None:
         window = main_window
+
+    if window is None:
+        raise error("No window has been created.")
 
     return SDL_ScreenKeyboardShown(window.window)

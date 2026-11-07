@@ -230,7 +230,7 @@ cdef make_keyboard_event(SDL_KeyboardEvent *e):
               'repeat' : e.repeat,
                }
 
-    if SDL_TextInputActive(main_window.window):
+    if main_window is not None and SDL_TextInputActive(main_window.window):
 
         if e.type == SDL_EVENT_KEY_DOWN:
             # Be careful to only check for a TEXTINPUT event when you know that
@@ -636,12 +636,18 @@ def get_blocked(t):
     return not SDL_EventEnabled(t)
 
 def set_grab(on):
+    if main_window is None:
+        raise error("No window has been created.")
+
     SDL_SetWindowMouseGrab(main_window.window, on)
 
     if not SDL_CursorVisible():
         SDL_SetWindowRelativeMouseMode(main_window.window, on)
 
 def get_grab():
+    if main_window is None:
+        raise error("No window has been created.")
+
     return SDL_GetWindowMouseGrab(main_window.window)
 
 def set_mousewheel_buttons(flag):
