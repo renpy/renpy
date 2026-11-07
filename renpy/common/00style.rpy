@@ -372,6 +372,7 @@ init -1800:
 
     style drag:
         focus_mask None
+        mouse "drag"
 
     # Out-of-game menu root windows
 
