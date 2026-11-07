@@ -1620,6 +1620,11 @@ class With(Node):
         self.paired = paired
 
     def diff_info(self):
+        # Older .rpyc files store `with None` as the expression "None", so treat it the same as None to keep
+        # node names stable when merging with them.
+        if self.expr is None:
+            return (With, "None")
+
         return (With, self.expr)
 
     def execute(self):
