@@ -567,8 +567,11 @@ def bootstrap(renpy_base: str):
 
         renpy.display.tts.tts(None)  # type: ignore
 
+        # The preload thread is started when renpy.display.im is imported, so stop it even if
+        # the display was never initialized.
+        renpy.display.im.cache.quit()  # type: ignore
+
         if renpy.display.draw:  # type: ignore
-            renpy.display.im.cache.quit()  # type: ignore
             renpy.display.draw.quit()  # type: ignore
 
         renpy.audio.audio.quit()
