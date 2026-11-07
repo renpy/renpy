@@ -23,7 +23,7 @@ from __future__ import print_function
 
 from renpy.pygame.sdl cimport *
 from renpy.pygame.surface cimport Surface
-from renpy.pygame.iostream cimport IOStream, open_io
+from renpy.pygame.iostream cimport open_io
 
 from freetype cimport *
 from ttgsubtable cimport *
@@ -290,8 +290,7 @@ cdef void close_func(FT_Stream stream) noexcept:
     """
     Close the stream.
 
-    Currently does nothing, closing is taken care of at the Font
-    object level.
+    Does nothing, as HBFace owns the stream and closes it in __dealloc__.
     """
 
     return
@@ -397,14 +396,12 @@ cdef class HBFace:
 
         float size
 
-        # The stream the font is read from.
-        IOStream f
-
-        # The SDL_IOStream borrowed from f, used by io_func.
+        # The stream the font is read from, used by io_func. HBFace owns it, and closes it once the
+        # face is done (or, for fonts loaded into memory, once they are read).
         SDL_IOStream *rw
 
         # If the font was loaded into memory, the buffer holding it. Freed after the face
-        # is done. When this is set, f is closed and rw is NULL.
+        # is done. When this is set, rw has been closed and is NULL.
         unsigned char *memory
 
         # The offset in that file.
@@ -432,6 +429,10 @@ cdef class HBFace:
         if self.memory:
             PyMem_Free(self.memory)
 
+        if self.rw:
+            SDL_CloseIO(self.rw)
+            self.rw = NULL
+
     def __init__(self, f, index, fn):
 
         cdef int error
@@ -447,9 +448,9 @@ cdef class HBFace:
         # The filename.
         self.fn = fn
 
-        # The stream that the font is opened from.
-        self.f = open_io(f, "rb", fn)
-        self.rw = self.f.borrow()
+        # Take ownership of the stream, so closing a wrapper around f (such as an io.BufferedReader
+        # around the IOSubFile from an archive or apk) no longer closes the stream io_func reads.
+        self.rw = open_io(f, "rb", fn).take()
 
         sdl_size = SDL_GetIOSize(self.rw)
         if sdl_size < 0:
@@ -480,8 +481,8 @@ cdef class HBFace:
 
                 total += read
 
+            SDL_CloseIO(self.rw)
             self.rw = NULL
-            self.f.close()
 
             self.open_args.flags = FT_OPEN_MEMORY
             self.open_args.memory_base = self.memory
