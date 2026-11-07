@@ -84,6 +84,10 @@ def fetch_pause():
 
 
 class FetchProgress(object):
+    """
+    A file-like request body that tracks upload progress, and also tracks download progress for the response.
+    """
+
     def __init__(self, data):
         if data is None:
             self.data = b""
@@ -113,6 +117,42 @@ class FetchProgress(object):
 
         self.upload_current += len(chunk)
         return chunk
+
+    def tell(self):
+        """
+        Returns the current upload position. Having this lets requests record the position of the body, so it
+        can be rewound if the server redirects with a 307 or 308 status code.
+        """
+
+        return self.offset
+
+    def seek(self, position, whence=os.SEEK_SET):
+        """
+        Moves the upload position to `position`, which is only valid with whence=os.SEEK_SET, and resets the
+        upload progress to match. requests calls this to rewind the body before following a 307 or 308 redirect.
+        """
+
+        if whence != os.SEEK_SET:
+            raise OSError("FetchProgress only supports seeking from the start.")
+
+        self.offset = max(0, min(position, self.upload_expected))
+        self.upload_current = self.offset
+
+        return self.offset
+
+    def __iter__(self):
+        """
+        Yields the remaining data in chunks. requests only records the body position (and so can rewind it on a
+        redirect) for bodies that are iterable. Bodies with a read method are sent with read, not this.
+        """
+
+        while True:
+            chunk = self.read(65536)
+
+            if not chunk:
+                return
+
+            yield chunk
 
     def get_progress(self):
         if self.monitoring_download:
@@ -171,7 +211,7 @@ def fetch_requests(url, method, data, content_type, timeout, headers):
             r = requests.request(
                 method,
                 url,
-                data=progress if data is not None else None,
+                data=progress if progress.upload_expected else None,
                 timeout=timeout,
                 headers=headers,
                 proxies=proxies,
@@ -180,7 +220,12 @@ def fetch_requests(url, method, data, content_type, timeout, headers):
             r.raise_for_status()
 
             progress.monitoring_download = True
-            progress.download_expected = int(r.headers.get("Content-Length", 0))
+
+            # The Content-Length is only used for progress, so ignore it if the server sends something invalid.
+            try:
+                progress.download_expected = max(0, int(r.headers.get("Content-Length", 0)))
+            except ValueError:
+                progress.download_expected = 0
 
             chunks = []
             for chunk in r.iter_content(chunk_size=65536):
