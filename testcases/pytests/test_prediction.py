@@ -75,3 +75,26 @@ def test_screen_pause_does_not_postpone_prediction_yield(mocker, predicting):
     predict.predicting = False
     predict.next_predict_pause_ns = 0
     assert list(slast.predict_pause(context)) == []
+
+
+@pytest.mark.parametrize("yield_prediction", [True, False])
+def test_screen_node_pauses_only_when_yield_prediction(mocker, predicting, yield_prediction):
+    """
+    A screen-language node yields to the prediction scheduler only when its context has yield_prediction set,
+    and doesn't even call predict_pause otherwise.
+
+    Nodes gate the predict_pause call on context.yield_prediction so ordinary screen updates don't create a
+    generator per node. SLPython stands in for every node. The deadline is already reached and prediction is
+    on (the predicting fixture), so a yield means the gate let predict_pause run, and the node's code must run
+    either way.
+    """
+
+    spy = mocker.spy(slast, "predict_pause")
+    node = slast.SLPython(("test.rpy", 1), SimpleNamespace(bytecode=compile("ran = True", "test", "exec")))
+    context = SimpleNamespace(yield_prediction=yield_prediction, globals={}, scope={})
+
+    yields = list(node.execute_generator(context))
+
+    assert yields == ([None] if yield_prediction else [])
+    assert spy.call_count == (1 if yield_prediction else 0)
+    assert context.scope == {"ran": True}

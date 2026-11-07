@@ -511,7 +511,8 @@ class SLBlock(SLNode):
                     break
 
     def execute_generator(self, context):
-        yield from predict_pause(context)
+        if context.yield_prediction:
+            yield from predict_pause(context)
 
         # Note: SLBlock.execute_generator() is inlined in various locations for performance
         # reasons.
@@ -886,7 +887,8 @@ class SLDisplayable(SLBlock):
         return
 
     def execute_generator(self, context):
-        yield from predict_pause(context)
+        if context.yield_prediction:
+            yield from predict_pause(context)
 
         debug = context.debug
 
@@ -1455,7 +1457,8 @@ class SLIf(SLNode):
             self.last_keyword |= block.last_keyword
 
     def execute_generator(self, context):
-        yield from predict_pause(context)
+        if context.yield_prediction:
+            yield from predict_pause(context)
 
         if context.predicting:
             yield from self.execute_predicting(context)
@@ -1599,7 +1602,8 @@ class SLShowIf(SLNode):
         self.last_keyword = True
 
     def execute_generator(self, context):
-        yield from predict_pause(context)
+        if context.yield_prediction:
+            yield from predict_pause(context)
 
         # This is true when the block should be executed - when no outer
         # showif is False, and when no prior block in this showif has
@@ -1722,7 +1726,8 @@ class SLFor(SLBlock):
         self.last_keyword = True
 
     def execute_generator(self, context):
-        yield from predict_pause(context)
+        if context.yield_prediction:
+            yield from predict_pause(context)
 
         variable = self.variable
         expr = self.expression_expr
@@ -1892,7 +1897,8 @@ class SLPython(SLNode):
         analysis.python(self.code.source)
 
     def execute_generator(self, context):
-        yield from predict_pause(context)
+        if context.yield_prediction:
+            yield from predict_pause(context)
         exec(self.code.bytecode, context.globals, context.scope)
 
     def prepare(self, analysis):
@@ -2078,7 +2084,8 @@ class SLUse(SLNode):
             renpy.ui.stack.pop()
 
     def execute_generator(self, context):
-        yield from predict_pause(context)
+        if context.yield_prediction:
+            yield from predict_pause(context)
 
         if isinstance(self.target, renpy.ast.PyExpr):
             target_name = eval(self.target, context.globals, context.scope)
@@ -2225,7 +2232,8 @@ class SLTransclude(SLNode):
         return rv
 
     def execute_generator(self, context):
-        yield from predict_pause(context)
+        if context.yield_prediction:
+            yield from predict_pause(context)
 
         if not context.transclude:
             return
@@ -2359,7 +2367,8 @@ class SLCustomUse(SLNode):
         self.constant = min(self.constant, self.ast.constant)
 
     def execute_generator(self, context):
-        yield from predict_pause(context)
+        if context.yield_prediction:
+            yield from predict_pause(context)
 
         # Figure out the cache to use.
         ctx = SLContext(context)
@@ -2667,7 +2676,8 @@ class SLScreen(SLBlock):
             profile_log.write("")
 
     def execute_generator(self, context):
-        yield from predict_pause(context)
+        if context.yield_prediction:
+            yield from predict_pause(context)
         self.const_ast.keywords(context)
         yield from SLBlock.execute_generator(self.const_ast, context)
 
