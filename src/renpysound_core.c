@@ -1209,7 +1209,9 @@ int RPS_get_pos(int channel) {
 
     LOCK_NAME();
 
-    if (c->playing) {
+    /* An ENDED channel keeps its decoder only for an explicit seek; report
+     * it as not playing, as before natural EOF retained the decoder. */
+    if (c->playing && c->state != CHANNEL_ENDED) {
         rv = samples_to_ms(c->pos) + c->playing_start_ms;
     } else {
         rv = -1;
@@ -1237,7 +1239,7 @@ double RPS_get_duration(int channel) {
 
     LOCK_NAME();
 
-    if (c->playing) {
+    if (c->playing && c->state != CHANNEL_ENDED) {
         rv = media_duration(c->playing);
     } else {
         rv = 0.0;
