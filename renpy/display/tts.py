@@ -336,9 +336,15 @@ def periodic():
     if process is not None:
         if process.poll() is not None:
             if process.returncode:
-                if get_voice(last_spoken)[0] is not None:
-                    renpy.game.preferences.tts_voice = None
-                    renpy.config.tts_function(last_spoken)
+                voice, text = get_voice(last_spoken)
+
+                if voice is not None:
+                    # Only blame the preference if it was the voice that failed, not an unrelated inline
+                    # {voice=...} tag. The retry uses the text without the tag, so the tag's voice is not tried again.
+                    if voice == renpy.game.preferences.tts_voice:
+                        renpy.game.preferences.tts_voice = None
+
+                    renpy.config.tts_function(text)
 
             process = None
 
@@ -791,6 +797,8 @@ class PrismTTS(object):
         self.tts_backend = None
         self._tts_backends: dict[int, _CtypesBackend] = {}
         self._default_voices: dict[int, int | None] = {}
+        self._changed_voices: set[int] = set()
+        "The ids of the backends whose voice speak() changed away from the default."
         self._voice_catalog: dict[int, list[tuple[int, str, str]]] | None = None
         self._init_backends()
 
@@ -979,8 +987,12 @@ class PrismTTS(object):
                 b, index = selected_voice
                 try:
                     b.voice = index
+                    self._changed_voices.update(bid for bid, tb in self._tts_backends.items() if tb is b)
                 except Exception as e:
                     renpy.display.log.write(f"Failed to set Prism voice for {b.name}: {e}")
+
+        if mode != "screenreader" and selected_voice is None:
+            self._restore_default_voice(b)
 
         if interrupt:
             # The voice may live on a different backend than the previous utterance.
@@ -1046,6 +1058,28 @@ class PrismTTS(object):
             self._voice_catalog = catalog
         return self._voice_catalog
 
+    def _restore_default_voice(self, b: "_CtypesBackend") -> None:
+        """
+        Restores the voice of `b` to the default it had at startup, if speak() changed it. This keeps a voice
+        chosen for one utterance, such as a preview of a voice in the preferences, from leaking into later speech
+        that uses the default voice.
+        """
+
+        for bid, backend in self._tts_backends.items():
+            if backend is not b or bid not in self._changed_voices:
+                continue
+
+            self._changed_voices.discard(bid)
+            default = self._default_voices.get(bid)
+
+            if default is None:
+                continue
+
+            try:
+                b.voice = default
+            except Exception as e:
+                renpy.display.log.write(f"Failed to restore Prism default voice for {b.name}: {e}")
+
     def resolve_voice(self, voice: str) -> "tuple[_CtypesBackend, int] | None":
         """Resolve qualified or legacy names, including voices omitted from the menu."""
         catalog = self._get_voice_catalog()
@@ -1081,6 +1115,7 @@ class PrismTTS(object):
             b.free()
         self._tts_backends.clear()
         self._default_voices.clear()
+        self._changed_voices.clear()
         self._voice_catalog = None
         self.sr_backend = None
         self.tts_backend = None
@@ -1288,18 +1323,23 @@ def get_voice(text: str = ""):
     """
     :undocumented:
 
-    Returns the self-voicing voice to use. If :var:`preferences.tts_voice` is set,
-    it is used. If the selected voice is unavailable, returns None. Prism also
-    accepts installed voices omitted from its reduced list and legacy names
-    without a backend suffix.
+    Returns the self-voicing voice to use. If `text` contains a ``{voice=...}``
+    tag, that voice is used, and the tag is removed from the returned text. The tag
+    is internal and undocumented: the preferences screen uses it to preview a voice.
+    Otherwise, if :var:`preferences.tts_voice` is set, it is used. If the selected
+    voice is unavailable, returns None. Prism also accepts installed voices omitted
+    from its reduced list and legacy names without a backend suffix.
     """
+
+    voice = None
 
     if m := VOICE_RE.search(text):
         voice = m.group(1)
         text = VOICE_RE.sub("", text)
 
-    prefs = getattr(getattr(renpy, "game", None), "preferences", None)
-    voice = prefs.tts_voice if prefs is not None else None
+    if voice is None:
+        prefs = getattr(getattr(renpy, "game", None), "preferences", None)
+        voice = prefs.tts_voice if prefs is not None else None
 
     if voice is not None and voice in get_tts_voices():
         return voice, text

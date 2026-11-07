@@ -732,3 +732,82 @@ def test_find_and_load_prism_checks_executable_dir(mocker, tmp_path):
     res = tts_module._find_and_load_prism()
     assert res is not None
     assert loaded_paths[0] == fake_dll_path
+
+
+def test_inline_voice_tag_overrides_preference(make_tts, mocker):
+    """An inline {voice=...} tag is stripped from the text and takes precedence over preferences.tts_voice.
+
+    The preferences screen uses the tag to preview each voice in that voice. The tag must be honoured even when the
+    saved preference names a different voice, and a tag naming an unavailable voice must yield no voice (not fall
+    back to the preference) while still being stripped from the text.
+    """
+    tts, _backends = make_tts([("sapi", create_voices(4), 0)])
+    preferences = SimpleNamespace(tts_voice="en-US: Voice 1")
+    mocker.patch.object(tts_module, "platform_tts", tts)
+    mocker.patch.object(tts_module, "_tts_voices_cache", None)
+    mocker.patch.object(tts_module.renpy, "game", SimpleNamespace(preferences=preferences), create=True)
+
+    assert tts_module.get_voice("{voice=en-US: Voice 3}Hello") == ("en-US: Voice 3", "Hello")
+    assert tts_module.get_voice("{voice=xx-XX: Missing}Hello") == (None, "Hello")
+    assert tts_module.get_voice("Hello") == ("en-US: Voice 1", "Hello")
+
+
+@pytest.mark.parametrize(
+    ("last_spoken", "retried_text", "preference_after"),
+    [
+        ("{voice=en-US: Voice 3}Hello", "Hello", "en-US: Voice 1"),
+        ("{voice=en-US: Voice 1}Hello", "Hello", None),
+        ("Hello", "Hello", None),
+    ],
+    ids=["tagged", "tagged-same-as-preference", "preference"],
+)
+def test_failed_speech_retry_drops_tag_and_blames_only_the_preference(
+    make_tts, mocker, last_spoken, retried_text, preference_after
+):
+    """After a nonzero speech exit, periodic() retries once without the voice and blames only the preference.
+
+    A failure with an inline {voice=...} tag must retry with the tag stripped and leave the saved preference alone;
+    retrying the tagged text would fail the same way forever. A failure with the preference voice, whether it was
+    chosen by the preference or by a tag naming the same voice, clears the preference, as before.
+    """
+    tts, _backends = make_tts([("sapi", create_voices(4), 0)])
+    preferences = SimpleNamespace(tts_voice="en-US: Voice 1")
+    tts_function = mocker.Mock()
+    process = mocker.Mock(returncode=1)
+    process.poll.return_value = 1
+    mocker.patch.object(tts_module, "platform_tts", tts)
+    mocker.patch.object(tts_module, "_tts_voices_cache", None)
+    mocker.patch.object(tts_module, "process", process)
+    mocker.patch.object(tts_module, "last_spoken", last_spoken)
+    mocker.patch.object(tts_module.renpy, "game", SimpleNamespace(preferences=preferences), create=True)
+    mocker.patch.object(tts_module.renpy.config, "tts_function", tts_function)
+
+    tts_module.periodic()
+
+    tts_function.assert_called_once_with(retried_text)
+    assert preferences.tts_voice == preference_after
+    assert tts_module.process is None
+
+
+def test_previewed_voice_is_restored_for_default_speech(make_tts, mocker):
+    """A voice chosen by an inline {voice=...} tag does not leak into later untagged speech.
+
+    With no saved preference, previewing a non-default voice changes the Prism backend's voice. The next utterance
+    without a tag must put the backend back to the default voice captured at startup, and further untagged speech
+    must not touch the voice again.
+    """
+    tts, backends = make_tts([("sapi", create_voices(4), 2)])
+    preferences = SimpleNamespace(tts_voice=None, tts_speed=1.0, get_mixer=lambda name: 1.0)
+    mocker.patch.object(tts_module, "platform_tts", tts)
+    mocker.patch.object(tts_module, "_tts_voices_cache", None)
+    mocker.patch.object(tts_module.renpy, "game", SimpleNamespace(preferences=preferences), create=True)
+
+    tts.speak("{voice=en-US: Voice 3}Preview")
+    assert backends[0].voice == 3
+
+    tts.speak("Hello")
+    assert backends[0].voice == 2
+
+    backends[0].voice = 1
+    tts.speak("Again")
+    assert backends[0].voice == 1
