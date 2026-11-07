@@ -882,7 +882,12 @@ class CompileCache:
     def save(self):
         """
         Saves the bytecode cache.
+
+        Also drops warnings whose code was not compiled or loaded during this run, so warnings for code that
+        has been changed or removed are neither saved nor reported by lint.
         """
+
+        self.warnings = {k: v for k, v in self.warnings.items() if k[1] in self.new_bytecode_cache}
 
         if renpy.macapp:
             return
