@@ -43,6 +43,10 @@ cdef class TextureLoader:
     # The program used for fast texture loading
     cdef Program ftl_program
 
+    # An identity for mask rasterization in the current graphics context.
+    # Unlike a Program, this token owns no OpenGL resource.
+    cdef object mask_generation
+
     # The queue of textures that need to be loaded.
     cdef object texture_load_queue
 
