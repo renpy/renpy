@@ -691,6 +691,7 @@ init -1500 python:
 
 
         kwargs = { }
+        screen = None
 
         def __init__(self, prompt, yes, no=None, confirm_selected=False, screen=None, **kwargs):
             self.prompt = prompt

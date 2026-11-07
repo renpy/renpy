@@ -2194,6 +2194,7 @@ class Text(renpy.display.displayable.Displayable):
     tokenized = False
     slow_done_time = None
     safe = False
+    afm_start = None
 
     def after_upgrade(self, version):
         if version < 3:
