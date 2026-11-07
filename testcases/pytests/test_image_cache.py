@@ -213,3 +213,15 @@ def test_premultiply_setting_gets_separate_cache_entry(cache, draw):
         {"properties": {}},
         {"properties": {"premultiplied": True}},
     ]
+
+
+def test_decode_pool_auto_size_without_cpu_count(mocker, cache):
+    """
+    With preload_threads set to 0 (auto), get_decode_pool must not raise when os.cpu_count() returns None, which the
+    platform may do when the CPU count cannot be determined. It falls back to a single thread, so no pool is created.
+    """
+
+    mocker.patch.object(renpy.config, "preload_threads", 0)
+    mocker.patch.object(im.os, "cpu_count", return_value=None)
+
+    assert cache.get_decode_pool() is None
