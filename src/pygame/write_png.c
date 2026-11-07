@@ -33,9 +33,38 @@
 #define png_voidp voidp
 #endif
 
+/* State shared with the libpng callbacks. */
+typedef struct {
+	/* True once SDL_WriteIO has failed; the SDL error it set is the useful one, so it must be kept. */
+	int write_failed;
+} png_save_state;
+
 static void png_write_data(png_structp png_ptr,png_bytep data, png_size_t length){
 	SDL_IOStream *rp = (SDL_IOStream*) png_get_io_ptr(png_ptr);
-	SDL_WriteIO(rp,data,length);
+
+	if (SDL_WriteIO(rp,data,length) != length) {
+		((png_save_state *) png_get_error_ptr(png_ptr))->write_failed = 1;
+
+		/* Does not return: ends up in png_error_fn, which longjmps to the handler in
+		 * Pygame_SDL3_SavePNG_IO. */
+		png_error(png_ptr, "Error writing PNG data");
+	}
+}
+
+/* Records libpng errors in the SDL error (unless a write failure already did), and unwinds. This
+ * replaces libpng's default handler, which would also print to stderr. */
+static void png_error_fn(png_structp png_ptr, png_const_charp msg){
+	png_save_state *state = (png_save_state *) png_get_error_ptr(png_ptr);
+
+	if (!state->write_failed) {
+		SDL_SetError("Error writing PNG: %s", msg);
+	}
+
+	png_longjmp(png_ptr, 1);
+}
+
+static void png_warning_fn(png_structp png_ptr, png_const_charp msg){
+	/* Ignore warnings. */
 }
 
 int Pygame_SDL3_SavePNG_IO(SDL_IOStream *src, SDL_Surface *surf,int compression){
@@ -49,11 +78,36 @@ int Pygame_SDL3_SavePNG_IO(SDL_IOStream *src, SDL_Surface *surf,int compression)
 	Uint8 *palette_alpha=NULL;
 	png_byte **row_pointers=NULL;
 	unsigned int target_format;
+	png_save_state state = { 0 };
 
 	png_ptr=NULL;info_ptr=NULL;palette=NULL;ret=-1;
 
 	if( !src || !surf) {
 		goto savedone2; /* Nothing to do. */
+	}
+
+	fmt= SDL_GetPixelFormatDetails(surf->format);
+	if (!fmt) {
+		goto savedone2; /* SDL has set the error. */
+	}
+
+	/* Convert to a tightly packed format that matches the PNG color type: 4 bytes per pixel RGBA with
+	 * alpha, 3 bytes per pixel RGB without. This is done before any libpng state exists so a failure
+	 * leaves nothing half-written. */
+	if (fmt->Amask) {
+		target_format = SDL_PIXELFORMAT_RGBA32;
+	} else {
+		target_format = SDL_PIXELFORMAT_RGB24;
+	}
+
+	if (surf->format != target_format) {
+		tempsurf = SDL_ConvertSurface(surf, target_format);
+
+		if (!tempsurf){
+			goto savedone2; /* SDL has set the error. */
+		}
+
+		surf = tempsurf;
 	}
 
 	row_pointers=(png_byte **)malloc(surf->h * sizeof(png_byte*));
@@ -62,7 +116,7 @@ int Pygame_SDL3_SavePNG_IO(SDL_IOStream *src, SDL_Surface *surf,int compression)
 		goto savedone2;
 	}
 
-	png_ptr=png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL,NULL,NULL);
+	png_ptr=png_create_write_struct(PNG_LIBPNG_VER_STRING, &state, png_error_fn, png_warning_fn);
 	if (!png_ptr){
 		SDL_SetError("Couldn't allocate memory for PNG file version: " PNG_LIBPNG_VER_STRING);
 		goto savedone2;
@@ -76,7 +130,6 @@ int Pygame_SDL3_SavePNG_IO(SDL_IOStream *src, SDL_Surface *surf,int compression)
 	png_set_write_fn(png_ptr,(png_voidp)src,png_write_data,NULL);
 
 	if (setjmp(png_jmpbuf(png_ptr))){
-		SDL_SetError("Unknown error writing PNG");
 		goto savedone;
 	}
 
@@ -93,8 +146,6 @@ int Pygame_SDL3_SavePNG_IO(SDL_IOStream *src, SDL_Surface *surf,int compression)
 	else
 		png_set_compression_level(png_ptr,compression);
 
-	fmt= SDL_GetPixelFormatDetails(surf->format);
-
 	if (fmt->Amask) {
 		png_set_IHDR(png_ptr,info_ptr,
 			surf->w,surf->h,8,PNG_COLOR_TYPE_RGB_ALPHA,
@@ -109,31 +160,11 @@ int Pygame_SDL3_SavePNG_IO(SDL_IOStream *src, SDL_Surface *surf,int compression)
 
 	png_write_info(png_ptr, info_ptr);
 
-	if (fmt->Amask) {
-		target_format = SDL_PIXELFORMAT_ABGR8888;
-	} else {
-		target_format = SDL_PIXELFORMAT_XBGR8888;
-	}
-
-	if (surf->format != target_format) {
-		tempsurf = SDL_ConvertSurface(surf, target_format);
-		surf = tempsurf;
-
-		if (!tempsurf){
-			SDL_SetError("Couldn't allocate temp surface");
-			goto savedone;
-		}
-	}
-
 	for(i=0;i < surf->h;i++){
 		row_pointers[i]= ((png_byte*) surf->pixels) + i * surf->pitch;
 	}
 
 	png_write_image(png_ptr, row_pointers);
-
-	if (tempsurf) {
-		SDL_DestroySurface(tempsurf);
-	}
 
 	png_write_end(png_ptr, NULL);
 
@@ -143,6 +174,9 @@ savedone: /* clean up and return */
 	png_destroy_write_struct(&png_ptr,&info_ptr);
 
 savedone2:
+	if (tempsurf) {
+		SDL_DestroySurface(tempsurf);
+	}
 	if (palette) {
 		free(palette);
 	}
