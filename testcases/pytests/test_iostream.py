@@ -147,6 +147,35 @@ def test_subfile_from_path(data_file, data):
         assert f.read(5) == data[4010:4015]
 
 
+class NoneSeekFile(io.BytesIO):
+    """
+    A BytesIO whose seek() returns None, like file-likes written before seek() was specified to return the position.
+    """
+
+    def seek(self, offset, whence=io.SEEK_SET):
+        super().seek(offset, whence)
+
+
+@pytest.mark.parametrize("seek", [iostream.IOFileLike.seek, iostream.IOStream.seek], ids=["python", "sdl"])
+def test_filelike_seek_returning_none(data, seek):
+    """
+    IOFileLike seeks on a file-like whose seek() returns None, falling back to tell() for the new position.
+
+    IOFileLike.seek calls the file-like directly, so IOStream.seek is called unbound to also exercise the
+    callback SDL uses (py_seek), which is what image and audio loaders reach.
+    """
+
+    model = io.BytesIO(data)
+
+    with iostream.IOFileLike(NoneSeekFile(data)) as f:
+        assert seek(f, 100) == model.seek(100)
+        assert f.read(10) == model.read(10)
+        assert seek(f, 20, io.SEEK_CUR) == model.seek(20, io.SEEK_CUR)
+        assert f.read(10) == model.read(10)
+        assert seek(f, -50, io.SEEK_END) == model.seek(-50, io.SEEK_END)
+        assert f.read() == model.read()
+
+
 def test_buffering_argument(data_file):
     """
     The default buffering is the platform default, and negative buffering is rejected.

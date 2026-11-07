@@ -1100,7 +1100,13 @@ cdef Sint64 py_seek(void *userdata, Sint64 offset, SDL_IOWhence whence) noexcept
         else:
             raise ValueError(f"Invalid whence: {whence!r}")
 
-        return <Sint64> f.seek(offset, w)
+        rv = f.seek(offset, w)
+
+        # Older file-likes return None from seek(); 8.5.0 handled that by calling tell().
+        if rv is None:
+            rv = f.tell()
+
+        return <Sint64> rv
 
     except Exception as e:
         set_error(e)
@@ -1360,7 +1366,13 @@ cdef class IOFileLike(IOStream):
         self._checkClosed()
         self._checkSeekable()
 
-        return self.filelike.seek(offset, whence)
+        rv = self.filelike.seek(offset, whence)
+
+        # Older file-likes return None from seek(); fall back to tell() like py_seek.
+        if rv is None:
+            rv = self.filelike.tell()
+
+        return rv
 
     def flush(IOFileLike self not None, /):
         self._checkClosed()
