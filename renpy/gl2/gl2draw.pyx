@@ -1404,14 +1404,9 @@ cdef class GL2Draw:
             return what
 
         if what.cached_texture is not None:
-            # A shared Live2D mask can be used under a different parent zoom.
-            # Grow its cached texture when necessary, while keeping the old
-            # texture intact for models that have already referenced it.
-            if (not what.properties or not what.properties.get("live2d_mask", False) or
-                    what.cached_texture.properties.get("_live2d_oversample", 0.0) >= oversample):
-                if need_mipmap:
-                    what.cached_texture.add_mipmap()
-                return what.cached_texture
+            if need_mipmap:
+                what.cached_texture.add_mipmap()
+            return what.cached_texture
 
         rv = self.texture_loader.render_to_texture(what, properties, oversample)
         what.cached_texture = rv

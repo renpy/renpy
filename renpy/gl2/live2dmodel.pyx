@@ -21,7 +21,7 @@
 
 from libc.stdint cimport intptr_t
 from libc.stdlib cimport malloc, free
-from libc.string cimport memcpy, memcmp
+from libc.string cimport memcpy
 from libc.math cimport floor, ceil
 from libc.stdio cimport printf
 
@@ -36,7 +36,6 @@ from renpy.display.render cimport Render
 from renpy.uguu.gl cimport GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_DST_COLOR, GL_DST_ALPHA
 
 import renpy
-import weakref
 import renpy.gl2.live2dblend as live2dblend
 from renpy.gl2.live2dblend import BlendAnalysis, flags_blend_mode
 
@@ -137,14 +136,6 @@ cdef class AlignedMemory:
     def __dealloc__(self):
         free(self.base)
 
-cdef class Live2DMask(Render):
-    """
-    A mask owned by the render tree, weakly cached by its Core model.
-    """
-
-    cdef object __weakref__
-
-
 class Parameter(object):
     """
     Represents the information known about a parameter.
@@ -242,7 +233,6 @@ cdef class Live2DModel:
     cdef public dict opacity_groups
 
     cdef list meshes
-    cdef dict mask_cache
 
     cdef object filename
 
@@ -333,9 +323,6 @@ cdef class Live2DModel:
         self.drawable_indices = csmGetDrawableIndices(self.model)
         self.drawable_multiply_colors = csmGetDrawableMultiplyColors(self.model)
         self.drawable_screen_colors = csmGetDrawableScreenColors(self.model)
-
-        self.meshes = [None] * self.drawable_count
-        self.mask_cache = { }
 
         self.offscreen_count = 0
         self.init_analysis()
@@ -470,16 +457,7 @@ cdef class Live2DModel:
 
         cdef int j
 
-        cdef Mesh2 mesh = self.meshes[i]
-
-        # Renders can outlive this frame, including when two displayables
-        # share a Core model. Never update a mesh that a Render still uses.
-        if mesh is not None:
-            if not mesh.points or not memcmp(
-                    mesh.point_data, self.drawable_vertex_positions[i], sizeof(float) * mesh.points * 2):
-                return mesh
-
-        mesh = Mesh2(TEXTURE_LAYOUT, self.drawable_vertex_counts[i], self.drawable_index_counts[i] // 3)
+        cdef Mesh2 mesh = Mesh2(TEXTURE_LAYOUT, self.drawable_vertex_counts[i], self.drawable_index_counts[i] // 3)
 
         mesh.points = self.drawable_vertex_counts[i]
         memcpy(mesh.point_data, self.drawable_vertex_positions[i], sizeof(float) * mesh.points * 2)
@@ -493,8 +471,6 @@ cdef class Live2DModel:
         mesh.point_version = 1
         mesh.attribute_version = 1
         mesh.triangle_version = 1
-
-        self.meshes[i] = mesh
 
         return mesh
 
@@ -671,8 +647,6 @@ cdef class ModelRenderer:
     # Caches of renders used as masks.
     cdef dict mask_renders
     cdef dict multi_masks
-    cdef dict next_mask_cache
-    cdef object mask_token
 
     def __init__(self, Live2DModel model, textures, w, h, double offset_x, double offset_y, double ppu, Matrix reverse, Matrix forward):
         self.model = model
@@ -688,8 +662,6 @@ cdef class ModelRenderer:
 
         self.mask_renders = { }
         self.multi_masks = { }
-        self.next_mask_cache = { }
-        self.mask_token = (w, h, offset_x, offset_y, ppu, renpy.display.draw.texture_loader.mask_cache_token())
 
     def render(self):
         """
@@ -699,7 +671,6 @@ cdef class ModelRenderer:
         cdef Render rv
 
         acc, replaced = self.container(0)
-        self.model.mask_cache = self.next_mask_cache
 
         if acc is None:
             return Render(self.w, self.h)
@@ -801,67 +772,42 @@ cdef class ModelRenderer:
 
         cdef int i, j
         cdef Render m
-        cdef csmVector4 multiply, screen
         cdef double left, top, right, bottom, x, y
 
         key = tuple([ masks[j] for j in range(count) ])
         cropped = self.multi_masks.get(key, None)
 
         if cropped is None:
-            signature = []
+            m = Render(self.w, self.h)
+            left, top, right, bottom = self.w, self.h, 0, 0
+
             for i in key:
-                multiply = self.model.drawable_multiply_colors[i]
-                screen = self.model.drawable_screen_colors[i]
-                signature.append((
-                    self.model.drawable_mesh(i),
-                    self.textures[self.model.drawable_texture_indices[i]],
-                    (multiply.X, multiply.Y, multiply.Z, multiply.W),
-                    (screen.X, screen.Y, screen.Z, screen.W)))
-            signature = tuple(signature)
+                m.blit(self.mask_render(i), (0, 0))
+                for j in range(self.model.drawable_vertex_counts[i]):
+                    x = self.offset_x + self.model.drawable_vertex_positions[i][j].X * self.ppu
+                    y = self.offset_y - self.model.drawable_vertex_positions[i][j].Y * self.ppu
+                    left = min(left, x)
+                    top = min(top, y)
+                    right = max(right, x)
+                    bottom = max(bottom, y)
 
-            cached = self.model.mask_cache.get(key, None)
-            if cached is not None and cached[0] == self.mask_token and cached[1] == signature:
-                m = cached[2]()
-                if m is not None and not m.killed:
-                    cropped = (m, cached[3])
+            # Keep transparent texels around the geometry for filtering,
+            # and retain the clipping of the original model canvas.
+            left = max(0, floor(left) - 2)
+            top = max(0, floor(top) - 2)
+            right = min(self.w, ceil(right) + 2)
+            bottom = min(self.h, ceil(bottom) + 2)
 
-            if cropped is None:
-                m = Render(self.w, self.h)
-                left, top, right, bottom = self.w, self.h, 0, 0
+            if right > left and bottom > top:
+                m = m.subsurface((left, top, right - left, bottom - top), subpixel=True)
+                bounds = (left / self.w, top / self.h, (right - left) / self.w, (bottom - top) / self.h)
+            else:
+                m = Render(1, 1)
+                bounds = (0.0, 0.0, 1.0 / self.w, 1.0 / self.h)
 
-                for i in key:
-                    m.blit(self.mask_render(i), (0, 0))
-                    for j in range(self.model.drawable_vertex_counts[i]):
-                        x = self.offset_x + self.model.drawable_vertex_positions[i][j].X * self.ppu
-                        y = self.offset_y - self.model.drawable_vertex_positions[i][j].Y * self.ppu
-                        left = min(left, x)
-                        top = min(top, y)
-                        right = max(right, x)
-                        bottom = max(bottom, y)
-
-                # Keep transparent texels around the geometry for filtering,
-                # and retain the clipping of the original model canvas.
-                left = max(0, floor(left) - 2)
-                top = max(0, floor(top) - 2)
-                right = min(self.w, ceil(right) + 2)
-                bottom = min(self.h, ceil(bottom) + 2)
-
-                if right > left and bottom > top:
-                    m = m.subsurface((left, top, right - left, bottom - top), subpixel=True)
-                    bounds = (left / self.w, top / self.h, (right - left) / self.w, (bottom - top) / self.h)
-                else:
-                    m = Render(1, 1)
-                    bounds = (0.0, 0.0, 1.0 / self.w, 1.0 / self.h)
-
-                # Render itself does not support weak references. This
-                # subclass allows hiding a model to release its textures.
-                wrapper = Live2DMask(m.width, m.height)
-                wrapper.add_property("live2d_mask", True)
-                wrapper.blit(m, (0, 0))
-                cropped = (wrapper, bounds)
+            cropped = (m, bounds)
 
             self.multi_masks[key] = cropped
-            self.next_mask_cache[key] = (self.mask_token, signature, weakref.ref(cropped[0]), cropped[1])
 
         m, bounds = cropped
 

@@ -82,7 +82,6 @@ cdef class TextureLoader:
         self.total_texture_size = 0
         self.texture_load_queue = weakref.WeakSet()
         self.draw = draw
-        self.mask_generation = object()
 
     def init(self):
 
@@ -90,7 +89,6 @@ cdef class TextureLoader:
             self.quit()
 
         self.ftl_program = self.draw.shader_cache.get(("renpy.ftl",))
-        self.mask_generation = object()
 
         self.allocated = set()
         self.free_list = [ ]
@@ -119,19 +117,6 @@ cdef class TextureLoader:
         """
 
         return self.total_texture_size, len(self.allocated)
-
-    def mask_cache_token(self):
-        """
-        Context and sampling state that invalidates cached Live2D masks.
-        The generation changes when the texture loader is reinitialized.
-        """
-
-        return (
-            self.mask_generation, self.draw.virt_to_draw.transform(1.0, 1.0),
-            self.max_texture_width, self.max_texture_height, self.max_anisotropy,
-            renpy.config.mipmap, self.draw.auto_mipmap, renpy.config.max_mipmap_level,
-            renpy.config.depth_size,
-        )
 
     def load_one_surface(self, surf, bl, bt, br, bb, properties):
         """
@@ -443,9 +428,6 @@ cdef class GLTexture(GL2Model):
             "mipmap" : self.should_have_mipmaps(properties),
             "pixel_perfect" : properties.get("pixel_perfect", False),
             }
-
-        if what.properties and what.properties.get("live2d_mask", False):
-            self.properties["_live2d_oversample"] = oversample
 
         cw, ch = size = what.get_size()
 

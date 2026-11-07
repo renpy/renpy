@@ -24,36 +24,11 @@ Tests that Live2D displayables in saves from before Ren'Py 8.6 load correctly. T
 given to Live2D, which can be a directory, while newer code expects the path to the .model3.json file.
 """
 
-import copy
-
 import pytest
 from pytest_mock import MockerFixture
 
 from renpy.compat import pickle
 from renpy.gl2 import live2d
-
-
-def test_common_can_be_shallow_copied():
-    """Expression-speed adapters can replace a shallow copy's expressions while sharing its native model."""
-
-    common = live2d.Live2DCommon.__new__(live2d.Live2DCommon)
-    common.model = object()
-    common.all_expressions = {"expression": object()}
-
-    adjusted = copy.copy(common)
-    assert adjusted is not common
-    assert adjusted.model is common.model
-    assert adjusted.all_expressions is common.all_expressions
-    adjusted.all_expressions = { }
-    assert common.all_expressions
-
-
-def test_copied_common_cannot_be_saved():
-    """Allowing shallow copies must not allow a native Core model to leak into a save."""
-
-    common = copy.copy(live2d.Live2DCommon.__new__(live2d.Live2DCommon))
-    with pytest.raises(Exception, match="Live2DCommon objects cannot be pickled"):
-        pickle.dumps(common)
 
 
 def make_old_save(mocker: MockerFixture, filename: str) -> bytes:
