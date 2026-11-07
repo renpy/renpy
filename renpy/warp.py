@@ -295,13 +295,17 @@ def warp():
     # Now, attempt to find a statement preceding the line that the
     # user wants to warp to.
 
+    # This iterates the namemap rather than seenset, as the namemap is in source order, with each statement before
+    # the statements it contains.
     candidates = [n for n in renpy.game.script.namemap.values() if n.filename == filename and n.linenumber <= line]
 
     # We didn't find any candidate statements, so give up the warp.
     if not candidates:
         raise Exception("Could not find a statement to warp to. ({})".format(spec))
 
-    # Pick the first statement on the line at or before the requested line.
+    # Pick the first statement on the closest line at or before the requested line. Several statements can share a
+    # line: a Translate, the statements it wraps, and an EndTranslate that has the location of the first wrapped
+    # statement but follows the last, which may be on a later line. The first is the one that starts the line.
     linenumber = max(n.linenumber for n in candidates)
     node = next(n for n in candidates if n.linenumber == linenumber)
 

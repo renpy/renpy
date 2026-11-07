@@ -536,3 +536,43 @@ def test_clearing_retained_screens_uses_the_requested_layer(mocker):
     mocker.stop(tags)
 
     hide.assert_called_once_with("_retain_0", layer="bubbles")
+
+
+def test_warp_lands_on_first_statement_of_line(mocker, warp_context):
+    """
+    Warping to a translatable user statement (like ``nvl clear``) lands on the Translate that starts its line. That
+    Translate wraps the statement and the say on the next line, and is followed by an EndTranslate that has the
+    Translate's line number but continues after the say, so landing on the EndTranslate would skip a line (#7487).
+
+    The namemap is given in source order, so the old sort by line number, which was stable, always chose the
+    EndTranslate here; in a real game the nodes were iterated in hash order, which made the failure intermittent.
+    """
+
+    def named(node, name):
+        node.name = ("warp_target", name)
+        return node
+
+    clear = named(ast.Pass(("game/warp.rpy", 5)), "clear")
+    after = named(ast.Say(("game/warp.rpy", 6), "n", "after", None), "after")
+    translate = named(ast.Translate(("game/warp.rpy", 5), "warp_target", None, [clear, after]), "translate")
+    end = named(ast.EndTranslate(("game/warp.rpy", 5)), "end_translate")
+    too_far = named(ast.Say(("game/warp.rpy", 7), "n", "too far", None), "too_far")
+
+    translate.chain(end)
+    end.chain(too_far)
+    too_far.next = None
+
+    nodes = [translate, clear, after, end, too_far]
+    mocker.patch.object(renpy.game, "script", SimpleNamespace(namemap={node: node for node in nodes}))
+    mocker.patch.object(renpy.config, "developer", True)
+    mocker.patch.object(renpy.game, "after_rollback", False)
+    mocker.patch.object(renpy.exports, "block_rollback")
+    mocker.patch.object(warp, "reconstruct")
+    mocker.patch.object(warp, "warp_spec", "warp.rpy:5")
+    warp_context.goto_label = mocker.Mock()
+    warp_context.come_from = mocker.Mock()
+
+    with pytest.raises(renpy.execution.RestartContext):
+        warp.warp()
+
+    warp_context.goto_label.assert_called_once_with(translate.name)

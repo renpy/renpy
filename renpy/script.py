@@ -106,6 +106,14 @@ class Script:
     integers, strings being explicit names provided by the user, and
     integers being names synthesised by renpy.
 
+    The namemap is kept in source order: within each file, nodes are
+    inserted in the order of the file's statements, with each statement
+    before the statements it contains. Code relies on this to find the
+    first statement on a line (renpy.warp). Editing the script at runtime
+    with renpy.scriptedit, as the interactive director does, does not
+    preserve this order: added statements go at the end, and the names
+    of removed statements map to the statement after them.
+
     @ivar initcode: A list of priority, Node tuples that should be
     executed in ascending priority order at init time.
 
@@ -702,7 +710,8 @@ class Script:
                 check_name(node)
 
                 # Add the name to the namemap. This uses the node as both key and value, as the node is equal to and
-                # hashes as its name.
+                # hashes as its name. all_stmts is in source order, so this keeps the namemap in source order, which
+                # warp relies on.
                 self.namemap[node] = node
 
             # Add any init nodes to self.initcode.
