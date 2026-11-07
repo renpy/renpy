@@ -645,6 +645,13 @@ class Live2DCommon(object):
     def __reduce__(self):
         raise Exception("Live2DCommon objects cannot be pickled.")
 
+    def __copy__(self):
+        # Copies may customize expression data while sharing the native model.
+        # Keep this separate from pickling, which must still be prohibited.
+        rv = object.__new__(type(self))
+        rv.__dict__.update(self.__dict__)
+        return rv
+
     def get_pose(self):
         """
         Returns the model's pose, or None if it doesn't have one. The file is
