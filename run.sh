@@ -84,7 +84,7 @@ setup () {
 if [ -e "$ROOT/cubism" ]; then
     export CUBISM="$ROOT/cubism"
     export CUBISM_PLATFORM=${CUBISM_PLATFORM:-linux/x86_64}
-    export LD_LIBRARY_PATH="$CUBISM/Core/dll/$CUBISM_PLATFORM:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+    export LD_LIBRARY_PATH="$CUBISM/Core/dll/$CUBISM_PLATFORM${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 fi
 
 setup "$ROOT/"
