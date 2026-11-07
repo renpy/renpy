@@ -366,6 +366,7 @@ missing_image_callback = None
 # Called to filter text in the say and menu statements.
 say_menu_text_filter = None
 say_menu_text_filters = []
+say_menu_text_filter_extended = False
 
 # Should menu text be filtered by say_menu_text_filter and say_menu_text_filters?
 use_menu_text_filter = True
