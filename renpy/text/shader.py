@@ -23,6 +23,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import re
+from collections import OrderedDict
 
 import renpy
 
@@ -341,7 +342,7 @@ def parse_textshader(o):
     raise Exception("Expected a TextShader, but got %r." % o)
 
 
-parsed_shader_cache = {}
+parsed_shader_cache = OrderedDict()
 
 
 def get_textshader(o):
@@ -355,10 +356,13 @@ def get_textshader(o):
             name = renpy.config.textshader_callbacks[name]()
 
         if name in parsed_shader_cache:
+            parsed_shader_cache.move_to_end(name)
             return parsed_shader_cache[name]
 
         rv = parse_textshader(name)
         parsed_shader_cache[name] = rv
+        if len(parsed_shader_cache) > 1024:
+            parsed_shader_cache.popitem(last=False)
         return rv
 
     if o is None:
