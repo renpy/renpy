@@ -51,6 +51,10 @@ static void png_write_data(png_structp png_ptr,png_bytep data, png_size_t length
 	}
 }
 
+/* Nothing is buffered here, but libpng's default flush treats the io pointer as a FILE *, which ours is not. */
+static void png_flush_data(png_structp png_ptr){
+}
+
 /* Records libpng errors in the SDL error (unless a write failure already did), and unwinds. This
  * replaces libpng's default handler, which would also print to stderr. */
 static void png_error_fn(png_structp png_ptr, png_const_charp msg){
@@ -84,6 +88,11 @@ int Pygame_SDL3_SavePNG_IO(SDL_IOStream *src, SDL_Surface *surf,int compression)
 
 	if( !src || !surf) {
 		goto savedone2; /* Nothing to do. */
+	}
+
+	if (surf->w <= 0 || surf->h <= 0) {
+		SDL_SetError("Can't save a PNG with no pixels");
+		goto savedone2;
 	}
 
 	fmt= SDL_GetPixelFormatDetails(surf->format);
@@ -127,7 +136,7 @@ int Pygame_SDL3_SavePNG_IO(SDL_IOStream *src, SDL_Surface *surf,int compression)
 		goto savedone;
 	}
 	/* setup custom writer functions */
-	png_set_write_fn(png_ptr,(png_voidp)src,png_write_data,NULL);
+	png_set_write_fn(png_ptr,(png_voidp)src,png_write_data,png_flush_data);
 
 	if (setjmp(png_jmpbuf(png_ptr))){
 		goto savedone;
