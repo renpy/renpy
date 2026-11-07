@@ -246,6 +246,7 @@ name_blacklist = {
     "renpy.loadsave.autosave_not_running",
     "renpy.python.store_dicts",
     "renpy.python.store_modules",
+    "renpy.python.compile_cache",
     "renpy.text.text.VERT_FORWARD",
     "renpy.text.text.VERT_REVERSE",
     "renpy.savelocation.scan_thread_condition",
