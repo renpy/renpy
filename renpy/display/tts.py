@@ -43,7 +43,6 @@ except Exception:
 prism = None
 try:
     import ctypes
-    import ctypes.util
 
     class _PrismConfig(ctypes.Structure):
         _fields_ = [
@@ -281,14 +280,23 @@ try:
 
         candidates.append(os.path.join(base, dll_name))
 
-        found = ctypes.util.find_library("prism")
-        if found:
-            candidates.append(found)
+        # Fall back to a system-installed prism, except on Windows, where the DLL search path
+        # includes the current directory and PATH, letting an unrelated prism.dll be loaded. On
+        # macOS, dlopen of a bare name also searches the current directory, so check the usual
+        # system library directories by absolute path instead.
+        system_candidates = []
 
-        candidates.append(dll_name)
+        if sys.platform.startswith("darwin"):
+            for lib_dir in ("/usr/local/lib", "/opt/local/lib"):
+                candidates.append(os.path.join(lib_dir, dll_name))
+        elif not sys.platform.startswith("win"):
+            # A bare name uses the dynamic linker's search (LD_LIBRARY_PATH, the ld.so cache,
+            # and the default directories), which does not include the current directory unless
+            # LD_LIBRARY_PATH contains an empty entry.
+            system_candidates.append(dll_name)
 
-        for c in candidates:
-            if os.path.isfile(c) or c == dll_name:
+        for c in candidates + system_candidates:
+            if c in system_candidates or os.path.isfile(c):
                 try:
                     dll_obj = ctypes.CDLL(c)
                     if hasattr(dll_obj, "prism_init"):
