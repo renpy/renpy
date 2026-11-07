@@ -31,6 +31,10 @@ init python in director:
     # Do not participate in saves.
     _constant = True
 
+    import copy
+    import functools
+    import re
+    import os
     from store import Action, config
     import store
 
@@ -49,6 +53,9 @@ init python in director:
 
     # A list of transforms to use.
     transforms = [ "left", "center", "right" ]
+
+    # A list of characters to use.
+    characters = [ "name_only", "centered", "vcentered", "extend" ]
 
     # A list of transitions to use.
     transitions = [ "dissolve", "pixellate" ]
@@ -126,6 +133,7 @@ init python in director:
             renpy.ast.Hide,
             renpy.ast.Scene,
             renpy.ast.With,
+            renpy.ast.TranslateSay,
         )):
 
             return True
@@ -135,6 +143,16 @@ init python in director:
 
         return False
 
+    def translate_watcher(lang_translator, old):
+        global state
+        if old not in state.recent_translations and old in lang_translator.translation_loc:
+            state.recent_translations.append(old)
+            state.recent_translations = state.recent_translations[max(0, len(state.recent_translations)-50):]
+        return renpy.translation.StringTranslator.translate(lang_translator, old)
+
+    def watch_translations():
+        for lang, tl in renpy.game.script.translator.strings.items():
+            tl.translate = functools.partial(translate_watcher, tl)
 
     # Initialize the state object if it doesn't exist.
     if state is None:
@@ -149,6 +167,9 @@ init python in director:
 
         # The list of lines we've seen recently.
         state.lines = [ ]
+
+        # The list of translations we've seen recently.
+        state.recent_translations = [ ]
 
         # The mode we're in.
         state.mode = "lines"
@@ -322,6 +343,7 @@ init python in director:
         config.line_log_callbacks = [ line_log_callback ]
 
         config.start_interact_callbacks.append(interact)
+        watch_translations()
 
     if state.active:
         init()
@@ -339,6 +361,9 @@ init python in director:
 
     renpy.arguments.register_command("director", command)
 
+
+    def escape_speech_string(speech):
+        return speech.replace("\\", "\\\\").replace('"', '\\"')
 
     def get_scene_show_hide_statement():
 
@@ -416,6 +441,46 @@ init python in director:
 
         return "voice {}".format(quote_audio())
 
+    def get_say_statement():
+        if state.mode == "lines":
+            return None
+        statement = ""
+        if state.character:
+            statement = f"{state.character} "
+        statement += f'"{escape_speech_string(state.speech)}"'
+        if state.arguments:
+            statement += " (" + ', '.join("=".join((k, v)) for k, v in state.arguments) + ")"
+        if state.transition:
+            statement += f" with {state.transition}"
+        if state.explicit_identifier or state.identifier != state.original_identifier:
+            statement += f" id {state.identifier}"
+
+        if renpy.check_text_tags(state.speech):
+            return None
+        try:
+            renpy.substitute(state.speech)
+        except:
+            return None
+
+        for k, v in state.arguments:
+            if not re.match('[a-zA-Z_][a-zA-Z_0-9]*', k):
+                return None
+            try:
+                renpy.eval(v, renpy.store.__dict__, {})
+            except Exception:
+                return None
+
+        return statement
+
+    def get_translation_string_statement():
+        if renpy.check_text_tags(state.translation):
+            return None
+        try:
+            renpy.substitute(state.translation)
+        except:
+            return None
+        return f"new \"{escape_speech_string(state.translation)}\""
+
     def get_statement():
         """
         If a statement is defined enough to implement, returns the text
@@ -437,6 +502,12 @@ init python in director:
         elif state.kind == "voice":
             rv = get_voice_statement()
 
+        elif state.kind in ("arguments", "say", "saywith", "character", "identifier"):
+            rv = get_say_statement()
+
+        elif state.kind in ("translation_string"):
+            rv = get_translation_string_statement()
+
         else:
             rv = get_scene_show_hide_statement()
 
@@ -457,11 +528,11 @@ init python in director:
 
         linenumber = state.linenumber
 
-        if statement:
+        if statement and state.added_statement is not None:
+            renpy.scriptedit.replace_ast(statement, state.filename, linenumber)
+        elif statement:
             renpy.scriptedit.add_to_ast_before(statement, state.filename, linenumber)
-            linenumber += 1
-
-        if state.added_statement is not None:
+        elif state.added_statement is not None:
             renpy.scriptedit.remove_from_ast(state.filename, linenumber)
 
         state.added_statement = statement
@@ -691,6 +762,13 @@ init python in director:
 
         return rv
 
+    def get_translatestring_node(language, source):
+        ts_class = renpy.ast.TranslateString
+        for s in renpy.game.script.all_stmts:
+            if isinstance(s, ts_class) and s.language == language and s.old == source:
+                return s
+        return None
+
     # Actions ##################################################################
 
     class Start(Action):
@@ -717,6 +795,7 @@ init python in director:
 
             state.show_director = True
             state.mode = "lines"
+            watch_translations()
 
             if state.active:
 
@@ -825,6 +904,36 @@ init python in director:
         return True
 
 
+    class ChangeStringTranslation(Action):
+        def __init__(self, lang, source):
+            self.lang = lang
+            self.source = source
+
+        def get_sensitive(self):
+            return get_translatestring_node(self.lang, self.source) is not None
+
+        def __call__(self):
+            node = get_translatestring_node(self.lang, self.source)
+
+            state.filename = node.filename
+            state.linenumber = node.linenumber
+            state.newlinenumber = node.newloc[1]
+
+            state.mode = "translation_string"
+            state.kind = "translation_string"
+            state.original_kind = "translation_string"
+
+            state.language = node.language
+            state.source = node.old
+            state.translation = node.new
+            state.original_translation = node.new
+
+            state.added_statement = True
+            state.change = True
+
+            renpy.restart_interaction()
+
+
     class ChangeStatement(Action):
         """
         An action that changes the statement at `filename`:`linenumber`.
@@ -844,6 +953,12 @@ init python in director:
 
             self.channel = None
             self.audio = None
+
+            self.identifier = None
+            self.explicit_identifier = False
+            self.character = None
+            self.speech = None
+            self.arguments = []
 
             self.sensitive = True
 
@@ -927,6 +1042,22 @@ init python in director:
                 self.kind = "with"
                 self.transition = node.expr
 
+            elif isinstance(node, renpy.ast.TranslateSay):
+                self.kind = "say"
+                self.character = node.who
+                self.speech = node.what
+                self.identifier = node.identifier
+                self.explicit_identifier = node.explicit_identifier
+                self.transition = getattr(node, 'with')
+                if node.arguments is None:
+                    self.arguments = []
+                else:
+                    self.arguments = [list(v) for v in node.arguments.arguments]
+
+            elif isinstance(node, renpy.ast.Menu):
+
+                self.kind = "menu"
+
             elif is_play(node) or is_queue(node) or is_stop(node):
                 audio(node)
 
@@ -966,6 +1097,8 @@ init python in director:
                 state.mode = "channel"
             elif self.kind == "voice":
                 state.mode = "audio"
+            elif self.kind == "say":
+                state.mode = "say"
             else:
                 if self.tag is None:
                     state.mode = "tag"
@@ -993,10 +1126,25 @@ init python in director:
             state.audio = self.audio
             state.original_audio = self.audio
 
+            state.identifier = self.identifier
+            state.original_identifier = self.identifier
+
+            state.character = self.character
+            state.original_character = self.character
+
+            state.speech = self.speech
+            state.original_speech = self.speech
+
+            state.arguments = copy.deepcopy(self.arguments)
+            state.original_arguments = self.arguments
+
+            state.explicit_identifier = self.explicit_identifier
+
             state.added_statement = True
             state.change = True
 
             update_ast()
+            renpy.restart_interaction()
 
 
     class SetKind(Action):
@@ -1024,6 +1172,9 @@ init python in director:
             if self.kind == "voice":
                 state.channel = "voice"
                 state.mode = "audio"
+
+            if self.kind in ("character", "say", "arguments", "identifier", "saywith"):
+                state.mode = "say"
 
             update_ast()
 
@@ -1207,6 +1358,46 @@ init python in director:
             return state.audio == self.filename
 
 
+    class CommitStringTranslation(Action):
+        """
+        Commits the current string translation to the .rpy files.
+        """
+        def __call__(self):
+            statement = get_statement()
+
+            if statement:
+                translator = renpy.game.script.translator.strings[state.language]
+                translator.translations[state.source] = state.translation
+                renpy.scriptedit.insert_line_before(statement, state.filename, state.newlinenumber)
+                renpy.scriptedit.remove_line(state.filename, state.newlinenumber + statement.count("\n") + 1)
+
+                add_spacing(state.filename, state.linenumber)
+                node = get_translatestring_node(state.language, state.source)
+                if node is not None: # Fake Ast node reload
+                    node.new = state.translation
+
+            state.mode = "translations"
+
+            renpy.rollback(checkpoints=0, force=True, greedy=True)
+
+        def get_sensitive(self):
+            return get_statement()
+
+    class CancelStringTranslation(Action):
+        """
+        This action cancels the operation, resetting the AST and returning to
+        the lines screen.
+        """
+        def __call__(self):
+            statement = get_statement()
+
+            translator = renpy.game.script.translator.strings[state.language]
+            translator.translations[state.source] = state.original_translation
+
+            state.mode = "translations"
+            renpy.restart_interaction()
+
+
     class Commit(Action):
         """
         Commits the current statement to the .rpy files.
@@ -1220,7 +1411,7 @@ init python in director:
 
             if state.change:
                 if statement:
-                    renpy.scriptedit.remove_line(state.filename, state.linenumber + 1)
+                    renpy.scriptedit.remove_line(state.filename, state.linenumber + statement.count("\n") + 1)
                 else:
                     renpy.scriptedit.remove_line(state.filename, state.linenumber)
 
@@ -1277,7 +1468,8 @@ init python in director:
 
             state.mode = "lines"
 
-            update_ast()
+            renpy.restart_interaction()
+            # update_ast()
 
     class Remove(Action):
         """
@@ -1342,7 +1534,7 @@ init python in director:
             if ev.type == renpy.display.core.TIMEEVENT:
                 return None
 
-            if state.mode != "lines":
+            if state.mode not in ("lines", "translations"):
 
                 if renpy.map_event(ev, "rollback") or renpy.map_event(ev, "rollforward"):
                     raise renpy.IgnoreEvent()
@@ -1520,6 +1712,26 @@ screen director_move_button():
             action SetField(persistent, "_director_bottom", True)
             xalign 1.0
 
+screen director_text_errors(text, update = False):
+    python:
+        error = renpy.check_text_tags(text)
+        if error is not None:
+            try:
+                renpy.substitute(text)
+            except Exception as e:
+                error = str(e)
+
+    if error is not None:
+        text "{b}Error:{/b} [error!q]":
+            color "#f00"
+
+        null height 14
+
+    if update:
+        textbutton "Preview":
+            action Function(director.update_ast)
+            sensitive not bool(error)
+
 screen director_lines(state):
 
     frame:
@@ -1528,6 +1740,12 @@ screen director_lines(state):
 
         has vbox:
             xfill True
+
+        hbox:
+            spacing 10
+            textbutton "Lines" action SetField(director.state, 'mode', 'lines')
+            textbutton "Translations" action SetField(director.state, 'mode', 'translations')
+            text "Current language: [renpy.game.preferences.language!q]"
 
         viewport:
             scrollbars "vertical"
@@ -1585,7 +1803,99 @@ screen director_lines(state):
 
             use director_move_button()
 
+screen director_translations(state):
 
+    frame:
+        style "empty"
+        background Solid("#fff8", xsize=20, xpos=gui._scale(300))
+
+        has vbox:
+            xfill True
+
+        hbox:
+            spacing 10
+            textbutton "Lines" action SetField(director.state, 'mode', 'lines')
+            textbutton "Translations" action SetField(director.state, 'mode', 'translations')
+            text "Current language: [renpy.game.preferences.language!q]"
+
+        viewport:
+            scrollbars "vertical"
+            ymaximum director.viewport_height
+            mousewheel True
+            yinitial 1.0
+            viewport_yfill False
+
+            has vbox:
+                xfill True
+
+            $ translator = renpy.game.script.translator.strings.get(renpy.game.preferences.language, None)
+            $ got_any = False
+
+            for translation in state.recent_translations:
+
+                if translator and translation in translator.translation_loc:
+                    python:
+                        got_any = True
+                        line = translator.translations[translation]
+                        tl_file, tl_line = translator.translation_loc[translation]
+                        line_pos = f"{os.path.basename(tl_file)}:{tl_line:04d}"
+
+                    fixed:
+                        yfit True
+
+                        text "[line_pos]":
+                            xpos (gui._scale(300) - 10)
+                            xanchor 1.0
+                            textalign 1.0
+                            style "director_text"
+
+                        textbutton "✎":
+                            action director.ChangeStringTranslation(renpy.game.preferences.language, translation)
+                            xpos gui._scale(300)
+                            style "director_edit_button"
+                            alt ("change " + line)
+
+                        frame:
+                            style "empty"
+                            left_padding (gui._scale(300) + 30)
+
+                            hbox:
+                                spacing 10
+                                text "[line!q]" style "director_text" xsize .5
+                                text "{b}<={/b}" style "director_text"
+                                text "[translation!q]" style "director_text"
+            null
+
+            if not got_any:
+                fixed:
+                    yfit True
+
+                    text "No translation found":
+                        xpos (gui._scale(300) - 10)
+                        xanchor 1.0
+                        textalign 1.0
+                        style "director_text"
+
+                    frame:
+                        style "empty"
+                        left_padding (gui._scale(300) + 30)
+
+                        text "Progress through the game or change the current language":
+                            style "director_text"
+
+        null height 14
+
+        fixed:
+            yfit True
+
+            hbox:
+                xpos (gui._scale(300) + 30)
+
+                textbutton _("Done"):
+                    action director.Stop()
+                    style "director_action_button"
+
+            use director_move_button()
 
 screen director_statement(state):
 
@@ -1645,6 +1955,26 @@ screen director_audio_statement(state):
 
     null height 14
 
+screen director_say_statement(state):
+
+    $ character = state.character or __("(character)")
+    $ speech = state.speech
+    $ identifier = state.identifier or __("(identifier)")
+    $ transition = state.transition or __("(transition)")
+    $ arguments = "(" + ', '.join(f"{k}={v}" for k, v in state.arguments) + ")"
+
+    hbox:
+        style_prefix "director_statement"
+        box_wrap True
+
+        textbutton "[character!q] " action SetField(state, "mode", "character")
+        textbutton "\"[speech!q]\" " action SetField(state, "mode", "say")
+        textbutton "[arguments!q] " action SetField(state, "mode", "arguments")
+        text "id "
+        textbutton "[identifier!q]" action SetField(state, "mode", "identifier")
+        text " with "
+        textbutton "[transition!q]" action SetField(state, "mode", "saywith")
+
 screen director_footer(state):
 
     null height 14
@@ -1668,6 +1998,25 @@ screen director_footer(state):
 
             if state.change:
                 textbutton _("Remove") action director.Remove()
+
+        use director_move_button()
+
+screen director_translation_footer(state):
+
+    null height 14
+
+    fixed:
+
+        yfit True
+
+        hbox:
+            style_prefix "director_action"
+
+            spacing 26
+
+            textbutton _("Change") action director.CommitStringTranslation()
+
+            textbutton _("Cancel") action director.CancelStringTranslation()
 
         use director_move_button()
 
@@ -1824,6 +2173,209 @@ screen director_with(state):
 
         use director_footer(state)
 
+screen director_translationstring(state):
+
+    vbox:
+        xfill True
+
+        text "[director.get_statement()!q]" style "director_text"
+
+        null height 14
+
+        input:
+            multiline True
+            value FieldInputValue(state, "translation")
+            action NullAction()
+
+        null height 14
+
+        use director_text_errors(state.translation)
+
+        null height 14
+
+        text _("Type to set new translation.")
+
+        use director_translation_footer(state)
+
+screen director_arguments(state):
+
+    default selected_index = 0
+
+    vbox:
+        xfill True
+
+        use director_say_statement(state)
+
+        use director_choices(_("Arguments:")):
+            for i, a in enumerate(state.arguments):
+                if i != 0:
+                    text ", "
+                hbox:
+                    textbutton "[a[0] or '???']":
+                        action SetLocalVariable('selected_index', i*2)
+                    text "="
+                    textbutton "[a[1] or '???']":
+                        action SetLocalVariable('selected_index', i*2+1)
+
+            null width 20
+
+            textbutton "+":
+                action (
+                    AddToSet(state.arguments, ['', '']),
+                    SetLocalVariable('selected_index', len(state.arguments)*2)
+                )
+
+        null height 14
+
+        if len(state.arguments) > selected_index/2:
+            input:
+                value DictInputValue(state.arguments[int(selected_index/2)], selected_index%2)
+
+        null height 14
+
+        python:
+            error = None
+            for k, v in state.arguments:
+                if not director.re.match('[a-zA-Z_][a-zA-Z_0-9]*', k):
+                    error = f"Invalid key value '{k}'"
+                    break
+                try:
+                    renpy.eval(v, renpy.store.__dict__, {})
+                except Exception as e:
+                    error = f"Invalid value '{v}': {e}"
+                    break
+
+        if error is not None:
+            text "{b}Error:{/b} [error!q]":
+                color "#f00"
+
+            null height 14
+
+        text _("Click to set.")
+
+        use director_footer(state)
+
+
+screen director_character(state):
+
+    vbox:
+        xfill True
+
+        use director_say_statement(state)
+
+        use director_choices(_("Character:")):
+
+            textbutton "{i}(narrator){/i}":
+                action SetField(state, "character", None)
+                style "director_button"
+                ypadding 0
+            for c in director.characters:
+                textbutton "[c]":
+                    action SetField(state, "character", c)
+                    style "director_button"
+                    ypadding 0
+
+        null height 14
+
+        text _("Click to set.")
+        text _("Customize director.characters to add more characters.")
+
+        use director_footer(state)
+
+
+screen director_saywith(state):
+
+    vbox:
+        xfill True
+
+        use director_say_statement(state)
+
+        use director_choices(_("Transition:")):
+
+            textbutton "{i}(none){/i}":
+                action SetField(state, "transition", None)
+                style "director_button"
+                ypadding 0
+            for t in director.transitions:
+                textbutton "[t]":
+                    action SetField(state, "transition", t)
+                    style "director_button"
+                    ypadding 0
+
+        null height 14
+
+        text _("Click to set.")
+        text _("Customize director.transitions to add more transitions.")
+
+        use director_footer(state)
+
+
+screen director_say(state):
+
+    vbox:
+        xfill True
+
+        use director_say_statement(state)
+
+        use director_choices(_("New text:") if state.mode == "say" else _("New identifier:")):
+
+            input:
+                multiline True
+                value FieldInputValue(state, "speech" if state.mode == "say" else _("identifier"))
+                action NullAction()
+
+        null height 14
+
+        if state.mode == "say":
+            use director_text_errors(state.speech, update = True)
+
+        text _("Type to set, then confirm to update displayed text.")
+
+        use director_footer(state)
+
+
+screen director_menu(state):
+
+    vbox:
+        xfill True
+
+
+        # use director_say_statement(state)
+
+        use director_choices(_("New text:") if state.mode == "say" else _("New identifier:")):
+
+            input:
+                multiline True
+                value FieldInputValue(state, "speech" if state.mode == "say" else _("identifier"))
+                action NullAction()
+
+
+        null height 14
+
+        if state.mode == "say":
+            python:
+                error = renpy.check_text_tags(state.speech)
+                if error is not None:
+                    try:
+                        renpy.substitute(state.speech)
+                    except Exception as e:
+                        error = str(e)
+        else:
+            $ error = None
+
+        if error is not None:
+            text "{b}Error:{/b} [error!q]":
+                color "#f00"
+            null height 14
+
+        textbutton "Preview":
+            action Function(director.update_ast)
+            sensitive not bool(error)
+
+        text _("Type to set, then confirm to update displayed text.")
+
+        use director_footer(state)
+
 
 screen director_channel(state):
 
@@ -1883,7 +2435,7 @@ screen director():
 
         style ("director_bottom_frame" if persistent._director_bottom else "director_top_frame")
 
-        xpadding ( 0 if state.mode == "lines" else gui._scale(20) )
+        xpadding ( 0 if state.mode in ("lines", "translations") else gui._scale(20) )
 
         at director.SemiModal
 
@@ -1892,6 +2444,8 @@ screen director():
 
         if state.mode == "lines":
             use director_lines(state)
+        elif state.mode == "translations":
+            use director_translations(state)
         elif state.mode == "kind":
             use director_kind(state)
         elif state.mode == "tag":
@@ -1904,10 +2458,20 @@ screen director():
             use director_behind(state)
         elif state.mode == "with":
             use director_with(state)
+        elif state.mode == "arguments":
+            use director_arguments(state)
+        elif state.mode == "character":
+            use director_character(state)
+        elif state.mode == "saywith":
+            use director_saywith(state)
+        elif state.mode in ("say", "identifier"):
+            use director_say(state)
+        elif state.mode == "translation_string":
+            use director_translationstring(state)
         elif state.mode == "channel":
             use director_channel(state)
         elif state.mode == "audio":
             use director_audio(state)
 
-    if state.mode == "lines":
+    if state.mode in ("lines", "translations"):
         key "director" action director.Stop()
