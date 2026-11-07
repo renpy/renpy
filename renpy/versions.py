@@ -95,8 +95,13 @@ def _make_version_string(
     if dirty:
         suffixes.append("dirty")
 
-    if not official and branch not in {"main", "master"}:
-        suffixes.append(branch)
+    # Only the part of the branch name after the last slash is used (work/tom/test123 -> test123), as the
+    # slashes would otherwise end up in the version string and in file names. The name is empty when git is
+    # on a detached HEAD, in which case no branch suffix is added.
+    short_branch = branch.rsplit("/", 1)[-1]
+
+    if not official and branch not in {"main", "master"} and short_branch:
+        suffixes.append(short_branch)
 
     version = f"{major}.{minor}.{patch}.{commit:08d}"
 
