@@ -1522,7 +1522,14 @@ class Scene(Node):
         else:
             tag = None
 
-        renpy.config.scene(self.layer, tag=tag)
+        scene = renpy.config.scene
+
+        # A config.scene written before the tag parameter was added doesn't accept it, so only pass tag to a
+        # replacement function that does. The default always accepts it.
+        if scene is not renpy.exports.scene and not renpy.object.takes_keyword(scene, "tag"):
+            scene(self.layer)
+        else:
+            scene(self.layer, tag=tag)
 
         if self.imspec:
             show_imspec(self.imspec, atl=getattr(self, "atl", None))

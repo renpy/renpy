@@ -1748,7 +1748,8 @@ Showing Images
     A function that's used in place of :func:`renpy.scene` by the :ref:`scene
     statement <scene-statement>`. Note that this is used to clear the screen,
     and :var:`config.show` is used to show a new image. This should have the same
-    signature as :func:`renpy.scene`.
+    signature as :func:`renpy.scene`. If the function does not accept a `tag`
+    parameter (or ``**kwargs``), it is called without it.
 
 .. var:: config.show = renpy.show
 
