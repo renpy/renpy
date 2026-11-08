@@ -100,6 +100,9 @@ which is consistent with the Live2D SDK. This behavior can be changed with the `
 displayable, or with the :var:`config.live2d_old_beziers` variable, and the old interpretation is used in games that
 declare compatibility with Ren'Py 8.5 or earlier.
 
+Live2D clipping masks are now cropped to the bounds of their geometry, which uses less texture memory. This can be
+disabled with the :var:`config.live2d_mask_clipping` variable.
+
 Clipboard
 ---------
 

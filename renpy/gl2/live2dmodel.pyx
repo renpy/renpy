@@ -648,6 +648,9 @@ cdef class ModelRenderer:
     cdef dict mask_renders
     cdef dict multi_masks
 
+    # True if masks should be cropped to the bounds of their geometry.
+    cdef bint mask_clipping
+
     def __init__(self, Live2DModel model, textures, w, h, double offset_x, double offset_y, double ppu, Matrix reverse, Matrix forward):
         self.model = model
         self.analysis = model.analysis
@@ -662,6 +665,8 @@ cdef class ModelRenderer:
 
         self.mask_renders = { }
         self.multi_masks = { }
+
+        self.mask_clipping = renpy.config.live2d_mask_clipping
 
     def render(self):
         """
@@ -776,6 +781,20 @@ cdef class ModelRenderer:
 
         key = tuple([ masks[j] for j in range(count) ])
         cropped = self.multi_masks.get(key, None)
+
+        if cropped is None and not self.mask_clipping:
+            if count == 1:
+                m = self.mask_render(masks[0])
+            else:
+                m = Render(self.w, self.h)
+
+                for i in key:
+                    m.blit(self.mask_render(i), (0, 0))
+
+            # A zero width tells the shaders that the mask covers the canvas.
+            cropped = (m, (0.0, 0.0, 0.0, 0.0))
+
+            self.multi_masks[key] = cropped
 
         if cropped is None:
             m = Render(self.w, self.h)

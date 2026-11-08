@@ -1688,6 +1688,12 @@ If True, Live2D displayables use the pose file of their model, unless the `pose`
 pose files are ignored by default.
 """
 
+live2d_mask_clipping: bool = True
+"""
+If True, the textures Live2D uses for clipping masks are cropped to the bounds of the mask's geometry, which uses less
+memory. If False, each mask texture covers the model's whole canvas.
+"""
+
 special_directory_map: dict[str, list[str]] = {"images": ["images"], "audio": ["audio"], "fonts": ["fonts"]}
 """
 This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will

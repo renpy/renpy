@@ -33,6 +33,45 @@ init python:
             if name[1] == tag
         )
 
+    def test_live2d__clipping_frame(name, motion, st):
+        """
+        Renders one frame of a motion to a surface, using the current value of
+        config.live2d_mask_clipping.
+
+        This calls the render method directly, as the render cache could
+        otherwise return the render made with the other setting. Physics and
+        poses depend on the time between frames, so they're disabled to make
+        the frame depend only on `st`. The common data is isolated by its key,
+        so the other tests still use physics.
+        """
+
+        d = Live2D(
+            f"live2d/{name}", base=0.8, loop=False, fade=False, pose=False, motions=[ motion ],
+            deduplication_key=f"test_live2d_mask_clipping_{name}",
+        )
+        d.common.physics = None
+
+        return renpy.render_to_surface(d.render(config.screen_width, config.screen_height, st, st))
+
+    def test_live2d__max_difference(a, b=None):
+        """
+        Returns the largest difference in any channel of any pixel between
+        surfaces `a` and `b`. If `b` is None, `a` is compared to a transparent
+        surface.
+        """
+
+        if b is None:
+            b = renpy.pygame.Surface(a.get_size(), 0, a)
+
+        width, height = a.get_size()
+
+        return max(
+            abs(i - j)
+            for y in range(height)
+            for x in range(width)
+            for i, j in zip(a.get_at((x, y)), b.get_at((x, y)))
+        )
+
     # Live2D loads the model when it's created, so the images are only
     # defined when the models are present.
     if test_live2d__available():
@@ -131,6 +170,11 @@ testsuite live2d:
     enabled test_live2d__available()
 
     after testcase:
+        # Surfaces can't be saved, and the setting must not reach other tests.
+        $ test_live2d__cropped = None
+        $ test_live2d__uncropped = None
+        $ config.live2d_mask_clipping = True
+
         if not screen "main_menu":
             run MainMenu(confirm=False, save=False)
 
@@ -204,3 +248,18 @@ testsuite live2d:
         run Start("test_live2d__ren_closeup")
         pause 0.5
         screenshot "live2d/ren_closeup.png"
+
+    testcase mask_clipping:
+        description "Draws the same frame of a motion with cropped and uncropped clipping masks"
+        parameter model = [ "Mao", "Ren" ]
+        parameter motion = [ "mtn_02", "mtn_03" ]
+        parameter st = [ 1.0, 2.5 ]
+        $ config.live2d_mask_clipping = True
+        $ test_live2d__cropped = test_live2d__clipping_frame(model, motion, st)
+        $ config.live2d_mask_clipping = False
+        $ test_live2d__uncropped = test_live2d__clipping_frame(model, motion, st)
+        assert eval test_live2d__max_difference(test_live2d__uncropped) > 0
+        # Cropping changes the edges of masks slightly, by at most 25/255 in the models tested.
+        assert eval test_live2d__max_difference(test_live2d__cropped, test_live2d__uncropped) <= 25
+        # Mao's masks differ in hundreds of pixels, so an identical frame means the setting was ignored.
+        assert eval model != "Mao" or test_live2d__max_difference(test_live2d__cropped, test_live2d__uncropped) > 0

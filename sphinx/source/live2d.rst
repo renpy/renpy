@@ -218,6 +218,11 @@ Live2D animations are defined using the Live2D displayable and the image stateme
     If True, Live2D displayables use the pose file of their model, unless the `pose` argument to :func:`Live2D` says
     otherwise. If False, pose files are ignored by default. See :ref:`live2d-poses`.
 
+.. var:: config.live2d_mask_clipping = True
+
+    If True, the textures Live2D uses for clipping masks are cropped to the bounds of the mask's geometry, which uses
+    less memory. If False, each mask texture covers the model's whole canvas.
+
 There is a config variable that can help in debugging what motions and
 expressions were loaded from .model3.json files:
 
