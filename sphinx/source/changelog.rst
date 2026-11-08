@@ -419,6 +419,10 @@ backslash. The error message for mismatched indentation has been improved.
 
 The default :file:`.gitignore` for new projects excludes Android keystore files.
 
+``renpy.pygame.Surface.get_buffer`` now returns a writable memoryview of the
+surface's pixels and surfaces support Python's buffer protocol.
+
+
 Fixes
 -----
 

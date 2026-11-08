@@ -171,3 +171,92 @@ def test_surface_factories_preserve_pixels_and_accounting():
     del copy, copies, surface
     pygame.surface._quit_surface_deallocation()
     assert pygame.surface.total_size == original_size
+
+
+def test_get_buffer_returns_pixel_bytes():
+    """
+    get_buffer gives access to the surface's pixels, with a pixel's channels at its offset.
+
+    The channels are compared sorted, as their order depends on the surface's pixel format.
+    """
+
+    surface = pygame.Surface((2, 2), pygame.SRCALPHA, 32)
+    surface.fill((0, 0, 0, 0))
+    surface.set_at((1, 0), (10, 20, 30, 40))
+    buffer = surface.get_buffer()
+    assert len(buffer) == surface.get_pitch() + 8
+    assert buffer[:4] == bytes(4)
+    assert sorted(buffer[4:8]) == [10, 20, 30, 40]
+
+
+def test_get_buffer_stays_within_subsurface_parent():
+    """
+    A subsurface's buffer ends with its last pixel.
+
+    The subsurface is at the parent's bottom right corner, so a buffer of height * pitch bytes would
+    read past the end of the parent's pixels.
+    """
+
+    surface = pygame.Surface((4, 4), pygame.SRCALPHA, 32)
+    surface.fill((0, 0, 0, 0))
+    child = surface.subsurface((2, 2, 2, 2))
+    child.set_at((1, 1), (10, 20, 30, 40))
+    buffer = child.get_buffer()
+    assert len(buffer) == child.get_pitch() + 8
+    assert sorted(buffer[-4:]) == [10, 20, 30, 40]
+
+
+@pytest.mark.parametrize("subsurface", [False, True])
+def test_get_buffer_writes_change_pixels(subsurface):
+    """
+    Writing to the buffer changes the surface directly, including through a subsurface, where the write
+    also reaches the parent.
+
+    The bytes come from another surface of the same format, so the test doesn't depend on channel order.
+    """
+
+    source = pygame.Surface((1, 1), pygame.SRCALPHA, 32)
+    source.fill((10, 20, 30, 40))
+    pixel = bytes(source.get_buffer())
+
+    parent = pygame.Surface((2, 2), pygame.SRCALPHA, 32)
+    parent.fill((0, 0, 0, 0))
+    surface = parent.subsurface((1, 1, 1, 1)) if subsurface else parent
+    surface.get_buffer()[:4] = pixel
+
+    assert tuple(parent.get_at((1, 1) if subsurface else (0, 0))) == (10, 20, 30, 40)
+
+
+def test_get_buffer_keeps_surface_alive():
+    """
+    The buffer points at the surface's own pixels, so it must keep the surface alive after every other
+    reference is gone, and must release it afterwards.
+    """
+
+    gc.collect()
+    original_size = pygame.surface.total_size
+    surface = pygame.Surface((4, 4), pygame.SRCALPHA, 32)
+    surface.fill((1, 1, 1, 1))
+    reference = weakref.ref(surface)
+    buffer = surface.get_buffer()
+
+    del surface
+    gc.collect()
+    assert reference() is not None
+    assert set(buffer) == {1}
+
+    buffer.release()
+    del buffer
+    assert reference() is None
+    pygame.surface._quit_surface_deallocation()
+    assert pygame.surface.total_size == original_size
+
+
+@pytest.mark.parametrize("size", [(), (0, 0)])
+def test_get_buffer_of_empty_surface_is_empty(size):
+    """
+    A surface with no pixels gives an empty buffer. An empty size builds a surface with no SDL surface
+    at all, which must not be dereferenced.
+    """
+
+    assert len(pygame.Surface(size).get_buffer()) == 0
