@@ -157,7 +157,8 @@ testsuite context:
         description "Tests that the Replay action properly updates context variables."
 
         $ replay_scope = {"context_test_inner_val": True}
-        run Replay("start", scope=replay_scope)
+        # Unlocked, as a fresh persistent may not have seen "start" yet.
+        run Replay("start", scope=replay_scope, locked=False)
         assert eval (not "replay_scope" in globals())
         assert eval ("context_test_inner_val" in globals())
         $ renpy.end_replay()
