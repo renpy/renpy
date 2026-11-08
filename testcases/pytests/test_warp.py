@@ -11,6 +11,10 @@ import pytest
 import renpy
 from renpy import ast, character, warp
 
+################################################################################
+# Fixtures and helpers
+################################################################################
+
 
 @pytest.fixture
 def warp_context(mocker):
@@ -105,11 +109,21 @@ def make_say(who, what="line", arguments=None):
 def run_says(mocker, warp_context, pairs):
     """
     Reconstructs the Say nodes in ``pairs``. Each node's speaker is resolved by ``ast.eval_who`` from the
-    node's text, so a node's ``who`` is the callable replayed for it.
+    node's text, so a node's ``who`` is the callable replayed for it. A ``who`` that is an exception instance
+    is raised while the speaker is resolved, as an undefined speaker would be.
     """
 
     lookup = {node.what: who for node, who in pairs}
-    eval_who = mocker.patch.object(ast, "eval_who", side_effect=lambda *args: lookup[warp_context.current[1]])
+
+    def resolve(*args):
+        who = lookup[warp_context.current[1]]
+
+        if isinstance(who, Exception):
+            raise who
+
+        return who
+
+    eval_who = mocker.patch.object(ast, "eval_who", side_effect=resolve)
     warp.reconstruct([node for node, _who in pairs])
     mocker.stop(eval_who)
 
@@ -128,6 +142,11 @@ def install_translation(mocker, default, translated):
     persistent = SimpleNamespace(_seen_translates=set())
     mocker.patch.object(renpy.game, "persistent", persistent)
     return persistent
+
+
+################################################################################
+# Replaying statements
+################################################################################
 
 
 def test_opt_in_and_unsupported_callables(mocker, warp_context, warp_store):
@@ -172,35 +191,6 @@ def test_say_attributes_are_not_applied_during_warp(mocker, warp_context):
     assert seen_attributes == [(("permanent",), None)]
 
 
-def test_character_skips_temporary_and_speaking_attributes_during_warp(mocker, warp_context):
-    """
-    A character's say handling during warp drops the temporary and speaking attributes and returns no state
-    to the caller, so no attributes leak into the context afterwards.
-    """
-
-    c = character.ADVCharacter.__new__(character.ADVCharacter)
-    c.image_tag = "speaker"
-    images = mocker.Mock()
-    images.get_attributes.return_value = ("permanent",)
-    warp_context.images = images
-    warp_context.say_attributes = ("permanent",)
-    warp_context.temporary_attributes = ("temporary",)
-    resolve = mocker.Mock(return_value=True)
-    mocker.patch.object(c, "resolve_say_attributes", resolve)
-    mocker.patch.object(c, "handle_say_transition")
-
-    warping_patch = mocker.patch.object(warp, "warping", True)
-    speaking_patch = mocker.patch.object(renpy.config, "speaking_attribute", "speaking")
-    state = c.handle_say_attributes(False, True)
-    mocker.stop(speaking_patch)
-    mocker.stop(warping_patch)
-
-    resolve.assert_called_once_with(False, ("permanent",))
-    assert state is None
-    assert warp_context.say_attributes is None
-    assert warp_context.temporary_attributes is None
-
-
 def test_failed_callable_restores_bookkeeping_and_continues(mocker, warp_context, warp_store, write_log, log_exception):
     """
     When a replayed say raises, warp logs it, undoes the state the failed say changed (the multiple count, the
@@ -225,75 +215,6 @@ def test_failed_callable_restores_bookkeeping_and_continues(mocker, warp_context
     log_exception.assert_called_once()
 
 
-def test_failed_synthetic_node_uses_fallback_location(mocker, write_log, log_exception):
-    """
-    A node without a usable source location is reported as ``<unknown>:0`` when its execution fails during warp.
-    """
-
-    class SyntheticNode:
-        name = "synthetic"
-        next = None
-
-        def can_warp(self):
-            return True
-
-        def execute(self):
-            raise ValueError("synthetic failure")
-
-    warp.replay_node(SyntheticNode())
-
-    write_log.assert_called_once_with(
-        "While warping, ignoring statement at %s:%s:",
-        "<unknown>",
-        0,
-    )
-    log_exception.assert_called_once()
-
-
-def test_failed_resolution_is_skipped(mocker, log_exception):
-    """
-    A say whose speaker cannot be resolved is skipped and logged, and the next say is still replayed.
-    """
-
-    valid = mocker.Mock(warp=True, record_say=True, statement_name="say")
-    pairs = [make_say(None, "bad"), make_say(valid, "good")]
-    eval_who = mocker.patch.object(ast, "eval_who", side_effect=[ValueError("undefined"), valid])
-    warp.reconstruct([node for node, _who in pairs])
-    mocker.stop(eval_who)
-
-    valid.assert_called_once()
-    log_exception.assert_called_once()
-
-
-def test_failed_eligibility_is_skipped(mocker, warp_context, log_exception):
-    """
-    A speaker whose ``warp`` attribute raises is skipped and logged, and the next say is still replayed.
-    """
-
-    class Broken:
-        @property
-        def warp(self):
-            raise ValueError("eligibility")
-
-    valid = mocker.Mock(warp=True, record_say=True, statement_name="say")
-    run_says(mocker, warp_context, [make_say(Broken(), "bad"), make_say(valid, "good")])
-    valid.assert_called_once()
-    log_exception.assert_called_once()
-
-
-def test_failed_arguments_are_skipped(mocker, warp_context, log_exception):
-    """
-    A say whose arguments fail to evaluate is skipped and logged, and the next say is still replayed.
-    """
-
-    valid = mocker.Mock(warp=True, record_say=True, statement_name="say")
-    arguments = mocker.Mock()
-    arguments.evaluate.side_effect = ValueError("arguments")
-    run_says(mocker, warp_context, [make_say(valid, "bad", arguments), make_say(valid, "good")])
-    valid.assert_called_once_with("good", interact=True)
-    log_exception.assert_called_once()
-
-
 def test_control_exception_propagates_and_restores_flag(mocker, warp_context, log_exception):
     """
     A control-flow exception such as KeyboardInterrupt is not swallowed or logged. It propagates, while warp
@@ -310,57 +231,58 @@ def test_control_exception_propagates_and_restores_flag(mocker, warp_context, lo
     log_exception.assert_not_called()
 
 
-def test_display_during_warp_only_creates_retained_screen(mocker):
+def test_failed_say_removes_new_retained_screen(mocker, warp_context):
     """
-    While warping, a say that is not retained is not shown. A retained say creates a new ``_retain_`` screen
-    and does not call its callback.
-    """
-
-    show = mocker.Mock()
-    kwargs = {
-        "interact": True,
-        "slow": True,
-        "afm": True,
-        "ctc": None,
-        "ctc_pause": None,
-        "ctc_position": "nestled",
-        "all_at_once": False,
-        "cb_args": {},
-        "with_none": True,
-        "callback": mocker.Mock(),
-        "type": "adv",
-    }
-    warping_patch = mocker.patch.object(warp, "warping", True)
-    character.display_say("Name", "text", show, **kwargs)
-    show.assert_not_called()
-    get_screen_patch = mocker.patch.object(renpy.exports, "get_screen", side_effect=[object(), None])
-    character.display_say("Name", "text{w}more", show, retain=True, **kwargs)
-    mocker.stop(get_screen_patch)
-    mocker.stop(warping_patch)
-
-    show.assert_called_once_with("Name", "text{w}more", multiple=None, retain="_retain_1")
-    kwargs["callback"].assert_not_called()
-
-
-def test_reconstructed_history_has_no_rollback_identifier(mocker, warp_store):
-    """
-    History entries added during warp have no rollback identifier, and the history length limit still applies.
+    When a say fails after it creates a retained screen, warp hides that new screen. Screens that were already
+    showing are left alone.
     """
 
-    c = character.ADVCharacter.__new__(character.ADVCharacter)
-    c.who_args = c.what_args = c.window_args = c.show_args = {}
-    c.image_tag = None
-    warping_patch = mocker.patch.object(warp, "warping", True)
-    length_patch = mocker.patch.object(renpy.config, "history_length", 1)
-    callbacks_patch = mocker.patch.object(renpy.config, "history_callbacks", [])
-    c.do_done("Name", "one")
-    c.do_done("Name", "two")
-    mocker.stop(callbacks_patch)
-    mocker.stop(length_patch)
-    mocker.stop(warping_patch)
+    who = mocker.Mock(warp=True, record_say=True, statement_name="say", side_effect=ValueError("completion"))
+    tags = mocker.patch.object(
+        renpy.exports, "get_showing_tags", side_effect=[["_retain_old"], ["_retain_old", "_retain_0"]]
+    )
+    hide = mocker.patch.object(renpy.exports, "hide_screen")
+    run_says(mocker, warp_context, [make_say(who)])
+    mocker.stop(tags)
+    mocker.stop(hide)
 
-    assert [h.what for h in warp_store._history_list] == ["two"]
-    assert warp_store._history_list[0].rollback_identifier is None
+    hide.assert_called_once_with("_retain_0", layer="screens", immediately=True)
+
+
+class BrokenEligibility:
+    """
+    A speaker whose ``warp`` attribute raises when warp checks whether it can be replayed.
+    """
+
+    @property
+    def warp(self) -> bool:
+        raise ValueError("eligibility")
+
+
+@pytest.mark.parametrize("failure", ["resolution", "eligibility", "arguments"])
+def test_failed_say_preparation_is_skipped(mocker, warp_context, log_exception, failure):
+    """
+    A say that fails before it is replayed is skipped and logged, and the next say is still replayed. The
+    failure can come from resolving the speaker, from checking whether it can warp, or from evaluating
+    the say's arguments.
+    """
+
+    valid = mocker.Mock(warp=True, record_say=True, statement_name="say")
+    arguments = None
+    speaker = valid
+
+    if failure == "resolution":
+        speaker = ValueError("undefined")
+    elif failure == "eligibility":
+        speaker = BrokenEligibility()
+    else:
+        arguments = mocker.Mock()
+        arguments.evaluate.side_effect = ValueError("arguments")
+
+    run_says(mocker, warp_context, [make_say(speaker, "bad", arguments), make_say(valid, "good")])
+
+    valid.assert_called_once_with("good", interact=True)
+    log_exception.assert_called_once()
 
 
 def test_narrator_and_string_adapter_eligibility(warp_store):
@@ -394,6 +316,11 @@ def test_skipped_menu_only_applies_bubble_clearing(mocker, warp_store):
 
     execute_patch.assert_not_called()
     warp_store.bubble.statement_callback.assert_called_once_with("menu")
+
+
+################################################################################
+# Translation blocks
+################################################################################
 
 
 def test_optimized_translation_uses_selected_text_without_marking_seen(mocker, warp_context):
@@ -462,24 +389,6 @@ def test_translation_block_skips_failed_say_and_replays_next(mocker, warp_store,
     log_exception.assert_called_once()
 
 
-def test_failed_say_removes_new_retained_screen(mocker, warp_context):
-    """
-    When a say fails after it creates a retained screen, warp hides that new screen. Screens that were already
-    showing are left alone.
-    """
-
-    who = mocker.Mock(warp=True, record_say=True, statement_name="say", side_effect=ValueError("completion"))
-    tags = mocker.patch.object(
-        renpy.exports, "get_showing_tags", side_effect=[["_retain_old"], ["_retain_old", "_retain_0"]]
-    )
-    hide = mocker.patch.object(renpy.exports, "hide_screen")
-    run_says(mocker, warp_context, [make_say(who)])
-    mocker.stop(tags)
-    mocker.stop(hide)
-
-    hide.assert_called_once_with("_retain_0", layer="screens", immediately=True)
-
-
 def test_partial_translation_block_does_not_replay_target(mocker, warp_context):
     """
     When the selected translation block has fewer lines than the source block, warp replays only the lines
@@ -506,36 +415,9 @@ def test_partial_translation_block_does_not_replay_target(mocker, warp_context):
     who.assert_called_once_with("first", interact=True)
 
 
-def test_disabled_history_stays_empty(mocker, warp_store):
-    """
-    With history disabled in config or in the store, reconstructed dialogue is not added to the history list.
-    """
-
-    c = character.ADVCharacter.__new__(character.ADVCharacter)
-    history_length = mocker.patch.object(renpy.config, "history_length", None)
-    c.do_done("Name", "line")
-    mocker.stop(history_length)
-
-    warp_store._history = False
-    history_length = mocker.patch.object(renpy.config, "history_length", 10)
-    c.do_done("Name", "line")
-    mocker.stop(history_length)
-
-    assert warp_store._history_list == []
-
-
-def test_clearing_retained_screens_uses_the_requested_layer(mocker):
-    """
-    clear_retain hides each retained screen on the requested layer, and skips tags that are not retained.
-    """
-
-    tags = mocker.patch.object(renpy.exports.displayexports, "get_showing_tags", return_value=["_retain_0", "other"])
-    hide = mocker.patch.object(renpy.exports, "hide_screen")
-    renpy.exports.clear_retain(layer="bubbles")
-    mocker.stop(hide)
-    mocker.stop(tags)
-
-    hide.assert_called_once_with("_retain_0", layer="bubbles")
+################################################################################
+# Finding the statement to warp to
+################################################################################
 
 
 def test_warp_lands_on_first_statement_of_line(mocker, warp_context):

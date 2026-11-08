@@ -131,3 +131,6 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["testcases/pytests"]
 pythonpath = ["."]
+markers = [
+    "prism_native: runs against the real libprism and the host's speech engines; skipped unless selected with -m prism_native",
+]

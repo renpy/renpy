@@ -268,6 +268,40 @@ runtime coverage of changes in `renpy/common/`.
   performed and its result, and the remaining regression risk. If manual validation is also
   unavailable, explicitly report the unverified path; do not present the change as validated.
 
+### Test files and quality
+
+Organization:
+
+- One test file per source file, named `test_<path under renpy/, "/" replaced by "_">.py`:
+  `renpy/bootstrap.py` → `test_bootstrap.py`, `renpy/gl2/live2d.py` → `test_gl2_live2d.py`. A
+  package's `__init__.py` takes the package name (`renpy/translation/` → `test_translation.py`).
+  Tools in `scripts/` follow the same rule in `scripts/tests/`. Runtime testcases use the same name
+  as their pytest counterpart.
+- Before creating a test file, look for the existing one for that module and extend it.
+- A test that spans several files goes in the file for the most important one. Split a large file
+  by aspect with a suffix (`test_display_tts_prism_native.py`), keep shared harness code in
+  `conftest.py` or a helper module, and add section comments to files over about 250 lines.
+
+Quality:
+
+- Assert behavior that games, saves, or callers depend on: results, state, exceptions, ordering.
+  Do not assert constants, private attributes, mock call counts, log wording, or the internal
+  layout of renders and AST nodes.
+- Mock only a collaborator the code needs (clock, filesystem, threads, native libraries, network).
+  If a test patches most of the code path it claims to cover, it is testing the mocks; move it to
+  a runtime testcase or drive the real code instead.
+- Do not write tests that pass whether or not the code works: asserting that nothing raised,
+  restating a constant, or testing the test harness. Use `pytest.mark.parametrize` rather than
+  near-duplicate functions.
+- A test must fail or skip loudly when its required resource is missing; do not let it pass
+  vacuously. Tests that need native libraries, a GPU driver, or non-redistributable assets skip
+  with an explicit reason.
+- Do not make checks pass by skipping, deleting, or weakening tests, loosening assertions, or
+  special-casing test inputs, unless the task is to change the test. A test that checks
+  implementation details rather than the intended contract may be changed; say so in the final
+  response.
+- Before reporting a task as done, run the relevant tests and report any that could not run.
+
 ### Python Tests
 
 The Python tests use pytest and pytest-mock, installed by `uv sync` as dev dependencies. Engine tests live in
@@ -279,8 +313,9 @@ discovery includes only engine tests; run the tool suite explicitly.
 uv run pytest                                   # engine Python tests (default)
 uv run pytest scripts/tests                      # script tools, without engine startup
 uv run pytest testcases/pytests                   # engine Python tests
-uv run pytest testcases/pytests/test_prediction.py  # one module
+uv run pytest testcases/pytests/test_display_predict.py  # one module
 uv run pytest -k <expression>                   # tests matching an expression
+uv run pytest -m prism_native                   # native Prism TTS tests (opt-in, need libprism)
 uv run ruff check <changed-files>
 ```
 

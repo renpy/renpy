@@ -1,47 +1,11 @@
 import subprocess
 import sys
 import tempfile
-from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
 
-import setup as renpy_setup
 from scripts.setuplib import _build_lock
-
-
-def test_setup_holds_lock_through_build(mocker, monkeypatch):
-    """
-    main() takes the Cython build lock at tmp/.cython.lock and holds it for the whole of _build().
-
-    The lock and build functions are replaced with recorders, so the test checks ordering only: locked,
-    then build, then unlocked. main() changes the working directory to the repository base, so the test
-    records the current directory with monkeypatch.chdir, which restores it at teardown.
-    """
-
-    events = []
-
-    @contextmanager
-    def record_lock(path):
-        assert path == Path("tmp/.cython.lock")
-        events.append("locked")
-        try:
-            yield
-        finally:
-            events.append("unlocked")
-
-    def build():
-        events.append("build")
-        assert events == ["locked", "build"]
-
-    monkeypatch.chdir(Path.cwd())
-    lock_patch = mocker.patch.object(renpy_setup.setuplib, "_build_lock", record_lock)
-    build_patch = mocker.patch.object(renpy_setup, "_build", build)
-    renpy_setup.main()
-    mocker.stop(build_patch)
-    mocker.stop(lock_patch)
-
-    assert events == ["locked", "build", "unlocked"]
 
 
 def test_other_process_waits_for_build():

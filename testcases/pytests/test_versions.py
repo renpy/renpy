@@ -60,6 +60,12 @@ def test_make_version_string(branch, official, nightly, dirty, expected):
     ],
 )
 def test_get_release_version(monkeypatch, version, branch, nightly, expected):
+    """
+    The release version is the last one that shipped. A nightly build of the fix branch reports the previous point
+    release, since the version it carries has not shipped yet, except for x.y.0, which has no previous point
+    release. Every other build reports its own version without the build date or suffix.
+    """
+
     monkeypatch.setattr(
         renpy.versions, "get_version", lambda: {"version": version, "branch": branch, "nightly": nightly}
     )

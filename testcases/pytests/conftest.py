@@ -28,6 +28,8 @@ collects the test modules, so the tests can import engine names at module level.
 per process and records the reload backup, so tests must never call ``renpy.import_all()`` themselves.
 """
 
+import os
+
 import pytest
 
 import renpy
@@ -48,3 +50,53 @@ def surface_deallocation():
     yield
     renpy.pygame.surface._quit_surface_deallocation()
     renpy.pygame.surface._init_surface_deallocation()
+
+
+@pytest.fixture
+def windows_replace(mocker):
+    """
+    Patches os.replace to refuse an existing destination, as Windows does when another program has it open.
+
+    The program is assumed to allow deletion, so moving the file to an unused name still works. Returns the mock, so
+    a test can extend its behavior. os.replace is patched module-wide, so the real function is captured first.
+    """
+
+    replace = os.replace
+
+    def refuse_existing(source, destination):
+        if os.path.exists(destination):
+            raise PermissionError("destination is open")
+        replace(source, destination)
+
+    return mocker.patch("renpy.loadsave.os.replace", side_effect=refuse_existing)
+
+
+@pytest.fixture
+def audio():
+    """
+    Provide an AudioHarness with SDL's dummy audio driver and an initialized renpysound mixer.
+
+    Shared by the test_audio_renpysound_*.py modules. The SDL_AUDIO_DRIVER hint is restored after the test,
+    and renpysound.quit() runs before the restore. The harness module is imported here, rather than at the
+    top of this file, so that it is loaded after the engine has been started.
+    """
+
+    from renpy.audio import renpysound
+
+    from .audio_harness import AudioHarness
+
+    harness = AudioHarness()
+    hint = b"SDL_AUDIO_DRIVER"
+    original = harness.native.SDL_GetHint(hint)
+    assert harness.native.SDL_SetHint(hint, b"dummy")
+    try:
+        harness.initialize()
+        try:
+            yield harness
+        finally:
+            renpysound.quit()
+    finally:
+        if original is None:
+            harness.native.SDL_ResetHint(hint)
+        else:
+            harness.native.SDL_SetHint(hint, original)

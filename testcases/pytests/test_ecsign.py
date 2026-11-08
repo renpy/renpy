@@ -73,23 +73,18 @@ INVALID_PRIVATE_PEMS = (
 )
 
 
-def test_key_generation():
-    """A generated P-256 key pair has a 32-byte private scalar and a 64-byte public point."""
+def test_der_pem_roundtrip():
+    """
+    A generated P-256 key pair has a 32-byte private scalar and a 64-byte public point, and signing and
+    verifying keys serialized as DER or PEM load back to the same key material.
+    """
 
     sk = ecsign.SigningKey.generate(curve=ecsign.NIST256p)
     vk = sk.verifying_key
+
     assert vk is not None
     assert len(sk.to_string()) == 32
     assert len(vk.to_string()) == 64
-
-
-def test_der_pem_roundtrip():
-    """
-    Signing and verifying keys serialized as DER or PEM load back to the same key material.
-    """
-
-    sk = ecsign.SigningKey.generate(curve=ecsign.NIST256p)
-    vk = sk.verifying_key
 
     sk_der = sk.to_der()
     vk_der = vk.to_der()
@@ -105,6 +100,55 @@ def test_der_pem_roundtrip():
     assert sk.to_string() == sk_from_pem.to_string()
     assert vk.to_string() == vk_from_der.to_string()
     assert vk.to_string() == vk_from_pem.to_string()
+
+
+def test_public_key_for_scalar_one_is_the_generator_point():
+    """
+    The public key for private scalar 1 is the P-256 base point G, whose coordinates are fixed by FIPS 186.
+
+    Round trips alone cannot catch an implementation that is self-consistent but uses the wrong curve
+    constants, so this pins the point multiplication to the published value.
+    """
+
+    expected = bytes.fromhex(
+        "6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296"
+        "4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5"
+    )
+
+    assert ecsign.SigningKey.from_secret_exponent(1).verifying_key.to_string() == expected
+
+
+def test_verifies_externally_generated_signature():
+    """
+    A signature produced by OpenSSL (a fresh prime256v1 key, `openssl dgst -sha256 -sign`, with the DER
+    signature converted to the 64-byte r || s form) verifies against its SPKI public key.
+
+    A tampered copy of the signature and a different message must both be rejected. The key, message, and
+    signature are fixed values generated outside Ren'Py, so a verifier that was wrong in a way that signing
+    here would mirror cannot pass. The hash function is passed explicitly because the default is sha1.
+    """
+
+    public_key = bytes.fromhex(
+        "3059301306072a8648ce3d020106082a8648ce3d030107034200"
+        "040e04ad3f574113098c59c9839535af99a808c451fd8098207b709795c1f176"
+        "febd9603202e85a08bab3a8adfeb057b897d32dd8f41b561192dfc2beada1e64ed"
+    )
+    signature = bytes.fromhex(
+        "465c518a5947f498fe1d44842d694fa2d756e8b242c8dc371c50ce343f88cefc"
+        "0bfd7fcc549a25f40e39a8ce25f0bd24d3b118fb63b2d85763d63725eacffb5e"
+    )
+    message = b"Ren'Py known-answer signature test"
+
+    vk = ecsign.VerifyingKey.from_der(public_key)
+    assert vk.verify(signature, message, hashfunc=hashlib.sha256)
+
+    tampered = signature[:-1] + bytes([signature[-1] ^ 1])
+
+    with pytest.raises(ecsign.BadSignatureError):
+        vk.verify(tampered, message, hashfunc=hashlib.sha256)
+
+    with pytest.raises(ecsign.BadSignatureError):
+        vk.verify(signature, message + b"!", hashfunc=hashlib.sha256)
 
 
 def test_sign_and_verify():

@@ -27,6 +27,12 @@ from scripts import checksums
 
 
 def test_checksums_cover_every_download_format(tmp_path, monkeypatch):
+    """
+    checksums.main writes three checksum lines for every download format and leaves out updates.json.
+
+    gpg2 is replaced by a function that only renames the file to its .asc name, so no signing key is needed.
+    """
+
     for fn in ["a.zip", "b.tar.gz", "c.tar.bz2", "d.exe", "e.dmg", "updates.json"]:
         (tmp_path / fn).write_bytes(b"data")
 

@@ -256,6 +256,9 @@ label retain_after_load:
 # Drag and Drop
 ###############################################################################
 
+# The drag_and_drop screen is also the fixture for the drag tests in tests/test_test_selectors.rpy, so
+# changes to it may need to be reflected there.
+
 init python:
 
     def peg_dragged(drags, drop):
@@ -295,25 +298,6 @@ screen drag_and_drop():
 label drag_and_drop:
     call screen drag_and_drop
     return
-
-###############################################################################
-# Scroll
-###############################################################################
-
-screen scroll_screen:
-    viewport:
-        id "scroll_vp"
-        draggable True
-        mousewheel True
-
-        vbox:
-            spacing 10
-
-            for i in range(50):
-                text "This is line [i]."
-
-            textbutton "Close" action Hide("scroll_screen") id "close_screen_button"
-
 
 ###############################################################################
 # GLTFModel

@@ -4,6 +4,10 @@
 # == Fixtures ==
 # ==============
 
+# ----------------------------------------------------------------------------
+# Fixtures: replacing or hiding an image that runs ATL (parameters, globals, running transforms)
+# ----------------------------------------------------------------------------
+
 image atl__solid = Solid("#fff", xysize=(100, 100))
 
 default atl__global_alpha = 0.25
@@ -72,6 +76,10 @@ label atl__running_replace__start:
 
     "Replaced."
     return
+
+# ----------------------------------------------------------------------------
+# Fixtures: replacing the child of an ATL transform
+# ----------------------------------------------------------------------------
 
 # Child fixtures. Images are shown as atl__person so they can be replaced by tag.
 
@@ -271,6 +279,10 @@ label atl__child_layer_dissolve__swap:
     call atl__child_layer_dissolve(atl__swap)
     return
 
+# ----------------------------------------------------------------------------
+# Fixtures: duplicating ATL transforms and the displayables that contain them
+# ----------------------------------------------------------------------------
+
 # Duplication fixtures.
 
 # A displayable that isn't a transform, containing a running ATL transform.
@@ -362,6 +374,10 @@ testsuite atl:
         if not screen "main_menu":
             run MainMenu(confirm=False, save=False)
 
+    # ------------------------------------------------------------------------
+    # Replacing or hiding an image that runs ATL
+    # ------------------------------------------------------------------------
+
     # GH-7283: Replacing or hiding an image copies its ATL transform. The copy must reuse the
     # compiled block, not re-evaluate the ATL, whose names may have left scope (label parameters
     # are dynamic variables) or changed since it was shown.
@@ -404,6 +420,10 @@ testsuite atl:
     # (config.keep_running_transform). ATL that displays its `child` parameter compiles that
     # displayable into its block, so these check the transform shows the new child, not the one
     # it was created with.
+    # ------------------------------------------------------------------------
+    # Replacing the child of an ATL transform
+    # ------------------------------------------------------------------------
+
     testsuite child:
         testcase replace:
             description "Replacing an image under a running transform displays the new image"
@@ -492,6 +512,10 @@ testsuite atl:
 
     # A duplicatable displayable has to be duplicated wherever it's shown, so that each place it's
     # shown runs its own ATL.
+    # ------------------------------------------------------------------------
+    # Duplicating ATL transforms
+    # ------------------------------------------------------------------------
+
     testsuite duplicate:
         testcase show_expression:
             description "Each show expression of a displayable containing ATL runs its own copy of the ATL"

@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-"""Tests that scriptedit.add_to_ast_before reports parse errors and leaves the AST alone when they happen."""
+"""Tests that scriptedit.add_to_ast_before inserts parsed statements into the AST, and leaves it alone on errors."""
 
 from types import SimpleNamespace
 
@@ -28,29 +28,98 @@ import pytest
 
 import renpy
 from renpy import scriptedit
+from renpy.script import Script
+
+FILENAME = "game/script.rpy"
+
+SOURCE = """\
+e "one"
+e "two"
+e "three"
+"""
 
 
-def test_add_to_ast_before_parse_error(mocker):
+@pytest.fixture
+def script(mocker):
     """
-    A parse error raises ValueError carrying the error text, and the line number shift is undone.
+    Installs a Script whose AST was parsed from SOURCE, and returns the first statement of the chain.
 
-    The script and the node lookups are mocked, since only the handling of load_string's (None, None) result
-    is under test. The statement at line 5 is shifted to 6 before parsing, so the undo must shift 6 back.
+    The parser and Script.load_string are real, so inserted code goes through the same parse and name
+    assignment as in the interactive director. The Script is built without __init__, which would scan the real
+    game, and the line text that scriptedit reads from disk, the context stack, and the rollback log are
+    replaced, since the test only looks at the AST. Parse errors are collected into a fresh list.
     """
 
-    old = SimpleNamespace(filename="game/script.rpy", linenumber=5)
-    stmts = [old]
+    script = Script.__new__(Script)
+    script.namemap = {}
+    script.all_stmts = []
+    script.all_pycode = []
+    script.need_analysis = []
+    script.need_compress = []
+    script.record_pycode = True
+    script.serial = 0
+    script.translator = renpy.translation.ScriptTranslator()
 
-    mocker.patch.object(scriptedit, "nodes_on_line_at_or_after", return_value=[old])
-    mocker.patch.object(scriptedit, "first_and_last_nodes", return_value=(old, old))
-    mocker.patch.object(renpy.game, "script", mocker.Mock(all_stmts=stmts))
-    renpy.game.script.load_string.return_value = (None, None)
-    mocker.patch.object(renpy.parser, "parse_errors", ["first error", "second error"])
+    mocker.patch.object(renpy.game, "script", script)
+    mocker.patch.object(renpy.game, "contexts", [])
+    mocker.patch.object(renpy.game, "log", SimpleNamespace(replace_node=lambda old, new: None))
+    mocker.patch.object(renpy.parser, "parse_errors", [])
     mocker.patch.object(renpy.parser, "deferred_parse_errors", {})
+    # Script.load_string rebinds this module global; patching it lets mocker restore the engine's list.
+    mocker.patch.object(renpy.parser, "parsed_expressions", [])
+    mocker.patch.object(scriptedit, "files", {FILENAME})
+
+    stmts = renpy.parser.parse(FILENAME, SOURCE)
+    renpy.ast.chain_block(stmts, None)
+    script.all_stmts = renpy.script.collapse_stmts(stmts)
+
+    for number, node in enumerate(script.all_stmts):
+        node.name = ("scriptedit", number)
+
+    return stmts[0]
+
+
+def walk_chain(first):
+    """
+    Returns the (line number, text) of each statement reachable from `first`, which is the order the game would
+    run them in. The text is None for statements without any, like the return at the end.
+    """
+
+    rv = []
+    node = first
+
+    while node is not None:
+        rv.append((node.linenumber, getattr(node, "what", None)))
+        node = node.next
+
+    return rv
+
+
+def test_add_to_ast_before_inserts_statement(script):
+    """
+    Code added before a line runs before that line's statement, and the statements from that line on move down
+    one line, so later edits to the same line numbers still find the right statements.
+    """
+
+    scriptedit.add_to_ast_before('e "new"', FILENAME, 2)
+
+    assert walk_chain(script)[:4] == [(1, "one"), (2, "new"), (3, "two"), (4, "three")]
+
+
+def test_add_to_ast_before_parse_error(script):
+    """
+    A parse error raises ValueError naming the file and line of the bad code, and the AST is as it was.
+
+    The statements from the given line on are shifted down one line before parsing, so the failure has to
+    shift them back up. A shift that is not undone leaves every later statement on the wrong line.
+    """
+
+    before = walk_chain(script)
 
     with pytest.raises(ValueError) as excinfo:
-        scriptedit.add_to_ast_before("bogus (", "game/script.rpy", 5)
+        scriptedit.add_to_ast_before("bogus (", FILENAME, 2)
 
-    assert str(excinfo.value) == "first error\n\nsecond error"
-    assert old.linenumber == 5
+    assert str(excinfo.value).startswith(f'File "{FILENAME}", line 2')
+    assert walk_chain(script) == before
+    assert [node.linenumber for node in renpy.game.script.all_stmts] == [number for number, _what in before]
     assert renpy.parser.parse_errors == []

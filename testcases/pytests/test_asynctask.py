@@ -40,6 +40,11 @@ def runner():
     runner.reset()
 
 
+################################################################################
+# Scheduling and results
+################################################################################
+
+
 def test_empty_and_result(runner):
     """
     An empty runner reports no work, and a task's result is unavailable until it finishes.
@@ -120,13 +125,21 @@ def test_budget_checks_clock_after_each_step(runner, mocker):
     assert order == [1, 2]
 
 
+################################################################################
+# Cancel and reset
+################################################################################
+
+
 def test_cancel_before_start(runner):
     """
-    Cancelling a task before its first step closes it without ever running its body.
+    Cancelling a task before its first step closes it without ever running its body, and a task that has
+    already taken a step is removed from the ready queue when cancelled.
 
     The generator has never started, so its finally block does not run and "started" never appears. The
     task reports cancelled, result() and exception() both raise CancelledError, and a second cancel
-    returns False.
+    returns False. After one step a task sits in the ready queue, and cancelling it empties both the task
+    list and the queue. The loop repeats create-and-cancel 20 times to confirm the queue never keeps a
+    cancelled task.
     """
 
     events = []
@@ -150,18 +163,6 @@ def test_cancel_before_start(runner):
     assert len(runner._ready) == 0
     assert not task.cancel()
     assert not runner.run_for_ns(10)
-
-
-def test_cancel_only_started_task_clears_ready_queue(runner):
-    """
-    Cancelling a started task removes it from the ready queue, and repeated cancels are no-ops.
-
-    After one step the task sits in the ready queue. Cancelling it empties both the task list and the queue.
-    The loop repeats create-and-cancel 20 times to confirm the queue never keeps a cancelled task.
-    """
-
-    def work():
-        yield
 
     task = runner.create_task(work())
     assert runner.run_for_ns(0)
@@ -343,6 +344,11 @@ def test_cleanup_that_yields_is_error_but_other_tasks_are_closed(runner):
     assert not runner.tasks
 
 
+################################################################################
+# Exceptions, nesting, and run_sync
+################################################################################
+
+
 def test_exception_propagates_without_discarding_other_work(runner):
     """
     An exception raised by one task propagates out of run_for_ns, and unrelated ready work is kept.
@@ -443,12 +449,20 @@ def test_run_sync_closes_on_exception():
     assert events == ["closed"]
 
 
+################################################################################
+# Slow-step debug logging
+################################################################################
+
+
 def test_slow_step_logs_nested_location_and_completed(runner, capsys, mocker):
     """
-    A step that exceeds RENPY_DEBUG_SLOW_ASYNC is logged with the nested frame locations and a completion note.
+    A step that exceeds RENPY_DEBUG_SLOW_ASYNC is logged with the nested frame locations and a completion note,
+    and a slow step that suspends at a single frame logs just that frame.
 
     Both the outer task and the `yield from` child sleep past the 0.5 ms threshold. The report must name the
     task, show the outer and inner frames, mark the suspension point, and note the completion and threshold.
+    A second task that sleeps, yields, and is still pending after one step must be reported with its name and
+    the function it is suspended in.
     """
 
     def leaf():
@@ -472,24 +486,14 @@ def test_slow_step_logs_nested_location_and_completed(runner, capsys, mocker):
     assert "completed" in text
     assert "threshold: 0.50 ms" in text
 
-
-def test_slow_step_logs_single_frame_location(runner, capsys, mocker):
-    """
-    A slow step that suspends at a single frame logs that frame and names the task, without a completion note.
-
-    The task sleeps past the threshold, yields, and is still pending after one step. The report must name the
-    task and the function it is suspended in.
-    """
-
     def work():
         time.sleep(0.003)
         yield
 
-    mocker.patch.dict(os.environ, {"RENPY_DEBUG_SLOW_ASYNC": "0.5"})
-    task = runner.create_task(work(), name="single_task")
+    single = runner.create_task(work(), name="single_task")
     runner.run_for_ns(0)
     text = capsys.readouterr().out
-    assert not task.done()
+    assert not single.done()
     assert "Slow generator task 'single_task'" in text
     assert "suspended at" in text
     assert "in work" in text
@@ -497,10 +501,9 @@ def test_slow_step_logs_single_frame_location(runner, capsys, mocker):
 
 def test_slow_step_disabled_and_invalid_setting(runner, capsys, mocker):
     """
-    An unparseable RENPY_DEBUG_SLOW_ASYNC value disables slow-step logging and leaves the threshold unset.
+    An unparseable RENPY_DEBUG_SLOW_ASYNC value disables slow-step logging.
 
-    Output must be empty even though the task sleeps, the task still completes normally, and the runner's
-    internal threshold stays None.
+    Output must be empty even though the task sleeps, and the task still completes normally.
     """
 
     def work():
@@ -513,4 +516,3 @@ def test_slow_step_disabled_and_invalid_setting(runner, capsys, mocker):
         pass
     assert capsys.readouterr().out == ""
     assert task.done()
-    assert runner._debug_threshold_ns is None

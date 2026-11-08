@@ -32,7 +32,15 @@ label layeredimage_unknown_attribute_error:
     $ config.developer = True
     $ config.report_extraneous_attributes = True
     $ config.raise_image_exceptions = True
-    show test_unknown_attribute happy typo_attribute
+
+    # The show statement calls renpy.show, so this is the same error, caught so the testcase can check it.
+    $ layeredimage_error = None
+    python:
+        try:
+            renpy.show("test_unknown_attribute happy typo_attribute")
+        except Exception as e:
+            layeredimage_error = str(e)
+
     "Layeredimage not displayed."
     return
 
@@ -49,9 +57,6 @@ init python:
 testsuite layeredimage:
     setup:
         $ _test.old_config = (config.developer, config.report_extraneous_attributes, config.raise_image_exceptions)
-        $ layeredimage_old_developer = config.developer
-        $ layeredimage_old_report_extraneous_attributes = config.report_extraneous_attributes
-        $ layeredimage_old_raise_image_exceptions = config.raise_image_exceptions
 
     teardown:
         $ config.developer, config.report_extraneous_attributes, config.raise_image_exceptions = _test.old_config
@@ -72,6 +77,8 @@ testsuite layeredimage:
         assert eval layeredimage_has_error_displayable()
 
     testcase unknown_attribute_raises:
-        xfail True
+        description "With raise_image_exceptions, showing an unknown attribute raises an error that names it."
+
         run Start("layeredimage_unknown_attribute_error")
-        advance
+        advance until "Layeredimage not displayed."
+        assert eval (layeredimage_error is not None and "typo_attribute" in layeredimage_error)

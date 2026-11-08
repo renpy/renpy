@@ -21,7 +21,8 @@
 # SOFTWARE.
 
 """
-Tests for generation of translation identifiers from translatable statements.
+Tests for renpy.translation: generation of translation identifiers from translatable statements, and the
+translation of strings.
 """
 
 from types import SimpleNamespace
@@ -30,6 +31,10 @@ import pytest
 
 import renpy
 from renpy import ast, translation
+
+################################################################################
+# Restructurer translation ids
+################################################################################
 
 
 class TranslatableStatement(ast.Node):
@@ -97,3 +102,143 @@ def test_tlid_includes_non_say_code_when_configured(mocker, translation_environm
     second = create_translation_id("voice second.ogg")
 
     assert first != second
+
+
+GOLDEN_SCRIPT = """\
+label start:
+    e "Hello."
+    e "Hello."
+    e happy "Goodbye, \\"friend\\"." (what_italic=True)
+    "Narration."
+    e "Hello." id explicit_one
+
+label other.sub:
+    e "Hello."
+"""
+"A small script that exercises label prefixes, duplicate lines, explicit ids, and quoting."
+
+
+def test_translation_ids_are_stable(mocker, translation_environment):
+    """
+    The identifiers generated for a fixed script are pinned to the values below.
+
+    A translation identifier is the translate statement's name in saves and in translators' tl/ files, so a
+    change in how it is computed silently orphans every existing translation. If this test fails because
+    the algorithm was changed on purpose, the change needs a compatibility switch like
+    config.tlid_only_considers_say, rather than an update to these values.
+
+    The ids come from parsing real script text. A line's id is a hash of its canonical say statement,
+    including the speaker, attributes, and arguments, prefixed with the enclosing label. A repeated line gets
+    a numeric suffix, a dotted label has its dot replaced, and an explicit id wins, with the generated id
+    kept as the alternate.
+    """
+
+    mocker.patch.object(renpy.config, "tlid_only_considers_say", True)
+    mocker.patch.object(renpy.parser, "parsed_expressions", [])
+
+    stmts = renpy.parser.parse("game/translation.rpy", GOLDEN_SCRIPT)
+
+    for number, node in enumerate(renpy.script.collapse_stmts(stmts)):
+        # The restructurer reads names, which the script loader normally assigns. Labels already have theirs.
+        if not isinstance(node, ast.Label):
+            node.name = ("golden", number)
+
+    translation.restructure(stmts)
+
+    says = [node for node in renpy.script.collapse_stmts(stmts) if isinstance(node, ast.TranslateSay)]
+
+    assert [(node.what, node.identifier, node.alternate) for node in says] == [
+        ("Hello.", "start_4e73b00f", None),
+        ("Hello.", "start_4e73b00f_1", None),
+        ('Goodbye, "friend".', "start_5fc7bae6", None),
+        ("Narration.", "start_822c98ab", None),
+        ("Hello.", "explicit_one", "start_ffcfebec"),
+        ("Hello.", "other_sub_4e73b00f", None),
+    ]
+
+
+################################################################################
+# StringTranslator
+################################################################################
+
+
+@pytest.fixture
+def translator(mocker):
+    """Gives the test a fresh translator, with recording of unknown strings disabled."""
+
+    mocker.patch.object(translation, "update_translations", False)
+    return translation.StringTranslator()
+
+
+@pytest.mark.parametrize(
+    "old, entries, expected",
+    [
+        ("Item", {}, "Item"),
+        ("Item", {"Item": "Objet"}, "Objet"),
+        ("Item", {"Item": ""}, ""),
+        ("Item", {"Other": "Autre"}, "Item"),
+        ("Item {#gallery}", {"Item ": "Objet"}, "Objet"),
+        ("Item {#gallery}", {"Item {#gallery}": "Exact", "Item ": "Fallback"}, "Exact"),
+        ("Item {#gallery}", {}, "Item {#gallery}"),
+        ("Item {#gallery}", {"Other": "Autre"}, "Item {#gallery}"),
+        ("{#one}Item{#two}", {"Item": "Objet"}, "Objet"),
+        ("Item {#unfinished", {"Item ": "Wrong"}, "Item {#unfinished"),
+        ("Item {#two\nlines}", {"Item ": "Wrong"}, "Item {#two\nlines}"),
+        ("", {}, ""),
+        ("{color=#fff}Item{/color}", {}, "{color=#fff}Item{/color}"),
+        ("Élément [item]", {}, "Élément [item]"),
+    ],
+)
+def test_translate(translator, old, entries, expected):
+    """Exact matches win, then matches with {#...} tags removed, and otherwise the original is returned."""
+
+    translator.translations.update(entries)
+    assert translator.translate(old) == expected
+
+
+def test_unknown_tagged_string_is_recorded(mocker, translator):
+    """In update mode, an unknown tagged string is recorded once, and its tagless translation is still used."""
+
+    mocker.patch.object(translation, "update_translations", True)
+    translator.translations["Item "] = "Objet"
+
+    assert translator.translate("Item {#gallery}") == "Objet"
+    assert translator.unknown == ["Item {#gallery}"]
+
+    # The recorded identity translation is now an exact match.
+    assert translator.translate("Item {#gallery}") == "Item {#gallery}"
+    assert translator.unknown == ["Item {#gallery}"]
+
+
+def test_unknown_plain_string_is_recorded(mocker, translator):
+    """In update mode, an unknown plain string is recorded once."""
+
+    mocker.patch.object(translation, "update_translations", True)
+
+    assert translator.translate("Item") == "Item"
+    assert translator.translate("Item") == "Item"
+    assert translator.unknown == ["Item"]
+    assert translator.translations == {"Item": "Item"}
+
+
+def test_table_changes_are_seen(translator):
+    """An earlier miss does not hide translations added, replaced or removed later."""
+
+    assert translator.translate("Item") == "Item"
+
+    translator.add("Item", "Objet", None)
+    assert translator.translate("Item") == "Objet"
+
+    translator.translations["Item"] = "Article"
+    assert translator.translate("Item") == "Article"
+
+    del translator.translations["Item"]
+    assert translator.translate("Item") == "Item"
+
+
+@pytest.mark.parametrize("old", [123, b"Item {#tag}"])
+def test_non_string_raises(translator, old):
+    """Translating something that is not a string raises TypeError."""
+
+    with pytest.raises(TypeError):
+        translator.translate(old)
