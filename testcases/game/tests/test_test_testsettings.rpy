@@ -17,6 +17,10 @@ testsuite screenshot:
     setup:
         run Preference("display", 1.0)
 
+        # Other tests change these, so reset them to their defaults to keep the preferences screen fixed.
+        run Preference("text speed", 0)
+        run Preference("auto-forward time", 0)
+
         # Earlier tests leave the mouse at a random position, which could hover over a button. No
         # screen in this suite has anything here.
         move pos (300, 500)
