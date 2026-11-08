@@ -46,7 +46,7 @@ implementing local changes requested by the user in an interactive session).
 | Launcher | [launcher/game/](launcher/game/) |
 | New-project template | [gui/](gui/) (copied into new games; edits do not reach existing games) |
 | Bundled games | [tutorial/](tutorial/), [the_question/](the_question/) |
-| Tests | [testcases/pytests/](testcases/pytests/) (engine pytest), [scripts/tests/](scripts/tests/) (tool pytest), [testcases/](testcases/) (Ren'Py testcase project), runner in [renpy/test/](renpy/test/) |
+| Tests | [testcases/pytests/](testcases/pytests/) (engine pytest), [scripts/tests/](scripts/tests/) (pytest for `scripts/` tools and the build system), [testcases/](testcases/) (Ren'Py testcase project), runner in [renpy/test/](renpy/test/) |
 | Docs | [sphinx/source/](sphinx/source/) |
 
 Untracked local directories such as `lib/`, `web/`, `vscode/`, `tmp/`, `scratch/`, `c/`, `cg/`, and
@@ -275,8 +275,9 @@ Organization:
 - One test file per source file, named `test_<path under renpy/, "/" replaced by "_">.py`:
   `renpy/bootstrap.py` → `test_bootstrap.py`, `renpy/gl2/live2d.py` → `test_gl2_live2d.py`. A
   package's `__init__.py` takes the package name (`renpy/translation/` → `test_translation.py`).
-  Tools in `scripts/` follow the same rule in `scripts/tests/`. Runtime testcases use the same name
-  as their pytest counterpart.
+  Tests for tools in `scripts/` and for the build system (`setup.py`, `scripts/setuplib.py`) go in
+  `scripts/tests/`, named by the same rule. Runtime testcases use the same name as their pytest
+  counterpart.
 - Before creating a test file, look for the existing one for that module and extend it.
 - A test that spans several files goes in the file for the most important one. Split a large file
   by aspect with a suffix (`test_display_tts_prism_native.py`), keep shared harness code in
@@ -305,9 +306,9 @@ Quality:
 ### Python Tests
 
 The Python tests use pytest and pytest-mock, installed by `uv sync` as dev dependencies. Engine tests live in
-[testcases/pytests/](testcases/pytests/); tests for tools in `scripts/` live in
-[scripts/tests/](scripts/tests/) and run without engine initialization or compiled extensions. Default pytest
-discovery includes only engine tests; run the tool suite explicitly.
+[testcases/pytests/](testcases/pytests/); tests for tools in `scripts/` and for the build system (`setup.py`,
+`scripts/setuplib.py`) live in [scripts/tests/](scripts/tests/) and run without engine initialization or compiled
+extensions. Default pytest discovery includes only engine tests; run the tool suite explicitly.
 
 ```sh
 uv run pytest                                   # engine Python tests (default)

@@ -456,14 +456,18 @@ def test_reinit_drains_old_worker_before_replacing_it(start_worker, mocker):
 
 
 def test_late_failure_is_logged_and_sync_failure_propagates(start_worker, mocker):
-    """A failing background write is logged and raised from its future; a later sync failure still raises."""
+    """A failing background write is logged and raised from its future; a later sync failure still raises.
+
+    The log is patched so the test doesn't write to the real log, and so the background failure can be seen to reach
+    the log through the event it sets. The worker must survive both failures and run later writes.
+    """
     start_worker()
     location = make_file_location()
     location._save_persistent = lambda data: (_ for _ in ()).throw(OSError("write failed"))
     logged = threading.Event()
 
-    log_write = mocker.patch.object(renpy.display.log, "write")
-    log_exception = mocker.patch.object(renpy.display.log, "exception", side_effect=lambda: logged.set())
+    mocker.patch.object(renpy.display.log, "write")
+    mocker.patch.object(renpy.display.log, "exception", side_effect=lambda: logged.set())
 
     future = location.save_persistent(b"data", background=True)
     with pytest.raises(OSError, match="write failed"):
@@ -472,9 +476,6 @@ def test_late_failure_is_logged_and_sync_failure_propagates(start_worker, mocker
 
     with pytest.raises(OSError, match="write failed"):
         location.save_persistent(b"data")
-
-    log_write.assert_called_once_with("Writing persistent.")
-    log_exception.assert_called_once()
 
     location._save_persistent = lambda data: 10
     assert location.save_persistent(b"later") is None

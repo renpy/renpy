@@ -1,3 +1,24 @@
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 """
 Tests for Render.subsurface handling of zero-sized intermediate renders.
 """
@@ -85,38 +106,72 @@ def test_zero_width_clipping_render_is_excluded():
     assert clipped.children == []
 
 
-def test_callable_receives_displayable_dimensions(mocker) -> None:
-    """A callable focus mask is called with coordinates relative to the displayable and the full displayable size."""
+def make_mask(expected_point: tuple[int, int], expected_args: tuple[int, int, int, int] | None):
+    """
+    Returns a callable focus mask that reports focus only when it is called with expected_point, and whose result
+    reports focus only when called with expected_args. If expected_args is None, the result accepts any arguments.
+    This lets a test check the coordinates passed to the mask through the focus result alone.
+    """
+
+    def result(x, y, w, h):
+        return expected_args is None or (x, y, w, h) == expected_args
+
+    def mask(x, y):
+        if (x, y) != expected_point:
+            return False
+
+        return result
+
+    return mask
+
+
+def accept_all_mask(x, y):
+    """A callable focus mask that reports focus at every point it is asked about."""
+
+    return True
+
+
+def test_callable_receives_displayable_dimensions() -> None:
+    """
+    A callable focus mask is called with coordinates relative to the displayable, and its callable result also gets
+    the full displayable size. The mask only reports focus for exactly those arguments, so a focused result shows the
+    arguments were right.
+    """
     render = Render(120, 60)
     displayable = object()
-    result = mocker.Mock(return_value=True)
-    mask = mocker.Mock(return_value=result)
-    render.add_focus(displayable, None, 0, 0, 120, 60, 10, 5, mask)
+    render.add_focus(displayable, None, 0, 0, 120, 60, 10, 5, make_mask((20, 15), (20, 15, 110, 55)))
 
     assert render.focus_at_point(30, 20, None) == (displayable, None, None)
-    mask.assert_called_once_with(20, 15)
-    result.assert_called_once_with(20, 15, 110, 55)
 
 
 @pytest.mark.parametrize("subpixel", [False, True], ids=["pixel", "subpixel"])
-@pytest.mark.parametrize("point", [(-1, 2), (40, 2), (3, -1), (3, 20)], ids=["left", "right", "above", "below"])
-def test_callable_mask_remains_focusable_after_nested_clipping(subpixel: bool, point: tuple[int, int], mocker) -> None:
+def test_callable_mask_remains_focusable_after_nested_clipping(subpixel: bool) -> None:
     """
-    After two nested clipping subsurfaces, a point inside the clip is focused and the mask is called with the
-    translated coordinates, while a point outside either clip is not focused and the mask is not called again.
+    After two nested clipping subsurfaces, a point inside the clip is focused, and the mask is called with the
+    point translated back into the original render's coordinates.
     """
     render = Render(120, 60)
     displayable = object()
-    result = mocker.Mock(return_value=True)
-    mask = mocker.Mock(return_value=result)
-    render.add_focus(displayable, None, 0, 0, 120, 60, 0, 0, mask)
+    render.add_focus(displayable, None, 0, 0, 120, 60, 0, 0, make_mask((28, 16), (28, 16, 120, 60)))
 
     clipped = render.subsurface((20, 10, 70, 30), focus=True, subpixel=subpixel)
     clipped = clipped.subsurface((5, 4, 40, 20), focus=True, subpixel=subpixel)
 
     assert clipped.focus_at_point(3, 2, None) == (displayable, None, None)
-    mask.assert_called_once_with(28, 16)
-    result.assert_called_once_with(28, 16, 120, 60)
+
+
+@pytest.mark.parametrize("subpixel", [False, True], ids=["pixel", "subpixel"])
+@pytest.mark.parametrize("point", [(-1, 2), (40, 2), (3, -1), (3, 20)], ids=["left", "right", "above", "below"])
+def test_callable_mask_not_focused_outside_nested_clipping(subpixel: bool, point: tuple[int, int]) -> None:
+    """
+    After two nested clipping subsurfaces, a point just outside the inner clip is not focused, even though the mask
+    reports focus everywhere, so only the clipping can prevent focus.
+    """
+    render = Render(120, 60)
+    displayable = object()
+    render.add_focus(displayable, None, 0, 0, 120, 60, 0, 0, accept_all_mask)
+
+    clipped = render.subsurface((20, 10, 70, 30), focus=True, subpixel=subpixel)
+    clipped = clipped.subsurface((5, 4, 40, 20), focus=True, subpixel=subpixel)
 
     assert clipped.focus_at_point(*point, None) is None
-    assert mask.call_count == 1

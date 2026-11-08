@@ -95,7 +95,7 @@ testcase menus_and_branching_variables:
     assert not "Decrement"
     assert not "Reset"
 
-    # for_loops.menu_choices and while_loops.real_choices in test_test_flow.rpy click through the full
+    # for_loops.menu_choices and while_loops.real_choices in test_test_testast_flow.rpy click through the full
     # Increment/Decrement sequence, so this only needs to get to the value where "Done" appears.
     click "Increment"
     click "Increment"

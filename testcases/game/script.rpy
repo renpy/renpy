@@ -256,7 +256,7 @@ label retain_after_load:
 # Drag and Drop
 ###############################################################################
 
-# The drag_and_drop screen is also the fixture for the drag tests in tests/test_test_selectors.rpy, so
+# The drag_and_drop screen is also the fixture for the drag tests in tests/test_test_testast_selectors.rpy, so
 # changes to it may need to be reflected there.
 
 init python:

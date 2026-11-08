@@ -4,7 +4,7 @@
 # == Fixtures ==
 # ==============
 
-# Also used by test_test_selectors.rpy.
+# Also used by test_test_testast_selectors.rpy.
 label three_messages:
     "Message 1"
     "Message 2"
