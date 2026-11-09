@@ -2,7 +2,7 @@
 
     # _developer/developer.rpym:38
     old "Developer Menu"
-    new "Menú de desarrollador"
+    new "Menú de desarrollo"
 
     # _developer/developer.rpym:43
     old "Interactive Director (D)"
@@ -10,11 +10,11 @@
 
     # _developer/developer.rpym:45
     old "Reload Game (Shift+R)"
-    new "Recargar juego (Mayús+R)"
+    new "Reiniciar juego (Shift+R)"
 
     # _developer/developer.rpym:47
     old "Console (Shift+O)"
-    new "Consola (Mayús+O)"
+    new "Consola (Shift.+O)"
 
     # _developer/developer.rpym:49
     old "Variable Viewer"
@@ -42,7 +42,7 @@
 
     # _developer/developer.rpym:223
     old "Return to the developer menu"
-    new "Volver al menú de desarrollador"
+    new "Volver al menú de desarrollo"
 
     # _developer/developer.rpym:383
     old "Rectangle: %r"
@@ -54,7 +54,7 @@
 
     # _developer/developer.rpym:393
     old "Right-click or escape to quit."
-    new "Clic derecho o Escape para salir."
+    new "Clicvderecho o Esc para salir."
 
     # _developer/developer.rpym:425
     old "Rectangle copied to clipboard."
@@ -90,7 +90,7 @@
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
-    new "Inspector de visualizables"
+    new "Inspector de {i}displayables{/i}"
 
     # _developer/inspector.rpym:61
     old "Size"
@@ -110,11 +110,11 @@
 
     # _developer/inspector.rpym:139
     old "displayable:"
-    new "visualizable:"
+    new "{i}displayable{/i}:"
 
     # _developer/inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        (no hay propiedades que afecten la visualización)"
+    new "        (ninguna propiedad afecta al {i}displayable{/i})"
 
     # _developer/inspector.rpym:147
     old "        (default properties omitted)"
@@ -126,7 +126,7 @@
 
     # 00console.rpy:255
     old "Press <esc> to exit console. Type help for help.\n"
-    new "Presiona <esc> para salir de la consola. Escribe 'help' para obtener ayuda.\n"
+    new "Presiona <Esc> para salir de la consola. Escribe 'help' para obtener ayuda.\n"
 
     # 00console.rpy:259
     old "Ren'Py script enabled."
@@ -198,7 +198,7 @@
 
     # renpy/common/00console.rpy:814
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
-    new "watch <expression>: observa una expresión de Python\n watch short: hace que la representación de las expresiones rastreadas sea corta (predeterminado)\n watch long: hace que la representación de las expresiones rastreadas sea tal cual."
+    new "watch <expression>: observa una expresión de Python\n watch short: hace que la representación de las expresiones rastreadas sea corta (predeterminado)\n watch long: hace que la representación de las expresiones rastreadas sea corta"
 
     # renpy/common/00console.rpy:925
     old "escape: Enables escaping of unicode symbols in unicode strings."
@@ -226,7 +226,7 @@
 
     # renpy/common/_developer/developer.rpym:70
     old "Speech Bubble Editor (Shift+B)"
-    new "Editor de burbujas de diálogo (Mayús+B)"
+    new "Editor de burbujas de diálogo (Shift+B)"
 
     # renpy/common/_developer/developer.rpym:69
     old "Show Translation Identifiers"
@@ -286,9 +286,8 @@
 
     # renpy/common/00console.rpy:725
     old "The console is using short representations. To disable this, type 'long', and to re-enable, type 'short'"
-    new "La consola está utilizando representaciones cortas. Para desactivarlo, escribe 'long', y para volver a activarlo, escribe 'short'."
+    new "La consola está utilizando representaciones cortas. Para desactivarlo, escriba 'long', y para volver a activarlo, escriba 'short'."
 
     # renpy/common/_developer/developer.rpym:144
     old "    (transforms: [', '.join(transform_list)])"
     new "    (transformaciones: [', '.join(transform_list)])"
-

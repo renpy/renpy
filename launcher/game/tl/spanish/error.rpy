@@ -122,7 +122,7 @@
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No hay mandos disponibles"
+    new "No hay controles disponibles"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
@@ -166,7 +166,7 @@
 
     # _errorhandling.rpym:583
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Intenta volver a un momento anterior y permite guardar o escoger una opción diferente."
+    new "Intenta volver a un momento anterior y permite guardar o escoger una decisión diferente."
 
     # _errorhandling.rpym:586
     old "Ignore"

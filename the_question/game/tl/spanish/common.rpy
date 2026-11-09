@@ -427,11 +427,11 @@ translate spanish strings:
 
     # 00preferences.rpy:256
     old "joystick"
-    new "joystick"
+    new "control"
 
     # 00preferences.rpy:256
     old "joystick..."
-    new "joystick..."
+    new "control..."
 
     # 00preferences.rpy:263
     old "skip"
@@ -447,31 +447,31 @@ translate spanish strings:
 
     # 00preferences.rpy:273
     old "begin skipping"
-    new "comienza salto"
+    new "comenzar salto"
 
     # 00preferences.rpy:277
     old "after choices"
-    new "tras las opciones"
+    new "despues de decisiones"
 
     # 00preferences.rpy:284
     old "skip after choices"
-    new "salta tras las opciones"
+    new "salta despues de las decisiones"
 
     # 00preferences.rpy:286
     old "auto-forward time"
-    new "tiempo auto-avance"
+    new "tiempo de autoavance"
 
     # 00preferences.rpy:300
     old "auto-forward"
-    new "auto-avance"
+    new "autoavance"
 
     # 00preferences.rpy:307
     old "Auto forward"
-    new "Auto-avance"
+    new "Autoavance"
 
     # 00preferences.rpy:310
     old "auto-forward after click"
-    new "auto-avance después del clic"
+    new "autoavance después del clic"
 
     # 00preferences.rpy:319
     old "automatic move"
@@ -527,35 +527,35 @@ translate spanish strings:
 
     # 00preferences.rpy:415
     old "voice volume"
-    new "volumen voz"
+    new "volumen de voz"
 
     # 00preferences.rpy:416
     old "mute music"
-    new "silencia música"
+    new "silenciar música"
 
     # 00preferences.rpy:417
     old "mute sound"
-    new "silencia sonido"
+    new "silenciar sonido"
 
     # 00preferences.rpy:418
     old "mute voice"
-    new "silencia voz"
+    new "silenciar voz"
 
     # 00preferences.rpy:419
     old "mute all"
-    new "silencia todo"
+    new "silenciar todo"
 
     # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "'Portapapeles a voz' activado. Pulsa 'Mayús.+C' para desactivarlo."
+    new "'Portapapeles a voz' activado. Pulsa 'Shift+C' para desactivarlo."
 
     # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "La voz automática dirá \"[renpy.display.tts.last]\". Presiona 'Alt+Mayús+V' para desactivarla."
+    new "La voz automática dirá \"[renpy.display.tts.last]\". Presiona 'Alt+Shift+V' para desactivarla."
 
     # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Voz automática activada. Presiona 'v' para desactivarla."
+    new "Voz automática activada. Presiona 'V' para desactivarla."
 
     # _compat\gamemenu.rpym:198
     old "Empty Slot."
@@ -571,7 +571,7 @@ translate spanish strings:
 
     # _compat\preferences.rpym:428
     old "Joystick Mapping"
-    new "Mapeado del Joystick"
+    new "Mapeado del control"
 
     # _developer\developer.rpym:38
     old "Developer Menu"
@@ -583,11 +583,11 @@ translate spanish strings:
 
     # _developer\developer.rpym:45
     old "Reload Game (Shift+R)"
-    new "Recargar juego (Mayús+R)"
+    new "Recargar juego (Shift+R)"
 
     # _developer\developer.rpym:47
     old "Console (Shift+O)"
-    new "Consola (Mayús.+O)"
+    new "Consola (Shift+O)"
 
     # _developer\developer.rpym:49
     old "Variable Viewer"
@@ -703,11 +703,11 @@ translate spanish strings:
 
     # _developer\inspector.rpym:139
     old "displayable:"
-    new "visualizable:"
+    new "{i}displayable{/i}:"
 
     # _developer\inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        (no hay propiedades que afecten la visualización)"
+    new "        (no hay propiedades que afecten al {i}displayable{/i})"
 
     # _developer\inspector.rpym:147
     old "        (default properties omitted)"
@@ -899,11 +899,11 @@ translate spanish strings:
 
     # 00gltest.rpy:218
     old "This computer is using software rendering."
-    new "Esta computadora usa 'software rendering'."
+    new "Esta computadora usa {i}software rendering{/i}."
 
     # 00gltest.rpy:220
     old "This computer is not using shaders."
-    new "Esta computadora no usa 'shaders'."
+    new "Esta computadora no usa {i}shaders{/i}."
 
     # 00gltest.rpy:222
     old "This computer is displaying graphics slowly."
@@ -955,11 +955,11 @@ translate spanish strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Selecciona mando para calibrar"
+    new "Selecciona control para calibrar"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No hay mandos disponibles"
+    new "No hay controles disponibles"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
@@ -1003,7 +1003,7 @@ translate spanish strings:
 
     # _errorhandling.rpym:586
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Intenta volver a un momento anterior y permite guardar o escoger una opción diferente."
+    new "Intenta volver a un momento anterior y permite guardar o escoger una decisión diferente."
 
     # _errorhandling.rpym:589
     old "Ignore"

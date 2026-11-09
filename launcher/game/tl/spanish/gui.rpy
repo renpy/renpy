@@ -42,7 +42,7 @@
 
     # gui.rpy:39
     old "## The color used for a text button when it is selected but not focused. A button is selected if it is the current screen or preference value."
-    new "## El color usado en el botón de texto cuando está seleccionado pero no enfocado. Un botón está seleccionado si representa la pantalla actual o el valor actual de una preferencia."
+    new "## El color usado en el botón de texto cuando está seleccionado pero no enfocado. Un botón está seleccionado si representa la pantalla actual o el valor actual de un ajuste."
 
     # gui.rpy:43
     old "## The color used for a text button when it cannot be selected."
@@ -54,7 +54,7 @@
 
     # gui.rpy:51
     old "## The colors used for dialogue and menu choice text."
-    new "## Colores usados para el texto del diálogo y de las elecciones de menú."
+    new "## Colores usados para el texto del diálogo y de las decisiones de menú."
 
     # gui.rpy:56
     old "## Fonts and Font Sizes"
@@ -202,11 +202,11 @@
 
     # gui.rpy:202
     old "## Choice Buttons"
-    new "## Botones de elección"
+    new "## Botones de decisión"
 
     # gui.rpy:204
     old "## Choice buttons are used in the in-game menus."
-    new "## Los botones de elección se utilizan en los menús del juego."
+    new "## Los botones de decisión se utilizan en los menús del juego."
 
     # gui.rpy:217
     old "## File Slot Buttons"
@@ -250,7 +250,7 @@
 
     # gui.rpy:257
     old "## The spacing between menu choices."
-    new "## Espacio entre elecciones del menú."
+    new "## Espacio entre decisiones del menú."
 
     # gui.rpy:260
     old "## Buttons in the navigation section of the main and game menus."
@@ -258,11 +258,11 @@
 
     # gui.rpy:263
     old "## Controls the amount of spacing between preferences."
-    new "## Controla el espacio entre preferencias."
+    new "## Controla el espacio entre ajustes."
 
     # gui.rpy:266
     old "## Controls the amount of spacing between preference buttons."
-    new "## Controla el espacio entre botones de preferencia."
+    new "## Controla el espacio entre botones de ajustes."
 
     # gui.rpy:269
     old "## The spacing between file page buttons."

@@ -2,7 +2,7 @@
 
     # _layout/classic_joystick_preferences.rpym:94
     old "Joystick Mapping"
-    new "Mapeado del mando"
+    new "Mapeado del control"
 
     # _layout/classic_load_save.rpym:138
     old "Empty Slot."

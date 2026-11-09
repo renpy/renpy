@@ -326,11 +326,11 @@
 
     # 00gui.rpy:378
     old "Are you sure you want to skip to the next choice?"
-    new "¿Seguro que quieres saltar hasta la próxima elección?"
+    new "¿Seguro que quieres saltar hasta la próxima decisión?"
 
     # 00gui.rpy:379
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "¿Seguro que quieres saltar el texto no visto hasta la próxima elección?"
+    new "¿Seguro que quieres saltar el texto no visto hasta la próxima decisión?"
 
     # 00keymap.rpy:258
     old "Failed to save screenshot as %s."
@@ -362,7 +362,7 @@
 
     # 00library.rpy:152
     old "viewport"
-    new "'viewport'"
+    new "{i}}viewport{/i}}"
 
     # 00library.rpy:153
     old "horizontal scroll"
@@ -446,11 +446,11 @@
 
     # 00preferences.rpy:277
     old "after choices"
-    new "despues de elecciones"
+    new "despues de decisiones"
 
     # 00preferences.rpy:284
     old "skip after choices"
-    new "saltar despues de elecciones"
+    new "saltar despues de decisiones"
 
     # 00preferences.rpy:286
     old "auto-forward time"
@@ -542,7 +542,7 @@
 
     # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "Voz por portapapeles activada. Presiona 'Mayús+C' para desactivarla."
+    new "Voz por portapapeles activada. Presiona 'Shift+C' para desactivarla."
 
     # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
@@ -550,7 +550,7 @@
 
     # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Voz automática activada. Presiona 'v' para desactivarla."
+    new "Voz automática activada. Presiona 'V' para desactivarla."
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."

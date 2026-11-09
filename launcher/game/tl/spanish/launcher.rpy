@@ -57,11 +57,11 @@
 
     # android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Intenta emular un teléfono Android.\n\nLa entrada táctil se emula mediante el mouse, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
+    new "Intenta emular un teléfono Android.\n\nLa entrada táctil se emula mediante el ratón, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
 
     # android.rpy:38
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Intenta emular una tableta Android.\n\nLa entrada táctil se emula mediante el mouse, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
+    new "Intenta emular una tableta Android.\n\nLa entrada táctil se emula mediante el ratón, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
 
     # android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
@@ -662,7 +662,7 @@
 
     # interface.rpy:131
     old "preferences"
-    new "preferencias"
+    new "ajustes"
 
     # interface.rpy:132
     old "quit"
@@ -702,7 +702,7 @@
 
     # interface.rpy:509
     old "CHOICE"
-    new "SELECCIONA"
+    new "ELECCIÓN"
 
     # ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
@@ -722,11 +722,11 @@
 
     # ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Intenta emular un iPhone.\n\nLa entrada táctil se emula a través del mouse, pero solo cuando se mantiene pulsado el botón."
+    new "Intenta emular un iPhone.\n\nLa entrada táctil se emula a través del ratón, pero solo cuando se mantiene pulsado el botón."
 
     # ios.rpy:34
     old "Attempts to emulate an iPad.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Intenta emular un iPad.\n\nLa entrada táctil se emula a través del mouse, pero solo cuando se mantiene pulsado el botón."
+    new "Intenta emular un iPad.\n\nLa entrada táctil se emula a través del ratón, pero solo cuando se mantiene pulsado el botón."
 
     # ios.rpy:36
     old "Selects the directory where Xcode projects will be placed."
@@ -886,7 +886,7 @@
 
     # navigation.rpy:251
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
-    new "No se han encontrado comentarios \"TODO\". Para crear uno, incluye \"# TODO\" en tu script."
+    new "No se han encontrado comentarios TODO.\n\nPara crear uno, incluye \"# TODO\" en tu {i}script{/i}."
 
     # navigation.rpy:258
     old "The list of names is empty."
@@ -918,7 +918,7 @@
 
     # new_project.rpy:71
     old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
-    new "Vas a crear un proyecto en idioma [new_project_language]. Cambia el idioma del lanzador en preferencias para crear un proyecto en otro idioma."
+    new "Vas a crear un proyecto en idioma [new_project_language]. Cambia el idioma del lanzador en ajustes para crear un proyecto en otro idioma."
 
     # new_project.rpy:79
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
@@ -938,7 +938,7 @@
 
     # preferences.rpy:73
     old "Launcher Preferences"
-    new "Preferencias del lanzador"
+    new "Ajustes del lanzador"
 
     # preferences.rpy:94
     old "Projects Directory:"
@@ -2251,7 +2251,7 @@
 
     # game/project.rpy:776
     old "Splashscreen skipped in launcher preferences."
-    new "Se omite la pantalla Splashscreen en las preferencias del lanzador."
+    new "Se omite la pantalla Splashscreen en los ajustes del lanzador."
 
     # game/editor.rpy:667
     old "You are using an old version of the Ren'Py Language support for Visual Studio Code. Would you like to upgrade?"

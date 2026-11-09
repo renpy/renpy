@@ -19,7 +19,7 @@ translate spanish strings:
 
     # screens.rpy:92
     old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
-    new "## Esta pantalla debe crear un texto visualizable con id \"what\" que Ren'Py usa para gestionar la visualización del texto. Puede crear también visualizables con id \"who\" y id \"window\" para aplicar propiedades de estilo."
+    new "## Esta pantalla debe crear un texto 'displayable' con id \"what\" que Ren'Py usa para gestionar la visualización del texto. Puede crear también 'displayables' con id \"who\" y id \"window\" para aplicar propiedades de estilo."
 
     # screens.rpy:96
     old "## https://www.renpy.org/doc/html/screen_special.html#say"
@@ -43,7 +43,7 @@ translate spanish strings:
 
     # screens.rpy:169
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
-    new "## Esta pantalla debe crear un displayable 'input' con id \"input\" para aceptar diversos parámetros de entrada."
+    new "## Esta pantalla debe crear un 'displayable' 'input' con id \"input\" para aceptar diversos parámetros de entrada."
 
     # screens.rpy:172
     old "## https://www.renpy.org/doc/html/screen_special.html#input"
@@ -51,11 +51,11 @@ translate spanish strings:
 
     # screens.rpy:199
     old "## Choice screen"
-    new "## Pantalla de menú"
+    new "## Pantalla de decisiones"
 
     # screens.rpy:201
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
-    new "## Esta pantalla presenta las elecciones dentro del juego de la sentencia 'menu'. El parámetro único, 'items', es una lista de objetos, cada uno con los campos 'caption' y 'action'."
+    new "## Esta pantalla presenta las decisiones dentro del juego de la sentencia 'menu'. El parámetro único, 'items', es una lista de objetos, cada uno con los campos 'caption' y 'action'."
 
     # screens.rpy:205
     old "## https://www.renpy.org/doc/html/screen_special.html#choice"
@@ -107,7 +107,7 @@ translate spanish strings:
 
     # screens.rpy:263
     old "Prefs"
-    new "Prefs."
+    new "Ajustes"
 
     # screens.rpy:266
     old "## This code ensures that the quick_menu screen is displayed in-game, whenever the player has not explicitly hidden the interface."
@@ -135,7 +135,7 @@ translate spanish strings:
 
     # screens.rpy:314
     old "Preferences"
-    new "Opciones"
+    new "Ajustes"
 
     # screens.rpy:318
     old "End Replay"
@@ -311,11 +311,11 @@ translate spanish strings:
 
     # screens.rpy:710
     old "## Preferences screen"
-    new "## Pantalla de preferencias"
+    new "## Pantalla de ajustes"
 
     # screens.rpy:712
     old "## The preferences screen allows the player to configure the game to better suit themselves."
-    new "## La pantalla de preferencias permite al jugador configurar el juego a su gusto."
+    new "## La pantalla de ajustes permite al jugador configurar el juego a su gusto."
 
     # screens.rpy:715
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
@@ -355,7 +355,7 @@ translate spanish strings:
 
     # screens.rpy:747
     old "After Choices"
-    new "Después de las elecciones"
+    new "Después de decisiones"
 
     # screens.rpy:748
     old "Transitions"
@@ -363,7 +363,7 @@ translate spanish strings:
 
     # screens.rpy:750
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
-    new "## Aquí se pueden añadir 'vboxes' adicionales del tipo \"radio_pref\" o \"check_pref\" para nuevas preferencias."
+    new "## Aquí se pueden añadir 'vboxes' adicionales del tipo \"radio_pref\" o \"check_pref\" para nuevos ajustes."
 
     # screens.rpy:761
     old "Text Speed"
@@ -667,7 +667,7 @@ translate spanish strings:
 
     # screens.rpy:1415
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
-    new "## Como puede que no haya un mouse, reemplazamos el menú rápido con una versión que usa menos botones y más grandes, más fáciles de tocar."
+    new "## Como puede que no haya un ratón, reemplazamos el menú rápido con una versión que usa menos botones y más grandes, más fáciles de tocar."
 
     # screens.rpy:1431
     old "Menu"
