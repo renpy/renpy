@@ -173,10 +173,11 @@ def showing(name, layer=None):
     """
     :doc: image_func
 
-    Returns true if an image with the same tag as `name` is showing on
-    `layer`.
+    Returns true if an image with the tag given in `name` is showing on
+    `layer`, and any attributes in `name` match the beginning of the
+    attributes recorded for that tag, in order.
 
-    `image`
+    `name`
         May be a string giving the image name or a tuple giving each
         component of the image name. It may also be a string giving
         only the image tag.
