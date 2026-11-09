@@ -886,7 +886,7 @@
 
     # navigation.rpy:251
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
-    new "No se han encontrado comentarios TODO.\n\nPara crear uno, incluye \"# TODO\" en tu script."
+    new "No se han encontrado comentarios TODO.\n\nPara crear uno, incluye \"# TODO\" en tu {i}script{/i}."
 
     # navigation.rpy:258
     old "The list of names is empty."
