@@ -481,6 +481,12 @@ When an image is replaced while an ATL transform is kept running (see
 transform's child now show the new image, rather than bringing back the image
 that was replaced.
 
+On Android, Ren'Py no longer clears the setgid bit on save directories in
+external storage, so saves can be read from outside the game, such as with
+``adb``. New files and directories now give their group access. Save
+directories that previous versions damaged are repaired when the game starts,
+by replacing them with a copy.
+
 .. _renpy-8.5.4:
 
 8.5.4

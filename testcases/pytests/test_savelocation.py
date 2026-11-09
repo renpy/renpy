@@ -518,3 +518,35 @@ def test_real_file_write_and_failed_write_balance_syncfs(scan_state, mocker):
             location.save_persistent(b"new data")
 
         assert savelocation.pause_syncfs_count == 0
+
+
+def test_file_location_recovers_interrupted_repair_before_creating_directory(tmp_path, mocker):
+    """
+    A FileLocation finishes an interrupted Android repair instead of making an empty directory over it.
+
+    The save directory is missing in this state, so creating it first would hide the player's saves.
+    """
+    mocker.patch.object(renpy, "android", True)
+    mocker.patch.object(savelocation, "syncfs")
+
+    parent = tmp_path / "files"
+    parent.mkdir()
+    os.chmod(parent, 0o2770)
+
+    if not renpy.util.is_setgid(parent):
+        pytest.skip("The filesystem doesn't hold the setgid bit.")
+
+    directory = parent / "saves"
+
+    repaired = parent / ("saves" + renpy.util.REPAIR_SUFFIX)
+    repaired.mkdir()
+    (repaired / "persistent").write_bytes(b"data")
+
+    replaced = parent / ("saves" + renpy.util.REPLACED_SUFFIX)
+    replaced.mkdir()
+
+    location = savelocation.FileLocation(str(directory))
+
+    assert (directory / "persistent").read_bytes() == b"data"
+    assert location.active
+    assert sorted(os.listdir(parent)) == ["saves"]

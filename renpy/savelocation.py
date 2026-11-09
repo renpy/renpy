@@ -111,6 +111,10 @@ class FileLocation(object):
     def __init__(self, directory):
         self.directory = directory
 
+        # This has to come before the directory is created, and covers the
+        # locations other than config.savedir, which main.py repairs earlier.
+        renpy.util.repair_directory(self.directory)
+
         # Make the save directory.
         try:
             os.makedirs(self.directory)

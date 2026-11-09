@@ -20,8 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-Tests for renpy.bootstrap.set_utf8_locale. Each case runs in a fresh process, to isolate native locale state and
-CPython initialization.
+Tests for renpy.bootstrap.set_utf8_locale and set_android_umask. Each case runs in a fresh process, to isolate native
+locale state, CPython initialization, and the umask.
 """
 
 import os
@@ -279,4 +279,31 @@ for target, attribute, value in (
     assert dict(os.environ) == environment
 """,
         {"LANG": "C"},
+    )
+
+
+@pytest.mark.parametrize("android, expected", [(True, 0o2770), (False, 0o2700)], ids=["android", "other_platform"])
+def test_android_umask_gives_new_directories_group_access(tmp_path, android: bool, expected: int) -> None:
+    """
+    A directory made in a setgid parent gets group access on Android, starting from Android's owner-only umask.
+
+    Group access has to come from the umask because chmod on Android would clear the setgid bit the directory inherits.
+    """
+
+    run_case(
+        f"""
+import stat
+from renpy.bootstrap import set_android_umask
+
+os.umask(0o077)
+
+with patch_object(renpy, "android", {android}):
+    set_android_umask()
+
+os.chmod({str(tmp_path)!r}, 0o2770)
+child = os.path.join({str(tmp_path)!r}, "child")
+os.mkdir(child)
+
+assert stat.S_IMODE(os.stat(child).st_mode) == {expected}
+"""
     )
