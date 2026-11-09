@@ -108,6 +108,7 @@ the omission in future versions.
 * Eric Ahn
 * Erik Chou
 * Erufailon4
+* Estelle Booher
 * Evilantishad0w
 * Farzher
 * Felipe Carvajal Brown
@@ -179,6 +180,7 @@ the omission in future versions.
 * Kassy
 * Kapil Gain
 * Kathryn
+* Kayenuonuo
 * Kevin Turner
 * KG
 * Kinsman
@@ -292,6 +294,7 @@ the omission in future versions.
 * Ruben Jesus Garcia-Hernandez
 * Sab Pyrope
 * SahabandhSthabara
+* Saki
 * Saltome
 * Saamkhaih Kyakya
 * Sandra "Maxi" Molina
