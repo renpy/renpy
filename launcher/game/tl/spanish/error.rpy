@@ -166,7 +166,7 @@
 
     # _errorhandling.rpym:583
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Intenta volver a un momento anterior y permite guardar o escoger una dicisión diferente."
+    new "Intenta volver a un momento anterior y permite guardar o escoger una decisión diferente."
 
     # _errorhandling.rpym:586
     old "Ignore"
