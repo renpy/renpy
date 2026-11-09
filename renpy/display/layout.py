@@ -2372,16 +2372,29 @@ class AlphaMask(Container):
     opaque where `child` and `mask` are both opaque.
 
     The `child` and `mask` parameters may be arbitrary displayables. The
-    size of the AlphaMask is the size of `child`. The `invert` parameter
-    can be used to invert the mask's alpha channel.
+    `invert` parameter can be used to invert the mask's alpha channel.
 
-    The child is always drawn at the top left corner of the AlphaMask, so
-    position properties supplied to `child` (such as xpos, yanchor, or
-    xoffset) are ignored. Other transforms, such as zoom and rotate, are
-    applied. The mask is placed within the area of the child, so its position
-    properties are honored. To move the result, apply a transform to the
-    AlphaMask. To move the child relative to the mask, apply the opposite
-    offset to `mask`.
+    By default, the size of the AlphaMask is the size of `child`, and the child
+    is always drawn at the top left corner of the AlphaMask, so position
+    properties supplied to `child` (such as xpos, yanchor, or xoffset) are
+    ignored. Other transforms, such as zoom and rotate, are applied. The mask is
+    placed within the area of the child, so its position properties are honored.
+    To move the result, apply a transform to the AlphaMask.
+
+    `place_child`
+        If True, the child is placed inside the AlphaMask, so its position
+        properties are honored and it can move behind a mask that stays still.
+        The mask is rendered with the size of the child as the space available
+        to it, so a mask that fills the available space, like :func:`Solid` or
+        :func:`Frame`, takes the size of the child. The AlphaMask is as wide as
+        the wider of the child and mask, and as tall as the taller of the two,
+        and anything that falls outside it is cropped.
+
+        A mask that is larger than the child makes the AlphaMask larger, which
+        changes what the positions of the child and mask are relative to. A
+        mask that changes size, such as one that zooms, changes the size of the
+        AlphaMask while it is larger than the child. To keep the child and a
+        larger mask centered on each other, align both of them.
 
     Note that this takes different arguments from :func:`im.AlphaMask`,
     which uses the mask's red channel.
@@ -2389,9 +2402,12 @@ class AlphaMask(Container):
 
     invert = False
 
+    place_child = False
+    "If True, this AlphaMask is the size of the larger of its child and mask, and places its child."
+
     _duplicatable = False
 
-    def __init__(self, child, mask, invert=False, **properties):
+    def __init__(self, child, mask, invert=False, place_child=False, **properties):
         super(AlphaMask, self).__init__(**properties)
 
         self.mask = renpy.easy.displayable(mask)
@@ -2400,6 +2416,7 @@ class AlphaMask(Container):
         self.add(self.mask)
         self.add(child)
         self.invert = invert
+        self.place_child = place_child
 
     def _duplicate(self, args):
         rv = super(AlphaMask, self)._duplicate(args)
@@ -2427,13 +2444,45 @@ class AlphaMask(Container):
 
         w, h = cr.get_size()
 
-        mr = renpy.display.render.Render(w, h)
-        mr.add_property("color_mask", (False, False, False, True))
-        mr.place(self.mask, main=False)
+        if self.place_child:
+            mask_render = renpy.display.render.render(self.mask, w, h, st, at)
+            mask_w, mask_h = mask_render.get_size()
+
+            w = max(w, mask_w)
+            h = max(h, mask_h)
+
+            # The shader samples the child and mask at the same coordinates, so the child
+            # has to be placed on a layer that is the same size as the mask's layer.
+            child_layer = renpy.display.render.Render(w, h)
+            child_offset = self.child.place(child_layer, 0, 0, w, h, cr)
+
+            # A render that's only used for focus, so the cropped part of a moved child can't be
+            # focused. It isn't drawn, as clipping the drawing would hide a child using perspective.
+            focus_layer = renpy.display.render.Render(w, h)
+            focus_layer.xclipping = True
+            focus_layer.yclipping = True
+            self.child.place(focus_layer, 0, 0, w, h, cr)
+
+            mr = renpy.display.render.Render(w, h)
+            mr.add_property("color_mask", (False, False, False, True))
+            mask_offset = self.mask.place(mr, 0, 0, w, h, mask_render, main=False)
+
+        else:
+            child_layer = cr
+            child_offset = (0, 0)
+            focus_layer = None
+
+            mr = renpy.display.render.Render(w, h)
+            mr.add_property("color_mask", (False, False, False, True))
+            mr.place(self.mask, main=False)
+            mask_offset = (0, 0)
 
         rv = renpy.display.render.Render(w, h)
-        rv.blit(cr, (0, 0))
+        rv.blit(child_layer, (0, 0), focus=focus_layer is None)
         rv.blit(mr, (0, 0), focus=False, main=False)
+
+        if focus_layer is not None:
+            rv.depends_on(focus_layer, focus=True)
 
         rv.mesh = True
         rv.add_shader("renpy.mask")
@@ -2445,7 +2494,7 @@ class AlphaMask(Container):
             rv.add_uniform("u_renpy_mask_multiplier", 1)
             rv.add_uniform("u_renpy_mask_offset", 0)
 
-        self.offsets = [(0, 0), (0, 0)]
+        self.offsets = [mask_offset, child_offset]
 
         return rv
 

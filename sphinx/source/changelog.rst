@@ -309,6 +309,8 @@ only the positional arguments or only the keyword arguments of another statement
 
 :class:`AudioData` can now be played on the web platform.
 
+The new `place_child` argument to :func:`AlphaMask` makes it the size of the larger of its child and mask, and honors
+the position properties of its child, which allows a child to move behind a mask that stays still.
 
 Automated Testing
 -----------------
@@ -424,7 +426,6 @@ The default :file:`.gitignore` for new projects excludes Android keystore files.
 
 ``renpy.pygame.Surface.get_buffer`` now returns a writable memoryview of the
 surface's pixels and surfaces support Python's buffer protocol.
-
 
 Fixes
 -----
