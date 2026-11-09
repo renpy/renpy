@@ -17,6 +17,13 @@ Upcoming Deprecations
 
 The ability to create zsync updates will be removed when Ren'Py 8.7 is released.
 
+The ``future``, ``six``, and ``renpy.six`` modules are deprecated, and should
+not be used in new games. Portions of these modules may be removed in future
+versions of Ren'Py.
+
+The undocumented ``renpy.tfd`` module is planned to be removed in mid-2027.
+
+
 .. _incompatible-8.6.0:
 
 8.6.0
