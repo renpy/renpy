@@ -789,7 +789,7 @@ Media (Music, Sound, and Video)
     and is expected to return a second audio filename, the latter of which
     will be played.
 
-    This is intended for use when an a games has audio file formats changed,
+    This is intended for use when a game has audio file formats changed,
     but it's not desired to update the game script.
 
     As video files are played using the audio subsystem, this is also called for video files.
