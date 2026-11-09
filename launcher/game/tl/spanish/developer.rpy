@@ -194,7 +194,7 @@
 
     # 00console.rpy:685
     old "long: Print the full representation of objects on the console."
-    new "long: imprime la representación completa de los objetos en la consola."
+    new "long: Imprime la representación completa de los objetos en la consola."
 
     # renpy/common/00console.rpy:814
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
@@ -218,7 +218,7 @@
 
     # renpy/common/00console.rpy:805
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
-    new "La ayuda puede mostrar funciones no documentadas. Por favor, compruebe que la función o\nclase que desea utilizar está documentada.\n\n"
+    new "La ayuda puede mostrar funciones no documentadas. Por favor, comprueba que la función o\nclase que deseas utilizar está documentada.\n\n"
 
     # renpy/common/_developer/developer.rpym:51
     old "Persistent Viewer"
@@ -242,7 +242,7 @@
 
     # renpy/common/_developer/developer.rpym:588
     old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
-    new "\n{color=#fff}Haz clic para copiar.\nArrastre para mover.{/color}"
+    new "\n{color=#fff}Haz clic para copiar.\nArrastra para mover.{/color}"
 
     # renpy/common/_developer/developer.rpym:81
     old "Show Filename and Line"
@@ -258,7 +258,7 @@
 
     # renpy/common/_developer/developer.rpym:131
     old "    [name] [attributes] (hidden)"
-    new "    [name] [attributes] (ocultar)"
+    new "    [name] [attributes] (oculto)"
 
     # renpy/common/_developer/developer.rpym:135
     old "    [name] [attributes]"
@@ -287,3 +287,7 @@
     # renpy/common/00console.rpy:725
     old "The console is using short representations. To disable this, type 'long', and to re-enable, type 'short'"
     new "La consola está utilizando representaciones cortas. Para desactivarlo, escriba 'long', y para volver a activarlo, escriba 'short'."
+
+    # renpy/common/_developer/developer.rpym:144
+    old "    (transforms: [', '.join(transform_list)])"
+    new "    (transformaciones: [', '.join(transform_list)])"
