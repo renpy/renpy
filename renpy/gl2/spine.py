@@ -254,7 +254,7 @@ def alias_argument(value: object, where: str) -> SpineModelAliasArgument:
 
 
 def alias_arguments(value: object, where: str) -> List[SpineModelAliasArgument]:
-    """Validate an alias’s names and return them in show order."""
+    """Validate an alias's names and return them in show order."""
     if isinstance(value, list):
         return [alias_argument(v, where) for v in value]
     return [alias_argument(value, where)]
@@ -280,7 +280,7 @@ def join_expansions(expansions: Iterable[SpineExpansion]) -> SpineExpansion:
 
 
 def resolve_zoom(zoom: Optional[float], zoomX: Optional[float], zoomY: Optional[float]) -> Tuple[float, float, float]:
-    """Resolve the character’s scale. Negative values mirror an axis; zero is invalid."""
+    """Resolve the character's scale. Negative values mirror an axis; zero is invalid."""
     z = 1.0 if zoom is None else float(zoom)
     zx = z if zoomX is None else float(zoomX)
     zy = z if zoomY is None else float(zoomY)
@@ -294,7 +294,7 @@ def resolve_zoom(zoom: Optional[float], zoomX: Optional[float], zoomY: Optional[
 
 
 class SpineDisplayable(renpy.display.displayable.Displayable):  # type: ignore[misc]  # renpy is untyped
-    """A Spine character that can be shown in a Ren’Py scene.
+    """A Spine character that can be shown in a Ren'Py scene.
     Saves retain its requested appearance; live animation state is rebuilt on load."""
 
     # Class defaults restore excluded live state when unpickling bypasses __init__.
@@ -382,13 +382,13 @@ class SpineDisplayable(renpy.display.displayable.Displayable):  # type: ignore[m
         self._target_skins = self._argument_names(skin, "skin") if skin else ()
 
     def create_common(self) -> SpineCommon:
-        """Get shared resources for this character’s files."""
+        """Get shared resources for this character's files."""
         self.common_cache = runtime.common_for(self.atlas_path, self.skeleton_path)
         return self.common_cache
 
     @property
     def common(self) -> SpineCommon:
-        """Return this character’s shared resources, creating them if needed."""
+        """Return this character's shared resources, creating them if needed."""
         if self.common_cache is not None:
             return self.common_cache
         return self.create_common()
@@ -567,7 +567,7 @@ class SpineDisplayable(renpy.display.displayable.Displayable):  # type: ignore[m
         return None
 
     def _page_texture(self, page_key: str, width: float, height: float, st: float, at: float) -> Any:
-        """Return an atlas page’s texture, or None if it is unavailable."""
+        """Return an atlas page's texture, or None if it is unavailable."""
         common = self._common_or_none()
         if common is None:
             return None
@@ -728,7 +728,7 @@ class SpineDisplayable(renpy.display.displayable.Displayable):  # type: ignore[m
         return tuple(dict.fromkeys(pseudo + animation_attributes + skin_attributes))
 
     def visit(self) -> List[Any]:
-        """Expose atlas textures so Ren’Py can load them before drawing."""
+        """Expose atlas textures so Ren'Py can load them before drawing."""
 
         common = self.common_cache
 

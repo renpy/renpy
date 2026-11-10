@@ -168,6 +168,10 @@ def parse_metadata(metadata: SpineMetadataArgument) -> SpineMetadata:
     return coerce_policy(metadata, "metadata")
 
 
+# Only resolve_policy runs user hooks; remaining helpers use resolved values.
+# So the policy concept is due to Tom not having an ATL API for custom ATLs.
+# https://github.com/renpy/renpy/issues/7249
+# If there's ever a custom ATL workflow, this should be deprecated in favor of it.
 
 def _invoke_hook(hook: Callable[..., object], ctx: SpineHookContext) -> object:
     """Call a policy callback, passing transition details if it accepts them."""
@@ -295,7 +299,7 @@ SpineSessionKey: TypeAlias = Tuple[str, str, int]
 
 
 class SpineSession(object):
-    """Keep a character’s animation running when its displayable is replaced."""
+    """Keep a character's animation running when its displayable is replaced."""
 
     def __init__(self, key: SpineSessionKey) -> None:
         self.key = key
@@ -324,7 +328,7 @@ class SpineSession(object):
         self.pending_invalidation: Optional[str] = None
 
     def dispose(self) -> None:
-        """Release the character’s live model."""
+        """Release the character's live model."""
         if self.model is not None:
             try:
                 self.model.dispose()
@@ -356,7 +360,7 @@ class SpineSession(object):
             self._last_report = message
 
     def ensure_model(self, d: SpineDisplayableLike) -> bool:
-        """Create the character’s model if needed. Return whether it is ready."""
+        """Create the character's model if needed. Return whether it is ready."""
         if self.model is not None and self.model.is_loaded():
             return True
 
@@ -492,7 +496,7 @@ class SpineRegistry(object):
         self.retired.append(session)
 
     def dispose_retired(self) -> None:
-        """Release sessions retained for the previous interaction’s transitions."""
+        """Release sessions retained for the previous interaction's transitions."""
         for s in self.retired:
             s.dispose()
         del self.retired[:]

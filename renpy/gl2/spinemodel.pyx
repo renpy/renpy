@@ -103,7 +103,7 @@ cdef enum:
 
 
 def sampling_properties(min_filter, mag_filter, u_wrap, v_wrap):
-    """Translate atlas filtering and wrapping into Ren’Py texture settings.
+    """Translate atlas filtering and wrapping into Ren'Py texture settings.
     Atlas textures have no mipmaps, so mipmapped filters use ordinary sampling."""
     rv = {}
 
@@ -152,7 +152,7 @@ class SpineRun:
 
 
 class SpineTextureManager:
-    """Find and cache atlas textures through Ren’Py’s resource loader,
+    """Find and cache atlas textures through Ren'Py's resource loader,
     so packaged games use the same paths as loose files."""
 
     def __init__(self, atlas_dir=None):
@@ -1448,7 +1448,7 @@ cdef class SpineModel:
 
     def apply_skin(self, skin_name, setup_slots):
         """Change the skin while animation and physics continue.
-        Optionally restore the new skin’s default attachments."""
+        Optionally restore the new skin's default attachments."""
         spine_log(f"Spine: apply_skin '{skin_name}' setup_slots={setup_slots} (from '{self.current_skin}')")
 
         if not self.loaded or self.skeleton == NULL or self.data is None:
