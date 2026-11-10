@@ -158,7 +158,7 @@
 
     # 00action_file.rpy:344
     old "Save slot %s: [text]"
-    new "Ranura de guardado %s: [text]"
+    new "Guardar ranura %s: [text]"
 
     # 00action_file.rpy:434
     old "Load slot %s: [text]"
@@ -346,7 +346,7 @@
 
     # 00library.rpy:146
     old "Self-voicing disabled."
-    new "Desactivar voz automática"."
+    new "Desactivar voz automática."
 
     # 00library.rpy:147
     old "Clipboard voicing enabled. "
@@ -677,7 +677,7 @@
     new "Restablecer"
 
     # 00accessibility.rpy:105
-    old "Line Spacing S ng"
+    old "Line Spacing Scaling"
     new "Escalado del interlineado"
 
     # 00accessibility.rpy:117
