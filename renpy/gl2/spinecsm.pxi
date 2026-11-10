@@ -1,4 +1,18 @@
-# By Sebulsik <sebulsik.dev@gmail.com>
+# Copyright 2025-2046 Sebulsik <sebulsik.dev@gmail.com>
+#
+# All rights reserved.
+#
+# This source code and its associated files are the property of
+# Sebulsik. Unauthorized copying, modification, distribution,
+# sublicensing, or use of this software, in whole or in part, is
+# prohibited without prior written permission from the copyright holder.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM,
+# DAMAGES, OR OTHER LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OF THIS SOFTWARE.
 
 # Spine-C 4.3 opaque handles and dynamically resolved function pointers.
 
@@ -138,6 +152,8 @@ ctypedef float (*spine_animation_get_durationType)(spine_animation)
 
 ctypedef const char* (*spine_skin_get_nameType)(spine_skin)
 
+# Composed skins are owned; merged attachments are shared and refcounted.
+# Later skins override earlier attachments for the same slot.
 ctypedef spine_skin (*spine_skin_createType)(const char*)
 
 ctypedef void (*spine_skin_add_skinType)(spine_skin, spine_skin)
@@ -145,6 +161,7 @@ ctypedef void (*spine_skin_add_skinType)(spine_skin, spine_skin)
 ctypedef void (*spine_skin_disposeType)(spine_skin)
 
 
+# Skeleton drawable (owns skeleton + animation state + renderer)
 ctypedef spine_skeleton_drawable (*spine_skeleton_drawable_createType)(spine_skeleton_data)
 
 ctypedef void (*spine_skeleton_drawable_updateType)(spine_skeleton_drawable, float)
@@ -175,6 +192,8 @@ ctypedef spine_skin (*spine_skeleton_get_skinType)(spine_skeleton)
 # Computes the current-pose AABB in world (post scale/flip) coordinates.
 ctypedef void (*spine_skeleton_get_bounds_1Type)(spine_skeleton, float*, float*, float*, float*)
 
+
+# Animation state
 ctypedef spine_track_entry (*spine_animation_state_set_animation_1Type)(spine_animation_state, size_t, const char*, uint8_t)
 
 ctypedef void (*spine_animation_state_clear_tracksType)(spine_animation_state)
@@ -244,6 +263,9 @@ ctypedef void* (*spine_render_command_get_textureType)(spine_render_command)
 
 ctypedef spine_render_command (*spine_render_command_get_nextType)(spine_render_command)
 
+
+# Active constraints with positive applied mix keep frames running.
+# This tests participation, not settling; arrays and poses borrow skeleton lifetime.
 ctypedef spine_array_physics_constraint (*spine_skeleton_get_physics_constraintsType)(spine_skeleton)
 
 ctypedef size_t (*spine_array_physics_constraint_sizeType)(spine_array_physics_constraint)
@@ -257,99 +279,100 @@ ctypedef spine_physics_constraint_pose (*spine_physics_constraint_get_applied_po
 ctypedef float (*spine_physics_constraint_pose_get_mixType)(spine_physics_constraint_pose)
 
 
-cdef struct SpineApi:
-    spine_major_versionType spine_major_version
-    spine_minor_versionType spine_minor_version
-    spine_atlas_loadType spine_atlas_load
-    spine_atlas_result_get_errorType spine_atlas_result_get_error
-    spine_atlas_result_get_atlasType spine_atlas_result_get_atlas
-    spine_atlas_result_disposeType spine_atlas_result_dispose
-    spine_atlas_disposeType spine_atlas_dispose
-    spine_atlas_get_pagesType spine_atlas_get_pages
-    spine_array_atlas_page_sizeType spine_array_atlas_page_size
-    spine_array_atlas_page_bufferType spine_array_atlas_page_buffer
-    spine_atlas_page_get_nameType spine_atlas_page_get_name
-    spine_atlas_page_get_indexType spine_atlas_page_get_index
-    spine_atlas_page_get_min_filterType spine_atlas_page_get_min_filter
-    spine_atlas_page_get_mag_filterType spine_atlas_page_get_mag_filter
-    spine_atlas_page_get_u_wrapType spine_atlas_page_get_u_wrap
-    spine_atlas_page_get_v_wrapType spine_atlas_page_get_v_wrap
-    spine_atlas_page_get_pmaType spine_atlas_page_get_pma
-    spine_skeleton_data_load_jsonType spine_skeleton_data_load_json
-    spine_skeleton_data_load_binaryType spine_skeleton_data_load_binary
-    spine_skeleton_data_result_get_errorType spine_skeleton_data_result_get_error
-    spine_skeleton_data_result_get_dataType spine_skeleton_data_result_get_data
-    spine_skeleton_data_result_disposeType spine_skeleton_data_result_dispose
-    spine_skeleton_data_disposeType spine_skeleton_data_dispose
-    spine_skeleton_data_find_animationType spine_skeleton_data_find_animation
-    spine_skeleton_data_get_animationsType spine_skeleton_data_get_animations
-    spine_skeleton_data_find_skinType spine_skeleton_data_find_skin
-    spine_skeleton_data_get_skinsType spine_skeleton_data_get_skins
-    spine_skeleton_data_get_xType spine_skeleton_data_get_x
-    spine_skeleton_data_get_yType spine_skeleton_data_get_y
-    spine_skeleton_data_get_widthType spine_skeleton_data_get_width
-    spine_skeleton_data_get_heightType spine_skeleton_data_get_height
-    spine_array_animation_sizeType spine_array_animation_size
-    spine_array_animation_bufferType spine_array_animation_buffer
-    spine_array_skin_sizeType spine_array_skin_size
-    spine_array_skin_bufferType spine_array_skin_buffer
-    spine_animation_get_nameType spine_animation_get_name
-    spine_animation_get_durationType spine_animation_get_duration
-    spine_skin_get_nameType spine_skin_get_name
-    spine_skin_createType spine_skin_create
-    spine_skin_add_skinType spine_skin_add_skin
-    spine_skin_disposeType spine_skin_dispose
-    spine_skeleton_drawable_createType spine_skeleton_drawable_create
-    spine_skeleton_drawable_updateType spine_skeleton_drawable_update
-    spine_skeleton_drawable_renderType spine_skeleton_drawable_render
-    spine_skeleton_drawable_disposeType spine_skeleton_drawable_dispose
-    spine_skeleton_drawable_get_skeletonType spine_skeleton_drawable_get_skeleton
-    spine_skeleton_drawable_get_animation_stateType spine_skeleton_drawable_get_animation_state
-    spine_skeleton_set_scaleType spine_skeleton_set_scale
-    spine_skeleton_setup_poseType spine_skeleton_setup_pose
-    spine_skeleton_setup_pose_slotsType spine_skeleton_setup_pose_slots
-    spine_skeleton_set_skin_1Type spine_skeleton_set_skin_1
-    spine_skeleton_set_skin_2Type spine_skeleton_set_skin_2
-    spine_skeleton_update_world_transformType spine_skeleton_update_world_transform
-    spine_skeleton_get_skinType spine_skeleton_get_skin
-    spine_skeleton_get_bounds_1Type spine_skeleton_get_bounds_1
-    spine_animation_state_set_animation_1Type spine_animation_state_set_animation_1
-    spine_animation_state_clear_tracksType spine_animation_state_clear_tracks
-    spine_animation_state_get_dataType spine_animation_state_get_data
-    spine_animation_state_data_set_default_mixType spine_animation_state_data_set_default_mix
-    spine_animation_state_data_set_mix_2Type spine_animation_state_data_set_mix_2
-    spine_track_entry_set_mix_duration_1Type spine_track_entry_set_mix_duration_1
-    spine_animation_state_add_animation_1Type spine_animation_state_add_animation_1
-    spine_animation_state_set_empty_animationType spine_animation_state_set_empty_animation
-    spine_animation_state_clear_trackType spine_animation_state_clear_track
-    spine_track_entry_get_alphaType spine_track_entry_get_alpha
-    spine_track_entry_set_alphaType spine_track_entry_set_alpha
-    spine_track_entry_get_additiveType spine_track_entry_get_additive
-    spine_track_entry_set_additiveType spine_track_entry_set_additive
-    spine_animation_state_get_tracksType spine_animation_state_get_tracks
-    spine_array_track_entry_sizeType spine_array_track_entry_size
-    spine_array_track_entry_bufferType spine_array_track_entry_buffer
-    spine_track_entry_is_completeType spine_track_entry_is_complete
-    spine_track_entry_get_loopType spine_track_entry_get_loop
-    spine_track_entry_set_loopType spine_track_entry_set_loop
-    spine_track_entry_get_mixing_fromType spine_track_entry_get_mixing_from
-    spine_track_entry_get_nextType spine_track_entry_get_next
-    spine_render_command_get_positionsType spine_render_command_get_positions
-    spine_render_command_get_uvsType spine_render_command_get_uvs
-    spine_render_command_get_colorsType spine_render_command_get_colors
-    spine_render_command_get_dark_colorsType spine_render_command_get_dark_colors
-    spine_render_command_get_num_verticesType spine_render_command_get_num_vertices
-    spine_render_command_get_indicesType spine_render_command_get_indices
-    spine_render_command_get_num_indicesType spine_render_command_get_num_indices
-    spine_render_command_get_blend_modeType spine_render_command_get_blend_mode
-    spine_render_command_get_textureType spine_render_command_get_texture
-    spine_render_command_get_nextType spine_render_command_get_next
-    spine_skeleton_get_physics_constraintsType spine_skeleton_get_physics_constraints
-    spine_array_physics_constraint_sizeType spine_array_physics_constraint_size
-    spine_array_physics_constraint_bufferType spine_array_physics_constraint_buffer
-    spine_physics_constraint_is_activeType spine_physics_constraint_is_active
-    spine_physics_constraint_get_applied_poseType spine_physics_constraint_get_applied_pose
-    spine_physics_constraint_pose_get_mixType spine_physics_constraint_pose_get_mix
+# Generated by sebulsik-spine/gen_api.py.
+# Module-level spine-c entry points, resolved by load().
+cdef spine_major_versionType spine_major_version
+cdef spine_minor_versionType spine_minor_version
+cdef spine_atlas_loadType spine_atlas_load
+cdef spine_atlas_result_get_errorType spine_atlas_result_get_error
+cdef spine_atlas_result_get_atlasType spine_atlas_result_get_atlas
+cdef spine_atlas_result_disposeType spine_atlas_result_dispose
+cdef spine_atlas_disposeType spine_atlas_dispose
+cdef spine_atlas_get_pagesType spine_atlas_get_pages
+cdef spine_array_atlas_page_sizeType spine_array_atlas_page_size
+cdef spine_array_atlas_page_bufferType spine_array_atlas_page_buffer
+cdef spine_atlas_page_get_nameType spine_atlas_page_get_name
+cdef spine_atlas_page_get_indexType spine_atlas_page_get_index
+cdef spine_atlas_page_get_min_filterType spine_atlas_page_get_min_filter
+cdef spine_atlas_page_get_mag_filterType spine_atlas_page_get_mag_filter
+cdef spine_atlas_page_get_u_wrapType spine_atlas_page_get_u_wrap
+cdef spine_atlas_page_get_v_wrapType spine_atlas_page_get_v_wrap
+cdef spine_atlas_page_get_pmaType spine_atlas_page_get_pma
+cdef spine_skeleton_data_load_jsonType spine_skeleton_data_load_json
+cdef spine_skeleton_data_load_binaryType spine_skeleton_data_load_binary
+cdef spine_skeleton_data_result_get_errorType spine_skeleton_data_result_get_error
+cdef spine_skeleton_data_result_get_dataType spine_skeleton_data_result_get_data
+cdef spine_skeleton_data_result_disposeType spine_skeleton_data_result_dispose
+cdef spine_skeleton_data_disposeType spine_skeleton_data_dispose
+cdef spine_skeleton_data_find_animationType spine_skeleton_data_find_animation
+cdef spine_skeleton_data_get_animationsType spine_skeleton_data_get_animations
+cdef spine_skeleton_data_find_skinType spine_skeleton_data_find_skin
+cdef spine_skeleton_data_get_skinsType spine_skeleton_data_get_skins
+cdef spine_skeleton_data_get_xType spine_skeleton_data_get_x
+cdef spine_skeleton_data_get_yType spine_skeleton_data_get_y
+cdef spine_skeleton_data_get_widthType spine_skeleton_data_get_width
+cdef spine_skeleton_data_get_heightType spine_skeleton_data_get_height
+cdef spine_array_animation_sizeType spine_array_animation_size
+cdef spine_array_animation_bufferType spine_array_animation_buffer
+cdef spine_array_skin_sizeType spine_array_skin_size
+cdef spine_array_skin_bufferType spine_array_skin_buffer
+cdef spine_animation_get_nameType spine_animation_get_name
+cdef spine_animation_get_durationType spine_animation_get_duration
+cdef spine_skin_get_nameType spine_skin_get_name
+cdef spine_skin_createType spine_skin_create
+cdef spine_skin_add_skinType spine_skin_add_skin
+cdef spine_skin_disposeType spine_skin_dispose
+cdef spine_skeleton_drawable_createType spine_skeleton_drawable_create
+cdef spine_skeleton_drawable_updateType spine_skeleton_drawable_update
+cdef spine_skeleton_drawable_renderType spine_skeleton_drawable_render
+cdef spine_skeleton_drawable_disposeType spine_skeleton_drawable_dispose
+cdef spine_skeleton_drawable_get_skeletonType spine_skeleton_drawable_get_skeleton
+cdef spine_skeleton_drawable_get_animation_stateType spine_skeleton_drawable_get_animation_state
+cdef spine_skeleton_set_scaleType spine_skeleton_set_scale
+cdef spine_skeleton_setup_poseType spine_skeleton_setup_pose
+cdef spine_skeleton_setup_pose_slotsType spine_skeleton_setup_pose_slots
+cdef spine_skeleton_set_skin_1Type spine_skeleton_set_skin_1
+cdef spine_skeleton_set_skin_2Type spine_skeleton_set_skin_2
+cdef spine_skeleton_update_world_transformType spine_skeleton_update_world_transform
+cdef spine_skeleton_get_skinType spine_skeleton_get_skin
+cdef spine_skeleton_get_bounds_1Type spine_skeleton_get_bounds_1
+cdef spine_animation_state_set_animation_1Type spine_animation_state_set_animation_1
+cdef spine_animation_state_clear_tracksType spine_animation_state_clear_tracks
+cdef spine_animation_state_get_dataType spine_animation_state_get_data
+cdef spine_animation_state_data_set_default_mixType spine_animation_state_data_set_default_mix
+cdef spine_animation_state_data_set_mix_2Type spine_animation_state_data_set_mix_2
+cdef spine_track_entry_set_mix_duration_1Type spine_track_entry_set_mix_duration_1
+cdef spine_animation_state_add_animation_1Type spine_animation_state_add_animation_1
+cdef spine_animation_state_set_empty_animationType spine_animation_state_set_empty_animation
+cdef spine_animation_state_clear_trackType spine_animation_state_clear_track
+cdef spine_track_entry_get_alphaType spine_track_entry_get_alpha
+cdef spine_track_entry_set_alphaType spine_track_entry_set_alpha
+cdef spine_track_entry_get_additiveType spine_track_entry_get_additive
+cdef spine_track_entry_set_additiveType spine_track_entry_set_additive
+cdef spine_animation_state_get_tracksType spine_animation_state_get_tracks
+cdef spine_array_track_entry_sizeType spine_array_track_entry_size
+cdef spine_array_track_entry_bufferType spine_array_track_entry_buffer
+cdef spine_track_entry_is_completeType spine_track_entry_is_complete
+cdef spine_track_entry_get_loopType spine_track_entry_get_loop
+cdef spine_track_entry_set_loopType spine_track_entry_set_loop
+cdef spine_track_entry_get_mixing_fromType spine_track_entry_get_mixing_from
+cdef spine_track_entry_get_nextType spine_track_entry_get_next
+cdef spine_render_command_get_positionsType spine_render_command_get_positions
+cdef spine_render_command_get_uvsType spine_render_command_get_uvs
+cdef spine_render_command_get_colorsType spine_render_command_get_colors
+cdef spine_render_command_get_dark_colorsType spine_render_command_get_dark_colors
+cdef spine_render_command_get_num_verticesType spine_render_command_get_num_vertices
+cdef spine_render_command_get_indicesType spine_render_command_get_indices
+cdef spine_render_command_get_num_indicesType spine_render_command_get_num_indices
+cdef spine_render_command_get_blend_modeType spine_render_command_get_blend_mode
+cdef spine_render_command_get_textureType spine_render_command_get_texture
+cdef spine_render_command_get_nextType spine_render_command_get_next
+cdef spine_skeleton_get_physics_constraintsType spine_skeleton_get_physics_constraints
+cdef spine_array_physics_constraint_sizeType spine_array_physics_constraint_size
+cdef spine_array_physics_constraint_bufferType spine_array_physics_constraint_buffer
+cdef spine_physics_constraint_is_activeType spine_physics_constraint_is_active
+cdef spine_physics_constraint_get_applied_poseType spine_physics_constraint_get_applied_pose
+cdef spine_physics_constraint_pose_get_mixType spine_physics_constraint_pose_get_mix
 
 
 cdef extern from "SDL3/SDL.h":
@@ -370,34 +393,18 @@ cdef void* load_required(void* handle, object dll_name, const char* name) except
     return rv
 
 
-cdef class SpineLibrary:
-    """
-    A loaded spine-c library: the resolved API table plus its identity and
-    version. Created by load() and held by the Python runtime object; passed to
-    SpineData, and through it to every SpineModel, so native calls go through
-    an object rather than module state.
-    """
-
-    cdef SpineApi api
-    cdef void* handle
-    cdef readonly object name
-    cdef readonly int major
-    cdef readonly int minor
-
-    def __cinit__(self):
-        self.handle = NULL
-        self.name = None
-        self.major = 0
-        self.minor = 0
-
-    def version(self):
-        """(major, minor) of the loaded runtime."""
-        return (self.major, self.minor)
+# True once load() has resolved every entry point. The spine_* function
+# pointers above are NULL until then, so SpineData refuses to exist earlier.
+cdef bint spine_library_loaded = False
 
 
 def load(dll):
+    """Load the Spine library and return its version, or None if it cannot open.
+    Raise an error if a required library function is missing."""
+    global spine_library_loaded
+
     cdef void* handle = NULL
-    cdef SpineLibrary lib
+    cdef int major, minor
 
     if not dll:
         return None
@@ -406,110 +413,201 @@ def load(dll):
     if handle == NULL:
         return None
 
-    lib = SpineLibrary()
-    lib.handle = handle
-    lib.name = dll.decode("utf-8")
+    dll_name = dll.decode("utf-8")
 
     # ---- begin resolve ----
-    lib.api.spine_major_version = <spine_major_versionType> load_required(handle, lib.name, "spine_major_version")
-    lib.api.spine_minor_version = <spine_minor_versionType> load_required(handle, lib.name, "spine_minor_version")
-    lib.api.spine_atlas_load = <spine_atlas_loadType> load_required(handle, lib.name, "spine_atlas_load")
-    lib.api.spine_atlas_result_get_error = <spine_atlas_result_get_errorType> load_required(handle, lib.name, "spine_atlas_result_get_error")
-    lib.api.spine_atlas_result_get_atlas = <spine_atlas_result_get_atlasType> load_required(handle, lib.name, "spine_atlas_result_get_atlas")
-    lib.api.spine_atlas_result_dispose = <spine_atlas_result_disposeType> load_required(handle, lib.name, "spine_atlas_result_dispose")
-    lib.api.spine_atlas_dispose = <spine_atlas_disposeType> load_required(handle, lib.name, "spine_atlas_dispose")
-    lib.api.spine_atlas_get_pages = <spine_atlas_get_pagesType> load_required(handle, lib.name, "spine_atlas_get_pages")
-    lib.api.spine_array_atlas_page_size = <spine_array_atlas_page_sizeType> load_required(handle, lib.name, "spine_array_atlas_page_size")
-    lib.api.spine_array_atlas_page_buffer = <spine_array_atlas_page_bufferType> load_required(handle, lib.name, "spine_array_atlas_page_buffer")
-    lib.api.spine_atlas_page_get_name = <spine_atlas_page_get_nameType> load_required(handle, lib.name, "spine_atlas_page_get_name")
-    lib.api.spine_atlas_page_get_index = <spine_atlas_page_get_indexType> load_required(handle, lib.name, "spine_atlas_page_get_index")
-    lib.api.spine_atlas_page_get_min_filter = <spine_atlas_page_get_min_filterType> load_required(handle, lib.name, "spine_atlas_page_get_min_filter")
-    lib.api.spine_atlas_page_get_mag_filter = <spine_atlas_page_get_mag_filterType> load_required(handle, lib.name, "spine_atlas_page_get_mag_filter")
-    lib.api.spine_atlas_page_get_u_wrap = <spine_atlas_page_get_u_wrapType> load_required(handle, lib.name, "spine_atlas_page_get_u_wrap")
-    lib.api.spine_atlas_page_get_v_wrap = <spine_atlas_page_get_v_wrapType> load_required(handle, lib.name, "spine_atlas_page_get_v_wrap")
-    lib.api.spine_atlas_page_get_pma = <spine_atlas_page_get_pmaType> load_required(handle, lib.name, "spine_atlas_page_get_pma")
-    lib.api.spine_skeleton_data_load_json = <spine_skeleton_data_load_jsonType> load_required(handle, lib.name, "spine_skeleton_data_load_json")
-    lib.api.spine_skeleton_data_load_binary = <spine_skeleton_data_load_binaryType> load_required(handle, lib.name, "spine_skeleton_data_load_binary")
-    lib.api.spine_skeleton_data_result_get_error = <spine_skeleton_data_result_get_errorType> load_required(handle, lib.name, "spine_skeleton_data_result_get_error")
-    lib.api.spine_skeleton_data_result_get_data = <spine_skeleton_data_result_get_dataType> load_required(handle, lib.name, "spine_skeleton_data_result_get_data")
-    lib.api.spine_skeleton_data_result_dispose = <spine_skeleton_data_result_disposeType> load_required(handle, lib.name, "spine_skeleton_data_result_dispose")
-    lib.api.spine_skeleton_data_dispose = <spine_skeleton_data_disposeType> load_required(handle, lib.name, "spine_skeleton_data_dispose")
-    lib.api.spine_skeleton_data_find_animation = <spine_skeleton_data_find_animationType> load_required(handle, lib.name, "spine_skeleton_data_find_animation")
-    lib.api.spine_skeleton_data_get_animations = <spine_skeleton_data_get_animationsType> load_required(handle, lib.name, "spine_skeleton_data_get_animations")
-    lib.api.spine_skeleton_data_find_skin = <spine_skeleton_data_find_skinType> load_required(handle, lib.name, "spine_skeleton_data_find_skin")
-    lib.api.spine_skeleton_data_get_skins = <spine_skeleton_data_get_skinsType> load_required(handle, lib.name, "spine_skeleton_data_get_skins")
-    lib.api.spine_skeleton_data_get_x = <spine_skeleton_data_get_xType> load_required(handle, lib.name, "spine_skeleton_data_get_x")
-    lib.api.spine_skeleton_data_get_y = <spine_skeleton_data_get_yType> load_required(handle, lib.name, "spine_skeleton_data_get_y")
-    lib.api.spine_skeleton_data_get_width = <spine_skeleton_data_get_widthType> load_required(handle, lib.name, "spine_skeleton_data_get_width")
-    lib.api.spine_skeleton_data_get_height = <spine_skeleton_data_get_heightType> load_required(handle, lib.name, "spine_skeleton_data_get_height")
-    lib.api.spine_array_animation_size = <spine_array_animation_sizeType> load_required(handle, lib.name, "spine_array_animation_size")
-    lib.api.spine_array_animation_buffer = <spine_array_animation_bufferType> load_required(handle, lib.name, "spine_array_animation_buffer")
-    lib.api.spine_array_skin_size = <spine_array_skin_sizeType> load_required(handle, lib.name, "spine_array_skin_size")
-    lib.api.spine_array_skin_buffer = <spine_array_skin_bufferType> load_required(handle, lib.name, "spine_array_skin_buffer")
-    lib.api.spine_animation_get_name = <spine_animation_get_nameType> load_required(handle, lib.name, "spine_animation_get_name")
-    lib.api.spine_animation_get_duration = <spine_animation_get_durationType> load_required(handle, lib.name, "spine_animation_get_duration")
-    lib.api.spine_skin_get_name = <spine_skin_get_nameType> load_required(handle, lib.name, "spine_skin_get_name")
-    lib.api.spine_skin_create = <spine_skin_createType> load_required(handle, lib.name, "spine_skin_create")
-    lib.api.spine_skin_add_skin = <spine_skin_add_skinType> load_required(handle, lib.name, "spine_skin_add_skin")
-    lib.api.spine_skin_dispose = <spine_skin_disposeType> load_required(handle, lib.name, "spine_skin_dispose")
-    lib.api.spine_skeleton_drawable_create = <spine_skeleton_drawable_createType> load_required(handle, lib.name, "spine_skeleton_drawable_create")
-    lib.api.spine_skeleton_drawable_update = <spine_skeleton_drawable_updateType> load_required(handle, lib.name, "spine_skeleton_drawable_update")
-    lib.api.spine_skeleton_drawable_render = <spine_skeleton_drawable_renderType> load_required(handle, lib.name, "spine_skeleton_drawable_render")
-    lib.api.spine_skeleton_drawable_dispose = <spine_skeleton_drawable_disposeType> load_required(handle, lib.name, "spine_skeleton_drawable_dispose")
-    lib.api.spine_skeleton_drawable_get_skeleton = <spine_skeleton_drawable_get_skeletonType> load_required(handle, lib.name, "spine_skeleton_drawable_get_skeleton")
-    lib.api.spine_skeleton_drawable_get_animation_state = <spine_skeleton_drawable_get_animation_stateType> load_required(handle, lib.name, "spine_skeleton_drawable_get_animation_state")
-    lib.api.spine_skeleton_set_scale = <spine_skeleton_set_scaleType> load_required(handle, lib.name, "spine_skeleton_set_scale")
-    lib.api.spine_skeleton_setup_pose = <spine_skeleton_setup_poseType> load_required(handle, lib.name, "spine_skeleton_setup_pose")
-    lib.api.spine_skeleton_setup_pose_slots = <spine_skeleton_setup_pose_slotsType> load_required(handle, lib.name, "spine_skeleton_setup_pose_slots")
-    lib.api.spine_skeleton_set_skin_1 = <spine_skeleton_set_skin_1Type> load_required(handle, lib.name, "spine_skeleton_set_skin_1")
-    lib.api.spine_skeleton_set_skin_2 = <spine_skeleton_set_skin_2Type> load_required(handle, lib.name, "spine_skeleton_set_skin_2")
-    lib.api.spine_skeleton_update_world_transform = <spine_skeleton_update_world_transformType> load_required(handle, lib.name, "spine_skeleton_update_world_transform")
-    lib.api.spine_skeleton_get_skin = <spine_skeleton_get_skinType> load_required(handle, lib.name, "spine_skeleton_get_skin")
-    lib.api.spine_skeleton_get_bounds_1 = <spine_skeleton_get_bounds_1Type> load_required(handle, lib.name, "spine_skeleton_get_bounds_1")
-    lib.api.spine_animation_state_set_animation_1 = <spine_animation_state_set_animation_1Type> load_required(handle, lib.name, "spine_animation_state_set_animation_1")
-    lib.api.spine_animation_state_clear_tracks = <spine_animation_state_clear_tracksType> load_required(handle, lib.name, "spine_animation_state_clear_tracks")
-    lib.api.spine_animation_state_get_data = <spine_animation_state_get_dataType> load_required(handle, lib.name, "spine_animation_state_get_data")
-    lib.api.spine_animation_state_data_set_default_mix = <spine_animation_state_data_set_default_mixType> load_required(handle, lib.name, "spine_animation_state_data_set_default_mix")
-    lib.api.spine_animation_state_data_set_mix_2 = <spine_animation_state_data_set_mix_2Type> load_required(handle, lib.name, "spine_animation_state_data_set_mix_2")
-    lib.api.spine_track_entry_set_mix_duration_1 = <spine_track_entry_set_mix_duration_1Type> load_required(handle, lib.name, "spine_track_entry_set_mix_duration_1")
-    lib.api.spine_animation_state_add_animation_1 = <spine_animation_state_add_animation_1Type> load_required(handle, lib.name, "spine_animation_state_add_animation_1")
-    lib.api.spine_animation_state_set_empty_animation = <spine_animation_state_set_empty_animationType> load_required(handle, lib.name, "spine_animation_state_set_empty_animation")
-    lib.api.spine_animation_state_clear_track = <spine_animation_state_clear_trackType> load_required(handle, lib.name, "spine_animation_state_clear_track")
-    lib.api.spine_track_entry_get_alpha = <spine_track_entry_get_alphaType> load_required(handle, lib.name, "spine_track_entry_get_alpha")
-    lib.api.spine_track_entry_set_alpha = <spine_track_entry_set_alphaType> load_required(handle, lib.name, "spine_track_entry_set_alpha")
-    lib.api.spine_track_entry_get_additive = <spine_track_entry_get_additiveType> load_required(handle, lib.name, "spine_track_entry_get_additive")
-    lib.api.spine_track_entry_set_additive = <spine_track_entry_set_additiveType> load_required(handle, lib.name, "spine_track_entry_set_additive")
-    lib.api.spine_animation_state_get_tracks = <spine_animation_state_get_tracksType> load_required(handle, lib.name, "spine_animation_state_get_tracks")
-    lib.api.spine_array_track_entry_size = <spine_array_track_entry_sizeType> load_required(handle, lib.name, "spine_array_track_entry_size")
-    lib.api.spine_array_track_entry_buffer = <spine_array_track_entry_bufferType> load_required(handle, lib.name, "spine_array_track_entry_buffer")
-    lib.api.spine_track_entry_is_complete = <spine_track_entry_is_completeType> load_required(handle, lib.name, "spine_track_entry_is_complete")
-    lib.api.spine_track_entry_get_loop = <spine_track_entry_get_loopType> load_required(handle, lib.name, "spine_track_entry_get_loop")
-    lib.api.spine_track_entry_set_loop = <spine_track_entry_set_loopType> load_required(handle, lib.name, "spine_track_entry_set_loop")
-    lib.api.spine_track_entry_get_mixing_from = <spine_track_entry_get_mixing_fromType> load_required(handle, lib.name, "spine_track_entry_get_mixing_from")
-    lib.api.spine_track_entry_get_next = <spine_track_entry_get_nextType> load_required(handle, lib.name, "spine_track_entry_get_next")
-    lib.api.spine_render_command_get_positions = <spine_render_command_get_positionsType> load_required(handle, lib.name, "spine_render_command_get_positions")
-    lib.api.spine_render_command_get_uvs = <spine_render_command_get_uvsType> load_required(handle, lib.name, "spine_render_command_get_uvs")
-    lib.api.spine_render_command_get_colors = <spine_render_command_get_colorsType> load_required(handle, lib.name, "spine_render_command_get_colors")
-    lib.api.spine_render_command_get_dark_colors = <spine_render_command_get_dark_colorsType> load_required(handle, lib.name, "spine_render_command_get_dark_colors")
-    lib.api.spine_render_command_get_num_vertices = <spine_render_command_get_num_verticesType> load_required(handle, lib.name, "spine_render_command_get_num_vertices")
-    lib.api.spine_render_command_get_indices = <spine_render_command_get_indicesType> load_required(handle, lib.name, "spine_render_command_get_indices")
-    lib.api.spine_render_command_get_num_indices = <spine_render_command_get_num_indicesType> load_required(handle, lib.name, "spine_render_command_get_num_indices")
-    lib.api.spine_render_command_get_blend_mode = <spine_render_command_get_blend_modeType> load_required(handle, lib.name, "spine_render_command_get_blend_mode")
-    lib.api.spine_render_command_get_texture = <spine_render_command_get_textureType> load_required(handle, lib.name, "spine_render_command_get_texture")
-    lib.api.spine_render_command_get_next = <spine_render_command_get_nextType> load_required(handle, lib.name, "spine_render_command_get_next")
-    lib.api.spine_skeleton_get_physics_constraints = <spine_skeleton_get_physics_constraintsType> load_required(handle, lib.name, "spine_skeleton_get_physics_constraints")
-    lib.api.spine_array_physics_constraint_size = <spine_array_physics_constraint_sizeType> load_required(handle, lib.name, "spine_array_physics_constraint_size")
-    lib.api.spine_array_physics_constraint_buffer = <spine_array_physics_constraint_bufferType> load_required(handle, lib.name, "spine_array_physics_constraint_buffer")
-    lib.api.spine_physics_constraint_is_active = <spine_physics_constraint_is_activeType> load_required(handle, lib.name, "spine_physics_constraint_is_active")
-    lib.api.spine_physics_constraint_get_applied_pose = <spine_physics_constraint_get_applied_poseType> load_required(handle, lib.name, "spine_physics_constraint_get_applied_pose")
-    lib.api.spine_physics_constraint_pose_get_mix = <spine_physics_constraint_pose_get_mixType> load_required(handle, lib.name, "spine_physics_constraint_pose_get_mix")
+    global spine_major_version
+    spine_major_version = <spine_major_versionType> load_required(handle, dll_name, "spine_major_version")
+    global spine_minor_version
+    spine_minor_version = <spine_minor_versionType> load_required(handle, dll_name, "spine_minor_version")
+    global spine_atlas_load
+    spine_atlas_load = <spine_atlas_loadType> load_required(handle, dll_name, "spine_atlas_load")
+    global spine_atlas_result_get_error
+    spine_atlas_result_get_error = <spine_atlas_result_get_errorType> load_required(handle, dll_name, "spine_atlas_result_get_error")
+    global spine_atlas_result_get_atlas
+    spine_atlas_result_get_atlas = <spine_atlas_result_get_atlasType> load_required(handle, dll_name, "spine_atlas_result_get_atlas")
+    global spine_atlas_result_dispose
+    spine_atlas_result_dispose = <spine_atlas_result_disposeType> load_required(handle, dll_name, "spine_atlas_result_dispose")
+    global spine_atlas_dispose
+    spine_atlas_dispose = <spine_atlas_disposeType> load_required(handle, dll_name, "spine_atlas_dispose")
+    global spine_atlas_get_pages
+    spine_atlas_get_pages = <spine_atlas_get_pagesType> load_required(handle, dll_name, "spine_atlas_get_pages")
+    global spine_array_atlas_page_size
+    spine_array_atlas_page_size = <spine_array_atlas_page_sizeType> load_required(handle, dll_name, "spine_array_atlas_page_size")
+    global spine_array_atlas_page_buffer
+    spine_array_atlas_page_buffer = <spine_array_atlas_page_bufferType> load_required(handle, dll_name, "spine_array_atlas_page_buffer")
+    global spine_atlas_page_get_name
+    spine_atlas_page_get_name = <spine_atlas_page_get_nameType> load_required(handle, dll_name, "spine_atlas_page_get_name")
+    global spine_atlas_page_get_index
+    spine_atlas_page_get_index = <spine_atlas_page_get_indexType> load_required(handle, dll_name, "spine_atlas_page_get_index")
+    global spine_atlas_page_get_min_filter
+    spine_atlas_page_get_min_filter = <spine_atlas_page_get_min_filterType> load_required(handle, dll_name, "spine_atlas_page_get_min_filter")
+    global spine_atlas_page_get_mag_filter
+    spine_atlas_page_get_mag_filter = <spine_atlas_page_get_mag_filterType> load_required(handle, dll_name, "spine_atlas_page_get_mag_filter")
+    global spine_atlas_page_get_u_wrap
+    spine_atlas_page_get_u_wrap = <spine_atlas_page_get_u_wrapType> load_required(handle, dll_name, "spine_atlas_page_get_u_wrap")
+    global spine_atlas_page_get_v_wrap
+    spine_atlas_page_get_v_wrap = <spine_atlas_page_get_v_wrapType> load_required(handle, dll_name, "spine_atlas_page_get_v_wrap")
+    global spine_atlas_page_get_pma
+    spine_atlas_page_get_pma = <spine_atlas_page_get_pmaType> load_required(handle, dll_name, "spine_atlas_page_get_pma")
+    global spine_skeleton_data_load_json
+    spine_skeleton_data_load_json = <spine_skeleton_data_load_jsonType> load_required(handle, dll_name, "spine_skeleton_data_load_json")
+    global spine_skeleton_data_load_binary
+    spine_skeleton_data_load_binary = <spine_skeleton_data_load_binaryType> load_required(handle, dll_name, "spine_skeleton_data_load_binary")
+    global spine_skeleton_data_result_get_error
+    spine_skeleton_data_result_get_error = <spine_skeleton_data_result_get_errorType> load_required(handle, dll_name, "spine_skeleton_data_result_get_error")
+    global spine_skeleton_data_result_get_data
+    spine_skeleton_data_result_get_data = <spine_skeleton_data_result_get_dataType> load_required(handle, dll_name, "spine_skeleton_data_result_get_data")
+    global spine_skeleton_data_result_dispose
+    spine_skeleton_data_result_dispose = <spine_skeleton_data_result_disposeType> load_required(handle, dll_name, "spine_skeleton_data_result_dispose")
+    global spine_skeleton_data_dispose
+    spine_skeleton_data_dispose = <spine_skeleton_data_disposeType> load_required(handle, dll_name, "spine_skeleton_data_dispose")
+    global spine_skeleton_data_find_animation
+    spine_skeleton_data_find_animation = <spine_skeleton_data_find_animationType> load_required(handle, dll_name, "spine_skeleton_data_find_animation")
+    global spine_skeleton_data_get_animations
+    spine_skeleton_data_get_animations = <spine_skeleton_data_get_animationsType> load_required(handle, dll_name, "spine_skeleton_data_get_animations")
+    global spine_skeleton_data_find_skin
+    spine_skeleton_data_find_skin = <spine_skeleton_data_find_skinType> load_required(handle, dll_name, "spine_skeleton_data_find_skin")
+    global spine_skeleton_data_get_skins
+    spine_skeleton_data_get_skins = <spine_skeleton_data_get_skinsType> load_required(handle, dll_name, "spine_skeleton_data_get_skins")
+    global spine_skeleton_data_get_x
+    spine_skeleton_data_get_x = <spine_skeleton_data_get_xType> load_required(handle, dll_name, "spine_skeleton_data_get_x")
+    global spine_skeleton_data_get_y
+    spine_skeleton_data_get_y = <spine_skeleton_data_get_yType> load_required(handle, dll_name, "spine_skeleton_data_get_y")
+    global spine_skeleton_data_get_width
+    spine_skeleton_data_get_width = <spine_skeleton_data_get_widthType> load_required(handle, dll_name, "spine_skeleton_data_get_width")
+    global spine_skeleton_data_get_height
+    spine_skeleton_data_get_height = <spine_skeleton_data_get_heightType> load_required(handle, dll_name, "spine_skeleton_data_get_height")
+    global spine_array_animation_size
+    spine_array_animation_size = <spine_array_animation_sizeType> load_required(handle, dll_name, "spine_array_animation_size")
+    global spine_array_animation_buffer
+    spine_array_animation_buffer = <spine_array_animation_bufferType> load_required(handle, dll_name, "spine_array_animation_buffer")
+    global spine_array_skin_size
+    spine_array_skin_size = <spine_array_skin_sizeType> load_required(handle, dll_name, "spine_array_skin_size")
+    global spine_array_skin_buffer
+    spine_array_skin_buffer = <spine_array_skin_bufferType> load_required(handle, dll_name, "spine_array_skin_buffer")
+    global spine_animation_get_name
+    spine_animation_get_name = <spine_animation_get_nameType> load_required(handle, dll_name, "spine_animation_get_name")
+    global spine_animation_get_duration
+    spine_animation_get_duration = <spine_animation_get_durationType> load_required(handle, dll_name, "spine_animation_get_duration")
+    global spine_skin_get_name
+    spine_skin_get_name = <spine_skin_get_nameType> load_required(handle, dll_name, "spine_skin_get_name")
+    global spine_skin_create
+    spine_skin_create = <spine_skin_createType> load_required(handle, dll_name, "spine_skin_create")
+    global spine_skin_add_skin
+    spine_skin_add_skin = <spine_skin_add_skinType> load_required(handle, dll_name, "spine_skin_add_skin")
+    global spine_skin_dispose
+    spine_skin_dispose = <spine_skin_disposeType> load_required(handle, dll_name, "spine_skin_dispose")
+    global spine_skeleton_drawable_create
+    spine_skeleton_drawable_create = <spine_skeleton_drawable_createType> load_required(handle, dll_name, "spine_skeleton_drawable_create")
+    global spine_skeleton_drawable_update
+    spine_skeleton_drawable_update = <spine_skeleton_drawable_updateType> load_required(handle, dll_name, "spine_skeleton_drawable_update")
+    global spine_skeleton_drawable_render
+    spine_skeleton_drawable_render = <spine_skeleton_drawable_renderType> load_required(handle, dll_name, "spine_skeleton_drawable_render")
+    global spine_skeleton_drawable_dispose
+    spine_skeleton_drawable_dispose = <spine_skeleton_drawable_disposeType> load_required(handle, dll_name, "spine_skeleton_drawable_dispose")
+    global spine_skeleton_drawable_get_skeleton
+    spine_skeleton_drawable_get_skeleton = <spine_skeleton_drawable_get_skeletonType> load_required(handle, dll_name, "spine_skeleton_drawable_get_skeleton")
+    global spine_skeleton_drawable_get_animation_state
+    spine_skeleton_drawable_get_animation_state = <spine_skeleton_drawable_get_animation_stateType> load_required(handle, dll_name, "spine_skeleton_drawable_get_animation_state")
+    global spine_skeleton_set_scale
+    spine_skeleton_set_scale = <spine_skeleton_set_scaleType> load_required(handle, dll_name, "spine_skeleton_set_scale")
+    global spine_skeleton_setup_pose
+    spine_skeleton_setup_pose = <spine_skeleton_setup_poseType> load_required(handle, dll_name, "spine_skeleton_setup_pose")
+    global spine_skeleton_setup_pose_slots
+    spine_skeleton_setup_pose_slots = <spine_skeleton_setup_pose_slotsType> load_required(handle, dll_name, "spine_skeleton_setup_pose_slots")
+    global spine_skeleton_set_skin_1
+    spine_skeleton_set_skin_1 = <spine_skeleton_set_skin_1Type> load_required(handle, dll_name, "spine_skeleton_set_skin_1")
+    global spine_skeleton_set_skin_2
+    spine_skeleton_set_skin_2 = <spine_skeleton_set_skin_2Type> load_required(handle, dll_name, "spine_skeleton_set_skin_2")
+    global spine_skeleton_update_world_transform
+    spine_skeleton_update_world_transform = <spine_skeleton_update_world_transformType> load_required(handle, dll_name, "spine_skeleton_update_world_transform")
+    global spine_skeleton_get_skin
+    spine_skeleton_get_skin = <spine_skeleton_get_skinType> load_required(handle, dll_name, "spine_skeleton_get_skin")
+    global spine_skeleton_get_bounds_1
+    spine_skeleton_get_bounds_1 = <spine_skeleton_get_bounds_1Type> load_required(handle, dll_name, "spine_skeleton_get_bounds_1")
+    global spine_animation_state_set_animation_1
+    spine_animation_state_set_animation_1 = <spine_animation_state_set_animation_1Type> load_required(handle, dll_name, "spine_animation_state_set_animation_1")
+    global spine_animation_state_clear_tracks
+    spine_animation_state_clear_tracks = <spine_animation_state_clear_tracksType> load_required(handle, dll_name, "spine_animation_state_clear_tracks")
+    global spine_animation_state_get_data
+    spine_animation_state_get_data = <spine_animation_state_get_dataType> load_required(handle, dll_name, "spine_animation_state_get_data")
+    global spine_animation_state_data_set_default_mix
+    spine_animation_state_data_set_default_mix = <spine_animation_state_data_set_default_mixType> load_required(handle, dll_name, "spine_animation_state_data_set_default_mix")
+    global spine_animation_state_data_set_mix_2
+    spine_animation_state_data_set_mix_2 = <spine_animation_state_data_set_mix_2Type> load_required(handle, dll_name, "spine_animation_state_data_set_mix_2")
+    global spine_track_entry_set_mix_duration_1
+    spine_track_entry_set_mix_duration_1 = <spine_track_entry_set_mix_duration_1Type> load_required(handle, dll_name, "spine_track_entry_set_mix_duration_1")
+    global spine_animation_state_add_animation_1
+    spine_animation_state_add_animation_1 = <spine_animation_state_add_animation_1Type> load_required(handle, dll_name, "spine_animation_state_add_animation_1")
+    global spine_animation_state_set_empty_animation
+    spine_animation_state_set_empty_animation = <spine_animation_state_set_empty_animationType> load_required(handle, dll_name, "spine_animation_state_set_empty_animation")
+    global spine_animation_state_clear_track
+    spine_animation_state_clear_track = <spine_animation_state_clear_trackType> load_required(handle, dll_name, "spine_animation_state_clear_track")
+    global spine_track_entry_get_alpha
+    spine_track_entry_get_alpha = <spine_track_entry_get_alphaType> load_required(handle, dll_name, "spine_track_entry_get_alpha")
+    global spine_track_entry_set_alpha
+    spine_track_entry_set_alpha = <spine_track_entry_set_alphaType> load_required(handle, dll_name, "spine_track_entry_set_alpha")
+    global spine_track_entry_get_additive
+    spine_track_entry_get_additive = <spine_track_entry_get_additiveType> load_required(handle, dll_name, "spine_track_entry_get_additive")
+    global spine_track_entry_set_additive
+    spine_track_entry_set_additive = <spine_track_entry_set_additiveType> load_required(handle, dll_name, "spine_track_entry_set_additive")
+    global spine_animation_state_get_tracks
+    spine_animation_state_get_tracks = <spine_animation_state_get_tracksType> load_required(handle, dll_name, "spine_animation_state_get_tracks")
+    global spine_array_track_entry_size
+    spine_array_track_entry_size = <spine_array_track_entry_sizeType> load_required(handle, dll_name, "spine_array_track_entry_size")
+    global spine_array_track_entry_buffer
+    spine_array_track_entry_buffer = <spine_array_track_entry_bufferType> load_required(handle, dll_name, "spine_array_track_entry_buffer")
+    global spine_track_entry_is_complete
+    spine_track_entry_is_complete = <spine_track_entry_is_completeType> load_required(handle, dll_name, "spine_track_entry_is_complete")
+    global spine_track_entry_get_loop
+    spine_track_entry_get_loop = <spine_track_entry_get_loopType> load_required(handle, dll_name, "spine_track_entry_get_loop")
+    global spine_track_entry_set_loop
+    spine_track_entry_set_loop = <spine_track_entry_set_loopType> load_required(handle, dll_name, "spine_track_entry_set_loop")
+    global spine_track_entry_get_mixing_from
+    spine_track_entry_get_mixing_from = <spine_track_entry_get_mixing_fromType> load_required(handle, dll_name, "spine_track_entry_get_mixing_from")
+    global spine_track_entry_get_next
+    spine_track_entry_get_next = <spine_track_entry_get_nextType> load_required(handle, dll_name, "spine_track_entry_get_next")
+    global spine_render_command_get_positions
+    spine_render_command_get_positions = <spine_render_command_get_positionsType> load_required(handle, dll_name, "spine_render_command_get_positions")
+    global spine_render_command_get_uvs
+    spine_render_command_get_uvs = <spine_render_command_get_uvsType> load_required(handle, dll_name, "spine_render_command_get_uvs")
+    global spine_render_command_get_colors
+    spine_render_command_get_colors = <spine_render_command_get_colorsType> load_required(handle, dll_name, "spine_render_command_get_colors")
+    global spine_render_command_get_dark_colors
+    spine_render_command_get_dark_colors = <spine_render_command_get_dark_colorsType> load_required(handle, dll_name, "spine_render_command_get_dark_colors")
+    global spine_render_command_get_num_vertices
+    spine_render_command_get_num_vertices = <spine_render_command_get_num_verticesType> load_required(handle, dll_name, "spine_render_command_get_num_vertices")
+    global spine_render_command_get_indices
+    spine_render_command_get_indices = <spine_render_command_get_indicesType> load_required(handle, dll_name, "spine_render_command_get_indices")
+    global spine_render_command_get_num_indices
+    spine_render_command_get_num_indices = <spine_render_command_get_num_indicesType> load_required(handle, dll_name, "spine_render_command_get_num_indices")
+    global spine_render_command_get_blend_mode
+    spine_render_command_get_blend_mode = <spine_render_command_get_blend_modeType> load_required(handle, dll_name, "spine_render_command_get_blend_mode")
+    global spine_render_command_get_texture
+    spine_render_command_get_texture = <spine_render_command_get_textureType> load_required(handle, dll_name, "spine_render_command_get_texture")
+    global spine_render_command_get_next
+    spine_render_command_get_next = <spine_render_command_get_nextType> load_required(handle, dll_name, "spine_render_command_get_next")
+    global spine_skeleton_get_physics_constraints
+    spine_skeleton_get_physics_constraints = <spine_skeleton_get_physics_constraintsType> load_required(handle, dll_name, "spine_skeleton_get_physics_constraints")
+    global spine_array_physics_constraint_size
+    spine_array_physics_constraint_size = <spine_array_physics_constraint_sizeType> load_required(handle, dll_name, "spine_array_physics_constraint_size")
+    global spine_array_physics_constraint_buffer
+    spine_array_physics_constraint_buffer = <spine_array_physics_constraint_bufferType> load_required(handle, dll_name, "spine_array_physics_constraint_buffer")
+    global spine_physics_constraint_is_active
+    spine_physics_constraint_is_active = <spine_physics_constraint_is_activeType> load_required(handle, dll_name, "spine_physics_constraint_is_active")
+    global spine_physics_constraint_get_applied_pose
+    spine_physics_constraint_get_applied_pose = <spine_physics_constraint_get_applied_poseType> load_required(handle, dll_name, "spine_physics_constraint_get_applied_pose")
+    global spine_physics_constraint_pose_get_mix
+    spine_physics_constraint_pose_get_mix = <spine_physics_constraint_pose_get_mixType> load_required(handle, dll_name, "spine_physics_constraint_pose_get_mix")
     # ---- end resolve ----
 
-    lib.major = lib.api.spine_major_version()
-    lib.minor = lib.api.spine_minor_version()
-    spine_log("Spine: loaded {} (spine-c {}.{})".format(lib.name, lib.major, lib.minor), debug=False)
+    major = spine_major_version()
+    minor = spine_minor_version()
+    spine_library_loaded = True
+    spine_log("Spine: loaded {} (spine-c {}.{})".format(dll_name, major, minor), debug=False)
 
-    if lib.major != 4 or lib.minor != 3:
-        spine_log("Spine: Warning - expected spine-c 4.3, but loaded {}.{}".format(lib.major, lib.minor), debug=False)
+    if major != 4 or minor != 3:
+        spine_log("Spine: Warning - expected spine-c 4.3, but loaded {}.{}".format(major, minor), debug=False)
 
-    return lib
+    return (major, minor)

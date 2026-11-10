@@ -1,4 +1,18 @@
-# By Sebulsik <sebulsik.dev@gmail.com>
+# Copyright 2025-2046 Sebulsik <sebulsik.dev@gmail.com>
+#
+# All rights reserved.
+#
+# This source code and its associated files are the property of
+# Sebulsik. Unauthorized copying, modification, distribution,
+# sublicensing, or use of this software, in whole or in part, is
+# prohibited without prior written permission from the copyright holder.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM,
+# DAMAGES, OR OTHER LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OF THIS SOFTWARE.
 
 # Spine 4.3 native resource ownership and mesh construction.
 
@@ -60,10 +74,12 @@ from renpy.uguu.gl cimport GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, \
     GL_CLAMP_TO_EDGE, GL_REPEAT, GL_MIRRORED_REPEAT
 
 
+# Shared by the Python and Cython Spine modules.
 SPINE_DEBUG = os.environ.get("SPINE_DEBUG", "0") == "1"
 
 
-def spine_log(message, *args, debug=True):
+def spine_log(message: object, *args: object, debug: bool = True) -> None:
+    """Write a Spine diagnostic. Use debug=False for warnings and errors."""
     if debug and not SPINE_DEBUG:
         return
 
@@ -75,6 +91,7 @@ from renpy.gl2.gl2mesh import AttributeLayout
 from renpy.gl2.gl2mesh2 cimport Mesh2
 from renpy.display.render cimport Render
 
+# Both tints are per-vertex because one batch can combine differently tinted slots.
 SPINE_LAYOUT = AttributeLayout()
 SPINE_LAYOUT.add_attribute("a_tex_coord", 2)
 SPINE_LAYOUT.add_attribute("a_color", 4)
@@ -86,6 +103,8 @@ cdef enum:
 
 
 def sampling_properties(min_filter, mag_filter, u_wrap, v_wrap):
+    """Translate atlas filtering and wrapping into Ren’Py texture settings.
+    Atlas textures have no mipmaps, so mipmapped filters use ordinary sampling."""
     rv = {}
 
     nearest_mag = (mag_filter == SPINE_TEXTURE_FILTER_NEAREST)
@@ -117,9 +136,8 @@ def filter_is_mipmapped(f):
 
 
 class SpineRun:
-    """One draw: a maximal consecutive run of render commands sharing an
-    atlas page and blend mode, already converted into an owned Mesh2.
-    """
+    """A drawable mesh sharing one texture and blend mode.
+    It owns its data so retained frames remain valid as animation advances."""
 
     __slots__ = ("page_index", "page_key", "blend_mode", "mesh", "vertices", "triangles", "commands")
 
@@ -134,7 +152,8 @@ class SpineRun:
 
 
 class SpineTextureManager:
-    """Resolves atlas page names to Ren'Py displayables."""
+    """Find and cache atlas textures through Ren’Py’s resource loader,
+    so packaged games use the same paths as loose files."""
 
     def __init__(self, atlas_dir=None):
         self.page_cache = {}  # page name -> renpy displayable
@@ -143,6 +162,7 @@ class SpineTextureManager:
             self.atlas_dir = Path(atlas_dir).as_posix()
 
     def candidate_paths(self, path):
+        """Return possible resource paths for an atlas page, in search order."""
         candidates = []
 
         if self.atlas_dir:
@@ -163,6 +183,7 @@ class SpineTextureManager:
         return unique
 
     def load_atlas_page(self, path):
+        """Find an atlas texture, using a visible magenta placeholder if it is missing."""
         if path in self.page_cache:
             return self.page_cache[path]
 
@@ -188,16 +209,15 @@ class SpineTextureManager:
         return fallback
 
     def dispose_texture(self, path):
+        """Forget a page so the next request resolves it again. Ren'Py's
+        image cache owns the texture itself."""
         self.page_cache.pop(path, None)
 
 
 # Shared atlas and skeleton data; each model owns a separate drawable.
 cdef class SpineData:
     """Parsed skeleton/atlas data, loaded once and shared across SpineModels.
-    Constructed with the SpineLibrary whose runtime parses and owns it."""
-
-    # Keep the owning runtime alive while native data exists.
-    cdef SpineLibrary lib
+    Requires load() to have resolved the spine-c library first."""
 
     cdef spine_atlas atlas
     cdef spine_skeleton_data skeleton_data
@@ -219,10 +239,9 @@ cdef class SpineData:
     cdef float data_w
     cdef float data_h
 
-    def __cinit__(self, SpineLibrary library):
-        if library is None:
-            raise ValueError("SpineData needs a loaded SpineLibrary")
-        self.lib = library
+    def __cinit__(self):
+        if not spine_library_loaded:
+            raise RuntimeError("SpineData needs the spine-c library; call load() first")
         self.atlas = NULL
         self.skeleton_data = NULL
         self.page_names = []
@@ -247,15 +266,15 @@ cdef class SpineData:
         if self.combined_skins:
             for ptr in self.combined_skins.values():
                 if ptr:
-                    self.lib.api.spine_skin_dispose(<spine_skin><intptr_t> ptr)
+                    spine_skin_dispose(<spine_skin><intptr_t> ptr)
             self.combined_skins = {}
 
         if self.skeleton_data != NULL:
-            self.lib.api.spine_skeleton_data_dispose(self.skeleton_data)
+            spine_skeleton_data_dispose(self.skeleton_data)
             self.skeleton_data = NULL
 
         if self.atlas != NULL:
-            self.lib.api.spine_atlas_dispose(self.atlas)
+            spine_atlas_dispose(self.atlas)
             self.atlas = NULL
 
         self.page_names = []
@@ -263,26 +282,33 @@ cdef class SpineData:
         self.loaded = False
 
     def is_loaded(self):
+        """Check if the shared data is loaded"""
         return self.loaded
 
     def get_page_names(self):
+        """Returns the list of atlas page texture names."""
         return list(self.page_names)
 
     def get_page_sampling(self):
+        """Per page, by index: (min_filter, mag_filter, u_wrap, v_wrap, pma)."""
         return list(self.page_sampling)
 
     def page_render_properties(self, page_index):
+        """Ren'Py render properties for the page's sampling, or {}."""
         if 0 <= page_index < len(self.page_sampling):
             mn, mg, uw, vw, pma = self.page_sampling[page_index]
             return sampling_properties(mn, mg, uw, vw)
         return {}
 
     def get_setup_bounds(self):
+        """Return the unscaled bounds stored in the skeleton export.
+        Zero bounds indicate that the live model must be measured instead."""
         if not self.loaded:
             return (0.0, 0.0, 0.0, 0.0)
         return (self.data_x, self.data_y, self.data_w, self.data_h)
 
     def get_animation_names(self):
+        """List animations from shared data without creating a live model."""
         if not self.loaded or self.skeleton_data == NULL:
             return []
 
@@ -293,25 +319,26 @@ cdef class SpineData:
         cdef size_t count, i
         cdef const char* name
 
-        animations = self.lib.api.spine_skeleton_data_get_animations(self.skeleton_data)
+        animations = spine_skeleton_data_get_animations(self.skeleton_data)
         if animations == NULL:
             return []
 
-        count = self.lib.api.spine_array_animation_size(animations)
-        buffer = self.lib.api.spine_array_animation_buffer(animations)
+        count = spine_array_animation_size(animations)
+        buffer = spine_array_animation_buffer(animations)
         if count == 0 or buffer == NULL:
             return []
 
         for i in range(count):
             animation = buffer[i]
             if animation != NULL:
-                name = self.lib.api.spine_animation_get_name(animation)
+                name = spine_animation_get_name(animation)
                 if name != NULL:
                     names.append(name.decode('utf-8'))
 
         return names
 
     def get_skin_names(self):
+        """List skins from shared skeleton data."""
         if not self.loaded or self.skeleton_data == NULL:
             return []
 
@@ -322,25 +349,27 @@ cdef class SpineData:
         cdef size_t count, i
         cdef const char* name
 
-        skins = self.lib.api.spine_skeleton_data_get_skins(self.skeleton_data)
+        skins = spine_skeleton_data_get_skins(self.skeleton_data)
         if skins == NULL:
             return []
 
-        count = self.lib.api.spine_array_skin_size(skins)
-        buffer = self.lib.api.spine_array_skin_buffer(skins)
+        count = spine_array_skin_size(skins)
+        buffer = spine_array_skin_buffer(skins)
         if count == 0 or buffer == NULL:
             return []
 
         for i in range(count):
             skin = buffer[i]
             if skin != NULL:
-                name = self.lib.api.spine_skin_get_name(skin)
+                name = spine_skin_get_name(skin)
                 if name != NULL:
                     names.append(name.decode('utf-8'))
 
         return names
 
     cdef spine_skin _get_combined_skin(self, names):
+        """Combine two or more skins, reusing a cached result when available.
+        The shared data owns the result; callers must not free it. Return NULL on failure."""
         cdef spine_skin combined
         cdef spine_skin part
 
@@ -352,21 +381,23 @@ cdef class SpineData:
         if ptr is not None:
             return <spine_skin><intptr_t> ptr
 
-        combined = self.lib.api.spine_skin_create(b"__renpy_combined__")
+        combined = spine_skin_create(b"__renpy_combined__")
         if combined == NULL:
             return NULL
 
         # Order-sensitive merge: later adds override earlier for the same slot,
         # so the tuple must be in show order.
         for n in key:
-            part = self.lib.api.spine_skeleton_data_find_skin(self.skeleton_data, n.encode('utf-8'))
+            part = spine_skeleton_data_find_skin(self.skeleton_data, n.encode('utf-8'))
             if part != NULL:
-                self.lib.api.spine_skin_add_skin(combined, part)
+                spine_skin_add_skin(combined, part)
 
         self.combined_skins[key] = <intptr_t> combined
         return combined
 
     def load(self, atlas_path, skeleton_path):
+        """Return a SpineLoadError; retain diagnostics in last_error.
+        Failed loads dispose partial native state before returning."""
         self.last_error = None
         if self.loaded:
             return SpineLoadError.OK
@@ -383,6 +414,7 @@ cdef class SpineData:
         return status
 
     def _load_impl(self, atlas_path, skeleton_path):
+        """Load atlas and skeleton resources. The caller cleans up if loading fails."""
         cdef spine_atlas_result atlas_result
         cdef spine_skeleton_data_result skeleton_result
         cdef const char* error
@@ -446,21 +478,21 @@ cdef class SpineData:
         if not atlas_data.endswith(b'\0'):
             atlas_data = atlas_data + b'\0'
 
-        atlas_result = self.lib.api.spine_atlas_load(<const char*> atlas_data)
+        atlas_result = spine_atlas_load(<const char*> atlas_data)
 
         if atlas_result == NULL:
             self.last_error = f"Spine: Failed to load atlas from data: {atlas_path}"
             return SpineLoadError.ATLAS_CREATE_FAILED
 
-        error = self.lib.api.spine_atlas_result_get_error(atlas_result)
+        error = spine_atlas_result_get_error(atlas_result)
         if error != NULL:
             error_message = error.decode('utf-8', 'replace')
-            self.lib.api.spine_atlas_result_dispose(atlas_result)
+            spine_atlas_result_dispose(atlas_result)
             self.last_error = f"Spine: Failed to parse atlas {atlas_path}: {error_message}"
             return SpineLoadError.ATLAS_PARSE_FAILED
 
-        self.atlas = self.lib.api.spine_atlas_result_get_atlas(atlas_result)
-        self.lib.api.spine_atlas_result_dispose(atlas_result)
+        self.atlas = spine_atlas_result_get_atlas(atlas_result)
+        spine_atlas_result_dispose(atlas_result)
 
         if self.atlas == NULL:
             self.last_error = f"Spine: Failed to create atlas from data: {atlas_path}"
@@ -471,25 +503,25 @@ cdef class SpineData:
         # Native texture pointers encode page indices, not texture addresses.
         self.page_names = []
         self.page_sampling = []
-        pages = self.lib.api.spine_atlas_get_pages(self.atlas)
+        pages = spine_atlas_get_pages(self.atlas)
         if pages != NULL:
-            page_count = self.lib.api.spine_array_atlas_page_size(pages)
-            page_buffer = self.lib.api.spine_array_atlas_page_buffer(pages)
+            page_count = spine_array_atlas_page_size(pages)
+            page_buffer = spine_array_atlas_page_buffer(pages)
             if page_buffer != NULL:
                 for page_index in range(page_count):
                     page = page_buffer[page_index]
-                    page_name = self.lib.api.spine_atlas_page_get_name(page)
+                    page_name = spine_atlas_page_get_name(page)
                     if page_name != NULL:
                         name = page_name.decode('utf-8')
                     else:
                         name = None
                     self.page_names.append(name)
 
-                    min_filter = self.lib.api.spine_atlas_page_get_min_filter(page)
-                    mag_filter = self.lib.api.spine_atlas_page_get_mag_filter(page)
-                    u_wrap = self.lib.api.spine_atlas_page_get_u_wrap(page)
-                    v_wrap = self.lib.api.spine_atlas_page_get_v_wrap(page)
-                    pma = self.lib.api.spine_atlas_page_get_pma(page) != 0
+                    min_filter = spine_atlas_page_get_min_filter(page)
+                    mag_filter = spine_atlas_page_get_mag_filter(page)
+                    u_wrap = spine_atlas_page_get_u_wrap(page)
+                    v_wrap = spine_atlas_page_get_v_wrap(page)
+                    pma = spine_atlas_page_get_pma(page) != 0
                     self.page_sampling.append((min_filter, mag_filter, u_wrap, v_wrap, pma))
 
                     if filter_is_mipmapped(min_filter):
@@ -553,10 +585,10 @@ cdef class SpineData:
             # JSON loader expects a null-terminated string.
             if not skeleton_data_bytes.endswith(b'\0'):
                 skeleton_data_bytes = skeleton_data_bytes + b'\0'
-            skeleton_result = self.lib.api.spine_skeleton_data_load_json(
+            skeleton_result = spine_skeleton_data_load_json(
                 self.atlas, <const char*> skeleton_data_bytes, skeleton_path_bytes)
         else:
-            skeleton_result = self.lib.api.spine_skeleton_data_load_binary(
+            skeleton_result = spine_skeleton_data_load_binary(
                 self.atlas, <const uint8_t*><char*> skeleton_data_bytes,
                 len(skeleton_data_bytes), skeleton_path_bytes)
 
@@ -564,15 +596,15 @@ cdef class SpineData:
             self.last_error = f"Spine: Failed to load skeleton: {skeleton_path}"
             return SpineLoadError.SKELETON_CREATE_FAILED
 
-        error = self.lib.api.spine_skeleton_data_result_get_error(skeleton_result)
+        error = spine_skeleton_data_result_get_error(skeleton_result)
         if error != NULL:
             error_message = error.decode('utf-8', 'replace')
-            self.lib.api.spine_skeleton_data_result_dispose(skeleton_result)
+            spine_skeleton_data_result_dispose(skeleton_result)
             self.last_error = f"Spine: Failed to parse skeleton {skeleton_path}: {error_message}"
             return SpineLoadError.SKELETON_PARSE_FAILED
 
-        self.skeleton_data = self.lib.api.spine_skeleton_data_result_get_data(skeleton_result)
-        self.lib.api.spine_skeleton_data_result_dispose(skeleton_result)
+        self.skeleton_data = spine_skeleton_data_result_get_data(skeleton_result)
+        spine_skeleton_data_result_dispose(skeleton_result)
 
         if self.skeleton_data == NULL:
             self.last_error = f"Spine: Failed to load skeleton: {skeleton_path}"
@@ -580,21 +612,20 @@ cdef class SpineData:
 
         spine_log(f"Spine: Skeleton data loaded successfully: {skeleton_path}")
 
-        self.data_x = self.lib.api.spine_skeleton_data_get_x(self.skeleton_data)
-        self.data_y = self.lib.api.spine_skeleton_data_get_y(self.skeleton_data)
-        self.data_w = self.lib.api.spine_skeleton_data_get_width(self.skeleton_data)
-        self.data_h = self.lib.api.spine_skeleton_data_get_height(self.skeleton_data)
+        self.data_x = spine_skeleton_data_get_x(self.skeleton_data)
+        self.data_y = spine_skeleton_data_get_y(self.skeleton_data)
+        self.data_w = spine_skeleton_data_get_width(self.skeleton_data)
+        self.data_h = spine_skeleton_data_get_height(self.skeleton_data)
 
         self.loaded = True
         return SpineLoadError.OK
 
 
 cdef class SpineModel:
-    """Spine model backed by the 4.3 skeleton drawable pipeline."""
+    """A live character model with animation, physics, and rendering state."""
 
+    # Retain shared native data for the drawable's lifetime.
     cdef SpineData data
-
-    cdef SpineLibrary lib
 
     cdef spine_skeleton_drawable drawable
     cdef spine_skeleton skeleton
@@ -620,7 +651,6 @@ cdef class SpineModel:
 
     def __init__(self, scale=1.0, scaleX=None, scaleY=None):
         self.data = None
-        self.lib = None
         self.drawable = NULL
         self.skeleton = NULL
         self.animation_state = NULL
@@ -646,19 +676,22 @@ cdef class SpineModel:
         self.dispose()
 
     def dispose(self):
+        """Dispose per-instance Spine resources"""
+
+        # The drawable owns its skeleton, state, and renderer; SpineData owns shared data.
         if self.drawable != NULL:
-            self.lib.api.spine_skeleton_drawable_dispose(self.drawable)
+            spine_skeleton_drawable_dispose(self.drawable)
             self.drawable = NULL
             self.skeleton = NULL
             self.animation_state = NULL
 
         self.data = None
-        self.lib = None
         self.texture_manager = None
         self.page_names = []
         self.loaded = False
 
     def load_from_data(self, SpineData data, texture_manager):
+        """Return a SpineLoadError; retain diagnostics in last_error."""
         cdef float sx_eff, sy_eff, x0, x1, y0, y1
         cdef float bx, by, bw, bh
 
@@ -672,28 +705,27 @@ cdef class SpineModel:
 
         try:
             self.data = data
-            self.lib = data.lib
             self.texture_manager = texture_manager
             self.atlas_path = data.atlas_path
             self.skeleton_path = data.skeleton_path
             self.page_names = list(data.page_names)
 
-            self.drawable = self.lib.api.spine_skeleton_drawable_create(data.skeleton_data)
+            self.drawable = spine_skeleton_drawable_create(data.skeleton_data)
             if self.drawable == NULL:
                 self.last_error = "Spine: Failed to create skeleton drawable"
                 return SpineLoadError.DRAWABLE_CREATE_FAILED
 
-            self.skeleton = self.lib.api.spine_skeleton_drawable_get_skeleton(self.drawable)
-            self.animation_state = self.lib.api.spine_skeleton_drawable_get_animation_state(self.drawable)
+            self.skeleton = spine_skeleton_drawable_get_skeleton(self.drawable)
+            self.animation_state = spine_skeleton_drawable_get_animation_state(self.drawable)
 
             if self.skeleton == NULL or self.animation_state == NULL:
                 self.last_error = "Spine: Failed to get skeleton or animation state from drawable"
                 return SpineLoadError.DRAWABLE_STATE_UNAVAILABLE
 
             # Spine 4.3 already uses yDown; negating scaleY would cancel the flip.
-            self.lib.api.spine_skeleton_set_scale(self.skeleton, self.scaleX, self.scaleY)
-            self.lib.api.spine_skeleton_setup_pose(self.skeleton)
-            self.lib.api.spine_skeleton_update_world_transform(self.skeleton, SPINE_PHYSICS_RESET)
+            spine_skeleton_set_scale(self.skeleton, self.scaleX, self.scaleY)
+            spine_skeleton_setup_pose(self.skeleton)
+            spine_skeleton_update_world_transform(self.skeleton, SPINE_PHYSICS_RESET)
 
             # Use stable editor bounds; yDown maps Y to -Y * scaleY.
             # Min/max handles mirrored scales.
@@ -718,7 +750,7 @@ cdef class SpineModel:
                 by = 0.0
                 bw = 0.0
                 bh = 0.0
-                self.lib.api.spine_skeleton_get_bounds_1(self.skeleton, &bx, &by, &bw, &bh)
+                spine_skeleton_get_bounds_1(self.skeleton, &bx, &by, &bw, &bh)
 
                 if bw > 0.0 and bh > 0.0:
                     self.offset_x = -bx
@@ -743,24 +775,32 @@ cdef class SpineModel:
                 self.dispose()
 
     def is_loaded(self):
+        """Check if model is loaded"""
         return self.loaded
 
     def get_size(self):
+        """Returns the model's (width, height) in render space, or None if
+        no usable bounds were found at load time."""
         if not self.loaded or not self.has_bounds:
             return None
         return (self.bounds_width, self.bounds_height)
 
     def get_offset(self):
+        """Returns the (x, y) translation applied to rendered vertices so
+        the model's bounding box starts at (0, 0)."""
         if not self.loaded or not self.has_bounds:
             return (0.0, 0.0)
         return (self.offset_x, self.offset_y)
 
     cdef int _find_animation_ok(self, animation_name_bytes) except -1:
-        if self.lib.api.spine_skeleton_data_find_animation(self.data.skeleton_data, animation_name_bytes) == NULL:
+        """1 if the animation exists, 0 otherwise. spine-cpp asserts (crashing
+        the process) on an unknown name, so every set path guards with this."""
+        if spine_skeleton_data_find_animation(self.data.skeleton_data, animation_name_bytes) == NULL:
             return 0
         return 1
 
     def apply_animation_reset(self, track_index, animation_name, loop):
+        """Restart an animation from the setup pose and reset physics."""
         cdef spine_track_entry entry
 
         if not self.loaded or self.animation_state == NULL:
@@ -773,16 +813,16 @@ cdef class SpineModel:
                 return False
 
             # Clear only this track to prevent automatic mixing while preserving overlays.
-            self.lib.api.spine_animation_state_clear_track(self.animation_state, track_index)
-            self.lib.api.spine_skeleton_setup_pose(self.skeleton)
-            entry = self.lib.api.spine_animation_state_set_animation_1(
+            spine_animation_state_clear_track(self.animation_state, track_index)
+            spine_skeleton_setup_pose(self.skeleton)
+            entry = spine_animation_state_set_animation_1(
                 self.animation_state,
                 track_index,
                 animation_name_bytes,
                 1 if loop else 0
             )
             # Reset physics explicitly; ordinary updates preserve velocities.
-            self.lib.api.spine_skeleton_update_world_transform(self.skeleton, SPINE_PHYSICS_RESET)
+            spine_skeleton_update_world_transform(self.skeleton, SPINE_PHYSICS_RESET)
             return entry != NULL
 
         except Exception as e:
@@ -790,6 +830,8 @@ cdef class SpineModel:
             return False
 
     def apply_animation_mix(self, track_index, animation_name, loop, mix_time):
+        """Blend into an animation while preserving ongoing motion.
+        A negative mix_time uses the default blend duration."""
         cdef spine_track_entry entry
         cdef float mt
 
@@ -802,7 +844,7 @@ cdef class SpineModel:
                 spine_log(f"Spine: Unknown animation '{animation_name}', ignoring.", debug=False)
                 return False
 
-            entry = self.lib.api.spine_animation_state_set_animation_1(
+            entry = spine_animation_state_set_animation_1(
                 self.animation_state,
                 track_index,
                 animation_name_bytes,
@@ -813,7 +855,7 @@ cdef class SpineModel:
 
             if mix_time is not None and mix_time >= 0.0:
                 mt = mix_time
-                self.lib.api.spine_track_entry_set_mix_duration_1(entry, mt)
+                spine_track_entry_set_mix_duration_1(entry, mt)
 
             return True
 
@@ -822,6 +864,7 @@ cdef class SpineModel:
             return False
 
     def apply_overlay_animation(self, track_index, animation_name, loop, mix_time, alpha, additive):
+        """Start a layered animation with its blend weight and playback settings."""
         cdef spine_track_entry entry
         cdef float mt, a
 
@@ -834,7 +877,7 @@ cdef class SpineModel:
                 spine_log(f"Spine: Unknown animation '{animation_name}', ignoring.", debug=False)
                 return False
 
-            entry = self.lib.api.spine_animation_state_set_animation_1(
+            entry = spine_animation_state_set_animation_1(
                 self.animation_state,
                 track_index,
                 animation_name_bytes,
@@ -845,11 +888,11 @@ cdef class SpineModel:
 
             if mix_time is not None and mix_time >= 0.0:
                 mt = mix_time
-                self.lib.api.spine_track_entry_set_mix_duration_1(entry, mt)
+                spine_track_entry_set_mix_duration_1(entry, mt)
 
             a = alpha
-            self.lib.api.spine_track_entry_set_alpha(entry, a)
-            self.lib.api.spine_track_entry_set_additive(entry, 1 if additive else 0)
+            spine_track_entry_set_alpha(entry, a)
+            spine_track_entry_set_additive(entry, 1 if additive else 0)
             return True
 
         except Exception as e:
@@ -857,6 +900,8 @@ cdef class SpineModel:
             return False
 
     def update_track_settings(self, track_index, loop, alpha, additive):
+        """Change playback settings without restarting the animation.
+        Return False if the track cannot be updated."""
         cdef spine_array_track_entry tracks
         cdef spine_track_entry* buffer
         cdef spine_track_entry entry
@@ -871,12 +916,12 @@ cdef class SpineModel:
                 return False
             idx = track_index
 
-            tracks = self.lib.api.spine_animation_state_get_tracks(self.animation_state)
+            tracks = spine_animation_state_get_tracks(self.animation_state)
             if tracks == NULL:
                 return False
 
-            count = self.lib.api.spine_array_track_entry_size(tracks)
-            buffer = self.lib.api.spine_array_track_entry_buffer(tracks)
+            count = spine_array_track_entry_size(tracks)
+            buffer = spine_array_track_entry_buffer(tracks)
             if buffer == NULL or idx >= count:
                 return False
 
@@ -884,10 +929,10 @@ cdef class SpineModel:
             if entry == NULL:
                 return False
 
-            self.lib.api.spine_track_entry_set_loop(entry, 1 if loop else 0)
+            spine_track_entry_set_loop(entry, 1 if loop else 0)
             a = alpha
-            self.lib.api.spine_track_entry_set_alpha(entry, a)
-            self.lib.api.spine_track_entry_set_additive(entry, 1 if additive else 0)
+            spine_track_entry_set_alpha(entry, a)
+            spine_track_entry_set_additive(entry, 1 if additive else 0)
             return True
 
         except Exception as e:
@@ -895,6 +940,7 @@ cdef class SpineModel:
             return False
 
     def fade_track(self, track_index, mix_out):
+        """Fade out a track over the requested duration."""
         cdef float mt
 
         if not self.loaded or self.animation_state == NULL:
@@ -902,24 +948,26 @@ cdef class SpineModel:
 
         try:
             mt = mix_out if (mix_out is not None and mix_out >= 0.0) else 0.0
-            self.lib.api.spine_animation_state_set_empty_animation(self.animation_state, track_index, mt)
+            spine_animation_state_set_empty_animation(self.animation_state, track_index, mt)
             return True
         except Exception as e:
             spine_log(f"Spine: Error in fade_track: {e}")
             return False
 
     def clear_track(self, track_index):
+        """Immediately clear a single track (no fade)."""
         if not self.loaded or self.animation_state == NULL:
             return False
 
         try:
-            self.lib.api.spine_animation_state_clear_track(self.animation_state, track_index)
+            spine_animation_state_clear_track(self.animation_state, track_index)
             return True
         except Exception as e:
             spine_log(f"Spine: Error in clear_track: {e}")
             return False
 
     def set_default_mix(self, mix_time):
+        """Set the fallback duration for animation blends."""
         cdef spine_animation_state_data data
         cdef float mt
 
@@ -927,17 +975,18 @@ cdef class SpineModel:
             return False
 
         try:
-            data = self.lib.api.spine_animation_state_get_data(self.animation_state)
+            data = spine_animation_state_get_data(self.animation_state)
             if data == NULL:
                 return False
             mt = mix_time
-            self.lib.api.spine_animation_state_data_set_default_mix(data, mt)
+            spine_animation_state_data_set_default_mix(data, mt)
             return True
         except Exception as e:
             spine_log(f"Spine: Error in set_default_mix: {e}")
             return False
 
     def set_pair_mix(self, from_name, to_name, mix_time):
+        """Set the blend duration between two named animations."""
         cdef spine_animation_state_data data
         cdef float mt
 
@@ -945,29 +994,31 @@ cdef class SpineModel:
             return False
 
         try:
-            data = self.lib.api.spine_animation_state_get_data(self.animation_state)
+            data = spine_animation_state_get_data(self.animation_state)
             if data == NULL:
                 return False
             from_bytes = from_name.encode('utf-8')
             to_bytes = to_name.encode('utf-8')
             mt = mix_time
-            self.lib.api.spine_animation_state_data_set_mix_2(data, <const char*> from_bytes, <const char*> to_bytes, mt)
+            spine_animation_state_data_set_mix_2(data, <const char*> from_bytes, <const char*> to_bytes, mt)
             return True
         except Exception as e:
             spine_log(f"Spine: Error in set_pair_mix: {e}")
             return False
 
     def update_animation(self, delta_time):
+        """Advance animation and physics by the elapsed time."""
         if not self.loaded or self.drawable == NULL:
             return
 
         try:
-            self.lib.api.spine_skeleton_drawable_update(self.drawable, delta_time)
+            spine_skeleton_drawable_update(self.drawable, delta_time)
 
         except Exception as e:
             spine_log(f"Spine: Error updating animation: {e}")
 
     def should_animate(self):
+        """Return whether an animation is playing, blending, or waiting to play."""
         cdef spine_array_track_entry tracks
         cdef spine_track_entry* buffer
         cdef spine_track_entry entry
@@ -976,12 +1027,12 @@ cdef class SpineModel:
         if not self.loaded or self.animation_state == NULL:
             return False
 
-        tracks = self.lib.api.spine_animation_state_get_tracks(self.animation_state)
+        tracks = spine_animation_state_get_tracks(self.animation_state)
         if tracks == NULL:
             return False
 
-        count = self.lib.api.spine_array_track_entry_size(tracks)
-        buffer = self.lib.api.spine_array_track_entry_buffer(tracks)
+        count = spine_array_track_entry_size(tracks)
+        buffer = spine_array_track_entry_buffer(tracks)
         if count == 0 or buffer == NULL:
             return False
 
@@ -989,18 +1040,20 @@ cdef class SpineModel:
             entry = buffer[i]
             if entry == NULL:            # unset track slot - the array has NULL gaps
                 continue
-            if self.lib.api.spine_track_entry_get_loop(entry) != 0:
+            if spine_track_entry_get_loop(entry) != 0:
                 return True
-            if self.lib.api.spine_track_entry_is_complete(entry) == 0:
+            if spine_track_entry_is_complete(entry) == 0:
                 return True
-            if self.lib.api.spine_track_entry_get_mixing_from(entry) != NULL:
+            if spine_track_entry_get_mixing_from(entry) != NULL:
                 return True
-            if self.lib.api.spine_track_entry_get_next(entry) != NULL:
+            if spine_track_entry_get_next(entry) != NULL:
                 return True
 
         return False
 
     def physics_active(self):
+        """Return whether physics requires continued updates.
+        Active constraints may need updates even when the character looks still."""
         cdef spine_array_physics_constraint constraints
         cdef spine_physics_constraint* buffer
         cdef spine_physics_constraint constraint
@@ -1010,12 +1063,12 @@ cdef class SpineModel:
         if not self.loaded or self.skeleton == NULL:
             return False
 
-        constraints = self.lib.api.spine_skeleton_get_physics_constraints(self.skeleton)
+        constraints = spine_skeleton_get_physics_constraints(self.skeleton)
         if constraints == NULL:
             return False
 
-        count = self.lib.api.spine_array_physics_constraint_size(constraints)
-        buffer = self.lib.api.spine_array_physics_constraint_buffer(constraints)
+        count = spine_array_physics_constraint_size(constraints)
+        buffer = spine_array_physics_constraint_buffer(constraints)
         if count == 0 or buffer == NULL:
             return False
 
@@ -1023,20 +1076,22 @@ cdef class SpineModel:
             constraint = buffer[i]
             if constraint == NULL:
                 continue
-            if self.lib.api.spine_physics_constraint_is_active(constraint) == 0:
+            if spine_physics_constraint_is_active(constraint) == 0:
                 continue
-            pose = self.lib.api.spine_physics_constraint_get_applied_pose(constraint)
+            pose = spine_physics_constraint_get_applied_pose(constraint)
             if pose == NULL:
                 continue
-            if self.lib.api.spine_physics_constraint_pose_get_mix(pose) > 0.0:
+            if spine_physics_constraint_pose_get_mix(pose) > 0.0:
                 return True
 
         return False
 
     def needs_next_frame(self):
+        """Return whether animation or physics needs another frame."""
         return self.should_animate() or self.physics_active()
 
     def render_runs(self):
+        """Build drawable meshes for the current frame, preserving drawing order."""
         if not self.loaded or self.drawable == NULL:
             return []
 
@@ -1051,27 +1106,27 @@ cdef class SpineModel:
         cdef list group
 
         try:
-            command = self.lib.api.spine_skeleton_drawable_render(self.drawable)
+            command = spine_skeleton_drawable_render(self.drawable)
 
             while command != NULL:
-                num_vertices = self.lib.api.spine_render_command_get_num_vertices(command)
-                num_indices = self.lib.api.spine_render_command_get_num_indices(command)
+                num_vertices = spine_render_command_get_num_vertices(command)
+                num_indices = spine_render_command_get_num_indices(command)
 
                 if (num_vertices <= 0 or num_indices < 3
-                        or self.lib.api.spine_render_command_get_positions(command) == NULL
-                        or self.lib.api.spine_render_command_get_uvs(command) == NULL
-                        or self.lib.api.spine_render_command_get_indices(command) == NULL):
-                    command = self.lib.api.spine_render_command_get_next(command)
+                        or spine_render_command_get_positions(command) == NULL
+                        or spine_render_command_get_uvs(command) == NULL
+                        or spine_render_command_get_indices(command) == NULL):
+                    command = spine_render_command_get_next(command)
                     continue
 
                 # Native texture pointers encode page indices.
-                page_index = <int><intptr_t> self.lib.api.spine_render_command_get_texture(command)
+                page_index = <int><intptr_t> spine_render_command_get_texture(command)
                 if not (0 <= page_index < len(self.page_names)) or not self.page_names[page_index]:
                     spine_log(f"Spine: render command has unknown page index {page_index}")
-                    command = self.lib.api.spine_render_command_get_next(command)
+                    command = spine_render_command_get_next(command)
                     continue
 
-                colors = self.lib.api.spine_render_command_get_colors(command)
+                colors = spine_render_command_get_colors(command)
                 visible = True
                 if colors != NULL:
                     visible = False
@@ -1080,12 +1135,12 @@ cdef class SpineModel:
                             visible = True
                             break
                 if not visible:
-                    command = self.lib.api.spine_render_command_get_next(command)
+                    command = spine_render_command_get_next(command)
                     continue
 
-                blend_mode = self.lib.api.spine_render_command_get_blend_mode(command)
+                blend_mode = spine_render_command_get_blend_mode(command)
                 commands.append((<intptr_t> command, page_index, blend_mode, <int> num_vertices, <int> (num_indices // 3)))
-                command = self.lib.api.spine_render_command_get_next(command)
+                command = spine_render_command_get_next(command)
 
             group = []
             for entry in commands:
@@ -1104,8 +1159,8 @@ cdef class SpineModel:
             return []
 
     cdef object _build_run(self, list group):
-        """Allocate one Mesh2 for `group` (a consecutive same-page, same-blend
-        list of validated command entries) and fill it from native memory."""
+        """Build an owned mesh for a group of compatible drawing commands.
+        Return None if its size exceeds the mesh limits."""
         cdef Mesh2 mesh
         cdef spine_render_command command
         cdef float* positions
@@ -1142,13 +1197,13 @@ cdef class SpineModel:
 
         for entry in group:
             command = <spine_render_command><intptr_t> entry[0]
-            num_vertices = self.lib.api.spine_render_command_get_num_vertices(command)
-            num_indices = self.lib.api.spine_render_command_get_num_indices(command)
-            positions = self.lib.api.spine_render_command_get_positions(command)
-            uvs = self.lib.api.spine_render_command_get_uvs(command)
-            colors = self.lib.api.spine_render_command_get_colors(command)
-            dark_colors = self.lib.api.spine_render_command_get_dark_colors(command)
-            indices = self.lib.api.spine_render_command_get_indices(command)
+            num_vertices = spine_render_command_get_num_vertices(command)
+            num_indices = spine_render_command_get_num_indices(command)
+            positions = spine_render_command_get_positions(command)
+            uvs = spine_render_command_get_uvs(command)
+            colors = spine_render_command_get_colors(command)
+            dark_colors = spine_render_command_get_dark_colors(command)
+            indices = spine_render_command_get_indices(command)
 
             for j in range(num_vertices):
                 v = (base + j) * 2
@@ -1197,6 +1252,7 @@ cdef class SpineModel:
                         <int> total_vertices, <int> total_triangles, len(group))
 
     def run_render(self, run, texture, width, height):
+        """Prepare a mesh for drawing with its texture, tint, and blend settings."""
         cdef Render render
 
         try:
@@ -1228,7 +1284,64 @@ cdef class SpineModel:
             traceback.print_exc()
             return None
 
+    def debug_render_items(self):
+        """Return the current drawing commands as Python data for diagnostics."""
+        if not self.loaded or self.drawable == NULL:
+            return []
+
+        cdef spine_render_command command
+        cdef int32_t num_vertices, num_indices
+        cdef float* positions
+        cdef float* uvs
+        cdef uint32_t* colors
+        cdef uint32_t* dark_colors
+        cdef uint16_t* indices
+        cdef uint32_t packed
+        cdef int j, page_index
+        cdef float offset_x, offset_y
+        cdef list items = []
+
+        offset_x = self.offset_x if self.has_bounds else 0.0
+        offset_y = self.offset_y if self.has_bounds else 0.0
+
+        command = spine_skeleton_drawable_render(self.drawable)
+        while command != NULL:
+            num_vertices = spine_render_command_get_num_vertices(command)
+            num_indices = spine_render_command_get_num_indices(command)
+            positions = spine_render_command_get_positions(command)
+            uvs = spine_render_command_get_uvs(command)
+            colors = spine_render_command_get_colors(command)
+            dark_colors = spine_render_command_get_dark_colors(command)
+            indices = spine_render_command_get_indices(command)
+            page_index = <int><intptr_t> spine_render_command_get_texture(command)
+
+            item = {
+                "page_index": page_index,
+                "page_key": self.page_names[page_index] if 0 <= page_index < len(self.page_names) else None,
+                "blend_mode": spine_render_command_get_blend_mode(command),
+                "positions": [], "uvs": [], "colors": [], "dark_colors": [], "indices": [],
+            }
+            if positions != NULL and uvs != NULL:
+                for j in range(num_vertices):
+                    item["positions"].extend((positions[j * 2] + offset_x, positions[j * 2 + 1] + offset_y))
+                    item["uvs"].extend((uvs[j * 2], uvs[j * 2 + 1]))
+            for j in range(num_vertices):
+                packed = colors[j] if colors != NULL else 0xffffffff
+                item["colors"].extend((((packed >> 16) & 0xff) / 255.0, ((packed >> 8) & 0xff) / 255.0,
+                                       (packed & 0xff) / 255.0, ((packed >> 24) & 0xff) / 255.0))
+                packed = dark_colors[j] if dark_colors != NULL else 0
+                item["dark_colors"].extend((((packed >> 16) & 0xff) / 255.0, ((packed >> 8) & 0xff) / 255.0,
+                                            (packed & 0xff) / 255.0))
+            if indices != NULL:
+                for j in range(num_indices):
+                    item["indices"].append(indices[j])
+            items.append(item)
+            command = spine_render_command_get_next(command)
+
+        return items
+
     def get_animation_names(self):
+        """Get list of available animation names"""
         if not self.loaded or self.data is None:
             return []
 
@@ -1240,13 +1353,13 @@ cdef class SpineModel:
         cdef const char* name
 
         try:
-            animations = self.lib.api.spine_skeleton_data_get_animations(self.data.skeleton_data)
+            animations = spine_skeleton_data_get_animations(self.data.skeleton_data)
             if animations == NULL:
                 spine_log("Spine: No animations found in skeleton data")
                 return []
 
-            count = self.lib.api.spine_array_animation_size(animations)
-            animation_buffer = self.lib.api.spine_array_animation_buffer(animations)
+            count = spine_array_animation_size(animations)
+            animation_buffer = spine_array_animation_buffer(animations)
 
             if count <= 0 or animation_buffer == NULL:
                 spine_log("Spine: No animations found in skeleton data")
@@ -1255,7 +1368,7 @@ cdef class SpineModel:
             for i in range(count):
                 animation = animation_buffer[i]
                 if animation != NULL:
-                    name = self.lib.api.spine_animation_get_name(animation)
+                    name = spine_animation_get_name(animation)
                     if name != NULL:
                         animation_names.append(name.decode('utf-8'))
 
@@ -1265,6 +1378,7 @@ cdef class SpineModel:
             return []
 
     def find_animation(self, animation_name):
+        """Find animation by name"""
         if not self.loaded or self.data is None:
             return None
 
@@ -1273,20 +1387,21 @@ cdef class SpineModel:
 
         try:
             animation_name_bytes = animation_name.encode('utf-8')
-            animation = self.lib.api.spine_skeleton_data_find_animation(self.data.skeleton_data, animation_name_bytes)
+            animation = spine_skeleton_data_find_animation(self.data.skeleton_data, animation_name_bytes)
             if animation == NULL:
                 return None
 
-            name = self.lib.api.spine_animation_get_name(animation)
+            name = spine_animation_get_name(animation)
             return {
                 "name": name.decode('utf-8') if name != NULL else "unknown",
-                "duration": float(self.lib.api.spine_animation_get_duration(animation))
+                "duration": float(spine_animation_get_duration(animation))
             }
         except Exception as e:
             spine_log(f"Spine: Error finding animation '{animation_name}': {e}")
             return None
 
     def get_skin_names(self):
+        """Get list of available skin names"""
         if not self.loaded or self.data is None:
             return []
 
@@ -1298,13 +1413,13 @@ cdef class SpineModel:
         cdef const char* name
 
         try:
-            skins = self.lib.api.spine_skeleton_data_get_skins(self.data.skeleton_data)
+            skins = spine_skeleton_data_get_skins(self.data.skeleton_data)
             if skins == NULL:
                 spine_log("Spine: No skins found in skeleton data")
                 return []
 
-            count = self.lib.api.spine_array_skin_size(skins)
-            skin_buffer = self.lib.api.spine_array_skin_buffer(skins)
+            count = spine_array_skin_size(skins)
+            skin_buffer = spine_array_skin_buffer(skins)
 
             if count <= 0 or skin_buffer == NULL:
                 spine_log("Spine: No skins found in skeleton data")
@@ -1315,7 +1430,7 @@ cdef class SpineModel:
             for i in range(count):
                 skin = skin_buffer[i]
                 if skin != NULL:
-                    name = self.lib.api.spine_skin_get_name(skin)
+                    name = spine_skin_get_name(skin)
                     if name != NULL:
                         skin_names.append(name.decode('utf-8'))
 
@@ -1325,6 +1440,7 @@ cdef class SpineModel:
             return []
 
     def find_skin(self, skin_name):
+        """Find skin by name"""
         if not self.loaded or self.data is None:
             return None
 
@@ -1333,11 +1449,11 @@ cdef class SpineModel:
 
         try:
             skin_name_bytes = skin_name.encode('utf-8')
-            skin = self.lib.api.spine_skeleton_data_find_skin(self.data.skeleton_data, skin_name_bytes)
+            skin = spine_skeleton_data_find_skin(self.data.skeleton_data, skin_name_bytes)
             if skin == NULL:
                 return None
 
-            name = self.lib.api.spine_skin_get_name(skin)
+            name = spine_skin_get_name(skin)
             return {
                 "name": name.decode('utf-8') if name != NULL else "unknown",
             }
@@ -1346,6 +1462,8 @@ cdef class SpineModel:
             return None
 
     def apply_skin_combined(self, names, setup_slots):
+        """Apply skins in order, with later skins taking precedence.
+        Empty input restores the default skin. Animation and physics continue."""
         cdef spine_skin combined
 
         if not self.loaded or self.skeleton == NULL or self.data is None:
@@ -1358,26 +1476,26 @@ cdef class SpineModel:
                 for n in names:
                     if n is None:
                         continue
-                    if self.lib.api.spine_skeleton_data_find_skin(self.data.skeleton_data, n.encode('utf-8')) != NULL:
+                    if spine_skeleton_data_find_skin(self.data.skeleton_data, n.encode('utf-8')) != NULL:
                         valid.append(n)
                     else:
                         spine_log(f"Spine: Unknown skin '{n}', ignoring.", debug=False)
 
             if not valid:
-                self.lib.api.spine_skeleton_set_skin_2(self.skeleton, NULL)
+                spine_skeleton_set_skin_2(self.skeleton, NULL)
                 self.current_skin = None
             elif len(valid) == 1:
-                self.lib.api.spine_skeleton_set_skin_1(self.skeleton, valid[0].encode('utf-8'))
+                spine_skeleton_set_skin_1(self.skeleton, valid[0].encode('utf-8'))
                 self.current_skin = valid[0]
             else:
                 combined = self.data._get_combined_skin(tuple(valid))
                 if combined == NULL:
                     return False
-                self.lib.api.spine_skeleton_set_skin_2(self.skeleton, combined)
+                spine_skeleton_set_skin_2(self.skeleton, combined)
                 self.current_skin = tuple(valid)
 
             if setup_slots:
-                self.lib.api.spine_skeleton_setup_pose_slots(self.skeleton)
+                spine_skeleton_setup_pose_slots(self.skeleton)
 
             return True
         except Exception as e:
@@ -1385,6 +1503,8 @@ cdef class SpineModel:
             return False
 
     def apply_skin(self, skin_name, setup_slots):
+        """Change the skin while animation and physics continue.
+        Optionally restore the new skin’s default attachments."""
         spine_log(f"Spine: apply_skin '{skin_name}' setup_slots={setup_slots} (from '{self.current_skin}')")
 
         if not self.loaded or self.skeleton == NULL or self.data is None:
@@ -1392,9 +1512,9 @@ cdef class SpineModel:
             return False
         try:
             if skin_name is None:
-                self.lib.api.spine_skeleton_set_skin_2(self.skeleton, NULL)
+                spine_skeleton_set_skin_2(self.skeleton, NULL)
                 if setup_slots:
-                    self.lib.api.spine_skeleton_setup_pose_slots(self.skeleton)
+                    spine_skeleton_setup_pose_slots(self.skeleton)
                 self.current_skin = None
                 spine_log("Spine: Reset to default skin")
                 return True
@@ -1402,13 +1522,13 @@ cdef class SpineModel:
             skin_name_bytes = skin_name.encode('utf-8')
 
             # Unknown skin names assert inside spine-cpp.
-            if self.lib.api.spine_skeleton_data_find_skin(self.data.skeleton_data, skin_name_bytes) == NULL:
+            if spine_skeleton_data_find_skin(self.data.skeleton_data, skin_name_bytes) == NULL:
                 spine_log(f"Spine: Unknown skin '{skin_name}', ignoring.", debug=False)
                 return False
 
-            self.lib.api.spine_skeleton_set_skin_1(self.skeleton, skin_name_bytes)
+            spine_skeleton_set_skin_1(self.skeleton, skin_name_bytes)
             if setup_slots:
-                self.lib.api.spine_skeleton_setup_pose_slots(self.skeleton)
+                spine_skeleton_setup_pose_slots(self.skeleton)
             self.current_skin = skin_name
             spine_log(f"Spine: Skin set to '{skin_name}'")
             return True
@@ -1417,6 +1537,7 @@ cdef class SpineModel:
             return False
 
     def get_current_skin_name(self):
+        """Get the name of the currently applied skin"""
         if not self.loaded or self.skeleton == NULL:
             return None
 
@@ -1424,11 +1545,11 @@ cdef class SpineModel:
         cdef const char* name
 
         try:
-            current_skin = self.lib.api.spine_skeleton_get_skin(self.skeleton)
+            current_skin = spine_skeleton_get_skin(self.skeleton)
             if current_skin == NULL:
                 return None
 
-            name = self.lib.api.spine_skin_get_name(current_skin)
+            name = spine_skin_get_name(current_skin)
             if name == NULL:
                 return None
 
