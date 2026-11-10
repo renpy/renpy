@@ -60,11 +60,11 @@ pass `glsl` and uses GLSL ES 3.00 features raises an exception.
 argument, which should be set to 3 to get the SDL3 library. Calls without the version argument will return None,
 representing SDL2 not being present.
 
-**Input Method Candidates** Ren'Py now draws the input method (IME) candidate list
-when SDL supplies candidate events, including on Windows, rather than using the
-operating system's candidate window. Linux IBus and Fcitx still use their native
-candidate windows. Games that customized text input may want to restyle the new
-``_ime_candidates`` screen, as described in :ref:`input-methods`.
+**Input Method Candidates** On Windows, Ren'Py now draws the input method (IME)
+candidate list, rather than using the operating system's candidate window. SDL
+currently supplies candidate events only on Windows, so other platforms still
+use their native candidate windows. Games that customized text input may want to
+restyle the new ``_ime_candidates`` screen, as described in :ref:`input-methods`.
 
 **Late Audio Scan** Ren'Py now defines automatic audio files at a late init level, rather than at init 0.
 To revert to the prior behavior, add to your game::

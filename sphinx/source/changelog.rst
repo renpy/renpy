@@ -10,8 +10,8 @@ Changelog (Ren'Py 7.x-)
 8.6.0
 =====
 
-SDL3
-----
+SDL3 and Requirements
+---------------------
 
 Ren'Py has moved to SDL3. SDL is the Simple DirectMedia Layer, the cross-platform library that Ren'Py uses for
 window creation, input handling, audio output, and many ways in which Ren'Py interacts with the system. SDL3 is the
@@ -24,152 +24,9 @@ On Windows, Ren'Py now uses SDL3's high-DPI support, and the mouse cursor is sca
 
 The Nintendo Switch Pro Controller is no longer blocked, as it now works with SDL3.
 
-Shaders
--------
-
-Shader parts can now be written in GLSL ES 3.00, which is the version new
-games use by default.
-
-The GLSL version is selected by the new :var:`config.glsl_version` variable, which
-defaults to 300 in new games and to 100 in games that declare compatibility with
-Ren'Py 8.5 or earlier. A single part can override it by passing `glsl` to
-:func:`renpy.register_shader` or :func:`renpy.register_textshader`.
-
-Existing shader parts do not require changes. Ren'Py translates between the two
-versions, so parts written in either can be combined in the same shader. A part
-that doesn't pass `glsl`, but uses syntax that only exists in GLSL ES 1.00 (like
-``attribute``, ``varying``, or ``gl_FragColor``), is treated as being written in
-GLSL ES 1.00 even when :var:`config.glsl_version` is 300. Ren'Py will not infer
-the version of a part that uses GLSL ES 3.00 syntax when
-:var:`config.glsl_version` is 100; see the :ref:`incompatible changes
-<incompatible-8.6.0>`.
-
-Shader combinations used by predicted displayables are now compiled during
-idle prediction, reducing stalls when they are first shown. The new
-:func:`renpy.start_predict_shader` and
-:func:`renpy.stop_predict_shader` functions support explicit prediction.
-
-It's now possible to control the wrap and texture scaling modes of sampler2D uniforms.
-If your uniform is u_myuniform, you can control it with gl_texture_wrap_myuniform and
-gl_texture_scaling_myuniform, as destribed at :ref:`gl-properties`.
-
-Graphics
---------
-
 On mobile and the web, Ren'Py now requires an OpenGL ES 3.0 context, which
 devices with a GPU from 2013 or later provide. On desktop, Ren'Py asks for
 an OpenGL 3.3 context and falls back to OpenGL 2.0.
-
-When supported by the graphics driver, linked shader programs can now be cached
-across launches. This reduces first-use shader compilation and linking hitches
-after a program has been encountered once.
-
-Fixed a crash when rendering image manipulators created with ``cache=False``.
-Uncached images now use the same texture conversion and oversampling as cached
-images, without being retained in the image cache.
-
-The new :func:`RawTexture` displayable loads an image as a texture without
-optimizing its bounds, and can skip alpha premultiplication. :meth:`Model.texture`
-also takes a new `premultiply` parameter. These are useful for textures that
-contain data rather than colors, like normal maps. Passing ``premultiply=False``
-to :meth:`Model.texture` requires a literal image filename; image names,
-interpolated filenames, and displayable objects raise ValueError.
-
-
-Ren'Py's framerate safeguard now limits framerate to at most 1.5 times the refresh rate of the window's display,
-or at least 90 fps, whichever is higher, when vsync is enabled. This kicks in when the framerate would otherwise
-exceed this limit. When the window is minimized or hidden, the framerate is limited to 5 fps. This only kicks in
-in situations where the video driver is not limiting the framerate properly.
-
-Live2D
-------
-
-Ren'Py now supports the blend modes and offscreen drawing introduced in
-Live2D Cubism 5.3. This requires the Cubism Core from Cubism SDK for Native
-5-r.5 or later. With an older Core, these models are drawn without blend
-modes or offscreens, as before. Models that don't use these features look
-the same as before, and are drawn without the extra textures and shaders
-these features require.
-
-Ren'Py now supports Live2D :ref:`pose files <live2d-poses>`, which keep alternative parts of a model, like two versions
-of an arm, from being shown at the same time. This can be controlled with the `pose` argument to :func:`Live2D` and
-the :var:`config.live2d_pose` variable, and is disabled in games that declare compatibility with Ren'Py 8.5 or earlier.
-
-The interpretation of Bezier curves in Live2D has been changed to match the Cardano interpretation,
-which is consistent with the Live2D SDK. This behavior can be changed with the `old_beziers` parameter to the :func:`Live2D`
-displayable, or with the :var:`config.live2d_old_beziers` variable, and the old interpretation is used in games that
-declare compatibility with Ren'Py 8.5 or earlier.
-
-Live2D clipping masks are now cropped to the bounds of their geometry, which uses less texture memory. This can be
-disabled with the :var:`config.live2d_mask_clipping` variable.
-
-Clipboard
----------
-
-Ren'Py has new :file:`clipboard` functions that work with the system clipboard.
-
-The :func:`renpy.get_clipboard_text` and :func:`renpy.put_clipboard_text` functions work with the text clipboard that
-is present on all systems.
-
-The :func:`renpy.get_clipboard_data`, :func:`renpy.get_clipboard_mime_types`, and :func:`renpy.put_clipboard_data`
-functions work with the data clipboard that is more limited.
-
-The :func:`renpy.put_clipboard_image_file` function puts the contents of an image file
-into the clipboard, which can be pasted into other applications that support pasting images.
-:func:`renpy.put_clipboard_text_file` does the same for text files.
-
-Input Methods
--------------
-
-On Windows, Ren'Py now draws the list of candidates offered by an input method
-editor (IME), rather than relying on the operating system's candidate window,
-which could be invisible when the game was fullscreen. The list is shown by
-the ``_ime_candidates`` screen, and can be customized with styles.
-
-SDL currently supplies IME candidate events only on Windows. macOS, Linux,
-and other platforms continue to use their native candidate interfaces.
-See :ref:`input-methods` for details.
-
-Age Verification
-----------------
-
-The new :func:`renpy.get_user_age` function returns an age range for the user on supported platforms
-(currently Android and iOS 26+). This is intended to help developers comply with age-related legal
-requirements.
-
-On Android, this uses the Play Age Signals API. On iOS, it uses the Declared Age Range API,
-which requires explicitly adding the "Declared Age Range" capability/entitlement in Xcode.
-
-Self-Voicing
-------------
-
-Ren'Py now supports selecting the voice used by self-voicing. This is done through the shift+A accessibility menu,
-which now presents a list of voices available on the user's system for the user to pick from.
-
-The list of available voices can be obtained through the :func:`renpy.get_tts_voices` function, and
-the voice can be set through the :class:`Preference` class, using the "self voicing voice" setting. The voice is
-stored in :var:`preferences.tts_voice`.
-
-The speed of self-voicing can be adjusted through the "self voicing speed" setting, which is stored in :var:`preferences.tts_speed`,
-and can be set through the :class:`Preference` class, using the "self voicing speed" setting, which may be used as a bar value or
-to set the speed directly to a number between 1.0 and 5.0.
-
-On the shift+A accessibility menu, pressing the "R" key resets the self-voicing settings to the default values, then
-enables self-voicing. This can be used to reset the self-voicing settings if the user has changed them to a state that
-makes self-voicing unusable.
-
-On macOS and Windows, more modern techniques are used to play back the speech.
-
-The :var:`config.tts_voice` variable is no longer used.
-
-There is a new :ref:`screen reader mode <self-voicing>`, toggled by pressing Shift+V. In this mode, Ren'Py uses
-the Prism library to communicate directly with active screen readers, such as NVDA, JAWS, VoiceOver, or Orca, which
-can present the text through both speech and braille displays. If no screen reader is active, system speech
-synthesis is used instead. When a screen reader is running as Ren'Py starts, screen reader mode is enabled
-automatically. This can be controlled with :var:`config.auto_screenreader_voicing`.
-
-When the new :var:`config.auto_image_alt` variable is True, images shown without an explicit :propref:`alt`
-property are voiced using their image name and attributes.
 
 Performance
 -----------
@@ -191,48 +48,125 @@ rendering:
 * Persistent data is generated asynchronously, and written to disk in a background thread.
 * Parsed text substitutions are cached, making screens that redraw interpolated text faster.
 
-Features
---------
+Shader combinations used by predicted displayables are now compiled during
+idle prediction, reducing stalls when they are first shown. The new
+:func:`renpy.start_predict_shader` and
+:func:`renpy.stop_predict_shader` functions support explicit prediction.
 
-When :var:`build.wavedash_id` is configured, building a web distribution now
-creates a :file:`wavedash.toml` file for uploading the build to Wavedash.
-The launcher can upload that web distribution directly to Wavedash, downloading
-the Wavedash CLI when necessary and prompting for browser authentication when
-needed. When the web distribution is missing, the launcher can build it before
-uploading. It can also rebuild the distribution when the Wavedash game ID has
-changed.
+When supported by the graphics driver, linked shader programs can now be cached
+across launches. This reduces first-use shader compilation and linking hitches
+after a program has been encountered once.
 
-Resource path translations can now be overridden independently of the global language with
-:var:`_preferences.resource_path_translations` and :class:`ChangeResourcePathTranslation`.
+Accessibility
+-------------
 
-The new :func:`renpy.safe_rename` function moves a temporary file into place, replacing an existing file if there is one, and handles files that are open in another program on Windows.
+There is a new :ref:`screen reader mode <self-voicing>`, toggled by pressing Shift+V. In this mode, Ren'Py uses
+the Prism library to communicate directly with active screen readers, such as NVDA, JAWS, VoiceOver, or Orca, which
+can present the text through both speech and braille displays. If no screen reader is active, system speech
+synthesis is used instead. When a screen reader is running as Ren'Py starts, screen reader mode is enabled
+automatically. This can be controlled with :var:`config.auto_screenreader_voicing`.
 
-The new :func:`renpy.music.seek` function seeks the audio or video currently playing on a channel, while :class:`AudioPositionValue` now accepts an `adjustable` argument that allows a bar to seek when dragged.
+When the new :var:`config.auto_image_alt` variable is True, images shown without an explicit :propref:`alt`
+property are voiced using their image name and attributes.
+
+Ren'Py now supports selecting the voice used by self-voicing. This is done through the shift+A accessibility menu,
+which now presents a list of voices available on the user's system for the user to pick from.
+
+The list of available voices can be obtained through the :func:`renpy.get_tts_voices` function, and
+the voice can be set through the :class:`Preference` class, using the "self voicing voice" setting. The voice is
+stored in :var:`preferences.tts_voice`.
+
+The speed of self-voicing can be adjusted through the "self voicing speed" setting, which is stored in :var:`preferences.tts_speed`,
+and can be set through the :class:`Preference` class, using the "self voicing speed" setting, which may be used as a bar value or
+to set the speed directly to a number between 1.0 and 5.0.
+
+On the shift+A accessibility menu, pressing the "R" key resets the self-voicing settings to the default values, then
+enables self-voicing. This can be used to reset the self-voicing settings if the user has changed them to a state that
+makes self-voicing unusable.
+
+On macOS and Windows, more modern techniques are used to play back the speech.
+
+The :var:`config.tts_voice` variable is no longer used.
+
+Shaders
+-------
+
+Shader parts can now be written in GLSL ES 3.00, which is the version new
+games use by default.
+
+The GLSL version is selected by the new :var:`config.glsl_version` variable, which
+defaults to 300 in new games and to 100 in games that declare compatibility with
+Ren'Py 8.5 or earlier. A single part can override it by passing `glsl` to
+:func:`renpy.register_shader` or :func:`renpy.register_textshader`.
+
+Existing shader parts do not require changes. Ren'Py translates between the two
+versions, so parts written in either can be combined in the same shader. A part
+that doesn't pass `glsl`, but uses syntax that only exists in GLSL ES 1.00 (like
+``attribute``, ``varying``, or ``gl_FragColor``), is treated as being written in
+GLSL ES 1.00 even when :var:`config.glsl_version` is 300. Ren'Py will not infer
+the version of a part that uses GLSL ES 3.00 syntax when
+:var:`config.glsl_version` is 100; see the :ref:`incompatible changes
+<incompatible-8.6.0>`.
+
+It's now possible to control the wrap and texture scaling modes of sampler2D uniforms.
+If your uniform is u_myuniform, you can control it with gl_texture_wrap_myuniform and
+gl_texture_scaling_myuniform, as destribed at :ref:`gl-properties`.
 
 A new :ref:`renpy.red_to_alpha <shader-renpy.red_to_alpha>` shader part has been added, which creates a new image that is white with the alpha taken from
 the red channel of the original data being drawn. This is intended for use to replace: :class:`im.AlphaMask` with :class:`AlphaMask`.
 
-The :func:`renpy.transition` function now takes a `priority` argument. A lower-priority transition will not replace
-a higher-priority transition for the same layer.
+The blur shader has been improved, with dithering to reduce banding, and no longer pops in when animating to or from
+zero blur.
 
-The :func:`renpy.callback` decorator registers callbacks with Ren'Py in more concise way.
+A sampler uniform can now be suffixed with ``__virtual_size`` to get the size
+of its texture in virtual pixels. The ``__res`` and other uniform operations
+now work on uniforms supplied by displayables and transforms.
 
-The new :func:`renpy.get_rollback_identifier` function returns the rollback identifier of the
-current statement. When called from :var:`config.statement_callbacks`, this makes it possible to
-remember a statement, like the most recent menu, and roll back to it with :func:`RollbackToIdentifier`.
+Graphics
+--------
 
-The new :var:`config.after_init_callbacks` variable is a list of callbacks that are called at the very end of the init phase,
-before the game starts normal execution for the first time. These are run once per Ren'Py start, after the default
-statements have been executed, and so this is the place to set up callbacks that need access to default data.
+The new :func:`RawTexture` displayable loads an image as a texture without
+optimizing its bounds, and can skip alpha premultiplication. :meth:`Model.texture`
+also takes a new `premultiply` parameter. These are useful for textures that
+contain data rather than colors, like normal maps. Passing ``premultiply=False``
+to :meth:`Model.texture` requires a literal image filename; image names,
+interpolated filenames, and displayable objects raise ValueError.
 
-:class:`Movie` now accepts a movie file as it's `loop` parameter. When given, the movie passed to `play` is played
-to completion, and then `loop` will be played looping. This is intended to be seamless as long as the `play` movie
-is long enough to allow the `loop` movie to load.
+Ren'Py's framerate safeguard now limits framerate to at most 1.5 times the refresh rate of the window's display,
+or at least 90 fps, whichever is higher, when vsync is enabled. This kicks in when the framerate would otherwise
+exceed this limit. When the window is minimized or hidden, the framerate is limited to 5 fps. This only kicks in
+in situations where the video driver is not limiting the framerate properly.
 
-The new :func:`FetchProgressValue` bar value allows the progress of fetch requests to be displayed. The same
-information is also available through the :func:`renpy.get_fetch_progress` function.
+The :var:`config.mesh_oversample` variable now defaults to 8.0, which allows meshes to be scaled up before becoming blurry.
 
-Ren'Py sync now displays a progress bar while uploading and downloading data, using the :func:`FetchProgressValue` bar value.
+Live2D
+------
+
+Ren'Py now supports the blend modes and offscreen drawing introduced in
+Live2D Cubism 5.3. This requires the Cubism Core from Cubism SDK for Native
+5-r.5 or later. With an older Core, these models are drawn without blend
+modes or offscreens, as before. Models that don't use these features look
+the same as before, and are drawn without the extra textures and shaders
+these features require.
+
+Ren'Py now supports Live2D :ref:`pose files <live2d-poses>`, which keep alternative parts of a model, like two versions
+of an arm, from being shown at the same time. This can be controlled with the `pose` argument to :func:`Live2D` and
+the :var:`config.live2d_pose` variable, and is disabled in games that declare compatibility with Ren'Py 8.5 or earlier.
+See the :ref:`incompatible changes <incompatible-8.6.0>`.
+
+The interpretation of Bezier curves in Live2D has been changed to match the Cardano interpretation,
+which is consistent with the Live2D SDK. This behavior can be changed with the `old_beziers` parameter to the :func:`Live2D`
+displayable, or with the :var:`config.live2d_old_beziers` variable, and the old interpretation is used in games that
+declare compatibility with Ren'Py 8.5 or earlier. See the :ref:`incompatible changes <incompatible-8.6.0>`.
+
+Live2D clipping masks are now cropped to the bounds of their geometry, which uses less texture memory. This can be
+disabled with the :var:`config.live2d_mask_clipping` variable.
+
+The :func:`Live2D` displayable now takes a `deduplication_key` argument, which allows Live2D displayables that use
+the same model with different settings to be kept separate.
+
+Text
+----
 
 The new :var:`config.font_size_adjust` variable is a dictionary mapping font names to
 either a multiplier or a function that adjusts the size of the font. This allows you to
@@ -251,10 +185,142 @@ Text interpolation now supports the ``!f`` flag, which passes interpolated text 
 
 Menu text filtering can now be disabled with :var:`config.use_menu_text_filter`, which defaults to True.
 
+Audio and Video
+---------------
+
+The new :func:`renpy.music.seek` function seeks the audio or video currently playing on a channel, while :class:`AudioPositionValue` now accepts an `adjustable` argument that allows a bar to seek when dragged.
+
+:class:`Movie` now accepts a movie file as it's `loop` parameter. When given, the movie passed to `play` is played
+to completion, and then `loop` will be played looping. This is intended to be seamless as long as the `play` movie
+is long enough to allow the `loop` movie to load.
+
+:class:`AudioData` can now be played on the web platform.
+
+The new :var:`config.audio_directories` variable is a list of directories that are searched for audio Files
+and used to populate the :ref:`audio-namespace <audio-namespace>`.
+
+Clipboard
+---------
+
+Ren'Py has new :file:`clipboard` functions that work with the system clipboard.
+
+The :func:`renpy.get_clipboard_text` and :func:`renpy.put_clipboard_text` functions work with the text clipboard that
+is present on all systems.
+
+The :func:`renpy.get_clipboard_data`, :func:`renpy.get_clipboard_mime_types`, and :func:`renpy.put_clipboard_data`
+functions work with the data clipboard that is more limited.
+
+The :func:`renpy.put_clipboard_image_file` function puts the contents of an image file
+into the clipboard, which can be pasted into other applications that support pasting images.
+:func:`renpy.put_clipboard_text_file` does the same for text files.
+
+When a screenshot is taken with the screenshot key, it is now also copied to the clipboard.
+
+Input Methods
+-------------
+
+On Windows, Ren'Py now draws the list of candidates offered by an input method
+editor (IME), rather than relying on the operating system's candidate window,
+which could be invisible when the game was fullscreen. The list is shown by
+the ``_ime_candidates`` screen, and can be customized with styles.
+
+SDL currently supplies IME candidate events only on Windows. macOS, Linux,
+and other platforms continue to use their native candidate interfaces.
+See :ref:`input-methods` for details, and the
+:ref:`incompatible changes <incompatible-8.6.0>` for how this affects existing games.
+
+Age Verification
+----------------
+
+The new :func:`renpy.get_user_age` function returns an age range for the user on supported platforms
+(currently Android and iOS 26+). This is intended to help developers comply with age-related legal
+requirements.
+
+On Android, this uses the Play Age Signals API. On iOS, it uses the Declared Age Range API,
+which requires explicitly adding the "Declared Age Range" capability/entitlement in Xcode.
+
+Launcher and Distribution
+-------------------------
+
+When :var:`build.wavedash_id` is configured, building a web distribution now
+creates a :file:`wavedash.toml` file for uploading the build to Wavedash.
+The launcher can upload that web distribution directly to Wavedash, downloading
+the Wavedash CLI when necessary and prompting for browser authentication when
+needed. When the web distribution is missing, the launcher can build it before
+uploading. It can also rebuild the distribution when the Wavedash game ID has
+changed.
+
+Automatically generated android versions will now work past the year 2100, rather than reaching the upper limit in
+2036.
+
+Files generated when a new project is created are now dedicated to the public domain. See :doc:`license` for details.
+
+The default :file:`.gitignore` for new projects excludes Android keystore files.
+
+Automated Testing
+-----------------
+
+Tests can now be filtered using the ``*`` wildcard (e.g. ``suite.sub*``),
+by parameter (e.g. ``math.addition(a=1, b=2)``), and any combination of the two.
+
+Multiple filters can be provided, which will run tests that match at least one filter.
+
+Test statements that accept a ``pos`` argument can now handle positioning outside of a selected
+displayable. This allows for things like ``click id "element" pos (0, -20)`` or
+``drag id "peg" to id "hole" pos (1.5, 0)``.
+
+The following test statements now accept expressions:
+
+- ``click button <expr>`` (e.g. ``click button 2``, ``click button button_num``)
+- ``drag ... button <expr> steps <expr>``
+- ``scroll amount <expr>``
+- ``type <expr>``
+- ``keysym <expr>``
+- ``label <expr>`` matches naked strings (e.g. ``label chapter1``) and
+  expressions (e.g. ``label "chapter1"``, ``label label_name``)
+- ``text <expr>`` selects text (e.g. ``assert text "Hello"``, ``assert text dialogue_text``)
+
+The :func:`renpy.exports.get_mouse_pos()` function returns the test mouse position when running a test.
+
+The testcase separator has been changed from ``::`` to ``.`` for test selection.
+
+A testcase and testsuite can no longer have the same name at the same level in the hierarchy.
+
+User mouse movements are ignored during tests.
+
+The ``enabled`` property of a testcase or testsuite is now evaluated when the
+tests are run, rather than when the script is compiled.
+
+Desktop testcase runs now use a fixed window with physical and drawable
+resolution matching the game's virtual resolution, making screenshot sizes
+and crop coordinates independent of saved window preferences and DPI scaling.
+
+Fixed a counting bug with the ``repeat <num>`` statement.
+
+Features
+--------
+
+The new :func:`renpy.get_rollback_identifier` function returns the rollback identifier of the
+current statement. When called from :var:`config.statement_callbacks`, this makes it possible to
+remember a statement, like the most recent menu, and roll back to it with :func:`RollbackToIdentifier`.
+
 The new :func:`renpy.get_statement_name` function returns the name of the current statement.
 
 The new :func:`renpy.get_statement_info` function returns the filename, line number, and translation identifier
 of the statement that is currently executing or being predicted.
+
+:ref:`Warping to a line <warping_to_a_line>` now replays dialogue along the path to the target line, without waiting
+for input, reconstructing the dialogue history, the NVL-mode list, and retained speech bubbles. A character can opt out
+of this with ``Character(..., warp=False)``, and the new :func:`renpy.is_warping` function returns True while the warp
+is being performed.
+
+The new :func:`CallInNewContext` action calls a label in a new context, like :func:`renpy.call_in_new_context`.
+
+The :func:`renpy.callback` decorator registers callbacks with Ren'Py in more concise way.
+
+The new :var:`config.after_init_callbacks` variable is a list of callbacks that are called at the very end of the init phase,
+before the game starts normal execution for the first time. These are run once per Ren'Py start, after the default
+statements have been executed, and so this is the place to set up callbacks that need access to default data.
 
 The :class:`Confirm` action and :func:`renpy.confirm` function now take a `screen` argument, allowing
 a custom screen to be used instead of the default confirm screen.
@@ -268,109 +334,73 @@ The `changed` property of bars can now be supplied in addition to a bar value.
 Bars now take an `action` property, which is an action that is run when the bar value changes. Unlike `change`, `action`
 is not supplied the bar value, and so can be used with the same actions as buttons.
 
-Layered images now support ``at`` and ``at transform`` clauses at the same time.
+The new :func:`FetchProgressValue` bar value allows the progress of fetch requests to be displayed. The same
+information is also available through the :func:`renpy.get_fetch_progress` function.
 
-The new :var:`config.special_directory_map` variable maps special directory names
-('images', 'audio', 'fonts') to a list of directories that will be searched for that kind of file. This isn't
-used when defining images and variables in the audio namespace - for automatic definition of images and audio,
-see :var:`config.image_directories` and :var:`config.audio_directories`.
-
-The new :var:`config.audio_directories` variable is a list of directories that are searched for audio Files
-and used to populate the :ref:`audio-namespace <audio-namespace>`.
-
-The directories in :var:`config.audio_directories` and :var:`config.image_directories` are now also searched when
-a file is loaded by name, after the directories in :var:`config.special_directory_map`.
-
-The ``if``, ``elif``, and ``else`` clauses of a :ref:`layered image <layeredimage-statement>` can now contain a
-nested ``if`` statement, in place of a displayable.
-
-The new :func:`CallInNewContext` action calls a label in a new context, like :func:`renpy.call_in_new_context`.
-
-NVL-mode characters now take `page_ctc` and `page_ctc_position` arguments, which override
-:var:`config.nvl_page_ctc` and :var:`config.nvl_page_ctc_position` for that character.
-
-The :func:`Live2D` displayable now takes a `deduplication_key` argument, which allows Live2D displayables that use
-the same model with different settings to be kept separate.
-
-The new :var:`config.failed_save_dump` variable, which is True by default, writes the save dump (as with
-:var:`config.save_dump`) only when saving fails.
-
-:ref:`Warping to a line <warping_to_a_line>` now replays dialogue along the path to the target line, without waiting
-for input, reconstructing the dialogue history, the NVL-mode list, and retained speech bubbles. A character can opt out
-of this with ``Character(..., warp=False)``, and the new :func:`renpy.is_warping` function returns True while the warp
-is being performed.
-
-When a screenshot is taken with the screenshot key, it is now also copied to the clipboard.
+Ren'Py sync now displays a progress bar while uploading and downloading data, using the :func:`FetchProgressValue` bar value.
 
 When a screen language statement is given an invalid property, the error message now suggests a likely correction.
 
 Creator-defined screen language statements can now use the ``copy_positionals`` and ``copy_keywords`` methods to copy
 only the positional arguments or only the keyword arguments of another statement.
 
-:class:`AudioData` can now be played on the web platform.
+Layered images now support ``at`` and ``at transform`` clauses at the same time.
+
+The ``if``, ``elif``, and ``else`` clauses of a :ref:`layered image <layeredimage-statement>` can now contain a
+nested ``if`` statement, in place of a displayable.
 
 The new `place_child` argument to :func:`AlphaMask` makes it the size of the larger of its child and mask, and honors
 the position properties of its child, which allows a child to move behind a mask that stays still.
 
-Automated Testing
------------------
+The :func:`renpy.transition` function now takes a `priority` argument. A lower-priority transition will not replace
+a higher-priority transition for the same layer.
 
-The :func:`renpy.exports.get_mouse_pos()` function returns the test mouse position when running a test.
+NVL-mode characters now take `page_ctc` and `page_ctc_position` arguments, which override
+:var:`config.nvl_page_ctc` and :var:`config.nvl_page_ctc_position` for that character.
 
-Test statements that accept a ``pos`` argument can now handle positioning outside of a selected
-displayable. This allows for things like ``click id "element" pos (0, -20)`` or
-``drag id "peg" to id "hole" pos (1.5, 0)``.
+Resource path translations can now be overridden independently of the global language with
+:var:`_preferences.resource_path_translations` and :class:`ChangeResourcePathTranslation`.
 
-Tests can now be filtered using the ``*`` wildcard (e.g. ``suite.sub*``),
-by parameter (e.g. ``math.addition(a=1, b=2)``), and any combination of the two.
+The new :var:`config.special_directory_map` variable maps special directory names
+('images', 'audio', 'fonts') to a list of directories that will be searched for that kind of file. This isn't
+used when defining images and variables in the audio namespace - for automatic definition of images and audio,
+see :var:`config.image_directories` and :var:`config.audio_directories`.
 
-Multiple filters can be provided, which will run tests that match at least one filter.
+The directories in :var:`config.audio_directories` and :var:`config.image_directories` are now also searched when
+a file is loaded by name, after the directories in :var:`config.special_directory_map`.
+See the :ref:`incompatible changes <incompatible-8.6.0>`.
 
-The testcase separator has been changed from ``::`` to ``.`` for test selection.
+The new :func:`renpy.safe_rename` function moves a temporary file into place, replacing an existing file if there is one, and handles files that are open in another program on Windows.
 
-A testcase and testsuite can no longer have the same name at the same level in the hierarchy.
+The new :var:`config.failed_save_dump` variable, which is True by default, writes the save dump (as with
+:var:`config.save_dump`) only when saving fails.
 
-User mouse movements are ignored during tests.
+It is now possible to consume in-app purchases on Android, as well as on iOS.
 
-The ``enabled`` property of a testcase or testsuite is now evaluated when the
-tests are run, rather than when the script is compiled.
-
-The following test statements now accept expressions:
-
-- ``click button <expr>`` (e.g. ``click button 2``, ``click button button_num``)
-- ``drag ... button <expr> steps <expr>``
-- ``scroll amount <expr>``
-- ``type <expr>``
-- ``keysym <expr>``
-- ``label <expr>`` matches naked strings (e.g. ``label chapter1``) and
-  expressions (e.g. ``label "chapter1"``, ``label label_name``)
-
-Text can now be selected with ``text <expr>`` (e.g. ``assert text "Hello"``, ``assert text dialogue_text``)
-
-Fixed a counting bug with the ``repeat <num>`` statement.
-
-Desktop testcase runs now use a fixed window with physical and drawable
-resolution matching the game's virtual resolution, making screenshot sizes
-and crop coordinates independent of saved window preferences and DPI scaling.
+Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
 
 Other Changes
 -------------
 
-Automatically generated android versions will now work past the year 2100, rather than reaching the upper limit in
-2036.
+The ability to apply zsync-based updates has been removed. This was an older update format that has been replaced.
+The ability to create these updates will be removed in Ren'Py 8.7.0.
 
 The :var:`config.say_layer`, :var:`config.choice_layer`, and
 :var:`config.nvl_choice_layer` variables now default to None for new games.
 When None, dialogue and choice screens use the screen's ``layer`` property,
 or "screens" if no layer is declared. Explicit layer overrides still take
 precedence. Games declaring compatibility with Ren'Py 8.5 or earlier retain
-the previous "screens" defaults.
+the previous "screens" defaults. See the
+:ref:`incompatible changes <incompatible-8.6.0>`.
 
-The audio synchro start feature now only applies to playing audio. Queued audio will not be affected, and will always
-be played when their turn comes in the playback queue.
+The :var:`config.tlid_only_considers_say` variable has been set to True by default. This prevents non-say statements,
+such as the ``voice`` statement, from contributing to translation identifiers. This can change translation identifiers.
+See the :ref:`incompatible changes <incompatible-8.6.0>` for more information.
 
-The :var:`config.enter_replay_transition` and :var:`config.after_load_transition` transitions now take priority over
-other transitions queued for the same layer.
+Audio files are now automatically defined in the audio namespace at a late init level, rather than at init 0. This
+can be reverted with ``config.late_audio_scan``; see the :ref:`incompatible changes <incompatible-8.6.0>`.
+
+Buttons are now only activated when the mouse button is pressed and released on the same button.
 
 The ``--compile`` command line argument now deletes orphaned rpyc files by default.
 This can be disabled with the ``--keep-orphan-rpyc`` command line argument.
@@ -378,41 +408,36 @@ This can be disabled with the ``--keep-orphan-rpyc`` command line argument.
 Ren'Py now considered Android devices under 6.95 inches to be phones, and devices 6.95 inches and larger to be
 tablets, for the purpose of selecting a variant. The previous breakpoint was 6.0 inches.
 
-The :var:`config.mesh_oversample` variable now defaults to 8.0, which allows meshes to be scaled up before becoming blurry.
+The audio synchro start feature now only applies to playing audio. Queued audio will not be affected, and will always
+be played when their turn comes in the playback queue.
+
+The :var:`config.enter_replay_transition` and :var:`config.after_load_transition` transitions now take priority over
+other transitions queued for the same layer.
 
 The ``scene`` statement now respects :var:`config.tag_layer` when deciding which layer to clear.
 
-It is now possible to consume in-app purchases on Android, as well as on iOS.
-
-The :var:`config.tlid_only_considers_say` variable has been set to True by default. This prevents non-say statements,
-such as the ``voice`` statement, from contributing to translation identifiers. This can change translation identifiers.
-See the incompatible changes for more information.
-
-The ability to apply zsync-based updates has been removed. This was an older update format that has been replaced.
-The ability to create these updates will be removed in Ren'Py 8.7.0.
-
-Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, in addition to PNG and JPG.
-
-When using the harfbuzz text shaper, fonts smaller than :var:`config.font_memory_buffer_size` (2 MB by default) are
-now loaded into memory, while larger fonts are read through SDL as needed.
+More displayables now show their own copy of a child that contains ATL or
+otherwise needs to be copied, rather than sharing one copy between every place
+the displayable is used. This means ATL inside the child starts from the
+beginning each time the displayable is shown, and image arguments and
+``[prefix_]`` substitutions are applied. This affects the children of drags
+(including those set with :meth:`Drag.set_child`), buttons created in Python,
+imagemap images, :func:`Fade` and :func:`MultipleTransition` intermediate
+images, displayables embedded in :class:`Text`, displayables shown with
+``show expression`` that are not transforms, and the deprecated
+``Zoom``, ``FactorZoom``, ``SizeZoom``, ``RotoZoom``, ``Alpha``, ``Blink``,
+``Animation``, and ``anim.SMAnimation`` displayables.
 
 On all platforms except the web, Ren'Py now verifies TLS certificates against the operating system's trust store,
 using the truststore library, rather than the certificate bundle shipped with the certifi library. This applies to
 Python's ssl module and to requests, which is used by :func:`renpy.fetch` and the updater. A certificate bundle
 explicitly passed to requests is still used. (The web platform continues to use the browser's certificate store.)
 
-Buttons are now only activated when the mouse button is pressed and released on the same button.
-
-Audio files are now automatically defined in the audio namespace at a late init level, rather than at init 0. This
-can be reverted with ``config.late_audio_scan``; see the :ref:`incompatible changes <incompatible-8.6.0>`.
-
-Files generated when a new project is created are now dedicated to the public domain. See :doc:`license` for details.
+When using the harfbuzz text shaper, fonts smaller than :var:`config.font_memory_buffer_size` (2 MB by default) are
+now loaded into memory, while larger fonts are read through SDL as needed.
 
 The error screen now uses the WenQuanYi Micro Hei font, so that Chinese, Japanese, and Korean text in error messages
 can be displayed.
-
-The blur shader has been improved, with dithering to reduce banding, and no longer pops in when animating to or from
-zero blur.
 
 Dialogue extraction now includes say statements used as menu captions, and more reliably keeps extracted dialogue in
 source order.
@@ -421,8 +446,6 @@ The script parser now rejects ASCII control characters, and characters other tha
 backslash. The error message for mismatched indentation has been improved.
 
 ``renpy.py --version`` now prints only the version.
-
-The default :file:`.gitignore` for new projects excludes Android keystore files.
 
 ``renpy.pygame.Surface.get_buffer`` now returns a writable memoryview of the
 surface's pixels and surfaces support Python's buffer protocol.
@@ -456,21 +479,9 @@ an image name or other non-file displayable was scaled by the ratio between
 drawable and virtual pixels, which could stretch a per-line gradient across
 several lines.
 
-A sampler uniform can now be suffixed with ``__virtual_size`` to get the size
-of its texture in virtual pixels. The ``__res`` and other uniform operations
-now work on uniforms supplied by displayables and transforms.
-
-More displayables now show their own copy of a child that contains ATL or
-otherwise needs to be copied, rather than sharing one copy between every place
-the displayable is used. This means ATL inside the child starts from the
-beginning each time the displayable is shown, and image arguments and
-``[prefix_]`` substitutions are applied. This affects the children of drags
-(including those set with :meth:`Drag.set_child`), buttons created in Python,
-imagemap images, :func:`Fade` and :func:`MultipleTransition` intermediate
-images, displayables embedded in :class:`Text`, displayables shown with
-``show expression`` that are not transforms, and the deprecated
-``Zoom``, ``FactorZoom``, ``SizeZoom``, ``RotoZoom``, ``Alpha``, ``Blink``,
-``Animation``, and ``anim.SMAnimation`` displayables.
+Fixed a crash when rendering image manipulators created with ``cache=False``.
+Uncached images now use the same texture conversion and oversampling as cached
+images, without being retained in the image cache.
 
 When an ATL child statement with a ``with`` clause changes the child, the
 transition now starts from the copy of the old child that was being shown,
