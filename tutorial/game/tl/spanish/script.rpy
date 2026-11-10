@@ -9,7 +9,7 @@ translate spanish start_0e6a5bb4:
 translate spanish start_d3abb53c:
 
     # e "In this tutorial, we'll teach you the basics of Ren'Py, so you can make games of your own. We'll also demonstrate many features, so you can see what Ren'Py is capable of."
-    e "En este tutorial, te enseñaremos los conceptos básicos de Ren'Py, para que puedas crear tus propios juegos. También demostraremos muchas características, para que puedas ver de lo que Ren'Py es capaz."
+    e "En este tutorial te enseñaremos los conceptos básicos de Ren'Py para que puedas crear tus propios juegos. También te mostraremos muchas características para que veas de lo que Ren'Py es capaz."
 
 # game/script.rpy:205
 translate spanish end_b2482727:
@@ -21,19 +21,19 @@ translate spanish end_b2482727:
 translate spanish end_38362e36:
 
     # e "If you'd like to see a full Ren'Py game, select \"The Question\" in the launcher."
-    e "Si deseas ver un juego completo de Ren'Py, selecciona \"La pregunta\" en el lanzador."
+    e "Si deseas ver un juego completo de Ren'Py, selecciona \"The Question\" en el {i}launcher{/i}."
 
 # game/script.rpy:209
 translate spanish end_02527d05:
 
     # e "You can download new versions of Ren'Py from {a=https://www.renpy.org/}https://www.renpy.org/{/a}. For help and discussion, check out the {a=https://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
-    e "Puedes descargar nuevas versiones de Ren'Py desde {a=https://www.renpy.org/}https://www.renpy.org/{/a}. Para ayuda y discusión, echa un vistazo a {a=https://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
+    e "Puedes descargar nuevas versiones de Ren'Py desde {a=https://www.renpy.org/}https://www.renpy.org/{/a}. Para ayuda y discusión, visita {a=https://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
 
 # game/script.rpy:211
 translate spanish end_c9d03136:
 
     # e "We'd like to thank Piroshki for contributing my sprites; Mugenjohncel for Lucy, the band, and drawn backgrounds; and Jake for the magic circle."
-    e "Nos gustaría agradecer a Piroshki por contribuir con mis sprites; Mugenjohncel por Lucy, la banda y los fondos; y Jake para el círculo mágico."
+    e "Nos gustaría agradecer a Piroshki por contribuir con mis {i}sprites{/i}; a Mugenjohncel por Lucy, la banda y los fondos dibujados; y a Jake por el círculo mágico."
 
 # game/script.rpy:213
 translate spanish end_762dc07a:
@@ -59,7 +59,7 @@ translate spanish strings:
 
     # script.rpy:58
     old "Player Experience"
-    new "Experiencia de jugador"
+    new "Experiencia del jugador"
 
     # script.rpy:59
     old "Creating a New Game"
@@ -67,15 +67,15 @@ translate spanish strings:
 
     # script.rpy:60
     old "Writing Dialogue"
-    new "Escribiendo un dialogo"
+    new "Escribiendo un diálogo"
 
     # script.rpy:61
     old "Adding Images"
-    new "Añadiendo Imágenes"
+    new "Añadiendo imágenes"
 
     # script.rpy:62
     old "Positioning Images"
-    new "Posicionando Imágenes"
+    new "Posicionando imágenes"
 
     # script.rpy:63
     old "Transitions"
@@ -87,7 +87,7 @@ translate spanish strings:
 
     # script.rpy:65
     old "Choices and Python"
-    new "Elecciones y Python"
+    new "Decisiones y Python"
 
     # script.rpy:66
     old "Input and Interpolation"
@@ -95,11 +95,11 @@ translate spanish strings:
 
     # script.rpy:67
     old "Video Playback"
-    new "Reproducción de vídeo"
+    new "Reproducción de video"
 
     # script.rpy:68
     old "NVL Mode"
-    new "Modo VNL"
+    new "Modo NVL"
 
     # script.rpy:69
     old "Tools and the Interactive Director"
@@ -107,7 +107,7 @@ translate spanish strings:
 
     # script.rpy:70
     old "Building Distributions"
-    new "Construllendo Distribuciones"
+    new "Construyendo distribuciones"
 
     # script.rpy:72
     old "In Depth"
@@ -115,15 +115,15 @@ translate spanish strings:
 
     # script.rpy:74
     old "Text Tags, Escapes, and Interpolation"
-    new "Etiquetas de Texto, Escapes e Interpolación"
+    new "Etiquetas de texto, escapes e interpolación"
 
     # script.rpy:75
     old "Character Objects"
-    new "Objetos Character"
+    new "Objetos 'Character'"
 
     # script.rpy:76
     old "Simple Displayables"
-    new "Visualizables simples"
+    new "{i}Displayables{/i} simples"
 
     # script.rpy:77
     old "Transition Gallery"
@@ -135,7 +135,7 @@ translate spanish strings:
 
     # script.rpy:83
     old "Transforms and Animation"
-    new "Transformaciones y animación."
+    new "Transformaciones y animación"
 
     # script.rpy:84
     old "Transform Properties"
@@ -151,11 +151,11 @@ translate spanish strings:
 
     # script.rpy:88
     old "Screen Basics"
-    new "Fundamentos de Pantallas"
+    new "Fundamentos de pantallas"
 
     # script.rpy:89
     old "Screen Displayables"
-    new "Visualizables Screen"
+    new "{i}Displayables{/i} de pantallas"
 
     # script.rpy:91
     old "Minigames and CDDs"

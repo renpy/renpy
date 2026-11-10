@@ -1,5 +1,4 @@
-﻿
-translate spanish strings:
+﻿translate spanish strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
@@ -153,11 +152,11 @@ translate spanish strings:
     old "{#month_short}Dec"
     new "Dic."
 
-    # 00action_file.rpy:240
+    # 00action_file.rpy:237
     old "%b %d, %H:%M"
     new "%d de %b, %H:%M"
 
-    # 00action_file.rpy:353
+    # 00action_file.rpy:344
     old "Save slot %s: [text]"
     new "Guardar ranura %s: [text]"
 
@@ -165,39 +164,39 @@ translate spanish strings:
     old "Load slot %s: [text]"
     new "Cargar ranura %s: [text]"
 
-    # 00action_file.rpy:487
+    # 00action_file.rpy:459
     old "Delete slot [text]"
-    new "Borrar partida [text]"
+    new "Borrar ranura [text]"
 
-    # 00action_file.rpy:569
+    # 00action_file.rpy:539
     old "File page auto"
-    new "Página guardado automático"
+    new "Página de guardado automático"
 
-    # 00action_file.rpy:571
+    # 00action_file.rpy:541
     old "File page quick"
-    new "Página guardado rápido"
+    new "Página de guardado rápido"
 
-    # 00action_file.rpy:573
+    # 00action_file.rpy:543
     old "File page [text]"
-    new "Página grabación [text]"
+    new "Página de archivos [text]"
 
-    # 00action_file.rpy:772
+    # 00action_file.rpy:733
     old "Next file page."
     new "Página siguiente."
 
-    # 00action_file.rpy:845
+    # 00action_file.rpy:797
     old "Previous file page."
     new "Página anterior."
 
-    # 00action_file.rpy:906
+    # 00action_file.rpy:858
     old "Quick save complete."
-    new "Grabar rápido completo."
+    new "Guardado rápido completado."
 
-    # 00action_file.rpy:924
+    # 00action_file.rpy:876
     old "Quick save."
     new "Guardado rápido."
 
-    # 00action_file.rpy:943
+    # 00action_file.rpy:895
     old "Quick load."
     new "Carga rápida."
 
@@ -205,95 +204,95 @@ translate spanish strings:
     old "Language [text]"
     new "Idioma [text]"
 
-    # 00director.rpy:708
+    # 00director.rpy:709
     old "The interactive director is not enabled here."
-    new "El director interactivo no está habilitado aquí."
+    new "El director interactivo no está activado aquí."
 
-    # 00director.rpy:1481
+    # 00director.rpy:1479
     old "⬆"
     new "⬆"
 
-    # 00director.rpy:1487
+    # 00director.rpy:1485
     old "⬇"
     new "⬇"
 
-    # 00director.rpy:1551
+    # 00director.rpy:1549
     old "Done"
     new "Hecho"
 
-    # 00director.rpy:1561
+    # 00director.rpy:1559
     old "(statement)"
     new "(sentencia)"
 
-    # 00director.rpy:1562
+    # 00director.rpy:1560
     old "(tag)"
     new "(etiqueta)"
 
-    # 00director.rpy:1563
+    # 00director.rpy:1561
     old "(attributes)"
     new "(atributos)"
 
-    # 00director.rpy:1564
+    # 00director.rpy:1562
     old "(transform)"
     new "(transformación)"
 
-    # 00director.rpy:1589
+    # 00director.rpy:1587
     old "(transition)"
     new "(transición)"
 
-    # 00director.rpy:1601
+    # 00director.rpy:1599
     old "(channel)"
     new "(canal)"
 
-    # 00director.rpy:1602
+    # 00director.rpy:1600
     old "(filename)"
     new "(archivo)"
 
-    # 00director.rpy:1631
+    # 00director.rpy:1629
     old "Change"
     new "Cambiar"
 
-    # 00director.rpy:1633
+    # 00director.rpy:1631
     old "Add"
     new "Añadir"
 
-    # 00director.rpy:1636
+    # 00director.rpy:1634
     old "Cancel"
     new "Cancelar"
 
-    # 00director.rpy:1639
+    # 00director.rpy:1637
     old "Remove"
     new "Eliminar"
 
-    # 00director.rpy:1674
+    # 00director.rpy:1672
     old "Statement:"
     new "Sentencia:"
 
-    # 00director.rpy:1695
+    # 00director.rpy:1693
     old "Tag:"
     new "Etiqueta:"
 
-    # 00director.rpy:1711
+    # 00director.rpy:1709
     old "Attributes:"
     new "Atributos:"
 
-    # 00director.rpy:1729
+    # 00director.rpy:1727
     old "Transforms:"
     new "Transformaciones:"
 
-    # 00director.rpy:1748
+    # 00director.rpy:1746
     old "Behind:"
     new "Detrás:"
 
-    # 00director.rpy:1767
+    # 00director.rpy:1765
     old "Transition:"
     new "Transición:"
 
-    # 00director.rpy:1785
+    # 00director.rpy:1783
     old "Channel:"
     new "Canal:"
 
-    # 00director.rpy:1803
+    # 00director.rpy:1801
     old "Audio Filename:"
     new "Archivo de audio:"
 
@@ -307,7 +306,7 @@ translate spanish strings:
 
     # 00gui.rpy:372
     old "Are you sure you want to overwrite your save?"
-    new "¿Seguro que quieres sobreescribir esta partida?"
+    new "¿Seguro que quieres sobrescribir tu partida?"
 
     # 00gui.rpy:373
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
@@ -327,15 +326,15 @@ translate spanish strings:
 
     # 00gui.rpy:377
     old "Are you sure you want to begin skipping?"
-    new "¿Seguro que quieres empezar el modo salto?"
+    new "¿Seguro que quieres empezar el modo salto de escenas?"
 
     # 00gui.rpy:378
     old "Are you sure you want to skip to the next choice?"
-    new "¿Seguro que quieres saltar hasta la próxima elección?"
+    new "¿Seguro que quieres saltar hasta la próxima decisión?"
 
     # 00gui.rpy:379
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "¿Seguro que quieres saltar el texto no visto hasta la próxima elección?"
+    new "¿Seguro que quieres saltar el texto no visto hasta la próxima decisión?"
 
     # 00keymap.rpy:258
     old "Failed to save screenshot as %s."
@@ -347,11 +346,11 @@ translate spanish strings:
 
     # 00library.rpy:146
     old "Self-voicing disabled."
-    new "Voz automática desactivada."
+    new "Desactivar voz automática"."
 
     # 00library.rpy:147
     old "Clipboard voicing enabled. "
-    new "'Portapapeles a voz' activado. "
+    new "Activar voz por portapapeles. "
 
     # 00library.rpy:148
     old "Self-voicing enabled. "
@@ -359,7 +358,7 @@ translate spanish strings:
 
     # 00library.rpy:150
     old "bar"
-    new "bar"
+    new "barra"
 
     # 00library.rpy:151
     old "selected"
@@ -367,15 +366,15 @@ translate spanish strings:
 
     # 00library.rpy:152
     old "viewport"
-    new "viewport"
+    new "{i}viewport{/i}"
 
     # 00library.rpy:153
     old "horizontal scroll"
-    new "deslizamiento horizontal"
+    new "desplazamiento horizontal"
 
     # 00library.rpy:154
     old "vertical scroll"
-    new "deslizamiento vertical"
+    new "desplazamiento vertical"
 
     # 00library.rpy:155
     old "activate"
@@ -399,7 +398,7 @@ translate spanish strings:
 
     # 00library.rpy:279
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "Este programa contiene {i}software{/i} libre sujeto a diversas licencias que incluyen la licencia MIT y la {i}GNU Lesser General Public License{/i} (Licencia Pública General Reducida de GNU). Puedes encontrar la lista completa {i}de software{/i}, con enlaces al código fuente completo, {a=https://www.renpy.org/l/license}aquí (en inglés){/a}."
+    new "Este programa contiene {i}software{/i} libre sujeto a diversas licencias, incluidas la licencia MIT y la {i}GNU Lesser General Public License{/i} (Licencia Pública General Reducida de GNU). Puedes encontrar la lista completa de {i}software{/i}, con enlaces al código fuente completo, {a=https://www.renpy.org/l/license}aquí{/a} (en inglés)."
 
     # 00preferences.rpy:207
     old "display"
@@ -415,11 +414,11 @@ translate spanish strings:
 
     # 00preferences.rpy:230
     old "video sprites"
-    new "sprites de vídeo"
+    new "{i}sprites{/i} de video"
 
     # 00preferences.rpy:239
     old "show empty window"
-    new "muestra ventana vacía"
+    new "mostrar ventana vacía"
 
     # 00preferences.rpy:248
     old "text speed"
@@ -427,11 +426,11 @@ translate spanish strings:
 
     # 00preferences.rpy:256
     old "joystick"
-    new "joystick"
+    new "control"
 
     # 00preferences.rpy:256
     old "joystick..."
-    new "joystick..."
+    new "control..."
 
     # 00preferences.rpy:263
     old "skip"
@@ -439,7 +438,7 @@ translate spanish strings:
 
     # 00preferences.rpy:266
     old "skip unseen [text]"
-    new "saltar no visto [text]"
+    new "saltar [text] no visto"
 
     # 00preferences.rpy:271
     old "skip unseen text"
@@ -447,31 +446,31 @@ translate spanish strings:
 
     # 00preferences.rpy:273
     old "begin skipping"
-    new "comienzar salto"
+    new "comenzar salto"
 
     # 00preferences.rpy:277
     old "after choices"
-    new "tras elecciones"
+    new "después de decisiones"
 
     # 00preferences.rpy:284
     old "skip after choices"
-    new "saltar tras elecciones"
+    new "saltar después de decisiones"
 
     # 00preferences.rpy:286
     old "auto-forward time"
-    new "tiempo autoavance"
+    new "tiempo de avance automático"
 
     # 00preferences.rpy:300
     old "auto-forward"
-    new "autoavance"
+    new "avance automático"
 
     # 00preferences.rpy:307
     old "Auto forward"
-    new "Autoavance"
+    new "Avance automático"
 
     # 00preferences.rpy:310
     old "auto-forward after click"
-    new "autoavanzar después del clic"
+    new "avanzar automáticamente después del clic"
 
     # 00preferences.rpy:319
     old "automatic move"
@@ -479,7 +478,7 @@ translate spanish strings:
 
     # 00preferences.rpy:328
     old "wait for voice"
-    new "espera la voz"
+    new "esperar la voz"
 
     # 00preferences.rpy:337
     old "voice sustain"
@@ -487,15 +486,15 @@ translate spanish strings:
 
     # 00preferences.rpy:346
     old "self voicing"
-    new "auto voz"
+    new "voz automática"
 
     # 00preferences.rpy:355
     old "clipboard voicing"
-    new "voz en clipboard"
+    new "voz por portapapeles"
 
     # 00preferences.rpy:364
     old "debug voicing"
-    new "depurar voz"
+    new "depuración de voz"
 
     # 00preferences.rpy:373
     old "emphasize audio"
@@ -511,23 +510,23 @@ translate spanish strings:
 
     # 00preferences.rpy:398
     old "gl framerate"
-    new "gl cuadros por s."
+    new "gl cuadros por segundo"
 
     # 00preferences.rpy:401
     old "gl tearing"
-    new "gl tearing"
+    new "gl {i}tearing{/i}"
 
     # 00preferences.rpy:413
     old "music volume"
-    new "volumen música"
+    new "volumen de música"
 
     # 00preferences.rpy:414
     old "sound volume"
-    new "volumen sonido"
+    new "volumen de sonido"
 
     # 00preferences.rpy:415
     old "voice volume"
-    new "volumen voz"
+    new "volumen de voz"
 
     # 00preferences.rpy:416
     old "mute music"
@@ -547,547 +546,119 @@ translate spanish strings:
 
     # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "'Portapapeles a voz' activado. Pulsa 'Mayús.+C' para desactivarlo."
+    new "Voz por portapapeles activada. Presiona 'Shift+C' para desactivarla."
 
     # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Voz automática dirá \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivar."
+    new "La voz automática dirá \"[renpy.display.tts.last]\". Presiona 'Alt+Shift+V' para desactivarla."
 
     # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Voz automática activada. Presiona 'v' para desactivarla."
-
-    # _compat\gamemenu.rpym:198
-    old "Empty Slot."
-    new "Vacío."
-
-    # _compat\gamemenu.rpym:355
-    old "Previous"
-    new "Anterior"
-
-    # _compat\gamemenu.rpym:362
-    old "Next"
-    new "Siguiente"
-
-    # _compat\preferences.rpym:428
-    old "Joystick Mapping"
-    new "Mapeado del mando"
-
-    # _developer\developer.rpym:38
-    old "Developer Menu"
-    new "Menú de desarrollo"
-
-    # _developer\developer.rpym:43
-    old "Interactive Director (D)"
-    new "Director interactivo (D)"
-
-    # _developer\developer.rpym:45
-    old "Reload Game (Shift+R)"
-    new "Reiniciar juego (Shift+R)"
-
-    # _developer\developer.rpym:47
-    old "Console (Shift+O)"
-    new "Consola (Mayús.+O)"
-
-    # _developer\developer.rpym:49
-    old "Variable Viewer"
-    new "Visor de variables"
-
-    # _developer\developer.rpym:51
-    old "Image Location Picker"
-    new "Selector de posición en imágenes"
-
-    # _developer\developer.rpym:53
-    old "Filename List"
-    new "Lista de archivos"
-
-    # _developer\developer.rpym:57
-    old "Show Image Load Log (F4)"
-    new "Mostrar registro de carga de imagen (F4)"
-
-    # _developer\developer.rpym:60
-    old "Hide Image Load Log (F4)"
-    new "Ocultar registro de carga de imagen (F4)"
-
-    # _developer\developer.rpym:63
-    old "Image Attributes"
-    new "Image Attributes"
-
-    # _developer\developer.rpym:90
-    old "[name] [attributes] (hidden)"
-    new "[name] [attributes] (hidden)"
-
-    # _developer\developer.rpym:94
-    old "[name] [attributes]"
-    new "[name] [attributes]"
-
-    # _developer\developer.rpym:143
-    old "Nothing to inspect."
-    new "Nada para inspeccionar."
-
-    # _developer\developer.rpym:154
-    old "Hide deleted"
-    new "Hide deleted"
-
-    # _developer\developer.rpym:154
-    old "Show deleted"
-    new "Show deleted"
-
-    # _developer\developer.rpym:278
-    old "Return to the developer menu"
-    new "Volver al menú de desarrollo"
-
-    # _developer\developer.rpym:438
-    old "Rectangle: %r"
-    new "Rectángulo: %r"
-
-    # _developer\developer.rpym:443
-    old "Mouse position: %r"
-    new "Posición del ratón: %r"
-
-    # _developer\developer.rpym:448
-    old "Right-click or escape to quit."
-    new "Clic-derecho o escape para salir."
-
-    # _developer\developer.rpym:480
-    old "Rectangle copied to clipboard."
-    new "Rectángulo copiado al portapapeles."
-
-    # _developer\developer.rpym:483
-    old "Position copied to clipboard."
-    new "Posición copiada al portapapeles."
-
-    # _developer\developer.rpym:502
-    old "Type to filter: "
-    new "Tipo a filtrar: "
-
-    # _developer\developer.rpym:630
-    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
-    new "Texturas: [tex_count] ([tex_size_mb:.1f] MB)"
-
-    # _developer\developer.rpym:634
-    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
-    new "Caché de imagen: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
-
-    # _developer\developer.rpym:644
-    old "✔ "
-    new "✔ "
-
-    # _developer\developer.rpym:647
-    old "✘ "
-    new "✘ "
-
-    # _developer\developer.rpym:652
-    old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ imagen prevista (correcto){/color}\n{color=#fcc}✘ imagen no prevista (fallido){/color}\n{color=#fff}Arrastra para mover.{/color}"
-
-    # _developer\inspector.rpym:38
-    old "Displayable Inspector"
-    new "Inspector de visualizables"
-
-    # _developer\inspector.rpym:61
-    old "Size"
-    new "Tamaño"
-
-    # _developer\inspector.rpym:65
-    old "Style"
-    new "Estilo"
-
-    # _developer\inspector.rpym:71
-    old "Location"
-    new "Ubicación"
-
-    # _developer\inspector.rpym:122
-    old "Inspecting Styles of [displayable_name!q]"
-    new "Inspeccionando estilos de [displayable_name!q]"
-
-    # _developer\inspector.rpym:139
-    old "displayable:"
-    new "visualizable:"
-
-    # _developer\inspector.rpym:145
-    old "        (no properties affect the displayable)"
-    new "        (no hay propiedades que afecten la visualización)"
-
-    # _developer\inspector.rpym:147
-    old "        (default properties omitted)"
-    new "        (propiedades por defecto omitidas)"
-
-    # _developer\inspector.rpym:185
-    old "<repr() failed>"
-    new "<repr() fallido>"
-
-    # _layout\classic_load_save.rpym:170
-    old "a"
-    new "a"
-
-    # _layout\classic_load_save.rpym:179
-    old "q"
-    new "r"
+    new "Voz automática activada. Presiona 'V' para desactivarla."
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
-    new "Contactando App Store\nPor favor, espera..."
+    new "Contactando con App Store\nPor favor, espera..."
 
-    # 00updater.rpy:375
+    # 00updater.rpy:372
     old "The Ren'Py Updater is not supported on mobile devices."
-    new "El Actualizador de Ren'Py no es compatible con dispositivos móviles."
+    new "El actualizador de Ren'Py no es compatible con dispositivos móviles."
 
-    # 00updater.rpy:494
+    # 00updater.rpy:491
     old "An error is being simulated."
-    new "Se simula un error."
+    new "Se está simulando un error."
 
-    # 00updater.rpy:678
+    # 00updater.rpy:672
     old "Either this project does not support updating, or the update status file was deleted."
-    new "O bien este proyecto no es compatible con la actualización o el archivo de estado de la actualización se ha eliminado."
+    new "Este proyecto no admite actualizaciones, o el archivo de estado de la actualización se eliminó."
 
-    # 00updater.rpy:692
+    # 00updater.rpy:686
     old "This account does not have permission to perform an update."
     new "Esta cuenta no tiene permiso para realizar una actualización."
 
-    # 00updater.rpy:695
+    # 00updater.rpy:689
     old "This account does not have permission to write the update log."
-    new "Esta cuenta no tiene permiso para escribir en el registro de actualización."
+    new "Esta cuenta no tiene permiso para escribir el registro de actualización."
 
-    # 00updater.rpy:722
+    # 00updater.rpy:716
     old "Could not verify update signature."
-    new "No se pudo verificar la actualización de firmas."
+    new "No se pudo verificar la firma de la actualización."
 
-    # 00updater.rpy:997
+    # 00updater.rpy:991
     old "The update file was not downloaded."
-    new "El archivo de actualización no se ha descargado."
+    new "El archivo de actualización no se descargó."
 
-    # 00updater.rpy:1015
+    # 00updater.rpy:1009
     old "The update file does not have the correct digest - it may have been corrupted."
-    new "El archivo de actualización no tiene el 'digest' correcto - es posible que esté dañado."
+    new "El archivo de actualización no tiene el compendio correcto; es posible que esté dañado."
 
-    # 00updater.rpy:1071
+    # 00updater.rpy:1065
     old "While unpacking {}, unknown type {}."
-    new "Tipo desconocido {1} al desempaquetar {0}."
+    new "Al desempaquetar {}, tipo desconocido {}."
 
-    # 00updater.rpy:1439
+    # 00updater.rpy:1412
     old "Updater"
     new "Actualizador"
 
-    # 00updater.rpy:1446
-    old "An error has occurred:"
-    new "Ha sucedido un error:"
-
-    # 00updater.rpy:1448
-    old "Checking for updates."
-    new "Buscando actualizaciones."
-
-    # 00updater.rpy:1450
+    # 00updater.rpy:1423
     old "This program is up to date."
     new "Este programa está actualizado."
 
-    # 00updater.rpy:1452
+    # 00updater.rpy:1425
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] está disponible. ¿Quieres instalarla?"
 
-    # 00updater.rpy:1454
+    # 00updater.rpy:1427
     old "Preparing to download the updates."
-    new "Preparando para descargar la actualización."
+    new "Preparando la descarga de las actualizaciones."
 
-    # 00updater.rpy:1456
+    # 00updater.rpy:1429
     old "Downloading the updates."
-    new "Descargando la actualización."
+    new "Descargando las actualizaciones."
 
-    # 00updater.rpy:1458
+    # 00updater.rpy:1431
     old "Unpacking the updates."
-    new "Desempaquetando la actualización."
+    new "Desempaquetando las actualizaciones."
 
-    # 00updater.rpy:1460
-    old "Finishing up."
-    new "Finalizando."
-
-    # 00updater.rpy:1462
+    # 00updater.rpy:1435
     old "The updates have been installed. The program will restart."
-    new "La actualización ha sido instalada. El programa se reiniciará."
+    new "Se han instalado las actualizaciones. El programa se reiniciará."
 
-    # 00updater.rpy:1464
+    # 00updater.rpy:1437
     old "The updates have been installed."
-    new "La actualización ha sido instalada."
+    new "Se han instalado las actualizaciones."
 
-    # 00updater.rpy:1466
+    # 00updater.rpy:1439
     old "The updates were cancelled."
-    new "La actualización ha sido cancelada."
+    new "Se han cancelado las actualizaciones."
 
-    # 00updater.rpy:1481
-    old "Proceed"
-    new "Continuar"
-
-    # 00gallery.rpy:585
+    # 00gallery.rpy:573
     old "Image [index] of [count] locked."
     new "Imagen [index] de [count] bloqueada."
 
-    # 00gallery.rpy:605
+    # 00gallery.rpy:593
     old "prev"
     new "ant."
 
-    # 00gallery.rpy:606
+    # 00gallery.rpy:594
     old "next"
     new "sig."
 
-    # 00gallery.rpy:607
+    # 00gallery.rpy:595
     old "slideshow"
     new "presentación"
 
-    # 00gallery.rpy:608
+    # 00gallery.rpy:596
     old "return"
     new "volver"
 
-    # 00gltest.rpy:70
-    old "Renderer"
-    new "Renderizador"
-
-    # 00gltest.rpy:74
-    old "Automatically Choose"
-    new "Escoger automáticamente"
-
-    # 00gltest.rpy:79
-    old "Force Angle/DirectX Renderer"
-    new "Forzar 'Angle/DirectX Renderer'"
-
-    # 00gltest.rpy:83
-    old "Force OpenGL Renderer"
-    new "Forzar renderizador OpenGL"
-
-    # 00gltest.rpy:87
-    old "Force Software Renderer"
-    new "Forzar renderizado por software"
-
-    # 00gltest.rpy:93
-    old "NPOT"
-    new "NPOT"
-
-    # 00gltest.rpy:97
-    old "Enable"
-    new "Activar"
-
-    # 00gltest.rpy:101
-    old "Disable"
-    new "Desactivar"
-
-    # 00gltest.rpy:131
-    old "Powersave"
-    new "Ahorro de energía"
-
-    # 00gltest.rpy:145
-    old "Framerate"
-    new "Cuadros por s."
-
-    # 00gltest.rpy:149
-    old "Screen"
-    new "Pantalla"
-
-    # 00gltest.rpy:153
-    old "60"
-    new "60"
-
-    # 00gltest.rpy:157
-    old "30"
-    new "30"
-
-    # 00gltest.rpy:163
-    old "Tearing"
-    new "Tearing"
-
-    # 00gltest.rpy:179
-    old "Changes will take effect the next time this program is run."
-    new "Los cambios se aplicarán la próxima vez que el programa se ejecute."
-
-    # 00gltest.rpy:213
-    old "Performance Warning"
-    new "Aviso de funcionamiento"
-
-    # 00gltest.rpy:218
-    old "This computer is using software rendering."
-    new "Este ordenador usa 'software rendering'."
-
-    # 00gltest.rpy:220
-    old "This computer is not using shaders."
-    new "Este ordenador no usa 'shaders'."
-
-    # 00gltest.rpy:222
-    old "This computer is displaying graphics slowly."
-    new "Este ordenador muestra los gráficos lentamente."
-
-    # 00gltest.rpy:224
-    old "This computer has a problem displaying graphics: [problem]."
-    new "Este ordenador tiene un problema mostrando los gráficos: [problem]."
-
-    # 00gltest.rpy:229
-    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "Los controladores gráficos pueden estar obsoletos o no funcionar adecuadamente. Esto puede conllevar que los gráficos se muestren lenta o incorrectamente. Actualizar DirectX puede solucionar este problema."
-
-    # 00gltest.rpy:231
-    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
-    new "Los controladores gráficos pueden estar obsoletos o no funcionar adecuadamente. Esto puede conllevar que los gráficos se muestren lenta o incorrectamente."
-
-    # 00gltest.rpy:236
-    old "Update DirectX"
-    new "Actualizar DirectX"
-
-    # 00gltest.rpy:242
-    old "Continue, Show this warning again"
-    new "Continuar. Mostrar este aviso de nuevo"
-
-    # 00gltest.rpy:246
-    old "Continue, Don't show warning again"
-    new "Continuar. No mostrar este aviso de nuevo"
-
-    # 00gltest.rpy:264
-    old "Updating DirectX."
-    new "Actualizando DirectX."
-
-    # 00gltest.rpy:268
-    old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
-    new "La instalación web de DirectX ha comenzado. Puede haber iniciado minimizada en la barra de tareas. Siga las instrucciones para instalar DirectX."
-
-    # 00gltest.rpy:272
-    old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}Nota:{/b} El programa de instalación de DirectX de Microsoft instalará, por defecto, la barra Bing. Si no desea esta barra, desactive la casilla correspondiente."
-
-    # 00gltest.rpy:276
-    old "When setup finishes, please click below to restart this program."
-    new "Cuando la instalación acabe, haga clic abajo para reiniciar el programa."
-
-    # 00gltest.rpy:278
-    old "Restart"
-    new "Reiniciar"
-
-    # 00gamepad.rpy:32
-    old "Select Gamepad to Calibrate"
-    new "Selecciona mando para calibrar"
-
-    # 00gamepad.rpy:35
-    old "No Gamepads Available"
-    new "No hay mandos disponibles"
-
-    # 00gamepad.rpy:54
-    old "Calibrating [name] ([i]/[total])"
-    new "Calibrando [name] ([i]/[total])"
-
-    # 00gamepad.rpy:58
-    old "Press or move the [control!s] [kind]."
-    new "Pulsa o mueve: [control!s] [kind]."
-
-    # 00gamepad.rpy:66
-    old "Skip (A)"
-    new "Salto (A)"
-
-    # 00gamepad.rpy:69
-    old "Back (B)"
-    new "Atrás (B)"
-
-    # _errorhandling.rpym:531
-    old "Open"
-    new "Abrir"
-
-    # _errorhandling.rpym:533
-    old "Opens the traceback.txt file in a text editor."
-    new "Abre el archivo de rastreo 'traceback.txt' en un editor de texto."
-
-    # _errorhandling.rpym:535
-    old "Copy"
-    new "Copiar"
-
-    # _errorhandling.rpym:537
-    old "Copies the traceback.txt file to the clipboard."
-    new "Copiar el archivo traceback.txt al portapapeles."
-
-    # _errorhandling.rpym:564
-    old "An exception has occurred."
-    new "Ha sucedido una excepción."
-
-    # _errorhandling.rpym:584
-    old "Rollback"
-    new "Volver atrás"
-
-    # _errorhandling.rpym:586
-    old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Intenta volver a un momento anterior y permite guardar o escoger una opción diferente."
-
-    # _errorhandling.rpym:589
-    old "Ignore"
-    new "Ignorar"
-
-    # _errorhandling.rpym:593
-    old "Ignores the exception, allowing you to continue."
-    new "Ignora la excepción y permite continuar."
-
-    # _errorhandling.rpym:595
-    old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "Ignora la excepción y permite continuar. Suele conllevar más errores."
-
-    # _errorhandling.rpym:599
-    old "Reload"
-    new "Recargar"
-
-    # _errorhandling.rpym:601
-    old "Reloads the game from disk, saving and restoring game state if possible."
-    new "Recarga el juego del disco, guardando y restaurando la partida si es posible."
-
-    # _errorhandling.rpym:604
-    old "Console"
-    new "Consola"
-
-    # _errorhandling.rpym:606
-    old "Opens a console to allow debugging the problem."
-    new "Abre una consola y permite depurar el problema."
-
-    # _errorhandling.rpym:616
-    old "Quits the game."
-    new "Sale del juego."
-
-    # _errorhandling.rpym:640
-    old "Parsing the script failed."
-    new "Error en el análisis del código."
-
-    # _errorhandling.rpym:666
-    old "Opens the errors.txt file in a text editor."
-    new "Abre el archivo de errores, 'errors.txt', en un editor de texto."
-
-    # _errorhandling.rpym:670
-    old "Copies the errors.txt file to the clipboard."
-    new "Copia el archivo errors.txt al portapapeles."
-
-translate spanish strings:
-
-    # _errorhandling.rpym:540
-    old "Copy BBCode"
-    new "Copiar BBCode"
-
-    # _errorhandling.rpym:542
-    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Copia el archivo traceback.txt en el portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
-
-    # _errorhandling.rpym:544
-    old "Copy Markdown"
-    new "Copiar Markdown"
-
-    # _errorhandling.rpym:546
-    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
-    new "Copia el archivo traceback.txt al portapapeles como Markdown para Discord."
-
-    # _errorhandling.rpym:681
-    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Copia el archivo errors.txt en el portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
-
-    # _errorhandling.rpym:685
-    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
-    new "Copia el archivo errors.txt al portapapeles como Markdown para Discord."
-
-translate spanish strings:
-
     # 00accessibility.rpy:76
     old "Font Override"
-    new "Sobrescribir fuente"
+    new "Reemplazar fuente"
 
     # 00accessibility.rpy:80
     old "Default"
-    new "Por defecto"
+    new "Predeterminada"
 
     # 00accessibility.rpy:84
     old "DejaVu Sans"
@@ -1099,15 +670,15 @@ translate spanish strings:
 
     # 00accessibility.rpy:94
     old "Text Size Scaling"
-    new "Escala del tamaño del texto"
+    new "Escalado del tamaño del texto"
 
     # 00accessibility.rpy:100
     old "Reset"
-    new "Reiniciar"
+    new "Restablecer"
 
     # 00accessibility.rpy:105
     old "Line Spacing Scaling"
-    new "Escala del espacio de línea"
+    new "Escalado del interlineado"
 
     # 00accessibility.rpy:117
     old "Self-Voicing"
@@ -1115,7 +686,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:121
     old "Off"
-    new "Apagado"
+    new "Desactivada"
 
     # 00accessibility.rpy:125
     old "Text-to-speech"
@@ -1127,7 +698,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:133
     old "Debug"
-    new "Depurar"
+    new "Depuración"
 
     # 00preferences.rpy:430
     old "font transform"
@@ -1139,27 +710,47 @@ translate spanish strings:
 
     # 00preferences.rpy:441
     old "font line spacing"
-    new "fuente de espacio de líneas"
+    new "interlineado de fuente"
+
+    # _developer\developer.rpym:63
+    old "Image Attributes"
+    new "Atributos de imagen"
+
+    # _developer\developer.rpym:90
+    old "[name] [attributes] (hidden)"
+    new "[name] [attributes] (oculto)"
+
+    # _developer\developer.rpym:94
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # _developer\developer.rpym:154
+    old "Hide deleted"
+    new "Ocultar borrados"
+
+    # _developer\developer.rpym:154
+    old "Show deleted"
+    new "Mostrar borrados"
 
     # renpy/common/00accessibility.rpy:146
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    new "Las opciones en este menú están destinadas a mejorar la accesibilidad. Es posible que no funcionen con todos los juegos, y algunas combinaciones de opciones pueden hacer que el juego no se pueda jugar. Esto no es un problema con el juego o el motor. Para obtener los mejores resultados al cambiar las fuentes, intente mantener el tamaño del texto igual al original."
+    new "Las opciones en este menú están destinadas a mejorar la accesibilidad. Es posible que no funcionen con todos los juegos, y algunas combinaciones de opciones pueden hacer que el juego no se pueda jugar. Esto no es un problema con el juego o el motor. Para obtener los mejores resultados al cambiar las fuentes, intenta mantener el tamaño del texto igual al original."
+
+    # renpy/common/00accessibility.rpy:193
+    old "Self-Voicing Volume Drop"
+    new "Reducción de volumen de voz automática"
+
+    # renpy/common/00preferences.rpy:384
+    old "self voicing volume drop"
+    new "reducción de volumen de voz automática"
+
+    # renpy/common/00preferences.rpy:464
+    old "system cursor"
+    new "cursor del sistema"
 
     # renpy/common/00accessibility.rpy:180
     old "High Contrast Text"
     new "Texto de alto contraste"
-
-    # renpy/common/00accessibility.rpy:215
-    old "Self-Voicing Volume Drop"
-    new "Caída de Volumen de Voz Automática"
-
-    # renpy/common/00preferences.rpy:402
-    old "self voicing volume drop"
-    new "caída de volumen de voz automática"
-
-    # renpy/common/00preferences.rpy:478
-    old "system cursor"
-    new "cursor del sistema"
 
     # renpy/common/00preferences.rpy:487
     old "renderer menu"
@@ -1173,50 +764,563 @@ translate spanish strings:
     old "high contrast text"
     new "texto de alto contraste"
 
-    # renpy/common/00gltest.rpy:100
-    old "Force GL Renderer"
-    new "Forzar renderizador GL"
+    # renpy/common/00preferences.rpy:511
+    old "audio when minimized"
+    new "audio cuando está minimizado"
 
-    # renpy/common/00gltest.rpy:105
-    old "Force ANGLE Renderer"
-    new "Force renderizador ANGLE"
+    # renpy/common/00preferences.rpy:531
+    old "main volume"
+    new "volumen principal"
 
-    # renpy/common/00gltest.rpy:110
-    old "Force GLES Renderer"
-    new "Forzar renderizador GLES"
+    # renpy/common/00preferences.rpy:535
+    old "mute main"
+    new "silenciar volumen principal"
 
-    # renpy/common/00gltest.rpy:116
+    # renpy/common/00speechbubble.rpy:299
+    old "Speech Bubble Editor"
+    new "Editor de globos de diálogo"
+
+    # renpy/common/00speechbubble.rpy:304
+    old "(hide)"
+    new "(oculto)"
+
+    # renpy/common/00gui.rpy:455
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    new "Este archivo se creó en otro dispositivo. Los archivos de guardado maliciosamente creados pueden dañar tu computadora. ¿Confías en el creador de este archivo y en todos los que podrían haberlo modificado?"
+
+    # renpy/common/00gui.rpy:456
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    new "¿Confías en el dispositivo en el que se creó el archivo de guardado? Sólo debes elegir sí si eres el único usuario del dispositivo."
+
+    # renpy/common/00preferences.rpy:520
+    old "web cache preload"
+    new "precarga de la caché web"
+
+    # renpy/common/00webvideo.rpy:5
+    old "Touch to play the video."
+    new "Toca aquí para reproducir el video."
+
+    # renpy/common/00director.rpy:1748
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    new "Haz clic para alternar el atributo, clic derecho para alternar el atributo negativo."
+
+    # renpy/common/00director.rpy:1771
+    old "Click to set transform, right click to add to transform list."
+    new "Haz clic para establecer la transformación, clic derecho para añadir a la lista de transformaciones."
+
+    # renpy/common/00director.rpy:1792
+    old "Click to set, right click to add to behind list."
+    new "Haz clic para fijar, clic derecho para añadir a la lista de detrás."
+
+    # renpy/common/00preferences.rpy:528
+    old "audio when unfocused"
+    new "audio cuando no está enfocado"
+
+    # renpy/common/00preferences.rpy:552
+    old "voice after game menu"
+    new "voz después de un menú del juego"
+
+    # renpy/common/00sync.rpy:58
+    old "Sync downloaded."
+    new "Sincronización descargada."
+
+    # renpy/common/00sync.rpy:178
+    old "Could not connect to the Ren'Py Sync server."
+    new "No se pudo conectar al servidor Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:180
+    old "The Ren'Py Sync server timed out."
+    new "Se agotó el tiempo de espera del servidor Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:182
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    new "Se produjo un error desconocido al conectarse al servidor Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:255
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    new "El servidor Ren'Py Sync no tiene una copia de esta sincronización. Es posible que el ID de sincronización no sea válido o que se haya agotado el tiempo de espera."
+
+    # renpy/common/00sync.rpy:397
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    new "Ingresa el ID de sincronización que generaste.\nNunca ingreses un ID de sincronización que no hayas creado tú."
+
+    # renpy/common/00sync.rpy:416
+    old "The sync ID is not in the correct format."
+    new "El ID de sincronización no tiene el formato correcto."
+
+    # renpy/common/00sync.rpy:436
+    old "The sync could not be decrypted."
+    new "No se pudo descifrar la sincronización."
+
+    # renpy/common/00sync.rpy:459
+    old "The sync belongs to a different game."
+    new "La sincronización pertenece a un juego diferente."
+
+    # renpy/common/00sync.rpy:464
+    old "The sync contains a file with an invalid name."
+    new "La sincronización contiene un archivo con un nombre no válido."
+
+    # renpy/common/00sync.rpy:517
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    new "Esto cargará tus partidas guardadas en el {a=https://sync.renpy.org}Servidor Ren'Py Sync{/a}.\n¿Quieres continuar?"
+
+    # renpy/common/00sync.rpy:546
+    old "Enter Sync ID"
+    new "Ingresa el Sync ID"
+
+    # renpy/common/00sync.rpy:557
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    new "Esto se pondrá en contacto con el {a=https://sync.renpy.org}Servidor Ren'Py Sync{/a}."
+
+    # renpy/common/00sync.rpy:584
+    old "Sync Success"
+    new "Sincronización exitosa"
+
+    # renpy/common/00sync.rpy:587
+    old "The Sync ID is:"
+    new "El Sync ID es:"
+
+    # renpy/common/00sync.rpy:593
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    new "Puedes usar este ID para descargar tu partida guardada en otro dispositivo.\nEsta sincronización caducará en una hora.\nRen'Py Sync es gracias a {a=https://www.renpy.org/sponsors.html}los patrocinadores de Ren'Py{/a}."
+
+    # renpy/common/00sync.rpy:619
+    old "Sync Error"
+    new "Error de sincronización"
+
+    # renpy/common/00speechbubble.rpy:391
+    old "(clear retained bubbles)"
+    new "(borrar burbujas retenidas)"
+
+    # renpy/common/00director.rpy:1776
+    old "Customize director.transforms to add more transforms."
+    new "Modifica 'director.transforms' para añadir más transformaciones."
+
+    # renpy/common/00director.rpy:1821
+    old "Click to set."
+    new "Haz clic para ajustar."
+
+    # renpy/common/00director.rpy:1822
+    old "Customize director.transitions to add more transitions."
+    new "Modifica 'director.transitions' para añadir más transiciones."
+
+    # renpy/common/00director.rpy:1845
+    old "Customize director.audio_channels to add more channels."
+    new "Modifica 'director.audio_channels' para añadir más canales."
+
+    # renpy/common/00preferences.rpy:587
+    old "restore window position"
+    new "restaurar la posición de la ventana"
+
+    # renpy/common/00preferences.rpy:596
+    old "reset"
+    new "restablecer"
+
+    # renpy/common/00updater.rpy:504
+    old "No update methods found."
+    new "No se encontraron métodos de actualización."
+
+    # renpy/common/00updater.rpy:551
+    old "Could not download file list: "
+    new "No se pudo descargar la lista de archivos: "
+
+    # renpy/common/00updater.rpy:554
+    old "File list digest does not match."
+    new "El compendio de la lista de archivos no coincide."
+
+    # renpy/common/00updater.rpy:2072
+    old "Preparing to download the game data."
+    new "Preparando la descarga de los datos del juego."
+
+    # renpy/common/00updater.rpy:2074
+    old "Downloading the game data."
+    new "Descargando los datos del juego."
+
+    # renpy/common/00updater.rpy:2076
+    old "The game data has been downloaded."
+    new "Se han descargado los datos del juego."
+
+    # renpy/common/00updater.rpy:2078
+    old "An error occured when trying to download game data:"
+    new "Se ha producido un error al intentar descargar los datos del juego:"
+
+    # renpy/common/00updater.rpy:2083
+    old "This game cannot be run until the game data has been downloaded."
+    new "Este juego no puede ejecutarse hasta que se hayan descargado los datos del juego."
+
+    # renpy/common/00updater.rpy:2090
+    old "Retry"
+    new "Reintentar"
+
+    # renpy/common/00accessibility.rpy:122
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
+    new "Menú de accesibilidad. Usa las flechas arriba y abajo para navegar y la tecla Intro para activar botones y barras."
+
+    # renpy/common/00accessibility.rpy:199
+    old "Self-voicing support is limited when using a touch screen."
+    new "El soporte de voz automática es limitado cuando se utiliza una pantalla táctil."
+
+    # renpy/common/00gui.rpy:454
+    old "Are you sure you want to continue where you left off?"
+    new "¿Seguro que quieres continuar donde lo dejaste?"
+
+    # renpy/common/00preferences.rpy:440
+    old "self voicing enable"
+    new "activar voz automática"
+
+    # renpy/common/00preferences.rpy:442
+    old "self voicing disable"
+    new "desactivar voz automática"
+
+    # renpy/common/00preferences.rpy:457
+    old "clipboard voicing enable"
+    new "activar voz por portapapeles"
+
+    # renpy/common/00preferences.rpy:459
+    old "clipboard voicing disable"
+    new "desactivar voz por portapapeles"
+
+    # renpy/common/00preferences.rpy:466
+    old "debug voicing enable"
+    new "activar depuración de voz"
+
+    # renpy/common/00preferences.rpy:468
+    old "debug voicing disable"
+    new "desactivar depuración de voz"
+
+    # renpy/common/00translation.rpy:63
+    old "Translation identifier: [identifier]"
+    new "Identificador de traducción: [identifier]"
+
+    # renpy/common/00translation.rpy:84
+    old " translates [tl.filename]:[tl.linenumber]"
+    new " traduce [tl.filename]:[tl.linenumber]"
+
+    # renpy/common/000statements.rpy:28
+    old "Click to play the video."
+    new "Haz clic para reproducir el video."
+
+    # renpy/common/00accessibility.rpy:180
+    old "Mono Audio"
+    new "Audio mono"
+
+    # renpy/common/00accessibility.rpy:182
+    old "Enable"
+    new "Activado"
+
+    # renpy/common/00accessibility.rpy:186
+    old "Disable"
+    new "Desactivado"
+
+    # renpy/common/00accessibility.rpy:246
+    old "Kerning"
+    new "Interletraje"
+
+    # renpy/common/00accessibility.rpy:288
+    old "Self-Voicing and Audio"
+    new "Voz automática y audio"
+
+    # renpy/common/00accessibility.rpy:292
+    old "Text"
+    new "Texto"
+
+    # renpy/common/00action_other.rpy:786
+    old "Open [text] directory."
+    new "Abrir el directorio [text]"
+
+    # renpy/common/00preferences.rpy:602
+    old "mono audio"
+    new "audio mono"
+
+    # renpy/common/00preferences.rpy:611
+    old "font kerning"
+    new "interletraje de fuente"
+
+    # renpy/common/00sync.rpy:511
+    old "Continue"
+    new "Continuar"
+
+    # renpy/common/00translation.rpy:101
+    old "\n{color=#fff}Copied to clipboard.{/color}"
+    new "\n{color=#fff}Copiado al portapapeles.{/color}"
+
+    # renpy/common/00updater.rpy:1935
+    old "An error has occurred:"
+    new "Ha ocurrido un error:"
+
+    # renpy/common/00updater.rpy:1937
+    old "Checking for updates."
+    new "Buscando actualizaciones."
+
+    # renpy/common/00updater.rpy:1949
+    old "Finishing up."
+    new "Finalizando."
+
+    # renpy/common/00updater.rpy:1970
+    old "Proceed"
+    new "Continuar"
+
+    # renpy/common/00updater.rpy:1992
+    old "An error occurred when trying to download game data:"
+    new "Ha ocurrido un error al intentar descargar los datos del juego:"
+
+    # renpy/common/00gltest.rpy:89
+    old "Renderer"
+    new "Renderizador"
+
+    # renpy/common/00gltest.rpy:91
+    old "Automatically Choose"
+    new "Escoger automáticamente"
+
+    # renpy/common/00gltest.rpy:96
     old "Force GL2 Renderer"
     new "Forzar renderizador GL2"
 
-    # renpy/common/00gltest.rpy:121
+    # renpy/common/00gltest.rpy:101
     old "Force ANGLE2 Renderer"
     new "Forzar renderizador ANGLE2"
 
-    # renpy/common/00gltest.rpy:126
+    # renpy/common/00gltest.rpy:106
     old "Force GLES2 Renderer"
     new "Forzar renderizador GLES2"
 
-    # renpy/common/00gltest.rpy:136
+    # renpy/common/00gltest.rpy:112
     old "Enable (No Blocklist)"
     new "Habilitar (sin Blocklist)"
 
-    # renpy/common/00gltest.rpy:249
+    # renpy/common/00gltest.rpy:135
+    old "Powersave"
+    new "Ahorro de energía"
+
+    # renpy/common/00gltest.rpy:145
+    old "Framerate"
+    new "Cuadros por segundo"
+
+    # renpy/common/00gltest.rpy:147
+    old "Screen"
+    new "Pantalla"
+
+    # renpy/common/00gltest.rpy:151
+    old "60"
+    new "60"
+
+    # renpy/common/00gltest.rpy:155
+    old "30"
+    new "30"
+
+    # renpy/common/00gltest.rpy:159
+    old "Tearing"
+    new "Tearing"
+
+    # renpy/common/00gltest.rpy:171
+    old "Changes will take effect the next time this program is run."
+    new "Los cambios se aplicarán la próxima vez que el programa se ejecute."
+
+    # renpy/common/00gltest.rpy:207
+    old "Performance Warning"
+    new "Aviso de funcionamiento"
+
+    # renpy/common/00gltest.rpy:212
+    old "This computer is using software rendering."
+    new "Esta computadora usa {i}software rendering{/i}."
+
+    # renpy/common/00gltest.rpy:214
     old "This game requires use of GL2 that can't be initialised."
-    new "Este juego requiere el uso de GL2 que no se puede inicializar."
+    new "Este juego requiere el uso de GL2, que no se puede inicializar."
 
-    # renpy/common/00gltest.rpy:259
+    # renpy/common/00gltest.rpy:216
+    old "This computer has a problem displaying graphics: [problem]."
+    new "Esta computadora tiene un problema mostrando los gráficos: [problem]."
+
+    # renpy/common/00gltest.rpy:220
+    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
+    new "Los controladores gráficos pueden estar obsoletos o no funcionar correctamente. Esto puede provocar que los gráficos se muestren lenta o incorrectamente."
+
+    # renpy/common/00gltest.rpy:224
     old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
-    new "El archivo {a=edit:1:log.txt}log.txt{/a} puede contener información para ayudarte a encontrar el problema en tu ordenador."
+    new "El archivo {a=edit:1:log.txt}log.txt{/a} puede contener información para ayudarte a encontrar el problema en tu computadora."
 
-    # renpy/common/00gltest.rpy:264
+    # renpy/common/00gltest.rpy:229
     old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
-    new "Puede encontrar más detalles sobre cómo solucionar este problema en la {a=[url]} documentación {/a}."
+    new "Puedes encontrar más detalles sobre cómo solucionar este problema en la {a=[url]}documentación{/a}."
 
-    # renpy/common/00gltest.rpy:281
+    # renpy/common/00gltest.rpy:234
+    old "Continue, Show this warning again"
+    new "Continuar. Mostrar este aviso de nuevo"
+
+    # renpy/common/00gltest.rpy:238
+    old "Continue, Don't show warning again"
+    new "Continuar. No mostrar este aviso de nuevo"
+
+    # renpy/common/00gltest.rpy:246
     old "Change render options"
     new "Cambiar las opciones de renderizado"
 
-    # renpy/common/00gamepad.rpy:58
+    # renpy/common/00gamepad.rpy:33
+    old "Select Gamepad to Calibrate"
+    new "Selecciona control para calibrar"
+
+    # renpy/common/00gamepad.rpy:36
+    old "No Gamepads Available"
+    new "No hay controles disponibles"
+
+    # renpy/common/00gamepad.rpy:56
+    old "Calibrating [name] ([i]/[total])"
+    new "Calibrando [name] ([i]/[total])"
+
+    # renpy/common/00gamepad.rpy:60
     old "Press or move the '[control!s]' [kind]."
-    new "Presiona o mueve el '[control!s]' [kind]."
+    new "Presiona o mueve el [control!s] [kind]."
+
+    # renpy/common/00gamepad.rpy:70
+    old "Skip (A)"
+    new "Saltar (A)"
+
+    # renpy/common/00gamepad.rpy:73
+    old "Back (B)"
+    new "Atrás (B)"
+
+    # renpy/common/_errorhandling.rpym:764
+    old "Open"
+    new "Abrir"
+
+    # renpy/common/_errorhandling.rpym:766
+    old "Opens the traceback.txt file in a text editor."
+    new "Abre el archivo de rastreo 'traceback.txt' en un editor de texto."
+
+    # renpy/common/_errorhandling.rpym:768
+    old "Copy BBCode"
+    new "Copiar BBCode"
+
+    # renpy/common/_errorhandling.rpym:770
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Copia el archivo 'traceback.txt' al portapapeles como BBCode para foros como https://lemmasoft.renai.us/."
+
+    # renpy/common/_errorhandling.rpym:772
+    old "Copy Markdown"
+    new "Copiar Markdown"
+
+    # renpy/common/_errorhandling.rpym:774
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "Copia el archivo 'traceback.txt' al portapapeles como Markdown para Discord."
+
+    # renpy/common/_errorhandling.rpym:806
+    old "An exception has occurred."
+    new "Ha sucedido una excepción."
+
+    # renpy/common/_errorhandling.rpym:835
+    old "Rollback"
+    new "Volver atrás"
+
+    # renpy/common/_errorhandling.rpym:837
+    old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
+    new "Intenta volver a un momento anterior y permite guardar o escoger una decisión diferente."
+
+    # renpy/common/_errorhandling.rpym:840
+    old "Ignore"
+    new "Ignorar"
+
+    # renpy/common/_errorhandling.rpym:844
+    old "Ignores the exception, allowing you to continue."
+    new "Ignora la excepción y permite continuar."
+
+    # renpy/common/_errorhandling.rpym:846
+    old "Ignores the exception, allowing you to continue. This often leads to additional errors."
+    new "Ignora la excepción y permite continuar. Suele conllevar más errores."
+
+    # renpy/common/_errorhandling.rpym:850
+    old "Reload"
+    new "Recargar"
+
+    # renpy/common/_errorhandling.rpym:852
+    old "Reloads the game from disk, saving and restoring game state if possible."
+    new "Recarga el juego desde el disco, guardando y restaurando el estado del juego si es posible."
+
+    # renpy/common/_errorhandling.rpym:855
+    old "Console"
+    new "Consola"
+
+    # renpy/common/_errorhandling.rpym:857
+    old "Opens a console to allow debugging the problem."
+    new "Abre una consola y permite depurar el problema."
+
+    # renpy/common/_errorhandling.rpym:870
+    old "Quits the game."
+    new "Sale del juego."
+
+    # renpy/common/_errorhandling.rpym:892
+    old "Parsing the script failed."
+    new "Error en el análisis del código."
+
+    # renpy/common/00accessibility.rpy:143
+    old "Screen Reader"
+    new "Lector de pantalla"
+
+    # renpy/common/00accessibility.rpy:183
+    old "Self-Voicing Speed"
+    new "Velocidad de voz automática"
+
+    # renpy/common/00accessibility.rpy:205
+    old "Self-Voicing Voice"
+    new "Voz de la voz automática"
+
+    # renpy/common/00accessibility.rpy:293
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars. Press R to reset self-voicing settings to their default values and enable self-voicing."
+    new "Menú de accesibilidad. Usa las flechas arriba y abajo para navegar y la tecla Intro para activar botones y barras. Presiona R para restablecer los ajustes de voz automática a sus valores predeterminados y activarla."
+
+    # renpy/common/00accessibility.rpy:335
+    old "Press R to reset all self-voicing settings to their default values, and enable self-voicing."
+    new "Presiona R para restablecer todos los ajustes de voz automática a sus valores predeterminados y activarla."
+
+    # renpy/common/00accessibility.rpy:342
+    old "Self-voicing settings reset."
+    new "Se restablecieron los ajustes de voz automática."
+
+    # renpy/common/00keymap.rpy:355
+    old " Copied screenshot to clipboard."
+    new " Captura de pantalla copiada al portapapeles."
+
+    # renpy/common/00preferences.rpy:476
+    old "screenreader voicing"
+    new "voz de lector de pantalla"
+
+    # renpy/common/00preferences.rpy:479
+    old "screenreader voicing enable"
+    new "activar voz de lector de pantalla"
+
+    # renpy/common/00preferences.rpy:481
+    old "screenreader voicing disable"
+    new "desactivar voz de lector de pantalla"
+
+    # renpy/common/00preferences.rpy:635
+    old "self voicing voice"
+    new "voz de la voz automática"
+
+    # renpy/common/00preferences.rpy:637
+    old "voice [text]"
+    new "voz [text]"
+
+    # renpy/common/00preferences.rpy:640
+    old "voice "
+    new "voz "
+
+    # renpy/common/00preferences.rpy:648
+    old "self voicing speed"
+    new "velocidad de voz automática"
+
+    # renpy/common/00preferences.rpy:651
+    old "self-voicing speed"
+    new "velocidad de voz automática"
+
+    # renpy/common/00preferences.rpy:761
+    old "Screen reader voicing enabled. Press 'shift+V' to disable."
+    new "Voz de lector de pantalla activada. Presiona 'Shift+V' para desactivarla."
+
+    # renpy/common/00sync.rpy:577
+    old "Sync Progress"
+    new "Progreso de sincronización"
+
+    # renpy/common/00updater.rpy:885
+    old "The update source does not support RPU updates."
+    new "La fuente de actualización no admite actualizaciones RPU."
+
