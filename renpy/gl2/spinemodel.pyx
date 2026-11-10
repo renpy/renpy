@@ -1284,62 +1284,6 @@ cdef class SpineModel:
             traceback.print_exc()
             return None
 
-    def debug_render_items(self):
-        """Return the current drawing commands as Python data for diagnostics."""
-        if not self.loaded or self.drawable == NULL:
-            return []
-
-        cdef spine_render_command command
-        cdef int32_t num_vertices, num_indices
-        cdef float* positions
-        cdef float* uvs
-        cdef uint32_t* colors
-        cdef uint32_t* dark_colors
-        cdef uint16_t* indices
-        cdef uint32_t packed
-        cdef int j, page_index
-        cdef float offset_x, offset_y
-        cdef list items = []
-
-        offset_x = self.offset_x if self.has_bounds else 0.0
-        offset_y = self.offset_y if self.has_bounds else 0.0
-
-        command = spine_skeleton_drawable_render(self.drawable)
-        while command != NULL:
-            num_vertices = spine_render_command_get_num_vertices(command)
-            num_indices = spine_render_command_get_num_indices(command)
-            positions = spine_render_command_get_positions(command)
-            uvs = spine_render_command_get_uvs(command)
-            colors = spine_render_command_get_colors(command)
-            dark_colors = spine_render_command_get_dark_colors(command)
-            indices = spine_render_command_get_indices(command)
-            page_index = <int><intptr_t> spine_render_command_get_texture(command)
-
-            item = {
-                "page_index": page_index,
-                "page_key": self.page_names[page_index] if 0 <= page_index < len(self.page_names) else None,
-                "blend_mode": spine_render_command_get_blend_mode(command),
-                "positions": [], "uvs": [], "colors": [], "dark_colors": [], "indices": [],
-            }
-            if positions != NULL and uvs != NULL:
-                for j in range(num_vertices):
-                    item["positions"].extend((positions[j * 2] + offset_x, positions[j * 2 + 1] + offset_y))
-                    item["uvs"].extend((uvs[j * 2], uvs[j * 2 + 1]))
-            for j in range(num_vertices):
-                packed = colors[j] if colors != NULL else 0xffffffff
-                item["colors"].extend((((packed >> 16) & 0xff) / 255.0, ((packed >> 8) & 0xff) / 255.0,
-                                       (packed & 0xff) / 255.0, ((packed >> 24) & 0xff) / 255.0))
-                packed = dark_colors[j] if dark_colors != NULL else 0
-                item["dark_colors"].extend((((packed >> 16) & 0xff) / 255.0, ((packed >> 8) & 0xff) / 255.0,
-                                            (packed & 0xff) / 255.0))
-            if indices != NULL:
-                for j in range(num_indices):
-                    item["indices"].append(indices[j])
-            items.append(item)
-            command = spine_render_command_get_next(command)
-
-        return items
-
     def get_animation_names(self):
         """Get list of available animation names"""
         if not self.loaded or self.data is None:
