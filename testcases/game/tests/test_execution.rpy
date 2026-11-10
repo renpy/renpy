@@ -173,3 +173,32 @@ testsuite context:
         assert eval ("context_test_inner_val" in globals())
         $ renpy.end_replay()
         assert eval ("replay_scope" in globals())
+
+
+label replay_window_label:
+    "Replay window line."
+    return
+
+testsuite replay_window:
+    description "Tests that config.window sets the dialogue window mode when a replay starts."
+
+    after testcase:
+        $ config.window = None
+
+    testcase config_window:
+        description "A replay uses config.window, and a value given in the replay's scope takes priority over it."
+
+        # The window is checked at the first say statement, where auto mode has shown it.
+        parameter (mode, scope, auto, shown) = [
+            ("auto", {}, True, True),
+            ("show", {}, False, True),
+            ("hide", {}, False, False),
+            ("auto", {"_window_auto": False}, False, False),
+        ]
+
+        $ config.window = mode
+        run Replay("replay_window_label", scope=scope, locked=False)
+        assert eval (_in_replay == "replay_window_label")
+        assert eval (_window_auto == auto)
+        assert eval (_window == shown)
+        $ renpy.end_replay()

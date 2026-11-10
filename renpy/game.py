@@ -386,6 +386,10 @@ def call_replay(label, scope={}):
     # This has to be here, to ensure the scope stuff works.
     renpy.exports.execute_default_statement()
 
+    # clean_stores undid the _init_window call made when the game started. This is
+    # before the scopes are applied, so that they can override config.window.
+    renpy.store._init_window()
+
     for k, v in renpy.config.replay_scope.items():
         stores = k.split(".")
         current_obj = renpy.store
