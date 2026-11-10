@@ -141,7 +141,7 @@ class SpineHookContext(NamedTuple):
 
 @dataclass(frozen=True)
 class SpinePolicy:
-    """Rules for changing a character’s animations and skins."""
+    """Rules for changing a character's animations and skins."""
     default: SpineTransition = SpineTransition()
     # Fade-out time for dropped tracks, and track mix time when none is given.
     mix_time: float = DEFAULT_MIX_TIME
@@ -294,7 +294,7 @@ class SpineCommonLike(Protocol):
 
 
 class SpineDisplayableLike(Protocol):
-    """The displayable information needed to manage a character’s animation."""
+    """The displayable information needed to manage a character's animation."""
     atlas_path: str
     skeleton_path: str
     zoom: float
@@ -327,7 +327,7 @@ class SpineOp(Protocol):
 
 
 class SkinOp(NamedTuple):
-    """Change the character’s skins, optionally restoring default attachments."""
+    """Change the character's skins, optionally restoring default attachments."""
     skins: Tuple[str, ...]
     setup_slots: bool
 
@@ -390,7 +390,7 @@ class MixOp(NamedTuple):
 
 
 class OverlayOp(NamedTuple):
-    """Layer an animation over the character’s other tracks."""
+    """Layer an animation over the character's other tracks."""
     track: int
     spec: SpineTrackSpec
     mix_time: float
