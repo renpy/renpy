@@ -175,19 +175,29 @@ def showing(name, layer=None):
 
     Returns true if an image with the tag given in `name` is showing on
     `layer`, and any attributes in `name` match the beginning of the
-    attributes recorded for that tag, in order.
+    attributes recorded for that tag, in order. Otherwise, returns a
+    false value.
+
+    For an image defined with its full name, attributes are recorded in
+    the order of that name, which may differ from the order given in the
+    show statement. Layered images and other images that choose their
+    own attributes may record them in a different order.
 
     `name`
         May be a string giving the image name or a tuple giving each
         component of the image name. It may also be a string giving
-        only the image tag.
+        only the image tag. Raises ValueError if this is empty.
 
     `layer`
-        The layer to check. If None, uses the default layer for `tag`.
+        The layer to check. If None, uses the default layer for the tag
+        in `name`.
     """
 
     if not isinstance(name, tuple):
         name = tuple(name.split())
+
+    if not name:
+        raise ValueError("renpy.showing requires a non-empty image name.")
 
     layer = default_layer(layer, name)
 
