@@ -66,6 +66,7 @@ the omission in future versions.
 * Clinton Nguyen
 * CobaltCore
 * CodePsy
+* Cosumicu
 * Craig de Stigter
 * Craig P. Donson
 * 被诅咒的章鱼
