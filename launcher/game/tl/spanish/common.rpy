@@ -158,8 +158,12 @@
 
     # 00action_file.rpy:344
     old "Save slot %s: [text]"
-    new "Ranura de guardado %s: [text]"
+    new "Guardar ranura %s: [text]"
 
+    # 00action_file.rpy:434
+    old "Load slot %s: [text]"
+    new "Cargar ranura %s: [text]"
+    
     # 00action_file.rpy:459
     old "Delete slot [text]"
     new "Borrar ranura [text]"
@@ -174,11 +178,11 @@
 
     # 00action_file.rpy:543
     old "File page [text]"
-    new "Página de guardado [text]"
+    new "Página de archivos [text]"
 
     # 00action_file.rpy:733
     old "Next file page."
-    new "Siguiente página de guardado."
+    new "Página siguiente."
 
     # 00action_file.rpy:797
     old "Previous file page."
@@ -342,15 +346,15 @@
 
     # 00library.rpy:146
     old "Self-voicing disabled."
-    new "Voz automática desactivada."
+    new "Desactivar voz automática."
 
     # 00library.rpy:147
     old "Clipboard voicing enabled. "
-    new "'Portapapeles a voz' activado. "
+    new "Activar voz por portapapeles. "
 
     # 00library.rpy:148
     old "Self-voicing enabled. "
-    new "Voz automática activada. "
+    new "Activar voz automática. "
 
     # 00library.rpy:150
     old "bar"
@@ -362,7 +366,7 @@
 
     # 00library.rpy:152
     old "viewport"
-    new "{i}}viewport{/i}}"
+    new "{i}viewport{/i}"
 
     # 00library.rpy:153
     old "horizontal scroll"
@@ -410,7 +414,7 @@
 
     # 00preferences.rpy:230
     old "video sprites"
-    new "sprites de video"
+    new "{i}sprites{/i} de video"
 
     # 00preferences.rpy:239
     old "show empty window"
@@ -446,11 +450,11 @@
 
     # 00preferences.rpy:277
     old "after choices"
-    new "despues de decisiones"
+    new "después de decisiones"
 
     # 00preferences.rpy:284
     old "skip after choices"
-    new "saltar despues de decisiones"
+    new "saltar después de decisiones"
 
     # 00preferences.rpy:286
     old "auto-forward time"
@@ -510,7 +514,7 @@
 
     # 00preferences.rpy:401
     old "gl tearing"
-    new "gl tearing"
+    new "gl {i}tearing{/i}"
 
     # 00preferences.rpy:413
     old "music volume"
@@ -586,7 +590,7 @@
 
     # 00updater.rpy:1009
     old "The update file does not have the correct digest - it may have been corrupted."
-    new "El archivo de actualización no tiene el compendio correcto - es posible que esté dañado."
+    new "El archivo de actualización no tiene el compendio correcto; es posible que esté dañado."
 
     # 00updater.rpy:1065
     old "While unpacking {}, unknown type {}."
@@ -650,7 +654,7 @@
 
     # 00accessibility.rpy:76
     old "Font Override"
-    new "Sobrescribir fuente"
+    new "Reemplazar fuente"
 
     # 00accessibility.rpy:80
     old "Default"
@@ -695,10 +699,6 @@
     # 00accessibility.rpy:133
     old "Debug"
     new "Depuración"
-
-    # 00action_file.rpy:434
-    old "Load slot %s: [text]"
-    new "Cargar ranura %s: [text]"
 
     # 00preferences.rpy:430
     old "font transform"
@@ -782,7 +782,7 @@
 
     # renpy/common/00speechbubble.rpy:304
     old "(hide)"
-    new "(ocultar)"
+    new "(oculto)"
 
     # renpy/common/00gui.rpy:455
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
@@ -802,7 +802,7 @@
 
     # renpy/common/00director.rpy:1748
     old "Click to toggle attribute, right click to toggle negative attribute."
-    new "Haz clic para cambiar el atributo, clic derecho para cambiar el atributo negativo."
+    new "Haz clic para alternar el atributo, clic derecho para alternar el atributo negativo."
 
     # renpy/common/00director.rpy:1771
     old "Click to set transform, right click to add to transform list."
@@ -894,7 +894,7 @@
 
     # renpy/common/00director.rpy:1776
     old "Customize director.transforms to add more transforms."
-    new "Modifica director.transforms para añadir más transformaciones."
+    new "Modifica 'director.transforms' para añadir más transformaciones."
 
     # renpy/common/00director.rpy:1821
     old "Click to set."
@@ -902,11 +902,11 @@
 
     # renpy/common/00director.rpy:1822
     old "Customize director.transitions to add more transitions."
-    new "Modifica director.transitions para añadir más transiciones."
+    new "Modifica 'director.transitions' para añadir más transiciones."
 
     # renpy/common/00director.rpy:1845
     old "Customize director.audio_channels to add more channels."
-    new "Modifica director.audio_channels para añadir más canales."
+    new "Modifica 'director.audio_channels' para añadir más canales."
 
     # renpy/common/00preferences.rpy:587
     old "restore window position"
@@ -1079,7 +1079,7 @@
 
     # renpy/common/00preferences.rpy:640
     old "voice "
-    new  "voz "
+    new "voz "
 
     # renpy/common/00preferences.rpy:648
     old "self voicing speed"
@@ -1091,7 +1091,7 @@
 
     # renpy/common/00preferences.rpy:761
     old "Screen reader voicing enabled. Press 'shift+V' to disable."
-    new "Voz de lector de pantalla activada. Presiona 'Mayús+V' para desactivarla."
+    new "Voz de lector de pantalla activada. Presiona 'Shift+V' para desactivarla."
 
     # renpy/common/00sync.rpy:575
     old "Sync Progress"

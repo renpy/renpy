@@ -9,7 +9,7 @@ translate spanish demo_minigame_8f14835c:
 translate spanish demo_minigame_9b01503e:
 
     # e "The first is with the screen system, which can be used to display data and create button and menu based interfaces."
-    e "La primera es con el sistema de pantalla, que se puede utilizar para mostrar datos y crear interfaces basadas en botones y menús."
+    e "La primera es con el sistema de pantallas, que se puede utilizar para mostrar datos y crear interfaces basadas en botones y menús."
 
 # game/indepth_minigame.rpy:224
 translate spanish demo_minigame_3e601161:
@@ -21,13 +21,13 @@ translate spanish demo_minigame_3e601161:
 translate spanish demo_minigame_a92baa6b:
 
     # e "When screens are not enough you can write a creator-defined displayable to extend Ren'Py itself. A Creator-defined displayables can process raw events and draw to the screen."
-    e "Cuando las pantallas no son suficientes, puede escribir un visualizable creator-defined para extender Ren'Py. Un visualizable creator-defined puede procesar eventos en bruto y dibujar en la pantalla."
+    e "Cuando las pantallas no son suficientes, puedes escribir un {i}creator-defined displayable{/i} para extender Ren'Py. Un {i}creator-defined displayable{/i} puede procesar eventos sin procesar y dibujar en la pantalla."
 
 # game/indepth_minigame.rpy:228
 translate spanish demo_minigame_a07dbae0:
 
     # e "That makes it possible to create all kinds of minigames. Would you like to play some pong?"
-    e "Eso hace posible crear todo tipo de minijuegos. ¿Te gustaría jugar pong?"
+    e "Eso hace posible crear todo tipo de minijuegos. ¿Te gustaría jugar Pong?"
 
 # game/indepth_minigame.rpy:245
 translate spanish play_pong_ce00ff63:
@@ -57,19 +57,19 @@ translate spanish pong_done_a21abf38:
 translate spanish pong_done_750092ed:
 
     # e "I won't go over it in detail here. You can read more about it in the {a=https://www.renpy.org/doc/html/udd.html}Creator-Defined Displayable documentation{/a}."
-    e "No lo voy a repasar en detalle aquí. Puede leer más sobre esto en la {a=https://www.renpy.org/doc/html/udd.html}Documentación Creator-Defined Displayable{/a}."
+    e "No lo voy a repasar en detalle aquí. Puedes leer más sobre esto en la {a=https://www.renpy.org/doc/html/udd.html}documentación de {i}Creator-Defined Displayable{/i}{/a}."
 
 # game/indepth_minigame.rpy:274
 translate spanish pong_done_5781d902:
 
     # e "Minigames can spice up your visual novel, but be careful – not every visual novel player wants to be good at arcade games."
-    e "Los minijuegos pueden animar tu novela visual, pero ten cuidado, no todos los jugadores de novelas visuales quieren ser buenos en los juegos de arcade."
+    e "Los minijuegos pueden animar tu novela visual, pero ten cuidado: no todos los jugadores de novelas visuales quieren ser buenos en los juegos de {i}arcade{/i}."
 
 # game/indepth_minigame.rpy:276
 translate spanish pong_done_631325c8:
 
     # e "Part of the reason Ren'Py works well is that it's meant for certain types of games, like visual novels and life simulations."
-    e "Parte de la razón por la que Ren'Py funciona bien es que está destinado a ciertos tipos de juegos, como las novelas visuales y simuladores."
+    e "Parte de la razón por la que Ren'Py funciona bien es que está destinado a ciertos tipos de juegos, como las novelas visuales y las simulaciones de vida."
 
 # game/indepth_minigame.rpy:278
 translate spanish pong_done_61d60761:
@@ -91,13 +91,13 @@ translate spanish strings:
 
     # indepth_minigame.rpy:211
     old "Click to Begin"
-    new "Click para iniciar"
+    new "Haz clic para comenzar"
 
     # indepth_minigame.rpy:255
     old "Sure."
-    new "Serguro"
+    new "Claro."
 
     # indepth_minigame.rpy:255
     old "No thanks."
-    new "No, gracias"
+    new "No, gracias."
 

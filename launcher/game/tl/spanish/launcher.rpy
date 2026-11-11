@@ -1026,15 +1026,15 @@
 
     # project.rpy:49
     old "After making changes to the script, press shift+R to reload your game."
-    new "Después de hacer cambios a un script, presiona Mayús+R para recargar tu juego."
+    new "Después de hacer cambios a un script, presiona Shift+R para recargar tu juego."
 
     # project.rpy:49
     old "Press shift+O (the letter) to access the console."
-    new "Presiona Mayús+O (la letra) para acceder a la consola."
+    new "Presiona Shift+O (la letra) para acceder a la consola."
 
     # project.rpy:49
     old "Press shift+D to access the developer menu."
-    new "Presiona Mayús+D para acceder al menú de desarrollador."
+    new "Presiona Shift+D para acceder al menú de desarrollador."
 
     # project.rpy:49
     old "Have you backed up your projects recently?"
@@ -1154,7 +1154,7 @@
 
     # translations.rpy:367
     old "Dialogue Text Only (dialogue.txt)"
-    new "Diálogo en solo texto (dialogue.txt)"
+    new "Diálogo en solo texto ('dialogue.txt')"
 
     # translations.rpy:380
     old "Strip text tags from the dialogue."
@@ -2223,7 +2223,7 @@
 
     # game/preferences.rpy:332
     old "Open projects.txt"
-    new "Abrir projects.txt"
+    new "Abrir 'projects.txt'"
 
     # game/preferences.rpy:356
     old "Lint toggles:"

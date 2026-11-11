@@ -15,37 +15,37 @@ translate spanish demo_character_d7908a94:
 translate spanish demo_character_275ef8b9:
 
     # e "Each statement creates a Character object, and gives it a single argument, a name. If the name is 'None', no name is displayed."
-    e "Cada sentencia crea un objeto 'Character' y le da un solo argumento, un nombre. Si el nombre es None, no se muestra ningún nombre."
+    e "Cada sentencia crea un objeto 'Character' y le da un solo argumento, un nombre. Si el nombre es 'None', no se muestra ningún nombre."
 
 # game/indepth_character.rpy:21
 translate spanish demo_character_a63aea0c:
 
     # e "This can be followed by named arguments that set properties of the character. A named argument is a property name, an equals sign, and a value."
-    e "Esto puede ser seguido por argumentos con nombre que establecen las propiedades del personaje. Un argumento con nombre es el nombre de propiedad, un signo igual y un valor."
+    e "Esto puede ir seguido de argumentos con nombre que establecen propiedades del personaje. Un argumento con nombre es un nombre de propiedad, un signo igual y un valor."
 
 # game/indepth_character.rpy:23
 translate spanish demo_character_636a502e:
 
     # e "Multiple arguments should be separated with commas, like they are here. Let's see those characters in action."
-    e "Los argumentos múltiples se deben separar con comas, como están aquí. Veamos esos personajes en acción."
+    e "Los distintos argumentos deben separarse con comas, como aquí. Veamos esos personajes en acción."
 
 # game/indepth_character.rpy:27
 translate spanish demo_character_44b54e1d:
 
     # e_shout "I can shout!"
-    e_shout "Puedo gritar"
+    e_shout "¡Puedo gritar!"
 
 # game/indepth_character.rpy:29
 translate spanish demo_character_a9646dd8:
 
     # e_whisper "And I can speak in a whisper."
-    e_whisper "Y puedo hablar susurrando."
+    e_whisper "Y puedo susurrar."
 
 # game/indepth_character.rpy:31
 translate spanish demo_character_79793208:
 
     # e "This example shows how the name Character is a bit of a misnomer. Here, we have multiple Characters in use, but you see it as me speaking."
-    e "Este ejemplo muestra cómo el nombre 'Character' es un poco inapropiado. Aquí, tenemos varios 'Characters' en uso, pero los ves como mi hablar."
+    e "Este ejemplo muestra cómo el nombre 'Character' es un poco inapropiado. Aquí tenemos varios 'Character' en uso, pero lo ves como si hablara yo."
 
 # game/indepth_character.rpy:33
 translate spanish demo_character_5d5d7482:
@@ -57,25 +57,25 @@ translate spanish demo_character_5d5d7482:
 translate spanish demo_character_66d08d98:
 
     # e "There are a lot of properties that can be given to Characters, most of them prefixed styles."
-    e "Hay muchas propiedades que se pueden asignar a los 'Characters', la mayoría de ellos con estilos prefijados."
+    e "Hay muchas propiedades que se pueden asignar a los 'Character'; la mayoría de ellas son estilos con prefijo."
 
 # game/indepth_character.rpy:39
 translate spanish demo_character_7e0d75aa:
 
     # e "Properties beginning with window apply to the textbox, those with what apply to the dialogue, and those with who to the name of Character speaking."
-    e "Las propiedades que comienzan con 'window' se aplican al cuadro de texto, aquellas con 'what' se aplican al diálogo y aquellas con 'who' al nombre del Character que habla."
+    e "Las propiedades que comienzan con 'window' se aplican al cuadro de texto, aquellas con 'what' se aplican al diálogo y aquellas con 'who' al nombre del 'Character' que habla."
 
 # game/indepth_character.rpy:41
 translate spanish demo_character_56703784:
 
     # e "If you leave a prefix out, the style customizes the name of the speaker."
-    e "Si dejas un prefijo, el estilo personaliza el nombre del orador."
+    e "Si omites un prefijo, el estilo personaliza el nombre del orador."
 
 # game/indepth_character.rpy:43
 translate spanish demo_character_b456f0a9:
 
     # e "There are quite a few different properties that can be set this way. Here are some of the most useful."
-    e "Hay bastantes propiedades diferentes que se pueden establecer de esta manera. Éstos son algunos de los más útiles."
+    e "Hay bastantes propiedades diferentes que se pueden establecer de esta manera. Estas son algunas de las más útiles."
 
 # game/indepth_character.rpy:48
 translate spanish demo_character_31ace18e:
@@ -93,13 +93,13 @@ translate spanish demo_character_18ba073d:
 translate spanish demo_character_5a26445c:
 
     # e2 "The who_color and what_color properties set the color of the character's name and dialogue text, respectively."
-    e2 "Las propiedades 'who_color' y 'what_color' establecen el color del texto del nombre y diálogo del personaje, respectivamente."
+    e2 "Las propiedades 'who_color' y 'what_color' establecen el color del nombre del personaje y del texto del diálogo, respectivamente."
 
 # game/indepth_character.rpy:61
 translate spanish demo_character_88a18c32:
 
     # e2 "The colors are strings containing rgb hex codes, the same sort of colors understood by a web browser."
-    e2 "Los colores son cadenas que contienen códigos hexadecimales rgb, el mismo tipo de colores que entiende un navegador web."
+    e2 "Los colores son cadenas que contienen códigos hexadecimales RGB, el mismo tipo de colores que entiende un navegador web."
 
 # game/indepth_character.rpy:67
 translate spanish demo_character_ed690751:
@@ -129,13 +129,13 @@ translate spanish demo_character_e4cbb1f2:
 translate spanish demo_character_71535ecf:
 
     # e5 "It's a little complicated since it takes a list with a tuple in it, with the tuple being four things in parenthesis, and the list the square brackets around them."
-    e5 "Es un poco complicado, ya que toma una lista con una tupla, con la tupla cuatro valores entre paréntesis, y los corchetes de la lista a su alrededor."
+    e5 "Es un poco complicado, ya que toma una lista que contiene una tupla, con cuatro valores entre paréntesis dentro de la tupla y los corchetes de la lista alrededor."
 
 # game/indepth_character.rpy:87
 translate spanish demo_character_e9ac7482:
 
     # e5 "The first number is the size of the outline, in pixels. That's followed by a string giving the hex-code of the color of the outline, and the x and y offsets."
-    e5 "El primer número es el tamaño del contorno, en píxeles. A esto le sigue una cadena que proporciona el código hexadecimal del color del contorno y los desplazamientos de x e y."
+    e5 "El primer número es el tamaño del contorno, en píxeles. A esto le sigue una cadena que proporciona el código hexadecimal del color del contorno y los desplazamientos en 'x' e 'y'."
 
 # game/indepth_character.rpy:93
 translate spanish demo_character_ea72d988:
@@ -146,20 +146,20 @@ translate spanish demo_character_ea72d988:
 # game/indepth_character.rpy:99
 translate spanish demo_character_8d35ebcd:
 
-    # e7 "The what_xalign and what_textalign properties control the alignment of text, with 0.0 being left, 0.5 being center, and 1.0 being right."
-    e7 "Las propiedades 'what_xalign' y 'what_textalign' controlan la alineación del texto, con 0.0 a la izquierda, 0,5 al centro y 1.0 a la derecha."
+    # e7 "The what_xalign and what_textalign properties control the alignment of text, with 0.0 being left, 0.5 being center, and 1.0 being right." 
+    e7 "Las propiedades 'what_xalign' y 'what_textalign' controlan la alineación del texto, con 0.0 a la izquierda, 0.5 al centro y 1.0 a la derecha."
 
 # game/indepth_character.rpy:101
 translate spanish demo_character_7c75906c:
 
     # e7 "The what_xalign property controls where all the text itself is placed within the textbox, while what_textalign controls where rows of text are placed relative to each other."
-    e7 "La propiedad 'what_xalign' controla dónde se coloca todo el texto dentro del cuadro de texto, mientras que 'what_textalign' controla dónde se colocan las filas de texto relativas entre sí."
+    e7 "La propiedad 'what_xalign' controla dónde se coloca todo el texto dentro del cuadro de texto, mientras que 'what_textalign' controla dónde se colocan las filas de texto unas respecto a otras."
 
 # game/indepth_character.rpy:103
 translate spanish demo_character_e2811c1c:
 
     # e7 "Generally you'll want to to set them both what_xalign and what_textalign to the same value."
-    e7 "Por lo general, querrás establecerlos 'what_xalign' y 'what_textalign' en el mismo valor."
+    e7 "Generalmente querrás establecer tanto 'what_xalign' como 'what_textalign' en el mismo valor."
 
 # game/indepth_character.rpy:105
 translate spanish demo_character_baa52234:
@@ -183,25 +183,25 @@ translate spanish demo_character_aa12d9ca:
 translate spanish demo_character_a7f243e5:
 
     # e9 "There are two interesting non-style properties, what_prefix and what_suffix. These can put text at the start and end of a line of dialogue."
-    e9 "Hay dos propiedades interesantes que no son de estilo, 'what_prefix' y 'what_suffix'. Estos pueden poner texto al principio y al final de una línea de diálogo."
+    e9 "Hay dos propiedades interesantes que no son de estilo, 'what_prefix' y 'what_suffix'. Estas pueden poner texto al principio y al final de una línea de diálogo."
 
 # game/indepth_character.rpy:139
 translate spanish demo_character_f9b0052f:
 
     # e "By using kind, you can copy properties from one character to another, changing only what you need to."
-    e "Al usar 'kind', puede copiar las propiedades de un personaje a otro, cambiando solo lo que necesitas."
+    e "Al usar 'kind', puedes copiar las propiedades de un personaje a otro, cambiando solo lo que necesitas."
 
 # game/indepth_character.rpy:148
 translate spanish demo_character_6dfce4b7:
 
     # l8 "Like this! Finally I get some more dialogue around here."
-    l8 "¡Me gusta esto! Finalmente consigo un poco más de diálogo por aquí."
+    l8 "¡Así! Finalmente consigo un poco más de diálogo por aquí."
 
 # game/indepth_character.rpy:157
 translate spanish demo_character_68d9e46c:
 
     # e "The last thing you have to know is that there's a special character, narrator, that speaks narration. Got it?"
-    e "Lo último que debes saber es que hay un personaje especial, 'narrator' (narrador), que habla narración. ¿Entendido?"
+    e "Lo último que debes saber es que hay un personaje especial, 'narrator' (narrador), que dice la narración. ¿Entendido?"
 
 # game/indepth_character.rpy:159
 translate spanish demo_character_0c8f314a:
