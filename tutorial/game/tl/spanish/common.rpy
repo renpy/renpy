@@ -346,7 +346,7 @@
 
     # 00library.rpy:146
     old "Self-voicing disabled."
-    new "Desactivar voz automática"."
+    new "Desactivar voz automática."
 
     # 00library.rpy:147
     old "Clipboard voicing enabled. "
