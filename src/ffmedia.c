@@ -879,40 +879,40 @@ static void decode_audio(MediaState *ms) {
 #if (LIBAVUTIL_VERSION_MAJOR < 59)
 			if (!ms->audio_decode_frame->channel_layout) {
 				ms->audio_decode_frame->channel_layout = av_get_default_channel_layout(ms->audio_decode_frame->channels);
+			}
 
-				if (audio_equal_mono && (ms->audio_decode_frame->channels == 1)) {
-				    swr_alloc_set_opts(
-                        ms->swr,
-                        converted_frame->channel_layout,
-                        converted_frame->format,
-                        converted_frame->sample_rate,
-                        ms->audio_decode_frame->channel_layout,
-                        ms->audio_decode_frame->format,
-                        ms->audio_decode_frame->sample_rate,
-                        0,
-                        NULL);
+			if (audio_equal_mono && (ms->audio_decode_frame->channels == 1) && !swr_is_initialized(ms->swr)) {
+			    swr_alloc_set_opts(
+                    ms->swr,
+                    converted_frame->channel_layout,
+                    converted_frame->format,
+                    converted_frame->sample_rate,
+                    ms->audio_decode_frame->channel_layout,
+                    ms->audio_decode_frame->format,
+                    ms->audio_decode_frame->sample_rate,
+                    0,
+                    NULL);
 
-				    swr_set_matrix(ms->swr, stereo_matrix, 1);
-				}
+			    swr_set_matrix(ms->swr, stereo_matrix, 1);
 			}
 #else
 			if (ms->audio_decode_frame->ch_layout.order == AV_CHANNEL_ORDER_UNSPEC) {
 				av_channel_layout_default(&ms->audio_decode_frame->ch_layout, ms->audio_decode_frame->ch_layout.nb_channels);
+			}
 
-				if (audio_equal_mono && (ms->audio_decode_frame->ch_layout.nb_channels == 1)) {
-				    swr_alloc_set_opts2(
-                        &ms->swr,
-                        &converted_frame->ch_layout,
-                        converted_frame->format,
-                        converted_frame->sample_rate,
-                        &ms->audio_decode_frame->ch_layout,
-                        ms->audio_decode_frame->format,
-                        ms->audio_decode_frame->sample_rate,
-                        0,
-                        NULL);
+			if (audio_equal_mono && (ms->audio_decode_frame->ch_layout.nb_channels == 1) && !swr_is_initialized(ms->swr)) {
+			    swr_alloc_set_opts2(
+                    &ms->swr,
+                    &converted_frame->ch_layout,
+                    converted_frame->format,
+                    converted_frame->sample_rate,
+                    &ms->audio_decode_frame->ch_layout,
+                    ms->audio_decode_frame->format,
+                    ms->audio_decode_frame->sample_rate,
+                    0,
+                    NULL);
 
-				    swr_set_matrix(ms->swr, stereo_matrix, 1);
-				}
+			    swr_set_matrix(ms->swr, stereo_matrix, 1);
 			}
 #endif
 
