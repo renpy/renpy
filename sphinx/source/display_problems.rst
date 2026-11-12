@@ -40,6 +40,15 @@ consider switching video renderers, using the following steps.
 We suggest trying the GL and ANGLE renderers. The GLES renderers may not function
 on desktop hardware.
 
+Custom Cursor Disappears in Fullscreen
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+On Windows, if a custom cursor set with :var:`config.mouse` works in windowed
+mode but disappears in fullscreen, try setting :var:`config.mouse_displayable`
+to a :func:`MouseDisplayable` using the same cursor image and hotspot. Ren'Py
+draws the cursor as part of the game, avoiding hardware cursor size limits.
+See :doc:`mouse` for an example.
+
 On Suspend/Resume
 ^^^^^^^^^^^^^^^^^
 
