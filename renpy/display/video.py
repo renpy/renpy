@@ -906,7 +906,7 @@ def update_playing():
 
         if (c in reset_channels) and renpy.config.replay_movie_sprites:
             m.play(old)
-        elif old is m and last is m:
+        elif old is m or last is m:
             continue
         elif old is not m:
             m.play(old)
