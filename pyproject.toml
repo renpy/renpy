@@ -19,7 +19,7 @@ dependencies = [
     "sphinx_rtd_dark_mode",
     "sphinx-tabs",
     "jinja2",
-    "chardet>=7.6.0",
+    "chardet>=7.7.0",
     "websockets>=17.2",
     "pysocks>=1.7.1",
 ]
