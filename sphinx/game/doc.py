@@ -98,6 +98,10 @@ def sl2_keywords():
     rv = set()
 
     for i in sorted(renpy.sl2.slparser.statements):
+        # Statements beginning with _ are internal to Ren'Py.
+        if i.startswith("_"):
+            continue
+
         rv.add(i)
 
     rv.remove("icon")
