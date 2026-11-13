@@ -550,7 +550,7 @@ translate spanish strings:
     new "Voz por portapapeles activada. Presiona 'Shift+C' para desactivarla."
 
     # 00preferences.rpy:502
-    #old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+    old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "La voz automática dirá \"[renpy.display.tts.last]\". Presiona 'Alt+Shift+V' para desactivarla."
 
     # 00preferences.rpy:504
@@ -1315,7 +1315,7 @@ translate spanish strings:
 
     # renpy/common/00preferences.rpy:455
     old "self voicing disable"
-    new "desactivar voz automática""
+    new "desactivar voz automática"
 
     # renpy/common/00preferences.rpy:470
     old "clipboard voicing enable"
