@@ -913,6 +913,11 @@ class Transform(Container):
         d = self()
         d.kwargs = {}
         d.take_state(self)
+
+        if isinstance(self, ATLTransform):
+            assert isinstance(d, ATLTransform)
+            d.block = self.block
+
         d.take_execution_state(self)
         d.st = self.st
         d.at = self.at
