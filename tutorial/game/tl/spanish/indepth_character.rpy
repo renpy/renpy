@@ -146,7 +146,7 @@ translate spanish demo_character_ea72d988:
 # game/indepth_character.rpy:99
 translate spanish demo_character_8d35ebcd:
 
-    # e7 "The what_xalign and what_textalign properties control the alignment of text, with 0.0 being left, 0.5 being center, and 1.0 being right." 
+    # e7 "The what_xalign and what_textalign properties control the alignment of text, with 0.0 being left, 0.5 being center, and 1.0 being right."
     e7 "Las propiedades 'what_xalign' y 'what_textalign' controlan la alineación del texto, con 0.0 a la izquierda, 0.5 al centro y 1.0 a la derecha."
 
 # game/indepth_character.rpy:101

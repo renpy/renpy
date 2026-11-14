@@ -20,7 +20,7 @@ translate spanish new_gui_0a2a73bb:
 # game/indepth_style.rpy:46
 translate spanish new_gui_22adf68e:
 
-    # e "The GUI is also meant to be easy for an intermediate creator to customize. Customizing the GUI consists of changing the image files in the gui directory, and changing variables in gui.rpy."  
+    # e "The GUI is also meant to be easy for an intermediate creator to customize. Customizing the GUI consists of changing the image files in the gui directory, and changing variables in gui.rpy."
     e "La GUI también está pensada para que un creador de nivel intermedio pueda personalizarla fácilmente. Personalizar la GUI consiste en cambiar los archivos de imagen del directorio 'gui' y cambiar las variables en 'gui.rpy'."
 
 # game/indepth_style.rpy:48
@@ -190,7 +190,7 @@ translate spanish style_general_81f3c8ff:
 
     # e "The first group of style properties that we'll go over are the general style properties. These work with every displayable, or at least many different ones."
     e "El primer grupo de propiedades de estilo que veremos son las propiedades de estilo generales. Estas funcionan con todos los {i}displayables{/i}, o al menos con muchos de ellos."
-    
+
 
 # game/indepth_style.rpy:264
 translate spanish style_general_a8d99699:
@@ -531,7 +531,7 @@ translate spanish style_bar_9ef4f62f:
 # game/indepth_style.rpy:792
 translate spanish style_bar_d4c29710:
 
-    # e "When the bar_invert style property is True, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."   
+    # e "When the bar_invert style property is True, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
     e "Cuando la propiedad de estilo 'bar_invert' es 'True', el valor de la barra se muestra en el lado derecho de la barra. Es posible que también haya que intercambiar los {i}displayables{/i} 'left_bar' y 'right_bar'."
 
 # game/indepth_style.rpy:806

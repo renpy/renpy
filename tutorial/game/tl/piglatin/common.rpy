@@ -369,7 +369,7 @@ translate piglatin strings:
     old "Language [text]"
     new "Anguagelay [text]"
 
-    # renpy/common/00action_other.rpy:831
+    # renpy/common/00action_other.rpy:832
     old "Open [text] directory."
     new "Penoay [text] irectoryday."
 
@@ -549,11 +549,11 @@ translate piglatin strings:
     old "Failed to save screenshot as %s."
     new "Ailedfay otay avesay creenshotsay asay %say."
 
-    # renpy/common/00keymap.rpy:349
+    # renpy/common/00keymap.rpy:355
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
-    # renpy/common/00keymap.rpy:349
+    # renpy/common/00keymap.rpy:355
     old " Copied screenshot to clipboard."
     new " Opiedcay creenshotsay otay ipboardclay."
 
@@ -885,59 +885,59 @@ translate piglatin strings:
     old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
     new "Hetay Enray'Ypay Yncsay erversay oesday otnay avehay aay opycay ofay histay yncsay. Hetay yncsay Diay aymay ebay invaliday, oray itay aymay avehay imedtay outay."
 
-    # renpy/common/00sync.rpy:309
+    # renpy/common/00sync.rpy:310
     old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
     new "Leasepay enteray hetay yncsay Diay ouyay eneratedgay.\nEvernay enteray aay yncsay Diay ouyay idnday'tay reatecay ourselfyay."
 
-    # renpy/common/00sync.rpy:328
+    # renpy/common/00sync.rpy:329
     old "The sync ID is not in the correct format."
     new "Hetay yncsay Diay isay otnay inay hetay orrectcay ormatfay."
 
-    # renpy/common/00sync.rpy:352
+    # renpy/common/00sync.rpy:354
     old "The sync could not be decrypted."
     new "Hetay yncsay ouldcay otnay ebay ecryptedday."
 
-    # renpy/common/00sync.rpy:375
+    # renpy/common/00sync.rpy:377
     old "The sync belongs to a different game."
     new "Hetay yncsay elongsbay otay aay ifferentday amegay."
 
-    # renpy/common/00sync.rpy:380
+    # renpy/common/00sync.rpy:382
     old "The sync contains a file with an invalid name."
     new "Hetay yncsay ontainscay aay ilefay ithway anay invaliday amenay."
 
-    # renpy/common/00sync.rpy:433
+    # renpy/common/00sync.rpy:435
     old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
     new "Histay illway uploaday ouryay avessay otay hetay {a=https://sync.renpy.org}Enray'Ypay Yncsay Erversay{/a}.\nOday ouyay antway otay ontinuecay?"
 
-    # renpy/common/00sync.rpy:465
+    # renpy/common/00sync.rpy:467
     old "Enter Sync ID"
     new "Ntereay Yncsay Diay"
 
-    # renpy/common/00sync.rpy:476
+    # renpy/common/00sync.rpy:478
     old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
     new "Histay illway ontactcay hetay {a=https://sync.renpy.org}Enray'Ypay Yncsay Erversay{/a}."
 
-    # renpy/common/00sync.rpy:506
+    # renpy/common/00sync.rpy:508
     old "Sync Success"
     new "Yncsay Uccesssay"
 
-    # renpy/common/00sync.rpy:509
+    # renpy/common/00sync.rpy:511
     old "The Sync ID is:"
     new "Hetay Yncsay Diay isay:"
 
-    # renpy/common/00sync.rpy:515
+    # renpy/common/00sync.rpy:517
     old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
     new "Ouyay ancay useay histay Diay otay ownloadday ouryay avesay onay anotheray eviceday.\nHistay yncsay illway expireay inay anay ourhay.\nEnray'Ypay Yncsay isay upportedsay ybay {a=https://www.renpy.org/sponsors.html}Enray'Ypay'say Ponsorssay{/a}."
 
-    # renpy/common/00sync.rpy:519
+    # renpy/common/00sync.rpy:521
     old "Continue"
     new "Ontinuecay"
 
-    # renpy/common/00sync.rpy:544
+    # renpy/common/00sync.rpy:546
     old "Sync Error"
     new "Yncsay Rroreay"
 
-    # renpy/common/00sync.rpy:575
+    # renpy/common/00sync.rpy:577
     old "Sync Progress"
     new "Yncsay Rogresspay"
 

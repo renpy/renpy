@@ -51,7 +51,7 @@ translate spanish tutorial_positions_be14c7c3:
 translate spanish tutorial_positions_9b91be6c:
 
     # e "Increasing xpos to 1.0 moves us to the right-hand border of the screen."
-    e "Al aumentar 'xpos' a 1.0, nos movemos al borde derecho de la pantalla."    
+    e "Al aumentar 'xpos' a 1.0, nos movemos al borde derecho de la pantalla."
 
 # game/tutorial_atl.rpy:246
 translate spanish tutorial_positions_2b293304:
@@ -110,7 +110,7 @@ translate spanish tutorial_positions_77b45218:
 # game/tutorial_atl.rpy:283
 translate spanish tutorial_positions_6f926e18_1:
 
-    # e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."    
+    # e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."
     e "Lo siento, eso está mal. El 'xpos' es .75, y el 'ypos' es .25."
 
 # game/tutorial_atl.rpy:285
@@ -224,7 +224,7 @@ translate spanish tutorial_positions_1b1cedc6:
 # game/tutorial_atl.rpy:399
 translate spanish tutorial_positions_e6da2798:
 
-    # e "Of course, you can use negative numbers to offset things to the left and top." 
+    # e "Of course, you can use negative numbers to offset things to the left and top."
     e "Por supuesto, puedes usar números negativos para desplazar cosas hacia la izquierda y hacia arriba."
 
 # game/tutorial_atl.rpy:404
@@ -508,7 +508,7 @@ translate spanish transform_properties_391169cf:
 
     # e "Ren'Py has quite a few transform properties that can be used with ATL, the Transform displayable, and the add Screen Language statement."
     e "Ren'Py tiene bastantes propiedades de transformación que se pueden usar con ATL, el {i}displayable{/i} 'Transform' y la sentencia 'add' del Lenguaje de pantallas."
-    
+
 # game/tutorial_atl.rpy:685
 translate spanish transform_properties_fc895a1f:
 

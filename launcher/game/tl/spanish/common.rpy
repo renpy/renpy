@@ -163,7 +163,7 @@
     # 00action_file.rpy:434
     old "Load slot %s: [text]"
     new "Cargar ranura %s: [text]"
-    
+
     # 00action_file.rpy:459
     old "Delete slot [text]"
     new "Borrar ranura [text]"
