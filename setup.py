@@ -148,6 +148,14 @@ def _build():
         packages="assimp sdl3",
     )
 
+    if spine := os.environ.get("SPINE", None):
+        cython(
+            "renpy.gl2.spinemodel",
+            [ "src/spinecsm.c" ],
+            include_dirs=[f"{spine}/include"],
+            packages="sdl3"
+        )
+
     # renpy.text
     cython("renpy.text.textsupport")
     cython("renpy.text.texwrap")

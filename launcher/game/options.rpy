@@ -281,6 +281,7 @@ init python:
     build.classify_renpy("**/.*", None)
 
     build.classify_renpy("rapt/**/libLive2DCubismCore.so", None)
+    build.classify_renpy("rapt/**/libspine-c.so", None)
     build.classify_renpy("rapt/symbols/", None)
     build.classify_renpy("rapt/**", "rapt")
     build.executable("rapt/prototype/gradlew")
