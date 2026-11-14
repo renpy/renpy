@@ -908,6 +908,8 @@ def update_playing():
             m.play(old)
         elif old is m and last is m:
             continue
+        elif last is m and old is None:
+            continue
         elif old is not m:
             m.play(old)
         elif m.loop and last is not m:
