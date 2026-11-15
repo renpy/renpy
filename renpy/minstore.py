@@ -95,10 +95,14 @@ def _(s):
     will be translated when displayed by the text displayable.
     """
 
+    if isinstance(s, str) and renpy.config.mark_translatable_strings:
+        return TranslatableStr(s)
+
     return s
 
 
 from renpy.translation import translate_string as __
+from renpy.translation import TranslatableStr
 from renpy.substitutions import ___
 
 

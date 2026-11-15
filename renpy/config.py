@@ -275,6 +275,12 @@ editor_file_separator = None  # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '"
 # Enable developer mode?
 developer = False  # Changed to True or False in the init code.
 
+# Enable marking of strings passed to _() with a marker type, so that
+# renpy.is_translatable and renpy.require_translatable can detect strings
+# that were not wrapped in _(). Disabled by default, as it changes the type
+# of the value returned by _().
+mark_translatable_strings = False
+
 # The value of developer requested by the creator (True, False, or "auto")
 original_developer = False
 

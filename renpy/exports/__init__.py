@@ -285,7 +285,9 @@ from renpy.translation import (
     change_language as change_language,
     get_translation_identifier as get_translation_identifier,
     get_translation_info as get_translation_info,
+    is_translatable as is_translatable,
     known_languages as known_languages,
+    require_translatable as require_translatable,
     translate_string as translate_string,
 )
 
