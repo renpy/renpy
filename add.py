@@ -13,7 +13,6 @@ branch = os.popen("git branch --show-current").read().strip()
 SOURCE = [
     "/home/tom/ab/renpy",
     "/home/tom/ab/renpy-build-" + branch,
-    "/home/tom/ab/pygame_sdl2",
 ]
 
 
