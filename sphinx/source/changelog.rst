@@ -5,6 +5,17 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.6.1:
+
+8.6.1
+=====
+
+Fixes
+-----
+
+The launcher can once again download and install Visual Studio Code. The issue preventes the public key used to
+verify the downloader script from loading. Support for that key type works again.
+
 .. _renpy-8.6.0:
 
 8.6.0
