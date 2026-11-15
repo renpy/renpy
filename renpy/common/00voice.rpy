@@ -52,6 +52,7 @@ init -1500 python:
     _voice.info = None
     _voice.playing_info = None
     _voice.last_playing = 0.0
+    _voice.volume = 1.0
 
     # If true, the voice system ignores the interaction.
     _voice.ignore_interaction = False
@@ -69,6 +70,7 @@ init -1500 python:
     # The last sound played on the voice channel. (This is used to replay
     # it.)
     _last_voice_play = None
+    _last_voice_volume = 1.0
 
 
     def _invoke_voice_callbacks(event):
@@ -84,7 +86,7 @@ init -1500 python:
     # Call this to specify the voice file that will be played for
     # the user. This piece only gathers the information so
     # voice_interact can play the right file.
-    def voice(filename, tag=None):
+    def voice(filename, tag=None, volume=1.0):
         """
         :doc: voice
 
@@ -105,6 +107,10 @@ init -1500 python:
             The voice tag is used to specify which character is
             speaking, to allow a user to mute or unmute the
             voices of particular characters.
+
+        `volume`
+            The relative volume to play the voice at, as a fraction of the
+            speaking character's voice volume.
         """
 
         if not config.has_voice:
@@ -113,6 +119,7 @@ init -1500 python:
         fn = config.voice_filename_format.format(filename=filename)
         _voice.play = fn
         _voice.tag = tag
+        _voice.volume = volume
 
 
     # Call this to specify that the currently playing voice file
@@ -138,7 +145,7 @@ init -1500 python:
         """
 
         if _last_voice_play is not None:
-            renpy.sound.play(_last_voice_play, channel="voice")
+            renpy.sound.play(_last_voice_play, channel="voice", relative_volume=_last_voice_volume)
 
     # Returns true if we can replay the voice.
     def voice_can_replay():
@@ -337,10 +344,12 @@ init -1500 python:
                 self.filename = _voice.play
                 self.sustain = _voice.sustain
                 self.tag = _voice.tag
+                self.volume = _voice.volume
             else:
                 self.filename = None
                 self.sustain = False
                 self.tag = tag
+                self.volume = 1.0
 
             self.auto_filename = None
             self.tlid = None
@@ -414,6 +423,11 @@ init -1500 python:
 
             False if the file was played as part of this interaction. True if
             it was sustained from a previous interaction.
+
+        .. attribute:: VoiceInfo.volume
+
+            The relative volume this voice file is played at, as a fraction
+            of the speaking character's voice volume.
 
         """
 
@@ -492,18 +506,20 @@ init -1500 python hide:
             renpy.sound.stop(channel="voice")
             _invoke_voice_callbacks("stop")
             store._last_voice_play = _voice.play
+            store._last_voice_volume = vi.volume
             _voice.playing_info = None
 
         elif _voice.play:
             if not config.skipping:
                 renpy.stop_tts()
                 renpy.music.get_channel("voice").set_volume(volume)
-                renpy.sound.play(_voice.play, channel="voice", synchro_start=False)
+                renpy.sound.play(_voice.play, channel="voice", synchro_start=False, relative_volume=vi.volume)
                 _invoke_voice_callbacks("stop")
                 _voice.playing_info = vi
                 _invoke_voice_callbacks("play")
 
             store._last_voice_play = _voice.play
+            store._last_voice_volume = vi.volume
 
         elif not _voice.sustain and not (getattr(renpy.context(), "_menu", False) and _preferences.voice_after_game_menu):
             renpy.sound.stop(channel="voice")
@@ -520,6 +536,7 @@ init -1500 python hide:
         _voice.play = None
         _voice.sustain = False
         _voice.tag = None
+        _voice.volume = 1.0
 
     config.start_interact_callbacks.append(voice_interact)
     config.fast_skipping_callbacks.append(voice_interact)

@@ -199,6 +199,9 @@ is long enough to allow the `loop` movie to load.
 The new :var:`config.audio_directories` variable is a list of directories that are searched for audio Files
 and used to populate the :ref:`audio-namespace <audio-namespace>`.
 
+The :func:`renpy.voice` function now takes a `volume` argument, which plays the voice file at a relative volume.
+The volume is preserved in the VoiceInfo object and on voice replay.
+
 Clipboard
 ---------
 
