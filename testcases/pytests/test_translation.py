@@ -242,3 +242,66 @@ def test_non_string_raises(translator, old):
 
     with pytest.raises(TypeError):
         translator.translate(old)
+
+
+################################################################################
+# is_translatable / require_translatable
+################################################################################
+
+
+@pytest.fixture
+def clear_translatable_cache():
+    """Clears the module-level scan cache before and after each test."""
+
+    translation._translatable_cache = None
+    yield
+    translation._translatable_cache = None
+
+
+@pytest.fixture
+def translatable_scan(mocker, clear_translatable_cache):
+    """Fakes the scan of translatable strings so tests do not read real files."""
+
+    mocker.patch.object(
+        renpy.translation.scanstrings,
+        "scan",
+        return_value=[
+            SimpleNamespace(text="Marked", comment=False),
+            SimpleNamespace(text="Commented", comment=True),
+        ],
+    )
+
+
+def test_is_translatable(translatable_scan):
+    """Marked strings are detected, while comments, unmarked and non-strings are not."""
+
+    assert translation.is_translatable("Marked")
+    assert not translation.is_translatable("Commented")
+    assert not translation.is_translatable("Unmarked")
+    assert not translation.is_translatable(123)
+
+
+def test_require_translatable_passes_when_marked(mocker, translatable_scan):
+    """Marked and empty values do not raise."""
+
+    mocker.patch.object(renpy.config, "developer", True)
+
+    translation.require_translatable("name", "Marked")
+    translation.require_translatable("name", "")
+
+
+def test_require_translatable_raises_when_unmarked(mocker, translatable_scan):
+    """An unmarked non-empty string raises in developer mode."""
+
+    mocker.patch.object(renpy.config, "developer", True)
+
+    with pytest.raises(Exception):
+        translation.require_translatable("name", "Unmarked")
+
+
+def test_require_translatable_ignored_outside_developer_mode(mocker, translatable_scan):
+    """Outside developer mode, require_translatable is a no-op."""
+
+    mocker.patch.object(renpy.config, "developer", False)
+
+    translation.require_translatable("name", "Unmarked")

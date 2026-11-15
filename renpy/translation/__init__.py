@@ -617,6 +617,67 @@ def translate_string(s, language=Default):  # type (str, str|renpy.object.Sentin
     return stl.translate(s)
 
 
+# A set of the strings that have been marked for translation with _(), or None
+# if it has not been computed yet.
+_translatable_cache = None
+
+
+def is_translatable(s):
+    """
+    :doc: translate_string
+    :name: renpy.is_translatable
+
+    Returns True if `s` was marked as translatable, by being passed to the
+    `_()` function somewhere in the script. The check is done by scanning
+    the script files for `_()` calls, so it can detect strings that were
+    written as literals inside `_()`, but not strings that are built
+    dynamically at runtime, or strings that were translated with
+    `renpy.translate_string`.
+
+    `s`
+        The string to check. Non-strings return False.
+
+    This is intended to be used in developer mode, to detect strings that
+    were accidentally left untranslated.
+    """
+
+    if not isinstance(s, str):
+        return False
+
+    global _translatable_cache
+
+    if _translatable_cache is None:
+        _translatable_cache = {
+            ss.text for ss in renpy.translation.scanstrings.scan() if not ss.comment
+        }
+
+    return s in _translatable_cache
+
+
+def require_translatable(name, value):
+    """
+    :doc: translate_string
+    :name: renpy.require_translatable
+
+    In developer mode, raises an exception if `value` is a non-empty string
+    that was not marked as translatable with the `_()` function. This is
+    intended to be used to check that text passed to a function or stored in
+    a variable has not been accidentally left untranslated.
+
+    `name`
+        The name of the value, used in the error message.
+
+    `value`
+        The value to check.
+    """
+
+    if not renpy.config.developer:
+        return
+
+    if value and isinstance(value, str) and not is_translatable(value):
+        raise Exception("{} is not marked for translation with _(): {!r}".format(name, value))
+
+
 def write_updated_strings():
     stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
     stl.write_updated_strings(renpy.game.preferences.language)
