@@ -51,14 +51,14 @@ cdef class GL2Draw:
     cdef public object display_info
     cdef public tuple clip_cache
     cdef public tuple default_clip
-    cdef public float dpi_scale
+    cdef public double dpi_scale
     cdef public object shader_cache
     cdef public set gl_extensions
     cdef public bint ever_set_position
 
     cdef public tuple clip_rtt_box
 
-    cdef public float draw_per_phys
+    cdef public double draw_per_phys
     cdef public tuple drawable_viewport
 
     cdef public object draw_per_virt
