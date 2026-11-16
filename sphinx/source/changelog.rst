@@ -16,6 +16,10 @@ Fixes
 The launcher can once again download and install Visual Studio Code. The issue preventes the public key used to
 verify the downloader script from loading. Support for that key type works again.
 
+Transforms that use the :tpref:`blur` property are no longer affected by :var:`config.mesh_oversample`. This fixes
+an issue where animating the zoom of a blurred displayable or layer would cause it to shake, and restores the
+strength of the blur to what it was in Ren'Py 8.5.
+
 .. _renpy-8.6.0:
 
 8.6.0
