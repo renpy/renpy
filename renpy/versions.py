@@ -51,9 +51,9 @@ class Version:
 branch_to_version: dict[str, Version] = {}
 
 
-Version("main", (8, 6, 0), "Real Artists Ship")
+Version("main", (8, 7, 0), "TBD")
 
-Version("fix", (8, 5, 4), "We Can Go to the Moon")
+Version("fix", (8, 6, 1), "Real Artists Ship")
 
 
 class VersionDict(TypedDict):

@@ -5,6 +5,25 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.6.1:
+
+8.6.1
+=====
+
+Fixes
+-----
+
+The launcher can once again download and install Visual Studio Code. The issue preventes the public key used to
+verify the downloader script from loading. Support for that key type works again.
+
+Transforms that use the :tpref:`blur` property are no longer affected by :var:`config.mesh_oversample`. This fixes
+an issue where animating the zoom of a blurred displayable or layer would cause it to shake, and restores the
+strength of the blur to what it was in Ren'Py 8.5.
+
+A mesh that changes size after it is first shown is now rendered at the new size, as allowed by
+:var:`config.mesh_oversample`. Previously, the mesh could keep using a texture created for a smaller size.
+
+
 .. _renpy-8.6.0:
 
 8.6.0

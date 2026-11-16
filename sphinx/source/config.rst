@@ -416,11 +416,13 @@ Display
     performance test. This image will be shown for 5 frames or .25
     seconds, on startup. It will then be automatically hidden.
 
-.. var:: config.mesh_oversample = 1.0
+.. var:: config.mesh_oversample = 8.0
 
     Determines how much mesh textures can be oversampled by. This, in turn, controls the maximum
     amount a mesh can be scaled up by before it introduces additional blurriness, at the risk of
     creating excessive large textures when a mesh is scaled up greatly.
+
+    Meshes created by the :tpref:`blur` transform property are never oversampled.
 
 .. var:: config.minimum_presplash_time = 0.0
 

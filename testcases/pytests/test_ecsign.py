@@ -20,12 +20,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-Tests for the pure-Python ECDSA P-256 implementation in ecsign: key generation, signing and verification,
-DER and PEM encodings, and rejection of malformed keys, digests, and signatures.
+Tests for the pure-Python ECDSA implementation in ecsign (P-256 and secp256k1): key generation, signing and
+verification, DER and PEM encodings, and rejection of malformed keys, digests, and signatures.
 """
 
 import base64
 import hashlib
+import pathlib
 
 import pytest
 
@@ -44,6 +45,14 @@ P256_PKCS8_PRIVATE_KEY = bytes.fromhex(
 SEC1_DER = ecsign.SigningKey.from_secret_exponent(1).to_der()
 SEC1_PEM = ecsign.SigningKey.from_secret_exponent(1).to_pem()
 VERIFYING_KEY_DER = ecsign.SigningKey.from_secret_exponent(1).verifying_key.to_der()
+
+CURVES = (
+    pytest.param(ecsign.NIST256p, id="NIST256p"),
+    pytest.param(ecsign.SECP256k1, id="SECP256k1"),
+)
+
+# The key that signs launcher extension manifests. It is on secp256k1.
+LAUNCHER_PUBLIC_KEY_PEM = pathlib.Path(__file__).parents[2] / "launcher" / "game" / "renpy_ecdsa_public.pem"
 
 INVALID_PUBLIC_KEYS = (
     pytest.param(ecsign._P.to_bytes(32, "big") + b"\x00" * 32, id="out-of-range-coordinate"),
@@ -73,13 +82,15 @@ INVALID_PRIVATE_PEMS = (
 )
 
 
-def test_der_pem_roundtrip():
+@pytest.mark.parametrize("curve", CURVES)
+def test_der_pem_roundtrip(curve):
     """
-    A generated P-256 key pair has a 32-byte private scalar and a 64-byte public point, and signing and
-    verifying keys serialized as DER or PEM load back to the same key material.
+    A generated key pair has a 32-byte private scalar and a 64-byte public point, and signing and verifying
+    keys serialized as DER or PEM load back to the same key material on the same curve, without the curve
+    being passed to the loaders.
     """
 
-    sk = ecsign.SigningKey.generate(curve=ecsign.NIST256p)
+    sk = ecsign.SigningKey.generate(curve=curve)
     vk = sk.verifying_key
 
     assert vk is not None
@@ -101,21 +112,48 @@ def test_der_pem_roundtrip():
     assert vk.to_string() == vk_from_der.to_string()
     assert vk.to_string() == vk_from_pem.to_string()
 
+    for key in (sk_from_der, sk_from_pem, vk_from_der, vk_from_pem):
+        assert key.curve is curve
 
-def test_public_key_for_scalar_one_is_the_generator_point():
+
+@pytest.mark.parametrize(
+    "curve, scalar, expected",
+    (
+        pytest.param(
+            ecsign.NIST256p,
+            1,
+            "6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296"
+            "4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5",
+            id="NIST256p-1",
+        ),
+        pytest.param(
+            ecsign.SECP256k1,
+            1,
+            "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"
+            "483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8",
+            id="SECP256k1-1",
+        ),
+        pytest.param(
+            ecsign.SECP256k1,
+            2,
+            "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5"
+            "1ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a",
+            id="SECP256k1-2",
+        ),
+    ),
+)
+def test_public_key_for_small_scalars(curve, scalar, expected):
     """
-    The public key for private scalar 1 is the P-256 base point G, whose coordinates are fixed by FIPS 186.
+    The public key for private scalar 1 is the curve's base point G (FIPS 186 for P-256, SEC 2 for
+    secp256k1), and for secp256k1 the public key for scalar 2 is the published value of 2G.
 
     Round trips alone cannot catch an implementation that is self-consistent but uses the wrong curve
-    constants, so this pins the point multiplication to the published value.
+    constants, so this pins the point multiplication to published values. The 2G case exercises point
+    doubling, whose formula depends on the curve's `a` coefficient (-3 for P-256, 0 for secp256k1).
     """
 
-    expected = bytes.fromhex(
-        "6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296"
-        "4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5"
-    )
-
-    assert ecsign.SigningKey.from_secret_exponent(1).verifying_key.to_string() == expected
+    sk = ecsign.SigningKey.from_secret_exponent(scalar, curve=curve)
+    assert sk.verifying_key.to_string() == bytes.fromhex(expected)
 
 
 def test_verifies_externally_generated_signature():
@@ -151,13 +189,91 @@ def test_verifies_externally_generated_signature():
         vk.verify(signature, message + b"!", hashfunc=hashlib.sha256)
 
 
-def test_sign_and_verify():
+def test_verifies_externally_generated_secp256k1_signature():
+    """
+    A signature produced by OpenSSL (a fresh secp256k1 key, `openssl dgst -sha1 -sign`, with the DER
+    signature converted to the 64-byte r || s form) verifies against its SPKI public key with the default
+    sha1 hash, which is how launcher extension manifests are signed. OpenSSL's PKCS#8 export of the same key,
+    whose inner SEC1 structure omits the curve OID, loads to the same public key.
+
+    A tampered copy of the signature and a different message must both be rejected.
+    """
+
+    public_key = bytes.fromhex(
+        "3056301006072a8648ce3d020106052b8104000a03420004"
+        "8477ea61e09dcb37008102a8ef1c1d0a11902532cf0a771009afc3a664ef6b33"
+        "9d5119606468ef6db2054df6b7ae47355b966ec0c2cd6a40bc6579da47335008"
+    )
+    private_key = bytes.fromhex(
+        "308184020100301006072a8648ce3d020106052b8104000a046d306b0201010420"
+        "92ec902616a5dd45f70bc3436ce42f7a8595c02d662d073e3f43c0743f396cfd"
+        "a14403420004"
+        "8477ea61e09dcb37008102a8ef1c1d0a11902532cf0a771009afc3a664ef6b33"
+        "9d5119606468ef6db2054df6b7ae47355b966ec0c2cd6a40bc6579da47335008"
+    )
+    signature = bytes.fromhex(
+        "9e27be29d0635f22e6405d465c2c17a8d92abe14e538ec09f90bf13b9232685b"
+        "9d4945a9492c91665af3dfd2095cc7ad0e24a331d062636321910e1877856644"
+    )
+    message = b"Ren'Py secp256k1 known-answer signature test"
+
+    vk = ecsign.VerifyingKey.from_der(public_key)
+    assert vk.curve is ecsign.SECP256k1
+    assert vk.to_der() == public_key
+    assert vk.verify(signature, message)
+
+    sk = ecsign.SigningKey.from_der(private_key)
+    assert sk.curve is ecsign.SECP256k1
+    assert sk.verifying_key.to_string() == vk.to_string()
+
+    tampered = signature[:-1] + bytes([signature[-1] ^ 1])
+
+    with pytest.raises(ecsign.BadSignatureError):
+        vk.verify(tampered, message)
+
+    with pytest.raises(ecsign.BadSignatureError):
+        vk.verify(signature, message + b"!")
+
+
+def test_loads_launcher_manifest_public_key():
+    """
+    The launcher's manifest-signing public key, a secp256k1 SubjectPublicKeyInfo PEM, loads as a secp256k1
+    key and re-encodes to the same PEM. Loading it used to fail with "Unsupported public key algorithm or
+    curve", which broke installing launcher extensions.
+    """
+
+    pem = LAUNCHER_PUBLIC_KEY_PEM.read_bytes()
+    vk = ecsign.VerifyingKey.from_pem(pem)
+
+    assert vk.curve is ecsign.SECP256k1
+    assert vk.to_pem() == pem
+
+
+def test_rejects_pkcs8_with_conflicting_sec1_curve():
+    """
+    A PKCS#8 private key whose AlgorithmIdentifier names secp256k1 but whose inner SEC1 key names P-256 is
+    rejected with ValueError, rather than either curve being picked silently.
+    """
+
+    def tlv(tag, value):
+        return bytes([tag, len(value)]) + value
+
+    algorithm = tlv(0x30, tlv(0x06, bytes.fromhex("2a8648ce3d0201")) + tlv(0x06, ecsign.SECP256k1.oid))
+    body = tlv(0x02, b"\x00") + algorithm + tlv(0x04, SEC1_DER)
+    pkcs8 = b"\x30\x81" + bytes([len(body)]) + body
+
+    with pytest.raises(ValueError):
+        ecsign.SigningKey.from_der(pkcs8)
+
+
+@pytest.mark.parametrize("curve", CURVES)
+def test_sign_and_verify(curve):
     """
     A signature made with the signing key verifies against the same data. Verification fails with
     BadSignatureError when the data was altered, or when the signature is not 64 bytes long.
     """
 
-    sk = ecsign.SigningKey.generate(curve=ecsign.NIST256p)
+    sk = ecsign.SigningKey.generate(curve=curve)
     vk = sk.verifying_key
 
     data = b"Hello, Ren'Py ECDSA signing test!"
