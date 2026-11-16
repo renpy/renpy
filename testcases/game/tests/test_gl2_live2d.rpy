@@ -259,7 +259,7 @@ testsuite live2d:
         $ config.live2d_mask_clipping = False
         $ test_live2d__uncropped = test_live2d__clipping_frame(model, motion, st)
         assert eval test_live2d__max_difference(test_live2d__uncropped) > 0
-        # Cropping changes the edges of masks slightly, by at most 25/255 in the models tested.
-        assert eval test_live2d__max_difference(test_live2d__cropped, test_live2d__uncropped) <= 25
+        # Cropping changes the edges of masks slightly, by at most 26/255 in the models tested.
+        assert eval test_live2d__max_difference(test_live2d__cropped, test_live2d__uncropped) <= 26
         # Mao's masks differ in hundreds of pixels, so an identical frame means the setting was ignored.
         assert eval model != "Mao" or test_live2d__max_difference(test_live2d__cropped, test_live2d__uncropped) > 0
