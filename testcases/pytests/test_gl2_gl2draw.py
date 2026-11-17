@@ -96,6 +96,95 @@ def test_normal_resize_keeps_existing_policy(mocker, window_environment):
     get_window.return_value.resize.assert_called_once_with((1024, 768), opengl=True, fullscreen=True, maximized=False)
 
 
+class ResizeRecordingDraw(GL2Draw):
+    """A GL2Draw that counts on_resize calls instead of rebuilding the OpenGL display."""
+
+    resizes: int
+    """The number of times on_resize was called."""
+
+    def on_resize(self, first=False, full_reset=False):
+        self.resizes += 1
+
+
+@pytest.fixture
+def update_environment(mocker, window_environment):
+    """
+    Returns a function that sets up GL2Draw.update to see a window of the given size, drawable size, SDL
+    display scale and pixel density. The function returns a ResizeRecordingDraw whose stored state already
+    matches that window, with a DPI scale of 1, and the mocked SDL window.
+    """
+
+    mocker.patch.object(testexecution, "get_test_window_size", return_value=None)
+    window = mocker.patch.object(renpy.pygame.display, "get_window").return_value
+
+    def setup(size, drawable_size, display_scale, pixel_density, fullscreen):
+        window.get_window_flags.return_value = renpy.pygame.WINDOW_FULLSCREEN_DESKTOP if fullscreen else 0
+        mocker.patch.object(renpy.display.core, "get_size", return_value=size)
+        mocker.patch.object(renpy.pygame.display, "get_drawable_size", return_value=drawable_size)
+        mocker.patch.object(renpy.pygame.display, "get_window_display_scale", return_value=display_scale)
+        mocker.patch.object(renpy.pygame.display, "get_window_pixel_density", return_value=pixel_density)
+        renpy.display.interface.fullscreen = fullscreen
+
+        draw = ResizeRecordingDraw.__new__(ResizeRecordingDraw)
+        draw.resizes = 0
+        draw.dpi_scale = 1.0
+        draw.physical_size = size
+        draw.drawable_size = drawable_size
+        draw.maximized = False
+        return draw, window
+
+    return setup
+
+
+@pytest.mark.parametrize(
+    "fullscreen, size, drawable_size",
+    [(True, (1463, 914), (2560, 1600)), (False, (1361, 766), (2382, 1341))],
+)
+def test_update_ignores_pixel_density_rounding(update_environment, fullscreen, size, drawable_size):
+    """
+    With fractional scaling (Wayland at 175%), SDL computes the pixel density from the rounded window and
+    drawable sizes, so it is slightly off from the display scale. That isn't a DPI change, so update must
+    neither rebuild the display nor resize the window.
+
+    The values are from issue #7529. Treating the difference as a change rebuilt the display every frame,
+    leaving fullscreen black, and resized the window by a pixel each frame in windowed mode.
+    """
+
+    draw, window = update_environment(size, drawable_size, 1.75, 1.7501837015151978, fullscreen)
+
+    assert draw.update() is False
+    assert draw.resizes == 0
+    window.resize.assert_not_called()
+    assert draw.dpi_scale == 1.0
+
+
+@pytest.mark.parametrize(
+    "display_scale, pixel_density, expected_scale, expected_size",
+    [
+        (1.5, 1.0, 1.5, (1200, 900)),
+        (3.5, 2.0002, 1.75, (1400, 1050)),
+        (1.3, 1.0, 1.3, (1040, 780)),
+    ],
+)
+def test_update_resizes_window_on_dpi_change(
+    update_environment, display_scale, pixel_density, expected_scale, expected_size
+):
+    """
+    When the window moves to a display with a different scale and the drawable doesn't scale to match,
+    update resizes the window to keep its size on screen, records the new DPI scale, and rebuilds the display.
+
+    A scale within rounding error of a multiple of 0.25 snaps to it (3.5 / 2.0002 becomes 1.75), so the
+    window doesn't keep resizing as the rounding changes. Other scales, such as 1.3, are kept as they are.
+    """
+
+    draw, window = update_environment((800, 600), (800, 600), display_scale, pixel_density, False)
+
+    assert draw.update() is True
+    assert draw.dpi_scale == expected_scale
+    window.resize.assert_called_once_with(expected_size, opengl=True, fullscreen=False, maximized=False)
+    assert draw.resizes == 1
+
+
 class RecordingDraw(GL2Draw):
     """A GL2Draw that records the oversample each render-to-texture asks for, as drawing needs OpenGL."""
 

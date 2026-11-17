@@ -23,6 +23,15 @@ strength of the blur to what it was in Ren'Py 8.5.
 A mesh that changes size after it is first shown is now rendered at the new size, as allowed by
 :var:`config.mesh_oversample`. Previously, the mesh could keep using a texture created for a smaller size.
 
+Fixed a rounding issue with fractional displays that caused a window size update look that would stop Ren'Py
+from working correctly with scaled displays.
+
+Keysyms that consist of a single character, like ``key "i"`` in a screen, work again when no text input is
+active.
+
+The OpenGL state cache is properly reset when a new context is created, ensuring that GL state matches the cache
+and preventing issues with reused contexts. This manifested in a black screen on mobile devices after a
+shift+R reset or call to :func:`renpy.utter_restart`.
 
 .. _renpy-8.6.0:
 

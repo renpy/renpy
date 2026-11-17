@@ -621,6 +621,11 @@ cdef class GL2Draw:
         if self.state_cache.core_profile:
             self.create_default_vao()
 
+        # The context may be reused from a renderer that existed before an utter restart,
+        # with its state (like the bound array buffer) left behind. Force the GL state to match
+        # the cache, as textures can be loaded before the first draw_render resets it.
+        self.state_cache.reset()
+
         # The shading language version the context actually provides, which
         # is what decides the dialect shaders are emitted in. This is read
         # directly from the context.
@@ -714,6 +719,9 @@ cdef class GL2Draw:
 
                 if self.state_cache.core_profile:
                     self.create_default_vao()
+
+                # Make the new context's GL state match the cache.
+                self.state_cache.reset()
 
             if recreated or renpy.emscripten:
                 renpy.display.interface.kill_textures()
@@ -896,10 +904,19 @@ cdef class GL2Draw:
 
         window_dpi_scale = window_display_scale / window_pixel_density
 
+        # SDL computes the pixel density from the integer window and drawable
+        # sizes, so with fractional scaling (e.g. Wayland at 175%) it can differ
+        # from the display scale by rounding error. Snap scales within that error
+        # of a multiple of 0.25, as acting on the error resizes the window, which
+        # changes the rounding error, which causes another resize, and so on forever.
+        nearest_dpi_scale = round(window_dpi_scale * 4.0) / 4.0
+        if nearest_dpi_scale > 0.0 and abs(window_dpi_scale - nearest_dpi_scale) < 0.01:
+            window_dpi_scale = nearest_dpi_scale
+
         if renpy.test.testexecution.get_test_window_size() is not None:
             window_dpi_scale = 1.0
 
-        dpi_changed = window_dpi_scale != self.dpi_scale
+        dpi_changed = abs(window_dpi_scale - self.dpi_scale) >= 0.01
 
         if dpi_changed:
             if not fullscreen and not maximized and self.physical_size is not None:
