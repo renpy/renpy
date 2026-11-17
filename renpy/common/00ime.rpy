@@ -70,6 +70,7 @@ init -1500:
                             frame:
                                 style ("_ime_candidates_selected_item_frame" if _i == _ime.selected else "_ime_candidates_item_frame")
 
-                                text "{}. {}".format(_i + 1, _c.replace("{", "{{")):
+                                # The candidate includes the number used to select it.
+                                text _c.replace("{", "{{"):
                                     style ("_ime_candidates_selected_text" if _i == _ime.selected else "_ime_candidates_text")
                                     substitute False

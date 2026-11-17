@@ -23,6 +23,7 @@ from libc.string cimport memcpy, memset
 
 from .sdl cimport *
 from .display cimport Window, main_window
+from .time cimport suspend_timers
 from .error import error
 import threading
 import sys
@@ -632,6 +633,15 @@ cdef void queue_sdl_lifecycle_event(SDL_Event *event) noexcept nogil:
 
 
 cdef cbool lifecycle_event_watch(void *userdata, SDL_Event *event) noexcept nogil:
+
+    # SDL calls this while it is pumping events. On Android, the pump that pauses the app only returns once
+    # other threads stop posting events, so the timers have to be suspended here, rather than by the code that
+    # handles the queued event.
+    if event.type == SDL_EVENT_WILL_ENTER_BACKGROUND:
+        suspend_timers(True)
+    elif event.type == SDL_EVENT_DID_ENTER_FOREGROUND:
+        suspend_timers(False)
+
     if is_sdl_lifecycle_event(event.type):
         queue_sdl_lifecycle_event(event)
 

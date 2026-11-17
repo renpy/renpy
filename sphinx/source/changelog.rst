@@ -33,6 +33,18 @@ The OpenGL state cache is properly reset when a new context is created, ensuring
 and preventing issues with reused contexts. This manifested in a black screen on mobile devices after a
 shift+R reset or call to :func:`renpy.utter_restart`.
 
+The list of input method (IME) candidates drawn by Ren'Py on Windows no longer shows the number of each
+candidate twice.
+
+On Android, a game is once again told that it is entering the background when that happens, rather than when
+it returns to the foreground. This means the game is saved before Android can terminate it, and that Ren'Py
+no longer blocks for 8 seconds each time the game is sent to the background.
+
+On Android and iOS, a game that is terminated while in the background once again returns the player to where
+they were when it is started again, as described by :var:`config.save_on_mobile_background`.
+
+On Android 16 and later, the back button and back gesture once again roll back, rather than closing the game.
+
 .. _renpy-8.6.0:
 
 8.6.0

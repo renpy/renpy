@@ -36,7 +36,10 @@ class IMECandidates(NamedTuple):
     """
 
     candidates: tuple[str, ...]
-    "The candidate strings."
+    """
+    The candidate strings. Each includes the number used to select it, as supplied by the platform, so
+    the candidates should not be numbered again when displayed.
+    """
 
     selected: int
     "The index of the selected candidate, or -1 if no candidate is selected."

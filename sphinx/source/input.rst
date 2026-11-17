@@ -58,7 +58,9 @@ events on an unsupported backend.
 When candidate events are supplied, the list is displayed by the
 ``_ime_candidates`` screen, which Ren'Py shows and hides as required.
 The screen is placed next to the text
-being entered, and can be customized by changing the following styles:
+being entered. Each candidate is shown as it is supplied, which includes the
+number used to select it. The screen can be customized by changing the
+following styles:
 
 ``_ime_candidates_frame``
     The frame containing the candidate list.
