@@ -40,6 +40,9 @@ On Android, a game is once again told that it is entering the background when th
 it returns to the foreground. This means the game is saved before Android can terminate it, and that Ren'Py
 no longer blocks for 8 seconds each time the game is sent to the background.
 
+On Android and iOS, a game that is terminated while in the background once again returns the player to where
+they were when it is started again, as described by :var:`config.save_on_mobile_background`.
+
 .. _renpy-8.6.0:
 
 8.6.0
