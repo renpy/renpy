@@ -33,6 +33,9 @@ The OpenGL state cache is properly reset when a new context is created, ensuring
 and preventing issues with reused contexts. This manifested in a black screen on mobile devices after a
 shift+R reset or call to :func:`renpy.utter_restart`.
 
+The list of input method (IME) candidates drawn by Ren'Py on Windows no longer shows the number of each
+candidate twice.
+
 .. _renpy-8.6.0:
 
 8.6.0
