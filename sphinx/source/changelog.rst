@@ -43,6 +43,8 @@ no longer blocks for 8 seconds each time the game is sent to the background.
 On Android and iOS, a game that is terminated while in the background once again returns the player to where
 they were when it is started again, as described by :var:`config.save_on_mobile_background`.
 
+On Android 16 and later, the back button and back gesture once again roll back, rather than closing the game.
+
 .. _renpy-8.6.0:
 
 8.6.0
