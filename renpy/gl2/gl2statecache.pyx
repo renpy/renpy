@@ -124,7 +124,16 @@ cdef class GLStateCache:
             self.current_program = program
 
     cpdef void new_context(GLStateCache self, bint core_profile):
+        """
+        Forgets everything cached about the previous context, without making GL
+        calls, as GL may not be loaded yet. The cache then matches a newly created
+        context. A reused context may hold other state, so callers must also call
+        reset() once GL is loaded and the default VAO exists.
+        """
+
         global buffer_generation
+
+        cdef int i
 
         buffer_generation += 1
         self.buffer_generation = buffer_generation
@@ -137,6 +146,34 @@ cdef class GLStateCache:
         self.scratch_buffers[0] = 0
         self.scratch_buffers[1] = 0
         self.scratch_buffers[2] = 0
+
+        self.current_program = 0
+
+        # 0 is not GL_TEXTURE0, so this forces the first activate call.
+        self.current_active_texture = 0
+
+        for i in range(8):
+            self.current_texture[i] = 0
+
+        # No blend equation is zero, so this forces the next set_blend.
+        self.blend_eq_rgb = 0
+        self.blend_eq_alpha = 0
+        self.blend_src_rgb = 0
+        self.blend_dst_rgb = 0
+        self.blend_src_alpha = 0
+        self.blend_dst_alpha = 0
+
+        # A new context starts with all color channels writable.
+        self.color_mask_r = True
+        self.color_mask_g = True
+        self.color_mask_b = True
+        self.color_mask_a = True
+
+        # A new context starts with no vertex attribute arrays enabled.
+        self.enabled_attrib_mask = 0
+
+        # Sampler-to-unit assignments belonged to the old context's programs.
+        self.reset_serial += 1
 
     cdef void delete_scratch_buffers(GLStateCache self) noexcept nogil:
         if self.scratch_buffers[0] or self.scratch_buffers[1] or self.scratch_buffers[2]:

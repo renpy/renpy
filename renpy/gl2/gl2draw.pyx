@@ -621,6 +621,11 @@ cdef class GL2Draw:
         if self.state_cache.core_profile:
             self.create_default_vao()
 
+        # The context may be reused from a renderer that existed before an utter restart,
+        # with its state (like the bound array buffer) left behind. Force the GL state to match
+        # the cache, as textures can be loaded before the first draw_render resets it.
+        self.state_cache.reset()
+
         # The shading language version the context actually provides, which
         # is what decides the dialect shaders are emitted in. This is read
         # directly from the context.
@@ -714,6 +719,9 @@ cdef class GL2Draw:
 
                 if self.state_cache.core_profile:
                     self.create_default_vao()
+
+                # Make the new context's GL state match the cache.
+                self.state_cache.reset()
 
             if recreated or renpy.emscripten:
                 renpy.display.interface.kill_textures()
