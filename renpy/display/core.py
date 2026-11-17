@@ -1998,6 +1998,8 @@ class Interface:
         Handles the SDL2 suspend process.
         """
 
+        # On Android, this event is only delivered because renpy.pygame.event stops timers from posting events
+        # as soon as SDL reports that the app is entering the background.
         if ev.type != pygame.WILLENTERBACKGROUND:
             return False
 

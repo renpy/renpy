@@ -36,6 +36,10 @@ shift+R reset or call to :func:`renpy.utter_restart`.
 The list of input method (IME) candidates drawn by Ren'Py on Windows no longer shows the number of each
 candidate twice.
 
+On Android, a game is once again told that it is entering the background when that happens, rather than when
+it returns to the foreground. This means the game is saved before Android can terminate it, and that Ren'Py
+no longer blocks for 8 seconds each time the game is sent to the background.
+
 .. _renpy-8.6.0:
 
 8.6.0

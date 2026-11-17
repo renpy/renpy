@@ -47,8 +47,37 @@ def delay(milliseconds):
 
 from libc.stdint cimport uintptr_t
 
+# True while timers do not post their events. SDL's timer thread reads this without a lock, as acting on a
+# stale value only posts or drops a single event.
+cdef bint timers_suspended = False
+
+cdef void suspend_timers(bint suspended) noexcept nogil:
+    """
+    Stops timers from posting events when `suspended` is true, and lets them post again when it is false. A
+    repeating timer keeps running while suspended, and a one-shot timer that expires while suspended is lost.
+
+    This exists for the mobile platforms, where it is called when the app enters and leaves the background.
+    On Android, SDL does not return from pumping events in a paused app while other threads post events less
+    than 100 ms apart, which a repeating timer does. That kept the game from being told that it was paused
+    until it was resumed. (renpy/renpy#7534)
+    """
+
+    global timers_suspended
+    timers_suspended = suspended
+
+def _suspend_timers(suspended):
+    """
+    Calls suspend_timers. This is for use by tests.
+    """
+
+    suspend_timers(suspended)
+
 cdef Uint32 timer_callback(void *param, SDL_TimerID timerID, Uint32 interval) nogil:
     cdef SDL_Event e
+
+    if timers_suspended:
+        return interval
+
     e.type = <unsigned short> <uintptr_t> param
     e.user.code = <unsigned char> 0
     e.user.data1 = NULL
@@ -58,6 +87,10 @@ cdef Uint32 timer_callback(void *param, SDL_TimerID timerID, Uint32 interval) no
 
 cdef Uint32 timer_once_callback(void *param, SDL_TimerID timerID, Uint32 interval) nogil:
     cdef SDL_Event e
+
+    if timers_suspended:
+        return 0
+
     e.type = <unsigned short> <uintptr_t> param
     e.user.code = 0
     e.user.data1 = NULL
