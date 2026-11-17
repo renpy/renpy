@@ -19,7 +19,7 @@
 
 from cpython.ref cimport Py_INCREF, Py_DECREF
 
-from libc.string cimport memcpy
+from libc.string cimport memcpy, memset
 
 from .sdl cimport *
 from .display cimport Window, main_window
@@ -241,12 +241,37 @@ cdef make_keyboard_event(SDL_KeyboardEvent *e):
                 dargs['unicode'] = get_textinput()
 
     else:
-        if e.type == SDL_EVENT_KEY_DOWN and not(e.key & SDL_KMOD_NUM):
-            if SDLK_KP_1 <= e.key <= SDLK_KP_0:
-                get_textinput()
-                dargs['unicode'] = ''
+        if e.type == SDL_EVENT_KEY_DOWN:
+            # Without text input, there is no TEXTINPUT event, so take the
+            # character from the keyboard layout, with shift, caps lock, and
+            # AltGr applied. Keycodes of keys that do not produce a character
+            # have bits above the Unicode range set.
+            keycode = SDL_GetKeyFromScancode(e.scancode, e.mod, False)
+
+            if 0x20 <= keycode <= 0x10FFFF and keycode != 0x7F:
+                dargs['unicode'] = chr(keycode)
 
     return EventType(e.type, dict=dargs, repeat=e.repeat)
+
+
+def _make_keyboard_event(type, scancode, key, mod, repeat=False):
+    """
+    Converts the fields of an SDL keyboard event into an event object, as
+    the event queue does. This exists so tests can exercise the conversion
+    without a keyboard.
+    """
+
+    cdef SDL_KeyboardEvent e
+
+    memset(&e, 0, sizeof(e))
+    e.type = type
+    e.scancode = scancode
+    e.key = key
+    e.mod = mod
+    e.down = (type == SDL_EVENT_KEY_DOWN)
+    e.repeat = repeat
+
+    return make_keyboard_event(&e)
 
 cdef make_mousemotion_event(SDL_MouseMotionEvent *e):
     buttons = (1 if e.state & SDL_BUTTON_LMASK else 0,

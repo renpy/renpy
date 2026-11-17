@@ -26,6 +26,9 @@ A mesh that changes size after it is first shown is now rendered at the new size
 Fixed a rounding issue with fractional displays that caused a window size update look that would stop Ren'Py
 from working correctly with scaled displays.
 
+Keysyms that consist of a single character, like ``key "i"`` in a screen, work again when no text input is
+active.
+
 .. _renpy-8.6.0:
 
 8.6.0
