@@ -9,12 +9,17 @@ export RENPY_CYTHON=cython
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 QUIET=${RENPY_QUIET- --quiet}
 BUILD_ONLY=false
+SKIP_BUILD=false
 CLEAN=false
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
         --build)
             BUILD_ONLY=true
+            shift
+            ;;
+        --no-build)
+            SKIP_BUILD=true
             shift
             ;;
         --clean)
@@ -33,12 +38,6 @@ while [ "$#" -gt 0 ]; do
             ;;
     esac
 done
-
-if $CLEAN; then
-    find "$ROOT" -maxdepth 1 -type f -name '*.cpython*.so' -delete
-    find "$ROOT/renpy" -type f -name '*.cpython*.so' -delete
-    rm -Rf "$ROOT/tmp/gen"
-fi
 
 if [ -n "$RENPY_COVERAGE" ]; then
     variant="renpy-coverage"
@@ -70,6 +69,12 @@ BUILD_J="-j $CPUS"
 setup () {
     pushd $1 >/dev/null
 
+    if $CLEAN; then
+        find "$ROOT" -maxdepth 1 -type f -name '*.cpython*.so' -delete
+        find "$ROOT/renpy" -type f -name '*.cpython*.so' -delete
+        rm -Rf "$ROOT/tmp/gen"
+    fi
+
     if ! python setup.py $QUIET build_ext -b tmp/build/lib.$variant -t tmp/build/tmp.$variant --inplace $BUILD_J; then
         if [ "$(which python)" != "$ROOT/.venv/bin/python" ]; then
             echo "Warning: Running using $(which python)"
@@ -87,7 +92,17 @@ if [ -e "$ROOT/cubism" ]; then
     export LD_LIBRARY_PATH="$CUBISM/Core/dll/$CUBISM_PLATFORM${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 fi
 
-setup "$ROOT/"
+if ! $SKIP_BUILD || $BUILD_ONLY || $CLEAN; then
+    if [ -n "$RENPY_SERIALIZE_BUILD" ]; then
+        # The shell keeps the locked file descriptor open until setup finishes.
+        {
+            python -c 'import fcntl; fcntl.flock(9, fcntl.LOCK_EX)'
+            setup "$ROOT/"
+        } 9<"$ROOT/setup.py"
+    else
+        setup "$ROOT/"
+    fi
+fi
 
 if $BUILD_ONLY; then
     echo "Ren'Py build complete."

@@ -12,6 +12,7 @@ add_all.sh
 Runs add.py using the Python in lib/, giving it the ``--real`` flag. add.py tags
 and publishes a release, and refuses to do so if the updates.json file in dl/
 isn't for the current version.
+With ``-n`` (``--no-tag``), the current Ren'Py commit must already have a tag.
 
 alter_translations.py
 ---------------------
@@ -106,11 +107,28 @@ run_testcases.py
 ----------------
 
 Runs the test suites of the testcases, tutorial, the_question, and launcher
-projects on several platforms at once, and prints a combined synopsis to stdout.
+projects concurrently on each selected target, and prints a combined synopsis to stdout.
 Targets can run in the repository, in a private copy of the tree (natively or
 under wine), or on another computer using rsync and ssh. They run like normal
 games unless they're set to be headless. Use --project to run some of the
 projects, which test filters require.
+
+The launcher's build_project testcase builds signed PC and Mac updates for its
+temporary game. It installs both updates from the generated RPU files and checks
+the installed executable, game script, license, and Python runtime against the
+desktop ZIPs.
+
+Alongside the projects, each target apart from a source one also runs the updater
+test described under run_updater_test.py. It's selected with --project updater,
+and reported in the synopsis as updater and updater:the_question. When it's the
+only thing selected, it takes the --version, --variant, and --channel of
+run_updater_test.py after --, as in
+``run_testcases.py -p updater -- --version 8.6.1``.
+
+Without those, it updates the SDK of this repository's version. If that SDK
+hasn't been built in dl/, the updater test is reported as XFAIL, an expected
+failure that doesn't fail the run. A version named with --version that hasn't
+been built is an error.
 
 Failure reports include assertion messages and tracebacks, including errors in
 test hooks. Routine test output stays in the logs, and expected failures do not
@@ -119,6 +137,23 @@ print diagnostics.
 Targets are defined in ~/.renpy/dev/testcases.toml. To create it, copy and edit
 run_testcases.example.toml, which documents the format. Logs and artifacts are
 kept in tmp/run-testcases/.
+
+run_updater_test.py
+-------------------
+
+Tests the updater. run_testcases.py runs this test as well, and this script
+runs it alone. On each target of run_testcases.py, apart from source targets,
+this unpacks the SDK that was built into dl/<version>, uses its launcher to
+update it to a nightly build, and checks that the launcher restarts as the new
+version and that the_question's tests pass in it. The version defaults to that
+of this repository, and --version picks another one. The update channel
+defaults to Nightly Fix for a version in the series that's getting fixes and to
+Nightly otherwise, and --channel picks another one.
+
+The update is downloaded from the real update servers, so each target needs to
+reach them. On a computer reached with ssh, the SDK is kept in the updater-test
+directory inside the target's destination. Logs are kept in
+tmp/run-updater-test/.
 
 sign_update.py
 ---------------

@@ -240,7 +240,8 @@ Ubuntu/Debian package list.
 
 On Windows, use the equivalent PowerShell commands with `.\run.ps1`.
 
-`run.sh` rebuilds stale extensions before every launch; Python-only edits need no build step.
+`run.sh` rebuilds stale extensions by default. Use `--no-build` to launch with the existing extensions, as the
+parallel source testcase runner does after a shared build.
 `run-headless.sh` needs Weston, `xvfb-run`, or `Xvfb`; read the script if it fails.
 
 Lint the affected project (e.g. `launcher`, `tutorial`, or `the_question`), not always `testcases`.

@@ -10,10 +10,10 @@ label transforms__matrixcolor__label:
         matrixcolor BrightnessMatrix(0.0)
     "Start"
     show eileen happy:
-        linear 0.2 matrixcolor BrightnessMatrix(1.0)
+        linear 1.0 matrixcolor BrightnessMatrix(1.0)
     "Brightening"
     show eileen happy:
-        linear 0.2 matrixcolor BrightnessMatrix(0.0)
+        linear 1.0 matrixcolor BrightnessMatrix(0.0)
     "Done"
     return
 
@@ -86,8 +86,10 @@ testsuite transforms:
             # https://github.com/renpy/renpy/issues/2591
 
             run Start("transforms__matrixcolor__label")
+            # The animations take 1.0 s, so that a frame delayed by tens of milliseconds on a loaded machine stays
+            # within the tolerances below.
             advance # Begin animation
-            pause 0.2 * 0.25 # 25% brightness
+            pause 1.0 * 0.25 # 25% brightness
 
             # Verify we're partway through the first animation (25% of 0.0 -> 1.0, within a tolerance of 0.1).
             python:
@@ -101,7 +103,7 @@ testsuite transforms:
             # Interrupt by advancing to the next show statement, then let the new
             # reverse animation run partway.
             advance
-            pause 0.2 * 0.3  # 30% reverse animation
+            pause 1.0 * 0.3  # 30% reverse animation
 
             # The new animation should be reversing from ~0.25 toward 0.0, not
             # jumping toward the old target (1.0) first.
@@ -109,7 +111,7 @@ testsuite transforms:
                 d = renpy.game.context().scene_lists.get_displayable_by_tag("master", "eileen")
                 mc = d.state.matrixcolor
                 second_brightness = mc.ydw
-                # The reverse animation (0.2 s, from the interrupted value to 0.0) is 30% done, so
+                # The reverse animation (1.0 s, from the interrupted value to 0.0) is 30% done, so
                 # it has covered 30% of the way from first_brightness back to 0.0.
                 expected = first_brightness * (1.0 - 0.3)
                 assert abs(second_brightness - expected) < 0.1, \
@@ -118,7 +120,7 @@ testsuite transforms:
                     f"Expected brightness to decrease from {first_brightness}, got {second_brightness}"
 
             # Let the reverse animation complete; brightness should reach 0.0 (within 0.05).
-            pause 0.2
+            pause 1.0
             python:
                 d = renpy.game.context().scene_lists.get_displayable_by_tag("master", "eileen")
                 mc = d.state.matrixcolor
@@ -132,7 +134,7 @@ testsuite transforms:
 
             run Start("transforms__matrixcolor__label")
             advance  # start the 0→1 animation
-            pause 0.2  # let it complete
+            pause 1.25  # let it complete; linear stops at its target, so waiting longer cannot overshoot
 
             python:
                 d = renpy.game.context().scene_lists.get_displayable_by_tag("master", "eileen")

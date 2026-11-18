@@ -882,7 +882,9 @@ class Script:
                     bad_reduction_name=f"<{fn} transformed rpyc data>",
                 )
 
-                if not renpy.macapp:
+                # Parallel testcase projects share the common directory and can parse the same source concurrently.
+                readonly_common = dir == renpy.config.commondir and os.environ.get("RENPY_TEST_READONLY_COMMON") == "1"
+                if not renpy.macapp and not readonly_common:
                     try:
                         with open(rpycfn, "wb") as f:
                             self.write_rpyc_header(f)

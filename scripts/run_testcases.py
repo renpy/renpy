@@ -26,8 +26,9 @@ Runs Ren'Py's functional testcases on several platforms at once, and prints one 
 
 Targets are defined in ~/.renpy/dev/testcases.toml; scripts/run_testcases.example.toml documents the format. A target
 is a place to run: in the repository, in a private copy of the tree (natively or under wine), or in a copy rsynced to
-another computer and run over ssh. Targets run in parallel, and each one runs the test suites of the projects in
-PROJECTS, one project at a time, with a process for each.
+another computer and run over ssh. Each selected project runs concurrently on each target, with a process for each pair.
+Non-source targets also run scripts/run_updater_test.py alongside the other projects. Select it using the name in
+UPDATER. A missing SDK counts as an expected failure and allows the run to pass.
 
 Progress goes to stderr and the final synopsis to stdout. Logs and failure artifacts are kept in
 tmp/run-testcases/<timestamp>/<target>/<project>/, with tmp/run-testcases/latest pointing at the newest run. The exit
@@ -38,6 +39,7 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import importlib
 import os
 import re
 import shlex
@@ -48,7 +50,9 @@ import sys
 import threading
 import time
 import tomllib
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from types import ModuleType
 
 # The root of the Ren'Py checkout this script belongs to.
 REPO: Path = Path(__file__).resolve().parent.parent
@@ -63,8 +67,17 @@ WORK_DIR: Path = REPO / "tmp" / "run-testcases"
 # share the directory named by config.save_directory. Each project has a directory of its own inside this one.
 STAGED_SAVEDIR: str = ".test-saves"
 
-# The projects with test suites, in the order they run. These are top-level directories of the repository.
+# The projects with test suites, in report order. These are top-level directories of the repository.
 PROJECTS: tuple[str, ...] = ("testcases", "tutorial", "the_question", "launcher")
+
+# The name that selects the updater test with --project, and that it's reported under. It isn't a directory.
+UPDATER: str = "updater"
+
+# Everything --project can name, in report order.
+RUNNABLE: tuple[str, ...] = (*PROJECTS, UPDATER)
+
+# The statuses of a result that don't make the run fail. XFAIL is a failure that was expected.
+SUCCESSFUL: frozenset[str] = frozenset({"PASS", "XFAIL"})
 
 # The kinds of target, which determine where a target runs and how it starts.
 TARGET_TYPES: frozenset[str] = frozenset({"source", "local", "wine", "ssh"})
@@ -231,13 +244,21 @@ class Target:
 
     wineprefix: str | None = None
 
+    root: str | None = None
+    "If not None, the tree this target runs in, replacing the one its type would use. The configuration can't set this."
+
+    wine_cleanup_requested: threading.Event | None = None
+    "During a parallel run, set this to request prefix-wide cleanup after all games have exited."
+
     @property
     def workdir(self) -> str:
         """
         The root of the tree this target runs in, on the computer it runs on.
         """
 
-        if self.type == "source":
+        if self.root is not None:
+            return self.root
+        elif self.type == "source":
             return str(REPO)
         elif self.type == "ssh":
             return str(self.path)
@@ -485,6 +506,10 @@ def parse_target(name: str, table: dict[str, object], defaults: dict[str, object
     if not re.fullmatch(r"[A-Za-z0-9._-]+", name):
         raise ConfigError(f"Target name {name!r} may only contain letters, digits, '.', '_' and '-'.")
 
+    # The name is used as a directory, and these would be a directory that holds every target's.
+    if name in (".", ".."):
+        raise ConfigError(f"Target name {name!r} isn't allowed.")
+
     unknown = set(table) - TARGET_KEYS
     if unknown:
         raise ConfigError(f"Target {name}: unknown key(s): {', '.join(sorted(unknown))}.")
@@ -596,15 +621,16 @@ def select_targets(targets: list[Target], names: str | None) -> list[Target]:
 
 def select_projects(names: str | None, filters: list[str]) -> list[str]:
     """
-    Picks the projects to run: the comma-separated `names`, or else all of them. Test filters are specific to a
-    project, and a filter that matches nothing fails the run, so they can only be used with a single project.
+    Picks what to run: the comma-separated `names`, or else all of RUNNABLE, which is the projects and the updater
+    test. Test filters are specific to a project, and a filter that matches nothing fails the run, so they can only
+    be used with a single project. When that's the updater test, they are its arguments instead.
     """
 
-    projects = list(dict.fromkeys(names.split(","))) if names else list(PROJECTS)
+    projects = list(dict.fromkeys(names.split(","))) if names else list(RUNNABLE)
 
     for project in projects:
-        if project not in PROJECTS:
-            raise ConfigError(f"Unknown project {project!r}. Known projects: {', '.join(PROJECTS)}.")
+        if project not in RUNNABLE:
+            raise ConfigError(f"Unknown project {project!r}. Known projects: {', '.join(RUNNABLE)}.")
 
     if filters and len(projects) != 1:
         raise ConfigError("Test filters are specific to a project, so use --project to name exactly one.")
@@ -612,11 +638,30 @@ def select_projects(names: str | None, filters: list[str]) -> list[str]:
     return projects
 
 
-def build_launch(target: Target, index: int) -> str:
+def choose_command(target: Target) -> str:
+    """
+    Returns the shell command that starts Ren'Py on a target, without the environment or virtual display it needs.
+    """
+
+    if target.command:
+        return target.command
+    elif target.type == "source":
+        return "./scripts/run-headless.sh" if target.headless else "./run.sh"
+    elif target.type == "wine":
+        return "wine lib/py3-windows-x86_64/python.exe renpy.py"
+    else:
+        return "./renpy.sh"
+
+
+def build_launch(target: Target, index: int, command: str | None = None) -> str:
     """
     Returns the shell command that starts Ren'Py on a target, up to but not including Ren'Py's arguments.
 
-    `index` is the target's position in this run, which keeps parallel virtual displays apart.
+    `index` identifies the concurrent run, which keeps parallel virtual displays apart.
+
+    `command`
+        If not None, a shell command that's run in place of Ren'Py, in the environment and on the virtual display
+        that Ren'Py would get. This lets several Ren'Py processes share one display.
     """
 
     env = dict(target.env)
@@ -626,21 +671,23 @@ def build_launch(target: Target, index: int) -> str:
         if target.wineprefix:
             env.setdefault("WINEPREFIX", target.wineprefix)
 
-    if target.command:
-        launch = target.command
-    elif target.type == "source":
-        launch = "./scripts/run-headless.sh" if target.headless else "./run.sh"
-    elif target.type == "wine":
-        launch = "wine lib/py3-windows-x86_64/python.exe renpy.py"
-    else:
-        launch = "./renpy.sh"
+    launch = choose_command(target) if command is None else command
+
+    if target.type == "source":
+        if not target.command and command is None:
+            # sync_target has already built the extensions shared by all source projects.
+            launch += " --no-build"
+        else:
+            # A custom wrapper may invoke run.sh with its own build environment.
+            env["RENPY_SERIALIZE_BUILD"] = "1"
+        env["RENPY_XVFB_START"] = str(100 + 10 * index)
 
     unset = ""
 
     if target.headless and target.type != "source":
         # Without these, SDL prefers a Wayland session, and opens on the real desktop instead of the virtual display.
         # SDL under wine is a Windows build with no x11 driver, so it has to pick its own, which wine then runs on X11.
-        # xvfb-run -a is racy when started in parallel, so each target searches from its own display number.
+        # xvfb-run -a is racy when started in parallel, so each run searches from its own display number.
         unset = "-u WAYLAND_DISPLAY "
 
         if target.type == "wine":
@@ -677,6 +724,7 @@ def build_run_script(target: Target, project: str, index: int, filters: list[str
         f"cd {shlex.quote(target.workdir)} || exit 125",
         f"rm -rf {shlex.quote(target.project_savedir(project))} {project}/traceback.txt {project}/errors.txt",
         f"find {project}/screenshots \\( -name '*.new.png' -o -name '*.diff.png' \\) -delete 2>/dev/null",
+        "export RENPY_TEST_READONLY_COMMON=1",
         f"exec {build_launch(target, index)} {arguments}",
     ])
 
@@ -865,6 +913,16 @@ def stop_wine(target: Target, log: Path) -> None:
     if target.type != "wine":
         return
 
+    if target.wine_cleanup_requested is not None:
+        target.wine_cleanup_requested.set()
+        return
+
+    stop_wine_server(target, log)
+
+
+def stop_wine_server(target: Target, log: Path) -> None:
+    """Stop all Wine processes using the target's configured prefix."""
+
     env = dict(os.environ)
     if target.wineprefix:
         env["WINEPREFIX"] = target.wineprefix
@@ -908,6 +966,14 @@ def sync_target(target: Target, log: Path) -> str | None:
 
     if target.type == "source":
         WORK_DIR.mkdir(parents=True, exist_ok=True)
+        if not target.command:
+            report_progress(target.name, "building source extensions")
+            try:
+                status = run_logged(["./run.sh", "--build"], log, target.timeout, env={**os.environ, **target.env})
+            except CommandTimeout:
+                return "source build timed out"
+            if status:
+                return f"source build failed with exit status {status}"
         return None
 
     if target.type == "ssh":
@@ -1018,36 +1084,61 @@ def run_project(target: Target, project: str, index: int, filters: list[str], di
     return Result(target.name, project, status, report, duration, detail, relative_output)
 
 
+def load_updater_test() -> ModuleType:
+    """
+    Returns the run_updater_test module, which is imported when it's needed, as it imports this module.
+
+    It has to get this module, rather than a second copy of it with a `cancelled` of its own. When this file is run
+    as a script it's named __main__, so it's given the name run_updater_test imports it by.
+    """
+
+    if __package__:
+        return importlib.import_module(".run_updater_test", __package__)
+
+    if __name__ == "__main__":
+        sys.modules.setdefault("run_testcases", sys.modules["__main__"])
+
+    return importlib.import_module("run_updater_test")
+
+
 def run_target(target: Target, projects: list[str], index: int, filters: list[str], directory: Path) -> list[Result]:
-    """
-    Syncs a target and runs its projects one at a time, returning a result for each. Projects run on their own
-    because their windows would take focus from each other. This doesn't raise for anything that's the target's fault,
-    so a broken target can't affect the others.
-    """
+    """Sync the target once, then run its selected projects concurrently. Report the updater last."""
 
+    synced = [project for project in projects if project != UPDATER]
     directory.mkdir(parents=True, exist_ok=True)
-
     support = directory / "support.txt"
+    failure = None
 
-    try:
-        if target.type != "source":
-            report_progress(target.name, "syncing")
+    if synced:
+        try:
+            if target.type != "source":
+                report_progress(target.name, "syncing")
+            failure = sync_target(target, support)
+        except Cancelled:
+            failure = "interrupted"
+        except OSError as e:
+            failure = str(e)
 
-        failure = sync_target(target, support)
+        if failure:
+            report_progress(target.name, f"ERROR: {failure}")
 
-    except Cancelled:
-        report_progress(target.name, "interrupted")
-        return make_target_errors(target, projects, "interrupted")
+    def run_one(project: str, job_index: int) -> list[Result]:
+        """Run one project, keeping exceptions and diagnostics local to this pair."""
+        project_dir = directory / project
+        try:
+            if project == UPDATER:
+                return load_updater_test().run_default(target, job_index, project_dir, [] if synced else filters)
+            if failure:
+                return make_target_errors(target, [project], f"{failure}; see {support}")
+            return [run_project(target, project, job_index, filters, project_dir, project_dir / "support.txt")]
+        except Exception as e:
+            report_progress(f"{target.name}/{project}", f"ERROR: {e!r}")
+            return [Result(target.name, project, "ERROR", detail=repr(e))]
 
-    except OSError as e:
-        report_progress(target.name, f"ERROR: {e}")
-        return make_target_errors(target, projects, str(e))
-
-    if failure:
-        report_progress(target.name, f"ERROR: {failure}")
-        return make_target_errors(target, projects, f"{failure}; see {support}")
-
-    return [run_project(target, i, index, filters, directory / i, support) for i in projects]
+    ordered = synced + ([UPDATER] if UPDATER in projects else [])
+    with ThreadPoolExecutor(max_workers=len(ordered), thread_name_prefix=target.name) as pool:
+        futures = [pool.submit(run_one, project, index * len(ordered) + i) for i, project in enumerate(ordered)]
+        return [result for future in futures for result in future.result()]
 
 
 def run_prepare_commands(targets: list[Target], directory: Path) -> dict[str, str]:
@@ -1105,8 +1196,8 @@ def format_duration(seconds: float) -> str:
 
 def format_synopsis(results: list[Result]) -> str:
     """
-    Formats the final report: a table with a row per project on each target, the problems found, and the overall
-    result. A problem that stopped a whole target is only listed once.
+    Formats the final report: a table with a row per project on each target, the problems found, the failures that
+    were expected, and the overall result. A problem that stopped a whole target is only listed once.
     """
 
     rows = [("Target", "Project", "Status", "Passed", "Failed", "XFail", "Skip", "Time", "Platform")]
@@ -1135,7 +1226,7 @@ def format_synopsis(results: list[Result]) -> str:
     failed_targets = set()
 
     for r in results:
-        if r.status == "PASS":
+        if r.status in SUCCESSFUL:
             continue
 
         if r.target_wide:
@@ -1156,29 +1247,42 @@ def format_synopsis(results: list[Result]) -> str:
     if failures:
         lines += ["", "Failures:", *failures]
 
+    expected = [f"  {r.name}/{r.project}: {r.detail or r.status}" for r in results if r.status == "XFAIL"]
+
+    if expected:
+        lines += ["", "Expected failures:", *expected]
+
     passed = sum(r.status == "PASS" for r in results)
-    overall = "PASS" if passed == len(results) else "FAIL"
-    lines += ["", f"OVERALL: {overall} ({passed}/{len(results)} test runs passed)"]
+    overall = "PASS" if all(r.status in SUCCESSFUL for r in results) else "FAIL"
+    summary = f"{passed}/{len(results)} test runs passed"
+
+    if expected:
+        summary += f", {len(expected)} failed as expected"
+
+    lines += ["", f"OVERALL: {overall} ({summary})"]
 
     return "\n".join(lines)
 
 
-def make_results_directory() -> Path:
+def make_results_directory(work_dir: Path | None = None) -> Path:
     """
-    Creates this run's results directory, and points the `latest` symlink at it.
+    Creates this run's results directory in `work_dir`, which defaults to WORK_DIR, and points the `latest` symlink
+    there at it.
     """
 
+    work_dir = work_dir or WORK_DIR
+
     stamp = time.strftime("%Y%m%d-%H%M%S")
-    directory = WORK_DIR / stamp
+    directory = work_dir / stamp
     suffix = 1
 
     while directory.exists():
         suffix += 1
-        directory = WORK_DIR / f"{stamp}-{suffix}"
+        directory = work_dir / f"{stamp}-{suffix}"
 
     directory.mkdir(parents=True)
 
-    latest = WORK_DIR / "latest"
+    latest = work_dir / "latest"
     latest.unlink(missing_ok=True)
     latest.symlink_to(directory.name)
 
@@ -1195,6 +1299,11 @@ def run_all(targets: list[Target], projects: list[str], filters: list[str], use_
 
     directory = make_results_directory()
     report_progress("results", str(directory))
+
+    # wineserver -k stops every game in its prefix, which can even be shared between targets.
+    targets = [
+        dataclasses.replace(t, wine_cleanup_requested=threading.Event()) if t.type == "wine" else t for t in targets
+    ]
 
     results: dict[str, list[Result]] = {}
     threads = []
@@ -1229,6 +1338,10 @@ def run_all(targets: list[Target], projects: list[str], filters: list[str], use_
     for thread in threads:
         thread.join()
 
+    for target in targets:
+        if target.wine_cleanup_requested is not None and target.wine_cleanup_requested.is_set():
+            stop_wine_server(target, directory / target.name / "support.txt")
+
     return [result for t in targets for result in results[t.name]]
 
 
@@ -1252,7 +1365,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Run Ren'Py's functional testcases on several platforms at once.")
     ap.add_argument("--config", type=Path, default=DEFAULT_CONFIG, help=f"The config file. Default: {DEFAULT_CONFIG}")
     ap.add_argument("-t", "--target", help="A comma-separated list of targets to run, which may be disabled ones.")
-    ap.add_argument("-p", "--project", help=f"A comma-separated list of projects to run. Default: {','.join(PROJECTS)}")
+    ap.add_argument("-p", "--project", help=f"A comma-separated list of projects to run. Default: {','.join(RUNNABLE)}")
     ap.add_argument("--list", action="store_true", help="List the configured targets, and exit.")
     ap.add_argument("--build", action="store_true", help="Run the targets' prepare commands before the tests.")
     ap.add_argument("--headless", action="store_true", help="Run every target on a virtual display with dummy audio.")
@@ -1260,7 +1373,8 @@ def main() -> int:
     ap.add_argument(
         "filters",
         nargs="*",
-        help="Test filters, which require --project to name one project. Default: all tests. Use -- before them.",
+        help="Test filters, which require --project to name one project. Default: all tests. Use -- before them. "
+        f"With --project {UPDATER}, these are the --version, --variant, and --channel of run_updater_test.py.",
     )
     args = ap.parse_args()
 
@@ -1278,6 +1392,12 @@ def main() -> int:
 
         selected = select_targets(targets, args.target)
         projects = select_projects(args.project, args.filters)
+
+        if projects == [UPDATER] and all(t.type == "source" for t in selected):
+            raise ConfigError("The updater test can't run on a source target, as it would update the repository.")
+
+        if projects == [UPDATER]:
+            load_updater_test().check_arguments(args.filters)
 
     except ConfigError as e:
         print(f"Error: {e}", file=sys.stderr)
@@ -1298,7 +1418,7 @@ def main() -> int:
     results = run_all(selected, projects, args.filters, args.build)
     print(format_synopsis(results), flush=True)
 
-    return 0 if all(r.status == "PASS" for r in results) else 1
+    return 0 if all(r.status in SUCCESSFUL for r in results) else 1
 
 
 if __name__ == "__main__":

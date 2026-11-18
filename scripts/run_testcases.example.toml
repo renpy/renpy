@@ -1,6 +1,7 @@
 # The configuration for scripts/run_testcases.py. Copy this to ~/.renpy/dev/testcases.toml, and edit it to describe
 # your computers. Each [target.<name>] table is one place to run the tests, and they all run at the same time. Each
-# target runs the tests of testcases, tutorial, the_question, and launcher, one project at a time.
+# target runs testcases, tutorial, the_question, and launcher in parallel. Non-source targets also run the updater
+# test of scripts/run_updater_test.py alongside them.
 #
 # Keys every target can have:
 #

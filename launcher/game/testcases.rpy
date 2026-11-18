@@ -42,6 +42,62 @@
 
         return True
 
+    def check_updates():
+        """Install the signed PC and Mac updates from their local blocks and compare them with the desktop builds."""
+        import hashlib
+        import json
+        from pathlib import Path
+        import shutil
+        import sys
+        import tempfile
+        import zipfile
+
+        from renpy.ecsign import VerifyingKey
+        from renpy.update.common import FileList
+        from renpy.update.update import Update
+
+        dest = Path(project.current.parent_path) / project.current.dump["build"]["destination"]
+        index = (dest / "updates.json").read_bytes()
+        key = VerifyingKey.from_pem((dest / "public_key.pem").read_bytes())
+        key.verify((dest / "updates.ecdsa").read_bytes(), index)
+        packages = json.loads(index)
+
+        class LocalUpdate(Update):
+            def download_block_file(self, filename, plan):
+                # The updater deletes its downloaded copy after applying it.
+                return shutil.copyfile(dest / "rpu" / filename, Path(self.updatedir) / filename)
+
+        for variant in ("pc", "mac"):
+            info = packages[variant]
+            data = (dest / info["rpu_url"]).read_bytes()
+            if hashlib.sha256(data).hexdigest() != info["rpu_digest"]:
+                raise Exception("Incorrect file list digest for the {} update.".format(variant))
+
+            files = FileList.decode(data)
+            with tempfile.TemporaryDirectory(prefix="renpy-update-test-") as root:
+                update = LocalUpdate(None, [files], root, [], progress_callback=lambda message, done: None)
+                update.init()
+                update.update()
+
+                base = project.current.dump["build"]["directory_name"]
+                with zipfile.ZipFile(dest / (base + "-" + variant + ".zip")) as archive:
+                    runtime = "lib/python{}.{}/encodings/__init__.pyc".format(*sys.version_info[:2])
+                    executable = project.current.dump["build"]["executable_name"]
+                    launcher = executable + ".exe" if variant == "pc" else executable + ".app/Contents/MacOS/" + executable
+                    for name in ("renpy/LICENSE.txt", "game/script.rpyc", runtime, launcher):
+                        member, = [i for i in archive.namelist() if ("/" + i).endswith("/" + name)]
+                        installed, = [i.name for i in files.files if ("/" + i.name).endswith("/" + name)]
+                        if (Path(root) / installed).read_bytes() != archive.read(member):
+                            raise Exception("{} differs between the {} archive and update.".format(name, variant))
+
+                    paths = archive.namelist() + [i.name for i in files.files]
+                    for path in paths:
+                        if any(part in ("python3.9", "python3.11", "libpython3.9.dll", "libpython3.11.dll")
+                               for part in path.split("/")):
+                            raise Exception("Old Python runtime in {}: {}".format(variant, path))
+
+        return True
+
     def check_mobile_license():
         """
         Checks that the android and ios packages for the current project contain
@@ -273,12 +329,20 @@ testsuite default:
 
     testcase build_project:
         $ _test.timeout = 60.0
+        python:
+            from pathlib import Path
+            options = Path(persistent.temp_projects_directory) / "Test Project" / "game" / "test_updates.rpy"
+            options.write_text("define build.include_update = True\n", encoding="utf-8")
+
         click "Build Distributions"
+        click "Build Updates"
         click "Build"
-        pause until "Return"
+        click "Continue"
+        pause until "Return" timeout 180.0
         click "Return"
 
         assert eval check_dists_license()
+        assert eval check_updates()
         assert eval check_mobile_license()
 
 

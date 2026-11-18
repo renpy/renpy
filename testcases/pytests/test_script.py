@@ -22,9 +22,11 @@
 
 """Tests which script files Script.load_script loads after a parse error, and the order it loads them in."""
 
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from pytest_mock import MockerFixture
 
 import renpy
 from renpy.script import Script
@@ -144,3 +146,33 @@ def test_load_order_without_errors(load):
     expected = ["00common", "libs/y/01cds", "libs/x/bar", "00early", "script", "mods/y/01m", "mods/x/m"]
 
     assert load(files, common=["00common"]) == expected
+
+
+@pytest.mark.parametrize(
+    ("readonly", "common", "writes"), [(True, True, False), (True, False, True), (False, True, True)]
+)
+def test_parallel_script_cache(
+    mocker: MockerFixture, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, readonly: bool, common: bool, writes: bool
+) -> None:
+    """Parallel test games can parse shared common scripts while still compiling their own game files."""
+    common_dir = tmp_path / "common"
+    directory = common_dir if common else tmp_path / "game"
+    directory.mkdir()
+    (directory / "sample.rpy").write_text("label sample:\n    pass\n")
+    mocker.patch.object(renpy.config, "basedir", str(tmp_path))
+    mocker.patch.object(renpy.config, "renpy_base", str(tmp_path))
+    mocker.patch.object(renpy.config, "commondir", str(common_dir))
+    mocker.patch.object(renpy, "macapp", False)
+    if readonly:
+        monkeypatch.setenv("RENPY_TEST_READONLY_COMMON", "1")
+    else:
+        monkeypatch.delenv("RENPY_TEST_READONLY_COMMON", raising=False)
+
+    script = Script.__new__(Script)
+    script.namemap = {}
+    script.key = None
+    script.serial = 0
+    _, statements = script.load_file(str(directory), "sample.rpy")
+
+    assert statements
+    assert (directory / "sample.rpyc").exists() == writes

@@ -101,11 +101,11 @@ elif command -v xvfb-run >/dev/null 2>&1; then
     export SDL_VIDEO_DRIVER=x11
     unset WAYLAND_DISPLAY
 
-    exec xvfb-run -a -s "-screen 0 1920x1080x24" "$RUN_SH" "$@"
+    exec xvfb-run -a -n "${RENPY_XVFB_START:-99}" -s "-screen 0 1920x1080x24" "$RUN_SH" "$@"
 
 elif command -v Xvfb >/dev/null 2>&1; then
     # X11 fallback: start Xvfb directly if xvfb-run is not installed.
-    DISP=99
+    DISP=${RENPY_XVFB_START:-99}
     while [ -e "/tmp/.X${DISP}-lock" ] || [ -e "/tmp/.X11-unix/X${DISP}" ]; do
         DISP=$((DISP + 1))
     done
