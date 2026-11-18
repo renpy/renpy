@@ -113,6 +113,11 @@ under wine), or on another computer using rsync and ssh. They run like normal
 games unless they're set to be headless. Use --project to run some of the
 projects, which test filters require.
 
+The launcher's build_project testcase builds signed PC and Mac updates for its
+temporary game. It installs both updates from the generated RPU files and checks
+the installed executable, game script, license, and Python runtime against the
+desktop ZIPs.
+
 Alongside the projects, each target apart from a source one also runs the updater
 test described under run_updater_test.py. It's selected with --project updater,
 and reported in the synopsis as updater and updater:the_question. When it's the
