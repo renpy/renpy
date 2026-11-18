@@ -127,6 +127,111 @@ def test_classify_missing_summary() -> None:
     assert run_testcases.classify(0, None) == "CRASH"
 
 
+@pytest.mark.parametrize("name", [".", ".."])
+def test_parse_target_rejects_directory_names(name: str) -> None:
+    """
+    A target's name is a directory under the staging directory, which is deleted from. These two names are made of
+    allowed characters, but name the staging directory or its parent, which hold every target's files.
+    """
+
+    with pytest.raises(run_testcases.ConfigError, match="isn't allowed"):
+        run_testcases.parse_target(name, {"type": "local"}, {})
+
+
+def test_updater_runs_by_default_and_takes_arguments() -> None:
+    """
+    The updater test is selected like a project, and runs last when nothing is selected. What follows -- is specific
+    to one project, so it's refused when several are selected, and accepted for the updater test alone, where it
+    holds that test's arguments rather than test filters.
+    """
+
+    assert run_testcases.select_projects(None, [])[-1] == run_testcases.UPDATER
+    assert run_testcases.select_projects("updater,tutorial", []) == ["updater", "tutorial"]
+    assert run_testcases.select_projects("updater", ["--version", "8.6.1"]) == ["updater"]
+
+    with pytest.raises(run_testcases.ConfigError, match="exactly one"):
+        run_testcases.select_projects("updater,tutorial", ["--version", "8.6.1"])
+
+
+def test_run_target_passes_arguments_to_updater(mocker: MockerFixture, tmp_path: Path) -> None:
+    """
+    When the updater test is all that's selected, what followed -- on the command line reaches it, so that
+    `-p updater -- --version 8.6.1` picks the SDK to update. The updater test is replaced, as it would download an
+    update.
+    """
+
+    target = run_testcases.Target("linux", "local")
+    run_default = mocker.patch.object(run_testcases.load_updater_test(), "run_default", return_value=[])
+
+    run_testcases.run_target(target, ["updater"], 0, ["--version", "8.6.1"], tmp_path)
+
+    assert run_default.call_args.args[3] == ["--version", "8.6.1"]
+
+
+def test_synopsis_counts_expected_failure_as_success() -> None:
+    """
+    An expected failure, which is what the updater test reports when its SDK hasn't been built, is shown with its
+    reason but doesn't fail the run. A real failure beside it still does.
+    """
+
+    passed = run_testcases.Result("linux", "tutorial", "PASS")
+    expected = run_testcases.Result("linux", "updater", "XFAIL", detail="dl/8.6.2 doesn't exist.")
+    failed = run_testcases.Result("linux", "launcher", "FAIL", detail="exit status 1")
+
+    synopsis = run_testcases.format_synopsis([passed, expected])
+
+    assert "OVERALL: PASS (1/2 test runs passed, 1 failed as expected)" in synopsis
+    assert "Expected failures:\n  linux/updater: dl/8.6.2 doesn't exist." in synopsis
+    assert "Failures:" not in synopsis.replace("Expected failures:", "")
+
+    assert "OVERALL: FAIL" in run_testcases.format_synopsis([passed, expected, failed])
+
+
+def test_updater_test_shares_this_module() -> None:
+    """
+    The updater test has to use the same run_testcases module that's running it. A second copy would have its own
+    `cancelled` event, so interrupting the run wouldn't stop an update.
+    """
+
+    assert run_testcases.load_updater_test().run_testcases is run_testcases
+
+
+def test_run_target_runs_updater_without_syncing(mocker: MockerFixture, tmp_path: Path) -> None:
+    """
+    When only the updater test is selected, the target's tree isn't synced, as the updater test unpacks a Ren'Py of
+    its own. sync_target is patched to fail the test if it's called, and the updater test itself is replaced, as it
+    would download an update.
+    """
+
+    target = run_testcases.Target("linux", "local")
+    result = run_testcases.Result("linux", "updater", "PASS")
+
+    mocker.patch.object(run_testcases, "sync_target", side_effect=AssertionError("The target was synced."))
+    mocker.patch.object(run_testcases.load_updater_test(), "run_default", return_value=[result])
+
+    assert run_testcases.run_target(target, ["updater"], 0, [], tmp_path) == [result]
+
+
+def test_run_target_keeps_project_results_when_updater_breaks(mocker: MockerFixture, tmp_path: Path) -> None:
+    """
+    The updater test runs after the projects, so an unexpected exception from it must not replace their results,
+    which may have taken a long time to get. It becomes an error of the updater test alone. The projects and the
+    updater test are replaced, as this is about how their results are combined.
+    """
+
+    target = run_testcases.Target("linux", "local")
+    passed = run_testcases.Result("linux", "tutorial", "PASS")
+
+    mocker.patch.object(run_testcases, "run_synced_projects", return_value=[passed])
+    mocker.patch.object(run_testcases.load_updater_test(), "run_default", side_effect=RuntimeError("broken"))
+
+    results = run_testcases.run_target(target, ["tutorial", "updater"], 0, [], tmp_path)
+
+    assert results[0] is passed
+    assert [(r.project, r.status) for r in results[1:]] == [("updater", "ERROR")]
+    assert "broken" in results[1].detail
+
+
 @pytest.fixture
 def wine_environment(mocker: MockerFixture) -> None:
     """Restore the inherited environment after each test, including direct changes to WINEPREFIX."""
