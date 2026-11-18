@@ -5,6 +5,18 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.6.2:
+
+8.6.2
+=====
+
+Fixes
+-----
+
+On Android 16 and later, the back button and back gesture once again roll back, rather than closing the game.
+(This fix was incorrectly listed in the 8.6.1 changelog, but was not in the release itself.)
+
+
 .. _renpy-8.6.1:
 
 8.6.1
@@ -43,7 +55,6 @@ no longer blocks for 8 seconds each time the game is sent to the background.
 On Android and iOS, a game that is terminated while in the background once again returns the player to where
 they were when it is started again, as described by :var:`config.save_on_mobile_background`.
 
-On Android 16 and later, the back button and back gesture once again roll back, rather than closing the game.
 
 .. _renpy-8.6.0:
 
