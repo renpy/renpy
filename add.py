@@ -57,7 +57,9 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--release", action="store_true")
 ap.add_argument("--prerelease", action="store_true")
 ap.add_argument("--experimental", action="store_true")
-ap.add_argument("--no-tag", "-n", action="store_true")
+ap.add_argument(
+    "--no-tag", "-n", action="store_true", help="Skip creating tags. The current commit must already be tagged."
+)
 ap.add_argument("--push-tags", action="store_true")
 ap.add_argument("--delete-tag")
 ap.add_argument("--github", action="store_true")
@@ -65,6 +67,9 @@ ap.add_argument("--real", action="store_true")
 ap.add_argument("--version")
 
 args = ap.parse_args()
+
+if args.no_tag and not subprocess.check_output(["git", "tag", "--points-at", "HEAD"]):
+    ap.error("--no-tag requires the current commit to have a tag.")
 
 if args.version:
     version = args.version
