@@ -469,7 +469,8 @@ def init(freq, stereo, samples, status=False, equal_mono=False, linear_fades=Fal
         Should we play in stereo (generally true).
 
     `samples`
-        The length of the sample buffer.
+        The requested length of the audio device buffer, in sample frames.
+        If 0, SDL chooses the length.
 
     `status`
         If true, the sound system will print errors out to the console.

@@ -55,6 +55,9 @@ class Action(renpy.object.Object):
     def get_tooltip(self):
         return None
 
+    def get_mouse(self):
+        return None
+
     def periodic(self, st):
         return
 
@@ -88,6 +91,9 @@ class BarValue(renpy.object.Object):
         return "bar", "vbar"
 
     def get_tooltip(self):
+        return None
+
+    def get_mouse(self):
         return None
 
 
@@ -1286,7 +1292,13 @@ def _imagemap(
     parts = []
 
     if ground:
-        rv.add(renpy.easy.displayable(ground))
+        ground = renpy.easy.displayable(ground)
+
+        if ground._duplicatable:
+            ground = ground._duplicate(None)
+            ground._unique()
+
+        rv.add(ground)
         parts.append(ground)
 
     box = renpy.display.layout.MultiBox(layout="fixed")

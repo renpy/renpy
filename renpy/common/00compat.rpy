@@ -44,14 +44,17 @@ init -1100 python:
             return
 
         if version <= (8, 5, 99):
+            config.say_layer = "screens"
+            config.choice_layer = "screens"
+            config.nvl_choice_layer = "screens"
             config.audio_directory = "audio"
             config.audio_directories = [ ]
             config.late_audio_scan = False
+            config.add_to_special_directories = False
             config.scene_uses_tag_layer = False
             config.mesh_oversample = 1.0
             config.glsl_version = 100
-
-        if version <= (8, 5, 3):
+            config.live2d_pose = False
             config.live2d_old_beziers = True
 
         if version <= (8, 4, 99):

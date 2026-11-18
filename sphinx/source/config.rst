@@ -240,6 +240,9 @@ which automatically gets pluralized.  For example::
     There is a default callback in this list that is used to implement
     ``window auto``.
 
+    A callback can call :func:`renpy.get_rollback_identifier` to get an
+    identifier that can later be used to roll back to the statement.
+
 .. var:: config.with_callback = None
 
     If not None, this should be a function that is called when a :ref:`with statement <with-statement>`
@@ -397,6 +400,12 @@ Display
     The default value of the :ref:`u_lod_bias <u-lod-bias>` uniform,
     which controls the mipmap level Ren'Py uses.
 
+.. var:: config.gl_program_cache = False
+
+    If True, Ren'Py caches compiled OpenGL programs on disk for reuse on
+    subsequent launches. This can reduce shader loading time on supported
+    native renderers. Unsupported renderers compile shaders normally.
+
 .. var:: config.gl_resize = True
 
     Determines if the user is allowed to resize an OpenGL-drawn window.
@@ -407,11 +416,13 @@ Display
     performance test. This image will be shown for 5 frames or .25
     seconds, on startup. It will then be automatically hidden.
 
-.. var:: config.mesh_oversample = 1.0
+.. var:: config.mesh_oversample = 8.0
 
     Determines how much mesh textures can be oversampled by. This, in turn, controls the maximum
     amount a mesh can be scaled up by before it introduces additional blurriness, at the risk of
     creating excessive large textures when a mesh is scaled up greatly.
+
+    Meshes created by the :tpref:`blur` transform property are never oversampled.
 
 .. var:: config.minimum_presplash_time = 0.0
 
@@ -466,6 +477,14 @@ Display
 File I/O
 --------
 
+.. var:: config.add_to_special_directories = True
+
+    If True, the directories in :var:`config.audio_directories` and :var:`config.image_directories` are searched
+    when a file is loaded by name, after the directories in :var:`config.special_directory_map`. If False, only the
+    directories in :var:`config.special_directory_map` are searched.
+
+    This defaults to False for games that declare compatibility with Ren'Py 8.5 or earlier.
+
 .. var:: config.file_open_callback = None
 
     If not None, this is a function that is called with the file name
@@ -487,13 +506,6 @@ File I/O
     This gets its default value from the RENPY_OPEN_FILE_ENCODING
     environment variable.
 
-.. var:: config.special_directory_map = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ], ... }
-
-    This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
-    be searched for that kind of file. These are only used when loading a filename - for automatic definition
-    of images and audiom see :var:`config.image_directories` and :var:`config.audio_directories`. New special
-    directory names may be added in future versions of Ren'Py.
-
 .. var:: config.renamed_files = { ... }
 
     A map from file names to new file names. When Ren'Py looks for a file by
@@ -505,6 +517,13 @@ File I/O
 
     Ren'Py uses this to handle some renamed files internally, so creators should add to this dictionary rather than
     replacing it entirely.
+
+.. var:: config.special_directory_map = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ], ... }
+
+    This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
+    be searched for that kind of file. These are only used when loading a filename, and are searched before
+    :var:`config.image_directories` and :var:`config.audio_directories`, which also control the automatic definition
+    of images and audio. New special directory names may be added in future versions of Ren'Py.
 
 History
 -------
@@ -535,7 +554,9 @@ Images
 .. var:: config.image_directories = [ "images" ]
 
     A list of one or more directories that Ren'Py searches for images, as described in the :ref:`images-directory` section.
-    The directories are searched in order, and the first directory that contains the image is used.
+    The directories are searched in order, and the first directory that contains the image is used. When an image file
+    is loaded by name, these directories are searched after those in :var:`config.special_directory_map`, unless
+    :var:`config.add_to_special_directories` is False.
 
     This should be set at init priority -1 or lower to ensure that it is set before the images are defined. This
     can be done with::
@@ -644,9 +665,12 @@ Layers
     applied to all layers. If a layer name is listed here, it should
     not be listed in :var:`config.layers` or :var:`config.top_layers`.
 
-.. var:: config.choice_layer = "screens"
+.. var:: config.choice_layer = None
 
     The layer the choice screen (used by the menu statement) is shown on.
+    If None, the screen's :scpref:`layer` property is used,
+    defaulting to "screens". This defaults to "screens" for games that declare
+    compatibility with Ren'Py 8.5 or earlier.
 
 .. var:: config.clear_layers = [ ... ]
 
@@ -704,16 +728,26 @@ Layers
     The :func:`renpy.add_layer` can add layers to this variable without
     needing to know the original contents.
 
+.. var:: config.nvl_choice_layer = None
+
+    The layer the NVL choice screen is shown on. If None, the screen's
+    :scpref:`layer` property is used, defaulting to "screens".
+    This defaults to "screens" for games that declare compatibility with
+    Ren'Py 8.5 or earlier.
+
 .. var:: config.overlay_layers = [ 'overlay', ... ]
 
     This is a list of all of the overlay layers. Overlay layers are
     cleared before the overlay functions are called. "overlay" should
     always be in this list.
 
-.. var:: config.say_layer = "screens"
+.. var:: config.say_layer = None
 
-    The layer the say screen is shown on. This layer should be in
-    :var:`config.context_clear_layers`.
+    The layer the say screen is shown on. If None, the screen's
+    :scpref:`layer` property is used, defaulting to "screens".
+    The resulting layer should be in :var:`config.context_clear_layers`.
+    This defaults to "screens" for games that declare compatibility with
+    Ren'Py 8.5 or earlier.
 
 .. var:: config.sticky_layers = [ "master", ... ]
 
@@ -748,7 +782,8 @@ Media (Music, Sound, and Video)
 .. var:: config.audio_directories = [ 'audio' ]
 
     A list of directories that are searched for audio files and used to populate the
-    :ref:`audio-namespace`.
+    :ref:`audio-namespace`. When an audio file is loaded by name, these directories are searched after
+    those in :var:`config.special_directory_map`, unless :var:`config.add_to_special_directories` is False.
 
 .. var:: config.audio_filename_callback = None
 
@@ -756,7 +791,7 @@ Media (Music, Sound, and Video)
     and is expected to return a second audio filename, the latter of which
     will be played.
 
-    This is intended for use when an a games has audio file formats changed,
+    This is intended for use when a game has audio file formats changed,
     but it's not desired to update the game script.
 
     As video files are played using the audio subsystem, this is also called for video files.
@@ -1547,6 +1582,19 @@ Screenshots
 Self-Voicing / Text to Speech
 -----------------------------
 
+.. var:: config.auto_image_alt = False
+
+    If True, images displayed without an explicit :propref:`alt` style property
+    will be announced using their image name and attributes.
+
+
+.. var:: config.auto_screenreader_voicing = True
+
+    If True, Ren'Py will automatically enable screen reader voicing on launch
+    if an active screen reader (such as NVDA, JAWS, VoiceOver, or Orca) is
+    detected.
+
+
 .. var:: config.tts_substitutions = [ ]
 
     This is a list of (pattern, replacement) pairs that are used to perform
@@ -1702,7 +1750,8 @@ Showing Images
     A function that's used in place of :func:`renpy.scene` by the :ref:`scene
     statement <scene-statement>`. Note that this is used to clear the screen,
     and :var:`config.show` is used to show a new image. This should have the same
-    signature as :func:`renpy.scene`.
+    signature as :func:`renpy.scene`. If the function does not accept a `tag`
+    parameter (or ``**kwargs``), it is called without it.
 
 .. var:: config.show = renpy.show
 
@@ -1779,6 +1828,14 @@ Text and Fonts
     and the resulting mode is used.
 
     If no key is found, None is looked up, and the resulting mode is used.
+
+.. var:: config.font_memory_buffer_size = 2097152
+
+    When using the harfbuzz text shaper, each font file smaller than this
+    many bytes (2 MB, by default) is loaded entirely into memory, which makes
+    accessing it faster. Font files this size or larger are read from disk or
+    the archive as needed, which saves memory for large fonts, such as those
+    that cover Chinese, Japanese, and Korean.
 
 .. var:: config.font_name_map = { }
 
@@ -2473,7 +2530,12 @@ Debugging
 
     If None, this takes on the value of config.developer.
 
-    This is set to False when Ren'Py ignore an exception.
+    This also controls :propref:`focus_mask` displayables that fail to render.
+    If True, the exception is raised. If False, the error is logged and the
+    focus mask is ignored.
+
+    Ren'Py stops raising these exceptions when the player ignores an
+    exception, but does not change the value of this variable.
 
 .. var:: config.return_not_found_label = None
 

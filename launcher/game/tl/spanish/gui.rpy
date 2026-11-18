@@ -42,7 +42,7 @@
 
     # gui.rpy:39
     old "## The color used for a text button when it is selected but not focused. A button is selected if it is the current screen or preference value."
-    new "## El color usado en el botón de texto cuando está seleccionado pero no enfocado. Un botón está seleccionado si representa la pantalla actual o el valor actual de una preferencia."
+    new "## El color usado en el botón de texto cuando está seleccionado pero no enfocado. Un botón está seleccionado si representa la pantalla actual o el valor actual de un ajuste."
 
     # gui.rpy:43
     old "## The color used for a text button when it cannot be selected."
@@ -51,10 +51,10 @@
     # gui.rpy:46
     old "## Colors used for the portions of bars that are not filled in. These are not used directly, but are used when re-generating bar image files."
     new "## Colores de la parte vacía de las barras. No se usan directamente, sino al regenerar los archivos de imagen de las barras."
-    
+
     # gui.rpy:51
     old "## The colors used for dialogue and menu choice text."
-    new "## Colores usados para el texto del diálogo y de las elecciones de menú."
+    new "## Colores usados para el texto del diálogo y de las decisiones de menú."
 
     # gui.rpy:56
     old "## Fonts and Font Sizes"
@@ -123,7 +123,7 @@
     # gui.rpy:106
     old "## The placement of the speaking character's name, relative to the textbox. These can be a whole number of pixels from the left or top, or 0.5 to center."
     new "## La posición del nombre del personaje que habla, relativa a la caja de texto. Puede ser un número entero de píxeles desde la izquierda o la parte superior, o 0.5 para centrar."
-    
+
     # gui.rpy:111
     old "## The horizontal alignment of the character's name. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
     new "## La alineación horizontal del nombre del personaje. (0.0 es izquierda, 0.5 es centro, 1.0 es derecha)."
@@ -199,14 +199,14 @@
     # gui.rpy:195
     old "## You can also add your own customizations, by adding properly-named variables. For example, you can uncomment the following line to set the width of a navigation button."
     new "## Se pueden añadir personalizaciones propias agregando variables con los nombres adecuados. Por ejemplo, es posible descomentar la línea siguiente para ajustar el ancho de los botones de navegación."
-    
+
     # gui.rpy:202
     old "## Choice Buttons"
-    new "## Botones de elección"
+    new "## Botones de decisión"
 
     # gui.rpy:204
     old "## Choice buttons are used in the in-game menus."
-    new "## Los botones de elección se utilizan en los menús del juego."
+    new "## Los botones de decisión se utilizan en los menús del juego."
 
     # gui.rpy:217
     old "## File Slot Buttons"
@@ -250,7 +250,7 @@
 
     # gui.rpy:257
     old "## The spacing between menu choices."
-    new "## Espacio entre elecciones del menú."
+    new "## Espacio entre decisiones del menú."
 
     # gui.rpy:260
     old "## Buttons in the navigation section of the main and game menus."
@@ -258,11 +258,11 @@
 
     # gui.rpy:263
     old "## Controls the amount of spacing between preferences."
-    new "## Controla el espacio entre preferencias."
+    new "## Controla el espacio entre ajustes."
 
     # gui.rpy:266
     old "## Controls the amount of spacing between preference buttons."
-    new "## Controla el espacio entre botones de preferencia."
+    new "## Controla el espacio entre botones de ajustes."
 
     # gui.rpy:269
     old "## The spacing between file page buttons."

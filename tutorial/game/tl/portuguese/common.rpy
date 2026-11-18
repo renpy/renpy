@@ -359,7 +359,7 @@ translate portuguese strings:
 
     # 00library.rpy:150
     old "bar"
-    new "bar"
+    new "barra"
 
     # 00library.rpy:151
     old "selected"

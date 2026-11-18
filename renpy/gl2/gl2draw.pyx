@@ -61,6 +61,7 @@ from renpy.gl2.gl2model cimport GL2Model
 
 from renpy.gl2.gl2texture import Texture, TextureLoader
 from renpy.gl2.gl2shader cimport Program
+from renpy.gl2.gl2shader import supports_program_binaries
 from renpy.gl2.gl2shadercache import ShaderCache, parse_glsl_version
 from renpy.gl2.gl2statecache cimport GLStateCache
 
@@ -81,8 +82,9 @@ IDENTITY = renpy.display.render.IDENTITY
 # Should we try to vsync?
 vsync = True
 
-# A list of frame end times, used for the same purpose.
-frame_times = [ ]
+# Oversamples that differ by less than this share a render's cached texture. At this size, the
+# textures differ by about a pixel in every thousand.
+cdef double OVERSAMPLE_TOLERANCE = 0.001
 
 cdef GLenum CONTEXT_PROFILE_MASK = 0x9126
 cdef GLint CONTEXT_CORE_PROFILE_BIT = 0x00000001
@@ -266,6 +268,12 @@ cdef class GL2Draw:
             round(min(bound_h * virtual_ar, bound_w)),
             round(min(bound_w / virtual_ar, bound_h)),
             )
+
+        test_window_size = renpy.test.testexecution.get_test_window_size()
+        if test_window_size is not None:
+            self.dpi_scale = 1.0
+            self.info["max_window_size"] = test_window_size
+            return test_window_size
 
         if (not renpy.mobile) and (not maximized):
 
@@ -453,8 +461,11 @@ cdef class GL2Draw:
         self.dpi_scale = pygame.display.get_display_content_scale()
 
         pwidth, pheight = self.select_physical_size(physical_size)
+        test_window_size = renpy.test.testexecution.get_test_window_size()
 
-        if renpy.android or renpy.ios:
+        if test_window_size is not None:
+            fullscreen = False
+        elif renpy.android or renpy.ios:
             fullscreen = True
         elif renpy.emscripten:
             fullscreen = False
@@ -510,6 +521,9 @@ cdef class GL2Draw:
         if renpy.config.gl2_modify_window_flags is not None:
             window_flags = renpy.config.gl2_modify_window_flags(window_flags)
 
+        if test_window_size is not None:
+            window_flags &= ~(pygame.WINDOW_HIGH_PIXEL_DENSITY | pygame.RESIZABLE)
+
         # Opens the window.
         #
         # If we're in fullscreen, tries to get a fullscreen window. If that fails,
@@ -538,7 +552,7 @@ cdef class GL2Draw:
                     self.window = None
 
             if self.window is None:
-                if renpy.game.preferences.maximized:
+                if renpy.game.preferences.maximized and test_window_size is None:
                     window_flags |= pygame.WINDOW_MAXIMIZED
                     pos = (pygame.WINDOWPOS_UNDEFINED, pygame.WINDOWPOS_UNDEFINED)
                 else:
@@ -607,6 +621,11 @@ cdef class GL2Draw:
         if self.state_cache.core_profile:
             self.create_default_vao()
 
+        # The context may be reused from a renderer that existed before an utter restart,
+        # with its state (like the bound array buffer) left behind. Force the GL state to match
+        # the cache, as textures can be loaded before the first draw_render resets it.
+        self.state_cache.reset()
+
         # The shading language version the context actually provides, which
         # is what decides the dialect shaders are emitted in. This is read
         # directly from the context.
@@ -646,7 +665,9 @@ cdef class GL2Draw:
             # give back control to browser regularly
             self.redraw_period = 0.1
 
-        self.shader_cache = ShaderCache("cache/shaders.txt", self.gles, glsl_version)
+        driver = (vendor, renderer, version, glsl)
+        binary_supported = supports_program_binaries(self.gles, version, extensions)
+        self.shader_cache = ShaderCache("cache/shaders.txt", self.gles, glsl_version, driver, binary_supported)
 
         renpy.display.log.write("Emitting shaders as GLSL %s.", self.shader_cache.version)
 
@@ -698,6 +719,9 @@ cdef class GL2Draw:
 
                 if self.state_cache.core_profile:
                     self.create_default_vao()
+
+                # Make the new context's GL state match the cache.
+                self.state_cache.reset()
 
             if recreated or renpy.emscripten:
                 renpy.display.interface.kill_textures()
@@ -837,6 +861,13 @@ cdef class GL2Draw:
         else:
             maximized = renpy.game.preferences.maximized
 
+        test_window_size = renpy.test.testexecution.get_test_window_size()
+        if test_window_size is not None:
+            self.dpi_scale = 1.0
+            width, height = test_window_size
+            fullscreen = False
+            maximized = False
+
         renpy.display.log.write("Requested resize to %dx%d, fullscreen=%d, maximized=%d", width, height, fullscreen, maximized)
         pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen, maximized=maximized)
 
@@ -873,9 +904,19 @@ cdef class GL2Draw:
 
         window_dpi_scale = window_display_scale / window_pixel_density
 
+        # SDL computes the pixel density from the integer window and drawable
+        # sizes, so with fractional scaling (e.g. Wayland at 175%) it can differ
+        # from the display scale by rounding error. Snap scales within that error
+        # of a multiple of 0.25, as acting on the error resizes the window, which
+        # changes the rounding error, which causes another resize, and so on forever.
+        nearest_dpi_scale = round(window_dpi_scale * 4.0) / 4.0
+        if nearest_dpi_scale > 0.0 and abs(window_dpi_scale - nearest_dpi_scale) < 0.01:
+            window_dpi_scale = nearest_dpi_scale
 
+        if renpy.test.testexecution.get_test_window_size() is not None:
+            window_dpi_scale = 1.0
 
-        dpi_changed = window_dpi_scale != self.dpi_scale
+        dpi_changed = abs(window_dpi_scale - self.dpi_scale) >= 0.01
 
         if dpi_changed:
             if not fullscreen and not maximized and self.physical_size is not None:
@@ -1090,6 +1131,13 @@ cdef class GL2Draw:
             glDeleteRenderbuffers(1, &self.depth_renderbuffer_1px)
 
 
+    def get_vsync(self):
+        """
+        Returns True if drawing is synchronized to the display's refresh.
+        """
+
+        return vsync != 0
+
     def can_block(self):
         """
         Returns True if we can block to wait for input, False if the screen
@@ -1175,8 +1223,6 @@ cdef class GL2Draw:
         Called to flip the screen after it's drawn.
         """
 
-        start = time.time()
-
         renpy.plog(1, "flip")
 
         try:
@@ -1184,24 +1230,6 @@ cdef class GL2Draw:
         except pygame.error as e:
             renpy.display.log.write("Flip failed %r", e)
             renpy.game.interface.display_reset = True
-
-        end = time.time()
-
-        if vsync:
-
-            # When the window is covered, we can get into a state where no
-            # drawing occurs and everything goes fast. Detect that and
-            # sleep.
-
-            frame_times.append(end)
-
-            if len(frame_times) > 10:
-                frame_times.pop(0)
-
-                # If we're running at over 1000 fps, vsync is broken.
-                if (frame_times[-1] - frame_times[0] < .001 * 10):
-                    time.sleep(1.0 / 120.0)
-                    renpy.plog(1, "after broken vsync sleep")
 
 
     def draw_screen(self, render_tree, flip=True, screenshot=False):
@@ -1318,6 +1346,25 @@ cdef class GL2Draw:
             if (r.mesh is True) and (not r.children):
                 return
 
+            # With w=0, only the scale and rotation of the matrix are used, not its offset.
+            tx, ty = reverse.transform(1, 1, w=0)
+            oversample = math.hypot(tx, ty) / math.hypot(1, 1)
+
+            if r.properties is not None:
+                oversample *= r.properties.get("mesh_oversample_scale", 1.0)
+
+            oversample = max(1.0, min(oversample, renpy.config.mesh_oversample))
+
+            if (r.properties is not None) and not r.properties.get("mesh_oversample", True):
+                oversample = 1.0
+
+            # The children are rendered before the uniforms, so a render that is both a child
+            # and a uniform shares the child's oversampled texture.
+            textures = [
+                self.render_to_texture(c[0], properties=r.properties, oversample=oversample)
+                for c in r.children
+            ]
+
             if not r.uniforms:
                 uniforms = None
 
@@ -1328,8 +1375,9 @@ cdef class GL2Draw:
                 for k, v in r.uniforms.items():
                     if isinstance(v, Render):
                         self.load_all_textures(v, reverse)
-                        uniforms[k] = ctex = self.render_to_texture(v, properties=r.properties)
+                        uniforms[k] = ctex = self.render_to_texture(v, properties=r.properties, oversample=None)
                         uniforms.setdefault(k + "_res", (ctex.texture_width, ctex.texture_height))
+                        uniforms.setdefault(k + "_OP_virtual_size", (v.width, v.height))
                     else:
                         uniforms[k] = v
             else:
@@ -1341,16 +1389,8 @@ cdef class GL2Draw:
                 r.shaders,
                 uniforms)
 
-            tx, ty = reverse.transform(1, 1)
-            oversample = math.hypot(tx, ty) / math.hypot(1, 1)
-
-            if r.properties is not None:
-                oversample *= r.properties.get("mesh_oversample_scale", 1.0)
-
-            oversample = max(1.0, min(oversample, renpy.config.mesh_oversample))
-
-            for i, c in enumerate(r.children):
-                model.set_texture(i, self.render_to_texture(c[0], properties=r.properties, oversample=oversample))
+            for i, texture in enumerate(textures):
+                model.set_texture(i, texture)
 
             if r.mesh is True:
                 tex = model.get_texture(0)
@@ -1370,12 +1410,21 @@ cdef class GL2Draw:
             for v in r.uniforms.values():
                 if isinstance(v, Render):
                     self.load_all_textures(v, reverse)
-                    self.render_to_texture(v, properties=r.properties)
+                    self.render_to_texture(v, properties=r.properties, oversample=None)
 
     def render_to_texture(self, what, alpha=True, properties={}, oversample=1.0):
         """
         Renders `what` to a texture. The texture will have the drawable
-        size of `what`.
+        size of `what`, multiplied by `oversample`.
+
+        The texture is cached on `what`, and returned again when the same oversample,
+        within OVERSAMPLE_TOLERANCE, is requested. A request for a different oversample
+        renders `what` again, and the new texture replaces the cached one.
+
+        If `oversample` is None, a cached texture is returned whatever its oversample,
+        and `what` is rendered without oversampling if there isn't one. This is used for
+        renders passed as uniforms, so a render that is also the child of a mesh shares
+        the mesh's texture.
         """
 
         if properties is None:
@@ -1395,10 +1444,27 @@ cdef class GL2Draw:
                 what.add_mipmap()
             return what
 
-        if what.cached_texture is not None:
-            if need_mipmap:
-                what.cached_texture.add_mipmap()
-            return what.cached_texture
+        cached = what.cached_texture
+
+        if cached is not None:
+
+            # A texture that wasn't rendered from `what`, like a loaded image, has no oversample
+            # and is always used. (This may also be a Render, for an image loaded as tiles.)
+            cached_oversample = getattr(cached, "render_oversample", None)
+
+            # The oversample is computed from single-precision matrices, so it varies slightly
+            # between frames when the mesh rotates. Treat nearly equal values as the same.
+            if (
+                (oversample is None)
+                or (cached_oversample is None)
+                or (abs(cached_oversample - oversample) < OVERSAMPLE_TOLERANCE)
+            ):
+                if need_mipmap:
+                    cached.add_mipmap()
+                return cached
+
+        if oversample is None:
+            oversample = 1.0
 
         rv = self.texture_loader.render_to_texture(what, properties, oversample)
         what.cached_texture = rv

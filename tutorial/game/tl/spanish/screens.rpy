@@ -31,7 +31,7 @@ translate spanish strings:
 
     # screens.rpy:268
     old "Prefs"
-    new "Prefs."
+    new "Ajustes"
 
     # screens.rpy:309
     old "Start"
@@ -43,11 +43,11 @@ translate spanish strings:
 
     # screens.rpy:319
     old "Preferences"
-    new "Opciones"
+    new "Ajustes"
 
     # screens.rpy:323
     old "End Replay"
-    new "Finaliza repetición"
+    new "Finalizar repetición"
 
     # screens.rpy:327
     old "Main Menu"
@@ -83,11 +83,11 @@ translate spanish strings:
 
     # screens.rpy:610
     old "Automatic saves"
-    new "Grabación automática"
+    new "Guardado automático"
 
     # screens.rpy:610
     old "Quick saves"
-    new "Grabación rápida"
+    new "Guardado rápido"
 
     # screens.rpy:652
     old "{#file_time}%A, %B %d %Y, %H:%M"
@@ -95,7 +95,7 @@ translate spanish strings:
 
     # screens.rpy:652
     old "empty slot"
-    new "vacío"
+    new "Ranura vacía"
 
     # screens.rpy:669
     old "<"
@@ -123,7 +123,7 @@ translate spanish strings:
 
     # screens.rpy:745
     old "Fullscreen"
-    new "Pant. completa"
+    new "Pantalla completa"
 
     # screens.rpy:757
     old "Unseen Text"
@@ -131,7 +131,7 @@ translate spanish strings:
 
     # screens.rpy:758
     old "After Choices"
-    new "Tras opciones"
+    new "Después de decisiones"
 
     # screens.rpy:764
     old "Examples"
@@ -143,19 +143,19 @@ translate spanish strings:
 
     # screens.rpy:794
     old "Text Speed"
-    new "Veloc. texto"
+    new "Velocidad del texto"
 
     # screens.rpy:798
     old "Auto-Forward Time"
-    new "Veloc. auto-avance"
+    new "Velocidad de autoavance"
 
     # screens.rpy:805
     old "Music Volume"
-    new "Volumen música"
+    new "Volumen de música"
 
     # screens.rpy:812
     old "Sound Volume"
-    new "Volumen sonido"
+    new "Volumen de sonido"
 
     # screens.rpy:818
     old "Test"
@@ -163,15 +163,15 @@ translate spanish strings:
 
     # screens.rpy:822
     old "Voice Volume"
-    new "Volumen voz"
+    new "Volumen de voz"
 
     # screens.rpy:833
     old "Mute All"
-    new "Silencia todo"
+    new "Silenciar todo"
 
     # screens.rpy:952
     old "The dialogue history is empty."
-    new "El historial está vacío."
+    new "El historial de dialogos está vacío."
 
     # screens.rpy:1018
     old "Keyboard"
@@ -183,11 +183,11 @@ translate spanish strings:
 
     # screens.rpy:1022
     old "Gamepad"
-    new "Mando"
+    new "Control"
 
     # screens.rpy:1035
     old "Enter"
-    new "Enter"
+    new "Intro"
 
     # screens.rpy:1036
     old "Advances dialogue and activates the interface."
@@ -211,7 +211,7 @@ translate spanish strings:
 
     # screens.rpy:1047
     old "Escape"
-    new "Escape"
+    new "Esc"
 
     # screens.rpy:1048
     old "Accesses the game menu."
@@ -223,7 +223,7 @@ translate spanish strings:
 
     # screens.rpy:1052
     old "Skips dialogue while held down."
-    new "Salta el diálogo mientras se presiona."
+    new "Salta el diálogo mientras se mantiene presionado."
 
     # screens.rpy:1055
     old "Tab"
@@ -235,7 +235,7 @@ translate spanish strings:
 
     # screens.rpy:1059
     old "Page Up"
-    new "Av. pág."
+    new "Av Pág"
 
     # screens.rpy:1060
     old "Rolls back to earlier dialogue."
@@ -243,7 +243,7 @@ translate spanish strings:
 
     # screens.rpy:1063
     old "Page Down"
-    new "Re. pág."
+    new "Re Pág"
 
     # screens.rpy:1064
     old "Rolls forward to later dialogue."
@@ -259,7 +259,7 @@ translate spanish strings:
 
     # screens.rpy:1076
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "Activa/desactiva la asistencia por {a=https://www.renpy.org/l/voicing}voz-automática{/a}."
+    new "Activa/desactiva la asistencia de {a=https://www.renpy.org/l/voicing}voz automática{/a}."
 
     # screens.rpy:1082
     old "Left Click"
@@ -275,11 +275,11 @@ translate spanish strings:
 
     # screens.rpy:1094
     old "Mouse Wheel Up"
-    new "Rueda del ratón arriba"
+    new "Rueda del mouse hacia arriba"
 
     # screens.rpy:1098
     old "Mouse Wheel Down"
-    new "Rueda del ratón abajo"
+    new "Rueda del ratón hacia abajo"
 
     # screens.rpy:1105
     old "Right Trigger\nA/Bottom Button"
@@ -299,7 +299,7 @@ translate spanish strings:
 
     # screens.rpy:1121
     old "Start, Guide"
-    new "Comenzar, Guía"
+    new "Start, Guía"
 
     # screens.rpy:1125
     old "Y/Top Button"

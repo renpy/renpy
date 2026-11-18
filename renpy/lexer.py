@@ -1309,14 +1309,20 @@ class Lexer:
 
         s = self.text[start:end]
 
-        # Only eval expressions need to strip its leading whitespace,
-        # trailing whitespace is to simulate `strip`.
+        # Only eval expressions need to strip whitespace.
         if context == "eval":
-            start = start + (len(s) - len(s.lstrip()))
-            end = end - (len(s) - len(s.rstrip()))
+            s = s.lstrip()
+            start = end - len(s)
+
+            # Stripping claims the newline of a line continuation, and python can't compile the backslash that
+            # would leave behind, so the backslash has to go too.
+            s = s.rstrip()
+
+            while s.endswith("\\"):
+                s = s[:-1].rstrip()
 
         expr = make_pyexpr(
-            self.text[start:end],
+            s,
             self.filename,
             self.number,
             self.column,
@@ -1590,6 +1596,18 @@ class Lexer:
         return self._expr_from_range(pos, self.pos, "exec")
 
     rest_statement = rest
+
+    def raw_rest(self) -> str:
+        """
+        Like `rest`, but returns the text as a plain string, for use when the text isn't
+        a Python expression that needs to be stored and compiled ahead of time.
+        """
+
+        self.skip_whitespace()
+
+        rv = self.text[self.pos :]
+        self.pos = len(self.text)
+        return rv
 
     def _process_python_block(self, block, rv, line_holder):
         for _fn, ln, indent, text, subblock in block:

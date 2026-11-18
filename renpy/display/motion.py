@@ -483,6 +483,8 @@ class ZoomCommon(renpy.display.displayable.Displayable):
             else:
                 self.after_child = None
 
+        self._duplicatable = child._duplicatable or ((self.after_child is not None) and self.after_child._duplicatable)
+
         self.time_warp = time_warp
         self.bilinear = bilinear
         self.opaque = opaque
@@ -490,6 +492,38 @@ class ZoomCommon(renpy.display.displayable.Displayable):
 
     def visit(self):
         return [self.child, self.after_child]
+
+    def _duplicate(self, args):
+        child = self.child._duplicate(args)
+
+        if self.after_child is self.child:
+            after_child = child
+        elif self.after_child is not None:
+            after_child = self.after_child._duplicate(args)
+        else:
+            after_child = None
+
+        if (child is self.child) and (after_child is self.after_child):
+            return self
+
+        child._unique()
+
+        if after_child is not None:
+            after_child._unique()
+
+        rv = self._copy(args)
+        rv.child = child
+        rv.after_child = after_child
+        rv._duplicatable = False
+        return rv
+
+    def _unique(self):
+        self.child._unique()
+
+        if self.after_child is not None:
+            self.after_child._unique()
+
+        self._duplicatable = False
 
     def zoom_rectangle(self, done, width, height):  # type: (ZoomCommon, float, float, float) -> tuple[int, int, int, int, int, int]
         raise Exception("Zoom rectangle not implemented.")
@@ -632,6 +666,7 @@ class RotoZoom(renpy.display.displayable.Displayable):
         self.zoom_delay = zoom_delay
 
         self.child = renpy.easy.displayable(child)
+        self._duplicatable = self.child._duplicatable
 
         self.rot_repeat = rot_repeat
         self.zoom_repeat = zoom_repeat
@@ -649,6 +684,23 @@ class RotoZoom(renpy.display.displayable.Displayable):
 
     def visit(self):
         return [self.child]
+
+    def _duplicate(self, args):
+        child = self.child._duplicate(args)
+
+        if child is self.child:
+            return self
+
+        child._unique()
+
+        rv = self._copy(args)
+        rv.child = child
+        rv._duplicatable = False
+        return rv
+
+    def _unique(self):
+        self.child._unique()
+        self._duplicatable = False
 
     def render(self, width, height, st, at):
         if self.rot_anim_timebase:

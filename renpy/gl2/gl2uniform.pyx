@@ -307,9 +307,6 @@ ARRAY_SETTERS = {
     "bvec4": IVec4ArraySetter,
 }
 
-
-
-
 TEXTURE_SCALING = {
     "nearest" : (GL_NEAREST, GL_NEAREST),
     "linear" : (GL_LINEAR, GL_LINEAR),
@@ -319,14 +316,25 @@ TEXTURE_SCALING = {
     "linear_mipmap_linear" : (GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR),
 }
 
+cdef dict _SAMPLER_TARGETS = {
+    "sampler2D": GL_TEXTURE_2D,
+    "sampler3D": GL_TEXTURE_3D,
+    "samplerCube": GL_TEXTURE_CUBE_MAP,
+    "sampler2DArray": GL_TEXTURE_2D_ARRAY,
+}
 
-cdef class Sampler2DSetter(Setter):
 
-    def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int sampler):
+cdef class SamplerSetter(Setter):
+    def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int sampler, GLenum target_type):
         Setter.__init__(self, uniform_name, uniform_type, location, getter)
         self.sampler = sampler
-        self.texture_wrap_key = "texture_wrap_" + uniform_name[2:]
-        self.texture_scaling_key = "texture_scaling_" + uniform_name[2:]
+        self.target_type = target_type
+
+        # Removes the prefix from u_myuniform, while built-in samplers like tex0 keep their full names.
+        suffix = uniform_name[2:] if uniform_name.startswith("u_") else uniform_name
+
+        self.texture_wrap_key = "texture_wrap_" + suffix
+        self.texture_scaling_key = "texture_scaling_" + suffix
 
     cdef void set_texture(self, GLStateCache cache, GLuint texture):
         """
@@ -342,7 +350,7 @@ cdef class Sampler2DSetter(Setter):
             glUniform1i(self.location, self.sampler)
             self.bound_serial = cache.reset_serial
 
-        cache.bind_texture(GL_TEXTURE0 + self.sampler, texture)
+        cache.bind_texture(GL_TEXTURE0 + self.sampler, texture, self.target_type)
 
     cdef object set(self, GL2DrawingContext context, value):
 
@@ -368,15 +376,22 @@ cdef class Sampler2DSetter(Setter):
 
         cdef GLint wrap_s = GL_CLAMP_TO_EDGE
         cdef GLint wrap_t = GL_CLAMP_TO_EDGE
+        cdef GLint wrap_r = GL_CLAMP_TO_EDGE
         cdef GLfloat anisotropy = texture.loader.max_anisotropy
         cdef GLint mag_filter = texture.default_mag_filter
         cdef GLint min_filter = texture.default_min_filter
 
         if context.properties:
             if self.texture_wrap_key in context.properties:
-                wrap_s, wrap_t = context.properties[self.texture_wrap_key]
+                if len(context.properties[self.texture_wrap_key]) == 2:
+                    wrap_s, wrap_t = context.properties[self.texture_wrap_key]
+                else:
+                    wrap_s, wrap_t, wrap_r = context.properties[self.texture_wrap_key]
             elif "texture_wrap" in context.properties:
-                wrap_s, wrap_t = context.properties["texture_wrap"]
+                if len(context.properties["texture_wrap"]) == 2:
+                    wrap_s, wrap_t = context.properties["texture_wrap"]
+                else:
+                    wrap_s, wrap_t, wrap_r = context.properties["texture_wrap"]
 
             if not context.properties.get("anisotropic", True):
                 anisotropy = 1.0
@@ -391,25 +406,28 @@ cdef class Sampler2DSetter(Setter):
             anisotropy = 1.0
 
         if wrap_s != texture.wrap_s:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
+            glTexParameteri(self.target_type, GL_TEXTURE_WRAP_S, wrap_s)
             texture.wrap_s = wrap_s
 
         if wrap_t != texture.wrap_t:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
+            glTexParameteri(self.target_type, GL_TEXTURE_WRAP_T, wrap_t)
             texture.wrap_t = wrap_t
 
         if anisotropy != texture.anisotropy and texture.loader.max_anisotropy > 1.0:
-            glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, anisotropy)
+            glTexParameterf(self.target_type, TEXTURE_MAX_ANISOTROPY_EXT, anisotropy)
             texture.anisotropy = anisotropy
 
         if mag_filter != texture.mag_filter:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter)
+            glTexParameteri(self.target_type, GL_TEXTURE_MAG_FILTER, mag_filter)
             texture.mag_filter = mag_filter
 
         if min_filter != texture.min_filter:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter)
+            glTexParameteri(self.target_type, GL_TEXTURE_MIN_FILTER, min_filter)
             texture.min_filter = min_filter
 
+        if wrap_r != texture.wrap_r:
+            glTexParameteri(self.target_type, GL_TEXTURE_WRAP_R, wrap_r)
+            texture.wrap_r = wrap_r
 
 cdef class Getter:
     """
@@ -641,6 +659,9 @@ cdef class Res3Getter(Getter):
         return (tex.texture_width, tex.texture_height)
 
 cdef class ResGetter(Getter):
+
+    cdef Getter getter
+
     def __init__(self, uniform_name, getter):
         Getter.__init__(self, uniform_name)
         self.getter = getter
@@ -651,10 +672,39 @@ cdef class ResGetter(Getter):
         if type(value) is Render:
             value = value.cached_texture
 
-        if type(value) is GLTexture:
+        if isinstance(value, GLTexture):
             return (value.texture_width, value.texture_height)
         else:
             raise TypeError("ResGetter only works with GLTexture values.")
+
+cdef class VirtualSizeOpGetter(Getter):
+    """
+    Returns the size of a texture uniform in virtual pixels. Unlike ResGetter, this doesn't depend on the
+    resolution the texture was rendered or loaded at.
+    """
+
+    cdef Getter getter
+
+    def __init__(self, uniform_name, getter):
+        Getter.__init__(self, uniform_name)
+        self.getter = getter
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        value = self.getter.get(context, model)
+
+        if type(value) is Render:
+            return (value.width, value.height)
+
+        # When a Render uniform is replaced with a texture by GL2Draw.load_all_textures, the virtual size of the
+        # Render is stored under this uniform's name.
+        rv = context.uniforms.get(self.uniform_name, None)
+        if rv is not None:
+            return rv
+
+        if isinstance(value, GL2Model):
+            return (value.width, value.height)
+
+        raise TypeError("VirtualSizeOpGetter only works with Render and GLTexture values.")
 
 # The classes that are used to get the values of uniforms.
 UNIFORM_GETTER_CLASSES = {
@@ -715,12 +765,12 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
 
     if base_name in UNIFORM_GETTER_CLASSES:
         getter_class, require_type = UNIFORM_GETTER_CLASSES[base_name]
-        getter = getter_class(uniform_name)
+        getter = getter_class(base_name)
     else:
-        getter = ContextGetter(uniform_name)
+        getter = ContextGetter(base_name)
         require_type = None
 
-    if require_type is not None and uniform_type != require_type:
+    if require_type is not None and operation is None and uniform_type != require_type:
         raise TypeError(
             f"Uniform {uniform_name} in shader {shader_name} has type {uniform_type}, "
             f"but requires type {require_type}."
@@ -743,14 +793,17 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
     elif operation == "res":
         getter = ResGetter(uniform_name, getter)
         uniform_type = "vec2"
+    elif operation == "virtual_size":
+        getter = VirtualSizeOpGetter(uniform_name, getter)
+        uniform_type = "vec2"
     else:
         raise TypeError(
             f"Uniform {uniform_name} in shader {shader_name} has unknown operation "
             f"{operation}."
         )
 
-    if uniform_type == "sampler2D":
-        setter = Sampler2DSetter(uniform_name, uniform_type, location, getter, sampler)
+    if (array is None) and (sampler_target := _SAMPLER_TARGETS.get(uniform_type, None)):
+        setter = SamplerSetter(uniform_name, uniform_type, location, getter, sampler, sampler_target)
         sampler += 1
     elif (array is None) and (setter_class := NON_ARRAY_SETTERS.get(uniform_type, None)):
         setter = setter_class(uniform_name, uniform_type, location, getter)

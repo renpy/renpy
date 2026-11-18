@@ -343,7 +343,7 @@ All user interface statements take the following common properties:
     with a given identifier is created.
 
     When a displayable is created with an id, the id is stored as a
-    string ion a attribute named id on the Displayable object.
+    string in an attribute named id on the Displayable object.
 
 .. screen-property:: prefer_screen_to_id
 
@@ -2744,7 +2744,7 @@ and choosing the entries that apply to the current platform.
 ``"phone"``
     Defined on touchscreen-based devices where the diagonal size of
     the screen is less than 6 inches. On such a small device, it's
-    important to make buttons large enough a user can easily choose
+    important to make buttons large enough that a user can easily choose
     them. (In general, ``"small"`` should be used instead of ``"phone"``.)
 
 ``"touch"``

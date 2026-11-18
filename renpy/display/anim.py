@@ -25,6 +25,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
+import copy
 import random
 
 import renpy
@@ -200,8 +201,42 @@ class SMAnimation(renpy.display.displayable.Displayable):
         # The state we're in.
         self.state = None
 
+        for i in self.states.values():
+            if (i.image is not None) and i.image._duplicatable:
+                self._duplicatable = True
+
     def visit(self):
         return [i.image for i in self.states.values()]
+
+    def _duplicate(self, args):
+        if not self._duplicatable:
+            return super(SMAnimation, self)._duplicate(args)
+
+        states = {}
+
+        for name, state in self.states.items():
+            if state.image is not None:
+                state = copy.copy(state)
+                state.image = state.image._duplicate(args)
+                state.image._unique()
+
+            states[name] = state
+
+        rv = self._copy(args)
+        rv.states = states
+        rv.edge_start = None
+        rv.edge_cache = None
+        rv.edge = None
+        rv.state = None
+        rv._duplicatable = False
+        return rv
+
+    def _unique(self):
+        for i in self.states.values():
+            if i.image is not None:
+                i.image._unique()
+
+        self._duplicatable = False
 
     def pick_edge(self, state):
         """
@@ -372,6 +407,7 @@ class TransitionAnimation(renpy.display.displayable.Displayable):
 
         self.images = images
         self.prev_images = [images[-1]] + images[:-1]
+        self._duplicatable = any(i._duplicatable for i in images)
         self.delays = delays
         self.transitions = [transitions[-1]] + transitions[:-1]
 
@@ -403,6 +439,27 @@ class TransitionAnimation(renpy.display.displayable.Displayable):
 
     def visit(self):
         return self.images
+
+    def _duplicate(self, args):
+        if not self._duplicatable:
+            return super(TransitionAnimation, self)._duplicate(args)
+
+        images = [i._duplicate(args) for i in self.images]
+
+        for i in images:
+            i._unique()
+
+        rv = self._copy(args)
+        rv.images = images
+        rv.prev_images = [images[-1]] + images[:-1]
+        rv._duplicatable = False
+        return rv
+
+    def _unique(self):
+        for i in self.images:
+            i._unique()
+
+        self._duplicatable = False
 
 
 class Blink(renpy.display.displayable.Displayable):
@@ -448,6 +505,7 @@ class Blink(renpy.display.displayable.Displayable):
         super(Blink, self).__init__(**properties)
 
         self.image = renpy.easy.displayable(image)
+        self._duplicatable = self.image._duplicatable
         self.on = on
         self.off = off
         self.rise = rise
@@ -461,6 +519,23 @@ class Blink(renpy.display.displayable.Displayable):
 
     def visit(self):
         return [self.image]
+
+    def _duplicate(self, args):
+        image = self.image._duplicate(args)
+
+        if image is self.image:
+            return self
+
+        image._unique()
+
+        rv = self._copy(args)
+        rv.image = image
+        rv._duplicatable = False
+        return rv
+
+    def _unique(self):
+        self.image._unique()
+        self._duplicatable = False
 
     def predict_shaders(self, shaders):
         return shaders + ("renpy.alpha",)

@@ -47,6 +47,15 @@ class TagQuotingDict(object):
 tag_quoting_dict = TagQuotingDict()
 
 
+def can_warp_say(who):
+    if who is None:
+        who = renpy.store.narrator
+    elif isinstance(who, str):
+        who = renpy.store.say
+
+    return bool(getattr(who, "warp", False))
+
+
 def predict_say(who, what):
     """
     :undocumented:

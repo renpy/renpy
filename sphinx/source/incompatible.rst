@@ -17,19 +17,69 @@ Upcoming Deprecations
 
 The ability to create zsync updates will be removed when Ren'Py 8.7 is released.
 
+The ``future``, ``six``, and ``renpy.six`` modules are deprecated, and should
+not be used in new games. Portions of these modules may be removed in future
+versions of Ren'Py.
+
+The undocumented ``renpy.tfd`` module is planned to be removed in mid-2027.
+
+
 .. _incompatible-8.6.0:
 
 8.6.0
 -----
 
+**Dialogue and Choice Screen Layers** :var:`config.say_layer`,
+:var:`config.choice_layer`, and :var:`config.nvl_choice_layer` now default to
+None, allowing the screen's ``layer`` property to take precedence. Screens
+without a declared layer still use "screens". Games declaring compatibility
+with Ren'Py 8.5 or earlier retain the old defaults. To restore them explicitly::
+
+    define config.say_layer = "screens"
+    define config.choice_layer = "screens"
+    define config.nvl_choice_layer = "screens"
+
+**Shader GLSL Version** Shader parts can now be written in GLSL ES 3.00, and
+:var:`config.glsl_version` now defaults to 300. Games declaring compatibility
+with Ren'Py 8.5 or earlier retain the old default of 100. A shader part that
+doesn't pass `glsl` to :func:`renpy.register_shader` or
+:func:`renpy.register_textshader`, but uses syntax that only exists in GLSL ES
+1.00 (``attribute``, ``varying``, ``gl_FragColor``, ``gl_FragData``,
+``texture2D`` and similar functions), is treated as GLSL ES 1.00 and a note
+is written to log.txt. Parts using only syntax common to both versions, such as
+a vertex shader that only uses uniforms, are now treated as GLSL ES 3.00. If
+such a part is affected, pass ``glsl=100`` to the registration call, or restore
+the old default with::
+
+    define config.glsl_version = 100
+
+Conversely, if :var:`config.glsl_version` is set to 100, a part that doesn't
+pass `glsl` and uses GLSL ES 3.00 features raises an exception.
+
 **renpy.get_sdl_dll Version** Ren'Py now uses SDL3, and the :func:`renpy.get_sdl_dll` function now takes a `version`
 argument, which should be set to 3 to get the SDL3 library. Calls without the version argument will return None,
 representing SDL2 not being present.
+
+**Input Method Candidates** On Windows, Ren'Py now draws the input method (IME)
+candidate list, rather than using the operating system's candidate window. SDL
+currently supplies candidate events only on Windows, so other platforms still
+use their native candidate windows. Games that customized text input may want to
+restyle the new ``_ime_candidates`` screen, as described in :ref:`input-methods`.
 
 **Late Audio Scan** Ren'Py now defines automatic audio files at a late init level, rather than at init 0.
 To revert to the prior behavior, add to your game::
 
     define -1 config.late_audio_scan = False
+
+**Audio and Image Directories** The directories in :var:`config.audio_directories` and
+:var:`config.image_directories` are now searched when a file is loaded by name, after the directories in
+:var:`config.special_directory_map`. Files that were found before are still found at the same paths, unless
+:var:`_preferences.resource_path_translations` maps one of the added directories. A game that sets these variables may
+also find a file that was previously missing, which can change the result of :func:`renpy.loadable` or of an imagemap's
+``auto`` property. Games declaring compatibility with Ren'Py 8.5 or earlier
+retain the old behavior. To revert to it, add to your game::
+
+    define config.add_to_special_directories = False
 
 **Voice Statement and Translation Identifiers** By default, the ``voice`` statement no longer contributes to
 translation identifiers. This means that adding or removing voice statements will not change the translation ID.
@@ -38,13 +88,16 @@ back, add::
 
     define config.tlid_only_considers_say = False
 
-.. _incompatible-8.5.4:
+**Live2D Poses** Live2D models that have a pose file now use it, showing only one part from each group of alternative
+parts. Models with a pose file that were shown without a motion hiding those parts will look different, and motions
+that switch between alternatives will crossfade. Games declaring compatibility with Ren'Py 8.5 or earlier retain the
+old behavior. To revert to it, add to your game::
 
-8.5.4
------
+    define config.live2d_pose = False
 
-Ren'Py now uses the Cardano interpretation of Bezier curves in Live2D, which is consistent with the Live2D SDK.
-This may cause some motions to change their behavior. To revert to the old behavior, add to your game::
+**Live2D Bezier Curves** Ren'Py now uses the Cardano interpretation of Bezier curves in Live2D, which is consistent
+with the Live2D SDK. This may cause some motions to change their behavior. Games declaring compatibility with Ren'Py
+8.5 or earlier retain the old behavior. To revert to it, add to your game::
 
     define config.live2d_old_beziers = True
 

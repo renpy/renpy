@@ -408,6 +408,15 @@ class SpriteManager(renpy.display.displayable.Displayable):
         self.children = []
 
 
+class ParticleList(list):
+    """
+    The list of particles passed to the create method of a particle factory. `first` is true when the effect is
+    being initialized, which can happen at a nonzero time, such as when a screen is shown again.
+    """
+
+    first = False
+
+
 class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback):
     """
     Supports particle motion, using the old API.
@@ -453,11 +462,12 @@ class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback
 
         if st == 0 or particles is None:
             self.sm.destroy_all()
-            particles = []
+            particles = ParticleList()
+            particles.first = True
 
         add_parts = self.factory.create(particles, st)
 
-        new_particles = []
+        new_particles = ParticleList()
 
         for sprite, p in particles:
             update = p.update(st)
@@ -555,7 +565,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
             else:
                 return n
 
-        if (st == 0) and not particles and self.fast:
+        if self.fast and particles.first:
             rv = []
 
             for _i in range(0, self.count):
@@ -574,7 +584,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
                 )
             return rv
 
-        if particles is None or len(particles) < self.count:
+        if len(particles) < self.count:
             # Check to see if we have a particle ready to start. If not,
             # don't start it.
             if particles and st < self.starts[len(particles)]:
@@ -703,7 +713,9 @@ def SnowBlossom(
 
     `fast`
         If true, particles start in the center of the screen, rather than
-        only at the edges.
+        only at the edges. This applies whenever the effect is initialized,
+        even when the animation timebase is already running. Replacement
+        particles still start at the edges.
 
     `horizontal`
         If true, particles appear on the left or right side of the screen,

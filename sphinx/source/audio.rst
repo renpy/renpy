@@ -77,7 +77,9 @@ can be played with::
 
     play music town_theme
 
-The directories that are searched for files can be changed by modifying :var:`config.audio_directories`.
+The directories that are searched for files, and that are used to populate the audio namespace, can be changed by
+modifying :var:`config.audio_directories`. A file in a subdirectory is given relative to one of these directories, so
+with ``full/audio`` in the list, ``"mini/opening.ogg"`` will find :file:`game/full/audio/mini/opening.ogg`.
 
 The usable name is determined by stripping the extension and forcing the rest of
 the filename to lower case. This is only the case for audio files with names that
@@ -180,6 +182,10 @@ will start synchronized. Specifically, the audio will start:
 
 New audio will start playing when both conditions are met.
 
+Synchro start applies when a channel begins playback. Files queued behind a
+playing track start as soon as that track ends, without waiting to synchronize
+with other channels.
+
 
 Stop Statement
 --------------
@@ -242,6 +248,7 @@ The partial playback specification should consist of alternating
 property name and value pairs, with every thing separated by spaces.
 
 The values are always interpreted as seconds from the start of the file.
+Audio positions are rounded to the nearest sample at the playback sample rate.
 The three properties are:
 
 ``from``

@@ -126,7 +126,7 @@ fast_skipping = False
 
 # Are we currently skipping? If so, how fast?
 # May be "slow", "fast", or None.
-skipping = None
+skipping: str | None = None
 
 # The delay while we are skipping say statements.
 skip_delay = 5
@@ -567,14 +567,14 @@ autoreload_blacklist = [".rpyc", ".rpymc", ".rpyb", ".pyc", ".pyo"]
 # A list of python modules that should be reloaded when appropriate.
 reload_modules = []
 
-# The layer dialogue is shown on.
-say_layer = "screens"
+# The layer dialogue is shown on, or None to use the screen's layer.
+say_layer: str | None = None
 
-# The layer the choice screen is shown on.
-choice_layer = "screens"
+# The layer the choice screen is shown on, or None to use the screen's layer.
+choice_layer: str | None = None
 
-# The layer the choice screen is shown on, when passed (nvl=True).
-nvl_choice_layer = "screens"
+# The layer the NVL choice screen is shown on, or None to use the screen's layer.
+nvl_choice_layer: str | None = None
 
 # If true, we will not use the .report_traceback method to produced
 # prettier tracebacks.
@@ -1152,7 +1152,6 @@ gl_set_attributes = None
 
 # The blacklist of controllers with known problems.
 controller_blocklist = [
-    # "030000007e0500000920",  # Nintendo Pro Controller (natively supported in SDL3)
     "030000006d0400000000",  # Razer Xbox 360 Controller (#4622)
 ]
 
@@ -1193,9 +1192,15 @@ log_gl_extensions = False
 # Should GL shaders be logged to log.txt
 log_gl_shaders = False
 
+# Should GL shader program binaries be cached?
+gl_program_cache = False
+
 # The GLSL dialect shader parts are written in when they don't pass glsl to
 # renpy.register_shader. 300 selects GLSL ES 3.00 and 100 selects GLSL ES
-# 1.00. Games declaring compatibility with 8.5 or earlier get 100.
+# 1.00. Games declaring compatibility with 8.5 or earlier get 100. When this
+# is 300, a part that doesn't pass glsl but uses a construct only found in
+# GLSL ES 1.00 (such as attribute, varying, or gl_FragColor) is treated as
+# being written in GLSL ES 1.00.
 glsl_version = 300
 
 # OpenGL Blend Funcs
@@ -1267,6 +1272,12 @@ tts_front_to_back = True
 # Should tts invocations be queued (default) or cancel each other out (legacy)?
 tts_queue = True
 
+# Should images without explicit alt text be announced with their tag and attribute names?
+auto_image_alt = False
+
+# Should screen reader voicing be automatically enabled if an active screen reader is detected?
+auto_screenreader_voicing = True
+
 # Should live2d loading be logged to log.txt
 log_live2d_loading = False
 
@@ -1308,7 +1319,7 @@ call_screen_roll_forward = False
 
 # A function that's called with ("", interact=False) when no window is
 # displayed during a choice menu.
-choice_empty_window = None
+choice_empty_window: Callable[..., Any] | None = None
 
 # The encoding that's used by renpy.open_file by default. False
 # means to use binary mode.
@@ -1438,7 +1449,7 @@ at_transform_compare_full_context = False
 # A list of callbacks when the display starts.
 display_start_callbacks = []
 
-# If not None, the size of the sound buffer, in bytes.
+# If not None, the requested size of the audio device buffer, in sample frames.
 sound_buffer_size = None
 
 # If True, the default volumes are considered to be quadratic.
@@ -1679,15 +1690,51 @@ If True, live2d will use the old Bezier curve behavior, which usees easing. If F
 of beziers is used.
 """
 
+live2d_pose: bool = True
+"""
+If True, Live2D displayables use the pose file of their model, unless the `pose` parameter says otherwise. If False,
+pose files are ignored by default.
+"""
+
+live2d_mask_clipping: bool = True
+"""
+If True, the textures Live2D uses for clipping masks are cropped to the bounds of the mask's geometry, which uses less
+memory. If False, each mask texture covers the model's whole canvas.
+"""
+
 special_directory_map: dict[str, list[str]] = {"images": ["images"], "audio": ["audio"], "fonts": ["fonts"]}
 """
 This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
 be searched for that kind of file.
 """
 
+audio_directories: list[str] = ["audio"]
+"""
+A list of directories used to populate the audio namespace. These are also searched when loading an audio file by
+name, after the directories in special_directory_map.
+"""
+
+image_directories: list[str] = ["images"]
+"""
+A list of directories used to define images automatically. These are also searched when loading an image file by
+name, after the directories in special_directory_map.
+"""
+
+add_to_special_directories: bool = True
+"""
+If True, audio_directories and image_directories are searched when loading a file by name. If False, only the
+directories in special_directory_map are searched.
+"""
+
 font_size_adjust: dict[str, float | Callable[[str, float], float]] = {}
 """
 A map from font name to a multiplier or function that's used to adjust the size of a font.
+"""
+
+font_memory_buffer_size: int = 2 * 1024 * 1024
+"""
+Fonts smaller than this many bytes are loaded into memory by the harfbuzz shaper. Larger fonts are read from
+disk as needed.
 """
 
 scene_uses_tag_layer: bool = True
@@ -1778,3 +1825,5 @@ def post_init():
 
     if renpy.config.raise_image_load_exceptions is None:
         renpy.config.raise_image_load_exceptions = renpy.config.developer
+
+    renpy.display.im.thread_local.raise_image_load_exceptions = bool(renpy.config.raise_image_load_exceptions)

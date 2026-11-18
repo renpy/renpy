@@ -28,6 +28,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import __future__
 
+import operator
 import random
 import weakref
 import sys
@@ -567,6 +568,20 @@ class DetRandom(random.Random):
 
     choices = list_wrapper(random.Random.choices)
     sample = list_wrapper(random.Random.sample)
+
+    _randbelow = random.Random._randbelow_without_getrandbits
+
+    def getrandbits(self, k):
+        k = operator.index(k)
+        if k < 0:
+            raise ValueError("number of bits must be non-negative")
+
+        rv = 0
+        for shift in range(0, k, 32):
+            bits = min(k - shift, 32)
+            rv |= int(self.random() * (1 << bits)) << shift
+
+        return rv
 
     def random(self):
         if self.stack:

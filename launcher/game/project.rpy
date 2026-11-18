@@ -702,12 +702,17 @@ init python in project:
                     # We have a project directory, so create a Project.
                     p = Project(p_path, name, parent_path=full_path)
 
-                    # Adds the project to the ProjectFolder
-                    pf.add(p)
-
                     self.all_projects.append(p)
 
                     project_type = p.data.get("type", "normal")
+
+                    # Hidden projects (like the launcher of a Ren'Py SDK inside the folder) are not shown.
+                    if project_type == "hidden":
+                        continue
+
+                    # Adds the project to the ProjectFolder
+                    pf.add(p)
+
                     if project_type == "template":
                         self.templates.append(p)
 

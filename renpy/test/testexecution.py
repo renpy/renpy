@@ -122,8 +122,17 @@ def initialize(test_filter: ExecutionFilter) -> None:
     phase_controller = TestPhaseController(root)
     # Disable vsync, to speed up testing.
     renpy.config.gl_vsync = False
+    renpy.config.save_physical_size = False
+    renpy.display.interface.display_reset = True
 
     initialized = True
+
+
+def get_test_window_size() -> tuple[int, int] | None:
+    if initialized and not renpy.mobile:
+        return renpy.config.screen_width, renpy.config.screen_height
+
+    return None
 
 
 def has_default_testcase() -> bool:
@@ -257,6 +266,26 @@ def scoped_exec(source: str, hide: bool = False, store: str = "store") -> None:
 
 ################################################################################
 ## Setup methods
+
+def evaluate_enabled_expressions() -> None:
+    """
+    Sets the enabled flag of each testcase with an `enabled` property by
+    evaluating its expression. This is done after init code has run, rather
+    than when the script is compiled, so the result reflects the current
+    platform and game files.
+    """
+
+    for tc in testcases.values():
+        expr = getattr(tc, "enabled_expr", None)
+
+        if expr is None:
+            continue
+
+        tc.enabled = bool(scoped_eval(expr))
+
+        if tc.only and not tc.enabled:
+            raise ValueError(f"Test case '{tc.name}' must be enabled before setting 'only' to True.")
+
 
 def update_enable_flag() -> None:
     """
@@ -551,6 +580,9 @@ class TestPhaseController:
     """
 
     def __init__(self, root_suite: TestSuite):
+        # The first pass uses the first parameter set, like a subtest in NextTestTransitionPhase.
+        root_suite.advance_to_next_parameter_set()
+
         self.active_phase: BaseExecutionPhase = StartPhase(root_suite)
         testreporter.reporter.test_run_start()
         self.active_phase.enter()
@@ -904,4 +936,3 @@ class GlobalParameterCyclePhase(BaseExecutionPhase):
             return EndPhase()
 
         return StartPhase(root)
-

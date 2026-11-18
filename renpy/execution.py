@@ -65,10 +65,14 @@ def check_infinite_loop():
         il_second_deadline = 0
         return
 
+    # The first deadline has passed. Give the game one second to show that it's still making
+    # progress (not_infinite_loop, or an interaction, will push out the first deadline and
+    # cancel this) before reporting an infinite loop.
     if il_second_deadline == 0:
         il_second_deadline = now + 1
+        return
 
-    if now < il_second_deadline:
+    if now >= il_second_deadline:
         il_second_deadline = 0
         il_first_deadline = now + 60
         raise Exception("Possible infinite loop.")
@@ -93,7 +97,9 @@ def not_infinite_loop(delay):
         delay *= 5
 
     global il_first_deadline
+    global il_second_deadline
     il_first_deadline = time.time() + delay
+    il_second_deadline = 0
 
 
 class Delete(object):
@@ -1040,6 +1046,27 @@ class RestartTopContext(BaseException):
     """
 
 
+class ResetAllContexts(BaseException):
+    """
+    This exception is raised by reset_all_contexts. It unwinds any nested contexts, so
+    they can clean up after themselves, before the top context performs the reset.
+    """
+
+    def __init__(self, label: "renpy.ast.NodeName"):
+        super().__init__()
+        self.label: renpy.ast.NodeName = label
+
+    def perform_reset(self):
+        while renpy.game.contexts:
+            c = renpy.game.contexts.pop()
+            c.pop_all_dynamic()
+
+        c = Context(True)
+        c.goto_label(self.label)
+
+        renpy.game.contexts.append(c)
+
+
 def run_context(top):
     """
     Runs the current context until it can't be run anymore, while handling
@@ -1066,11 +1093,23 @@ def run_context(top):
                 return rv
 
             except renpy.rollback.RollbackException as e:
-                e.perform_rollback()
+                # The top context and replays have rollback logs, other contexts leave it to them.
+                if context.rollback:
+                    e.perform_rollback()
+                else:
+                    context.pop_all_dynamic()
+                    raise
 
             except renpy.rollback.UnfreezeException as e:
                 if top:
                     e.perform_unfreeze()
+                else:
+                    context.pop_all_dynamic()
+                    raise
+
+            except ResetAllContexts as e:
+                if top:
+                    e.perform_reset()
                 else:
                     context.pop_all_dynamic()
                     raise
@@ -1083,6 +1122,7 @@ def run_context(top):
                 continue
             else:
                 context.pop_all_dynamic()
+                raise
 
         except Exception:
             context.pop_all_dynamic()
@@ -1118,12 +1158,4 @@ def reset_all_contexts():
             "The renpy.reset_all_contexts function can only be called as the last thing in a python statement."
         )
 
-    while renpy.game.contexts:
-        c = renpy.game.contexts.pop()
-        c.pop_all_dynamic()
-
-    c = Context(True)
-    c.goto_label(old.next_node.name)
-
-    renpy.game.contexts.append(c)
-    raise RestartTopContext()
+    raise ResetAllContexts(old.next_node.name)

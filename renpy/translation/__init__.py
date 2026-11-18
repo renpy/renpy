@@ -349,9 +349,8 @@ class Restructurer(object):
                 digest_block = [i for i in block if isinstance(i, renpy.ast.Say)]
 
         for i in digest_block:
-            if isinstance(i, renpy.ast.Say):
-                code = i.get_code()
-                md5.update((code + "\r\n").encode("utf-8"))
+            code = i.get_code()
+            md5.update((code + "\r\n").encode("utf-8"))
 
         digest = md5.hexdigest()[:8]
 
@@ -555,10 +554,12 @@ class StringTranslator(object):
             self.translations[old] = old
             self.unknown.append(old)
 
-        # Remove {#...} tags.
-        if new is None:
-            notags = re.sub(r"\{\#.*?\}", "", old)
-            new = self.translations.get(notags, None)
+        # Remove {#...} tags, and try again. A string without tags has already been looked up.
+        if "{#" not in old:
+            return old
+
+        notags = re.sub(r"\{\#.*?\}", "", old)
+        new = self.translations.get(notags, None)
 
         if new is not None:
             return new

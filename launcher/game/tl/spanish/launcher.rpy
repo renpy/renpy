@@ -57,11 +57,11 @@
 
     # android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Intenta emular un teléfono Android.\n\nLa entrada táctil se emula mediante el mouse, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
+    new "Intenta emular un teléfono Android.\n\nLa entrada táctil se emula mediante el ratón, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
 
     # android.rpy:38
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Intenta emular una tableta Android.\n\nLa entrada táctil se emula mediante el mouse, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
+    new "Intenta emular una tableta Android.\n\nLa entrada táctil se emula mediante el ratón, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y Av.Pág está asignado al botón Atrás."
 
     # android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
@@ -98,7 +98,7 @@
     # android.rpy:49
     old "Disconnects from an Android device running ADB in TCP/IP mode."
     new "Se desconecta de un dispositivo Android que ejecuta ADB en modo TCP/IP."
-    
+
 
     # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
@@ -662,7 +662,7 @@
 
     # interface.rpy:131
     old "preferences"
-    new "preferencias"
+    new "ajustes"
 
     # interface.rpy:132
     old "quit"
@@ -702,7 +702,7 @@
 
     # interface.rpy:509
     old "CHOICE"
-    new "SELECCIONA"
+    new "ELECCIÓN"
 
     # ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
@@ -722,11 +722,11 @@
 
     # ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Intenta emular un iPhone.\n\nLa entrada táctil se emula a través del mouse, pero solo cuando se mantiene pulsado el botón."
+    new "Intenta emular un iPhone.\n\nLa entrada táctil se emula a través del ratón, pero solo cuando se mantiene pulsado el botón."
 
     # ios.rpy:34
     old "Attempts to emulate an iPad.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Intenta emular un iPad.\n\nLa entrada táctil se emula a través del mouse, pero solo cuando se mantiene pulsado el botón."
+    new "Intenta emular un iPad.\n\nLa entrada táctil se emula a través del ratón, pero solo cuando se mantiene pulsado el botón."
 
     # ios.rpy:36
     old "Selects the directory where Xcode projects will be placed."
@@ -886,7 +886,7 @@
 
     # navigation.rpy:251
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
-    new "No se han encontrado comentarios \"TODO\". Para crear uno, incluye \"# TODO\" en tu script."
+    new "No se han encontrado comentarios TODO.\n\nPara crear uno, incluye \"# TODO\" en tu {i}script{/i}."
 
     # navigation.rpy:258
     old "The list of names is empty."
@@ -918,7 +918,7 @@
 
     # new_project.rpy:71
     old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
-    new "Vas a crear un proyecto en idioma [new_project_language]. Cambia el idioma del lanzador en preferencias para crear un proyecto en otro idioma."
+    new "Vas a crear un proyecto en idioma [new_project_language]. Cambia el idioma del lanzador en ajustes para crear un proyecto en otro idioma."
 
     # new_project.rpy:79
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
@@ -938,7 +938,7 @@
 
     # preferences.rpy:73
     old "Launcher Preferences"
-    new "Preferencias del lanzador"
+    new "Ajustes del lanzador"
 
     # preferences.rpy:94
     old "Projects Directory:"
@@ -1026,15 +1026,15 @@
 
     # project.rpy:49
     old "After making changes to the script, press shift+R to reload your game."
-    new "Después de hacer cambios a un script, presiona Mayús+R para recargar tu juego."
+    new "Después de hacer cambios a un script, presiona Shift+R para recargar tu juego."
 
     # project.rpy:49
     old "Press shift+O (the letter) to access the console."
-    new "Presiona Mayús+O (la letra) para acceder a la consola."
+    new "Presiona Shift+O (la letra) para acceder a la consola."
 
     # project.rpy:49
     old "Press shift+D to access the developer menu."
-    new "Presiona Mayús+D para acceder al menú de desarrollador."
+    new "Presiona Shift+D para acceder al menú de desarrollador."
 
     # project.rpy:49
     old "Have you backed up your projects recently?"
@@ -1154,7 +1154,7 @@
 
     # translations.rpy:367
     old "Dialogue Text Only (dialogue.txt)"
-    new "Diálogo en solo texto (dialogue.txt)"
+    new "Diálogo en solo texto ('dialogue.txt')"
 
     # translations.rpy:380
     old "Strip text tags from the dialogue."
@@ -1947,7 +1947,7 @@
     # game/editor.rpy:152
     old "A modern editor with many extensions including advanced Ren'Py integration."
     new "Un editor moderno con muchas extensiones, incluida la integración avanzada de Ren'Py."
-    
+
 
     # game/editor.rpy:153
     old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
@@ -2223,7 +2223,7 @@
 
     # game/preferences.rpy:332
     old "Open projects.txt"
-    new "Abrir projects.txt"
+    new "Abrir 'projects.txt'"
 
     # game/preferences.rpy:356
     old "Lint toggles:"
@@ -2251,7 +2251,7 @@
 
     # game/project.rpy:776
     old "Splashscreen skipped in launcher preferences."
-    new "Se omite la pantalla Splashscreen en las preferencias del lanzador."
+    new "Se omite la pantalla Splashscreen en los ajustes del lanzador."
 
     # game/editor.rpy:667
     old "You are using an old version of the Ren'Py Language support for Visual Studio Code. Would you like to upgrade?"
@@ -2272,9 +2272,6 @@
     # game/preferences.rpy:258
     old "Prefer the web documentation"
     new "Preferir la documentación web"
-# TODO: Translation updated at 2026-09-29 08:37
-
-translate spanish strings:
 
     # game/android.rpy:45
     old "Attempts to emulate a television-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
@@ -2360,3 +2357,46 @@ translate spanish strings:
     old "Updating while Ren'Py games are running on this computer can cause problems. Please close all Ren'Py games before proceeding."
     new "Actualizar mientras hay juegos de Ren'Py en ejecución en esta computadora puede causar problemas. Cierra todos los juegos de Ren'Py antes de continuar."
 
+    # game/wavedash.rpy:81
+    old "Downloading the Wavedash CLI."
+    new "Descargando la CLI de Wavedash."
+
+    # game/wavedash.rpy:210
+    old "The Wavedash game ID has not been set."
+    new "El ID de juego de Wavedash no se ha establecido."
+
+    # game/wavedash.rpy:210
+    old "Create a game at {a=https://wavedash.com/dev-portal}wavedash.com/dev-portal{/a}, then add a line like \n{vspace=5}define build.wavedash_id = \"YOUR_GAME_ID_HERE\"\n{vspace=5} to options.rpy."
+    new "Crea un juego en {a=https://wavedash.com/dev-portal}wavedash.com/dev-portal{/a} y luego agrega una línea como \n{vspace=5}define build.wavedash_id = \"TU_ID_DE_JUEGO_AQUÍ\"\n{vspace=5} en options.rpy."
+
+    # game/wavedash.rpy:222
+    old "The web distribution could not be found. Would you like to build it now and upload it to Wavedash?"
+    new "No se pudo encontrar la distribución web. ¿Quieres crearla ahora y subirla a Wavedash?"
+
+    # game/wavedash.rpy:230
+    old "The Wavedash configuration in the web distribution could not be read."
+    new "No se pudo leer la configuración de Wavedash en la distribución web."
+
+    # game/wavedash.rpy:230
+    old "Please choose 'Web', 'Build Web Application' and try again."
+    new "Elige 'Web', 'Construir aplicación web' y vuelve a intentarlo."
+
+    # game/wavedash.rpy:237
+    old "The Wavedash game ID changed after the web distribution was built. Would you like to rebuild it now and upload it to Wavedash?"
+    new "El ID de juego de Wavedash cambió después de crear la distribución web. ¿Quieres reconstruirla ahora y subirla a Wavedash?"
+
+    # game/wavedash.rpy:253
+    old "RenPyWeb could not be installed."
+    new "No se pudo instalar RenPyWeb."
+
+    # game/wavedash.rpy:270
+    old "The web distribution was built for a different Wavedash game."
+    new "La distribución web se creó para un juego de Wavedash diferente."
+
+    # game/wavedash.rpy:278
+    old "The Wavedash CLI is not available for this platform."
+    new "La CLI de Wavedash no está disponible para esta plataforma."
+
+    # game/web.rpy:570
+    old "Upload to wavedash.com"
+    new "Subir a wavedash.com"

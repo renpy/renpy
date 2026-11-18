@@ -1017,7 +1017,9 @@ def register_channel(
 
     `synchro_start`
         Does this channel participate in synchro start? Synchro start determines if
-        the channel will start playing at the same time as other channels. If None,
+        the channel will start playing at the same time as other channels.
+        Files queued behind a playing track start when that track ends, without
+        waiting for other channels. If None,
         this defaults to `loop` if `movie` is False, and False otherwise.
     """
 
@@ -1149,14 +1151,8 @@ def init():
             webaudio.set_movie_channel(c.number, c.movie != renpy.audio.renpysound.NO_VIDEO)
 
     if pcm_ok is None and renpysound:
-        bufsize = 2048
-        if renpy.emscripten:
-            # Large buffer (and latency) as compromise to avoid sound jittering
-            bufsize = 8192  # works for me
-            # bufsize = 16384  # jitter/silence right after starting a sound
-
-        if renpy.config.sound_buffer_size is not None:
-            bufsize = renpy.config.sound_buffer_size
+        # The requested buffer size, in sample frames. 0 lets SDL choose.
+        bufsize = renpy.config.sound_buffer_size or 0
 
         if "RENPY_SOUND_BUFSIZE" in os.environ:
             bufsize = int(os.environ["RENPY_SOUND_BUFSIZE"])

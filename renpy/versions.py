@@ -51,9 +51,9 @@ class Version:
 branch_to_version: dict[str, Version] = {}
 
 
-Version("main", (8, 6, 0), "Real Artists Ship")
+Version("main", (8, 7, 0), "TBD")
 
-Version("fix", (8, 5, 4), "We Can Go to the Moon")
+Version("fix", (8, 6, 2), "Real Artists Ship")
 
 
 class VersionDict(TypedDict):
@@ -95,10 +95,20 @@ def _make_version_string(
     if dirty:
         suffixes.append("dirty")
 
-    if not official and branch not in {"main", "master"}:
-        suffixes.append(branch)
+    # Only the part of the branch name after the last slash is used (work/tom/test123 -> test123), as the
+    # slashes would otherwise end up in the version string and in file names. The name is empty when git is
+    # on a detached HEAD, in which case no branch suffix is added.
+    short_branch = branch.rsplit("/", 1)[-1]
 
-    return f"{major}.{minor}.{patch}.{commit:08d}+{'.'.join(suffixes)}"
+    if not official and branch not in {"main", "master"} and short_branch:
+        suffixes.append(short_branch)
+
+    version = f"{major}.{minor}.{patch}.{commit:08d}"
+
+    if suffixes:
+        version += f"+{'.'.join(suffixes)}"
+
+    return version
 
 
 def get_vc_version() -> VersionDict | None:
@@ -140,6 +150,54 @@ def get_vc_version() -> VersionDict | None:
     )
 
 
+DIRTY_IGNORED_FILES: frozenset[str] = frozenset(
+    {
+        "sphinx/source/keywords.py",
+        "tutorial/game/keywords.py",
+    }
+)
+"Repository-relative paths whose modification does not make the working tree dirty."
+
+
+def is_git_dirty() -> bool:
+    """
+    Return True if the git working tree has changes to files not listed in
+    `DIRTY_IGNORED_FILES`. Raises subprocess errors if git fails.
+    """
+
+    creationflags = 0
+    if sys.platform == "win32":
+        creationflags = subprocess.CREATE_NO_WINDOW
+
+    status = subprocess.check_output(
+        ["git", "status", "--porcelain", "-z", "--untracked-files=all"],
+        encoding="utf-8",
+        creationflags=creationflags,
+    )
+
+    entries = status.split("\0")
+    i = 0
+
+    while i < len(entries):
+        entry = entries[i]
+        i += 1
+
+        if not entry:
+            continue
+
+        paths = [entry[3:]]
+
+        # Renames and copies are followed by the original path.
+        if entry[0] in "RC" and i < len(entries):
+            paths.append(entries[i])
+            i += 1
+
+        if any(path not in DIRTY_IGNORED_FILES for path in paths):
+            return True
+
+    return False
+
+
 def get_git_version(nightly: bool = False) -> VersionDict:
     """
     Return `Version` read from the git repository if it exists or None otherwise.
@@ -160,7 +218,7 @@ def get_git_version(nightly: bool = False) -> VersionDict:
             raise Exception("Current git repository is not Ren'Py repository.")
 
         branch = get_output(["git", "branch", "--show-current"])
-        dirty = get_output(["git", "status", "--porcelain"]) != ""
+        dirty = is_git_dirty()
         commits = get_output(["git", "log", "-99", "--pretty=%cd", "--date=format:%y%m%d"])
 
         commits_per_day = collections.Counter[str](commits.split())
@@ -224,7 +282,7 @@ def get_release_version():
     version_tuple = tuple(map(int, version["version"].split(".")[:3]))
 
     if version["nightly"] and version["branch"] == "fix" and version_tuple[2] > 0:
-        return "{}.{}.{}".format(version_tuple[0], version_tuple[1] - 1, version_tuple[2])
+        return "{}.{}.{}".format(version_tuple[0], version_tuple[1], version_tuple[2] - 1)
     else:
         return "{}.{}.{}".format(*version_tuple)
 

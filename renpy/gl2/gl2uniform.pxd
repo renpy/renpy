@@ -57,7 +57,7 @@ cdef class Setter:
     cdef object set(self, GL2DrawingContext context, value)
 
 
-cdef class Sampler2DSetter(Setter):
+cdef class SamplerSetter(Setter):
 
     cdef int sampler
     "The sampler number to use."
@@ -65,10 +65,13 @@ cdef class Sampler2DSetter(Setter):
     cdef unsigned long long bound_serial
     "The state-cache reset serial when this program's sampler unit was last set."
 
-    cdef str texture_wrap_key
+    cdef readonly str texture_wrap_key
     "The key to use to look up the texture wrap mode."
 
-    cdef str texture_scaling_key
+    cdef GLenum target_type
+    "The GLenum target to be used for this sampler"
+    
+    cdef readonly str texture_scaling_key
     "The key to use to look up the texture scaling mode."
 
     cdef void set_texture(self, GLStateCache cache, GLuint texture)

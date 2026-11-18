@@ -106,6 +106,14 @@ class Script:
     integers, strings being explicit names provided by the user, and
     integers being names synthesised by renpy.
 
+    The namemap is kept in source order: within each file, nodes are
+    inserted in the order of the file's statements, with each statement
+    before the statements it contains. Code relies on this to find the
+    first statement on a line (renpy.warp). Editing the script at runtime
+    with renpy.scriptedit, as the interactive director does, does not
+    preserve this order: added statements go at the end, and the names
+    of removed statements map to the statement after them.
+
     @ivar initcode: A list of priority, Node tuples that should be
     executed in ascending priority order at init time.
 
@@ -397,7 +405,7 @@ class Script:
                     sort_key = parts[1]
 
             priority *= 2
-            if fn >= "A":
+            if sort_key >= "A":
                 priority += 1
 
             return (priority, sort_key, fn, dn)
@@ -423,6 +431,8 @@ class Script:
             if priority != last_priority and renpy.parser.has_parse_errors():
                 skipped += len(script_files) - count
                 break
+
+            last_priority = priority
 
             count += 1
             renpy.display.presplash.progress("Loading script...", count, len(script_files))
@@ -689,7 +699,7 @@ class Script:
                         )
                     )
 
-        self.update_bytecode(expressions or [])
+        self.update_bytecode(expressions)
 
         for node in all_stmts:
             if isinstance(node, renpy.ast.Testcase):
@@ -700,7 +710,8 @@ class Script:
                 check_name(node)
 
                 # Add the name to the namemap. This uses the node as both key and value, as the node is equal to and
-                # hashes as its name.
+                # hashes as its name. all_stmts is in source order, so this keeps the namemap in source order, which
+                # warp relies on.
                 self.namemap[node] = node
 
             # Add any init nodes to self.initcode.
@@ -871,7 +882,9 @@ class Script:
                     bad_reduction_name=f"<{fn} transformed rpyc data>",
                 )
 
-                if not renpy.macapp:
+                # Parallel testcase projects share the common directory and can parse the same source concurrently.
+                readonly_common = dir == renpy.config.commondir and os.environ.get("RENPY_TEST_READONLY_COMMON") == "1"
+                if not renpy.macapp and not readonly_common:
                     try:
                         with open(rpycfn, "wb") as f:
                             self.write_rpyc_header(f)
@@ -1069,37 +1082,38 @@ class Script:
 
         self.digest.update(digest)  # type: ignore
 
-    def update_bytecode(self, expressions: renpy.parser.ExpressionsList):
+    def update_bytecode(self, expressions: renpy.parser.ExpressionsList | None = None):
         """
         Compiles the PyCode objects in self.all_pycode, updating the
         cache. Clears out self.all_pycode.
         """
 
-        for expr, context in expressions:
-            if context == "unknown":
-                mode = "eval"
-            else:
-                mode = context
-
-            try:
-                renpy.python.py_compile(expr, mode)
-            except SyntaxError as e:
+        if expressions is not None:
+            for expr, context in expressions:
                 if context == "unknown":
-                    continue
+                    mode = "eval"
+                else:
+                    mode = context
 
-                assert e.filename is not None
-                assert e.lineno is not None
-                pem = renpy.parser.ParseError(
-                    e.msg,
-                    e.filename,
-                    e.lineno,
-                    e.offset,
-                    e.text,
-                    e.end_lineno,
-                    e.end_offset,
-                )
+                try:
+                    renpy.python.py_compile(expr, mode)
+                except SyntaxError as e:
+                    if context == "unknown":
+                        continue
 
-                renpy.parser.parse_errors.append(pem.message)
+                    assert e.filename is not None
+                    assert e.lineno is not None
+                    pem = renpy.parser.ParseError(
+                        e.msg,
+                        e.filename,
+                        e.lineno,
+                        e.offset,
+                        e.text,
+                        e.end_lineno,
+                        e.end_offset,
+                    )
+
+                    renpy.parser.parse_errors.append(pem.message)
 
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.

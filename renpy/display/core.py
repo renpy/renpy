@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import NotRequired, TypedDict, Any
+from typing import TYPE_CHECKING, NotRequired, TypedDict, Any
 
 import sys
 import os
@@ -37,6 +37,9 @@ import renpy.pygame as pygame
 from renpy.display.position import absolute as absolute, position as position
 from renpy.display.displayable import Displayable, DisplayableArguments as DisplayableArguments, place as place
 from renpy.display.scenelists import SceneListEntry as SceneListEntry, SceneLists as SceneLists
+
+if TYPE_CHECKING:
+    from renpy.display.ime import IMECandidates
 
 import_time = time.time()
 import_perf_time = time.perf_counter()
@@ -100,6 +103,7 @@ enabled_events: set[int] = {
     pygame.KEYDOWN,
     pygame.KEYUP,
     pygame.TEXTEDITING,
+    pygame.TEXTEDITINGCANDIDATES,
     pygame.TEXTINPUT,
     pygame.KEYMAPCHANGED,
     pygame.MOUSEMOTION,
@@ -130,6 +134,7 @@ input_events: set[int] = {
     pygame.KEYDOWN,
     pygame.KEYUP,
     pygame.TEXTEDITING,
+    pygame.TEXTEDITINGCANDIDATES,
     pygame.TEXTINPUT,
     pygame.MOUSEMOTION,
     pygame.MOUSEBUTTONDOWN,
@@ -363,6 +368,12 @@ class Renderer:
         using renpy.game.preferences.fullscreen.
         """
 
+    def get_vsync(self):
+        """
+        Returns True if drawing is synchronized to the display's refresh,
+        and False otherwise.
+        """
+
     def can_block(self):
         """
         Returns True if we can block to wait for input, False if the screen
@@ -393,7 +404,7 @@ class Renderer:
         if surf in self.texture_cache:
             del self.texture_cache[surf]
 
-    def load_texture(self, surf, transient=False):
+    def load_texture(self, surf, transient=False, properties={}):
         """
         Loads a surface into a texture.
 
@@ -737,11 +748,17 @@ class Interface:
         # If in text editing mode, the current text editing event.
         self.text_editing = None
 
+        self.text_editing_candidates: IMECandidates | None = None
+        "The IME candidate list to display, or None if there is none."
+
         self.old_text_rect: tuple[float, float, float, float] | None = None
         "The text rectangle after the previous draw."
 
         self.text_rect: tuple[float, float, float, float] | None = None
         "The text rectangle after the current draw."
+
+        self.ime_text_rect: tuple[float, float, float, float] | None = None
+        "The most recent text rectangle, used to place the IME candidate list during rendering."
 
         # Are we a touchscreen?
         self.touch = renpy.exports.variant("touch")
@@ -796,6 +813,7 @@ class Interface:
         # is done, or at the end of the interaction.
         self.force_prediction = False
         self.texture_task: renpy.asynctask.Task | None = None
+        self.prediction_task: renpy.asynctask.Task | None = None
 
         # The number of interactions that have happened without processing an event.
         self.interaction_counter = 0
@@ -977,7 +995,9 @@ class Interface:
         pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
         pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
-        pygame.display.hint("SDL_IME_SHOW_UI", "1")
+        # Ren'Py draws the IME composition and candidate list itself, as the
+        # native IME windows may be hidden when the game is fullscreen.
+        pygame.display.hint("SDL_IME_IMPLEMENTED_UI", "composition,candidates")
         pygame.display.hint("SDL_ANDROID_BLOCK_ON_PAUSE", "0")
         pygame.display.hint("SDL_MOUSE_DPI_SCALE_CURSORS", "1")
 
@@ -1009,6 +1029,9 @@ class Interface:
         """
         Called after the first frame has been drawn.
         """
+
+        if renpy.emscripten:
+            emscripten.run_script(r"""presplashEnd();""")
 
         if renpy.android:
             from jnius import autoclass
@@ -1202,6 +1225,9 @@ class Interface:
             pygame.key.set_text_input_rect(None)
             self.text_rect = None
             self.old_text_rect = None
+            self.ime_text_rect = None
+            self.text_editing = None
+            self.set_text_editing_candidates(None)
 
         self.display_reset = False
 
@@ -1655,6 +1681,36 @@ class Interface:
 
         return ev
 
+    def get_earliest_redraw_time(self, first_pass):
+        """
+        Vsync doesn't always limit the framerate. Some platforms stop waiting
+        for vsync when the window is minimized, hidden, or covered (notably
+        ANGLE on Direct3D 11, where DXGI reports the window as occluded), and
+        drivers can disable it. When vsync is requested, this limits drawing
+        to 5 fps when minimized or hidden, and otherwise to 1.5 times the
+        refresh rate of the window's display, but no lower than 90 fps. When
+        vsync is off, drawing is not limited.
+
+        Returns the time before which the screen should not be redrawn, or
+        None if it can be redrawn now.
+        """
+
+        if first_pass or not renpy.display.draw.get_vsync():
+            return None
+
+        if not pygame.display.get_active():
+            min_frame_duration = 1.0 / 5.0
+        else:
+            refresh_rate = pygame.display.get_refresh_rate()
+            min_frame_duration = 1.0 / max(1.5 * refresh_rate, 90.0)
+
+        rv = self.frame_time + min_frame_duration
+
+        if rv <= get_time():
+            return None
+
+        return rv
+
     def compute_overlay(self):
         if renpy.store.suppress_overlay:
             return
@@ -1942,6 +1998,8 @@ class Interface:
         Handles the SDL2 suspend process.
         """
 
+        # On Android, this event is only delivered because renpy.pygame.event stops timers from posting events
+        # as soon as SDL reports that the app is entering the background.
         if ev.type != pygame.WILLENTERBACKGROUND:
             return False
 
@@ -2060,7 +2118,39 @@ class Interface:
         if ev is None:
             return False
         else:
-            return ev.type in (pygame.TEXTINPUT, pygame.TEXTEDITING)
+            return ev.type in (pygame.TEXTINPUT, pygame.TEXTEDITING, pygame.TEXTEDITINGCANDIDATES)
+
+    def set_text_editing_candidates(self, candidates: "IMECandidates | None"):
+        """
+        Sets the IME candidate list, restarting the interaction so the
+        candidate screen is updated if it changed.
+        """
+
+        if candidates == self.text_editing_candidates:
+            return
+
+        self.text_editing_candidates = candidates
+        self.update_ime_candidates_screen()
+        renpy.exports.restart_interaction()
+
+    def update_ime_candidates_screen(self):
+        """
+        Shows or hides the screen that displays the IME candidate list, to
+        match the current candidate list.
+        """
+
+        if not renpy.display.screen.has_screen("_ime_candidates"):
+            return
+
+        shown = renpy.exports.get_screen("_ime_candidates") is not None
+
+        if self.text_editing_candidates is not None and not shown:
+            renpy.exports.show_screen("_ime_candidates", _transient=True)
+            renpy.exports.restart_interaction()
+
+        elif self.text_editing_candidates is None and shown:
+            renpy.exports.hide_screen("_ime_candidates")
+            renpy.exports.restart_interaction()
 
     def update_text_rect(self):
         """
@@ -2069,6 +2159,9 @@ class Interface:
 
         if renpy.store._text_rect is not None:
             self.text_rect = renpy.store._text_rect
+
+        if self.text_rect is not None:
+            self.ime_text_rect = self.text_rect
 
         # There is an active text input.
         if self.keyboard_focused and self.text_rect is not None:
@@ -2099,10 +2192,17 @@ class Interface:
                     _transient=True,
                 )
 
+            # Show the IME candidate list if it was hidden at the end of an interaction.
+            self.update_ime_candidates_screen()
+
         # Text input is no longer active.
         elif self.old_text_rect:
             pygame.key.stop_text_input()
             pygame.key.set_text_input_rect(None)
+
+            self.text_editing = None
+            self.ime_text_rect = None
+            self.set_text_editing_candidates(None)
 
             if self.touch_keyboard:
                 renpy.exports.hide_screen("_touch_keyboard")
@@ -2311,7 +2411,7 @@ class Interface:
         """
 
         renpy.asynctask.create_task(self.run_gc_task())
-        renpy.asynctask.create_task(self.run_prediction_task(root_widget))
+        self.prediction_task = renpy.asynctask.create_task(self.run_prediction_task(root_widget))
         renpy.asynctask.create_task(self.run_filesystem_task())
 
     def run_tasks(self, expensive):
@@ -2336,6 +2436,15 @@ class Interface:
 
             if self.event_peek(False):
                 break
+
+        if (
+            self.force_prediction
+            and self.prediction_task is not None
+            and self.prediction_task.done()
+            and not self.prediction_task.cancelled()
+            and renpy.display.im.cache.done()
+        ):
+            self.force_prediction = False
 
         if expensive:
             renpy.plog(1, "end tasks (expensive)")
@@ -2829,9 +2938,13 @@ class Interface:
                     # This becomes true if we did a redraw this cycle.
                     did_redraw = False
 
+                    # Limit the framerate, in case vsync doesn't.
+                    earliest_redraw_time = self.get_earliest_redraw_time(first_pass)
+
                     # Redraw the screen.
                     if self.force_redraw or (
                         (first_pass or not pygame.event.peek(ALL_EVENTS))
+                        and earliest_redraw_time is None
                         and renpy.display.draw.should_redraw(needs_redraw, first_pass, can_block)
                     ):
                         self.force_redraw = False
@@ -2964,6 +3077,18 @@ class Interface:
                 if self.maximum_framerate_time > get_time():
                     can_block = False
 
+                # Delay the redraw until the next frame is allowed.
+                earliest_redraw_time = self.get_earliest_redraw_time(first_pass)
+
+                if earliest_redraw_time is not None and (
+                    needs_redraw
+                    or (not can_block)
+                    or self.mouse_move
+                    or renpy.display.video.playing()
+                    or redraw_time is not None
+                ):
+                    redraw_time = max(redraw_time or 0, earliest_redraw_time)
+
                 # Compute the redraw time and set the redraw timer.
                 if redraw_time is not None:
                     time_left = redraw_time - get_time()
@@ -3019,7 +3144,12 @@ class Interface:
 
                     self.run_tasks(expensive)
 
-                if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
+                if earliest_redraw_time is not None:
+                    # The REDRAW timer will wake us when it's time to draw.
+                    renpy.plog(1, "pre framerate limit wait")
+                    ev = self.event_wait()
+                    renpy.plog(1, "post framerate limit wait {!r}", ev)
+                elif needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
                     renpy.plog(1, "pre event poll")
                     ev = self.event_poll()
                     renpy.plog(1, "post event poll {!r}", ev)
@@ -3112,8 +3242,14 @@ class Interface:
                         self.text_editing = ev
                     else:
                         self.text_editing = None
+                        self.set_text_editing_candidates(None)
                 elif ev.type == pygame.TEXTINPUT:
                     self.text_editing = None
+                    self.set_text_editing_candidates(None)
+
+                elif ev.type == pygame.TEXTEDITINGCANDIDATES:
+                    self.set_text_editing_candidates(renpy.display.ime.IMECandidates.from_event(ev))
+                    continue
 
                 elif ev.type == pygame.KEYMAPCHANGED:
                     # Clear the mods when the keymap is changed, such as when
@@ -3163,6 +3299,14 @@ class Interface:
                 # ignoring those events.
                 if self.ignore_touch and ev.type == pygame.MOUSEBUTTONUP and ev.button == 1:
                     self.ignore_touch = False
+                    continue
+
+                # During tests, ignore the user's pointer entering or leaving the window. Otherwise,
+                # the test's simulated mouse events would be treated as if the mouse were elsewhere.
+                if (
+                    ev.type in (pygame.WINDOWMOUSELEAVE, pygame.WINDOWMOUSEENTER)
+                    and renpy.test.testexecution.is_in_test()
+                ):
                     continue
 
                 # Merge mousemotion events.
@@ -3259,7 +3403,7 @@ class Interface:
                 if ev is None:
                     continue
 
-                if not self.mouse_focused or self.ignore_touch:
+                if (not self.mouse_focused and not renpy.test.testexecution.is_in_test()) or self.ignore_touch:
                     x = -1
                     y = -1
 

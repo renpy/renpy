@@ -25,6 +25,7 @@ from typing import Any
 import renpy
 import renpy.gl2.live2dmotion
 import renpy.gl2.live2dphysics
+import renpy.gl2.live2dpose
 from renpy.gl2.gl2shadercache import register_shader
 from renpy.display.core import absolute
 
@@ -154,6 +155,7 @@ def init():
         uniform vec2 u_model_size;
         uniform float u_live2d_ppu;
         uniform vec2 u_live2d_offset;
+        uniform vec4 u_live2d_mask_bounds;
         in vec4 a_position;
         in vec2 a_tex_coord;
         out vec2 v_tex_coord;
@@ -161,11 +163,17 @@ def init():
     """,
         vertex_200="""
         v_tex_coord = a_tex_coord;
-        v_mask_coord = (a_position.xy * u_live2d_ppu + u_live2d_offset) / u_model_size;
-        v_mask_coord.y = 1.0 - v_mask_coord.y;
+        v_mask_coord = vec2(
+            a_position.x * u_live2d_ppu + u_live2d_offset.x,
+            u_live2d_offset.y - a_position.y * u_live2d_ppu) / u_model_size;
+        if (u_live2d_mask_bounds.z > 0.0) {
+            v_mask_coord = (v_mask_coord - u_live2d_mask_bounds.xy) / u_live2d_mask_bounds.zw;
+        }
     """,
         fragment_200="""
-        fragment_color = texture(tex0, v_tex_coord) * texture(tex1, v_mask_coord).a;
+        vec2 inside = step(vec2(0.0), v_mask_coord) * step(v_mask_coord, vec2(1.0));
+        float mask = texture(tex1, v_mask_coord).a * inside.x * inside.y;
+        fragment_color = texture(tex0, v_tex_coord) * mask;
     """,
     )
 
@@ -178,6 +186,7 @@ def init():
         uniform vec2 u_model_size;
         uniform float u_live2d_ppu;
         uniform vec2 u_live2d_offset;
+        uniform vec4 u_live2d_mask_bounds;
         in vec4 a_position;
         in vec2 a_tex_coord;
         out vec2 v_tex_coord;
@@ -185,11 +194,17 @@ def init():
     """,
         vertex_200="""
         v_tex_coord = a_tex_coord;
-        v_mask_coord = (a_position.xy * u_live2d_ppu + u_live2d_offset) / u_model_size;
-        v_mask_coord.y = 1.0 - v_mask_coord.y;
+        v_mask_coord = vec2(
+            a_position.x * u_live2d_ppu + u_live2d_offset.x,
+            u_live2d_offset.y - a_position.y * u_live2d_ppu) / u_model_size;
+        if (u_live2d_mask_bounds.z > 0.0) {
+            v_mask_coord = (v_mask_coord - u_live2d_mask_bounds.xy) / u_live2d_mask_bounds.zw;
+        }
     """,
         fragment_200="""
-        fragment_color = texture(tex0, v_tex_coord) * (1.0 - texture(tex1, v_mask_coord).a);
+        vec2 inside = step(vec2(0.0), v_mask_coord) * step(v_mask_coord, vec2(1.0));
+        float mask = texture(tex1, v_mask_coord).a * inside.x * inside.y;
+        fragment_color = texture(tex0, v_tex_coord) * (1.0 - mask);
     """,
     )
 
@@ -217,6 +232,184 @@ def init():
     """,
     )
 
+    # Implements the Cubism 5.3 color and alpha blend modes. This takes the
+    # premultiplied color computed by the shaders before it, and blends it with
+    # the backdrop - a texture containing what has been drawn beneath it. The
+    # result replaces what is in the framebuffer, so this must be used with a
+    # blend_func that replaces the destination. The mode uniforms use the
+    # values of csmColorBlendType and csmAlphaBlendType.
+    register_shader(
+        "live2d.blend",
+        glsl=300,
+        variables="""
+        uniform sampler2D u_live2d_backdrop;
+        uniform int u_live2d_color_blend;
+        uniform int u_live2d_alpha_blend;
+        uniform vec2 u_model_size;
+        uniform float u_live2d_ppu;
+        uniform vec2 u_live2d_offset;
+        in vec4 a_position;
+        out vec2 v_live2d_backdrop_coord;
+    """,
+        fragment_functions="""
+        vec4 live2d_straight(vec4 c) {
+            if (abs(c.a) < 1e-5) {
+                return vec4(0.0, 0.0, 0.0, c.a);
+            }
+
+            return vec4(c.rgb / c.a, c.a);
+        }
+
+        float live2d_luma(vec3 c) {
+            return dot(c, vec3(0.30, 0.59, 0.11));
+        }
+
+        vec3 live2d_clip_color(vec3 c) {
+            float l = live2d_luma(c);
+            float n = min(min(c.r, c.g), c.b);
+            float x = max(max(c.r, c.g), c.b);
+
+            if (n < 0.0) {
+                c = l + (c - l) * l / (l - n);
+            }
+
+            if (x > 1.0) {
+                c = l + (c - l) * (1.0 - l) / (x - l);
+            }
+
+            return c;
+        }
+
+        vec3 live2d_set_luma(vec3 c, float l) {
+            return live2d_clip_color(c + (l - live2d_luma(c)));
+        }
+
+        vec3 live2d_set_saturation(vec3 c, float s) {
+            float n = min(min(c.r, c.g), c.b);
+            float x = max(max(c.r, c.g), c.b);
+
+            if (x <= n) {
+                return vec3(0.0);
+            }
+
+            return (c - n) * s / (x - n);
+        }
+
+        float live2d_color_burn(float s, float d) {
+            if (abs(d - 1.0) < 1e-6) {
+                return 1.0;
+            } else if (abs(s) < 1e-6) {
+                return 0.0;
+            }
+
+            return 1.0 - min(1.0, (1.0 - d) / s);
+        }
+
+        float live2d_color_dodge(float s, float d) {
+            if (d <= 0.0) {
+                return 0.0;
+            } else if (s >= 1.0) {
+                return 1.0;
+            }
+
+            return min(1.0, d / (1.0 - s));
+        }
+
+        float live2d_hard_light(float s, float d) {
+            if (s < 0.5) {
+                return 2.0 * s * d;
+            }
+
+            return 1.0 - 2.0 * (1.0 - s) * (1.0 - d);
+        }
+
+        float live2d_soft_light(float s, float d) {
+            if (s <= 0.5) {
+                return d - (1.0 - 2.0 * s) * d * (1.0 - d);
+            } else if (d <= 0.25) {
+                return d + (2.0 * s - 1.0) * d * ((16.0 * d - 12.0) * d + 3.0);
+            }
+
+            return d + (2.0 * s - 1.0) * (sqrt(d) - d);
+        }
+
+        float live2d_linear_light(float s, float d) {
+            if (s < 0.5) {
+                return max(0.0, 2.0 * s + d - 1.0);
+            }
+
+            return min(1.0, 2.0 * (s - 0.5) + d);
+        }
+
+        vec3 live2d_color_blend(vec3 s, vec3 d, int mode) {
+            if (mode == 3) {
+                return min(s + d, 1.0);
+            } else if (mode == 4) {
+                return s + d;
+            } else if (mode == 5) {
+                return min(s, d);
+            } else if (mode == 6) {
+                return s * d;
+            } else if (mode == 7) {
+                return vec3(live2d_color_burn(s.r, d.r), live2d_color_burn(s.g, d.g), live2d_color_burn(s.b, d.b));
+            } else if (mode == 8) {
+                return max(s + d - 1.0, 0.0);
+            } else if (mode == 9) {
+                return max(s, d);
+            } else if (mode == 10) {
+                return s + d - s * d;
+            } else if (mode == 11) {
+                return vec3(live2d_color_dodge(s.r, d.r), live2d_color_dodge(s.g, d.g), live2d_color_dodge(s.b, d.b));
+            } else if (mode == 12) {
+                return vec3(live2d_hard_light(d.r, s.r), live2d_hard_light(d.g, s.g), live2d_hard_light(d.b, s.b));
+            } else if (mode == 13) {
+                return vec3(live2d_soft_light(s.r, d.r), live2d_soft_light(s.g, d.g), live2d_soft_light(s.b, d.b));
+            } else if (mode == 14) {
+                return vec3(live2d_hard_light(s.r, d.r), live2d_hard_light(s.g, d.g), live2d_hard_light(s.b, d.b));
+            } else if (mode == 15) {
+                return vec3(live2d_linear_light(s.r, d.r), live2d_linear_light(s.g, d.g), live2d_linear_light(s.b, d.b));
+            } else if (mode == 16) {
+                float sd = max(max(d.r, d.g), d.b) - min(min(d.r, d.g), d.b);
+                return live2d_set_luma(live2d_set_saturation(s, sd), live2d_luma(d));
+            } else if (mode == 17) {
+                return live2d_set_luma(s, live2d_luma(d));
+            }
+
+            return s;
+        }
+
+        vec4 live2d_alpha_blend(vec3 c, vec4 s, vec4 d, int mode) {
+            vec3 p;
+
+            if (mode == 1) {
+                p = vec3(s.a * d.a, 0.0, d.a * (1.0 - s.a));
+            } else if (mode == 2) {
+                p = vec3(0.0, 0.0, d.a * (1.0 - s.a));
+            } else if (mode == 3) {
+                p = vec3(min(s.a, d.a), max(s.a - d.a, 0.0), max(d.a - s.a, 0.0));
+            } else if (mode == 4) {
+                p = vec3(max(s.a + d.a - 1.0, 0.0), min(s.a, 1.0 - d.a), min(d.a, 1.0 - s.a));
+            } else {
+                p = vec3(s.a * d.a, s.a * (1.0 - d.a), d.a * (1.0 - s.a));
+            }
+
+            return vec4(c * p.x + s.rgb * p.y + d.rgb * p.z, p.x + p.y + p.z);
+        }
+    """,
+        vertex_300="""
+        v_live2d_backdrop_coord = vec2(
+            a_position.x * u_live2d_ppu + u_live2d_offset.x,
+            u_live2d_offset.y - a_position.y * u_live2d_ppu) / u_model_size;
+    """,
+        fragment_700="""
+        vec4 live2d_src = live2d_straight(fragment_color);
+        vec4 live2d_dst = live2d_straight(texture(u_live2d_backdrop, v_live2d_backdrop_coord));
+        fragment_color = live2d_alpha_blend(
+            live2d_color_blend(live2d_src.rgb, live2d_dst.rgb, u_live2d_color_blend),
+            live2d_src, live2d_dst, u_live2d_alpha_blend);
+    """,
+    )
+
     did_init = True
 
 
@@ -237,6 +430,18 @@ def reset_states():
     """
 
     states.clear()
+
+
+def reset_pose_states() -> None:
+    """
+    Resets unsaved pose selections after loading, without changing motion or
+    expression state.
+    """
+
+    for state in states.values():
+        state.pose_sustained.clear()
+        state.pose_opacities = None
+        state.pose_time = 0.0
 
 
 class Live2DExpression(object):
@@ -291,6 +496,18 @@ class Live2DCommon(object):
         self.physics = renpy.gl2.live2dphysics.load_physics(
             self.model, self.base, self.model_json["FileReferences"].get("Physics")
         )
+
+        # The pose, which is loaded when first used by get_pose.
+        self.pose = None  # type: renpy.gl2.live2dpose.Pose|None
+        self.pose_loaded = False
+
+        # A map from part id to the value motions and expressions requested
+        # for that part during the current render.
+        self.pose_requests = {}  # type: dict[str, float]
+
+        # Pose selector parameters requested by motions, as (remaining weight,
+        # weighted value) pairs. Part opacity curves take precedence over these.
+        self.pose_parameters: dict[str, tuple[float, float]] = {}
 
         # The texture images.
         self.textures = []
@@ -428,6 +645,20 @@ class Live2DCommon(object):
     def __reduce__(self):
         raise Exception("Live2DCommon objects cannot be pickled.")
 
+    def get_pose(self):
+        """
+        Returns the model's pose, or None if it doesn't have one. The file is
+        loaded here so that it isn't used unless pose support is enabled.
+        """
+
+        if not self.pose_loaded:
+            self.pose = renpy.gl2.live2dpose.load_pose(
+                self.model, self.base, self.model_json["FileReferences"].get("Pose")
+            )
+            self.pose_loaded = True
+
+        return self.pose
+
     def apply_aliases(self, aliases):
         for k, v in aliases.items():
             target = None
@@ -501,6 +732,16 @@ class Live2DState(object):
 
         # A list of (expression_name, time_shown, time_hidden) tuples.
         self.old_expressions = []
+
+        # A map from pose group index to the id of the selected part.
+        self.pose_sustained = {}  # type: dict[int, str]
+
+        # A map from part id to the opacity given to it by the pose, or None
+        # if the pose hasn't been applied yet.
+        self.pose_opacities = None  # type: dict[str, float]|None
+
+        # The time at which the pose was last applied.
+        self.pose_time = 0.0
 
     def update_expressions(self, expressions, now):
         """
@@ -620,12 +861,32 @@ def update_states():
         s.mark = False
 
 
+def expand_filename(filename: str) -> str:
+    """
+    Returns the path to the .model3.json file for a Live2D `filename`, which may name either that file or a
+    directory containing <directory name>.model3.json.
+    """
+
+    if filename.endswith(".json"):
+        return filename
+
+    suffix = filename.rpartition("/")[2]
+    return f"{filename}/{suffix}.model3.json"
+
+
 class Live2D(renpy.display.displayable.Displayable):
     name: tuple[str, str, str, int] | None = None
     """
     A structural name for this displayable, consisting of the layer, tag, and a count. This is used to
     match the displayable to its state in a previous interaction.
     """
+
+    __version__ = 1
+
+    def after_upgrade(self, version):
+        # Before version 1, a directory given as the filename was kept as is, and expanded by Live2DCommon.
+        if version < 1:
+            self.filename = expand_filename(self.filename)
 
     nosave = ["common_cache"]
 
@@ -646,6 +907,12 @@ class Live2D(renpy.display.displayable.Displayable):
     If True, this uses the old Bezier curve behavior, which uses easing.
     If False, the Cardano interpretation of beziers is used.
     If none, the value of config.live2d_old_beziers is used.
+    """
+
+    pose: bool | None = None
+    """
+    If True, the model's pose file is used. If False, it's ignored. If None,
+    the value of config.live2d_pose is used.
     """
 
     deduplication_key: str | None = None
@@ -702,6 +969,7 @@ class Live2D(renpy.display.displayable.Displayable):
         default_fade: float = 1.0,
         old_beziers: bool | None = None,
         deduplication_key: str | None = None,
+        pose: bool | None = None,
         **properties,
     ):
         super().__init__(**properties)
@@ -723,16 +991,12 @@ class Live2D(renpy.display.displayable.Displayable):
 
         self.properties = properties
 
-        # If a directory is given rather than a json file, expand it.
-        if not filename.endswith(".json"):
-            suffix = filename.rpartition("/")[2]
-            filename = f"{filename}/{suffix}.model3.json"
-
         # Should be set before call to self.common.
-        self.filename = filename
+        self.filename = expand_filename(filename)
         self.default_fade = default_fade
         self.old_beziers = old_beziers
         self.deduplication_key = deduplication_key
+        self.pose = pose
 
         # Load the common data. Needed!
         common = self.common
@@ -839,6 +1103,7 @@ class Live2D(renpy.display.displayable.Displayable):
             default_fade=self.default_fade,
             old_beziers=self.old_beziers,
             deduplication_key=self.deduplication_key,
+            pose=self.pose,
             **self.properties,
         )
 
@@ -1001,6 +1266,7 @@ class Live2D(renpy.display.displayable.Displayable):
         # Apply the motion.
 
         motion_data = motion.get(st, st_fade, do_fade_in, do_fade_out)
+        pose = self.get_pose()
 
         for k, v in motion_data.items():
             kind, key = k
@@ -1008,8 +1274,15 @@ class Live2D(renpy.display.displayable.Displayable):
 
             if kind == "PartOpacity":
                 common.model.set_part_opacity(key, value)
+                common.pose_requests.setdefault(key, value)
             elif kind == "Parameter":
                 common.model.set_parameter(key, value, factor)
+
+                if pose is not None and key in pose.part_groups:
+                    remaining, total = common.pose_parameters.get(key, (1.0, 0.0))
+                    weight = min(factor, remaining)
+                    common.pose_parameters[key] = (remaining - weight, total + weight * value)
+
             elif kind == "Model":
                 common.model.set_parameter(key, value, factor)
 
@@ -1046,6 +1319,15 @@ class Live2D(renpy.display.displayable.Displayable):
         # Use them to update old_expressions and expressions in the frame.
         state.update_expressions(expressions, now - st)
 
+        pose = self.get_pose()
+
+        if pose is not None:
+            for part_id, (remaining, value) in common.pose_parameters.items():
+                group_index = pose.part_groups[part_id]
+                sustained = state.pose_sustained.get(group_index, pose.groups[group_index][0].part_id)
+                default = 1.0 if part_id == sustained else 0.0
+                common.pose_requests.setdefault(part_id, value + remaining * default)
+
         # Actually blend.
         redraw = None
 
@@ -1067,6 +1349,9 @@ class Live2D(renpy.display.displayable.Displayable):
             for i in e.parameters:
                 model.blend_parameter(i["Id"], i["Blend"], i["Value"], weight=weight)
 
+                if pose is not None:
+                    pose.blend_request(common.pose_requests, state.pose_sustained, i, weight)
+
         for name, shown in state.expressions:
             weight = 1.0
             e = common.all_expressions[name]
@@ -1077,6 +1362,64 @@ class Live2D(renpy.display.displayable.Displayable):
 
             for i in e.parameters:
                 model.blend_parameter(i["Id"], i["Blend"], i["Value"], weight=weight)
+
+                if pose is not None:
+                    pose.blend_request(common.pose_requests, state.pose_sustained, i, weight)
+
+        return redraw
+
+    def get_pose(self):
+        """
+        Returns the pose this displayable should apply, or None if it shouldn't
+        apply one.
+        """
+
+        enabled = self.pose if self.pose is not None else renpy.config.live2d_pose
+
+        return self.common.get_pose() if enabled else None
+
+    def update_pose(self):
+        """
+        Selects a part from each pose group, and applies the resulting opacities
+        to the model. This returns the time until the next redraw, or None if
+        no redraw is required.
+        """
+
+        pose = self.get_pose()
+
+        if pose is None:
+            return None
+
+        common = self.common
+        state = states[self.name]
+        now = renpy.display.interface.frame_time
+
+        # The first time, parts start out at their final opacity.
+        if state.pose_opacities is None:
+            state.pose_opacities = {}
+            dt = pose.fade_time
+            fade_time = 0.0
+        else:
+            dt = now - state.pose_time
+            fade_time = pose.fade_time
+
+        state.pose_time = now
+
+        redraw = None
+
+        for index, group in enumerate(pose.groups):
+            sustained = state.pose_sustained.get(index)
+            visible = renpy.gl2.live2dpose.select_part(group, common.pose_requests, sustained)
+            state.pose_sustained[index] = visible
+
+            # A new fade starts now, even if the previous render was long ago.
+            group_dt = dt if visible == sustained else 0.0
+
+            if renpy.gl2.live2dpose.fade_group(group, visible, state.pose_opacities, group_dt, fade_time):
+                redraw = 0
+
+        for part_id, opacity in state.pose_opacities.items():
+            common.model.blend_opacity(part_id, "Overwrite", opacity)
 
         return redraw
 
@@ -1122,6 +1465,8 @@ class Live2D(renpy.display.displayable.Displayable):
 
         # Reset the parameter, and update.
         model.reset_parameters()
+        common.pose_requests.clear()
+        common.pose_parameters.clear()
 
         if fade:
             t = renpy.display.interface.frame_time - state.new_base_time  # type: ignore
@@ -1140,6 +1485,9 @@ class Live2D(renpy.display.displayable.Displayable):
         # Apply the expressions.
         expression_redraw = self.update_expressions(st)
 
+        # Apply the pose. This is before the user-defined update, so that can override it.
+        pose_redraw = self.update_pose()
+
         # Apply the user-defined update.
         if common.update_function is None:
             user_redraw = None
@@ -1152,7 +1500,7 @@ class Live2D(renpy.display.displayable.Displayable):
             physics_redraw = common.physics.evaluate(renpy.display.interface.frame_time)
 
         # Determine when to redraw.
-        redraws = [new_redraw, old_redraw, expression_redraw, user_redraw, physics_redraw]
+        redraws = [new_redraw, old_redraw, expression_redraw, pose_redraw, user_redraw, physics_redraw]
         redraws = [i for i in redraws if i is not None]
 
         if redraws:

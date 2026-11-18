@@ -32,8 +32,7 @@ cdef class Surface:
     cdef SDL_Surface* sdl_surface
     cdef RenpySurfaceDeallocation *deallocation
 
-    # True if we own our surface. False if some other Surface owns our
-    # surface.
+    # True if we own the pixel storage, which is included in memory accounting.
     cdef bint owns_surface
 
     # True if this surface is owned by a window.

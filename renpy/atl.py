@@ -515,10 +515,17 @@ class ATLTransformBase(renpy.object.Object):
         if self.child is renpy.display.motion.null:
             if t.child and t.child._duplicatable:
                 self.child = t.child._duplicate(None)
+
+                if not self._duplicatable:
+                    self.child._unique()
             else:
                 self.child = t.child
 
+            self.children = [self.child] if self.child is not None else []
             self.raw_child = t.raw_child
+
+            if self.child is t.child:
+                self.atl_child = t.atl_child
 
     def __call__(self, *args, **kwargs):
         _args = kwargs.pop("_args", None)
@@ -694,6 +701,23 @@ class ATLTransformBase(renpy.object.Object):
 
         return block
 
+    def change_block_child(self, old, new):
+        """
+        Changes the compiled block of this transform so that child statements
+        showing one of the displayables in `old` show `new` instead. The
+        execution state is updated to match, so the ATL keeps running from
+        where it was. Does nothing if the block has not been compiled yet, or
+        if the ATL has no statement that could be a child statement.
+        """
+
+        if self.block is None:
+            return
+
+        if not self.atl.has_child:
+            return
+
+        self.block, self.atl_state = self.block.change_child(old, new, self.atl_state)
+
     def execute(self, trans, st, at):
         if self.done:
             return None
@@ -772,6 +796,13 @@ class ATLTransformBase(renpy.object.Object):
 class RawStatement(object):
     constant = None
 
+    has_child = True
+    """
+    True if this statement, or a statement it contains, may compile into a
+    Child statement. Set by mark_constant. Defaults to True, so statements that
+    were never analyzed, or were loaded from an older .rpyc, are not skipped.
+    """
+
     def __init__(self, loc):
         super(RawStatement, self).__init__()
         self.loc = loc
@@ -842,6 +873,25 @@ class Statement(renpy.object.Object):
     def in_current_store(self):
         return self
 
+    def change_child(self, old, new, state):
+        """
+        Replaces the displayable shown by child statements in this statement.
+
+        `old`
+            A list of displayables. A child statement showing one of these
+            (compared by identity) is replaced with one showing `new`.
+
+        `state`
+            The execution state of this statement, or None.
+
+        Returns a (statement, state) tuple. The statement is self if nothing
+        was replaced, and otherwise a copy, so compiled blocks that are shared
+        are never changed. The state is rewritten to refer to any copied
+        blocks it contains.
+        """
+
+        return self, state
+
     # Does this respond to an event?
     def _handles_event(self, event):
         return False
@@ -910,12 +960,15 @@ class RawBlock(RawStatement):
 
     def mark_constant(self, analysis):
         constant = GLOBAL_CONST
+        has_child = False
 
         for i in self.statements:
             i.mark_constant(analysis)
             constant = min(constant, i.constant)
+            has_child = has_child or i.has_child
 
         self.constant = constant
+        self.has_child = has_child
 
 
 # A compiled ATL block.
@@ -938,6 +991,33 @@ class Block(Statement):
     def in_current_store(self):
         statements = [i.in_current_store() for i in self.statements]
         return Block(self.loc, statements)
+
+    def change_child(self, old, new, state):
+        if state is not None:
+            index, start, loop_start, repeats, times, child_state = state
+        else:
+            index = None
+            child_state = None
+
+        changed = False
+        statements = []
+
+        for i, stmt in enumerate(self.statements):
+            if i == index:
+                new_stmt, child_state = stmt.change_child(old, new, child_state)
+            else:
+                new_stmt, _ = stmt.change_child(old, new, None)
+
+            changed = changed or (new_stmt is not stmt)
+            statements.append(new_stmt)
+
+        if not changed:
+            return self, state
+
+        if state is not None:
+            state = (index, start, loop_start, repeats, times, child_state)  # type: ignore
+
+        return Block(self.loc, statements), state
 
     def _handles_event(self, event):
         for i in self.statements:
@@ -1272,6 +1352,15 @@ class RawMultipurpose(RawStatement):
 
         self.constant = constant
 
+        # The same test compile uses to decide this is a child statement.
+        self.has_child = (
+            self.warper is None
+            and self.warp_function is None
+            and not self.properties
+            and not self.splines
+            and len(self.expressions) == 1
+        )
+
     def predict(self, ctx):
         for i, _j in self.expressions:
             try:
@@ -1322,6 +1411,7 @@ class RawContainsExpr(RawStatement):
 
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.expression)
+        self.has_child = True
 
 
 # This allows us to have multiple ATL transforms as children.
@@ -1346,12 +1436,15 @@ class RawChild(RawStatement):
 
     def mark_constant(self, analysis):
         constant = GLOBAL_CONST
+        has_child = False
 
         for i in self.children:
             i.mark_constant(analysis)
             constant = min(constant, i.constant)
+            has_child = has_child or i.has_child
 
         self.constant = constant
+        self.has_child = has_child
 
 
 # This changes the child of this statement, optionally with a transition.
@@ -1365,7 +1458,10 @@ class Child(Statement):
     def execute(self, trans, st, state, events):
         executing(self.loc)
 
-        old_child = trans.raw_child
+        # Transition from the child that's being shown. If an earlier child
+        # statement's transition is still in progress, transition from that
+        # statement's child rather than nesting the transitions.
+        old_child = trans.atl_child if trans.atl_child is not None else trans.child
 
         child = self.child
 
@@ -1373,18 +1469,27 @@ class Child(Statement):
             child = self.child._duplicate(trans._args)
             child._unique()
 
+        atl_child = child
+
         if (old_child is not None) and (old_child is not renpy.display.motion.null) and (self.transition is not None):
             child = self.transition(old_widget=old_child, new_widget=child)
             child._unique()
 
         trans.set_child(child, duplicate=False)
         trans.raw_child = self.child
+        trans.atl_child = atl_child
 
         return "next", st, None
 
     def in_current_store(self):
         child = self.child._in_current_store()
         return Child(self.loc, child, self.transition)
+
+    def change_child(self, old, new, state):
+        if any(self.child is i for i in old):
+            return Child(self.loc, new, self.transition), state
+
+        return self, state
 
     def visit(self):
         return [self.child]
@@ -1675,6 +1780,7 @@ class RawRepeat(RawStatement):
 
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.repeats)
+        self.has_child = False
 
 
 class Repeat(Statement):
@@ -1704,12 +1810,15 @@ class RawParallel(RawStatement):
 
     def mark_constant(self, analysis):
         constant = GLOBAL_CONST
+        has_child = False
 
         for i in self.blocks:
             i.mark_constant(analysis)
             constant = min(constant, i.constant)
+            has_child = has_child or i.has_child
 
         self.constant = constant
+        self.has_child = has_child
 
 
 class Parallel(Statement):
@@ -1720,6 +1829,21 @@ class Parallel(Statement):
     def in_current_store(self):
         blocks = [i.in_current_store() for i in self.blocks]
         return Parallel(self.loc, blocks)
+
+    def change_child(self, old, new, state):
+        # Maps the id of each block that is still running to its state.
+        states = {id(i): istate for i, istate in state} if state is not None else {}
+
+        # Maps the id of each block to its replacement and the replacement's state.
+        replacements = {id(i): i.change_child(old, new, states.get(id(i), None)) for i in self.blocks}
+
+        if all(replacements[id(i)][0] is i for i in self.blocks):
+            return self, state
+
+        if state is not None:
+            state = [replacements[id(i)] for i, _ in state]
+
+        return Parallel(self.loc, [replacements[id(i)][0] for i in self.blocks]), state
 
     def _handles_event(self, event):
         for i in self.blocks:
@@ -1784,12 +1908,15 @@ class RawChoice(RawStatement):
 
     def mark_constant(self, analysis):
         constant = GLOBAL_CONST
+        has_child = False
 
         for _chance, block in self.choices:
             block.mark_constant(analysis)
             constant = min(constant, block.constant)
+            has_child = has_child or block.has_child
 
         self.constant = constant
+        self.has_child = has_child
 
 
 class Choice(Statement):
@@ -1801,6 +1928,34 @@ class Choice(Statement):
     def in_current_store(self):
         choices = [(chance, block.in_current_store()) for chance, block in self.choices]
         return Choice(self.loc, choices)
+
+    def change_child(self, old, new, state):
+        if state is not None:
+            choice, cstate = state
+        else:
+            choice = None
+            cstate = None
+
+        changed = False
+        choices = []
+
+        for chance, block in self.choices:
+            if block is choice:
+                new_block, cstate = block.change_child(old, new, cstate)
+                choice = new_block
+            else:
+                new_block, _ = block.change_child(old, new, None)
+
+            changed = changed or (new_block is not block)
+            choices.append((chance, new_block))
+
+        if not changed:
+            return self, state
+
+        if state is not None:
+            state = (choice, cstate)
+
+        return Choice(self.loc, choices), state
 
     def _handles_event(self, event):
         for i in self.choices:
@@ -1857,6 +2012,7 @@ class RawTime(RawStatement):
 
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.time)
+        self.has_child = False
 
 
 class Time(Statement):
@@ -1897,12 +2053,15 @@ class RawOn(RawStatement):
 
     def mark_constant(self, analysis):
         constant = GLOBAL_CONST
+        has_child = False
 
         for block in self.handlers.values():
             block.mark_constant(analysis)
             constant = min(constant, block.constant)
+            has_child = has_child or block.has_child
 
         self.constant = constant
+        self.has_child = has_child
 
 
 class On(Statement):
@@ -1914,6 +2073,32 @@ class On(Statement):
     def in_current_store(self):
         handlers = {k: v.in_current_store() for k, v in self.handlers.items()}
         return On(self.loc, handlers)
+
+    def change_child(self, old, new, state):
+        if state is not None:
+            name, start, cstate = state
+        else:
+            name = None
+            cstate = None
+
+        changed = False
+        handlers = {}
+
+        for k, v in self.handlers.items():
+            if k == name:
+                handlers[k], cstate = v.change_child(old, new, cstate)
+            else:
+                handlers[k] = v.change_child(old, new, None)[0]
+
+            changed = changed or (handlers[k] is not v)
+
+        if not changed:
+            return self, state
+
+        if state is not None:
+            state = (name, start, cstate)  # type: ignore
+
+        return On(self.loc, handlers), state
 
     def _handles_event(self, event):
         if event in self.handlers:
@@ -2010,6 +2195,7 @@ class RawEvent(RawStatement):
 
     def mark_constant(self, analysis):
         self.constant = GLOBAL_CONST
+        self.has_child = False
 
 
 class Event(Statement):
@@ -2034,6 +2220,7 @@ class RawFunction(RawStatement):
 
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.expr)
+        self.has_child = False
 
 
 class Function(Statement):

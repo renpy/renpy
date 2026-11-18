@@ -21,6 +21,8 @@
 
 import os
 import io
+import importlib.abc
+import importlib.util
 import sys
 import subprocess
 import textwrap
@@ -194,11 +196,173 @@ def relaunch():
         subprocess.Popen([sys.executable] + sys.argv)
 
 
+def disable_requests_ca_bundle(adapters) -> None:
+    """
+    Stops requests from loading its default (certifi) CA bundle when `verify` is True, so that
+    urllib3 loads the default certificates, which truststore provides from the system store. An
+    explicit CA bundle path passed as `verify` (or via REQUESTS_CA_BUNDLE) is still honored.
+
+    `adapters` is the requests.adapters module.
+    """
+
+    original_cert_verify = adapters.HTTPAdapter.cert_verify
+
+    def cert_verify(self, conn, url, verify, cert):
+        if verify is True and url.lower().startswith("https"):
+            # Clears ca_certs and ca_cert_dir, then requires verification against the defaults.
+            original_cert_verify(self, conn, url, False, cert)
+            conn.cert_reqs = "CERT_REQUIRED"
+        else:
+            original_cert_verify(self, conn, url, verify, cert)
+
+    adapters.HTTPAdapter.cert_verify = cert_verify
+
+
+class RequestsAdaptersLoader(importlib.abc.Loader):
+    """
+    Wraps the loader of requests.adapters, calling disable_requests_ca_bundle once the module
+    has been executed. Other attributes are delegated to the wrapped loader.
+    """
+
+    def __init__(self, loader):
+        self.loader = loader
+
+    def __getattr__(self, name):
+        return getattr(self.loader, name)
+
+    def create_module(self, spec):
+        return self.loader.create_module(spec)
+
+    def exec_module(self, module):
+        self.loader.exec_module(module)
+        disable_requests_ca_bundle(module)
+
+
+class RequestsAdaptersFinder(importlib.abc.MetaPathFinder):
+    """
+    A one-shot meta path finder that arranges for requests.adapters to be patched when it is
+    first imported, so requests need not be imported at startup.
+    """
+
+    def find_spec(self, fullname, path, target=None):
+        if fullname != "requests.adapters":
+            return None
+
+        if self in sys.meta_path:
+            sys.meta_path.remove(self)
+
+        spec = importlib.util.find_spec(fullname)
+
+        if spec is None or spec.loader is None:
+            return spec
+
+        spec.loader = RequestsAdaptersLoader(spec.loader)
+        return spec
+
+
+def use_system_certificates() -> None:
+    """
+    Make ssl and requests verify TLS certificates against the operating system's trust store,
+    rather than certifi's CA bundle.
+    """
+
+    import truststore
+
+    if "urllib3" in sys.modules or "requests" in sys.modules:
+        truststore.inject_into_ssl()
+    else:
+        # inject_into_ssl() imports urllib3 and requests to patch them. They have not been
+        # imported yet, so replacing ssl.SSLContext is enough for them to use truststore.
+        import ssl
+
+        ssl.SSLContext = truststore.SSLContext  # type: ignore
+
+    if "requests.adapters" in sys.modules:
+        disable_requests_ca_bundle(sys.modules["requests.adapters"])
+    else:
+        sys.meta_path.insert(0, RequestsAdaptersFinder())
+
+
+def set_utf8_locale() -> None:
+    """
+    Align the native character locale and inherited subprocess environment with UTF-8.
+
+    Run only during desktop POSIX startup, before engine threads are started.
+    Other locale categories are preserved, including those overridden by LC_ALL.
+    If no usable UTF-8 locale is available, warn and retain the original settings.
+    """
+    if os.name != "posix" or renpy.android or renpy.ios or renpy.emscripten:
+        return
+
+    import locale
+
+    original = locale.setlocale(locale.LC_CTYPE)
+    configured = False
+
+    try:
+        # Python's UTF-8 mode can mask a non-UTF-8 environment inherited by native children.
+        locale.setlocale(locale.LC_CTYPE, "")
+        if locale.getencoding().lower().replace("-", "") == "utf8":
+            configured = True
+            return
+
+        for candidate in ("C.UTF-8", "C.utf8", "UTF-8"):
+            try:
+                locale.setlocale(locale.LC_CTYPE, candidate)
+            except locale.Error:
+                continue
+
+            if locale.getencoding().lower().replace("-", "") == "utf8":
+                break
+        else:
+            raise locale.Error("none of C.UTF-8, C.utf8, or UTF-8 is available with a UTF-8 encoding")
+
+        override = os.environ.get("LC_ALL")
+        if override:
+            categories = ["LC_COLLATE", "LC_MESSAGES", "LC_MONETARY", "LC_NUMERIC", "LC_TIME"]
+            if sys.platform.startswith("linux"):
+                categories.extend(
+                    ["LC_PAPER", "LC_NAME", "LC_ADDRESS", "LC_TELEPHONE", "LC_MEASUREMENT", "LC_IDENTIFICATION"]
+                )
+
+            for category in categories:
+                os.environ[category] = override
+
+            del os.environ["LC_ALL"]
+
+        os.environ["LC_CTYPE"] = candidate
+        configured = True
+    except locale.Error as e:
+        sys.stderr.write(
+            f"Warning: Could not configure a UTF-8 character locale: {e}. "
+            "Keeping the original locale; native dialogs and other external tools may not handle non-ASCII text.\n"
+        )
+    finally:
+        if not configured:
+            locale.setlocale(locale.LC_CTYPE, original)
+
+
+def set_android_umask():
+    """
+    On Android, gives what the process creates group access. Android starts
+    apps with an owner-only umask, but external storage relies on group access:
+    a directory there inherits the setgid bit and the ext_data_rw group, which
+    only helps adb and storage tools if the group can use it. That can't be
+    added with chmod afterwards, as the app isn't in the group, and so the
+    kernel would clear the setgid bit.
+    """
+
+    if renpy.android:
+        os.umask(0o007)
+
+
 def bootstrap(renpy_base: str):
     global renpy
 
     import renpy.config
     import renpy.log
+
+    set_android_umask()
 
     # In case of invocation with system python, check that it's run with -X utf8
     if not sys.flags.utf8_mode:
@@ -247,6 +411,8 @@ def bootstrap(renpy_base: str):
             for k, v in evars.items():
                 if k not in os.environ:
                     os.environ[k] = str(v)
+
+    set_utf8_locale()
 
     # Get a working name for the game.
     name = os.path.basename(sys.argv[0])
@@ -340,6 +506,11 @@ def bootstrap(renpy_base: str):
 
     renpy.import_all()
 
+    # This must run before init_importer, as importing truststore through the Ren'Py importer
+    # would cache the game's Python files before the game directory is known.
+    if not renpy.emscripten:
+        use_system_certificates()
+
     renpy.importer.init_importer()
 
     if renpy.emscripten:
@@ -412,8 +583,11 @@ def bootstrap(renpy_base: str):
 
         renpy.display.tts.tts(None)  # type: ignore
 
+        # The preload thread is started when renpy.display.im is imported, so stop it even if
+        # the display was never initialized.
+        renpy.display.im.cache.quit()  # type: ignore
+
         if renpy.display.draw:  # type: ignore
-            renpy.display.im.cache.quit()  # type: ignore
             renpy.display.draw.quit()  # type: ignore
 
         renpy.audio.audio.quit()

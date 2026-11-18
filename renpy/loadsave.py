@@ -27,7 +27,9 @@ import re
 import threading
 import shutil
 import os
+import stat
 import time
+import uuid
 
 import renpy
 from json import dumps as json_dumps
@@ -51,27 +53,104 @@ class SaveAbort(Exception):
     pass
 
 
-def safe_rename(old, new):
-    """
-    Safely rename old to new.
-    """
+# Matches the end of the name of a .old file made by safe_rename.
+# safe_rename deletes files that match, so this requires the unique part of
+# the name, and leaves other .old files in the directory alone.
+dot_old_re = re.compile(r"\.[0-9a-f]{32}\.old$")
 
-    if os.path.exists(new):
-        os.unlink(new)
+
+def remove_dot_old_file(dot_old):
+    """
+    Deletes a .old file made by safe_rename. If this fails, perhaps because the
+    file is still open, the next call to safe_rename will try again.
+    """
 
     try:
-        os.rename(old, new)
-    except Exception:
-        # If the rename failed, try again.
         try:
-            os.unlink(new)
-            os.rename(old, new)
-        except Exception:
-            # If it fails a second time, give up.
+            os.unlink(dot_old)
+        except PermissionError:
+            # On Windows, a read-only file can't be deleted.
+            os.chmod(dot_old, stat.S_IREAD | stat.S_IWRITE)
+            os.unlink(dot_old)
+    except OSError:
+        pass
+
+
+def remove_dot_old_files(filename):
+    """
+    Deletes the .old files made by safe_rename in the directory containing
+    filename. These only exist if an earlier replacement was refused, and the
+    moved file couldn't be deleted at the time. Failing to list the directory
+    isn't an error, as the files can be deleted later.
+    """
+
+    directory = os.path.dirname(filename)
+
+    try:
+        names = os.listdir(directory or os.curdir)
+    except OSError:
+        return
+
+    for name in names:
+        if dot_old_re.search(name):
+            remove_dot_old_file(os.path.join(directory, name))
+
+
+def safe_rename(from_filename, to_filename, keep_from=False):
+    """
+    :doc: file_rare
+
+    Renames `from_filename` to `to_filename`, replacing `to_filename` if it
+    exists. Writing data to a temporary file and then calling this function
+    means that a crash while writing can't damage the existing file. These are
+    paths on the filesystem, and a relative path is relative to the current
+    directory, not the game directory.
+
+    If this fails, an OSError is raised, and `from_filename` is removed if
+    possible. Set `keep_from` to True to keep `from_filename` instead, which
+    should be done when it isn't a temporary file.
+
+    On Windows, a file another program has open can't be replaced, but it can
+    be renamed if that program allows deletion. So if replacing `to_filename` is
+    refused with a permission error, it's moved to a uniquely named file to make
+    room, and is discarded even if `from_filename` then can't be moved into
+    place. That file's name ends with a period, 32 lowercase hexadecimal digits,
+    and ``.old``. Each call tries to delete all files with names like this in the
+    directory containing `to_filename`, so don't keep other files with such names
+    there.
+    """
+
+    remove_dot_old_files(to_filename)
+
+    try:
+        try:
+            os.replace(from_filename, to_filename)
+        except PermissionError:
+            # Windows refuses to replace a directory in the same way, but moving
+            # it aside would succeed.
+            if os.path.isdir(to_filename):
+                raise
+
+            dot_old = f"{to_filename}.{uuid.uuid4().hex}.old"
+
+            # If to_filename doesn't exist, there's nothing to move, and moving
+            # from_filename into place will report why the rename failed.
             try:
-                os.unlink(old)
-            except Exception:
+                os.replace(to_filename, dot_old)
+            except FileNotFoundError:
                 pass
+
+            os.replace(from_filename, to_filename)
+
+            remove_dot_old_file(dot_old)
+    except OSError:
+        if not keep_from:
+            try:
+                os.unlink(from_filename)
+            except FileNotFoundError:
+                pass
+
+        raise
 
 
 class SaveRecord(object):

@@ -102,7 +102,7 @@
 
     # options.rpy:121
     old "## Preference defaults"
-    new "## Preferencias por defecto"
+    new "## Ajustes predeterminados"
 
     # options.rpy:123
     old "## Controls the default text speed. The default, 0, is infinite, while any other number is the number of characters per second to type out."

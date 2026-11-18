@@ -971,6 +971,11 @@ Button Style Properties
     Displayable
         The areas of the displayable that are not transparent cause the button
         to be focused.
+
+        If the displayable fails to render (for example, because an image
+        file is missing), the error is raised if
+        :var:`config.raise_image_load_exceptions` is true. Otherwise, the
+        error is logged and the focus mask is ignored.
     True
         The button itself is used as the displayable (so
         non-transparent areas of the button cause the button to be

@@ -90,6 +90,9 @@ init -1500 python:
         def get_tooltip(self):
             return renpy.display.behavior.get_tooltip(self.actions)
 
+        def get_mouse(self):
+            return renpy.display.behavior.get_mouse(self.actions)
+
         def periodic(self, st):
             return renpy.display.behavior.run_periodic(self.actions, st)
 
@@ -126,7 +129,7 @@ init -1500 python:
             self.expression = expression
 
             if isinstance(expression, Action):
-                for i in ("get_selected", "get_sensitive", "get_tooltip", "periodic", "unhovered", "alt"):
+                for i in ("get_selected", "get_sensitive", "get_tooltip", "get_mouse", "periodic", "unhovered", "alt"):
                     setattr(self, i, getattr(expression, i, None))
 
         def __call__(self):
@@ -163,7 +166,7 @@ init -1500 python:
             self.expression = expression
 
             if isinstance(expression, Action):
-                for i in ("get_selected", "get_sensitive", "get_tooltip", "periodic", "unhovered", "alt"):
+                for i in ("get_selected", "get_sensitive", "get_tooltip", "get_mouse", "periodic", "unhovered", "alt"):
                     setattr(self, i, getattr(expression, i, None))
 
         def __call__(self):
@@ -275,7 +278,8 @@ init -1500 python:
         :doc: other_action
 
         This causes a rollback to an identifier to occur. Rollback
-        identifiers are returned as part of HistoryEntry objects.
+        identifiers are returned as part of HistoryEntry objects, and
+        by :func:`renpy.get_rollback_identifier`.
         """
 
         def __init__(self, identifier):
@@ -687,6 +691,7 @@ init -1500 python:
 
 
         kwargs = { }
+        screen = None
 
         def __init__(self, prompt, yes, no=None, confirm_selected=False, screen=None, **kwargs):
             self.prompt = prompt
@@ -713,6 +718,9 @@ init -1500 python:
 
         def get_tooltip(self):
             return renpy.display.behavior.get_tooltip(self.yes)
+
+        def get_mouse(self):
+            return renpy.display.behavior.get_mouse(self.yes)
 
     @renpy.pure
     class Scroll(Action, DictEquality):

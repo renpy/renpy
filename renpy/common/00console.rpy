@@ -211,7 +211,7 @@ init -1500 python in _console:
 
                 val = x[key]
                 if val is x:
-                    val = f"{left}{self.fillvalue}{right}"
+                    val_repr = f"{left}{self.fillvalue}{right}"
                 else:
                     val_repr = repr1(val, newlevel)
 

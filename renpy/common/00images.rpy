@@ -21,8 +21,6 @@
 
 init -1900 python:
 
-    config.image_directories = [ "images" ]
-
     # Compat for < 8.5
     config.images_directory = None
 

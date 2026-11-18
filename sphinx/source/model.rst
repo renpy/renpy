@@ -151,6 +151,12 @@ used in game/cache/shaders.txt, and loads them at startup. If major changes
 in shader use occur, this file should be edited or deleted so it can be
 re-created with valid data.
 
+On systems that support OpenGL program binaries, Ren'Py can also cache the linked
+program for each combination. This cache is specific to the graphics driver; if
+shader parts or GLSL version change or if the driver rejects a cached program,
+Ren'Py re-compiles the shader from source and replaces the cached program
+automatically.
+
 When :var:`config.predict_shaders` is true, shader combinations exposed by
 predicted displayables are compiled during expensive idle prediction.
 
@@ -253,6 +259,14 @@ shader writes its color to ``fragment_color``.
 
 A single part can override this by passing `glsl` to
 :func:`renpy.register_shader`.
+
+When :var:`config.glsl_version` is 300, a part that doesn't pass `glsl` but
+uses a construct that only exists in GLSL ES 1.00 (``attribute``, ``varying``,
+``gl_FragColor``, ``texture2D``, and so on) is treated as being written in
+GLSL ES 1.00, and a note is written to log.txt. Passing ``glsl=100`` makes
+this explicit and silences the note. A part that doesn't pass `glsl`, and
+that uses a construct that is only available in a newer version than
+:var:`config.glsl_version` selects, raises an exception.
 
 Ren'Py translates between the two versions, so parts written in either can be
 combined in the same shader, and a variable declared by two parts in different
@@ -452,6 +466,11 @@ The following uniforms are made available to all models.
 If a sampler uniform is available, then suffixing it with ``__res`` will give a vec2
 containing the underlying texture size. For example, ``u_markup__res`` will give the size of the
 ``u_markup`` texture.
+
+If a sampler uniform is available, then suffixing it with ``__virtual_size`` will give a vec2
+containing the size of the texture in virtual pixels. Unlike ``__res``, this doesn't depend on the
+resolution the texture was rendered or loaded at, so it doesn't change when the window is scaled.
+For example, ``u_markup__virtual_size`` will give the virtual size of the ``u_markup`` texture.
 
 If a vec4 uniform is available, then suffixing it with ``__premul`` will give a vec4
 containing the premultiplied color. For example, ``u_color__premul`` will give a vec4

@@ -1,15 +1,8 @@
 #pragma once
 
 #include <SDL3/SDL.h>
-#include <assimp/IOSystem.hpp>
+#include <assimp/scene.h>
 
-int assimp_loadable(const char *filename);
 SDL_IOStream *assimp_load(const char *filename);
 
-class RenpyIOSystem : public Assimp::IOSystem {
-public:
-    bool Exists(const char *pFile) const;
-    char getOsSeparator() const;
-    Assimp::IOStream *Open(const char *pFile, const char *pMode = "rb");
-    void Close(Assimp::IOStream *pFile);
-};
+const struct aiScene *assimpio_import(const char *filename, unsigned int flags);

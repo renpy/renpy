@@ -68,9 +68,6 @@ init -1500 python in build:
         ("renpy/**__pycache__", "all"),
     ])
 
-    if os.path.exists(os.path.join(config.renpy_base, "renpy3.sh")):
-        renpy_sh = "renpy3.sh"
-
 
     # Patterns that are used to classify Ren'Py.
     renpy_patterns.extend(pattern_list([
@@ -114,6 +111,10 @@ init -1500 python in build:
 
         # Ignore the wrong Python.
         ( "lib/py2-*/", None),
+        ( "lib/python3.9/", None),
+        ( "lib/python3.11/", None),
+        ( "lib/py*-windows-*/libpython3.9.dll", None),
+        ( "lib/py*-windows-*/libpython3.11.dll", None),
 
         # Windows patterns.
         ( "lib/py*-windows-i686/**", "windows_i686"),

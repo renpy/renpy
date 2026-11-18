@@ -4,6 +4,13 @@ import pathlib
 import re
 
 
+OPTIONAL_FUNCTIONS = {
+    "glGetProgramBinary",
+    "glProgramBinary",
+    "glProgramParameteri",
+}
+
+
 def process(dn):
     required = set()
 
@@ -11,7 +18,7 @@ def process(dn):
         for m in re.finditer(r"gl[A-Z]\w+", fn.read_text()):
             required.add(m.group(0))
 
-    required = list(required)
+    required = list(required - OPTIONAL_FUNCTIONS)
     required.sort()
 
     with open(dn / (str(dn.name) + "functions.py"), "w") as f:

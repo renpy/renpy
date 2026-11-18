@@ -26,13 +26,13 @@ from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2texture cimport GLTexture
 from renpy.gl2.gl2draw cimport GL2DrawingContext
 from renpy.gl2.gl2model cimport GL2Model
-from renpy.gl2.gl2uniform cimport Setter, Sampler2DSetter
+from renpy.gl2.gl2uniform cimport Setter, SamplerSetter
 from renpy.gl2.gl2statecache cimport GLStateCache, SCRATCH_POSITION, SCRATCH_ATTRIBUTE, SCRATCH_INDEX
 
 from renpy.display.matrix cimport Matrix
 
 from renpy.gl2.gl2uniform import generate_uniform_setter
-from renpy.gl2.gl2shadercache import FLAT_TYPES, FRAGMENT_OUTPUT
+from renpy.gl2.gl2shadercache import FLAT_TYPES, FRAGMENT_OUTPUT, MAX_PROGRAM_BINARY_SIZE, parse_glsl_version
 
 import renpy
 import copy
@@ -44,6 +44,28 @@ cdef GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
 
 class ShaderError(Exception):
     pass
+
+
+def supports_program_binaries(gles, version, extensions):
+    cdef GLint formats = 0
+
+    if renpy.emscripten:
+        return False
+
+    version = parse_glsl_version(version)
+
+    if gles:
+        if version is None or version < 300:
+            return False
+    elif (version is None or version < 410) and "GL_ARB_get_program_binary" not in extensions:
+        return False
+
+    if glGetProgramBinary == NULL or glProgramBinary == NULL or glProgramParameteri == NULL:
+        return False
+
+    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats)
+
+    return formats > 0
 
 
 GLSL_PRECISIONS = {
@@ -89,6 +111,9 @@ UNIFORM_TYPES = {
     "mat3",
     "mat4",
     "sampler2D",
+    "sampler3D",
+    "samplerCube",
+    "sampler2DArray",
 }
 
 VARYING_TYPES = set(ATTRIBUTE_TYPES)| set(UNIFORM_TYPES)
@@ -236,7 +261,7 @@ class Variable:
             token = match_word()
 
         if token not in types:
-            raise ShaderError(f"In {shader_name}, Unsupported type {token} in '{line}'. Only float, int, bool, vec<2-4>, ivec<2-4>, bvec<2-4>, mat<2-4>, and sampler2D are supported.")
+            raise ShaderError(f"In {shader_name}, Unsupported type {token} in '{line}'. Only float, int, bool, vec<2-4>, ivec<2-4>, bvec<2-4>, mat<2-4>, sampler2D, sampler3D, samplerCube, and sampler2DArray are supported.")
 
         self.type = token
 
@@ -409,10 +434,12 @@ cdef class Program:
     Represents an OpenGL program.
     """
 
-    def __init__(self, name, vertex, fragment):
+    def __init__(self, name, vertex, fragment, variable_specs=None):
         self.name = name
         self.vertex = vertex
         self.fragment = fragment
+        self.variable_specs = variable_specs
+        self.binary_retrievable = False
 
         # A list of Attribute objects
         self.attributes = [ ]
@@ -421,12 +448,16 @@ cdef class Program:
         # the uniforms.
         self.uniform_setters = [ ]
 
+    def make_binary_retrievable(self):
+        self.binary_retrievable = True
+
     def __dealloc__(self):
         glDeleteProgram(self.program)
 
-    def find_variables(self, source, seen_uniforms: set, samplers: int, fragment=False):
+    def find_variables(self, source, fragment=False):
 
         shader_name = "+".join(self.name)
+        specs = []
 
         for line in source.split("\n"):
 
@@ -451,29 +482,111 @@ cdef class Program:
 
             v = Variable(shader_name, l, fragment)
 
-            if v.storage == "uniform":
-                if v.name in seen_uniforms:
+            if v.storage == "uniform" or (v.storage == "attribute" and not fragment):
+                specs.append((v.storage, v.type, v.name, v.array, fragment))
+
+        return specs
+
+    def load_binary(self, binary):
+        cdef GLenum binary_format
+        cdef GLint status
+        cdef GLuint program
+        cdef bytes binary_data
+        cdef const char *binary_ptr
+
+        if glProgramBinary == NULL:
+            return False
+
+        binary_format, binary_data = binary
+
+        if not binary_data or len(binary_data) > MAX_PROGRAM_BINARY_SIZE:
+            return False
+
+        binary_ptr = binary_data
+        program = glCreateProgram()
+
+        glProgramBinary(program, binary_format, binary_ptr, len(binary_data))
+        glGetProgramiv(program, GL_LINK_STATUS, &status)
+
+        if status == GL_FALSE:
+            glDeleteProgram(program)
+            return False
+
+        self.program = program
+        self.find_program_variables()
+
+        return True
+
+    def get_binary(self):
+        cdef char *binary = NULL
+        cdef GLenum binary_format
+        cdef GLint binary_length
+        cdef GLsizei written = 0
+
+        if glGetProgramBinary == NULL:
+            return None
+
+        glGetProgramiv(self.program, GL_PROGRAM_BINARY_LENGTH, &binary_length)
+
+        if binary_length <= 0 or binary_length > MAX_PROGRAM_BINARY_SIZE:
+            return None
+
+        binary = <char *> malloc(binary_length)
+
+        if binary == NULL:
+            raise MemoryError()
+
+        try:
+            glGetProgramBinary(self.program, binary_length, &written, &binary_format, binary)
+
+            if written <= 0 or written > binary_length:
+                return None
+
+            return binary_format, binary[:written]
+        finally:
+            free(binary)
+
+    def find_program_variables(self):
+        cdef GLint max_samplers = 0
+
+        seen_uniforms = set()
+        samplers = 0
+
+        self.attributes = [ ]
+        self.uniform_setters = [ ]
+
+        if self.variable_specs is None:
+            self.variable_specs = self.find_variables(self.vertex) + self.find_variables(self.fragment, True)
+
+        shader_name = "+".join(self.name)
+
+        for storage, variable_type, name, array, fragment in self.variable_specs:
+            if storage == "uniform":
+                if name in seen_uniforms:
                     continue
 
-                location = glGetUniformLocation(self.program, v.name.encode("utf-8"))
+                location = glGetUniformLocation(self.program, name.encode("utf-8"))
 
                 if location >= 0:
-                    seen_uniforms.add(v.name)
-                    setter, samplers = generate_uniform_setter(shader_name, location, v.name, v.type, v.array, samplers)
+                    seen_uniforms.add(name)
+                    setter, samplers = generate_uniform_setter(shader_name, location, name, variable_type, array, samplers)
                     self.uniform_setters.append(setter)
 
-            elif v.storage == "attribute" and not fragment:
-                location = glGetAttribLocation(self.program, v.name.encode("utf-8"))
+            elif storage == "attribute" and not fragment:
+                location = glGetAttribLocation(self.program, name.encode("utf-8"))
 
-                if v.array is None:
+                if array is None:
                     array = 1
-                else:
-                    array = v.array
 
                 if location >= 0:
-                    self.attributes.append(Attribute(v.name, location, ATTRIBUTE_TYPES[v.type] * array))
+                    self.attributes.append(Attribute(name, location, ATTRIBUTE_TYPES[variable_type] * array))
 
-        return samplers
+        glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_samplers)
+
+        if max_samplers > 0 and samplers > max_samplers:
+            raise ShaderError(
+                "Shader %s needs %d texture units, but this system provides %d." % (
+                    "+".join(self.name), samplers, max_samplers))
 
     cdef GLuint load_shader(self, GLenum shader_type, source) except 0:
         """
@@ -521,8 +634,6 @@ cdef class Program:
         cdef GLuint vertex
         cdef GLuint program
         cdef GLint status
-        cdef GLint max_samplers = 0
-
         cdef char[1024] error
 
         vertex = self.load_shader(GL_VERTEX_SHADER, self.vertex)
@@ -531,6 +642,10 @@ cdef class Program:
         program = glCreateProgram()
         glAttachShader(program, vertex)
         glAttachShader(program, fragment)
+
+        if self.binary_retrievable and glProgramParameteri != NULL:
+            glProgramParameteri(program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE)
+
         glLinkProgram(program)
 
         glGetProgramiv(program, GL_LINK_STATUS, &status)
@@ -556,22 +671,7 @@ cdef class Program:
         glDeleteShader(fragment)
 
         self.program = program
-
-        # Create self.uniform_setters
-        seen_uniforms = set()
-        samplers = 0
-
-        self.uniform_setters = [ ]
-
-        samplers = self.find_variables(self.vertex, seen_uniforms, samplers, False)
-        samplers = self.find_variables(self.fragment, seen_uniforms, samplers, True)
-
-        glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_samplers)
-
-        if max_samplers > 0 and samplers > max_samplers:
-            raise ShaderError(
-                "Shader %s needs %d texture units, but this system provides %d." % (
-                    "+".join(self.name), samplers, max_samplers))
+        self.find_program_variables()
 
     cpdef void draw(self, GL2DrawingContext context, GL2Model model, Mesh mesh):
 
@@ -674,7 +774,7 @@ cdef class Program:
         cache.sync_attrib_arrays(required_mask)
 
         # There's only one setter, and it's for tex0.
-        cdef Sampler2DSetter setter
+        cdef SamplerSetter setter
 
         for setter in self.uniform_setters:
             setter.set_texture(cache, texture)

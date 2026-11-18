@@ -7,7 +7,12 @@ VOLNAME="$2"
 DMGDIRBASE="$3"
 DMGBASE="$4"
 
-security unlock-keychain -p "$(cat ~/.password)"
+# The tarball and the dmg are removed by the client once it has the dmg.
+trap 'rm -rf "/tmp/${DMGDIRBASE:?}"' EXIT
+
+# Sed writes the command for security's interactive mode, so that the password is only
+# ever on stdin, and isn't in the arguments of any process.
+sed -e 's/^/unlock-keychain -p "/' -e 's/$/"/' ~/.password | security -i
 
 pushd /tmp
 

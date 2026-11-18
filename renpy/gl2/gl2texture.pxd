@@ -74,6 +74,10 @@ cdef class GLTexture(GL2Model):
     cdef public int texture_width
     cdef public int texture_height
 
+    # The oversample this texture was rendered at, if it was created by rendering a Render to a
+    # texture. None for other textures, such as loaded images.
+    cdef public object render_oversample
+
     # Borders
     cdef public int bl
     cdef public int bt
@@ -83,6 +87,7 @@ cdef class GLTexture(GL2Model):
     # The last texture states set in gl2uniform.
     cdef public GLint wrap_s
     cdef public GLint wrap_t
+    cdef public GLint wrap_r
     cdef public GLfloat anisotropy
 
     cdef public GLint mag_filter

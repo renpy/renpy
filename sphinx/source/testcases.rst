@@ -125,6 +125,13 @@ If you're running the test from the command line, the command should look someth
 Running Testcases
 =================
 
+On desktop platforms, test runs use a non-resizable window whose physical and
+drawable resolution matches the game's virtual resolution
+(:var:`config.screen_width` by :var:`config.screen_height`). Saved window sizes,
+fullscreen and maximized preferences, and high-DPI scaling do not change the
+test window's resolution. This makes screenshot dimensions and crop coordinates
+consistent across test runs. Test window sizes are not saved to preferences.
+
 Launcher
 --------
 
@@ -347,7 +354,9 @@ It takes the following properties:
 .. var:: enabled
 
     If this expression evaluates to ``False``, this test is skipped.
-    Defaults to ``True``.
+    Defaults to ``True``. The expression is evaluated when the tests are
+    run, after init code has run, so it can check the platform, variables
+    set by init code, or whether game files are present.
 
     This can conditionally disable tests, for example on platforms
     where they are not supported. ::
@@ -358,6 +367,10 @@ It takes the following properties:
 
         testcase not_on_mobile:
             enabled not renpy.mobile
+            ...
+
+        testsuite live2d:
+            enabled renpy.has_live2d() and renpy.loadable("live2d/Ren/Ren.model3.json")
             ...
 
     See :ref:`skipping-testcases` for more information.

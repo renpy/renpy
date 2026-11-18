@@ -124,6 +124,10 @@ the default.
 
 The `.webp` format allows for an animated presplash image, if that's required.
 
+The presplash remains visible while Ren'Py initializes and is hidden after the
+first frame is drawn, whether that frame shows a splashscreen, the main menu,
+or another screen.
+
 Icon
 ---------
 

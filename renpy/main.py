@@ -429,6 +429,9 @@ def main():
     if renpy.game.args.savedir:  # type: ignore
         renpy.config.savedir = renpy.game.args.savedir  # type: ignore
 
+    # Repair the save directory first, as the save token system can create it.
+    renpy.util.repair_directory(renpy.config.savedir)
+
     # Init the save token system.
     renpy.savetoken.init()
 

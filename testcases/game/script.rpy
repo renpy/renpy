@@ -46,6 +46,9 @@ label start:
         "Text":
             call text
 
+        "Text Shaders":
+            call textshader_jitter
+
         "Get Image Bounds":
             call get_image_bounds
 
@@ -58,6 +61,9 @@ label start:
         "Drag and Drop":
             call drag_and_drop
 
+        "GLTF Box":
+            call gltf_box
+
         "Done.":
             return
 
@@ -68,7 +74,7 @@ label start:
 ###############################################################################
 
 init python:
-    _preferences.text_cps = 100
+    _preferences.text_cps = 1000
 
     style.red = Style(style.default)
     style.red.color = "#f00"
@@ -217,7 +223,6 @@ label get_image_bounds:
 
     return
 
-
 ###############################################################################
 # Retain on Load
 ###############################################################################
@@ -250,6 +255,9 @@ label retain_after_load:
 ###############################################################################
 # Drag and Drop
 ###############################################################################
+
+# The drag_and_drop screen is also the fixture for the drag tests in tests/test_test_testast_selectors.rpy, so
+# changes to it may need to be reflected there.
 
 init python:
 
@@ -292,19 +300,21 @@ label drag_and_drop:
     return
 
 ###############################################################################
-# Scroll
+# GLTFModel
 ###############################################################################
+image GLTFBox = GLTFModel("Box.glb", shader="renpy.texture", zoom=100.0, report=True)
 
-screen scroll_screen:
-    viewport:
-        id "scroll_vp"
-        draggable True
-        mousewheel True
+label gltf_box:
+    camera:
+        perspective True
 
-        vbox:
-            spacing 10
+    show GLTFBox:
+        align (0.5, 0.5)
+        matrixanchor (0.5, 0.5)
+        matrixtransform RotateMatrix(0, 0, 0)
+        linear 4.0 matrixtransform RotateMatrix(90, 360, 0)
+        repeat
 
-            for i in range(50):
-                text "This is line [i]."
-
-            textbutton "Close" action Hide("scroll_screen") id "close_screen_button"
+    "You should see the GLTF Box rotating."
+    hide GLTFBox
+    return

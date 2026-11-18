@@ -3,19 +3,19 @@
 translate spanish demo_transitions_5bbc72fe:
 
     # e "Ren'Py ships with a large number of built-in transitions, and also includes classes that let you define your own."
-    e "Ren'Py se envía con un gran número de transiciones integradas, y también incluye clases que le permiten definir las tuyas propias."
+    e "Ren'Py viene con un gran número de transiciones integradas y también incluye clases que te permiten definir las tuyas."
 
 # game/indepth_transitions.rpy:58
 translate spanish demo_transitions_menu_3caf78d3:
 
     # e "What kind of transitions would you like demonstrated?" nointeract
-    e "¿Qué tipo de transiciones te gustaría demostrar?" nointeract
+    e "¿Qué tipo de transiciones quieres que te muestre?" nointeract
 
 # game/indepth_transitions.rpy:95
 translate spanish demo_simple_transitions_2b4fbae3:
 
     # e "Okay, I can tell you about simple transitions. We call them simple because they don't take much in the way of configuration."
-    e "Vale, te puedo contar sobre transiciones simples. Las llamamos simples porque no toman mucho en la configuración."
+    e "Vale, te puedo hablar de las transiciones simples. Las llamamos simples porque no requieren mucha configuración."
 
 # game/indepth_transitions.rpy:97
 translate spanish demo_simple_transitions_4b235ac2:
@@ -27,43 +27,43 @@ translate spanish demo_simple_transitions_4b235ac2:
 translate spanish demo_simple_transitions_af0431ac:
 
     # e "The 'dissolve' transition is probably the most useful, blending one scene into another."
-    e "La transición 'dissolve' es probablemente la más útil, combinando una escena con otra."
+    e "La transición 'dissolve' es probablemente la más útil, fundiendo una escena en otra."
 
 # game/indepth_transitions.rpy:109
 translate spanish demo_simple_transitions_5b9f711f:
 
     # e "The 'Dissolve' function lets you create your own dissolves, taking a different amount of time."
-    e "La función 'Dissolve' te permite crear tus propios dissolves, tendran tiempos diferente."
+    e "La función 'Dissolve' te permite crear tus propios {i}dissolves{/i}, con una duración diferente."
 
 # game/indepth_transitions.rpy:116
 translate spanish demo_simple_transitions_79816523:
 
     # e "The 'fade' transition fades to black, and then fades back in to the new scene."
-    e "La transición de 'fade' desvanece a negro, y luego se desvanece en la nueva escena."
+    e "La transición 'fade' se desvanece a negro y luego vuelve a aparecer en la nueva escena."
 
 # game/indepth_transitions.rpy:118
 translate spanish demo_simple_transitions_141bb95d:
 
     # e "If you're going to stay at a black screen, you'll probably want to use 'dissolve' rather than 'fade'."
-    e "Si va a permanecer en una pantalla negra, es probable que desees utilizar 'dissolve' en lugar de 'fade'."
+    e "Si vas a permanecer en una pantalla negra, probablemente querrás usar 'dissolve' en lugar de 'fade'."
 
 # game/indepth_transitions.rpy:123
 translate spanish demo_simple_transitions_f059f4ae:
 
     # e "You can use 'Fade' to define your own fades. By changing the timing and the color faded to, you can use this for special effects, like flashbulbs."
-    e "Puedes usar 'Fade' para definir tus propios fades. Al cambiar la sincronización y el color difuminado, puede usar esto para efectos especiales, como flashes."
+    e "Puedes usar 'Fade' para definir tus propios {i}fades{/i}. Al cambiar la duración y el color al que se desvanece, puedes usar esto para efectos especiales, como destellos."
 
 # game/indepth_transitions.rpy:129
 translate spanish demo_simple_transitions_e948905b:
 
     # e "The 'pixellate' transition pixellates out the old scene, switches to the new scene, and then unpixellates that."
-    e "La transición 'pixellate' pixela la escena antigua, cambia a la nueva escena, y luego la muestra sin píxeles."
+    e "La transición 'pixellate' pixeliza la escena antigua, cambia a la nueva escena y luego la despixeliza."
 
 # game/indepth_transitions.rpy:131
 translate spanish demo_simple_transitions_6a1ae05f:
 
     # e "It's probably not appropriate for most games, but we think it's kind of neat."
-    e "Probablemente no sea apropiado para la mayoría de los juegos, pero creemos que es un poco prolijo."
+    e "Probablemente no sea apropiado para la mayoría de los juegos, pero creemos que es bastante ingenioso."
 
 # game/indepth_transitions.rpy:134
 translate spanish demo_simple_transitions_bdfcd85a:
@@ -75,7 +75,7 @@ translate spanish demo_simple_transitions_bdfcd85a:
 translate spanish demo_simple_transitions_432f7224:
 
     # e "Motions can also be used as transitions."
-    e "Motions también se puede utilizar como transiciones."
+    e "{i}Motions{/i} también se pueden usar como transiciones."
 
 # game/indepth_transitions.rpy:138
 translate spanish demo_simple_transitions_a20cefa7:
@@ -99,19 +99,19 @@ translate spanish demo_simple_transitions_fbf11906:
 translate spanish demo_simple_transitions_51c1c5b8:
 
     # e "I was about to demonstrate 'vpunch'... well, I guess I just did."
-    e "Estaba a punto de demostrar 'vpunch' ... bueno, supongo que acabo de hacerlo."
+    e "Estaba a punto de demostrar 'vpunch'... bueno, supongo que acabo de hacerlo."
 
 # game/indepth_transitions.rpy:154
 translate spanish demo_simple_transitions_57f19473:
 
     # e "We can also shake the screen horizontally, with 'hpunch'. These were defined using the 'Move' function."
-    e "También podemos sacudir la pantalla horizontalmente, con 'hpunch'. Estos se definieron utilizando la función 'Move'."
+    e "También podemos sacudir la pantalla horizontalmente con 'hpunch'. Estas se definieron usando la función 'Move'."
 
 # game/indepth_transitions.rpy:156
 translate spanish demo_simple_transitions_fce83e12:
 
     # e "There's also the 'move' transition, which is confusingly enough defined using the 'MoveTransition' function."
-    e "También está la transición 'move', que se define confusamente usando la función 'MoveTransition'."
+    e "También está la transición 'move', que se define usando la función 'MoveTransition', lo cual resulta un poco confuso."
 
 # game/indepth_transitions.rpy:164
 translate spanish demo_simple_transitions_1050b6a4:
@@ -123,19 +123,19 @@ translate spanish demo_simple_transitions_1050b6a4:
 translate spanish demo_simple_transitions_dc776e59:
 
     # e "That's it for the simple transitions."
-    e "Eso es todo por las transiciones simples ."
+    e "Eso es todo sobre las transiciones simples."
 
 # game/indepth_transitions.rpy:175
 translate spanish demo_imagedissolve_transitions_2db67018:
 
     # e "Perhaps the most flexible kind of transition is the ImageDissolve, which lets you use an image to control a dissolve."
-    e "Quizás el tipo de transición más flexible sea el ImageDissolve, que te permite usar una imagen para controlar una disolución."
+    e "Quizás el tipo de transición más flexible sea el 'ImageDissolve', que te permite usar una imagen para controlar un {i}dissolve{/i}."
 
 # game/indepth_transitions.rpy:177
 translate spanish demo_imagedissolve_transitions_429f8d03:
 
     # e "This lets us specify very complex transitions, fairly simply. Let's try some, and then I'll show you how they work."
-    e "Esto nos permite especificar transiciones muy complejas, de manera bastante simple. Probemos un poco y luego te mostraré cómo funcionan."
+    e "Esto nos permite especificar transiciones muy complejas de manera bastante simple. Probemos algunas y luego te mostraré cómo funcionan."
 
 # game/indepth_transitions.rpy:179
 translate spanish demo_imagedissolve_transitions_1ce501b0:
@@ -147,7 +147,7 @@ translate spanish demo_imagedissolve_transitions_1ce501b0:
 translate spanish demo_imagedissolve_transitions_ea0413be:
 
     # e "The 'blinds' transition opens and closes what looks like vertical blinds."
-    e "La transición 'blinds' abre y cierra para parecer persianas verticales."
+    e "La transición 'blinds' abre y cierra lo que parecen persianas verticales."
 
 # game/indepth_transitions.rpy:201
 translate spanish demo_imagedissolve_transitions_12e2e0d0:
@@ -171,13 +171,13 @@ translate spanish demo_imagedissolve_transitions_0ab2902d:
 translate spanish demo_imagedissolve_transitions_54aa9bf9:
 
     # e "These ones require an image the size of the screen, and so we couldn't include them as the size of the screen can change from game to game."
-    e "Estos requieren una imagen del tamaño de la pantalla, por lo que no podemos incluirlos, ya que el tamaño de la pantalla puede cambiar de un juego a otro."
+    e "Estas requieren una imagen del tamaño de la pantalla, por lo que no pudimos incluirlas, ya que el tamaño de la pantalla puede cambiar de un juego a otro."
 
 # game/indepth_transitions.rpy:215
 translate spanish demo_imagedissolve_transitions_ca316184:
 
     # e "We can hide things with a 'circleirisin'..."
-    e "Podemos ocultar cosas con un 'circleirisin' ..."
+    e "Podemos ocultar cosas con un 'circleirisin'..."
 
 # game/indepth_transitions.rpy:221
 translate spanish demo_imagedissolve_transitions_b8fdf2b6:
@@ -189,13 +189,13 @@ translate spanish demo_imagedissolve_transitions_b8fdf2b6:
 translate spanish demo_imagedissolve_transitions_ee427486:
 
     # e "The 'circlewipe' transitions changes screens using a circular wipe effect."
-    e "Las transiciones 'circlewipe' cambian las pantallas utilizando un efecto de barrido circular."
+    e "Las transiciones 'circlewipe' cambian las pantallas usando un efecto de barrido circular."
 
 # game/indepth_transitions.rpy:233
 translate spanish demo_imagedissolve_transitions_6f089276:
 
     # e "The 'dream' transition does this weird wavy dissolve, and does it relatively slowly."
-    e "La transición 'dream' hace que esta ondulación extraña se disuelva, y lo hace con relativa lentitud."
+    e "La transición 'dream' hace un {i}dissolve{/i} ondulado extraño, y lo hace con relativa lentitud."
 
 # game/indepth_transitions.rpy:239
 translate spanish demo_imagedissolve_transitions_c0b9d74d:
@@ -219,7 +219,7 @@ translate spanish demo_imagedissolve_transitions_fc3b3339:
 translate spanish demo_imagedissolve_transitions_4327dca2:
 
     # e "If we give ImageDissolve the 'reverse' parameter, black areas will dissolve in first."
-    e "Si le damos a 'ImageDissolve' el parámetro 'reversa', las áreas negras se disolverán primero."
+    e "Si le damos a 'ImageDissolve' el parámetro 'reverse', las áreas negras se disolverán primero."
 
 # game/indepth_transitions.rpy:260
 translate spanish demo_imagedissolve_transitions_3a401ee7:
@@ -237,7 +237,7 @@ translate spanish demo_imagedissolve_transitions_20d9cf6c:
 translate spanish demo_imagedissolve_transitions_906f7800:
 
     # e "A dissolve only seems to affect parts of the scene that have changed..."
-    e "Una disolución solo parece afectar partes de la escena que han cambiado ..."
+    e "Un {i}dissolve{/i} solo parece afectar las partes de la escena que han cambiado..."
 
 # game/indepth_transitions.rpy:277
 translate spanish demo_imagedissolve_transitions_4b557a29:
@@ -261,13 +261,13 @@ translate spanish demo_cropmove_transitions_6d82cfd7:
 translate spanish demo_cropmove_transitions_4427c78c:
 
     # e "We first have wiperight..."
-    e "Primero tenemos 'wiperight' ..."
+    e "Primero tenemos 'wiperight'..."
 
 # game/indepth_transitions.rpy:302
 translate spanish demo_cropmove_transitions_6d1810a1:
 
     # e "...followed by wipeleft... "
-    e "... seguido de 'wipeleft'... "
+    e "... seguido de 'wipeleft'..."
 
 # game/indepth_transitions.rpy:308
 translate spanish demo_cropmove_transitions_1dd1c6a1:
@@ -279,13 +279,13 @@ translate spanish demo_cropmove_transitions_1dd1c6a1:
 translate spanish demo_cropmove_transitions_0ea0fa83:
 
     # e "...and wipedown."
-    e "..y 'wipedown'."
+    e "...y 'wipedown'."
 
 # game/indepth_transitions.rpy:316
 translate spanish demo_cropmove_transitions_c7cb4c16:
 
     # e "Next, the slides."
-    e "A continuación, las slides."
+    e "A continuación, los {i}slides{/i}."
 
 # game/indepth_transitions.rpy:322
 translate spanish demo_cropmove_transitions_462a442f:
@@ -315,7 +315,7 @@ translate spanish demo_cropmove_transitions_9e00a7a6:
 translate spanish demo_cropmove_transitions_b8a710c1:
 
     # e "While the slide transitions slide in the new scene, the slideaways slide out the old scene."
-    e "Mientras que las transiciones de slide se deslizan en la nueva escena, las slideaways se deslizan fuera de la escena anterior."
+    e "Mientras que las transiciones {i}slide{/i} deslizan la nueva escena hacia dentro, las {i}slideaways{/i} deslizan la escena anterior hacia fuera."
 
 # game/indepth_transitions.rpy:349
 translate spanish demo_cropmove_transitions_1efb4cd0:
@@ -369,13 +369,13 @@ translate spanish demo_cropmove_transitions_08d753ed:
 translate spanish demo_pushmove_transitions_003e506d:
 
     # e "The PushMove transitions use the new scene to push the old one out. Let's take a look."
-    e "Las transiciones de 'PushMove' utilizan la nueva escena para expulsar la anterior. Vamos a ver."
+    e "Las transiciones 'PushMove' utilizan la nueva escena para expulsar la anterior. Vamos a ver."
 
 # game/indepth_transitions.rpy:401
 translate spanish demo_pushmove_transitions_124f375d:
 
     # "There's pushright..."
-    "'Está pushright' ..."
+    "Está 'pushright'..."
 
 # game/indepth_transitions.rpy:408
 translate spanish demo_pushmove_transitions_ce380ccb:
@@ -393,13 +393,13 @@ translate spanish demo_pushmove_transitions_77629638:
 translate spanish demo_pushmove_transitions_b7f33c95:
 
     # "... and pushup. And that's it the for the PushMove-based transitions."
-    "... y 'pushup'. Y eso es todo para las transiciones basadas en 'PushMove'."
+    "... y 'pushup'. Y eso es todo sobre las transiciones basadas en 'PushMove'."
 
 # game/indepth_transitions.rpy:434
 translate spanish demo_movetransition_14df0e34:
 
     # e "The most common MoveTransition is move, which slides around images that have changed position on the screen."
-    e "La 'MoveTransition' más común es move, que desliza imágenes que han cambiado de posición en la pantalla."
+    e "La 'MoveTransition' más común es 'move', que desliza imágenes que han cambiado de posición en la pantalla."
 
 # game/indepth_transitions.rpy:442
 translate spanish demo_movetransition_84e40422:
@@ -411,31 +411,31 @@ translate spanish demo_movetransition_84e40422:
 translate spanish demo_movetransition_098ee9f1:
 
     # e "There are also the moveout and movein transitions."
-    e "También están las transiciones de 'moveout' y 'movein'."
+    e "También están las transiciones 'moveout' y 'movein'."
 
 # game/indepth_transitions.rpy:448
 translate spanish demo_movetransition_09748f81:
 
     # e "The moveout transitions (moveoutleft, moveoutright, moveouttop, and moveoutbottom) slide hidden images off the appropriate side of the screen."
-    e "Las transiciones de movimiento ('moveoutlft', 'moveoutright', 'moveouttop' y 'moveoutbottom') deslizan las imágenes ocultas del lado apropiado de la pantalla."
+    e "Las transiciones 'moveout' ('moveoutleft', 'moveoutright', 'moveouttop' y 'moveoutbottom') deslizan las imágenes ocultas fuera del lado correspondiente de la pantalla."
 
 # game/indepth_transitions.rpy:450
 translate spanish demo_movetransition_5edf6007:
 
     # e "The movein transitions (moveinleft, moveinright, moveintop, and moveinbottom) slide in new images."
-    e "Las transiciones de movimiento ('moveinleft', 'moveinright', 'moveintop' y 'moveinbottom') deslizan dentro nuevas imágenes."
+    e "Las transiciones 'movein' ('moveinleft', 'moveinright', 'moveintop' y 'moveinbottom') deslizan nuevas imágenes hacia dentro."
 
 # game/indepth_transitions.rpy:452
 translate spanish demo_movetransition_20946d36:
 
     # e "Let's see them all in action."
-    e "Vamos a verlos todas en acción."
+    e "Vamos a verlas todas en acción."
 
 # game/indepth_transitions.rpy:487
 translate spanish demo_movetransition_569952e3:
 
     # e "That's it for the moveins and moveouts."
-    e "Eso es todo para los 'moveins' y 'moveouts'."
+    e "Eso es todo sobre los 'moveins' y 'moveouts'."
 
 # game/indepth_transitions.rpy:489
 translate spanish demo_movetransition_bbb75540:
@@ -453,19 +453,19 @@ translate spanish demo_movetransition_dc5ccd54:
 translate spanish demo_alphadissolve_51613c02:
 
     # e "The AlphaDissolve transition lets you use one displayable to combine two others. Click, and I'll show you an example."
-    e "La transición 'AlphaDissolve' te permite usar un visualizable para combinar otros dos. Haz click, y te mostraré un ejemplo."
+    e "La transición 'AlphaDissolve' te permite usar un {i}displayable{/i} para combinar otros dos. Haz clic y te mostraré un ejemplo."
 
 # game/indepth_transitions.rpy:518
 translate spanish demo_alphadissolve_7c08cf8b:
 
     # e "The AlphaDissolve displayable takes a control displayable, usually an ATL transform."
-    e "El 'AlphaDissolve' visualizable toma un visualizable de control, generalmente una transformación ATL."
+    e "El {i}displayable{/i} 'AlphaDissolve' toma un {i}displayable{/i} de control, generalmente una transformación ATL."
 
 # game/indepth_transitions.rpy:523
 translate spanish demo_alphadissolve_068e3e98:
 
     # e "To be useful, the control displayable should be partially transparent."
-    e "Para ser útil, el visualizable de control debe ser parcialmente transparente."
+    e "Para ser útil, el {i}displayable{/i} de control debe ser parcialmente transparente."
 
 # game/indepth_transitions.rpy:525
 translate spanish demo_alphadissolve_6a1b6203:
@@ -519,5 +519,5 @@ translate spanish strings:
 
     # indepth_transitions.rpy:58
     old "How about something else?"
-    new "¿Que hay de otra cosa?"
+    new "¿Qué hay de otra cosa?"
 

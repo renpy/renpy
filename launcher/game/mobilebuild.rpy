@@ -100,7 +100,9 @@ init -1 python:
             self.log(prompt)
 
         def open_directory(self, directory, prompt):
-            renpy.run(store.OpenDirectory(directory, absolute=True))
+            if not renpy.is_in_test():
+                renpy.run(store.OpenDirectory(directory, absolute=True))
+
             interface.info(prompt)
 
         def yesno(self, prompt, submessage=None):

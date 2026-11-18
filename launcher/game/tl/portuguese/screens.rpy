@@ -101,7 +101,7 @@ translate portuguese strings:
     # gui/game/screens.rpy:255
     old "Auto"
     # Automatic translation.
-    new "Automotivo"
+    new "Auto"
 
     # gui/game/screens.rpy:256
     old "Save"

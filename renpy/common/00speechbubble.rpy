@@ -23,7 +23,7 @@
 # that image tag.
 default bubble.tag_properties = { }
 
-# A list of (image_tag, tlid) pairs represening the dialogue that is
+# A list of (image_tag, tlid) pairs representing the dialogue that is
 # on the screen now.
 default bubble.current_dialogue = [ ]
 
@@ -222,15 +222,10 @@ init -1150 python in bubble:
 
             image_tag = self.image_tag
 
-            if retain or (image_tag not in tag_properties):
-                tag_properties[image_tag] = self.bubble_default_properties(image_tag)
+            self.prepare_properties(retain)
 
             tlid = renpy.get_translation_identifier()
-
-            if tlid is not None:
-                for k, v in db[tlid].items():
-                    tag_properties[image_tag][k] = v
-
+            if tlid is not None and not renpy.is_warping():
                 current_dialogue.append((image_tag, tlid))
 
             properties_key = tag_properties[image_tag]["properties"]
@@ -246,6 +241,24 @@ init -1150 python in bubble:
             extra_properties["show_layer"] = show_layer
 
             return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, retain=retain, extra_properties=extra_properties)
+
+        def prepare_properties(self, retain):
+            image_tag = self.image_tag
+
+            if retain or (image_tag not in tag_properties):
+                tag_properties[image_tag] = self.bubble_default_properties(image_tag)
+
+            tlid = renpy.get_translation_identifier()
+
+            if tlid is not None:
+                for k, v in db[tlid].items():
+                    tag_properties[image_tag][k] = v
+
+        def do_display(self, who, what, **display_args):
+            if renpy.is_warping() and not display_args.get("retain"):
+                self.prepare_properties(False)
+
+            super(BubbleCharacter, self).do_display(who, what, **display_args)
 
     class CycleBubbleProperty(Action):
         """

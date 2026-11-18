@@ -169,6 +169,27 @@ transitions.
 
 .. include:: inc/transition_family
 
+For example, to create slower versions of the directional move transitions,
+with easing for entering images::
+
+    init python:
+        define.move_transitions(
+            "slow_move", 1.0, in_time_warp=_warper.easein)
+
+    label start:
+        show eileen happy with slow_moveinright:
+            pos (0.46, 0.3)
+
+This defines ``slow_move``, ``slow_moveinright``, ``slow_moveinleft``, and the
+other members of the family. The horizontal entrances preserve the image's
+vertical placement, even when it is explicitly positioned.
+
+For an individual custom transition, use :func:`MoveTransition` with an
+axis-specific entrance transform, such as ``Transform(xpos=1.0, xanchor=0.0)``.
+Using :var:`offscreenright` instead also sets the starting vertical placement
+to bottom-aligned, which can cause diagonal movement. The same distinction
+applies to :var:`offscreenleft` and exit transforms.
+
 
 .. _dict-transitions:
 

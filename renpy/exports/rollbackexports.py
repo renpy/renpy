@@ -250,3 +250,54 @@ def get_identifier_checkpoints(identifier):
     """
 
     return renpy.game.log.get_identifier_checkpoints(identifier)
+
+
+def get_rollback_identifier():
+    """
+    :doc: rollback
+
+    Returns the rollback identifier for the currently executing statement. This
+    is the same kind of identifier found in the `rollback_identifier` field of
+    :class:`HistoryEntry` objects, and can be passed to
+    :func:`RollbackToIdentifier` or :func:`renpy.get_identifier_checkpoints`.
+
+    The identifier names the rollback entry that contains the statement. That
+    entry may begin at an earlier statement that did not interact with the
+    player, in which case rolling back to the identifier also runs those
+    statements again.
+
+    An identifier can only be rolled back to while it remains in the rollback
+    log, which is limited by :var:`config.rollback_length`, and while rollback
+    to it isn't blocked.
+
+    This returns None when the current context does not support rollback,
+    while warping, or when no rollback entry is available.
+
+    This is meant to be called from a function in
+    :var:`config.statement_callbacks`. For example, the following remembers
+    the most recent menu::
+
+        default last_menu_identifier = None
+
+        init python:
+            def remember_menu(statement):
+                if statement.startswith("menu"):
+                    store.last_menu_identifier = renpy.get_rollback_identifier()
+
+            config.statement_callbacks.append(remember_menu)
+
+    A button that rolls back to that menu can then be added to a screen, such
+    as the quick menu::
+
+        textbutton _("Last Choice") action RollbackToIdentifier(last_menu_identifier)
+    """
+
+    if not renpy.game.context().rollback or renpy.warp.warping:
+        return None
+
+    current = renpy.game.log.current
+
+    if current is None:
+        return None
+
+    return current.identifier

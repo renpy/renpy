@@ -129,127 +129,127 @@ translate piglatin strings:
     old "Copying Android files to distributions directory."
     new "Opyingcay Ndroidaay ilesfay otay istributionsday irectoryday."
 
-    # game/android.rpy:337
+    # game/android.rpy:331
     old "Android: [project.current.display_name!q]"
     new "Ndroidaay: [project.current.display_name!q]"
 
-    # game/android.rpy:357
+    # game/android.rpy:351
     old "Emulation:"
     new "Mulationeay:"
 
-    # game/android.rpy:366
+    # game/android.rpy:360
     old "Phone"
     new "Honepay"
 
-    # game/android.rpy:370
+    # game/android.rpy:364
     old "Tablet"
     new "Ablettay"
 
-    # game/android.rpy:374
+    # game/android.rpy:368
     old "Television"
     new "Elevisiontay"
 
-    # game/android.rpy:386
+    # game/android.rpy:380
     old "Build:"
     new "Uildbay:"
 
-    # game/android.rpy:393
+    # game/android.rpy:387
     old "Install SDK"
     new "Nstalliay Dksay"
 
-    # game/android.rpy:397
+    # game/android.rpy:391
     old "Generate Keys"
     new "Enerategay Eyskay"
 
-    # game/android.rpy:401
+    # game/android.rpy:395
     old "Configure"
     new "Onfigurecay"
 
-    # game/android.rpy:407
+    # game/android.rpy:401
     old "Play Bundle"
     new "Laypay Undlebay"
 
-    # game/android.rpy:412
+    # game/android.rpy:406
     old "Universal APK"
     new "Niversaluay Pkaay"
 
-    # game/android.rpy:419
+    # game/android.rpy:413
     old "Build Package"
     new "Uildbay Ackagepay"
 
-    # game/android.rpy:423
+    # game/android.rpy:417
     old "Build & Install"
     new "Uildbay & Nstalliay"
 
-    # game/android.rpy:427
+    # game/android.rpy:421
     old "Build, Install & Launch"
     new "Uildbay, Nstalliay & Aunchlay"
 
-    # game/android.rpy:433
+    # game/android.rpy:427
     old "Force Recompile"
     new "Orcefay Ecompileray"
 
-    # game/android.rpy:450
+    # game/android.rpy:444
     old "Other:"
     new "Theroay:"
 
-    # game/android.rpy:458
+    # game/android.rpy:452
     old "Logcat"
     new "Ogcatlay"
 
-    # game/android.rpy:462
+    # game/android.rpy:456
     old "List Devices"
     new "Istlay Evicesday"
 
-    # game/android.rpy:466
+    # game/android.rpy:460
     old "Wi-Fi Debugging Pair"
     new "Iway-Ifay Ebuggingday Airpay"
 
-    # game/android.rpy:470
+    # game/android.rpy:464
     old "Wi-Fi Debugging Connect"
     new "Iway-Ifay Ebuggingday Onnectcay"
 
-    # game/android.rpy:474
+    # game/android.rpy:468
     old "Wi-Fi Debugging Disconnect"
     new "Iway-Ifay Ebuggingday Isconnectday"
 
-    # game/android.rpy:478
+    # game/android.rpy:472
     old "Clean"
     new "Leancay"
 
-    # game/android.rpy:503
+    # game/android.rpy:497
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
     new "Eforebay ackagingpay Ndroidaay appsay, ouyay'llay eednay otay ownloadday Aptray, hetay Enray'Ypay Ndroidaay Ackagingpay Ooltay. Ouldway ouyay ikelay otay ownloadday Aptray ownay?"
 
-    # game/android.rpy:564
+    # game/android.rpy:558
     old "Retrieving logcat information from device."
     new "Etrievingray ogcatlay informationay omfray eviceday."
 
-    # game/android.rpy:583
+    # game/android.rpy:577
     old "Wi-Fi Pairing Code"
     new "Iway-Ifay Airingpay Odecay"
 
-    # game/android.rpy:583
+    # game/android.rpy:577
     old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
     new "Fiay upportedsay, histay ancay ebay oundfay inay 'Eveloperday optionsay', 'Irelessway ebuggingday', 'Airpay eviceday ithway airingpay odecay'."
 
-    # game/android.rpy:590
+    # game/android.rpy:584
     old "Pairing Host & Port"
     new "Airingpay Osthay & Ortpay"
 
-    # game/android.rpy:606
+    # game/android.rpy:600
     old "IP Address & Port"
     new "Piay Ddressaay & Ortpay"
 
-    # game/android.rpy:606
+    # game/android.rpy:600
     old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
     new "Fiay upportedsay, histay ancay ebay oundfay inay 'Eveloperday optionsay', 'Irelessway ebuggingday'."
 
-    # game/android.rpy:622
+    # game/android.rpy:616
     old "This can be found in 'List Devices'."
     new "Histay ancay ebay oundfay inay 'Istlay Evicesday'."
 
-    # game/android.rpy:642
+    # game/android.rpy:636
     old "Cleaning up Android project."
     new "Leaningcay upay Ndroidaay rojectpay."
 
@@ -497,11 +497,11 @@ translate piglatin strings:
     old "No directory was selected, but one is required."
     new "Onay irectoryday asway electedsay, utbay oneay isay equiredray."
 
-    # game/choose_directory.rpy:80
+    # game/choose_directory.rpy:77
     old "The selected directory does not exist."
     new "Hetay electedsay irectoryday oesday otnay existay."
 
-    # game/choose_directory.rpy:82
+    # game/choose_directory.rpy:79
     old "The selected directory is not writable."
     new "Hetay electedsay irectoryday isay otnay ritableway."
 
@@ -529,83 +529,83 @@ translate piglatin strings:
     old "changing the theme"
     new "angingchay hetay hemetay"
 
-    # game/consolecommand.rpy:131
+    # game/consolecommand.rpy:129
     old "INFORMATION"
     new "Nformationiay"
 
-    # game/consolecommand.rpy:131
+    # game/consolecommand.rpy:129
     old "The command is being run in a new operating system console window."
     new "Hetay ommandcay isay eingbay unray inay aay ewnay operatingay ystemsay onsolecay indowway."
 
-    # game/distribute.rpy:600
+    # game/distribute.rpy:607
     old "Scanning project files..."
     new "Canningsay rojectpay ilesfay..."
 
-    # game/distribute.rpy:604
+    # game/distribute.rpy:611
     old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
     new "Uildingbay istributionsday ailedfay:\n\nHetay rojectpay isay hetay Enray'Ypay Utorialtay, hichway ancay'tay ebay istributedday outsideay ofay Enray'Ypay. Onsidercay usingay Hetay Uestionqay asay aay esttay rojectpay."
 
-    # game/distribute.rpy:631
+    # game/distribute.rpy:650
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
     new "Uildingbay istributionsday ailedfay:\n\nHetay uildbay.irectory_nameday ariablevay aymay otnay includeay hetay pacesay, oloncay, oray emicolonsay aracterschay."
 
-    # game/distribute.rpy:631
+    # game/distribute.rpy:650
     old "This may be derived from build.name and config.version or build.version."
     new "Histay aymay ebay erivedday omfray uildbay.amenay anday onfigcay.ersionvay oray uildbay.ersionvay."
 
-    # game/distribute.rpy:680
+    # game/distribute.rpy:699
     old "No packages are selected, so there's nothing to do."
     new "Onay ackagespay areay electedsay, osay heretay'say othingnay otay oday."
 
-    # game/distribute.rpy:692
+    # game/distribute.rpy:711
     old "Scanning Ren'Py files..."
     new "Canningsay Enray'Ypay ilesfay..."
 
-    # game/distribute.rpy:771
+    # game/distribute.rpy:790
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
     new "Llaay ackagespay avehay eenbay uiltbay.\n\nUeday otay hetay resencepay ofay ermissionpay informationay, unpackingay anday epackingray hetay Inuxlay anday Acintoshmay istributionsday onay Indowsway isay otnay upportedsay."
 
-    # game/distribute.rpy:1008
+    # game/distribute.rpy:1027
     old "Archiving files..."
     new "Rchivingaay ilesfay..."
 
-    # game/distribute.rpy:1367
+    # game/distribute.rpy:1386
     old "Unpacking the Macintosh application for signing..."
     new "Npackinguay hetay Acintoshmay applicationay orfay igningsay..."
 
-    # game/distribute.rpy:1377
+    # game/distribute.rpy:1396
     old "Signing the Macintosh application...\n(This may take a long time.)"
     new "Igningsay hetay Acintoshmay applicationay...\n(Histay aymay aketay aay onglay imetay.)"
 
-    # game/distribute.rpy:1400
+    # game/distribute.rpy:1419
     old "Creating the Macintosh DMG..."
     new "Reatingcay hetay Acintoshmay Mgday..."
 
-    # game/distribute.rpy:1411
+    # game/distribute.rpy:1430
     old "Signing the Macintosh DMG..."
     new "Igningsay hetay Acintoshmay Mgday..."
 
-    # game/distribute.rpy:1640
+    # game/distribute.rpy:1661
     old "Writing the [variant] [format] package."
     new "Ritingway hetay [variant] [format] ackagepay."
 
-    # game/distribute.rpy:1653
+    # game/distribute.rpy:1674
     old "Making the [variant] update zsync file."
     new "Akingmay hetay [variant] updateay synczay ilefay."
 
-    # game/distribute.rpy:1656
+    # game/distribute.rpy:1677
     old "Finishing the [variant] [format] package."
     new "Inishingfay hetay [variant] [format] ackagepay."
 
-    # game/distribute.rpy:1776
+    # game/distribute.rpy:1797
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
     new "Rocessedpay {b}[complete]{/b} ofay {b}[total]{/b} ilesfay."
 
-    # game/distribute.rpy:1837
+    # game/distribute.rpy:1858
     old "Recompiling all rpy files into rpyc files..."
     new "Ecompilingray allay pyray ilesfay intoay pycray ilesfay..."
 
-    # game/distribute.rpy:1853
+    # game/distribute.rpy:1874
     old "Copying files..."
     new "Opyingcay ilesfay..."
 
@@ -937,75 +937,75 @@ translate piglatin strings:
     old "The game/libs/ directory is meant for third-party libraries that ask to be\nput in game/libs.\n\nWhen this file (game/libs/libs.txt) is present, Ren'Py will load all files\nin libs before any other file in game/, and will ignore the first directory\nname under game/libs when determining the order to load files.\n"
     new "Hetay amegay/ibslay/ irectoryday isay eantmay orfay hirdtay-artypay ibrarieslay hattay askay otay ebay\nutpay inay amegay/ibslay.\n\nHenway histay ilefay (amegay/ibslay/ibslay.xttay) isay resentpay, Enray'Ypay illway oadlay allay ilesfay\ninay ibslay eforebay anyay otheray ilefay inay amegay/, anday illway ignoreay hetay irstfay irectoryday\namenay underay amegay/ibslay henway eterminingday hetay orderay otay oadlay ilesfay.\n"
 
-    # game/gui7.rpy:255
+    # game/gui7.rpy:256
     old "Select Accent and Background Colors"
     new "Electsay Ccentaay anday Ackgroundbay Olorscay"
 
-    # game/gui7.rpy:269
+    # game/gui7.rpy:270
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
     new "Leasepay ickclay onay hetay olorcay chemesay ouyay ishway otay useay, hentay ickclay Ontinuecay. Hesetay olorscay ancay ebay angedchay anday ustomizedcay aterlay."
 
-    # game/gui7.rpy:314
+    # game/gui7.rpy:315
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
     new "{b}Arningway{/b}\nOntinuingcay illway overwriteay ustomizedcay arbay, uttonbay, avesay otslay, crollbarsay, anday iderslay imagesay.\n\nHatway ouldway ouyay ikelay otay oday?"
 
-    # game/gui7.rpy:314
+    # game/gui7.rpy:315
     old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
     new "{size=-4}\n\nHistay illway otnay overwriteay uigay/ain_menumay.ngpay, uigay/ame_menugay.ngpay, anday uigay/indow_iconway.ngpay, utbay illway reatecay ilesfay hattay oday otnay existay.{/size}"
 
-    # game/gui7.rpy:314
+    # game/gui7.rpy:315
     old "Choose new colors, then regenerate image files."
     new "Hoosecay ewnay olorscay, hentay egenerateray imageay ilesfay."
 
-    # game/gui7.rpy:314
+    # game/gui7.rpy:315
     old "Regenerate the image files using the colors in gui.rpy."
     new "Egenerateray hetay imageay ilesfay usingay hetay olorscay inay uigay.pyray."
 
-    # game/gui7.rpy:345
+    # game/gui7.rpy:346
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
     new "Hatway esolutionray ouldshay hetay rojectpay useay? Lthoughaay Enray'Ypay ancay calesay hetay indowway upay anday ownday, histay isay hetay initialay izesay ofay hetay indowway, hetay izesay atay hichway assetsay ouldshay ebay rawnday, anday hetay izesay atay hichway hetay assetsay illway ebay atay heirtay arpestshay.\n\nHetay efaultday ofay [default_size[0]]xay[default_size[1]] isay aay easonableray ompromisecay."
 
-    # game/gui7.rpy:345
+    # game/gui7.rpy:346
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
     new "Ustomcay. Hetay Uigay isay optimizeday orfay aay 16:9 aspectay atioray."
 
-    # game/gui7.rpy:362
+    # game/gui7.rpy:363
     old "WIDTH"
     new "Idthway"
 
-    # game/gui7.rpy:362
+    # game/gui7.rpy:363
     old "Please enter the width of your game, in pixels."
     new "Leasepay enteray hetay idthway ofay ouryay amegay, inay ixelspay."
 
-    # game/gui7.rpy:372
+    # game/gui7.rpy:373
     old "The width must be a number."
     new "Hetay idthway ustmay ebay aay umbernay."
 
-    # game/gui7.rpy:378
+    # game/gui7.rpy:379
     old "HEIGHT"
     new "Eighthay"
 
-    # game/gui7.rpy:378
+    # game/gui7.rpy:379
     old "Please enter the height of your game, in pixels."
     new "Leasepay enteray hetay eighthay ofay ouryay amegay, inay ixelspay."
 
-    # game/gui7.rpy:388
+    # game/gui7.rpy:389
     old "The height must be a number."
     new "Hetay eighthay ustmay ebay aay umbernay."
 
-    # game/gui7.rpy:432
+    # game/gui7.rpy:433
     old "Creating the new project..."
     new "Reatingcay hetay ewnay rojectpay..."
 
-    # game/gui7.rpy:434
+    # game/gui7.rpy:435
     old "Updating the project..."
     new "Pdatinguay hetay rojectpay..."
 
-    # game/gui7.rpy:436
+    # game/gui7.rpy:437
     old "creating a new project"
     new "reatingcay aay ewnay rojectpay"
 
-    # game/gui7.rpy:440
+    # game/gui7.rpy:441
     old "activating the new project"
     new "activatingay hetay ewnay rojectpay"
 
@@ -1273,7 +1273,7 @@ translate piglatin strings:
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
     new "Leasepay {a=https://itch.io/game/new}reatecay ouryay rojectpay{/a}, hentay adday aay inelay ikelay \n{vspace=5}efineday uildbay.itch_projectay = \"useray-amenay/amegay-amenay\"\n{vspace=5} otay optionsay.pyray."
 
-    # game/mobilebuild.rpy:114
+    # game/mobilebuild.rpy:116
     old "{a=%s}%s{/a}"
     new "{a=%s}%say{/a}"
 
@@ -1385,183 +1385,183 @@ translate piglatin strings:
     old "[project_dir!q] already exists. Please choose a different project name."
     new "[project_dir!q] alreadyay existsay. Leasepay oosechay aay ifferentday rojectpay amenay."
 
-    # game/preferences.rpy:95
+    # game/preferences.rpy:96
     old "General"
     new "Eneralgay"
 
-    # game/preferences.rpy:95
+    # game/preferences.rpy:96
     old "Options"
     new "Ptionsoay"
 
-    # game/preferences.rpy:95
+    # game/preferences.rpy:96
     old "Lint"
     new "Intlay"
 
-    # game/preferences.rpy:117
+    # game/preferences.rpy:118
     old "Launcher Preferences"
     new "Auncherlay Referencespay"
 
-    # game/preferences.rpy:154
+    # game/preferences.rpy:155
     old "Projects Directory:"
     new "Rojectspay Irectoryday:"
 
-    # game/preferences.rpy:161
+    # game/preferences.rpy:162
     old "[persistent.projects_directory!q]"
     new "[persistent.projects_directory!q]"
 
-    # game/preferences.rpy:163
+    # game/preferences.rpy:164
     old "Projects directory: [text]"
     new "Rojectspay irectoryday: [text]"
 
-    # game/preferences.rpy:165
+    # game/preferences.rpy:166
     old "Not Set"
     new "Otnay Etsay"
 
-    # game/preferences.rpy:178
+    # game/preferences.rpy:179
     old "Text Editor:"
     new "Exttay Ditoreay:"
 
-    # game/preferences.rpy:183
+    # game/preferences.rpy:184
     old "Text editor: [text]"
     new "Exttay editoray: [text]"
 
-    # game/preferences.rpy:193
+    # game/preferences.rpy:194
     old "Language:"
     new "Anguagelay:"
 
-    # game/preferences.rpy:221
+    # game/preferences.rpy:222
     old "Navigation Options:"
     new "Avigationnay Ptionsoay:"
 
-    # game/preferences.rpy:225
+    # game/preferences.rpy:226
     old "Include private names"
     new "Ncludeiay rivatepay amesnay"
 
-    # game/preferences.rpy:226
+    # game/preferences.rpy:227
     old "Include library names"
     new "Ncludeiay ibrarylay amesnay"
 
-    # game/preferences.rpy:235
+    # game/preferences.rpy:236
     old "Game Options:"
     new "Amegay Ptionsoay:"
 
-    # game/preferences.rpy:240
+    # game/preferences.rpy:241
     old "Console output"
     new "Onsolecay outputay"
 
-    # game/preferences.rpy:242
+    # game/preferences.rpy:243
     old "Skip splashscreen"
     new "Kipsay plashscreensay"
 
-    # game/preferences.rpy:251
+    # game/preferences.rpy:252
     old "Launcher Options:"
     new "Auncherlay Ptionsoay:"
 
-    # game/preferences.rpy:255
+    # game/preferences.rpy:256
     old "Show edit file section"
     new "Howsay editay ilefay ectionsay"
 
-    # game/preferences.rpy:256
+    # game/preferences.rpy:257
     old "Show tutorial projects"
     new "Howsay utorialtay rojectspay"
 
-    # game/preferences.rpy:257
+    # game/preferences.rpy:258
     old "Large fonts"
     new "Argelay ontsfay"
 
-    # game/preferences.rpy:260
+    # game/preferences.rpy:261
     old "Prefer the web documentation"
     new "Referpay hetay ebway ocumentationday"
 
-    # game/preferences.rpy:262
+    # game/preferences.rpy:263
     old "Sponsor message"
     new "Ponsorsay essagemay"
 
-    # game/preferences.rpy:264
+    # game/preferences.rpy:265
     old "Restore window position"
     new "Estoreray indowway ositionpay"
 
-    # game/preferences.rpy:267
+    # game/preferences.rpy:268
     old "Daily check for update"
     new "Ailyday eckchay orfay updateay"
 
-    # game/preferences.rpy:268
+    # game/preferences.rpy:269
     old "Prefer RPU updates"
     new "Referpay Puray updatesay"
 
-    # game/preferences.rpy:285
+    # game/preferences.rpy:286
     old "Launcher Theme:"
     new "Auncherlay Hemetay:"
 
-    # game/preferences.rpy:289
+    # game/preferences.rpy:290
     old "Default theme"
     new "Efaultday hemetay"
 
-    # game/preferences.rpy:290
+    # game/preferences.rpy:291
     old "Dark theme"
     new "Arkday hemetay"
 
-    # game/preferences.rpy:291
+    # game/preferences.rpy:292
     old "Custom theme"
     new "Ustomcay hemetay"
 
-    # game/preferences.rpy:297
+    # game/preferences.rpy:298
     old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
     new "Nformationiay aboutay reatingcay aay ustomcay hemetay ancay ebay oundfay {a=[skins_url]}inay hetay Enray'Ypay Ocumentationday{/a}."
 
-    # game/preferences.rpy:314
+    # game/preferences.rpy:315
     old "Install Libraries:"
     new "Nstalliay Ibrarieslay:"
 
-    # game/preferences.rpy:339
+    # game/preferences.rpy:340
     old "Open launcher project"
     new "Penoay auncherlay rojectpay"
 
-    # game/preferences.rpy:340
+    # game/preferences.rpy:341
     old "Open projects.txt"
     new "Penoay rojectspay.xttay"
 
-    # game/preferences.rpy:348
+    # game/preferences.rpy:349
     old "Reset window size"
     new "Esetray indowway izesay"
 
-    # game/preferences.rpy:349
+    # game/preferences.rpy:350
     old "Clean temporary files"
     new "Leancay emporarytay ilesfay"
 
-    # game/preferences.rpy:366
+    # game/preferences.rpy:367
     old "Lint toggles:"
     new "Intlay ogglestay:"
 
-    # game/preferences.rpy:370
+    # game/preferences.rpy:371
     old "Check for orphan/obsolete translations"
     new "Heckcay orfay orphanay/obsoleteay anslationstray"
 
-    # game/preferences.rpy:373
+    # game/preferences.rpy:374
     old "Check parameters shadowing reserved names"
     new "Heckcay arameterspay adowingshay eservedray amesnay"
 
-    # game/preferences.rpy:376
+    # game/preferences.rpy:377
     old "Print block, word, and character counts by speaking character."
     new "Rintpay ockblay, ordway, anday aracterchay ountscay ybay peakingsay aracterchay."
 
-    # game/preferences.rpy:379
+    # game/preferences.rpy:380
     old "Unclosed text tags"
     new "Ncloseduay exttay agstay"
 
-    # game/preferences.rpy:382
+    # game/preferences.rpy:383
     old "Show all unreachable blocks and orphaned translations."
     new "Howsay allay unreachableay ocksblay anday orphaneday anslationstray."
 
-    # game/preferences.rpy:391
+    # game/preferences.rpy:392
     old "Cleaning temporary files..."
     new "Leaningcay emporarytay ilesfay..."
 
-    # game/preferences.rpy:421
+    # game/preferences.rpy:422
     old "{#in language font}Welcome! Please choose a language"
     new "{#in language font}Elcomeway! Leasepay oosechay aay anguagelay"
 
-    # game/preferences.rpy:456
+    # game/preferences.rpy:457
     old "{#in language font}Start using Ren'Py in [lang_name]"
     new "{#in language font}Tartsay usingay Enray'Ypay inay [lang_name]"
 
@@ -1585,43 +1585,43 @@ translate piglatin strings:
     old "Lint checks your game for potential mistakes, and gives you statistics."
     new "Intlay eckschay ouryay amegay orfay otentialpay istakesmay, anday ivesgay ouyay atisticsstay."
 
-    # game/project.rpy:357
+    # game/project.rpy:347
     old "Launching the project failed."
     new "Aunchinglay hetay rojectpay ailedfay."
 
-    # game/project.rpy:357
+    # game/project.rpy:347
     old "This may be because the project is not writeable."
     new "Histay aymay ebay ecausebay hetay rojectpay isay otnay riteableway."
 
-    # game/project.rpy:359
+    # game/project.rpy:349
     old "Please ensure that your project launches normally before running this command."
     new "Leasepay ensureay hattay ouryay rojectpay auncheslay ormallynay eforebay unningray histay ommandcay."
 
-    # game/project.rpy:433
+    # game/project.rpy:423
     old "Ren'Py is scanning the project..."
     new "Enray'Ypay isay canningsay hetay rojectpay..."
 
-    # game/project.rpy:1014
+    # game/project.rpy:1011
     old "Splashscreen skipped in launcher preferences."
     new "Plashscreensay kippedsay inay auncherlay referencespay."
 
-    # game/project.rpy:1018
+    # game/project.rpy:1015
     old "Launching"
     new "Aunchinglay"
 
-    # game/project.rpy:1076
+    # game/project.rpy:1070
     old "PROJECTS DIRECTORY"
     new "Rojectspay Irectoryday"
 
-    # game/project.rpy:1076
+    # game/project.rpy:1070
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Leasepay oosechay hetay rojectspay irectoryday usingay hetay irectoryday ooserchay.\n{b}Hetay irectoryday ooserchay aymay avehay openeday ehindbay histay indowway.{/b}"
 
-    # game/project.rpy:1076
+    # game/project.rpy:1070
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Histay auncherlay illway cansay orfay rojectspay inay histay irectoryday, illway reatecay ewnay rojectspay inay histay irectoryday, anday illway aceplay uiltbay rojectspay intoay histay irectoryday."
 
-    # game/project.rpy:1081
+    # game/project.rpy:1075
     old "Ren'Py has set the projects directory to:"
     new "Enray'Ypay ashay etsay hetay rojectspay irectoryday otay:"
 
@@ -1893,39 +1893,83 @@ translate piglatin strings:
     old "downloading the list of update channels"
     new "ownloadingday hetay istlay ofay updateay annelschay"
 
-    # game/web.rpy:427
+    # game/wavedash.rpy:81
+    old "Downloading the Wavedash CLI."
+    new "Ownloadingday hetay Avedashway Licay."
+
+    # game/wavedash.rpy:210
+    old "The Wavedash game ID has not been set."
+    new "Hetay Avedashway amegay Diay ashay otnay eenbay etsay."
+
+    # game/wavedash.rpy:210
+    old "Create a game at {a=https://wavedash.com/dev-portal}wavedash.com/dev-portal{/a}, then add a line like \n{vspace=5}define build.wavedash_id = \"YOUR_GAME_ID_HERE\"\n{vspace=5} to options.rpy."
+    new "Reatecay aay amegay atay {a=https://wavedash.com/dev-portal}avedashway.omcay/evday-ortalpay{/a}, hentay adday aay inelay ikelay \n{vspace=5}efineday uildbay.avedash_idway = \"Our_game_id_hereyay\"\n{vspace=5} otay optionsay.pyray."
+
+    # game/wavedash.rpy:222
+    old "The web distribution could not be found. Would you like to build it now and upload it to Wavedash?"
+    new "Hetay ebway istributionday ouldcay otnay ebay oundfay. Ouldway ouyay ikelay otay uildbay itay ownay anday uploaday itay otay Avedashway?"
+
+    # game/wavedash.rpy:230
+    old "The Wavedash configuration in the web distribution could not be read."
+    new "Hetay Avedashway onfigurationcay inay hetay ebway istributionday ouldcay otnay ebay eadray."
+
+    # game/wavedash.rpy:230
+    old "Please choose 'Web', 'Build Web Application' and try again."
+    new "Leasepay oosechay 'Ebway', 'Uildbay Ebway Pplicationaay' anday ytray againay."
+
+    # game/wavedash.rpy:237
+    old "The Wavedash game ID changed after the web distribution was built. Would you like to rebuild it now and upload it to Wavedash?"
+    new "Hetay Avedashway amegay Diay angedchay afteray hetay ebway istributionday asway uiltbay. Ouldway ouyay ikelay otay ebuildray itay ownay anday uploaday itay otay Avedashway?"
+
+    # game/wavedash.rpy:244
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    new "Eforebay ackagingpay ebway appsay, ouyay'llay eednay otay ownloadday Enpywebray, Enray'Ypay'say ebway upportsay. Ouldway ouyay ikelay otay ownloadday Enpywebray ownay?"
+
+    # game/wavedash.rpy:253
+    old "RenPyWeb could not be installed."
+    new "Enpywebray ouldcay otnay ebay installeday."
+
+    # game/wavedash.rpy:270
+    old "The web distribution was built for a different Wavedash game."
+    new "Hetay ebway istributionday asway uiltbay orfay aay ifferentday Avedashway amegay."
+
+    # game/wavedash.rpy:278
+    old "The Wavedash CLI is not available for this platform."
+    new "Hetay Avedashway Licay isay otnay availableay orfay histay atformplay."
+
+    # game/web.rpy:460
     old "Preparing progressive download"
     new "Reparingpay rogressivepay ownloadday"
 
-    # game/web.rpy:479
+    # game/web.rpy:513
     old "Creating package..."
     new "Reatingcay ackagepay..."
 
-    # game/web.rpy:502
+    # game/web.rpy:536
     old "Web: [project.current.display_name!q]"
     new "Ebway: [project.current.display_name!q]"
 
-    # game/web.rpy:532
+    # game/web.rpy:566
     old "Build Web Application"
     new "Uildbay Ebway Pplicationaay"
 
-    # game/web.rpy:533
+    # game/web.rpy:567
     old "Build and Open in Browser"
     new "Uildbay anday Penoay inay Rowserbay"
 
-    # game/web.rpy:534
+    # game/web.rpy:568
     old "Open in Browser"
     new "Penoay inay Rowserbay"
 
-    # game/web.rpy:535
+    # game/web.rpy:569
     old "Open build directory"
     new "Penoay uildbay irectoryday"
 
-    # game/web.rpy:557
+    # game/web.rpy:570
+    old "Upload to wavedash.com"
+    new "Ploaduay otay avedashway.omcay"
+
+    # game/web.rpy:592
     old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
     new "Magesiay anday usicmay ancay ebay ownloadedday hileway ayingplay. Aay 'rogressive_downloadpay.xttay' ilefay illway ebay reatedcay osay ouyay ancay onfigurecay histay ehaviorbay."
-
-    # game/web.rpy:565
-    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
-    new "Eforebay ackagingpay ebway appsay, ouyay'llay eednay otay ownloadday Enpywebray, Enray'Ypay'say ebway upportsay. Ouldway ouyay ikelay otay ownloadday Enpywebray ownay?"
 

@@ -19,6 +19,7 @@
 
 from .sdl cimport *
 from .display cimport main_window
+from .error import error
 from .surface cimport Surface
 
 def init():
@@ -55,13 +56,16 @@ def set_pos(pos):
     SDL_WarpMouseInWindow(NULL, x, y)
 
 def set_visible(visible):
+    if main_window is None:
+        raise error("No window has been created.")
+
     if visible:
         SDL_ShowCursor()
     else:
         SDL_HideCursor()
 
     if SDL_GetWindowMouseGrab(main_window.window) :
-        SDL_SetWindowRelativeMouseMode(main_window.window, visible)
+        SDL_SetWindowRelativeMouseMode(main_window.window, not visible)
 
 def get_focused():
     return SDL_GetMouseFocus() != NULL

@@ -22,6 +22,10 @@
 
 # Allow pickling NoneType.
 import builtins
+import functools
+import inspect
+from collections.abc import Callable
+from typing import Any
 
 builtins.NoneType = type(None)  # type: ignore
 
@@ -123,3 +127,45 @@ class Sentinel:
 
     def __repr__(self):
         return f"renpy.object.Sentinel({self.name!r})"
+
+
+@functools.lru_cache(maxsize=50)
+def _takes_keyword(f: Callable[..., Any], name: str) -> bool:
+    """
+    The cached implementation of takes_keyword. The callable must be hashable.
+    """
+
+    try:
+        parameters = inspect.signature(f).parameters
+    except (TypeError, ValueError):
+        return False
+
+    parameter = parameters.get(name)
+
+    if parameter is not None and parameter.kind in (
+        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+        inspect.Parameter.KEYWORD_ONLY,
+    ):
+        return True
+
+    return any(p.kind is inspect.Parameter.VAR_KEYWORD for p in parameters.values())
+
+
+def takes_keyword(f: Callable[..., Any], name: str) -> bool:
+    """
+    Returns True if `f` can be called with the keyword argument `name`, because it has a parameter with that
+    name that is not positional-only, or because it accepts ``**kwargs``.
+
+    This is meant for deciding whether to pass an optional keyword argument to a callable that may predate it,
+    such as a function a game assigns to a config variable. If the signature of `f` can't be determined (as
+    with some callables implemented in C), this returns False, so only the oldest calling convention is used.
+
+    Results are cached for the 50 most recently used callables, so `f` should be a long-lived object. An
+    unhashable `f` is supported, but is not cached.
+    """
+
+    try:
+        return _takes_keyword(f, name)
+    except TypeError:
+        # f is not hashable.
+        return _takes_keyword.__wrapped__(f, name)

@@ -413,8 +413,15 @@ class TextSegment(object):
         Draws the glyphs to surf.
         """
 
-        if di.override_color:
-            color = self.outline_color or di.override_color
+        if (color := di.override_color) is not None:
+            # Let "outlinecolor" text tag override the outline color.
+            if (outline_color := self.outline_color) is not None:
+                color = outline_color
+
+            # "alpha" text tag should affect the outline color as well.
+            if (alpha := self.color.alpha) != 1.0:
+                color = renpy.color.Color(color)
+                color = color.replace_opacity(color.alpha * alpha)
             black_color = None
         else:
             color = self.color
@@ -1312,6 +1319,8 @@ class Layout(object):
         done = False
 
         for type, text in tokens:
+            tss_depth = len(tss)
+
             try:
                 if type == PARAGRAPH:
                     # Note that this code is duplicated for the p tag, and for
@@ -1626,9 +1635,24 @@ class Layout(object):
                     else:
                         raise Exception("Unknown text tag %r" % text)
 
+            except renpy.game.CONTROL_EXCEPTIONS:
+                raise
+
             except Exception:
                 if done:
                     break
+
+                if type == TAG and (renpy.config.safe_text or self.safe):
+                    # A tag that can't be processed, like size with a non-numeric value, is shown as text. Remove
+                    # any segment the tag pushed before it failed, and push a neutral one in its place if the tag
+                    # takes a close tag, so the close tag doesn't close an enclosing segment.
+                    del tss[tss_depth:]
+
+                    if renpy.text.extras.text_tags.get(text.partition("=")[0], False):
+                        push()
+
+                    line.extend(self.create_text_segments(text, tss[-1], style))
+                    continue
 
                 renpy.game.exception_info = "While processing text tag {{{!s}}} in {!r}.:".format(
                     text, text_displayable.get_all_text()
@@ -2156,12 +2180,21 @@ class Text(renpy.display.displayable.Displayable):
     _duplicatable = False
     locked = False
 
+    displayable_copies: "dict[int, tuple[renpy.display.core.Displayable, renpy.display.core.Displayable]] | None" = None
+    """
+    Maps the id of each duplicatable displayable embedded in the text to a
+    tuple of that displayable and the copy this Text shows in its place.
+    The copies are kept between updates, so retokenizing doesn't restart
+    their animations.
+    """
+
     language = None
     mask = None
     last_ctc = None
     tokenized = False
     slow_done_time = None
     safe = False
+    afm_start = None
 
     def after_upgrade(self, version):
         if version < 3:
@@ -2260,10 +2293,18 @@ class Text(renpy.display.displayable.Displayable):
             self.start = replaces.start
             self.end = replaces.end
 
+            # Keep the replaced text's copies, so embedded animations continue.
+            self.displayable_copies = replaces.displayable_copies
+
         # The list of displayables we use.
         self.displayables = None
 
         self._duplicatable = self.slow
+
+        if not self.tokenized:
+            for i in self.text:  # type: ignore
+                if isinstance(i, renpy.display.displayable.Displayable) and i._duplicatable:
+                    self._duplicatable = True
 
         # The list of displayables and their offsets.
         self.displayable_offsets = []
@@ -2275,6 +2316,11 @@ class Text(renpy.display.displayable.Displayable):
         if self._duplicatable:
             rv = self._copy(args)
             rv._unique()
+
+            # Make sure the copy doesn't share copies of embedded displayables.
+            if rv.displayable_copies:
+                rv.displayable_copies = None
+                rv.dirty = True
 
             return rv
 
@@ -2422,16 +2468,13 @@ class Text(renpy.display.displayable.Displayable):
                 mid_string = text[0][self.start : self.end]
                 end_string = text[0][self.end :]
 
-                if start_string:
-                    start_string = start_string + "{_start}"
-
-                if end_string:
-                    end_string = "{_end}" + end_string
-
                 text_split = []
 
+                # The markers are separate strings from the text around them. If that text is malformed and falls
+                # back to literal text in safe mode, the marker still has to be tokenized as a tag.
                 if start_string:
                     text_split.append(start_string)
+                    text_split.append("{_start}")
 
                 text_split.append(mid_string)
 
@@ -2442,6 +2485,7 @@ class Text(renpy.display.displayable.Displayable):
                         text_split.append(self.ctc)
 
                 if end_string:
+                    text_split.append("{_end}")
                     text_split.append(end_string)
 
                 text_split.extend(text[1:])
@@ -2658,7 +2702,12 @@ class Text(renpy.display.displayable.Displayable):
             finally:
                 self.slow_done = None
 
-        if self.slow and renpy.display.behavior.map_event(ev, "dismiss") and self.style.slow_abortable:
+        if (
+            self.slow
+            and renpy.display.behavior.map_event(ev, "dismiss")
+            and self.style.slow_abortable
+            and renpy.display.focus.get_grab() is None
+        ):
             for i in slow_text:
                 if i.slow:
                     i.slow = False
@@ -2989,9 +3038,11 @@ class Text(renpy.display.displayable.Displayable):
 
                 else:
                     raise Exception("Can't display {0!r} as Text.".format(i))
-            except Exception as e:
+            except Exception:
                 if renpy.config.safe_text or self.safe:
-                    tokens.append((TEXT, i))
+                    tokens.append((TEXT, str(i)))
+                else:
+                    raise
 
         return tokens
 
@@ -3084,10 +3135,35 @@ class Text(renpy.display.displayable.Displayable):
         displayables = set()
         new_tokens = []
 
+        # The click-to-continue indicators are duplicated by the Character,
+        # so they're shown as-is.
+        ctc_ids = set()
+
+        for ctc in (self.ctc, self.last_ctc):
+            if isinstance(ctc, list):
+                ctc_ids.update(id(i) for i in ctc)
+            elif ctc is not None:
+                ctc_ids.add(id(ctc))
+
+        old_copies = self.displayable_copies or {}
+        copies = {}
+
         for t in tokens:
             kind, text = t
 
             if kind == DISPLAYABLE:
+                if text._duplicatable and (id(text) not in ctc_ids):
+                    entry = old_copies.get(id(text), None)
+
+                    if (entry is None) or (entry[0] is not text):
+                        duplicate = text._duplicate(None)
+                        duplicate._unique()
+                        entry = (text, duplicate)
+
+                    copies[id(text)] = entry
+                    text = entry[1]
+                    t = (DISPLAYABLE, text)
+
                 displayables.add(text)
                 new_tokens.append(t)
                 continue
@@ -3103,6 +3179,8 @@ class Text(renpy.display.displayable.Displayable):
                     continue
 
             new_tokens.append(t)
+
+        self.displayable_copies = copies or None
 
         return new_tokens, displayables
 

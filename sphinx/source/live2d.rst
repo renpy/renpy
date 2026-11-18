@@ -3,6 +3,8 @@
 Live2D Cubism
 =============
 
+.. include:: third-party
+
 `Live2D Cubism <https://www.live2d.com/en/>`_ is a system that allows you
 to animate 2D images, such as the character sprites in a visual novel. These
 images are drawn in a series of layers - for example, a layer for pupils and
@@ -24,6 +26,12 @@ Ren'Py back a list of meshes to show. Ren'Py then renders these meshes, and the 
 Ren'Py supports Live2D animations in the Cubism 3, 4 and 5 formats.
 It supports the playback of expressions and motions.
 
+Ren'Py also supports the blend modes and offscreen drawing introduced in
+Cubism 5.3. These require the Cubism Core from Cubism SDK for Native 5-r.5
+or later. With an older Core, models that use these features are drawn
+without them. Models that use blend modes or offscreens take longer to
+render, as each use requires drawing part of the model to a texture.
+
 .. warning::
 
     Installing Live2D on iOS requires copying the static libraries into your
@@ -40,7 +48,7 @@ business makes more than a certain amount of money a year.
 
 Once you've downloaded Live2D, you can install it from the Ren'Py launcher. To
 install, go to "preferences", then click "Install libraries". Place the
-:file:`CubismSdkForNative-5-r.1.zip` file in the Ren'Py SDK directory, which can
+:file:`CubismSdkForNative-5-r.5.zip` file in the Ren'Py SDK directory, which can
 be accessed using the button in the bottom right of the install libraries
 screen. Then click "Install Live2D Cubism SDK for Native". After a short
 amount of time, Live2D will be installed.
@@ -50,7 +58,7 @@ Defining Animations
 
 Live2D animations are defined using the Live2D displayable and the image statement:
 
-.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, aliases=None, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, update_function=None, default_fade=1.0, old_beziers=None, deduplication_key=None, **properties)
+.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, aliases=None, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, update_function=None, default_fade=1.0, old_beziers=None, deduplication_key=None, pose=None, **properties)
 
     This displayable displays a Live2D animation.
 
@@ -75,6 +83,9 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         The bottom of the image, for sizing purposes. This is a fraction of
         the image, with 0.0 being the top and 1.0 being the bottom. This
         also becomes the default value of yanchor.
+
+        Parts of the model above `top` or below `base` are cropped off by
+        transform properties like :tpref:`blur`. See :ref:`live2d-sizing`.
 
     `height`
         The height that the image is scaled to. This is a fraction of the
@@ -145,6 +156,10 @@ Live2D animations are defined using the Live2D displayable and the image stateme
     `deduplication_key`
         If not None, this is a key used to deduplicate Live2D displayables that reference the same `filename` but have different `aliases`, `nonexclusive`, `seamless`, `default_fade`, `attribute_function`, `attribute_filter` and/or `update_function`.
 
+    `pose`
+        If True, the model's pose file is used. If False, the pose file is ignored. If None, the value of
+        :var:`config.live2d_pose` is used. See :ref:`live2d-poses`.
+
     The difference between `attribute_function` and `attribute_filter` is
     that the former is generally used to compute replacement - the presence
     of two attributes means one should be replaced by a third. The latter
@@ -197,6 +212,16 @@ Live2D animations are defined using the Live2D displayable and the image stateme
 
     If True, live2d will by default use the old Bezier curve behavior, which usees easing. If False, the Cardano interpretation
     of beziers is used.
+
+.. var:: config.live2d_pose = True
+
+    If True, Live2D displayables use the pose file of their model, unless the `pose` argument to :func:`Live2D` says
+    otherwise. If False, pose files are ignored by default. See :ref:`live2d-poses`.
+
+.. var:: config.live2d_mask_clipping = True
+
+    If True, the textures Live2D uses for clipping masks are cropped to the bounds of the mask's geometry, which uses
+    less memory. If False, each mask texture covers the model's whole canvas.
 
 There is a config variable that can help in debugging what motions and
 expressions were loaded from .model3.json files:
@@ -264,6 +289,8 @@ Nonexclusive expressions persist until removed with attribute negation::
 
     show hiyori -wave
 
+.. _live2d-sizing:
+
 Scaling
 -------
 
@@ -291,6 +318,17 @@ up with the bottom of the screen. Then:
 * If the image is too small, increase `top` to reduce the amount of blank
   space above the animation.
 
+When `top` or `base` cut off part of the model, the size of the displayable
+only covers the area between them, and the rest of the model is drawn outside
+of that area. Transform properties that render the displayable to a texture
+first, such as :tpref:`blur`, :tpref:`mesh`, and :tpref:`shader`, only
+include the area between `top` and `base`, so the parts of the model above
+`top` or below `base` will be cropped off. If you want to use these
+properties, use `zoom` to scale the model instead, or use :tpref:`mesh_pad`
+to add room for the parts outside the displayable. ::
+
+    image hiyori = Live2D("Resources/Hiyori", zoom=0.25)
+
 Motion Fading
 -------------
 
@@ -312,6 +350,30 @@ motion fading is controlled by the ``_live2d_fade`` variable:
 
     If true, Live2D animations use motion fading. If False, animations
     are transitioned abruptly.
+
+.. _live2d-poses:
+
+Poses
+-----
+
+A Live2D model can have a pose file, named by the ``Pose`` entry of its .model3.json file. A pose file divides parts
+of the model into groups of alternatives, such as two versions of an arm, so that only one part of each group is
+visible at a time.
+
+Ren'Py starts with the first part of each group visible. A motion or expression can select a different part by setting
+the opacity of the parts in the group. A motion can use part opacity curves or parameter curves with the same ids as
+the parts, while an expression uses a parameter with the same id as the part. The first part in the group that has a
+non-zero value is selected, and a part that's already selected keeps its value until it's changed, so selecting a later
+part requires setting the opacity of the current part to 0.
+
+When the selected part changes, the parts crossfade over the time given by the pose file, which defaults to 0.5
+seconds. The part remains selected after the motion or expression ends, until another motion or expression changes it,
+including if the image is hidden and shown again.
+
+Which part is selected isn't saved, and isn't changed by rollback. After a game is loaded, each group begins with its
+first part visible.
+
+An `update_function` runs after the pose is applied, so its ``blend_opacity`` method can be used to change the result.
 
 Aliasing
 --------

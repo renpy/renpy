@@ -287,9 +287,10 @@ init -1100 python in _sync:
 
         renpy.show_screen("sync_progress")
 
-        error = upload_content(contents, url)
-
-        renpy.hide_screen("sync_progress")
+        try:
+            error = upload_content(contents, url)
+        finally:
+            renpy.hide_screen("sync_progress")
 
         if error:
             report_error(error)
@@ -336,9 +337,10 @@ init -1100 python in _sync:
 
         renpy.show_screen("sync_progress")
 
-        error, content = download_content(url)
-
-        renpy.hide_screen("sync_progress")
+        try:
+            error, content = download_content(url)
+        finally:
+            renpy.hide_screen("sync_progress")
 
         if error:
             report_error(content)
@@ -578,5 +580,6 @@ init -1100:
                 bar value FetchProgressValue() xsize 0.5 xalign 0.5
 
 
-        ## Right-click and escape answer "no".
-        key "game_menu" action Return(False)
+        ## Block right-click and escape, so the game menu can't be opened or
+        ## closed while the sync is in progress.
+        key "game_menu" action NullAction()

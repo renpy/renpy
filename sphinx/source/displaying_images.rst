@@ -127,7 +127,8 @@ When an image filename is given, and the image is not found, the images director
 is searched.
 
 The images directory can be customized with :var:`config.image_directories` and
-:var:`config.image_extensions`.
+:var:`config.image_extensions`. The directories in :var:`config.image_directories` are
+also searched when an image filename is given.
 
 .. _oversampling:
 

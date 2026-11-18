@@ -388,6 +388,9 @@ init -1500 python:
 
         def do_display(self, who, what, multiple=None, retain=None, **display_args):
 
+            if renpy.is_warping():
+                return
+
             renpy.translation.check_language()
 
             page = self.clear or nvl_clear_next()
@@ -452,7 +455,8 @@ init -1500 python:
             self.add_history("nvl", who, what)
 
         def do_extend(self):
-            renpy.mode(self.mode)
+            if not renpy.is_warping():
+                renpy.mode(self.mode)
             store.nvl_list = store.nvl_list[:-1]
 
             self.pop_history()
@@ -638,5 +642,6 @@ python early hide:
     renpy.statements.register('nvl clear',
                               parse=parse_nvl_clear,
                               execute=execute_nvl_clear,
+                              warp=lambda parse: True,
                               scry=scry_nvl_clear,
                               translatable=True)

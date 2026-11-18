@@ -17,6 +17,7 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
+from cpython.buffer cimport PyBuffer_FillInfo
 from libc.string cimport memmove
 from .sdl cimport *
 
@@ -28,7 +29,6 @@ from .error import error
 # from pygame.locals import SRCALPHA
 
 import atexit
-import warnings
 
 cdef extern from "pygame/surface_deallocation.h":
     enum:
@@ -118,24 +118,13 @@ cdef class Surface:
     def __dealloc__(self):
         global total_size
 
-        if self.sdl_surface and self.owns_surface:
-            if total_size:
+        if self.sdl_surface and not self.window_surface:
+            if self.owns_surface and total_size:
                 total_size -= self.sdl_surface.pitch * self.sdl_surface.h
 
             renpy_surface_deallocation_enqueue(self.deallocation, self.sdl_surface)
-            return
-        elif self.window_surface:
+        else:
             renpy_surface_deallocation_discard(self.deallocation)
-            return
-        elif self.parent:
-            renpy_surface_deallocation_enqueue(self.deallocation, self.sdl_surface)
-            return
-
-        renpy_surface_deallocation_discard(self.deallocation)
-        if self.sdl_surface == NULL:
-            return
-
-        warnings.warn("Memory leak via Surface in renpy.pygame.")
 
     def __sizeof__(self):
         if self.sdl_surface and self.owns_surface:
@@ -165,7 +154,6 @@ cdef class Surface:
         assert h >= 0
 
         cdef int depth_int
-
 
         cdef SDL_Surface *surface
 
@@ -980,9 +968,27 @@ cdef class Surface:
     def get_view(self, kind='2'):
         raise error("Surface.get_view is not supported.")
 
+    def __getbuffer__(self, Py_buffer *buffer, int flags):
+        cdef void *pixels = NULL
+        cdef Py_ssize_t size = 0
+
+        if self.sdl_surface != NULL and self.sdl_surface.w > 0 and self.sdl_surface.h > 0:
+            pixels = self.sdl_surface.pixels
+
+            # The last row isn't padded to the pitch, as the last row of a subsurface
+            # can end where its parent's pixels do.
+            size = (<Py_ssize_t> self.sdl_surface.h - 1) * self.sdl_surface.pitch
+            size += <Py_ssize_t> self.sdl_surface.w * self.get_bytesize()
+
+        PyBuffer_FillInfo(buffer, self, pixels, size, False, flags)
+
     def get_buffer(self):
-        cdef Uint8 *pixels = <Uint8 *> self.sdl_surface.pixels
-        return pixels[self.sdl_surface.h * self.sdl_surface.pitch]
+        """
+        Returns a writable memoryview of the surface's pixels, with rows `get_pitch()` bytes
+        apart. Changes to the view change the surface, and the view keeps the surface alive.
+        """
+
+        return memoryview(self)
 
     @property
     def _pixels_address(self):

@@ -34,6 +34,9 @@ cdef class Polygon:
             The number of points to allocate room for.
         """
 
+        if allocate_points < 0:
+            raise ValueError("allocate_points must not be negative")
+
         self.points = 0
         self.point = <Point2 *> calloc(allocate_points, sizeof(Point2))
 

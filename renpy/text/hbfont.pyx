@@ -23,11 +23,11 @@ from __future__ import print_function
 
 from renpy.pygame.sdl cimport *
 from renpy.pygame.surface cimport Surface
+from renpy.pygame.iostream cimport open_io
 
 from freetype cimport *
 from ttgsubtable cimport *
 from renpy.text.textsupport cimport Glyph, SPLIT_INSTEAD
-import traceback
 import sys
 
 import renpy.config
@@ -259,43 +259,38 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
     """
 
     cdef HBFace face
-    cdef char *cbuf
-    cdef unsigned long i
+    cdef unsigned long total
+    cdef size_t read
 
     face = <HBFace> stream.descriptor.pointer
-    f = face.f
 
     if face.offset != offset:
 
-        try:
-            f.seek(offset)
-            face.offset = offset
-        except Exception:
-            traceback.print_exc()
-            return -1
+        if SDL_SeekIO(face.rw, offset, SDL_IO_SEEK_SET) < 0:
+            # A failed seek-only call returns non-zero, a failed read returns 0 bytes.
+            return 1 if count == 0 else 0
 
-    if count != 0:
-        try:
-            buf = f.read(count)
-            cbuf = buf
-            count = len(buf)
+        face.offset = offset
 
-            for i in range(count):
-                buffer[i] = cbuf[i]
-        except Exception:
-            traceback.print_exc()
-            return -1
+    total = 0
 
-    face.offset += count
+    while total < count:
+        read = SDL_ReadIO(face.rw, buffer + total, count - total)
 
-    return count
+        if read == 0:
+            break
+
+        total += read
+
+    face.offset += total
+
+    return total
 
 cdef void close_func(FT_Stream stream) noexcept:
     """
     Close the stream.
 
-    Currently does nothing, closing is taken care of at the Font
-    object level.
+    Does nothing, as HBFace owns the stream and closes it in __dealloc__.
     """
 
     return
@@ -401,8 +396,13 @@ cdef class HBFace:
 
         float size
 
-        # The file the font is read from.
-        object f
+        # The stream the font is read from, used by io_func. HBFace owns it, and closes it once the
+        # face is done (or, for fonts loaded into memory, once they are read).
+        SDL_IOStream *rw
+
+        # If the font was loaded into memory, the buffer holding it. Freed after the face
+        # is done. When this is set, rw has been closed and is NULL.
+        unsigned char *memory
 
         # The offset in that file.
         unsigned long offset
@@ -426,10 +426,20 @@ cdef class HBFace:
 
         FT_Done_Face(self.face)
 
+        if self.memory:
+            PyMem_Free(self.memory)
+
+        if self.rw:
+            SDL_CloseIO(self.rw)
+            self.rw = NULL
+
     def __init__(self, f, index, fn):
 
         cdef int error
         cdef unsigned long size
+        cdef Sint64 sdl_size
+        cdef unsigned long total
+        cdef size_t read
         cdef hb_face_t *hb_face
 
         cdef char text[256]
@@ -438,24 +448,57 @@ cdef class HBFace:
         # The filename.
         self.fn = fn
 
-        # The file that the font is opened from.
-        self.f = f
+        # Take ownership of the stream, so closing a wrapper around f (such as an io.BufferedReader
+        # around the IOSubFile from an archive or apk) no longer closes the stream io_func reads.
+        self.rw = open_io(f, "rb", fn).take()
 
-        f.seek(0, 2)
-        size = f.tell()
-        f.seek(0, 0)
+        sdl_size = SDL_GetIOSize(self.rw)
+        if sdl_size < 0:
+            raise IOError("Could not get the size of {!r}: {}".format(fn, SDL_GetError().decode("utf-8", "replace")))
+
+        size = sdl_size
+
+        if SDL_SeekIO(self.rw, 0, SDL_IO_SEEK_SET) < 0:
+            raise IOError("Could not seek in {!r}: {}".format(fn, SDL_GetError().decode("utf-8", "replace")))
 
         # The offset within the stream we're currently at.
         self.offset = 0
 
-        self.open_args.flags = FT_OPEN_STREAM
-        self.open_args.stream = &self.stream
+        if size < renpy.config.font_memory_buffer_size:
 
-        self.stream.size = size
-        self.stream.pos = 0
-        self.stream.descriptor.pointer = <void *> self
-        self.stream.read = io_func
-        self.stream.close = close_func
+            # Small fonts are read into memory, so FreeType can access them directly.
+            self.memory = <unsigned char *> PyMem_Malloc(size if size else 1)
+            if not self.memory:
+                raise MemoryError()
+
+            total = 0
+
+            while total < size:
+                read = SDL_ReadIO(self.rw, self.memory + total, size - total)
+
+                if read == 0:
+                    raise IOError("Could not read {!r}: {}".format(fn, SDL_GetError().decode("utf-8", "replace")))
+
+                total += read
+
+            SDL_CloseIO(self.rw)
+            self.rw = NULL
+
+            self.open_args.flags = FT_OPEN_MEMORY
+            self.open_args.memory_base = self.memory
+            self.open_args.memory_size = size
+
+        else:
+
+            # Larger fonts are read through io_func.
+            self.open_args.flags = FT_OPEN_STREAM
+            self.open_args.stream = &self.stream
+
+            self.stream.size = size
+            self.stream.pos = 0
+            self.stream.descriptor.pointer = <void *> self
+            self.stream.read = io_func
+            self.stream.close = close_func
 
         error = FT_Open_Face(library, &self.open_args, index, &self.face)
         if error:
@@ -721,8 +764,6 @@ cdef class HBFont:
             self.has_setup = True
 
             self.hb_font = hb_ft_font_create(self.face_object.face, NULL)
-
-            hb_ft_font_set_funcs(self.hb_font)
 
             hb_font_set_scale(self.hb_font, <int> (self.size * 64), <int> (self.size * 64))
 

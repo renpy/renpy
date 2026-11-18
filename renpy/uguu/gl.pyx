@@ -153,6 +153,7 @@ cdef:
     glGetFramebufferAttachmentParameteriv_type glGetFramebufferAttachmentParameteriv
     glGetIntegeri_v_type glGetIntegeri_v
     glGetIntegerv_type glGetIntegerv
+    glGetProgramBinary_type glGetProgramBinary
     glGetProgramInfoLog_type glGetProgramInfoLog
     glGetProgramiv_type glGetProgramiv
     glGetQueryObjectuiv_type glGetQueryObjectuiv
@@ -190,6 +191,8 @@ cdef:
     glMapBufferRange_type glMapBufferRange
     glPixelStorei_type glPixelStorei
     glPolygonOffset_type glPolygonOffset
+    glProgramBinary_type glProgramBinary
+    glProgramParameteri_type glProgramParameteri
     glReadBuffer_type glReadBuffer
     glReadPixels_type glReadPixels
     glRenderbufferStorage_type glRenderbufferStorage
@@ -530,6 +533,9 @@ def load():
     global glGetIntegerv
     glGetIntegerv = <glGetIntegerv_type> find_gl_command([b'glGetIntegerv'])
 
+    global glGetProgramBinary
+    glGetProgramBinary = <glGetProgramBinary_type> find_gl_command([b'glGetProgramBinary', b'glGetProgramBinaryOES'])
+
     global glGetProgramInfoLog
     glGetProgramInfoLog = <glGetProgramInfoLog_type> find_gl_command([b'glGetProgramInfoLog'])
 
@@ -640,6 +646,12 @@ def load():
 
     global glPolygonOffset
     glPolygonOffset = <glPolygonOffset_type> find_gl_command([b'glPolygonOffset'])
+
+    global glProgramBinary
+    glProgramBinary = <glProgramBinary_type> find_gl_command([b'glProgramBinary', b'glProgramBinaryOES'])
+
+    global glProgramParameteri
+    glProgramParameteri = <glProgramParameteri_type> find_gl_command([b'glProgramParameteri', b'glProgramParameteriARB', b'glProgramParameteriEXT'])
 
     global glReadBuffer
     glReadBuffer = <glReadBuffer_type> find_gl_command([b'glReadBuffer'])

@@ -119,13 +119,44 @@ example::
 
 (Where `my_project` is the full path to the base directory of your project.)
 
-When warping is invoked, Ren'Py does a number of things. It first finds all of
-the scene statements in the program. It then tries to find a path from the
-scene statements to every reachable statement in the game. It then picks the
-reachable statement closest to, but before or at, the given line. It works
-backwards from that statement to a scene statement, recording the path it took.
-Ren'Py then executes the scene statement and any show or hide statements found
-along that path. Finally, it transfers control to the found statement.
+When warping is invoked, Ren'Py picks the statement closest to, but before or
+at, the given line, and works backwards to infer a path leading to it. Up to
+``config.warp_limit`` statements from the end of that path are considered.
+Ren'Py executes warp-compatible statements, such as scene, show, and hide,
+along the path. Finally, it transfers control to the target statement.
+
+Dialogue by ADV, NVL, and bubble characters is also replayed to reconstruct
+state, without waiting for input:
+
+* ADV dialogue adds completed lines to the history.
+* NVL dialogue adds completed lines to the history and NVL list. ``nvl clear``
+  and a character's ``clear=True`` setting clear the NVL list without clearing
+  history.
+* Bubble dialogue adds completed lines to the history, reconstructs retained
+  bubbles, and updates bubble layout properties. Bubbles are cleared according
+  to the bubble database and :var:`bubble.clear_retain_statements`, including
+  at skipped menus and ``call screen`` statements. Those statements are not
+  otherwise executed.
+
+History and NVL list length limits still apply. Reconstructed history entries
+do not represent rollback checkpoints. The target statement is not replayed:
+it executes normally after ``after_warp``.
+
+Characters support replay by default; ``Character(..., warp=False)`` disables
+it for a particular character. Other say callables are skipped unless their
+``warp`` attribute is True. An opted-in callable is called normally and can
+use :func:`renpy.is_warping` to avoid interactions and other side effects.
+Built-in characters suppress interaction callbacks, voice hooks, and say
+transitions during replay, but text filters, substitutions, dynamic names,
+history callbacks, and character preparation/completion hooks still run.
+Opting in does not make arbitrary application code safe to replay.
+
+If a replayed say statement raises an ordinary exception, Ren'Py logs it,
+ignores that statement, and continues warping. This includes failures while
+resolving the sayer or evaluating arguments and substitutions. Quit, restart,
+and other engine control-flow exceptions are not ignored. Temporary replay
+state is restored, but arbitrary side effects performed before an exception
+cannot be undone.
 
 There are a number of fairly major caveats to the warp feature. The first is
 that it only examines a single path, which means that while the path may be
@@ -133,14 +164,22 @@ representative of some route of execution, it's possible that there may be a
 bug along some other route. In general, the path doesn't consider game logic,
 so it's also possible to have a path that isn't actually reachable. (This is
 only really a problem on control-heavy games, especially those that use a lot of
-Python.
+Python.)
 
 The biggest problem, though, is that Python is not executed before the
 statement that is warped to. This means that all variables will be
 uninitialized, which can lead to crashes when they are used. To overcome this,
 one can define a label ``after_warp``, which is called after a warp but before
 the warped-to statement executes. This label can set up variables in the
-program, and then return to the preview.
+program, and then return to the preview. This setup occurs after dialogue
+reconstruction, so it cannot repair preceding lines that failed to replay.
+Initialized defaults remain available during replay.
+
+Translations are used when replaying a complete dialogue translation block.
+If the target or the warp limit cuts through a multi-statement translation
+block, warp replays the available source-language prefix: there is no general
+mapping from part of a source block to part of its translation. As with route
+selection, this remains best-effort rather than a full playthrough.
 
 The warp feature requires :var:`config.developer` to be True to operate.
 

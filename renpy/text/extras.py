@@ -196,7 +196,7 @@ def filter_alt_text(s) -> str:
 
     rv = []
 
-    active = set()
+    active = {}
 
     for tokentype, text in tokens:
         if tokentype == PARAGRAPH:
@@ -212,9 +212,12 @@ def filter_alt_text(s) -> str:
 
             if kind in renpy.config.tts_filter_tags:
                 if end:
-                    active.discard(kind)
+                    if active.get(kind, 0) > 1:
+                        active[kind] -= 1
+                    else:
+                        active.pop(kind, None)
                 else:
-                    active.add(kind)
+                    active[kind] = active.get(kind, 0) + 1
         elif tokentype == DISPLAYABLE:
             rv.append(text._tts(raw=False))
         else:

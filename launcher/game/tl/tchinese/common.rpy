@@ -159,7 +159,7 @@ translate tchinese strings:
 
     # 00action_file.rpy:820
     old "Quick save complete."
-    new "快速儲存。"
+    new "快速儲存完成。"
 
     # 00gui.rpy:227
     old "Are you sure?"
@@ -263,7 +263,7 @@ translate tchinese strings:
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
-    new "聯絡應用程式商店中\n請稍等。。。。。。"
+    new "聯絡應用程式商店中\n請稍等……"
 
     # 00updater.rpy:367
     old "The Ren'Py Updater is not supported on mobile devices."
@@ -271,7 +271,7 @@ translate tchinese strings:
 
     # 00updater.rpy:486
     old "An error is being simulated."
-    new "正在類比錯誤。"
+    new "正在模擬錯誤。"
 
     # 00updater.rpy:662
     old "Either this project does not support updating, or the update status file was deleted."
@@ -291,11 +291,11 @@ translate tchinese strings:
 
     # 00updater.rpy:975
     old "The update file was not downloaded."
-    new "不下載更新檔。"
+    new "更新檔未下載。"
 
     # 00updater.rpy:993
     old "The update file does not have the correct digest - it may have been corrupted."
-    new "無法驗證更新檔案 — 它可能已損壞。"
+    new "更新檔摘要不符 - 它可能已損毀。"
 
     # 00updater.rpy:1049
     old "While unpacking {}, unknown type {}."
@@ -359,7 +359,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:32
     old "bar"
-    new "條"
+    new "長條"
 
     # renpy/common/00accessibility.rpy:33
     old "selected"
@@ -367,15 +367,15 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
-    new "視角"
+    new "檢視區"
 
     # renpy/common/00accessibility.rpy:35
     old "horizontal scroll"
-    new "水平滾動"
+    new "水平捲動"
 
     # renpy/common/00accessibility.rpy:36
     old "vertical scroll"
-    new "垂直滾動"
+    new "垂直捲動"
 
     # renpy/common/00accessibility.rpy:37
     old "activate"
@@ -431,7 +431,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:194
     old "Self-Voicing"
-    new "Self-voicing "
+    new "自動朗讀"
 
     # renpy/common/00accessibility.rpy:198
     old "Off"
@@ -451,7 +451,7 @@ translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:224
     old "Self-Voicing Volume Drop"
-    new "Self-voicing 音量下降"
+    new "自動朗讀音量下降"
 
     # renpy/common/00accessibility.rpy:235
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
@@ -559,7 +559,7 @@ translate tchinese strings:
 
     # renpy/common/00director.rpy:1704
     old "Statement:"
-    new "通告："
+    new "語句："
 
     # renpy/common/00director.rpy:1725
     old "Tag:"
@@ -627,11 +627,11 @@ translate tchinese strings:
 
     # renpy/common/00gui.rpy:460
     old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
-    new "您信任建立儲存的裝置嗎？只有當您是該裝置的唯一使用者時，才應選擇“是”。"
+    new "您信任建立儲存的裝置嗎？只有當您是該裝置的唯一使用者時，才應選擇「是」。"
 
     # renpy/common/00keymap.rpy:323
     old "Failed to save screenshot as %s."
-    new "無法將螢幕截圖儲存為 %s 。"
+    new "無法將螢幕截圖儲存為 %s。"
 
     # renpy/common/00speechbubble.rpy:392
     old "Speech Bubble Editor"
@@ -719,7 +719,7 @@ translate tchinese strings:
 
     # renpy/common/00updater.rpy:552
     old "Could not download file list: "
-    new "無法下載的檔案清單："
+    new "無法下載檔案清單："
 
     # renpy/common/00updater.rpy:555
     old "File list digest does not match."
@@ -879,7 +879,7 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:479
     old "rollback side"
-    new "回滾側端"
+    new "回滾側"
 
     # renpy/common/00preferences.rpy:489
     old "gl powersave"

@@ -1,0 +1,3 @@
+.. warning::
+
+    The features in this section require a third-party service or library, so they depend on a compatible version of that service or library remaining available. Ren'Py can't guarantee compatibility with new versions of the dependency, or support for new features.

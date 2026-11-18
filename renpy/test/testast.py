@@ -298,7 +298,7 @@ class TestHook(BaseTestBlock):
 
 
 class TestCase(BaseTestBlock):
-    __slots__ = ("description", "enabled", "only", "parameter_index", "parameters")
+    __slots__ = ("description", "enabled", "enabled_expr", "only", "parameter_index", "parameters")
 
     def __init__(
         self,
@@ -311,9 +311,11 @@ class TestCase(BaseTestBlock):
         enabled: bool = True,
         only: bool = False,
         parameters: list[list[dict[str, Any]]] | None = None,
+        enabled_expr: str | None = None,
     ):
         self.description = description
         self.enabled = enabled
+        self.enabled_expr = enabled_expr
         self.only = only
         self.parameters = self.generate_parameter_combinations(parameters)
         self.parameter_index = -1
@@ -417,6 +419,7 @@ class TestSuite(TestCase):
         after_testsuite: TestHook | None = None,
         after_testcase: TestHook | None = None,
         teardown: TestHook | None = None,
+        enabled_expr: str | None = None,
     ):
         self.subtest_index = 0
 
@@ -427,7 +430,7 @@ class TestSuite(TestCase):
         self.after_testcase = after_testcase
         self.after_testsuite = after_testsuite
         self.teardown = teardown
-        super().__init__(loc, [], name, parent, xfail_expr, description, enabled, only, parameters)
+        super().__init__(loc, [], name, parent, xfail_expr, description, enabled, only, parameters, enabled_expr)
 
         if subtests is not None:
             for subtest in subtests:
@@ -823,7 +826,7 @@ class SelectorDrivenNode(Node):
                 return ("skipped_transition", old_less_updates, state)
             return state
 
-        if isinstance(state, tuple) and len(state) == 3 and state[0] == "skipped_transition":
+        while isinstance(state, tuple) and len(state) == 3 and state[0] == "skipped_transition":
             renpy.game.less_updates = state[1]
             state = state[-1]
 
@@ -1112,9 +1115,10 @@ class Label(Condition):
     def ready(self):
         # Match the evaluated value or the raw expression text.
         # This lets `label chapter_1` and `label "chapter_1"` both work,
-        # while also allowing `label label_name` to use a variable.
+        # while also allowing `label label_name` to use a variable. The raw text can have whitespace
+        # after it, if another clause follows.
 
-        names = [self.name]
+        names = [self.name.strip()]
 
         try:
             eval_name = scoped_eval(self.name)
@@ -1722,10 +1726,12 @@ class Assert(Node):
         Executes the assertion. If the condition is not ready, it waits up to
         `self.timeout` seconds.
         """
-        if (not self.condition.ready() ^ self.xfail) and t < _test.timeout:
+        ready = self.condition.ready()
+
+        if (not ready ^ self.xfail) and t < _test.timeout:
             return state
 
-        self.is_assertion_true = self.condition.ready()
+        self.is_assertion_true = ready
         renpy.test.testreporter.reporter.log_assert(self)
         self.cleanup_after_error(state)
         next_node(self.next)

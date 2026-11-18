@@ -200,6 +200,7 @@ from renpy.loadsave import (
     load as load,
     newest_slot as newest_slot,
     rename_save as rename_save,
+    safe_rename as safe_rename,
     save as save,
     scan_saved_game as scan_saved_game,
     slot_json as slot_json,
@@ -365,6 +366,7 @@ from renpy.exports.debugexports import (
     error as error,
     filename_line_override as filename_line_override,
     get_filename_line as get_filename_line,
+    is_warping as is_warping,
     log as log,
     pop_error_handler as pop_error_handler,
     push_error_handler as push_error_handler,
@@ -555,6 +557,7 @@ from renpy.exports.rollbackexports import (
     checkpoint as checkpoint,
     fix_rollback as fix_rollback,
     get_identifier_checkpoints as get_identifier_checkpoints,
+    get_rollback_identifier as get_rollback_identifier,
     get_roll_forward as get_roll_forward,
     in_fixed_rollback as in_fixed_rollback,
     in_rollback as in_rollback,
@@ -566,6 +569,7 @@ from renpy.exports.rollbackexports import (
 )
 
 from renpy.exports.sayexports import (
+    can_warp_say as can_warp_say,
     count_dialogue_blocks as count_dialogue_blocks,
     count_newly_seen_dialogue_blocks as count_newly_seen_dialogue_blocks,
     count_seen_dialogue_blocks as count_seen_dialogue_blocks,

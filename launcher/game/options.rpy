@@ -290,8 +290,6 @@ init python:
     build.classify_renpy("renios/prototype/prototype.xcodeproj/xcuserdata/", None)
     build.classify_renpy("renios/prototype/**", "renios")
     build.classify_renpy("renios/buildlib/**", "renios")
-    build.classify_renpy("renios/ios.py", "renios")
-    build.classify_renpy("renios/version.txt", "renios")
     build.classify_renpy("renios/", "renios")
 
     build.classify_renpy("web/game.zip", None)
@@ -306,6 +304,13 @@ init python:
     build.classify_renpy("**/log.txt", None)
     build.classify_renpy("**/traceback.txt", None)
     build.classify_renpy("**/errors.txt", None)
+    build.classify_renpy("**/image_cache.txt", None)
+    build.classify_renpy("**/text_overflow.txt", None)
+    build.classify_renpy("**/dialogue.txt", None)
+    build.classify_renpy("**/dialogue.tab", None)
+    build.classify_renpy("**/profile_screen.txt", None)
+    build.classify_renpy("**/files.txt", None)
+    build.classify_renpy("**/memory.txt", None)
     build.classify_renpy("**/steam_appid.txt", None)
     build.classify_renpy("**/saves/", None)
     build.classify_renpy("**/tmp/", None)
@@ -352,6 +357,7 @@ init python:
         build.classify_renpy(pattern + "/**.pyi", "source_only")
         build.classify_renpy(pattern + "/**.pyx", "source_only")
         build.classify_renpy(pattern + "/**.pxd", "source_only")
+        build.classify_renpy(pattern + "/**.pxi", "source_only")
 
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
@@ -401,6 +407,10 @@ init python:
 
     # Build System.
     build.classify_renpy("setup.py", "source_only")
+    build.classify_renpy("pyproject.toml", "source_only")
+    build.classify_renpy("run.sh", "source_only")
+    build.classify_renpy("run.ps1", "source_only")
+    build.classify_renpy("README.rst", "source_only")
     build.classify_renpy("src/**", "source_only")
     build.classify_renpy("scripts/", "source_only")
     build.classify_renpy("scripts/setuplib.py", "source_only")
@@ -416,16 +426,16 @@ init python:
 
     build.classify_renpy("lib/py3-linux-armv7l", None)
     build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
+    build.classify_renpy("lib/py3-windows-x86_64/dev/**", "windev")
     source_and_binary("lib/py3-**", "binary", "binary", so=True)
 
     libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
     source_and_binary(libpython, "binary", "binary", py='pyc')
 
-    build.classify_renpy("lib/py3-windows-x86_64/zsync.exe", None)
     build.classify_renpy("lib/python**", None)
     build.classify_renpy("lib/py2-**", None)
 
-    build.classify_renpy("renpy3.sh", "binary")
+    build.classify_renpy("renpy.sh", "binary")
 
     build.classify_renpy("lib/", "binary")
 
@@ -440,6 +450,8 @@ init python:
     build.package("rapt", "zip", "rapt", dlc=True)
     build.package("renios", "zip", "renios", dlc=True)
     build.package("web", "zip", "web", dlc=True)
+
+    build.package("windev", "zip", "windev", dlc=True, update=False)
 
 # The identifier for the SDK.
 define build.mac_info_plist["CFBundleIdentifier"] = "org.renpy.sdk"

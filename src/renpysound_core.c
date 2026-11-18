@@ -434,10 +434,17 @@ void RPS_set_channel_count(int count) {
     channel_count = count;
 }
 
-static void callback(void *userdata, SDL_AudioStream *stream, int additional_amount, int length) {
+static void callback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount) {
 
-    // Convert the length to samples.
-    length /= (2 * sizeof(float));
+    if (additional_amount <= 0) {
+        return;
+    }
+
+    const int bytes_per_frame = 2 * sizeof(float);
+    int length = additional_amount / bytes_per_frame;
+    if (additional_amount % bytes_per_frame) {
+        length++;
+    }
 
     float mix_buffer[length * 2];
     short stream_buffer[length * 2];
@@ -623,7 +630,7 @@ static void callback(void *userdata, SDL_AudioStream *stream, int additional_amo
         mix_buffer[i * 2 + 1] = right;
     }
 
-    SDL_PutAudioStreamData(stream, mix_buffer, length * 2 * sizeof(float));
+    SDL_PutAudioStreamData(stream, mix_buffer, length * bytes_per_frame);
 }
 
 
@@ -817,7 +824,8 @@ void RPS_queue(int channel, SDL_IOStream *rw, const char *ext, const char *name,
     c->queued_name = strdup(name);
     c->queued_fadein = fadein;
     c->queued_tight = tight;
-    c->queued_synchro_start = synchro_start;
+    /* Synchronize initial playback, not the handoff from a playing stream. */
+    c->queued_synchro_start = 0;
 
     c->queued_start_ms = (int) (start * 1000);
     c->queued_relative_volume = relative_volume;
@@ -1201,7 +1209,9 @@ int RPS_get_pos(int channel) {
 
     LOCK_NAME();
 
-    if (c->playing) {
+    /* An ENDED channel keeps its decoder only for an explicit seek; report
+     * it as not playing, as before natural EOF retained the decoder. */
+    if (c->playing && c->state != CHANNEL_ENDED) {
         rv = samples_to_ms(c->pos) + c->playing_start_ms;
     } else {
         rv = -1;
@@ -1229,7 +1239,7 @@ double RPS_get_duration(int channel) {
 
     LOCK_NAME();
 
-    if (c->playing) {
+    if (c->playing && c->state != CHANNEL_ENDED) {
         rv = media_duration(c->playing);
     } else {
         rv = 0.0;
@@ -1500,7 +1510,8 @@ void RPS_set_video(int channel, int video) {
 
 /*
  * Initializes the sound to the given frequencies, channels, and
- * sample buffer size.
+ * sample buffer size. If samples is greater than 0, it's passed to SDL as the
+ * requested device buffer size, in sample frames. Otherwise, SDL chooses.
  */
 void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int linear_fades_) {
 
@@ -1525,6 +1536,15 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int
     audio_spec.format = SDL_AUDIO_F32;
     audio_spec.channels = stereo;
     // callback and userdata are passed to SDL_OpenAudioDeviceStream
+
+    if (samples > 0) {
+        char samples_string[32];
+        snprintf(samples_string, sizeof(samples_string), "%d", samples);
+        SDL_SetHint(SDL_HINT_AUDIO_DEVICE_SAMPLE_FRAMES, samples_string);
+    } else {
+        // Don't keep a size requested before a game reload.
+        SDL_ResetHint(SDL_HINT_AUDIO_DEVICE_SAMPLE_FRAMES);
+    }
 
     audio_stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audio_spec, callback, NULL);
     if (audio_stream == NULL) {

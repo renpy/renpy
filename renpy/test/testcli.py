@@ -122,6 +122,7 @@ def test_command() -> bool:
     testreporter.reporter.add_reporter(testreporter.ConsoleReporter())
 
     setup_global_test_suite()
+    testexecution.evaluate_enabled_expressions()
     include_filters = args.filters
     run_plan = ExecutionFilter(include_filters)
     testexecution.initialize(run_plan)

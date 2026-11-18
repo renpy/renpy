@@ -62,7 +62,7 @@
 
     # 00gltest.rpy:218
     old "This computer is using software rendering."
-    new "Esta computadora está usando renderizado por software."
+    new "Esta computadora usa {i}software rendering{/i}."
 
     # 00gltest.rpy:220
     old "This computer is not using shaders."
@@ -122,7 +122,7 @@
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No hay mandos disponibles"
+    new "No hay controles disponibles"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
@@ -130,7 +130,7 @@
 
     # 00gamepad.rpy:58
     old "Press or move the [control!s] [kind]."
-    new "Presiona o mueve [control!s] [kind]."
+    new "Presiona o mueve el [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
@@ -154,7 +154,7 @@
 
     # _errorhandling.rpym:534
     old "Copies the traceback.txt file to the clipboard."
-    new "Copia el archivo traceback.txt al portapapeles."
+    new "Copia el archivo 'traceback.txt' al portapapeles."
 
     # _errorhandling.rpym:561
     old "An exception has occurred."
@@ -166,7 +166,7 @@
 
     # _errorhandling.rpym:583
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Intenta volver a un momento anterior y permite guardar o escoger una opción diferente."
+    new "Intenta volver a un momento anterior y permite guardar o escoger una decisión diferente."
 
     # _errorhandling.rpym:586
     old "Ignore"
@@ -210,7 +210,7 @@
 
     # _errorhandling.rpym:667
     old "Copies the errors.txt file to the clipboard."
-    new "Copia el archivo errors.txt al portapapeles."
+    new "Copia el archivo 'errors.txt' al portapapeles."
 
     # _errorhandling.rpym:542
     old "Copy BBCode"
@@ -218,7 +218,7 @@
 
     # _errorhandling.rpym:544
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Copia el archivo traceback.txt al portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
+    new "Copia el archivo 'traceback.txt' al portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
 
     # _errorhandling.rpym:546
     old "Copy Markdown"
@@ -226,15 +226,15 @@
 
     # _errorhandling.rpym:548
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
-    new "Copia el archivo traceback.txt al portapapeles como Markdown para Discord."
+    new "Copia el archivo 'traceback.txt' al portapapeles como Markdown para Discord."
 
     # _errorhandling.rpym:683
     old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Copia el archivo errors.txt al portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
+    new "Copia el archivo 'errors.txt' al portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
 
     # _errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
-    new "Copia el archivo errors.txt al portapapeles como Markdown para Discord."
+    new "Copia el archivo 'errors.txt' al portapapeles como Markdown para Discord."
 
     # renpy/common/00gltest.rpy:77
     old "Force ANGLE Renderer"

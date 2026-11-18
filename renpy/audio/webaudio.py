@@ -293,15 +293,19 @@ def queue_depth(channel):
 
 @proxy_with_channel
 def get_state(channel):
-    """Returns the best-effort lifecycle state of a web audio channel."""
+    """
+    Returns the best-effort lifecycle state of a web audio channel as an
+    integer, using the same values as renpysound.get_state (the keys of
+    renpy.audio.audio.CHANNEL_STATES).
+    """
 
     # The web backend currently exposes queue depth but not a distinct EOF
-    # state. Keep the API compatible and add the richer state when the JS
-    # backend grows an explicit state query.
+    # or paused state. Keep the API compatible and add the richer states when
+    # the JS backend grows an explicit state query.
     if queue_depth(channel):
-        return "playing"
+        return 1  # CHANNEL_STATE_PLAYING
 
-    return "idle"
+    return 0  # CHANNEL_STATE_IDLE
 
 
 @proxy_with_channel

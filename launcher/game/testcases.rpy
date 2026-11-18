@@ -1,4 +1,197 @@
-﻿testsuite global:
+﻿init python:
+
+    def check_dists_license():
+        """
+        Checks that every archive built for the current project contains
+        renpy/LICENSE.txt, and that it matches sphinx/source/license.rst.
+        Returns True if so, and raises an exception otherwise.
+        """
+
+        import tarfile
+        import zipfile
+
+        with open(os.path.join(config.renpy_base, "sphinx", "source", "license.rst"), "rb") as f:
+            license = f.read()
+
+        p = project.current
+        destination = os.path.join(p.parent_path, p.dump["build"]["destination"])
+
+        archives = [ i for i in os.listdir(destination) if i.endswith((".zip", ".tar.bz2")) ]
+
+        if not archives:
+            raise Exception("No archives were built in {}.".format(destination))
+
+        for fn in archives:
+            path = os.path.join(destination, fn)
+
+            if fn.endswith(".zip"):
+                with zipfile.ZipFile(path) as zf:
+                    names = [ i for i in zf.namelist() if i.endswith("/renpy/LICENSE.txt") ]
+                    contents = [ zf.read(i) for i in names ]
+            else:
+                with tarfile.open(path) as tf:
+                    names = [ i for i in tf.getnames() if i.endswith("/renpy/LICENSE.txt") ]
+                    contents = [ tf.extractfile(i).read() for i in names ]
+
+            if not contents:
+                raise Exception("{} does not contain renpy/LICENSE.txt.".format(fn))
+
+            for name, data in zip(names, contents):
+                if data != license:
+                    raise Exception("{} in {} does not match license.rst.".format(name, fn))
+
+        return True
+
+    def check_updates():
+        """Install the signed PC and Mac updates from their local blocks and compare them with the desktop builds."""
+        import hashlib
+        import json
+        from pathlib import Path
+        import shutil
+        import sys
+        import tempfile
+        import zipfile
+
+        from renpy.ecsign import VerifyingKey
+        from renpy.update.common import FileList
+        from renpy.update.update import Update
+
+        dest = Path(project.current.parent_path) / project.current.dump["build"]["destination"]
+        index = (dest / "updates.json").read_bytes()
+        key = VerifyingKey.from_pem((dest / "public_key.pem").read_bytes())
+        key.verify((dest / "updates.ecdsa").read_bytes(), index)
+        packages = json.loads(index)
+
+        class LocalUpdate(Update):
+            def download_block_file(self, filename, plan):
+                # The updater deletes its downloaded copy after applying it.
+                return shutil.copyfile(dest / "rpu" / filename, Path(self.updatedir) / filename)
+
+        for variant in ("pc", "mac"):
+            info = packages[variant]
+            data = (dest / info["rpu_url"]).read_bytes()
+            if hashlib.sha256(data).hexdigest() != info["rpu_digest"]:
+                raise Exception("Incorrect file list digest for the {} update.".format(variant))
+
+            files = FileList.decode(data)
+            with tempfile.TemporaryDirectory(prefix="renpy-update-test-") as root:
+                update = LocalUpdate(None, [files], root, [], progress_callback=lambda message, done: None)
+                update.init()
+                update.update()
+
+                base = project.current.dump["build"]["directory_name"]
+                with zipfile.ZipFile(dest / (base + "-" + variant + ".zip")) as archive:
+                    runtime = "lib/python{}.{}/encodings/__init__.pyc".format(*sys.version_info[:2])
+                    executable = project.current.dump["build"]["executable_name"]
+                    launcher = executable + ".exe" if variant == "pc" else executable + ".app/Contents/MacOS/" + executable
+                    for name in ("renpy/LICENSE.txt", "game/script.rpyc", runtime, launcher):
+                        member, = [i for i in archive.namelist() if ("/" + i).endswith("/" + name)]
+                        installed, = [i.name for i in files.files if ("/" + i.name).endswith("/" + name)]
+                        if (Path(root) / installed).read_bytes() != archive.read(member):
+                            raise Exception("{} differs between the {} archive and update.".format(name, variant))
+
+                    paths = archive.namelist() + [i.name for i in files.files]
+                    for path in paths:
+                        if any(part in ("python3.9", "python3.11", "libpython3.9.dll", "libpython3.11.dll")
+                               for part in path.split("/")):
+                            raise Exception("Old Python runtime in {}: {}".format(variant, path))
+
+        return True
+
+    def check_mobile_license():
+        """
+        Checks that the android and ios packages for the current project contain
+        renpy/LICENSE.txt, and that it matches sphinx/source/license.rst. These packages
+        are directories that aren't part of a normal build, so they're built to a temporary
+        directory. Only the license is copied, as this blocks the event loop while it runs.
+        Returns True if so, and raises an exception otherwise.
+        """
+
+        import shutil
+        import tempfile
+
+        class LicenseFilter(object):
+            def filter(self, file, variant, format):
+                return file.name == "renpy/LICENSE.txt"
+
+        with open(os.path.join(config.renpy_base, "sphinx", "source", "license.rst"), "rb") as f:
+            license = f.read()
+
+        tempdir = tempfile.mkdtemp(prefix="renpy-test-")
+
+        try:
+            for package in [ "android", "ios" ]:
+                dest = os.path.join(tempdir, package)
+
+                distribute.Distributor(project.current,
+                    reporter=distribute.TextReporter(),
+                    packages=[ package ],
+                    build_update=False,
+                    noarchive=True,
+                    packagedest=dest,
+                    report_success=False,
+                    scan=False,
+                    files_filter=LicenseFilter(),
+                    )
+
+                with open(os.path.join(dest, "renpy", "LICENSE.txt"), "rb") as f:
+                    if f.read() != license:
+                        raise Exception("renpy/LICENSE.txt in {} does not match license.rst.".format(package))
+        finally:
+            shutil.rmtree(tempdir)
+
+        return True
+
+    def check_package_failures():
+        """
+        Checks that failures while packaging reach the code that started the build.
+        Returns True if so, and raises an exception otherwise.
+        """
+
+        import shutil
+        import tempfile
+
+        class FailingPackage(object):
+            def close(self, progress=None):
+                raise Exception("This failure is expected by the test.")
+
+        distribute.ParallelPackage(FailingPackage(), None, "failing").close()
+
+        try:
+            distribute.wait_parallel_threads()
+        except Exception as e:
+            if "failing" not in str(e):
+                raise
+        else:
+            raise Exception("A failure in a package thread was ignored.")
+
+        tempdir = tempfile.mkdtemp(prefix="renpy-test-")
+
+        try:
+            # Zip has nothing to do, so it fails.
+            package = distribute.ExternalZipPackage(os.path.join(tempdir, "empty.zip"))
+
+            try:
+                package.close()
+            except Exception:
+                pass
+            else:
+                raise Exception("A failure of zip was ignored.")
+
+        finally:
+            shutil.rmtree(tempdir)
+
+        return True
+
+
+testsuite global:
+    setup:
+        # On a tree that has never run the launcher, it starts by asking for a language.
+        pause until (screen "choose_language" or id "pref_btn")
+
+        if screen "choose_language":
+            click "Start using Ren'Py"
+
     teardown:
         exit
 
@@ -136,10 +329,25 @@ testsuite default:
 
     testcase build_project:
         $ _test.timeout = 60.0
+        python:
+            from pathlib import Path
+            options = Path(persistent.temp_projects_directory) / "Test Project" / "game" / "test_updates.rpy"
+            options.write_text("define build.include_update = True\n", encoding="utf-8")
+
         click "Build Distributions"
+        click "Build Updates"
         click "Build"
-        pause until "Return"
+        click "Continue"
+        pause until "Return" timeout 180.0
         click "Return"
+
+        assert eval check_dists_license()
+        assert eval check_updates()
+        assert eval check_mobile_license()
+
+
+    testcase package_failures:
+        assert eval check_package_failures()
 
 
     testcase choose_colors:

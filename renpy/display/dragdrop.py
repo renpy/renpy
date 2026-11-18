@@ -30,7 +30,7 @@ import renpy
 import renpy.pygame as pygame
 from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
-from renpy.display.behavior import map_event, run, run_unhovered
+from renpy.display.behavior import map_event, run, run_unhovered, render_focus_mask
 
 import weakref
 
@@ -534,8 +534,23 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         if self.child is not None:
             raise Exception("Drag expects either zero or one children.")
 
-        self.child = renpy.easy.displayable(d)
+        self.child = self._unique_child(d)
         renpy.display.render.invalidate(self)
+
+    def _unique_child(self, d):
+        """
+        Converts `d` to a displayable that is only used by this drag. Drags
+        hold user-manipulated state and are never duplicated, so the child is
+        duplicated here instead.
+        """
+
+        d = renpy.easy.displayable(d)
+
+        if d._duplicatable:
+            d = d._duplicate(None)
+            d._unique()
+
+        return d
 
     def _clear(self):
         self.child = None
@@ -548,7 +563,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         Changes the child of this drag to `d`.
         """
 
-        self.child = renpy.easy.displayable(d)
+        self.child = self._unique_child(d)
         self.child.per_interact()
         renpy.display.render.invalidate(self)
 
@@ -713,14 +728,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             if mask is True:
                 mask = cr.subsurface((fx, fy, fw, fh))
-            elif mask is not None:
-                try:
-                    mask = renpy.display.render.render(mask, fw, fh, st, at)
-                except Exception:
-                    if callable(mask):
-                        mask = mask
-                    else:
-                        raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
+            else:
+                mask = render_focus_mask(mask, fw, fh, st, at)
 
             if mask is not None:
                 fmx = 0
@@ -839,7 +848,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
                 raise renpy.display.core.IgnoreEvent()
 
-            return self.child.event(ev, x, y, st)
+            return None
 
         # Handle moves by moving things relative to the grab point.
         if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
@@ -894,20 +903,21 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
                         new_x, new_y = self.drag_offscreen(new_x, new_y)
 
                     if i.drag_group is not None and i.drag_name is not None:
-                        i.drag_group.positions[i.drag_name] = (new_x, new_y, self.old_position)
+                        i.drag_group.positions[i.drag_name] = (new_x, new_y, i.old_position)
 
                     i.x = new_x
                     i.y = new_y
                     i.target_x = new_x
                     i.target_y = new_y
                     i.target_at = self.at
-                    # Call the dragging callback.
-                    drag = joined[0]
-                    if drag.dragging is not None:
-                        rv = run(drag.dragging, joined)
-                        if rv is not None:
-                            return rv
                     redraw(i, 0)
+
+                # Call the dragging callback.
+                drag = joined[0]
+                if drag.dragging is not None:
+                    rv = run(drag.dragging, joined)
+                    if rv is not None:
+                        return rv
 
         else:
             handled = False

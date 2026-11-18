@@ -66,6 +66,14 @@ sensitive, and when it is selected.
 
         This defaults to returning None.
 
+    .. method:: get_mouse(self)
+
+        This gets a default mouse cursor for a button, if a specific
+        mouse cursor is not assigned. It should return the cursor name,
+        or None if a cursor is not known.
+
+        This defaults to returning None.
+
     .. method:: periodic(self, st)
 
         This method is called once at the start of each interaction,
@@ -137,6 +145,14 @@ the adjustment and styles.
         This gets a default tooltip for this button, if a specific
         tooltip is not assigned. It should return the tooltip value,
         or None if a tooltip is not known.
+
+        This defaults to returning None.
+
+    .. method:: get_mouse(self)
+
+        This gets a default mouse cursor for a bar, if a specific mouse
+        cursor is not assigned. It should return the cursor name, or
+        None if a cursor is not known.
 
         This defaults to returning None.
 

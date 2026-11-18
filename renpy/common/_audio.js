@@ -866,6 +866,10 @@ renpyAudio.periodic = () => {
 let tts_voices = { };
 
 renpyAudio.tts = (s, v, rate, voice) => {
+    if (typeof speechSynthesis === "undefined") {
+        return;
+    }
+
     v = v || 1.0;
     rate = rate || 1.0;
 
@@ -886,7 +890,7 @@ renpyAudio.tts = (s, v, rate, voice) => {
 renpyAudio.update_tts_voices = () => {
     tts_voices = {};
 
-    let voices = (speechSynthesis && speechSynthesis.getVoices) ? Array.from(speechSynthesis.getVoices()) : [];
+    let voices = (typeof speechSynthesis !== "undefined" && speechSynthesis.getVoices) ? Array.from(speechSynthesis.getVoices()) : [];
     if (!voices.length) {
         return;
     }
@@ -973,7 +977,7 @@ renpyAudio.update_tts_voices = () => {
     }
 }
 
-if (speechSynthesis) {
+if (typeof speechSynthesis !== "undefined") {
     speechSynthesis.onvoiceschanged = renpyAudio.update_tts_voices;
     renpyAudio.update_tts_voices();
 }

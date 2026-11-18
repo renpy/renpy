@@ -191,7 +191,7 @@ class absolute(float):
         if isinstance(value, position):
             return value.relative * room + value.absolute
 
-        elif isinstance(value, (absolute, int)):
+        elif isinstance(value, _absolute_types):
             return value
 
         elif isinstance(value, float):
@@ -211,6 +211,7 @@ class absolute(float):
 
 
 _absolute = absolute
+_absolute_types = (absolute, int)
 
 
 @final

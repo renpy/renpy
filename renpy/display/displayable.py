@@ -287,6 +287,13 @@ class Displayable(renpy.object.Object):
 
         return self._tooltip
 
+    def _get_mouse(self) -> str | None:
+        """
+        Returns the mouse cursor of this displayable.
+        """
+
+        return self.style.mouse
+
     def _in_current_store(self) -> Self:
         """
         Returns a version of this displayable that will not change as it is

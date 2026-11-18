@@ -38,7 +38,11 @@ def loadable(filename, directory=None, tl=True):
     `directory`
         If not None, a directory to search in if the file is not found
         in the game directory. This will be prepended to filename, and
-        the search tried again.
+        the search tried again. The special names "audio", "images", and
+        "fonts" search the directories given in :var:`config.special_directory_map`,
+        and "audio" and "images" also search :var:`config.audio_directories` and
+        :var:`config.image_directories`, respectively, unless
+        :var:`config.add_to_special_directories` is False.
     `tl`
         If True, a translation subdirectory will be considered as well.
     """
@@ -87,7 +91,11 @@ def open_file(fn, encoding=None, directory=None):
     `directory`
         If not None, a directory to search in if the file is not found
         in the game directory. This will be prepended to filename, and
-        the search tried again.
+        the search tried again. The special names "audio", "images", and
+        "fonts" search the directories given in :var:`config.special_directory_map`,
+        and "audio" and "images" also search :var:`config.audio_directories` and
+        :var:`config.image_directories`, respectively, unless
+        :var:`config.add_to_special_directories` is False.
 
     This returns an io.BufferedReader object if encoding is None, and an
     io.TextIOWrapper object if encoding is not None.
