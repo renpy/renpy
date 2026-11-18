@@ -23,8 +23,10 @@
 
 import os
 import shlex
+import shutil
 import subprocess
 import sys
+import threading
 from collections.abc import Callable
 from pathlib import Path
 
@@ -212,9 +214,30 @@ def test_run_target_runs_updater_without_syncing(mocker: MockerFixture, tmp_path
     assert run_testcases.run_target(target, ["updater"], 0, [], tmp_path) == [result]
 
 
+def test_project_target_pairs_overlap(mocker: MockerFixture, tmp_path: Path) -> None:
+    """All four runs must reach the barrier before any finishes, with stable report order and separate displays."""
+    barrier = threading.Barrier(4)
+
+    def run_pair(
+        target: run_testcases.Target, project: str, index: int, filters: list[str], directory: Path, support: Path
+    ) -> run_testcases.Result:
+        barrier.wait(timeout=5)
+        return run_testcases.Result(target.name, project, "PASS", detail=str(index))
+
+    targets = [run_testcases.Target(name, "local") for name in ("one", "two")]
+    mocker.patch.object(run_testcases, "make_results_directory", return_value=tmp_path)
+    mocker.patch.object(run_testcases, "sync_target", return_value=None)
+    mocker.patch.object(run_testcases, "run_project", side_effect=run_pair)
+
+    projects = ["tutorial", "launcher"]
+    results = run_testcases.run_all(targets, projects, [], False)
+    assert [(r.name, r.project, r.status) for r in results] == [(t.name, p, "PASS") for t in targets for p in projects]
+    assert len({r.detail for r in results}) == 4
+
+
 def test_run_target_keeps_project_results_when_updater_breaks(mocker: MockerFixture, tmp_path: Path) -> None:
     """
-    The updater test runs after the projects, so an unexpected exception from it must not replace their results,
+    An unexpected exception from the updater test must not replace the results of concurrent projects,
     which may have taken a long time to get. It becomes an error of the updater test alone. The projects and the
     updater test are replaced, as this is about how their results are combined.
     """
@@ -222,7 +245,8 @@ def test_run_target_keeps_project_results_when_updater_breaks(mocker: MockerFixt
     target = run_testcases.Target("linux", "local")
     passed = run_testcases.Result("linux", "tutorial", "PASS")
 
-    mocker.patch.object(run_testcases, "run_synced_projects", return_value=[passed])
+    mocker.patch.object(run_testcases, "sync_target", return_value=None)
+    mocker.patch.object(run_testcases, "run_project", return_value=passed)
     mocker.patch.object(run_testcases.load_updater_test(), "run_default", side_effect=RuntimeError("broken"))
 
     results = run_testcases.run_target(target, ["tutorial", "updater"], 0, [], tmp_path)
@@ -230,6 +254,71 @@ def test_run_target_keeps_project_results_when_updater_breaks(mocker: MockerFixt
     assert results[0] is passed
     assert [(r.project, r.status) for r in results[1:]] == [("updater", "ERROR")]
     assert "broken" in results[1].detail
+
+
+@pytest.mark.skipif(os.name != "posix", reason="The source runner launches projects through POSIX shell scripts.")
+def test_source_build_failure_stops_all_projects(mocker: MockerFixture, tmp_path: Path) -> None:
+    """Both projects report a failed shared build, and a custom runtime can still skip this preparation."""
+    mocker.patch.object(run_testcases, "REPO", tmp_path)
+    mocker.patch.object(run_testcases, "WORK_DIR", tmp_path)
+    build = tmp_path / "run.sh"
+    build.write_text("#!/bin/sh\necho build attempted\nexit 42\n")
+    build.chmod(0o755)
+    target = run_testcases.Target("source", "source")
+    results_dir = tmp_path / "results"
+
+    results = run_testcases.run_target(target, ["tutorial", "the_question"], 0, [], results_dir)
+
+    assert [r.status for r in results] == ["ERROR", "ERROR"]
+    assert all("build failed with exit status 42" in r.detail for r in results)
+    assert (results_dir / "support.txt").read_text().splitlines() == ["build attempted"]
+    target.command = "alternate-runtime"
+    assert run_testcases.sync_target(target, tmp_path / "custom.txt") is None
+
+
+@pytest.mark.parametrize("command", [None, "./scripts/run-headless.sh"])
+@pytest.mark.skipif(os.name != "posix", reason="The source runner launches projects through POSIX shell scripts.")
+def test_source_xvfb_displays_are_distinct(tmp_path: Path, command: str | None) -> None:
+    """Run the real headless wrapper with an Xvfb probe to check the display chosen for each project."""
+    for tool in ("bash", "dirname"):
+        executable = shutil.which(tool)
+        assert executable
+        (tmp_path / tool).symlink_to(executable)
+    xvfb = tmp_path / "xvfb-run"
+    xvfb.write_text('#!/bin/sh\nwhile [ "$1" != "-n" ]; do shift; done\necho "$2"\n')
+    xvfb.chmod(0o755)
+    target = run_testcases.Target("source", "source", command=command, headless=True, env={"PATH": str(tmp_path)})
+
+    displays = [
+        subprocess.check_output(["/bin/sh", "-c", run_testcases.build_launch(target, index)], cwd=run_testcases.REPO)
+        for index in (0, 1)
+    ]
+    assert all(display.strip().isdigit() for display in displays)
+    assert displays[0] != displays[1]
+
+
+@pytest.mark.skipif(os.name != "posix", reason="The source runner launches projects through POSIX shell scripts.")
+def test_custom_run_sh_builds_do_not_overlap(tmp_path: Path) -> None:
+    """Concurrent wrapper launches share a build tree. The simulated setup fails if another build is writing."""
+    shutil.copy2(run_testcases.REPO / "run.sh", tmp_path)
+    (tmp_path / "setup.py").write_text(
+        "from pathlib import Path\nimport time\n"
+        'build = Path("build-active")\nbuild.mkdir()\ntime.sleep(0.25)\nbuild.rmdir()\n'
+    )
+    (tmp_path / "renpy.py").write_text('print("game launched")\n')
+    target = run_testcases.Target(
+        "source", "source", command="bash ./run.sh", env={"VIRTUAL_ENV": sys.prefix, "RENPY_VIRTUAL_ENV": ""}
+    )
+    processes = [
+        subprocess.Popen(
+            ["/bin/sh", "-c", run_testcases.build_launch(target, index)], cwd=tmp_path, stdout=subprocess.PIPE
+        )
+        for index in (0, 1)
+    ]
+    for process in processes:
+        output, _ = process.communicate(timeout=15)
+        assert process.returncode == 0
+        assert output.strip() == b"game launched"
 
 
 @pytest.fixture
@@ -291,6 +380,28 @@ def test_wine_cleanup_uses_launch_prefix(
     cleanup.assert_called_once()
     assert cleanup.call_args.args[0] == ["wineserver", "-k"]
     assert cleanup.call_args.kwargs["env"].get("WINEPREFIX", "default") == launch.stdout.strip()
+
+
+def test_parallel_wine_cleanup_waits_for_games(mocker: MockerFixture, tmp_path: Path) -> None:
+    """A failed Wine game requests cleanup without stopping other jobs that still need its prefix."""
+
+    events: list[str] = []
+    target = run_testcases.Target(name="windows", type="wine")
+    mocker.patch.object(run_testcases, "WORK_DIR", tmp_path)
+    mocker.patch.object(run_testcases, "run_logged", side_effect=lambda *args, **kwargs: events.append("stop prefix"))
+
+    def run_games(
+        target: run_testcases.Target, projects: list[str], index: int, filters: list[str], directory: Path
+    ) -> list[run_testcases.Result]:
+        """Simulate one game timing out while another is finishing on the same target."""
+        run_testcases.stop_wine(target, directory / "support.txt")
+        events.append("last game finished")
+        return []
+
+    mocker.patch.object(run_testcases, "run_target", side_effect=run_games)
+    run_testcases.run_all([target], ["testcases", "tutorial"], [], False)
+
+    assert events == ["last game finished", "stop prefix"]
 
 
 @pytest.fixture

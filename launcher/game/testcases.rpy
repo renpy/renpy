@@ -275,7 +275,7 @@ testsuite default:
         $ _test.timeout = 60.0
         click "Build Distributions"
         click "Build"
-        pause until "Return"
+        pause until "Return" timeout 180.0
         click "Return"
 
         assert eval check_dists_license()

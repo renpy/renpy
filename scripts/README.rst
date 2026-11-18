@@ -107,13 +107,13 @@ run_testcases.py
 ----------------
 
 Runs the test suites of the testcases, tutorial, the_question, and launcher
-projects on several platforms at once, and prints a combined synopsis to stdout.
+projects concurrently on each selected target, and prints a combined synopsis to stdout.
 Targets can run in the repository, in a private copy of the tree (natively or
 under wine), or on another computer using rsync and ssh. They run like normal
 games unless they're set to be headless. Use --project to run some of the
 projects, which test filters require.
 
-After the projects, each target apart from a source one also runs the updater
+Alongside the projects, each target apart from a source one also runs the updater
 test described under run_updater_test.py. It's selected with --project updater,
 and reported in the synopsis as updater and updater:the_question. When it's the
 only thing selected, it takes the --version, --variant, and --channel of
