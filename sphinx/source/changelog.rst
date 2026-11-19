@@ -18,6 +18,8 @@ On Android 16 and later, the back button and back gesture once again roll back, 
 
 On macOS, colors are once again displayed as they were in Ren'Py 8.5, fixing a green tinge introduced in 8.6.0.
 
+Scrying (which predicts things like extend and :var:`config.nvl_page_ctc`) now takes translations into account,
+rather than skipping over them.
 
 .. _renpy-8.6.1:
 
