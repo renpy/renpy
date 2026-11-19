@@ -172,8 +172,7 @@ init python:
         Returns the text of the current NVL line and the text of its click-to-continue indicator, or None in place
         of either that is missing.
 
-        The test uses this instead of text selectors, which match the original-language dialogue of a translated
-        line in some cases and the displayed dialogue in others, and never the indicator.
+        The test uses this instead of text selectors, which never match the indicator.
         """
 
         what = renpy.get_widget("nvl", "what", config.nvl_layer)

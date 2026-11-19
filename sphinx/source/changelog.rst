@@ -21,6 +21,14 @@ On macOS, colors are once again displayed as they were in Ren'Py 8.5, fixing a g
 Scrying (which predicts things like extend and :var:`config.nvl_page_ctc`) now takes translations into account,
 rather than skipping over them.
 
+On Windows, the list of input method (IME) candidates drawn by Ren'Py now highlights the selected candidate
+on every page of candidates, rather than only on the first. Pages of candidates also no longer repeat
+candidates from the previous page.
+
+In the :doc:`testing framework <testcases>`, a text selector matching dialogue now matches the translated dialogue being
+displayed, or with ``raw``, the dialogue as written in the original-language script. Previously, which of the two
+was matched depended on how the line was translated, and some translated lines caused an error.
+
 Other Changes
 -------------
 
