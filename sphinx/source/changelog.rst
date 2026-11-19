@@ -16,6 +16,8 @@ Fixes
 On Android 16 and later, the back button and back gesture once again roll back, rather than closing the game.
 (This fix was incorrectly listed in the 8.6.1 changelog, but was not in the release itself.)
 
+On macOS, colors are once again displayed as they were in Ren'Py 8.5, fixing a green tinge introduced in 8.6.0.
+
 
 .. _renpy-8.6.1:
 
