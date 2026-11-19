@@ -103,6 +103,11 @@ The following environment variables control the behavior of Ren'Py:
     The path to a directory where Ren'Py stores it's saves. The actual saves
     for a game are stored in a game-specific path underneath this directory.
 
+.. envvar:: RENPY_SCREENSHOT_CLIPBOARD
+
+    If set to 0, screenshots taken with the screenshot key are not copied to
+    the clipboard.
+
 .. envvar:: RENPY_SCREENSHOT_PATTERN
 
     A pattern used to create screenshot filenames. It should contain a single

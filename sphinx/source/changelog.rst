@@ -21,6 +21,12 @@ On macOS, colors are once again displayed as they were in Ren'Py 8.5, fixing a g
 Scrying (which predicts things like extend and :var:`config.nvl_page_ctc`) now takes translations into account,
 rather than skipping over them.
 
+Other Changes
+-------------
+
+Setting the new :envvar:`RENPY_SCREENSHOT_CLIPBOARD` environment variable to 0 stops the screenshot key from copying
+screenshots to the clipboard.
+
 .. _renpy-8.6.1:
 
 8.6.1
