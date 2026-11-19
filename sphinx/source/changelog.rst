@@ -5,6 +5,36 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.6.2:
+
+8.6.2
+=====
+
+Fixes
+-----
+
+On Android 16 and later, the back button and back gesture once again roll back, rather than closing the game.
+(This fix was incorrectly listed in the 8.6.1 changelog, but was not in the release itself.)
+
+On macOS, colors are once again displayed as they were in Ren'Py 8.5, fixing a green tinge introduced in 8.6.0.
+
+Scrying (which predicts things like extend and :var:`config.nvl_page_ctc`) now takes translations into account,
+rather than skipping over them.
+
+On Windows, the list of input method (IME) candidates drawn by Ren'Py now highlights the selected candidate
+on every page of candidates, rather than only on the first. Pages of candidates also no longer repeat
+candidates from the previous page.
+
+In the :doc:`testing framework <testcases>`, a text selector matching dialogue now matches the translated dialogue being
+displayed, or with ``raw``, the dialogue as written in the original-language script. Previously, which of the two
+was matched depended on how the line was translated, and some translated lines caused an error.
+
+Other Changes
+-------------
+
+Setting the new :envvar:`RENPY_SCREENSHOT_CLIPBOARD` environment variable to 0 stops the screenshot key from copying
+screenshots to the clipboard.
+
 .. _renpy-8.6.1:
 
 8.6.1
@@ -43,7 +73,6 @@ no longer blocks for 8 seconds each time the game is sent to the background.
 On Android and iOS, a game that is terminated while in the background once again returns the player to where
 they were when it is started again, as described by :var:`config.save_on_mobile_background`.
 
-On Android 16 and later, the back button and back gesture once again roll back, rather than closing the game.
 
 .. _renpy-8.6.0:
 

@@ -3029,15 +3029,18 @@ class TranslateSay(Say):
             renpy.display.predict.tlids = []
 
     def scry(self):
+        # Like execute, only the default-language node transfers control to a translation, and a translated
+        # node describes itself even if the language has changed since it started.
+        if self.language is not None:
+            return Say.scry(self)
+
         node = self.lookup()
 
         if node is None or node is self:
             return Say.scry(self)
 
-        rv = Scry()
-        rv._next = self.next
-
-        return rv
+        # The translation runs instead of this node, so the future is what the translation scries.
+        return node.scry()
 
     def get_reachable(self):
         rv = super().get_reachable()

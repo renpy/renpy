@@ -137,3 +137,85 @@ testcase label_control_flow:
     advance until "..resides a local one."
 
     run MainMenu(confirm=False, save=False)
+
+
+##############################
+## Translated say statements and scry
+##############################
+
+define ast_scry_nvl = Character(None, kind=nvl, ctc=Text("LINE CTC"), page_ctc=Text("PAGE CTC"))
+
+label translate_say_scry:
+    nvl clear
+    ast_scry_nvl "One." id ast_scry_one
+    ast_scry_nvl "Two." id ast_scry_two
+    nvl clear
+    ast_scry_nvl "Three." id ast_scry_three
+    "Done."
+    return
+
+# nvl clear is translatable, so it is part of the block for the first and third lines.
+translate ast_scry ast_scry_one:
+    nvl clear
+    ast_scry_nvl "Un."
+
+translate ast_scry ast_scry_two:
+    ast_scry_nvl "Deux."
+
+translate ast_scry ast_scry_three:
+    nvl clear
+    ast_scry_nvl "Trois."
+
+init python:
+    def ast_scry_line():
+        """
+        Returns the text of the current NVL line and the text of its click-to-continue indicator, or None in place
+        of either that is missing.
+
+        The test uses this instead of text selectors, which never match the indicator.
+        """
+
+        what = renpy.get_widget("nvl", "what", config.nvl_layer)
+
+        if what is None:
+            return (None, None)
+
+        # The indicator is wrapped, for example in a CTCPauseHolder, so search inside it for its Text.
+        pending = [ getattr(what, "ctc", None) ]
+        ctc = None
+
+        while pending:
+            d = pending.pop()
+
+            if isinstance(d, Text):
+                ctc = "".join(str(i) for i in d.text)
+                break
+
+            if d is not None:
+                pending.extend(d.visit())
+
+        return ("".join(str(i) for i in what.text), ctc)
+
+testsuite translate_say_scry:
+    teardown:
+        run Language(None)
+
+    after testcase:
+        if not screen "main_menu":
+            run MainMenu(confirm=False, save=False)
+
+    # Only a line followed by nvl clear shows the page CTC, in the default language and in a translation, which
+    # used to show it after every line (#7537). Each assertion waits for the line's text to finish, so the advance
+    # that follows goes to the next line.
+    testcase nvl_page_ctc:
+        parameter (language, first, second, third) = [(None, "One.", "Two.", "Three."), ("ast_scry", "Un.", "Deux.", "Trois.")]
+
+        $ _test.transition_timeout = 0.00
+        run Language(language)
+        run Start("translate_say_scry")
+
+        assert eval (ast_scry_line() == (first, "LINE CTC")) timeout 2.0
+        advance
+        assert eval (ast_scry_line() == (second, "PAGE CTC")) timeout 2.0
+        advance
+        assert eval (ast_scry_line() == (third, "LINE CTC")) timeout 2.0
