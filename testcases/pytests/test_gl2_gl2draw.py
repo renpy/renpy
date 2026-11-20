@@ -1,9 +1,10 @@
+import math
 from types import SimpleNamespace
 
 import pytest
 
 import renpy
-from renpy.display.matrix import MatrixStack
+from renpy.display.matrix import Matrix, MatrixStack
 from renpy.display.render import Render
 from renpy.gl2.gl2draw import GL2Draw
 from renpy.gl2.gl2model import GL2Model
@@ -242,6 +243,123 @@ def test_mesh_oversample_ignores_translation(mocker):
     draw.load_all_textures(render, MatrixStack(matrix))
 
     assert draw.oversamples == [2.0]
+
+
+def perspective_stack(matrix):
+    """Returns a MatrixStack holding `matrix`, viewed through the default perspective camera on a 1920x1080 screen."""
+
+    stack = MatrixStack(None)
+    stack.take(Matrix.perspective(1920, 1080, 100.0, 1000.0, 100000.0) * matrix)
+    return stack
+
+
+def projected_scale(matrix, x, y):
+    """
+    Returns how much `matrix` magnifies the diagonal at (x, y), found by projecting points on either side of it and
+    dividing by w, in double precision. This is independent of how load_all_textures computes the scale.
+    """
+
+    columns = [matrix.transform(*basis, components=4) for basis in ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 0, 1))]
+
+    def project(u, v):
+        point = [u * cu + v * cv + cw for cu, cv, cw in zip(*columns)]
+        return point[0] / point[3], point[1] / point[3]
+
+    h = 1e-3
+    x0, y0 = project(x - h, y - h)
+    x1, y1 = project(x + h, y + h)
+
+    return math.hypot(x1 - x0, y1 - y0) / math.hypot(2 * h, 2 * h)
+
+
+def record_oversamples(render, stack):
+    """Loads the textures of `render` through `stack`, and returns the oversample each render-to-texture asked for."""
+
+    draw = RecordingDraw.__new__(RecordingDraw)
+    draw.oversamples = []
+    draw.load_all_textures(render, stack)
+    return draw.oversamples
+
+
+def mesh_render(width, height):
+    """Returns a mesh render with a child to render to a texture."""
+
+    rv = Render(width, height)
+    rv.blit(Render(width, height), (0, 0))
+    rv.mesh = True
+    return rv
+
+
+@pytest.mark.parametrize(
+    "z, scale, expected",
+    [
+        (0.0, 1.0, 1.0),
+        (500.0, 1.0, 2.0),
+        (0.0, 2.0, 2.0),
+        (-1000.0, 4.0, 2.0),
+        (2000.0, 1.0, 8.0),
+    ],
+)
+def test_mesh_oversample_under_perspective(mocker, z, scale, expected):
+    """
+    A mesh seen through a perspective camera is oversampled by how much it's scaled on screen.
+
+    With the 1:1 plane 1000 units from the camera, a mesh moved 500 units towards the camera is drawn twice as
+    large, and one moved 1000 units away is drawn at half size. Without dividing by w, the camera's distance
+    counts towards the scale, and every mesh is oversampled by config.mesh_oversample. A mesh behind the camera
+    (z = 2000) can't be measured, and is oversampled as much as config.mesh_oversample allows.
+    """
+
+    mocker.patch.object(renpy.config, "mesh_oversample", 8.0)
+
+    stack = perspective_stack(Matrix.offset(300, 200, z) * Matrix.scale(scale, scale, 1.0))
+
+    assert record_oversamples(mesh_render(100, 50), stack) == [pytest.approx(expected, rel=1e-4)]
+
+
+def test_mesh_oversample_uses_most_magnified_corner(mocker):
+    """
+    A mesh tilted towards a perspective camera is oversampled by the scale of its most magnified part.
+
+    The mesh is turned about its left edge, so its right edge comes towards the camera and is drawn larger. The
+    assertion that the corners differ guards against a rotation that leaves the scale the same everywhere.
+    """
+
+    mocker.patch.object(renpy.config, "mesh_oversample", 8.0)
+
+    matrix = Matrix.offset(960, 540, 0) * Matrix.rotate(0, -60, 0)
+    corners = [(0, 0), (400, 0), (0, 400), (400, 400)]
+    scales = [projected_scale(perspective_stack(matrix), x, y) for x, y in corners]
+
+    assert max(scales) > 1.2 * min(scales)
+
+    oversamples = record_oversamples(mesh_render(400, 400), perspective_stack(matrix))
+
+    assert oversamples == [pytest.approx(max(scales), rel=1e-3)]
+
+
+def test_mesh_oversample_includes_blit_offset(mocker):
+    """
+    A mesh blitted away from its parent's origin is oversampled by the scale at the place it's drawn.
+
+    The parent is tilted, so the mesh's blit offset moves it towards the camera. If the offset were ignored, the
+    mesh would be measured at the parent's origin, where it would be drawn smaller.
+    """
+
+    mocker.patch.object(renpy.config, "mesh_oversample", 8.0)
+
+    matrix = Matrix.offset(960, 540, 0) * Matrix.rotate(0, -60, 0)
+
+    parent = Render(1000, 100)
+    parent.blit(mesh_render(100, 100), (600, 0))
+
+    placed = perspective_stack(matrix * Matrix.offset(600, 0, 0))
+    expected = max(projected_scale(placed, x, y) for x in (0, 100) for y in (0, 100))
+    unplaced = max(projected_scale(perspective_stack(matrix), x, y) for x in (0, 100) for y in (0, 100))
+
+    assert expected > 1.2 * unplaced
+
+    assert record_oversamples(parent, perspective_stack(matrix)) == [pytest.approx(expected, rel=1e-3)]
 
 
 class StandInTexture(GL2Model):

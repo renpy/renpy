@@ -780,9 +780,12 @@ cdef class ModelRenderer:
         cdef double left, top, right, bottom, x, y
 
         key = tuple([ masks[j] for j in range(count) ])
-        cropped = self.multi_masks.get(key, None)
 
-        if cropped is None and not self.mask_clipping:
+        # The mask render is shared by the drawables that use the same
+        # masks, so they share its texture.
+        m = self.multi_masks.get(key, None)
+
+        if m is None and not self.mask_clipping:
             if count == 1:
                 m = self.mask_render(masks[0])
             else:
@@ -791,12 +794,9 @@ cdef class ModelRenderer:
                 for i in key:
                     m.blit(self.mask_render(i), (0, 0))
 
-            # A zero width tells the shaders that the mask covers the canvas.
-            cropped = (m, (0.0, 0.0, 0.0, 0.0))
+            self.multi_masks[key] = m
 
-            self.multi_masks[key] = cropped
-
-        if cropped is None:
+        if m is None:
             m = Render(self.w, self.h)
             left, top, right, bottom = self.w, self.h, 0, 0
 
@@ -818,17 +818,16 @@ cdef class ModelRenderer:
             bottom = min(self.h, ceil(bottom) + 2)
 
             if right > left and bottom > top:
-                m = m.subsurface((left, top, right - left, bottom - top), subpixel=True)
-                bounds = (left / self.w, top / self.h, (right - left) / self.w, (bottom - top) / self.h)
+                # The texture is cropped when it's created, to whole texels
+                # at the scale the mask is drawn at, so the mask is sampled
+                # the same way however the crop changes as the model
+                # animates. The shaders use tex1__to_crop to find the mask's
+                # texture coordinates.
+                m.add_property("crop_texture", (left, top, right - left, bottom - top))
             else:
                 m = Render(1, 1)
-                bounds = (0.0, 0.0, 1.0 / self.w, 1.0 / self.h)
 
-            cropped = (m, bounds)
-
-            self.multi_masks[key] = cropped
-
-        m, bounds = cropped
+            self.multi_masks[key] = m
 
         r.add_shader("-renpy.texture")
 
@@ -838,7 +837,6 @@ cdef class ModelRenderer:
             r.add_shader("live2d.mask")
 
         self.add_position_uniforms(r)
-        r.add_uniform("u_live2d_mask_bounds", bounds)
 
         # Correct the mesh oversample estimate for model coordinates.
         r.add_property("mesh_oversample_scale", 1.0 / self.ppu)

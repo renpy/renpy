@@ -58,7 +58,17 @@ def jump_out_of_context(label):
 
     Causes control to leave the current context, and then to be
     transferred in the parent context to the given label.
+
+    This raises an error when called in the outermost context, which has
+    no parent context to transfer control to.
     """
+
+    if len(renpy.game.contexts) <= 1:
+        raise Exception(
+            f"renpy.jump_out_of_context, Start(), and ui.jumpsoutofcontext can't jump to the label {label!r} from the "
+            "outermost context, which has no parent context. Use them in a context created by a menu or by "
+            "renpy.call_in_new_context."
+        )
 
     raise renpy.game.JumpOutException(label)
 

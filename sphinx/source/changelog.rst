@@ -29,11 +29,24 @@ In the :doc:`testing framework <testcases>`, a text selector matching dialogue n
 displayed, or with ``raw``, the dialogue as written in the original-language script. Previously, which of the two
 was matched depended on how the line was translated, and some translated lines caused an error.
 
+Live2D clipping mask textures that are being cropped to save space are now cropped in a way that aligns with
+texels, allowing these textures to be sampled consistently even when the crop changes as the model animates. This keeps
+the edges of the masked parts from flickering.
+
+Meshes shown through a perspective camera, such as Live2D models and displayables using :tpref:`mesh`, are rendered
+to textures at the size they are drawn on screen. Previously, the camera's distance was counted as scaling, so these
+textures were rendered as large as :var:`config.mesh_oversample` allows, using more memory and GPU time.
+
+
 Other Changes
 -------------
 
 Setting the new :envvar:`RENPY_SCREENSHOT_CLIPBOARD` environment variable to 0 stops the screenshot key from copying
 screenshots to the clipboard.
+
+Using :func:`Start` or :func:`renpy.jump_out_of_context` in the outermost context, such as during the splashscreen or
+in the game itself, reports an error explaining that there is no parent context to jump to, rather than quitting with
+an uncaught ``JumpOutException``.
 
 .. _renpy-8.6.1:
 

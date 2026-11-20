@@ -301,6 +301,9 @@ cdef class GLTexture(GL2Model):
         # The oversample this was rendered at, when created by from_render.
         self.render_oversample = None
 
+        # How to transform texture coordinates into this texture, if it was cropped.
+        self.to_crop = (0.0, 0.0, 1.0, 1.0)
+
         # Update the loader.
         self.loader = loader
 

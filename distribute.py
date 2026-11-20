@@ -285,7 +285,13 @@ def main():
     ap.add_argument("--vc-version-only", action="store_true")
     ap.add_argument("--append-version", action="store_true")
     ap.add_argument("--nightly", action="store_true")
-    ap.add_argument("--print-version", action="store_true")
+    ap.add_argument(
+        "--print-version",
+        nargs="?",
+        const="full",
+        choices=["full", "short"],
+        help="Print the version from the existing renpy/vc_version.py, then exit. 'short' prints major.minor.patch.",
+    )
     ap.add_argument("--allow-dirty", action="store_true", help="Allow a full build from a dirty git tree.")
     ap.add_argument("--check-tree", action="store_true", help="Check the git tree can be built from, then exit.")
 
@@ -297,6 +303,13 @@ def main():
     os.chdir(ROOT)
 
     import renpy.versions
+
+    if args.print_version == "short":
+        print("{}.{}.{}".format(*renpy.version_tuple[:3]))
+        return
+    elif args.print_version:
+        print(renpy.version_only)
+        return
 
     if args.check_tree:
         check_tree(renpy.versions.get_git_version(args.nightly), args.fast, args.nightly, args.allow_dirty)
@@ -331,10 +344,6 @@ def main():
 
     # A normal reload is fine, as renpy/__init__.py won't change.
     reload(renpy)
-
-    if args.print_version:
-        print(renpy.version_only)
-        return
 
     check_tree(version_dict, args.fast, args.nightly, args.allow_dirty)
 
