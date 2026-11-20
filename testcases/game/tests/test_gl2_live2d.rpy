@@ -56,8 +56,12 @@ init python:
     def test_live2d__max_difference(a, b=None):
         """
         Returns the largest difference in any channel of any pixel between
-        surfaces `a` and `b`. If `b` is None, `a` is compared to a transparent
-        surface.
+        surfaces `a` and `b`, with the colors premultiplied by alpha. If `b` is
+        None, `a` is compared to a transparent surface.
+
+        Surfaces store colors that aren't premultiplied, so in a nearly
+        transparent pixel a difference too small to see would otherwise be
+        magnified many times.
         """
 
         if b is None:
@@ -65,11 +69,15 @@ init python:
 
         width, height = a.get_size()
 
+        def premultiplied(color):
+            r, g, b, alpha = color
+            return (r * alpha / 255.0, g * alpha / 255.0, b * alpha / 255.0, alpha)
+
         return max(
             abs(i - j)
             for y in range(height)
             for x in range(width)
-            for i, j in zip(a.get_at((x, y)), b.get_at((x, y)))
+            for i, j in zip(premultiplied(a.get_at((x, y))), premultiplied(b.get_at((x, y))))
         )
 
     # Live2D loads the model when it's created, so the images are only
@@ -259,7 +267,7 @@ testsuite live2d:
         $ config.live2d_mask_clipping = False
         $ test_live2d__uncropped = test_live2d__clipping_frame(model, motion, st)
         assert eval test_live2d__max_difference(test_live2d__uncropped) > 0
-        # Cropping changes the edges of masks slightly, by at most 26/255 in the models tested.
-        assert eval test_live2d__max_difference(test_live2d__cropped, test_live2d__uncropped) <= 26
+        # Cropping changes the edges of masks slightly, by at most 8/255 in the models tested.
+        assert eval test_live2d__max_difference(test_live2d__cropped, test_live2d__uncropped) <= 10
         # Mao's masks differ in hundreds of pixels, so an identical frame means the setting was ignored.
         assert eval model != "Mao" or test_live2d__max_difference(test_live2d__cropped, test_live2d__uncropped) > 0

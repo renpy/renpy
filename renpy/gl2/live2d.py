@@ -155,7 +155,7 @@ def init():
         uniform vec2 u_model_size;
         uniform float u_live2d_ppu;
         uniform vec2 u_live2d_offset;
-        uniform vec4 u_live2d_mask_bounds;
+        uniform vec4 tex1__to_crop;
         in vec4 a_position;
         in vec2 a_tex_coord;
         out vec2 v_tex_coord;
@@ -166,9 +166,7 @@ def init():
         v_mask_coord = vec2(
             a_position.x * u_live2d_ppu + u_live2d_offset.x,
             u_live2d_offset.y - a_position.y * u_live2d_ppu) / u_model_size;
-        if (u_live2d_mask_bounds.z > 0.0) {
-            v_mask_coord = (v_mask_coord - u_live2d_mask_bounds.xy) / u_live2d_mask_bounds.zw;
-        }
+        v_mask_coord = tex1__to_crop.xy + v_mask_coord * tex1__to_crop.zw;
     """,
         fragment_200="""
         vec2 inside = step(vec2(0.0), v_mask_coord) * step(v_mask_coord, vec2(1.0));
@@ -186,7 +184,7 @@ def init():
         uniform vec2 u_model_size;
         uniform float u_live2d_ppu;
         uniform vec2 u_live2d_offset;
-        uniform vec4 u_live2d_mask_bounds;
+        uniform vec4 tex1__to_crop;
         in vec4 a_position;
         in vec2 a_tex_coord;
         out vec2 v_tex_coord;
@@ -197,9 +195,7 @@ def init():
         v_mask_coord = vec2(
             a_position.x * u_live2d_ppu + u_live2d_offset.x,
             u_live2d_offset.y - a_position.y * u_live2d_ppu) / u_model_size;
-        if (u_live2d_mask_bounds.z > 0.0) {
-            v_mask_coord = (v_mask_coord - u_live2d_mask_bounds.xy) / u_live2d_mask_bounds.zw;
-        }
+        v_mask_coord = tex1__to_crop.xy + v_mask_coord * tex1__to_crop.zw;
     """,
         fragment_200="""
         vec2 inside = step(vec2(0.0), v_mask_coord) * step(v_mask_coord, vec2(1.0));
