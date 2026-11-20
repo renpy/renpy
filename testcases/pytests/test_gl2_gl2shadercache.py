@@ -110,3 +110,26 @@ def test_failed_fallback_preserves_version(mocker, shader_parts, tmp_path) -> No
         cache.get((name,))
 
     assert cache.version == 300
+
+
+@pytest.mark.parametrize(
+    ("written", "expanded"),
+    [("tex1__to_crop", "tex1_OP_to_crop"), ("tex0__res", "tex0_OP_res"), ("u_markup__res", "u_markup_OP_res")],
+)
+def test_operation_suffix_expands_for_tex_and_u_names(shader_parts, written: str, expanded: str) -> None:
+    """
+    A double-underscore operation suffix on a texN sampler expands like one on a u_ uniform, so shaders can
+    write tex1__to_crop to get the transform into a cropped texture's coordinates. The expanded name is what
+    the uniform setter parses the operation from.
+    """
+
+    part = shadercache.ShaderPart(
+        "test_gl2_shadercache.operation_" + written,
+        glsl=300,
+        variables=f"uniform sampler2D tex0;\nuniform sampler2D tex1;\nuniform vec4 {written};",
+        vertex_200=f"gl_Position.xy += {written}.xy;",
+    )
+
+    assert expanded in part.uniforms
+    assert written not in part.uniforms
+    assert any(expanded in text for _priority, _name, text in part.vertex_parts)

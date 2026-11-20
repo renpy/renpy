@@ -784,6 +784,7 @@ class ShaderPart(object):
     def substitute_name(self, s):
         rv = re.sub(r"\b[uavl]__\w+", self.expand_match, s)
         rv = re.sub(r"\bu_(\w+)__(\w+)", self.expand_operation, rv)
+        rv = re.sub(r"\b(tex\d+)__(\w+)", r"\1_OP_\2", rv)
         return rv
 
 

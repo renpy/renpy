@@ -78,6 +78,11 @@ cdef class GLTexture(GL2Model):
     # texture. None for other textures, such as loaded images.
     cdef public object render_oversample
 
+    # An (x offset, y offset, x scale, y scale) tuple that transforms a texture coordinate uv for the Render
+    # this texture was rendered from into one for this texture, as offset + uv * scale. This is (0, 0, 1, 1)
+    # unless the texture was cropped with the crop_texture property.
+    cdef public object to_crop
+
     # Borders
     cdef public int bl
     cdef public int bt

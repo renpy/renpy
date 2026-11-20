@@ -1412,6 +1412,76 @@ cdef class GL2Draw:
                     self.load_all_textures(v, reverse)
                     self.render_to_texture(v, properties=r.properties, oversample=None)
 
+    def create_cropped_texture(self, Render what, rect, properties, double oversample):
+        """
+        Renders the part of `what` inside `rect` to a texture, as requested by the crop_texture property of
+        `what`. `rect` is an (x, y, width, height) rectangle in the coordinates of `what`. `properties` and
+        `oversample` are as for render_to_texture.
+
+        The rectangle is grown outwards to whole texels of the texture, plus a texel of transparent padding, so the
+        texels are in the same place whatever the rectangle is, and a crop that changes from frame to frame doesn't
+        change how `what` is sampled. What `what` draws is still clipped to its own bounds.
+
+        The to_crop field of the texture is set to (x offset, y offset, x scale, y scale), so that a texture
+        coordinate uv for all of `what` becomes offset + uv * scale in the cropped texture.
+        """
+
+        x, y, w, h = rect
+
+        # The number of texels per unit of `what`, as render_to_texture will compute it.
+        sx = oversample
+        sy = oversample
+
+        if properties.get("drawable_resolution", True):
+            sx *= self.virt_to_draw.xdx
+            sy *= self.virt_to_draw.ydy
+
+        # A texture larger than the maximum size would be shrunk to fit, by an amount that depends on the
+        # rectangle. Instead, lower the oversample so that all of `what` fits, with texels to spare for
+        # growing the rectangle.
+        max_width = self.texture_loader.max_texture_width - 2
+        max_height = self.texture_loader.max_texture_height - 2
+
+        texture_oversample = oversample
+
+        if what.width * sx > max_width or what.height * sy > max_height:
+            factor = min(max_width / (what.width * sx), max_height / (what.height * sy))
+            texture_oversample *= factor
+            sx *= factor
+            sy *= factor
+
+        # Grow the rectangle by a texel, so the texels at its edge are transparent even when a texel is larger
+        # than any padding in the rectangle, as shaders may not sample past the edge.
+        left = max(0, math.floor(x * sx) - 1) / sx
+        top = max(0, math.floor(y * sy) - 1) / sy
+        right = (math.ceil((x + w) * sx) + 1) / sx
+        bottom = (math.ceil((y + h) * sy) + 1) / sy
+
+        cropped = Render(right - left, bottom - top)
+        cropped.xclipping = True
+        cropped.yclipping = True
+
+        # Growing the rectangle can take it past the edge of `what`, which must still clip what it draws.
+        if right > what.width or bottom > what.height:
+            clipped = Render(what.width - left, what.height - top)
+            clipped.xclipping = True
+            clipped.yclipping = True
+            clipped.subpixel_blit(what, (-left, -top))
+            cropped.blit(clipped, (0, 0))
+        else:
+            cropped.subpixel_blit(what, (-left, -top))
+
+        rv = self.texture_loader.render_to_texture(cropped, properties, texture_oversample)
+
+        # Cache the texture under the oversample that was requested, even if it was lowered to fit.
+        rv.render_oversample = oversample
+
+        cw = right - left
+        ch = bottom - top
+        rv.to_crop = (-left / cw, -top / ch, what.width / cw, what.height / ch)
+
+        return rv
+
     def render_to_texture(self, what, alpha=True, properties={}, oversample=1.0):
         """
         Renders `what` to a texture. The texture will have the drawable
@@ -1466,7 +1536,13 @@ cdef class GL2Draw:
         if oversample is None:
             oversample = 1.0
 
-        rv = self.texture_loader.render_to_texture(what, properties, oversample)
+        crop = what.properties.get("crop_texture", None) if isinstance(what, Render) and what.properties else None
+
+        if crop is not None:
+            rv = self.create_cropped_texture(what, crop, properties, oversample)
+        else:
+            rv = self.texture_loader.render_to_texture(what, properties, oversample)
+
         what.cached_texture = rv
 
         return rv
