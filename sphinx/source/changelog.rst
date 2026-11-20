@@ -33,6 +33,10 @@ Live2D clipping mask textures that are being cropped to save space are now cropp
 texels, allowing these textures to be sampled consistently even when the crop changes as the model animates. This keeps
 the edges of the masked parts from flickering.
 
+Meshes shown through a perspective camera, such as Live2D models and displayables using :tpref:`mesh`, are rendered
+to textures at the size they are drawn on screen. Previously, the camera's distance was counted as scaling, so these
+textures were rendered as large as :var:`config.mesh_oversample` allows, using more memory and GPU time.
+
 
 Other Changes
 -------------

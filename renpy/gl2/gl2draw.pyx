@@ -1305,8 +1305,9 @@ cdef class GL2Draw:
 
         `reverse`
              A MatrixStack that transforms from the model space to the drawable space. This is used to determine the
-             size of the textures to create when rendering to a texture, in some cases. This is only used to get the
-             size right, the position and rotation may or may not be correct.
+             size of the textures to create when rendering to a texture, in some cases. It includes the offsets
+             children are drawn at, so a perspective projection can find how far a mesh is from the camera, but
+             clipping and other effects of drawing are ignored.
 
         """
 
@@ -1324,11 +1325,16 @@ cdef class GL2Draw:
         cdef Render r = what
         cdef GL2Model model
         cdef int i
+        cdef MatrixStack outer
+        cdef MatrixStack child_reverse
 
         if r.loaded:
             return
 
         r.loaded = True
+
+        # The stack for the coordinates of r, and the stack for the coordinates of its children.
+        outer = reverse
 
         if r.reverse is not None:
             reverse = reverse.get_child().inplace_multiply(r.reverse)
@@ -1338,7 +1344,23 @@ cdef class GL2Draw:
         # even if uniforms isn't used.
 
         for c in r.children:
-            self.load_all_textures(c[0], reverse)
+            cx = c[1]
+            cy = c[2]
+
+            if cx or cy:
+                # Like draw_render, offset the child before applying r.reverse. Under a perspective camera,
+                # the offset can change how far the child is from the camera, and so how much it's scaled.
+                child_reverse = reverse.get_child()
+                child_reverse.ctake(outer)
+                child_reverse.inplace_offset(cx, cy)
+
+                if r.reverse is not None:
+                    child_reverse.inplace_multiply(r.reverse)
+
+                self.load_all_textures(c[0], child_reverse)
+
+            else:
+                self.load_all_textures(c[0], reverse)
 
         # If we have a mesh (or mesh=True), create the GL2Model.
         if r.mesh:
@@ -1346,11 +1368,13 @@ cdef class GL2Draw:
             if (r.mesh is True) and (not r.children):
                 return
 
-            # With w=0, only the scale and rotation of the matrix are used, not its offset.
-            tx, ty = reverse.transform(1, 1, w=0)
-            oversample = math.hypot(tx, ty) / math.hypot(1, 1)
+            oversample = self.estimate_mesh_scale(r, reverse)
 
-            if r.properties is not None:
+            if oversample is None:
+                # Part of the mesh is behind the camera, so it may be scaled up without limit.
+                oversample = renpy.config.mesh_oversample
+
+            elif r.properties is not None:
                 oversample *= r.properties.get("mesh_oversample_scale", 1.0)
 
             oversample = max(1.0, min(oversample, renpy.config.mesh_oversample))
@@ -1411,6 +1435,63 @@ cdef class GL2Draw:
                 if isinstance(v, Render):
                     self.load_all_textures(v, reverse)
                     self.render_to_texture(v, properties=r.properties, oversample=None)
+
+    def estimate_mesh_scale(self, Render r, Matrix reverse):
+        """
+        Returns how much the mesh of `r` is scaled up when drawn, used to choose how much to oversample its texture.
+        `reverse` transforms the mesh's coordinates, which are the coordinates of the children of `r`, to the screen.
+
+        The scale is the derivative of the projected position along (1, 1), the largest at the four corners of `r`.
+        For an affine matrix it's the same everywhere: the scale and rotation of the matrix, without its offset. A
+        perspective projection also has to be divided by w, or the distance of the camera would count as scaling,
+        and a mesh tilted towards the camera is scaled more at one end than the other.
+
+        Returns None if a corner is behind the camera.
+        """
+
+        # When w doesn't depend on x and y, as for an affine matrix or a mesh facing a perspective camera, the
+        # scale is the same everywhere on the mesh.
+        if reverse.wdx == 0 and reverse.wdy == 0:
+            if reverse.wdw <= 0:
+                return None
+
+            dx, dy = reverse.transform(1, 1, 0, 0)
+            return math.hypot(dx, dy) / math.hypot(1, 1) / reverse.wdw
+
+        forward = None
+
+        if r.reverse is not None:
+            forward = r.forward if r.forward is not None else r.reverse.inverse()
+
+        dx, dy, _, dw = reverse.transform(1, 1, 0, 0, components=4)
+
+        rv = 0.0
+
+        for x, y in ((0, 0), (r.width, 0), (0, r.height), (r.width, r.height)):
+            mx, my, mz, mw = x, y, 0.0, 1.0
+
+            if forward is not None:
+                mx, my, mz, mw = forward.transform(x, y, 0.0, 1.0, components=4)
+
+                if mw <= 0:
+                    return None
+
+                mx /= mw
+                my /= mw
+                mz /= mw
+                mw = 1.0
+
+            px, py, _, pw = reverse.transform(mx, my, mz, mw, components=4)
+
+            if pw <= 0:
+                return None
+
+            tx = (dx * pw - px * dw) / (pw * pw)
+            ty = (dy * pw - py * dw) / (pw * pw)
+
+            rv = max(rv, math.hypot(tx, ty) / math.hypot(1, 1))
+
+        return rv
 
     def create_cropped_texture(self, Render what, rect, properties, double oversample):
         """
