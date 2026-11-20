@@ -1906,6 +1906,7 @@ cdef class GL2DrawingContext:
         rv.pixel_perfect = self.pixel_perfect
         rv.has_depth = self.has_depth
         rv.cull_face = self.cull_face
+        rv.pixels_per_unit = self.pixels_per_unit
 
         return rv
 
@@ -2279,6 +2280,9 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
     ctx.width = drawable_width
     ctx.height = drawable_height
     ctx.debug = False
+
+    # The projection maps the width of the render to the two units of clip space, which span drawable_width pixels.
+    ctx.pixels_per_unit = abs(projection.xdx) * drawable_width / 2.0
     ctx.state_cache = state_cache
 
     ctx.projection_matrix.ctake(projection)
@@ -2314,7 +2318,7 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
 
 
 # A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.
-standard_uniforms = { "u_transform", "u_projection", "u_view", "u_projectionview", "u_model", "u_time", "u_random", "u_drawable_size" }
+standard_uniforms = { "u_transform", "u_projection", "u_view", "u_projectionview", "u_model", "u_time", "u_random", "u_drawable_size", "u_pixels_per_unit" }
 
 
 _types = """

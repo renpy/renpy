@@ -526,6 +526,16 @@ cdef class VirtualSizeGetter(Getter):
         return renpy.display.draw.virtual_size
 
 
+cdef class PixelsPerUnitGetter(Getter):
+    """
+    Gets how many pixels of the framebuffer being drawn into there are per unit of the render being drawn. Unlike
+    u_drawable_size / u_virtual_size, this is right when drawing into a texture as well as to the screen.
+    """
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return context.pixels_per_unit
+
+
 cdef class PremultiplyGetter(Getter):
     """
     A getter that returns the premultiplied value of the value returned by
@@ -746,6 +756,7 @@ UNIFORM_GETTER_CLASSES = {
     "u_viewport": (ViewportGetter, "vec4"),
     "u_drawable_size": (DrawableSizeGetter, "vec2"),
     "u_virtual_size": (VirtualSizeGetter, "vec2"),
+    "u_pixels_per_unit": (PixelsPerUnitGetter, "float"),
     "tex0" : (Tex0Getter, "sampler2D"),
     "tex1" : (Tex1Getter, "sampler2D"),
     "tex2" : (Tex2Getter, "sampler2D"),

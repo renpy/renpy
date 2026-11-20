@@ -48,6 +48,9 @@ Using :func:`Start` or :func:`renpy.jump_out_of_context` in the outermost contex
 in the game itself, reports an error explaining that there is no parent context to jump to, rather than quitting with
 an uncaught ``JumpOutException``.
 
+The new :ref:`u_pixels_per_unit <model-uniforms>` uniform gives shaders the number of pixels being drawn for each
+unit of the displayable.
+
 .. _renpy-8.6.1:
 
 8.6.1
