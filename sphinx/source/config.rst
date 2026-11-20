@@ -381,6 +381,14 @@ Display
     The highest level of :ref:`automatic oversampling <automatic-oversampling>` that
     Ren'Py will use. If None, automatic oversampling is disabled.
 
+.. var:: config.blur_virtual_pixels = True
+
+    If True, the :tpref:`blur` transform property is measured in virtual
+    pixels, so a blur keeps its strength relative to the game when the window
+    is resized. If False, it's measured in drawable pixels, as it was in
+    Ren'Py 8.5 and earlier, so a blur is stronger relative to the game in a
+    smaller window, and weaker in a larger one.
+
 .. var:: config.display_start_callbacks = [ ]
 
     This contains a list of functions that are called after Ren'Py

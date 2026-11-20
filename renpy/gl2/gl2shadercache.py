@@ -145,6 +145,11 @@ LOD_EXTENSION = {
 
 LOD_FUNCTIONS = re.compile(r"(?<![\w.])(texture2DProjLod|texture2DLod)(?:EXT)?\s*\(")
 
+# GLSL ES 1.00 fragment shaders can only use derivatives through an extension. Desktop GLSL 1.20 has them built in.
+DERIVATIVE_EXTENSION = "GL_OES_standard_derivatives"
+
+DERIVATIVE_FUNCTIONS = re.compile(r"(?<![\w.])(dFdx|dFdy|fwidth)\s*\(")
+
 
 # Strip comments so they can't cause errors in parsing.
 GLSL_COMMENTS = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
@@ -864,6 +869,9 @@ precision highp int;
 
         if count:
             rv.insert(1, "#extension {} : require\n".format(extension))
+
+        if gles and DERIVATIVE_FUNCTIONS.search(body):
+            rv.insert(1, f"#extension {DERIVATIVE_EXTENSION} : require\n")
 
     rv.append(body)
 

@@ -65,6 +65,23 @@ def test_modern_fragment_output_has_explicit_location(gles: bool, version: int) 
     assert "layout(location = 0) out vec4 fragment_color;" in text
 
 
+@pytest.mark.parametrize(
+    "gles, version, expected",
+    [(True, 100, True), (False, 120, False), (True, 300, False), (False, 330, False)],
+)
+def test_derivatives_enable_extension_in_gles_100(gles: bool, version: int, expected: bool) -> None:
+    """
+    A fragment shader using dFdx enables GL_OES_standard_derivatives when emitted as GLSL ES 1.00, where
+    derivatives need it, and not in the other dialects, where they're built in. The blur shader uses
+    derivatives to measure how small its texture is drawn.
+    """
+
+    parts = [(0, "test", "fragment_color = vec4(dFdx(v_tex_coord), 0.0, 1.0);\n", 300)]
+    text = shadercache.source([], parts, [], True, gles, version)
+
+    assert ("#extension GL_OES_standard_derivatives : require" in text) == expected
+
+
 @pytest.mark.parametrize("interpolation", ["flat", "noperspective"])
 def test_interpolation_requires_modern_dialect(shader_parts, interpolation: str) -> None:
     """

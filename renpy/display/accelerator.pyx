@@ -242,9 +242,10 @@ cdef class RenderTransform:
         if (blur is not None) and (blur > 0):
             mr.add_shader("renpy.blur")
             mr.add_uniform("u_renpy_blur_log2", math.log(blur, 2))
+            mr.add_uniform("u_renpy_blur_virtual_pixels", 1.0 if renpy.config.blur_virtual_pixels else 0.0)
 
-            # The blur is measured in texture pixels, and samples mipmaps whose sizes depend on
-            # the texture size, so the texture must not change size as the mesh is scaled.
+            # The blur shader measures the blur in pixels on screen, but samples mipmaps whose sizes
+            # depend on the texture size, so the texture must not change size as the mesh is scaled.
             mr.add_property("mesh_oversample", False)
         else:
             mr.add_shader("renpy.texture")
