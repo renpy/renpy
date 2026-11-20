@@ -474,9 +474,13 @@ class RollbackLog(renpy.object.Object):
 
     __version__ = 7
 
-    nosave = ["old_store", "mutated", "identifier_cache"]
+    nosave = ["old_store", "mutated", "identifier_cache", "statement_reentrant"]
     identifier_cache = None
     force_checkpoint = False
+
+    # True if the currently executing statement has declared itself
+    # re-entrant. Cleared when a new statement begins.
+    statement_reentrant = False
 
     def __init__(self):
         super(RollbackLog, self).__init__()
@@ -552,6 +556,8 @@ class RollbackLog(renpy.object.Object):
         if not context.rollback:
             return
 
+        self.statement_reentrant = False
+
         # We only begin a Rollback if the previous statement reached a checkpoint,
         # or an interaction took place. (Or we're forced.)
         ignore = True
@@ -581,13 +587,7 @@ class RollbackLog(renpy.object.Object):
         else:
             renpy.python.begin_stores()
 
-        # If the log is too long, prune it.
-        while len(self.log) > renpy.config.rollback_length:
-            if self.log.pop(0).hard_checkpoint:
-                if self.rollback_block:
-                    self.rollback_block -= 1
-                else:
-                    self.rollback_limit -= 1
+        self.prune_log()
 
         self.current = Rollback()
         self.current.retain_after_load = self.retain_after_load_flag
@@ -598,6 +598,46 @@ class RollbackLog(renpy.object.Object):
 
         # Flag a mutation as having happened. This is used by the
         # save code.
+        renpy.revertable.mutate_flag = True
+
+        self.rolled_forward = False
+
+    def prune_log(self):
+        """
+        If the log is too long, prune it.
+        """
+
+        while len(self.log) > renpy.config.rollback_length:
+            if self.log.pop(0).hard_checkpoint:
+                if self.rollback_block:
+                    self.rollback_block -= 1
+                else:
+                    self.rollback_limit -= 1
+
+    def split(self):
+        """
+        Called when a checkpoint is reached inside a statement that has
+        declared itself re-entrant. This closes out the current Rollback and
+        starts a new one, so that each checkpoint inside the statement gets
+        its own rollback record.
+        """
+
+        self.identifier_cache = None
+
+        self.complete(True)
+        self.prune_log()
+
+        self.current = Rollback()
+
+        # A load that lands on this record keeps its data, restoring the
+        # exact state at save time. This is safe because the statement has
+        # declared that re-executing it will not repeat its side effects.
+        self.current.retain_after_load = True
+
+        self.log.append(self.current)
+
+        self.mutated.clear()
+
         renpy.revertable.mutate_flag = True
 
         self.rolled_forward = False
@@ -752,6 +792,8 @@ class RollbackLog(renpy.object.Object):
 
         self.current.checkpoint = True
 
+        new_hard_checkpoint = False
+
         if hard and (not self.current.hard_checkpoint):
             if self.rollback_limit < renpy.config.hard_rollback_limit:
                 self.rollback_limit += 1
@@ -762,6 +804,17 @@ class RollbackLog(renpy.object.Object):
                 self.current.not_greedy = True
             else:
                 self.current.hard_checkpoint = hard
+
+                new_hard_checkpoint = True
+
+        # Inside a re-entrant statement, start a new rollback record, so this
+        # checkpoint becomes a place rollback and load can stop at. This only
+        # happens when the checkpoint is new, as complete() may call this
+        # method again from inside split().
+        if self.statement_reentrant and new_hard_checkpoint:
+            self.split()
+
+            return
 
         if self.in_fixed_rollback() and self.forward:
             # use data from the forward stack
