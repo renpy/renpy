@@ -40,6 +40,10 @@ Other Changes
 Setting the new :envvar:`RENPY_SCREENSHOT_CLIPBOARD` environment variable to 0 stops the screenshot key from copying
 screenshots to the clipboard.
 
+Using :func:`Start` or :func:`renpy.jump_out_of_context` in the outermost context, such as during the splashscreen or
+in the game itself, reports an error explaining that there is no parent context to jump to, rather than quitting with
+an uncaught ``JumpOutException``.
+
 .. _renpy-8.6.1:
 
 8.6.1

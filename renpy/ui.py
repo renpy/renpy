@@ -1449,7 +1449,7 @@ jumps = renpy.curry.curry(_jumps)
 
 
 def _jumpsoutofcontext(label):
-    raise renpy.game.JumpOutException(label)
+    renpy.exports.jump_out_of_context(label)
 
 
 jumpsoutofcontext = renpy.curry.curry(_jumpsoutofcontext)

@@ -190,6 +190,10 @@ init -1500 python:
 
         * Start() - Start at the start label.
         * Start("foo") - Start at the "foo" label.
+
+        Using this action in the outermost context, which has no parent
+        context to jump to, is an error. This includes the splashscreen and
+        the game itself.
         """
 
         def __init__(self, label="start"):
