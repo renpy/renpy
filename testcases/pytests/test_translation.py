@@ -242,3 +242,87 @@ def test_non_string_raises(translator, old):
 
     with pytest.raises(TypeError):
         translator.translate(old)
+
+
+################################################################################
+# is_translatable / require_translatable
+################################################################################
+
+
+@pytest.fixture
+def mark_translatable_strings(mocker):
+    """Enables the config flag that makes _() mark strings."""
+
+    mocker.patch.object(renpy.config, "mark_translatable_strings", True)
+
+
+def test_is_translatable(mark_translatable_strings):
+    """Strings returned by _() are marked; plain strings and non-strings are not."""
+
+    assert translation.is_translatable(renpy.minstore._("Marked"))
+    assert not translation.is_translatable("Marked")
+    assert not translation.is_translatable(123)
+
+
+def test_is_translatable_disabled():
+    """When the feature is disabled, no strings are recognized as marked."""
+
+    assert not translation.is_translatable("Marked")
+    assert not translation.is_translatable(renpy.minstore._("Marked"))
+
+
+def test_translatable_str_acts_like_str(mark_translatable_strings):
+    """A TranslatableStr compares and hashes like the plain string it wraps."""
+
+    marked = renpy.minstore._("Item {#gallery}")
+
+    assert marked == "Item {#gallery}"
+    assert hash(marked) == hash("Item {#gallery}")
+    assert isinstance(marked, str)
+    assert marked.startswith("Item")
+
+
+def test_translatable_str_pickles_as_plain_str(mark_translatable_strings):
+    """Pickling a marked string produces a plain str, so saves stay simple."""
+
+    import pickle
+
+    marked = renpy.minstore._("Marked")
+    unpickled = pickle.loads(pickle.dumps(marked))
+
+    assert unpickled == "Marked"
+    assert type(unpickled) is str
+
+
+def test_require_translatable_passes_when_marked(mocker, mark_translatable_strings):
+    """Marked and empty values do not raise."""
+
+    mocker.patch.object(renpy.config, "developer", True)
+
+    translation.require_translatable("name", renpy.minstore._("Marked"))
+    translation.require_translatable("name", "")
+
+
+def test_require_translatable_raises_when_unmarked(mocker, mark_translatable_strings):
+    """An unmarked non-empty string raises in developer mode."""
+
+    mocker.patch.object(renpy.config, "developer", True)
+
+    with pytest.raises(Exception):
+        translation.require_translatable("name", "Unmarked")
+
+
+def test_require_translatable_ignored_outside_developer_mode(mocker, mark_translatable_strings):
+    """Outside developer mode, require_translatable is a no-op."""
+
+    mocker.patch.object(renpy.config, "developer", False)
+
+    translation.require_translatable("name", "Unmarked")
+
+
+def test_require_translatable_ignored_when_disabled(mocker):
+    """When the feature is disabled, require_translatable is a no-op even in developer mode."""
+
+    mocker.patch.object(renpy.config, "developer", True)
+
+    translation.require_translatable("name", "Unmarked")

@@ -617,6 +617,72 @@ def translate_string(s, language=Default):  # type (str, str|renpy.object.Sentin
     return stl.translate(s)
 
 
+class TranslatableStr(str):
+    """
+    A subclass of str that marks a string as having been passed to the `_()`
+    function, and therefore as intended for translation. It behaves exactly
+    like a str, so it can be used anywhere a string is expected.
+
+    When pickled, a TranslatableStr is reduced to a plain str, so save files
+    and compiled .rpyc files do not depend on this class.
+    """
+
+    __slots__ = ()
+
+    def __reduce__(self):
+        return (str, (str(self),))
+
+
+def is_translatable(s):  # type (Any) -> bool
+    """
+    :doc: translate_string
+    :name: renpy.is_translatable
+
+    Returns True if `s` is a string that was marked for translation by being
+    passed to the `_()` function. Non-strings return False.
+
+    This only does anything when `config.mark_translatable_strings` is enabled.
+    When it is disabled (the default), `_()` does not mark strings, so no
+    string is recognized and this returns False.
+
+    Note that a string is only recognized if it was actually passed to `_()`.
+    A plain string with the same content is not recognized, even if an
+    identical string appears elsewhere wrapped in `_()`.
+
+    This is intended to be used in developer mode, to detect strings that
+    were accidentally left untranslated.
+    """
+
+    return isinstance(s, TranslatableStr)
+
+
+def require_translatable(name, value):  # type (str, Any) -> None
+    """
+    :doc: translate_string
+    :name: renpy.require_translatable
+
+    In developer mode, raises an exception if `value` is a non-empty string
+    that was not marked for translation with the `_()` function. This is
+    intended to be used to check that text passed to a function or stored in
+    a variable has not been accidentally left untranslated.
+
+    This only does anything when `config.mark_translatable_strings` is enabled
+    and the game is running in developer mode. Otherwise it is a no-op.
+
+    `name`
+        The name of the value, used in the error message.
+
+    `value`
+        The value to check.
+    """
+
+    if not (renpy.config.developer and renpy.config.mark_translatable_strings):
+        return
+
+    if value and isinstance(value, str) and not is_translatable(value):
+        raise Exception("{} is not marked for translation with _(): {!r}".format(name, value))
+
+
 def write_updated_strings():
     stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
     stl.write_updated_strings(renpy.game.preferences.language)
