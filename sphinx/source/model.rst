@@ -439,6 +439,14 @@ The following uniforms are made available to all models.
     to the bottom-left corner of the window. u_viewport.pq is the width
     and height of the viewport.
 
+``float u_pixels_per_unit``
+    The number of pixels of the framebuffer being drawn into for each unit of
+    the render being drawn, horizontally. When drawing to the screen, this is
+    the number of drawable pixels per virtual pixel, which changes as the
+    window is resized and on high-DPI displays. When drawing into a texture,
+    such as for a mesh or :func:`Flatten`, this is the number of texels per
+    unit of the displayable being drawn into it.
+
 ``vec2 u_virtual_size``
 
     This is the virtual size of the game (:var:`config.screen_width`, :var:`config.screen_height`).

@@ -1613,6 +1613,12 @@ mesh_pad_compat: bool = False
 Should mesh pad work the way it did before 8.4? (That is, it shifts things to the right/down by pad_left/pad_top.)
 """
 
+blur_virtual_pixels: bool = True
+"""
+If True, the blur transform property is measured in virtual pixels, so it keeps its strength relative to the game when
+the window is resized. If False, it's measured in drawable pixels, as it was in Ren'Py 8.5 and earlier.
+"""
+
 mesh_oversample: float = 8.0
 """
 Determines how much mesh textures can be oversampled by. This, in turn, controls the maximum amount a mesh can be scaled up by before it introduces additional blurriness.

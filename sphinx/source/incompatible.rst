@@ -24,6 +24,21 @@ versions of Ren'Py.
 The undocumented ``renpy.tfd`` module is planned to be removed in mid-2027.
 
 
+.. _incompatible-8.6.2:
+
+8.6.2
+-----
+
+**Blur and Window Size** The :tpref:`blur` transform property is measured in
+virtual pixels, so it keeps its strength relative to the game when the window
+is resized. Previously, it was measured in drawable pixels, so a blur was
+stronger in a window smaller than the game, and weaker in a larger one. Games
+declaring compatibility with Ren'Py 8.5 or earlier retain the old behavior. To
+restore it explicitly::
+
+    define config.blur_virtual_pixels = False
+
+
 .. _incompatible-8.6.0:
 
 8.6.0

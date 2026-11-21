@@ -272,9 +272,16 @@ Pixel Effects
     :default: None
 
     This blurs the child of this transform by `blur` pixels, up to the border
-    of the displayable. The precise details of the blurring may change between
-    Ren'Py versions, and the blurring may exhibit artifacts, especially when the
-    image being blurred is changing.
+    of the displayable. The pixels are measured on the screen, in the game's
+    coordinates, so the blur is the same size however much the displayable is
+    zoomed, and the same strength relative to the game however large the window
+    is (see :var:`config.blur_virtual_pixels`). When the blur is inside a
+    displayable that is drawn to a texture first, such as a :func:`Flatten` or
+    a transform with :tpref:`mesh`, the pixels are measured in that
+    displayable's coordinates, so zooming it afterwards also scales the blur.
+    The precise details of the blurring may change between Ren'Py versions,
+    and the blurring may exhibit artifacts, especially when the image being
+    blurred is changing.
 
     Blurring causes its child to be flattened, with the child drawn onto a transparent
     background before the blurring happens.

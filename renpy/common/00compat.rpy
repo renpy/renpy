@@ -56,6 +56,7 @@ init -1100 python:
             config.glsl_version = 100
             config.live2d_pose = False
             config.live2d_old_beziers = True
+            config.blur_virtual_pixels = False
 
         if version <= (8, 4, 99):
             config.images_directory = "images"

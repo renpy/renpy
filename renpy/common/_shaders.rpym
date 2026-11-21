@@ -66,13 +66,11 @@ init python:
         uniform sampler2D tex0;
         uniform vec2 res0;
         uniform float u_renpy_blur_log2;
+        uniform float u_pixels_per_unit;
+        uniform float u_renpy_blur_virtual_pixels;
 
         in vec2 a_tex_coord;
         out vec2 v_tex_coord;
-
-        out vec2 v__lod_blend;
-        out vec4 v__floor_size;
-        out vec4 v__ceil_size;
     """, fragment_functions = """
         vec4 l__cubic(float value) {
             vec2 n = vec2(1.0 - value, value);
@@ -106,22 +104,33 @@ init python:
         }
     """, vertex_200 = """
         v_tex_coord = a_tex_coord;
+    """, fragment_200 = """
+        // Like a bias added to the hardware's choice of mipmap, the blur is offset by the level that matches how
+        // many texels are drawn to each pixel. This keeps a blur the same number of pixels on screen however
+        // large the displayable is drawn, as it was in Ren'Py 8.5.
+        vec2 l__texels = v_tex_coord * res0;
+        vec2 l__dx = dFdx(l__texels);
+        vec2 l__dy = dFdy(l__texels);
+        float l__base_lod = 0.5 * log2(max(max(dot(l__dx, l__dx), dot(l__dy, l__dy)), 1.0e-8));
 
-        float l__lod = floor(u_renpy_blur_log2);
+        // The blur is given in units of what's being drawn into (virtual pixels for the screen), so it's scaled
+        // by the number of pixels in each one. This keeps it the same strength relative to the game when the
+        // window is resized. When config.blur_virtual_pixels is False, as for games made for Ren'Py 8.5 and
+        // earlier, the blur is given in pixels of what's being drawn into instead.
+        float l__target_lod = u_renpy_blur_virtual_pixels * log2(max(u_pixels_per_unit, 1.0e-8));
 
-        v__lod_blend = vec2(l__lod, u_renpy_blur_log2 - l__lod);
+        float l__level = u_renpy_blur_log2 + l__base_lod + l__target_lod;
+        float l__lod = floor(l__level);
+        float l__blend = l__level - l__lod;
 
         vec2 l__floor_size = max(vec2(1.0), floor(res0 / exp2(l__lod)));
         vec2 l__ceil_size = max(vec2(1.0), floor(l__floor_size * 0.5));
 
-        v__floor_size = vec4(l__floor_size, 1.0 / l__floor_size);
-        v__ceil_size = vec4(l__ceil_size, 1.0 / l__ceil_size);
-    """, fragment_200 = """
-        fragment_color = l__sample_bicubic(tex0, v_tex_coord, v__floor_size, v__lod_blend.x);
+        fragment_color = l__sample_bicubic(tex0, v_tex_coord, vec4(l__floor_size, 1.0 / l__floor_size), l__lod);
 
-        if (v__lod_blend.y > 0.0) {
-            vec4 l__next_mip = l__sample_bicubic(tex0, v_tex_coord, v__ceil_size, v__lod_blend.x + 1.0);
-            fragment_color = mix(fragment_color, l__next_mip, v__lod_blend.y);
+        if (l__blend > 0.0) {
+            vec4 l__next_mip = l__sample_bicubic(tex0, v_tex_coord, vec4(l__ceil_size, 1.0 / l__ceil_size), l__lod + 1.0);
+            fragment_color = mix(fragment_color, l__next_mip, l__blend);
         }
 
         float l__noise = (fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715)))) - 0.5) * (2.0 / 255.0);

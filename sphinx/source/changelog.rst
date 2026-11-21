@@ -37,6 +37,15 @@ Meshes shown through a perspective camera, such as Live2D models and displayable
 to textures at the size they are drawn on screen. Previously, the camera's distance was counted as scaling, so these
 textures were rendered as large as :var:`config.mesh_oversample` allows, using more memory and GPU time.
 
+The :tpref:`blur` property blurs by the same number of pixels, measured on the screen in the game's coordinates,
+however much the displayable is zoomed and however large the window is. This fixes two issues:
+
+* Since Ren'Py 8.6.0, the blur was scaled along with the displayable, so a displayable drawn smaller than its own
+  size, such as with a zoom below 1, was blurred much less than in Ren'Py 8.5.
+* The blur was a fixed number of pixels on the display, so it was stronger in a window smaller than the game, and
+  weaker in a larger one, such as fullscreen on a high-resolution display. Games made for Ren'Py 8.5 and earlier keep
+  this behavior, which is controlled by the new :var:`config.blur_virtual_pixels` variable.
+
 
 Other Changes
 -------------
@@ -47,6 +56,9 @@ screenshots to the clipboard.
 Using :func:`Start` or :func:`renpy.jump_out_of_context` in the outermost context, such as during the splashscreen or
 in the game itself, reports an error explaining that there is no parent context to jump to, rather than quitting with
 an uncaught ``JumpOutException``.
+
+The new :ref:`u_pixels_per_unit <model-uniforms>` uniform gives shaders the number of pixels being drawn for each
+unit of the displayable.
 
 .. _renpy-8.6.1:
 
