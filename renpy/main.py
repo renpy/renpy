@@ -332,6 +332,11 @@ def main():
     except Exception:
         pass
 
+    try:
+        renpy.gl2.spine.reset()
+    except Exception:
+        pass
+
     # Set up variants.
     choose_variants()
     renpy.display.touch = "touch" in renpy.config.variants
