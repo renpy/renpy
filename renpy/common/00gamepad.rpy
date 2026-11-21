@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -279,3 +279,94 @@ init -1200 python:
             return ui.invokesinnewcontext(_gamepad.calibrate)
         else:
             return None
+
+
+    def GamepadType(index=None):
+        """
+        :doc: gamepad
+
+        Returns the type name of the connected gamepad (e.g. 'nintendo_switch_pro',
+        'xbox360', 'ps5', etc.), or None if no gamepad is connected.
+        """
+
+        return renpy.display.controller.get_controller_type(index)
+
+
+    def GamepadRealType(index=None):
+        """
+        :doc: gamepad
+
+        Returns the real hardware type name of the connected gamepad,
+        ignoring any emulation or remapping layers, or None if no gamepad is connected.
+        """
+
+        return renpy.display.controller.get_controller_real_type(index)
+
+
+    def GamepadButtonLabel(button, index=None):
+        """
+        :doc: gamepad
+
+        Returns the physical button label string (e.g. 'a', 'b', 'x', 'y',
+        'cross', 'circle', 'square', 'triangle') for the given `button` on
+        the connected gamepad, or None if unknown or no gamepad is connected.
+        `button` can be an integer button index or a button name ('a', 'b', 'x', 'y', etc.).
+        """
+
+        return renpy.display.controller.get_controller_button_label(button, index)
+
+
+    def GamepadRumble(low=1.0, high=1.0, duration=0.5, index=None):
+        """
+        :doc: gamepad
+
+        Causes the connected gamepad to rumble (vibrate).
+
+        `low`
+            The intensity of the low frequency rumble motor, between 0.0 and 1.0 (defaults to 1.0).
+        `high`
+            The intensity of the high frequency rumble motor, between 0.0 and 1.0 (defaults to 1.0).
+        `duration`
+            The duration of the rumble effect, in seconds (defaults to 0.5).
+        `index`
+            The index or instance ID of the gamepad to rumble. If None, all connected
+            gamepads will rumble.
+        """
+
+        return renpy.display.controller.rumble(low=low, high=high, duration=duration, index=index)
+
+
+    def GamepadRumbleTriggers(left=1.0, right=1.0, duration=0.5, index=None):
+        """
+        :doc: gamepad
+
+        Causes the triggers of the connected gamepad to rumble (supported on Xbox controllers).
+
+        `left`
+            The intensity of the left trigger rumble motor, between 0.0 and 1.0 (defaults to 1.0).
+        `right`
+            The intensity of the right trigger rumble motor, between 0.0 and 1.0 (defaults to 1.0).
+        `duration`
+            The duration of the rumble effect, in seconds (defaults to 0.5).
+        `index`
+            The index or instance ID of the gamepad to rumble. If None, all connected
+            gamepads will rumble.
+        """
+
+        return renpy.display.controller.rumble_triggers(left=left, right=right, duration=duration, index=index)
+
+
+    def GamepadSetLED(red, green, blue, index=None):
+        """
+        :doc: gamepad
+
+        Sets the LED light color on the connected gamepad (e.g. PlayStation DualShock 4 or DualSense).
+
+        `red`, `green`, `blue`
+            The RGB color components, from 0.0 to 1.0 or integers from 0 to 255.
+        `index`
+            The index or instance ID of the gamepad. If None, all connected gamepads are updated.
+        """
+
+        return renpy.display.controller.set_led(red, green, blue, index=index)
+
