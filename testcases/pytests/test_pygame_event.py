@@ -20,9 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-Tests for converting SDL keyboard events into Ren'Py event objects in renpy.pygame.event.
+Tests for converting SDL events into Ren'Py event objects in renpy.pygame.event.
 
-The tests run without a window, so text input is never active. That is the case of a game with no focused input,
+The keyboard tests run without a window, so text input is never active. That is the case of a game with no focused input,
 where KEYDOWN events get their unicode character from the keyboard layout. With no video subsystem, SDL uses its
 default US keymap, so the expected characters are those of a US layout.
 """
@@ -96,3 +96,29 @@ def test_single_character_keysym_matches_without_text_input():
     assert not renpy.display.behavior.map_event(plain, "I")
     assert renpy.display.behavior.map_event(shifted, "I")
     assert not renpy.display.behavior.map_event(shifted, "i")
+
+
+@pytest.mark.parametrize("kind", ["FINGERDOWN", "FINGERUP", "FINGERMOTION", "FINGERCANCELED"])
+def test_finger_event_fields(kind):
+    """
+    Touch finger events carry their touch and finger IDs, position, motion, and pressure, under both the
+    pygame 2 names (touch_id, finger_id) and the older camelCase names (touchId, fingerId).
+
+    This is the regression in issue #7541: the conversion read misspelled SDL3 field names, so these events
+    raised AttributeError when taken from the queue, and FINGERCANCELED events carried no fields at all.
+    The touch ID is above 2**32 to check that 64-bit IDs are not truncated.
+    """
+
+    event_type = getattr(pygame, kind)
+    touch_id = 2**40 + 12
+
+    ev = pygame.event._make_finger_event(event_type, touch_id, 34, 0.25, 0.75, 0.125, -0.5, 0.5)
+
+    assert ev.type == event_type
+    assert ev.touch_id == touch_id
+    assert ev.touchId == touch_id
+    assert ev.finger_id == 34
+    assert ev.fingerId == 34
+    assert (ev.x, ev.y) == (0.25, 0.75)
+    assert (ev.dx, ev.dy) == (0.125, -0.5)
+    assert ev.pressure == 0.5

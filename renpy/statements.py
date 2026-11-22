@@ -57,6 +57,7 @@ def register(
     predict_next=None,
     execute_default=None,
     reachable=None,
+    strict_expression=False,
 ):
     """
     :doc: statement_register
@@ -232,6 +233,14 @@ def register(
         reachable or not. (For example, the next statement may only be reachable
         if this statement is.)
 
+    `strict_expression`
+        If true, Python expressions the parse function gets from the lexer are checked for syntax errors when the
+        game loads, and an error stops the game from starting. If false, a syntax error is reported only if the
+        statement evaluates the expression, which lets the parse function use methods like ``rest`` to read text
+        that isn't Python. The lexer's ``rest`` method takes a `strict` keyword argument, and its other methods
+        that return expressions take an `expr` keyword argument, that override this when they aren't None. Ren'Py
+        statements parsed with ``renpy_statement`` and ``renpy_block`` are always checked.
+
     .. warning::
 
         Using the empty string as the name to redefine the say statement is
@@ -267,6 +276,7 @@ def register(
         execute_default=execute_default,
         reachable=reachable,
         init_priority=init_priority,
+        strict_expression=strict_expression,
     )
 
     if block not in [True, False, "script", "script-possible", "atl", "atl-possible", "possible"]:
@@ -277,6 +287,7 @@ def register(
         renpy.exports.push_error_handler(l.error)
 
         old_subparses = l.subparses
+        old_strict_expression = l.strict_expression
 
         try:
             l.subparses = []
@@ -308,7 +319,9 @@ def register(
 
             start_line = l.line
 
+            l.strict_expression = strict_expression
             parsed = name, parse(l)
+            l.strict_expression = old_strict_expression
 
             if l.line == start_line:
                 l.advance()
@@ -327,6 +340,7 @@ def register(
 
         finally:
             l.subparses = old_subparses
+            l.strict_expression = old_strict_expression
             renpy.exports.pop_error_handler()
 
         if (post_execute is not None) or (post_label is not None):
@@ -345,6 +359,7 @@ def register(
 
     # The function that is called to get our parse data.
     def parse_data(l):
+        l.strict_expression = registry[name]["strict_expression"]
         return (name, registry[name]["parse"](l))
 
     parsers.add(name, parse_data)

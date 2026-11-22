@@ -454,6 +454,36 @@ cdef class ContextGetter(Getter):
         return context.uniforms[self.uniform_name]
 
 
+cdef class DefaultContextGetter(Getter):
+    """
+    Gets a uniform from the context like ContextGetter, but falls back to the default a shader part gave for it with
+    a default_ keyword argument to renpy.register_shader when it isn't set. A callable default is called with no
+    arguments each time the shader is applied, to get the value.
+    """
+
+    cdef object default
+    cdef bint callable_default
+
+    def __init__(self, uniform_name, default):
+        Getter.__init__(self, uniform_name)
+        self.default = default
+        self.callable_default = callable(default)
+
+    def __repr__(self):
+        return f"DefaultContextGetter({self.uniform_name}, {self.default!r})"
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        rv = context.uniforms.get(self.uniform_name, self)
+
+        if rv is not self:
+            return rv
+
+        if self.callable_default:
+            return self.default()
+
+        return self.default
+
+
 cdef class ProjectionGetter(Getter):
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         return context.projection_matrix
@@ -768,7 +798,7 @@ UNIFORM_GETTER_CLASSES = {
 }
 
 
-def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, uniform_type: str, array: int|None, sampler: int):
+def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, uniform_type: str, array: int|None, sampler: int, defaults: dict|None = None):
     """
     Given the information about a uniform, generates an object that will get the
     information for the uniform, and set it.
@@ -790,6 +820,10 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
     `sampler`
         The sampler number to allocate next.
 
+    `defaults`
+        If not None, a map from uniform name to the default value (or callable giving it) used when a uniform
+        without a built-in getter isn't set. A uniform with an operation uses the default of its base name.
+
     Returns a (setter, sampler) tuple, where setter is a Setter object with its getter
     field set, and sampler is the sampler number to use for the next sampler.
     """
@@ -803,6 +837,9 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
     if base_name in UNIFORM_GETTER_CLASSES:
         getter_class, require_type = UNIFORM_GETTER_CLASSES[base_name]
         getter = getter_class(base_name)
+    elif defaults and base_name in defaults:
+        getter = DefaultContextGetter(base_name, defaults[base_name])
+        require_type = None
     else:
         getter = ContextGetter(base_name)
         require_type = None

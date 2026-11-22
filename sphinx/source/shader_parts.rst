@@ -7,6 +7,15 @@ Shader parts are used by :doc:`model` and :doc:`textshaders`. This file
 contains an index of parts by priority, and the source of each shader
 part.
 
+.. warning::
+
+    The default shader parts may change between versions of Ren'Py. A
+    part may gain additional parameters, or have its implementation
+    changed, while producing similar output. A game that depends on the
+    exact behavior of a shader part should copy the part, register the
+    copy under a new name with :func:`renpy.register_shader`, and use
+    that name instead.
+
 Vertex Part Priorities
 ----------------------
 

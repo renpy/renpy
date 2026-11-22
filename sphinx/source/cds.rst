@@ -261,20 +261,29 @@ A custom statement's parse function takes an instance of a Lexer object.
         actually declare the label - the statement is required to do that
         by returning it from the `label` function.)
 
-    .. method:: simple_expression()
+    .. method:: simple_expression(expr=None)
 
         Match a simple Python expression, returns it as a string.
         This is often used when you expect a variable name.
         It is not recommended to change the result. The correct action is
         to evaluate the result in the future.
 
-    .. method:: delimited_python(delim)
+        `expr` controls when syntax errors in the expression are reported.
+        If true, a syntax error is reported when the game loads, stopping it
+        from starting. If None, the `strict_expression` argument to
+        :func:`renpy.register_statement` decides whether it is reported
+        then, or only if the expression is evaluated. If false, the
+        expression is returned as a plain string that is never checked.
+
+    .. method:: delimited_python(delim, expr=None)
 
         Match a Python expression that ends in a `delim`, for example ':'.
         This is often used when you expect a condition until the delimiter.
         It is not recommended to change the result. The correct action is
         to evaluate the result in the future. This raises an error if
         end of line is reached before the delimiter.
+
+        `expr` is as for ``simple_expression``.
 
     .. method:: arguments()
 
@@ -285,10 +294,19 @@ A custom statement's parse function takes an instance of a Lexer object.
         takes an optional `scope` dictionary, and returns a tuple
         in which the first component is a tuple of positional arguments,
         and the second component is a dictionary of keyword arguments.
+        Syntax errors in the arguments are reported as decided by the
+        `strict_expression` argument to :func:`renpy.register_statement`.
 
-    .. method:: rest()
+    .. method:: rest(strict=None)
 
         Skip whitespace, then return the rest of the line.
+
+        `strict` controls when syntax errors in the result are reported, if
+        it is evaluated as Python. If true, a syntax error is reported when
+        the game loads, stopping it from starting. If false, a syntax error
+        is only reported if the result is evaluated, so the text need not
+        be Python. If None, the `strict_expression` argument to
+        :func:`renpy.register_statement` decides.
 
     .. method:: checkpoint()
 

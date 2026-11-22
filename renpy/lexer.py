@@ -670,7 +670,19 @@ class Lexer:
 
     block: list[GroupedLine]
 
-    def __init__(self, block, init=False, init_offset=0, global_label=None, monologue_delimiter="\n\n", subparses=None):
+    strict_expression: bool = True
+    "A default for lexers pickled into creator-defined statement data before strictness existed."
+
+    def __init__(
+        self,
+        block,
+        init=False,
+        init_offset=0,
+        global_label=None,
+        monologue_delimiter="\n\n",
+        subparses=None,
+        strict_expression: bool = True,
+    ):
         # Older version of Lexer had block being a list of tuples. Those lists can be found in UserStatements,
         # and so need to be upgraded.
         if block and not isinstance(block[0], GroupedLine):
@@ -707,6 +719,14 @@ class Lexer:
         self.monologue_delimiter = monologue_delimiter
 
         self.subparses = subparses
+
+        self.strict_expression: bool = strict_expression
+        """
+        The default strictness of the expressions this lexer makes. A syntax error in a strict expression is
+        reported when the script loads; in other expressions, it's reported when the expression is evaluated.
+        Methods that make eval expressions take an `expr` argument, and rest takes a `strict` argument, that
+        override this when they aren't None.
+        """
 
     def advance(self):
         """
@@ -946,6 +966,7 @@ class Lexer:
             global_label=self.global_label,
             monologue_delimiter=self.monologue_delimiter,
             subparses=self.subparses,
+            strict_expression=self.strict_expression,
         )
 
     def string(self):
@@ -1288,6 +1309,12 @@ class Lexer:
         return rv
 
     def expr(self, s: str, expr: bool) -> str:
+        """
+        Returns `s` unchanged if `expr` is false, or as a non-strict PyExpr otherwise.
+
+        This isn't used by Ren'Py and isn't documented, but is retained for compatibility with creator-defined
+        statements that may call it.
+        """
 
         if not expr:
             return s
@@ -1300,26 +1327,33 @@ class Lexer:
 
         return rv
 
+    def _resolve_strict(self, strict: bool | None) -> bool:
+        """
+        Returns whether an expression should be strict, given the `expr` or `strict` argument passed to the method
+        that makes it. None means to use this lexer's strict_expression.
+        """
+
+        if strict is None:
+            return self.strict_expression
+
+        return strict
+
     def _expr_from_range(
         self,
         start: int,
         end: int,
         context: ExpressionContext = "unknown",
+        strict: bool | None = None,
     ) -> PyExpr:
+        """
+        Returns the text from `start` to `end` as a PyExpr, and queues it to be compiled in `context`. `strict` is
+        as for _resolve_strict.
+        """
 
-        s = self.text[start:end]
-
-        # Only eval expressions need to strip whitespace.
         if context == "eval":
-            s = s.lstrip()
-            start = end - len(s)
-
-            # Stripping claims the newline of a line continuation, and python can't compile the backslash that
-            # would leave behind, so the backslash has to go too.
-            s = s.rstrip()
-
-            while s.endswith("\\"):
-                s = s[:-1].rstrip()
+            start, s = self._strip_eval(start, end)
+        else:
+            s = self.text[start:end]
 
         expr = make_pyexpr(
             s,
@@ -1328,6 +1362,7 @@ class Lexer:
             self.column,
             self.text,
             start,
+            self._resolve_strict(strict),
         )
 
         # Empty expression can't be compiled.
@@ -1336,7 +1371,25 @@ class Lexer:
 
         return expr
 
-    def delimited_python(self, delim, expr=True):
+    def _strip_eval(self, start: int, end: int) -> tuple[int, str]:
+        """
+        Strips whitespace from both ends of the eval expression from `start` to `end`. Returns the position of the
+        first character kept, and the stripped text.
+        """
+
+        s = self.text[start:end].lstrip()
+        start = end - len(s)
+
+        # Stripping claims the newline of a line continuation, and python can't compile the backslash that would
+        # leave behind, so the backslash has to go too.
+        s = s.rstrip()
+
+        while s.endswith("\\"):
+            s = s[:-1].rstrip()
+
+        return start, s
+
+    def delimited_python(self, delim, expr: bool | None = None):
         """
         This matches python code up to, but not including, the non-whitespace
         delimiter characters. Returns a string containing the matched code,
@@ -1350,10 +1403,10 @@ class Lexer:
             c = self.text[self.pos]
 
             if c in delim:
-                if not expr:
+                if expr is False:
                     return self.text[start : self.pos]
 
-                return self._expr_from_range(start, self.pos, "eval")
+                return self._expr_from_range(start, self.pos, "eval", expr)
 
             if self.python_string():
                 continue
@@ -1365,10 +1418,14 @@ class Lexer:
 
         self.error(f"reached end of line when expecting '{delim}'.")
 
-    def python_expression(self, expr=True):
+    def python_expression(self, expr: bool | None = None):
         """
         Returns a python expression, which is arbitrary python code
         extending to a colon.
+
+        If expr is False, the expression is returned as a plain string. If
+        it's True, a strict PyExpr is returned, and if None, a PyExpr that
+        follows strict_expression.
         """
 
         start = self.pos
@@ -1377,10 +1434,10 @@ class Lexer:
         if not pe:
             self.error("expected python_expression")
 
-        if not expr:
+        if expr is False:
             return pe
 
-        return self._expr_from_range(start, self.pos, "eval")
+        return self._expr_from_range(start, self.pos, "eval", expr)
 
     def parenthesised_python(self):
         """
@@ -1411,7 +1468,9 @@ class Lexer:
 
         return False
 
-    def simple_expression(self, comma=False, operator=True, image=False) -> PyExpr | None:
+    def simple_expression(
+        self, comma=False, operator=True, image=False, expr: bool | None = None
+    ) -> PyExpr | str | None:
         """
         Tries to parse a simple_expression. Returns the text if it can, or
         None if it cannot.
@@ -1425,6 +1484,10 @@ class Lexer:
         If image is True, then the expression is being parsed as part of
         an image, and so keywords that are special in the show/hide/scene
         statements are not allowed.
+
+        If expr is False, the expression is returned as a plain string. If
+        it's True, a strict PyExpr is returned, and if None, a PyExpr that
+        follows strict_expression.
         """
 
         start = self.pos
@@ -1484,26 +1547,24 @@ class Lexer:
 
             break
 
-        expr = self._expr_from_range(start, self.pos, "eval")
+        if expr is False:
+            return self._strip_eval(start, self.pos)[1] or None
 
-        if not expr:
-            return None
+        return self._expr_from_range(start, self.pos, "eval", expr) or None
 
-        return expr
-
-    def comma_expression(self):
+    def comma_expression(self, expr: bool | None = None):
         """
         One or more simple expressions, separated by commas, including an
         optional trailing comma.
         """
 
-        return self.simple_expression(comma=True)
+        return self.simple_expression(comma=True, expr=expr)
 
-    def say_expression(self):
+    def say_expression(self, expr: bool | None = None):
         """
         Parses the name portion of a say statement.
         """
-        return self.simple_expression(operator=False)
+        return self.simple_expression(operator=False, expr=expr)
 
     type LexerCheckpoint = Any
     "Opaque representation of the lexer state."
@@ -1582,7 +1643,7 @@ class Lexer:
 
         return rv
 
-    def rest(self):
+    def rest(self, strict: bool | None = None):
         """
         Skips whitespace, then returns the rest of the current
         line, and advances the current position to the end of
@@ -1593,7 +1654,7 @@ class Lexer:
 
         pos = self.pos
         self.pos = len(self.text)
-        return self._expr_from_range(pos, self.pos, "exec")
+        return self._expr_from_range(pos, self.pos, "exec", strict)
 
     rest_statement = rest
 
@@ -1657,7 +1718,15 @@ class Lexer:
         if self.subparses is None:
             raise Exception("A renpy_statement can only be parsed inside a creator-defined statement.")
 
-        block = renpy.parser.parse_statement(self)
+        # Ren'Py statements are always checked strictly, even inside a lenient creator-defined statement.
+        old_strict = self.strict_expression
+
+        try:
+            self.strict_expression = True
+            block = renpy.parser.parse_statement(self)
+        finally:
+            self.strict_expression = old_strict
+
         self.unadvance()
 
         if not isinstance(block, list):
@@ -1677,18 +1746,25 @@ class Lexer:
 
         block = []
 
-        while not self.eob:
-            try:
-                stmt = renpy.parser.parse_statement(self)
+        # Ren'Py statements are always checked strictly, even inside a lenient creator-defined statement.
+        old_strict = self.strict_expression
+        self.strict_expression = True
 
-                if isinstance(stmt, list):
-                    block.extend(stmt)
-                else:
-                    block.append(stmt)
+        try:
+            while not self.eob:
+                try:
+                    stmt = renpy.parser.parse_statement(self)
 
-            except ParseError as e:
-                renpy.parser.parse_errors.append(e.message)
-                self.advance()
+                    if isinstance(stmt, list):
+                        block.extend(stmt)
+                    else:
+                        block.append(stmt)
+
+                except ParseError as e:
+                    renpy.parser.parse_errors.append(e.message)
+                    self.advance()
+        finally:
+            self.strict_expression = old_strict
 
         if not block:
             if empty:

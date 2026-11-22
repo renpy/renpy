@@ -1098,7 +1098,8 @@ class Script:
                 try:
                     renpy.python.py_compile(expr, mode)
                 except SyntaxError as e:
-                    if context == "unknown":
+                    # Errors in other expressions are reported if and when the expression is evaluated.
+                    if context == "unknown" or not expr.strict:
                         continue
 
                     assert e.filename is not None

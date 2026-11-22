@@ -65,6 +65,18 @@ def shaders(incdir="source/inc"):
 
                 indented(sp.raw_variables)
 
+            if sp.uniform_defaults:
+                p("Defaults::")
+                p("")
+
+                for k, v in sorted(sp.uniform_defaults.items()):
+                    if callable(v):
+                        p(f"    {k} = {getattr(v, '__name__', repr(v))}()")
+                    else:
+                        p(f"    {k} = {v!r}")
+
+                p("")
+
             if sp.vertex_functions:
                 p("Vertex functions::")
                 indented(sp.vertex_functions)

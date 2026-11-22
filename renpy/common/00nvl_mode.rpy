@@ -620,12 +620,14 @@ python early hide:
     renpy.statements.register("nvl show",
                               parse=parse_nvl_show_hide,
                               execute=execute_nvl_show,
-                              lint=lint_nvl_show_hide)
+                              lint=lint_nvl_show_hide,
+                              strict_expression=True)
 
     renpy.statements.register("nvl hide",
                               parse=parse_nvl_show_hide,
                               execute=execute_nvl_hide,
-                              lint=lint_nvl_show_hide)
+                              lint=lint_nvl_show_hide,
+                              strict_expression=True)
 
     def parse_nvl_clear(l):
         if not l.eol():
@@ -644,4 +646,5 @@ python early hide:
                               execute=execute_nvl_clear,
                               warp=lambda parse: True,
                               scry=scry_nvl_clear,
-                              translatable=True)
+                              translatable=True,
+                              strict_expression=True)

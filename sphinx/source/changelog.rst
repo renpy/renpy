@@ -18,6 +18,10 @@ On Android 16 and later, the back button and back gesture once again roll back, 
 
 On macOS, colors are once again displayed as they were in Ren'Py 8.5, fixing a green tinge introduced in 8.6.0.
 
+On Android, HTTPS requests, including Ren'Py Sync, :func:`renpy.fetch`, and the updater, verify certificates against
+the device's certificate store. Since 8.6.0, every such request failed, which made Sync report that it could not
+connect to the Ren'Py Sync server.
+
 Scrying (which predicts things like extend and :var:`config.nvl_page_ctc`) now takes translations into account,
 rather than skipping over them.
 
@@ -28,6 +32,14 @@ candidates from the previous page.
 In the :doc:`testing framework <testcases>`, a text selector matching dialogue now matches the translated dialogue being
 displayed, or with ``raw``, the dialogue as written in the original-language script. Previously, which of the two
 was matched depended on how the line was translated, and some translated lines caused an error.
+
+In the :doc:`testing framework <testcases>`, statements such as ``move`` and ``click`` run as soon as a layer
+transition finishes, and run after skipping a layer transition that outlasts the transition timeout. Previously, they
+waited for the transition timeout and then failed with a RecursionError.
+
+In the :doc:`testing framework <testcases>`, running tests filtered by testsuite or testcase name works when a
+testcase parameter is a tuple, or a string containing parentheses or dots, instead of failing with an "Invalid
+parameter filter" or "Unmatched parentheses" error.
 
 Live2D clipping mask textures that are being cropped to save space are now cropped in a way that aligns with
 texels, allowing these textures to be sampled consistently even when the crop changes as the model animates. This keeps
@@ -46,6 +58,15 @@ however much the displayable is zoomed and however large the window is. This fix
   weaker in a larger one, such as fullscreen on a high-resolution display. Games made for Ren'Py 8.5 and earlier keep
   this behavior, which is controlled by the new :var:`config.blur_virtual_pixels` variable.
 
+:doc:`Creator-defined statements <cds>` can once again read text that isn't Python, such as with the lexer's ``rest``
+method, as in Ren'Py 8.5. Since Ren'Py 8.6.0, such text was reported as invalid syntax, stopping the game from
+starting. A statement registered with the new `strict_expression` argument to :func:`renpy.register_statement` has
+its Python expressions checked when the game loads, as Ren'Py's own statements do.
+
+Games that enable touch finger events through :var:`config.pygame_events` can once again receive FINGERDOWN, FINGERUP,
+and FINGERMOTION events, rather than getting an error when one occurs. FINGERCANCELED events include the touch and
+finger information as well.
+
 
 Other Changes
 -------------
@@ -59,6 +80,13 @@ an uncaught ``JumpOutException``.
 
 The new :ref:`u_pixels_per_unit <model-uniforms>` uniform gives shaders the number of pixels being drawn for each
 unit of the displayable.
+
+:func:`renpy.register_shader` takes keyword arguments beginning with ``default_``, which give default values for
+uniforms that aren't set. A default can be a callable, which is called each time the shader is applied. This lets a
+shader part gain a uniform without breaking code that uses the part directly.
+
+The new ``--list`` option to the ``test`` command lists the test suites and test cases that match the filters, by
+the names used to filter them, without running them. See the :doc:`testing framework <testcases>` documentation.
 
 .. _renpy-8.6.1:
 

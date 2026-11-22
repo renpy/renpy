@@ -32,7 +32,26 @@ screen blur_in_oversampled_mesh(blur):
     add Transform(Fixed(Solid("#fff", xysize=(100, 100), align=(.5, .5)), xysize=(200, 200)), blur=blur * 2, zoom=2.0):
         pos (400, 100)
 
+screen blur_shader_and_property(blur):
+    add Solid("#000")
+
+    # On the left, the renpy.blur shader part is applied directly, setting only u_renpy_blur_log2, as games did
+    # before the part gained other uniforms. On the right, the same square uses the blur property.
+    add Transform(
+        Fixed(Solid("#fff", xysize=(100, 100), align=(.5, .5)), xysize=(200, 200)),
+        mesh=True,
+        gl_mipmap=True,
+        shader=("renpy.blur", "-renpy.texture"),
+        u_renpy_blur_log2=math.log2(blur),
+    ):
+        pos (100, 100)
+
+    add Transform(Fixed(Solid("#fff", xysize=(100, 100), align=(.5, .5)), xysize=(200, 200)), blur=blur):
+        pos (400, 100)
+
 init python:
+    import math
+
     def blur_edge_width(left, right, y):
         """
         Returns how many virtual pixels it takes for the screen to go from 10% to 90% of its brightest value,
@@ -91,3 +110,18 @@ testsuite blur_shader:
         assert eval (0.7 < blur_in_mesh / blur_direct < 1.4)
 
         run Hide("blur_in_oversampled_mesh")
+
+    testcase direct_shader_matches_property:
+        description "Applying the renpy.blur shader part directly with only u_renpy_blur_log2 set uses the defaults of its other uniforms, and blurs as much as the blur property."
+        parameter blur = [ 4.0, 8.0 ]
+
+        run Show("blur_shader_and_property", blur=blur)
+        pause 0.1
+
+        $ blur_shader = blur_edge_width(100, 200, 200)
+        $ blur_property = blur_edge_width(400, 500, 200)
+
+        assert eval (blur_property > 2.0)
+        assert eval (0.7 < blur_shader / blur_property < 1.4)
+
+        run Hide("blur_shader_and_property")

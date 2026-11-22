@@ -309,6 +309,171 @@ def test_only_requires_the_test_to_be_enabled(mocker):
 
 
 ################################################################################
+# Listing tests
+#
+# `test --list` prints the paths of the tests the filters match, which must be names that select those tests.
+################################################################################
+
+
+LIST_SCRIPT = """\
+testsuite math:
+    testcase addition:
+        parameter (a, b) = [(2, 1), (3, 2)]
+        pause 0
+    testcase move:
+        parameter point = [(0, 0), (5, 5)]
+        pause 0
+    testsuite graphs:
+        parameter kind = ["line", "bar"]
+        testcase dot:
+            pause 0
+
+testsuite audio:
+    testcase save:
+        enabled False
+        pause 0
+
+testcase reload:
+    pause 0
+"""
+
+
+@pytest.fixture
+def listed(mocker):
+    """
+    Returns a function that registers the tests in a script and returns the paths `test --list` would print
+    for the given filters.
+
+    The registered tests and the root suite are replaced, so that each call starts from only its own script and
+    nothing is left behind for later tests.
+    """
+
+    def listed(source, *filters):
+        mocker.patch.dict(testexecution.testcases, clear=True)
+        mocker.patch.object(testexecution, "global_test_suite", None)
+
+        for node in renpy.parser.parse("listing.rpy", source):
+            if hasattr(node, "test"):
+                testexecution.register_testcase(node.test)
+
+        testexecution.setup_global_test_suite()
+        return testexecution.collect_test_paths(testfilter.ExecutionFilter(list(filters)))
+
+    return listed
+
+
+def test_list_without_filters_lists_everything(listed):
+    """
+    Without filters, every suite and test case is listed in run order, once per parameter set. The children of a
+    parameterized suite are listed under each of its sets, and the disabled test is listed too.
+    """
+
+    assert listed(LIST_SCRIPT) == [
+        "math",
+        "math.addition(a=2, b=1)",
+        "math.addition(a=3, b=2)",
+        "math.move(point=(0, 0))",
+        "math.move(point=(5, 5))",
+        "math.graphs(kind='line')",
+        "math.graphs(kind='line').dot",
+        "math.graphs(kind='bar')",
+        "math.graphs(kind='bar').dot",
+        "audio",
+        "audio.save",
+        "reload",
+    ]
+
+
+@pytest.mark.parametrize(
+    ("filters", "expected"),
+    [
+        (["audio"], ["audio", "audio.save"]),
+        (["math.graphs.dot"], ["math", "math.graphs(kind='line')", "math.graphs(kind='line').dot",
+                               "math.graphs(kind='bar')", "math.graphs(kind='bar').dot"]),
+        (["math.move(point=(5, 5))"], ["math", "math.move(point=(5, 5))"]),
+        (["math.addition(a=3)", "reload"], ["math", "math.addition(a=3, b=2)", "reload"]),
+        (["math.graphs(kind='bar')"], ["math", "math.graphs(kind='bar')", "math.graphs(kind='bar').dot"]),
+    ],
+)
+def test_list_applies_filters(listed, filters, expected):
+    """
+    Filters select tests for listing as they do for a run, including parameter filters with tuple and string
+    values. The suites containing a selected test are listed so the structure is visible.
+    """
+
+    assert listed(LIST_SCRIPT, *filters) == expected
+
+
+def test_list_names_select_the_listed_test(listed):
+    """
+    Each listed name, used as a filter, lists that test itself, so the names can be pasted into `test`.
+    """
+
+    for path in listed(LIST_SCRIPT):
+        assert path in listed(LIST_SCRIPT, path)
+
+
+NON_LITERAL_SCRIPT = """\
+testsuite s:
+    testcase case:
+        parameter x = [float("nan"), 1]
+        pause 0
+    testsuite inner:
+        parameter y = [float("nan"), 2]
+        testcase leaf:
+            pause 0
+"""
+
+
+@pytest.mark.parametrize(
+    ("filters", "expected"),
+    [
+        ([], ["s", "s.case(x=nan)", "s.case(x=1)", "s.inner(y=nan)", "s.inner(y=nan).leaf", "s.inner(y=2)",
+              "s.inner(y=2).leaf"]),
+        (["s"], ["s", "s.case(x=1)", "s.inner(y=2)", "s.inner(y=2).leaf"]),
+        (["s.case(x=1)"], ["s", "s.case(x=1)"]),
+        (["s.inner.leaf"], ["s", "s.inner(y=2)", "s.inner(y=2).leaf"]),
+    ],
+)
+def test_non_literal_parameters_are_skipped_by_filters(listed, filters, expected):
+    """
+    A test whose generated name has a parameter value that isn't a Python literal, such as nan, can't be matched
+    against a filter. With filters it is skipped, along with the children of such a suite, rather than raising
+    KeyError for every filter that reaches it. Without filters, every test still runs, so it is listed.
+    """
+
+    assert listed(NON_LITERAL_SCRIPT, *filters) == expected
+
+
+def test_list_keeps_parameterized_root_prefix(listed):
+    """
+    The children of a parameterized root suite keep the `global(...)` prefix, since it is needed to tell the
+    root's parameter sets apart, while the root itself is not listed.
+    """
+
+    source = """\
+testsuite global:
+    parameter x = [1, 2]
+    testcase one:
+        pause 0
+"""
+
+    assert listed(source) == ["global(x=1).one", "global(x=2).one"]
+
+
+def test_list_resets_parameter_indices(listed):
+    """
+    Listing steps through the parameter sets of every test and leaves them as a run expects to find them, so a
+    later run, or listing again, starts from the first set.
+    """
+
+    first = listed(LIST_SCRIPT)
+
+    assert all(test.parameter_index == -1 for test in testexecution.testcases.values())
+    assert testexecution.collect_test_paths(testfilter.ExecutionFilter([])) == first
+
+
+################################################################################
 # Window size
 ################################################################################
 

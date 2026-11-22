@@ -648,7 +648,8 @@ python early hide:
         execute=execute_voice,
         predict=predict_voice,
         lint=lint_voice,
-        translatable=True)
+        translatable=True,
+        strict_expression=True)
 
     def parse_voice_sustain(l):
         if not l.eol():
@@ -663,4 +664,5 @@ python early hide:
         'voice sustain',
         parse=parse_voice_sustain,
         execute=execute_voice_sustain,
-        translatable=True)
+        translatable=True,
+        strict_expression=True)
