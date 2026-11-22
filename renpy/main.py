@@ -366,6 +366,8 @@ def main():
 
     load_build_info()
 
+    renpy.compat.ca.log_certificate_fallback()
+
     log_clock("Early init")
 
     # Initialize the log.

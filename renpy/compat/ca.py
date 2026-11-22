@@ -28,7 +28,9 @@ where neither OpenSSL nor truststore can find the system store, this bundles it 
 import importlib.abc
 import importlib.util
 import os
+import re
 import sys
+from collections.abc import Callable
 
 import renpy
 
@@ -282,15 +284,241 @@ def set_android_certificates() -> None:
     ssl.SSLContext.set_default_verify_paths = set_default_verify_paths
 
 
+TRUSTSTORE_PROBE_CERTIFICATE: str = """\
+-----BEGIN CERTIFICATE-----
+MIIBnjCCAUOgAwIBAgIUQv9Tde1zFs9z0+IJtS4iCqLTiy0wCgYIKoZIzj0EAwIw
+IzEhMB8GA1UEAwwYdHJ1c3RzdG9yZS1wcm9iZS5pbnZhbGlkMCAXDTI2MTEyMjIx
+NTIxN1oYDzIxMjYxMDI5MjE1MjE3WjAjMSEwHwYDVQQDDBh0cnVzdHN0b3JlLXBy
+b2JlLmludmFsaWQwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQzH5ymZSJmNGYk
+WVZf3W/k2a6eMK/y5gpZAHZr0d+NrAjCYs3F7Ij5AodC2/ym9TY3Ay+YrzvWXZAq
+S4B4+7UZo1MwUTAdBgNVHQ4EFgQUGtVRzMfPk//yVfJcaF4/i771tY4wHwYDVR0j
+BBgwFoAUGtVRzMfPk//yVfJcaF4/i771tY4wDwYDVR0TAQH/BAUwAwEB/zAKBggq
+hkjOPQQDAgNJADBGAiEAh2WTup4CaTVMMOi1eNOBoHAMIO1zM8t8R7zNG+MsYhAC
+IQDU878j+UMsMCR0ReVbrigjmoVz7O7zTD8p6b7hzSy5Fg==
+-----END CERTIFICATE-----
+"""
+"""
+A self-signed certificate for truststore-probe.invalid, whose private key was discarded, so no
+trust store contains it. check_truststore expects truststore to reject it.
+"""
+
+
+def ca_file_loads(path: str) -> bool:
+    """
+    Returns True if `path` is a file OpenSSL can load at least one CA certificate from, or False
+    if it doesn't exist, can't be read, or holds no CA certificates.
+    """
+
+    import ssl
+
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+
+    try:
+        context.load_verify_locations(cafile=path)
+    except (OSError, ssl.SSLError):
+        return False
+
+    return context.cert_store_stats()["x509_ca"] > 0
+
+
+HASHED_CERTIFICATE_NAME = re.compile(r"^[0-9a-fA-F]{8}\.[0-9]+$")
+"""
+Matches the names OpenSSL looks certificates up by in a CA directory: the subject hash, a dot,
+and a sequence number.
+"""
+
+
+def ca_directory_loads(directory: str) -> bool:
+    """
+    Returns True if `directory` is a CA directory holding at least one CA certificate OpenSSL
+    can load under a hashed name, or False if it doesn't exist or holds none.
+    """
+
+    try:
+        names = sorted(os.listdir(directory))
+    except OSError:
+        return False
+
+    return any(HASHED_CERTIFICATE_NAME.match(i) and ca_file_loads(os.path.join(directory, i)) for i in names)
+
+
+WINDOWS_OFFLINE_CHAIN_FLAGS: int = 0x00000004 | 0x00000100
+"""
+CERT_CHAIN_CACHE_ONLY_URL_RETRIEVAL | CERT_CHAIN_DISABLE_AUTH_ROOT_AUTO_UPDATE, which keep
+Windows from contacting the network while building a certificate chain.
+"""
+
+
+def check_truststore() -> None:
+    """
+    Checks that truststore's backend for this platform works, so a backend that imports but
+    fails when used is found at startup rather than failing every HTTPS request. The check is
+    offline, and can't go stale as certificates expire.
+
+    The Windows, macOS, and iOS backends verify certificates with the operating system, so they
+    are asked to verify TRUSTSTORE_PROBE_CERTIFICATE, and must give the rejection a working
+    backend gives. This runs the backend's whole verification path, but doesn't check that the
+    trust store has useful roots. On Windows, building a chain to an unknown root may contact
+    Windows Update for its list of roots, so WINDOWS_OFFLINE_CHAIN_FLAGS are added to the chain
+    flags truststore uses during the check, to keep it from delaying startup.
+
+    The OpenSSL backend (Linux and Android) only finds the system's CA certificates and leaves
+    verification to OpenSSL, failing when there are none. So it is asked to configure a context,
+    which must then have CA certificates, or OpenSSL's default CA directory must hold one (as
+    OpenSSL loads those only when needed).
+
+    Raises an exception if the check fails. Must be called before truststore is injected into
+    ssl, so the contexts it uses are plain ssl.SSLContexts.
+    """
+
+    import ssl
+
+    # truststore's __init__ deletes its _api attribute, so the module is found through importlib.
+    api = importlib.import_module("truststore._api")
+    verify = api._verify_peercerts_impl
+
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+
+    if verify.__module__ == "truststore._openssl":
+        with api._configure_context(context):
+            pass
+
+        if context.cert_store_stats()["x509_ca"]:
+            return
+
+        capath = ssl.get_default_verify_paths().capath
+
+        if capath and ca_directory_loads(capath):
+            return
+
+        raise RuntimeError("truststore found no CA certificates.")
+
+    certificate = ssl.PEM_cert_to_DER_cert(TRUSTSTORE_PROBE_CERTIFICATE)
+
+    # On Windows, truststore's chain building is wrapped to add the offline flags.
+    windows = sys.modules.get("truststore._windows")
+    name = "_get_and_verify_cert_chain"
+    original: Callable[..., None] | None = getattr(windows, name, None)
+
+    if windows is not None and original is not None:
+        chain: Callable[..., None] = original
+
+        def offline_get_and_verify_cert_chain(*args: object, chain_flags: int = 0, **kwargs: object) -> None:
+            chain(*args, chain_flags=chain_flags | WINDOWS_OFFLINE_CHAIN_FLAGS, **kwargs)
+
+        setattr(windows, name, offline_get_and_verify_cert_chain)
+
+    try:
+        verify(context, [certificate], server_hostname="truststore-probe.invalid")
+    except ssl.SSLCertVerificationError:
+        return
+    finally:
+        if windows is not None and original is not None:
+            setattr(windows, name, original)
+
+    raise RuntimeError("truststore accepted a self-signed certificate that no trust store contains.")
+
+
+truststore_error: str | None = None
+"""
+The traceback of the exception that prevented truststore from being imported or used, if
+use_system_certificates had to fall back to a CA bundle, or None. log_certificate_fallback
+writes it to the log, as the log directory isn't known when certificates are set up.
+"""
+
+fallback_bundle: str | None = None
+"""
+The CA bundle that default SSL contexts verify against when truststore couldn't be used, or
+None if there is none. Only meaningful when truststore_error is set.
+"""
+
+
+def use_certifi_certificates() -> str | None:
+    """
+    Makes certifi's CA bundle the default certificates of every ssl.SSLContext, for when
+    truststore can't be used, as OpenSSL's default locations may not exist on the platform.
+    (use_system_certificates makes requests use these defaults too.) An SSL_CERT_FILE naming a
+    file with CA certificates is used instead. On Android, set_android_certificates has already
+    chosen the default certificates, so nothing is changed.
+
+    Returns the bundle that default SSL contexts verify against, or None if there is none.
+    """
+
+    if renpy.android:
+        return os.environ.get("SSL_CERT_FILE")
+
+    import ssl
+
+    bundle = os.environ.get("SSL_CERT_FILE")
+
+    if bundle is None or not ca_file_loads(bundle):
+        try:
+            import certifi
+
+            bundle = certifi.where()
+        except ImportError:
+            return None
+
+    # CA directories named by SSL_CERT_DIR, which OpenSSL would load by default, are kept. Like
+    # OpenSSL, capath takes a list separated by os.pathsep, and skips entries that don't exist.
+    directory = os.environ.get("SSL_CERT_DIR")
+
+    if directory is not None and not any(os.path.isdir(i) for i in directory.split(os.pathsep)):
+        directory = None
+
+    def set_default_verify_paths(self: ssl.SSLContext) -> None:
+        self.load_verify_locations(cafile=bundle, capath=directory)
+
+    ssl.SSLContext.set_default_verify_paths = set_default_verify_paths
+
+    return bundle
+
+
+def log_certificate_fallback() -> None:
+    """
+    Writes to the log why use_system_certificates couldn't use truststore, and the CA bundle it
+    used instead, if that happened. Called once the log directory is known.
+    """
+
+    if truststore_error is None:
+        return
+
+    if fallback_bundle is not None:
+        renpy.display.log.write("Could not use the system certificate store, using %s instead:", fallback_bundle)
+    else:
+        renpy.display.log.write("Could not use the system certificate store, and no CA bundle was found:")
+
+    renpy.display.log.write("%s", truststore_error.rstrip())
+
+
 def use_system_certificates() -> None:
     """
     Make ssl and requests verify TLS certificates against the operating system's trust store,
-    rather than certifi's CA bundle.
+    rather than certifi's CA bundle. If truststore can't be imported on this platform, or fails
+    check_truststore, falls back to a CA bundle, recording the error in truststore_error and the
+    bundle in fallback_bundle.
     """
+
+    global truststore_error, fallback_bundle
 
     set_android_certificates()
 
-    import truststore
+    try:
+        import truststore
+
+        check_truststore()
+    except Exception:
+        import traceback
+
+        truststore_error = traceback.format_exc()
+        fallback_bundle = use_certifi_certificates()
+
+        # Make requests use the same bundle as ssl, which may not be certifi's (on Android, or
+        # with SSL_CERT_FILE). Without a bundle, requests keeps using certifi's, if it can.
+        if fallback_bundle is not None:
+            use_default_certificates_for_requests()
+
+        return
 
     if "urllib3" in sys.modules or "requests" in sys.modules:
         truststore.inject_into_ssl()
@@ -300,6 +528,15 @@ def use_system_certificates() -> None:
         import ssl
 
         ssl.SSLContext = truststore.SSLContext  # type: ignore
+
+    use_default_certificates_for_requests()
+
+
+def use_default_certificates_for_requests() -> None:
+    """
+    Makes requests verify against the default certificates of ssl.SSLContext rather than its
+    certifi bundle, now if requests.adapters is imported, or else when it is first imported.
+    """
 
     if "requests.adapters" in sys.modules:
         disable_requests_ca_bundle(sys.modules["requests.adapters"])
