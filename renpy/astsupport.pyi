@@ -37,6 +37,12 @@ def hash64(s: Any) -> int:
         A unicode string. Other types will be coerced to unicode before hashing.
     """
 
+PY_STRICT: int
+"""
+A flag in PyExpr.py, set when a syntax error in the expression should be reported when the script loads, rather
+than when the expression is evaluated. The low bits hold the python version.
+"""
+
 class PyExpr(str):
     """
     Represents a string containing python expression.
@@ -45,8 +51,16 @@ class PyExpr(str):
     filename: str
     linenumber: int
     py: int
+    "The python version the expression is written in, combined with PY_STRICT."
     hashcode: int
     column: int
+
+    @property
+    def strict(self) -> bool:
+        """
+        True if a syntax error in this expression is reported when the script loads. Otherwise, it's reported
+        when the expression is evaluated.
+        """
 
     def __new__(
         cls, s: str, filename: str, linenumber: int, py: int = 3, hashcode: int | None = None, column: int = 0, /
@@ -64,7 +78,9 @@ class PyExpr(str):
         Reverts the pyexpr list to the state it was in when checkpoint was called.
         """
 
-def make_pyexpr(s: str, filename: str, linenumber: int, column: int, text: str, pos: int) -> PyExpr:
+def make_pyexpr(
+    s: str, filename: str, linenumber: int, column: int, text: str, pos: int, strict: bool = False
+) -> PyExpr:
     """
     Used by lexer to make a pyexpr, rapidly adjusting line number and column.
 
@@ -85,4 +101,7 @@ def make_pyexpr(s: str, filename: str, linenumber: int, column: int, text: str, 
 
     `pos`
         The position in the text where the expression starts.
+
+    `strict`
+        If true, the expression is marked with PY_STRICT.
     """

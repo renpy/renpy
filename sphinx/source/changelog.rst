@@ -46,6 +46,11 @@ however much the displayable is zoomed and however large the window is. This fix
   weaker in a larger one, such as fullscreen on a high-resolution display. Games made for Ren'Py 8.5 and earlier keep
   this behavior, which is controlled by the new :var:`config.blur_virtual_pixels` variable.
 
+:doc:`Creator-defined statements <cds>` can once again read text that isn't Python, such as with the lexer's ``rest``
+method, as in Ren'Py 8.5. Since Ren'Py 8.6.0, such text was reported as invalid syntax, stopping the game from
+starting. A statement registered with the new `strict_expression` argument to :func:`renpy.register_statement` has
+its Python expressions checked when the game loads, as Ren'Py's own statements do.
+
 
 Other Changes
 -------------

@@ -1527,6 +1527,7 @@ renpy.register_statement(
     lint=lint_layeredimage,
     init=True,
     block=True,
+    strict_expression=True,
 )
 
 

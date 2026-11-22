@@ -65,6 +65,13 @@ cpdef unsigned long long hash64(s):
     return rv
 
 
+PY_STRICT = 0x80
+"""
+A flag in PyExpr.py, set when a syntax error in the expression should be reported when the script loads, rather
+than when the expression is evaluated. The low bits hold the python version.
+"""
+
+
 @cython.no_gc
 cdef class PyExpr(str):
     """
@@ -75,7 +82,19 @@ cdef class PyExpr(str):
     cdef public unsigned int hashcode
     cdef public unsigned int linenumber
     cdef public unsigned short column
+
+    # The python version the expression is written in, combined with PY_STRICT. PyExprs created before PY_STRICT
+    # existed don't have it set, so they're not strict.
     cdef public unsigned char py
+
+    @property
+    def strict(self) -> bool:
+        """
+        True if a syntax error in this expression is reported when the script loads. Otherwise, it's reported
+        when the expression is evaluated.
+        """
+
+        return bool(self.py & PY_STRICT)
 
     def __reduce__(self):
         return (PyExpr, (str(self), self.filename, self.linenumber, self.py, self.hashcode, self.column))
@@ -115,7 +134,7 @@ cdef object PyExpr_new(type cls, PyObject *args, PyObject *kwargs):
 
     cdef PyExpr rv = old_pyexpr_newfunc(cls, <PyObject *> new_args, kwargs)
 
-    if py != 3 and py != 2:
+    if (py & ~PY_STRICT) != 3 and (py & ~PY_STRICT) != 2:
         raise ValueError("PyExpr was given an invalid value for its py argument. Did you put the column in the py argument?")
 
     if <PyObject *> rv:
@@ -135,7 +154,7 @@ cdef object PyExpr_new(type cls, PyObject *args, PyObject *kwargs):
 PyExprType.tp_new = <newfunc> PyExpr_new
 
 
-def make_pyexpr(s, str filename, int linenumber, int column, str text, int pos):
+def make_pyexpr(s, str filename, int linenumber, int column, str text, int pos, bint strict=False):
     """
     Used by lexer to make a pyexpr, rapidly adjusting line number and column.
 
@@ -156,6 +175,9 @@ def make_pyexpr(s, str filename, int linenumber, int column, str text, int pos):
 
     `pos`
         The position in the text where the expression starts.
+
+    `strict`
+        If true, the expression is marked with PY_STRICT.
     """
 
     cdef Py_UCS4 c
@@ -173,4 +195,4 @@ def make_pyexpr(s, str filename, int linenumber, int column, str text, int pos):
         else:
             column += 1
 
-    return PyExpr(s, filename, linenumber, 3, hash32(s), column)
+    return PyExpr(s, filename, linenumber, (3 | PY_STRICT) if strict else 3, hash32(s), column)
