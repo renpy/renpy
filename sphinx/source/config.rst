@@ -396,12 +396,33 @@ Display
     main use of this is to allow libraries to gain access to resources
     that need an initialized gui, like OpenGL functions.
 
+.. var:: config.gl2_modify_window_flags = None
+
+    If not None, this should be a function that takes the window flags
+    that Ren'Py selected and returns the window flags to use. Ren'Py
+    calls it each time it sets up the display. For example, the
+    following creates a transparent window::
+
+        init python:
+
+            def transparent_window(flags):
+                return flags | renpy.pygame.WINDOW_TRANSPARENT
+
+            config.gl2_modify_window_flags = transparent_window
+
+        define config.gl_clear_color = "#0000"
+
 .. var:: config.gl_clear_color = "#000"
 
     The color that the window is cleared to before images are drawn.
     This is mainly seen as the color of the letterbox or pillarbox
     edges drawn when aspect ratio of the window (or monitor in
     fullscreen mode) does not match the aspect ratio of the game.
+
+    The window clear uses the alpha of this color. In a window created
+    with ``renpy.pygame.WINDOW_TRANSPARENT``, the desktop shows through
+    each pixel whose alpha is below 1.0. See
+    :var:`config.gl2_modify_window_flags`.
 
 .. var:: config.gl_lod_bias = -0.6
 
