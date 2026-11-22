@@ -51,7 +51,7 @@ method, as in Ren'Py 8.5. Since Ren'Py 8.6.0, such text was reported as invalid 
 starting. A statement registered with the new `strict_expression` argument to :func:`renpy.register_statement` has
 its Python expressions checked when the game loads, as Ren'Py's own statements do.
 
-Games that enable touch finger events through ``config.pygame_events`` can once again receive FINGERDOWN, FINGERUP,
+Games that enable touch finger events through :var:`config.pygame_events` can once again receive FINGERDOWN, FINGERUP,
 and FINGERMOTION events, rather than getting an error when one occurs. FINGERCANCELED events include the touch and
 finger information as well.
 
