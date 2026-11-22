@@ -668,28 +668,10 @@ class Interface:
         self.old_root_transform = None
 
         # Init layers.
-        renpy.display.scenelists.init_layers()
+        self.init_layers()
 
         global null
         null = renpy.display.layout.Null()
-
-        for layer in renpy.display.scenelists.layers:
-            if layer in renpy.config.layer_clipping:
-                x, y, w, h = renpy.config.layer_clipping[layer]
-                self.layer_properties[layer] = dict(
-                    xpos=x,
-                    xanchor=0,
-                    ypos=y,
-                    yanchor=0,
-                    xmaximum=w,
-                    ymaximum=h,
-                    xminimum=w,
-                    yminimum=h,
-                    clipping=True,
-                )
-
-            else:
-                self.layer_properties[layer] = {}
 
         # A stack giving the values of self.transition and self.transition_time
         # for contexts outside the current one. This is used to restore those
@@ -884,6 +866,34 @@ class Interface:
 
         renpy.game.preferences.window_position = pos
         renpy.game.preferences.window_position_layout = self.get_display_layout()
+
+    def init_layers(self):
+        """
+        Sets up the layers named in config. This is called when the interface
+        is created. It's called again by renpy.main when the interface was
+        created to report an error during init, as init code that runs after
+        the error can add layers.
+        """
+
+        renpy.display.scenelists.init_layers()
+
+        for layer in renpy.display.scenelists.layers:
+            if layer in renpy.config.layer_clipping:
+                x, y, w, h = renpy.config.layer_clipping[layer]
+                self.layer_properties[layer] = dict(
+                    xpos=x,
+                    xanchor=0,
+                    ypos=y,
+                    yanchor=0,
+                    xmaximum=w,
+                    ymaximum=h,
+                    xminimum=w,
+                    yminimum=h,
+                    clipping=True,
+                )
+
+            else:
+                self.layer_properties[layer] = {}
 
     def start(self):
         """
