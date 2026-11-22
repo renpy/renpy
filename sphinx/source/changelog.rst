@@ -77,6 +77,9 @@ an uncaught ``JumpOutException``.
 The new :ref:`u_pixels_per_unit <model-uniforms>` uniform gives shaders the number of pixels being drawn for each
 unit of the displayable.
 
+The new ``--list`` option to the ``test`` command lists the test suites and test cases that match the filters, by
+the names used to filter them, without running them. See the :doc:`testing framework <testcases>` documentation.
+
 .. _renpy-8.6.1:
 
 8.6.1

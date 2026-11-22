@@ -55,6 +55,14 @@ def test_command() -> bool:
         "Does not work if a specific test case or suite is specified.",
     )
     group.add_argument(
+        "--list",
+        dest="list",
+        action="store_true",
+        default=False,
+        help="List the test suites and test cases that match the filters, including disabled ones, "
+        "without running them.",
+    )
+    group.add_argument(
         "--overwrite-screenshots",
         dest="_test.overwrite_screenshots",
         action="store_true",
@@ -118,6 +126,14 @@ def test_command() -> bool:
             setattr(obj, key_parts[-1], value)
         else:
             raise AttributeError(f"Unknown test setting: {key}")
+
+    if args.list:
+        setup_global_test_suite()
+
+        for path in testexecution.collect_test_paths(ExecutionFilter(args.filters)):
+            print(path)
+
+        return False
 
     testreporter.reporter.add_reporter(testreporter.ConsoleReporter())
 

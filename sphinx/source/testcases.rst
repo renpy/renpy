@@ -181,12 +181,23 @@ use the test command:
     These are combined, so that a test will be run if it
     matches any of the filters.
 
-    See :ref:`test-filter-examples` for examples.
+    See :ref:`test-filter-examples` for examples, and use ``--list`` to see
+    the names you can filter by.
 
 .. option:: --enable-all
 
     Executes all test cases and test suites, regardless of their ``enabled`` property.
     Does not work if a specific test case or suite is specified.
+
+.. option:: --list
+
+    Lists the test suites and test cases that match the filters, one per line,
+    and quits without running them. Each parameter set of a parameterized test
+    is listed separately, and suites are listed before the tests they contain.
+    Tests are listed even if their ``enabled`` property is false, or another
+    test has the ``only`` property. Each listed name can be used as a filter,
+    provided the test's parameter values are literals, such as numbers,
+    strings, and tuples.
 
 .. option:: --overwrite-screenshots
 
@@ -242,6 +253,12 @@ Consider a game with the following test structure::
         testcase save: ...
         testcase load: ...
 
+    testsuite screens:
+        testcase menu: ...
+            parameter kind = ["load", "save"]
+        testcase click: ...
+            parameter point = [(0, 0), (5, 5)]
+
     testcase reload: ...
 
 All tests live inside the implicit root suite called ``global``.
@@ -293,16 +310,21 @@ Command           Selected Tests
 **Parameters**
 
 When a test case uses the ``parameter`` keyword, each value combination is a separate run.
+A filter can give some or all of the parameters as keyword arguments, and selects the runs
+whose parameters are equal to the values given. The values are written as Python literals,
+such as numbers, strings, and tuples.
 
 See :ref:`parameterized-tests` for more information.
 
-==================================  ==============
-Command                             Selected Tests
-==================================  ==============
-``test "math.addition(a=2, b=1)"``  ``math.addition(a=2, b=1)``
-``test "math.addition(a=3)"``       ``addition(a=3, b=1)``, ``addition(a=3, b=2)``
-``test "math.*(a=3, b=2)"``         ``addition(a=3, b=2)``, ``subtraction(a=3, b=2)``
-==================================  ==============
+========================================  ==============
+Command                                   Selected Tests
+========================================  ==============
+``test "math.addition(a=2, b=1)"``        ``math.addition(a=2, b=1)``
+``test "math.addition(a=3)"``             ``math.addition(a=3, b=1)``, ``math.addition(a=3, b=2)``
+``test "math.*(a=3, b=2)"``               ``math.addition(a=3, b=2)``, ``math.subtraction(a=3, b=2)``
+``test "screens.menu(kind='load')"``      ``screens.menu(kind='load')``
+``test "screens.click(point=(5, 5))"``    ``screens.click(point=(5, 5))``
+========================================  ==============
 
 .. note::
 
@@ -317,7 +339,7 @@ Command                         Selected Tests
 =============================   ==============
 ``test audio sprites``          ``audio.save``, ``audio.load``, ``sprites.save``,
                                 ``sprites.load``
-``test *.save math``            ``sprites.save``, ``sounds.save``, plus all of ``math``
+``test *.save math``            ``audio.save``, ``sprites.save``, plus all of ``math``
 =============================   ==============
 
 **Quick Reference**

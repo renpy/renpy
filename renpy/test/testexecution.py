@@ -361,6 +361,53 @@ def setup_global_test_suite() -> TestSuite:
     return root
 
 
+def collect_test_paths(test_filter: ExecutionFilter) -> list[str]:
+    """
+    Returns the parameterized paths of the test suites and test cases that `test_filter` matches, in the order a
+    test run would reach them, without running anything. This implements `test --list`.
+
+    Each parameter set of a test gets its own path, and a suite's path comes before those of its children. The
+    `enabled` and `only` flags are not consulted, so disabled tests are listed too. A leading "global." is removed,
+    as filters do not need it. Hooks are not listed.
+
+    The parameter indices of the tests are stepped through as a run would, and are reset afterward.
+    """
+
+    root = setup_global_test_suite()
+    rv: list[str] = []
+    visited: list[TestCase] = [root]
+
+    prefix = global_testsuite_name + "."
+
+    def visit(suite: TestSuite) -> None:
+        for test in suite.subtests:
+            visited.append(test)
+
+            for index in range(max(1, len(test.parameters))):
+                test.parameter_index = index
+
+                if not test_filter.matches(test):
+                    continue
+
+                path = test.current_full_parameterized_path
+                rv.append(path.removeprefix(prefix))
+
+                if isinstance(test, TestSuite):
+                    visit(test)
+
+            test.parameter_index = -1
+
+    try:
+        for index in range(max(1, len(root.parameters))):
+            root.parameter_index = index
+            visit(root)
+    finally:
+        for test in visited:
+            test.parameter_index = -1
+
+    return rv
+
+
 def get_testcase_by_id(id: str) -> TestCase:
     if id not in testcases:
         if suggestion := renpy.error.compute_closest_value(id, list(testcases.keys())):
