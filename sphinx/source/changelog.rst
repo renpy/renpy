@@ -33,6 +33,10 @@ In the :doc:`testing framework <testcases>`, statements such as ``move`` and ``c
 transition finishes, and run after skipping a layer transition that outlasts the transition timeout. Previously, they
 waited for the transition timeout and then failed with a RecursionError.
 
+In the :doc:`testing framework <testcases>`, running tests filtered by testsuite or testcase name works when a
+testcase parameter is a tuple, or a string containing parentheses or dots, instead of failing with an "Invalid
+parameter filter" or "Unmatched parentheses" error.
+
 Live2D clipping mask textures that are being cropped to save space are now cropped in a way that aligns with
 texels, allowing these textures to be sampled consistently even when the crop changes as the model animates. This keeps
 the edges of the masked parts from flickering.

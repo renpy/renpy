@@ -42,6 +42,14 @@ class TestFilterSegment:
         self.name, self.parameters = self._parse_filter_segment()
 
     def _parse_filter_segment(self) -> tuple[str, dict[str, Any]]:
+        """
+        Splits the segment text into a name and a dict of literal keyword parameters.
+
+        The parameter list, including its own closing parenthesis, is parsed as a Python call, so values such as
+        tuples and strings may contain parentheses. Raises KeyError if the text is not a name optionally followed
+        by a single call with literal keyword arguments.
+        """
+
         text = self.raw_text.strip()
         if not text:
             raise KeyError("Empty filter segment.")
@@ -49,18 +57,16 @@ class TestFilterSegment:
         if "(" not in text:
             return text, {}
 
-        name, params_expr = text.split("(", 1)
-        params_expr = params_expr.rstrip(")")
+        paren = text.index("(")
+        name = text[:paren]
 
         try:
-            expression = ast.parse(f"_({params_expr})", mode="eval")
+            expression = ast.parse("_" + text[paren:], mode="eval")
         except SyntaxError as exc:
             raise KeyError(f"Invalid parameter filter in {text!r}: {exc.msg}.") from exc
 
         call = expression.body
-        if isinstance(call, ast.Name):
-            return call.id, {}
-        if not isinstance(call, ast.Call):
+        if not isinstance(call, ast.Call) or not isinstance(call.func, ast.Name):
             raise KeyError(f"Invalid parameter filter in {text!r}.")
         if call.args:
             raise KeyError(f"Parameter filter only supports keyword arguments: {text!r}.")
@@ -156,6 +162,9 @@ class TestFilter:
         """
         Parses the raw filter text into a list of segments, each with an optional
         parameter filter.
+
+        Segments are separated by dots outside parentheses and string literals, so parameter values may contain
+        dots and parentheses. Raises KeyError for empty segments, unmatched parentheses, or an unterminated string.
         """
         text = self.raw.strip()
         if not text:
@@ -165,8 +174,28 @@ class TestFilter:
         depth = 0
         start = 0
 
+        # The delimiter (one or three quote characters) of the string literal being scanned, or None outside strings.
+        quote: str | None = None
+        escaped = False
+
+        # The number of upcoming characters that belong to a triple-quote delimiter already handled.
+        skip = 0
+
         for i, ch in enumerate(text):
-            if ch == "(":
+            if skip:
+                skip -= 1
+            elif quote is not None:
+                if escaped:
+                    escaped = False
+                elif ch == "\\":
+                    escaped = True
+                elif text.startswith(quote, i):
+                    skip = len(quote) - 1
+                    quote = None
+            elif ch in "'\"":
+                quote = ch * 3 if text.startswith(ch * 3, i) else ch
+                skip = len(quote) - 1
+            elif ch == "(":
                 depth += 1
             elif ch == ")":
                 depth -= 1
@@ -180,6 +209,9 @@ class TestFilter:
                 start = i + 1
             elif ch == ":" and depth == 0:
                 raise DeprecationWarning("Replace `::` with `.` in filter")
+
+        if quote is not None:
+            raise KeyError(f"Unterminated string in filter: {self.raw!r}.")
 
         if depth != 0:
             raise KeyError(f"Unmatched parentheses in filter: {self.raw!r}.")
