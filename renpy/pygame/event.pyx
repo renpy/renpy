@@ -274,6 +274,28 @@ def _make_keyboard_event(type, scancode, key, mod, repeat=False):
 
     return make_keyboard_event(&e)
 
+
+def _make_finger_event(type, touch_id, finger_id, x, y, dx=0.0, dy=0.0, pressure=0.0):
+    """
+    Converts the fields of an SDL touch finger event into an event object,
+    as the event queue does. This exists so tests can exercise the
+    conversion without a touchscreen.
+    """
+
+    cdef SDL_Event e
+
+    memset(&e, 0, sizeof(e))
+    e.type = type
+    e.tfinger.touchID = touch_id
+    e.tfinger.fingerID = finger_id
+    e.tfinger.x = x
+    e.tfinger.y = y
+    e.tfinger.dx = dx
+    e.tfinger.dy = dy
+    e.tfinger.pressure = pressure
+
+    return make_event(&e)
+
 cdef make_mousemotion_event(SDL_MouseMotionEvent *e):
     buttons = (1 if e.state & SDL_BUTTON_LMASK else 0,
                1 if e.state & SDL_BUTTON_MMASK else 0,
@@ -403,8 +425,8 @@ cdef make_event(SDL_Event *e):
         return EventType(e.type, which=e.gbutton.which, button=e.gbutton.button, state=e.gbutton.down)
     elif e.type in (SDL_EVENT_GAMEPAD_ADDED, SDL_EVENT_GAMEPAD_REMOVED, SDL_EVENT_GAMEPAD_REMAPPED):
         return EventType(e.type, which=e.gdevice.which)
-    elif e.type in (SDL_EVENT_FINGER_MOTION, SDL_EVENT_FINGER_DOWN, SDL_EVENT_FINGER_UP):
-        return EventType(e.type, touchId=e.tfinger.touchId, fingerId=e.tfinger.fingerId, touch_id=e.tfinger.touchId, finger_id=e.tfinger.fingerId, x=e.tfinger.x, y=e.tfinger.y, dx=e.tfinger.dx, dy=e.tfinger.dy, pressure=e.tfinger.pressure)
+    elif e.type in (SDL_EVENT_FINGER_MOTION, SDL_EVENT_FINGER_DOWN, SDL_EVENT_FINGER_UP, SDL_EVENT_FINGER_CANCELED):
+        return EventType(e.type, touchId=e.tfinger.touchID, fingerId=e.tfinger.fingerID, touch_id=e.tfinger.touchID, finger_id=e.tfinger.fingerID, x=e.tfinger.x, y=e.tfinger.y, dx=e.tfinger.dx, dy=e.tfinger.dy, pressure=e.tfinger.pressure)
     elif e.type in (SDL_EVENT_DROP_FILE, SDL_EVENT_DROP_TEXT, SDL_EVENT_DROP_BEGIN, SDL_EVENT_DROP_COMPLETE):
         return make_drop_event(<SDL_DropEvent*> e)
     elif e.type == POSTEDEVENT:
