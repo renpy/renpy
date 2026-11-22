@@ -74,10 +74,10 @@ init -1100 python:
 
 init 1100 python:
 
-    if config.savedir is not None:
-        config.extra_savedirs.append(config.savedir + "/sync")
-    else:
+    if config.savedir is None:
         config.has_sync = None
+    elif config.has_sync:
+        config.extra_savedirs.append(config.savedir + "/sync")
 
 init -1100 python in _sync:
 
