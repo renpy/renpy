@@ -1076,6 +1076,9 @@ context_copy_remove_screens = ["notify"]
 # An exception handling callback.
 exception_handler: Callable[[renpy.error.TracebackException], bool] | None = None
 
+# If True, the exception screen offers the Ignore button for exceptions that occur during the init phase.
+init_exception_ignore: bool = False
+
 # A label to jump to if return fails.
 return_not_found_label = None
 

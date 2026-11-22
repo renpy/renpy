@@ -38,6 +38,13 @@ restore it explicitly::
 
     define config.blur_virtual_pixels = False
 
+**Ignoring Init Exceptions** The exception screen no longer offers the Ignore
+button when an exception occurs during the init phase, as ignoring such an
+exception leaves the game partly initialized, which often leads to further
+errors. To restore the button::
+
+    define config.init_exception_ignore = True
+
 
 .. _incompatible-8.6.0:
 

@@ -125,8 +125,13 @@ def report_exception(traceback_exception: renpy.error.TracebackException) -> boo
         else:
             reload_action = renpy.exports.utter_restart
 
-        # If next node is known, allow to advance to it.
-        if renpy.game.context().next_node is not None:
+        # If next node is known, allow to advance to it. Ignoring an exception during init leaves the game partly
+        # initialized, so this is only offered there when the creator opts in. Every context is checked, as a
+        # context created by renpy.call_in_new_context during init isn't marked as being in the init phase, while
+        # renpy.load_string runs init code in a new context on top of the game.
+        in_init = any(c.init_phase for c in renpy.game.contexts)
+
+        if renpy.game.context().next_node is not None and (not in_init or renpy.config.init_exception_ignore):
             ignore_action = renpy.ui.returns(False)
 
     except Exception:
