@@ -20,8 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-Tests for renpy/display/core.py: the cooperative tasks the Interface runs while idle, and how it removes the
-presplash after drawing the first frame.
+Tests for renpy/display/core.py: the cooperative tasks the Interface runs while idle, how it removes the
+presplash after drawing the first frame, and how the window geometry is held back until it is stable.
 """
 
 from types import SimpleNamespace
@@ -31,7 +31,7 @@ import pytest
 import renpy
 import renpy.asynctask
 from renpy.display import core
-from renpy.display.core import Interface
+from renpy.display.core import WINDOW_GEOMETRY_STABLE_TIME, Interface, WindowGeometryDebouncer
 
 ################################################################################
 # Interface.run_tasks: the texture task
@@ -188,3 +188,80 @@ class TestFirstFramePresplash:
         jnius.autoclass.assert_called_once_with("org.renpy.android.PythonSDLActivity")
         jnius.autoclass.return_value.mActivity.hidePresplash.assert_called_once_with()
         frame.browser.run_script.assert_not_called()
+
+
+################################################################################
+# WindowGeometryDebouncer: saving the window geometry once it stops changing
+################################################################################
+
+WINDOWED = ((640, 400), (100, 100))
+ANIMATING = ((2560, 1305), (0, 25))
+
+
+def run_geometry_steps(steps: list[tuple[float, object]]) -> list[object]:
+    """Pass each (time, geometry) step to a new WindowGeometryDebouncer, returning the geometries it reported."""
+    debouncer = WindowGeometryDebouncer()
+    rv = []
+
+    for now, geometry in steps:
+        reported = debouncer.check(geometry, now)
+
+        if reported is not None:
+            rv.append(reported)
+
+    return rv
+
+
+@pytest.mark.parametrize(
+    ("steps", "expected"),
+    [
+        pytest.param(
+            [(0.0, WINDOWED), (WINDOW_GEOMETRY_STABLE_TIME - 0.01, WINDOWED)],
+            [],
+            id="not-yet-stable",
+        ),
+        pytest.param(
+            [(0.0, WINDOWED), (WINDOW_GEOMETRY_STABLE_TIME, WINDOWED)],
+            [WINDOWED],
+            id="stable",
+        ),
+        pytest.param(
+            [(0.0, WINDOWED), (1.5, ANIMATING), (2.5, ANIMATING), (1.5 + WINDOW_GEOMETRY_STABLE_TIME, ANIMATING)],
+            [ANIMATING],
+            id="change-restarts-timer",
+        ),
+        pytest.param(
+            [(0.0, ANIMATING), (0.5, ANIMATING), (1.0, None), (5.0, None)],
+            [],
+            id="fullscreen-before-stable",
+        ),
+        pytest.param(
+            [(0.0, WINDOWED), (1.0, None), (2.5, WINDOWED), (3.0, WINDOWED)],
+            [],
+            id="ineligible-clears-pending",
+        ),
+        pytest.param(
+            [(0.0, WINDOWED), (2.0, WINDOWED), (3.0, WINDOWED), (10.0, WINDOWED)],
+            [WINDOWED],
+            id="reported-once",
+        ),
+        pytest.param(
+            [(0.0, WINDOWED), (2.0, WINDOWED), (3.0, ANIMATING), (5.0, ANIMATING), (6.0, WINDOWED), (8.0, WINDOWED)],
+            [WINDOWED, ANIMATING, WINDOWED],
+            id="reported-again-after-change",
+        ),
+        pytest.param(
+            [(0.0, WINDOWED), (2.0, WINDOWED), (3.0, None), (4.0, WINDOWED), (6.0, WINDOWED)],
+            [WINDOWED, WINDOWED],
+            id="reported-again-after-fullscreen",
+        ),
+    ],
+)
+def test_stable_window_geometry(steps: list[tuple[float, object]], expected: list[object]) -> None:
+    """
+    The window geometry is reported only after it has stayed the same for WINDOW_GEOMETRY_STABLE_TIME while
+    eligible (None marks a fullscreen, maximized, minimized, or hidden window). This keeps the desktop-sized
+    geometry seen during macOS's asynchronous fullscreen animation from being saved as the windowed size (#7549),
+    and keeps the preferences from being rewritten every frame once the geometry is stable.
+    """
+    assert run_geometry_steps(steps) == expected

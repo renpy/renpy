@@ -88,6 +88,10 @@ shader part gain a uniform without breaking code that uses the part directly.
 The new ``--list`` option to the ``test`` command lists the test suites and test cases that match the filters, by
 the names used to filter them, without running them. See the :doc:`testing framework <testcases>` documentation.
 
+The size and position of the game window are only saved once the window has stayed the same for two seconds, so the
+sizes a window passes through while it animates, such as when entering fullscreen, are ignored. Previously, a game that
+started in fullscreen could open a window as large as the screen when switched to windowed.
+
 .. _renpy-8.6.1:
 
 8.6.1

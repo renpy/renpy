@@ -56,6 +56,9 @@ cdef class GL2Draw:
     cdef public set gl_extensions
     cdef public bint ever_set_position
 
+    # Tracks the window size and position, so they're saved only once stable.
+    cdef public object window_geometry_debouncer
+
     cdef public tuple clip_rtt_box
 
     cdef public double draw_per_phys
