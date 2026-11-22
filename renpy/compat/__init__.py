@@ -149,5 +149,6 @@ __all__ = [
 import typing
 
 if typing.TYPE_CHECKING:
+    from . import ca as ca
     from . import fixes as fixes
     from . import pickle as pickle
