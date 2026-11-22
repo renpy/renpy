@@ -260,3 +260,83 @@ def test_get_buffer_of_empty_surface_is_empty(size):
     """
 
     assert len(pygame.Surface(size).get_buffer()) == 0
+
+
+# Blitting
+
+
+BLIT_CASES = {
+    "whole_source": ((20, 10), (5, 4), (2, 3), None, None, (2, 3, 5, 4)),
+    "area_skips_first_row": ((304, 60), (304, 50), (0, 0), (0, 1, 304, 49), None, (0, 0, 304, 49)),
+    "negative_area_offset": ((20, 10), (5, 4), (2, 3), (-2, -1, 5, 4), None, (4, 4, 3, 3)),
+    "dest_off_top_left": ((20, 10), (5, 4), (-2, -1), None, None, (0, 0, 3, 3)),
+    "dest_off_bottom_right": ((20, 10), (5, 4), (18, 8), None, None, (18, 8, 2, 2)),
+    "clip_rect": ((20, 10), (5, 4), (2, 2), None, (3, 3, 4, 4), (3, 3, 4, 3)),
+    "area_too_large_for_sdl": ((20, 10), (5, 4), (2, 3), (0, 0, 2**31 - 1, 4), None, (2, 3, 5, 4)),
+    "area_end_overflows_int": ((20, 10), (5, 4), (0, 0), (1, 0, 2**31 - 1, 4), None, (0, 0, 4, 4)),
+    "area_outside_source": ((20, 10), (5, 4), (2, 3), (10, 10, 5, 5), None, (2, 3, 0, 0)),
+    "negative_area_outside_source": ((20, 10), (5, 4), (2, 3), (-10, 0, 5, 4), None, (12, 3, 0, 0)),
+    "dest_beyond_top_left": ((20, 10), (5, 4), (-10, -10), None, None, (0, 0, 0, 0)),
+    "dest_beyond_bottom_right": ((20, 10), (5, 4), (30, 20), None, None, (30, 20, 0, 0)),
+    "dest_outside_clip_rect": ((20, 10), (5, 4), (-10, 1), None, (3, 3, 4, 4), (3, 3, 0, 0)),
+}
+
+
+@pytest.mark.parametrize("special_flags", [0, pygame.BLEND_RGBA_MAX], ids=["plain", "blend"])
+@pytest.mark.parametrize(
+    "dest_size, source_size, dest, area, clip, expected",
+    list(BLIT_CASES.values()),
+    ids=list(BLIT_CASES),
+)
+def test_blit_returns_drawn_rect(dest_size, source_size, dest, area, clip, expected, special_flags):
+    """
+    blit returns the rectangle of destination pixels it changed, taking the area, a negative area offset, the
+    destination bounds, and the clip rectangle into account. Every pixel inside that rectangle, and none outside it,
+    is drawn, each from the source pixel that the area and destination line up with it.
+
+    The expected rectangles follow pygame-ce, including where nothing is drawn: the size is zero, and the position is
+    the destination moved right and down by a negative area offset, then up to the clip rectangle's top-left corner if
+    it was above or left of it.
+
+    Each opaque source pixel stores its own x (modulo 256) in green and its y in blue. On a transparent black
+    destination, both a plain blit and BLEND_RGBA_MAX copy the source pixel unchanged, so the pixel check is the same
+    for both paths, and it catches a blit that copies the wrong part of the source into the right rectangle. SDL refuses
+    to draw an area wide enough to overflow, and adding an area's offset to its size can overflow an int, so the cases
+    with huge areas check that the drawn pixels still match the returned rectangle.
+    """
+
+    target = pygame.Surface(dest_size, pygame.SRCALPHA, 32)
+    target.fill((0, 0, 0, 0))
+
+    if clip is not None:
+        target.set_clip(clip)
+
+    source = pygame.Surface(source_size, pygame.SRCALPHA, 32)
+
+    for sx in range(source_size[0]):
+        for sy in range(source_size[1]):
+            source.set_at((sx, sy), (255, sx % 256, sy, 255))
+
+    rect = target.blit(source, dest, area, special_flags)
+    assert tuple(rect) == expected
+
+    # A blit is a translation: destination (px, py) is drawn from source (px + offset_x, py + offset_y).
+    area_x, area_y = area[:2] if area is not None else (0, 0)
+    offset_x = area_x - dest[0]
+    offset_y = area_y - dest[1]
+
+    x, y, w, h = expected
+    width, height = dest_size
+
+    drawn = {
+        (px, py): tuple(target.get_at((px, py)))
+        for px in range(width)
+        for py in range(height)
+        if target.get_at((px, py))[3]
+    }
+
+    assert drawn == {
+        (px, py): (255, (px + offset_x) % 256, py + offset_y, 255)
+        for px in range(x, x + w)
+        for py in range(y, y + h)
+    }

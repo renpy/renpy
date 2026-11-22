@@ -183,25 +183,25 @@ cdef class Surface:
     def blit(self, Surface source, dest, area=None, int special_flags=0):
         cdef SDL_Rect dest_rect
         cdef SDL_Rect area_rect
-        cdef SDL_Rect *area_ptr = NULL
         cdef SDL_Rect clip_rect
 
         cdef Surface source_view
         cdef Surface dest_view
 
         cdef int success
-        cdef int src_x
-        cdef int src_y
-        cdef int src_w
-        cdef int src_h
-        cdef int dst_x
-        cdef int dst_y
-        cdef int left
-        cdef int top
-        cdef int right
-        cdef int bottom
-        cdef int out_w
-        cdef int out_h
+        # 64-bit, so clipping an area as large as an int allows can't overflow.
+        cdef long long src_x
+        cdef long long src_y
+        cdef long long src_w
+        cdef long long src_h
+        cdef long long dst_x
+        cdef long long dst_y
+        cdef long long left
+        cdef long long top
+        cdef long long right
+        cdef long long bottom
+        cdef long long out_w
+        cdef long long out_h
 
         try:
             if isinstance(dest, Rect):
@@ -216,14 +216,8 @@ cdef class Surface:
         except:
             raise TypeError("Argument dest must be a rect style object.")
 
-        dest_rect.x = dst_x
-        dest_rect.y = dst_y
-        dest_rect.w = source.sdl_surface.w
-        dest_rect.h = source.sdl_surface.h
-
         if area is not None:
             to_sdl_rect(area, &area_rect, "area")
-            area_ptr = &area_rect
             src_x = area_rect.x
             src_y = area_rect.y
             src_w = area_rect.w
@@ -251,9 +245,6 @@ cdef class Surface:
         if src_y + src_h > source.sdl_surface.h:
             src_h = source.sdl_surface.h - src_y
 
-        if src_w <= 0 or src_h <= 0:
-            return Rect(0, 0, 0, 0)
-
         SDL_GetSurfaceClipRect(self.sdl_surface, &clip_rect)
 
         left = max(dst_x, 0, clip_rect.x)
@@ -261,16 +252,18 @@ cdef class Surface:
         right = min(dst_x + src_w, self.sdl_surface.w, clip_rect.x + clip_rect.w)
         bottom = min(dst_y + src_h, self.sdl_surface.h, clip_rect.y + clip_rect.h)
 
+        # When nothing is drawn, return an empty rectangle at the clipped position, as pygame does. This also
+        # covers an area that misses the source, since a width or height that is not positive puts right before left.
         if right <= left or bottom <= top:
-            return Rect(0, 0, 0, 0)
+            return Rect(left, top, 0, 0)
 
         out_w = right - left
         out_h = bottom - top
 
-        if special_flags:
+        src_x += left - dst_x
+        src_y += top - dst_y
 
-            src_x += left - dst_x
-            src_y += top - dst_y
+        if special_flags:
 
             source_view = source.subsurface((src_x, src_y, out_w, out_h))
             dest_view = self.subsurface((left, top, out_w, out_h))
@@ -283,9 +276,21 @@ cdef class Surface:
 
             return Rect(left, top, out_w, out_h)
 
+        # Pass the clipped rectangles, so SDL draws exactly the rectangle that is returned. SDL would clip the
+        # original rectangles the same way, but refuses to draw an area large enough to overflow.
+        area_rect.x = src_x
+        area_rect.y = src_y
+        area_rect.w = out_w
+        area_rect.h = out_h
+
+        dest_rect.x = left
+        dest_rect.y = top
+        dest_rect.w = out_w
+        dest_rect.h = out_h
+
         with nogil:
             SDL_SetSurfaceBlendMode(source.sdl_surface, SDL_BLENDMODE_BLEND)
-            success = SDL_BlitSurface(source.sdl_surface, area_ptr, self.sdl_surface, &dest_rect)
+            success = SDL_BlitSurface(source.sdl_surface, &area_rect, self.sdl_surface, &dest_rect)
 
         if not success:
             raise error()

@@ -49,6 +49,9 @@ In the :doc:`testing framework <testcases>`, running tests filtered by testsuite
 testcase parameter is a tuple, or a string containing parentheses or dots, instead of failing with an "Invalid
 parameter filter" or "Unmatched parentheses" error.
 
+``renpy.pygame.Surface.blit`` returns the rectangle it drew, taking ``area`` and the clip rectangle into account, as
+pygame does.
+
 Live2D clipping mask textures that are being cropped to save space are now cropped in a way that aligns with
 texels, allowing these textures to be sampled consistently even when the crop changes as the model animates. This keeps
 the edges of the masked parts from flickering.
