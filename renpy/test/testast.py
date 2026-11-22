@@ -817,7 +817,17 @@ class SelectorDrivenNode(Node):
         return True
 
     def execute(self, state: NodeState, t: float) -> NodeState:
-        if renpy.display.interface.trans_pause or renpy.display.interface.ongoing_transition:
+        if is_skipped_transition_state(state):
+            ## Transitions were skipped on an earlier frame, and less_updates made them render their end state
+            ## and accept events. Proceed, even if a layer transition is still recorded, unless a trans_pause
+            ## interaction has yet to end. The state is never wrapped twice.
+            if renpy.display.interface.trans_pause:
+                return state
+
+            renpy.game.less_updates = state[1]
+            state = state[2]
+
+        elif transition_in_progress():
             if t >= _test.transition_timeout:
                 ## End the transition and wait for the next frame.
                 ## We need to suppress_transition in the core loop
@@ -825,10 +835,6 @@ class SelectorDrivenNode(Node):
                 renpy.game.less_updates = True
                 return ("skipped_transition", old_less_updates, state)
             return state
-
-        while isinstance(state, tuple) and len(state) == 3 and state[0] == "skipped_transition":
-            renpy.game.less_updates = state[1]
-            state = state[-1]
 
         if self.selector and not self.selector.ready():
             return state
@@ -1895,6 +1901,42 @@ class Exit(Node):
 
 def next_node(node: Node | None):
     renpy.test.testexecution.set_next_execution_node(node)
+
+
+def transition_in_progress() -> bool:
+    """
+    Returns True if a transition is still running, so that input sent to the game might be ignored.
+
+    A transition displayable ignores events until it finishes. Layer transitions stay recorded in the
+    interface's ongoing transitions until the end of the interaction, so a recorded transition only counts
+    while it has not been rendered yet or is still within its delay.
+    """
+
+    interface = renpy.display.interface
+
+    if interface.trans_pause:
+        return True
+
+    for layer, transition in interface.ongoing_transition.items():
+        if not transition:
+            continue
+
+        if layer not in interface.instantiated_transition:
+            return True
+
+        if interface.get_ongoing_transition(layer) is not None:
+            return True
+
+    return False
+
+
+def is_skipped_transition_state(state: Any) -> bool:
+    """
+    Returns True if `state` was returned by SelectorDrivenNode.execute after it skipped a transition, in
+    which case it is ("skipped_transition", old_less_updates, original_state).
+    """
+
+    return isinstance(state, tuple) and len(state) == 3 and state[0] == "skipped_transition"
 
 
 def scoped_eval(expr: str) -> Any:

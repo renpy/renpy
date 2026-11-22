@@ -29,6 +29,10 @@ In the :doc:`testing framework <testcases>`, a text selector matching dialogue n
 displayed, or with ``raw``, the dialogue as written in the original-language script. Previously, which of the two
 was matched depended on how the line was translated, and some translated lines caused an error.
 
+In the :doc:`testing framework <testcases>`, statements such as ``move`` and ``click`` run as soon as a layer
+transition finishes, and run after skipping a layer transition that outlasts the transition timeout. Previously, they
+waited for the transition timeout and then failed with a RecursionError.
+
 Live2D clipping mask textures that are being cropped to save space are now cropped in a way that aligns with
 texels, allowing these textures to be sampled consistently even when the crop changes as the model animates. This keeps
 the edges of the masked parts from flickering.
