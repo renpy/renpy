@@ -560,6 +560,9 @@ cdef class Program:
 
         shader_name = "+".join(self.name)
 
+        # Defaults given by the parts with default_ keyword arguments to renpy.register_shader.
+        defaults = renpy.gl2.gl2shadercache.get_uniform_defaults(self.name)
+
         for storage, variable_type, name, array, fragment in self.variable_specs:
             if storage == "uniform":
                 if name in seen_uniforms:
@@ -569,7 +572,8 @@ cdef class Program:
 
                 if location >= 0:
                     seen_uniforms.add(name)
-                    setter, samplers = generate_uniform_setter(shader_name, location, name, variable_type, array, samplers)
+                    setter, samplers = generate_uniform_setter(
+                        shader_name, location, name, variable_type, array, samplers, defaults)
                     self.uniform_setters.append(setter)
 
             elif storage == "attribute" and not fragment:
@@ -712,7 +716,10 @@ cdef class Program:
         for setter in self.uniform_setters:
             try:
                 value = setter.getter.get(context, model)
-            except:
+            except renpy.game.CONTROL_EXCEPTIONS:
+                # A callable default given to renpy.register_shader runs game code, which may jump, quit, or restart.
+                raise
+            except Exception:
                 shader_name = "+".join(self.name)
                 raise ShaderError(f"Could not get value for uniform {setter.uniform_name} in shader {shader_name}, using {setter.getter!r}")
 

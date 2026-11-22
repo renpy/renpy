@@ -150,6 +150,9 @@ DERIVATIVE_EXTENSION = "GL_OES_standard_derivatives"
 
 DERIVATIVE_FUNCTIONS = re.compile(r"(?<![\w.])(dFdx|dFdy|fwidth)\s*\(")
 
+# Uniform operations that take a texture, so the uniforms they're computed from can't have defaults.
+TEXTURE_OPERATIONS = {"res", "virtual_size", "to_crop"}
+
 
 # Strip comments so they can't cause errors in parsing.
 GLSL_COMMENTS = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
@@ -422,6 +425,26 @@ def register_shader(name, **kwargs):
         If given, a string containing functions that will be included in the
         fragment shader.
 
+    Keyword arguments beginning with ``default_`` give a default value for a
+    uniform, which is used when the uniform isn't set by a transform or
+    displayable. The rest of the argument name is the name of a uniform
+    declared in `variables`, and can use :ref:`shader local variables
+    <shader-local-variables>`, so ``default_u__strength`` gives the default
+    for ``u__strength``. A uniform declared with an operation, like
+    ``u__color__premul``, uses the default for the uniform it's computed from,
+    given as ``default_u__color``. If the value is callable, it's called with no
+    arguments each time the shader is applied, to get the value of the
+    uniform. Textures, and uniforms Ren'Py supplies itself, such as
+    ``u_time`` and ``res0``, can't have defaults. If more than one part in a
+    shader gives a default for the same uniform, which one is used is
+    unspecified. ::
+
+        renpy.register_shader("example.tint", variables='''
+            uniform vec4 u__color;
+        ''', fragment_300='''
+            fragment_color *= u__color;
+        ''', default_u__color=(1.0, 0.5, 0.5, 1.0))
+
     Other keyword arguments should start with ``vertex_`` or ``fragment_``,
     and end with an integer priority. So "fragment_200" or "vertex_300". These
     give text that's placed in the appropriate shader at the given priority,
@@ -429,6 +452,27 @@ def register_shader(name, **kwargs):
     """
 
     return ShaderPart(name, **kwargs)
+
+
+def get_uniform_defaults(partnames):
+    """
+    Returns a dict mapping uniform names to the defaults given by the shader parts named in `partnames` with
+    default_ keyword arguments. When more than one part gives a default for a uniform, the first part's is used.
+    Unknown part names are skipped.
+    """
+
+    rv = {}
+
+    for i in partnames:
+        p = shader_part.get(i, None)
+
+        if p is None:
+            continue
+
+        for k, v in p.uniform_defaults.items():
+            rv.setdefault(k, v)
+
+    return rv
 
 
 class ShaderPart(object):
@@ -509,7 +553,14 @@ class ShaderPart(object):
 
         self.uniforms = []
 
+        # A map from the expanded name of a uniform to its default value, or a callable that returns it.
+        self.uniform_defaults = {}
+
         for k, v in kwargs.items():
+            if k.startswith("default_"):
+                self.uniform_defaults[self.expand_name(k[len("default_") :])] = v
+                continue
+
             shader, _, priority = k.partition("_")
 
             v = self.substitute_name(v)
@@ -530,7 +581,10 @@ class ShaderPart(object):
                 parts = self.fragment_parts
                 used = fragment_used
             else:
-                raise Exception("Keyword arguments to ShaderPart must be of the form {vertex,fragment}_{priority}.")
+                raise Exception(
+                    "Keyword arguments to ShaderPart must be of the form {vertex,fragment}_{priority} or "
+                    "default_{uniform}."
+                )
 
             parts.append((priority, name, v))
 
@@ -577,8 +631,41 @@ class ShaderPart(object):
             if v.storage == "uniform":
                 self.uniforms.append(v.name)
 
+        # Uniforms declared without an operation, and a map from the base name of a uniform declared with an
+        # operation, like u_color_OP_premul, to its operations. A uniform with an operation takes the default for
+        # its base name.
+        plain_uniforms = set()
+        uniform_operations = {}
+
+        for u in self.uniforms:
+            if "_OP_" in u:
+                base, _, operation = u.rpartition("_OP_")
+                uniform_operations.setdefault(base, set()).add(operation)
+            else:
+                plain_uniforms.add(u)
+
+        from renpy.gl2.gl2uniform import UNIFORM_GETTER_CLASSES
+
+        for k in self.uniform_defaults:
+            if k in UNIFORM_GETTER_CLASSES:
+                raise Exception(
+                    f"In shader {self.name}: default_{k} is given, but {k} is supplied by Ren'Py, so it can't have a "
+                    "default."
+                )
+
+            if (k not in plain_uniforms) and (k not in uniform_operations):
+                raise Exception(f"In shader {self.name}: default_{k} is given, but {k} is not a uniform.")
+
+            if self.variable_types.get(k, "").startswith("sampler") or (
+                uniform_operations.get(k, set()) & TEXTURE_OPERATIONS
+            ):
+                raise Exception(
+                    f"In shader {self.name}: default_{k} is given, but {k} is a texture, which can't have a default."
+                )
+
         self.raw_variables = variables
 
+        # The defaults aren't part of the cache data, as they don't change the GLSL.
         cache_data = (
             self.name,
             self.declared_glsl,

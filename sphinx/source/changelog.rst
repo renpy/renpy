@@ -77,6 +77,10 @@ an uncaught ``JumpOutException``.
 The new :ref:`u_pixels_per_unit <model-uniforms>` uniform gives shaders the number of pixels being drawn for each
 unit of the displayable.
 
+:func:`renpy.register_shader` takes keyword arguments beginning with ``default_``, which give default values for
+uniforms that aren't set. A default can be a callable, which is called each time the shader is applied. This lets a
+shader part gain a uniform without breaking code that uses the part directly.
+
 The new ``--list`` option to the ``test`` command lists the test suites and test cases that match the filters, by
 the names used to filter them, without running them. See the :doc:`testing framework <testcases>` documentation.
 
