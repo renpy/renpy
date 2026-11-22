@@ -79,14 +79,17 @@ def _diff(Surface dest, Surface a, Surface b, same_color, different_color):
 
     return diff_count
 
-def _max_difference(Surface a, Surface b, bint premultiplied=True):
+def _difference_histogram(Surface a, Surface b, bint premultiplied=True):
     """
     This is Ren'Py specific, and is used by tests.
 
-    Returns the largest difference between a and b in any channel of any
-    pixel, as a float from 0 to 255. If premultiplied is true, the color
-    channels are multiplied by alpha before they're compared, so differences
-    in nearly transparent pixels aren't magnified.
+    Compares a and b pixel by pixel, and returns a list of 256 counts. Entry i
+    is the number of pixels whose largest difference in any channel, in units
+    of 0-255 and rounded up to an integer, is i. So entry 0 counts identical
+    pixels, and the highest non-zero entry is the largest difference. If
+    premultiplied is true, the color channels are multiplied by alpha before
+    they're compared, so differences in nearly transparent pixels aren't
+    magnified.
 
     a and b must be the same size and pixel format, with 32 bits per pixel
     and 8 bits per channel.
@@ -121,8 +124,14 @@ def _max_difference(Surface a, Surface b, bint premultiplied=True):
     cdef int x, y, i
     cdef int alpha_a, alpha_b, ca, cb, d
 
-    # Differences are scaled by 255, so they stay integers.
-    cdef int worst = 0
+    # The largest difference in the current pixel, scaled by 255 so it stays
+    # an integer.
+    cdef int worst
+
+    cdef long long[256] counts
+
+    for i in range(256):
+        counts[i] = 0
 
     with nogil:
         for y in range(a_surf.h):
@@ -134,6 +143,7 @@ def _max_difference(Surface a, Surface b, bint premultiplied=True):
                 pb = b_row[x]
 
                 if pa == pb:
+                    counts[0] += 1
                     continue
 
                 if has_alpha:
@@ -143,9 +153,7 @@ def _max_difference(Surface a, Surface b, bint premultiplied=True):
                     alpha_a = 255
                     alpha_b = 255
 
-                d = abs(alpha_a - alpha_b) * 255
-                if d > worst:
-                    worst = d
+                worst = abs(alpha_a - alpha_b) * 255
 
                 for i in range(3):
                     ca = (pa >> shifts[i]) & 0xff
@@ -159,7 +167,9 @@ def _max_difference(Surface a, Surface b, bint premultiplied=True):
                     if d > worst:
                         worst = d
 
-    return worst / 255.0
+                counts[(worst + 254) // 255] += 1
+
+    return [ counts[i] for i in range(256) ]
 
 def flip(Surface surface, bint xbool, bint ybool):
 
