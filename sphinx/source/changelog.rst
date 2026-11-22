@@ -18,6 +18,10 @@ On Android 16 and later, the back button and back gesture once again roll back, 
 
 On macOS, colors are once again displayed as they were in Ren'Py 8.5, fixing a green tinge introduced in 8.6.0.
 
+On Android, HTTPS requests, including Ren'Py Sync, :func:`renpy.fetch`, and the updater, verify certificates against
+the device's certificate store. Since 8.6.0, every such request failed, which made Sync report that it could not
+connect to the Ren'Py Sync server.
+
 Scrying (which predicts things like extend and :var:`config.nvl_page_ctc`) now takes translations into account,
 rather than skipping over them.
 
