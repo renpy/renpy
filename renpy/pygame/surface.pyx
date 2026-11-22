@@ -234,42 +234,43 @@ cdef class Surface:
             src_w = source.sdl_surface.w
             src_h = source.sdl_surface.h
 
+        # Find the rectangle that will be drawn. Clip to the source bounds first.
+        if src_x < 0:
+            dst_x -= src_x
+            src_w += src_x
+            src_x = 0
+
+        if src_y < 0:
+            dst_y -= src_y
+            src_h += src_y
+            src_y = 0
+
+        if src_x + src_w > source.sdl_surface.w:
+            src_w = source.sdl_surface.w - src_x
+
+        if src_y + src_h > source.sdl_surface.h:
+            src_h = source.sdl_surface.h - src_y
+
+        if src_w <= 0 or src_h <= 0:
+            return Rect(0, 0, 0, 0)
+
+        SDL_GetSurfaceClipRect(self.sdl_surface, &clip_rect)
+
+        left = max(dst_x, 0, clip_rect.x)
+        top = max(dst_y, 0, clip_rect.y)
+        right = min(dst_x + src_w, self.sdl_surface.w, clip_rect.x + clip_rect.w)
+        bottom = min(dst_y + src_h, self.sdl_surface.h, clip_rect.y + clip_rect.h)
+
+        if right <= left or bottom <= top:
+            return Rect(0, 0, 0, 0)
+
+        out_w = right - left
+        out_h = bottom - top
+
         if special_flags:
-
-            # Clip to the source bounds first.
-            if src_x < 0:
-                dst_x -= src_x
-                src_w += src_x
-                src_x = 0
-
-            if src_y < 0:
-                dst_y -= src_y
-                src_h += src_y
-                src_y = 0
-
-            if src_x + src_w > source.sdl_surface.w:
-                src_w = source.sdl_surface.w - src_x
-
-            if src_y + src_h > source.sdl_surface.h:
-                src_h = source.sdl_surface.h - src_y
-
-            if src_w <= 0 or src_h <= 0:
-                return Rect(0, 0, 0, 0)
-
-            SDL_GetSurfaceClipRect(self.sdl_surface, &clip_rect)
-
-            left = max(dst_x, 0, clip_rect.x)
-            top = max(dst_y, 0, clip_rect.y)
-            right = min(dst_x + src_w, self.sdl_surface.w, clip_rect.x + clip_rect.w)
-            bottom = min(dst_y + src_h, self.sdl_surface.h, clip_rect.y + clip_rect.h)
-
-            if right <= left or bottom <= top:
-                return Rect(0, 0, 0, 0)
 
             src_x += left - dst_x
             src_y += top - dst_y
-            out_w = right - left
-            out_h = bottom - top
 
             source_view = source.subsurface((src_x, src_y, out_w, out_h))
             dest_view = self.subsurface((left, top, out_w, out_h))
@@ -289,8 +290,7 @@ cdef class Surface:
         if not success:
             raise error()
 
-        dirty = Rect(dest[0], dest[1], source.sdl_surface.w, source.sdl_surface.h)
-        return dirty.clip(self.get_rect())
+        return Rect(left, top, out_w, out_h)
 
     cdef void _blend(self, Surface source, int function):
 
