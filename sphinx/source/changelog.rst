@@ -22,6 +22,10 @@ On Android, HTTPS requests, including Ren'Py Sync, :func:`renpy.fetch`, and the 
 the device's certificate store. Since 8.6.0, every such request failed, which made Sync report that it could not
 connect to the Ren'Py Sync server.
 
+When ``config.has_sync`` is False, Ren'Py doesn't create a ``sync`` directory inside the save directory or write
+every save into it as well. If that directory already exists, it is still used, so saves downloaded while Sync was
+enabled can still be loaded.
+
 Scrying (which predicts things like extend and :var:`config.nvl_page_ctc`) now takes translations into account,
 rather than skipping over them.
 
