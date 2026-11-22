@@ -413,6 +413,38 @@ def test_list_names_select_the_listed_test(listed):
         assert path in listed(LIST_SCRIPT, path)
 
 
+NON_LITERAL_SCRIPT = """\
+testsuite s:
+    testcase case:
+        parameter x = [float("nan"), 1]
+        pause 0
+    testsuite inner:
+        parameter y = [float("nan"), 2]
+        testcase leaf:
+            pause 0
+"""
+
+
+@pytest.mark.parametrize(
+    ("filters", "expected"),
+    [
+        ([], ["s", "s.case(x=nan)", "s.case(x=1)", "s.inner(y=nan)", "s.inner(y=nan).leaf", "s.inner(y=2)",
+              "s.inner(y=2).leaf"]),
+        (["s"], ["s", "s.case(x=1)", "s.inner(y=2)", "s.inner(y=2).leaf"]),
+        (["s.case(x=1)"], ["s", "s.case(x=1)"]),
+        (["s.inner.leaf"], ["s", "s.inner(y=2)", "s.inner(y=2).leaf"]),
+    ],
+)
+def test_non_literal_parameters_are_skipped_by_filters(listed, filters, expected):
+    """
+    A test whose generated name has a parameter value that isn't a Python literal, such as nan, can't be matched
+    against a filter. With filters it is skipped, along with the children of such a suite, rather than raising
+    KeyError for every filter that reaches it. Without filters, every test still runs, so it is listed.
+    """
+
+    assert listed(NON_LITERAL_SCRIPT, *filters) == expected
+
+
 def test_list_keeps_parameterized_root_prefix(listed):
     """
     The children of a parameterized root suite keep the `global(...)` prefix, since it is needed to tell the

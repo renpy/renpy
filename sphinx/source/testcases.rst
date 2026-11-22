@@ -196,8 +196,8 @@ use the test command:
     is listed separately, and suites are listed before the tests they contain.
     Tests are listed even if their ``enabled`` property is false, or another
     test has the ``only`` property. Each listed name can be used as a filter,
-    provided the test's parameter values are literals, such as numbers,
-    strings, and tuples.
+    except names marked with an asterisk, which have a parameter value that
+    is not a Python literal.
 
 .. option:: --overwrite-screenshots
 
@@ -313,6 +313,10 @@ When a test case uses the ``parameter`` keyword, each value combination is a sep
 A filter can give some or all of the parameters as keyword arguments, and selects the runs
 whose parameters are equal to the values given. The values are written as Python literals,
 such as numbers, strings, and tuples.
+
+A test with a parameter value that is not a Python literal, such as ``float("nan")`` or
+an object, can't be selected by a filter, and is skipped whenever filters are given. This
+includes the tests inside a suite with such a parameter. Running without filters runs it.
 
 See :ref:`parameterized-tests` for more information.
 

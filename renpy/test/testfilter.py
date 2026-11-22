@@ -58,7 +58,7 @@ class TestFilterSegment:
             return text, {}
 
         paren = text.index("(")
-        name = text[:paren]
+        name = text[:paren].rstrip()
 
         try:
             expression = ast.parse("_" + text[paren:], mode="eval")
@@ -270,12 +270,22 @@ class ExecutionFilter:
                     parent.enabled = True
 
     def matches(self, testcase: TestCase, exact: bool = False) -> bool:
+        """
+        Returns True if `testcase`, with its current parameters and those of its parents, should run.
+
+        Everything matches when there are no filters. Otherwise, a test whose generated name can't be parsed as a
+        filter, because a parameter's repr is not a Python literal, never matches.
+        """
+
         if not self.include_filters:
             return True
 
         is_parent = (testcase not in self.matched_nodes) and (testcase in self.parent_nodes)
 
-        node_filter = get_test_filter(testcase.current_full_parameterized_path)
+        node_filter = get_node_filter(testcase.current_full_parameterized_path)
+        if node_filter is None:
+            return False
+
         for include_filter in self.include_filters:
             if include_filter.matches(node_filter, exact, is_parent):
                 # Make sure that the specific parameter keywords actually exist in the node
@@ -303,3 +313,17 @@ def get_test_filter_segment(raw_text: str) -> TestFilterSegment:
 @functools.cache
 def get_test_filter(raw_text: str) -> TestFilter:
     return TestFilter(raw_text)
+
+@functools.cache
+def get_node_filter(path: str) -> TestFilter | None:
+    """
+    Returns the filter for the generated name of a test, or None if the name can't be parsed as a filter.
+
+    Generated names show parameter values with repr, so a value that isn't a Python literal, such as nan or an
+    object, gives a name that no filter can be written for.
+    """
+
+    try:
+        return get_test_filter(path)
+    except (KeyError, DeprecationWarning):
+        return None

@@ -35,6 +35,7 @@ from renpy.test import testfilter
         ("case(s='a).b(')", "case", {"s": "a).b("}),
         ('case(s="it\'s (")', "case", {"s": "it's ("}),
         ("case(s='\\')(')", "case", {"s": "')("}),
+        ("case (x=1)", "case", {"x": 1}),
     ],
 )
 def test_segment_parses_parameters(text, name, parameters):
