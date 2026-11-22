@@ -576,6 +576,10 @@ def main():
         if not game.interface:
             renpy.display.core.Interface()
             log_clock("Creating interface object")
+        else:
+            # The interface was created to report an error during init.
+            # Init code that ran after the error may have added layers.
+            game.interface.init_layers()
 
         # Init translation.
         renpy.translation.init_translation()
