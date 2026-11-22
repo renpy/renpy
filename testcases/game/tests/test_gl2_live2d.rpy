@@ -67,18 +67,7 @@ init python:
         if b is None:
             b = renpy.pygame.Surface(a.get_size(), 0, a)
 
-        width, height = a.get_size()
-
-        def premultiplied(color):
-            r, g, b, alpha = color
-            return (r * alpha / 255.0, g * alpha / 255.0, b * alpha / 255.0, alpha)
-
-        return max(
-            abs(i - j)
-            for y in range(height)
-            for x in range(width)
-            for i, j in zip(premultiplied(a.get_at((x, y))), premultiplied(b.get_at((x, y))))
-        )
+        return renpy.pygame.transform._max_difference(a, b)
 
     # Live2D loads the model when it's created, so the images are only
     # defined when the models are present.
