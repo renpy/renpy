@@ -1312,6 +1312,10 @@ Saving and Loading
     If True, the game will autosave. If False, no autosaving will
     occur.
 
+.. var:: config.has_sync = True
+
+    If True, Ren'Py Sync is enabled. If False, it is disabled.
+
 .. var:: config.keep_screenshot_entering_menu = False
 
     If True, a screenshot taken with :class:`FileTakeScreenshot` will be kept
