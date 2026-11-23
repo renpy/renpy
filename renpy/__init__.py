@@ -413,6 +413,7 @@ def import_all():
     import renpy.arguments
 
     import renpy.compat.fixes
+    import renpy.compat.ca
 
     import renpy.display
 

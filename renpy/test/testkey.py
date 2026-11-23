@@ -337,10 +337,13 @@ def queue_keysym(name: str) -> None:
     """
     Trigger a keysym event, which is a string like "ctrl_K_a" or "mouseup_1"
     or an event name in `config.keymap` like "skip" or "dismiss".
+
+    Every event posted is marked as a test event, so the test executor waits for the game to handle it before
+    running the next test statement.
     """
 
     if name in renpy.config.keymap:
-        renpy.exports.queue_event(name)
+        renpy.exports.queue_event(name, test=True)
         return
 
     elif "pad_" in name:
@@ -350,7 +353,7 @@ def queue_keysym(name: str) -> None:
         state = parts[-1]
         repeat = parts[0] == "repeat"
 
-        renpy.display.controller.post_event(control, state, repeat)
+        renpy.display.controller.post_event(control, state, repeat, test=True)
         return
 
     down(name)

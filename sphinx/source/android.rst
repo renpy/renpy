@@ -59,10 +59,6 @@ due to the Android software and hardware are:
   only produce mouse events when the user is actively touching the
   screen.
 
-* Text input (such as :func:`renpy.input`) is limited to the input methods
-  that do not require completions to work. (Western languages probably work,
-  while other languages might not.)
-
 In addition, there are a few changes that may be necessary due to
 human factors:
 

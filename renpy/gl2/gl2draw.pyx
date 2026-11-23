@@ -159,6 +159,10 @@ cdef class GL2Draw:
         # The physical size of the window we got.
         self.physical_size = None
 
+        # Tracks the window size and position, so they're saved in the
+        # preferences only once the window stops changing.
+        self.window_geometry_debouncer = renpy.display.core.WindowGeometryDebouncer()
+
         # The time of the last redraw.
         self.last_redraw_time = 0
 
@@ -444,6 +448,8 @@ cdef class GL2Draw:
 
         self.virtual_size = virtual_size
         vwidth, vheight = virtual_size
+
+        self.window_geometry_debouncer = renpy.display.core.WindowGeometryDebouncer()
 
         global vsync
 
@@ -757,9 +763,6 @@ cdef class GL2Draw:
         if not fullscreen:
             renpy.game.preferences.maximized = maximized
 
-        if not fullscreen and not maximized:
-            renpy.game.preferences.physical_size = self.get_physical_size()
-
         if renpy.config.adjust_view_size is not None:
             view_width, view_height = renpy.config.adjust_view_size(pwidth, pheight)
         else:
@@ -954,9 +957,63 @@ cdef class GL2Draw:
             renpy.display.interface.before_resize()
             self.on_resize(full_reset=full_reset)
 
-            return True
+            rv = True
         else:
-            return False
+            rv = False
+
+        self.save_window_geometry(fullscreen)
+
+        return rv
+
+    def save_window_geometry(self, fullscreen):
+        """
+        Saves the window size and position in the preferences, once they have
+        stayed the same for renpy.display.core.WINDOW_GEOMETRY_STABLE_TIME
+        seconds while the window is not fullscreen, maximized, minimized, or
+        hidden. Waiting lets window animations, like the asynchronous
+        fullscreen transition on macOS, finish before anything is saved.
+
+        `fullscreen` is True if the window is fullscreen.
+        """
+
+        if self.physical_size is None:
+            return
+
+        window = pygame.display.get_window()
+        flags = window.get_window_flags()
+
+        ineligible = (
+            fullscreen or
+            renpy.display.interface.fullscreen or
+            renpy.mobile or
+            (renpy.test.testexecution.get_test_window_size() is not None) or
+            (flags & (pygame.WINDOW_MAXIMIZED | pygame.WINDOW_MINIMIZED | pygame.WINDOW_HIDDEN))
+        )
+
+        if ineligible:
+            geometry = None
+        else:
+            if renpy.windows or renpy.macintosh or renpy.linux:
+                position = window.get_position()
+            else:
+                position = None
+
+            geometry = (self.get_physical_size(), position)
+
+        # Window animations run in real time, so this uses a clock that
+        # RENPY_TIMEWARP doesn't scale.
+        geometry = self.window_geometry_debouncer.check(geometry, time.monotonic())
+
+        if geometry is None:
+            return
+
+        size, position = geometry
+
+        renpy.game.preferences.physical_size = size
+
+        if position is not None:
+            renpy.game.preferences.window_position = position
+            renpy.game.preferences.window_position_layout = renpy.game.interface.get_display_layout()
 
     def quit(GL2Draw self):
         """

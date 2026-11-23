@@ -132,6 +132,7 @@ def update_environment(mocker, window_environment):
         draw.physical_size = size
         draw.drawable_size = drawable_size
         draw.maximized = False
+        draw.window_geometry_debouncer = renpy.display.core.WindowGeometryDebouncer()
         return draw, window
 
     return setup
@@ -184,6 +185,60 @@ def test_update_resizes_window_on_dpi_change(
     assert draw.dpi_scale == expected_scale
     window.resize.assert_called_once_with(expected_size, opengl=True, fullscreen=False, maximized=False)
     assert draw.resizes == 1
+
+
+@pytest.mark.parametrize(
+    "flags, eligible",
+    [
+        (0, True),
+        (renpy.pygame.WINDOW_FULLSCREEN_DESKTOP, False),
+        (renpy.pygame.WINDOW_MAXIMIZED, False),
+        (renpy.pygame.WINDOW_MINIMIZED, False),
+        (renpy.pygame.WINDOW_HIDDEN, False),
+    ],
+)
+def test_update_saves_window_geometry_once_stable(mocker, window_environment, update_environment, flags, eligible):
+    """
+    update saves the window size and position in the preferences only after they have stayed the same for
+    WINDOW_GEOMETRY_STABLE_TIME seconds, and never while the window is fullscreen, maximized, minimized, or
+    hidden.
+
+    On macOS, the window resizes through the desktop size while it animates into fullscreen, before it is
+    flagged fullscreen. Saving that size made switching to windowed open a window as large as the screen (#7549).
+    The clock is mocked so the test doesn't wait.
+    """
+
+    draw, window = update_environment((1361, 766), (1361, 766), 1.0, 1.0, False)
+    window.get_window_flags.return_value = flags
+
+    mocker.patch.object(renpy, "linux", True)
+    mocker.patch.object(renpy, "mobile", False)
+    window.get_position.return_value = (100, 50)
+    interface = mocker.patch.object(renpy.game, "interface")
+    interface.get_display_layout.return_value = ((0, 0, 1920, 1080),)
+    get_time = mocker.patch("time.monotonic", return_value=0.0)
+
+    window_environment.physical_size = None
+    window_environment.window_position = None
+    window_environment.window_position_layout = None
+
+    draw.update()
+    get_time.return_value = renpy.display.core.WINDOW_GEOMETRY_STABLE_TIME - 0.1
+    draw.update()
+
+    assert window_environment.physical_size is None
+    assert window_environment.window_position is None
+
+    get_time.return_value = renpy.display.core.WINDOW_GEOMETRY_STABLE_TIME
+    draw.update()
+
+    if eligible:
+        assert window_environment.physical_size == (1361, 766)
+        assert window_environment.window_position == (100, 50)
+        assert window_environment.window_position_layout == ((0, 0, 1920, 1080),)
+    else:
+        assert window_environment.physical_size is None
+        assert window_environment.window_position is None
 
 
 class RecordingDraw(GL2Draw):

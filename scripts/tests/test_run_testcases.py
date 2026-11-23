@@ -391,7 +391,13 @@ def test_parallel_wine_cleanup_waits_for_games(mocker: MockerFixture, tmp_path: 
     mocker.patch.object(run_testcases, "run_logged", side_effect=lambda *args, **kwargs: events.append("stop prefix"))
 
     def run_games(
-        target: run_testcases.Target, projects: list[str], index: int, filters: list[str], directory: Path
+        target: run_testcases.Target,
+        projects: list[str],
+        index: int,
+        filters: list[str],
+        directory: Path,
+        games: list[run_testcases.Game] | None = None,
+        exit_suite: Path | None = None,
     ) -> list[run_testcases.Result]:
         """Simulate one game timing out while another is finishing on the same target."""
         run_testcases.stop_wine(target, directory / "support.txt")
@@ -508,3 +514,272 @@ def test_synopsis_omits_expected_failure_output(simulated_project: SimulatedProj
     assert "Failures:" not in synopsis
     assert "expected_failure" not in synopsis
     assert "XFAIL-NOISE" not in synopsis
+
+
+# Games given with --game
+
+
+def make_game(root: Path, name: str, script: str = 'label start:\n    return\n') -> Path:
+    """Creates a minimal game directory named `name` under `root`, with `script` as its only script."""
+    game = root / name
+    (game / "game").mkdir(parents=True)
+    (game / "game" / "script.rpy").write_text(script)
+    return game
+
+
+def test_load_games_detects_global_suite(tmp_path: Path) -> None:
+    """
+    A game that defines testsuite global, even in a subdirectory, a linked directory, or a _ren.py file, keeps its own
+    teardown. An indented definition is a nested suite, not the global one. One that
+    doesn't gets the exit suite, as it would otherwise stay open until the timeout.
+    """
+
+    plain = make_game(tmp_path, "plain")
+    nested = make_game(tmp_path, "nested")
+    (nested / "game" / "tests").mkdir()
+    (nested / "game" / "tests" / "global.rpy").write_text("testsuite global:\n    teardown:\n        exit\n")
+    ren_py = make_game(tmp_path, "ren_py")
+    (ren_py / "game" / "suite_ren.py").write_text('"""renpy\ntestsuite global:\n    teardown:\n        exit\n"""\n')
+
+    linked = make_game(tmp_path, "linked")
+    (linked / "game" / "tests").symlink_to(nested / "game" / "tests")
+    indented = make_game(tmp_path, "indented", "testsuite outer:\n    testsuite global:\n        teardown:\n            exit\n")
+
+    games = run_testcases.load_games([str(plain), str(nested), str(ren_py), str(linked), str(indented)])
+
+    assert [(g.name, g.source, g.needs_exit_suite) for g in games] == [
+        ("plain", plain, True),
+        ("nested", nested, False),
+        ("ren_py", ren_py, False),
+        ("linked", linked, False),
+        ("indented", indented, True),
+    ]
+
+
+def test_load_games_rejects_runner_copies(mocker: MockerFixture, tmp_path: Path) -> None:
+    """
+    A copy the runner made is cleaned before it's synced, so running it as the source would delete files from the
+    game being run. WORK_DIR is patched so the copy can be made in tmp_path.
+    """
+
+    mocker.patch.object(run_testcases, "WORK_DIR", tmp_path)
+    copy = make_game(tmp_path / "games", "probe")
+
+    with pytest.raises(run_testcases.ConfigError, match="where the runner keeps its copies"):
+        run_testcases.load_games([str(copy)])
+
+
+@pytest.mark.parametrize(
+    ("names", "message"),
+    [
+        (["one"], "has no game directory"),
+        (["launcher"], "same name as the launcher project"),
+        (["updater"], "same name as the updater project"),
+        (["game", "elsewhere/game"], "more than one game named game"),
+        (["has space"], "may only contain"),
+    ],
+)
+def test_load_games_rejects_unusable_games(tmp_path: Path, names: list[str], message: str) -> None:
+    """
+    A game is reported under its directory name, which is also its directory and savedir on each target, so a name
+    that matches a project or another game would mix their files and results. "one" is created without a game
+    directory, to show that the path must be a game.
+    """
+
+    paths = []
+
+    for name in names:
+        path = tmp_path / name
+        path.mkdir(parents=True)
+        if name != "one":
+            (path / "game").mkdir()
+        paths.append(str(path))
+
+    with pytest.raises(run_testcases.ConfigError, match=message):
+        run_testcases.load_games(paths)
+
+
+def test_select_projects_with_games() -> None:
+    """Games replace the default projects, --project adds to them, and filters still need exactly one item."""
+    games = [run_testcases.Game("probe", Path("/probe")), run_testcases.Game("other", Path("/other"))]
+
+    assert run_testcases.select_projects(None, [], games) == ["probe", "other"]
+    assert run_testcases.select_projects("tutorial", [], games[:1]) == ["tutorial", "probe"]
+    assert run_testcases.select_projects(None, ["case"], games[:1]) == ["probe"]
+
+    with pytest.raises(run_testcases.ConfigError):
+        run_testcases.select_projects(None, ["case"], games)
+
+    with pytest.raises(run_testcases.ConfigError):
+        run_testcases.select_projects("tutorial", ["case"], games[:1])
+
+
+@pytest.mark.parametrize("needs_exit_suite", [True, False])
+def test_game_sync_copies_to_ssh_target(tmp_path: Path, needs_exit_suite: bool) -> None:
+    """
+    On an ssh target, the game is copied into the games directory of the target's tree, and the exit suite is added
+    to its game directory only when the game needs it.
+    """
+
+    target = run_testcases.Target("mac", "ssh", host="tom@mac", path="/Users/tom/renpy-test")
+    game = run_testcases.Game("probe", tmp_path / "probe", needs_exit_suite=needs_exit_suite)
+    exit_suite = tmp_path / run_testcases.EXIT_SUITE_FILE
+
+    prepare, *rsyncs = run_testcases.build_game_sync_argvs(target, game, exit_suite)
+
+    assert prepare[0] == "ssh"
+    assert [argv[-2:] for argv in rsyncs] == [
+        [f"{game.source}/", "tom@mac:/Users/tom/renpy-test/games/probe"],
+        [str(exit_suite), f"tom@mac:/Users/tom/renpy-test/games/probe/game/{run_testcases.EXIT_SUITE_FILE}"],
+    ][: 2 if needs_exit_suite else 1]
+
+
+@pytest.mark.skipif(os.name != "posix", reason="Games are copied with rsync and run through POSIX shell scripts.")
+@pytest.mark.skipif(shutil.which("rsync") is None, reason="Games are copied with rsync.")
+def test_source_target_runs_staged_game(mocker: MockerFixture, tmp_path: Path) -> None:
+    """
+    A source target runs a copy of the game in the repository's tmp directory, with the exit suite added, and leaves
+    the game's own directory alone. A copy left over from a previous run loses its compiled scripts and files that
+    the game no longer has, so a deleted test can't run. REPO is patched so the copy goes to tmp_path, and the
+    "game" is a shell script that prints its arguments.
+    """
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    mocker.patch.object(run_testcases, "REPO", repo)
+    mocker.patch.object(run_testcases, "WORK_DIR", repo / "tmp" / "run-testcases")
+
+    # The game directory is a link, which must be copied rather than recreated, or the exit suite would be written
+    # through it into the original scripts.
+    original = make_game(tmp_path, "original")
+    source = tmp_path / "probe"
+    source.mkdir()
+    (source / "game").symlink_to(original / "game")
+    game = run_testcases.load_games([str(source)])[0]
+    staged = repo / "tmp" / "run-testcases" / "games" / "probe" / "game"
+    staged.mkdir(parents=True)
+    (staged / "removed.rpy").write_text("")
+    (staged / "script.rpyc").write_text("")
+
+    exit_suite = tmp_path / run_testcases.EXIT_SUITE_FILE
+    exit_suite.write_text(run_testcases.EXIT_SUITE)
+    fake_renpy = tmp_path / "fake-renpy.sh"
+    fake_renpy.write_text('#!/bin/sh\necho "$@" > args.txt\n')
+    fake_renpy.chmod(0o755)
+    target = run_testcases.Target("source", "source", command=str(fake_renpy))
+    output = tmp_path / "results"
+
+    results = run_testcases.run_target(target, ["probe"], 0, [], output, [game], exit_suite)
+
+    assert [(r.project, r.status) for r in results] == [("probe", "CRASH")]
+    assert sorted(i.name for i in staged.iterdir()) == ["script.rpy", run_testcases.EXIT_SUITE_FILE]
+    assert sorted(i.name for i in (original / "game").iterdir()) == ["script.rpy"]
+    assert not staged.is_symlink()
+    assert (repo / "args.txt").read_text().split()[:3] == [
+        "tmp/run-testcases/games/probe",
+        "--savedir",
+        "tmp/run-testcases/saves/source/probe",
+    ]
+
+
+def test_run_target_with_only_games_syncs_engine(mocker: MockerFixture, tmp_path: Path) -> None:
+    """
+    When only games run, the bundled projects and what only they use aren't copied to the target, which saves a
+    long sync. Commands are recorded rather than run, and every one succeeds.
+    """
+
+    commands: list[list[str]] = []
+
+    def record(argv: list[str], *args: object, **kwargs: object) -> int:
+        commands.append(argv)
+        return 0
+
+    mocker.patch.object(run_testcases, "run_logged", side_effect=record)
+    mocker.patch.object(run_testcases, "run_project", return_value=run_testcases.Result("linux", "probe", "PASS"))
+    target = run_testcases.Target("linux", "local")
+    game = run_testcases.Game("probe", tmp_path / "probe")
+
+    run_testcases.run_target(target, ["probe"], 0, [], tmp_path / "results", [game])
+
+    synced = {Path(argv[-1]).name for argv in commands if argv[0] == "rsync"}
+    assert "renpy" in synced
+    assert "probe" in synced
+    assert not synced & run_testcases.BUNDLED_ONLY
+
+
+@pytest.mark.skipif(shutil.which("rsync") is None, reason="Games are copied with rsync.")
+@pytest.mark.parametrize("screenshots", run_testcases.SCREENSHOT_DIRS)
+def test_game_sync_keeps_baselines_game_lacks(mocker: MockerFixture, tmp_path: Path, screenshots: str) -> None:
+    """
+    In the usual case, the game has no screenshot directory, or tests directory, at all, and a target saves baselines
+    on its first run. The next sync must keep them, rather than deleting the directory the game doesn't have.
+    """
+
+    mocker.patch.object(run_testcases, "WORK_DIR", tmp_path / "work")
+    source = make_game(tmp_path, "probe")
+    target = run_testcases.Target("linux", "local")
+    game = run_testcases.load_games([str(source)])[0]
+    staged = Path(target.workdir) / target.game_path("probe") / screenshots
+    log = tmp_path / "log.txt"
+
+    assert run_testcases.sync_game(target, game, None, log) is None
+    staged.mkdir(parents=True)
+    (staged / "saved.png").write_text("target")
+    assert run_testcases.sync_game(target, game, None, log) is None
+
+    assert [i.name for i in staged.iterdir()] == ["saved.png"]
+
+
+@pytest.mark.skipif(shutil.which("rsync") is None, reason="Games are copied with rsync.")
+@pytest.mark.parametrize("screenshots", run_testcases.SCREENSHOT_DIRS)
+def test_game_sync_keeps_target_baselines(mocker: MockerFixture, tmp_path: Path, screenshots: str) -> None:
+    """
+    A screenshot baseline that a target saved survives the next sync, or every run would save a new one and pass
+    without comparing anything. A baseline in the game itself replaces the target's, while the mismatch images
+    the game's directory may hold aren't copied. The runner's cleanup step is run as a real shell script, and the
+    run's screenshots are collected from the same directory.
+    """
+
+    mocker.patch.object(run_testcases, "WORK_DIR", tmp_path / "work")
+    source = make_game(tmp_path, "probe")
+    (source / screenshots).mkdir(parents=True)
+    (source / screenshots / "shipped.png").write_text("source")
+    (source / screenshots / "shipped.new.png").write_text("mismatch")
+
+    target = run_testcases.Target("linux", "local")
+    game = run_testcases.load_games([str(source)])[0]
+    staged = Path(target.workdir) / target.game_path("probe") / screenshots
+    log = tmp_path / "log.txt"
+
+    assert run_testcases.sync_game(target, game, None, log) is None
+    (staged / "saved.png").write_text("target")
+    (staged / "shipped.png").write_text("target-made")
+    assert run_testcases.sync_game(target, game, None, log) is None
+
+    assert sorted(i.name for i in staged.iterdir()) == ["saved.png", "shipped.png"]
+    assert (staged / "shipped.png").read_text() == "source"
+
+    collected = [argv[-2] for argv in run_testcases.build_collect_argvs(target, "probe", tmp_path, "games/probe")]
+    assert f"{target.workdir}/games/probe/{screenshots}/" in collected
+
+
+@pytest.mark.skipif(shutil.which("rsync") is None, reason="Artifacts are collected with rsync.")
+@pytest.mark.parametrize("screenshots", run_testcases.SCREENSHOT_DIRS)
+def test_collect_artifacts_gets_mismatch_images(mocker: MockerFixture, tmp_path: Path, screenshots: str) -> None:
+    """
+    The images that explain a failed screenshot assert are collected from either screenshot directory, including
+    tests/screenshots, whose parent doesn't exist in the results until it's made. Baselines aren't collected.
+    """
+
+    mocker.patch.object(run_testcases, "WORK_DIR", tmp_path / "work")
+    target = run_testcases.Target("linux", "local")
+    staged = Path(target.workdir) / "games" / "probe" / screenshots
+    staged.mkdir(parents=True)
+    for name in ("shot.png", "shot.new.png", "shot.diff.png"):
+        (staged / name).write_text(name)
+
+    results = tmp_path / "results"
+    results.mkdir()
+    run_testcases.collect_artifacts(target, "probe", results, tmp_path / "log.txt", "games/probe")
+
+    assert sorted(i.name for i in (results / screenshots).iterdir()) == ["shot.diff.png", "shot.new.png"]

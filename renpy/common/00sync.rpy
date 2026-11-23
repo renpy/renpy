@@ -74,10 +74,14 @@ init -1100 python:
 
 init 1100 python:
 
-    if config.savedir is not None:
-        config.extra_savedirs.append(config.savedir + "/sync")
-    else:
+    import os
+
+    # An existing sync directory is used even when sync is disabled, so saves
+    # downloaded while it was enabled stay available.
+    if config.savedir is None:
         config.has_sync = None
+    elif config.has_sync or os.path.isdir(config.savedir + "/sync"):
+        config.extra_savedirs.append(config.savedir + "/sync")
 
 init -1100 python in _sync:
 

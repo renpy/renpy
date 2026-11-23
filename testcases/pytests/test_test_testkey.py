@@ -1,3 +1,5 @@
+import types
+
 import pytest
 
 from renpy import pygame
@@ -74,15 +76,44 @@ def test_navigation_keys_do_not_insert_text(mocker, keysym):
     assert events[0].unicode == ""
 
 
-def test_keymap_event_uses_existing_queue(mocker):
+def test_keymap_event_is_posted_as_test_event(mocker):
     """
-    A name found in config.keymap is queued as that keymap event through renpy.queue_event, rather than
-    being treated as a key name and posted as key presses.
+    A name found in config.keymap is posted as that keymap event, rather than being treated as a key name
+    and posted as key presses.
+
+    The event must be marked as a test event, as the executor only waits for marked events to be handled
+    before running the next statement. The engine isn't displaying under pytest, so a stand-in interface lets
+    queue_event post at all. Unmarked, an `assert` right after `keysym "game_menu"` could run
+    before the game menu closed.
     """
 
     mocker.patch.dict(testkey.renpy.config.keymap, {"dismiss": ["K_RETURN"]})
-    queue = mocker.patch.object(testkey.renpy.exports, "queue_event")
+    mocker.patch.object(testkey.renpy.display, "interface", types.SimpleNamespace())
+    post = mocker.patch.object(pygame.event, "post")
 
     testkey.queue_keysym("dismiss")
 
-    queue.assert_called_once_with("dismiss")
+    event = post.call_args.args[0]
+    assert event.type == testkey.renpy.display.core.EVENTNAME
+    assert event.eventnames == ["dismiss"]
+    assert event.test
+
+
+def test_pad_event_is_posted_as_test_event(mocker):
+    """
+    A controller keysym is posted as the matching pad event, marked as a test event so the executor waits
+    for it to be handled.
+
+    The stand-in interface reports keyboard focus, as controller events are dropped without it.
+    """
+
+    mocker.patch.object(testkey.renpy.display, "interface", types.SimpleNamespace(keyboard_focused=True))
+    mocker.patch.object(testkey.renpy.display.controller, "ignore", False)
+    post = mocker.patch.object(pygame.event, "post")
+
+    testkey.queue_keysym("pad_a_press")
+
+    event = post.call_args.args[0]
+    assert event.type == testkey.renpy.display.core.EVENTNAME
+    assert event.eventnames[0] == "pad_a_press"
+    assert event.test

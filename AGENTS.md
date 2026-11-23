@@ -376,6 +376,14 @@ testsuite global:
         exit
 ```
 
+To skip the main menu in a test game, define a `main_menu` label that returns, so the game goes straight to
+`label start`:
+
+```
+label main_menu:
+    return
+```
+
 ### Which checks to run
 
 Run the applicable checks below. Decide whether missing coverage requires a new or extended test

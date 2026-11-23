@@ -79,6 +79,98 @@ def _diff(Surface dest, Surface a, Surface b, same_color, different_color):
 
     return diff_count
 
+def _difference_histogram(Surface a, Surface b, bint premultiplied=True):
+    """
+    This is Ren'Py specific, and is used by tests.
+
+    Compares a and b pixel by pixel, and returns a list of 256 counts. Entry i
+    is the number of pixels whose largest difference in any channel, in units
+    of 0-255 and rounded up to an integer, is i. So entry 0 counts identical
+    pixels, and the highest non-zero entry is the largest difference. If
+    premultiplied is true, the color channels are multiplied by alpha before
+    they're compared, so differences in nearly transparent pixels aren't
+    magnified.
+
+    a and b must be the same size and pixel format, with 32 bits per pixel
+    and 8 bits per channel.
+    """
+
+    if a.get_size() != b.get_size():
+        raise error("Surface sizes do not match.")
+
+    cdef SDL_Surface *a_surf = a.sdl_surface
+    cdef SDL_Surface *b_surf = b.sdl_surface
+
+    if a_surf.format != b_surf.format:
+        raise error("Surface formats do not match.")
+
+    cdef const SDL_PixelFormatDetails *format = SDL_GetPixelFormatDetails(a_surf.format)
+
+    if format.bytes_per_pixel != 4 or format.Rbits != 8 or format.Gbits != 8 or format.Bbits != 8 or format.Abits not in (0, 8):
+        raise error("Surfaces must be 32 bit, with 8 bits per channel.")
+
+    cdef int[3] shifts
+    shifts[0] = format.Rshift
+    shifts[1] = format.Gshift
+    shifts[2] = format.Bshift
+
+    cdef bint has_alpha = format.Amask != 0
+    cdef int ashift = format.Ashift
+
+    cdef Uint32 *a_row
+    cdef Uint32 *b_row
+    cdef Uint32 pa
+    cdef Uint32 pb
+    cdef int x, y, i
+    cdef int alpha_a, alpha_b, ca, cb, d
+
+    # The largest difference in the current pixel, scaled by 255 so it stays
+    # an integer.
+    cdef int worst
+
+    cdef long long[256] counts
+
+    for i in range(256):
+        counts[i] = 0
+
+    with nogil:
+        for y in range(a_surf.h):
+            a_row = <Uint32 *> ((<Uint8 *> a_surf.pixels) + y * a_surf.pitch)
+            b_row = <Uint32 *> ((<Uint8 *> b_surf.pixels) + y * b_surf.pitch)
+
+            for x in range(a_surf.w):
+                pa = a_row[x]
+                pb = b_row[x]
+
+                if pa == pb:
+                    counts[0] += 1
+                    continue
+
+                if has_alpha:
+                    alpha_a = (pa >> ashift) & 0xff
+                    alpha_b = (pb >> ashift) & 0xff
+                else:
+                    alpha_a = 255
+                    alpha_b = 255
+
+                worst = abs(alpha_a - alpha_b) * 255
+
+                for i in range(3):
+                    ca = (pa >> shifts[i]) & 0xff
+                    cb = (pb >> shifts[i]) & 0xff
+
+                    if premultiplied:
+                        d = abs(ca * alpha_a - cb * alpha_b)
+                    else:
+                        d = abs(ca - cb) * 255
+
+                    if d > worst:
+                        worst = d
+
+                counts[(worst + 254) // 255] += 1
+
+    return [ counts[i] for i in range(256) ]
+
 def flip(Surface surface, bint xbool, bint ybool):
 
     cdef Surface rv = Surface(surface.get_size(), surface.get_flags(), surface)

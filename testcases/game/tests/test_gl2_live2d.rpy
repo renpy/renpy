@@ -53,10 +53,11 @@ init python:
 
         return renpy.render_to_surface(d.render(config.screen_width, config.screen_height, st, st))
 
-    def test_live2d__max_difference(a, b=None):
+    def test_live2d__histogram(a, b=None):
         """
-        Returns the largest difference in any channel of any pixel between
-        surfaces `a` and `b`, with the colors premultiplied by alpha. If `b` is
+        Returns a list of 256 counts, where entry i is the number of pixels
+        whose largest difference in any channel between surfaces `a` and `b`,
+        rounded up, is i/255. The colors are premultiplied by alpha. If `b` is
         None, `a` is compared to a transparent surface.
 
         Surfaces store colors that aren't premultiplied, so in a nearly
@@ -67,18 +68,25 @@ init python:
         if b is None:
             b = renpy.pygame.Surface(a.get_size(), 0, a)
 
-        width, height = a.get_size()
+        return renpy.pygame.transform._difference_histogram(a, b)
 
-        def premultiplied(color):
-            r, g, b, alpha = color
-            return (r * alpha / 255.0, g * alpha / 255.0, b * alpha / 255.0, alpha)
+    def test_live2d__max_difference(histogram):
+        """
+        Returns the largest difference in any channel of any pixel counted by
+        `histogram`, a result of test_live2d__histogram, as an integer from 0
+        to 255.
+        """
 
-        return max(
-            abs(i - j)
-            for y in range(height)
-            for x in range(width)
-            for i, j in zip(premultiplied(a.get_at((x, y))), premultiplied(b.get_at((x, y))))
-        )
+        return max(i for i, count in enumerate(histogram) if count)
+
+    def test_live2d__pixels_over(histogram, limit):
+        """
+        Returns the number of pixels counted by `histogram`, a result of
+        test_live2d__histogram, whose largest difference in any channel is
+        more than `limit`/255.
+        """
+
+        return sum(histogram[limit + 1:])
 
     # Live2D loads the model when it's created, so the images are only
     # defined when the models are present.
@@ -181,6 +189,7 @@ testsuite live2d:
         # Surfaces can't be saved, and the setting must not reach other tests.
         $ test_live2d__cropped = None
         $ test_live2d__uncropped = None
+        $ test_live2d__changes = None
         $ config.live2d_mask_clipping = True
 
         if not screen "main_menu":
@@ -266,8 +275,12 @@ testsuite live2d:
         $ test_live2d__cropped = test_live2d__clipping_frame(model, motion, st)
         $ config.live2d_mask_clipping = False
         $ test_live2d__uncropped = test_live2d__clipping_frame(model, motion, st)
-        assert eval test_live2d__max_difference(test_live2d__uncropped) > 0
-        # Cropping changes the edges of masks slightly, by at most 8/255 in the models tested.
-        assert eval test_live2d__max_difference(test_live2d__cropped, test_live2d__uncropped) <= 10
+        assert eval test_live2d__max_difference(test_live2d__histogram(test_live2d__uncropped)) > 0
+        $ test_live2d__changes = test_live2d__histogram(test_live2d__cropped, test_live2d__uncropped)
+        # Cropping changes edge pixels by at most 9/255 in the models tested, except for a few pixels on
+        # high-contrast edges, which reach 20/255 on Apple GPUs. Shifting the masks by half a texel fails one of
+        # these assertions in every case.
+        assert eval test_live2d__max_difference(test_live2d__changes) <= 24
+        assert eval test_live2d__pixels_over(test_live2d__changes, 10) <= 5
         # Mao's masks differ in hundreds of pixels, so an identical frame means the setting was ignored.
-        assert eval model != "Mao" or test_live2d__max_difference(test_live2d__cropped, test_live2d__uncropped) > 0
+        assert eval model != "Mao" or test_live2d__max_difference(test_live2d__changes) > 0

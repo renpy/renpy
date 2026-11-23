@@ -91,10 +91,14 @@ ZERO_THRESHOLD = 8192
 ignore = False
 
 
-def post_event(control, state, repeat):
+def post_event(control, state, repeat, test=False):
     """
     Creates an EVENTNAME event for the given state and name, and post it
     to the event queue.
+
+    `test`
+        True if the event was synthesized by the test runner, which waits for
+        such events to be handled before running the next test statement.
     """
 
     if not renpy.display.interface.keyboard_focused:
@@ -115,7 +119,9 @@ def post_event(control, state, repeat):
     else:
         names.extend(renpy.config.pad_bindings.get(name, ()))
 
-    ev = pygame.event.Event(renpy.display.core.EVENTNAME, {"eventnames": names, "controller": name, "up": False})
+    ev = pygame.event.Event(
+        renpy.display.core.EVENTNAME, {"eventnames": names, "controller": name, "up": False, "test": test}
+    )
 
     pygame.event.post(ev)
 

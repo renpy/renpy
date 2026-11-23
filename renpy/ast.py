@@ -72,6 +72,7 @@ EARLY_CONFIG = {
     "munge_in_strings",
     "interface_layer",
     "persistent_callback",
+    "init_exception_ignore",
 }
 
 
