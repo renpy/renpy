@@ -656,9 +656,8 @@ Input, Focus, and Events
                 pygame.FINGERCANCELED,
             ]
 
-    The event types, and the fields each event has, are defined by the
-    ``make_event`` function in
-    `renpy/pygame/event.pyx <https://github.com/renpy/renpy/blob/master/renpy/pygame/event.pyx>`_.
+    The event types, and the fields each event has, are listed in
+    :doc:`pygame_events`.
 
     The event types that are available, and the fields each event has, come
     from the version of SDL that Ren'Py uses, and may change in major

@@ -82,6 +82,9 @@ finger information as well.
 Other Changes
 -------------
 
+``renpy.pygame`` events are closer to pygame-ce's. Aliases and missing fields have been added. The new
+:doc:`pygame_events` page lists every event, its attributes, and how it differs from pygame-ce.
+
 Setting the new :envvar:`RENPY_SCREENSHOT_CLIPBOARD` environment variable to 0 stops the screenshot key from copying
 screenshots to the clipboard.
 

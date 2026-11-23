@@ -20,6 +20,7 @@
 from .sdl cimport *
 
 from .error import error
+from .event import convert_hat_value
 
 def init():
 
@@ -154,16 +155,4 @@ cdef class Joystick:
         if self.joystick == NULL:
             raise error("joystick not initialized")
 
-        state = SDL_GetJoystickHat(self.joystick, hat_number)
-        hx = hy = 0
-        if state & SDL_HAT_LEFT:
-            hx = -1
-        elif state & SDL_HAT_RIGHT:
-            hx = 1
-
-        if state & SDL_HAT_UP:
-            hy = 1
-        elif state & SDL_HAT_DOWN:
-            hy = -1
-
-        return (hx, hy)
+        return convert_hat_value(SDL_GetJoystickHat(self.joystick, hat_number))

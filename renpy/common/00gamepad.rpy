@@ -83,6 +83,27 @@ init -1200 python in _gamepad:
     import renpy.pygame as pygame
     import os
 
+    def get_hat_mask(value):
+        """
+        Converts the (x, y) value of a JOYHATMOTION event into the SDL hat
+        bitmask (up 1, right 2, down 4, left 8) that SDL gamepad mappings use.
+        """
+
+        x, y = value
+        rv = 0
+
+        if y > 0:
+            rv |= 1
+        elif y < 0:
+            rv |= 4
+
+        if x > 0:
+            rv |= 2
+        elif x < 0:
+            rv |= 8
+
+        return rv
+
     class EventWatcher(renpy.Displayable):
 
         def __init__(self, mappings):
@@ -101,8 +122,8 @@ init -1200 python in _gamepad:
                 binding = "b{}".format(ev.button)
             elif ev.type == JOYAXISMOTION and abs(ev.value) > .6:
                 binding = "a{}".format(ev.axis)
-            elif ev.type == JOYHATMOTION and (ev.value != 0):
-                binding = "h{}.{}".format(ev.hat, ev.value)
+            elif ev.type == JOYHATMOTION and (ev.value != (0, 0)):
+                binding = "h{}.{}".format(ev.hat, get_hat_mask(ev.value))
 
             if binding not in self.bound:
                 return binding

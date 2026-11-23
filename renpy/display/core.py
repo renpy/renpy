@@ -67,6 +67,7 @@ ALL_EVENTS.discard(pygame.MOUSEMOTION)
 ALL_EVENTS.add(PERIODIC)
 ALL_EVENTS.add(EVENTNAME)
 
+# sphinx/source/pygame_events.rst lists which events are enabled by default; update it when changing this set.
 enabled_events: set[int] = {
     pygame.QUIT,
     pygame.TERMINATING,

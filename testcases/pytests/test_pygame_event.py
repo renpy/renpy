@@ -27,12 +27,15 @@ where KEYDOWN events get their unicode character from the keyboard layout. With 
 default US keymap, so the expected characters are those of a US layout.
 """
 
+import pathlib
 import pickle
+import re
 import sys
 
 import pytest
 
 import renpy.display.behavior
+import renpy.display.core
 from renpy import pygame
 
 # SDL scancodes (USB HID usage IDs), which renpy.pygame does not expose.
@@ -398,3 +401,191 @@ def test_event_unpickles_old_format():
     assert ev.dict == {"_type": 5, "a": 1}
     assert ev.timestamp == 0.0
     assert ev == pygame.event.Event(5, a=1)
+
+
+# Names, aliases, and representation.
+
+# The pygame-ce names that renpy.pygame provides for its own event types.
+PYGAME_CE_ALIASES = {
+    "WINDOWENTER": "WINDOWMOUSEENTER",
+    "WINDOWLEAVE": "WINDOWMOUSELEAVE",
+    "WINDOWCLOSE": "WINDOWCLOSEREQUESTED",
+    "WINDOWSIZECHANGED": "WINDOWRESIZED",
+    "APP_TERMINATING": "TERMINATING",
+    "APP_LOWMEMORY": "LOWMEMORY",
+    "APP_WILLENTERBACKGROUND": "WILLENTERBACKGROUND",
+    "APP_DIDENTERBACKGROUND": "DIDENTERBACKGROUND",
+    "APP_WILLENTERFOREGROUND": "WILLENTERFOREGROUND",
+    "APP_DIDENTERFOREGROUND": "DIDENTERFOREGROUND",
+    "RENDER_TARGETS_RESET": "RENDERTARGETSRESET",
+    "RENDER_DEVICE_RESET": "RENDERDEVICERESET",
+    "RENDER_DEVICE_LOST": "RENDERDEVICELOST",
+}
+
+# The source of renpy.pygame.locals, and the event reference page, which distributions may leave out.
+LOCALS_SOURCE = pathlib.Path(renpy.__file__).parent / "pygame" / "locals.pyx"
+EVENTS_PAGE = pathlib.Path(renpy.__file__).parent.parent / "sphinx" / "source" / "pygame_events.rst"
+
+
+def read_event_constants() -> list[str]:
+    """
+    Returns the name of every event type constant defined in renpy.pygame.locals, skipping the test if the source is
+    not available.
+    """
+
+    if not LOCALS_SOURCE.exists():
+        pytest.skip(f"{LOCALS_SOURCE} is not available")
+
+    return re.findall(r"^([A-Z][A-Z0-9_]*) = SDL_EVENT_", LOCALS_SOURCE.read_text(), re.MULTILINE)
+
+
+def test_event_class_is_exported():
+    """
+    pygame.Event is the event class, as in pygame-ce, so code that creates events with it gets the class the queue
+    returns.
+    """
+
+    assert pygame.Event is pygame.event.Event
+    assert isinstance(pygame.Event(pygame.USEREVENT), pygame.event.EventType)
+
+
+@pytest.mark.parametrize("alias, name", sorted(PYGAME_CE_ALIASES.items()))
+def test_pygame_ce_alias(alias, name):
+    """
+    Each pygame-ce name is the same type as the Ren'Py name, and event_name() still gives the Ren'Py name.
+    """
+
+    assert getattr(pygame, alias) == getattr(pygame, name)
+    assert getattr(pygame.locals, alias) == getattr(pygame, name)
+    assert pygame.event.event_name(getattr(pygame, alias)) == name
+
+
+def test_every_event_constant_has_a_name():
+    """
+    Every event constant in renpy.pygame.locals is exported from renpy.pygame, and its type has a name, so events of
+    that type have a useful repr().
+    """
+
+    names = read_event_constants()
+
+    assert "SCREENKEYBOARDSHOWN" in names
+
+    for name in names:
+        assert getattr(pygame, name) == getattr(pygame.locals, name), name
+        assert pygame.event.event_name(getattr(pygame, name)) != "UNKNOWN", name
+
+
+def test_unknown_window_is_none():
+    """
+    An event from a window id that is not the main window's has None as its window, rather than an error or an id.
+    """
+
+    (ev,) = pygame.event._make_event(pygame.WINDOWMOVED, windowID=12345, data1=1, data2=2)
+
+    assert ev.window is None
+
+
+@pytest.mark.parametrize(
+    "ev, expected",
+    [
+        (pygame.event.Event(pygame.KEYDOWN, key=97, unicode="a"), "<Event(768-KEYDOWN key=97, unicode='a')>"),
+        (pygame.event.Event(pygame.USEREVENT + 2, code=1), "<Event(32770-UserEvent2 code=1)>"),
+        (pygame.event.Event(0x7FFF), "<Event(32767-UNKNOWN )>"),
+        (pygame.event.Event(pygame.WINDOWSIZECHANGED), "<Event(518-WINDOWRESIZED )>"),
+    ],
+)
+def test_event_repr(ev, expected):
+    """
+    repr() gives the type number and name, then the attributes in name order. User types are numbered from USEREVENT,
+    a type with no name is UNKNOWN, and an aliased type uses the Ren'Py name.
+    """
+
+    assert repr(ev) == expected
+
+
+# The event reference page.
+
+
+def read_event_rows() -> list[list[str]]:
+    """
+    Returns the cells of each row of the list tables on the event reference page, without the header rows, skipping the
+    test if the page is not available.
+    """
+
+    if not EVENTS_PAGE.exists():
+        pytest.skip(f"{EVENTS_PAGE} is not available")
+
+    rows = []
+    cell = None
+
+    for line in EVENTS_PAGE.read_text().splitlines():
+        if m := re.match(r"^   \* - (.*)$", line):
+            rows.append([m.group(1)])
+            cell = rows[-1]
+        elif cell is not None and (m := re.match(r"^     - (.*)$", line)):
+            cell.append(m.group(1))
+        elif cell is not None and (m := re.match(r"^       (\S.*)$", line)):
+            cell[-1] += " " + m.group(1)
+        else:
+            cell = None
+
+    return [row for row in rows if row[0] != "Event"]
+
+
+def get_row_names(row: list[str]) -> list[str]:
+    """
+    Returns the event names in the Event cell of `row`, without the SDL names.
+    """
+
+    return [name for name in re.findall(r"``([A-Z][A-Z0-9_]*)``", row[0]) if not name.startswith("SDL_")]
+
+
+def test_events_page_names_every_event():
+    """
+    The event reference page has a row naming every event type and every event constant, including the pygame-ce and
+    older aliases, so a new type or alias fails here until it is documented.
+    """
+
+    documented = set()
+
+    for row in read_event_rows():
+        assert len(row) == 4, row
+        documented.update(get_row_names(row))
+
+    expected = set(pygame.event.event_names.values()) | set(read_event_constants())
+
+    assert sorted(expected - documented) == []
+
+
+def test_events_page_default_matches_enabled_events():
+    """
+    The Default column says Yes for exactly the standard event types Ren'Py enables by default, and for user and
+    registered types, which are never blocked. Markers and obsolete names say n/a.
+    """
+
+    standard = set(pygame.event.get_standard_events())
+    types_by_name = {name: t for t, name in pygame.event.event_names.items()}
+    obsolete = {"DISPLAYEVENT", "WINDOWEVENT", "SYSWMEVENT", "DOLLARGESTURE", "DOLLARRECORD", "MULTIGESTURE"}
+    markers = {"NOEVENT", "DISPLAYFIRST", "PRIVATE0"} | obsolete
+
+    rows = read_event_rows()
+    assert len(rows) > 100
+
+    for row in rows:
+        name = get_row_names(row)[0]
+        default = row[1].split()[0]
+
+        if name in markers:
+            assert default == "n/a", name
+            continue
+
+        event_type = getattr(pygame, name, None)
+        if event_type is None:
+            event_type = types_by_name[name]
+
+        if event_type in standard:
+            expected = "Yes" if event_type in renpy.display.core.enabled_events else "No"
+        else:
+            expected = "Yes"
+
+        assert default == expected, name

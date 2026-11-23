@@ -259,6 +259,16 @@ cdef class Window:
         self.surface.get_window_flags = self.get_window_flags
 
 
+    def __reduce__(self):
+        """
+        Pickles a window as a reference to the main window, so that an event
+        whose `window` attribute is a window can be saved. Unpickling gives the
+        main window that exists at that time, or None if there is none.
+        """
+
+        return (get_window, ())
+
+
     def destroy(self):
         """
         This should be called before the window is deleted.
