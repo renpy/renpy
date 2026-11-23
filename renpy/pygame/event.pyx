@@ -17,6 +17,7 @@
 #    misrepresented as being the original software.
 # 3. This notice may not be removed or altered from any source distribution.
 
+cimport cython
 from cpython.ref cimport Py_INCREF, Py_DECREF
 
 from libc.string cimport memcpy, memset
@@ -159,14 +160,32 @@ POSTEDEVENT = SDL_EVENT_LAST - 1
 # The maximum number of a user-defined event.
 USEREVENT_MAX = SDL_EVENT_LAST - 2
 
-# If true, the mousewheel is mapped to buttons 4 and 5. Otherwise, a
-# MOUSEWHEEL event is created.
+# If true, the mousewheel generates presses and releases of mouse buttons 4
+# and 5 instead of MOUSEWHEEL events, and buttons 4 and higher are mapped to 6
+# and higher.
 cdef bint mousewheel_buttons = 1
 
 cdef unsigned int SDL_TOUCH_MOUSEID
 SDL_TOUCH_MOUSEID = <unsigned int> -1 # type: ignore
 
-class EventType(object):
+# EventType pickles itself, in a format that older versions, which had no C fields, can also load.
+@cython.auto_pickle(False)
+cdef class EventBase:
+    """
+    The base of EventType, holding the fields stored in C.
+    """
+
+    # The time SDL queued the event, in seconds since SDL was initialized, or 0.0 for an event that has not been
+    # through the queue. Stored outside __dict__, so it does not take part in equality or appear in `dict`.
+    cdef public double timestamp
+
+
+class EventType(EventBase):
+    """
+    An event, as returned by the event queue or created by the program to be
+    posted. The event's attributes are stored in its __dict__, along with its
+    type as `_type`.
+    """
 
     def __init__(self, type, dict=None, **kwargs):
         self._type = type
@@ -175,6 +194,23 @@ class EventType(object):
             self.__dict__.update(dict)
 
         self.__dict__.update(kwargs)
+
+        if "timestamp" in self.__dict__:
+            self.timestamp = self.__dict__.pop("timestamp")
+
+    def __getstate__(self):
+        return (dict(self.__dict__), self.timestamp)
+
+    def __setstate__(self, state):
+        if isinstance(state, tuple):
+            attributes, self.timestamp = state
+        else:
+            # Older versions pickled only the attribute dictionary, with the timestamp in it in SDL's units, so the
+            # timestamp is dropped.
+            attributes = dict(state)
+            attributes.pop("timestamp", None)
+
+        self.__dict__.update(attributes)
 
     def __repr__(self):
         if SDL_EVENT_USER <= self.type <= USEREVENT_MAX:
@@ -188,7 +224,7 @@ class EventType(object):
         rest = [ ]
 
         for k, v in sorted(self.__dict__.items()):
-            if k == "_type" or k == "timestamp":
+            if k == "_type":
                 continue
 
             rest.append("%s=%r" % (k, v))
@@ -204,26 +240,33 @@ class EventType(object):
         return self._type
 
     def __eq__(self, other):
+        if not isinstance(other, EventType):
+            return NotImplemented
+
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other):
-        return not (self == other)
-
-    def __nonzero__(self):
+    def __bool__(self):
         return self.type != 0
 
 Event = EventType
 
-cdef get_textinput():
-    cdef SDL_Event evt
 
-    SDL_PumpEvents()
+cdef bint text_input_active():
+    """
+    Returns true if text input is active on the main window, in which case
+    typed text arrives as TEXTINPUT events.
+    """
 
-    if SDL_PeepEvents(&evt, 1, SDL_GETEVENT, SDL_EVENT_TEXT_INPUT, SDL_EVENT_TEXT_INPUT) > 0:
-        return evt.text.text.decode('utf-8')
-    return u''
+    return main_window is not None and SDL_TextInputActive(main_window.window)
 
-cdef make_keyboard_event(SDL_KeyboardEvent *e):
+
+cdef make_keyboard_event(SDL_KeyboardEvent *e, bint text_input):
+    """
+    Converts an SDL keyboard event. `text_input` is true if text input is
+    active, in which case typed text is delivered by separate TEXTINPUT events,
+    and KEYDOWN only gives control characters a unicode value.
+    """
+
     dargs = { 'scancode' : e.scancode,
               'key' : e.key,
               'mod' : e.mod,
@@ -231,15 +274,12 @@ cdef make_keyboard_event(SDL_KeyboardEvent *e):
               'repeat' : e.repeat,
                }
 
-    if main_window is not None and SDL_TextInputActive(main_window.window):
+    if text_input:
 
         if e.type == SDL_EVENT_KEY_DOWN:
-            # Be careful to only check for a TEXTINPUT event when you know that
-            # there will be one associated with this KEYDOWN event.
+            # Control keys produce no TEXTINPUT event.
             if e.key < 0x20:
                 dargs['unicode'] = chr(e.key)
-            elif e.key <= 0xFFFF:
-                dargs['unicode'] = get_textinput()
 
     else:
         if e.type == SDL_EVENT_KEY_DOWN:
@@ -255,11 +295,12 @@ cdef make_keyboard_event(SDL_KeyboardEvent *e):
     return EventType(e.type, dict=dargs, repeat=e.repeat)
 
 
-def _make_keyboard_event(type, scancode, key, mod, repeat=False):
+def _make_keyboard_event(type, scancode, key, mod, repeat=False, text_input=False):
     """
     Converts the fields of an SDL keyboard event into an event object, as
-    the event queue does. This exists so tests can exercise the conversion
-    without a keyboard.
+    the event queue does when text input is active if `text_input` is true,
+    or inactive otherwise. This exists so tests can exercise the conversion
+    without a keyboard or window.
     """
 
     cdef SDL_KeyboardEvent e
@@ -272,7 +313,7 @@ def _make_keyboard_event(type, scancode, key, mod, repeat=False):
     e.down = (type == SDL_EVENT_KEY_DOWN)
     e.repeat = repeat
 
-    return make_keyboard_event(&e)
+    return make_keyboard_event(&e, text_input)
 
 
 def _make_finger_event(type, touch_id, finger_id, x, y, dx=0.0, dy=0.0, pressure=0.0):
@@ -296,6 +337,88 @@ def _make_finger_event(type, touch_id, finger_id, x, y, dx=0.0, dy=0.0, pressure
 
     return make_event(&e)
 
+
+def _push_mousewheel_event(x, y, integer_y, mouse_x, mouse_y, which=0, timestamp=0):
+    """
+    Pushes an SDL mouse wheel event onto SDL's queue, as a mouse would. This
+    exists so tests can exercise the queue without a mouse. A `timestamp` of 0
+    makes SDL use the current time.
+    """
+
+    cdef SDL_Event e
+
+    memset(&e, 0, sizeof(e))
+    e.type = SDL_EVENT_MOUSE_WHEEL
+    e.common.timestamp = timestamp
+    e.wheel.which = which
+    e.wheel.x = x
+    e.wheel.y = y
+    e.wheel.integer_x = int(x)
+    e.wheel.integer_y = integer_y
+    e.wheel.mouse_x = mouse_x
+    e.wheel.mouse_y = mouse_y
+
+    if not SDL_PushEvent(&e):
+        raise error()
+
+
+def _push_mousemotion_event(x, y, xrel, yrel, state=0, which=0, timestamp=0):
+    """
+    Pushes an SDL mouse motion event onto SDL's queue, as a mouse would. This
+    exists so tests can exercise the queue without a mouse. A `timestamp` of 0
+    makes SDL use the current time.
+    """
+
+    cdef SDL_Event e
+
+    memset(&e, 0, sizeof(e))
+    e.type = SDL_EVENT_MOUSE_MOTION
+    e.common.timestamp = timestamp
+    e.motion.which = which
+    e.motion.state = state
+    e.motion.x = x
+    e.motion.y = y
+    e.motion.xrel = xrel
+    e.motion.yrel = yrel
+
+    if not SDL_PushEvent(&e):
+        raise error()
+
+
+def _push_user_event(type, code=0, timestamp=0):
+    """
+    Pushes an SDL user event of `type` onto SDL's queue. This exists so tests
+    can put a non-motion event with a known timestamp on the queue. A
+    `timestamp` of 0 makes SDL use the current time.
+    """
+
+    cdef SDL_Event e
+
+    memset(&e, 0, sizeof(e))
+    e.type = type
+    e.common.timestamp = timestamp
+    e.user.code = code
+
+    if not SDL_PushEvent(&e):
+        raise error()
+
+cdef cbool reject_posted_events_filter(void *userdata, SDL_Event *event) noexcept nogil:
+    return event.type != POSTEDEVENT
+
+
+def _reject_posted_events(flag):
+    """
+    If `flag` is true, installs an SDL event filter that rejects the events
+    post() pushes, so SDL_PushEvent fails. If false, removes the filter. This
+    exists so tests can exercise a failed post(). Changing the filter discards
+    the events pending in SDL's queue.
+    """
+
+    if flag:
+        SDL_SetEventFilter(reject_posted_events_filter, NULL)
+    else:
+        SDL_SetEventFilter(NULL, NULL)
+
 cdef make_mousemotion_event(SDL_MouseMotionEvent *e):
     buttons = (1 if e.state & SDL_BUTTON_LMASK else 0,
                1 if e.state & SDL_BUTTON_MMASK else 0,
@@ -312,30 +435,43 @@ cdef make_mousebtn_event(SDL_MouseButtonEvent *e):
     return EventType(e.type, button=btn, pos=(e.x, e.y), which=e.which, touch=(SDL_TOUCH_MOUSEID == e.which))
 
 cdef make_mousewheel_event(SDL_MouseWheelEvent *e):
+    """
+    Converts an SDL mouse wheel event into a MOUSEWHEEL event.
+    """
 
-    cdef float mx, my
+    return EventType(e.type, which=e.which, x=e.x, y=e.y, touch=(SDL_TOUCH_MOUSEID == e.which))
 
-    # SDL2-style, if the user has opted-in.
+cdef list make_mousewheel_events(SDL_MouseWheelEvent *e):
+    """
+    Converts an SDL mouse wheel event into a list of events.
+
+    If mousewheel_buttons is false, this is a single MOUSEWHEEL event.
+
+    Otherwise, as in SDL 1, no MOUSEWHEEL event is generated. If SDL has
+    accumulated at least one whole step of vertical scrolling, the result is a
+    single press and release of button 4 (up) or 5 (down), however many steps
+    the event carries, so a fast flick doesn't scroll in a jump. Otherwise, the
+    result is empty.
+    """
+
     if not mousewheel_buttons:
-        return EventType(e.type, which=e.which, x=e.x, y=e.y, touch=(SDL_TOUCH_MOUSEID == e.which))
+        return [ make_mousewheel_event(e) ]
 
-    # Otherwise, follow the SDL1 approach.
+    if e.integer_y == 0:
+        return [ ]
 
-    cdef float y = e.y
-
-    if y > 0:
+    if e.integer_y > 0:
         btn = 4
-    elif y < 0:
-        btn = 5
     else:
-        return EventType(0) # x axis scrolling produces no event in pygame
+        btn = 5
 
-    # This is not the mouse position at the time of the event
-    SDL_GetMouseState(&mx, &my)
+    touch = (SDL_TOUCH_MOUSEID == e.which)
+    pos = (e.mouse_x, e.mouse_y)
 
-    # MOUSEBUTTONUP event should follow immediately after
-    event_queue.insert(0, EventType(SDL_EVENT_MOUSE_BUTTON_UP, which=e.which, button=btn, pos=(mx, my), touch=(SDL_TOUCH_MOUSEID == e.which)))
-    return EventType(SDL_EVENT_MOUSE_BUTTON_DOWN, which=e.which, button=btn, pos=(mx, my), touch=(SDL_TOUCH_MOUSEID == e.which))
+    return [
+        EventType(SDL_EVENT_MOUSE_BUTTON_DOWN, which=e.which, button=btn, pos=pos, touch=touch),
+        EventType(SDL_EVENT_MOUSE_BUTTON_UP, which=e.which, button=btn, pos=pos, touch=touch),
+    ]
 
 cdef make_joyaxis_event(SDL_JoyAxisEvent *e):
     return EventType(e.type, joy=e.which, instance_id=e.which, axis=e.axis, value=e.value/32768.0)
@@ -400,7 +536,7 @@ cdef make_event(SDL_Event *e):
     elif e.type == SDL_EVENT_MOUSE_WHEEL:
         return make_mousewheel_event(<SDL_MouseWheelEvent*>e)
     elif e.type in (SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP):
-        return make_keyboard_event(<SDL_KeyboardEvent*>e)
+        return make_keyboard_event(<SDL_KeyboardEvent*>e, text_input_active())
     elif e.type == SDL_EVENT_JOYSTICK_AXIS_MOTION:
         return make_joyaxis_event(<SDL_JoyAxisEvent*>e)
     elif e.type == SDL_EVENT_JOYSTICK_BALL_MOTION:
@@ -438,6 +574,26 @@ cdef make_event(SDL_Event *e):
         return EventType(e.type, code=e.user.code)
 
     return EventType(e.type)
+
+
+cdef list make_events(SDL_Event *e):
+    """
+    Converts an SDL event into the list of events it produces, which can be
+    empty.
+    """
+
+    if e.type == SDL_EVENT_MOUSE_WHEEL:
+        return make_mousewheel_events(<SDL_MouseWheelEvent*>e)
+
+    return [ make_event(e) ]
+
+
+cdef void stamp_event(EventBase e, Uint64 timestamp):
+    """
+    Sets the timestamp of `e` from an SDL timestamp in nanoseconds.
+    """
+
+    e.timestamp = <double> timestamp / 1e9
 
 
 # The event queue - a list of pending events from oldest to newest.
@@ -522,7 +678,7 @@ cdef int poll_sdl() except 1:
                 # We can't merge the event.
                 if last_mousemotion:
                     e = make_mousemotion_event(old_mm_evt)
-                    e.timestamp = evt.common.timestamp
+                    stamp_event(e, old_evt.common.timestamp)
                     event_queue.append(e)
 
                 memcpy(&old_evt, &evt, sizeof(SDL_Event))
@@ -531,18 +687,17 @@ cdef int poll_sdl() except 1:
             else:
                 if last_mousemotion:
                     e = make_mousemotion_event(old_mm_evt)
-                    e.timestamp = evt.common.timestamp
+                    stamp_event(e, old_evt.common.timestamp)
                     event_queue.append(e)
                     last_mousemotion = False
 
-                e = make_event(&evt)
-                e.timestamp = evt.common.timestamp
-                event_queue.append(e)
-                last_mousemotion = False
+                for e in make_events(&evt):
+                    stamp_event(e, evt.common.timestamp)
+                    event_queue.append(e)
 
         if last_mousemotion:
             e = make_mousemotion_event(old_mm_evt)
-            e.timestamp = old_evt.common.timestamp
+            stamp_event(e, old_evt.common.timestamp)
             event_queue.append(e)
             last_mousemotion = False
 
@@ -587,22 +742,22 @@ def poll():
 
 def wait():
 
-    cdef SDL_Event evt
-    cdef int result
+    cdef bint result
 
-    with lock:
-        poll_sdl()
+    while True:
+        with lock:
+            poll_sdl()
 
-        if event_queue:
-            return event_queue.pop(0)
+            if event_queue:
+                return event_queue.pop(0)
 
-    with nogil:
-        result = SDL_WaitEvent(&evt)
+        # Wait for an event without removing it, so the next poll_sdl converts,
+        # merges, and timestamps it like any other event.
+        with nogil:
+            result = SDL_WaitEvent(NULL)
 
-    if result:
-        return make_event(&evt)
-    else:
-        return NOEVENT_EVENT
+        if not result:
+            return NOEVENT_EVENT
 
 
 def peek(t=None):
@@ -690,7 +845,15 @@ def set_allowed(t=None):
             SDL_SetEventEnabled(et, True)
 
 def get_blocked(t):
-    return not SDL_EventEnabled(t)
+    """
+    Returns true if event type `t` is blocked. If `t` is a sequence of event
+    types, returns true if any of them is blocked.
+    """
+
+    if isinstance(t, int):
+        return not SDL_EventEnabled(t)
+
+    return any(not SDL_EventEnabled(et) for et in t)
 
 def set_grab(on):
     if main_window is None:
@@ -709,11 +872,13 @@ def get_grab():
 
 def set_mousewheel_buttons(flag):
     """
-    If true (the default), the mousewheel will generate events involving
-    mouse buttons 4 and 5, and mousebuttons 4 and higher will be mapped to 6 and higher.
+    If true (the default), the mouse wheel generates presses and releases of
+    mouse buttons 4 (up) and 5 (down) instead of MOUSEWHEEL events: one press
+    and release for each wheel event that completes at least one whole step of
+    vertical scrolling. Mouse buttons 4 and higher are mapped to 6 and higher.
 
-    If false, MOUSEWHEEL events are generated, and the mousebuttons are
-    not remapped.
+    If false, the mouse wheel generates MOUSEWHEEL events, and the mouse
+    buttons are not remapped.
     """
 
     global mousewheel_buttons
@@ -741,10 +906,15 @@ def post(e):
 
     Py_INCREF(e)
 
+    # A zero timestamp makes SDL stamp the event with the current time.
+    memset(&event, 0, sizeof(event))
     event.type = POSTEDEVENT
     event.user.data1 = <void *> e
 
-    SDL_PushEvent(&event)
+    # The reference is released when the event is taken off the queue, or here
+    # if SDL rejected it.
+    if not SDL_PushEvent(&event):
+        Py_DECREF(e)
 
 def register(name):
     """

@@ -1732,6 +1732,11 @@ class Input(renpy.text.text.Text):
             and (not ev.unicode)
             and not edit_controls
         ):
+            # On macOS, Option+key types a character, which arrives as a TEXTINPUT after the KEYDOWN. Ignore the
+            # KEYDOWN, so it doesn't also trigger an alt_ keybinding.
+            if renpy.display.interface.text_event_in_queue():
+                raise renpy.display.core.IgnoreEvent()
+
             return None
 
         l = len(self.content)

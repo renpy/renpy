@@ -27,6 +27,9 @@ where KEYDOWN events get their unicode character from the keyboard layout. With 
 default US keymap, so the expected characters are those of a US layout.
 """
 
+import pickle
+import sys
+
 import pytest
 
 import renpy.display.behavior
@@ -34,6 +37,8 @@ from renpy import pygame
 
 # SDL scancodes (USB HID usage IDs), which renpy.pygame does not expose.
 SCANCODE_I: int = 12
+SCANCODE_RETURN: int = 40
+SCANCODE_BACKSPACE: int = 42
 SCANCODE_1: int = 30
 SCANCODE_F1: int = 58
 SCANCODE_KP_1: int = 89
@@ -122,3 +127,274 @@ def test_finger_event_fields(kind):
     assert (ev.x, ev.y) == (0.25, 0.75)
     assert (ev.dx, ev.dy) == (0.125, -0.5)
     assert ev.pressure == 0.5
+
+
+def test_keydown_with_text_input_leaves_text_to_textinput():
+    """
+    While text input is active, a printable KEYDOWN gets no unicode, because its text arrives as a separate TEXTINPUT
+    event, which Input inserts. Control keys produce no TEXTINPUT, so they keep their control character.
+    """
+
+    def keydown(scancode, key, mod=0):
+        return pygame.event._make_keyboard_event(pygame.KEYDOWN, scancode, key, mod, text_input=True)
+
+    assert keydown(SCANCODE_I, pygame.K_i).unicode == ""
+    assert keydown(SCANCODE_I, pygame.K_i, pygame.KMOD_LSHIFT).unicode == ""
+    assert keydown(SCANCODE_RETURN, pygame.K_RETURN).unicode == "\r"
+    assert keydown(SCANCODE_BACKSPACE, pygame.K_BACKSPACE).unicode == "\x08"
+
+
+# Event objects.
+
+
+def test_event_truthiness():
+    """
+    NOEVENT is falsy and other events are truthy, as in pygame.
+    """
+
+    assert not pygame.event.Event(pygame.NOEVENT)
+    assert pygame.event.Event(pygame.KEYDOWN)
+
+
+def test_event_equality():
+    """
+    Events are equal when their type and attributes are equal, whatever their timestamps. Comparing an event with a
+    non-event is False rather than an error.
+    """
+
+    a = pygame.event.Event(pygame.USEREVENT, code=1, timestamp=1.0)
+    b = pygame.event.Event(pygame.USEREVENT, {"code": 1}, timestamp=2.0)
+
+    assert a == b
+    assert (a != b) is False
+    assert a != pygame.event.Event(pygame.USEREVENT, code=2)
+    assert a != pygame.event.Event(pygame.USEREVENT + 1, code=1)
+    assert (a == 3) is False
+    assert a != 3
+
+
+def test_event_timestamp_field():
+    """
+    The timestamp defaults to 0.0, can be given to the constructor, and is a float kept out of the attribute
+    dictionary, so it neither shows up in `dict` nor affects equality.
+    """
+
+    assert pygame.event.Event(pygame.USEREVENT).timestamp == 0.0
+
+    ev = pygame.event.Event(pygame.USEREVENT, code=3, timestamp=1.5)
+    assert ev.timestamp == 1.5
+    assert "timestamp" not in ev.dict
+
+    ev.timestamp = 2
+    assert isinstance(ev.timestamp, float)
+
+
+def test_event_pickle_round_trip():
+    """
+    Events survive pickling with their type, attributes, and timestamp. Reload pickles module globals that hold
+    events, such as the event queue. An attribute named like internal state must not collide with the timestamp.
+    """
+
+    ev = pygame.event.Event(pygame.USEREVENT, code=4, timestamp=1.25)
+    ev.extra = "x"
+    ev._timestamp = "kept"
+
+    copy = pickle.loads(pickle.dumps(ev, pickle.HIGHEST_PROTOCOL))
+
+    assert type(copy) is type(ev)
+    assert copy == ev
+    assert copy.type == pygame.USEREVENT
+    assert copy.extra == "x"
+    assert copy._timestamp == "kept"
+    assert copy.timestamp == 1.25
+
+
+# The event queue.
+
+
+@pytest.fixture(scope="module")
+def sdl_events():
+    """
+    Initializes SDL's event subsystem, which the tests that push events onto SDL's queue need.
+    """
+
+    pygame.event.init()
+
+
+@pytest.fixture
+def event_queue(sdl_events):
+    """
+    Provides an empty event queue in the default mouse wheel mode, and empties it and restores the mode afterwards.
+    """
+
+    pygame.event.get()
+    pygame.event.set_mousewheel_buttons(True)
+
+    yield
+
+    pygame.event.get()
+    pygame.event.set_mousewheel_buttons(True)
+
+
+def describe(events):
+    """
+    Returns (type, button) pairs for `events`, with button None for events without one, for comparing event order.
+    """
+
+    return [(ev.type, getattr(ev, "button", None)) for ev in events]
+
+
+@pytest.mark.parametrize("integer_y, button", [(1, 4), (3, 4), (-1, 5), (-2, 5)])
+def test_mousewheel_with_buttons(event_queue, integer_y, button):
+    """
+    In the default mode, a wheel event gives a single press and release of button 4 (up) or 5 (down), in order, at
+    the position carried by the wheel event, and no MOUSEWHEEL. An event carrying several whole steps, as a fast
+    flick can on macOS or the web, still gives only one pair.
+    """
+
+    pygame.event._push_mousewheel_event(0.0, float(integer_y), integer_y, 12.0, 34.0)
+
+    events = pygame.event.get()
+
+    assert describe(events) == [(pygame.MOUSEBUTTONDOWN, button), (pygame.MOUSEBUTTONUP, button)]
+
+    for ev in events:
+        assert ev.pos == (12.0, 34.0)
+
+
+@pytest.mark.parametrize("x, y", [(1.0, 0.0), (0.0, 0.25)])
+def test_mousewheel_without_whole_step(event_queue, x, y):
+    """
+    In the default mode, horizontal scrolling, and vertical scrolling of less than a step, give no events. In
+    particular, they never put a NOEVENT on the queue.
+    """
+
+    pygame.event._push_mousewheel_event(x, y, 0, 0.0, 0.0)
+
+    assert pygame.event.get() == []
+
+
+def test_mousewheel_without_buttons(event_queue):
+    """
+    With mouse wheel buttons turned off, every wheel event, including one of less than a step, gives a MOUSEWHEEL
+    carrying the scroll amounts, and no button events.
+    """
+
+    pygame.event.set_mousewheel_buttons(False)
+    pygame.event._push_mousewheel_event(0.5, 1.0, 1, 0.0, 0.0)
+    pygame.event._push_mousewheel_event(0.0, 0.25, 0, 0.0, 0.0)
+
+    events = pygame.event.get()
+
+    assert describe(events) == [(pygame.MOUSEWHEEL, None), (pygame.MOUSEWHEEL, None)]
+    assert [(ev.x, ev.y) for ev in events] == [(0.5, 1.0), (0.0, 0.25)]
+
+
+def test_merged_motion_keeps_its_timestamp(event_queue):
+    """
+    Consecutive motion events are merged, and the merged event keeps the timestamp of its last motion, in seconds,
+    rather than taking the timestamp of the event that ended the run of motion.
+
+    Timestamps are given explicitly, in nanoseconds, so SDL keeps them rather than using the current time.
+    """
+
+    pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0, timestamp=3_000_000)
+    pygame.event._push_mousemotion_event(2.0, 3.0, 1.0, 2.0, timestamp=5_000_000)
+    pygame.event._push_user_event(pygame.USEREVENT, timestamp=9_000_000)
+
+    events = pygame.event.get()
+
+    assert [ev.type for ev in events] == [pygame.MOUSEMOTION, pygame.USEREVENT]
+    assert events[0].pos == (2.0, 3.0)
+    assert events[0].rel == (2.0, 3.0)
+    assert events[0].timestamp == pytest.approx(0.005)
+    assert events[1].timestamp == pytest.approx(0.009)
+
+
+def test_wait_uses_the_queue(event_queue):
+    """
+    wait() returns events converted like those from get(): a wheel event comes back as a timestamped button press,
+    with its release following it on the queue.
+    """
+
+    pygame.event._push_mousewheel_event(0.0, 1.0, 1, 5.0, 6.0, timestamp=7_000_000)
+
+    ev = pygame.event.wait()
+
+    assert (ev.type, ev.button) == (pygame.MOUSEBUTTONDOWN, 4)
+    assert ev.timestamp == pytest.approx(0.007)
+    assert describe(pygame.event.get()) == [(pygame.MOUSEBUTTONUP, 4)]
+
+
+def test_posted_event_is_timestamped(event_queue):
+    """
+    A posted event comes back from the queue as the same object, stamped with the time it was queued.
+    """
+
+    ev = pygame.event.Event(pygame.USEREVENT, code=5)
+    pygame.event.post(ev)
+
+    events = pygame.event.get()
+
+    assert events == [ev]
+    assert events[0] is ev
+    assert ev.timestamp > 0.0
+
+
+def test_failed_post_releases_event(event_queue):
+    """
+    When SDL refuses a posted event, post() releases the reference it took for the queue, so the event is not leaked.
+
+    SDL refuses the event because a test-only SDL event filter rejects posted events. Blocking the event type would
+    not do: SDL still queues pushed events of disabled types.
+    """
+
+    ev = pygame.event.Event(pygame.USEREVENT, code=6)
+
+    before = sys.getrefcount(ev)
+
+    pygame.event._reject_posted_events(True)
+
+    try:
+        pygame.event.post(ev)
+    finally:
+        pygame.event._reject_posted_events(False)
+
+    assert sys.getrefcount(ev) == before
+    assert pygame.event.get() == []
+
+
+def test_get_blocked_sequence(event_queue):
+    """
+    get_blocked accepts a sequence of types, and is true if any of them is blocked.
+    """
+
+    pygame.event.set_blocked(pygame.USEREVENT + 2)
+
+    try:
+        assert pygame.event.get_blocked([pygame.USEREVENT + 1, pygame.USEREVENT + 2])
+        assert not pygame.event.get_blocked([pygame.USEREVENT + 1, pygame.USEREVENT + 3])
+        assert pygame.event.get_blocked(pygame.USEREVENT + 2)
+    finally:
+        pygame.event.set_allowed(pygame.USEREVENT + 2)
+
+
+def test_event_unpickles_old_format():
+    """
+    An event pickled by an older version, whose timestamp, in SDL's units, was in the attribute dictionary, loads
+    with its type and attributes, and with the old timestamp dropped rather than left in the dictionary.
+
+    The pickle is written out by hand, as older versions produced it: the class, then its attribute dictionary.
+    """
+
+    data = (
+        b"\x80\x02crenpy.pygame.event\nEventType\n)\x81"
+        b"}(X\x05\x00\x00\x00_typeK\x05X\x01\x00\x00\x00aK\x01X\t\x00\x00\x00timestampK{ub."
+    )
+
+    ev = pickle.loads(data)
+
+    assert ev.type == 5
+    assert ev.dict == {"_type": 5, "a": 1}
+    assert ev.timestamp == 0.0
+    assert ev == pygame.event.Event(5, a=1)
