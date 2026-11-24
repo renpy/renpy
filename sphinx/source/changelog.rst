@@ -106,6 +106,11 @@ The size and position of the game window are only saved once the window has stay
 sizes a window passes through while it animates, such as when entering fullscreen, are ignored. Previously, a game that
 started in fullscreen could open a window as large as the screen when switched to windowed.
 
+When the launcher opens the copy of Visual Studio Code it installed, it sets the Ren'Py extension's
+``renpy.renpyExecutableLocation`` setting to the current Ren'Py, unless that setting already names a file that
+exists. This lets the extension's tasks run Ren'Py, and stops Visual Studio Code from showing "Error: Illegal argument:
+command can't be undefined or null" in the Tasks output.
+
 .. _renpy-8.6.1:
 
 8.6.1
