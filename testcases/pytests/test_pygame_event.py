@@ -27,13 +27,21 @@ where KEYDOWN events get their unicode character from the keyboard layout. With 
 default US keymap, so the expected characters are those of a US layout.
 """
 
+import pathlib
+import pickle
+import re
+import sys
+
 import pytest
 
 import renpy.display.behavior
+import renpy.display.core
 from renpy import pygame
 
 # SDL scancodes (USB HID usage IDs), which renpy.pygame does not expose.
 SCANCODE_I: int = 12
+SCANCODE_RETURN: int = 40
+SCANCODE_BACKSPACE: int = 42
 SCANCODE_1: int = 30
 SCANCODE_F1: int = 58
 SCANCODE_KP_1: int = 89
@@ -122,3 +130,462 @@ def test_finger_event_fields(kind):
     assert (ev.x, ev.y) == (0.25, 0.75)
     assert (ev.dx, ev.dy) == (0.125, -0.5)
     assert ev.pressure == 0.5
+
+
+def test_keydown_with_text_input_leaves_text_to_textinput():
+    """
+    While text input is active, a printable KEYDOWN gets no unicode, because its text arrives as a separate TEXTINPUT
+    event, which Input inserts. Control keys produce no TEXTINPUT, so they keep their control character.
+    """
+
+    def keydown(scancode, key, mod=0):
+        return pygame.event._make_keyboard_event(pygame.KEYDOWN, scancode, key, mod, text_input=True)
+
+    assert keydown(SCANCODE_I, pygame.K_i).unicode == ""
+    assert keydown(SCANCODE_I, pygame.K_i, pygame.KMOD_LSHIFT).unicode == ""
+    assert keydown(SCANCODE_RETURN, pygame.K_RETURN).unicode == "\r"
+    assert keydown(SCANCODE_BACKSPACE, pygame.K_BACKSPACE).unicode == "\x08"
+
+
+# Event objects.
+
+
+def test_event_truthiness():
+    """
+    NOEVENT is falsy and other events are truthy, as in pygame.
+    """
+
+    assert not pygame.event.Event(pygame.NOEVENT)
+    assert pygame.event.Event(pygame.KEYDOWN)
+
+
+def test_event_equality():
+    """
+    Events are equal when their type and attributes are equal, whatever their timestamps. Comparing an event with a
+    non-event is False rather than an error.
+    """
+
+    a = pygame.event.Event(pygame.USEREVENT, code=1, timestamp=1.0)
+    b = pygame.event.Event(pygame.USEREVENT, {"code": 1}, timestamp=2.0)
+
+    assert a == b
+    assert (a != b) is False
+    assert a != pygame.event.Event(pygame.USEREVENT, code=2)
+    assert a != pygame.event.Event(pygame.USEREVENT + 1, code=1)
+    assert (a == 3) is False
+    assert a != 3
+
+
+def test_event_timestamp_field():
+    """
+    The timestamp defaults to 0.0, can be given to the constructor, and is a float kept out of the attribute
+    dictionary, so it neither shows up in `dict` nor affects equality.
+    """
+
+    assert pygame.event.Event(pygame.USEREVENT).timestamp == 0.0
+
+    ev = pygame.event.Event(pygame.USEREVENT, code=3, timestamp=1.5)
+    assert ev.timestamp == 1.5
+    assert "timestamp" not in ev.dict
+
+    ev.timestamp = 2
+    assert isinstance(ev.timestamp, float)
+
+
+def test_event_pickle_round_trip():
+    """
+    Events survive pickling with their type, attributes, and timestamp. Reload pickles module globals that hold
+    events, such as the event queue. An attribute named like internal state must not collide with the timestamp.
+    """
+
+    ev = pygame.event.Event(pygame.USEREVENT, code=4, timestamp=1.25)
+    ev.extra = "x"
+    ev._timestamp = "kept"
+
+    copy = pickle.loads(pickle.dumps(ev, pickle.HIGHEST_PROTOCOL))
+
+    assert type(copy) is type(ev)
+    assert copy == ev
+    assert copy.type == pygame.USEREVENT
+    assert copy.extra == "x"
+    assert copy._timestamp == "kept"
+    assert copy.timestamp == 1.25
+
+
+# The event queue.
+
+
+@pytest.fixture(scope="module")
+def sdl_events():
+    """
+    Initializes SDL's event subsystem, which the tests that push events onto SDL's queue need.
+    """
+
+    pygame.event.init()
+
+
+@pytest.fixture
+def event_queue(sdl_events):
+    """
+    Provides an empty event queue in the default mouse wheel mode, and empties it and restores the mode afterwards.
+    """
+
+    pygame.event.get()
+    pygame.event.set_mousewheel_buttons(True)
+
+    yield
+
+    pygame.event.get()
+    pygame.event.set_mousewheel_buttons(True)
+
+
+def describe(events):
+    """
+    Returns (type, button) pairs for `events`, with button None for events without one, for comparing event order.
+    """
+
+    return [(ev.type, getattr(ev, "button", None)) for ev in events]
+
+
+@pytest.mark.parametrize("integer_y, button", [(1, 4), (3, 4), (-1, 5), (-2, 5)])
+def test_mousewheel_with_buttons(event_queue, integer_y, button):
+    """
+    In the default mode, a wheel event gives a single press and release of button 4 (up) or 5 (down), in order, at
+    the position carried by the wheel event, and no MOUSEWHEEL. An event carrying several whole steps, as a fast
+    flick can on macOS or the web, still gives only one pair.
+    """
+
+    pygame.event._push_mousewheel_event(0.0, float(integer_y), integer_y, 12.0, 34.0)
+
+    events = pygame.event.get()
+
+    assert describe(events) == [(pygame.MOUSEBUTTONDOWN, button), (pygame.MOUSEBUTTONUP, button)]
+
+    for ev in events:
+        assert ev.pos == (12.0, 34.0)
+
+
+@pytest.mark.parametrize("x, y", [(1.0, 0.0), (0.0, 0.25)])
+def test_mousewheel_without_whole_step(event_queue, x, y):
+    """
+    In the default mode, horizontal scrolling, and vertical scrolling of less than a step, give no events. In
+    particular, they never put a NOEVENT on the queue.
+    """
+
+    pygame.event._push_mousewheel_event(x, y, 0, 0.0, 0.0)
+
+    assert pygame.event.get() == []
+
+
+def test_mousewheel_without_buttons(event_queue):
+    """
+    With mouse wheel buttons turned off, every wheel event, including one of less than a step, gives a MOUSEWHEEL
+    carrying the scroll amounts, and no button events.
+    """
+
+    pygame.event.set_mousewheel_buttons(False)
+    pygame.event._push_mousewheel_event(0.5, 1.0, 1, 0.0, 0.0)
+    pygame.event._push_mousewheel_event(0.0, 0.25, 0, 0.0, 0.0)
+
+    events = pygame.event.get()
+
+    assert describe(events) == [(pygame.MOUSEWHEEL, None), (pygame.MOUSEWHEEL, None)]
+    assert [(ev.x, ev.y) for ev in events] == [(0.5, 1.0), (0.0, 0.25)]
+
+
+def test_merged_motion_keeps_its_timestamp(event_queue):
+    """
+    Consecutive motion events are merged, and the merged event keeps the timestamp of its last motion, in seconds,
+    rather than taking the timestamp of the event that ended the run of motion.
+
+    Timestamps are given explicitly, in nanoseconds, so SDL keeps them rather than using the current time.
+    """
+
+    pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0, timestamp=3_000_000)
+    pygame.event._push_mousemotion_event(2.0, 3.0, 1.0, 2.0, timestamp=5_000_000)
+    pygame.event._push_user_event(pygame.USEREVENT, timestamp=9_000_000)
+
+    events = pygame.event.get()
+
+    assert [ev.type for ev in events] == [pygame.MOUSEMOTION, pygame.USEREVENT]
+    assert events[0].pos == (2.0, 3.0)
+    assert events[0].rel == (2.0, 3.0)
+    assert events[0].timestamp == pytest.approx(0.005)
+    assert events[1].timestamp == pytest.approx(0.009)
+
+
+def test_wait_uses_the_queue(event_queue):
+    """
+    wait() returns events converted like those from get(): a wheel event comes back as a timestamped button press,
+    with its release following it on the queue.
+    """
+
+    pygame.event._push_mousewheel_event(0.0, 1.0, 1, 5.0, 6.0, timestamp=7_000_000)
+
+    ev = pygame.event.wait()
+
+    assert (ev.type, ev.button) == (pygame.MOUSEBUTTONDOWN, 4)
+    assert ev.timestamp == pytest.approx(0.007)
+    assert describe(pygame.event.get()) == [(pygame.MOUSEBUTTONUP, 4)]
+
+
+def test_posted_event_is_timestamped(event_queue):
+    """
+    A posted event comes back from the queue as the same object, stamped with the time it was queued.
+    """
+
+    ev = pygame.event.Event(pygame.USEREVENT, code=5)
+    pygame.event.post(ev)
+
+    events = pygame.event.get()
+
+    assert events == [ev]
+    assert events[0] is ev
+    assert ev.timestamp > 0.0
+
+
+def test_failed_post_releases_event(event_queue):
+    """
+    When SDL refuses a posted event, post() releases the reference it took for the queue, so the event is not leaked.
+
+    SDL refuses the event because a test-only SDL event filter rejects posted events. Blocking the event type would
+    not do: SDL still queues pushed events of disabled types.
+    """
+
+    ev = pygame.event.Event(pygame.USEREVENT, code=6)
+
+    before = sys.getrefcount(ev)
+
+    pygame.event._reject_posted_events(True)
+
+    try:
+        pygame.event.post(ev)
+    finally:
+        pygame.event._reject_posted_events(False)
+
+    assert sys.getrefcount(ev) == before
+    assert pygame.event.get() == []
+
+
+def test_get_blocked_sequence(event_queue):
+    """
+    get_blocked accepts a sequence of types, and is true if any of them is blocked.
+    """
+
+    pygame.event.set_blocked(pygame.USEREVENT + 2)
+
+    try:
+        assert pygame.event.get_blocked([pygame.USEREVENT + 1, pygame.USEREVENT + 2])
+        assert not pygame.event.get_blocked([pygame.USEREVENT + 1, pygame.USEREVENT + 3])
+        assert pygame.event.get_blocked(pygame.USEREVENT + 2)
+    finally:
+        pygame.event.set_allowed(pygame.USEREVENT + 2)
+
+
+def test_event_unpickles_old_format():
+    """
+    An event pickled by an older version, whose timestamp, in SDL's units, was in the attribute dictionary, loads
+    with its type and attributes, and with the old timestamp dropped rather than left in the dictionary.
+
+    The pickle is written out by hand, as older versions produced it: the class, then its attribute dictionary.
+    """
+
+    data = (
+        b"\x80\x02crenpy.pygame.event\nEventType\n)\x81"
+        b"}(X\x05\x00\x00\x00_typeK\x05X\x01\x00\x00\x00aK\x01X\t\x00\x00\x00timestampK{ub."
+    )
+
+    ev = pickle.loads(data)
+
+    assert ev.type == 5
+    assert ev.dict == {"_type": 5, "a": 1}
+    assert ev.timestamp == 0.0
+    assert ev == pygame.event.Event(5, a=1)
+
+
+# Names, aliases, and representation.
+
+# The pygame-ce names that renpy.pygame provides for its own event types.
+PYGAME_CE_ALIASES = {
+    "WINDOWENTER": "WINDOWMOUSEENTER",
+    "WINDOWLEAVE": "WINDOWMOUSELEAVE",
+    "WINDOWCLOSE": "WINDOWCLOSEREQUESTED",
+    "WINDOWSIZECHANGED": "WINDOWRESIZED",
+    "APP_TERMINATING": "TERMINATING",
+    "APP_LOWMEMORY": "LOWMEMORY",
+    "APP_WILLENTERBACKGROUND": "WILLENTERBACKGROUND",
+    "APP_DIDENTERBACKGROUND": "DIDENTERBACKGROUND",
+    "APP_WILLENTERFOREGROUND": "WILLENTERFOREGROUND",
+    "APP_DIDENTERFOREGROUND": "DIDENTERFOREGROUND",
+    "RENDER_TARGETS_RESET": "RENDERTARGETSRESET",
+    "RENDER_DEVICE_RESET": "RENDERDEVICERESET",
+    "RENDER_DEVICE_LOST": "RENDERDEVICELOST",
+}
+
+# The source of renpy.pygame.locals, and the event reference page, which distributions may leave out.
+LOCALS_SOURCE = pathlib.Path(renpy.__file__).parent / "pygame" / "locals.pyx"
+EVENTS_PAGE = pathlib.Path(renpy.__file__).parent.parent / "sphinx" / "source" / "pygame_events.rst"
+
+
+def read_event_constants() -> list[str]:
+    """
+    Returns the name of every event type constant defined in renpy.pygame.locals, skipping the test if the source is
+    not available.
+    """
+
+    if not LOCALS_SOURCE.exists():
+        pytest.skip(f"{LOCALS_SOURCE} is not available")
+
+    return re.findall(r"^([A-Z][A-Z0-9_]*) = SDL_EVENT_", LOCALS_SOURCE.read_text(), re.MULTILINE)
+
+
+def test_event_class_is_exported():
+    """
+    pygame.Event is the event class, as in pygame-ce, so code that creates events with it gets the class the queue
+    returns.
+    """
+
+    assert pygame.Event is pygame.event.Event
+    assert isinstance(pygame.Event(pygame.USEREVENT), pygame.event.EventType)
+
+
+@pytest.mark.parametrize("alias, name", sorted(PYGAME_CE_ALIASES.items()))
+def test_pygame_ce_alias(alias, name):
+    """
+    Each pygame-ce name is the same type as the Ren'Py name, and event_name() still gives the Ren'Py name.
+    """
+
+    assert getattr(pygame, alias) == getattr(pygame, name)
+    assert getattr(pygame.locals, alias) == getattr(pygame, name)
+    assert pygame.event.event_name(getattr(pygame, alias)) == name
+
+
+def test_every_event_constant_has_a_name():
+    """
+    Every event constant in renpy.pygame.locals is exported from renpy.pygame, and its type has a name, so events of
+    that type have a useful repr().
+    """
+
+    names = read_event_constants()
+
+    assert "SCREENKEYBOARDSHOWN" in names
+
+    for name in names:
+        assert getattr(pygame, name) == getattr(pygame.locals, name), name
+        assert pygame.event.event_name(getattr(pygame, name)) != "UNKNOWN", name
+
+
+def test_unknown_window_is_none():
+    """
+    An event from a window id that is not the main window's has None as its window, rather than an error or an id.
+    """
+
+    (ev,) = pygame.event._make_event(pygame.WINDOWMOVED, windowID=12345, data1=1, data2=2)
+
+    assert ev.window is None
+
+
+@pytest.mark.parametrize(
+    "ev, expected",
+    [
+        (pygame.event.Event(pygame.KEYDOWN, key=97, unicode="a"), "<Event(768-KEYDOWN key=97, unicode='a')>"),
+        (pygame.event.Event(pygame.USEREVENT + 2, code=1), "<Event(32770-UserEvent2 code=1)>"),
+        (pygame.event.Event(0x7FFF), "<Event(32767-UNKNOWN )>"),
+        (pygame.event.Event(pygame.WINDOWSIZECHANGED), "<Event(518-WINDOWRESIZED )>"),
+    ],
+)
+def test_event_repr(ev, expected):
+    """
+    repr() gives the type number and name, then the attributes in name order. User types are numbered from USEREVENT,
+    a type with no name is UNKNOWN, and an aliased type uses the Ren'Py name.
+    """
+
+    assert repr(ev) == expected
+
+
+# The event reference page.
+
+
+def read_event_rows() -> list[list[str]]:
+    """
+    Returns the cells of each row of the list tables on the event reference page, without the header rows, skipping the
+    test if the page is not available.
+    """
+
+    if not EVENTS_PAGE.exists():
+        pytest.skip(f"{EVENTS_PAGE} is not available")
+
+    rows = []
+    cell = None
+
+    for line in EVENTS_PAGE.read_text().splitlines():
+        if m := re.match(r"^   \* - (.*)$", line):
+            rows.append([m.group(1)])
+            cell = rows[-1]
+        elif cell is not None and (m := re.match(r"^     - (.*)$", line)):
+            cell.append(m.group(1))
+        elif cell is not None and (m := re.match(r"^       (\S.*)$", line)):
+            cell[-1] += " " + m.group(1)
+        else:
+            cell = None
+
+    return [row for row in rows if row[0] != "Event"]
+
+
+def get_row_names(row: list[str]) -> list[str]:
+    """
+    Returns the event names in the Event cell of `row`, without the SDL names.
+    """
+
+    return [name for name in re.findall(r"``([A-Z][A-Z0-9_]*)``", row[0]) if not name.startswith("SDL_")]
+
+
+def test_events_page_names_every_event():
+    """
+    The event reference page has a row naming every event type and every event constant, including the pygame-ce and
+    older aliases, so a new type or alias fails here until it is documented.
+    """
+
+    documented = set()
+
+    for row in read_event_rows():
+        assert len(row) == 4, row
+        documented.update(get_row_names(row))
+
+    expected = set(pygame.event.event_names.values()) | set(read_event_constants())
+
+    assert sorted(expected - documented) == []
+
+
+def test_events_page_default_matches_enabled_events():
+    """
+    The Default column says Yes for exactly the standard event types Ren'Py enables by default, and for user and
+    registered types, which are never blocked. Markers and obsolete names say n/a.
+    """
+
+    standard = set(pygame.event.get_standard_events())
+    types_by_name = {name: t for t, name in pygame.event.event_names.items()}
+    obsolete = {"DISPLAYEVENT", "WINDOWEVENT", "SYSWMEVENT", "DOLLARGESTURE", "DOLLARRECORD", "MULTIGESTURE"}
+    markers = {"NOEVENT", "DISPLAYFIRST", "PRIVATE0"} | obsolete
+
+    rows = read_event_rows()
+    assert len(rows) > 100
+
+    for row in rows:
+        name = get_row_names(row)[0]
+        default = row[1].split()[0]
+
+        if name in markers:
+            assert default == "n/a", name
+            continue
+
+        event_type = getattr(pygame, name, None)
+        if event_type is None:
+            event_type = types_by_name[name]
+
+        if event_type in standard:
+            expected = "Yes" if event_type in renpy.display.core.enabled_events else "No"
+        else:
+            expected = "Yes"
+
+        assert default == expected, name

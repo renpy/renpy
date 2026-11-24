@@ -219,4 +219,4 @@ label prompt_live2d_web:
 
 label install_steam:
     $ add_dlc("steam", restart=True)
-    jump install
+    jump preferences

@@ -49,7 +49,8 @@ The following submodules are available. Note that the ``Surface`` and
     surfaces.
 
 ``event``
-    Access to the event queue.
+    Access to the event queue. The events and their attributes are listed
+    in :doc:`pygame_events`.
 
 ``gfxdraw``
     Antialiased drawing primitives.

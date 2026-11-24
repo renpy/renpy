@@ -181,3 +181,67 @@ def test_disabled_rollback_side_overrides_desktop_preference(mocker):
 
     assert result
     rollback.assert_not_called()
+
+
+# Input.
+
+# The SDL scancode (USB HID usage ID) of the V key, which renpy.pygame does not expose.
+SCANCODE_V: int = 25
+
+
+def make_input() -> behavior.Input:
+    """
+    Returns an empty, editable Input, made without running its constructor, which lays out text and so needs a
+    running game. Input.event only needs these attributes to decide whether to pass on an Alt key press.
+    """
+
+    inp = behavior.Input.__new__(behavior.Input)
+    inp.editable = True
+    inp.content = ""
+    inp.caret_pos = 0
+    return inp
+
+
+@pytest.fixture
+def alt_typing(mocker):
+    """
+    Makes Left Alt read as held, and returns a stand-in for the interface whose text_event_in_queue result the test
+    sets. The real interface needs a running game; only whether a text event is queued matters here.
+    """
+
+    mocker.patch.object(pygame.key, "get_mods", return_value=pygame.KMOD_LALT)
+
+    interface = mocker.Mock()
+    mocker.patch.object(renpy.display, "interface", interface)
+
+    return interface
+
+
+def test_input_ignores_alt_keydown_that_types_text(alt_typing):
+    """
+    On macOS, Option+V types "√" as a TEXTINPUT that follows a KEYDOWN with Left Alt and no unicode. Input ignores
+    that KEYDOWN, so it does not go on to trigger an alt_ keybinding (alt_K_v toggles self-voicing), and the
+    TEXTINPUT inserts the character.
+    """
+
+    alt_typing.text_event_in_queue.return_value = True
+
+    inp = make_input()
+    ev = pygame.event._make_keyboard_event(pygame.KEYDOWN, SCANCODE_V, pygame.K_v, pygame.KMOD_LALT, text_input=True)
+
+    with pytest.raises(renpy.display.core.IgnoreEvent):
+        inp.event(ev, 0, 0, 0)
+
+
+def test_input_passes_on_alt_keydown_without_text(alt_typing):
+    """
+    Alt+key that types nothing, as on Windows and Linux, is passed on by Input, so alt_ keybindings keep working
+    while an input is focused.
+    """
+
+    alt_typing.text_event_in_queue.return_value = False
+
+    inp = make_input()
+    ev = pygame.event._make_keyboard_event(pygame.KEYDOWN, SCANCODE_V, pygame.K_v, pygame.KMOD_LALT, text_input=True)
+
+    assert inp.event(ev, 0, 0, 0) is None

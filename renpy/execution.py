@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     from types import FrameType
 
 import sys
+import traceback
 import time
 
 import renpy
@@ -524,11 +525,39 @@ class Context(renpy.object.Object):
 
         te = renpy.error.report_exception(e, editor=False)
 
+        try:
+            handled = self.run_exception_handlers(te)
+
+        except renpy.game.CONTROL_EXCEPTIONS:
+            raise
+
+        except Exception:
+            # As before 8.4, an error in a handler leaves the original
+            # exception unhandled. Report the error, rather than hiding it.
+            try:
+                print("While handling an exception, another exception occurred:", file=sys.stderr)
+                traceback.print_exc(file=sys.stderr, chain=False)
+            except Exception:
+                pass
+
+            handled = False
+
+        if not handled:
+            raise e
+
+    def run_exception_handlers(self, te: renpy.error.TracebackException) -> bool:
+        """
+        Runs the handlers for an exception reported as `te`: the context's own handler, which handles every
+        exception, then config.exception_handler, then Ren'Py's default handler, which may show the exception
+        screen. Returns True if one of them handled the exception, and False if it should be re-raised.
+        Handlers may raise control exceptions, such as to jump or roll back.
+        """
+
         # Local exception handler, if any. This should handle all cases
         # of the exception.
         if self.exception_handler is not None:
             self.exception_handler(te)
-            return
+            return True
 
         # Creator-defined exception handler. Returns True
         # if exception handled.
@@ -541,15 +570,15 @@ class Context(renpy.object.Object):
 
             except TypeError:
                 if renpy.config.exception_handler(*te):  # type: ignore
-                    return
+                    return True
 
             else:
                 if renpy.config.exception_handler(te):
-                    return
+                    return True
 
         # RenPy default exception handler. Returns True
         # if exception NOT handled.
-        renpy.display.error.report_exception(te)
+        return not renpy.display.error.report_exception(te)
 
     def report_traceback(self, name: str, last: bool):
         if last:
@@ -697,8 +726,8 @@ class Context(renpy.object.Object):
                     self.translate_interaction = None
 
                     # This could raise CONTROL_EXCEPTIONS that are handled
-                    # as if it happened in node execute. Other exceptions
-                    # are chained to original and reported after program exit.
+                    # as if it happened in node execute, or re-raise the
+                    # original exception if no handler handled it.
                     self.handle_exception()
 
                 node = self.next_node

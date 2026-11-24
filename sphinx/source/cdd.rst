@@ -7,7 +7,7 @@ Creator-Defined Displayables
 
 The most complex, but most powerful, way of customizing Ren'Py's
 behavior is to use a creator-defined displayable. A creator-defined
-displayable is allowed to take arbitrary pygame events. It can
+displayable is allowed to take arbitrary :doc:`pygame events <pygame_events>`. It can
 also render other displayables, and place them at arbitrary locations
 on the screen. This makes it suitable for creating 2D mini-games that
 cannot be expressed with the tools Ren'Py gives you. (But see also the
@@ -182,7 +182,9 @@ class, we'll present them with the `self` parameter.
         creator-defined displayable to pass on the event.
 
         `ev`
-            An `event object <http://www.pygame.org/docs/ref/event.html>`_
+            An `event object <http://www.pygame.org/docs/ref/event.html>`_.
+            The types of event, and the fields each one has, are listed
+            in :doc:`pygame_events`.
 
         `x`, `y`
             The x and y coordinates of the event, relative to the
