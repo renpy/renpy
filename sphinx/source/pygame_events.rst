@@ -109,8 +109,7 @@ Display Events
    * - ``DISPLAYORIENTATION`` (``SDL_EVENT_DISPLAY_ORIENTATION``)
      - No
      - ``display_index: int``, ``data1: int``, ``data2: int``
-     - Not in pygame-ce. ``event_name()`` gives ``DISPLAYFIRST`` for this
-       type.
+     - Not in pygame-ce.
    * - ``DISPLAYADDED`` (``SDL_EVENT_DISPLAY_ADDED``)
      - No
      - ``display_index: int``, ``data1: int``, ``data2: int``
@@ -166,7 +165,7 @@ on the event, as described by SDL; the Fields column lists other fields.
    * - ``WINDOWSHOWN`` (``SDL_EVENT_WINDOW_SHOWN``)
      - Yes
      - None
-     - ``event_name()`` gives ``WINDOWFIRST`` for this type.
+     - None
    * - ``WINDOWHIDDEN`` (``SDL_EVENT_WINDOW_HIDDEN``)
      - Yes
      - None
@@ -268,7 +267,7 @@ on the event, as described by SDL; the Fields column lists other fields.
    * - ``WINDOWHDRSTATECHANGED`` (``SDL_EVENT_WINDOW_HDR_STATE_CHANGED``)
      - Yes
      - None
-     - Not in pygame-ce. ``event_name()`` gives ``WINDOWLAST`` for this type.
+     - Not in pygame-ce.
 
 pygame-ce's ``WINDOWTAKEFOCUS`` has no SDL 3 equivalent, and is not
 available. pygame-ce's window events have only the fields listed in the
@@ -793,7 +792,7 @@ These names never identify an event a game receives.
      - Default
      - Fields
      - pygame(-ce) differences
-   * - ``NOEVENT``, ``FIRST`` (``SDL_EVENT_FIRST``)
+   * - ``NOEVENT`` (``SDL_EVENT_FIRST``)
      - n/a
      - None
      - The type of the event ``pygame.event.poll()`` returns when the queue

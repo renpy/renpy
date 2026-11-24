@@ -737,7 +737,7 @@ def test_user_event_attributes(offset):
 
 
 # Names of event types that SDL uses as range markers or reserves, and which never reach a game.
-SENTINEL_NAMES = {"FIRST", "PRIVATE0", "PRIVATE1", "PRIVATE2", "PRIVATE3", "POLLSENTINEL", "LAST", "ENUMPADDING"}
+SENTINEL_NAMES = {"NOEVENT", "PRIVATE0", "PRIVATE1", "PRIVATE2", "PRIVATE3", "POLLSENTINEL", "LAST", "ENUMPADDING"}
 
 # Every type the parametrizations above cover.
 COVERED_TYPES = set(

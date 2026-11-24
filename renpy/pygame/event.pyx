@@ -36,9 +36,11 @@ import sys
 # it differs from pygame-ce. Update that page with any change to event_names, the event constants, or the attributes
 # the make_*_event functions below produce. test_pygame_event.py checks that the page names every event.
 
-# The name of each event type, as given by event_name() and repr().
+# The name of each event type, as given by event_name() and repr(). SDL's range markers (SDL_EVENT_DISPLAY_FIRST,
+# SDL_EVENT_WINDOW_LAST, and so on) share values with real events, so they are left out, and the real event's name is
+# the one reported.
 event_names = {
-    SDL_EVENT_FIRST: "FIRST",
+    SDL_EVENT_FIRST: "NOEVENT",
     SDL_EVENT_QUIT: "QUIT",
     SDL_EVENT_TERMINATING: "TERMINATING",
     SDL_EVENT_LOW_MEMORY: "LOWMEMORY",
@@ -55,9 +57,6 @@ event_names = {
     SDL_EVENT_DISPLAY_DESKTOP_MODE_CHANGED: "DISPLAYDESKTOPMODECHANGED",
     SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED: "DISPLAYCURRENTMODECHANGED",
     SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED: "DISPLAYCONTENTSCALECHANGED",
-    SDL_EVENT_DISPLAY_FIRST: "DISPLAYFIRST",
-    SDL_EVENT_DISPLAY_LAST: "DISPLAYLAST",
-    # After DISPLAYLAST, which has the same value, so that this name is the one reported.
     SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED: "DISPLAYUSABLEBOUNDSCHANGED",
     SDL_EVENT_WINDOW_SHOWN: "WINDOWSHOWN",
     SDL_EVENT_WINDOW_HIDDEN: "WINDOWHIDDEN",
@@ -84,8 +83,6 @@ event_names = {
     SDL_EVENT_WINDOW_LEAVE_FULLSCREEN: "WINDOWLEAVEFULLSCREEN",
     SDL_EVENT_WINDOW_DESTROYED: "WINDOWDESTROYED",
     SDL_EVENT_WINDOW_HDR_STATE_CHANGED: "WINDOWHDRSTATECHANGED",
-    SDL_EVENT_WINDOW_FIRST: "WINDOWFIRST",
-    SDL_EVENT_WINDOW_LAST: "WINDOWLAST",
     SDL_EVENT_KEY_DOWN: "KEYDOWN",
     SDL_EVENT_KEY_UP: "KEYUP",
     SDL_EVENT_TEXT_EDITING: "TEXTEDITING",
