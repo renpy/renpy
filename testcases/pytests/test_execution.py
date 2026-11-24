@@ -103,3 +103,55 @@ def test_progress_cancels_pending_detection(reset_loop_state, checked_in_window)
 
     with pytest.raises(Exception, match="Possible infinite loop"):
         run_check()
+
+
+@pytest.fixture
+def unhandled_reporting(mocker):
+    """
+    Sets up handle_exception so that no handler handles an exception: there is no creator-defined handler, and
+    Ren'Py's default handler reports it unhandled, as it does for lint, compile, and RENPY_SIMPLE_EXCEPTIONS. The
+    traceback formatter is patched because the real one prints and writes traceback.txt.
+    """
+
+    mocker.patch.object(renpy.exports, "is_in_test", return_value=False)
+    mocker.patch.object(renpy.config, "exception_handler", None)
+    te = renpy.error.TracebackException(ValueError())
+    mocker.patch.object(renpy.error, "report_exception", return_value=te)
+    mocker.patch.object(renpy.display.error, "report_exception", return_value=True)
+
+
+class StubContext:
+    """
+    A context with no handler of its own, using Context's exception handling methods without the rest of a
+    context's state.
+    """
+
+    exception_handler = None
+
+    handle_exception = renpy.execution.Context.handle_exception
+    run_exception_handlers = renpy.execution.Context.run_exception_handlers
+
+
+def run_handle_exception(exception: Exception) -> None:
+    """
+    Calls handle_exception on a new context while `exception` is being handled, as the statement loop does.
+    """
+
+    try:
+        raise exception
+    except Exception:
+        StubContext().handle_exception()
+
+
+def test_handle_exception_reraises_original_when_handler_fails(mocker, unhandled_reporting, capsys):
+    """
+    If config.exception_handler itself raises, the original exception is re-raised, as before Ren'Py 8.4, and the
+    handler's error is printed rather than hidden.
+    """
+
+    mocker.patch.object(renpy.config, "exception_handler", mocker.Mock(side_effect=KeyError("handler bug")))
+
+    with pytest.raises(ValueError, match="original"):
+        run_handle_exception(ValueError("original"))
+
+    assert "handler bug" in capsys.readouterr().err
