@@ -548,8 +548,9 @@ class Context(renpy.object.Object):
                     return
 
         # RenPy default exception handler. Returns True
-        # if exception NOT handled.
-        renpy.display.error.report_exception(te)
+        # if exception NOT handled, in which case it is re-raised.
+        if renpy.display.error.report_exception(te):
+            raise e
 
     def report_traceback(self, name: str, last: bool):
         if last:
