@@ -2987,7 +2987,29 @@ class Interface:
                 if renpy.emscripten or os.environ.get("RENPY_SIMULATE_DOWNLOAD", False):
                     renpy.webloader.process_downloaded_resources()
 
+                # Handle a pending suspend before touching the display: on Android, recreating the window or
+                # GL context while paused blocks, and fails if the activity is destroyed meanwhile.
+                # This repeats, since the app may have been sent to the background again while it was resuming.
+                while renpy.mobile:
+                    suspend_events = []
+
+                    # event_peek may have already taken the suspend event off the queue.
+                    if self.pushed_event is not None and self.pushed_event.type == pygame.WILLENTERBACKGROUND:
+                        suspend_events.append(self.pushed_event)
+                        self.pushed_event = None
+
+                    suspend_events.extend(pygame.event.get(pygame.WILLENTERBACKGROUND))
+
+                    if not suspend_events:
+                        break
+
+                    for suspend_ev in suspend_events:
+                        self.check_suspend(suspend_ev)
+
                 avoid_draw = False
+
+                # This becomes true if we did a redraw this cycle.
+                did_redraw = False
 
                 if renpy.emscripten:
                     avoid_draw = emscripten.run_script_int("webglContextLost")
@@ -2995,6 +3017,28 @@ class Interface:
                     if emscripten.run_script_int("webglContextRestored"):
                         self.display_reset = True
                         emscripten.run_script("webglContextRestored = false;")
+
+                # Never draw while the window's OpenGL context isn't current. On Android, SDL releases the context
+                # when it pauses the app, after queuing WILLENTERBACKGROUND: recreating the context then would block
+                # until the app resumes, so skip the display until check_suspend has handled the event. Otherwise
+                # the context was lost some other way (such as SDL failing to restore it on resume), so reset the
+                # display, which recreates it before anything is drawn.
+                if not avoid_draw:
+                    window = pygame.display.get_window()
+
+                    if (
+                        window is not None
+                        and (window.get_window_flags() & pygame.WINDOW_OPENGL)
+                        and not pygame.display.gl_has_current_context()
+                    ):
+                        suspend_pending = (
+                            self.pushed_event is not None and self.pushed_event.type == pygame.WILLENTERBACKGROUND
+                        ) or pygame.event.peek(pygame.WILLENTERBACKGROUND)
+
+                        if suspend_pending:
+                            avoid_draw = True
+                        else:
+                            self.display_reset = True
 
                 if not avoid_draw:
                     for i in renpy.config.needs_redraw_callbacks:
@@ -3019,9 +3063,6 @@ class Interface:
                     # Ask if the game has changed size.
                     if renpy.display.draw.update(force=self.display_reset):
                         needs_redraw = True
-
-                    # This becomes true if we did a redraw this cycle.
-                    did_redraw = False
 
                     # Limit the framerate, in case vsync doesn't.
                     earliest_redraw_time = self.get_earliest_redraw_time(first_pass)
@@ -3255,7 +3296,15 @@ class Interface:
                 renpy.display.focus.clear_focus_changes_since_event()
 
                 if ev.type == pygame.NOEVENT:
-                    if can_block and (not needs_redraw) and (not renpy.asynctask.has_tasks()) and (not self.mouse_move):
+                    if avoid_draw:
+                        # Nothing can be drawn until the context comes back, so don't spin. On the web, SDL_Delay
+                        # doesn't yield to the browser, which has to run for the context to be restored.
+                        if renpy.emscripten:
+                            emscripten.sleep(10)
+                        else:
+                            pygame.time.wait(10)
+
+                    elif can_block and (not needs_redraw) and (not renpy.asynctask.has_tasks()) and (not self.mouse_move):
                         pygame.time.wait(1)
 
                     continue

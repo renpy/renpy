@@ -763,6 +763,14 @@ def get_num_video_displays():
     return num_displays
 
 
+def gl_has_current_context():
+    """
+    Returns True if an OpenGL context is current on the calling thread. On Android, SDL releases the
+    context while the app is paused, and creating one then blocks until the app resumes.
+    """
+
+    return SDL_GL_GetCurrentContext() != NULL
+
 def gl_reset_attributes():
     SDL_GL_ResetAttributes()
 
