@@ -911,6 +911,11 @@ class Layout(object):
 
                 if ended:
                     textsupport.assign_times(gt, 0.0, glyphs)
+
+                    # Text after the end segment isn't shown, so its hyperlinks mustn't be focusable.
+                    for g in glyphs:
+                        g.hyperlink = 0
+
                 else:
                     gt = ts.assign_times(gt, glyphs)
 
