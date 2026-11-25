@@ -774,6 +774,14 @@ class Interface:
         # Should we reset the display?
         self.display_reset = False
 
+        # True to make the next display reset destroy the GL context and create a new one, rather than reuse the
+        # current one. Set on Windows when the window is restored from being minimized, since the context can be
+        # broken then without SDL reporting it. Consumed by the next full reset of the GL2 renderer.
+        self.gl_context_force_new = False
+
+        # True between WINDOWMINIMIZED and the WINDOWRESTORED or WINDOWMAXIMIZED that follows it.
+        self.window_minimized = False
+
         # True when the mobile reload save is waiting to be deleted after the app returned to the foreground.
         self.mobile_unlink_pending = False
 
@@ -3523,11 +3531,22 @@ class Interface:
                         renpy.audio.audio.pause_all()
 
                 elif ev.type == pygame.WINDOWMINIMIZED:
+                    self.window_minimized = True
+
                     if not renpy.game.preferences.audio_when_minimized and not renpy.emscripten:
                         renpy.audio.audio.pause_all()
                         self.audio_paused = True
 
                 elif ev.type == pygame.WINDOWRESTORED or ev.type == pygame.WINDOWMAXIMIZED:
+                    # On Windows, the GL context can be broken after the window is restored from being
+                    # minimized, without SDL reporting it, so replace it.
+                    if self.window_minimized:
+                        self.window_minimized = False
+
+                        if renpy.windows:
+                            self.gl_context_force_new = True
+                            self.display_reset = True
+
                     # unpause the audio
                     if pygame.display.get_active() and self.audio_paused:
                         renpy.audio.audio.unpause_all()
