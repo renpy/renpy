@@ -155,6 +155,12 @@ input_events: set[int] = {
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
 
+# After a mobile app returns to the foreground, the reload save is kept until at least this many frames have been
+# drawn with the restored display, and at least MOBILE_UNLINK_DELAY seconds have passed, so a failure or a kill while
+# the display is being restored still leaves the save for the next start.
+MOBILE_UNLINK_FRAMES = 10
+MOBILE_UNLINK_DELAY = 0.5
+
 null: "renpy.display.layout.Null | None" = None
 
 # Time management.
@@ -767,6 +773,15 @@ class Interface:
 
         # Should we reset the display?
         self.display_reset = False
+
+        # True when the mobile reload save is waiting to be deleted after the app returned to the foreground.
+        self.mobile_unlink_pending = False
+
+        # The number of frames that must still be drawn with the restored display before the reload save is deleted.
+        self.mobile_unlink_frames = 0
+
+        # The earliest time (from get_time) at which the reload save may be deleted.
+        self.mobile_unlink_time = 0.0
 
         # Should we profile the next frame?
         self.profile_once = False
@@ -2018,6 +2033,29 @@ class Interface:
         # auto-reload.
         renpy.loadsave.unlink_save("_reload-1")
 
+    def check_mobile_unlink(self):
+        """
+        Called after each frame is drawn. Once the app has returned to the foreground, the display reset has
+        succeeded, and the game has drawn MOBILE_UNLINK_FRAMES frames over at least MOBILE_UNLINK_DELAY seconds,
+        deletes the mobile reload save. Until then the save is kept, so a failure, a re-pause, or the activity
+        being destroyed while the display is restored leaves it for the next start to load.
+        """
+
+        if not self.mobile_unlink_pending:
+            return
+
+        # A new display reset (such as after a failed buffer swap) means the display isn't stable yet, so frames
+        # drawn before it don't count.
+        if self.display_reset:
+            self.mobile_unlink_frames = MOBILE_UNLINK_FRAMES
+            return
+
+        self.mobile_unlink_frames -= 1
+
+        if self.mobile_unlink_frames <= 0 and get_time() >= self.mobile_unlink_time:
+            self.mobile_unlink_pending = False
+            self.mobile_unlink()
+
     def check_android_start(self):
         """
         Delays until the android screen is visible, to ensure the
@@ -2108,7 +2146,10 @@ class Interface:
 
         print("Entering foreground. -------------------------------------------")
 
-        self.mobile_unlink()
+        # Keep the reload save until the display has been restored and the game is stable.
+        self.mobile_unlink_pending = True
+        self.mobile_unlink_frames = MOBILE_UNLINK_FRAMES
+        self.mobile_unlink_time = get_time() + MOBILE_UNLINK_DELAY
 
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
@@ -2946,7 +2987,29 @@ class Interface:
                 if renpy.emscripten or os.environ.get("RENPY_SIMULATE_DOWNLOAD", False):
                     renpy.webloader.process_downloaded_resources()
 
+                # Handle a pending suspend before touching the display: on Android, recreating the window or
+                # GL context while paused blocks, and fails if the activity is destroyed meanwhile.
+                # This repeats, since the app may have been sent to the background again while it was resuming.
+                while renpy.mobile:
+                    suspend_events = []
+
+                    # event_peek may have already taken the suspend event off the queue.
+                    if self.pushed_event is not None and self.pushed_event.type == pygame.WILLENTERBACKGROUND:
+                        suspend_events.append(self.pushed_event)
+                        self.pushed_event = None
+
+                    suspend_events.extend(pygame.event.get(pygame.WILLENTERBACKGROUND))
+
+                    if not suspend_events:
+                        break
+
+                    for suspend_ev in suspend_events:
+                        self.check_suspend(suspend_ev)
+
                 avoid_draw = False
+
+                # This becomes true if we did a redraw this cycle.
+                did_redraw = False
 
                 if renpy.emscripten:
                     avoid_draw = emscripten.run_script_int("webglContextLost")
@@ -2954,6 +3017,28 @@ class Interface:
                     if emscripten.run_script_int("webglContextRestored"):
                         self.display_reset = True
                         emscripten.run_script("webglContextRestored = false;")
+
+                # Never draw while the window's OpenGL context isn't current. On Android, SDL releases the context
+                # when it pauses the app, after queuing WILLENTERBACKGROUND: recreating the context then would block
+                # until the app resumes, so skip the display until check_suspend has handled the event. Otherwise
+                # the context was lost some other way (such as SDL failing to restore it on resume), so reset the
+                # display, which recreates it before anything is drawn.
+                if not avoid_draw:
+                    window = pygame.display.get_window()
+
+                    if (
+                        window is not None
+                        and (window.get_window_flags() & pygame.WINDOW_OPENGL)
+                        and not pygame.display.gl_has_current_context()
+                    ):
+                        suspend_pending = (
+                            self.pushed_event is not None and self.pushed_event.type == pygame.WILLENTERBACKGROUND
+                        ) or pygame.event.peek(pygame.WILLENTERBACKGROUND)
+
+                        if suspend_pending:
+                            avoid_draw = True
+                        else:
+                            self.display_reset = True
 
                 if not avoid_draw:
                     for i in renpy.config.needs_redraw_callbacks:
@@ -2978,9 +3063,6 @@ class Interface:
                     # Ask if the game has changed size.
                     if renpy.display.draw.update(force=self.display_reset):
                         needs_redraw = True
-
-                    # This becomes true if we did a redraw this cycle.
-                    did_redraw = False
 
                     # Limit the framerate, in case vsync doesn't.
                     earliest_redraw_time = self.get_earliest_redraw_time(first_pass)
@@ -3009,8 +3091,12 @@ class Interface:
 
                         renpy.audio.audio.advance_time()  # Sets the time of all video frames.
 
-                        self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
+                        presented = (not fullscreen_video) or video_frame_drawn
+                        self.draw_screen(root_widget, fullscreen_video, presented)
                         did_redraw = True
+
+                        if presented:
+                            self.check_mobile_unlink()
 
                         if first_pass:
                             if not self.interact_time:
@@ -3107,6 +3193,10 @@ class Interface:
                     video_frame_drawn = True
 
                 if renpy.display.render.check_redraws():
+                    needs_redraw = True
+
+                # Keep drawing until the mobile reload save is deleted, so a static screen can't keep it alive.
+                if self.mobile_unlink_pending:
                     needs_redraw = True
 
                 # How many seconds until we timeout.
@@ -3206,7 +3296,15 @@ class Interface:
                 renpy.display.focus.clear_focus_changes_since_event()
 
                 if ev.type == pygame.NOEVENT:
-                    if can_block and (not needs_redraw) and (not renpy.asynctask.has_tasks()) and (not self.mouse_move):
+                    if avoid_draw:
+                        # Nothing can be drawn until the context comes back, so don't spin. On the web, SDL_Delay
+                        # doesn't yield to the browser, which has to run for the context to be restored.
+                        if renpy.emscripten:
+                            emscripten.sleep(10)
+                        else:
+                            pygame.time.wait(10)
+
+                    elif can_block and (not needs_redraw) and (not renpy.asynctask.has_tasks()) and (not self.mouse_move):
                         pygame.time.wait(1)
 
                     continue

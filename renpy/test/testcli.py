@@ -100,6 +100,25 @@ def test_command() -> bool:
         help="Replace existing screenshots when a screenshot is taken during tests.",
     )
 
+    persist_group = group.add_mutually_exclusive_group()
+    persist_group.add_argument(
+        "--persist",
+        dest="_test.persist",
+        action="store_const",
+        const=True,
+        default=None,
+        help="Keep the game running after the tests finish, with player input enabled "
+        "(default: config.persist_after_tests).",
+    )
+    persist_group.add_argument(
+        "--nopersist",
+        dest="_test.persist",
+        action="store_const",
+        const=False,
+        default=None,
+        help="Quit the game after the tests finish. This is the default unless config.persist_after_tests is True.",
+    )
+
     group = ap.add_argument_group(title="Console Reporting")
     group.add_argument(
         "--hide-header",

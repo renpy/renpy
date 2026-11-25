@@ -266,3 +266,15 @@ html[data-theme='dark'] .sphinx-tabs-tab[aria-selected="true"] {
 html[data-theme='dark'] .sphinx-tabs-panel {
     background: #141414 !important;
 }
+
+/* The event tables in pygame_events. The theme keeps table cells from wrapping, except inside code. Here the
+   prose wraps instead, and each event name and field stays on its own line. */
+
+.rst-content table.docutils.pygame-events td {
+    white-space: normal;
+}
+
+.rst-content table.docutils.pygame-events td .line,
+.rst-content table.docutils.pygame-events td .line code {
+    white-space: nowrap;
+}

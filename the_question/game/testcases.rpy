@@ -6,10 +6,6 @@ testsuite global:
         if not screen "main_menu":
             run MainMenu(confirm=False)
 
-
-    teardown:
-        exit
-
 testcase bad_end:
     click "start"
     advance until screen "choice"

@@ -199,6 +199,17 @@ use the test command:
     except names marked with an asterisk, which have a parameter value that
     is not a Python literal.
 
+.. option:: --persist
+
+    Keeps the game running once the tests finish, rather than quitting. The
+    player can then continue the game with the mouse and keyboard. When the
+    player quits, the process exits with status 1 if a test failed.
+
+.. option:: --nopersist
+
+    Quits the game once the tests finish. This is the default, unless
+    :var:`config.persist_after_tests` is True.
+
 .. option:: --overwrite-screenshots
 
     Overwrite existing screenshots when a
@@ -540,7 +551,6 @@ executed, and how the hooks are called. The following example illustrates this:
 
             teardown:
                 $ print(""global :: teardown"")
-                exit
 
             testsuite basic:
                 testcase first_testcase:
@@ -698,16 +708,16 @@ integer (for a specific depth).
 
 .. note::
 
-    When a testsuite finishes executing, the game doesn't close itself.
-    Instead, it will return control of the game back to the player,
-    awaiting user input.
+    When all tests have finished, Ren'Py quits the game. The process exits
+    with status 0 if every test passed, and 1 if a test failed.
 
-    To close the game after a testsuite, you can use the ``exit`` test
-    statement in the ``after`` hook of the testsuite::
+    To keep the game running instead, and continue it with the mouse and
+    keyboard, give the ``test`` command the :option:`--persist` option, or
+    set :var:`config.persist_after_tests` to True. A test can also set
+    ``_test.persist`` to True or False, which overrides both.
 
-        testsuite global:
-            teardown:
-                exit
+    The ``exit`` test statement quits right away, even when the game would
+    otherwise persist.
 
 .. _skipping-testcases:
 
@@ -1728,4 +1738,4 @@ You can find real tests in the Ren'Py source code:
 
 * `<https://github.com/renpy/renpy/blob/master/tutorial/game/testcases.rpy>`_
 * `<https://github.com/renpy/renpy/blob/master/gui/game/testcases.rpy>`_
-* `<https://github.com/renpy/renpy/blob/master/launcher/game/testcases.rpy>`_
+* `<https://github.com/renpy/renpy/blob/master/launcher/game/testcases.rpy>`_

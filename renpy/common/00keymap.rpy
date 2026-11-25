@@ -573,8 +573,9 @@ label _load_reload_game:
     python hide:
 
         # On Android and iOS, the game is saved to _reload-1 when the app enters the background, and that save
-        # is deleted when the app returns to the foreground. If the save exists when the app starts, the app was
-        # terminated while in the background, so load the save to return the player to where they were.
+        # is deleted shortly after the app returns to the foreground and has restored its display. If the save
+        # exists when the app starts, the app was terminated while in the background or while returning from it,
+        # so load the save to return the player to where they were.
         if (renpy.android or renpy.ios) and config.save_on_mobile_background:
             if not renpy.session.get("_reload_slot", None) and renpy.can_load("_reload-1"):
                 renpy.session["_reload_slot"] = "_reload-1"

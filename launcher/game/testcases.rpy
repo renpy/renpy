@@ -192,9 +192,6 @@ testsuite global:
         if screen "choose_language":
             click "Start using Ren'Py"
 
-    teardown:
-        exit
-
 testcase change_language:
     parameter lang = [
         "arabic", "danish", "finnish", "french", "german",

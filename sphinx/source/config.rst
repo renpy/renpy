@@ -2541,6 +2541,13 @@ Debugging
     name of a label to use as a replacement for the missing label, or None
     to cause Ren'Py to raise an exception.
 
+.. var:: config.persist_after_tests = False
+
+    If False, Ren'Py quits once the tests run by the ``test`` command finish. If True,
+    the game keeps running afterwards, and the player can continue it with the mouse and
+    keyboard. The :option:`--persist` and :option:`--nopersist` options of the ``test``
+    command override this. See :doc:`testcases`.
+
 .. var:: config.profile = False
 
     If set to True, some profiling information will be output to

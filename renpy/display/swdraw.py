@@ -867,9 +867,14 @@ class SWDraw(object):
         Creates a texture from the surface. In the software implementation,
         the only difference between a texture and a surface is that a texture
         is in the RLE cache.
+
+        The texture is copied into a surface with a transparent border, like
+        every other surface the software renderer draws from, because the
+        bilinear sampler used for transformed drawing reads pixels past the
+        right and bottom edges of its source.
         """
 
-        return surf.convert_alpha(self.screen)
+        return copy_surface(surf)
 
     def ready_one_texture(self):
         return False

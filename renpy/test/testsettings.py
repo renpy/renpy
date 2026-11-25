@@ -62,6 +62,12 @@ class TestSettings:
     maximum_framerate: bool = True
     """Use the maximum framerate (unlocked framerate) during tests."""
 
+    persist: bool | None = None
+    """
+    Whether the game keeps running after the tests finish, instead of quitting. None uses
+    `config.persist_after_tests`.
+    """
+
     overwrite_screenshots: bool = False
     """Whether to overwrite existing screenshots. If True, no comparison is done."""
 

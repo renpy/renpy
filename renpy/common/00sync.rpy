@@ -72,8 +72,9 @@ init -1100 python:
         def get_sensitive(self):
             return config.has_sync
 
-init 1100 python:
+init 1100 python hide:
 
+    # This block is hidden so the import doesn't replace a game's own os variable.
     import os
 
     # An existing sync directory is used even when sync is disabled, so saves

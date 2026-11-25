@@ -365,16 +365,9 @@ A filter matching nothing is an error. Options are defined in
 [renpy/test/testcli.py](renpy/test/testcli.py); do not guess flags. Success means the runner's
 report shows passes and the process exited 0 — launching the game is not a pass.
 
-After the last test, the game stays open at whatever screen it reached, so `test` never returns unless the
-game's tests end with the `exit` test statement. `testcases` does this in
-[global.rpy](testcases/game/tests/global.rpy). When running tests in another game, add the following to one of its
-test files, or the run will look like a hang after `Status: PASSED`:
-
-```
-testsuite global:
-    teardown:
-        exit
-```
+After the last test, the game quits with status 1 if a test failed and 0 otherwise. `--persist` (or
+`config.persist_after_tests = True`) keeps it open for a human instead; never pass it in unattended runs, where it
+looks like a hang after `Status: PASSED`. An `exit` test statement quits immediately, overriding `--persist`.
 
 To skip the main menu in a test game, define a `main_menu` label that returns, so the game goes straight to
 `label start`:

@@ -1,8 +1,4 @@
-﻿testsuite global:
-    teardown:
-        exit
-
-testcase default:
+﻿testcase default:
     $ _test.transition_timeout = 0.05
     click "Start"
     pause .6
@@ -106,7 +102,6 @@ testcase default:
     pause .5
 
     click "Done."
-    exit
 
 
 define nvle = Character("Eileen", kind=nvl)
