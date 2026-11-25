@@ -11,6 +11,3 @@ testsuite global:
 
         if eval not renpy.context()._main_menu: #screen "main_menu":
             run MainMenu(confirm=False)
-
-    teardown:
-        exit

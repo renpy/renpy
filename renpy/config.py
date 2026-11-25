@@ -1659,6 +1659,12 @@ If True, Ren'Py will attempt to enable vsync when creating the OpenGL context. I
 This is mostly intended to be set by renpy.test to disable vsync during tests.
 """
 
+persist_after_tests: bool = False
+"""
+If False, Ren'Py quits once the tests run by the test command finish. If True, the game keeps running and accepts
+player input. The --persist and --nopersist options of the test command override this.
+"""
+
 tracesave_screenshot: bool = True
 """
 If True, trace saves will include a screenshot of the game at the time of the save.

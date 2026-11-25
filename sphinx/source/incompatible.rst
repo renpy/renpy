@@ -45,6 +45,13 @@ errors. To restore the button::
 
     define config.init_exception_ignore = True
 
+**Quitting After Tests** The ``test`` command quits the game once the tests
+finish, rather than leaving it running. Games that rely on the game staying
+open after a test run, for example to continue playing from the state a test
+reached, should run the tests with the ``--persist`` option, or use::
+
+    define config.persist_after_tests = True
+
 
 .. _incompatible-8.6.0:
 

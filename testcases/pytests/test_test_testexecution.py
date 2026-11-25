@@ -499,3 +499,130 @@ def test_get_test_window_size(mocker, initialized, mobile, expected):
     mocker.patch.object(renpy.config, "screen_width", 800)
     mocker.patch.object(renpy.config, "screen_height", 600)
     assert testexecution.get_test_window_size() == expected
+
+
+################################################################################
+# End of the run
+################################################################################
+
+
+class FinishingController:
+    """
+    Stands in for TestPhaseController in a run whose last phase ends on the next update.
+    """
+
+    def __init__(self):
+        self.is_running = True
+
+    def update(self):
+        self.is_running = False
+
+    def quit(self):
+        self.is_running = False
+
+
+class FakeInterface:
+    """
+    The parts of the display interface that execute() and release_input() use.
+    """
+
+    suppress_underlay = False
+    mouse_focused = False
+
+
+@pytest.fixture
+def finishing(mocker):
+    """
+    Sets up a test run that finishes on the next call to execute(), and returns a function that sets the
+    persistence settings and whether a test failed, then calls execute() and returns the controller.
+
+    The display, event queue, and reporter are replaced, as execute() needs a running game for them, and these
+    tests are only about what happens once the run has ended. The mouse is reported as over the window, so that
+    the interface's stale `mouse_focused` must be refreshed.
+    """
+
+    controller = FinishingController()
+    interface = FakeInterface()
+
+    mocker.patch.object(testexecution, "initialized", True)
+    mocker.patch.object(testexecution, "input_released", False)
+    mocker.patch.object(testexecution, "phase_controller", controller, create=True)
+    mocker.patch.object(renpy.display, "interface", interface)
+    mocker.patch.object(renpy.exports, "maximum_framerate")
+    mocker.patch.object(renpy.pygame.event, "copy_event_queue", return_value=[])
+    mocker.patch.object(renpy.pygame.mouse, "get_focused", return_value=True)
+    mocker.patch.object(testexecution._test, "persist", None)
+
+    def finish(persist, config_persist, failed=False):
+        mocker.patch.object(testexecution._test, "persist", persist)
+        mocker.patch.object(renpy.config, "persist_after_tests", config_persist)
+        mocker.patch.object(testreporter, "reporter", mocker.Mock(has_failed=failed))
+
+        testexecution.execute()
+        return controller, interface
+
+    return finish
+
+
+@pytest.mark.parametrize(
+    ("persist", "config_persist", "failed", "status"),
+    [
+        (None, False, False, 0),
+        (None, False, True, 1),
+        (False, True, False, 0),
+        (False, True, True, 1),
+    ],
+    ids=["default-passed", "default-failed", "nopersist-overrides-config-passed", "nopersist-overrides-config-failed"],
+)
+def test_finished_run_quits(finishing, persist, config_persist, failed, status):
+    """
+    Unless the game persists, it quits once the run ends, with a status that tells scripts and CI whether a test
+    failed. --nopersist takes precedence over config.persist_after_tests.
+    """
+
+    with pytest.raises(renpy.game.QuitException) as excinfo:
+        finishing(persist, config_persist, failed)
+
+    assert excinfo.value.status == status
+
+
+@pytest.mark.parametrize(("persist", "config_persist"), [(None, True), (True, False)], ids=["config", "persist"])
+def test_finished_run_persists_with_input(finishing, persist, config_persist):
+    """
+    When the game persists, it keeps running once the run ends, and the player's mouse counts as over the window
+    again. Window enter events are dropped during a test, so without the refresh Ren'Py would ignore where the
+    player's mouse is. --persist takes precedence over config.persist_after_tests.
+    """
+
+    controller, interface = finishing(persist, config_persist)
+
+    assert not controller.is_running
+    assert interface.mouse_focused is True
+
+
+@pytest.mark.parametrize(
+    ("initialized", "running", "failed", "status"),
+    [
+        (False, False, True, 0),
+        (True, False, False, 0),
+        (True, False, True, 1),
+        (True, True, True, 1),
+    ],
+    ids=["not-testing", "ended-passed", "ended-failed", "running-failed"],
+)
+def test_quit_handler_status(mocker, initialized, running, failed, status):
+    """
+    Quitting reports a failed run with status 1, including after the run ended, when the player quits a game kept
+    open with --persist. Outside a test run, quitting is reported as success. Quitting while tests are running ends
+    the run.
+    """
+
+    controller = FinishingController()
+    controller.is_running = running
+
+    mocker.patch.object(testexecution, "initialized", initialized)
+    mocker.patch.object(testexecution, "phase_controller", controller, create=True)
+    mocker.patch.object(testreporter, "reporter", mocker.Mock(has_failed=failed))
+
+    assert testexecution.quit_handler() == status
+    assert not controller.is_running

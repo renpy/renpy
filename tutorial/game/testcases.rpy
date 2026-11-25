@@ -6,9 +6,6 @@ testsuite global:
         if not screen "main_menu":
             run MainMenu(confirm=False)
 
-    teardown:
-        exit
-
 
 testsuite play_game:
     description "Default project testsuite"

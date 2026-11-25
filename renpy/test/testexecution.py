@@ -47,6 +47,9 @@ global_test_suite: TestSuite | None = None
 "Caches the global test suite, once it's been set up."
 execution_filter: ExecutionFilter
 
+input_released: bool = False
+"True once player input has been given back after a run that finished with the game persisting."
+
 ################################################################################
 ## Public Methods
 
@@ -87,11 +90,52 @@ def execute() -> None:
 
     try:
         phase_controller.update()
+
+        if not phase_controller.is_running:
+            if not should_persist():
+                raise renpy.game.QuitException()
+
+            release_input()
+
     except renpy.game.QuitException as e:
         status = quit_handler()
         raise renpy.game.QuitException(status=status)
 
     reached_labels.clear()
+
+
+def should_persist() -> bool:
+    """
+    Returns True if the game should keep running once the test run finishes, and False if it should quit. The
+    --persist and --nopersist options (or `_test.persist`) take precedence over `config.persist_after_tests`.
+    """
+
+    if _test.persist is not None:
+        return _test.persist
+
+    return bool(renpy.config.persist_after_tests)
+
+
+def release_input() -> None:
+    """
+    Gives mouse input back to the player once the test run has finished and the game persists. Runs only once.
+
+    Most of the lockout ends on its own, as the core loop only filters the player's mouse while `is_in_test()`
+    is True, and EndPhase stops overriding the mouse position. Window mouse enter and leave events are dropped
+    during tests, so whether the mouse is over the window is read again from SDL. Otherwise, a stale value would
+    make Ren'Py ignore where the player's mouse is.
+    """
+
+    global input_released
+
+    if input_released:
+        return
+
+    input_released = True
+
+    interface = renpy.display.interface
+    if interface is not None:
+        interface.mouse_focused = pygame.mouse.get_focused()
 
 
 def initialize(test_filter: ExecutionFilter) -> None:
@@ -197,12 +241,16 @@ def quit_handler() -> int:
     """
     Handles the quit command and QuitException thrown by the test.
     Returns a status code that indicates whether the test passed or failed.
+
+    This is also called when the player quits a game that persisted after the run, so the status still reports
+    a failed run.
     """
 
-    if not is_in_test():
+    if not initialized:
         return 0
 
-    phase_controller.quit()
+    if is_in_test():
+        phase_controller.quit()
 
     if testreporter.reporter.has_failed:
         return 1
