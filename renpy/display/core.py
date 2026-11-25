@@ -155,6 +155,12 @@ input_events: set[int] = {
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
 
+# After a mobile app returns to the foreground, the reload save is kept until at least this many frames have been
+# drawn with the restored display, and at least MOBILE_UNLINK_DELAY seconds have passed, so a failure or a kill while
+# the display is being restored still leaves the save for the next start.
+MOBILE_UNLINK_FRAMES = 10
+MOBILE_UNLINK_DELAY = 0.5
+
 null: "renpy.display.layout.Null | None" = None
 
 # Time management.
@@ -767,6 +773,15 @@ class Interface:
 
         # Should we reset the display?
         self.display_reset = False
+
+        # True when the mobile reload save is waiting to be deleted after the app returned to the foreground.
+        self.mobile_unlink_pending = False
+
+        # The number of frames that must still be drawn with the restored display before the reload save is deleted.
+        self.mobile_unlink_frames = 0
+
+        # The earliest time (from get_time) at which the reload save may be deleted.
+        self.mobile_unlink_time = 0.0
 
         # Should we profile the next frame?
         self.profile_once = False
@@ -2018,6 +2033,29 @@ class Interface:
         # auto-reload.
         renpy.loadsave.unlink_save("_reload-1")
 
+    def check_mobile_unlink(self):
+        """
+        Called after each frame is drawn. Once the app has returned to the foreground, the display reset has
+        succeeded, and the game has drawn MOBILE_UNLINK_FRAMES frames over at least MOBILE_UNLINK_DELAY seconds,
+        deletes the mobile reload save. Until then the save is kept, so a failure, a re-pause, or the activity
+        being destroyed while the display is restored leaves it for the next start to load.
+        """
+
+        if not self.mobile_unlink_pending:
+            return
+
+        # A new display reset (such as after a failed buffer swap) means the display isn't stable yet, so frames
+        # drawn before it don't count.
+        if self.display_reset:
+            self.mobile_unlink_frames = MOBILE_UNLINK_FRAMES
+            return
+
+        self.mobile_unlink_frames -= 1
+
+        if self.mobile_unlink_frames <= 0 and get_time() >= self.mobile_unlink_time:
+            self.mobile_unlink_pending = False
+            self.mobile_unlink()
+
     def check_android_start(self):
         """
         Delays until the android screen is visible, to ensure the
@@ -2108,7 +2146,10 @@ class Interface:
 
         print("Entering foreground. -------------------------------------------")
 
-        self.mobile_unlink()
+        # Keep the reload save until the display has been restored and the game is stable.
+        self.mobile_unlink_pending = True
+        self.mobile_unlink_frames = MOBILE_UNLINK_FRAMES
+        self.mobile_unlink_time = get_time() + MOBILE_UNLINK_DELAY
 
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
@@ -3009,8 +3050,12 @@ class Interface:
 
                         renpy.audio.audio.advance_time()  # Sets the time of all video frames.
 
-                        self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
+                        presented = (not fullscreen_video) or video_frame_drawn
+                        self.draw_screen(root_widget, fullscreen_video, presented)
                         did_redraw = True
+
+                        if presented:
+                            self.check_mobile_unlink()
 
                         if first_pass:
                             if not self.interact_time:
@@ -3107,6 +3152,10 @@ class Interface:
                     video_frame_drawn = True
 
                 if renpy.display.render.check_redraws():
+                    needs_redraw = True
+
+                # Keep drawing until the mobile reload save is deleted, so a static screen can't keep it alive.
+                if self.mobile_unlink_pending:
                     needs_redraw = True
 
                 # How many seconds until we timeout.

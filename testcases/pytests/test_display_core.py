@@ -21,7 +21,8 @@
 
 """
 Tests for renpy/display/core.py: the cooperative tasks the Interface runs while idle, how it removes the
-presplash after drawing the first frame, and how the window geometry is held back until it is stable.
+presplash after drawing the first frame, how the window geometry is held back until it is stable, and how long the
+mobile reload save is kept after the app returns to the foreground.
 """
 
 from types import SimpleNamespace
@@ -265,3 +266,108 @@ def test_stable_window_geometry(steps: list[tuple[float, object]], expected: lis
     and keeps the preferences from being rewritten every frame once the geometry is stable.
     """
     assert run_geometry_steps(steps) == expected
+
+
+################################################################################
+# Interface.check_suspend / check_mobile_unlink: keeping the mobile reload save after a resume
+################################################################################
+
+
+@pytest.fixture
+def resumed(mocker) -> SimpleNamespace:
+    """
+    Provide an Interface that has gone to the background on a mobile platform and returned to the foreground at
+    time 100, by running check_suspend with stubbed audio, timers, and saving. Android is off so check_suspend
+    doesn't need jnius or the activity. ``unlink`` records deletions of save slots, and ``clock`` sets the time
+    check_mobile_unlink sees.
+    """
+    interface = Interface.__new__(Interface)
+    interface.display_reset = False
+    interface.restart_interaction = False
+    interface.mobile_unlink_pending = False
+
+    clock = SimpleNamespace(now=100.0)
+
+    mocker.patch.object(renpy, "mobile", True)
+    mocker.patch.object(renpy, "android", False)
+    mocker.patch.object(renpy.config, "quit_on_mobile_background", False)
+    mocker.patch.object(renpy.audio.audio, "pause_all")
+    mocker.patch.object(renpy.audio.audio, "unpause_all")
+    mocker.patch.object(renpy.exports, "free_memory")
+    mocker.patch.object(core.pygame.time, "set_timer")
+    mocker.patch.object(core.pygame.event, "wait", return_value=SimpleNamespace(type=core.pygame.DIDENTERFOREGROUND))
+    mocker.patch.object(Interface, "mobile_save")
+    mocker.patch.object(core, "get_time", side_effect=lambda: clock.now)
+    mocker.patch("builtins.print")
+    unlink = mocker.patch.object(renpy.loadsave, "unlink_save")
+
+    assert interface.check_suspend(SimpleNamespace(type=core.pygame.WILLENTERBACKGROUND))
+
+    return SimpleNamespace(interface=interface, unlink=unlink, clock=clock)
+
+
+def test_resume_keeps_reload_save_until_display_reset(resumed) -> None:
+    """
+    Returning to the foreground requests a display reset but doesn't delete the reload save, and frames drawn while
+    that reset is still pending don't count, since the reset (which recreates the GL context on Android) can still
+    fail or be interrupted by the activity being destroyed.
+    """
+    assert resumed.interface.display_reset
+
+    resumed.clock.now = 200.0
+
+    for _ in range(core.MOBILE_UNLINK_FRAMES * 2):
+        resumed.interface.check_mobile_unlink()
+
+    resumed.unlink.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("frames", "elapsed", "deleted"),
+    [
+        (core.MOBILE_UNLINK_FRAMES - 1, 10.0, False),
+        (core.MOBILE_UNLINK_FRAMES, core.MOBILE_UNLINK_DELAY / 2, False),
+        (core.MOBILE_UNLINK_FRAMES, core.MOBILE_UNLINK_DELAY, True),
+        (core.MOBILE_UNLINK_FRAMES * 3, 10.0, True),
+    ],
+)
+def test_reload_save_deleted_once_stable(resumed, frames: int, elapsed: float, deleted: bool) -> None:
+    """
+    After the display reset has run, the reload save is deleted only once enough frames have been drawn and enough
+    time has passed since the resume, and only once. Either condition alone keeps it, so a fast device drawing many
+    frames quickly and a slow device that takes a while to draw both keep the save while the game settles.
+    """
+    resumed.interface.display_reset = False
+    resumed.clock.now = 100.0 + elapsed
+
+    for _ in range(frames):
+        resumed.interface.check_mobile_unlink()
+
+    if deleted:
+        resumed.unlink.assert_called_once_with("_reload-1")
+    else:
+        resumed.unlink.assert_not_called()
+
+
+def test_new_display_reset_restarts_frame_count(resumed) -> None:
+    """
+    A display reset requested during the countdown, such as after a failed buffer swap, means the display isn't
+    stable yet. Frames drawn before it no longer count, so a single good frame after it can't delete the save.
+    """
+    resumed.interface.display_reset = False
+    resumed.clock.now = 200.0
+
+    for _ in range(core.MOBILE_UNLINK_FRAMES - 1):
+        resumed.interface.check_mobile_unlink()
+
+    resumed.interface.display_reset = True
+    resumed.interface.check_mobile_unlink()
+    resumed.interface.display_reset = False
+
+    resumed.interface.check_mobile_unlink()
+    resumed.unlink.assert_not_called()
+
+    for _ in range(core.MOBILE_UNLINK_FRAMES - 1):
+        resumed.interface.check_mobile_unlink()
+
+    resumed.unlink.assert_called_once_with("_reload-1")

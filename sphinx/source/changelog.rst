@@ -116,6 +116,9 @@ When the launcher opens the copy of Visual Studio Code it installed, it sets the
 exists. This lets the extension's tasks run Ren'Py, and stops Visual Studio Code from showing "Error: Illegal argument:
 command can't be undefined or null" in the Tasks output.
 
+On Android and iOS, the reload save made when the game goes to the background is kept until at least 10 frames have
+been drawn over 0.5 seconds after it returns to the foreground.
+
 .. _renpy-8.6.1:
 
 8.6.1
