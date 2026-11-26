@@ -334,16 +334,16 @@ Here's a synopsis of Python expressions.
 :dfn:`Variable`
     Python expressions can use variables, that store values defined using the
     :ref:`define-statement` or the :ref:`default-statement`. A variable name
-    follows the rules of  :dfn:`NAME` from the `Python Language Reference <https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords>`_.
-
-    This consists of:
+    follows Python's rules for `identifiers
+    <https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords>`_,
+    which allow:
 
     * Uppercase and lowercase letters (A-Z and a-z),
     * The underscore (_),
     * Digits (0 through 9), which cannot appear as the first character, and
-    * Non-ASCII characters. Valid names may only contain “letter-like” and “digit-like” characters.
+    * Non-ASCII letter-like and digit-like characters.
 
-    Examples of valid variable names include:
+    Examples of valid variable names include::
 
         playername
         love_love_points
