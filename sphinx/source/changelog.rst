@@ -144,6 +144,8 @@ command can't be undefined or null" in the Tasks output.
 On Android and iOS, the reload save made when the game goes to the background is kept until at least 10 frames have
 been drawn over 0.5 seconds after it returns to the foreground.
 
+A perspective camera can now handle subpixel positioning. This removes visible stepping during slow camera animations.
+
 .. _renpy-8.6.1:
 
 8.6.1

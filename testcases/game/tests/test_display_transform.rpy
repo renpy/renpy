@@ -58,6 +58,15 @@ transform camera_transform__replacement_preserves_state__zoomin:
 transform camera_transform__replacement_preserves_state__zoomout:
     linear 0.2 xoffset 0 yoffset 0 zoom 1.0
 
+label camera_transform__perspective_child_offset__label:
+    scene bg room
+    show eileen happy
+    camera:
+        subpixel True yoffset 0.25
+        # ease 5.0 yoffset 10
+    "Offset..."
+    return
+
 init python:
 
     def camera_transform__state():
@@ -241,3 +250,15 @@ testsuite camera_transform:
 
         assert eval (abs(camera_transform__state().xoffset) < 0.01)
         assert eval (abs(camera_transform__state().zoom - 1.0) < 0.01)
+
+    testcase perspective_keeps_child_subpixel_offset:
+        description "Perspective cameras keep a child's fractional offset subpixel."
+        # A transform earlier in a camera at list is the perspective camera's child. Its offset is
+        # passed up through the camera's placement, which must stay subpixel, or offsets such as
+        # a slow camera bob are rounded to whole pixels and visibly step.
+        run Start("camera_transform__perspective_child_offset__label")
+        assert "Offset..."
+        python:
+            _placement = renpy.game.context().scene_lists.camera_transform["master"].get_placement()
+            assert _placement[5] == 0.25, f"Expected the child's yoffset 0.25, got {_placement[5]}"
+            assert _placement[6] is True, f"Expected a subpixel placement, got {_placement[6]!r}"
