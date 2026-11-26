@@ -100,6 +100,12 @@ cdef class GLTexture(GL2Model):
     cdef public GLint default_mag_filter
     cdef public GLint default_min_filter
 
+    cdef object allocate_render_target(self, GLuint texture, int width, int height, object properties, GLuint depth)
+
+    cdef void finish_render_target(self, GLuint texture)
+
+    cdef void load_surface_texture(self, bint premultiply)
+
     cdef bint has_mipmaps(self)
 
     cdef bint from_yuv_plane_pointer(self, const unsigned char *data, int width, int height, GLenum format, bint mipmap)
