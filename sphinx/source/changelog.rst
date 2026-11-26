@@ -41,6 +41,20 @@ instead of being followed when the player clicked where the hidden hyperlink wou
 Movies play at their full frame rate while a movie that doesn't loop and has finished is still shown, rather than
 dropping to about 10 frames per second, a problem introduced in 8.6.0.
 
+The display keeps running while a movie starts, rather than freezing until the movie's first frame has been decoded.
+Until then, the movie shows its `start_image`, if it has one.
+
+Ren'Py doesn't crash when a movie loops, stops, or changes while one of its frames is being read, or when an audio
+channel is used for the first time while other audio is playing. These crashes were rare.
+
+:func:`renpy.music.seek` plays audio from the requested position. Since 8.6.0, a WAV file played from twice that
+position, and seeking audio that had finished playing could leave the channel stopped.
+
+Muting a channel stops a sound that :func:`renpy.music.seek` restarted after it finished, rather than only silencing
+it.
+
+Audio filters are released when the audio they apply to is replaced or faded out, rather than staying in memory.
+
 On Windows, the list of input method (IME) candidates drawn by Ren'Py now highlights the selected candidate
 on every page of candidates, rather than only on the first. Pages of candidates also no longer repeat
 candidates from the previous page.

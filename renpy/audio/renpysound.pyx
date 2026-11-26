@@ -569,7 +569,7 @@ def sample_surfaces(rgb, rgba):
     global rgba_surface
 
     rgb_surface = rgb
-    rgba_surface = rgb
+    rgba_surface = rgba
 
     RPS_sample_surfaces(rgb, rgba)
 

@@ -368,6 +368,42 @@ static void free_stream(struct MediaState *ss) {
     media_close(ss);
 }
 
+/*
+ * Frees the playing and queued streams of a channel, with their names and
+ * audio filters, and resets their settings. Called with the GIL and the
+ * audio lock held.
+ */
+static void free_channel_streams(struct Channel *c) {
+
+    if (c->playing) {
+        free_stream(c->playing);
+        c->playing = NULL;
+    }
+
+    free(c->playing_name);
+    c->playing_name = NULL;
+    c->playing_tight = 0;
+    c->playing_start_ms = 0;
+    c->playing_relative_volume = 1.0;
+    c->playing_synchro_start = 0;
+
+    Py_CLEAR(c->playing_audio_filter);
+
+    if (c->queued) {
+        free_stream(c->queued);
+        c->queued = NULL;
+    }
+
+    free(c->queued_name);
+    c->queued_name = NULL;
+    c->queued_tight = 0;
+    c->queued_start_ms = 0;
+    c->queued_relative_volume = 1.0;
+    c->queued_synchro_start = 0;
+
+    Py_CLEAR(c->queued_audio_filter);
+}
+
 
 #define MAX_SHORT (32767)
 #define MIN_SHORT (-32768)
@@ -478,6 +514,22 @@ static void callback(void *userdata, SDL_AudioStream *stream, int additional_amo
 
             // Decode some amount of data.
             read_length = media_read_audio(c->playing, (Uint8 *) stream_buffer, mixleft * 2 * sizeof(short));
+
+            /* The decoder is seeking, and has no audio from the new position
+             * yet. Mix nothing from this channel until it does, rather than
+             * taking it as the end of the stream. During a fadeout, mix
+             * silence instead, so the fade and the stop keep their timing. */
+            if (read_length < 0) {
+                if (c->stop_samples > 0) {
+                    memset(stream_buffer, 0, mixleft * 2 * sizeof(short));
+                    read_length = mixleft * 2 * sizeof(short);
+                } else if (c->stop_samples != 0) {
+                    break;
+                } else {
+                    read_length = 0;
+                }
+            }
+
             read_length /= (2 * sizeof(short));
 
             // If we're done with this stream, skip to the next.
@@ -649,8 +701,14 @@ static int check_channel(int c) {
     }
 
     if (c >= num_channels) {
+
+        /* The audio callback reads the channels array, so keep it from
+         * running while the array moves. */
+        LOCK_AUDIO();
+
         struct Channel *extended_channels = realloc(channels, sizeof(struct Channel) * (c + 1));
         if (extended_channels == NULL) {
+            UNLOCK_AUDIO();
             error(RPS_ERROR);
             error_msg = "Unable to allocate additional channels.";
             return -1;
@@ -671,6 +729,8 @@ static int check_channel(int c) {
         }
 
         num_channels = c + 1;
+
+        UNLOCK_AUDIO();
     }
 
     return 0;
@@ -711,37 +771,7 @@ void RPS_play(int channel, SDL_IOStream *rw, const char *ext, const char *name, 
 
     LOCK_AUDIO();
 
-    /* Free playing and queued samples. */
-    if (c->playing) {
-        free_stream(c->playing);
-        c->playing = NULL;
-        free(c->playing_name);
-        c->playing_name = NULL;
-        c->playing_tight = 0;
-        c->playing_start_ms = 0;
-        c->playing_relative_volume = 1.0;
-
-        if (c->playing_audio_filter) {
-            Py_DECREF(c->playing_audio_filter);
-            c->queued_audio_filter = NULL;
-        }
-    }
-
-    if (c->queued) {
-        free_stream(c->queued);
-        c->queued = NULL;
-        free(c->queued_name);
-        c->queued_name = NULL;
-        c->queued_tight = 0;
-        c->queued_start_ms = 0;
-        c->queued_relative_volume = 1.0;
-
-        if (c->queued_audio_filter) {
-            Py_DECREF(c->queued_audio_filter);
-            c->queued_audio_filter = NULL;
-        }
-    }
-
+    free_channel_streams(c);
     c->state = CHANNEL_IDLE;
 
     /* Allocate playing sample. */
@@ -865,38 +895,7 @@ void RPS_stop(int channel) {
     }
 
     c->state = CHANNEL_IDLE;
-
-    /* Free playing and queued samples. */
-    if (c->playing) {
-        free_stream(c->playing);
-        c->playing = NULL;
-        free(c->playing_name);
-        c->playing_name = NULL;
-        c->playing_start_ms = 0;
-        c->playing_relative_volume = 1.0;
-        c->playing_synchro_start = 0;
-    }
-
-    if (c->playing_audio_filter) {
-        Py_DECREF(c->playing_audio_filter);
-        c->playing_audio_filter = NULL;
-    }
-
-    if (c->queued) {
-        free_stream(c->queued);
-        c->queued = NULL;
-        free(c->queued_name);
-        c->queued_name = NULL;
-        c->queued_start_ms = 0;
-        c->queued_relative_volume = 1.0;
-        c->queued_synchro_start = 0;
-
-    }
-
-    if (c->queued_audio_filter) {
-        Py_DECREF(c->queued_audio_filter);
-        c->queued_audio_filter = NULL;
-    }
+    free_channel_streams(c);
 
     UNLOCK_AUDIO();
 
@@ -1057,6 +1056,10 @@ void RPS_fadeout(int channel, int ms) {
                 c->queued_name = NULL;
                 c->queued_start_ms = 0;
                 c->queued_relative_volume = 1.0;
+
+                /* The filter belongs to the queued stream, and would
+                 * otherwise move to a channel with nothing playing. */
+                Py_CLEAR(c->queued_audio_filter);
         }
     }
 
@@ -1183,8 +1186,11 @@ void RPS_seek(int channel, double position) {
 
         media_seek(c->playing, position);
 
-        if (c->state == CHANNEL_ENDED && !c->paused) {
-            c->state = CHANNEL_PLAYING;
+        /* Play an ended stream again from the new position. Nothing is
+         * queued behind an ended stream, so pad it as start_stream does. */
+        if (c->state == CHANNEL_ENDED) {
+            c->state = c->paused ? CHANNEL_PAUSED : CHANNEL_PLAYING;
+            c->playing_pad = audio_spec.freq * 2;
         }
     }
 
@@ -1403,10 +1409,11 @@ PyObject *RPS_read_video(int channel) {
      * no frames to show. */
     MediaState *playing = (c->state != CHANNEL_ENDED) ? c->playing : NULL;
 
+    /* The read keeps the GIL. Streams are only closed with the GIL held, so
+     * the periodic thread can't close this one during the read. The read
+     * doesn't wait for the decoder, which may itself need the GIL. */
     if (playing) {
-        Py_BEGIN_ALLOW_THREADS
         surf = media_read_video(playing);
-        Py_END_ALLOW_THREADS
     }
 
     error(SUCCESS);
@@ -1456,9 +1463,8 @@ PyObject *RPS_read_video_yuv(int channel) {
 		return PyErr_NoMemory();
 	}
 
-	Py_BEGIN_ALLOW_THREADS
+	/* The read keeps the GIL, as in RPS_read_video. */
 	got_frame = media_read_video_yuv(c->playing, frame);
-	Py_END_ALLOW_THREADS
 
 	if (!got_frame) {
 		PyMem_Free(frame);
