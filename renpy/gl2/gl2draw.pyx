@@ -716,11 +716,30 @@ cdef class GL2Draw:
             if full_reset:
                 self.shader_cache.clear()
 
-        if full_reset:
-            recreated = pygame.display.get_window().recreate_gl_context()
+                # Free the texture loader's program now, before any new program exists. If the context has been
+                # replaced, freeing it after the new context reuses its number would delete a new program.
+                self.texture_loader.ftl_program = None
 
-            if recreated and not first:
-                self.default_vao = 0
+        if full_reset:
+            # On the first call, init has just set up the context, so there's nothing to replace.
+            force_new = renpy.display.interface.gl_context_force_new and not first
+            renpy.display.interface.gl_context_force_new = False
+
+            # The context may have been replaced, so everything below treats it as new.
+            pygame.display.get_window().recreate_gl_context(always=force_new)
+
+            if not first:
+                renpy.display.interface.kill_textures()
+
+                # Delete the GL objects the state cache is about to forget, in case the context was kept. If it
+                # was replaced, the new context doesn't have these names yet, so deleting them does nothing.
+                drain_dead_buffers(self.state_cache)
+                self.state_cache.delete_scratch_buffers()
+
+                if self.default_vao:
+                    glDeleteVertexArrays(1, &self.default_vao)
+                    self.default_vao = 0
+
                 self.state_cache.new_context(self.context_uses_core_profile(get_gl_string(GL_VERSION)))
 
                 if self.state_cache.core_profile:
@@ -729,7 +748,7 @@ cdef class GL2Draw:
                 # Make the new context's GL state match the cache.
                 self.state_cache.reset()
 
-            if recreated or renpy.emscripten:
+            elif renpy.emscripten:
                 renpy.display.interface.kill_textures()
 
         # Are we in fullscreen mode?

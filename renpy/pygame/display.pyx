@@ -356,12 +356,38 @@ cdef class Window:
 
     def recreate_gl_context(self, always=False):
         """
-        Check to see if the GL context was lost, and re-create it if it was.
+        Makes a GL context current on this window. Callers must treat all GL state and objects as
+        new afterwards, since the context may have been replaced.
+
+        Uses the context already current on this window if there is one (on Android, SDL replaces
+        a context it couldn't restore on resume with a new current one), then this window's own
+        context, and otherwise creates a new one. A context current on another window is never
+        adopted.
+
+        If `always` is true, this window's context is destroyed and a new one created, for when
+        the context may be broken without SDL reporting it (on Windows, after the window is
+        restored from being minimized).
         """
 
-        if not always:
-            if <unsigned long> SDL_GL_GetCurrentContext():
-                return False
+        cdef SDL_GLContext current = SDL_GL_GetCurrentContext()
+
+        if always:
+
+            if self.gl_context != NULL:
+                SDL_GL_DestroyContext(self.gl_context)
+                self.gl_context = NULL
+
+        elif current != NULL and SDL_GL_GetCurrentWindow() == self.window:
+
+            # Use the context current on this window: ours, or one SDL created.
+            if SDL_GL_MakeCurrent(self.window, current):
+                self.gl_context = current
+                return
+
+        elif self.gl_context != NULL and SDL_GL_MakeCurrent(self.window, self.gl_context):
+
+            # No context was current on this window, but ours could be made current.
+            return
 
         self.gl_context = SDL_GL_CreateContext(self.window)
 
@@ -369,8 +395,6 @@ cdef class Window:
             raise error()
 
         SDL_GL_MakeCurrent(self.window, self.gl_context)
-
-        return True
 
     def get_window_flags(self):
         rv = SDL_GetWindowFlags(self.window)
