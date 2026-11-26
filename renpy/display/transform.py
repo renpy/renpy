@@ -256,7 +256,7 @@ class TransformState(renpy.object.Object):
                 0,
                 cxoffset,
                 cyoffset,
-                False,
+                bool(self.subpixel),
             )
 
         return (
