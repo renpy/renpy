@@ -38,6 +38,9 @@ rather than skipping over them.
 Hyperlinks in dialogue after a ``{w}`` pause, or in text added by ``extend``, can only be clicked once they are shown,
 instead of being followed when the player clicked where the hidden hyperlink would later appear.
 
+Like ``say``, ``extend`` records what is being said before it is shown, so :func:`renpy.last_say` returns the
+extended text while it is displayed, rather than the text before the extend.
+
 Movies play at their full frame rate while a movie that doesn't loop and has finished is still shown, rather than
 dropping to about 10 frames per second, a problem introduced in 8.6.0.
 
