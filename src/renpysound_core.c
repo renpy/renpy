@@ -1398,7 +1398,10 @@ PyObject *RPS_read_video(int channel) {
     }
 
     c = &channels[channel];
-    MediaState *playing = c->playing;
+
+    /* An ENDED channel keeps its decoder only for an explicit seek, and has
+     * no frames to show. */
+    MediaState *playing = (c->state != CHANNEL_ENDED) ? c->playing : NULL;
 
     if (playing) {
         Py_BEGIN_ALLOW_THREADS
@@ -1440,7 +1443,10 @@ PyObject *RPS_read_video_yuv(int channel) {
 	}
 
 	c = &channels[channel];
-	if (!c->playing) {
+
+	/* An ENDED channel keeps its decoder only for an explicit seek, and has
+	 * no frames to show. */
+	if (!c->playing || c->state == CHANNEL_ENDED) {
 		Py_INCREF(Py_None);
 		return Py_None;
 	}
@@ -1482,7 +1488,10 @@ int RPS_video_ready(int channel) {
 
     c = &channels[channel];
 
-    if (c->playing) {
+    /* An ENDED channel keeps its decoder only for an explicit seek. Report it
+     * as ready, as before natural EOF retained the decoder, so that it doesn't
+     * hold back the redraw of other movies. */
+    if (c->playing && c->state != CHANNEL_ENDED) {
         rv = media_video_ready(c->playing);
     } else {
         rv = 1;

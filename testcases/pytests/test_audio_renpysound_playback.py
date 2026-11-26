@@ -22,13 +22,18 @@
 
 """
 Tests for renpysound's partial playback: sample-aligned start and end positions, rounding to whole samples,
-and natural clip durations.
+natural clip durations, and the state of a movie channel that has played to its end.
 """
 
+import io
 import os
+import threading
+import time
+from pathlib import Path
 
 import pytest
 
+import renpy.pygame
 from renpy.audio import renpysound
 
 from .audio_harness import assert_gapless, wav
@@ -86,3 +91,63 @@ def test_natural_duration_rounds_to_whole_samples(audio, samples):
     renpysound.periodic()
     assert_gapless(audio.read(samples))
     assert audio.read(1) == [0.0]
+
+
+@pytest.fixture
+def video_channel():
+    """
+    Mark channel 0 as a video channel for the test, and restore it to an audio-only channel afterwards.
+
+    The video decoder converts frames to the format of the sample surfaces, which the display normally provides at
+    startup; without a display, the test provides RGBA surfaces itself. The audio fixture's teardown doesn't reset the
+    video flag, so leaving it set would make later tests on channel 0 decode as video.
+    """
+
+    masks = (0xFF, 0xFF00, 0xFF0000, 0xFF000000)
+    rgba = renpy.pygame.Surface((10, 10), 0, 32, masks)
+    rgb = renpy.pygame.Surface((10, 10), 0, 32, masks[:3] + (0,))
+    renpysound.sample_surfaces(rgb, rgba)
+
+    renpysound.set_video(0, renpysound.NODROP_VIDEO)
+    yield
+    renpysound.stop(0)
+    renpysound.set_video(0, renpysound.NO_VIDEO)
+
+
+def test_ended_movie_reports_video_ready(audio, video_channel):
+    """
+    A movie channel that has played to its end reports a frame as ready, so it doesn't hold back other movies.
+
+    The display only redraws movies when every movie channel is ready, so an ended movie that reported not ready kept
+    every other movie on screen at about 10 frames per second (#7561). The movie is the tutorial's webm (VP8 and
+    Vorbis), cut to 0.3 seconds so reading its audio reaches the end quickly. The mixer is driven by reading its
+    output, so the loop reads until the channel reports that it ended. The display reads every frame it is offered, so
+    the test does the same: the queue of decoded frames is drained before checking readiness, because a frame still
+    waiting in the queue would make the channel ready regardless.
+    """
+
+    movie = Path(__file__).parents[2] / "tutorial" / "game" / "oa4_launch.webm"
+    if not movie.exists():
+        pytest.fail(f"Missing movie fixture {movie}.")
+
+    renpysound.play(0, io.BytesIO(movie.read_bytes()), "movie.webm", synchro_start=True, end=0.3)
+    audio.wait_ready(audio.channel.playing)
+    renpysound.periodic()
+
+    deadline = time.monotonic() + 5
+    event = threading.Event()
+    while renpysound.get_state(0) != 3:
+        assert time.monotonic() < deadline, "The movie did not reach its end."
+        audio.read(480)
+        renpysound.advance_time()
+        renpysound.read_video(0)
+        event.wait(0.001)
+
+    deadline = time.monotonic() + 5
+    while True:
+        renpysound.advance_time()
+        if renpysound.read_video(0) is None:
+            break
+        assert time.monotonic() < deadline, "The movie's frames were not drained."
+
+    assert renpysound.video_ready(0)

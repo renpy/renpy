@@ -38,6 +38,9 @@ rather than skipping over them.
 Hyperlinks in dialogue after a ``{w}`` pause, or in text added by ``extend``, can only be clicked once they are shown,
 instead of being followed when the player clicked where the hidden hyperlink would later appear.
 
+Movies play at their full frame rate while a movie that doesn't loop and has finished is still shown, rather than
+dropping to about 10 frames per second, a problem introduced in 8.6.0.
+
 On Windows, the list of input method (IME) candidates drawn by Ren'Py now highlights the selected candidate
 on every page of candidates, rather than only on the first. Pages of candidates also no longer repeat
 candidates from the previous page.
