@@ -76,7 +76,7 @@ cdef class GLStateCache:
 
     cpdef void reset(GLStateCache self)
 
-    cpdef void new_context(GLStateCache self, bint core_profile)
+    cpdef void new_context(GLStateCache self, bint core_profile, bint objects_lost=*)
 
     cdef void use_program(GLStateCache self, GLuint program)
 

@@ -123,20 +123,26 @@ cdef class GLStateCache:
 
             self.current_program = program
 
-    cpdef void new_context(GLStateCache self, bint core_profile):
+    cpdef void new_context(GLStateCache self, bint core_profile, bint objects_lost=True):
         """
         Forgets everything cached about the previous context, without making GL
         calls, as GL may not be loaded yet. The cache then matches a newly created
         context. A reused context may hold other state, so callers must also call
         reset() once GL is loaded and the default VAO exists.
+
+        If `objects_lost` is true, the context's buffers are gone, so the buffer
+        generation advances and mesh buffers from before are abandoned rather than
+        deleted. Pass False when the same context was made current again, so those
+        buffers stay in use and are deleted normally.
         """
 
         global buffer_generation
 
         cdef int i
 
-        buffer_generation += 1
-        self.buffer_generation = buffer_generation
+        if objects_lost:
+            buffer_generation += 1
+            self.buffer_generation = buffer_generation
 
         self.core_profile = core_profile
 

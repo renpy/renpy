@@ -31,14 +31,19 @@ cdef class TextureLoader:
     cdef GL2Draw draw
 
     # All the texture number currently allocated by this loader.
-    cdef set allocated
+    cdef readonly set allocated
 
-    # A list of (number, generation) pairs for textures that need to be freed.
-    cdef list free_list
+    # A list of texture numbers that need to be freed.
+    cdef readonly list free_list
+
+    # Increases each time the OpenGL context is replaced. A texture
+    # is only freed if it was created in the current generation, so a texture
+    # that outlives its context can't delete a texture in the new one.
+    cdef public unsigned long long generation
 
     # The total size (in bytes) of all the textures that have been allocated
     # but not deallocated.
-    cdef object total_texture_size
+    cdef readonly object total_texture_size
 
     # The program used for fast texture loading
     cdef Program ftl_program
@@ -61,12 +66,17 @@ cdef class GLTexture(GL2Model):
     # Has this texture been loaded yet?
     cdef public bint loaded
 
+    # The loader generation the texture number was created in.
+    cdef public unsigned long long generation
+
     # If we are doing in-place loading, this is the data that's used for
     # that.
     cdef Surface surface
 
     # The texture loader associated with this texture.
     cdef TextureLoader loader
+
+    cdef void set_number(GLTexture self, GLuint number)
 
     # The width and height of the texture. (Which may be a different size
     # than the model, if the texture is being rendered in the drawable

@@ -779,6 +779,11 @@ class Interface:
         # broken then without SDL reporting it. Consumed by the next full reset of the GL2 renderer.
         self.gl_context_force_new = False
 
+        # True when the GL context may have kept its handle but lost its objects, as a WebGL context does when the
+        # browser restores it, or a context SDL reports replacing does. Consumed by the next full reset of the GL2
+        # renderer, which then treats the context as new.
+        self.gl_context_objects_lost = False
+
         # True between WINDOWMINIMIZED and the WINDOWRESTORED or WINDOWMAXIMIZED that follows it.
         self.window_minimized = False
 
@@ -2149,8 +2154,18 @@ class Interface:
             if ev.type == pygame.TERMINATING:
                 sys.exit(0)
 
+            # SDL may replace the GL context while resuming. The reset below must know, as the new context's
+            # handle may equal the old one's.
+            if ev.type == pygame.RENDERDEVICERESET:
+                self.gl_context_objects_lost = True
+
             if ev.type == pygame.DIDENTERFOREGROUND:
                 break
+
+        # Take the event now, as the reset below handles it. Left queued, it would make the next reset treat the
+        # rebuilt context as replaced too, abandoning objects still in use.
+        if pygame.event.get(pygame.RENDERDEVICERESET):
+            self.gl_context_objects_lost = True
 
         print("Entering foreground. -------------------------------------------")
 
@@ -3024,6 +3039,7 @@ class Interface:
 
                     if emscripten.run_script_int("webglContextRestored"):
                         self.display_reset = True
+                        self.gl_context_objects_lost = True
                         emscripten.run_script("webglContextRestored = false;")
 
                 # Never draw while the window's OpenGL context isn't current. On Android, SDL releases the context
@@ -3553,7 +3569,10 @@ class Interface:
                         self.audio_paused = False
 
                 elif ev.type == pygame.RENDERDEVICERESET:
+                    # SDL sends this when it had to replace the GL context (on Android, when the context couldn't be
+                    # restored on resume). The new context's handle may equal the old one's, so say so explicitly.
                     self.display_reset = True
+                    self.gl_context_objects_lost = True
 
                 # This returns the event location. It also updates the
                 # mouse state as necessary.
