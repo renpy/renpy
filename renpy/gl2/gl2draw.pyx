@@ -2309,6 +2309,8 @@ cdef class GL2DrawingContext:
         if has_depth:
             glDisable(GL_DEPTH_TEST)
 
+            self.has_depth = False
+
         return 0
 
 
