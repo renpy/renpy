@@ -35,6 +35,7 @@ import time
 import wave
 
 from renpy.audio import renpysound
+from renpy.audio.audio import CHANNEL_STATES
 
 
 class ChannelHead(ctypes.Structure):
@@ -70,6 +71,7 @@ class MediaHead(ctypes.Structure):
         ("skip", ctypes.c_double),
         ("seek_requested", ctypes.c_int),
         ("seek_target", ctypes.c_double),
+        ("seeking", ctypes.c_int),
         ("audio_finished", ctypes.c_int),
         ("video_finished", ctypes.c_int),
         ("video_stream", ctypes.c_int),
@@ -179,6 +181,49 @@ class AudioHarness:
 
         address = ctypes.c_void_p.in_dll(self.native, "channels")
         return ctypes.cast(address, ctypes.POINTER(ChannelHead)).contents
+
+    @property
+    def state(self):
+        """
+        Return the lifecycle state of channel 0 by name, such as "playing" or "ended".
+        """
+
+        return CHANNEL_STATES[renpysound.get_state(0)]
+
+    def media(self, address):
+        """
+        Return a live view of the decoder at `address`, such as self.channel.playing.
+        """
+
+        return ctypes.cast(address, ctypes.POINTER(MediaHead)).contents
+
+    def wait_seek(self, position):
+        """
+        Poll until the playing decoder has finished seeking to `position` seconds and buffered at least 960 frames.
+
+        The decoder state is read while holding its lock. A seek is finished once neither a request is pending nor
+        the decoder is still carrying one out, which it does until it has decoded audio from the new position. Fails
+        after five seconds.
+        """
+
+        media = self.media(self.channel.playing)
+        deadline = time.monotonic() + 5
+        event = threading.Event()
+        while True:
+            self.native.SDL_LockMutex(media.lock)
+            try:
+                ready = (
+                    not media.seek_requested
+                    and not media.seeking
+                    and media.skip == position
+                    and media.audio_queue_samples >= 960
+                )
+            finally:
+                self.native.SDL_UnlockMutex(media.lock)
+            if ready:
+                return
+            assert time.monotonic() < deadline, "Audio seek did not finish decoding."
+            event.wait(0.001)
 
     def wait_ready(self, media):
         """

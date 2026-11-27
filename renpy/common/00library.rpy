@@ -214,8 +214,8 @@ init -1700 python:
             kw.update(kwargs)
             kw["interact"] = interact and kw.get("interact", True)
 
-            renpy.exports.say(who, what, *args, **kw)
             store._last_say_what = what
+            renpy.exports.say(who, what, *args, **kw)
 
         record_say = False
 

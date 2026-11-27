@@ -774,6 +774,19 @@ class Interface:
         # Should we reset the display?
         self.display_reset = False
 
+        # True to make the next display reset destroy the GL context and create a new one, rather than reuse the
+        # current one. Set on Windows when the window is restored from being minimized, since the context can be
+        # broken then without SDL reporting it. Consumed by the next full reset of the GL2 renderer.
+        self.gl_context_force_new = False
+
+        # True when the GL context may have kept its handle but lost its objects, as a WebGL context does when the
+        # browser restores it, or a context SDL reports replacing does. Consumed by the next full reset of the GL2
+        # renderer, which then treats the context as new.
+        self.gl_context_objects_lost = False
+
+        # True between WINDOWMINIMIZED and the WINDOWRESTORED or WINDOWMAXIMIZED that follows it.
+        self.window_minimized = False
+
         # True when the mobile reload save is waiting to be deleted after the app returned to the foreground.
         self.mobile_unlink_pending = False
 
@@ -2141,8 +2154,18 @@ class Interface:
             if ev.type == pygame.TERMINATING:
                 sys.exit(0)
 
+            # SDL may replace the GL context while resuming. The reset below must know, as the new context's
+            # handle may equal the old one's.
+            if ev.type == pygame.RENDERDEVICERESET:
+                self.gl_context_objects_lost = True
+
             if ev.type == pygame.DIDENTERFOREGROUND:
                 break
+
+        # Take the event now, as the reset below handles it. Left queued, it would make the next reset treat the
+        # rebuilt context as replaced too, abandoning objects still in use.
+        if pygame.event.get(pygame.RENDERDEVICERESET):
+            self.gl_context_objects_lost = True
 
         print("Entering foreground. -------------------------------------------")
 
@@ -3016,6 +3039,7 @@ class Interface:
 
                     if emscripten.run_script_int("webglContextRestored"):
                         self.display_reset = True
+                        self.gl_context_objects_lost = True
                         emscripten.run_script("webglContextRestored = false;")
 
                 # Never draw while the window's OpenGL context isn't current. On Android, SDL releases the context
@@ -3523,18 +3547,32 @@ class Interface:
                         renpy.audio.audio.pause_all()
 
                 elif ev.type == pygame.WINDOWMINIMIZED:
+                    self.window_minimized = True
+
                     if not renpy.game.preferences.audio_when_minimized and not renpy.emscripten:
                         renpy.audio.audio.pause_all()
                         self.audio_paused = True
 
                 elif ev.type == pygame.WINDOWRESTORED or ev.type == pygame.WINDOWMAXIMIZED:
+                    # On Windows, the GL context can be broken after the window is restored from being
+                    # minimized, without SDL reporting it, so replace it.
+                    if self.window_minimized:
+                        self.window_minimized = False
+
+                        if renpy.windows:
+                            self.gl_context_force_new = True
+                            self.display_reset = True
+
                     # unpause the audio
                     if pygame.display.get_active() and self.audio_paused:
                         renpy.audio.audio.unpause_all()
                         self.audio_paused = False
 
                 elif ev.type == pygame.RENDERDEVICERESET:
+                    # SDL sends this when it had to replace the GL context (on Android, when the context couldn't be
+                    # restored on resume). The new context's handle may equal the old one's, so say so explicitly.
                     self.display_reset = True
+                    self.gl_context_objects_lost = True
 
                 # This returns the event location. It also updates the
                 # mouse state as necessary.

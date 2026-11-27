@@ -889,7 +889,12 @@ class Channel(object):
         if not pcm_ok or self._number is None:
             return
 
-        renpysound.seek(self.number, position)
+        with lock:
+            renpysound.seek(self.number, position)
+
+            # A seek can restart audio that played to its end, which a force-stop must then stop.
+            if renpysound.queue_depth(self.number):
+                self.playing = True
 
     def set_pan(self, pan, delay):
         with lock:

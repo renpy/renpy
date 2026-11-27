@@ -167,6 +167,9 @@ Ren'Py statements are made of a few basic parts.
     Unicode characters between U+00a0 and U+fffd are considered to be
     letters.
 
+    When a name is used as a Python variable, Python's identifier rules apply
+    instead, as described under Variable in :ref:`python-basics`.
+
     .. warning::
 
         Names beginning with a single underscore (_) are reserved for
@@ -331,8 +334,16 @@ Here's a synopsis of Python expressions.
 :dfn:`Variable`
     Python expressions can use variables, that store values defined using the
     :ref:`define-statement` or the :ref:`default-statement`. A variable name
-    follows the rules of a :dfn:`name` as explained in
-    :ref:`elements-of-statements`. For example::
+    follows Python's rules for `identifiers
+    <https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords>`_,
+    which allow:
+
+    * Uppercase and lowercase letters (A-Z and a-z),
+    * The underscore (_),
+    * Digits (0 through 9), which cannot appear as the first character, and
+    * Non-ASCII letter-like and digit-like characters.
+
+    Examples of valid variable names include::
 
         playername
         love_love_points

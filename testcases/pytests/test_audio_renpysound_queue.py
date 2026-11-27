@@ -21,15 +21,18 @@
 
 
 """
-Tests for the renpysound channel queue: synchronized starts, queue replacement, and gapless handoff between clips.
+Tests for the renpysound channel queue: synchronized starts, queue replacement, gapless handoff between clips, and
+releasing the audio filter of a queued clip that is replaced or dropped.
 """
 
 import os
+import sys
 import threading
 import time
 
 import pytest
 
+import renpy.audio.filter
 from renpy.audio import renpysound
 
 from .audio_harness import assert_gapless, wav
@@ -174,3 +177,32 @@ def test_tight_fadeout_spans_late_queue(audio):
     assert output[0] > output[2400]
     assert output[2400] > output[-1]
     assert audio.read(1) == [0.0]
+
+
+@pytest.mark.parametrize(
+    "replace",
+    [
+        pytest.param(lambda: renpysound.play(0, wav(), "third.wav", end=-1), id="play"),
+        pytest.param(lambda: renpysound.fadeout(0, 0.05), id="fadeout"),
+    ],
+)
+def test_replaced_queued_audio_filter_is_released(audio, replace):
+    """
+    The audio filter of a queued clip is released when playing a new clip replaces it, or a fadeout drops it.
+
+    Playing a new clip cleared the wrong field while releasing the playing clip's filter, so the queued clip's filter
+    was never released. A fadeout freed the queued clip but kept its filter, which the handoff then moved onto a
+    channel with nothing playing. The reference count is the observable sign of the leak, since filters are plain
+    Python objects that the channel references from C.
+    """
+
+    playing_filter = renpy.audio.filter.Null()
+    queued_filter = renpy.audio.filter.Null()
+    baseline = sys.getrefcount(queued_filter)
+
+    audio.play(audio_filter=playing_filter)
+    audio.queue(audio_filter=queued_filter)
+    assert sys.getrefcount(queued_filter) > baseline
+
+    replace()
+    assert sys.getrefcount(queued_filter) == baseline

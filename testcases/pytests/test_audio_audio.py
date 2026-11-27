@@ -20,10 +20,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-"""Tests for parsing partial-playback audio specs such as ``<loop 1.0>music.ogg``."""
+"""Tests for Channel: parsing partial-playback audio specs such as ``<loop 1.0>music.ogg``, and seeking."""
 
 import pytest
 
+import renpy.audio.audio
 from renpy.audio.audio import AudioData, Channel
 
 
@@ -60,3 +61,24 @@ def test_loop_spec_on_audio_data(channel):
         assert isinstance(split, AudioData)
         assert str(split) == "first.wav"
         assert split.data == data
+
+
+@pytest.mark.parametrize("depth", [0, 1])
+def test_seek_marks_restarted_channel_playing(mocker, channel, depth):
+    """
+    A seek that leaves the backend with audio marks the channel as playing, so that a force-stop stops it.
+
+    A seek can restart audio that played to its end, after which the channel had been marked as not playing, so
+    muting a channel that stops on mute silenced the audio rather than stopping it. A seek on an idle channel leaves
+    the channel as it was. The native backend is patched, since the test covers the channel's bookkeeping.
+    """
+
+    channel._number = 0
+    channel.playing = False
+    mocker.patch.object(renpy.audio.audio, "pcm_ok", True)
+    mocker.patch.object(renpy.audio.audio.renpysound, "seek")
+    mocker.patch.object(renpy.audio.audio.renpysound, "queue_depth", return_value=depth)
+
+    channel.seek(0.25)
+
+    assert channel.playing == (depth > 0)

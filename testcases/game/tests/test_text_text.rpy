@@ -119,3 +119,53 @@ testsuite safe_text:
         run Start("safe_text__failed_tag_closed")
 
         assert eval (safe_text__segments() == [("size=abc", True), ("x", True), (" y", True)]) timeout 2.0
+
+
+# ==================
+# === Hyperlinks ===
+# ==================
+
+init python:
+
+    def hyperlink_focus__links():
+        """The hyperlink numbers in the say statement that can currently be focused, and so clicked."""
+        what = safe_text__what()
+        return [ f.arg for f in renpy.display.focus.focus_list if (what is not None) and (f.widget is what) ]
+
+label hyperlink_focus__pause:
+    "Shown.{w} Then {a=https://example.com/}LINK{/a}."
+    return
+
+label hyperlink_focus__space:
+    "Shown.{w} Then {a=https://example.com/}LI{space=40}NK{/a}."
+    return
+
+label hyperlink_focus__extend:
+    "Shown."
+    extend " Then {a=https://example.com/}LINK{/a}."
+    return
+
+testsuite hyperlink_focus:
+
+    after testcase:
+        if not screen "main_menu":
+            run MainMenu(confirm=False, save=False)
+
+    testcase hidden_link_is_not_focusable:
+        description "A hyperlink after a pause or in an extend can't be clicked until it is shown"
+        # The hidden text is laid out, but not drawn. Its link used to be given a focus area once the shown text
+        # finished, so clicking where the link would later appear followed it. A {space} in a link has a glyph of its
+        # own, which needs clearing too.
+        parameter label = [ "hyperlink_focus__pause", "hyperlink_focus__space", "hyperlink_focus__extend" ]
+
+        run Start(label)
+
+        assert eval (safe_text__hides_tail() is True) timeout 2.0
+
+        # The hidden link used to become focusable once the shown part finished displaying.
+        assert eval (safe_text__what().slow is False) timeout 2.0
+        assert eval (hyperlink_focus__links() == [])
+
+        keysym "dismiss" until eval (safe_text__hides_tail() is False)
+
+        assert eval (hyperlink_focus__links() == [1]) timeout 2.0
