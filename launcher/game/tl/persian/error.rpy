@@ -67,7 +67,7 @@ translate persian strings:
 
     # renpy/common/00gltest.rpy:244
     old "Performance Warning"
-    new "هشدار کارآیی"
+    new "هشدار عملکرد"
 
     # renpy/common/00gltest.rpy:249
     old "This computer is using software rendering."
@@ -83,7 +83,7 @@ translate persian strings:
 
     # renpy/common/00gltest.rpy:257
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
-    new "درایورهای گرافیکی ممکن است به روز نباشند یا به درستی عمل نمی‌کنند. این ممکن است سبب کندی یا اشتباه در نمایش گرافیکی شود."
+    new "درایورهای گرافیکی ممکن است به‌روز نباشند یا به درستی عمل نمی‌کنند. این ممکن است سبب کندی یا اشتباه در نمایش گرافیکی شود."
 
     # renpy/common/00gltest.rpy:261
     old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
@@ -95,11 +95,11 @@ translate persian strings:
 
     # renpy/common/00gltest.rpy:271
     old "Continue, Show this warning again"
-    new "ادامه، نمایش دوبارۀ این هشدار"
+    new "ادامه، نمایش دوبارهٔ این هشدار"
 
     # renpy/common/00gltest.rpy:275
     old "Continue, Don't show warning again"
-    new "ادامه، عدم نمایش دوبارۀ این هشدار"
+    new "ادامه، عدم نمایش دوبارهٔ این هشدار"
 
     # renpy/common/00gltest.rpy:283
     old "Change render options"
@@ -107,11 +107,11 @@ translate persian strings:
 
     # renpy/common/00gamepad.rpy:33
     old "Select Gamepad to Calibrate"
-    new "دستۀ بازی را برای واسنجی کردن انتخاب کنید"
+    new "دستهٔ بازی را برای واسنجی کردن انتخاب کنید"
 
     # renpy/common/00gamepad.rpy:36
     old "No Gamepads Available"
-    new "هیچ‌دستۀ بازی موجود نیست"
+    new "هیچ‌دستهٔ بازی موجود نیست"
 
     # renpy/common/00gamepad.rpy:56
     old "Calibrating [name] ([i]/[total])"
@@ -163,7 +163,7 @@ translate persian strings:
 
     # renpy/common/_errorhandling.rpym:741
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "تلاش به عقب‌گرد رفتن به یک زمان قبل‌تر می‌کند و به شما این اجازه را می‌دهد که ذخیره کرده یا یک گزینۀ دیگر را انتخاب بکنید."
+    new "تلاش به عقب‌گرد رفتن به یک زمان قبل‌تر می‌کند و به شما این اجازه را می‌دهد که ذخیره کرده یا یک گزینهٔ دیگر را انتخاب بکنید."
 
     # renpy/common/_errorhandling.rpym:744
     old "Ignore"
@@ -171,11 +171,11 @@ translate persian strings:
 
     # renpy/common/_errorhandling.rpym:748
     old "Ignores the exception, allowing you to continue."
-    new "استثناء را نادیده می‌گیرد و به شما اجازۀ ادامه دادن را می‌دهد."
+    new "استثناء را نادیده می‌گیرد و به شما اجازهٔ ادامه دادن را می‌دهد."
 
     # renpy/common/_errorhandling.rpym:750
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "استثناء را نادیده می‌گیرد و به شما اجازۀ ادامه دادن را می‌دهد. این معمولاً سبب خطاهای بیشتر می‌شود."
+    new "استثناء را نادیده می‌گیرد و به شما اجازهٔ ادامه دادن را می‌دهد. این معمولاً سبب خطاهای بیشتر می‌شود."
 
     # renpy/common/_errorhandling.rpym:754
     old "Reload"
@@ -199,4 +199,4 @@ translate persian strings:
 
     # renpy/common/_errorhandling.rpym:796
     old "Parsing the script failed."
-    new "تجزیۀ اسکریپ ناموفق بود."
+    new "تجزیهٔ اسکریپ ناموفق بود."

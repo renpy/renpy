@@ -68,8 +68,6 @@ Persian
 
 Translation to the Persian language. Some translated terms have the original
 English term in brackets, and some terms have only been transliterated, as the
-original term is more commonly used. The translated comments are written based
-on the United Nations Romanization System for Persian, rather than actual
-Persian to avoid issues in text and code editors.
+original term is more commonly used.
 
 * Gekkou Translations <gekkoutranslations@gmail.com>
