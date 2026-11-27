@@ -3,7 +3,7 @@ translate arabic strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
-    new "{#weekday}الأثنين"
+    new "{#weekday}الاثنين"
 
     # 00action_file.rpy:26
     old "{#weekday}Tuesday"
@@ -163,27 +163,27 @@ translate arabic strings:
 
     # 00gui.rpy:227
     old "Are you sure?"
-    new "هل انت متأكد؟"
+    new "هل أنت متأكد؟"
 
     # 00gui.rpy:228
     old "Are you sure you want to delete this save?"
-    new "هل انت متأكد من رغبتك في حذف خانة الحفظ هذه؟"
+    new "هل أنت متأكد من رغبتك في حذف خانة الحفظ هذه؟"
 
     # 00gui.rpy:229
     old "Are you sure you want to overwrite your save?"
-    new "هل انت متأكد من رغبتك في الحفظ على هذه الخانة؟"
+    new "هل أنت متأكد من رغبتك في الحفظ على هذه الخانة؟"
 
     # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "الاسترجاع سيضيع كل ما فعلته منذ خانة الحفظ السابقة. \n هل انت متأكد من رغبتك في الاسترجاع إلى هذه النقطة؟"
+    new "الاسترجاع سيضيع كل ما فعلته منذ خانة الحفظ السابقة. \n هل أنت متأكد من رغبتك في الاسترجاع إلى هذه النقطة؟"
 
     # 00gui.rpy:231
     old "Are you sure you want to quit?"
-    new "هل انت متأكد من رغبتك في الخروج؟"
+    new "هل أنت متأكد من رغبتك في الخروج؟"
 
     # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "هل انت متأكد من رغبتك في العودة للقائمة الرئيسية؟ \n كل ما لم تقم بحفظة سيضيع."
+    new "هل أنت متأكد من رغبتك في العودة للقائمة الرئيسية؟ \n كل ما لم تقم بحفظة سيضيع."
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
@@ -191,15 +191,15 @@ translate arabic strings:
 
     # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
-    new "هل أنت متأكد من رغبتك في البدء بالتسريع؟"
+    new "هل أنت متأكد من رغبتك في بدء التخطي؟"
 
     # 00gui.rpy:235
     old "Are you sure you want to skip to the next choice?"
-    new "هل انت متأكد من رغبتك في التسريع حتى الخيار التالي؟"
+    new "هل أنت متأكد من رغبتك في التخطي حتى الخيار التالي؟"
 
     # 00gui.rpy:236
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "هل أنت متأكد من رغبتك في تسريع كل الحوارات حتى التي لم تسبق رؤيتها؟"
+    new "هل أنت متأكد من رغبتك في تخطي كل الحوارات حتى التي لم تسبق رؤيتها؟"
 
     # 00keymap.rpy:250
     old "Saved screenshot as %s."
@@ -219,7 +219,7 @@ translate arabic strings:
 
     # 00library.rpy:179
     old "Skip Mode"
-    new "وضع التسريع"
+    new "وضع التخطي"
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."

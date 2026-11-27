@@ -4,6 +4,15 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+.. _renpy-8.6.3:
+
+8.6.3
+=====
+
+Translations
+------------
+
+The Question has been translated into Arabic with an RTL layout.
 
 .. _renpy-8.6.2:
 

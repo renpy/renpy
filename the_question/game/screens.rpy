@@ -806,6 +806,7 @@ screen preferences():
                     textbutton "한국어" text_font "SourceHanSansLite.ttf" action Language("korean")
                     textbutton "简体中文" text_font "SourceHanSansLite.ttf" action Language("schinese")
                     textbutton "繁體中文" text_font "SourceHanSansLite.ttf" action Language("tchinese")
+                    textbutton "العربية" text_font "DejaVuSans.ttf" action Language("arabic")
 
 #end language_picker
 

@@ -83,6 +83,11 @@ define gui.notify_text_size = 16
 ## The size of the game's title.
 define gui.title_text_size = 50
 
+## The outline around the game's title
+define gui.title_text_outlines = [(2, "#0005", 0, 0), (1, "#0005", 0, 0)]
+
+## The outline around the game's title
+define gui.version_text_outlines = [(2, "#0005", 0, 0), (1, "#0005", 0, 0)]
 
 ## Main and Game Menus #########################################################
 

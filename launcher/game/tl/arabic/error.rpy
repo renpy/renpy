@@ -151,7 +151,7 @@ translate arabic strings:
 
     # _errorhandling.rpym:548
     old "Reload"
-    new "إعادة المحاولة"
+    new "إعادة تحميل"
 
     # _errorhandling.rpym:550
     old "Reloads the game from disk, saving and restoring game state if possible."
