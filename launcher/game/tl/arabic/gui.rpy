@@ -235,7 +235,7 @@ translate arabic strings:
 
     # gui.rpy:252
     old "## The vertical position of the skip indicator."
-    new "## موقع مؤشر استمرار الحوار رأسياً."
+    new "## موقع مؤشر التخطي رأسياً."
 
     # gui.rpy:255
     old "## The vertical position of the notify screen."
@@ -283,7 +283,7 @@ translate arabic strings:
 
     # gui.rpy:288
     old "## The frame that is used as part of the skip screen."
-    new "## الإطار المستخدم في صفحة التسريع."
+    new "## الإطار المستخدم في صفحة التخطي."
 
     # gui.rpy:291
     old "## The frame that is used as part of the notify screen."
