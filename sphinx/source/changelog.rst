@@ -146,6 +146,10 @@ been drawn over 0.5 seconds after it returns to the foreground.
 
 A perspective camera can now handle subpixel positioning. This removes visible stepping during slow camera animations.
 
+The ``renpy.sound.play`` and ``renpy.sound.stop`` functions fade out over :var:`config.fadeout_audio` by
+default, reducing pops, as the ``play sound`` and ``stop sound`` statements already did. A fadeout of 0, given to
+either the functions or the statements, stops the sound immediately.
+
 .. _renpy-8.6.1:
 
 8.6.1
