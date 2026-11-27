@@ -163,28 +163,6 @@ def assert_opus_matches(output, reference, start, rate=48000):
         assert error <= 0.01, f"Opus decoder has not warmed up at {begin}-{end} ms."
 
 
-def wait_seek(audio, position):
-    """
-    Poll until the playing decoder has finished seeking to `position` seconds and buffered at least 960 frames.
-
-    The decoder state is read while holding its lock. Fails after five seconds.
-    """
-
-    media = ctypes.cast(audio.channel.playing, ctypes.POINTER(MediaHead)).contents
-    deadline = time.monotonic() + 5
-    event = threading.Event()
-    while True:
-        audio.native.SDL_LockMutex(media.lock)
-        try:
-            ready = not media.seek_requested and media.skip == position and media.audio_queue_samples >= 960
-        finally:
-            audio.native.SDL_UnlockMutex(media.lock)
-        if ready:
-            return
-        assert time.monotonic() < deadline, "Audio seek did not finish decoding."
-        event.wait(0.001)
-
-
 # -----------------------------------------------------------------------------
 # Seeking and looping
 # -----------------------------------------------------------------------------
@@ -243,7 +221,7 @@ def test_opus_runtime_seeks_match_continuous_decode(audio):
     for position in [1.0, 0.05, 2.0, 0.0, 2.9]:
         renpysound.pause(0)
         renpysound.seek(0, position)
-        wait_seek(audio, position)
+        audio.wait_seek(position)
         assert audio.native.SDL_ClearAudioStream(audio.stream), audio.native.SDL_GetError()
         renpysound.unpause(0)
         start = round(position * 48000)

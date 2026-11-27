@@ -216,9 +216,13 @@ typedef struct MediaState {
 	/* The number of seconds to skip at the start. */
 	double skip;
 
-	/* A seek requested by the audio callback thread. Protected by lock. */
+	/* A seek requested by media_seek, and its target. Protected by lock. */
 	int seek_requested;
 	double seek_target;
+
+	/* True while the decode thread carries out a seek, until it has decoded
+	 * from the new position. Protected by lock. */
+	int seeking;
 
 	/* These become true when the audio and video finish. */
 	int audio_finished;
@@ -621,6 +625,7 @@ static AVPacket *read_packet(MediaState *ms, PacketQueue *pq) {
 		}
 
 		if (av_read_frame(ms->ctx, pkt)) {
+			av_packet_free(&pkt);
 			return NULL;
 		}
 
@@ -1289,11 +1294,10 @@ int media_read_video_yuv(MediaState *ms, MediaVideoYUV *rv) {
 
 	SDL_LockMutex(ms->lock);
 
-#ifndef __EMSCRIPTEN__
-	while (!ms->ready) {
-		SDL_WaitCondition(ms->cond, ms->lock);
+	/* Don't wait for the decoder, which may need the caller's GIL. */
+	if (!ms->ready) {
+		goto done;
 	}
-#endif
 
 	if (ms->pause_time > 0 || !ms->surface_queue_size || !ms->surface_queue->yuv) {
 		goto done;
@@ -1445,11 +1449,10 @@ SDL_Surface *media_read_video(MediaState *ms) {
 
 	SDL_LockMutex(ms->lock);
 
-#ifndef __EMSCRIPTEN__
-	while (!ms->ready) {
-	    SDL_WaitCondition(ms->cond, ms->lock);
+	/* Don't wait for the decoder, which may need the caller's GIL. */
+	if (!ms->ready) {
+		goto done;
 	}
-#endif
 
 	if (ms->pause_time > 0) {
 	    goto done;
@@ -1591,12 +1594,15 @@ static int decode_thread(void *arg) {
 	}
 
 	while (!ms->quit) {
+		int seek = 0;
 		double seek_target = -1.0;
 
 		SDL_LockMutex(ms->lock);
 		if (ms->seek_requested) {
+			seek = 1;
 			seek_target = ms->seek_target;
 			ms->seek_requested = 0;
+			ms->seeking = 1;
 		}
 		SDL_UnlockMutex(ms->lock);
 
@@ -1606,8 +1612,11 @@ static int decode_thread(void *arg) {
 				seek_target = maximum;
 			}
 
+			/* av_seek_frame flushes the demuxer itself. Flushing again
+			 * afterwards would forget the position it set, so formats whose
+			 * packets carry no timestamps, like WAV, would be taken to start
+			 * at 0 and lose another seek_target of audio. */
 			if (seek_media(ms, seek_target) >= 0) {
-				avformat_flush(ctx);
 				if (ms->audio_context) {
 					avcodec_flush_buffers(ms->audio_context);
 				}
@@ -1641,6 +1650,11 @@ static int decode_thread(void *arg) {
 			SDL_BroadcastCondition(ms->cond);
 		}
 
+		/* The audio from the new position has been decoded. */
+		if (seek) {
+			ms->seeking = 0;
+		}
+
 		if (!(ms->needs_decode || ms->quit)) {
 			SDL_WaitCondition(ms->cond, ms->lock);
 		}
@@ -1665,6 +1679,11 @@ finish:
 	}
 
 	while (!ms->quit) {
+		/* The decoder has stopped, so it can't carry out a seek. Don't
+		 * leave the audio callback waiting for one. */
+		ms->seek_requested = 0;
+		ms->seeking = 0;
+
 		SDL_WaitCondition(ms->cond, ms->lock);
 	}
 
@@ -1827,12 +1846,22 @@ void media_read_sync(struct MediaState *ms) {
 }
 
 
+/*
+ * Reads up to len bytes of audio into stream, and returns the number of bytes
+ * read, 0 at the end of the stream. Returns -1, reading nothing, while a seek
+ * is in progress, since the decoder has no audio from the new position yet.
+ */
 int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 #ifdef __EMSCRIPTEN__
     media_read_sync(ms);
 #endif
 
 	SDL_LockMutex(ms->lock);
+
+	if (ms->seek_requested || ms->seeking) {
+		SDL_UnlockMutex(ms->lock);
+		return -1;
+	}
 
     if(!ms->ready) {
 	    SDL_UnlockMutex(ms->lock);
@@ -2037,7 +2066,7 @@ void media_seek(MediaState *ms, double position) {
         return;
     }
 
-    avformat_flush(ms->ctx);
+    /* As in decode_thread, av_seek_frame has already flushed the demuxer. */
     if (ms->audio_context) {
         avcodec_flush_buffers(ms->audio_context);
     }

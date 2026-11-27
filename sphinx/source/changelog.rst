@@ -38,6 +38,26 @@ rather than skipping over them.
 Hyperlinks in dialogue after a ``{w}`` pause, or in text added by ``extend``, can only be clicked once they are shown,
 instead of being followed when the player clicked where the hidden hyperlink would later appear.
 
+Like ``say``, ``extend`` records what is being said before it is shown, so :func:`renpy.last_say` returns the
+extended text while it is displayed, rather than the text before the extend.
+
+Movies play at their full frame rate while a movie that doesn't loop and has finished is still shown, rather than
+dropping to about 10 frames per second, a problem introduced in 8.6.0.
+
+The display keeps running while a movie starts, rather than freezing until the movie's first frame has been decoded.
+Until then, the movie shows its `start_image`, if it has one.
+
+Ren'Py doesn't crash when a movie loops, stops, or changes while one of its frames is being read, or when an audio
+channel is used for the first time while other audio is playing. These crashes were rare.
+
+:func:`renpy.music.seek` plays audio from the requested position. Since 8.6.0, a WAV file played from twice that
+position, and seeking audio that had finished playing could leave the channel stopped.
+
+Muting a channel stops a sound that :func:`renpy.music.seek` restarted after it finished, rather than only silencing
+it.
+
+Audio filters are released when the audio they apply to is replaced or faded out, rather than staying in memory.
+
 On Windows, the list of input method (IME) candidates drawn by Ren'Py now highlights the selected candidate
 on every page of candidates, rather than only on the first. Pages of candidates also no longer repeat
 candidates from the previous page.
@@ -123,6 +143,12 @@ command can't be undefined or null" in the Tasks output.
 
 On Android and iOS, the reload save made when the game goes to the background is kept until at least 10 frames have
 been drawn over 0.5 seconds after it returns to the foreground.
+
+A perspective camera can now handle subpixel positioning. This removes visible stepping during slow camera animations.
+
+The ``renpy.sound.play`` and ``renpy.sound.stop`` functions fade out over :var:`config.fadeout_audio` by
+default, reducing pops, as the ``play sound`` and ``stop sound`` statements already did. A fadeout of 0, given to
+either the functions or the statements, stops the sound immediately.
 
 .. _renpy-8.6.1:
 

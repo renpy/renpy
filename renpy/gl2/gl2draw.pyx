@@ -720,16 +720,29 @@ cdef class GL2Draw:
                 # replaced, freeing it after the new context reuses its number would delete a new program.
                 self.texture_loader.ftl_program = None
 
+                # Delete the textures that can be freed while the old context is current, before new_context
+                # makes the loader forget them. If no context is current, they stay queued.
+                renpy.display.interface.kill_textures()
+
         if full_reset:
             # On the first call, init has just set up the context, so there's nothing to replace.
             force_new = renpy.display.interface.gl_context_force_new and not first
             renpy.display.interface.gl_context_force_new = False
 
-            # The context may have been replaced, so everything below treats it as new.
-            pygame.display.get_window().recreate_gl_context(always=force_new)
+            # The context may have been replaced, so the GL state below is reset either way.
+            replaced = pygame.display.get_window().recreate_gl_context(always=force_new)
+
+            # A restored WebGL context keeps its handle, but loses its objects.
+            replaced = replaced or renpy.display.interface.gl_context_objects_lost
+            renpy.display.interface.gl_context_objects_lost = False
 
             if not first:
-                renpy.display.interface.kill_textures()
+                # A replaced context took its textures with it, and their numbers may be reused. A kept context
+                # deletes the textures that stayed queued because no context was current before.
+                if replaced:
+                    self.texture_loader.new_context()
+                else:
+                    self.texture_loader.cleanup()
 
                 # Delete the GL objects the state cache is about to forget, in case the context was kept. If it
                 # was replaced, the new context doesn't have these names yet, so deleting them does nothing.
@@ -740,7 +753,8 @@ cdef class GL2Draw:
                     glDeleteVertexArrays(1, &self.default_vao)
                     self.default_vao = 0
 
-                self.state_cache.new_context(self.context_uses_core_profile(get_gl_string(GL_VERSION)))
+                # Mesh buffers survive in a kept context, so only a replaced one starts a new buffer generation.
+                self.state_cache.new_context(self.context_uses_core_profile(get_gl_string(GL_VERSION)), replaced)
 
                 if self.state_cache.core_profile:
                     self.create_default_vao()
@@ -1874,7 +1888,13 @@ cdef class GL2Draw:
         return rv
 
     def kill_textures(self):
+        """
+        Called when the caches holding textures have been emptied. Deletes the textures that were freed, and drops
+        the textures queued to load ahead of time, which load when they're drawn instead.
+        """
+
         if self.texture_loader is not None:
+            self.texture_loader.dequeue_textures()
             self.texture_loader.cleanup()
 
     def event_peek_sleep(self):
@@ -2308,6 +2328,8 @@ cdef class GL2DrawingContext:
 
         if has_depth:
             glDisable(GL_DEPTH_TEST)
+
+            self.has_depth = False
 
         return 0
 

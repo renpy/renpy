@@ -870,9 +870,10 @@ Media (Music, Sound, and Video)
 .. var:: config.fadeout_audio = 0.016
 
     The default audio fadeout time that's used to fade out audio, when
-    audio is stopped with the ``stop`` statement or :func:`renpy.music.stop`,
-    or when a new audio track is started with the ``play`` statement or
-    :func:`renpy.music.play`. This is not used when queued audio begins.
+    audio is stopped with the ``stop`` statement, :func:`renpy.music.stop`, or
+    ``renpy.sound.stop``, or when a new audio track is started with the
+    ``play`` statement, :func:`renpy.music.play`, or ``renpy.sound.play``.
+    This is not used when queued audio begins.
 
     A short fadeout is the default to prevent clicks and pops when
     audio is stopped or changed.
