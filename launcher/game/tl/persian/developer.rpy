@@ -27,7 +27,7 @@ translate persian strings:
 
     # renpy/common/_developer/developer.rpym:54
     old "Image Location Picker"
-    new "انتخاب کنندۀ مکان عکس"
+    new "انتخاب کنندهٔ مکان تصویر"
 
     # renpy/common/_developer/developer.rpym:56
     old "Filename List"
@@ -35,15 +35,15 @@ translate persian strings:
 
     # renpy/common/_developer/developer.rpym:60
     old "Show Image Load Log (F4)"
-    new "نمایش گزارش بارگذاری عکس (F4)"
+    new "نمایش گزارش بارگذاری تصویر (F4)"
 
     # renpy/common/_developer/developer.rpym:63
     old "Hide Image Load Log (F4)"
-    new "پنهان کردن گزارش بارگذاری عکس (F4)"
+    new "پنهان کردن گزارش بارگذاری تصویر (F4)"
 
     # renpy/common/_developer/developer.rpym:66
     old "Image Attributes"
-    new "صفات عکس"
+    new "صفات تصویر"
 
     # renpy/common/_developer/developer.rpym:70
     old "Show Translation Info"
@@ -67,7 +67,7 @@ translate persian strings:
 
     # renpy/common/_developer/developer.rpym:129
     old "Layer [l]:"
-    new "لایۀ [l]:"
+    new "لایهٔ [l]:"
 
     # renpy/common/_developer/developer.rpym:133
     old "    [name!q] [attributes!q] (hidden)"
@@ -119,7 +119,7 @@ translate persian strings:
 
     # renpy/common/_developer/developer.rpym:548
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
-    new "حافطۀ نهان تصاویر: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    new "حافطهٔ نهان تصاویر: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
 
     # renpy/common/_developer/developer.rpym:558
     old "✔ "
@@ -159,7 +159,7 @@ translate persian strings:
 
     # renpy/common/_developer/inspector.rpym:141
     old "displayable:"
-    new "Displayable:"
+    new "displayable:"
 
     # renpy/common/_developer/inspector.rpym:147
     old "        (no properties affect the displayable)"
@@ -211,7 +211,7 @@ translate persian strings:
 
     # renpy/common/00console.rpy:850
     old "clear: clear the console history"
-    new "clear: پاک کردن تاریخچۀ کنسول"
+    new "clear: پاک کردن تاریخچهٔ کنسول"
 
     # renpy/common/00console.rpy:854
     old "exit: exit the console"
@@ -219,7 +219,7 @@ translate persian strings:
 
     # renpy/common/00console.rpy:862
     old "stack: print the return stack"
-    new "stack: چاپ کردن پشتۀ برگشت"
+    new "stack: چاپ کردن پشتهٔ برگشت"
 
     # renpy/common/00console.rpy:884
     old "load <slot>: loads the game from slot"
@@ -227,7 +227,7 @@ translate persian strings:
 
     # renpy/common/00console.rpy:897
     old "save <slot>: saves the game in slot"
-    new "save <slot>: ذخیرۀ بازی در خانه"
+    new "save <slot>: ذخیرهٔ بازی در خانه"
 
     # renpy/common/00console.rpy:908
     old "reload: reloads the game, refreshing the scripts"
@@ -243,7 +243,7 @@ translate persian strings:
 
     # renpy/common/00console.rpy:999
     old "unwatchall: stop watching all expressions"
-    new "unwatchall: توقف تماشا کردن همۀ عبارات"
+    new "unwatchall: توقف تماشا کردن همهٔ عبارات"
 
     # renpy/common/00console.rpy:1020
     old "jump <label>: jumps to label"
@@ -264,3 +264,8 @@ translate persian strings:
     # renpy/common/00console.rpy:1048
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
     new "unescape: غیرفعال کردن رهایی نمادهای یونیکد در رشته‌های یونیکد و چاپ به همان صورت که هست (پیش‌فرض)"
+
+    # renpy/common/_developer/developer.rpym:144
+    old "    (transforms: [', '.join(transform_list)])"
+    new "    (تبدیلات: ['، '.join(transform_list)])"
+

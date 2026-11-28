@@ -63,7 +63,7 @@ translate persian strings:
 
     # renpy/common/00accessibility.rpy:159
     old "Text Size Scaling"
-    new "مقیاس اندازۀ فونت"
+    new "مقیاس اندازهٔ فونت"
 
     # renpy/common/00accessibility.rpy:165
     old "Reset"
@@ -71,7 +71,7 @@ translate persian strings:
 
     # renpy/common/00accessibility.rpy:171
     old "Line Spacing Scaling"
-    new "مقیاس فاصلۀ خطوط"
+    new "مقیاس فاصلهٔ خطوط"
 
     # renpy/common/00accessibility.rpy:183
     old "High Contrast Text"
@@ -91,7 +91,7 @@ translate persian strings:
 
     # renpy/common/00accessibility.rpy:199
     old "Self-voicing support is limited when using a touch screen."
-    new "پشتیبانی گفتار خودکار هنگام استفاده از صفحۀ لمسی محدود است."
+    new "پشتیبانی گفتار خودکار هنگام استفاده از صفحهٔ لمسی محدود است."
 
     # renpy/common/00accessibility.rpy:203
     old "Off"
@@ -115,7 +115,7 @@ translate persian strings:
 
     # renpy/common/00accessibility.rpy:238
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    new "تنظیمات داخل این منو برای بهبود دسترس‌پذیری در نظر گرفته شده‌اند. این تنظیمات ممکن است با بعضی از بازی‌ها کار نکنند، و بعضی از ترکیب تنظیمات ممکن است مانع اجرا شدن بازی شوند. این مشکل مربوط به بازی و یا موتور نیست. برای بهترین نتیجه هنگام تغییر فونت، سعی کنید اندازۀ متن را مشابه قبل نگه دارید."
+    new "تنظیمات داخل این منو برای بهبود دسترس‌پذیری در نظر گرفته شده‌اند. این تنظیمات ممکن است با بعضی از بازی‌ها کار نکنند، و بعضی از ترکیب تنظیمات ممکن است مانع اجرا شدن بازی شوند. این مشکل مربوط به بازی و یا موتور نیست. برای بهترین نتیجه هنگام تغییر فونت، سعی کنید اندازهٔ متن را مشابه قبل نگه دارید."
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Monday"
@@ -275,43 +275,43 @@ translate persian strings:
 
     # renpy/common/00action_file.rpy:395
     old "Save slot %s: [text]"
-    new "ذخیرۀ خانۀ %s: [text]"
+    new "ذخیرهٔ خانهٔ %s: [text]"
 
     # renpy/common/00action_file.rpy:481
     old "Load slot %s: [text]"
-    new "بارگذاری خانۀ %s: [text]"
+    new "بارگذاری خانهٔ %s: [text]"
 
     # renpy/common/00action_file.rpy:534
     old "Delete slot [text]"
-    new "حذف خانۀ %s: [text]"
+    new "حذف خانهٔ %s: [text]"
 
     # renpy/common/00action_file.rpy:613
     old "File page auto"
-    new "صفحۀ فایل اتوماتیک"
+    new "صفحهٔ فایل اتوماتیک"
 
     # renpy/common/00action_file.rpy:615
     old "File page quick"
-    new "صفحۀ فایل سریع"
+    new "صفحهٔ فایل سریع"
 
     # renpy/common/00action_file.rpy:617
     old "File page [text]"
-    new "صفحۀ فایل [text]"
+    new "صفحهٔ فایل [text]"
 
     # renpy/common/00action_file.rpy:816
     old "Next file page."
-    new "صفحۀ فایل بعدی."
+    new "صفحهٔ فایل بعدی."
 
     # renpy/common/00action_file.rpy:888
     old "Previous file page."
-    new "صفحۀ فایل قبلی."
+    new "صفحهٔ فایل قبلی."
 
     # renpy/common/00action_file.rpy:949
     old "Quick save complete."
-    new "ذخیرۀ سریع انجام شد."
+    new "ذخیرهٔ سریع انجام شد."
 
     # renpy/common/00action_file.rpy:964
     old "Quick save."
-    new "ذخیرۀ سریع."
+    new "ذخیرهٔ سریع."
 
     # renpy/common/00action_file.rpy:983
     old "Quick load."
@@ -455,7 +455,7 @@ translate persian strings:
 
     # renpy/common/00gui.rpy:450
     old "Are you sure you want to overwrite your save?"
-    new "آیا مایل به بازنویسی ذخیرۀ خود هستید؟"
+    new "آیا مایل به بازنویسی ذخیرهٔ خود هستید؟"
 
     # renpy/common/00gui.rpy:451
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
@@ -491,15 +491,15 @@ translate persian strings:
 
     # renpy/common/00gui.rpy:459
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
-    new "این ذخیره در یک دستگاه دیگر ساخته شده است. فایل‌های ذخیرۀ ساخته شده با سوءنیت ممکن است به رایانۀ شما آسیب برسانند. آیا به سازندۀ این ذخیره و تمام کسانی که ممکن است فایل را تغییر داده باشند اعتماد دارید؟"
+    new "این ذخیره در یک دستگاه دیگر ساخته شده است. فایل‌های ذخیرهٔ ساخته شده با سوءنیت ممکن است به رایانهٔ شما آسیب برسانند. آیا به سازندهٔ این ذخیره و تمام کسانی که ممکن است فایل را تغییر داده باشند اعتماد دارید؟"
 
     # renpy/common/00gui.rpy:460
     old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
-    new "آیا به دستگاهی که این ذخیره در آن ساخته شده اعتماد دارید؟ پیشنهاد می‌شود که فقط در صورتی گزینۀ بله را انتخاب کنید که شما تنها کاربر آن دستگاه باشید."
+    new "آیا به دستگاهی که این ذخیره در آن ساخته شده اعتماد دارید؟ پیشنهاد می‌شود که فقط در صورتی گزینهٔ بله را انتخاب کنید که شما تنها کاربر آن دستگاه باشید."
 
     # renpy/common/00keymap.rpy:325
     old "Failed to save screenshot as %s."
-    new "ذخیرۀ اسکرین‌شات به عنوان %s ناموفق شد."
+    new "ذخیرهٔ اسکرین‌شات به عنوان %s ناموفق شد."
 
     # renpy/common/00keymap.rpy:346
     old "Saved screenshot as %s."
@@ -531,7 +531,7 @@ translate persian strings:
 
     # renpy/common/00preferences.rpy:330
     old "show empty window"
-    new "نمایش پنجرۀ خالی"
+    new "نمایش پنجرهٔ خالی"
 
     # renpy/common/00preferences.rpy:339
     old "text speed"
@@ -663,7 +663,7 @@ translate persian strings:
 
     # renpy/common/00preferences.rpy:506
     old "font size"
-    new "اندازۀ فونت"
+    new "اندازهٔ فونت"
 
     # renpy/common/00preferences.rpy:514
     old "font line spacing"
@@ -687,15 +687,15 @@ translate persian strings:
 
     # renpy/common/00preferences.rpy:546
     old "audio when minimized"
-    new "صوت موقع مینیمایز شدن"
+    new "صوت هنگام مینیمایز شدن"
 
     # renpy/common/00preferences.rpy:555
     old "audio when unfocused"
-    new "صوت موقع غیرمتمرکز بودن"
+    new "صوت هنگام غیرمتمرکز بودن"
 
     # renpy/common/00preferences.rpy:564
     old "web cache preload"
-    new "پیش‌بارگذاری حافظۀ نهان وب"
+    new "پیش‌بارگذاری حافظهٔ نهان وب"
 
     # renpy/common/00preferences.rpy:579
     old "voice after game menu"
@@ -787,15 +787,15 @@ translate persian strings:
 
     # renpy/common/00sync.rpy:213
     old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
-    new "سرور همگام‌سازی Ren'Py نسخه‌ای از این همگام‌سازی ندارد. شناسۀ همگام‌سازی ممکن است نامعتبر باشد، یا زمان اتصال ممکن است به پایان رسیده باشد."
+    new "سرور همگام‌سازی Ren'Py نسخه‌ای از این همگام‌سازی ندارد. شناسهٔ همگام‌سازی ممکن است نامعتبر باشد، یا زمان اتصال ممکن است به پایان رسیده باشد."
 
     # renpy/common/00sync.rpy:316
     old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
-    new "لطفاً شناسۀ همگام‌سازی را که ساخته‌اید را وارد کنید.\nبه هیچ‌وجه شناسۀ همگام‌سازی که خودتان نساخته‌اید را وارد نکنید."
+    new "لطفاً شناسهٔ همگام‌سازی را که ساخته‌اید را وارد کنید.\nبه هیچ‌وجه شناسهٔ همگام‌سازی که خودتان نساخته‌اید را وارد نکنید."
 
     # renpy/common/00sync.rpy:335
     old "The sync ID is not in the correct format."
-    new "قالب شناسۀ همگام‌سازی نادرست می‌باشد."
+    new "قالب شناسهٔ همگام‌سازی نادرست می‌باشد."
 
     # renpy/common/00sync.rpy:355
     old "The sync could not be decrypted."
@@ -815,7 +815,7 @@ translate persian strings:
 
     # renpy/common/00sync.rpy:472
     old "Enter Sync ID"
-    new "شناسۀ همگام‌سازی را وارد کنید"
+    new "شناسهٔ همگام‌سازی را وارد کنید"
 
     # renpy/common/00sync.rpy:483
     old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
@@ -827,11 +827,11 @@ translate persian strings:
 
     # renpy/common/00sync.rpy:516
     old "The Sync ID is:"
-    new "شناسۀ همگام‌سازی:"
+    new "شناسهٔ همگام‌سازی:"
 
     # renpy/common/00sync.rpy:522
     old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
-    new "شما می‌توانید از این شناسه برای دانلود ذخیرۀ خود در یک دستگاه دیگر استفاده کنید.\nاین همگام‌سازی در یک ساعت منقضی خواهد شد.\nهمگام‌سازی Ren'Py توسط {a=https://www.renpy.org/sponsors.html}اسپانسور های Ren'Py{/a} پشتیبانی شده است."
+    new "شما می‌توانید از این شناسه برای دانلود ذخیرهٔ خود در یک دستگاه دیگر استفاده کنید.\nاین همگام‌سازی در یک ساعت منقضی خواهد شد.\nهمگام‌سازی Ren'Py توسط {a=https://www.renpy.org/sponsors.html}اسپانسور های Ren'Py{/a} پشتیبانی شده است."
 
     # renpy/common/00sync.rpy:526
     old "Continue"
@@ -843,7 +843,7 @@ translate persian strings:
 
     # renpy/common/00translation.rpy:63
     old "Translation identifier: [identifier]"
-    new "شناسۀ ترجمه: [identifier]"
+    new "شناسهٔ ترجمه: [identifier]"
 
     # renpy/common/00translation.rpy:84
     old " translates [tl.filename]:[tl.linenumber]"
@@ -879,11 +879,11 @@ translate persian strings:
 
     # renpy/common/00updater.rpy:967
     old "This account does not have permission to perform an update."
-    new "این حساب اجازۀ شروع یک به‌روزرسانی را ندارد."
+    new "این حساب اجازهٔ شروع یک به‌روزرسانی را ندارد."
 
     # renpy/common/00updater.rpy:970
     old "This account does not have permission to write the update log."
-    new "این حساب اجازۀ نوشتن گزارش به‌روزرسانی را ندارد."
+    new "این حساب اجازهٔ نوشتن گزارش به‌روزرسانی را ندارد."
 
     # renpy/common/00updater.rpy:1050
     old "Could not verify update signature."
@@ -903,11 +903,11 @@ translate persian strings:
 
     # renpy/common/00updater.rpy:2022
     old "Updater"
-    new "به روزرساننده"
+    new "به‌روزرساننده"
 
     # renpy/common/00updater.rpy:2033
     old "This program is up to date."
-    new "این برنامه به روز است."
+    new "این برنامه به‌روز است."
 
     # renpy/common/00updater.rpy:2035
     old "[u.version] is available. Do you want to install it?"
@@ -980,3 +980,116 @@ translate persian strings:
     # renpy/common/00gallery.rpy:666
     old "return"
     new "برگشت"
+
+    # renpy/common/000statements.rpy:28
+    old "Click to play the video."
+    new "برای پخش ویدیو کلیک کنید."
+
+    # renpy/common/00accessibility.rpy:143
+    old "Screen Reader"
+    new "صفحه‌خوان"
+
+    # renpy/common/00accessibility.rpy:183
+    old "Self-Voicing Speed"
+    new "سرعت گفتار خودکار"
+
+    # renpy/common/00accessibility.rpy:195
+    old "Mono Audio"
+    new "صوت مونو"
+
+    # renpy/common/00accessibility.rpy:205
+    old "Self-Voicing Voice"
+    new "صدای گفتار خودکار"
+
+    # renpy/common/00accessibility.rpy:230
+    old "DejaVu Sans"
+    new "DejaVu Sans"
+
+    # renpy/common/00accessibility.rpy:234
+    old "Opendyslexic"
+    new "Opendyslexic"
+
+    # renpy/common/00accessibility.rpy:272
+    old "Kerning"
+    new "کرنینگ"
+
+    # renpy/common/00accessibility.rpy:293
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars. Press R to reset self-voicing settings to their default values and enable self-voicing."
+    new "منوی دسترس‌پذیری. از کلیدهای فلش بالا و پایین برای هدایت، و از کلید enter برای فعال کردن دکمه‌ها و میله‌ها استفاده کنید. برای بازنشانی تنظیمات گفتار خودکار به مقدار اولیه و فعال کردن گفتار خودکار دکمهٔ R را فشار دهید."
+
+    # renpy/common/00accessibility.rpy:307
+    old "Self-Voicing and Audio"
+    new "گفتار خودکار و صوت"
+
+    # renpy/common/00accessibility.rpy:311
+    old "Text"
+    new "متن"
+
+    # renpy/common/00accessibility.rpy:335
+    old "Press R to reset all self-voicing settings to their default values, and enable self-voicing."
+    new "برای بازنشانی تمام تنظیمات گفتار خودکار به مقدار اولیه و فعال کردن گفتار خودکار دکمهٔ R را فشار دهید."
+
+    # renpy/common/00accessibility.rpy:342
+    old "Self-voicing settings reset."
+    new "بازنشانی تنظیمات گفتار خودکار."
+
+    # renpy/common/00keymap.rpy:355
+    old " Copied screenshot to clipboard."
+    new " اسکرین‌شات به کلیپ‌بورد کپی شد."
+
+    # renpy/common/00preferences.rpy:476
+    old "screenreader voicing"
+    new "صداگذاری صفحه‌خوان"
+
+    # renpy/common/00preferences.rpy:479
+    old "screenreader voicing enable"
+    new "فعال‌سازی صداگذاری صفحه‌خوان"
+
+    # renpy/common/00preferences.rpy:481
+    old "screenreader voicing disable"
+    new "غیرفعال‌سازی صداگذاری صفحه‌خوان"
+
+    # renpy/common/00preferences.rpy:619
+    old "mono audio"
+    new "صوت مونو"
+
+    # renpy/common/00preferences.rpy:628
+    old "font kerning"
+    new "کرنینگ فونت"
+
+    # renpy/common/00preferences.rpy:635
+    old "self voicing voice"
+    new "صدای گفتار خودکار"
+
+    # renpy/common/00preferences.rpy:637
+    old "voice [text]"
+    new "صدای [text]"
+
+    # renpy/common/00preferences.rpy:640
+    old "voice "
+    new "صدای "
+
+    # renpy/common/00preferences.rpy:648
+    old "self voicing speed"
+    new "سرعت گفتار خودکار"
+
+    # renpy/common/00preferences.rpy:651
+    old "self-voicing speed"
+    new "سرعت گفتار خودکار"
+
+    # renpy/common/00preferences.rpy:761
+    old "Screen reader voicing enabled. Press 'shift+V' to disable."
+    new "صداگذاری صفحه‌خوان فعال شد. برای غیرفعال کردن 'shift+V' را فشار دهید."
+
+    # renpy/common/00sync.rpy:577
+    old "Sync Progress"
+    new "همگام‌سازی پیشرفت"
+
+    # renpy/common/00updater.rpy:885
+    old "The update source does not support RPU updates."
+    new "منبع به‌روزرسانی از به‌روزرسانی‌های RPU پشتیبانی نمی‌کند."
+
+    # renpy/common/00updater.rpy:1375
+    old "An error occurred when trying to download game data:"
+    new "هنگام دانلود اطلاعات بازی یک خطا رخ داد:"
+

@@ -7,7 +7,7 @@ translate persian strings:
 
     # renpy/common/_layout/classic_load_save.rpym:138
     old "Empty Slot."
-    new "خانۀ خالی."
+    new "خانهٔ خالی."
 
     # renpy/common/_layout/classic_load_save.rpym:170
     old "a"

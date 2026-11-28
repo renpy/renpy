@@ -1,34 +1,33 @@
-﻿# Script-e bāzi dar in bāzi qarār migirad.
+﻿# اسکریپت بازی در این فایل قرار می‌گیرد.
 
-# Ta'rif-e šaxsiyat-hā-ye estefāde šode tavvasot-e in bāzi. Argumān-e
-# color nām-e šaxsiyat rā rangāmizi mikonad.
+# تعریف شخصیت‌های استفاده شده توسط این بازی. آرگومان color نام شخصیت را
+# رنگ‌آمیزی می‌کند.
 
 define e = Character("ایلین")
 
 
-# Bāzi injā šoru' mišavad.
+# بازی اینجا شروع می‌شود.
 
 label start:
 
-    # Namāyeš-e yek paszamine. In be surat-e pišfarz az yek tasvir-e
-    # movaqqati estefāde mikonad, vali šomā mitavānid yek file (be
-    # nām-e "bg room.png" yā "bg room.jpg") be puše-ye images ezāfe
-    # karde tā āz rā namāyeš dahid.
+    # نمایش یک پس‌زمینه. این به صورت پیش‌فرض از یک تصویر موقتی استفاده می‌کند،
+    # ولی شما می‌توانید یک فایل (به نام "bg room.png" یا "bg room.jpg") به پوشهٔ
+    # images اضافه کرده تا آن را نمایش دهید.
 
     scene bg room
 
-    # In yek sprite-e šaxsiyat rā namāyeš midahad. Yek tasvir-e movaqqati
-    # estefāde šode, vali šomā mitavānid ān rā bā ezāfe kardān-e yek file
-    # be nām-e "eileen happy.png" be puše-ye images jāygozin konid.
+    # این یک اسپرایت شخصیت را نمایش می‌دهد. یک تصویر موقتی استفاده شده، ولی شما
+    # می‌توانید آن را با اضافه کردن یک فایل به نام "eileen happy.png" به پوشهٔ
+    # images جایگزین کنید.
 
     show eileen happy
 
-    # Namāyeš-e in xotut-e diālog.
+    # نمایش این خطوط دیالوگ.
 
     e "شما یک بازی جدید Ren'Py ساختید."
 
     e "وقتی یک داستان، تصاویر، و موسیقی اضافه کنید، می‌توانید به دنیا انتشار کنید!"
 
-    # In bāzi rā tamām mikonad.
+    # این بازی را تمام می‌کند.
 
     return
