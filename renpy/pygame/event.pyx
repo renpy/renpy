@@ -190,6 +190,13 @@ cdef class EventBase:
     # through the queue. Stored outside __dict__, so it does not take part in equality or appear in `dict`.
     cdef public double timestamp
 
+    # True for a MOUSEMOTION event that poll_sdl created from SDL and that hasn't been posted since. Only these are
+    # updated with newer motion, which must have the SDL button state, mouse id, and window they were created from.
+    cdef bint mergeable_motion
+    cdef SDL_MouseButtonFlags motion_state
+    cdef SDL_MouseID motion_which
+    cdef SDL_WindowID motion_window
+
 
 class EventType(EventBase):
     """
@@ -734,7 +741,7 @@ def _push_mousewheel_event(x, y, integer_y, mouse_x, mouse_y, which=0, timestamp
         raise error()
 
 
-def _push_mousemotion_event(x, y, xrel, yrel, state=0, which=0, timestamp=0):
+def _push_mousemotion_event(x, y, xrel, yrel, state=0, which=0, timestamp=0, window_id=0):
     """
     Pushes an SDL mouse motion event onto SDL's queue, as a mouse would. This
     exists so tests can exercise the queue without a mouse. A `timestamp` of 0
@@ -747,6 +754,7 @@ def _push_mousemotion_event(x, y, xrel, yrel, state=0, which=0, timestamp=0):
     e.type = SDL_EVENT_MOUSE_MOTION
     e.common.timestamp = timestamp
     e.motion.which = which
+    e.motion.windowID = window_id
     e.motion.state = state
     e.motion.x = x
     e.motion.y = y
@@ -1182,13 +1190,83 @@ cdef object get_events(kinds):
     return rv
 
 
+# The types of events that newer mouse motion can be merged across. See
+# set_motion_merge_events.
+cdef frozenset motion_merge_events = frozenset()
+
+
+def set_motion_merge_events(types):
+    """
+    Sets the event types that newer mouse motion can be merged across, into
+    older motion queued ahead of them, replacing the types set before. These
+    should be events whose handling doesn't depend on the mouse position, like
+    timers. Merging stops at events of any other type.
+    """
+
+    global motion_merge_events
+    motion_merge_events = frozenset(types)
+
+
+cdef queue_mousemotion(SDL_Event *evt):
+    """
+    Adds a MOUSEMOTION event for `evt` to the event queue.
+
+    If the queue already holds motion that poll_sdl created with the same
+    button state, mouse id, and window, with only events of the types given to
+    set_motion_merge_events (such as Ren'Py's timer and redraw events) after
+    it, that event is updated in place to the new position and timestamp, and
+    given the new relative movement as well.
+    Keeping the older event's place means motion isn't pushed behind events
+    queued since. Otherwise, a new event is appended, so that motion is never
+    moved past input events, such as the button press that changed the state,
+    or past other motion. Posted motion events are never updated.
+
+    The lock must be held when calling this function.
+    """
+
+    cdef SDL_MouseMotionEvent *mm = &evt.motion
+    cdef EventBase old
+    cdef Py_ssize_t i
+
+    for i in range(len(event_queue) - 1, -1, -1):
+        o = event_queue[i]
+        old = <EventBase?> o
+
+        if (
+            old.mergeable_motion
+            and old.motion_state == mm.state
+            and old.motion_which == mm.which
+            and old.motion_window == mm.windowID
+        ):
+            oxrel, oyrel = o.rel
+            o.pos = (mm.x, mm.y)
+            o.rel = (oxrel + mm.xrel, oyrel + mm.yrel)
+            stamp_event(o, evt.common.timestamp)
+            return
+
+        if o._type not in motion_merge_events:
+            break
+
+    e = make_mousemotion_event(mm)
+    stamp_event(e, evt.common.timestamp)
+
+    old = <EventBase> e
+    old.mergeable_motion = True
+    old.motion_state = mm.state
+    old.motion_which = mm.which
+    old.motion_window = mm.windowID
+
+    event_queue.append(e)
+
+
 cdef int poll_sdl() except 1:
     """
     Polls SDL for pending events, and places those events onto the event q
     queue.
     """
 
-    # This also merges MOUSEMOTION events.
+    # This also merges MOUSEMOTION events, both consecutive ones from SDL, here,
+    # and with motion already on the queue, in queue_mousemotion.
 
     cdef bint last_mousemotion = False
 
@@ -1203,7 +1281,12 @@ cdef int poll_sdl() except 1:
             if evt.type == SDL_EVENT_MOUSE_MOTION:
 
                 # We can merge the event.
-                if last_mousemotion and mm_evt.state == old_mm_evt.state and mm_evt.which == old_mm_evt.which:
+                if (
+                    last_mousemotion
+                    and mm_evt.state == old_mm_evt.state
+                    and mm_evt.which == old_mm_evt.which
+                    and mm_evt.windowID == old_mm_evt.windowID
+                ):
                     old_mm_evt.timestamp = mm_evt.timestamp
                     old_mm_evt.x = mm_evt.x
                     old_mm_evt.y = mm_evt.y
@@ -1213,18 +1296,14 @@ cdef int poll_sdl() except 1:
 
                 # We can't merge the event.
                 if last_mousemotion:
-                    e = make_mousemotion_event(old_mm_evt)
-                    stamp_event(e, old_evt.common.timestamp)
-                    event_queue.append(e)
+                    queue_mousemotion(&old_evt)
 
                 memcpy(&old_evt, &evt, sizeof(SDL_Event))
                 last_mousemotion = True
 
             else:
                 if last_mousemotion:
-                    e = make_mousemotion_event(old_mm_evt)
-                    stamp_event(e, old_evt.common.timestamp)
-                    event_queue.append(e)
+                    queue_mousemotion(&old_evt)
                     last_mousemotion = False
 
                 for e in make_events(&evt):
@@ -1232,9 +1311,7 @@ cdef int poll_sdl() except 1:
                     event_queue.append(e)
 
         if last_mousemotion:
-            e = make_mousemotion_event(old_mm_evt)
-            stamp_event(e, old_evt.common.timestamp)
-            event_queue.append(e)
+            queue_mousemotion(&old_evt)
             last_mousemotion = False
 
     return 0
@@ -1439,6 +1516,9 @@ def post(e):
 
     if get_blocked(e.type):
         return
+
+    # A posted event is delivered as it is, never merged with other motion.
+    (<EventBase> e).mergeable_motion = False
 
     Py_INCREF(e)
 
