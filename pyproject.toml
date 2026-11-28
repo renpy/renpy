@@ -13,7 +13,7 @@ dependencies = [
     "chardet>=7.7.0",
     "websockets>=17.4",
     "pysocks>=1.7.1",
-    "certifi>=2026.10.23", # This is to satisfy requests' dependency, but truststore will handle SSL certificates.
+    "certifi>=2026.11.20", # This is to satisfy requests' dependency, but truststore will handle SSL certificates.
     "jinja2>=3.1.6",
     "truststore>=0.10.5",
 ]
