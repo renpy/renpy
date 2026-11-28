@@ -61,6 +61,11 @@ PERIODIC = pygame.event.register("PERIODIC")
 REDRAW = pygame.event.register("REDRAW")
 EVENTNAME = pygame.event.register("EVENTNAME")
 
+# Mouse motion can be merged across these events, which don't depend on the mouse position, so that queued motion stays
+# ahead of the TIMEEVENT posted at the start of each interaction. EVENTNAME is input, so motion isn't merged across it.
+MOTION_MERGE_EVENTS: tuple[int, ...] = (TIMEEVENT, PERIODIC, REDRAW)
+pygame.event.set_motion_merge_events(MOTION_MERGE_EVENTS)
+
 # All events except for TIMEEVENT and REDRAW
 ALL_EVENTS: set[int] = set(pygame.event.get_standard_events())
 ALL_EVENTS.discard(pygame.MOUSEMOTION)
@@ -167,11 +172,6 @@ null: "renpy.display.layout.Null | None" = None
 time_base = import_time
 perf_base = import_perf_time
 time_mult = 1.0
-
-# Mouse management.
-relx = 0
-rely = 0
-
 
 def init_time():
     warp = os.environ.get("RENPY_TIMEWARP", "1.0")
@@ -2699,12 +2699,10 @@ class Interface:
         # Clear some events.
         pygame.event.clear((PERIODIC, TIMEEVENT, REDRAW))
 
-        # Merge pending mouse motion into the newest motion event, which stays in its place in the queue, ahead of the
-        # TIMEEVENT posted below. Keeping it, rather than discarding it, means that restarting the interaction faster
-        # than events are handled (for example, from a repeating timer) doesn't starve displayables of motion.
-        global relx, rely
-
-        if pygame.event.merge_motion():
+        # Pending mouse motion stays on the queue, ahead of the TIMEEVENT posted below. (The event queue merges motion
+        # as it arrives.) Discarding it would mean that restarting the interaction faster than events are handled (for
+        # example, from a repeating timer) starves displayables of motion.
+        if pygame.event.peek(pygame.MOUSEMOTION):
             self.mouse_event_time = get_time()
 
         # Add a single TIMEEVENT to the queue.
@@ -3475,26 +3473,13 @@ class Interface:
                 ):
                     continue
 
-                # Merge mousemotion events.
+                # Mouse motion is delivered one event at a time, in queue order. The event queue has already merged
+                # newer motion into queued motion where that doesn't change the order of input events.
                 if ev.type == pygame.MOUSEMOTION:
 
                     # During tests, ignore user mouse motion events
                     if renpy.test.testexecution.is_in_test() and not getattr(ev, "test", False):
                         continue
-
-                    xr, yr = ev.rel
-                    relx += xr
-                    rely += yr
-
-                    for ev in pygame.event.get(pygame.MOUSEMOTION):
-                        xr, yr = ev.rel
-                        relx += xr
-                        rely += yr
-
-                    # Event is now the most recent mouse move due to loop.
-                    ev.rel = relx, rely
-                    relx = 0
-                    rely = 0
 
                     if renpy.windows:
                         self.mouse_focused = True

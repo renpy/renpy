@@ -314,72 +314,212 @@ def test_merged_motion_keeps_its_timestamp(event_queue):
     assert events[1].timestamp == pytest.approx(0.009)
 
 
-def test_merge_motion_keeps_newest_in_place(event_queue):
+def describe_motion(events):
     """
-    merge_motion() leaves one MOUSEMOTION, the newest, in its place in the queue, carrying the position of the newest
-    motion and the total movement of all of them. Other events keep their order around it.
+    Returns the events as (type, pos, rel) tuples, with None for the position and movement of non-motion events.
+    """
+
+    return [
+        (ev.type, ev.pos, ev.rel) if ev.type == pygame.MOUSEMOTION else (ev.type, None, None) for ev in events
+    ]
+
+
+@pytest.fixture
+def merge_across_user_events(event_queue):
+    """
+    Lets mouse motion merge across USEREVENT and USEREVENT + 1, which stand in for Ren'Py's timer events, and restores
+    the event types Ren'Py sets afterwards.
+    """
+
+    pygame.event.set_motion_merge_events((pygame.USEREVENT, pygame.USEREVENT + 1))
+
+    yield
+
+    pygame.event.set_motion_merge_events(renpy.display.core.MOTION_MERGE_EVENTS)
+
+
+@pytest.mark.parametrize("poll_between", [False, True])
+def test_motion_merges_into_queued_motion_across_merge_events(merge_across_user_events, poll_between):
+    """
+    Newer motion is merged into queued motion with the same buttons when only events given to set_motion_merge_events,
+    like Ren'Py's timer event, are between them. The queued event keeps its place, ahead of those events, and takes the newest
+    position and the total movement. This holds whether the queued motion was read from SDL in the same poll or an
+    earlier one.
     """
 
     pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0)
+
+    if poll_between:
+        pygame.event.pump()
+
     pygame.event._push_user_event(pygame.USEREVENT)
-    pygame.event._push_mousemotion_event(10.0, 20.0, 3.0, 4.0)
+    pygame.event._push_mousemotion_event(10.0, 20.0, 3.0, 4.0, timestamp=5_000_000)
+
+    events = pygame.event.get()
+
+    assert describe_motion(events) == [
+        (pygame.MOUSEMOTION, (10.0, 20.0), (4.0, 5.0)),
+        (pygame.USEREVENT, None, None),
+    ]
+
+    assert events[0].timestamp == pytest.approx(0.005)
+
+
+def test_motion_merges_across_renpy_timer_but_not_input_events(event_queue):
+    """
+    With the event types Ren'Py sets, motion merges across the TIMEEVENT posted at the start of each interaction, so
+    it stays ahead of it, but not across EVENTNAME, which carries input such as renpy.queue_event.
+    """
+
+    core = renpy.display.core
+
+    pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0)
+    pygame.event._push_user_event(core.TIMEEVENT)
+    pygame.event._push_mousemotion_event(5.0, 5.0, 4.0, 4.0)
+
+    assert describe_motion(pygame.event.get()) == [
+        (pygame.MOUSEMOTION, (5.0, 5.0), (5.0, 5.0)),
+        (core.TIMEEVENT, None, None),
+    ]
+
+    pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0)
+    pygame.event._push_user_event(core.EVENTNAME)
+    pygame.event._push_mousemotion_event(5.0, 5.0, 4.0, 4.0)
+
+    assert describe_motion(pygame.event.get()) == [
+        (pygame.MOUSEMOTION, (1.0, 1.0), (1.0, 1.0)),
+        (core.EVENTNAME, None, None),
+        (pygame.MOUSEMOTION, (5.0, 5.0), (4.0, 4.0)),
+    ]
+
+
+def test_motion_is_not_merged_across_other_events(merge_across_user_events):
+    """
+    Motion isn't merged across an event of a type not given to set_motion_merge_events, such as Ren'Py's EVENTNAME,
+    which is input. So the motion is delivered in the order it happened relative to that event.
+    """
+
+    pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0)
+    pygame.event._push_user_event(pygame.USEREVENT + 2)
+    pygame.event._push_mousemotion_event(5.0, 5.0, 4.0, 4.0)
+
+    assert describe_motion(pygame.event.get()) == [
+        (pygame.MOUSEMOTION, (1.0, 1.0), (1.0, 1.0)),
+        (pygame.USEREVENT + 2, None, None),
+        (pygame.MOUSEMOTION, (5.0, 5.0), (4.0, 4.0)),
+    ]
+
+
+def test_motion_is_not_merged_across_input_events(merge_across_user_events):
+    """
+    Motion isn't merged across an input event, such as a mouse button press, so it's delivered in the order it
+    happened relative to that event.
+    """
+
+    pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0)
+    pygame.event._push_mousewheel_event(0.0, 1.0, 1, 1.0, 1.0)
+    pygame.event._push_mousemotion_event(5.0, 5.0, 4.0, 4.0)
+
+    assert describe_motion(pygame.event.get()) == [
+        (pygame.MOUSEMOTION, (1.0, 1.0), (1.0, 1.0)),
+        (pygame.MOUSEBUTTONDOWN, None, None),
+        (pygame.MOUSEBUTTONUP, None, None),
+        (pygame.MOUSEMOTION, (5.0, 5.0), (4.0, 4.0)),
+    ]
+
+
+def test_motion_with_different_buttons_is_not_merged(merge_across_user_events):
+    """
+    Motion with different buttons held isn't merged, and neither is motion that would have to move past it, so a
+    drag sees motion in the order it happened.
+    """
+
+    pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0, state=0)
+    pygame.event._push_user_event(pygame.USEREVENT)
+    pygame.event._push_mousemotion_event(5.0, 5.0, 4.0, 4.0, state=1)
     pygame.event._push_user_event(pygame.USEREVENT + 1)
-
-    assert pygame.event.merge_motion()
-
-    events = pygame.event.get()
-
-    assert [ev.type for ev in events] == [pygame.USEREVENT, pygame.MOUSEMOTION, pygame.USEREVENT + 1]
-    assert events[1].pos == (10.0, 20.0)
-    assert events[1].rel == (4.0, 5.0)
-
-
-def test_merge_motion_includes_posted_motion(event_queue):
-    """
-    Motion posted to the queue, as the test runner and the touch emulator do, is merged with motion from SDL.
-    """
-
-    pygame.event.post(pygame.event.Event(pygame.MOUSEMOTION, pos=(1, 2), rel=(1, 2), buttons=(0, 0, 0)))
-    pygame.event._push_user_event(pygame.USEREVENT)
-    pygame.event._push_mousemotion_event(30.0, 40.0, 2.0, 1.0)
-
-    assert pygame.event.merge_motion()
+    pygame.event._push_mousemotion_event(7.0, 9.0, 2.0, 4.0, state=0)
 
     events = pygame.event.get()
 
-    assert [ev.type for ev in events] == [pygame.USEREVENT, pygame.MOUSEMOTION]
-    assert events[1].pos == (30.0, 40.0)
-    assert events[1].rel == (3.0, 3.0)
+    assert describe_motion(events) == [
+        (pygame.MOUSEMOTION, (1.0, 1.0), (1.0, 1.0)),
+        (pygame.USEREVENT, None, None),
+        (pygame.MOUSEMOTION, (5.0, 5.0), (4.0, 4.0)),
+        (pygame.USEREVENT + 1, None, None),
+        (pygame.MOUSEMOTION, (7.0, 9.0), (2.0, 4.0)),
+    ]
+
+    assert events[2].buttons == (1, 0, 0)
+    assert events[4].buttons == (0, 0, 0)
 
 
-def test_merge_motion_with_event_posted_twice(event_queue):
+def test_motion_from_different_mice_is_not_merged(merge_across_user_events):
     """
-    When the same motion event object is posted twice, only one queue entry is left, so its movement isn't counted
-    twice when the queue is read.
+    Motion from different mice, such as a mouse and a touchscreen, isn't merged.
     """
 
-    ev = pygame.event.Event(pygame.MOUSEMOTION, pos=(5, 6), rel=(1, 2), buttons=(0, 0, 0))
-    pygame.event.post(ev)
+    pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0, which=1)
     pygame.event._push_user_event(pygame.USEREVENT)
-    pygame.event.post(ev)
+    pygame.event._push_mousemotion_event(2.0, 2.0, 1.0, 1.0, which=2)
 
-    assert pygame.event.merge_motion()
-
-    events = pygame.event.get()
-
-    assert [ev.type for ev in events] == [pygame.USEREVENT, pygame.MOUSEMOTION]
-    assert events[1].rel == (2, 4)
+    assert [ev.type for ev in pygame.event.get()] == [pygame.MOUSEMOTION, pygame.USEREVENT, pygame.MOUSEMOTION]
 
 
-def test_merge_motion_without_motion(event_queue):
+@pytest.mark.parametrize("poll_between", [False, True])
+def test_motion_from_different_windows_is_not_merged(merge_across_user_events, poll_between):
     """
-    With no MOUSEMOTION on the queue, merge_motion() returns false and leaves the queue as it was.
+    Motion in different windows isn't merged, whether it arrives back to back or with merge events between.
     """
 
+    pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0, window_id=1)
+
+    if poll_between:
+        pygame.event.pump()
+        pygame.event._push_user_event(pygame.USEREVENT)
+
+    pygame.event._push_mousemotion_event(2.0, 2.0, 1.0, 1.0, window_id=2)
+
+    events = [ev for ev in pygame.event.get() if ev.type == pygame.MOUSEMOTION]
+
+    assert [(ev.pos, ev.rel) for ev in events] == [((1.0, 1.0), (1.0, 1.0)), ((2.0, 2.0), (1.0, 1.0))]
+
+
+def test_posted_motion_is_not_merged(merge_across_user_events):
+    """
+    Posted motion, such as motion from the test runner, is delivered as posted, and newer motion from SDL isn't
+    merged into it.
+    """
+
+    pygame.event.post(pygame.event.Event(pygame.MOUSEMOTION, pos=(3, 3), rel=(2, 2), buttons=(0, 0, 0), test=True))
     pygame.event._push_user_event(pygame.USEREVENT)
+    pygame.event._push_mousemotion_event(4.0, 4.0, 1.0, 1.0)
 
-    assert not pygame.event.merge_motion()
-    assert [ev.type for ev in pygame.event.get()] == [pygame.USEREVENT]
+    assert describe_motion(pygame.event.get()) == [
+        (pygame.MOUSEMOTION, (3, 3), (2, 2)),
+        (pygame.USEREVENT, None, None),
+        (pygame.MOUSEMOTION, (4.0, 4.0), (1.0, 1.0)),
+    ]
+
+
+def test_reposted_motion_is_not_merged(merge_across_user_events):
+    """
+    A motion event read from SDL and then posted again is delivered as posted, and newer motion from SDL isn't merged
+    into it.
+    """
+
+    pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0)
+    reposted = pygame.event.get()[0]
+
+    pygame.event.post(reposted)
+    pygame.event._push_user_event(pygame.USEREVENT)
+    pygame.event._push_mousemotion_event(4.0, 4.0, 1.0, 1.0)
+
+    assert describe_motion(pygame.event.get()) == [
+        (pygame.MOUSEMOTION, (1.0, 1.0), (1.0, 1.0)),
+        (pygame.USEREVENT, None, None),
+        (pygame.MOUSEMOTION, (4.0, 4.0), (1.0, 1.0)),
+    ]
 
 
 def test_wait_uses_the_queue(event_queue):
