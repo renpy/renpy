@@ -25,6 +25,7 @@ from renpy.gl2.gl2texture cimport GLTexture
 from renpy.display.render cimport Render
 from renpy.gl2.gl2statecache cimport GLStateCache
 
+from cpython.array cimport array as cpy_array
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
 
 import random
@@ -227,35 +228,47 @@ cdef class ArraySetter(Setter):
         PyMem_Free(self.scratch)
 
 
+    cdef GLfloat *float_values(self, value, int components) except? NULL:
+        cdef int count = self.length * components
+        cdef GLfloat *values = <GLfloat *> self.scratch
+
+        if type(value) is cpy_array and (<cpy_array> value).ob_descr.typecode == c'f':
+            if len(value) != count:
+                raise Exception(f"Expected {count} floats, got {len(value)}.")
+
+            # Caller retains the buffer until the synchronous upload returns.
+            return (<cpy_array> value).data.as_floats
+
+        _fill_array(value, values, count)
+
+        return values
+
+
 cdef class FloatArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = <GLfloat *> self.scratch
-        _fill_array(value, values, self.length)
+        cdef GLfloat *values = self.float_values(value, 1)
         glUniform1fv(self.location, self.length, values)
 
 
 cdef class Vec2ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = <GLfloat *> self.scratch
-        _fill_array(value, values, self.length * 2)
+        cdef GLfloat *values = self.float_values(value, 2)
         glUniform2fv(self.location, self.length, values)
 
 
 cdef class Vec3ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = <GLfloat *> self.scratch
-        _fill_array(value, values, self.length * 3)
+        cdef GLfloat *values = self.float_values(value, 3)
         glUniform3fv(self.location, self.length, values)
 
 
 cdef class Vec4ArraySetter(ArraySetter):
 
     cdef object set(self, GL2DrawingContext context, value):
-        cdef GLfloat *values = <GLfloat *> self.scratch
-        _fill_array(value, values, self.length * 4)
+        cdef GLfloat *values = self.float_values(value, 4)
         glUniform4fv(self.location, self.length, values)
 
 
