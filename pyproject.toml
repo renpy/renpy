@@ -117,7 +117,7 @@ preview = true
 [dependency-groups]
 dev = [
     "setuptools>=84.2.1",
-    "cython>=3.3.0",
+    "cython>=3.3.1",
     "pkgconfig>=1.6.0",
     "ruff>=0.17.3",
     "sphinx>=9.1.1",
