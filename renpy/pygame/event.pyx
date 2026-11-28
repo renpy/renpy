@@ -1309,6 +1309,50 @@ def peek(t=None):
             return has_event(t)
 
 
+def merge_motion():
+    """
+    Merges every MOUSEMOTION event on the queue into the newest one, which
+    keeps its place in the queue and is given the total relative movement of
+    the merged events. The other events keep their order.
+
+    This happens in a single step under the queue lock, so events that arrive
+    while it runs are queued after the merged event, in order.
+
+    Returns true if the queue held any MOUSEMOTION event.
+    """
+
+    global event_queue
+
+    cdef int count = 0
+    cdef Py_ssize_t i
+    cdef Py_ssize_t last = -1
+
+    with lock:
+        poll_sdl()
+
+        relx = 0
+        rely = 0
+
+        for i, e in enumerate(event_queue):
+            if e.type == SDL_EVENT_MOUSE_MOTION:
+                xr, yr = e.rel
+                relx += xr
+                rely += yr
+                last = i
+                count += 1
+
+        if last < 0:
+            return False
+
+        if count > 1:
+            event_queue[last].rel = (relx, rely)
+
+            # The newest entry is kept by position, since a posted event can be on the queue more than once.
+            event_queue = [ e for i, e in enumerate(event_queue) if (e.type != SDL_EVENT_MOUSE_MOTION) or (i == last) ]
+
+        return True
+
+
 def clear(t=None):
 
     # Clear is implemented in terms of get.

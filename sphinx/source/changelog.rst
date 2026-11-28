@@ -14,6 +14,17 @@ Translations
 
 The Question has been translated into Arabic with an RTL layout.
 
+.. _renpy-8.6.3:
+
+8.6.3
+=====
+
+Fixes
+-----
+
+A screen that rapidly restarts interactions no longer starves the interface from receiving mouse motion events.
+
+
 .. _renpy-8.6.2:
 
 8.6.2

@@ -2699,12 +2699,12 @@ class Interface:
         # Clear some events.
         pygame.event.clear((PERIODIC, TIMEEVENT, REDRAW))
 
-        # Accumulate relative mouse movement from otherwise obsolete events.
+        # Merge pending mouse motion into the newest motion event, which stays in its place in the queue, ahead of the
+        # TIMEEVENT posted below. Keeping it, rather than discarding it, means that restarting the interaction faster
+        # than events are handled (for example, from a repeating timer) doesn't starve displayables of motion.
         global relx, rely
-        for ev in pygame.event.get(pygame.MOUSEMOTION):
-            xr, yr = ev.rel
-            relx += xr
-            rely += yr
+
+        if pygame.event.merge_motion():
             self.mouse_event_time = get_time()
 
         # Add a single TIMEEVENT to the queue.

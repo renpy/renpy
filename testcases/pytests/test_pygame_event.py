@@ -314,6 +314,74 @@ def test_merged_motion_keeps_its_timestamp(event_queue):
     assert events[1].timestamp == pytest.approx(0.009)
 
 
+def test_merge_motion_keeps_newest_in_place(event_queue):
+    """
+    merge_motion() leaves one MOUSEMOTION, the newest, in its place in the queue, carrying the position of the newest
+    motion and the total movement of all of them. Other events keep their order around it.
+    """
+
+    pygame.event._push_mousemotion_event(1.0, 1.0, 1.0, 1.0)
+    pygame.event._push_user_event(pygame.USEREVENT)
+    pygame.event._push_mousemotion_event(10.0, 20.0, 3.0, 4.0)
+    pygame.event._push_user_event(pygame.USEREVENT + 1)
+
+    assert pygame.event.merge_motion()
+
+    events = pygame.event.get()
+
+    assert [ev.type for ev in events] == [pygame.USEREVENT, pygame.MOUSEMOTION, pygame.USEREVENT + 1]
+    assert events[1].pos == (10.0, 20.0)
+    assert events[1].rel == (4.0, 5.0)
+
+
+def test_merge_motion_includes_posted_motion(event_queue):
+    """
+    Motion posted to the queue, as the test runner and the touch emulator do, is merged with motion from SDL.
+    """
+
+    pygame.event.post(pygame.event.Event(pygame.MOUSEMOTION, pos=(1, 2), rel=(1, 2), buttons=(0, 0, 0)))
+    pygame.event._push_user_event(pygame.USEREVENT)
+    pygame.event._push_mousemotion_event(30.0, 40.0, 2.0, 1.0)
+
+    assert pygame.event.merge_motion()
+
+    events = pygame.event.get()
+
+    assert [ev.type for ev in events] == [pygame.USEREVENT, pygame.MOUSEMOTION]
+    assert events[1].pos == (30.0, 40.0)
+    assert events[1].rel == (3.0, 3.0)
+
+
+def test_merge_motion_with_event_posted_twice(event_queue):
+    """
+    When the same motion event object is posted twice, only one queue entry is left, so its movement isn't counted
+    twice when the queue is read.
+    """
+
+    ev = pygame.event.Event(pygame.MOUSEMOTION, pos=(5, 6), rel=(1, 2), buttons=(0, 0, 0))
+    pygame.event.post(ev)
+    pygame.event._push_user_event(pygame.USEREVENT)
+    pygame.event.post(ev)
+
+    assert pygame.event.merge_motion()
+
+    events = pygame.event.get()
+
+    assert [ev.type for ev in events] == [pygame.USEREVENT, pygame.MOUSEMOTION]
+    assert events[1].rel == (2, 4)
+
+
+def test_merge_motion_without_motion(event_queue):
+    """
+    With no MOUSEMOTION on the queue, merge_motion() returns false and leaves the queue as it was.
+    """
+
+    pygame.event._push_user_event(pygame.USEREVENT)
+
+    assert not pygame.event.merge_motion()
+    assert [ev.type for ev in pygame.event.get()] == [pygame.USEREVENT]
+
+
 def test_wait_uses_the_queue(event_queue):
     """
     wait() returns events converted like those from get(): a wheel event comes back as a timestamped button press,
