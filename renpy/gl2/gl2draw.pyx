@@ -1362,12 +1362,14 @@ cdef class GL2Draw:
 
         glViewport(x, y, w, h)
 
-        # Clear the screen.
-        clear_r, clear_g, clear_b = renpy.color.Color(renpy.config.gl_clear_color).rgb
-        glClearColor(clear_r, clear_g, clear_b, 0.0 if screenshot else 1.0)
+        # Clear the screen. The frame holds premultiplied alpha, so the
+        # window clear multiplies the clear color by its alpha.
+        clear_r, clear_g, clear_b, clear_a = renpy.color.Color(renpy.config.gl_clear_color).rgba
         if screenshot:
+            glClearColor(clear_r, clear_g, clear_b, 0.0)
             clear_color_buffer(0, 0, <int> w, <int> h)
         else:
+            glClearColor(clear_r * clear_a, clear_g * clear_a, clear_b * clear_a, clear_a)
             glClear(GL_COLOR_BUFFER_BIT)
 
         # Project the child from virtual space to the screen space.
