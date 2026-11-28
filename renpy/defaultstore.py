@@ -89,7 +89,7 @@ class _Config(object):
         cvars = vars(_config)
 
         if name not in cvars:
-            raise Exception("config.%s is not a known configuration variable." % (name))
+            raise AttributeError("config.%s is not a known configuration variable." % (name))
 
         return cvars[name]
 
