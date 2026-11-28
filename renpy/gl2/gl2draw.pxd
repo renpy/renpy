@@ -86,6 +86,12 @@ cdef class GL2Draw:
     # The framebuffer object used for offscreen rendering.
     cdef public GLuint fbo
 
+    # Zero when the driver requires the renderbuffer copy path.
+    cdef GLuint texture_fbo
+
+    # Depth attachment currently bound to texture_fbo.
+    cdef GLuint texture_fbo_depth
+
     # The color texture object used for pixel tests (1x1).
     cdef public GLuint color_renderbuffer_1px
 

@@ -1198,6 +1198,36 @@ cdef class GL2Draw:
                 GL_RENDERBUFFER,
                 self.depth_renderbuffer_1px)
 
+        # Probe once per framebuffer setup. Some drivers require color and depth
+        # attachments of the same size, so keep the renderbuffer copy path for them.
+        cdef GLuint probe_texture, previous_texture
+
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, <GLint *> &previous_texture)
+        glGenTextures(1, &probe_texture)
+        glBindTexture(GL_TEXTURE_2D, probe_texture)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL)
+
+        glGenFramebuffers(1, &self.texture_fbo)
+
+        self.change_fbo(self.texture_fbo)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, probe_texture, 0)
+        self.texture_fbo_depth = self.depth_renderbuffer
+
+        if self.texture_fbo_depth:
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, self.texture_fbo_depth)
+
+        cdef GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER)
+
+        glDeleteTextures(1, &probe_texture)
+        glBindTexture(GL_TEXTURE_2D, previous_texture)
+
+        if status != GL_FRAMEBUFFER_COMPLETE:
+            glDeleteFramebuffers(1, &self.texture_fbo)
+            self.texture_fbo = 0
+
+            renpy.display.log.write("Using framebuffer copies for render-to-texture (status 0x%x).", status)
+
         glBindRenderbuffer(GL_RENDERBUFFER, default_renderbuffer)
         self.change_fbo(self.default_fbo)
 
@@ -1206,12 +1236,16 @@ cdef class GL2Draw:
 
         self.change_fbo(self.default_fbo)
 
+        glDeleteFramebuffers(1, &self.texture_fbo)
+        self.texture_fbo = 0
+
         # Full-size fbo.
         glDeleteFramebuffers(1, &self.fbo)
         glDeleteRenderbuffers(1, &self.color_renderbuffer)
 
         if renpy.config.depth_size:
             glDeleteRenderbuffers(1, &self.depth_renderbuffer)
+            self.depth_renderbuffer = 0
 
         # 1px fbo.
         glDeleteFramebuffers(1, &self.fbo_1px)

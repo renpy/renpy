@@ -72,6 +72,10 @@ cdef GLenum TEXTURE_SWIZZLE_G = 0x8E43
 cdef GLenum TEXTURE_SWIZZLE_B = 0x8E44
 cdef GLenum TEXTURE_SWIZZLE_A = 0x8E45
 
+cdef enum:
+    # At or below this area, switching framebuffer attachments can cost more than copying.
+    RTT_COPY_THRESHOLD_PIXELS = 128 * 128
+
 ################################################################################
 
 cdef class TextureLoader:
@@ -503,203 +507,168 @@ cdef class GLTexture(GL2Model):
 
         cdef GLuint premultiplied
 
-        glGenTextures(1, &premultiplied)
-
-        # Bind the framebuffer.
-        draw.change_fbo(draw.fbo)
-
         # Project the child from virtual space to the screen space.
         cdef Matrix transform
         transform = Matrix.ctexture_projection(cw, ch)
 
-        self.allocate_texture(premultiplied, tw, th, properties)
+        cdef GLuint previous_fbo = draw.current_fbo
+        texture_size = 0
+        glGenTextures(1, &premultiplied)
 
-        # Set up the viewport.
-        glViewport(0, 0, tw, th)
+        try:
+            texture_size = self.allocate_render_target(premultiplied, tw, th, properties, draw.depth_renderbuffer)
 
-        # Clear the screen.
-        glClearColor(0.0, 0.0, 0.0, 0.0)
-        clear_color_buffer(0, 0, tw, th)
+            # Set up the viewport.
+            glViewport(0, 0, tw, th)
 
-        # Set up the default modes.
-        glEnable(GL_BLEND)
+            glClearColor(0.0, 0.0, 0.0, 0.0)
 
-        renpy.gl2.gl2draw.draw_render(what, tw, th, transform, draw.state_cache, invert_front_face=True)
+            if draw.current_fbo == draw.texture_fbo:
+                glClear(GL_COLOR_BUFFER_BIT)
+            else:
+                clear_color_buffer(0, 0, tw, th)
 
-        glBindTexture(GL_TEXTURE_2D, premultiplied)
-        glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, tw, th, 0)
+            # Set up the default modes.
+            glEnable(GL_BLEND)
 
-        self.mipmap_texture(premultiplied, tw, th, properties)
+            renpy.gl2.gl2draw.draw_render(what, tw, th, transform, draw.state_cache, invert_front_face=True)
 
-        self.set_number(premultiplied)
+            self.finish_render_target(premultiplied)
 
-        self.loaded = True
+            self.mipmap_texture(premultiplied, tw, th, properties)
+
+            self.set_number(premultiplied)
+            self.loaded = True
+        finally:
+            if not self.loaded:
+                glDeleteTextures(1, &premultiplied)
+
+                self.loader.total_texture_size -= texture_size
+
+                draw.change_fbo(previous_fbo)
 
 
     def __repr__(self):
         return "<GLTexture {}x{} {}>".format(self.width, self.height, self.number)
 
     def load_gltexture(GLTexture self):
-        """
-        Loads this texture. When it's loaded, number and generation are set,
-        and the texture is ready to use.
-        """
-
-        cdef GLuint tex
-        cdef GLuint premultiplied
-        cdef Program program
-        cdef SDL_Surface *s
-        cdef GLuint pixel_buffer
-
-        if self.loaded:
-            return
-
-        draw = self.loader.draw
-
-        s = self.surface.sdl_surface
-
-        # Generate the old textures.
-        glGenTextures(1, &tex)
-        glGenTextures(1, &premultiplied)
-
-        # Bind the framebuffer.
-        draw.change_fbo(draw.fbo)
-
-        # Load the pixel data into tex, and set it up for drawing.
-        glActiveTexture(GL_TEXTURE0)
-        glBindTexture(GL_TEXTURE_2D, tex)
-
-        # Setup the non-premultiplied texture.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-
-        # Use a pixel buffer to create a texture.
-        # Why use a Pixel Buffer? Apart from potentially being faster, this
-        # works around a bug in Samsung android devices running Android 11,
-        # where glTexImage2D doesn't seem to work when the pixels are not
-        # aligned.
-
-        # But it doesn't seem to work with ANGLE or emscripten, so we avoid using PBOs when
-        # angle is in use.
-
-        if not renpy.emscripten and not draw.angle:
-
-            glGenBuffers(1, &pixel_buffer)
-            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pixel_buffer)
-            glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STREAM_DRAW)
-            glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, <void *> 0)
-            glDeleteBuffers(1, &pixel_buffer)
-
-        else:
-            glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, s.pixels)
-
-
-        mesh = Mesh2.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
-
-        # Set up the viewport.
-        glViewport(0, 0, self.width, self.height)
-
-        # Set up the blend mode for premultiplication.
-        glEnable(GL_BLEND)
-        cdef GLStateCache sc = draw.state_cache
-        sc.set_blend(GL_FUNC_ADD, GL_FUNC_ADD, GL_SRC_ALPHA, GL_ZERO, GL_ONE, GL_ZERO)
-
-        # Draw.
-        program = self.loader.ftl_program
-        program.draw_ftl(sc, tex, mesh)
-
-        # Create premultiplied.
-        self.allocate_texture(premultiplied, self.width, self.height, self.properties)
-
-        glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, self.width, self.height, 0)
-
-        self.mipmap_texture(premultiplied, self.width, self.height, self.properties)
-
-        # Delete tex.
-        glDeleteTextures(1, &tex)
-
-        # Store the loaded texture.
-        self.set_number(premultiplied)
-
-        self.loaded = True
-        self.surface = None
+        self.load_surface_texture(True)
 
     def load_gltexture_premultiplied(GLTexture self):
-        """
-        Loads this texture. When it's loaded, number and generation are set,
-        and the texture is ready to use.
-        """
+        self.load_surface_texture(False)
 
-        cdef GLuint premultiplied
-        cdef Program program
-        cdef SDL_Surface *s
-        cdef GLuint pixel_buffer
-
+    cdef void load_surface_texture(self, bint premultiply):
         if self.loaded:
             return
 
-        draw = self.loader.draw
+        cdef GL2Draw draw = self.loader.draw
+        cdef GLuint previous_fbo = draw.current_fbo
+        cdef SDL_Surface *s = self.surface.sdl_surface
+        cdef GLuint texture
+        cdef GLuint pixel_buffer = 0
+        cdef void *pixels = s.pixels
+        cdef GLuint source = 0
+        cdef GLStateCache sc = draw.state_cache
 
-        s = self.surface.sdl_surface
+        texture_size = 0
+        glGenTextures(1, &texture)
 
-        glGenTextures(1, &premultiplied)
+        try:
+            glActiveTexture(GL_TEXTURE0)
 
-        # Load the pixel data into tex, and set it up for drawing.
-        glActiveTexture(GL_TEXTURE0)
+            # Empty surfaces have no pixels to upload and cannot be attached to an FBO.
+            if premultiply and s.w and s.h:
+                texture_size = self.allocate_render_target(texture, self.width, self.height, self.properties, 0)
 
-        self.allocate_texture(premultiplied, self.width, self.height, self.properties)
-        glBindTexture(GL_TEXTURE_2D, premultiplied)
+                glGenTextures(1, &source)
+                glBindTexture(GL_TEXTURE_2D, source)
 
-        # Use a pixel buffer to create a texture.
-        # Why use a Pixel Buffer? Apart from potentially being faster, this
-        # works around a bug in Samsung android devices running Android 11,
-        # where glTexImage2D doesn't seem to work when the pixels are not
-        # aligned.
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+            else:
+                texture_size = self.allocate_texture(texture, self.width, self.height, self.properties, not (s.w and s.h))
 
-        # But it doesn't seem to work with ANGLE or emscripten, so we avoid using PBOs when
-        # angle is in use.
+            if s.w and s.h:
+                if not renpy.emscripten and not draw.angle: # ANGLE and Emscripten require the client-memory path.
+                    glGenBuffers(1, &pixel_buffer)
+                    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pixel_buffer)
+                    glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, pixels, GL_STREAM_DRAW)
 
-        if not renpy.emscripten and not draw.angle:
+                    pixels = NULL
 
-            glGenBuffers(1, &pixel_buffer)
-            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pixel_buffer)
-            glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STREAM_DRAW)
-            glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, <void *> 0)
-            glDeleteBuffers(1, &pixel_buffer)
+                glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s.w, s.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels)
 
+                if pixel_buffer:
+                    glDeleteBuffers(1, &pixel_buffer)
+
+            if source:
+                mesh = Mesh2.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
+
+                glViewport(0, 0, self.width, self.height)
+                glEnable(GL_BLEND)
+
+                sc.set_blend(GL_FUNC_ADD, GL_FUNC_ADD, GL_SRC_ALPHA, GL_ZERO, GL_ONE, GL_ZERO)
+
+                self.loader.ftl_program.draw_ftl(sc, source, mesh)
+                self.finish_render_target(texture)
+
+            self.mipmap_texture(texture, self.width, self.height, self.properties)
+            self.set_number(texture)
+            self.loaded = True
+            self.surface = None
+        finally:
+            if source:
+                glDeleteTextures(1, &source)
+
+            if not self.loaded:
+                glDeleteTextures(1, &texture)
+
+                self.loader.total_texture_size -= texture_size
+
+                draw.change_fbo(previous_fbo)
+
+    cdef object allocate_render_target(self, GLuint texture, int width, int height, object properties, GLuint depth):
+        cdef GL2Draw draw = self.loader.draw
+
+        cdef bint direct = draw.texture_fbo and <size_t> width * height > RTT_COPY_THRESHOLD_PIXELS
+
+        texture_size = self.allocate_texture(texture, width, height, properties, direct)
+
+        if direct:
+            draw.change_fbo(draw.texture_fbo)
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0)
+
+            if draw.texture_fbo_depth != depth:
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth)
+                draw.texture_fbo_depth = depth
         else:
+            draw.change_fbo(draw.fbo)
 
-            glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, s.pixels)
+        return texture_size
 
-        self.mipmap_texture(premultiplied, self.width, self.height, self.properties)
+    cdef void finish_render_target(self, GLuint texture):
+        cdef GL2Draw draw = self.loader.draw
 
-        # Store the loaded texture.
-        self.set_number(premultiplied)
+        if draw.current_fbo == draw.texture_fbo: # Detach level zero before generating mipmaps.
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0)
+        else:
+            glBindTexture(GL_TEXTURE_2D, texture)
+            glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, self.texture_width, self.texture_height, 0)
 
-        self.loaded = True
-        self.surface = None
-
-    def allocate_texture(GLTexture self, GLuint tex, int tw, int th, properties={}):
+    def allocate_texture(GLTexture self, GLuint tex, int tw, int th, properties={}, bint allocate_base=True):
         """
         Allocates the VRAM required to store `tex`, which is a `tw` x `th`
-        texture, including all mipmap levels.
+        texture, including all mipmap levels. A copy or surface upload defines
+        level zero itself, so `allocate_base` can be False for a single-level texture.
         """
 
         # It's not 100% clear why we need this function, but it does seem to
         # significantly speed things up on my GeForce GTX 1060 3GB/PCIe/SSE2.
         # Going from a single to multiple mipmap levels takes ~9ms when loading
         # each mipmap, while allocating the space first reduces that to ~1ms.
-
-        if self.has_mipmaps():
-            self.loader.total_texture_size += int(self.width * self.height * 4 * 1.34)
-        else:
-            self.loader.total_texture_size += int(self.width * self.height * 4)
 
         glBindTexture(GL_TEXTURE_2D, tex)
 
@@ -731,21 +700,26 @@ cdef class GLTexture(GL2Model):
         self.texture_width = tw
         self.texture_height = th
 
-        cdef GLuint level = 0
+        cdef int level = 0
 
-        while True:
+        # Allocate mipmapped textures from level zero up to avoid driver reallocations.
+        if allocate_base or max_level:
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL)
 
-            glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL)
-
-            if tw == 1 and th == 1:
-                break
-
+        while level < max_level and (tw != 1 or th != 1):
             tw = max(tw >> 1, 1)
             th = max(th >> 1, 1)
             level += 1
+            glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL)
 
-            if level > max_level:
-                break
+        if self.has_mipmaps():
+            texture_size = int(self.width * self.height * 4 * 1.34)
+        else:
+            texture_size = int(self.width * self.height * 4)
+
+        self.loader.total_texture_size += texture_size
+
+        return texture_size
 
     def mipmap_texture(GLTexture self, GLuint tex, int tw, int th, properties={}):
         """
